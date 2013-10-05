@@ -1,0 +1,13 @@
+#!/usr/bin/gnuplot
+reset
+set terminal png size 1000, 700 
+
+set xlabel "step"
+set ylabel "value"
+set title "Kalman Filter"
+set grid
+
+set style data lines
+
+plot \
+"out.txt" using 1:2 title "Correction Array"

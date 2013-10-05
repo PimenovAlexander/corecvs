@@ -1,0 +1,105 @@
+<poco version="5.0">
+
+  <enum name="Filter Blocks">
+    <item name="Bit Selector"        id="0" />
+    <item name="Gain Offset"         id="1" />
+    <item name="Sobel Filter"        id="2" />
+    <item name="Canny Filter"        id="3" />
+    <item name="Background Filter"   id="4" />    
+    <item name="Input Filter"        id="5" />    
+    <item name="Output Filter"       id="6" />    
+  </enum>
+
+  <class name="Bit Selector Parameters" uibase="FilterParametersControlWidgetBase">
+    <field type="int" name="shift"   defaultValue = "0" />
+
+    <field type="bool" name="bit 0"  defaultValue="true" />
+    <field type="bool" name="bit 1"  defaultValue="true" />
+    <field type="bool" name="bit 2"  defaultValue="true" />
+    <field type="bool" name="bit 3"  defaultValue="true" />
+    <field type="bool" name="bit 4"  defaultValue="true" />
+    <field type="bool" name="bit 5"  defaultValue="true" />
+    <field type="bool" name="bit 6"  defaultValue="true" />
+    <field type="bool" name="bit 7"  defaultValue="true" />
+    <field type="bool" name="bit 8"  defaultValue="true" />
+    <field type="bool" name="bit 9"  defaultValue="true" />
+    <field type="bool" name="bit 10" defaultValue="true" />
+    <field type="bool" name="bit 11" defaultValue="true" />
+    <field type="bool" name="bit 12" defaultValue="true" />
+    <field type="bool" name="bit 13" defaultValue="true" />
+    <field type="bool" name="bit 14" defaultValue="true" />
+    <field type="bool" name="bit 15" defaultValue="true" />
+  </class>
+
+  <class name="Gain Offset Parameters" uibase="FilterParametersControlWidgetBase">
+    <field type="double" name="gain"   defaultValue = "1.0" min="-10.0"   max="10.0"  step="0.05"/>
+    <field type="double" name="offset" defaultValue = "0.0" min="-5000.0" max="5000.0" step="1"/>
+  </class>
+  
+  
+  <enum name="Sobel Mixing Type">
+    <item name="Sum of Absolute" id="0" />
+    <item name="L2"              id="1" />
+  </enum>
+  
+  
+  <class name="Sobel Parameters" uibase="FilterParametersControlWidgetBase">
+    <field type="Sobel Mixing Type"   name="Mixing Type"/>
+    <field type="bool"                name="Horizontal"  defaultValue="false" />
+    <field type="bool"                name="Vertical"    defaultValue="false" />
+  </class>
+
+  <class name="Canny Parameters" uibase="FilterParametersControlWidgetBase">
+    <field type="bool"               name="Should edge detect"  defaultValue="false" />
+    <field type="int"                name="Minimum threshold"   defaultValue="500"     min="0"   max="10000"  step="1" />
+    <field type="int"                name="Maximum threshold"   defaultValue="1500" min="0"   max="10000"  step="1" />
+  </class>
+
+  <enum name="OpenCV Binary Filter Type">
+    <item name="Canny" id="0" />
+  </enum>
+
+
+  <class name="OpenCV Filter Parameters" uibase="FilterParametersControlWidgetBase">
+    <field type="OpenCV Binary Filter Type" name="OpenCVFilter" />
+    <field type="int"                name="Param1"   defaultValue="50"  min="0"   max="10000"  step="1" />
+    <field type="int"                name="Param2"   defaultValue="100" min="0"   max="10000"  step="1" />
+  </class>
+  
+  <class name="Background Filter Parameters" uibase="FilterParametersControlWidgetBase">
+    <field type="int"                name="Threshold"   defaultValue="100" min="0"   max="10000"  step="1" />
+  </class>
+
+
+  <enum name="Input Type">
+    <item name="Left Frame"  id="0" />
+    <item name="Right Frame" id="1" />
+  </enum>
+  
+  <class name="Input Filter Parameters" uibase="FilterParametersControlWidgetBase">
+    <field type="Input Type"   name="Input Type"/>
+  </class>
+  
+
+  <enum name="Output Type">
+    <item name="Left Frame"  id="0" />
+    <item name="Right Frame" id="1" />
+  </enum>
+  
+  <class name="Output Filter Parameters" uibase="FilterParametersControlWidgetBase">
+    <field type="Output Type"   name="Output Type"/>
+  </class>
+  
+  <class name="Binarize Parameters" uibase="FilterParametersControlWidgetBase">
+    <field type="int"   name="Threshold" defaultValue="2000"  min="0"   max="4096"  step="1" />
+  </class>
+  
+  <class name="Thickening Parameters" uibase="FilterParametersControlWidgetBase">
+    <field type="int"   name="Power" defaultValue="5000"  min="0"   max="9999"  step="1" />
+  </class>
+  
+  <class name="Masking Parameters" uibase="FilterParametersControlWidgetBase">
+    <field type="bool"   name="Invert"/>
+  </class>
+  
+</poco>

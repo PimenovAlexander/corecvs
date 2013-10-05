@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Transform3DSelectorClass</class>
+ <widget class="QWidget" name="Transform3DSelectorClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>469</width>
+    <height>150</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Transform3DSelector</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="margin">
+    <number>3</number>
+   </property>
+   <item row="0" column="1">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>X</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>Y</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="3">
+    <widget class="QLabel" name="label_6">
+     <property name="text">
+      <string>Z</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Scale</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QDoubleSpinBox" name="scaleXSpinBox">
+     <property name="prefix">
+      <string>x</string>
+     </property>
+     <property name="decimals">
+      <number>4</number>
+     </property>
+     <property name="minimum">
+      <double>0.000100000000000</double>
+     </property>
+     <property name="maximum">
+      <double>9999999.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QDoubleSpinBox" name="scaleYSpinBox">
+     <property name="prefix">
+      <string>x</string>
+     </property>
+     <property name="decimals">
+      <number>4</number>
+     </property>
+     <property name="minimum">
+      <double>0.000100000000000</double>
+     </property>
+     <property name="maximum">
+      <double>999999.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3">
+    <widget class="QDoubleSpinBox" name="scaleZSpinBox">
+     <property name="prefix">
+      <string>x</string>
+     </property>
+     <property name="decimals">
+      <number>4</number>
+     </property>
+     <property name="minimum">
+      <double>0.000100000000000</double>
+     </property>
+     <property name="maximum">
+      <double>999999.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Rotate</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QDoubleSpinBox" name="rotateXSpinBox">
+     <property name="suffix">
+      <string>°</string>
+     </property>
+     <property name="minimum">
+      <double>-180.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>0.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QDoubleSpinBox" name="rotateYSpinBox">
+     <property name="suffix">
+      <string>°</string>
+     </property>
+     <property name="minimum">
+      <double>-180.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>180.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3">
+    <widget class="QDoubleSpinBox" name="rotateZSpinBox">
+     <property name="suffix">
+      <string>°</string>
+     </property>
+     <property name="minimum">
+      <double>-180.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>180.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Shift</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QDoubleSpinBox" name="shiftXSpinBox">
+     <property name="decimals">
+      <number>4</number>
+     </property>
+     <property name="minimum">
+      <double>-999999.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>999999.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QDoubleSpinBox" name="shiftYSpinBox">
+     <property name="decimals">
+      <number>4</number>
+     </property>
+     <property name="minimum">
+      <double>-999999.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>999999.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="3">
+    <widget class="QDoubleSpinBox" name="shiftZSpinBox">
+     <property name="decimals">
+      <number>4</number>
+     </property>
+     <property name="minimum">
+      <double>-999999.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>999999.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>10</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="4" column="3">
+    <widget class="QPushButton" name="hideButton">
+     <property name="text">
+      <string>Hide</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="4" rowspan="3">
+    <widget class="QToolButton" name="lockScaleToolButton">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../../../resources/main.qrc">
+       <normaloff>:/new/prefix1/lock.png</normaloff>
+       <normalon>:/new/prefix1/unlock.png</normalon>:/new/prefix1/lock.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>scaleXSpinBox</tabstop>
+  <tabstop>scaleYSpinBox</tabstop>
+  <tabstop>scaleZSpinBox</tabstop>
+  <tabstop>lockScaleToolButton</tabstop>
+  <tabstop>rotateXSpinBox</tabstop>
+  <tabstop>rotateYSpinBox</tabstop>
+  <tabstop>rotateZSpinBox</tabstop>
+  <tabstop>shiftXSpinBox</tabstop>
+  <tabstop>shiftYSpinBox</tabstop>
+  <tabstop>shiftZSpinBox</tabstop>
+  <tabstop>hideButton</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../../../../resources/main.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>scaleZSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>Transform3DSelectorClass</receiver>
+   <slot>parametersChangedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>356</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>460</x>
+     <y>57</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>scaleYSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>Transform3DSelectorClass</receiver>
+   <slot>parametersChangedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>234</x>
+     <y>45</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>401</x>
+     <y>52</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>scaleXSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>Transform3DSelectorClass</receiver>
+   <slot>parametersChangedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>124</x>
+     <y>40</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>50</x>
+     <y>19</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rotateXSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>Transform3DSelectorClass</receiver>
+   <slot>parametersChangedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>154</x>
+     <y>72</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>69</x>
+     <y>59</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rotateYSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>Transform3DSelectorClass</receiver>
+   <slot>parametersChangedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>224</x>
+     <y>72</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>290</x>
+     <y>75</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rotateZSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>Transform3DSelectorClass</receiver>
+   <slot>parametersChangedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>360</x>
+     <y>74</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>397</x>
+     <y>88</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>shiftZSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>Transform3DSelectorClass</receiver>
+   <slot>parametersChangedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>345</x>
+     <y>106</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>345</x>
+     <y>129</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>shiftYSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>Transform3DSelectorClass</receiver>
+   <slot>parametersChangedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>235</x>
+     <y>106</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>234</x>
+     <y>128</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>shiftXSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>Transform3DSelectorClass</receiver>
+   <slot>parametersChangedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>98</x>
+     <y>102</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>27</x>
+     <y>128</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hideButton</sender>
+   <signal>released()</signal>
+   <receiver>Transform3DSelectorClass</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>379</x>
+     <y>132</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>468</x>
+     <y>147</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lockScaleToolButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>scaleZSpinBox</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>465</x>
+     <y>50</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>385</x>
+     <y>48</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lockScaleToolButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>scaleYSpinBox</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>465</x>
+     <y>50</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>208</x>
+     <y>32</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lockScaleToolButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Transform3DSelectorClass</receiver>
+   <slot>parametersChangedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>460</x>
+     <y>38</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>504</x>
+     <y>38</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>parametersChangedSlot()</slot>
+ </slots>
+</ui>

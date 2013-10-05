@@ -1,0 +1,22 @@
+<poco version="5.0">
+  <enum name="Make Precise Algorithm">
+    <item name="KLT"   id="0" />
+  </enum>
+  
+  <enum name="Precise Interpolation Type">
+    <item name="Bilinear" id="0" />
+    <item name="Spline"   id="1" />
+    <item name="Polynom"  id="2" />        
+  </enum>
+  
+
+  <class name="Make Precise Parameters" description="Make Precise Parameters">
+    <field type="bool"                       name="Should Make Precise" default="false"/>
+    <field type="Make Precise Algorithm"     name="Algorithm" />
+    <field type="Precise Interpolation Type" name="Interpolation" />    
+    <field type="int"                        name="KLT iterations" default="5" min="1" max="100"/>
+    <field type="int"                        name="KLT Radius H"   default="5" min="1" max="100"/>
+    <field type="int"                        name="KLT Radius W"   default="5" min="1" max="100"/>
+    <field type="double"                     name="KLT Threshold"  default="2" min="1" max="100"/>
+  </class> 
+</poco>

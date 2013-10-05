@@ -1,0 +1,79 @@
+<poco version="5.0">
+  <enum name="Estimation Method Type">
+    <item name="RANSAC"    id="0" comment="RANSAC"/>
+    <item name="Iterative" id="1" comment="Iterative"/>
+    <item name="Manual"    id="2" comment="Manual"/>
+  </enum>
+  
+  <enum name="Optimization Method Type">
+    <item name="SVD"                 id="0" comment="SVD"/>
+    <item name="Gradient Descent"    id="1" comment="Gradient Descent"/>
+    <item name="Marquardt Levenberg" id="2" comment="Marquardt-Levenberg"/>
+    <item name="Classic Kalman"      id="3" comment="Classic Kalman"/>
+    <item name="Kalman"              id="4" comment="Kalman"/>
+  </enum>
+  
+  <enum name="Matching Method Type">
+    <item name="SurfCV"   id="0" comment="SurfCV"/>
+    <item name="viTech"   id="1" comment="viTech"/>
+  </enum>
+
+  <class name="Rectify Parameters" description="osd parameters">
+    <field type="Matching Method Type" name="matchingMethod" defaultValue="1"/>
+    
+    <field type="double"   name="hessianThreshold"    defaultValue="400.0"/>      
+    <field type="int"      name="octaves"             defaultValue="3"/>      
+    <field type="int"      name="octaveLayers"        defaultValue="4"/>      
+    <field type="bool"     name="extended"            defaultValue="false"/>       
+
+    <field type="double"   name="filterMinimumLength"        defaultValue="3.0"     min="0.0"    max="99.0"    step="1"/>
+    
+    <field type="bool"   name="useKLT"              defaultValue="false"/>      
+    <field type="bool"   name="computeEssential"    defaultValue="true"/>      
+
+
+    <field type="double"   name="priorFocal"      defaultValue="820.427" min="0"      max="99999.0" step="1"/>
+    <field type="double"   name="priorFocal2"     defaultValue="820.427" min="0"      max="99999.0" step="1"/>    
+    <field type="double"   name="baselineLength"  defaultValue="60"      min="-1000"  max="1000.0"  step="1"/>
+    <field type="double"   name="fovAngle"        defaultValue="60"      min="0"      max="20.0"    step="1"/>
+ 
+    <field type="Estimation Method Type" name="estimationMethod" defaultValue="1"/>
+
+    <field type="bool"     name="normalise"         defaultValue="true"/>
+    <field type="int"      name="ransacIterations"  defaultValue="4000"  min="1"      max="9999"    step="1"/>
+    <field type="int"      name="ransacTestSize"    defaultValue="15"    min="1"      max="9999"    step="1"/>
+    <field type="double"   name="ransacThreshold"   defaultValue="1"     min="1"      max="20.0"    step="1"/>
+
+    <!-- Make this an embed of the vector -->
+    <field type="double"   name="baselineX"   defaultValue="1"     min="-20"      max="20.0"    step="1"/>
+    <field type="double"   name="baselineY"   defaultValue="0"     min="-20"      max="20.0"    step="1"/>
+    <field type="double"   name="baselineZ"   defaultValue="0"     min="-20"      max="20.0"    step="1"/>
+
+    <field type="Optimization Method Type" name="iterativeMethod" defaultValue="2"/>
+    
+    <field type="int"      name="iterativeIterations"    defaultValue="30"    min="1"      max="9999"    step="1"/>
+    <field type="double"   name="iterativeInitialSigma"  defaultValue="30"    min="0"      max="20.0"    step="0.1"/>
+    <field type="double"   name="iterativeFactorSigma"   defaultValue="0.95"  min="0"      max="20.0"    step="0.01"/>
+   
+    <!-- Make this an embed of the vector -->
+    <field type="double"   name="manualX"   defaultValue="1"     min="-20"      max="20.0"    step="1"/>
+    <field type="double"   name="manualY"   defaultValue="0"     min="-20"      max="20.0"    step="1"/>
+    <field type="double"   name="manualZ"   defaultValue="0"     min="-20"      max="20.0"    step="1"/>
+
+    <!-- Make this an embed of the vector -->
+    <field type="double"   name="manualPitch" defaultValue="0"   min="-20"      max="20.0"    step="0.05"/>
+    <field type="double"   name="manualYaw"   defaultValue="0"   min="-20"      max="20.0"    step="0.05"/>
+    <field type="double"   name="manualRoll"  defaultValue="0"   min="-20"      max="20.0"    step="0.05"/>
+ 
+    <!-- Make this an embed of the vector -->
+    <field type="double"   name="zdirX"   defaultValue="1"     min="-20"      max="20.0"    step="1"/>
+    <field type="double"   name="zdirY"   defaultValue="0"     min="-20"      max="20.0"    step="1"/>
+    <field type="double"   name="zdirZ"   defaultValue="0"     min="-20"      max="20.0"    step="1"/>
+    
+    <field type="bool"   name="autoZ"    defaultValue="true"/>
+    
+    <field type="bool"   name="autoShift"           defaultValue="true"/>
+    <field type="int"    name="preShift"            defaultValue="0"    min="-9999"  max="9999"  step="1"/>
+    <field type="int"    name="guessShiftThreshold" defaultValue="0"    min="0"      max="99999" step="1"/>
+  </class>
+</poco>

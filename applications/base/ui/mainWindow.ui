@@ -1,0 +1,519 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>893</width>
+    <height>550</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="toolButtonStyle">
+   <enum>Qt::ToolButtonIconOnly</enum>
+  </property>
+  <widget class="QWidget" name="centralWidget"/>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>893</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="action_OpenInput"/>
+    <addaction name="separator"/>
+    <addaction name="actionSaveParameters"/>
+    <addaction name="actionLoadParameters"/>
+    <addaction name="separator"/>
+    <addaction name="actionShowLog"/>
+    <addaction name="separator"/>
+    <addaction name="actionToggleAdvanced"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+    <addaction name="actionAbout_Qt"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionStatistics"/>
+   <addaction name="actionHistogram"/>
+   <addaction name="action3DHistogram"/>
+   <addaction name="actionCameraSettings"/>
+   <addaction name="separator"/>
+   <addaction name="actionCorrectDistortion"/>
+   <addaction name="separator"/>
+   <addaction name="actionCameraCalculator"/>
+   <addaction name="separator"/>
+   <addaction name="actionRectify"/>
+   <addaction name="actionDO"/>
+   <addaction name="actionResetRectification"/>
+   <addaction name="separator"/>
+   <addaction name="actionSaveParameters"/>
+   <addaction name="actionLoadParameters"/>
+   <addaction name="separator"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_4">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>400</width>
+     <height>117</height>
+    </size>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_4">
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <property name="margin">
+      <number>1</number>
+     </property>
+     <item>
+      <widget class="QScrollArea" name="scrollArea">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="widgetResizable">
+        <bool>true</bool>
+       </property>
+       <widget class="QWidget" name="scrollAreaWidgetContents">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>394</width>
+          <height>345</height>
+         </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <property name="margin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://localhost:6781&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Web Interface&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="widget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>280</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="baseSize">
+            <size>
+             <width>280</width>
+             <height>0</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QToolBar" name="toolBar_2">
+   <property name="windowTitle">
+    <string>toolBar_2</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QToolBar" name="toolBar_3">
+   <property name="windowTitle">
+    <string>toolBar_3</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>BottomToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionStartCapture"/>
+   <addaction name="actionPauseCalculation"/>
+   <addaction name="separator"/>
+   <addaction name="actionStepMode"/>
+   <addaction name="actionNextFrame"/>
+  </widget>
+  <widget class="QDockWidget" name="loggingDockWidget">
+   <property name="minimumSize">
+    <size>
+     <width>112</width>
+     <height>45</height>
+    </size>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QGridLayout" name="gridLayout">
+     <property name="leftMargin">
+      <number>3</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>3</number>
+     </property>
+     <property name="bottomMargin">
+      <number>3</number>
+     </property>
+     <property name="spacing">
+      <number>3</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="LoggerWidget" name="loggingWidget" native="true"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <action name="actionStatistics">
+   <property name="icon">
+    <iconset resource="../../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/monitor.png</normaloff>:/new/prefix1/monitor.png</iconset>
+   </property>
+   <property name="text">
+    <string>Statistics</string>
+   </property>
+   <property name="toolTip">
+    <string>Show statistics</string>
+   </property>
+  </action>
+  <action name="actionHistogram">
+   <property name="icon">
+    <iconset resource="../../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/chart_bar.png</normaloff>:/new/prefix1/chart_bar.png</iconset>
+   </property>
+   <property name="text">
+    <string>Histogram</string>
+   </property>
+   <property name="toolTip">
+    <string>Show histogram</string>
+   </property>
+  </action>
+  <action name="actionCameraSettings">
+   <property name="icon">
+    <iconset resource="../../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/cctv_camera.png</normaloff>:/new/prefix1/cctv_camera.png</iconset>
+   </property>
+   <property name="text">
+    <string>Camera Settings</string>
+   </property>
+   <property name="toolTip">
+    <string>Show camera settings</string>
+   </property>
+  </action>
+  <action name="actionRectify">
+   <property name="icon">
+    <iconset resource="../../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/georectify.png</normaloff>:/new/prefix1/georectify.png</iconset>
+   </property>
+   <property name="text">
+    <string>Rectify</string>
+   </property>
+   <property name="toolTip">
+    <string>Rectify</string>
+   </property>
+  </action>
+  <action name="actionDO">
+   <property name="icon">
+    <iconset resource="../../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/lightning.png</normaloff>:/new/prefix1/lightning.png</iconset>
+   </property>
+   <property name="text">
+    <string>DO!</string>
+   </property>
+   <property name="toolTip">
+    <string>Do Rectify now!</string>
+   </property>
+  </action>
+  <action name="actionSaveParameters">
+   <property name="icon">
+    <iconset resource="../../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/install.png</normaloff>:/new/prefix1/install.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save parameters</string>
+   </property>
+   <property name="toolTip">
+    <string>Save parameters</string>
+   </property>
+  </action>
+  <action name="actionLoadParameters">
+   <property name="icon">
+    <iconset resource="../../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/remove.png</normaloff>:/new/prefix1/remove.png</iconset>
+   </property>
+   <property name="text">
+    <string>Load parameters</string>
+   </property>
+   <property name="toolTip">
+    <string>Load parameters</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionAbout_Qt">
+   <property name="text">
+    <string>About Qt</string>
+   </property>
+  </action>
+  <action name="action_OpenInput">
+   <property name="icon">
+    <iconset resource="../../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/webcam_add.png</normaloff>:/new/prefix1/webcam_add.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Open Input</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Input</string>
+   </property>
+  </action>
+  <action name="actionStartCapture">
+   <property name="icon">
+    <iconset resource="../../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/play.png</normaloff>:/new/prefix1/play.png</iconset>
+   </property>
+   <property name="text">
+    <string>startCapture</string>
+   </property>
+   <property name="toolTip">
+    <string>Start capture</string>
+   </property>
+  </action>
+  <action name="actionStepMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/forward_alt.png</normaloff>
+     <normalon>:/new/prefix1/stop.png</normalon>:/new/prefix1/forward_alt.png</iconset>
+   </property>
+   <property name="text">
+    <string>stepMode</string>
+   </property>
+  </action>
+  <action name="actionNextFrame">
+   <property name="icon">
+    <iconset resource="../../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/refresh.png</normaloff>:/new/prefix1/refresh.png</iconset>
+   </property>
+   <property name="text">
+    <string>nextFrame</string>
+   </property>
+   <property name="toolTip">
+    <string>Next frame</string>
+   </property>
+  </action>
+  <action name="actionPauseCalculation">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/pause.png</normaloff>:/new/prefix1/pause.png</iconset>
+   </property>
+   <property name="text">
+    <string>pauseCalculation</string>
+   </property>
+   <property name="toolTip">
+    <string>Pause calculation</string>
+   </property>
+  </action>
+  <action name="actionCorrectDistortion">
+   <property name="icon">
+    <iconset resource="../../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/sphere.png</normaloff>:/new/prefix1/sphere.png</iconset>
+   </property>
+   <property name="text">
+    <string>Correct Distortion</string>
+   </property>
+  </action>
+  <action name="actionCameraCalculator">
+   <property name="icon">
+    <iconset resource="../../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/calculator.png</normaloff>:/new/prefix1/calculator.png</iconset>
+   </property>
+   <property name="text">
+    <string>Camera Calculator</string>
+   </property>
+   <property name="toolTip">
+    <string>Camera Parameters Calculator</string>
+   </property>
+  </action>
+  <action name="actionShowLog">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/application_view_list.png</normaloff>:/new/prefix1/application_view_list.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show Log</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+L</string>
+   </property>
+  </action>
+  <action name="actionResetRectification">
+   <property name="icon">
+    <iconset resource="../../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/bullet_blue.png</normaloff>
+     <normalon>:/new/prefix1/bullet_orange.png</normalon>:/new/prefix1/bullet_blue.png</iconset>
+   </property>
+   <property name="text">
+    <string>ResetRectification</string>
+   </property>
+   <property name="toolTip">
+    <string>This button resets rectification</string>
+   </property>
+  </action>
+  <action name="action3DHistogram">
+   <property name="icon">
+    <iconset resource="../../../../resources/main.qrc">
+     <normaloff>:/new/our/our/chart_bar3d.png</normaloff>:/new/our/our/chart_bar3d.png</iconset>
+   </property>
+   <property name="text">
+    <string>Histogram</string>
+   </property>
+   <property name="toolTip">
+    <string>Show 3D histogram</string>
+   </property>
+  </action>
+  <action name="actionToggleAdvanced">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/advanced.png</normaloff>:/new/prefix1/advanced.png</iconset>
+   </property>
+   <property name="text">
+    <string>Advanced Settings</string>
+   </property>
+   <property name="toolTip">
+    <string>Advanced Settings</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+A</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>LoggerWidget</class>
+   <extends>QWidget</extends>
+   <header>loggerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../../../../resources/main.qrc"/>
+ </resources>
+ <connections/>
+</ui>

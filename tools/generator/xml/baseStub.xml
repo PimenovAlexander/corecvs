@@ -1,0 +1,8 @@
+<poco version="5.0">
+  <include name="base.xml"/>
+ 
+  <parametersMapper name="Base">
+    <field type="Base Parameters" name="Base Parameters"/>
+    <field type="Presentation Parameters"   name="Presentation Parameters"/>
+  </parametersMapper>
+</poco>

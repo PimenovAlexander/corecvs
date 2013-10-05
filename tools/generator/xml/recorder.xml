@@ -1,0 +1,15 @@
+<poco version="5.0">
+  <include name="base.xml"/>
+    
+  <class name="Recorder" description="Recorder parameters">
+    <field type="string" name="path"   defaultValue=""/>
+    <field type="string" name="fileTemplate"   defaultValue="sequence_%04d_c%d.pgm"/>
+  </class> 
+  
+  <parametersMapper name="Recorder">
+    <field type="Base Parameters" name="Base Parameters"/>
+    <field type="Recorder"        name="Recorder"/>
+    <field type="Presentation Parameters"   name="Presentation Parameters"/>
+  </parametersMapper>
+</poco>
+

@@ -1,0 +1,31 @@
+<poco version="5.0">
+  
+  <class name="OpenCV SGM Parameters" description="OpenCV SGM Parameters Class">
+    <field type="int"    name="Pre Filter Cap"   defaultValue="10"  min="1"     max="99"    step="1" adv="true"/>
+    <field type="int"    name="SAD Window Size"  defaultValue="5"   min="1"     max="99"    step="1" adv="true"/>
+    
+    <field type="int"    name="P1 multiplier"    defaultValue="8"   min="1"     max="99"    step="1" adv="true"/>
+    <field type="int"    name="P2 multiplier"    defaultValue="32"  min="1"     max="99"    step="1" adv="true"/>
+
+    <field type="int"    name="Min Disparity"    defaultValue="0"   min="-9999" max="99999" step="1" adv="true"/>
+    <field type="int"    name="Uniqueness Ratio" defaultValue="15"  min="0"     max="99"    step="1" adv="true"/>
+    
+    <field type="int"    name="Speckle Window Size" defaultValue="50"   min="1"     max="99"    step="1" adv="true"/>
+    <field type="int"    name="Speckle Range"       defaultValue="16"   min="1"     max="99"    step="1" adv="true"/>
+    <field type="int"    name="Disp 12 Max Diff"    defaultValue="-1"   min="-9999" max="99999" step="1" adv="true"/>
+    <field type="bool"   name="Full DP"             defaultValue="true" adv="true"/>
+  </class>
+  
+  <class name="OpenCV BM Parameters" description="OpenCV BM Parameters Class">
+     <field type="int"    name="Block Size"          defaultValue="21"  min="5"   max="255"    step="2"  adv="true"/>
+     <field type="int"    name="Disparity search"    defaultValue="0"   min="0"   max="1600"   step="16" adv="true"/>
+     <field type="int"    name="preFilterCap"        defaultValue="31"  min="1"   max="1000"   step="1"  adv="true"/>
+     <field type="int"    name="minDisparity"        defaultValue="1"   min="1"   max="1000"   step="1"  adv="true"/>
+     <field type="int"    name="textureThreshold"    defaultValue="10"  min="0"   max="1000"   step="1"  adv="true"/>
+     <field type="int"    name="uniquenessRatio"     defaultValue="15"  min="0"   max="1000"   step="1"  adv="true"/>
+     <field type="int"    name="speckleWindowSize"   defaultValue="100" min="0"   max="1000"   step="1"  adv="true"/>
+     <field type="int"    name="speckleRange"        defaultValue="32"  min="0"   max="1000"   step="1"  adv="true"/>
+     <field type="int"    name="disp12MaxDiff"       defaultValue="1"   min="-1"  max="1000"   step="1"  adv="true"/>
+  </class>
+  
+</poco>

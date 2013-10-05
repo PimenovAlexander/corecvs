@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>GraphPlotDialogClass</class>
+ <widget class="QWidget" name="GraphPlotDialogClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>796</width>
+    <height>680</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>GraphPlotDialog</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QSplitter" name="splitter_2">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QSplitter" name="splitter">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>100</horstretch>
+        <verstretch>100</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="opaqueResize">
+       <bool>true</bool>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>true</bool>
+      </property>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string/>
+       </property>
+       <widget class="QPushButton" name="resetButton">
+        <property name="geometry">
+         <rect>
+          <x>270</x>
+          <y>0</y>
+          <width>46</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Reset settings</string>
+        </property>
+        <property name="text">
+         <string comment="Reset settings" extracomment="Reset settings"/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../../../resources/main.qrc">
+          <normaloff>:/new/prefix1/refresh.png</normaloff>:/new/prefix1/refresh.png</iconset>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="saveButton">
+        <property name="geometry">
+         <rect>
+          <x>210</x>
+          <y>0</y>
+          <width>46</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Save settings</string>
+        </property>
+        <property name="text">
+         <string comment="Save settings" extracomment="Save settings"/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../../../resources/main.qrc">
+          <normaloff>:/new/prefix1/install.png</normaloff>:/new/prefix1/install.png</iconset>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="loadButton">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>0</y>
+          <width>46</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Load settings</string>
+        </property>
+        <property name="text">
+         <string comment="Load settings" extracomment="Load settings"/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../../../resources/main.qrc">
+          <normaloff>:/new/prefix1/remove.png</normaloff>:/new/prefix1/remove.png</iconset>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="exportCSVButton">
+        <property name="geometry">
+         <rect>
+          <x>60</x>
+          <y>0</y>
+          <width>92</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Export to CSV</string>
+        </property>
+        <property name="text">
+         <string>to CSV</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../../../resources/main.qrc">
+          <normaloff>:/new/prefix1/install.png</normaloff>:/new/prefix1/install.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pauseButton">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>46</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Pause</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../../../resources/main.qrc">
+          <normaloff>:/new/prefix1/pause.png</normaloff>
+          <normalon>:/new/prefix1/play.png</normalon>:/new/prefix1/pause.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="shortcut">
+         <string/>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </widget>
+      <widget class="ViAreaWidget" name="widget" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>200</horstretch>
+         <verstretch>30</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>575</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="parametersBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>150</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="title">
+       <string/>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetDefaultConstraint</enum>
+       </property>
+       <property name="leftMargin">
+        <number>2</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>2</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item row="7" column="0" colspan="2">
+        <widget class="QLabel" name="visibleGraphLabel">
+         <property name="text">
+          <string>Visible graphs</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0" colspan="2">
+        <widget class="QTableWidget" name="visibleGraph">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>150</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>170</height>
+          </size>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::SingleSelection</enum>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+         <property name="verticalScrollMode">
+          <enum>QAbstractItemView::ScrollPerPixel</enum>
+         </property>
+         <property name="horizontalScrollMode">
+          <enum>QAbstractItemView::ScrollPerPixel</enum>
+         </property>
+         <property name="gridStyle">
+          <enum>Qt::DotLine</enum>
+         </property>
+         <property name="columnCount">
+          <number>2</number>
+         </property>
+         <attribute name="horizontalHeaderVisible">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="horizontalHeaderCascadingSectionResizes">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="horizontalHeaderDefaultSectionSize">
+          <number>68</number>
+         </attribute>
+         <attribute name="horizontalHeaderMinimumSectionSize">
+          <number>40</number>
+         </attribute>
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderDefaultSectionSize">
+          <number>21</number>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderDefaultSectionSize">
+          <number>21</number>
+         </attribute>
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="horizontalHeaderCascadingSectionResizes">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="horizontalHeaderVisible">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="horizontalHeaderMinimumSectionSize">
+          <number>40</number>
+         </attribute>
+         <attribute name="horizontalHeaderDefaultSectionSize">
+          <number>68</number>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Value</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+       <item row="9" column="0">
+        <widget class="QPushButton" name="up">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../../../../resources/main.qrc">
+           <normaloff>:/new/prefix1/up_alt.png</normaloff>:/new/prefix1/up_alt.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="1">
+        <widget class="QPushButton" name="down">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../../../../resources/main.qrc">
+           <normaloff>:/new/prefix1/down_alt.png</normaloff>:/new/prefix1/down_alt.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0" colspan="2">
+        <widget class="QLabel" name="invisibleGraphLabel">
+         <property name="text">
+          <string>Invisible graphs</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="0" colspan="2">
+        <widget class="QTableWidget" name="invisibleGraph">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>170</height>
+          </size>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::SingleSelection</enum>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+         <property name="verticalScrollMode">
+          <enum>QAbstractItemView::ScrollPerPixel</enum>
+         </property>
+         <property name="horizontalScrollMode">
+          <enum>QAbstractItemView::ScrollPerPixel</enum>
+         </property>
+         <property name="gridStyle">
+          <enum>Qt::DotLine</enum>
+         </property>
+         <attribute name="horizontalHeaderDefaultSectionSize">
+          <number>68</number>
+         </attribute>
+         <attribute name="horizontalHeaderMinimumSectionSize">
+          <number>40</number>
+         </attribute>
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderDefaultSectionSize">
+          <number>21</number>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderDefaultSectionSize">
+          <number>21</number>
+         </attribute>
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="horizontalHeaderMinimumSectionSize">
+          <number>40</number>
+         </attribute>
+         <attribute name="horizontalHeaderDefaultSectionSize">
+          <number>68</number>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Value</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+       <item row="12" column="0" colspan="2">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="5" column="0" rowspan="2" colspan="2">
+        <widget class="GraphPlotParametersControlWidget" name="parametersWidget" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>140</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>190</width>
+           <height>300</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>ViAreaWidget</class>
+   <extends>QWidget</extends>
+   <header>viAreaWidget.h</header>
+   <container>1</container>
+   <slots>
+    <slot>drawGrid(int)</slot>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>GraphPlotParametersControlWidget</class>
+   <extends>QWidget</extends>
+   <header>graphPlotParametersControlWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+ </resources>
+ <connections/>
+ <slots>
+  <slot>exportToCSV()</slot>
+  <slot>setGraphInvisible()</slot>
+  <slot>setGraphVisible()</slot>
+  <slot>selectGraph(QListWidgetItem*,QListWidgetItem*)</slot>
+  <slot>unselectGraph(QListWidgetItem*)</slot>
+  <slot>removeSelection()</slot>
+  <slot>editVisibleGraphName(QListWidgetItem*)</slot>
+  <slot>saveVisibleGraphName(QListWidgetItem*)</slot>
+  <slot>editInvisibleGraphName(QListWidgetItem*)</slot>
+  <slot>saveInvisibleGraphName(QListWidgetItem*)</slot>
+  <slot>resetSettings()</slot>
+  <slot>saveSettingsToFile()</slot>
+  <slot>loadSettingsFromFile()</slot>
+ </slots>
+</ui>

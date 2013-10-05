@@ -1,0 +1,17 @@
+<poco version="5.0">
+
+  <enum name="Operation">
+    <item name="First"    id="0" />
+    <item name="Second"   id="1" />
+    <item name="Add"      id="2" />
+    <item name="Subtract" id="3" />
+    <item name="Min"      id="4" />
+    <item name="Max"      id="5" />
+  </enum>
+  
+  
+  <class name="Operation Parameters" uibase="FilterParametersControlWidgetBase">
+    <field type="Operation" name="operation"  defaultValue="false" />
+  </class>
+  
+</poco>  

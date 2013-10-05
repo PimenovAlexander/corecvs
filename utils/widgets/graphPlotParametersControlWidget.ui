@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>GraphPlotParametersControlWidget</class>
+ <widget class="QWidget" name="GraphPlotParametersControlWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>189</width>
+    <height>282</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>GraphPlotParameters</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="margin">
+    <number>3</number>
+   </property>
+   <property name="spacing">
+    <number>3</number>
+   </property>
+   <item row="0" column="0" colspan="2">
+    <widget class="QComboBox" name="graphStyleComboBox">
+     <property name="toolTip">
+      <string>graphStyle</string>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+     <item>
+      <property name="text">
+       <string>Draw Lines</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../../../resources/main.qrc">
+        <normaloff>:/new/graph/draw_line.png</normaloff>:/new/graph/draw_line.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Draw Dots</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../../../resources/main.qrc">
+        <normaloff>:/new/graph/draw_points.png</normaloff>:/new/graph/draw_points.png</iconset>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_1">
+     <property name="text">
+      <string>Width</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QSpinBox" name="widthSpinBox">
+     <property name="toolTip">
+      <string>width</string>
+     </property>
+     <property name="suffix">
+      <string>px</string>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>99</number>
+     </property>
+     <property name="singleStep">
+      <number>1</number>
+     </property>
+     <property name="value">
+      <number>1</number>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Center At</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QDoubleSpinBox" name="centerAtSpinBox">
+     <property name="toolTip">
+      <string>centerAt</string>
+     </property>
+     <property name="minimum">
+      <double>-9999.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>9999.989999999999782</double>
+     </property>
+     <property name="singleStep">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>0.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="label_7">
+     <property name="text">
+      <string>Contrast</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QDoubleSpinBox" name="contrastSpinBox">
+     <property name="toolTip">
+      <string>contrast</string>
+     </property>
+     <property name="minimum">
+      <double>0.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>100.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>50.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0">
+    <widget class="QLabel" name="label_8">
+     <property name="text">
+      <string>Mark Graph</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_6">
+     <property name="text">
+      <string>Y Grid</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QCheckBox" name="xGridCheckBox">
+     <property name="toolTip">
+      <string>xGrid</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>X Grid</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QCheckBox" name="yGridCheckBox">
+     <property name="toolTip">
+      <string>yGrid</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="1">
+    <widget class="QCheckBox" name="selectGraphCheckBox">
+     <property name="toolTip">
+      <string>selectGraph</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Scale:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="2">
+    <widget class="ExponentialSlider" name="xScaleSlider" native="true"/>
+   </item>
+   <item row="7" column="0" colspan="2">
+    <widget class="ExponentialSlider" name="yScaleSlider" native="true"/>
+   </item>
+   <item row="10" column="1">
+    <widget class="QRadioButton" name="fixTimeValueButton">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Fix Time Value</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="1">
+    <widget class="QRadioButton" name="fixGridValueButton">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Fix Grid Value</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="3" margin="3"/>
+ <customwidgets>
+  <customwidget>
+   <class>ExponentialSlider</class>
+   <extends>QWidget</extends>
+   <header>exponentialSlider.h</header>
+   <container>1</container>
+   <slots>
+    <signal>valueChanged(double)</signal>
+   </slots>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>graphStyleComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>GraphPlotParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widthSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>GraphPlotParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>centerAtSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>GraphPlotParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>xGridCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>GraphPlotParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>yGridCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>GraphPlotParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>contrastSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>GraphPlotParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>selectGraphCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>GraphPlotParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>changeParameters()</slot>
+ </slots>
+</ui>

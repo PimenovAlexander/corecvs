@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SobelParametersControlWidget</class>
+ <widget class="QWidget" name="SobelParametersControlWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>SobelParameters</string>
+  </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <property name="margin">
+     <number>3</number>
+    </property>
+    <property name="spacing">
+     <number>3</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_0">
+       <property name="text">
+         <string>Mixing Type</string>
+       </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="mixingTypeComboBox">
+       <property name="currentIndex">
+         <number>0</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>Sum of Absolute</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>L2</string>
+        </property>
+       </item>
+       <property name="toolTip">
+         <string>Mixing Type</string>
+       </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_1">
+       <property name="text">
+         <string>Horizontal</string>
+       </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QCheckBox" name="horizontalCheckBox">
+       <property name="toolTip">
+         <string>Horizontal</string>
+       </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_2">
+       <property name="text">
+         <string>Vertical</string>
+       </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QCheckBox" name="verticalCheckBox">
+       <property name="toolTip">
+         <string>Vertical</string>
+       </property>
+     </widget>
+    </item>
+   <item row="3" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="3" column="2">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="3" margin="3"/>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>mixingTypeComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SobelParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>horizontalCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>SobelParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>verticalCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>SobelParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+ </connections>
+ <slots>
+  <slot>changeParameters()</slot>
+ </slots>
+ <customwidgets>
+ </customwidgets>
+</ui>

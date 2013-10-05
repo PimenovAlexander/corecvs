@@ -1,0 +1,13 @@
+set terminal png size 1000,800
+set output "rosenberg.png"
+
+set dgrid3d 40,40
+set contour base
+set cntrparam levels incremental -100,10,110
+
+set arrow 1 from 1,1,0 to 1,1,1 nohead back nofilled linetype -1 linewidth 1.000
+splot "rosenberg.txt" with lines title "Rosenberg Graph"      
+ 
+
+
+     

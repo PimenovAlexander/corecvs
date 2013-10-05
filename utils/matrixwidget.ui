@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MatrixWidgetClass</class>
+ <widget class="QWidget" name="MatrixWidgetClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>296</width>
+    <height>69</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MatrixWidget</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="verticalSpacing">
+    <number>0</number>
+   </property>
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QDoubleSpinBox" name="box0">
+     <property name="decimals">
+      <number>6</number>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QDoubleSpinBox" name="box1">
+     <property name="decimals">
+      <number>6</number>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QDoubleSpinBox" name="box2">
+     <property name="decimals">
+      <number>6</number>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QDoubleSpinBox" name="box3">
+     <property name="decimals">
+      <number>6</number>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QDoubleSpinBox" name="box4">
+     <property name="decimals">
+      <number>6</number>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QDoubleSpinBox" name="box5">
+     <property name="decimals">
+      <number>6</number>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QDoubleSpinBox" name="box6">
+     <property name="decimals">
+      <number>6</number>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QDoubleSpinBox" name="box7">
+     <property name="decimals">
+      <number>6</number>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QDoubleSpinBox" name="box8">
+     <property name="decimals">
+      <number>6</number>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>

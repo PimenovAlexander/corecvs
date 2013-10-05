@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>BitSelectorParametersControlWidget</class>
+ <widget class="QWidget" name="BitSelectorParametersControlWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>BitSelectorParameters</string>
+  </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <property name="margin">
+     <number>3</number>
+    </property>
+    <property name="spacing">
+     <number>3</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_0">
+       <property name="text">
+         <string>shift</string>
+       </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QSpinBox" name="shiftSpinBox">
+       <property name="toolTip">
+         <string>shift</string>
+       </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_1">
+       <property name="text">
+         <string>bit 0</string>
+       </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QCheckBox" name="bit0CheckBox">
+       <property name="toolTip">
+         <string>bit 0</string>
+       </property>
+       <property name="checked">
+           <bool>true</bool>
+       </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_2">
+       <property name="text">
+         <string>bit 1</string>
+       </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QCheckBox" name="bit1CheckBox">
+       <property name="toolTip">
+         <string>bit 1</string>
+       </property>
+       <property name="checked">
+           <bool>true</bool>
+       </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_3">
+       <property name="text">
+         <string>bit 2</string>
+       </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QCheckBox" name="bit2CheckBox">
+       <property name="toolTip">
+         <string>bit 2</string>
+       </property>
+       <property name="checked">
+           <bool>true</bool>
+       </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_4">
+       <property name="text">
+         <string>bit 3</string>
+       </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QCheckBox" name="bit3CheckBox">
+       <property name="toolTip">
+         <string>bit 3</string>
+       </property>
+       <property name="checked">
+           <bool>true</bool>
+       </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="label_5">
+       <property name="text">
+         <string>bit 4</string>
+       </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QCheckBox" name="bit4CheckBox">
+       <property name="toolTip">
+         <string>bit 4</string>
+       </property>
+       <property name="checked">
+           <bool>true</bool>
+       </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="label_6">
+       <property name="text">
+         <string>bit 5</string>
+       </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="QCheckBox" name="bit5CheckBox">
+       <property name="toolTip">
+         <string>bit 5</string>
+       </property>
+       <property name="checked">
+           <bool>true</bool>
+       </property>
+     </widget>
+    </item>
+    <item row="7" column="0">
+     <widget class="QLabel" name="label_7">
+       <property name="text">
+         <string>bit 6</string>
+       </property>
+     </widget>
+    </item>
+    <item row="7" column="1">
+     <widget class="QCheckBox" name="bit6CheckBox">
+       <property name="toolTip">
+         <string>bit 6</string>
+       </property>
+       <property name="checked">
+           <bool>true</bool>
+       </property>
+     </widget>
+    </item>
+    <item row="8" column="0">
+     <widget class="QLabel" name="label_8">
+       <property name="text">
+         <string>bit 7</string>
+       </property>
+     </widget>
+    </item>
+    <item row="8" column="1">
+     <widget class="QCheckBox" name="bit7CheckBox">
+       <property name="toolTip">
+         <string>bit 7</string>
+       </property>
+       <property name="checked">
+           <bool>true</bool>
+       </property>
+     </widget>
+    </item>
+    <item row="9" column="0">
+     <widget class="QLabel" name="label_9">
+       <property name="text">
+         <string>bit 8</string>
+       </property>
+     </widget>
+    </item>
+    <item row="9" column="1">
+     <widget class="QCheckBox" name="bit8CheckBox">
+       <property name="toolTip">
+         <string>bit 8</string>
+       </property>
+       <property name="checked">
+           <bool>true</bool>
+       </property>
+     </widget>
+    </item>
+    <item row="10" column="0">
+     <widget class="QLabel" name="label_10">
+       <property name="text">
+         <string>bit 9</string>
+       </property>
+     </widget>
+    </item>
+    <item row="10" column="1">
+     <widget class="QCheckBox" name="bit9CheckBox">
+       <property name="toolTip">
+         <string>bit 9</string>
+       </property>
+       <property name="checked">
+           <bool>true</bool>
+       </property>
+     </widget>
+    </item>
+    <item row="11" column="0">
+     <widget class="QLabel" name="label_11">
+       <property name="text">
+         <string>bit 10</string>
+       </property>
+     </widget>
+    </item>
+    <item row="11" column="1">
+     <widget class="QCheckBox" name="bit10CheckBox">
+       <property name="toolTip">
+         <string>bit 10</string>
+       </property>
+       <property name="checked">
+           <bool>true</bool>
+       </property>
+     </widget>
+    </item>
+    <item row="12" column="0">
+     <widget class="QLabel" name="label_12">
+       <property name="text">
+         <string>bit 11</string>
+       </property>
+     </widget>
+    </item>
+    <item row="12" column="1">
+     <widget class="QCheckBox" name="bit11CheckBox">
+       <property name="toolTip">
+         <string>bit 11</string>
+       </property>
+       <property name="checked">
+           <bool>true</bool>
+       </property>
+     </widget>
+    </item>
+    <item row="13" column="0">
+     <widget class="QLabel" name="label_13">
+       <property name="text">
+         <string>bit 12</string>
+       </property>
+     </widget>
+    </item>
+    <item row="13" column="1">
+     <widget class="QCheckBox" name="bit12CheckBox">
+       <property name="toolTip">
+         <string>bit 12</string>
+       </property>
+       <property name="checked">
+           <bool>true</bool>
+       </property>
+     </widget>
+    </item>
+    <item row="14" column="0">
+     <widget class="QLabel" name="label_14">
+       <property name="text">
+         <string>bit 13</string>
+       </property>
+     </widget>
+    </item>
+    <item row="14" column="1">
+     <widget class="QCheckBox" name="bit13CheckBox">
+       <property name="toolTip">
+         <string>bit 13</string>
+       </property>
+       <property name="checked">
+           <bool>true</bool>
+       </property>
+     </widget>
+    </item>
+    <item row="15" column="0">
+     <widget class="QLabel" name="label_15">
+       <property name="text">
+         <string>bit 14</string>
+       </property>
+     </widget>
+    </item>
+    <item row="15" column="1">
+     <widget class="QCheckBox" name="bit14CheckBox">
+       <property name="toolTip">
+         <string>bit 14</string>
+       </property>
+       <property name="checked">
+           <bool>true</bool>
+       </property>
+     </widget>
+    </item>
+    <item row="16" column="0">
+     <widget class="QLabel" name="label_16">
+       <property name="text">
+         <string>bit 15</string>
+       </property>
+     </widget>
+    </item>
+    <item row="16" column="1">
+     <widget class="QCheckBox" name="bit15CheckBox">
+       <property name="toolTip">
+         <string>bit 15</string>
+       </property>
+       <property name="checked">
+           <bool>true</bool>
+       </property>
+     </widget>
+    </item>
+   <item row="17" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="17" column="2">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="3" margin="3"/>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>shiftSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>BitSelectorParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>bit0CheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>BitSelectorParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>bit1CheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>BitSelectorParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>bit2CheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>BitSelectorParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>bit3CheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>BitSelectorParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>bit4CheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>BitSelectorParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>bit5CheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>BitSelectorParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>bit6CheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>BitSelectorParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>bit7CheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>BitSelectorParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>bit8CheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>BitSelectorParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>bit9CheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>BitSelectorParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>bit10CheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>BitSelectorParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>bit11CheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>BitSelectorParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>bit12CheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>BitSelectorParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>bit13CheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>BitSelectorParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>bit14CheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>BitSelectorParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>bit15CheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>BitSelectorParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+ </connections>
+ <slots>
+  <slot>changeParameters()</slot>
+ </slots>
+ <customwidgets>
+ </customwidgets>
+</ui>

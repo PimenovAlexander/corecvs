@@ -1,0 +1,25 @@
+<poco version="5.0">
+
+  <enum name="Graph Style">
+    <item name="Draw Lines"     id="0"/>
+    <item name="Draw Dots"      id="1"/>
+  </enum>
+
+  <class name="Graph Plot Parameters" description="Graph Plot Parameters">
+    <field type="Graph Style" name="graphStyle"   defaultValue="Draw Lines"/>
+    <field type="int"         name="width"        defaultValue="1"    min="1"       max="99"      step="1"/>
+    <field type="double"      name="centerAt"     defaultValue="0.0"  min="-9999.0" max="9999.99" step="1.0"/>
+    <field type="bool"        name="xGrid"        defaultValue="false"/>
+    <field type="bool"        name="yGrid"        defaultValue="false"/>
+    <field type="double"      name="xScale"       defaultValue="1.0"  widget = "ExponentialSlider"/>
+    <field type="double"      name="yScale"       defaultValue="1.0"  max="1000.0"  widget = "ExponentialSlider"/>
+    <field type="double"      name="contrast"     defaultValue="50.0" min="0.0" max="100.0" step="1.0"/>
+    <field type="bool"        name="selectGraph"  defaultValue="false"/>
+    <field type="bool"        name="Fix Time value"  defaultValue="false"   widget="RadioButton"/>
+    <field type="bool"        name="Fix Grid value"  defaultValue="true"  widget="RadioButton"/>
+  </class>
+
+  <parametersMapper name="GraphPlot">
+    <field type="Graph Plot Parameters"           name="Graph Plot Parameters"/>
+  </parametersMapper>
+</poco>

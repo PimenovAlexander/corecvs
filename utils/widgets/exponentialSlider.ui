@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ExponentialSliderClass</class>
+ <widget class="QWidget" name="ExponentialSliderClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>318</width>
+    <height>25</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>ExponentialSlider</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QSlider" name="expSlider">
+     <property name="minimum">
+      <number>-100</number>
+     </property>
+     <property name="maximum">
+      <number>100</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="tickPosition">
+      <enum>QSlider::TicksBelow</enum>
+     </property>
+     <property name="tickInterval">
+      <number>25</number>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDoubleSpinBox" name="expSpinBox">
+     <property name="prefix">
+      <string>x</string>
+     </property>
+     <property name="minimum">
+      <double>0.010000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>100.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.010000000000000</double>
+     </property>
+     <property name="value">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>expSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>ExponentialSliderClass</receiver>
+   <slot>expSliderChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>83</x>
+     <y>18</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>83</x>
+     <y>57</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>expSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>ExponentialSliderClass</receiver>
+   <slot>expTextChanged(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>265</x>
+     <y>24</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>263</x>
+     <y>59</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>expSliderChanged(int)</slot>
+  <slot>expTextChanged(double)</slot>
+ </slots>
+</ui>

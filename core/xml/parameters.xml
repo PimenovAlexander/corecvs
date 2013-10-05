@@ -1,0 +1,27 @@
+<poco version="5.0">
+  <enum name="InterpolationType">
+    <item name="Nearest"         id="0" comment="Nearest"/>
+    <item name="Bilinear"        id="1" comment="Bilinear"/>
+    <item name="Bilinear Fixed8" id="2" comment="Bilinear Fixed8"/>
+    <item name="Hardware"        id="3" comment="Hardware"/>
+  </enum>
+  
+  
+  <class name="Axis Aligned Box Parameters">
+        <field type="double" name="X" min="-50000" max="50000" defaultValue="0"    step="100"/>
+        <field type="double" name="Y" min="-50000" max="50000" defaultValue="0"    step="100"/>
+        <field type="double" name="Z" min="-50000" max="50000" defaultValue="3000" step="100"/>
+        
+        <field type="double" name="width"  min="-50000" max="50000" defaultValue="1000" step="100"/>
+        <field type="double" name="height" min="-50000" max="50000" defaultValue="1000" step="100"/>
+        <field type="double" name="depth"  min="-50000" max="50000" defaultValue="1000" step="100"/>        
+  </class>  
+ 
+  <class name="rgb Color Parameters">
+    <field type="int" name="R"  min="0" max="255" defaultValue="128"/>
+    <field type="int" name="G"  min="0" max="255" defaultValue="128"/>
+    <field type="int" name="B"  min="0" max="255" defaultValue="128"/>
+  </class>  
+  
+</poco>
+

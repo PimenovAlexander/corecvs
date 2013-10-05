@@ -1,0 +1,45 @@
+<poco version="5.0">
+
+  <enum name="Stereo Style">
+    <item name="dont show stereo"   id="0" comment="don't show stereo"/>
+    <item name="fast large dots"    id="1" comment="fast large dots"/>
+    <item name="fast dots"          id="2" comment="fast dots"/>
+    <item name="show lines stereo"  id="3" comment="show lines stereo"/>
+    <item name="show all stereo"    id="4" comment="show all stereo"/>
+    <item name="show dots stereo"   id="5" comment="show dots stereo"/>
+  </enum>
+
+  <enum name="Flow Style">
+    <item name="dont show flow"      id="0" comment="don't show flow"/>
+    <item name="fast colored dots"   id="1" comment="fast colored dots"/>
+    <item name="show lines only"     id="2" comment="show lines only"/>
+    <item name="show colored dots"   id="3" comment="show colored dots"/>
+    <item name="show colored lines"  id="4" comment="show colored lines"/>
+    <item name="show heat coloring"  id="5" comment="show heat coloring"/>
+  </enum>
+
+  <enum name="Output Style">
+    <item name="standart output"     id="0" comment="Standart output"/>
+    <item name="sidebyside stereo"   id="1" comment="Side-by-side stereo"/>
+    <item name="anaglyph RG"         id="2" comment="Red-Green Anaglyph"/>
+    <item name="anaglyph RC"         id="3" comment="Red-Cyan Anaglyph"/>
+    <item name="blend"               id="4" comment="Blend"/>
+    <item name="none"                id="5" comment="None"/>
+  </enum>
+
+  <class name="Presentation Parameters" description="Presentation parameters">
+    <field type="bool"         name="leftFrame"    defaultValue="false" widget="RadioButton"/>
+    <field type="bool"         name="rightFrame"   defaultValue="true"  widget="RadioButton"/>
+    <field type="Stereo Style" name="Stereo"/>
+    <field type="Flow Style"   name="Flow"/>
+    <field type="Output Style" name="Output"/>
+    <field type="bool"         name="showClusters"          defaultValue="true"/>
+    <field type="bool"         name="showHistogram"         defaultValue="true"/>
+    <field type="bool"         name="Auto Update Histogram" defaultValue="false"/>
+    <field type="bool"         name="showAreaOfInterest"    defaultValue="true"/>
+    <field type="bool"         name="produce3D"             defaultValue="false"/>
+    <field type="bool"         name="produce6D"             defaultValue="false"/>
+    <field type="bool"         name="dump3D"                defaultValue="false" advanced="true" />
+  </class>
+
+</poco>

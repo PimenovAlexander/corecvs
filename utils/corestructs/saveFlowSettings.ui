@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SaveFlowSettings</class>
+ <widget class="QWidget" name="SaveFlowSettings">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>350</width>
+    <height>165</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="pathLabel">
+     <property name="text">
+      <string>Target path:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLineEdit" name="pathEdit"/>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="filenameLabel">
+     <property name="text">
+      <string>Filename template:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="QLineEdit" name="fileTemplateEdit">
+     <property name="text">
+      <string>sequence_%04d.pgm</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QPushButton" name="pushButton">
+     <property name="text">
+      <string>Start</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QToolButton" name="choosePathButton">
+     <property name="text">
+      <string>...</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../../../resources/main.qrc">
+       <normaloff>:/new/prefix1/folder-grey-open-24x24.png</normaloff>:/new/prefix1/folder-grey-open-24x24.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+ </resources>
+ <connections/>
+</ui>

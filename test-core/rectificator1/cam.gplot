@@ -1,0 +1,28 @@
+set terminal png size 1000,800
+
+
+set output "points.png"
+splot "points.dat" using 5:6:7 with points title "Points"     
+
+set xrange [0 : 200] 
+set yrange [0 : 200]
+
+set output "left.png"
+plot "points.dat" using 1:2 with points title "Left Cam" 
+
+set output "right.png"
+plot "points.dat" using 3:4 with points title "Right Cam" 
+
+set autoscale x
+set autoscale y
+set autoscale z
+
+set output "selected1.png"
+splot "result1.dat" using 1:2:3 with points title "Result" ,\
+      "result1.dat" using 4:5:6 with points title "Result" ,\
+      "result1.dat" using 1:2:3:($4-$1):($5-$2):($6-$3) with vectors title "Selected1" 
+
+ 
+
+
+     

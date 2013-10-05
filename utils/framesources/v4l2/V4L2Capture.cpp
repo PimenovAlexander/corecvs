@@ -1,0 +1,497 @@
+/**
+ * \file V4L2Capture.cpp
+ * \brief Add Comment Here
+ *
+ * \date Apr 9, 2010
+ * \author alexander
+ */
+
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>
+#undef __STDC_FORMAT_MACROS
+
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/mman.h>
+#include <sys/ioctl.h>
+#include <linux/videodev2.h>
+#include <sstream>
+
+#include <QtCore/QRegExp>
+#include <QtCore/QString>
+#include <QtCore/QtCore>
+
+#include "global.h"
+
+#include "V4L2Capture.h"
+#include "mjpegDecoder.h"
+#include "preciseTimer.h"
+#include "mjpegDecoderLazy.h"
+
+
+const char* V4L2CaptureInterface::CODEC_NAMES[] =
+{
+    "off",
+    "mjpeg",
+    "mjpeg fast decoder"
+};
+
+STATIC_ASSERT(CORE_COUNT_OF(V4L2CaptureInterface::CODEC_NAMES) == V4L2CaptureInterface::CODEC_NUMBER, wrong_codec_names_number);
+
+V4L2CaptureInterface::V4L2CaptureInterface(string _devname)
+    : spin(this)
+{
+    setConfigurationString(_devname);
+}
+
+int V4L2CaptureInterface::setConfigurationString(string _devname)
+{
+    this->interfaceName = _devname;
+
+    //     Group Number                   1       2 3        4 5      6       7 8       9       10     11   12     13
+    QRegExp deviceStringPattern(QString("^([^,:]*)(,([^:]*))?(:(\\d*)/(\\d*))?((:mjpeg)|(:yuyv)|(:fjpeg))?(:(\\d*)x(\\d*))?$"));
+    static const int Device1Group     = 1;
+    static const int Device2Group     = 3;
+    static const int FpsNumGroup      = 5;
+    static const int FpsDenumGroup    = 6;
+    static const int CompressionGroup = 7;
+    static const int WidthGroup       = 12;
+    static const int HeightGroup      = 13;
+
+    printf ("Input string %s\n", _devname.c_str());
+    QString qdevname(_devname.c_str());
+    int result = deviceStringPattern.indexIn(qdevname);
+    if (result == -1)
+    {
+        printf("Error in device string format:%s\n", _devname.c_str());
+        exit(EXIT_FAILURE);
+    }
+    printf (
+        "Parsed data:\n"
+        "  | - Device 1=%s\n"
+        "  | - Device 2=%s\n"
+        "  | - FPS %s/%s\n"
+        "  | - Size [%sx%s]\n"
+        "  \\ - Compressing: %s\n",
+        deviceStringPattern.cap(Device1Group) .toAscii().constData(),
+        deviceStringPattern.cap(Device2Group) .toAscii().constData(),
+        deviceStringPattern.cap(FpsNumGroup)  .toAscii().constData(),
+        deviceStringPattern.cap(FpsDenumGroup).toAscii().constData(),
+        deviceStringPattern.cap(WidthGroup)   .toAscii().constData(),
+        deviceStringPattern.cap(HeightGroup)  .toAscii().constData(),
+        deviceStringPattern.cap(CompressionGroup).toAscii().constData());
+
+    deviceName[Frames::RIGHT_FRAME] = deviceStringPattern.cap(Device1Group).toAscii().constData();
+    deviceName[Frames::LEFT_FRAME ] = deviceStringPattern.cap(Device2Group).toAscii().constData();
+
+    bool isOk;
+    cameraMode.fpsnum = deviceStringPattern.cap(FpsNumGroup).toInt(&isOk);
+    if (!isOk) cameraMode.fpsnum = 1;
+
+    cameraMode.fpsdenum = deviceStringPattern.cap(FpsDenumGroup).toInt(&isOk);
+    if (!isOk) cameraMode.fpsdenum = 10;
+
+    cameraMode.width = deviceStringPattern.cap(WidthGroup).toInt(&isOk);
+    if (!isOk || cameraMode.width <= 0) cameraMode.width = 800;
+
+    cameraMode.height = deviceStringPattern.cap(HeightGroup).toInt(&isOk);
+    if (!isOk || cameraMode.height <= 0) cameraMode.height = 600;
+
+    decoder = UNCOMPRESSED;
+    if (!deviceStringPattern.cap(CompressionGroup).isEmpty())
+    {
+        if (!deviceStringPattern.cap(CompressionGroup).compare(QString(":mjpeg")))
+            decoder = COMPRESSED_JPEG;
+        if (!deviceStringPattern.cap(CompressionGroup).compare(QString(":fjpeg")))
+            decoder = COMPRESSED_FAST_JPEG;
+    }
+
+    cameraMode.compressed = (decoder != UNCOMPRESSED);
+
+    printf("Capture Right device: V4L2 %s\n", deviceName[Frames::RIGHT_FRAME].c_str());
+    printf("Capture Left  device: V4L2 %s\n", deviceName[Frames::LEFT_FRAME ].c_str());
+    printf("MJPEG compression is: %s\n", CODEC_NAMES[cameraMode.compressed]);
+    return isOk ? 0 : 1;
+}
+
+
+
+V4L2CaptureInterface::FramePair V4L2CaptureInterface::getFrame()
+{
+    CaptureStatistics  stats;
+
+    PreciseTimer start = PreciseTimer::currentTime();
+    FramePair result;
+
+    protectFrame.lock();
+    G12Buffer **results[Frames::MAX_INPUTS_NUMBER] = {
+            &result.bufferRight,
+            &result.bufferLeft
+    };
+
+
+    for (int i=0; i < Frames::MAX_INPUTS_NUMBER; i++)
+    {
+        decodeData(&camera[i],  &currentFrame[i],  results[i]);
+
+        if ((*results[i]) == NULL) {
+            printf("V4L2CaptureInterface::getFrame(): Precrash condition\n");
+        }
+    }
+
+    if (currentFrame[Frames::LEFT_FRAME].isFilled)
+        result.leftTimeStamp  = currentFrame[Frames::LEFT_FRAME].usecsTimeStamp();
+
+    if (currentFrame[Frames::RIGHT_FRAME].isFilled)
+        result.rightTimeStamp = currentFrame[Frames::RIGHT_FRAME].usecsTimeStamp();
+
+    if (skippedCount == 0)
+    {
+        SYNC_PRINT(("Warning: Requested same frames twice. Is this by design?\n"));
+    }
+
+    stats.framesSkipped = skippedCount > 0 ? skippedCount - 1 : 0;
+    skippedCount = 0;
+    protectFrame.unlock();
+
+    stats.values[CaptureStatistics::DECODING_TIME] = start.usecsToNow();
+    stats.values[CaptureStatistics::INTERFRAME_DELAY] = frameDelay;
+
+    int64_t desync =  currentFrame[Frames::LEFT_FRAME].usecsTimeStamp() - currentFrame[Frames::RIGHT_FRAME].usecsTimeStamp();
+    stats.values[CaptureStatistics::DESYNC_TIME] = desync > 0 ? desync : -desync;
+    stats.values[CaptureStatistics::DATA_SIZE] = currentFrame[Frames::LEFT_FRAME].bytesused;
+
+    emit newStatisticsReady(stats);
+
+    return result;
+}
+
+
+void V4L2CaptureInterface::SpinThread::run()
+{
+    while (interface->spinRunning.tryLock())
+    {
+        V4L2BufferDescriptor newBufferLeft;
+        V4L2BufferDescriptor newBufferRight;
+
+        V4L2CameraDescriptor* left  = &(interface->camera[Frames::LEFT_FRAME ]);
+        V4L2CameraDescriptor* right = &(interface->camera[Frames::RIGHT_FRAME]);
+
+        V4L2BufferDescriptor* currentLeft  = &(interface->currentFrame[Frames::LEFT_FRAME ]);
+        V4L2BufferDescriptor* currentRight = &(interface->currentFrame[Frames::RIGHT_FRAME]);
+
+        /* First we block till we will get a new frame */
+        /*TODO: Wonder if dequeue should be static */
+        left->dequeue(newBufferLeft);
+
+        /* If we have only one camera, we assume this is the left camera */
+        if (right->deviceHandle != V4L2CameraDescriptor::INVALID_HANDLE) {
+            right->dequeue(newBufferRight);
+        }
+
+        uint64_t leftStamp = newBufferLeft.usecsTimeStamp();
+
+        if (right->deviceHandle != V4L2CameraDescriptor::INVALID_HANDLE)
+        {
+            uint64_t rightStamp = newBufferRight.usecsTimeStamp();
+
+            /*Reducing desync only  one frame at a time*/
+            if (leftStamp > rightStamp && leftStamp - rightStamp > interface->maxDesync)
+            {
+                right->enqueue(newBufferRight);
+                right->dequeue(newBufferRight);
+                rightStamp = newBufferRight.usecsTimeStamp();
+            }
+
+            if (rightStamp > leftStamp && rightStamp - leftStamp > interface->maxDesync)
+            {
+                left->enqueue(newBufferLeft);
+                left->dequeue(newBufferLeft);
+                leftStamp = newBufferLeft.usecsTimeStamp();
+            }
+        }
+
+        /**
+         *  Now we have two new buffers
+         *  So we do some thread protected operations.
+         *  1. Enqueue the previously used buffers
+         *  2. Replace them with the new ones
+         **/
+        interface->protectFrame.lock();
+        {
+            if (left->deviceHandle != -1)
+            {
+                left->enqueue(*currentLeft);
+                *currentLeft = newBufferLeft;
+            }
+
+            if (right->deviceHandle != -1)
+            {
+                right->enqueue(*currentRight);
+                *currentRight = newBufferRight;
+            }
+            interface->skippedCount++;
+        }
+        interface->protectFrame.unlock();
+
+
+        /* For statistics */
+        if (interface->lastFrameTime.usecsTo(PreciseTimer()) != 0)
+        {
+            interface->frameDelay = interface->lastFrameTime.usecsToNow();
+        }
+        interface->lastFrameTime = PreciseTimer::currentTime();
+
+//        cout << "Frame notification" << endl;
+        frame_data_t frameData;
+        frameData.timestamp = (currentLeft->usecsTimeStamp() / 2) + (currentRight->usecsTimeStamp() / 2);;
+
+        interface->notifyAboutNewFrame(frameData);
+
+        interface->spinRunning.unlock();
+        if (interface->shouldStopSpinThread)
+        {
+            break;
+        }
+    }
+}
+
+uint16_t *V4L2CaptureInterface::decodeMjpeg(unsigned char *data)
+{
+    int width  = 800;
+    int height = 600;
+    unsigned char * framebuffer = 0;
+
+    MjpegDecoder decoder;
+    int result = decoder.decode(&framebuffer, data, &width, &height);
+    if (result != 0)
+    {
+        SYNC_PRINT(("MJPEG decoder error, code %d\n", result));
+    }
+
+    return (uint16_t*)framebuffer;
+}
+
+void V4L2CaptureInterface::decodeData(V4L2CameraDescriptor *camera, V4L2BufferDescriptor *buffer, G12Buffer **output)
+{
+    if (!buffer->isFilled)
+    {
+        *output = new G12Buffer(formatH, formatW);
+        return;
+    }
+
+    uint8_t *ptrL = (uint8_t*)(camera->buffers[buffer->index].start);
+    switch(decoder)
+    {
+        case UNCOMPRESSED:
+            *output = new G12Buffer(formatH, formatW, false);
+            (*output)->fillWithYUYV((uint16_t *)ptrL);
+            break;
+        case COMPRESSED_JPEG:
+        {
+            uint16_t *ptrDecoded = decodeMjpeg(ptrL );
+            *output = new G12Buffer(formatH, formatW, false);
+            (*output)->fillWithYUYV(ptrDecoded);
+            free(ptrDecoded);
+        }
+        break;
+        case CODEC_NUMBER:
+        case COMPRESSED_FAST_JPEG:
+        {
+            MjpegDecoderLazy lazyDecoder;
+            *output = lazyDecoder.decode(ptrL);
+            if (*output == NULL) {
+                SYNC_PRINT(("V4L2CaptureInterface::decodeData(): Decoded to buffer that is NULL\n"));
+            }
+        }
+        break;
+    }
+}
+
+ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::queryCameraParameters(CameraParameters &parameter)
+{
+    camera[Frames::LEFT_FRAME].queryCameraParameters(parameter);
+    return SUCCESS;
+}
+
+
+ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::setCaptureProperty(int id, int value)
+{
+    for (int i = 0; i < Frames::MAX_INPUTS_NUMBER; i++) {
+        camera[i].setCaptureProperty(id, value);
+    }
+    return SUCCESS;
+}
+
+ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::getCaptureProperty(int id, int *value)
+{
+    camera[Frames::LEFT_FRAME].getCaptureProperty(id, value);
+    //printf("Getting the values of capture properties is not supported for V4L2 yet.\n");
+    return SUCCESS;
+}
+
+ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::initCapture()
+{
+
+    formatH = 0;
+    formatW = 0;
+
+    /* TODO: Check that formats are ok*/
+
+    maxDesync = (1000000UL * cameraMode.fpsnum / cameraMode.fpsdenum) * 6 / 10;
+    printf("Max allowed desync is %" PRIu64 "\n", maxDesync );
+
+    skippedCount = 0;
+    frameDelay = 0;
+    shouldStopSpinThread = false;
+
+    int result[Frames::MAX_INPUTS_NUMBER];
+
+    for (int i = 0; i < Frames::MAX_INPUTS_NUMBER; i++) {
+        result[i] = 0;
+        if (!deviceName[i].empty()) {
+            result[i] |= !!(camera[i].initCamera(deviceName[i], cameraMode));
+            result[i] |= !!(camera[i].initBuffers());
+        }
+
+        if (formatH == 0) {
+            formatH = camera[i].formatH;
+            formatW = camera[i].formatW;
+        } else {
+            if (formatH != camera[i].formatH || formatW != camera[i].formatW)
+            {
+                SYNC_PRINT(( "Cameras initialized to different sizes [%dx%d] and [%dx%d]\n", formatW, formatH, camera[i].formatH, camera[i].formatW ));
+            }
+        }
+    }
+
+    /* If only one camera started, we assume it is the left camera */
+    if ((result[Frames::LEFT_FRAME] == 0) && (result[Frames::RIGHT_FRAME] != 0))
+    {
+        V4L2CameraDescriptor tmp;
+        tmp = camera[Frames::LEFT_FRAME];
+        camera[Frames::LEFT_FRAME] = camera[Frames::RIGHT_FRAME];
+        camera[Frames::RIGHT_FRAME] = tmp;
+    }
+
+    return (CapErrorCode) ((bool) result[Frames::LEFT_FRAME] + (bool) result[Frames::RIGHT_FRAME]);
+}
+
+ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::startCapture()
+{
+    int res[Frames::MAX_INPUTS_NUMBER];
+
+    /*Try to start as synchronous as possible*/
+    for (int i = 0; i < Frames::MAX_INPUTS_NUMBER; i++) {
+        res[i] = camera[i].start();
+    }
+
+    shouldStopSpinThread = false;
+    spin.start();
+
+    return (CapErrorCode) ((bool) res[Frames::LEFT_FRAME] + (bool) res[Frames::RIGHT_FRAME]);
+}
+
+ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::getCaptureName(QString &value)
+{
+    string name;
+    if (camera[0].getCaptureName(name) != 0)
+    {
+        camera[1].getCaptureName(name);
+    }
+    value = QString(name.c_str());
+    return ImageCaptureInterface::SUCCESS;
+}
+
+ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::getFormats(int *num, ImageCaptureInterface::CameraFormat *&formats)
+{
+    if (camera[0].getCaptureFormats(num, formats) != 0)
+    {
+        camera[1].getCaptureFormats(num, formats);
+    }
+    return ImageCaptureInterface::SUCCESS;
+}
+
+QString V4L2CaptureInterface::getInterfaceName()
+{
+    return QString("v4l2:") + QString(interfaceName.c_str());
+}
+
+ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::getDeviceName(int num, QString &name)
+{
+    if (num  < 0 || num >= Frames::MAX_INPUTS_NUMBER)
+    {
+        return ImageCaptureInterface::FAILURE;
+    }
+    name = QString(deviceName[num].c_str());
+    return ImageCaptureInterface::SUCCESS;
+}
+
+void V4L2CaptureInterface::getAllCameras(int *num, int *&cameras)
+{
+    vector<int> allCameras;
+    const int maxUsbPortNum = 2;
+    for (int i = 0; i < maxUsbPortNum; i ++)
+    {
+        std::stringstream ss;
+        ss << i;
+        string dev = "/dev/video" + ss.str();
+        V4L2CameraDescriptor cameraDescriptor;
+        if (cameraDescriptor.initCamera(dev, 480, 640, 1, 30, false) == 0
+            || cameraDescriptor.initCamera(dev, 480, 640, 1, 30, true) == 0)
+        {
+            allCameras.push_back(i);
+        }
+    }
+    *num = allCameras.size();
+    cameras = new int[allCameras.size()];
+    for (unsigned i = 0; i < allCameras.size(); i ++)
+    {
+        cameras[i] = allCameras[i];
+    }
+}
+
+
+void V4L2CaptureInterface::setCaptureDeviceParameters(const int handle, const int prop,
+                                                      const int32_t val, int &res, const char* text) const {
+    v4l2_control request;
+    if (handle)
+    {
+        request.id = prop;
+        request.value = val;
+        int result = ioctl( handle, VIDIOC_S_CTRL, &request);
+        if ( result != 0 )
+        {
+            SYNC_PRINT(( "VIDIOC_S_CTRL for %s with value %d failed. (%s)\n", text, val, strerror(errno) ));
+        }
+
+        res |= result;
+    }
+    else {
+        res = -1;
+    }
+}
+
+
+V4L2CaptureInterface::~V4L2CaptureInterface()
+{
+   // spinRunning.lock();
+    cout << "V4L2CaptureInterface::Request for killing the thread" << endl;
+
+    shouldStopSpinThread = true;
+    bool result = spinRunning.tryLock(1000);
+
+    if (result) {
+        SYNC_PRINT(("V4L2CaptureInterface::Camera thread killed\n"));
+    } else {
+        SYNC_PRINT(("V4L2CaptureInterface::Unable to exit Camera thread\n"));
+    }
+
+    for (int i = 0; i < Frames::MAX_INPUTS_NUMBER; i++) {
+        SYNC_PRINT(("V4L2CaptureInterface::Stopping cameras\n"));
+        camera[i].stop();
+
+
+    }
+}

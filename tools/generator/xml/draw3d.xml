@@ -1,0 +1,86 @@
+<poco version="5.0">
+  
+  <include name="../../../core/xml/parameters.xml"/>
+
+  <enum name="draw 3d Style">
+    <item name="Points"       id="0"  comment=""/>
+    <item name="Wireframe"    id="1"  comment=""/>
+    <item name="Color"        id="2"  comment=""/>
+    <item name="Color 2"      id="3"  comment=""/>    
+    <item name="Textured"     id="4"  comment=""/>  
+  </enum>
+  
+  <enum name="draw 3d Texture Gen">
+    <item name="No Texture"     id="0"  comment=""/>
+    <item name="Auto Decide"    id="1"  comment=""/>
+    <item name="Force Texture"  id="2"  comment=""/>
+  </enum>
+  
+  
+  <class name="draw 3d Parameters">
+    <!-- Geometry  draw style -->
+    <field type="draw 3d Style" name="style"/>
+    
+    <!-- Simple coloring -->
+    <field type="rgb Color Parameters" name="Color"/>
+    <field type="rgb Color Parameters" name="Secondary Color"/>
+
+    <!-- Texturing details -->
+    <field type="draw 3d Texture Gen"  name="Texture Corrodinates"/>
+    <field type="int"                  name="Texture Alpha" min="0"  max="255" defaultValue="255"/>
+    <field type="double"               name="Texture Scale" min="0"  max="2000" defaultValue="1.0"/>
+    <!-- Decal details -->
+    <field type="int"                  name="Decal Matrix Type" min="0"  max="19" defaultValue="11"/>
+    
+        
+    <field type="bool" name="Decal Left Cam"    defaultValue="false" />
+    <field type="int"  name="Decal Left Alpha"    min="0"  max="255" defaultValue="255"/>
+    
+    <field type="bool" name="Decal Right Cam"    defaultValue="false" />
+    <field type="int"  name="Decal Right Alpha"    min="0"  max="255" defaultValue="255"/>            
+  </class>
+  
+  <class name="draw 3d Camera Parameters">
+    <embed type="draw 3d Parameters" name="Base Parameters" />
+    <field type="double"  name="fovH"      min = "0" max="180"   defaultValue="90" />
+    <field type="double"  name="fovV"      min = "0" max="180"   defaultValue="60" />
+    <field type="double"  name="nearPlane" min = "0" max="20000" defaultValue="10" />
+    <field type="double"  name="farPlane"  min = "0" max="20000" defaultValue="100"/>
+  </class>
+  
+  <enum name="ViMouse 3d Stereo Style">
+    <item name="Grey value"   id="0"/>
+    <item name="Z Coordinate" id="1"/>
+    <item name="Y Coordinate" id="2"/>
+    <item name="Distance"     id="3"/>
+    <item name="None"         id="4"/>
+    <item name="By Flag"      id="5"/>
+    <item name="By Cluster"   id="6"/>    
+  </enum>
+  
+  <enum name="ViMouse 3d Flow Style">
+    <item name="None"    id="0"/>
+    <item name="White"   id="1"/>
+    <item name="Heat"    id="2"/>
+    <item name="By Flag" id="3"/>    
+  </enum>
+  
+  
+  <class name="draw 3d ViMouse Parameters">
+    <!--  
+    double redDist  = dialog->mUi.redZBox ->value();
+    double blueDist = dialog->mUi.blueZBox->value();
+    double flowZoom = dialog->mUi.flowZoomSpinBox->value();
+    int pointColorType = dialog->mUi.colorTypeBox    ->currentIndex();
+    int flowColorType  = dialog->mUi.flowColorTypeBox->currentIndex();
+    -->
+
+    <field type="double"  name="redDist"   min = "-50000" max="50000"   defaultValue="0" />
+    <field type="double"  name="blueDist"  min = "-50000" max="50000"   defaultValue="1000" />
+    <field type="double"  name="flowZoom"  min = "0" max="50"   defaultValue="1" />
+ 
+    <field type="ViMouse 3d Stereo Style" name="Point Color Type"  defaultValue="0" />
+    <field type="ViMouse 3d Flow Style"   name="Flow Color Type"   defaultValue="0" />
+  </class>
+  
+</poco>

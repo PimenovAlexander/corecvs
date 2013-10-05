@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>OpenCVBMParametersControlWidget</class>
+ <widget class="QWidget" name="OpenCVBMParametersControlWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>OpenCVBMParameters</string>
+  </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <property name="margin">
+     <number>3</number>
+    </property>
+    <property name="spacing">
+     <number>3</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_0">
+       <property name="text">
+         <string>Block Size</string>
+       </property>
+       <property name="tags" stdset="0">
+           <string>advanced</string>
+       </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QSpinBox" name="blockSizeSpinBox">
+       <property name="toolTip">
+         <string>Block Size</string>
+       </property>
+       <property name="minimum">
+        <number>5</number>
+       </property>
+       <property name="maximum">
+        <number>255</number>
+       </property>
+       <property name="singleStep">
+        <number>2</number>
+       </property>
+       <property name="value">
+        <number>21</number>
+       </property>
+       <property name="tags" stdset="0">
+           <string>advanced</string>
+       </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_1">
+       <property name="text">
+         <string>Disparity search</string>
+       </property>
+       <property name="tags" stdset="0">
+           <string>advanced</string>
+       </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QSpinBox" name="disparitySearchSpinBox">
+       <property name="toolTip">
+         <string>Disparity search</string>
+       </property>
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>1600</number>
+       </property>
+       <property name="singleStep">
+        <number>16</number>
+       </property>
+       <property name="value">
+        <number>0</number>
+       </property>
+       <property name="tags" stdset="0">
+           <string>advanced</string>
+       </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_2">
+       <property name="text">
+         <string>preFilterCap</string>
+       </property>
+       <property name="tags" stdset="0">
+           <string>advanced</string>
+       </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QSpinBox" name="preFilterCapSpinBox">
+       <property name="toolTip">
+         <string>preFilterCap</string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>1000</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>31</number>
+       </property>
+       <property name="tags" stdset="0">
+           <string>advanced</string>
+       </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_3">
+       <property name="text">
+         <string>minDisparity</string>
+       </property>
+       <property name="tags" stdset="0">
+           <string>advanced</string>
+       </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QSpinBox" name="minDisparitySpinBox">
+       <property name="toolTip">
+         <string>minDisparity</string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>1000</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>1</number>
+       </property>
+       <property name="tags" stdset="0">
+           <string>advanced</string>
+       </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_4">
+       <property name="text">
+         <string>textureThreshold</string>
+       </property>
+       <property name="tags" stdset="0">
+           <string>advanced</string>
+       </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QSpinBox" name="textureThresholdSpinBox">
+       <property name="toolTip">
+         <string>textureThreshold</string>
+       </property>
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>1000</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>10</number>
+       </property>
+       <property name="tags" stdset="0">
+           <string>advanced</string>
+       </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="label_5">
+       <property name="text">
+         <string>uniquenessRatio</string>
+       </property>
+       <property name="tags" stdset="0">
+           <string>advanced</string>
+       </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QSpinBox" name="uniquenessRatioSpinBox">
+       <property name="toolTip">
+         <string>uniquenessRatio</string>
+       </property>
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>1000</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>15</number>
+       </property>
+       <property name="tags" stdset="0">
+           <string>advanced</string>
+       </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="label_6">
+       <property name="text">
+         <string>speckleWindowSize</string>
+       </property>
+       <property name="tags" stdset="0">
+           <string>advanced</string>
+       </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="QSpinBox" name="speckleWindowSizeSpinBox">
+       <property name="toolTip">
+         <string>speckleWindowSize</string>
+       </property>
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>1000</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>100</number>
+       </property>
+       <property name="tags" stdset="0">
+           <string>advanced</string>
+       </property>
+     </widget>
+    </item>
+    <item row="7" column="0">
+     <widget class="QLabel" name="label_7">
+       <property name="text">
+         <string>speckleRange</string>
+       </property>
+       <property name="tags" stdset="0">
+           <string>advanced</string>
+       </property>
+     </widget>
+    </item>
+    <item row="7" column="1">
+     <widget class="QSpinBox" name="speckleRangeSpinBox">
+       <property name="toolTip">
+         <string>speckleRange</string>
+       </property>
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>1000</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>32</number>
+       </property>
+       <property name="tags" stdset="0">
+           <string>advanced</string>
+       </property>
+     </widget>
+    </item>
+    <item row="8" column="0">
+     <widget class="QLabel" name="label_8">
+       <property name="text">
+         <string>disp12MaxDiff</string>
+       </property>
+       <property name="tags" stdset="0">
+           <string>advanced</string>
+       </property>
+     </widget>
+    </item>
+    <item row="8" column="1">
+     <widget class="QSpinBox" name="disp12MaxDiffSpinBox">
+       <property name="toolTip">
+         <string>disp12MaxDiff</string>
+       </property>
+       <property name="minimum">
+        <number>-1</number>
+       </property>
+       <property name="maximum">
+        <number>1000</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>1</number>
+       </property>
+       <property name="tags" stdset="0">
+           <string>advanced</string>
+       </property>
+     </widget>
+    </item>
+   <item row="9" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="9" column="2">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="3" margin="3"/>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>blockSizeSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>OpenCVBMParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>disparitySearchSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>OpenCVBMParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>preFilterCapSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>OpenCVBMParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>minDisparitySpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>OpenCVBMParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>textureThresholdSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>OpenCVBMParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>uniquenessRatioSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>OpenCVBMParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>speckleWindowSizeSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>OpenCVBMParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>speckleRangeSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>OpenCVBMParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>disp12MaxDiffSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>OpenCVBMParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+ </connections>
+ <slots>
+  <slot>changeParameters()</slot>
+ </slots>
+ <customwidgets>
+ </customwidgets>
+</ui>

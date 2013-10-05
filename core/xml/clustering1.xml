@@ -1,0 +1,29 @@
+<poco version="5.0">
+
+  <!-- For parameters inside vimouse -->
+  <!-- <include name="../../../../core/src/xml/parameters.xml"/>  -->
+  <include name="parameters.xml"/>  
+  
+  <enum name="ClusteringDirectionType">
+    <item name="X"    id="0" comment="Sort by X axis"/>
+    <item name="Y"    id="1" comment="Sort by Y axis"/>
+    <item name="Z"    id="2" comment="Sort by Z axis"/>
+    <item name="NONE" id="3" comment="Without sortig"/>
+  </enum>
+  
+  <class name="Head Search Parameters" description="Head Search Parameters">
+      <field type="double"  name="Threshold Distance" min="0.0" max="99999" defaultValue="100" comment="Threshold Distance in mm"/> 
+      <field type="double"  name="Cluster depth"      min="0.0" max="99999" defaultValue="100" comment="Cluster depth in mm"/>
+      <field type="int"     name="Cluster min size"   min="0"   max="99999" defaultValue="100" comment="Cluster min size"/>
+      <field type="double"  name="Head area radius"   min="0.0" max="99999" defaultValue="100" comment="Head area in mm"/>
+      <field type="int"     name="Head Number"        min="0"   max="100"   defaultValue="1"   comment="Expected number of heads"/>
+  </class>
+  
+  <class name="New Clustering Parameters" description="New Clustering Parameters">
+      <field type="bool"                        name="New Clustering"     defaultValue="false"/>  
+      <field type="ClusteringDirectionType"     name="Sorting direction"  defaultValue="Z"/>  
+      <field type="Axis Aligned Box Parameters" name="Work Zone"  />
+      <field type="Head Search Parameters"      name="Head Search Parameters"  /> 
+  </class>
+    
+</poco>
