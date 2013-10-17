@@ -46,6 +46,7 @@ public:
             BaseHostDialog *dialog,
             const QString &source,
             const MainWindowParameters &params,
+            bool isRgb = false,
             QWidget *parent = 0);
     ~MainWindow();
 

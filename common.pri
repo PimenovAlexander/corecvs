@@ -391,3 +391,4 @@ with_tbb:!contains(DEFINES, WITH_TBB) {
 # Workaround for -fPIC bug
 QMAKE_CFLAGS_STATIC_LIB=
 QMAKE_CXXFLAGS_STATIC_LIB=
+

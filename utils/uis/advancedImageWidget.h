@@ -78,6 +78,8 @@ signals:
     void newPointSelected(int toolID, QPoint point);
     void newLineSelected (int toolID, QLine  line);
 
+    void pointToolMoved(int toolID, QPoint point);
+
     void notifyZoomChanged(double zoom);
     void notifyCenterPointChanged(QPoint point);
 

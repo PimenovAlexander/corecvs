@@ -87,7 +87,7 @@ public:
 }; // BaseSegment
 
 /**
- *   This class implements a generic approach to the segmantation - Connected Component Labeling
+ *   This class implements a generic approach to the segmentation - Connected Component Labeling
  *   Base problem statement can be seen here
  *
  *   http://en.wikipedia.org/wiki/Connected_Component_Labeling

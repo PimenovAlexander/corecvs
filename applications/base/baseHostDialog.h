@@ -106,7 +106,7 @@ public:
     /**
      *
      **/
-    void initCapture(QString const &initString = QString());
+    void initCapture(QString const &initString = QString(), bool isRgb = false);
 
 
 

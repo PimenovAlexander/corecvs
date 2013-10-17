@@ -489,6 +489,11 @@ void AdvancedImageWidget::childMouseMoved(QMouseEvent * event)
         emit notifyCenterPointChanged(mZoomCenter);
     }
 
+    if (mCurrentToolClass == POINT_SELECTION_TOOLS)
+    {
+        emit pointToolMoved(mCurrentPointButton, widgetToImage(mSelectionEnd));
+    }
+
     /*if (mCurrentToolClass == LINE_SELECTION_TOOLS)
     {
         QLine line(widgetToImage(mSelectionStart), widgetToImage(mSelectionEnd));

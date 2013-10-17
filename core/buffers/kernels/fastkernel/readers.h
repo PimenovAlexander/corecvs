@@ -124,9 +124,9 @@ public:
 
         FixedVector<Int16x8, 4> result;
         /* Preparing 2 registers that contain...*/
-        /* A0 B0 C0 D0 .... A3 B3 C3 D3 */
+        /* | A0 B0 C0 D0 | .... | A3 B3 C3 D3 |*/
         Int32x4 a(ptr      );
-        /* A4 B4 C4 D4 .... A7 B7 C7 D7 */
+        /* | A4 B4 C4 D4 | .... | A7 B7 C7 D7 |*/
         Int32x4 b(ptr + 0x4);
 
         /* Rearranging the data cycling trough the fields of the structure*/
@@ -227,6 +227,158 @@ public:
     }
 
 };
+
+class SSEReader8BBBBBBBB_DDDDDDDD {
+public:
+
+    static const int BYTE_STEP = 64;
+
+    /**
+       *  This function takes 8 8 byte records packed as
+       *
+       *  0                          8                        16                                        8*8
+       *  | A0 B0 C0 D0  E0 F0 G0 H0 | A1 B1 C1 D1 E1 F1 G1 H1 | A2 ....   H7 | A7 B7 C7 D7  E7 F7 G7 H7 |
+       *
+       *  And packs them as
+       *
+       *  | 00 A0 | 00 A1 | 00 A2 | 00 A3 ...  | 00 A7 |
+       *  | 00 B0 | 00 B1 | 00 B2 | 00 B3 ...  | 00 B7 |
+       *  | 00 C0 | 00 C1 | 00 C2 | 00 C3 ...  | 00 C7 |
+       *  | 00 D0 | 00 D1 | 00 D2 | 00 D3 ...  | 00 D7 |
+       *  | 00 E0 | 00 E1 | 00 E2 | 00 E3 ...  | 00 E7 |
+       *  | 00 F0 | 00 F1 | 00 F2 | 00 F3 ...  | 00 F7 |
+       *  | 00 G0 | 00 G1 | 00 G2 | 00 G3 ...  | 00 G7 |
+       *  | 00 H0 | 00 H1 | 00 H2 | 00 H3 ...  | 00 H7 |
+       **/
+    static FixedVector<Int16x8, 8> read(int64_t *ptr)
+    {
+        /* Preparing 2 registers that contain...*/
+        /* | A0 B0 C0 D0  E0 F0 G0 H0 | A1 B1 C1 D1 E1 F1 G1 H1 | */
+        Int64x2 a(ptr      );
+        /* | A2 B2 C2 D2  E2 F2 G2 H2 | A3 B3 C3 D3 E3 F3 G3 H3 | */
+        Int64x2 b(ptr + 0x2);
+        /* | A4 B4 C4 D4  E4 F4 G4 H4 | A5 B5 C5 D5 E5 F5 G5 H5 | */
+        Int64x2 c(ptr + 0x4);
+        /* | A6 B6 C6 D6  E6 F6 G6 H6 | A7 B7 C7 D7 E7 F7 G7 H7 | */
+        Int64x2 d(ptr + 0x6);
+
+//        cout << "a =" << Int8x16(a.data) << endl;
+//        cout << "b =" << Int8x16(b.data) << endl;
+//        cout << "c =" << Int8x16(c.data) << endl;
+//        cout << "d =" << Int8x16(d.data) << endl;
+
+//        cout << " " << endl;
+        Int64x2 e = Int32x4::unpackLower(Int32x4(a.data), Int32x4(b.data));
+//        cout << "upackl =" << Int8x16(e.data) << endl;
+        Int64x2 g = Int32x4::unpackHigher(Int32x4(a.data), Int32x4(b.data));
+//        cout << "upackh =" << Int8x16(g.data) << endl;
+        Int64x2 e1 = Int32x4::unpackLower(Int32x4(c.data), Int32x4(d.data));
+//        cout << "upackl =" << Int8x16(e1.data) << endl;
+        Int64x2 g1 = Int32x4::unpackHigher(Int32x4(c.data), Int32x4(d.data));
+//        cout << "upackh =" << Int8x16(g1.data) << endl;
+
+//        cout << "interl 8" << endl;
+        Int16x8 u = Int8x16::unpackLower(Int8x16(e.data), Int8x16(g.data));
+//        cout << "interl =" << Int8x16(u.data) << endl;
+        Int16x8 v = Int8x16::unpackHigher(Int8x16(e.data), Int8x16(g.data));
+//        cout << "interh =" << Int8x16(v.data) << endl;
+        Int16x8 u1 = Int8x16::unpackLower(Int8x16(e1.data), Int8x16(g1.data));
+//        cout << "interl =" << Int8x16(u1.data) << endl;
+        Int16x8 v1 = Int8x16::unpackHigher(Int8x16(e1.data), Int8x16(g1.data));
+//        cout << "interh =" << Int8x16(v1.data) << endl;
+
+//        cout << "unpack again" << endl;
+        Int64x2 k = Int32x4::unpackLower(Int32x4(u.data), Int32x4(v.data));
+//        cout << "upackl =" << Int8x16(k.data) << endl;
+        Int64x2 l = Int32x4::unpackHigher(Int32x4(u.data), Int32x4(v.data));
+//        cout << "upackh =" << Int8x16(l.data) << endl;
+        Int64x2 k1 = Int32x4::unpackLower(Int32x4(u1.data), Int32x4(v1.data));
+//        cout << "upackl =" << Int8x16(k1.data) << endl;
+        Int64x2 l1 = Int32x4::unpackHigher(Int32x4(u1.data), Int32x4(v1.data));
+//        cout << "upackh =" << Int8x16(l1.data) << endl;
+
+//        cout << "interl 16" << endl;
+        Int32x4 s = Int16x8::unpackLower(Int16x8(k.data), Int16x8(l.data));
+//        cout << "interl =" << Int8x16(s.data) << endl;
+        Int32x4 t = Int16x8::unpackHigher(Int16x8(k.data), Int16x8(l.data));
+//        cout << "interh =" << Int8x16(t.data) << endl;
+        Int32x4 s1 = Int16x8::unpackLower(Int16x8(k1.data), Int16x8(l1.data));
+//        cout << "interl =" << Int8x16(s1.data) << endl;
+        Int32x4 t1 = Int16x8::unpackHigher(Int16x8(k1.data), Int16x8(l1.data));
+//        cout << "interh =" << Int8x16(t1.data) << endl;
+
+//        cout << "interl 32" << endl;
+        Int64x2 x = Int32x4::unpackLower(Int32x4(s.data), Int32x4(s1.data));
+//        cout << "interl =" << Int8x16(x.data) << endl;
+        Int64x2 y = Int32x4::unpackHigher(Int32x4(s.data), Int32x4(s1.data));
+//        cout << "interh =" << Int8x16(y.data) << endl;
+        Int64x2 x1 = Int32x4::unpackLower(Int32x4(t.data), Int32x4(t1.data));
+//        cout << "interl =" << Int8x16(x1.data) << endl;
+        Int64x2 y1 = Int32x4::unpackHigher(Int32x4(t.data), Int32x4(t1.data));
+//        cout << "interh =" << Int8x16(y1.data) << endl;
+
+        FixedVector<Int16x8, 8> result;
+        result[0] =  Int8x16::unpackLower (Int8x16(x.data), Int8x16((int8_t)0));
+        result[1] =  Int8x16::unpackHigher(Int8x16(x.data), Int8x16((int8_t)0));
+        result[2] =  Int8x16::unpackLower (Int8x16(x1.data), Int8x16((int8_t)0));
+        result[3] =  Int8x16::unpackHigher(Int8x16(x1.data), Int8x16((int8_t)0));
+        result[4] =  Int8x16::unpackLower (Int8x16(y.data), Int8x16((int8_t)0));
+        result[5] =  Int8x16::unpackHigher(Int8x16(y.data), Int8x16((int8_t)0));
+        result[6] =  Int8x16::unpackLower (Int8x16(y1.data), Int8x16((int8_t)0));
+        result[7] =  Int8x16::unpackHigher(Int8x16(y1.data), Int8x16((int8_t)0));
+
+        return result;
+
+    }
+
+    /**
+     *  Taking packed vector
+       *  | 00 A0 | 00 A1 | 00 A2 | 00 A3 ...  | 00 A7 |
+       *  | 00 B0 | 00 B1 | 00 B2 | 00 B3 ...  | 00 B7 |
+       *  | 00 C0 | 00 C1 | 00 C2 | 00 C3 ...  | 00 C7 |
+       *  | 00 D0 | 00 D1 | 00 D2 | 00 D3 ...  | 00 D7 |
+       *  | 00 E0 | 00 E1 | 00 E2 | 00 E3 ...  | 00 E7 |
+       *  | 00 F0 | 00 F1 | 00 F2 | 00 F3 ...  | 00 F7 |
+       *  | 00 G0 | 00 G1 | 00 G2 | 00 G3 ...  | 00 G7 |
+       *  | 00 H0 | 00 H1 | 00 H2 | 00 H3 ...  | 00 H7 |
+     **/
+
+    static void write(const FixedVector<Int16x8, 8> &data, uint32_t *ptr)
+    {
+
+        /* | A0 B0 A1 B1 A2 B2 A3 B3 A4 B4 A5 B5 A6 B6 A7 B7 | */
+        Int16x8 united1 = (data[1] << 8) | data[0];
+        /* | C0 D0 C1 D1 C2 D2 C3 D3 C4 D4 C5 D5 C6 D6 C7 D7 | */
+        Int16x8 united2 = (data[3] << 8) | data[2];
+        Int16x8 united3 = (data[5] << 8) | data[4];
+        Int16x8 united4 = (data[7] << 8) | data[6];
+
+        /* | A0 B0 C0 D0 A2 B2 C2 D2 A4 B4 C4 D4 A6 B6 C4 D4 | */
+        Int32x4 a = Int16x8::unpackLower (united1.data, united2.data);
+        /* | A1 B1 C1 D1 A3 B3 C3 D3 A5 B5 C5 D5 A7 B7 C7 D7 | */
+        Int32x4 b = Int16x8::unpackHigher(united1.data, united2.data);
+        Int32x4 c = Int16x8::unpackLower (united3.data, united4.data);
+        Int32x4 d = Int16x8::unpackHigher(united3.data, united4.data);
+
+//        cout << "a =" << Int8x16(a) << endl;
+//        cout << "b =" << Int8x16(b) << endl;
+//        cout << "c =" << Int8x16(c) << endl;
+//        cout << "d =" << Int8x16(d) << endl;
+
+        Int64x2 e = Int32x4::unpackLower (a.data, c.data);
+        Int64x2 f = Int32x4::unpackHigher(a.data, c.data);
+        Int64x2 g = Int32x4::unpackLower (b.data, d.data);
+        Int64x2 h = Int32x4::unpackHigher(b.data, d.data);
+
+        uint64_t *outptr = (uint64_t *)ptr;
+        e.save(outptr);
+        f.save(outptr + 0x2);
+        g.save(outptr + 0x4);
+        h.save(outptr + 0x6);
+    }
+
+};
+
 
 } //namespace corecvs
 #endif

@@ -46,7 +46,7 @@ G12Image::G12Image(G12Buffer *buffer, int newH, int newW) : QImage (newW, newH, 
 
 
 
-G12Image::G12Image(G12Buffer *buffer, bool invert) : QImage (buffer->w, buffer->h, QImage::Format_RGB32){
+G12Image::G12Image(G12Buffer *buffer, bool mirror) : QImage (buffer->w, buffer->h, QImage::Format_RGB32){
     int i,j;
     uint8_t *data = bits();
     int bpl = bytesPerLine();
@@ -55,10 +55,11 @@ G12Image::G12Image(G12Buffer *buffer, bool invert) : QImage (buffer->w, buffer->
         for (j = 0; j < buffer->w; j++ )
         {
             uint8_t c;
-            if (!invert)
+            if (!mirror) {
                 c = buffer->element(i, j) >> 4;
-            else
+            } else {
                 c = buffer->element(i, buffer->w - 1 - j  ) >> 4;
+            }
 
             uint32_t value = c | (c << 8) | (c << 16) | (0xFF << 24);
             ((uint32_t *)(data + i * bpl))[j] = value;
@@ -69,15 +70,28 @@ G12Image::~G12Image() {
 }
 
 
-RGB24Image::RGB24Image(RGB24Buffer *buffer) : QImage (buffer->w, buffer->h, QImage::Format_RGB32){
+RGB24Image::RGB24Image(RGB24Buffer *buffer, bool mirror) : QImage (buffer->w, buffer->h, QImage::Format_RGB32){
     int i,j;
     uint8_t *data = bits();
     int bpl = bytesPerLine();
-    for (i = 0; i < buffer->h; i++ )
-        for (j = 0; j < buffer->w; j++ )
+
+    if (!mirror) {
+        for (i = 0; i < buffer->h; i++ )
         {
-            ((uint32_t *)(data + i * bpl))[j] = buffer->element(i, j).color();
+            for (j = 0; j < buffer->w; j++ )
+            {
+                ((uint32_t *)(data + i * bpl))[j] = (buffer->element(i, j).color()) | 0xFF000000;
+            }
         }
+    } else {
+        for (i = 0; i < buffer->h; i++ )
+        {
+            for (j = 0; j < buffer->w; j++ )
+            {
+                ((uint32_t *)(data + i * bpl))[j] = (buffer->element(i, buffer->w - 1 - j).color()) | 0xFF000000;
+            }
+        }
+    }
 }
 
 RGB24Image::~RGB24Image() {

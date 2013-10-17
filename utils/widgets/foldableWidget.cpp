@@ -1,5 +1,6 @@
 #include "foldableWidget.h"
 #include "ui_foldableWidget.h"
+#include "configManager.h"
 
 #include <QtCore/QSettings>
 
@@ -21,7 +22,7 @@ FoldableWidget::FoldableWidget(
 
     setMainWidget(centralWidget);
 
-    QSettings settings("cvs.conf", QSettings::IniFormat);
+    QSettings settings(ConfigManager::configName(), QSettings::IniFormat);
     settings.beginGroup("foldedWidgets");
     startFolded = settings.value(name, true).toBool();
     settings.endGroup();
@@ -39,7 +40,7 @@ FoldableWidget::FoldableWidget(
 
 FoldableWidget::~FoldableWidget()
 {
-    QSettings settings("cvs.conf", QSettings::IniFormat);
+    QSettings settings(ConfigManager::configName(), QSettings::IniFormat);
     settings.beginGroup("foldedWidgets");
     settings.setValue(mName, mIsFolded);
     settings.endGroup();

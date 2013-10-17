@@ -1,11 +1,13 @@
 # try use global config 
 exists(../../../../config.pri) {
+    ROOT_DIR=../../../..
     #message(Using global config)
-    include(../../../../config.pri)
 } else { 
     message(Using local config)
-    include(../../config.pri)
+    ROOT_DIR=../..
 }
+ROOT_DIR=$$PWD/$$ROOT_DIR
+include($$ROOT_DIR/config.pri)
 
 CONFIG  += staticlib
 TARGET   = cvs_application_base

@@ -66,6 +66,31 @@ ostream & operator <<(ostream &out, const Int8x16 &vector)
    return out;
 }
 
+ostream & operator <<(ostream &out, const UInt8x16 &vector)
+{
+   ALIGN_DATA(16) uint8_t data[16];
+   vector.saveAligned(data);
+   out << "[";
+   for (unsigned i = 0; i < 16; i++) {
+       out << (i == 0 ? "" : ", ") << (unsigned)data[i];
+   }
+   out << "]";
+   return out;
+}
+
+
+ostream & operator <<(ostream &out, const Int64x2 &vector)
+{
+   ALIGN_DATA(16) int64_t data[2];
+   vector.saveAligned(data);
+   out << "[";
+   for (unsigned i = 0; i < 2; i++) {
+       out << (i == 0 ? "" : ", ") << (int)data[i];
+   }
+   out << "]";
+   return out;
+}
+
 #endif // WITH_SSE
 
 } //namespace corecvs

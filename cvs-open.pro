@@ -5,9 +5,9 @@ SUBDIRS +=                   \
     core                     \
     unitTests                \
     utils                    \
-#    base_application         \
-#    base_application_example \    
-#    recorder                 \
+    base_application         \
+    base_application_example \    
+    recorder                 \
     testbed                  \
     
 

@@ -1,11 +1,14 @@
 # try use global config 
 exists(../../../config.pri) {
+    ROOT_DIR=../../..
     #message(Using global config)
-    include(../../../config.pri)
 } else { 
     message(Using local config)
-    include(../config.pri)
+    ROOT_DIR=..
 }
+ROOT_DIR=$$PWD/$$ROOT_DIR
+include($$ROOT_DIR/config.pri)
+
 
 CONFIG  += staticlib
 TARGET   = cvs_utils
@@ -19,7 +22,9 @@ TEMPLATE = lib
 #include(../../core/core.pri)                       # it uses COREDIR, TARGET and detects     COREBINDIR!
 #include(../../core/core_restricted.pri)            # it uses COREDIR, TARGET and detects RES_COREBINDIR!
 
-UTILSDIR = .
+COREDIR=../core
+
+UTILSDIR=$$PWD
 include($$UTILSDIR/utils.pri)                      # it uses UTILSDIR, TARGET and detects UTILS_BINDIR, OBJECTS_DIR,...!
 
 include($$UTILSDIR/corestructs/coreWidgets/coreWidgets.pri)
@@ -150,6 +155,7 @@ HEADERS += \
     filters/graph/g12PinPresentation.h \
     filters/graph/txtPinPresentation.h \
     filters/graph/compoundBlockPresentation.h \
+    configManager.h
   
 
 SOURCES += \
@@ -268,6 +274,7 @@ SOURCES += \
     filters/graph/g12PinPresentation.cpp \
     filters/graph/txtPinPresentation.cpp \
     filters/graph/compoundBlockPresentation.cpp \
+    configManager.cpp
  
 
 FORMS += \

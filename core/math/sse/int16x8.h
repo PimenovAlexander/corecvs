@@ -120,11 +120,30 @@ public:
 
     friend Int32x8 productExtending (const Int16x8 &left, const Int16x8 &right);
 
-    // Producers
+    /**
+     *   Create a 32bit word mixing and interleaving even parts of the input
+     *   0    16                                16*8
+     *   | A0 | A1 | A2 | A3 | A4 | A5 | A6 | A7 |
+     *   | B0 | B1 | B2 | B3 | B4 | B5 | B6 | B7 |
+     *  unpacks into
+     *
+     *   | A0 | B0 | A2 | B2 | A4 | B4 | A6 | B6 |
+     *
+     **/
     inline static Int32x4 unpackLower (const Int16x8 &left, const Int16x8 &right) {
         return Int32x4(_mm_unpacklo_epi16(left.data, right.data));
     }
 
+    /**
+     *   Create a 32bit word mixing and interleaving odd parts of the input
+     *   0    16                                16*8
+     *   | A0 | A1 | A2 | A3 | A4 | A5 | A6 | A7 |
+     *   | B0 | B1 | B2 | B3 | B4 | B5 | B6 | B7 |
+     *  unpacks into
+     *
+     *   | A1 | B1 | A3 | B3 | A5 | B5 | A7 | B7 |
+     *
+     **/
     inline static Int32x4 unpackHigher (const Int16x8 &left, const Int16x8 &right) {
         return Int32x4(_mm_unpackhi_epi16(left.data, right.data));
     }

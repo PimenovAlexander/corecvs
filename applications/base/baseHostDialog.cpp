@@ -41,7 +41,7 @@
 #include "qSettingsSetter.h"
 #include "../utils/serializer/widgetQtIterator.h"
 #include "painterHelpers.h"
-
+#include "configManager.h"
 
 using namespace std;
 const QString initialCameraString = "InitialCameraString";
@@ -80,7 +80,7 @@ void BaseHostDialog::init(QWidget *parameterHolderWidget, QTextEdit * /*loggerWi
 
     initCommon();
     initParameterWidgets();
-    loadParams("cvs.conf", "");
+    loadParams(ConfigManager::configName(), "");
 
     initMemoryUsageCalculator();
     initCalculator();
@@ -111,7 +111,7 @@ void BaseHostDialog::initGraphPresentation()
 void BaseHostDialog::deinit()
 {
     /* Stop all possible events sources */
-    saveParams("cvs.conf", "");
+    saveParams(ConfigManager::configName(), "");
     terminateCalculator();
 
     /* Cleanup the queue */
@@ -136,7 +136,7 @@ BaseHostDialog::~BaseHostDialog()
     delete_safe (mDistortionWidget);
     delete_safe (mFilterGraphPresentation);
 
-    SettingsSetter visitor("cvs-camera.conf", UI_NAME_BASE_DIALOG);
+    SettingsSetter visitor(ConfigManager::camConfigName(), UI_NAME_BASE_DIALOG);
     mRectifierData.accept<SettingsSetter>(visitor);
 }
 
@@ -301,7 +301,7 @@ void BaseHostDialog::deinitCamera()
 /* ******************************************************************************
  *  Calculation thread
  */
-void BaseHostDialog::initCapture(QString const &init)
+void BaseHostDialog::initCapture(QString const &init, bool isRgb)
 {
     //TODO:: if mInputString is empty, but app params not empty wizard is shown. Maybe it's bad
     if (!init.isEmpty())
@@ -317,7 +317,7 @@ void BaseHostDialog::initCapture(QString const &init)
 
     mInputSelectorDialog.setInputString(mInputString);
 
-    mCamera = ImageCaptureInterface::fabric(mInputString.toStdString());
+    mCamera = ImageCaptureInterface::fabric(mInputString.toStdString(), isRgb);
 
     if (mCamera == NULL)
     {
@@ -346,7 +346,7 @@ void BaseHostDialog::initCapture(QString const &init)
     /* Now we need to connect the camera to widgets */
     mCapSettings = new CapSettingsDialog(NULL, mCamera);
     mSaveableCameraWidgets.push_back(mCapSettings);
-    mCapSettings->loadFromQSettings("cvs-camera.conf", "");
+    mCapSettings->loadFromQSettings(ConfigManager::camConfigName(), "");
 
     qRegisterMetaType<CaptureStatistics>("CaptureStatistics");
     connect(mCamera, SIGNAL(newStatisticsReady(CaptureStatistics)),
@@ -784,8 +784,7 @@ void BaseHostDialog::loadParams(const QString &fileName, QString root)
 {
     QSettings settings(fileName, QSettings::IniFormat);
 
-    QString cameraConfig = fileName.section(".", 0, 0) + "-camera.conf";
-    QSettings cameraSettings(cameraConfig, QSettings::IniFormat);
+    QSettings cameraSettings(ConfigManager::camConfigName(), QSettings::IniFormat);
 
     if (!root.isEmpty())
     {
@@ -814,7 +813,7 @@ void BaseHostDialog::loadParams(const QString &fileName, QString root)
 
     for (unsigned i = 0; i < mSaveableCameraWidgets.size(); i++)
     {
-        mSaveableWidgets[i]->loadFromQSettings(cameraConfig, root);
+        mSaveableWidgets[i]->loadFromQSettings(ConfigManager::camConfigName(), root);
     }
 }
 
@@ -822,8 +821,7 @@ void BaseHostDialog::saveParams(const QString &fileName, QString root)
 {
     QSettings settings(fileName, QSettings::IniFormat);
 
-    QString cameraConfig = fileName.section(".", 0, 0) + "-camera.conf";
-    QSettings cameraSettings(cameraConfig, QSettings::IniFormat);
+    QSettings cameraSettings(ConfigManager::camConfigName(), QSettings::IniFormat);
 
     if (!root.isEmpty())
     {
@@ -844,7 +842,7 @@ void BaseHostDialog::saveParams(const QString &fileName, QString root)
 
     for (unsigned i = 0; i < mSaveableCameraWidgets.size(); i++)
     {
-        mSaveableWidgets[i]->loadFromQSettings(cameraConfig, root);
+        mSaveableWidgets[i]->loadFromQSettings(ConfigManager::camConfigName(), root);
     }
 
 }

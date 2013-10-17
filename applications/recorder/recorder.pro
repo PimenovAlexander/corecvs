@@ -1,21 +1,23 @@
 # try use global config 
 exists(../../../../config.pri) {
+    ROOT_DIR=../../../..
     #message(Using global config)
-    include(../../../../config.pri)
 } else { 
     message(Using local config)
-    include(../../config.pri)
+    ROOT_DIR=../..
 }
+ROOT_DIR=$$PWD/$$ROOT_DIR
+include($$ROOT_DIR/config.pri)
 
 
-TARGET   = virecorder
+TARGET   = recorder
 TEMPLATE = app
 
 HOSTBASE_DIR=../base
 include ($$HOSTBASE_DIR/baseApplication.pri)                   # it uses HOSTBASE_DIR, detects HOSTBASE_BINDIR, OBJECTS_DIR, ...
 
 win32 {
-    MOC_DIR = ../../../../.obj/$$TARGET_ORIG/$$BUILD_CFG_NAME  # resolve moc path for mocs to help qmake to unify those paths.
+    MOC_DIR = $$ROOT_DIR/.obj/$$TARGET_ORIG/$$BUILD_CFG_NAME  # resolve moc path for mocs to help qmake to unify those paths.
 }
 
 INCLUDEPATH += .

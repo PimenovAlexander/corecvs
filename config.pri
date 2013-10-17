@@ -17,8 +17,8 @@
 !gen_vsproj {
     CONFIG +=   \
                 \
-#        debug \
-        release \
+        debug \
+#        release \
 
 }
 
@@ -27,10 +27,10 @@ CONFIG +=       \
 #   trace       \
 #   asserts     \
                 \
-   with_sse     \
-   with_sse3    \
-   with_sse4    \
-   with_tbb     \
+#   with_sse     \
+#   with_sse3    \
+#   with_sse4    \
+#   with_tbb     \
 
 
 !win32:!macx {
@@ -38,8 +38,8 @@ CONFIG +=       \
                           \
     #   pedantic_build    \
     #   gcc_env_toolchain \
-       gcc48_toolchain   \
-       gcc_lto           \
+    #   gcc48_toolchain   \
+    #   gcc_lto           \
     #   gcc_checker       \
     #   gcc47_toolchain   \
     #   gcc45_toolchain   \
@@ -57,7 +57,7 @@ CONFIG +=       \
 }
 
 CONFIG +=                   \
-        with_ueye           \
+#        with_ueye           \
         with_httpserver     \
 
 win32 {
@@ -94,4 +94,5 @@ win32-msvc* {
 
 # include standard part for any project that tunes some specific parameters that depend of the config been set above
 #
+ROOT_PATH=$$PWD
 include(common.pri)

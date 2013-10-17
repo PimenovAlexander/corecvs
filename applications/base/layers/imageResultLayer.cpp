@@ -65,6 +65,20 @@ ImageResultLayer::ImageResultLayer(
     mImages[Frames::RIGHT_FRAME] = new G12Image(image);
 }
 
+ImageResultLayer::ImageResultLayer(
+    RGB24Buffer* image
+) : ResultLayerBase(ResultLayerBase::LAYER_IMAGE)
+, mStyle(OutputStyle::STANDART_OUTPUT)
+, mShowLeftFrame(false)
+{
+    for (int id = 0; id < Frames::MAX_INPUTS_NUMBER; id++ )
+    {
+        mImages[id] = NULL;
+    }
+
+    mImages[Frames::RIGHT_FRAME] = new RGB24Image(image);
+}
+
 
 ImageResultLayer::~ImageResultLayer()
 {

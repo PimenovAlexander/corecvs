@@ -6,7 +6,7 @@ exists(../../../config.pri) {
     message(Using local config)
     TOPLEVEL=../    
 }
- include($$TOPLEVEL/config.pri)
+include($$TOPLEVEL/config.pri)
     
 
 CONFIG  += staticlib

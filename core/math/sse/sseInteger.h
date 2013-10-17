@@ -41,6 +41,7 @@ public:
 
     explicit SSEInteger(const __m128i &data)
     {
+     //   printf("SSEInteger(const __m128i &data):Setting data\n");
         this->data = data;
     }
 
@@ -109,6 +110,7 @@ static uint64_t   streamedWrites;
 
     /* Logical operations */
     friend RealType operator & (const RealType &left, const SSEInteger &right) {
+     //   printf("called operator &\n");
         return RealType(_mm_and_si128(left.data, right.data));
     }
 

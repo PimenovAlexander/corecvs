@@ -25,8 +25,8 @@ public:
         MAX_INPUTS_NUMBER
     };
 
-
     G12Buffer *currentFrames[MAX_INPUTS_NUMBER];
+    RGB24Buffer *currentRgbFrames[MAX_INPUTS_NUMBER];
     int frameCount;
 
     Frames();
@@ -35,6 +35,7 @@ public:
     void fetchNewFrames(ImageCaptureInterface *input);
 
     G12Buffer* getCurrentFrame (FrameSourceId id)   { return currentFrames[id]; }
+    RGB24Buffer* getCurrentRgbFrame (FrameSourceId id) { return currentRgbFrames[id]; }
 
     /// Swaps the frame sources so, for example, left camera becomes right,
     /// and right camera becomes left. Useful when cameras are plugged in wrong order.

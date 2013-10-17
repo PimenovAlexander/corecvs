@@ -246,16 +246,20 @@ public:
     EllipticalApproximationUnified() :
          mSum(ElementType(0))
        , mCount(0)
+       , mInfMatrix(NULL)
     {
         ElementType forSize;
         mInfMatrix = new Matrix(forSize.size(), forSize.size());
     }
 
     EllipticalApproximationUnified(const EllipticalApproximationUnified &other) :
-        mSum(ElementType(0))
-      , mCount(0)
+        mSum(other.mSum)
+      , mCount(other.mCount)
+      , mInfMatrix(NULL)
     {
         this->mInfMatrix = new Matrix(other.mInfMatrix);
+        printf("EllipticalApproximationUnified(const EllipticalApproximationUnified &other) called\n");
+
     }
 
     ~EllipticalApproximationUnified()
@@ -284,6 +288,21 @@ public:
 
     void getEllipseParameters()
     {
+        if (mCount == 0) {
+            printf("Can't approximate 0 points");
+            return;
+        }
+
+        if (mInfMatrix == NULL) {
+            printf("Can't approximate non existant matrix");
+            return;
+        }
+
+        if (mInfMatrix->h == 0 || mInfMatrix->w == 0) {
+            printf("Can't approximate non existant matrix");
+            return;
+        }
+
         Matrix A(*mInfMatrix /= double(mCount));
         Matrix W(1, mInfMatrix->w);
         Matrix V(mInfMatrix->h, mInfMatrix->w);

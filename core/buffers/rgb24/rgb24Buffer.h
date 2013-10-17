@@ -59,6 +59,11 @@ public:
         drawG8Buffer(buffer);
     }
 
+    /**
+     * This function is used as a hack to interface the C-style g12Buffer
+     *
+     **/
+    RGB24Buffer() {}
 
     void drawG12Buffer(G12Buffer *src, int32_t y = 0, int32_t x = 0);
     void drawG8Buffer(G8Buffer *src, int32_t y = 0, int32_t x = 0);
@@ -147,8 +152,13 @@ public:
             FunctionArgs &f);
 
 
+    void fillWithYUYV (uint8_t *yuyv);
+    G12Buffer *toG12Buffer();
+
 
     virtual ~RGB24Buffer(){};
+
+
 
 private:
     /* TODO: Special helper class should be used to store sprites after that this function could be made public */

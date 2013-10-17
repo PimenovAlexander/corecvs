@@ -172,6 +172,7 @@ void BaseCalculationThread::executeFilterGraph(Statistics *stats)
 //        cout<<"mTransformedBuffers[1] != NULL"<<endl;
 
 }
+
 void BaseCalculationThread::transformInputFrames()
 {
     for (int i = 0; i < mActiveInputsNumber; i++)

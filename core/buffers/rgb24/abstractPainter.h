@@ -156,10 +156,10 @@ public:
 
     void drawCircle(int x, int y, int rad, ElementType color )
     {
-        int rad2 = rad * rad;
+        int radsq = rad * rad;
         for (int dy = -rad; dy <= 0; dy++)
         {
-            int dx = (int)sqrt((float)(rad2 - (dy - 0.5) * (dy - 0.5)));
+            int dx = (int)sqrt((float)(radsq - (dy - 0.5) * (dy - 0.5)));
             for (int j= x - dx; j <= x + dx; j++)
             {
                 if (mTarget->isValidCoord(y - dy, j))

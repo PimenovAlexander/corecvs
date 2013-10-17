@@ -136,9 +136,12 @@ void Grid3DScene::drawMyself(CloudViewDialog* /*dialog*/ /*, const Draw3dParamet
     {
         qDebug("Grid3DScene was not initialized");
     }
+    GLboolean textureState = glIsEnabled(GL_TEXTURE_2D);
     glDisable(GL_TEXTURE_2D);
     glCallList(mGridId);
-    glEnable(GL_TEXTURE_2D);
+    if (textureState) {
+        glEnable(GL_TEXTURE_2D);
+    }
 }
 
 

@@ -39,8 +39,8 @@ const char* V4L2CaptureInterface::CODEC_NAMES[] =
 
 STATIC_ASSERT(CORE_COUNT_OF(V4L2CaptureInterface::CODEC_NAMES) == V4L2CaptureInterface::CODEC_NUMBER, wrong_codec_names_number);
 
-V4L2CaptureInterface::V4L2CaptureInterface(string _devname)
-    : spin(this)
+V4L2CaptureInterface::V4L2CaptureInterface(string _devname, bool isRgb)
+    : spin(this), mIsRgb(isRgb)
 {
     setConfigurationString(_devname);
 }
@@ -130,6 +130,8 @@ V4L2CaptureInterface::FramePair V4L2CaptureInterface::getFrame()
             &result.bufferLeft
     };
 
+    result.rgbBufferRight = NULL;
+    result.rgbBufferLeft = NULL;
 
     for (int i=0; i < Frames::MAX_INPUTS_NUMBER; i++)
     {
@@ -163,6 +165,62 @@ V4L2CaptureInterface::FramePair V4L2CaptureInterface::getFrame()
     stats.values[CaptureStatistics::DATA_SIZE] = currentFrame[Frames::LEFT_FRAME].bytesused;
 
     emit newStatisticsReady(stats);
+
+    return result;
+}
+
+V4L2CaptureInterface::FramePair V4L2CaptureInterface::getFrameRGB24()
+{
+//    CaptureStatistics  stats;
+
+//    PreciseTimer start = PreciseTimer::currentTime();
+
+    protectFrame.lock();
+
+    FramePair result;
+
+    RGB24Buffer **results[Frames::MAX_INPUTS_NUMBER] = {
+            &result.rgbBufferRight,
+            &result.rgbBufferLeft
+    };
+
+    for (int i = 0; i < Frames::MAX_INPUTS_NUMBER; i++)
+    {
+        decodeDataRGB24(&camera[i],  &currentFrame[i],  results[i]);
+
+        if ((*results[i]) == NULL) {
+            printf("V4L2CaptureInterface::getFrameRGB24(): Precrash condition\n");
+        }
+    }
+
+    result.bufferLeft  = result.rgbBufferLeft ->toG12Buffer(); // FIXME
+    result.bufferRight = result.rgbBufferRight->toG12Buffer();
+
+#if 0
+    if (currentFrame[Frames::LEFT_FRAME].isFilled)
+        result.leftTimeStamp  = currentFrame[Frames::LEFT_FRAME].usecsTimeStamp();
+
+    if (currentFrame[Frames::RIGHT_FRAME].isFilled)
+        result.rightTimeStamp = currentFrame[Frames::RIGHT_FRAME].usecsTimeStamp();
+
+    if (skippedCount == 0)
+    {
+        SYNC_PRINT(("Warning: Requested same frames twice. Is this by design?\n"));
+    }
+
+    stats.framesSkipped = skippedCount > 0 ? skippedCount - 1 : 0;
+    skippedCount = 0;
+#endif
+    protectFrame.unlock();
+#if 0
+    stats.values[CaptureStatistics::DECODING_TIME] = start.usecsToNow();
+    stats.values[CaptureStatistics::INTERFRAME_DELAY] = frameDelay;
+
+    int64_t desync =  currentFrame[Frames::LEFT_FRAME].usecsTimeStamp() - currentFrame[Frames::RIGHT_FRAME].usecsTimeStamp();
+    stats.values[CaptureStatistics::DESYNC_TIME] = desync > 0 ? desync : -desync;
+    stats.values[CaptureStatistics::DATA_SIZE] = currentFrame[Frames::LEFT_FRAME].bytesused;
+    emit newStatisticsReady(stats);
+#endif
 
     return result;
 }
@@ -305,6 +363,57 @@ void V4L2CaptureInterface::decodeData(V4L2CameraDescriptor *camera, V4L2BufferDe
                 SYNC_PRINT(("V4L2CaptureInterface::decodeData(): Decoded to buffer that is NULL\n"));
             }
         }
+        break;
+    }
+}
+
+void V4L2CaptureInterface::decodeDataRGB24(V4L2CameraDescriptor *camera, V4L2BufferDescriptor *buffer, RGB24Buffer **output)
+{
+    if (!buffer->isFilled)
+    {
+        *output = new RGB24Buffer(formatH, formatW);
+        return;
+    }
+
+    uint8_t *ptrL = (uint8_t*)(camera->buffers[buffer->index].start);
+    PreciseTimer timer;
+    switch(decoder)
+    {
+        case UNCOMPRESSED:
+            *output = new RGB24Buffer(formatH, formatW);
+            printf("Decoding image...");
+            timer = PreciseTimer::currentTime();
+#if 0
+            for(int i = 0; i < formatH; i++)
+            {
+                uint8_t *ptrI = ptrL + formatW * 2 * i;
+                RGBColor *ptrO = &((*output)->element(i,0));
+
+                for(int j = 0; j < formatW; j+=2)
+                {
+                    int y1 = ptrI[0];
+                    int u  = ptrI[1];
+                    int y2 = ptrI[2];
+                    int v  = ptrI[3];
+                    ptrI += 4;
+                    ptrO[j    ] = RGBColor::FromYUV(y1, u, v);
+                    ptrO[j + 1] = RGBColor::FromYUV(y2, u, v);
+                }
+            }
+#endif
+            (*output)->fillWithYUYV(ptrL);
+            printf("Delay: %i\n", timer.usecsToNow());
+            break;
+        case COMPRESSED_JPEG:
+        {
+            /*uint16_t *ptrDecoded = decodeMjpeg(ptrL );
+            *output = new G12Buffer(formatH, formatW, false);
+            (*output)->fillWithYUYV(ptrDecoded);
+            free(ptrDecoded);*/
+        }
+        break;
+        case CODEC_NUMBER:
+        case COMPRESSED_FAST_JPEG:
         break;
     }
 }

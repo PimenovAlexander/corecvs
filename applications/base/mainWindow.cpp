@@ -2,7 +2,7 @@
 #include "ui_mainWindow.h"
 
 MainWindow::MainWindow(BaseHostDialog *dialog, const QString &source,
-        const MainWindowParameters &params,  QWidget *parent)
+        const MainWindowParameters &params, bool isRgb,  QWidget *parent)
     : QMainWindow(parent)
     , mUi(new Ui::MainWindow)
     , mMainDialog(dialog)
@@ -12,7 +12,7 @@ MainWindow::MainWindow(BaseHostDialog *dialog, const QString &source,
 
     mMainDialog->init(mUi->widget);
 //    mMainDialog->init(mUi->scrollAreaWidgetContents);
-    mMainDialog->initCapture(source);
+    mMainDialog->initCapture(source, isRgb);
     mMainDialog->show();
     setCentralWidget(mMainDialog);
 

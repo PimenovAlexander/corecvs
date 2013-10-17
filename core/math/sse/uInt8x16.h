@@ -285,24 +285,6 @@ template<int idx>
 
     /*TODO: Add shuffling*/
 
-    /**
-     *  This function unpacks two 8bit vectors into 16bit vector using 0-7 elements
-     *
-     *
-     *  left  ->   A0 A1 A2 A3 .... A15 A16
-     *  right ->   B0 B1 B2 B3 .... B15 B16
-     *
-     *  result ->  A0 B0 A1 B2 .... A7  B7
-     *
-     **/
-    inline static Int16x8 unpackLower (const UInt8x16 &left, const UInt8x16 &right) {
-       return Int16x8(_mm_unpacklo_epi8(left.data, right.data));
-    }
-
-    inline static Int16x8 unpackHigher (const UInt8x16 &left, const UInt8x16 &right) {
-       return Int16x8(_mm_unpackhi_epi8(left.data, right.data));
-    }
-
 };
 
 #ifdef UNSUPPORTED

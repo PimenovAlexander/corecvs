@@ -6,6 +6,8 @@
 # output parameter: $$COREBINDIR - path to the output|used core library
 #
 
+COREDIR=$$PWD
+
 CORE_INCLUDEPATH = \
     $$COREDIR/alignment \
 #   $$COREDIR/alignment/camerasCalibration \    # used via path
@@ -57,16 +59,7 @@ CORE_INCLUDEPATH = \
     $$COREDIR/xml \
     $$COREDIR/xml/generated \                   # to allow including of generated headers without directory name prefix
 
-
-
 INCLUDEPATH += $$CORE_INCLUDEPATH
-
-#exists($$COREDIR/../../../config.pri) {
-#    COREBINDIR = $$COREDIR/../../../bin
-#} else {
-#    message(Using local core. config should be $$COREDIR/../../../config.pri)
-#    COREBINDIR = $$COREDIR/../bin
-#}
 
 exists(../../../config.pri) {
     COREBINDIR = $$COREDIR/../../../bin

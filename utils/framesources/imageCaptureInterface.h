@@ -10,6 +10,7 @@
 #include <QtCore/QObject>
 
 #include "g12Buffer.h"
+#include "rgb24Buffer.h"
 
 using namespace corecvs;
 
@@ -120,6 +121,8 @@ public:
     public:
         G12Buffer* bufferLeft;      /**< Pointer to left  gray scale buffer*/
         G12Buffer* bufferRight;     /**< Pointer to right gray scale buffer*/
+        RGB24Buffer *rgbBufferLeft;
+        RGB24Buffer *rgbBufferRight;
         uint64_t   leftTimeStamp;
         uint64_t   rightTimeStamp;
 
@@ -132,6 +135,8 @@ public:
 
         bool hasBoth() const    { return bufferLeft && bufferRight; }
     };
+
+    static bool isRgb;
 
     struct CameraFormat
     {
@@ -153,11 +158,15 @@ public:
     /**
      *  Fabric to create particular implementation of the capturer
      **/
-    static ImageCaptureInterface *fabric(string input);
+    static ImageCaptureInterface *fabric(string input, bool isRgb = false);
     /**
      *  Main function to request frames from image interface
      **/
     virtual FramePair    getFrame() = 0;
+    virtual FramePair    getFrameRGB24()
+    {
+        return getFrame();
+    }
 
     virtual CapErrorCode setCaptureProperty(int id, int value);
 

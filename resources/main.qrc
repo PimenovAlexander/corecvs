@@ -1,109 +1,110 @@
 <RCC>
-  <qresource prefix="/new/prefix1">
-    <file>camera_lens.png</file>
-    <file>brick_add.png</file>
-    <file>3d_glasses_rg.png</file>
-    <file>3d_glasses_rc.png</file>
-    <file>filter.png</file>
-    <file>flag_start.png</file>
-    <file>accept.png</file>
-    <file>select_reg.png</file>
-    <file>webcam_add.png</file>
-    <file>webcam.png</file>
-    <file>lightning.png</file>
-    <file>draw_calligraphic.png</file>
-    <file>transform_rotate_270.png</file>
-    <file>transform_rotate_180.png</file>
-    <file>transform_rotate_90.png</file>
-    <file>picture_frame.png</file>
-    <file>zoom_layer.png</file>
-    <file>georectify.png</file>
-    <file>chart_bar.png</file>
-    <file>cctv_camera.png</file>
-    <file>info.png</file>
-    <file>hand.png</file>
-    <file>select.png</file>
-    <file>picture_save.png</file>
-    <file>film_save.png</file>
-    <file>advanced.png</file>
-    <file>Picture Cast.png</file>
-    <file>burn.png</file>
-    <file>Graphite Desktop.png</file>
-    <file>monitor.png</file>
-    <file>calculator.png</file>
-    <file>play.png</file>
-    <file>pause.png</file>
-    <file>refresh.png</file>
-    <file>remove.png</file>
-    <file>install.png</file>
-    <file>minus.png</file>
-    <file>plus.png</file>
-    <file>lock.png</file>
-    <file>unlock.png</file>
-    <file>Line Chart.png</file>
-    <file>folder-grey-open-24x24.png</file>
-    <file>back_alt.png</file>
-    <file>down_alt.png</file>
-    <file>forward_alt.png</file>
-    <file>up_alt.png</file>
-    <file>zoom_in.png</file>
-    <file>zoom_out.png</file>
-    <file>record.png</file>
-    <file>stop.png</file>
-    <file>user.png</file>
-    <file>user_silhouette.png</file>
-    <file>sphere.png</file>
-    <file>measure.png</file>
-    <file>bug.png</file>
-    <file>warning.png</file>
-    <file>bug_add.png</file>
-    <file>wizard.png</file>
-    <file>bullet_blue.png</file>
-    <file>bullet_orange.png</file>
-    <file>arrow_switch.png</file>
-    <file>exchange.png</file>
-    <file>application_view_list.png</file>
-    <file>hand_cursor_1.png</file>
-    <file>str1.png</file>
-    <file>str2.png</file>
-    <file>str3.png</file>
-    <file>str4.png</file>
-    <file>workspace.png</file>
-    <file>diamond.png</file>
-    <file>vector_add.png</file>
-    <file>vector_delete.png</file>
-    <file>select_by_color.png</file>
-  </qresource>
-  <qresource prefix="/new/graph">
-    <file>draw_line.png</file>
-    <file>draw_points.png</file>
-  </qresource>
-  <qresource prefix="/new/logos">
-    <file>viziware_grey.png</file>
-    <file>cvs_big.png</file>
-    <file>cvs_mid.png</file>
-    <file>cvs16x16.png</file>
-    <file>cvs24x24.png</file>
-    <file>cvs32x32.png</file>
-  </qresource>
-  <qresource prefix="/new/subwindows">
-    <file>hat.png</file>
-    <file>film.png</file>
-    <file>flood_it.png</file>
-    <file>monitor.png</file>
-    <file>layer_histogram.png</file>
-    <file>chart_curve.png</file>
-    <file>film_add.png</file>
-  </qresource>
-  <qresource prefix="/new/osd">
-    <file>swipe.svg</file>
-  </qresource>
-  <qresource prefix="/new/our">
-    <file>our/chart_bar3d.png</file>
-    <file>our/3D.png</file>
-    <file>our/hyst_y.png</file>
-    <file>our/hyst_z.png</file>
-    <file>our/hyst.png</file>
-    <file>our/top.png</file>
-  </qresource>
+    <qresource prefix="/new/prefix1">
+        <file>camera_lens.png</file>
+        <file>brick_add.png</file>
+        <file>3d_glasses_rg.png</file>
+        <file>3d_glasses_rc.png</file>
+        <file>filter.png</file>
+        <file>flag_start.png</file>
+        <file>accept.png</file>
+        <file>select_reg.png</file>
+        <file>webcam_add.png</file>
+        <file>webcam.png</file>
+        <file>lightning.png</file>
+        <file>draw_calligraphic.png</file>
+        <file>transform_rotate_270.png</file>
+        <file>transform_rotate_180.png</file>
+        <file>transform_rotate_90.png</file>
+        <file>picture_frame.png</file>
+        <file>zoom_layer.png</file>
+        <file>georectify.png</file>
+        <file>chart_bar.png</file>
+        <file>cctv_camera.png</file>
+        <file>info.png</file>
+        <file>hand.png</file>
+        <file>select.png</file>
+        <file>picture_save.png</file>
+        <file>film_save.png</file>
+        <file>advanced.png</file>
+        <file>Picture Cast.png</file>
+        <file>burn.png</file>
+        <file>Graphite Desktop.png</file>
+        <file>monitor.png</file>
+        <file>calculator.png</file>
+        <file>play.png</file>
+        <file>pause.png</file>
+        <file>refresh.png</file>
+        <file>remove.png</file>
+        <file>install.png</file>
+        <file>minus.png</file>
+        <file>plus.png</file>
+        <file>lock.png</file>
+        <file>unlock.png</file>
+        <file>Line Chart.png</file>
+        <file>folder-grey-open-24x24.png</file>
+        <file>back_alt.png</file>
+        <file>down_alt.png</file>
+        <file>forward_alt.png</file>
+        <file>up_alt.png</file>
+        <file>zoom_in.png</file>
+        <file>zoom_out.png</file>
+        <file>record.png</file>
+        <file>stop.png</file>
+        <file>user.png</file>
+        <file>user_silhouette.png</file>
+        <file>sphere.png</file>
+        <file>measure.png</file>
+        <file>bug.png</file>
+        <file>warning.png</file>
+        <file>bug_add.png</file>
+        <file>wizard.png</file>
+        <file>bullet_blue.png</file>
+        <file>bullet_orange.png</file>
+        <file>arrow_switch.png</file>
+        <file>exchange.png</file>
+        <file>application_view_list.png</file>
+        <file>hand_cursor_1.png</file>
+        <file>str1.png</file>
+        <file>str2.png</file>
+        <file>str3.png</file>
+        <file>str4.png</file>
+        <file>workspace.png</file>
+        <file>diamond.png</file>
+        <file>vector_add.png</file>
+        <file>vector_delete.png</file>
+        <file>select_by_color.png</file>
+        <file>draw_eraser.png</file>
+    </qresource>
+    <qresource prefix="/new/graph">
+        <file>draw_line.png</file>
+        <file>draw_points.png</file>
+    </qresource>
+    <qresource prefix="/new/logos">
+        <file>viziware_grey.png</file>
+        <file>cvs_big.png</file>
+        <file>cvs_mid.png</file>
+        <file>cvs16x16.png</file>
+        <file>cvs24x24.png</file>
+        <file>cvs32x32.png</file>
+    </qresource>
+    <qresource prefix="/new/subwindows">
+        <file>hat.png</file>
+        <file>film.png</file>
+        <file>flood_it.png</file>
+        <file>monitor.png</file>
+        <file>layer_histogram.png</file>
+        <file>chart_curve.png</file>
+        <file>film_add.png</file>
+    </qresource>
+    <qresource prefix="/new/osd">
+        <file>swipe.svg</file>
+    </qresource>
+    <qresource prefix="/new/our">
+        <file>our/chart_bar3d.png</file>
+        <file>our/3D.png</file>
+        <file>our/hyst_y.png</file>
+        <file>our/hyst_z.png</file>
+        <file>our/hyst.png</file>
+        <file>our/top.png</file>
+    </qresource>
 </RCC>

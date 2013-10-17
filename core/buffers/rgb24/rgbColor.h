@@ -4,8 +4,8 @@
 #include <stdint.h>
 
 #include "fixedVector.h"
-#include <vector3d.h>
-#include "../../math/mathUtils.h"
+#include "vector3d.h"
+#include "mathUtils.h"
 namespace corecvs {
 /**
  * \file rgbColor.h
@@ -126,7 +126,8 @@ public:
     // Y = 0.2126 R + 0.7152 G + 0.0722 B
     inline uint16_t luma12() const
     {
-        return (11 * r() + 16 * g() + 5 * b()) >> 1;
+        return (5 * (int)r() + 8 * (int)g() + 2 * (int)b());
+        //return (11 * r() + 16 * g() + 5 * b()) >> 1;
     }
 
 
@@ -248,6 +249,28 @@ public:
         return RGBColor(gray >> 4, gray >> 4, gray >> 4);
     }
 
+    /**
+     *  C = Y - 16
+     *  D = U - 128
+     *  E = V - 128
+     *  Using the previous coefficients and noting that clamp() denotes clamping a value to the range of 0 to 255, the following formulae provide the conversion from YUV to RGB (NTSC version):
+     *  R = clamp(( 298 \times C                + 409 \times E + 128) >> 8)
+     *  G = clamp(( 298 \times C - 100 \times D - 208 \times E + 128) >> 8)
+     *  B = clamp(( 298 \times C + 516 \times D                + 128) >> 8)
+     **/
+    static RGBColor FromYUV(uint8_t y, uint8_t u, uint8_t v)
+    {
+        int c = y - 16;
+        int d = u - 128;
+        int e = v - 128;
+
+        int r =  ((298 * c           + 409 * e + 128) >> 8);
+        int g =  ((298 * c - 100 * d - 208 * e + 128) >> 8);
+        int b =  ((298 * c + 516 * d           + 128) >> 8);
+
+        return RGBColor(r,g,b);
+    }
+
     static RGBColor Black()
     {
         return RGBColor(0, 0, 0);
@@ -271,6 +294,11 @@ public:
     static RGBColor Green()
     {
         return RGBColor(0, 255, 0);
+    }
+
+    static RGBColor Cyan()
+    {
+        return RGBColor(0, 255, 255);
     }
 
     static RGBColor Blue()

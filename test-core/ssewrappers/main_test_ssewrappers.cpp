@@ -338,6 +338,169 @@ void testExtendingRGBReader(void)
 }
 
 
+void testDoubleExtendingRGBReader(void)
+{
+    uint8_t data[8 * 8];
+    for (unsigned i = 0; i < 8; i++)
+    {
+        for (unsigned j = 0; j < 8; j++)
+        {
+            data[i * 8 + j] = (j * 10) + i;
+            cout << (int)data[i*8 + j] << " ";
+        }
+        cout << endl;
+    }
+    FixedVector<Int16x8,8> r = SSEReader8BBBBBBBB_DDDDDDDD::read((int64_t *)data);
+
+    for (unsigned i = 0; i < 8; i++)
+    {
+        int st = i * 10;
+        cout << r[i] << endl;
+//        r[i] = Int16x8(st, st + 1, st + 2, st + 3, st + 4, st + 5, st + 6, st + 7);
+    }
+
+    cout << "Input" << endl;
+    for (unsigned i = 0; i < 8; i++)
+    {
+        cout << r[i] << endl;
+    }
+
+
+    uint8_t outData[8 * 8];
+
+    SSEReader8BBBBBBBB_DDDDDDDD::write(r, (uint32_t *)outData);
+
+    cout << "Result written back" << endl;
+    for (unsigned i = 0; i < 8; i++)
+    {
+        for (unsigned j = 0; j < 8; j++)
+        {
+            cout << (int)outData[i*8 + j] << " ";
+//            ASSERT_TRUE_P(data[i*4 + j] == outData[i*4 + j], ("Error"));
+        }
+        cout << endl;
+    }
+    cout << "Finished" << endl;
+}
+
+
+void testDoubleExtendingRGBReader1(void)
+{
+    uint8_t data[8 * 8];
+    for (unsigned i = 0; i < 8; i++)
+    {
+        for (unsigned j = 0; j < 8; j++)
+        {
+            data[i * 8 + j] = (j * 10) + i;
+            cout << (int)data[i*8 + j] << " ";
+        }
+        cout << endl;
+    }
+
+    int64_t *ptr = (int64_t *)data;
+
+    /* Preparing 2 registers that contain...*/
+    /* | A0 B0 C0 D0  E0 F0 G0 H0 | A1 B1 C1 D1 E1 F1 G1 H1 | */
+    Int64x2 a(ptr      );
+    /* | A2 B2 C2 D2  E2 F2 G2 H2 | A3 B3 C3 D3 E3 F3 G3 H3 | */
+    Int64x2 b(ptr + 0x2);
+    /* | A4 B4 C4 D4  E4 F4 G4 H4 | A5 B5 C5 D5 E5 F5 G5 H5 | */
+    Int64x2 c(ptr + 0x4);
+    /* | A6 B6 C6 D6  E6 F6 G6 H6 | A7 B7 C7 D7 E7 F7 G7 H7 | */
+    Int64x2 d(ptr + 0x6);
+
+    cout << "a =" << Int8x16(a.data) << endl;
+    cout << "b =" << Int8x16(b.data) << endl;
+    cout << "c =" << Int8x16(c.data) << endl;
+    cout << "d =" << Int8x16(d.data) << endl;
+
+    cout << " " << endl;
+    Int64x2 e = Int32x4::unpackLower(Int32x4(a.data), Int32x4(b.data));
+    cout << "upackl =" << Int8x16(e.data) << endl;
+    Int64x2 g = Int32x4::unpackHigher(Int32x4(a.data), Int32x4(b.data));
+    cout << "upackh =" << Int8x16(g.data) << endl;
+    Int64x2 e1 = Int32x4::unpackLower(Int32x4(c.data), Int32x4(d.data));
+    cout << "upackl =" << Int8x16(e1.data) << endl;
+    Int64x2 g1 = Int32x4::unpackHigher(Int32x4(c.data), Int32x4(d.data));
+    cout << "upackh =" << Int8x16(g1.data) << endl;
+
+    cout << "interl 8" << endl;
+    Int16x8 u = Int8x16::unpackLower(Int8x16(e.data), Int8x16(g.data));
+    cout << "interl =" << Int8x16(u.data) << endl;
+    Int16x8 v = Int8x16::unpackHigher(Int8x16(e.data), Int8x16(g.data));
+    cout << "interh =" << Int8x16(v.data) << endl;
+    Int16x8 u1 = Int8x16::unpackLower(Int8x16(e1.data), Int8x16(g1.data));
+    cout << "interl =" << Int8x16(u1.data) << endl;
+    Int16x8 v1 = Int8x16::unpackHigher(Int8x16(e1.data), Int8x16(g1.data));
+    cout << "interh =" << Int8x16(v1.data) << endl;
+
+    cout << "unpack again" << endl;
+    Int64x2 k = Int32x4::unpackLower(Int32x4(u.data), Int32x4(v.data));
+    cout << "upackl =" << Int8x16(k.data) << endl;
+    Int64x2 l = Int32x4::unpackHigher(Int32x4(u.data), Int32x4(v.data));
+    cout << "upackh =" << Int8x16(l.data) << endl;
+    Int64x2 k1 = Int32x4::unpackLower(Int32x4(u1.data), Int32x4(v1.data));
+    cout << "upackl =" << Int8x16(k1.data) << endl;
+    Int64x2 l1 = Int32x4::unpackHigher(Int32x4(u1.data), Int32x4(v1.data));
+    cout << "upackh =" << Int8x16(l1.data) << endl;
+
+    cout << "interl 16" << endl;
+    Int32x4 s = Int16x8::unpackLower(Int16x8(k.data), Int16x8(l.data));
+    cout << "interl =" << Int8x16(s.data) << endl;
+    Int32x4 t = Int16x8::unpackHigher(Int16x8(k.data), Int16x8(l.data));
+    cout << "interh =" << Int8x16(t.data) << endl;
+    Int32x4 s1 = Int16x8::unpackLower(Int16x8(k1.data), Int16x8(l1.data));
+    cout << "interl =" << Int8x16(s1.data) << endl;
+    Int32x4 t1 = Int16x8::unpackHigher(Int16x8(k1.data), Int16x8(l1.data));
+    cout << "interh =" << Int8x16(t1.data) << endl;
+
+    cout << "interl 32" << endl;
+    Int64x2 x = Int32x4::unpackLower(Int32x4(s.data), Int32x4(s1.data));
+    cout << "interl =" << Int8x16(x.data) << endl;
+    Int64x2 y = Int32x4::unpackHigher(Int32x4(s.data), Int32x4(s1.data));
+    cout << "interh =" << Int8x16(y.data) << endl;
+    Int64x2 x1 = Int32x4::unpackLower(Int32x4(t.data), Int32x4(t1.data));
+    cout << "interl =" << Int8x16(x1.data) << endl;
+    Int64x2 y1 = Int32x4::unpackHigher(Int32x4(t.data), Int32x4(t1.data));
+    cout << "interh =" << Int8x16(y1.data) << endl;
+
+
+}
+
+void testPack(void)
+{
+    Int32x4 a((int32_t)0xA);
+    cout << "a =" << Int8x16(a.data) << endl;
+    Int32x4 b((int32_t)0xB);
+    cout << "b =" << Int8x16(b.data) << endl;
+
+    Int16x8 f((int16_t)0);
+    cout << "ppack =" << hex << Int8x16(f.data) << dec << endl;
+    f = Int16x8::pack(a, b);
+    cout << " pack =" << hex << Int8x16(f.data) << dec << endl;
+    cout << "Finished" << endl;
+}
+
+void testSelector(void)
+{
+    Int16x8 con8bit((int16_t)0xFF);
+    Int16x8 con0bit((int16_t)0x00);
+
+    Int16x8 a(256, 257, 2, 340, 1, 23, 45, 625);
+    cout << "input  " << a << endl;
+
+    a = SSEMath::selector(a > con8bit, con8bit, a);
+    cout << "cliptop" << a << endl;
+
+    Int16x8 b(-256, 257, -2, 340, 1, 23, -45, 625);
+    cout << "input  " << b << endl;
+    b = SSEMath::selector(b < con0bit, con0bit, b);
+    cout << "clipbottom" << b << endl;
+
+    cout << "Finished" << endl;
+}
+
+
 void testExtendingReader(void)
 {
     uint16_t data[2 * 8];
@@ -370,12 +533,61 @@ void testExtendingReader(void)
     cout << "Finished" << endl;
 }
 
+
+void test64bit()
+{
+    cout << "Testing 64 bit sse wrapper" << endl;
+    cout << "Testing 64 bit to 16bit" << endl;
+
+    Int64x2 l64(0xFF);
+    cout << "Lower byte in 64 bit" << l64 << endl;
+
+    UInt8x16 l8(l64.data);
+    cout << "Lower byte in 8 bit"  << l8 << endl;
+
+    Int64x2 l64back(l8.data);
+    cout << "Lower byte in 64 bit back" << l64back << endl;
+
+    Int64x2 l64backeq = Int64x2(l8.data);
+    cout << "Lower byte in 64 bit back =" << l64backeq << endl;
+
+    UInt8x16 a8(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16);
+    cout << "Test vector 8 bit"<< a8 << endl;
+
+    Int64x2 a64(a8.data);
+    cout << "Test vector 64 bit" << a64 << endl;
+
+    UInt8x16 a8back(a64.data);
+    cout << "Test vector back in 16 bit"<< a8back << endl;
+
+    Int64x2 a64l64 = a64 & l64;
+    cout << "And in 64 form presented in 64" << a64l64 << endl;
+
+    UInt8x16 a64l8 = UInt8x16(a64l64.data);
+    cout << "And in 64 form presented in 64" << a64l8 << endl;
+
+    UInt8x16 a8l8 = a8 & l8;
+    cout << "And in 8 form presented in 8" << a8l8 << endl;
+
+    /*UInt8x16 al16 = UInt8x16(al.data);
+    cout << al16 << endl;*/
+    cout << "Finished" << endl;
+}
+
+
 #endif
 
 int main (int /*argC*/, char ** /*argV*/)
 {
-
 #ifdef WITH_SSE
+    testSelector();
+    return 0;
+
+    //    testPack();
+//    testRGBReader();
+    //testDoubleExtendingRGBReader1();
+//    test64bit();
+    testDoubleExtendingRGBReader();
     testSignUnsign16 ( );
     testAdditionalFunctions();
     testRGBReader();

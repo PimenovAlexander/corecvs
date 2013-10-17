@@ -35,6 +35,11 @@ public:
         G12Buffer* image
     );
 
+    ImageResultLayer(
+        RGB24Buffer* image
+    );
+
+
     /** Polymorphic type so virtual destructor needed */
     virtual ~ImageResultLayer();
 

@@ -3,14 +3,18 @@
 # input1 parameter: $$OBJ_TESTS_DIR        - name of common intermediate dir for all UnitTests of the current project
 # input2 parameter: $$USE_CORE_PRI_FILE    - required core|core-res project file to include
 #
+
 # try use global config 
 exists(../../../config.pri) {
+    ROOT_DIR=../../..
     #message(Using global config)
-    include(../../../config.pri)
 } else { 
     message(Using local config)
-    include(../../config.pri)
+    ROOT_DIR=..
 }
+ROOT_DIR=$$PWD/$$ROOT_DIR
+message(Tests root dir is $$ROOT_DIR)
+include($$ROOT_DIR/config.pri)
 
 CONFIG += console
 
@@ -19,7 +23,7 @@ win32-msvc* {
     #CONFIG -= embed_manifest_exe
 }
 
-DESTDIR = ../../../../bin
+DESTDIR = $$ROOT_DIR/bin
 
 #macx {
 #    INCLUDEDIR = ../core
@@ -50,8 +54,8 @@ include($$USE_CORE_PRI_FILE)
 }
 
 win32 {
-    OBJECTS_DIR = ../../../../.obj/$$OBJ_TESTS_DIR/$$TARGET_ORIG/$$BUILD_CFG_NAME
+    OBJECTS_DIR = $$ROOT_DIR/.obj/$$OBJ_TESTS_DIR/$$TARGET_ORIG/$$BUILD_CFG_NAME
 } else {
-    OBJECTS_DIR = ../../../../.obj/$$OBJ_TESTS_DIR/$$TARGET_ORIG
+    OBJECTS_DIR = $$ROOT_DIR/.obj/$$OBJ_TESTS_DIR/$$TARGET_ORIG
 }
 MOC_DIR = $$OBJECTS_DIR                             # we have to set it to omit creating dummy dirs: debug,release

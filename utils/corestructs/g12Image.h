@@ -22,7 +22,7 @@ class G12Image : public QImage {
 public:
     G12Image(G12Buffer *buffer);
     G12Image(G12Buffer *buffer, int newH, int newW);
-    G12Image(G12Buffer *buffer, bool invert);
+    G12Image(G12Buffer *buffer, bool mirror);
 
 
     virtual ~G12Image();
@@ -30,7 +30,7 @@ public:
 
 class RGB24Image : public QImage{
 public:
-    RGB24Image(RGB24Buffer *buffer);
+    RGB24Image(RGB24Buffer *buffer, bool mirror = false);
     virtual ~RGB24Image();
 };
 
