@@ -26,14 +26,14 @@ win32 {
 
 HEADERS = \
     testbedMainWindow.h \
-    pointScene.h \
+#    pointScene.h \
 
           
 
 SOURCES = \
     testbedMainWindow.cpp \
     main_testbed.cpp \
-    pointScene.cpp \
+#    pointScene.cpp \
 
 FORMS = ui/testbedMainWindow.ui \
 
