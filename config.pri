@@ -1,4 +1,4 @@
-# Configuration of a build is determined by CONFIG variable, comment and uncomment
+# Cnfiguration of a build is determined by CONFIG variable, comment and uncomment
 # entries as needed. Configurations can be added from command line, like
 # qmake "CONFIG+=with_neon" cvs.pro
 
