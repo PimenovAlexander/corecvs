@@ -2,7 +2,6 @@
 # entries as needed. Configurations can be added from command line, like
 # qmake "CONFIG+=with_neon" cvs.pro
 
-
 # This is a common section, anyway everybody is changing config.pri after checkout
 
 # Open both lines to work with only one configuration that is chosen below.
