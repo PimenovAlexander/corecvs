@@ -90,7 +90,7 @@ FlowBuffer* FlowBuffer::load(const string& path)
     if (toReturn == NULL)
         return NULL;
 
-    if (!toReturn->AbstractBuffer::load(file, binaryMode)) {
+    if (!toReturn->FlowBufferBase::load(file, binaryMode)) {
         delete_safe(toReturn);
         return NULL;
     }
@@ -135,7 +135,7 @@ bool FlowBuffer::dump(const string& path) const
     if (!file)
         return false;
 
-    bool_t res = AbstractBuffer::dump(file, binaryMode);
+    bool_t res = FlowBufferBase::dump(file, binaryMode);
 
     if (res && !binaryMode)
     {

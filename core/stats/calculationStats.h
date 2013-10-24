@@ -178,7 +178,8 @@ public:
     virtual void addSingleStat(string name, const SingleStat &stat)
     {
         UnitedStat unitedStat;
-        typename map<string, UnitedStat>::iterator uit;
+        //typename map<string, UnitedStat>::iterator uit;
+        map<string, UnitedStat>::iterator uit;
         uit = sumValues.find(name);
         if (uit != sumValues.end())
         {
@@ -204,7 +205,8 @@ public:
 
     virtual int maximumCaptionLength() const
     {
-        typename StatsMap::const_iterator uit;
+        //typename StatsMap::const_iterator uit;
+        StatsMap::const_iterator uit;
         int maxCaptionLen = 0;
         for (uit = this->sumValues.begin(); uit != this->sumValues.end(); ++uit )
         {

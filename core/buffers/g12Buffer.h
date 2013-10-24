@@ -83,7 +83,7 @@ public:
     /** Fills the buffer by random values within the given range */
     void fillWithRands(int valueMax = BUFFER_MAX_VALUE, int valueMin = 0)
     {
-        AbstractBuffer::fillWithRands(valueMax, valueMin);
+        G12BufferBase::fillWithRands(valueMax, valueMin);
     }
 
     /** Safe assignment of this buffer by the content from the given one */
