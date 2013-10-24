@@ -180,8 +180,8 @@ public:
 
     virtual void operator()(const double in[], double out[])
     {
-        double tmpOut[F->outputs];
-        F->operator ()(in, tmpOut);
+        vector<double> tmpOut(F->outputs);
+        F->operator ()(in, &tmpOut[0]);
         out[0] = 0.0;
         for (int i = 0; i < F->outputs; i++) {
             out[0] += tmpOut[i] * tmpOut[i];

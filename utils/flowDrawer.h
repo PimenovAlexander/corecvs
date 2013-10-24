@@ -12,7 +12,7 @@ enum DrawMode {
     drawDotsFastBig,
     drawLines,
     drawLongLinesOnly,
-    drawLinesAndDots,
+    drawLinesAndDots
 };
 
 

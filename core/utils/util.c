@@ -103,10 +103,10 @@ void stackTraceHandler(int sig)
     void *array[10];
     size_t size;
 
-    // get void*'s for all entries on the stack
+    /* get void*'s for all entries on the stack */
     size = backtrace(array, CORE_COUNT_OF(array));
 
-    // print out all the frames to stderr
+    /* print out all the frames to stderr */
     fprintf(stderr, "Error: signal %d:\n", sig);
     backtrace_symbols_fd(array, size, 2);
     exit(1);
