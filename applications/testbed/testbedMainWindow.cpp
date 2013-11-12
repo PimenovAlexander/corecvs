@@ -46,6 +46,7 @@ void TestbedMainWindow::connectActions()
 
     connect(mUi -> actionAdd, SIGNAL(triggered()), this, SLOT(addElementToCollection()));
     connect(mUi -> mWidgetList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(on_listWidget_itemDoubleClicked(QListWidgetItem*)));
+    connect(mUi -> actionClear, SIGNAL(triggered()), this, SLOT(ClearCollection()));
 }
 
 
@@ -328,6 +329,25 @@ void TestbedMainWindow::addElementToCollection() {
 
     QListWidgetItem *item = new QListWidgetItem(QIcon(filename),name,mUi -> mWidgetList,0);
     item -> setData(Qt::UserRole, QVariant(filename));
+}
+void TestbedMainWindow::ClearCollection() {
+
+    mUi -> mWidgetList -> clear();
+    /*QString filename = QFileDialog::getOpenFileName(
+        this,
+        "Choose an file name",
+        ".",
+        "Text (*.bmp *.jpg *.png *.gif)"
+    );
+    QImage *qImage = new QImage(filename);
+    if (qImage == NULL) {
+        return;
+    }
+
+    QString name = filename.section('/', -1);
+
+    QListWidgetItem *item = new QListWidgetItem(QIcon(filename),name,mUi -> mWidgetList,0);
+    item -> setData(Qt::UserRole, QVariant(filename));*/
 }
 
 

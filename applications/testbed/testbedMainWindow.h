@@ -44,6 +44,7 @@ public slots:
     void recursiveTolerance(RGBColor startColor, int tolerance, int x, int y);
 
     void addImageToCollection();
+    void ClearCollection();
 public:
     RGB24Buffer *mImage;
     G8Buffer *mMask;

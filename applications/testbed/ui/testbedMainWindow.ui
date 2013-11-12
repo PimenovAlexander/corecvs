@@ -313,6 +313,9 @@
      <string>AwC</string>
     </property>
     <addaction name="actionAdd"/>
+    <addaction name="separator"/>
+    <addaction name="separator"/>
+    <addaction name="actionClear"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSelection"/>
@@ -365,6 +368,11 @@
   <action name="actionAdd">
    <property name="text">
     <string>Add</string>
+   </property>
+  </action>
+  <action name="actionClear">
+   <property name="text">
+    <string>Clear</string>
    </property>
   </action>
  </widget>
