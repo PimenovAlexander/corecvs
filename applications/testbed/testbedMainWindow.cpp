@@ -5,8 +5,7 @@
 #include "../../utils/fileformats/qtFileLoader.h"
 #include "../../utils/corestructs/g12Image.h"
 #include "../../core/buffers/rgb24/abstractPainter.h"
-
-
+#include <iostream>
 TestbedMainWindow::TestbedMainWindow(QWidget *parent)
     : QMainWindow(parent)
     , mUi(new Ui::TestbedMainWindowClass)
@@ -17,8 +16,8 @@ TestbedMainWindow::TestbedMainWindow(QWidget *parent)
     mUi->setupUi(this);
 
     mImageWidget = new AdvancedImageWidget(this);
-	setCentralWidget(mImageWidget);
-	mImageWidget->addPointTool(0, QString("Select point"), QIcon(":/new/prefix1/lightning.png"));
+    setCentralWidget(mImageWidget);
+    mImageWidget->addPointTool(0, QString("Select point"), QIcon(":/new/prefix1/lightning.png"));
     showMaximized();
     setWindowTitle("Testbed");
     connectActions();
@@ -45,7 +44,8 @@ void TestbedMainWindow::connectActions()
     connect(mUi->maskColorWidget,  SIGNAL(valueChanged()), this, SLOT(updateViewImage()));
     connect(mUi->showEdgeCheckBox, SIGNAL(toggled(bool)), this, SLOT(updateViewImage()));
 
-
+    connect(mUi -> actionAdd, SIGNAL(triggered()), this, SLOT(addElementToCollection()));
+    connect(mUi -> mWidgetList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(on_listWidget_itemDoubleClicked(QListWidgetItem*)));
 }
 
 
@@ -80,6 +80,9 @@ void TestbedMainWindow::loadImage(void)
     delete_safe(qImage);
     updateViewImage();
 }
+
+
+void TestbedMainWindow::addImageToCollection() { }
 
 void TestbedMainWindow::toggleMask(void)
 {
@@ -292,3 +295,39 @@ TestbedMainWindow::~TestbedMainWindow()
     delete_safe(mImageWidget);
     delete_safe(mUi);
 }
+
+
+void TestbedMainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
+{
+    QVariant filename = item -> data(Qt::UserRole);
+    QImage *qImage = new QImage(filename.toString());
+    delete_safe(mImage);
+    delete_safe(mMask);
+    mImage = QTFileLoader::RGB24BufferFromQImage(qImage);
+    mMask = new G8Buffer(mImage->getSize());
+    AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
+
+    delete_safe(qImage);
+    updateViewImage();
+}
+
+
+void TestbedMainWindow::addElementToCollection() {
+    QString filename = QFileDialog::getOpenFileName(
+        this,
+        "Choose an file name",
+        ".",
+        "Text (*.bmp *.jpg *.png *.gif)"
+    );
+    QImage *qImage = new QImage(filename);
+    if (qImage == NULL) {
+        return;
+    }
+
+    QString name = filename.section('/', -1);
+
+    QListWidgetItem *item = new QListWidgetItem(QIcon(filename),name,mUi -> mWidgetList,0);
+    item -> setData(Qt::UserRole, QVariant(filename));
+}
+
+

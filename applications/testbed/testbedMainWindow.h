@@ -6,7 +6,7 @@
 #include "ui_testbedMainWindow.h"
 #include "advancedImageWidget.h"
 #include "rgb24Buffer.h"
-
+#include <QListWidget>
 using corecvs::RGB24Buffer;
 using std::deque;
 
@@ -26,7 +26,7 @@ private:
     Ui::TestbedMainWindowClass *mUi;
 
     AdvancedImageWidget *mImageWidget;
-
+    QListWidget mListWidget;
 /* Move this out */
 
 public slots:
@@ -43,12 +43,15 @@ public slots:
     void maskTolerance1(QPoint point);
     void recursiveTolerance(RGBColor startColor, int tolerance, int x, int y);
 
-
+    void addImageToCollection();
 public:
     RGB24Buffer *mImage;
     G8Buffer *mMask;
     bool mMaskChange;
     deque<G8Buffer *> mUndoList;
+private slots:
+    void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
+    void addElementToCollection();
 };
 
 #endif // TESTBEDMAINWINDOW_H
