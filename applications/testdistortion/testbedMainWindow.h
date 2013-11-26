@@ -3,6 +3,10 @@
 
 #include <deque>
 #include <QtGui/QMainWindow>
+
+
+#include "distortioncorrector/distortionWidget.h"
+
 #include "ui_testbedMainWindow.h"
 #include "advancedImageWidget.h"
 #include "rgb24Buffer.h"
@@ -26,7 +30,7 @@ private:
     Ui::TestbedMainWindowClass *mUi;
 
     AdvancedImageWidget *mImageWidget;
-
+    DistortionWidget *mDistrtionWidget;
 /* Move this out */
 
 public slots:
@@ -37,6 +41,7 @@ public slots:
     void toggleMask(void);
     void resetMask(void);
     void undoMask(void);
+    void openDistortionWindow(void);
 
     void maskHue(int hue1, int hue2);
     void maskTolerance(QPoint point);

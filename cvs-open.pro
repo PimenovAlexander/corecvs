@@ -9,6 +9,7 @@ SUBDIRS +=                   \
     base_application_example \    
     recorder                 \
     testbed                  \
+    testdistortion           \
     
 
 win32 {
@@ -43,4 +44,4 @@ base_application_example.file = applications/base/baseApplicationExample.pro
 recorder.file                 = applications/recorder/recorder.pro
 testbed.file                  = applications/testbed/testbed.pro
 generator.file                = tools/generator/generator.pro
-
+testdistortion.file           = applications/testdistortion/testdistortion.pro

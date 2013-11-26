@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>27</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -42,8 +42,8 @@
   <widget class="QDockWidget" name="parametersWidget">
    <property name="minimumSize">
     <size>
-     <width>275</width>
-     <height>408</height>
+     <width>276</width>
+     <height>415</height>
     </size>
    </property>
    <property name="features">
@@ -150,7 +150,16 @@
         <string>Presentation</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
-        <property name="margin">
+        <property name="leftMargin">
+         <number>3</number>
+        </property>
+        <property name="topMargin">
+         <number>3</number>
+        </property>
+        <property name="rightMargin">
+         <number>3</number>
+        </property>
+        <property name="bottomMargin">
          <number>3</number>
         </property>
         <item row="0" column="1">
@@ -199,7 +208,16 @@
         <string>Postprocess</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_3">
-        <property name="margin">
+        <property name="leftMargin">
+         <number>3</number>
+        </property>
+        <property name="topMargin">
+         <number>3</number>
+        </property>
+        <property name="rightMargin">
+         <number>3</number>
+        </property>
+        <property name="bottomMargin">
          <number>3</number>
         </property>
         <item row="0" column="0">
@@ -276,6 +294,7 @@
    <addaction name="actionShowMask"/>
    <addaction name="separator"/>
    <addaction name="actionUndoMask"/>
+   <addaction name="actionDistortionCorrection"/>
   </widget>
   <widget class="QDockWidget" name="logWidget_2">
    <property name="features">
@@ -291,7 +310,7 @@
   </widget>
   <action name="actionOpen">
    <property name="icon">
-    <iconset>
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/remove.png</normaloff>:/new/prefix1/remove.png</iconset>
    </property>
    <property name="text">
@@ -305,7 +324,7 @@
   </action>
   <action name="actionResetMask">
    <property name="icon">
-    <iconset>
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/bullet_blue.png</normaloff>:/new/prefix1/bullet_blue.png</iconset>
    </property>
    <property name="text">
@@ -317,7 +336,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset>
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/select.png</normaloff>:/new/prefix1/select.png</iconset>
    </property>
    <property name="text">
@@ -326,11 +345,20 @@
   </action>
   <action name="actionUndoMask">
    <property name="icon">
-    <iconset>
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/back_alt.png</normaloff>:/new/prefix1/back_alt.png</iconset>
    </property>
    <property name="text">
     <string>Undo Mask</string>
+   </property>
+  </action>
+  <action name="actionDistortionCorrection">
+   <property name="icon">
+    <iconset resource="../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/sphere.png</normaloff>:/new/prefix1/sphere.png</iconset>
+   </property>
+   <property name="text">
+    <string>Distortion correction</string>
    </property>
   </action>
  </widget>
@@ -342,6 +370,10 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../../../resources/main.qrc"/>
+  <include location="../../../resources/main.qrc"/>
+  <include location="../../../resources/main.qrc"/>
+  <include location="../../../resources/main.qrc"/>
   <include location="../../../resources/main.qrc"/>
  </resources>
  <connections/>

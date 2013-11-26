@@ -9,7 +9,7 @@ ROOT_DIR=$$PWD/$$ROOT_DIR
 include($$ROOT_DIR/config.pri)
 
 QT += xml
-TARGET   = testbed
+TARGET   = testdistortion
 TEMPLATE = app
 
 #OBJECTS_DIR = $$ROOT_DIR/.obj

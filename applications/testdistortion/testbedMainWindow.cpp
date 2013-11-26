@@ -11,14 +11,18 @@ TestbedMainWindow::TestbedMainWindow(QWidget *parent)
     : QMainWindow(parent)
     , mUi(new Ui::TestbedMainWindowClass)
     , mImageWidget(NULL)
+    , mDistrtionWidget(NULL)
     , mImage(NULL)
     , mMask(NULL)
 {
     mUi->setupUi(this);
 
     mImageWidget = new AdvancedImageWidget(this);
-	setCentralWidget(mImageWidget);
-	mImageWidget->addPointTool(0, QString("Select point"), QIcon(":/new/prefix1/lightning.png"));
+    setCentralWidget(mImageWidget);
+
+    mDistrtionWidget = new DistortionWidget();
+
+    mImageWidget->addPointTool(0, QString("Select point"), QIcon(":/new/prefix1/lightning.png"));
     showMaximized();
     setWindowTitle("Testbed");
     connectActions();
@@ -45,6 +49,8 @@ void TestbedMainWindow::connectActions()
     connect(mUi->maskColorWidget,  SIGNAL(valueChanged()), this, SLOT(updateViewImage()));
     connect(mUi->showEdgeCheckBox, SIGNAL(toggled(bool)), this, SLOT(updateViewImage()));
 
+    connect(mUi->actionDistortionCorrection, SIGNAL(triggered(bool)), this, SLOT(openDistortionWindow()));
+
 
 }
 
@@ -68,7 +74,8 @@ void TestbedMainWindow::loadImage(void)
         "Text (*.bmp *.jpg *.png *.gif)"
     );
     QImage *qImage = new QImage(filename);
-    if (qImage == NULL) {
+    if (qImage == NULL)
+    {
         return;
     }
     delete_safe(mImage);
@@ -98,6 +105,17 @@ void TestbedMainWindow::resetMask(void)
     updateViewImage();
 }
 
+void TestbedMainWindow::openDistortionWindow(void)
+{
+    mDistrtionWidget->show();
+    mDistrtionWidget->raise();
+
+    if (mImage != NULL)
+    {
+        mDistrtionWidget->setBuffer(mImage->toG12Buffer());
+    }
+}
+
 void TestbedMainWindow::undoMask(void)
 {
     if (mUndoList.empty()) {
@@ -123,8 +141,8 @@ void TestbedMainWindow::updateViewImage(void)
         {
             for (int j = 0; j < toDraw->w; j++)
             {
-                bool hasmask = false;
-                bool hasnomask = false;
+                bool hasMask = false;
+                bool hasNoMask = false;
                 /* so far no optimization here */
                 if (mUi->showEdgeCheckBox->isChecked()) {
                     for (int dx = -1; dx <= 1; dx++)
@@ -134,20 +152,20 @@ void TestbedMainWindow::updateViewImage(void)
                             if (!mMask->isValidCoord(i + dy, j + dx))
                                 continue;
                             if (mMask->element(i + dy, j + dx)) {
-                                hasmask = true;
+                                hasMask = true;
                             } else {
-                                hasnomask = true;
+                                hasNoMask = true;
                             }
                         }
                     }
                 }
 
                 if (mMask->element(i,j)) {
-                    if (hasmask && hasnomask) {
-                        toDraw->element(i,j) = maskColor;
+                    if (hasMask && hasNoMask) {
+                        toDraw->element(i, j) = maskColor;
                     } else {
-                        toDraw->element(i,j).r() += (maskColor.r() - toDraw->element(i,j).r()) * alpha;
-                        toDraw->element(i,j).g() += (maskColor.g() - toDraw->element(i,j).g()) * alpha;
+                        toDraw->element(i, j).r() += (maskColor.r() - toDraw->element(i,j).r()) * alpha;
+                        toDraw->element(i, j).g() += (maskColor.g() - toDraw->element(i,j).g()) * alpha;
                         toDraw->element(i,j).b() += (maskColor.b() - toDraw->element(i,j).b()) * alpha;
                     }
                 }
