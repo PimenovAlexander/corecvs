@@ -1,32 +1,31 @@
-#ifndef TESTBEDMAINWINDOW_H
-#define TESTBEDMAINWINDOW_H
+#ifndef TESTSUPERRESOLUTIONMAINWINDOW_H
+#define TESTSUPERRESOLUTIONMAINWINDOW_H
 
 #include <deque>
 #include <QtGui/QMainWindow>
-#include "ui_testbedMainWindow.h"
+#include "ui_testSuperResolutionMainWindow.h"
 #include "advancedImageWidget.h"
 #include "rgb24Buffer.h"
-
+#include <QListWidget>
 using corecvs::RGB24Buffer;
 using std::deque;
 
-class TestbedMainWindow : public QMainWindow
+class TestSuperResolutionMainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    TestbedMainWindow(QWidget *parent = 0);
-    ~TestbedMainWindow();
+    TestSuperResolutionMainWindow(QWidget *parent = 0);
+    ~TestSuperResolutionMainWindow();
 
     void closeEvent(QCloseEvent *event);
     void keyPressEvent(QKeyEvent * event);
 
 private:
     void connectActions();
-    Ui::TestbedMainWindowClass *mUi;
+    Ui::TestSuperResolutionMainWindowClass *mUi;
 
     AdvancedImageWidget *mImageWidget;
-
 /* Move this out */
 
 public slots:
@@ -43,12 +42,16 @@ public slots:
     void maskTolerance1(QPoint point);
     void recursiveTolerance(RGBColor startColor, int tolerance, int x, int y);
 
-
+    void addImageToCollection();
+    void ClearCollection();
 public:
     RGB24Buffer *mImage;
     G8Buffer *mMask;
     bool mMaskChange;
     deque<G8Buffer *> mUndoList;
+private slots:
+    void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
+    void addElementToCollection();
 };
 
-#endif // TESTBEDMAINWINDOW_H
+#endif // TESTSUPERRESOLUTIONMAINWINDOW_H

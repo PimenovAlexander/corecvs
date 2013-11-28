@@ -9,6 +9,7 @@ SUBDIRS +=                   \
     base_application_example \    
     recorder                 \
     testbed                  \
+    testSuperResolution
     
 
 win32 {
@@ -42,5 +43,6 @@ base_application.file         = applications/base/baseApplication.pro
 base_application_example.file = applications/base/baseApplicationExample.pro
 recorder.file                 = applications/recorder/recorder.pro
 testbed.file                  = applications/testbed/testbed.pro
+testSuperResolution.file      = applications/testSuperResolution/testSuperResolution.pro
 generator.file                = tools/generator/generator.pro
 

@@ -1,15 +1,14 @@
 #include <QtGui/QWheelEvent>
 
-#include "testbedMainWindow.h"
+#include "testSuperResolutionMainWindow.h"
 #include "advancedImageWidget.h"
 #include "../../utils/fileformats/qtFileLoader.h"
 #include "../../utils/corestructs/g12Image.h"
 #include "../../core/buffers/rgb24/abstractPainter.h"
-
-
-TestbedMainWindow::TestbedMainWindow(QWidget *parent)
+#include <iostream>
+TestSuperResolutionMainWindow::TestSuperResolutionMainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , mUi(new Ui::TestbedMainWindowClass)
+    , mUi(new Ui::TestSuperResolutionMainWindowClass)
     , mImageWidget(NULL)
     , mImage(NULL)
     , mMask(NULL)
@@ -17,22 +16,22 @@ TestbedMainWindow::TestbedMainWindow(QWidget *parent)
     mUi->setupUi(this);
 
     mImageWidget = new AdvancedImageWidget(this);
-	setCentralWidget(mImageWidget);
-	mImageWidget->addPointTool(0, QString("Select point"), QIcon(":/new/prefix1/lightning.png"));
+    setCentralWidget(mImageWidget);
+    mImageWidget->addPointTool(0, QString("Select point"), QIcon(":/new/prefix1/lightning.png"));
     showMaximized();
-    setWindowTitle("Testbed");
+    setWindowTitle("TestSuperResolution");
     connectActions();
 }
 
 
-void TestbedMainWindow::closeEvent(QCloseEvent *event)
+void TestSuperResolutionMainWindow::closeEvent(QCloseEvent *event)
 {
     Q_UNUSED(event)
     qApp->quit();
 }
 
 
-void TestbedMainWindow::connectActions()
+void TestSuperResolutionMainWindow::connectActions()
 {
     connect(mUi->actionOpen, SIGNAL(triggered()), this, SLOT(loadImage()));
     connect(mImageWidget,    SIGNAL(newPointSelected(int, QPoint)), this, SLOT(pointSelected(int, QPoint)));
@@ -45,11 +44,13 @@ void TestbedMainWindow::connectActions()
     connect(mUi->maskColorWidget,  SIGNAL(valueChanged()), this, SLOT(updateViewImage()));
     connect(mUi->showEdgeCheckBox, SIGNAL(toggled(bool)), this, SLOT(updateViewImage()));
 
-
+    connect(mUi -> actionAdd, SIGNAL(triggered()), this, SLOT(addElementToCollection()));
+    connect(mUi -> mWidgetList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(on_listWidget_itemDoubleClicked(QListWidgetItem*)));
+    connect(mUi -> actionClear, SIGNAL(triggered()), this, SLOT(ClearCollection()));
 }
 
 
-void TestbedMainWindow::keyPressEvent(QKeyEvent * event)
+void TestSuperResolutionMainWindow::keyPressEvent(QKeyEvent * event)
 {
     if (event->modifiers() == Qt::AltModifier && event->key() == Qt::Key_X)
     {
@@ -59,7 +60,7 @@ void TestbedMainWindow::keyPressEvent(QKeyEvent * event)
     event->ignore();
 }
 
-void TestbedMainWindow::loadImage(void)
+void TestSuperResolutionMainWindow::loadImage(void)
 {
     QString filename = QFileDialog::getOpenFileName(
         this,
@@ -81,12 +82,15 @@ void TestbedMainWindow::loadImage(void)
     updateViewImage();
 }
 
-void TestbedMainWindow::toggleMask(void)
+
+void TestSuperResolutionMainWindow::addImageToCollection() { }
+
+void TestSuperResolutionMainWindow::toggleMask(void)
 {
     updateViewImage();
 }
 
-void TestbedMainWindow::resetMask(void)
+void TestSuperResolutionMainWindow::resetMask(void)
 {
     mUndoList.push_back(mMask);
     if (mUndoList.size() > 20) {
@@ -98,7 +102,7 @@ void TestbedMainWindow::resetMask(void)
     updateViewImage();
 }
 
-void TestbedMainWindow::undoMask(void)
+void TestSuperResolutionMainWindow::undoMask(void)
 {
     if (mUndoList.empty()) {
         return;
@@ -112,7 +116,7 @@ void TestbedMainWindow::undoMask(void)
 
 vector<G8Buffer *> mUndoList;
 
-void TestbedMainWindow::updateViewImage(void)
+void TestSuperResolutionMainWindow::updateViewImage(void)
 {
     RGB24Buffer *toDraw = new RGB24Buffer(mImage);
     RGBColor maskColor = mUi->maskColorWidget->getColor();
@@ -161,7 +165,7 @@ void TestbedMainWindow::updateViewImage(void)
 }
 
 
-void TestbedMainWindow::maskHue(int hue1, int hue2)
+void TestSuperResolutionMainWindow::maskHue(int hue1, int hue2)
 {
     for (int i = 0; i < mImage->h; i++)
     {
@@ -214,7 +218,7 @@ public:
 
 };
 
-void TestbedMainWindow::recursiveTolerance(RGBColor startColor, int tolerance, int x, int y)
+void TestSuperResolutionMainWindow::recursiveTolerance(RGBColor startColor, int tolerance, int x, int y)
 {
     if (!mMask->isValidCoord(y,x))
         return;
@@ -237,7 +241,7 @@ void TestbedMainWindow::recursiveTolerance(RGBColor startColor, int tolerance, i
     recursiveTolerance(startColor, tolerance, x    , y - 1);
 }
 
-void TestbedMainWindow::maskTolerance(QPoint point)
+void TestSuperResolutionMainWindow::maskTolerance(QPoint point)
 {
     int x = point.x();
     int y = point.y();
@@ -249,7 +253,7 @@ void TestbedMainWindow::maskTolerance(QPoint point)
     recursiveTolerance(currentColor, mUi->toleranceSpinBox->value(), x, y);
 }
 
-void TestbedMainWindow::maskTolerance1(QPoint point)
+void TestSuperResolutionMainWindow::maskTolerance1(QPoint point)
 {
     int x = point.x();
     int y = point.y();
@@ -263,7 +267,7 @@ void TestbedMainWindow::maskTolerance1(QPoint point)
     painter.floodFill(x,y, predicate);
 }
 
-void TestbedMainWindow::pointSelected(int toolID, QPoint point)
+void TestSuperResolutionMainWindow::pointSelected(int toolID, QPoint point)
 {
     qDebug() << "Point Selected" << point;
     mUndoList.push_back(new G8Buffer(mMask));
@@ -287,8 +291,64 @@ void TestbedMainWindow::pointSelected(int toolID, QPoint point)
     updateViewImage();
 }
 
-TestbedMainWindow::~TestbedMainWindow()
+TestSuperResolutionMainWindow::~TestSuperResolutionMainWindow()
 {
     delete_safe(mImageWidget);
     delete_safe(mUi);
 }
+
+
+void TestSuperResolutionMainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
+{
+    QVariant filename = item -> data(Qt::UserRole);
+    QImage *qImage = new QImage(filename.toString());
+    delete_safe(mImage);
+    delete_safe(mMask);
+    mImage = QTFileLoader::RGB24BufferFromQImage(qImage);
+    mMask = new G8Buffer(mImage->getSize());
+    AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
+
+    delete_safe(qImage);
+    updateViewImage();
+}
+
+
+void TestSuperResolutionMainWindow::addElementToCollection() {
+    QString filename = QFileDialog::getOpenFileName(
+        this,
+        "Choose an file name",
+        ".",
+        "Text (*.bmp *.jpg *.png *.gif)"
+    );
+    QImage *qImage = new QImage(filename);
+    if (qImage == NULL) {
+        return;
+    }
+
+    QString name = filename.section('/', -1);
+
+    QListWidgetItem *item = new QListWidgetItem(QIcon(filename),name,mUi -> mWidgetList,0);
+    item -> setData(Qt::UserRole, QVariant(filename));
+}
+void TestSuperResolutionMainWindow::ClearCollection() {
+
+    mUi -> mWidgetList -> clear();
+    /*QString filename = QFileDialog::getOpenFileName(
+        this,
+        "Choose an file name",
+        ".",
+        "Text (*.bmp *.jpg *.png *.gif)"
+    );
+    QImage *qImage = new QImage(filename);
+    if (qImage == NULL) {
+        return;
+    }
+
+    QString name = filename.section('/', -1);
+
+    QListWidgetItem *item = new QListWidgetItem(QIcon(filename),name,mUi -> mWidgetList,0);
+    item -> setData(Qt::UserRole, QVariant(filename));*/
+}
+
+
+

@@ -9,7 +9,7 @@ ROOT_DIR=$$PWD/$$ROOT_DIR
 include($$ROOT_DIR/config.pri)
 
 QT += xml
-TARGET   = testbed
+TARGET   = testSuperResolution
 TEMPLATE = app
 
 #OBJECTS_DIR = $$ROOT_DIR/.obj
@@ -25,16 +25,16 @@ win32 {
 }
 
 HEADERS = \
-    testbedMainWindow.h \
+    testSuperResolutionMainWindow.h \
 #    pointScene.h \
 
 
 
 SOURCES = \
-    testbedMainWindow.cpp \
-    main_testbed.cpp \
+    testSuperResolutionMainWindow.cpp \
+    main_testSuperResolution.cpp \
 #    pointScene.cpp \
 
-FORMS = ui/testbedMainWindow.ui \
+FORMS = ui/testSuperResolutionMainWindow.ui \
 
 RESOURCES += ../../resources/main.qrc
