@@ -1,5 +1,4 @@
 #include <QtGui/QApplication>
-#include "widget.h"
 
 #include "cloudViewDialog.h"
 #include "triangulator.h"
@@ -28,6 +27,8 @@ int main(int argc, char *argv[])
 	Mesh3DScene *mesh = new Mesh3DScene;
 	mesh->addSphere(Vector3dd(0, 0, 0), 10, 1000);
 
+	RectificationResult result;
+
 	QSharedPointer<Scene3D> sc = QSharedPointer<Scene3D>( new StereoReconstructedScene(im) );
 
     qDebug() << "try";
@@ -37,5 +38,5 @@ int main(int argc, char *argv[])
 
     w.show();
     
-    return a.exec();
+	return a.exec();
 }
