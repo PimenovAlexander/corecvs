@@ -317,9 +317,16 @@
     <addaction name="separator"/>
     <addaction name="actionClear"/>
    </widget>
+   <widget class="QMenu" name="menuResampling">
+    <property name="title">
+     <string>Resampling</string>
+    </property>
+    <addaction name="actionResample_current_picture"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSelection"/>
    <addaction name="menuAwC"/>
+   <addaction name="menuResampling"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -373,6 +380,11 @@
   <action name="actionClear">
    <property name="text">
     <string>Clear</string>
+   </property>
+  </action>
+  <action name="actionResample_current_picture">
+   <property name="text">
+    <string>Resample current picture</string>
    </property>
   </action>
  </widget>

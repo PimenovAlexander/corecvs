@@ -5,6 +5,7 @@
 #include "../../utils/fileformats/qtFileLoader.h"
 #include "../../utils/corestructs/g12Image.h"
 #include "../../core/buffers/rgb24/abstractPainter.h"
+#include "resamples.h"
 #include <iostream>
 TestSuperResolutionMainWindow::TestSuperResolutionMainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -47,6 +48,8 @@ void TestSuperResolutionMainWindow::connectActions()
     connect(mUi -> actionAdd, SIGNAL(triggered()), this, SLOT(addElementToCollection()));
     connect(mUi -> mWidgetList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(on_listWidget_itemDoubleClicked(QListWidgetItem*)));
     connect(mUi -> actionClear, SIGNAL(triggered()), this, SLOT(ClearCollection()));
+
+    connect(mUi -> actionResample_current_picture, SIGNAL(triggered()), this, SLOT(resample()));
 }
 
 
@@ -72,9 +75,11 @@ void TestSuperResolutionMainWindow::loadImage(void)
     if (qImage == NULL) {
         return;
     }
+
     delete_safe(mImage);
     delete_safe(mMask);
     mImage = QTFileLoader::RGB24BufferFromQImage(qImage);
+
     mMask = new G8Buffer(mImage->getSize());
     AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
 
@@ -351,4 +356,13 @@ void TestSuperResolutionMainWindow::ClearCollection() {
 }
 
 
+void TestSuperResolutionMainWindow::resample() {
+    RGB24Buffer *result = nearestNeighbourVersion2(mImage);
+    delete_safe(mImage);
+    delete_safe(mMask);
+    mImage = result;
+    mMask = new G8Buffer(mImage->getSize());
+    AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
 
+    updateViewImage();
+}
