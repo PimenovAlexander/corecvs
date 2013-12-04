@@ -6,6 +6,8 @@
 #include "mathUtils.h"      // M_PI
 #include "mesh3d.h"
 
+#include <QDebug>
+
 namespace corecvs {
 
 void Mesh3D::addAOB(Vector3dd c1, Vector3dd c2)
@@ -70,6 +72,8 @@ void Mesh3D::addSphere(Vector3dd center, double radius, int step)
     double dphy =     M_PI / (step + 1);
     double dpsi = 2 * M_PI / (step + 1);
 
+	int counter = 0;
+
     for (int i = 0; i < step; i++)
     {
         for (int j = 0; j < step; j++)
@@ -81,8 +85,39 @@ void Mesh3D::addSphere(Vector3dd center, double radius, int step)
             double y = radius * sin(phi) * cos(psi);
             double z = radius * cos(phi);
             vertexes.push_back(center + Vector3dd(x,y,z));
+			faces.push_back(Vector3d32(i, j, counter));
+
+			counter++;
         }
     }
+}
+
+void Mesh3D::addEllipsoid(Vector3dd center, Vector3dd radiuses, int step)
+{
+	int vectorIndex = (int)vertexes.size();
+	Vector3d32 startId(vectorIndex, vectorIndex, vectorIndex);
+
+	double dphy =     M_PI / (step + 1);
+	double dpsi = 2 * M_PI / (step + 1);
+
+	int counter = 0;
+
+	for (int i = 0; i < step; i++)
+	{
+		for (int j = 0; j < step; j++)
+		{
+			double phi = dphy * i;
+			double psi = dpsi * j;
+
+			double x = radiuses.x() * sin(phi) * sin(psi);
+			double y = radiuses.y() * sin(phi) * cos(psi);
+			double z = radiuses.z() * cos(phi);
+			vertexes.push_back(center + Vector3dd(x,y,z));
+			faces.push_back(Vector3d32(i, j, counter));
+
+			counter++;
+		}
+	}
 }
 
 #if 0

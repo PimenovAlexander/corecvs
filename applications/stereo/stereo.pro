@@ -30,9 +30,9 @@ TARGET = stereo
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-        widget.cpp \
-    stereoReconstructedScene.cpp
+SOURCES += main.cpp \
+    stereoReconstructedScene.cpp \
+    sphereReconstructed.cpp
 
-HEADERS  += widget.h \
-    stereoReconstructedScene.h
+HEADERS  += stereoReconstructedScene.h \
+    sphereReconstructed.h

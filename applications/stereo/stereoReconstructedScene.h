@@ -7,14 +7,17 @@ class StereoReconstructedScene : public Mesh3DScene
 {
 public:
 	StereoReconstructedScene(DepthBuffer* buffer
-			, const int& hScale = 1
-			, const int& wScale = 1
-			, const int& dScale = 1);
+			, const double& hScale = 1
+			, const double& wScale = 1
+			, const double& dScale = 1);
 
 	StereoReconstructedScene(QImage image
-			, const int& hScale = 1
-			, const int& wScale = 1
-			, const int& dScale = 1);
+			, const double& hScale = 1
+			, const double& wScale = 1
+			, const double& dScale = 1);
+
+	corecvs::Vector3dd radius;
+	corecvs::Vector3dd center;
 };
 
 #endif // STEREORECONSTRUCTEDSCENE_H

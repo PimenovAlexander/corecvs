@@ -15,25 +15,23 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     CloudViewDialog w;
 
-	DepthBuffer *buffer = new DepthBuffer(50, 50, false);
-	for (int i = 0; i < 50; i++) {
-		for (int j = 0; j < 50; j++) {
-			buffer->element(i, j) = i + ((j - i) / 2);
-		}
-	}
+	QImage im("/home/rayman/Downloads/depthMap3.png");
 
-	QImage im("/home/rayman/Downloads/depth.jpg");
+//	StereoReconstructedScene *scene = new StereoReconstructedScene(im, 1, 1, 0.5);
 
 	Mesh3DScene *mesh = new Mesh3DScene;
-	mesh->addSphere(Vector3dd(0, 0, 0), 10, 1000);
+	StereoReconstructedScene *sc = new StereoReconstructedScene(im, 1, 1, 0.5);
 
-	RectificationResult result;
+	QSharedPointer<Scene3D> depth = QSharedPointer<Scene3D>( sc );
 
-	QSharedPointer<Scene3D> sc = QSharedPointer<Scene3D>( new StereoReconstructedScene(im) );
+	mesh->addEllipsoid(sc->center, sc->radius, 100);
+
+	QSharedPointer<Scene3D> build = QSharedPointer<Scene3D>( mesh);
 
     qDebug() << "try";
 
-	w.setNewScenePointer(sc, 9);
+	w.setNewScenePointer(depth, 8);
+	w.setNewScenePointer(build, 7);
     qDebug() << "fin";
 
     w.show();

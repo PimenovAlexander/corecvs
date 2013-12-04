@@ -118,6 +118,7 @@ public:
     void addAOB(const AxisAlignedBox3d &box);
 
     void addSphere(Vector3dd center, double radius, int step);
+	void addEllipsoid(Vector3dd center, Vector3dd radiuses, int step);
 
 #if 0
     void addTruncatedCone(double r1, double r2, double length, int steps = 16);
