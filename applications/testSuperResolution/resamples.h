@@ -1,6 +1,6 @@
 #pragma once
 #include "rgb24Buffer.h"
 
-RGB24Buffer *nearestNeighbourVersion1(RGB24Buffer *startImage);
+RGB24Buffer *resampleWithBilinearInterpolation(RGB24Buffer *startImage, double coefficient);
 
-RGB24Buffer *nearestNeighbourVersion2(RGB24Buffer *startImage);
+RGB24Buffer *resampleWithBicubicInterpolation(RGB24Buffer *startImage, double coefficient);

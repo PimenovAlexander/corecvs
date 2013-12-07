@@ -321,7 +321,8 @@
     <property name="title">
      <string>Resampling</string>
     </property>
-    <addaction name="actionResample_current_picture"/>
+    <addaction name="actionResample_with_bilinear_interpolation"/>
+    <addaction name="actionResample_with_bicubic_interpolation"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSelection"/>
@@ -385,6 +386,16 @@
   <action name="actionResample_current_picture">
    <property name="text">
     <string>Resample current picture</string>
+   </property>
+  </action>
+  <action name="actionResample_with_bilinear_interpolation">
+   <property name="text">
+    <string>Resample with bilinear interpolation</string>
+   </property>
+  </action>
+  <action name="actionResample_with_bicubic_interpolation">
+   <property name="text">
+    <string>Resample with bicubic interpolation</string>
    </property>
   </action>
  </widget>

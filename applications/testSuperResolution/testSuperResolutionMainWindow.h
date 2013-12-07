@@ -52,7 +52,8 @@ public:
 private slots:
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
     void addElementToCollection();
-    void resample();
+    void resampleUsingBilinearInterpolation();
+    void resampleUsingBicubicInterpolation();
 };
 
 #endif // TESTSUPERRESOLUTIONMAINWINDOW_H

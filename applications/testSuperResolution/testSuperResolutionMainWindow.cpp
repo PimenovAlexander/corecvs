@@ -1,4 +1,5 @@
 #include <QtGui/QWheelEvent>
+#include <QInputDialog>
 
 #include "testSuperResolutionMainWindow.h"
 #include "advancedImageWidget.h"
@@ -49,7 +50,8 @@ void TestSuperResolutionMainWindow::connectActions()
     connect(mUi -> mWidgetList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(on_listWidget_itemDoubleClicked(QListWidgetItem*)));
     connect(mUi -> actionClear, SIGNAL(triggered()), this, SLOT(ClearCollection()));
 
-    connect(mUi -> actionResample_current_picture, SIGNAL(triggered()), this, SLOT(resample()));
+    connect(mUi -> actionResample_with_bilinear_interpolation, SIGNAL(triggered()), this, SLOT(resampleUsingBilinearInterpolation()));
+    connect(mUi -> actionResample_with_bicubic_interpolation, SIGNAL(triggered()), this, SLOT(resampleUsingBicubicInterpolation()));
 }
 
 
@@ -356,13 +358,51 @@ void TestSuperResolutionMainWindow::ClearCollection() {
 }
 
 
-void TestSuperResolutionMainWindow::resample() {
-    RGB24Buffer *result = nearestNeighbourVersion2(mImage);
-    delete_safe(mImage);
-    delete_safe(mMask);
-    mImage = result;
-    mMask = new G8Buffer(mImage->getSize());
-    AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
+void TestSuperResolutionMainWindow::resampleUsingBilinearInterpolation() {
+    bool ok;
+    double newSize = QInputDialog::getDouble(
+                this,
+                "Print the compression ratio",
+                tr("Ratio:"),
+                1,
+                0.01,
+                5,
+                2,
+                &ok);
+    if (ok)
+    {
+        RGB24Buffer *result = resampleWithBilinearInterpolation(mImage,newSize);
+        delete_safe(mImage);
+        delete_safe(mMask);
+        mImage = result;
+        mMask = new G8Buffer(mImage->getSize());
+        AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
 
-    updateViewImage();
+        updateViewImage();
+    }
+}
+
+
+void TestSuperResolutionMainWindow::resampleUsingBicubicInterpolation() {
+    bool ok;
+    double newSize = QInputDialog::getDouble(
+                this,
+                "Print the compression ratio",
+                tr("Ratio:"),
+                1,
+                0.01,
+                5,
+                2,
+                &ok);
+    if (ok)
+    {
+        RGB24Buffer *result = resampleWithBicubicInterpolation(mImage,newSize);
+        delete_safe(mImage);
+        delete_safe(mMask);
+        mImage = result;
+        mMask = new G8Buffer(mImage->getSize());
+        AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
+
+        updateViewImage();
+    }
 }
