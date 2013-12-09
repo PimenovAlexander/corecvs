@@ -323,6 +323,11 @@
     </property>
     <addaction name="actionResample_with_bilinear_interpolation"/>
     <addaction name="actionResample_with_bicubic_interpolation"/>
+    <addaction name="actionResample_with_Lancsoz_filter_2x2"/>
+    <addaction name="actionResample_with_Lancsoz_filter_4x4"/>
+    <addaction name="actionResample_with_Lancsoz_filter_6x6"/>
+    <addaction name="actionResample_with_Lancsoz_filter_8x8"/>
+    <addaction name="actionResample_with_Nearest_Neighbour"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSelection"/>
@@ -396,6 +401,31 @@
   <action name="actionResample_with_bicubic_interpolation">
    <property name="text">
     <string>Resample with bicubic interpolation</string>
+   </property>
+  </action>
+  <action name="actionResample_with_Lancsoz_filter_2x2">
+   <property name="text">
+    <string>Resample with Lancsoz filter 2x2</string>
+   </property>
+  </action>
+  <action name="actionResample_with_Lancsoz_filter_4x4">
+   <property name="text">
+    <string>Resample with Lancsoz filter 4x4</string>
+   </property>
+  </action>
+  <action name="actionResample_with_Lancsoz_filter_6x6">
+   <property name="text">
+    <string>Resample with Lancsoz filter 6x6</string>
+   </property>
+  </action>
+  <action name="actionResample_with_Lancsoz_filter_8x8">
+   <property name="text">
+    <string>Resample with Lancsoz filter 8x8</string>
+   </property>
+  </action>
+  <action name="actionResample_with_Nearest_Neighbour">
+   <property name="text">
+    <string>Resample with Nearest Neighbour</string>
    </property>
   </action>
  </widget>

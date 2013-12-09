@@ -52,6 +52,11 @@ void TestSuperResolutionMainWindow::connectActions()
 
     connect(mUi -> actionResample_with_bilinear_interpolation, SIGNAL(triggered()), this, SLOT(resampleUsingBilinearInterpolation()));
     connect(mUi -> actionResample_with_bicubic_interpolation, SIGNAL(triggered()), this, SLOT(resampleUsingBicubicInterpolation()));
+    connect(mUi -> actionResample_with_Lancsoz_filter_2x2, SIGNAL(triggered()), this, SLOT(resampleUsingLancsozFilter2x2()));
+    connect(mUi -> actionResample_with_Lancsoz_filter_4x4, SIGNAL(triggered()), this, SLOT(resampleUsingLancsozFilter4x4()));
+    connect(mUi -> actionResample_with_Lancsoz_filter_6x6, SIGNAL(triggered()), this, SLOT(resampleUsingLancsozFilter6x6()));
+    connect(mUi -> actionResample_with_Lancsoz_filter_8x8, SIGNAL(triggered()), this, SLOT(resampleUsingLancsozFilter8x8()));
+    connect(mUi -> actionResample_with_Nearest_Neighbour, SIGNAL(triggered()), this, SLOT(resampleUsingNearestNeighbour()));
 }
 
 
@@ -384,7 +389,7 @@ void TestSuperResolutionMainWindow::resampleUsingBilinearInterpolation() {
 
 
 void TestSuperResolutionMainWindow::resampleUsingBicubicInterpolation() {
-    bool ok;
+    /*bool ok;
     double newSize = QInputDialog::getDouble(
                 this,
                 "Print the compression ratio",
@@ -397,6 +402,128 @@ void TestSuperResolutionMainWindow::resampleUsingBicubicInterpolation() {
     if (ok)
     {
         RGB24Buffer *result = resampleWithBicubicInterpolation(mImage,newSize);
+        delete_safe(mImage);
+        delete_safe(mMask);
+        mImage = result;
+        mMask = new G8Buffer(mImage->getSize());
+        AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
+
+        updateViewImage();
+    }*/
+}
+
+
+void TestSuperResolutionMainWindow::resampleUsingLancsozFilter2x2() {
+    bool ok;
+    double newSize = QInputDialog::getDouble(
+                this,
+                "Print the compression ratio",
+                tr("Ratio:"),
+                1,
+                0.01,
+                5,
+                2,
+                &ok);
+    if (ok)
+    {
+        RGB24Buffer *result = resampleWithLancsozFilter(mImage,newSize,1);
+        delete_safe(mImage);
+        delete_safe(mMask);
+        mImage = result;
+        mMask = new G8Buffer(mImage->getSize());
+        AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
+
+        updateViewImage();
+    }
+}
+
+void TestSuperResolutionMainWindow::resampleUsingLancsozFilter4x4() {
+    bool ok;
+    double newSize = QInputDialog::getDouble(
+                this,
+                "Print the compression ratio",
+                tr("Ratio:"),
+                1,
+                0.01,
+                5,
+                2,
+                &ok);
+    if (ok)
+    {
+        RGB24Buffer *result = resampleWithLancsozFilter(mImage,newSize,2);
+        delete_safe(mImage);
+        delete_safe(mMask);
+        mImage = result;
+        mMask = new G8Buffer(mImage->getSize());
+        AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
+
+        updateViewImage();
+    }
+}
+
+void TestSuperResolutionMainWindow::resampleUsingLancsozFilter6x6() {
+    bool ok;
+    double newSize = QInputDialog::getDouble(
+                this,
+                "Print the compression ratio",
+                tr("Ratio:"),
+                1,
+                0.01,
+                5,
+                2,
+                &ok);
+    if (ok)
+    {
+        RGB24Buffer *result = resampleWithLancsozFilter(mImage,newSize,3);
+        delete_safe(mImage);
+        delete_safe(mMask);
+        mImage = result;
+        mMask = new G8Buffer(mImage->getSize());
+        AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
+
+        updateViewImage();
+    }
+}
+
+void TestSuperResolutionMainWindow::resampleUsingLancsozFilter8x8() {
+    bool ok;
+    double newSize = QInputDialog::getDouble(
+                this,
+                "Print the compression ratio",
+                tr("Ratio:"),
+                1,
+                0.01,
+                5,
+                2,
+                &ok);
+    if (ok)
+    {
+        RGB24Buffer *result = resampleWithLancsozFilter(mImage,newSize,4);
+        delete_safe(mImage);
+        delete_safe(mMask);
+        mImage = result;
+        mMask = new G8Buffer(mImage->getSize());
+        AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
+
+        updateViewImage();
+    }
+}
+
+
+void TestSuperResolutionMainWindow::resampleUsingNearestNeighbour() {
+    bool ok;
+    double newSize = QInputDialog::getDouble(
+                this,
+                "Print the compression ratio",
+                tr("Ratio:"),
+                1,
+                0.01,
+                5,
+                2,
+                &ok);
+    if (ok)
+    {
+        RGB24Buffer *result = resampleWithNearestNeighbour(mImage,newSize);
         delete_safe(mImage);
         delete_safe(mMask);
         mImage = result;

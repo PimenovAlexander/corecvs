@@ -1,12 +1,11 @@
-#include "resamples.h"
+﻿#include "resamples.h"
 #include <cmath>
-#include <iostream>
-
 RGB24Buffer *resampleWithBilinearInterpolation(RGB24Buffer *startImage, double coefficient)
 {
     RGB24Buffer *result = new RGB24Buffer((int)(startImage -> getH()*coefficient),(int)(startImage -> getW()*coefficient),false);
     for (int i = 0; i < result -> getH(); i++)
-        for (int j = 0 ; j < result -> getW(); j++) {
+        for (int j = 0 ; j < result -> getW(); j++)
+        {
             int xLeft = floor(((double)i) / coefficient);
             int yLeft = floor(((double)j) / coefficient);
             int xRight = min (xLeft+1,startImage -> getH()-1);
@@ -36,111 +35,127 @@ RGB24Buffer *resampleWithBilinearInterpolation(RGB24Buffer *startImage, double c
 }
 
 
-uint8_t interpolate(uint8_t value0, uint8_t value1, uint8_t value2, uint8_t value3, double x)
+
+/*RGBColor cubicPolynomial(RGBColor p0, RGBColor p1, RGBColor p2, RGBColor p3, double x)
 {
-    return value0 * (x-1)*(x-2)*(x-3)/(-6) +
-            value1 * x * (x-2) * (x-3) / 2 +
-            value2 * x * (x-1) * (x-3) / (-2) +
-            value3 * x * (x-1) * (x-2) / 6;
-}
+    return p1 + 0.5 * x*(p2 - p0 + x*(2.0*p0 - 5.0*p1 + 4.0*p2 - p3 + x*(3.0*(p1 - p2) + p3 - p4)));
+}*/
 
 RGB24Buffer *resampleWithBicubicInterpolation(RGB24Buffer *startImage, double coefficient)
 {
     RGB24Buffer *result = new RGB24Buffer((int)(startImage -> getH()*coefficient),(int)(startImage -> getW()*coefficient),false);
+
+    /*for (int i = 0; i < result -> getH; i++)
+        for (int j = 0; j < result -> getW; j++)
+        {
+            int si = (int)(i / coefficient);
+            int sj = (int)(j / coefficient);
+            double dx = (i / coefficient) - si;
+            double dy = (j / coefficient) - sj;
+            if ((si > 0) && (si < startImage -> getH - 2))
+            {
+                if ((sj > 0) && (sj < startImage -> getW - 2))
+                {
+                    RGBColor temp0 = cubicPolynomial(startImage -> element(si-1,sj).)
+                }
+            }
+        }*/
+
+    return result;
+}
+
+
+
+double LancsozFilter(double dist, int a)
+{
+    if (dist == 0)
+        return 1;
+    if (abs(dist) >= a)
+        return 0;
+    return (double)a * sin (M_PI * dist) * sin (M_PI * dist/(double)a) / (M_PI*M_PI*(double)a * (double)a);
+}
+
+
+RGB24Buffer *resampleWithLancsozFilter(RGB24Buffer *startImage, double coefficient, int a)
+{
+    RGB24Buffer *tempHorImage = new RGB24Buffer((int)(startImage -> getH()),(int)(startImage -> getW()*coefficient),false);
+    for (int i = 0 ; i < tempHorImage -> getH(); i++)
+        for (int j = 0; j < tempHorImage -> getW(); j++)
+        {
+            double nearY = floor(j / coefficient);
+            uint8_t sumR = 0;
+            uint8_t sumG = 0;
+            uint8_t sumB = 0;
+            double weight = 0;
+            for (int y = nearY - a + 1; y < nearY + a; y++) {
+                if ((y >= 0) && (y < startImage -> getW()))
+                {
+                    double lanc = LancsozFilter(nearY - y, a);
+                    sumR += startImage -> element(i,y).r() * lanc;
+                    sumG += startImage -> element(i,y).g() * lanc;
+                    sumB += startImage -> element(i,y).b() * lanc;
+                    weight += lanc;
+                }
+            }
+            tempHorImage -> element(i,j).r() = sumR/weight;
+            tempHorImage -> element(i,j).g() = sumG/weight;
+            tempHorImage -> element(i,j).b() = sumB/weight;
+        }
+
+    RGB24Buffer *result = new RGB24Buffer((int)(tempHorImage -> getH()*coefficient),tempHorImage -> getW(),false);
+    for (int i = 0 ; i < result -> getH(); i++)
+        for (int j = 0; j < result -> getW(); j++)
+        {
+            double nearX = floor( i / coefficient);
+            uint8_t sumR = 0;
+            uint8_t sumG = 0;
+            uint8_t sumB = 0;
+            double weight = 0;
+            for (int x = nearX - a + 1; x < nearX + a; x++) {
+                if ((x >= 0) && (x < tempHorImage -> getH()))
+                {
+                    double lanc = LancsozFilter(nearX - x, a);
+                    sumR += tempHorImage -> element(x,j).r() * lanc;
+                    sumG += tempHorImage -> element(x,j).g() * lanc;
+                    sumB += tempHorImage -> element(x,j).b() * lanc;
+                    weight += lanc;
+                }
+            }
+            result -> element(i,j).r() = sumR/weight;
+            result -> element(i,j).g() = sumG/weight;
+            result -> element(i,j).b() = sumB/weight;
+        }
+    delete_safe(tempHorImage);
+    return result;
+}
+
+
+RGB24Buffer *resampleWithNearestNeighbour(RGB24Buffer *startImage, double coefficient) {
+    RGB24Buffer *result = new RGB24Buffer((int)(startImage -> getH()*coefficient),(int)(startImage -> getW()*coefficient),false);
     for (int i = 0; i < result -> getH(); i++)
         for (int j = 0 ; j < result -> getW(); j++)
         {
-            int x0 = 4 * floor(((double)i) / (4 * coefficient));
-            int y0 = 4 * floor(((double)j) / (4 * coefficient));
-            if ((x0 + 3 < startImage -> getH()) && (y0 +3 < startImage -> getW()))
+            int xLeft = floor(((double)i) / coefficient);
+            int yLeft = floor(((double)j) / coefficient);
+            int xRight = min (xLeft+1,startImage -> getH()-1);
+            int yRight = min (yLeft+1,startImage -> getW()-1);
+            double k1 = ((double)i)/coefficient - (double)xLeft;
+            double k2 = ((double)j)/coefficient - (double)yLeft;
+
+            if (k1 > 0.5)
             {
-                double dx = 4 * ((double)i)/(4 * coefficient) - (double)x0;
-                double dy = 4 * ((double)j)/(4 * coefficient) - (double)y0;
-                int x1 = x0 + 1;
-                int x2 = x0 + 2;
-                int x3 = x0 + 3;
-                int y1 = y0 + 1;
-                int y2 = y0 + 2;
-                int y3 = y0 + 3;
-                uint8_t tempResult0 = interpolate(startImage -> element(x0, y0).r(),
-                                                  startImage -> element(x0, y1).r(),
-                                                  startImage -> element(x0, y2).r(),
-                                                  startImage -> element(x0, y3).r(),
-                                                  dy);
-
-                uint8_t tempResult1 = interpolate(startImage -> element(x1, y0).r(),
-                                                  startImage -> element(x1, y1).r(),
-                                                  startImage -> element(x1, y2).r(),
-                                                  startImage -> element(x1, y3).r(),
-                                                  dy);
-
-                uint8_t tempResult2 = interpolate(startImage -> element(x2, y0).r(),
-                                                  startImage -> element(x2, y1).r(),
-                                                  startImage -> element(x2, y2).r(),
-                                                  startImage -> element(x2, y3).r(),
-                                                  dy);
-
-                uint8_t tempResult3 = interpolate(startImage -> element(x3, y0).r(),
-                                                  startImage -> element(x3, y1).r(),
-                                                  startImage -> element(x3, y2).r(),
-                                                  startImage -> element(x3, y3).r(),
-                                                  dy);
-
-                result -> element(i,j).r() = interpolate(tempResult0,tempResult1,tempResult2,tempResult3,dx);
-
-                tempResult0 = interpolate(startImage -> element(x0, y0).g(),
-                                          startImage -> element(x0, y1).g(),
-                                          startImage -> element(x0, y2).g(),
-                                          startImage -> element(x0, y3).g(),
-                                                  dy);
-
-                tempResult1 = interpolate(startImage -> element(x1, y0).g(),
-                                          startImage -> element(x1, y1).g(),
-                                          startImage -> element(x1, y2).g(),
-                                          startImage -> element(x1, y3).g(),
-                                                  dy);
-
-                tempResult2 = interpolate(startImage -> element(x2, y0).g(),
-                                          startImage -> element(x2, y1).g(),
-                                          startImage -> element(x2, y2).g(),
-                                          startImage -> element(x2, y3).g(),
-                                                  dy);
-
-                tempResult3 = interpolate(startImage -> element(x3, y0).g(),
-                                          startImage -> element(x3, y1).g(),
-                                          startImage -> element(x3, y2).g(),
-                                          startImage -> element(x3, y3).g(),
-                                                  dy);
-
-                result -> element(i,j).g() = interpolate(tempResult0,tempResult1,tempResult2,tempResult3,dx);
-
-                tempResult0 = interpolate(startImage -> element(x0, y0).b(),
-                                          startImage -> element(x0, y1).b(),
-                                          startImage -> element(x0, y2).b(),
-                                          startImage -> element(x0, y3).b(),
-                                                  dy);
-
-                tempResult1 = interpolate(startImage -> element(x1, y0).b(),
-                                          startImage -> element(x1, y1).b(),
-                                          startImage -> element(x1, y2).b(),
-                                          startImage -> element(x1, y3).b(),
-                                                  dy);
-
-                tempResult2 = interpolate(startImage -> element(x2, y0).b(),
-                                          startImage -> element(x2, y1).b(),
-                                          startImage -> element(x2, y2).b(),
-                                          startImage -> element(x2, y3).b(),
-                                                  dy);
-
-                tempResult3 = interpolate(startImage -> element(x3, y0).b(),
-                                          startImage -> element(x3, y1).b(),
-                                          startImage -> element(x3, y2).b(),
-                                          startImage -> element(x3, y3).b(),
-                                                  dy);
-
-                result -> element(i,j).b() = interpolate(tempResult0,tempResult1,tempResult2,tempResult3,dx);
+                if (k2 > 0.5)
+                    result -> element(i,j) = startImage -> element(xRight,yRight);
+                else
+                    result -> element(i,j) = startImage -> element(xRight,yLeft);
+            }
+            else
+            {
+                if (k2 > 0.5)
+                    result -> element(i,j) = startImage -> element(xLeft,yRight);
+                else
+                    result -> element(i,j) = startImage -> element(xLeft,yLeft);
             }
         }
     return result;
 }
-

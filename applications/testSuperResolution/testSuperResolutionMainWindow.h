@@ -54,6 +54,11 @@ private slots:
     void addElementToCollection();
     void resampleUsingBilinearInterpolation();
     void resampleUsingBicubicInterpolation();
+    void resampleUsingLancsozFilter2x2();
+    void resampleUsingLancsozFilter4x4();
+    void resampleUsingLancsozFilter6x6();
+    void resampleUsingLancsozFilter8x8();
+    void resampleUsingNearestNeighbour();
 };
 
 #endif // TESTSUPERRESOLUTIONMAINWINDOW_H
