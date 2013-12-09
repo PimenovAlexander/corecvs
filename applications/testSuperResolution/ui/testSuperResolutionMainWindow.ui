@@ -410,6 +410,11 @@
     <string>Use</string>
    </property>
   </action>
+  <action name="actionConvolution">
+   <property name="text">
+    <string>Convolution</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

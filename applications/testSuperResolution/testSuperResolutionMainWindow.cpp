@@ -53,7 +53,7 @@ void TestSuperResolutionMainWindow::connectActions()
 
     connect(mUi -> actionResample_with_bilinear_interpolation, SIGNAL(triggered()), this, SLOT(resampleUsingBilinearInterpolation()));
     connect(mUi -> actionResample_with_bicubic_interpolation, SIGNAL(triggered()), this, SLOT(resampleUsingBicubicInterpolation()));
-    connect(mUi -> actionUse_convolution, SIGNAL(triggered()), this, SLOT(convolutionImage));
+    connect(mUi -> actionUse_convolution, SIGNAL(triggered()), this, SLOT(convolutionImage()));
 }
 
 
