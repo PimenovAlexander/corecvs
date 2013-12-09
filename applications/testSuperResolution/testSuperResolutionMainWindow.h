@@ -54,6 +54,7 @@ private slots:
     void addElementToCollection();
     void resampleUsingBilinearInterpolation();
     void resampleUsingBicubicInterpolation();
+    void convolutionImage();
 };
 
 #endif // TESTSUPERRESOLUTIONMAINWINDOW_H

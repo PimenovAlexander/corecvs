@@ -324,10 +324,17 @@
     <addaction name="actionResample_with_bilinear_interpolation"/>
     <addaction name="actionResample_with_bicubic_interpolation"/>
    </widget>
+   <widget class="QMenu" name="menuConvolution">
+    <property name="title">
+     <string>Convolution</string>
+    </property>
+    <addaction name="actionUse_convolution"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSelection"/>
    <addaction name="menuAwC"/>
    <addaction name="menuResampling"/>
+   <addaction name="menuConvolution"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -396,6 +403,11 @@
   <action name="actionResample_with_bicubic_interpolation">
    <property name="text">
     <string>Resample with bicubic interpolation</string>
+   </property>
+  </action>
+  <action name="actionUse_convolution">
+   <property name="text">
+    <string>Use</string>
    </property>
   </action>
  </widget>
