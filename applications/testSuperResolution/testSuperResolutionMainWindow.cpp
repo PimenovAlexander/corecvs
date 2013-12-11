@@ -353,68 +353,51 @@ void TestSuperResolutionMainWindow::ClearCollection() {
 
 void TestSuperResolutionMainWindow::cutImage() { //cuts image and creates collection of 4 parts of image
     int pxls = mUi->pixelsSpinBox->value();
+    int count = mUi ->countImSpinBox->value()-1;
     QString filename = "1.bmp";
     QString name = filename.section('/', -1);
 
-    if (mImage == NULL || mImage->h < pxls || mImage->w < pxls) {
+    if (mImage == NULL) {
+        return;
+    }
+
+    if (mImage->w <= pxls*count){
+        QMessageBox msgBox;
+        msgBox.setText ("The size of the image is too small.");
+        msgBox.exec ();
         return;
     }
 
     ClearCollection();
 
     RGB24Buffer *toDraw = new RGB24Buffer(mImage);
-    toDraw ->h = toDraw ->h - pxls;
+    toDraw ->w = toDraw ->w - pxls*count;
     QImage *qImage = new RGB24Image(toDraw);
-    qImage->save("1.bmp");
+    qImage->save(filename);
 
-    QListWidgetItem *item1 = new QListWidgetItem(QIcon(filename),name,mUi -> mWidgetList,0);
-    item1 -> setData(Qt::UserRole, QVariant(filename));
+    QListWidgetItem *item = new QListWidgetItem(QIcon(filename),name,mUi -> mWidgetList,0);
+    item -> setData(Qt::UserRole, QVariant(filename));
 
-    *toDraw = mImage;
-    toDraw ->w = toDraw ->w - pxls;
-    *qImage = RGB24Image(toDraw);
-    qImage->save("2.bmp");
+    for (int k = 1; k <= count; k++) {
+        *toDraw = mImage;
+        for (int i = 0; i < mImage->h; i++)
+            {
+               for (int j = 0; j < mImage->w - pxls * count ; j++)
+               {
+                   toDraw->element(i,j) = mImage -> element(i,j + pxls * k);
+               }
 
-    filename = "2.bmp";
-    name = filename.section('/', -1);
-    QListWidgetItem *item2 = new QListWidgetItem(QIcon(filename),name,mUi -> mWidgetList,0);
-    item2 -> setData(Qt::UserRole, QVariant(filename));
+        }
+        toDraw ->w = toDraw ->w - pxls*count;
+        *qImage = RGB24Image(toDraw);
 
-    *toDraw = mImage;
-    for (int i = 0; i < mImage->h-pxls; i++)
-        {
-           for (int j = 0; j < mImage->w; j++)
-           {
-               toDraw->element(i,j) = mImage -> element(i+pxls,j);
-           }
-
+        filename = QString::number(k+1);
+        filename += ".bmp";
+        qImage->save(filename);
+        name = filename.section('/', -1);
+        QListWidgetItem *item = new QListWidgetItem(QIcon(filename),name,mUi -> mWidgetList,0);
+        item -> setData(Qt::UserRole, QVariant(filename));
     }
-    toDraw ->h = toDraw ->h - pxls;
-    *qImage = RGB24Image(toDraw);
-    qImage->save("3.bmp");
-
-    filename = "3.bmp";
-    name = filename.section('/', -1);
-    QListWidgetItem *item3 = new QListWidgetItem(QIcon(filename),name,mUi -> mWidgetList,0);
-    item3 -> setData(Qt::UserRole, QVariant(filename));
-
-    *toDraw = mImage;
-    for (int i = 0; i < mImage->h; i++)
-        {
-           for (int j = 0; j < mImage->w-pxls; j++)
-           {
-               toDraw->element(i,j) = mImage -> element(i,j+pxls);
-           }
-
-    }
-    toDraw ->w = toDraw ->w - pxls;
-    *qImage = RGB24Image(toDraw);
-    qImage->save("4.bmp");
-
-    filename = "4.bmp";
-    name = filename.section('/', -1);
-    QListWidgetItem *item4 = new QListWidgetItem(QIcon(filename),name,mUi -> mWidgetList,0);
-    item4 -> setData(Qt::UserRole, QVariant(filename));
 }
 
 
