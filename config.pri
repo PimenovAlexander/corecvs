@@ -26,9 +26,9 @@ CONFIG +=       \
 #   trace       \
 #   asserts     \
                 \
-#   with_sse     \
-#   with_sse3    \
-#   with_sse4    \
+   with_sse     \
+   with_sse3    \
+   with_sse4    \
    with_tbb     \
 
 

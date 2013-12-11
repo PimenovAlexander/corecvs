@@ -44,6 +44,8 @@ public slots:
 
     void addImageToCollection();
     void ClearCollection();
+
+    void cutImage();
 public:
     RGB24Buffer *mImage;
     G8Buffer *mMask;
