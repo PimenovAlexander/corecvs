@@ -7,6 +7,7 @@
 #include "../../utils/corestructs/g12Image.h"
 #include "../../core/buffers/rgb24/abstractPainter.h"
 #include "resamples.h"
+#include "convolution.h"
 #include <iostream>
 TestSuperResolutionMainWindow::TestSuperResolutionMainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -48,7 +49,7 @@ void TestSuperResolutionMainWindow::connectActions()
 
     connect(mUi -> actionAdd, SIGNAL(triggered()), this, SLOT(addElementToCollection()));
     connect(mUi -> mWidgetList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(on_listWidget_itemDoubleClicked(QListWidgetItem*)));
-    connect(mUi -> actionClear, SIGNAL(triggered()), this, SLOT(ClearCollection()));
+    connect(mUi -> actionClear, SIGNAL(triggered()), this, SLOT(ClearCollection()));//NB!
 
     connect(mUi -> actionResample_with_bilinear_interpolation, SIGNAL(triggered()), this, SLOT(resampleUsingBilinearInterpolation()));
     connect(mUi -> actionResample_with_Lancsoz_filter_2x2, SIGNAL(triggered()), this, SLOT(resampleUsingLancsozFilter2x2()));
@@ -59,6 +60,7 @@ void TestSuperResolutionMainWindow::connectActions()
 
     connect(mUi -> actionCut, SIGNAL(triggered()), this, SLOT(cutImage()));
 
+    connect(mUi -> actionUse_convolution, SIGNAL(triggered()), this, SLOT(convolutionImage()));
 }
 
 
@@ -347,21 +349,7 @@ void TestSuperResolutionMainWindow::addElementToCollection() {
 void TestSuperResolutionMainWindow::ClearCollection() {
 
     mUi -> mWidgetList -> clear();
-    /*QString filename = QFileDialog::getOpenFileName(
-        this,
-        "Choose an file name",
-        ".",
-        "Text (*.bmp *.jpg *.png *.gif)"
-    );
-    QImage *qImage = new QImage(filename);
-    if (qImage == NULL) {
-        return;
-    }
 
-    QString name = filename.section('/', -1);
-
-    QListWidgetItem *item = new QListWidgetItem(QIcon(filename),name,mUi -> mWidgetList,0);
-    item -> setData(Qt::UserRole, QVariant(filename));*/
 }
 
 void TestSuperResolutionMainWindow::cutImage() { //cuts image and creates collection of 4 parts of image
@@ -558,4 +546,16 @@ void TestSuperResolutionMainWindow::resampleUsingNearestNeighbour() {
 
         updateViewImage();
     }
+}
+void TestSuperResolutionMainWindow::convolutionImage() {
+
+        RGB24Buffer *result = convolution(mImage);
+        delete_safe(mImage);
+        delete_safe(mMask);
+        mImage = result;
+        mMask = new G8Buffer(mImage->getSize());
+        AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
+
+        updateViewImage();
+
 }

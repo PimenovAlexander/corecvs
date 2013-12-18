@@ -27,7 +27,8 @@ win32 {
 HEADERS = \
     testSuperResolutionMainWindow.h \
 #    pointScene.h \
-    resamples.h
+    resamples.h \
+    convolution.h
 
 
 
@@ -35,7 +36,8 @@ SOURCES = \
     testSuperResolutionMainWindow.cpp \
     main_testSuperResolution.cpp \
 #    pointScene.cpp \
-    resamples.cpp
+    resamples.cpp \
+    convolution.cpp
 
 FORMS = ui/testSuperResolutionMainWindow.ui \
 

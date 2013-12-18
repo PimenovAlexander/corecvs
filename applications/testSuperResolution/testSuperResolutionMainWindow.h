@@ -60,6 +60,7 @@ private slots:
     void resampleUsingLancsozFilter6x6();
     void resampleUsingLancsozFilter8x8();
     void resampleUsingNearestNeighbour();
+    void convolutionImage();
 };
 
 #endif // TESTSUPERRESOLUTIONMAINWINDOW_H

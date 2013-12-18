@@ -363,10 +363,17 @@
     <addaction name="actionResample_with_Lancsoz_filter_8x8"/>
     <addaction name="actionResample_with_Nearest_Neighbour"/>
    </widget>
+   <widget class="QMenu" name="menuConvolution">
+    <property name="title">
+     <string>Convolution</string>
+    </property>
+    <addaction name="actionUse_convolution"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSelection"/>
    <addaction name="menuAwC"/>
    <addaction name="menuResampling"/>
+   <addaction name="menuConvolution"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -432,11 +439,6 @@
     <string>Resample with bilinear interpolation</string>
    </property>
   </action>
-  <action name="actionResample_with_bicubic_interpolation">
-   <property name="text">
-    <string>Resample with bicubic interpolation</string>
-   </property>
-  </action>
   <action name="actionResample_with_Lancsoz_filter_2x2">
    <property name="text">
     <string>Resample with Lancsoz filter 2x2</string>
@@ -469,6 +471,16 @@
    </property>
    <property name="text">
     <string>Cut</string>
+    </property>
+  </action>
+  <action name="actionUse_convolution">
+   <property name="text">
+    <string>Use</string>
+   </property>
+  </action>
+  <action name="actionConvolution">
+   <property name="text">
+    <string>Convolution</string>
    </property>
   </action>
  </widget>
