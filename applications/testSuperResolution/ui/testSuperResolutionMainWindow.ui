@@ -104,16 +104,7 @@
         <string>Presentation</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
-        <property name="leftMargin">
-         <number>3</number>
-        </property>
-        <property name="topMargin">
-         <number>3</number>
-        </property>
-        <property name="rightMargin">
-         <number>3</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>3</number>
         </property>
         <item row="0" column="1">
@@ -190,16 +181,7 @@
         <string>Postprocess</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_3">
-        <property name="leftMargin">
-         <number>3</number>
-        </property>
-        <property name="topMargin">
-         <number>3</number>
-        </property>
-        <property name="rightMargin">
-         <number>3</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>3</number>
         </property>
         <item row="0" column="0">
@@ -327,7 +309,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>20</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -492,10 +474,6 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../resources/main.qrc"/>
-  <include location="../../../resources/main.qrc"/>
-  <include location="../../../resources/main.qrc"/>
-  <include location="../../../resources/main.qrc"/>
   <include location="../../../resources/main.qrc"/>
  </resources>
  <connections/>
