@@ -74,6 +74,7 @@
         <file>vector_delete.png</file>
         <file>select_by_color.png</file>
         <file>draw_eraser.png</file>
+        <file>cuts.png</file>
     </qresource>
     <qresource prefix="/new/graph">
         <file>draw_line.png</file>

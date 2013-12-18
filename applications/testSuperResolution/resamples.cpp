@@ -40,36 +40,6 @@ RGB24Buffer *resampleWithBilinearInterpolation(RGB24Buffer *startImage, double c
 
 
 
-/*RGBColor cubicPolynomial(RGBColor p0, RGBColor p1, RGBColor p2, RGBColor p3, double x)
-{
-    return p1 + 0.5 * x*(p2 - p0 + x*(2.0*p0 - 5.0*p1 + 4.0*p2 - p3 + x*(3.0*(p1 - p2) + p3 - p4)));
-}*/
-
-RGB24Buffer *resampleWithBicubicInterpolation(RGB24Buffer *startImage, double coefficient)
-{
-    RGB24Buffer *result = new RGB24Buffer((int)(startImage -> getH()*coefficient),(int)(startImage -> getW()*coefficient),false);
-
-    /*for (int i = 0; i < result -> getH; i++)
-        for (int j = 0; j < result -> getW; j++)
-        {
-            int si = (int)(i / coefficient);
-            int sj = (int)(j / coefficient);
-            double dx = (i / coefficient) - si;
-            double dy = (j / coefficient) - sj;
-            if ((si > 0) && (si < startImage -> getH - 2))
-            {
-                if ((sj > 0) && (sj < startImage -> getW - 2))
-                {
-                    RGBColor temp0 = cubicPolynomial(startImage -> element(si-1,sj).)
-                }
-            }
-        }*/
-
-    return result;
-}
-
-
-
 double LancsozFilter(double dist, int a)
 {
     if (dist == 0)

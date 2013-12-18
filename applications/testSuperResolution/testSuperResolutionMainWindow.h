@@ -44,6 +44,8 @@ public slots:
 
     void addImageToCollection();
     void ClearCollection();
+
+    void cutImage();
 public:
     RGB24Buffer *mImage;
     G8Buffer *mMask;
@@ -53,7 +55,6 @@ private slots:
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
     void addElementToCollection();
     void resampleUsingBilinearInterpolation();
-    void resampleUsingBicubicInterpolation();
     void resampleUsingLancsozFilter2x2();
     void resampleUsingLancsozFilter4x4();
     void resampleUsingLancsozFilter6x6();
