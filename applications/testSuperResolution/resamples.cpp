@@ -14,22 +14,26 @@ RGB24Buffer *resampleWithBilinearInterpolation(RGB24Buffer *startImage, double c
             double k2 = ((double)j)/coefficient - (double)yLeft;
 
             result -> element(i,j).r() =
-                    startImage -> element(xLeft,yLeft).r() * k1 * k2 +
-                    startImage -> element(xLeft,yRight).r() * k1 * (1 - k2) +
-                    startImage -> element(xRight,yLeft).r() * (1 - k1) * k2 +
-                    startImage -> element(xRight,yRight).r() * (1- k1) * (1 - k2);
+                    startImage -> element(xLeft,yLeft).r() * (1 - k1) * (1 - k2) +
+                    startImage -> element(xLeft,yRight).r() * (1 - k1) * k2 +
+                    startImage -> element(xRight,yLeft).r() * k1 * (1 - k2) +
+                    startImage -> element(xRight,yRight).r() * k1 * k2;
 
             result -> element(i,j).g() =
-                    startImage -> element(xLeft,yLeft).g() * k1 * k2 +
-                    startImage -> element(xLeft,yRight).g() * k1 * (1 - k2) +
-                    startImage -> element(xRight,yLeft).g() * (1 - k1) * k2 +
-                    startImage -> element(xRight,yRight).g() * (1- k1) * (1 - k2);
+                    startImage -> element(xLeft,yLeft).g() * (1 - k1) * (1 - k2) +
+                    startImage -> element(xLeft,yRight).g() * (1 - k1) * k2 +
+                    startImage -> element(xRight,yLeft).g() * k1 * (1 - k2) +
+                    startImage -> element(xRight,yRight).g() * k1 * k2;
 
             result -> element(i,j).b() =
-                    startImage -> element(xLeft,yLeft).b() * k1 * k2 +
-                    startImage -> element(xLeft,yRight).b() * k1 * (1 - k2) +
-                    startImage -> element(xRight,yLeft).b() * (1 - k1) * k2 +
-                    startImage -> element(xRight,yRight).b() * (1- k1) * (1 - k2);
+                    startImage -> element(xLeft,yLeft).b() * (1 - k1) * (1 - k2) +
+                    startImage -> element(xLeft,yRight).b() * (1 - k1) * k2 +
+                    startImage -> element(xRight,yLeft).b() * k1 * (1 - k2) +
+                    startImage -> element(xRight,yRight).b() * k1 * k2;
+            /*result -> element(i,j) = startImage -> element(xLeft,yLeft) * (1 - k1) * (1 - k2) +
+                    startImage -> element(xLeft,yRight) * (1 - k1) * k2 +
+                    startImage -> element(xRight,yLeft) * k1 * (1 - k2) +
+                    startImage -> element(xRight,yRight) * k1 * k2;*/
         }
     return result;
 }
