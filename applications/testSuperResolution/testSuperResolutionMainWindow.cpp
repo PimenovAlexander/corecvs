@@ -402,55 +402,6 @@ void TestSuperResolutionMainWindow::cutImage() { //cuts image and creates collec
     }
 }
 
-void TestSuperResolutionMainWindow::cutImage() { //cuts image and creates collection of 4 parts of image
-    int pxls = mUi->pixelsSpinBox->value();
-    int count = mUi ->countImSpinBox->value()-1;
-    QString filename = "1.bmp";
-    QString name = filename.section('/', -1);
-
-    if (mImage == NULL) {
-        return;
-    }
-
-    if (mImage->w <= pxls*count){
-        QMessageBox msgBox;
-        msgBox.setText ("The size of the image is too small.");
-        msgBox.exec ();
-        return;
-    }
-
-    ClearCollection();
-
-    RGB24Buffer *toDraw = new RGB24Buffer(mImage);
-    toDraw ->w = toDraw ->w - pxls*count;
-    QImage *qImage = new RGB24Image(toDraw);
-    qImage->save(filename);
-
-    QListWidgetItem *item = new QListWidgetItem(QIcon(filename),name,mUi -> mWidgetList,0);
-    item -> setData(Qt::UserRole, QVariant(filename));
-
-    for (int k = 1; k <= count; k++) {
-        *toDraw = mImage;
-        for (int i = 0; i < mImage->h; i++)
-            {
-               for (int j = 0; j < mImage->w - pxls * count ; j++)
-               {
-                   toDraw->element(i,j) = mImage -> element(i,j + pxls * k);
-               }
-
-        }
-        toDraw ->w = toDraw ->w - pxls*count;
-        *qImage = RGB24Image(toDraw);
-
-        filename = QString::number(k+1);
-        filename += ".bmp";
-        qImage->save(filename);
-        name = filename.section('/', -1);
-        QListWidgetItem *item = new QListWidgetItem(QIcon(filename),name,mUi -> mWidgetList,0);
-        item -> setData(Qt::UserRole, QVariant(filename));
-    }
-}
-
 
 void TestSuperResolutionMainWindow::resampleUsingBilinearInterpolation() {
     bool ok;
