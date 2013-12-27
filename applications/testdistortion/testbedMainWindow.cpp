@@ -17,6 +17,8 @@ TestbedMainWindow::TestbedMainWindow(QWidget *parent)
 {
     mUi->setupUi(this);
 
+    isEdgeFilterActive = false;
+
     mImageWidget = new AdvancedImageWidget(this);
     setCentralWidget(mImageWidget);
 
@@ -51,7 +53,7 @@ void TestbedMainWindow::connectActions()
 
     connect(mUi->actionDistortionCorrection, SIGNAL(triggered(bool)), this, SLOT(openDistortionWindow()));
 
-
+    connect(mUi->actionToggleEdgeFilter, SIGNAL(toggled(bool)), this, SLOT(toogleEdgeFilter()));
 }
 
 
@@ -85,6 +87,7 @@ void TestbedMainWindow::loadImage(void)
     AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
 
     delete_safe(qImage);
+    updateImages();
     updateViewImage();
 }
 
@@ -103,6 +106,90 @@ void TestbedMainWindow::resetMask(void)
 
     mMask = new G8Buffer(mImage->getSize());
     updateViewImage();
+}
+
+void TestbedMainWindow::updateImages(void)
+{
+    originalImage = new RGB24Buffer(mImage);
+
+    G12Buffer *originalGImage = originalImage->toG12Buffer();
+
+    int w =originalGImage->getW();
+    int h =originalGImage->getH();
+    edgeFilterImage = new G12Buffer(h,w);
+
+    int verArray[3][3] = {{1,0,-1},{2,0,-2},{1,0,-1}};
+
+    for (int i = 1; i < h-1; i++)
+    {
+        for (int j = 1; j < w-1; j++)
+        {
+            int verSum = 0;
+            int gorSum = 0;
+            for (int dx = -1, l = 0; dx <= 1; dx ++, l++)
+            {
+                for (int dy = -1, k = 0; dy <= 1; dy ++, k++)
+                {
+                    verSum += originalGImage->element(i + dy, j + dx) * verArray[l][k];
+                    gorSum += originalGImage->element(i + dy, j + dx) * verArray[k][l];
+                }
+            }
+            edgeFilterImage->element(i,j) = sqrt((verSum*verSum)+(gorSum*gorSum));
+        }
+    }
+}
+
+G12Buffer* executeEdgeFilter(RGB24Buffer *image)
+{
+    G12Buffer *buffer = image->toG12Buffer();
+
+    int w =buffer->getW();
+    int h =buffer->getH();
+
+    G12Buffer *newBuffer = new G12Buffer(h,w);
+
+    int verArray[3][3] = {{1,0,-1},{2,0,-2},{1,0,-1}};
+
+    for (int i = 1; i < h-1; i++)
+    {
+        for (int j = 1; j < w-1; j++)
+        {
+            int verSum = 0;
+            int gorSum = 0;
+            for (int dx = -1, l = 0; dx <= 1; dx ++, l++)
+            {
+                for (int dy = -1, k = 0; dy <= 1; dy ++, k++)
+                {
+                    verSum += buffer->element(i + dy, j + dx) * verArray[l][k];
+                    gorSum += buffer->element(i + dy, j + dx) * verArray[k][l];
+                }
+            }
+            int value = sqrt((verSum*verSum)+(gorSum*gorSum));
+            newBuffer->element(i,j) = value*value*value;
+        }
+    }
+    return newBuffer;
+}
+
+void TestbedMainWindow::toogleEdgeFilter(void)
+{
+    isEdgeFilterActive=!isEdgeFilterActive;
+
+    if (mImage==NULL)
+    {
+        return;
+    }
+
+    if (isEdgeFilterActive)
+    {
+        mImage=new RGB24Buffer(edgeFilterImage);
+    }
+    else
+    {
+        mImage=new RGB24Buffer(originalImage);
+    }
+    updateViewImage();
+
 }
 
 void TestbedMainWindow::openDistortionWindow(void)

@@ -295,6 +295,7 @@
    <addaction name="separator"/>
    <addaction name="actionUndoMask"/>
    <addaction name="actionDistortionCorrection"/>
+   <addaction name="actionToggleEdgeFilter"/>
   </widget>
   <widget class="QDockWidget" name="logWidget_2">
    <property name="features">
@@ -359,6 +360,18 @@
    </property>
    <property name="text">
     <string>Distortion correction</string>
+   </property>
+  </action>
+  <action name="actionToggleEdgeFilter">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/filter.png</normaloff>:/new/prefix1/filter.png</iconset>
+   </property>
+   <property name="text">
+    <string>Edge Filter</string>
    </property>
   </action>
  </widget>
