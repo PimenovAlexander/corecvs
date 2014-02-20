@@ -104,7 +104,16 @@
         <string>Presentation</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
-        <property name="margin">
+        <property name="leftMargin">
+         <number>3</number>
+        </property>
+        <property name="topMargin">
+         <number>3</number>
+        </property>
+        <property name="rightMargin">
+         <number>3</number>
+        </property>
+        <property name="bottomMargin">
          <number>3</number>
         </property>
         <item row="0" column="1">
@@ -181,7 +190,16 @@
         <string>Postprocess</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_3">
-        <property name="margin">
+        <property name="leftMargin">
+         <number>3</number>
+        </property>
+        <property name="topMargin">
+         <number>3</number>
+        </property>
+        <property name="rightMargin">
+         <number>3</number>
+        </property>
+        <property name="bottomMargin">
          <number>3</number>
         </property>
         <item row="0" column="0">
@@ -309,7 +327,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>25</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -344,6 +362,7 @@
     <addaction name="actionResample_with_Lancsoz_filter_6x6"/>
     <addaction name="actionResample_with_Lancsoz_filter_8x8"/>
     <addaction name="actionResample_with_Nearest_Neighbour"/>
+    <addaction name="actionSquare_based_Resampling"/>
    </widget>
    <widget class="QMenu" name="menuConvolution">
     <property name="title">
@@ -453,7 +472,7 @@
    </property>
    <property name="text">
     <string>Cut</string>
-    </property>
+   </property>
   </action>
   <action name="actionUse_convolution">
    <property name="text">
@@ -465,6 +484,11 @@
     <string>Convolution</string>
    </property>
   </action>
+  <action name="actionSquare_based_Resampling">
+   <property name="text">
+    <string>square based Resampling</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -474,6 +498,10 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../../../resources/main.qrc"/>
+  <include location="../../../resources/main.qrc"/>
+  <include location="../../../resources/main.qrc"/>
+  <include location="../../../resources/main.qrc"/>
   <include location="../../../resources/main.qrc"/>
  </resources>
  <connections/>
