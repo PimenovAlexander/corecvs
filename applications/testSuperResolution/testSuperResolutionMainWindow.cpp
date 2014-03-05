@@ -8,6 +8,7 @@
 #include "../../core/buffers/rgb24/abstractPainter.h"
 #include "resamples.h"
 #include "convolution.h"
+#include "modelingProcess.h"
 #include <iostream>
 TestSuperResolutionMainWindow::TestSuperResolutionMainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -59,6 +60,7 @@ void TestSuperResolutionMainWindow::connectActions()
     connect(mUi -> actionResample_with_Lancsoz_filter_8x8, SIGNAL(triggered()), this, SLOT(resampleUsingLancsozFilter8x8()));
     connect(mUi -> actionResample_with_Nearest_Neighbour, SIGNAL(triggered()), this, SLOT(resampleUsingNearestNeighbour()));
     connect(mUi -> actionSquare_based_Resampling, SIGNAL(triggered()), this, SLOT(resampleUsingSquares()));
+    connect(mUi -> actionSimple_modeling_process, SIGNAL(triggered()), this, SLOT(simpleMethodModelingProcess()));
 
     connect(mUi -> actionCut, SIGNAL(triggered()), this, SLOT(cutImage()));
 
@@ -598,6 +600,55 @@ void TestSuperResolutionMainWindow::resampleUsingSquares() {
                                 );
                     if (ok) {
                         RGB24Buffer *result = squareBasedResampling(mImage,newSize,shiftX,shiftY);
+                        delete_safe(mImage);
+                        delete_safe(mMask);
+                        mImage = result;
+                        mMask = new G8Buffer(mImage->getSize());
+                        AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
+
+                        updateViewImage();
+                    }
+        }
+
+    }
+}
+
+
+void TestSuperResolutionMainWindow::simpleMethodModelingProcess() {
+    bool ok;
+    double newSize = QInputDialog::getDouble(
+                this,
+                "Print the compression ratio",
+                tr("Ratio:"),
+                1,
+                0.01,
+                1,
+                2,
+                &ok);
+    if (ok) {
+        int shiftX = QInputDialog::getInt(
+                    this,
+                    "Print the X-shift (in pixels)",
+                    tr("X-shift:"),
+                    0,
+                    0,
+                    1000,
+                    1,
+                    &ok
+                    );
+        if (ok) {
+                    int shiftY = QInputDialog::getInt(
+                                this,
+                                "Print the Y-shift (in pixels)",
+                                tr("Y-shift:"),
+                                0,
+                                0,
+                                1000,
+                                1,
+                                &ok
+                                );
+                    if (ok) {
+                        RGB24Buffer *result = simpleModelingProcess(mImage,newSize,shiftX,shiftY);
                         delete_safe(mImage);
                         delete_safe(mMask);
                         mImage = result;
