@@ -1,5 +1,7 @@
 ﻿#include "resamples.h"
 #include <cmath>
+#include <random>
+
 RGB24Buffer *resampleWithBilinearInterpolation(RGB24Buffer *startImage, double coefficient)
 {
     RGB24Buffer *result = new RGB24Buffer((int)(startImage -> getH()*coefficient),(int)(startImage -> getW()*coefficient),false);
@@ -135,7 +137,44 @@ RGB24Buffer *resampleWithNearestNeighbour(RGB24Buffer *startImage, double coeffi
 }
 
 
-RGB24Buffer *squareBasedResampling(RGB24Buffer *startImage, double coefficient, int shiftX, int shiftY)
+
+int isInside(double A_x, double A_y, double B_x, double B_y,double C_x, double C_y,double D_x, double D_y, double X, double Y)
+{
+    int result = 0;
+    if ((B_x - A_x)*(X - A_x) + (B_y - A_y)*(Y - A_y) >= 0)
+    if ((C_x - B_x)*(X - B_x) + (C_y - B_y)*(Y - B_y) >= 0)
+        if ((D_x - C_x)*(X - C_x) + (D_y - C_y)*(Y - C_y) >= 0)
+        if ((A_x - D_x)*(X - D_x) + (A_y - D_y)*(Y - D_y) >= 0)
+            result = 1;
+    return result;
+}
+
+
+double getIntersectionOfSquares(double A_x, double A_y, double B_x, double B_y,double C_x, double C_y,double D_x, double D_y, int startPoint_x, int startPoint_y)
+{
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    std::uniform_real_distribution<double> dist(0, 0.1);
+    //some magic with new random from C++11
+
+
+    int sum = 0;
+    for (double i = (double) startPoint_x; i + 0.000001 < (double) startPoint_x + 1; i+= 0.1)
+    for (double j = (double) startPoint_y; j + 0.000001 < (double) startPoint_y + 1; j+= 0.1)
+    {
+        double X = i + dist(mt);
+        double Y = j + dist(mt);
+        sum += isInside(A_x, A_y, B_x, B_y,C_x, C_y,D_x,D_y,X,Y);
+    }
+
+    return (double)sum/100;
+
+}
+
+
+
+
+RGB24Buffer *squareBasedResampling(RGB24Buffer *startImage, double coefficient, double shiftX, double shiftY, double angle)
 {
     RGB24Buffer *result = new RGB24Buffer((int)(startImage -> getH()*coefficient),(int)(startImage -> getW()*coefficient),false);
     double cellSize = 1/coefficient;
@@ -146,11 +185,31 @@ RGB24Buffer *squareBasedResampling(RGB24Buffer *startImage, double coefficient, 
             uint8_t sumR = 0;
             uint8_t sumG = 0;
             uint8_t sumB = 0;
-            double startPointX = shiftX + i * cellSize;
-            double startPointY = shiftY + j * cellSize;
-            double endPointX = startPointX + cellSize;
-            double endPointY = startPointY + cellSize;
-            for (int iX = (int)startPointX; iX < ceil(endPointX); iX++)
+            double A_x = shiftX + i * cellSize * cos (angle/180 * MATH_PI) + j * cellSize * sin (angle/180 * MATH_PI);
+            double A_y = shiftY + j * cellSize * cos (angle/180 * MATH_PI) + i * cellSize * sin (angle/180 * MATH_PI);
+            double B_x = shiftX + (i+1) * cellSize * cos (angle/180 * MATH_PI) + j * cellSize * sin (angle/180 * MATH_PI);
+            double B_y = shiftY + j * cellSize * cos (angle/180 * MATH_PI) + (i+1) * cellSize * sin (angle/180 * MATH_PI);
+            double C_x = shiftX + (i+1) * cellSize * cos (angle/180 * MATH_PI) + (j+1) * cellSize * sin (angle/180 * MATH_PI);
+            double C_y = shiftY + (j+1) * cellSize * cos (angle/180 * MATH_PI) + (i+1) * cellSize * sin (angle/180 * MATH_PI);
+            double D_x = shiftX + i * cellSize * cos (angle/180 * MATH_PI) + (j+1) * cellSize * sin (angle/180 * MATH_PI);
+            double D_y = shiftY + (j+1) * cellSize * cos (angle/180 * MATH_PI) + i * cellSize * sin (angle/180 * MATH_PI);
+
+            int min_X = floor(min(min(min(A_x,B_x),min(C_x,D_x)),0));
+            int min_Y = floor(min(min(min(A_y,B_y),min(C_y,D_y)),0));
+            int max_X = floor(max(max(max(A_x,B_x),max(C_x,D_x)),startImage -> getH()-1));
+            int max_Y = floor(max(max(max(A_y,B_y),max(C_y,D_y)),startImage -> getW()-1));
+
+
+            for (int i = min_X; i <= max_X; i++)
+                for (int j = min_Y; j <= max_Y; j++)
+                {
+                    double square = getIntersectionOfSquares(A_x,A_y,B_x,B_y,C_x,C_y,D_x,D_y,i,j);
+                    sumR = (sumR * summarySquare + square * startImage -> element(i,j).r()) / (summarySquare + square);
+                    sumG = (sumG * summarySquare + square * startImage -> element(i,j).g()) / (summarySquare + square);
+                    sumB = (sumB * summarySquare + square * startImage -> element(i,j).b()) / (summarySquare + square);
+                    summarySquare += square;
+                }
+            /*for (int iX = (int)startPointX; iX < ceil(endPointX); iX++)
                 for (int iY = (int)startPointY; iY < ceil(endPointY); iY++)
                     if ((iX < startImage -> getH()) && (iY < startImage -> getW()) && (iX >= 0) && (iY >= 0)) {
                         double firstX = max(startPointX,(double)iX);
@@ -177,7 +236,7 @@ RGB24Buffer *squareBasedResampling(RGB24Buffer *startImage, double coefficient, 
                                 sumG += (X*Y/summarySquare)*startImage -> element(iX,iY).g();
                                 sumB += (X*Y/summarySquare)*startImage -> element(iX,iY).b();
                         }
-                    }
+                    }*/
             /*sumR /= summarySquare;
             sumG /= summarySquare;
             sumB /= summarySquare;*/
