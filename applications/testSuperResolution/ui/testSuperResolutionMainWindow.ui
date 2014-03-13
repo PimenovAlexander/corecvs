@@ -370,11 +370,18 @@
     </property>
     <addaction name="actionUse_convolution"/>
    </widget>
+   <widget class="QMenu" name="menuTransformations">
+    <property name="title">
+     <string>Transformations</string>
+    </property>
+    <addaction name="actionRotate"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSelection"/>
    <addaction name="menuAwC"/>
    <addaction name="menuResampling"/>
    <addaction name="menuConvolution"/>
+   <addaction name="menuTransformations"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -487,6 +494,11 @@
   <action name="actionSquare_based_Resampling">
    <property name="text">
     <string>square based Resampling</string>
+   </property>
+  </action>
+  <action name="actionRotate">
+   <property name="text">
+    <string>Rotate</string>
    </property>
   </action>
  </widget>

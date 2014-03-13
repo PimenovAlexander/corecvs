@@ -62,6 +62,7 @@ private slots:
     void resampleUsingNearestNeighbour();
     void resampleUsingSquares();
     void convolutionImage();
+    void rotateByAngle();
 };
 
 #endif // TESTSUPERRESOLUTIONMAINWINDOW_H

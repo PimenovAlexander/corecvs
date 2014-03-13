@@ -8,6 +8,7 @@
 #include "../../core/buffers/rgb24/abstractPainter.h"
 #include "resamples.h"
 #include "convolution.h"
+#include "transformations.h"
 #include <iostream>
 TestSuperResolutionMainWindow::TestSuperResolutionMainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -63,6 +64,8 @@ void TestSuperResolutionMainWindow::connectActions()
     connect(mUi -> actionCut, SIGNAL(triggered()), this, SLOT(cutImage()));
 
     connect(mUi -> actionUse_convolution, SIGNAL(triggered()), this, SLOT(convolutionImage()));
+
+    connect(mUi -> actionRotate, SIGNAL(triggered()), this, SLOT(rotateByAngle()));
 }
 
 
@@ -562,6 +565,17 @@ void TestSuperResolutionMainWindow::convolutionImage() {
 
 }
 
+
+void TestSuperResolutionMainWindow::rotateByAngle() {
+    RGB24Buffer *result = rotate(mImage,0.7854);
+    delete_safe(mImage);
+    delete_safe(mMask);
+    mImage = result;
+    mMask = new G8Buffer(mImage->getSize());
+    AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
+
+    updateViewImage();
+}
 
 void TestSuperResolutionMainWindow::resampleUsingSquares() {
     bool ok;

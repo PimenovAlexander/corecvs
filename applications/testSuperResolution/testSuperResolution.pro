@@ -28,7 +28,8 @@ HEADERS = \
     testSuperResolutionMainWindow.h \
 #    pointScene.h \
     resamples.h \
-    convolution.h
+    convolution.h \
+    transformations.h
 
 
 
@@ -37,8 +38,12 @@ SOURCES = \
     main_testSuperResolution.cpp \
 #    pointScene.cpp \
     resamples.cpp \
-    convolution.cpp
+    convolution.cpp \
+    transformations.cpp
 
 FORMS = ui/testSuperResolutionMainWindow.ui \
 
 RESOURCES += ../../resources/main.qrc
+
+
+QMAKE_CXXFLAGS += -std=c++11

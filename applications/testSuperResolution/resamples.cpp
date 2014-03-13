@@ -2,6 +2,8 @@
 #include <cmath>
 #include <random>
 
+#define _USE_MATH_DEFINES
+
 RGB24Buffer *resampleWithBilinearInterpolation(RGB24Buffer *startImage, double coefficient)
 {
     RGB24Buffer *result = new RGB24Buffer((int)(startImage -> getH()*coefficient),(int)(startImage -> getW()*coefficient),false);
@@ -185,19 +187,23 @@ RGB24Buffer *squareBasedResampling(RGB24Buffer *startImage, double coefficient, 
             uint8_t sumR = 0;
             uint8_t sumG = 0;
             uint8_t sumB = 0;
-            double A_x = shiftX + i * cellSize * cos (angle/180 * MATH_PI) + j * cellSize * sin (angle/180 * MATH_PI);
-            double A_y = shiftY + j * cellSize * cos (angle/180 * MATH_PI) + i * cellSize * sin (angle/180 * MATH_PI);
-            double B_x = shiftX + (i+1) * cellSize * cos (angle/180 * MATH_PI) + j * cellSize * sin (angle/180 * MATH_PI);
-            double B_y = shiftY + j * cellSize * cos (angle/180 * MATH_PI) + (i+1) * cellSize * sin (angle/180 * MATH_PI);
-            double C_x = shiftX + (i+1) * cellSize * cos (angle/180 * MATH_PI) + (j+1) * cellSize * sin (angle/180 * MATH_PI);
-            double C_y = shiftY + (j+1) * cellSize * cos (angle/180 * MATH_PI) + (i+1) * cellSize * sin (angle/180 * MATH_PI);
-            double D_x = shiftX + i * cellSize * cos (angle/180 * MATH_PI) + (j+1) * cellSize * sin (angle/180 * MATH_PI);
-            double D_y = shiftY + (j+1) * cellSize * cos (angle/180 * MATH_PI) + i * cellSize * sin (angle/180 * MATH_PI);
+            double startPointX = shiftX + i*cellSize;
+            double startPointY = shiftY + j*cellSize;
+            double endPointX = startPointX + cellSize;
+            double endPointY = startPointY + cellSize;
+            /*double A_x = shiftX + i * cellSize * cos (angle/180 * M_PI) + j * cellSize * sin (angle/180 * M_PI);
+            double A_y = shiftY + j * cellSize * cos (angle/180 * M_PI) + i * cellSize * sin (angle/180 * M_PI);
+            double B_x = shiftX + (i+1) * cellSize * cos (angle/180 * M_PI) + j * cellSize * sin (angle/180 * M_PI);
+            double B_y = shiftY + j * cellSize * cos (angle/180 * M_PI) + (i+1) * cellSize * sin (angle/180 * M_PI);
+            double C_x = shiftX + (i+1) * cellSize * cos (angle/180 * M_PI) + (j+1) * cellSize * sin (angle/180 * M_PI);
+            double C_y = shiftY + (j+1) * cellSize * cos (angle/180 * M_PI) + (i+1) * cellSize * sin (angle/180 * M_PI);
+            double D_x = shiftX + i * cellSize * cos (angle/180 * M_PI) + (j+1) * cellSize * sin (angle/180 * M_PI);
+            double D_y = shiftY + (j+1) * cellSize * cos (angle/180 * M_PI) + i * cellSize * sin (angle/180 * M_PI);
 
-            int min_X = floor(min(min(min(A_x,B_x),min(C_x,D_x)),0));
-            int min_Y = floor(min(min(min(A_y,B_y),min(C_y,D_y)),0));
-            int max_X = floor(max(max(max(A_x,B_x),max(C_x,D_x)),startImage -> getH()-1));
-            int max_Y = floor(max(max(max(A_y,B_y),max(C_y,D_y)),startImage -> getW()-1));
+            int min_X = floor(max(min(min(A_x,B_x),min(C_x,D_x)),0.0));
+            int min_Y = floor(max(min(min(A_y,B_y),min(C_y,D_y)),0.0));
+            int max_X = floor(min(max(max(A_x,B_x),max(C_x,D_x)),(double)startImage -> getH()-1));
+            int max_Y = floor(min(max(max(A_y,B_y),max(C_y,D_y)),(double)startImage -> getW()-1));
 
 
             for (int i = min_X; i <= max_X; i++)
@@ -208,8 +214,8 @@ RGB24Buffer *squareBasedResampling(RGB24Buffer *startImage, double coefficient, 
                     sumG = (sumG * summarySquare + square * startImage -> element(i,j).g()) / (summarySquare + square);
                     sumB = (sumB * summarySquare + square * startImage -> element(i,j).b()) / (summarySquare + square);
                     summarySquare += square;
-                }
-            /*for (int iX = (int)startPointX; iX < ceil(endPointX); iX++)
+                }*/
+            for (int iX = (int)startPointX; iX < ceil(endPointX); iX++)
                 for (int iY = (int)startPointY; iY < ceil(endPointY); iY++)
                     if ((iX < startImage -> getH()) && (iY < startImage -> getW()) && (iX >= 0) && (iY >= 0)) {
                         double firstX = max(startPointX,(double)iX);
@@ -236,7 +242,7 @@ RGB24Buffer *squareBasedResampling(RGB24Buffer *startImage, double coefficient, 
                                 sumG += (X*Y/summarySquare)*startImage -> element(iX,iY).g();
                                 sumB += (X*Y/summarySquare)*startImage -> element(iX,iY).b();
                         }
-                    }*/
+                    }
             /*sumR /= summarySquare;
             sumG /= summarySquare;
             sumB /= summarySquare;*/
