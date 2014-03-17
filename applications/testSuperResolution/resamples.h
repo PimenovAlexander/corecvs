@@ -7,4 +7,4 @@ RGB24Buffer *resampleWithLancsozFilter(RGB24Buffer *startImage, double coefficie
 
 RGB24Buffer *resampleWithNearestNeighbour(RGB24Buffer *startImage, double coefficient);
 
-RGB24Buffer *squareBasedResampling(RGB24Buffer *startImage, double coefficient, double shiftX, double shiftY, double angle);
+RGB24Buffer *squareBasedResampling(RGB24Buffer *startImage, double coefficient, double shiftX, double shiftY, double angleDegree);

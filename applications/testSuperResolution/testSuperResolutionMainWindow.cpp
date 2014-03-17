@@ -1,5 +1,7 @@
 #include <QtGui/QWheelEvent>
 #include <QInputDialog>
+#include <QMessageBox>
+
 
 #include "testSuperResolutionMainWindow.h"
 #include "advancedImageWidget.h"
@@ -25,6 +27,7 @@ TestSuperResolutionMainWindow::TestSuperResolutionMainWindow(QWidget *parent)
     showMaximized();
     setWindowTitle("TestSuperResolution");
     connectActions();
+    canDelete = true;
 }
 
 
@@ -48,7 +51,9 @@ void TestSuperResolutionMainWindow::connectActions()
     connect(mUi->maskColorWidget,  SIGNAL(valueChanged()), this, SLOT(updateViewImage()));
     connect(mUi->showEdgeCheckBox, SIGNAL(toggled(bool)), this, SLOT(updateViewImage()));
 
-    connect(mUi -> actionAdd, SIGNAL(triggered()), this, SLOT(addElementToCollection()));
+    connect(mUi -> actionAdd_from_the_File_System, SIGNAL(triggered()), this, SLOT(addElementToCollection()));
+    connect(mUi -> actionAdd_from_the_Screen, SIGNAL(triggered()), this, SLOT(addImageFromTheScreenToCollection()));
+
     connect(mUi -> mWidgetList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(on_listWidget_itemDoubleClicked(QListWidgetItem*)));
 
     connect(mUi -> actionClear, SIGNAL(triggered()), this, SLOT(ClearCollection()));//NB!
@@ -92,7 +97,8 @@ void TestSuperResolutionMainWindow::loadImage(void)
         return;
     }
 
-    delete_safe(mImage);
+    if (canDelete)
+        delete_safe(mImage);
     delete_safe(mMask);
     mImage = QTFileLoader::RGB24BufferFromQImage(qImage);
 
@@ -101,10 +107,31 @@ void TestSuperResolutionMainWindow::loadImage(void)
 
     delete_safe(qImage);
     updateViewImage();
+    canDelete = true;
 }
 
 
-void TestSuperResolutionMainWindow::addImageToCollection() { }
+void TestSuperResolutionMainWindow::addImageFromTheScreenToCollection()
+{
+    if (mImage != NULL)
+    {
+        bool ok;
+        QString name = QInputDialog::getText(this, tr("Enter Name"),tr("Image name:"), QLineEdit::Normal,"", &ok);
+        if (ok)
+        {
+            canDelete = false;
+            mImageColection.push_back(mImage);
+            QListWidgetItem *item = new QListWidgetItem(name,mUi -> mWidgetList,0);
+            item -> setData(Qt::UserRole, QVariant(QString::number(mImageColection.size()-1)));
+        }
+    }
+    else
+    {
+        QMessageBox msgBox;
+        msgBox.setText("Nothing to add");
+        msgBox.exec();
+    }
+}
 
 void TestSuperResolutionMainWindow::toggleMask(void)
 {
@@ -322,14 +349,14 @@ TestSuperResolutionMainWindow::~TestSuperResolutionMainWindow()
 void TestSuperResolutionMainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
 {
     QVariant filename = item -> data(Qt::UserRole);
-    QImage *qImage = new QImage(filename.toString());
-    delete_safe(mImage);
+    int i = filename.toInt();
+    if (canDelete)
+        delete_safe(mImage);
     delete_safe(mMask);
-    mImage = QTFileLoader::RGB24BufferFromQImage(qImage);
+    canDelete = false;
+    mImage = mImageColection.at(i);
     mMask = new G8Buffer(mImage->getSize());
     AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
-
-    delete_safe(qImage);
     updateViewImage();
 }
 
@@ -347,9 +374,10 @@ void TestSuperResolutionMainWindow::addElementToCollection() {
     }
 
     QString name = filename.section('/', -1);
-
+    RGB24Buffer *newImage = QTFileLoader::RGB24BufferFromQImage(qImage);
+    mImageColection.push_back(newImage);
     QListWidgetItem *item = new QListWidgetItem(QIcon(filename),name,mUi -> mWidgetList,0);
-    item -> setData(Qt::UserRole, QVariant(filename));
+    item -> setData(Qt::UserRole, QVariant(QString::number(mImageColection.size()-1)));
 }
 void TestSuperResolutionMainWindow::ClearCollection() {
 
@@ -421,7 +449,8 @@ void TestSuperResolutionMainWindow::resampleUsingBilinearInterpolation() {
     if (ok)
     {
         RGB24Buffer *result = resampleWithBilinearInterpolation(mImage,newSize);
-        delete_safe(mImage);
+        if (canDelete)
+            delete_safe(mImage);
         delete_safe(mMask);
         mImage = result;
         mMask = new G8Buffer(mImage->getSize());
@@ -446,7 +475,8 @@ void TestSuperResolutionMainWindow::resampleUsingLancsozFilter2x2() {
     if (ok)
     {
         RGB24Buffer *result = resampleWithLancsozFilter(mImage,newSize,1);
-        delete_safe(mImage);
+        if (canDelete)
+            delete_safe(mImage);
         delete_safe(mMask);
         mImage = result;
         mMask = new G8Buffer(mImage->getSize());
@@ -470,7 +500,8 @@ void TestSuperResolutionMainWindow::resampleUsingLancsozFilter4x4() {
     if (ok)
     {
         RGB24Buffer *result = resampleWithLancsozFilter(mImage,newSize,2);
-        delete_safe(mImage);
+        if (canDelete)
+            delete_safe(mImage);
         delete_safe(mMask);
         mImage = result;
         mMask = new G8Buffer(mImage->getSize());
@@ -494,7 +525,8 @@ void TestSuperResolutionMainWindow::resampleUsingLancsozFilter6x6() {
     if (ok)
     {
         RGB24Buffer *result = resampleWithLancsozFilter(mImage,newSize,3);
-        delete_safe(mImage);
+        if (canDelete)
+            delete_safe(mImage);
         delete_safe(mMask);
         mImage = result;
         mMask = new G8Buffer(mImage->getSize());
@@ -518,7 +550,8 @@ void TestSuperResolutionMainWindow::resampleUsingLancsozFilter8x8() {
     if (ok)
     {
         RGB24Buffer *result = resampleWithLancsozFilter(mImage,newSize,4);
-        delete_safe(mImage);
+        if (canDelete)
+            delete_safe(mImage);
         delete_safe(mMask);
         mImage = result;
         mMask = new G8Buffer(mImage->getSize());
@@ -543,7 +576,8 @@ void TestSuperResolutionMainWindow::resampleUsingNearestNeighbour() {
     if (ok)
     {
         RGB24Buffer *result = resampleWithNearestNeighbour(mImage,newSize);
-        delete_safe(mImage);
+        if (canDelete)
+            delete_safe(mImage);
         delete_safe(mMask);
         mImage = result;
         mMask = new G8Buffer(mImage->getSize());
@@ -552,10 +586,12 @@ void TestSuperResolutionMainWindow::resampleUsingNearestNeighbour() {
         updateViewImage();
     }
 }
+
 void TestSuperResolutionMainWindow::convolutionImage() {
 
         RGB24Buffer *result = convolution(mImage);
-        delete_safe(mImage);
+        if (canDelete)
+            delete_safe(mImage);
         delete_safe(mMask);
         mImage = result;
         mMask = new G8Buffer(mImage->getSize());
@@ -567,14 +603,28 @@ void TestSuperResolutionMainWindow::convolutionImage() {
 
 
 void TestSuperResolutionMainWindow::rotateByAngle() {
-    RGB24Buffer *result = rotate(mImage,0.7854);
-    delete_safe(mImage);
-    delete_safe(mMask);
-    mImage = result;
-    mMask = new G8Buffer(mImage->getSize());
-    AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
+    bool ok;
+    double angle = QInputDialog::getDouble(
+                this,
+                "Print the angle (degree)",
+                tr("Angle:"),
+                0,
+                -1000,
+                1000,
+                2,
+                &ok
+                );
+    if (ok) {
+        RGB24Buffer *result = rotate(mImage,angle);
+        if (canDelete)
+            delete_safe(mImage);
+        delete_safe(mMask);
+        mImage = result;
+        mMask = new G8Buffer(mImage->getSize());
+        AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
 
-    updateViewImage();
+        updateViewImage();
+    }
 }
 
 void TestSuperResolutionMainWindow::resampleUsingSquares() {
@@ -585,7 +635,7 @@ void TestSuperResolutionMainWindow::resampleUsingSquares() {
                 tr("Ratio:"),
                 1,
                 0.01,
-                1,
+                5,
                 2,
                 &ok);
     if (ok) {
@@ -623,7 +673,8 @@ void TestSuperResolutionMainWindow::resampleUsingSquares() {
                                     );
                         if (ok) {
                             RGB24Buffer *result = squareBasedResampling(mImage,newSize,shiftX,shiftY,angle);
-                            delete_safe(mImage);
+                            if (canDelete)
+                                delete_safe(mImage);
                             delete_safe(mMask);
                             mImage = result;
                             mMask = new G8Buffer(mImage->getSize());

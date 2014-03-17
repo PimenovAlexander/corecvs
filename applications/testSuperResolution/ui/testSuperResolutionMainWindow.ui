@@ -347,7 +347,14 @@
     <property name="title">
      <string>AwC</string>
     </property>
-    <addaction name="actionAdd"/>
+    <widget class="QMenu" name="menuAdd">
+     <property name="title">
+      <string>Add</string>
+     </property>
+     <addaction name="actionAdd_from_the_Screen"/>
+     <addaction name="actionAdd_from_the_File_System"/>
+    </widget>
+    <addaction name="menuAdd"/>
     <addaction name="separator"/>
     <addaction name="separator"/>
     <addaction name="actionClear"/>
@@ -427,11 +434,6 @@
     <string>Undo Mask</string>
    </property>
   </action>
-  <action name="actionAdd">
-   <property name="text">
-    <string>Add</string>
-   </property>
-  </action>
   <action name="actionClear">
    <property name="text">
     <string>Clear</string>
@@ -499,6 +501,16 @@
   <action name="actionRotate">
    <property name="text">
     <string>Rotate</string>
+   </property>
+  </action>
+  <action name="actionAdd_from_the_Screen">
+   <property name="text">
+    <string>Add from the Screen</string>
+   </property>
+  </action>
+  <action name="actionAdd_from_the_File_System">
+   <property name="text">
+    <string>Add from the File System</string>
    </property>
   </action>
  </widget>

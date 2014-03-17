@@ -140,7 +140,7 @@ RGB24Buffer *resampleWithNearestNeighbour(RGB24Buffer *startImage, double coeffi
 
 
 
-int isInside(double A_x, double A_y, double B_x, double B_y,double C_x, double C_y,double D_x, double D_y, double X, double Y)
+/*int isInside(double A_x, double A_y, double B_x, double B_y,double C_x, double C_y,double D_x, double D_y, double X, double Y)
 {
     int result = 0;
     if ((B_x - A_x)*(X - A_x) + (B_y - A_y)*(Y - A_y) >= 0)
@@ -174,9 +174,7 @@ double getIntersectionOfSquares(double A_x, double A_y, double B_x, double B_y,d
 }
 
 
-
-
-RGB24Buffer *squareBasedResampling(RGB24Buffer *startImage, double coefficient, double shiftX, double shiftY, double angle)
+RGB24Buffer *squareBasedResampling(RGB24Buffer *startImage, double coefficient, double shiftX, double shiftY, double angleDegree)
 {
     RGB24Buffer *result = new RGB24Buffer((int)(startImage -> getH()*coefficient),(int)(startImage -> getW()*coefficient),false);
     double cellSize = 1/coefficient;
@@ -187,11 +185,7 @@ RGB24Buffer *squareBasedResampling(RGB24Buffer *startImage, double coefficient, 
             uint8_t sumR = 0;
             uint8_t sumG = 0;
             uint8_t sumB = 0;
-            double startPointX = shiftX + i*cellSize;
-            double startPointY = shiftY + j*cellSize;
-            double endPointX = startPointX + cellSize;
-            double endPointY = startPointY + cellSize;
-            /*double A_x = shiftX + i * cellSize * cos (angle/180 * M_PI) + j * cellSize * sin (angle/180 * M_PI);
+            double A_x = shiftX + i * cellSize * cos (angle/180 * M_PI) + j * cellSize * sin (angle/180 * M_PI);
             double A_y = shiftY + j * cellSize * cos (angle/180 * M_PI) + i * cellSize * sin (angle/180 * M_PI);
             double B_x = shiftX + (i+1) * cellSize * cos (angle/180 * M_PI) + j * cellSize * sin (angle/180 * M_PI);
             double B_y = shiftY + j * cellSize * cos (angle/180 * M_PI) + (i+1) * cellSize * sin (angle/180 * M_PI);
@@ -214,42 +208,50 @@ RGB24Buffer *squareBasedResampling(RGB24Buffer *startImage, double coefficient, 
                     sumG = (sumG * summarySquare + square * startImage -> element(i,j).g()) / (summarySquare + square);
                     sumB = (sumB * summarySquare + square * startImage -> element(i,j).b()) / (summarySquare + square);
                     summarySquare += square;
-                }*/
-            for (int iX = (int)startPointX; iX < ceil(endPointX); iX++)
-                for (int iY = (int)startPointY; iY < ceil(endPointY); iY++)
-                    if ((iX < startImage -> getH()) && (iY < startImage -> getW()) && (iX >= 0) && (iY >= 0)) {
-                        double firstX = max(startPointX,(double)iX);
-                        double lastX = min(endPointX,(double)iX+1);
-                        double firstY = max(startPointY, (double)iY);
-                        double lastY = min(endPointY,(double)iY+1);
-                        if ((firstX <= lastX) && (firstY <= lastY)) {
-                                double X = lastX - firstX;
-                                double Y = lastY - firstY;
-                                summarySquare += X*Y;
-                        }
-                    }
-            for (int iX = (int)startPointX; iX < ceil(endPointX); iX++)
-                for (int iY = (int)startPointY; iY < ceil(endPointY); iY++)
-                    if ((iX < startImage -> getH()) && (iY < startImage -> getW()) && (iX >= 0) && (iY >= 0)) {
-                        double firstX = max(startPointX,(double)iX);
-                        double lastX = min(endPointX,(double)iX+1);
-                        double firstY = max(startPointY, (double)iY);
-                        double lastY = min(endPointY,(double)iY+1);
-                        if ((firstX <= lastX) && (firstY <= lastY)) {
-                                double X = lastX - firstX;
-                                double Y = lastY - firstY;
-                                sumR += (X*Y/summarySquare)*startImage -> element(iX,iY).r();
-                                sumG += (X*Y/summarySquare)*startImage -> element(iX,iY).g();
-                                sumB += (X*Y/summarySquare)*startImage -> element(iX,iY).b();
-                        }
-                    }
-            /*sumR /= summarySquare;
-            sumG /= summarySquare;
-            sumB /= summarySquare;*/
+                }
             result -> element(i,j) = RGBColor(sumR,sumG,sumB);
-            /*result -> element(i,j).r() = sumR;
-            result -> element(i,j).g() = sumG;
-            result -> element(i,j).b() = sumB;*/
+        }
+    return result;
+}
+*/
+RGB24Buffer *squareBasedResampling(RGB24Buffer *startImage, double coefficient, double shiftX, double shiftY, double angleDegree)
+{
+    RGB24Buffer *result = new RGB24Buffer((int)(startImage -> getH()*coefficient),(int)(startImage -> getW()*coefficient),false);
+    double cellSize = 1/coefficient;
+    for (int i = 0; i < result -> getH(); i++)
+        for (int j = 0; j < result -> getW(); j++)
+        {
+            double summarySquare = 0;
+            uint8_t sumR = 0;
+            uint8_t sumG = 0;
+            uint8_t sumB = 0;
+            double startPointX = shiftX + i*cellSize;
+            double startPointY = shiftY + j*cellSize;
+            double endPointX = startPointX + cellSize;
+            double endPointY = startPointY + cellSize;
+
+            double X = min((double)(startImage -> getH()),endPointX) - max(0.0, startPointX);
+            double Y = min((double)(startImage -> getW()),endPointY) - max(0.0, startPointY);
+            summarySquare = X * Y;
+            if (summarySquare > 0.0)
+            {
+                for (int iX = (int)startPointX; iX < ceil(endPointX); iX++)
+                    for (int iY = (int)startPointY; iY < ceil(endPointY); iY++)
+                        if ((iX < startImage -> getH()) && (iY < startImage -> getW()) && (iX >= 0) && (iY >= 0)) {
+                            double firstX = max(startPointX,(double)iX);
+                            double lastX = min(endPointX,(double)iX+1);
+                            double firstY = max(startPointY, (double)iY);
+                            double lastY = min(endPointY,(double)iY+1);
+                            if ((firstX <= lastX) && (firstY <= lastY)) {
+                                    X = lastX - firstX;
+                                    Y = lastY - firstY;
+                                    sumR += (X*Y/summarySquare)*startImage -> element(iX,iY).r();
+                                    sumG += (X*Y/summarySquare)*startImage -> element(iX,iY).g();
+                                    sumB += (X*Y/summarySquare)*startImage -> element(iX,iY).b();
+                            }
+                        }
+            }
+            result -> element(i,j) = RGBColor(sumR,sumG,sumB);
         }
     return result;
 }
