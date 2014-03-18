@@ -699,40 +699,53 @@ void TestSuperResolutionMainWindow::simpleMethodModelingProcess() {
                 tr("Ratio:"),
                 1,
                 0.01,
-                1,
+                5,
                 2,
                 &ok);
     if (ok) {
-        int shiftX = QInputDialog::getInt(
+        double shiftX = QInputDialog::getDouble(
                     this,
                     "Print the X-shift (in pixels)",
                     tr("X-shift:"),
                     0,
-                    0,
+                    -1000,
                     1000,
-                    1,
+                    2,
                     &ok
                     );
         if (ok) {
-                    int shiftY = QInputDialog::getInt(
+                    double shiftY = QInputDialog::getDouble(
                                 this,
                                 "Print the Y-shift (in pixels)",
                                 tr("Y-shift:"),
                                 0,
-                                0,
+                                -1000,
                                 1000,
-                                1,
+                                2,
                                 &ok
                                 );
                     if (ok) {
-                        RGB24Buffer *result = simpleModelingProcess(mImage,newSize,shiftX,shiftY);
-                        delete_safe(mImage);
-                        delete_safe(mMask);
-                        mImage = result;
-                        mMask = new G8Buffer(mImage->getSize());
-                        AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
+                        double angle = QInputDialog::getDouble(
+                                    this,
+                                    "Print the angle (degree)",
+                                    tr("Angle:"),
+                                    0,
+                                    -1000,
+                                    1000,
+                                    2,
+                                    &ok
+                                    );
+                        if (ok) {
+                            RGB24Buffer *result = simpleModelingProcess(mImage,newSize,shiftX,shiftY,angle);
+                            if (canDelete)
+                                delete_safe(mImage);
+                            delete_safe(mMask);
+                            mImage = result;
+                            mMask = new G8Buffer(mImage->getSize());
+                            AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
 
-                        updateViewImage();
+                            updateViewImage();
+                        }
                     }
         }
 

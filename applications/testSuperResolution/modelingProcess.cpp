@@ -1,7 +1,7 @@
 #include "resamples.h"
 #include "modelingProcess.h"
 
-RGB24Buffer *simpleModelingProcess(RGB24Buffer *startImage, double coefficient, int shiftX, int shiftY)
+RGB24Buffer *simpleModelingProcess(RGB24Buffer *startImage, double coefficient, int shiftX, int shiftY, double angleDegree)
 {
     int shiftX1, shiftY1, shiftX2, shiftY2, shiftX3, shiftY3, shiftX4, shiftY4;
     shiftX1 = shiftX;
@@ -13,10 +13,10 @@ RGB24Buffer *simpleModelingProcess(RGB24Buffer *startImage, double coefficient, 
     shiftX4 = 4 * shiftX;
     shiftY4 = 4 * shiftY;
 
-    RGB24Buffer *image1 = squareBasedResampling(startImage, coefficient, shiftX1, shiftY1);
-    RGB24Buffer *image2 = squareBasedResampling(startImage, coefficient, shiftX2, shiftY2);
-    RGB24Buffer *image3 = squareBasedResampling(startImage, coefficient, shiftX3, shiftY3);
-    RGB24Buffer *image4 = squareBasedResampling(startImage, coefficient, shiftX4, shiftY4);
+    RGB24Buffer *image1 = squareBasedResampling(startImage, coefficient, shiftX1, shiftY1, angleDegree);
+    RGB24Buffer *image2 = squareBasedResampling(startImage, coefficient, shiftX2, shiftY2, angleDegree);
+    RGB24Buffer *image3 = squareBasedResampling(startImage, coefficient, shiftX3, shiftY3, angleDegree);
+    RGB24Buffer *image4 = squareBasedResampling(startImage, coefficient, shiftX4, shiftY4, angleDegree);
 
     image1 = resampleWithBilinearInterpolation(image1, 1 / coefficient);
     image2 = resampleWithBilinearInterpolation(image2, 1 / coefficient);

@@ -29,9 +29,8 @@ HEADERS = \
 #    pointScene.h \
     resamples.h \
     convolution.h \
-    modelingProcess.h
-    transformations.h
-
+    modelingProcess.h \
+    transformations.h \
 
 
 SOURCES = \
@@ -40,8 +39,8 @@ SOURCES = \
 #    pointScene.cpp \
     resamples.cpp \
     convolution.cpp \
-    modelingProcess.cpp
-    transformations.cpp
+    modelingProcess.cpp \
+    transformations.cpp \
 
 FORMS = ui/testSuperResolutionMainWindow.ui \
 
