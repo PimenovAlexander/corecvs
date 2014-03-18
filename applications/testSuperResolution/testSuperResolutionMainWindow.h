@@ -26,6 +26,9 @@ private:
     Ui::TestSuperResolutionMainWindowClass *mUi;
 
     AdvancedImageWidget *mImageWidget;
+
+    std::deque<RGB24Buffer*> mImageColection;
+    bool canDelete;
 /* Move this out */
 
 public slots:
@@ -42,16 +45,15 @@ public slots:
     void maskTolerance1(QPoint point);
     void recursiveTolerance(RGBColor startColor, int tolerance, int x, int y);
 
-    void addImageToCollection();
-    void ClearCollection();
-
-    void cutImage();
 public:
     RGB24Buffer *mImage;
     G8Buffer *mMask;
     bool mMaskChange;
     deque<G8Buffer *> mUndoList;
 private slots:
+    void ClearCollection();
+    void cutImage();
+    void addImageFromTheScreenToCollection();
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
     void addElementToCollection();
     void resampleUsingBilinearInterpolation();
@@ -63,6 +65,7 @@ private slots:
     void resampleUsingSquares();
     void convolutionImage();
     void simpleMethodModelingProcess();
+    void rotateByAngle();
 };
 
 #endif // TESTSUPERRESOLUTIONMAINWINDOW_H

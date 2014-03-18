@@ -30,6 +30,7 @@ HEADERS = \
     resamples.h \
     convolution.h \
     modelingProcess.h
+    transformations.h
 
 
 
@@ -40,7 +41,11 @@ SOURCES = \
     resamples.cpp \
     convolution.cpp \
     modelingProcess.cpp
+    transformations.cpp
 
 FORMS = ui/testSuperResolutionMainWindow.ui \
 
 RESOURCES += ../../resources/main.qrc
+
+
+QMAKE_CXXFLAGS += -std=c++11
