@@ -31,6 +31,8 @@ HEADERS = \
     convolution.h \
     modelingProcess.h \
     transformations.h \
+    listsOfLRImages.h \
+    gradientDescent.h
 
 
 SOURCES = \
@@ -41,6 +43,8 @@ SOURCES = \
     convolution.cpp \
     modelingProcess.cpp \
     transformations.cpp \
+    listsOfLRImages.cpp \
+    gradientDescent.cpp
 
 FORMS = ui/testSuperResolutionMainWindow.ui \
 

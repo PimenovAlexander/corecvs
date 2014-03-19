@@ -6,6 +6,7 @@
 #include "ui_testSuperResolutionMainWindow.h"
 #include "advancedImageWidget.h"
 #include "rgb24Buffer.h"
+#include "listsOfLRImages.h"
 #include <QListWidget>
 using corecvs::RGB24Buffer;
 using std::deque;
@@ -27,7 +28,9 @@ private:
 
     AdvancedImageWidget *mImageWidget;
 
-    std::deque<RGB24Buffer*> mImageColection;
+    std::deque<RGB24Buffer*> mImageCollection;
+    std::deque<LRImage> mListOfLRImages;
+
     bool canDelete;
 /* Move this out */
 

@@ -12,6 +12,7 @@
 #include "convolution.h"
 #include "transformations.h"
 #include "modelingProcess.h"
+#include "gradientDescent.h"
 #include <iostream>
 TestSuperResolutionMainWindow::TestSuperResolutionMainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -122,9 +123,9 @@ void TestSuperResolutionMainWindow::addImageFromTheScreenToCollection()
         if (ok)
         {
             canDelete = false;
-            mImageColection.push_back(mImage);
+            mImageCollection.push_back(mImage);
             QListWidgetItem *item = new QListWidgetItem(name,mUi -> mWidgetList,0);
-            item -> setData(Qt::UserRole, QVariant(QString::number(mImageColection.size()-1)));
+            item -> setData(Qt::UserRole, QVariant(QString::number(mImageCollection.size()-1)));
         }
     }
     else
@@ -356,7 +357,7 @@ void TestSuperResolutionMainWindow::on_listWidget_itemDoubleClicked(QListWidgetI
         delete_safe(mImage);
     delete_safe(mMask);
     canDelete = false;
-    mImage = mImageColection.at(i);
+    mImage = mImageCollection.at(i);
     mMask = new G8Buffer(mImage->getSize());
     AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
     updateViewImage();
@@ -377,9 +378,9 @@ void TestSuperResolutionMainWindow::addElementToCollection() {
 
     QString name = filename.section('/', -1);
     RGB24Buffer *newImage = QTFileLoader::RGB24BufferFromQImage(qImage);
-    mImageColection.push_back(newImage);
+    mImageCollection.push_back(newImage);
     QListWidgetItem *item = new QListWidgetItem(QIcon(filename),name,mUi -> mWidgetList,0);
-    item -> setData(Qt::UserRole, QVariant(QString::number(mImageColection.size()-1)));
+    item -> setData(Qt::UserRole, QVariant(QString::number(mImageCollection.size()-1)));
 }
 void TestSuperResolutionMainWindow::ClearCollection() {
 

@@ -34,10 +34,6 @@ RGB24Buffer *resampleWithBilinearInterpolation(RGB24Buffer *startImage, double c
                     startImage -> element(xLeft,yRight).b() * (1 - k1) * k2 +
                     startImage -> element(xRight,yLeft).b() * k1 * (1 - k2) +
                     startImage -> element(xRight,yRight).b() * k1 * k2;
-            /*result -> element(i,j) = startImage -> element(xLeft,yLeft) * (1 - k1) * (1 - k2) +
-                    startImage -> element(xLeft,yRight) * (1 - k1) * k2 +
-                    startImage -> element(xRight,yLeft) * k1 * (1 - k2) +
-                    startImage -> element(xRight,yRight) * k1 * k2;*/
         }
     return result;
 }
