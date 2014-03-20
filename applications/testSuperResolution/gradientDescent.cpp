@@ -36,6 +36,7 @@ double diffFunc(RGB24Buffer* startImage, std::deque<RGB24Buffer*> imageCollectio
         delete_safe(rotatedImage);
         delete_safe(result);
     }
+    sum /= (double)LRImages.size();
     return sum;
 }
 

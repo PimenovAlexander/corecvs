@@ -832,5 +832,6 @@ void TestSuperResolutionMainWindow::simpleMethodModelingProcessWithList(){
     AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
 
     updateViewImage();
+    std::cout<<diffFunc(mImage,mImageCollection,mListOfLRImages)<<std::endl;
 
 }

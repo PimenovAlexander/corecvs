@@ -59,28 +59,46 @@ RGB24Buffer *squareBasedResamplingRotate(RGB24Buffer *startImage, double coeffic
 
 RGB24Buffer *simpleModelingProcessWithList(std::deque<RGB24Buffer*> imageCollection, std::deque<LRImage> LRImages)
 {
-    /*RGB24Buffer *result = new RGB24Buffer((int)(imageCollection.at(LRImages.at(0).numberInImageCollection_) -> getH()),(int)(imageCollection.at(LRImages.at(0).numberInImageCollection_) -> getW()), false);
-    RGB24Buffer *image = new RGB24Buffer((int)(imageCollection.at(LRImages.at(0).numberInImageCollection_) -> getH()),(int)(imageCollection.at(LRImages.at(0).numberInImageCollection_) -> getW()), false);
+    RGB24Buffer *result = new RGB24Buffer((double)((int)(imageCollection.at(LRImages.at(0).numberInImageCollection_) -> getH()) / (double)LRImages.at(0).coefficient_)
+                                          ,(double)((int)(imageCollection.at(LRImages.at(0).numberInImageCollection_) -> getW()) / (double)LRImages.at(0).coefficient_), false);
+    RGB24Buffer *image = new RGB24Buffer((double)((int)(imageCollection.at(LRImages.at(0).numberInImageCollection_) -> getH()) / (double)LRImages.at(0).coefficient_)
+                                          ,(double)((int)(imageCollection.at(LRImages.at(0).numberInImageCollection_) -> getW()) / (double)LRImages.at(0).coefficient_), false);
     std::deque<RGB24Buffer*> imageCollection2;
-    imageCollection2 = imageCollection;
     for(int k = 0; k < LRImages.size(); k++)
     {
-        imageCollection2.at(LRImages.at(k).numberInImageCollection_) = rotate(imageCollection.at(LRImages.at(k).numberInImageCollection_), -LRImages.at(k).angleDegree_);
-        imageCollection2.at(LRImages.at(k).numberInImageCollection_) = resampleWithBilinearInterpolation(imageCollection.at(LRImages.at(k).numberInImageCollection_), 1/LRImages.at(k).coefficient_);
+        RGB24Buffer *rotatedImage = rotate(imageCollection.at(LRImages.at(k).numberInImageCollection_), -LRImages.at(k).angleDegree_);
+        imageCollection2.push_back(resampleWithBilinearInterpolation(rotatedImage,1/(double)LRImages.at(k).coefficient_));
     }
-    for(int i = 0; i < imageCollection.at(LRImages.at(0).numberInImageCollection_) -> getH(); i++)
-        for(int j = 0; j < imageCollection.at(LRImages.at(0).numberInImageCollection_) -> getW(); j++)
+    for(int i = 0; i < result -> getH(); i++)
+        for(int j = 0; j < result -> getW(); j++)
         {
+            int numberOfEnters = 0;
             for(int k = 0; k < LRImages.size(); k++)
             {
-                image = imageCollection2.at(LRImages.at(k).numberInImageCollection_);
-                result -> element(i, j).r() += (image -> element(i, j).r()/LRImages.size());
-                result -> element(i, j).g() += (image -> element(i, j).g()/LRImages.size());
-                result -> element(i, j).b() += (image -> element(i, j).b()/LRImages.size());
+                image = imageCollection2.at(k);
+                int x = i - LRImages.at(k).shiftX_;
+                int y = j - LRImages.at(k).shiftY_;
+                if ((x >=0) && (y>=0) && (x < image -> getH()) && (y < image -> getW()))
+                    numberOfEnters++;
             }
-            //result -> element(i, j).r() /= LRImages.size();
-            //result -> element(i, j).g() /= LRImages.size();
-            //result -> element(i, j).b() /= LRImages.size();
+            result -> element(i, j).r() = 0;
+            result -> element(i, j).g() = 0;
+            result -> element(i, j).b() = 0;
+            if (numberOfEnters > 0)
+            {
+                for(int k = 0; k < LRImages.size(); k++)
+                {
+                    image = imageCollection2.at(k);
+                    int x = i - LRImages.at(k).shiftX_;
+                    int y = j - LRImages.at(k).shiftY_;
+                    if ((x >=0) && (y>=0) && (x < image -> getH()) && (y < image -> getW()))
+                    {
+                        result -> element(i, j).r() += image -> element(x, y).r()/numberOfEnters;
+                        result -> element(i, j).g() += image -> element(x, y).g()/numberOfEnters;
+                        result -> element(i, j).b() += image -> element(x, y).b()/numberOfEnters;
+                    }
+                }
+            }
         }
-    return result;*/
+    return result;
 }
