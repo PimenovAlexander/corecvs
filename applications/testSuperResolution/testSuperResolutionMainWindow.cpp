@@ -13,6 +13,7 @@
 #include "transformations.h"
 #include "modelingProcess.h"
 #include "gradientDescent.h"
+#include "listsOfLRImages.h"
 #include <iostream>
 TestSuperResolutionMainWindow::TestSuperResolutionMainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -68,6 +69,9 @@ void TestSuperResolutionMainWindow::connectActions()
     connect(mUi -> actionResample_with_Nearest_Neighbour, SIGNAL(triggered()), this, SLOT(resampleUsingNearestNeighbour()));
     connect(mUi -> actionSquare_based_Resampling, SIGNAL(triggered()), this, SLOT(resampleUsingSquares()));
     connect(mUi -> actionSimple_modeling_process, SIGNAL(triggered()), this, SLOT(simpleMethodModelingProcess()));
+    connect(mUi -> actionSB_resample_and_rotation, SIGNAL(triggered()), this, SLOT(SBResampleAndRotation()));
+    connect(mUi -> actionSimple_modeling_process_with_list, SIGNAL(triggered()), this, SLOT(simpleMethodModelingProcessWithList()));
+
 
     connect(mUi -> actionCut, SIGNAL(triggered()), this, SLOT(cutImage()));
 
@@ -751,4 +755,82 @@ void TestSuperResolutionMainWindow::simpleMethodModelingProcess() {
         }
 
     }
+}
+
+void TestSuperResolutionMainWindow::SBResampleAndRotation(){
+    bool ok;
+    double newSize = QInputDialog::getDouble(
+                this,
+                "Print the compression ratio",
+                tr("Ratio:"),
+                1,
+                0.01,
+                5,
+                2,
+                &ok);
+    if (ok) {
+        double shiftX = QInputDialog::getDouble(
+                    this,
+                    "Print the X-shift (in pixels)",
+                    tr("X-shift:"),
+                    0,
+                    -1000,
+                    1000,
+                    2,
+                    &ok
+                    );
+        if (ok) {
+                    double shiftY = QInputDialog::getDouble(
+                                this,
+                                "Print the Y-shift (in pixels)",
+                                tr("Y-shift:"),
+                                0,
+                                -1000,
+                                1000,
+                                2,
+                                &ok
+                                );
+                    if (ok) {
+                        double angle = QInputDialog::getDouble(
+                                    this,
+                                    "Print the angle (degree)",
+                                    tr("Angle:"),
+                                    0,
+                                    -1000,
+                                    1000,
+                                    2,
+                                    &ok
+                                    );
+                        if (ok) {
+                            RGB24Buffer *image = squareBasedResampling(mImage, newSize, shiftX, shiftY, angle);
+                            RGB24Buffer *result = rotate(image, angle);
+                            if (canDelete)
+                                delete_safe(mImage);
+                            delete_safe(mMask);
+                            mImage = result;
+                            mMask = new G8Buffer(mImage->getSize());
+                            AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
+
+                            updateViewImage();
+                            addImageFromTheScreenToCollection();
+                            LRImage *image2 = new LRImage(mListOfLRImages.size(), shiftX, shiftY, angle, newSize); //NB! size
+                            mListOfLRImages.push_back(*image2);
+                        }
+                    }
+        }
+
+    }
+}
+
+void TestSuperResolutionMainWindow::simpleMethodModelingProcessWithList(){
+    RGB24Buffer *result = simpleModelingProcessWithList(mImageCollection, mListOfLRImages);
+    if (canDelete)
+        delete_safe(mImage);
+    delete_safe(mMask);
+    mImage = result;
+    mMask = new G8Buffer(mImage->getSize());
+    AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
+
+    updateViewImage();
+
 }
