@@ -2,6 +2,8 @@
 #include <cmath>
 #include "transformations.h"
 #include "resamples.h"
+#include <cstdlib>
+#include <time.h>
 
 double differenceBetweenImages(RGB24Buffer* image1, RGB24Buffer* image2)
 {
@@ -35,4 +37,53 @@ double diffFunc(RGB24Buffer* startImage, std::deque<RGB24Buffer*> imageCollectio
         delete_safe(result);
     }
     return sum;
+}
+
+void iteration(RGB24Buffer* startImage, std::deque<RGB24Buffer*> imageCollection, std::deque<LRImage> LRImages, double step,
+               double minQualityImprovement)
+{
+    double oldValue = diffFunc(startImage,imageCollection,LRImages);
+    srand (time(NULL));
+    int rX = rand() % (int)(startImage -> getH());
+    int rY = rand() % (int)(startImage -> getW());
+    int rColor = rand() % 3;
+    int rDir = rand() % 2;
+    if (rDir == 0)
+        rDir = -1;
+
+    if (rColor == 0)
+    {
+        if ((int)(startImage -> element(rX,rY).r()) > 255 - step)
+            rDir = -1;
+        if ((int)(startImage -> element(rX,rY).r()) < step)
+            rDir = 1;
+        startImage -> element(rX,rY).r() += rDir * step;
+        double newValue = diffFunc(startImage,imageCollection,LRImages);
+        if (oldValue - newValue < minQualityImprovement)
+            startImage -> element(rX,rY).r() -= rDir * step;
+    }
+
+    if (rColor == 1)
+    {
+        if ((int)(startImage -> element(rX,rY).g()) > 255 - step)
+            rDir = -1;
+        if ((int)(startImage -> element(rX,rY).g()) < step)
+            rDir = 1;
+        startImage -> element(rX,rY).g() += rDir * step;
+        double newValue = diffFunc(startImage,imageCollection,LRImages);
+        if (oldValue - newValue < minQualityImprovement)
+            startImage -> element(rX,rY).g() -= rDir * step;
+    }
+
+    if (rColor == 2)
+    {
+        if ((int)(startImage -> element(rX,rY).b()) > 255 - step)
+            rDir = -1;
+        if ((int)(startImage -> element(rX,rY).b()) < step)
+            rDir = 1;
+        startImage -> element(rX,rY).b() += rDir * step;
+        double newValue = diffFunc(startImage,imageCollection,LRImages);
+        if (oldValue - newValue < minQualityImprovement)
+            startImage -> element(rX,rY).b() -= rDir * step;
+    }
 }
