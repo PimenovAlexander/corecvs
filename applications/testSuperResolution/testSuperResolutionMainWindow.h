@@ -69,6 +69,8 @@ private slots:
     void convolutionImage();
     void simpleMethodModelingProcess();
     void rotateByAngle();
+    void SBResampleAndRotation();
+    void simpleMethodModelingProcessWithList();
 };
 
 #endif // TESTSUPERRESOLUTIONMAINWINDOW_H

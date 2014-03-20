@@ -388,6 +388,8 @@
      <string>Modelling Procces</string>
     </property>
     <addaction name="actionSimple_modeling_process"/>
+    <addaction name="actionSB_resample_and_rotation"/>
+    <addaction name="actionSimple_modeling_process_with_list"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSelection"/>
@@ -523,6 +525,16 @@
   <action name="actionAdd_from_the_File_System">
    <property name="text">
     <string>Add from the File System</string>
+   </property>
+  </action>
+  <action name="actionSB_resample_and_rotation">
+   <property name="text">
+    <string>SB resample and rotation</string>
+   </property>
+  </action>
+  <action name="actionSimple_modeling_process_with_list">
+   <property name="text">
+    <string>Simple modeling process with list</string>
    </property>
   </action>
  </widget>
