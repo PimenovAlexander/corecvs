@@ -13,7 +13,7 @@
 #include "global.h"
 #include "utils.h"
 
-#include "testbedMainWindow.h"
+#include "testDistortionMainWindow.h"
 #include "qtFileLoader.h"
 
 

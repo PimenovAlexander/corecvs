@@ -29,12 +29,14 @@ private:
     void connectActions();
     void updateImages();
     G12Buffer* executeEdgeFilter(RGB24Buffer *image);
+    G12Buffer* executeHoughTransform(G12Buffer* image);
     Ui::TestbedMainWindowClass *mUi;
     bool isEdgeFilterActive;
     RGB24Buffer *originalImage;
     G12Buffer *edgeFilterImage;
 
     AdvancedImageWidget *mImageWidget;
+    AdvancedImageWidget *showerWidget;
     DistortionWidget *mDistrtionWidget;
 /* Move this out */
 
@@ -47,6 +49,7 @@ public slots:
     void resetMask(void);
     void undoMask(void);
     void openDistortionWindow(void);
+    void openHoughTransformWindow(void);
     void toogleEdgeFilter(void);
 
     void maskHue(int hue1, int hue2);

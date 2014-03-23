@@ -1,6 +1,6 @@
 #include <QtGui/QWheelEvent>
 
-#include "testbedMainWindow.h"
+#include "testDistortionMainWindow.h"
 #include "advancedImageWidget.h"
 #include "../../utils/fileformats/qtFileLoader.h"
 #include "../../utils/corestructs/g12Image.h"
@@ -12,6 +12,7 @@ TestbedMainWindow::TestbedMainWindow(QWidget *parent)
     , mUi(new Ui::TestbedMainWindowClass)
     , mImageWidget(NULL)
     , mDistrtionWidget(NULL)
+    , showerWidget(NULL)
     , mImage(NULL)
     , mMask(NULL)
 {
@@ -20,6 +21,7 @@ TestbedMainWindow::TestbedMainWindow(QWidget *parent)
     isEdgeFilterActive = false;
 
     mImageWidget = new AdvancedImageWidget(this);
+    showerWidget = new AdvancedImageWidget();
     setCentralWidget(mImageWidget);
 
     mDistrtionWidget = new DistortionWidget();
@@ -54,6 +56,8 @@ void TestbedMainWindow::connectActions()
     connect(mUi->actionDistortionCorrection, SIGNAL(triggered(bool)), this, SLOT(openDistortionWindow()));
 
     connect(mUi->actionToggleEdgeFilter, SIGNAL(toggled(bool)), this, SLOT(toogleEdgeFilter()));
+
+    connect(mUi->actionShowHoughTransform, SIGNAL(triggered(bool)), this, SLOT(openHoughTransformWindow()));
 }
 
 
@@ -112,43 +116,22 @@ void TestbedMainWindow::updateImages(void)
 {
     originalImage = new RGB24Buffer(mImage);
 
-    G12Buffer *originalGImage = originalImage->toG12Buffer();
+    edgeFilterImage=new G12Buffer(executeEdgeFilter(originalImage));
 
-    int w =originalGImage->getW();
-    int h =originalGImage->getH();
-    edgeFilterImage = new G12Buffer(h,w);
 
-    int verArray[3][3] = {{1,0,-1},{2,0,-2},{1,0,-1}};
-
-    for (int i = 1; i < h-1; i++)
-    {
-        for (int j = 1; j < w-1; j++)
-        {
-            int verSum = 0;
-            int gorSum = 0;
-            for (int dx = -1, l = 0; dx <= 1; dx ++, l++)
-            {
-                for (int dy = -1, k = 0; dy <= 1; dy ++, k++)
-                {
-                    verSum += originalGImage->element(i + dy, j + dx) * verArray[l][k];
-                    gorSum += originalGImage->element(i + dy, j + dx) * verArray[k][l];
-                }
-            }
-            edgeFilterImage->element(i,j) = sqrt((verSum*verSum)+(gorSum*gorSum));
-        }
-    }
 }
 
-G12Buffer* executeEdgeFilter(RGB24Buffer *image)
+G12Buffer* TestbedMainWindow::executeEdgeFilter(RGB24Buffer* image)
 {
-    G12Buffer *buffer = image->toG12Buffer();
-
+    G12Buffer* buffer = image->toG12Buffer();
     int w =buffer->getW();
     int h =buffer->getH();
 
-    G12Buffer *newBuffer = new G12Buffer(h,w);
+    G12Buffer* newBuffer = new G12Buffer(h,w);
 
     int verArray[3][3] = {{1,0,-1},{2,0,-2},{1,0,-1}};
+
+    int maxValue=0;
 
     for (int i = 1; i < h-1; i++)
     {
@@ -165,10 +148,74 @@ G12Buffer* executeEdgeFilter(RGB24Buffer *image)
                 }
             }
             int value = sqrt((verSum*verSum)+(gorSum*gorSum));
-            newBuffer->element(i,j) = value*value*value;
+            newBuffer->element(i,j) = pow(value/G12Buffer::BUFFER_MAX_VALUE,1.5)*G12Buffer::BUFFER_MAX_VALUE;
         }
     }
     return newBuffer;
+}
+
+
+G12Buffer* TestbedMainWindow::executeHoughTransform(G12Buffer* image)
+{
+    int numberOfAngles = 500;
+    int w = image->getW();
+    int h = image->getH();
+    double minDist = - sqrt(w * w + h * h);
+    double maxDist =   sqrt(w * w + h * h);
+
+    double scale = 2;
+
+    int numberOfDistances = (int)((maxDist - minDist) / scale);
+    double distanceBias = -minDist;
+
+    AbstractBuffer<double> accumulator(numberOfAngles, numberOfDistances);
+
+    for (int angleCounter = 0; angleCounter < numberOfAngles; angleCounter++)
+    {
+        double angle = (M_PI / numberOfAngles)*angleCounter;
+        Vector2dd normal(cos(angle), sin(angle));
+        for (int x = 0; x < h; x++)
+        {
+            for (int y = 0; y < w; y++)
+            {
+                double distance = Vector2dd(x, y) & normal;
+                distance += distanceBias;
+                distance /= scale;
+
+                if (distance < 0 && distance > numberOfDistances)
+                {
+                    qDebug()  << "Error condition";
+                }
+
+                double couf = distance<=maxDist/2 ? distance/maxDist : 1 - distance/maxDist;
+
+                if (image->element(x,y)>=G12Buffer::BUFFER_MAX_VALUE)
+                {
+                    accumulator.element(angleCounter,(int)distance) += 1 / sqrt(couf);
+                }
+            }
+        }
+    }
+
+    G12Buffer* renderOfHoughTransform = new G12Buffer(numberOfAngles, numberOfDistances);
+
+    double maxValue = 0;
+    for (int i = 0; i < numberOfAngles; i++)
+    {
+        for (int j = 0; j < numberOfDistances; j++)
+        {
+            maxValue = max(maxValue, accumulator.element(i,j));
+        }
+    }
+
+    for (int i = 0; i < numberOfAngles; i++)
+    {
+        for (int j = 0; j < numberOfDistances; j++)
+        {
+            renderOfHoughTransform->element(i,j) = accumulator.element(i,j) / maxValue * G12Buffer::BUFFER_MAX_VALUE ;
+        }
+    }
+    return renderOfHoughTransform;
 }
 
 void TestbedMainWindow::toogleEdgeFilter(void)
@@ -189,7 +236,19 @@ void TestbedMainWindow::toogleEdgeFilter(void)
         mImage=new RGB24Buffer(originalImage);
     }
     updateViewImage();
+}
 
+void TestbedMainWindow::openHoughTransformWindow(void)
+{
+    if (edgeFilterImage != NULL)
+    {
+        showerWidget->show();
+        showerWidget->raise();
+        RGB24Buffer *image = new RGB24Buffer(executeHoughTransform(edgeFilterImage));
+        QImage *qImage = new RGB24Image(image);
+        showerWidget->setImage(QSharedPointer<QImage>(qImage));
+        showerWidget->update();
+    }
 }
 
 void TestbedMainWindow::openDistortionWindow(void)

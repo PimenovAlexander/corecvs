@@ -296,6 +296,7 @@
    <addaction name="actionUndoMask"/>
    <addaction name="actionDistortionCorrection"/>
    <addaction name="actionToggleEdgeFilter"/>
+   <addaction name="actionShowHoughTransform"/>
   </widget>
   <widget class="QDockWidget" name="logWidget_2">
    <property name="features">
@@ -372,6 +373,15 @@
    </property>
    <property name="text">
     <string>Edge Filter</string>
+   </property>
+  </action>
+  <action name="actionShowHoughTransform">
+   <property name="icon">
+    <iconset resource="../../../resources/main.qrc">
+     <normaloff>:/new/subwindows/chart_curve.png</normaloff>:/new/subwindows/chart_curve.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show Hough Transform</string>
    </property>
   </action>
  </widget>

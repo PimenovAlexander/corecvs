@@ -25,16 +25,17 @@ win32 {
 }
 
 HEADERS = \
-    testbedMainWindow.h \
 #    pointScene.h \
+    testDistortionMainWindow.h
 
           
 
 SOURCES = \
-    testbedMainWindow.cpp \
-    main_testbed.cpp \
 #    pointScene.cpp \
+    testDistortionMainWindow.cpp \
+    main_testDistortion.cpp
 
-FORMS = ui/testbedMainWindow.ui \
+FORMS = \
+    ui/testDistortionMainWindow.ui
 
 RESOURCES += ../../resources/main.qrc
