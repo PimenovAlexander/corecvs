@@ -15,6 +15,7 @@
 #include "gradientDescent.h"
 #include "listsOfLRImages.h"
 #include <iostream>
+#include <sstream>
 TestSuperResolutionMainWindow::TestSuperResolutionMainWindow(QWidget *parent)
     : QMainWindow(parent)
     , mUi(new Ui::TestSuperResolutionMainWindowClass)
@@ -78,6 +79,10 @@ void TestSuperResolutionMainWindow::connectActions()
     connect(mUi -> actionUse_convolution, SIGNAL(triggered()), this, SLOT(convolutionImage()));
 
     connect(mUi -> actionRotate, SIGNAL(triggered()), this, SLOT(rotateByAngle()));
+
+    connect(mUi -> actionPrint_diff_Function, SIGNAL(triggered()), this, SLOT(getDiffFunction()));
+
+    connect(mUi -> actionSharpening, SIGNAL(triggered()), this, SLOT(sharpeningImage()));
 }
 
 
@@ -832,6 +837,30 @@ void TestSuperResolutionMainWindow::simpleMethodModelingProcessWithList(){
     AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
 
     updateViewImage();
-    std::cout<<diffFunc(mImage,mImageCollection,mListOfLRImages)<<std::endl;
 
+}
+
+void TestSuperResolutionMainWindow::getDiffFunction()
+{
+    double result = diffFunc(mImage,mImageCollection,mListOfLRImages);
+    std::ostringstream ost;
+    ost << result;
+    std::string strResult = ost.str();
+    QString qstr = QString::fromStdString(strResult);
+    messagesList -> addItems(QStringList()
+                             << qstr);
+    mUi -> dockWidget -> setWidget(messagesList);
+}
+
+void TestSuperResolutionMainWindow::sharpeningImage()
+{
+    RGB24Buffer *result = sharpening(mImage);
+    if (canDelete)
+        delete_safe(mImage);
+    delete_safe(mMask);
+    mImage = result;
+    mMask = new G8Buffer(mImage->getSize());
+    AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
+
+    updateViewImage();
 }

@@ -284,7 +284,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="logWidget_2">
+  <widget class="QDockWidget" name="dockWidget">
    <property name="features">
     <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
@@ -376,6 +376,7 @@
      <string>Convolution</string>
     </property>
     <addaction name="actionUse_convolution"/>
+    <addaction name="actionSharpening"/>
    </widget>
    <widget class="QMenu" name="menuTransformations">
     <property name="title">
@@ -390,6 +391,7 @@
     <addaction name="actionSimple_modeling_process"/>
     <addaction name="actionSB_resample_and_rotation"/>
     <addaction name="actionSimple_modeling_process_with_list"/>
+    <addaction name="actionPrint_diff_Function"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSelection"/>
@@ -535,6 +537,16 @@
   <action name="actionSimple_modeling_process_with_list">
    <property name="text">
     <string>Simple modeling process with list</string>
+   </property>
+  </action>
+  <action name="actionPrint_diff_Function">
+   <property name="text">
+    <string>print diff Function</string>
+   </property>
+  </action>
+  <action name="actionSharpening">
+   <property name="text">
+    <string>Sharpening</string>
    </property>
   </action>
  </widget>

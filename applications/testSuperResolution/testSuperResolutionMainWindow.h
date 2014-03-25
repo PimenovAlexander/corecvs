@@ -30,7 +30,7 @@ private:
 
     std::deque<RGB24Buffer*> mImageCollection;
     std::deque<LRImage> mListOfLRImages;
-
+    QListWidget *messagesList = new QListWidget(/*mUi -> dockWidget*/);
     bool canDelete;
 /* Move this out */
 
@@ -71,6 +71,8 @@ private slots:
     void rotateByAngle();
     void SBResampleAndRotation();
     void simpleMethodModelingProcessWithList();
+    void getDiffFunction();
+    void sharpeningImage();
 };
 
 #endif // TESTSUPERRESOLUTIONMAINWINDOW_H
