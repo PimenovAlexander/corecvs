@@ -5,6 +5,7 @@
 #include "../../utils/fileformats/qtFileLoader.h"
 #include "../../utils/corestructs/g12Image.h"
 #include "../../core/buffers/rgb24/abstractPainter.h"
+#include "houghSpace.h"
 
 
 TestbedMainWindow::TestbedMainWindow(QWidget *parent)
@@ -157,64 +158,9 @@ G12Buffer* TestbedMainWindow::executeEdgeFilter(RGB24Buffer* image)
 
 G12Buffer* TestbedMainWindow::executeHoughTransform(G12Buffer* image)
 {
-    int numberOfAngles = 500;
-    int w = image->getW();
-    int h = image->getH();
-    double minDist = - sqrt(w * w + h * h);
-    double maxDist =   sqrt(w * w + h * h);
+    HoughSpace* houghSpace = new HoughSpace(image);
+    G12Buffer* renderOfHoughTransform = houghSpace->getHoughImage(TRUE);
 
-    double scale = 2;
-
-    int numberOfDistances = (int)((maxDist - minDist) / scale);
-    double distanceBias = -minDist;
-
-    AbstractBuffer<double> accumulator(numberOfAngles, numberOfDistances);
-
-    for (int angleCounter = 0; angleCounter < numberOfAngles; angleCounter++)
-    {
-        double angle = (M_PI / numberOfAngles)*angleCounter;
-        Vector2dd normal(cos(angle), sin(angle));
-        for (int x = 0; x < h; x++)
-        {
-            for (int y = 0; y < w; y++)
-            {
-                double distance = Vector2dd(x, y) & normal;
-                distance += distanceBias;
-                distance /= scale;
-
-                if (distance < 0 && distance > numberOfDistances)
-                {
-                    qDebug()  << "Error condition";
-                }
-
-                double couf = distance<=maxDist/2 ? distance/maxDist : 1 - distance/maxDist;
-
-                if (image->element(x,y)>=G12Buffer::BUFFER_MAX_VALUE)
-                {
-                    accumulator.element(angleCounter,(int)distance) += 1 / sqrt(couf);
-                }
-            }
-        }
-    }
-
-    G12Buffer* renderOfHoughTransform = new G12Buffer(numberOfAngles, numberOfDistances);
-
-    double maxValue = 0;
-    for (int i = 0; i < numberOfAngles; i++)
-    {
-        for (int j = 0; j < numberOfDistances; j++)
-        {
-            maxValue = max(maxValue, accumulator.element(i,j));
-        }
-    }
-
-    for (int i = 0; i < numberOfAngles; i++)
-    {
-        for (int j = 0; j < numberOfDistances; j++)
-        {
-            renderOfHoughTransform->element(i,j) = accumulator.element(i,j) / maxValue * G12Buffer::BUFFER_MAX_VALUE ;
-        }
-    }
     return renderOfHoughTransform;
 }
 

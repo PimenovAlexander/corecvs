@@ -1,7 +1,7 @@
 # try use global config
 exists(../../../../config.pri) {
     ROOT_DIR=../../../..
-} else { 
+} else {
     message(Using local config)
     ROOT_DIR=../..
 }
@@ -26,14 +26,16 @@ win32 {
 
 HEADERS = \
 #    pointScene.h \
-    testDistortionMainWindow.h
+    testDistortionMainWindow.h \
+    houghSpace.h
 
-          
+
 
 SOURCES = \
 #    pointScene.cpp \
     testDistortionMainWindow.cpp \
-    main_testDistortion.cpp
+    main_testDistortion.cpp \
+    houghSpace.cpp
 
 FORMS = \
     ui/testDistortionMainWindow.ui
