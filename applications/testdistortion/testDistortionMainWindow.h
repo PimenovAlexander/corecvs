@@ -9,7 +9,9 @@
 
 #include "ui_testbedMainWindow.h"
 #include "advancedImageWidget.h"
+#include "houghTransformViewer.h"
 #include "rgb24Buffer.h"
+#include "houghSpace.h"
 
 using corecvs::RGB24Buffer;
 using std::deque;
@@ -34,9 +36,10 @@ private:
     bool isEdgeFilterActive;
     RGB24Buffer *originalImage;
     G12Buffer *edgeFilterImage;
+    HoughSpace *houghSpace;
 
     AdvancedImageWidget *mImageWidget;
-    AdvancedImageWidget *showerWidget;
+    HoughTransformViewer *showerWidget;
     DistortionWidget *mDistrtionWidget;
 /* Move this out */
 
@@ -51,6 +54,7 @@ public slots:
     void openDistortionWindow(void);
     void openHoughTransformWindow(void);
     void toogleEdgeFilter(void);
+    void selectedPointInHoughSpace(QPoint point);
 
     void maskHue(int hue1, int hue2);
     void maskTolerance(QPoint point);

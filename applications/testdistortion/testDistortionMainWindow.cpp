@@ -5,7 +5,6 @@
 #include "../../utils/fileformats/qtFileLoader.h"
 #include "../../utils/corestructs/g12Image.h"
 #include "../../core/buffers/rgb24/abstractPainter.h"
-#include "houghSpace.h"
 
 
 TestbedMainWindow::TestbedMainWindow(QWidget *parent)
@@ -22,7 +21,7 @@ TestbedMainWindow::TestbedMainWindow(QWidget *parent)
     isEdgeFilterActive = false;
 
     mImageWidget = new AdvancedImageWidget(this);
-    showerWidget = new AdvancedImageWidget();
+    showerWidget = new HoughTransformViewer();
     setCentralWidget(mImageWidget);
 
     mDistrtionWidget = new DistortionWidget();
@@ -59,6 +58,8 @@ void TestbedMainWindow::connectActions()
     connect(mUi->actionToggleEdgeFilter, SIGNAL(toggled(bool)), this, SLOT(toogleEdgeFilter()));
 
     connect(mUi->actionShowHoughTransform, SIGNAL(triggered(bool)), this, SLOT(openHoughTransformWindow()));
+
+    connect(showerWidget, SIGNAL(pointSelected(QPoint)), this, SLOT(selectedPointInHoughSpace(QPoint)));
 }
 
 
@@ -132,8 +133,6 @@ G12Buffer* TestbedMainWindow::executeEdgeFilter(RGB24Buffer* image)
 
     int verArray[3][3] = {{1,0,-1},{2,0,-2},{1,0,-1}};
 
-    int maxValue=0;
-
     for (int i = 1; i < h-1; i++)
     {
         for (int j = 1; j < w-1; j++)
@@ -158,11 +157,33 @@ G12Buffer* TestbedMainWindow::executeEdgeFilter(RGB24Buffer* image)
 
 G12Buffer* TestbedMainWindow::executeHoughTransform(G12Buffer* image)
 {
-    HoughSpace* houghSpace = new HoughSpace(image);
+    houghSpace = new HoughSpace(image);
     G12Buffer* renderOfHoughTransform = houghSpace->getHoughImage(TRUE);
 
     return renderOfHoughTransform;
 }
+
+void TestbedMainWindow::selectedPointInHoughSpace(QPoint point)
+{
+    QLine *line =  houghSpace->getLineOfPoint(&point);
+    RGB24Buffer *imageWithLine;
+    if (isEdgeFilterActive)
+    {
+        imageWithLine=new RGB24Buffer(edgeFilterImage);
+    }
+    else
+    {
+        imageWithLine=new RGB24Buffer(originalImage);
+    }
+
+
+    imageWithLine->drawLine(line->x1(),line->y1(),line->x2(),line->y2(),RGBColor::Red());
+    AbstractPainter<RGB24Buffer>(imageWithLine).drawCircle(line->x1(),line->y1(), 5, RGBColor::Blue());
+    AbstractPainter<RGB24Buffer>(imageWithLine).drawCircle(line->x2(),line->y2(), 5, RGBColor::Green());
+    mImage = imageWithLine;
+    updateViewImage();
+}
+
 
 void TestbedMainWindow::toogleEdgeFilter(void)
 {

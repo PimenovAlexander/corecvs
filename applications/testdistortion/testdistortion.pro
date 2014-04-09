@@ -27,7 +27,8 @@ win32 {
 HEADERS = \
 #    pointScene.h \
     testDistortionMainWindow.h \
-    houghSpace.h
+    houghSpace.h \
+    houghTransformViewer.h
 
 
 
@@ -35,7 +36,8 @@ SOURCES = \
 #    pointScene.cpp \
     testDistortionMainWindow.cpp \
     main_testDistortion.cpp \
-    houghSpace.cpp
+    houghSpace.cpp \
+    houghTransformViewer.cpp
 
 FORMS = \
     ui/testDistortionMainWindow.ui

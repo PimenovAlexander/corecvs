@@ -19,13 +19,13 @@ namespace corecvs {
 template<class TargetBuffer>
 class AbstractPainter
 {
-	TargetBuffer *mTarget;
+    TargetBuffer *mTarget;
 public:
-	typedef typename TargetBuffer::InternalElementType ElementType;
+    typedef typename TargetBuffer::InternalElementType ElementType;
 
-	AbstractPainter(TargetBuffer *target) :
-		mTarget(target)
-	{}
+    AbstractPainter(TargetBuffer *target) :
+        mTarget(target)
+    {}
 
     /**
      *  This function draws the char with the hardcoded font
@@ -83,7 +83,7 @@ public:
                         for (int dx = 0; dx < scale; dx++)
                         {
                             if (mTarget->isValidCoord(ry + dy, rx + dx))
-                        	    mTarget->element(ry + dy, rx + dx) = color;
+                                mTarget->element(ry + dy, rx + dx) = color;
                         }
                     }
 
@@ -159,7 +159,7 @@ public:
         int radsq = rad * rad;
         for (int dy = -rad; dy <= 0; dy++)
         {
-            int dx = (int)sqrt((float)(radsq - (dy - 0.5) * (dy - 0.5)));
+            int dx = (int)sqrt((float)(radsq - dy * dy));
             for (int j= x - dx; j <= x + dx; j++)
             {
                 if (mTarget->isValidCoord(y - dy, j))
@@ -302,7 +302,7 @@ public:
 
     }
 
-	virtual ~AbstractPainter() {}
+    virtual ~AbstractPainter() {}
 };
 
 /* TODO: try msvc to feed this...
