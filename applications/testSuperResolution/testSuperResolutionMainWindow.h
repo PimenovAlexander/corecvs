@@ -6,7 +6,7 @@
 #include "ui_testSuperResolutionMainWindow.h"
 #include "advancedImageWidget.h"
 #include "rgb24Buffer.h"
-#include "listsOfLRImages.h"
+#include "commonStructures.h"
 #include <QListWidget>
 using corecvs::RGB24Buffer;
 using std::deque;
@@ -30,6 +30,8 @@ private:
 
     std::deque<RGB24Buffer*> mImageCollection;
     std::deque<LRImage> mListOfLRImages;
+    std::deque<double> differences;
+    std::deque<RGB24Buffer*> listOfimagesFromTheUpsampled;
     QListWidget *messagesList = new QListWidget(/*mUi -> dockWidget*/);
     bool canDelete;
 /* Move this out */
@@ -73,6 +75,8 @@ private slots:
     void simpleMethodModelingProcessWithList();
     void getDiffFunction();
     void sharpeningImage();
+    void ImproveResult();
+    void test();
 };
 
 #endif // TESTSUPERRESOLUTIONMAINWINDOW_H

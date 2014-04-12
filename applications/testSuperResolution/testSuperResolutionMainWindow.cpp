@@ -13,9 +13,12 @@
 #include "transformations.h"
 #include "modelingProcess.h"
 #include "gradientDescent.h"
-#include "listsOfLRImages.h"
+#include "commonStructures.h"
 #include <iostream>
 #include <sstream>
+
+using namespace std;
+
 TestSuperResolutionMainWindow::TestSuperResolutionMainWindow(QWidget *parent)
     : QMainWindow(parent)
     , mUi(new Ui::TestSuperResolutionMainWindowClass)
@@ -83,6 +86,10 @@ void TestSuperResolutionMainWindow::connectActions()
     connect(mUi -> actionPrint_diff_Function, SIGNAL(triggered()), this, SLOT(getDiffFunction()));
 
     connect(mUi -> actionSharpening, SIGNAL(triggered()), this, SLOT(sharpeningImage()));
+
+    connect(mUi -> actionImprove_Result, SIGNAL(triggered()), this, SLOT(ImproveResult()));
+
+    connect(mUi -> actionTEST_BUTTON, SIGNAL(triggered()), this, SLOT(test()));
 }
 
 
@@ -600,12 +607,16 @@ void TestSuperResolutionMainWindow::resampleUsingNearestNeighbour() {
 }
 
 void TestSuperResolutionMainWindow::convolutionImage() {
+    mMask = new G8Buffer(mImage->getSize());
+    AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
 
-        RGB24Buffer *result = convolution(mImage);
+    updateViewImage();
+    RGB24Buffer *result = convolution(mImage);
         if (canDelete)
             delete_safe(mImage);
         delete_safe(mMask);
         mImage = result;
+
         mMask = new G8Buffer(mImage->getSize());
         AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
 
@@ -818,8 +829,8 @@ void TestSuperResolutionMainWindow::SBResampleAndRotation(){
 
                             updateViewImage();
                             addImageFromTheScreenToCollection();
-                            LRImage *image2 = new LRImage(mListOfLRImages.size(), shiftX, shiftY, angle, newSize); //NB! size
-                            mListOfLRImages.push_back(*image2);
+                            LRImage image2 = LRImage(mImageCollection.size() - 1, shiftX, shiftY, angle, newSize); //NB! size
+                            mListOfLRImages.push_back(image2);
                         }
                     }
         }
@@ -827,22 +838,47 @@ void TestSuperResolutionMainWindow::SBResampleAndRotation(){
     }
 }
 
-void TestSuperResolutionMainWindow::simpleMethodModelingProcessWithList(){
+void TestSuperResolutionMainWindow::simpleMethodModelingProcessWithList()
+{
     RGB24Buffer *result = simpleModelingProcessWithList(mImageCollection, mListOfLRImages);
     if (canDelete)
         delete_safe(mImage);
     delete_safe(mMask);
     mImage = result;
+
+    /*for (int i = 0; i < mImage -> getH(); i++)
+        for (int j = 0; j < mImage -> getW(); j++)
+        {
+            mImage -> element(i, j).r() = 0;
+            mImage -> element(i, j).g() = 0;
+            mImage -> element(i, j).b() = 0;
+        }*/
+    for(int k = 0; k < (int)mListOfLRImages.size(); k++)
+    {
+        RGB24Buffer *rotatedImage = rotate(mImage, mListOfLRImages.at(k).angleDegree_);
+        listOfimagesFromTheUpsampled.push_back(squareBasedResampling(rotatedImage,mListOfLRImages.at(k).coefficient_,mListOfLRImages.at(k).shiftX_,mListOfLRImages.at(k).shiftY_,mListOfLRImages.at(k).angleDegree_));
+        mImageCollection.push_back(listOfimagesFromTheUpsampled.back());
+        QString name = "aaaa";
+        QListWidgetItem *item = new QListWidgetItem(name,mUi -> mWidgetList,0);
+        item -> setData(Qt::UserRole, QVariant(QString::number(mImageCollection.size()-1)));
+        delete_safe(rotatedImage);
+    }
+
+    for (int i = 0; i < (int)mListOfLRImages.size(); i++)
+        differences.push_back(differenceBetweenImages(listOfimagesFromTheUpsampled.at(i), mImageCollection.at(mListOfLRImages.at(i).numberInImageCollection_) ));
+
     mMask = new G8Buffer(mImage->getSize());
     AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
 
     updateViewImage();
-
 }
 
 void TestSuperResolutionMainWindow::getDiffFunction()
 {
-    double result = diffFunc(mImage,mImageCollection,mListOfLRImages);
+    double result = 0;
+    for (int i = 0; i < (int)differences.size(); i++)
+        result += differences.at(i);
+    result /= (int)mListOfLRImages.size();
     std::ostringstream ost;
     ost << result;
     std::string strResult = ost.str();
@@ -863,4 +899,80 @@ void TestSuperResolutionMainWindow::sharpeningImage()
     AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
 
     updateViewImage();
+}
+
+void TestSuperResolutionMainWindow::ImproveResult()
+{
+    bool ok;
+    int numberOfIterations = QInputDialog::getInt(this,
+                                                     "Print number of iterations",
+                                                     tr("iterations:"),
+                                                     0,
+                                                     0,
+                                                     10000000,
+                                                     1,
+                                                     &ok);
+    if (ok)
+    {
+        int step = QInputDialog::getInt(this,
+                                                         "Print length of step",
+                                                         tr("step:"),
+                                                         2,
+                                                         1,
+                                                         255,
+                                                         1,
+                                                         &ok);
+        if (ok)
+        {
+            double minCoefficientOfImprovement = QInputDialog::getInt(this,
+                                                             "Print minimal coefficient of improvement",
+                                                             tr("coefficient:"),
+                                                             0,
+                                                             0,
+                                                             1,
+                                                             10,
+                                                             &ok);
+            if (ok)
+            {
+
+
+                improve(mImage, mImageCollection, mListOfLRImages, listOfimagesFromTheUpsampled, &differences, step, minCoefficientOfImprovement, numberOfIterations);
+
+                delete_safe(mMask);
+                mMask = new G8Buffer(mImage->getSize());
+                AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
+
+                updateViewImage();
+            }
+        }
+    }
+
+}
+
+void TestSuperResolutionMainWindow::test()
+{
+    RGBmask *mask = new RGBmask[(int)(mImage -> getH()) * (int)(mImage -> getW())];
+
+    for (int i = 0; i < mImage -> getH(); i++)
+        for (int j = 0; j < mImage -> getW(); j++)
+        {
+            mask[i * mImage -> getW() + j].bDown = true;
+            mask[i * mImage -> getW() + j].bUp = true;
+            mask[i * mImage -> getW() + j].gDown = true;
+            mask[i * mImage -> getW() + j].gUp = true;
+            mask[i * mImage -> getW() + j].rDown = true;
+            mask[i * mImage -> getW() + j].rUp = true;
+        }
+
+    iteration(mImage, mImageCollection, mListOfLRImages, listOfimagesFromTheUpsampled, &differences, 200, 0, mask, 0, 0, 0, 1);
+
+    delete_safe(mMask);
+    mMask = new G8Buffer(mImage->getSize());
+    AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
+
+    updateViewImage();
+
+    cout<<(int)mImage -> element(0, 0).r()<<endl;
+
+    delete [] mask;
 }

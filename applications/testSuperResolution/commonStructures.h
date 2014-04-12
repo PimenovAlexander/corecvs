@@ -11,3 +11,13 @@ public:
 public:
     LRImage(int newNumberInImageCollection, double newShiftX, double newShiftY, double newAngleDegree, double newCoefficient);
 };
+
+struct RGBmask
+{
+    bool rUp;
+    bool rDown;
+    bool gUp;
+    bool gDown;
+    bool bUp;
+    bool bDown;
+};

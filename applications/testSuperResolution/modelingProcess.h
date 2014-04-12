@@ -1,6 +1,6 @@
 #pragma once
 #include "rgb24Buffer.h"
-#include "listsOfLRImages.h"
+#include "commonStructures.h"
 #include <deque>
 
 RGB24Buffer *simpleModelingProcess(RGB24Buffer *startImage, double coefficient, int shiftX, int shiftY, double angleDegree);

@@ -392,6 +392,8 @@
     <addaction name="actionSB_resample_and_rotation"/>
     <addaction name="actionSimple_modeling_process_with_list"/>
     <addaction name="actionPrint_diff_Function"/>
+    <addaction name="actionImprove_Result"/>
+    <addaction name="actionTEST_BUTTON"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSelection"/>
@@ -547,6 +549,16 @@
   <action name="actionSharpening">
    <property name="text">
     <string>Sharpening</string>
+   </property>
+  </action>
+  <action name="actionImprove_Result">
+   <property name="text">
+    <string>Improve Result</string>
+   </property>
+  </action>
+  <action name="actionTEST_BUTTON">
+   <property name="text">
+    <string>TEST BUTTON</string>
    </property>
   </action>
  </widget>

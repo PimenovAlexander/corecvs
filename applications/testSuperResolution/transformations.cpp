@@ -44,3 +44,4 @@ RGB24Buffer *rotate(RGB24Buffer *startImage, double angleDegree)
 
     return result;
 }
+

@@ -1,7 +1,7 @@
 #include "resamples.h"
 #include "modelingProcess.h"
 #include "transformations.h"
-#include "listsOfLRImages.h"
+#include "commonStructures.h"
 RGB24Buffer *simpleModelingProcess(RGB24Buffer *startImage, double coefficient, int shiftX, int shiftY, double angleDegree)
 {
     int shiftX1, shiftY1, shiftX2, shiftY2, shiftX3, shiftY3, shiftX4, shiftY4;
@@ -64,7 +64,7 @@ RGB24Buffer *simpleModelingProcessWithList(std::deque<RGB24Buffer*> imageCollect
     RGB24Buffer *image = new RGB24Buffer((double)((int)(imageCollection.at(LRImages.at(0).numberInImageCollection_) -> getH()) / (double)LRImages.at(0).coefficient_)
                                           ,(double)((int)(imageCollection.at(LRImages.at(0).numberInImageCollection_) -> getW()) / (double)LRImages.at(0).coefficient_), false);
     std::deque<RGB24Buffer*> imageCollection2;
-    for(int k = 0; k < LRImages.size(); k++)
+    for(int k = 0; k < (int)LRImages.size(); k++)
     {
         RGB24Buffer *rotatedImage = rotate(imageCollection.at(LRImages.at(k).numberInImageCollection_), -LRImages.at(k).angleDegree_);
         imageCollection2.push_back(resampleWithBilinearInterpolation(rotatedImage,1/(double)LRImages.at(k).coefficient_));
@@ -73,7 +73,7 @@ RGB24Buffer *simpleModelingProcessWithList(std::deque<RGB24Buffer*> imageCollect
         for(int j = 0; j < result -> getW(); j++)
         {
             int numberOfEnters = 0;
-            for(int k = 0; k < LRImages.size(); k++)
+            for(int k = 0; k < (int)LRImages.size(); k++)
             {
                 image = imageCollection2.at(k);
                 int x = i - LRImages.at(k).shiftX_;
@@ -86,7 +86,7 @@ RGB24Buffer *simpleModelingProcessWithList(std::deque<RGB24Buffer*> imageCollect
             result -> element(i, j).b() = 0;
             if (numberOfEnters > 0)
             {
-                for(int k = 0; k < LRImages.size(); k++)
+                for(int k = 0; k < (int)LRImages.size(); k++)
                 {
                     image = imageCollection2.at(k);
                     int x = i - LRImages.at(k).shiftX_;

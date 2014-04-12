@@ -1,4 +1,4 @@
-#include "listsOfLRImages.h"
+#include "commonStructures.h"
 
 
 LRImage::LRImage(int newNumberInImageCollection, double newShiftX, double newShiftY, double newAngleDegree, double newCoefficient)

@@ -1,6 +1,7 @@
 ﻿#include "resamples.h"
 #include <cmath>
 #include <random>
+#include <deque>
 
 #define _USE_MATH_DEFINES
 
@@ -136,7 +137,7 @@ RGB24Buffer *resampleWithNearestNeighbour(RGB24Buffer *startImage, double coeffi
 
 
 
-/*int isInside(double A_x, double A_y, double B_x, double B_y,double C_x, double C_y,double D_x, double D_y, double X, double Y)
+int isInside(double A_x, double A_y, double B_x, double B_y,double C_x, double C_y,double D_x, double D_y, double X, double Y)
 {
     int result = 0;
     if ((B_x - A_x)*(X - A_x) + (B_y - A_y)*(Y - A_y) >= 0)
@@ -168,9 +169,34 @@ double getIntersectionOfSquares(double A_x, double A_y, double B_x, double B_y,d
     return (double)sum/100;
 
 }
+/*double squareBetweenVectors(double A_x, double A_y, double B_x, double B_y)
+{
+    return abs(A_x * B_y - A_y * B_x)/2;
+}
+
+void getListOfPoints(std::deque<double> *list)
+{
+
+}
+
+double getIntersectionOfSquares()
+{
+    double square = 0;
+    std::deque<double> listOfPoints;
+    getListOfPoints(&listOfPoints);
+    if (listOfPoints.size() > 0)
+    {
+        for (int i = 1; i <((int)listOfPoints.size())/2 - 1; i++)
+            square += squareBetweenVectors(listOfPoints.at(2*i) - listOfPoints.at(0),
+                                           listOfPoints.at(2*i+1) - listOfPoints.at(1),
+                                           listOfPoints.at(2*i+2) - listOfPoints.at(0),
+                                           listOfPoints.at(2*i+3) - listOfPoints.at(1));
+    }
+    return square;
+}*/
 
 
-RGB24Buffer *squareBasedResampling(RGB24Buffer *startImage, double coefficient, double shiftX, double shiftY, double angleDegree)
+/*RGB24Buffer *squareBasedResampling(RGB24Buffer *startImage, double coefficient, double shiftX, double shiftY, double angleDegree)
 {
     RGB24Buffer *result = new RGB24Buffer((int)(startImage -> getH()*coefficient),(int)(startImage -> getW()*coefficient),false);
     double cellSize = 1/coefficient;
