@@ -32,7 +32,8 @@ HEADERS = \
     modelingProcess.h \
     transformations.h \
     listsOfLRImages.h \
-    gradientDescent.h
+    gradientDescent.h \
+    polygons.h
 
 
 SOURCES = \
@@ -44,7 +45,8 @@ SOURCES = \
     modelingProcess.cpp \
     transformations.cpp \
     listsOfLRImages.cpp \
-    gradientDescent.cpp
+    gradientDescent.cpp \
+    polygons.cpp
 
 FORMS = ui/testSuperResolutionMainWindow.ui \
 

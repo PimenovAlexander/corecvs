@@ -14,6 +14,7 @@
 #include "modelingProcess.h"
 #include "gradientDescent.h"
 #include "listsOfLRImages.h"
+#include "polygons.h"
 #include <iostream>
 #include <sstream>
 TestSuperResolutionMainWindow::TestSuperResolutionMainWindow(QWidget *parent)
