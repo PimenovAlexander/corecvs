@@ -31,7 +31,7 @@ private:
     std::deque<RGB24Buffer*> mImageCollection;
     std::deque<LRImage> mListOfLRImages;
     std::deque<double> differences;
-    std::deque<RGB24Buffer*> listOfimagesFromTheUpsampled;
+    std::deque<RGB24Buffer*> listOfImagesFromTheUpsampled;
     QListWidget *messagesList = new QListWidget(/*mUi -> dockWidget*/);
     bool canDelete;
 /* Move this out */

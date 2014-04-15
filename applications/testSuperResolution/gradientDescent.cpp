@@ -89,7 +89,7 @@ void getNewCoordinates(double oldX, double oldY, double coefficient, double shif
 }
 
 void iteration(RGB24Buffer* startImage, std::deque<RGB24Buffer*> imageCollection, std::deque<LRImage> LRImages,
-               std::deque<RGB24Buffer*> listOfImagesFromUpsampled, std::deque<double> *results,
+               std::deque<RGB192Buffer*> listOfImagesFromUpsampled, std::deque<double> *results,
                double step,
                double minQualityImprovement, RGBmask *mask,
                int rX,
@@ -153,7 +153,7 @@ void iteration(RGB24Buffer* startImage, std::deque<RGB24Buffer*> imageCollection
                         double oldELement = (double)listOfImagesFromUpsampled.at(k) -> element(i,j).r() -
                             (double)imageCollection.at(LRImages.at(k).numberInImageCollection_) -> element(i, j).r();
 
-                        double newELement = oldELement + sign(shift)*ceil(abs(shift));
+                        double newELement = oldELement + shift;
 
                         double coefficient = 255 * 255 * 3 * (double)listOfImagesFromUpsampled.at(k) -> getH() * (double)listOfImagesFromUpsampled.at(k) -> getW();
 
@@ -178,7 +178,7 @@ void iteration(RGB24Buffer* startImage, std::deque<RGB24Buffer*> imageCollection
                         if ((i >= 0) && (i < listOfImagesFromUpsampled.at(k) -> getH()) && (j >= 0) && (j < listOfImagesFromUpsampled.at(k) -> getW()))
                         {
                             double shift = shifts.at(4 * k + (i - minXs.at(k)) * 2 * (maxYs.at(k) - minYs.at(k)) + (j - minYs.at(k)) );
-                            listOfImagesFromUpsampled.at(k) -> element(i, j).r() += sign(shift)*ceil(abs(shift));
+                            listOfImagesFromUpsampled.at(k) -> element(i, j).r() += shift;
                         }
                     }
             }
@@ -247,7 +247,7 @@ void iteration(RGB24Buffer* startImage, std::deque<RGB24Buffer*> imageCollection
                         double oldELement = (double)listOfImagesFromUpsampled.at(k) -> element(i,j).g() -
                             (double)imageCollection.at(LRImages.at(k).numberInImageCollection_) -> element(i, j).g();
 
-                        double newELement = oldELement + sign(shift)*ceil(abs(shift));
+                        double newELement = oldELement + shift;
 
                         double coefficient = 255 * 255 * 3 * (double)listOfImagesFromUpsampled.at(k) -> getH() * (double)listOfImagesFromUpsampled.at(k) -> getW();
 
@@ -272,7 +272,7 @@ void iteration(RGB24Buffer* startImage, std::deque<RGB24Buffer*> imageCollection
                         if ((i >= 0) && (i < listOfImagesFromUpsampled.at(k) -> getH()) && (j >= 0) && (j < listOfImagesFromUpsampled.at(k) -> getW()))
                         {
                             double shift = shifts.at(4 * k + (i - minXs.at(k)) * 2 * (maxYs.at(k) - minYs.at(k)) + (j - minYs.at(k)) );
-                            listOfImagesFromUpsampled.at(k) -> element(i, j).g() += sign(shift)*ceil(abs(shift));
+                            listOfImagesFromUpsampled.at(k) -> element(i, j).g() += shift;
                         }
                     }
             }
@@ -342,7 +342,7 @@ void iteration(RGB24Buffer* startImage, std::deque<RGB24Buffer*> imageCollection
                         double oldELement = (double)listOfImagesFromUpsampled.at(k) -> element(i,j).b() -
                             (double)imageCollection.at(LRImages.at(k).numberInImageCollection_) -> element(i, j).b();
 
-                        double newELement = oldELement + sign(shift)*ceil(abs(shift));
+                        double newELement = oldELement + shift;
 
                         double coefficient = 255 * 255 * 3 * (double)listOfImagesFromUpsampled.at(k) -> getH() * (double)listOfImagesFromUpsampled.at(k) -> getW();
 
@@ -367,7 +367,7 @@ void iteration(RGB24Buffer* startImage, std::deque<RGB24Buffer*> imageCollection
                         if ((i >= 0) && (i < listOfImagesFromUpsampled.at(k) -> getH()) && (j >= 0) && (j < listOfImagesFromUpsampled.at(k) -> getW()))
                         {
                             double shift = shifts.at(4 * k + (i - minXs.at(k)) * 2 * (maxYs.at(k) - minYs.at(k)) + (j - minYs.at(k)) );
-                            listOfImagesFromUpsampled.at(k) -> element(i, j).b() += sign(shift)*ceil(abs(shift));
+                            listOfImagesFromUpsampled.at(k) -> element(i, j).b() += shift;
                         }
                     }
             }
@@ -383,7 +383,7 @@ void iteration(RGB24Buffer* startImage, std::deque<RGB24Buffer*> imageCollection
 
 
 void improve(RGB24Buffer* startImage, std::deque<RGB24Buffer*> imageCollection, std::deque<LRImage> LRImages,
-             std::deque<RGB24Buffer*> listOfImagesFromUpsampled, std::deque<double> *results,
+             std::deque<RGB192Buffer*> listOfImagesFromUpsampled, std::deque<double> *results,
              double step,
              double minQualityImprovement, int numberOfIterations)
 {

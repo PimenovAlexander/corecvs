@@ -856,8 +856,8 @@ void TestSuperResolutionMainWindow::simpleMethodModelingProcessWithList()
     for(int k = 0; k < (int)mListOfLRImages.size(); k++)
     {
         RGB24Buffer *rotatedImage = rotate(mImage, mListOfLRImages.at(k).angleDegree_);
-        listOfimagesFromTheUpsampled.push_back(squareBasedResampling(rotatedImage,mListOfLRImages.at(k).coefficient_,mListOfLRImages.at(k).shiftX_,mListOfLRImages.at(k).shiftY_,mListOfLRImages.at(k).angleDegree_));
-        mImageCollection.push_back(listOfimagesFromTheUpsampled.back());
+        listOfImagesFromTheUpsampled.push_back(squareBasedResampling(rotatedImage,mListOfLRImages.at(k).coefficient_,mListOfLRImages.at(k).shiftX_,mListOfLRImages.at(k).shiftY_,mListOfLRImages.at(k).angleDegree_));
+        mImageCollection.push_back(listOfImagesFromTheUpsampled.back());
         QString name = "aaaa";
         QListWidgetItem *item = new QListWidgetItem(name,mUi -> mWidgetList,0);
         item -> setData(Qt::UserRole, QVariant(QString::number(mImageCollection.size()-1)));
@@ -865,7 +865,7 @@ void TestSuperResolutionMainWindow::simpleMethodModelingProcessWithList()
     }
 
     for (int i = 0; i < (int)mListOfLRImages.size(); i++)
-        differences.push_back(differenceBetweenImages(listOfimagesFromTheUpsampled.at(i), mImageCollection.at(mListOfLRImages.at(i).numberInImageCollection_) ));
+        differences.push_back(differenceBetweenImages(listOfImagesFromTheUpsampled.at(i), mImageCollection.at(mListOfLRImages.at(i).numberInImageCollection_) ));
 
     mMask = new G8Buffer(mImage->getSize());
     AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
@@ -934,15 +934,28 @@ void TestSuperResolutionMainWindow::ImproveResult()
                                                              &ok);
             if (ok)
             {
+                int size = (int)listOfImagesFromTheUpsampled.size();
 
+                std::deque<RGB192Buffer*> listOfImagesFromUpsampledDouble;
+                for (int i = 0 ; i < size; i++)
+                    listOfImagesFromUpsampledDouble.push_back(new RGB192Buffer(listOfImagesFromTheUpsampled.at(i)));
 
-                improve(mImage, mImageCollection, mListOfLRImages, listOfimagesFromTheUpsampled, &differences, step, minCoefficientOfImprovement, numberOfIterations);
+                improve(mImage, mImageCollection, mListOfLRImages, listOfImagesFromUpsampledDouble, &differences, step, minCoefficientOfImprovement, numberOfIterations);
 
                 delete_safe(mMask);
                 mMask = new G8Buffer(mImage->getSize());
                 AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
 
                 updateViewImage();
+
+                for (int i = 0; i < size; i++)
+                    listOfImagesFromUpsampledDouble.at(i) -> copy192to24(listOfImagesFromTheUpsampled.at(i));
+
+                for (int i = 0 ; i < size; i++)
+                    differences.at(i) = differenceBetweenImages(listOfImagesFromTheUpsampled.at(i), mImageCollection.at(mListOfLRImages.at(i).numberInImageCollection_) );
+
+                for (int i = 0 ; i < size; i++)
+                    delete listOfImagesFromUpsampledDouble.at(i);
             }
         }
     }
@@ -951,7 +964,7 @@ void TestSuperResolutionMainWindow::ImproveResult()
 
 void TestSuperResolutionMainWindow::test()
 {
-    RGBmask *mask = new RGBmask[(int)(mImage -> getH()) * (int)(mImage -> getW())];
+    /*RGBmask *mask = new RGBmask[(int)(mImage -> getH()) * (int)(mImage -> getW())];
 
     for (int i = 0; i < mImage -> getH(); i++)
         for (int j = 0; j < mImage -> getW(); j++)
@@ -974,5 +987,25 @@ void TestSuperResolutionMainWindow::test()
 
     cout<<(int)mImage -> element(0, 0).r()<<endl;
 
-    delete [] mask;
+    delete [] mask;*/
+
+    /*int n = 5;
+    int m = 4;
+    RGB192Buffer **newImage = new RGB192Buffer*[n];
+    for (int i = 0; i < n ; i++){
+        newImage[i] = new RGB192Buffer[m];
+    }
+    newImage[4][3].r() = 4;
+    cout<<newImage[0][0].r()<<endl;
+
+    for (int i = 0; i < n ; i++){
+        delete [] newImage[i];
+    }
+
+    delete [] newImage;*/
+
+    /*RGB192Buffer *newImage = new RGB192Buffer(mImage);
+    cout<<newImage -> element(3,3).r()<<" "<<newImage -> element(3,3).g()<<" "<<newImage -> element(3,3).b()<<endl;
+
+    delete newImage;*/
 }
