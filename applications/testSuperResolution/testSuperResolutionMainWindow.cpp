@@ -13,7 +13,10 @@
 #include "transformations.h"
 #include "modelingProcess.h"
 #include "gradientDescent.h"
+
 #include "commonStructures.h"
+
+#include "polygons.h"
 #include <iostream>
 #include <sstream>
 

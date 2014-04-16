@@ -32,7 +32,8 @@ HEADERS = \
     modelingProcess.h \
     transformations.h \
     gradientDescent.h \
-    commonStructures.h
+    commonStructures.h \
+    polygons.h
 
 
 SOURCES = \
@@ -44,8 +45,8 @@ SOURCES = \
     modelingProcess.cpp \
     transformations.cpp \
     gradientDescent.cpp \
-    commonStructures.cpp
-
+    commonStructures.cpp \
+    polygons.cpp
 FORMS = ui/testSuperResolutionMainWindow.ui \
 
 RESOURCES += ../../resources/main.qrc

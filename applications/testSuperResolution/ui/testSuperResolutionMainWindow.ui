@@ -384,9 +384,9 @@
     </property>
     <addaction name="actionRotate"/>
    </widget>
-   <widget class="QMenu" name="menuModelling_Procces">
+   <widget class="QMenu" name="menuModelling_Process">
     <property name="title">
-     <string>Modelling Procces</string>
+     <string>Modeling Process</string>
     </property>
     <addaction name="actionSimple_modeling_process"/>
     <addaction name="actionSB_resample_and_rotation"/>
@@ -400,7 +400,7 @@
    <addaction name="menuAwC"/>
    <addaction name="menuResampling"/>
    <addaction name="menuConvolution"/>
-   <addaction name="menuModelling_Procces"/>
+   <addaction name="menuModelling_Process"/>
    <addaction name="menuTransformations"/>
   </widget>
   <action name="actionOpen">
