@@ -2,6 +2,7 @@
 #include <cmath>
 #include <random>
 #include <deque>
+#include "polygons.h"
 
 #define _USE_MATH_DEFINES
 
@@ -236,7 +237,7 @@ double getIntersectionOfSquares()
     return result;
 }
 */
-RGB24Buffer *squareBasedResampling(RGB24Buffer *startImage, double coefficient, double shiftX, double shiftY, double angleDegree)
+/*RGB24Buffer *squareBasedResampling(RGB24Buffer *startImage, double coefficient, double shiftX, double shiftY, double angleDegree)
 {
     RGB24Buffer *result = new RGB24Buffer((int)(startImage -> getH()*coefficient),(int)(startImage -> getW()*coefficient),false);
     double cellSize = 1/coefficient;
@@ -244,9 +245,9 @@ RGB24Buffer *squareBasedResampling(RGB24Buffer *startImage, double coefficient, 
         for (int j = 0; j < result -> getW(); j++)
         {
             double summarySquare = 0;
-            uint8_t sumR = 0;
-            uint8_t sumG = 0;
-            uint8_t sumB = 0;
+            double sumR = 0;
+            double sumG = 0;
+            double sumB = 0;
             double startPointX = shiftX + i*cellSize;
             double startPointY = shiftY + j*cellSize;
             double endPointX = startPointX + cellSize;
@@ -275,5 +276,82 @@ RGB24Buffer *squareBasedResampling(RGB24Buffer *startImage, double coefficient, 
             }
             result -> element(i,j) = RGBColor(sumR,sumG,sumB);
         }
+    return result;
+}*/
+
+void getCoordinatesInOldImage(double *oldX, double *oldY, double coefficient, double shiftX, double shiftY, double angle, double oldCenterX, double oldCenterY, double newCenterX, double newCenterY, double newX, double newY)
+{
+    double xShifted = newX - newCenterX;
+    double yShifted = newY - newCenterY;
+    double newXShifted = (xShifted * cos(angle) + yShifted * sin(angle))/coefficient;
+    double newYShifted = (-xShifted * sin(angle) + yShifted * cos(angle))/coefficient;
+    *oldX = shiftX + newXShifted + oldCenterX;
+    *oldY = shiftY + newYShifted + oldCenterY;
+}
+
+
+RGB24Buffer *squareBasedResampling(RGB24Buffer *startImage, double coefficient, double shiftX, double shiftY, double angleDegree)
+{
+    RGB24Buffer *result = new RGB24Buffer((int)(startImage -> getH()*coefficient),(int)(startImage -> getW()*coefficient),false);
+    for (int i = 0; i < result -> getW(); i++)
+        for (int j = 0; j < result -> getH(); j++)
+        {
+            //cout<<i<<" "<<j<<endl;
+            double summarySquare = 0;
+
+            double sumR = 0;
+            double sumG = 0;
+            double sumB = 0;
+
+            double oldX1;
+            double oldY1;
+            getCoordinatesInOldImage(&oldX1, &oldY1, coefficient, shiftX, shiftY, angleDegree * M_PI/180,
+                                     (double)startImage -> getW()/2, (double)startImage -> getH()/2,
+                                     (double)result -> getW()/2, (double)result -> getH()/2, (double)i, (double)j);
+
+            double oldX2;
+            double oldY2;
+            getCoordinatesInOldImage(&oldX2, &oldY2, coefficient, shiftX, shiftY, angleDegree * M_PI/180,
+                                     (double)startImage -> getW()/2, (double)startImage -> getH()/2,
+                                     (double)result -> getW()/2, (double)result -> getH()/2, (double)i+1, (double)j);
+
+            double oldX3;
+            double oldY3;
+            getCoordinatesInOldImage(&oldX3, &oldY3, coefficient, shiftX, shiftY, angleDegree * M_PI/180,
+                                     (double)startImage -> getW()/2, (double)startImage -> getH()/2,
+                                     (double)result -> getW()/2, (double)result -> getH()/2, (double)i+1, (double)j+1);
+
+            double oldX4;
+            double oldY4;
+            getCoordinatesInOldImage(&oldX4, &oldY4, coefficient, shiftX, shiftY, angleDegree * M_PI/180,
+                                     (double)startImage -> getW()/2, (double)startImage -> getH()/2,
+                                     (double)result -> getW()/2, (double)result -> getH()/2, (double)i, (double)j+1);
+
+            int minX = min(min((int)oldX1, (int)oldX2), min((int)oldX3, (int)oldX4));
+            int maxX = max(max((int)oldX1, (int)oldX2), max((int)oldX3, (int)oldX4));
+
+            int minY = min(min((int)oldY1, (int)oldY2), min((int)oldY3, (int)oldY4));
+            int maxY = max(max((int)oldY1, (int)oldY2), max((int)oldY3, (int)oldY4));
+
+
+            for (int x = minX; x <= maxX; x++)
+                for (int y = minY; y <= maxY; y++)
+                {
+                    if ((x >= 0) && (y >= 0) && (x < startImage -> getW()) && (y < startImage -> getH()))
+                    {
+                        double square = areaForPixels(oldX1, oldY1, oldX2, oldY2, oldX3, oldY3, oldX4, oldY4, x, y);
+                        if (square > 0)
+                        {
+                            sumR = (sumR * summarySquare + (double)startImage -> element(y,x).r() * square)/(summarySquare + square);
+                            sumG = (sumG * summarySquare + (double)startImage -> element(y,x).g() * square)/(summarySquare + square);
+                            sumB = (sumB * summarySquare + (double)startImage -> element(y,x).b() * square)/(summarySquare + square);
+
+                            summarySquare += square;
+                        }
+                    }
+                }
+            result -> element(j,i) = RGBColor((uint8_t)sumR,(uint8_t)sumG,(uint8_t)sumB);
+        }
+    //cout<<(int)result -> element(17 , 25).r()<<endl;
     return result;
 }

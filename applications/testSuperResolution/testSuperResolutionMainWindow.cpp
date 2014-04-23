@@ -19,6 +19,7 @@
 #include "polygons.h"
 #include <iostream>
 #include <sstream>
+#include <ctime>
 
 using namespace std;
 
@@ -705,7 +706,6 @@ void TestSuperResolutionMainWindow::resampleUsingSquares() {
                             mImage = result;
                             mMask = new G8Buffer(mImage->getSize());
                             AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
-
                             updateViewImage();
                         }
                     }
@@ -767,7 +767,6 @@ void TestSuperResolutionMainWindow::simpleMethodModelingProcess() {
                             mImage = result;
                             mMask = new G8Buffer(mImage->getSize());
                             AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
-
                             updateViewImage();
                         }
                     }
@@ -822,11 +821,11 @@ void TestSuperResolutionMainWindow::SBResampleAndRotation(){
                                     );
                         if (ok) {
                             RGB24Buffer *image = squareBasedResampling(mImage, newSize, shiftX, shiftY, angle);
-                            RGB24Buffer *result = rotate(image, angle);
+                            //RGB24Buffer *result = rotate(image, angle);
                             if (canDelete)
                                 delete_safe(mImage);
                             delete_safe(mMask);
-                            mImage = result;
+                            mImage = image;
                             mMask = new G8Buffer(mImage->getSize());
                             AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
 
@@ -859,7 +858,7 @@ void TestSuperResolutionMainWindow::simpleMethodModelingProcessWithList()
     for(int k = 0; k < (int)mListOfLRImages.size(); k++)
     {
         RGB24Buffer *rotatedImage = rotate(mImage, mListOfLRImages.at(k).angleDegree_);
-        listOfImagesFromTheUpsampled.push_back(squareBasedResampling(rotatedImage,mListOfLRImages.at(k).coefficient_,mListOfLRImages.at(k).shiftX_,mListOfLRImages.at(k).shiftY_,mListOfLRImages.at(k).angleDegree_));
+        listOfImagesFromTheUpsampled.push_back(squareBasedResampling(mImage,mListOfLRImages.at(k).coefficient_,mListOfLRImages.at(k).shiftX_,mListOfLRImages.at(k).shiftY_,mListOfLRImages.at(k).angleDegree_));
         mImageCollection.push_back(listOfImagesFromTheUpsampled.back());
         QString name = "aaaa";
         QListWidgetItem *item = new QListWidgetItem(name,mUi -> mWidgetList,0);
@@ -912,7 +911,7 @@ void TestSuperResolutionMainWindow::ImproveResult()
                                                      tr("iterations:"),
                                                      0,
                                                      0,
-                                                     10000000,
+                                                     100000000,
                                                      1,
                                                      &ok);
     if (ok)
@@ -1011,4 +1010,15 @@ void TestSuperResolutionMainWindow::test()
     cout<<newImage -> element(3,3).r()<<" "<<newImage -> element(3,3).g()<<" "<<newImage -> element(3,3).b()<<endl;
 
     delete newImage;*/
+
+    /*clock_t t0 = clock();
+    cout<<getIntersectionOfSquares(0.5,0.0,0.5,1.0,1.5,1.0,1.5,0.0,0,0)<<endl;
+    clock_t t1 = clock();
+    cout<<areaForPixels(0.5, 0.0, 0.5, 1.0, 1.5, 1.0, 1.5, 0.0, 0, 0)<<endl;
+    clock_t t2 = clock();
+    cout<<t0<<endl;
+    cout<<t1<<endl;
+    cout<<t2<<endl;
+    cout << "time 1: " << (double)(t1 - t0)/CLOCKS_PER_SEC << endl;
+    cout << "time 2: " << (double)(t2 - t1)/CLOCKS_PER_SEC << endl;*/
 }

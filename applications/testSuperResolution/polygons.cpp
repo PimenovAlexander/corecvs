@@ -23,6 +23,6 @@ double areaForPixels(double x1, double y1, double x2, double y2, double x3, doub
     double x = (double) x0;
     double y = (double) y0;
     rec1<<QPointF(x1, y1)<<QPointF(x2, y2)<<QPointF(x3, y3)<<QPointF(x4, y4);
-    rec2<<QPointF(x, y)<<QPointF(x + 1, y)<<QPointF(x + 1, y - 1)<<QPointF(x, y - 1);
+    rec2<<QPointF(x, y)<<QPointF(x + 1, y)<<QPointF(x + 1, y + 1)<<QPointF(x, y + 1);
     return area(rec1, rec2);
 }

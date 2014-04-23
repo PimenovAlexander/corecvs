@@ -1,7 +1,7 @@
 #include "transformations.h"
 #include <cmath>
-#define M
-RGB24Buffer *rotate(RGB24Buffer *startImage, double angleDegree)
+#include "resamples.h"
+/*RGB24Buffer *rotate(RGB24Buffer *startImage, double angleDegree)
 {
     double angle = M_PI * angleDegree / 180;
     RGB24Buffer *result = new RGB24Buffer(startImage -> getH(),startImage -> getW(),false);
@@ -43,5 +43,10 @@ RGB24Buffer *rotate(RGB24Buffer *startImage, double angleDegree)
         }
 
     return result;
+}*/
+
+RGB24Buffer *rotate(RGB24Buffer *startImage, double angleDegree)
+{
+    return squareBasedResampling(startImage, 1 , 0, 0, angleDegree);
 }
 
