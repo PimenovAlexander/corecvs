@@ -842,6 +842,20 @@ void TestSuperResolutionMainWindow::SBResampleAndRotation(){
 
 void TestSuperResolutionMainWindow::simpleMethodModelingProcessWithList()
 {
+    /*for (int i = 0 ; i < mImage -> getW(); i++)
+    {
+        for (int j = 0; j < mImage -> getH(); j++)
+            cout<<"("<<(int)mImage -> element(j, i).r()<<","<<(int)mImage -> element(j, i).g()<<","<<(int)mImage -> element(j, i).b()<<") ";
+        cout<<endl;
+    }
+
+    for (int i = 0 ; i < mImageCollection.at(0) -> getW(); i++)
+    {
+        for (int j = 0; j < mImageCollection.at(0) -> getH(); j++)
+            cout<<"("<<(int)mImageCollection.at(0) -> element(j, i).r()<<","<<(int)mImageCollection.at(0) -> element(j, i).g()<<","<<(int)mImageCollection.at(0) -> element(j, i).b()<<") ";
+        cout<<endl;
+    }*/
+
     RGB24Buffer *result = simpleModelingProcessWithList(mImageCollection, mListOfLRImages);
     if (canDelete)
         delete_safe(mImage);
@@ -857,13 +871,12 @@ void TestSuperResolutionMainWindow::simpleMethodModelingProcessWithList()
         }*/
     for(int k = 0; k < (int)mListOfLRImages.size(); k++)
     {
-        RGB24Buffer *rotatedImage = rotate(mImage, mListOfLRImages.at(k).angleDegree_);
+        //RGB24Buffer *rotatedImage = rotate(mImage, mListOfLRImages.at(k).angleDegree_);
         listOfImagesFromTheUpsampled.push_back(squareBasedResampling(mImage,mListOfLRImages.at(k).coefficient_,mListOfLRImages.at(k).shiftX_,mListOfLRImages.at(k).shiftY_,mListOfLRImages.at(k).angleDegree_));
         mImageCollection.push_back(listOfImagesFromTheUpsampled.back());
         QString name = "aaaa";
         QListWidgetItem *item = new QListWidgetItem(name,mUi -> mWidgetList,0);
         item -> setData(Qt::UserRole, QVariant(QString::number(mImageCollection.size()-1)));
-        delete_safe(rotatedImage);
     }
 
     for (int i = 0; i < (int)mListOfLRImages.size(); i++)
@@ -916,17 +929,17 @@ void TestSuperResolutionMainWindow::ImproveResult()
                                                      &ok);
     if (ok)
     {
-        int step = QInputDialog::getInt(this,
+        int step = QInputDialog::getDouble(this,
                                                          "Print length of step",
                                                          tr("step:"),
-                                                         2,
                                                          1,
+                                                         0.001,
                                                          255,
-                                                         1,
+                                                         3,
                                                          &ok);
         if (ok)
         {
-            double minCoefficientOfImprovement = QInputDialog::getInt(this,
+            double minCoefficientOfImprovement = QInputDialog::getDouble(this,
                                                              "Print minimal coefficient of improvement",
                                                              tr("coefficient:"),
                                                              0,
@@ -937,27 +950,58 @@ void TestSuperResolutionMainWindow::ImproveResult()
             if (ok)
             {
                 int size = (int)listOfImagesFromTheUpsampled.size();
-
+                RGB192Buffer *image192 = new RGB192Buffer(mImage);
                 std::deque<RGB192Buffer*> listOfImagesFromUpsampledDouble;
                 for (int i = 0 ; i < size; i++)
                     listOfImagesFromUpsampledDouble.push_back(new RGB192Buffer(listOfImagesFromTheUpsampled.at(i)));
 
-                improve(mImage, mImageCollection, mListOfLRImages, listOfImagesFromUpsampledDouble, &differences, step, minCoefficientOfImprovement, numberOfIterations);
+                improve(image192, mImageCollection, mListOfLRImages, listOfImagesFromUpsampledDouble, &differences, step, minCoefficientOfImprovement, numberOfIterations);
 
+                for (int i = 0 ; i < image192 -> getW(); i++)
+                {
+                        for (int j = 0; j < image192 -> getH(); j++)
+                            cout<<"("<<(int)image192 -> element(j, i).r()<<","<<(int)image192 -> element(j, i).g()<<","<<(int)image192 -> element(j, i).b()<<") ";
+                        cout<<endl;
+                    }
+
+                    for (int i = 0 ; i < mImageCollection.at(1) -> getW(); i++)
+                    {
+                        for (int j = 0; j < mImageCollection.at(1) -> getH(); j++)
+                            cout<<"("<<(int)mImageCollection.at(1) -> element(j, i).r()<<","<<(int)mImageCollection.at(1) -> element(j, i).g()<<","<<(int)mImageCollection.at(1) -> element(j, i).b()<<") ";
+                        cout<<endl;
+                    }
+                cout<<"-----"<<endl;
+                image192 -> copy192to24(mImage);
+
+                for(int k = 0; k < (int)mListOfLRImages.size(); k++)
+                {
+                    delete_safe(listOfImagesFromTheUpsampled.at(k));
+                    listOfImagesFromTheUpsampled.at(k) = squareBasedResampling(mImage,mListOfLRImages.at(k).coefficient_,mListOfLRImages.at(k).shiftX_,mListOfLRImages.at(k).shiftY_,mListOfLRImages.at(k).angleDegree_);
+                }
                 delete_safe(mMask);
                 mMask = new G8Buffer(mImage->getSize());
                 AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
 
                 updateViewImage();
 
-                for (int i = 0; i < size; i++)
-                    listOfImagesFromUpsampledDouble.at(i) -> copy192to24(listOfImagesFromTheUpsampled.at(i));
-
                 for (int i = 0 ; i < size; i++)
                     differences.at(i) = differenceBetweenImages(listOfImagesFromTheUpsampled.at(i), mImageCollection.at(mListOfLRImages.at(i).numberInImageCollection_) );
 
                 for (int i = 0 ; i < size; i++)
-                    delete listOfImagesFromUpsampledDouble.at(i);
+                    delete_safe(listOfImagesFromUpsampledDouble.at(i));
+                for (int i = 0 ; i < mImage -> getW(); i++)
+                {
+                        for (int j = 0; j < mImage -> getH(); j++)
+                            cout<<"("<<(int)mImage -> element(j, i).r()<<","<<(int)mImage -> element(j, i).g()<<","<<(int)mImage -> element(j, i).b()<<") ";
+                        cout<<endl;
+                    }
+
+                    for (int i = 0 ; i < mImageCollection.at(0) -> getW(); i++)
+                    {
+                        for (int j = 0; j < mImageCollection.at(0) -> getH(); j++)
+                            cout<<"("<<(int)mImageCollection.at(0) -> element(j, i).r()<<","<<(int)mImageCollection.at(0) -> element(j, i).g()<<","<<(int)mImageCollection.at(0) -> element(j, i).b()<<") ";
+                        cout<<endl;
+                    }
             }
         }
     }

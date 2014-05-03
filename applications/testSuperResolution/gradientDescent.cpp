@@ -37,12 +37,12 @@ double differenceBetweenImages(RGB24Buffer* image1, RGB24Buffer* image2)
        for (int j = 0 ; (j < image1 -> getW()) && (j < image2 -> getW()); j++)
        {
            sum += (
-                       (double)((int)(image1 -> element(i,j).r()) - (int)(image2 -> element(i,j).r()))/255
-                     * (double)((int)(image1 -> element(i,j).r()) - (int)(image2 -> element(i,j).r()))/255
-                     + (double)((int)(image1 -> element(i,j).g()) - (int)(image2 -> element(i,j).g()))/255
-                     * (double)((int)(image1 -> element(i,j).g()) - (int)(image2 -> element(i,j).g()))/255
-                     + (double)((int)(image1 -> element(i,j).b()) - (int)(image2 -> element(i,j).b()))/255
-                     * (double)((int)(image1 -> element(i,j).b()) - (int)(image2 -> element(i,j).b()))/255
+                       ((double)(image1 -> element(i,j).r()) - (double)(image2 -> element(i,j).r()))/255
+                     * ((double)(image1 -> element(i,j).r()) - (double)(image2 -> element(i,j).r()))/255
+                     + ((double)(image1 -> element(i,j).g()) - (double)(image2 -> element(i,j).g()))/255
+                     * ((double)(image1 -> element(i,j).g()) - (double)(image2 -> element(i,j).g()))/255
+                     + ((double)(image1 -> element(i,j).b()) - (double)(image2 -> element(i,j).b()))/255
+                     * ((double)(image1 -> element(i,j).b()) - (double)(image2 -> element(i,j).b()))/255
                        )/3;
        }
     sum = sum/((image1 -> getH()) * (image1 -> getW()));
@@ -89,16 +89,18 @@ void getNewCoordinates(double oldX, double oldY, double coefficient, double shif
     *newY = yShifted + newCenterY;
 }
 
-bool iteration(RGB24Buffer* startImage, std::deque<RGB24Buffer*> imageCollection, std::deque<LRImage> LRImages,
+bool iteration(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollection, std::deque<LRImage> LRImages,
                std::deque<RGB192Buffer*> listOfImagesFromUpsampled, std::deque<double> *results,
                double step,
                double minQualityImprovement, RGBmask *mask,
                int rX,
                int rY,
                int rColor,
-               int rDir)
+               int rDir,
+               double startSum)
 {
     bool result = true;
+    //cout<<startSum<<endl;
     if ((rColor == 0) && ( ((rDir == 1) && (mask[startImage -> getH() * rX + rY].rUp)) || ((rDir == -1) && (mask[startImage -> getH() * rX + rY].rDown)) ))
     {
         std::deque<double> newValues;
@@ -165,33 +167,68 @@ bool iteration(RGB24Buffer* startImage, std::deque<RGB24Buffer*> imageCollection
                     }
                 }
         }
-        double diff = 0;
-        for (int k = 0; k < (int)LRImages.size();k++)
-            diff += (*results).at(k) - newValues.at(k);
-
-        if (diff > minQualityImprovement)               //Need to improve this part
+        if (minQualityImprovement != 0)
         {
-            startImage -> element(rY,rX).r() += rDir * step;
-            for (int k = 0; k < (int)LRImages.size(); k++)
+            double diff = 0;
+            for (int k = 0; k < (int)LRImages.size();k++)
+                diff += newValues.at(k);
+            cout.setf(ios_base::fixed);
+            cout.precision(10);
+            if ((float)abs(diff - startSum) <= minQualityImprovement)               //Need to improve this part
             {
-                (*results).at(k) = newValues.at(k);
-                for (int i = minXs.at(k); i <= maxXs.at(k); i++)
-                    for (int j = minYs.at(k); j <= maxYs.at(k); j++)
-                    {
-                        if ((i >= 0) && (i < listOfImagesFromUpsampled.at(k) -> getW()) && (j >= 0) && (j < listOfImagesFromUpsampled.at(k) -> getH()))
+                cout<<diff<<" "<<(float)abs(diff - startSum)<<" "<<minQualityImprovement<<endl;
+                startImage -> element(rY,rX).r() += rDir * step;
+                for (int k = 0; k < (int)LRImages.size(); k++)
+                {
+                    (*results).at(k) = newValues.at(k);
+                    for (int i = minXs.at(k); i <= maxXs.at(k); i++)
+                        for (int j = minYs.at(k); j <= maxYs.at(k); j++)
                         {
-                            double shift = shifts.at(9*k + (i - minXs.at(k)) * 3 + (j - minYs.at(k)) );
-                            listOfImagesFromUpsampled.at(k) -> element(j, i).r() += shift;
+                            if ((i >= 0) && (i < listOfImagesFromUpsampled.at(k) -> getW()) && (j >= 0) && (j < listOfImagesFromUpsampled.at(k) -> getH()))
+                            {
+                                double shift = shifts.at(9*k + (i - minXs.at(k)) * 3 + (j - minYs.at(k)) );
+                                listOfImagesFromUpsampled.at(k) -> element(j, i).r() += shift;
+                            }
                         }
-                    }
+                }
+            }else
+            {
+                result = false;
+                /*if (rDir == 1)
+                    mask[startImage -> getH() * rX + rY].rUp = false;
+                else
+                    mask[startImage -> getH() * rX + rY].rDown = false;*/
             }
-        }else
+        } else
         {
-            result = false;
-            if (rDir == 1)
-                mask[startImage -> getH() * rX + rY].rUp = false;
-            else
-                mask[startImage -> getH() * rX + rY].rDown = false;
+            double diff = 0;
+            for (int k = 0; k < (int)LRImages.size();k++)
+                diff += newValues.at(k) - results->at(k);
+
+            if (diff < 0)               //Need to improve this part
+            {
+                startImage -> element(rY,rX).r() += rDir * step;
+                for (int k = 0; k < (int)LRImages.size(); k++)
+                {
+                    (*results).at(k) = newValues.at(k);
+                    for (int i = minXs.at(k); i <= maxXs.at(k); i++)
+                        for (int j = minYs.at(k); j <= maxYs.at(k); j++)
+                        {
+                            if ((i >= 0) && (i < listOfImagesFromUpsampled.at(k) -> getW()) && (j >= 0) && (j < listOfImagesFromUpsampled.at(k) -> getH()))
+                            {
+                                double shift = shifts.at(9*k + (i - minXs.at(k)) * 3 + (j - minYs.at(k)) );
+                                listOfImagesFromUpsampled.at(k) -> element(j, i).r() += shift;
+                            }
+                        }
+                }
+            }else
+            {
+                result = false;
+                /*if (rDir == 1)
+                    mask[startImage -> getH() * rX + rY].rUp = false;
+                else
+                    mask[startImage -> getH() * rX + rY].rDown = false;*/
+            }
         }
     }
 
@@ -262,33 +299,68 @@ bool iteration(RGB24Buffer* startImage, std::deque<RGB24Buffer*> imageCollection
                     }
                 }
         }
-        double diff = 0;
-        for (int k = 0; k < (int)LRImages.size();k++)
-            diff += (*results).at(k) - newValues.at(k);
-
-        if (diff > minQualityImprovement)               //Need to improve this part
+        if (minQualityImprovement != 0)
         {
-            startImage -> element(rY,rX).g() += rDir * step;
-            for (int k = 0; k < (int)LRImages.size(); k++)
+            double diff = 0;
+            for (int k = 0; k < (int)LRImages.size();k++)
+                diff += newValues.at(k);
+            cout.setf(ios_base::fixed);
+            cout.precision(10);
+            if ((float)abs(diff - startSum) <= minQualityImprovement)               //Need to improve this part
             {
-                (*results).at(k) = newValues.at(k);
-                for (int i = minXs.at(k); i <= maxXs.at(k); i++)
-                    for (int j = minYs.at(k); j <= maxYs.at(k); j++)
-                    {
-                        if ((i >= 0) && (i < listOfImagesFromUpsampled.at(k) -> getW()) && (j >= 0) && (j < listOfImagesFromUpsampled.at(k) -> getH()))
+                cout<<diff<<" "<<(float)abs(diff - startSum)<<" "<<minQualityImprovement<<endl;
+                startImage -> element(rY,rX).r() += rDir * step;
+                for (int k = 0; k < (int)LRImages.size(); k++)
+                {
+                    (*results).at(k) = newValues.at(k);
+                    for (int i = minXs.at(k); i <= maxXs.at(k); i++)
+                        for (int j = minYs.at(k); j <= maxYs.at(k); j++)
                         {
-                            double shift = shifts.at(9*k + (i - minXs.at(k)) * 3 + (j - minYs.at(k)) );
-                            listOfImagesFromUpsampled.at(k) -> element(j, i).g() += shift;
+                            if ((i >= 0) && (i < listOfImagesFromUpsampled.at(k) -> getW()) && (j >= 0) && (j < listOfImagesFromUpsampled.at(k) -> getH()))
+                            {
+                                double shift = shifts.at(9*k + (i - minXs.at(k)) * 3 + (j - minYs.at(k)) );
+                                listOfImagesFromUpsampled.at(k) -> element(j, i).r() += shift;
+                            }
                         }
-                    }
+                }
+            }else
+            {
+                result = false;
+                /*if (rDir == 1)
+                    mask[startImage -> getH() * rX + rY].rUp = false;
+                else
+                    mask[startImage -> getH() * rX + rY].rDown = false;*/
             }
-        }else
+        } else
         {
-            result = false;
-            if (rDir == 1)
-                mask[startImage -> getH() * rX + rY].gUp = false;
-            else
-                mask[startImage -> getH() * rX + rY].gDown = false;
+            double diff = 0;
+            for (int k = 0; k < (int)LRImages.size();k++)
+                diff += newValues.at(k) - results->at(k);
+
+            if (diff < 0)               //Need to improve this part
+            {
+                startImage -> element(rY,rX).g() += rDir * step;
+                for (int k = 0; k < (int)LRImages.size(); k++)
+                {
+                    (*results).at(k) = newValues.at(k);
+                    for (int i = minXs.at(k); i <= maxXs.at(k); i++)
+                        for (int j = minYs.at(k); j <= maxYs.at(k); j++)
+                        {
+                            if ((i >= 0) && (i < listOfImagesFromUpsampled.at(k) -> getW()) && (j >= 0) && (j < listOfImagesFromUpsampled.at(k) -> getH()))
+                            {
+                                double shift = shifts.at(9*k + (i - minXs.at(k)) * 3 + (j - minYs.at(k)) );
+                                listOfImagesFromUpsampled.at(k) -> element(j, i).g() += shift;
+                            }
+                        }
+                }
+            }else
+            {
+                result = false;
+                /*if (rDir == 1)
+                    mask[startImage -> getH() * rX + rY].gUp = false;
+                else
+                    mask[startImage -> getH() * rX + rY].gDown = false;*/
+            }
         }
     }
 
@@ -359,40 +431,75 @@ bool iteration(RGB24Buffer* startImage, std::deque<RGB24Buffer*> imageCollection
                     }
                 }
         }
-        double diff = 0;
-        for (int k = 0; k < (int)LRImages.size();k++)
-            diff += (*results).at(k) - newValues.at(k);
-
-        if (diff > minQualityImprovement)               //Need to improve this part
+        if (minQualityImprovement != 0)
         {
-            startImage -> element(rY,rX).b() += rDir * step;
-            for (int k = 0; k < (int)LRImages.size(); k++)
+            double diff = 0;
+            for (int k = 0; k < (int)LRImages.size();k++)
+                diff += newValues.at(k);
+            cout.setf(ios_base::fixed);
+            cout.precision(10);
+            if ((float)abs(diff - startSum) <= minQualityImprovement)               //Need to improve this part
             {
-                (*results).at(k) = newValues.at(k);
-                for (int i = minXs.at(k); i <= maxXs.at(k); i++)
-                    for (int j = minYs.at(k); j <= maxYs.at(k); j++)
-                    {
-                        if ((i >= 0) && (i < listOfImagesFromUpsampled.at(k) -> getW()) && (j >= 0) && (j < listOfImagesFromUpsampled.at(k) -> getH()))
+                cout<<diff<<" "<<(float)abs(diff - startSum)<<" "<<minQualityImprovement<<endl;
+                startImage -> element(rY,rX).r() += rDir * step;
+                for (int k = 0; k < (int)LRImages.size(); k++)
+                {
+                    (*results).at(k) = newValues.at(k);
+                    for (int i = minXs.at(k); i <= maxXs.at(k); i++)
+                        for (int j = minYs.at(k); j <= maxYs.at(k); j++)
                         {
-                            double shift = shifts.at(9*k + (i - minXs.at(k)) * 3 + (j - minYs.at(k)) );
-                            listOfImagesFromUpsampled.at(k) -> element(j, i).b() += shift;
+                            if ((i >= 0) && (i < listOfImagesFromUpsampled.at(k) -> getW()) && (j >= 0) && (j < listOfImagesFromUpsampled.at(k) -> getH()))
+                            {
+                                double shift = shifts.at(9*k + (i - minXs.at(k)) * 3 + (j - minYs.at(k)) );
+                                listOfImagesFromUpsampled.at(k) -> element(j, i).r() += shift;
+                            }
                         }
-                    }
+                }
+            }else
+            {
+                result = false;
+                /*if (rDir == 1)
+                    mask[startImage -> getH() * rX + rY].rUp = false;
+                else
+                    mask[startImage -> getH() * rX + rY].rDown = false;*/
             }
-        }else
+        } else
         {
-            result = false;
-            if (rDir == 1)
-                mask[startImage -> getH() * rX + rY].bUp = false;
-            else
-                mask[startImage -> getH() * rX + rY].bDown = false;
+            double diff = 0;
+            for (int k = 0; k < (int)LRImages.size();k++)
+                diff += newValues.at(k) - results->at(k);
+
+            if (diff < 0)               //Need to improve this part
+            {
+                startImage -> element(rY,rX).b() += rDir * step;
+                for (int k = 0; k < (int)LRImages.size(); k++)
+                {
+                    (*results).at(k) = newValues.at(k);
+                    for (int i = minXs.at(k); i <= maxXs.at(k); i++)
+                        for (int j = minYs.at(k); j <= maxYs.at(k); j++)
+                        {
+                            if ((i >= 0) && (i < listOfImagesFromUpsampled.at(k) -> getW()) && (j >= 0) && (j < listOfImagesFromUpsampled.at(k) -> getH()))
+                            {
+                                double shift = shifts.at(9*k + (i - minXs.at(k)) * 3 + (j - minYs.at(k)) );
+                                listOfImagesFromUpsampled.at(k) -> element(j, i).b() += shift;
+                            }
+                        }
+                }
+            }else
+            {
+                result = false;
+                /*if (rDir == 1)
+                    mask[startImage -> getH() * rX + rY].bUp = false;
+                else
+                    mask[startImage -> getH() * rX + rY].bDown = false;*/
+            }
         }
     }
     return result;
 }
 
 
-void improve(RGB24Buffer* startImage, std::deque<RGB24Buffer*> imageCollection, std::deque<LRImage> LRImages,
+void improve(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollection, std::deque<LRImage> LRImages,
              std::deque<RGB192Buffer*> listOfImagesFromUpsampled, std::deque<double> *results,
              double step,
              double minQualityImprovement, int numberOfIterations)
@@ -410,6 +517,10 @@ void improve(RGB24Buffer* startImage, std::deque<RGB24Buffer*> imageCollection, 
             mask[i * startImage -> getW() + j].rUp = true;
         }
 
+    double startSum = 0;
+    for (int i = 0 ; i < (int) LRImages.size(); i++)
+        startSum += results->at(i);
+
     std::random_device rd;
     std::mt19937 mt(rd());
 
@@ -421,35 +532,40 @@ void improve(RGB24Buffer* startImage, std::deque<RGB24Buffer*> imageCollection, 
 
     for (int i = 1; i <= numberOfIterations; i++)
     {
-
         int rX = genRX(mt);
         int rY = genRY(mt);
         int rColor = genRColor(mt);
         int rDir = genRDir(mt);
+
+        if ((int)startImage -> element(rY, rX).r() > 255)
+            cout<<"something is wrong"<<endl;
 
         if (rDir == 0)
             rDir = -1;
 
         if (rColor == 0)
         {
-            if (((rDir == 1) && ((int)startImage -> element(rY,rX).r() > 255 - step)) || ((rDir == -1) && ((int)startImage -> element(rY,rX).r() < 255)))
+            if (((rDir == 1) && (startImage -> element(rY,rX).r() + step > 255.0)) || ((rDir == -1) && (startImage -> element(rY,rX).r() - step < 0.0)))
+            {
+                cout<<rDir<<" "<<startImage -> element(rY,rX).r() + step<<" "<<startImage -> element(rY,rX).r() - step<<endl;
                 rDir = 0;
+            }
         }
 
         if (rColor == 1)
         {
-            if (((rDir == 1) && ((int)startImage -> element(rY,rX).g() > 255 - step)) || ((rDir == -1) && ((int)startImage -> element(rY,rX).g() < 255)))
+            if (((rDir == 1) && (startImage -> element(rY,rX).g() + step > 255.0)) || ((rDir == -1) && (startImage -> element(rY,rX).g() - step < 0.0)))
                 rDir = 0;
         }
 
         if (rColor == 2)
         {
-            if (((rDir == 1) && ((int)startImage -> element(rY,rX).b() > 255 - step)) || ((rDir == -1) && ((int)startImage -> element(rY,rX).b() < 255)))
+            if (((rDir == 1) && (startImage -> element(rY,rX).b() + step > 255.0)) || ((rDir == -1) && (startImage -> element(rY,rX).b() - step < 0.0)))
                 rDir = 0;
         }
 
         if (rDir != 0)
-            iteration(startImage, imageCollection, LRImages, listOfImagesFromUpsampled, results, step, minQualityImprovement, mask, rX, rY, rColor, rDir);
+            iteration(startImage, imageCollection, LRImages, listOfImagesFromUpsampled, results, step, minQualityImprovement, mask, rX, rY, rColor, rDir, startSum);
 
         if (i % 10000 == 0)
             cout<<i<<endl;
