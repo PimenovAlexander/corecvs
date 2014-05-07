@@ -172,11 +172,11 @@ bool iteration(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollectio
             double diff = 0;
             for (int k = 0; k < (int)LRImages.size();k++)
                 diff += newValues.at(k);
-            cout.setf(ios_base::fixed);
-            cout.precision(10);
-            if ((float)abs(diff - startSum) <= minQualityImprovement)               //Need to improve this part
+            //cout.setf(ios_base::fixed);
+            //cout.precision(10);
+            if ((double)abs(diff - startSum) <= minQualityImprovement)               //Need to improve this part
             {
-                cout<<diff<<" "<<(float)abs(diff - startSum)<<" "<<minQualityImprovement<<endl;
+                //cout<<diff<<" "<<(double)abs(diff - startSum)<<" "<<minQualityImprovement<<endl;
                 startImage -> element(rY,rX).r() += rDir * step;
                 for (int k = 0; k < (int)LRImages.size(); k++)
                 {
@@ -201,6 +201,7 @@ bool iteration(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollectio
             }
         } else
         {
+            cout<<"improve"<<endl;
             double diff = 0;
             for (int k = 0; k < (int)LRImages.size();k++)
                 diff += newValues.at(k) - results->at(k);
@@ -304,12 +305,12 @@ bool iteration(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollectio
             double diff = 0;
             for (int k = 0; k < (int)LRImages.size();k++)
                 diff += newValues.at(k);
-            cout.setf(ios_base::fixed);
-            cout.precision(10);
-            if ((float)abs(diff - startSum) <= minQualityImprovement)               //Need to improve this part
+            //cout.setf(ios_base::fixed);
+            //cout.precision(10);
+            if ((double)abs(diff - startSum) <= minQualityImprovement)               //Need to improve this part
             {
-                cout<<diff<<" "<<(float)abs(diff - startSum)<<" "<<minQualityImprovement<<endl;
-                startImage -> element(rY,rX).r() += rDir * step;
+                //cout<<diff<<" "<<(double)abs(diff - startSum)<<" "<<minQualityImprovement<<endl;
+                startImage -> element(rY,rX).g() += rDir * step;
                 for (int k = 0; k < (int)LRImages.size(); k++)
                 {
                     (*results).at(k) = newValues.at(k);
@@ -319,7 +320,7 @@ bool iteration(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollectio
                             if ((i >= 0) && (i < listOfImagesFromUpsampled.at(k) -> getW()) && (j >= 0) && (j < listOfImagesFromUpsampled.at(k) -> getH()))
                             {
                                 double shift = shifts.at(9*k + (i - minXs.at(k)) * 3 + (j - minYs.at(k)) );
-                                listOfImagesFromUpsampled.at(k) -> element(j, i).r() += shift;
+                                listOfImagesFromUpsampled.at(k) -> element(j, i).g() += shift;
                             }
                         }
                 }
@@ -333,6 +334,7 @@ bool iteration(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollectio
             }
         } else
         {
+            cout<<"improve"<<endl;
             double diff = 0;
             for (int k = 0; k < (int)LRImages.size();k++)
                 diff += newValues.at(k) - results->at(k);
@@ -436,12 +438,12 @@ bool iteration(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollectio
             double diff = 0;
             for (int k = 0; k < (int)LRImages.size();k++)
                 diff += newValues.at(k);
-            cout.setf(ios_base::fixed);
-            cout.precision(10);
-            if ((float)abs(diff - startSum) <= minQualityImprovement)               //Need to improve this part
+            //cout.setf(ios_base::fixed);
+            //cout.precision(10);
+            if ((double)abs(diff - startSum) <= minQualityImprovement)               //Need to improve this part
             {
-                cout<<diff<<" "<<(float)abs(diff - startSum)<<" "<<minQualityImprovement<<endl;
-                startImage -> element(rY,rX).r() += rDir * step;
+                //cout<<diff<<" "<<(double)abs(diff - startSum)<<" "<<minQualityImprovement<<endl;
+                startImage -> element(rY,rX).b() += rDir * step;
                 for (int k = 0; k < (int)LRImages.size(); k++)
                 {
                     (*results).at(k) = newValues.at(k);
@@ -451,7 +453,7 @@ bool iteration(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollectio
                             if ((i >= 0) && (i < listOfImagesFromUpsampled.at(k) -> getW()) && (j >= 0) && (j < listOfImagesFromUpsampled.at(k) -> getH()))
                             {
                                 double shift = shifts.at(9*k + (i - minXs.at(k)) * 3 + (j - minYs.at(k)) );
-                                listOfImagesFromUpsampled.at(k) -> element(j, i).r() += shift;
+                                listOfImagesFromUpsampled.at(k) -> element(j, i).b() += shift;
                             }
                         }
                 }
@@ -465,6 +467,7 @@ bool iteration(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollectio
             }
         } else
         {
+            cout<<"improve"<<endl;
             double diff = 0;
             for (int k = 0; k < (int)LRImages.size();k++)
                 diff += newValues.at(k) - results->at(k);
@@ -537,8 +540,8 @@ void improve(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollection,
         int rColor = genRColor(mt);
         int rDir = genRDir(mt);
 
-        if ((int)startImage -> element(rY, rX).r() > 255)
-            cout<<"something is wrong"<<endl;
+        //if ((int)startImage -> element(rY, rX).r() > 255)
+        //    cout<<"something is wrong"<<endl;
 
         if (rDir == 0)
             rDir = -1;
@@ -546,10 +549,10 @@ void improve(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollection,
         if (rColor == 0)
         {
             if (((rDir == 1) && (startImage -> element(rY,rX).r() + step > 255.0)) || ((rDir == -1) && (startImage -> element(rY,rX).r() - step < 0.0)))
-            {
-                cout<<rDir<<" "<<startImage -> element(rY,rX).r() + step<<" "<<startImage -> element(rY,rX).r() - step<<endl;
                 rDir = 0;
-            }
+            //else
+              //  cout<<rDir<<" "<<startImage -> element(rY,rX).r() + step<<" "<<startImage -> element(rY,rX).r() - step<<endl;
+
         }
 
         if (rColor == 1)

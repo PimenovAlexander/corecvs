@@ -123,8 +123,8 @@ RGB24Buffer *simpleModelingProcessWithList(std::deque<RGB24Buffer*> imageCollect
                 double minY = min(min(y1, y2), min(y3, y4));
                 double maxY = max(max(y1, y2), max(y3, y4));
 
-                for (int x = max( minX, 0.0); (x < sizeX) && (x <= maxX); x++)
-                    for (int y = max( minY, 0.0); (y < sizeY) && (y <= maxY); y++)
+                for (int x = max( minX, (double)0.0); (x < sizeX) && (x <= maxX); x++)
+                    for (int y = max( minY, (double)0.0); (y < sizeY) && (y <= maxY); y++)
                     {
                         double square = areaForPixels(x1,y1,x2,y2,x3,y3,x4,y4,x,y);
 

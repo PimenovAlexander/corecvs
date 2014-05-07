@@ -65,7 +65,7 @@ void TestSuperResolutionMainWindow::connectActions()
     connect(mUi -> actionAdd_from_the_File_System, SIGNAL(triggered()), this, SLOT(addElementToCollection()));
     connect(mUi -> actionAdd_from_the_Screen, SIGNAL(triggered()), this, SLOT(addImageFromTheScreenToCollection()));
 
-    connect(mUi -> mWidgetList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(on_listWidget_itemDoubleClicked(QListWidgetItem*)));
+    connect(mUi -> mWidgetList, SIGNAL(itemdoubleClicked(QListWidgetItem*)), this, SLOT(on_listWidget_itemdoubleClicked(QListWidgetItem*)));
 
     connect(mUi -> actionClear, SIGNAL(triggered()), this, SLOT(ClearCollection()));//NB!
 
@@ -369,7 +369,7 @@ TestSuperResolutionMainWindow::~TestSuperResolutionMainWindow()
 }
 
 
-void TestSuperResolutionMainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
+void TestSuperResolutionMainWindow::on_listWidget_itemdoubleClicked(QListWidgetItem *item)
 {
     QVariant filename = item -> data(Qt::UserRole);
     int i = filename.toInt();
@@ -460,7 +460,7 @@ void TestSuperResolutionMainWindow::cutImage() { //cuts image and creates collec
 
 void TestSuperResolutionMainWindow::resampleUsingBilinearInterpolation() {
     bool ok;
-    double newSize = QInputDialog::getDouble(
+    double newSize = (double)QInputDialog::getDouble(
                 this,
                 "Print the compression ratio",
                 tr("Ratio:"),
@@ -486,7 +486,7 @@ void TestSuperResolutionMainWindow::resampleUsingBilinearInterpolation() {
 
 void TestSuperResolutionMainWindow::resampleUsingLancsozFilter2x2() {
     bool ok;
-    double newSize = QInputDialog::getDouble(
+    double newSize = (double)QInputDialog::getDouble(
                 this,
                 "Print the compression ratio",
                 tr("Ratio:"),
@@ -511,7 +511,7 @@ void TestSuperResolutionMainWindow::resampleUsingLancsozFilter2x2() {
 
 void TestSuperResolutionMainWindow::resampleUsingLancsozFilter4x4() {
     bool ok;
-    double newSize = QInputDialog::getDouble(
+    double newSize = (double)QInputDialog::getDouble(
                 this,
                 "Print the compression ratio",
                 tr("Ratio:"),
@@ -536,7 +536,7 @@ void TestSuperResolutionMainWindow::resampleUsingLancsozFilter4x4() {
 
 void TestSuperResolutionMainWindow::resampleUsingLancsozFilter6x6() {
     bool ok;
-    double newSize = QInputDialog::getDouble(
+    double newSize = (double)QInputDialog::getDouble(
                 this,
                 "Print the compression ratio",
                 tr("Ratio:"),
@@ -561,7 +561,7 @@ void TestSuperResolutionMainWindow::resampleUsingLancsozFilter6x6() {
 
 void TestSuperResolutionMainWindow::resampleUsingLancsozFilter8x8() {
     bool ok;
-    double newSize = QInputDialog::getDouble(
+    double newSize = (double)QInputDialog::getDouble(
                 this,
                 "Print the compression ratio",
                 tr("Ratio:"),
@@ -587,7 +587,7 @@ void TestSuperResolutionMainWindow::resampleUsingLancsozFilter8x8() {
 
 void TestSuperResolutionMainWindow::resampleUsingNearestNeighbour() {
     bool ok;
-    double newSize = QInputDialog::getDouble(
+    double newSize = (double)QInputDialog::getDouble(
                 this,
                 "Print the compression ratio",
                 tr("Ratio:"),
@@ -631,7 +631,7 @@ void TestSuperResolutionMainWindow::convolutionImage() {
 
 void TestSuperResolutionMainWindow::rotateByAngle() {
     bool ok;
-    double angle = QInputDialog::getDouble(
+    double angle = (double)QInputDialog::getDouble(
                 this,
                 "Print the angle (degree)",
                 tr("Angle:"),
@@ -656,7 +656,7 @@ void TestSuperResolutionMainWindow::rotateByAngle() {
 
 void TestSuperResolutionMainWindow::resampleUsingSquares() {
     bool ok;
-    double newSize = QInputDialog::getDouble(
+    double newSize = (double)QInputDialog::getDouble(
                 this,
                 "Print the compression ratio",
                 tr("Ratio:"),
@@ -666,7 +666,7 @@ void TestSuperResolutionMainWindow::resampleUsingSquares() {
                 2,
                 &ok);
     if (ok) {
-        double shiftX = QInputDialog::getDouble(
+        double shiftX = (double)QInputDialog::getDouble(
                     this,
                     "Print the X-shift (in pixels)",
                     tr("X-shift:"),
@@ -677,7 +677,7 @@ void TestSuperResolutionMainWindow::resampleUsingSquares() {
                     &ok
                     );
         if (ok) {
-                    double shiftY = QInputDialog::getDouble(
+                    double shiftY = (double)QInputDialog::getDouble(
                                 this,
                                 "Print the Y-shift (in pixels)",
                                 tr("Y-shift:"),
@@ -688,7 +688,7 @@ void TestSuperResolutionMainWindow::resampleUsingSquares() {
                                 &ok
                                 );
                     if (ok) {
-                        double angle = QInputDialog::getDouble(
+                        double angle = (double)QInputDialog::getDouble(
                                     this,
                                     "Print the angle (degree)",
                                     tr("Angle:"),
@@ -717,7 +717,7 @@ void TestSuperResolutionMainWindow::resampleUsingSquares() {
 
 void TestSuperResolutionMainWindow::simpleMethodModelingProcess() {
     bool ok;
-    double newSize = QInputDialog::getDouble(
+    double newSize = (double)QInputDialog::getDouble(
                 this,
                 "Print the compression ratio",
                 tr("Ratio:"),
@@ -727,7 +727,7 @@ void TestSuperResolutionMainWindow::simpleMethodModelingProcess() {
                 2,
                 &ok);
     if (ok) {
-        double shiftX = QInputDialog::getDouble(
+        double shiftX = (double)QInputDialog::getDouble(
                     this,
                     "Print the X-shift (in pixels)",
                     tr("X-shift:"),
@@ -738,7 +738,7 @@ void TestSuperResolutionMainWindow::simpleMethodModelingProcess() {
                     &ok
                     );
         if (ok) {
-                    double shiftY = QInputDialog::getDouble(
+                    double shiftY = (double)QInputDialog::getDouble(
                                 this,
                                 "Print the Y-shift (in pixels)",
                                 tr("Y-shift:"),
@@ -749,7 +749,7 @@ void TestSuperResolutionMainWindow::simpleMethodModelingProcess() {
                                 &ok
                                 );
                     if (ok) {
-                        double angle = QInputDialog::getDouble(
+                        double angle = (double)QInputDialog::getDouble(
                                     this,
                                     "Print the angle (degree)",
                                     tr("Angle:"),
@@ -777,7 +777,7 @@ void TestSuperResolutionMainWindow::simpleMethodModelingProcess() {
 
 void TestSuperResolutionMainWindow::SBResampleAndRotation(){
     bool ok;
-    double newSize = QInputDialog::getDouble(
+    double newSize = (double)QInputDialog::getDouble(
                 this,
                 "Print the compression ratio",
                 tr("Ratio:"),
@@ -787,7 +787,7 @@ void TestSuperResolutionMainWindow::SBResampleAndRotation(){
                 2,
                 &ok);
     if (ok) {
-        double shiftX = QInputDialog::getDouble(
+        double shiftX = (double)QInputDialog::getDouble(
                     this,
                     "Print the X-shift (in pixels)",
                     tr("X-shift:"),
@@ -798,7 +798,7 @@ void TestSuperResolutionMainWindow::SBResampleAndRotation(){
                     &ok
                     );
         if (ok) {
-                    double shiftY = QInputDialog::getDouble(
+                    double shiftY = (double)QInputDialog::getDouble(
                                 this,
                                 "Print the Y-shift (in pixels)",
                                 tr("Y-shift:"),
@@ -809,7 +809,7 @@ void TestSuperResolutionMainWindow::SBResampleAndRotation(){
                                 &ok
                                 );
                     if (ok) {
-                        double angle = QInputDialog::getDouble(
+                        double angle = (double)QInputDialog::getDouble(
                                     this,
                                     "Print the angle (degree)",
                                     tr("Angle:"),
@@ -929,7 +929,7 @@ void TestSuperResolutionMainWindow::ImproveResult()
                                                      &ok);
     if (ok)
     {
-        int step = QInputDialog::getDouble(this,
+        int step = (double)QInputDialog::getDouble(this,
                                                          "Print length of step",
                                                          tr("step:"),
                                                          1,
@@ -939,7 +939,7 @@ void TestSuperResolutionMainWindow::ImproveResult()
                                                          &ok);
         if (ok)
         {
-            double minCoefficientOfImprovement = QInputDialog::getDouble(this,
+            double minCoefficientOfImprovement = (double)QInputDialog::getDouble(this,
                                                              "Print minimal coefficient of improvement",
                                                              tr("coefficient:"),
                                                              0,
@@ -951,13 +951,13 @@ void TestSuperResolutionMainWindow::ImproveResult()
             {
                 int size = (int)listOfImagesFromTheUpsampled.size();
                 RGB192Buffer *image192 = new RGB192Buffer(mImage);
-                std::deque<RGB192Buffer*> listOfImagesFromUpsampledDouble;
+                std::deque<RGB192Buffer*> listOfImagesFromUpsampleddouble;
                 for (int i = 0 ; i < size; i++)
-                    listOfImagesFromUpsampledDouble.push_back(new RGB192Buffer(listOfImagesFromTheUpsampled.at(i)));
+                    listOfImagesFromUpsampleddouble.push_back(new RGB192Buffer(listOfImagesFromTheUpsampled.at(i)));
 
-                improve(image192, mImageCollection, mListOfLRImages, listOfImagesFromUpsampledDouble, &differences, step, minCoefficientOfImprovement, numberOfIterations);
+                improve(image192, mImageCollection, mListOfLRImages, listOfImagesFromUpsampleddouble, &differences, step, minCoefficientOfImprovement, numberOfIterations);
 
-                for (int i = 0 ; i < image192 -> getW(); i++)
+                /*for (int i = 0 ; i < image192 -> getW(); i++)
                 {
                         for (int j = 0; j < image192 -> getH(); j++)
                             cout<<"("<<(int)image192 -> element(j, i).r()<<","<<(int)image192 -> element(j, i).g()<<","<<(int)image192 -> element(j, i).b()<<") ";
@@ -970,7 +970,7 @@ void TestSuperResolutionMainWindow::ImproveResult()
                             cout<<"("<<(int)mImageCollection.at(1) -> element(j, i).r()<<","<<(int)mImageCollection.at(1) -> element(j, i).g()<<","<<(int)mImageCollection.at(1) -> element(j, i).b()<<") ";
                         cout<<endl;
                     }
-                cout<<"-----"<<endl;
+                cout<<"-----"<<endl;*/
                 image192 -> copy192to24(mImage);
 
                 for(int k = 0; k < (int)mListOfLRImages.size(); k++)
@@ -988,8 +988,8 @@ void TestSuperResolutionMainWindow::ImproveResult()
                     differences.at(i) = differenceBetweenImages(listOfImagesFromTheUpsampled.at(i), mImageCollection.at(mListOfLRImages.at(i).numberInImageCollection_) );
 
                 for (int i = 0 ; i < size; i++)
-                    delete_safe(listOfImagesFromUpsampledDouble.at(i));
-                for (int i = 0 ; i < mImage -> getW(); i++)
+                    delete_safe(listOfImagesFromUpsampleddouble.at(i));
+                /*for (int i = 0 ; i < mImage -> getW(); i++)
                 {
                         for (int j = 0; j < mImage -> getH(); j++)
                             cout<<"("<<(int)mImage -> element(j, i).r()<<","<<(int)mImage -> element(j, i).g()<<","<<(int)mImage -> element(j, i).b()<<") ";
@@ -1001,7 +1001,7 @@ void TestSuperResolutionMainWindow::ImproveResult()
                         for (int j = 0; j < mImageCollection.at(0) -> getH(); j++)
                             cout<<"("<<(int)mImageCollection.at(0) -> element(j, i).r()<<","<<(int)mImageCollection.at(0) -> element(j, i).g()<<","<<(int)mImageCollection.at(0) -> element(j, i).b()<<") ";
                         cout<<endl;
-                    }
+                    }*/
             }
         }
     }
