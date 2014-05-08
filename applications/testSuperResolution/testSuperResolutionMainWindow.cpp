@@ -65,7 +65,7 @@ void TestSuperResolutionMainWindow::connectActions()
     connect(mUi -> actionAdd_from_the_File_System, SIGNAL(triggered()), this, SLOT(addElementToCollection()));
     connect(mUi -> actionAdd_from_the_Screen, SIGNAL(triggered()), this, SLOT(addImageFromTheScreenToCollection()));
 
-    connect(mUi -> mWidgetList, SIGNAL(itemdoubleClicked(QListWidgetItem*)), this, SLOT(on_listWidget_itemdoubleClicked(QListWidgetItem*)));
+    connect(mUi -> mWidgetList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(on_listWidget_itemdoubleClicked(QListWidgetItem*)));
 
     connect(mUi -> actionClear, SIGNAL(triggered()), this, SLOT(ClearCollection()));//NB!
 
@@ -929,7 +929,7 @@ void TestSuperResolutionMainWindow::ImproveResult()
                                                      &ok);
     if (ok)
     {
-        int step = (double)QInputDialog::getDouble(this,
+        double step = (double)QInputDialog::getDouble(this,
                                                          "Print length of step",
                                                          tr("step:"),
                                                          1,

@@ -150,10 +150,11 @@ bool iteration(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollectio
                 {
                     if ((i >= 0) && (i < listOfImagesFromUpsampled.at(k) -> getW()) && (j >= 0) && (j < listOfImagesFromUpsampled.at(k) -> getH()))
                     {
+
                         double square = areaForPixels(newX1,newY1,newX2,newY2,newX3,newY3,newX4,newY4,i,j);
 
-                        double shift = square * (double)rDir * (double)step;
-
+                        double shift = square * rDir * step;
+                        //cout<<rX<<" "<<rY<<""<<0<<" "<<square<<" "<<rDir<<" "<<step<<" "<<shift<<endl;
                         shifts.at(9*k + (i - minXs.at(k)) * 3 + (j - minYs.at(k)) ) = shift;
 
                         double oldELement = (double)listOfImagesFromUpsampled.at(k) -> element(j,i).r() -
@@ -201,7 +202,7 @@ bool iteration(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollectio
             }
         } else
         {
-            cout<<"improve"<<endl;
+
             double diff = 0;
             for (int k = 0; k < (int)LRImages.size();k++)
                 diff += newValues.at(k) - results->at(k);
@@ -209,6 +210,7 @@ bool iteration(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollectio
             if (diff < 0)               //Need to improve this part
             {
                 startImage -> element(rY,rX).r() += rDir * step;
+                //cout<<rX<<" "<<rY<<" "<<0<<" "<<startImage -> element(rY,rX).r()<<endl;
                 for (int k = 0; k < (int)LRImages.size(); k++)
                 {
                     (*results).at(k) = newValues.at(k);
@@ -285,7 +287,7 @@ bool iteration(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollectio
                         double square = areaForPixels(newX1,newY1,newX2,newY2,newX3,newY3,newX4,newY4,i,j);
 
                         double shift = square * (double)rDir * (double)step;
-
+                        //cout<<rX<<" "<<rY<<""<<1<<" "<<square<<" "<<rDir<<" "<<step<<" "<<shift<<endl;
                         shifts.at(9*k + (i - minXs.at(k)) * 3 + (j - minYs.at(k)) ) = shift;
 
                         double oldELement = (double)listOfImagesFromUpsampled.at(k) -> element(j,i).g() -
@@ -334,7 +336,7 @@ bool iteration(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollectio
             }
         } else
         {
-            cout<<"improve"<<endl;
+
             double diff = 0;
             for (int k = 0; k < (int)LRImages.size();k++)
                 diff += newValues.at(k) - results->at(k);
@@ -342,6 +344,7 @@ bool iteration(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollectio
             if (diff < 0)               //Need to improve this part
             {
                 startImage -> element(rY,rX).g() += rDir * step;
+                //cout<<rX<<" "<<rY<<" "<<1<<" "<<startImage -> element(rY,rX).g()<<endl;
                 for (int k = 0; k < (int)LRImages.size(); k++)
                 {
                     (*results).at(k) = newValues.at(k);
@@ -418,7 +421,7 @@ bool iteration(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollectio
                         double square = areaForPixels(newX1,newY1,newX2,newY2,newX3,newY3,newX4,newY4,i,j);
 
                         double shift = square * (double)rDir * (double)step;
-
+                        //cout<<rX<<" "<<rY<<""<<2<<" "<<square<<" "<<rDir<<" "<<step<<" "<<shift<<endl;
                         shifts.at(9*k + (i - minXs.at(k)) * 3 + (j - minYs.at(k)) ) = shift;
 
                         double oldELement = (double)listOfImagesFromUpsampled.at(k) -> element(j,i).b() -
@@ -467,7 +470,7 @@ bool iteration(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollectio
             }
         } else
         {
-            cout<<"improve"<<endl;
+
             double diff = 0;
             for (int k = 0; k < (int)LRImages.size();k++)
                 diff += newValues.at(k) - results->at(k);
@@ -475,6 +478,7 @@ bool iteration(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollectio
             if (diff < 0)               //Need to improve this part
             {
                 startImage -> element(rY,rX).b() += rDir * step;
+                //cout<<rX<<" "<<rY<<" "<<2<<" "<<startImage -> element(rY,rX).b()<<endl;
                 for (int k = 0; k < (int)LRImages.size(); k++)
                 {
                     (*results).at(k) = newValues.at(k);
@@ -573,7 +577,7 @@ void improve(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollection,
         if (i % 10000 == 0)
             cout<<i<<endl;
     }
-
+    //cout<<step<<endl;
     delete [] mask;
 }
 
