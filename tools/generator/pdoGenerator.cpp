@@ -129,6 +129,31 @@ void PDOGenerator::generatePDOEnumSubH(const EnumReflection *eref)
     "    "+enumCapitalName+"_LAST\n"
     "};\n"
     "\n"
+    "\n"
+    "static inline const char *getName(const "+ enumName + " &value)\n"
+    "{\n"
+    "    switch (value) \n"
+    "    {\n";
+
+    for (int j = 0; j < eref->optionsNumber(); j ++)
+    {
+        const EnumOption *option = eref->options[j];
+        QString optionName = toEnumName(QString(option->name.name));
+//        QString optionComment = option->name.comment;
+//        QString optionDescr   = option->name.decription;
+//        QString optionID   = QString::number(option->id);
+
+    result+=
+    "     case " + optionName + " : return \"" + optionName + "\"; break ;\n";
+    }
+
+    result+=
+    "     default : return \"Not in range\"; break ;\n"
+    "     \n"
+    "    }\n"
+    "    return \"Not in range\";\n"
+    "}\n"
+    "\n"
     "} //namespace "+enumName+"\n"
     "\n"
     "#endif  //"+guardDefine+"\n";
@@ -698,7 +723,7 @@ void PDOGenerator::generateControlWidgetCpp()
     "\n"
     "    delete mUi;\n"
     "}\n"
-/*    "void "+className+"::loadFromQSettings(const QString &fileName, QString _root)\n"
+/*    "void "+className+"::loadFromQSettings(const QString &fileName, const QString &_root)\n"
     "{\n"
     "    "+parametersName+" *params = createParameters();\n"
     "    SettingsGetter visitor(fileName, _root + rootPath);\n"
@@ -707,7 +732,7 @@ void PDOGenerator::generateControlWidgetCpp()
     "    delete params;\n"
     "}\n"
     "\n"
-    "void "+className+"::saveToQSettings  (const QString &fileName, QString _root)\n"
+    "void "+className+"::saveToQSettings  (const QString &fileName, const QString &_root)\n"
     "{\n"
     "    "+parametersName+" *params = createParameters();\n"
     "    SettingsSetter visitor(fileName, _root + rootPath);\n"
