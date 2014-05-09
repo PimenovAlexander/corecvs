@@ -17,7 +17,7 @@ public:
         FIELD_B = 2
     };
 
-    RGB192Color();
+    RGB192Color(){};
 
     RGB192Color(double _r, double _g, double _b)
     {
