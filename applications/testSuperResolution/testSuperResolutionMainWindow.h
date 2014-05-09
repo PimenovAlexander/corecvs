@@ -59,7 +59,7 @@ private slots:
     void ClearCollection();
     void cutImage();
     void addImageFromTheScreenToCollection();
-    void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
+    void on_listWidget_itemdoubleClicked(QListWidgetItem *item);
     void addElementToCollection();
     void resampleUsingBilinearInterpolation();
     void resampleUsingLancsozFilter2x2();
