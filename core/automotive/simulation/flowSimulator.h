@@ -1,8 +1,8 @@
-#ifndef FLOWSIMUATOR_H_
-#define FLOWSIMUATOR_H_
+#ifndef FLOWSIMULATOR_H_
+#define FLOWSIMULATOR_H_
 
 /**
- * \file flowSimuator.h
+ * \file flowSimulator.h
  * \brief This is a header file to simulate flow caused by still standing objects and a moving
  * vehicle.
  *
@@ -23,11 +23,11 @@
 namespace corecvs {
 
 
-class FlowSimuator
+class FlowSimulator
 {
 public:
-    FlowSimuator();
-    virtual ~FlowSimuator();
+    FlowSimulator();
+    virtual ~FlowSimulator();
 
     static std::vector<Vector3dd> *generateMockScene();
 
@@ -47,5 +47,5 @@ public:
 
 
 } //namespace corecvs
-#endif /* FLOWSIMUATOR_H_ */
 
+#endif /* FLOWSIMULATOR_H_ */

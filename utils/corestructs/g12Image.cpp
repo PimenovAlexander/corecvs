@@ -69,6 +69,23 @@ G12Image::G12Image(G12Buffer *buffer, bool mirror) : QImage (buffer->w, buffer->
 G12Image::~G12Image() {
 }
 
+G8Image::G8Image(G8Buffer *buffer) : QImage (buffer->w, buffer->h, QImage::Format_RGB32){
+    int i,j;
+    uint8_t *data = bits();
+    int bpl = bytesPerLine();
+    //int depth = image.depth;
+    for (i = 0; i < buffer->h; i++ )
+        for (j = 0; j < buffer->w; j++ )
+        {
+            uint8_t c = buffer->element(i, j);
+            uint32_t value = c | (c << 8) | (c << 16) | (0xFF << 24);
+            ((uint32_t *)(data + i * bpl))[j] = value;
+        }
+}
+
+G8Image::~G8Image() {
+}
+
 
 RGB24Image::RGB24Image(RGB24Buffer *buffer, bool mirror) : QImage (buffer->w, buffer->h, QImage::Format_RGB32){
     int i,j;
@@ -97,6 +114,19 @@ RGB24Image::RGB24Image(RGB24Buffer *buffer, bool mirror) : QImage (buffer->w, bu
 RGB24Image::~RGB24Image() {
     // \todo TODO Auto-generated destructor stub
 }
+
+QImage *toQImage(G12Buffer *buffer) {
+    return new G12Image(buffer);
+}
+
+QImage *toQImage(G8Buffer *buffer) {
+    return new G8Image(buffer);
+}
+
+QImage *toQImage(RGB24Buffer *buffer) {
+    return new RGB24Image(buffer);
+}
+
 
 RGB24InterfaceImage::RGB24InterfaceImage(RGB24Buffer *buffer) : QImage((uchar *)buffer->data, buffer->w, buffer->h, QImage::Format_RGB32)
 {

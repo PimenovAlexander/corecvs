@@ -66,11 +66,11 @@ G12Buffer *BufferFactory::loadG16Bitmap(string name)
         goto exit;
     }
 
-    read = fread(&h, sizeof(uint32_t), 1, In);
+    read = (int)fread(&h, sizeof(uint32_t), 1, In);
     if (read != 1) {
         goto exit;
     }
-    read = fread(&w, sizeof(uint32_t), 1, In);
+    read = (int)fread(&w, sizeof(uint32_t), 1, In);
     if (read != 1)
     {
         goto exit;
@@ -84,7 +84,7 @@ G12Buffer *BufferFactory::loadG16Bitmap(string name)
 
     for (uint32_t i = 0; i < h; ++i) {
         for (uint32_t j = 0; j < w; ++j) {
-            read = fread(&d, sizeof(uint16_t), 1, In);
+            read = (int)fread(&d, sizeof(uint16_t), 1, In);
             if (read != 1)
             {
                 goto exit;

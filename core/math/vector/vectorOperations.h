@@ -506,6 +506,16 @@ public:
         return true;
     }
 
+
+    void mapToHypercube(const VectorOperationsBase &low, const VectorOperationsBase &high)
+    {
+        for (int i = 0; i < _size(); i++)
+        {
+            if (_at(i) <  low._at(i)) _at(i) =  low._at(i);
+            if (_at(i) > high._at(i)) _at(i) = high._at(i);
+        }
+    }
+
     friend ostream & operator <<(ostream &out, const VectorOperationsBase &vector)
     {
         out << "[";

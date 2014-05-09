@@ -101,16 +101,19 @@ class SaveableWidget
 {
 public:
 
-    virtual void loadFromQSettings  (const QString &fileName, QString _root)
+    virtual void loadFromQSettings  (const QString &fileName, const QString &_root)
     {
+//        qDebug("SaveableWidget::loadFromQSettings(\"%s\", \"%s\"): called",fileName.toAscii().constData(), _root.toAscii().constData());
+
         SettingsGetter visitor(fileName, _root);
         WidgetLoader loader(&visitor);
         loadParamWidget(loader);
     }
 
-    virtual void saveToQSettings (const QString &fileName, QString _root)
+    virtual void saveToQSettings (const QString &fileName, const QString &_root)
     {
-        // qDebug() << "SaveableWidget::saveToQSettings: " << _root << " to file" << fileName;
+//        qDebug("SaveableWidget::saveToQSettings(\"%s\", \"%s\"): called",fileName.toAscii().constData(), _root.toAscii().constData());
+
         SettingsSetter visitor(fileName, _root);
         WidgetSaver saver(&visitor);
         saveParamWidget(saver);

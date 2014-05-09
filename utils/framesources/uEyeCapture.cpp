@@ -7,11 +7,11 @@
  */
 
 #define __STDC_FORMAT_MACROS
-#include <inttypes.h>
+//#include <inttypes.h>
 #undef __STDC_FORMAT_MACROS
 
 #include <fcntl.h>
-#include <unistd.h>
+//#include <unistd.h>
 #include <stdlib.h>
 //#include <sys/mman.h>
 //#include <sys/ioctl.h>
@@ -32,7 +32,8 @@
 #define TRACE_DEQUEUE(X)
 #endif
 
-
+/*static*/ const double UEyeCaptureInterface::EXPOSURE_SCALER = 10.0;
+/*static*/ const double UEyeCaptureInterface::FPS_SCALER      = 100.0;
 
 int UEyeCaptureInterface::ueyeTrace(int result)
 {

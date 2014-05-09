@@ -78,10 +78,10 @@ public:
     ErodeKernel(G12Buffer *_element, int _y, int _x) :
         element(_element), x(_x), y(_y) {};
 
-    inline int getCenterX(){ return x; };
-    inline int getCenterY(){ return y; };
-    inline int getSizeX(){ return element->w; };
-    inline int getSizeY(){ return element->h; };
+    inline int getCenterX(){ return x; }
+    inline int getCenterY(){ return y; }
+    inline int getSizeX()  { return element->w; }
+    inline int getSizeY()  { return element->h; }
 
     typedef typename Algebra::InputType Type;
 

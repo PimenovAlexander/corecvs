@@ -87,7 +87,9 @@ void BaseHostDialog::init(QWidget *parameterHolderWidget, QTextEdit * /*loggerWi
 
     initGraphPresentation();
 
-    loadTransformFromFile(savePath);
+    SettingsGetter visitor(ConfigManager::camConfigName(), UI_NAME_BASE_DIALOG);
+    mRectifierData.accept<SettingsGetter>(visitor);
+//    loadTransformFromFile(savePath);
 }
 
 void BaseHostDialog::initGraphPresentation()
@@ -110,6 +112,7 @@ void BaseHostDialog::initGraphPresentation()
 
 void BaseHostDialog::deinit()
 {
+    qDebug() << "void BaseHostDialog::deinit(): called";
     /* Stop all possible events sources */
     saveParams(ConfigManager::configName(), "");
     terminateCalculator();
@@ -384,10 +387,8 @@ void BaseHostDialog::createCalculator()
 
     mCalculator = calculator;
 
-    connect(mapper
-          , SIGNAL(baseParametersParamsChanged(QSharedPointer<BaseParameters>))
-          , calculator
-          , SLOT(baseControlParametersChanged(QSharedPointer<BaseParameters>))
+    connect(mapper  , SIGNAL(baseParametersParamsChanged(QSharedPointer<BaseParameters>))
+          , calculator, SLOT(baseControlParametersChanged(QSharedPointer<BaseParameters>))
     );
 
     connect(mFilterGraphPresentation
@@ -409,10 +410,8 @@ void BaseHostDialog::createCalculator()
     qRegisterMetaType<Frames::FrameSourceId>("Frames::FrameSourceId");
     qRegisterMetaType<QSharedPointer<FilterSelectorParameters> >("QSharedPointer<FilterSelectorParameters>");
 
-    connect(this
-          , SIGNAL(filterControlParametersChanged(Frames::FrameSourceId, QSharedPointer<FilterSelectorParameters>))
-          , calculator
-          , SLOT(filterControlParametersChanged(Frames::FrameSourceId, QSharedPointer<FilterSelectorParameters>))
+    connect(this    , SIGNAL(filterControlParametersChanged(Frames::FrameSourceId, QSharedPointer<FilterSelectorParameters>))
+          , calculator, SLOT(filterControlParametersChanged(Frames::FrameSourceId, QSharedPointer<FilterSelectorParameters>))
         );
 
     connect(mapper
@@ -813,12 +812,13 @@ void BaseHostDialog::loadParams(const QString &fileName, QString root)
 
     for (unsigned i = 0; i < mSaveableCameraWidgets.size(); i++)
     {
-        mSaveableWidgets[i]->loadFromQSettings(ConfigManager::camConfigName(), root);
+        mSaveableCameraWidgets[i]->loadFromQSettings(ConfigManager::camConfigName(), root);
     }
 }
 
 void BaseHostDialog::saveParams(const QString &fileName, QString root)
 {
+    qDebug("BaseHostDialog::saveParam(\"%s\", \"%s\"): called",fileName.toAscii().constData(), root.toAscii().constData());
     QSettings settings(fileName, QSettings::IniFormat);
 
     QSettings cameraSettings(ConfigManager::camConfigName(), QSettings::IniFormat);
@@ -835,14 +835,16 @@ void BaseHostDialog::saveParams(const QString &fileName, QString root)
         cameraSettings.endGroup();
     }
 
+    qDebug("BaseHostDialog::saveParam(): We will be saving %d widgets", mSaveableWidgets.size());
     for (unsigned i = 0; i < mSaveableWidgets.size(); i++)
     {
         mSaveableWidgets[i]->saveToQSettings(fileName, root);
     }
 
+    qDebug("BaseHostDialog::saveParam(): We will be saving %d camera widgets", mSaveableCameraWidgets.size());
     for (unsigned i = 0; i < mSaveableCameraWidgets.size(); i++)
     {
-        mSaveableWidgets[i]->loadFromQSettings(ConfigManager::camConfigName(), root);
+        mSaveableCameraWidgets[i]->saveToQSettings(ConfigManager::camConfigName(), root);
     }
 
 }

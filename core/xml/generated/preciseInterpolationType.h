@@ -40,6 +40,20 @@ enum PreciseInterpolationType {
     PRECISE_INTERPOLATION_TYPE_LAST
 };
 
+
+static inline const char *getName(const PreciseInterpolationType &value)
+{
+    switch (value) 
+    {
+     case BILINEAR : return "BILINEAR"; break ;
+     case SPLINE : return "SPLINE"; break ;
+     case POLYNOM : return "POLYNOM"; break ;
+     default : return "Not in range"; break ;
+     
+    }
+    return "Not in range";
+}
+
 } //namespace PreciseInterpolationType
 
 #endif  //PRECISE_INTERPOLATION_TYPE_H_

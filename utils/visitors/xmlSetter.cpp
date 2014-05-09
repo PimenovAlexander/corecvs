@@ -1,12 +1,88 @@
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
+#include <QtCore/QtDebug>
 #include <QtXml/QDomDocument>
 
 #include "xmlSetter.h"
 
-XmlSetter::XmlSetter(QString const & filename)
+
+XmlSetter::XmlSetter(const QString &fileName) :
+    mDocument("document")
 {
-    mFileName = filename;
+    mFileName = fileName;
+    /*QFile file(mFileName);
+    if (!file.open(QFile::ReadWrite)) {
+        qDebug() << "Can't open file <" << fileName << ">" << endl;
+        return;
+    }
+
+    //mDocument.setContent(&file);
+    file.close();*/
+    mNodePath.push_back(mDocument);
+}
+
+XmlSetter::~XmlSetter()
+{
+    qDebug() << "XmlSetter::~XmlSetter(): saving to <" << mFileName << ">" << endl;
+
+    QFile file(mFileName);
+    if (!file.open(QFile::WriteOnly)) {
+        qDebug() << "Can't open file <" << mFileName << ">" << endl;
+        return;
+    }
+
+    QTextStream textStream(&file);
+    mDocument.save(textStream, 2);
+    textStream.flush();
+    qDebug() << "Output" << mDocument.toString();
+    file.close();
+
+}
+
+
+void XmlSetter::pushChild(const char *childName)
+{
+//    qDebug("XmlSetter::pushChild(%s): called", childName);
+
+    QDomElement element = getChildByTag(childName);
+    if (element.isNull())
+    {
+        QDomNode mainElement = mNodePath.back();
+
+//        qDebug("  XmlSetter::pushChild(): adding new subelement");
+        element = mDocument.createElement(childName);
+        QDomNode node = mainElement.appendChild(element);
+        if (node == QDomNode())
+        {
+            qDebug("  XmlSetter::pushChild(): failed");
+        }
+    }
+    mNodePath.push_back(element);
+}
+
+void XmlSetter::popChild()
+{
+//    qDebug() << "Node seem to be finished" << mDocument.toString();
+    mNodePath.pop_back();
+}
+
+void XmlSetter::saveValue(const char *fieldName, QString value)
+{
+    QDomElement element = getChildByTag(fieldName);
+
+    qDebug() << "We arrived at DOM path of length " << mNodePath.size() << " adding " << fieldName << " with value:" << value;
+
+    if (element.isNull())
+    {
+        pushChild(fieldName);
+
+        QDomElement mainElement = mNodePath.back().toElement();
+        mainElement.setAttribute("value", value);
+        popChild();
+
+    } else {
+        element.setAttribute("value", value);
+    }
 }
 
 template <>
@@ -33,30 +109,6 @@ void XmlSetter::visit<float>(float &floatField, float /*defaultValue*/, const ch
     saveValue(fieldName, QString::number(floatField));
 }
 
-void XmlSetter::saveValue(const char *fieldName, QString value)
-{
-    QFile file(mFileName);
-    if (!file.open(QFile::ReadWrite))
-        return;
-    QDomDocument doc("document");
-    doc.setContent(&file);
-    QDomElement element = doc.elementById(fieldName);
-    if (element.isNull())
-    {
-        QDomElement root = doc.documentElement();
-        if (root.isNull())
-        {
-            root = doc.createElement("Parameters");
-            doc.appendChild(root);
-        }
-        element = doc.createElement(fieldName);
-        root.appendChild(element);
-    }
-    element.setAttribute("value", value);
-    QTextStream textStream(&file);
-    doc.save(textStream, 0);
-    file.close();
-}
 
 /* And new style visitor method */
 

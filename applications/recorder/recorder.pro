@@ -30,7 +30,7 @@ HEADERS += \
     parametersMapper/parametersMapperRecorder.h \       # parameters for params mapper
 
 SOURCES += \
-    main_virecorder.cpp \
+    main_recorder.cpp \
     recorderDialog.cpp \
     recorderThread.cpp \
     recorderControlWidget.cpp \                         # control widgets

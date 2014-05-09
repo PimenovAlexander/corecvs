@@ -155,10 +155,11 @@ public:
 
     void mapToRect(const Vector2d<ElementType> &low, const Vector2d<ElementType> &high)
     {
-        if (this->element[0] <  low.element[0]) this->element[0] =  low.element[0];
+        /*if (this->element[0] <  low.element[0]) this->element[0] =  low.element[0];
         if (this->element[1] <  low.element[1]) this->element[1] =  low.element[1];
         if (this->element[0] > high.element[0]) this->element[0] = high.element[0];
-        if (this->element[1] > high.element[1]) this->element[1] = high.element[1];
+        if (this->element[1] > high.element[1]) this->element[1] = high.element[1];*/
+        this->mapToHypercube(low, high);
     }
 
     bool isInRect(const Vector2d<ElementType> &low, const Vector2d<ElementType> &high) const

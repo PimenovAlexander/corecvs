@@ -35,6 +35,19 @@ enum SobelMixingType {
     SOBEL_MIXING_TYPE_LAST
 };
 
+
+static inline const char *getName(const SobelMixingType &value)
+{
+    switch (value) 
+    {
+     case SUM_OF_ABSOLUTE : return "SUM_OF_ABSOLUTE"; break ;
+     case L2 : return "L2"; break ;
+     default : return "Not in range"; break ;
+     
+    }
+    return "Not in range";
+}
+
 } //namespace SobelMixingType
 
 #endif  //SOBEL_MIXING_TYPE_H_

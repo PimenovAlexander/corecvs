@@ -159,8 +159,8 @@ protected:
     /* Saving loading parameters to/from widget */
     /* TODO: Use visitors here*/
     QString mRootPath;
-    virtual void loadFromQSettings(const QString &fileName, QString _root);
-    virtual void saveToQSettings  (const QString &fileName, QString _root);
+    virtual void loadFromQSettings(const QString &fileName, const QString &_root);
+    virtual void saveToQSettings  (const QString &fileName, const QString &_root);
 
 public:
     void setSavingRoot(const QString &root)

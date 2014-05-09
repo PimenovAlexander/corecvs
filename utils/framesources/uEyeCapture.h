@@ -49,8 +49,8 @@ public:
     static int ueyeTrace(int);
 
 
-    static const double EXPOSURE_SCALER = 10.0;
-    static const double FPS_SCALER      = 100.0;
+    static const double EXPOSURE_SCALER /*= 10.0*/;
+    static const double FPS_SCALER      /*= 100.0*/;
 
 private:
 

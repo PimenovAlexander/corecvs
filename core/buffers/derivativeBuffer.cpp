@@ -40,7 +40,7 @@ DerivativeBuffer::DerivativeBuffer(G12Buffer *input) : DerivativeBufferBase(inpu
     }
 }
 
-G12Buffer *DerivativeBuffer::nonMaximalSuppression(/*uint16_t low, uint16_t hight*/)
+G12Buffer *DerivativeBuffer::nonMaximalSuppression(int downscale)
 {
     G12Buffer *toReturn = new G12Buffer(h,w);
 
@@ -79,9 +79,9 @@ G12Buffer *DerivativeBuffer::nonMaximalSuppression(/*uint16_t low, uint16_t high
             } while (false);
 
 
-            int16_t first   =  element(i + dy, j + dx).x();
-            int16_t second  =  element(i - dy, j - dx).x();
-            int16_t current =  element(i     , j     ).x();
+            double first   =  elementMagnitude(i + dy, j + dx);
+            double second  =  elementMagnitude(i - dy, j - dx);
+            double current =  elementMagnitude(i     , j     );
 
             first   = (first   > 0) ?   first :    -first;
             second  = (second  > 0) ?  second :  - second;
@@ -89,7 +89,7 @@ G12Buffer *DerivativeBuffer::nonMaximalSuppression(/*uint16_t low, uint16_t high
 
 
             if (current > second && current > first)
-                toReturn->element(i, j) = (uint16_t)current;
+                toReturn->element(i, j) = (uint16_t)(current / downscale);
             else
                 toReturn->element(i, j) = 0x0;
         }
@@ -99,7 +99,7 @@ G12Buffer *DerivativeBuffer::nonMaximalSuppression(/*uint16_t low, uint16_t high
 }
 
 
-G12Buffer *DerivativeBuffer::gradientMagnitudeBuffer()
+G12Buffer *DerivativeBuffer::gradientMagnitudeBuffer(int downscale)
 {
     G12Buffer *toReturn = new G12Buffer(h,w);
 
@@ -107,7 +107,7 @@ G12Buffer *DerivativeBuffer::gradientMagnitudeBuffer()
     {
         for (int j = 1; j < w - 1; j++)
         {
-            toReturn->element(i,j) = (this->element(i,j).l1Metric() / 2);
+            toReturn->element(i,j) = elementMagnitude(i,j) / downscale;
         }
     }
     return toReturn;

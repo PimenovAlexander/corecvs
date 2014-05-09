@@ -22,7 +22,7 @@
 
 /* TODO: try to use std offsetof() while it's present. */
 #define     CORE_OFFSET_OF(s, m)        offsetof(s, m)
-/*#define   CORE_OFFSET_OF(s, m)        (int)&(((s *)0)->m)*/
+//#define   CORE_OFFSET_OF(s, m)        (int)&(((s *)0)->m)
 
 #define     CORE_UNUSED(arg)            (void)arg
 

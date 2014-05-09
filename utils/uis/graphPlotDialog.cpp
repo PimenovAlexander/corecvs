@@ -429,12 +429,12 @@ void GraphPlotDialog::update(void)
     mUi.widget->update();
 }
 
-void GraphPlotDialog::loadFromQSettings(const QString &fileName, QString _root)
+void GraphPlotDialog::loadFromQSettings(const QString &fileName, const QString &_root)
 {
     mUi.parametersWidget->loadFromQSettings(fileName, _root + mRootPath);
 }
 
-void GraphPlotDialog::saveToQSettings  (const QString &fileName, QString _root)
+void GraphPlotDialog::saveToQSettings  (const QString &fileName, const QString &_root)
 {
     mUi.parametersWidget->saveToQSettings(fileName, _root + mRootPath);
 }

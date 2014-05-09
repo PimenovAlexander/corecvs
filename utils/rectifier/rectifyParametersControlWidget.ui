@@ -14,7 +14,7 @@
    <string>RectifyCamDialog</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../../../resources/main.qrc">
+   <iconset resource="../../resources/main.qrc">
     <normaloff>:/new/prefix1/georectify.png</normaloff>:/new/prefix1/georectify.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
@@ -379,7 +379,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../../../resources/main.qrc">
+         <iconset resource="../../resources/main.qrc">
           <normaloff>:/new/prefix1/unlock.png</normaloff>
           <normalon>:/new/prefix1/lock.png</normalon>:/new/prefix1/unlock.png</iconset>
         </property>
@@ -483,7 +483,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../../../resources/main.qrc">
+         <iconset resource="../../resources/main.qrc">
           <normaloff>:/new/prefix1/forward_alt.png</normaloff>:/new/prefix1/forward_alt.png</iconset>
         </property>
        </widget>
@@ -522,6 +522,9 @@
    </item>
    <item row="5" column="0">
     <widget class="QComboBox" name="matchingMethodComboBox">
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
      <item>
       <property name="text">
        <string>SurfCV</string>
@@ -1203,19 +1206,19 @@
   <tabstop>resetButton</tabstop>
  </tabstops>
  <resources>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
+  <include location="../../resources/main.qrc"/>
+  <include location="../../resources/main.qrc"/>
+  <include location="../../resources/main.qrc"/>
+  <include location="../../resources/main.qrc"/>
+  <include location="../../resources/main.qrc"/>
+  <include location="../../resources/main.qrc"/>
+  <include location="../../resources/main.qrc"/>
+  <include location="../../resources/main.qrc"/>
+  <include location="../../resources/main.qrc"/>
+  <include location="../../resources/main.qrc"/>
+  <include location="../../resources/main.qrc"/>
+  <include location="../../resources/main.qrc"/>
+  <include location="../../resources/main.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -3,6 +3,8 @@
 #include "QtCore/QString"
 #include "basePathVisitor.h"
 #include "reflection.h"
+#include "baseXMLVisitor.h"
+#include <QtCore/QtCore>
 
 using corecvs::IntField;
 using corecvs::DoubleField;
@@ -14,27 +16,62 @@ using corecvs::EnumField;
 
 using namespace corecvs;
 
-class XmlSetter : public BasePathVisitor
+class XmlSetter : public BaseXMLVisitor
 {
 public:
+    /**
+     *  Create a setter object that will store data to a file with a specified name.
+     *
+     **/
     XmlSetter(QString const & filename);
-    template <class Type>
-    	void visit(Type &field, Type defaultValue, const char *fieldName)
+
+    /**
+     *  Create a setter object that will store data to a given XML
+     **/
+    XmlSetter(QDomElement &documentElement) :
+        mDocumentElement(documentElement)
+    {
+        mNodePath.push_back(mDocumentElement);
+    }
+
+    virtual ~XmlSetter();
+
+    void pushChild(const char *childName);
+    void popChild();
+
+
+template <class Type>
+    void visit(Type &field, Type defaultValue, const char *fieldName)
     {
         pushChild(fieldName);
            field.accept(*this);
         popChild();
     }
 
-    template <typename inputType, typename reflectionType>
-        void visit(inputType &field, const reflectionType * fieldDescriptor)
+template <class inputType>
+    void visit(inputType &field, const char *fieldName)
+    {
+        pushChild(fieldName);
+            field.accept(*this);
+        popChild();
+    }
+
+template <typename inputType, typename reflectionType>
+    void visit(inputType &field, const reflectionType * fieldDescriptor)
     {
         pushChild(fieldDescriptor->getSimpleName());
            field.accept(*this);
         popChild();
     }
+
 private:
+
     QString mFileName;
+
+    QDomDocument mDocument;
+    QDomElement mDocumentElement;
+
+
     void saveValue(const char *fieldName, QString value);
 };
 

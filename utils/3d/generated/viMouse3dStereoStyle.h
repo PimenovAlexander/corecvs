@@ -60,6 +60,24 @@ enum ViMouse3dStereoStyle {
     VIMOUSE_3D_STEREO_STYLE_LAST
 };
 
+
+static inline const char *getName(const ViMouse3dStereoStyle &value)
+{
+    switch (value) 
+    {
+     case GREY_VALUE : return "GREY_VALUE"; break ;
+     case Z_COORDINATE : return "Z_COORDINATE"; break ;
+     case Y_COORDINATE : return "Y_COORDINATE"; break ;
+     case DISTANCE : return "DISTANCE"; break ;
+     case NONE : return "NONE"; break ;
+     case BY_FLAG : return "BY_FLAG"; break ;
+     case BY_CLUSTER : return "BY_CLUSTER"; break ;
+     default : return "Not in range"; break ;
+     
+    }
+    return "Not in range";
+}
+
 } //namespace ViMouse3dStereoStyle
 
 #endif  //VIMOUSE_3D_STEREO_STYLE_H_
