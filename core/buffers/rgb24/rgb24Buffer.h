@@ -155,6 +155,53 @@ public:
     void fillWithYUYV (uint8_t *yuyv);
     G12Buffer *toG12Buffer();
 
+    enum ChannelID {
+        CHANNEL_R,
+        CHANNEL_G,
+        CHANNEL_B,
+        CHANNEL_GRAY
+    };
+    G8Buffer* getChannel(ChannelID channel);
+
+    template<class SelectorPrediate>
+    Vector3dd getMeanValue(int x1, int y1, int x2, int y2, const SelectorPrediate &predicate)
+    {
+        /* Some sanity check. Could use rectangle operations for this */
+        if (x1 < 0) x1 = 0;
+        if (y1 < 0) y1 = 0;
+        if (x2 < 0) x2 = 0;
+        if (y2 < 0) y2 = 0;
+
+        if (x1 > w) x1 = w;
+        if (y1 > h) y1 = h;
+        if (x2 > w) x2 = w;
+        if (y2 > h) y2 = h;
+
+        if (x1 > x2) {int tmp = x1; x1 = x2; x2 = tmp;}
+        if (y1 > y2) {int tmp = y1; y1 = y2; y2 = tmp;}
+
+        int count = 0;
+        Vector3dd sum = Vector3dd(0.0);
+
+        for (int i = y1; i < y2; i++)
+        {
+            for (int j = x1; j < x2; j++)
+            {
+                if (!predicate(i,j)) {
+                    continue;
+                }
+                count++;
+                sum += element(i,j).toDouble();
+
+            }
+        }
+
+        if (count == 0) {
+            return Vector3dd(0.0);
+        }
+        return sum / count;
+
+    }
 
     virtual ~RGB24Buffer(){};
 

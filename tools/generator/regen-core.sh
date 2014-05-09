@@ -54,12 +54,12 @@ END_TEXT
 
     for class in $classes; do
         echo copying ${class}
-        copy_if_different ${GEN_DIR}/${class}.h ${DST_DIR}
+        copy_if_different ${GEN_DIR}/${class}.h   ${DST_DIR}
         copy_if_different ${GEN_DIR}/${class}.cpp ${DST_DIR}
         copy_if_different ${GEN_DIR}/${class}ControlWidget.cpp ${WIDGETS_DIR} 
         
-        echo  >>${PRIFILE} SOURCES+= ${DST_DIR}/${class}.cpp  
-        echo  >>${PRIFILE} HEADERS+= ${DST_DIR}/${class}.h
+        echo  >>${PRIFILE} SOURCES+= ${DST_REL_DIR}/${class}.cpp  
+        echo  >>${PRIFILE} HEADERS+= ${DST_REL_DIR}/${class}.h
         echo  >>${PRIFILE}    
     done;
     
@@ -69,12 +69,12 @@ END_TEXT
     
     for class in $ui_classes; do
         echo copying ${class}
-        copy_if_different ${GEN_DIR}/${class}.h ${DST_DIR}
+        copy_if_different ${GEN_DIR}/${class}.h   ${DST_DIR}
         copy_if_different ${GEN_DIR}/${class}.cpp ${DST_DIR}
     	copy_if_different ${GEN_DIR}/${class}ControlWidget.cpp ${WIDGETS_DIR} 
         
-        echo  >>${PRIFILE} SOURCES+= ${DST_DIR}/${class}.cpp  
-        echo  >>${PRIFILE} HEADERS+= ${DST_DIR}/${class}.h
+        echo  >>${PRIFILE} SOURCES+= ${DST_REL_DIR}/${class}.cpp  
+        echo  >>${PRIFILE} HEADERS+= ${DST_REL_DIR}/${class}.h
         echo  >>${PRIFILE}    
     
         echo  >>${WPRIFILE} SOURCES+= ${WIDGETS_REL_DIR}/${class}ControlWidget.cpp  
@@ -96,13 +96,13 @@ END_TEXT
     
     for class in $full_ui_classes; do
         echo copying ${class}
-        copy_if_different ${GEN_DIR}/${class}.h ${DST_DIR}
+        copy_if_different ${GEN_DIR}/${class}.h   ${DST_DIR}
         copy_if_different ${GEN_DIR}/${class}.cpp ${DST_DIR}
         copy_if_different ${GEN_DIR}/${class}ControlWidget.cpp ${WIDGETS_DIR}
         copy_if_different ${GEN_DIR}/${class}ControlWidget.ui  ${WIDGETS_DIR}  
         
-        echo  >>${PRIFILE} SOURCES+= ${DST_DIR}/${class}.cpp  
-        echo  >>${PRIFILE} HEADERS+= ${DST_DIR}/${class}.h
+        echo  >>${PRIFILE} SOURCES+= ${DST_REL_DIR}/${class}.cpp  
+        echo  >>${PRIFILE} HEADERS+= ${DST_REL_DIR}/${class}.h
         echo  >>${PRIFILE}    
     
         echo  >>${WPRIFILE} SOURCES+= ${WIDGETS_REL_DIR}/${class}ControlWidget.cpp  
@@ -123,7 +123,7 @@ END_TEXT
     
     for enum in $enums; do
         copy_if_different ${GEN_DIR}/${enum}.h ${DST_DIR}
-        echo  >>${PRIFILE} HEADERS+= ${DST_DIR}/${enum}.h
+        echo  >>${PRIFILE} HEADERS+= ${DST_REL_DIR}/${enum}.h
         echo  >>${PRIFILE}     
     done;
 
@@ -137,6 +137,7 @@ END_TEXT
 
 XML_DIR="${CORE_DIR}/xml"
 DST_DIR="${CORE_DIR}/xml/generated"
+DST_REL_DIR="xml/generated"
 
 UTILS_DIR="../../utils"
 WIDGETS_DIR="${UTILS_DIR}/filters/ui"
@@ -187,6 +188,7 @@ generate_and_copy
 
 XML_DIR="${CORE_DIR}/xml"
 DST_DIR="${CORE_DIR}/xml/generated"
+DST_REL_DIR="xml/generated"
 UTILS_DIR="../../utils"
 
 WIDGETS_DIR="${UTILS_DIR}/corestructs/coreWidgets"
