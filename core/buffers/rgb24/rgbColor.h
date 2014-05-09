@@ -1,12 +1,5 @@
 #ifndef RGBCOLOR_H_
 #define RGBCOLOR_H_
-
-#include <stdint.h>
-
-#include "fixedVector.h"
-#include "vector3d.h"
-#include "mathUtils.h"
-namespace corecvs {
 /**
  * \file rgbColor.h
  * \brief a header for rgbColor.c
@@ -14,6 +7,14 @@ namespace corecvs {
  * \date Apr 19, 2011
  * \author alexander
  */
+
+#include <stdint.h>
+
+#include "fixedVector.h"
+#include "vector3d.h"
+#include "mathUtils.h"
+
+namespace corecvs {
 /**
  *   I use inheritance because no new data members will be added
  **/

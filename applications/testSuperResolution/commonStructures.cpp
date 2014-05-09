@@ -10,6 +10,7 @@ LRImage::LRImage(int newNumberInImageCollection, double newShiftX, double newShi
     coefficient_ = newCoefficient;
 }
 
+#if 0
 RGB192Color::RGB192Color(double red, double green, double blue)
 {
     r_ = red;
@@ -23,6 +24,7 @@ RGB192Color::RGB192Color()
     g_ = 0;
     b_ = 0;
 }
+#endif
 
 
 RGB192Buffer::RGB192Buffer(int height, int width)

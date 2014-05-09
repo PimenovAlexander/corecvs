@@ -26,6 +26,7 @@ CORE_INCLUDEPATH = \
     $$COREDIR/buffers/memory \
     $$COREDIR/buffers/morphological \
     $$COREDIR/buffers/rgb24 \
+    $$COREDIR/buffers/rgb192 \
 #   $$COREDIR/buffers/voxels \                  # not used
     $$COREDIR/cammodel \
 #   $$COREDIR/clegacy \                         # not used ?

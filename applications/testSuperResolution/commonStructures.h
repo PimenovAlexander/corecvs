@@ -1,6 +1,8 @@
-#include <rgb24Buffer.h>
-
 #pragma once
+
+#include <rgb24Buffer.h>
+#include "rgb192Color.h"
+
 
 class LRImage
 {
@@ -25,7 +27,7 @@ struct RGBmask
 };
 
 
-
+#if 0
 class RGB192Color
 {
 private:
@@ -51,6 +53,7 @@ public:
             return (*this).b_;
     }
 };
+#endif
 
 class RGB192Buffer
 {
