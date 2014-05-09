@@ -23,7 +23,7 @@
 #include "essentialMatrix.h"
 #include "cameraParameters.h"
 #include "mathUtils.h"
-#include "simulation/flowSimuator.h"
+#include "simulation/flowSimulator.h"
 #include "ransacEstimator.h"
 #include "stereoAligner.h"
 
@@ -187,7 +187,7 @@ void testRectificatorCubeEssential (void)
 
     // A cube of 1.5 m side at the distance of 2 meters
     Matrix44 modelViewMatrix = Matrix44::Shift(0.0, 0.0, 2000.0) * Matrix44::Scale(1500);
-    pointsIn3d = FlowSimuator::unitCube(3);
+    pointsIn3d = FlowSimulator::unitCube(3);
 
     for (unsigned i = 0; i < pointsIn3d->size(); i++)
         pointsIn3d->at(i) = modelViewMatrix * pointsIn3d->at(i);
@@ -385,7 +385,7 @@ void testRectificatorCube (void)
     cout << "=============================Testing old style rectificator=================================" << endl;
 
     CorrespondanceList points;
-    vector<Vector3dd> *pointsIn3d = FlowSimuator::unitCube(GRID_STEP);
+    vector<Vector3dd> *pointsIn3d = FlowSimulator::unitCube(GRID_STEP);
 
 
     Matrix44 leftCamera  = Matrix44::ProjectParallelToZ() * Matrix44(Matrix33(1.0), Vector3dd(0,0,4));

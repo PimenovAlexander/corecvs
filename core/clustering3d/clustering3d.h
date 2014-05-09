@@ -12,6 +12,7 @@
 #include "buffer3d.h"
 
 #include "calculationStats.h"
+#include "generated/headSearchParameters.h"
 
 namespace corecvs {
 using std::vector;
@@ -28,7 +29,6 @@ public:
        , mHeadArea(headArea)
        , mHeadNumber(headNumber)
     {
-        mMarkup         = NULL;
         mClusterNum     = 0;
         mSortingTime    = 0;
         mClusteringTime = 0;
@@ -38,10 +38,35 @@ public:
         mpClusters.reserve(50);
     }
 
+    Clustering3D(Cloud *cloud, const HeadSearchParameters & params) :
+         mMarkup(NULL)
+       , mCloud(cloud)
+       , mRadius(params.thresholdDistance())
+       , mSize(params.clusterMinSize())
+       , mDepth(params.clusterDepth())
+       , mHeadArea(params.headAreaRadius())
+       , mHeadNumber(params.headNumber())
+    {
+        mClusterNum     = 0;
+        mSortingTime    = 0;
+        mClusteringTime = 0;
+        mHeadSize.reserve(4);
+        mIndexes.reserve(50);
+        mClusters.reserve(50);
+        mpClusters.reserve(50);
+    }
+
+
+
+
     ~Clustering3D()
     {
         vector<CloudCluster *>::iterator it;
-        for (it = mpClusters.begin(); it < mpClusters.end(); it++) delete_safe(*(it));
+        for (it = mpClusters.begin(); it < mpClusters.end(); it++)
+        {
+            delete_safe(*(it));
+        }
+
         delete_safe(mMarkup);
     }
 
@@ -89,6 +114,7 @@ private:
 
     // input for clustering
     Cloud    *mCloud;
+
     int       mRadius;
     unsigned  mSize;
     double    mDepth;

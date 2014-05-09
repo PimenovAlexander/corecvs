@@ -70,13 +70,13 @@ void Frames::fetchNewFrames(ImageCaptureInterface *input)
 
     if (input->isRgb)
     {
-        printf("rgb\n");
+//        printf("Frames::fetchNewFrames() : rgb\n");
         currentRgbFrames[LEFT_FRAME]  = mSwapped ? pair.rgbBufferRight : pair.rgbBufferLeft;
         currentRgbFrames[RIGHT_FRAME] = mSwapped ? pair.rgbBufferLeft  : pair.rgbBufferRight;
     }
     else
     {
-        printf("no rgb\n");
+//        printf("Frames::fetchNewFrames() : no rgb\n");
         currentRgbFrames[LEFT_FRAME]  = NULL;
         currentRgbFrames[RIGHT_FRAME]  = NULL;
     }

@@ -70,18 +70,14 @@ void FaceDetectorOpenCV::detectFacesOpenCV(G12Buffer *input, vector<DetectedObje
 
     for (vector<Rect>::const_iterator r = faces.begin(); r != faces.end(); ++r)
     {
-        int x;
-        int y;
-        int h;
-        int w;
+        int x = cvRound(r->x + r->width  * 0.5);
+        int y = cvRound(r->y + r->height * 0.5);
+        int h = cvRound(r->height);
+        int w = cvRound(r->width);
 
-        x = cvRound(r->x + r->width  * 0.5);
-        y = cvRound(r->y + r->height * 0.5);
-        h = cvRound(r->height);
-        w = cvRound(r->width);
         DetectedObject object(Vector2dd(x,y), Vector2dd(w,h));
         objects->push_back(object);
-      //  printf("  Center [%d %d] h=%d w=%d\n", x, y, h, w);
+        //printf("  Center [%d %d] h=%d w=%d\n", x, y, h, w);
     }
 }
 

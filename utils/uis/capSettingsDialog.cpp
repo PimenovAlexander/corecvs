@@ -8,8 +8,9 @@
 #include "parameterSelector.h"
 
 
-CapSettingsDialog::CapSettingsDialog(QWidget *parent, ImageCaptureInterface *pInterface) :
+CapSettingsDialog::CapSettingsDialog(QWidget *parent, ImageCaptureInterface *pInterface, QString rootPath) :
         QWidget(parent),
+        mRootPath(rootPath),
         mUi(new Ui::CapSettingsDialog),
         mCaptureInterface(pInterface),
         signalMapper(NULL),
@@ -123,7 +124,7 @@ void CapSettingsDialog::loadFromQSettings (const QString &fileName, const QStrin
 
     qDebug() << "CapSettingsDialog::loadFromQSettings(): Interface name: " << interfaceName;
     QSettings *mSettings = new QSettings(fileName, QSettings::IniFormat);
-    mSettings->beginGroup(_root + ":" + interfaceName + ":");
+    mSettings->beginGroup(_root + ":" + mRootPath + ":" + interfaceName + ":");
 
 
     QMapIterator<int, ParameterEditorWidget *> i(sliders);
@@ -146,6 +147,7 @@ void CapSettingsDialog::loadFromQSettings (const QString &fileName, const QStrin
 
 void CapSettingsDialog::saveToQSettings   (const QString &fileName, const QString &_root)
 {
+    qDebug() << QString("CapSettingsDialog::saveToQSettings(\"%1\", \"%2\"): called").arg(fileName, _root);
     if (mCaptureInterface == NULL)
     {
         return;
@@ -159,7 +161,7 @@ void CapSettingsDialog::saveToQSettings   (const QString &fileName, const QStrin
 
     qDebug() << "CapSettingsDialog::saveToQSettings(): Interface name: " << interfaceName;
     QSettings *mSettings = new QSettings(fileName, QSettings::IniFormat);
-    mSettings->beginGroup(_root + ":" + interfaceName + ":");
+    mSettings->beginGroup(_root + ":" + mRootPath + ":" + interfaceName + ":");
 
 
     QMapIterator<int, ParameterEditorWidget *> i(sliders);

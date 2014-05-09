@@ -55,6 +55,23 @@ enum OutputStyle {
     OUTPUT_STYLE_LAST
 };
 
+
+static inline const char *getName(const OutputStyle &value)
+{
+    switch (value) 
+    {
+     case STANDART_OUTPUT : return "STANDART_OUTPUT"; break ;
+     case SIDEBYSIDE_STEREO : return "SIDEBYSIDE_STEREO"; break ;
+     case ANAGLYPH_RG : return "ANAGLYPH_RG"; break ;
+     case ANAGLYPH_RC : return "ANAGLYPH_RC"; break ;
+     case BLEND : return "BLEND"; break ;
+     case NONE : return "NONE"; break ;
+     default : return "Not in range"; break ;
+     
+    }
+    return "Not in range";
+}
+
 } //namespace OutputStyle
 
 #endif  //OUTPUT_STYLE_H_

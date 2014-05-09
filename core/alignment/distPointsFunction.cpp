@@ -97,7 +97,7 @@ Matrix DistPointsFunction::getJacobian(const double in[], double delta)
         vector<Vector2dd> straight = mSample[i];
         RadialFunc f(straight,
                 mModelFactory.mLockedDimentions.mParams.center,
-                mModelFactory.mLockedDimentions.mParams.koeff.size());
+           (int)mModelFactory.mLockedDimentions.mParams.koeff.size());
 
         vector<Vector2dd> newStraight(straight.size());
         f.setScaleFactor(mModelFactory.mLockedDimentions.mParams.aspect);

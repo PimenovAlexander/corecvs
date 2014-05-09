@@ -116,6 +116,7 @@ istream& read_integer_bin(istream& is, IntegerType& value)
 
 /**
  * This is a basis part of the AbstractBuffer template - serializable buffer params.
+ * FIX THIS ASAP
  */
 class AbstractBufferParams
 {

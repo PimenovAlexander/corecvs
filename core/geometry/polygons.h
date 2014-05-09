@@ -14,6 +14,7 @@
 
 #include "vector3d.h"
 #include "generated/axisAlignedBoxParameters.h"
+#include "line.h"
 
 namespace corecvs {
 
@@ -54,6 +55,7 @@ public:
     }
 
     int isInside(const Vector2dd &point);
+    bool clipRay(const Ray2d &ray, double &t1, double &t2);
 };
 
 

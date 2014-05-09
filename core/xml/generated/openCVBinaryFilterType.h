@@ -30,6 +30,18 @@ enum OpenCVBinaryFilterType {
     OPENCV_BINARY_FILTER_TYPE_LAST
 };
 
+
+static inline const char *getName(const OpenCVBinaryFilterType &value)
+{
+    switch (value) 
+    {
+     case CANNY : return "CANNY"; break ;
+     default : return "Not in range"; break ;
+     
+    }
+    return "Not in range";
+}
+
 } //namespace OpenCVBinaryFilterType
 
 #endif  //OPENCV_BINARY_FILTER_TYPE_H_

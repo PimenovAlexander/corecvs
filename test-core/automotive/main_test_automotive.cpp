@@ -16,7 +16,7 @@
 #include "cameraParameters.h"
 #include "eulerAngles.h"
 #include "FCostFunction.h"
-#include "simulation/flowSimuator.h"
+#include "simulation/flowSimulator.h"
 #include "mathUtils.h"
 
 using namespace std;
@@ -38,7 +38,7 @@ void drawSituation(
 
    CameraIntrinsics camIntr(imageSize, imageSize / 2.0, 40.0, 1.0);
 
-   std::vector<FloatFlowVector> *flowVectors = FlowSimuator::simulateFlow(camIntr, realCameraExtr, realCarMovement);
+   std::vector<FloatFlowVector> *flowVectors = FlowSimulator::simulateFlow(camIntr, realCameraExtr, realCarMovement);
 
    for (unsigned i = 0; i < flowVectors->size(); i++)
    {

@@ -8,84 +8,117 @@ XmlGetter::XmlGetter(const QString &fileName)
 {
     mFileName = fileName;
     QFile file(mFileName);
-    if (!file.open(QFile::ReadWrite))
+    if (!file.open(QFile::ReadWrite)) {
+        qDebug() << "Can't open file <" << mFileName << ">";
         return;
+    }
     QDomDocument doc("document");
     doc.setContent(&file);
-    mDocumentElement = doc.documentElement();
+    //mDocumentElement = doc.documentElement();
+    qDebug() << doc.toString();
     file.close();
+
+    mNodePath.push_back(doc);
 }
 
 template <>
 void XmlGetter::visit<bool>(bool &boolField, bool defaultValue, const char *fieldName)
 {
-    QDomElement element = mDocumentElement.toDocument().elementById(fieldName);
-    if (element.isNull())
+
+    QDomElement childElement = getChildByTag(fieldName);
+    if (childElement.isNull())
+    {
         boolField = defaultValue;
-    else
-        boolField = element.attribute("value", defaultValue ? "true" : "false") == "true";
+        return;
+    }
+    boolField = childElement.attribute("value", defaultValue ? "true" : "false") == "true";
 }
 
 template <>
 void XmlGetter::visit<double>(double &doubleField, double defaultValue, const char *fieldName)
 {
-    QDomElement element = mDocumentElement.toDocument().elementById(fieldName);
-    if (element.isNull())
+    QDomElement childElement = getChildByTag(fieldName);
+    if (childElement.isNull())
+    {
         doubleField = defaultValue;
-    else
-        doubleField = element.attribute("value", QString::number(defaultValue)).toDouble();
+        return;
+    }
+    doubleField = childElement.attribute("value", QString::number(defaultValue)).toDouble();
 }
 
 template <>
 void XmlGetter::visit<float>(float &floatField, float defaultValue, const char *fieldName)
 {
-    QDomElement element = mDocumentElement.toDocument().elementById(fieldName);
-    if (element.isNull())
+    QDomElement childElement = getChildByTag(fieldName);
+    if (childElement.isNull())
+    {
         floatField = defaultValue;
-    else
-        floatField = element.attribute("value", QString::number(defaultValue)).toFloat();
+        return;
+    }
+    floatField = childElement.attribute("value", QString::number(defaultValue)).toFloat();
 }
 
 template <>
 void XmlGetter::visit<int>(int &intField, int defaultValue, const char *fieldName)
 {
-    QDomElement element = mDocumentElement.toDocument().elementById(fieldName);
-    if (element.isNull())
+    QDomElement childElement = getChildByTag(fieldName);
+    if (childElement.isNull())
+    {
         intField = defaultValue;
-    else
-        intField = element.attribute("value", QString::number(defaultValue)).toDouble();
+        return;
+    }
+
+    intField = childElement.attribute("value", QString::number(defaultValue)).toInt();
+}
+
+template <>
+void XmlGetter::visit<std::string>(std::string &stringField, std::string defaultValue, const char *fieldName)
+{
+    QDomElement childElement = getChildByTag(fieldName);
+    if (childElement.isNull())
+    {
+        stringField = defaultValue;
+        return;
+    }
+
+    stringField = childElement.attribute("value", QString::fromStdString(defaultValue)).toUtf8().constData();
 }
 
 /* And new style visitor method */
 
 template <>
-void XmlGetter::visit<int, IntField>(int &/*field*/, const IntField * /*fieldDescriptor*/)
+void XmlGetter::visit<int, IntField>(int &intField, const IntField * fieldDescriptor)
 {
-	qDebug() << "XmlGetter::visit<int, IntField>(int &field, const IntField *fieldDescriptor) NOT YET SUPPORTED";
+    visit<int>(intField, fieldDescriptor->defaultValue, fieldDescriptor->name.name);
+//	qDebug() << "XmlGetter::visit<int, IntField>(int &field, const IntField *fieldDescriptor) NOT YET SUPPORTED";
 }
 
 template <>
-void XmlGetter::visit<double, DoubleField>(double &/*field*/, const DoubleField * /*fieldDescriptor*/)
+void XmlGetter::visit<double, DoubleField>(double &doubleField, const DoubleField * fieldDescriptor)
 {
-	qDebug() << "XmlGetter::visit<int, DoubleField>(double &field, const DoubleField *fieldDescriptor) NOT YET SUPPORTED";
+    visit<double>(doubleField, fieldDescriptor->defaultValue, fieldDescriptor->name.name);
+//	qDebug() << "XmlGetter::visit<int, DoubleField>(double &field, const DoubleField *fieldDescriptor) NOT YET SUPPORTED";
 }
 
 template <>
-void XmlGetter::visit<float, FloatField>(float &/*field*/, const FloatField * /*fieldDescriptor*/)
+void XmlGetter::visit<float, FloatField>(float &floatField, const FloatField * fieldDescriptor)
 {
-	qDebug() << "XmlGetter::visit<int, FloatField>(float &field, const FloatField *fieldDescriptor) NOT YET SUPPORTED";
+    visit<float>(floatField, fieldDescriptor->defaultValue, fieldDescriptor->name.name);
+//	qDebug() << "XmlGetter::visit<float, FloatField>(float &field, const FloatField *fieldDescriptor) NOT YET SUPPORTED";
 }
 
 template <>
-void XmlGetter::visit<bool, BoolField>(bool &/*field*/, const BoolField * /*fieldDescriptor*/)
+void XmlGetter::visit<bool, BoolField>(bool &boolField, const BoolField * fieldDescriptor)
 {
-	qDebug() << "XmlGetter::visit<int, BoolField>(bool &field, const BoolField *fieldDescriptor) NOT YET SUPPORTED";
+    visit<bool>(boolField, fieldDescriptor->defaultValue, fieldDescriptor->name.name);
+//	qDebug() << "XmlGetter::visit<int, BoolField>(bool &boolField, const BoolField *fieldDescriptor) NOT YET SUPPORTED";
 }
 
 template <>
-void XmlGetter::visit<std::string, StringField>(std::string &/*field*/, const StringField * /*fieldDescriptor*/)
+void XmlGetter::visit<std::string, StringField>(std::string &stringField, const StringField * fieldDescriptor)
 {
-	qDebug() << "XmlGetter::visit<int, StringField>(std::string &field, const StringField *fieldDescriptor) NOT YET SUPPORTED";
+    visit<std::string>(stringField, fieldDescriptor->defaultValue, fieldDescriptor->name.name);
+//	qDebug() << "XmlGetter::visit<int, StringField>(std::string &field, const StringField *fieldDescriptor) NOT YET SUPPORTED";
 }
 
 template <>

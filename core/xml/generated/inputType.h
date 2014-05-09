@@ -35,6 +35,19 @@ enum InputType {
     INPUT_TYPE_LAST
 };
 
+
+static inline const char *getName(const InputType &value)
+{
+    switch (value) 
+    {
+     case LEFT_FRAME : return "LEFT_FRAME"; break ;
+     case RIGHT_FRAME : return "RIGHT_FRAME"; break ;
+     default : return "Not in range"; break ;
+     
+    }
+    return "Not in range";
+}
+
 } //namespace InputType
 
 #endif  //INPUT_TYPE_H_

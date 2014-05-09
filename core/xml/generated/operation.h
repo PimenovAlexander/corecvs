@@ -55,6 +55,23 @@ enum Operation {
     OPERATION_LAST
 };
 
+
+static inline const char *getName(const Operation &value)
+{
+    switch (value) 
+    {
+     case FIRST : return "FIRST"; break ;
+     case SECOND : return "SECOND"; break ;
+     case ADD : return "ADD"; break ;
+     case SUBTRACT : return "SUBTRACT"; break ;
+     case MIN : return "MIN"; break ;
+     case MAX : return "MAX"; break ;
+     default : return "Not in range"; break ;
+     
+    }
+    return "Not in range";
+}
+
 } //namespace Operation
 
 #endif  //OPERATION_H_

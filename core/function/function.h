@@ -180,13 +180,20 @@ public:
 
     virtual void operator()(const double in[], double out[])
     {
-        vector<double> tmpOut(F->outputs);
-        F->operator ()(in, &tmpOut[0]);
+#ifdef WIN32
+        double* tmpOut = new double[F->outputs];
+#else
+        double tmpOut[F->outputs];
+#endif
+        F->operator ()(in, tmpOut);
         out[0] = 0.0;
         for (int i = 0; i < F->outputs; i++) {
             out[0] += tmpOut[i] * tmpOut[i];
         }
         out[0] = sqrt(out[0]);
+#ifdef WIN32
+        delete[] tmpOut;
+#endif
     }
 };
 

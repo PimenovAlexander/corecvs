@@ -164,44 +164,43 @@ void Clustering3D::clusterStartRecursive(SortingType sortingType)
     }
     mSortingTime = stat.usecsTo(PreciseTimer::currentTime());
 
-    unsigned i = 0;
-    while (i < (*mCloud).size())
+    for (unsigned i = 0; i < mCloud->size(); i++)
     {
-        if ((*mCloud)[i].cluster == 0)
-        {
-            mIndexes.clear();
-            mIndexes.push_back((int)i);
-            clusteringRecursive(mDepth, 0, sortingType);
-            if (mClusters.back().size() > mSize )
-            {
-                bool isGood = true;
-                int sz = (int)mClustersCenter.size();
-                mClusters.back().getStat();
-                for (int i = 0; i < sz; i++)
-                {
-                    // check if new cluster not down from previous
-                    if (abs(mClusters.back().mClusterInfo.point.z() - mClustersCenter[i].z()) < mHeadArea && abs(mClusters.back().mClusterInfo.point.x() - mClustersCenter[i].x()) < mHeadArea )
-                        isGood = false;
-                }
-                if (isGood)
-                {
-                    mClustersTexCenter.push_back(mClusters.back().mClusterInfo.texCoor);
-                    mClustersCenter.push_back(mClusters.back().mClusterInfo.point);
-                    mClustersFlow.push_back(mClusters.back().mClusterInfo.speed);
-                    mClusterSize.push_back((int)mClusters.back().size());
-                    mCluster6DSize.push_back(mClusters.back().m6Dpoints);
-                    vector<double> tmpVect = mClusters.back().mEllipse.mValues;
-                    double forMax = 0;
-                    for (unsigned i = 0; i < tmpVect.size(); i++)
-                    {
-                        forMax = forMax < tmpVect[i] ? tmpVect[i] : forMax;
-                    }
-                    mHeadSize.push_back(forMax);
-                }
-                if (mClustersCenter.size() == mHeadNumber) break;
-            }
+        if ((*mCloud)[i].cluster != 0) {
+            continue;
         }
-        i++;
+
+        mIndexes.clear();
+        mIndexes.push_back((int)i);
+        clusteringRecursive(mDepth, 0, sortingType);
+        if (mClusters.back().size() > mSize )
+        {
+            bool isGood = true;
+            int sz = (int)mClustersCenter.size();
+            mClusters.back().getStat();
+            for (int i = 0; i < sz; i++)
+            {
+                // check if new cluster not down from previous
+                if (abs(mClusters.back().mClusterInfo.point.z() - mClustersCenter[i].z()) < mHeadArea && abs(mClusters.back().mClusterInfo.point.x() - mClustersCenter[i].x()) < mHeadArea )
+                    isGood = false;
+            }
+            if (isGood)
+            {
+                mClustersTexCenter.push_back(mClusters.back().mClusterInfo.texCoor);
+                mClustersCenter.push_back(mClusters.back().mClusterInfo.point);
+                mClustersFlow.push_back(mClusters.back().mClusterInfo.speed);
+                mClusterSize.push_back((int)mClusters.back().size());
+                mCluster6DSize.push_back(mClusters.back().m6Dpoints);
+                vector<double> tmpVect = mClusters.back().mEllipse.mValues;
+                double forMax = 0;
+                for (unsigned i = 0; i < tmpVect.size(); i++)
+                {
+                    forMax = forMax < tmpVect[i] ? tmpVect[i] : forMax;
+                }
+                mHeadSize.push_back(forMax);
+            }
+            if (mClustersCenter.size() == mHeadNumber) break;
+        }
     }
     mClusteringTime = stat.usecsTo(PreciseTimer::currentTime());
 }

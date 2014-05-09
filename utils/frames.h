@@ -34,7 +34,7 @@ public:
 
     void fetchNewFrames(ImageCaptureInterface *input);
 
-    G12Buffer* getCurrentFrame (FrameSourceId id)   { return currentFrames[id]; }
+    G12Buffer*   getCurrentFrame    (FrameSourceId id) { return currentFrames   [id]; }
     RGB24Buffer* getCurrentRgbFrame (FrameSourceId id) { return currentRgbFrames[id]; }
 
     /// Swaps the frame sources so, for example, left camera becomes right,

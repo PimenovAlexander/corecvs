@@ -1,5 +1,5 @@
 /**
- * \file flowSimuator.cpp
+ * \file flowSimulator.cpp
  * \brief This is an implementation file to simulate flow caused by still standing objects and a moving
  * vehicle.
  *
@@ -7,19 +7,19 @@
  * \author alexander
  */
 
-#include "flowSimuator.h"
+#include "flowSimulator.h"
 #include "FCostFunction.h"
 namespace corecvs {
 
-FlowSimuator::FlowSimuator()
+FlowSimulator::FlowSimulator()
 {
 }
 
-FlowSimuator::~FlowSimuator()
+FlowSimulator::~FlowSimulator()
 {
 }
 
-std::vector<Vector3dd> *FlowSimuator::generateMockScene()
+std::vector<Vector3dd> *FlowSimulator::generateMockScene()
 {
     static const int WALL_H = 20;
     static const int WALL_L = 280;
@@ -72,7 +72,7 @@ std::vector<Vector3dd> *FlowSimuator::generateMockScene()
 
 }
 
-std::vector<Vector3dd> *FlowSimuator::unitCube(unsigned gradations)
+std::vector<Vector3dd> *FlowSimulator::unitCube(unsigned gradations)
 {
     vector<Vector3dd> *pointsIn3d = new std::vector<Vector3dd>();
     double step = 1.0 / (gradations - 1);
@@ -93,7 +93,7 @@ std::vector<Vector3dd> *FlowSimuator::unitCube(unsigned gradations)
 }
 
 
-std::vector<Vector3dd> *FlowSimuator::applyTransform(std::vector<Vector3dd> * pointsA, const Matrix44 &A)
+std::vector<Vector3dd> *FlowSimulator::applyTransform(std::vector<Vector3dd> * pointsA, const Matrix44 &A)
 {
     vector<Vector3dd> *result = new std::vector<Vector3dd>();
     for (unsigned i = 0; i < pointsA->size(); i++)
@@ -103,7 +103,7 @@ std::vector<Vector3dd> *FlowSimuator::applyTransform(std::vector<Vector3dd> * po
     return result;
 }
 
-std::vector<FloatFlowVector> *FlowSimuator::simulateFlow(
+std::vector<FloatFlowVector> *FlowSimulator::simulateFlow(
         const CameraIntrinsics &camIntrinsics,
         const ShiftRotateTransformation &cameraExtrinsics,
         const ShiftRotateTransformation &carMovement,
@@ -116,13 +116,13 @@ std::vector<FloatFlowVector> *FlowSimuator::simulateFlow(
 
     Matrix44 A = FCostFunction::GetMatrixForTransform(carMovement);
 
-    vector<Vector3dd> *pointsA = FlowSimuator::generateMockScene();
-    vector<Vector3dd> *pointsB = FlowSimuator::applyTransform(pointsA, A);
+    vector<Vector3dd> *pointsA = FlowSimulator::generateMockScene();
+    vector<Vector3dd> *pointsB = FlowSimulator::applyTransform(pointsA, A);
 
     Matrix44 D = FCostFunction::getDMatrix(FCostFunction::FRONT_VIEW_CAMERA, camIntrinsics, cameraExtrinsics);
 
-    vector<Vector3dd> *imagePointsA = FlowSimuator::applyTransform(pointsA, D);
-    vector<Vector3dd> *imagePointsB = FlowSimuator::applyTransform(pointsB, D);
+    vector<Vector3dd> *imagePointsA = FlowSimulator::applyTransform(pointsA, D);
+    vector<Vector3dd> *imagePointsB = FlowSimulator::applyTransform(pointsB, D);
 
     for (unsigned i = 0; i < pointsA->size(); i++)
     {

@@ -80,20 +80,19 @@ void CannyFilter::recursiveEdgeProver(G12Buffer *buffer, int h, int w)
     return;
 }
 
-int CannyFilter::operator ()()
+G12Buffer *CannyFilter::doFilter(G12Buffer *input, const CannyParameters &mCannyParameters, DerivativeBuffer **derivativePtr, DerivativeBuffer **suppressedPtr )
 {
-
-    G12Buffer* &input  = static_cast<G12Pin*>(inputPins [0])->getData();
-    G12Buffer* &result = static_cast<G12Pin*>(outputPins[0])->getData();
-
-    if (input == NULL)
-        return 0;
+    CORE_UNUSED(suppressedPtr);
+    if (input == NULL) {
+        return NULL;
+    }
 
     // non-maximum suppression
-    DerivativeBuffer derBuf(input);
-    G12Buffer *suppressedBuffer = derBuf.nonMaximalSuppression();
+    DerivativeBuffer *derivativeBuffer = new DerivativeBuffer(input);
+    G12Buffer *suppressedBuffer = derivativeBuffer->nonMaximalSuppression();
 
     // double thresholding
+#if 0
     for (int i = 0; i < suppressedBuffer->h; i++)
     {
         for (int j = 0; j < suppressedBuffer->w; j++ )
@@ -106,12 +105,13 @@ int CannyFilter::operator ()()
              }
              if (pixel > mCannyParameters.maximumThreshold())
              {
-                 suppressedBuffer->element(i,j) = white;
+                 suppressedBuffer->element(i,j) = CannyFilter::white;
                  continue;
              }
-             suppressedBuffer->element(i,j) = gray;
+             suppressedBuffer->element(i,j) = CannyFilter::gray;
         }
     }
+#endif
 
     // edge tracking
     if (mCannyParameters.shouldEdgeDetect())
@@ -120,16 +120,38 @@ int CannyFilter::operator ()()
         {
             for (int j = 0; j < suppressedBuffer->w; j++ )
             {
-                if (suppressedBuffer->element(i,j) == white)
-                    recursiveEdgeProver(suppressedBuffer, i, j);
+                if (suppressedBuffer->element(i,j) == CannyFilter::white)
+                    CannyFilter::recursiveEdgeProver(suppressedBuffer, i, j);
             }
         }
         for (int i = 0; i < suppressedBuffer->h; i++)
+        {
             for (int j = 0; j < suppressedBuffer->w; j++ )
-                if (suppressedBuffer->element(i,j) == gray) suppressedBuffer->element(i,j) = 0;
+            {
+                if (suppressedBuffer->element(i,j) == CannyFilter::gray)
+                    suppressedBuffer->element(i,j) = 0;
+            }
+        }
     }
 
-    result = suppressedBuffer;
+    if (derivativePtr == NULL)
+    {
+        delete_safe(derivativeBuffer);
+    } else {
+        *derivativePtr = derivativeBuffer;
+    }
+
+    return suppressedBuffer;
+}
+
+
+int CannyFilter::operator ()()
+{
+
+    G12Buffer* &input  = static_cast<G12Pin*>(inputPins [0])->getData();
+    G12Buffer* &result = static_cast<G12Pin*>(outputPins[0])->getData();
+
+    result = doFilter(input, mCannyParameters);
     return 0;
 }
 

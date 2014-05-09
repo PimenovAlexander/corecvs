@@ -36,8 +36,16 @@ class DerivativeBuffer : public DerivativeBufferBase
 public:
     DerivativeBuffer(G12Buffer *input);
 
-    G12Buffer *nonMaximalSuppression(/*uint16_t low, uint16_t hight*/);
-    G12Buffer *gradientMagnitudeBuffer();
+    G12Buffer *nonMaximalSuppression(int downscale = 2);
+    G12Buffer *gradientMagnitudeBuffer(int downscale = 2);
+
+    double elementMagnitude(int i, int j)
+    {
+        const Vector2d<int16_t> &element = this->element(i,j);
+        Vector2dd vector(element.x(), element.y());
+        return vector.getLengthStable();
+    }
+
 
     DerivativeBuffer() {}
 };

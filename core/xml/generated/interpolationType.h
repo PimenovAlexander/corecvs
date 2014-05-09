@@ -45,6 +45,21 @@ enum InterpolationType {
     INTERPOLATIONTYPE_LAST
 };
 
+
+static inline const char *getName(const InterpolationType &value)
+{
+    switch (value) 
+    {
+     case NEAREST : return "NEAREST"; break ;
+     case BILINEAR : return "BILINEAR"; break ;
+     case BILINEAR_FIXED8 : return "BILINEAR_FIXED8"; break ;
+     case HARDWARE : return "HARDWARE"; break ;
+     default : return "Not in range"; break ;
+     
+    }
+    return "Not in range";
+}
+
 } //namespace InterpolationType
 
 #endif  //INTERPOLATIONTYPE_H_

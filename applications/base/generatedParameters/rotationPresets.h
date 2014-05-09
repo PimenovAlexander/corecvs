@@ -45,6 +45,21 @@ enum RotationPresets {
     ROTATION_PRESETS_LAST
 };
 
+
+static inline const char *getName(const RotationPresets &value)
+{
+    switch (value) 
+    {
+     case NO_ROTATION : return "NO_ROTATION"; break ;
+     case CLOCKWISE_90DEG : return "CLOCKWISE_90DEG"; break ;
+     case CLOCKWISE_180DEG : return "CLOCKWISE_180DEG"; break ;
+     case CLOCKWISE_270DEG : return "CLOCKWISE_270DEG"; break ;
+     default : return "Not in range"; break ;
+     
+    }
+    return "Not in range";
+}
+
 } //namespace RotationPresets
 
 #endif  //ROTATION_PRESETS_H_

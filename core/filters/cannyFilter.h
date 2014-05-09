@@ -12,6 +12,7 @@
 #include "../xml/generated/cannyParameters.h"
 #include "filtersCollection.h"
 #include "g12Buffer.h"
+#include "../buffers/derivativeBuffer.h"
 
 namespace corecvs
 {
@@ -63,9 +64,16 @@ private:
     G12Buffer *input;
     G12Buffer *result;
 
+public:
     static void recursiveEdgeProver(G12Buffer *buffer, int h, int w);
+    static G12Buffer *doFilter(
+            G12Buffer *buffer,
+            const CannyParameters &mCannyParameters,
+            DerivativeBuffer **derivativePtr = NULL,
+            DerivativeBuffer **suppressedPtr = NULL
+    );
 
-
+private:
     static int instanceCounter;
 };
 

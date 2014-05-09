@@ -32,7 +32,7 @@ OperationFilterControlWidget::~OperationFilterControlWidget()
 
     delete mUi;
 }
-void OperationFilterControlWidget::loadFromQSettings(const QString &fileName, QString _root)
+void OperationFilterControlWidget::loadFromQSettings(const QString &fileName, const QString &_root)
 {
     OperationFilter *params = createParameters();
     SettingsGetter visitor(fileName, _root + rootPath);
@@ -41,7 +41,7 @@ void OperationFilterControlWidget::loadFromQSettings(const QString &fileName, QS
     delete params;
 }
 
-void OperationFilterControlWidget::saveToQSettings  (const QString &fileName, QString _root)
+void OperationFilterControlWidget::saveToQSettings  (const QString &fileName, const QString &_root)
 {
     OperationFilter *params = createParameters();
     SettingsSetter visitor(fileName, _root + rootPath);

@@ -30,6 +30,18 @@ enum MakePreciseAlgorithm {
     MAKE_PRECISE_ALGORITHM_LAST
 };
 
+
+static inline const char *getName(const MakePreciseAlgorithm &value)
+{
+    switch (value) 
+    {
+     case KLT : return "KLT"; break ;
+     default : return "Not in range"; break ;
+     
+    }
+    return "Not in range";
+}
+
 } //namespace MakePreciseAlgorithm
 
 #endif  //MAKE_PRECISE_ALGORITHM_H_

@@ -6,7 +6,9 @@ exists(../../../config.pri) {
     message(Using local config)
     ROOT_DIR=..
 }
-ROOT_DIR=$$PWD/$$ROOT_DIR
+!win32 {                                        # it dues to the "mocinclude.tmp" bug on win32!
+    ROOT_DIR=$$PWD/$$ROOT_DIR
+}
 include($$ROOT_DIR/config.pri)
 
 
@@ -14,17 +16,7 @@ CONFIG  += staticlib
 TARGET   = cvs_utils
 TEMPLATE = lib
 
-# Utils lib uses core, core-res. These includes must be before adding utils lib for mingw linker!
-#
-# But they create unneccessary dependence core->utils, although they are not linked together, but should!
-#
-#COREDIR = ../../core
-#include(../../core/core.pri)                       # it uses COREDIR, TARGET and detects     COREBINDIR!
-#include(../../core/core_restricted.pri)            # it uses COREDIR, TARGET and detects RES_COREBINDIR!
-
-COREDIR=../core
-
-UTILSDIR=$$PWD
+UTILSDIR = $$PWD
 include($$UTILSDIR/utils.pri)                      # it uses UTILSDIR, TARGET and detects UTILS_BINDIR, OBJECTS_DIR,...!
 
 include($$UTILSDIR/corestructs/coreWidgets/coreWidgets.pri)
@@ -105,10 +97,11 @@ HEADERS += \
     qtHelper.h \
     timeliner.h \
     \
+    visitors/baseXMLVisitor.h \
+    visitors/xmlGetter.h \
     visitors/xmlSetter.h \
     visitors/qSettingsSetter.h \
     visitors/qSettingsGetter.h \
-    visitors/xmlGetter.h \
     \
     serializer/serializer.h \
     serializer/serializedWidget.h \
@@ -231,10 +224,11 @@ SOURCES += \
     qtHelper.cpp \
     \
 ### visitors/defaultSetter.cpp \        # this file is obsolete version of the same name at "core/reflection"
+    visitors/baseXMLVisitor.cpp \
     visitors/xmlSetter.cpp \
+    visitors/xmlGetter.cpp \
     visitors/qSettingsSetter.cpp \
     visitors/qSettingsGetter.cpp \
-    visitors/xmlGetter.cpp \
 #   visitors/printerVisitor.cpp \
     \
     serializer/serializer.cpp \
@@ -307,7 +301,7 @@ FORMS += \
     camcalc/cameraCalculatorWidget.ui \
     \
     uis/advancedImageWidget.ui \
-    paintImageWidget.ui \    
+    uis/paintImageWidget.ui \    
     uis/histogramdepthdialog.ui \
     uis/capSettingsDialog.ui \
     uis/graphPlotDialog.ui \
@@ -372,9 +366,9 @@ with_ueye {
 
 with_opencv {
     OPENCV_WRAPPER_DIR = $$UTILSDIR/../wrappers/opencv
-    include($$OPENCV_WRAPPER_DIR/opencv.pri)            # it uses OPENCV_WRAPPER_DIR inside
+    include($$OPENCV_WRAPPER_DIR/opencv.pri)                # it uses OPENCV_WRAPPER_DIR inside
 
-    contains(DEFINES, WITH_OPENCV) {  # Move this to OpenCV
+    contains(DEFINES, WITH_OPENCV) {                        # TODO: move this to OpenCV
         HEADERS += \
             framesources/openCVCapture.h \
             framesources/openCvFileCapture.h \

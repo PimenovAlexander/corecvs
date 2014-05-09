@@ -56,7 +56,7 @@ RadialFunc::RadialFunc(const vector<Vector2dd> &undistortedPoints, const Vector2
 /**
  * TODO: keep model in one place only
  **/
-void RadialFunc::operator ()(const double in[], double out[])
+void RadialFunc::operator ()(const double /*in*/[], double /*out*/[])
 {
 #if 0
 //    double p1 = in[mPolynomDegree];

@@ -52,6 +52,7 @@ public:
 
     void closeEvent(QCloseEvent *event);
     void keyPressEvent(QKeyEvent * event);
+    void addMainPanelAction(QAction *action);
 
 signals:
     void pauseCalculation();

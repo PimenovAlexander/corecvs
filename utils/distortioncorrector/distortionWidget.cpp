@@ -670,7 +670,7 @@ void DistortionWidget::updateAdditionalData()
 
     mUi->koefTableWidget->clear();
     mUi->koefTableWidget->setColumnCount(2);
-    mUi->koefTableWidget->setRowCount(lensParams.koeff.size());
+    mUi->koefTableWidget->setRowCount((int)lensParams.koeff.size());
     for (unsigned i = 0; i < lensParams.koeff.size(); i ++) {
         mUi->koefTableWidget->setItem(i, 0, new QTableWidgetItem(QString("x^%1").arg(i + 1)));
         QVariant value(QString::number(lensParams.koeff[i], 'g', 15));

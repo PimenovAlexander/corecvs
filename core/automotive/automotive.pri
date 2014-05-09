@@ -1,10 +1,10 @@
 HEADERS += \
     automotive/FCostFunction.h \
     automotive/flowVectorInformation.h \
-    automotive/simulation/flowSimuator.h \
+    automotive/simulation/flowSimulator.h \
 
 SOURCES += \
     automotive/FCostFunction.cpp \
     automotive/flowVectorInformation.cpp \
-    automotive/simulation/flowSimuator.cpp \
+    automotive/simulation/flowSimulator.cpp \
 

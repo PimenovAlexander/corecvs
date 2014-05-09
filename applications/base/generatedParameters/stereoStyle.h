@@ -55,6 +55,23 @@ enum StereoStyle {
     STEREO_STYLE_LAST
 };
 
+
+static inline const char *getName(const StereoStyle &value)
+{
+    switch (value) 
+    {
+     case DONT_SHOW_STEREO : return "DONT_SHOW_STEREO"; break ;
+     case FAST_LARGE_DOTS : return "FAST_LARGE_DOTS"; break ;
+     case FAST_DOTS : return "FAST_DOTS"; break ;
+     case SHOW_LINES_STEREO : return "SHOW_LINES_STEREO"; break ;
+     case SHOW_ALL_STEREO : return "SHOW_ALL_STEREO"; break ;
+     case SHOW_DOTS_STEREO : return "SHOW_DOTS_STEREO"; break ;
+     default : return "Not in range"; break ;
+     
+    }
+    return "Not in range";
+}
+
 } //namespace StereoStyle
 
 #endif  //STEREO_STYLE_H_

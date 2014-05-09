@@ -104,9 +104,11 @@ public:
     virtual void deinit();
 
     /**
+     * This function interconnects all the objects realted to capturing
+     * and initializes inputs
      *
      **/
-    void initCapture(QString const &initString = QString(), bool isRgb = false);
+    virtual void initCapture(QString const &initString = QString(), bool isRgb = false);
 
 
 

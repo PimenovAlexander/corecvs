@@ -87,7 +87,7 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
     commonTierdown(dialog, &mParameters);
 
     glDisable(GL_TEXTURE_2D);
-}
+};
 
 
 Mesh3DScene::~Mesh3DScene() {

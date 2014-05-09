@@ -95,6 +95,11 @@ void MainWindow::keyPressEvent(QKeyEvent * event)
     event->ignore();
 }
 
+void MainWindow::addMainPanelAction(QAction *action)
+{
+    mUi->toolBar->addAction(action);
+}
+
 void MainWindow::createAdditionalMenu()
 {
     QList<QMenu *> menuList = mMainDialog->additionalMenus();

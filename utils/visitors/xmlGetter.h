@@ -13,13 +13,33 @@ using corecvs::PointerField;
 using corecvs::EnumField;
 
 #include "basePathVisitor.h"
+#include "baseXMLVisitor.h"
 
 using namespace corecvs;
 
-class XmlGetter : public BasePathVisitor
+class XmlGetter : public BaseXMLVisitor
 {
 public:
+    /**
+     *  Create a getter object that will use data from a file with a specified name.
+     *
+     **/
     XmlGetter(QString const & fileName);
+
+    /**
+     *  Create a getter object that will use data from a given XML
+     **/
+    XmlGetter(QDomElement &documentElement) :
+        mDocumentElement(documentElement)
+    {
+        mNodePath.push_back(mDocumentElement);
+    }
+
+    /**
+     *  Visitor method that will traverse xml and object tree and fill object with data form xml
+     *
+     *
+     **/
     template <class Type>
         void visit(Type &field, Type defaultValue, const char *fieldName)
     {
@@ -27,6 +47,14 @@ public:
             field.accept(*this);
         popChild();
     }
+
+    template <class Type>
+        void visit(Type &field, const char *fieldName)
+        {
+            pushChild(fieldName);
+                field.accept(*this);
+            popChild();
+        }
 
     template <typename inputType, typename reflectionType>
         void visit(inputType &field, const reflectionType * fieldDescriptor)
@@ -36,7 +64,18 @@ public:
         popChild();
     }
 
+    void pushChild(const char *childName)
+    {
+        mNodePath.push_back(getChildByTag(childName));
+    }
+
+    void popChild()
+    {
+        mNodePath.pop_back();
+    }
+
 private:
+
     QString mFileName;
     QDomElement mDocumentElement;
 };

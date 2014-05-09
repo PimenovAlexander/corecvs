@@ -51,8 +51,8 @@ public:
     void update(void);
 
     /* Automatic saving and loading */
-    virtual void loadFromQSettings(const QString &fileName, QString _root);
-    virtual void saveToQSettings  (const QString &fileName, QString _root);
+    virtual void loadFromQSettings(const QString &fileName, const QString &_root);
+    virtual void saveToQSettings  (const QString &fileName, const QString &_root);
 
 public slots:
     /* Repaint graphs */

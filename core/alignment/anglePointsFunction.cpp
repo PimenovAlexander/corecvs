@@ -91,7 +91,7 @@ Matrix AnglePointsFunction::getJacobian(const double in[], double delta)
         vector<Vector2dd> straight = mSample[i];
         RadialFunc f(straight,
                 mModelFactory.mLockedDimentions.mParams.center,
-                mModelFactory.mLockedDimentions.mParams.koeff.size());
+            (int)mModelFactory.mLockedDimentions.mParams.koeff.size());
 
         vector<Vector2dd> newStraight(straight.size());
         f.setScaleFactor(mModelFactory.mLockedDimentions.mParams.aspect);
@@ -139,7 +139,7 @@ int AnglePointsFunction::getOutputs(const vector<vector<Vector2dd> > &sample)
         if (sample[i].size() < 3) {
             continue;
         }
-        pointsNum += sample[i].size() - 2;
+        pointsNum += (int)sample[i].size() - 2;
     }
 #if ENFORCE_CORNERS
     pointsNum += 4;

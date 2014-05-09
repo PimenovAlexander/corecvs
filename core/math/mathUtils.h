@@ -116,7 +116,10 @@ inline void SwapXY(Type& a, Type& b) { Type t = a; a = b; b = t; }
 template <typename Type>
 inline void SwapInts(Type& a, Type& b) { a ^= b; b ^= a; a ^= b; }
 
-/** Function to get a random value in the given range
+/**
+ *  Function to get a random value in the given range
+ *
+ *  TODO: This is terrible in fact. We should use Merssen Twister here, rand() is poor and not fun.
  */
 template<typename Type>
 inline Type randRanged(Type valMax, Type valMin = Type(0))
