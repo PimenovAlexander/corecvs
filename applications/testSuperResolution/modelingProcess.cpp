@@ -75,42 +75,47 @@ RGB24Buffer *simpleModelingProcessWithList(std::deque<RGB24Buffer*> imageCollect
         imageCollection2.push_back(squareBasedResampling(rotatedImage, 1 /LRImages.at(k).coefficient_, - LRImages.at(k).coefficient_ * LRImages.at(k).shiftX_, - LRImages.at(k).coefficient_ * LRImages.at(k).shiftY_, 0));
         delete_safe(rotatedImage);
     }*/
-    for(int i = 0; i < result -> getW(); i++)
+    for(int i = 0; i < result -> getW(); i++)    
+    {
         for(int j = 0; j < result -> getH(); j++)
         {
-            double red = 0;
+          /*  double red = 0;
             double green = 0;
-            double blue = 0;
+            double blue = 0;*/
 
+            RGB192Color newColor(0, 0, 0);
             double summarySquare = 0;
 
             for(int k = 0; k < (int)LRImages.size(); k++)
             {
-                double sizeX = (double)imageCollection.at(LRImages.at(k).numberInImageCollection_) -> getW();
-                double sizeY = (double)imageCollection.at(LRImages.at(k).numberInImageCollection_) -> getH();
+                RGB24Buffer *input = imageCollection.at(LRImages.at(k).numberInImageCollection_);
+                double coefficient = LRImages.at(k).coefficient_;
+
+                double sizeX = (double)input-> getW();
+                double sizeY = (double)input-> getH();
 
 
                 double x1;
                 double y1;
-                getNewCoordinates(i,j,LRImages.at(k).coefficient_, LRImages.at(k).shiftX_, LRImages.at(k).shiftY_, LRImages.at(k).angleDegree_ * M_PI/180,
+                getNewCoordinates(i, j,coefficient, LRImages.at(k).shiftX_, LRImages.at(k).shiftY_, LRImages.at(k).angleDegree_ * M_PI/180,
                                   (double)result -> getW()/2, (double)result -> getH()/2,
                                   sizeX/2, sizeY/2, &x1, &y1);
 
                 double x2;
                 double y2;
-                getNewCoordinates(i+1,j,LRImages.at(k).coefficient_, LRImages.at(k).shiftX_, LRImages.at(k).shiftY_, LRImages.at(k).angleDegree_ * M_PI/180,
+                getNewCoordinates(i+1,j,coefficient, LRImages.at(k).shiftX_, LRImages.at(k).shiftY_, LRImages.at(k).angleDegree_ * M_PI/180,
                                   (double)result -> getW()/2, (double)result -> getH()/2,
                                   sizeX/2, sizeY/2, &x2, &y2);
 
                 double x3;
                 double y3;
-                getNewCoordinates(i+1,j+1,LRImages.at(k).coefficient_, LRImages.at(k).shiftX_, LRImages.at(k).shiftY_, LRImages.at(k).angleDegree_ * M_PI/180,
+                getNewCoordinates(i+1,j+1,coefficient, LRImages.at(k).shiftX_, LRImages.at(k).shiftY_, LRImages.at(k).angleDegree_ * M_PI/180,
                                   (double)result -> getW()/2, (double)result -> getH()/2,
                                   sizeX/2, sizeY/2, &x3, &y3);
 
                 double x4;
                 double y4;
-                getNewCoordinates(i,j+1,LRImages.at(k).coefficient_, LRImages.at(k).shiftX_, LRImages.at(k).shiftY_, LRImages.at(k).angleDegree_ * M_PI/180,
+                getNewCoordinates(i,j+1,coefficient, LRImages.at(k).shiftX_, LRImages.at(k).shiftY_, LRImages.at(k).angleDegree_ * M_PI/180,
                                   (double)result -> getW()/2, (double)result -> getH()/2,
                                   sizeX/2, sizeY/2, &x4, &y4);
 
@@ -124,24 +129,24 @@ RGB24Buffer *simpleModelingProcessWithList(std::deque<RGB24Buffer*> imageCollect
                 double maxY = max(max(y1, y2), max(y3, y4));
 
                 for (int x = max( minX, (double)0.0); (x < sizeX) && (x <= maxX); x++)
+                {
                     for (int y = max( minY, (double)0.0); (y < sizeY) && (y <= maxY); y++)
                     {
                         double square = areaForPixels(x1,y1,x2,y2,x3,y3,x4,y4,x,y);
-
                         //cout<<i<<" "<<j<<" "<<x1<<" "<<y1<<" "<<x2<<" "<<y2<<" "<<x3<<" "<<y3<<" "<<x4<<" "<<y4<<" "<<square<<endl;
-
-                        if (square > 0)
-                        {
-                            red   = (red   * summarySquare + square * (double)imageCollection.at(LRImages.at(k).numberInImageCollection_) -> element(y, x).r()) / (summarySquare + square);
-                            green = (green * summarySquare + square * (double)imageCollection.at(LRImages.at(k).numberInImageCollection_) -> element(y, x).g()) / (summarySquare + square);
-                            blue  = (blue  * summarySquare + square * (double)imageCollection.at(LRImages.at(k).numberInImageCollection_) -> element(y, x).b()) / (summarySquare + square);
-                            summarySquare += square;
+                        if (square <= 0.0) {
+                            continue;
                         }
+
+                        newColor = RGB192Color((newColor * summarySquare + square * RGB192Color::FromRGBColor(input->element(y, x))) / (summarySquare + square));
+                        summarySquare += square;
                     }
+                }
 
             }
 
-            result -> element(j,i) = RGBColor((uint8_t)red,(uint8_t)green,(uint8_t)blue);
+            result -> element(j,i) = RGBColor::FromDouble(newColor);
         }
+    }
     return result;
 }

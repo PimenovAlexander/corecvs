@@ -30,6 +30,7 @@ using namespace std;
     return sum;
 }*/
 
+#if DEPRICATED
 double differenceBetweenImages(RGB24Buffer* image1, RGB24Buffer* image2)
 {
     double sum = 0;
@@ -48,6 +49,7 @@ double differenceBetweenImages(RGB24Buffer* image1, RGB24Buffer* image2)
     sum = sum/((image1 -> getH()) * (image1 -> getW()));
     return sum;
 }
+#endif
 
 /*double diffFunc(RGB24Buffer* startImage, std::deque<RGB24Buffer*> imageCollection, std::deque<LRImage> LRImages)
 {
@@ -89,6 +91,28 @@ void getNewCoordinates(double oldX, double oldY, double coefficient, double shif
     *newY = yShifted + newCenterY;
 }
 
+
+void getNewCoordinatesMat(double oldX, double oldY, double coefficient, double shiftX, double shiftY, double angle, double oldCenterX, double oldCenterY, double newCenterX, double newCenterY, double *newX, double *newY)
+{
+    double newXShifted = (oldX - shiftX - oldCenterX) * coefficient;
+    double newYShifted = (oldY - shiftY - oldCenterY) * coefficient;
+
+    double xShifted = newXShifted * cos(angle) - newYShifted * sin(angle);
+    double yShifted = newXShifted * sin(angle) + newYShifted * cos(angle);
+
+    *newX = xShifted + newCenterX;
+    *newY = yShifted + newCenterY;
+
+    Matrix33 transform = Matrix33::ShiftProj(newCenterX, newCenterY)
+                       * Matrix33::RotateProj(angle)
+                       * Matrix33::ScaleProj(coefficient)
+                       * Matrix33::ShiftProj(- shiftX - oldCenterX, - shiftY - oldCenterY);
+
+    Vector2dd transformed = transform * Vector2dd(oldX, oldY);
+    *newX = transformed.x();
+    *newY = transformed.y();
+}
+
 bool iteration(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollection, std::deque<LRImage> LRImages,
                std::deque<RGB192Buffer*> listOfImagesFromUpsampled, std::deque<double> *results,
                double step,
@@ -110,8 +134,10 @@ bool iteration(RGB192Buffer* startImage, std::deque<RGB24Buffer*> imageCollectio
         std::deque<int> maxYs;
         std::deque<double > shifts;
 
-        for (int i = 0; i < 9 * (int)LRImages.size(); i++)
+        for (int i = 0; i < 9 * (int)LRImages.size(); i++) {
             shifts.push_back(0);
+        }
+
         for (int k = 0; k < (int)LRImages.size(); k++)
         {
             double coefficient = LRImages.at(k).coefficient_;

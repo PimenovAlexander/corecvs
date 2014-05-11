@@ -879,8 +879,9 @@ void TestSuperResolutionMainWindow::simpleMethodModelingProcessWithList()
         item -> setData(Qt::UserRole, QVariant(QString::number(mImageCollection.size()-1)));
     }
 
-    for (int i = 0; i < (int)mListOfLRImages.size(); i++)
-        differences.push_back(differenceBetweenImages(listOfImagesFromTheUpsampled.at(i), mImageCollection.at(mListOfLRImages.at(i).numberInImageCollection_) ));
+    for (int i = 0; i < (int)mListOfLRImages.size(); i++) {
+        differences.push_back(RGB24Buffer::diffL2(listOfImagesFromTheUpsampled.at(i), mImageCollection.at(mListOfLRImages.at(i).numberInImageCollection_) ));
+    }
 
     mMask = new G8Buffer(mImage->getSize());
     AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
@@ -927,84 +928,87 @@ void TestSuperResolutionMainWindow::ImproveResult()
                                                      100000000,
                                                      1,
                                                      &ok);
-    if (ok)
+    if (!ok) return;
+
+    double step = (double)QInputDialog::getDouble(this,
+                                                     "Print length of step",
+                                                     tr("step:"),
+                                                     1,
+                                                     0.001,
+                                                     255,
+                                                     3,
+                                                     &ok);
+    if (!ok) return;
+
+    double minCoefficientOfImprovement = (double)QInputDialog::getDouble(this,
+                                                     "Print minimal coefficient of improvement",
+                                                     tr("coefficient:"),
+                                                     0,
+                                                     0,
+                                                     1,
+                                                     10,
+                                                     &ok);
+    if (!ok) return;
+
+    int size = (int)listOfImagesFromTheUpsampled.size();
+    RGB192Buffer *image192 = new RGB192Buffer(mImage);
+    std::deque<RGB192Buffer*> listOfImagesFromUpsampleddouble;
+    for (int i = 0 ; i < size; i++)
     {
-        double step = (double)QInputDialog::getDouble(this,
-                                                         "Print length of step",
-                                                         tr("step:"),
-                                                         1,
-                                                         0.001,
-                                                         255,
-                                                         3,
-                                                         &ok);
-        if (ok)
-        {
-            double minCoefficientOfImprovement = (double)QInputDialog::getDouble(this,
-                                                             "Print minimal coefficient of improvement",
-                                                             tr("coefficient:"),
-                                                             0,
-                                                             0,
-                                                             1,
-                                                             10,
-                                                             &ok);
-            if (ok)
-            {
-                int size = (int)listOfImagesFromTheUpsampled.size();
-                RGB192Buffer *image192 = new RGB192Buffer(mImage);
-                std::deque<RGB192Buffer*> listOfImagesFromUpsampleddouble;
-                for (int i = 0 ; i < size; i++)
-                    listOfImagesFromUpsampleddouble.push_back(new RGB192Buffer(listOfImagesFromTheUpsampled.at(i)));
-
-                improve(image192, mImageCollection, mListOfLRImages, listOfImagesFromUpsampleddouble, &differences, step, minCoefficientOfImprovement, numberOfIterations);
-
-                /*for (int i = 0 ; i < image192 -> getW(); i++)
-                {
-                        for (int j = 0; j < image192 -> getH(); j++)
-                            cout<<"("<<(int)image192 -> element(j, i).r()<<","<<(int)image192 -> element(j, i).g()<<","<<(int)image192 -> element(j, i).b()<<") ";
-                        cout<<endl;
-                    }
-
-                    for (int i = 0 ; i < mImageCollection.at(1) -> getW(); i++)
-                    {
-                        for (int j = 0; j < mImageCollection.at(1) -> getH(); j++)
-                            cout<<"("<<(int)mImageCollection.at(1) -> element(j, i).r()<<","<<(int)mImageCollection.at(1) -> element(j, i).g()<<","<<(int)mImageCollection.at(1) -> element(j, i).b()<<") ";
-                        cout<<endl;
-                    }
-                cout<<"-----"<<endl;*/
-                image192 -> copy192to24(mImage);
-
-                for(int k = 0; k < (int)mListOfLRImages.size(); k++)
-                {
-                    delete_safe(listOfImagesFromTheUpsampled.at(k));
-                    listOfImagesFromTheUpsampled.at(k) = squareBasedResampling(mImage,mListOfLRImages.at(k).coefficient_,mListOfLRImages.at(k).shiftX_,mListOfLRImages.at(k).shiftY_,mListOfLRImages.at(k).angleDegree_);
-                }
-                delete_safe(mMask);
-                mMask = new G8Buffer(mImage->getSize());
-                AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
-
-                updateViewImage();
-
-                for (int i = 0 ; i < size; i++)
-                    differences.at(i) = differenceBetweenImages(listOfImagesFromTheUpsampled.at(i), mImageCollection.at(mListOfLRImages.at(i).numberInImageCollection_) );
-
-                for (int i = 0 ; i < size; i++)
-                    delete_safe(listOfImagesFromUpsampleddouble.at(i));
-                /*for (int i = 0 ; i < mImage -> getW(); i++)
-                {
-                        for (int j = 0; j < mImage -> getH(); j++)
-                            cout<<"("<<(int)mImage -> element(j, i).r()<<","<<(int)mImage -> element(j, i).g()<<","<<(int)mImage -> element(j, i).b()<<") ";
-                        cout<<endl;
-                    }
-
-                    for (int i = 0 ; i < mImageCollection.at(0) -> getW(); i++)
-                    {
-                        for (int j = 0; j < mImageCollection.at(0) -> getH(); j++)
-                            cout<<"("<<(int)mImageCollection.at(0) -> element(j, i).r()<<","<<(int)mImageCollection.at(0) -> element(j, i).g()<<","<<(int)mImageCollection.at(0) -> element(j, i).b()<<") ";
-                        cout<<endl;
-                    }*/
-            }
-        }
+        listOfImagesFromUpsampleddouble.push_back(new RGB192Buffer(listOfImagesFromTheUpsampled.at(i)));
     }
+
+    improve(image192, mImageCollection, mListOfLRImages, listOfImagesFromUpsampleddouble, &differences, step, minCoefficientOfImprovement, numberOfIterations);
+
+    /*for (int i = 0 ; i < image192 -> getW(); i++)
+    {
+            for (int j = 0; j < image192 -> getH(); j++)
+                cout<<"("<<(int)image192 -> element(j, i).r()<<","<<(int)image192 -> element(j, i).g()<<","<<(int)image192 -> element(j, i).b()<<") ";
+            cout<<endl;
+        }
+
+        for (int i = 0 ; i < mImageCollection.at(1) -> getW(); i++)
+        {
+            for (int j = 0; j < mImageCollection.at(1) -> getH(); j++)
+                cout<<"("<<(int)mImageCollection.at(1) -> element(j, i).r()<<","<<(int)mImageCollection.at(1) -> element(j, i).g()<<","<<(int)mImageCollection.at(1) -> element(j, i).b()<<") ";
+            cout<<endl;
+        }
+    cout<<"-----"<<endl;*/
+    image192->copyTo(mImage);
+
+    for(int k = 0; k < (int)mListOfLRImages.size(); k++)
+    {
+        delete_safe(listOfImagesFromTheUpsampled.at(k));
+        listOfImagesFromTheUpsampled.at(k) = squareBasedResampling(mImage,mListOfLRImages.at(k).coefficient_,mListOfLRImages.at(k).shiftX_,mListOfLRImages.at(k).shiftY_,mListOfLRImages.at(k).angleDegree_);
+    }
+    delete_safe(mMask);
+    mMask = new G8Buffer(mImage->getSize());
+    AbstractPainter<G8Buffer>(mMask).drawCircle(mImage->w / 2, mImage->h / 2, (!mImage->getSize()) / 4, 255);
+
+    updateViewImage();
+
+    for (int i = 0 ; i < size; i++) {
+        differences.at(i) = RGB24Buffer::diffL2(listOfImagesFromTheUpsampled.at(i), mImageCollection.at(mListOfLRImages.at(i).numberInImageCollection_) );
+    }
+
+    for (int i = 0 ; i < size; i++) {
+        delete_safe(listOfImagesFromUpsampleddouble.at(i));
+    }
+    /*for (int i = 0 ; i < mImage -> getW(); i++)
+    {
+        for (int j = 0; j < mImage -> getH(); j++)
+            cout<<"("<<(int)mImage -> element(j, i).r()<<","<<(int)mImage -> element(j, i).g()<<","<<(int)mImage -> element(j, i).b()<<") ";
+        cout<<endl;
+    }
+
+    for (int i = 0 ; i < mImageCollection.at(0) -> getW(); i++)
+    {
+        for (int j = 0; j < mImageCollection.at(0) -> getH(); j++)
+            cout<<"("<<(int)mImageCollection.at(0) -> element(j, i).r()<<","<<(int)mImageCollection.at(0) -> element(j, i).g()<<","<<(int)mImageCollection.at(0) -> element(j, i).b()<<") ";
+        cout<<endl;
+    }*/
+
+
 
 }
 

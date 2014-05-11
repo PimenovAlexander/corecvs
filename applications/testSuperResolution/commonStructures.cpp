@@ -24,7 +24,6 @@ RGB192Color::RGB192Color()
     g_ = 0;
     b_ = 0;
 }
-#endif
 
 
 RGB192Buffer::RGB192Buffer(int height, int width)
@@ -91,3 +90,4 @@ void RGB192Buffer::copy24to192(RGB24Buffer *image24)
             data_[i][j].b() = (double)image24 -> element(i, j).b();
         }
 }
+#endif

@@ -386,14 +386,15 @@ template<class VisitorType>
         visitor.visit(a(), static_cast<const IntField *>(reflect.fields[FIELD_A]));
     }
 
-    Vector3dd toDouble()
+    Vector3dd toDouble() const
     {
         return Vector3dd(r(), g(), b());
     }
 
-    static RGBColor fromDouble(Vector3dd input)
+    static RGBColor FromDouble(const Vector3dd &input)
     {
-        input.mapToHypercube(Vector3dd(0.0,0.0,0.0), Vector3dd(255.0,255.0,255.0));
+        Vector3dd input1 = input;
+        input1.mapToHypercube(Vector3dd(0.0,0.0,0.0), Vector3dd(255.0,255.0,255.0));
         return RGBColor(input.x(), input.y(), input.z());
     }
 

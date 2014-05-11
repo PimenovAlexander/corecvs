@@ -1,6 +1,8 @@
 #pragma once
 
 #include "rgb24Buffer.h"
+#include "rgb192Buffer.h"
+
 #include "commonStructures.h"
 #include <deque>
 

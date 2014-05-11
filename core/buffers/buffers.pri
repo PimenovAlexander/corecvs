@@ -46,7 +46,8 @@ HEADERS += \
     buffers/g12Buffer3d.h \
     buffers/buffer3d.h \
     buffers/transformationCache.h \
-    buffers/rgb192/rgb192Color.h
+    buffers/rgb192/rgb192Color.h \
+    buffers/rgb192/rgb192Buffer.h
 
 
 SOURCES += \
@@ -81,6 +82,7 @@ SOURCES += \
     buffers/g12Buffer3d.cpp \
     buffers/buffer3d.cpp \
     buffers/transformationCache.cpp \
-    buffers/rgb192/rgb192Color.cpp
+    buffers/rgb192/rgb192Color.cpp \
+    buffers/rgb192/rgb192Buffer.cpp
 
 

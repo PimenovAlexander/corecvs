@@ -33,19 +33,19 @@ typedef AbstractContiniousBuffer<RGBColor, int32_t> CRGB24BufferBase;
 class RGB24Buffer : public CRGB24BufferBase
 {
 public:
-//    RGB24Buffer(int32_t h, int32_t w) : CRGB24BufferBase(h, w) {};
-    RGB24Buffer(RGB24Buffer &that) : CRGB24BufferBase (that) {};
-    RGB24Buffer(RGB24Buffer *that) : CRGB24BufferBase (that) {};
+//    RGB24Buffer(int32_t h, int32_t w) : CRGB24BufferBase(h, w) {}
+    RGB24Buffer(RGB24Buffer &that) : CRGB24BufferBase (that) {}
+    RGB24Buffer(RGB24Buffer *that) : CRGB24BufferBase (that) {}
 
     RGB24Buffer(RGB24Buffer *src, int32_t x1, int32_t y1, int32_t x2, int32_t y2) :
-        CRGB24BufferBase(src, x1, y1, x2, y2) {};
+        CRGB24BufferBase(src, x1, y1, x2, y2) {}
 
-    RGB24Buffer(int32_t h, int32_t w, RGBColor *data) : CRGB24BufferBase(h, w, data) {};
-    RGB24Buffer(int32_t h, int32_t w, const RGBColor &data) : CRGB24BufferBase(h, w, data) {};
+    RGB24Buffer(int32_t h, int32_t w, RGBColor *data) : CRGB24BufferBase(h, w, data) {}
+    RGB24Buffer(int32_t h, int32_t w, const RGBColor &data) : CRGB24BufferBase(h, w, data) {}
 
 
-    RGB24Buffer(int32_t h, int32_t w, bool shouldInit = true) : CRGB24BufferBase (h, w, shouldInit) {};
-    RGB24Buffer(Vector2d<int32_t> size, bool shouldInit = true) : CRGB24BufferBase (size, shouldInit) {};
+    RGB24Buffer(int32_t h, int32_t w, bool shouldInit = true) : CRGB24BufferBase (h, w, shouldInit) {}
+    RGB24Buffer(Vector2d<int32_t> size, bool shouldInit = true) : CRGB24BufferBase (size, shouldInit) {}
 
     /*Helper Constructors form the relative types*/
     RGB24Buffer(G12Buffer *buffer) : CRGB24BufferBase (buffer->h, buffer->w, false)
@@ -203,9 +203,8 @@ public:
 
     }
 
-    virtual ~RGB24Buffer(){};
-
-
+    virtual ~RGB24Buffer() {}
+    static double diffL2 (RGB24Buffer *buffer1, RGB24Buffer *buffer2);
 
 private:
     /* TODO: Special helper class should be used to store sprites after that this function could be made public */

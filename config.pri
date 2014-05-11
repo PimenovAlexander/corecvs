@@ -40,7 +40,7 @@ CONFIG +=       \
     #  gcc48_toolchain   \
     #   gcc_lto           \
     #   gcc_checker       \
-       gcc47_toolchain   \
+    #   gcc47_toolchain   \
     #   gcc45_toolchain   \
     #   clang_toolchain   \
     #   clang_analyser    \

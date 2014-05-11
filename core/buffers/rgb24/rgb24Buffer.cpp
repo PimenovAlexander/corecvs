@@ -844,6 +844,22 @@ G8Buffer* RGB24Buffer::getChannel(ChannelID channel)
     return result;
 }
 
+double RGB24Buffer::diffL2(RGB24Buffer *buffer1, RGB24Buffer *buffer2)
+{
+    double sum = 0;
+    int h = std::min(buffer1->h, buffer2->w);
+    int w = std::min(buffer1->w, buffer2->w);
+
+    for (int i = 0; i < h; i++)
+    {
+        for (int j = 0; j < w; j++)
+        {
+            sum += (buffer1->element(i,j).toDouble() - buffer2->element(i,j).toDouble()).sumAllElementsSq() / 3.0;
+        }
+    }
+    sum /= (double) h * w;
+    return sum;
+}
 
 
 } //namespace corecvs

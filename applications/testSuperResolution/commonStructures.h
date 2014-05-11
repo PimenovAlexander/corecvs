@@ -53,7 +53,7 @@ public:
             return (*this).b_;
     }
 };
-#endif
+
 
 class RGB192Buffer
 {
@@ -81,3 +81,5 @@ public:
 
     ~RGB192Buffer();
 };
+
+#endif

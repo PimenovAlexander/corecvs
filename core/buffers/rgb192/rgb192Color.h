@@ -2,6 +2,7 @@
 #define RGB192COLOR_H
 
 #include "vector3d.h"
+#include "rgbColor.h"
 
 namespace corecvs {
 /**
@@ -17,7 +18,11 @@ public:
         FIELD_B = 2
     };
 
-    RGB192Color(){};
+    RGB192Color() {}
+
+    explicit RGB192Color(const Vector3dd &vector) :  Vector3dd(vector)
+    {
+    }
 
     RGB192Color(double _r, double _g, double _b)
     {
@@ -75,6 +80,11 @@ template<class VisitorType>
         visitor.visit(r(), static_cast<const DoubleField *>(reflect.fields[FIELD_R]));
         visitor.visit(g(), static_cast<const DoubleField *>(reflect.fields[FIELD_G]));
         visitor.visit(b(), static_cast<const DoubleField *>(reflect.fields[FIELD_B]));
+    }
+
+    static RGB192Color FromRGBColor(const RGBColor &color)
+    {
+        return RGB192Color(color.toDouble());
     }
 
 };
