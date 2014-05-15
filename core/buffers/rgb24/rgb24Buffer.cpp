@@ -118,6 +118,18 @@ void RGB24Buffer::drawLineSimple (int x1, int y1, int x2, int y2, RGBColor color
     }
 }
 
+void RGB24Buffer::drawCircle(int x, int y, int rad, RGBColor color )
+{
+    for (int yCounter=y-rad; yCounter<y+rad; yCounter++)
+    {
+        int offset = (int)sqrt(rad*rad-(yCounter-y)*(yCounter-y));
+        for (int xCounter=x-offset; xCounter<x+offset; xCounter++)
+        {
+            drawPixel(xCounter,yCounter,color);
+        }
+    }
+}
+
 
 void RGB24Buffer::drawPixel ( int x, int y, RGBColor color)
 {

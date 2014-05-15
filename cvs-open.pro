@@ -9,8 +9,8 @@ SUBDIRS +=                   \
     base_application_example \    
     recorder                 \
     testbed                  \
-    testSuperResolution
-    
+    testSuperResolution   \
+    testdistortion
 
 win32 {
     SUBDIRS += directshow
@@ -45,4 +45,4 @@ recorder.file                 = applications/recorder/recorder.pro
 testbed.file                  = applications/testbed/testbed.pro
 testSuperResolution.file      = applications/testSuperResolution/testSuperResolution.pro
 generator.file                = tools/generator/generator.pro
-
+testdistortion.file           = applications/testdistortion/testdistortion.pro
