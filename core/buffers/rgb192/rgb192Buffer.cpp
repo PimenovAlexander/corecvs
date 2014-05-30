@@ -35,7 +35,7 @@ void RGB192Buffer::fillWith(RGB24Buffer *that)
 
         for (int j = 0; j < minW; j++)
         {
-            *outRunner = RGB192Color::fromRGBColor(*inRunner);
+            *outRunner = RGB192Color::FromRGBColor(*inRunner);
             inRunner++;
             outRunner++;
         }

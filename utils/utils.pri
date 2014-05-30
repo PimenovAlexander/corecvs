@@ -72,7 +72,7 @@ contains(TARGET, cvs_utils) {
 DESTDIR = $$UTILS_BINDIR
 
 
-CONFIG += with_opengl                           # always include here OpenGL dependent modules as utils's and related projects need it
+#CONFIG += with_opengl                           # always include here OpenGL dependent modules as utils's and related projects need it
 with_opengl {
     QT += opengl                                # this must be defined for utils's and all related sources
 
@@ -89,6 +89,7 @@ with_opengl {
     with_openglext {
         DEFINES += WITH_OPENGLEXT
     } 
+
 }
 
 with_ueye {

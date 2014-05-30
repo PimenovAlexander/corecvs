@@ -39,7 +39,7 @@ int Poligon::isInside(const Vector2dd &a)
  * http://en.wikipedia.org/wiki/Cyrus%E2%80%93Beck_algorithm
  *
  * */
-bool Poligon::clipRay(const Ray2d &ray, double &t1, double &t2)
+bool Poligon::clipRay(const Ray2d &/*ray*/, double &/*t1*/, double &/*t2*/)
 {
 #if 0
 

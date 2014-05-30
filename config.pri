@@ -76,6 +76,7 @@ win32 {
 #   CONFIG += with_hardware     # enabled only for some linux PCs for debugging
 }
 
+CONFIG += with_opengl
 win32 {
    #CONFIG += with_openglext	# is disabled as it's not yet implemented
 } else {

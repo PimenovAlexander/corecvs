@@ -344,7 +344,7 @@ with_opengl {
     SOURCES     += opengl/openGLTools.cpp
 
     HEADERS     += uis/cloudview/cloudViewDialog.h \ 
-    			   uis/cloudview/treeSceneController.h \
+                   uis/cloudview/treeSceneController.h \
     			   
     SOURCES     += uis/cloudview/cloudViewDialog.cpp \ 
                    uis/cloudview/treeSceneController.cpp \
