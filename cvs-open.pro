@@ -8,8 +8,9 @@ SUBDIRS +=                   \
     base_application         \
     base_application_example \    
     recorder                 \
-    testbed                  \
-    testSuperResolution
+#    testbed                  \
+#    testSuperResolution      \
+    distortionCorrector   
     
 
 win32 {
@@ -44,5 +45,6 @@ base_application_example.file = applications/base/baseApplicationExample.pro
 recorder.file                 = applications/recorder/recorder.pro
 testbed.file                  = applications/testbed/testbed.pro
 testSuperResolution.file      = applications/testSuperResolution/testSuperResolution.pro
+distortionCorrector.file      = applications/distortionCorrector/corrector.pro
 generator.file                = tools/generator/generator.pro
 
