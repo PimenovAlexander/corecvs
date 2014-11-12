@@ -88,10 +88,10 @@ DistortionWidget::~DistortionWidget()
 
 void DistortionWidget::setParams()
 {
-    delete mDistortionParameters;
+    delete_safe(mDistortionParameters);
     mDistortionParameters = new DistortionParameters(
             mUi->radiusSpinBox->value(),
-            mUi->scaleSpinBox->value());
+            mUi->dsbScale->value());
 }
 
 void DistortionWidget::initTransform()
@@ -249,10 +249,10 @@ void DistortionWidget::doInversionTransform()
     Vector2dd centre(mUi->widget->mImage.data()->width() * 0.5, mUi->widget->mImage.data()->height() * 0.5);
     vector<Vector2dd> points = mDistortionParameters->getPoints();
 
-    DistortionCorrectTransform *transform = new DistortionCorrectTransform(centre);
+    DistortionCorrectTransform *transform = NULL;
+
     if (points.size() < 3 || !mDistortionParameters->needCalculateParams())
     {
-        delete transform;
         transform = new DistortionCorrectTransform(
             centre,
             mDistortionParameters->getRadius(),
@@ -260,6 +260,7 @@ void DistortionWidget::doInversionTransform()
     }
     else
     {
+        transform = new DistortionCorrectTransform(centre);
         transform->setRadius(points.at(0), points.at(1), points.at(2));
     }
 
