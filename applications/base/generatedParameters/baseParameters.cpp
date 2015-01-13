@@ -98,10 +98,10 @@ int BaseParameters::staticInit()
         (
           BaseParameters::DOWNSAMPLE_ID,
           offsetof(BaseParameters, mDownsample),
-          1.5,
+          1,
           "downsample",
           "downsample",
-          "downsample"
+          "Prescale coefficient for input image"
         )
     );
     fields().push_back(
@@ -112,7 +112,7 @@ int BaseParameters::staticInit()
           640,
           "h",
           "h",
-          "h"
+          "Input crop height"
         )
     );
     fields().push_back(
@@ -123,7 +123,7 @@ int BaseParameters::staticInit()
           480,
           "w",
           "w",
-          "w"
+          "Input crop width"
         )
     );
     fields().push_back(
@@ -134,7 +134,7 @@ int BaseParameters::staticInit()
           true,
           "autoH",
           "autoH",
-          "autoH"
+          "Select crop height so that full image will fit"
         )
     );
     fields().push_back(
@@ -145,7 +145,7 @@ int BaseParameters::staticInit()
           true,
           "autoW",
           "autoW",
-          "autoW"
+          "Select crop width so that full image will fit"
         )
     );
     fields().push_back(
@@ -156,7 +156,7 @@ int BaseParameters::staticInit()
           0,
           "x",
           "x",
-          "x"
+          "Scaled image horizonal shift before crop"
         )
     );
     fields().push_back(
@@ -167,7 +167,7 @@ int BaseParameters::staticInit()
           0,
           "y",
           "y",
-          "y"
+          "Scaled image vertical shift before crop"
         )
     );
     fields().push_back(
@@ -175,7 +175,7 @@ int BaseParameters::staticInit()
         (
           BaseParameters::INTERPOLATIONTYPE_ID,
           offsetof(BaseParameters, mInterpolationType),
-          0,
+          2,
           "InterpolationType",
           "InterpolationType",
           "InterpolationType",

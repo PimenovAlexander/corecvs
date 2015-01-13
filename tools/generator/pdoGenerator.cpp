@@ -53,6 +53,12 @@ void PDOGenerator::enterFieldContext(int i)
         QString typeName = static_cast<const CompositeField *>(field)->typeName;
         boxFileName = toCamelCase(typeName, false) + getWidgetSuffixForType(type);
     }
+    if (type == BaseField::TYPE_COMPOSITE_ARRAY)
+    {
+        QString typeName = static_cast<const CompositeArrayField *>(field)->typeName;
+        boxFileName = toCamelCase(typeName, false) + getWidgetSuffixForType(type);
+    }
+
     boxSignal = getSignalForType(type);
 
     prefix = "";
@@ -217,10 +223,22 @@ void PDOGenerator::generatePDOH()
     for (int i = 0; i < fieldNumber; i++ )
     {
         enterFieldContext(i);
-        if (field->type != BaseField::TYPE_COMPOSITE)
+        const Reflection *referent = NULL;
+        if (field->type == BaseField::TYPE_COMPOSITE)
+        {
+            const CompositeField *cfield = static_cast<const CompositeField *>(field);
+            referent = cfield->reflection;
+        }
+        if (field->type == BaseField::TYPE_COMPOSITE_ARRAY)
+        {
+            const CompositeArrayField *cafield = static_cast<const CompositeArrayField *>(field);
+            referent = cafield->reflection;
+        }
+
+        if (referent == NULL) {
             continue;
-        const CompositeField *cfield = static_cast<const CompositeField *>(field);
-        const Reflection *referent = cfield->reflection;
+        }
+
         if (std::find(references.begin(), references.end(), referent) != references.end())
             continue;
     result +=
@@ -328,6 +346,13 @@ void PDOGenerator::generatePDOH()
         if (type == BaseField::TYPE_COMPOSITE)
         {
             PDOGenerator generator(static_cast<const CompositeField*>(field)->reflection);
+            generator.generatePDOH();
+            generator.generatePDOCpp();
+            generator.generateControlWidgetCpp();
+        }
+        if (type == BaseField::TYPE_COMPOSITE_ARRAY)
+        {
+            PDOGenerator generator(static_cast<const CompositeArrayField*>(field)->reflection);
             generator.generatePDOH();
             generator.generatePDOCpp();
             generator.generateControlWidgetCpp();
@@ -575,7 +600,7 @@ void PDOGenerator::generatePDOCpp()
     "          "+className+"::"+fieldEnumId+",\n"
     "          offsetof("+className+", "+cppName+"),\n";
 
-    if (type != BaseField::TYPE_COMPOSITE) {
+    if (type != BaseField::TYPE_COMPOSITE && type != BaseField::TYPE_COMPOSITE_ARRAY) {
     result+=
     "          "+defaultValue+",\n"
     "          \""+name+"\",\n"
@@ -583,12 +608,21 @@ void PDOGenerator::generatePDOCpp()
     "          \""+comment+"\"";
 
 
-    } else {
+    } else if (type == BaseField::TYPE_COMPOSITE) {
         const CompositeField *cfield = static_cast<const CompositeField *>(field);
         const Reflection *referent = cfield->reflection;
     result+=
     "          \""+name+"\",\n"
     "          \""+toCamelCase(referent->name.name, true) + "\",\n"
+    "          \""+descr+"\",\n"
+    "          \""+comment+"\"";
+    } else if (type == BaseField::TYPE_COMPOSITE_ARRAY) {
+        const CompositeArrayField *cafield = static_cast<const CompositeArrayField *>(field);
+        const Reflection *referent = cafield->reflection;
+    result+=
+    "          \""+name+"\",\n"
+    "          \""+toCamelCase(referent->name.name, true) + "\",\n"
+    "            "+QString::number(cafield->size)+",\n"
     "          \""+descr+"\",\n"
     "          \""+comment+"\"";
     }

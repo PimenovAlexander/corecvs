@@ -1,4 +1,4 @@
-#include "openCvHelper.h"
+#include "openCVHelper.h"
 
 bool OpenCvHelper::captureImageCopyToBuffer(cv::VideoCapture &capture, G12Buffer* buf)
 {
@@ -20,8 +20,9 @@ bool OpenCvHelper::captureImageCopyToBuffer(CvCapture* capHandle, G12Buffer* buf
 
 bool OpenCvHelper::captureImageCopyToBuffer(IplImage* frame, G12Buffer* buf)
 {
-    if (!buf)
+    if (buf == NULL) {
         throw "No buffer allocated for a frame";
+    }
 
     const uchar *imageData = (const uchar *)frame->imageData;
 

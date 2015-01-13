@@ -83,12 +83,6 @@ public:
         CAMERA_BOTH   = 0x11
     };
 
-    typedef struct
-    {
-        uint16_t width;
-        uint16_t height;
-    } frame_dims_t;
-
     /**
      *  This structure will hold the rational number
      *  for the FPS
@@ -119,17 +113,21 @@ public:
     class FramePair
     {
     public:
-        G12Buffer* bufferLeft;      /**< Pointer to left  gray scale buffer*/
-        G12Buffer* bufferRight;     /**< Pointer to right gray scale buffer*/
+        G12Buffer* bufferRight;       /**< Pointer to right gray scale buffer*/
+        G12Buffer* bufferLeft;        /**< Pointer to left  gray scale buffer*/
         RGB24Buffer *rgbBufferLeft;
         RGB24Buffer *rgbBufferRight;
-        uint64_t   leftTimeStamp;
-        uint64_t   rightTimeStamp;
+        uint64_t   leftTimeStamp;    /**< Timestamp for left image */
+        uint64_t   rightTimeStamp;   /**< Timestamp for right image */
 
-        FramePair(G12Buffer* _bufferLeft = NULL, G12Buffer* _bufferRight = NULL,
-                  RGB24Buffer *_rgbBufferLeft = NULL, RGB24Buffer *_rgbBufferRight = NULL)
-            : bufferLeft (_bufferLeft )
-            , bufferRight(_bufferRight)
+        FramePair(
+            G12Buffer* _bufferLeft = NULL,
+            G12Buffer* _bufferRight = NULL,
+            RGB24Buffer *_rgbBufferLeft = NULL,
+            RGB24Buffer *_rgbBufferRight = NULL
+        ) :
+              bufferRight(_bufferRight)
+            , bufferLeft (_bufferLeft )
             , rgbBufferLeft(_rgbBufferLeft)
             , rgbBufferRight(_rgbBufferRight)
             , leftTimeStamp (0)
@@ -151,6 +149,7 @@ public:
 signals:
     void    newFrameReady(frame_data_t frameData);
     void    newImageReady();
+
     void    newStatisticsReady(CaptureStatistics stats);
     void    streamPaused();
 

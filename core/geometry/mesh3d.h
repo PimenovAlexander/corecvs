@@ -38,7 +38,7 @@ public:
 
     void _initByLowHigh(const Vector3dd &low, const Vector3dd &high)
     {
-        /* TODO: Move this to vector opetions and use cycle */
+        /* TODO: Move this to vector operations and use cycle */
         mLow .x() = std::min(low.x(), high.x());
         mHigh.x() = std::max(low.x(), high.x());
 
@@ -91,6 +91,11 @@ public:
         return ((mLow + mHigh) / 2.0);
     }
 
+    Vector3dd measure()
+    {
+        return mHigh - mLow;
+    }
+
     void getPoints(Vector3dd points[8])
     {
         points[0] = Vector3dd(mLow .x() , mLow .y(), mLow.z());
@@ -101,17 +106,38 @@ public:
         points[5] = Vector3dd(mHigh.x() , mLow .y(), mHigh.z());
         points[6] = Vector3dd(mHigh.x() , mHigh.y(), mHigh.z());
         points[7] = Vector3dd(mLow .x() , mHigh.y(), mHigh.z());
-
     }
+
+    AxisAlignedBox3d outset(double value) const
+    {
+        return AxisAlignedBox3d(mLow - Vector3dd(value), mHigh + Vector3dd(value));
+    }
+
 };
 
 
 
 class Mesh3D {
 public:
+
+    Mesh3D() :
+        hasCentral(false)
+    {}
+
+
+    Vector3dd  centralPoint;
+    bool hasCentral;
+
     vector<Vector3dd>  vertexes;
     vector<Vector3d32> faces;
     vector<Vector2dd>  textureCoords;
+
+    void setCentral(Vector3dd _central)
+    {
+        centralPoint = _central;
+        hasCentral = true;
+    }
+
 
     void addAOB(Vector3dd corner1, Vector3dd corner2);
     void addAOB(const AxisAlignedBoxParameters &box);

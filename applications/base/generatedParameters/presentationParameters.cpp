@@ -38,25 +38,15 @@ int PresentationParameters::staticInit()
      
 
     fields().push_back(
-        new BoolField
+        new EnumField
         (
-          PresentationParameters::LEFTFRAME_ID,
-          offsetof(PresentationParameters, mLeftFrame),
-          false,
-          "leftFrame",
-          "leftFrame",
-          "leftFrame"
-        )
-    );
-    fields().push_back(
-        new BoolField
-        (
-          PresentationParameters::RIGHTFRAME_ID,
-          offsetof(PresentationParameters, mRightFrame),
-          true,
-          "rightFrame",
-          "rightFrame",
-          "rightFrame"
+          PresentationParameters::OUTPUT_ID,
+          offsetof(PresentationParameters, mOutput),
+          0,
+          "Output",
+          "Output",
+          "View - views are more or less self-explenatory",
+           NULL
         )
     );
     fields().push_back(
@@ -67,7 +57,7 @@ int PresentationParameters::staticInit()
           0,
           "Stereo",
           "Stereo",
-          "Stereo",
+          "Way to draw overlay with disparity information",
            NULL
         )
     );
@@ -79,19 +69,7 @@ int PresentationParameters::staticInit()
           0,
           "Flow",
           "Flow",
-          "Flow",
-           NULL
-        )
-    );
-    fields().push_back(
-        new EnumField
-        (
-          PresentationParameters::OUTPUT_ID,
-          offsetof(PresentationParameters, mOutput),
-          0,
-          "Output",
-          "Output",
-          "Output",
+          "Way to draw overlay with optical flow information",
            NULL
         )
     );
@@ -100,7 +78,7 @@ int PresentationParameters::staticInit()
         (
           PresentationParameters::SHOWCLUSTERS_ID,
           offsetof(PresentationParameters, mShowClusters),
-          true,
+          false,
           "showClusters",
           "showClusters",
           "showClusters"
@@ -144,7 +122,7 @@ int PresentationParameters::staticInit()
         (
           PresentationParameters::PRODUCE3D_ID,
           offsetof(PresentationParameters, mProduce3D),
-          false,
+          true,
           "produce3D",
           "produce3D",
           "produce3D"

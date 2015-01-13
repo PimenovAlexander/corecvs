@@ -142,6 +142,15 @@ public:
         BaseClass(V, lastElement)
     {}
 
+/*
+    template<template <typename, int> class OtherVector>
+    inline FixedVector(
+            const FixedVectorBase<OtherVector<ElementType, length - 1>, ElementType, length - 1> &V,
+            const ElementType &lastElement) :
+        BaseClass(V, lastElement)
+    {}
+*/
+
     /**
      *   Copy constructor.
      *   Acts the same way as assignment constructor

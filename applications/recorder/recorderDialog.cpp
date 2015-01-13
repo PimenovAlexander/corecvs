@@ -182,6 +182,9 @@ void RecorderDialog::processResult()
         if (mIsRecording)
             mRecorderControlWidget->ui()->frameCountLabel->setText(QString("Frame (frame pairs) written: %1").arg(fod->frameCount));
 
+
+//        fod->mMainImage.print();
+
         if (i == eventList.size() - 1) {
             mImage = QSharedPointer<QImage>(new QImage(fod->mMainImage.width(), fod->mMainImage.height(),  QImage::Format_RGB32));
             fod->mMainImage.drawImage(mImage.data());

@@ -504,6 +504,16 @@ template<typename ResultType>
     }
 
     /**
+     *  Calculate memory for all the structures in the object
+     **/
+    inline size_t memoryFootprint() const
+    {
+      //return _allocatedSize;
+        return this->memoryBlock.getTotalObjectSize(this->sizeInBytes(), DATA_ALIGN_GRANULARITY) + sizeof(this);
+    }
+
+
+    /**
      *  This function fills the rectangle inside the buffer with the value.
      *
      *  You could use this to clean part of the buffer

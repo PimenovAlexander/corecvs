@@ -6,15 +6,17 @@ exists(../../../../config.pri) {
     message(Using local config)
     ROOT_DIR=../..
 }
-ROOT_DIR=$$PWD/$$ROOT_DIR
+!win32 {                                            # it dues to the "mocinclude.tmp" bug on win32!
+    ROOT_DIR=$$PWD/$$ROOT_DIR
+}
 include($$ROOT_DIR/config.pri)
 
 CONFIG  += staticlib
 TARGET   = cvs_application_base
 TEMPLATE = lib
 
-HOSTBASE_DIR=.
-include ($$HOSTBASE_DIR/baseApplication.pri)                   # it uses HOSTBASE_DIR, detects HOSTBASE_BINDIR, OBJECTS_DIR, ...
+HOSTBASE_DIR = $$PWD
+include ($$HOSTBASE_DIR/baseApplication.pri)        # it uses HOSTBASE_DIR, detects HOSTBASE_BINDIR, OBJECTS_DIR, ...
 
 HEADERS += \
     generatedParameters/baseParameters.h \

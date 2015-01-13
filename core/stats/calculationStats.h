@@ -27,7 +27,9 @@ namespace corecvs {
 using std::map;
 using std::string;
 
-
+/**
+ *  Single statistics entry
+ **/
 struct SingleStat {
     enum Type {
         UNKNOWN,

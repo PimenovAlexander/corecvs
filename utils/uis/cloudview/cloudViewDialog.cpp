@@ -626,6 +626,8 @@ void CloudViewDialog::setNewScenePointer(QSharedPointer<Scene3D> newScene, int s
         case CLUSTER_ZONE               : name = "Cluster zone";     break;
         case CLUSTER_SWARM              : name = "Cluster swarm";    break;
         case HEAD_SEARCH_ZONE           : name = "Head search zone"; break;
+        case HAND_1                     : name = "Hand 1";           break;
+        case HAND_2                     : name = "Hand 2";           break;
         default:
             break;
         };

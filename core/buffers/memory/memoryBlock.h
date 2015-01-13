@@ -80,6 +80,11 @@ public:
         }
     }
 
+    size_t getTotalObjectSize(size_t size = sizeof(Type), size_t alignMask = 0) const
+    {
+        return size + 2 * alignMask + sizeof(ObjectBlock<Type>) - sizeof(Type);
+    }
+
     /**
      *   In the worst case we will have to add align mask twice. Say we want
      * to allocate 10 bytes with 4 byte alignment.
@@ -96,7 +101,7 @@ public:
             freeRef();
         }
 
-        size_t totalSize = size + 2 * alignMask + sizeof(ObjectBlock<Type>) - sizeof(Type);
+        size_t totalSize = getTotalObjectSize(size, alignMask);
         void *rawBlock = new uint8_t[totalSize];
         if (rawBlock != NULL)
         {

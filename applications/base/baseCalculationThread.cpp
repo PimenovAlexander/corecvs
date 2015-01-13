@@ -53,6 +53,7 @@ BaseCalculationThread::BaseCalculationThread()
 
 AbstractOutputData* BaseCalculationThread::processNewData()
 {
+    qDebug("BaseCalculationThread::processNewData(): called");
     BaseOutputData *resultData = new BaseOutputData();
 
     initData(resultData);
@@ -83,8 +84,7 @@ void BaseCalculationThread::initData(BaseOutputData *calculationOutputData, Stat
     calculationOutputData->mMainImage.addLayer(
             new ImageResultLayer(
                     mPresentationParams->output(),
-                    mTransformedBuffers,
-                    mPresentationParams->leftFrame()
+                    mTransformedBuffers
             )
     );
 
@@ -382,9 +382,7 @@ void BaseCalculationThread::recalculateCache()
         Q_ASSERT(currentBuffer != NULL);
         Q_ASSERT(currentBuffer->hasSameSize(firstInput));
 
-
-
-        delete mTransformationCache[i];
+        delete_safe(mTransformationCache[i]);
         mTransformationCache[i] = new TransformationCache(mFrameTransformsInv[i], w, h, currentBuffer->getSize());
 #ifdef WITH_HARDWARE
         //Matrix33 mat = Matrix33::Scale2(1.08) * Matrix33::ShiftProj(-39.5, -39.5) * Matrix33::RotateProj(6.0 / 128.0);

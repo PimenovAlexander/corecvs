@@ -47,6 +47,18 @@ public:
 
     uint64_t startProcessTimestamp() const          { return mStartProcessTimestamp; }
 
+    static inline const char *getEnumName(const FrameSourceId &value)
+    {
+        switch (value)
+        {
+         case LEFT_FRAME : return "LEFT_FRAME"; break ;
+         case RIGHT_FRAME : return "RIGHT_FRAME"; break ;
+         default : return "Not in range"; break ;
+
+        }
+        return "Not in range";
+    }
+
 private:
     bool     mSwapped;
     uint64_t mTimestamp;

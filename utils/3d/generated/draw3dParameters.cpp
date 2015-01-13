@@ -74,6 +74,51 @@ int Draw3dParameters::staticInit()
         )
     );
     fields().push_back(
+        new BoolField
+        (
+          Draw3dParameters::SHOW_CAPTION_ID,
+          offsetof(Draw3dParameters, mShowCaption),
+          false,
+          "Show caption",
+          "Show caption",
+          "Show caption"
+        )
+    );
+    fields().push_back(
+        new IntField
+        (
+          Draw3dParameters::FONT_SIZE_ID,
+          offsetof(Draw3dParameters, mFontSize),
+          8,
+          "Font Size",
+          "Font Size",
+          "Font Size"
+        )
+    );
+    fields().push_back(
+        new IntField
+        (
+          Draw3dParameters::FONT_WIDTH_ID,
+          offsetof(Draw3dParameters, mFontWidth),
+          1,
+          "Font Width",
+          "Font Width",
+          "Font Width"
+        )
+    );
+    fields().push_back(
+        new CompositeField
+        (
+          Draw3dParameters::FONT_COLOR_ID,
+          offsetof(Draw3dParameters, mFontColor),
+          "Font Color",
+          "RgbColorParameters",
+          "Font Color",
+          "Font Color",
+           NULL
+        )
+    );
+    fields().push_back(
         new EnumField
         (
           Draw3dParameters::TEXTURE_CORRODINATES_ID,

@@ -6,6 +6,10 @@
 #include "imageFileCaptureInterface.h"
 #include "abstractFileCaptureSpinThread.h"
 
+/**
+    This class is a base for the file interfaces that simulates the camera and skips frames if they are not claimed in time.
+
+**/
 class AbstractFileCapture : public ImageFileCaptureInterface
 {
 public:

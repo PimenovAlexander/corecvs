@@ -58,6 +58,8 @@ CONFIG +=       \
 CONFIG +=                   \
 #        with_ueye           \
         with_httpserver     \
+        with_avcodec        \
+
 
 win32 {
     CONFIG +=               \

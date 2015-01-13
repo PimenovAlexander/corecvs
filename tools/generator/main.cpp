@@ -6,8 +6,10 @@
 #include "widgetUIGenerator.h"
 #include "pdoGenerator.h"
 #include "parametersMapperGenerator.h"
+#include "documentationGenerator.h"
 
 #include "configLoader.h"
+
 
 int main(int argc, char *argv[])
 {
@@ -31,6 +33,9 @@ int main(int argc, char *argv[])
         generator.generatePDOH();
         generator.generatePDOCpp();
         generator.generateControlWidgetCpp();
+
+        DocumentationGenerator generatorDoc(result);
+        generatorDoc.generateDocumentation();
     }
 
     /* Generate all enums */

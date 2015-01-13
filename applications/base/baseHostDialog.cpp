@@ -55,7 +55,7 @@ BaseHostDialog::BaseHostDialog(QWidget *parent)
     , mDistortionWidget(NULL)
     , mCameraStarted(false)
     , mCamera(NULL)
-    , mCapSettings(NULL)
+    , mCapSettings(NULL, "MainSource")
     , mFrames(NULL)
     , mBaseControlWidget(NULL)
     , mPresentationControlWidget(NULL)
@@ -80,6 +80,8 @@ void BaseHostDialog::init(QWidget *parameterHolderWidget, QTextEdit * /*loggerWi
 
     initCommon();
     initParameterWidgets();
+
+    mSaveableCameraWidgets.push_back(&mCapSettings);
     loadParams(ConfigManager::configName(), "");
 
     initMemoryUsageCalculator();
@@ -128,7 +130,6 @@ BaseHostDialog::~BaseHostDialog()
         delete_safe(widget);
     }
 
-    delete_safe(mCapSettings);
     delete_safe(mCamera);
 
     delete_safe (mMemoryCalculator);
@@ -267,8 +268,8 @@ void BaseHostDialog::showStatistics()
 
 void BaseHostDialog::showCaptureSettings()
 {
-    mCapSettings->show();
-    mCapSettings->raise();
+    mCapSettings.show();
+    mCapSettings.raise();
 }
 
 void BaseHostDialog::showAboutDialog()
@@ -296,6 +297,7 @@ void BaseHostDialog::distortionEstimationFinished()
 
 void BaseHostDialog::deinitCamera()
 {
+    mCapSettings.setCaptureInterface(NULL);
     delete_safe(mCamera);
     mCameraStarted = false;
     emit captureStatusUpdated(false);
@@ -324,22 +326,22 @@ void BaseHostDialog::initCapture(QString const &init, bool isRgb)
 
     if (mCamera == NULL)
     {
-        cout << "Error initializing capture device." << endl;
+        cout << "BaseHostDialog::initCapture(): Error initializing capture device." << endl;
         return;
     }
     ImageCaptureInterface::CapErrorCode res = mCamera->initCapture();
 
     if (ImageCaptureInterface::FAILURE == res)
     {
-        cout << "Error: none of the capture devices started.\n" << endl;
+        cout << "BaseHostDialog::initCapture(): Error: none of the capture devices started.\n" << endl;
         QMessageBox::warning(this, "Error: none of the capture devices started.","Error: none of the capture devices started.");
         return;
     }
     else if (ImageCaptureInterface::SUCCESS_1CAM == res)
     {
-        cout << "Will be using only one capture device.\n" << endl;
+        cout << "BaseHostDialog::initCapture(): Will be using only one capture device.\n" << endl;
         mUseOneCaptureDevice = true;
-        mPresentationControlWidget->ui()->rightFrameButton->setEnabled(false);
+        mPresentationControlWidget->ui()->outputComboBox->setCurrentIndex(0);
     }
     else
     {
@@ -347,9 +349,8 @@ void BaseHostDialog::initCapture(QString const &init, bool isRgb)
     }
 
     /* Now we need to connect the camera to widgets */
-    mCapSettings = new CapSettingsDialog(NULL, mCamera);
-    mSaveableCameraWidgets.push_back(mCapSettings);
-    mCapSettings->loadFromQSettings(ConfigManager::camConfigName(), "");
+    mCapSettings.setCaptureInterface(mCamera);
+    mCapSettings.loadFromQSettings(ConfigManager::camConfigName(), "");
 
     qRegisterMetaType<CaptureStatistics>("CaptureStatistics");
     connect(mCamera, SIGNAL(newStatisticsReady(CaptureStatistics)),

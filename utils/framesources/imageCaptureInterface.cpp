@@ -17,6 +17,8 @@
 #include "cameraControlParameters.h"
 
 #include "fileCapture.h"
+#include "precCapture.h"
+
 #ifdef Q_OS_LINUX
 # include "V4L2Capture.h"
 # include "V4L2CaptureDecouple.h"
@@ -31,9 +33,17 @@
 # include "uEyeCapture.h"
 #endif
 
+#ifdef WITH_SYNCCAM
+#include "syncCamerasCaptureInterface.h"
+#endif
+
+#ifdef WITH_AVCODEC
+#include "aviCapture.h"
+#endif
+
 #ifdef WITH_OPENCV
 # include "openCVCapture.h"
-# include "openCvFileCapture.h"
+# include "openCVFileCapture.h"
 #endif
 
 char const *CaptureStatistics::names[] =
@@ -67,6 +77,16 @@ ImageCaptureInterface* ImageCaptureInterface::fabric(string input, bool isRGB)
         string tmp = input.substr(prec.size());
         return new FilePreciseCapture(QString(tmp.c_str()), false);
     }
+
+#ifdef WITH_SYNCCAM
+    string sync("sync:");
+    if (input.substr(0, sync.size()).compare(sync) == 0)
+    {
+        //isRgb = false;
+        string tmp = input.substr(sync.size());
+        return new SyncCamerasCaptureInterface(tmp);
+    }
+#endif
 
 #ifdef Q_OS_LINUX
     string v4l2("v4l2:");
@@ -109,6 +129,16 @@ ImageCaptureInterface* ImageCaptureInterface::fabric(string input, bool isRGB)
     }
 #endif
 
+#ifdef WITH_AVCODEC
+    string avcodec("avcodec:");
+    if (input.substr(0, avcodec.size()).compare(avcodec) == 0)
+    {
+        SYNC_PRINT(("ImageCaptureInterface::fabric(): Creating avcodec input"));
+        string tmp = input.substr(avcodec.size());
+        return new AviCapture(QString(tmp.c_str()));
+    }
+#endif
+
 #ifdef WITH_OPENCV
     string any("any:");
     if (input.substr(0, any.size()).compare(any) == 0)
@@ -144,6 +174,7 @@ ImageCaptureInterface* ImageCaptureInterface::fabric(string input, bool isRGB)
 
 void ImageCaptureInterface::notifyAboutNewFrame(frame_data_t frameData)
 {
+    SYNC_PRINT(("ImageCaptureInterface::notifyAboutNewFrame()\n"));
     emit newFrameReady(frameData);
     emit newImageReady();
 }

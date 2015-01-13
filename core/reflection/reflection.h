@@ -117,9 +117,11 @@ public:
         TYPE_VECTOR3DD,
 
         /* POINTER_TYPE */
-        TYPE_POINTER,
+        TYPE_POINTER,       
 
-        TYPE_COMPOSITE
+        TYPE_COMPOSITE,
+        TYPE_COMPOSITE_ARRAY,
+        TYPE_LAST
     };
 
     /**
@@ -491,6 +493,58 @@ public:
 
 };
 
+
+class CompositeArrayField : public BaseField
+{
+public:
+    const Reflection *reflection;
+    const char *typeName;
+    int size;
+
+    CompositeArrayField (
+            int _id,
+            int _offset,
+            const char *_name,
+            const char *_typeName,
+            int _size,
+            const char *_decription = NULL,
+            const char *_comment = NULL,
+            const Reflection *_reflection = NULL
+    ) :
+        BaseField(_id, TYPE_COMPOSITE_ARRAY, _name, _decription, _comment, _offset),
+        reflection(_reflection),
+        typeName(_typeName),
+        size(_size)
+    {}
+
+
+    CompositeArrayField (
+            int _id,
+            int _offset,
+            const ReflectionNaming &_nameing,
+            const char *_typeName,
+            int _size,
+            const Reflection *_reflection = NULL
+    ) :
+        BaseField(_id, TYPE_COMPOSITE_ARRAY, _nameing, _offset),
+        reflection(_reflection),
+        typeName(_typeName),
+        size(_size)
+    {}
+
+#ifdef REFLECTION_WITH_VIRTUAL_SUPPORT
+    /**
+     * Make a bit-by-bit clone
+     **/
+    virtual BaseField* clone() const
+    {
+        return new CompositeArrayField(*this);
+    }
+#endif
+
+};
+
+
 /*TODO: This is bad - redo this*/
 //typedef SimpleScalarField<corecvs::Vector3dd> Vector3ddField;
 //typedef SimpleScalarField<corecvs::Vector2dd> Vector2ddField;
@@ -617,11 +671,16 @@ public:
 
 };
 
+
 /**
  * Now traits that allow getting reflection from basic type
  **/
 template<typename InputType>
 struct ReflectionHelper {  typedef CompositeField Type; };
+
+
+/*template<typename InputType>
+struct ReflectionHelper {  typedef CompositeField Type; };*/
 
 template<> struct ReflectionHelper<int>         { typedef IntField       Type; };
 template<> struct ReflectionHelper<double>      { typedef DoubleField    Type; };

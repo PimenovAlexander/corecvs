@@ -8,17 +8,27 @@
 
 # ------------------------------------------
 
-BUILD_CFG_SFX = ""
+BUILD_CFG_SFX = ""                                  # debug and release libs/exes will be overwritten on !win32-msvc* config as we use one output folder
 build_pass:CONFIG(debug, debug|release) {
-                DEFINES +=  DEBUG
-    win32-msvc*:DEFINES += _DEBUG                   # for msvc such a define is commonly used
-    BUILD_CFG_NAME = debug
-
-   #win32:       BUILD_CFG_SFX = "d"                # append suffix to the target only for win32 config for a while...
+                 DEFINES +=  DEBUG
+    win32-msvc*: DEFINES += _DEBUG                  # for msvc such a define is commonly used
     win32-msvc*: BUILD_CFG_SFX = "d"                # only for msvc as QtCreator doesn't understand the app with suffix
+    win32-msvc* {
+        BUILD_CFG_NAME = /debug
+    } else:win32 {
+        BUILD_CFG_NAME = /debug-mg
+    } else {
+        BUILD_CFG_NAME = ""                         # debug and release objs will be overwritten on !win32 config!
+    }
 }
 build_pass:CONFIG(release, debug|release) {
-    BUILD_CFG_NAME = release
+    win32-msvc* {
+        BUILD_CFG_NAME = /release
+    } else:win32 {
+        BUILD_CFG_NAME = /release-mg
+    } else {
+        BUILD_CFG_NAME = ""                         # debug and release objs will be overwritten on !win32 config!
+    }
 }
 
 trace {
@@ -147,11 +157,12 @@ gcc48_toolchain {
      QMAKE_CXXFLAGS_RELEASE += -flto
      QMAKE_LFLAGS += -flto
   }
-  gcc_checker {
+}
+
+gcc_checker {
      QMAKE_CFLAGS += -fsanitize=address -fno-omit-frame-pointer
      QMAKE_CXXFLAGS += -fsanitize=address -fno-omit-frame-pointer
      QMAKE_LFLAGS += -fsanitize=address -fno-omit-frame-pointer
-  }
 }
 
 
@@ -262,20 +273,20 @@ build_pass :                          # must clean only for the concrete configu
     contains(TARGET, directShow) {
         QMAKE_DISTCLEAN += Makefile.directShow*
     }
-    contains(TARGET, core) {
+    contains(TARGET, cvs_core) {
         QMAKE_DISTCLEAN += Makefile.core*
     }
-    contains(TARGET, utils) {
+    contains(TARGET, cvs_utils) {
         QMAKE_DISTCLEAN += Makefile.utils*
     }
     contains(TARGET, recorder) {
         QMAKE_DISTCLEAN += Makefile.recorder*
     }
-    contains(TARGET, opencl) {
+    contains(TARGET, test_opencl) {
         QMAKE_DISTCLEAN += Makefile.opencl*
     }
     contains(OBJ_TESTS_DIR, tests) {        # TARGET doesn't work as it has a name of each test!
-       #QMAKE_DISTCLEAN += Makefile*        # doesn't work as it tries to delete Makefile.unitTests.Debug/Release that're really used on distclean cmd!
+       #QMAKE_DISTCLEAN += Makefile*        # doesn't work as it tries to delete Makefile.unitTests.Debug/Release that are really used on distclean cmd!
         QMAKE_DISTCLEAN += Makefile Makefile.Debug Makefile.Release     # these files are generated indeed!
     }
 }
@@ -359,9 +370,9 @@ with_tbb:!contains(DEFINES, WITH_TBB) {
             }
             INCLUDEPATH += $(TBB_PATH)/include
             LIBS        += -L"$$TBB_LIBDIR" -ltbb
-            contains(TARGET, core): !build_pass: message(Using <$$TBB_LIBDIR>)
+            !build_pass: contains(TARGET, cvs_core): message(Using <$$TBB_LIBDIR>)
         } else {
-           !build_pass:message(TBB not found. Please set TBB_PATH system variable to a root folder of TBB)
+           !build_pass: message(TBB not found. Please set TBB_PATH system variable to a root folder of TBB)
         }
     } else:macx {
         #message (Using TBB at $$TBB_PATH)
@@ -378,6 +389,7 @@ with_tbb:!contains(DEFINES, WITH_TBB) {
    }
 }
 
+
 # More static analysis warnings
 # QMAKE_CXXFLAGS += -Wextra
 # QMAKE_CXXFLAGS += -Woverloaded-virtual
@@ -391,4 +403,3 @@ with_tbb:!contains(DEFINES, WITH_TBB) {
 # Workaround for -fPIC bug
 QMAKE_CFLAGS_STATIC_LIB=
 QMAKE_CXXFLAGS_STATIC_LIB=
-

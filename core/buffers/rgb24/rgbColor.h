@@ -14,7 +14,16 @@
 #include "vector3d.h"
 #include "mathUtils.h"
 
+#include "generated/rgbColorParameters.h"
+
 namespace corecvs {
+/**
+ * \file rgbColor.h
+ * \brief a header for rgbColor.c
+ *
+ * \date Apr 19, 2011
+ * \author alexander
+ */
 /**
  *   I use inheritance because no new data members will be added
  **/
@@ -54,6 +63,15 @@ public:
         this->b() = _b;
         this->a() = 0;
     }
+
+    RGBColor(const RgbColorParameters &color)
+    {
+        this->r() = color.r();
+        this->g() = color.g();
+        this->b() = color.b();
+        this->a() = 0;
+    }
+
 
     RGBColor()
     {
@@ -268,6 +286,18 @@ public:
         int r =  ((298 * c           + 409 * e + 128) >> 8);
         int g =  ((298 * c - 100 * d - 208 * e + 128) >> 8);
         int b =  ((298 * c + 516 * d           + 128) >> 8);
+
+/*        int r =  ((298 * c           + 409 * e + 128) / 256);
+        int g =  ((298 * c - 100 * d - 208 * e + 128) / 256);
+        int b =  ((298 * c + 516 * d           + 128) / 256);*/
+
+
+        if (r < 0) r = 0;
+        if (g < 0) g = 0;
+        if (b < 0) b = 0;
+        if (r > 255) r = 255;
+        if (g > 255) g = 255;
+        if (b > 255) b = 255;
 
         return RGBColor(r,g,b);
     }

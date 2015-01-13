@@ -90,7 +90,7 @@ public slots:
 public:
     Ui_CloudViewDialogClass mUi;
 
-    enum SceneId{
+    enum SceneId {
         MAIN_SCENE,
         ADDITIONAL_SCENE,
         CAMERA_PAIR,
@@ -103,6 +103,11 @@ public:
         CLUSTER_ZONE,
         CLUSTER_SWARM,
         HEAD_SEARCH_ZONE,
+
+        HAND_1,
+        HAND_2,
+        HAND_FIRST = HAND_1,
+        HAND_LAST  = HAND_2,
         /* Should be the last one*/
         SCENE_NUMBER
     };

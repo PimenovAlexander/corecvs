@@ -111,6 +111,8 @@ void ConfigLoader::loadClasses(QDomDocument const &config)
         QString uibase = classElement.attribute("uibase");
         result->uiBaseClass = toCString(uibase);
 
+        qDebug() << "Class" << result->name.name << " (" << i << "/" << classes.length() << ")";
+
         QDomNodeList fields = classElement.elementsByTagName("field");
         for (unsigned j = 0; j < fields.length(); j++)
         {
@@ -120,7 +122,7 @@ void ConfigLoader::loadClasses(QDomDocument const &config)
             QDomAttr typeAttribute = fieldElement.attributeNode("type");
             QString type = typeAttribute.value();
 
-//            qDebug() << "Field" << fieldNameing.name << " type " << type;
+            qDebug() << "  Field" << fieldNameing.name << " type " << type;
 
             QString defaultValue = fieldElement.attribute("defaultValue");
             QString minValue     = fieldElement.attribute("min");
@@ -185,7 +187,14 @@ void ConfigLoader::loadClasses(QDomDocument const &config)
 
                 if (reflection) // is it a field with the type of some other class?
                 {
-                    field = new CompositeFieldGen(fieldNameing, toCString(type), reflection);
+                    QDomAttr typeAttribute = fieldElement.attributeNode("size");
+                    int size = typeAttribute.value().toInt();
+
+                    if (size <= 0) {
+                        field = new CompositeFieldGen(fieldNameing, toCString(type), reflection);
+                    } else {
+                        field = new CompositeArrayFieldGen(fieldNameing, toCString(type), size, reflection);
+                    }
                 }
                 else if (enumRef) // then it should be a enum
                 {

@@ -17,6 +17,11 @@ public:
     void visit(typename FieldReflectionType::CPPType &field, const FieldReflectionType *fieldDescriptor);*/
 
     template <typename inputType, typename reflectionType>
+        void visit(std::vector<inputType> &field, const reflectionType * /*fieldDescriptor*/)
+    {
+    }
+
+    template <typename inputType, typename reflectionType>
         void visit(inputType &field, const reflectionType * /*fieldDescriptor*/)
     {
         field.accept(*this);

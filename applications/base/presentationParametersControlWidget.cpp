@@ -20,11 +20,9 @@ PresentationParametersControlWidget::PresentationParametersControlWidget(QWidget
 {
     mUi->setupUi(this);
 
-    QObject::connect(mUi->leftFrameButton, SIGNAL(clicked(bool)), this, SIGNAL(paramsChanged()));
-    QObject::connect(mUi->rightFrameButton, SIGNAL(clicked(bool)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->outputComboBox, SIGNAL(currentIndexChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->stereoComboBox, SIGNAL(currentIndexChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->flowComboBox, SIGNAL(currentIndexChanged(int)), this, SIGNAL(paramsChanged()));
-    QObject::connect(mUi->outputComboBox, SIGNAL(currentIndexChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->showClustersCheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->showHistogramCheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->autoUpdateHistogramCheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
@@ -65,11 +63,9 @@ PresentationParameters *PresentationParametersControlWidget::createParameters() 
 
 
     PresentationParameters *result = new PresentationParameters(
-          mUi->leftFrameButton->isChecked()
-        , mUi->rightFrameButton->isChecked()
+          static_cast<OutputStyle::OutputStyle>(mUi->outputComboBox->currentIndex())
         , static_cast<StereoStyle::StereoStyle>(mUi->stereoComboBox->currentIndex())
         , static_cast<FlowStyle::FlowStyle>(mUi->flowComboBox->currentIndex())
-        , static_cast<OutputStyle::OutputStyle>(mUi->outputComboBox->currentIndex())
         , mUi->showClustersCheckBox->isChecked()
         , mUi->showHistogramCheckBox->isChecked()
         , mUi->autoUpdateHistogramCheckBox->isChecked()
@@ -85,11 +81,9 @@ void PresentationParametersControlWidget::setParameters(const PresentationParame
 {
     // Block signals to send them all at once
     bool wasBlocked = blockSignals(true);
-    mUi->leftFrameButton->setChecked(input.leftFrame());
-    mUi->rightFrameButton->setChecked(input.rightFrame());
+    mUi->outputComboBox->setCurrentIndex(input.output());
     mUi->stereoComboBox->setCurrentIndex(input.stereo());
     mUi->flowComboBox->setCurrentIndex(input.flow());
-    mUi->outputComboBox->setCurrentIndex(input.output());
     mUi->showClustersCheckBox->setChecked(input.showClusters());
     mUi->showHistogramCheckBox->setChecked(input.showHistogram());
     mUi->autoUpdateHistogramCheckBox->setChecked(input.autoUpdateHistogram());

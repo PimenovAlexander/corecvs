@@ -2,7 +2,7 @@
 #include <QtCore/QObject>
 
 /// When this limit is hit, memoryOverflow() signal is thrown
-const double upperMemoryUsageLimit = 800.0; // in Mb
+const double upperMemoryUsageLimit = 1400.0; // in Mb
 
 /// Class that gets memory usage info from OS and checks if it is within allowed range or not
 class MemoryUsageCalculator : public QObject

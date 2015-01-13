@@ -55,6 +55,8 @@ QString BaseGenerator::getCppTypeForType(const BaseField *field)
             return QString(static_cast<const PointerField*>(field)->targetClass) + " *";
         case BaseField::TYPE_COMPOSITE:
             return toCamelCase(static_cast<const CompositeField *>(field)->typeName, true);
+        case BaseField::TYPE_COMPOSITE_ARRAY:
+            return QString("std::vector<") + toCamelCase(static_cast<const CompositeField *>(field)->typeName, true) + ">";
         default:
             return "/* Something is not supported by generator */";
     }
@@ -128,6 +130,12 @@ QString BaseGenerator::getDefaultValue(const BaseField *field)
             const Reflection *referent = cfield->reflection;
             return toCamelCase(referent->name.name, true) + "()";
         }
+        case BaseField::TYPE_COMPOSITE_ARRAY:
+        {
+            const CompositeArrayField *cafield = static_cast<const CompositeArrayField *>(field);
+            const Reflection *referent = cafield->reflection;
+            return QString("std::vector<") + toCamelCase(referent->name.name, true) + ">()";
+        }
         default:
             return "/* Something is not supported by generator */";
     }
@@ -153,6 +161,8 @@ QString BaseGenerator::getFieldRefTypeForType(BaseField::FieldType type)
             return "PointerField";
         case BaseField::TYPE_COMPOSITE:
             return "CompositeField";
+        case BaseField::TYPE_COMPOSITE_ARRAY:
+             return "CompositeArrayField";
         default:
             return "/* Something is not supported by generator */";
     }

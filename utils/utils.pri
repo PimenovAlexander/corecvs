@@ -29,6 +29,10 @@ UTILS_INCLUDEPATH = \
     $$UTILSDIR/framesources/directShow \    
     $$UTILSDIR/framesources/decoders \    
     $$UTILSDIR/framesources/v4l2 \
+    $$UTILSDIR/framesources/syncCam \
+    $$UTILSDIR/framesources/file \
+    $$UTILSDIR/framesources/avcodec \
+    $$UTILSDIR/framesources/opencv \
     $$UTILSDIR/processor \
     $$UTILSDIR/rectifier \
 #   $$UTILSDIR/serializer \     # obsolete?
@@ -72,7 +76,7 @@ contains(TARGET, cvs_utils) {
 DESTDIR = $$UTILS_BINDIR
 
 
-#CONFIG += with_opengl                           # always include here OpenGL dependent modules as utils's and related projects need it
+CONFIG += with_opengl                           # always include here OpenGL dependent modules as utils's and related projects need it
 with_opengl {
     QT += opengl                                # this must be defined for utils's and all related sources
 
@@ -89,7 +93,6 @@ with_opengl {
     with_openglext {
         DEFINES += WITH_OPENGLEXT
     } 
-
 }
 
 with_ueye {
@@ -128,6 +131,45 @@ with_opencv {                                       # all this stuff was extract
 with_directshow {
     DIRECT_SHOW_WRAPPER_DIR = $$UTILSDIR/../wrappers/directShow
     include($$DIRECT_SHOW_WRAPPER_DIR/directShowLibs.pri)
+}
+
+
+
+with_avcodec {
+    !build_pass: message(Switching on avcodec support)
+
+    DEFINES += WITH_AVCODEC
+    LIBS    += -lavutil -lavformat -lavcodec -lz -lavutil -lm
+}
+
+with_synccam {
+    win32: LIBS += -L$$PWD/../../../../SyncCamera/library/lib/x86/ -lCyAPI
+
+    INCLUDEPATH += $$PWD/../../../../SyncCamera/library/inc
+    DEPENDPATH += $$PWD/../../../../SyncCamera/library/inc
+
+    win32: PRE_TARGETDEPS += $$PWD/../../../../SyncCamera/library/lib/x86/CyAPI.lib
+
+
+    win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../SyncCamera/driver/USBSyncCam2/release/ -lUSBSyncCam2
+    else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../SyncCamera/driver/USBSyncCam2/debug/ -lUSBSyncCam2
+    #else:unix:!macx: LIBS += -L$$PWD/../../../../SyncCamera/driver/USBSyncCam2/ -lUSBSyncCam2
+
+    INCLUDEPATH += $$PWD/../../../../SyncCamera/driver/USBSyncCam2
+    DEPENDPATH += $$PWD/../../../../SyncCamera/driver/USBSyncCam2
+
+    win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../../SyncCamera/driver/USBSyncCam2/release/USBSyncCam2.lib
+    else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../../SyncCamera/driver/USBSyncCam2/debug/USBSyncCam2.lib
+
+
+    #unix:!macx: LIBS += -L$$PWD/../../../../Cypress/cyusb_linux_1.0.3/lib/ -lcyusb
+
+    #INCLUDEPATH += $$PWD/../../../../Cypress/cyusb_linux_1.0.3/include
+    #DEPENDPATH += $$PWD/../../../../Cypress/cyusb_linux_1.0.3/include
+
+    win32: LIBS += -lSetupAPI
+    #win32: LIBS += -lUser32
+
 }
 
 
@@ -173,3 +215,6 @@ win32 {
 
     QMAKE_CLEAN += "$$MOC_DIR/mocinclude.tmp"       # it doesn't killed some-why...
 }
+
+
+

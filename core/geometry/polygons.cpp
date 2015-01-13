@@ -57,7 +57,7 @@ bool Poligon::clipRay(const Ray2d &/*ray*/, double &/*t1*/, double &/*t2*/)
         bool enter = sign > 0;
     }
 #endif
-
+    return true;
 }
 
 

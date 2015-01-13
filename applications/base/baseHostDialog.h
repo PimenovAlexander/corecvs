@@ -264,7 +264,7 @@ protected:
     ImageCaptureInterface *mCamera;
 
     /*TODO: Rename this */
-    CapSettingsDialog *mCapSettings;
+    CapSettingsDialog mCapSettings;
     Frames *mFrames;
     StatisticsDialog mStatsDialog;
 

@@ -20,9 +20,11 @@ namespace Ui {
 class CapSettingsDialog : public QWidget, public SaveableWidget {
     Q_OBJECT
 public:
-    CapSettingsDialog(QWidget *parent = NULL, ImageCaptureInterface *pInterface = NULL, QString rootPath = "");
+    CapSettingsDialog(QWidget *parent = NULL, QString rootPath = "");
     ~CapSettingsDialog();
 
+
+    void setCaptureInterface(ImageCaptureInterface *pInterface = NULL);
     void clearDialog();
     void refreshDialog();
 

@@ -74,7 +74,7 @@ int V4L2CaptureInterface::setConfigurationString(string _devname)
         "  | - FPS %s/%s\n"
         "  | - Size [%sx%s]\n"
         "  \\ - Compressing: %s\n"
-        "RGB decoding is %s",
+        "RGB decoding is %s\n",
         deviceStringPattern.cap(Device1Group) .toAscii().constData(),
         deviceStringPattern.cap(Device2Group) .toAscii().constData(),
         deviceStringPattern.cap(FpsNumGroup)  .toAscii().constData(),
@@ -123,7 +123,7 @@ int V4L2CaptureInterface::setConfigurationString(string _devname)
 V4L2CaptureInterface::FramePair V4L2CaptureInterface::getFrame()
 {
 
-    SYNC_PRINT(("V4L2CaptureInterface::getFrame(): called\n"));
+//    SYNC_PRINT(("V4L2CaptureInterface::getFrame(): called\n"));
     CaptureStatistics  stats;
 
     PreciseTimer start = PreciseTimer::currentTime();
@@ -155,7 +155,7 @@ V4L2CaptureInterface::FramePair V4L2CaptureInterface::getFrame()
 
     if (skippedCount == 0)
     {
-        SYNC_PRINT(("Warning: Requested same frames twice. Is this by design?\n"));
+        //SYNC_PRINT(("Warning: Requested same frames twice. Is this by design?\n"));
     }
 
     stats.framesSkipped = skippedCount > 0 ? skippedCount - 1 : 0;
@@ -198,8 +198,12 @@ V4L2CaptureInterface::FramePair V4L2CaptureInterface::getFrameRGB24()
         }
     }
 
-    result.bufferLeft  = result.rgbBufferLeft ->toG12Buffer(); // FIXME
-    result.bufferRight = result.rgbBufferRight->toG12Buffer();
+    if (result.rgbBufferLeft != NULL) {
+        result.bufferLeft  = result.rgbBufferLeft ->toG12Buffer(); // FIXME
+    }
+    if (result.rgbBufferRight != NULL) {
+        result.bufferRight = result.rgbBufferRight->toG12Buffer();
+    }
 
     if (currentFrame[Frames::LEFT_FRAME].isFilled)
         result.leftTimeStamp  = currentFrame[Frames::LEFT_FRAME].usecsTimeStamp();
@@ -209,7 +213,7 @@ V4L2CaptureInterface::FramePair V4L2CaptureInterface::getFrameRGB24()
 
     if (skippedCount == 0)
     {
-        SYNC_PRINT(("Warning: Requested same frames twice. Is this by design?\n"));
+   //     SYNC_PRINT(("Warning: Requested same frames twice. Is this by design?\n"));
     }
 
     stats.framesSkipped = skippedCount > 0 ? skippedCount - 1 : 0;
@@ -338,12 +342,12 @@ void V4L2CaptureInterface::decodeData(V4L2CameraDescriptor *camera, V4L2BufferDe
 {
     if (!buffer->isFilled)
     {
-        SYNC_PRINT(("V4L2CaptureInterface::decodeData(): Buffer is not filled. Returning empty\n"));
+    //    SYNC_PRINT(("V4L2CaptureInterface::decodeData(): Buffer is not filled. Returning empty\n"));
         *output = new G12Buffer(formatH, formatW);
         return;
     }
 
-    SYNC_PRINT(("V4L2CaptureInterface::decodeData(): Decoding buffer\n"));
+    //SYNC_PRINT(("V4L2CaptureInterface::decodeData(): Decoding buffer\n"));
 
     uint8_t *ptrL = (uint8_t*)(camera->buffers[buffer->index].start);
     switch(decoder)
@@ -366,7 +370,7 @@ void V4L2CaptureInterface::decodeData(V4L2CameraDescriptor *camera, V4L2BufferDe
             MjpegDecoderLazy lazyDecoder;
             *output = lazyDecoder.decode(ptrL);
             if (*output == NULL) {
-                SYNC_PRINT(("V4L2CaptureInterface::decodeData(): Decoded to buffer that is NULL\n"));
+//                SYNC_PRINT(("V4L2CaptureInterface::decodeData(): Decoded to buffer that is NULL\n"));
             }
         }
         break;
