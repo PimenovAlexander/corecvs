@@ -11,7 +11,6 @@
 
 #include "scene3D.h"
 #include "cloudViewDialog.h"
-#include "plyLoader.h"
 #include "generated/draw3dParameters.h"
 #include "draw3dParametersControlWidget.h"
 #include "draw3dCameraParametersControlWidget.h"

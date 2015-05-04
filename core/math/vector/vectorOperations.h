@@ -20,6 +20,10 @@
  * (&A[0]) + 1 = &A[1]
  * </pre>
  *
+ * This template class has 3 parameters
+ *    ReturnType  - The type that should be returned in all constructive functions
+ *    RealType    - The type that holds all the data needed for processing
+ *    ElementType - The element type
  *
  * TODO: Consider using size_t instead of int
  * TODO: Consider using iterator and function object
@@ -46,7 +50,7 @@ using std::cout;
 
 namespace corecvs {
 
-template<typename RealType, typename ElementType>
+template<typename RealType, typename ElementType, typename ReturnType = RealType>
 class VectorOperationsBase
 {
 public:
@@ -59,6 +63,14 @@ public:
 
     inline const RealType *realThis() const {
         return static_cast<const RealType *>(this);
+    }
+
+    inline ReturnType *returnThis() {
+        return static_cast<ReturnType *>(this);
+    }
+
+    inline const ReturnType *returnThis() const {
+        return static_cast<const ReturnType *>(this);
     }
 
 private:
@@ -77,7 +89,7 @@ private:
         return realThis()->size();
     }
 
-    inline RealType _createVector(int length) const {
+    inline ReturnType _createVector(int length) const {
         return realThis()->createVector(length);
     }
 
@@ -88,13 +100,13 @@ public:
      *
      *
      **/
-    inline RealType& operator =(const ElementType &x)
+    inline ReturnType& operator =(const ElementType &x)
     {
         for (int i = 0; i < _size(); i++)
             _at(i) = x;
-        return *(realThis());
+        return *(returnThis());
 
-    };
+    }
 
     /**
      * This function copies the vector data from the other vector
@@ -168,36 +180,36 @@ public:
      *    \return
      *        Reference to current vector
      **/
-    inline VectorOperationsBase& operator +=(const RealType& V)
+    inline ReturnType& operator +=(const RealType& V)
     {
         int length = _size() < V.size() ? _size() : V.size();
 
         for (int i = 0; i < length; i++)
             _at(i) += V.at(i);
-        return *this;
+        return *returnThis();
     }
 
-    inline VectorOperationsBase& operator -=(const RealType& V)
+    inline ReturnType& operator -=(const RealType& V)
     {
         int length = _size() < V.size() ? _size() : V.size();
 
         for (int i = 0; i < length; i++)
             _at(i) -= V.at(i);
-        return *this;
+        return *returnThis();
     }
 
-    inline VectorOperationsBase& operator *=(const ElementType &c)
+    inline ReturnType& operator *=(const ElementType &c)
     {
         for (int i = 0; i < _size(); i++)
             _at(i) *= c;
-        return *this;
+        return *returnThis();
     }
 
-    inline VectorOperationsBase& operator /=(const ElementType &c)
+    inline ReturnType& operator /=(const ElementType &c)
     {
         for (int i = 0; i < _size(); i++)
             _at(i) /= c;
-        return *this;
+        return *returnThis();
     }
 
     /**
@@ -209,10 +221,11 @@ public:
      * \param V2
      *
      **/
-    friend inline RealType operator +(const VectorOperationsBase &V1, const VectorOperationsBase &V2)
+    //friend inline RealType operator +(const VectorOperationsBase &V1, const VectorOperationsBase &V2)
+    friend inline ReturnType operator +(const RealType &V1, const RealType &V2)
     {
         int length = V1._size() < V2._size() ? V1._size() : V2._size();
-        RealType result = V1._createVector(length);
+        ReturnType result = V1._createVector(length);
 
         for (int i = 0; i < length; i++)
             result.at(i) = V1._at(i) + V2._at(i);
@@ -226,10 +239,14 @@ public:
      * \param V1
      * \param V2
      **/
-    friend inline RealType operator -(const VectorOperationsBase &V1, const VectorOperationsBase &V2)
+    //friend inline RealType operator -(const VectorOperationsBase &V1, const VectorOperationsBase &V2)
+    friend inline ReturnType operator -(const RealType &V1, const RealType &V2)
     {
+        //cout << "Subtract v1: " << V1 << std::endl;
+        //cout << "Subtract v2: " << V2 << std::endl;
+
         int length = V1._size() < V2._size() ? V1._size() : V2._size();
-        RealType result = V1._createVector(length);
+        ReturnType result = V1._createVector(length);
 
         for (int i = 0; i < length; i++)
             result.at(i) = V1._at(i) - V2._at(i);
@@ -243,7 +260,8 @@ public:
      * \param V1
      * \param V2
      **/
-    friend inline RealType operator *(const VectorOperationsBase &V1, const VectorOperationsBase &V2)
+    //friend inline RealType operator *(const VectorOperationsBase &V1, const VectorOperationsBase &V2)
+    friend inline ReturnType operator *(const RealType &V1, const RealType &V2)
     {
         int length = V1._size() < V2._size() ? V1._size() : V2._size();
         RealType result = V1._createVector(length);
@@ -259,11 +277,12 @@ public:
      *
      * \param V1
      * \param V2
-     **/
-    friend inline RealType operator /(const VectorOperationsBase &V1, const VectorOperationsBase &V2)
+     **/    
+    //friend inline RealType operator /(const VectorOperationsBase &V1, const VectorOperationsBase &V2)
+    friend inline ReturnType operator /(const RealType &V1, const RealType &V2)
     {
         int length = V1._size() < V2._size() ? V1._size() : V2._size();
-        RealType result = V1._createVector(length);
+        ReturnType result = V1._createVector(length);
 
         for (int i = 0; i < length; i++)
             result.at(i) = V1._at(i) / V2._at(i);
@@ -279,16 +298,18 @@ public:
      * \param c
      * \param V
      **/
-    friend inline RealType operator *(const ElementType &c, const VectorOperationsBase &V)
+    //friend inline RealType operator *(const ElementType &c, const VectorOperationsBase &V)
+    friend inline ReturnType operator *(const ElementType &c, const RealType &V)
     {
-        RealType result = V._createVector(V._size());
+        ReturnType result = V._createVector(V._size());
 
         for (int i = 0; i < V._size(); i++)
             result.at(i) = V._at(i) * c;
         return result;
     }
 
-    friend inline RealType operator *(const VectorOperationsBase &V, const ElementType &c)
+    // friend inline RealType operator *(const VectorOperationsBase &V, const ElementType &c)
+    friend inline ReturnType operator *(const RealType &V, const ElementType &c)
     {
         return operator *(c, V);
 
@@ -301,9 +322,10 @@ public:
      * \param c
      * \param V
      **/
-    friend inline RealType operator /(const VectorOperationsBase &V, const ElementType &c)
+    //friend inline RealType operator /(const VectorOperationsBase &V, const ElementType &c)
+    friend inline ReturnType operator /(const RealType &V, const ElementType &c)
     {
-        RealType result = V._createVector(V._size());
+        ReturnType result = V._createVector(V._size());
 
         for (int i = 0; i < V._size(); i++)
             result.at(i) = V._at(i) / c;
@@ -322,7 +344,8 @@ public:
      *
      *
      **/
-    friend inline ElementType operator &(const VectorOperationsBase &V1, const VectorOperationsBase &V2)
+    //friend inline ElementType operator &(const VectorOperationsBase &V1, const VectorOperationsBase &V2)
+    friend inline ElementType operator &(const RealType &V1, const RealType &V2)
     {
         int length = V1._size() < V2._size() ? V1._size() : V2._size();
         ElementType result(0);
@@ -395,8 +418,24 @@ public:
     inline ElementType operator !() const
     {
         return l2Metric();
-    };
+    }
 
+    /**
+     * The normalized dot product of two vectors. This a sort of correlation
+     *
+     * \f[cos(\alpha) = { \sum_{i=0}^n {V1_i V2_i} \over \sqrt{\sum_{i=0}^n {V1_i^2}} \sqrt{\sum_{i=0}^n {V2_i^2}}}\f]
+     *
+     **/
+    ElementType cosineTo(const RealType &other) const
+    {
+        double thisLength  = !(*this);
+        double otherLength = !other;
+
+        if (thisLength == ElementType(0) || otherLength == ElementType(0)) {
+            return ElementType(0);
+        }
+        return ((*realThis()) & other) / (thisLength * otherLength);
+    }
 
     /**
      * Normalize a vector length to 1 without changing the direction
@@ -417,11 +456,11 @@ public:
      * \f[W = V \over {\|V_i\|} \f]
      *
      **/
-    inline RealType normalised() const
+    inline ReturnType normalised() const
     {
         ElementType length = this->l2Metric();
         if (length != ElementType(0))
-            return (*this / length);
+            return (*returnThis() / length);
         else {
             return this->cloneVector();
         }
@@ -430,9 +469,9 @@ public:
     /**
      * Return copy of vector
      **/
-    inline RealType cloneVector() const
+    inline ReturnType cloneVector() const
     {
-        RealType result = this->_createVector(this->_size());
+        ReturnType result = this->_createVector(this->_size());
         for (int i = 0; i < this->_size(); i++)
             result.at(i) = this->_at(i);
         return result;
@@ -478,13 +517,28 @@ public:
      * \f[V := -V\f]
      *
      **/
-    RealType inline operator -() const
+    ReturnType inline operator -() const
     {
-        RealType result = _createVector(_size());
+        ReturnType result = _createVector(_size());
         for (int i = 0; i < _size(); i++)
             result.at(i) = -_at(i);
         return result;
     }
+
+    /**
+     * Per-elementSqrt
+     *
+     * \f[W_i = sqrt(V_i) \f]
+     *
+     **/
+    ReturnType inline perElementSqrt() const
+    {
+        RealType result = _createVector(_size());
+        for (int i = 0; i < _size(); i++)
+            result.at(i) = (ElementType)sqrt((double)_at(i));
+        return result;
+    }
+
 
     /**
      *   Check if current vector is inside the n dimensional cube
@@ -495,7 +549,8 @@ public:
      *   NB - both low and high limits are included.
      *
      **/
-    bool isInHypercube(const VectorOperationsBase &low, const VectorOperationsBase &high) const
+    //bool isInHypercube(const VectorOperationsBase &low, const VectorOperationsBase &high) const
+    bool isInHypercube(const RealType &low, const RealType &high) const
     {
         for (int i = 0; i < _size(); i++)
         {
@@ -507,7 +562,8 @@ public:
     }
 
 
-    void mapToHypercube(const VectorOperationsBase &low, const VectorOperationsBase &high)
+    //void mapToHypercube(const VectorOperationsBase &low, const VectorOperationsBase &high)
+    void mapToHypercube(const RealType &low, const RealType &high)
     {
         for (int i = 0; i < _size(); i++)
         {
@@ -516,7 +572,8 @@ public:
         }
     }
 
-    friend ostream & operator <<(ostream &out, const VectorOperationsBase &vector)
+    //friend ostream & operator <<(ostream &out, const VectorOperationsBase &vector)
+    friend ostream & operator <<(ostream &out, const RealType &vector)
     {
         out << "[";
         for (int i = 0; i < vector._size(); i++)
@@ -525,7 +582,8 @@ public:
         return out;
     }
 
-    friend istream & operator >>(istream &in, VectorOperationsBase &vector)
+    // friend istream & operator >>(istream &in, VectorOperationsBase &vector)
+    friend istream & operator >>(istream &in, RealType &vector)
     {
         for (int i = 0; i < vector._size(); i++)
             in >> vector._at(i);
@@ -534,7 +592,7 @@ public:
 
     void print() const
     {
-        cout << *this;
+        cout << *realThis();
     }
 
 

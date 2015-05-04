@@ -1,6 +1,6 @@
 #pragma once
 /**
- * \file FileCapture.h
+ * \file fileCapture.h
  * \brief Add Comment Here
  *
  * \date Apr 9, 2010
@@ -27,30 +27,7 @@ public:
 
     virtual CapErrorCode initCapture();
     virtual CapErrorCode startCapture();
-//  virtual void freeFrame(G12Buffer* buffer);
 
     virtual ~FileCaptureInterface();
 };
 
-/***************************************************************************************/
-
-class FilePreciseCapture : public AbstractFileCapture
-{
-public:
-    FilePreciseCapture(QString const &params, bool isVerbose = true);
-
-    virtual FramePair getFrame();
-
-    void increaseCurrentCount() { mCurrentCount++; }
-
-private:
-
-    class FileSpinThread : public AbstractFileCaptureSpinThread
-    {
-    public:
-        FileSpinThread(AbstractFileCapture *pInterface, int delay, ImageCaptureInterface::FramePair &framePair);
-        virtual bool grabFramePair();
-    };
-
-    int mCurrentCount;
-};

@@ -51,17 +51,25 @@ void MainWindow::connectActions()
 
     connect(mUi->action_OpenInput,         SIGNAL(triggered()), mMainDialog, SLOT(showInputSelectorDialog()));
     connect(mUi->actionStatistics,         SIGNAL(triggered()), mMainDialog, SLOT(showStatistics()));
-    connect(mUi->actionHistogram,          SIGNAL(triggered()), mMainDialog, SLOT(showHistogram()));
-    connect(mUi->action3DHistogram,        SIGNAL(triggered()), mMainDialog, SLOT(show3DHistogram()));
+//    connect(mUi->actionHistogram,          SIGNAL(triggered()), mMainDialog, SLOT(showHistogram()));
+//    connect(mUi->action3DHistogram,        SIGNAL(triggered()), mMainDialog, SLOT(show3DHistogram()));
     connect(mUi->actionCameraSettings,     SIGNAL(triggered()), mMainDialog, SLOT(showCaptureSettings()));
-    connect(mUi->actionRectify,            SIGNAL(triggered()), mMainDialog, SLOT(showRectificationDialog()));
+//    connect(mUi->actionRectify,            SIGNAL(triggered()), mMainDialog, SLOT(showRectificationDialog()));
     connect(mUi->actionAbout,              SIGNAL(triggered()), mMainDialog, SLOT(showAboutDialog()));
-    connect(mUi->actionDO,                 SIGNAL(triggered()), mMainDialog, SLOT(doRectify()));
-    connect(mUi->actionResetRectification, SIGNAL(triggered()), mMainDialog, SLOT(resetRectification()));
+//    connect(mUi->actionDO,                 SIGNAL(triggered()), mMainDialog, SLOT(doRectify()));
+//    connect(mUi->actionResetRectification, SIGNAL(triggered()), mMainDialog, SLOT(resetRectification()));
+
     connect(mUi->actionSaveParameters,     SIGNAL(triggered()), mMainDialog, SLOT(doSaveParams()));
     connect(mUi->actionLoadParameters,     SIGNAL(triggered()), mMainDialog, SLOT(doLoadParams()));
+
+    connect(mUi->actionForceSaveDatabase,  SIGNAL(triggered()), mMainDialog, SLOT(doSaveDB()));
+    connect(mUi->actionForceLoadDatabase,  SIGNAL(triggered()), mMainDialog, SLOT(doLoadDB()));
+
+    connect(mUi->actionSecurityWorkbench,  SIGNAL(triggered()), mMainDialog, SLOT(showSecurityWorkbench()));
+
     connect(mUi->actionCorrectDistortion,  SIGNAL(triggered()), mMainDialog, SLOT(showDistortionCorrectorDialog()));
     connect(mUi->actionCameraCalculator,   SIGNAL(triggered()), mMainDialog, SLOT(showCameraCalculatorDialog()));
+    connect(mUi->actionAnalysisRecords,    SIGNAL(triggered()), mMainDialog, SLOT(showAnalysisRecordsWindow()));
 
     connect(mUi->actionAbout_Qt,           SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 

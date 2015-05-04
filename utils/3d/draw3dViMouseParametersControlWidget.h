@@ -1,5 +1,5 @@
 #pragma once
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "generated/draw3dViMouseParameters.h"
 #include "ui_draw3dViMouseParametersControlWidget.h"
 #include "parametersControlWidgetBase.h"

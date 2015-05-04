@@ -2,7 +2,7 @@
 #define TESTBEDMAINWINDOW_H
 
 #include <deque>
-#include <QtGui/QMainWindow>
+#include <QMainWindow>
 #include "ui_testbedMainWindow.h"
 #include "advancedImageWidget.h"
 #include "rgb24Buffer.h"

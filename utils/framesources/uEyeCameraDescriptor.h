@@ -7,7 +7,7 @@
 
 #include <uEye.h>
 
-#include <QtGui/QImage>
+#include <QImage>
 
 #include "global.h"
 

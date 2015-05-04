@@ -249,8 +249,8 @@ void StereoAligner::getAlignmentTransformation(
     printf("\n");
 #endif
 
-    Vector2dd w1_2d = (Vector2dd) w1;
-    Vector2dd w2_2d = (Vector2dd) w2;
+    Vector2dd w1_2d = w1.project();
+    Vector2dd w2_2d = w2.project();
 
 #ifdef TRACE
     printf("Normalized correctives:\n");

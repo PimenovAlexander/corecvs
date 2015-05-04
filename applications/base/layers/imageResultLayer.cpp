@@ -8,11 +8,28 @@
 #include "imageResultLayer.h"
 
 
+
+ImageResultLayer::ImageResultLayer(G8Buffer* image) :
+    ResultLayerBase(LAYER_CLASS_ID)
+  , mStyle(OutputStyle::RIGHT_FRAME)
+{
+    for (int id = 0; id < Frames::MAX_INPUTS_NUMBER; id++ )
+    {
+        mImages[id] = NULL;
+    }
+
+    if (image == NULL) {
+        qDebug("ImageResultLayer::ImageResultLayer( G12Buffer* NULL) : Called with null input");
+        return;
+    }
+
+    mImages[Frames::RIGHT_FRAME] = new G8Image(image);
+}
+
 ImageResultLayer::ImageResultLayer(
     G12Buffer* image
 ) : ResultLayerBase(LAYER_CLASS_ID)
-, mStyle(OutputStyle::STANDART_OUTPUT)
-, mShowLeftFrame(false)
+, mStyle(OutputStyle::RIGHT_FRAME)
 {
     for (int id = 0; id < Frames::MAX_INPUTS_NUMBER; id++ )
     {
@@ -30,8 +47,7 @@ ImageResultLayer::ImageResultLayer(
 ImageResultLayer::ImageResultLayer(
     RGB24Buffer* image
 ) : ResultLayerBase(LAYER_CLASS_ID)
-, mStyle(OutputStyle::STANDART_OUTPUT)
-, mShowLeftFrame(false)
+, mStyle(OutputStyle::RIGHT_FRAME)
 {
     for (int id = 0; id < Frames::MAX_INPUTS_NUMBER; id++ )
     {
@@ -83,8 +99,10 @@ void ImageResultLayer::drawImage (QImage *image)
             break;
         case OutputStyle::SIDEBYSIDE_STEREO:
             {
-                int lFrameId = mShowLeftFrame ? Frames::LEFT_FRAME  : Frames::RIGHT_FRAME;
-                int rFrameId = mShowLeftFrame ? Frames::RIGHT_FRAME : Frames::LEFT_FRAME;
+                //int lFrameId = mShowLeftFrame ? Frames::LEFT_FRAME  : Frames::RIGHT_FRAME;
+                //int rFrameId = mShowLeftFrame ? Frames::RIGHT_FRAME : Frames::LEFT_FRAME;
+                int lFrameId =  Frames::RIGHT_FRAME;
+                int rFrameId =  Frames::LEFT_FRAME;
 
                 if (mImages[lFrameId] != NULL)
                     painter.drawImage(QPoint(mImages[lFrameId]->width(),0), *(mImages[lFrameId]));
@@ -104,12 +122,15 @@ void ImageResultLayer::drawImage (QImage *image)
             }
             break;
 
-        case OutputStyle::STANDART_OUTPUT:
-            int selectedFrameId = mShowLeftFrame ? Frames::LEFT_FRAME : Frames::RIGHT_FRAME;
-            if (mImages[selectedFrameId] != NULL) {
-                painter.drawImage(QPoint(0,0), *(mImages[selectedFrameId]));
+        case OutputStyle::LEFT_FRAME:
+        case OutputStyle::RIGHT_FRAME:
+
+            Frames::FrameSourceId id = (mStyle == OutputStyle::LEFT_FRAME) ? Frames::LEFT_FRAME : Frames::RIGHT_FRAME;
+
+            if (mImages[id] != NULL) {
+                painter.drawImage(QPoint(0,0), *(mImages[id]));
             } else {
-                qDebug("ImageResultLayer::drawImage (): %d image is NULL", selectedFrameId);
+                qDebug("ImageResultLayer::drawImage (): %d (%s) image is NULL", id, Frames::getEnumName(id));
             }
             break;
     }

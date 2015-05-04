@@ -120,14 +120,12 @@ public:
         return tangentCross / (thisLength * otherLength);
     }
 
-    double cosineTo(const Vector2d &other) const
+    double azimuthTo(const Vector2d &other) const
     {
-        double thisLength  = !(*this);
-        double otherLength = !other;
+        double dot   = (*this) & other;
+        double cross = (*this) & other.rightNormal();
 
-        if (thisLength == 0 || otherLength == 0)
-          return 0;
-        return ((*this) & other) / (thisLength * otherLength);
+        return atan2(cross, dot);
     }
 
     /**

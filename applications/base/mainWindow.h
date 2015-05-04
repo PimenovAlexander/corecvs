@@ -2,7 +2,7 @@
 
 #include "baseHostDialog.h"
 
-#include <QtGui/QMainWindow>
+#include <QMainWindow>
 
 namespace Ui {
 class MainWindow;
@@ -26,14 +26,14 @@ public:
         startMini(_startMini),
         autoStop(_autoStop),
         frameToStop(_frameToStop)
-    { };
+    { }
 
     MainWindowParameters() :
         autoPlay(false),
         startMini(false),
         autoStop(false),
         frameToStop(0)
-    { };
+    { }
 
 };
 

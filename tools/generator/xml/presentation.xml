@@ -1,10 +1,10 @@
 <poco version="5.0">
 
   <enum name="Stereo Style">
-    <item name="dont show stereo"   id="0" comment="don't show stereo"/>
-    <item name="fast large dots"    id="1" comment="fast large dots"/>
-    <item name="fast dots"          id="2" comment="fast dots"/>
-    <item name="show lines stereo"  id="3" comment="show lines stereo"/>
+    <item name="dont show stereo"   id="0" comment="Style in which color coded disparity is not shown"/>
+    <item name="fast large dots"    id="1" comment="Fast mode for large color coded disparity dots"/>
+    <item name="fast dots"          id="2" comment="Fast mode for small color coded disparity dots"/>
+    <item name="show lines stereo"  id="3" comment="Show disparity as lines"/>
     <item name="show all stereo"    id="4" comment="show all stereo"/>
     <item name="show dots stereo"   id="5" comment="show dots stereo"/>
   </enum>
@@ -19,26 +19,27 @@
   </enum>
 
   <enum name="Output Style">
-    <item name="standart output"     id="0" comment="Standart output"/>
-    <item name="sidebyside stereo"   id="1" comment="Side-by-side stereo"/>
-    <item name="anaglyph RG"         id="2" comment="Red-Green Anaglyph"/>
-    <item name="anaglyph RC"         id="3" comment="Red-Cyan Anaglyph"/>
-    <item name="blend"               id="4" comment="Blend"/>
-    <item name="none"                id="5" comment="None"/>
+    <item name="right Frame"         id="0" comment="!right-cam.png! Frame from the right camera"/>    
+    <item name="left Frame"          id="1" comment="!left-cam.png! Frame from the  left camera"/>
+    <item name="sidebyside stereo"   id="2" comment="!2cam-active.png! Side-by-side images from right and left cameras"/>
+    <item name="anaglyph RG"         id="3" comment="!3d_glasses_rg.png! Red-Green Anaglyph view"/>
+    <item name="anaglyph RC"         id="4" comment="!3d_glasses_rc.png! Red-Cyan Anaglyph view"/>
+    <item name="blend"               id="5" comment="!2cam-blend.png! Blend two images"/>
+    <item name="none"                id="6" comment="None. Show black output"/>
   </enum>
 
   <class name="Presentation Parameters" description="Presentation parameters">
-    <field type="bool"         name="leftFrame"    defaultValue="false" widget="RadioButton"/>
-    <field type="bool"         name="rightFrame"   defaultValue="true"  widget="RadioButton"/>
-    <field type="Stereo Style" name="Stereo"/>
-    <field type="Flow Style"   name="Flow"/>
-    <field type="Output Style" name="Output"/>
-    <field type="bool"         name="showClusters"          defaultValue="true"/>
+    <comment>These parameters control the view of the output (and some of them also affect processing so be sure to backup if you plan to change them)</comment>
+    <field type="Output Style" name="Output" comment="View - views are more or less self-explenatory" />
+    <field type="Stereo Style" name="Stereo" comment="Way to draw overlay with disparity information" />
+    <field type="Flow Style"   name="Flow"   comment="Way to draw overlay with optical flow information" />
+    
+    <field type="bool"         name="showClusters"          defaultValue="false"/>
     <field type="bool"         name="showHistogram"         defaultValue="true"/>
     <field type="bool"         name="Auto Update Histogram" defaultValue="false"/>
     <field type="bool"         name="showAreaOfInterest"    defaultValue="true"/>
-    <field type="bool"         name="produce3D"             defaultValue="false"/>
-    <field type="bool"         name="produce6D"             defaultValue="false"/>
+    <field type="bool"         name="produce3D"             defaultValue="true"/>
+    <field type="bool"         name="produce6D"             defaultValue="false" advanced="true" />
     <field type="bool"         name="dump3D"                defaultValue="false" advanced="true" />
   </class>
 

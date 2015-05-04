@@ -21,14 +21,23 @@ class DecoupleYUYV
 {
 public:
     enum ImageCouplingType {
-        ANAGLYPH_RC       = 0,
-        SIDEBYSIDE_STEREO = 1,
-        ANAGLYPH_RC_X2    = 2,
-        ANAGLYPH_RC_FAST  = 3
+        ANAGLYPH_RC       , /**< Decodes two stereo images form Red/Cyan anaglyth */
+        SIDEBYSIDE_STEREO , /**< Decodes two stereo images form side by side buffer */
+        ANAGLYPH_RC_X2    , /**< Decodes two stereo images form Red/Cyan anaglyth with unrolled inner cylce (for profiling only)*/
+        ANAGLYPH_RC_FAST  , /**< Decodes two stereo images form Red/Cyan anaglyth with optional SSE optimisation */
+
+        SIDEBYSIDE_SYNCCAM_1  /**< First version SyncCam Linux version */
     };
 
 
-    static void decouple(unsigned formatH, unsigned formatW, uint8_t *ptr, ImageCouplingType coupling, ImageCaptureInterface::FramePair &result);
+    static void decouple                (unsigned formatH, unsigned formatW, uint8_t *ptr, ImageCouplingType coupling, ImageCaptureInterface::FramePair &result);
+
+    static void decoupleSideBySide      (unsigned formatH, unsigned formatW, uint8_t *ptr, ImageCaptureInterface::FramePair &result);
+    static void decoupleAnaglythUnrolled(unsigned formatH, unsigned formatW, uint8_t *ptr, ImageCaptureInterface::FramePair &result);
+    static void decoupleAnaglythSSE     (unsigned formatH, unsigned formatW, uint8_t *ptr, ImageCaptureInterface::FramePair &result, bool withSSE = true);
+
+    static void decoupleAnaglythSyncCam1(unsigned formatH, unsigned formatW, uint8_t *ptr, ImageCaptureInterface::FramePair &result);
+
 };
 
 } /* namespace corecvs */

@@ -1,4 +1,5 @@
 #include <QtGui/QWheelEvent>
+#include <QFileDialog>
 
 #include "testbedMainWindow.h"
 #include "advancedImageWidget.h"
@@ -208,7 +209,7 @@ public:
         return true;
      }
 
-     void mark(RGB24Buffer *buffer, int x, int y) {
+     void mark(RGB24Buffer */*buffer*/, int x, int y) {
          mMask->element(y,x) = 255;
      }
 

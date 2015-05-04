@@ -25,11 +25,32 @@ namespace corecvs {
 
 using namespace std;
 
+class PropertyListVectorContainer : public vector< pair <string, string> >
+{
+protected:
+    PropertyListVectorContainer::iterator find (string name)
+    {
+        PropertyListVectorContainer::iterator it;
+        for(it = begin(); it != end(); ++it)
+        {
+            if ((*it).first == name)
+            {
+                break;
+            }
+        }
+        return it;
+    }
 
+    void insert(pair <string, string> pair)
+    {
+        push_back(pair);
+    }
+};
 
-class PropertyList : public map<string, string>
+class PropertyList : public PropertyListVectorContainer
 {
 private:
+
 template<typename ValueType>
     ValueType getTypedProperty(string name, ValueType defaultValue)
     {

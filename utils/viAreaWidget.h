@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "ui_viAreaWidget.h"
 
 class ViAreaWidget : public QWidget

@@ -117,9 +117,11 @@ public:
         TYPE_VECTOR3DD,
 
         /* POINTER_TYPE */
-        TYPE_POINTER,
+        TYPE_POINTER,       
 
-        TYPE_COMPOSITE
+        TYPE_COMPOSITE,
+        TYPE_COMPOSITE_ARRAY,
+        TYPE_LAST
     };
 
     /**
@@ -430,6 +432,18 @@ public:
         return fields[fieldId]->name.comment;
     }
 
+    int idByName(const char *name)
+    {
+        for (int i = 0; i < fieldNumber(); i++)
+        {
+            if (strcmp(fields[i]->name.name, name) == 0)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
 /*    ~Reflection()
     {
 #ifndef REFLECTION_STATIC_ALLOCATION
@@ -491,6 +505,58 @@ public:
 
 };
 
+
+class CompositeArrayField : public BaseField
+{
+public:
+    const Reflection *reflection;
+    const char *typeName;
+    int size;
+
+    CompositeArrayField (
+            int _id,
+            int _offset,
+            const char *_name,
+            const char *_typeName,
+            int _size,
+            const char *_decription = NULL,
+            const char *_comment = NULL,
+            const Reflection *_reflection = NULL
+    ) :
+        BaseField(_id, TYPE_COMPOSITE_ARRAY, _name, _decription, _comment, _offset),
+        reflection(_reflection),
+        typeName(_typeName),
+        size(_size)
+    {}
+
+
+    CompositeArrayField (
+            int _id,
+            int _offset,
+            const ReflectionNaming &_nameing,
+            const char *_typeName,
+            int _size,
+            const Reflection *_reflection = NULL
+    ) :
+        BaseField(_id, TYPE_COMPOSITE_ARRAY, _nameing, _offset),
+        reflection(_reflection),
+        typeName(_typeName),
+        size(_size)
+    {}
+
+#ifdef REFLECTION_WITH_VIRTUAL_SUPPORT
+    /**
+     * Make a bit-by-bit clone
+     **/
+    virtual BaseField* clone() const
+    {
+        return new CompositeArrayField(*this);
+    }
+#endif
+
+};
+
+
 /*TODO: This is bad - redo this*/
 //typedef SimpleScalarField<corecvs::Vector3dd> Vector3ddField;
 //typedef SimpleScalarField<corecvs::Vector2dd> Vector2ddField;
@@ -505,8 +571,8 @@ public:
     EnumOption(
         int _id,
         const char *_name,
-        const char *_decription,
-        const char *_comment
+        const char *_decription = NULL,
+        const char *_comment = NULL
     ) :
         id(_id),
         name(_name, _decription, _comment)
@@ -529,6 +595,20 @@ public:
     int optionsNumber() const
     {
         return (int)options.size();
+    }
+
+    EnumReflection() {}
+
+    EnumReflection(int number, ...)
+    {
+        va_list marker;
+        va_start( marker, number );
+        for (int i = 0; i < number; i++)
+        {
+            const EnumOption *ref = va_arg( marker, const EnumOption *);
+            options.push_back(ref);
+        }
+        va_end( marker );
     }
 
 };
@@ -617,11 +697,16 @@ public:
 
 };
 
+
 /**
  * Now traits that allow getting reflection from basic type
  **/
 template<typename InputType>
 struct ReflectionHelper {  typedef CompositeField Type; };
+
+
+/*template<typename InputType>
+struct ReflectionHelper {  typedef CompositeField Type; };*/
 
 template<> struct ReflectionHelper<int>         { typedef IntField       Type; };
 template<> struct ReflectionHelper<double>      { typedef DoubleField    Type; };
@@ -680,6 +765,31 @@ public:
     {
         return fields()[fieldId]->name.comment;
     }
+};
+
+
+class DynamicObject {
+public:
+    Reflection *reflection;
+    void *rawObject;
+
+    DynamicObject() :
+        reflection(NULL),
+        rawObject(NULL)
+    {}
+
+    template<typename Object>
+    DynamicObject(Object *object):
+        reflection(BaseReflection<Object>::getReflection()),
+        rawObject((void *) object)
+    {}
+
+    template<typename Type>
+    Type *getField(int fieldId)
+    {
+        return (Type *)&(((uint8_t*)rawObject)[reflection->fields[fieldId]->offset]);
+    }
+
 };
 
 } //namespace corecvs

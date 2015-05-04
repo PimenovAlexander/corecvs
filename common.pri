@@ -65,11 +65,13 @@ with_sse4 {
     !win32-msvc* {
         QMAKE_CFLAGS   += -msse4.1
         QMAKE_CXXFLAGS += -msse4.1
-    } else !win32-msvc2008 {
-        QMAKE_CFLAGS   += /arch:SSE4.1
-        QMAKE_CXXFLAGS += /arch:SSE4.1
     } else {
-        DEFINES -= WITH_SSE4
+       !win32-msvc2008 {
+          QMAKE_CFLAGS   += /arch:SSE4.1
+          QMAKE_CXXFLAGS += /arch:SSE4.1
+        } else {
+          DEFINES -= WITH_SSE4
+        }
     }
 }
 

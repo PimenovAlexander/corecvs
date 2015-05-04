@@ -1,7 +1,7 @@
 #ifndef SHIFT3DWIDGET_H
 #define SHIFT3DWIDGET_H
 
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "ui_shift3dWidget.h"
 
 class Shift3dWidget : public QWidget

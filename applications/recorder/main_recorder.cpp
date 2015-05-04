@@ -10,7 +10,7 @@
 #include <iostream>
 
 #include <QtGui/QtGui>
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QtCore/qobjectdefs.h>
 
 #include "global.h"
@@ -18,6 +18,7 @@
 #include "utils.h"
 #include "recorderDialog.h"
 #include "mainWindow.h"
+#include "configManager.h"
 
 
 using namespace std;
@@ -26,6 +27,8 @@ int main(int argc, char *argv[])
 {
     setSegVHandler();
     setStdTerminateHandler();
+
+    Q_INIT_RESOURCE(main);
 
     QString source;
     if (argc != 2)
@@ -42,6 +45,10 @@ int main(int argc, char *argv[])
     }
 
     printf("Starting recorder...\n");
+
+    ConfigManager::setConfigName("cvs.conf");
+    ConfigManager::setCamConfigName("cvs-camera.conf");
+
 
     QApplication app(argc, argv);
     MainWindowParameters params;

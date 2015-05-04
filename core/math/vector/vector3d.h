@@ -127,13 +127,45 @@ public:
         return Vector3d(x, y, z);
     }
 
+    double sineTo(const Vector3d &other) const
+    {
+        double thisLength  = !(*this);
+        double otherLength = !other;
+
+        if (thisLength == 0.0 || otherLength == 0.0)
+          return 0.0;
+        double cross = ((*this) ^ other).l2Metric();
+        return cross / (thisLength * otherLength);
+    }
+
+    /**
+     *  Not a fastest but stable way to compute an angle
+     *
+     *  \f[ alpha = atan2(sin(\widehat{V1 V2}) \|V1\|\|V2\|, cos(\widehat{V1 V2}) \|V1\| \|V2\| ) \f]
+     *
+     **/
+    double angleTo(const Vector3d &other) const
+    {
+        /*double thisLength  = !(*this);
+        double otherLength = !other;
+
+        if (thisLength == 0.0 || otherLength == 0.0)
+            return 0.0;*/
+
+        double dot   = (*this) & other;
+        double cross = ((*this) ^ other).l2Metric();
+
+        return atan2(cross, dot);
+    }
+
+
     /**
      *  Do the conversion form projective coordinates to the 2D ones
      *
      *  TODO: Should not do this as an automatic conversion
      *
      **/
-    inline operator Vector2d<ElementType> ()
+    inline Vector2d<ElementType> project()
     {
         if (this->z() == 0.0)
         {

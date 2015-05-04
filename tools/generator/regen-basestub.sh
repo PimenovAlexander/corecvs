@@ -5,7 +5,7 @@ source ./helper-regen.sh
 dest="../../applications/base/"
 
 echo -n "Building generator... "
-qmake && make
+qmake-qt4 && make
 echo "done"
 
 echo -n "Running generator on xml/baseStub.xml..."

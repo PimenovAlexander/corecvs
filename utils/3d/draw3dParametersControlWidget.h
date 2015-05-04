@@ -1,5 +1,5 @@
 #pragma once
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "generated/draw3dParameters.h"
 #include "ui_draw3dParametersControlWidget.h"
 #include "parametersControlWidgetBase.h"

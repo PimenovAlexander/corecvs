@@ -243,8 +243,8 @@ void testRectificatorCubeEssential (void)
         Vector3dd left3D  =  leftCamera * pointsIn3d->at(i);
         Vector3dd right3D = rightCamera * pointsIn3d->at(i);
 
-        Vector2dd imageL = (Vector2dd)  left3D;
-        Vector2dd imageR = (Vector2dd) right3D;
+        Vector2dd imageL = left3D .project();
+        Vector2dd imageR = right3D.project();
 /*
         if (imageL.x() != (double)fround(imageL.x()))
             printf("Adacto %lf %lf\n", imageL.x(), (double)fround(imageL.x()));
@@ -265,8 +265,8 @@ void testRectificatorCubeEssential (void)
         imagesL.push_back(imageL);
         imagesR.push_back(imageR);
 
-        corr.start = (Vector2dd)(LKI * Vector3dd(imageL, 1.0));
-        corr.end   = (Vector2dd)(RKI * Vector3dd(imageR, 1.0));
+        corr.start = (LKI * Vector3dd(imageL, 1.0)).project();
+        corr.end   = (RKI * Vector3dd(imageR, 1.0)).project();
 
         corr.flags = 0;
         corr.value = 1;

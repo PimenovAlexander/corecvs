@@ -136,8 +136,8 @@ std::vector<FloatFlowVector> *FlowSimulator::simulateFlow(
             continue;
 
 
-        Vector2dd imagePointA = (Vector2dd)projectiveA;
-        Vector2dd imagePointB = (Vector2dd)projectiveB;
+        Vector2dd imagePointA = projectiveA.project();
+        Vector2dd imagePointB = projectiveB.project();
 
         if (!imagePointA.isInRect(Vector2dd(0.0,0.0), imageSize - Vector2dd(1.0,1.0)))
             continue;

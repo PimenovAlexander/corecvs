@@ -41,6 +41,8 @@ public:
         return *this;
     }
 
+    /* Formated hex helper */
+    void hexDump (ostream &out);
 };
 
 FORCE_INLINE Int32x8 operator >> (const Int32x8 &left, uint32_t count) {

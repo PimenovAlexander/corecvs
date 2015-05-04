@@ -13,6 +13,7 @@
 
 #include "global.h"
 
+#include "fixedPointBlMapper.h"
 #include "abstractContiniousBuffer.h"
 #include "g12Buffer.h"
 #include "g8Buffer.h"
@@ -22,39 +23,40 @@
 #include "rgbColor.h"
 #include "function.h"
 #include "correspondanceList.h"
-namespace corecvs {
 
+
+namespace corecvs {
 
 #define FLAGS_INCLUDE_MARGIN 0x1
 
 
-typedef AbstractContiniousBuffer<RGBColor, int32_t> CRGB24BufferBase;
+typedef AbstractContiniousBuffer<RGBColor, int32_t> RGB24BufferBase;
 
-class RGB24Buffer : public CRGB24BufferBase
+class RGB24Buffer : public RGB24BufferBase, public FixedPointBlMapper<RGB24Buffer, RGB24Buffer, RGB24BufferBase::InternalIndexType, RGB24BufferBase::InternalElementType>
 {
 public:
-//    RGB24Buffer(int32_t h, int32_t w) : CRGB24BufferBase(h, w) {};
-    RGB24Buffer(RGB24Buffer &that) : CRGB24BufferBase (that) {};
-    RGB24Buffer(RGB24Buffer *that) : CRGB24BufferBase (that) {};
+//    RGB24Buffer(int32_t h, int32_t w) : CRGB24BufferBase(h, w) {}
+    RGB24Buffer(RGB24Buffer &that) : RGB24BufferBase (that) {}
+    RGB24Buffer(RGB24Buffer *that) : RGB24BufferBase (that) {}
 
     RGB24Buffer(RGB24Buffer *src, int32_t x1, int32_t y1, int32_t x2, int32_t y2) :
-        CRGB24BufferBase(src, x1, y1, x2, y2) {};
+        RGB24BufferBase(src, x1, y1, x2, y2) {}
 
-    RGB24Buffer(int32_t h, int32_t w, RGBColor *data) : CRGB24BufferBase(h, w, data) {};
-    RGB24Buffer(int32_t h, int32_t w, const RGBColor &data) : CRGB24BufferBase(h, w, data) {};
+    RGB24Buffer(int32_t h, int32_t w, RGBColor *data) : RGB24BufferBase(h, w, data) {}
+    RGB24Buffer(int32_t h, int32_t w, const RGBColor &data) : RGB24BufferBase(h, w, data) {}
 
 
-    RGB24Buffer(int32_t h, int32_t w, bool shouldInit = true) : CRGB24BufferBase (h, w, shouldInit) {};
-    RGB24Buffer(Vector2d<int32_t> size, bool shouldInit = true) : CRGB24BufferBase (size, shouldInit) {};
+    RGB24Buffer(int32_t h, int32_t w, bool shouldInit = true) : RGB24BufferBase (h, w, shouldInit) {}
+    RGB24Buffer(Vector2d<int32_t> size, bool shouldInit = true) : RGB24BufferBase (size, shouldInit) {}
 
     /*Helper Constructors form the relative types*/
-    RGB24Buffer(G12Buffer *buffer) : CRGB24BufferBase (buffer->h, buffer->w, false)
+    RGB24Buffer(G12Buffer *buffer) : RGB24BufferBase (buffer->h, buffer->w, false)
     {
         drawG12Buffer(buffer);
     }
 
     /*Helper Constructors form the relative types*/
-    RGB24Buffer(G8Buffer *buffer) : CRGB24BufferBase (buffer->h, buffer->w, false)
+    RGB24Buffer(G8Buffer *buffer) : RGB24BufferBase (buffer->h, buffer->w, false)
     {
         drawG8Buffer(buffer);
     }
@@ -127,11 +129,17 @@ public:
     void drawLineSimple (int x1, int y1, int x2, int y2, RGBColor color );
     void drawLine(int x1, int y1, int x2, int y2, RGBColor color );
 
+    void drawHLine(int x1, int y1, int x2, RGBColor color );
+    void drawVLine(int x1, int y1, int y2, RGBColor color );
+
 
     void drawCircle(int x, int y, int rad, RGBColor color );
     void drawArc (int x, int y, int rad, RGBColor color );
     void drawArc1(int x, int y, int rad, RGBColor color );
 
+    /* Some alternatives */
+    void drawLine(double x1, double y1, double x2, double y2, RGBColor color );
+    void drawLine(const Vector2dd &v1, const Vector2dd &v2, RGBColor color );
 
     //void drawLineSimple (int x1, int y1, int x2, int y2, int color );
     //void drawLineSafe (int x1, int y1, int x2, int y2, int color );
@@ -153,13 +161,22 @@ public:
 
 
     void fillWithYUYV (uint8_t *yuyv);
+    //void fillWith420P (uint8_t *y, uint8_t *u, uint8_t *v, int ly, int lu, int lv);
+
+    void dropValueAndSatuation(void);
+    void dropValue();
+
     G12Buffer *toG12Buffer();
 
     enum ChannelID {
         CHANNEL_R,
         CHANNEL_G,
         CHANNEL_B,
-        CHANNEL_GRAY
+        CHANNEL_GRAY,
+        CHANNEL_HUE,
+        CHANNEL_SATURATION,
+        CHANNEL_VALUE,
+        CHANNEL_LAST
     };
     G8Buffer* getChannel(ChannelID channel);
 
@@ -203,8 +220,39 @@ public:
 
     }
 
-    virtual ~RGB24Buffer(){};
+    virtual ~RGB24Buffer() {}
+    static double diffL2 (RGB24Buffer *buffer1, RGB24Buffer *buffer2);
 
+
+    class RGBEx : public FixedVectorBase<RGBEx, uint16_t, 4>
+    {
+    public:
+        RGBEx() {}
+        RGBEx(const RGBColor &color)
+        {
+            at(0) = color.r();
+            at(1) = color.g();
+            at(2) = color.b();
+            at(3) = color.a();
+        }
+
+        RGBColor toRGBColor() const
+        {
+            return RGBColor((uint8_t)at(0), (uint8_t)at(1), (uint8_t)at(2), (uint8_t)at(3));
+        }
+
+    };
+
+    RGB24Buffer::InternalElementType elementBlPrecomp(const BilinearMapPoint &point)
+    {
+        RGBEx a = RGBEx(this->element(point.y    , point.x    ));
+        RGBEx b = RGBEx(this->element(point.y    , point.x + 1));
+        RGBEx c = RGBEx(this->element(point.y + 1, point.x    ));
+        RGBEx d = RGBEx(this->element(point.y + 1, point.x + 1));
+
+        RGBEx result = (a * point.k1 + b * point.k2 + c * point.k3 + d * point.k4) / 255;
+        return result.toRGBColor();
+    }
 
 
 private:

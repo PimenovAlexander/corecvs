@@ -40,7 +40,7 @@ void WidgetUiGenerator::generateWidgetUi()
     int fieldNumber = clazz->fields.size();
 
     out.close();
-    out.open(QString("Generated/" + toCamelCase(className) + ".ui").toAscii(), ios::out);
+    out.open(QString("Generated/" + toCamelCase(className) + ".ui").toLatin1(), ios::out);
 
     result +=
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -271,7 +271,7 @@ void WidgetUiGenerator::generateWidgetUi()
     "</ui>\n";
 
 
-    out << result.toAscii().constData();
+    out << result.toLatin1().constData();
 }
 
 

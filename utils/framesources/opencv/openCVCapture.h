@@ -62,7 +62,8 @@ using namespace std;
 
     unsigned int delay;
 
-    CvCapture* captureLeft, *captureRight;
+    CvCapture* captureLeft;
+    CvCapture* captureRight;
 
     OpenCVCaptureInterface(string _devname, unsigned int mode);
 

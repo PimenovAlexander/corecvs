@@ -1,3 +1,4 @@
+
 #include "txtPinPresentation.h"
 
 //void TxtPinPresentation::draw(DiagramScene *scene, DiagramItem *blockItem, int x, int y)

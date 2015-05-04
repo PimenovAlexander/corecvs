@@ -22,7 +22,6 @@ class ImageResultLayer : public ResultLayerBase
 
     OutputStyle::OutputStyle mStyle;
     QImage* mImages[Frames::MAX_INPUTS_NUMBER];
-    bool mShowLeftFrame;
 
 public:
     static const ResultLayerType LAYER_CLASS_ID = ResultLayerBase::LAYER_IMAGE;
@@ -31,8 +30,7 @@ public:
 template<class BufferType>
     ImageResultLayer(
         OutputStyle::OutputStyle style,
-        BufferType* images[Frames::MAX_INPUTS_NUMBER],
-        bool showLeftFrame = false
+        BufferType* images[Frames::MAX_INPUTS_NUMBER]
     );
 
 /*    ImageResultLayer(
@@ -41,13 +39,11 @@ template<class BufferType>
         bool showLeftFrame = false
     );*/
 
-    ImageResultLayer(
-        G12Buffer* image
-    );
+    ImageResultLayer(G8Buffer* image);
 
-    ImageResultLayer(
-        RGB24Buffer* image
-    );
+    ImageResultLayer(G12Buffer* image);
+
+    ImageResultLayer(RGB24Buffer* image);
 
 
     /** Polymorphic type so virtual destructor needed */
@@ -81,7 +77,7 @@ template<class BufferType>
                 printf(" NULL\n");
                 continue;
             }
-            printf("[%dx%d]\n", mImages[i]->height(), mImages[i]->width());
+            printf(" [%dx%d]\n", mImages[i]->height(), mImages[i]->width());
         }
     }
 };
@@ -90,19 +86,15 @@ template<class BufferType>
 template<class BufferType>
 ImageResultLayer::ImageResultLayer(
         OutputStyle::OutputStyle style,
-        BufferType* images[Frames::MAX_INPUTS_NUMBER],
-        bool showLeftFrame
+        BufferType* images[Frames::MAX_INPUTS_NUMBER]
 )
-: ResultLayerBase(LAYER_CLASS_ID)
-, mStyle(style)
-, mShowLeftFrame(showLeftFrame)
+    : ResultLayerBase(LAYER_CLASS_ID)
+    , mStyle(style)
 {
     for (int id = 0; id < Frames::MAX_INPUTS_NUMBER; id++ )
     {
         mImages[id] = NULL;
     }
-
-    int selectedFrameId = showLeftFrame ? Frames::LEFT_FRAME : Frames::RIGHT_FRAME;
 
     switch (mStyle)
     {
@@ -123,12 +115,19 @@ ImageResultLayer::ImageResultLayer(
             }
             break;
 
-        case OutputStyle::STANDART_OUTPUT:
-            if (images[selectedFrameId] != NULL)
+        case OutputStyle::LEFT_FRAME:
+            if (images[Frames::LEFT_FRAME] != NULL)
             {
-                mImages[selectedFrameId] = toQImage(images[selectedFrameId]);
+                mImages[Frames::LEFT_FRAME] = toQImage(images[Frames::LEFT_FRAME]);
             }
             break;
+        case OutputStyle::RIGHT_FRAME:
+            if (images[Frames::RIGHT_FRAME] != NULL)
+            {
+                mImages[Frames::RIGHT_FRAME] = toQImage(images[Frames::RIGHT_FRAME]);
+            }
+            break;
+
     }
 }
 

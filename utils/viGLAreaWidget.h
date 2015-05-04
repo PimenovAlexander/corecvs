@@ -1,8 +1,8 @@
 #ifndef VIGLAREA_H
 #define VIGLAREA_H
 
-#include <QtGui/QMouseEvent>
-#include <QtGui/QWheelEvent>
+#include <QMouseEvent>
+#include <QWheelEvent>
 #define __XMLDocument_FWD_DEFINED__  // to omit conflict "msxml.h:3376: using typedef-name 'XMLDocument' after 'class'"
 #include <QtOpenGL/QGLWidget>
 

@@ -324,6 +324,27 @@ public:
         }
     }
 
+    static GenericQuaternion slerp(const GenericQuaternion &Q1, const GenericQuaternion &Q2, ElementType t)
+    {
+        double cos = Q1 & Q2;
+
+        const double THRESHOLD = 0.9995;
+        if (cos > THRESHOLD) {
+            // Use linear
+            GenericQuaternion result = Q1 + t*(Q2 - Q1);
+            result.normalise();
+            return result;
+        }
+        double theta = acos(cos);
+
+        double a = sin((1 - t) * theta);
+        double b = sin(t * theta);
+
+        GenericQuaternion result = (Q1 * a + Q2 * b) / sin(theta);
+        result.normalise();
+        return result;
+    }
+
 };
 
 typedef GenericQuaternion<double> Quaternion;

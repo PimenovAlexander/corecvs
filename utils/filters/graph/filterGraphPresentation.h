@@ -2,6 +2,8 @@
 #ifndef FILTERGRAPHPRESENTATION_H
 #define FILTERGRAPHPRESENTATION_H
 
+#define __XMLDocument_FWD_DEFINED__  // to omit conflict "msxml.h:3376: using typedef-name 'XMLDocument' after 'class'"
+
 #include "ui_filterGraphPresentation.h"
 #include "arrow.h"
 #include "exponentialSlider.h"

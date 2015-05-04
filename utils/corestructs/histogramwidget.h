@@ -1,7 +1,7 @@
 #pragma once
 
-#include <QtGui/QWidget>
-#include <QtGui/QMouseEvent>
+#include <QWidget>
+#include <QMouseEvent>
 #include "histogram.h"
 
 using namespace corecvs;

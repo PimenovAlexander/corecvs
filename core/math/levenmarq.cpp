@@ -3,15 +3,18 @@
 #include <math.h>
 #include <limits>
 
-#define TRACE_PROGRESS
-//#define TRACE
-
 #include "global.h"
 
 #include "levenmarq.h"
 #include "stdlib.h"
 #include "vector.h"
 namespace corecvs {
+
+//#define TRACE_PROGRESS
+//#define TRACE_CRUCIAL
+//#define TRACE
+//#define TRACE_MATRIX
+
 
 using std::flush;
 /**
@@ -21,10 +24,10 @@ using std::flush;
  **/
 vector<double> LevenbergMarquardt::fit(const vector<double> &input, const vector<double> &output)
 {
-#ifdef TRACE_PROGRESS
-    cout << "================== Starting LM fit ================== " << endl;
-    cout << "[" << flush;
-#endif
+    if (traceProgress) {
+        cout << "================== Starting LM fit ================== " << endl;
+        cout << "[" << flush;
+    }
 
     Vector beta(input);
     Vector target(output);
@@ -43,19 +46,23 @@ vector<double> LevenbergMarquardt::fit(const vector<double> &input, const vector
     bool converged = false;
 
     double lambda = startLambda;
+    double maxlambda = maxLambda;
 
-    for (int g = 0; g < maxIterations && lambda < std::numeric_limits<double>::max() && !converged; g++)
+    for (int g = 0; (g < maxIterations) && (lambda < maxlambda) && !converged; g++)
     {
-#ifdef TRACE_PROGRESS
-        if ((g % ((maxIterations / 100) + 1) == 0))
-        {
-            cout << "#" << flush;
+        if (traceProgress) {
+            if ((g % ((maxIterations / 100) + 1) == 0))
+            {
+                cout << "#" << flush;
+            }
         }
-#endif
+
         Matrix J = f->getJacobian(&(beta[0]));
-#ifdef TRACE
-        cout << "New Jacobian:" << endl << J << endl;
-#endif
+
+        if (traceMatrix) {
+            cout << "New Jacobian:" << endl << J << endl;
+        }
+
         Matrix JT = J.t();
         Matrix JTJ = JT * J;
 
@@ -64,52 +71,58 @@ vector<double> LevenbergMarquardt::fit(const vector<double> &input, const vector
         Vector d = JT * diff;
 
         double norm = diff.sumAllElementsSq();
-#ifdef TRACE
-        cout << "Now  :" <<  norm << " " << lambda << endl;
-#endif
+
+        if (trace) {
+            cout << "Now  :" <<  norm << " " << lambda << endl;
+        }
+
         while (true)
         {
 
             if (norm == 0.0)
             {
-#ifdef TRACE_PROGRESS
-                cout << "Algorithm fully converged" << endl;
-#endif
+                if (traceCrucial)
+                {
+                    cout << "Algorithm fully converged" << endl;
+                }
                 converged = true;
                 break;
             }
 
             if (!(lambda < std::numeric_limits<double>::max()))
             {
-#ifdef TRACE_PROGRESS
-                cout << "Algorithm seem to be trapped at point: " << endl;
-                cout << "After: " << g << " iterations" << endl;
-                cout << beta << endl;
-#endif
-#ifdef TRACE
-                cout << "Current Jacobian:" << endl << J << endl;
-                cout << "Current JTJ:" << endl << JTJ << endl;
-                cout << "previous delta was:" << endl << delta << endl;
-
-
-                int old = cout.precision(30);
-                cout << "guess:" << endl << beta << endl;
-                F(beta, yNew);
-                cout << "value:" << endl << yNew.l2Metric() << endl;
-                F(beta + delta, yNew);
-                cout << "value at +step:" << endl << yNew.l2Metric() << endl;
-                F(beta - delta, yNew);
-                cout << "value at -step:" << endl << yNew.l2Metric() << endl;
-                for (int i = 0; i < delta.size(); i++)
+                if (traceCrucial)
                 {
-                    delta[i] = 0.0001 * J.a(0,i);
+                    cout << "Algorithm seem to be trapped at point: " << endl;
+                    cout << "After: " << g << " iterations" << endl;
+                    cout << beta << endl;
                 }
-                F(beta + delta, yNew);
-                cout << "value at +J:" << endl << yNew.l2Metric() << endl;
-                F(beta - delta, yNew);
-                cout << "value at -J:" << endl << yNew.l2Metric() << endl;
-                cout.precision(old);
-#endif
+
+                if (traceMatrix)
+                {
+                    cout << "Current Jacobian:" << endl << J << endl;
+                    cout << "Current JTJ:" << endl << JTJ << endl;
+                    cout << "previous delta was:" << endl << delta << endl;
+
+                    int old = cout.precision(30);
+                    cout << "guess:" << endl << beta << endl;
+                    F(beta, yNew);
+                    cout << "value:" << endl << yNew.l2Metric() << endl;
+                    F(beta + delta, yNew);
+                    cout << "value at +step:" << endl << yNew.l2Metric() << endl;
+                    F(beta - delta, yNew);
+                    cout << "value at -step:" << endl << yNew.l2Metric() << endl;
+                    for (int i = 0; i < delta.size(); i++)
+                    {
+                        delta[i] = 0.0001 * J.a(0,i);
+                    }
+                    F(beta + delta, yNew);
+                    cout << "value at +J:" << endl << yNew.l2Metric() << endl;
+                    F(beta - delta, yNew);
+                    cout << "value at -J:" << endl << yNew.l2Metric() << endl;
+                    cout.precision(old);
+                }
+
                 break;
             }
 
@@ -129,15 +142,20 @@ vector<double> LevenbergMarquardt::fit(const vector<double> &input, const vector
             F(beta + delta, yNew);
             diffNew = target - yNew;
             double normNew = diffNew.sumAllElementsSq();
-#ifdef TRACE
-            cout << "  Guess:" <<  normNew << " - ";
-#endif
+            if (trace) {
+                cout << "  Guess:" <<  normNew << " - ";
+            }
 
             if (normNew < norm) // If the current solution is better
             {
-#ifdef TRACE
-                cout << "Accepted" << endl;
-#endif
+                if (trace) {
+                    cout << "Accepted" << endl;
+                }
+
+                if (traceMatrix) {
+                    cout << "Old soluton:" << endl << beta << endl;
+                }
+
                 lambda /= lambdaFactor;
                 norm = normNew;
                 beta += delta;
@@ -147,26 +165,35 @@ vector<double> LevenbergMarquardt::fit(const vector<double> &input, const vector
                     normalisation->operator()(beta, normBeta);
                     beta = normBeta;
                 }
+
+                if (traceMatrix) {
+                    cout << "New soluton:" << endl << beta << endl;
+                }
                 break;
             }
             else
             {
-#ifdef TRACE
-                cout << "Rejected lambda up" << endl;
-#endif
+                if (trace) {
+                    cout << "Rejected lambda old: "<< lambda << " lambda new:" << lambda * lambdaFactor << endl;
+                }
+                if (traceMatrix) {
+                    cout << "Keep soluton:" << endl << beta << endl;
+                }
+
                 lambda *= lambdaFactor;// Current solution is worse. Try new lambda
             }
         }
     }
 
-#ifdef TRACE_PROGRESS
-    cout << "]" << endl;
-#endif
+    if (traceProgress) {
+        cout << "]" << endl;
+    }
 
     vector<double> result;
     result.reserve(f->inputs);
-    for (int i = 0; i < f->inputs; i++)
+    for (int i = 0; i < f->inputs; i++) {
         result.push_back(beta[i]);
+    }
     return result;
 }
 

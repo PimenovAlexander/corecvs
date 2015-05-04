@@ -6,8 +6,8 @@
  * \author alexander
  */
 
-#include <QtGui/QImage>
-#include <QtGui/QPainter>
+#include <QImage>
+#include <QPainter>
 
 #include "global.h"
 

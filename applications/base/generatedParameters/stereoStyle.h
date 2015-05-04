@@ -21,22 +21,22 @@ namespace StereoStyle {
 enum StereoStyle {
     /** 
      * \brief dont show stereo 
-     * don't show stereo 
+     * Style in which color coded disparity is not shown 
      */
     DONT_SHOW_STEREO = 0,
     /** 
      * \brief fast large dots 
-     * fast large dots 
+     * Fast mode for large color coded disparity dots 
      */
     FAST_LARGE_DOTS = 1,
     /** 
      * \brief fast dots 
-     * fast dots 
+     * Fast mode for small color coded disparity dots 
      */
     FAST_DOTS = 2,
     /** 
      * \brief show lines stereo 
-     * show lines stereo 
+     * Show disparity as lines 
      */
     SHOW_LINES_STEREO = 3,
     /** 

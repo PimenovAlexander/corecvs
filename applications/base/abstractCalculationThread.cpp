@@ -82,9 +82,11 @@ void AbstractCalculationThread::newFrameReady(frame_data_t frameData)
         return;
     }
 
-    if (frameData.timestamp <= mLastFrameTimeStamp)
+    if (frameData <= mLastFrameTimeStamp) /*An overloaded operator is used*/
     {
-        //cout << "Frame was received second time. Previous TS: "<< lastFrameTimeStamp << " Current TS: " << frameData.timestamp << "\n";
+        cout << "Frame was received second time. "
+                "Previous TS: (" << mLastFrameTimeStamp.streamId << ") " << mLastFrameTimeStamp.timestamp <<
+                " Current TS: (" << frameData.streamId           << ") "<< frameData.timestamp << "\n";
         return;
     }
 
@@ -105,8 +107,9 @@ void AbstractCalculationThread::newFrameReady(frame_data_t frameData)
     {
         uint64_t oldStamp   = mFrames.timestamp();
         mFrames.fetchNewFrames(mCaptureInterface);
+
         mInterframeDelay    = mFrames.timestamp() - oldStamp;
-        mLastFrameTimeStamp = mFrames.timestamp();
+        mLastFrameTimeStamp = mFrames.frameHerald();
 /*
         cout << "AbstractCalculationThread::requesting frame..." << endl;
         if (interframeDelay == 0) {

@@ -1,7 +1,7 @@
 #ifndef rectifyWidget_H
 #define rectifyWidget_H
 
-#include <QtGui/QDialog>
+#include <QDialog>
 #include "ui_rectifyParametersControlWidget.h"
 #include "eulerAngles.h"
 #include "vector3d.h"
@@ -113,6 +113,7 @@ public slots:
             case 1:  mUi->priorFocalSpinBox->setValue(555.0 * 2650.0 / 2505.0); break;
             // PS Eye 640x480 tele
             case 2:  mUi->priorFocalSpinBox->setValue(640.0 / 83.0 * 100.0); break;
+            case 3:  mUi->priorFocalSpinBox->setValue(586.0 * 134.0 / 152.0); break;
             default: mUi->priorFocalSpinBox->setValue(603); break;
         }
     }

@@ -124,11 +124,11 @@ public:
     /* SSE4 has 4 comparison instructions for unsigned */
 #ifdef WITH_SSE4
     ALIGN_STACK_SSE inline static UInt16x8 max (const UInt16x8 &left, const UInt16x8 &right) {
-        return Int16x8(_mm_max_epu16(left.data, right.data));
+        return UInt16x8(_mm_max_epu16(left.data, right.data));
     }
 
     ALIGN_STACK_SSE inline static UInt16x8 min (const UInt16x8 &left, const UInt16x8 &right) {
-        return Int16x8(_mm_min_epu16(left.data, right.data));
+        return UInt16x8(_mm_min_epu16(left.data, right.data));
     }
 #endif
 

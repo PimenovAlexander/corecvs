@@ -16,7 +16,7 @@ V4L2CaptureDecoupleInterface::V4L2CaptureDecoupleInterface(string _devname)
     this->devname = _devname;
 
     //     Group Number                   1       2 3      4       56        7       8         9 10     11     1213    14
-    QRegExp deviceStringPattern(QString("^([^,:]*)(:(\\d*)/(\\d*))?((:mjpeg)|(:yuyv)|(:fjpeg))?(:(\\d*)x(\\d*))?((:rc)|(:rc2)|(:sbs)|(:rcf))?$"));
+    QRegExp deviceStringPattern(QString("^([^,:]*)(:(\\d*)/(\\d*))?((:mjpeg)|(:yuyv)|(:fjpeg))?(:(\\d*)x(\\d*))?((:rc)|(:rc2)|(:sbs)|(:rcf)|(:sc1))?$"));
     static const int DeviceGroup     = 1;
     static const int FpsNumGroup      = 3;
     static const int FpsDenumGroup    = 4;
@@ -41,16 +41,16 @@ V4L2CaptureDecoupleInterface::V4L2CaptureDecoupleInterface(string _devname)
         "  | - Size [%sx%s]\n"
         "  | - Compressing: %s\n"
         "  \\ - Coupling: <%s>\n",
-        deviceStringPattern.cap(DeviceGroup).toAscii().constData(),
-        deviceStringPattern.cap(FpsNumGroup).toAscii().constData(),
-        deviceStringPattern.cap(FpsDenumGroup).toAscii().constData(),
-        deviceStringPattern.cap(WidthGroup).toAscii().constData(),
-        deviceStringPattern.cap(HeightGroup).toAscii().constData(),
-        deviceStringPattern.cap(CompressionGroup).toAscii().constData(),
-        deviceStringPattern.cap(CouplingGroup).toAscii().constData()
+        deviceStringPattern.cap(DeviceGroup).toLatin1().constData(),
+        deviceStringPattern.cap(FpsNumGroup).toLatin1().constData(),
+        deviceStringPattern.cap(FpsDenumGroup).toLatin1().constData(),
+        deviceStringPattern.cap(WidthGroup).toLatin1().constData(),
+        deviceStringPattern.cap(HeightGroup).toLatin1().constData(),
+        deviceStringPattern.cap(CompressionGroup).toLatin1().constData(),
+        deviceStringPattern.cap(CouplingGroup).toLatin1().constData()
     );
 
-    deviceName =  deviceStringPattern.cap(DeviceGroup).toAscii().constData();
+    deviceName =  deviceStringPattern.cap(DeviceGroup).toLatin1().constData();
 
     bool err;
     cameraMode.fpsnum = deviceStringPattern.cap(FpsNumGroup).toInt(&err);
@@ -86,12 +86,13 @@ V4L2CaptureDecoupleInterface::V4L2CaptureDecoupleInterface(string _devname)
     if (!deviceStringPattern.cap(CouplingGroup).compare(QString(":rcf"))) {
         coupling = DecoupleYUYV::ANAGLYPH_RC_FAST;
     }
+    if (!deviceStringPattern.cap(CouplingGroup).compare(QString(":sc1"))) {
+        coupling = DecoupleYUYV::SIDEBYSIDE_SYNCCAM_1;
+    }
 
     printf("Capture device: V4L2 %s\n", deviceName.c_str());
     printf("MJPEG compression is: %s\n", V4L2CaptureInterface::CODEC_NAMES[decoder]);
     printf("Coupling is: %d\n", coupling);
-
-
 }
 
 

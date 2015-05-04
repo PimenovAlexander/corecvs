@@ -216,8 +216,8 @@ template<class VisitorType>
 class EssentialMatrix : public Matrix33
 {
 public:
-    EssentialMatrix() : Matrix33(Matrix33::CrossProductLeft(Vector3dd(1.0,0.0,0.0))) {};
-    EssentialMatrix(const Matrix33 &other) : Matrix33(other) {};
+    EssentialMatrix() : Matrix33(Matrix33::CrossProductLeft(Vector3dd(1.0,0.0,0.0))) {}
+    EssentialMatrix(const Matrix33 &other) : Matrix33(other) {}
 
     /**
      * The inliers calculation is as follows:

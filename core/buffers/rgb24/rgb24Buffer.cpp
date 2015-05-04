@@ -138,6 +138,48 @@ void RGB24Buffer::drawLine(int x1, int y1, int x2, int y2, RGBColor color )
     drawLineSimple(lineStart.x(), lineStart.y(),lineEnd.x(), lineEnd.y(), color);
 }
 
+void RGB24Buffer::drawLine(double x1, double y1, double x2, double y2, RGBColor color )
+{
+    drawLine(fround(x1), fround(y1), fround(x2), fround(y2), color);
+}
+
+void RGB24Buffer::drawLine(const Vector2dd &v1, const Vector2dd &v2, RGBColor color )
+{
+    drawLine(v1.x(), v1.y(), v2.x(), v2.y(), color);
+}
+
+
+void RGB24Buffer::drawHLine(int x1, int y1, int x2, RGBColor color )
+{
+    if (x1 > x2)  {int tmp = x1; x1 = x2; x2 = tmp;}
+    if (x1 <  0) x1 = 0;
+    if (x2 >= w) x2 = w - 1;
+
+    if (x1 >= w || x2 < 0 || y1 < 0 || y1 >= h )
+        return;
+
+    for (int j = x1; j < x2; j++)
+    {
+        this->element(y1, j) = color;
+    }
+}
+
+void RGB24Buffer::drawVLine(int x1, int y1, int y2, RGBColor color )
+{
+    if (y1 > y2)  {int tmp = y1; y1 = y2; y2 = tmp;}
+    if (y1 <  0) y1 = 0;
+    if (y2 >= h) y2 = h - 1;
+
+    if (y1 >= h || y2 < 0 || x1 < 0 || x1 >= w )
+        return;
+
+    for (int i = y1; i < y2; i++)
+    {
+        this->element(i, x1) = color;
+    }
+}
+
+
 void RGB24Buffer::drawSprite(int x, int y, RGBColor color, int d[][2], int pointNum)
 {
     int i;
@@ -769,6 +811,33 @@ void RGB24Buffer::fillWithYUYV (uint8_t *yuyv)
     }
 }
 
+/*void RGB24Buffer::fillWith420P(uint8_t *y, uint8_t *u, uint8_t *v, int ly, int lu, int lv)
+{
+
+}*/
+
+void RGB24Buffer::dropValueAndSatuation()
+{
+    for (int i = 0; i < h; i++)
+    {
+        for (int j = 0; j < w; j++)
+        {
+            element(i,j) = RGBColor::FromHSV(element(i,j).hue(), 255, 255);
+        }
+    }
+}
+
+void RGB24Buffer::dropValue()
+{
+    for (int i = 0; i < h; i++)
+    {
+        for (int j = 0; j < w; j++)
+        {
+            element(i,j) = RGBColor::FromHSV(element(i,j).hue(), element(i,j).saturation(), 255);
+        }
+    }
+}
+
 
 G12Buffer *RGB24Buffer::toG12Buffer()
 {
@@ -811,6 +880,7 @@ G12Buffer *RGB24Buffer::toG12Buffer()
 }
 
 
+/* We need to optimize this */
 G8Buffer* RGB24Buffer::getChannel(ChannelID channel)
 {
     G8Buffer *result = new G8Buffer(getSize(), false);
@@ -831,9 +901,21 @@ G8Buffer* RGB24Buffer::getChannel(ChannelID channel)
                 case CHANNEL_B:
                     pixel = element(i,j).b();
                     break;
+                default:
                 case CHANNEL_GRAY:
                     pixel = element(i,j).brightness();
                     break;
+
+                case CHANNEL_HUE:
+                    pixel = ((int)element(i,j).hue()) * 255 / 360;
+                    break;
+                case CHANNEL_SATURATION:
+                    pixel = element(i,j).saturation();
+                    break;
+                case CHANNEL_VALUE:
+                    pixel = element(i,j).value();
+                    break;
+
             }
             result->element(i,j) = pixel;
         }
@@ -844,6 +926,22 @@ G8Buffer* RGB24Buffer::getChannel(ChannelID channel)
     return result;
 }
 
+double RGB24Buffer::diffL2(RGB24Buffer *buffer1, RGB24Buffer *buffer2)
+{
+    double sum = 0;
+    int h = std::min(buffer1->h, buffer2->w);
+    int w = std::min(buffer1->w, buffer2->w);
+
+    for (int i = 0; i < h; i++)
+    {
+        for (int j = 0; j < w; j++)
+        {
+            sum += (buffer1->element(i,j).toDouble() - buffer2->element(i,j).toDouble()).sumAllElementsSq() / 3.0;
+        }
+    }
+    sum /= (double) h * w;
+    return sum;
+}
 
 
 } //namespace corecvs

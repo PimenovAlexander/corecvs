@@ -7,7 +7,9 @@
  * \author alexander
  */
 
+#include <iomanip>
 #include "sseWrapper.h"
+
 namespace corecvs {
 
 #ifdef PROFILE_ACCESS_ALIGNMENT
@@ -89,6 +91,41 @@ ostream & operator <<(ostream &out, const Int64x2 &vector)
    }
    out << "]";
    return out;
+}
+
+/* Hexdump functions */
+
+void Int32x4::hexDump(ostream &out)
+{
+   ALIGN_DATA(16) int32_t data[4];
+   this->saveAligned(data);
+   out << "[";
+   for (unsigned i = 0; i < 4; i++) {
+       out << (i == 0 ? "" : ", ") << "0x" << std::hex << std::setw(8) << std::setfill('0') << data[i];
+   }
+   out << "]";
+}
+
+void Int16x8::hexDump(ostream &out)
+{
+   ALIGN_DATA(16) int16_t data[8];
+   this->saveAligned(data);
+   out << "[";
+   for (unsigned i = 0; i < 8; i++) {
+       out << (i == 0 ? "" : ", ") << "0x" << std::hex << std::setw(4) << std::setfill('0') << data[i];
+   }
+   out << "]";
+}
+
+void Int8x16::hexDump(ostream &out)
+{
+   ALIGN_DATA(16) int8_t data[16];
+   this->saveAligned(data);
+   out << "[";
+   for (unsigned i = 0; i < 16; i++) {
+       out << (i == 0 ? "" : ", ") << "0x" << std::hex << std::setw(2) << std::setfill('0') << (uint16_t)data[i];
+   }
+   out << "]";
 }
 
 #endif // WITH_SSE

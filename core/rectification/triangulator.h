@@ -25,23 +25,36 @@ namespace corecvs {
 using std::vector;
 
 /**
- *  This class contains all the output information about
+ *  This class contains all the output information about the results of the
  *  rectification process
  *
  **/
 class RectificationResult
 {
 public:
+    /** Intrinsic parameters of the cameras*/
     CameraIntrinsics rightCamera;
     CameraIntrinsics leftCamera;
 
+    /**
+     * Essential matrix
+     **/
     Matrix33  F;
+    /**
+     * Decomposed version of the matrix above
+     *
+     * Address this  class for ray based triangulation.
+     **/
     EssentialDecomposition decomposition;
 
-    /* Transformations that should be applied to right input image to get rectified image*/
+    /**
+     * Transformations that should be applied to right input image to get rectified image
+     **/
     Matrix33 rightTransform;
 
-    /* Transformations that should be applied to left input image to get rectified image*/
+    /**
+     * Transformations that should be applied to left input image to get rectified image
+     **/
     Matrix33 leftTransform;
 
     /** Distance between cameras in units (generally millimeters) */
@@ -54,6 +67,11 @@ public:
         baseline(1.0)
     {}
 
+    /**
+     *   This method makes current RectificationResult that was created for a perticular input image corresponded
+     *  to the transformed image. Say if you have rectified the full resolution, full frame image, and now want to
+     *  tringulate a scaled subregion.
+     **/
     RectificationResult addPretransform(const Matrix33 &transform) const
     {
         RectificationResult toReturn = *this;
@@ -64,7 +82,7 @@ public:
 
     Vector2dd getRectifiedProjectionRight(const Vector3dd &point) const
     {
-        return (Vector2dd)(rightTransform * rightCamera.getKMatrix33() * point);
+        return (rightTransform * rightCamera.getKMatrix33() * point).project();
     }
 
     Vector2dd getRectifiedProjectionLeft(const Vector3dd &point) const
@@ -75,13 +93,15 @@ public:
 
         Vector3dd pointInLeftFrame = toLeftFrame.inverted() * point;
 
-        return (Vector2dd)(leftTransform * leftCamera.getKMatrix33() * pointInLeftFrame);
+        return (leftTransform * leftCamera.getKMatrix33() * pointInLeftFrame).project();
     }
 
+    /* Gets a camera shift as a vector */
     Vector3dd getCameraShift() const
     {
         return baseline * decomposition.direction;
     }
+
 
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -137,18 +157,20 @@ public:
      *  Input is right to left
      *
      **/
-    /*
-    vector<SwarmPoint> *triangulate (DisparityBuffer *input, int density, bool enforceRectify = false) const;
-    vector<SwarmPoint> *triangulate (FloatFlowBuffer *input, int density, bool enforceRectify = false) const;
-
-    vector<SwarmPoint> *triangulate (SixDBuffer *input, int density) const;
-    */
     Cloud *triangulate (DisparityBuffer *input, int density, bool enforceRectify = false) const;
     Cloud *triangulate (FloatFlowBuffer *input, int density, bool enforceRectify = false) const;
 
     Cloud *triangulate (SixDBuffer *input, int density) const;
 
     DepthBuffer *triangulateToDB (DisparityBuffer *input, bool enforceRectify = false) const;
+
+
+    /*
+    vector<SwarmPoint> *triangulate (DisparityBuffer *input, int density, bool enforceRectify = false) const;
+    vector<SwarmPoint> *triangulate (FloatFlowBuffer *input, int density, bool enforceRectify = false) const;
+    vector<SwarmPoint> *triangulate (SixDBuffer *input, int density) const;
+    */
+
 private:
     template<class InputType>
     Cloud *triangulateHelper (InputType *input,  int density, bool enforceRectify) const;

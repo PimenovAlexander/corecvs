@@ -6,12 +6,8 @@
  * \author alexander
  */
 
-/*
-#ifndef TRACE
-#define TRACE
-#endif
-*/
 #include <QtCore/QSettings>
+#include <QDebug>
 
 #include "global.h"
 
@@ -55,7 +51,7 @@ void Frames::fetchNewFrames(ImageCaptureInterface *input)
     ImageCaptureInterface::FramePair pair = input->isRgb ? input->getFrameRGB24() : input->getFrame();
     if (pair.bufferLeft == NULL || pair.bufferRight == NULL)
     {
-        printf("Alert: We have received one or zero frames\n");
+        printf("Frames::fetchNewFrames(): Alert: We have received one or zero frames\n");
         fflush(stdout);
     }
 
@@ -81,7 +77,10 @@ void Frames::fetchNewFrames(ImageCaptureInterface *input)
         currentRgbFrames[RIGHT_FRAME]  = NULL;
     }
 
-    mTimestamp  = (pair.leftTimeStamp / 2) + (pair.rightTimeStamp / 2);
+    mTimestamp.timestamp  = (pair.leftTimeStamp / 2) + (pair.rightTimeStamp / 2);
+//    qDebug() << "Frames::fetchNewFrames(): streamId" << pair.streamId;
+    mTimestamp.streamId = pair.streamId;
+
 
     mDesyncTime = !mSwapped ? (pair.leftTimeStamp - pair.rightTimeStamp) : (pair.rightTimeStamp - pair.leftTimeStamp);
     frameCount++;

@@ -16,6 +16,16 @@ public:
 /*template <typename FieldReflectionType>
     void visit(typename FieldReflectionType::CPPType &field, const FieldReflectionType *fieldDescriptor);*/
 
+    /* Oldstyle */
+    template <class Type>
+        void visit(Type &field, Type defaultValue, const char *fieldName);
+
+
+    template <typename inputType, typename reflectionType>
+        void visit(std::vector<inputType> &field, const reflectionType * /*fieldDescriptor*/)
+    {
+    }
+
     template <typename inputType, typename reflectionType>
         void visit(inputType &field, const reflectionType * /*fieldDescriptor*/)
     {
@@ -57,6 +67,19 @@ template <>
 void DefaultSetter::visit<std::string, StringField>(
         std::string &field,
         const StringField *fieldDescriptor);
+
+/* Oldstyle setter */
+template <>
+void DefaultSetter::visit<int>(int &intField, int defaultValue, const char * /*fieldName*/);
+
+template <>
+void DefaultSetter::visit<double>(double &doubleField, double defaultValue, const char * /*fieldName*/);
+
+template <>
+void DefaultSetter::visit<bool>(bool &boolField, bool defaultValue, const char * /*fieldName*/);
+
+template <>
+void DefaultSetter::visit<std::string>(std::string &stringField, std::string defaultValue, const char * /*fieldName*/);
 
 
 } //namespace corecvs

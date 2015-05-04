@@ -1,6 +1,8 @@
-#include <QtGui/QtGui>
-#include <QtGui/QPainter>
-#include <QtGui/QFont>
+#include <QApplication>
+#include <QDesktopWidget>
+#include <QtGui>
+#include <QPainter>
+#include <QFont>
 
 #include "global.h"
 
@@ -38,8 +40,7 @@ OSDBaseWidget::OSDBaseWidget(QWidget *parent) :
     QRect absoluteWidgetRect = QRect(QWidget::mapToGlobal(relativeWidgetRect.topLeft()), QWidget::mapToGlobal(relativeWidgetRect.bottomRight()));
 
     XRectangle xrect = {0,0,1,1};
-    QX11Info qX11Info = this->x11Info();
-    Display *display = qX11Info.display ();
+    Display *display = QX11Info::display ();
     Window winId = (Window)this->winId();
 
     XShapeCombineRectangles (

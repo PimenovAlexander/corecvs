@@ -14,7 +14,7 @@
 
 #include "abstractBuffer.h"
 #include "abstractContiniousBuffer.h"
-#include "fixedPointDisplace.h"
+#include "fixedPointBlMapper.h"
 
 namespace corecvs {
 
@@ -25,7 +25,7 @@ typedef AbstractContiniousBuffer<uint16_t, int32_t> G12BufferBase;
  *
  *
  */
-class G12Buffer : public G12BufferBase
+class G12Buffer : public G12BufferBase, public FixedPointBlMapper<G12Buffer, G12Buffer, int32_t, uint16_t>
 {
 public:
     static const int BUFFER_BITS      = 12;
@@ -109,12 +109,6 @@ template<typename DeformMapType>
         return toReturn;
     }
 
-    inline bool isValidCoordBlPrecomp(const BilinearMapPoint &point) const
-    {
-        return /*(point.x >= 0 ) &&*/ (point.x < this->getW() - 1) &&
-               /*(point.y >= 0 ) &&*/ (point.y < this->getH() - 1);
-    }
-
     G12Buffer::InternalElementType elementBlPrecomp(const BilinearMapPoint &point)
     {
         uint32_t a = this->element(point.y    , point.x    );
@@ -122,62 +116,6 @@ template<typename DeformMapType>
         uint32_t c = this->element(point.y + 1, point.x    );
         uint32_t d = this->element(point.y + 1, point.x + 1);
         return (a * point.k1 + b * point.k2 + c * point.k3 + d * point.k4) / 255;
-    }
-
-
-    class ParallelDoReverseDeformationBlPrecomp
-    {
-        G12Buffer *toReturn;
-        const FixedPointDisplace *map;
-        G12Buffer *buf;
-
-    public:
-        ParallelDoReverseDeformationBlPrecomp(
-            G12Buffer *_toReturn,
-            const FixedPointDisplace *_map,
-            G12Buffer *_buf
-            ) :
-        toReturn(_toReturn), map(_map), buf(_buf)
-        {}
-
-        void operator()( const BlockedRange<G12Buffer::InternalIndexType>& r ) const
-        {
-            G12Buffer::InternalIndexType j;
-            G12Buffer::InternalIndexType newW = toReturn->getW();
-
-            for (G12Buffer::InternalIndexType i = r.begin(); i < r.end(); i++)
-            {
-                for (j = 0; j < newW - 1; j++)
-                {
-                    BilinearMapPoint p = map->map(i,j);
-                    if (buf->isValidCoordBlPrecomp(p))
-                        toReturn->element(i,j) = buf->elementBlPrecomp(p);
-                    else
-                        toReturn->element(i,j) = 0x0;
-                }
-            }
-        }
-
-    }; // ParallelDoReverseDeformationBlPrecomp
-
-    /**
-     * This function template is responsible for applying reverse
-     * transformation to the abstract buffer.
-     *
-     *
-     * \param map
-     *         The map to apply
-     * \param newH
-     *         Output Buffer Height
-     * \param newW
-     *        Output Buffer Width
-     **/
-    G12Buffer *doReverseDeformationBlPrecomp(const FixedPointDisplace *map, G12Buffer::InternalIndexType newH, G12Buffer::InternalIndexType newW)
-    {
-        G12Buffer *toReturn = new G12Buffer(newH, newW);
-        DOTRACE(("Starting transform to %d %d...\n", newW - 1, newH - 1));
-        parallelable_for(0, newH - 1, ParallelDoReverseDeformationBlPrecomp(toReturn, map, this));
-        return toReturn;
     }
 
     /**

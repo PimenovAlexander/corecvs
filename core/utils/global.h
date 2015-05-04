@@ -1,7 +1,7 @@
 #pragma once
 /**
  * \file global.h
- * \brief This file holds the global includes, mostly for debuging, tracing and profiling
+ * \brief This file holds the global includes, mostly for debuging, tracing, profiling and portability
  *
  *
  * \ingroup cppcorefiles
@@ -130,9 +130,20 @@ typedef int                bool_t;                          // fast Boolean type
 #define STATIC_ASSERT(CONDITION, VALUE) static_assert((CONDITION), (#VALUE))
 #elif defined( __clang__ )
 #define STATIC_ASSERT(CONDITION, VALUE) static_assert((CONDITION), (#VALUE))
-#else*/
-#define STATIC_ASSERT(CONDITION, VALUE) typedef int foo_##VALUE[(CONDITION) ? 1 : -1]
+#else
+#define STATIC_ASSERT(CONDITION, VALUE) typedef int foo_##VALUE[(CONDITION) ? 1 : -1] */
 /*#endif*/
+
+#if defined(__GNUC__)
+   #define STATIC_ASSERT(CONDITION, VALUE)                         \
+     _Pragma("GCC diagnostic push")                                \
+     _Pragma("GCC diagnostic ignored \"-Wunused-local-typedefs\"") \
+     typedef int foo_##VALUE[(CONDITION) ? 1 : -1];                \
+     _Pragma("GCC diagnostic pop")
+
+#else
+   #define STATIC_ASSERT(CONDITION, VALUE) typedef int foo_##VALUE[(CONDITION) ? 1 : -1]
+#endif
 
 #define SYNC_PRINT(X) \
 do {                  \
@@ -243,6 +254,11 @@ inline void deletearr_safe (Type * &ptr)
 # define GET_VEC_DATA_PTR(vec)  &(vec[0])
 #else
 # define GET_VEC_DATA_PTR(vec)  vec.data()
+#endif
+
+
+#if defined(_MSC_VER)
+
 #endif
 
 #endif // is__cplusplus

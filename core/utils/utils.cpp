@@ -24,6 +24,28 @@
 
 namespace corecvs {
 
+namespace HelperUtils {
+
+
+
+istream &getlineSafe(istream &is, std::string &str)
+{
+    istream& stream = getline(is, str);
+
+    if (str.length() != 0 &&  *str.rbegin() == '\r') {
+        str.erase(str.length() - 1);
+    }
+
+    return stream;
+}
+
+bool startsWith(const string &str, const string &prefix)
+{
+    return (str.compare(0, prefix.size(), prefix) == 0);
+}
+
+}
+
 #if defined( DSP_TARGET ) || defined( WIN32 ) || defined( WIN64 )
 // It is possible but quite hard and usually not needed to print stack trace on Win32.
 // Debugging shall be done with debugger when possible, if not, minidump is better than stack trace

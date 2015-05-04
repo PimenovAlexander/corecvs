@@ -30,18 +30,18 @@ int Log::mDummy = Log::staticInit();
 
 int Log::staticInit()
 {
-	LogDrain *defaultDrain = new StdStreamLogDrain(std::cout);
-	mLogDrains.push_back(defaultDrain);
+    LogDrain *defaultDrain = new StdStreamLogDrain(std::cout);
+    mLogDrains.push_back(defaultDrain);
 //	logStream.reset(new std::ofstream(fileName.c_str(), std::ios::out | std::ios::app));
-	return 0;
+    return 0;
 }
 
 void Log::message(Message &message)
 {
-	for(unsigned int i = 0; i < mLogDrains.size(); i++)
-	{
-		mLogDrains[i]->drain(message);
-	}
+    for(unsigned int i = 0; i < mLogDrains.size(); i++)
+    {
+        mLogDrains[i]->drain(message);
+    }
 }
 
 Log::Log(const LogLevel /*maxLocalLevel*/)
@@ -54,13 +54,13 @@ Log::~Log()
 
 std::string Log::msgBufToString(const char* msg)
 {
-	std::string message(msg);
+    std::string message(msg);
 
-	if (message.size() != 0 && message[message.size() - 1] == '\n') {
-		message.resize(message.size() - 1);
+    if (message.size() != 0 && message[message.size() - 1] == '\n') {
+        message.resize(message.size() - 1);
     }
 
-	return message;
+    return message;
 }
 
 //static
@@ -108,11 +108,10 @@ cchar* LogDrain::time2str(time_t &time)
 
 void StdStreamLogDrain::drain(Log::Message &message)
 {
-    //static const std::string sLevels[] = { "    ", "    ", "    ", "WRN ", "ERR " };
     std::ostringstream prefix;
 
     prefix << time2str(message.get()->rawtime)   << ":"
-           << Log::level_names[message.get()->mLevel]
+           << Log::level_names[message.get()->mLevel] << " "
            << message.get()->mOriginFileName     << ":"
            << message.get()->mOriginLineNumber   << " "
            << message.get()->mOriginFunctionName << "() ";
@@ -134,4 +133,30 @@ void StdStreamLogDrain::drain(Log::Message &message)
             break;
         pos = posBr + 1;
     } while (true);
+}
+
+
+FileLogDrain::FileLogDrain(const std::string &path, bool bAppend)
+    : mFile(path.c_str(), bAppend ? std::ios_base::app : std::ios_base::trunc)
+{}
+
+FileLogDrain::~FileLogDrain()
+{
+    mFile.flush();
+    mFile.close();
+}
+
+void FileLogDrain::drain(Log::Message &message)
+{
+    if (mFile.is_open())
+    {
+        mFile << message.get()->s.str() << std::endl;
+        mFile.flush();
+    }
+}
+
+
+void LiteStdStreamLogDrain::drain(Log::Message &message) {
+    mOutputStream << message.get()->s.str() << std::endl;
+    mOutputStream.flush();
 }

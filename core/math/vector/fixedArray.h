@@ -82,7 +82,7 @@ public:
 
     ~FixedArrayBase()
     {
-        if (this->element)
+        if (this->element != NULL)
         {
             for (int i = 0; i < length; i++)
             {
@@ -111,11 +111,11 @@ public:
     typedef FixedArrayBase<FixedArray<ElementType>, ElementType> BaseClass;
 
     explicit inline FixedArray(int _length) :
-        BaseClass(_length) {};
+        BaseClass(_length) {}
     explicit inline FixedArray(int _length, const ElementType* _x) :
-        BaseClass(_length, _x) {};
+        BaseClass(_length, _x) {}
     explicit inline FixedArray(const std::vector<ElementType> &_x) :
-        BaseClass(_x) {};
+        BaseClass(_x) {}
 };
 
 

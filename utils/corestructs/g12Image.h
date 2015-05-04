@@ -8,7 +8,7 @@
 #ifndef G12IMAGE_H_
 #define G12IMAGE_H_
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 #include "g12Buffer.h"
 #include "rgb24Buffer.h"
@@ -20,9 +20,8 @@ using namespace corecvs;
 
 class G12Image : public QImage {
 public:
-    G12Image(G12Buffer *buffer);
     G12Image(G12Buffer *buffer, int newH, int newW);
-    G12Image(G12Buffer *buffer, bool mirror);
+    G12Image(G12Buffer *buffer, bool mirror = false);
 
 
     virtual ~G12Image();
@@ -61,7 +60,8 @@ public:
 
 
 
-class RGB24InterfaceImage : public QImage{
+class RGB24InterfaceImage : public QImage
+{
 public:
     RGB24InterfaceImage(RGB24Buffer *buffer);
     virtual ~RGB24InterfaceImage();

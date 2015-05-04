@@ -1,7 +1,11 @@
 #ifndef LINE_H_
 #define LINE_H_
+
 #include "vector2d.h"
 #include "vector3d.h"
+#include "matrix44.h"
+
+
 namespace corecvs {
 /**
  * \file line.h
@@ -61,7 +65,7 @@ public:
     BaseRay(const VectorType &_a, const VectorType & _p) :
         a(_a),
         p(_p)
-    {};
+    {}
 
 
     VectorType getPoint(double t) const
@@ -70,7 +74,7 @@ public:
     }
 
     /**
-     *   Normalizes the normal vector without changing the ray itself
+     *   Normalizes the direction vector without changing the ray itself
      *
      *
      **/
@@ -86,6 +90,75 @@ public:
         RealType toReturn(*this);
         toReturn.normalise();
         return toReturn;
+    }
+
+    /**
+     *
+     * This method implements Cyrus-Beck algorithm
+     * http://en.wikipedia.org/wiki/Cyrus%E2%80%93Beck_algorithm
+     *
+     * This method expects normals to be internal
+     *
+     * Intersection with each line is computed and classified as an enter, or exit to the polygon halfspace.
+     * An internal normal is computed - n. On a ray there is a parametrised point.
+     *
+     * Criteria for intersection is
+     * \f[
+     *    \overrightarrow {P(t)} = \overrightarrow {p} + \overrightarrow {a} t
+     * \f]
+     * \f[
+     *    ( \overrightarrow {P(t)} - \overrightarrow {r} ) \overrightarrow {n} = 0
+     * \f]
+     * \f[
+     *    ( \overrightarrow {p} + \overrightarrow {a} t - \overrightarrow {r} ) \overrightarrow {n} = 0
+     * \f]
+     * \f[
+     *    ( \overrightarrow {p} - \overrightarrow {r} ) \overrightarrow {n} + \overrightarrow {a} \overrightarrow {n} t = 0
+     * \f]
+     * \f[
+     *    t = - {( \overrightarrow {p} - \overrightarrow {r} ) \overrightarrow {n} \over \overrightarrow {a} \overrightarrow {n} }
+     * \f]
+     * \f[
+     *    t = {( \overrightarrow {r} - \overrightarrow {p} ) \overrightarrow {n} \over \overrightarrow {a} \overrightarrow {n} }
+     * \f]
+     *
+     *
+     * If the point is an entry one the sign of \f$\overrightarrow {a} \overrightarrow {n}\f$ will denote if it is an entry or exit
+     * What interests us is a maximum entry point and minimum exit point
+     *
+     *
+     *
+     * */
+    template<typename ConvexType>
+    bool clip(const ConvexType &convex, double &t1, double &t2)
+    {
+        t1 = -numeric_limits<double>::max();
+        t2 =  numeric_limits<double>::max();
+
+        for (unsigned i = 0; i < convex.size();  i++) {
+            VectorType r = convex.getPoint(i);
+            VectorType n = convex.getNormal(i);
+
+            VectorType diff = r - p;
+
+            double numen = diff & n;
+            double denum = a & n;
+            if (denum == 0.0) {
+                continue;
+            }
+            double t = numen / denum;
+
+            if ((denum > 0) && (t > t1)) {
+                t1 = t;
+            }
+            if ((denum < 0) && (t < t2)) {
+                t2 = t;
+            }
+
+            cout << "Intersection " << t << " at " << getPoint(t) << " is " << (numen > 0 ? "enter" : "exit") << std::endl;
+
+        }
+        return t2 > t1;
     }
 
     friend ostream & operator <<(ostream &out, const BaseRay &ray)
@@ -130,6 +203,51 @@ public:
         }
 
         return fabs(dp & denum) / l;
+    }
+
+    /**
+     *    This is a helpful method to estimate properties of skew lines
+     **/
+    Vector3dd intersectCoef(Ray3d &other)
+    {
+        Vector3dd normal = a ^ other.a;
+        normal.normalise();
+        Matrix33 m = Matrix33::FromColumns(a, -other.a, normal);
+        return m.inv() * (other.p - p);
+    }
+
+    /**
+     * not optimal so far
+     **/
+    Vector3dd closestPoint(Ray3d &other)
+    {
+        return getPoint(intersectCoef(other).x());
+    }
+
+    Vector3dd intersect(Ray3d &other)
+    {
+        Vector3dd coef = intersectCoef(other);
+        return (getPoint(coef.x()) + other.getPoint(coef.y())) / 2.0;
+    }
+
+    void transform(const Matrix44 &M)
+    {
+        a = M * a;
+        p = M * p;
+    }
+
+    Ray3d transformed(const Matrix44 &M)
+    {
+        return Ray3d((M * (p + a)) - (M * p), M * p);
+    }
+
+
+    /**
+     *   NYI
+     **/
+    static Vector3dd bestFit(Ray3d * /*rays*/, unsigned /*number*/)
+    {
+        return Vector3dd(0.0);
     }
 
 };
@@ -493,7 +611,7 @@ public:
 
     typedef FixedVector<double, 4> Vector4dd;
 
-    Plane3d() {};
+    Plane3d() {}
 
     Plane3d(const double &_a, const double &_b, const double &_c, const double &_d)
     {
@@ -660,6 +778,15 @@ public:
          return point - t * normal();
      }
 
+     /**
+      *   projecting zero to the current plane
+      **/
+     Vector3dd projectZeroTo() const
+     {
+         double l2 = normal().sumAllElementsSq();
+         double t = (last() / l2);
+         return - t * normal();
+     }
 
     /**
      *  Construct a plane from normal
@@ -667,7 +794,7 @@ public:
     static Plane3d FormNormal(const Vector3dd &normal)
     {
         return Plane3d(normal);
-    };
+    }
 
     /**
      *  Construct the Plane from normal and a point
@@ -682,7 +809,7 @@ public:
     static Plane3d FormNormalAndPoint(const Vector3dd &normal, const Vector3dd &point)
     {
         return Plane3d(normal, -(normal & point));
-    };
+    }
 
     /**
      *  Construct the Plane from 3 points

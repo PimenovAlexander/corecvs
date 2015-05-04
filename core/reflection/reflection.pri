@@ -1,15 +1,15 @@
 SOURCES += \
-    reflection/defaultSetter.cpp  \
+    reflection/stringPrinterVisitor.cpp \
+    reflection/defaultSetter.cpp \
     reflection/printerVisitor.cpp \
     reflection/serializerVisitor.cpp \
     reflection/deserializerVisitor.cpp
-
-
+    
+    
 HEADERS += \
-    reflection/reflection.h      \
-    reflection/defaultSetter.h   \
-    reflection/printerVisitor.h  \
+    reflection/stringPrinterVisitor.h \
+    reflection/reflection.h \
+    reflection/defaultSetter.h \
+    reflection/printerVisitor.h \
     reflection/serializerVisitor.h \
     reflection/deserializerVisitor.h
-    
-    

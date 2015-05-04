@@ -58,4 +58,39 @@ void DefaultSetter::visit<std::string, StringField>(
     field = fieldDescriptor->defaultValue;
 }
 
+/* Old style */
+
+template <>
+void DefaultSetter::visit<int>(int &intField, int defaultValue, const char * /*fieldName*/)
+{
+    intField = defaultValue;
+}
+
+template <>
+void DefaultSetter::visit<double>(double &doubleField, double defaultValue, const char * /*fieldName*/)
+{
+    doubleField = defaultValue;
+}
+
+template <>
+void DefaultSetter::visit<bool>(bool &boolField, bool defaultValue, const char * /*fieldName*/)
+{
+    boolField = defaultValue;
+}
+
+template <>
+void DefaultSetter::visit<std::string>(std::string &stringField, std::string defaultValue, const char * /*fieldName*/)
+{
+    stringField = defaultValue;
+}
+
+
+template<class Type>
+void DefaultSetter::visit(Type &field, Type /*defaultValue*/, const char *fieldName)
+{
+    /*pushChild(fieldName);*/
+        field.accept(*this);
+    /*popChild();*/
+}
+
 } //namespace corecvs

@@ -69,6 +69,26 @@ Matrix::operator Matrix33() const
     );
 }
 
+Matrix operator *(const double &a, const Matrix &B)
+{
+    Matrix result(B.h, B.w, false);
+    int row, column;
+    for (row = 0; row < result.h ; row++)
+    {
+        for (column = 0; column < result.w ; column++)
+        {
+             result.a(row, column) = B.a(row, column) * a;
+        }
+    }
+    return result;
+}
+
+Matrix operator *(const Matrix &B, const double &a)
+{
+    return a * B;
+}
+
+
 /* TODO: Merge functions below */
 Matrix *Matrix::mul(const Matrix& V)
 {
@@ -241,6 +261,21 @@ ostream & operator <<(ostream &out, const Matrix &matrix)
     }
     out.precision(wasPrecision);
     return out;
+}
+
+void Matrix::print(ostream &out)
+{
+    out << "{";
+    for (int i = 0; i < h; i++)
+    {
+        out << "{";
+        for (int j = 0; j < w; j++)
+        {
+            out << a(i, j) << ((j != w - 1) ? "," : "");
+        }
+        out << "}" << ((i != h - 1) ? ",\n" : "\n") ;
+    }
+    out << "}";
 }
 
 
@@ -553,6 +588,65 @@ double Matrix::detSVD() const
     return det;
 }
 
+Vector2d32 Matrix::getMinCoord() const
+{
+    Vector2d32 result(0, 0);
+    double value = numeric_limits<double>::max();
+
+    for (int row = 0; row < h ; row++)
+    {
+        for (int column = 0; column < w ; column++)
+        {
+            if (this->a(row, column) < value)
+            {
+                value = this->a(row, column);
+                result = Vector2d32(row, column);
+            }
+        }
+    }
+    return result;
+}
+
+Vector2d32 Matrix::getMaxCoord() const
+{
+    Vector2d32 result(0, 0);
+    double value = -numeric_limits<double>::max();
+
+    for (int row = 0; row < h ; row++)
+    {
+        for (int column = 0; column < w ; column++)
+        {
+            if (this->a(row, column) > value)
+            {
+                value = this->a(row, column);
+                result = Vector2d32(row, column);
+            }
+        }
+    }
+    return result;
+}
+
+Matrix Matrix::column(int column)
+{
+    Matrix toReturn(h, 1);
+    for (int row = 0; row < h ; row++)
+    {
+        toReturn.a(row, 0) = this->a(row, column);
+    }
+    return toReturn;
+}
+
+Matrix Matrix::row(int row)
+{
+    Matrix toReturn(1, w);
+    for (int column = 0; column < w ; column++)
+    {
+        toReturn.a(0, column) = toReturn.a(row, column);
+    }
+    return toReturn;
+}
+
+
 /**
  *
  * \brief This method contains SVD implementation.
@@ -833,10 +927,148 @@ void Matrix::svd (Matrix *A, Matrix *W, Matrix *V)
                 W->a(0, k) = x;
             }
         }
-     delete[] rv1;
+        delete[] rv1;
 }
 
+void Matrix::svd(Matrix *A, DiagonalMatrix *W, Matrix *V)
+{
+    ASSERT_TRUE((W->size() == A->w), "Matrix W has wrong size\n" );
+    Matrix WVec(1, W->size());
+    svd(A, &WVec, V);
+    for (int i = 0; i < W->size(); i++)
+    {
+        W->a(i) = WVec.a(0, i);
+    }
+}
 
+ /**
+  *  \author Alexander Pimenov based on code form "Numerical Recipies in C"
+  *
+  *   Computes all eigenvalues and eigenvectors of a real symmetric matrix a[1..n][1..n].
+  *   On output, elements of a above the diagonal are destroyed. d[1..n] returns the eigenvalues of a v[1..n][1..n]
+  *   is a matrix whose columns contain, on output, the normalized eigenvectors of a nrot returns the number of Jacobi rotations that were required.
+  *
+  *
+  *
+  **/
+
+#define ROTATE(mat,i,j,k,l) g = mat->a(i,j); h = mat->a(k,l); mat->a(i,j) = g - s * ( h + g * tau); mat->a(k,l) = h + s * ( g - h * tau);
+
+int Matrix::jacobi(Matrix *a, DiagonalMatrix *d, Matrix *v, int *nrotpt)
+{
+
+    ASSERT_TRUE((a != NULL && d != NULL && v != NULL), "NULL input Matrix\n");
+    ASSERT_TRUE((a->h == a->w), "Matrix A is not square\n" );
+    ASSERT_TRUE((v->h == a->h && v->w == a->w), "Matrix V has wrong size\n" );
+    ASSERT_TRUE((a->w == d->size()),"Matrix D has wrong size\n");
+
+    int j,iq,ip,i;
+    double tresh,theta,tau,t,sm,s,h,g,c,*b,*z;
+
+    int n = a->h;
+
+    b = new double[n];
+    z = new double[n];
+
+    for (ip = 0;ip < n; ip++) {   // Initialize to the identity matrix.
+        for ( iq = 0; iq < n; iq++) {
+            v->a(ip,iq) = 0.0;
+        }
+        v->a(ip,ip) = 1.0;
+    }
+
+    for (ip = 0;ip < n; ip++)  // Initialize b and d to the diagonal of a .
+    {
+        b[ip] = a->a(ip,ip);
+        d->a(ip) = a->a(ip,ip);
+        z[ip] = 0.0;             // This vector will accumulate terms of the form ta_pq
+    }
+
+    int nrot=0;
+
+    for (i = 0; i < 50; i++) {
+        sm = 0.0;
+        for (ip = 0;ip < n - 1; ip++)   //  Sum off-diagonal elements.
+        {
+            for (iq = ip + 1;iq < n; iq++) {
+                sm += fabs(a->a(ip,iq));
+            }
+        }
+
+        if (sm == 0.0) { // The normal return, which relies on quadratic convergence to machine underflow.
+            deletearr_safe (z);
+            deletearr_safe (b);
+            if (nrotpt != NULL) {
+                *nrotpt = nrot;
+            }
+            return 0;
+        }
+
+        if (i < 4) {
+            tresh = 0.2 * sm / (n * n); // ...on the first three sweeps.
+        } else {
+            tresh = 0.0;          //...thereafter.
+        }
+
+        for (ip = 0;ip < n-1; ip++)
+        {
+            for (iq = ip + 1; iq < n; iq++)
+            {
+                g = 100.0 * fabs(a->a(ip,iq)); // After four sweeps, skip the rotation if the off-diagonal element is small.
+
+                if (i > 4 && (double)(fabs(d->a(ip)) + g) == (double)fabs(d->a(ip))
+                          && (double)(fabs(d->a(iq)) + g) == (double)fabs(d->a(iq)))
+                {
+                    a->a(ip,iq) = 0.0;
+                }
+                else if (fabs(a->a(ip,iq)) > tresh)
+                {
+                    h = d->a(iq) - d->a(ip);
+                    if ((float)(fabs(h) + g) == (float)fabs(h)) {
+                        t = (a->a(ip,iq)) / h;  // t =1 /(2 \tau)
+                    } else {
+                        theta = 0.5 * h / (a->a(ip,iq));
+                        t = 1.0 / (fabs(theta) + sqrt(1.0 + theta*theta));
+                        if (theta < 0.0) t = -t;
+                    }
+
+                    c = 1.0 / sqrt(1 + t*t);
+                    s = t * c;
+                    tau = s / (1.0+c);
+                    h = t * a->a(ip,iq);
+                    z[ip] -= h;
+                    z[iq] += h;
+                    d->a(ip) -= h;
+                    d->a(iq) += h;
+                    a->a(ip,iq) = 0.0;
+
+                    for (j = 0; j <= ip - 1; j++) { // Case of rotations 1 <= j < p .
+                        ROTATE(a, j, ip, j, iq)
+                    }
+                    for (j = ip + 1; j <= iq - 1;j++) { // Case of rotations p < j < q .
+                        ROTATE(a, ip, j, j, iq)
+                    }
+                    for (j = iq + 1; j < n; j++) { // Case of rotations  q < j<= n .
+                        ROTATE(a, ip, j, iq, j)
+                    }
+                    for (j = 0; j < n; j++) {
+                        ROTATE(v, j, ip, j, iq)
+                    }
+                    ++nrot;
+                }
+            }
+        }
+        for (ip = 0;ip < n; ip++)
+        {
+            b[ip] += z[ip];
+            d->a(ip) = b[ip];                   // Update d with the sum of ta_pq and reinitialize z
+            z[ip] = 0.0;
+        }
+    }
+    SYNC_PRINT(("Too many iterations in routine jacobi"));
+    return 1;
+}
+#undef ROTATE
 
 
 } //namespace corecvs

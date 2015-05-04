@@ -38,6 +38,8 @@
 **
 ****************************************************************************/
 
+#include <QGraphicsSceneMouseEvent>
+
 #include "iostream"
 #include "filterGraphPresentation.h"
 

@@ -52,7 +52,7 @@ public:
 
     static const int H = 3;
     static const int W = H;
-    static const int ELEM_NUM = H*W;
+    static const int ELEM_NUM = H * W;
 
 
     explicit Matrix33(const double* _data) : BaseClass(_data) {}
@@ -64,19 +64,21 @@ public:
 
     Matrix33() {}
 
-    Matrix33(const FixedVector<double, 9> &_M) : BaseClass(_M) {}
+    Matrix33(const FixedVector<double, 9> &_M) : BaseClass(&_M.at(0)) {}
     Matrix33(const Vector3dd &_V1, const Vector3dd &_V2, const Vector3dd &_V3);
 
 //  Matrix33& operator =(const Matrix33& V);
 
     void invert();
     // TODO: Rename to inverted
-    Matrix33 inv();
+    Matrix33 inv() const;
 
     double trace() const;
-    double det();
+    double det() const;
     inline double &a(int i, int j);
     inline const double &a(int i, int j) const;
+    double &operator ()(int i,int j);
+    const double &operator ()(int i,int j) const;
 
     void transpose();
     void swapRows(int r1, int r2);
@@ -86,7 +88,12 @@ public:
 
     void neg();
     Vector3dd aV(int i) const;
+    Vector3dd row(int i) const;
+
     Vector3dd aW(int i) const;
+    Vector3dd column(int i) const;
+
+
     Vector3dd diagonal() const;
 
     double frobeniusNorm() const;
@@ -126,6 +133,7 @@ public:
 
     /* Constructing 3D scale matrix */
     static Matrix33 Scale3(const Vector3dd& v);
+    static Matrix33 Scale3(double s1, double s2, double s3);
     static Matrix33 Scale3(double v);
 
 
@@ -252,6 +260,18 @@ inline const double &Matrix33::a(int i,int j) const
 {
    return (*this)[i * W + j];
 }
+
+inline double &Matrix33::operator ()(int i,int j)
+{
+    return (*this)[i * W + j];
+}
+
+inline const double &Matrix33::operator ()(int i,int j) const
+{
+    return (*this)[i * W + j];
+}
+
+
 
 
 /**
@@ -444,7 +464,7 @@ inline Vector3dd Matrix33::mulBy2dLeft(const Vector2dd &V) const
  **/
 inline Vector2dd operator * (const Matrix33 &matrix, const Vector2dd &V)
 {
-    return (Vector2dd) matrix.mulBy2dRight(V);
+    return matrix.mulBy2dRight(V).project();
 }
 
 /**
@@ -464,7 +484,7 @@ inline Vector2dd operator * (const Matrix33 &matrix, const Vector2dd &V)
  **/
 inline Vector2dd operator * (const Vector2dd &V,const Matrix33 &matrix)
 {
-    return (Vector2dd) matrix.mulBy2dLeft(V);
+    return matrix.mulBy2dLeft(V).project();
 }
 
 } //namespace corecvs

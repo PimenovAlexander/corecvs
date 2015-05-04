@@ -133,5 +133,26 @@ int Histogram::getOtsuThreshold()
     return result + min;
 }
 
+double Histogram::getMeanValue(double *dev)
+{
+    double meanColor = 0.0;
+    double meanSquare = 0.0;
+    for (unsigned i = 0; i < data.size(); i++)
+    {
+        double c = data[i];
+        meanColor += c * i;
+        meanSquare += c * i * i;
+    }
+
+    meanColor  /= totalSum;
+    meanSquare /= totalSum;
+
+    if (dev != NULL) {
+        (*dev) = sqrt(meanSquare - meanColor * meanColor);
+    }
+
+    return (meanColor + min);
+}
+
 } //namespace corecvs
 

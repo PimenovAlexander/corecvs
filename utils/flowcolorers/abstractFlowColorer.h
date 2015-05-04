@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#include <QtGui/QColor>
+#include <QColor>
 
 #include "vector2d.h"
 

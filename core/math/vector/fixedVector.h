@@ -29,13 +29,17 @@ namespace corecvs {
  *
  */
 
-template<typename RealType, typename ElementType, int length>
-class FixedVectorBase : public VectorOperationsBase<RealType, ElementType>
+template<
+        typename ReturnType,             /**<  The type that will be returned from the operator and constuctive functions  */
+        typename ElementType,            /**<  Internal type */
+        int length                       /**<  Vector length */
+       >
+class FixedVectorBase : public VectorOperationsBase<FixedVectorBase<ReturnType, ElementType, length>, ElementType, ReturnType>
 {
 public:
 
     static const int LENGTH = length;
-    typedef VectorOperationsBase<RealType, ElementType> BaseClass;
+    typedef VectorOperationsBase<FixedVectorBase<ReturnType, ElementType, length>, ElementType, ReturnType> BaseClass;
     typedef ElementType InnerElementType;
 
     //union {
@@ -43,12 +47,11 @@ public:
         // While debugging you favorite datatype could be added here
     //};
 
-
     /**
      * This functions creates the object from the other fixed vector
      **/
-    template<typename OtherRealType>
-    inline FixedVectorBase(const FixedVectorBase<OtherRealType,typename OtherRealType::InnerElementType, length> &V)
+    template<typename OtherReturnType>
+    inline FixedVectorBase(const FixedVectorBase<OtherReturnType,typename OtherReturnType::InnerElementType, length> &V)
     {
         for (int i = 0; i < length; i++)
             this->element[i] = (ElementType)V.element[i];
@@ -58,10 +61,10 @@ public:
      * This functions creates the fixed vector object from the other fixed vector of smaller size, adding an
      * element at the end
      **/
-    template<typename OtherRealType>
+    template<typename OtherReturnType>
     inline FixedVectorBase(
-            const FixedVectorBase<OtherRealType,typename OtherRealType::InnerElementType, length - 1> &V,
-            const typename OtherRealType::InnerElementType &lastElement)
+            const FixedVectorBase<OtherReturnType,typename OtherReturnType::InnerElementType, length - 1> &V,
+            const typename OtherReturnType::InnerElementType &lastElement)
     {
         for (int i = 0; i < length - 1; i++)
             this->element[i] = (ElementType)V.element[i];
@@ -115,13 +118,37 @@ public:
         return element[n];
     }
 
-    inline RealType createVector(int /*length*/) const {
-        return RealType();
+    inline ReturnType createVector(int /*length*/) const {
+        return ReturnType();
     }
 
 };
 
-template<typename ElementType, int length>
+#if 0
+/**
+ *   This is a base class for data structures that work on top of the vector.
+ *   For example Matrix33 can be a small 9 element vector. All inherited data types will take
+ *   FixedVectorBase as input and produce Matrix33.
+ **/
+template<typename ReturnType, typename ElementType, int length>
+class FixedVectorBase: public FixedVectorDataContainer< FixedVectorDataContainer<ReturnType, ElementType, length>, ElementType, length, ReturnType>
+{
+public:
+    class FixedVectorDataContainer< FixedVectorDataContainer<ReturnType, ElementType, length>, ElementType, length, ReturnType> BaseClass;
+
+    template<typename OtherRealType>
+    inline FixedVectorBase(const FixedVectorBase<OtherRealType, typename OtherRealType::InnerElementType, length> &V) :
+        BaseClass(V)
+    {}
+
+    explicit inline FixedVectorBase(const ElementType &x) : BaseClass(x) {}
+    explicit inline FixedVectorBase(const ElementType* x) : BaseClass(x) {}
+    explicit inline FixedVectorBase() {}
+
+};
+#endif
+
+template<typename ElementType, int length >
 class FixedVector : public FixedVectorBase<FixedVector<ElementType, length>, ElementType, length>
 {
 protected:
@@ -141,6 +168,15 @@ public:
             const ElementType &lastElement) :
         BaseClass(V, lastElement)
     {}
+
+/*
+    template<template <typename, int> class OtherVector>
+    inline FixedVector(
+            const FixedVectorBase<OtherVector<ElementType, length - 1>, ElementType, length - 1> &V,
+            const ElementType &lastElement) :
+        BaseClass(V, lastElement)
+    {}
+*/
 
     /**
      *   Copy constructor.

@@ -1,5 +1,5 @@
 #pragma once
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "generated/draw3dCameraParameters.h"
 #include "ui_draw3dCameraParametersControlWidget.h"
 #include "parametersControlWidgetBase.h"

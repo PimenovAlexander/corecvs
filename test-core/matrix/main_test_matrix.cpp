@@ -362,17 +362,29 @@ void testVector2d (void)
     ASSERT_TRUE(rightNormal.notTooFar(v3.rightNormal() , 1e-10), "Right Normal Error\n");
 }
 
-void testMatrixSerialisation (void)
+
+void testVector2dAzimuth (void)
 {
-    Matrix33 m = Matrix33::RotationX(0.1) * Matrix33::RotationY(0.1);
-    Matrix33 m1;
-    ostringstream oss;
-    m.serialise(oss);
-    istringstream iss (oss.str(),istringstream::in);
-    iss >> m1;
-    m.print();
-    m1.print();
-    ASSERT_TRUE(m1.notTooFar(m), "serialization fails\n");
+    cout << "Testing Vector2d\n";
+
+    Vector2dd v1(1.0, 0.0);
+    Vector2dd v2;
+    for (int i = -20; i < 20; i++)
+    {
+        double angle = i / 20.0 * (2 * M_PI);
+        v2 = Vector2dd::FromPolar(angle);
+        double azim = v1.azimuthTo(v2);
+
+        while (angle <         0) angle += (2 * M_PI);
+        while (angle >= 2 * M_PI) angle -= (2 * M_PI);
+
+        while (azim <         0) azim += (2 * M_PI);
+        while (azim >= 2 * M_PI) azim -= (2 * M_PI);
+
+
+        SYNC_PRINT(("Azimuth is %lg deg should be %lg deg\n", radToDeg(azim), radToDeg(angle)));
+        ASSERT_DOUBLE_EQUAL(azim, angle, "Azimuth calculation failed\n");
+    }
 }
 
 void testDouble (void)
@@ -485,13 +497,40 @@ void testMatrixOperations (void)
 
 }
 
+void testVectorMatrixConversions()
+{
+    Matrix44 input(Matrix33::RotationY(0.1), Vector3dd(6,7,8));
+    Vector3dd pos(45.0,45.0,45.0);
+    Vector2dd shift(4.0,5.0);
+
+ //   Vector2dd out0 = input * pos - shift;
+ //   Vector2dd out1 = ((Vector2dd)(input * pos)) - shift;
+
+    Vector3dd product = Vector3dd(1.0,2.0,3.0);
+    Vector2dd out2 = (product.project() - shift);
+    Vector2dd out3 = product.project() - shift;
+
+    Vector2dd t1   = product.project();
+    Vector2dd out4 = t1 - shift;
+
+//    cout << out0  << endl;
+//    cout << out1 << endl;
+    cout << out2 << endl;
+    cout << out3 << endl;
+    cout << out4 << endl;
+
+}
+
 int main (int /*argC*/, char ** /*argV*/)
 {
     cout << "Testing " << endl;
+    testVector2dAzimuth();
+
+#if 0
+    return 0;
     //testMatrixVectorMult();
     //testMatrixOperations();
-    testMatrix44VectorProduct();
-    return 0;
+    testMatrix44VectorProduct();   
     //return 0;
     testMatrix44();
     testDouble();
@@ -502,7 +541,9 @@ int main (int /*argC*/, char ** /*argV*/)
     testMatrixSVD ();
     testVector3d ();
     testVector2d ();
+    testVectorMatrixConversions();
 
+#endif
     cout << "PASSED" << endl;
     return 0;
 }

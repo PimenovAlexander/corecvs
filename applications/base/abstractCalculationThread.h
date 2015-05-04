@@ -126,7 +126,8 @@ class AbstractCalculationThread : public QThread
          **/
         uint64_t mInterframeDelay;
 
-        uint64_t mLastFrameTimeStamp;
+        //uint64_t mLastFrameTimeStamp;
+        frame_data_t mLastFrameTimeStamp;
 
         /**
          * Current calculation state

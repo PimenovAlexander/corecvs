@@ -9,7 +9,7 @@
  */
 
 #include <QtCore/QString>
-#include <QtGui/QImage>
+#include <QImage>
 
 #include "rectifyParameters.h"
 #include "matrix33.h"

@@ -10,8 +10,8 @@
 
 
 #include <vector>
-#include <QtGui/QWidget>
-#include <QtGui/QtGui>
+#include <QWidget>
+#include <QtGui>
 
 #include "viAreaWidget.h"
 #include "saveFlowSettings.h"
@@ -36,6 +36,7 @@ public:
 
     ~AdvancedImageWidget();
 
+    void setCollapseTitle(bool collapse);
 
 public slots:
     virtual void childRepaint(QPaintEvent *event, QWidget *who);
@@ -62,6 +63,7 @@ public slots:
     void zoomChanged();
 
     void fitToggled();
+    void setFitWindow(bool flag = true);
 
     void setInfoString(QString info) { mUi->infoValueLabel->setText(info); }
 

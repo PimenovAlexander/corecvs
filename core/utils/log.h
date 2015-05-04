@@ -11,6 +11,7 @@
 #include <sys/time.h>
 #endif
 
+#include <fstream>
 #include <vector>
 #include <memory>
 #include <sstream>
@@ -236,6 +237,29 @@ class StdStreamLogDrain : public LogDrain
 
 public:
     StdStreamLogDrain(std::ostream &outputStream)
+        : mOutputStream(outputStream)
+    {}
+
+    virtual void drain(Log::Message &message);
+};
+
+
+class FileLogDrain : public LogDrain
+{
+    std::ofstream  mFile;
+
+public:
+    FileLogDrain(const std::string& path, bool bAppend = false);
+    ~FileLogDrain();
+    virtual void drain(Log::Message &message);
+};
+
+class LiteStdStreamLogDrain : public LogDrain
+{
+    std::ostream &mOutputStream;
+
+public:
+    LiteStdStreamLogDrain(std::ostream &outputStream)
         : mOutputStream(outputStream)
     {}
 

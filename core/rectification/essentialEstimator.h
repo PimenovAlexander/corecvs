@@ -87,7 +87,7 @@ public:
 
     /**
      *  Function that normalizes the current state.
-     *  It makes quaternion have module of 1 and also makes 1 a legth of the
+     *  It makes quaternion have module of 1 and also makes 1 a length of the
      *  direction vector
      *
      **/

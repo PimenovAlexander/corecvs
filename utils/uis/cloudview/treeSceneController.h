@@ -78,7 +78,7 @@ template <class Visitor>
 
         for (unsigned i = 0; i < mChildren.size(); i++)
         {
-            visitor.visit(*(mChildren[i]), mChildren[i]->mName.toAscii().data());
+            visitor.visit(*(mChildren[i]), mChildren[i]->mName.toLatin1().data());
         }
     }
 

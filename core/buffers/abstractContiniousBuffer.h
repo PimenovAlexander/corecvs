@@ -16,6 +16,9 @@
 #include "abstractBuffer.h"
 #include "matrix.h"
 
+#include "fixedPointBlMapper.h"
+//#include "bilinearMapPoint.h"
+
 namespace corecvs {
 
 /**
@@ -290,6 +293,14 @@ public:
     }
 
 
+
+
+    /**
+     *  This class provides a parallel execution of bilinear pixel mapping.
+     *  Basically it moves pixels to new position based on the DeformMapType buffer that should implement
+     *  the map(i,j) function
+     *
+     **/
     template<class ReturnType, class DeformMapType>
     class ParallelDoReverseDeformationBl
     {
@@ -319,7 +330,7 @@ public:
                     if (buf->isValidCoordBl(p)) {
                         toReturn->element(i,j) = buf->elementBl(p);
                     } else {
-                        toReturn->element(i,j) = 0x0;
+                        toReturn->element(i,j) = ElementType(0x0);
                     }
                 }
             }
@@ -346,6 +357,14 @@ public:
         parallelable_for((IndexType)0,(IndexType)(newH-1), ParallelDoReverseDeformationBl<ReturnType, DeformMapType>(toReturn, map, this));
         return toReturn;
     }
+
+
+    /**
+     *  This class provides a parallel execution of pixel mapping.
+     *  Basically it moves pixels to new position based on the DeformMapType buffer that should implement
+     *  the map(i,j) function
+     *
+     **/
 
     template<class ReturnType, class DeformMapType>
     class ParallelDoReverseDeformation
@@ -384,7 +403,6 @@ public:
     template<class ReturnType, class DeformMapType>
     ReturnType *doReverseDeformation(DeformMapType &map, IndexType newH, IndexType newW )
     {
-        IndexType i,j;
         ReturnType *toReturn = new ReturnType(newH, newW);
         DOTRACE(("Starting integer transform to %d %d...\n", newW - 1, newH - 1));
 

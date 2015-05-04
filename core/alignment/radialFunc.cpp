@@ -38,7 +38,11 @@ void ModelToRadialCorrection::getModel(const RadialCorrection &correction, doubl
         in[count++] = correction.mParams.p2;
     }
     for (int i = 0; i < mPolynomPower; i++) {
-        in[count++] = correction.mParams.koeff[i];
+        if (i < (int)correction.mParams.koeff.size()) {
+            in[count++] = correction.mParams.koeff[i];
+        } else {
+            in[count++] = 0.0;
+        }
     }
 }
 

@@ -92,28 +92,7 @@ public:
     virtual ~DeformMap() {}
 };
 
-/**
- * These are useful methods to serialize integer types not depending of the current endianess
- */
-template <typename IntegerType>
-ostream& write_integer_bin(ostream& os, IntegerType value)
-{
-    for (unsigned size = sizeof(IntegerType); size != 0; size--, value >>= 8) {
-        os.put(static_cast<char>(value & 0xFF));
-    }
-    return os;
-}
-
-template <typename IntegerType>
-istream& read_integer_bin(istream& is, IntegerType& value)
-{
-    value = 0;
-    for (unsigned size = 0; size < sizeof(IntegerType); size++) {
-        value |= is.get() << (8 * size);
-    }
-    return is;
-}
-
+#if 0
 /**
  * This is a basis part of the AbstractBuffer template - serializable buffer params.
  * FIX THIS ASAP
@@ -153,6 +132,7 @@ template<size_t size>
     bool_t  dump(ostream& s, uint elemSize, bool_t binaryMode) const { return dump(s, h, w, stride, elemSize, binaryMode); }
     bool_t  load(istream& s, uint elemSize, bool_t binaryMode)       { return load(s, h, w, stride, elemSize, binaryMode); }
 };
+#endif
 
 /**
  * This is a common buffer template.
@@ -160,7 +140,7 @@ template<size_t size>
  *
  */
 template<typename ElementType, typename IndexType = int32_t>
-class AbstractBuffer : public AbstractBufferParams
+class AbstractBuffer /*: public AbstractBufferParams*/
 {
 public:
     /**
@@ -196,12 +176,12 @@ public:
      *
      * \todo TODO: This field is public do far, but that is dangerous.
      **/
-    //IndexType h;
+    IndexType h;
 
     /**
      * The width of the buffer
      **/
-    //IndexType w;
+    IndexType w;
 
     /**
      * The stride of the buffer
@@ -209,7 +189,7 @@ public:
      * \todo TODO: This field is public do far, but that is dangerous.
      * TODO: Could happen it would be nice to have this in bytes
      **/
-    //IndexType stride;
+    IndexType stride;
 
     /**
      * The given stride value to have automatically chosen stride of the buffer 
@@ -233,8 +213,9 @@ public:
      * So far this type of constructor is used only for view creation
      * Should refactor to make it private
      **/
-    AbstractBuffer() : AbstractBufferParams()
-        , data(NULL)
+    AbstractBuffer() :
+       /* AbstractBufferParams() ,*/
+          data(NULL)
       //, _allocatedSize(0)
         , flags(EMPTY_BUFFER)
     {
@@ -494,6 +475,11 @@ template<typename ResultType>
         return data != NULL;
     }
 
+    inline int numElements() const
+    {
+        return h * stride;
+    }
+
     /**
      *  Calculate image buffer size in bytes
      **/
@@ -502,6 +488,16 @@ template<typename ResultType>
       //return _allocatedSize;
         return this->numElements() * sizeof(ElementType);
     }
+
+    /**
+     *  Calculate memory for all the structures in the object
+     **/
+    inline size_t memoryFootprint() const
+    {
+      //return _allocatedSize;
+        return this->memoryBlock.getTotalObjectSize(this->sizeInBytes(), DATA_ALIGN_GRANULARITY) + sizeof(this);
+    }
+
 
     /**
      *  This function fills the rectangle inside the buffer with the value.
@@ -909,7 +905,7 @@ friend ostream & operator <<(ostream &out, const AbstractBuffer &buffer)
         return out;
     }
 
-    bool dump(ostream& s, bool binaryMode) const
+   /* bool dump(ostream& s, bool binaryMode) const
     {
         AbstractBufferParams::dump(s, sizeof(ElementType), binaryMode);
         if (binaryMode) {
@@ -930,7 +926,7 @@ friend ostream & operator <<(ostream &out, const AbstractBuffer &buffer)
 
         s.read((char *)data, sizeInBytes());
         return !s.bad();
-    }
+    }*/
 
     /**
      *  Please check that you really don't want to invoke the copy constructor
@@ -1008,7 +1004,20 @@ protected:
 
 private:
 
+    void    setH     (int _h)
+    {
+        h = _h;
+    }
 
+    void    setW     (int _w)
+    {
+        w = _w;
+    }
+
+    void    setStride(int _stride)
+    {
+        stride = _stride;
+    }
 
     /**
      *  This is a helper method for constructing.

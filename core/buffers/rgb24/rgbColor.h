@@ -1,11 +1,21 @@
 #ifndef RGBCOLOR_H_
 #define RGBCOLOR_H_
+/**
+ * \file rgbColor.h
+ * \brief a header for rgbColor.c
+ *
+ * \date Apr 19, 2011
+ * \author alexander
+ */
 
 #include <stdint.h>
 
 #include "fixedVector.h"
 #include "vector3d.h"
 #include "mathUtils.h"
+
+#include "generated/rgbColorParameters.h"
+
 namespace corecvs {
 /**
  * \file rgbColor.h
@@ -17,8 +27,11 @@ namespace corecvs {
 /**
  *   I use inheritance because no new data members will be added
  **/
-class RGBColor : public FixedVectorBase<RGBColor, uint8_t,4> {
+//class RGBColor : public FixedVectorBase<RGBColor, uint8_t,4> {
+class RGBColor : public FixedVector<uint8_t, 4> {
 public:
+
+    typedef FixedVector<uint8_t, 4> RGBColorBase;
 
     enum FieldId {
         FIELD_R = 2,
@@ -54,6 +67,24 @@ public:
         this->a() = 0;
     }
 
+    RGBColor(uint8_t _r, uint8_t _g, uint8_t _b, uint8_t _a)
+    {
+        this->r() = _r;
+        this->g() = _g;
+        this->b() = _b;
+        this->a() = _a;
+    }
+
+    RGBColor(const RgbColorParameters &color)
+    {
+        this->r() = color.r();
+        this->g() = color.g();
+        this->b() = color.b();
+        this->a() = 0;
+    }
+
+    RGBColor(const RGBColorBase& base) : RGBColorBase(base) {}
+
     RGBColor()
     {
     }
@@ -86,17 +117,22 @@ public:
     /* Constant versions for read-only form const colors */
     inline const uint8_t &r() const
     {
-        return (*this)[2];
+        return (*this)[FIELD_R];
     }
 
     inline const uint8_t &g() const
     {
-        return (*this)[1];
+        return (*this)[FIELD_G];
     }
 
     inline const uint8_t &b() const
     {
-        return (*this)[0];
+        return (*this)[FIELD_B];
+    }
+
+    inline const uint8_t &a() const
+    {
+        return (*this)[FIELD_A];
     }
 
     inline uint32_t &color() const
@@ -115,6 +151,11 @@ public:
          *
          * */
         return ((uint16_t)r() + (uint16_t)g() + (uint16_t)b()) / 3;
+    }
+
+    inline uint16_t sum() const
+    {
+        return ((uint16_t)r() + (uint16_t)g() + (uint16_t)b());
     }
 
     // Y = 0.2126 R + 0.7152 G + 0.0722 B
@@ -268,12 +309,29 @@ public:
         int g =  ((298 * c - 100 * d - 208 * e + 128) >> 8);
         int b =  ((298 * c + 516 * d           + 128) >> 8);
 
+/*        int r =  ((298 * c           + 409 * e + 128) / 256);
+        int g =  ((298 * c - 100 * d - 208 * e + 128) / 256);
+        int b =  ((298 * c + 516 * d           + 128) / 256);*/
+
+
+        if (r < 0) r = 0;
+        if (g < 0) g = 0;
+        if (b < 0) b = 0;
+        if (r > 255) r = 255;
+        if (g > 255) g = 255;
+        if (b > 255) b = 255;
+
         return RGBColor(r,g,b);
     }
 
     static RGBColor Black()
     {
         return RGBColor(0, 0, 0);
+    }
+
+    static RGBColor White()
+    {
+        return RGBColor(255, 255, 255);
     }
 
     static RGBColor Red()
@@ -324,6 +382,14 @@ public:
         return RGBColor(r, g, b);
     }
 
+    static RGBColor diff(const RGBColor &first, const RGBColor &second)
+    {
+        int16_t r = (int16_t)first.r() - (int16_t)second.r();
+        int16_t g = (int16_t)first.g() - (int16_t)second.g();
+        int16_t b = (int16_t)first.b() - (int16_t)second.b();
+
+        return RGBColor(r > 0 ? r : -r , g > 0 ? g : -g, b > 0 ? b : -b);
+    }
 
     /**
      *  Helper method that allows to represent the double value in interval 0..1
@@ -385,15 +451,68 @@ template<class VisitorType>
         visitor.visit(a(), static_cast<const IntField *>(reflect.fields[FIELD_A]));
     }
 
-    Vector3dd toDouble()
+    friend ostream & operator <<(ostream &out, const RGBColor &color)
+    {
+        out << "[";
+            out << (int)color.r() << ", " << (int)color.g() << ", " << (int)color.b() << " (" << (int)color.a() << ")";
+        out << "]";
+        return out;
+    }
+
+    friend istream & operator >>(istream &out, RGBColor &color)
+    {
+       int v;
+       out >> v;
+       color.r() = v;
+       out >> v;
+       color.g() = v;
+       out >> v;
+       color.b() = v;
+       return out;
+    }
+
+    Vector3dd toDouble() const
     {
         return Vector3dd(r(), g(), b());
     }
 
-    static RGBColor fromDouble(Vector3dd input)
+    static RGBColor FromDouble(const Vector3dd &input)
     {
-        input.mapToHypercube(Vector3dd(0.0,0.0,0.0), Vector3dd(255.0,255.0,255.0));
+        Vector3dd input1 = input;
+        input1.mapToHypercube(Vector3dd(0.0,0.0,0.0), Vector3dd(255.0,255.0,255.0));
         return RGBColor(input.x(), input.y(), input.z());
+    }
+
+    static RGBColor FromHSV(uint16_t h, uint8_t s, uint8_t v)
+    {
+        int c = ((int)(s * v)) / 255;
+        int m = v - c;
+        int r,g,b;
+
+        int swh = h / 60;
+        int dh = h - swh * 60.0;
+
+        int x1 = c * dh / 60;
+        int x2 = c - x1;
+
+
+        switch (swh) {
+        case 0:
+            r =  c; g = x1; b = 0; break;
+        case 1:
+            r = x2; g =  c; b = 0; break;
+        case 2:
+            r =  0; g =  c; b = x1; break;
+        case 3:
+            r =  0; g = x2; b = c; break;
+        case 4:
+            r =  x1; g =  0; b = c; break;
+        case 5:
+        default:
+            r =  c; g =  0; b = x2; break;
+        }
+
+        return RGBColor(r + m, g + m, b + m);
     }
 
 };

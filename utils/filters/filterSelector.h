@@ -1,7 +1,7 @@
 #ifndef FILTER_SELECTOR_H_
 #define FILTER_SELECTOR_H_
 
-#include <QtGui/QWidget>
+#include <QWidget>
 #include <QtCore/qlist.h>
 
 #include "ui_filterSelector.h"

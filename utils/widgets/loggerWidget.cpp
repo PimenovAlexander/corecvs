@@ -1,5 +1,5 @@
 #include "loggerWidget.h"
-#include <QtGui/QPushButton>
+#include <QPushButton>
 
 const char *LoggerWidget::iconResources[] =
 {

@@ -32,7 +32,7 @@ typedef AbstractContiniousBuffer<Vector2dd, int32_t> DisplacementBufferBase;
  *   This buffer stores a buffer deformation - a shift of the buffer pixels.
  *
  *   This buffer is usually used to cache some sort of transformation that is
- *   to slow to compute.
+ *   too slow to compute.
  *
  *   \attention usually you should use this to store inverse transformation.
  *
@@ -175,10 +175,11 @@ public:
     }
 
     /* Class for parallel processing of the remap */
+    template<class BufferToTransform>
     class ParallelRemap
     {
-        G12Buffer *result;
-        G12Buffer *input;
+        BufferToTransform *result;
+        BufferToTransform *input;
         DirectRemapper *remapper;
 
     public:
@@ -186,7 +187,7 @@ public:
         {
             for (int i = r.begin(); i < r.end(); i++)
             {
-                uint16_t *offsetResult = &result->element(i, 0);
+                typename BufferToTransform::InternalElementType *offsetResult = &result->element(i, 0);
                 Vector2d32 *offsetMap  = &remapper->mOffsets[i * remapper->mOutputW];
                 for (int j = 0; j < remapper->mOutputW; j++)
                 {
@@ -195,16 +196,23 @@ public:
                 }
             }
         }
-        ParallelRemap(G12Buffer *_result, G12Buffer *_input, DirectRemapper *_remapper) :
-        result(_result), input(_input), remapper(_remapper)
+
+        ParallelRemap(
+                BufferToTransform *_result,
+                BufferToTransform *_input,
+                DirectRemapper *_remapper) :
+            result(_result),
+            input(_input),
+            remapper(_remapper)
         {}
     };
 
-    G12Buffer *remap (G12Buffer *input)
+    template<class BufferToTransform>
+    BufferToTransform *remap (BufferToTransform *input)
     {
         ASSERT_TRUE(input->h == mInputH && input->w == mInputW, "Wrong size...");
-        G12Buffer *result = new G12Buffer(mOutputH, mOutputW);
-        parallelable_for(0, mOutputH, ParallelRemap(result, input, this));
+        BufferToTransform *result = new BufferToTransform(mOutputH, mOutputW);
+        parallelable_for(0, mOutputH, ParallelRemap<BufferToTransform>(result, input, this));
         return result;
     }
 

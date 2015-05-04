@@ -4,27 +4,27 @@
   <include name="presentation.xml"/>
   
   <enum name="Rotation Presets">
-    <item name="No rotation"      id="0" />
-    <item name="Clockwise 90deg"  id="1" />
-    <item name="Clockwise 180deg" id="2" />
-    <item name="Clockwise 270deg" id="3" />
+    <item name="No rotation"      id="0" comment="Do not rotate"/>
+    <item name="Clockwise 90deg"  id="1" comment="!transform_rotate_90.png!Rotate 90 deg clockwise"/>
+    <item name="Clockwise 180deg" id="2" comment="!transform_rotate_180.png!Rotate 180 deg clockwise"/>
+    <item name="Clockwise 270deg" id="3" comment="!transform_rotate_270.png!Rotate 270 deg clockwise"/>
   </enum>
   
   <class name="Base Parameters" description="Base parameters">
     <field type="Rotation Presets" name="rotation"/>
     <field type="bool"             name="mirror"       defaultValue="false"/>
     <field type="bool"             name="swapCameras"  defaultValue="false" widget="RadioButton"/>
-    <field type="bool"             name="filterLock"   defaultValue="false" widget="RadioButton"/>
-    <field type="bool"             name="enableFilterGraph" defaultValue="false"/>
+    <field type="bool"             name="filterLock"   defaultValue="false" widget="RadioButton" advanced="true"/>
+    <field type="bool"             name="enableFilterGraph" defaultValue="false" advanced="true"/>
    
-    <field type="double" name="downsample"   defaultValue="1.5"  min="0.5" max="16.0"   step="0.1"/>
-    <field type="int"    name="h"            defaultValue="640"  min="0"   max="2024"   step="1"/>
-    <field type="int"    name="w"            defaultValue="480"  min="0"   max="4096"   step="1"/>
-    <field type="bool"   name="autoH"        defaultValue="true" />
-    <field type="bool"   name="autoW"        defaultValue="true" />
-    <field type="int"    name="x"            defaultValue="0"    min="0"   max="1024"   step="1"/>
-    <field type="int"    name="y"            defaultValue="0"    min="0"   max="2048"   step="1"/>
-    <field type="InterpolationType" name="InterpolationType"/>
+    <field type="double" name="downsample"   defaultValue="1"  min="0.5" max="16.0"   step="0.1" comment="Prescale coefficient for input image"/>
+    <field type="int"    name="h"            defaultValue="640"  min="0"   max="2024"   step="1"   comment="Input crop height"/>
+    <field type="int"    name="w"            defaultValue="480"  min="0"   max="4096"   step="1"   comment="Input crop width"/>
+    <field type="bool"   name="autoH"        defaultValue="true" comment="Select crop height so that full image will fit"/>
+    <field type="bool"   name="autoW"        defaultValue="true" comment="Select crop width so that full image will fit"/>
+    <field type="int"    name="x"            defaultValue="0"    min="0"   max="1024"   step="1" comment="Scaled image horizonal shift before crop"/>
+    <field type="int"    name="y"            defaultValue="0"    min="0"   max="2048"   step="1" comment="Scaled image vertical shift before crop"/>
+    <field type="InterpolationType" name="InterpolationType" defaultValue="2"/>
   </class>
 
 </poco>

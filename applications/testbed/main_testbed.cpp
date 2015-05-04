@@ -8,7 +8,7 @@
 #include <iostream>
 
 #include <QtGui/QtGui>
-#include <QtGui/QApplication>
+#include <QApplication>
 
 #include "global.h"
 #include "utils.h"

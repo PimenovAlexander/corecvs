@@ -289,7 +289,7 @@ G12Buffer* PPMLoader::g16BufferCreateFromPPM (string& name)
     if (maxval <= 255)
     {
         charImage = new uint8_t[w * h];
-        if (fread(charImage, 1, (w * h) * sizeof(uint8_t), fp) == 0)
+        if (fread(charImage, sizeof(uint8_t), w * h, fp) == 0)
         {
             printf("fread() call failed %s():%d\n", __FILE__, __LINE__);
             goto done;
@@ -305,7 +305,7 @@ G12Buffer* PPMLoader::g16BufferCreateFromPPM (string& name)
         for (shiftCount = 0; (maxval >> shiftCount) > (1 << 16); shiftCount++);
 
         charImage = new uint8_t[2 * w * h];
-        if (fread(charImage, 1, (w * h) * sizeof(uint8_t) * 2, fp) == 0)
+        if (fread(charImage, sizeof(uint8_t), (w * h) * 2, fp) == 0)
         {
             printf("fread() call failed %s:%d\n", __FILE__, __LINE__);
             goto done;
@@ -321,7 +321,7 @@ G12Buffer* PPMLoader::g16BufferCreateFromPPM (string& name)
                 toReturn->element(i, j) = ((charImage[offset * 2]) << 8 |
                                           (charImage[offset * 2 + 1])) >> shiftCount;
 
-                ASSERT_FALSE((toReturn->element(i, j) >= (1 << 16)), "Internal error in image loader\n");
+                ASSERT_FALSE((toReturn->element(i, j) >= G12Buffer::BUFFER_MAX_VALUE), "Internal error in image loader\n");
             }
         }
     }

@@ -4,15 +4,19 @@
  * \date Nov 13, 2012
  **/
 
+#include <sstream>
+
 #include "plyLoader.h"
+#include "utils.h"
+
+namespace corecvs {
 
 
+using std::istringstream;
 
 PLYLoader::PLYLoader()
 {
 }
-
-
 
 /**
  *
@@ -40,9 +44,11 @@ PLYLoader::PLYLoader()
 
 int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
 {
-    char line[300];
-    input.getline(line, sizeof(line) - 1);
-    if (strcmp(line, "ply") != 0) {
+    //char line[300];
+    string line;
+
+    HelperUtils::getlineSafe (input, line);
+    if (line != "ply") {
         SYNC_PRINT(("Not a PLY file\n"));
         return 1;
     }
@@ -59,175 +65,253 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
 
     const char *el_vertex = "vertex";
     const char *el_face   = "face";
+    const char *el_edge   = "edge";
 
-    int vertex_number = -1;
-    int face_number = -1;
-
-    enum PlyFormat {
-        ASCII,
-        BINARY_LITTLE_ENDIAN,
-        OTHER
-    };
-
+    int objNumber[OBJ_LAST] = {-1, -1, -1};
     PlyFormat plyFormat = OTHER;
+    ObjType propState = OBJ_VERTEX;
+
+
+    vector<Prop> objProps[OBJ_LAST];
 
     while (!input.eof())
     {
-        input.getline(line, sizeof(line) - 1);
-        char *work = line;
-        if (strncmp(work, com_format, strlen(com_format)) == 0)
+        HelperUtils::getlineSafe (input, line);
+
+        istringstream work(line);
+        string command;
+        work >> command;
+
+        SYNC_PRINT(("Input line: %s\n", line.c_str()));
+
+        if (command == com_format)
         {
-            work += strlen(com_format);
-            while(*work == ' ' && *work != 0) work++;
-            char *format = work;
-            if (strncmp(format, form_ascii, strlen(form_ascii)) == 0)
+            string format;
+            work >> format;
+            if (format ==  form_ascii)
             {
                 plyFormat = ASCII;
-                //SYNC_PRINT(("PLY ascii format\n"));
+                SYNC_PRINT(("PLY ascii format\n"));
                 continue;
             }
 
-            if (strncmp(format, form_binaryle, strlen(form_binaryle)) == 0)
+            if (format ==  form_binaryle)
             {
                 plyFormat = BINARY_LITTLE_ENDIAN;
-                //SYNC_PRINT(("PLY binary format\n"));
+                SYNC_PRINT(("PLY binary format\n"));
                 continue;
             }
 
-            SYNC_PRINT(("PLY format not supported. Format here <%s>\n", format));
+            SYNC_PRINT(("PLY format not supported. Format here <%s>\n", format.c_str()));
             return 1;
         }
 
-        if (strncmp(work, com_comment, strlen(com_comment)) == 0)
-        {
-            work += strlen(com_comment);
-            //printf("Skipping comment <%s>\n", work);
+        if (command == com_comment) {
             continue;
         }
 
-        if (strncmp(work, com_property, strlen(com_property)) == 0)
+        if (command == com_property)
         {
-            work += strlen(com_property);
-
-            while(*work == ' ' && *work != 0) work++;
-
-            if (strncmp(work, el_vertex, strlen(el_vertex)) == 0)
-            {
-               work += strlen(el_vertex);
-               if (sscanf(work, "%d", &vertex_number) != 1) {
-                   SYNC_PRINT(("Vertex number is not found"));
-                   continue;
-               }
-               //SYNC_PRINT(("Vertex number %d", vertex_number));
+            Prop p;
+            work >> p;
+            if (work.bad()) {
+               SYNC_PRINT(("Prop failed to load\n"));
                continue;
             }
-
-            if (strncmp(work, el_face, strlen(el_face)) == 0)
-            {
-               work += strlen(el_face);
-               if (sscanf(work, "%d", &face_number) != 1) {
-                   SYNC_PRINT(("Face number is not found"));
-                   continue;
-               }
-               //SYNC_PRINT(("Face number %d", face_number));
-               continue;
-            }
-            //SYNC_PRINT(("Found unsupported property <%s>\n", work));
+            objProps[propState].push_back(p);
             continue;
         }
 
-        if (strncmp(work, com_element, strlen(com_element)) == 0)
+        if (command == com_element)
         {
-            work += strlen(com_element);
 
-            while(*work == ' ' && *work != 0) work++;
+            string objtype;
+            work >> objtype;
 
-            if (strncmp(work, el_vertex, strlen(el_vertex)) == 0)
+            if (objtype == el_vertex)
             {
-               work += strlen(el_vertex);
-               if (sscanf(work, "%d", &vertex_number) != 1) {
-                   SYNC_PRINT(("Vertex number is not found"));
-                   continue;
-               }
-               //SYNC_PRINT(("Vertex number %d\n", vertex_number));
-               continue;
+                propState = OBJ_VERTEX;
             }
 
-            if (strncmp(work, el_face, strlen(el_face)) == 0)
+            if (objtype == el_face)
             {
-               work += strlen(el_face);
-               if (sscanf(work, "%d", &face_number) != 1) {
-                   SYNC_PRINT(("Face number is not found"));
-                   continue;
-               }
-               //SYNC_PRINT(("Face number %d\n", face_number));
-               continue;
+                propState = OBJ_FACE;
             }
-            printf("Found unsupported element <%s>\n", work);
+
+            if (objtype == el_edge)
+            {
+                propState = OBJ_EDGE;
+            }
+
+            work >> objNumber[propState];
+            if (work.bad()) {
+               SYNC_PRINT(("Number is not found"));
+            }
+            SYNC_PRINT(("Number %d %d\n", propState, objNumber[propState]));
             continue;
         }
 
-        if (strncmp(work, com_end_header, strlen(com_end_header)) == 0)
+        if (command == com_end_header)
         {
             break;
         }
     }
 
-    if (vertex_number == -1 || face_number == -1)
+    if (objNumber[OBJ_VERTEX] == -1)
     {
         SYNC_PRINT(("Necessary data was missing form the header\n"));
         return 1;
     }
 
+    for (int k = 0; k < OBJ_LAST; k++)
+    {
+        for (unsigned i = 0; i < objProps[k].size(); i++)
+        {
+            SYNC_PRINT((" %d %d \n", objProps[k][i].type, objProps[k][i].name));
+        }
+        SYNC_PRINT(("\n"));
+    }
+
+    /* Checking if we support this format? */
+    bool supportVertex =
+            (objProps[OBJ_VERTEX].size() == 3 &&
+             objProps[OBJ_VERTEX][0].name == PROP_NAME_X &&
+             objProps[OBJ_VERTEX][1].name == PROP_NAME_Y &&
+             objProps[OBJ_VERTEX][2].name == PROP_NAME_Z) ||
+            (objProps[OBJ_VERTEX].size() == 6 &&
+             objProps[OBJ_VERTEX][0].name == PROP_NAME_X &&
+             objProps[OBJ_VERTEX][1].name == PROP_NAME_Y &&
+             objProps[OBJ_VERTEX][2].name == PROP_NAME_Z &&
+             objProps[OBJ_VERTEX][3].name == PROP_NAME_RED &&
+             objProps[OBJ_VERTEX][4].name == PROP_NAME_GREEN &&
+             objProps[OBJ_VERTEX][5].name == PROP_NAME_BLUE);
+    bool vertexColor = (objProps[OBJ_VERTEX].size() == 6);
+
+    bool supportFace =
+            (objProps[OBJ_FACE].size() == 1 &&
+             objProps[OBJ_FACE][0].name == PROP_NAME_VERTEX_INDEX ) ||
+            (objProps[OBJ_FACE].size() == 4 &&
+             objProps[OBJ_FACE][0].name == PROP_NAME_VERTEX_INDEX &&
+             objProps[OBJ_FACE][1].name == PROP_NAME_RED &&
+             objProps[OBJ_FACE][2].name == PROP_NAME_GREEN &&
+             objProps[OBJ_FACE][3].name == PROP_NAME_BLUE);
+    bool faceColor = (objProps[OBJ_FACE].size() == 4);
+
+    bool supportEdge =
+            (objProps[OBJ_EDGE].size() == 2 &&
+             objProps[OBJ_EDGE][0].name == PROP_NAME_VERTEX1 &&
+             objProps[OBJ_EDGE][1].name == PROP_NAME_VERTEX2 ) ||
+            (objProps[OBJ_EDGE].size() == 5 &&
+             objProps[OBJ_EDGE][0].name == PROP_NAME_VERTEX1 &&
+             objProps[OBJ_EDGE][1].name == PROP_NAME_VERTEX2 &&
+             objProps[OBJ_EDGE][2].name == PROP_NAME_RED &&
+             objProps[OBJ_EDGE][3].name == PROP_NAME_GREEN &&
+             objProps[OBJ_EDGE][4].name == PROP_NAME_BLUE);
+    bool edgeColor = (objProps[OBJ_EDGE].size() == 5);
+
+    if (!supportVertex || !supportFace || !supportEdge) {
+         SYNC_PRINT(("Unsupported format\n"));
+        return 1;
+    }
+
+    bool hasColor = vertexColor && edgeColor && faceColor;
+    mesh.switchColor(hasColor);
+
     if (plyFormat == ASCII)
     {
-        for (int i = 0; i < vertex_number; i++)
+        for (int i = 0; i < objNumber[OBJ_VERTEX]; i++)
         {
-            input.getline(line, sizeof(line) - 1);
+            HelperUtils::getlineSafe (input, line);
+            istringstream work(line);
+
             Vector3dd vertex;
-            if (sscanf(line, "%lf %lf %lf", &(vertex.x()), &(vertex.y()), &(vertex.z())) != 3) {
-                SYNC_PRINT(("Corrupted vertex %d <%s>\n", i, line));
+            work >> vertex.x() >> vertex.y() >> vertex.z();
+
+            if (hasColor) {
+                work >> mesh.currentColor;
+                SYNC_PRINT(("Color %d %d %d\n", mesh.currentColor.r(), mesh.currentColor.g(), mesh.currentColor.b()));
+
+            }
+
+            if (work.bad()) {
+                SYNC_PRINT(("Corrupted vertex %d <%s>\n", i, line.c_str()));
                 return 1;
             }
-            mesh.vertexes.push_back(vertex);
+
+            mesh.addVertex(vertex);
         }
 
-        for (int i = 0; i < face_number; i++)
+        for (int i = 0; i <  objNumber[OBJ_FACE]; i++)
         {
-            input.getline(line, sizeof(line) - 1);
-            char *work = line;
-            while(*work == ' ' && *work != 0) work++;
+            HelperUtils::getlineSafe (input, line);
+            istringstream work(line);
             int points;
-            if (sscanf(line, "%d", &points) != 1) {
+            work >> points;
+            if (work.bad()) {
                 SYNC_PRINT(("Corrupted face number %d\n", i));
                 return 1;
             }
             if (points != 3) {
                 SYNC_PRINT(("We only support faces with 3 sides not %d\n", points));
                 continue;
-            }
-
-            while(*work != ' ' && *work != 0) work++;
+            }         
             Vector3d32 face;
+            work >> face.x() >> face.y() >> face.z();
 
-            if (sscanf(work, "%d %d %d", &(face.x()), &(face.y()), &(face.z())) != 3) {
+            if (work.bad()) {
                 SYNC_PRINT(("Corrupted face number %d\n", i));
                 return 1;
             }
 
+            if (hasColor) {
+                work >> mesh.currentColor;
+                SYNC_PRINT(("Color %d %d %d\n", mesh.currentColor.r(), mesh.currentColor.g(), mesh.currentColor.b()));
+            }
+
             if (!face.isInCube(
-                    Vector3d32(                0,                 0,                0),
-                    Vector3d32(vertex_number - 1, vertex_number - 1, vertex_number - 1)))
+                    Vector3d32(                        0,                         0,                          0),
+                    Vector3d32(objNumber[OBJ_VERTEX] - 1, objNumber[OBJ_VERTEX] - 1, objNumber[OBJ_VERTEX] - 1)))
             {
                 SYNC_PRINT(("Vertex index is wrong on face %i\n", i));
                 return 1;
             }
-            //printf("%d %d %d\n", face.x(), face.y(), face.z());
+            SYNC_PRINT(("%d %d %d\n", face.x(), face.y(), face.z()));
 
-            mesh.faces.push_back(face);
+            mesh.addFace(face);
+        }
+
+        for (int i = 0; i <  objNumber[OBJ_EDGE]; i++)
+        {
+            HelperUtils::getlineSafe (input, line);
+            istringstream work(line);
+            Vector2d32 edge;
+
+            work >> edge.x() >> edge.y();
+
+            if (work.bad()) {
+                SYNC_PRINT(("Corrupted edge number %d\n", i));
+                return 1;
+            }
+
+            if (hasColor) {
+                work >> mesh.currentColor;
+                SYNC_PRINT(("Color %d %d %d\n", mesh.currentColor.r(), mesh.currentColor.g(), mesh.currentColor.b()));
+
+            }
+
+            if (!edge.isInHypercube(
+                    Vector2d32(                        0,                         0),
+                    Vector2d32(objNumber[OBJ_VERTEX] - 1, objNumber[OBJ_VERTEX] - 1)))
+            {
+                SYNC_PRINT(("Vertex index is wrong on edge %i\n", i));
+                return 1;
+            }
+            SYNC_PRINT(("Edge %d %d\n", edge.x(), edge.y()));
+
+            mesh.addEdge(edge);
         }
     } else {
-        for (int i = 0; i < vertex_number; i++)
+        for (int i = 0; i < objNumber[OBJ_VERTEX]; i++)
         {
             float f;
             Vector3dd vertex;
@@ -246,3 +330,65 @@ PLYLoader::~PLYLoader()
 {
 }
 
+// PROP_TYPE_FLOAT,
+// PROP_TYPE_UCHAR,
+// PROP_TYPE_INT,
+// PROP_TYPE_LIST,
+
+istream &operator >>(istream &in, PLYLoader::Prop &toLoad)
+{
+    string type;
+    in >> type;
+    if (in.bad()) {
+        return in;
+    }
+    if (type == "float") toLoad.type = PLYLoader::PROP_TYPE_FLOAT;
+    if (type == "uchar") toLoad.type = PLYLoader::PROP_TYPE_UCHAR;
+    if (type == "int")   toLoad.type = PLYLoader::PROP_TYPE_INT;
+    if (type == "list") {
+        toLoad.type = PLYLoader::PROP_TYPE_LIST;
+        string dummy;
+        in >> dummy; // elementType
+        in >> dummy; // indexType
+    }
+
+    if (toLoad.type == PLYLoader::PROP_TYPE_CORRUPT) {
+        return in;
+    }
+
+    /* loading name */
+    /*PROP_NAME_X,
+    PROP_NAME_Y,
+    PROP_NAME_Z,
+
+    PROP_NAME_RED,
+    PROP_NAME_GREEN,
+    PROP_NAME_BLUE,
+
+    PROP_NAME_VECTOR1,
+    PROP_NAME_VECTOR2,*/
+
+    string name;
+    in >> name;
+    if (in.bad()) {
+        return in;
+    }
+
+    if (name == "x") toLoad.name = PLYLoader::PROP_NAME_X;
+    if (name == "y") toLoad.name = PLYLoader::PROP_NAME_Y;
+    if (name == "z") toLoad.name = PLYLoader::PROP_NAME_Z;
+
+    if (name == "red")   toLoad.name = PLYLoader::PROP_NAME_RED;
+    if (name == "green") toLoad.name = PLYLoader::PROP_NAME_GREEN;
+    if (name == "blue")  toLoad.name = PLYLoader::PROP_NAME_BLUE;
+
+    if (name == "vertex1") toLoad.name = PLYLoader::PROP_NAME_VERTEX1;
+    if (name == "vertex2") toLoad.name = PLYLoader::PROP_NAME_VERTEX2;
+
+    if (name == "vertex_index") toLoad.name = PLYLoader::PROP_NAME_VERTEX_INDEX;
+
+    return in;
+
+}
+
+} // namespace corecvs

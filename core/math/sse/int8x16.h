@@ -279,9 +279,21 @@ template<int idx>
     friend Int8x16 operator *= (      Int8x16 &left, int16_t right);
 
 
+    inline static Int16x8 unpackLower (const Int8x16 &left, const Int8x16 &right) {
+        return Int16x8(_mm_unpacklo_epi8(left.data, right.data));
+    }
+
+    inline static Int16x8 unpackHigher (const Int8x16 &left, const Int8x16 &right) {
+        return Int16x8(_mm_unpackhi_epi8(left.data, right.data));
+    }
+
+
     /*Print to stream helper */
 
     friend ostream & operator << (ostream &out, const Int8x16 &vector);
+
+    /* Formated hex helper */
+    void hexDump (ostream &out);
 };
 
 #ifdef UNSUPPORTED

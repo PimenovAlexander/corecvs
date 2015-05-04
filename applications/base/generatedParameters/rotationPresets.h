@@ -21,22 +21,22 @@ namespace RotationPresets {
 enum RotationPresets {
     /** 
      * \brief No rotation 
-     * No rotation 
+     * Do not rotate 
      */
     NO_ROTATION = 0,
     /** 
      * \brief Clockwise 90deg 
-     * Clockwise 90deg 
+     * !transform_rotate_90.png!Rotate 90 deg clockwise 
      */
     CLOCKWISE_90DEG = 1,
     /** 
      * \brief Clockwise 180deg 
-     * Clockwise 180deg 
+     * !transform_rotate_180.png!Rotate 180 deg clockwise 
      */
     CLOCKWISE_180DEG = 2,
     /** 
      * \brief Clockwise 270deg 
-     * Clockwise 270deg 
+     * !transform_rotate_270.png!Rotate 270 deg clockwise 
      */
     CLOCKWISE_270DEG = 3,
     /** 

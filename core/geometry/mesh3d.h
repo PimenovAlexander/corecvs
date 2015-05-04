@@ -8,120 +8,128 @@
 
 #include "generated/axisAlignedBoxParameters.h"
 #include "vector3d.h"
+#include "matrix33.h"
+#include "matrix44.h"
+#include "cameraParameters.h"
+#include "axisAlignedBox.h"
+#include "rgbColor.h"
+#include "ellipticalApproximation.h"
 
 namespace corecvs
 {
 
-class AxisAlignedBox3d
-{
-    Vector3dd mLow;
-    Vector3dd mHigh;
-public:
-
-    AxisAlignedBox3d()
-    {
-        _initByLowHigh(Vector3dd(0.0), Vector3dd(0.0));
-    }
-
-    AxisAlignedBox3d(const Vector3dd &low, const Vector3dd &high)
-    {
-        _initByLowHigh(low, high);
-    }
-
-    AxisAlignedBox3d(const AxisAlignedBoxParameters &params)
-    {
-        Vector3dd measure(params.width(), params.height(), params.depth());
-        Vector3dd center (params.x()    , params.y()     , params.z    ());
-
-        _initByCenter(center, measure);
-    }
-
-    void _initByLowHigh(const Vector3dd &low, const Vector3dd &high)
-    {
-        /* TODO: Move this to vector opetions and use cycle */
-        mLow .x() = std::min(low.x(), high.x());
-        mHigh.x() = std::max(low.x(), high.x());
-
-        mLow .y() = std::min(low.y(), high.y());
-        mHigh.y() = std::max(low.y(), high.y());
-
-        mLow .z() = std::min(low.z(), high.z());
-        mHigh.z() = std::max(low.z(), high.z());
-    }
-
-    void _initByCenter(const Vector3dd &center, const Vector3dd &measure)
-    {
-        _initByLowHigh((center - measure / 2.0), (center + measure / 2.0));
-    }
-
-    static AxisAlignedBox3d ByCenter(const Vector3dd &center, const Vector3dd &measure)
-    {
-        AxisAlignedBox3d box;
-        box._initByCenter(center, measure);
-        return box;
-    }
-
-    bool contains (const Vector3dd &vector) const
-    {
-        return vector.isInCube(mLow, mHigh);
-    }
-
-    const Vector3dd &low()  const {
-        return mLow;
-    }
-
-    const Vector3dd &high() const {
-        return mHigh;
-    }
-
-    double width() const {
-        return mHigh.x() - mLow.x();
-    }
-
-    double height() const {
-        return mHigh.y() - mLow.y();
-    }
-
-    double depth() const {
-        return mHigh.z() - mLow.z();
-    }
-
-    Vector3dd getCenter()
-    {
-        return ((mLow + mHigh) / 2.0);
-    }
-
-    void getPoints(Vector3dd points[8])
-    {
-        points[0] = Vector3dd(mLow .x() , mLow .y(), mLow.z());
-        points[1] = Vector3dd(mHigh.x() , mLow .y(), mLow.z());
-        points[2] = Vector3dd(mHigh.x() , mHigh.y(), mLow.z());
-        points[3] = Vector3dd(mLow .x() , mHigh.y(), mLow.z());
-        points[4] = Vector3dd(mLow .x() , mLow .y(), mHigh.z());
-        points[5] = Vector3dd(mHigh.x() , mLow .y(), mHigh.z());
-        points[6] = Vector3dd(mHigh.x() , mHigh.y(), mHigh.z());
-        points[7] = Vector3dd(mLow .x() , mHigh.y(), mHigh.z());
-
-    }
-};
-
-
-
+/**
+ *  This class is overcompliced. Break it into several ones
+ **/
 class Mesh3D {
 public:
+    friend class PLYLoader;
+    friend class STLLoader;
+
+    Mesh3D() :
+        centralPoint(0.0),
+        hasCentral(false),
+
+        hasTexCoords(false),
+        hasColor(false),
+
+        currentColor(RGBColor::Black()),
+        currentTransform(1.0)
+    {}
+
+
+    Vector3dd  centralPoint;
+    bool hasCentral;
+
+/* Data that is stored */
+    bool hasTexCoords;
+    bool hasColor;
+
+
+    void switchColor(bool on = true)
+    {
+        if (hasColor == on)
+            return;
+        if (on) {
+            vertexesColor.resize(vertexes.size(), currentColor);
+            edgesColor   .resize(edges   .size(), currentColor);
+            facesColor   .resize(faces   .size(), currentColor);
+        } else {
+            vertexesColor.clear();
+            edgesColor.clear();
+            facesColor.clear();
+        }
+        hasColor = on;
+    }
+
+    /** Vertexes that from the mesh (faces or edges or noconnected) */
     vector<Vector3dd>  vertexes;
     vector<Vector3d32> faces;
+    vector<Vector2d32> edges;
+
+    /* Texture Coords Channel */
     vector<Vector2dd>  textureCoords;
 
-    void addAOB(Vector3dd corner1, Vector3dd corner2);
-    void addAOB(const AxisAlignedBoxParameters &box);
-    void addAOB(const AxisAlignedBox3d &box);
+    /* RGB Colors */
+    vector<RGBColor> vertexesColor;
+    vector<RGBColor> facesColor;
+    vector<RGBColor> edgesColor;
+
+/*  Current state */
+
+    RGBColor currentColor;
+    Matrix44 currentTransform;
+
+/* Methods */
+
+
+    void setCentral(Vector3dd _central)
+    {
+        centralPoint = _central;
+        hasCentral = true;
+    }
+
+
+    void addAOB(Vector3dd corner1, Vector3dd corner2, bool addFaces = true);
+    void addAOB(const AxisAlignedBoxParameters &box , bool addFaces = true);
+    void addAOB(const AxisAlignedBox3d &box         , bool addFaces = true);
+
+    int addPoint(Vector3dd point);
+
+    void addLine(Vector3dd point1, Vector3dd point2);
+    void addTriangle(Vector3dd point1, Vector3dd point2, Vector3dd point3);
 
     void addSphere(Vector3dd center, double radius, int step);
+
+    void addCamera(const CameraIntrinsics &cam, double len);
+
+    void add2AxisEllipse  (const EllipticalApproximation3d &approx);
+    void addMatrixSurface (double *data, int h, int w);
+
+    /* For abstract painter */
+    typedef int InternalElementType;
+    void drawLine(double x1, double y1, double x2, double y2, int);
+
 
 #if 0
     void addTruncatedCone(double r1, double r2, double length, int steps = 16);
 #endif
+
+    void dumpPLY(ostream &out);
+    void transform (const Matrix44 &matrix);
+    Mesh3D transformed(const Matrix44 &matrix);
+
+    void add(const Mesh3D &other);
+
+private:
+    virtual void addEdge(const Vector2d32 &edge);
+    virtual void addVertex(const Vector3dd &vector);
+    virtual void addFace(const Vector3d32 &faceId);
+
+
+    //, Vector2dd &texCoord
+public:
+    virtual ~Mesh3D() {}
 };
 
 

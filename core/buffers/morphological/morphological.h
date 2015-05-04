@@ -76,7 +76,7 @@ public:
     int y;
 
     ErodeKernel(G12Buffer *_element, int _y, int _x) :
-        element(_element), x(_x), y(_y) {};
+        element(_element), x(_x), y(_y) {}
 
     inline int getCenterX(){ return x; }
     inline int getCenterY(){ return y; }
@@ -96,7 +96,7 @@ template <typename OtherAlgebra>
     inline void process(Algebra &algebra) const
     {
         // TODO: Correct this please
-        Type result((uint16_t)0xFFFF);
+        Type result((uint16_t)0xFFFFU);
 
         for (int i = 0; i < element->h; i++)
         {

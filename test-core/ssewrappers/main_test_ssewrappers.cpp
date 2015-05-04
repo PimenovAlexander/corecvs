@@ -354,7 +354,7 @@ void testDoubleExtendingRGBReader(void)
 
     for (unsigned i = 0; i < 8; i++)
     {
-        int st = i * 10;
+//        int st = i * 10;
         cout << r[i] << endl;
 //        r[i] = Int16x8(st, st + 1, st + 2, st + 3, st + 4, st + 5, st + 6, st + 7);
     }
@@ -539,8 +539,14 @@ void test64bit()
     cout << "Testing 64 bit sse wrapper" << endl;
     cout << "Testing 64 bit to 16bit" << endl;
 
+#if _MSC_VER != 1600    // TODO: for msvc2010 it doesn't linking, why?
     Int64x2 l64(0xFF);
     cout << "Lower byte in 64 bit" << l64 << endl;
+#else
+    Int64x2 l64;
+    cout << "test64bit() FAILED on msvc2010" << endl;
+    exit(-1);
+#endif
 
     UInt8x16 l8(l64.data);
     cout << "Lower byte in 8 bit"  << l8 << endl;

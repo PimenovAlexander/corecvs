@@ -1,5 +1,5 @@
 #pragma once
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "generated/sobelParameters.h"
 #include "ui_sobelParametersControlWidget.h"
 #include "filterParametersControlWidgetBase.h"

@@ -19,6 +19,7 @@ using corecvs::BoolField;
 using corecvs::DoubleField;
 using corecvs::StringField;
 using corecvs::CompositeField;
+using corecvs::CompositeArrayField;
 using corecvs::EnumField;
 using corecvs::PointerField;
 using corecvs::ReflectionNaming;
@@ -173,6 +174,30 @@ public:
         return new CompositeFieldGen(*this);
     }
 };
+
+class CompositeArrayFieldGen : public CompositeArrayField
+{
+public:
+    CompositeArrayFieldGen(
+            const ReflectionNaming &_nameing,
+            const char *_typeName,
+            int _size,
+            const Reflection *_reflection = NULL
+      ) : CompositeArrayField (
+              BaseField::UNKNOWN_ID,
+              BaseField::UNKNOWN_OFFSET,
+              _nameing,
+              _typeName,
+              _size,
+              _reflection
+      ) {}
+
+    virtual BaseField* clone() const
+    {
+        return new CompositeArrayFieldGen(*this);
+    }
+};
+
 
 enum EnumWidgetType {
     comboBox,

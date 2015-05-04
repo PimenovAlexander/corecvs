@@ -67,6 +67,10 @@ template<>
 template<>
     void PropertyListWriterVisitor::visit<bool>(bool &boolField, bool boolValue, const char *fieldName);
 
+template<>
+    void PropertyListWriterVisitor::visit<std::string>(std::string &stringField, std::string stringValue, const char *fieldName);
+
+
 /* New Style visitor*/
 template <>
     void PropertyListWriterVisitor::visit<int,    IntField>(int &field, const IntField *fieldDescriptor);
@@ -127,6 +131,10 @@ template<>
 
 template<>
     void PropertyListReaderVisitor::visit<bool>(bool &boolField, bool boolValue, const char *fieldName);
+
+template<>
+    void PropertyListReaderVisitor::visit<std::string>(std::string &stringField, std::string stringValue, const char *fieldName);
+
 
 /* New Style visitor*/
 template <>

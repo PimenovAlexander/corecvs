@@ -1,6 +1,6 @@
 #pragma once
 #include <QtCore/QTimer>
-#include <QtGui/QWidget>
+#include <QWidget>
 
 
 class OSDBaseWidget : public QWidget

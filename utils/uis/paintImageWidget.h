@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 #include "advancedImageWidget.h"
 #include "polygons.h"

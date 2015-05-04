@@ -1,20 +1,21 @@
-QT += core xml
-QT -= gui
-
-TARGET  = generator
-CONFIG += console
-CONFIG -= app_bundle
-CONFIG += debug
-
 TEMPLATE = app
+TARGET   = generator
+QT      += core xml
+QT      -= gui
+CONFIG  += console
+CONFIG  -= app_bundle
+CONFIG  += debug
 
-include(../../../../config.pri)
-
-win32 {
-    OBJECTS_DIR = ../../../../.obj/generator/$$BUILD_CFG_NAME
+exists(../../../../config.pri) {
+    #message(Using global config)
+    ROOT_DIR=../../../../
 } else {
-    OBJECTS_DIR = ../../../../.obj/generator
+    message(Using local config)
+    ROOT_DIR=../../
 }
+include($$ROOT_DIR/config.pri)
+
+OBJECTS_DIR = $$ROOT_DIR/.obj/generator$$BUILD_CFG_NAME
 MOC_DIR  = $$OBJECTS_DIR
 #UI_DIR  = $$OBJECTS_DIR
 #RCC_DIR = $$OBJECTS_DIR
@@ -27,6 +28,7 @@ SOURCES += \
 #    example.cpp \
     pdoGenerator.cpp \
     widgetUIGenerator.cpp \
+    documentationGenerator.cpp \
     baseGenerator.cpp \
 #    qSettingsVisitors.cpp \
     parametersMapperGenerator.cpp \
@@ -37,6 +39,7 @@ HEADERS += \
 #    example.h \
     pdoGenerator.h \
     widgetUIGenerator.h \
+    documentationGenerator.h \
     baseGenerator.h \
 #    qSettingsVisitors.h \
     parametersMapperGenerator.h \

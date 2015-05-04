@@ -191,6 +191,9 @@ public:
     /* Print to stream helper */
     friend ostream & operator << (ostream &out, const Int32x4 &vector);
 
+    /* Formated hex helper */
+    void hexDump (ostream &out);
+
     // Producers
     inline static Int64x2 unpackLower(const Int32x4 &left, const Int32x4 &right) {
         return Int64x2(_mm_unpacklo_epi32(left.data, right.data));

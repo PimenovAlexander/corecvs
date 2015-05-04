@@ -16,9 +16,38 @@ using namespace corecvs;
 
 class CameraParameters;
 
-typedef struct {
+struct frame_data_t {
+
+    frame_data_t() :
+        streamId(0),
+        timestamp(0)
+    {}
+
+    frame_data_t(uint64_t _timestamp) :
+        streamId(0),
+        timestamp(_timestamp)
+    {}
+
+    frame_data_t(int _stream, uint64_t _timestamp) :
+        streamId(_stream),
+        timestamp(_timestamp)
+    {}
+
+    int streamId;
     uint64_t timestamp;
-} frame_data_t;
+
+    bool operator <= (const frame_data_t &other)
+    {
+//        SYNC_PRINT(("frame_data_t::operator <= ()\n"));
+        if ( streamId < other.streamId) {
+            return true;
+        }
+        if ( streamId > other.streamId) {
+            return false;
+        }
+        return (timestamp <= other.timestamp);
+    }
+};
 
 class CaptureStatistics
 {
@@ -29,6 +58,7 @@ public:
         DESYNC_TIME,
         INTERNAL_DESYNC_TIME,
         DECODING_TIME,
+        CONVERTING_TIME,
         INTERFRAME_DELAY,
         MAX_TIME_ID,
         DATA_SIZE = MAX_TIME_ID,
@@ -83,12 +113,6 @@ public:
         CAMERA_BOTH   = 0x11
     };
 
-    typedef struct
-    {
-        uint16_t width;
-        uint16_t height;
-    } frame_dims_t;
-
     /**
      *  This structure will hold the rational number
      *  for the FPS
@@ -119,21 +143,28 @@ public:
     class FramePair
     {
     public:
-        G12Buffer* bufferLeft;      /**< Pointer to left  gray scale buffer*/
-        G12Buffer* bufferRight;     /**< Pointer to right gray scale buffer*/
+        G12Buffer* bufferRight;       /**< Pointer to right gray scale buffer*/
+        G12Buffer* bufferLeft;        /**< Pointer to left  gray scale buffer*/
         RGB24Buffer *rgbBufferLeft;
         RGB24Buffer *rgbBufferRight;
-        uint64_t   leftTimeStamp;
-        uint64_t   rightTimeStamp;
+        uint64_t   leftTimeStamp;    /**< Timestamp for left image */
+        uint64_t   rightTimeStamp;   /**< Timestamp for right image */
 
-        FramePair(G12Buffer* _bufferLeft = NULL, G12Buffer* _bufferRight = NULL,
-                  RGB24Buffer *_rgbBufferLeft = NULL, RGB24Buffer *_rgbBufferRight = NULL)
-            : bufferLeft (_bufferLeft )
-            , bufferRight(_bufferRight)
+        int streamId;
+
+        FramePair(
+            G12Buffer* _bufferLeft = NULL,
+            G12Buffer* _bufferRight = NULL,
+            RGB24Buffer *_rgbBufferLeft = NULL,
+            RGB24Buffer *_rgbBufferRight = NULL
+        ) :
+              bufferRight(_bufferRight)
+            , bufferLeft (_bufferLeft )
             , rgbBufferLeft(_rgbBufferLeft)
             , rgbBufferRight(_rgbBufferRight)
             , leftTimeStamp (0)
             , rightTimeStamp(0)
+            , streamId(0)
         {}
 
         bool hasBoth() const    { return bufferLeft && bufferRight; }
@@ -151,6 +182,7 @@ public:
 signals:
     void    newFrameReady(frame_data_t frameData);
     void    newImageReady();
+
     void    newStatisticsReady(CaptureStatistics stats);
     void    streamPaused();
 

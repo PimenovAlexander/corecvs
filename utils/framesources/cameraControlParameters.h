@@ -92,11 +92,22 @@ public:
         EXPOSURE_AUTO,
         EXPOSURE_REL,
         GAIN,
+        GAIN_MULTIPLIER,
+        GAIN_DIGITAL,
         GAIN_AUTO,
         GAIN_BOOST,
         GAIN_RED,
+        GAIN_RED_MULTIPLIER,
+        GAIN_RED_DIGITAL,
         GAIN_GREEN,
+        GAIN_GREEN_MULTIPLIER,
+        GAIN_GREEN_DIGITAL,
         GAIN_BLUE,
+        GAIN_BLUE_MULTIPLIER,
+        GAIN_BLUE_DIGITAL,
+        GAIN_GREEN2,
+        GAIN_GREEN2_MULTIPLIER,
+        GAIN_GREEN2_DIGITAL,
         IRIS,
         FPS,
         FOCUS,
@@ -121,6 +132,10 @@ public:
 
         HORIZONTAL_FLIP,
         VERTICAL_FLIP,
+
+        SHUTTER_WIDTH_U,
+        SHUTTER_WIDTH_L,
+        SHUTTER_DEL,
 
         LAST
     };

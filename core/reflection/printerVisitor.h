@@ -2,6 +2,7 @@
 #define PRINTER_VISITOR_OLD_H_
 
 #include <iostream>
+
 #include "reflection.h"
 
 namespace corecvs {
@@ -13,12 +14,25 @@ using std::cout;
 class PrinterVisitor
 {
 public:
-    std::ostream &stream;
+    std::ostream *stream;
 
-    explicit  PrinterVisitor(ostream &_stream = cout) :
+    explicit  PrinterVisitor(ostream *_stream) :
         stream(_stream)
     {}
 
+    explicit  PrinterVisitor(ostream &_stream = cout) :
+        stream(&_stream)
+    {}
+
+/* Array support */
+    template <typename inputType, typename reflectionType>
+    void visit(std::vector<inputType> &fields, const reflectionType * /*fieldDescriptor*/)
+    {
+        for (int i = 0; i < fields.size(); i++)
+        {
+            fields[i].accept(*this);
+        }
+    }
 
 template <typename inputType, typename reflectionType>
     void visit(inputType &field, const reflectionType * /*fieldDescriptor*/)
@@ -27,12 +41,13 @@ template <typename inputType, typename reflectionType>
     }
 
 template <class Type>
-    void visit(Type &field, Type /*defaultValue*/, const char */*fieldName*/)
+    void visit(Type &field, Type /*defaultValue*/, const char * /*fieldName*/)
 	{
 		field.accept(*this);
 	}
 
 };
+
 
 template <>
 void PrinterVisitor::visit<int,    IntField>(int &field, const IntField *fieldDescriptor);
@@ -58,9 +73,10 @@ void PrinterVisitor::visit<int,    EnumField>(int &field, const EnumField *field
 template <>
 void PrinterVisitor::visit<std::string, StringField>(std::string &field, const StringField *fieldDescriptor);
 
-/* Old style visitor */
+/* Arrays */
 template <>
-void PrinterVisitor::visit<int>(int &intField, int defaultValue, const char *fieldName);
+void PrinterVisitor::visit<std::string, StringField>(std::string &field, const StringField *fieldDescriptor);
+
 
 template <>
 void PrinterVisitor::visit<double>(double &doubleField, double defaultValue, const char *fieldName);

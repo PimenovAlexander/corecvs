@@ -17,8 +17,8 @@
 #include "vector2d.h"
 #include "matrix.h"
 #include "function.h"
-namespace corecvs {
 
+namespace corecvs {
 
 class LevenbergMarquardt
 {
@@ -26,16 +26,28 @@ public:
     FunctionArgs *f;
     FunctionArgs *normalisation;
     double startLambda;
+    double maxLambda;
     double lambdaFactor;
     int maxIterations;
+
+    bool traceProgress;
+    bool traceCrucial;
+    bool trace;
+    bool traceMatrix;
 
     LevenbergMarquardt(int _maxIterations = 25, double _startLambda = 10, double _lambdaFactor = 2.0) :
         f(NULL),
         normalisation(NULL),
         startLambda(_startLambda),
+        maxLambda(std::numeric_limits<double>::max()),
         lambdaFactor(_lambdaFactor),
-        maxIterations(_maxIterations)
-        {};
+        maxIterations(_maxIterations),
+
+        traceProgress(true),
+        traceCrucial(false),
+        trace(false),
+        traceMatrix(false)
+        {}
 
     vector<double> fit(const vector<double> &input, const vector<double> &output);
 

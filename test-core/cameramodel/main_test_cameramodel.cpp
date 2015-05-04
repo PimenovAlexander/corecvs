@@ -136,8 +136,8 @@ void generateReality (void)
                 double z = lerp(billboard->z , billboard->z  + billboard->dz, j, 0, inputText->w);
 
 				Vector3dd point = Vector3dd(x, y, z);
-				Vector2dd imageL =  leftCamera * point;
-				Vector2dd imageR = rightCamera * point;
+                Vector2dd imageL = ( leftCamera * point).project();
+                Vector2dd imageR = (rightCamera * point).project();
 
 				if (outputL->isValidCoord(imageL.y(), imageL.x()))
 					outputL->element(imageL.y(), imageL.x()) = inputText->element(i,j);

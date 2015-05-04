@@ -5,9 +5,11 @@
  * \date Jun 24, 2010
  * \author alexander
  */
-#include <QtGui/QImage>
+#include <QImage>
+#include <QImageWriter>
 
 #include "qtFileLoader.h"
+#include "g12Image.h"
 
 /**
  *  This is a form of dirty hack to be sure that int QT builds loading QT images will always
@@ -68,19 +70,47 @@ RGB24Buffer *QTFileLoader::RGB24BufferFromQImage(QImage *image)
 
     RGB24Buffer *result = new RGB24Buffer(image->height(), image->width(), false);
 
-    /**
-     * TODO: Make this faster using .bits() method.
-     * So far don't want to mess with possible image formats
-     *
-     */
-    for (int i = 0; i < image->height(); i++)
+    if (image->format() == QImage::Format_ARGB32 || image->format() == QImage::Format_RGB32 )
     {
-        for (int j = 0; j < image->width(); j++)
+        for (int i = 0; i < image->height(); i++)
         {
-            QRgb pixel = image->pixel(j,i);
-            result->element(i,j) = RGBColor(qRed(pixel), qGreen(pixel), qBlue(pixel));
+            uint8_t *in = (uint8_t *)image->scanLine(i);
+            RGBColor *out = &result->element(i, 0);
+            for (int j = 0; j < image->width(); j++)
+            {
+                uint8_t r = *(in++);
+                uint8_t g = *(in++);
+                uint8_t b = *(in++);
+                *out = RGBColor(b,g,r);
+                in++;
+                out++;
+            }
+        }
+    } else {
+        /**
+         * TODO: Make this faster using .bits() method.
+         * So far don't want to mess with possible image formats
+         *
+         */
+        qDebug("QTFileLoader::RGB24BufferFromQImage():Slow conversion.");
+        for (int i = 0; i < image->height(); i++)
+        {
+            for (int j = 0; j < image->width(); j++)
+            {
+                QRgb pixel = image->pixel(j,i);
+                result->element(i,j) = RGBColor(qRed(pixel), qGreen(pixel), qBlue(pixel));
+            }
         }
     }
 
     return result;
+}
+
+void QTFileLoader::save(string name, RGB24Buffer *input)
+{
+    QString fileName = QString::fromStdString(name);
+    QImageWriter imageWriter(fileName);
+    RGB24InterfaceImage imageToSave(input);
+    imageWriter.setQuality(95);
+    imageWriter.write(imageToSave);
 }

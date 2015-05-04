@@ -24,13 +24,14 @@ namespace corecvs {
 class ProjectiveTransform : public Matrix33, public DeformMap<int32_t, double>
 {
 public:
-    ProjectiveTransform() : Matrix33() {};
-    ProjectiveTransform(double _A) : Matrix33(_A) {};
-    ProjectiveTransform(const double* data) : Matrix33(data) {};
-    ProjectiveTransform(const ProjectiveTransform &_M) : Matrix33(_M) {};
-    ProjectiveTransform(const Matrix33 &_M) : Matrix33(_M) {};
+    ProjectiveTransform() : Matrix33() {}
+    ProjectiveTransform(double _A) : Matrix33(_A) {}
+    ProjectiveTransform(const double* data) : Matrix33(data) {}
+    ProjectiveTransform(const ProjectiveTransform &_M) : Matrix33(_M) {}
+    ProjectiveTransform(const Matrix33 &_M) : Matrix33(_M) {}
+
     ProjectiveTransform(const Vector3dd &_V1,const Vector3dd &_V2,const Vector3dd &_V3) :
-       Matrix33 (_V1,_V2,_V3) {} ;
+        Matrix33 (_V1,_V2,_V3) {}
 
     inline Vector2dd map(int32_t y, int32_t x) const
     {

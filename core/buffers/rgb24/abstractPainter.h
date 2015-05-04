@@ -13,19 +13,20 @@
 #include "hardcodeFont.h"
 #include "hersheyVectorFont.h"
 #include "rgbColor.h"
+#include "polygons.h"
 
 namespace corecvs {
 
 template<class TargetBuffer>
 class AbstractPainter
 {
-	TargetBuffer *mTarget;
+    TargetBuffer *mTarget;
 public:
-	typedef typename TargetBuffer::InternalElementType ElementType;
+    typedef typename TargetBuffer::InternalElementType ElementType;
 
-	AbstractPainter(TargetBuffer *target) :
-		mTarget(target)
-	{}
+    AbstractPainter(TargetBuffer *target) :
+        mTarget(target)
+    {}
 
     /**
      *  This function draws the char with the hardcoded font
@@ -65,6 +66,14 @@ public:
             char_ptr = HardcodeFont::symbols_glyphs + HardcodeFont::GLYPH_HEIGHT * 8;
         if (theChar == '_')
             char_ptr = HardcodeFont::symbols_glyphs + HardcodeFont::GLYPH_HEIGHT * 9;
+        if (theChar == '(')
+            char_ptr = HardcodeFont::symbols_glyphs + HardcodeFont::GLYPH_HEIGHT * 11;
+        if (theChar == ')')
+            char_ptr = HardcodeFont::symbols_glyphs + HardcodeFont::GLYPH_HEIGHT * 12;
+        if (theChar == ',')
+            char_ptr = HardcodeFont::symbols_glyphs + HardcodeFont::GLYPH_HEIGHT * 13;
+        if (theChar == '.')
+            char_ptr = HardcodeFont::symbols_glyphs + HardcodeFont::GLYPH_HEIGHT * 14;
 
         if (char_ptr == NULL)
             char_ptr = HardcodeFont::symbols_glyphs + HardcodeFont::GLYPH_HEIGHT * 10;
@@ -83,7 +92,7 @@ public:
                         for (int dx = 0; dx < scale; dx++)
                         {
                             if (mTarget->isValidCoord(ry + dy, rx + dx))
-                        	    mTarget->element(ry + dy, rx + dx) = color;
+                                mTarget->element(ry + dy, rx + dx) = color;
                         }
                     }
 
@@ -302,7 +311,17 @@ public:
 
     }
 
-	virtual ~AbstractPainter() {}
+
+    void drawPolygon(const Polygon &p, ElementType color )
+    {
+        for (unsigned i = 0; i < p.size() - 1; i++ )
+        {
+            mTarget->drawLine(p[i].x(), p[i].y(), p[i + 1].x(), p[i + 1].y(), color);
+        }
+        mTarget->drawLine(p[p.size() - 1].x(), p[p.size() - 1].y(), p[0].x(), p[0].y(), color);
+    }
+
+    virtual ~AbstractPainter() {}
 };
 
 /* TODO: try msvc to feed this...

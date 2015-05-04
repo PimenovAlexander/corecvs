@@ -20,7 +20,7 @@ AbstractFileCapture::AbstractFileCapture(QString const &params)
     static const int delayGroup            = 6;
     static const int shouldSkipGroup       = 7;
 
-    printf ("Input string %s\n", params.toAscii().constData());
+    printf ("Input string %s\n", params.toLatin1().constData());
     int result = deviceStringPattern.indexIn(params);
     if (result == -1)
     {
@@ -34,15 +34,15 @@ AbstractFileCapture::AbstractFileCapture(QString const &params)
         "  | - FPS: <%s/%s>\n"
         "  | - Delay: <%s>\n"
         "  \\ - Skip: <%s>\n",
-        deviceStringPattern.cap(filenamePatternGroup).toAscii().constData(),
-        deviceStringPattern.cap(fpsNumGroup)         .toAscii().constData(),
-        deviceStringPattern.cap(fpsDenumGroup)       .toAscii().constData(),
-        deviceStringPattern.cap(delayGroup)          .toAscii().constData(),
-        deviceStringPattern.cap(shouldSkipGroup)     .toAscii().constData()
+        deviceStringPattern.cap(filenamePatternGroup).toLatin1().constData(),
+        deviceStringPattern.cap(fpsNumGroup)         .toLatin1().constData(),
+        deviceStringPattern.cap(fpsDenumGroup)       .toLatin1().constData(),
+        deviceStringPattern.cap(delayGroup)          .toLatin1().constData(),
+        deviceStringPattern.cap(shouldSkipGroup)     .toLatin1().constData()
         );
 
     // store the given path format for further usage
-    mPathFmt = deviceStringPattern.cap(filenamePatternGroup).toAscii().constData();
+    mPathFmt = deviceStringPattern.cap(filenamePatternGroup).toLatin1().constData();
 
     bool err = false;
     int fpsnum = deviceStringPattern.cap(fpsNumGroup).toInt(&err);

@@ -14,6 +14,10 @@
 #include "generated/draw3dParameters.h"
 #include "painterHelpers.h"
 #include "mathUtils.h"
+#include "qtHelper.h"
+
+#include "plyLoader.h"
+#include "stlLoader.h"
 
 using corecvs::lerp;
 
@@ -22,6 +26,82 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
     bool withTexture = false;
     withTexture |= (mParameters.style() == Draw3dStyle::TEXTURED) && (dialog->mFancyTexture != GLuint(-1));
     bool withTexCoords = withTexture && !textureCoords.empty();
+
+    /**/
+    //qDebug( "Will draw mesh %s with v:%lu f:%lu e:%lu", name.toLatin1().constData(), vertexes.size(), faces.size(), edges.size());
+
+
+    /*Caption drawing*/
+    if (mParameters.showCaption())
+    {
+        if (hasCentral)
+        {
+            OpenGLTools::GLWrapper wrapper;
+            GLPainter painter(&wrapper);
+
+            QString text = QString("[%1, %2, %3]")
+                    .arg(centralPoint.x(), 0, 'f', 2).arg(centralPoint.y(), 0, 'f', 2).arg(centralPoint.z(), 0, 'f', 2);
+
+            /*glPushMatrix();
+               glTranslated(centralPoint.x(),centralPoint.y(), centralPoint.z());
+               glScaled(0.5,0.5,0.5);
+               painter.drawFormatVector(0, 0, RGBColor(255,20,20), 1, text.toLatin1().constData());
+            glPopMatrix();*/
+
+            //Vector3dd projected =
+
+            Matrix44 modelview  = OpenGLTools::glGetModelViewMatrix();
+            Matrix44 projection = OpenGLTools::glGetProjectionMatrix();
+            Matrix44 glMatrix = projection * modelview;
+
+            /* Setting new matrices */
+
+            int width  = dialog->mUi.widget->width();
+            int height = dialog->mUi.widget->height();
+            /*double aspect = (double)width / (double)height;
+            */
+            /*int width  = 200;
+            int height = 200;*/
+
+            /* SetMatrices to draw on 2D canvas */
+            glMatrixMode(GL_PROJECTION);
+            glPushMatrix();
+            glLoadIdentity();
+            glOrtho(- width / 2.0 , width / 2.0, -height / 2.0, height / 2.0, 10, -10);
+
+            glMatrixMode(GL_MODELVIEW);
+            glPushMatrix();
+            glLoadIdentity();
+
+            Vector3dd labelPos = glMatrix * centralPoint;
+            glTranslated(labelPos[0] * width / 2.0, labelPos[1] * height / 2.0, 0.0);
+
+            double size = mParameters.fontSize() / 25.0;
+            glScaled(size, -size, size);
+
+            bool depthTest =  glIsEnabled(GL_DEPTH_TEST);
+            glDisable(GL_DEPTH_TEST);
+            GLint lineWidth;
+            glGetIntegerv(GL_LINE_WIDTH, &lineWidth);
+            glLineWidth(mParameters.fontWidth());
+
+            //glColor3ub(mParameters.fontColor().r(), mParameters.fontColor().g(), mParameters.fontColor().b());
+
+            painter.drawFormatVector(0, 0, mParameters.fontColor(), 1, text.toLatin1().constData());
+            if (depthTest) {
+                glEnable(GL_DEPTH_TEST);
+            }
+            glLineWidth(lineWidth);
+
+            /*Restore old matrices */
+            glMatrixMode(GL_PROJECTION);
+            glPopMatrix();
+            glMatrixMode(GL_MODELVIEW);
+            glPopMatrix();
+
+
+        }
+    }
 
     if (!withTexture) {
         glDisable(GL_TEXTURE_2D);
@@ -33,53 +113,56 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
 
     commonSetup(dialog, &mParameters);
 
-    GLenum mode;
-
-    switch (mParameters.style()) {
-        case Draw3dStyle::POINTS:
-            mode = GL_POINT;
-            break;
-        case Draw3dStyle::WIREFRAME:
-            mode = GL_LINE;
-            break;
-        default:
-        case Draw3dStyle::COLOR:
-        case Draw3dStyle::COLOR_2:
-            mode = GL_FILL;
-            break;
-    }
-
     glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_DOUBLE, sizeof(Vector3dd), &(vertexes[0]));
 
-
-    if (withTexCoords) {
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    }
-
-    if (mParameters.style() == Draw3dStyle::COLOR_2)
+    if (mParameters.style() == Draw3dStyle::FILLED_AND_FRAME)
     {
         glPolygonOffset ( -1.0, -2.0);
         glEnable (  GL_POLYGON_OFFSET_LINE );
         glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
         glColor3ub(mParameters.secondaryColor().r(), mParameters.secondaryColor().g(), mParameters.secondaryColor().b());
-        glVertexPointer(3, GL_DOUBLE, sizeof(Vector3dd), &(vertexes[0]));
         glDrawElements(GL_TRIANGLES, GLsizei(faces.size() * 3), GL_UNSIGNED_INT, &(faces[0]));
         glDisable (  GL_POLYGON_OFFSET_LINE );
     }
 
-    glPolygonMode( GL_FRONT_AND_BACK, mode );
-    glColor3ub(mParameters.color().r(), mParameters.color().g(), mParameters.color().b());
-    glVertexPointer(3, GL_DOUBLE, sizeof(Vector3dd), &(vertexes[0]));
+    if (hasColor) {
+        glEnableClientState(GL_COLOR_ARRAY);
+        glColorPointer(3, GL_UNSIGNED_BYTE, sizeof(RGBColor), &(vertexesColor[0]));
+    } else {
+        glColor3ub(mParameters.color().r(), mParameters.color().g(), mParameters.color().b());
+    }
+
     if (withTexCoords) {
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glTexCoordPointer(2, GL_DOUBLE, sizeof(Vector2dd), &(textureCoords[0]));
     }
 
-    glDrawElements(GL_TRIANGLES, GLsizei(faces.size() * 3), GL_UNSIGNED_INT, &(faces[0]));
+    switch (mParameters.style()) {
+    case Draw3dStyle::POINTS:
+            glDrawArrays(GL_POINTS, 0, vertexes.size());
+        break;
+    case Draw3dStyle::WIREFRAME:
+            glDrawElements(GL_LINES, GLsizei(edges.size() * 2), GL_UNSIGNED_INT, &(edges[0]));
+            glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+            glDrawElements(GL_TRIANGLES, GLsizei(faces.size() * 3), GL_UNSIGNED_INT, &(faces[0]));
+        break;
+    default:
+    case Draw3dStyle::FILLED:
+    case Draw3dStyle::FILLED_AND_FRAME:
+            glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+            glDrawElements(GL_TRIANGLES, GLsizei(faces.size() * 3), GL_UNSIGNED_INT, &(faces[0]));
+        break;
+    }
 
     /* Cleanup */
     glDisableClientState(GL_VERTEX_ARRAY);
     if (withTexCoords) {
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    }
+
+    if (hasColor) {
+        glDisableClientState(GL_COLOR_ARRAY);
     }
 
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );

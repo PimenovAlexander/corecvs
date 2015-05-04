@@ -9,7 +9,7 @@
 
 source ./helper-regen.sh
 
-qmake && make
+qmake-qt4 && make
 
 CORE_DIR="../../core"
 GEN_DIR="./Generated"

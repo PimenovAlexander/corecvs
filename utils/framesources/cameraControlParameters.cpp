@@ -6,11 +6,22 @@ const char *CameraParameters::names[] = {
     "EXPOSURE_AUTO",
     "EXPOSURE",
     "GAIN",
+    "GLOBAL ANALOG MULTIPIER",
+    "GLOBAL DIGITAL GAIN ",
     "GAIN_AUTO",
     "GAIN_BOOST",
-    "GAIN_RED",
-    "GAIN_GREEN",
-    "GAIN_BLUE",
+    "RED GAIN",
+    "RED ANALOG MULTIPIER",
+    "RED DIGITAL GAIN",
+    "GREEN GAIN",
+    "GREEN ANALOG MULTIPIER",
+    "GREEN DIGITAL GAIN",
+    "BLUE GAIN",
+    "BLUE ANALOG MULTIPIER",
+    "BLUE DIGITAL GAIN",
+    "GREEN2 GAIN",
+    "GREEN2 ANALOG MULTIPIER",
+    "GREEN2 DIGITAL GAIN",
     "IRIS",
     "FPS",
     "FOCUS",
@@ -33,7 +44,11 @@ const char *CameraParameters::names[] = {
     "UEYE SLAVE TRIGGER DELAY",
 
     "HORIZONTAL_FLIP",
-    "VERTICAL_FLIP"
+    "VERTICAL_FLIP",
+
+    "SHUTTER WIDTH UPPER",
+    "SHUTTER WIDTH LOWER",
+    "SHUTTER DELAY",
 };
 
 STATIC_ASSERT(CORE_COUNT_OF(CameraParameters::names) == CameraParameters::LAST, wrong_camera_parameter_num);

@@ -107,7 +107,7 @@ void ParametersMapperGenerator::generateHeader()
     QString mapperName  = "ParametersMapper"+mapperPostfix;
 
     out.close();
-    out.open(QString("Generated/" + fileName).toAscii(), ios::out);
+    out.open(QString("Generated/" + fileName).toLatin1(), ios::out);
 
     result +=
     "#ifndef "+guardDefine+"\n"
@@ -209,7 +209,7 @@ void ParametersMapperGenerator::generateHeader()
     "};\n"
     "#endif //"+guardDefine+"\n";
 
-    out << result.toAscii().constData();
+    out << result.toLatin1().constData();
 }
 
 void ParametersMapperGenerator::generateSource()
@@ -222,7 +222,7 @@ void ParametersMapperGenerator::generateSource()
     QString mapperName  = "ParametersMapper"+mapperPostfix;
 
     out.close();
-    out.open(QString("Generated/" + fileName).toAscii(), ios::out);
+    out.open(QString("Generated/" + fileName).toLatin1(), ios::out);
 
     result +=
     "/**\n"
@@ -397,5 +397,5 @@ void ParametersMapperGenerator::generateSource()
     "}\n"
     "\n";
 
-    out << result.toAscii().constData();
+    out << result.toLatin1().constData();
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "openCVBMParameters.h"
 #include "ui_openCVBMParametersControlWidget.h"
 #include "parametersControlWidgetBase.h"

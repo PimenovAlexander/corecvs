@@ -127,7 +127,7 @@ public:
      *   | B0 | B1 | B2 | B3 | B4 | B5 | B6 | B7 |
      *  unpacks into
      *
-     *   | A0 | B0 | A2 | B2 | A4 | B4 | A6 | B6 |
+     *   | A0 | B0 | A1 | B1 | A2 | B2 | A3 | B3 |
      *
      **/
     inline static Int32x4 unpackLower (const Int16x8 &left, const Int16x8 &right) {
@@ -141,7 +141,7 @@ public:
      *   | B0 | B1 | B2 | B3 | B4 | B5 | B6 | B7 |
      *  unpacks into
      *
-     *   | A1 | B1 | A3 | B3 | A5 | B5 | A7 | B7 |
+     *   | A4 | B4 | A5 | B5 | A6 | B6 | A7 | B7 |
      *
      **/
     inline static Int32x4 unpackHigher (const Int16x8 &left, const Int16x8 &right) {
@@ -151,8 +151,9 @@ public:
     /*Print to stream helper */
     friend ostream & operator << (ostream &out, const Int16x8 &vector);
 
+    /* Formated hex helper */
+    void hexDump (ostream &out);
 };
-
 
 FORCE_INLINE Int16x8 operator >> (const Int16x8 &left, uint32_t count) {
     return Int16x8(_mm_srai_epi16(left.data, count));

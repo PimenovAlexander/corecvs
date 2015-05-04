@@ -11,7 +11,11 @@
  * \author alexander
  */
 
+#include <string>
+#include <iostream>
+
 #include "global.h"
+
 
 namespace corecvs {
 
@@ -43,11 +47,20 @@ class binary<0>
 #define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
 #define MIN(X, Y) (((X) > (Y)) ? (Y) : (X))
 */
-//template<typename Type>
 
+/* */
+namespace HelperUtils {
+    using std::string;
+    using std::istream;
 
+    bool startsWith(const string &str, const string &prefix);
+    istream& getlineSafe(istream& is, string& str);
+}
 
+/* OS related stuff */
 void setStdTerminateHandler();
+
+
 
 
 } //namespace corecvs

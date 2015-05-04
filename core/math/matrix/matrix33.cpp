@@ -37,7 +37,7 @@ void Matrix33::invert()
  *
  * \return The \f$I^{-1}\f$
  */
-Matrix33 Matrix33::inv()
+Matrix33 Matrix33::inv() const
 {
     Matrix33 toReturn;
     /* Will hold the minors determinant with the changing sign*/
@@ -68,7 +68,7 @@ Matrix33 Matrix33::inv()
  *   Computing determinant of the matrix.
  **/
 
-double Matrix33::det()
+double Matrix33::det() const
 {
  return    a(0,0) * (a(1,1) * a(2,2) - a(1,2) * a(2,1))
          - a(0,1) * (a(1,0) * a(2,2) - a(1,2) * a(2,0))
@@ -202,6 +202,11 @@ Vector3dd Matrix33::aV(int i) const
     return Vector3dd (a(i,0), a(i,1), a(i,2));
 }
 
+Vector3dd Matrix33::row(int i) const
+{
+    return aV(i);
+}
+
 /**
  *  Get the i-th column vector
  **/
@@ -209,6 +214,11 @@ Vector3dd Matrix33::aV(int i) const
 Vector3dd Matrix33::aW(int i) const
 {
     return Vector3dd (a(0,i), a(1,i), a(2,i));
+}
+
+Vector3dd Matrix33::column(int i) const
+{
+    return aW(i);
 }
 
 /**
@@ -415,6 +425,12 @@ Matrix33 Matrix33::Scale3 (const Vector3dd& v)
             0,     0, v.z()
     );
 }
+
+Matrix33 Matrix33::Scale3(double s1, double s2, double s3)
+{
+    return Matrix33::Scale3(Vector3dd(s1, s2, s3));
+}
+
 
 /**
  * \brief This function returns a matrix with only 2 scale components

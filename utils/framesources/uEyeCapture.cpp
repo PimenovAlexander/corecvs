@@ -118,18 +118,18 @@ UEyeCaptureInterface::UEyeCaptureInterface(string _devname) :
         "  | - Sync:%s\n"
         "  \\ - GlobalShutter:%s\n",
 
-        deviceStringPattern.cap(Device1Group).toAscii().constData(),
-        deviceStringPattern.cap(Device2Group).toAscii().constData(),
-        deviceStringPattern.cap(PixelClockGroup).toAscii().constData(),
-        deviceStringPattern.cap(FpsGroup).toAscii().constData(),
-        deviceStringPattern.cap(BitsGroup).toAscii().constData(),
-        deviceStringPattern.cap(BinningGroup).toAscii().constData(),
-        deviceStringPattern.cap(SyncGroup).toAscii().constData(),
-        deviceStringPattern.cap(GlobalShutterGroup).toAscii().constData()
+        deviceStringPattern.cap(Device1Group).toLatin1().constData(),
+        deviceStringPattern.cap(Device2Group).toLatin1().constData(),
+        deviceStringPattern.cap(PixelClockGroup).toLatin1().constData(),
+        deviceStringPattern.cap(FpsGroup).toLatin1().constData(),
+        deviceStringPattern.cap(BitsGroup).toLatin1().constData(),
+        deviceStringPattern.cap(BinningGroup).toLatin1().constData(),
+        deviceStringPattern.cap(SyncGroup).toLatin1().constData(),
+        deviceStringPattern.cap(GlobalShutterGroup).toLatin1().constData()
     );
 
-    string leftName  = deviceStringPattern.cap(Device1Group).toAscii().constData();
-    string rightName = deviceStringPattern.cap(Device2Group).toAscii().constData();
+    string leftName  = deviceStringPattern.cap(Device1Group).toLatin1().constData();
+    string rightName = deviceStringPattern.cap(Device2Group).toLatin1().constData();
     bool err;
 
     int leftID =  deviceStringPattern.cap(Device1Group).toInt(&err);

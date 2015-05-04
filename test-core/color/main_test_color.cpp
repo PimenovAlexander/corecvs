@@ -13,6 +13,7 @@
 #include "global.h"
 
 #include "rgb24Buffer.h"
+#include "rgbColor.h"
 
 
 
@@ -42,9 +43,32 @@ void testRGB(void )
 
 }
 
+void testHSVCoversion(void)
+{
+    RGBColor testColors[] = {
+        RGBColor::Black(), RGBColor::Red(), RGBColor::Green(), RGBColor::Blue(), RGBColor::Cyan(),
+        RGBColor::Indigo(), RGBColor::Violet()
+    };
+
+    for (unsigned i = 0; i < CORE_COUNT_OF(testColors); i++)
+    {
+        cout << "Testing color: " << testColors[i] << std::endl;
+        int h = testColors[i].hue();
+        int s = testColors[i].saturation();
+        int v = testColors[i].value();
+        RGBColor rebuild = RGBColor::FromHSV(h,s,v);
+        cout << "  HSV: " << h << "," << s  << "," << v << std::endl;
+        cout << "  Res: " << rebuild << std::endl;
+    }
+
+
+
+}
+
 int main (int /*argC*/, char ** /*argV*/)
 {
-    testRGB();
-        cout << "PASSED" << endl;
-        return 0;
+    //testRGB();
+    testHSVCoversion();
+    cout << "PASSED" << endl;
+    return 0;
 }

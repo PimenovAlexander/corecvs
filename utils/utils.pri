@@ -24,14 +24,16 @@ UTILS_INCLUDEPATH = \
     $$UTILSDIR/filters \
     $$UTILSDIR/filters/graph \
     $$UTILSDIR/filters/ui \                         # include isn't used, but need for DEPENDPATH!
-#   $$UTILSDIR/flowcolorers \
     $$UTILSDIR/framesources \
     $$UTILSDIR/framesources/directShow \    
     $$UTILSDIR/framesources/decoders \    
     $$UTILSDIR/framesources/v4l2 \
+    $$UTILSDIR/framesources/syncCam \
+    $$UTILSDIR/framesources/file \
+    $$UTILSDIR/framesources/avcodec \
+    $$UTILSDIR/framesources/opencv \
     $$UTILSDIR/processor \
     $$UTILSDIR/rectifier \
-#   $$UTILSDIR/serializer \     # obsolete?
     $$UTILSDIR/statistics \     # obsolete?
     $$UTILSDIR/uis \
     $$UTILSDIR/uis/cloudview \    
@@ -39,6 +41,12 @@ UTILS_INCLUDEPATH = \
     $$UTILSDIR/widgets \
 
 INCLUDEPATH += $$UTILS_INCLUDEPATH
+
+QT += xml
+
+unix {
+    QT += x11extras
+}
 
 UTILS_BINDIR = $$ROOT_DIR/bin
 #message(Utils.pri ROOT_DIR is <$$ROOT_DIR>. Bindir is <$$UTILS_BINDIR>. PWD is <$$PWD>)
@@ -130,6 +138,63 @@ with_directshow {
 }
 
 
+
+with_avcodec {
+    !build_pass: message(Switching on avcodec support)
+
+    win32 {
+        isEmpty(AVCODEC_PATH): AVCODEC_PATH = "c:/ffmpeg"
+        !build_pass: message(AvCodec $$AVCODEC_PATH)   
+       
+
+        DEFINES += WITH_AVCODEC
+        INCLUDEPATH += $$AVCODEC_PATH/include
+        LIBS        += -L$$AVCODEC_PATH/lib -lavutil -lavformat -lavcodec -lavutil -lm
+    } else {
+        DEFINES += WITH_AVCODEC
+        LIBS    += -lavutil -lavformat -lavcodec -lz -lavutil -lm
+    }
+}
+
+with_avcodec {
+    !build_pass: message(Switching on swscale support)
+
+    DEFINES += WITH_SWSCALE
+    LIBS    += -lswscale
+}
+
+
+with_synccam {
+    win32: LIBS += -L$$PWD/../../../../SyncCamera/library/lib/x86/ -lCyAPI
+
+    INCLUDEPATH += $$PWD/../../../../SyncCamera/library/inc
+    DEPENDPATH += $$PWD/../../../../SyncCamera/library/inc
+
+    win32: PRE_TARGETDEPS += $$PWD/../../../../SyncCamera/library/lib/x86/CyAPI.lib
+
+
+    win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../SyncCamera/driver/USBSyncCam2/release/ -lUSBSyncCam2
+    else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../SyncCamera/driver/USBSyncCam2/debug/ -lUSBSyncCam2
+    #else:unix:!macx: LIBS += -L$$PWD/../../../../SyncCamera/driver/USBSyncCam2/ -lUSBSyncCam2
+
+    INCLUDEPATH += $$PWD/../../../../SyncCamera/driver/USBSyncCam2
+    DEPENDPATH += $$PWD/../../../../SyncCamera/driver/USBSyncCam2
+
+    win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../../SyncCamera/driver/USBSyncCam2/release/USBSyncCam2.lib
+    else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../../SyncCamera/driver/USBSyncCam2/debug/USBSyncCam2.lib
+
+
+    #unix:!macx: LIBS += -L$$PWD/../../../../Cypress/cyusb_linux_1.0.3/lib/ -lcyusb
+
+    #INCLUDEPATH += $$PWD/../../../../Cypress/cyusb_linux_1.0.3/include
+    #DEPENDPATH += $$PWD/../../../../Cypress/cyusb_linux_1.0.3/include
+
+    win32: LIBS += -lSetupAPI
+    #win32: LIBS += -lUser32
+
+}
+
+
 ###############################################
 #   Useful common part for all cvs projects   #
 ###############################################
@@ -172,3 +237,6 @@ win32 {
 
     QMAKE_CLEAN += "$$MOC_DIR/mocinclude.tmp"       # it doesn't killed some-why...
 }
+
+
+

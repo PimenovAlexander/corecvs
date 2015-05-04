@@ -98,6 +98,8 @@ public:
         return getJacobian(in.element, delta);
     }
 
+    virtual ~FunctionArgs() {};
+
 };
 
 class IdentityFunction : public FunctionArgs

@@ -8,9 +8,9 @@
 
 
 #include <QtCore/QDebug>
-#include <QtGui/QPainter>
-#include <QtGui/QFileDialog>
-#include <QtGui/QMouseEvent>
+#include <QPainter>
+#include <QFileDialog>
+#include <QMouseEvent>
 
 #include "global.h"
 
@@ -83,6 +83,18 @@ AdvancedImageWidget::~AdvancedImageWidget()
     delete_safe(mUi);
     delete_safe(mSaveDialog);
     delete_safe(mResizeCache);
+}
+
+void AdvancedImageWidget::setCollapseTitle(bool collapse)
+{
+    QList<int> sizes;
+    if (collapse) {
+        sizes << 0 << 1;
+    } else {
+        sizes << 1 << 1;
+    }
+
+    mUi->splitter->setSizes(sizes);
 }
 
 void AdvancedImageWidget::setImage(QSharedPointer<QImage> newImage)
@@ -557,6 +569,11 @@ void AdvancedImageWidget::fitToggled()
 {
     recomputeRects();
     mUi->widget->update();
+}
+
+void AdvancedImageWidget::setFitWindow(bool flag)
+{
+    mUi->fitToWindowCheckBox->setChecked(flag);
 }
 
 void AdvancedImageWidget::childResized (QResizeEvent * /*event*/)

@@ -1,8 +1,8 @@
 #ifndef LOGGERWIDGET_H
 #define LOGGERWIDGET_H
 
-#include <QtGui/QWidget>
-#include <QtGui/QPushButton>
+#include <QWidget>
+#include <QPushButton>
 
 #include "log.h"
 #include "ui_loggerWidget.h"

@@ -35,19 +35,18 @@ typedef GenericTriangle<int32_t> Triangle;
 class PointPath : public vector<Vector2dd>
 {
 public:
-    PointPath(){};
+    PointPath(){}
 
     PointPath(int len) : vector<Vector2dd>(len)
-    {};
+    {}
 };
 
-class Poligon : public PointPath
+class Polygon : public PointPath
 {
 public:
+    Polygon(){}
 
-    Poligon(){};
-
-    Poligon(const Vector2dd *points, int len) : PointPath(len)
+    Polygon(const Vector2dd *points, int len) : PointPath(len)
     {
         for (unsigned i = 0; i < size(); i++) {
            this->operator[](i) = points[i];
@@ -55,7 +54,22 @@ public:
     }
 
     int isInside(const Vector2dd &point);
-    bool clipRay(const Ray2d &ray, double &t1, double &t2);
+    bool isConvex(bool *direction = NULL);
+
+    Vector2dd getPoint (int i) const
+    {
+        return operator [](i);
+    }
+
+    Vector2dd getNormal(int i) const
+    {
+        Vector2dd r1 = operator []( i              );
+        Vector2dd r2 = operator []((i + 1) % size());
+
+        return (r2 - r1).rightNormal();
+    }
+
+    //bool clipRay(const Ray2d &ray, double &t1, double &t2);
 };
 
 

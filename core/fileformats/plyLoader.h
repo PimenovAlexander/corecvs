@@ -12,14 +12,66 @@
 
 #include "mesh3d.h"
 
+namespace corecvs {
 
 using std::vector;
 
 class PLYLoader {
 public:
+    enum PlyFormat {
+        ASCII,
+        BINARY_LITTLE_ENDIAN,
+        OTHER
+    };
+
+    enum PropType  {
+        PROP_TYPE_FLOAT,
+        PROP_TYPE_UCHAR,
+        PROP_TYPE_INT,
+        PROP_TYPE_LIST,
+        PROP_TYPE_CORRUPT,
+    };
+
+    enum PropName  {
+        PROP_NAME_X,
+        PROP_NAME_Y,
+        PROP_NAME_Z,
+
+        PROP_NAME_RED,
+        PROP_NAME_GREEN,
+        PROP_NAME_BLUE,
+
+        PROP_NAME_VERTEX1,
+        PROP_NAME_VERTEX2,
+
+        PROP_NAME_VERTEX_INDEX,
+
+        PROP_NAME_CORRUPT
+    };
+
+    struct Prop {
+        PropType type;
+        PropName name;
+
+        Prop() :
+            type(PROP_TYPE_CORRUPT),
+            name(PROP_NAME_CORRUPT)
+        {}
+    };
+
+    enum ObjType {
+        OBJ_VERTEX,
+        OBJ_FACE,
+        OBJ_EDGE,
+        OBJ_LAST
+    };
+
+    friend istream &operator >> (istream &in, Prop &toLoad);
+
     PLYLoader();
     int loadPLY(istream &input, Mesh3D &mesh);
     virtual ~PLYLoader();
 };
 
+} // namespace corecvs
 /* EOF */

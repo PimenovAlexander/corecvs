@@ -35,7 +35,8 @@ HEADERS += \
     math/sse/int16x8.h \
     math/mathUtils.h \
     math/eulerAngles.h \
-    math/puzzleBlock.h
+    math/puzzleBlock.h \
+    math/matrix/similarityReconstructor.h
     
     
 SOURCES += \
@@ -53,3 +54,4 @@ SOURCES += \
     math/helperFunctions.cpp \
     math/generic/genericMath.cpp \
     math/sse/sseWrapper.cpp \
+    math/matrix/similarityReconstructor.cpp

@@ -23,7 +23,16 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
     <number>3</number>
    </property>
    <item row="0" column="0">
@@ -93,7 +102,16 @@
           <property name="spacing">
            <number>3</number>
           </property>
-          <property name="margin">
+          <property name="leftMargin">
+           <number>3</number>
+          </property>
+          <property name="topMargin">
+           <number>3</number>
+          </property>
+          <property name="rightMargin">
+           <number>3</number>
+          </property>
+          <property name="bottomMargin">
            <number>3</number>
           </property>
           <item>
@@ -184,7 +202,16 @@
           </size>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_4">
-          <property name="margin">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
            <number>0</number>
           </property>
           <item>
@@ -196,7 +223,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../../../../resources/main.qrc">
+             <iconset resource="../../resources/main.qrc">
               <normaloff>:/new/prefix1/pause.png</normaloff>:/new/prefix1/pause.png</iconset>
             </property>
             <property name="iconSize">
@@ -229,7 +256,16 @@
              <property name="spacing">
               <number>3</number>
              </property>
-             <property name="margin">
+             <property name="leftMargin">
+              <number>3</number>
+             </property>
+             <property name="topMargin">
+              <number>3</number>
+             </property>
+             <property name="rightMargin">
+              <number>3</number>
+             </property>
+             <property name="bottomMargin">
               <number>3</number>
              </property>
              <item>
@@ -241,7 +277,7 @@
                 <string/>
                </property>
                <property name="icon">
-                <iconset resource="../../../../resources/main.qrc">
+                <iconset resource="../../resources/main.qrc">
                  <normaloff>:/new/prefix1/zoom_layer.png</normaloff>:/new/prefix1/zoom_layer.png</iconset>
                </property>
                <property name="iconSize">
@@ -270,7 +306,7 @@
                 <string/>
                </property>
                <property name="icon">
-                <iconset resource="../../../../resources/main.qrc">
+                <iconset resource="../../resources/main.qrc">
                  <normaloff>:/new/prefix1/hand.png</normaloff>:/new/prefix1/hand.png</iconset>
                </property>
                <property name="iconSize">
@@ -302,7 +338,7 @@
                 <string/>
                </property>
                <property name="icon">
-                <iconset resource="../../../../resources/main.qrc">
+                <iconset resource="../../resources/main.qrc">
                  <normaloff>:/new/prefix1/info.png</normaloff>:/new/prefix1/info.png</iconset>
                </property>
                <property name="iconSize">
@@ -377,7 +413,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../../../../resources/main.qrc">
+             <iconset resource="../../resources/main.qrc">
               <normaloff>:/new/prefix1/zoom_out.png</normaloff>:/new/prefix1/zoom_out.png</iconset>
             </property>
             <property name="iconSize">
@@ -406,7 +442,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../../../../resources/main.qrc">
+             <iconset resource="../../resources/main.qrc">
               <normaloff>:/new/prefix1/zoom_in.png</normaloff>:/new/prefix1/zoom_in.png</iconset>
             </property>
             <property name="iconSize">
@@ -429,7 +465,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../../../../resources/main.qrc">
+             <iconset resource="../../resources/main.qrc">
               <normaloff>:/new/prefix1/refresh.png</normaloff>:/new/prefix1/refresh.png</iconset>
             </property>
             <property name="iconSize">
@@ -465,7 +501,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../../../../resources/main.qrc">
+             <iconset resource="../../resources/main.qrc">
               <normaloff>:/new/prefix1/picture_save.png</normaloff>:/new/prefix1/picture_save.png</iconset>
             </property>
             <property name="iconSize">
@@ -495,7 +531,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../../../../resources/main.qrc">
+             <iconset resource="../../resources/main.qrc">
               <normaloff>:/new/prefix1/film_save.png</normaloff>:/new/prefix1/film_save.png</iconset>
             </property>
             <property name="iconSize">
@@ -547,9 +583,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
+  <include location="../../resources/main.qrc"/>
  </resources>
  <connections>
   <connection>

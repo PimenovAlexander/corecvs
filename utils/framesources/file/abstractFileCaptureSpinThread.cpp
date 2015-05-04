@@ -28,8 +28,9 @@ void AbstractFileCaptureSpinThread::run()
 
     while (mInterface->spinThreadRunMutex().tryLock())
     {
-        if (mDelay != 0)
+        if (mDelay != 0) {
             msleep(mDelay);
+        }
 
         if (!mPaused || mNextFrameNeeded)
         {
@@ -46,6 +47,7 @@ void AbstractFileCaptureSpinThread::run()
                 }
             mInterface->protectFrameMutex().unlock();
         }
+
 
         mInterface->spinThreadRunMutex().unlock();
 

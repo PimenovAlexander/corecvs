@@ -165,6 +165,9 @@ public:
     int getMeanThreshold();
     int getMedianThreshold();
 
+
+    double getMeanValue(double *dev);
+
     /**
      *   Having an input histogram we search for an interval that satisfies
      *   following criteria:
@@ -237,6 +240,7 @@ public:
     }
 
     virtual ~Histogram();
+
 
 private:
     void _init(int min, int max)

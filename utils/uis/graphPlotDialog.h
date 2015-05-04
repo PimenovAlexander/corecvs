@@ -2,8 +2,8 @@
 #define GRAPHPLOTDIALOG_H
 
 #include <deque>
-#include <QtGui/QWidget>
-#include <QtGui/QtGui>
+#include <QWidget>
+#include <QtGui>
 #include <QtXml/QDomDocument>
 
 #include "ui_graphPlotDialog.h"
@@ -100,6 +100,8 @@ private:
     void drawGrid(QPainter &painter);
     /* Draw line to monitor values */
     void drawGridFixLine(QPainter &painter);
+
+    void addNewGraphToUI(QString name, unsigned graphId);
 
     QSignalMapper *mUpDownMapper;
 //    ParametersMapperGraphPlot *mParamMapper;

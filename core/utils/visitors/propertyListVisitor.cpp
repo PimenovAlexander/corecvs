@@ -35,6 +35,12 @@ template<>
         output->setIntProperty(getChildPath(fieldName), boolField);
     }
 
+template<>
+    void PropertyListWriterVisitor::visit<std::string>(std::string &stringField, std::string /*stringValue*/, const char *fieldName)
+    {
+        output->setStringProperty(getChildPath(fieldName), stringField);
+    }
+
 /* New style fields*/
 
 template<>
@@ -81,6 +87,13 @@ template<>
     {
         boolField = input->getIntProperty(getChildPath(fieldName), defaultValue);
     }
+
+template<>
+    void PropertyListReaderVisitor::visit<std::string>(std::string &stringField, std::string stringValue, const char *fieldName)
+    {
+        stringField = input->getStringProperty(getChildPath(fieldName), stringValue);
+    }
+
 
 /* New style fields*/
 

@@ -1,5 +1,5 @@
 #pragma once
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "generated/graphPlotParameters.h"
 #include "ui_graphPlotParametersControlWidget.h"
 #include "parametersControlWidgetBase.h"

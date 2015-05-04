@@ -20,11 +20,20 @@
    <string>HostDialog</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../../../resources/main.qrc">
+   <iconset resource="../../../resources/main.qrc">
     <normaloff>:/new/logos/cvs16x16.png</normaloff>:/new/logos/cvs16x16.png</iconset>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
     <number>3</number>
    </property>
    <item>
@@ -52,7 +61,16 @@
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QGridLayout" name="gridLayout">
-          <property name="margin">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
            <number>0</number>
           </property>
           <item row="0" column="0">
@@ -79,12 +97,12 @@
   <customwidget>
    <class>AdvancedImageWidget</class>
    <extends>QWidget</extends>
-   <header>advancedImageWidget.h</header>
+   <header location="global">advancedImageWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../resources/main.qrc"/>
  </resources>
  <connections/>
 </ui>
