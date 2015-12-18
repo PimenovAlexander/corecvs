@@ -1,8 +1,9 @@
 #include "semiGlobalBlockMatching.h"
 #include "OpenCVTools.h"
 
-using namespace cv;
+#include <opencv2/core/core_c.h> // cvReleaseImage
 
+using namespace cv;
 
 FlowBuffer* BMOpenCV::getStereoBM(G12Buffer* InputBufferLeft, G12Buffer* InputBufferRight, const OpenCVBMParameters &params)
 {

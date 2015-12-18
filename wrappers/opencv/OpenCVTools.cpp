@@ -5,10 +5,8 @@
  * \date Apr 6, 2011
  * \author alexander
  */
-#include <opencv/cv.h>
-
-
 #include "OpenCVTools.h"
+#include <opencv2/core/core_c.h> // cvCreateImage
 
 using namespace corecvs;
 
@@ -81,11 +79,11 @@ G12Buffer *OpenCVTools::getG12BufferFromCVImage(IplImage *input)
 {
     G12Buffer *toReturn = new G12Buffer(input->height, input->width);
 
+    CORE_ASSERT_TRUE_P((input->depth == IPL_DEPTH_8U) && ((input->nChannels == 3) || (input->nChannels == 1)),
+        ("Unsupported IplImage format: depth=%d, channels = %d\n", input->depth, input->nChannels));
 
-    ASSERT_TRUE_P((input->depth == IPL_DEPTH_8U) && ((input->nChannels == 3) || input->nChannels == 1),
-      ("Unsupported IplImage format: depth=%d, channels = %d\n", input->depth, input->nChannels));
-
-
+    if (input->nChannels == 3)
+    {
         for (int i = 0; i < input->height; i++)
         {
             uint8_t *srcData = (uint8_t *)&input->imageData[i * input->widthStep];
@@ -94,23 +92,29 @@ G12Buffer *OpenCVTools::getG12BufferFromCVImage(IplImage *input)
             /*TODO: Add SSE implementation*/
             for (int j = 0; j < input->width; j++)
             {
-                if (input->nChannels == 3)
-                {
-                    *dstData = (11 * srcData[0] + 16 * srcData[1] + 5 * srcData[2]) >> 1;
-                    dstData++;
-                    srcData += 3;
-                }
-                if (input->nChannels == 1)
-                {
-                    *dstData = *srcData * 16;
-                    dstData++;
-                    srcData++;
-                }
-
-
+                *dstData = (11 * srcData[0] + 16 * srcData[1] + 5 * srcData[2]) >> 1;
+                dstData++;
+                srcData += 3;
             }
         }
+    }
 
+    if (input->nChannels == 1)
+    {
+        for (int i = 0; i < input->height; i++)
+        {
+            uint8_t *srcData = (uint8_t *)&input->imageData[i * input->widthStep];
+            G12Buffer::InternalElementType *dstData =  &(toReturn->element(i,0));
+
+            /*TODO: Add SSE implementation*/
+            for (int j = 0; j < input->width; j++)
+            {
+                *dstData = *srcData * 16;
+                dstData++;
+                srcData++;
+            }
+        }
+    }
 
     return toReturn;
 }
@@ -120,27 +124,46 @@ RGB24Buffer *OpenCVTools::getRGB24BufferFromCVImage(IplImage *input)
 {
     RGB24Buffer *toReturn = new RGB24Buffer(input->height, input->width);
 
+    CORE_ASSERT_TRUE_P((input->depth == IPL_DEPTH_8U) && ((input->nChannels == 3) || (input->nChannels == 1)),
+        ("Unsupported IplImage format: depth=%d, channels = %d\n", input->depth, input->nChannels));
 
-    ASSERT_TRUE_P((input->depth == IPL_DEPTH_8U) && (input->nChannels == 3),
-      ("Unsupported IplImage format: depth=%d, channels = %d\n", input->depth, input->nChannels));
-
-    for (int i = 0; i < input->height; i++)
+    if (input->nChannels == 3)
     {
-        uint8_t *srcData = (uint8_t *)&input->imageData[i * input->widthStep];
-        RGB24Buffer::InternalElementType *dstData =  &(toReturn->element(i,0));
-
-        /*TODO: Add SSE implementation*/
-        for (int j = 0; j < input->width; j++)
+        for (int i = 0; i < input->height; i++)
         {
-            uint8_t b = *(srcData );
-            uint8_t g = *(srcData + 1);
-            uint8_t r = *(srcData + 2);
-            *dstData = RGBColor(r,g,b);
-            dstData++;
-            srcData += 3;
+            uint8_t *srcData = (uint8_t *)&input->imageData[i * input->widthStep];
+            RGB24Buffer::InternalElementType *dstData =  &(toReturn->element(i,0));
+
+            /*TODO: Add SSE implementation*/
+            for (int j = 0; j < input->width; j++)
+            {
+                uint8_t b = *(srcData );
+                uint8_t g = *(srcData + 1);
+                uint8_t r = *(srcData + 2);
+                *dstData = RGBColor(r,g,b);
+                dstData++;
+                srcData += 3;
+            }
         }
     }
+
+    if (input->nChannels == 1)
+    {
+        for (int i = 0; i < input->height; i++)
+        {
+            uint8_t *srcData = (uint8_t *)&input->imageData[i * input->widthStep];
+            RGB24Buffer::InternalElementType *dstData =  &(toReturn->element(i,0));
+
+            /*TODO: Add SSE implementation*/
+            for (int j = 0; j < input->width; j++)
+            {
+                uint8_t g = *(srcData );
+                *dstData = RGBColor::gray(g);
+                dstData++;
+                srcData ++;
+            }
+        }
+    }
+
     return toReturn;
 }
-
-

@@ -1,5 +1,10 @@
 <RCC>
     <qresource prefix="/new/prefix1">
+        <file>2cam-active.png</file>
+        <file>2cam-blend-b.png</file>
+        <file>2cam.png</file>
+        <file>left-cam.png</file>
+        <file>right-cam.png</file>
         <file>camera_lens.png</file>
         <file>brick_add.png</file>
         <file>3d_glasses_rg.png</file>
@@ -74,6 +79,27 @@
         <file>vector_delete.png</file>
         <file>select_by_color.png</file>
         <file>draw_eraser.png</file>
+        <file>color_adjustment.png</file>
+        <file>checkerboard.png</file>
+        <file>table_lightning.png</file>
+        <file>price_comparison.png</file>
+        <file>picture.png</file>
+        <file>script_add.png</file>
+        <file>script_save.png</file>
+        <file>info_rhombus.png</file>
+        <file>sharpen.png</file>
+        <file>tipper.png</file>
+        <file>tractor.png</file>
+        <file>radioactivity_drum.png</file>
+        <file>transform_rotate.png</file>
+    </qresource>
+    <qresource prefix="/new/colors">
+        <file>colors/color_blue.png</file>
+        <file>colors/color_green.png</file>
+        <file>colors/color_red.png</file>
+        <file>colors/color_gray.png</file>
+        <file>colors/color_wheel.png</file>
+        <file>colors/contrast.png</file>
     </qresource>
     <qresource prefix="/new/graph">
         <file>draw_line.png</file>

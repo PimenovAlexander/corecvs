@@ -84,6 +84,9 @@ HEADERS += \
     visitors/jsonGetter.h \
     visitors/jsonSetter.h \
     widgets/vectorWidget.h \
+    distortioncorrector/cameraModelParametersControlWidget.h \
+    distortioncorrector/lensDistortionModelParametersControlWidget.h \
+    distortioncorrector/calibrationFeaturesWidget.h \
     uis/cloudview/scene3dTreeView.h \
 
 SOURCES += \
@@ -143,11 +146,17 @@ SOURCES += \
     visitors/jsonGetter.cpp \
     visitors/jsonSetter.cpp \
     widgets/vectorWidget.cpp \
+    distortioncorrector/cameraModelParametersControlWidget.cpp \
+    distortioncorrector/lensDistortionModelParametersControlWidget.cpp \
+    distortioncorrector/calibrationFeaturesWidget.cpp \
     uis/cloudview/scene3dTreeView.cpp \
 
 
 FORMS += \
     widgets/vectorWidget.ui \
+    distortioncorrector/cameraModelParametersControlWidget.ui \
+    distortioncorrector/lensDistortionModelParametersControlWidget.ui \
+    distortioncorrector/calibrationFeaturesWidget.ui \
 
 # =============================================================
 
@@ -523,4 +532,4 @@ with_synccam {
 
 OTHER_FILES += ../tools/generator/xml/draw3d.xml
 
-message($$CONFIG)
+#message($$CONFIG)

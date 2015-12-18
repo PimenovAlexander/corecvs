@@ -7,11 +7,11 @@ SUBDIRS +=                   \
     utils                    \
     base_application         \
     base_application_example \
-#    recorder                 \
-#    testbed                  \
-#    cloudview                \
+    recorder                 \
+    testbed                  \
+    cloudview                \
     \
-#    generator                \
+    generator                \
 
     
 
@@ -31,7 +31,7 @@ generator.depends        += core
 unitTests.depends        += core
 utils.depends            += core
 #utils.depends            += preprocSrc       # preprocSrc tool is needed to convert OpenCL sources into one binary archive
-baseApplication.depends  += core             # utils:    as libs building could be done in parallel except apps!
+baseApplication.depends  += core utils        # utils:    as libs building could be done in parallel except apps!
 directshow.depends       += core
 
 hostSoftStub.depends     += baseApplication utils

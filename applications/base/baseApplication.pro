@@ -15,8 +15,8 @@ CONFIG  += staticlib
 TARGET   = cvs_application_base
 TEMPLATE = lib
 
-HOSTBASE_DIR=.
-include ($$HOSTBASE_DIR/baseApplication.pri)                   # it uses HOSTBASE_DIR, detects HOSTBASE_BINDIR, OBJECTS_DIR, ...
+HOSTBASE_DIR = $$PWD
+include ($$HOSTBASE_DIR/baseApplication.pri)        # it uses HOSTBASE_DIR, detects HOSTBASE_BINDIR, OBJECTS_DIR, ...
 
 HEADERS += \
     generatedParameters/baseParameters.h \

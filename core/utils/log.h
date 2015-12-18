@@ -56,20 +56,31 @@ public:
     void operator()(T* p)
     {
         CORE_UNUSED(p);
-        if (mNeedDel)
+        if (mNeedDel) {
+            SYNC_PRINT(("LogDrainDeleter():operator(%p): called\n", p));
             delete p;
+        }
     }
 };
 
 class LogDrainsKeeper : public std::vector<std::unique_ptr<LogDrain, LogDrainDeleter>>
 {
 public:
+    typedef std::unique_ptr<LogDrain, LogDrainDeleter> LogDrainPtr;
+
     LogDrainsKeeper() {}
    ~LogDrainsKeeper() {}
 
-   void add(LogDrain* p, bool needDel = true) {
+    std::mutex protector;
+
+   void add(LogDrain* p, bool needDel = true)
+   {
+       SYNC_PRINT(("LogDrainsKeeper():add(%p, %s): called\n", p, needDel ? "true" : "false"));
+       protector.lock();
        push_back(std::unique_ptr<LogDrain, LogDrainDeleter>(p, LogDrainDeleter(needDel)));
+       protector.unlock();
    }
+
 };
 
 /** \class Log

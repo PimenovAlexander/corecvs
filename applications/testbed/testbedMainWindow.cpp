@@ -52,7 +52,7 @@ TestbedMainWindow::TestbedMainWindow(QWidget *parent)
 {
     mUi->setupUi(this);
 
-    Log::mLogDrains.push_back(mUi->loggingWidget);
+    Log::mLogDrains.add(mUi->loggingWidget, false);
 
     mImageWidget = new TestbedImageWidget(this);
     setCentralWidget(mImageWidget);
@@ -157,7 +157,7 @@ void TestbedMainWindow::loadImage(void)
         "Text (*.bmp *.jpg *.png *.gif)"
     );
 
-    L_INFO_P("Loading <%s>", filename.toAscii().data());
+    L_INFO_P("Loading <%s>", filename.toLatin1().data());
 
     QRegExp pattern("_t(\\d*)\\.");
     if (pattern.indexIn(filename) != -1)
@@ -754,7 +754,7 @@ public:
         return false;
      }
 
-     void mark(RGB24Buffer *buffer, int x, int y) {
+     void mark(RGB24Buffer */*buffer*/, int x, int y) {
          mMask->element(y,x) = 255;
      }
 
@@ -861,8 +861,9 @@ void TestbedMainWindow::maskToleranceGraph(QPoint point)
     }
 
 
-
-    QRect workingRect = mImageWidget->getInputRect().intersect(QRect(0,0,mMask->w - 1, mMask->h - 1));
+    QRect inputRect = mImageWidget->getInputRect();
+    QRect maskRect = QRect(0,0,mMask->w - 1, mMask->h - 1);
+    QRect workingRect = inputRect.intersected(maskRect);
     int totalArea = workingRect.height() * workingRect.width();
 
     vector<int> areas;
@@ -985,7 +986,7 @@ public:
             int tolerance) :
         mLocalHist(localHist), mMask(mask), mBase(base), mTolerance(tolerance) {};
 
-    bool operator()(RGB24Buffer *buffer, int x, int y) {
+    bool operator()(RGB24Buffer */*buffer*/, int x, int y) {
         if (mMask->element(y,x) == 255)
             return false;
 
@@ -1039,7 +1040,7 @@ public:
             int tolerance) :
         mLocalHist(localHist), mMask(mask), mBase(base), mTolerance(tolerance) {};
 
-    bool operator()(RGB24Buffer *buffer, int x, int y) {
+    bool operator()(RGB24Buffer */*buffer*/, int x, int y) {
         if (mMask->element(y,x) == 255)
             return false;
         if (!mLocalHist->element(y,x).isSet)
@@ -1057,7 +1058,7 @@ public:
         return true;
      }
 
-     void mark(RGB24Buffer *buffer, int x, int y) {
+     void mark(RGB24Buffer */*buffer*/, int x, int y) {
          mMask->element(y,x) = 255;
      }
 
@@ -1366,7 +1367,7 @@ void TestbedMainWindow::pointSelectedMoved(int toolID, QPoint point)
 
 
 
-void TestbedMainWindow::rectSelected(int toolID, QRect rect)
+void TestbedMainWindow::rectSelected(int /*toolID*/, QRect rect)
 {
     qDebug() << "Rect Selected: " << rect;
     mUndoList.push_back(new G8Buffer(mMask));

@@ -8,7 +8,7 @@ MainWindow::MainWindow(BaseHostDialog *dialog, const QString &source,
     , mMainDialog(dialog)
 {
     mUi->setupUi(this);
-    Log::mLogDrains.add(mUi->loggingWidget);
+    Log::mLogDrains.add(mUi->loggingWidget, false);
 
     mMainDialog->init(mUi->widget);
 //    mMainDialog->init(mUi->scrollAreaWidgetContents);

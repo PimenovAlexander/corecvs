@@ -9,7 +9,7 @@
 
 #include <QtCore/qglobal.h>
 #include <QtGui/QtGui>
-#include <QtGui/QApplication>
+#include <QApplication>
 
 #include "global.h"
 #include "utils.h"
@@ -26,7 +26,9 @@ using namespace corecvs;
 int main(int argc, char *argv[])
 {
     Q_INIT_RESOURCE(testbed);
-    QTFileLoader::registerMyself();
+    QTG12Loader::registerMyself();
+    QTRGB24Loader::registerMyself();
+
     setSegVHandler();
     setStdTerminateHandler();
 
