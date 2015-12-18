@@ -6,15 +6,24 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>469</width>
-    <height>150</height>
+    <width>569</width>
+    <height>160</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Transform3DSelector</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
     <number>3</number>
    </property>
    <item row="0" column="1">
@@ -58,6 +67,9 @@
      </property>
      <property name="maximum">
       <double>9999999.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
      </property>
      <property name="value">
       <double>1.000000000000000</double>
@@ -116,6 +128,9 @@
      </property>
      <property name="minimum">
       <double>-180.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>180.000000000000000</double>
      </property>
      <property name="value">
       <double>0.000000000000000</double>
@@ -220,7 +235,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="../../../../resources/main.qrc">
+      <iconset resource="../../resources/main.qrc">
        <normaloff>:/new/prefix1/lock.png</normaloff>
        <normalon>:/new/prefix1/unlock.png</normalon>:/new/prefix1/lock.png</iconset>
      </property>
@@ -252,7 +267,7 @@
   <tabstop>hideButton</tabstop>
  </tabstops>
  <resources>
-  <include location="../../../../resources/main.qrc"/>
+  <include location="../../resources/main.qrc"/>
  </resources>
  <connections>
   <connection>

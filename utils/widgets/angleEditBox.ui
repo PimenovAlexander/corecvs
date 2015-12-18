@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>243</width>
+    <width>247</width>
     <height>26</height>
    </rect>
   </property>
@@ -23,7 +23,16 @@
    <property name="spacing">
     <number>1</number>
    </property>
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -38,7 +47,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="../../../../resources/main.qrc">
+      <iconset resource="../../resources/main.qrc">
        <normaloff>:/new/prefix1/bullet_blue.png</normaloff>
        <normalon>:/new/prefix1/bullet_orange.png</normalon>:/new/prefix1/bullet_blue.png</iconset>
      </property>
@@ -53,10 +62,10 @@
       <number>5</number>
      </property>
      <property name="minimum">
-      <double>-999.000000000000000</double>
+      <double>-99999.000000000000000</double>
      </property>
      <property name="maximum">
-      <double>999.000000000000000</double>
+      <double>99999.000000000000000</double>
      </property>
      <property name="singleStep">
       <double>0.010000000000000</double>
@@ -72,10 +81,10 @@
       <number>3</number>
      </property>
      <property name="minimum">
-      <double>-180.000000000000000</double>
+      <double>-9999.000000000000000</double>
      </property>
      <property name="maximum">
-      <double>180.000000000000000</double>
+      <double>9999.000000000000000</double>
      </property>
     </widget>
    </item>
@@ -83,7 +92,7 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="../../../../resources/main.qrc"/>
+  <include location="../../resources/main.qrc"/>
  </resources>
  <connections/>
 </ui>

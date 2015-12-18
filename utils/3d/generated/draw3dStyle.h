@@ -50,6 +50,22 @@ enum Draw3dStyle {
     DRAW_3D_STYLE_LAST
 };
 
+
+static inline const char *getName(const Draw3dStyle &value)
+{
+    switch (value) 
+    {
+     case POINTS : return "POINTS"; break ;
+     case WIREFRAME : return "WIREFRAME"; break ;
+     case COLOR : return "COLOR"; break ;
+     case COLOR_2 : return "COLOR_2"; break ;
+     case TEXTURED : return "TEXTURED"; break ;
+     default : return "Not in range"; break ;
+     
+    }
+    return "Not in range";
+}
+
 } //namespace Draw3dStyle
 
 #endif  //DRAW_3D_STYLE_H_

@@ -1,5 +1,5 @@
 #include "loggerWidget.h"
-#include <QtGui/QPushButton>
+#include <QPushButton>
 
 const char *LoggerWidget::iconResources[] =
 {
@@ -10,7 +10,7 @@ const char *LoggerWidget::iconResources[] =
     ":/new/prefix1/stop.png"
 };
 
-STATIC_ASSERT(CORE_COUNT_OF(LoggerWidget::iconResources) == Log::LEVEL_LAST , wrong_number_of_icon_resources);
+STATIC_ASSERT(CORE_COUNT_OF(LoggerWidget::iconResources) == Log::LEVEL_LAST, wrong_number_of_icon_resources);
 
 LoggerWidget::LoggerWidget(QWidget *parent)
     : QWidget(parent)
@@ -69,11 +69,8 @@ void LoggerWidget::drain(Log::Message &message)
 	//doDrain(message);
 }
 
-
 void LoggerWidget::doDrain(Log::Message message)
 {
-    static const char *sLevels[] = { "D Debug", "Debug", "Info", "Warning", "Error" };
-
      while (ui.tableWidget->rowCount() > ui.scrollbackSpinBox->value())
         ui.tableWidget->removeRow(0);
 
@@ -83,8 +80,8 @@ void LoggerWidget::doDrain(Log::Message message)
     int lastRow = ui.tableWidget->rowCount();
     ui.tableWidget->insertRow(lastRow);
     ui.tableWidget->setItem(lastRow, 0, new QTableWidgetItem((*mLevelIcons  [ message.get()->mLevel ]),
-                                                             QString(sLevels[ message.get()->mLevel ]),            0));
-    ui.tableWidget->setItem(lastRow, 1, new QTableWidgetItem(QString(time2str(message.get()->rawtime)),            0));
+                                                       QString(Log::levelName(message.get()->mLevel)),             0));
+    ui.tableWidget->setItem(lastRow, 1, new QTableWidgetItem(QString(time2str(message.get()->mTime)),              0));
     ui.tableWidget->setItem(lastRow, 2, new QTableWidgetItem(QString(         message.get()->mOriginFileName),     0));
     ui.tableWidget->setItem(lastRow, 3, new QTableWidgetItem(QString::number( message.get()->mOriginLineNumber),   0));
     ui.tableWidget->setItem(lastRow, 4, new QTableWidgetItem(QString(         message.get()->mOriginFunctionName), 0));

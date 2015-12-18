@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>189</width>
+    <width>218</width>
     <height>282</height>
    </rect>
   </property>
@@ -14,7 +14,16 @@
    <string>GraphPlotParameters</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
     <number>3</number>
    </property>
    <property name="spacing">
@@ -39,7 +48,7 @@
        <string>Draw Lines</string>
       </property>
       <property name="icon">
-       <iconset resource="../../../../resources/main.qrc">
+       <iconset resource="../../../restricted/resources/resresource.qrc">
         <normaloff>:/new/graph/draw_line.png</normaloff>:/new/graph/draw_line.png</iconset>
       </property>
      </item>
@@ -48,7 +57,7 @@
        <string>Draw Dots</string>
       </property>
       <property name="icon">
-       <iconset resource="../../../../resources/main.qrc">
+       <iconset resource="../../../restricted/resources/resresource.qrc">
         <normaloff>:/new/graph/draw_points.png</normaloff>:/new/graph/draw_points.png</iconset>
       </property>
      </item>
@@ -239,17 +248,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../restricted/resources/resresource.qrc"/>
  </resources>
  <connections>
   <connection>
@@ -275,8 +274,8 @@
    <slot>changeParameters()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
+     <x>132</x>
+     <y>54</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -291,8 +290,8 @@
    <slot>changeParameters()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
+     <x>132</x>
+     <y>84</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -307,8 +306,8 @@
    <slot>changeParameters()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
+     <x>132</x>
+     <y>109</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -323,8 +322,8 @@
    <slot>changeParameters()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
+     <x>132</x>
+     <y>130</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -339,8 +338,8 @@
    <slot>changeParameters()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
+     <x>132</x>
+     <y>209</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -355,8 +354,8 @@
    <slot>changeParameters()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
+     <x>132</x>
+     <y>234</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>

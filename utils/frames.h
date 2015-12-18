@@ -19,13 +19,13 @@ class Frames
 {
 public:
     enum FrameSourceId {
-        LEFT_FRAME,
-        DEFAULT_FRAME = LEFT_FRAME,
-        RIGHT_FRAME,
-        MAX_INPUTS_NUMBER
+        LEFT_FRAME        = ImageCaptureInterface::LEFT_FRAME,
+        DEFAULT_FRAME     = LEFT_FRAME,
+        RIGHT_FRAME       = ImageCaptureInterface::RIGHT_FRAME,
+        MAX_INPUTS_NUMBER = ImageCaptureInterface::MAX_INPUTS_NUMBER
     };
 
-    G12Buffer *currentFrames[MAX_INPUTS_NUMBER];
+    G12Buffer   *currentFrames   [MAX_INPUTS_NUMBER];
     RGB24Buffer *currentRgbFrames[MAX_INPUTS_NUMBER];
     int frameCount;
 
@@ -34,7 +34,7 @@ public:
 
     void fetchNewFrames(ImageCaptureInterface *input);
 
-    G12Buffer* getCurrentFrame (FrameSourceId id)   { return currentFrames[id]; }
+    G12Buffer*   getCurrentFrame    (FrameSourceId id) { return currentFrames   [id]; }
     RGB24Buffer* getCurrentRgbFrame (FrameSourceId id) { return currentRgbFrames[id]; }
 
     /// Swaps the frame sources so, for example, left camera becomes right,
@@ -46,6 +46,17 @@ public:
     int64_t  desyncTime() const                     { return mDesyncTime; }
 
     uint64_t startProcessTimestamp() const          { return mStartProcessTimestamp; }
+
+    static inline const char *getEnumName(const FrameSourceId &value)
+    {
+        switch (value)
+        {
+            case LEFT_FRAME :   return "LEFT_FRAME";
+            case RIGHT_FRAME:   return "RIGHT_FRAME";
+            default:            break;
+        }
+        return "Not in range";
+    }
 
 private:
     bool     mSwapped;

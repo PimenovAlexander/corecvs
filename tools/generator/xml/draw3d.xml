@@ -19,11 +19,26 @@
   
   <class name="draw 3d Parameters">
     <!-- Geometry  draw style -->
-    <field type="draw 3d Style" name="style"/>
+    <field type="draw 3d Style" name="style" defaultValue="3"/>
     
     <!-- Simple coloring -->
-    <field type="rgb Color Parameters" name="Color"/>
-    <field type="rgb Color Parameters" name="Secondary Color"/>
+    <field type="rgb Color Parameters" name="Point Color"/>
+    <field type="bool" name="Point Color Override" defaultValue="false" />
+    <field type="int"  name="Point Size"  min="0"  max="255" defaultValue="1"/>
+
+    <field type="rgb Color Parameters" name="Edge Color"/>
+    <field type="bool" name="Edge Color Override"  defaultValue="false" />
+    <field type="int"  name="Edge Width"  min="0"  max="255" defaultValue="1"/>
+
+    <field type="rgb Color Parameters" name="Face Color"/>
+    <field type="bool" name="Face Color Override"  defaultValue="false" />
+
+
+    <!-- Caption -->
+    <field type="bool" name="Show caption"  defaultValue="false" />
+    <field type="int"  name="Font Size"  min="0"  max="255" defaultValue="8"/>
+    <field type="int"  name="Font Width" min="0"  max="255" defaultValue="1"/>
+    <field type="rgb Color Parameters" name="Font Color"/>
 
     <!-- Texturing details -->
     <field type="draw 3d Texture Gen"  name="Texture Corrodinates"/>

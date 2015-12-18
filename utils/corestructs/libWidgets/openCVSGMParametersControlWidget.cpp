@@ -53,6 +53,22 @@ void OpenCVSGMParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void OpenCVSGMParametersControlWidget::getParameters(OpenCVSGMParameters& params) const
+{
+
+    params.setPreFilterCap     (mUi->preFilterCapSpinBox->value());
+    params.setSADWindowSize    (mUi->sADWindowSizeSpinBox->value());
+    params.setP1Multiplier     (mUi->p1MultiplierSpinBox->value());
+    params.setP2Multiplier     (mUi->p2MultiplierSpinBox->value());
+    params.setMinDisparity     (mUi->minDisparitySpinBox->value());
+    params.setUniquenessRatio  (mUi->uniquenessRatioSpinBox->value());
+    params.setSpeckleWindowSize(mUi->speckleWindowSizeSpinBox->value());
+    params.setSpeckleRange     (mUi->speckleRangeSpinBox->value());
+    params.setDisp12MaxDiff    (mUi->disp12MaxDiffSpinBox->value());
+    params.setFullDP           (mUi->fullDPCheckBox->isChecked());
+
+}
 
 OpenCVSGMParameters *OpenCVSGMParametersControlWidget::createParameters() const
 {

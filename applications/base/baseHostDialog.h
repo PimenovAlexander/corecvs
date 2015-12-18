@@ -14,9 +14,11 @@
 #include <QtCore/QSharedPointer>
 #include <QtCore/QSignalMapper>
 #include <QtCore/QTimer>
-#include <QtGui/QDialog>
-#include <QtGui/QAction>
-#include <QtGui/QKeyEvent>
+#include <QDialog>
+#include <QTextEdit>
+#include <QAction>
+#include <QKeyEvent>
+#include <QTableView>
 
 #include "ui_hostDialogStub.h"
 
@@ -42,6 +44,7 @@
 #include "camerasConfigParameters.h"
 #include "g12Image.h"
 #include "advancedImageWidget.h"
+#include "histogramdialog.h"
 
 #include "memoryUsageCalculator.h"
 #include "inputSelectorWidget.h"
@@ -104,9 +107,11 @@ public:
     virtual void deinit();
 
     /**
+     * This function interconnects all the objects realted to capturing
+     * and initializes inputs
      *
      **/
-    void initCapture(QString const &initString = QString(), bool isRgb = false);
+    virtual void initCapture(QString const &initString = QString(), bool isRgb = false);
 
 
 
@@ -135,6 +140,7 @@ public slots:
     void presentationControlParametersChanged(QSharedPointer<PresentationParameters> params);
     void showStatistics();
     void showCaptureSettings();
+    void showColorHistogram();
     void showAboutDialog();
     void showInputSelectorDialog();
     void showDistortionCorrectorDialog();
@@ -262,7 +268,9 @@ protected:
     ImageCaptureInterface *mCamera;
 
     /*TODO: Rename this */
-    CapSettingsDialog *mCapSettings;
+    CapSettingsDialog mCapSettings;
+    HistogramDialog mColorHistogram;
+
     Frames *mFrames;
     StatisticsDialog mStatsDialog;
 

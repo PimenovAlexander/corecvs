@@ -1,7 +1,7 @@
 #ifndef TEXTLABELWIDGET_H
 #define TEXTLABELWIDGET_H
 
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "ui_textLabelWidget.h"
 #include "../viAreaWidget.h"
 
@@ -13,7 +13,7 @@ public:
     TextLabelWidget(QWidget *parent = 0);
     ~TextLabelWidget();
 
-    void setText(QString &string)
+    void setText(const QString &string)
     {
     	ui.label->setText(string);
     }

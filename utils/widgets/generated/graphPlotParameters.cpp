@@ -46,7 +46,10 @@ int GraphPlotParameters::staticInit()
           "graphStyle",
           "graphStyle",
           "graphStyle",
-           NULL
+          new EnumReflection(2
+          , new EnumOption(0,"Draw Lines")
+          , new EnumOption(1,"Draw Dots")
+          )
         )
     );
     fields().push_back(
@@ -57,7 +60,10 @@ int GraphPlotParameters::staticInit()
           1,
           "width",
           "width",
-          "width"
+          "width",
+          true,
+         1,
+         99
         )
     );
     fields().push_back(
@@ -68,7 +74,10 @@ int GraphPlotParameters::staticInit()
           0,
           "centerAt",
           "centerAt",
-          "centerAt"
+          "centerAt",
+          true,
+         -9999,
+         9999.99
         )
     );
     fields().push_back(
@@ -112,7 +121,10 @@ int GraphPlotParameters::staticInit()
           1,
           "yScale",
           "yScale",
-          "yScale"
+          "yScale",
+          true,
+         0,
+         1000
         )
     );
     fields().push_back(
@@ -123,7 +135,10 @@ int GraphPlotParameters::staticInit()
           50,
           "contrast",
           "contrast",
-          "contrast"
+          "contrast",
+          true,
+         0,
+         100
         )
     );
     fields().push_back(

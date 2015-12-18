@@ -16,6 +16,8 @@ public:
     explicit BitSelectorParametersControlWidget(QWidget *parent = 0, bool autoInit = false, QString rootPath = QString());
     virtual ~BitSelectorParametersControlWidget();
     BitSelectorParameters* createParameters() const;
+    void getParameters(BitSelectorParameters &params) const;
+
 
     virtual BaseReflectionStatic *createParametersVirtual() const
     {

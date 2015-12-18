@@ -56,6 +56,25 @@ void BaseParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void BaseParametersControlWidget::getParameters(BaseParameters& params) const
+{
+
+    params.setRotation         (static_cast<RotationPresets::RotationPresets>(mUi->rotationComboBox->currentIndex()));
+    params.setMirror           (mUi->mirrorCheckBox->isChecked());
+    params.setSwapCameras      (mUi->swapCamerasButton->isChecked());
+    params.setFilterLock       (mUi->filterLockButton->isChecked());
+    params.setEnableFilterGraph(mUi->enableFilterGraphCheckBox->isChecked());
+    params.setDownsample       (mUi->downsampleSpinBox->value());
+    params.setH                (mUi->hSpinBox->value());
+    params.setW                (mUi->wSpinBox->value());
+    params.setAutoH            (mUi->autoHCheckBox->isChecked());
+    params.setAutoW            (mUi->autoWCheckBox->isChecked());
+    params.setX                (mUi->xSpinBox->value());
+    params.setY                (mUi->ySpinBox->value());
+    params.setInterpolationType(static_cast<InterpolationType::InterpolationType>(mUi->interpolationTypeComboBox->currentIndex()));
+
+}
 
 BaseParameters *BaseParametersControlWidget::createParameters() const
 {

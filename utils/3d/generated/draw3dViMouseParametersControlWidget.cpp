@@ -48,6 +48,17 @@ void Draw3dViMouseParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void Draw3dViMouseParametersControlWidget::getParameters(Draw3dViMouseParameters& params) const
+{
+
+    params.setRedDist          (mUi->redDistSpinBox->value());
+    params.setBlueDist         (mUi->blueDistSpinBox->value());
+    params.setFlowZoom         (mUi->flowZoomSpinBox->value());
+    params.setPointColorType   (static_cast<ViMouse3dStereoStyle::ViMouse3dStereoStyle>(mUi->pointColorTypeComboBox->currentIndex()));
+    params.setFlowColorType    (static_cast<ViMouse3dFlowStyle::ViMouse3dFlowStyle>(mUi->flowColorTypeComboBox->currentIndex()));
+
+}
 
 Draw3dViMouseParameters *Draw3dViMouseParametersControlWidget::createParameters() const
 {

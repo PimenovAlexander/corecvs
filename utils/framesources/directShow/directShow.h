@@ -13,18 +13,20 @@
 class DirectShowCameraDescriptor
 {
 public:
+    static cchar*              codec_names[];
+    static CAPTURE_FORMAT_TYPE codec_types[];
+    static uint                codec_size;
 
-    static const char* codec_names[];
-
-    DSCapDeviceId deviceHandle;
-    int size;
-    uint64_t decodeTime;
-    uint64_t timestamp;
-    bool gotBuffer;
-    G12Buffer *buffer;
-    uint8_t *rawBuffer;
-    int height;
-    int width;
+    DSCapDeviceId   deviceHandle = -1;
+    int             size = 0;
+    uint64_t        decodeTime = 0;
+    uint64_t        timestamp = 0;
+    bool            gotBuffer = false;
+    G12Buffer      *buffer = NULL;
+    RGB24Buffer    *buffer24 = NULL;
+    uint8_t        *rawBuffer = NULL;
+    int             height = 0;
+    int             width = 0;
 
     /* Codec descriptor */
     enum {
@@ -32,21 +34,9 @@ public:
        UNCOMPRESSED_RGB = 1,
        COMPRESSED_JPEG = 2,
        COMPRESSED_FAST_JPEG = 3
-
     };
 
-    DirectShowCameraDescriptor() :
-        deviceHandle(-1),
-        size(0),
-        decodeTime(0),
-        timestamp(0),
-        gotBuffer(false),
-        buffer(NULL),
-        rawBuffer(NULL),
-        height(0),
-        width(0)
-    {}
-
+    DirectShowCameraDescriptor() {}
 
 private:
     static void setFromCameraParam(CaptureParameter &param,CameraParameter &camParam);
@@ -55,9 +45,6 @@ public:
     int queryCameraParameters(CameraParameters &parameters);
     int setCaptureProperty(int id, int value);
     int getCaptureProperty(int id, int *value);
-
-
 };
 
 /* EOF */
-

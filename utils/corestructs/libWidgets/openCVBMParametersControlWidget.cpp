@@ -52,6 +52,21 @@ void OpenCVBMParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void OpenCVBMParametersControlWidget::getParameters(OpenCVBMParameters& params) const
+{
+
+    params.setBlockSize        (mUi->blockSizeSpinBox->value());
+    params.setDisparitySearch  (mUi->disparitySearchSpinBox->value());
+    params.setPreFilterCap     (mUi->preFilterCapSpinBox->value());
+    params.setMinDisparity     (mUi->minDisparitySpinBox->value());
+    params.setTextureThreshold (mUi->textureThresholdSpinBox->value());
+    params.setUniquenessRatio  (mUi->uniquenessRatioSpinBox->value());
+    params.setSpeckleWindowSize(mUi->speckleWindowSizeSpinBox->value());
+    params.setSpeckleRange     (mUi->speckleRangeSpinBox->value());
+    params.setDisp12MaxDiff    (mUi->disp12MaxDiffSpinBox->value());
+
+}
 
 OpenCVBMParameters *OpenCVBMParametersControlWidget::createParameters() const
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QtGui/QPainter>
+#include <QPainter>
 
 #include "flowBuffer.h"
 #include "flowcolorers/abstractFlowColorer.h"

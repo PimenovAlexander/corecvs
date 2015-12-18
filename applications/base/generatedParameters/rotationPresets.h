@@ -21,22 +21,22 @@ namespace RotationPresets {
 enum RotationPresets {
     /** 
      * \brief No rotation 
-     * No rotation 
+     * Do not rotate 
      */
     NO_ROTATION = 0,
     /** 
      * \brief Clockwise 90deg 
-     * Clockwise 90deg 
+     * !transform_rotate_90.png!Rotate 90 deg clockwise 
      */
     CLOCKWISE_90DEG = 1,
     /** 
      * \brief Clockwise 180deg 
-     * Clockwise 180deg 
+     * !transform_rotate_180.png!Rotate 180 deg clockwise 
      */
     CLOCKWISE_180DEG = 2,
     /** 
      * \brief Clockwise 270deg 
-     * Clockwise 270deg 
+     * !transform_rotate_270.png!Rotate 270 deg clockwise 
      */
     CLOCKWISE_270DEG = 3,
     /** 
@@ -44,6 +44,21 @@ enum RotationPresets {
      */
     ROTATION_PRESETS_LAST
 };
+
+
+static inline const char *getName(const RotationPresets &value)
+{
+    switch (value) 
+    {
+     case NO_ROTATION : return "NO_ROTATION"; break ;
+     case CLOCKWISE_90DEG : return "CLOCKWISE_90DEG"; break ;
+     case CLOCKWISE_180DEG : return "CLOCKWISE_180DEG"; break ;
+     case CLOCKWISE_270DEG : return "CLOCKWISE_270DEG"; break ;
+     default : return "Not in range"; break ;
+     
+    }
+    return "Not in range";
+}
 
 } //namespace RotationPresets
 

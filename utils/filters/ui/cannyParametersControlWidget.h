@@ -1,5 +1,5 @@
 #pragma once
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "generated/cannyParameters.h"
 #include "ui_cannyParametersControlWidget.h"
 #include "filterParametersControlWidgetBase.h"
@@ -18,6 +18,7 @@ public:
     ~CannyParametersControlWidget();
 
     CannyParameters* createParameters() const;
+    void getParameters(CannyParameters& params) const;
     void setParameters(const CannyParameters &input);
     virtual void setParametersVirtual(void *input);
 

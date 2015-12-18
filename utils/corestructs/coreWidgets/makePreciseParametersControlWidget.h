@@ -1,5 +1,7 @@
 #pragma once
-#include <QtGui/QWidget>
+
+#include <QWidget>
+
 #include "generated/makePreciseParameters.h"
 #include "ui_makePreciseParametersControlWidget.h"
 #include "parametersControlWidgetBase.h"
@@ -18,6 +20,7 @@ public:
     ~MakePreciseParametersControlWidget();
 
     MakePreciseParameters* createParameters() const;
+    void getParameters(MakePreciseParameters &params) const;
     void setParameters(const MakePreciseParameters &input);
     virtual void setParametersVirtual(void *input);
     

@@ -9,7 +9,7 @@
  * \author alexander
  */
 
-#include <QtGui/QtGui>
+#include <QWidget>
 
 #include "global.h"
 

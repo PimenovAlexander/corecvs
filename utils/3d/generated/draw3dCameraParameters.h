@@ -48,8 +48,18 @@ public:
         NEARPLANE_ID,
         FARPLANE_ID,
         STYLE_ID,
-        COLOR_ID,
-        SECONDARY_COLOR_ID,
+        POINT_COLOR_ID,
+        POINT_COLOR_OVERRIDE_ID,
+        POINT_SIZE_ID,
+        EDGE_COLOR_ID,
+        EDGE_COLOR_OVERRIDE_ID,
+        EDGE_WIDTH_ID,
+        FACE_COLOR_ID,
+        FACE_COLOR_OVERRIDE_ID,
+        SHOW_CAPTION_ID,
+        FONT_SIZE_ID,
+        FONT_WIDTH_ID,
+        FONT_COLOR_ID,
         TEXTURE_CORRODINATES_ID,
         TEXTURE_ALPHA_ID,
         TEXTURE_SCALE_ID,
@@ -94,16 +104,76 @@ public:
     int mStyle;
 
     /** 
-     * \brief Color 
-     * Color 
+     * \brief Point Color 
+     * Point Color 
      */
-    RgbColorParameters mColor;
+    RgbColorParameters mPointColor;
 
     /** 
-     * \brief Secondary Color 
-     * Secondary Color 
+     * \brief Point Color Override 
+     * Point Color Override 
      */
-    RgbColorParameters mSecondaryColor;
+    bool mPointColorOverride;
+
+    /** 
+     * \brief Point Size 
+     * Point Size 
+     */
+    int mPointSize;
+
+    /** 
+     * \brief Edge Color 
+     * Edge Color 
+     */
+    RgbColorParameters mEdgeColor;
+
+    /** 
+     * \brief Edge Color Override 
+     * Edge Color Override 
+     */
+    bool mEdgeColorOverride;
+
+    /** 
+     * \brief Edge Width 
+     * Edge Width 
+     */
+    int mEdgeWidth;
+
+    /** 
+     * \brief Face Color 
+     * Face Color 
+     */
+    RgbColorParameters mFaceColor;
+
+    /** 
+     * \brief Face Color Override 
+     * Face Color Override 
+     */
+    bool mFaceColorOverride;
+
+    /** 
+     * \brief Show caption 
+     * Show caption 
+     */
+    bool mShowCaption;
+
+    /** 
+     * \brief Font Size 
+     * Font Size 
+     */
+    int mFontSize;
+
+    /** 
+     * \brief Font Width 
+     * Font Width 
+     */
+    int mFontWidth;
+
+    /** 
+     * \brief Font Color 
+     * Font Color 
+     */
+    RgbColorParameters mFontColor;
 
     /** 
      * \brief Texture Corrodinates 
@@ -186,14 +256,64 @@ public:
         return static_cast<Draw3dStyle::Draw3dStyle>(mStyle);
     }
 
-    RgbColorParameters color() const
+    RgbColorParameters pointColor() const
     {
-        return mColor;
+        return mPointColor;
     }
 
-    RgbColorParameters secondaryColor() const
+    bool pointColorOverride() const
     {
-        return mSecondaryColor;
+        return mPointColorOverride;
+    }
+
+    int pointSize() const
+    {
+        return mPointSize;
+    }
+
+    RgbColorParameters edgeColor() const
+    {
+        return mEdgeColor;
+    }
+
+    bool edgeColorOverride() const
+    {
+        return mEdgeColorOverride;
+    }
+
+    int edgeWidth() const
+    {
+        return mEdgeWidth;
+    }
+
+    RgbColorParameters faceColor() const
+    {
+        return mFaceColor;
+    }
+
+    bool faceColorOverride() const
+    {
+        return mFaceColorOverride;
+    }
+
+    bool showCaption() const
+    {
+        return mShowCaption;
+    }
+
+    int fontSize() const
+    {
+        return mFontSize;
+    }
+
+    int fontWidth() const
+    {
+        return mFontWidth;
+    }
+
+    RgbColorParameters fontColor() const
+    {
+        return mFontColor;
     }
 
     Draw3dTextureGen::Draw3dTextureGen textureCorrodinates() const
@@ -262,14 +382,64 @@ public:
         mStyle = style;
     }
 
-    void setColor(RgbColorParameters const &color)
+    void setPointColor(RgbColorParameters const &pointColor)
     {
-        mColor = color;
+        mPointColor = pointColor;
     }
 
-    void setSecondaryColor(RgbColorParameters const &secondaryColor)
+    void setPointColorOverride(bool pointColorOverride)
     {
-        mSecondaryColor = secondaryColor;
+        mPointColorOverride = pointColorOverride;
+    }
+
+    void setPointSize(int pointSize)
+    {
+        mPointSize = pointSize;
+    }
+
+    void setEdgeColor(RgbColorParameters const &edgeColor)
+    {
+        mEdgeColor = edgeColor;
+    }
+
+    void setEdgeColorOverride(bool edgeColorOverride)
+    {
+        mEdgeColorOverride = edgeColorOverride;
+    }
+
+    void setEdgeWidth(int edgeWidth)
+    {
+        mEdgeWidth = edgeWidth;
+    }
+
+    void setFaceColor(RgbColorParameters const &faceColor)
+    {
+        mFaceColor = faceColor;
+    }
+
+    void setFaceColorOverride(bool faceColorOverride)
+    {
+        mFaceColorOverride = faceColorOverride;
+    }
+
+    void setShowCaption(bool showCaption)
+    {
+        mShowCaption = showCaption;
+    }
+
+    void setFontSize(int fontSize)
+    {
+        mFontSize = fontSize;
+    }
+
+    void setFontWidth(int fontWidth)
+    {
+        mFontWidth = fontWidth;
+    }
+
+    void setFontColor(RgbColorParameters const &fontColor)
+    {
+        mFontColor = fontColor;
     }
 
     void setTextureCorrodinates(Draw3dTextureGen::Draw3dTextureGen textureCorrodinates)
@@ -321,8 +491,18 @@ public:
     {
         return Draw3dParameters(
              style()
-           , color()
-           , secondaryColor()
+           , pointColor()
+           , pointColorOverride()
+           , pointSize()
+           , edgeColor()
+           , edgeColorOverride()
+           , edgeWidth()
+           , faceColor()
+           , faceColorOverride()
+           , showCaption()
+           , fontSize()
+           , fontWidth()
+           , fontColor()
            , textureCorrodinates()
            , textureAlpha()
            , textureScale()
@@ -337,8 +517,18 @@ public:
     void setBaseParameters(Draw3dParameters const &baseParameters)
     {
         mStyle         = baseParameters.style();
-        mColor         = baseParameters.color();
-        mSecondaryColor = baseParameters.secondaryColor();
+        mPointColor    = baseParameters.pointColor();
+        mPointColorOverride = baseParameters.pointColorOverride();
+        mPointSize     = baseParameters.pointSize();
+        mEdgeColor     = baseParameters.edgeColor();
+        mEdgeColorOverride = baseParameters.edgeColorOverride();
+        mEdgeWidth     = baseParameters.edgeWidth();
+        mFaceColor     = baseParameters.faceColor();
+        mFaceColorOverride = baseParameters.faceColorOverride();
+        mShowCaption   = baseParameters.showCaption();
+        mFontSize      = baseParameters.fontSize();
+        mFontWidth     = baseParameters.fontWidth();
+        mFontColor     = baseParameters.fontColor();
         mTextureCorrodinates = baseParameters.textureCorrodinates();
         mTextureAlpha  = baseParameters.textureAlpha();
         mTextureScale  = baseParameters.textureScale();
@@ -358,8 +548,18 @@ template<class VisitorType>
         visitor.visit(mNearPlane,                 static_cast<const DoubleField *>  (fields()[NEARPLANE_ID]));
         visitor.visit(mFarPlane,                  static_cast<const DoubleField *>  (fields()[FARPLANE_ID]));
         visitor.visit((int &)mStyle,              static_cast<const EnumField *>    (fields()[STYLE_ID]));
-        visitor.visit(mColor,                     static_cast<const CompositeField *>(fields()[COLOR_ID]));
-        visitor.visit(mSecondaryColor,            static_cast<const CompositeField *>(fields()[SECONDARY_COLOR_ID]));
+        visitor.visit(mPointColor,                static_cast<const CompositeField *>(fields()[POINT_COLOR_ID]));
+        visitor.visit(mPointColorOverride,        static_cast<const BoolField *>    (fields()[POINT_COLOR_OVERRIDE_ID]));
+        visitor.visit(mPointSize,                 static_cast<const IntField *>     (fields()[POINT_SIZE_ID]));
+        visitor.visit(mEdgeColor,                 static_cast<const CompositeField *>(fields()[EDGE_COLOR_ID]));
+        visitor.visit(mEdgeColorOverride,         static_cast<const BoolField *>    (fields()[EDGE_COLOR_OVERRIDE_ID]));
+        visitor.visit(mEdgeWidth,                 static_cast<const IntField *>     (fields()[EDGE_WIDTH_ID]));
+        visitor.visit(mFaceColor,                 static_cast<const CompositeField *>(fields()[FACE_COLOR_ID]));
+        visitor.visit(mFaceColorOverride,         static_cast<const BoolField *>    (fields()[FACE_COLOR_OVERRIDE_ID]));
+        visitor.visit(mShowCaption,               static_cast<const BoolField *>    (fields()[SHOW_CAPTION_ID]));
+        visitor.visit(mFontSize,                  static_cast<const IntField *>     (fields()[FONT_SIZE_ID]));
+        visitor.visit(mFontWidth,                 static_cast<const IntField *>     (fields()[FONT_WIDTH_ID]));
+        visitor.visit(mFontColor,                 static_cast<const CompositeField *>(fields()[FONT_COLOR_ID]));
         visitor.visit((int &)mTextureCorrodinates, static_cast<const EnumField *>    (fields()[TEXTURE_CORRODINATES_ID]));
         visitor.visit(mTextureAlpha,              static_cast<const IntField *>     (fields()[TEXTURE_ALPHA_ID]));
         visitor.visit(mTextureScale,              static_cast<const DoubleField *>  (fields()[TEXTURE_SCALE_ID]));
@@ -382,8 +582,18 @@ template<class VisitorType>
         , double nearPlane
         , double farPlane
         , Draw3dStyle::Draw3dStyle style
-        , RgbColorParameters color
-        , RgbColorParameters secondaryColor
+        , RgbColorParameters pointColor
+        , bool pointColorOverride
+        , int pointSize
+        , RgbColorParameters edgeColor
+        , bool edgeColorOverride
+        , int edgeWidth
+        , RgbColorParameters faceColor
+        , bool faceColorOverride
+        , bool showCaption
+        , int fontSize
+        , int fontWidth
+        , RgbColorParameters fontColor
         , Draw3dTextureGen::Draw3dTextureGen textureCorrodinates
         , int textureAlpha
         , double textureScale
@@ -399,8 +609,18 @@ template<class VisitorType>
         mNearPlane = nearPlane;
         mFarPlane = farPlane;
         mStyle = style;
-        mColor = color;
-        mSecondaryColor = secondaryColor;
+        mPointColor = pointColor;
+        mPointColorOverride = pointColorOverride;
+        mPointSize = pointSize;
+        mEdgeColor = edgeColor;
+        mEdgeColorOverride = edgeColorOverride;
+        mEdgeWidth = edgeWidth;
+        mFaceColor = faceColor;
+        mFaceColorOverride = faceColorOverride;
+        mShowCaption = showCaption;
+        mFontSize = fontSize;
+        mFontWidth = fontWidth;
+        mFontColor = fontColor;
         mTextureCorrodinates = textureCorrodinates;
         mTextureAlpha = textureAlpha;
         mTextureScale = textureScale;

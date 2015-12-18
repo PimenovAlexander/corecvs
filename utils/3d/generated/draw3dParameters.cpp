@@ -42,34 +42,164 @@ int Draw3dParameters::staticInit()
         (
           Draw3dParameters::STYLE_ID,
           offsetof(Draw3dParameters, mStyle),
-          0,
+          3,
           "style",
           "style",
           "style",
-           NULL
+          new EnumReflection(5
+          , new EnumOption(0,"Points")
+          , new EnumOption(1,"Wireframe")
+          , new EnumOption(2,"Color")
+          , new EnumOption(3,"Color 2")
+          , new EnumOption(4,"Textured")
+          )
         )
     );
     fields().push_back(
         new CompositeField
         (
-          Draw3dParameters::COLOR_ID,
-          offsetof(Draw3dParameters, mColor),
-          "Color",
+          Draw3dParameters::POINT_COLOR_ID,
+          offsetof(Draw3dParameters, mPointColor),
+          "Point Color",
           "RgbColorParameters",
-          "Color",
-          "Color",
+          "Point Color",
+          "Point Color",
            NULL
+        )
+    );
+    fields().push_back(
+        new BoolField
+        (
+          Draw3dParameters::POINT_COLOR_OVERRIDE_ID,
+          offsetof(Draw3dParameters, mPointColorOverride),
+          false,
+          "Point Color Override",
+          "Point Color Override",
+          "Point Color Override"
+        )
+    );
+    fields().push_back(
+        new IntField
+        (
+          Draw3dParameters::POINT_SIZE_ID,
+          offsetof(Draw3dParameters, mPointSize),
+          1,
+          "Point Size",
+          "Point Size",
+          "Point Size",
+          true,
+         0,
+         255
         )
     );
     fields().push_back(
         new CompositeField
         (
-          Draw3dParameters::SECONDARY_COLOR_ID,
-          offsetof(Draw3dParameters, mSecondaryColor),
-          "Secondary Color",
+          Draw3dParameters::EDGE_COLOR_ID,
+          offsetof(Draw3dParameters, mEdgeColor),
+          "Edge Color",
           "RgbColorParameters",
-          "Secondary Color",
-          "Secondary Color",
+          "Edge Color",
+          "Edge Color",
+           NULL
+        )
+    );
+    fields().push_back(
+        new BoolField
+        (
+          Draw3dParameters::EDGE_COLOR_OVERRIDE_ID,
+          offsetof(Draw3dParameters, mEdgeColorOverride),
+          false,
+          "Edge Color Override",
+          "Edge Color Override",
+          "Edge Color Override"
+        )
+    );
+    fields().push_back(
+        new IntField
+        (
+          Draw3dParameters::EDGE_WIDTH_ID,
+          offsetof(Draw3dParameters, mEdgeWidth),
+          1,
+          "Edge Width",
+          "Edge Width",
+          "Edge Width",
+          true,
+         0,
+         255
+        )
+    );
+    fields().push_back(
+        new CompositeField
+        (
+          Draw3dParameters::FACE_COLOR_ID,
+          offsetof(Draw3dParameters, mFaceColor),
+          "Face Color",
+          "RgbColorParameters",
+          "Face Color",
+          "Face Color",
+           NULL
+        )
+    );
+    fields().push_back(
+        new BoolField
+        (
+          Draw3dParameters::FACE_COLOR_OVERRIDE_ID,
+          offsetof(Draw3dParameters, mFaceColorOverride),
+          false,
+          "Face Color Override",
+          "Face Color Override",
+          "Face Color Override"
+        )
+    );
+    fields().push_back(
+        new BoolField
+        (
+          Draw3dParameters::SHOW_CAPTION_ID,
+          offsetof(Draw3dParameters, mShowCaption),
+          false,
+          "Show caption",
+          "Show caption",
+          "Show caption"
+        )
+    );
+    fields().push_back(
+        new IntField
+        (
+          Draw3dParameters::FONT_SIZE_ID,
+          offsetof(Draw3dParameters, mFontSize),
+          8,
+          "Font Size",
+          "Font Size",
+          "Font Size",
+          true,
+         0,
+         255
+        )
+    );
+    fields().push_back(
+        new IntField
+        (
+          Draw3dParameters::FONT_WIDTH_ID,
+          offsetof(Draw3dParameters, mFontWidth),
+          1,
+          "Font Width",
+          "Font Width",
+          "Font Width",
+          true,
+         0,
+         255
+        )
+    );
+    fields().push_back(
+        new CompositeField
+        (
+          Draw3dParameters::FONT_COLOR_ID,
+          offsetof(Draw3dParameters, mFontColor),
+          "Font Color",
+          "RgbColorParameters",
+          "Font Color",
+          "Font Color",
            NULL
         )
     );
@@ -82,7 +212,11 @@ int Draw3dParameters::staticInit()
           "Texture Corrodinates",
           "Texture Corrodinates",
           "Texture Corrodinates",
-           NULL
+          new EnumReflection(3
+          , new EnumOption(0,"No Texture")
+          , new EnumOption(1,"Auto Decide")
+          , new EnumOption(2,"Force Texture")
+          )
         )
     );
     fields().push_back(
@@ -93,7 +227,10 @@ int Draw3dParameters::staticInit()
           255,
           "Texture Alpha",
           "Texture Alpha",
-          "Texture Alpha"
+          "Texture Alpha",
+          true,
+         0,
+         255
         )
     );
     fields().push_back(
@@ -104,7 +241,10 @@ int Draw3dParameters::staticInit()
           1,
           "Texture Scale",
           "Texture Scale",
-          "Texture Scale"
+          "Texture Scale",
+          true,
+         0,
+         2000
         )
     );
     fields().push_back(
@@ -115,7 +255,10 @@ int Draw3dParameters::staticInit()
           11,
           "Decal Matrix Type",
           "Decal Matrix Type",
-          "Decal Matrix Type"
+          "Decal Matrix Type",
+          true,
+         0,
+         19
         )
     );
     fields().push_back(
@@ -137,7 +280,10 @@ int Draw3dParameters::staticInit()
           255,
           "Decal Left Alpha",
           "Decal Left Alpha",
-          "Decal Left Alpha"
+          "Decal Left Alpha",
+          true,
+         0,
+         255
         )
     );
     fields().push_back(
@@ -159,7 +305,10 @@ int Draw3dParameters::staticInit()
           255,
           "Decal Right Alpha",
           "Decal Right Alpha",
-          "Decal Right Alpha"
+          "Decal Right Alpha",
+          true,
+         0,
+         255
         )
     );
    return 0;

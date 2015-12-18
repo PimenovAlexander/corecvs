@@ -1,3 +1,4 @@
+#pragma once
 /**
  * \file V4L2Capture.h
  * \brief Add Comment Here
@@ -5,9 +6,6 @@
  * \date Apr 9, 2010
  * \author alexander
  */
-
-#pragma once
-
 #include <QtCore/QThread>
 #include <QtCore/QMutex>
 #include <string>
@@ -26,11 +24,13 @@
 using namespace std;
 
 
-
 class V4L2CaptureInterface : public ImageCaptureInterface
 {
 public:
     V4L2CaptureInterface(string _devname, bool isRgb = false);
+    V4L2CaptureInterface(string _devname, int h, int w, int fps, bool isRgb = false);
+    V4L2CaptureInterface(string _devname, CameraFormat format, bool isRgb = false);
+
     virtual ~V4L2CaptureInterface();
 
     virtual int setConfigurationString(string _devname);
@@ -44,7 +44,7 @@ public:
     virtual CapErrorCode queryCameraParameters(CameraParameters &parameter) ;
 
 
-    virtual CapErrorCode initCapture();
+    virtual CapErrorCode initCapture(CameraFormat *actualFormat = NULL);
     virtual CapErrorCode startCapture();
 
     virtual CapErrorCode getCaptureName(QString &value);
@@ -53,7 +53,14 @@ public:
     virtual QString      getInterfaceName();
     virtual CapErrorCode getDeviceName(int num, QString &name);
 
+    virtual std::string  getDeviceSerial(int num = LEFT_FRAME);
+
     static void getAllCameras(int *num, int *&cameras);
+
+    static const int MAX_SCAN_DEVICE_ID = 20;
+    static void getAllCameras(vector<std::string> &cameras, int maxDeviceId = MAX_SCAN_DEVICE_ID);
+
+
 
     enum DecoderType{
         UNCOMPRESSED,
@@ -74,10 +81,10 @@ private:
     class SpinThread : public QThread
     {
     public:
-        V4L2CaptureInterface *interface;
+        V4L2CaptureInterface *mInterface;
 
-        SpinThread(V4L2CaptureInterface *_interface) :
-            interface(_interface)
+        SpinThread(V4L2CaptureInterface *interface) :
+            mInterface(interface)
         {}
 
         virtual void run (void);
@@ -105,9 +112,9 @@ private:
 
 
 
-    string           deviceName[Frames::MAX_INPUTS_NUMBER];
+    string           deviceName[MAX_INPUTS_NUMBER];
     V4L2CameraMode   cameraMode;
-    V4L2CameraDescriptor camera[Frames::MAX_INPUTS_NUMBER];
+    V4L2CameraDescriptor camera[MAX_INPUTS_NUMBER];
 
     int formatH;
     int formatW;
@@ -130,7 +137,4 @@ private:
     uint64_t skippedCount;
 
     uint64_t maxDesync; /**< Maximum de-synchronization that we will not attempt to correct */
-
-    bool mIsRgb;
-
 };

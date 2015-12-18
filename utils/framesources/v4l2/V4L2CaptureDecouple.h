@@ -51,10 +51,10 @@ private:
     class SpinThread : public QThread
     {
     public:
-        V4L2CaptureDecoupleInterface *interface;
+        V4L2CaptureDecoupleInterface *mInterface;
 
-        SpinThread(V4L2CaptureDecoupleInterface *_interface) :
-            interface(_interface)
+        SpinThread(V4L2CaptureDecoupleInterface *interface) :
+            mInterface(interface)
         {}
 
         virtual void run (void);

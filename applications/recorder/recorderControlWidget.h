@@ -1,7 +1,7 @@
 
 #pragma once
-#include <QtGui/QWidget>
-#include <QtGui/QLineEdit>
+#include <QWidget>
+#include <QLineEdit>
 #include "generatedParameters/recorder.h"
 #include "ui_recorderControlWidget.h"
 #include "parametersControlWidgetBase.h"
@@ -19,6 +19,8 @@ public:
     ~RecorderControlWidget();
 
     Recorder* createParameters() const;
+
+    void getParameters(Recorder &params) const;
     void setParameters(const Recorder &input);
     virtual void setParametersVirtual(void *input);
 

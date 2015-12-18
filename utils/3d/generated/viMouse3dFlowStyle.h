@@ -45,6 +45,21 @@ enum ViMouse3dFlowStyle {
     VIMOUSE_3D_FLOW_STYLE_LAST
 };
 
+
+static inline const char *getName(const ViMouse3dFlowStyle &value)
+{
+    switch (value) 
+    {
+     case NONE : return "NONE"; break ;
+     case WHITE : return "WHITE"; break ;
+     case HEAT : return "HEAT"; break ;
+     case BY_FLAG : return "BY_FLAG"; break ;
+     default : return "Not in range"; break ;
+     
+    }
+    return "Not in range";
+}
+
 } //namespace ViMouse3dFlowStyle
 
 #endif  //VIMOUSE_3D_FLOW_STYLE_H_

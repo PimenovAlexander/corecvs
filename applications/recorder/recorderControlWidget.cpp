@@ -45,6 +45,14 @@ void RecorderControlWidget::saveParamWidget(WidgetSaver  &saver)
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void RecorderControlWidget::getParameters(Recorder& params) const
+{
+
+    params.setPath             (mUi->pathEdit->text().toStdString());
+    params.setFileTemplate     (mUi->fileTemplateEdit->text().toStdString());
+
+}
 
 Recorder *RecorderControlWidget::createParameters() const
 {

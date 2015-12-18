@@ -12,22 +12,26 @@
 
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
-#include <QtGui/QPainter>
-#include <QtGui/QFileDialog>
-#include <QtGui/QMenu>
-#include <QtGui/QAction>
+#include <QPainter>
+#include <QFileDialog>
+#include <QMenu>
+#include <QAction>
+#include <QMessageBox>
 
 #include "log.h"
 
 #include "baseHostDialog.h"
 
 #include "g12Image.h"
-#include "cloudViewDialog.h"
 #include "graphPlotDialog.h"
 #include "textLabelWidget.h"
 #include "propertyListVisitor.h"
 #include "foldableWidget.h"
 #include "parametersMapper/parametersMapperBase.h"
+
+#ifdef WITH_OPENGL
+#include "cloudViewDialog.h"
+#endif
 
 #ifdef Q_OS_WIN
 #include "windowsMemoryUsageCalculator.h"
@@ -55,7 +59,7 @@ BaseHostDialog::BaseHostDialog(QWidget *parent)
     , mDistortionWidget(NULL)
     , mCameraStarted(false)
     , mCamera(NULL)
-    , mCapSettings(NULL)
+    , mCapSettings(NULL, "MainSource")
     , mFrames(NULL)
     , mBaseControlWidget(NULL)
     , mPresentationControlWidget(NULL)
@@ -80,6 +84,8 @@ void BaseHostDialog::init(QWidget *parameterHolderWidget, QTextEdit * /*loggerWi
 
     initCommon();
     initParameterWidgets();
+
+    mSaveableCameraWidgets.push_back(&mCapSettings);
     loadParams(ConfigManager::configName(), "");
 
     initMemoryUsageCalculator();
@@ -87,7 +93,9 @@ void BaseHostDialog::init(QWidget *parameterHolderWidget, QTextEdit * /*loggerWi
 
     initGraphPresentation();
 
-    loadTransformFromFile(savePath);
+    SettingsGetter visitor(ConfigManager::camConfigName(), UI_NAME_BASE_DIALOG);
+    mRectifierData.accept<SettingsGetter>(visitor);
+//    loadTransformFromFile(savePath);
 }
 
 void BaseHostDialog::initGraphPresentation()
@@ -110,6 +118,7 @@ void BaseHostDialog::initGraphPresentation()
 
 void BaseHostDialog::deinit()
 {
+    qDebug() << "void BaseHostDialog::deinit(): called";
     /* Stop all possible events sources */
     saveParams(ConfigManager::configName(), "");
     terminateCalculator();
@@ -125,7 +134,6 @@ BaseHostDialog::~BaseHostDialog()
         delete_safe(widget);
     }
 
-    delete_safe(mCapSettings);
     delete_safe(mCamera);
 
     delete_safe (mMemoryCalculator);
@@ -183,6 +191,7 @@ void BaseHostDialog::initParameterWidgets()
 
 void BaseHostDialog::baseControlParametersChanged(QSharedPointer<BaseParameters> params)
 {
+     SYNC_PRINT(("BaseHostDialog::baseControlParametersChanged"));
     // check if we should swap frames
     if (params.isNull()) {
         return;
@@ -192,7 +201,7 @@ void BaseHostDialog::baseControlParametersChanged(QSharedPointer<BaseParameters>
     )
     {
         if (mFrames == NULL)
-        {
+        {           
             mScheduledSwap = true; // should schedule swap if we can't perform it now
         }
         swapCameras(params->swapCameras());
@@ -264,9 +273,16 @@ void BaseHostDialog::showStatistics()
 
 void BaseHostDialog::showCaptureSettings()
 {
-    mCapSettings->show();
-    mCapSettings->raise();
+    mCapSettings.show();
+    mCapSettings.raise();
 }
+
+void BaseHostDialog::showColorHistogram()
+{
+    mColorHistogram.show();
+    mColorHistogram.raise();
+}
+
 
 void BaseHostDialog::showAboutDialog()
 {
@@ -293,6 +309,7 @@ void BaseHostDialog::distortionEstimationFinished()
 
 void BaseHostDialog::deinitCamera()
 {
+    mCapSettings.setCaptureInterface(NULL);
     delete_safe(mCamera);
     mCameraStarted = false;
     emit captureStatusUpdated(false);
@@ -321,22 +338,22 @@ void BaseHostDialog::initCapture(QString const &init, bool isRgb)
 
     if (mCamera == NULL)
     {
-        cout << "Error initializing capture device." << endl;
+        cout << "BaseHostDialog::initCapture(): Error initializing capture device." << endl;
         return;
     }
     ImageCaptureInterface::CapErrorCode res = mCamera->initCapture();
 
     if (ImageCaptureInterface::FAILURE == res)
     {
-        cout << "Error: none of the capture devices started.\n" << endl;
+        cout << "BaseHostDialog::initCapture(): Error: none of the capture devices started.\n" << endl;
         QMessageBox::warning(this, "Error: none of the capture devices started.","Error: none of the capture devices started.");
         return;
     }
     else if (ImageCaptureInterface::SUCCESS_1CAM == res)
     {
-        cout << "Will be using only one capture device.\n" << endl;
+        cout << "BaseHostDialog::initCapture(): Will be using only one capture device.\n" << endl;
         mUseOneCaptureDevice = true;
-        mPresentationControlWidget->ui()->rightFrameButton->setEnabled(false);
+        mPresentationControlWidget->ui()->outputComboBox->setCurrentIndex(0);
     }
     else
     {
@@ -344,9 +361,8 @@ void BaseHostDialog::initCapture(QString const &init, bool isRgb)
     }
 
     /* Now we need to connect the camera to widgets */
-    mCapSettings = new CapSettingsDialog(NULL, mCamera);
-    mSaveableCameraWidgets.push_back(mCapSettings);
-    mCapSettings->loadFromQSettings(ConfigManager::camConfigName(), "");
+    mCapSettings.setCaptureInterface(mCamera);
+    mCapSettings.loadFromQSettings(ConfigManager::camConfigName(), "");
 
     qRegisterMetaType<CaptureStatistics>("CaptureStatistics");
     connect(mCamera, SIGNAL(newStatisticsReady(CaptureStatistics)),
@@ -384,10 +400,8 @@ void BaseHostDialog::createCalculator()
 
     mCalculator = calculator;
 
-    connect(mapper
-          , SIGNAL(baseParametersParamsChanged(QSharedPointer<BaseParameters>))
-          , calculator
-          , SLOT(baseControlParametersChanged(QSharedPointer<BaseParameters>))
+    connect(mapper  , SIGNAL(baseParametersParamsChanged(QSharedPointer<BaseParameters>))
+          , calculator, SLOT(baseControlParametersChanged(QSharedPointer<BaseParameters>))
     );
 
     connect(mFilterGraphPresentation
@@ -409,10 +423,8 @@ void BaseHostDialog::createCalculator()
     qRegisterMetaType<Frames::FrameSourceId>("Frames::FrameSourceId");
     qRegisterMetaType<QSharedPointer<FilterSelectorParameters> >("QSharedPointer<FilterSelectorParameters>");
 
-    connect(this
-          , SIGNAL(filterControlParametersChanged(Frames::FrameSourceId, QSharedPointer<FilterSelectorParameters>))
-          , calculator
-          , SLOT(filterControlParametersChanged(Frames::FrameSourceId, QSharedPointer<FilterSelectorParameters>))
+    connect(this    , SIGNAL(filterControlParametersChanged(Frames::FrameSourceId, QSharedPointer<FilterSelectorParameters>))
+          , calculator, SLOT(filterControlParametersChanged(Frames::FrameSourceId, QSharedPointer<FilterSelectorParameters>))
         );
 
     connect(mapper
@@ -735,7 +747,9 @@ ViAreaWidget * BaseHostDialog::createAdditionalWindow(QString const &name, Windo
             area = new TextLabelWidget();
             break;
         case oglWindow:
+#ifdef WITH_OPENGL
             area = new CloudViewDialog();
+#endif
             break;
         case graphWindow:
         default:
@@ -813,12 +827,13 @@ void BaseHostDialog::loadParams(const QString &fileName, QString root)
 
     for (unsigned i = 0; i < mSaveableCameraWidgets.size(); i++)
     {
-        mSaveableWidgets[i]->loadFromQSettings(ConfigManager::camConfigName(), root);
+        mSaveableCameraWidgets[i]->loadFromQSettings(ConfigManager::camConfigName(), root);
     }
 }
 
 void BaseHostDialog::saveParams(const QString &fileName, QString root)
 {
+    qDebug("BaseHostDialog::saveParam(\"%s\", \"%s\"): called",fileName.toLatin1().constData(), root.toLatin1().constData());
     QSettings settings(fileName, QSettings::IniFormat);
 
     QSettings cameraSettings(ConfigManager::camConfigName(), QSettings::IniFormat);
@@ -835,14 +850,16 @@ void BaseHostDialog::saveParams(const QString &fileName, QString root)
         cameraSettings.endGroup();
     }
 
+    qDebug("BaseHostDialog::saveParam(): We will be saving %lu widgets", mSaveableWidgets.size());
     for (unsigned i = 0; i < mSaveableWidgets.size(); i++)
     {
         mSaveableWidgets[i]->saveToQSettings(fileName, root);
     }
 
+    qDebug("BaseHostDialog::saveParam(): We will be saving %lu camera widgets", mSaveableCameraWidgets.size());
     for (unsigned i = 0; i < mSaveableCameraWidgets.size(); i++)
     {
-        mSaveableWidgets[i]->loadFromQSettings(ConfigManager::camConfigName(), root);
+        mSaveableCameraWidgets[i]->saveToQSettings(ConfigManager::camConfigName(), root);
     }
 
 }
@@ -855,7 +872,7 @@ void BaseHostDialog::saveParams(const QString &fileName, QString root)
 void BaseHostDialog::loadTransformFromFile(QString const &filename)
 {
     fstream f;
-    f.open((char *)filename.toAscii().constData(), fstream::in);
+    f.open((char *)filename.toLatin1().constData(), fstream::in);
     mRectifierData = RectificationResult();
     if (f.is_open())
     {
@@ -873,7 +890,7 @@ void BaseHostDialog::saveTransformToFile(QString const &filename)
 {
     qDebug() << "saving to" << filename;
     fstream f;
-    f.open((char *)filename.toAscii().constData(), fstream::out);
+    f.open((char *)filename.toLatin1().constData(), fstream::out);
     PropertyList list;
     PropertyListWriterVisitor writerVisitor(&list);
     RectificationResult defaultResult;

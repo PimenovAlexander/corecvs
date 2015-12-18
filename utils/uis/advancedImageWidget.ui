@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>578</width>
-    <height>401</height>
+    <width>1089</width>
+    <height>812</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -23,7 +23,16 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
     <number>3</number>
    </property>
    <item row="0" column="0">
@@ -93,7 +102,16 @@
           <property name="spacing">
            <number>3</number>
           </property>
-          <property name="margin">
+          <property name="leftMargin">
+           <number>3</number>
+          </property>
+          <property name="topMargin">
+           <number>3</number>
+          </property>
+          <property name="rightMargin">
+           <number>3</number>
+          </property>
+          <property name="bottomMargin">
            <number>3</number>
           </property>
           <item>
@@ -183,8 +201,20 @@
            <height>20</height>
           </size>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
-          <property name="margin">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="spacing">
+           <number>2</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
            <number>0</number>
           </property>
           <item>
@@ -196,7 +226,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../../../3Vi/src/open/resources/main.qrc">
+             <iconset resource="../../resources/main.qrc">
               <normaloff>:/new/prefix1/pause.png</normaloff>:/new/prefix1/pause.png</iconset>
             </property>
             <property name="iconSize">
@@ -229,7 +259,16 @@
              <property name="spacing">
               <number>3</number>
              </property>
-             <property name="margin">
+             <property name="leftMargin">
+              <number>3</number>
+             </property>
+             <property name="topMargin">
+              <number>3</number>
+             </property>
+             <property name="rightMargin">
+              <number>3</number>
+             </property>
+             <property name="bottomMargin">
               <number>3</number>
              </property>
              <item>
@@ -241,7 +280,7 @@
                 <string/>
                </property>
                <property name="icon">
-                <iconset resource="../../../3Vi/src/open/resources/main.qrc">
+                <iconset resource="../../resources/main.qrc">
                  <normaloff>:/new/prefix1/zoom_layer.png</normaloff>:/new/prefix1/zoom_layer.png</iconset>
                </property>
                <property name="iconSize">
@@ -270,7 +309,7 @@
                 <string/>
                </property>
                <property name="icon">
-                <iconset resource="../../../3Vi/src/open/resources/main.qrc">
+                <iconset resource="../../resources/main.qrc">
                  <normaloff>:/new/prefix1/hand.png</normaloff>:/new/prefix1/hand.png</iconset>
                </property>
                <property name="iconSize">
@@ -302,7 +341,7 @@
                 <string/>
                </property>
                <property name="icon">
-                <iconset resource="../../../3Vi/src/open/resources/main.qrc">
+                <iconset resource="../../resources/main.qrc">
                  <normaloff>:/new/prefix1/info.png</normaloff>:/new/prefix1/info.png</iconset>
                </property>
                <property name="iconSize">
@@ -377,7 +416,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../../../3Vi/src/open/resources/main.qrc">
+             <iconset resource="../../resources/main.qrc">
               <normaloff>:/new/prefix1/zoom_out.png</normaloff>:/new/prefix1/zoom_out.png</iconset>
             </property>
             <property name="iconSize">
@@ -406,7 +445,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../../../3Vi/src/open/resources/main.qrc">
+             <iconset resource="../../resources/main.qrc">
               <normaloff>:/new/prefix1/zoom_in.png</normaloff>:/new/prefix1/zoom_in.png</iconset>
             </property>
             <property name="iconSize">
@@ -429,7 +468,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../../../3Vi/src/open/resources/main.qrc">
+             <iconset resource="../../resources/main.qrc">
               <normaloff>:/new/prefix1/refresh.png</normaloff>:/new/prefix1/refresh.png</iconset>
             </property>
             <property name="iconSize">
@@ -441,6 +480,51 @@
             <property name="autoRaise">
              <bool>true</bool>
             </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="rotationComboBox">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <item>
+             <property name="text">
+              <string>Original</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>90deg</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../../resources/main.qrc">
+               <normaloff>:/new/prefix1/transform_rotate_90.png</normaloff>:/new/prefix1/transform_rotate_90.png</iconset>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>180deg</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../../resources/main.qrc">
+               <normaloff>:/new/prefix1/transform_rotate_180.png</normaloff>:/new/prefix1/transform_rotate_180.png</iconset>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>270deg</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../../resources/main.qrc">
+               <normaloff>:/new/prefix1/transform_rotate_270.png</normaloff>:/new/prefix1/transform_rotate_270.png</iconset>
+             </property>
+            </item>
            </widget>
           </item>
           <item>
@@ -465,7 +549,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../../../3Vi/src/open/resources/main.qrc">
+             <iconset resource="../../resources/main.qrc">
               <normaloff>:/new/prefix1/picture_save.png</normaloff>:/new/prefix1/picture_save.png</iconset>
             </property>
             <property name="iconSize">
@@ -495,7 +579,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../../../3Vi/src/open/resources/main.qrc">
+             <iconset resource="../../resources/main.qrc">
               <normaloff>:/new/prefix1/film_save.png</normaloff>:/new/prefix1/film_save.png</iconset>
             </property>
             <property name="iconSize">
@@ -547,9 +631,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../3Vi/src/open/resources/main.qrc"/>
-  <include location="../../../3Vi/src/open/resources/main.qrc"/>
-  <include location="../../../3Vi/src/open/resources/main.qrc"/>
+  <include location="../../resources/main.qrc"/>
  </resources>
  <connections>
   <connection>
@@ -709,6 +791,22 @@
     <hint type="destinationlabel">
      <x>741</x>
      <y>221</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rotationComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>advancedImageWidget</receiver>
+   <slot>zoomChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>603</x>
+     <y>44</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>544</x>
+     <y>405</y>
     </hint>
    </hints>
   </connection>

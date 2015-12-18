@@ -1,6 +1,8 @@
+#include <QPainter>
+#include <QFileDialog>
+#include <QtXml/QDomElement>
+
 #include <fstream>
-#include <QtGui/QPainter>
-#include "QtXml/QDomElement"
 
 #include "global.h"
 
@@ -347,37 +349,38 @@ void GraphPlotDialog::saveGraphName(QTableWidgetItem*item)
     QTableWidget *graphList = (QTableWidget*)sender();
     if (item != NULL && graphList->column(item) == 0) {
         unsigned graphId = item->data(Qt::UserRole).toUInt();
-        mData[graphId].name = item->text();
+        mData[graphId].name = item->text().toStdString();
         graphList->closePersistentEditor(item);
     }
 }
 
 void GraphPlotDialog::addGraphPoint(unsigned graphId, double value, bool isValid)
 {
+//    qDebug("GraphPlotDialog::addGraphPoint(%d, %lf, %s): called", graphId, value, isValid ? "valid" : "invalid");
+
     if (mUi.pauseButton->isChecked())
         return;
 
     if (graphId >= mData.size()) {
+        qDebug("GraphPlotDialog::addGraphPoint(): adding new graph");
+
         mData.resize(graphId + 1);
         mData[graphId].isSelected = false;
-        mData[graphId].name = QString("Graph %2").arg(graphId);
+        mData[graphId].name = QString("Graph %2").arg(graphId).toStdString();
 
-        QTableWidgetItem* graphItem = new QTableWidgetItem(mData[graphId].name);
-        graphItem->setData(Qt::UserRole, QVariant(graphId));
-        setItemColor(graphItem);
-        int rowCount = mUi.visibleGraph->rowCount();
-        mUi.visibleGraph->setRowCount(rowCount + 1);
-        mUi.visibleGraph->setItem(rowCount, 0, graphItem);
+        addNewGraphToUI(graphId);
+    }
 
-        QTableWidgetItem* valueItem = new QTableWidgetItem();
-        valueItem->setForeground(graphItem->foreground());
-        valueItem->setData(Qt::UserRole, QVariant(graphId));
-        mUi.visibleGraph->setItem(rowCount, 1, valueItem);
-
-   }
+/*
+    qDebug("GraphPlotDialog::addGraphPoint(): adding point to graph %d(%d) : %s ", graphId, mData.size(), mData[graphId].name.toLatin1().constData());
+    for (int i = 0; i < mData.size(); i++)
+    {
+        qDebug("GraphPlotDialog::addGraphPoint(): %d %s", i, mData[i].name.toLatin1().constData());
+    }
+*/
 
     mData[graphId].push_front(GraphValue(value, isValid));
-    while (mData[graphId].size() > 1000) {
+    while (mData[graphId].size() > 2000) {
         mData[graphId].pop_back();
     }
 
@@ -407,6 +410,8 @@ void GraphPlotDialog::addGraphPoint(unsigned graphId, double value, bool isValid
 }
 void GraphPlotDialog::addGraphPoint(QString graphName, double value, bool isValid)
 {
+//    qDebug("GraphPlotDialog::addGraphPoint(%s, %lf, %s): called", graphName.toLatin1().constData(), value, isValid ? "valid" : "invalid");
+
     if (mUi.pauseButton->isChecked())
         return;
     unsigned graphId = getGraphId(graphName);
@@ -429,12 +434,12 @@ void GraphPlotDialog::update(void)
     mUi.widget->update();
 }
 
-void GraphPlotDialog::loadFromQSettings(const QString &fileName, QString _root)
+void GraphPlotDialog::loadFromQSettings(const QString &fileName, const QString &_root)
 {
     mUi.parametersWidget->loadFromQSettings(fileName, _root + mRootPath);
 }
 
-void GraphPlotDialog::saveToQSettings  (const QString &fileName, QString _root)
+void GraphPlotDialog::saveToQSettings  (const QString &fileName, const QString &_root)
 {
     mUi.parametersWidget->saveToQSettings(fileName, _root + mRootPath);
 }
@@ -480,29 +485,45 @@ void GraphPlotDialog::resetSettings()
 
 GraphPlotDialog::~GraphPlotDialog()
 {
-    //    saveSettings(QString("graphConfig.xml"));
-
     delete_safe(mUpDownMapper);
-    //delete mParamMapper;
 }
+
+void GraphPlotDialog::addNewGraphToUI(unsigned graphId)
+{
+    QTableWidgetItem* graphItem = new QTableWidgetItem(QString::fromStdString(mData[graphId].name));
+    graphItem->setData(Qt::UserRole, QVariant(graphId));
+    setItemColor(graphItem);
+    int rowCount = mUi.visibleGraph->rowCount();
+    mUi.visibleGraph->setRowCount(rowCount + 1);
+    mUi.visibleGraph->setItem(rowCount, 0, graphItem);
+
+    QTableWidgetItem* valueItem = new QTableWidgetItem();
+    valueItem->setForeground(graphItem->foreground());
+    valueItem->setData(Qt::UserRole, QVariant(graphId));
+    mUi.visibleGraph->setItem(rowCount, 1, valueItem);
+
+}
+
 
 unsigned GraphPlotDialog::getGraphId(QString name)
 {
     unsigned graphId = 0;
+//    qDebug("GraphPlotDialog::getGraphId(%s): called", name.toLatin1().constData());
 
     while (graphId < mData.size()) {
-        if (mData[graphId].name == name) {
+        if (mData[graphId].name == name.toStdString()) {
             return graphId;
         }
         graphId++;
     }
+
+//    qDebug("GraphPlotDialog::getGraphId(): adding ui.. ");
+
     mData.resize(graphId + 1);
     mData[graphId].isSelected = false;
-    mData[graphId].name = name;
-    QTableWidgetItem* graphItem = new QTableWidgetItem(name);
-    graphItem->setData(Qt::UserRole, QVariant(graphId));
-    mUi.visibleGraph->setItem(mUi.visibleGraph->rowCount(), 0, graphItem);
+    mData[graphId].name = name.toStdString();
 
+    addNewGraphToUI(graphId);
     return graphId;
 }
 
@@ -517,7 +538,7 @@ QString GraphPlotDialog::getGraphName(unsigned id)
     if (id >= mData.size())
         return "";
 
-    return mData[id].name;
+    return QString::fromStdString(mData[id].name);
 }
 
 void GraphPlotDialog::setItemColor(QTableWidgetItem *item)
@@ -551,6 +572,7 @@ void GraphPlotDialog::drawGridFixLine(QPainter &painter)
                      mMouseClickedValue, mUi.widget->height() - 1);
 }
 
+
 void GraphPlotDialog::showGraphsValue(QTableWidget *graphTable)
 {
     for (int i = 0; i < graphTable->rowCount(); i++) {
@@ -580,8 +602,6 @@ void GraphPlotDialog::setSnapshotValue(QMouseEvent *mouseEvent)
     if (mGraphShowPoint >= (int)mData[0].size()) {
        mGraphShowPoint = (int)(mData[0].size() - mGraphShowPoint - 1);
     }
-    emit newTimeSelected(mGraphShowPoint);
-
     mUi.widget->update();
 }
 

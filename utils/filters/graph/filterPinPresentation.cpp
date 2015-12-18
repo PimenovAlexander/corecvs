@@ -1,3 +1,6 @@
+#define __XMLDocument_FWD_DEFINED__  // to omit conflict "msxml.h:3376: using typedef-name 'XMLDocument' after 'class'"
+
+
 #include "filterPinPresentation.h"
 #include "g12PinPresentation.h"
 #include "txtPinPresentation.h"

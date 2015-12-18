@@ -17,8 +17,8 @@
 
 #include "frames.h"
 
-Frames::Frames() :
-    mSwapped(false)
+Frames::Frames()
+  : mSwapped(false)
   , mTimestamp(0)
   , mDesyncTime(0)
   , mStartProcessTimestamp(0)
@@ -40,8 +40,7 @@ Frames::Frames() :
  **/
 Frames::~Frames()
 {
-
-    for (int id = 0; id <  MAX_INPUTS_NUMBER; id++ )
+    for (int id = 0; id < MAX_INPUTS_NUMBER; id++)
     {
         delete_safe(currentFrames[id]);
         delete_safe(currentRgbFrames[id]);
@@ -50,16 +49,16 @@ Frames::~Frames()
 
 void Frames::fetchNewFrames(ImageCaptureInterface *input)
 {
- //   DOTRACE(("New frames arrived: left=0x8%X right=0x8%X\n", left, right));
+    SYNC_PRINT(("Frames::fetchNewFrames():Swapped is %d\n", mSwapped));
 
-    ImageCaptureInterface::FramePair pair = input->isRgb ? input->getFrameRGB24() : input->getFrame();
-    if (pair.bufferLeft == NULL || pair.bufferRight == NULL)
+    ImageCaptureInterface::FramePair pair = input->mIsRgb ? input->getFrameRGB24() : input->getFrame();
+    if (!pair.hasBoth())
     {
         printf("Alert: We have received one or zero frames\n");
         fflush(stdout);
     }
 
-    for (int id = 0; id <  MAX_INPUTS_NUMBER; id++ )
+    for (int id = 0; id < MAX_INPUTS_NUMBER; id++)
     {
         delete_safe(currentFrames[id]);
         delete_safe(currentRgbFrames[id]);
@@ -68,22 +67,22 @@ void Frames::fetchNewFrames(ImageCaptureInterface *input)
     currentFrames[LEFT_FRAME]  = mSwapped ? pair.bufferRight : pair.bufferLeft;
     currentFrames[RIGHT_FRAME] = mSwapped ? pair.bufferLeft  : pair.bufferRight;
 
-    if (input->isRgb)
+    if (input->mIsRgb)
     {
-        printf("rgb\n");
+//        printf("Frames::fetchNewFrames() : rgb\n");
         currentRgbFrames[LEFT_FRAME]  = mSwapped ? pair.rgbBufferRight : pair.rgbBufferLeft;
         currentRgbFrames[RIGHT_FRAME] = mSwapped ? pair.rgbBufferLeft  : pair.rgbBufferRight;
     }
     else
     {
-        printf("no rgb\n");
+//        printf("Frames::fetchNewFrames() : no rgb\n");
         currentRgbFrames[LEFT_FRAME]  = NULL;
-        currentRgbFrames[RIGHT_FRAME]  = NULL;
+        currentRgbFrames[RIGHT_FRAME] = NULL;
     }
 
-    mTimestamp  = (pair.leftTimeStamp / 2) + (pair.rightTimeStamp / 2);
+    mTimestamp  = pair.timeStamp();
 
-    mDesyncTime = !mSwapped ? (pair.leftTimeStamp - pair.rightTimeStamp) : (pair.rightTimeStamp - pair.leftTimeStamp);
+    mDesyncTime = !mSwapped ? pair.diffTimeStamps() : -pair.diffTimeStamps();
     frameCount++;
 }
 

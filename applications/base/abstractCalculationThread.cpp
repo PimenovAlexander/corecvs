@@ -65,9 +65,7 @@ void AbstractCalculationThread::run()
 
 void AbstractCalculationThread::newFrameReady(frame_data_t frameData)
 {
-//    cout << "AbstractCalculationThread::newFrameReady called..." << endl;
-
-    //L_INFO_P("new frame notification");
+//    qDebug("AbstractCalculationThread::newFrameReady(): called");
 
     if (!mCaptureInterface)
     {
@@ -84,7 +82,7 @@ void AbstractCalculationThread::newFrameReady(frame_data_t frameData)
 
     if (frameData.timestamp <= mLastFrameTimeStamp)
     {
-        //cout << "Frame was received second time. Previous TS: "<< lastFrameTimeStamp << " Current TS: " << frameData.timestamp << "\n";
+//        cout << "Frame was received second time. Previous TS: "<< mLastFrameTimeStamp << " Current TS: " << frameData.timestamp << "\n";
         return;
     }
 

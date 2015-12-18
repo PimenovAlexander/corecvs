@@ -45,7 +45,10 @@ int Draw3dViMouseParameters::staticInit()
           0,
           "redDist",
           "redDist",
-          "redDist"
+          "redDist",
+          true,
+         -50000,
+         50000
         )
     );
     fields().push_back(
@@ -56,7 +59,10 @@ int Draw3dViMouseParameters::staticInit()
           1000,
           "blueDist",
           "blueDist",
-          "blueDist"
+          "blueDist",
+          true,
+         -50000,
+         50000
         )
     );
     fields().push_back(
@@ -67,7 +73,10 @@ int Draw3dViMouseParameters::staticInit()
           1,
           "flowZoom",
           "flowZoom",
-          "flowZoom"
+          "flowZoom",
+          true,
+         0,
+         50
         )
     );
     fields().push_back(
@@ -79,7 +88,15 @@ int Draw3dViMouseParameters::staticInit()
           "Point Color Type",
           "Point Color Type",
           "Point Color Type",
-           NULL
+          new EnumReflection(7
+          , new EnumOption(0,"Grey value")
+          , new EnumOption(1,"Z Coordinate")
+          , new EnumOption(2,"Y Coordinate")
+          , new EnumOption(3,"Distance")
+          , new EnumOption(4,"None")
+          , new EnumOption(5,"By Flag")
+          , new EnumOption(6,"By Cluster")
+          )
         )
     );
     fields().push_back(
@@ -91,7 +108,12 @@ int Draw3dViMouseParameters::staticInit()
           "Flow Color Type",
           "Flow Color Type",
           "Flow Color Type",
-           NULL
+          new EnumReflection(4
+          , new EnumOption(0,"None")
+          , new EnumOption(1,"White")
+          , new EnumOption(2,"Heat")
+          , new EnumOption(3,"By Flag")
+          )
         )
     );
    return 0;

@@ -52,7 +52,19 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
     MainWindowParameters params;
-    MainWindow mainWindow(new RecorderDialog(), source, params);
+
+    for (int i = 2; i < argc; i++)
+    {
+        QString val = QString(argv[i]);
+
+        if (val == "auto")
+        {
+            printf("Autoplay on\n");
+            params.autoPlay = true;
+        }
+    }
+
+    MainWindow mainWindow(new RecorderDialog(), source, params, true);
 
     app.exec();
 

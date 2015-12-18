@@ -45,7 +45,10 @@ int OpenCVSGMParameters::staticInit()
           10,
           "Pre Filter Cap",
           "Pre Filter Cap",
-          "Pre Filter Cap"
+          "Pre Filter Cap",
+          true,
+         1,
+         99
         )
     );
     fields().push_back(
@@ -56,7 +59,10 @@ int OpenCVSGMParameters::staticInit()
           5,
           "SAD Window Size",
           "SAD Window Size",
-          "SAD Window Size"
+          "SAD Window Size",
+          true,
+         1,
+         99
         )
     );
     fields().push_back(
@@ -67,7 +73,10 @@ int OpenCVSGMParameters::staticInit()
           8,
           "P1 multiplier",
           "P1 multiplier",
-          "P1 multiplier"
+          "P1 multiplier",
+          true,
+         1,
+         99
         )
     );
     fields().push_back(
@@ -78,7 +87,10 @@ int OpenCVSGMParameters::staticInit()
           32,
           "P2 multiplier",
           "P2 multiplier",
-          "P2 multiplier"
+          "P2 multiplier",
+          true,
+         1,
+         99
         )
     );
     fields().push_back(
@@ -89,7 +101,10 @@ int OpenCVSGMParameters::staticInit()
           0,
           "Min Disparity",
           "Min Disparity",
-          "Min Disparity"
+          "Min Disparity",
+          true,
+         -9999,
+         99999
         )
     );
     fields().push_back(
@@ -100,7 +115,10 @@ int OpenCVSGMParameters::staticInit()
           15,
           "Uniqueness Ratio",
           "Uniqueness Ratio",
-          "Uniqueness Ratio"
+          "Uniqueness Ratio",
+          true,
+         0,
+         99
         )
     );
     fields().push_back(
@@ -111,7 +129,10 @@ int OpenCVSGMParameters::staticInit()
           50,
           "Speckle Window Size",
           "Speckle Window Size",
-          "Speckle Window Size"
+          "Speckle Window Size",
+          true,
+         1,
+         99
         )
     );
     fields().push_back(
@@ -122,7 +143,10 @@ int OpenCVSGMParameters::staticInit()
           16,
           "Speckle Range",
           "Speckle Range",
-          "Speckle Range"
+          "Speckle Range",
+          true,
+         1,
+         99
         )
     );
     fields().push_back(
@@ -133,7 +157,10 @@ int OpenCVSGMParameters::staticInit()
           -1,
           "Disp 12 Max Diff",
           "Disp 12 Max Diff",
-          "Disp 12 Max Diff"
+          "Disp 12 Max Diff",
+          true,
+         -9999,
+         99999
         )
     );
     fields().push_back(

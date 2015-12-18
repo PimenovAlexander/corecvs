@@ -45,7 +45,10 @@ int Draw3dCameraParameters::staticInit()
           90,
           "fovH",
           "fovH",
-          "fovH"
+          "fovH",
+          true,
+         0,
+         180
         )
     );
     fields().push_back(
@@ -56,7 +59,10 @@ int Draw3dCameraParameters::staticInit()
           60,
           "fovV",
           "fovV",
-          "fovV"
+          "fovV",
+          true,
+         0,
+         180
         )
     );
     fields().push_back(
@@ -67,7 +73,10 @@ int Draw3dCameraParameters::staticInit()
           10,
           "nearPlane",
           "nearPlane",
-          "nearPlane"
+          "nearPlane",
+          true,
+         0,
+         20000
         )
     );
     fields().push_back(
@@ -78,7 +87,10 @@ int Draw3dCameraParameters::staticInit()
           100,
           "farPlane",
           "farPlane",
-          "farPlane"
+          "farPlane",
+          true,
+         0,
+         20000
         )
     );
     fields().push_back(
@@ -86,34 +98,164 @@ int Draw3dCameraParameters::staticInit()
         (
           Draw3dCameraParameters::STYLE_ID,
           offsetof(Draw3dCameraParameters, mStyle),
-          0,
+          3,
           "style",
           "style",
           "style",
-           NULL
+          new EnumReflection(5
+          , new EnumOption(0,"Points")
+          , new EnumOption(1,"Wireframe")
+          , new EnumOption(2,"Color")
+          , new EnumOption(3,"Color 2")
+          , new EnumOption(4,"Textured")
+          )
         )
     );
     fields().push_back(
         new CompositeField
         (
-          Draw3dCameraParameters::COLOR_ID,
-          offsetof(Draw3dCameraParameters, mColor),
-          "Color",
+          Draw3dCameraParameters::POINT_COLOR_ID,
+          offsetof(Draw3dCameraParameters, mPointColor),
+          "Point Color",
           "RgbColorParameters",
-          "Color",
-          "Color",
+          "Point Color",
+          "Point Color",
            NULL
+        )
+    );
+    fields().push_back(
+        new BoolField
+        (
+          Draw3dCameraParameters::POINT_COLOR_OVERRIDE_ID,
+          offsetof(Draw3dCameraParameters, mPointColorOverride),
+          false,
+          "Point Color Override",
+          "Point Color Override",
+          "Point Color Override"
+        )
+    );
+    fields().push_back(
+        new IntField
+        (
+          Draw3dCameraParameters::POINT_SIZE_ID,
+          offsetof(Draw3dCameraParameters, mPointSize),
+          1,
+          "Point Size",
+          "Point Size",
+          "Point Size",
+          true,
+         0,
+         255
         )
     );
     fields().push_back(
         new CompositeField
         (
-          Draw3dCameraParameters::SECONDARY_COLOR_ID,
-          offsetof(Draw3dCameraParameters, mSecondaryColor),
-          "Secondary Color",
+          Draw3dCameraParameters::EDGE_COLOR_ID,
+          offsetof(Draw3dCameraParameters, mEdgeColor),
+          "Edge Color",
           "RgbColorParameters",
-          "Secondary Color",
-          "Secondary Color",
+          "Edge Color",
+          "Edge Color",
+           NULL
+        )
+    );
+    fields().push_back(
+        new BoolField
+        (
+          Draw3dCameraParameters::EDGE_COLOR_OVERRIDE_ID,
+          offsetof(Draw3dCameraParameters, mEdgeColorOverride),
+          false,
+          "Edge Color Override",
+          "Edge Color Override",
+          "Edge Color Override"
+        )
+    );
+    fields().push_back(
+        new IntField
+        (
+          Draw3dCameraParameters::EDGE_WIDTH_ID,
+          offsetof(Draw3dCameraParameters, mEdgeWidth),
+          1,
+          "Edge Width",
+          "Edge Width",
+          "Edge Width",
+          true,
+         0,
+         255
+        )
+    );
+    fields().push_back(
+        new CompositeField
+        (
+          Draw3dCameraParameters::FACE_COLOR_ID,
+          offsetof(Draw3dCameraParameters, mFaceColor),
+          "Face Color",
+          "RgbColorParameters",
+          "Face Color",
+          "Face Color",
+           NULL
+        )
+    );
+    fields().push_back(
+        new BoolField
+        (
+          Draw3dCameraParameters::FACE_COLOR_OVERRIDE_ID,
+          offsetof(Draw3dCameraParameters, mFaceColorOverride),
+          false,
+          "Face Color Override",
+          "Face Color Override",
+          "Face Color Override"
+        )
+    );
+    fields().push_back(
+        new BoolField
+        (
+          Draw3dCameraParameters::SHOW_CAPTION_ID,
+          offsetof(Draw3dCameraParameters, mShowCaption),
+          false,
+          "Show caption",
+          "Show caption",
+          "Show caption"
+        )
+    );
+    fields().push_back(
+        new IntField
+        (
+          Draw3dCameraParameters::FONT_SIZE_ID,
+          offsetof(Draw3dCameraParameters, mFontSize),
+          8,
+          "Font Size",
+          "Font Size",
+          "Font Size",
+          true,
+         0,
+         255
+        )
+    );
+    fields().push_back(
+        new IntField
+        (
+          Draw3dCameraParameters::FONT_WIDTH_ID,
+          offsetof(Draw3dCameraParameters, mFontWidth),
+          1,
+          "Font Width",
+          "Font Width",
+          "Font Width",
+          true,
+         0,
+         255
+        )
+    );
+    fields().push_back(
+        new CompositeField
+        (
+          Draw3dCameraParameters::FONT_COLOR_ID,
+          offsetof(Draw3dCameraParameters, mFontColor),
+          "Font Color",
+          "RgbColorParameters",
+          "Font Color",
+          "Font Color",
            NULL
         )
     );
@@ -126,7 +268,11 @@ int Draw3dCameraParameters::staticInit()
           "Texture Corrodinates",
           "Texture Corrodinates",
           "Texture Corrodinates",
-           NULL
+          new EnumReflection(3
+          , new EnumOption(0,"No Texture")
+          , new EnumOption(1,"Auto Decide")
+          , new EnumOption(2,"Force Texture")
+          )
         )
     );
     fields().push_back(
@@ -137,7 +283,10 @@ int Draw3dCameraParameters::staticInit()
           255,
           "Texture Alpha",
           "Texture Alpha",
-          "Texture Alpha"
+          "Texture Alpha",
+          true,
+         0,
+         255
         )
     );
     fields().push_back(
@@ -148,7 +297,10 @@ int Draw3dCameraParameters::staticInit()
           1,
           "Texture Scale",
           "Texture Scale",
-          "Texture Scale"
+          "Texture Scale",
+          true,
+         0,
+         2000
         )
     );
     fields().push_back(
@@ -159,7 +311,10 @@ int Draw3dCameraParameters::staticInit()
           11,
           "Decal Matrix Type",
           "Decal Matrix Type",
-          "Decal Matrix Type"
+          "Decal Matrix Type",
+          true,
+         0,
+         19
         )
     );
     fields().push_back(
@@ -181,7 +336,10 @@ int Draw3dCameraParameters::staticInit()
           255,
           "Decal Left Alpha",
           "Decal Left Alpha",
-          "Decal Left Alpha"
+          "Decal Left Alpha",
+          true,
+         0,
+         255
         )
     );
     fields().push_back(
@@ -203,7 +361,10 @@ int Draw3dCameraParameters::staticInit()
           255,
           "Decal Right Alpha",
           "Decal Right Alpha",
-          "Decal Right Alpha"
+          "Decal Right Alpha",
+          true,
+         0,
+         255
         )
     );
    return 0;

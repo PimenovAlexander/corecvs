@@ -1,5 +1,5 @@
 #include <fstream>
-
+#include <sstream>
 #include <QtCore/QDebug>
 #include <QtOpenGL/QtOpenGL>
 #include <QtOpenGL/QGLWidget>
@@ -9,6 +9,8 @@
 #include "3d/mesh3DScene.h"
 #include "rgb24Buffer.h"
 #include "qSettingsSetter.h"
+
+#include "meshLoader.h"
 
 // FIXIT: GOOPEN
 //#include "../../../restricted/applications/vimouse/faceDetection/faceMesh.h"
@@ -86,12 +88,17 @@ CloudViewDialog::CloudViewDialog(QWidget *parent) :
     mUi.treeView->setModel(&mTreeModel);
     mUi.treeView->setDragEnabled(true);
     mUi.treeView->setAcceptDrops(true);
-    mUi.treeView->setDropIndicatorShown(true);
+    //mUi.treeView->setDropIndicatDraw3dParametersorShown(true);
+
+    mUi.treeView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    mUi.treeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
     mUi.treeView->setColumnWidth(TreeSceneModel::NAME_COLUMN,200);
     mUi.treeView->setColumnWidth(TreeSceneModel::FLAG_COLUMN,30);
     mUi.treeView->setColumnWidth(TreeSceneModel::PARAMETER_COLUMN,20);
 
     connect(mUi.treeView, SIGNAL(clicked(const QModelIndex &)), &mTreeModel, SLOT(clicked(const QModelIndex &)));
+    connect(mUi.treeView, SIGNAL(toggleInitiated()), this, SLOT(toggledVisibility()));
 
     connect(&mTreeModel, SIGNAL(modelChanged()), mUi.widget, SLOT(update()));
 
@@ -104,6 +111,7 @@ CloudViewDialog::CloudViewDialog(QWidget *parent) :
 
     QSharedPointer<CoordinateFrame> worldFrame = QSharedPointer<CoordinateFrame>(new CoordinateFrame());
 
+#if 0
 /*    QSharedPointer<Scene3D> grid  = QSharedPointer<Scene3D>(new Grid3DScene());
     QSharedPointer<Scene3D> plane = QSharedPointer<Scene3D>(new Plane3DScene());
     grid->name  = "Grid";
@@ -114,39 +122,80 @@ CloudViewDialog::CloudViewDialog(QWidget *parent) :
     camera->name = "camera";
     worldFrame->mChildren.push_back(camera);
 
-    Mesh3DScene *mesh = new Mesh3DScene();
-    PLYLoader loader;
-    ifstream file("data/box.ply", ios::in);
-    if (!file.fail() && loader.loadPLY(file, *mesh) != 0)
-    {
-        qDebug() << "CloudViewDialog::Unable to load mesh";
-    } else {
-        mesh->name = "box-ply";
-    //    addSubObject("box-ply", QSharedPointer<Scene3D>(mesh));
-    }
-    file.close();
-    worldFrame->mChildren.push_back(QSharedPointer<Scene3D>(mesh));
+    /* Test mesh load */
+        Mesh3DScene *mesh = new Mesh3DScene();
+        PLYLoader loader;
+        const char *testMeshName = "data/box.ply";
+        ifstream file(testMeshName, ios::in);
+        if (!file.fail() && loader.loadPLY(file, *mesh) != 0)
+        {
+            qDebug() << "CloudViewDialog::Unable to load mesh " << testMeshName;
+        } else {
+            mesh->name = "box-ply";
+        //    addSubObject("box-ply", QSharedPointer<Scene3D>(mesh));
+        }
+        file.close();
+        worldFrame->mChildren.push_back(QSharedPointer<Scene3D>(mesh));
+    /* Test colored mesh */
+        Mesh3DScene *meshTest = new Mesh3DScene();
+        meshTest->fillTestScene();
+        meshTest->name = "Colored mesh";
+        worldFrame->mChildren.push_back(QSharedPointer<Scene3D>(meshTest));
+
 
     Mesh3DScene *box = new Mesh3DScene();
     box->addAOB(Vector3dd(0.0,0.0,0.0), Vector3dd(1.0,1.0,1.0));
     box->name = "box-mesh";
     //addSubObject("box-mesh", QSharedPointer<Scene3D>(box));
     worldFrame->mChildren.push_back(QSharedPointer<Scene3D>(box));
+#endif
 
     addSubObject("World Frame", worldFrame);
 
+}
+
+
+
+void CloudViewDialog::addMesh(QString name, Mesh3D *mesh)
+{
+    std::stringstream ss;
+    mesh->dumpPLY(ss);
+    Mesh3DScene *scene = new Mesh3DScene();
+    PLYLoader loader;
+    loader.loadPLY(ss, *scene);
+
+    cout << "Loaded mesh:" << endl;
+    cout << " Edges   :" << scene->edges.size() << endl;
+    cout << " Vertexes:" << scene->vertexes.size() << endl;
+    cout << " Faces   :" << scene->faces.size() << endl;
+    cout << " Bounding box " << scene->getBoundingBox() << endl;
+
+    addSubObject(name, QSharedPointer<Scene3D>((Scene3D*)scene));
 }
 
 TreeSceneController * CloudViewDialog::addSubObject (QString name, QSharedPointer<Scene3D> scene, bool visible)
 {
     qDebug() << "Adding object" << name;
 
-    return mTreeModel.addObject(name, scene, visible);
+    TreeSceneController * result = mTreeModel.addObject(name, scene, visible);
+    mUi.widget->updateGL();
+    return result;
 }
 
 
 CloudViewDialog::~CloudViewDialog()
 {
+}
+
+void CloudViewDialog::setCollapseTree(bool collapse)
+{
+    QList<int> sizes;
+    if (collapse) {
+        sizes << 1 << 0;
+    } else {
+        sizes << 1 << 1;
+    }
+        mUi.splitter->setSizes(sizes);
 }
 
 void CloudViewDialog::downRotate()
@@ -626,6 +675,8 @@ void CloudViewDialog::setNewScenePointer(QSharedPointer<Scene3D> newScene, int s
         case CLUSTER_ZONE               : name = "Cluster zone";     break;
         case CLUSTER_SWARM              : name = "Cluster swarm";    break;
         case HEAD_SEARCH_ZONE           : name = "Head search zone"; break;
+        case HAND_1                     : name = "Hand 1";           break;
+        case HAND_2                     : name = "Hand 2";           break;
         default:
             break;
         };
@@ -730,32 +781,41 @@ void CloudViewDialog::savePointsPLY()
     qDebug("done\n");
 }
 
+void CloudViewDialog::toggledVisibility()
+{
+    QItemSelectionModel *selection = mUi.treeView->selectionModel();
+    QModelIndexList	list = selection->selectedRows();
+    for (const QModelIndex &index : list)
+    {
+        qDebug() << "Model Ids:" << index.row();
+        QModelIndex boxIndex = index.sibling(index.row(), TreeSceneModel::FLAG_COLUMN);
+        bool isVisible = mTreeModel.data(boxIndex, Qt::CheckStateRole).toBool();
+        mTreeModel.setData(boxIndex, !isVisible, Qt::CheckStateRole);
+    }
+
+}
+
 void CloudViewDialog::loadMesh()
 {
+    MeshLoader loader;
+
+    QString type = QString("3D Model (%1)").arg(loader.extentionList().c_str());
+
     QString fileName = QFileDialog::getOpenFileName(
       this,
       tr("Load 3D Model"),
       ".",
-      tr("3D Model (*.ply)"));
+      type);
 
     Mesh3DScene *mesh = new Mesh3DScene();
-    ifstream file;
-    file.open(fileName.toAscii().data(), ios::in);
-    if (file.fail())
-    {
-        qDebug() << "Can't open property list file" << endl;
-        return;
-    }
-    PLYLoader loader;
-    if (loader.loadPLY(file, *mesh) != 0)
-    {
-       qDebug() << "CloudViewDialog::Unable to load mesh";
-       file.close();
-       return;
-    }
 
+    if (!loader.load(mesh, fileName.toStdString()))
+    {
+        delete_safe(mesh);
+           return;
+        }
     QFileInfo fileInfo(fileName);
-    addSubObject(fileInfo.baseName(), QSharedPointer<Scene3D>(mesh));
+    addSubObject(fileInfo.baseName(), QSharedPointer<Scene3D>((Scene3D*)mesh));
 }
 
 void CloudViewDialog::addCoordinateFrame()

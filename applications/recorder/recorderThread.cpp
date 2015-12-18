@@ -9,7 +9,6 @@
 #include "recorderThread.h"
 
 #include <stdio.h>
-#include <QtGui/QMessageBox>
 #include <QMetaType>
 #include <QMessageBox>
 
@@ -72,11 +71,15 @@ void RecorderThread::toggleRecording()
 AbstractOutputData* RecorderThread::processNewData()
 {
     Statistics stats;
+
+//    qDebug("RecorderThread::processNewData(): called");
+
 #if 0
     stats.setTime(ViFlowStatisticsDescriptor::IDLE_TIME, mIdleTimer.usecsToNow());
 #endif
+
     PreciseTimer start = PreciseTimer::currentTime();
-    PreciseTimer startEl = PreciseTimer::currentTime();
+//    PreciseTimer startEl = PreciseTimer::currentTime();
 
     bool have_params = !(mRecorderParameters.isNull());
     bool two_frames = have_params && (CamerasConfigParameters::TwoCapDev == mActiveInputsNumber); // FIXME: additional params needed here
@@ -96,9 +99,15 @@ AbstractOutputData* RecorderThread::processNewData()
     /*TODO: Logic here should be changed according to the host base change*/
     for (int id = 0; id < mActiveInputsNumber; id++)
     {
-        G12Buffer *buf = mFrames.getCurrentFrame((Frames::FrameSourceId)id);
+        G12Buffer   *buf    = mFrames.getCurrentFrame   ((Frames::FrameSourceId)id);
+        RGB24Buffer *bufrgb = mFrames.getCurrentRgbFrame((Frames::FrameSourceId)id);
+        if (bufrgb != NULL) {
+            buf = bufrgb->toG12Buffer();
+        }
 
-        result[id] = mTransformationCache[id] ? mTransformationCache[id]->doDeformation(mBaseParams->interpolationType(), buf) : buf;
+
+        //result[id] = mTransformationCache[id] ? mTransformationCache[id]->doDeformation(mBaseParams->interpolationType(), buf) : buf;
+        result[id] = buf;
 
         if (mIsRecording)
         {
@@ -129,16 +138,15 @@ AbstractOutputData* RecorderThread::processNewData()
     outputData->mMainImage.addLayer(
             new ImageResultLayer(
                     mPresentationParams->output(),
-                    result,
-                    mPresentationParams->leftFrame()
+                    result
             )
     );
 
     outputData->mMainImage.setHeight(mBaseParams->h());
     outputData->mMainImage.setWidth (mBaseParams->w());
 
-#if 0
-    stats.setTime(ViFlowStatisticsDescriptor::TOTAL_TIME, start.usecsToNow());
+#if 1
+    stats.setTime("Total time", start.usecsToNow());
 #endif
     mIdleTimer = PreciseTimer::currentTime();
 

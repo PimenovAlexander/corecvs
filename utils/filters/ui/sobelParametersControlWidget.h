@@ -1,5 +1,5 @@
 #pragma once
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "generated/sobelParameters.h"
 #include "ui_sobelParametersControlWidget.h"
 #include "filterParametersControlWidgetBase.h"
@@ -18,6 +18,8 @@ public:
     ~SobelParametersControlWidget();
 
     SobelParameters* createParameters() const;
+
+    void getParameters(SobelParameters &params) const;
     void setParameters(const SobelParameters &input);
     virtual void setParametersVirtual(void *input);
 

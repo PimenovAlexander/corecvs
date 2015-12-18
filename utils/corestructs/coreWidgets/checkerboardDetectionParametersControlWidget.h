@@ -18,7 +18,7 @@ public:
     ~CheckerboardDetectionParametersControlWidget();
 
     CheckerboardDetectionParameters* createParameters() const;
-    void getParameters(CheckerboardDetectionParameters &param) const;
+    void getParameters(CheckerboardDetectionParameters &params) const;
     void setParameters(const CheckerboardDetectionParameters &input);
     virtual void setParametersVirtual(void *input);
     

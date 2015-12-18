@@ -6,16 +6,37 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>910</width>
-    <height>609</height>
+    <width>1234</width>
+    <height>718</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
+    <number>3</number>
+   </property>
+   <property name="spacing">
+    <number>3</number>
+   </property>
    <item row="0" column="0">
     <widget class="QSplitter" name="splitter">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
@@ -26,10 +47,16 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>200</height>
+       </size>
+      </property>
      </widget>
      <widget class="QWidget" name="parameterHolder" native="true">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
+       <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -37,102 +64,33 @@
       <property name="minimumSize">
        <size>
         <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
         <height>400</height>
        </size>
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>3</number>
+       </property>
+       <property name="topMargin">
+        <number>3</number>
+       </property>
+       <property name="rightMargin">
+        <number>3</number>
+       </property>
+       <property name="bottomMargin">
         <number>3</number>
        </property>
        <property name="spacing">
         <number>3</number>
        </property>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Сorrection algorithm:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QComboBox" name="methodSelectorBox">
-         <property name="currentIndex">
-          <number>2</number>
-         </property>
-         <item>
-          <property name="text">
-           <string>Polynomial distortion correction</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Inversion distortion correction</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Lines distortion correction</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Default correction</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Manual correction</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="1" column="4">
-        <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_4">
-         <property name="text">
-          <string>Show Buffer</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="bufferSelectorBox">
-         <item>
-          <property name="text">
-           <string>Original</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Corners</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Corrected</string>
-          </property>
-         </item>
-        </widget>
-       </item>
        <item row="3" column="0" colspan="5">
         <widget class="QTabWidget" name="parametersTabWidget">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -140,200 +98,123 @@
           </size>
          </property>
          <property name="currentIndex">
-          <number>2</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="tab_LevMarq">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>150</height>
-           </size>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
           <attribute name="title">
            <string>Polynomial distortion correction</string>
           </attribute>
-          <layout class="QGridLayout" name="gridLayout_2">
-           <property name="margin">
-            <number>3</number>
-           </property>
-           <property name="spacing">
-            <number>3</number>
-           </property>
-           <item row="0" column="2" rowspan="10" colspan="8">
-            <widget class="QTableWidget" name="pointsTableWidget">
-             <property name="editTriggers">
-              <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::EditKeyPressed</set>
-             </property>
-             <column>
-              <property name="text">
-               <string>x Space</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>y Space</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>z Space</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>x Image</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>y Image</string>
-              </property>
-             </column>
-            </widget>
+          <layout class="QGridLayout" name="gridLayout_8">
+           <item row="0" column="0" rowspan="2">
+            <layout class="QGridLayout" name="gridLayout_7">
+             <item row="0" column="1">
+              <widget class="QDoubleSpinBox" name="lambdaDivisorBox">
+               <property name="maximum">
+                <double>999999.000000000000000</double>
+               </property>
+               <property name="value">
+                <double>400.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0" colspan="2">
+              <widget class="CheckerboardDetectionParametersControlWidget" name="checkerboardParametersWidget" native="true">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_6">
+               <property name="text">
+                <string>Corner Threshold:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_7">
+               <property name="text">
+                <string>Lambda divisor</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QPushButton" name="crossDetectorButton">
+               <property name="text">
+                <string>Detect chekerboard</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QPushButton" name="cornerDetectorButton">
+               <property name="text">
+                <string>Detect corners</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QSpinBox" name="cornerThresholdBox">
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>99999</number>
+               </property>
+               <property name="value">
+                <number>400</number>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0" colspan="2">
+              <spacer name="verticalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
            </item>
-           <item row="11" column="4">
-            <widget class="QPushButton" name="saveButton">
-             <property name="text">
-              <string>Save</string>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="0">
-            <spacer name="verticalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="10" column="1" colspan="2">
-            <widget class="QLabel" name="label_5">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>15</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Coordinates</string>
-             </property>
-            </widget>
-           </item>
-           <item row="10" column="4">
-            <widget class="QDoubleSpinBox" name="xCoordSpinBox">
-             <property name="decimals">
-              <number>6</number>
-             </property>
-            </widget>
-           </item>
-           <item row="10" column="5">
-            <widget class="QDoubleSpinBox" name="yCoordSpinBox">
-             <property name="decimals">
-              <number>6</number>
-             </property>
-            </widget>
-           </item>
-           <item row="10" column="7">
-            <widget class="Line" name="line">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="10" column="6">
-            <widget class="QDoubleSpinBox" name="zCoordSpinBox">
-             <property name="readOnly">
-              <bool>false</bool>
-             </property>
-             <property name="decimals">
-              <number>6</number>
-             </property>
-            </widget>
-           </item>
-           <item row="10" column="8">
-            <widget class="QDoubleSpinBox" name="imageXSpinBox">
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-             <property name="decimals">
-              <number>6</number>
-             </property>
-            </widget>
-           </item>
-           <item row="10" column="9">
-            <widget class="QDoubleSpinBox" name="imageYSpinBox">
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-             <property name="decimals">
-              <number>6</number>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="0">
-            <widget class="QPushButton" name="cornerDetectorButton">
-             <property name="text">
-              <string>Detect corners</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_7">
-             <property name="text">
-              <string>Lambda divisor</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_6">
-             <property name="text">
-              <string>Corner Threshold:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QSpinBox" name="cornerThresholdBox">
-             <property name="minimum">
-              <number>1</number>
-             </property>
-             <property name="maximum">
-              <number>99999</number>
-             </property>
-             <property name="value">
-              <number>400</number>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QDoubleSpinBox" name="lambdaDivisorBox">
-             <property name="maximum">
-              <double>999999.000000000000000</double>
-             </property>
-             <property name="value">
-              <double>400.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item row="11" column="5">
-            <widget class="QPushButton" name="deleteButton">
-             <property name="text">
-              <string>Delete</string>
-             </property>
-            </widget>
+           <item row="0" column="1" rowspan="2">
+            <widget class="CalibrationFeaturesWidget" name="calibrationFeatures" native="true"/>
            </item>
           </layout>
          </widget>
          <widget class="QWidget" name="tab_Inversion">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <attribute name="title">
            <string>Inversion distortion correction</string>
           </attribute>
           <layout class="QGridLayout" name="gridLayout">
-           <property name="margin">
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>3</number>
+           </property>
+           <property name="rightMargin">
+            <number>3</number>
+           </property>
+           <property name="bottomMargin">
             <number>3</number>
            </property>
            <property name="spacing">
@@ -415,83 +296,62 @@
           </layout>
          </widget>
          <widget class="QWidget" name="tab_Lines">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <attribute name="title">
            <string>Lines distortion correction</string>
           </attribute>
           <layout class="QGridLayout" name="gridLayout_5">
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_8">
+           <property name="topMargin">
+            <number>3</number>
+           </property>
+           <property name="rightMargin">
+            <number>3</number>
+           </property>
+           <property name="bottomMargin">
+            <number>3</number>
+           </property>
+           <property name="spacing">
+            <number>3</number>
+           </property>
+           <item row="2" column="1">
+            <widget class="QPushButton" name="savePointsButton">
              <property name="text">
-              <string>Iteration Number</string>
+              <string>Save</string>
              </property>
             </widget>
            </item>
            <item row="1" column="1">
-            <widget class="QSpinBox" name="iterationsSpinBox">
-             <property name="minimum">
-              <number>250</number>
-             </property>
-             <property name="maximum">
-              <number>100000</number>
-             </property>
-             <property name="value">
-              <number>1000</number>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_9">
+            <widget class="QPushButton" name="loadPointsButton">
              <property name="text">
-              <string>Polynom Degree</string>
+              <string>Load</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
-            <widget class="QSpinBox" name="degreeSpinBox">
-             <property name="minimum">
-              <number>2</number>
+           <item row="0" column="0" rowspan="3">
+            <widget class="LineDistortionEstimatorParametersControlWidget" name="lineDistortionWidget" native="true">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
-             <property name="maximum">
-              <number>20</number>
-             </property>
-             <property name="value">
-              <number>4</number>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_10">
-             <property name="text">
-              <string>Scale factor y/x</string>
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>120</height>
+              </size>
              </property>
             </widget>
            </item>
-           <item row="3" column="1">
-            <widget class="QDoubleSpinBox" name="lineScaleSpinBox">
-             <property name="decimals">
-              <number>3</number>
-             </property>
-             <property name="minimum">
-              <double>0.100000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>1.500000000000000</double>
-             </property>
-             <property name="singleStep">
-              <double>0.050000000000000</double>
-             </property>
-             <property name="value">
-              <double>0.800000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item row="11" column="0">
+           <item row="3" column="0" colspan="2">
             <spacer name="verticalSpacer_3">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Expanding</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -501,7 +361,7 @@
              </property>
             </spacer>
            </item>
-           <item row="8" column="3">
+           <item row="0" column="2" rowspan="3">
             <spacer name="horizontalSpacer_3">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -514,130 +374,45 @@
              </property>
             </spacer>
            </item>
-           <item row="1" column="2" rowspan="3" colspan="2">
-            <widget class="QLabel" name="label_12">
-             <property name="text">
-              <string>TextLabel</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0" colspan="2">
-            <widget class="QCheckBox" name="simpleJacobianCheckBox">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="text">
-              <string>Simple Jacobian</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="0" colspan="2">
-            <widget class="QCheckBox" name="preciseInvertionCheckBox">
-             <property name="text">
-              <string>Precise Invertion</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="0" colspan="2">
-            <widget class="QCheckBox" name="estimateTangentCheckBox">
-             <property name="text">
-              <string>Estimate Tangent</string>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="0">
-            <widget class="QCheckBox" name="estimateCenterCheckBox">
-             <property name="text">
-              <string>Estimate Center</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0" colspan="2">
-            <widget class="QComboBox" name="costFunctionComboBox">
-             <item>
-              <property name="text">
-               <string>Angle Cost Function</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Distance Cost Function</string>
-              </property>
-             </item>
-            </widget>
-           </item>
           </layout>
          </widget>
          <widget class="QWidget" name="tab_Manual">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <attribute name="title">
            <string>Manual</string>
           </attribute>
           <layout class="QGridLayout" name="gridLayout_6">
-           <item row="1" column="0">
-            <widget class="QLabel" name="centerLabel">
-             <property name="text">
-              <string>Center</string>
-             </property>
-            </widget>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>3</number>
+           </property>
+           <property name="rightMargin">
+            <number>3</number>
+           </property>
+           <property name="bottomMargin">
+            <number>3</number>
+           </property>
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <item row="1" column="0" colspan="2">
+            <widget class="LensDistortionModelParametersControlWidget" name="lensCorrectionWidget" native="true"/>
            </item>
-           <item row="1" column="1">
-            <widget class="QDoubleSpinBox" name="centerXSpinBox">
-             <property name="maximum">
-              <double>99999.990000000005239</double>
+           <item row="0" column="0" colspan="2">
+            <widget class="QCheckBox" name="isInverseCheckBox">
+             <property name="text">
+              <string>Inverse/Forward transform</string>
              </property>
             </widget>
            </item>
            <item row="1" column="2">
-            <widget class="QDoubleSpinBox" name="centerYSpinBox">
-             <property name="maximum">
-              <double>99999.990000000005239</double>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_14">
-             <property name="text">
-              <string>Tangential</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QDoubleSpinBox" name="tangential1SpinBox">
-             <property name="decimals">
-              <number>9</number>
-             </property>
-             <property name="minimum">
-              <double>-99.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="2">
-            <widget class="QDoubleSpinBox" name="tangential2SpinBox">
-             <property name="decimals">
-              <number>9</number>
-             </property>
-             <property name="minimum">
-              <double>-99.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_13">
-             <property name="text">
-              <string>Scale</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QDoubleSpinBox" name="scaleSpinBox"/>
-           </item>
-           <item row="5" column="0" rowspan="3" colspan="3">
-            <widget class="QTableWidget" name="koefTableWidget"/>
-           </item>
-           <item row="1" column="4">
             <spacer name="horizontalSpacer_5">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -650,78 +425,39 @@
              </property>
             </spacer>
            </item>
-           <item row="5" column="3">
-            <widget class="QPushButton" name="delPowerButton">
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../../../../resources/main.qrc">
-               <normaloff>:/new/prefix1/minus.png</normaloff>:/new/prefix1/minus.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="3">
-            <widget class="QPushButton" name="addPowerButton">
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../../../../resources/main.qrc">
-               <normaloff>:/new/prefix1/plus.png</normaloff>:/new/prefix1/plus.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="3">
-            <spacer name="verticalSpacer_4">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="0" column="0" colspan="3">
-            <widget class="QCheckBox" name="isInverseCheckBox">
-             <property name="text">
-              <string>Inverse/Forward transform</string>
-             </property>
-            </widget>
-           </item>
           </layout>
          </widget>
         </widget>
        </item>
        <item row="4" column="0" colspan="5">
-        <widget class="QGroupBox" name="groupBox">
-         <property name="title">
-          <string/>
+        <widget class="QFrame" name="frame">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="flat">
-          <bool>false</bool>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
           <property name="spacing">
-           <number>3</number>
+           <number>2</number>
           </property>
-          <property name="margin">
-           <number>3</number>
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
           </property>
           <item>
            <widget class="QPushButton" name="recalculateButton">
@@ -729,7 +465,7 @@
              <string>Recalculate</string>
             </property>
             <property name="icon">
-             <iconset resource="../../../../resources/main.qrc">
+             <iconset resource="../../resources/main.qrc">
               <normaloff>:/new/prefix1/calculator.png</normaloff>:/new/prefix1/calculator.png</iconset>
             </property>
             <property name="iconSize">
@@ -746,49 +482,8 @@
              <string>Reset</string>
             </property>
             <property name="icon">
-             <iconset resource="../../../../resources/main.qrc">
+             <iconset resource="../../resources/main.qrc">
               <normaloff>:/new/prefix1/refresh.png</normaloff>:/new/prefix1/refresh.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>24</width>
-              <height>24</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="Line" name="line_2">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="graphButton">
-            <property name="text">
-             <string>Show Graph</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../../../../resources/main.qrc">
-              <normaloff>:/new/prefix1/Line Chart.png</normaloff>:/new/prefix1/Line Chart.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>24</width>
-              <height>24</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="levelGraphButton">
-            <property name="text">
-             <string>Show Field</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../../../../resources/main.qrc">
-              <normaloff>:/new/prefix1/sphere.png</normaloff>:/new/prefix1/sphere.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -814,18 +509,23 @@
          </layout>
         </widget>
        </item>
-       <item row="0" column="2">
-        <widget class="QLabel" name="label_11">
-         <property name="text">
-          <string>Score</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="3">
-        <widget class="QLabel" name="scoreLabel">
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="bufferSelectorBox">
+         <item>
+          <property name="text">
+           <string>Original</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Corners</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Corrected</string>
+          </property>
+         </item>
         </widget>
        </item>
        <item row="1" column="3">
@@ -835,6 +535,103 @@
          </property>
         </widget>
        </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="label_11">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Score</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QLabel" name="scoreLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="methodSelectorBox">
+         <property name="currentIndex">
+          <number>2</number>
+         </property>
+         <item>
+          <property name="text">
+           <string>Polynomial distortion correction</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Inversion distortion correction</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Lines distortion correction</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Default correction</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Manual correction</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Show Buffer</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Сorrection algorithm:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
      </widget>
     </widget>
@@ -843,14 +640,38 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>CheckerboardDetectionParametersControlWidget</class>
+   <extends>QWidget</extends>
+   <header>checkerboardDetectionParametersControlWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>PaintImageWidget</class>
    <extends>QWidget</extends>
    <header>paintImageWidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>LensDistortionModelParametersControlWidget</class>
+   <extends>QWidget</extends>
+   <header>lensDistortionModelParametersControlWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LineDistortionEstimatorParametersControlWidget</class>
+   <extends>QWidget</extends>
+   <header>lineDistortionEstimatorParametersControlWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CalibrationFeaturesWidget</class>
+   <extends>QWidget</extends>
+   <header>calibrationFeaturesWidget.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../../resources/main.qrc"/>
+  <include location="../../resources/main.qrc"/>
  </resources>
  <connections>
   <connection>
@@ -860,8 +681,8 @@
    <slot>showBufferChanged()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>299</x>
-     <y>86</y>
+     <x>418</x>
+     <y>262</y>
     </hint>
     <hint type="destinationlabel">
      <x>5</x>

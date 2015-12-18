@@ -1,5 +1,5 @@
 #pragma once
-#include <QtGui/QWidget>
+#include <QWidget>
 #include <QtCore/QDebug>
 
 #include "generatedParameters/baseParameters.h"
@@ -19,6 +19,8 @@ public:
     ~BaseParametersControlWidget();
 
     BaseParameters* createParameters() const;
+
+    void getParameters(BaseParameters &params) const;
     void setParameters(const BaseParameters &input);
     virtual void setParametersVirtual(void *input);
 

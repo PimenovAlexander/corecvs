@@ -1,10 +1,10 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QFile>
-#include <QtGui/QPushButton>
-#include <QtGui/QComboBox>
-#include <QtGui/QSpinBox>
-#include <QtGui/QDoubleSpinBox>
-#include <QtGui/QCheckBox>
+#include <QPushButton>
+#include <QComboBox>
+#include <QSpinBox>
+#include <QDoubleSpinBox>
+#include <QCheckBox>
 #include <QtXml/QDomDocument>
 
 #include "serializer.h"

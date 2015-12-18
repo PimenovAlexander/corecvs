@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>893</width>
-    <height>550</height>
+    <height>622</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
      <x>0</x>
      <y>0</y>
      <width>893</width>
-     <height>27</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -61,9 +61,10 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionStatistics"/>
+   <addaction name="actionCameraSettings"/>
+   <addaction name="actionColorHistogram"/>
    <addaction name="actionHistogram"/>
    <addaction name="action3DHistogram"/>
-   <addaction name="actionCameraSettings"/>
    <addaction name="separator"/>
    <addaction name="actionCorrectDistortion"/>
    <addaction name="separator"/>
@@ -104,7 +105,16 @@
      </sizepolicy>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
-     <property name="margin">
+     <property name="leftMargin">
+      <number>1</number>
+     </property>
+     <property name="topMargin">
+      <number>1</number>
+     </property>
+     <property name="rightMargin">
+      <number>1</number>
+     </property>
+     <property name="bottomMargin">
       <number>1</number>
      </property>
      <item>
@@ -123,8 +133,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>394</width>
-          <height>345</height>
+          <width>396</width>
+          <height>422</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -134,7 +144,16 @@
          </sizepolicy>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
-         <property name="margin">
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
           <number>2</number>
          </property>
          <item>
@@ -267,7 +286,7 @@ p, li { white-space: pre-wrap; }
   </widget>
   <action name="actionStatistics">
    <property name="icon">
-    <iconset resource="../../../../resources/main.qrc">
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/monitor.png</normaloff>:/new/prefix1/monitor.png</iconset>
    </property>
    <property name="text">
@@ -279,7 +298,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionHistogram">
    <property name="icon">
-    <iconset resource="../../../../resources/main.qrc">
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/chart_bar.png</normaloff>:/new/prefix1/chart_bar.png</iconset>
    </property>
    <property name="text">
@@ -291,7 +310,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionCameraSettings">
    <property name="icon">
-    <iconset resource="../../../../resources/main.qrc">
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/cctv_camera.png</normaloff>:/new/prefix1/cctv_camera.png</iconset>
    </property>
    <property name="text">
@@ -303,7 +322,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionRectify">
    <property name="icon">
-    <iconset resource="../../../../resources/main.qrc">
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/georectify.png</normaloff>:/new/prefix1/georectify.png</iconset>
    </property>
    <property name="text">
@@ -315,7 +334,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionDO">
    <property name="icon">
-    <iconset resource="../../../../resources/main.qrc">
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/lightning.png</normaloff>:/new/prefix1/lightning.png</iconset>
    </property>
    <property name="text">
@@ -327,7 +346,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionSaveParameters">
    <property name="icon">
-    <iconset resource="../../../../resources/main.qrc">
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/install.png</normaloff>:/new/prefix1/install.png</iconset>
    </property>
    <property name="text">
@@ -339,7 +358,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionLoadParameters">
    <property name="icon">
-    <iconset resource="../../../../resources/main.qrc">
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/remove.png</normaloff>:/new/prefix1/remove.png</iconset>
    </property>
    <property name="text">
@@ -361,7 +380,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_OpenInput">
    <property name="icon">
-    <iconset resource="../../../../resources/main.qrc">
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/webcam_add.png</normaloff>:/new/prefix1/webcam_add.png</iconset>
    </property>
    <property name="text">
@@ -373,7 +392,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionStartCapture">
    <property name="icon">
-    <iconset resource="../../../../resources/main.qrc">
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/play.png</normaloff>:/new/prefix1/play.png</iconset>
    </property>
    <property name="text">
@@ -388,7 +407,7 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../../../resources/main.qrc">
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/forward_alt.png</normaloff>
      <normalon>:/new/prefix1/stop.png</normalon>:/new/prefix1/forward_alt.png</iconset>
    </property>
@@ -398,7 +417,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionNextFrame">
    <property name="icon">
-    <iconset resource="../../../../resources/main.qrc">
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/refresh.png</normaloff>:/new/prefix1/refresh.png</iconset>
    </property>
    <property name="text">
@@ -413,7 +432,7 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../../../resources/main.qrc">
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/pause.png</normaloff>:/new/prefix1/pause.png</iconset>
    </property>
    <property name="text">
@@ -425,7 +444,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionCorrectDistortion">
    <property name="icon">
-    <iconset resource="../../../../resources/main.qrc">
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/sphere.png</normaloff>:/new/prefix1/sphere.png</iconset>
    </property>
    <property name="text">
@@ -434,7 +453,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionCameraCalculator">
    <property name="icon">
-    <iconset resource="../../../../resources/main.qrc">
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/calculator.png</normaloff>:/new/prefix1/calculator.png</iconset>
    </property>
    <property name="text">
@@ -449,7 +468,7 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../../../resources/main.qrc">
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/application_view_list.png</normaloff>:/new/prefix1/application_view_list.png</iconset>
    </property>
    <property name="text">
@@ -461,7 +480,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionResetRectification">
    <property name="icon">
-    <iconset resource="../../../../resources/main.qrc">
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/bullet_blue.png</normaloff>
      <normalon>:/new/prefix1/bullet_orange.png</normalon>:/new/prefix1/bullet_blue.png</iconset>
    </property>
@@ -474,7 +493,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action3DHistogram">
    <property name="icon">
-    <iconset resource="../../../../resources/main.qrc">
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/our/our/chart_bar3d.png</normaloff>:/new/our/our/chart_bar3d.png</iconset>
    </property>
    <property name="text">
@@ -489,7 +508,7 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../../../resources/main.qrc">
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/advanced.png</normaloff>:/new/prefix1/advanced.png</iconset>
    </property>
    <property name="text">
@@ -500,6 +519,18 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="shortcut">
     <string>Alt+A</string>
+   </property>
+  </action>
+  <action name="actionColorHistogram">
+   <property name="icon">
+    <iconset resource="../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/color_adjustment.png</normaloff>:/new/prefix1/color_adjustment.png</iconset>
+   </property>
+   <property name="text">
+    <string>Color Distribution Histogram</string>
+   </property>
+   <property name="toolTip">
+    <string>Color Distribution Histogram</string>
    </property>
   </action>
  </widget>
@@ -513,7 +544,7 @@ p, li { white-space: pre-wrap; }
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../resources/main.qrc"/>
  </resources>
  <connections/>
 </ui>

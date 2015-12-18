@@ -6,8 +6,8 @@
  * \author alexander
  */
 
-#include <QtGui/QImage>
-#include <QtGui/QPainter>
+#include <QImage>
+#include <QPainter>
 
 #include "global.h"
 
@@ -30,9 +30,9 @@ public:
         filterLength(_filterLength)
     {}
 
-    bool operator() (const Correspondance &corr) const
+    bool operator() (const Correspondence &corr) const
     {
-        return (corr.correspondanceLength() >= filterLength);
+        return (corr.correspondenceLength() >= filterLength);
     }
 };
 
@@ -41,7 +41,7 @@ class RemoveFilteredPredicate
 public:
     RemoveFilteredPredicate() {};
 
-    bool operator() (const Correspondance &corr) const
+    bool operator() (const Correspondence &corr) const
     {
         return !(corr.isFiltered());
     }
@@ -95,8 +95,8 @@ void UniversalRectifier::iterativeMethod( void )
     RGB24Buffer *buffer = new RGB24Buffer(right);
     for (unsigned i = 0 ; i < data->size(); i++)
     {
-        Correspondance *corr    = data->at(i);
-        Correspondance *corrPos = &(filteredList->at(i));
+        Correspondence *corr    = data->at(i);
+        Correspondence *corrPos = &(filteredList->at(i));
 
         double value = corr->value / (double)params.iterativeIterations();
         buffer->drawLineSimple(
@@ -114,7 +114,7 @@ void UniversalRectifier::iterativeMethod( void )
 
 void UniversalRectifier::manualMethod( void )
 {
-    CameraAngles euler(params.manualPitch(), params.manualYaw(), params.manualRoll());
+    CameraAnglesLegacy euler(params.manualPitch(), params.manualYaw(), params.manualRoll());
     Matrix33 R = euler.toMatrix();
     Vector3dd direction(params.manualX(), params.manualY(), params.manualZ());
     direction.normalise();
@@ -244,7 +244,7 @@ void UniversalRectifier::recalculate(void)
         status = "Too few matches at input";
         return;
     }
-    list = new DerivedCorrespondanceList(inputList);
+    list = new DerivedCorrespondenceList(inputList);
 
     /**
      * Clear the flags
@@ -263,8 +263,8 @@ void UniversalRectifier::recalculate(void)
 
 
     /* First prepare the common output */
-    CameraIntrinsics cameraLeft (inputList->getSize(), inputList->getSize() / 2.0, focalLeft , 1.0);
-    CameraIntrinsics cameraRight(inputList->getSize(), inputList->getSize() / 2.0, focalRight, 1.0);
+    CameraIntrinsicsLegacy cameraLeft (inputList->getSize(), inputList->getSize() / 2.0, focalLeft , 1.0);
+    CameraIntrinsicsLegacy cameraRight(inputList->getSize(), inputList->getSize() / 2.0, focalRight, 1.0);
 
 #if 0
     PrinterVisitor visitor;
@@ -290,24 +290,24 @@ void UniversalRectifier::recalculate(void)
     }
 
     RemoveFilteredPredicate kltFiltered;
-    postKlt = new DerivedCorrespondanceList(
+    postKlt = new DerivedCorrespondenceList(
             list,
             kltFiltered,
-            (int)Correspondance::FLAG_FILTERED_KLT);
+            (int)Correspondence::FLAG_FILTERED_KLT);
 
     /* Then length filtering */
     LengthFilterPredicate lenFilter(params.filterMinimumLength());
-    filteredList = new DerivedCorrespondanceList(
+    filteredList = new DerivedCorrespondenceList(
             postKlt,
             lenFilter,
-            (int)Correspondance::FLAG_FILTERED_SHORT);
+            (int)Correspondence::FLAG_FILTERED_SHORT);
 
     /* Filtering finished we can select correspondences that are left and form input data */
     cout << "Input " << list->size() << " correspondences" << endl;
     cout << "After Klt Filtering " << postKlt->size()      << " correspondences" << endl;
     cout << "After Len Filtering " << filteredList->size() << " correspondences" << endl;
 
-    normalList = new DerivedCorrespondanceList(filteredList);
+    normalList = new DerivedCorrespondenceList(filteredList);
     data = normalList->toArrayOfPointers();
 
     /* In case of essential estimation data should be transformed to the view of normalized camera */
@@ -358,7 +358,7 @@ void UniversalRectifier::recalculate(void)
     printf("Global Fundamental Matrix:\n");
     result.F.print();
     printf("Global Fundamental Matrix cost:");
-    vector<Correspondance *> inputListPtr;
+    vector<Correspondence *> inputListPtr;
     for (unsigned i = 0; i < inputList->size(); i++) {
         inputListPtr.push_back(&(inputList->at(i)));
     }
@@ -398,12 +398,12 @@ void UniversalRectifier::recalculate(void)
     }
 
     /* One more cost computation */
-    vector<Correspondance>   alignedList;
-    vector<Correspondance *> alignedPtrList;
+    vector<Correspondence>   alignedList;
+    vector<Correspondence *> alignedPtrList;
     for (unsigned i = 0; i < inputList->size(); i++)
     {
-        Correspondance input = inputList->at(i);
-        Correspondance output;
+        Correspondence input = inputList->at(i);
+        Correspondence output;
         output.start = result.rightTransform * input.start;
         output.end   = result.leftTransform  * input.end;
 
@@ -427,7 +427,7 @@ void UniversalRectifier::recalculate(void)
         for (unsigned i = 0; i < normalList->size(); i++)
         {
             double d1, d2, err;
-            Correspondance corr = normalList->at(i);
+            Correspondence corr = normalList->at(i);
             result.decomposition.getScaler(corr , d1, d2, err);
             Vector3dd point(corr.start, 1.0);
             point *= d1;

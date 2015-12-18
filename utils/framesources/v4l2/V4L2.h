@@ -141,6 +141,8 @@ public:
     int getCaptureName(string &name);
     int getCaptureFormats(int *num, ImageCaptureInterface::CameraFormat *&formats);
 
+     std::string getSerialNumber();
+
 private:
     int queryParmeter(const uint32_t propID, v4l2_queryctrl &request) const;
     int setParmeter  (const uint32_t propID, int  value) const;
@@ -163,7 +165,8 @@ public:
    static CameraParameters::CameraControls  getViIdByProp(uint32_t v4l2Id);
 
 
-    ~V4L2CameraDescriptor();
+   ~V4L2CameraDescriptor();
+
 };
 
 

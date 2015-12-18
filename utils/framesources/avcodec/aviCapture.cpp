@@ -138,8 +138,8 @@ ImageCaptureInterface::FramePair AviCapture::getFrame()
         }
 
 
-        result.leftTimeStamp  = count * 10;
-        result.rightTimeStamp = count * 10;
+        result.timeStampLeft  = count * 10;
+        result.timeStampRight  = count * 10;
 
     //mProtectFrame.unlock();
     stats.values[CaptureStatistics::DECODING_TIME] = start.usecsToNow();

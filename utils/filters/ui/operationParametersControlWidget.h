@@ -1,5 +1,5 @@
 #pragma once
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "generated/operationParameters.h"
 #include "ui_operationParametersControlWidget.h"
 #include "parametersControlWidgetBase.h"
@@ -19,6 +19,7 @@ public:
     ~OperationParametersControlWidget();
 
     OperationParameters* createParameters() const;
+    void getParameters(OperationParameters &params) const;
     void setParameters(const OperationParameters &input);
     virtual void setParametersVirtual(void *input);
 

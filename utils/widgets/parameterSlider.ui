@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>507</width>
-    <height>55</height>
+    <height>57</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,14 +20,23 @@
    <string>ParameterSlider</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <property name="horizontalSpacing">
-    <number>-1</number>
+    <number>7</number>
    </property>
    <property name="verticalSpacing">
     <number>2</number>
-   </property>
-   <property name="margin">
-    <number>0</number>
    </property>
    <item row="0" column="0" colspan="4">
     <widget class="QLabel" name="label">
@@ -74,7 +83,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="../../../../resources/main.qrc">
+      <iconset resource="../../../restricted/resources/resresource.qrc">
        <normaloff>:/new/prefix1/refresh.png</normaloff>:/new/prefix1/refresh.png</iconset>
      </property>
      <property name="iconSize">
@@ -155,7 +164,7 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../restricted/resources/resresource.qrc"/>
  </resources>
  <connections>
   <connection>
@@ -170,7 +179,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>33</x>
-     <y>98</y>
+     <y>56</y>
     </hint>
    </hints>
   </connection>
@@ -181,12 +190,12 @@
    <slot>sliderChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>183</x>
-     <y>46</y>
+     <x>273</x>
+     <y>34</y>
     </hint>
     <hint type="destinationlabel">
      <x>187</x>
-     <y>88</y>
+     <y>56</y>
     </hint>
    </hints>
   </connection>

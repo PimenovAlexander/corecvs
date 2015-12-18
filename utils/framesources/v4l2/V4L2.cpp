@@ -12,8 +12,13 @@
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <libgen.h>
+
 #include "V4L2.h"
 
+//#define PROFILE_DEQUEUE
 #ifdef PROFILE_DEQUEUE
 #define TRACE_DEQUEUE(X) printf X
 #else
@@ -69,7 +74,7 @@ int V4L2CameraDescriptor::initCamera(
 
     formatH = format.fmt.pix.height;
     formatW = format.fmt.pix.width;
-    printf("Set dimensions [%d x %d] for camera %s\n", format.fmt.pix.width, format.fmt.pix.height, deviceName.c_str());
+    SYNC_PRINT(("Set dimensions [%d x %d] for camera %s\n", format.fmt.pix.width, format.fmt.pix.height, deviceName.c_str()));
 
     /* Setting up FPS */
     struct v4l2_streamparm streamparm;
@@ -79,11 +84,23 @@ int V4L2CameraDescriptor::initCamera(
     streamparm.parm.capture.timeperframe.numerator = fpsnum;
     streamparm.parm.capture.timeperframe.denominator = fpsdenum;
 
+    SYNC_PRINT(("Setting fps [%d / %d] for camera %s\n",
+                streamparm.parm.capture.timeperframe.numerator,
+                streamparm.parm.capture.timeperframe.denominator,
+                deviceName.c_str()));
+
+
     if(ioctl( deviceHandle, VIDIOC_S_PARM, &streamparm) == -1)
     {
         SYNC_PRINT(("Unable to set FPS for camera %s \n", deviceName.c_str()));
         return 3;
     }
+
+    SYNC_PRINT(("Set fps [%d / %d] for camera %s\n",
+                streamparm.parm.capture.timeperframe.numerator,
+                streamparm.parm.capture.timeperframe.denominator,
+                deviceName.c_str()));
+
 
     /*
     v4l2_control req;
@@ -244,7 +261,7 @@ V4L2CameraDescriptor::~V4L2CameraDescriptor()
 int V4L2CameraDescriptor::start()
 {
     if (state != STOPPED) {
-        SYNC_PRINT(("V4L2CameraDescriptor::Trying to start camera in state <%s>\n", STATE_NAMES[state]));
+        SYNC_PRINT(("V4L2CameraDescriptor::Trying to start camera <%s> in state <%s>\n", camFileName.c_str(), STATE_NAMES[state]));
         return -1;
     }
 
@@ -293,9 +310,9 @@ int V4L2CameraDescriptor::stop()
 
 int V4L2CameraDescriptor::dequeue( V4L2BufferDescriptor &bufferDescr)
 {
-	if (deviceHandle == INVALID_HANDLE) {
-		return 1;
-	}
+    if (deviceHandle == INVALID_HANDLE) {
+        return 1;
+    }
 
     bufferDescr.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     bufferDescr.memory = V4L2_MEMORY_MMAP;
@@ -320,7 +337,7 @@ int V4L2CameraDescriptor::dequeue( V4L2BufferDescriptor &bufferDescr)
     }
 
     queued--;
-    TRACE_DEQUEUE(("Dequeued %d (%x) [%d]\n", bufferDescr.index, cam->deviceHandle, cam->queued));
+    TRACE_DEQUEUE(("Dequeued %d (%x) [%d]\n", bufferDescr.index, deviceHandle, queued));
 
     bufferDescr.isFilled = true;
     return 0;
@@ -328,24 +345,24 @@ int V4L2CameraDescriptor::dequeue( V4L2BufferDescriptor &bufferDescr)
 
 int V4L2CameraDescriptor::enqueue(V4L2BufferDescriptor buffer)
 {
-	if (deviceHandle == INVALID_HANDLE) {
-		return 1;
-	}
+    if (deviceHandle == INVALID_HANDLE) {
+        return 1;
+    }
 
     if (!buffer.isFilled)
     {
-        printf("Empty Buffer. Will not enqueue\n");
+        printf("V4L2CameraDescriptor::enqueue():Empty Buffer. Will not enqueue\n");
         return 0;
     }
 
     if (ioctl (deviceHandle, VIDIOC_QBUF, &buffer) == -1)
     {
-        printf ("Unable to requeue buffer (%d).\n", errno);
+        printf ("V4L2CameraDescriptor::enqueue():Unable to requeue buffer (%d).\n", errno);
         return 1;
     }
 
     queued++;
-    TRACE_DEQUEUE(("Enqueued %d (%x) [%d]\n", buffer.index, cam->deviceHandle,  cam->queued));
+    TRACE_DEQUEUE(("Enqueued %d (%x) [%d]\n", buffer.index, deviceHandle,  queued));
     return 0;
 }
 
@@ -574,7 +591,9 @@ int V4L2CameraDescriptor::getCaptureName(string &name)
 
 int V4L2CameraDescriptor::getCaptureFormats(int *num, ImageCaptureInterface::CameraFormat *&formats)
 {
+    SYNC_PRINT(("V4L2CameraDescriptor::getCaptureFormats()"));
     if (deviceHandle == INVALID_HANDLE) {
+        SYNC_PRINT(("V4L2CameraDescriptor::getCaptureFormats(): deviceHandle == INVALID_HANDLE"));
         return -1;
     }
     vector<ImageCaptureInterface::CameraFormat> cameraFormats;
@@ -627,5 +646,77 @@ int V4L2CameraDescriptor::getCaptureFormats(int *num, ImageCaptureInterface::Cam
         formats[i] = cameraFormats[i];
     }
     return 0;
+}
+
+std::string V4L2CameraDescriptor::getSerialNumber()
+{
+    // First we need to locate the device on the bus
+
+    struct stat buf;
+
+   if (fstat(deviceHandle, &buf) == 1)
+   {
+       SYNC_PRINT(("fstat call failed with %s", strerror(errno)));
+       return "none";
+   }
+
+   int major_id = major(buf.st_rdev);
+   int minor_id = minor(buf.st_rdev);
+
+   SYNC_PRINT(("V4L2CameraDescriptor::getSerialNumber():"
+               "device %s major %d minor %d\n",
+               camFileName.c_str(),
+
+               major_id,
+               minor_id));
+
+   char deviceSysPath[1024] = "";
+   char linkPath[1024] = "";
+   snprintf(deviceSysPath, CORE_COUNT_OF(deviceSysPath), "/sys/dev/char/%d:%d/device", major_id, minor_id);
+   ssize_t err = readlink(deviceSysPath, linkPath, CORE_COUNT_OF(linkPath));
+   if (err == -1)
+   {
+       SYNC_PRINT(("V4L2CameraDescriptor::getSerialNumber():Opening device softlink failed\n"));
+   }
+
+   SYNC_PRINT(("V4L2CameraDescriptor::getSerialNumber():Opening device softlink <%s> -> <%s>\n", deviceSysPath, linkPath));
+   /* Going for particular interface to the device */
+   snprintf(deviceSysPath, CORE_COUNT_OF(deviceSysPath), "/sys/dev/char/%d:%d/%s/../serial", major_id, minor_id, linkPath);
+
+   std::string result;
+
+   SYNC_PRINT(("V4L2CameraDescriptor::getSerialNumber():USB device serial path <%s>\n", deviceSysPath));
+   char *serial = NULL;
+   size_t len;
+   FILE *serialFile = fopen(deviceSysPath, "rt");
+   if (serialFile != NULL)
+   {
+         err = getline(&serial, &len, serialFile);
+         if (err == -1)
+         {
+             SYNC_PRINT(("V4L2CameraDescriptor::getSerialNumber():Error reading the line\n"));
+         }
+
+         for (size_t i = 0; i < strlen(serial); i++)
+         {
+             if (serial[i] == '\n' || serial[i] == '\r' ) serial[i] = 0;
+         }
+         fclose(serialFile);
+
+
+        SYNC_PRINT(("V4L2CameraDescriptor::getSerialNumber():Serial <%s>\n", serial));
+        result = serial;
+        free(serial);
+   } else {
+        SYNC_PRINT(("V4L2CameraDescriptor::getSerialNumber():serialFile is NULL\n"));
+   }
+
+   char *usbData = basename(linkPath);
+   SYNC_PRINT(("V4L2CameraDescriptor::getSerialNumber(): Usbpath <%s>\n", usbData));
+   result = usbData;
+
+   SYNC_PRINT(("V4L2CameraDescriptor::getSerialNumber(): returning <%s>\n", result.c_str()));
+   return result;
+
 }
 

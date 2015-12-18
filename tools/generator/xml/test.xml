@@ -1,0 +1,18 @@
+<poco version="5.0">
+ 
+  
+  <class name="Test Class" description="Recorder parameters">
+    <field type="int" name="p1x"   defaultValue="0"/>
+    <field type="int" name="p1y"   defaultValue="0"/>
+    <field type="int" name="p2x"   defaultValue="0"/>
+    <field type="int" name="p2y"   defaultValue="0"/>    
+  </class> 
+  
+  <class name="TestArray" description="Recorder parameters">
+    <field name="test1" type="Test Class" size="1"/>
+    
+  </class> 
+      
+
+  
+</poco>

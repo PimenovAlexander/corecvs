@@ -1,3 +1,17 @@
+# try use global config
+exists(../../../../config.pri) {
+    ROOT_DIR=../../../..
+    #message(Using global config)
+    ROOT_DIR=$$PWD/$$ROOT_DIR
+    include($$ROOT_DIR/config.pri)
+} else {
+    message(Using local config)
+    ROOT_DIR=../..
+    ROOT_DIR=$$PWD/$$ROOT_DIR
+    include($$ROOT_DIR/cvs-config.pri)
+}
+
+
 TEMPLATE = app
 TARGET   = generator
 QT      += core xml
@@ -5,9 +19,6 @@ QT      -= gui
 CONFIG  += console
 CONFIG  -= app_bundle
 CONFIG  += debug
-
-ROOT_DIR=../../../..
-include($$ROOT_DIR/config.pri)
 
 OBJECTS_DIR = $$ROOT_DIR/.obj/generator$$BUILD_CFG_NAME
 MOC_DIR  = $$OBJECTS_DIR

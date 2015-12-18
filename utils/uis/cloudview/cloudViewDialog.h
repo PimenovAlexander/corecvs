@@ -2,9 +2,9 @@
 
 #include <vector>
 #include <QtCore/QObject>
-#include <QtGui/QDialog>
-#include <QtGui/QFileDialog>
-#include <QtGui/QImage>
+#include <QDialog>
+#include <QFileDialog>
+#include <QImage>
 
 #include "global.h"
 
@@ -44,6 +44,8 @@ public:
     ~CloudViewDialog();
 
 public slots:
+    void setCollapseTree(bool collapse);
+
     void downRotate();
     void upRotate();
     void leftRotate();
@@ -77,6 +79,8 @@ public slots:
     void savePointsPCD();
     void savePointsPLY();
 
+    /* Tree manipulation functions */
+    void toggledVisibility();
 //    void treeItemClicked(QTreeWidgetItem *, int);
 
     /* Load New Mesh*/
@@ -90,7 +94,7 @@ public slots:
 public:
     Ui_CloudViewDialogClass mUi;
 
-    enum SceneId{
+    enum SceneId {
         MAIN_SCENE,
         ADDITIONAL_SCENE,
         CAMERA_PAIR,
@@ -103,6 +107,11 @@ public:
         CLUSTER_ZONE,
         CLUSTER_SWARM,
         HEAD_SEARCH_ZONE,
+
+        HAND_1,
+        HAND_2,
+        HAND_FIRST = HAND_1,
+        HAND_LAST  = HAND_2,
         /* Should be the last one*/
         SCENE_NUMBER
     };
@@ -147,11 +156,13 @@ protected:
     /* OpenGL textures */
 public:
     GLuint mFancyTexture;
+    TreeSceneController* addSubObject (QString name, QSharedPointer<Scene3D> scene, bool visible = true);
+    void addMesh(QString name, Mesh3D *mesh);
 private:
     GLuint mCameraTexture[Frames::MAX_INPUTS_NUMBER];
 
 protected:
-    TreeSceneController* addSubObject (QString name, QSharedPointer<Scene3D> scene, bool visible = true);
+
 
     void setZoom(double value);
     void zoom(int delta);

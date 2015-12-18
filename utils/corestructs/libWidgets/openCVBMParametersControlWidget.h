@@ -1,5 +1,5 @@
 #pragma once
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "openCVBMParameters.h"
 #include "ui_openCVBMParametersControlWidget.h"
 #include "parametersControlWidgetBase.h"
@@ -18,6 +18,7 @@ public:
     ~OpenCVBMParametersControlWidget();
 
     OpenCVBMParameters* createParameters() const;
+    void getParameters(OpenCVBMParameters &params) const;
     void setParameters(const OpenCVBMParameters &input);
     virtual void setParametersVirtual(void *input);
 

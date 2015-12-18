@@ -1,33 +1,16 @@
-#ifndef GRAPHPLOTDIALOG_H
-#define GRAPHPLOTDIALOG_H
+#ifndef GRAPH_PLOT_DIALOG_H
+#define GRAPH_PLOT_DIALOG_H
 
 #include <deque>
-#include <QtGui/QWidget>
-#include <QtGui/QtGui>
+#include <QWidget>
+#include <QtGui>
 #include <QtXml/QDomDocument>
 
+#include "graphData.h"
 #include "ui_graphPlotDialog.h"
 
-using namespace std;
-
-class GraphValue
-{
-public:
-    double value;
-    bool isValid;
-
-    explicit GraphValue(double _value, bool _isValid = true) :
-        value(_value), isValid(_isValid)
-    {}
-};
-
-class GraphHistory : public deque<GraphValue>
-{
-public:
-    bool isSelected;
-    QString name;
-};
-
+using std::vector;
+using std::deque;
 
 class GraphPlotDialog : public ViAreaWidget, public SaveableWidget
 {
@@ -51,8 +34,8 @@ public:
     void update(void);
 
     /* Automatic saving and loading */
-    virtual void loadFromQSettings(const QString &fileName, QString _root);
-    virtual void saveToQSettings  (const QString &fileName, QString _root);
+    virtual void loadFromQSettings(const QString &fileName, const QString &_root);
+    virtual void saveToQSettings  (const QString &fileName, const QString &_root);
 
 public slots:
     /* Repaint graphs */
@@ -80,9 +63,6 @@ public slots:
     /* Set snapshot point for values of graphs */
     void setSnapshotValue(QMouseEvent*);
 
-signals:
-    void newTimeSelected(int value);
-
 private:
     Ui::GraphPlotDialogClass mUi;
     QSharedPointer<GraphPlotParameters> mGraphPlotParameters;
@@ -104,6 +84,8 @@ private:
     /* Draw line to monitor values */
     void drawGridFixLine(QPainter &painter);
 
+    void addNewGraphToUI(unsigned graphId);
+
     QSignalMapper *mUpDownMapper;
 //    ParametersMapperGraphPlot *mParamMapper;
 
@@ -119,4 +101,4 @@ public:
     }
 };
 
-#endif // GRAPHPLOTDIALOG_H
+#endif // GRAPH_PLOT_DIALOG_H

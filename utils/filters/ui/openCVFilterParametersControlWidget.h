@@ -1,5 +1,5 @@
 #pragma once
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "generated/openCVFilterParameters.h"
 #include "ui_openCVFilterParametersControlWidget.h"
 #include "filterParametersControlWidgetBase.h"
@@ -18,6 +18,7 @@ public:
     ~OpenCVFilterParametersControlWidget();
 
     OpenCVFilterParameters* createParameters() const;
+    void getParameters(OpenCVFilterParameters& params) const;
     void setParameters(const OpenCVFilterParameters &input);
     virtual void setParametersVirtual(void *input);
 

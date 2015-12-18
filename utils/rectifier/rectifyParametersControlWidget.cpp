@@ -80,6 +80,49 @@ void RectifyParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void RectifyParametersControlWidget::getParameters(RectifyParameters& params) const
+{
+
+    params.setMatchingMethod   (static_cast<MatchingMethodType::MatchingMethodType>(mUi->matchingMethodComboBox->currentIndex()));
+    params.setHessianThreshold (mUi->hessianThresholdSpinBox->value());
+    params.setOctaves          (mUi->octavesSpinBox->value());
+    params.setOctaveLayers     (mUi->octaveLayersSpinBox->value());
+    params.setExtended         (mUi->extendedCheckBox->isChecked());
+    params.setFilterMinimumLength(mUi->filterMinimumLengthSpinBox->value());
+    params.setUseKLT           (mUi->useKLTCheckBox->isChecked());
+    params.setComputeEssential (mUi->computeEssentialCheckBox->isChecked());
+    params.setPriorFocal       (mUi->priorFocalSpinBox->value());
+    params.setPriorFocal2      (mUi->priorFocal2SpinBox->value());
+    params.setBaselineLength   (mUi->baselineLengthSpinBox->value());
+    params.setFovAngle         (mUi->fovAngleSpinBox->value());
+    params.setEstimationMethod (static_cast<EstimationMethodType::EstimationMethodType>(mUi->estimationMethodComboBox->currentIndex()));
+    params.setNormalise        (mUi->normaliseCheckBox->isChecked());
+    params.setRansacIterations (mUi->ransacIterationsSpinBox->value());
+    params.setRansacTestSize   (mUi->ransacTestSizeSpinBox->value());
+    params.setRansacThreshold  (mUi->ransacThresholdSpinBox->value());
+    params.setBaselineX        (mUi->baselineXSpinBox->value());
+    params.setBaselineY        (mUi->baselineYSpinBox->value());
+    params.setBaselineZ        (mUi->baselineZSpinBox->value());
+    params.setIterativeMethod  (static_cast<OptimizationMethodType::OptimizationMethodType>(mUi->iterativeMethodComboBox->currentIndex()));
+    params.setIterativeIterations(mUi->iterativeIterationsSpinBox->value());
+    params.setIterativeInitialSigma(mUi->iterativeInitialSigmaSpinBox->value());
+    params.setIterativeFactorSigma(mUi->iterativeFactorSigmaSpinBox->value());
+    params.setManualX          (mUi->manualXSpinBox->value());
+    params.setManualY          (mUi->manualYSpinBox->value());
+    params.setManualZ          (mUi->manualZSpinBox->value());
+    params.setManualPitch      (mUi->manualPitchSpinBox->value());
+    params.setManualYaw        (mUi->manualYawSpinBox->value());
+    params.setManualRoll       (mUi->manualRollSpinBox->value());
+    params.setZdirX            (mUi->zdirXSpinBox->value());
+    params.setZdirY            (mUi->zdirYSpinBox->value());
+    params.setZdirZ            (mUi->zdirZSpinBox->value());
+    params.setAutoZ            (mUi->autoZCheckBox->isChecked());
+    params.setAutoShift        (mUi->autoShiftCheckBox->isChecked());
+    params.setPreShift         (mUi->preShiftSpinBox->value());
+    params.setGuessShiftThreshold(mUi->guessShiftThresholdSpinBox->value());
+
+}
 
 RectifyParameters *RectifyParametersControlWidget::createParameters() const
 {

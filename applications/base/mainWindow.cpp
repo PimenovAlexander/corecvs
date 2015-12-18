@@ -8,7 +8,7 @@ MainWindow::MainWindow(BaseHostDialog *dialog, const QString &source,
     , mMainDialog(dialog)
 {
     mUi->setupUi(this);
-    Log::mLogDrains.push_back(mUi->loggingWidget);
+    Log::mLogDrains.add(mUi->loggingWidget);
 
     mMainDialog->init(mUi->widget);
 //    mMainDialog->init(mUi->scrollAreaWidgetContents);
@@ -54,6 +54,7 @@ void MainWindow::connectActions()
     connect(mUi->actionHistogram,          SIGNAL(triggered()), mMainDialog, SLOT(showHistogram()));
     connect(mUi->action3DHistogram,        SIGNAL(triggered()), mMainDialog, SLOT(show3DHistogram()));
     connect(mUi->actionCameraSettings,     SIGNAL(triggered()), mMainDialog, SLOT(showCaptureSettings()));
+    connect(mUi->actionColorHistogram,     SIGNAL(triggered()), mMainDialog, SLOT(showColorHistogram()));
     connect(mUi->actionRectify,            SIGNAL(triggered()), mMainDialog, SLOT(showRectificationDialog()));
     connect(mUi->actionAbout,              SIGNAL(triggered()), mMainDialog, SLOT(showAboutDialog()));
     connect(mUi->actionDO,                 SIGNAL(triggered()), mMainDialog, SLOT(doRectify()));
@@ -93,6 +94,11 @@ void MainWindow::keyPressEvent(QKeyEvent * event)
     }
 
     event->ignore();
+}
+
+void MainWindow::addMainPanelAction(QAction *action)
+{
+    mUi->toolBar->addAction(action);
 }
 
 void MainWindow::createAdditionalMenu()

@@ -1,15 +1,18 @@
 #include "directShow.h"
+#include "log.h"
 
-
-const char* DirectShowCameraDescriptor::codec_names[] =
-{
-        "yuv",
-        "rgb",
-        "mjpeg",
-        "mjpeg fast decoder"
+cchar* DirectShowCameraDescriptor::codec_names[] = {
+    "yuyv",  "rgb",   "mjpeg",   "fjpeg"
 };
 
-void DirectShowCameraDescriptor::setFromCameraParam(CaptureParameter &param,CameraParameter &camParam)
+CAPTURE_FORMAT_TYPE DirectShowCameraDescriptor::codec_types[] = {
+    CAP_YUV, CAP_RGB, CAP_MJPEG, CAP_MJPEG //, CAP_I420
+};
+
+uint DirectShowCameraDescriptor::codec_size = CORE_COUNT_OF(codec_names);
+
+
+void DirectShowCameraDescriptor::setFromCameraParam(CaptureParameter &param, CameraParameter &camParam)
 {
     param = CaptureParameter();
     param.setActive      (true);
@@ -18,8 +21,6 @@ void DirectShowCameraDescriptor::setFromCameraParam(CaptureParameter &param,Came
     param.setStep        (camParam.step);
     param.setDefaultValue(camParam.defaultValue);
 }
-
-
 
 int DirectShowCameraDescriptor::queryCameraParameters(CameraParameters &parameters)
 {
@@ -98,7 +99,6 @@ int DirectShowCameraDescriptor::setCaptureProperty(int id, int value)
             DirectShowCapDll_getCameraProp(deviceHandle, CAPDLL_Control_Exposure, &param);
             param.isAuto = value;
             DirectShowCapDll_setCameraProp(deviceHandle, CAPDLL_Control_Exposure, &param);
-
             break;
         }
 
@@ -135,7 +135,6 @@ int DirectShowCameraDescriptor::setCaptureProperty(int id, int value)
             DirectShowCapDll_getCameraProp(deviceHandle, CAPDLL_Control_Focus, &param);
             param.isAuto = value;
             DirectShowCapDll_setCameraProp(deviceHandle, CAPDLL_Control_Focus, &param);
-
             break;
         }
 
@@ -202,11 +201,20 @@ int DirectShowCameraDescriptor::setCaptureProperty(int id, int value)
             break;
         }
 
+        case CameraParameters::BRIGHTNESS:
+        {
+            CameraParameter param;
+            DirectShowCapDll_getCameraProp(deviceHandle, CAPDLL_AMP_Brightness, &param);
+            param.value = value;
+            DirectShowCapDll_setCameraProp(deviceHandle, CAPDLL_AMP_Brightness, &param);
+            break;
+        }
+
         default:
-            {
-                printf("Set request for unknown parameter (%d)\n", id);
-                return 1;
-            }
+        {
+            L_WARNING_P("Set request for unknown parameter (%d)", id);
+            return 1;
+        }
     }
 
     return 0;
@@ -313,9 +321,17 @@ int DirectShowCameraDescriptor::getCaptureProperty(int id, int *value)
             break;
         }
 
+        case CameraParameters::BRIGHTNESS:
+        {
+            CameraParameter param;
+            DirectShowCapDll_getCameraProp(deviceHandle, CAPDLL_AMP_Brightness, &param);
+            *value = param.value;
+            break;
+        }
+
         default:
         {
-            printf("Set request for unknown parameter (%d)\n", id);
+            L_WARNING_P("Set request for unknown parameter (%d)", id);
             return 1;
         }
     }

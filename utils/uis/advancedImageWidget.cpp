@@ -5,21 +5,20 @@
  * \author Olga Sapershteyn
  * \author Alexander Pimenov
  */
-
-
 #include <QtCore/QDebug>
-#include <QtGui/QPainter>
-#include <QtGui/QFileDialog>
-#include <QtGui/QMouseEvent>
+#include <QPainter>
+#include <QFileDialog>
+#include <QMouseEvent>
 
 #include "global.h"
 
 #include "advancedImageWidget.h"
 #include "saveFlowSettings.h"
 #include "mathUtils.h"
+#include "qtHelper.h"
 
-AdvancedImageWidget::AdvancedImageWidget(QWidget *parent, bool showHeader):
-    ViAreaWidget(parent, false)
+AdvancedImageWidget::AdvancedImageWidget(QWidget *parent, bool showHeader)
+  : ViAreaWidget(parent, false)
   , mImage(NULL)
   , mIsFreezed(false)
     /* Icons */
@@ -38,7 +37,6 @@ AdvancedImageWidget::AdvancedImageWidget(QWidget *parent, bool showHeader):
   , mCurrentPointButton(0)
   , mCurrentLineButton(0)
   , mImageSize(QSize())
-
 {
     mUi->setupUi(this);
     mSaveDialog = new SaveFlowSettings();
@@ -51,7 +49,7 @@ AdvancedImageWidget::AdvancedImageWidget(QWidget *parent, bool showHeader):
 
     if (!showHeader)
     {
-        mUi->frame_2->hide();
+        mUi->frame_2 ->hide();
         mUi->widget_2->hide();
     }
 
@@ -76,7 +74,6 @@ AdvancedImageWidget::AdvancedImageWidget(QWidget *parent, bool showHeader):
 
     connect(&mToolMapper, SIGNAL(mapped(QWidget *)), this, SLOT(toolButtonReleased(QWidget *)));
     mCurrentToolClass = NO_TOOL;
-
 }
 
 AdvancedImageWidget::~AdvancedImageWidget()
@@ -84,6 +81,18 @@ AdvancedImageWidget::~AdvancedImageWidget()
     delete_safe(mUi);
     delete_safe(mSaveDialog);
     delete_safe(mResizeCache);
+}
+
+void AdvancedImageWidget::setCollapseTitle(bool collapse)
+{
+    QList<int> sizes;
+    if (collapse) {
+        sizes << 0 << 1;
+    } else {
+        sizes << 1 << 1;
+    }
+
+    mUi->splitter->setSizes(sizes);
 }
 
 void AdvancedImageWidget::setImage(QSharedPointer<QImage> newImage)
@@ -96,7 +105,7 @@ void AdvancedImageWidget::setImage(QSharedPointer<QImage> newImage)
 
     mImage = newImage;
 
-    delete_safe(mResizeCache);
+    delete_safe(mResizeCache), mResizeCache = NULL;
 
     if (mSaveProcStarted)
     {
@@ -111,8 +120,7 @@ void AdvancedImageWidget::setImage(QSharedPointer<QImage> newImage)
         saveFlowImage(mResizeCache);
     }
 
-    if ((!mImage.isNull() && mImageSize != mImage->size())
-            || (mZoomCenter == QPoint(-1,-1)))
+    if ((!mImage.isNull() && mImageSize != mImage->size()) || (mZoomCenter == QPoint(-1,-1)))
     {
         mImageSize = mImage->size();
         recalculateZoomCenter();
@@ -121,7 +129,7 @@ void AdvancedImageWidget::setImage(QSharedPointer<QImage> newImage)
     mUi->widget->update();
 }
 
-void AdvancedImageWidget::drawResized (QPainter &painter)
+void AdvancedImageWidget::drawResized(QPainter &painter)
 {
     if (mImage.isNull())
     {
@@ -129,40 +137,80 @@ void AdvancedImageWidget::drawResized (QPainter &painter)
         return;
     }
 
-    // We should keep the trivial transform really trivial
-    /*if (mOutputRect == mInputRect) {
-        printf("Trivial transform\n");
-    } else {
-        qDebug() << mOutputRect << " - " << mInputRect << endl;
-    }*/
+    if (mUi->rotationComboBox->currentIndex() == 0)
+    {
+        painter.drawImage(mOutputRect, *mImage, mInputRect);
+        return;
+    }
 
-    painter.drawImage(mOutputRect, *mImage, mInputRect);
+    /** There is extra copy here. Should be fixed **/
+    QTransform transform;
+    QImage cropped = mImage->copy(mInputRect);
+
+    switch (mUi->rotationComboBox->currentIndex())
+    {
+        case 1 : transform.rotate( 90); break;
+        case 2 : transform.rotate(180); break;
+        case 3 : transform.rotate(270); break;
+    }
+
+    QImage rotated = cropped.transformed(transform);
+//    qDebug() << "Image before resize" << rotated.size();
+
+    painter.drawImage(mOutputRect, rotated);
 }
 
 QPointF AdvancedImageWidget::widgetToImageF(const QPointF &p)
 {
-    double hAspect = (double)mInputRect.height() / mOutputRect.height();
-    double wAspect = (double)mInputRect.width()  / mOutputRect.width();
+    if (mOutputRect.height() == 0 || mOutputRect.width() == 0 ||
+        mInputRect .height() == 0 || mInputRect .width() == 0)
+    {
+        return p;
+    }
 
-    double x = (p.x() - mOutputRect.left()) * wAspect + mInputRect.x();
-    double y = (p.y() - mOutputRect.top())  * hAspect + mInputRect.y();
+    double x1 = (double)(p.x() - mOutputRect.left()) / (mOutputRect. width());
+    double y1 = (double)(p.y() - mOutputRect. top()) / (mOutputRect.height());
+    double x2 = x1;
+    double y2 = y1;
+
+    switch (mUi->rotationComboBox->currentIndex()) {
+        case 3: x2 = 1.0 - y1; y2 = x1;       break; /*  -90 */
+        case 2: x2 = 1.0 - x1; y2 = 1.0 - y1; break; /* -180 */
+        case 1: x2 =       y1; y2 = 1.0 - x1; break; /* -270 */
+        default:
+            break;
+    }
+
+    double x = x2 * (mInputRect.width() ) + mInputRect.x();
+    double y = y2 * (mInputRect.height()) + mInputRect.y();
 
     return QPointF(x,y);
 }
 
 QPointF AdvancedImageWidget::imageToWidgetF(const QPointF &p)
 {
-    if (mOutputRect.height() == 0 || mInputRect.height() == 0 ||
-        mInputRect.height() == 0 || mInputRect.height() == 0)
+    if (mOutputRect.height() == 0 || mOutputRect.width() == 0 ||
+        mInputRect .height() == 0 || mInputRect .width() == 0)
     {
         return p;
     }
 
-    double hAspect = (double)mInputRect.height() / mOutputRect.height();
-    double wAspect = (double)mInputRect.width()  / mOutputRect.width();
+    double x1 = (double)(p.x() - mInputRect.x()) / (mInputRect. width());
+    double y1 = (double)(p.y() - mInputRect.y()) / (mInputRect.height());
+    double x2 = x1;
+    double y2 = y1;
 
-    double resultX = (p.x() - mInputRect.x()) / wAspect + mOutputRect.left();
-    double resultY = (p.y() - mInputRect.y()) / hAspect + mOutputRect.top();
+
+    switch (mUi->rotationComboBox->currentIndex()) {
+        case 1: x2 = 1.0 - y1; y2 = x1;       break; /*  90 */
+        case 2: x2 = 1.0 - x1; y2 = 1.0 - y1; break; /* 180 */
+        case 3: x2 =       y1; y2 = 1.0 - x1; break; /* 270 */
+        default:
+            break;
+    }
+
+    double resultX = x2 * (mOutputRect.width() ) + mOutputRect.x();
+    double resultY = y2 * (mOutputRect.height()) + mOutputRect.y();
 
     return QPointF(resultX, resultY);
 }
@@ -171,6 +219,17 @@ QPoint AdvancedImageWidget::widgetToImage(const QPoint &p)
 {
     QPointF out = widgetToImageF(p);
     return QPoint(fround(out.x()), fround(out.y()));
+}
+
+
+Vector2dd AdvancedImageWidget::widgetToImageF(const Vector2dd &p)
+{
+    return Qt2Core::Vector2ddFromQPointF(AdvancedImageWidget::widgetToImageF(Core2Qt::QPointFromVector2dd(p)));
+}
+
+Vector2dd AdvancedImageWidget::imageToWidgetF(const Vector2dd &p)
+{
+    return Qt2Core::Vector2ddFromQPointF(AdvancedImageWidget::imageToWidgetF(Core2Qt::QPointFromVector2dd(p)));
 }
 
 
@@ -183,38 +242,39 @@ void AdvancedImageWidget::childRepaint(QPaintEvent* /*event*/, QWidget* childWid
 
     if (mResizeCache != NULL)
     {
-        p.drawImage(mOutputRect.topLeft(), *mResizeCache);
+        p.drawImage(mOutputRect.topLeft(), *mResizeCache);      
     }
     else
     {
         drawResized(p);
     }
 
+     p.drawRect(mOutputRect.adjusted(-1,-1, 1, 1));
+
     if (mIsMousePressed && (mCurrentToolClass == ZOOM_SELECT_TOOL))
     {
-      p.setPen(Qt::DashLine);
-      p.drawRect(QRect(mSelectionStart, mSelectionEnd));
+        p.setPen(Qt::DashLine);
+        p.drawRect(QRect(mSelectionStart, mSelectionEnd));
     }
 
     if (mIsMousePressed && (mCurrentToolClass == RECT_SELECTION_TOOLS))
     {
-      QPen pen;
-      pen.setColor(Qt::red);
-      pen.setStyle(Qt::DashDotLine);
-      p.setPen(pen);
-      p.drawRect(QRect(mSelectionStart, mSelectionEnd));
+        QPen pen;
+        pen.setColor(Qt::red);
+        pen.setStyle(Qt::DashDotLine);
+        p.setPen(pen);
+        p.drawRect(QRect(mSelectionStart, mSelectionEnd));
     }
 
     if (mIsMousePressed && (mCurrentToolClass == LINE_SELECTION_TOOLS))
     {
-      QPen pen;
-      pen.setColor(Qt::red);
-      pen.setStyle(Qt::DashDotLine);
-      p.setPen(pen);
-      p.drawLine(QLine(mSelectionStart, mSelectionEnd));
+        QPen pen;
+        pen.setColor(Qt::red);
+        pen.setStyle(Qt::DashDotLine);
+        p.setPen(pen);
+        p.drawLine(QLine(mSelectionStart, mSelectionEnd));
       //p.drawText(mSelectionEnd, QString::number(mDistance));
     }
-
 } // childRepaint
 
 void AdvancedImageWidget::freezeImage()
@@ -223,7 +283,7 @@ void AdvancedImageWidget::freezeImage()
     mUi->freezeButton->setIcon( mIsFreezed ? mContinueIcon : mFreezeIcon);
 }
 
-void AdvancedImageWidget::toolButtonReleased(QWidget */*button*/)
+void AdvancedImageWidget::toolButtonReleased(QWidget * /*button*/)
 {
     if (mUi->panButton->isChecked())
     {
@@ -294,7 +354,7 @@ void AdvancedImageWidget::saveImageToFile()
             "./Image.bmp",
             tr("Image Files (*.png *.jpg *.bmp)"));
 
-    if(mImage == NULL)
+    if (mImage == NULL)
     {
         return;
     }
@@ -433,6 +493,7 @@ void AdvancedImageWidget::childMouseReleased(QMouseEvent * event)
         QRect selection(widgetToImage(mSelectionStart), widgetToImage(mSelectionEnd));
 
         qDebug("AdvancedImageWidget::mouseReleased: Emitting newAreaSelected(%d, _)", mCurrentSelectionButton);
+
         emit newAreaSelected(mCurrentSelectionButton, selection);
     }
 
@@ -462,7 +523,7 @@ void AdvancedImageWidget::childMouseMoved(QMouseEvent * event)
     {
         QColor color = mImage->pixel(imagePoint);
 
-        QString info = QString("[%1 x %2] of [%3 x %4] (%5 %6 %7)")
+        QString info = QString("[%1 x %2] of [%3 x %4] (R:%5 G:%6 B:%7)")
                 .arg(imagePoint.x())
                 .arg(imagePoint.y())
                 .arg(mImage->width())
@@ -483,10 +544,12 @@ void AdvancedImageWidget::childMouseMoved(QMouseEvent * event)
     if (mCurrentToolClass == PAN_TOOL)
     {
         mZoomCenter += shift;
+        /*
         if (mZoomCenter.x() < mImage->rect().left())   mZoomCenter.setX(mImage->rect().left()  );
         if (mZoomCenter.x() > mImage->rect().right())  mZoomCenter.setX(mImage->rect().right() );
         if (mZoomCenter.y() < mImage->rect().top())    mZoomCenter.setY(mImage->rect().top()   );
         if (mZoomCenter.y() > mImage->rect().bottom()) mZoomCenter.setY(mImage->rect().bottom());
+        */
         recomputeRects();
         emit notifyCenterPointChanged(mZoomCenter);
     }
@@ -544,6 +607,12 @@ void AdvancedImageWidget::changeCenterPoint(QPoint point)
     emit notifyCenterPointChanged(mZoomCenter);
 }
 
+bool AdvancedImageWidget::isRotationLandscape()
+{
+    int rotation = mUi->rotationComboBox->currentIndex();
+    return (rotation == 0) || (rotation == 2);
+}
+
 
 void AdvancedImageWidget::zoomIn()
 {
@@ -559,6 +628,11 @@ void AdvancedImageWidget::fitToggled()
 {
     recomputeRects();
     mUi->widget->update();
+}
+
+void AdvancedImageWidget::setFitWindow(bool flag)
+{
+    mUi->fitToWindowCheckBox->setChecked(flag);
 }
 
 void AdvancedImageWidget::childResized (QResizeEvent * /*event*/)
@@ -592,7 +666,13 @@ void AdvancedImageWidget::recomputeRects()
        return;
     }
 
-    QRect output(mImage->rect().normalized());
+    QRect output (mImage->rect());
+    if (!isRotationLandscape()) {
+        output.setWidth (mImage->height());
+        output.setHeight(mImage->width ());
+    }
+
+    output = output.normalized();
     QRect input = computeInputRect();
 
     if (mUi->fitToWindowCheckBox->isChecked())
@@ -601,7 +681,12 @@ void AdvancedImageWidget::recomputeRects()
 
         if (mUi->aspectCheckBox->isChecked())
         {
-            double inputAspect = (double)input.height() / input.width();
+            double inputAspect = 1.0;
+            if (isRotationLandscape()) {
+                inputAspect = (double)input.height() / input.width();
+            } else {
+                inputAspect = (double)input.width() / input.height();
+            }
 
             int outH = output.width() * inputAspect;
             if (outH > output.height())
@@ -616,12 +701,12 @@ void AdvancedImageWidget::recomputeRects()
 
     mOutputRect = output;
     mInputRect  = input;
-    delete_safe(mResizeCache);
+    delete_safe(mResizeCache), mResizeCache = NULL;
 }
 
 void AdvancedImageWidget::saveFlowImage(QImage * image)
 {
-    if(mSaveProcStarted && image)
+    if (mSaveProcStarted && image != NULL)
     {
         unsigned int pathLength = mImageSavePath.size() + 10;
         char *currentPath = new char[pathLength];
@@ -629,7 +714,7 @@ void AdvancedImageWidget::saveFlowImage(QImage * image)
         image->save(currentPath);
         mImageNumber++;
         mUi->fileValuelabel->setText(currentPath);
-        delete []currentPath;
+        delete[] currentPath;
     }
 }
 
@@ -713,7 +798,7 @@ void AdvancedImageWidget::setInfoValueLabel(QString &infoString)
     mUi->infoValueLabel->setText(infoString);
 }
 
-void AdvancedImageWidget::loadFromQSettings(const QString &fileName, QString _root)
+void AdvancedImageWidget::loadFromQSettings(const QString &fileName, const QString &_root)
 {
     QSettings loader(fileName, QSettings::IniFormat);
     loader.beginGroup(_root + mRootPath);
@@ -723,9 +808,11 @@ void AdvancedImageWidget::loadFromQSettings(const QString &fileName, QString _ro
     mUi->fitToWindowCheckBox->setChecked(loader.value("fitToWindow", false).toBool());
     mUi->aspectCheckBox     ->setChecked(loader.value("fixAspect", false).toBool());
     mUi->expSpinBox         ->setValue  (loader.value("zoom", 1.0).toDouble());
+
+    mUi->rotationComboBox   ->setCurrentIndex(loader.value("rotation", 0).toInt());
 }
 
-void AdvancedImageWidget::saveToQSettings  (const QString &fileName, QString _root)
+void AdvancedImageWidget::saveToQSettings(const QString &fileName, const QString &_root)
 {
     QSettings saver(fileName, QSettings::IniFormat);
     saver.beginGroup(_root + mRootPath);
@@ -734,4 +821,6 @@ void AdvancedImageWidget::saveToQSettings  (const QString &fileName, QString _ro
     saver.setValue("zoom", mUi->expSpinBox->value());
     saver.setValue("center.x", mZoomCenter.x());
     saver.setValue("center.y", mZoomCenter.y());
+
+    saver.setValue("rotation", mUi->rotationComboBox->currentIndex());
 }

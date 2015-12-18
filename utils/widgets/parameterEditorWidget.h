@@ -9,7 +9,7 @@
 
 
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 class ParameterEditorWidget: public QWidget
 {

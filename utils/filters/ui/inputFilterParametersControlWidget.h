@@ -1,5 +1,5 @@
 #pragma once
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "generated/inputFilterParameters.h"
 #include "ui_inputFilterParametersControlWidget.h"
 #include "filterParametersControlWidgetBase.h"
@@ -18,6 +18,8 @@ public:
     ~InputFilterParametersControlWidget();
 
     InputFilterParameters* createParameters() const;
+
+    void getParameters(InputFilterParameters& params) const;
     void setParameters(const InputFilterParameters &input);
     virtual void setParametersVirtual(void *input);
 

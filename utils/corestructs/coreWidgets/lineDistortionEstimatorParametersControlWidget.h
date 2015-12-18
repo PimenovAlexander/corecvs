@@ -18,7 +18,7 @@ public:
     ~LineDistortionEstimatorParametersControlWidget();
 
     LineDistortionEstimatorParameters* createParameters() const;
-    void getParameters(LineDistortionEstimatorParameters &param) const;
+    void getParameters(LineDistortionEstimatorParameters &params) const;
     void setParameters(const LineDistortionEstimatorParameters &input);
     virtual void setParametersVirtual(void *input);
     

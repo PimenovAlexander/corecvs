@@ -20,7 +20,7 @@
    <string>Capture Settings</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../../../resources/main.qrc">
+   <iconset>
     <normaloff>:/new/prefix1/cctv_camera.png</normaloff>:/new/prefix1/cctv_camera.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
@@ -33,7 +33,7 @@
       <string>Default All</string>
      </property>
      <property name="icon">
-      <iconset resource="../../../../resources/main.qrc">
+      <iconset>
        <normaloff>:/new/prefix1/refresh.png</normaloff>:/new/prefix1/refresh.png</iconset>
      </property>
      <property name="iconSize">
@@ -50,7 +50,7 @@
       <string>Refresh Limits</string>
      </property>
      <property name="icon">
-      <iconset resource="../../../../resources/main.qrc">
+      <iconset>
        <normaloff>:/new/prefix1/up_alt.png</normaloff>:/new/prefix1/up_alt.png</iconset>
      </property>
      <property name="iconSize">
@@ -128,7 +128,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../../../../resources/main.qrc"/>
+  <include location="../../resources/main.qrc"/>
  </resources>
  <connections>
   <connection>

@@ -1,5 +1,5 @@
 #pragma once
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "generated/binarizeParameters.h"
 #include "ui_binarizeParametersControlWidget.h"
 #include "filterParametersControlWidgetBase.h"
@@ -17,6 +17,8 @@ public:
     ~BinarizeParametersControlWidget();
 
     BinarizeParameters* createParameters() const;
+
+    void getParameters(BinarizeParameters& params) const;
     void setParameters(const BinarizeParameters &input);
 
     virtual BaseReflectionStatic *createParametersVirtual() const

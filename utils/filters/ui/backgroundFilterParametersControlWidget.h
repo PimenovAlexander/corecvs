@@ -1,5 +1,5 @@
 #pragma once
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "generated/backgroundFilterParameters.h"
 #include "ui_backgroundFilterParametersControlWidget.h"
 #include "filterParametersControlWidgetBase.h"
@@ -17,6 +17,8 @@ public:
     ~BackgroundFilterParametersControlWidget();
 
     BackgroundFilterParameters* createParameters() const;
+
+    void getParameters(BackgroundFilterParameters& params) const;
     void setParameters(const BackgroundFilterParameters &input);
     virtual void setParametersVirtual(void *input);
 

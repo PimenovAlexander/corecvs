@@ -56,6 +56,23 @@ void GraphPlotParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void GraphPlotParametersControlWidget::getParameters(GraphPlotParameters& params) const
+{
+
+    params.setGraphStyle       (static_cast<GraphStyle::GraphStyle>(mUi->graphStyleComboBox->currentIndex()));
+    params.setWidth            (mUi->widthSpinBox->value());
+    params.setCenterAt         (mUi->centerAtSpinBox->value());
+    params.setXGrid            (mUi->xGridCheckBox->isChecked());
+    params.setYGrid            (mUi->yGridCheckBox->isChecked());
+    params.setXScale           (mUi->xScaleSlider->value());
+    params.setYScale           (mUi->yScaleSlider->value());
+    params.setContrast         (mUi->contrastSpinBox->value());
+    params.setSelectGraph      (mUi->selectGraphCheckBox->isChecked());
+    params.setFixTimeValue     (mUi->fixTimeValueButton->isChecked());
+    params.setFixGridValue     (mUi->fixGridValueButton->isChecked());
+
+}
 
 GraphPlotParameters *GraphPlotParametersControlWidget::createParameters() const
 {

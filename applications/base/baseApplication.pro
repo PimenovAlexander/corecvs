@@ -2,12 +2,14 @@
 exists(../../../../config.pri) {
     ROOT_DIR=../../../..
     #message(Using global config)
+    ROOT_DIR=$$PWD/$$ROOT_DIR
+    include($$ROOT_DIR/config.pri)
 } else { 
     message(Using local config)
     ROOT_DIR=../..
+    ROOT_DIR=$$PWD/$$ROOT_DIR
+    include($$ROOT_DIR/cvs-config.pri)
 }
-ROOT_DIR=$$PWD/$$ROOT_DIR
-include($$ROOT_DIR/config.pri)
 
 CONFIG  += staticlib
 TARGET   = cvs_application_base
@@ -25,6 +27,7 @@ HEADERS += \
     generatedParameters/outputStyle.h \    
     layers/resultImage.h \
     layers/imageResultLayer.h \
+    layers/geometryResultLayer.h \
     memoryUsageCalculator/memoryUsageCalculator.h \
     parametersMapper/parametersMapperBase.h \
     statistics/statisticsDialog.h \
@@ -39,11 +42,13 @@ HEADERS += \
     camerasConfigParameters.h \
     
 
+
 SOURCES += \
     generatedParameters/baseParameters.cpp \
     generatedParameters/presentationParameters.cpp \
     layers/resultImage.cpp \
     layers/imageResultLayer.cpp \
+    layers/geometryResultLayer.cpp \
     memoryUsageCalculator/memoryUsageCalculator.cpp \
     parametersMapper/parametersMapperBase.cpp \
     statistics/statisticsDialog.cpp \

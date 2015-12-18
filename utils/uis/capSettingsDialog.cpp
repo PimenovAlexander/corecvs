@@ -1,4 +1,4 @@
-#include <QtGui/QMessageBox>
+#include <QMessageBox>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
 
@@ -8,19 +8,28 @@
 #include "parameterSelector.h"
 
 
-CapSettingsDialog::CapSettingsDialog(QWidget *parent, ImageCaptureInterface *pInterface) :
+CapSettingsDialog::CapSettingsDialog(QWidget *parent, QString rootPath) :
         QWidget(parent),
+        mRootPath(rootPath),
         mUi(new Ui::CapSettingsDialog),
-        mCaptureInterface(pInterface),
+        mCaptureInterface(NULL),
         signalMapper(NULL),
         resetSignalMapper(NULL)
 {
     mUi->setupUi(this);
+    setWindowTitle(rootPath);
 
     setWindowFlags(windowFlags() ^ Qt::WindowMinimizeButtonHint);
 
     refreshDialog();
 }
+
+void CapSettingsDialog::setCaptureInterface(ImageCaptureInterface *pInterface)
+{
+    mCaptureInterface = pInterface;
+    refreshDialog();
+}
+
 
 void CapSettingsDialog::clearDialog()
 {
@@ -38,10 +47,13 @@ void CapSettingsDialog::clearDialog()
 
 void CapSettingsDialog::refreshDialog()
 {
+   clearDialog();
    if (mCaptureInterface == NULL)
    {
        return;
    }
+
+   //clearDialog();
 
     //ImageCaptureInterface::CapErrorCode resLeft =
    mCaptureInterface->queryCameraParameters(mLeftCameraParameters);
@@ -122,8 +134,11 @@ void CapSettingsDialog::loadFromQSettings (const QString &fileName, const QStrin
     }
 
     qDebug() << "CapSettingsDialog::loadFromQSettings(): Interface name: " << interfaceName;
-    QSettings *mSettings = new QSettings(fileName, QSettings::IniFormat);
-    mSettings->beginGroup(_root + ":" + interfaceName + ":");
+    QSettings *settings = new QSettings(fileName, QSettings::IniFormat);
+    settings->beginGroup(_root);
+    settings->beginGroup(mRootPath);
+    settings->beginGroup(interfaceName);
+
 
 
     QMapIterator<int, ParameterEditorWidget *> i(sliders);
@@ -134,18 +149,22 @@ void CapSettingsDialog::loadFromQSettings (const QString &fileName, const QStrin
         const char *name = CameraParameters::names[id];
         ParameterEditorWidget *widget = i.value();
         double value = widget->value();
-        double newValue = mSettings->value(name, value).toDouble();
+        double newValue = settings->value(name, value).toDouble();
         qDebug() << "   " << QString(name).leftJustified(16, ' ') << ": " << value << " -> " << newValue;
         widget->setValue(newValue);
     }
 
-    mSettings->endGroup();
-    delete mSettings;
+    settings->endGroup();
+    settings->endGroup();
+    settings->endGroup();
+
+    delete_safe(settings);
 
 }
 
 void CapSettingsDialog::saveToQSettings   (const QString &fileName, const QString &_root)
 {
+    qDebug() << QString("CapSettingsDialog::saveToQSettings(\"%1\", \"%2\"): called").arg(fileName, _root);
     if (mCaptureInterface == NULL)
     {
         return;
@@ -158,9 +177,10 @@ void CapSettingsDialog::saveToQSettings   (const QString &fileName, const QStrin
     }
 
     qDebug() << "CapSettingsDialog::saveToQSettings(): Interface name: " << interfaceName;
-    QSettings *mSettings = new QSettings(fileName, QSettings::IniFormat);
-    mSettings->beginGroup(_root + ":" + interfaceName + ":");
-
+    QSettings *settings = new QSettings(fileName, QSettings::IniFormat);
+    settings->beginGroup(_root);
+    settings->beginGroup(mRootPath);
+    settings->beginGroup(interfaceName);
 
     QMapIterator<int, ParameterEditorWidget *> i(sliders);
     while (i.hasNext())
@@ -170,12 +190,14 @@ void CapSettingsDialog::saveToQSettings   (const QString &fileName, const QStrin
         const char *name = CameraParameters::names[id];
         ParameterEditorWidget *widget = i.value();
         double value = widget->value();
-        mSettings->setValue(name, value);
+        settings->setValue(name, value);
         qDebug() << "   " << QString(name).leftJustified(16, ' ') << ": " << value;
     }
 
-    mSettings->endGroup();
-    delete mSettings;
+    settings->endGroup();
+    settings->endGroup();
+    settings->endGroup();
+    delete_safe(settings);
 }
 
 

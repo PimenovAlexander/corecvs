@@ -1,7 +1,7 @@
 #ifndef EXPONENTIALSLIDER_H
 #define EXPONENTIALSLIDER_H
 
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "ui_exponentialSlider.h"
 
 class ExponentialSlider : public QWidget

@@ -13,6 +13,8 @@
 
 #include "rgbColorParametersControlWidget.h"
 #include "rgbColorParametersControlWidget.h"
+#include "rgbColorParametersControlWidget.h"
+#include "rgbColorParametersControlWidget.h"
 
 Draw3dParametersControlWidget::Draw3dParametersControlWidget(QWidget *parent, bool _autoInit, QString _rootPath)
     : ParametersControlWidgetBase(parent)
@@ -23,8 +25,18 @@ Draw3dParametersControlWidget::Draw3dParametersControlWidget(QWidget *parent, bo
     mUi->setupUi(this);
 
     QObject::connect(mUi->styleComboBox, SIGNAL(currentIndexChanged(int)), this, SIGNAL(paramsChanged()));
-    QObject::connect(mUi->colorControlWidget, SIGNAL(paramsChanged()), this, SIGNAL(paramsChanged()));
-    QObject::connect(mUi->secondaryColorControlWidget, SIGNAL(paramsChanged()), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->pointColorControlWidget, SIGNAL(paramsChanged()), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->pointColorOverrideCheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->pointSizeSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->edgeColorControlWidget, SIGNAL(paramsChanged()), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->edgeColorOverrideCheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->edgeWidthSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->faceColorControlWidget, SIGNAL(paramsChanged()), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->faceColorOverrideCheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->showCaptionCheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->fontSizeSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->fontWidthSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->fontColorControlWidget, SIGNAL(paramsChanged()), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->textureCorrodinatesComboBox, SIGNAL(currentIndexChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->textureAlphaSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->textureScaleSpinBox, SIGNAL(valueChanged(double)), this, SIGNAL(paramsChanged()));
@@ -56,6 +68,33 @@ void Draw3dParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void Draw3dParametersControlWidget::getParameters(Draw3dParameters& params) const
+{
+
+    params.setStyle            (static_cast<Draw3dStyle::Draw3dStyle>(mUi->styleComboBox->currentIndex()));
+//    params.setPointColor       (mUi->pointColorControlWidget->createParameters());
+    params.setPointColorOverride(mUi->pointColorOverrideCheckBox->isChecked());
+    params.setPointSize        (mUi->pointSizeSpinBox->value());
+//    params.setEdgeColor        (mUi->edgeColorControlWidget->createParameters());
+    params.setEdgeColorOverride(mUi->edgeColorOverrideCheckBox->isChecked());
+    params.setEdgeWidth        (mUi->edgeWidthSpinBox->value());
+//    params.setFaceColor        (mUi->faceColorControlWidget->createParameters());
+    params.setFaceColorOverride(mUi->faceColorOverrideCheckBox->isChecked());
+    params.setShowCaption      (mUi->showCaptionCheckBox->isChecked());
+    params.setFontSize         (mUi->fontSizeSpinBox->value());
+    params.setFontWidth        (mUi->fontWidthSpinBox->value());
+//    params.setFontColor        (mUi->fontColorControlWidget->createParameters());
+    params.setTextureCorrodinates(static_cast<Draw3dTextureGen::Draw3dTextureGen>(mUi->textureCorrodinatesComboBox->currentIndex()));
+    params.setTextureAlpha     (mUi->textureAlphaSpinBox->value());
+    params.setTextureScale     (mUi->textureScaleSpinBox->value());
+    params.setDecalMatrixType  (mUi->decalMatrixTypeSpinBox->value());
+    params.setDecalLeftCam     (mUi->decalLeftCamCheckBox->isChecked());
+    params.setDecalLeftAlpha   (mUi->decalLeftAlphaSpinBox->value());
+    params.setDecalRightCam    (mUi->decalRightCamCheckBox->isChecked());
+    params.setDecalRightAlpha  (mUi->decalRightAlphaSpinBox->value());
+
+}
 
 Draw3dParameters *Draw3dParametersControlWidget::createParameters() const
 {
@@ -65,12 +104,24 @@ Draw3dParameters *Draw3dParametersControlWidget::createParameters() const
      **/
 
     RgbColorParameters *tmp1 = NULL;
-    RgbColorParameters *tmp2 = NULL;
+    RgbColorParameters *tmp4 = NULL;
+    RgbColorParameters *tmp7 = NULL;
+    RgbColorParameters *tmp12 = NULL;
 
     Draw3dParameters *result = new Draw3dParameters(
           static_cast<Draw3dStyle::Draw3dStyle>(mUi->styleComboBox->currentIndex())
-        , * (tmp1 = mUi->colorControlWidget->createParameters())
-        , * (tmp2 = mUi->secondaryColorControlWidget->createParameters())
+        , * (tmp1 = mUi->pointColorControlWidget->createParameters())
+        , mUi->pointColorOverrideCheckBox->isChecked()
+        , mUi->pointSizeSpinBox->value()
+        , * (tmp4 = mUi->edgeColorControlWidget->createParameters())
+        , mUi->edgeColorOverrideCheckBox->isChecked()
+        , mUi->edgeWidthSpinBox->value()
+        , * (tmp7 = mUi->faceColorControlWidget->createParameters())
+        , mUi->faceColorOverrideCheckBox->isChecked()
+        , mUi->showCaptionCheckBox->isChecked()
+        , mUi->fontSizeSpinBox->value()
+        , mUi->fontWidthSpinBox->value()
+        , * (tmp12 = mUi->fontColorControlWidget->createParameters())
         , static_cast<Draw3dTextureGen::Draw3dTextureGen>(mUi->textureCorrodinatesComboBox->currentIndex())
         , mUi->textureAlphaSpinBox->value()
         , mUi->textureScaleSpinBox->value()
@@ -81,7 +132,9 @@ Draw3dParameters *Draw3dParametersControlWidget::createParameters() const
         , mUi->decalRightAlphaSpinBox->value()
     );
     delete tmp1;
-    delete tmp2;
+    delete tmp4;
+    delete tmp7;
+    delete tmp12;
     return result;
 }
 
@@ -90,8 +143,18 @@ void Draw3dParametersControlWidget::setParameters(const Draw3dParameters &input)
     // Block signals to send them all at once
     bool wasBlocked = blockSignals(true);
     mUi->styleComboBox->setCurrentIndex(input.style());
-    mUi->colorControlWidget->setParameters(input.color());
-    mUi->secondaryColorControlWidget->setParameters(input.secondaryColor());
+    mUi->pointColorControlWidget->setParameters(input.pointColor());
+    mUi->pointColorOverrideCheckBox->setChecked(input.pointColorOverride());
+    mUi->pointSizeSpinBox->setValue(input.pointSize());
+    mUi->edgeColorControlWidget->setParameters(input.edgeColor());
+    mUi->edgeColorOverrideCheckBox->setChecked(input.edgeColorOverride());
+    mUi->edgeWidthSpinBox->setValue(input.edgeWidth());
+    mUi->faceColorControlWidget->setParameters(input.faceColor());
+    mUi->faceColorOverrideCheckBox->setChecked(input.faceColorOverride());
+    mUi->showCaptionCheckBox->setChecked(input.showCaption());
+    mUi->fontSizeSpinBox->setValue(input.fontSize());
+    mUi->fontWidthSpinBox->setValue(input.fontWidth());
+    mUi->fontColorControlWidget->setParameters(input.fontColor());
     mUi->textureCorrodinatesComboBox->setCurrentIndex(input.textureCorrodinates());
     mUi->textureAlphaSpinBox->setValue(input.textureAlpha());
     mUi->textureScaleSpinBox->setValue(input.textureScale());

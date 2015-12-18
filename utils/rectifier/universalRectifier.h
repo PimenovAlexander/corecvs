@@ -9,12 +9,12 @@
  */
 
 #include <QtCore/QString>
-#include <QtGui/QImage>
+#include <QImage>
 
 #include "rectifyParameters.h"
 #include "matrix33.h"
 #include "rectifyParameters.h"
-#include "correspondanceList.h"
+#include "correspondenceList.h"
 #include "cameraParameters.h"
 #include "essentialMatrix.h"
 #include "triangulator.h"
@@ -28,40 +28,40 @@ public:
     RectifyParameters params;
     /**
      *   The input list.
-     *   Right to Left correspondances.
+     *   Right to Left correspondences.
      *   For rectified pair all end.x() - start.x() should be positive
      *   After recalculation it will be altered with new flags
      *
      **/
-    CorrespondanceList *inputList;
+    CorrespondenceList *inputList;
     /**
      *  This is a local copy of the input that we will alter with KLT, or any other
      *  improvement algorithm
      **/
-    DerivedCorrespondanceList *list;
+    DerivedCorrespondenceList *list;
 
     /**
      *  This is a local copy of the input that we will alter with KLT, or any other
      *  improvement algorithm
      **/
-    DerivedCorrespondanceList *postKlt;
+    DerivedCorrespondenceList *postKlt;
 
     /**
      *  This is a local copy of the input that we will hold the filtered by length values
      **/
-    DerivedCorrespondanceList *filteredList;
+    DerivedCorrespondenceList *filteredList;
 
 
     /**
      *  This is a local copy of the input that we will hold the filtered by length values
      **/
-    DerivedCorrespondanceList *normalList;
+    DerivedCorrespondenceList *normalList;
 
     /**
      *  Data in the format the estimators understand
      *
      **/
-    vector<Correspondance *> *data;
+    vector<Correspondence *> *data;
 
     /**
      *  This is used for KLT only and should be brought out of the class

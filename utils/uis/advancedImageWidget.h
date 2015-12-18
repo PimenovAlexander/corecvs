@@ -7,16 +7,17 @@
  * \date Feb 27, 2012
  * \author: Olga Sapershteyn
  */
-
-
 #include <vector>
-#include <QtGui/QWidget>
-#include <QtGui/QtGui>
 
+#include <QWidget>
+#include <QtGui>
+
+#include "vector2d.h"
 #include "viAreaWidget.h"
 #include "saveFlowSettings.h"
-#include "ui_advancedImageWidget.h"
 #include "parametersControlWidgetBase.h"
+
+#include "ui_advancedImageWidget.h"
 
 using std::vector;
 
@@ -28,87 +29,110 @@ public:
     QSharedPointer<QImage> mImage;
 
     AdvancedImageWidget(QWidget *parent = 0, bool showHeader = true);
-    void setImage(QSharedPointer<QImage> _image);
+   ~AdvancedImageWidget();
 
-    QWidget* getWidget();
-    QFrame*  getToolsFrame();
-    void setInfoValueLabel(QString &string);
+    void            setImage(QSharedPointer<QImage> _image);
 
-    virtual ~AdvancedImageWidget();
+    QWidget*        getWidget();
+    QFrame*         getToolsFrame();
+    QRect           getInputRect() const                { return mInputRect; }
 
+    void            setInfoValueLabel(QString &string);
+
+    void            setCollapseTitle(bool collapse);
 
 public slots:
-    virtual void childRepaint(QPaintEvent *event, QWidget *who);
-    void freezeImage();
+    virtual void    childRepaint(QPaintEvent *event, QWidget *who);
+    void            freezeImage();
 
    /**
     *   This could be reimplemented to add additional tools
     **/
-    virtual void toolButtonReleased(QWidget *button);
+    virtual void    toolButtonReleased(QWidget *button);
 
-    void saveImageToFile();
-    void startSaveFlow();
-    void stopSaveFlow();
+    void            saveImageToFile();
+    void            startSaveFlow();
+    void            stopSaveFlow();
 
-    virtual void childMouseMoved   (QMouseEvent  *);
-    virtual void childMousePressed (QMouseEvent  *);
-    virtual void childMouseReleased(QMouseEvent  *);
-    virtual void childWheelEvent   (QWheelEvent  *);
-    virtual void childResized      (QResizeEvent *);
+    virtual void    childMouseMoved   (QMouseEvent  *);
+    virtual void    childMousePressed (QMouseEvent  *);
+    virtual void    childMouseReleased(QMouseEvent  *);
+    virtual void    childWheelEvent   (QWheelEvent  *);
+    virtual void    childResized      (QResizeEvent *);
 
-    void zoomIn();
-    void zoomOut();
-    void zoomReset();
-    void zoomChanged();
+    void            zoomIn();
+    void            zoomOut();
+    void            zoomReset();
+    void            zoomChanged();
 
-    void fitToggled();
+    void            fitToggled();
+    void            setFitWindow(bool flag = true);
 
-    void setInfoString(QString info) { mUi->infoValueLabel->setText(info); }
+    void            setInfoString(QString info)         { mUi->infoValueLabel->setText(info); }
 
     /* Additional tools support*/
-    bool addSelectionTool (int toolID, QString name, QIcon icon);
-    bool addLineTool      (int toolID, QString name, QIcon icon);
-    bool addPointTool     (int toolID, QString name, QIcon icon);
+    bool            addSelectionTool (int toolID, QString name, QIcon icon);
+    bool            addLineTool      (int toolID, QString name, QIcon icon);
+    bool            addPointTool     (int toolID, QString name, QIcon icon);
 
-    void changeZoom(double zoom);
-    void changeCenterPoint(QPoint point);
+    void            changeZoom(double zoom);
+    void            changeCenterPoint(QPoint point);
 
 signals:
-    void newAreaSelected (int toolID, QRect  area);
-    void newPointSelected(int toolID, QPoint point);
-    void newLineSelected (int toolID, QLine  line);
+    void            newAreaSelected (int toolID, QRect  area);
+    void            newPointSelected(int toolID, QPoint point);
+    void            newLineSelected (int toolID, QLine  line);
 
-    void pointToolMoved(int toolID, QPoint point);
+    void            pointToolMoved(int toolID, QPoint point);
 
-    void notifyZoomChanged(double zoom);
-    void notifyCenterPointChanged(QPoint point);
+    void            notifyZoomChanged(double zoom);
+    void            notifyCenterPointChanged(QPoint point);
 
 protected:
-    void drawResized (QPainter &painter);
+
+    bool            isRotationLandscape();
+    void            drawResized (QPainter &painter);
 
     /* Freeze related variables */
-    bool mIsFreezed;
-    QIcon mFreezeIcon;
-    QIcon mContinueIcon;
+    bool                    mIsFreezed;
+    QIcon                   mFreezeIcon;
+    QIcon                   mContinueIcon;
 
-    bool mSaveProcStarted;
-    unsigned int mImageNumber;
-    QString mImageSavePath;
-    SaveFlowSettings* mSaveDialog;
+    bool                    mSaveProcStarted;
+    unsigned int            mImageNumber;
+    QString                 mImageSavePath;
+    SaveFlowSettings*       mSaveDialog;
     Ui_advancedImageWidget *mUi;
 
-    QPoint mZoomCenter;
+    QPoint                  mZoomCenter;
 
-    QRect mOutputRect;
-    QRect mInputRect;
+    /**
+     * Two input geometry controls
+     * Trasformation is done it three steps
+     *   1. Input is cropped to mInputRect
+     *   2. Rotated according to ui->rotation
+     *   3. Output is scaled to mOutputRect
+     **/
+    QRect                   mOutputRect;
+    QRect                   mInputRect;
 
+    bool                    mIsMousePressed;
+    QPoint                  mSelectionStart;
+    QPoint                  mSelectionEnd;
 
-    bool mIsMousePressed;
-    QPoint mSelectionStart;
-    QPoint mSelectionEnd;
+    /**
+     * Image is transformed only once. If transformation is done, result is saved to
+     * this variable.
+     **/
+    QImage                 *mResizeCache;
 
-    QImage *mResizeCache;
-
+    /**
+     *  Exandable toolbar has several predefined  instuments, and th ability to add addintional tools
+     *  tools added by user can be used to select point, line or area.
+     *
+     *  For more advanced tools you will need to derive from this class
+     *
+     **/
     enum ToolClass {
         NO_TOOL,
         ZOOM_SELECT_TOOL,
@@ -122,53 +146,51 @@ protected:
         TOOL_CLASS_LAST
     };
 
-    ToolClass mCurrentToolClass;
+    ToolClass               mCurrentToolClass;
 
-    /** Tool bars */
+    /** Tools in the toolbar bars */
     struct WidgetToolButton {
-        int id;
+        int          id;
         QToolButton *button;
 
-        WidgetToolButton(int _id, QToolButton *_button) :
-            id(_id),
-            button(_button)
-        {}
+        WidgetToolButton(int _id, QToolButton *_button) : id(_id), button(_button) {}
     };
 
     vector<WidgetToolButton> mSelectionButtons;
-    int mCurrentSelectionButton;
+    int                      mCurrentSelectionButton;
     vector<WidgetToolButton> mPointButtons;
-    int mCurrentPointButton;
+    int                      mCurrentPointButton;
     vector<WidgetToolButton> mLineButtons;
-    int mCurrentLineButton;
-    QToolButton *addToolButton(QString name, QIcon icon, bool checkable = true);
-    QSignalMapper mToolMapper;
+    int                      mCurrentLineButton;
 
+    QSignalMapper            mToolMapper;
 
-    QPointF widgetToImageF(const QPointF &p);
-    QPointF imageToWidgetF(const QPointF &p);
-    QPoint  widgetToImage(const QPoint &p);
-    QRect computeInputRect();
+    QToolButton             *addToolButton(QString name, QIcon icon, bool checkable = true);
 
-    QSize mImageSize;
+    QPointF     widgetToImageF(const QPointF &p);
+    QPointF     imageToWidgetF(const QPointF &p);
+    QPoint      widgetToImage(const QPoint &p);
 
-    void recomputeRects();
-    void saveFlowImage(QImage * image);
-    void recalculateZoomCenter();
+    Vector2dd   widgetToImageF(const Vector2dd &p);
+    Vector2dd   imageToWidgetF(const Vector2dd &p);
 
-    /* Saving loading parameters to/from widget */
-    /* TODO: Use visitors here*/
-    QString mRootPath;
-    virtual void loadFromQSettings(const QString &fileName, QString _root);
-    virtual void saveToQSettings  (const QString &fileName, QString _root);
+    QRect       computeInputRect();
+
+    QSize       mImageSize;
+
+    void        recomputeRects();
+    void        saveFlowImage(QImage * image);
+    void        recalculateZoomCenter();
 
 public:
-    void setSavingRoot(const QString &root)
-    {
-    	mRootPath = root;
-    }
+    /* Saving loading parameters to/from widget */
+    /* TODO: Use visitors here*/
+    QString      mRootPath;
 
+    virtual void loadFromQSettings(const QString &fileName, const QString &_root);
+    virtual void saveToQSettings  (const QString &fileName, const QString &_root);
 
+    void         setSavingRoot(const QString &root) { mRootPath = root; }
 };
 
 #endif /* ADVANCEDIMAGEWIDGET_H */

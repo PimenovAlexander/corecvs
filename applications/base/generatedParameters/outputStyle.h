@@ -20,40 +20,63 @@ namespace OutputStyle {
  */
 enum OutputStyle {
     /** 
-     * \brief standart output 
-     * Standart output 
+     * \brief right Frame 
+     * !right-cam.png! Frame from the right camera 
      */
-    STANDART_OUTPUT = 0,
+    RIGHT_FRAME = 0,
+    /** 
+     * \brief left Frame 
+     * !left-cam.png! Frame from the  left camera 
+     */
+    LEFT_FRAME = 1,
     /** 
      * \brief sidebyside stereo 
-     * Side-by-side stereo 
+     * !2cam-active.png! Side-by-side images from right and left cameras 
      */
-    SIDEBYSIDE_STEREO = 1,
+    SIDEBYSIDE_STEREO = 2,
     /** 
      * \brief anaglyph RG 
-     * Red-Green Anaglyph 
+     * !3d_glasses_rg.png! Red-Green Anaglyph view 
      */
-    ANAGLYPH_RG = 2,
+    ANAGLYPH_RG = 3,
     /** 
      * \brief anaglyph RC 
-     * Red-Cyan Anaglyph 
+     * !3d_glasses_rc.png! Red-Cyan Anaglyph view 
      */
-    ANAGLYPH_RC = 3,
+    ANAGLYPH_RC = 4,
     /** 
      * \brief blend 
-     * Blend 
+     * !2cam-blend.png! Blend two images 
      */
-    BLEND = 4,
+    BLEND = 5,
     /** 
      * \brief none 
-     * None 
+     * None. Show black output 
      */
-    NONE = 5,
+    NONE = 6,
     /** 
      * \brief Last virtual option to run cycles to
      */
     OUTPUT_STYLE_LAST
 };
+
+
+static inline const char *getName(const OutputStyle &value)
+{
+    switch (value) 
+    {
+     case RIGHT_FRAME : return "RIGHT_FRAME"; break ;
+     case LEFT_FRAME : return "LEFT_FRAME"; break ;
+     case SIDEBYSIDE_STEREO : return "SIDEBYSIDE_STEREO"; break ;
+     case ANAGLYPH_RG : return "ANAGLYPH_RG"; break ;
+     case ANAGLYPH_RC : return "ANAGLYPH_RC"; break ;
+     case BLEND : return "BLEND"; break ;
+     case NONE : return "NONE"; break ;
+     default : return "Not in range"; break ;
+     
+    }
+    return "Not in range";
+}
 
 } //namespace OutputStyle
 

@@ -1,5 +1,5 @@
 #pragma once
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "generated/graphPlotParameters.h"
 #include "ui_graphPlotParametersControlWidget.h"
 #include "parametersControlWidgetBase.h"
@@ -17,6 +17,7 @@ public:
     ~GraphPlotParametersControlWidget();
 
     GraphPlotParameters* createParameters() const;
+    void getParameters(GraphPlotParameters &params) const;
     void setParameters(const GraphPlotParameters &input);
     virtual void setParametersVirtual(void *input);
 

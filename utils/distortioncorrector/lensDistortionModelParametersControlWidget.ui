@@ -1,0 +1,871 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LensDistortionModelParametersContolWidget</class>
+ <widget class="QWidget" name="LensDistortionModelParametersContolWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>709</width>
+    <height>397</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
+    <number>3</number>
+   </property>
+   <property name="spacing">
+    <number>2</number>
+   </property>
+   <item row="0" column="1">
+    <widget class="QLabel" name="centerLabel">
+     <property name="text">
+      <string>Center</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QDoubleSpinBox" name="centerXSpinBox">
+     <property name="minimum">
+      <double>-999999.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>99999.990000000005239</double>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="3">
+    <widget class="QPushButton" name="resetCxPushButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../../restricted/resources/resresource.qrc">
+       <normaloff>:/new/prefix1/bullet_blue.png</normaloff>:/new/prefix1/bullet_blue.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>16</width>
+       <height>16</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="4">
+    <widget class="QDoubleSpinBox" name="centerYSpinBox">
+     <property name="minimum">
+      <double>-99999.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>99999.990000000005239</double>
+     </property>
+     <property name="value">
+      <double>0.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="5" colspan="2">
+    <widget class="QPushButton" name="resetCyPushButton">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../../restricted/resources/resresource.qrc">
+       <normaloff>:/new/prefix1/bullet_blue.png</normaloff>:/new/prefix1/bullet_blue.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>16</width>
+       <height>16</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLabel" name="label_14">
+     <property name="text">
+      <string>Tangential</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QDoubleSpinBox" name="tangential1SpinBox">
+     <property name="decimals">
+      <number>9</number>
+     </property>
+     <property name="minimum">
+      <double>-99.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.000100000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLabel" name="label_13">
+     <property name="text">
+      <string>Scale</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3">
+    <widget class="QPushButton" name="resetP1PushButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../../restricted/resources/resresource.qrc">
+       <normaloff>:/new/prefix1/bullet_blue.png</normaloff>:/new/prefix1/bullet_blue.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>16</width>
+       <height>16</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="4">
+    <widget class="QDoubleSpinBox" name="tangential2SpinBox">
+     <property name="decimals">
+      <number>9</number>
+     </property>
+     <property name="minimum">
+      <double>-99.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.000100000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="5" colspan="2">
+    <widget class="QPushButton" name="resetP2PushButton">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../../restricted/resources/resresource.qrc">
+       <normaloff>:/new/prefix1/bullet_blue.png</normaloff>:/new/prefix1/bullet_blue.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>16</width>
+       <height>16</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3">
+    <widget class="QPushButton" name="resetScalePushButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../../restricted/resources/resresource.qrc">
+       <normaloff>:/new/prefix1/bullet_blue.png</normaloff>:/new/prefix1/bullet_blue.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>16</width>
+       <height>16</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QDoubleSpinBox" name="scaleSpinBox">
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="value">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QDoubleSpinBox" name="aspectSpinBox">
+     <property name="value">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="3">
+    <widget class="QPushButton" name="resetAspectPushButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../../restricted/resources/resresource.qrc">
+       <normaloff>:/new/prefix1/bullet_blue.png</normaloff>:/new/prefix1/bullet_blue.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>16</width>
+       <height>16</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" rowspan="2">
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1" colspan="6">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <property name="spacing">
+      <number>2</number>
+     </property>
+     <item row="1" column="1">
+      <widget class="QPushButton" name="addPowerButton">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../restricted/resources/resresource.qrc">
+         <normaloff>:/new/prefix1/plus.png</normaloff>:/new/prefix1/plus.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0" rowspan="3">
+      <widget class="QTableWidget" name="koefTableWidget">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="delPowerButton">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../restricted/resources/resresource.qrc">
+         <normaloff>:/new/prefix1/minus.png</normaloff>:/new/prefix1/minus.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Minimum</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="8" column="0" colspan="2">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="6" column="1" colspan="7">
+    <layout class="QGridLayout" name="gridLayout_4">
+     <item row="0" column="3">
+      <widget class="QPushButton" name="refreshButton">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../restricted/resources/resresource.qrc">
+         <normaloff>:/new/prefix1/refresh.png</normaloff>:/new/prefix1/refresh.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QPushButton" name="loadPushButton">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../restricted/resources/resresource.qrc">
+         <normaloff>:/new/prefix1/remove.png</normaloff>:/new/prefix1/remove.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="savePushButton">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../restricted/resources/resresource.qrc">
+         <normaloff>:/new/prefix1/install.png</normaloff>:/new/prefix1/install.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="5">
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="0" column="2">
+      <widget class="Line" name="line_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="4">
+      <widget class="QCheckBox" name="autoRefeshCheckBox">
+       <property name="text">
+        <string>Auto refresh</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="7" column="1" colspan="7">
+    <layout class="QGridLayout" name="gridLayout_3">
+     <item row="0" column="2">
+      <widget class="QComboBox" name="exampleComboBox">
+       <item>
+        <property name="text">
+         <string>Input</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Corrected</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Inverse</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Backproject</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Diff</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Field</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="levelGraphButton_2">
+       <property name="icon">
+        <iconset resource="../../../restricted/resources/resresource.qrc">
+         <normaloff>:/new/prefix1/picture_save.png</normaloff>:/new/prefix1/picture_save.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QPushButton" name="graphButton">
+       <property name="icon">
+        <iconset resource="../../../restricted/resources/resresource.qrc">
+         <normaloff>:/new/prefix1/Line Chart.png</normaloff>:/new/prefix1/Line Chart.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="5">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="0" column="3">
+      <widget class="QDoubleSpinBox" name="freeParamSpinBox">
+       <property name="minimum">
+        <double>-99999.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>99999.990000000005239</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+       <property name="value">
+        <double>0.500000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="4">
+      <widget class="QCheckBox" name="bilinearCheckBox">
+       <property name="text">
+        <string>Bilnear</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="8">
+    <spacer name="horizontalSpacer_4">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="7" rowspan="6">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QPushButton" name="invertPushButton">
+       <property name="toolTip">
+        <string>Invert</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../resources/main.qrc">
+         <normaloff>:/new/colors/colors/contrast.png</normaloff>:/new/colors/colors/contrast.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="comparePushButton">
+       <property name="toolTip">
+        <string>Compare with other deformation</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../resources/main.qrc">
+         <normaloff>:/new/prefix1/price_comparison.png</normaloff>:/new/prefix1/price_comparison.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Aspect</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Normalizer</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2">
+    <widget class="QDoubleSpinBox" name="normalizerSpinBox">
+     <property name="maximum">
+      <double>999999.989999999990687</double>
+     </property>
+     <property name="value">
+      <double>140.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="3">
+    <widget class="QPushButton" name="resetNormalizePushButton">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../../restricted/resources/resresource.qrc">
+       <normaloff>:/new/prefix1/bullet_blue.png</normaloff>:/new/prefix1/bullet_blue.png</iconset>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../../../restricted/resources/resresource.qrc"/>
+  <include location="../../resources/main.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>delPowerButton</sender>
+   <signal>released()</signal>
+   <receiver>LensDistortionModelParametersContolWidget</receiver>
+   <slot>delPower()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>446</x>
+     <y>150</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>354</x>
+     <y>66</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>addPowerButton</sender>
+   <signal>released()</signal>
+   <receiver>LensDistortionModelParametersContolWidget</receiver>
+   <slot>addPower()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>446</x>
+     <y>183</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>438</x>
+     <y>75</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>graphButton</sender>
+   <signal>released()</signal>
+   <receiver>LensDistortionModelParametersContolWidget</receiver>
+   <slot>showGraphDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>42</x>
+     <y>380</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>50</x>
+     <y>317</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>levelGraphButton_2</sender>
+   <signal>released()</signal>
+   <receiver>LensDistortionModelParametersContolWidget</receiver>
+   <slot>loadExample()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>86</x>
+     <y>380</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>93</x>
+     <y>316</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>exampleComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>LensDistortionModelParametersContolWidget</receiver>
+   <slot>exampleShow()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>206</x>
+     <y>377</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>330</x>
+     <y>175</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resetCxPushButton</sender>
+   <signal>released()</signal>
+   <receiver>LensDistortionModelParametersContolWidget</receiver>
+   <slot>resetCx()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>247</x>
+     <y>22</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>239</x>
+     <y>76</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resetP1PushButton</sender>
+   <signal>released()</signal>
+   <receiver>LensDistortionModelParametersContolWidget</receiver>
+   <slot>resetP1()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>259</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>260</x>
+     <y>72</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resetCyPushButton</sender>
+   <signal>released()</signal>
+   <receiver>LensDistortionModelParametersContolWidget</receiver>
+   <slot>resetCy()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>447</x>
+     <y>17</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>451</x>
+     <y>79</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resetP2PushButton</sender>
+   <signal>released()</signal>
+   <receiver>LensDistortionModelParametersContolWidget</receiver>
+   <slot>resetP2()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>447</x>
+     <y>57</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>451</x>
+     <y>82</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resetAspectPushButton</sender>
+   <signal>released()</signal>
+   <receiver>LensDistortionModelParametersContolWidget</receiver>
+   <slot>resetAspect()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>259</x>
+     <y>107</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>298</x>
+     <y>98</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resetScalePushButton</sender>
+   <signal>released()</signal>
+   <receiver>LensDistortionModelParametersContolWidget</receiver>
+   <slot>resetScale()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>254</x>
+     <y>82</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>284</x>
+     <y>89</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>invertPushButton</sender>
+   <signal>released()</signal>
+   <receiver>LensDistortionModelParametersContolWidget</receiver>
+   <slot>invertCorrection()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>476</x>
+     <y>19</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>541</x>
+     <y>21</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resetNormalizePushButton</sender>
+   <signal>released()</signal>
+   <receiver>LensDistortionModelParametersContolWidget</receiver>
+   <slot>resetNormalize()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>250</x>
+     <y>133</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>316</x>
+     <y>132</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comparePushButton</sender>
+   <signal>released()</signal>
+   <receiver>LensDistortionModelParametersContolWidget</receiver>
+   <slot>compareCorrection()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>475</x>
+     <y>54</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>542</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>delPower()</slot>
+  <slot>addPower()</slot>
+  <slot>showGraphDialog()</slot>
+  <slot>loadExample()</slot>
+  <slot>exampleShow()</slot>
+  <slot>resetCx()</slot>
+  <slot>resetCy()</slot>
+  <slot>resetP1()</slot>
+  <slot>resetP2()</slot>
+  <slot>loadParams()</slot>
+  <slot>saveParams()</slot>
+  <slot>resetAspect()</slot>
+  <slot>resetScale()</slot>
+  <slot>invertCorrection()</slot>
+  <slot>resetNormalize()</slot>
+  <slot>compareCorrection()</slot>
+ </slots>
+</ui>

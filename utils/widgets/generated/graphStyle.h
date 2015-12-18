@@ -35,6 +35,19 @@ enum GraphStyle {
     GRAPH_STYLE_LAST
 };
 
+
+static inline const char *getName(const GraphStyle &value)
+{
+    switch (value) 
+    {
+     case DRAW_LINES : return "DRAW_LINES"; break ;
+     case DRAW_DOTS : return "DRAW_DOTS"; break ;
+     default : return "Not in range"; break ;
+     
+    }
+    return "Not in range";
+}
+
 } //namespace GraphStyle
 
 #endif  //GRAPH_STYLE_H_

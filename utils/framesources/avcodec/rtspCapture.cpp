@@ -15,7 +15,7 @@ RTSPCapture::RTSPCapture(QString const &params):
      , mFrame(NULL)
      , count(1)
 {
-    SYNC_PRINT(("RTSPCapture::RTSPCapture(%s): called\n", params.toAscii().constData()));
+    SYNC_PRINT(("RTSPCapture::RTSPCapture(%s): called\n", params.toLatin1().constData()));
     SYNC_PRINT(("Registering the codecs...\n"));
 
     av_register_all();
@@ -140,8 +140,8 @@ ImageCaptureInterface::FramePair RTSPCapture::getFrame()
         }
 
 
-        result.leftTimeStamp  = count * 10;
-        result.rightTimeStamp = count * 10;
+        result.timeStampLeft  = count * 10;
+        result.timeStampRight = count * 10;
 
     //mProtectFrame.unlock();
     stats.values[CaptureStatistics::DECODING_TIME] = start.usecsToNow();

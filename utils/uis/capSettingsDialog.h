@@ -4,7 +4,7 @@
 
 #include <QtCore/QSignalMapper>
 #include <QtCore/QMap>
-#include <QtGui/QWidget>
+#include <QWidget>
 
 #include "cameraControlParameters.h"
 #include "imageCaptureInterface.h"
@@ -20,9 +20,11 @@ namespace Ui {
 class CapSettingsDialog : public QWidget, public SaveableWidget {
     Q_OBJECT
 public:
-    CapSettingsDialog(QWidget *parent = 0, ImageCaptureInterface *pInterface = 0);
+    CapSettingsDialog(QWidget *parent = NULL, QString rootPath = "");
     ~CapSettingsDialog();
 
+
+    void setCaptureInterface(ImageCaptureInterface *pInterface = NULL);
     void clearDialog();
     void refreshDialog();
 
@@ -46,6 +48,8 @@ protected:
     void showEvent(QShowEvent *e);
 
 private:
+    QString mRootPath;
+
     Ui_CapSettingsDialog *mUi;
     ImageCaptureInterface *mCaptureInterface;
 

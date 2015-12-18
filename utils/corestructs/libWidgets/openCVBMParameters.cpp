@@ -45,7 +45,10 @@ int OpenCVBMParameters::staticInit()
           21,
           "Block Size",
           "Block Size",
-          "Block Size"
+          "Block Size",
+          true,
+         5,
+         255
         )
     );
     fields().push_back(
@@ -56,7 +59,10 @@ int OpenCVBMParameters::staticInit()
           0,
           "Disparity search",
           "Disparity search",
-          "Disparity search"
+          "Disparity search",
+          true,
+         0,
+         1600
         )
     );
     fields().push_back(
@@ -67,7 +73,10 @@ int OpenCVBMParameters::staticInit()
           31,
           "preFilterCap",
           "preFilterCap",
-          "preFilterCap"
+          "preFilterCap",
+          true,
+         1,
+         1000
         )
     );
     fields().push_back(
@@ -78,7 +87,10 @@ int OpenCVBMParameters::staticInit()
           1,
           "minDisparity",
           "minDisparity",
-          "minDisparity"
+          "minDisparity",
+          true,
+         1,
+         1000
         )
     );
     fields().push_back(
@@ -89,7 +101,10 @@ int OpenCVBMParameters::staticInit()
           10,
           "textureThreshold",
           "textureThreshold",
-          "textureThreshold"
+          "textureThreshold",
+          true,
+         0,
+         1000
         )
     );
     fields().push_back(
@@ -100,7 +115,10 @@ int OpenCVBMParameters::staticInit()
           15,
           "uniquenessRatio",
           "uniquenessRatio",
-          "uniquenessRatio"
+          "uniquenessRatio",
+          true,
+         0,
+         1000
         )
     );
     fields().push_back(
@@ -111,7 +129,10 @@ int OpenCVBMParameters::staticInit()
           100,
           "speckleWindowSize",
           "speckleWindowSize",
-          "speckleWindowSize"
+          "speckleWindowSize",
+          true,
+         0,
+         1000
         )
     );
     fields().push_back(
@@ -122,7 +143,10 @@ int OpenCVBMParameters::staticInit()
           32,
           "speckleRange",
           "speckleRange",
-          "speckleRange"
+          "speckleRange",
+          true,
+         0,
+         1000
         )
     );
     fields().push_back(
@@ -133,7 +157,10 @@ int OpenCVBMParameters::staticInit()
           1,
           "disp12MaxDiff",
           "disp12MaxDiff",
-          "disp12MaxDiff"
+          "disp12MaxDiff",
+          true,
+         -1,
+         1000
         )
     );
    return 0;

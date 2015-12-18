@@ -1,24 +1,26 @@
-#include <QtGui/QtGui>
-#include <QtGui/QPainter>
-#include <QtGui/QFont>
+#include <QApplication>
+#include <QDesktopWidget>
+#include <QtGui>
+#include <QPainter>
+#include <QFont>
 
 #include "global.h"
 
 #include "osdBaseWidget.h"
 
 #ifdef Q_OS_WIN
-#include <windows.h>
+# include <windows.h>
 #endif
 
-#ifdef Q_OS_LINUX
-#include <X11/Xlib.h>
-#include <QX11Info>
-#include <X11/extensions/shape.h>
+#ifdef WITH_X11EXTRAS
+# include <X11/Xlib.h>
+# include <QX11Info>
+# include <X11/extensions/shape.h>
 #endif
 
-OSDBaseWidget::OSDBaseWidget(QWidget *parent) :
-        QWidget(parent,  Qt::FramelessWindowHint),
-        offscreen(NULL)
+OSDBaseWidget::OSDBaseWidget(QWidget *parent)
+  : QWidget(parent, Qt::FramelessWindowHint)
+  , offscreen(NULL)
 {
     setAccessibleName("OSD");
     setWindowTitle("ViMouse OSD");
@@ -30,29 +32,29 @@ OSDBaseWidget::OSDBaseWidget(QWidget *parent) :
 #ifdef Q_OS_WIN
     runOnTopCommand();
 #endif
+
     setAttribute(Qt::WA_TranslucentBackground);
     show();
 
-#ifdef Q_OS_LINUX
+#ifdef WITH_X11EXTRAS
     QRect relativeWidgetRect = this->contentsRect();
     QRect absoluteWidgetRect = QRect(QWidget::mapToGlobal(relativeWidgetRect.topLeft()), QWidget::mapToGlobal(relativeWidgetRect.bottomRight()));
 
-    XRectangle xrect = {0,0,1,1};
-    QX11Info qX11Info = this->x11Info();
-    Display *display = qX11Info.display ();
+    XRectangle xrect = { 0, 0, 1, 1 };
+    Display *display = QX11Info::display();
     Window winId = (Window)this->winId();
 
     XShapeCombineRectangles (
          display,
          winId,
          ShapeInput,
-         absoluteWidgetRect.x(),absoluteWidgetRect.y(),
+         absoluteWidgetRect.x(), absoluteWidgetRect.y(),
          &xrect, 1,
          ShapeSet,
          YXBanded );
-#endif
+#endif // WITH_X11EXTRAS
 
-// FIXME
+    // FIXME
     hide();
 }
 
@@ -74,7 +76,7 @@ void OSDBaseWidget::runOnTopCommand()
 }
 #endif
 
-#ifdef Q_OS_LINUX
+#ifdef WITH_X11EXTRAS
 void OSDBaseWidget::runOnTopCommand()
 {
   /*  QX11Info qX11Info = this->x11Info();
@@ -86,7 +88,7 @@ void OSDBaseWidget::runOnTopCommand()
     setWindowFlags( flags );*/
 
 }
-#endif
+#endif // WITH_X11EXTRAS
 
 void OSDBaseWidget::offscreenChanged(QImage *newOffscreen)
 {
@@ -136,4 +138,3 @@ void OSDBaseWidget::paintEvent(QPaintEvent *)
         painter.drawImage(0,0,*offscreen);
     }
 }
-

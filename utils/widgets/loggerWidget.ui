@@ -6,28 +6,34 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>666</width>
-    <height>288</height>
+    <width>697</width>
+    <height>349</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>LoggerWidget</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <property name="verticalSpacing">
     <number>3</number>
-   </property>
-   <property name="margin">
-    <number>0</number>
    </property>
    <item row="0" column="0" rowspan="5">
     <widget class="QTableWidget" name="tableWidget">
      <property name="columnCount">
       <number>6</number>
      </property>
-     <attribute name="horizontalHeaderCascadingSectionResizes">
-      <bool>false</bool>
-     </attribute>
      <attribute name="horizontalHeaderCascadingSectionResizes">
       <bool>false</bool>
      </attribute>
@@ -113,8 +119,6 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources>
-  <include location="../../../../resources/main.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

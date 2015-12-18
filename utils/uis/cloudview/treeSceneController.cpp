@@ -406,18 +406,22 @@ bool TreeSceneModel::setData(const QModelIndex &index, const QVariant &value, in
         return false;
     }
 
-    qDebug("setData called:");
+//    qDebug("TreeSceneModel::setData((%d x %d), %d, %d)", index.row(), index.column(), value.toBool(), role);
 
     if (role == Qt::CheckStateRole)
     {
+//        qDebug("   This was a check box");
+
         TreeSceneController *scene = indexToScene(index);
         Qt::CheckState checkState = static_cast<Qt::CheckState>(value.toInt());
         if (scene->mObject)
         {
             scene->mObject->visible = checkState;
-            qDebug("setData called: returning true");
+//            qDebug("setData called: returning true");
             emit modelChanged();
-          //  emit dataChanged(index, index);
+            /* Well... this should be called */
+            emit dataChanged(index, index);
+
             qDebug() << scene->mObject->name <<
                     "(" << scene->mObject.data() << ")" <<
                     " is now:" << scene->mObject->visible;

@@ -46,7 +46,10 @@ int RectifyParameters::staticInit()
           "matchingMethod",
           "matchingMethod",
           "matchingMethod",
-           NULL
+          new EnumReflection(2
+          , new EnumOption(0,"SurfCV")
+          , new EnumOption(1,"viTech")
+          )
         )
     );
     fields().push_back(
@@ -101,7 +104,10 @@ int RectifyParameters::staticInit()
           3,
           "filterMinimumLength",
           "filterMinimumLength",
-          "filterMinimumLength"
+          "filterMinimumLength",
+          true,
+         0,
+         99
         )
     );
     fields().push_back(
@@ -134,7 +140,10 @@ int RectifyParameters::staticInit()
           820.427,
           "priorFocal",
           "priorFocal",
-          "priorFocal"
+          "priorFocal",
+          true,
+         0,
+         99999
         )
     );
     fields().push_back(
@@ -145,7 +154,10 @@ int RectifyParameters::staticInit()
           820.427,
           "priorFocal2",
           "priorFocal2",
-          "priorFocal2"
+          "priorFocal2",
+          true,
+         0,
+         99999
         )
     );
     fields().push_back(
@@ -156,7 +168,10 @@ int RectifyParameters::staticInit()
           60,
           "baselineLength",
           "baselineLength",
-          "baselineLength"
+          "baselineLength",
+          true,
+         -1000,
+         1000
         )
     );
     fields().push_back(
@@ -167,7 +182,10 @@ int RectifyParameters::staticInit()
           60,
           "fovAngle",
           "fovAngle",
-          "fovAngle"
+          "fovAngle",
+          true,
+         0,
+         20
         )
     );
     fields().push_back(
@@ -179,7 +197,11 @@ int RectifyParameters::staticInit()
           "estimationMethod",
           "estimationMethod",
           "estimationMethod",
-           NULL
+          new EnumReflection(3
+          , new EnumOption(0,"RANSAC")
+          , new EnumOption(1,"Iterative")
+          , new EnumOption(2,"Manual")
+          )
         )
     );
     fields().push_back(
@@ -201,7 +223,10 @@ int RectifyParameters::staticInit()
           4000,
           "ransacIterations",
           "ransacIterations",
-          "ransacIterations"
+          "ransacIterations",
+          true,
+         1,
+         9999
         )
     );
     fields().push_back(
@@ -212,7 +237,10 @@ int RectifyParameters::staticInit()
           15,
           "ransacTestSize",
           "ransacTestSize",
-          "ransacTestSize"
+          "ransacTestSize",
+          true,
+         1,
+         9999
         )
     );
     fields().push_back(
@@ -223,7 +251,10 @@ int RectifyParameters::staticInit()
           1,
           "ransacThreshold",
           "ransacThreshold",
-          "ransacThreshold"
+          "ransacThreshold",
+          true,
+         1,
+         20
         )
     );
     fields().push_back(
@@ -234,7 +265,10 @@ int RectifyParameters::staticInit()
           1,
           "baselineX",
           "baselineX",
-          "baselineX"
+          "baselineX",
+          true,
+         -20,
+         20
         )
     );
     fields().push_back(
@@ -245,7 +279,10 @@ int RectifyParameters::staticInit()
           0,
           "baselineY",
           "baselineY",
-          "baselineY"
+          "baselineY",
+          true,
+         -20,
+         20
         )
     );
     fields().push_back(
@@ -256,7 +293,10 @@ int RectifyParameters::staticInit()
           0,
           "baselineZ",
           "baselineZ",
-          "baselineZ"
+          "baselineZ",
+          true,
+         -20,
+         20
         )
     );
     fields().push_back(
@@ -268,7 +308,13 @@ int RectifyParameters::staticInit()
           "iterativeMethod",
           "iterativeMethod",
           "iterativeMethod",
-           NULL
+          new EnumReflection(5
+          , new EnumOption(0,"SVD")
+          , new EnumOption(1,"Gradient Descent")
+          , new EnumOption(2,"Marquardt Levenberg")
+          , new EnumOption(3,"Classic Kalman")
+          , new EnumOption(4,"Kalman")
+          )
         )
     );
     fields().push_back(
@@ -279,7 +325,10 @@ int RectifyParameters::staticInit()
           30,
           "iterativeIterations",
           "iterativeIterations",
-          "iterativeIterations"
+          "iterativeIterations",
+          true,
+         1,
+         9999
         )
     );
     fields().push_back(
@@ -290,7 +339,10 @@ int RectifyParameters::staticInit()
           30,
           "iterativeInitialSigma",
           "iterativeInitialSigma",
-          "iterativeInitialSigma"
+          "iterativeInitialSigma",
+          true,
+         0,
+         20
         )
     );
     fields().push_back(
@@ -301,7 +353,10 @@ int RectifyParameters::staticInit()
           0.95,
           "iterativeFactorSigma",
           "iterativeFactorSigma",
-          "iterativeFactorSigma"
+          "iterativeFactorSigma",
+          true,
+         0,
+         20
         )
     );
     fields().push_back(
@@ -312,7 +367,10 @@ int RectifyParameters::staticInit()
           1,
           "manualX",
           "manualX",
-          "manualX"
+          "manualX",
+          true,
+         -20,
+         20
         )
     );
     fields().push_back(
@@ -323,7 +381,10 @@ int RectifyParameters::staticInit()
           0,
           "manualY",
           "manualY",
-          "manualY"
+          "manualY",
+          true,
+         -20,
+         20
         )
     );
     fields().push_back(
@@ -334,7 +395,10 @@ int RectifyParameters::staticInit()
           0,
           "manualZ",
           "manualZ",
-          "manualZ"
+          "manualZ",
+          true,
+         -20,
+         20
         )
     );
     fields().push_back(
@@ -345,7 +409,10 @@ int RectifyParameters::staticInit()
           0,
           "manualPitch",
           "manualPitch",
-          "manualPitch"
+          "manualPitch",
+          true,
+         -20,
+         20
         )
     );
     fields().push_back(
@@ -356,7 +423,10 @@ int RectifyParameters::staticInit()
           0,
           "manualYaw",
           "manualYaw",
-          "manualYaw"
+          "manualYaw",
+          true,
+         -20,
+         20
         )
     );
     fields().push_back(
@@ -367,7 +437,10 @@ int RectifyParameters::staticInit()
           0,
           "manualRoll",
           "manualRoll",
-          "manualRoll"
+          "manualRoll",
+          true,
+         -20,
+         20
         )
     );
     fields().push_back(
@@ -378,7 +451,10 @@ int RectifyParameters::staticInit()
           1,
           "zdirX",
           "zdirX",
-          "zdirX"
+          "zdirX",
+          true,
+         -20,
+         20
         )
     );
     fields().push_back(
@@ -389,7 +465,10 @@ int RectifyParameters::staticInit()
           0,
           "zdirY",
           "zdirY",
-          "zdirY"
+          "zdirY",
+          true,
+         -20,
+         20
         )
     );
     fields().push_back(
@@ -400,7 +479,10 @@ int RectifyParameters::staticInit()
           0,
           "zdirZ",
           "zdirZ",
-          "zdirZ"
+          "zdirZ",
+          true,
+         -20,
+         20
         )
     );
     fields().push_back(
@@ -433,7 +515,10 @@ int RectifyParameters::staticInit()
           0,
           "preShift",
           "preShift",
-          "preShift"
+          "preShift",
+          true,
+         -9999,
+         9999
         )
     );
     fields().push_back(
@@ -444,7 +529,10 @@ int RectifyParameters::staticInit()
           0,
           "guessShiftThreshold",
           "guessShiftThreshold",
-          "guessShiftThreshold"
+          "guessShiftThreshold",
+          true,
+         0,
+         99999
         )
     );
    return 0;

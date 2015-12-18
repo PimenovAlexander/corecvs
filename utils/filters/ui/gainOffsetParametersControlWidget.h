@@ -22,6 +22,7 @@ public:
         return createParameters();
     }
 
+    void getParameters(GainOffsetParameters &params) const;
     void setParameters(const GainOffsetParameters &input);
     virtual void setParametersVirtual(void *input);
 

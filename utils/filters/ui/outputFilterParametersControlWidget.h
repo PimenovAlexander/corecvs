@@ -18,6 +18,7 @@ public:
     ~OutputFilterParametersControlWidget();
 
     OutputFilterParameters* createParameters() const;
+    void getParameters(OutputFilterParameters &params) const;
     void setParameters(const OutputFilterParameters &input);
     virtual void setParametersVirtual(void *input);
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>448</width>
-    <height>142</height>
+    <height>153</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -42,7 +42,7 @@
       <string>Ok</string>
      </property>
      <property name="icon">
-      <iconset resource="../../../../resources/main.qrc">
+      <iconset resource="../../../restricted/resources/resresource.qrc">
        <normaloff>:/new/prefix1/accept.png</normaloff>:/new/prefix1/accept.png</iconset>
      </property>
     </widget>
@@ -79,7 +79,7 @@
        <string>v4l2:/dev/video0,/dev/video1</string>
       </property>
       <property name="icon">
-       <iconset resource="../../../../resources/main.qrc">
+       <iconset resource="../../../restricted/resources/resresource.qrc">
         <normaloff>:/new/prefix1/webcam.png</normaloff>:/new/prefix1/webcam.png</iconset>
       </property>
      </item>
@@ -88,7 +88,7 @@
        <string>v4l2:/dev/video1,/dev/video0</string>
       </property>
       <property name="icon">
-       <iconset resource="../../../../resources/main.qrc">
+       <iconset resource="../../../restricted/resources/resresource.qrc">
         <normaloff>:/new/prefix1/webcam.png</normaloff>:/new/prefix1/webcam.png</iconset>
       </property>
      </item>
@@ -97,7 +97,7 @@
        <string>v4l2:/dev/video0,/dev/video1:1/30:fjpeg:640x480</string>
       </property>
       <property name="icon">
-       <iconset resource="../../../../resources/main.qrc">
+       <iconset resource="../../../restricted/resources/resresource.qrc">
         <normaloff>:/new/prefix1/webcam.png</normaloff>:/new/prefix1/webcam.png</iconset>
       </property>
      </item>
@@ -106,7 +106,7 @@
        <string>prec:data/pair/image0001%0.0s_c%d.pgm</string>
       </property>
       <property name="icon">
-       <iconset resource="../../../../resources/main.qrc">
+       <iconset resource="../../../restricted/resources/resresource.qrc">
         <normaloff>:/new/prefix1/remove.png</normaloff>:/new/prefix1/remove.png</iconset>
       </property>
      </item>
@@ -115,7 +115,7 @@
        <string>v4l2d:/dev/video1:1/30:rc</string>
       </property>
       <property name="icon">
-       <iconset resource="../../../../resources/main.qrc">
+       <iconset resource="../../../restricted/resources/resresource.qrc">
         <normaloff>:/new/prefix1/3d_glasses_rc.png</normaloff>:/new/prefix1/3d_glasses_rc.png</iconset>
       </property>
      </item>
@@ -124,7 +124,7 @@
        <string>prec:data/pair/image%04d_c%d.pgm,100ms</string>
       </property>
       <property name="icon">
-       <iconset resource="../../../../resources/main.qrc">
+       <iconset resource="../../../restricted/resources/resresource.qrc">
         <normaloff>:/new/prefix1/remove.png</normaloff>:/new/prefix1/remove.png</iconset>
       </property>
      </item>
@@ -133,7 +133,7 @@
        <string>dshow:0,1:1/30:fjpeg:960x544</string>
       </property>
       <property name="icon">
-       <iconset resource="../../../../resources/main.qrc">
+       <iconset resource="../../../restricted/resources/resresource.qrc">
         <normaloff>:/new/prefix1/webcam.png</normaloff>:/new/prefix1/webcam.png</iconset>
       </property>
      </item>
@@ -142,7 +142,7 @@
        <string>dshow:1:1/30:rc</string>
       </property>
       <property name="icon">
-       <iconset resource="../../../../resources/main.qrc">
+       <iconset resource="../../../restricted/resources/resresource.qrc">
         <normaloff>:/new/prefix1/3d_glasses_rc.png</normaloff>:/new/prefix1/3d_glasses_rc.png</iconset>
       </property>
      </item>
@@ -164,7 +164,7 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../restricted/resources/resresource.qrc"/>
  </resources>
  <connections>
   <connection>
@@ -174,8 +174,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>438</x>
-     <y>119</y>
+     <x>436</x>
+     <y>134</y>
     </hint>
     <hint type="destinationlabel">
      <x>447</x>
@@ -194,8 +194,8 @@
      <y>49</y>
     </hint>
     <hint type="destinationlabel">
-     <x>103</x>
-     <y>67</y>
+     <x>114</x>
+     <y>100</y>
     </hint>
    </hints>
   </connection>

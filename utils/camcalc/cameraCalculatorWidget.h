@@ -1,7 +1,7 @@
 #ifndef CAMERACALCULATORWIDGET_H
 #define CAMERACALCULATORWIDGET_H
 
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "ui_cameraCalculatorWidget.h"
 #include "colorTimer.h"
 
