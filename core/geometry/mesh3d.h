@@ -15,6 +15,8 @@
 #include "rgbColor.h"
 #include "ellipticalApproximation.h"
 
+#include "conic.h"
+
 namespace corecvs
 {
 
@@ -45,23 +47,6 @@ public:
     bool hasTexCoords;
     bool hasColor;
 
-
-    void switchColor(bool on = true)
-    {
-        if (hasColor == on)
-            return;
-        if (on) {
-            vertexesColor.resize(vertexes.size(), currentColor);
-            edgesColor   .resize(edges   .size(), currentColor);
-            facesColor   .resize(faces   .size(), currentColor);
-        } else {
-            vertexesColor.clear();
-            edgesColor.clear();
-            facesColor.clear();
-        }
-        hasColor = on;
-    }
-
     /** Vertexes that from the mesh (faces or edges or noconnected) */
     vector<Vector3dd>  vertexes;
     vector<Vector3d32> faces;
@@ -77,17 +62,26 @@ public:
 
 /*  Current state */
 
+    void switchColor(bool on = true);
+    void setColor(const RGBColor &color);
+
+
     RGBColor currentColor;
     Matrix44 currentTransform;
+
+    vector<Matrix44> transformStack;
+
+    void mulTransform(const Matrix33 &transform);
+    void mulTransform(const Matrix44 &transform);
+    void popTransform();
+
 
 /* Methods */
 
 
-    void setCentral(Vector3dd _central)
-    {
-        centralPoint = _central;
-        hasCentral = true;
-    }
+    void setCentral(Vector3dd _central);
+
+    void addOrts(double length = 1.0, bool captions = false);
 
 
     void addAOB(Vector3dd corner1, Vector3dd corner2, bool addFaces = true);
@@ -99,12 +93,23 @@ public:
     void addLine(Vector3dd point1, Vector3dd point2);
     void addTriangle(Vector3dd point1, Vector3dd point2, Vector3dd point3);
 
-    void addSphere(Vector3dd center, double radius, int step);
+    void addSphere    (Vector3dd center, double radius, int step);
+    void addCylinder  (Vector3dd center, double radius, double height, int step = 20, double phase = 0.0);
 
-    void addCamera(const CameraIntrinsics &cam, double len);
+    void addIcoSphere(Vector3dd center, double radius, int step = 1);
+
+    void addCircle   (const Circle3d &circle, int step = 20);
+
+    void addSphere   (const Sphere3d &sphere, int step = 20);
+    void addIcoSphere(const Sphere3d &sphere, int step = 1);
+
+    void addCamera(const CameraIntrinsicsLegacy &cam, double len);
+
 
     void add2AxisEllipse  (const EllipticalApproximation3d &approx);
     void addMatrixSurface (double *data, int h, int w);
+
+    void clear();
 
     /* For abstract painter */
     typedef int InternalElementType;
@@ -116,10 +121,15 @@ public:
 #endif
 
     void dumpPLY(ostream &out);
+    int  dumpPLY(const string &filename);
+
+
     void transform (const Matrix44 &matrix);
     Mesh3D transformed(const Matrix44 &matrix);
 
-    void add(const Mesh3D &other);
+    AxisAlignedBox3d getBoundingBox();
+
+    void add(const Mesh3D &other, bool preserveColor = false);
 
 private:
     virtual void addEdge(const Vector2d32 &edge);
@@ -130,6 +140,8 @@ private:
     //, Vector2dd &texCoord
 public:
     virtual ~Mesh3D() {}
+
+    void fillTestScene();
 };
 
 

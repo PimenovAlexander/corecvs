@@ -45,7 +45,10 @@ int GainOffsetParameters::staticInit()
           1,
           "gain",
           "gain",
-          "gain"
+          "gain",
+          true,
+         -10,
+         10
         )
     );
     fields().push_back(
@@ -56,7 +59,10 @@ int GainOffsetParameters::staticInit()
           0,
           "offset",
           "offset",
-          "offset"
+          "offset",
+          true,
+         -5000,
+         5000
         )
     );
    return 0;

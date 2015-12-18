@@ -351,7 +351,7 @@ Matrix44 FCostFunction::GetMatrixForTransform (
 
  Matrix44 FCostFunction::getInvDMatrix(
      CameraId cameraId,
-     const CameraIntrinsics          &cameraIntrinsics,
+     const CameraIntrinsicsLegacy          &cameraIntrinsics,
      const ShiftRotateTransformation &cameraExtrinsics
  )
  {
@@ -370,7 +370,7 @@ Matrix44 FCostFunction::GetMatrixForTransform (
 
  Matrix44 FCostFunction::getDMatrix(
        CameraId cameraId,
-       const CameraIntrinsics          &cameraIntrinsics,
+       const CameraIntrinsicsLegacy          &cameraIntrinsics,
        const ShiftRotateTransformation &cameraExtrinsics
   )
  {
@@ -381,7 +381,7 @@ Matrix44 FCostFunction::GetMatrixForTransform (
 
  Matrix44 FCostFunction::getBMatrix(
      CameraId cameraId,
-     const CameraIntrinsics &cameraIntrinsics,
+     const CameraIntrinsicsLegacy &cameraIntrinsics,
      const ShiftRotateTransformation &cameraExtrinsics,
      const ShiftRotateTransformation &carEvolution
  )
@@ -564,7 +564,7 @@ Matrix44 FCostFunction::GetMatrixForTransform (
 double FCostFunction::function(
         const FloatFlowVector &flow,
         CameraId cameraId,
-        const CameraIntrinsics &cameraIntrinsics,
+        const CameraIntrinsicsLegacy &cameraIntrinsics,
         const ShiftRotateTransformation &cameraExtrinsics,
         const ShiftRotateTransformation &carEvolution)
  {
@@ -576,7 +576,7 @@ double FCostFunction::function(
 double FCostFunction::functionPro(
         const FloatFlowVector &flow,
         CameraId cameraId,
-        const CameraIntrinsics &cameraIntrinsics,
+        const CameraIntrinsicsLegacy &cameraIntrinsics,
         const ShiftRotateTransformation &cameraExtrinsics,
         const ShiftRotateTransformation &carEvolution,
         double *distancePtr, /*<[out]*/

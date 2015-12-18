@@ -9,7 +9,7 @@
 #ifndef ESSENTIALESTIMATOR_H_
 #define ESSENTIALESTIMATOR_H_
 #include <vector>
-#include "correspondanceList.h"
+#include "correspondenceList.h"
 #include "essentialMatrix.h"
 #include "function.h"
 #include "quaternion.h"
@@ -73,9 +73,9 @@ public:
      **/
     class CostFunction7to1 : public CostFunctionBase {
     public:
-        const vector<Correspondance *> *samples;
+        const vector<Correspondence *> *samples;
 
-        CostFunction7to1(const vector<Correspondance *> *_samples) :
+        CostFunction7to1(const vector<Correspondence *> *_samples) :
                CostFunctionBase(1),
                samples(_samples)
         {};
@@ -94,7 +94,7 @@ public:
     class NormalizeFunction : public FunctionArgs
     {
     public:
-        const vector<Correspondance *> *samples;
+        const vector<Correspondence *> *samples;
         NormalizeFunction() :
             FunctionArgs(CostFunctionBase::VECTOR_SIZE,1) {};
 
@@ -107,9 +107,9 @@ public:
      **/
     class CostFunction7toN : public CostFunctionBase {
     public:
-        const vector<Correspondance *> *samples;
+        const vector<Correspondence *> *samples;
 
-        CostFunction7toN(const vector<Correspondance *> *_samples) :
+        CostFunction7toN(const vector<Correspondence *> *_samples) :
             CostFunctionBase((int)_samples->size()),
             samples(_samples)
         {};
@@ -121,17 +121,19 @@ public:
     /* Main methods for essential matrix extraction */
 
     EssentialMatrix getEssential             (
-            const vector<Correspondance *> &samples,
+            const vector<Correspondence *> &samples,
             OptimisationMethod method = METHOD_DEFAULT);
 
-    EssentialMatrix getEssentialLSE          (const vector<Correspondance *> &samples);
-    EssentialMatrix getEssentialLM           (const vector<Correspondance *> &samples);
-    EssentialMatrix getEssentialGrad         (const vector<Correspondance *> &samples);
-    EssentialMatrix getEssentialGradToRm     (const vector<Correspondance *> &samples);
-    EssentialMatrix getEssentialSimpleKalman (const vector<Correspondance *> &samples);
+    EssentialMatrix getEssentialLSE          (const vector<Correspondence *> &samples);
+    EssentialMatrix getEssentialLM           (const vector<Correspondence *> &samples);
+    EssentialMatrix getEssentialGrad         (const vector<Correspondence *> &samples);
+    EssentialMatrix getEssentialGradToRm     (const vector<Correspondence *> &samples);
+    EssentialMatrix getEssentialSimpleKalman (const vector<Correspondence *> &samples);
+    std::vector<EssentialMatrix> getEssential7point(const vector<Correspondence*> &samples);
+    std::vector<EssentialMatrix> getEssential5point(const vector<Correspondence*> &samples);
 #if 0
-    EssentialMatrix getEssentialKalman       (const vector<Correspondance *> &samples);
-    EssentialMatrix getEssentialMultiKalman  (const vector<Correspondance *> &samples);
+    EssentialMatrix getEssentialKalman       (const vector<Correspondence *> &samples);
+    EssentialMatrix getEssentialMultiKalman  (const vector<Correspondence *> &samples);
 #endif
 
 

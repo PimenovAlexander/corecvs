@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include "gtest/gtest.h"
 
 #include "utils.h"
 #include "g12Buffer.h"

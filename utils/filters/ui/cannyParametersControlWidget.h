@@ -1,5 +1,5 @@
 #pragma once
-#include <QWidget>
+#include <QtGui/QWidget>
 #include "generated/cannyParameters.h"
 #include "ui_cannyParametersControlWidget.h"
 #include "filterParametersControlWidgetBase.h"

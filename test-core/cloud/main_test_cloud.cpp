@@ -9,18 +9,19 @@
  */
 
 #include <iostream>
+#include "gtest/gtest.h"
+
 #include "global.h"
+
 #include "cloud.h"
 #include "preciseTimer.h"
 #include "ellipticalApproximation.h"
 #include "clustering3d.h"
 #include "buffer3d.h"
 
-
 using namespace std;
 
-
-int main (int /*argC*/, char ** /*argV*/)
+TEST(CloudTest, main)
 {
 //    srand(int64_t(0));
 
@@ -67,7 +68,6 @@ int main (int /*argC*/, char ** /*argV*/)
         cout << (*it) << endl;
 
 
-
 //    Clustering3D clusterer(pCloud, 1, 1, 1, 1);
 //    clusterer._clusterStarting();
 
@@ -84,15 +84,9 @@ int main (int /*argC*/, char ** /*argV*/)
 //        }
 
 
-
-
-
 //    Buffer3d buffer(10, 10, pCloud);
 //    buffer.element(5, 5)->speed = Vector3dd(0, 0, 0);
 
 //    cout << pCloud->back().speed << endl;
-
-
-    cout << "PASSED" << endl;
-    return 0;
+    delete pCloud;
 }

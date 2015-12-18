@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <iostream>
+#include "gtest/gtest.h"
 
 #include "global.h"
 
@@ -19,8 +20,6 @@
 #ifdef WITH_TBB
 #include <tbb/task.h>
 #endif
-
-
 
 using namespace std;
 using namespace corecvs;
@@ -36,7 +35,7 @@ public:
     void operator()( const BlockedRange<int>& r ) const
     {
         DOTRACE(("Wrapped: Interval [%d : %d)\n", r.begin(), r.end()));
-        for( int i = r.begin(); i < r.end(); i ++ )
+        for (int i = r.begin(); i < r.end(); i++)
         {
             data[i] = 0xFF;
         }
@@ -46,7 +45,7 @@ public:
     void operator()( const tbb::blocked_range<int>& r ) const
     {
         DOTRACE(("TBB   : Interval [%d : %d)\n", r.begin(), r.end()));
-        for( int i = r.begin(); i < r.end(); i ++ )
+        for (int i = r.begin(); i < r.end(); i++)
         {
             data[i] = 0x7F;
         }
@@ -54,7 +53,7 @@ public:
 #endif
 };
 
-void testTBBWrapper(void)
+TEST(TBBWrapperTest, testWrapper)
 {
     const int SIZE = 9;
     uint8_t *data = new uint8_t[SIZE];
@@ -64,7 +63,7 @@ void testTBBWrapper(void)
     tbb::parallel_for(tbb::blocked_range<int>(0, SIZE), ParallelTestTBBWrapper(data));
     for (int i = 0; i < SIZE; i++)
     {
-        ASSERT_TRUE_P(data[i] == 0x7F,("TBB Wrapper has problems at pos %d found %d", i, data[i]));
+        CORE_ASSERT_TRUE_P(data[i] == 0x7F, ("TBB Wrapper has problems at pos %d found %d", i, data[i]));
     }
 #endif
 
@@ -72,7 +71,7 @@ void testTBBWrapper(void)
 
     for (int i = 0; i < SIZE; i++)
     {
-        ASSERT_TRUE_P(data[i] == 0xFF,("TBB Wrapper has problems at pos %d found %d", i, data[i]));
+        CORE_ASSERT_TRUE_P(data[i] == 0xFF, ("TBB Wrapper has problems at pos %d found %d", i, data[i]));
     }
     delete[] data;
 }
@@ -80,18 +79,15 @@ void testTBBWrapper(void)
 /*================= Task Tester ====================*/
 
 #ifdef WITH_TBB
+
 class TestTask : public tbb::task
 {
 public:
-    int len;
+    int      len;
     uint8_t *data;
-    int value;
+    int      value;
 
-    TestTask(int _len, uint8_t *_data, int _value) :
-        len(_len),
-        data(_data),
-        value(_value)
-    {}
+    TestTask(int _len, uint8_t *_data, int _value) : len(_len), data(_data), value(_value) {}
 
     tbb::task* execute()
     {
@@ -101,37 +97,26 @@ public:
     }
 };
 
-
-void testTasks( void )
+TEST(TBBWrapperTest, testTasks)
 {
     const int SIZE = 90;
     uint8_t *data = new uint8_t[SIZE];
     memset(data, 0, sizeof(uint8_t) * SIZE);
 
-
     tbb::task_list list;
-    for (int i = 0; i < SIZE; i+=10)
+    for (int i = 0; i < SIZE; i += 10)
     {
-        list.push_back( *new(task::allocate_root()) TestTask(10, data+i, 20 + (i / 10)));
+        list.push_back(*new(task::allocate_root()) TestTask(10, data + i, 20 + (i / 10)));
     }
 
     tbb::task::spawn_root_and_wait(list);
-
 
     for (int i = 0; i < SIZE; i++)
     {
         printf("%d ", data[i]);
     }
+    printf("\n");
+    delete[] data;
 }
-#endif
 
-
-int main (int /*argC*/, char ** /*argV*/)
-{
-    testTBBWrapper();
-#ifdef WITH_TBB
-    testTasks();
-#endif
-        cout << "PASSED" << endl;
-        return 0;
-}
+#endif // WITH_TBB

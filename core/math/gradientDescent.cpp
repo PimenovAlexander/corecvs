@@ -18,9 +18,9 @@ vector<double> GradientDescent::minimise(const vector<double> &input)
     cout << "Lambda is: "<< lambda << endl;
     cout << "[" << flush;
     Vector beta(input);
-    ASSERT_TRUE  ( f != NULL, "Function is NULL");
-    ASSERT_TRUE  ( f->outputs == 1, "Function should map to 1 dimentional space");
-    ASSERT_TRUE_P( beta.size() == f->inputs, ("input guess has wrong dimension %d instead of %d\n", beta.size(), f->inputs));
+    CORE_ASSERT_TRUE(f != NULL, "Function is NULL");
+    CORE_ASSERT_TRUE(f->outputs == 1, "Function should map to one-dimensional space");
+    CORE_ASSERT_TRUE_P(beta.size() == f->inputs, ("input guess has wrong dimension %d instead of %d\n", beta.size(), f->inputs));
 
     for (int g = 0; g < maxIterations; g++)
     {
@@ -78,10 +78,10 @@ vector<double> GradientDescent::fit(const vector<double> &input, const vector<do
 {
     cout << "================== Starting Gradient fit ================== " << endl;
     Vector beta(input);
-    ASSERT_TRUE  ( f != NULL, "Function is NULL");
-    ASSERT_TRUE  ( f->outputs == 1, "Function should map to 1 dimentional space");
-    ASSERT_TRUE_P( beta.size() == f->inputs, ("input guess has wrong dimension %d instead of %d\n", beta.size(), f->inputs));
-    ASSERT_TRUE_P( (int)output.size() == f->outputs, ("output has wrong dimension %d instead of %d\n", (int)output.size(), f->outputs));
+    CORE_ASSERT_TRUE(f != NULL, "Function is NULL");
+    CORE_ASSERT_TRUE(f->outputs == 1, "Function should map to one-dimensional space");
+    CORE_ASSERT_TRUE_P(beta.size() == f->inputs, ("input guess has wrong dimension %d instead of %d\n", beta.size(), f->inputs));
+    CORE_ASSERT_TRUE_P((int)output.size() == f->outputs, ("output has wrong dimension %d instead of %d\n", (int)output.size(), f->outputs));
 
     for (int g = 0; g < maxIterations; g++)
     {
@@ -129,9 +129,9 @@ vector<double> GradientDescentRnToRm::fit(const vector<double> &input, const vec
 {
     cout << "================== Starting Gradient Rn->Rm fit ================== " << endl;
     Vector beta(input);
-    ASSERT_TRUE  ( f != NULL, "Function is NULL");
-    ASSERT_TRUE_P( beta.size() == f->inputs, ("input guess has wrong dimension %d instead of %d\n", beta.size(), f->inputs));
-    ASSERT_TRUE_P( (int)output.size() == f->outputs, ("output has wrong dimension %d instead of %d\n", (int)output.size(), f->outputs));
+    CORE_ASSERT_TRUE(f != NULL, "Function is NULL");
+    CORE_ASSERT_TRUE_P(beta.size() == f->inputs, ("input guess has wrong dimension %d instead of %d\n", beta.size(), f->inputs));
+    CORE_ASSERT_TRUE_P((int)output.size() == f->outputs, ("output has wrong dimension %d instead of %d\n", (int)output.size(), f->outputs));
 
     /**Current value of the function */
     Vector F(f->outputs);
@@ -139,7 +139,6 @@ vector<double> GradientDescentRnToRm::fit(const vector<double> &input, const vec
 
     for (int g = 0; g < maxIterations; g++)
     {
-
         Matrix J = f->getJacobian(&(beta[0]));
         f->operator()(beta.element, F.element);
 #ifdef TRACE

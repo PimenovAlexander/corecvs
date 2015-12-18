@@ -96,7 +96,9 @@ template <typename OtherAlgebra>
     inline void process(Algebra &algebra) const
     {
         // TODO: Correct this please
-        Type result((uint16_t)0xFFFFU);
+        //Type result((uint16_t)0xFFFFU);
+        Type result;
+        Algebra::fillOnes(result);
 
         for (int i = 0; i < element->h; i++)
         {
@@ -110,7 +112,7 @@ template <typename OtherAlgebra>
                 result &= algebra.getInput(i,j);
             }
         }
-        algebra.putOutput(0,0,result);
+        algebra.putOutput(0, 0, result);
     }
 };
 
@@ -127,12 +129,12 @@ public:
     int y;
 
     DilateKernel(G12Buffer *_element, int _y, int _x) :
-        element(_element), x(_x), y(_y) {};
+        element(_element), x(_x), y(_y) {}
 
-    inline int getCenterX(){ return x; };
-    inline int getCenterY(){ return y; };
-    inline int getSizeX(){ return element->w; };
-    inline int getSizeY(){ return element->h; };
+    inline int getCenterX(){ return x; }
+    inline int getCenterY(){ return y; }
+    inline int getSizeX(){ return element->w; }
+    inline int getSizeY(){ return element->h; }
 
     typedef typename Algebra::InputType Type;
 

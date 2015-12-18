@@ -14,8 +14,91 @@
 
 namespace corecvs {
 
-using std::max;
-using std::min;
+
+/**
+ *  This class provides a parallel execution of pixel mapping based on the bilinear transform.
+ *  Basically it moves pixels to new position based on the map function
+ *  the map(i,j) function
+ *
+ **/
+template<class InputType, class OutputType, class InternalIndexType, class InternalElementType>
+class BlMapper {
+
+public:
+
+    template<class Mapper>
+    class ParallelDoReverseDeformationBl
+    {
+        OutputType *toReturn;
+        const Mapper *map;
+        InputType *buf;
+
+    public:
+        ParallelDoReverseDeformationBl(
+            OutputType *_toReturn,
+            const Mapper *_map,
+            InputType *_buf
+            ) :
+        toReturn(_toReturn), map(_map), buf(_buf)
+        {}
+
+        void operator()( const BlockedRange<InternalIndexType>& r ) const
+        {
+            InternalIndexType j;
+            InternalIndexType newW = toReturn->getW();
+
+            for (InternalIndexType i = r.begin(); i < r.end(); i++)
+            {
+                for (j = 0; j < newW - 1; j++)
+                {
+                    Vector2dd p = map->map(i,j);
+                    if (buf->isValidCoordBl(p))
+                        toReturn->element(i,j) = buf->elementBl(p);
+                    else
+                        toReturn->element(i,j) = InternalElementType(0x0);
+                }
+            }
+        }
+
+    }; // ParallelDoReverseDeformationBl
+
+   /* inline bool isValidCoordBl(const Vector2dd &point) const
+    {
+        return (floor(point.x()) >= 0) && (floor(point.x()) + 1.0 < this->getW()) &&
+               (floor(point.y()) >= 0) && (floor(point.y()) + 1.0 < this->getH());
+    }*/
+
+    /**
+     * This function template is responsible for applying reverse
+     * transformation to the abstract buffer.
+     *
+     *
+     * \param map
+     *         The map to apply
+     * \param newH
+     *         Output Buffer Height
+     * \param newW
+     *         Output Buffer Width
+     **/
+    template<class Mapper>
+    OutputType *doReverseDeformationBlTyped(const Mapper *map, InternalIndexType newH = -1, InternalIndexType newW = -1)
+    {
+        InputType *realThis =  static_cast<InputType *>(this);
+
+        if (newH == -1) newH = realThis->getH();
+        if (newW == -1) newW = realThis->getW();
+
+        OutputType *toReturn = new OutputType(newH, newW);
+        DOTRACE(("Starting transform to %d %d...\n", newW - 1, newH - 1));
+        parallelable_for(0, newH - 1, ParallelDoReverseDeformationBl<Mapper>(toReturn, map, realThis));
+        return toReturn;
+    }
+
+};
+
+
+
+
 
 class Splain3Interpolator
 {
@@ -26,14 +109,14 @@ public:
         int32_t i = floor(y);
         int32_t j = floor(x);
 
-        ASSERT_TRUE_P(buffer->isValidCoordBl(y,x),
+        CORE_ASSERT_TRUE_P(buffer->isValidCoordBl(y, x),
                 ("Invalid coordinate in AbstractContiniousBuffer::elementBl(double y=%lf, double x=%lf) buffer sizes is [%dx%d]",
                    y, x, buffer->w, buffer->h));
 
         double a = (double)buffer->element(i, j);
-        double b = (double)buffer->element(i, min(buffer->w - 1, j + 1));
-        double c = (double)buffer->element(min(buffer->h - 1, i + 1), j);
-        double d = (double)buffer->element(min(i + 1, buffer->h - 1), min(j + 1, buffer->w - 1));
+        double b = (double)buffer->element(i, CORE_MIN(buffer->w - 1, j + 1));
+        double c = (double)buffer->element(CORE_MIN(buffer->h - 1, i + 1), j);
+        double d = (double)buffer->element(CORE_MIN(i + 1, buffer->h - 1), CORE_MIN(j + 1, buffer->w - 1));
 
         double derAY = c - a;
         double derCY = c - a;
@@ -47,22 +130,22 @@ public:
         if (i > 0)
         {
             derAY = (c - (double)buffer->element(i - 1, j)) * 0.5;
-            derBY = (d - (double)buffer->element(i - 1, min(j + 1, buffer->w - 1))) * 0.5;
+            derBY = (d - (double)buffer->element(i - 1, CORE_MIN(j + 1, buffer->w - 1))) * 0.5;
         }
         if (i + 2 < buffer->h)
         {
             derCY = ((double)buffer->element(i + 2, j) - a) * 0.5;
-            derDY = ((double)buffer->element(i + 2, min(j + 1, buffer->w - 1)) - b) * 0.5;
+            derDY = ((double)buffer->element(i + 2, CORE_MIN(j + 1, buffer->w - 1)) - b) * 0.5;
         }
         if (j > 0)
         {
             derAX = (b - (double)buffer->element(i, j - 1)) * 0.5;
-            derCX = (d - (double)buffer->element(min(i + 1, buffer->h - 1), j - 1)) * 0.5;
+            derCX = (d - (double)buffer->element(CORE_MIN(i + 1, buffer->h - 1), j - 1)) * 0.5;
         }
         if (j + 2 < buffer->w)
         {
             derBX = ((double)buffer->element(i, j + 2) - a) * 0.5;
-            derDX = ((double)buffer->element(min(i + 1, buffer->h - 1), j + 2) - c) * 0.5;
+            derDX = ((double)buffer->element(CORE_MIN(i + 1, buffer->h - 1), j + 2) - c) * 0.5;
         }
 
         double b0 = 4 * a - 4 * b - 4 * c + 4 * d + 2 * derAX + 2 * derBX
@@ -119,7 +202,7 @@ public:
         int32_t i = floor(y);
         int32_t j = floor(x);
 
-        ASSERT_TRUE_P(buffer->isValidCoordBl(y,x),
+        CORE_ASSERT_TRUE_P(buffer->isValidCoordBl(y, x),
             ("Invalid coordinate in AbstractContiniousBuffer::elementBl(double y=%lf, double x=%lf) buffer sizes is [%dx%d]",
                y, x, buffer->w, buffer->h));
 
@@ -149,19 +232,19 @@ public:
         int w = buffer->getW();
         int h = buffer->getH();
 
-        ASSERT_TRUE_P(buffer->isValidCoordBl(y,x),
+        CORE_ASSERT_TRUE_P(buffer->isValidCoordBl(y, x),
                       ("Invalid coordinate in AbstractContiniousBuffer::elementBl(double y=%lf, double x=%lf) buffer sizes is [%dx%d]",
                        y, x, w, h));
 
-        double a0 = (double)buffer->element(max(0, i - 1), max(0, j - 1));
-        double a1 = (double)buffer->element(i, max(0, j - 1));
-        double a2 = (double)buffer->element(min(i + 1, h - 1), max(0, j - 1));
-        double a3 = (double)buffer->element(max(0, i - 1), j);
+        double a0 = (double)buffer->element(CORE_MAX(0, i - 1)    , CORE_MAX(0, j - 1));
+        double a1 = (double)buffer->element(                 i    , CORE_MAX(0, j - 1));
+        double a2 = (double)buffer->element(CORE_MIN(i + 1, h - 1), CORE_MAX(0, j - 1));
+        double a3 = (double)buffer->element(CORE_MAX(0, i - 1), j);
         double a4 = (double)buffer->element(i, j);
-        double a5 = (double)buffer->element(min(i + 1, h - 1), j);
-        double a6 = (double)buffer->element(max(0, i - 1), min(j + 1, w - 1));
-        double a7 = (double)buffer->element(i, min(j + 1, w -1));
-        double a8 = (double)buffer->element(min(i + 1, h - 1), min(j + 1, w - 1));
+        double a5 = (double)buffer->element(CORE_MIN(i + 1, h - 1), j);
+        double a6 = (double)buffer->element(CORE_MAX(0, i - 1),     CORE_MIN(j + 1, w - 1));
+        double a7 = (double)buffer->element(i,                      CORE_MIN(j + 1, w - 1));
+        double a8 = (double)buffer->element(CORE_MIN(i + 1, h - 1), CORE_MIN(j + 1, w - 1));
 
         x -= j;
         y -= i;

@@ -2,7 +2,7 @@
 
 #include "baseHostDialog.h"
 
-#include <QMainWindow>
+#include <QtGui/QMainWindow>
 
 namespace Ui {
 class MainWindow;
@@ -26,14 +26,14 @@ public:
         startMini(_startMini),
         autoStop(_autoStop),
         frameToStop(_frameToStop)
-    { }
+    { };
 
     MainWindowParameters() :
         autoPlay(false),
         startMini(false),
         autoStop(false),
         frameToStop(0)
-    { }
+    { };
 
 };
 
@@ -52,7 +52,6 @@ public:
 
     void closeEvent(QCloseEvent *event);
     void keyPressEvent(QKeyEvent * event);
-    void addMainPanelAction(QAction *action);
 
 signals:
     void pauseCalculation();

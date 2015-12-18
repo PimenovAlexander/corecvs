@@ -63,7 +63,7 @@ int main (int /*argC*/, char ** /*argV*/)
 
         //cout << "Surfer done in: " << (timer.usecsToNow() / 1000.0 / 100.0) << "ms" << endl;
 
-        CorrespondanceList* result = new  CorrespondanceList(surfer.getCorrespondanceList());
+        CorrespondenceList* result = new  CorrespondenceList(surfer.getCorrespondenceList());
         vector<KeyPoint> imagePoints   = surfer.getKeypointsImage();
         vector<KeyPoint> patternPoints = surfer.getKeypointsPattern();
 
@@ -82,15 +82,15 @@ int main (int /*argC*/, char ** /*argV*/)
 
         flowDump->drawG12Buffer(pattern);
 
-        flowDump->drawCorrespondanceList(result);
+        flowDump->drawCorrespondenceList(result);
         BMPLoader().save("OUTPUT.bmp", flowDump);
         delete_safe(flowDump);
 
-        cout << "Number of correspondances: " << result->size() << endl;
+        cout << "Number of correspondences: " << result->size() << endl;
 
         while  (!result->empty())
         {
-            Correspondance tmpCor = result->back();
+            Correspondence tmpCor = result->back();
             result->pop_back();
             cout << " from pattern (x,y)= (" << tmpCor.start.x() << ", " << tmpCor.start.y() << ")";
             cout << " to image (x,y)= ("   << tmpCor.end.x() << ", " << tmpCor.end.y() << ")";

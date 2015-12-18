@@ -36,7 +36,10 @@
 
 namespace Triangulation
 {
-using namespace std;
+
+using std::list;
+using std::set;
+
 using namespace corecvs;
 
 const double DEFAULT_MAX_DISTANCE = 200.0;

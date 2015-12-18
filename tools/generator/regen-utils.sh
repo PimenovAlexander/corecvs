@@ -3,7 +3,7 @@
 source ./helper-regen.sh
 
 echo -n "Building generator... "
-qmake-qt4 && make
+qmake && make
 echo "done"
 
 echo -n "Running generator on xml/graphPlot.xml..."

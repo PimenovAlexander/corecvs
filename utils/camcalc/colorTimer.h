@@ -2,7 +2,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QTimer>
-#include <QDoubleSpinBox>
+#include <QtGui/QDoubleSpinBox>
 
 class ColorTimer : public QTimer
 {

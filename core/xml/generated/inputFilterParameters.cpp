@@ -46,7 +46,10 @@ int InputFilterParameters::staticInit()
           "Input Type",
           "Input Type",
           "Input Type",
-           NULL
+          new EnumReflection(2
+          , new EnumOption(0,"Left Frame")
+          , new EnumOption(1,"Right Frame")
+          )
         )
     );
    return 0;

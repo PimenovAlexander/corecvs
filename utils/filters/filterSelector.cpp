@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <qtablewidget.h>
+#include <QtGui/qtablewidget.h>
 #include "filterSelector.h"
 
 #include "gainOffsetFilter.h"       // ../../../core/src/filters
@@ -154,7 +154,7 @@ void FilterSelector::activateFilter(QListWidgetItem *item)
 {
     if (currentWidget != NULL)
     {
-        //printf("Removing current widget: %s\n", currentWidget->getInstanceName().toLatin1().constData());
+        //printf("Removing current widget: %s\n", currentWidget->getInstanceName().toAscii().constData());
         ui.gridLayout->removeWidget(currentWidget);
         currentWidget->setParent(NULL);
         currentWidget = NULL;
@@ -163,7 +163,7 @@ void FilterSelector::activateFilter(QListWidgetItem *item)
     }
 
     currentWidget = ((FilterListWidgetItem *)item)->parametersWidget;
-    //printf("Adding current widget: %s\n", currentWidget->getInstanceName().toLatin1().constData());
+    //printf("Adding current widget: %s\n", currentWidget->getInstanceName().toAscii().constData());
     ui.gridLayout->addWidget(currentWidget, 4, 0, 1, 2);
     this->update();
 }

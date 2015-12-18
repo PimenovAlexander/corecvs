@@ -24,7 +24,7 @@ public:
     {
         if (instanceId == -1)
              instanceId = ++instanceCounter;
-        else instanceCounter = max(instanceCounter, instanceId);
+        else instanceCounter = CORE_MAX(instanceCounter, instanceId);
 
         inputPins.push_back (new G12Pin(this, Pin::INPUT_PIN, (id == -1),  "0"));
         outputPins.push_back(new G12Pin(this, Pin::OUTPUT_PIN, (id == -1), "0"));

@@ -53,7 +53,6 @@ BaseCalculationThread::BaseCalculationThread()
 
 AbstractOutputData* BaseCalculationThread::processNewData()
 {
-    qDebug("BaseCalculationThread::processNewData(): called");
     BaseOutputData *resultData = new BaseOutputData();
 
     initData(resultData);
@@ -84,7 +83,8 @@ void BaseCalculationThread::initData(BaseOutputData *calculationOutputData, Stat
     calculationOutputData->mMainImage.addLayer(
             new ImageResultLayer(
                     mPresentationParams->output(),
-                    mTransformedBuffers
+                    mTransformedBuffers,
+                    mPresentationParams->leftFrame()
             )
     );
 
@@ -193,14 +193,28 @@ void BaseCalculationThread::transformInputFrames()
                 mDistortionTransform.data(),
                 inputFrame->h, inputFrame->w
             );
-            if (inputFrame != inputFrameOrig) {
+            if (inputFrame != inputFrameOrig)
                 delete inputFrame;
-            }
             inputFrame = newInputFrame;
         }
 
         delete_safe (mTransformedBuffers[i]);
+#ifdef WITH_HARDWARE
+        if (mBaseParams->interpolationType() == InterpolationType::HARDWARE)
+        {
+            try {
+                mTransformedBuffers[i] = new G12Buffer(inputFrame);
+                mHardwareCorrectors[i] -> processABuffer(1, *(mTransformedBuffers[i]));
+            } catch (Failure fail ) {
+                qDebug() << fail.getReason().c_str();
+            }
+        } else
+        {
+#endif
         mTransformedBuffers[i] = mTransformationCache[i]->doDeformation(mBaseParams->interpolationType(), inputFrame);
+#ifdef WITH_HARDWARE
+        }
+#endif
 
 
         if (inputFrame != inputFrameOrig)
@@ -361,9 +375,6 @@ void BaseCalculationThread::recalculateCache()
     mFrameTransformsInv[Frames::RIGHT_FRAME] = mPretransformedRectificationData.rightTransform.inv();
     mFrameTransformsInv[Frames::LEFT_FRAME]  = mPretransformedRectificationData.leftTransform .inv();
 
-    /*mFrameTransformsInv[Frames::RIGHT_FRAME] = Matrix33(1.0);
-    mFrameTransformsInv[Frames::LEFT_FRAME] = Matrix33(1.0);*/
-
     for (int i = 0; i < mActiveInputsNumber; i++)
     {
         G12Buffer *currentBuffer = mFrames.getCurrentFrame((Frames::FrameSourceId)i);
@@ -371,7 +382,9 @@ void BaseCalculationThread::recalculateCache()
         Q_ASSERT(currentBuffer != NULL);
         Q_ASSERT(currentBuffer->hasSameSize(firstInput));
 
-        delete_safe(mTransformationCache[i]);
+
+
+        delete mTransformationCache[i];
         mTransformationCache[i] = new TransformationCache(mFrameTransformsInv[i], w, h, currentBuffer->getSize());
 #ifdef WITH_HARDWARE
         //Matrix33 mat = Matrix33::Scale2(1.08) * Matrix33::ShiftProj(-39.5, -39.5) * Matrix33::RotateProj(6.0 / 128.0);

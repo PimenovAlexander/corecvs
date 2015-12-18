@@ -64,6 +64,10 @@ protected:
      * The cache of the transformation applied to the left and right image
      */
     TransformationCache *mTransformationCache[Frames::MAX_INPUTS_NUMBER];
+#ifdef WITH_HARDWARE
+    std::vector<FpgaCamCorrector*> mHardwareCorrectors;
+#endif
+
 
     /**
      *   Transformed buffers
@@ -76,7 +80,7 @@ protected:
     void initData(BaseOutputData *data, Statistics *stats = NULL);
     void executeFilterGraph(Statistics *stats = NULL);
     void transformInputFrames();
-    virtual void recalculateCache();
+    void recalculateCache();
 
 
     FilterExecuter      *mFilterExecuter [Frames::MAX_INPUTS_NUMBER];

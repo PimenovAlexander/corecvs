@@ -44,6 +44,13 @@ void MaskingParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void MaskingParametersControlWidget::getParameters(MaskingParameters& params) const
+{
+
+    params.setInvert           (mUi->invertCheckBox->isChecked());
+
+}
 
 MaskingParameters *MaskingParametersControlWidget::createParameters() const
 {

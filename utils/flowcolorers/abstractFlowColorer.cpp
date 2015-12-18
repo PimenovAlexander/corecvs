@@ -1,4 +1,4 @@
-#include <QtGui>
+#include <QtGui/QtGui>
 #include "abstractFlowColorer.h"
 /**
  * \file abstractFlowColorer.cpp

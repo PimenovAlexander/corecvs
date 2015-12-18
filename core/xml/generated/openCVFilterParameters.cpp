@@ -46,7 +46,9 @@ int OpenCVFilterParameters::staticInit()
           "OpenCVFilter",
           "OpenCVFilter",
           "OpenCVFilter",
-           NULL
+          new EnumReflection(1
+          , new EnumOption(0,"Canny")
+          )
         )
     );
     fields().push_back(
@@ -57,7 +59,10 @@ int OpenCVFilterParameters::staticInit()
           50,
           "Param1",
           "Param1",
-          "Param1"
+          "Param1",
+          true,
+         0,
+         10000
         )
     );
     fields().push_back(
@@ -68,7 +73,10 @@ int OpenCVFilterParameters::staticInit()
           100,
           "Param2",
           "Param2",
-          "Param2"
+          "Param2",
+          true,
+         0,
+         10000
         )
     );
    return 0;

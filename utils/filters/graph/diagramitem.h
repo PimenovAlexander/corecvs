@@ -55,8 +55,8 @@ public:
     enum { Type = UserType + 15 };
 
     DiagramItem(QGraphicsItem* parent = 0,
-                QGraphicsScene* /*scene*/ = 0) :
-        QGraphicsPolygonItem(parent/*, scene*/)
+                QGraphicsScene* scene = 0) :
+        QGraphicsPolygonItem(parent, scene)
     {}
 
     void finishInit();

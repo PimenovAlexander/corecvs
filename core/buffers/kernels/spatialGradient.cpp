@@ -55,9 +55,9 @@ G12Buffer* SpatialGradient::findCornerPoints(double scaler)
 
     G12Buffer *toReturn = new G12Buffer(h, w);
 
-    for (int i = 2; i < h - 2; i++)
+    for (int i = 2; i < (int)h - 2; i++)
     {
-        for (int j = 2; j < w - 2; j++)
+        for (int j = 2; j < (int)w - 2; j++)
         {
             Vector3dd grad = blur->element(i,j);
             // Counting eigenvalues

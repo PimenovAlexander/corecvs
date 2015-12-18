@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "global.h"
+
 #include "mjpegDecoder.h"
 
 /* This is black box code, so I will suppress unused-value warning  */

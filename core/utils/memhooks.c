@@ -31,7 +31,7 @@ void *malloc_hook (size_t size)
     }
     void *ptr = malloc(size);
 
-    ASSERT_FALSE((ptr == NULL), "Out of heap memory\n");
+    CORE_ASSERT_FALSE((ptr == NULL), "Out of heap memory\n");
     memcount += size;
     mem_blocks[blocks_count].ptr = ptr;
     mem_blocks[blocks_count].memsize = size;
@@ -54,7 +54,7 @@ void *calloc_hook (size_t num, size_t size)
     void *ptr = calloc(num, size);
     if (ptr == NULL)
     {
-        ASSERT_FAIL("Out of heap memory");
+        CORE_ASSERT_FAIL("Out of heap memory");
     }
     memcount += size * num;
     mem_blocks[blocks_count].ptr = ptr;
@@ -69,7 +69,7 @@ void free_hook (void *ptr)
 {
     if (ptr == NULL)
     {
-        ASSERT_FAIL("Attempt to free NULL pointer");
+        CORE_ASSERT_FAIL("Attempt to free NULL pointer");
     }
     int i;
     for (i = 0; i < blocks_count; i++)
@@ -91,7 +91,7 @@ void free_hook (void *ptr)
         }
     }
 
-    ASSERT_FAIL("Attempt to free unallocated pointer\n");
+    CORE_ASSERT_FAIL("Attempt to free unallocated pointer\n");
 }
 
 #endif

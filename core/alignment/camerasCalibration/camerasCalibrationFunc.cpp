@@ -3,7 +3,7 @@
 namespace corecvs {
 
 //TODO:fix degrees in polynom
-CamerasCalibrationFunc::CamerasCalibrationFunc(const vector<Vector3dd> *sample, const Vector2d32 &center) :
+CamerasCalibrationFunc::CamerasCalibrationFunc(const vector<Vector3dd> *sample, const Vector2dd &center) :
     FunctionArgs(14, (int)sample->size() * 2),
     mSample(sample),
     mCenter(center),

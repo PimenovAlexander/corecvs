@@ -40,20 +40,6 @@ enum Draw3dTextureGen {
     DRAW_3D_TEXTURE_GEN_LAST
 };
 
-
-static inline const char *getName(const Draw3dTextureGen &value)
-{
-    switch (value) 
-    {
-     case NO_TEXTURE : return "NO_TEXTURE"; break ;
-     case AUTO_DECIDE : return "AUTO_DECIDE"; break ;
-     case FORCE_TEXTURE : return "FORCE_TEXTURE"; break ;
-     default : return "Not in range"; break ;
-     
-    }
-    return "Not in range";
-}
-
 } //namespace Draw3dTextureGen
 
 #endif  //DRAW_3D_TEXTURE_GEN_H_

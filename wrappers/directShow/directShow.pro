@@ -1,23 +1,28 @@
-include(../../config.pri)
-
-QT     -= gui
-CONFIG += console
-
-TARGET  = test_directshow
-
-DSHOW_INTDIR = ../../../../.obj/tests/directshow
-win32 {
-    OBJECTS_DIR = $$DSHOW_INTDIR/$$BUILD_CFG_NAME
-} else {
-    OBJECTS_DIR = $$DSHOW_INTDIR
+# try use global config 
+exists(../../../../config.pri) {
+    ROOT_DIR=../../../..
+    #message(Using global config)
+    include($$ROOT_DIR/config.pri)
+} else { 
+    message(Using local config)
+    ROOT_DIR=../../
+    include($$ROOT_DIR/cvs-config.pri)
 }
-MOC_DIR = $$OBJECTS_DIR			            # we have to set this to omit creating dummy dirs: debug,release
+ROOT_DIR=$$PWD/$$ROOT_DIR
 
-# Note: debug and release libs will be overwritten on !win32 only
-#
-TARGET  = $$join(TARGET,,,$$BUILD_CFG_SFX)          # add 'd' at the end for debug win32 version
+TEMPLATE = app
+TARGET   = test_directshow
+CONFIG  += console
+QT      -= gui
 
-DESTDIR = ../../../../bin
+
+OBJECTS_DIR = $$ROOT_DIR/.obj/directshow$$BUILD_CFG_NAME
+
+MOC_DIR = $$OBJECTS_DIR			                    # we have to set this to omit creating dummy dirs: debug,release
+
+TARGET  = $$join(TARGET,,,$$BUILD_CFG_SFX)          # add 'd' at the end for debug versions
+
+DESTDIR = $$ROOT_DIR/bin
 
 # We should copy proper version of capdll.dll module from LIB dir of this project into the output common BIN dir
 #
@@ -35,7 +40,6 @@ win32-msvc*:!contains(QMAKE_HOST.arch, x86_64) {
 } else {
         QMAKE_POST_LINK = "echo Nothing to do on Unix with capdll!"
 }
-
 
 DIRECT_SHOW_WRAPPER_DIR = .
 include($$DIRECT_SHOW_WRAPPER_DIR/directShowLibs.pri)

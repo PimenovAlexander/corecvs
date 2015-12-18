@@ -5,7 +5,7 @@
 
 #include "matrix44.h"
 #include "ui_transform3DSelector.h"
-#include <QWidget>
+#include <QtGui/QWidget>
 
 using corecvs::Matrix44;
 

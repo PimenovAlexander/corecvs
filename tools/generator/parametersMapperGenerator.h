@@ -5,6 +5,7 @@
 #include <QtCore/QHash>
 #include <QtCore/QMap>
 #include <QtCore/QList>
+#include <QtCore/QDir>
 
 #include "baseGenerator.h"
 

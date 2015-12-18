@@ -4,9 +4,6 @@
 #include <QtCore/QRegExp>
 #include <QtCore/QString>
 
-#include "global.h"
-#include "stdint.h"
-#include "stdio.h"
 #include "rtspCapture.h"
 
 RTSPCapture::RTSPCapture(QString const &params):
@@ -16,10 +13,9 @@ RTSPCapture::RTSPCapture(QString const &params):
      , mCodec(NULL)
      , mIsPaused(false)
      , mFrame(NULL)
-     , spin(this)
-     , fcb(this)
+     , count(1)
 {
-    SYNC_PRINT(("RTSPCapture::RTSPCapture(%s): called\n", params.toLatin1().constData()));
+    SYNC_PRINT(("RTSPCapture::RTSPCapture(%s): called\n", params.toAscii().constData()));
     SYNC_PRINT(("Registering the codecs...\n"));
 
     av_register_all();
@@ -94,8 +90,60 @@ ImageCaptureInterface::FramePair RTSPCapture::getFrame()
     CaptureStatistics  stats;
     PreciseTimer start = PreciseTimer::currentTime();
 
-    FramePair result = fcb.dequeue();
+//    SYNC_PRINT(("AviCapture::getFrame(): called\n"));
+    //mProtectFrame.lock();
+        FramePair result(NULL, NULL);
+        int res;
+        av_init_packet(&mPacket);
+        while ( (res = av_read_frame(mFormatContext, &mPacket)) >= 0)
+        {
+            if (mPacket.stream_index == mVideoStream)
+            {
+                int frame_finished;
+                avcodec_decode_video2(mCodecContext, mFrame, &frame_finished, &mPacket);
 
+                if (frame_finished) {
+//                    SYNC_PRINT(("AviCapture::getFrame(): Frame ready\n"));
+                    break;
+                }
+            }
+            // Free the packet that was allocated by av_read_frame
+            av_free_packet(&mPacket);
+        }
+
+        if (res >= 0)
+        {
+            if (mFrame->format != PIX_FMT_YUV420P && mFrame->format != PIX_FMT_YUVJ420P)
+            {
+                SYNC_PRINT(("RTSPCapture::getFrame(): Not supported format %d\n", mFrame->format));
+                return result;
+            }
+
+            result.rgbBufferLeft = new RGB24Buffer(mFrame->height, mFrame->width);
+            result.bufferLeft    = new G12Buffer  (mFrame->height, mFrame->width);
+            for (int i = 0; i < mFrame->height; i++)
+            {
+                for (int j = 0; j < mFrame->width; j++)
+                {
+                    uint8_t y = (mFrame->data[0])[i * mFrame->linesize[0] + j];
+
+                    uint8_t u = (mFrame->data[1])[(i / 2) * mFrame->linesize[1] + (j / 2)];
+                    uint8_t v = (mFrame->data[2])[(i / 2) * mFrame->linesize[2] + (j / 2)];
+
+                    result.rgbBufferLeft->element(i,j) = RGBColor::FromYUV(y,u,v);
+                    result.bufferLeft   ->element(i,j) = (int)y << 4;
+                }
+            }
+
+            result.rgbBufferRight = new RGB24Buffer(result.rgbBufferLeft);
+            result.bufferRight = new G12Buffer(result.bufferLeft);
+        }
+
+
+        result.leftTimeStamp  = count * 10;
+        result.rightTimeStamp = count * 10;
+
+    //mProtectFrame.unlock();
     stats.values[CaptureStatistics::DECODING_TIME] = start.usecsToNow();
 
     if (mLastFrameTime.usecsTo(PreciseTimer()) != 0)
@@ -107,29 +155,32 @@ ImageCaptureInterface::FramePair RTSPCapture::getFrame()
     emit newStatisticsReady(stats);
 
     if (!mIsPaused)
-    {        
+    {
+        //SYNC_PRINT(("AviCapture::getFrame(): New notification sending\n"));
+        count++;
         frame_data_t frameData;
-        frameData.timestamp = fcb.secondFrameTimestamp();
-        //SYNC_PRINT(("RTSPCapture::getFrame(): sending notification ts = %d\n", frameData.timestamp));
+        frameData.timestamp = (count * 10);
         notifyAboutNewFrame(frameData);
     } else {
         SYNC_PRINT(("RTSPCapture::getFrame(): Paused\n"));
     }
 
+    //count++;
     return result;
 }
 
 ImageCaptureInterface::CapErrorCode RTSPCapture::startCapture()
 {
     SYNC_PRINT(("RTSPCapture::startCapture(): called\n"));
-    mIsPaused = false;
-
     frame_data_t frameData;
-    frameData.timestamp = 0;
+
+    //mIsPaused = false;
+
+    count++;
+    frameData.timestamp = (count * 10);
     SYNC_PRINT(("RTSPCapture::startCapture(): sending notification\n"));
     notifyAboutNewFrame(frameData);
 
-    spin.start();
 
     SYNC_PRINT(("RTSPCapture::startCapture(): exited\n"));
     return ImageCaptureInterface::SUCCESS;
@@ -142,123 +193,16 @@ ImageCaptureInterface::CapErrorCode RTSPCapture::pauseCapture()
 
 ImageCaptureInterface::CapErrorCode RTSPCapture::nextFrame()
 {
+    count++;
     frame_data_t frameData;
-    frameData.timestamp = fcb.firstFrameTimestamp();
-
-    SYNC_PRINT(("RTSPCapture::nextFrame(): sending notification ts = %" PRIu64 "\n", frameData.timestamp));
+    frameData.timestamp = (count * 10);
+    SYNC_PRINT(("RTSPCapture::nextFrame(): sending notification\n"));
     notifyAboutNewFrame(frameData);
+
     return ImageCaptureInterface::SUCCESS;
 }
 
 bool RTSPCapture::supportPause()
 {
     return false;
-}
-
-void RTSPCapture::SpinThread::run()
-{
-    SYNC_PRINT(("RTSPCapture::SpinThread::run(): starting\n"));
-
-    AVFrame* frame = mInstance->mFrame;
-    AVPacket packet = mInstance->mPacket;
-    FramePair result(NULL, NULL);
-    int res;
-    while (true)
-    {
-        av_init_packet(&packet);
-        while ( (res = av_read_frame(mInstance->mFormatContext, &packet) ) >= 0)
-        {
-            if (packet.stream_index == mInstance->mVideoStream)
-            {
-                int frame_finished;
-                avcodec_decode_video2(mInstance->mCodecContext,
-                                      frame,
-                                      &frame_finished,
-                                      &packet);
-
-                if (frame_finished) {
-//                    SYNC_PRINT(("RTSPCapture::SpinThread::run(): Frame ready\n"));
-                    av_free_packet(&packet);
-                    break;
-                }
-            }
-            // Free the packet that was allocated by av_read_frame
-            av_free_packet(&packet);
-        }
-
-        if (res >= 0)
-        {
-            if (frame->format != PIX_FMT_YUV420P && frame->format != PIX_FMT_YUVJ420P)
-            {
-                SYNC_PRINT(("RTSPCapture::SpinThread::run(): Not supported format %d\n", frame->format));
-                continue;
-            }
-
-            result.rgbBufferLeft = new RGB24Buffer(frame->height, frame->width);
-            result.bufferLeft    = new G12Buffer  (frame->height, frame->width);
-            for (int i = 0; i < frame->height; i++)
-            {
-                for (int j = 0; j < frame->width; j++)
-                {
-                    uint8_t y = (frame->data[0])[i * frame->linesize[0] + j];
-
-                    uint8_t u = (frame->data[1])[(i / 2) * frame->linesize[1] + (j / 2)];
-                    uint8_t v = (frame->data[2])[(i / 2) * frame->linesize[2] + (j / 2)];
-
-                    result.rgbBufferLeft->element(i,j) = RGBColor::FromYUV(y,u,v);
-                    result.bufferLeft   ->element(i,j) = (int)y << 4;
-                }
-            }
-
-            result.rgbBufferRight = new RGB24Buffer(result.rgbBufferLeft);
-            result.bufferRight = new G12Buffer(result.bufferLeft);
-        }
-
-//        int64_t timestamp = av_frame_get_best_effort_timestamp(frame);
-        int64_t timestamp = PreciseTimer::currentTime().usec();
-
-        result.leftTimeStamp  = timestamp;
-        result.rightTimeStamp = timestamp;
-
-        if (mFirstFrame)
-        {
-            mFirstFrame = false;
-            continue;
-        }
-
-        mInstance->fcb.enqueue(result);
-    }
-}
-
-uint64_t RTSPCapture::FrameCircularBuffer::firstFrameTimestamp()
-{
-    uint64_t result;
-    mReadyFrames.acquire();
-    result = mFrames.head().leftTimeStamp;
-    mReadyFrames.release();
-    return result;
-}
-
-uint64_t RTSPCapture::FrameCircularBuffer::secondFrameTimestamp()
-{
-    uint64_t result;
-    mReadyFrames.acquire(2);
-    result = mFrames.at(1).leftTimeStamp;
-    mReadyFrames.release(2);
-    return result;
-}
-
-ImageCaptureInterface::FramePair RTSPCapture::FrameCircularBuffer::dequeue()
-{
-    mReadyFrames.acquire();
-    FramePair result = mFrames.dequeue();
-    mFreeFrames.release();
-    return result;
-}
-
-void RTSPCapture::FrameCircularBuffer::enqueue(const FramePair& frame)
-{
-    mFreeFrames.acquire();
-    mFrames.enqueue(frame);
-    mReadyFrames.release();
 }

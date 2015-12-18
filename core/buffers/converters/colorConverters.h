@@ -16,7 +16,7 @@ template<typename InputType, typename OutputType>
 class YUYVtoG12
 {
 
-    void operator()(const InputType &in, OutputType &out)
+    void operator(const InputType &in, OutputType &out)
     {
 
     }
@@ -26,7 +26,7 @@ template<typename InputType, typename OutputType>
 class YUYVtoG12G12
 {
 
-    void operator()(const InputType &in, OutputType &out)
+    void operator(const InputType &in, OutputType &out)
     {
 
     }

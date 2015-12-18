@@ -21,8 +21,7 @@
 
 #include "mjpegDecoderLazy.h"
 
-uint8_t MjpegDecoderLazy::JPEGHuffmanTable[MjpegDecoderLazy::JPG_HUFFMAN_TABLE_LENGTH]
-    = {
+uint8_t MjpegDecoderLazy::JPEGHuffmanTable[MjpegDecoderLazy::JPG_HUFFMAN_TABLE_LENGTH] = {
     0x00, 0x00, 0x01, 0x05, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09,
@@ -114,14 +113,10 @@ int MjpegDecoderLazy::aaidct[8] = {
 #define IC4 ((int)IFIX(1 / 0.707106781))
 
 
-MjpegDecoderLazy::MjpegDecoderLazy() :
-    comps(NULL),
-    scans(NULL)
-{
-}
-
-
-
+MjpegDecoderLazy::MjpegDecoderLazy()
+    : comps(NULL)
+    , scans(NULL)
+{}
 
 int MjpegDecoderLazy::huffman_init()
 {
@@ -430,8 +425,6 @@ int MjpegDecoderLazy::dec_checkmarker(void)
 }
 
 
-
-
 /**
  *
  *  This functions decodes   JPEG Minimum Coded Unit  form  huffman compressed stream
@@ -644,16 +637,13 @@ void MjpegDecoderLazy::idct(int *in, int *out, int *quant, long off)
          out[j + 7] = ITOINT(tmp3 - t7);
          j += 8;
      }
-
-
 }
 
-#define CLIP(color) (unsigned char)(((color)>0xFF)?0xff:(((color)<0)?0:(color)))
+#define CLIP(color) (unsigned char)(((color) > 0xFF) ? 0xFF : (((color) < 0) ? 0 : (color)))
 
-void MjpegDecoderLazy::yuv422ptoG12(int * out,G12Buffer *pic,int y, int x)
+void MjpegDecoderLazy::yuv422ptoG12(int *out, G12Buffer *pic, int y, int x)
 {
     int j, k;
-
 #ifdef _TRACE
     printf("Macroblock\n");
     printf("Y\n");
@@ -672,7 +662,6 @@ void MjpegDecoderLazy::yuv422ptoG12(int * out,G12Buffer *pic,int y, int x)
     }
     printf("\n");
 #endif
-
     for (j = 0; j < 8; j++) {
         for (k = 0; k < 8; k++) {
             int value;
@@ -682,213 +671,234 @@ void MjpegDecoderLazy::yuv422ptoG12(int * out,G12Buffer *pic,int y, int x)
             pic->element(y + j, x + k + 8) = CLIP(value) << 4;
         }
     }
-
 }
 
-
-G12Buffer *MjpegDecoderLazy::decode(unsigned char *buf)
+void MjpegDecoderLazy::yuv422ptoRGB(int *out, RGB24Buffer *pic, int y, int x)
 {
-    JpegDecdata *decdata;
-     int i, j, m, tac, tdc;
+    int j, k, idx = 0;
+    for (j = 0; j < 8; j++) {
+        for (k = 0; k < 8; k++, idx++) {
+            int value, y8, u, v;
+            value = out[idx];
+            y8 = CLIP(value);
+            u  = 128;
+            v  = 128;
+            pic->element(y + j, x + k) = RGBColor::FromYUV(y8, u, v);
 
-     int intwidth;
-     int intheight;
+            value = out[idx + 64];
+            y8 = CLIP(value);
+            u  = 128;
+            v  = 128;
+            pic->element(y + j, x + k + 8) = RGBColor::FromYUV(y8, u, v);
+        }
+    }
+}
 
-     int mcusx, mcusy, mx, my;
-     int ypitch ,xpitch,bpp,pitch,x,y;
-     int mb;
-/*     int max[6];*/
+template<class ResultBuffer>
+ResultBuffer *MjpegDecoderLazy::decodeData(unsigned char *buf, bool isRGB)
+{
+    int intwidth;
+    int intheight;
+    int i, j, m, tac, tdc;
+    int mcusx, mcusy, mx, my;
+    int ypitch,xpitch,bpp,pitch,x,y;
+    int mb;
+    int err = 0;
+    int isInitHuffman = 0;
+    JpegDecdata *decdata = new JpegDecdata();
 
-     G12Buffer *toReturn = NULL;
+    ResultBuffer *toReturn = NULL;
 
-//     ftopict convert;
+    memset(&info, 0, sizeof(Jpginfo));
 
-     int err = 0;
-     int isInitHuffman = 0;
-     decdata = new JpegDecdata();
+    {
+        if (!decdata) {
+            err = -1; goto error;
+        }
+        if (buf == NULL) {
+            err = -1; goto error;
+        }
 
-     memset(&info, 0, sizeof(Jpginfo));
+        parser = StreamParser(buf);
+        if (parser.getbyte() != 0xff) {
+            err = ERR_NO_SOI; goto error;
+        }
 
-     {
-         if (!decdata) {
-             err = -1; goto error;
-         }
-         if (buf == NULL) {
-             err = -1; goto error;
-         }
+        if (parser.getbyte() != M_SOI) {
+            err = ERR_NO_SOI; goto error;
+        }
 
-         parser = StreamParser(buf);
-         if (parser.getbyte() != 0xff) {
-             err = ERR_NO_SOI; goto error;
-         }
+        if (readtables(M_SOF0, &isInitHuffman)) {
+            err = ERR_BAD_TABLES; goto error;
+        }
+        parser.getword();
+        i = parser.getbyte();
 
-         if (parser.getbyte() != M_SOI) {
-             err = ERR_NO_SOI; goto error;
-         }
+        if (i != 8) {
+            err = ERR_NOT_8BIT; goto error;
+        }
 
-         if (readtables(M_SOF0, &isInitHuffman)) {
-             err = ERR_BAD_TABLES; goto error;
-         }
-         parser.getword();
-         i = parser.getbyte();
+        intheight = parser.getword();
+        intwidth = parser.getword();
 
-         if (i != 8) {
-             err = ERR_NOT_8BIT; goto error;
-         }
+        if ((intheight & 7) || (intwidth & 7)) {
+            err = ERR_BAD_WIDTH_OR_HEIGHT; goto error;
+        }
 
-         intheight = parser.getword();
-         intwidth = parser.getword();
+        _DOTRACE(("File metrics are [%dx%d]\n",intwidth, intheight));
 
-         if ((intheight & 7) || (intwidth & 7)) {
-             err = ERR_BAD_WIDTH_OR_HEIGHT; goto error;
-         }
+        info.nc = parser.getbyte();
+        if (info.nc > MAXCOMP) {
+            err = ERR_TOO_MANY_COMPPS; goto error;
+        }
 
-         _DOTRACE(("File metrics are [%dx%d]\n",intwidth, intheight));
+        _DOTRACE(("File has %d components\n", info.nc));
 
-         info.nc = parser.getbyte();
-         if (info.nc > MAXCOMP) {
-             err = ERR_TOO_MANY_COMPPS; goto error;
-         }
+        comps = new ComponentData[info.nc];
+        scans = new ScanData[info.nc];
 
-         _DOTRACE(("File has %d components\n", info.nc));
+        for (i = 0; i < info.nc; i++) {
+            int h, v;
+            comps[i].cid = parser.getbyte();
+            comps[i].hv  = parser.getbyte();
+            v = comps[i].hv & 0xF;
+            h = comps[i].hv >> 4;
 
-         comps = new ComponentData[info.nc];
-         scans = new ScanData[info.nc];
+            comps[i].tq = parser.getbyte();
 
-         for (i = 0; i < info.nc; i++) {
-             int h, v;
-             comps[i].cid = parser.getbyte();
-             comps[i].hv =  parser.getbyte();
-             v = comps[i].hv & 0xF;
-             h = comps[i].hv >> 4;
+            if (h > 3 || v > 3) {
+                err = ERR_ILLEGAL_HV; goto error;
+            }
+            if (comps[i].tq > 3) {
+                err = ERR_QUANT_TABLE_SELECTOR; goto error;
+            }
+        }
 
-             comps[i].tq = parser.getbyte();
+        if (readtables(M_SOS, &isInitHuffman)) {
+            err = ERR_BAD_TABLES; goto error;
+        }
 
-             if (h > 3 || v > 3) {
-                 err = ERR_ILLEGAL_HV; goto error;
-             }
-             if (comps[i].tq > 3) {
-                 err = ERR_QUANT_TABLE_SELECTOR; goto error;
-             }
-         }
+        parser.getword();
+        info.ns = parser.getbyte();
 
-         if (readtables(M_SOS,&isInitHuffman)) {
-             err = ERR_BAD_TABLES; goto error;
-         }
+        if (info.ns == 0) {
+            _DOTRACE(("info ns %d/n",info.ns));
+            err = ERR_NOT_YCBCR_221111;  goto error;
+        }
 
-         parser.getword();
-         info.ns = parser.getbyte();
+        for (i = 0; i < info.ns; i++) {
+            scans[i].cid = parser.getbyte();
+            tdc = parser.getbyte();
+            tac = tdc & 15;
+            tdc >>= 4;
+            if (tdc > 1 || tac > 1) {
+                err = ERR_QUANT_TABLE_SELECTOR;
+                goto error;
+            }
+            for (j = 0; j < info.nc; j++)
+                if (comps[j].cid == scans[i].cid)
+                    break;
+            if (j == info.nc) {
+                err = ERR_UNKNOWN_CID_IN_SCAN;
+                goto error;
+            }
+            scans[i].hv = comps[j].hv;
+            scans[i].tq = comps[j].tq;
+            scans[i].hudc = dhuff + tdc;
+            scans[i].huac = dhuff + 2 + tac;
+        }
 
-         if (info.ns == 0){
-             _DOTRACE(("info ns %d/n",info.ns));
-             err = ERR_NOT_YCBCR_221111;  goto error;
-         }
+        i = parser.getbyte();
+        j = parser.getbyte();
+        m = parser.getbyte();
 
-         for (i = 0; i < info.ns; i++) {
-             scans[i].cid = parser.getbyte();
-             tdc = parser.getbyte();
-             tac = tdc & 15;
-             tdc >>= 4;
-             if (tdc > 1 || tac > 1) {
-                 err = ERR_QUANT_TABLE_SELECTOR;
-                 goto error;
-             }
-             for (j = 0; j < info.nc; j++)
-                 if (comps[j].cid == scans[i].cid)
-                     break;
-             if (j == info.nc) {
-                 err = ERR_UNKNOWN_CID_IN_SCAN;
-                 goto error;
-             }
-             scans[i].hv = comps[j].hv;
-             scans[i].tq = comps[j].tq;
-             scans[i].hudc = dhuff + tdc;
-             scans[i].huac = dhuff + 2 + tac;
-         }
+        if (i != 0 || j != 63 || m != 0) {
+            _DOTRACE(("hmm FW error,not seq DCT ??\n"));
+        }
+        // printf("ext huffman table %d \n",isInitHuffman);
+        if (!isInitHuffman) {
+            if (huffman_init() < 0) {
+                //return -ERR_BAD_TABLES;
+                return NULL;
+            }
+        }
 
-         i = parser.getbyte();
-         j = parser.getbyte();
-         m = parser.getbyte();
+        toReturn = new ResultBuffer(intheight, intwidth, false);
+        int width  = intwidth;
+        int height = intheight;
 
-         if (i != 0 || j != 63 || m != 0) {
-             _DOTRACE(("hmm FW error,not seq DCT ??\n"));
-         }
-         // printf("ext huffman table %d \n",isInitHuffman);
-         if(!isInitHuffman) {
-             if(huffman_init() < 0) {
-                 //return -ERR_BAD_TABLES;
-                 return NULL;
-             }
-         }
+        if (scans[0].hv != 0x21)
+        {
+            _DOTRACE(("Formats other than 422 are temporary unsupported\n"));
+            return NULL;
+            //return -1;
+        }
 
-         toReturn = new G12Buffer(intheight, intwidth, false);
-         int width = intwidth;
-         int height = intheight;
+        _DOTRACE(("Format is 422\n"));
+        mb=4;
+        mcusx = width  >> 4;
+        mcusy = height >> 3;
+        bpp=2;
+        xpitch = 16    * bpp;
+        pitch  = width * bpp;       // YUYV out
+        ypitch = 8     * pitch;
 
-         if (scans[0].hv != 0x21)
-         {
-             _DOTRACE(("Formats other then 422 are temporary unsupported\n"));
-             return NULL;
-             //return -1;
-         }
+        idctqtab(quants[scans[0].tq], decdata->dquant[0]);
+        idctqtab(quants[scans[1].tq], decdata->dquant[1]);
+        idctqtab(quants[scans[2].tq], decdata->dquant[2]);
 
-         _DOTRACE(("Format is 422\n"));
-         mb=4;
-         mcusx = width >> 4;
-         mcusy = height >> 3;
-         bpp=2;
-         xpitch = 16 * bpp;
-         pitch = width * bpp; // YUYV out
-         ypitch = 8 * pitch;
+        hparser = HuffmanParser(parser.datap);
 
-         idctqtab(quants[scans[0].tq], decdata->dquant[0]);
-         idctqtab(quants[scans[1].tq], decdata->dquant[1]);
-         idctqtab(quants[scans[2].tq], decdata->dquant[2]);
-
-         hparser = HuffmanParser(parser.datap);
-
-         info.nm = info.dri + 1;
-         info.rm = M_RST0;
-         for (i = 0; i < info.ns; i++)
+        info.nm = info.dri + 1;
+        info.rm = M_RST0;
+        for (i = 0; i < info.ns; i++) {
             scans[i].dc = 0;
+        }
+        scans[0].next = 2;
+        scans[1].next = 1;
+        scans[2].next = 0; /* 4xx encoding */
 
-         scans[0].next = 2;
-         scans[1].next = 1;
-         scans[2].next = 0; /* 4xx encoding */
+#define CONV_PROLOG     \
+            for (my = 0, y = 0; my < mcusy; my++, y += ypitch) {            \
+                for (mx = 0, x = 0; mx < mcusx; mx++, x += xpitch) {        \
+                    if (info.dri && !--info.nm)                             \
+                        if (dec_checkmarker()) {                            \
+                            err = ERR_WRONG_MARKER; goto error;             \
+                        }                                                   \
+                    decode_mcus(decdata->dcts, mb, scans);                  \
+                    idct(decdata->dcts      , decdata->out      , decdata->dquant[0], IFIX(128.5));         \
+                    idct(decdata->dcts + 64 , decdata->out + 64 , decdata->dquant[0], IFIX(128.5));         \
+                  /*idct(decdata->dcts + 128, decdata->out + 256, decdata->dquant[1], IFIX(0.5), max[4]);*/ \
+                  /*idct(decdata->dcts + 192, decdata->out + 320, decdata->dquant[2], IFIX(0.5), max[5]);*/ \
 
+#define CONV_EPILOG     \
+                }       \
+            }           \
 
-         for (my = 0, y = 0; my < mcusy; my++,y+=ypitch)
-         {
-             for (mx = 0, x = 0; mx < mcusx; mx++,x+=xpitch)
-             {
-                 if (info.dri && !--info.nm)
-                     if (dec_checkmarker()) {
-                     err = ERR_WRONG_MARKER;
-                     goto error;
-                 }
+        if (isRGB)
+        {
+            CONV_PROLOG
+                    yuv422ptoRGB(decdata->out, (RGB24Buffer *)toReturn, my * 8, mx * 16);
+            CONV_EPILOG
+        }
+        else
+        {
+            CONV_PROLOG
+                    yuv422ptoG12(decdata->out, (G12Buffer *)toReturn, my * 8, mx * 16);
+            CONV_EPILOG
+        }
 
-                 decode_mcus(decdata->dcts, mb, scans);
-                 idct(decdata->dcts      , decdata->out      , decdata->dquant[0], IFIX(128.5));
-                 idct(decdata->dcts + 64 , decdata->out + 64 , decdata->dquant[0], IFIX(128.5));
-/*               idct(decdata->dcts + 128, decdata->out + 256, decdata->dquant[1], IFIX(0.5)  , max[4]);
-                 idct(decdata->dcts + 192, decdata->out + 320, decdata->dquant[2], IFIX(0.5)  , max[5]);
-*/
-                 yuv422ptoG12(decdata->out, toReturn, my * 8, mx * 16);
+        m = hparser.readMarker();
+        if (m != M_EOI) {
+            err = ERR_NO_EOI; goto error;
+        }
 
-             }
-         }
-
-         m = hparser.readMarker();
-         if (m != M_EOI) {
-             err = ERR_NO_EOI; goto error;
-         }
-
-         err = 0;
-         /*delete[] comps;
-         delete[] scans;
-         delete decdata;
-         return toReturn;*/
-     }
+        err = 0;
+        /*delete[] comps;
+        delete[] scans;
+        delete decdata;
+        return toReturn;*/
+    }
 error:
 
     if (err != 0)
@@ -901,9 +911,9 @@ error:
             fclose(out);
         }
 
-        if ( err != ERR_NO_EOI)
+        if (err != ERR_NO_EOI)
         {
-            if (toReturn)
+            if (toReturn != NULL)
             {
                 delete toReturn;
                 toReturn = NULL;
@@ -915,6 +925,14 @@ error:
     delete[] scans;
     delete decdata;
     return toReturn;
+}
 
+G12Buffer *MjpegDecoderLazy::decode(unsigned char *buf)
+{
+    return decodeData<G12Buffer>(buf, false);
+}
 
+RGB24Buffer *MjpegDecoderLazy::decodeRGB24(unsigned char *buf)
+{
+    return decodeData<RGB24Buffer>(buf, true);
 }

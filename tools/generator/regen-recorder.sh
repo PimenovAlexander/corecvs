@@ -5,7 +5,7 @@ source ./helper-regen.sh
 recorder="../../applications/recorder/"
 
 echo -n "Building generator... "
-qmake-qt4 && make
+qmake && make
 echo "done"
 
 echo -n "Running generator on xml/recorder.xml..."

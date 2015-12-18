@@ -9,6 +9,8 @@
  */
 
 #include <iostream>
+#include "gtest/gtest.h"
+
 #include "global.h"
 #include "function.h"
 
@@ -29,7 +31,7 @@ public:
     };
 };
 
-void testFunction(void)
+TEST(Derivative, testFunction)
 {
     SineCosine f;
     double x[] = {1.0, 0.5};
@@ -39,12 +41,4 @@ void testFunction(void)
     Matrix J = f.getJacobian(x);
     cout << "Jacobian" << endl;
     cout << J;
-}
-
-int main (int /*argC*/, char ** /*argV*/)
-{
-    testFunction();
-
-        cout << "PASSED" << endl;
-        return 0;
 }

@@ -55,23 +55,6 @@ enum FlowStyle {
     FLOW_STYLE_LAST
 };
 
-
-static inline const char *getName(const FlowStyle &value)
-{
-    switch (value) 
-    {
-     case DONT_SHOW_FLOW : return "DONT_SHOW_FLOW"; break ;
-     case FAST_COLORED_DOTS : return "FAST_COLORED_DOTS"; break ;
-     case SHOW_LINES_ONLY : return "SHOW_LINES_ONLY"; break ;
-     case SHOW_COLORED_DOTS : return "SHOW_COLORED_DOTS"; break ;
-     case SHOW_COLORED_LINES : return "SHOW_COLORED_LINES"; break ;
-     case SHOW_HEAT_COLORING : return "SHOW_HEAT_COLORING"; break ;
-     default : return "Not in range"; break ;
-     
-    }
-    return "Not in range";
-}
-
 } //namespace FlowStyle
 
 #endif  //FLOW_STYLE_H_

@@ -10,9 +10,6 @@
 #include "rgb24Buffer.h"
 #include "qSettingsSetter.h"
 
-#include "plyLoader.h"
-#include "stlLoader.h"
-
 // FIXIT: GOOPEN
 //#include "../../../restricted/applications/vimouse/faceDetection/faceMesh.h"
 
@@ -629,8 +626,6 @@ void CloudViewDialog::setNewScenePointer(QSharedPointer<Scene3D> newScene, int s
         case CLUSTER_ZONE               : name = "Cluster zone";     break;
         case CLUSTER_SWARM              : name = "Cluster swarm";    break;
         case HEAD_SEARCH_ZONE           : name = "Head search zone"; break;
-        case HAND_1                     : name = "Hand 1";           break;
-        case HAND_2                     : name = "Hand 2";           break;
         default:
             break;
         };
@@ -741,37 +736,22 @@ void CloudViewDialog::loadMesh()
       this,
       tr("Load 3D Model"),
       ".",
-      tr("3D Model (*.ply *.stl)"));
+      tr("3D Model (*.ply)"));
 
     Mesh3DScene *mesh = new Mesh3DScene();
     ifstream file;
-    file.open(fileName.toLatin1().data(), ios::in);
+    file.open(fileName.toAscii().data(), ios::in);
     if (file.fail())
     {
-        qDebug() << "Can't open mesh file" << endl;
+        qDebug() << "Can't open property list file" << endl;
         return;
     }
-
-    if (fileName.endsWith(".ply"))
+    PLYLoader loader;
+    if (loader.loadPLY(file, *mesh) != 0)
     {
-        PLYLoader loader;
-        if (loader.loadPLY(file, *mesh) != 0)
-        {
-           qDebug() << "CloudViewDialog::Unable to load mesh";
-           file.close();
-           return;
-        }
-    }
-
-    if (fileName.endsWith(".stl"))
-    {
-        STLLoader loader;
-        if (loader.loadBinarySTL(file, *mesh) != 0)
-        {
-           qDebug() << "CloudViewDialog::Unable to load mesh";
-           file.close();
-           return;
-        }
+       qDebug() << "CloudViewDialog::Unable to load mesh";
+       file.close();
+       return;
     }
 
     QFileInfo fileInfo(fileName);

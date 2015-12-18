@@ -18,9 +18,9 @@ CountedPtr<BufferFactory> BufferFactory::sThis;
 //static
 BufferFactory* BufferFactory::getInstance()
 {
-    ASSERT_TRUE(sThis.get() != NULL, "Out of memory!");
+    CORE_ASSERT_TRUE(sThis.get() != NULL, "Out of memory!");
 
-    if (sThis.get()->mLoaders.size() == 0)
+    if (sThis.get()->mLoadersG12.size() == 0)
     {
         sThis.get()->registerLoader(new PPMLoader());
         sThis.get()->registerLoader(new RAWLoader());
@@ -32,12 +32,28 @@ BufferFactory* BufferFactory::getInstance()
 G12Buffer *BufferFactory::loadG12Bitmap(string name)
 {
     vector<BufferLoader<G12Buffer> *>::iterator it;
-    for (it = mLoaders.begin(); it != mLoaders.end(); it++)
+    for (it = mLoadersG12.begin(); it != mLoadersG12.end(); it++)
     {
         if (!((*it)->acceptsFile(name)))
             continue;
 
         G12Buffer *result = (*it)->load(name);
+        if (result != NULL)
+            return result;
+    }
+
+    return NULL;
+}
+
+RGB24Buffer *BufferFactory::loadRGB24Bitmap(string name)
+{
+    vector<BufferLoader<RGB24Buffer> *>::iterator it;
+    for (it = mLoadersRGB24.begin(); it != mLoadersRGB24.end(); it++)
+    {
+        if (!((*it)->acceptsFile(name)))
+            continue;
+
+        RGB24Buffer *result = (*it)->load(name);
         if (result != NULL)
             return result;
     }
@@ -105,11 +121,11 @@ BufferFactory::~BufferFactory()
 {
     // delete all registered loaders
     vector<BufferLoader<G12Buffer> *>::iterator it;
-    for (it = mLoaders.begin(); it != mLoaders.end(); it++)
+    for (it = mLoadersG12.begin(); it != mLoadersG12.end(); it++)
     {
         delete_safe (*it);
     }
-    mLoaders.clear();
+    mLoadersG12.clear();
     //printf("BufferFactory has been destroyed.\n");
 }
 

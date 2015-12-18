@@ -9,10 +9,38 @@
  * \author alexander
  */
 
+/**
+ * \file matrixOperations.h
+ * \brief This header holds matrix operations that are common to
+ * matrixes of different nature.
+ *
+ * This class uses static polymorphism to access the elements of the container.
+ * Two (or three) methods should be implemented to use VectorOperations
+ *
+ * ElementType &at(int i);
+ * const ElementType &at(int i) const;
+ * int size();
+ *
+ * Also this implementation expect that RealType has two defined subtype
+ * InnerElementType
+ *
+ * This particular implementation doesn't expect that elements are continuous in memory
+ *
+ * This template class has 3 parameters
+ *    ReturnType  - The type that should be returned in all constructive functions
+ *    RealType    - The type that holds all the data needed for processing
+ *    ElementType - The element type
+ *
+ * TODO: Consider using size_t instead of int
+ * TODO: Consider using iterator and function object
+ *
+ * \date Aug 28, 2015
+ **/
+
 #include "global.h"
 namespace corecvs {
 
-template<typename RealType, typename ElementType>
+template<typename RealType, typename ElementType, typename ReturnType = RealType>
 class MatrixOperationsBase
 {
 public:
@@ -52,8 +80,6 @@ private:
     }
 
 public:
-
-
 };
 
 

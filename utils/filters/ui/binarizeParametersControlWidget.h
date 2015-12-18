@@ -1,5 +1,5 @@
 #pragma once
-#include <QWidget>
+#include <QtGui/QWidget>
 #include "generated/binarizeParameters.h"
 #include "ui_binarizeParametersControlWidget.h"
 #include "filterParametersControlWidgetBase.h"

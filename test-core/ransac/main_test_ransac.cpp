@@ -9,13 +9,15 @@
  */
 
 #include <iostream>
+#include "gtest/gtest.h"
+
 #include "global.h"
+
 #include "ransac.h"
 
 using namespace std;
+using namespace corecvs;
 
-int main (int /*argC*/, char ** /*argV*/)
+TEST(Ransac, testDummy)
 {
-        cout << "PASSED" << endl;
-        return 0;
 }

@@ -1,7 +1,7 @@
 #ifndef TEXTLABELWIDGET_H
 #define TEXTLABELWIDGET_H
 
-#include <QWidget>
+#include <QtGui/QWidget>
 #include "ui_textLabelWidget.h"
 #include "../viAreaWidget.h"
 

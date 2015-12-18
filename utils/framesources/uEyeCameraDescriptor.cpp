@@ -255,7 +255,7 @@ int UEyeCameraDescriptor::searchDefImageFormats(int suppportMask)
             qDebug("error: is_ImageFormat returned %d", ret);
         }
 
-        delete (pFormatList);
+        delete[] (pFormatList);
     }
     else
     {

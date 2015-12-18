@@ -45,7 +45,10 @@ int RgbColorParameters::staticInit()
           128,
           "R",
           "R",
-          "R"
+          "R",
+          true,
+         0,
+         255
         )
     );
     fields().push_back(
@@ -56,7 +59,10 @@ int RgbColorParameters::staticInit()
           128,
           "G",
           "G",
-          "G"
+          "G",
+          true,
+         0,
+         255
         )
     );
     fields().push_back(
@@ -67,7 +73,10 @@ int RgbColorParameters::staticInit()
           128,
           "B",
           "B",
-          "B"
+          "B",
+          true,
+         0,
+         255
         )
     );
    return 0;

@@ -4,14 +4,14 @@
  *
  * \date Mar 18, 2013
  **/
-#include <QWidget>
+#include <QtGui/QWidget>
 #include <QtCore/qstring.h>
-#include <QLabel>
-#include <QCheckBox>
-#include <QSpinBox>
-#include <QComboBox>
-#include <QDoubleSpinBox>
-#include <QGroupBox>
+#include <QtGui/QLabel>
+#include <QtGui/QCheckBox>
+#include <QtGui/QSpinBox>
+#include <QtGui/QComboBox>
+#include <QtGui/QDoubleSpinBox>
+#include <QtGui/QGroupBox>
 #include <QtCore/QVariant>
 #include <QtCore/QDebug>
 

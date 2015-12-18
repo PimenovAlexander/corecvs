@@ -1,5 +1,5 @@
 #pragma once
-#include <QWidget>
+#include <QtGui/QWidget>
 #include "generated/maskingParameters.h"
 #include "ui_maskingParametersControlWidget.h"
 #include "filterParametersControlWidgetBase.h"

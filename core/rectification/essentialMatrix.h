@@ -11,7 +11,7 @@
 #include "matrix.h"
 #include "quaternion.h"
 #include "line.h"
-#include "correspondanceList.h"
+#include "correspondenceList.h"
 
 namespace corecvs {
 
@@ -151,9 +151,9 @@ public:
     }
 
     /**
-	 *   Shortcut for Correspondance of getScaler()
+	 *   Shortcut for Correspondence of getScaler()
 	 **/
-    void getScaler(const Correspondance &corr, double &s1, double &s2, double &err) const
+    void getScaler(const Correspondence &corr, double &s1, double &s2, double &err) const
     {
         Vector3dd right = Vector3dd(corr.start.x(), corr.start.y(), 1.0);
     	Vector3dd left  = Vector3dd(corr.end  .x(), corr.end  .y(), 1.0);
@@ -161,9 +161,9 @@ public:
     }
 
     /**
-	 *   Shortcut for Correspondance of getDistance()
+	 *   Shortcut for Correspondence of getDistance()
 	 **/
-    void getDistance(const Correspondance &corr, double &d1, double &d2, double &err) const
+    void getDistance(const Correspondence &corr, double &d1, double &d2, double &err) const
     {
         Vector3dd right = Vector3dd(corr.start.x(), corr.start.y(), 1.0);
         Vector3dd left  = Vector3dd(corr.  end.x(), corr.  end.y(), 1.0);
@@ -179,7 +179,7 @@ template<class VisitorType>
 
 	friend ostream & operator <<(ostream &out, const EssentialDecomposition &edecomp)
     {
-		Quaternion q = Quaternion::FromMatrix(edecomp.rotation);
+        Quaternion q = Quaternion::FromMatrix(edecomp.rotation).normalised();
 		out << "This matrix is rotating " << radToDeg(q.getAngle()) << "deg around axis: ";
 		out << q.getAxis() << endl;
 		out << "And then shifting by vector:" << endl;
@@ -263,7 +263,7 @@ public:
          return epiline.distanceTo(left);
      }
 
-     double epipolarDistance(const Correspondance &data) const
+     double epipolarDistance(const Correspondence &data) const
      {
          return epipolarDistance(data.start, data.end);
      }

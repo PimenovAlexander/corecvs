@@ -99,7 +99,7 @@ public:
     }
 
     ElementType& operator [](int n)
-    {
+    {       
         return element[n];
     }
 

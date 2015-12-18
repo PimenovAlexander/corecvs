@@ -24,10 +24,10 @@ public:
     static const int inputNumber  = 1;
     static const int outputNumber = 1;
 
-    inline static int getCenterX(){ return 0; };
-    inline static int getCenterY(){ return 0; };
-    inline static int getSizeX(){ return 1; };
-    inline static int getSizeY(){ return 1; };
+    inline static int getCenterX(){ return 0; }
+    inline static int getCenterY(){ return 0; }
+    inline static int getSizeX(){ return 1; }
+    inline static int getSizeY(){ return 1; }
 
     typedef typename Algebra::InputType Type;
 
@@ -35,7 +35,7 @@ public:
 template<typename OtherAlgebra>
     CopyKernel(const CopyKernel<OtherAlgebra> &/* other*/ ) {}
 
-    CopyKernel() {};
+    CopyKernel() {}
 
     void process(Algebra &algebra) const
     {

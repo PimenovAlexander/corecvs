@@ -36,9 +36,7 @@ XmlSetter::~XmlSetter()
     textStream.flush();
     qDebug() << "Output" << mDocument.toString();
     file.close();
-
 }
-
 
 void XmlSetter::pushChild(const char *childName)
 {
@@ -79,8 +77,8 @@ void XmlSetter::saveValue(const char *fieldName, QString value)
         QDomElement mainElement = mNodePath.back().toElement();
         mainElement.setAttribute("value", value);
         popChild();
-
-    } else {
+    }
+    else {
         element.setAttribute("value", value);
     }
 }
@@ -145,7 +143,6 @@ void XmlSetter::visit<std::string, StringField>(std::string &field, const String
 template <>
 void XmlSetter::visit<void *, PointerField>(void * &/*field*/, const PointerField * /*fieldDescriptor*/)
 {
-
 }
 
 template <>
@@ -154,3 +151,8 @@ void XmlSetter::visit<int, EnumField>(int &field, const EnumField *fieldDescript
 	saveValue(fieldDescriptor->name.name, QString::number(field));
 }
 
+template <>
+void XmlSetter::visit<double, DoubleVectorField>(std::vector<double> & /*field*/, const DoubleVectorField * /*fieldDescriptor*/)
+{
+    qDebug() << "XmlSetter::visit<double, DoubleVectorField>() NOT YET SUPPORTED";
+}

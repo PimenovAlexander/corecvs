@@ -112,7 +112,7 @@ public:
             F.a(2, 0) = X.a(0, 0) * p3.x() + X.a(1, 0) * p3.y() + X.a(2, 0)
                     + sqrt(X.a(2, 0) * X.a(2, 0) - p3.x() * p3.x() - p3.y() * p3.y());
             X = X - invW * F;
-            double farPointNorm = max(max(p1.l2Metric(), p2.l2Metric()), p3.l2Metric());
+            double farPointNorm = CORE_MAX(CORE_MAX(p1.l2Metric(), p2.l2Metric()), p3.l2Metric());
             if (X.a(2, 0) <= farPointNorm)
             {
                 // something terrible

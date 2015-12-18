@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>639</height>
+    <width>840</width>
+    <height>893</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>840</width>
      <height>27</height>
     </rect>
    </property>
@@ -40,10 +40,16 @@
    <addaction name="menuSelection"/>
   </widget>
   <widget class="QDockWidget" name="parametersWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="minimumSize">
     <size>
-     <width>275</width>
-     <height>408</height>
+     <width>337</width>
+     <height>133</height>
     </size>
    </property>
    <property name="features">
@@ -56,199 +62,630 @@
     <number>2</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_2">
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="7" column="2">
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QScrollArea" name="scrollArea">
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOn</enum>
        </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
        </property>
-      </spacer>
-     </item>
-     <item row="1" column="0" colspan="4">
-      <widget class="QComboBox" name="maskComboBox">
-       <property name="currentIndex">
-        <number>2</number>
+       <property name="widgetResizable">
+        <bool>true</bool>
        </property>
-       <item>
-        <property name="text">
-         <string>Hue Mask</string>
+       <widget class="QWidget" name="scrollAreaWidgetContents">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>-157</y>
+          <width>303</width>
+          <height>1002</height>
+         </rect>
         </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Auto By Color</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Auto By Color(1)</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item row="2" column="2">
-      <widget class="QSpinBox" name="hue1SpinBox">
-       <property name="maximum">
-        <number>360</number>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="2">
-      <widget class="QSpinBox" name="hue2SpinBox">
-       <property name="maximum">
-        <number>360</number>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0" colspan="2">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Hue 1</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0" colspan="2">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Hue 2</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0" colspan="4">
-      <widget class="Line" name="line">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Tollerance</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="2">
-      <widget class="QSpinBox" name="toleranceSpinBox">
-       <property name="maximum">
-        <number>900</number>
-       </property>
-       <property name="value">
-        <number>30</number>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0" colspan="4">
-      <widget class="QGroupBox" name="groupBox">
-       <property name="title">
-        <string>Presentation</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <property name="margin">
-         <number>3</number>
-        </property>
-        <item row="0" column="1">
-         <widget class="RgbColorParametersControlWidget" name="maskColorWidget" native="true"/>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>Mask Color</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QCheckBox" name="showEdgeCheckBox">
-          <property name="text">
-           <string>Show Edge</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_8">
-          <property name="text">
-           <string>Alpha</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QSpinBox" name="maskAlphaSpinBox">
-          <property name="suffix">
-           <string>%</string>
-          </property>
-          <property name="maximum">
-           <number>100</number>
-          </property>
-          <property name="value">
-           <number>50</number>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="6" column="0" colspan="4">
-      <widget class="QGroupBox" name="groupBox_2">
-       <property name="title">
-        <string>Postprocess</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_3">
-        <property name="margin">
-         <number>3</number>
-        </property>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_5">
-          <property name="text">
-           <string>Gap Fill</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QComboBox" name="postFillComboBox">
-          <item>
+        <layout class="QGridLayout" name="gridLayout_5">
+         <item row="0" column="0">
+          <widget class="QLabel" name="Input">
            <property name="text">
-            <string>No</string>
+            <string>InputSize</string>
            </property>
-          </item>
-          <item>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QSpinBox" name="imageWSpinBox">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>2000</number>
+           </property>
+           <property name="singleStep">
+            <number>1</number>
+           </property>
+           <property name="value">
+            <number>480</number>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QSpinBox" name="imageHSpinBox">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>2000</number>
+           </property>
+           <property name="singleStep">
+            <number>0</number>
+           </property>
+           <property name="value">
+            <number>852</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="3">
+          <widget class="QGroupBox" name="groupBox">
+           <property name="title">
+            <string>Presentation</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <property name="margin">
+             <number>3</number>
+            </property>
+            <item row="1" column="1">
+             <widget class="RgbColorParametersControlWidget" name="maskColorWidget" native="true"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>Mask Color</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0" colspan="2">
+             <widget class="QCheckBox" name="showEdgeCheckBox">
+              <property name="text">
+               <string>Show Edge</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>Alpha</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QSpinBox" name="maskAlphaSpinBox">
+              <property name="suffix">
+               <string>%</string>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="value">
+               <number>80</number>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0" colspan="2">
+             <widget class="QComboBox" name="bufferSelectBox">
+              <item>
+               <property name="text">
+                <string>Image</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Mask</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Hue</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Saturation</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Value</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Edges</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Canny</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Principal Component</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Secondary Component</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Third Component</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_10">
+              <property name="text">
+               <string>Edge Color</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="RgbColorParametersControlWidget" name="edgeColorWidget" native="true"/>
+            </item>
+            <item row="5" column="0" colspan="2">
+             <widget class="QCheckBox" name="blendEdgeCheckBox">
+              <property name="text">
+               <string>BlendEdge</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="0">
+             <widget class="QCheckBox" name="levelDebugCheckBox">
+              <property name="text">
+               <string>Mask Level Debug</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="1">
+             <widget class="QSpinBox" name="levelSpinBox">
+              <property name="maximum">
+               <number>9999</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="3">
+          <widget class="QComboBox" name="maskComboBox">
+           <property name="currentIndex">
+            <number>2</number>
+           </property>
+           <item>
+            <property name="text">
+             <string>Hue Mask</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Auto By Color</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Auto By Color(1)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Auto By Local Histogram</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Auto By Local Histogram2D</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="3" column="0" colspan="2">
+          <widget class="QLabel" name="label">
            <property name="text">
-            <string>Fill with morphology</string>
+            <string>Hue 1</string>
            </property>
-          </item>
-          <item>
+          </widget>
+         </item>
+         <item row="3" column="2">
+          <widget class="QSpinBox" name="hue1SpinBox">
+           <property name="maximum">
+            <number>360</number>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0" colspan="2">
+          <widget class="QLabel" name="label_2">
            <property name="text">
-            <string>Fill small gaps</string>
+            <string>Hue 2</string>
            </property>
-          </item>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_6">
-          <property name="text">
-           <string>Close Size</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QSpinBox" name="fillCloseSizeSpinBox"/>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_7">
-          <property name="text">
-           <string>Gap Size</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QSpinBox" name="fillGapSizeSpinBox"/>
-        </item>
-       </layout>
+          </widget>
+         </item>
+         <item row="4" column="2">
+          <widget class="QSpinBox" name="hue2SpinBox">
+           <property name="maximum">
+            <number>360</number>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0" colspan="3">
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0" colspan="2">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Color Tolerance</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="2">
+          <widget class="QSpinBox" name="toleranceSpinBox">
+           <property name="maximum">
+            <number>800</number>
+           </property>
+           <property name="value">
+            <number>30</number>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0" colspan="3">
+          <widget class="QSlider" name="toleranceSlider">
+           <property name="maximum">
+            <number>800</number>
+           </property>
+           <property name="value">
+            <number>30</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0" colspan="3">
+          <widget class="Line" name="line_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0" colspan="2">
+          <widget class="QLabel" name="label_11">
+           <property name="text">
+            <string>Histogram Tolerance</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="2">
+          <widget class="QSpinBox" name="histToleranceSpinBox">
+           <property name="maximum">
+            <number>800</number>
+           </property>
+           <property name="value">
+            <number>45</number>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="0" colspan="3">
+          <widget class="QSlider" name="histToleranceSlider">
+           <property name="maximum">
+            <number>800</number>
+           </property>
+           <property name="value">
+            <number>45</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="0" colspan="2">
+          <widget class="QLabel" name="label_12">
+           <property name="text">
+            <string>Histogram Radius</string>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="2">
+          <widget class="QSpinBox" name="histRadiusSpinBox">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="singleStep">
+            <number>1</number>
+           </property>
+           <property name="value">
+            <number>4</number>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="0" colspan="3">
+          <widget class="CannyParametersControlWidget" name="cannyParametersWidget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>70</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="0" colspan="3">
+          <widget class="QGroupBox" name="groupBox_2">
+           <property name="title">
+            <string>Postprocess</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_3">
+            <property name="margin">
+             <number>3</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_5">
+              <property name="text">
+               <string>Gap Fill</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QComboBox" name="postFillComboBox">
+              <property name="currentIndex">
+               <number>3</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>No</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Fill with morphology</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Fill small gaps</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Fill with morphology fast</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Close Size</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QSpinBox" name="fillCloseSizeSpinBox">
+              <property name="maximum">
+               <number>1000</number>
+              </property>
+              <property name="value">
+               <number>3</number>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>Gap Size</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QSpinBox" name="fillGapSizeSpinBox">
+              <property name="maximum">
+               <number>1000</number>
+              </property>
+              <property name="value">
+               <number>3</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="15" column="0" colspan="2">
+          <widget class="QLabel" name="label_9">
+           <property name="text">
+            <string>Eraser Size</string>
+           </property>
+          </widget>
+         </item>
+         <item row="15" column="2">
+          <widget class="QSpinBox" name="eraserSizeSpinBox">
+           <property name="maximum">
+            <number>500</number>
+           </property>
+           <property name="value">
+            <number>20</number>
+           </property>
+          </widget>
+         </item>
+         <item row="16" column="0" colspan="3">
+          <widget class="QSlider" name="eraserSizeSlider">
+           <property name="maximum">
+            <number>500</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="17" column="0">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="12" column="0" colspan="3">
+          <widget class="QGroupBox" name="groupBox_3">
+           <property name="title">
+            <string>Mobile single click</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout">
+            <property name="leftMargin">
+             <number>3</number>
+            </property>
+            <property name="topMargin">
+             <number>3</number>
+            </property>
+            <property name="rightMargin">
+             <number>3</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_13">
+              <property name="text">
+               <string>Finger size</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QDoubleSpinBox" name="fingerSizeSpinBox">
+              <property name="prefix">
+               <string/>
+              </property>
+              <property name="suffix">
+               <string>mm</string>
+              </property>
+              <property name="value">
+               <double>8.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_14">
+              <property name="text">
+               <string>Minimum selection</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_15">
+              <property name="text">
+               <string>Maximum selection</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QDoubleSpinBox" name="minimumSelectionSpinBox">
+              <property name="suffix">
+               <string>%</string>
+              </property>
+              <property name="minimum">
+               <double>0.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>10.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QDoubleSpinBox" name="maximumSelectioSpinBox">
+              <property name="suffix">
+               <string>%</string>
+              </property>
+              <property name="maximum">
+               <double>99.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>40.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QDoubleSpinBox" name="spikeSpinBox">
+              <property name="suffix">
+               <string>%</string>
+              </property>
+              <property name="value">
+               <double>4.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_16">
+              <property name="text">
+               <string>Max Spike (in area%)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_17">
+              <property name="text">
+               <string>Stepback</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0" colspan="2">
+             <widget class="Line" name="line_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="0" colspan="2">
+             <widget class="QComboBox" name="samplingComboBox">
+              <property name="currentIndex">
+               <number>1</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>Single Point</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Mean Value</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Multi Samples</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QSpinBox" name="stepBackSpinBox"/>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </item>
     </layout>
@@ -271,11 +708,17 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionOpen"/>
+   <addaction name="actionReprocess"/>
    <addaction name="separator"/>
    <addaction name="actionResetMask"/>
    <addaction name="actionShowMask"/>
    <addaction name="separator"/>
    <addaction name="actionUndoMask"/>
+   <addaction name="separator"/>
+   <addaction name="action3DView"/>
+   <addaction name="actionHistogram"/>
+   <addaction name="actionHistogram2D"/>
+   <addaction name="actionThresholdGraph"/>
   </widget>
   <widget class="QDockWidget" name="logWidget_2">
    <property name="features">
@@ -287,11 +730,17 @@
    <attribute name="dockWidgetArea">
     <number>8</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_3"/>
+   <widget class="QWidget" name="dockWidgetContents_3">
+    <layout class="QGridLayout" name="gridLayout_4">
+     <item row="0" column="0">
+      <widget class="LoggerWidget" name="loggingWidget" native="true"/>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <action name="actionOpen">
    <property name="icon">
-    <iconset>
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/remove.png</normaloff>:/new/prefix1/remove.png</iconset>
    </property>
    <property name="text">
@@ -305,7 +754,7 @@
   </action>
   <action name="actionResetMask">
    <property name="icon">
-    <iconset>
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/bullet_blue.png</normaloff>:/new/prefix1/bullet_blue.png</iconset>
    </property>
    <property name="text">
@@ -317,7 +766,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset>
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/select.png</normaloff>:/new/prefix1/select.png</iconset>
    </property>
    <property name="text">
@@ -326,11 +775,71 @@
   </action>
   <action name="actionUndoMask">
    <property name="icon">
-    <iconset>
+    <iconset resource="../../../resources/main.qrc">
      <normaloff>:/new/prefix1/back_alt.png</normaloff>:/new/prefix1/back_alt.png</iconset>
    </property>
    <property name="text">
     <string>Undo Mask</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="action3DView">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../../resources/main.qrc">
+     <normaloff>:/new/subwindows/flood_it.png</normaloff>:/new/subwindows/flood_it.png</iconset>
+   </property>
+   <property name="text">
+    <string>3DView</string>
+   </property>
+  </action>
+  <action name="actionHistogram">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/chart_bar.png</normaloff>:/new/prefix1/chart_bar.png</iconset>
+   </property>
+   <property name="text">
+    <string>Histogram</string>
+   </property>
+  </action>
+  <action name="actionHistogram2D">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/workspace.png</normaloff>:/new/prefix1/workspace.png</iconset>
+   </property>
+   <property name="text">
+    <string>Histogram2D</string>
+   </property>
+  </action>
+  <action name="actionReprocess">
+   <property name="icon">
+    <iconset resource="../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/refresh.png</normaloff>:/new/prefix1/refresh.png</iconset>
+   </property>
+   <property name="text">
+    <string>Reload Image</string>
+   </property>
+  </action>
+  <action name="actionThresholdGraph">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/Line Chart.png</normaloff>:/new/prefix1/Line Chart.png</iconset>
+   </property>
+   <property name="text">
+    <string>Threshold Graph</string>
    </property>
   </action>
  </widget>
@@ -339,10 +848,120 @@
    <class>RgbColorParametersControlWidget</class>
    <extends>QWidget</extends>
    <header>rgbColorParametersControlWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LoggerWidget</class>
+   <extends>QWidget</extends>
+   <header>loggerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CannyParametersControlWidget</class>
+   <extends>QWidget</extends>
+   <header>cannyParametersControlWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
   <include location="../../../resources/main.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>eraserSizeSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>eraserSizeSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>825</x>
+     <y>647</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>825</x>
+     <y>669</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>eraserSizeSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>eraserSizeSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>825</x>
+     <y>669</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>825</x>
+     <y>647</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toleranceSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>toleranceSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>825</x>
+     <y>407</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>825</x>
+     <y>385</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toleranceSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>toleranceSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>825</x>
+     <y>385</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>825</x>
+     <y>407</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>histToleranceSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>histToleranceSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>759</x>
+     <y>444</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>755</x>
+     <y>459</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>histToleranceSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>histToleranceSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>724</x>
+     <y>455</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>733</x>
+     <y>439</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

@@ -23,17 +23,16 @@ public:
     double beta;  /**< Rotation around Y axis */
     double gamma; /**< Rotation around Z axis */
 
-    EulerAngles() : alpha(0.0), beta(0.0), gamma(0.0) {};
+    EulerAngles() : alpha(0.0), beta(0.0), gamma(0.0) {}
 
     EulerAngles(
         double _alpha,
         double _beta,
-        double _gamma
-    )
-    : alpha(_alpha),
-      beta (_beta),
-      gamma(_gamma)
-    { };
+        double _gamma)
+    : alpha(_alpha)
+    , beta (_beta)
+    , gamma(_gamma)
+    {}
 
     friend ostream & operator <<(ostream &out, const EulerAngles &angels)
     {
@@ -75,10 +74,10 @@ public:
 
  *
  **/
-class CameraAngles : public EulerAngles
+class CameraAnglesLegacy : public EulerAngles
 {
 public:
-    CameraAngles(double pitch, double yaw, double roll) :
+    CameraAnglesLegacy(double pitch, double yaw, double roll) :
         EulerAngles(pitch, yaw, roll)
     {}
 
@@ -133,13 +132,13 @@ public:
      *  \f]
      *
      */
-    static CameraAngles FromQuaternion(Quaternion &Q)
+    static CameraAnglesLegacy FromQuaternion(Quaternion &Q)
     {
         double pitch = atan2 (2.0 * (Q.t() * Q.x() + Q.y() * Q.z()),1.0 - 2.0 * (Q.x() * Q.x() + Q.y() * Q.y()));
         double yaw   = asin  (2.0 * (Q.t() * Q.y() - Q.z() * Q.x()));
         double roll  = atan2 (2.0 * (Q.t() * Q.z() + Q.x() * Q.y()),1.0 - 2.0 * (Q.y() * Q.y() + Q.z() * Q.z()));
-        return CameraAngles(pitch, yaw, roll);
-    };
+        return CameraAnglesLegacy(pitch, yaw, roll);
+    }
 
 
     template<class VisitorType>

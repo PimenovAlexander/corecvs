@@ -148,12 +148,12 @@
        </item>
        <item>
         <property name="text">
-         <string>Filled</string>
+         <string>Color</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Filled And Frame</string>
+         <string>Color 2</string>
         </property>
        </item>
        <item>
@@ -197,91 +197,11 @@
     <item row="7" column="0">
      <widget class="QLabel" name="label_7">
        <property name="text">
-         <string>Show caption</string>
-       </property>
-     </widget>
-    </item>
-    <item row="7" column="1">
-     <widget class="QCheckBox" name="showCaptionCheckBox">
-       <property name="toolTip">
-         <string>Show caption</string>
-       </property>
-     </widget>
-    </item>
-    <item row="8" column="0">
-     <widget class="QLabel" name="label_8">
-       <property name="text">
-         <string>Font Size</string>
-       </property>
-     </widget>
-    </item>
-    <item row="8" column="1">
-     <widget class="QSpinBox" name="fontSizeSpinBox">
-       <property name="toolTip">
-         <string>Font Size</string>
-       </property>
-       <property name="minimum">
-        <number>0</number>
-       </property>
-       <property name="maximum">
-        <number>255</number>
-       </property>
-       <property name="singleStep">
-        <number>1</number>
-       </property>
-       <property name="value">
-        <number>8</number>
-       </property>
-     </widget>
-    </item>
-    <item row="9" column="0">
-     <widget class="QLabel" name="label_9">
-       <property name="text">
-         <string>Font Width</string>
-       </property>
-     </widget>
-    </item>
-    <item row="9" column="1">
-     <widget class="QSpinBox" name="fontWidthSpinBox">
-       <property name="toolTip">
-         <string>Font Width</string>
-       </property>
-       <property name="minimum">
-        <number>0</number>
-       </property>
-       <property name="maximum">
-        <number>255</number>
-       </property>
-       <property name="singleStep">
-        <number>1</number>
-       </property>
-       <property name="value">
-        <number>1</number>
-       </property>
-     </widget>
-    </item>
-    <item row="10" column="0">
-     <widget class="QLabel" name="label_10">
-       <property name="text">
-         <string>Font Color</string>
-       </property>
-     </widget>
-    </item>
-    <item row="10" column="1">
-     <widget class="RgbColorParametersControlWidget" name="fontColorControlWidget">
-       <property name="toolTip">
-         <string>Font Color</string>
-       </property>
-     </widget>
-    </item>
-    <item row="11" column="0">
-     <widget class="QLabel" name="label_11">
-       <property name="text">
          <string>Texture Corrodinates</string>
        </property>
      </widget>
     </item>
-    <item row="11" column="1">
+    <item row="7" column="1">
      <widget class="QComboBox" name="textureCorrodinatesComboBox">
        <property name="currentIndex">
          <number>0</number>
@@ -306,14 +226,14 @@
        </property>
      </widget>
     </item>
-    <item row="12" column="0">
-     <widget class="QLabel" name="label_12">
+    <item row="8" column="0">
+     <widget class="QLabel" name="label_8">
        <property name="text">
          <string>Texture Alpha</string>
        </property>
      </widget>
     </item>
-    <item row="12" column="1">
+    <item row="8" column="1">
      <widget class="QSpinBox" name="textureAlphaSpinBox">
        <property name="toolTip">
          <string>Texture Alpha</string>
@@ -332,14 +252,14 @@
        </property>
      </widget>
     </item>
-    <item row="13" column="0">
-     <widget class="QLabel" name="label_13">
+    <item row="9" column="0">
+     <widget class="QLabel" name="label_9">
        <property name="text">
          <string>Texture Scale</string>
        </property>
      </widget>
     </item>
-    <item row="13" column="1">
+    <item row="9" column="1">
      <widget class="QDoubleSpinBox" name="textureScaleSpinBox">
        <property name="toolTip">
          <string>Texture Scale</string>
@@ -358,14 +278,14 @@
        </property>
      </widget>
     </item>
-    <item row="14" column="0">
-     <widget class="QLabel" name="label_14">
+    <item row="10" column="0">
+     <widget class="QLabel" name="label_10">
        <property name="text">
          <string>Decal Matrix Type</string>
        </property>
      </widget>
     </item>
-    <item row="14" column="1">
+    <item row="10" column="1">
      <widget class="QSpinBox" name="decalMatrixTypeSpinBox">
        <property name="toolTip">
          <string>Decal Matrix Type</string>
@@ -384,28 +304,28 @@
        </property>
      </widget>
     </item>
-    <item row="15" column="0">
-     <widget class="QLabel" name="label_15">
+    <item row="11" column="0">
+     <widget class="QLabel" name="label_11">
        <property name="text">
          <string>Decal Left Cam</string>
        </property>
      </widget>
     </item>
-    <item row="15" column="1">
+    <item row="11" column="1">
      <widget class="QCheckBox" name="decalLeftCamCheckBox">
        <property name="toolTip">
          <string>Decal Left Cam</string>
        </property>
      </widget>
     </item>
-    <item row="16" column="0">
-     <widget class="QLabel" name="label_16">
+    <item row="12" column="0">
+     <widget class="QLabel" name="label_12">
        <property name="text">
          <string>Decal Left Alpha</string>
        </property>
      </widget>
     </item>
-    <item row="16" column="1">
+    <item row="12" column="1">
      <widget class="QSpinBox" name="decalLeftAlphaSpinBox">
        <property name="toolTip">
          <string>Decal Left Alpha</string>
@@ -424,28 +344,28 @@
        </property>
      </widget>
     </item>
-    <item row="17" column="0">
-     <widget class="QLabel" name="label_17">
+    <item row="13" column="0">
+     <widget class="QLabel" name="label_13">
        <property name="text">
          <string>Decal Right Cam</string>
        </property>
      </widget>
     </item>
-    <item row="17" column="1">
+    <item row="13" column="1">
      <widget class="QCheckBox" name="decalRightCamCheckBox">
        <property name="toolTip">
          <string>Decal Right Cam</string>
        </property>
      </widget>
     </item>
-    <item row="18" column="0">
-     <widget class="QLabel" name="label_18">
+    <item row="14" column="0">
+     <widget class="QLabel" name="label_14">
        <property name="text">
          <string>Decal Right Alpha</string>
        </property>
      </widget>
     </item>
-    <item row="18" column="1">
+    <item row="14" column="1">
      <widget class="QSpinBox" name="decalRightAlphaSpinBox">
        <property name="toolTip">
          <string>Decal Right Alpha</string>
@@ -464,7 +384,7 @@
        </property>
      </widget>
     </item>
-   <item row="19" column="0">
+   <item row="15" column="0">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -477,7 +397,7 @@
      </property>
     </spacer>
    </item>
-   <item row="19" column="2">
+   <item row="15" column="2">
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -538,30 +458,6 @@
    <slot>changeParameters()</slot>
   </connection>
   <connection>
-   <sender>showCaptionCheckBox</sender>
-   <signal>stateChanged(int)</signal>
-   <receiver>Draw3dCameraParametersControlWidget</receiver>
-   <slot>changeParameters()</slot>
-  </connection>
-  <connection>
-   <sender>fontSizeSpinBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>Draw3dCameraParametersControlWidget</receiver>
-   <slot>changeParameters()</slot>
-  </connection>
-  <connection>
-   <sender>fontWidthSpinBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>Draw3dCameraParametersControlWidget</receiver>
-   <slot>changeParameters()</slot>
-  </connection>
-  <connection>
-   <sender>fontColorControlWidget</sender>
-   <signal>paramsChanged()</signal>
-   <receiver>Draw3dCameraParametersControlWidget</receiver>
-   <slot>changeParameters()</slot>
-  </connection>
-  <connection>
    <sender>textureCorrodinatesComboBox</sender>
    <signal>currentIndexChanged(int)</signal>
    <receiver>Draw3dCameraParametersControlWidget</receiver>
@@ -614,12 +510,6 @@
   <slot>changeParameters()</slot>
  </slots>
  <customwidgets>
-  <customwidget>
-   <class>RgbColorParametersControlWidget</class>
-   <extends>QWidget</extends>
-   <header>rgbColorParametersControlWidget.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>RgbColorParametersControlWidget</class>
    <extends>QWidget</extends>

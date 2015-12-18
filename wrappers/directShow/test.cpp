@@ -34,16 +34,30 @@ void greetingPrint( void )
     fflush(stdout);
 }
 
-int main (int /*argc*/, char * /*argv*/[])
+int main (int argc, char * argv[])
 {
     greetingPrint();
 //        setlocale(LC_ALL,".1251");
 //        wprintf(L"Это <%ls>\n", L"Тест"); fflush(stdout);
 //    QApplication app(argc, argv);
 
-    DSCapDeviceId cam1 = DirectShowCapDll_initCapture(1);
-    DirectShowCapDll_setFrameCallback(cam1, NULL, FrameCallbackFunctorExample);
-    DirectShowCapDll_start(cam1);
+    int camId = 1;
+    if (argc > 1 && strlen(argv[1]) == 1) {
+        camId = atoi(argv[1]);
+    }
+
+    int numCams;
+    DirectShowCapDll_devicesNumber(&numCams);
+    printf ("Found %d devices that support DirectShow interface.\n", numCams);
+
+    if (camId >= numCams) {
+        printf ("Invalid camId=%d, there're found %d device(s) that support DirectShow interface.\n", camId, numCams);
+        camId = 0;
+    }
+
+    DSCapDeviceId cam = DirectShowCapDll_initCapture(camId);
+    DirectShowCapDll_setFrameCallback(cam, NULL, FrameCallbackFunctorExample);
+    DirectShowCapDll_start(cam);
     tSleep(1000);  // = 1s
-    DirectShowCapDll_stop(cam1);
+    DirectShowCapDll_stop(cam);
 }

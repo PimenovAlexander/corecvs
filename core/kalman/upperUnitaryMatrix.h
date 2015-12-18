@@ -103,7 +103,7 @@ public:
         }
         int offset = internalOffset(row, column);
         DOTRACE(("R:%d C:%d off:%d\n", row, column, offset));
-        ASSERT_TRUE_P(offset < memSize, ("Overflow in Upper Unitary %d >= %d\n", offset, memSize));
+        CORE_ASSERT_TRUE_P(offset < memSize, ("Overflow in Upper Unitary %d >= %d\n", offset, memSize));
         return elements[offset];
      }
 
@@ -115,7 +115,7 @@ public:
             return 0.0;
         int offset = internalOffset(row, column);
         DOTRACE(("R:%d C:%d off:%d\n", row, column, offset));
-        ASSERT_TRUE_P(offset < memSize, ("Overflow in Upper Unitary %d >= %d\n", offset, memSize));
+        CORE_ASSERT_TRUE_P(offset < memSize, ("Overflow in Upper Unitary %d >= %d\n", offset, memSize));
         return elements[offset];
     }
 

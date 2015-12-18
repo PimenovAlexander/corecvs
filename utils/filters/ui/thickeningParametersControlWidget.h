@@ -1,5 +1,5 @@
 #pragma once
-#include <QWidget>
+#include <QtGui/QWidget>
 #include "generated/thickeningParameters.h"
 #include "ui_thickeningParametersControlWidget.h"
 #include "filterParametersControlWidgetBase.h"

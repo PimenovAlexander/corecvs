@@ -12,16 +12,16 @@
 #include "rgb24Buffer.h"
 #include "hardcodeFont.h"
 #include "readers.h"
-#include "../../math/vector/fixedVector.h"
+#include "fixedVector.h"
 
-#undef rad2     // it's defined at win hdrs
+#undef rad2     // it's defined at some Windows headers
 
 namespace corecvs {
 
 
 void RGB24Buffer::drawG12Buffer(G12Buffer *src, int32_t y, int32_t x)
 {
-    ASSERT_TRUE((this->h == src->h && this->w == src->w), "Wrong sizes");
+    CORE_ASSERT_TRUE((this->h == src->h && this->w == src->w), "Wrong sizes");
     int i,j;
     for (i = 0; i < src->h; i++)
     {
@@ -35,7 +35,7 @@ void RGB24Buffer::drawG12Buffer(G12Buffer *src, int32_t y, int32_t x)
 
 void RGB24Buffer::drawG8Buffer(G8Buffer *src, int32_t y, int32_t x)
 {
-    ASSERT_TRUE((this->h == src->h && this->w == src->w), "Wrong sizes");
+    CORE_ASSERT_TRUE((this->h == src->h && this->w == src->w), "Wrong sizes");
     int i,j;
     for (i = 0; i < src->h; i++)
     {
@@ -259,7 +259,7 @@ void RGB24Buffer::drawFlowBuffer(FlowBuffer *src, int32_t y, int32_t x)
             res += Vector2d32(j, i);
             if (!this->isValidCoord(res))
             {
-                ASSERT_FAIL("Overflow in the flow");
+                CORE_ASSERT_FAIL("Overflow in the flow");
             }
 #endif
 
@@ -333,16 +333,17 @@ void RGB24Buffer::drawFlowBuffer3(FlowBuffer *src, double colorScaler, int32_t y
     }
 }
 
-void RGB24Buffer::drawCorrespondanceList(CorrespondanceList *src, double colorScaler, int32_t y, int32_t x)
+#if 0
+void RGB24Buffer::drawCorrespondenceList(CorrespondenceList *src, double colorScaler, int32_t y, int32_t x)
 {
     if (src == NULL) {
         return;
     }
 
-    CorrespondanceList::iterator it;
+    CorrespondenceList::iterator it;
     for (it = src->begin(); it != src->end(); ++it)
     {
-        Correspondance &tmpCorr = (*it);
+        Correspondence &tmpCorr = (*it);
         Vector2dd from = tmpCorr.start;
         Vector2dd to = tmpCorr.end;
         Vector2dd vec = to - from;
@@ -352,7 +353,7 @@ void RGB24Buffer::drawCorrespondanceList(CorrespondanceList *src, double colorSc
         this->drawCrosshare3(to.x() + x, to.y() + y, color);
     }
 }
-
+#endif
 
 
 
@@ -564,19 +565,24 @@ void RGB24Buffer::drawArc(int x, int y, int rad, RGBColor color)
     int olddx = 0;
     for (int dy = -rad + 1; dy <= 0; dy++)
     {
-        int newdx = (int)sqrt((float)(rad2 - (dy - 0.5) * (dy - 0.5)));
+        int newdx = fround(sqrt((float)(rad2 - (dy - 0.5) * (dy - 0.5))));
 
-        for (int dx = olddx; dx <= newdx ; dx++) {
-            if (this->isValidCoord(y - dy, x + dx))  this->element(y - dy, x + dx) = color;
-            if (this->isValidCoord(y + dy, x + dx))  this->element(y + dy, x + dx) = color;
-            if (this->isValidCoord(y - dy, x - dx))  this->element(y - dy, x - dx) = color;
-            if (this->isValidCoord(y + dy, x - dx))  this->element(y + dy, x - dx) = color;
+        for (int dx = olddx; dx <= newdx ; dx++)
+        {
+            this->setElement(y - dy, x + dx, color);
+            this->setElement(y + dy, x + dx, color);
+            this->setElement(y - dy, x - dx, color);
+            this->setElement(y + dy, x - dx, color);
         }
 
         olddx = newdx;
     }
 }
 
+void RGB24Buffer::drawArc(const Circle2d &circle, RGBColor color )
+{
+    drawArc(circle.c.x(), circle.c.y(), circle.r, color);
+}
 
 
 void RGB24Buffer::drawArc1(int x, int y, int rad, RGBColor color)
@@ -588,10 +594,10 @@ void RGB24Buffer::drawArc1(int x, int y, int rad, RGBColor color)
         int newdx = (int)sqrt((float)(rad2 - (dy - 0.5) * (dy - 0.5)));
 
         for (int dx = olddx; dx <= newdx ; dx++) {
-            if (this->isValidCoord(y - dy, x + dx))  this->element(y - dy, x + dx) = color;
-            if (this->isValidCoord(y + dy, x + dx))  this->element(y + dy, x + dx) = color;
-            if (this->isValidCoord(y - dy, x - dx))  this->element(y - dy, x - dx) = color;
-            if (this->isValidCoord(y + dy, x - dx))  this->element(y + dy, x - dx) = color;
+            this->setElement(y - dy, x + dx, color);
+            this->setElement(y + dy, x + dx, color);
+            this->setElement(y - dy, x - dx, color);
+            this->setElement(y + dy, x - dx, color);
         }
 
         olddx = newdx;
@@ -881,7 +887,7 @@ G12Buffer *RGB24Buffer::toG12Buffer()
 
 
 /* We need to optimize this */
-G8Buffer* RGB24Buffer::getChannel(ChannelID channel)
+G8Buffer* RGB24Buffer::getChannel(ImageChannel::ImageChannel channel)
 {
     G8Buffer *result = new G8Buffer(getSize(), false);
 
@@ -892,27 +898,29 @@ G8Buffer* RGB24Buffer::getChannel(ChannelID channel)
             uint8_t pixel = 0;
             switch (channel)
             {
-                case CHANNEL_R:
+                case ImageChannel::R:
                     pixel = element(i,j).r();
                     break;
-                case CHANNEL_G:
+                case ImageChannel::G:
                     pixel = element(i,j).g();
                     break;
-                case CHANNEL_B:
+                case ImageChannel::B:
                     pixel = element(i,j).b();
                     break;
                 default:
-                case CHANNEL_GRAY:
+                case ImageChannel::LUMA:
+                    pixel = element(i,j).luma();
+                    break;
+                case ImageChannel::GRAY:
                     pixel = element(i,j).brightness();
                     break;
-
-                case CHANNEL_HUE:
+                case ImageChannel::HUE:
                     pixel = ((int)element(i,j).hue()) * 255 / 360;
                     break;
-                case CHANNEL_SATURATION:
+                case ImageChannel::SATURATION:
                     pixel = element(i,j).saturation();
                     break;
-                case CHANNEL_VALUE:
+                case ImageChannel::VALUE:
                     pixel = element(i,j).value();
                     break;
 
@@ -921,16 +929,14 @@ G8Buffer* RGB24Buffer::getChannel(ChannelID channel)
         }
     }
 
-
-
     return result;
 }
 
 double RGB24Buffer::diffL2(RGB24Buffer *buffer1, RGB24Buffer *buffer2)
 {
     double sum = 0;
-    int h = std::min(buffer1->h, buffer2->w);
-    int w = std::min(buffer1->w, buffer2->w);
+    int h = CORE_MIN(buffer1->h, buffer2->w);
+    int w = CORE_MIN(buffer1->w, buffer2->w);
 
     for (int i = 0; i < h; i++)
     {
@@ -941,6 +947,33 @@ double RGB24Buffer::diffL2(RGB24Buffer *buffer1, RGB24Buffer *buffer2)
     }
     sum /= (double) h * w;
     return sum;
+}
+
+void RGB24Buffer::diffBuffer(RGB24Buffer *that, int *diffPtr)
+{
+    int sum = 0;
+    int h = CORE_MIN(this->h, that->w);
+    int w = CORE_MIN(this->w, that->w);
+
+    for (int i = 0; i < h; i++)
+    {
+        for (int j = 0; j < w; j++)
+        {
+            RGBColor diff = RGBColor::diff(this->element(i,j), that->element(i,j));
+            sum += diff.brightness();
+            this->element(i,j) = diff;
+        }
+    }
+    if (diffPtr != NULL) {
+        *diffPtr = sum;
+    }
+}
+
+RGB24Buffer *RGB24Buffer::diff(RGB24Buffer *buffer1, RGB24Buffer *buffer2, int *diff)
+{
+    RGB24Buffer *toReturn = new RGB24Buffer(buffer1);
+    toReturn->diffBuffer(buffer2, diff);
+    return toReturn;
 }
 
 

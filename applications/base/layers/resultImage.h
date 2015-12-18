@@ -22,10 +22,8 @@ public:
         LAYER_STEREO,
         LAYER_TILES,
         LAYER_CLUSTERS,
-        LAYER_OBJECT,        
-        LAYER_PARAMS,
-        LAYER_GEOMETRY,
-        LAYER_LAST
+        LAYER_OBJECT,
+        LAYER_PARAMS
     };
 
     static const char* LAYER_TYPE_NAMES[];
@@ -35,7 +33,6 @@ public:
     }
 
     virtual void drawImage    (QImage * /*image*/) {}
-    virtual void print() const  { printf("    No info\n"); }
     virtual int  modifyWidth  (int width)  { return width;  }
     virtual int  modifyHeight (int height) { return height; }
 
@@ -51,19 +48,19 @@ private:
 };
 
 
-#if 0
+
 class ResultLayerStereo : public ResultLayerBase {
-    static const ResultLayerType LAYER_CLASS_ID = ResultLayerBase::LAYER_STEREO;
-    ResultLayerStereo() : ResultLayerBase(LAYER_CLASS_ID) {}
+    ResultLayerStereo() : ResultLayerBase(ResultLayerBase::LAYER_STEREO) {}
 
 
 };
 
 class ResultLayerFlow : public ResultLayerBase {
-    static const ResultLayerType LAYER_CLASS_ID = ResultLayerBase::LAYER_FLOW;
-    ResultLayerFlow() : ResultLayerBase(LAYER_CLASS_ID) {}
+    ResultLayerFlow() : ResultLayerBase(ResultLayerBase::LAYER_FLOW) {}
+
+
 };
-#endif
+
 
 
 class ResultImage
@@ -79,11 +76,6 @@ public:
     ,   mWidth (0)
     {}
 
-    ResultImage(int height, int width) :
-        mHeight(height)
-    ,   mWidth (width)
-    {}
-
     virtual ~ResultImage()
     {
         for (unsigned i = 0; i < mLayers.size(); i++)
@@ -94,29 +86,19 @@ public:
 
     void drawImage (QImage *image)
     {
-        bool filled = false;
-//        qDebug("ResultImage::drawImage (QImage *): called");
-
-        if (image == NULL) {
+        if (image == NULL)
             return;
-        }
 
         for (unsigned i = 0; i < mLayers.size(); i++)
         {
             if (mLayers[i] != NULL)
             {
 //            	qDebug("Applying layer %d of type %d", i, mLayers[i]->getType());
-                filled = true;
                 mLayers[i]->drawImage(image);
             } else {
 //            	qDebug("Layer %d is NULL", i);
             }
         }
-        if (!filled)
-        {
-            image->fill(Qt::green);
-        }
-
     }
 
     unsigned layerNum() const
@@ -128,27 +110,6 @@ public:
     {
     	return mLayers[number];
     }
-
-    template<class LayerClass>
-    const LayerClass *layerByType(unsigned number = 0) const
-    {
-        for (unsigned i = 0; i < layerNum(); i++)
-        {
-            const ResultLayerBase *layer = mLayers[i];
-            if (layer == NULL || layer->getType() != LayerClass::LAYER_CLASS_ID)
-            {
-                continue;
-            }
-
-            if (number == 0) {
-                return static_cast<const LayerClass *>(layer);
-            } else {
-                number --;
-            }
-        }
-        return NULL;
-    }
-
 
     void addLayer(ResultLayerBase *layer)
     {
@@ -190,15 +151,13 @@ public:
 
     void setWidth(int width)   { mWidth = width;   }
 
-    void print () const
+    void print ()
     {
     	printf("Result Image: %d layers", layerNum());
     	for (unsigned i = 0; i < layerNum(); i++)
     	{
         	printf("  %s\n", ResultLayerBase::LAYER_TYPE_NAMES[layer(i)->getType()]);
-        	layer(i)->print();
     	}
-        printf("Final size: [%d x %d]\n", width(), height());
     }
 
 };

@@ -38,23 +38,25 @@ int PresentationParameters::staticInit()
      
 
     fields().push_back(
-        new EnumField
+        new BoolField
         (
-          PresentationParameters::OUTPUT_ID,
-          offsetof(PresentationParameters, mOutput),
-          0,
-          "Output",
-          "Output",
-          "View - views are more or less self-explenatory",
-          new EnumReflection(7
-          , new EnumOption(0,"right Frame")
-          , new EnumOption(1,"left Frame")
-          , new EnumOption(2,"sidebyside stereo")
-          , new EnumOption(3,"anaglyph RG")
-          , new EnumOption(4,"anaglyph RC")
-          , new EnumOption(5,"blend")
-          , new EnumOption(6,"none")
-          )
+          PresentationParameters::LEFTFRAME_ID,
+          offsetof(PresentationParameters, mLeftFrame),
+          false,
+          "leftFrame",
+          "leftFrame",
+          "leftFrame"
+        )
+    );
+    fields().push_back(
+        new BoolField
+        (
+          PresentationParameters::RIGHTFRAME_ID,
+          offsetof(PresentationParameters, mRightFrame),
+          true,
+          "rightFrame",
+          "rightFrame",
+          "rightFrame"
         )
     );
     fields().push_back(
@@ -65,15 +67,8 @@ int PresentationParameters::staticInit()
           0,
           "Stereo",
           "Stereo",
-          "Way to draw overlay with disparity information",
-          new EnumReflection(6
-          , new EnumOption(0,"dont show stereo")
-          , new EnumOption(1,"fast large dots")
-          , new EnumOption(2,"fast dots")
-          , new EnumOption(3,"show lines stereo")
-          , new EnumOption(4,"show all stereo")
-          , new EnumOption(5,"show dots stereo")
-          )
+          "Stereo",
+           NULL
         )
     );
     fields().push_back(
@@ -84,15 +79,20 @@ int PresentationParameters::staticInit()
           0,
           "Flow",
           "Flow",
-          "Way to draw overlay with optical flow information",
-          new EnumReflection(6
-          , new EnumOption(0,"dont show flow")
-          , new EnumOption(1,"fast colored dots")
-          , new EnumOption(2,"show lines only")
-          , new EnumOption(3,"show colored dots")
-          , new EnumOption(4,"show colored lines")
-          , new EnumOption(5,"show heat coloring")
-          )
+          "Flow",
+           NULL
+        )
+    );
+    fields().push_back(
+        new EnumField
+        (
+          PresentationParameters::OUTPUT_ID,
+          offsetof(PresentationParameters, mOutput),
+          0,
+          "Output",
+          "Output",
+          "Output",
+           NULL
         )
     );
     fields().push_back(
@@ -100,7 +100,7 @@ int PresentationParameters::staticInit()
         (
           PresentationParameters::SHOWCLUSTERS_ID,
           offsetof(PresentationParameters, mShowClusters),
-          false,
+          true,
           "showClusters",
           "showClusters",
           "showClusters"
@@ -144,7 +144,7 @@ int PresentationParameters::staticInit()
         (
           PresentationParameters::PRODUCE3D_ID,
           offsetof(PresentationParameters, mProduce3D),
-          true,
+          false,
           "produce3D",
           "produce3D",
           "produce3D"

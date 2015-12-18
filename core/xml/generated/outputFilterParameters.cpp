@@ -46,7 +46,10 @@ int OutputFilterParameters::staticInit()
           "Output Type",
           "Output Type",
           "Output Type",
-           NULL
+          new EnumReflection(2
+          , new EnumOption(0,"Left Frame")
+          , new EnumOption(1,"Right Frame")
+          )
         )
     );
    return 0;

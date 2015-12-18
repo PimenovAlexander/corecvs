@@ -88,7 +88,6 @@ public:
             {
                 element[i].~ElementType();
             }
-
         }
         this->element = NULL;
     }
@@ -100,7 +99,6 @@ private:
         memoryBlock.allocate(_length * sizeof(ElementType), 0x0);
         this->element = new(memoryBlock.getAlignedStart(0x0)) ElementType[_length];
     }
-
 
 };
 

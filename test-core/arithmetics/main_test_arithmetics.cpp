@@ -14,11 +14,13 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <iostream>
+#include "gtest/gtest.h"
 
 #include "global.h"
 
 #include "sse_trace.h"
 #include "preciseTimer.h"
+
 
 using namespace std;
 using namespace corecvs;
@@ -170,11 +172,8 @@ uint16_t divby10(uint16_t value)
     return result;
 }
 
-
-
-
 ALIGN_STACK_SSE
-void testDivisionBy25( void )
+TEST(Arithmetics, testDivisionBy25)
 {
     unsigned LIMIT = 0x1000 * 25;
 //    unsigned LIMIT = 150;
@@ -221,7 +220,7 @@ void testDivisionBy25( void )
 }
 
 ALIGN_STACK_SSE
-void profileDivisionBy25( void )
+TEST(Arithmetics, profileDivisionBy25)
 {
     const unsigned  LIMIT = 500;
     PreciseTimer start;
@@ -315,7 +314,7 @@ void profileDivisionBy25( void )
 }
 #endif // WITH_SSE
 
-void testDivisionBy10( void )
+TEST(Arithmetics, testDivisionBy10)
 {
     /*for (uint16_t i = 0; i < 0x3FFF; i++)
     {
@@ -327,7 +326,9 @@ void testDivisionBy10( void )
     {
         short int a = delay;
         /*short int b;*/
+#ifdef BUF_DUMP
         char buffer[10];
+#endif
 
         int pos = 0;
         for (; pos < 5; pos++)
@@ -340,29 +341,34 @@ void testDivisionBy10( void )
                  }
                  result >>= 4;
 
-
                  uint16_t check = result * 10;
                  if (check > a) {result--; check -= 10;}
                  if (check <= a - 10) {result++; check += 10;}
 
-
+#ifdef BUF_DUMP
                  buffer[pos] = a - check + '0';
+#endif
                  a = result;
             } else {
                 break;
             }
+#ifdef BUF_DUMP
         buffer[pos++] = 0;
-        printf("%d == %s\n", delay, buffer);
+
+      printf("%d == %s\n", delay, buffer);
+        //    6 ==    6
+        //   10 ==   01
+        //   19 ==   91
+        //   20 ==   02
+        //   92 ==   92
+        //   99 ==   99
+        //  100 ==  001
+        //  101 ==  101
+        //  109 ==  901
+        //  591 ==  195
+        // 1023 == 3201
+        // ...
+#endif
     }
 }
 
-int main (int /*argC*/, char ** /*argV*/)
-{
-    testDivisionBy10();
-#ifdef WITH_SSE
-    //testDivisionBy25();
-    //profileDivisionBy25();
-#endif
-    printf("FINISHED\n");
-    return 0;
-}

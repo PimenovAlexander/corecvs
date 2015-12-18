@@ -46,7 +46,10 @@ int SobelParameters::staticInit()
           "Mixing Type",
           "Mixing Type",
           "Mixing Type",
-           NULL
+          new EnumReflection(2
+          , new EnumOption(0,"Sum of Absolute")
+          , new EnumOption(1,"L2")
+          )
         )
     );
     fields().push_back(

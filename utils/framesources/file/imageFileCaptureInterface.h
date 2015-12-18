@@ -1,10 +1,9 @@
 #pragma once
 
 #include <string>
+using std::string;
 
 #include "imageCaptureInterface.h"
-
-using namespace std;
 
 class ImageFileCaptureInterface : public ImageCaptureInterface
 {
@@ -20,10 +19,10 @@ public:
      */
     string   getImageFileName(uint imageNumber, uint channelNumber = 0);
 
-    static   string  sPgmImageFileFmt;                      // commonly used format of series from pgm files
-
     void     increaseImageFileCounter()  { mCount++;   }
     void     resetImageFileCounter()     { mCount = 1; }
+
+    static   string  sPgmImageFileFmt;                      // commonly used format of series from pgm files
 
 protected:
     string   mPathFmt;                                      // relative/absolute path format to the series of images that's given by app param

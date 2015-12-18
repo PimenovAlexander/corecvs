@@ -8,7 +8,13 @@
 #include <stdarg.h>
 #include <time.h>
 #ifndef _MSC_VER
-#include <sys/time.h>
+# include <sys/time.h>
+#endif
+#ifdef WIN32
+# include <windows.h>       // GetCurrentThreadId
+#else
+# include <unistd.h>
+# include <sys/syscall.h>
 #endif
 
 #include <fstream>
@@ -16,6 +22,7 @@
 #include <memory>
 #include <sstream>
 #include <string>
+#include <mutex>        // std::mutex
 
 #include "global.h"
 
@@ -24,20 +31,46 @@
 using corecvs::ObjectRef;
 
 
-#define L_ERROR            Log().error  (__FILE__, __LINE__, __FUNCTION__)
-#define L_WARNING          Log().warning(__FILE__, __LINE__, __FUNCTION__)
-#define L_INFO             Log().info   (__FILE__, __LINE__, __FUNCTION__)
-#define L_DEBUG            Log().debug  (__FILE__, __LINE__, __FUNCTION__)
-#define L_DDEBUG           Log().ddebug (__FILE__, __LINE__, __FUNCTION__)
+#define L_ERROR            ::Log().error  (__FILE__, __LINE__, __FUNCTION__)
+#define L_WARNING          ::Log().warning(__FILE__, __LINE__, __FUNCTION__)
+#define L_INFO             ::Log().info   (__FILE__, __LINE__, __FUNCTION__)
+#define L_DEBUG            ::Log().debug  (__FILE__, __LINE__, __FUNCTION__)
+#define L_DDEBUG           ::Log().ddebug (__FILE__, __LINE__, __FUNCTION__)
 
-#define L_ERROR_P(  ...)   Log().error  (__FILE__, __LINE__, __FUNCTION__) << Log::formatted(__VA_ARGS__)
-#define L_WARNING_P(...)   Log().warning(__FILE__, __LINE__, __FUNCTION__) << Log::formatted(__VA_ARGS__)
-#define L_INFO_P(   ...)   Log().info   (__FILE__, __LINE__, __FUNCTION__) << Log::formatted(__VA_ARGS__)
-#define L_DEBUG_P(  ...)   Log().debug  (__FILE__, __LINE__, __FUNCTION__) << Log::formatted(__VA_ARGS__)
-#define L_DDEBUG_P( ...)   Log().ddebug (__FILE__, __LINE__, __FUNCTION__) << Log::formatted(__VA_ARGS__)
+#define L_ERROR_P(  ...)   ::Log().error  (__FILE__, __LINE__, __FUNCTION__) << ::Log::formatted(__VA_ARGS__)
+#define L_WARNING_P(...)   ::Log().warning(__FILE__, __LINE__, __FUNCTION__) << ::Log::formatted(__VA_ARGS__)
+#define L_INFO_P(   ...)   ::Log().info   (__FILE__, __LINE__, __FUNCTION__) << ::Log::formatted(__VA_ARGS__)
+#define L_DEBUG_P(  ...)   ::Log().debug  (__FILE__, __LINE__, __FUNCTION__) << ::Log::formatted(__VA_ARGS__)
+#define L_DDEBUG_P( ...)   ::Log().ddebug (__FILE__, __LINE__, __FUNCTION__) << ::Log::formatted(__VA_ARGS__)
 
 
 class LogDrain;
+
+class LogDrainDeleter
+{
+    bool mNeedDel;
+public:
+    LogDrainDeleter(bool needDel = true) : mNeedDel(needDel) {}
+
+    template<typename T>
+    void operator()(T* p)
+    {
+        CORE_UNUSED(p);
+        if (mNeedDel)
+            delete p;
+    }
+};
+
+class LogDrainsKeeper : public std::vector<std::unique_ptr<LogDrain, LogDrainDeleter>>
+{
+public:
+    LogDrainsKeeper() {}
+   ~LogDrainsKeeper() {}
+
+   void add(LogDrain* p, bool needDel = true) {
+       push_back(std::unique_ptr<LogDrain, LogDrainDeleter>(p, LogDrainDeleter(needDel)));
+   }
+};
 
 /** \class Log
  *
@@ -60,7 +93,7 @@ public:
     static const char *level_names[];
 
     Log(const LogLevel maxLocalLevel = LEVEL_ERROR);
-    ~Log();
+   ~Log();
 
 
     /**
@@ -100,14 +133,13 @@ public:
         cchar      *mOriginFileName;
         int         mOriginLineNumber;
         cchar      *mOriginFunctionName;
-
-        time_t      rawtime;
+        int         mThreadId;
+        time_t      mTime;
 	};
 
 	/**
-	 * Message is a smart pointer to  MessageInternal. MessageInternal is usually accessed only through this structure
+	 * Message is a smart pointer to MessageInternal. MessageInternal is usually accessed only through this structure
 	 **/
-
 	typedef ObjectRef<MessageInternal> Message;
 
 	/**
@@ -132,7 +164,12 @@ public:
             message.get()->mOriginFileName     = originFileName;
             message.get()->mOriginFunctionName = originFunctionName;
             message.get()->mOriginLineNumber   = originLineNumber;
-            time(&message.get()->rawtime);
+#ifdef WIN32
+            message.get()->mThreadId = (int)GetCurrentThreadId();
+#else
+            message.get()->mThreadId = syscall(SYS_gettid);
+#endif
+            time(&message.get()->mTime);
         }
 
         ~MessageScoped()
@@ -157,58 +194,68 @@ public:
     }
 
     /**
-    * Create warning
-    **/
+     * Create warning
+     **/
     MessageScoped warning(const char *fileName = NULL, int lineNumber = -1, const char *functionName = NULL)
     {
         return MessageScoped(this, LEVEL_WARNING, fileName, lineNumber, functionName);
     }
 
     /**
-    * Create info
-    **/
+     * Create info
+     **/
     MessageScoped info(const char *fileName = NULL, int lineNumber = -1, const char *functionName = NULL)
     {
         return MessageScoped(this,  LEVEL_INFO, fileName, lineNumber, functionName);
     }
 
     /**
-    * Create debug trace
-    **/
+     * Create debug trace
+     **/
     MessageScoped debug(const char *fileName = NULL, int lineNumber = -1, const char *functionName = NULL)
     {
         return MessageScoped(this,  LEVEL_DEBUG, fileName, lineNumber, functionName);
     }
 
     /**
-    * Create detailed debug trace
-    **/
+     * Create detailed debug trace
+     **/
     MessageScoped ddebug(const char *fileName = NULL, int lineNumber = -1, const char *functionName = NULL)
     {
         return MessageScoped(this,  LEVEL_DETAILED_DEBUG, fileName, lineNumber, functionName);
     }
 
+    /**
+     * Create trace with the given level
+     **/
+    MessageScoped log(LogLevel level, const char *fileName = NULL, int lineNumber = -1, const char *functionName = NULL)
+    {
+        return MessageScoped(this, level, fileName, lineNumber, functionName);
+    }
+
 	/**
 	 * Log a message
 	 **/
-    void message(Message &message);
+    void                message(Message &message);
 
-    static std::string formatted(const char *format, ... );
+    static std::string  formatted(const char *format, ... );
 
-    static std::string msgBufToString(const char* message);
+  //static std::string  msgBufToString(const char* message);
 
-    static bool shouldWrite(LogLevel messageLevel) {
-        return messageLevel >= mMinLogLevel;
-    }
+    static const char*  levelName(LogLevel logLevel);
 
-    static LogLevel mMinLogLevel;
-    static std::vector<LogDrain *> mLogDrains;
-    static int mDummy;
+    static bool         shouldWrite(LogLevel messageLevel) { return messageLevel >= mMinLogLevel; }
+
+    /** add needed log drains for the app */
+    static void         addAppLog(int argc, char* argv[], cchar* logFileName = NULL);
+
+    static LogLevel         mMinLogLevel;
+    static LogDrainsKeeper  mLogDrains;
+    static int              mDummy;
 
 public:
     /** This is a static init function */
     static int staticInit();
-
 };
 
 template<typename T>
@@ -224,11 +271,17 @@ Log::Message operator<< (Log::Message msg, const T& t) {
 class LogDrain
 {
 public:
+    virtual ~LogDrain() {}
+
     virtual void drain(Log::Message &message) = 0;
 
 protected:
-    char   timeBuffer[32];
-    cchar* time2str(time_t &time);
+    std::mutex     mMutex;
+    bool           mFullInfo;
+    char           mTimeBuffer[32];
+
+    cchar*         time2str(time_t &time);
+    void           prefix2os(std::ostringstream &os, Log::Message &message);
 };
 
 class StdStreamLogDrain : public LogDrain
@@ -236,9 +289,12 @@ class StdStreamLogDrain : public LogDrain
     std::ostream &mOutputStream;
 
 public:
-    StdStreamLogDrain(std::ostream &outputStream)
+    StdStreamLogDrain(std::ostream &outputStream, bool fullInfo = true)
         : mOutputStream(outputStream)
-    {}
+    {
+        mFullInfo = fullInfo;
+    }
+    virtual ~StdStreamLogDrain() {}
 
     virtual void drain(Log::Message &message);
 };
@@ -249,19 +305,8 @@ class FileLogDrain : public LogDrain
     std::ofstream  mFile;
 
 public:
-    FileLogDrain(const std::string& path, bool bAppend = false);
-    ~FileLogDrain();
-    virtual void drain(Log::Message &message);
-};
-
-class LiteStdStreamLogDrain : public LogDrain
-{
-    std::ostream &mOutputStream;
-
-public:
-    LiteStdStreamLogDrain(std::ostream &outputStream)
-        : mOutputStream(outputStream)
-    {}
+    FileLogDrain(const std::string& path, bool bAppend = false, bool fullInfo = true);
+    virtual ~FileLogDrain();
 
     virtual void drain(Log::Message &message);
 };

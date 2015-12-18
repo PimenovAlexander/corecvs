@@ -48,6 +48,14 @@ public:
         return operator()(in.element, out.element);
     }
 
+    virtual void operator()(const vector<double> &in, vector<double> &out)
+    {
+        CORE_ASSERT_TRUE( (int)  in.size() > inputs , "Too few input numbers");
+        CORE_ASSERT_TRUE( (int) out.size() > outputs, "Too few output numbers");
+
+        return operator()(&in[0], &out[1]);
+    }
+
 
     /**
      *  This function computes Jacobian
@@ -98,14 +106,14 @@ public:
         return getJacobian(in.element, delta);
     }
 
-    virtual ~FunctionArgs() {};
+    virtual ~FunctionArgs() {}
 
 };
 
 class IdentityFunction : public FunctionArgs
 {
 public:
-    IdentityFunction(int dimention) : FunctionArgs(dimention, dimention) {};
+    IdentityFunction(int dimension) : FunctionArgs(dimension, dimension) {}
 
     virtual void operator()(const double in[], double out[])
     {
@@ -137,7 +145,7 @@ public:
     {
         cout << inputs << " " << outputs << endl;
         cout << F->inputs << " " << F->outputs << endl;
-    };
+    }
 
     virtual void operator()(const double in[], double out[])
     {
@@ -178,24 +186,18 @@ public:
     {
         cout << inputs << " " << outputs << endl;
         cout << F->inputs << " " << F->outputs << endl;
-    };
+    }
 
     virtual void operator()(const double in[], double out[])
     {
-#ifdef WIN32
-        double* tmpOut = new double[F->outputs];
-#else
-        double tmpOut[F->outputs];
-#endif
-        F->operator ()(in, tmpOut);
+        vector<double> tmpOut(F->outputs);
+
+        F->operator ()(in, &tmpOut[0]);
         out[0] = 0.0;
         for (int i = 0; i < F->outputs; i++) {
             out[0] += tmpOut[i] * tmpOut[i];
         }
         out[0] = sqrt(out[0]);
-#ifdef WIN32
-        delete[] tmpOut;
-#endif
     }
 };
 
@@ -204,13 +206,10 @@ template<typename RealFuncType, int inputDim, int outputDim>
 class FunctionStatic
 {
 public:
-    //const int  inputDim =  inputDim;
-    //const int outputDim = outputDim;
-
     typedef FixedVector<double, inputDim>   InputType;
     typedef FixedVector<double, outputDim> OutputType;
 
-    void operator()(const InputType &/*in*/, OutputType &/*out*/) {};
+    void operator()(const InputType &/*in*/, OutputType &/*out*/) {}
 
     OutputType f(const InputType &in)
     {

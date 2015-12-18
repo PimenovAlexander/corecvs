@@ -1,5 +1,5 @@
 #pragma once
-#include <QWidget>
+#include <QtGui/QWidget>
 #include "generated/axisAlignedBoxParameters.h"
 #include "ui_axisAlignedBoxParametersControlWidget.h"
 #include "parametersControlWidgetBase.h"

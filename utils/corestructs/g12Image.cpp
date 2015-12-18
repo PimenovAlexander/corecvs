@@ -4,60 +4,60 @@
  * \date Jul 22, 2009
  * \author: Alexander Pimenov
  */
+//#include <QPainter>
 
-
-#include "preciseTimer.h"
 #include "g12Image.h"
-#include <QPainter>
+#include "preciseTimer.h"
 
 #ifdef WITH_SSE
-#include "sseWrapper.h"
-using corecvs::Int32x4;
+# include "sseWrapper.h"
+    //using corecvs::Int32x4;
 #endif
 
 
-G12Image::G12Image(G12Buffer *buffer, int newH, int newW) : QImage (newW, newH, QImage::Format_RGB32){
-    int i,j;
-    uint8_t *data = bits();
+G12Image::G12Image(G12Buffer *buffer, int newH, int newW) : QImage(newW, newH, QImage::Format_RGB32)
+{
     int bpl = bytesPerLine();
-    //int depth = image.depth;
-    for (i = 0; i < newH; i++ )
+    uint8_t *data = bits(), *line = data;
+
+    for (int i = 0; i < newH; ++i, line += bpl)
     {
-        for (j = 0; j < newW; j++ )
+        for (int j = 0; j < newW; ++j)
         {
             uint32_t value;
             if (i < buffer->h && j < buffer->w)
             {
                 uint8_t c = buffer->element(i, j) >> 4;
                 value = c | (c << 8) | (c << 16) | (0xFF << 24);
-            } else
+            }
+            else
             {
                 value = 0xFF000000UL;
             }
 
-            ((uint32_t *)(data + i * bpl))[j] = value;
+            ((uint32_t *)line)[j] = value;
         }
     }
 }
 
 
-G12Image::G12Image(G12Buffer *buffer, bool mirror) : QImage (buffer->w, buffer->h, QImage::Format_RGB32){
-    int i,j;
-    uint8_t *data = bits();
+G12Image::G12Image(G12Buffer *buffer, bool mirror) : QImage(buffer->w, buffer->h, QImage::Format_RGB32)
+{
     int bpl = bytesPerLine();
+    uint8_t *data = bits();
 
 //    PreciseTimer time = PreciseTimer::currentTime();
 
     if (!mirror)
     {
-        for (i = 0; i < buffer->h; i++ )
+        for (int i = 0; i < buffer->h; i++)
         {
             uint16_t *lineIn  = (uint16_t *)&buffer->element(i, 0);
             uint32_t *lineOut = (uint32_t *)(data + i * bpl);
-            j = 0;
+            int j = 0;
 #ifdef WITH_SSE
             Int32x4 topbyte(0xFF << 24);
-            for (; j < buffer->w - 8; j+= 8)
+            for (; j < buffer->w - 8; j += 8)
             {
                 Int16x8 input(lineIn);
                 input.shiftLogical(4);
@@ -68,59 +68,61 @@ G12Image::G12Image(G12Buffer *buffer, bool mirror) : QImage (buffer->w, buffer->
                 e2 = e2 | topbyte;
                 e1.save(lineOut      );
                 e2.save(lineOut + 0x4);
-                lineIn +=8;
-                lineOut+=8;
+                lineIn  += 8;
+                lineOut += 8;
             }
 #endif
-            for (; j < buffer->w; j++ )
+            for (; j < buffer->w; j++)
             {
                 uint8_t c = buffer->element(i, j) >> 4;
                 uint32_t value = c | (c << 8) | (c << 16) | (0xFF << 24);
                 ((uint32_t *)(data + i * bpl))[j] = value;
             }
         }
-    } else {
-        for (i = 0; i < buffer->h; i++ )
+    }
+    else
+    {
+        uint8_t *line = data;
+        for (int i = 0; i < buffer->h; i++, line += bpl)
         {
-            for (j = 0; j < buffer->w; j++ )
+            for (int j = 0; j < buffer->w; j++)
             {
-                uint8_t c;
-                c = buffer->element(i, buffer->w - 1 - j  ) >> 4;
+                uint8_t      c = buffer->element(i, buffer->w - 1 - j) >> 4;
                 uint32_t value = c | (c << 8) | (c << 16) | (0xFF << 24);
-                ((uint32_t *)(data + i * bpl))[j] = value;
+                ((uint32_t *)line)[j] = value;
             }
         }
-
     }
 
 //    printf("Delay %" PRIu64 "\n", time.usecsToNow());
 }
 
-G12Image::~G12Image() {
-}
+G12Image::~G12Image()
+{}
 
-G8Image::G8Image(G8Buffer *buffer) : QImage (buffer->w, buffer->h, QImage::Format_RGB32){
-    int i,j;
-    uint8_t *data = bits();
+G8Image::G8Image(G8Buffer *buffer) : QImage (buffer->w, buffer->h, QImage::Format_RGB32)
+{
     int bpl = bytesPerLine();
+    uint8_t *data = bits();
     //int depth = image.depth;
-    for (i = 0; i < buffer->h; i++ )
+
+    for (int i = 0; i < buffer->h; i++)
     {
         uint8_t  *lineIn  = (uint8_t  *)&buffer->element(i, 0);
         uint32_t *lineOut = (uint32_t *)(data + i * bpl);
-        j = 0;
+        int j = 0;
 #ifdef WITH_SSE
             Int32x4 topbyte(0xFF << 24);
-            for (; j < buffer->w - 16; j+= 16)
+            for (; j < buffer->w - 16; j += 16)
             {
                 Int8x16 input(lineIn);
-                Int16x8 in1 = Int8x16::unpackLower (input,input);
-                Int16x8 in2 = Int8x16::unpackHigher(input,input);
+                Int16x8 in1 = Int8x16::unpackLower (input, input);
+                Int16x8 in2 = Int8x16::unpackHigher(input, input);
 
-                Int32x4 A = Int16x8::unpackLower (in1,in1);
-                Int32x4 B = Int16x8::unpackHigher(in1,in1);
-                Int32x4 C = Int16x8::unpackLower (in2,in2);
-                Int32x4 D = Int16x8::unpackHigher(in2,in2);
+                Int32x4 A = Int16x8::unpackLower (in1, in1);
+                Int32x4 B = Int16x8::unpackHigher(in1, in1);
+                Int32x4 C = Int16x8::unpackLower (in2, in2);
+                Int32x4 D = Int16x8::unpackHigher(in2, in2);
 
                 A |= topbyte;
                 B |= topbyte;
@@ -132,11 +134,11 @@ G8Image::G8Image(G8Buffer *buffer) : QImage (buffer->w, buffer->h, QImage::Forma
                 C.save(lineOut + 0x8);
                 D.save(lineOut + 0xC);
 
-                lineIn +=16;
-                lineOut+=16;
+                lineIn  += 16;
+                lineOut += 16;
             }
 #endif
-        for (; j < buffer->w; j++ )
+        for (; j < buffer->w; j++)
         {
             uint8_t c = *lineIn;
             uint32_t value = c | (c << 8) | (c << 16) | (0xFF << 24);
@@ -147,21 +149,22 @@ G8Image::G8Image(G8Buffer *buffer) : QImage (buffer->w, buffer->h, QImage::Forma
     }
 }
 
-G8Image::~G8Image() {
-}
+G8Image::~G8Image()
+{}
 
 
-RGB24Image::RGB24Image(RGB24Buffer *buffer, bool mirror) : QImage (buffer->w, buffer->h, QImage::Format_RGB32){
-    int i,j;
-    uint8_t *data = bits();
+RGB24Image::RGB24Image(RGB24Buffer *buffer, bool mirror) : QImage (buffer->w, buffer->h, QImage::Format_RGB32)
+{
     int bpl = bytesPerLine();
+    uint8_t *data = bits();
 
-    if (!mirror) {
-        for (i = 0; i < buffer->h; i++ )
+    if (!mirror)
+    {
+        for (int i = 0; i < buffer->h; i++)
         {
             uint32_t *lineIn  = (uint32_t *)&buffer->element(i, 0);
             uint32_t *lineOut = (uint32_t *)(data + i * bpl);
-            j = 0;
+            int j = 0;
 #ifdef WITH_SSE
             Int32x4 mask(0xFF000000);
             for (j = 0; j < buffer->w - 4; j+= 4 )
@@ -173,38 +176,42 @@ RGB24Image::RGB24Image(RGB24Buffer *buffer, bool mirror) : QImage (buffer->w, bu
                 lineOut += 4;
             }
 #endif
-            for (; j < buffer->w; j++ )
+            for (; j < buffer->w; j++)
             {
                 ((uint32_t *)(data + i * bpl))[j] = (buffer->element(i, j).color()) | 0xFF000000;
             }
         }
-    } else {
-        for (i = 0; i < buffer->h; i++ )
+    }
+    else
+    {
+        uint8_t *line = data;
+        for (int i = 0; i < buffer->h; i++, line += bpl)
         {
-            for (j = 0; j < buffer->w; j++ )
+            for (int j = 0; j < buffer->w; j++)
             {
-                ((uint32_t *)(data + i * bpl))[j] = (buffer->element(i, buffer->w - 1 - j).color()) | 0xFF000000;
+                ((uint32_t *)line)[j] = (buffer->element(i, buffer->w - 1 - j).color()) | 0xFF000000;
             }
         }
     }
 }
 
-RGB24Image::~RGB24Image() {
-    // \todo TODO Auto-generated destructor stub
-}
+RGB24Image::~RGB24Image()
+{}
 
-QImage *toQImage(G12Buffer *buffer) {
+QImage *toQImage(G12Buffer *buffer)
+{
     return new G12Image(buffer);
 }
 
-QImage *toQImage(G8Buffer *buffer) {
+QImage *toQImage(G8Buffer *buffer)
+{
     return new G8Image(buffer);
 }
 
-QImage *toQImage(RGB24Buffer *buffer) {
+QImage *toQImage(RGB24Buffer *buffer)
+{
     return new RGB24Image(buffer);
 }
-
 
 RGB24InterfaceImage::RGB24InterfaceImage(RGB24Buffer *buffer) :
     QImage(
@@ -213,29 +220,7 @@ RGB24InterfaceImage::RGB24InterfaceImage(RGB24Buffer *buffer) :
         buffer->h,
         buffer->stride * sizeof(RGB24Buffer::InternalElementType),
         QImage::Format_RGB32)
-{
+{}
 
-}
-
-RGB24InterfaceImage::~RGB24InterfaceImage() {
-
-}
-
-
-void ImageWidget::setImage(QImage *newImage)
-{
-    QImage *oldImage = image;
-    image = newImage;
-    delete oldImage;
-    this->resize(image->size());
-    this->update();
-
-}
-
-void ImageWidget::paintEvent(QPaintEvent * event)
-{
-    QPainter p(this);
-    if (image != NULL)
-        p.drawImage(QPoint(0,0), *image);
-    ViAreaWidget::paintEvent(event);
-}
+RGB24InterfaceImage::~RGB24InterfaceImage()
+{}

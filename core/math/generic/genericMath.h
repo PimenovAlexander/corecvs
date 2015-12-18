@@ -75,6 +75,13 @@ template <int multiplier>
     inline static Type andNot(const Type &left, const Type &right) {
         return (left & (~right));
     }
+
+    template<class InputType>
+    inline static void fillOnes(InputType &var)
+    {
+        var = 0;
+        var = ~var;
+    }
 };
 
 template<>

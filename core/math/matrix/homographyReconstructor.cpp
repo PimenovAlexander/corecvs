@@ -22,17 +22,17 @@ HomographyReconstructor::HomographyReconstructor()
 
 void HomographyReconstructor::addPoint2PointConstraint(const Vector2dd &from, const Vector2dd &to)
 {
-    p2p.push_back(Correspondance(from,to));
+    p2p.push_back(Correspondence(from,to));
 }
 
 void HomographyReconstructor::addPoint2LineConstraint(const Vector2dd &from, const Line2d &line)
 {
-    p2l.push_back(CorrespondancePointLine(from, line));
+    p2l.push_back(CorrespondencePointLine(from, line));
 }
 
 void HomographyReconstructor::addPoint2SegmentConstraint(const Vector2dd &from, const Segment2d &seg)
 {
-    p2s.push_back(CorrespondancePointSegment(from, seg));
+    p2s.push_back(CorrespondencePointSegment(from, seg));
 }
 
 bool HomographyReconstructor::hasEnoughtConstraints()
@@ -79,7 +79,8 @@ HomographyReconstructor::~HomographyReconstructor()
 /**
  *   TODO: This function doubles the code form rectificator.cpp
  **/
-void HomographyReconstructor::noramlisePoints(Matrix33 &transformLeft, Matrix33 &transformRight)
+// FIXME
+void HomographyReconstructor::normalisePoints(Matrix33 &transformLeft, Matrix33 &transformRight)
 {
     Vector2dd lmean(0.0);
     Vector2dd lmeansq(0.0);
@@ -343,8 +344,8 @@ Matrix33 HomographyReconstructor::getBestHomographyLSE1( void )
         lineNum += 1;
     }
 
-    cout << "X" << endl << mX << endl;
-    cout << "B" << endl << mB << endl;
+//    cout << "X" << endl << mX << endl;
+//    cout << "B" << endl << mB << endl;
 
     Matrix mXTX = mX.t() * mX;
     Matrix mXTB = mX.t() * mB;
@@ -352,7 +353,7 @@ Matrix33 HomographyReconstructor::getBestHomographyLSE1( void )
     Matrix result = mXTX.invSVD() * mXTB;
 
     Matrix test = mX * result - mB;
-    cout << "Residual:" << test.frobeniusNorm() << endl;
+//    cout << "Residual:" << test.frobeniusNorm() << endl;
 
     Matrix33 toReturn(
         result.a(0,0), result.a(1,0), result.a(2,0),
@@ -381,8 +382,8 @@ Matrix33 HomographyReconstructor::getBestHomographyLSE( void )
         lineNum += 1;
     }
 
-    cout << "X" << endl << mX << endl;
-    cout << "B" << endl << mB << endl;
+ //   cout << "X" << endl << mX << endl;
+//    cout << "B" << endl << mB << endl;
 
 
     Matrix U(mX);
@@ -404,7 +405,7 @@ Matrix33 HomographyReconstructor::getBestHomographyLSE( void )
     Matrix result = VT * UtB8;
 
     Matrix test = mX * result - mB;
-    cout << "Residual:" << test.frobeniusNorm() << endl;
+//    cout << "Residual:" << test.frobeniusNorm() << endl;
 
     Matrix33 toReturn(
         result.a(0,0), result.a(1,0), result.a(2,0),
@@ -433,14 +434,14 @@ Matrix33 HomographyReconstructor::getBestHomographyLSE2( void )
         lineNum += 1;
     }
 
-    cout << "X" << endl << mX << endl;
+//    cout << "X" << endl << mX << endl;
 
     Matrix U(mX);
     Matrix W(1, 9);
     Matrix VT(9, 9);
     Matrix::svd(&U, &W, &VT);
 
-    cout << "Singualar Values" << endl << W << endl;
+ //   cout << "Singualar Values" << endl << W << endl;
 
     int minId = -1;
     double minval = std::numeric_limits<double>::max();
@@ -462,8 +463,8 @@ Matrix33 HomographyReconstructor::getBestHomographyLSE2( void )
     Matrix result(9, 1, toReturn.element);
     Matrix test = mX * result;
 
-    cout << "Result" << endl << test << endl;
-    cout << "Residual:" << test.frobeniusNorm() << endl;
+//    cout << "Result" << endl << test << endl;
+//    cout << "Residual:" << test.frobeniusNorm() << endl;
     return toReturn;
 }
 
@@ -474,12 +475,19 @@ Matrix33 HomographyReconstructor::getBestHomographyLSE2( void )
  *
  *
  **/
-double HomographyReconstructor::getCostFunction(Matrix33 &H)
+double HomographyReconstructor::getCostFunction(Matrix33 &H, double out[])
 {
+    int argout = 0;
     double cost = 0.0;
     for (unsigned i = 0; i < p2p.size(); i++)
     {
         Vector2dd point = (H * p2p[i].start);
+        auto diff = point - p2p[i].end;
+        if (out)
+        {
+            out[argout++] = diff[0];
+            out[argout++] = diff[1];
+        }
         cost += (point - p2p[i].end).sumAllElementsSq();
     }
 
@@ -487,9 +495,16 @@ double HomographyReconstructor::getCostFunction(Matrix33 &H)
     {
         Vector2dd point = H * p2l[i].start;
         double distanceSq = p2l[i].end.sqDistanceTo(point);
+        if (out)
+            out[argout++] = std::sqrt(distanceSq);
         cost += distanceSq;
     }
     return cost;
+}
+
+int HomographyReconstructor::getConstraintNumber()
+{
+    return (int)p2l.size() + (int)p2s.size() + (int)p2p.size() * 2;
 }
 
 
@@ -498,8 +513,10 @@ void HomographyReconstructor::CostFunction::operator()(const double in[], double
     Matrix33 H(in[0], in[1], in[2],
                in[3], in[4], in[5],
                in[6], in[7], 1.0);
-    out[0] = reconstructor->getCostFunction(H);
+    reconstructor->getCostFunction(H, out);
 }
+
+
 
 /*
 void HomographyReconstructor::CostFunctionBack::operator()(const double in[], double out[])
@@ -522,7 +539,7 @@ void HomographyReconstructor::CostFunctionTwoWay::operator()(const double in[], 
 void HomographyReconstructor::CostFunctionWize::operator()(const double in[], double out[])
 {
     Matrix33 H = matrixFromState(in);
-    out[0] = reconstructor->getCostFunction(H);
+    reconstructor->getCostFunction(H, out);
 }
 
 Matrix33 HomographyReconstructor::CostFunctionWize::matrixFromState(const double in[])
@@ -582,8 +599,8 @@ Matrix33 HomographyReconstructor::getBestHomographyClassicKalman()
 /**
  *  This block is devoted to LM reconstruction
  **/
-
-Matrix33 HomographyReconstructor::getBestHomographyLM(Matrix33 /*guess*/)
+// FIXME: implement full cost-function for LM
+Matrix33 HomographyReconstructor::getBestHomographyLM(Matrix33 guess)
 {
     CostFunction F(this);
     LevenbergMarquardt LMfit;
@@ -592,12 +609,17 @@ Matrix33 HomographyReconstructor::getBestHomographyLM(Matrix33 /*guess*/)
     LMfit.maxIterations = 25;
 
     vector<double> input(8);
-    input[0] = 1.0; input[1] = 0.0; input[2] = 0.0;
-    input[3] = 0.0; input[4] = 1.0; input[5] = 0.0;
-    input[6] = 0.0; input[7] = 0.0;
+    for(int i = 0; i < 3; ++i)
+    {
+        for(int j = 0; j < 3; ++j)
+        {
+            if(i * 3 + j == 8)
+                break;
+            input[i * 3 + j] = guess.a(i, j) / guess.a(2, 2);
+        }
+    }
 
-    vector<double> output(1);
-    output[0] = 0.0;
+    vector<double> output(getConstraintNumber());
 
     vector<double> optInput = LMfit.fit(input, output);
 

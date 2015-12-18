@@ -56,7 +56,10 @@ int CannyParameters::staticInit()
           500,
           "Minimum threshold",
           "Minimum threshold",
-          "Minimum threshold"
+          "Minimum threshold",
+          true,
+         0,
+         10000
         )
     );
     fields().push_back(
@@ -67,7 +70,10 @@ int CannyParameters::staticInit()
           1500,
           "Maximum threshold",
           "Maximum threshold",
-          "Maximum threshold"
+          "Maximum threshold",
+          true,
+         0,
+         10000
         )
     );
    return 0;

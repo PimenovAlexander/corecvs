@@ -8,6 +8,19 @@
 #include "levenmarq.h"
 #include "stdlib.h"
 #include "vector.h"
+
+#ifdef WITH_BLAS
+#ifdef WITH_MKL
+#include <mkl.h>
+#else
+#  include <complex>
+#  define lapack_complex_float  std::complex<float>
+#  define lapack_complex_double std::complex<double>
+#  include <cblas.h>
+#  include <lapacke.h>
+#endif
+#endif
+
 namespace corecvs {
 
 //#define TRACE_PROGRESS
@@ -31,9 +44,9 @@ vector<double> LevenbergMarquardt::fit(const vector<double> &input, const vector
 
     Vector beta(input);
     Vector target(output);
-    ASSERT_TRUE  ( f != NULL, "Function is NULL");
-    ASSERT_TRUE_P( beta.size() == f->inputs, ("input guess has wrong dimension %d instead of %d\n", beta.size(), f->inputs));
-    ASSERT_TRUE_P( (int)output.size() == f->outputs, ("output has wrong dimension %d instead of %d\n", (int)output.size(), f->outputs));
+    CORE_ASSERT_TRUE(f != NULL, "Function is NULL");
+    CORE_ASSERT_TRUE_P(beta.size() == f->inputs, ("input guess has wrong dimension %d instead of %d\n", beta.size(), f->inputs));
+    CORE_ASSERT_TRUE_P((int)output.size() == f->outputs, ("output has wrong dimension %d instead of %d\n", (int)output.size(), f->outputs));
 
     Vector y(f->outputs);    /**<Will hold the current function result*/
     Vector diff(f->outputs); /**<Will hold current difference to traget*/
@@ -48,7 +61,10 @@ vector<double> LevenbergMarquardt::fit(const vector<double> &input, const vector
     double lambda = startLambda;
     double maxlambda = maxLambda;
 
-    for (int g = 0; (g < maxIterations) && (lambda < maxlambda) && !converged; g++)
+    double norm = std::numeric_limits<double>::max();
+
+    int g = 0;
+    for (g = 0; (g < maxIterations) && (lambda < maxlambda) && !converged; g++)
     {
         if (traceProgress) {
             if ((g % ((maxIterations / 100) + 1) == 0))
@@ -59,20 +75,47 @@ vector<double> LevenbergMarquardt::fit(const vector<double> &input, const vector
 
         Matrix J = f->getJacobian(&(beta[0]));
 
-        if (traceMatrix) {
+        if (traceJacobian) {
             cout << "New Jacobian:" << endl << J << endl;
         }
 
+        /*
+         * XXX: Using obscure profiling techniques I found that out L-M implementation is slow
+         *      for big tasks. So I changed this stuff into calls to BLAS.
+         *      For small tasks it may even decrease performance since calls to BLAS come
+         *      with some non-zero cost.
+         *      May be we need to investigate, from which problem size we should switch to BLAS
+         *      implementation.
+         * NOTE: Cool guys do not compute JTJ explicitly, since we can get all useful info from
+         *       J's QR decomposition (Q term cancels out and is not needed explicitly),
+         *       but we are using JTJ in user-enableable ouput, so I do not implement QR-way
+         */
+#ifndef WITH_BLAS
         Matrix JT = J.t();
         Matrix JTJ = JT * J;
+#else
+        Matrix JTJ(J.w, J.w);
+        cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans, J.w, J.w, J.h, 1.0, &J.a(0, 0), J.stride, &J.a(0, 0), J.stride, 0.0, &JTJ.a(0, 0), JTJ.stride);
+#endif
 
         F(beta, y);
         diff = target - y;
+#ifndef WITH_BLAS
         Vector d = JT * diff;
+#else
+        Vector d(J.w);
+        cblas_dgemv(CblasRowMajor, CblasTrans, J.h, J.w, 1.0, &J.a(0, 0), J.stride, &diff[0], 1, 0.0, &d[0], 1);
+#endif
 
-        double norm = diff.sumAllElementsSq();
+        double normOld = norm;
+        norm = diff.sumAllElementsSq();
 
         if (trace) {
+            if (normOld < norm) {
+                cout << "Paradox: Norm has not decreased..." << (normOld - norm) << endl;
+                hasParadox = true;
+            }
+
             cout << "Now  :" <<  norm << " " << lambda << endl;
         }
 
@@ -128,7 +171,9 @@ vector<double> LevenbergMarquardt::fit(const vector<double> &input, const vector
 
             // Make a temporary copy
             Matrix A(JTJ);
+#ifndef WITH_BLAS
             Vector B(d);
+#endif
 
 
             for (int j = 0; j < A.h; j++)
@@ -138,7 +183,21 @@ vector<double> LevenbergMarquardt::fit(const vector<double> &input, const vector
                 A.a(j, j) = a;
             }
 
+            /*
+             * XXX: Using obscure profiling techniques I found that out L-M implementation is slow
+             *      for big tasks. So I changed this stuff into calls to LAPACK.
+             *      For small tasks it may even decrease performance since calls to LAPACK come
+             *      with some non-zero cost.
+             *      May be we need to investigate, from which problem size we should switch to LAPACK
+             *      implementation.
+             */
+#ifndef WITH_BLAS
             delta = A.inv() * B;
+#else
+            Vector pivot(A.h);
+            delta = d;
+            LAPACKE_dsysv( LAPACK_ROW_MAJOR, 'L', A.h, 1, &A.a(0, 0), A.stride, (int*)&pivot[0], &delta[0], 1);
+#endif
             F(beta + delta, yNew);
             diffNew = target - yNew;
             double normNew = diffNew.sumAllElementsSq();
@@ -167,7 +226,7 @@ vector<double> LevenbergMarquardt::fit(const vector<double> &input, const vector
                 }
 
                 if (traceMatrix) {
-                    cout << "New soluton:" << endl << beta << endl;
+                    cout << "New soluton:" << endl << beta << " - " << normNew << endl;
                 }
                 break;
             }
@@ -176,11 +235,10 @@ vector<double> LevenbergMarquardt::fit(const vector<double> &input, const vector
                 if (trace) {
                     cout << "Rejected lambda old: "<< lambda << " lambda new:" << lambda * lambdaFactor << endl;
                 }
+                lambda *= lambdaFactor; // Current solution is worse. Try new lambda
                 if (traceMatrix) {
-                    cout << "Keep soluton:" << endl << beta << endl;
+                    cout << "Keep soluton:" << endl << beta << " - " << normNew << " l:"<<  lambda << endl;
                 }
-
-                lambda *= lambdaFactor;// Current solution is worse. Try new lambda
             }
         }
     }
@@ -194,6 +252,8 @@ vector<double> LevenbergMarquardt::fit(const vector<double> &input, const vector
     for (int i = 0; i < f->inputs; i++) {
         result.push_back(beta[i]);
     }
+
+    iterations = g;
     return result;
 }
 

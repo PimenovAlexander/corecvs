@@ -162,7 +162,7 @@ public:
         {
             return 0;
         }
-        ASSERT_FALSE_P(block->refCount() == 0, ("Block referenced by %p overfreed\n", (void *)this));
+        CORE_ASSERT_FALSE_P(block->refCount() == 0, ("Block referenced by %p overfreed\n", (void *)this));
 
         DOTRACE(("Reference for block %p Decrement to %d\n", (void *)block, block->refCount() - 1));
         atomic_int new_count = atomic_dec_and_fetch(&(block->refCount()));

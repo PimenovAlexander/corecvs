@@ -11,7 +11,7 @@
 
 //#include <QtCore/QObjectDefs>
 #include <QtGui/QtGui>
-#include <QApplication>
+#include <QtGui/QApplication>
 
 #include "global.h"
 

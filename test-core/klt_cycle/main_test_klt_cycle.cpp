@@ -7,6 +7,8 @@
  */
 
 #include <iostream>
+#include "gtest/gtest.h"
+
 #include "g12Buffer.h"
 #include "kltGenerator.h"
 #include "bufferFactory.h"
@@ -14,8 +16,7 @@
 
 using namespace corecvs;
 
-
-int testKLT ( void )
+TEST(KltCycle, testKLT)
 {
     /* Ok prepare a test buffer 8 by 8
               0  1  2  3  4  5  6  7
@@ -83,15 +84,15 @@ int testKLT ( void )
 
 
     delete sg;
+    delete second;
+    delete first;
+    delete context.gradient;
 
-    return 0;
+//    return 0;
 }
 
-
-
-
-int main (void)
-{
-    testKLT();
-    return 0;
-}
+//int main (void)
+//{
+//    testKLT();
+//    return 0;
+//}

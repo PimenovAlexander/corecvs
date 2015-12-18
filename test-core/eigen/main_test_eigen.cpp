@@ -9,13 +9,16 @@
  */
 
 #include <iostream>
+#include "gtest/gtest.h"
+
 #include "global.h"
+
 #include "matrix.h"
 
 using namespace std;
 using namespace corecvs;
 
-void testJacobi( void )
+TEST(Eigen, testJacobi)
 {
     Matrix A(4, 4);
 
@@ -66,11 +69,4 @@ void testJacobi( void )
         cout << D.a(i) * T << endl;
         cout << "================" << endl;
     }
-}
-
-int main (int /*argC*/, char **/*argV*/)
-{
-    testJacobi();
-    cout << "PASSED" << endl;
-    return 0;
 }

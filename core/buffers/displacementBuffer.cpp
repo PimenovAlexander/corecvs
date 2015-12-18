@@ -6,11 +6,15 @@
  * \date Mar 21, 2010
  * \author alexander
  */
-
 #include "displacementBuffer.h"
+
 namespace corecvs {
 
 
+/**
+ *   This method  tries to invert the radial correction buffer there are different ways to do this in terms of speed/quality
+ *
+ **/
 DisplacementBuffer *DisplacementBuffer::CacheInverse(
     RadialCorrection *inverseMap,
     int h, int w,
@@ -20,7 +24,15 @@ DisplacementBuffer *DisplacementBuffer::CacheInverse(
     bool useLM
 )
 {
-    DisplacementBuffer *toReturn = new DisplacementBuffer(h, w);
+    cout << "DisplacementBuffer::CacheInverse() called" << endl;
+    cout << "  Inverse Map:" << inverseMap->mParams << endl;
+    cout << "  H:" << h << " W:" << w << endl;
+    cout << "  x1:" << x1 << " y1:" << y1 << endl;
+    cout << "  x2:" << x2 << " y2:" << y2 << endl;
+    cout << "  step:" << step << endl;
+    cout << "  UseLM:" << (useLM ? "yes" : "no") << endl;
+
+    DisplacementBuffer *toReturn = new DisplacementBuffer(h, w, Vector2dd(numeric_limits<double>::max(), numeric_limits<double>::max()));
     AbstractBuffer<double> *distance = new AbstractBuffer<double>(h, w, 10.0);
 
     for (double y = y1; y < y2; y += step)
@@ -68,5 +80,24 @@ DisplacementBuffer *DisplacementBuffer::CacheInverse(
     return toReturn;
 }
 
-} //namespace corecvs
+DisplacementBuffer *DisplacementBuffer::TestWiggle(int h, int w, double power, double step)
+{
+    DisplacementBuffer *toReturn = new DisplacementBuffer(h, w);
 
+    for (int i = 0; i < toReturn->h; i++ )
+    {
+        for (int j = 0; j < toReturn->w; j++ )
+        {
+            toReturn->element(i,j) =  Vector2dd(sin(i / step), sin(j / step)) * power ;
+            /*if ((i / 100) % 2) {
+                toReturn->element(i,j) = Vector2dd(1.4, 0);
+            } else {
+                toReturn->element(i,j) = Vector2dd(1, 0);
+            }*/
+        }
+    }
+
+    return toReturn;
+}
+
+} //namespace corecvs

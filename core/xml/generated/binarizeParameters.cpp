@@ -45,7 +45,10 @@ int BinarizeParameters::staticInit()
           2000,
           "Threshold",
           "Threshold",
-          "Threshold"
+          "Threshold",
+          true,
+         0,
+         4096
         )
     );
    return 0;

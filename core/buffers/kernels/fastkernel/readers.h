@@ -20,40 +20,6 @@ namespace corecvs {
 
 using std::endl;
 
-class SSEReader8D_Q {
-public:
-
-    static const int BYTE_STEP = 16;
-
-    /**
-     *  This function takes 8 2 byte records packed as
-     *
-     *  0                    4                     8                    12                   16
-     *  | A.0  A.1  B.0  B.1 | C.0  C.1  D.0  D.1  | E.0  E.1  F.0  F.1 | G.0  G.1  H.0  H.1 |
-     *
-     *  And Loads them to 2 SSE 4x32bit registers
-     *
-     *
-     *  | 0x00 0x00 A.0  A.1 | 0x00 0x00  B.0  B.1 | 0x00 0x00 C.0  C.1 | 0x00 0x00  D.0  D.1 |
-     *  | 0x00 0x00 E.0  E.1 | 0x00 0x00  F.0  F.1 | 0x00 0x00 G.0  G.1 | 0x00 0x00  H.0  H.1 |
-     *
-     *
-     **/
-    static FixedVector<Int32x4, 2> read(uint16_t *ptr)
-    {
-/*        FixedVector<Int32x4, 2> result;
-
-        Int16x8 input(ptr);
-        input.
-
-
-        return result;*/
-    }
-
-};
-
-
-
 /**
  *   Reads a structure of 4 byte fields into SSE registers.
  *
@@ -196,6 +162,45 @@ public:
         b.save(ptr + 0x4);
     }
 
+};
+
+/**/
+class SSEReaderBBBB_QQQQ {
+public:
+
+    static const int SAFE_STEP = 16;
+    static const int BYTE_STEP = 4;
+
+    /**
+     *  This function reads _16_ bytes, takes 4 first and extends them to UInt32x4
+     **/
+    static Int32x4 read(uint8_t *ptr)
+    {
+        Int8x16 input(ptr);
+        Int16x8 extended = Int8x16::unpackLower(input, Int8x16((int8_t)0));
+        return Int16x8::unpackLower(extended, Int16x8((int16_t)0));
+    }
+};
+
+class SSEReader2BBBB_QQQQ {
+public:
+
+    static const int SAFE_STEP = 16;
+    static const int BYTE_STEP = 8;
+
+    /**
+     *  This function reads _16_ bytes, takes 4 first and 4 second bytes and extends them to UInt32x4 each
+     **/
+    static FixedVector<Int32x4, 2> read(uint8_t *ptr)
+    {
+        FixedVector<Int32x4, 2> result;
+
+        Int8x16 input(Int64x2::loadLower((int64_t *)ptr).data);
+        Int16x8 extended = Int8x16::unpackLower(input, Int8x16((int8_t)0));
+        result[0] = Int16x8::unpackLower(extended, Int16x8((int16_t)0));
+        result[1] = Int16x8::unpackHigher(extended, Int16x8((int16_t)0));
+        return result;
+    }
 };
 
 

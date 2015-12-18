@@ -6,29 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1234</width>
-    <height>751</height>
+    <width>910</width>
+    <height>609</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
-   <property name="leftMargin">
-    <number>3</number>
-   </property>
-   <property name="topMargin">
-    <number>3</number>
-   </property>
-   <property name="rightMargin">
-    <number>3</number>
-   </property>
-   <property name="bottomMargin">
-    <number>3</number>
-   </property>
-   <property name="spacing">
-    <number>3</number>
-   </property>
    <item row="0" column="0">
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
@@ -62,16 +47,7 @@
        </size>
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
-       <property name="leftMargin">
-        <number>3</number>
-       </property>
-       <property name="topMargin">
-        <number>3</number>
-       </property>
-       <property name="rightMargin">
-        <number>3</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>3</number>
        </property>
        <property name="spacing">
@@ -177,16 +153,7 @@
            <string>Polynomial distortion correction</string>
           </attribute>
           <layout class="QGridLayout" name="gridLayout_2">
-           <property name="leftMargin">
-            <number>3</number>
-           </property>
-           <property name="topMargin">
-            <number>3</number>
-           </property>
-           <property name="rightMargin">
-            <number>3</number>
-           </property>
-           <property name="bottomMargin">
+           <property name="margin">
             <number>3</number>
            </property>
            <property name="spacing">
@@ -366,16 +333,7 @@
            <string>Inversion distortion correction</string>
           </attribute>
           <layout class="QGridLayout" name="gridLayout">
-           <property name="leftMargin">
-            <number>3</number>
-           </property>
-           <property name="topMargin">
-            <number>3</number>
-           </property>
-           <property name="rightMargin">
-            <number>3</number>
-           </property>
-           <property name="bottomMargin">
+           <property name="margin">
             <number>3</number>
            </property>
            <property name="spacing">
@@ -461,18 +419,6 @@
            <string>Lines distortion correction</string>
           </attribute>
           <layout class="QGridLayout" name="gridLayout_5">
-           <property name="topMargin">
-            <number>3</number>
-           </property>
-           <property name="rightMargin">
-            <number>3</number>
-           </property>
-           <property name="bottomMargin">
-            <number>3</number>
-           </property>
-           <property name="spacing">
-            <number>3</number>
-           </property>
            <item row="1" column="0">
             <widget class="QLabel" name="label_8">
              <property name="text">
@@ -623,20 +569,6 @@
              </item>
             </widget>
            </item>
-           <item row="7" column="2">
-            <widget class="QPushButton" name="savePointsButton">
-             <property name="text">
-              <string>Save</string>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="2">
-            <widget class="QPushButton" name="loadPointsButton">
-             <property name="text">
-              <string>Load</string>
-             </property>
-            </widget>
-           </item>
           </layout>
          </widget>
          <widget class="QWidget" name="tab_Manual">
@@ -724,7 +656,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../../resources/main.qrc">
+              <iconset resource="../../../../resources/main.qrc">
                <normaloff>:/new/prefix1/minus.png</normaloff>:/new/prefix1/minus.png</iconset>
              </property>
              <property name="iconSize">
@@ -741,7 +673,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../../resources/main.qrc">
+              <iconset resource="../../../../resources/main.qrc">
                <normaloff>:/new/prefix1/plus.png</normaloff>:/new/prefix1/plus.png</iconset>
              </property>
              <property name="iconSize">
@@ -788,16 +720,7 @@
           <property name="spacing">
            <number>3</number>
           </property>
-          <property name="leftMargin">
-           <number>3</number>
-          </property>
-          <property name="topMargin">
-           <number>3</number>
-          </property>
-          <property name="rightMargin">
-           <number>3</number>
-          </property>
-          <property name="bottomMargin">
+          <property name="margin">
            <number>3</number>
           </property>
           <item>
@@ -806,7 +729,7 @@
              <string>Recalculate</string>
             </property>
             <property name="icon">
-             <iconset resource="../../resources/main.qrc">
+             <iconset resource="../../../../resources/main.qrc">
               <normaloff>:/new/prefix1/calculator.png</normaloff>:/new/prefix1/calculator.png</iconset>
             </property>
             <property name="iconSize">
@@ -823,7 +746,7 @@
              <string>Reset</string>
             </property>
             <property name="icon">
-             <iconset resource="../../resources/main.qrc">
+             <iconset resource="../../../../resources/main.qrc">
               <normaloff>:/new/prefix1/refresh.png</normaloff>:/new/prefix1/refresh.png</iconset>
             </property>
             <property name="iconSize">
@@ -847,7 +770,7 @@
              <string>Show Graph</string>
             </property>
             <property name="icon">
-             <iconset resource="../../resources/main.qrc">
+             <iconset resource="../../../../resources/main.qrc">
               <normaloff>:/new/prefix1/Line Chart.png</normaloff>:/new/prefix1/Line Chart.png</iconset>
             </property>
             <property name="iconSize">
@@ -864,7 +787,7 @@
              <string>Show Field</string>
             </property>
             <property name="icon">
-             <iconset resource="../../resources/main.qrc">
+             <iconset resource="../../../../resources/main.qrc">
               <normaloff>:/new/prefix1/sphere.png</normaloff>:/new/prefix1/sphere.png</iconset>
             </property>
             <property name="iconSize">
@@ -927,8 +850,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../resources/main.qrc"/>
-  <include location="../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
  </resources>
  <connections>
   <connection>

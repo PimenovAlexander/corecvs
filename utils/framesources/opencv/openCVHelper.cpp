@@ -31,8 +31,9 @@ bool OpenCvHelper::captureImageCopyToBuffer(IplImage* frame, G12Buffer* buf)
      * explaining the necessity to "skip" the few last bytes of each line of OpenCV image buffer.
      */
     int widthStep = frame->widthStep;
-    int height = frame->height;
-    int width = frame->width;
+    int height    = frame->height;
+    int width     = frame->width;
+    int gap       = widthStep - frame->nChannels * width;
 
     if ((frame->depth != IPL_DEPTH_8U) || (frame->nChannels != 3))
     {
@@ -44,10 +45,10 @@ bool OpenCvHelper::captureImageCopyToBuffer(IplImage* frame, G12Buffer* buf)
     {
         for (int j = 0; j < width; j++)
         {
-            buf->element(i, j) =  (11 * imageData[0] + 16 * imageData[1] + 5 * imageData[2]) >> 1;
+            buf->element(i, j) = (11 * imageData[0] + 16 * imageData[1] + 5 * imageData[2]) >> 1;  // b,g,r => y12
             imageData += 3;
         }
-        imageData += widthStep - 3 * width;
+        imageData += gap;
     }
     return true;
 }

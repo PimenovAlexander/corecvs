@@ -30,8 +30,8 @@ public:
     static int32_t data[9];
     static SobelVertInt *instance;
 
-    SobelVertInt() : AbstractKernel<int32_t, uint32_t> (3, 3, data, 4, 0, 1, 1) {};
-    virtual ~SobelVertInt(){};
+    SobelVertInt() : AbstractKernel<int32_t, uint32_t> (3, 3, data, 4, 0, 1, 1) {}
+    virtual ~SobelVertInt(){}
 };
 
 
@@ -48,8 +48,8 @@ public:
     static int32_t data[9];
     static SobelHorInt *instance;
 
-    SobelHorInt() : AbstractKernel<int32_t, uint32_t> (3, 3, data, 4, 0, 1, 1) {};
-    virtual ~SobelHorInt(){};
+    SobelHorInt() : AbstractKernel<int32_t, uint32_t> (3, 3, data, 4, 0, 1, 1) {}
+    virtual ~SobelHorInt(){}
 };
 
 /**

@@ -14,6 +14,7 @@
 #include "hersheyVectorFont.h"
 #include "rgbColor.h"
 #include "polygons.h"
+#include "conic.h"
 
 namespace corecvs {
 
@@ -179,6 +180,11 @@ public:
         }
     }
 
+    void drawCircle(const Circle2d &circle, RGBColor color)
+    {
+        drawCircle(circle.c.x(), circle.c.y(), circle.r, color);
+    }
+
     class EqualPredicate
     {
     private:
@@ -196,7 +202,7 @@ public:
         /*,   countPred(0)
         ,   countMark(0)
         ,   doubleMark(0)*/
-        {};
+        {}
 
         bool operator()(TargetBuffer *buffer, int x, int y) {
             //countPred++;
@@ -220,9 +226,9 @@ public:
         int x2;
         int y;
 
-        Segment() {};
+        Segment() {}
         Segment(int _x1, int _x2, int _y) :
-            x1(_x1), x2(_x2), y(_y) {};
+            x1(_x1), x2(_x2), y(_y) {}
     };
 
     template<class Predicate>

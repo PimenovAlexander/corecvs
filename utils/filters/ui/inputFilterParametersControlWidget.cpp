@@ -44,6 +44,13 @@ void InputFilterParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void InputFilterParametersControlWidget::getParameters(InputFilterParameters& params) const
+{
+
+    params.setInputType        (static_cast<InputType::InputType>(mUi->inputTypeComboBox->currentIndex()));
+
+}
 
 InputFilterParameters *InputFilterParametersControlWidget::createParameters() const
 {

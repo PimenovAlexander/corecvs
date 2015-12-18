@@ -44,6 +44,13 @@ void ThickeningParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void ThickeningParametersControlWidget::getParameters(ThickeningParameters& params) const
+{
+
+    params.setPower            (mUi->powerSpinBox->value());
+
+}
 
 ThickeningParameters *ThickeningParametersControlWidget::createParameters() const
 {

@@ -13,7 +13,7 @@
 #include "vector2d.h"
 #include "matrix33.h"
 #include "polygons.h"
-#include "correspondanceList.h"
+#include "correspondenceList.h"
 #include "matrix.h"
 #include "function.h"
 #include "line.h"
@@ -21,16 +21,16 @@ namespace corecvs {
 
 using std::vector;
 
-typedef PrimitiveCorrespondance<Vector2dd, Line2d> CorrespondancePointLine;
-typedef PrimitiveCorrespondance<Vector2dd, Segment2d> CorrespondancePointSegment;
+typedef PrimitiveCorrespondence<Vector2dd, Line2d> CorrespondencePointLine;
+typedef PrimitiveCorrespondence<Vector2dd, Segment2d> CorrespondencePointSegment;
 
 
 class HomographyReconstructor
 {
 public:
-    vector<Correspondance> p2p;
-    vector<CorrespondancePointLine> p2l;
-    vector<CorrespondancePointSegment> p2s;
+    vector<Correspondence> p2p;
+    vector<CorrespondencePointLine> p2l;
+    vector<CorrespondencePointSegment> p2s;
 
 
     HomographyReconstructor();
@@ -43,7 +43,8 @@ public:
 
     bool hasEnoughtConstraints();
 
-    double getCostFunction(Matrix33 &input);
+    double getCostFunction(Matrix33 &input, double out[] = 0);
+    int  getConstraintNumber();
 
     friend ostream & operator << (ostream &out, const HomographyReconstructor &reconstructor);
 
@@ -57,7 +58,7 @@ public:
     Matrix33 getBestHomographyLM(Matrix33 guess = Matrix33(1.0));
 
 
-    void noramlisePoints(Matrix33 &transformLeft, Matrix33 &transformRight);
+    void normalisePoints(Matrix33 &transformLeft, Matrix33 &transformRight);
 
     virtual ~HomographyReconstructor();
 
@@ -87,7 +88,7 @@ private:
     class CostFunction : public FunctionArgs {
     public:
         HomographyReconstructor *reconstructor;
-        CostFunction(HomographyReconstructor *_reconstructor) : FunctionArgs(8,1), reconstructor(_reconstructor) {};
+        CostFunction(HomographyReconstructor *_reconstructor) : FunctionArgs(8, _reconstructor->getConstraintNumber()), reconstructor(_reconstructor) {};
 
         virtual void operator()(const double in[], double out[]);
     };
@@ -95,7 +96,7 @@ private:
     class CostFunctionWize : public FunctionArgs {
     public:
         HomographyReconstructor *reconstructor;
-        CostFunctionWize(HomographyReconstructor *_reconstructor) : FunctionArgs(8,1), reconstructor(_reconstructor) {};
+        CostFunctionWize(HomographyReconstructor *_reconstructor) : FunctionArgs(8,_reconstructor->getConstraintNumber()), reconstructor(_reconstructor) {};
 
         virtual void operator()(const double in[], double out[]);
         Matrix33 matrixFromState(const double in[]);

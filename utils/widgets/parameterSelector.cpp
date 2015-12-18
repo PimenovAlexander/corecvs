@@ -13,8 +13,6 @@ ParameterSelector::ParameterSelector(QWidget *parent)
 void ParameterSelector::setName (QString name)
 {
     ui.label->setText(name);
-    setWindowTitle(name);
-    setObjectName(name);
 }
 
 void ParameterSelector::setAutoSupported(bool value)

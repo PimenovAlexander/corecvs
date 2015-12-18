@@ -22,7 +22,7 @@ public:
 
     unsigned size() const
     {
-        return faces.size();
+		return (unsigned)faces.size();
     }
 
     Vector3dd getPoint(int i) const

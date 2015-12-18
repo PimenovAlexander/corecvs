@@ -44,6 +44,13 @@ void BinarizeParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void BinarizeParametersControlWidget::getParameters(BinarizeParameters& params) const
+{
+
+    params.setThreshold        (mUi->thresholdSpinBox->value());
+
+}
 
 BinarizeParameters *BinarizeParametersControlWidget::createParameters() const
 {

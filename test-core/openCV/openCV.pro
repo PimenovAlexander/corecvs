@@ -3,8 +3,8 @@
 # This is a file for QMAKE that allows to build the test openCV
 #
 ##################################################################
-include(../testsCommon.pri)
-#include(../testsRestricted.pri)
+
+include(../test.pri)
 
 OPENCV_WRAPPER_DIR = ../../wrappers/opencv
 include($$OPENCV_WRAPPER_DIR/opencv.pri)

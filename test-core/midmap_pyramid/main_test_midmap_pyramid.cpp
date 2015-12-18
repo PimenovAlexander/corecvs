@@ -6,24 +6,23 @@
  * \author alexander
  */
 
-#include <stdint.h>
-#include <stdio.h>
-#include <string>
-#include <cstdio>
+#include <stdlib.h>
+#include "gtest/gtest.h"
 
 #include "global.h"
 
 #include "g12Buffer.h"
 #include "bufferFactory.h"
 #include "bmpLoader.h"
-#include "gaussian.h"
 #include "mipmapPyramid.h"
 
 using namespace corecvs;
 
-int main ( int /*argC*/, char * /*argV*/[])
+TEST(MidmapPyramid, testFunction)
 {
     G12Buffer *buffer = BufferFactory::getInstance()->loadG12Bitmap("data/pair/image0001_c0.pgm");
+
+    CORE_ASSERT_TRUE(buffer != NULL, "missed MidmapPyramid test data");
 
     int numLevels = 8;
     AbstractMipmapPyramid<G12Buffer> *pyr = new AbstractMipmapPyramid<G12Buffer>(buffer, numLevels, 1.2f);
@@ -35,6 +34,8 @@ int main ( int /*argC*/, char * /*argV*/[])
         G12Buffer *level = pyr->levels[i];
         RGB24Buffer levelSave(level);
         BMPLoader().save(string(outName), &levelSave);
+        delete level;
     }
-    return 0;
+    delete_safe(pyr);
+    delete buffer;
 }

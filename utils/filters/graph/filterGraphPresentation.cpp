@@ -1,8 +1,3 @@
-#define __XMLDocument_FWD_DEFINED__  // to omit conflict "msxml.h:3376: using typedef-name 'XMLDocument' after 'class'"
-
-#include <QFileDialog>
-#include <QInputDialog>
-
 #include <stdio.h>
 #include "filterGraphPresentation.h"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QWidget>
+#include <QtGui/QWidget>
 #include "ui_angleEditBox.h"
 
 class AngleEditBox : public QWidget

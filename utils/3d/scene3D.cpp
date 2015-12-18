@@ -117,7 +117,7 @@ void Scene3D::commonSetup(CloudViewDialog *dialog, const Draw3dParameters *param
 
     if (parameters->decalRightCam()) {
 #ifdef WITH_OPENGLEXT
-        CameraIntrinsics *intrinsics = &(dialog->mRectificationResult->rightCamera);
+        CameraIntrinsicsLegacy *intrinsics = &(dialog->mRectificationResult->rightCamera);
         double fovR = intrinsics->getVFov();
         double aspect = intrinsics->resolution.x() / intrinsics->resolution.y();
         Matrix44 projector = Matrix44::Frustum(fovR, aspect);
@@ -147,7 +147,7 @@ void Scene3D::commonSetup(CloudViewDialog *dialog, const Draw3dParameters *param
     if (parameters->decalLeftCam()) {
 #ifdef WITH_OPENGLEXT
         RectificationResult *rectification = dialog->mRectificationResult.data();
-        CameraIntrinsics *intrinsics = &(rectification->leftCamera);
+        CameraIntrinsicsLegacy *intrinsics = &(rectification->leftCamera);
         double fovL = intrinsics->getVFov();
         double aspect = intrinsics->resolution.x() / intrinsics->resolution.y();
         Matrix44 projector = Matrix44::Frustum(fovL, aspect);

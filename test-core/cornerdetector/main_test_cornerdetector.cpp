@@ -9,6 +9,7 @@
  */
 
 #include <iostream>
+#include "gtest/gtest.h"
 
 #include "global.h"
 
@@ -24,7 +25,7 @@
 using namespace std;
 using namespace corecvs;
 
-void testCornerDetector ( void )
+TEST(Cornerdetector, DISABLED_testCornerDetector)
 {
     G12Buffer *input = BufferFactory::getInstance()->loadG12Bitmap("data/calib-object.bmp");
     SpatialGradient *grad = new SpatialGradient(input);
@@ -50,12 +51,4 @@ void testCornerDetector ( void )
     delete grad;
     delete corners;
     delete result;
-
-}
-
-int main (int /*argC*/, char ** /*argV*/)
-{
-    testCornerDetector ();
-    cout << "PASSED" << endl;
-    return 0;
 }

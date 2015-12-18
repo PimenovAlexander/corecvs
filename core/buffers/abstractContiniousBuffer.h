@@ -16,7 +16,7 @@
 #include "abstractBuffer.h"
 #include "matrix.h"
 
-#include "fixedPointBlMapper.h"
+//#include "fixedPointBlMapper.h"
 //#include "bilinearMapPoint.h"
 
 namespace corecvs {
@@ -83,9 +83,9 @@ public:
 //        IndexType i = (IndexType) floor(y);
 //        IndexType j = (IndexType) floor(x);
 
-//        ASSERT_TRUE_P(this->isValidCoordBl(y,x),
-//                ("Invalid coordinate in AbstractContiniousBuffer::elementBl(double y=%lf, double x=%lf) buffer sizes is [%dx%d]",
-//                   y, x, this->w, this->h));
+//        CORE_ASSERT_TRUE_P(this->isValidCoordBl(y,x),
+//            ("Invalid coordinate in AbstractContiniousBuffer::elementBl(double y=%lf, double x=%lf) buffer sizes is [%dx%d]",
+//             y, x, this->w, this->h));
 
 //        double a = (double)this->element(i    ,j    );
 //        double b = (double)this->element(i    ,j + 1);
@@ -175,9 +175,9 @@ public:
         IndexType i = (IndexType)floor(y);
         IndexType j = (IndexType)floor(x);
 
-        ASSERT_TRUE_P(this->isValidCoordBl(y,x),
-                ("Invalid coordinate in AbstractContiniousBuffer::elementBl(double y=%lf, double x=%lf) buffer sizes is [%dx%d]",
-                   y, x, this->w, this->h));
+        CORE_ASSERT_TRUE_P(this->isValidCoordBl(y, x),
+            ("Invalid coordinate in AbstractContiniousBuffer::elementBl(double y=%lf, double x=%lf) buffer sizes is [%dx%d]",
+             y, x, this->w, this->h));
 
         ElementType a = this->element(i    ,j    );
         ElementType b = this->element(i    ,j + 1);
@@ -205,9 +205,9 @@ public:
         IndexType i = floor(y);
         IndexType j = floor(x);
 
-        ASSERT_TRUE_P(this->isValidCoordBl(y,x),
-                ("Invalid coordinate in AbstractContiniousBuffer::elementBl(double y=%lf, double x=%lf) buffer sizes is [%dx%d]",
-                   y, x, this->w, this->h));
+        CORE_ASSERT_TRUE_P(this->isValidCoordBl(y, x),
+            ("Invalid coordinate in AbstractContiniousBuffer::elementBl(double y=%lf, double x=%lf) buffer sizes is [%dx%d]",
+             y, x, this->w, this->h));
 
         ElementType a = this->element(i    ,j    );
         ElementType b = this->element(i    ,j + 1);
@@ -248,9 +248,9 @@ public:
         IndexType i = floor(y);
         IndexType j = floor(x);
 
-        ASSERT_TRUE_P(this->isValidCoordBl(y,x),
-                ("Invalid coordinate in AbstractContiniousBuffer::elementBl(double y=%lf, double x=%lf) buffer sizes is [%dx%d]",
-                   y, x, this->w, this->h));
+        CORE_ASSERT_TRUE_P(this->isValidCoordBl(y, x),
+            ("Invalid coordinate in AbstractContiniousBuffer::elementBl(double y=%lf, double x=%lf) buffer sizes is [%dx%d]",
+             y, x, this->w, this->h));
 
         ElementType &a = this->element(i    ,j    );
         ElementType &b = this->element(i    ,j + 1);
@@ -350,11 +350,18 @@ public:
      *         Output Buffer Width
      **/
     template<class ReturnType, class DeformMapType>
-    ReturnType *doReverseDeformationBl(const DeformMapType *map, IndexType newH, IndexType newW )
+    ReturnType *doReverseDeformationBl(const DeformMapType *map, IndexType newH = -1, IndexType newW = -1)
     {
+        if (newH == -1) {
+            newH = this->h;
+        }
+        if (newW == -1) {
+            newW = this->w;
+        }
+
         ReturnType *toReturn = new ReturnType(newH, newW);
         DOTRACE(("Starting transform to %d %d...\n", newW - 1, newH - 1));
-        parallelable_for((IndexType)0,(IndexType)(newH-1), ParallelDoReverseDeformationBl<ReturnType, DeformMapType>(toReturn, map, this));
+        parallelable_for((IndexType)0, (IndexType)(newH-1), ParallelDoReverseDeformationBl<ReturnType, DeformMapType>(toReturn, map, this));
         return toReturn;
     }
 
@@ -391,7 +398,7 @@ public:
                 for (j = 0; j < newW - 1; j++)
                 {
                     Vector2dd p = map.map(i,j);
-                    if (buf->isValidCoord(p.y(), p.x()) && buf->isValidCoord(p.y() + 1, p.x() + 1) )
+                    if (buf->isValidCoord(p.y(), p.x()))
                         toReturn->element(i,j) = buf->element(p.y(), p.x());
                     else
                         toReturn->element(i,j) = typename ReturnType::InternalElementType(0x0);
@@ -401,8 +408,15 @@ public:
     };
 
     template<class ReturnType, class DeformMapType>
-    ReturnType *doReverseDeformation(DeformMapType &map, IndexType newH, IndexType newW )
+    ReturnType *doReverseDeformation(DeformMapType &map, IndexType newH = -1, IndexType newW = -1)
     {
+        if (newH == -1) {
+            newH = this->h;
+        }
+        if (newW == -1) {
+            newW = this->w;
+        }
+
         ReturnType *toReturn = new ReturnType(newH, newW);
         DOTRACE(("Starting integer transform to %d %d...\n", newW - 1, newH - 1));
 

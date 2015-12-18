@@ -1,3 +1,5 @@
+#include <QPainter>
+
 #include "viAreaWidget.h"
 
 ViAreaWidget::ViAreaWidget(QWidget *parent, bool forwardEvents)
@@ -65,4 +67,25 @@ void ViAreaWidget::keyReleaseEvent ( QKeyEvent * event )
 
 ViAreaWidget::~ViAreaWidget()
 {
+}
+
+
+
+
+void ImageWidget::setImage(QImage *newImage)
+{
+    QImage *oldImage = image;
+    image = newImage;
+    delete oldImage;
+    this->resize(image->size());
+    this->update();
+
+}
+
+void ImageWidget::paintEvent(QPaintEvent * event)
+{
+    QPainter p(this);
+    if (image != NULL)
+        p.drawImage(QPoint(0,0), *image);
+    ViAreaWidget::paintEvent(event);
 }

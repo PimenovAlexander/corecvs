@@ -11,8 +11,9 @@
 
 #include "fixedVector.h"
 #include "matrix33.h"
-namespace corecvs {
+#include "vector4d.h"
 
+namespace corecvs {
 
 
 /**
@@ -84,6 +85,7 @@ public:
     Matrix44 transposed() const;
 
     Matrix44 inverted() const;
+    double trace() const;
     double det() const;
 
     double frobeniusNorm() const;
@@ -99,12 +101,17 @@ public:
 
     friend Vector3dd operator *(const Matrix44 &M1, const Vector3dd &v);
     friend FixedVector<double, 4> operator *(const Matrix44 &m, const FixedVector<double, 4> &v);
+    friend Vector4dd operator *(const Matrix44 &m, const Vector4dd &v);
 
 
     static Matrix44 ProjectParallelToZ();
     static Matrix44 Shift(double x, double y, double z);
     static Matrix44 Shift(const Vector3dd &v);
     static Matrix44 Scale(const double &d);
+
+    static Matrix44 RotationX(double angle);
+    static Matrix44 RotationY(double angle);
+    static Matrix44 RotationZ(double angle);
 
     static Matrix44 Frustum(double fovY, double aspect, double zNear = 1.0, double zFar = 1000.0);
 

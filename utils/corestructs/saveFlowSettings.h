@@ -9,7 +9,7 @@
 #define SAVEFLOWSETTINGS_H
 
 
-#include <QWidget>
+#include <QtGui/QWidget>
 
 #include "ui_saveFlowSettings.h"
 

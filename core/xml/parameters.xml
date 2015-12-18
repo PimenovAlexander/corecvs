@@ -22,6 +22,17 @@
     <field type="int" name="G"  min="0" max="255" defaultValue="128"/>
     <field type="int" name="B"  min="0" max="255" defaultValue="128"/>
   </class>  
+
+  <enum name="ImageChannel">
+      <item name="R"          id="0" icon=":/new/colors/colors/color_red.png@main.qrc"/>
+      <item name="G"          id="1" icon=":/new/colors/colors/color_green.png@main.qrc"/>
+      <item name="B"          id="2" icon=":/new/colors/colors/color_blue.png@main.qrc"/>
+      <item name="Gray"       id="3" icon=":/new/colors/colors/color_gray.png@main.qrc"/>
+      <item name="Luma"       id="4" icon=":/new/colors/colors/color_gray.png@main.qrc"/>
+      <item name="Hue"        id="5" icon=":/new/colors/colors/color_wheel.png@main.qrc"/>
+      <item name="Saturation" id="6" />
+      <item name="Value"      id="7" />
+  </enum>
   
 </poco>
 

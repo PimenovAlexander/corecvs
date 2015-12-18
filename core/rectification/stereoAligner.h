@@ -12,7 +12,7 @@
 
 
 #include "projectiveTransform.h"
-#include "correspondanceList.h"
+#include "correspondenceList.h"
 #include "matrix33.h"
 namespace corecvs {
 
@@ -50,7 +50,7 @@ public:
     static void getLateralCorrection(
         Matrix33 *leftTransform,
         Matrix33 *rightTransform,
-        CorrespondanceList *list,
+        CorrespondenceList *list,
         unsigned  threshold = 0 );
 
     static void getLateralCorrectionFixPoint(

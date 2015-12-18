@@ -13,6 +13,7 @@
 #include "global.h"
 
 #include "g12Buffer.h"
+#include "rgb24Buffer.h"
 #include "bufferLoader.h"
 #include "countedPtr.h"
 
@@ -34,13 +35,26 @@ public:
      */
     bool registerLoader(BufferLoader<G12Buffer> * loader)
     {
-        mLoaders.push_back(loader);
+        mLoadersG12.push_back(loader);
+        return true;
+    }
+
+    bool registerLoader(BufferLoader<RGB24Buffer> * loader)
+    {
+        mLoadersRGB24.push_back(loader);
         return true;
     }
 
     /** Main function to get a 12-bits buffer from the file with the given path name
      */
     virtual G12Buffer* loadG12Bitmap(string name);
+
+
+    /** Main function to get a 12-bits buffer from the file with the given path name
+     */
+    virtual RGB24Buffer* loadRGB24Bitmap(string name);
+
+
 
     /** Main function to get a 16-bits buffer from the file with the given path name
      */
@@ -57,7 +71,8 @@ private:
     /**
      * List of loaders - the supported formats
      */
-    vector<BufferLoader<G12Buffer> *> mLoaders;
+    vector<BufferLoader<G12Buffer>   *> mLoadersG12;
+    vector<BufferLoader<RGB24Buffer> *> mLoadersRGB24;
 };
 
 } //namespace corecvs

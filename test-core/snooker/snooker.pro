@@ -3,7 +3,8 @@
 # This is a file for QMAKE that allows to build the test snooker
 #
 ##################################################################
-include(../testsCommon.pri)
+
+include(../test.pri)
 
 HEADERS += \
    errors.h \

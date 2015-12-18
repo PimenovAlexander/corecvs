@@ -8,12 +8,8 @@
  * \ingroup autotest  
  */
 
-#ifndef ASSERTS
-#define ASSERTS
-#endif
-
-
 #include <iostream>
+#include "gtest/gtest.h"
 
 #include "global.h"
 
@@ -43,7 +39,7 @@ public:
     }
 };
 
-void testMarquardtLevenberg( void )
+TEST(Levenberg, testMarquardtLevenberg)
 {
     LevenbergTest function;
 
@@ -72,13 +68,11 @@ void testMarquardtLevenberg( void )
         cout << target[i] << ",";
     cout << endl;
 
-
-    ASSERT_DOUBLE_EQUAL_E(result[0],toguess[0], 1e-7, "Wrong result");
-    ASSERT_DOUBLE_EQUAL_E(result[1],toguess[1], 1e-7, "Wrong result");
+    CORE_ASSERT_DOUBLE_EQUAL_E(result[0], toguess[0], 1e-7, "Wrong result");
+    CORE_ASSERT_DOUBLE_EQUAL_E(result[1], toguess[1], 1e-7, "Wrong result");
 }
 
-
-void plotRosenberg ( void )
+TEST(Levenberg, DISABLED_plotRosenberg)
 {
     const int STEPS = 40;
     FILE *Out = fopen("rosenberg.txt", "wt");
@@ -106,14 +100,4 @@ void plotRosenberg ( void )
     delete image;
 
     fclose(Out);
-}
-
-int main (int /*argC*/, char ** /*argV*/)
-{
-    plotRosenberg();
- //   testMarquardtLevenberg();
-
-
-        cout << "PASSED" << endl;
-        return 0;
 }

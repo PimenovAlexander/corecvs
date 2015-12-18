@@ -30,15 +30,15 @@ enum Draw3dStyle {
      */
     WIREFRAME = 1,
     /** 
-     * \brief Filled 
-     * Filled 
+     * \brief Color 
+     * Color 
      */
-    FILLED = 2,
+    COLOR = 2,
     /** 
-     * \brief Filled And Frame 
-     * Filled And Frame 
+     * \brief Color 2 
+     * Color 2 
      */
-    FILLED_AND_FRAME = 3,
+    COLOR_2 = 3,
     /** 
      * \brief Textured 
      * Textured 
@@ -49,22 +49,6 @@ enum Draw3dStyle {
      */
     DRAW_3D_STYLE_LAST
 };
-
-
-static inline const char *getName(const Draw3dStyle &value)
-{
-    switch (value) 
-    {
-     case POINTS : return "POINTS"; break ;
-     case WIREFRAME : return "WIREFRAME"; break ;
-     case FILLED : return "FILLED"; break ;
-     case FILLED_AND_FRAME : return "FILLED_AND_FRAME"; break ;
-     case TEXTURED : return "TEXTURED"; break ;
-     default : return "Not in range"; break ;
-     
-    }
-    return "Not in range";
-}
 
 } //namespace Draw3dStyle
 

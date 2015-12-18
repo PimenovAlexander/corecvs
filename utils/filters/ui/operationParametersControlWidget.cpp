@@ -44,6 +44,13 @@ void OperationParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void OperationParametersControlWidget::getParameters(OperationParameters& params) const
+{
+
+    params.setOperation        (static_cast<Operation::Operation>(mUi->operationComboBox->currentIndex()));
+
+}
 
 OperationParameters *OperationParametersControlWidget::createParameters() const
 {

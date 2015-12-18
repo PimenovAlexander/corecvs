@@ -103,8 +103,7 @@ std::vector<Vector3dd> *FlowSimulator::applyTransform(std::vector<Vector3dd> * p
     return result;
 }
 
-std::vector<FloatFlowVector> *FlowSimulator::simulateFlow(
-        const CameraIntrinsics &camIntrinsics,
+std::vector<FloatFlowVector> *FlowSimulator::simulateFlow(const CameraIntrinsics &camIntrinsics,
         const ShiftRotateTransformation &cameraExtrinsics,
         const ShiftRotateTransformation &carMovement,
         double maxZ,

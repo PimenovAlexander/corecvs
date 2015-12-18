@@ -58,19 +58,19 @@ public:
 
     static Matrix44 getDMatrix(
           CameraId cameraId,
-          const CameraIntrinsics          &cameraIntrinsics,
+          const CameraIntrinsicsLegacy          &cameraIntrinsics,
           const ShiftRotateTransformation &cameraExtrinsics
      );
 
     static Matrix44 getInvDMatrix(
          CameraId cameraId,
-         const CameraIntrinsics          &cameraIntrinsics,
+         const CameraIntrinsicsLegacy          &cameraIntrinsics,
          const ShiftRotateTransformation &cameraExtrinsics
      );
 
     static Matrix44 getBMatrix(
         CameraId cameraId,
-        const CameraIntrinsics &cameraIntrinsics,
+        const CameraIntrinsicsLegacy &cameraIntrinsics,
         const ShiftRotateTransformation &cameraExtrinsics,
         const ShiftRotateTransformation &carEvolution
     );
@@ -94,14 +94,14 @@ public:
    static double function(
        const FloatFlowVector &flow,
        CameraId cameraId,
-       const CameraIntrinsics &cameraIntrinsics,
+       const CameraIntrinsicsLegacy &cameraIntrinsics,
        const ShiftRotateTransformation &cameraExtrinsics,
        const ShiftRotateTransformation &carEvolution);
 
    static double functionPro(
        const FloatFlowVector &flow,
        CameraId cameraId,
-       const CameraIntrinsics &cameraIntrinsics,
+       const CameraIntrinsicsLegacy &cameraIntrinsics,
        const ShiftRotateTransformation &cameraExtrinsics,
        const ShiftRotateTransformation &carEvolution,
        double *distancePtr, /*<[out]*/

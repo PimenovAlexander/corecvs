@@ -14,7 +14,7 @@ CompoundFilter::CompoundFilter(//FilterGraph* _parent,
     sort = COMPOUND_FILTER;
     if (instanceId == -1)
          instanceId = ++instanceCounter;
-    else instanceCounter = max(instanceCounter, instanceId);
+    else instanceCounter = CORE_MAX(instanceCounter, instanceId);
 
     graph = new FilterGraph(collection, parent);
     graph->loadFromFile(collection->compoundFilters[typeId].filename.c_str());

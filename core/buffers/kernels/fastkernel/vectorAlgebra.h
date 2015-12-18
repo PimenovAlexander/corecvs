@@ -60,8 +60,8 @@ public:
     typedef typename Traits::Type       OutputType;
     typedef typename Traits::SignedType OutputSignedType;
 
-    VectorAlgebraMulti(){};
-    VectorAlgebraMulti(const VectorAlgebraMulti &other) : BaseClass(other){};
+    VectorAlgebraMulti(){}
+    VectorAlgebraMulti(const VectorAlgebraMulti &other) : BaseClass(other){}
 
 
     /* Multi Buffer variant  */
@@ -118,8 +118,8 @@ public:
     typedef typename BaseClass::InputType  InputType;
     typedef typename BaseClass::OutputType OutputType;
 
-    VectorAlgebraMultiStreaming(){};
-    VectorAlgebraMultiStreaming(const VectorAlgebraMultiStreaming &other) : BaseClass(other){};
+    VectorAlgebraMultiStreaming(){}
+    VectorAlgebraMultiStreaming(const VectorAlgebraMultiStreaming &other) : BaseClass(other){}
 
     ALIGN_STACK_SSE inline void putOutput(const int output, const int y, const int x, const OutputType &result)
     {

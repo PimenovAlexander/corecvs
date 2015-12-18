@@ -41,4 +41,5 @@ public:
 };
 
 } /* namespace corecvs */
+
 #endif /* DECOUPLE_YUYV_H_ */

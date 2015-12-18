@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>609</width>
-    <height>756</height>
+    <width>535</width>
+    <height>663</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>RectifyCamDialog</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../../restricted/resources/resresource.qrc">
+   <iconset resource="../../../../resources/main.qrc">
     <normaloff>:/new/prefix1/georectify.png</normaloff>:/new/prefix1/georectify.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
@@ -211,19 +211,10 @@
          <string>Z Direction</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_7">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
          <property name="verticalSpacing">
+          <number>0</number>
+         </property>
+         <property name="margin">
           <number>0</number>
          </property>
          <item row="0" column="0">
@@ -373,11 +364,6 @@
           <string>Sony PS Eye 640x480 (tele)</string>
          </property>
         </item>
-        <item>
-         <property name="text">
-          <string>Beholder (Crow) v1</string>
-         </property>
-        </item>
        </widget>
       </item>
       <item row="3" column="0">
@@ -393,7 +379,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../../restricted/resources/resresource.qrc">
+         <iconset resource="../../../../resources/main.qrc">
           <normaloff>:/new/prefix1/unlock.png</normaloff>
           <normalon>:/new/prefix1/lock.png</normalon>:/new/prefix1/unlock.png</iconset>
         </property>
@@ -497,7 +483,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../../restricted/resources/resresource.qrc">
+         <iconset resource="../../../../resources/main.qrc">
           <normaloff>:/new/prefix1/forward_alt.png</normaloff>:/new/prefix1/forward_alt.png</iconset>
         </property>
        </widget>
@@ -536,9 +522,6 @@
    </item>
    <item row="5" column="0">
     <widget class="QComboBox" name="matchingMethodComboBox">
-     <property name="currentIndex">
-      <number>1</number>
-     </property>
      <item>
       <property name="text">
        <string>SurfCV</string>
@@ -561,16 +544,7 @@
        <string>RANSAC</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_11">
-       <property name="leftMargin">
-        <number>3</number>
-       </property>
-       <property name="topMargin">
-        <number>3</number>
-       </property>
-       <property name="rightMargin">
-        <number>3</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>3</number>
        </property>
        <property name="spacing">
@@ -688,19 +662,10 @@
           <string>Baseline Direction</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_6">
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
           <property name="verticalSpacing">
+           <number>0</number>
+          </property>
+          <property name="margin">
            <number>0</number>
           </property>
           <item row="0" column="0">
@@ -897,16 +862,7 @@
        <string>Manual</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_4">
-       <property name="leftMargin">
-        <number>3</number>
-       </property>
-       <property name="topMargin">
-        <number>3</number>
-       </property>
-       <property name="rightMargin">
-        <number>3</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>3</number>
        </property>
        <property name="spacing">
@@ -918,19 +874,10 @@
           <string>Baseline Direction</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_9">
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
           <property name="verticalSpacing">
+           <number>0</number>
+          </property>
+          <property name="margin">
            <number>0</number>
           </property>
           <item row="0" column="0">
@@ -1122,16 +1069,7 @@
        <string>SurfParams</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_12">
-       <property name="leftMargin">
-        <number>3</number>
-       </property>
-       <property name="topMargin">
-        <number>3</number>
-       </property>
-       <property name="rightMargin">
-        <number>3</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>3</number>
        </property>
        <property name="spacing">
@@ -1265,7 +1203,19 @@
   <tabstop>resetButton</tabstop>
  </tabstops>
  <resources>
-  <include location="../../../restricted/resources/resresource.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../../resources/main.qrc"/>
  </resources>
  <connections/>
 </ui>

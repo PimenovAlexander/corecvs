@@ -9,20 +9,22 @@
  */
 
 #include <iostream>
+#include "gtest/gtest.h"
+
+#include "global.h"
 
 #include "g12Buffer.h"
 #include "histogram.h"
 #include "bmpLoader.h"
 #include "bufferFactory.h"
 
-#include "global.h"
-
 using namespace std;
 using namespace corecvs;
 
-void testBinarization (void)
+TEST(Histogram, testBinarization)
 {
     G12Buffer *image = BufferFactory::getInstance()->loadG12Bitmap("data/pair/image0001_c0.pgm");
+    CORE_ASSERT_TRUE(image != NULL, "missed testBinarization input data");
 
     Histogram *histogram = new Histogram(image);
 
@@ -44,12 +46,4 @@ void testBinarization (void)
     delete meanImage;
     delete histogram;
     delete image;
-
-}
-
-int main (int /*argC*/, char ** /*argV*/)
-{
-    testBinarization ();
-    cout << "PASSED" << endl;
-    return 0;
 }

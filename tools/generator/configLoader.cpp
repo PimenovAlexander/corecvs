@@ -14,11 +14,13 @@ ConfigLoader::ConfigLoader()
 
 ConfigLoader::~ConfigLoader()
 {
-    foreach (EnumReflection *ref, mEnums.values())
-        delete ref;
+    foreach (EnumReflection *ref, mEnums.values()) {
+        delete_safe(ref);
+    }
 
-    foreach (Reflection *ref, mReflections.values())
-        delete ref;
+    foreach (Reflection *ref, mReflections.values()) {
+        delete_safe(ref);
+    }
 
 }
 
@@ -79,18 +81,21 @@ void ConfigLoader::loadEnums(QDomDocument const &config)
     result->name = ReflectionNaming("enums", NULL, NULL);
 
     QDomNodeList enums = config.elementsByTagName("enum");
-    for (unsigned i = 0; i < enums.length(); i++)
+    for (int i = 0; i < enums.length(); i++)
     {
         QDomElement enumElement = enums.at(i).toElement();
         EnumReflection *enumReflection = new EnumReflection();
         enumReflection->name = getNamingFromXML(enumElement);
 
         QDomNodeList items = enumElement.elementsByTagName("item");
-        for (unsigned j = 0; j < items.length(); j++)
+        for (int j = 0; j < items.length(); j++)
         {
             QDomElement itemElement = items.at(j).toElement();
             int id = itemElement.attribute("id").toInt();
-            enumReflection->options.push_back(new EnumOption(id, getNamingFromXML(itemElement)));
+
+            QString iconName = itemElement.attribute("icon");
+
+            enumReflection->options.push_back(new EnumOptionGen(id, getNamingFromXML(itemElement), iconName));
         }
 
         // TODO: add support for comment and description
@@ -103,7 +108,7 @@ void ConfigLoader::loadEnums(QDomDocument const &config)
 void ConfigLoader::loadClasses(QDomDocument const &config)
 {
     QDomNodeList classes = config.elementsByTagName("class");
-    for (unsigned i = 0; i < classes.length(); i++)
+    for (int i = 0; i < classes.length(); i++)
     {
         QDomElement classElement = classes.at(i).toElement();
         ReflectionGen *result = new ReflectionGen();
@@ -114,7 +119,7 @@ void ConfigLoader::loadClasses(QDomDocument const &config)
         qDebug() << "Class" << result->name.name << " (" << i << "/" << classes.length() << ")";
 
         QDomNodeList fields = classElement.elementsByTagName("field");
-        for (unsigned j = 0; j < fields.length(); j++)
+        for (int j = 0; j < fields.length(); j++)
         {
             QDomElement fieldElement = fields.at(j).toElement();
             ReflectionNaming fieldNameing = getNamingFromXML(fieldElement);
@@ -130,87 +135,138 @@ void ConfigLoader::loadClasses(QDomDocument const &config)
             QString stepValue    = fieldElement.attribute("step");
             bool hasAdditionalParameters = (!minValue.isEmpty()) || (!maxValue.isEmpty()) || (!stepValue.isEmpty());
 
+            /**/
+            QDomAttr sizeAttribute = fieldElement.attributeNode("size");
+            bool ok = false;
+            int size = sizeAttribute.value().toInt(&ok);
+            if (!ok) size = -1;
+
             BaseField *field = NULL;
 
-            if (type == "int")
+            if (size < 0)
             {
-                field = new IntFieldGen(
-                          defaultValue.toInt()
-                        , fieldNameing
-                        , hasAdditionalParameters
-                        , minValue.toInt()
-                        , maxValue.toInt()
-                        , stepValue.isEmpty() ? 1 : stepValue.toInt());
-            }
-            else if (type == "double")
-            {
-                DoubleWidgetType widgetType = fieldElement.attribute("widget") == "ExponentialSlider" ?
-                                           exponentialSlider :
-                                           doubleSpinBox;
-                field = new DoubleFieldGen(
-                          defaultValue.toDouble()
-                        , widgetType
-                        , fieldNameing
-                        , hasAdditionalParameters
-                        , minValue.toDouble()
-                        , maxValue.toDouble()
-                        , stepValue.isEmpty() ? 1.0 : stepValue.toDouble());
-            }
-            else if (type == "bool")
-            {
-                BoolWidgetType widgetType = fieldElement.attribute("widget") == "RadioButton" ?
-                                            radioButton :
-                                            checkBox;
-
-                field = new BoolFieldGen(defaultValue == "true", widgetType, fieldNameing);
-            }
-            else if (type == "string")
-            {
-                const char *dValue = toCString(defaultValue);
-                field = new StringFieldGen(dValue, fieldNameing);
-            }
-            else if (type == "Vector2dd" || type == "Vector3dd")
-            {
-                // not supported yet (and most probably won't be supported)
-            }
-            /* TODO: Use "Type *" syntax instead */
-            else if (type == "pointer")
-            {
-                QString targetType = fieldElement.attribute("target");
-                field = new PointerFieldGen(fieldNameing, toCString(targetType));
-
-            }
-            else // composite field or enum
-            {
-                Reflection *reflection = mReflections.value(type);
-                EnumReflection *enumRef = mEnums.value(type);
-
-                if (reflection) // is it a field with the type of some other class?
+                if (type == "int")
                 {
-                    QDomAttr typeAttribute = fieldElement.attributeNode("size");
-                    int size = typeAttribute.value().toInt();
+                    field = new IntFieldGen(
+                              defaultValue.toInt()
+                            , fieldNameing
+                            , hasAdditionalParameters
+                            , minValue.toInt()
+                            , maxValue.toInt()
+                            , stepValue.isEmpty() ? 1 : stepValue.toInt());
+                }
+                else if (type == "double")
+                {
+                    DoubleWidgetType widgetType = fieldElement.attribute("widget") == "ExponentialSlider" ?
+                                               exponentialSlider :
+                                               doubleSpinBox;
 
-                    if (size <= 0) {
-                        field = new CompositeFieldGen(fieldNameing, toCString(type), reflection);
-                    } else {
+                    QString prefix = fieldElement.attribute("prefix");
+                    QString suffix = fieldElement.attribute("suffix");
+                    int decimals = 2;
+                    bool ok;
+                    int parsed = fieldElement.attribute("decimals").toInt(&ok);
+                    if (ok) {
+                        decimals = parsed;
+                    }
+                    qDebug()  << "Decimals " << decimals;
+
+                    field = new DoubleFieldGen(
+                              defaultValue.toDouble()
+                            , widgetType
+                            , prefix
+                            , suffix
+                            , decimals
+                            , fieldNameing
+                            , hasAdditionalParameters
+                            , minValue.toDouble()
+                            , maxValue.toDouble()
+                            , stepValue.isEmpty() ? 1.0 : stepValue.toDouble());
+
+
+                }
+                else if (type == "bool")
+                {
+                    BoolWidgetType widgetType = fieldElement.attribute("widget") == "RadioButton" ?
+                                                radioButton :
+                                                checkBox;
+
+                    field = new BoolFieldGen(defaultValue == "true", widgetType, fieldNameing);
+                }
+                else if (type == "string")
+                {
+                    const char *dValue = toCString(defaultValue);
+                    field = new StringFieldGen(dValue, fieldNameing);
+                }
+                else if (type == "Vector2dd" || type == "Vector3dd")
+                {
+                    // not supported yet (and most probably won't be supported)
+                }
+                /* TODO: Use "Type *" syntax instead */
+                else if (type == "pointer")
+                {
+                    QString targetType = fieldElement.attribute("target");
+                    field = new PointerFieldGen(fieldNameing, toCString(targetType));
+
+                }
+                else // composite field or enum
+                {
+                    Reflection *reflection = mReflections.value(type);
+                    EnumReflection *enumRef = mEnums.value(type);
+
+                    if (reflection) // is it a field with the type of some other class?
+                    {
+                         field = new CompositeFieldGen(fieldNameing, toCString(type), reflection);
+                    }
+                    else if (enumRef) // then it should be a enum
+                    {
+                        EnumWidgetType widgetType = fieldElement.attribute("widget") == "TabWidget" ?
+                                                    tabWidget :
+                                                    comboBox;
+                        field = new EnumFieldGen(defaultValue.toInt(), widgetType, fieldNameing, enumRef);
+                    }
+                }
+            } else {
+                /* vector types*/
+                if (type == "int")
+                {
+                    field = new IntVectorFieldGen(
+                              defaultValue.toInt()
+                            , size
+                            , fieldNameing
+                            , hasAdditionalParameters
+                            , minValue.toInt()
+                            , maxValue.toInt()
+                            , stepValue.isEmpty() ? 1 : stepValue.toInt());
+                }
+                else if (type == "double")
+                {
+                    field = new DoubleVectorFieldGen(
+                              defaultValue.toDouble()
+                            , size
+                            /*, widgetType*/
+                            , fieldNameing
+                            , hasAdditionalParameters
+                            , minValue.toDouble()
+                            , maxValue.toDouble()
+                            , stepValue.isEmpty() ? 1.0 : stepValue.toDouble());
+                }
+               /* else if (type == "bool")
+                {
+                    BoolWidgetType widgetType = fieldElement.attribute("widget") == "RadioButton" ?
+                                                radioButton :
+                                                checkBox;
+
+                    field = new BoolFieldGen(defaultValue == "true", widgetType, fieldNameing);
+                }*/ else {
+                    Reflection *reflection = mReflections.value(type);
+
+                    if (reflection) // is it a field with the type of some other class?
+                    {
                         field = new CompositeArrayFieldGen(fieldNameing, toCString(type), size, reflection);
                     }
                 }
-                else if (enumRef) // then it should be a enum
-                {
-                    EnumWidgetType widgetType = fieldElement.attribute("widget") == "TabWidget" ?
-                                                tabWidget :
-                                                comboBox;
 
-                    field = new EnumFieldGen(defaultValue.toInt(), widgetType, fieldNameing, enumRef);
-                } else {
-                    fprintf(stderr, "Error 12 (%s:%d,%d) : Type '%s' is unknown. Is neither enum, nor known type.\n",
-                            result->name.name,
-                            fieldElement.lineNumber(),
-                            fieldElement.columnNumber(),
-                            type.toLatin1().constData()
-                    );
-                }
             }
 
             if (field)
@@ -218,11 +274,18 @@ void ConfigLoader::loadClasses(QDomDocument const &config)
                 bool isAdavnced = fieldElement.hasAttribute("adv") | fieldElement.hasAttribute("advanced");
                 field->isAdvanced = isAdavnced;
                 result->fields.push_back(field);
+            } else {
+                fprintf(stderr, "Error 12 (%s:%d,%d) : Type '%s' is unknown. Is neither enum, nor known type.\n",
+                        result->name.name,
+                        fieldElement.lineNumber(),
+                        fieldElement.columnNumber(),
+                        type.toLatin1().constData()
+                );
             }
         }
 
         QDomNodeList embeds = classElement.elementsByTagName("embed");
-        for (unsigned j = 0; j < embeds.length(); j++)
+        for (int j = 0; j < embeds.length(); j++)
         {
             // qDebug() << "processing tag embed N" << j << " of (" << embeds.length() << ")";
             QDomElement embeddedElement = embeds.at(j).toElement();
@@ -250,7 +313,7 @@ void ConfigLoader::loadClasses(QDomDocument const &config)
             {
                 // TODO: Partial renames
                 QDomNodeList renames = embeddedElement.elementsByTagName("rename");
-                for (unsigned j = 0; j < renames.length(); j++)
+                for (int j = 0; j < renames.length(); j++)
                 {
                     QDomElement renaming = renames.at(j).toElement();
                     QString from = renaming.attribute("from");
@@ -301,13 +364,13 @@ void ConfigLoader::loadClasses(QDomDocument const &config)
 void ConfigLoader::loadParamsMapper(QDomDocument const &config)
 {
     QDomNodeList paramsMappers = config.elementsByTagName("parametersMapper");
-    for (unsigned i = 0; i < paramsMappers.length(); i++)
+    for (int i = 0; i < paramsMappers.length(); i++)
     {
         QDomElement classElement = paramsMappers.at(i).toElement();
         QDomNodeList fields = classElement.elementsByTagName("field");
         mMapperPostfix = classElement.attribute("name");
 
-        for (unsigned j = 0; j < fields.length(); j++)
+        for (int j = 0; j < fields.length(); j++)
         {
             QDomElement fieldElement = fields.at(j).toElement();
             QString fieldName = fieldElement.attribute("name");
@@ -321,7 +384,7 @@ void ConfigLoader::loadParamsMapper(QDomDocument const &config)
 void ConfigLoader::loadIncludes(QDomDocument const &config, QFileInfo const &currentFile)
 {
     QDomNodeList includes = config.elementsByTagName("include");
-    for (unsigned i = 0; i < includes.length(); i++) {
+    for (int i = 0; i < includes.length(); i++) {
         QDomElement includeElement = includes.at(i).toElement();
         QString includeName = includeElement.attribute("name");
         QFileInfo included = QFileInfo(currentFile.dir(), includeName);

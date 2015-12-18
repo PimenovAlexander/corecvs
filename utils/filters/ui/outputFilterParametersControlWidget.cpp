@@ -44,6 +44,13 @@ void OutputFilterParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void OutputFilterParametersControlWidget::getParameters(OutputFilterParameters& params) const
+{
+
+    params.setOutputType       (static_cast<OutputType::OutputType>(mUi->outputTypeComboBox->currentIndex()));
+
+}
 
 OutputFilterParameters *OutputFilterParametersControlWidget::createParameters() const
 {

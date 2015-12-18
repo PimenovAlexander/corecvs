@@ -7,8 +7,9 @@
 #include <string>
 #include <iostream>
 
+#include <QtCore/qglobal.h>
 #include <QtGui/QtGui>
-#include <QApplication>
+#include <QtGui/QApplication>
 
 #include "global.h"
 #include "utils.h"
@@ -18,11 +19,13 @@
 
 
 
+
 using namespace std;
 using namespace corecvs;
 
 int main(int argc, char *argv[])
 {
+    Q_INIT_RESOURCE(testbed);
     QTFileLoader::registerMyself();
     setSegVHandler();
     setStdTerminateHandler();

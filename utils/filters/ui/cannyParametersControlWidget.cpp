@@ -46,6 +46,15 @@ void CannyParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void CannyParametersControlWidget::getParameters(CannyParameters& params) const
+{
+
+    params.setShouldEdgeDetect (mUi->shouldEdgeDetectCheckBox->isChecked());
+    params.setMinimumThreshold (mUi->minimumThresholdSpinBox->value());
+    params.setMaximumThreshold (mUi->maximumThresholdSpinBox->value());
+
+}
 
 CannyParameters *CannyParametersControlWidget::createParameters() const
 {

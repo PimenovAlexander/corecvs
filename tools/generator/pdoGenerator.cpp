@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include <QDir>
 #include <QtCore/QDebug>
 
 #include "pdoGenerator.h"
@@ -87,7 +88,7 @@ void PDOGenerator::generatePDOEnumSubH(const EnumReflection *eref)
     QString guardDefine = enumCapitalName + "_H_";
 
     out.close();
-    out.open(QString("Generated/" + fileName).toLatin1(), ios::out);
+    out.open(QString(getGenerateDir() + QDir::separator() + fileName).toLatin1(), ios::out);
 
     result+=
     "#ifndef "+guardDefine+"\n"
@@ -182,7 +183,7 @@ void PDOGenerator::generatePDOH()
     QString classDescr   = clazz->name.decription;
 
     out.close();
-    out.open(QString("Generated/" + fileName).toLatin1(), ios::out);
+    out.open(QString(getGenerateDir() + QDir::separator() + fileName).toLatin1(), ios::out);
 
     result +=
     "#ifndef "+guardDefine+"\n"
@@ -273,7 +274,7 @@ void PDOGenerator::generatePDOH()
             continue;
     result +=
     "class " + target + ";\n";
-    pointedTypes.push_back(target);
+        pointedTypes.push_back(target);
     }
 
     result +=
@@ -293,10 +294,6 @@ void PDOGenerator::generatePDOH()
         const EnumReflection *eref = efield->enumReflection;
 
         QString fileName = toCamelCase(eref->name.name) + ".h";
-
-        /* This is done elsewhere now */
-        /*PDOGenerator generator(NULL);
-        generator.generatePDOEnumSubH(eref);*/
 
     result+=
     "#include \"" + fileName + "\"\n";
@@ -546,7 +543,7 @@ void PDOGenerator::generatePDOCpp()
     QString classDescr   = clazz->name.decription;
 
     out.close();
-    out.open(QString("Generated/" + fileName).toLatin1(), ios::out);
+    out.open(QString(getGenerateDir() + QDir::separator() + fileName).toLatin1(), ios::out);
 
     result +=
     "/**\n"
@@ -602,10 +599,44 @@ void PDOGenerator::generatePDOCpp()
 
     if (type != BaseField::TYPE_COMPOSITE && type != BaseField::TYPE_COMPOSITE_ARRAY) {
     result+=
-    "          "+defaultValue+",\n"
+    "          "+defaultValue+",\n";
+        if (type & BaseField::TYPE_VECTOR_BIT)
+        {
+            QString defaultSize = "0";
+    result+=
+    "          "+defaultSize+",\n";
+
+        }
+
+    result+=
     "          \""+name+"\",\n"
     "          \""+descr+"\",\n"
     "          \""+comment+"\"";
+
+        if (type == BaseField::TYPE_INT) {
+            const IntField *ifield = static_cast<const IntField *>(field);
+            if (ifield->hasAdditionalValues)
+            {
+    result+=
+    ",\n"
+    "          true,\n"
+    "         " + QString::number(ifield->min) + ",\n"
+    "         " + QString::number(ifield->max);
+
+            }
+        }
+        if (type == BaseField::TYPE_DOUBLE) {
+            const DoubleField *dfield = static_cast<const DoubleField *>(field);
+            if (dfield->hasAdditionalValues)
+            {
+    result+=
+    ",\n"
+    "          true,\n"
+    "         " + QString::number(dfield->min) + ",\n"
+    "         " + QString::number(dfield->max);
+
+            }
+        }
 
 
     } else if (type == BaseField::TYPE_COMPOSITE) {
@@ -689,7 +720,7 @@ void PDOGenerator::generateControlWidgetCpp()
         baseWidget = "ParametersControlWidgetBase";
 
     out.close();
-    out.open(QString("Generated/" + fileName).toLatin1(), ios::out);
+    out.open(QString(getGenerateDir() + QDir::separator() + fileName).toLatin1(), ios::out);
 
     result +=
     "/**\n"
@@ -804,6 +835,25 @@ void PDOGenerator::generateControlWidgetCpp()
     "    delete params;\n"
     "}\n"
     "\n"
+    " /* Composite fields are NOT supported so far */\n"
+    "void "+className+"::getParameters("+parametersName+"& params) const\n"
+    "{\n"
+    "\n";
+
+    for (int i = 0; i < fieldNumber; i++ )
+    {
+        enterFieldContext(i);
+        if (type == BaseField::TYPE_COMPOSITE) {
+            result += "//";
+        }
+
+        result+=
+    "    params."+j(setterName,20)+"("+prefix+"mUi->"+boxName+"->"+getWidgetGetterMethodForType(type)+suffix+");\n";
+    }
+
+    result+=
+    "\n"
+    "}\n"
     "\n"
     ""+parametersName+" *"+className+"::createParameters() const\n"
     "{\n"

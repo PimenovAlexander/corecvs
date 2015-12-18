@@ -46,6 +46,15 @@ void RgbColorParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void RgbColorParametersControlWidget::getParameters(RgbColorParameters& params) const
+{
+
+    params.setR                (mUi->rSpinBox->value());
+    params.setG                (mUi->gSpinBox->value());
+    params.setB                (mUi->bSpinBox->value());
+
+}
 
 RgbColorParameters *RgbColorParametersControlWidget::createParameters() const
 {

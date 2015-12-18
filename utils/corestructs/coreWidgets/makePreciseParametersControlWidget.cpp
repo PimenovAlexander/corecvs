@@ -50,6 +50,19 @@ void MakePreciseParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void MakePreciseParametersControlWidget::getParameters(MakePreciseParameters& params) const
+{
+
+    params.setShouldMakePrecise(mUi->shouldMakePreciseCheckBox->isChecked());
+    params.setAlgorithm        (static_cast<MakePreciseAlgorithm::MakePreciseAlgorithm>(mUi->algorithmComboBox->currentIndex()));
+    params.setInterpolation    (static_cast<PreciseInterpolationType::PreciseInterpolationType>(mUi->interpolationComboBox->currentIndex()));
+    params.setKLTIterations    (mUi->kLTIterationsSpinBox->value());
+    params.setKLTRadiusH       (mUi->kLTRadiusHSpinBox->value());
+    params.setKLTRadiusW       (mUi->kLTRadiusWSpinBox->value());
+    params.setKLTThreshold     (mUi->kLTThresholdSpinBox->value());
+
+}
 
 MakePreciseParameters *MakePreciseParametersControlWidget::createParameters() const
 {

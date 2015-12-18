@@ -1,5 +1,5 @@
 #pragma once
-#include <QWidget>
+#include <QtGui/QWidget>
 #include "generated/inputFilterParameters.h"
 #include "ui_inputFilterParametersControlWidget.h"
 #include "filterParametersControlWidgetBase.h"

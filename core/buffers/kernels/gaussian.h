@@ -22,8 +22,8 @@ public:
     static double data[9];
     static Gaussian3x3 *instance;
 
-    Gaussian3x3() : AbstractKernel<double, int32_t> (3, 3, data, 16, 0, 1, 1) {};
-    virtual ~Gaussian3x3(){};
+    Gaussian3x3() : AbstractKernel<double, int32_t> (3, 3, data, 16, 0, 1, 1) {}
+    virtual ~Gaussian3x3(){}
 };
 
 
@@ -33,8 +33,8 @@ public:
     static uint32_t data[9];
     static Gaussian3x3int *instance;
 
-    Gaussian3x3int() : AbstractKernel<uint32_t, int32_t> (3, 3, data, 16, 0, 1, 1) {};
-    virtual ~Gaussian3x3int(){};
+    Gaussian3x3int() : AbstractKernel<uint32_t, int32_t> (3, 3, data, 16, 0, 1, 1) {}
+    virtual ~Gaussian3x3int(){}
 };
 
 
@@ -45,17 +45,17 @@ public:
     static const int inputNumber = 1;
     static const int outputNumber = 1;
 
-    inline static int getCenterX(){ return 1; };
-    inline static int getCenterY(){ return 1; };
-    inline static int getSizeX(){ return 3; };
-    inline static int getSizeY(){ return 3; };
+    inline static int getCenterX(){ return 1; }
+    inline static int getCenterY(){ return 1; }
+    inline static int getSizeX(){ return 3; }
+    inline static int getSizeY(){ return 3; }
 
     typedef typename Algebra::InputType Type;
 
 template<typename OtherAlgebra>
     Gaussian3x3Kernel(const Gaussian3x3Kernel<OtherAlgebra> &) {}
 
-    Gaussian3x3Kernel(){};
+    Gaussian3x3Kernel(){}
 
     void process(Algebra &algebra) const
     {
@@ -133,17 +133,17 @@ public:
     static const int inputNumber = 1;
     static const int outputNumber = 1;
 
-    inline static int getCenterX(){ return 0; };
-    inline static int getCenterY(){ return 2; };
-    inline static int getSizeX(){ return 1; };
-    inline static int getSizeY(){ return 5; };
+    inline static int getCenterX(){ return 0; }
+    inline static int getCenterY(){ return 2; }
+    inline static int getSizeX(){ return 1; }
+    inline static int getSizeY(){ return 5; }
 
     typedef typename Algebra::InputType Type;
 
 template <typename OtherAlgebra>
     Blur5Vertical(const Blur5Vertical<OtherAlgebra> &){}
 
-    Blur5Vertical(){};
+    Blur5Vertical(){}
 
     void process(Algebra &algebra) const
     {

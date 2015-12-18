@@ -10,6 +10,7 @@
 #ifndef PROJECTIVETRANSFORM_H_
 #define PROJECTIVETRANSFORM_H_
 
+#include "deformMap.h"
 #include "abstractBuffer.h"
 #include "matrix33.h"
 #include "vector2d.h"
@@ -53,9 +54,7 @@ public:
         return map(v);
     }
 
-
-
-    ~ProjectiveTransform(){};
+    ~ProjectiveTransform(){}
 };
 
 

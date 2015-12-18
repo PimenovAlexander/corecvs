@@ -233,7 +233,7 @@ bool BMPLoader::save(string name, G8Buffer *buffer)
  * */
 bool BMPLoader::save(string name, RGB24Buffer *buffer)
 {
-    ASSERT_TRUE(buffer != NULL, "Null buffer could not be saved");
+    CORE_ASSERT_TRUE(buffer != NULL, "Null buffer could not be saved");
     FILE *fp = fopen(name.c_str(), "wb");
     if (fp == NULL)
         return false;

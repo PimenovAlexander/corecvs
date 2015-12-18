@@ -10,7 +10,9 @@ public:
     RadialCorrection mLockedDimentions;
     bool mGuessCenter;
     bool mGuessTangent;
-    int  mPolynomPower;
+    int  mPolynomialDegree;
+    bool mEvenDegreeOnly;
+
 
 #if 0
     enum InputVector2Model {
@@ -26,12 +28,14 @@ public:
             const RadialCorrection &lockedDimentions,
             bool guessCenter,
             bool guessTangent,
-            int  polynomPower
+            int  polynomialDegree,
+            bool evenDegreeOnly
     ) :
         mLockedDimentions(lockedDimentions),
         mGuessCenter(guessCenter),
         mGuessTangent(guessTangent),
-        mPolynomPower(polynomPower)
+        mPolynomialDegree(polynomialDegree),
+        mEvenDegreeOnly(evenDegreeOnly)
     {}
 
     RadialCorrection getRadial(const double in[]) const;
@@ -39,12 +43,24 @@ public:
 
     int getModelSize() const
     {
-        return mPolynomPower +
+        int degrees = mPolynomialDegree;
+        if (mEvenDegreeOnly) {
+            // 0 - 0
+            // 1 - 0
+            // 2 - 1
+            // 3 - 1
+            degrees = mPolynomialDegree / 2;
+        }
+
+        return degrees +
                (mGuessCenter  ? 2 : 0) +
                (mGuessTangent ? 2 : 0);
     }
 
 };
+
+#define OUTDATED
+#ifdef OUTDATED
 
 /**
  * \ingroup distcorrect
@@ -75,4 +91,6 @@ private:
     int mPolynomDegree;
     double mScaleFactor;
 };
+#endif
+
 }

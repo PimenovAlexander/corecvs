@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "matrix33.h"
-#include "correspondanceList.h"
+#include "correspondenceList.h"
 namespace corecvs {
 
 
@@ -35,11 +35,11 @@ public:
         treshold(_treshold)
     {};
 
-    Matrix33 getFundamentalRansac1(CorrespondanceList *list);
-    Matrix33 getEssentialRansac1  (CorrespondanceList *list);
+    Matrix33 getFundamentalRansac1(CorrespondenceList *list);
+    Matrix33 getEssentialRansac1  (CorrespondenceList *list);
 
-    Matrix33 getFundamentalRansac(vector<Correspondance *> *data);
-    Matrix33 getEssentialRansac  (vector<Correspondance *> *data);
+    Matrix33 getFundamentalRansac(vector<Correspondence *> *data);
+    Matrix33 getEssentialRansac  (vector<Correspondence *> *data);
 };
 
 

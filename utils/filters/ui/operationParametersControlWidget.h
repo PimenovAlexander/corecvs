@@ -1,5 +1,5 @@
 #pragma once
-#include <QWidget>
+#include <QtGui/QWidget>
 #include "generated/operationParameters.h"
 #include "ui_operationParametersControlWidget.h"
 #include "parametersControlWidgetBase.h"

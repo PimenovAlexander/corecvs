@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include <QWidget>
+#include <QtGui/QWidget>
 
 #include "ui_parameterSelector.h"
 #include "parameterEditorWidget.h"

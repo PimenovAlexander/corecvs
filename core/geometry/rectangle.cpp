@@ -82,9 +82,9 @@ int Rectangle<int>::clipCohenSutherland ( Vector2d32 &lineStart, Vector2d32 &lin
 
 #ifdef ASSERT
 /*       if (a->x < x1 || a->x > x2 || a->y < y1 || a->y > y2)
-           ASSERT_FAIL("OOPS1");
+           CORE_ASSERT_FAIL("OOPS1");
        if (b->x < x1 || b->x > x2 || b->y < y1 || b->y > y2)
-           ASSERT_FAIL("OOPS2");*/
+           CORE_ASSERT_FAIL("OOPS2");*/
 #endif
 
     return CLIP_HAD_INTERSECTIONS;

@@ -22,7 +22,7 @@ public:
 
 
     template <typename inputType, typename reflectionType>
-        void visit(std::vector<inputType> &field, const reflectionType * /*fieldDescriptor*/)
+        void visit(std::vector<inputType> &/*field*/, const reflectionType * /*fieldDescriptor*/)
     {
     }
 

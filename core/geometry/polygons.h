@@ -1,3 +1,6 @@
+#ifndef POLYGONS_H_
+#define POLYGONS_H_
+
 /**
  * \file polygons.h
  * \brief Add Comment Here
@@ -7,8 +10,6 @@
  * \author alexander
  */
 
-#ifndef POLYGONS_H_
-#define POLYGONS_H_
 
 #include <vector>
 

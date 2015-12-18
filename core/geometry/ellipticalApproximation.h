@@ -276,6 +276,13 @@ public:
 template<typename ElementType>
 class EllipticalApproximationUnified
 {
+protected:
+    int getDimention() const
+    {
+        ElementType forSize;
+        return forSize.size();
+    }
+
 public:
     EllipticalApproximationUnified() :
          mInfMatrix(NULL)
@@ -283,8 +290,8 @@ public:
        , mCount(0)
 
     {
-        ElementType forSize;
-        mInfMatrix = new Matrix(forSize.size(), forSize.size());
+        int d = getDimention();
+        mInfMatrix = new Matrix(d, d);
     }
 
     EllipticalApproximationUnified(const EllipticalApproximationUnified &other) :
@@ -293,14 +300,27 @@ public:
       , mCount(other.mCount)
     {
         this->mInfMatrix = new Matrix(other.mInfMatrix);
-        //printf("EllipticalApproximationUnified(const EllipticalApproximationUnified &other) called\n");
+       // SYNC_PRINT(("EllipticalApproximationUnified(const EllipticalApproximationUnified &other) called\n"));
+    }
 
+    EllipticalApproximationUnified& operator =(const EllipticalApproximationUnified &other)
+    {
+        if (&other != this)
+        {
+            if (this->mInfMatrix) delete this->mInfMatrix;
+            this->mInfMatrix = new Matrix(other.mInfMatrix);
+            this->mSum = other.mSum;
+            this->mCount = other.mCount;
+        }
+        return *this;
+        // SYNC_PRINT(("EllipticalApproximationUnified::operator =(const EllipticalApproximationUnified &other) called\n"));
     }
 
     ~EllipticalApproximationUnified()
     {
         delete_safe(mInfMatrix);
     }
+
 
     /**
      * Computing covariance matrix adding point by point
@@ -317,6 +337,7 @@ public:
                 mInfMatrix->a(row, column) = mInfMatrix->a(row, column) + point.at(row) * point.at(column);
             }
         }
+
         mSum += point;
         mCount++;
     }
@@ -406,6 +427,11 @@ public:
         return mCount;
     }
 
+    int count() const
+    {
+        return mCount;
+    }
+
     bool isEmpty() const
     {
         return (mCount == 0);
@@ -432,7 +458,7 @@ public:
 
         ElementType mean = getMean();
         double radius = 0.0;
-        for (int i = 0; i < mean.size(); i++)
+        for (int i = 0; i < getDimention(); i++)
         {
             radius += mInfMatrix->a(i,i) / mCount - (mean.at(i) * mean.at(i));
         }
@@ -453,7 +479,7 @@ public:
         return sqrt(radius);
     }
 
-
+//
 //private:
     Matrix*                  mInfMatrix;
     ElementType              mSum;
@@ -463,6 +489,78 @@ public:
 };
 
 typedef EllipticalApproximationUnified<Vector3dd> EllipticalApproximation3d;
+
+template <>
+inline int EllipticalApproximationUnified<double>::getDimention() const
+{
+    return 1;
+}
+
+template <>
+inline void EllipticalApproximationUnified<double>::addPoint (double point)
+{
+    mInfMatrix->a(0, 0) += point * point;
+    mSum += point;
+    mCount++;
+
+}
+
+
+template <>
+inline double EllipticalApproximationUnified<double>::getRadius () const
+{
+    if (isEmpty()) {
+        return 0.0;
+    }
+
+    double mean = getMean();
+    double radius = 0.0;
+    for (int i = 0; i < getDimention(); i++)
+    {
+        radius += mInfMatrix->a(i,i) / mCount - mean * mean;
+    }
+    return sqrt(radius);
+}
+
+class EllipticalApproximation1d : public EllipticalApproximationUnified<double>
+{
+public:
+    double mMin;
+    double mMax;
+
+    EllipticalApproximation1d() :
+        mMin(numeric_limits<double>::max()),
+        mMax(-numeric_limits<double>::max())
+    {}
+
+    void addPoint (double point)
+    {
+        EllipticalApproximationUnified<double>::addPoint(point);
+        if (point < mMin) mMin = point;
+        if (point > mMax) mMax = point;
+    }
+
+    double getMin() const
+    {
+        return mMin;
+    }
+
+    double getMax() const
+    {
+        return mMax;
+    }
+
+
+    friend ostream & operator <<(ostream &out, const EllipticalApproximation1d &stats)
+    {
+        out << "Min:" << stats.getMin()  << endl;
+        out << "Max:" << stats.getMax()  << endl;
+        out << "Avg:" << stats.getMean() << endl;
+        return out;
+    }
+
+};
+
 
 } //namespace corecvs
 

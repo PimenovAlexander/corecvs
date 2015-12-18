@@ -46,7 +46,14 @@ int OperationParameters::staticInit()
           "operation",
           "operation",
           "operation",
-           NULL
+          new EnumReflection(6
+          , new EnumOption(0,"First")
+          , new EnumOption(1,"Second")
+          , new EnumOption(2,"Add")
+          , new EnumOption(3,"Subtract")
+          , new EnumOption(4,"Min")
+          , new EnumOption(5,"Max")
+          )
         )
     );
    return 0;

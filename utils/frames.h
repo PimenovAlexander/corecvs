@@ -34,35 +34,22 @@ public:
 
     void fetchNewFrames(ImageCaptureInterface *input);
 
-    G12Buffer*   getCurrentFrame    (FrameSourceId id) { return currentFrames   [id]; }
+    G12Buffer* getCurrentFrame (FrameSourceId id)   { return currentFrames[id]; }
     RGB24Buffer* getCurrentRgbFrame (FrameSourceId id) { return currentRgbFrames[id]; }
 
     /// Swaps the frame sources so, for example, left camera becomes right,
     /// and right camera becomes left. Useful when cameras are plugged in wrong order.
     void swapFrameSources(bool shouldSwap);
 
-    uint64_t timestamp() const                      { return mTimestamp.timestamp; }
-    frame_data_t frameHerald() const                { return mTimestamp; }
+    uint64_t timestamp() const                      { return mTimestamp; }
 
     int64_t  desyncTime() const                     { return mDesyncTime; }
 
     uint64_t startProcessTimestamp() const          { return mStartProcessTimestamp; }
 
-    static inline const char *getEnumName(const FrameSourceId &value)
-    {
-        switch (value)
-        {
-         case LEFT_FRAME : return "LEFT_FRAME"; break ;
-         case RIGHT_FRAME : return "RIGHT_FRAME"; break ;
-         default : return "Not in range"; break ;
-
-        }
-        return "Not in range";
-    }
-
 private:
     bool     mSwapped;
-    frame_data_t mTimestamp;
+    uint64_t mTimestamp;
     int64_t  mDesyncTime;
     uint64_t mStartProcessTimestamp;
 

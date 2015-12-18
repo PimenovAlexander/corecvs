@@ -25,12 +25,6 @@
     <field type="rgb Color Parameters" name="Color"/>
     <field type="rgb Color Parameters" name="Secondary Color"/>
 
-    <!-- Caption -->
-    <field type="bool" name="Show caption"  defaultValue="false" />
-    <field type="int"  name="Font Size"  min="0"  max="255" defaultValue="8"/>
-    <field type="int"  name="Font Width"  min="0"  max="255" defaultValue="1"/> 
-    <field type="rgb Color Parameters" name="Font Color"/>
-
     <!-- Texturing details -->
     <field type="draw 3d Texture Gen"  name="Texture Corrodinates"/>
     <field type="int"                  name="Texture Alpha" min="0"  max="255" defaultValue="255"/>

@@ -156,22 +156,25 @@ double Matrix33::frobeniusNorm() const
 
 Matrix33 operator* (const Matrix33 &m1, const Matrix33 &m2)
 {
-   Matrix33 M;
-
 #ifdef ACCURATE
 
-   double sum;
-   for (int i = 0;i < 3; i++)
-     for (int j = 0;j <3; j++)
-     {
-       sum = 0;
-       for (int k = 0; k < 3; k++)
-         sum+= M1.x[i*3 + k] * M2.x[k*3 + j];
-       M.x[i * 3 + j] = sum;
-     }
+    Matrix33 M;
 
+    double sum;
+    for (int i = 0; i < H; i++)
+    {
+        for (int j = 0; j < W; j++)
+        {
+            sum = 0;
+            for (int k = 0; k < H; k++)
+                sum+= M1.x[i * W + k] * M2.x[k * W + j];
+            M.x[i * 3 + j] = sum;
+        }
+    }
+
+    return M;
 #else
-   return Matrix33(
+    return Matrix33(
            m1.a(0,0) * m2.a(0,0) + m1.a(0,1) * m2.a(1,0) + m1.a(0,2) * m2.a(2,0),
            m1.a(0,0) * m2.a(0,1) + m1.a(0,1) * m2.a(1,1) + m1.a(0,2) * m2.a(2,1),
            m1.a(0,0) * m2.a(0,2) + m1.a(0,1) * m2.a(1,2) + m1.a(0,2) * m2.a(2,2),
@@ -183,7 +186,7 @@ Matrix33 operator* (const Matrix33 &m1, const Matrix33 &m2)
            m1.a(2,0) * m2.a(0,0) + m1.a(2,1) * m2.a(1,0) + m1.a(2,2) * m2.a(2,0),
            m1.a(2,0) * m2.a(0,1) + m1.a(2,1) * m2.a(1,1) + m1.a(2,2) * m2.a(2,1),
            m1.a(2,0) * m2.a(0,2) + m1.a(2,1) * m2.a(1,2) + m1.a(2,2) * m2.a(2,2)
-   );
+    );
 #endif
 }
 
@@ -230,6 +233,11 @@ Vector3dd Matrix33::diagonal() const
 }
 
 
+
+Matrix33 Matrix33::Identity()
+{
+  return Matrix33 (1.0);
+}
 
 /**
  *
@@ -625,7 +633,7 @@ Matrix33 Matrix33::ProjectiveByPoints(Vector2dd points[4], Vector2dd images[4])
  **/
 Matrix33 Matrix33::ProjectiveByPoints(int pointNumber, Vector2dd points[], Vector2dd images[])
 {
-    ASSERT_TRUE(pointNumber >= 4, "Too few points to create transform");
+    CORE_ASSERT_TRUE(pointNumber >= 4, "Too few points to create transform");
 
     if (pointNumber == 4)
         return ProjectiveByPoints(points, images);

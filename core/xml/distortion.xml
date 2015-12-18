@@ -1,0 +1,127 @@
+<poco version="5.0">
+  <include name="parameters.xml"/>
+
+
+  <class name="Lens Distortion Model Parameters" description="Lens Distortion Model Parameters">
+    <comment>
+ * \ingroup distcorrect
+ * \brief This structure holds the parameters to correct the image.
+ *
+ * The intrinsic correction parameters form
+ * http://www.vision.caltech.edu/bouguetj/calib_doc/papers/heikkila97.pdf
+ *
+ * Here are the correction formulas
+ *  \f{eqnarray*}
+ *  \pmatrix{dx \cr dy} &amp;=&amp; \pmatrix{x \cr y} - \pmatrix{x_c \cr y_c} \\
+ *                    r &amp;=&amp; \sqrt{dx^2 + dy^2} \\
+ *                 r_{corr} &amp;=&amp; k_1 r^2 + k_2 r^4 \\
+ *           \hat{r}_{corr} &amp;=&amp; \sum_{i=1}^{n} k_i r^i \\
+ *
+ *   \pmatrix{x_{coor}^t \cr y_{coor}^t} &amp;=&amp;
+ *   \pmatrix{p_1 dx dy + p_2 (r^2 + 2 dx^2)\cr p_1 (r^2 + 2 dy^2) + p_2 dx dy} \\
+ *
+ *
+ *   \pmatrix{x \cr y} &amp;=&amp;
+ *   \pmatrix{x_0 \cr y_0} +
+ *   \pmatrix{dx \cr dy} * r_{corr} +
+ *   \pmatrix{x_{coor}^t \cr y_{coor}^t}
+ *
+ *   \f}
+ *
+ *   For Marquardt-Levenberg algorithm we will need derivatives of the function
+ *
+ *   for more details please read the code of getCorrectionForPoint() or read the Heikkila paper
+    </comment>
+
+    <field type="double"    name="principalX"        defaultValue="240" comment="The center of the distortion \f$x_c\f$" />
+    <field type="double"    name="principalY"        defaultValue="320" comment="The center of the distortion \f$y_c\f$"/>
+
+    <field type="double"    name="tangentialX"       defaultValue="0"  comment="First tangent correction coefficient - \f$p_1\f$"/>
+    <field type="double"    name="tangentialY"       defaultValue="0" comment="Second tangent correction coefficient - \f$p_2\f$"/>
+
+    <field type="double"    name="koeff"             defaultValue="0.0" size="6" comment="Polynom to describe radial correction"/>
+
+    <field type="double"    name="aspect"            defaultValue="1.0"/>
+    <field type="double"    name="scale"             defaultValue="1.0"/>
+
+    <field type="double"    name="Normalizing Focal" defaultValue="1"/>
+
+
+    <!-- <field type="double"    name="Normalize Focal" defaultValue="1.0"/> -->
+  </class>
+
+<!-- class name="Camera Extirinsic Parameteres" description="">
+    <field type="double" name="yaw"            defaultValue="0.0"    />
+    <field type="double" name="pitch"          defaultValue="0.0"    />
+    <field type="double" name="roll"           defaultValue="0.0"    />
+
+    <field type="double" name="posX"            defaultValue="0.0"    />
+    <field type="double" name="posY"            defaultValue="0.0"    />
+    <field type="double" name="posZ"            defaultValue="0.0"    />
+</class> -->
+
+  <enum name="Checkerboard Detection Algorithm">
+    <item name="Homebrew Detector" id="0" />
+    <item name="OpenCV Detector"   id="1" />
+  </enum>
+
+  <class name="Checkerboard Detection Parameters">  
+    <field type="bool"         name="Estimate undistorted from distorted" defaultValue="true"/>
+    <field type="bool"         name="Use Undistortion"      defaultValue="true"/>
+
+    <field type="Checkerboard Detection Algorithm" name="Algorithm" defaultValue="0" />
+
+
+    <field type="ImageChannel" name="Channel"            defaultValue="3"   />
+    <field type="double"       name="Cell Size Hor"      defaultValue="50"   suffix="mm" />
+    <field type="double"       name="Cell Size Vert"     defaultValue="50"   suffix="mm" />
+
+    <field type="bool"         name="Clean existing"     defaultValue="true" />
+
+    <field type="int"          name="Precise Diameter"   defaultValue="50"      min="0"   max="999999"  />
+    <field type="int"          name="Iteration count"    defaultValue="50"      min="1"   max="999999"  />
+    <field type="double"       name="Min accuracy"       defaultValue="0.01"    min="0.0" max="999999" suffix="px" decimals="4"/>
+
+
+    <field type="bool"         name="Partial Board"       defaultValue="true"/>
+    <field type="bool"         name="Fast board Speedup"  defaultValue="true"/>
+    <field type="bool"         name="Draw SGFs on boards" defaultValue="true"/>
+    <field type="bool"         name="Skip undistorted with no distorted board" defaultValue="false"/>
+
+  </class>
+
+  <enum name="Line Distortion Estimator Cost">
+    <item name="Line Deviation Cost" id="0" />
+    <item name="Joint Angle Cost"    id="1" />
+  </enum>
+
+  <class name="Line Distortion Estimator Parameters">
+    <field type="Line Distortion Estimator Cost"   name="Cost Algorithm"  defaultValue="0" />
+
+    <field type="int"       name="Iteration Number"  defaultValue="1000"  max="99999" min="0"/>
+    <field type="int"       name="Polinom Degree"    defaultValue="6"  prefix="x^" max="20" min="0"/>
+
+    <field type="bool"      name="Simple Jacobian"   defaultValue="true" />
+    <field type="bool"      name="Even powers only"  defaultValue="false" />
+    <field type="bool"      name="Estimate Tangent"  defaultValue="true" />
+    <field type="bool"      name="Estimate Center"   defaultValue="true" />
+  </class>
+
+
+  <enum name="Distortion Resize Policy">
+    <item name="No Change"     id="0" />
+    <item name="Force Size"    id="1" />
+    <item name="To Fit Result" id="2" />
+    <item name="To No Gaps"    id="3" />
+  </enum>
+
+  <class name="Distortion Application Parameters">
+    <field type="bool"      name="Force Scale"   defaultValue="false" />
+    <field type="bool"      name="Adopt Scale"   defaultValue="false" />
+    <field type="Distortion Resize Policy"  name="Resize policy" defaultValue="3" />
+    <field type="int"                       name="New H"         defaultValue="0" />
+    <field type="int"                       name="New W"         defaultValue="0" />
+  </class>
+
+</poco>
+

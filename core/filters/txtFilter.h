@@ -22,7 +22,7 @@ public:
     {
         if (instanceId == -1)
              instanceId = ++instanceCounter;
-        else instanceCounter = max(instanceCounter, instanceId);
+        else instanceCounter = CORE_MAX(instanceCounter, instanceId);
 
         outputPins.push_back(new TxtPin(this, Pin::OUTPUT_PIN, (id == -1), "0"));
     }

@@ -4,11 +4,11 @@ CONFIG  += ordered
 SUBDIRS +=                   \
     core                     \
     unitTests                \
-    utils                    \
-    base_application         \
-    base_application_example \    
-    recorder                 \
-    testbed                  \
+#    utils                    \
+#    base_application         \
+#    base_application_example \
+#    recorder                 \
+#    testbed                  \
     
 
 win32 {
@@ -35,7 +35,7 @@ recorder.depends         += baseApplication
 
 
 core.file                     = core/core.pro
-unitTests.file                = test-core/unitTests.pro
+unitTests.file                = test-core/test-core.pro
 utils.file                    = utils/utils.pro
 directshow.file               = wrappers/directShow/directShow.pro
 base_application.file         = applications/base/baseApplication.pro

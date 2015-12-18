@@ -13,6 +13,7 @@
 
 #include "abstractBuffer.h"
 #include "vector2d.h"
+#include "deformMap.h"
 
 namespace corecvs {
 

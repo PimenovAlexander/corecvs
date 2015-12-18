@@ -7,7 +7,7 @@ void MemoryUsageCalculator::getMemoryUsage()
 
     if (mResidentSize > upperMemoryUsageLimit)
     {
-        qDebug() << "We are using " << mResidentSize << "Mb which is more then high limit of " << upperMemoryUsageLimit << "Mb";
+        qDebug() << "We are using " << mResidentSize << "Mb with is bigger then high limit of " << upperMemoryUsageLimit << "Mb";
         emit memoryOverflow();
     }
 }

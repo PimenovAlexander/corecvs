@@ -2,8 +2,8 @@
 #define GRAPHPLOTDIALOG_H
 
 #include <deque>
-#include <QWidget>
-#include <QtGui>
+#include <QtGui/QWidget>
+#include <QtGui/QtGui>
 #include <QtXml/QDomDocument>
 
 #include "ui_graphPlotDialog.h"
@@ -51,8 +51,8 @@ public:
     void update(void);
 
     /* Automatic saving and loading */
-    virtual void loadFromQSettings(const QString &fileName, const QString &_root);
-    virtual void saveToQSettings  (const QString &fileName, const QString &_root);
+    virtual void loadFromQSettings(const QString &fileName, QString _root);
+    virtual void saveToQSettings  (const QString &fileName, QString _root);
 
 public slots:
     /* Repaint graphs */
@@ -80,6 +80,9 @@ public slots:
     /* Set snapshot point for values of graphs */
     void setSnapshotValue(QMouseEvent*);
 
+signals:
+    void newTimeSelected(int value);
+
 private:
     Ui::GraphPlotDialogClass mUi;
     QSharedPointer<GraphPlotParameters> mGraphPlotParameters;
@@ -100,8 +103,6 @@ private:
     void drawGrid(QPainter &painter);
     /* Draw line to monitor values */
     void drawGridFixLine(QPainter &painter);
-
-    void addNewGraphToUI(QString name, unsigned graphId);
 
     QSignalMapper *mUpDownMapper;
 //    ParametersMapperGraphPlot *mParamMapper;

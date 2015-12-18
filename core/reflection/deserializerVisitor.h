@@ -29,7 +29,7 @@ template <typename inputType, typename reflectionType>
     }
 
 template <class Type>
-    void visit(Type &field, Type defaultValue, const char *fieldName)
+    void visit(Type &field, Type /*defaultValue*/, const char *fieldName)
     {
         field.accept(*this);
     }

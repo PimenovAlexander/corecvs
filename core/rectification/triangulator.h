@@ -33,8 +33,8 @@ class RectificationResult
 {
 public:
     /** Intrinsic parameters of the cameras*/
-    CameraIntrinsics rightCamera;
-    CameraIntrinsics leftCamera;
+    CameraIntrinsicsLegacy rightCamera;
+    CameraIntrinsicsLegacy leftCamera;
 
     /**
      * Essential matrix
@@ -106,8 +106,8 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit(rightCamera, CameraIntrinsics(), "RightCameraIntrinsics");
-        visitor.visit(leftCamera, CameraIntrinsics(), "LeftCameraIntrinsics");
+        visitor.visit(rightCamera, CameraIntrinsicsLegacy(), "RightCameraIntrinsics");
+        visitor.visit(leftCamera, CameraIntrinsicsLegacy(), "LeftCameraIntrinsics");
 
         /* Fix this ASAP*/
         EssentialMatrix defaultEMatrix;

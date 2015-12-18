@@ -57,7 +57,9 @@ int MakePreciseParameters::staticInit()
           "Algorithm",
           "Algorithm",
           "Algorithm",
-           NULL
+          new EnumReflection(1
+          , new EnumOption(0,"KLT")
+          )
         )
     );
     fields().push_back(
@@ -69,7 +71,11 @@ int MakePreciseParameters::staticInit()
           "Interpolation",
           "Interpolation",
           "Interpolation",
-           NULL
+          new EnumReflection(3
+          , new EnumOption(0,"Bilinear")
+          , new EnumOption(1,"Spline")
+          , new EnumOption(2,"Polynom")
+          )
         )
     );
     fields().push_back(
@@ -80,7 +86,10 @@ int MakePreciseParameters::staticInit()
           0,
           "KLT iterations",
           "KLT iterations",
-          "KLT iterations"
+          "KLT iterations",
+          true,
+         1,
+         100
         )
     );
     fields().push_back(
@@ -91,7 +100,10 @@ int MakePreciseParameters::staticInit()
           0,
           "KLT Radius H",
           "KLT Radius H",
-          "KLT Radius H"
+          "KLT Radius H",
+          true,
+         1,
+         100
         )
     );
     fields().push_back(
@@ -102,7 +114,10 @@ int MakePreciseParameters::staticInit()
           0,
           "KLT Radius W",
           "KLT Radius W",
-          "KLT Radius W"
+          "KLT Radius W",
+          true,
+         1,
+         100
         )
     );
     fields().push_back(
@@ -113,7 +128,10 @@ int MakePreciseParameters::staticInit()
           0,
           "KLT Threshold",
           "KLT Threshold",
-          "KLT Threshold"
+          "KLT Threshold",
+          true,
+         1,
+         100
         )
     );
    return 0;

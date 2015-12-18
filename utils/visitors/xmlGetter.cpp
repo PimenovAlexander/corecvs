@@ -132,3 +132,9 @@ void XmlGetter::visit<int, EnumField>(int &/*field*/, const EnumField * /*fieldD
 {
 	qDebug() << "XmlGetter::visit<int, EnumField>(int &field, const EnumField *fieldDescriptor) NOT YET SUPPORTED";
 }
+
+template <>
+void XmlGetter::visit<double, DoubleVectorField>(std::vector<double> &/*field*/, const DoubleVectorField * /*fieldDescriptor*/)
+{
+    qDebug() << "XmlGetter::visit<double, DoubleVectorField>() NOT YET SUPPORTED";
+}

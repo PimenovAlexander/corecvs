@@ -40,20 +40,6 @@ enum EstimationMethodType {
     ESTIMATION_METHOD_TYPE_LAST
 };
 
-
-static inline const char *getName(const EstimationMethodType &value)
-{
-    switch (value) 
-    {
-     case RANSAC : return "RANSAC"; break ;
-     case ITERATIVE : return "ITERATIVE"; break ;
-     case MANUAL : return "MANUAL"; break ;
-     default : return "Not in range"; break ;
-     
-    }
-    return "Not in range";
-}
-
 } //namespace EstimationMethodType
 
 #endif  //ESTIMATION_METHOD_TYPE_H_

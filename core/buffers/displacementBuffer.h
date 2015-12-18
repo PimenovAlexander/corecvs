@@ -42,8 +42,8 @@ class DisplacementBuffer : public DisplacementBufferBase, public DeformMap<int32
 {
 public:
 
-    DisplacementBuffer(int32_t h, int32_t w)     : DisplacementBufferBase (h, w) {}
-    DisplacementBuffer(DisplacementBuffer &that) : DisplacementBufferBase (that) {}
+    DisplacementBuffer(int32_t h = 0, int32_t w = 0)     : DisplacementBufferBase (h, w) {}
+    DisplacementBuffer(const DisplacementBuffer &that) : DisplacementBufferBase (that) {}
     DisplacementBuffer(DisplacementBuffer *that) : DisplacementBufferBase (that) {}
 
     DisplacementBuffer(DisplacementBuffer *src, int32_t x1, int32_t y1, int32_t x2, int32_t y2) :
@@ -69,7 +69,7 @@ public:
         }
     }
 
-    inline DisplacementBuffer (RadialCorrection *inverseMap, int h, int w, bool isInverse) : DisplacementBufferBase (h, w, false)
+    inline DisplacementBuffer (RadialCorrection *inverseMap, int h, int w, bool isInverse = false) : DisplacementBufferBase (h, w, false)
     {
         int koef = isInverse ? 1 : -1;
         for (int i = 0; i < h; i ++)
@@ -92,6 +92,12 @@ public:
             bool useLM = false
     );
 
+    static DisplacementBuffer *TestWiggle(
+            int h, int w,
+            double power = 5,
+            double step = 20
+    );
+
     inline DisplacementBuffer (DistortionCorrectTransform *transform, int h, int w) : DisplacementBufferBase (h, w, false)
     {
         for (int i = 0; i < h; i ++)
@@ -109,7 +115,14 @@ public:
     {
         Vector2dd  pointd(x, y);
         Vector2d32 pointi(x, y);
-        return element(pointi) + pointd;
+        return this->element(pointi) + pointd;
+    }
+
+    /*Bilinear approach should be used*/
+    inline Vector2dd map(Vector2dd pointd) const
+    {
+        Vector2d32 pointi(pointd.x(), pointd.y());
+        return this->element(pointi) + pointd;
     }
 
 };
@@ -210,7 +223,7 @@ public:
     template<class BufferToTransform>
     BufferToTransform *remap (BufferToTransform *input)
     {
-        ASSERT_TRUE(input->h == mInputH && input->w == mInputW, "Wrong size...");
+        CORE_ASSERT_TRUE(input->h == mInputH && input->w == mInputW, "Wrong size...");
         BufferToTransform *result = new BufferToTransform(mOutputH, mOutputW);
         parallelable_for(0, mOutputH, ParallelRemap<BufferToTransform>(result, input, this));
         return result;

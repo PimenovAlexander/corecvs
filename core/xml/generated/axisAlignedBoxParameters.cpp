@@ -45,7 +45,10 @@ int AxisAlignedBoxParameters::staticInit()
           0,
           "X",
           "X",
-          "X"
+          "X",
+          true,
+         -50000,
+         50000
         )
     );
     fields().push_back(
@@ -56,7 +59,10 @@ int AxisAlignedBoxParameters::staticInit()
           0,
           "Y",
           "Y",
-          "Y"
+          "Y",
+          true,
+         -50000,
+         50000
         )
     );
     fields().push_back(
@@ -67,7 +73,10 @@ int AxisAlignedBoxParameters::staticInit()
           3000,
           "Z",
           "Z",
-          "Z"
+          "Z",
+          true,
+         -50000,
+         50000
         )
     );
     fields().push_back(
@@ -78,7 +87,10 @@ int AxisAlignedBoxParameters::staticInit()
           1000,
           "width",
           "width",
-          "width"
+          "width",
+          true,
+         -50000,
+         50000
         )
     );
     fields().push_back(
@@ -89,7 +101,10 @@ int AxisAlignedBoxParameters::staticInit()
           1000,
           "height",
           "height",
-          "height"
+          "height",
+          true,
+         -50000,
+         50000
         )
     );
     fields().push_back(
@@ -100,7 +115,10 @@ int AxisAlignedBoxParameters::staticInit()
           1000,
           "depth",
           "depth",
-          "depth"
+          "depth",
+          true,
+         -50000,
+         50000
         )
     );
    return 0;

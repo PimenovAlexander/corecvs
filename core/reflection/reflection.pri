@@ -3,7 +3,8 @@ SOURCES += \
     reflection/defaultSetter.cpp \
     reflection/printerVisitor.cpp \
     reflection/serializerVisitor.cpp \
-    reflection/deserializerVisitor.cpp
+    reflection/deserializerVisitor.cpp \
+    reflection/commandLineSetter.cpp
     
     
 HEADERS += \
@@ -12,4 +13,5 @@ HEADERS += \
     reflection/defaultSetter.h \
     reflection/printerVisitor.h \
     reflection/serializerVisitor.h \
-    reflection/deserializerVisitor.h
+    reflection/deserializerVisitor.h \
+    reflection/commandLineSetter.h

@@ -50,22 +50,6 @@ enum OptimizationMethodType {
     OPTIMIZATION_METHOD_TYPE_LAST
 };
 
-
-static inline const char *getName(const OptimizationMethodType &value)
-{
-    switch (value) 
-    {
-     case SVD : return "SVD"; break ;
-     case GRADIENT_DESCENT : return "GRADIENT_DESCENT"; break ;
-     case MARQUARDT_LEVENBERG : return "MARQUARDT_LEVENBERG"; break ;
-     case CLASSIC_KALMAN : return "CLASSIC_KALMAN"; break ;
-     case KALMAN : return "KALMAN"; break ;
-     default : return "Not in range"; break ;
-     
-    }
-    return "Not in range";
-}
-
 } //namespace OptimizationMethodType
 
 #endif  //OPTIMIZATION_METHOD_TYPE_H_

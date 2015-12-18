@@ -191,7 +191,7 @@ void HistogramWidget::drawGrid(QPainter &painter, int scaleX, int scaleY)
 
 void HistogramWidget::notifyHistogramChange(Histogram *histogram, bool useMargin)
 {
-    mSelectedH = 0;
+//    mSelectedH = 0;
     bool needRecalculateFrame = (mHistogram == NULL);
     mHistogram = histogram;
     mUseMargin = useMargin;
@@ -278,7 +278,7 @@ void HistogramWidget::mouseMoveEvent(QMouseEvent *event)
 #if QT_VERSION >= 0x040700
         if (event->buttons() & (Qt::MiddleButton | Qt::RightButton))
 #else
-            if (event->buttons() & (Qt::MidButton | Qt::RightButton))
+        if (event->buttons() & (Qt::MidButton | Qt::RightButton))
 #endif
             {
             if (mPrevMousePos != QPointF())

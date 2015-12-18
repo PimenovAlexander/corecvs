@@ -1,10 +1,12 @@
-#pragma once
+#ifndef XMLSETTER_H
+#define XMLSETTER_H
 
+#include <QtCore/QtCore>
 #include "QtCore/QString"
+
 #include "basePathVisitor.h"
 #include "reflection.h"
 #include "baseXMLVisitor.h"
-#include <QtCore/QtCore>
 
 using corecvs::IntField;
 using corecvs::DoubleField;
@@ -41,7 +43,7 @@ public:
 
 
 template <class Type>
-    void visit(Type &field, Type defaultValue, const char *fieldName)
+    void visit(Type &field, Type /*defaultValue*/, const char *fieldName)
     {
         pushChild(fieldName);
            field.accept(*this);
@@ -62,6 +64,16 @@ template <typename inputType, typename reflectionType>
         pushChild(fieldDescriptor->getSimpleName());
            field.accept(*this);
         popChild();
+    }
+
+/* Generic Array support */
+    template <typename inputType, typename reflectionType>
+    void visit(std::vector<inputType> &fields, const reflectionType * /*fieldDescriptor*/)
+    {
+        for (int i = 0; i < fields.size(); i++)
+        {
+            fields[i].accept(*this);
+        }
     }
 
 private:
@@ -109,3 +121,10 @@ void XmlSetter::visit<void *, PointerField>(void * &field, const PointerField *f
 
 template <>
 void XmlSetter::visit<int, EnumField>(int &field, const EnumField *fieldDescriptor);
+
+/* Arrays */
+template <>
+void XmlSetter::visit<double, DoubleVectorField>(std::vector<double> &field, const DoubleVectorField *fieldDescriptor);
+
+
+#endif // XMLSETTER_H

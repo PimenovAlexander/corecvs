@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QWidget>
+#include <QtGui/QWidget>
 
 namespace Ui {
 class Widget;

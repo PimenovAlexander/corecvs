@@ -88,7 +88,7 @@ public:
    virtual void setInstanceId(int id)
    {
        instanceId = id;
-       instanceCounter = max(instanceCounter, instanceId);
+       instanceCounter = CORE_MAX(instanceCounter, instanceId);
    }
 
    virtual ~G12Pin() {}
@@ -137,7 +137,7 @@ public:
    virtual void setInstanceId(int id)
    {
        instanceId = id;
-       instanceCounter = max(instanceCounter, instanceId);
+       instanceCounter = CORE_MAX(instanceCounter, instanceId);
    }
 
    virtual void clear() { delete_safe(inout); }

@@ -46,12 +46,7 @@ int BaseParameters::staticInit()
           "rotation",
           "rotation",
           "rotation",
-          new EnumReflection(4
-          , new EnumOption(0,"No rotation")
-          , new EnumOption(1,"Clockwise 90deg")
-          , new EnumOption(2,"Clockwise 180deg")
-          , new EnumOption(3,"Clockwise 270deg")
-          )
+           NULL
         )
     );
     fields().push_back(
@@ -103,10 +98,10 @@ int BaseParameters::staticInit()
         (
           BaseParameters::DOWNSAMPLE_ID,
           offsetof(BaseParameters, mDownsample),
-          1,
+          1.5,
           "downsample",
           "downsample",
-          "Prescale coefficient for input image"
+          "downsample"
         )
     );
     fields().push_back(
@@ -117,7 +112,7 @@ int BaseParameters::staticInit()
           640,
           "h",
           "h",
-          "Input crop height"
+          "h"
         )
     );
     fields().push_back(
@@ -128,7 +123,7 @@ int BaseParameters::staticInit()
           480,
           "w",
           "w",
-          "Input crop width"
+          "w"
         )
     );
     fields().push_back(
@@ -139,7 +134,7 @@ int BaseParameters::staticInit()
           true,
           "autoH",
           "autoH",
-          "Select crop height so that full image will fit"
+          "autoH"
         )
     );
     fields().push_back(
@@ -150,7 +145,7 @@ int BaseParameters::staticInit()
           true,
           "autoW",
           "autoW",
-          "Select crop width so that full image will fit"
+          "autoW"
         )
     );
     fields().push_back(
@@ -161,7 +156,7 @@ int BaseParameters::staticInit()
           0,
           "x",
           "x",
-          "Scaled image horizonal shift before crop"
+          "x"
         )
     );
     fields().push_back(
@@ -172,7 +167,7 @@ int BaseParameters::staticInit()
           0,
           "y",
           "y",
-          "Scaled image vertical shift before crop"
+          "y"
         )
     );
     fields().push_back(
@@ -180,16 +175,11 @@ int BaseParameters::staticInit()
         (
           BaseParameters::INTERPOLATIONTYPE_ID,
           offsetof(BaseParameters, mInterpolationType),
-          2,
+          0,
           "InterpolationType",
           "InterpolationType",
           "InterpolationType",
-          new EnumReflection(4
-          , new EnumOption(0,"Nearest")
-          , new EnumOption(1,"Bilinear")
-          , new EnumOption(2,"Bilinear Fixed8")
-          , new EnumOption(3,"Hardware")
-          )
+           NULL
         )
     );
    return 0;

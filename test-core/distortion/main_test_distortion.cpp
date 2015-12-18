@@ -11,6 +11,7 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
+#include "gtest/gtest.h"
 
 #include "global.h"
 
@@ -29,8 +30,8 @@ using corecvs::Matrix;
 using corecvs::RadialCorrection;
 using corecvs::RadialFunc;
 
-#if 0
-void testRadialModel(void)
+
+TEST(Distortion, testRadialModel)
 {
    vector<vector<Vector2dd> > samples;
    vector<Vector2dd> line;
@@ -48,21 +49,21 @@ void testRadialModel(void)
    in[2] = 0.0000001;
    in[3] = 0.000000001;
 
-   RadialCorrection model = RadialFunc::inputToCorrection(&(in[0]), 4);
-   model.mParams.center = center;
-   model.mParams.p1 = 0;
-   model.mParams.p2 = 0;
-   model.mParams.aspect = 1.0;
-   model.mParams.focal = 20.0;
+   //RadialCorrection model = RadialFunc::inputToCorrection(&(in[0]), 4);
+   //model.mParams.center = center;
+   //model.mParams.p1 = 0;
+   //model.mParams.p2 = 0;
+   //model.mParams.aspect = 1.0;
+   //model.mParams.focal = 20.0;
 
    vector<Vector2dd> out(line.size(), Vector2dd(0));
 
-   for (unsigned i = 0; i < line.size(); i++)
-   {
-       out[i] = model.map(line[i].y(), line[i].x());
-       cout << setprecision(15) << out[i] << " ,";
-   }
-   cout << endl;
+   //for (unsigned i = 0; i < line.size(); i++)
+   //{
+   //    out[i] = model.map(line[i].y(), line[i].x());
+   //    cout << setprecision(15) << out[i] << " ,";
+   //}
+   //cout << endl;
 
    /*=================*/
 
@@ -74,11 +75,10 @@ void testRadialModel(void)
        cout << setprecision(15) << out[i] << " ,";
    }
    cout << endl;
-
 }
-#endif
 
-void testRadialJacobian(void)
+
+TEST(Distortion, testRadialJacobian)
 {
     vector<vector<Vector2dd> > samples;
 
@@ -91,7 +91,15 @@ void testRadialJacobian(void)
 
     Vector2dd center(1.0, 0.0);
 
-    AnglePointsFunction *function = NULL; //new AnglePointsFunction(samples, center, 4, 1.0);
+    LensDistortionModelParameters params;
+    RadialCorrection lockedDimentions(params);
+    bool guessCenter = false;
+    bool guessTangent = false;
+    int  polynomialDegree = false;
+    bool evenDegreeOnly = false;
+    ModelToRadialCorrection modelFactory(lockedDimentions, guessCenter, guessTangent, polynomialDegree, evenDegreeOnly); // center, 4, 1.0);
+
+    AnglePointsFunction *function = new AnglePointsFunction(samples, modelFactory);
     vector<double> in(function->inputs, 0);
 
     Matrix classicJacobian = function->FunctionArgs::getJacobian(&(in[0]));
@@ -103,15 +111,4 @@ void testRadialJacobian(void)
     cout << manualJacobian;
 
     delete function;
-
-}
-
-int main (int /*argC*/, char **/*argV*/)
-{
-//    cout << "testRadialModel" << endl;
-//    testRadialModel();
-    cout << "testRadialJacobian" << endl;
-    testRadialJacobian();
-    cout << "PASSED" << endl;
-    return 0;
 }

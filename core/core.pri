@@ -1,8 +1,6 @@
 # This file should be included by any project outside that wants to use core's files.
 #
-# input1 parameter: $$COREDIR    - path to core project files
-# input2 parameter: $$TARGET     - the current project output name
-
+# input1 parameter: $$TARGET     - the current project output name
 # output parameter: $$COREBINDIR - path to the output|used core library
 #
 
@@ -26,7 +24,6 @@ CORE_INCLUDEPATH = \
     $$COREDIR/buffers/memory \
     $$COREDIR/buffers/morphological \
     $$COREDIR/buffers/rgb24 \
-    $$COREDIR/buffers/rgb192 \
 #   $$COREDIR/buffers/voxels \                  # not used
     $$COREDIR/cammodel \
 #   $$COREDIR/clegacy \                         # not used ?
@@ -38,6 +35,7 @@ CORE_INCLUDEPATH = \
     $$COREDIR/geometry \
     $$COREDIR/kalman \
     $$COREDIR/kltflow \
+    $$COREDIR/meta \
     $$COREDIR/math \
 #   $$COREDIR/math/avx \                        # not used
 #   $$COREDIR/math/fixed \                      # not used
@@ -59,22 +57,27 @@ CORE_INCLUDEPATH = \
     $$COREDIR/clustering3d \
     $$COREDIR/xml \
     $$COREDIR/xml/generated \                   # to allow including of generated headers without directory name prefix
+    $$COREDIR/features2d \
+    $$COREDIR/patterndetection \
+    $$COREDIR/cameracalibration \
+    $$COREDIR/graphs \
+    $$COREDIR/reconstruction \
+    $$COREDIR/polynomial
+
 
 INCLUDEPATH += $$CORE_INCLUDEPATH
 
 exists(../../../config.pri) {
     COREBINDIR = $$COREDIR/../../../bin
 } else {
-    message(Using local core. config should be $$COREDIR/../../../config.pri)
+    message(Using local core. Global config should be at $$COREDIR/../../../config.pri)
     COREBINDIR = $$COREDIR/../bin
 }
 
-
 contains(TARGET, cvs_core): !contains(TARGET, cvs_core_restricted) {
     win32-msvc* {
-        DEPENDPATH += $$COREDIR/xml             # helps to able including sources by generated.pri from their dirs
-    }
-    else {
+        DEPENDPATH += $$COREDIR/xml                 # helps to able including sources by generated.pri from their dirs
+    } else {
         DEPENDPATH += \
 #           $$COREDIR \
             $$CORE_INCLUDEPATH                      # msvc sets this automatically by deps from includes for this project
@@ -85,16 +88,12 @@ contains(TARGET, cvs_core): !contains(TARGET, cvs_core_restricted) {
     CORE_TARGET_NAME = cvs_core
     CORE_TARGET_NAME = $$join(CORE_TARGET_NAME,,,$$BUILD_CFG_SFX)
 
-    LIBS = \
-        -L$$COREBINDIR \
-        -l$$CORE_TARGET_NAME \
-        $$LIBS
+    LIBS = -L$$COREBINDIR -l$$CORE_TARGET_NAME $$LIBS
 
     win32-msvc* {
         CORE_TARGET_NAME = $$join(CORE_TARGET_NAME,,,.lib)
-        PRE_TARGETDEPS  += $$COREBINDIR/$$CORE_TARGET_NAME
     } else {
         CORE_TARGET_NAME = $$join(CORE_TARGET_NAME,,lib,.a)
-        PRE_TARGETDEPS  += $$COREBINDIR/$$CORE_TARGET_NAME
     }
+    PRE_TARGETDEPS += $$COREBINDIR/$$CORE_TARGET_NAME
 }

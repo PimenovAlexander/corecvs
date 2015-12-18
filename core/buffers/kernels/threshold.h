@@ -20,10 +20,10 @@ public:
     static const int inputNumber  = 1;
     static const int outputNumber = 1;
 
-    inline static int getCenterX(){ return 0; };
-    inline static int getCenterY(){ return 0; };
-    inline static int getSizeX(){ return 1; };
-    inline static int getSizeY(){ return 1; };
+    inline static int getCenterX(){ return 0; }
+    inline static int getCenterY(){ return 0; }
+    inline static int getSizeX()  { return 1; }
+    inline static int getSizeY()  { return 1; }
 
     typedef typename Algebra::InputType Type;
 
@@ -35,9 +35,9 @@ template<typename OtherAlgebra>
         threshold = other.threshold;
     }
 
-    ThresholdBinariseKernel() : threshold(0x8FF) {};
+    ThresholdBinariseKernel() : threshold(0x8FF) {}
 
-    ThresholdBinariseKernel(int16_t _threshold) : threshold(_threshold)  {};
+    ThresholdBinariseKernel(int16_t _threshold) : threshold(_threshold)  {}
 
     void process(Algebra &algebra) const
     {

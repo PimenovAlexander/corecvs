@@ -10,10 +10,7 @@
 
 #include <iostream>
 #include <stdint.h>
-
-#ifndef ASSERTS
-#define ASSERTS
-#endif
+#include "gtest/gtest.h"
 
 #include "global.h"
 
@@ -64,10 +61,10 @@ class VisiterSemiRandom
 public:
     void operator() (int y , int x , Type &element) {
         element = Type(((unsigned)(y * 54536351 + x * 8769843 + 5)) % (G12Buffer::BUFFER_MAX_VALUE + 1));
-    };
+    }
 };
 
-void _testFastKernel( void )
+TEST(FastKernel, _testScalar)
 {
     printf("Testing the fast kernel infrastructure with integer scalar\n");
     G12Buffer *input = new G12Buffer(TEST_H_SMALL_SIZE,TEST_W_SMALL_SIZE);
@@ -83,7 +80,9 @@ void _testFastKernel( void )
     proc.process(in, &output);
     printf("Scalar:\n");
     output->print();
-    return;
+
+    delete input;
+    delete output;
 }
 
 template<int inputNumber, int outputNumber>
@@ -94,7 +93,7 @@ public:
     typedef ScalarAlgebraMulti<TraitVector3dd, TraitVector3dd, inputNumber, outputNumber> Type;
 };
 
-void _testFastKernelVector3dd( void )
+TEST(FastKernel, _testVector3dd)
 {
     printf("Testing the fast kernel infrastructure with Vector3dd\n");
     typedef AbstractBuffer<Vector3dd> BufferType;
@@ -110,12 +109,11 @@ void _testFastKernelVector3dd( void )
     cout << *output;
     delete input;
     delete output;
-    return;
 }
 
 #ifdef WITH_SSE
 
-void _testFastKernelSSE( void )
+TEST(FastKernel, _testSSE)
 {
     printf("Testing the fast kernel infrastructure with SSE\n");
     G12Buffer *input = new G12Buffer(TEST_H_SMALL_SIZE,TEST_W_SMALL_SIZE);
@@ -141,16 +139,9 @@ void _testFastKernelSSE( void )
     procS.processSaveAligned(in, &output);
     output->print();
 
-
     delete input;
     delete output;
-    return;
 }
-
-
-
-
-
 
 /*
 void _profileManualAddStream (void)
@@ -201,9 +192,7 @@ void _profileManualAddStream (void)
 }
 */
 
-
-
-void testEdgeDetector()
+TEST(FastKernel, testEdgeDetector)
 {
     G12Buffer *input = BufferFactory::getInstance()->loadG12Bitmap("data/pair/image0001_c0.pgm");
     BufferProcessor<G12Buffer, G12Buffer, EdgeMagnitude, G12BufferAlgebra> processor;
@@ -224,7 +213,7 @@ void testEdgeDetector()
     delete input;
 }
 
-void profileEdgeDetector()
+TEST(FastKernel, profileEdgeDetector)  // it could be moved to perf-tests...
 {
     const static unsigned int LIMIT = 100;
     G12Buffer *inputs[LIMIT];
@@ -244,7 +233,12 @@ void profileEdgeDetector()
         processor.process(&inputs[i], &edges);
         G12IntegralBuffer *integral = new G12IntegralBuffer(edges);
         G12Buffer *blurred = integral->rectangularBlur<G12Buffer>(5,5);
-        /*G12Buffer *output = */ blurred->binarize(100);
+        G12Buffer *output = blurred->binarize(100);
+        delete edges;
+        delete integral;
+        delete blurred;
+        delete inputs[i];
+        delete output;
     }
     delay = start.usecsToNow();
 
@@ -254,11 +248,9 @@ void profileEdgeDetector()
             (uint64_t)fround((double)delay / LIMIT),
             (uint64_t)fround((double)delay / 1000.0 / LIMIT));
     fflush(stdout);
-
 }
 
-
-void testSSEMath (void)
+TEST(FastKernel, testSSEMath)
 {
     uint16_t valueT = -(1 < 2);
     uint16_t valueF =   2 < 1;
@@ -276,18 +268,33 @@ void testSSEMath (void)
         UInt16x8 input((uint16_t)i);
         //cout << input << endl;
         UInt16x8 output = SSEMath::div<5>(input);
-#ifdef ASSERTS
+
         uint16_t inputS = i;
         uint16_t outputS = GenericMath<uint16_t>::div<5>(inputS);
-        ASSERT_TRUE_P(output[0] == outputS, ("Problem with %d s=%d v=%d", i, outputS, output[0]));
-#endif
+        CORE_ASSERT_TRUE_P(output[0] == outputS, ("Problem with %d s=%d v=%d", i, outputS, output[0]));
     }
 }
 
+TEST(FastKernel, testSSEMul)
+{
+    uint32_t data1[4] = { 12, 554, 345, 654 };
+    uint32_t data2[4] = { 12, 554, 345, 654 };
 
-#endif
+    Int32x4 in1(data1);
+    Int32x4 in2(data2);
 
-void testBooleanOperations (void)
+    Int32x4 result = in1 * in2;
+    cout << "Products are "<< result << endl;
+    for (unsigned i = 0; i < CORE_COUNT_OF(data1); i++)
+    {
+        CORE_ASSERT_TRUE_P((uint)result[i] == data1[i] * data2[i], ("Problem with product"));
+    }
+}
+
+#endif // WITH_SSE
+
+
+TEST(FastKernel, testBooleanOperations)
 {
     G8Buffer *mask1 = new G8Buffer(100, 100);
     G8Buffer *mask2 = new G8Buffer(100, 100);
@@ -338,7 +345,6 @@ void testBooleanOperations (void)
     BMPLoader().save("subt.bmp", out);
 
 
-
     delete out;
     delete in2;
     delete in1;
@@ -351,37 +357,45 @@ void testBooleanOperations (void)
 }
 
 
+#if 0
 int main (int /*argC*/, char ** /*argV*/)
 {
-    testBooleanOperations ();
+    testSSEMul();
+    //testBooleanOperations ();
     return 0;
 
-#ifdef WITH_SSE
-	_testFastKernel();
-	_testFastKernelSSE();
+//int main (int /*argC*/, char ** /*argV*/)
+//{
+//    testBooleanOperations ();
+//    return 0;
+//#ifdef WITH_SSE
+//	_testFastKernel();
+//	_testFastKernelSSE();
 
 
 
-#ifdef PROFILE_ACCESS_ALIGNMENT
-    Int16x8::resetAlignmnetCouters();
+//#ifdef PROFILE_ACCESS_ALIGNMENT
+//    Int16x8::resetAlignmnetCouters();
+//#endif
+
+
+//#ifdef PROFILE_ACCESS_ALIGNMENT
+//	uint64_t total     = Int16x8::alignedUWrites + Int16x8::alignedAWrites + Int16x8::unalignedUWrites + Int16x8::streamedWrites;
+//	uint64_t dquwrites = Int16x8::alignedUWrites + Int16x8::unalignedUWrites;
+//	printf("Total accesses          : %llu\n", total);
+//	printf("Unaligned instructions  : %12llu %7.2lf%%\n", dquwrites, dquwrites * 100.0 / total);
+//	printf("   Unaligned accesses   : %12llu %7.2lf%%\n", Int16x8::unalignedUWrites, Int16x8::unalignedUWrites * 100.0 / total);
+//	printf("   Aligned   accesses   : %12llu %7.2lf%%\n", Int16x8::alignedUWrites, Int16x8::alignedUWrites * 100.0 / total);
+//	printf("Aligned   instructions  : %12llu %7.2lf%%\n", Int16x8::alignedAWrites, Int16x8::alignedAWrites * 100.0 / total);
+//	printf("Streamed  instructions  : %12llu %7.2lf%%\n", Int16x8::streamedWrites, Int16x8::streamedWrites * 100.0 / total);
+
+//	Int16x8::resetAlignmnetCouters();
+//#endif
+
+
+//#endif // WITH_SSE
+//    cout << "PASSED" << endl;
+//    return 0;
+//}
+
 #endif
-
-
-#ifdef PROFILE_ACCESS_ALIGNMENT
-	uint64_t total     = Int16x8::alignedUWrites + Int16x8::alignedAWrites + Int16x8::unalignedUWrites + Int16x8::streamedWrites;
-	uint64_t dquwrites = Int16x8::alignedUWrites + Int16x8::unalignedUWrites;
-	printf("Total accesses          : %llu\n", total);
-	printf("Unaligned instructions  : %12llu %7.2lf%%\n", dquwrites, dquwrites * 100.0 / total);
-	printf("   Unaligned accesses   : %12llu %7.2lf%%\n", Int16x8::unalignedUWrites, Int16x8::unalignedUWrites * 100.0 / total);
-	printf("   Aligned   accesses   : %12llu %7.2lf%%\n", Int16x8::alignedUWrites, Int16x8::alignedUWrites * 100.0 / total);
-	printf("Aligned   instructions  : %12llu %7.2lf%%\n", Int16x8::alignedAWrites, Int16x8::alignedAWrites * 100.0 / total);
-	printf("Streamed  instructions  : %12llu %7.2lf%%\n", Int16x8::streamedWrites, Int16x8::streamedWrites * 100.0 / total);
-
-	Int16x8::resetAlignmnetCouters();
-#endif
-
-
-#endif // WITH_SSE
-    cout << "PASSED" << endl;
-    return 0;
-}

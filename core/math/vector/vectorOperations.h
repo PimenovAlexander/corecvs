@@ -221,7 +221,6 @@ public:
      * \param V2
      *
      **/
-    //friend inline RealType operator +(const VectorOperationsBase &V1, const VectorOperationsBase &V2)
     friend inline ReturnType operator +(const RealType &V1, const RealType &V2)
     {
         int length = V1._size() < V2._size() ? V1._size() : V2._size();
@@ -239,7 +238,6 @@ public:
      * \param V1
      * \param V2
      **/
-    //friend inline RealType operator -(const VectorOperationsBase &V1, const VectorOperationsBase &V2)
     friend inline ReturnType operator -(const RealType &V1, const RealType &V2)
     {
         //cout << "Subtract v1: " << V1 << std::endl;
@@ -260,7 +258,6 @@ public:
      * \param V1
      * \param V2
      **/
-    //friend inline RealType operator *(const VectorOperationsBase &V1, const VectorOperationsBase &V2)
     friend inline ReturnType operator *(const RealType &V1, const RealType &V2)
     {
         int length = V1._size() < V2._size() ? V1._size() : V2._size();
@@ -278,7 +275,6 @@ public:
      * \param V1
      * \param V2
      **/    
-    //friend inline RealType operator /(const VectorOperationsBase &V1, const VectorOperationsBase &V2)
     friend inline ReturnType operator /(const RealType &V1, const RealType &V2)
     {
         int length = V1._size() < V2._size() ? V1._size() : V2._size();
@@ -298,7 +294,6 @@ public:
      * \param c
      * \param V
      **/
-    //friend inline RealType operator *(const ElementType &c, const VectorOperationsBase &V)
     friend inline ReturnType operator *(const ElementType &c, const RealType &V)
     {
         ReturnType result = V._createVector(V._size());
@@ -308,7 +303,6 @@ public:
         return result;
     }
 
-    // friend inline RealType operator *(const VectorOperationsBase &V, const ElementType &c)
     friend inline ReturnType operator *(const RealType &V, const ElementType &c)
     {
         return operator *(c, V);
@@ -322,7 +316,6 @@ public:
      * \param c
      * \param V
      **/
-    //friend inline RealType operator /(const VectorOperationsBase &V, const ElementType &c)
     friend inline ReturnType operator /(const RealType &V, const ElementType &c)
     {
         ReturnType result = V._createVector(V._size());
@@ -344,7 +337,6 @@ public:
      *
      *
      **/
-    //friend inline ElementType operator &(const VectorOperationsBase &V1, const VectorOperationsBase &V2)
     friend inline ElementType operator &(const RealType &V1, const RealType &V2)
     {
         int length = V1._size() < V2._size() ? V1._size() : V2._size();
@@ -613,16 +605,59 @@ public:
         return minimum;
     }
 
-    /** Please don't use this for double so far*/
     inline ElementType maximum() const
     {
-        ElementType maximum = numeric_limits<ElementType>::min();
+        ElementType maximum = numeric_limits<ElementType>::lowest();
         for (int i = 0; i < _size(); i++)
         {
             if (_at(i) > maximum)
                 maximum = _at(i);
         }
         return maximum;
+    }
+
+    inline ElementType minimumId() const
+    {
+        ElementType minimum = numeric_limits<ElementType>::max();
+        int minId = 0;
+        for (int i = 0; i < _size(); i++)
+        {
+            if (_at(i) < minimum) {
+                minimum = _at(i);
+                minId = i;
+            }
+        }
+        return minId;
+    }
+
+    inline ElementType maximumId() const
+    {
+        ElementType maximum = numeric_limits<ElementType>::lowest();
+        int maxId = 0;
+        for (int i = 0; i < _size(); i++)
+        {
+            if (_at(i) > maximum) {
+                maximum = _at(i);
+                maxId = i;
+            }
+        }
+        return maxId;
+    }
+
+
+    inline ElementType minimumAbsId() const
+    {
+        ElementType minimum = numeric_limits<ElementType>::max();
+        int minId = 0;
+        for (int i = 0; i < _size(); i++)
+        {
+            ElementType absolute = CORE_ABS(_at(i));
+            if (absolute < minimum) {
+                minimum = absolute;
+                minId = i;
+            }
+        }
+        return minId;
     }
 
     /* Reflection block */

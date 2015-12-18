@@ -147,8 +147,8 @@ public:
             G12Buffer *second
             )
     {
-        ASSERT_TRUE(first  != NULL, "Arguments should not be null");
-        ASSERT_TRUE(second != NULL, "Arguments should not be null");
+        CORE_ASSERT_TRUE(first != NULL, "Arguments should not be null");
+        CORE_ASSERT_TRUE(second != NULL, "Arguments should not be null");
 
         FlowBuffer *prevFlow = NULL;
         FlowBuffer *currentFlow = NULL;
@@ -200,9 +200,9 @@ public:
             double nullThreshold) const
     {
 
-        ASSERT_TRUE(calculationContext.first    != NULL, "NULL parameter fisrt");
-        ASSERT_TRUE(calculationContext.second   != NULL, "NULL parameter second");
-        ASSERT_TRUE(calculationContext.gradient != NULL, "NULL parameter gradient");
+        CORE_ASSERT_TRUE(calculationContext.first != NULL, "NULL parameter fisrt");
+        CORE_ASSERT_TRUE(calculationContext.second != NULL, "NULL parameter second");
+        CORE_ASSERT_TRUE(calculationContext.gradient != NULL, "NULL parameter gradient");
         G12Buffer *first  = calculationContext.first;
         G12Buffer *second = calculationContext.second;
 
@@ -326,10 +326,9 @@ public:
             Vector2dd *startGuess,
             double nullThreshold) const
     {
-
-        ASSERT_TRUE(calculationContext.first    != NULL, "NULL parameter fisrt");
-        ASSERT_TRUE(calculationContext.second   != NULL, "NULL parameter second");
-        ASSERT_TRUE(calculationContext.gradient != NULL, "NULL parameter gradient");
+        CORE_ASSERT_TRUE(calculationContext.first != NULL, "NULL parameter fisrt");
+        CORE_ASSERT_TRUE(calculationContext.second != NULL, "NULL parameter second");
+        CORE_ASSERT_TRUE(calculationContext.gradient != NULL, "NULL parameter gradient");
         G12Buffer *first  = calculationContext.first;
         G12Buffer *second = calculationContext.second;
 
@@ -390,14 +389,14 @@ public:
                                 interpolator.interpolate(y + currentGuess.y(), x + currentGuess.x(), second);
 
                     double Ix = (double)(
-                            interpolator.interpolate(y      , min(first->w - 1.0, x + 1.0), first) -
-                            interpolator.interpolate(y      , max(0.0, x - 1.0), first)
-                                ) / (min(first->w - 1.0, x + 1.0) - max(0.0, x - 1.0));
+                            interpolator.interpolate(y      , CORE_MIN(first->w - 1.0, x + 1.0), first) -
+                            interpolator.interpolate(y      , CORE_MAX(0.0, x - 1.0), first)
+                                ) / (CORE_MIN(first->w - 1.0, x + 1.0) - CORE_MAX(0.0, x - 1.0));
 
                     double Iy = (double)(
-                                interpolator.interpolate(min(first->h - 1.0, y + 1.0), x, first) -
-                            interpolator.interpolate(max(0.0, y - 1.0), x, first)
-                                ) / (min(first->h - 1.0, y) - max(0.0, y - 1.0));
+                                interpolator.interpolate(CORE_MIN(first->h - 1.0, y + 1.0), x, first) -
+                            interpolator.interpolate(CORE_MAX(0.0, y - 1.0), x, first)
+                                ) / (CORE_MIN(first->h - 1.0, y) - CORE_MAX(0.0, y - 1.0));
                     DOTRACE(("%d %d ( %lf %lf %lf)\n", i, j, dI, Ix, Iy));
 
                     mSG += Vector3dd(Ix * Ix, Ix * Iy, Iy * Iy);
@@ -426,7 +425,7 @@ public:
         *startGuess = currentGuess;
         return true;
     }
-    virtual ~KLTGenerator(){};
+    virtual ~KLTGenerator(){}
 };
 
 } //namespace corecvs

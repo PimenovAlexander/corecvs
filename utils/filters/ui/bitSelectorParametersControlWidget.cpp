@@ -60,6 +60,29 @@ void BitSelectorParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void BitSelectorParametersControlWidget::getParameters(BitSelectorParameters& params) const
+{
+
+    params.setShift            (mUi->shiftSpinBox->value());
+    params.setBit0             (mUi->bit0CheckBox->isChecked());
+    params.setBit1             (mUi->bit1CheckBox->isChecked());
+    params.setBit2             (mUi->bit2CheckBox->isChecked());
+    params.setBit3             (mUi->bit3CheckBox->isChecked());
+    params.setBit4             (mUi->bit4CheckBox->isChecked());
+    params.setBit5             (mUi->bit5CheckBox->isChecked());
+    params.setBit6             (mUi->bit6CheckBox->isChecked());
+    params.setBit7             (mUi->bit7CheckBox->isChecked());
+    params.setBit8             (mUi->bit8CheckBox->isChecked());
+    params.setBit9             (mUi->bit9CheckBox->isChecked());
+    params.setBit10            (mUi->bit10CheckBox->isChecked());
+    params.setBit11            (mUi->bit11CheckBox->isChecked());
+    params.setBit12            (mUi->bit12CheckBox->isChecked());
+    params.setBit13            (mUi->bit13CheckBox->isChecked());
+    params.setBit14            (mUi->bit14CheckBox->isChecked());
+    params.setBit15            (mUi->bit15CheckBox->isChecked());
+
+}
 
 BitSelectorParameters *BitSelectorParametersControlWidget::createParameters() const
 {

@@ -1,24 +1,25 @@
 # try use global config 
 exists(../../../config.pri) {
     #message(Using global config)
-    ROOT_DIR=../../../
+    ROOT_DIR=../../..
+    include($$ROOT_DIR/config.pri)
 } else { 
     message(Using local config)
-    ROOT_DIR=../    
+    ROOT_DIR=..
+    include($$ROOT_DIR/cvs-config.pri)
 }
-include($$ROOT_DIR/config.pri)
-    
 
-CONFIG  += staticlib
-TARGET   = cvs_core
 TEMPLATE = lib
+TARGET   = cvs_core
+CONFIG  += staticlib
 
-COREDIR = .
-include(core.pri)                                   # it uses COREDIR, TARGET and detects COREBINDIR!
+include(core.pri)                                   # it uses TARGET and detects COREBINDIR!
+include($$ROOT_DIR/git-version.pri)
 
 OBJECTS_DIR = $$ROOT_DIR/.obj/cvs_core$$BUILD_CFG_NAME
 MOC_DIR     = $$OBJECTS_DIR
 UI_DIR      = $$OBJECTS_DIR
+RCC_DIR     = $$OBJECTS_DIR
 
 TARGET  = $$join(TARGET,,,$$BUILD_CFG_SFX)          # add 'd' at the end for debug versions
 
@@ -55,5 +56,29 @@ include(stats/stats.pri)
 include(tbbwrapper/tbbwrapper.pri)
 include(utils/utils.pri)
 include(clustering3d/clustering3d.pri)
+#include(features2d/features2d.pri)
+#include(patterndetection/patterndetection.pri)
+#include(cameracalibration/cameracalibration.pri)
+#include(graphs/graphs.pri)
+#include(reconstruction/reconstruction.pri)
+#include(polynomial/polynomial.pri)
+include(meta/meta.pri)
+
 
 include(xml/generated/generated.pri)
+
+
+
+OTHER_FILES +=            \
+    xml/parameters.xml    \
+    xml/bufferFilters.xml \
+    xml/clustering1.xml   \
+    xml/filterBlock.xml   \
+    xml/precise.xml       \
+    xml/distortion.xml    \
+
+OTHER_FILES +=            \
+    ../tools/generator/regen-core.sh \
+    ../tools/generator/h_stub.sh \
+
+

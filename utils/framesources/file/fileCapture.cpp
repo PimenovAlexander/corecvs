@@ -48,13 +48,10 @@ FileCaptureInterface::FramePair FileCaptureInterface::getFrame()
 
     if (!result.bufferLeft || !result.bufferRight)
     {
-        delete_safe(result.bufferLeft);
-        delete_safe(result.bufferRight);
-
+        result.freeBuffers();
         if (mVerbose) {
             printf("File not found, resetting to first image in the sequence.\n");
         }
-
         resetImageFileCounter();
         return getFrame();
     }
@@ -74,6 +71,4 @@ ImageCaptureInterface::CapErrorCode FileCaptureInterface::startCapture()
 }
 
 FileCaptureInterface::~FileCaptureInterface()
-{
-}
-
+{}

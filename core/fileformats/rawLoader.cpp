@@ -63,7 +63,7 @@ uint16_t RAWLoader::transform(RAWLoader::RawFileType type, uint8_t byte1, uint8_
         case RAWLoader::TYPE_16_BIT_LOW_ONLY :
             return ((uint16_t)byte2 << 4);
         default:
-            ASSERT_TRUE(false, "Internal Error");
+            CORE_ASSERT_TRUE(false, "Internal Error");
     }
     return 0;
 }

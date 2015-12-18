@@ -10,6 +10,7 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include "gtest/gtest.h"
 
 #include "global.h"
 #include "vjPattern.h"
@@ -23,7 +24,8 @@
 using namespace std;
 using namespace corecvs;
 
-int main (int /*argC*/, char *argV[])
+//int main (int /*argC*/, char *argV[])
+TEST(FaceRecognition, main)
 {
     const double FACTOR = 1.25;
 
@@ -108,7 +110,7 @@ int main (int /*argC*/, char *argV[])
     }
 
     printf("Found %d faces among %d objects %2.2lf%%\n", positive, total, (double) 100.0 * positive / total );
-    (BMPLoader()).save("output.bmp", output);
-    return 0;
+    (BMPLoader()).save("output.bmp", output);    
+    //    return 0;
 }
 

@@ -21,6 +21,8 @@
 using namespace tbb;
 #endif
 
+#include "global.h"
+
 namespace corecvs {
 
 template <typename IndexType>
@@ -76,7 +78,7 @@ public:
      *
      **/
 #ifdef WITH_TBB
-    BlockedRange(BlockedRange& r, split) :
+    BlockedRange(BlockedRange& r, tbb::split) :
         myGrainsize(r.myGrainsize)
     {
         myEnd = r.myEnd;
@@ -85,7 +87,7 @@ public:
 #endif
 
     static IndexType do_split( BlockedRange& r ) {
-        ASSERT_TRUE(r.is_divisible(), "TBB Wrapper internal error\n");
+        CORE_ASSERT_TRUE(r.is_divisible(), "TBB Wrapper internal error\n");
         IndexType middle = r.myBegin + (r.myEnd - r.myBegin) / 2u;
         r.myEnd = middle;
         return middle;

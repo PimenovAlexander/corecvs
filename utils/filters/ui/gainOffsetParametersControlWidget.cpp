@@ -45,6 +45,14 @@ void GainOffsetParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void GainOffsetParametersControlWidget::getParameters(GainOffsetParameters& params) const
+{
+
+    params.setGain             (mUi->gainSpinBox->value());
+    params.setOffset           (mUi->offsetSpinBox->value());
+
+}
 
 GainOffsetParameters *GainOffsetParametersControlWidget::createParameters() const
 {

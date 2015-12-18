@@ -69,7 +69,7 @@ public:
             {
 #ifdef ASSERTS
 //                ElementType test_sum = sum + input->element(i, j);
-//                ASSERT_FALSE((test_sum < sum || test_sum < input->element(i, j)), "Overflow while creating the integral buffer");
+//                CORE_ASSERT_FALSE((test_sum < sum || test_sum < input->element(i, j)), "Overflow while creating the integral buffer");
 
 #endif
                 sum += *baseOffset;

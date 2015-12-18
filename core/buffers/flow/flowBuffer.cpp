@@ -78,7 +78,6 @@ Vector2dd FlowBuffer::getMeanDifference()
 }
 
 //---------------------------------------------------------------------------
-#if 0
 FlowBuffer* FlowBuffer::load(const string& path)
 {
     bool_t binaryMode = path.rfind(".txt") == string::npos;
@@ -160,6 +159,5 @@ bool FlowBuffer::dump(const string& path) const
 
     return !file.bad();
 }
-#endif
 
 } //namespace corecvs

@@ -6,6 +6,7 @@
  * \author alexander
  */
 
+#include <QDir>
 #include <iostream>
 
 #include "widgetUIGenerator.h"
@@ -40,7 +41,7 @@ void WidgetUiGenerator::generateWidgetUi()
     int fieldNumber = clazz->fields.size();
 
     out.close();
-    out.open(QString("Generated/" + toCamelCase(className) + ".ui").toLatin1(), ios::out);
+    out.open(QString(getGenerateDir() + QDir::separator() + toCamelCase(className) + ".ui").toLatin1(), ios::out);
 
     result +=
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -107,7 +108,7 @@ void WidgetUiGenerator::generateWidgetUi()
 
         for (int j = 0; j < eref->optionsNumber(); j ++)
         {
-            const EnumOption *option = eref->options[j];
+            const EnumOptionGen *option = static_cast<const EnumOptionGen *>(eref->options[j]);
             QString name = option->name.name;
             QString descr = option->name.decription;
 
@@ -115,7 +116,21 @@ void WidgetUiGenerator::generateWidgetUi()
     "       <item>\n"
     "        <property name=\"text\">\n"
     "         <string>"+descr+"</string>\n"
-    "        </property>\n"
+    "        </property>\n";
+            if (!option->icon.isEmpty())
+            {
+              QStringList icon = option->icon.split("@");
+              QString iconName = icon[0];
+              QString iconRes  = icon[1];
+
+      result +=
+    "        <property name=\"icon\">\n"
+    "        <iconset resource=\""+iconRes+"\">\n"
+    "         <normaloff>"+iconName+"</normaloff>"+iconName+"\n"
+    "        </iconset>\n"
+    "        </property>\n";
+            }
+      result +=
     "       </item>\n";
         }
     }
@@ -147,7 +162,7 @@ void WidgetUiGenerator::generateWidgetUi()
 
     if (type == BaseField::TYPE_DOUBLE)
     {
-        const DoubleField *dfield = static_cast<const DoubleField *>(field);
+        const DoubleFieldGen *dfield = static_cast<const DoubleFieldGen *>(field);
         if (dfield->hasAdditionalValues)
             result +=
     "       <property name=\"minimum\">\n"
@@ -162,6 +177,24 @@ void WidgetUiGenerator::generateWidgetUi()
     "       <property name=\"value\">\n"
     "        <double>" + QString::number(dfield->defaultValue) + "</double>\n"
     "       </property>\n";
+
+        if (!dfield->prefix.isEmpty())
+            result +=
+    "       <property name=\"prefix\">\n"
+    "        <string>" + dfield->prefix + "</string>\n"
+    "       </property>\n";
+
+        if (!dfield->suffix.isEmpty())
+            result +=
+    "       <property name=\"suffix\">\n"
+    "        <string>" + dfield->suffix + "</string>\n"
+    "       </property>\n";
+        if (dfield->decimals != 2)
+            result +=
+    "       <property name=\"decimals\">\n"
+    "        <number>" + QString::number(dfield->decimals) + "</number>\n"
+    "       </property>\n";
+
     }
 
     if (type == BaseField::TYPE_BOOL)

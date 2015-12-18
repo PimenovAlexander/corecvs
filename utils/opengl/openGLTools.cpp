@@ -70,31 +70,6 @@ void OpenGLTools::glMultMatrixMatrix33(const Matrix33 &p)
     glMultMatrixd(Matrix44(p).transposed().element);
 }
 
-Matrix44 OpenGLTools::glGetProjectionMatrix()
-{
-    float arr[16];
-    glGetFloatv(GL_PROJECTION_MATRIX, arr);
-    Matrix44 result(
-            arr[0], arr[4], arr[ 8], arr[12],
-            arr[1], arr[5], arr[ 9], arr[13],
-            arr[2], arr[6], arr[10], arr[14],
-            arr[3], arr[7], arr[11], arr[15]
-    );
-    return result;
-}
-
-Matrix44 OpenGLTools::glGetModelViewMatrix()
-{
-    float arr[16];
-    glGetFloatv(GL_MODELVIEW_MATRIX, arr);
-    Matrix44 result(
-            arr[0], arr[4], arr[ 8], arr[12],
-            arr[1], arr[5], arr[ 9], arr[13],
-            arr[2], arr[6], arr[10], arr[14],
-            arr[3], arr[7], arr[11], arr[15]
-    );
-    return result;
-}
 
 
 void OpenGLTools::drawWiredBox(const Vector3dd &p1, const Vector3dd &p2)

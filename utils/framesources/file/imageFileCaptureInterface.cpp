@@ -61,34 +61,25 @@ string ImageFileCaptureInterface::getImageFileName(uint imageNumber, uint channe
         /**
          * We're to check correctness of the current directory, but we need a path to "data" folder with image files.
          *
-         *       "../"  - Bin directory curDir
-         *    "../../"  - OpenCL project curDir
-         * "../../../"  - MSVC sets curDir to the project dir (= "hostSoft")
+         *          "../"  - Bin directory curDir
+         * "../../../../"  - MSVC sets curDir to the project dir (= "host_soft")
+         * "../../../../"  - OpenCL project curDir
          *
-         * \note  But from another side it's dangerously to scan up to 3 levels by trying to find a requested file.\n
+         * \note  It's slightly dangerously to check 4 levels up for a requested file,\n
          *        especially if there's a special folder structure with different series...
-         *        Therefore for Unix it's applied only for one parent as we run from the bin directory, \n
-         *        but usually use images by path like this: "data/pair".
+         *        Therefore for Unix it's checked one level up as we've run from Bin dir,\n
+         *        and usually we use path as "data/pair" for test images.
          */
-        string path(pathName);
-        string prefix;
-
-#ifdef WIN32
-        cuint numRecursiveFoldersToCheck = 3;
-#else
-        cuint numRecursiveFoldersToCheck = 1;               // one check for parent dir is ok or also dangerously?
-#endif
-        for (unsigned k = 0; k < numRecursiveFoldersToCheck; k++)
+        if (QFile::exists((string("../") + pathName).c_str()))
         {
-            path  .insert(0, "../");
-            prefix.insert(0, "../");                        // try at folder one step up
-
-            if (QFile::exists(path.c_str()))
-            {
-                mPathPrefix.assign(prefix);
-                break;
-            }
+            mPathPrefix = "../";
         }
+#ifdef WIN32
+        else if (QFile::exists((string("../../../../") + pathName).c_str()))
+        {
+            mPathPrefix = "../../../../";
+        }
+#endif
     }
 
     return mPathPrefix + pathName;

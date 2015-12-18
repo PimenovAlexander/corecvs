@@ -44,10 +44,6 @@ typedef int                bool_t;                          // fast Boolean type
 # endif
 #endif
 
-#ifdef is__cplusplus
-    extern "C" {
-#endif
-
 // Hooks for memory profiling and leaks search
 #if defined(ASSERTS) || defined(TRACE)
 #   include <stdlib.h>
@@ -55,10 +51,11 @@ typedef int                bool_t;                          // fast Boolean type
 #endif
 
 #ifdef WIN32
-#   define strdup     _strdup
-#   define strcasecmp _stricmp
+#   define strdup       _strdup
+#   define strcasecmp   _stricmp
 #   ifdef _MSC_VER
-#    define snprintf sprintf_s
+#    define snprintf    sprintf_s
+#    define putenv      _putenv
 #   endif
 #endif
 
@@ -66,61 +63,110 @@ typedef int                bool_t;                          // fast Boolean type
 #   define printf xil_printf
 #endif
 
-#define DASSERT_FAIL(X)                                         \
+#ifdef GTEST_INCLUDE_GTEST_GTEST_H_
+    // gtest.h is included - the test is being compiled. We should activate our
+    //                       internal assertion mechanism if it was switched off!
+# ifndef  ASSERTS
+#  define ASSERTS
+# endif
+#endif
+
+#ifdef is__cplusplus
+# ifdef ASSERTS
+
+#   include <stdexcept>
+    /** This structure need to issue the exception, which nobody catches
+     *  that allow gtest to continue tests execution,
+     *  but for the application it dues to stop unless we catch this exception.
+     */
+    struct AssertException : public std::runtime_error
+    {
+        AssertException(const char* codeExpr) : std::runtime_error(codeExpr) {}
+    };
+
+#  define RAISE_ASSERT(text)    throw AssertException(text);
+# else
+#  define RAISE_ASSERT(text)
+# endif
+#else
+# define  RAISE_ASSERT(text)    exit(-2)
+#endif
+
+#define CORE_DASSERT_FAIL(X)                                    \
     do {                                                        \
         printf("Assert at %s:%d - %s\n", __FILE__, __LINE__, X);\
         fflush(stdout);                                         \
         stackTraceHandler(0xFF);                                \
-        exit (-2);                                              \
+        RAISE_ASSERT(X);                                        \
     } while (0)
 
-#define DASSERT_FAIL_P(X)                                       \
+#define CORE_DASSERT_FAIL_P(X)                                  \
     do {                                                        \
         printf("Assert at %s:%d - ", __FILE__, __LINE__);       \
         printf X;                                               \
         fflush(stdout);                                         \
         stackTraceHandler(0xFF);                                \
-        exit (-2);                                              \
+        RAISE_ASSERT(#X);                                       \
     } while (0)
+
 
 #ifdef ASSERTS
 
-# define ASSERT_FAIL(X)          DASSERT_FAIL(X)
-# define ASSERT_FAIL_P(X)        DASSERT_FAIL_P(X)
-# define ASSERT_TRUE(Y, X)       if (!(Y)) { ASSERT_FAIL(X);   }
-# define ASSERT_TRUE_S(Y)        if (!(Y)) { ASSERT_FAIL(#Y);  }
-# define ASSERT_FALSE(Y, X)      if (Y)    { ASSERT_FAIL(X);   }
-# define ASSERT_FALSE_S(Y)       if (Y)    { ASSERT_FAIL(#Y);  }
-# define ASSERT_TRUE_P(Y, X)     if (!(Y)) { ASSERT_FAIL_P(X); }
-# define ASSERT_FALSE_P(Y, X)    if (Y)    { ASSERT_FAIL_P(X); }
+# define CORE_ASSERT_FAIL(X)        CORE_DASSERT_FAIL(X)
+# define CORE_ASSERT_FAIL_P(X)      CORE_DASSERT_FAIL_P(X)
+# define CORE_ASSERT_TRUE_S(Y)      if (!(Y)) { CORE_ASSERT_FAIL(#Y);  }
+# define CORE_ASSERT_TRUE_P(Y, X)   if (!(Y)) { CORE_ASSERT_FAIL_P(X); }
+# define CORE_ASSERT_FALSE_S(Y)     if (Y)    { CORE_ASSERT_FAIL(#Y);  }
+# define CORE_ASSERT_FALSE_P(Y, X)  if (Y)    { CORE_ASSERT_FAIL_P(X); }
 
-# define ASSERT_DOUBLE_EQUAL_E(X,Y,Eps, Text) \
-    ASSERT_TRUE((X) > ((Y) - Eps) && (X) < ((Y) + Eps), Text)
+// these both macros without prefix "CORE_" are conflicting with gtest's ones
+# define CORE_ASSERT_TRUE(Y, X)     if (!(Y)) { CORE_ASSERT_FAIL(X);   }
+# define CORE_ASSERT_FALSE(Y, X)    if (Y)    { CORE_ASSERT_FAIL(X);   }
 
-# define ASSERT_DOUBLE_EQUAL(X,Y, Text) \
-    ASSERT_DOUBLE_EQUAL_E(X, Y, 1e-10, Text)
+# define CORE_ASSERT_EQ_P(X, Y, Text) if (X != Y) { CORE_ASSERT_FAIL_P(Text); }
+
+# define CORE_ASSERT_DOUBLE_EQUAL_E(X,Y,Eps, Text) \
+         CORE_ASSERT_TRUE((X) > ((Y) - Eps) && (X) < ((Y) + Eps), Text)
+
+# define CORE_ASSERT_DOUBLE_EQUAL_EP(X,Y,Eps, Text) \
+         CORE_ASSERT_TRUE_P((X) > ((Y) - Eps) && (X) < ((Y) + Eps), Text)
+
+# define CORE_ASSERT_DOUBLE_EQUAL(X,Y, Text) \
+         CORE_ASSERT_DOUBLE_EQUAL_E(X, Y, 1e-10, Text)
+
+# define CORE_ASSERT_DOUBLE_EQUAL_P(X,Y, Text) \
+         CORE_ASSERT_DOUBLE_EQUAL_EP(X, Y, 1e-10, Text)
+
+# ifdef GTEST_INCLUDE_GTEST_GTEST_H_
+//#  undef  CORE_DASSERT_FAIL
+//#  define CORE_DASSERT_FAIL(X)    GTEST_NONFATAL_FAILURE_(X)
+//#  undef  CORE_DASSERT_FAIL_P
+//#  define CORE_DASSERT_FAIL_P(X)  do { SYNC_PRINT(X); GTEST_NONFATAL_FAILURE_("xxx"); } while (0)
+# endif
 
 #else // ASSERTS
 
-# define ASSERT_FAIL(X)
-# define ASSERT_TRUE_S(Y)
-# define ASSERT_TRUE(Y, X)
-# define ASSERT_FALSE_S(Y)
-# define ASSERT_FALSE(Y, X)
-# define ASSERT_TRUE_P(Y, X)
-# define ASSERT_FALSE_P(Y, X)
-# define ASSERT_DOUBLE_EQUAL_E(X,Y,Eps, Text)
-# define ASSERT_DOUBLE_EQUAL(X,Y,Text)
+# if !defined(DEBUG) || defined(NDEBUG)
+#  undef  CORE_DASSERT_FAIL
+#  define CORE_DASSERT_FAIL(X)
+#  undef  CORE_DASSERT_FAIL_P
+#  define CORE_DASSERT_FAIL_P(X)
+# endif // !DEBUG
 
-# ifdef DEBUG
-#  define DASSERT_TRUE_P(Y, X)   if (!(Y)) { DASSERT_FAIL_P(X); }
-# else
-#  define DASSERT_TRUE_P(Y, X)
-#  undef  DASSERT_FAIL
-#  define DASSERT_FAIL(X)
-#  undef  DASSERT_FAIL_P
-#  define DASSERT_FAIL_P(X)
-# endif
+# define CORE_ASSERT_FAIL(X)
+# define CORE_ASSERT_FAIL_P(X)
+# define CORE_ASSERT_TRUE_S(Y)
+# define CORE_ASSERT_TRUE_P(Y, X)
+# define CORE_ASSERT_FALSE_S(Y)
+# define CORE_ASSERT_FALSE_P(Y, X)
+
+# define CORE_ASSERT_TRUE(Y, X)
+# define CORE_ASSERT_FALSE(Y, X)
+
+# define CORE_ASSERT_DOUBLE_EQUAL_E( X,Y,Eps, Text)
+# define CORE_ASSERT_DOUBLE_EQUAL_EP(X,Y,Eps, Text)
+# define CORE_ASSERT_DOUBLE_EQUAL(   X,Y, Text)
+# define CORE_ASSERT_DOUBLE_EQUAL_P( X,Y, Text)
 
 #endif // !ASSERTS
 
@@ -138,7 +184,7 @@ typedef int                bool_t;                          // fast Boolean type
    #define STATIC_ASSERT(CONDITION, VALUE)                         \
      _Pragma("GCC diagnostic push")                                \
      _Pragma("GCC diagnostic ignored \"-Wunused-local-typedefs\"") \
-     typedef int foo_##VALUE[(CONDITION) ? 1 : -1];                \
+     __attribute__((unused)) typedef int foo_##VALUE[(CONDITION) ? 1 : -1];                \
      _Pragma("GCC diagnostic pop")
 
 #else
@@ -151,7 +197,6 @@ do {                  \
     fflush(stdout);   \
 } while (0)
 
-/** TODO: Add flush*/
 #ifdef TRACE
 #   define DOTRACE(X) SYNC_PRINT(X)
 #else
@@ -170,8 +215,14 @@ do {                  \
 
 #ifndef OPENCL_KERNEL_CODE
 
-void stackTraceHandler(int sig);
-void setSegVHandler();
+#ifdef is__cplusplus
+extern "C" {
+#endif
+    void stackTraceHandler(int sig);
+    void setSegVHandler();
+#ifdef is__cplusplus
+} // extern "C"
+#endif
 
 #endif // !OPENCL_KERNEL_CODE
 
@@ -200,19 +251,24 @@ void setSegVHandler();
 #   define __STDC_FORMAT_MACROS
 #   include <inttypes.h>
 #   undef __STDC_FORMAT_MACROS
-#else
-#   ifndef PRIu64
-#   define PRIu64 "I64u"
-#   endif
-#   ifndef PRIi64
-#   define PRIi64 "I64d"
-#   endif
+#endif
+
+#ifndef  PRIu64
+# define PRIu64 "I64u"
+#endif
+#ifndef  PRIi64
+# define PRIi64 "I64d"
 #endif
 
 #define REFLECTION_IN_CORE
 
-#ifdef is__cplusplus
-    } //     extern "C"
+
+/** Useful macros for best compatibility with using development environments
+ */
+#if defined(WIN32) && _MSC_VER > 1200  // VS > 6.0
+# define USE_SAFE_RUNTIME_FUNCS                     // comment this to use old RT-funcs for VS > 6.0
+#else
+# undef  USE_SAFE_RUNTIME_FUNCS                     // non Windows platforms or old VS compiler
 #endif
 
 #ifdef is__cplusplus
@@ -226,11 +282,60 @@ inline int snprintf2buf(char (&d)[size], cchar* fmt, ...)
 {
     va_list  varList;
     va_start(varList, fmt);
+#ifdef USE_SAFE_RUNTIME_FUNCS
+    int iLen = vsnprintf_s((char*)d, size, size - 1, fmt, varList);
+#else
     int iLen = vsnprintf((char*)d, size, fmt, varList);
+#endif
     va_end(varList);
-    ASSERT_TRUE_S(iLen < (int)size);
+    CORE_ASSERT_TRUE_S(iLen < (int)size);
     return iLen;
 }
+
+#include <algorithm>
+namespace std
+{
+    template<typename U, typename V>
+    struct hash<pair<U, V>>
+    {
+        std::size_t operator() (const pair<U, V> &p) const
+        {
+            return std::hash<U>()(p.first) ^ std::hash<V>()(p.second);
+        }
+    };
+};
+
+
+#ifdef USE_SAFE_RUNTIME_FUNCS
+# define CORE_FOPEN(pFile, sName, sMode)    (fopen_s(&(pFile), (sName), (sMode)) ? ((pFile) = NULL, 0) : (1))
+#else
+# define CORE_FOPEN(pFile, sName, sMode)    (((pFile) = fopen((sName), (sMode))) != NULL ? (1) : (0))
+#endif
+
+/** MSVC: macro to help in memory leaks detection */
+#if defined(_MSC_VER) && defined(_DEBUG)
+# define USE_MSVC_DEBUG_MEM
+# define _CRTDBG_MAP_ALLOC
+# define _CRTDBG_MAP_ALLOC_NEW
+# include <stdlib.h>
+# include <crtdbg.h>
+// It's strange that msvc's inlines for new/delete don't work properly...
+//#  define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ ) // this doesn't work for new inplace :(
+//#  define new DBG_NEW
+inline void * __CRTDECL operator new[](size_t _Size) {
+    return ::operator new[](_Size, _NORMAL_BLOCK, __FILE__, __LINE__);
+}
+inline void * __CRTDECL operator new(size_t _Size) {
+    return ::operator new(_Size, _NORMAL_BLOCK, __FILE__, __LINE__);
+}
+//template<typename T> inline void * operator new (T) {
+//    void * p = ::operator new(sizeof(T), _NORMAL_BLOCK, __FILE__, __LINE__);
+//    return new (p)T;
+//}
+//inline void * __CRTDECL operator new(size_t _Size, void *p) {
+//    return p;
+//}
+#endif
 
 /** Function for safe deleting objects and arrays */
 #include <stdlib.h>
@@ -239,6 +344,7 @@ template<typename Type>
 inline void delete_safe (Type * &ptr)
 {
     delete ptr;
+  //ptr = (Type *)(uintptr_t(NULL) - 1);		/* We are not hiding our mistakes by zeroing the pointer */
     ptr = NULL;
 }
 
@@ -246,20 +352,35 @@ template<typename Type>
 inline void deletearr_safe (Type * &ptr)
 {
     delete[] ptr;
+  //ptr = (Type *)(uintptr_t(NULL) - 1);		/* We are not hiding our mistakes by zeroing the pointer */
     ptr = NULL;
 }
 
 /** Compatibility with old STL library versions without data() method of the vector object */
 #if defined(_MSC_VER) && _MSC_VER <= 1500
-# define GET_VEC_DATA_PTR(vec)  &(vec[0])
+# define VEC_DATA_PTR(vec)      &(vec[0])
 #else
-# define GET_VEC_DATA_PTR(vec)  vec.data()
+# define VEC_DATA_PTR(vec)      vec.data()
 #endif
 
-
-#if defined(_MSC_VER)
-
+#ifdef _WIN32
+#   define PATH_SEPARATOR "\\"
+#else
+#   define PATH_SEPARATOR  "/"
 #endif
+
+#if defined(_WIN32) && defined(_MSC_VER) && _MSC_VER < 1800
+#   define FOREACH(X, Y) for each (X in Y)      // msvc understands standard since vc12
+#else
+#   define FOREACH(X, Y) for (X : Y)
+#endif
+
+//#define QSTR_DATA_PTR(qstring)        (qstring).toLatin1().data()
+#define   QSTR_DATA_PTR(qstring)        (qstring).toStdString().c_str()  // after using textCodecs we should use this
+
+#define   QSTR_HAS_SLASH_AT_END(qstring)  ((qstring).length() > 1 && \
+                                          ((qstring)[(qstring).length() - 1] == '/' || \
+                                           (qstring)[(qstring).length() - 1] == '\\'))
 
 #endif // is__cplusplus
 

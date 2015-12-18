@@ -7,11 +7,12 @@
  * \author Alexander Pimenov
  */
 
-#ifndef _VECTOR_H_
-#define _VECTOR_H_
+#ifndef _VECTOR3D_H_
+#define _VECTOR3D_H_
 
 #include "math.h"
 #include "vector2d.h"
+#include "vector.h"
 namespace corecvs {
 
 /*
@@ -44,6 +45,15 @@ public:
     inline Vector3d(const Vector2d<ElementType> &V, const ElementType &x) :
         BaseClass(V,x)
     {}
+
+    explicit operator Vector() const
+    {
+        Vector v(3);
+        v[0] = (*this)[0];
+        v[1] = (*this)[1];
+        v[2] = (*this)[2];
+        return v;
+    }
 
     //@{
     /**
@@ -99,6 +109,14 @@ public:
     {
         return Vector2d<ElementType>(y(), z());
     }
+
+    void setXY(const Vector2d<ElementType> &vec2d )
+    {
+        this->x() = vec2d[0];
+        this->y() = vec2d[1];
+    }
+
+
 
     /**
      * \brief This function implements the vector cross product (See http://en.wikipedia.org/wiki/Vector_product).
@@ -196,6 +214,31 @@ public:
         return this->isInHypercube(low, high);
     }
 
+    /**
+     * Calculates two vector that give an ortogonal basis with the current one.
+     **/
+    void orthogonal(Vector3d<ElementType> &first, Vector3d<ElementType> &second) const
+    {
+        Vector3d<ElementType> n = this->normalised();
+        int min = n.minimumAbsId();
+        Vector3d<ElementType> ort(0.0);
+        ort[min] = 1.0;
+
+        ort = ort - n * (n & ort);
+
+        first  = ort.normalised();
+        second = (ort ^ *this).normalised();
+    }
+
+    /**
+     *   Return the vector from angle and length and height
+     **/
+    static Vector3d FromCylindrical(double angle, double length = 1.0, double height = 0.0)
+    {
+        return Vector3d(cos(angle) * length, sin(angle) * length, height);
+    }
+
+
 
     /*template<typename OtherType>
     inline operator Vector3d<OtherType>()
@@ -210,6 +253,24 @@ template<class VisitorType>
         visitor.visit(z(), ElementType(0), "z");
     }
 
+    /* Some frequently used vectors*/
+    static Vector3d<ElementType> Zero() {
+        return Vector3d<ElementType>(0.0, 0.0, 0.0);
+    }
+
+    static Vector3d<ElementType> OrtX() {
+        return Vector3d<ElementType>(1.0, 0.0, 0.0);
+    }
+
+    static Vector3d<ElementType> OrtY() {
+        return Vector3d<ElementType>(0.0, 1.0, 0.0);
+    }
+
+    static Vector3d<ElementType> OrtZ() {
+        return Vector3d<ElementType>(0.0, 0.0, 1.0);
+    }
+
+
 };
 
 typedef Vector3d<double> Vector3dd;
@@ -221,5 +282,6 @@ typedef Vector3d<int16_t> Vector3d16;
 
 
 } //namespace corecvs
-#endif
+
+#endif // _VECTOR3D_H_
 

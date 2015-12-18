@@ -2,7 +2,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QObject>
 #include <QtCore/QTimer>
-#include <QWidget>
+#include <QtGui/QWidget>
 
 #include "serializer.h"
 

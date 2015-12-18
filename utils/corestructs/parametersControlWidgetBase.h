@@ -9,8 +9,7 @@
  * \author alexander
  */
 
-#include <QtGui>
-#include <QWidget>
+#include <QtGui/QtGui>
 
 #include "global.h"
 
@@ -102,19 +101,16 @@ class SaveableWidget
 {
 public:
 
-    virtual void loadFromQSettings  (const QString &fileName, const QString &_root)
+    virtual void loadFromQSettings  (const QString &fileName, QString _root)
     {
-//        qDebug("SaveableWidget::loadFromQSettings(\"%s\", \"%s\"): called",fileName.toLatin1().constData(), _root.toLatin1().constData());
-
         SettingsGetter visitor(fileName, _root);
         WidgetLoader loader(&visitor);
         loadParamWidget(loader);
     }
 
-    virtual void saveToQSettings (const QString &fileName, const QString &_root)
+    virtual void saveToQSettings (const QString &fileName, QString _root)
     {
-//        qDebug("SaveableWidget::saveToQSettings(\"%s\", \"%s\"): called",fileName.toLatin1().constData(), _root.toLatin1().constData());
-
+        // qDebug() << "SaveableWidget::saveToQSettings: " << _root << " to file" << fileName;
         SettingsSetter visitor(fileName, _root);
         WidgetSaver saver(&visitor);
         saveParamWidget(saver);
@@ -131,7 +127,7 @@ class ParametersControlWidgetBase : public QWidget, public SaveableWidget
     Q_OBJECT
 
 public:
-    ParametersControlWidgetBase(QWidget *parent) : QWidget(parent) {}
+    ParametersControlWidgetBase(QWidget *parent) : QWidget(parent) {};
 
     virtual BaseReflectionStatic *createParametersVirtual() const;
     virtual ~ParametersControlWidgetBase();

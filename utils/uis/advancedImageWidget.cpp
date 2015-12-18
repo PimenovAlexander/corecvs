@@ -8,9 +8,9 @@
 
 
 #include <QtCore/QDebug>
-#include <QPainter>
-#include <QFileDialog>
-#include <QMouseEvent>
+#include <QtGui/QPainter>
+#include <QtGui/QFileDialog>
+#include <QtGui/QMouseEvent>
 
 #include "global.h"
 
@@ -76,6 +76,7 @@ AdvancedImageWidget::AdvancedImageWidget(QWidget *parent, bool showHeader):
 
     connect(&mToolMapper, SIGNAL(mapped(QWidget *)), this, SLOT(toolButtonReleased(QWidget *)));
     mCurrentToolClass = NO_TOOL;
+
 }
 
 AdvancedImageWidget::~AdvancedImageWidget()
@@ -83,18 +84,6 @@ AdvancedImageWidget::~AdvancedImageWidget()
     delete_safe(mUi);
     delete_safe(mSaveDialog);
     delete_safe(mResizeCache);
-}
-
-void AdvancedImageWidget::setCollapseTitle(bool collapse)
-{
-    QList<int> sizes;
-    if (collapse) {
-        sizes << 0 << 1;
-    } else {
-        sizes << 1 << 1;
-    }
-
-    mUi->splitter->setSizes(sizes);
 }
 
 void AdvancedImageWidget::setImage(QSharedPointer<QImage> newImage)
@@ -225,6 +214,7 @@ void AdvancedImageWidget::childRepaint(QPaintEvent* /*event*/, QWidget* childWid
       p.drawLine(QLine(mSelectionStart, mSelectionEnd));
       //p.drawText(mSelectionEnd, QString::number(mDistance));
     }
+
 } // childRepaint
 
 void AdvancedImageWidget::freezeImage()
@@ -233,7 +223,7 @@ void AdvancedImageWidget::freezeImage()
     mUi->freezeButton->setIcon( mIsFreezed ? mContinueIcon : mFreezeIcon);
 }
 
-void AdvancedImageWidget::toolButtonReleased(QWidget * /*button*/)
+void AdvancedImageWidget::toolButtonReleased(QWidget */*button*/)
 {
     if (mUi->panButton->isChecked())
     {
@@ -571,11 +561,6 @@ void AdvancedImageWidget::fitToggled()
     mUi->widget->update();
 }
 
-void AdvancedImageWidget::setFitWindow(bool flag)
-{
-    mUi->fitToWindowCheckBox->setChecked(flag);
-}
-
 void AdvancedImageWidget::childResized (QResizeEvent * /*event*/)
 {
    fitToggled();
@@ -728,7 +713,7 @@ void AdvancedImageWidget::setInfoValueLabel(QString &infoString)
     mUi->infoValueLabel->setText(infoString);
 }
 
-void AdvancedImageWidget::loadFromQSettings(const QString &fileName, const QString &_root)
+void AdvancedImageWidget::loadFromQSettings(const QString &fileName, QString _root)
 {
     QSettings loader(fileName, QSettings::IniFormat);
     loader.beginGroup(_root + mRootPath);
@@ -740,7 +725,7 @@ void AdvancedImageWidget::loadFromQSettings(const QString &fileName, const QStri
     mUi->expSpinBox         ->setValue  (loader.value("zoom", 1.0).toDouble());
 }
 
-void AdvancedImageWidget::saveToQSettings  (const QString &fileName, const QString &_root)
+void AdvancedImageWidget::saveToQSettings  (const QString &fileName, QString _root)
 {
     QSettings saver(fileName, QSettings::IniFormat);
     saver.beginGroup(_root + mRootPath);

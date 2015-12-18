@@ -6,9 +6,7 @@ exists(../../../../config.pri) {
     message(Using local config)
     ROOT_DIR=../..
 }
-!win32 {                                        # it dues to the "mocinclude.tmp" bug on win32!
-    ROOT_DIR=$$PWD/$$ROOT_DIR
-}
+ROOT_DIR=$$PWD/$$ROOT_DIR
 include($$ROOT_DIR/config.pri)
 
 
@@ -18,6 +16,9 @@ TEMPLATE = app
 HOSTBASE_DIR=../base
 include ($$HOSTBASE_DIR/baseApplication.pri)                   # it uses HOSTBASE_DIR, detects HOSTBASE_BINDIR, OBJECTS_DIR, ...
 
+win32 {
+    MOC_DIR = $$ROOT_DIR/.obj/$$TARGET_ORIG/$$BUILD_CFG_NAME  # resolve moc path for mocs to help qmake to unify those paths.
+}
 
 INCLUDEPATH += .
 
@@ -29,7 +30,7 @@ HEADERS += \
     parametersMapper/parametersMapperRecorder.h \       # parameters for params mapper
 
 SOURCES += \
-    main_recorder.cpp \
+    main_virecorder.cpp \
     recorderDialog.cpp \
     recorderThread.cpp \
     recorderControlWidget.cpp \                         # control widgets
@@ -39,4 +40,3 @@ SOURCES += \
 FORMS += \
     ui/recorderControlWidget.ui \
 
-#RESOURCES += ../../resources/main.qrc

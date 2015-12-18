@@ -13,6 +13,7 @@
 
 #include <stdint.h>
 #include "g12Buffer.h"
+#include "rgb24Buffer.h"
 
 using namespace corecvs;
 
@@ -23,16 +24,13 @@ public:
     static const unsigned DECBITS = 10;
     static const int MAXCOMP = 4;
 
-
     class StreamParser {
     public:
-
         uint8_t *datap;
 
         StreamParser(uint8_t *_datap) : datap(_datap) {}
         /*TODO: Remove this ASAP*/
         StreamParser() : datap(NULL) {}
-
 
         int getbyte(void)
         {
@@ -46,9 +44,7 @@ public:
             c2 = *datap++;
             return (c1 << 8) | c2;
         }
-
     };
-
 
     class HuffmanTableEntry {
     public:
@@ -70,8 +66,7 @@ public:
         int marker;     /**< flag if marker was found */
 
         HuffmanParser(uint8_t *_datap) : datap(_datap), bits(0), left(0), marker(0) {}
-        HuffmanParser(){}
-
+        HuffmanParser() {}
 
         int getValue(HuffmanTable *tbl);
         int getBits(int number);
@@ -80,7 +75,6 @@ public:
     private:
         int fillbits();
     };
-
 
     class Jpginfo {
     public:
@@ -103,9 +97,6 @@ public:
      *
      *
      * */
-
-
-
     class ScanData {
     public:
         int dc;         /* old dc value */
@@ -125,8 +116,6 @@ public:
         int out[64 * 6];
         int dquant[3][64];
     };
-
-
 
 
     /* Special constants */
@@ -169,34 +158,36 @@ public:
 
     MjpegDecoderLazy();
 
-    G12Buffer *decode(unsigned char *buf);
+    G12Buffer   *decode     (unsigned char *buf);
+    RGB24Buffer *decodeRGB24(unsigned char *buf);
+
 private:
+    template<class ResultBuffer> ResultBuffer *decodeData(unsigned char *buf, bool isRGB);
+
     int  huffman_init();
     void dec_makehuff(HuffmanTable *hu, unsigned * hufflen, unsigned char *huffvals);
     int  readtables(int till, int *isDHT);
 
     void idctqtab(uint8_t *qin, int *qout);
 
-    int dec_readmarker(void);
-    int dec_checkmarker(void);
-
+    int  dec_readmarker(void);
+    int  dec_checkmarker(void);
 
     void decode_mcus(int *dct, int n, ScanData *sc);
     void idct(int *in, int *out, int *quant, long off);
 
-    void yuv422ptoG12(int * out,G12Buffer *pic,int x, int y);
+    void yuv422ptoG12(int *out, G12Buffer   *pic, int y, int x);
+    void yuv422ptoRGB(int *out, RGB24Buffer *pic, int y, int x);
 
+    StreamParser    parser;
+    HuffmanParser   hparser;
 
-    StreamParser parser;
-    HuffmanParser hparser;
+    Jpginfo         info;
+    HuffmanTable    dhuff[4];
+    ComponentData  *comps;
+    ScanData       *scans;
 
-    Jpginfo info;
-    HuffmanTable dhuff[4];
-    ComponentData *comps;
-    ScanData *scans;
-
-    uint8_t quants[4][64];
-
+    uint8_t         quants[4][64];
 };
 
 #endif /* MJPEGDECODERLAZY_H_ */

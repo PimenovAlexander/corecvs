@@ -91,43 +91,43 @@ public:
 
     /** 
      * \brief downsample 
-     * Prescale coefficient for input image 
+     * downsample 
      */
     double mDownsample;
 
     /** 
      * \brief h 
-     * Input crop height 
+     * h 
      */
     int mH;
 
     /** 
      * \brief w 
-     * Input crop width 
+     * w 
      */
     int mW;
 
     /** 
      * \brief autoH 
-     * Select crop height so that full image will fit 
+     * autoH 
      */
     bool mAutoH;
 
     /** 
      * \brief autoW 
-     * Select crop width so that full image will fit 
+     * autoW 
      */
     bool mAutoW;
 
     /** 
      * \brief x 
-     * Scaled image horizonal shift before crop 
+     * x 
      */
     int mX;
 
     /** 
      * \brief y 
-     * Scaled image vertical shift before crop 
+     * y 
      */
     int mY;
 

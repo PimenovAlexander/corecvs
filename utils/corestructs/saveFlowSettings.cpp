@@ -1,5 +1,5 @@
 #include "saveFlowSettings.h"
-#include <QFileDialog>
+#include <QtGui/QFileDialog>
 
 SaveFlowSettings::SaveFlowSettings():
     mUi(new Ui::SaveFlowSettings)

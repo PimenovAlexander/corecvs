@@ -11,6 +11,7 @@ using corecvs::BoolField;
 using corecvs::StringField;
 using corecvs::PointerField;
 using corecvs::EnumField;
+using corecvs::DoubleVectorField;
 
 #include "basePathVisitor.h"
 #include "baseXMLVisitor.h"
@@ -41,7 +42,7 @@ public:
      *
      **/
     template <class Type>
-        void visit(Type &field, Type defaultValue, const char *fieldName)
+        void visit(Type &field, Type /*defaultValue*/, const char *fieldName)
     {
         pushChild(fieldName);
             field.accept(*this);
@@ -62,6 +63,16 @@ public:
         pushChild(fieldDescriptor->getSimpleName());
            field.accept(*this);
         popChild();
+    }
+
+/* Generic Array support */
+    template <typename inputType, typename reflectionType>
+    void visit(std::vector<inputType> &fields, const reflectionType * /*fieldDescriptor*/)
+    {
+        for (int i = 0; i < fields.size(); i++)
+        {
+            fields[i].accept(*this);
+        }
     }
 
     void pushChild(const char *childName)
@@ -114,3 +125,7 @@ void XmlGetter::visit<void *, PointerField>(void * &field, const PointerField *f
 
 template <>
 void XmlGetter::visit<int, EnumField>(int &field, const EnumField *fieldDescriptor);
+
+/* Arrays */
+template <>
+void XmlGetter::visit<double, DoubleVectorField>(std::vector<double> &field, const DoubleVectorField *fieldDescriptor);

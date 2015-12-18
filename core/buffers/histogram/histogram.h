@@ -62,7 +62,7 @@ public:
 
     Histogram(G12Buffer *buffer)
     {
-        ASSERT_TRUE(buffer != NULL, "Input buffer should not be NULL");
+        CORE_ASSERT_TRUE(buffer != NULL, "Input buffer should not be NULL");
 
         _init(0, G12Buffer::BUFFER_MAX_VALUE);
         for (int i = 0; i < buffer->h; i++)
@@ -70,7 +70,7 @@ public:
             for (int j = 0; j < buffer->w; j++)
             {
                 int result = buffer->element(i, j);
-                ASSERT_TRUE(result <= G12Buffer::BUFFER_MAX_VALUE, "G12Buffer has overflows");
+                CORE_ASSERT_TRUE(result <= G12Buffer::BUFFER_MAX_VALUE, "G12Buffer has overflows");
                 data[result]++;
             }
         }

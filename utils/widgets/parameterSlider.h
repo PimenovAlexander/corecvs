@@ -1,7 +1,7 @@
 #ifndef PARAMETERSLIDER_H
 #define PARAMETERSLIDER_H
 
-#include <QWidget>
+#include <QtGui/QWidget>
 #include "ui_parameterSlider.h"
 #include "parameterEditorWidget.h"
 

@@ -28,14 +28,15 @@ public:
 
     FixedPointDisplace(int32_t h, int32_t w) : FixedPointDisplaceBase (h,w) {}
 
-    inline FixedPointDisplace (const Matrix33 &proj, int h, int w) : FixedPointDisplaceBase (h,w, false)
+    template<class Mapper>
+    inline FixedPointDisplace (const Mapper &proj, int h, int w) : FixedPointDisplaceBase (h,w, false)
     {
         int i,j;
         for (i = 0; i < h; i++)
         {
             for (j = 0; j < w; j++)
             {
-                Vector2dd result   = proj * Vector2dd(j,i);
+                Vector2dd result   = proj.map(Vector2dd(j,i));
                 this->element(i,j) = BilinearMapPoint(result.x(), result.y());
             }
         }

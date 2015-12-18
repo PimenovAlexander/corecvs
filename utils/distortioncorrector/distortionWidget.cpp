@@ -1,4 +1,4 @@
-#include <QTableWidgetItem>
+#include <QtGui/QTableWidgetItem>
 
 #include "log.h"
 #include "rgb24Buffer.h"
@@ -88,10 +88,10 @@ DistortionWidget::~DistortionWidget()
 
 void DistortionWidget::setParams()
 {
-    delete_safe(mDistortionParameters);
+    delete mDistortionParameters;
     mDistortionParameters = new DistortionParameters(
             mUi->radiusSpinBox->value(),
-            mUi->dsbScale->value());
+            mUi->scaleSpinBox->value());
 }
 
 void DistortionWidget::initTransform()
@@ -249,10 +249,10 @@ void DistortionWidget::doInversionTransform()
     Vector2dd centre(mUi->widget->mImage.data()->width() * 0.5, mUi->widget->mImage.data()->height() * 0.5);
     vector<Vector2dd> points = mDistortionParameters->getPoints();
 
-    DistortionCorrectTransform *transform = NULL;
-
+    DistortionCorrectTransform *transform = new DistortionCorrectTransform(centre);
     if (points.size() < 3 || !mDistortionParameters->needCalculateParams())
     {
+        delete transform;
         transform = new DistortionCorrectTransform(
             centre,
             mDistortionParameters->getRadius(),
@@ -260,7 +260,6 @@ void DistortionWidget::doInversionTransform()
     }
     else
     {
-        transform = new DistortionCorrectTransform(centre);
         transform->setRadius(points.at(0), points.at(1), points.at(2));
     }
 
@@ -671,7 +670,7 @@ void DistortionWidget::updateAdditionalData()
 
     mUi->koefTableWidget->clear();
     mUi->koefTableWidget->setColumnCount(2);
-    mUi->koefTableWidget->setRowCount((int)lensParams.koeff.size());
+    mUi->koefTableWidget->setRowCount(lensParams.koeff.size());
     for (unsigned i = 0; i < lensParams.koeff.size(); i ++) {
         mUi->koefTableWidget->setItem(i, 0, new QTableWidgetItem(QString("x^%1").arg(i + 1)));
         QVariant value(QString::number(lensParams.koeff[i], 'g', 15));

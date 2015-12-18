@@ -34,7 +34,7 @@ typedef int atomic_int;
     inline int atomic_dec_and_fetch(atomic_int *ptr)
     {
         if ((int)ptr & 3) {
-            printf("Stop: unsupported pointer value %X in the function atomic_dec_and_fetch!\n", ptr);
+            printf("Stop: unsupported pointer value %p in the function atomic_dec_and_fetch!\n", ptr);
             exit(-1);
         }
         return (int)InterlockedDecrement((LONG *)ptr);
@@ -43,7 +43,7 @@ typedef int atomic_int;
     inline int atomic_inc_and_fetch(atomic_int *ptr)
     {
         if ((int)ptr & 3) {
-            printf("Stop: unsupported pointer value %X in the function atomic_inc_and_fetch!\n", ptr);
+            printf("Stop: unsupported pointer value %p in the function atomic_inc_and_fetch!\n", ptr);
             exit(-1);
         }
         return (int)InterlockedIncrement((LONG *)ptr);

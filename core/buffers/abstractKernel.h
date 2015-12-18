@@ -21,7 +21,7 @@ namespace corecvs {
  *  \brief Template class that holds the convolution kernel. Most probably depreciated
  *  functionality
  **/
-template<typename ElementType, typename IndexType>
+template<typename ElementType, typename IndexType = int32_t>
 class AbstractKernel : public AbstractBuffer<ElementType, IndexType>
 {
 public:
@@ -30,7 +30,6 @@ public:
     IndexType x;
     IndexType y;
 
-    AbstractKernel();
     AbstractKernel(IndexType h, IndexType w, ElementType *data,
             ElementType _invFactor,
             ElementType _bias,
@@ -43,14 +42,19 @@ public:
         x = _x;
         y = _y;
     }
+    AbstractKernel(IndexType h = 0, IndexType w = 0, ElementType *data = nullptr)
+        : AbstractBuffer<ElementType, IndexType>(h, w, data),
+          invFactor(1.0), bias(0.0), x(w / 2), y(h / 2)
+    {
+    }
 
     virtual ~AbstractKernel(){}
 
-    template<typename BufferElementType, typename BufferIndexType>
+    template<typename BufferElementType, typename BufferIndexType, bool allValid = false>
         ElementType multiplyAtPoint (
                 AbstractBuffer<BufferElementType, BufferIndexType> *buffer,
-                BufferIndexType bcx,
-                BufferIndexType bcy
+                BufferIndexType bcy,
+                BufferIndexType bcx
         )
     {
         IndexType dx,dy;
@@ -66,9 +70,9 @@ public:
                 BufferIndexType by = bcy - this->y + dy;
 
                 // Let's pray for inlining and branch prediction
-                if (buffer->isValidCoord(bx, by))
+                if (allValid || buffer->isValidCoord(by, bx))
                 {
-                    sum = sum + this->element(dy, dx) * buffer->element(bx, by);
+                    sum = sum + this->element(dy, dx) * buffer->element(by, bx);
                     count++;
                 }
             }

@@ -48,6 +48,17 @@ void HeadSearchParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void HeadSearchParametersControlWidget::getParameters(HeadSearchParameters& params) const
+{
+
+    params.setThresholdDistance(mUi->thresholdDistanceSpinBox->value());
+    params.setClusterDepth     (mUi->clusterDepthSpinBox->value());
+    params.setClusterMinSize   (mUi->clusterMinSizeSpinBox->value());
+    params.setHeadAreaRadius   (mUi->headAreaRadiusSpinBox->value());
+    params.setHeadNumber       (mUi->headNumberSpinBox->value());
+
+}
 
 HeadSearchParameters *HeadSearchParametersControlWidget::createParameters() const
 {

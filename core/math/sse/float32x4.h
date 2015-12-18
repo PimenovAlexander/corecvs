@@ -47,7 +47,7 @@ public:
     *  Fills the vector with 4 same float values
     **/
     explicit Float32x4(const float value) {
-        ASSERT_TRUE(sizeof(float) == 4, "Float should be 4 byte")
+        CORE_ASSERT_TRUE(sizeof(float) == 4, "Float should be 4 byte")
         this->data = _mm_set1_ps(value);
     }
 

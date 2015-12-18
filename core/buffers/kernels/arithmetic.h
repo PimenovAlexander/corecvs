@@ -9,7 +9,9 @@
  * \author alexander
  */
 
+#include "abstractBuffer.h"
 #include "global.h"
+
 namespace corecvs {
 
 /**
@@ -22,10 +24,10 @@ public:
     static const int inputNumber  = 2;
     static const int outputNumber = 1;
 
-    inline static int getCenterX(){ return 0; };
-    inline static int getCenterY(){ return 0; };
-    inline static int getSizeX(){ return 1; };
-    inline static int getSizeY(){ return 1; };
+    inline static int getCenterX(){ return 0; }
+    inline static int getCenterY(){ return 0; }
+    inline static int getSizeX(){ return 1; }
+    inline static int getSizeY(){ return 1; }
 };
 
 
@@ -38,7 +40,7 @@ public:
 template <typename OtherAlgebra>
     SumBuffers(const SumBuffers<OtherAlgebra> &){}
 
-    SumBuffers(){};
+    SumBuffers(){}
 
     void process(Algebra &algebra) const
     {
@@ -59,7 +61,7 @@ public:
 template <typename OtherAlgebra>
     MixBuffers(const MixBuffers<OtherAlgebra> &){}
 
-    MixBuffers(){};
+    MixBuffers(){}
 
     void process(Algebra &algebra) const
     {
@@ -79,7 +81,7 @@ public:
 template <typename OtherAlgebra>
     SubtractBuffers(const SubtractBuffers<OtherAlgebra> &){}
 
-    SubtractBuffers(){};
+    SubtractBuffers(){}
 
     void process(Algebra &algebra) const
     {
@@ -100,7 +102,7 @@ public:
 template <typename OtherAlgebra>
     DifferenceBuffers(const DifferenceBuffers<OtherAlgebra> &){}
 
-    DifferenceBuffers(){};
+    DifferenceBuffers(){}
 
     void process(Algebra &algebra) const
     {
@@ -108,6 +110,54 @@ template <typename OtherAlgebra>
         Type b = algebra.getInput(1,0,0);
         Type result = Algebra::difference(a,b);
         algebra.putOutput(0,0,0,result);
+    }
+};
+
+#define PROTO_KERNEL(input, outputs, sizeX, sizeY, centerX, centerY)
+
+/* Generic convolve for double */
+template <typename Algebra>
+class ConvolveKernel
+{
+public:
+    AbstractBuffer<double> *elements;
+    int x;
+    int y;
+
+
+    static const int inputNumber = 1;
+    static const int outputNumber = 1;
+
+    inline int getCenterX(){ return x; }
+    inline int getCenterY(){ return y; }
+    inline int getSizeX()  { return elements->w; }
+    inline int getSizeY()  { return elements->h; }
+
+    ConvolveKernel(AbstractBuffer<double> *_elements, int _y, int _x) :
+        elements(_elements), x(_x), y(_y) {}
+
+    typedef typename Algebra::InputType Type;
+
+template <typename OtherAlgebra>
+    ConvolveKernel(const ConvolveKernel<OtherAlgebra> & other)
+    {
+        this->x = other.x;
+        this->y = other.y;
+        this->elements = other.elements;
+    }
+
+    inline void process(Algebra &algebra) const
+    {
+        Type result(0.0);
+
+        for (int i = 0; i < elements->h; i++)
+        {
+            for (int j = 0; j < elements->w; j++)
+            {
+                 result += algebra.getInput(i,j) * Type(elements->element(i,j));
+            }
+        }
+        algebra.putOutput(0,0,result);
     }
 };
 

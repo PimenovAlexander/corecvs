@@ -18,6 +18,7 @@ public:
     ~Draw3dViMouseParametersControlWidget();
 
     Draw3dViMouseParameters* createParameters() const;
+    void getParameters(Draw3dViMouseParameters &params) const;
     void setParameters(const Draw3dViMouseParameters &input);
     virtual void setParametersVirtual(void *input);
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QDialog>
+#include <QtGui/QDialog>
 #include <QtCore/QMap>
 #include <iostream>
 

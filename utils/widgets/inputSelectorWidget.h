@@ -1,7 +1,7 @@
 #ifndef INPUTSELECTORWIDGET_H
 #define INPUTSELECTORWIDGET_H
 
-#include <QWidget>
+#include <QtGui/QWidget>
 #include "ui_inputSelectorWidget.h"
 
 class InputSelectorWidget : public QWidget

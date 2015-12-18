@@ -19,8 +19,7 @@ int main (int /*argC*/, char** /*argV*/)
 #else // !WITH_OPENCV
 
 #include <iostream>
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
+#include <opencv2/highgui/highgui.hpp>
 
 #include "global.h"
 

@@ -22,8 +22,12 @@
 #include "rectangle.h"
 #include "rgbColor.h"
 #include "function.h"
-#include "correspondanceList.h"
+#include "imageChannel.h"
+#include "interpolator.h"
 
+#include "conic.h"
+
+#include "readers.h"
 
 namespace corecvs {
 
@@ -32,11 +36,14 @@ namespace corecvs {
 
 typedef AbstractContiniousBuffer<RGBColor, int32_t> RGB24BufferBase;
 
-class RGB24Buffer : public RGB24BufferBase, public FixedPointBlMapper<RGB24Buffer, RGB24Buffer, RGB24BufferBase::InternalIndexType, RGB24BufferBase::InternalElementType>
+class RGB24Buffer : public RGB24BufferBase,
+                    public FixedPointBlMapper<RGB24Buffer, RGB24Buffer, RGB24BufferBase::InternalIndexType, RGB24BufferBase::InternalElementType>,
+                    public           BlMapper<RGB24Buffer, RGB24Buffer, RGB24BufferBase::InternalIndexType, RGB24BufferBase::InternalElementType>
+
 {
 public:
 //    RGB24Buffer(int32_t h, int32_t w) : CRGB24BufferBase(h, w) {}
-    RGB24Buffer(RGB24Buffer &that) : RGB24BufferBase (that) {}
+    RGB24Buffer(const RGB24Buffer &that) : RGB24BufferBase (that) {}
     RGB24Buffer(RGB24Buffer *that) : RGB24BufferBase (that) {}
 
     RGB24Buffer(RGB24Buffer *src, int32_t x1, int32_t y1, int32_t x2, int32_t y2) :
@@ -73,7 +80,8 @@ public:
     void drawFlowBuffer1(FlowBuffer *src, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
     void drawFlowBuffer2(FlowBuffer *src, double colorShift = 0.0, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
     void drawFlowBuffer3(FlowBuffer *src, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
-    void drawCorrespondanceList(CorrespondanceList *src, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
+
+    //void drawCorrespondenceList(CorrespondenceList *src, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
 
     //void drawRectangle(const Rectangle<int32_t> &rect, RGBColor color, int style = 0);
 
@@ -133,9 +141,14 @@ public:
     void drawVLine(int x1, int y1, int y2, RGBColor color );
 
 
-    void drawCircle(int x, int y, int rad, RGBColor color );
-    void drawArc (int x, int y, int rad, RGBColor color );
-    void drawArc1(int x, int y, int rad, RGBColor color );
+//    void drawCircle(int x, int y, int rad, RGBColor color );
+//    void drawCircle(const Circle2d &circle, RGBColor color );
+
+    void drawArc   (int x, int y, int rad, RGBColor color );
+    void drawArc1  (int x, int y, int rad, RGBColor color );
+
+    void drawArc   (const Circle2d &circle, RGBColor color );
+
 
     /* Some alternatives */
     void drawLine(double x1, double y1, double x2, double y2, RGBColor color );
@@ -168,17 +181,7 @@ public:
 
     G12Buffer *toG12Buffer();
 
-    enum ChannelID {
-        CHANNEL_R,
-        CHANNEL_G,
-        CHANNEL_B,
-        CHANNEL_GRAY,
-        CHANNEL_HUE,
-        CHANNEL_SATURATION,
-        CHANNEL_VALUE,
-        CHANNEL_LAST
-    };
-    G8Buffer* getChannel(ChannelID channel);
+    G8Buffer* getChannel(ImageChannel::ImageChannel channel);
 
     template<class SelectorPrediate>
     Vector3dd getMeanValue(int x1, int y1, int x2, int y2, const SelectorPrediate &predicate)
@@ -222,6 +225,8 @@ public:
 
     virtual ~RGB24Buffer() {}
     static double diffL2 (RGB24Buffer *buffer1, RGB24Buffer *buffer2);
+    void diffBuffer(RGB24Buffer *that, int *diffPtr);
+    static RGB24Buffer *diff(RGB24Buffer *buffer1, RGB24Buffer *buffer2, int *diff = NULL);
 
 
     class RGBEx : public FixedVectorBase<RGBEx, uint16_t, 4>
@@ -240,8 +245,133 @@ public:
         {
             return RGBColor((uint8_t)at(0), (uint8_t)at(1), (uint8_t)at(2), (uint8_t)at(3));
         }
-
     };
+
+    class RGBEx32 : public FixedVectorBase<RGBEx32, uint32_t, 3>
+    {
+    public:
+        RGBEx32() {}
+        RGBEx32(const RGBColor &color)
+        {
+            at(0) = color.r();
+            at(1) = color.g();
+            at(2) = color.b();
+            at(3) = color.a();
+        }
+
+        RGBColor toRGBColor() const
+        {
+            return RGBColor((uint8_t)at(0), (uint8_t)at(1), (uint8_t)at(2), (uint8_t)at(3));
+        }
+    };
+
+    /* This should be merged with generic elementBl */
+    RGB24Buffer::InternalElementType elementBlSSE(double y, double x)
+    {
+#ifndef WITH_SSE
+       return elementBlFixed(y, x);
+#else
+        /* floor() is needed here because of values (-1..0] which will be
+         * rounded to 0 and cause error */
+        RGB24Buffer::InternalIndexType i = (RGB24Buffer::InternalIndexType)floor(y);
+        RGB24Buffer::InternalIndexType j = (RGB24Buffer::InternalIndexType)floor(x);
+
+        CORE_ASSERT_TRUE_P(this->isValidCoordBl(y, x),
+                ("Invalid coordinate in AbstractContiniousBuffer::elementBl(double y=%lf, double x=%lf) buffer sizes is [%dx%d]",
+                   y, x, this->w, this->h));
+
+        /* Fixed point */
+        const int FIXED_SHIFT = 11;
+        uint32_t value = (1 << FIXED_SHIFT);
+
+        Int32x4 k1 ((int32_t)((x - j) * value));
+        Int32x4 k2 ((int32_t)((y - i) * value));
+        Int32x4 v  (value);
+
+        FixedVector<Int32x4, 2> in1 = SSEReader2BBBB_QQQQ::read((uint8_t *)&this->element(i  ,j));
+        FixedVector<Int32x4, 2> in2 = SSEReader2BBBB_QQQQ::read((uint8_t *)&this->element(i+1,j));
+
+        Int32x4 result =
+             (in1[0] * (v - k1) + k1 * in1[1]) * (v - k2) +
+             (in2[0] * (v - k1) + k1 * in2[1]) *      k2;
+        result >>= (FIXED_SHIFT * 2);
+
+        int32_t data[4];
+        result.save(data);
+        return RGBColor(data[2], data[1], data[0]);
+#endif
+    }
+
+
+
+    RGB24Buffer::InternalElementType elementBlFixed(double y, double x)
+    {
+        /* floor() is needed here because of values (-1..0] which will be
+         * rounded to 0 and cause error */
+        RGB24Buffer::InternalIndexType i = (RGB24Buffer::InternalIndexType)floor(y);
+        RGB24Buffer::InternalIndexType j = (RGB24Buffer::InternalIndexType)floor(x);
+
+        CORE_ASSERT_TRUE_P(this->isValidCoordBl(y, x),
+                ("Invalid coordinate in AbstractContiniousBuffer::elementBl(double y=%lf, double x=%lf) buffer sizes is [%dx%d]",
+                   y, x, this->w, this->h));
+
+        /* Fixed point */
+        uint32_t value = 255 * 16;
+
+        uint32_t k1 = (x - j) * value;
+        uint32_t k2 = (y - i) * value;
+
+        RGBEx32 a = RGBEx32(this->element(i    ,j    ));
+        RGBEx32 b = RGBEx32(this->element(i    ,j + 1));
+        RGBEx32 c = RGBEx32(this->element(i + 1,j    ));
+        RGBEx32 d = RGBEx32(this->element(i + 1,j + 1));
+
+
+        RGBEx32 result =
+             (a * (value - k1) + k1 * b) * (value - k2) +
+             (c * (value - k1) + k1 * d) *          k2;
+        result /= (value * value);
+        return result.toRGBColor();
+    }
+
+
+    /* This should be merged with generic elementBl */
+    RGB24Buffer::InternalElementType elementBlDouble(double y, double x)
+    {
+        /* floor() is needed here because of values (-1..0] which will be
+         * rounded to 0 and cause error */
+        RGB24Buffer::InternalIndexType i = (RGB24Buffer::InternalIndexType)floor(y);
+        RGB24Buffer::InternalIndexType j = (RGB24Buffer::InternalIndexType)floor(x);
+
+        CORE_ASSERT_TRUE_P(this->isValidCoordBl(y, x),
+                ("Invalid coordinate in AbstractContiniousBuffer::elementBl(double y=%lf, double x=%lf) buffer sizes is [%dx%d]",
+                   y, x, this->w, this->h));
+
+        /* So far use slow version. Generally this sould be done with fixed point */
+        double k1 = x - j;
+        double k2 = y - i;
+
+        Vector3dd a = this->element(i    ,j    ).toDouble();
+        Vector3dd b = this->element(i    ,j + 1).toDouble();
+        Vector3dd c = this->element(i + 1,j    ).toDouble();
+        Vector3dd d = this->element(i + 1,j + 1).toDouble();
+
+
+        Vector3dd result =
+             (a * (1 - k1) + k1 * b) * (1 - k2) +
+             (c * (1 - k1) + k1 * d) *      k2;
+        return RGBColor::FromDouble(result);
+    }
+
+    RGB24Buffer::InternalElementType elementBl(double y, double x)
+    {
+        return elementBlSSE(y,x);
+    }
+
+    RGB24Buffer::InternalElementType elementBl(Vector2dd &point)
+    {
+        return elementBlSSE(point.y(), point.x());
+    }
 
     RGB24Buffer::InternalElementType elementBlPrecomp(const BilinearMapPoint &point)
     {

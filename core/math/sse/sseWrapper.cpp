@@ -93,6 +93,18 @@ ostream & operator <<(ostream &out, const Int64x2 &vector)
    return out;
 }
 
+ostream & operator <<(ostream &out, const Doublex2 &vector)
+{
+   ALIGN_DATA(16) double data[2];
+   vector.saveAligned(data);
+   out << "[";
+   for (unsigned i = 0; i < 2; i++) {
+       out << (i == 0 ? "" : ", ") << (double)data[i];
+   }
+   out << "]";
+   return out;
+}
+
 /* Hexdump functions */
 
 void Int32x4::hexDump(ostream &out)

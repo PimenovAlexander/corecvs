@@ -11,7 +11,7 @@
 
 /* GCC 4.6 needs this to compile*/
 #include <cstddef>
-#include <opencv/highgui.h>
+#include <opencv2/highgui/highgui.hpp>  // CvCapture
 #include <QtCore/QThread>
 #include <QtCore/QMutex>
 #include <string>
@@ -24,7 +24,7 @@
 
 #define CAP_DEFAULT_DELAY 35
 
-#ifdef interface
+#ifdef interface            // msvc could define it as a "struct" at its header, but it's not a c++ keyword!
 #undef interface
 #endif
 
@@ -40,8 +40,7 @@ using namespace std;
     public:
         SpinThread(OpenCVCaptureInterface *interface)
             : mInterface(interface), mStopping(false)
-        {
-        }
+        {}
 
         virtual void run (void);
         void stop();
@@ -52,24 +51,21 @@ using namespace std;
 
  public:
     SpinThread spin;
-    FramePair current;
-    QMutex protectFrame;
+    FramePair  current;
+    QMutex     protectFrame;
+    CvCapture *captureLeft, *captureRight;
 
     /**
      * Delay to sleep before querying OpenCV for a new frame in milliseconds
-     *
      */
-
     unsigned int delay;
 
-    CvCapture* captureLeft;
-    CvCapture* captureRight;
 
     OpenCVCaptureInterface(string _devname, unsigned int mode);
 
     virtual FramePair getFrame();
 
-    virtual CapErrorCode setCaptureProperty( int id, int value );
+    virtual CapErrorCode setCaptureProperty(int id, int value);
 
     virtual CapErrorCode initCapture();
     virtual CapErrorCode startCapture();

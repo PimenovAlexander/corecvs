@@ -9,6 +9,7 @@
 #include "recorderThread.h"
 
 #include <stdio.h>
+#include <QtGui/QMessageBox>
 #include <QMetaType>
 #include <QMessageBox>
 
@@ -71,13 +72,9 @@ void RecorderThread::toggleRecording()
 AbstractOutputData* RecorderThread::processNewData()
 {
     Statistics stats;
-
-    qDebug("RecorderThread::processNewData(): called");
-
 #if 0
     stats.setTime(ViFlowStatisticsDescriptor::IDLE_TIME, mIdleTimer.usecsToNow());
 #endif
-
     PreciseTimer start = PreciseTimer::currentTime();
     PreciseTimer startEl = PreciseTimer::currentTime();
 
@@ -101,8 +98,7 @@ AbstractOutputData* RecorderThread::processNewData()
     {
         G12Buffer *buf = mFrames.getCurrentFrame((Frames::FrameSourceId)id);
 
-        //result[id] = mTransformationCache[id] ? mTransformationCache[id]->doDeformation(mBaseParams->interpolationType(), buf) : buf;
-        result[id] = buf;
+        result[id] = mTransformationCache[id] ? mTransformationCache[id]->doDeformation(mBaseParams->interpolationType(), buf) : buf;
 
         if (mIsRecording)
         {
@@ -133,7 +129,8 @@ AbstractOutputData* RecorderThread::processNewData()
     outputData->mMainImage.addLayer(
             new ImageResultLayer(
                     mPresentationParams->output(),
-                    result
+                    result,
+                    mPresentationParams->leftFrame()
             )
     );
 

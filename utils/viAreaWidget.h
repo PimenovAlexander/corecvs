@@ -38,3 +38,17 @@ private:
     Ui_ViAreaWidgetClass ui;
     bool mForwardEvents;
 };
+
+
+class ImageWidget : public ViAreaWidget {
+public:
+    QImage *image;
+
+    ImageWidget() : image(NULL) {}
+    void setImage(QImage *_image);
+
+    virtual void paintEvent(QPaintEvent * );
+
+    ~ImageWidget(){}
+};
+

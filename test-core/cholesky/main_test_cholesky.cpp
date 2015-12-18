@@ -9,6 +9,8 @@
  */
 
 #include <iostream>
+#include "gtest/gtest.h"
+
 #include "global.h"
 #include "matrix.h"
 #include "cholesky.h"
@@ -18,7 +20,7 @@
 using namespace std;
 using namespace corecvs;
 
-void testCholesky(void)
+TEST(CholeskyTest, testCholesky)
 {
     Matrix A = Matrix(3,3,false);
     A.fillWithArgs(
@@ -65,7 +67,7 @@ void testCholesky(void)
     delete D1;
 }
 
-void testCholesky1(void)
+TEST(CholeskyTest, testCholesky1)
 {
     DiagonalMatrix *D;
     UpperUnitaryMatrix *U1;
@@ -78,10 +80,3 @@ void testCholesky1(void)
 
 }
 
-int main (int /*argC*/, char ** /*argV*/)
-{
-    //testCholesky();
-    testCholesky1();
-        cout << "PASSED" << endl;
-        return 0;
-}

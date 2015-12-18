@@ -13,7 +13,7 @@
 class BaseXMLVisitor
 {
 public:
-    BaseXMLVisitor() {};
+    BaseXMLVisitor() {}
 
 
 protected:
@@ -21,7 +21,7 @@ protected:
 
     std::vector<QDomNode> mNodePath;
 
-    virtual ~BaseXMLVisitor() {};
+    virtual ~BaseXMLVisitor() {}
 
 };
 

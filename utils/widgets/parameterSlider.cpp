@@ -21,8 +21,6 @@ ParameterSlider::~ParameterSlider()
 void ParameterSlider::setName (QString name)
 {
     ui.label->setText(name);
-    setWindowTitle(name);
-    setObjectName(name);
 }
 
 void ParameterSlider::setAutoSupported(bool value)

@@ -13,8 +13,7 @@ namespace corecvs
 
 void DecoupleYUYV::decoupleAnaglythSSE(unsigned formatH, unsigned formatW, uint8_t *ptr, ImageCaptureInterface::FramePair &result, bool withSSE)
 {
-    result.bufferLeft  = new G12Buffer(formatH, formatW, false);
-    result.bufferRight = new G12Buffer(formatH, formatW, false);
+    result.allocBuffers(formatH, formatW);
 
     for (unsigned i = 0; i < formatH; i++)
     {
@@ -74,7 +73,7 @@ void DecoupleYUYV::decoupleAnaglythSSE(unsigned formatH, unsigned formatW, uint8
         }
 #endif
 
-        for (; j < formatW; j+=2)
+        for (; j < formatW; j += 2)
         {
             int y1 = ptr[0];
             int u  = ptr[1];
@@ -134,7 +133,8 @@ void DecoupleYUYV::decoupleAnaglythSSE(unsigned formatH, unsigned formatW, uint8
  * B 0x80 G 0x80 B 0x80 G 0x80    |  B 0x80 G 0x80 B 0x80 G 0x80
  *  </pre>
  *
- *  As input to this functions formatH - is equal to matrix height, formatW is a four times matrix width - doubleed beacause of two images side by sied and doubled again with YUYV
+ *  As input to this functions formatH - is equal to matrix height, formatW is a two times matrix width -
+ *     doubled beacause of two images side by side
  *  The output will be two images with height and width of formatH, formatW
  *
  *
@@ -144,21 +144,22 @@ void DecoupleYUYV::decoupleAnaglythSSE(unsigned formatH, unsigned formatW, uint8
  * @param ptr
  * @param result
  **/
-
 void DecoupleYUYV::decoupleAnaglythSyncCam1(unsigned formatH, unsigned formatW, uint8_t *ptr, ImageCaptureInterface::FramePair &result)
 {
-    result.rgbBufferLeft  = new RGB24Buffer(formatH, formatW / 4, false);
-    result.rgbBufferRight = new RGB24Buffer(formatH, formatW / 4, false);
+    //FixMe: use result.allocBuffersRGB(formatH, formatW / 2); ?
+    //
+    result.rgbBufferLeft  = new RGB24Buffer(formatH, formatW / 2, false);
+    result.rgbBufferRight = new RGB24Buffer(formatH, formatW / 2, false);
 
-    for (unsigned i = 0; i + 1 < formatH ; i += 2)
+    for (unsigned i = 0; i + 1 < formatH; i += 2)
     {
-        uint8_t *line0 = ptr + formatW * i;
-        uint8_t *line1 = line0 + formatW;
+        uint8_t *line0 = ptr   + 2 * formatW * i;
+        uint8_t *line1 = line0 + 2 * formatW;
 
         RGBColor *outLine0Left = &result.rgbBufferLeft->element(    i, 0);
         RGBColor *outLine1Left = &result.rgbBufferLeft->element(i + 1, 0);
 
-        for (unsigned j = 0; j < formatW / 8; j++)
+        for (unsigned j = 0; j < formatW / 4; j++)
         {
             uint8_t g1 = line0[0];
             uint8_t r  = line0[2];
@@ -180,7 +181,7 @@ void DecoupleYUYV::decoupleAnaglythSyncCam1(unsigned formatH, unsigned formatW, 
         RGBColor *outLine0Right = &result.rgbBufferRight->element(    i, 0);
         RGBColor *outLine1Right = &result.rgbBufferRight->element(i + 1, 0);
 
-        for (unsigned j = 0; j < formatW / 8; j++)
+        for (unsigned j = 0; j < formatW / 4; j++)
         {
             uint8_t g1 = line0[0];
             uint8_t r  = line0[2];
@@ -202,14 +203,12 @@ void DecoupleYUYV::decoupleAnaglythSyncCam1(unsigned formatH, unsigned formatW, 
 
     result.bufferLeft  = result.rgbBufferLeft ->toG12Buffer();
     result.bufferRight = result.rgbBufferRight->toG12Buffer();
-
 }
 
 
 void DecoupleYUYV::decoupleSideBySide(unsigned formatH, unsigned formatW, uint8_t *ptr, ImageCaptureInterface::FramePair &result)
 {
-    result.bufferLeft  = new G12Buffer(formatH, formatW / 2, false);
-    result.bufferRight = new G12Buffer(formatH, formatW / 2, false);
+    result.allocBuffers(formatH, formatW / 2);
 
     for (unsigned i = 0; i < formatH; i++)
     {
@@ -229,8 +228,7 @@ void DecoupleYUYV::decoupleSideBySide(unsigned formatH, unsigned formatW, uint8_
 
 void DecoupleYUYV::decoupleAnaglythUnrolled(unsigned formatH, unsigned formatW, uint8_t *ptr, ImageCaptureInterface::FramePair &result)
 {
-    result.bufferLeft  = new G12Buffer(formatH / 2, formatW / 2, true);
-    result.bufferRight = new G12Buffer(formatH / 2, formatW / 2, true);
+    result.allocBuffers(formatH / 2, formatW / 2, true); // shouldInit
 
     for (unsigned i = 0; i < formatH / 2; i++)
     {
@@ -291,7 +289,7 @@ void DecoupleYUYV::decoupleAnaglythUnrolled(unsigned formatH, unsigned formatW, 
 
 
 void DecoupleYUYV::decouple(unsigned formatH, unsigned formatW, uint8_t *ptr, ImageCouplingType coupling, ImageCaptureInterface::FramePair &result)
-{    
+{
     switch (coupling) {
         case ANAGLYPH_RC:
             decoupleAnaglythSSE(formatH, formatW, ptr, result, false);

@@ -17,16 +17,31 @@
 #include "int32x8.h"
 #include "int16x8.h"
 #include "uInt16x8.h"
+
 #include "int8x16.h"
 #include "uInt8x16.h"
 
 #include "float32x4.h"
+#include "doublex2.h"
 
 #include "sseMath.h"
+
 #endif //WITH_SSE
 
+#ifdef WITH_AVX
+#include "doublex4.h"
+#endif
 
 namespace corecvs {
+
+#ifdef WITH_AVX
+typedef Doublex4 DoublexN;
+#else
+#   ifdef WITH_SSE
+typedef Doublex2 DoublexN;
+#   endif
+#endif
+
 } //namespace corecvs
 
 #endif /* SEEWRAPPER_H_ */

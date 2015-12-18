@@ -45,7 +45,10 @@ int BackgroundFilterParameters::staticInit()
           100,
           "Threshold",
           "Threshold",
-          "Threshold"
+          "Threshold",
+          true,
+         0,
+         10000
         )
     );
    return 0;

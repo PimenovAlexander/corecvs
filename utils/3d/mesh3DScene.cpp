@@ -16,20 +16,17 @@
 #include "mathUtils.h"
 #include "qtHelper.h"
 
-#include "plyLoader.h"
-#include "stlLoader.h"
-
 using corecvs::lerp;
 
 void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
 {
+    //qDebug("Mesh3DScene::drawMyself() : called" );
+    //qDebug("V: %d E: %d F: %d ", );
+
+
     bool withTexture = false;
     withTexture |= (mParameters.style() == Draw3dStyle::TEXTURED) && (dialog->mFancyTexture != GLuint(-1));
     bool withTexCoords = withTexture && !textureCoords.empty();
-
-    /**/
-    //qDebug( "Will draw mesh %s with v:%lu f:%lu e:%lu", name.toLatin1().constData(), vertexes.size(), faces.size(), edges.size());
-
 
     /*Caption drawing*/
     if (mParameters.showCaption())
@@ -73,8 +70,23 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
             glPushMatrix();
             glLoadIdentity();
 
+/*          glBegin(GL_LINE_LOOP);
+              glVertex3i(0,0,0);
+              glVertex3i(100,0,0);
+              glVertex3i(100,100,0);
+              glVertex3i(0,100,0);
+            glEnd();*/
+
+            /* Draw */
+/*            FixedVector<double, 4> cent4((const FixedVector<double, 3> &)centralPoint, 1.0);
+            FixedVector<double, 4> labelPos = glMatrix * cent4;
+            glTranslated(labelPos[0] / labelPos[3] * width / 2, labelPos[1] / labelPos[3] * height / 2, 0.0);
+*/
             Vector3dd labelPos = glMatrix * centralPoint;
             glTranslated(labelPos[0] * width / 2.0, labelPos[1] * height / 2.0, 0.0);
+
+
+
 
             double size = mParameters.fontSize() / 25.0;
             glScaled(size, -size, size);
@@ -113,47 +125,112 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
 
     commonSetup(dialog, &mParameters);
 
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_DOUBLE, sizeof(Vector3dd), &(vertexes[0]));
+    GLenum mode;
 
-    if (mParameters.style() == Draw3dStyle::FILLED_AND_FRAME)
+    switch (mParameters.style()) {
+        case Draw3dStyle::POINTS:
+            mode = GL_POINT;
+            break;
+        case Draw3dStyle::WIREFRAME:
+            mode = GL_LINE;
+            break;
+        default:
+        case Draw3dStyle::COLOR:
+        case Draw3dStyle::COLOR_2:
+            mode = GL_FILL;
+            break;
+    }
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+
+    if (withTexCoords) {
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    }
+
+    if (mParameters.style() == Draw3dStyle::COLOR_2 && faces.size() > 0)
     {
         glPolygonOffset ( -1.0, -2.0);
         glEnable (  GL_POLYGON_OFFSET_LINE );
         glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-        glColor3ub(mParameters.secondaryColor().r(), mParameters.secondaryColor().g(), mParameters.secondaryColor().b());
+        glColor3ub(mParameters.edgeColor().r(), mParameters.edgeColor().g(), mParameters.edgeColor().b());
+        glVertexPointer(3, GL_DOUBLE, sizeof(Vector3dd), &(vertexes[0]));
         glDrawElements(GL_TRIANGLES, GLsizei(faces.size() * 3), GL_UNSIGNED_INT, &(faces[0]));
-        glDisable (  GL_POLYGON_OFFSET_LINE );
+
+//        glDrawElements(GL_LINES    , GLsizei(edges.size() * 2), GL_UNSIGNED_INT, &(edges[0]));
+
+        glDisable (GL_POLYGON_OFFSET_LINE);
     }
 
-    if (hasColor) {
-        glEnableClientState(GL_COLOR_ARRAY);
-        glColorPointer(3, GL_UNSIGNED_BYTE, sizeof(RGBColor), &(vertexesColor[0]));
-    } else {
-        glColor3ub(mParameters.color().r(), mParameters.color().g(), mParameters.color().b());
-    }
+    glPolygonMode( GL_FRONT_AND_BACK, mode );
 
+   // glColor3ub(mParameters.color().r(), mParameters.color().g(), mParameters.color().b());
+    glVertexPointer(3, GL_DOUBLE, sizeof(Vector3dd), &(vertexes[0]));
     if (withTexCoords) {
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glTexCoordPointer(2, GL_DOUBLE, sizeof(Vector2dd), &(textureCoords[0]));
     }
 
-    switch (mParameters.style()) {
-    case Draw3dStyle::POINTS:
-            glDrawArrays(GL_POINTS, 0, vertexes.size());
-        break;
-    case Draw3dStyle::WIREFRAME:
-            glDrawElements(GL_LINES, GLsizei(edges.size() * 2), GL_UNSIGNED_INT, &(edges[0]));
-            glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+    /* FACES */
+    if (faces.size() > 0)
+    {
+        if (mParameters.faceColorOverride() || !hasColor) {
+            OpenGLTools::glColorRGB(mParameters.faceColor());
             glDrawElements(GL_TRIANGLES, GLsizei(faces.size() * 3), GL_UNSIGNED_INT, &(faces[0]));
-        break;
-    default:
-    case Draw3dStyle::FILLED:
-    case Draw3dStyle::FILLED_AND_FRAME:
-            glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-            glDrawElements(GL_TRIANGLES, GLsizei(faces.size() * 3), GL_UNSIGNED_INT, &(faces[0]));
-        break;
+        }
+        else {
+            /* We need to speed this up */
+            for (size_t fi = 0; fi < faces.size(); fi++)
+            {
+                OpenGLTools::glColorRGB(facesColor[fi]);
+                glDrawElements(GL_TRIANGLES, GLsizei(3), GL_UNSIGNED_INT, &(faces[fi]));
+            }
+        }
     }
+
+    /* EDGES */
+    int oldLineWidth = 1;
+    glGetIntegerv(GL_LINE_WIDTH, &oldLineWidth);
+    glLineWidth(mParameters.edgeWidth());
+
+    if (mParameters.edgeColorOverride() || !hasColor ) {
+        OpenGLTools::glColorRGB(mParameters.edgeColor());
+        glDrawElements(GL_LINES    , GLsizei(edges.size() * 2), GL_UNSIGNED_INT, &(edges   [0]));
+    } else {
+        for (size_t ei = 0; ei < edges.size(); ei++)
+        {
+            OpenGLTools::glColorRGB(edgesColor[ei]);
+            glDrawElements(GL_LINES    , GLsizei(2), GL_UNSIGNED_INT, &(edges[ei]));
+        }
+    }
+    glPointSize(oldLineWidth);
+
+
+    /* POINTS */
+    int oldPointSize = 1;
+    glGetIntegerv(GL_POINT_SIZE, &oldPointSize);
+    glPointSize(mParameters.pointSize());
+
+    if (mParameters.pointColorOverride() || !hasColor ) {
+        glColor3ub(mParameters.pointColor().r(), mParameters.pointColor().g(), mParameters.pointColor().b());
+
+        glDrawArrays (GL_POINTS, 0, vertexes.size());
+    } else {
+        glColor3ub(mParameters.pointColor().r(), mParameters.pointColor().g(), mParameters.pointColor().b());
+        glPointSize(mParameters.pointSize());
+        /*glEnableClientState(GL_COLOR_ARRAY);
+        glColorPointer(3, GL_UNSIGNED_INT, sizeof(RGBColor), &(vertexesColor[0]));
+        glDrawArrays (GL_POINTS, 0, vertexes.size());
+        glDisableClientState(GL_COLOR_ARRAY);*/
+
+        glBegin(GL_POINTS); /* This is slow and retarded*/
+        for (size_t vi = 0; vi < vertexes.size(); vi++)
+        {
+            OpenGLTools::glColorRGB(vertexesColor[vi]);
+            glVertex3dv((double *)&(vertexes[vi]));
+        }
+        glEnd();
+    }
+    glPointSize(oldPointSize);
 
     /* Cleanup */
     glDisableClientState(GL_VERTEX_ARRAY);
@@ -161,16 +238,12 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
-    if (hasColor) {
-        glDisableClientState(GL_COLOR_ARRAY);
-    }
-
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
     commonTierdown(dialog, &mParameters);
 
     glDisable(GL_TEXTURE_2D);
-};
+}
 
 
 Mesh3DScene::~Mesh3DScene() {
@@ -310,7 +383,7 @@ void CameraScene::drawMyself(CloudViewDialog * /*dialog*/ )
     //qDebug() << "Calling CameraScene::drawMyself() for" << name;
 
     glPushMatrix();
-      glColor3ub(mParameters.color().r(), mParameters.color().g(), mParameters.color().b());
+      glColor3ub(mParameters.edgeColor().r(), mParameters.edgeColor().g(), mParameters.edgeColor().b());
       glScaled(5.0,5.0,5.0);
       OpenGLTools::drawWiredCamera();
     glPopMatrix();
@@ -392,7 +465,7 @@ void StereoCameraScene::drawMyself(CloudViewDialog *dialog)
 {
     glMatrixMode(GL_MODELVIEW);
     Draw3dCameraParameters camParams;
-    camParams.setColor(RgbColorParameters(255,20,20));
+    camParams.setEdgeColor(RgbColorParameters(255,20,20));
     camParams.setFovH(radToDeg(mStereoPair.rightCamera.getHFov()));
     camParams.setFovV(radToDeg(mStereoPair.rightCamera.getVFov()));
     mCamera1.setParameters(&camParams);
@@ -408,7 +481,7 @@ void StereoCameraScene::drawMyself(CloudViewDialog *dialog)
     glPushMatrix();
     OpenGLTools::glTranslateVector3dd(mStereoPair.getCameraShift());
     OpenGLTools::glMultMatrixMatrix33(mStereoPair.decomposition.rotation);
-    camParams.setColor(RgbColorParameters(20,20,200));
+    camParams.setEdgeColor(RgbColorParameters(20,20,200));
     camParams.setFovH(radToDeg(mStereoPair.leftCamera.getHFov()));
     camParams.setFovV(radToDeg(mStereoPair.leftCamera.getVFov()));
     mCamera2.setParameters(&camParams);

@@ -18,6 +18,7 @@ public:
     ~Draw3dCameraParametersControlWidget();
 
     Draw3dCameraParameters* createParameters() const;
+    void getParameters(Draw3dCameraParameters &params) const;
     void setParameters(const Draw3dCameraParameters &input);
     virtual void setParametersVirtual(void *input);
 

@@ -8,11 +8,8 @@
  * \ingroup autotest  
  */
 
-#ifndef ASSERTS
-#define ASSERTS
-#endif
-
 #include <iostream>
+#include "gtest/gtest.h"
 
 #include "global.h"
 
@@ -26,7 +23,7 @@ using namespace std;
 using corecvs::FilterGraph;
 using corecvs::FilterBlock;
 using corecvs::SobelFilter;
-using corecvs::GeneratedFilterBlock;
+//using corecvs::GeneratedFilterBlock;
 
 /**
  *  Creating test graph
@@ -38,9 +35,9 @@ using corecvs::GeneratedFilterBlock;
  *   F   G   H
  *
  **/
-void testFilterBlocks()
+TEST(FilterBlocks, testFilterBlocks)
 {
-    FilterGraph graph;
+    FilterGraph graph(NULL, NULL);
 
     FilterBlock* H = graph.addBlock(new FilterBlock("H"));
     FilterBlock* A = graph.addBlock(new FilterBlock("A"));
@@ -52,17 +49,17 @@ void testFilterBlocks()
     FilterBlock* E = graph.addBlock(new FilterBlock("E"));
     FilterBlock* I = graph.addBlock(new FilterBlock("I"));
 
-    ASSERT_TRUE(graph.addConnection(D, "0", G, "0"), "Failed connection D to G");
-    ASSERT_TRUE(graph.addConnection(E, "0", G, "1"), "Failed connection E to G");
-    ASSERT_TRUE(graph.addConnection(E, "1", H, "0"), "Failed connection E to H");
-    ASSERT_TRUE(graph.addConnection(A, "0", D, "0"), "Failed connection A to D");
-    ASSERT_TRUE(graph.addConnection(B, "0", E, "0"), "Failed connection B to E");
-    ASSERT_TRUE(graph.addConnection(C, "0", F, "0"), "Failed connection C to F");
+    CORE_ASSERT_TRUE(graph.connect(D, "0", G, "0"), "Failed connection D to G");
+    CORE_ASSERT_TRUE(graph.connect(E, "0", G, "1"), "Failed connection E to G");
+    CORE_ASSERT_TRUE(graph.connect(E, "1", H, "0"), "Failed connection E to H");
+    CORE_ASSERT_TRUE(graph.connect(A, "0", D, "0"), "Failed connection A to D");
+    CORE_ASSERT_TRUE(graph.connect(B, "0", E, "0"), "Failed connection B to E");
+    CORE_ASSERT_TRUE(graph.connect(C, "0", F, "0"), "Failed connection C to F");
 
-    ASSERT_FALSE(graph.addConnection(D, "0", F, "0"), "Connected D to busy pin of F");
+    CORE_ASSERT_FALSE(graph.connect(D, "0", F, "0"), "Connected D to busy pin of F");
 
-    ASSERT_TRUE(graph.addConnection(D, "0", F, "1"), "Failed connection D to F");
-    ASSERT_TRUE(graph.addConnection(A, "1", C, "0"), "Failed connection A to C");
+    CORE_ASSERT_TRUE(graph.connect(D, "0", F, "1"), "Failed connection D to F");
+    CORE_ASSERT_TRUE(graph.connect(A, "1", C, "0"), "Failed connection A to C");
 
     bool passed = true;
     graph.print();
@@ -87,7 +84,7 @@ void testFilterBlocks()
  *   F   G   H
  *
  **/
-void testFilterBlocksGenerated()
+TEST(FilterBlocks, testFilterBlocksGenerated)
 {
     FilterGraph graph;
 
@@ -101,20 +98,20 @@ void testFilterBlocksGenerated()
     FilterBlock* E = graph.addBlock(new OperationFilter("E"));
     FilterBlock* I = graph.addBlock(new OperationFilter("I"));
 
-    ASSERT_TRUE(graph.connect("D", "0", "G", "0"), "Failed connection D to G");
-    ASSERT_TRUE(graph.connect("E", "0", "G", "1"), "Failed connection E to G");
-    ASSERT_TRUE(graph.connect("E", "0", "H", "0"), "Failed connection E to H");
-    ASSERT_TRUE(graph.connect("A", "0", "D", "0"), "Failed connection A to D");
-    ASSERT_TRUE(graph.connect("B", "0", "E", "0"), "Failed connection B to E");
+    CORE_ASSERT_TRUE(graph.connect("D", "0", "G", "0"), "Failed connection D to G");
+    CORE_ASSERT_TRUE(graph.connect("E", "0", "G", "1"), "Failed connection E to G");
+    CORE_ASSERT_TRUE(graph.connect("E", "0", "H", "0"), "Failed connection E to H");
+    CORE_ASSERT_TRUE(graph.connect("A", "0", "D", "0"), "Failed connection A to D");
+    CORE_ASSERT_TRUE(graph.connect("B", "0", "E", "0"), "Failed connection B to E");
 
-    ASSERT_FALSE(E->inPinByName("0")->setPin(E->inPinByName("0")->takeFrom), "Failed connection B to E");
+    CORE_ASSERT_FALSE(E->inPinByName("0")->setPin(E->inPinByName("0")->takeFrom), "Failed connection B to E");
 
-    ASSERT_TRUE(graph.connect("C", "0", "F", "0"), "Failed connection C to F");
+    CORE_ASSERT_TRUE(graph.connect("C", "0", "F", "0"), "Failed connection C to F");
 
-    ASSERT_FALSE(graph.connect("D", "0", "F", "0"), "Connected D to busy pin of F");
+    CORE_ASSERT_FALSE(graph.connect("D", "0", "F", "0"), "Connected D to busy pin of F");
 
-    ASSERT_TRUE(graph.connect("D", "0", "F", "1"), "Failed connection D to F");
-    ASSERT_TRUE(graph.connect("A", "0", "C", "0"), "Failed connection A to C");
+    CORE_ASSERT_TRUE(graph.connect("D", "0", "F", "1"), "Failed connection D to F");
+    CORE_ASSERT_TRUE(graph.connect("A", "0", "C", "0"), "Failed connection A to C");
 
     bool passed = true;
     printf("Before topologic sort\n");
@@ -173,11 +170,11 @@ void testFilterBlocksGenerated()
 //    BMPLoader().save("graph.bmp", (G12Buffer *)abcd->getPin(0));
 //}
 
-int main (int /*argC*/, char ** /*argV*/)
-{
-    //testFilterBlocks();
-    testFilterBlocksGenerated();
-    //testOperationBlock();
-    cout << "PASSED" << endl;
-    return 0;
-}
+//int main (int /*argC*/, char ** /*argV*/)
+//{
+//    //testFilterBlocks();
+//    testFilterBlocksGenerated();
+//    //testOperationBlock();
+//    cout << "PASSED" << endl;
+//    return 0;
+//}

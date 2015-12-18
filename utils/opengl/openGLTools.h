@@ -27,12 +27,8 @@ public:
     static void glColorRGB(const RGBColor &color);
     static void glVertexVector3dd(const Vector3dd &p);
     static void glTranslateVector3dd(const Vector3dd &p);
-
     static void glMultMatrixMatrix44(const Matrix44 &p);
     static void glMultMatrixMatrix33(const Matrix33 &p);
-
-    static Matrix44 glGetProjectionMatrix();
-    static Matrix44 glGetModelViewMatrix();
 
     static void drawWiredBox(const Vector3dd &p1, const Vector3dd &p2);
     static void drawWiredCamera();

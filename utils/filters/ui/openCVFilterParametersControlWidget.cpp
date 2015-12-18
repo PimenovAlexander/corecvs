@@ -46,6 +46,15 @@ void OpenCVFilterParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void OpenCVFilterParametersControlWidget::getParameters(OpenCVFilterParameters& params) const
+{
+
+    params.setOpenCVFilter     (static_cast<OpenCVBinaryFilterType::OpenCVBinaryFilterType>(mUi->openCVFilterComboBox->currentIndex()));
+    params.setParam1           (mUi->param1SpinBox->value());
+    params.setParam2           (mUi->param2SpinBox->value());
+
+}
 
 OpenCVFilterParameters *OpenCVFilterParametersControlWidget::createParameters() const
 {

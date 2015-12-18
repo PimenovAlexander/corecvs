@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <vector>
 #include <limits>
+#include "gtest/gtest.h"
 
 #include "global.h"
 
@@ -18,7 +19,7 @@
 #include "matrix33.h"
 #include "matrix44.h"
 #include "vector3d.h"
-#include "correspondanceList.h"
+#include "correspondenceList.h"
 #include "bmpLoader.h"
 #include "essentialMatrix.h"
 #include "cameraParameters.h"
@@ -31,9 +32,9 @@ using namespace std;
 using namespace corecvs;
 
 
-#define GRID_STEP (10)
+#define GRID_STEP   10
 
-void testAligner (void)
+TEST(Rectification1, DISABLED_testAligner)
 {
     Vector3dd z1;
 
@@ -61,7 +62,7 @@ void testAligner (void)
 
 }
 
-void testEpipoles ( void )
+TEST(Rectification1, testEpipoles)
 {
     EssentialMatrix F = Matrix33( -4.68373e-06, 5.35286e-05, -0.0168343,
        -5.35711e-05, -4.77577e-06, 0.00601651,
@@ -83,15 +84,13 @@ void testEpipoles ( void )
 #ifdef ASSERTS
     Vector3dd left = e1 * F;
     Vector3dd right = F * e2;
-    ASSERT_TRUE(left.notTooFar(leftResult, 1e-10), "Left Epipole Error");
-    ASSERT_TRUE(right.notTooFar(rightResult, 1e-10), "Right Epipole Error");
+    CORE_ASSERT_TRUE(left.notTooFar(leftResult, 1e-10), "Left Epipole Error");
+    CORE_ASSERT_TRUE(right.notTooFar(rightResult, 1e-10), "Right Epipole Error");
 #endif
 }
 
-
-void __testUnDistortion ( void )
+TEST(Rectification1, __testUnDistortion)
 {
-
     Vector3dd affineProjective(0.0,0.0,1.0);
     double distortion = StereoAligner::getDistortion(affineProjective, Vector2dd(100.0,100.0));
 
@@ -171,18 +170,18 @@ void __testUnDistortion ( void )
 
     BMPLoader loader;
     loader.save("graph.bmp", graph);
-    printf ("Minimum distortions are with alpha %lf", minalpha);
+    printf ("Minimum distortions are with alpha %lf\n", minalpha);
+
     delete graph;
 }
 
-
-void testRectificatorCubeEssential (void)
+TEST(Rectification1, DISABLED_testRectificatorCubeEssential)
 {
     vector<Vector3dd> *pointsIn3d = NULL;
     vector<Vector2dd> imagesL;
     vector<Vector2dd> imagesR;
 
-    CorrespondanceList points;
+    CorrespondenceList points;
 
 
     // A cube of 1.5 m side at the distance of 2 meters
@@ -215,9 +214,8 @@ void testRectificatorCubeEssential (void)
      **/
 
     Vector2dd resolution(400.0, 400.0);
-    CameraIntrinsics  leftCameraIntrinsics(resolution, resolution  / 2.0, 360.0, 1.0);
-    CameraIntrinsics rightCameraIntrinsics(resolution, resolution  / 2.0, 360.0, 1.0);
-
+    CameraIntrinsicsLegacy  leftCameraIntrinsics(resolution, resolution  / 2.0, 360.0, 1.0);
+    CameraIntrinsicsLegacy rightCameraIntrinsics(resolution, resolution  / 2.0, 360.0, 1.0);
 
     Matrix44 LK = leftCameraIntrinsics.getKMatrix();
     Matrix44 RK = rightCameraIntrinsics.getKMatrix();
@@ -239,7 +237,7 @@ void testRectificatorCubeEssential (void)
 
     for (unsigned i = 0; i < pointsIn3d-> size(); i++)
     {
-        Correspondance corr;
+        Correspondence corr;
         Vector3dd left3D  =  leftCamera * pointsIn3d->at(i);
         Vector3dd right3D = rightCamera * pointsIn3d->at(i);
 
@@ -281,7 +279,7 @@ void testRectificatorCubeEssential (void)
 
     for (unsigned i = 0; i < points.size(); i++)
     {
-        //Correspondance *corr = &points[i];
+        //Correspondence *corr = &points[i];
         fprintf(gnuplot , "%2.7lf %2.7lf %2.7lf %2.7lf  %2.7lf %2.7lf %2.7lf\n",
                 imagesL[i].x(),
                 imagesL[i].y(),
@@ -293,7 +291,7 @@ void testRectificatorCubeEssential (void)
                 );
     }
 
-    fprintf(gnuplot , "0 0 0 0 0 0 0\n");
+    fprintf(gnuplot, "0 0 0 0 0 0 0\n");
 
     fclose(gnuplot);
 
@@ -324,7 +322,6 @@ void testRectificatorCubeEssential (void)
 
     for (selected = 0; selected < 4; selected++)
     {
-
         Matrix33  sR = R[selected];
         Vector3dd st = t[selected];
         st *= (rightCameraPosition - leftCameraPosition).l2Metric() / st.l2Metric();
@@ -347,7 +344,7 @@ void testRectificatorCubeEssential (void)
         for (unsigned i = 0; i < points.size(); i++)
         {
 
-            Correspondance *corr = &points[i];
+            Correspondence *corr = &points[i];
             Vector3dd left  = Vector3dd(corr->start.x(), corr->start.y(), 1.0);
             Vector3dd right = Vector3dd(corr->  end.x(), corr->  end.y(), 1.0);
 
@@ -377,14 +374,11 @@ void testRectificatorCubeEssential (void)
 
 }
 
-
-
-void testRectificatorCube (void)
+TEST(Rectification1, DISABLED_testRectificatorCube)
 {
-
     cout << "=============================Testing old style rectificator=================================" << endl;
 
-    CorrespondanceList points;
+    CorrespondenceList points;
     vector<Vector3dd> *pointsIn3d = FlowSimulator::unitCube(GRID_STEP);
 
 
@@ -402,7 +396,7 @@ void testRectificatorCube (void)
 
     for (unsigned i = 0; i < pointsIn3d->size(); i++)
     {
-        Correspondance corr;
+        Correspondence corr;
         Vector3dd left3D  =  leftCamera * pointsIn3d->at(i);
         Vector3dd right3D = rightCamera * pointsIn3d->at(i);
 
@@ -424,7 +418,7 @@ void testRectificatorCube (void)
     //double scale;
 
     /*points.getNoramlisingTransform(leftNormalize, rightNormalize, &scale);
-    CorrespondanceList *normalisedList = new CorrespondanceList(points);
+    CorrespondenceList *normalisedList = new CorrespondenceList(points);
     normalisedList->transform(leftNormalize, rightNormalize);
 
     Matrix33 leftNormalize1;
@@ -481,20 +475,20 @@ void testRectificatorCube (void)
     printf("Old Matrix was\n");
     F.print();
     printf("\n");
-    ASSERT_TRUE(Fprim.notTooFar(F, 1e-5), "Matrix reconstruction failed");
+    CORE_ASSERT_TRUE(Fprim.notTooFar(F, 1e-5), "Matrix reconstruction failed");
 
     delete pointsIn3d;
 
 }
 
-int main (int /*argC*/, char ** /*argV*/)
-{
-    testRectificatorCubeEssential();
-//    testRectificatorCube ();
-    return 0;
-    __testUnDistortion();
-    testEpipoles();
-    testAligner();
-    cout << "PASSED" << endl;
-    return 0;
-}
+//int main (int /*argC*/, char ** /*argV*/)
+//{
+//    testRectificatorCubeEssential();
+////    testRectificatorCube ();
+//    return 0;
+//    __testUnDistortion();
+//    testEpipoles();
+//    testAligner();
+//    cout << "PASSED" << endl;
+//    return 0;
+//}

@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include "gtest/gtest.h"
 
 #include "global.h"
 
@@ -23,7 +24,8 @@
 
 using namespace corecvs;
 
-int main ( int /*argV*/, char * /*argC*/[])
+//int main ( int /*argV*/, char * /*argC*/[])
+TEST(Convolve, DISABLED_main)
 {
     G12Buffer *buffer = BufferFactory::getInstance()->loadG12Bitmap("data/pair/image0001_c0.pgm");
 
@@ -66,7 +68,7 @@ int main ( int /*argV*/, char * /*argC*/[])
         }
     }
 
-    return 1;
+//    return 1;
 }
 
 /*

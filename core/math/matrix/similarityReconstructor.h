@@ -13,7 +13,7 @@
 
 #include "vector2d.h"
 #include "matrix33.h"
-#include "correspondanceList.h"
+#include "correspondenceList.h"
 #include "matrix.h"
 #include "quaternion.h"
 #include "function.h"
@@ -86,13 +86,13 @@ public:
     Matrix33 getRotation();
 };
 
-typedef PrimitiveCorrespondance<Vector3dd, Vector3dd> Correspondance3D;
+typedef PrimitiveCorrespondence<Vector3dd, Vector3dd> Correspondence3D;
 
 
 class SimilarityReconstructor
 {
 public:
-    vector<Correspondance3D> p2p;
+    vector<Correspondence3D> p2p;
     bool trace;
 
     SimilarityReconstructor();

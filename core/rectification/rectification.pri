@@ -1,5 +1,5 @@
 HEADERS += \
-    rectification/correspondanceList.h \
+    rectification/correspondenceList.h \
     rectification/essentialMatrix.h \
     rectification/essentialEstimator.h \
     rectification/iterativeEstimator.h \
@@ -14,7 +14,7 @@ SOURCES += \
     rectification/essentialEstimator.cpp \
     rectification/iterativeEstimator.cpp \
     rectification/ransacEstimator.cpp \
-    rectification/correspondanceList.cpp \
+    rectification/correspondenceList.cpp \
     rectification/stereoAligner.cpp \
     rectification/triangulator.cpp \
 

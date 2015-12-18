@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "gtest/gtest.h"
 
 #include "matrix.h"
 #include "classicKalman.h"
@@ -80,7 +81,7 @@ public:
     }
 };
 
-void testClassicKalman (void)
+TEST(Kalman, testClassicKalman)
 {
     static const int STATE_DIMENTION = 2;
     static const int MEASURE_DIMENTION = 1;
@@ -161,7 +162,7 @@ void testClassicKalman (void)
 
 }
 
-int main (int /*argC*/, char ** /*argV[]*/)
-{
-    testClassicKalman ();
-}
+//int main (int /*argC*/, char ** /*argV[]*/)
+//{
+//    testClassicKalman ();
+//}

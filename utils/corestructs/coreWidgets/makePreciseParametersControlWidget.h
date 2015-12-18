@@ -1,6 +1,5 @@
 #pragma once
-#include <QWidget>
-
+#include <QtGui/QWidget>
 #include "generated/makePreciseParameters.h"
 #include "ui_makePreciseParametersControlWidget.h"
 #include "parametersControlWidgetBase.h"

@@ -13,6 +13,7 @@
 #endif
 #include <iostream>
 #include <stdint.h>
+#include "gtest/gtest.h"
 
 #include "global.h"
 
@@ -21,7 +22,7 @@
 
 using namespace corecvs;
 
-void testIntergralBufferGeneration ()
+TEST(Integral, testIntergralBufferGeneration)
 {
     cout << "Testing the Integral Buffer generation" << endl;
 
@@ -49,14 +50,14 @@ void testIntergralBufferGeneration ()
     IntegralBuffer<uint32_t, uint16_t, int32_t> *integral =
         new IntegralBuffer<uint32_t, uint16_t, int32_t>(iBuf);
 
-    ASSERT_TRUE(integral->isEqual(rBuf), "Buffers should be equal");
+    CORE_ASSERT_TRUE(integral->isEqual(rBuf), "Buffers should be equal");
 
     delete iBuf;
     delete rBuf;
     delete integral;
 }
 
-void testIntergralBufferBlur ()
+TEST(Integral, testIntergralBufferBlur)
 {
     uint16_t i[] = {
                 1,   2,  3,  4,
@@ -80,7 +81,7 @@ void testIntergralBufferBlur ()
 
     AbstractBuffer<uint16_t, int32_t> *iBuf2;
     iBuf2 = integral->rectangularBlur<AbstractBuffer<uint16_t, int32_t> >(1,1);
-    ASSERT_TRUE(iBuf2->isEqual(rBuf), "Buffers should be equal");
+    CORE_ASSERT_TRUE(iBuf2->isEqual(rBuf), "Buffers should be equal");
 
     delete iBuf;
     delete rBuf;
@@ -88,7 +89,7 @@ void testIntergralBufferBlur ()
     delete integral;
 }
 
-void testIntegralBlurLarge()
+TEST(Integral, DISABLED_testIntegralBlurLarge)
 {
     cout << "Testing bluring on large file" << endl;
     G12Buffer *input = BufferFactory::getInstance()->loadG12Bitmap("data/pair/image0001_c0.pgm");
@@ -110,9 +111,9 @@ void testIntegralBlurLarge()
             unsigned tmp = integral->rectangle(j - BLUR_RADIUS, i - BLUR_RADIUS, j + BLUR_RADIUS, i + BLUR_RADIUS );
             unsigned result = (tmp / ((2 * BLUR_RADIUS + 1) * (2 * BLUR_RADIUS + 1)));
 
-            ASSERT_TRUE_P(blurFast->element(i - BLUR_RADIUS, j - BLUR_RADIUS) == result,
-                   ("Error calculating blur buffer at %d %d  %d != %d",
-                    i, j, blurFast->element(i - BLUR_RADIUS, j - BLUR_RADIUS), result));
+            CORE_ASSERT_TRUE_P(blurFast->element(i - BLUR_RADIUS, j - BLUR_RADIUS) == result,
+                ("Error calculating blur buffer at %d %d  %d != %d",
+                 i, j, blurFast->element(i - BLUR_RADIUS, j - BLUR_RADIUS), result));
 
             *offset = result;
             offset++;
@@ -123,12 +124,11 @@ void testIntegralBlurLarge()
     delete blurFast;
     delete integral;
     delete input;
-
 }
 
 #ifdef WITH_SSE
 ALIGN_STACK_SSE
-void testIntergralBufferSSE (void)
+TEST(Integral, testIntergralBufferSSE)
 {
     cout << "Testing the Integral Buffer SSE reading" << endl;
 
@@ -153,22 +153,21 @@ void testIntergralBufferSSE (void)
 
     DOTRACE(("Results are: %u %u %u %u\n", resultArray[0],resultArray[1],resultArray[2], resultArray[3]));
 
-    ASSERT_TRUE(resultArray[0] == 28, "Error in SSE integral buffer calculation 1");
-    ASSERT_TRUE(resultArray[1] == 32, "Error in SSE integral buffer calculation 2");
-    ASSERT_TRUE(resultArray[2] == 36, "Error in SSE integral buffer calculation 3");
-    ASSERT_TRUE(resultArray[3] == 40, "Error in SSE integral buffer calculation 4");
+    CORE_ASSERT_TRUE(resultArray[0] == 28, "Error in SSE integral buffer calculation 1");
+    CORE_ASSERT_TRUE(resultArray[1] == 32, "Error in SSE integral buffer calculation 2");
+    CORE_ASSERT_TRUE(resultArray[2] == 36, "Error in SSE integral buffer calculation 3");
+    CORE_ASSERT_TRUE(resultArray[3] == 40, "Error in SSE integral buffer calculation 4");
 
-    ASSERT_TRUE(integral->rectangle(0,0,0,3) == 28, "Error in integral buffer calculation 1");
-    ASSERT_TRUE(integral->rectangle(1,0,1,3) == 32, "Error in integral buffer calculation 2");
-    ASSERT_TRUE(integral->rectangle(2,0,2,3) == 36, "Error in integral buffer calculation 3");
-    ASSERT_TRUE(integral->rectangle(3,0,3,3) == 40, "Error in integral buffer calculation 4");
-
+    CORE_ASSERT_TRUE(integral->rectangle(0, 0, 0, 3) == 28, "Error in integral buffer calculation 1");
+    CORE_ASSERT_TRUE(integral->rectangle(1, 0, 1, 3) == 32, "Error in integral buffer calculation 2");
+    CORE_ASSERT_TRUE(integral->rectangle(2, 0, 2, 3) == 36, "Error in integral buffer calculation 3");
+    CORE_ASSERT_TRUE(integral->rectangle(3, 0, 3, 3) == 40, "Error in integral buffer calculation 4");
 
     delete input;
     delete integral;
 }
 
-void testIntergralBufferSSE_New (void)
+TEST(Integral, testIntergralBufferSSE_New)
 {
     cout << "Testing the Integral Buffer SSE reading New" << endl;
 
@@ -194,23 +193,21 @@ void testIntergralBufferSSE_New (void)
 
     DOTRACE(("New Results are: %u %u %u %u\n", resultArray[0],resultArray[1],resultArray[2], resultArray[3]));
 
-    ASSERT_TRUE(resultArray[0] == 28, "Error in SSE integral buffer calculation 1");
-    ASSERT_TRUE(resultArray[1] == 32, "Error in SSE integral buffer calculation 2");
-    ASSERT_TRUE(resultArray[2] == 36, "Error in SSE integral buffer calculation 3");
-    ASSERT_TRUE(resultArray[3] == 40, "Error in SSE integral buffer calculation 4");
+    CORE_ASSERT_TRUE(resultArray[0] == 28, "Error in SSE integral buffer calculation 1");
+    CORE_ASSERT_TRUE(resultArray[1] == 32, "Error in SSE integral buffer calculation 2");
+    CORE_ASSERT_TRUE(resultArray[2] == 36, "Error in SSE integral buffer calculation 3");
+    CORE_ASSERT_TRUE(resultArray[3] == 40, "Error in SSE integral buffer calculation 4");
 
-    ASSERT_TRUE(integral->rectangle(0,0,0,3) == 28, "Error in integral buffer calculation 1");
-    ASSERT_TRUE(integral->rectangle(1,0,1,3) == 32, "Error in integral buffer calculation 2");
-    ASSERT_TRUE(integral->rectangle(2,0,2,3) == 36, "Error in integral buffer calculation 3");
-    ASSERT_TRUE(integral->rectangle(3,0,3,3) == 40, "Error in integral buffer calculation 4");
-
+    CORE_ASSERT_TRUE(integral->rectangle(0, 0, 0, 3) == 28, "Error in integral buffer calculation 1");
+    CORE_ASSERT_TRUE(integral->rectangle(1, 0, 1, 3) == 32, "Error in integral buffer calculation 2");
+    CORE_ASSERT_TRUE(integral->rectangle(2, 0, 2, 3) == 36, "Error in integral buffer calculation 3");
+    CORE_ASSERT_TRUE(integral->rectangle(3, 0, 3, 3) == 40, "Error in integral buffer calculation 4");
 
     delete input;
     delete integral;
 }
 
-
-void testBlurBufferSSE (void)
+TEST(Integral, testBlurBufferSSE)
 {
     G12Buffer *image = new G12Buffer(14,15);
     for (int i = 0; i < image->h; i++)
@@ -240,24 +237,22 @@ void testBlurBufferSSE (void)
 }
 #endif
 
+//int main (int /*a*/, char * /*b*/[])
+//{
+//#ifdef WITH_SSE
+//    testBlurBufferSSE();
+//#endif
+
+//    testIntegralBlurLarge();
+//    testIntergralBufferBlur();
+//    testIntergralBufferGeneration ();
+
+//#ifdef WITH_SSE
+//    testIntergralBufferSSE();
+//    testIntergralBufferSSE_New();
+//#endif
 
 
-int main (int /*a*/, char * /*b*/[])
-{
-#ifdef WITH_SSE
-    testBlurBufferSSE();
-#endif
-
-    testIntegralBlurLarge();
-    testIntergralBufferBlur();
-    testIntergralBufferGeneration ();
-
-#ifdef WITH_SSE
-    testIntergralBufferSSE();
-    testIntergralBufferSSE_New();
-#endif
-
-
-    cout << "PASSED" << endl;
-    return 0;
-}
+//    cout << "PASSED" << endl;
+//    return 0;
+//}

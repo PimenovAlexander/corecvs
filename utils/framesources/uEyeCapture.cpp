@@ -204,8 +204,7 @@ UEyeCaptureInterface::FramePair UEyeCaptureInterface::getFrame()
         decodeData(&leftCamera , currentLeft,  &(result.bufferLeft));
         decodeData(&rightCamera, currentRight, &(result.bufferRight));
 
-        result.leftTimeStamp  = currentLeft->usecsTimeStamp();
-        result.rightTimeStamp = currentRight->usecsTimeStamp();
+        result.timeStampLeft = result.timeStampRight = currentRight->usecsTimeStamp();
 
         stats.framesSkipped = skippedCount > 0 ? skippedCount - 1 : 0;
         skippedCount = 0;
@@ -213,18 +212,18 @@ UEyeCaptureInterface::FramePair UEyeCaptureInterface::getFrame()
         stats.triggerSkipped = triggerSkippedCount;
         triggerSkippedCount = 0;
 
-        int64_t internalDesync =  currentLeft->internalTimestamp - currentRight->internalTimestamp;
+        int64_t internalDesync = currentLeft->internalTimestamp - currentRight->internalTimestamp;
     protectFrame.unlock();
 
-    stats.values[CaptureStatistics::DECODING_TIME] = start.usecsToNow();
+    stats.values[CaptureStatistics::DECODING_TIME]    = start.usecsToNow();
     stats.values[CaptureStatistics::INTERFRAME_DELAY] = frameDelay;
 
-    int64_t desync =  result.leftTimeStamp - result.rightTimeStamp;
-    stats.values[CaptureStatistics::DESYNC_TIME] = desync > 0 ? desync : -desync;
-    stats.values[CaptureStatistics::INTERNAL_DESYNC_TIME] = internalDesync > 0 ? internalDesync : -internalDesync;
+    int64_t desync = result.diffTimeStamps();
+    stats.values[CaptureStatistics::DESYNC_TIME]          = CORE_ABS(desync);
+    stats.values[CaptureStatistics::INTERNAL_DESYNC_TIME] = CORE_ABS(internalDesync);
 
     /* Get temperature data */
-    stats.temperature[0] = leftCamera.getTemperature();
+    stats.temperature[0] = leftCamera .getTemperature();
     stats.temperature[1] = rightCamera.getTemperature();
 
     //stats.values[CaptureStatistics::DATA_SIZE] = currentLeft.bytesused;
@@ -241,7 +240,7 @@ UEyeCaptureInterface::~UEyeCaptureInterface()
     shouldStopSpinThread = true;
     bool result = spinRunning.tryLock(1000);
 
-    is_DisableEvent(leftCamera.mCamera, IS_SET_EVENT_FRAME);
+    is_DisableEvent(leftCamera .mCamera, IS_SET_EVENT_FRAME);
     is_DisableEvent(rightCamera.mCamera, IS_SET_EVENT_FRAME);
 
 #ifdef Q_OS_WIN

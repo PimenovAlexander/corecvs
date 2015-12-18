@@ -4,7 +4,6 @@
 #include <QtCore/QRegExp>
 #include <QtCore/QString>
 
-#include <opencv/highgui.h>
 #include "openCVFileCapture.h"
 //#include "openCVHelper.h"
 #include "OpenCVTools.h"
@@ -42,7 +41,7 @@ ImageCaptureInterface::FramePair OpenCvFileCapture::getFrame()
 {
     SYNC_PRINT(("OpenCvFileCapture::getFrame(): called\n"));
     //mProtectFrame.lock();
-        FramePair result(NULL, NULL);
+        FramePair result;
 
         mCapture.grab();
         cv::Mat image;
@@ -51,6 +50,7 @@ ImageCaptureInterface::FramePair OpenCvFileCapture::getFrame()
 
         result.rgbBufferLeft  = OpenCVTools::getRGB24BufferFromCVImage(header);
         result.rgbBufferRight = new RGB24Buffer(result.rgbBufferLeft);
+
         result.bufferLeft  = result.rgbBufferLeft->toG12Buffer();
         result.bufferRight = new G12Buffer(result.bufferLeft);
 
@@ -62,9 +62,7 @@ ImageCaptureInterface::FramePair OpenCvFileCapture::getFrame()
             }
         }*/
 
-
-        result.leftTimeStamp  = count * 10;
-        result.rightTimeStamp = count * 10;
+        result.timeStampLeft = result.timeStampRight = count * 10;
 
         delete_safe(header);
     //mProtectFrame.unlock();

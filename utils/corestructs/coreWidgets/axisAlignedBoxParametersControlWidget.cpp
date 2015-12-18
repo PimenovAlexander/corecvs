@@ -49,6 +49,18 @@ void AxisAlignedBoxParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void AxisAlignedBoxParametersControlWidget::getParameters(AxisAlignedBoxParameters& params) const
+{
+
+    params.setX                (mUi->xSpinBox->value());
+    params.setY                (mUi->ySpinBox->value());
+    params.setZ                (mUi->zSpinBox->value());
+    params.setWidth            (mUi->widthSpinBox->value());
+    params.setHeight           (mUi->heightSpinBox->value());
+    params.setDepth            (mUi->depthSpinBox->value());
+
+}
 
 AxisAlignedBoxParameters *AxisAlignedBoxParametersControlWidget::createParameters() const
 {

@@ -90,7 +90,7 @@ public:
     G12Buffer& operator =(G12Buffer& other)
     {
         if (!hasSameSize(&other)) {
-            ASSERT_FAIL("buffers have different sizes for the assignment!");  // TODO: implement this case when need
+            CORE_ASSERT_FAIL("buffers have different sizes for the assignment!");  // TODO: implement this case when need
         }
         else {
             fillWithRaw(other.data);

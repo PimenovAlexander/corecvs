@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>color_picker_alternative.png</file>
+        <file>color_management.png</file>
+    </qresource>
+</RCC>

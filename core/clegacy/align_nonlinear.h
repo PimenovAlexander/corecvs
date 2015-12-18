@@ -48,7 +48,7 @@
  *   for more details please read the code of getCorrectionForPoint() or read the Heikkila paper
  *
  */
-typedef struct LensCorrectionParametres_TAG {
+typedef struct LensDistortionModelParameters_TAG {
     double k1;       /**< Second order radial correction coefficient - \f$k_1\f$*/
     double k2;       /**< Fourth order radial correction coefficient - \f$k_2\f$*/
 
@@ -56,18 +56,18 @@ typedef struct LensCorrectionParametres_TAG {
     double p2;       /**< Second tangent correction coefficient - \f$p_2\f$*/
 
     vector2Du16 center; /**< The center of the distortion \f$(x_c,y_c)\f$*/
-} LensCorrectionParametres;
+} LensDistortionModelParameters;
 
 
 
-G12Buffer *correctLens (G12Buffer *input, LensCorrectionParametres* params);
+G12Buffer *correctLens (G12Buffer *input, LensDistortionModelParameters* params);
 
 
 #define PARAMETER_NUM 16
 void CameraModel(double input[], double X, double Y, double Z, double *x, double *y);
 
 #ifdef DEPRICATED
-DisplacementBuffer *displacementBufferFromInverseCamera(LensCorrectionParametres *params, int h, int w);
+DisplacementBuffer *displacementBufferFromInverseCamera(LensDistortionModelParameters *params, int h, int w);
 #endif
 
 

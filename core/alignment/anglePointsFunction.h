@@ -8,7 +8,9 @@ namespace corecvs
  *  \ingroup distcorrect
  *
  *  This class describes the cost function that shows how a set of lines differ
- *  from the model. We use the polynomial model here and sine between segments
+ *  from the model. We use the polynomial distortion model here
+ *
+ *  Cost function if a vector formed of sines between line segments
  *
  **/
 class AnglePointsFunction : public FunctionArgs

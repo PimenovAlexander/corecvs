@@ -1,14 +1,12 @@
-# try use global config
+# try use global config 
 exists(../../../config.pri) {
     ROOT_DIR=../../..
     #message(Using global config)
-} else {
+} else { 
     message(Using local config)
     ROOT_DIR=..
 }
-!win32 {                                        # it dues to the "mocinclude.tmp" bug on win32!
-    ROOT_DIR=$$PWD/$$ROOT_DIR
-}
+ROOT_DIR=$$PWD/$$ROOT_DIR
 include($$ROOT_DIR/config.pri)
 
 
@@ -16,7 +14,16 @@ CONFIG  += staticlib
 TARGET   = cvs_utils
 TEMPLATE = lib
 
-UTILSDIR = $$PWD
+# Utils lib uses core, core-res. These includes must be before adding utils lib for mingw linker!
+#
+# But they create unneccessary dependence core->utils, although they are not linked together, but should!
+#
+#COREDIR = ../../core
+#include(../../core/core.pri)                       # it uses COREDIR, TARGET and detects     COREBINDIR!
+#include(../../core/core_restricted.pri)            # it uses COREDIR, TARGET and detects RES_COREBINDIR!
+
+UTILSDIR=$$PWD
+COREDIR=$$UTILSDIR/core
 include($$UTILSDIR/utils.pri)                      # it uses UTILSDIR, TARGET and detects UTILS_BINDIR, OBJECTS_DIR,...!
 
 include($$UTILSDIR/corestructs/coreWidgets/coreWidgets.pri)
@@ -45,12 +52,12 @@ HEADERS += \
     widgets/foldableWidget.h \
     widgets/exponentialSlider.h \
     widgets/parameterEditorWidget.h \
-    widgets/parameterSlider.h \
+    widgets/parameterSlider.h \    
     widgets/parameterSelector.h \
     widgets/inputSelectorWidget.h \
     widgets/loggerWidget.h \
     widgets/graphPlotParametersControlWidget.h \
-    widgets/transform3DSelector.h \
+    widgets/transform3DSelector.h \ 
     widgets/angleEditBox.h \
     widgets/shift3DWidget.h \
     \
@@ -69,20 +76,18 @@ HEADERS += \
     \
     frames.h \
     framesources/imageCaptureInterface.h \
+    framesources/imageFileCaptureInterface.h \
+    framesources/fileCapture.h \
+    framesources/abstractFileCapture.h \
+    framesources/abstractFileCaptureSpinThread.h \
     framesources/cameraControlParameters.h \
     framesources/decoders/mjpegDecoder.h \
     framesources/decoders/mjpegDecoderLazy.h \
     framesources/decoders/decoupleYUYV.h \
     \
-    framesources/file/imageFileCaptureInterface.h \
-    framesources/file/fileCapture.h \
-    framesources/file/precCapture.h \
-    framesources/file/abstractFileCapture.h \
-    framesources/file/abstractFileCaptureSpinThread.h \
-    \
     fileformats/qtFileLoader.h \
     uis/advancedImageWidget.h \
-    uis/paintImageWidget.h \
+    uis/paintImageWidget.h \    
     uis/histogramdepthdialog.h \
     uis/capSettingsDialog.h \
     uis/osdBaseWidget.h \
@@ -99,18 +104,16 @@ HEADERS += \
     qtHelper.h \
     timeliner.h \
     \
-    visitors/baseXMLVisitor.h \
-    visitors/xmlGetter.h \
     visitors/xmlSetter.h \
     visitors/qSettingsSetter.h \
     visitors/qSettingsGetter.h \
+    visitors/xmlGetter.h \
     \
     serializer/serializer.h \
     serializer/serializedWidget.h \
     serializer/widgetQtIterator.h \
     \
     statistics/contentStatistics.h \
-    statistics/userPoll.h \
     \
     rectifier/estimationMethodType.h \
     rectifier/optimizationMethodType.h \
@@ -140,9 +143,9 @@ HEADERS += \
     3d/generated/viMouse3DFlowStyle.h \
     3d/generated/viMouse3DStereoStyle.h \
     3d/generated/viMouse3DFlowStyle.h \
-    3d/generated/draw3dViMouseParameters.h \
+    3d/generated/draw3dViMouseParameters.h \ 
     3d/mesh3DScene.h \
-    3d/coordinateFrame.h \
+    3d/coordinateFrame.h \    
     filters/graph/filterPinPresentation.h \
     filters/graph/filterGraphPresentation.h \
     filters/graph/filterPresentationsCollection.h \
@@ -152,12 +155,12 @@ HEADERS += \
     filters/graph/txtPinPresentation.h \
     filters/graph/compoundBlockPresentation.h \
     configManager.h
-
+  
 
 SOURCES += \
     3d/scene3D.cpp \
     \
-    corestructs/parametersControlWidgetBase.cpp \
+    corestructs/parametersControlWidgetBase.cpp \    
     corestructs/histogramdialog.cpp \
     corestructs/histogramwidget.cpp \
     corestructs/g12Image.cpp \
@@ -167,7 +170,7 @@ SOURCES += \
     corestructs/libWidgets/openCVBMParameters.cpp \
     corestructs/libWidgets/openCVSGMParameters.cpp \
     corestructs/libWidgets/openCVBMParametersControlWidget.cpp \
-    corestructs/libWidgets/openCVSGMParametersControlWidget.cpp \
+    corestructs/libWidgets/openCVSGMParametersControlWidget.cpp \  
     \
     viAreaWidget.cpp \
     viGLAreaWidget.cpp \
@@ -180,7 +183,7 @@ SOURCES += \
     widgets/parameterSelector.cpp \
     widgets/inputSelectorWidget.cpp \
     widgets/loggerWidget.cpp \
-    widgets/transform3DSelector.cpp \
+    widgets/transform3DSelector.cpp \ 
     widgets/angleEditBox.cpp \
     widgets/shift3DWidget.cpp \
     \
@@ -198,23 +201,21 @@ SOURCES += \
     \
     frames.cpp \
     framesources/imageCaptureInterface.cpp \        # it uses WITH_DIRECTSHOW, WITH_UEYE, WITH_OPENCV
+    framesources/imageFileCaptureInterface.cpp \
+    framesources/abstractFileCapture.cpp \
+    framesources/abstractFileCaptureSpinThread.cpp \
     framesources/cameraControlParameters.cpp \
+    framesources/fileCapture.cpp \
     framesources/decoders/mjpegDecoder.cpp \
     framesources/decoders/mjpegDecoderLazy.cpp \
     framesources/decoders/decoupleYUYV.cpp \
     \
-    framesources/file/imageFileCaptureInterface.cpp \
-    framesources/file/fileCapture.cpp \
-    framesources/file/precCapture.cpp \
-    framesources/file/abstractFileCapture.cpp \
-    framesources/file/abstractFileCaptureSpinThread.cpp \
-    \
     fileformats/qtFileLoader.cpp \
     uis/advancedImageWidget.cpp \
-    uis/paintImageWidget.cpp \
+    uis/paintImageWidget.cpp \    
     uis/histogramdepthdialog.cpp \
     uis/capSettingsDialog.cpp \
-    uis/osdBaseWidget.cpp \
+    uis/osdBaseWidget.cpp \   
     uis/graphPlotDialog.cpp \
     uis/aboutDialog.cpp \
     uis/textLabelWidget.cpp \
@@ -229,11 +230,10 @@ SOURCES += \
     qtHelper.cpp \
     \
 ### visitors/defaultSetter.cpp \        # this file is obsolete version of the same name at "core/reflection"
-    visitors/baseXMLVisitor.cpp \
     visitors/xmlSetter.cpp \
-    visitors/xmlGetter.cpp \
     visitors/qSettingsSetter.cpp \
     visitors/qSettingsGetter.cpp \
+    visitors/xmlGetter.cpp \
 #   visitors/printerVisitor.cpp \
     \
     serializer/serializer.cpp \
@@ -241,7 +241,6 @@ SOURCES += \
     serializer/widgetQtIterator.cpp \
     \
     statistics/contentStatistics.cpp \
-    statistics/userPoll.cpp \
     \
     rectifier/universalRectifier.cpp \
     rectifier/rectifyParametersControlWidget.cpp \
@@ -275,7 +274,7 @@ SOURCES += \
     filters/graph/txtPinPresentation.cpp \
     filters/graph/compoundBlockPresentation.cpp \
     configManager.cpp
-
+ 
 
 FORMS += \
     \
@@ -307,7 +306,7 @@ FORMS += \
     camcalc/cameraCalculatorWidget.ui \
     \
     uis/advancedImageWidget.ui \
-    uis/paintImageWidget.ui \
+    paintImageWidget.ui \    
     uis/histogramdepthdialog.ui \
     uis/capSettingsDialog.ui \
     uis/graphPlotDialog.ui \
@@ -316,7 +315,7 @@ FORMS += \
     uis/pointsRectificationWidget.ui \
     \
     rectifier/rectifyParametersControlWidget.ui \
-    distortioncorrector/distortionWidget.ui \
+    distortioncorrector/distortionWidget.ui \    
     \
 #   Generated    \
     \
@@ -325,8 +324,7 @@ FORMS += \
     3d/generated/draw3dViMouseParametersControlWidget.ui \
     filters/graph/filterGraphPresentation.ui \
 
-RESOURCES += \
-   ../resources/main.qrc
+    
 
 unix:!macx {
     HEADERS += \
@@ -342,20 +340,20 @@ unix:!macx {
 }
 
 with_opengl {
-    DEPENDPATH  += opengl
+    DEPENDPATH  += opengl 
     DEPENDPATH  += uis/cloudview
     INCLUDEPATH += uis/cloudview
-
+    
 
     HEADERS     += opengl/openGLTools.h
     SOURCES     += opengl/openGLTools.cpp
 
-    HEADERS     += uis/cloudview/cloudViewDialog.h \
+    HEADERS     += uis/cloudview/cloudViewDialog.h \ 
     			   uis/cloudview/treeSceneController.h \
-
-    SOURCES     += uis/cloudview/cloudViewDialog.cpp \
+    			   
+    SOURCES     += uis/cloudview/cloudViewDialog.cpp \ 
                    uis/cloudview/treeSceneController.cpp \
-
+                       
     FORMS       += uis/cloudview/cloudViewDialog.ui
 }
 
@@ -373,18 +371,18 @@ with_ueye {
 
 with_opencv {
     OPENCV_WRAPPER_DIR = $$UTILSDIR/../wrappers/opencv
-    include($$OPENCV_WRAPPER_DIR/opencv.pri)                # it uses OPENCV_WRAPPER_DIR inside
+    include($$OPENCV_WRAPPER_DIR/opencv.pri)            # it uses OPENCV_WRAPPER_DIR inside
 
-    contains(DEFINES, WITH_OPENCV) {                        # TODO: move this to OpenCV
+    contains(DEFINES, WITH_OPENCV) {  # Move this to OpenCV
         HEADERS += \
-            framesources/opencv/openCVCapture.h \
-            framesources/opencv/openCVFileCapture.h \
-            framesources/opencv/openCVHelper.h \
+            framesources/openCVCapture.h \
+            framesources/openCvFileCapture.h \
+            framesources/openCvHelper.h \
 
         SOURCES += \
-            framesources/opencv/openCVCapture.cpp \
-            framesources/opencv/openCVFileCapture.cpp \
-            framesources/opencv/openCVHelper.cpp \
+            framesources/openCVCapture.cpp \
+            framesources/openCvFileCapture.cpp \
+            framesources/openCvHelper.cpp \
 
     }
 }
@@ -402,31 +400,4 @@ with_directshow {
         framesources/directShow/directShow.cpp \
 
     DEFINES += WITH_DIRECTSHOW
-}
-
-
-with_avcodec {
-    HEADERS += \
-        framesources/avcodec/aviCapture.h \
-        framesources/avcodec/aviListBase.h \
-        framesources/avcodec/aviTGListBase.h \
-        framesources/avcodec/rtspCapture.h \
-
-    SOURCES += \
-        framesources/avcodec/aviCapture.cpp \
-        framesources/avcodec/aviListBase.cpp \
-        framesources/avcodec/aviTGListBase.cpp \
-        framesources/avcodec/rtspCapture.cpp \
-
-}
-
-with_synccam {
-    HEADERS += \
-        framesources/syncCam/syncCamerasCaptureInterface.h \
-
-
-    SOURCES += \
-        framesources/syncCam/syncCamerasCaptureInterface.cpp \
-
-    DEFINES += WITH_SYNCCAM
 }

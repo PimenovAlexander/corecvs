@@ -181,7 +181,8 @@ void Clustering3D::clusterStartRecursive(SortingType sortingType)
             for (int i = 0; i < sz; i++)
             {
                 // check if new cluster not down from previous
-                if (abs(mClusters.back().mClusterInfo.point.z() - mClustersCenter[i].z()) < mHeadArea && abs(mClusters.back().mClusterInfo.point.x() - mClustersCenter[i].x()) < mHeadArea )
+                if (fabs(mClusters.back().mClusterInfo.point.z() - mClustersCenter[i].z()) < mHeadArea &&
+                    fabs(mClusters.back().mClusterInfo.point.x() - mClustersCenter[i].x()) < mHeadArea )
                     isGood = false;
             }
             if (isGood)
@@ -343,7 +344,7 @@ void Clustering3D::clustering(int sizeW, int sizeH, int zoneW, int zoneH, int zo
                     if (mMarkup->element(y,x) == NULL)
                         continue;
 
-                    depth = abs(map.element(i,j)->point.z() - map.element(y,x)->point.z());
+                    depth = fabs(map.element(i,j)->point.z() - map.element(y,x)->point.z());
                     if ( depth > zoneDepth )
                         continue;
 

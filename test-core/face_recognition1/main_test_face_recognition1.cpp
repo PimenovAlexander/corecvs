@@ -10,6 +10,7 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include "gtest/gtest.h"
 
 #include "global.h"
 #include "vjPattern.h"
@@ -29,7 +30,8 @@ void processPoint(VJAdaBoostedClassifier * /*classifier*/, G12IntegralBuffer * /
 
 }
 
-int main (int /*argC*/, char *argV[])
+//int main (int /*argC*/, char *argV[])
+TEST(FaceRecognition1, main)
 {
     const double UP_FACTOR = 5;
     const double UP_STEP   = 1.2;
@@ -109,6 +111,6 @@ int main (int /*argC*/, char *argV[])
 
     printf("Found %d faces among %d objects %2.2lf%%\n", positive, total, (double) 100.0 * positive / total );
     (BMPLoader()).save("output.bmp", output);
-    return 0;
+//    return 0;
 }
 

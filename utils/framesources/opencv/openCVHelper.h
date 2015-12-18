@@ -3,7 +3,8 @@
 /* GCC 4.6 needs this to compile*/
 #include <cstddef>
 
-#include <opencv/highgui.h>
+#include <opencv2/highgui/highgui.hpp>
+
 #include "g12Buffer.h"
 
 using corecvs::G12Buffer;

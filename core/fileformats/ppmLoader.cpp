@@ -96,7 +96,7 @@ G12Buffer* PPMLoader::g12BufferCreateFromPPM (string& name)
                 toReturn->element(i, j) = ((charImage[offset * 2]) << 8 |
                                           (charImage[offset * 2 + 1])) >> shiftCount;
 
-                ASSERT_FALSE((toReturn->element(i, j) >= (1 << G12Buffer::BUFFER_BITS)), "Internal error in image loader\n");
+                CORE_ASSERT_FALSE((toReturn->element(i, j) >= (1 << G12Buffer::BUFFER_BITS)), "Internal error in image loader\n");
             }
         }
     }
@@ -321,7 +321,7 @@ G12Buffer* PPMLoader::g16BufferCreateFromPPM (string& name)
                 toReturn->element(i, j) = ((charImage[offset * 2]) << 8 |
                                           (charImage[offset * 2 + 1])) >> shiftCount;
 
-                ASSERT_FALSE((toReturn->element(i, j) >= G12Buffer::BUFFER_MAX_VALUE), "Internal error in image loader\n");
+                CORE_ASSERT_FALSE((toReturn->element(i, j) >= G12Buffer::BUFFER_MAX_VALUE), "Internal error in image loader\n");
             }
         }
     }

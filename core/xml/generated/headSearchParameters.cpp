@@ -45,7 +45,10 @@ int HeadSearchParameters::staticInit()
           100,
           "Threshold Distance",
           "Threshold Distance",
-          "Threshold Distance in mm"
+          "Threshold Distance in mm",
+          true,
+         0,
+         99999
         )
     );
     fields().push_back(
@@ -56,7 +59,10 @@ int HeadSearchParameters::staticInit()
           100,
           "Cluster depth",
           "Cluster depth",
-          "Cluster depth in mm"
+          "Cluster depth in mm",
+          true,
+         0,
+         99999
         )
     );
     fields().push_back(
@@ -67,7 +73,10 @@ int HeadSearchParameters::staticInit()
           100,
           "Cluster min size",
           "Cluster min size",
-          "Cluster min size"
+          "Cluster min size",
+          true,
+         0,
+         99999
         )
     );
     fields().push_back(
@@ -78,7 +87,10 @@ int HeadSearchParameters::staticInit()
           100,
           "Head area radius",
           "Head area radius",
-          "Head area in mm"
+          "Head area in mm",
+          true,
+         0,
+         99999
         )
     );
     fields().push_back(
@@ -89,7 +101,10 @@ int HeadSearchParameters::staticInit()
           1,
           "Head Number",
           "Head Number",
-          "Expected number of heads"
+          "Expected number of heads",
+          true,
+         0,
+         100
         )
     );
    return 0;

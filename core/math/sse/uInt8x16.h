@@ -49,18 +49,15 @@ public:
     UInt8x16(const __m128i &_data) :
         BaseClass(_data) {}
 
-    explicit UInt8x16(int8_t constant) :
+    explicit UInt8x16(uint8_t constant) :
         BaseClass(constant){}
 
-    explicit UInt8x16(uint8_t constant) :
-        BaseClass(constant) {}
-
-    explicit UInt8x16( int8_t  c0, int8_t  c1, int8_t  c2, int8_t  c3,
-                      int8_t  c4, int8_t  c5, int8_t  c6, int8_t  c7,
-                      int8_t  c8, int8_t  c9, int8_t c10, int8_t c11,
-                      int8_t c12, int8_t c13, int8_t c14, int8_t c15 ) :
+    explicit UInt8x16( uint8_t  c0, uint8_t  c1, uint8_t  c2, uint8_t  c3,
+                       uint8_t  c4, uint8_t  c5, uint8_t  c6, uint8_t  c7,
+                       uint8_t  c8, uint8_t  c9, uint8_t c10, uint8_t c11,
+                       uint8_t c12, uint8_t c13, uint8_t c14, uint8_t c15 ) :
         BaseClass (c0, c1,  c2,  c3,  c4,  c5,  c6,  c7,
-                   c8, c9, c10, c11, c12, c13, c14, c15) {};
+                   c8, c9, c10, c11, c12, c13, c14, c15) {}
 
     explicit UInt8x16(const int8_t data[16]) :
         BaseClass(data) {}
@@ -68,7 +65,7 @@ public:
     explicit UInt8x16(const uint8_t data[16]) :
         BaseClass(data) {}
 
-    explicit inline UInt8x16(const FixedVector<int8_t,16> input) :
+    explicit inline UInt8x16(const FixedVector<uint8_t,16> input) :
         BaseClass(input) {}
 
 /* Could we use template constructor here? */
@@ -233,16 +230,9 @@ template<int idx>
     }
 #endif
 
-    /* Arithmetics operations */
-    friend UInt8x16 operator + (const UInt8x16 &left, const UInt8x16 &right);
-    friend UInt8x16 operator - (const UInt8x16 &left, const UInt8x16 &right);
-
-    friend UInt8x16 operator += (UInt8x16 &left, const UInt8x16 &right);
-    friend UInt8x16 operator -= (UInt8x16 &left, const UInt8x16 &right);
-
-    UInt8x16 operator -( ) {
-        return (UInt8x16((int8_t)0) - *this);
-    }
+    /* Saturated arithmetics operations */
+    friend UInt8x16 adds(const UInt8x16 &left, const UInt8x16 &right);
+    friend UInt8x16 subs(const UInt8x16 &left, const UInt8x16 &right);
 
     /* Immediate shift operations */
     friend UInt8x16 operator << (const UInt8x16 &left, uint32_t count);
@@ -332,6 +322,14 @@ FORCE_INLINE UInt8x16 operator >>= (UInt8x16 &left, const UInt8x16 &right) {
     return left;
 }
 #endif
+
+FORCE_INLINE UInt8x16 adds(const UInt8x16 &left, const UInt8x16 &right) {
+    return UInt8x16(_mm_adds_epu8(left.data, right.data));
+}
+
+FORCE_INLINE UInt8x16 subs(const UInt8x16 &left, const UInt8x16 &right) {
+    return UInt8x16(_mm_subs_epu8(left.data, right.data));
+}
 
 FORCE_INLINE UInt8x16 productLowerPart (const UInt8x16 &left, const UInt8x16 &right) {
     return UInt8x16(_mm_mullo_epi16(left.data, right.data));

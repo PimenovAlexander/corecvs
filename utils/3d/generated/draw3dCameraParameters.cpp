@@ -118,51 +118,6 @@ int Draw3dCameraParameters::staticInit()
         )
     );
     fields().push_back(
-        new BoolField
-        (
-          Draw3dCameraParameters::SHOW_CAPTION_ID,
-          offsetof(Draw3dCameraParameters, mShowCaption),
-          false,
-          "Show caption",
-          "Show caption",
-          "Show caption"
-        )
-    );
-    fields().push_back(
-        new IntField
-        (
-          Draw3dCameraParameters::FONT_SIZE_ID,
-          offsetof(Draw3dCameraParameters, mFontSize),
-          8,
-          "Font Size",
-          "Font Size",
-          "Font Size"
-        )
-    );
-    fields().push_back(
-        new IntField
-        (
-          Draw3dCameraParameters::FONT_WIDTH_ID,
-          offsetof(Draw3dCameraParameters, mFontWidth),
-          1,
-          "Font Width",
-          "Font Width",
-          "Font Width"
-        )
-    );
-    fields().push_back(
-        new CompositeField
-        (
-          Draw3dCameraParameters::FONT_COLOR_ID,
-          offsetof(Draw3dCameraParameters, mFontColor),
-          "Font Color",
-          "RgbColorParameters",
-          "Font Color",
-          "Font Color",
-           NULL
-        )
-    );
-    fields().push_back(
         new EnumField
         (
           Draw3dCameraParameters::TEXTURE_CORRODINATES_ID,

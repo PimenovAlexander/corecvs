@@ -85,3 +85,18 @@ void SettingsGetter::visit<int, EnumField>(int &field, const EnumField *fieldDes
 {
     field = mSettings->value(fieldDescriptor->name.name, fieldDescriptor->defaultValue).toInt();
 }
+
+/* Arrays block */
+
+template <>
+void SettingsGetter::visit<double, DoubleVectorField>(std::vector<double> &field, const DoubleVectorField *fieldDescriptor)
+{
+
+    mSettings->beginGroup(fieldDescriptor->name.name);
+    int size = mSettings->value("size", 0).toInt();
+    for (int i = 0; i < size; i++ )
+    {
+        field.push_back(mSettings->value(QString::number(i), fieldDescriptor->defaultValue).toDouble());
+    }
+    mSettings->endGroup();
+}

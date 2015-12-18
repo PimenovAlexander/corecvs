@@ -46,6 +46,15 @@ void SobelParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void SobelParametersControlWidget::getParameters(SobelParameters& params) const
+{
+
+    params.setMixingType       (static_cast<SobelMixingType::SobelMixingType>(mUi->mixingTypeComboBox->currentIndex()));
+    params.setHorizontal       (mUi->horizontalCheckBox->isChecked());
+    params.setVertical         (mUi->verticalCheckBox->isChecked());
+
+}
 
 SobelParameters *SobelParametersControlWidget::createParameters() const
 {

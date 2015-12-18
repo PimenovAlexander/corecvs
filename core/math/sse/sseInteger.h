@@ -45,6 +45,14 @@ public:
         this->data = data;
     }
 
+    static RealType Zero() {
+        return RealType(_mm_setzero_si128());
+    }
+
+    static RealType AllOnes() {
+        return RealType(_mm_set1_epi32(0xFFFF));
+    }
+
     /** Load unaligned. Not safe to use until you exactly know what you are doing */
     static SSEInteger load(const __m128i * const data_ptr)
     {
@@ -84,7 +92,8 @@ static uint64_t   streamedWrites;
 #endif
     }
 
-    /** Save aligned.
+    /**
+     * Save aligned.
      * \remark Not safe to use until you exactly know what you are doing
      **/
     void saveAligned(__m128i * const data) const
@@ -144,6 +153,12 @@ static uint64_t   streamedWrites;
     friend RealType andNotThis (RealType &left, const SSEInteger &right) {
         left.data = _mm_andnot_si128(left.data, right.data);
         return left;
+    }
+
+    template <int shift>
+    RealType shiftRightWhole() const
+    {
+        return RealType(_mm_srli_si128(data, shift));       // for msvc2013 shift must be a constant
     }
 
 };

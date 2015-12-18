@@ -1,8 +1,14 @@
+#include <QDebug>
 #include "baseGenerator.h"
 
 BaseGenerator::BaseGenerator(const Reflection *_clazz)
     : clazz(_clazz)
 {
+}
+
+QString BaseGenerator::getGenerateDir()
+{
+    return "Generated";
 }
 
 QString BaseGenerator::toEnumName(QString  input)
@@ -32,9 +38,9 @@ QString BaseGenerator::j(QString in, int width)
     return in.leftJustified(width, ' ');
 }
 
-QString BaseGenerator::getCppTypeForType(const BaseField *field)
-{
-    switch(field->type)
+QString BaseGenerator::getCppTypeForElementType(const BaseField::FieldType type)
+{   
+    switch(type)
     {
         case BaseField::TYPE_INT:
             return "int";
@@ -62,8 +68,27 @@ QString BaseGenerator::getCppTypeForType(const BaseField *field)
     }
 }
 
+QString BaseGenerator::getCppTypeForType(const BaseField *field)
+{
+
+    BaseField::FieldType type = (BaseField::FieldType)(field->type & ~BaseField::TYPE_VECTOR_BIT);
+    QString element = getCppTypeForElementType(type);
+
+    if (field->type & BaseField::TYPE_VECTOR_BIT) {
+        return QString("vector<%1>").arg(element);
+    } else {
+        return element;
+    }
+
+}
+
+
 QString BaseGenerator::getWidgetGetterMethodForType(BaseField::FieldType type)
 {
+    if (field->type & BaseField::TYPE_VECTOR_BIT) {
+       qDebug() << "Unsupported type for UI: vectors not supported so far";
+    }
+
     switch(type)
     {
         case BaseField::TYPE_INT:
@@ -90,6 +115,10 @@ QString BaseGenerator::getWidgetNameForName(QString name)
 
 QString BaseGenerator::getWidgetSetterMethodForType(BaseField::FieldType type)
 {
+    if (field->type & BaseField::TYPE_VECTOR_BIT) {
+       qDebug() << "Unsupported type for UI: vectors not supported so far";
+    }
+
     switch(type)
     {
         case BaseField::TYPE_INT:
@@ -108,13 +137,15 @@ QString BaseGenerator::getWidgetSetterMethodForType(BaseField::FieldType type)
     }
 }
 
-QString BaseGenerator::getDefaultValue(const BaseField *field)
-{
+QString BaseGenerator::getDefaultElementValue(const BaseField *field)
+{    
     switch(type)
     {
-        case BaseField::TYPE_INT:
+        case  BaseField::TYPE_INT:
+        case (BaseField::TYPE_INT | BaseField::TYPE_VECTOR_BIT):
             return QString::number(static_cast<const IntField *>(field)->defaultValue);
-        case BaseField::TYPE_DOUBLE:
+        case  BaseField::TYPE_DOUBLE:
+        case (BaseField::TYPE_DOUBLE | BaseField::TYPE_VECTOR_BIT):
             return QString::number(static_cast<const DoubleField *>(field)->defaultValue);
         case BaseField::TYPE_BOOL:
             return static_cast<const BoolField *>(field)->defaultValue ? "true" : "false";
@@ -137,36 +168,62 @@ QString BaseGenerator::getDefaultValue(const BaseField *field)
             return QString("std::vector<") + toCamelCase(referent->name.name, true) + ">()";
         }
         default:
-            return "/* Something is not supported by generator */";
+            return "/* default value is not supported by generator */";
     }
 }
 
-QString BaseGenerator::getFieldRefTypeForType(BaseField::FieldType type)
+QString BaseGenerator::getDefaultValue(const BaseField *field)
+{
+    /*if (field->type & BaseField::TYPE_VECTOR_BIT) {
+        return QString("std::") + getCppTypeForType(field) + "()";
+    } else {*/
+        return getDefaultElementValue(field);
+    /*}*/
+}
+
+
+
+QString BaseGenerator::getFieldRefTypeForElementType(BaseField::FieldType type)
 {
     switch(type)
     {
         case BaseField::TYPE_INT:
-            return "IntField";
+            return "Int";
         case BaseField::TYPE_TIMESTAMP:
-            return "TimestampField";
+            return "Timestamp";
         case BaseField::TYPE_DOUBLE:
-            return "DoubleField";
+            return "Double";
         case BaseField::TYPE_BOOL:
-            return "BoolField";
+            return "Bool";
         case BaseField::TYPE_ENUM:
-            return "EnumField";
+            return "Enum";
         case BaseField::TYPE_STRING:
-           return "StringField";
+           return "String";
         case BaseField::TYPE_POINTER:
-            return "PointerField";
+            return "Pointer";
         case BaseField::TYPE_COMPOSITE:
-            return "CompositeField";
+            return "Composite";
         case BaseField::TYPE_COMPOSITE_ARRAY:
-             return "CompositeArrayField";
+             return "CompositeArray";
         default:
             return "/* Something is not supported by generator */";
     }
 }
+
+QString BaseGenerator::getFieldRefTypeForType(BaseField::FieldType intype)
+{
+    BaseField::FieldType type = (BaseField::FieldType)(intype & ~BaseField::TYPE_VECTOR_BIT);
+    QString element = getFieldRefTypeForElementType(type);
+
+    if (field->type & BaseField::TYPE_VECTOR_BIT) {
+        return QString("%1VectorField").arg(element);
+    } else {
+        return QString("%1Field").arg(element);
+    }
+
+}
+
+
 
 QString BaseGenerator::getWidgetSuffixForType(BaseField::FieldType type)
 {

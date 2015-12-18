@@ -53,13 +53,13 @@ DirectShowCaptureInterface::DirectShowCaptureInterface(string _devname)
     "  | - FPS %s/%s\n"
     "  | - Size [%sx%s]\n"
     "  \\ - Compressing: %s\n",
-    deviceStringPattern.cap(Device1Group).toLatin1().constData(),
-    deviceStringPattern.cap(Device2Group).toLatin1().constData(),
-    deviceStringPattern.cap(FpsNumGroup).toLatin1().constData(),
-    deviceStringPattern.cap(FpsDenumGroup).toLatin1().constData(),
-    deviceStringPattern.cap(WidthGroup).toLatin1().constData(),
-    deviceStringPattern.cap(HeightGroup).toLatin1().constData(),
-    deviceStringPattern.cap(CompressionGroup).toLatin1().constData());
+    deviceStringPattern.cap(Device1Group).toAscii().constData(),
+    deviceStringPattern.cap(Device2Group).toAscii().constData(),
+    deviceStringPattern.cap(FpsNumGroup).toAscii().constData(),
+    deviceStringPattern.cap(FpsDenumGroup).toAscii().constData(),
+    deviceStringPattern.cap(WidthGroup).toAscii().constData(),
+    deviceStringPattern.cap(HeightGroup).toAscii().constData(),
+    deviceStringPattern.cap(CompressionGroup).toAscii().constData());
 
     int leftName =  deviceStringPattern.cap(Device1Group).isEmpty() ? -1 : deviceStringPattern.cap(Device1Group).toInt();
     int rightName = deviceStringPattern.cap(Device2Group).isEmpty() ? -1 : deviceStringPattern.cap(Device2Group).toInt();

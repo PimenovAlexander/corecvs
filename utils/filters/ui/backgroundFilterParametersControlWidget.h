@@ -1,5 +1,5 @@
 #pragma once
-#include <QWidget>
+#include <QtGui/QWidget>
 #include "generated/backgroundFilterParameters.h"
 #include "ui_backgroundFilterParametersControlWidget.h"
 #include "filterParametersControlWidgetBase.h"

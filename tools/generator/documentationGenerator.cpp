@@ -6,6 +6,7 @@
 
 #include <iostream>
 
+#include <QDir>
 #include <QStringList>
 
 #include "documentationGenerator.h"
@@ -94,7 +95,7 @@ void DocumentationGenerator::generateDocumentation()
     int fieldNumber = clazz->fields.size();
 
     out.close();
-    out.open(QString("Generated/" + toCamelCase(className) + ".redmine").toLatin1(), ios::out);
+    out.open(QString(getGenerateDir() + QDir::separator() + toCamelCase(className) + ".redmine").toLatin1(), ios::out);
 
     result +=
     "" + classComment + "\n\n";

@@ -96,11 +96,11 @@ Matrix DistPointsFunction::getJacobian(const double in[], double delta)
     {
         vector<Vector2dd> straight = mSample[i];
         RadialFunc f(straight,
-                mModelFactory.mLockedDimentions.mParams.center,
-           (int)mModelFactory.mLockedDimentions.mParams.koeff.size());
+                mModelFactory.mLockedDimentions.center(),
+           (int)mModelFactory.mLockedDimentions.mParams.koeff().size());
 
         vector<Vector2dd> newStraight(straight.size());
-        f.setScaleFactor(mModelFactory.mLockedDimentions.mParams.aspect);
+        f.setScaleFactor(mModelFactory.mLockedDimentions.mParams.aspect());
         Matrix dPointsDKoeff = f.getJacobian(in);
         f(in, &(newStraight[0].x()));
 

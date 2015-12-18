@@ -3,10 +3,111 @@
  *
  * \date Dec 13, 2012
  **/
+#include <fstream>
+
 #include "mathUtils.h"      // M_PI
+#include "abstractPainter.h"
 #include "mesh3d.h"
 
 namespace corecvs {
+
+void Mesh3D::switchColor(bool on)
+{
+    if (hasColor == on)
+        return;
+    if (on) {
+        vertexesColor.resize(vertexes.size(), currentColor);
+        edgesColor   .resize(edges   .size(), currentColor);
+        facesColor   .resize(faces   .size(), currentColor);
+    } else {
+        vertexesColor.clear();
+        edgesColor.clear();
+        facesColor.clear();
+    }
+    hasColor = on;
+}
+
+void Mesh3D::setColor(const RGBColor &color)
+{
+    currentColor = color;
+}
+
+void Mesh3D::mulTransform(const Matrix33 &transform)
+{
+    transformStack.push_back(currentTransform);
+    currentTransform = currentTransform * Matrix44(transform);
+}
+
+void Mesh3D::mulTransform(const Matrix44 &transform)
+{
+    transformStack.push_back(currentTransform);
+    currentTransform = currentTransform * transform;
+}
+
+void Mesh3D::popTransform()
+{
+    if (transformStack.empty()) {
+        SYNC_PRINT(("Mesh3D::popTransform(): Poping on empty stack\n"));
+        return;
+    }
+    currentTransform = transformStack.back();
+    transformStack.pop_back();
+}
+
+void Mesh3D::setCentral(Vector3dd _central)
+{
+    centralPoint = _central;
+    hasCentral = true;
+}
+
+void Mesh3D::addOrts(double length, bool captions)
+{
+    setColor(RGBColor::Red());
+    addLine(Vector3dd(0.0), Vector3dd::OrtX() * length);
+    setColor(RGBColor::Green());
+    addLine(Vector3dd(0.0), Vector3dd::OrtY() * length);
+    setColor(RGBColor::Blue());
+    addLine(Vector3dd(0.0), Vector3dd::OrtZ() * length);
+
+    /* Font Scale */
+    Matrix44 fs = Matrix44::Scale(1.0 / 20.0) * Matrix44(Matrix33::MirrorXZ());
+
+    /* Scale to length */
+    Matrix44 tl = Matrix44::Scale(length / 20.0);
+
+
+    AbstractPainter<Mesh3D> p(this);
+    if (captions) {
+        setColor(RGBColor::Red());
+        mulTransform(tl * Matrix44::Shift(18.0, 0.2, 0.0) * fs);
+        p.drawFormatVector(length, 0, 0, 1, "X");
+        popTransform();
+
+        mulTransform(tl * Matrix44(Matrix33::RotationX(degToRad(90.0))) * Matrix44::Shift(18.0, 0.2, 0.0)  * fs);
+        p.drawFormatVector(length, 0, 0, 1, "X");
+        popTransform();
+
+        setColor(RGBColor::Green());
+        mulTransform(tl * Matrix44::Shift(0, 18.0, 0.0) * fs);
+        p.drawFormatVector(length, 0, 0, 1, "Y");
+        popTransform();
+
+        mulTransform(tl * Matrix44(Matrix33::RotationY(degToRad(-90.0))) * Matrix44::Shift(0, 18.0, 0.0) * fs);
+        p.drawFormatVector(length, 0, 0, 1, "Y");
+        popTransform();
+
+        setColor(RGBColor::Blue());
+        mulTransform(tl * Matrix44::Shift(0.0, 0.2, 20.0) * Matrix44(Matrix33::RotationY(degToRad(90.0))) * fs);
+        p.drawFormatVector(length, 0, 0, 1, "Z");
+        popTransform();
+
+        mulTransform(tl * Matrix44(Matrix33::RotationZ(degToRad(-90.0))) * Matrix44::Shift(0.0, 0.2, 20.0) * Matrix44(Matrix33::RotationY(degToRad(90.0))) * fs);
+        p.drawFormatVector(length, 0, 0, 1, "Z");
+        popTransform();
+
+    }
+
+}
 
 void Mesh3D::addAOB(Vector3dd c1, Vector3dd c2, bool addFaces)
 {
@@ -82,8 +183,8 @@ void Mesh3D::addAOB(const AxisAlignedBox3d &box, bool addFaces)
 
 int Mesh3D::addPoint(Vector3dd point)
 {
-     addVertex(point);
-     return vertexes.size() - 1;
+    addVertex(point);
+    return (int)vertexes.size() - 1;
 }
 
 void Mesh3D::addLine(Vector3dd point1, Vector3dd point2)
@@ -115,8 +216,8 @@ void Mesh3D::addSphere(Vector3dd center, double radius, int step)
     int vectorIndex = (int)vertexes.size();
     Vector3d32 startId(vectorIndex, vectorIndex, vectorIndex);
 
-    double dphy =     M_PI / (step + 1);
-    double dpsi = 2 * M_PI / (step + 1);
+    double dphy =     M_PI / step ;
+    double dpsi = 2 * M_PI / step ;
 
     for (int i = 0; i < step; i++)
     {
@@ -133,7 +234,214 @@ void Mesh3D::addSphere(Vector3dd center, double radius, int step)
     }
 }
 
-void Mesh3D::addCamera(const CameraIntrinsics &cam, double len)
+void Mesh3D::addCylinder(Vector3dd center, double radius, double height, int step, double phase)
+{
+    int vectorIndex = (int)vertexes.size();
+    Vector3d32 startId(vectorIndex, vectorIndex, vectorIndex);
+
+    double dpsi = 2 * M_PI / step ;
+    height = height / 2.0;
+
+    addVertex(center + Vector3dd(0.0, 0.0, -height));
+    addVertex(center + Vector3dd(0.0, 0.0,  height));
+
+
+    for (int i = 0; i < step; i++)
+    {
+         double psi = dpsi * i + phase;
+         addVertex(center + Vector3dd::FromCylindrical(psi, radius, -height));
+         addVertex(center + Vector3dd::FromCylindrical(psi, radius,  height));
+    }
+
+    for (int i = 0; i < step; i++)
+    {
+        int i1 = 2 * ( i            ) + 2;
+        int i2 = 2 * ((i + 1) % step) + 2;
+        addFace(Vector3d32(0, i2    , i1    ) + startId); // Top cap
+
+        addFace(Vector3d32(1, i1 + 1, i2 + 1) + startId); // Bottom cap
+
+        addFace(Vector3d32(i1, i2    , i2 + 1) + startId); // Side
+        addFace(Vector3d32(i1, i2 + 1, i1 + 1) + startId); //
+    }
+}
+
+/**
+ *   https://en.wikipedia.org/wiki/Regular_icosahedron#Cartesian_coordinates
+ **/
+void Mesh3D::addIcoSphere(Vector3dd center, double radius, int step)
+{
+    //double scaler = radius * sqrt(5);
+    int vectorIndex = (int)vertexes.size();
+    Vector3d32 startId(vectorIndex, vectorIndex, vectorIndex);
+
+#if 0
+    addVertex(center + Vector3dd(0.0,  1.0,  M_PHI));  // 0
+    addVertex(center + Vector3dd(0.0, -1.0,  M_PHI));  // 1
+    addVertex(center + Vector3dd(0.0,  1.0, -M_PHI));  // 2
+    addVertex(center + Vector3dd(0.0, -1.0, -M_PHI));  // 3
+
+    addVertex(center + Vector3dd( M_PHI,  0.0,  1.0)); // 4
+    addVertex(center + Vector3dd(-M_PHI,  0.0,  1.0)); // 5
+    addVertex(center + Vector3dd( M_PHI,  0.0, -1.0)); // 6
+    addVertex(center + Vector3dd(-M_PHI,  0.0, -1.0)); // 7
+
+    addVertex(center + Vector3dd( 1.0,  M_PHI,  0.0)); // 8
+    addVertex(center + Vector3dd(-1.0,  M_PHI,  0.0)); // 9
+    addVertex(center + Vector3dd( 1.0, -M_PHI,  0.0)); // 10
+    addVertex(center + Vector3dd(-1.0, -M_PHI,  0.0)); // 11
+    /**/
+
+    /* and diagonal */
+    addFace(startId + Vector3d32(0, 4, 8));
+    addFace(startId + Vector3d32(1, 4, 8));
+    addFace(startId + Vector3d32(0, 4, 8));
+    addFace(startId + Vector3d32(0, 4, 8));
+
+    addFace(startId + Vector3d32(0, 4, 8));
+    addFace(startId + Vector3d32(0, 4, 8));
+    addFace(startId + Vector3d32(0, 4, 8));
+    addFace(startId + Vector3d32(0, 4, 8));
+
+
+    /*addFace(startId + Vector3d32(0, 1, 4));
+    addFace(startId + Vector3d32(0, 1, 5));
+
+    addFace(startId + Vector3d32(2, 3, 6));
+    addFace(startId + Vector3d32(2, 3, 7));
+
+
+    addFace(startId + Vector3d32(4, 6,  8));
+    addFace(startId + Vector3d32(4, 6, 10));
+
+    addFace(startId + Vector3d32(5, 7,  9));
+    addFace(startId + Vector3d32(5, 7, 11));
+
+
+    addFace(startId + Vector3d32(8, 9,  0));
+    addFace(startId + Vector3d32(8, 9,  2));
+
+    addFace(startId + Vector3d32(10, 11, 1));
+    addFace(startId + Vector3d32(10, 11, 3));*/
+#else
+
+
+    double level = atan(0.5);
+    double da = M_PI * 2 / 5;
+    double len = sqrt(1 - level * level);
+
+    addVertex(center + Vector3dd(0.0,  0.0, 1.0) * radius);
+    for (int i = 0; i < 5; i++) {
+        double angle = da * i;
+        addVertex(center + Vector3dd(cos(angle) * len, sin(angle) * len, level) * radius);
+    }
+    for (int i = 0; i < 5; i++) {
+         double angle = da * i + (da / 2);
+         addVertex(center + Vector3dd(cos(angle) * len, sin(angle) * len, -level) * radius);
+    }
+    addVertex(center + Vector3dd(0.0,  0.0, -1.0) * radius);
+
+    /*Adding faces */
+    static int ROUND_1 = 1;
+    static int ROUND_2 = 1 + 5;
+    static int LAST_P = 1 + 5 + 5;
+    int primaryIndex = (int)faces.size();
+
+
+     for (int i = 0; i < 5; i++) {
+         addFace(startId + Vector3d32(0, i + ROUND_1, ((i + 1) % 5) + ROUND_1));
+     }
+
+     for (int i = 0; i < 5; i++) {
+         int j = ((i + 1) % 5);
+         addFace(startId + Vector3d32(j + ROUND_1, i + ROUND_1, i + ROUND_2));
+         addFace(startId + Vector3d32(i + ROUND_2, j + ROUND_2, j + ROUND_1));
+     }
+
+     for (int i = 0; i < 5; i++) {
+         addFace(startId + Vector3d32(LAST_P, ((i + 1) % 5) + ROUND_2, i + ROUND_2));
+     }
+
+     /*No we start the subdivision*/
+
+     int faceIndex = primaryIndex;
+
+     for (int stage = 0; stage < step; stage ++)
+     {
+         /*Take every face */
+
+         int lastIndex = (int)faces.size();
+         for (int f = faceIndex; f < lastIndex; f++)
+         {
+             Vector3d32 face = faces[f];
+
+             /**/
+             int startId = (int)vertexes.size();
+
+             for (int k = 0; k < 3; k++)
+             {
+                 int startid = face[k];
+                 int endid   = face[(k + 1) % 3];
+
+                 /*if (endid < startid) continue;*/
+
+                Vector3dd startvert = vertexes[startid];
+                Vector3dd endvert   = vertexes[endid];
+
+                Vector3dd add = (startvert + endvert) / 2.0;
+
+                add = center + (add - center).normalised() * radius;
+
+                addVertex(add);
+             }
+             addFace(Vector3d32(face[0], startId, startId + 2));
+             addFace(Vector3d32(startId, face[1], startId + 1));
+             addFace(Vector3d32(startId + 1, face[2], startId + 2));
+
+             addFace(Vector3d32(startId, startId + 1, startId + 2));
+         }
+         faceIndex = lastIndex;
+     }
+
+     faces.erase(faces.begin() + primaryIndex, faces.begin() + faceIndex);
+     if (hasColor) {
+         facesColor.erase(facesColor.begin() + primaryIndex, facesColor.begin() + faceIndex);
+     }
+
+
+
+#endif
+
+}
+
+void Mesh3D::addCircle(const Circle3d &circle, int step)
+{
+    Vector3dd ort1;
+    Vector3dd ort2;
+    circle.normal.orthogonal(ort1, ort2);
+
+    double dphy = 2 * M_PI / step ;
+    for (int i = 0; i < step; i++)
+    {
+        double phi  = dphy * i;
+        double phi1 = dphy * (i + 1);
+        addLine(circle.c + (ort1 * sin(phi ) + ort2 * cos(phi )) * circle.r,
+                circle.c + (ort1 * sin(phi1) + ort2 * cos(phi1)) * circle.r);
+    }
+}
+
+void Mesh3D::addSphere(const Sphere3d &sphere, int step)
+{
+    addSphere(sphere.c, sphere.r, step);
+}
+
+void Mesh3D::addIcoSphere(const Sphere3d &sphere, int step)
+{
+    addIcoSphere(sphere.c, sphere.r, step);
+}
+
+
+void Mesh3D::addCamera(const CameraIntrinsicsLegacy &cam, double len)
 {
     //double aspect = cam.
 
@@ -227,6 +535,19 @@ void Mesh3D::addMatrixSurface(double *data, int h, int w)
 
         }
     }
+}
+
+void Mesh3D::clear()
+{
+    vertexes.clear();
+    faces.clear();
+    edges.clear();
+
+    textureCoords.clear();
+
+    vertexesColor.clear();
+    facesColor.clear();
+    edgesColor.clear();
 }
 
 void Mesh3D::drawLine(double x1, double y1, double x2, double y2, int /*color*/)
@@ -340,6 +661,20 @@ void Mesh3D::dumpPLY(ostream &out)
 
 }
 
+int Mesh3D::dumpPLY(const std::string &filename)
+{
+    std::ofstream out(filename, std::ios::out);
+    if (out.bad())
+    {
+        SYNC_PRINT(("Mesh3D::dumpPLY(%s): could not save\n", filename.c_str()));
+        return 1;
+    }
+
+    dumpPLY(out);
+    out.close();
+    return 0;
+}
+
 void Mesh3D::transform(const Matrix44 &matrix)
 {
     for (unsigned i = 0; i < vertexes.size(); i++)
@@ -356,27 +691,57 @@ Mesh3D Mesh3D::transformed(const Matrix44 &matrix)
     return toReturn;
 }
 
-void Mesh3D::add(const Mesh3D &other)
+AxisAlignedBox3d Mesh3D::getBoundingBox()
 {
-    int newZero = vertexes.size();
+    Vector3dd minP = Vector3dd( numeric_limits<double>::max());
+    Vector3dd maxP = Vector3dd(-numeric_limits<double>::max());
+
+    for (size_t i = 0; i < vertexes.size(); i++)
+    {
+        for (int j = 0; j < Vector3dd::LENGTH; j++)
+        {
+            if (minP[j] < vertexes[i][j]) minP[j] = vertexes[i][j];
+            if (maxP[j] > vertexes[i][j]) maxP[j] = vertexes[i][j];
+        }
+    }
+    return AxisAlignedBox3d(minP, maxP);
+}
+
+void Mesh3D::add(const Mesh3D &other, bool preserveColor)
+{
+    int newZero = (int)vertexes.size();
     vertexes.reserve(vertexes.size() + other.vertexes.size());
     faces.reserve(faces.size() + other.faces.size());
     edges.reserve(edges.size() + other.edges.size());
 
+    RGBColor backup = currentColor;
+    preserveColor = preserveColor & other.hasColor;
+
     for (unsigned i = 0; i < other.vertexes.size(); i++)
     {
+        if (preserveColor)
+            currentColor = other.vertexesColor[i];
+
         addVertex(other.vertexes[i]);
     }
 
     for (unsigned i = 0; i < other.faces.size(); i++)
     {
+        if (preserveColor)
+            currentColor = other.facesColor[i];
+
         addFace(other.faces[i] + Vector3d32(newZero, newZero, newZero));
     }
 
     for (unsigned i = 0; i < other.edges.size(); i++)
     {
+        if (preserveColor)
+            currentColor = other.edgesColor[i];
+
         addEdge(other.edges[i] + Vector2d32(newZero, newZero));
     }
+
+    currentColor = backup;
 }
 
 
@@ -405,6 +770,31 @@ void Mesh3D::addFace(const Vector3d32 &faceId)
     }
 }
 
+void Mesh3D::fillTestScene()
+{
+
+    switchColor();
+    /* Vertex sphere */
+    currentColor = RGBColor::Yellow();
+    addSphere(Vector3dd(0), 50, 10);
+
+    /* Face sphere */
+    //int colorStart = (int)facesColor.size();
+
+    currentColor = RGBColor::Red();
+
+    addIcoSphere(Vector3dd(100.0,0.0,100.0), 50.0, 1);
+    //int colorEnd = facesColor.size();
+
+    /*for (int c = colorStart; c < colorEnd; c++)
+    {
+        facesColor[c] = RGBColor::rainbow(lerpLimit(0.0, 1.0, c, colorStart, colorEnd));
+    }*/
+
+    /* Edge box */
+    currentColor = RGBColor::Blue();
+    addAOB(Vector3dd(40.0,10.0,-40.0), Vector3dd(70.0,30.0,20.0), false);
+}
 
 
 } /* namespace corecvs */

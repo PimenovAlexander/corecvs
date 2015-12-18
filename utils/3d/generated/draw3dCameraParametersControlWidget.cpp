@@ -13,7 +13,6 @@
 
 #include "rgbColorParametersControlWidget.h"
 #include "rgbColorParametersControlWidget.h"
-#include "rgbColorParametersControlWidget.h"
 
 Draw3dCameraParametersControlWidget::Draw3dCameraParametersControlWidget(QWidget *parent, bool _autoInit, QString _rootPath)
     : ParametersControlWidgetBase(parent)
@@ -30,10 +29,6 @@ Draw3dCameraParametersControlWidget::Draw3dCameraParametersControlWidget(QWidget
     QObject::connect(mUi->styleComboBox, SIGNAL(currentIndexChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->colorControlWidget, SIGNAL(paramsChanged()), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->secondaryColorControlWidget, SIGNAL(paramsChanged()), this, SIGNAL(paramsChanged()));
-    QObject::connect(mUi->showCaptionCheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
-    QObject::connect(mUi->fontSizeSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
-    QObject::connect(mUi->fontWidthSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
-    QObject::connect(mUi->fontColorControlWidget, SIGNAL(paramsChanged()), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->textureCorrodinatesComboBox, SIGNAL(currentIndexChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->textureAlphaSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->textureScaleSpinBox, SIGNAL(valueChanged(double)), this, SIGNAL(paramsChanged()));
@@ -75,7 +70,6 @@ Draw3dCameraParameters *Draw3dCameraParametersControlWidget::createParameters() 
 
     RgbColorParameters *tmp5 = NULL;
     RgbColorParameters *tmp6 = NULL;
-    RgbColorParameters *tmp10 = NULL;
 
     Draw3dCameraParameters *result = new Draw3dCameraParameters(
           mUi->fovHSpinBox->value()
@@ -85,10 +79,6 @@ Draw3dCameraParameters *Draw3dCameraParametersControlWidget::createParameters() 
         , static_cast<Draw3dStyle::Draw3dStyle>(mUi->styleComboBox->currentIndex())
         , * (tmp5 = mUi->colorControlWidget->createParameters())
         , * (tmp6 = mUi->secondaryColorControlWidget->createParameters())
-        , mUi->showCaptionCheckBox->isChecked()
-        , mUi->fontSizeSpinBox->value()
-        , mUi->fontWidthSpinBox->value()
-        , * (tmp10 = mUi->fontColorControlWidget->createParameters())
         , static_cast<Draw3dTextureGen::Draw3dTextureGen>(mUi->textureCorrodinatesComboBox->currentIndex())
         , mUi->textureAlphaSpinBox->value()
         , mUi->textureScaleSpinBox->value()
@@ -100,7 +90,6 @@ Draw3dCameraParameters *Draw3dCameraParametersControlWidget::createParameters() 
     );
     delete tmp5;
     delete tmp6;
-    delete tmp10;
     return result;
 }
 
@@ -115,10 +104,6 @@ void Draw3dCameraParametersControlWidget::setParameters(const Draw3dCameraParame
     mUi->styleComboBox->setCurrentIndex(input.style());
     mUi->colorControlWidget->setParameters(input.color());
     mUi->secondaryColorControlWidget->setParameters(input.secondaryColor());
-    mUi->showCaptionCheckBox->setChecked(input.showCaption());
-    mUi->fontSizeSpinBox->setValue(input.fontSize());
-    mUi->fontWidthSpinBox->setValue(input.fontWidth());
-    mUi->fontColorControlWidget->setParameters(input.fontColor());
     mUi->textureCorrodinatesComboBox->setCurrentIndex(input.textureCorrodinates());
     mUi->textureAlphaSpinBox->setValue(input.textureAlpha());
     mUi->textureScaleSpinBox->setValue(input.textureScale());

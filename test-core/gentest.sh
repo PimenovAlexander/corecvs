@@ -18,19 +18,19 @@ echo -e -n "${greenText}Will Create test with name \"${testName}\" ${normalText}
 mkdir -p ${testName}
 
 
-cat >${testName}/${testName}.pro  <<END_TEXT
+#cat >${testName}/${testName}.pro  <<END_TEXT
 ##################################################################
 # ${testName}.pro created on ${currentDate}
 # This is a file for QMAKE that allows to build the test ${testName}
 #
 ##################################################################
-include(../testsCommon.pri)
-
-TARGET = test_${testName}
-
-SOURCES += main_test_${testName}.cpp
-
-END_TEXT
+#include(../testsCommon.pri)
+#
+#TARGET = test_${testName}
+#
+#SOURCES += main_test_${testName}.cpp
+#
+#END_TEXT
 
 cat >${testName}/main_test_${testName}.cpp <<END_TEXT
 /**
@@ -44,19 +44,21 @@ cat >${testName}/main_test_${testName}.cpp <<END_TEXT
  */
 
 #include <iostream>
+#include "gtest/gtest.h"
+
 #include "global.h"
 
 
 using namespace std;
 
-int main (int /*argC*/, char **/*argV*/)
+TEST(${testName}, test${testName})
 {
-    cout << "PASSED" << endl;
-    return 0;
+    cout << "Starting test <${testName}>" << endl;
+    cout << "Test <${testName}> PASSED" << endl;
 }
 END_TEXT
 
-echo >>unitTests.pro -e "\t${testName} \\"
+echo >>test-core.pro -e "\t${testName}/main_test_${testName}.cpp \\"
 
 echo -e "${redText}done${normalText}"
  

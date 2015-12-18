@@ -44,6 +44,13 @@ void BackgroundFilterParametersControlWidget::saveParamWidget(WidgetSaver  &save
     delete params;
 }
 
+ /* Composite fields are NOT supported so far */
+void BackgroundFilterParametersControlWidget::getParameters(BackgroundFilterParameters& params) const
+{
+
+    params.setThreshold        (mUi->thresholdSpinBox->value());
+
+}
 
 BackgroundFilterParameters *BackgroundFilterParametersControlWidget::createParameters() const
 {

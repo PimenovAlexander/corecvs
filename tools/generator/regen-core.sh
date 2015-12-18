@@ -9,7 +9,7 @@
 
 source ./helper-regen.sh
 
-qmake-qt4 && make
+qmake && make
 
 CORE_DIR="../../core"
 GEN_DIR="./Generated"
@@ -195,13 +195,14 @@ WIDGETS_DIR="${UTILS_DIR}/corestructs/coreWidgets"
 WIDGETS_REL_DIR="\$\${UTILSDIR}/corestructs/coreWidgets"
 WPRIFILE="${WIDGETS_DIR}/coreWidgets.pri"
 
-enums="sobelMixingType
+enums="
+       sobelMixingType
        openCVBinaryFilterType 
        operation 
        interpolationType         
        makePreciseAlgorithm
-       preciseInterpolationType"
-classes=""
+       preciseInterpolationType
+       imageChannel"
 ui_classes="
         rgbColorParameters
     
@@ -212,6 +213,18 @@ full_ui_classes="
         headSearchParameters
         makePreciseParameters
        "
+
+
+enums+=" lineDistortionEstimatorCost"
+enums+=" distortionResizePolicy"
+enums+=" checkerboardDetectionAlgorithm"
+
+classes+=" lensDistortionModelParameters"
+
+full_ui_classes+=" checkerboardDetectionParameters"
+full_ui_classes+=" lineDistortionEstimatorParameters"
+full_ui_classes+=" distortionApplicationParameters"
+
 
 PRIFILE="${DST_DIR}/generated.pri"
 

@@ -1,6 +1,6 @@
 #pragma once
-#include <QWidget>
-#include <QDebug>
+#include <QtGui/QWidget>
+#include <QtCore/QDebug>
 
 #include "generatedParameters/baseParameters.h"
 #include "ui_baseParametersControlWidget.h"

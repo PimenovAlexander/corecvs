@@ -18,30 +18,53 @@
 #include "bufferFactory.h"
 #include "rgb24Buffer.h"
 
-using namespace std;
 using namespace corecvs;
 
-class QTFileLoader: public BufferLoader<G12Buffer>
+using std::string;
+
+class QTFileLoader
 {
-private:
-    static int DUMMY;
-
 public:
-    QTFileLoader();
-    virtual ~QTFileLoader();
+    QTFileLoader() {}
+    virtual ~QTFileLoader() {}
 
+/*  static G12Buffer   *G12BufferFromQImage(QImage *image);*/
+
+    static RGB24Buffer *RGB24BufferFromQImage(QImage *image);
+    static QImage* RGB24BufferToQImage(RGB24Buffer &buffer);
+    void save(const std::string& name, RGB24Buffer *input);
+    void save(const std::string& name, RGB24Buffer *input, int quality);
+};
+
+class QTG12Loader : public BufferLoader<G12Buffer>
+{
+public:
     static int registerMyself()
     {
-        BufferFactory::getInstance()->registerLoader(new QTFileLoader());   // TODO: memory leak: this loader is never destroyed!!!
+        BufferFactory::getInstance()->registerLoader(new QTG12Loader());   // TODO: memory leak: this loader is never destroyed!!!
         return 0;
     }
 
-/*  static G12Buffer   *G12BufferFromQImage(QImage *image);*/
-    static RGB24Buffer *RGB24BufferFromQImage(QImage *image);
+    virtual bool acceptsFile(string name);
+    virtual G12Buffer * load(string name);
+
+    virtual ~QTG12Loader();
+
+};
+
+
+class QTRGB24Loader : public BufferLoader<RGB24Buffer>
+{
+public:
+    static int registerMyself()
+    {
+        BufferFactory::getInstance()->registerLoader(new QTRGB24Loader());   // TODO: memory leak: this loader is never destroyed!!!
+        return 0;
+    }
 
     virtual bool acceptsFile(string name);
+    virtual RGB24Buffer * load(string name);
 
-    virtual G12Buffer * load(string name);
-    void save(string name, RGB24Buffer *input);
+    virtual ~QTRGB24Loader();
 
 };

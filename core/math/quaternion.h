@@ -12,6 +12,8 @@
 
 #include "matrix33.h"
 #include "fixedVector.h"
+#include "mathUtils.h"
+
 namespace corecvs {
 
 const int QUATERNION_DIMENTION = 4;
@@ -38,29 +40,29 @@ public:
 
     }
 
-    inline explicit GenericQuaternion(const BaseClass &V) : BaseClass(V) {};
-    inline explicit GenericQuaternion(const ElementType &x) : BaseClass(x) {};
-    inline GenericQuaternion(): BaseClass() {};
+    inline explicit GenericQuaternion(const BaseClass &V) : BaseClass(V) {}
+    inline explicit GenericQuaternion(const ElementType &x) : BaseClass(x) {}
+    inline GenericQuaternion(): BaseClass() {}
 
     inline ElementType &x()
     {
         return (*this)[0];
-    };
+    }
 
     inline ElementType &y()
     {
         return (*this)[1];
-    };
+    }
 
     inline ElementType &z()
     {
         return (*this)[2];
-    };
+    }
 
     inline ElementType &t()
     {
         return (*this)[3];
-    };
+    }
 
     inline VectorType v() const
     {
@@ -71,22 +73,22 @@ public:
     inline const ElementType &x() const
     {
         return (*this)[0];
-    };
+    }
 
     inline const ElementType &y() const
     {
         return (*this)[1];
-    };
+    }
 
     inline const ElementType &z() const
     {
         return (*this)[2];
-    };
+    }
 
     inline const ElementType &t() const
     {
         return (*this)[3];
-    };
+    }
 
     /**
      *   Hamilton Product
@@ -175,6 +177,17 @@ public:
     }
 
     /**
+     *  This makes rotation always positive, by optionally swapping the direction of rotation axis
+     **/
+    inline GenericQuaternion positivised() const
+    {
+        if (t() < 0) {
+            return - (*this);
+        }
+        return *this;
+    }
+
+    /**
      *  TODO:
      *  Add -
      *
@@ -210,16 +223,19 @@ public:
         wx = t() * x2;   wy = t() * y2;   wz = t() * z2;
 
         return Matrix33 (
-        1.0f - (yy + zz),          xy - wz,           xz + wy,
-                 xy + wz, 1.0f - (xx + zz),           yz - wx,
-                 xz - wy,          yz + wx,  1.0f - (xx + yy)
+        1.0f - (yy + zz),     xy - wz     ,     xz + wy,
+             xy + wz    , 1.0f - (xx + zz),     yz - wx,
+             xz - wy    ,     yz + wx     ,  1.0f - (xx + yy)
         );
     }
 
+
+
     /**
-     *   NB - this function expects normalized quaternion as input
+     *   NB - this function expects normalized quaternion as input.
+     *   Normalise it explicitly
      **/
-    inline double  getAngle() const  {
+    inline double  getAngle() const  {        
         return 2 * acos(t());
     }
 
@@ -278,6 +294,12 @@ public:
         return GenericQuaternion(0.0, 0.0, 0.0, 1.0);
     }
 
+    static GenericQuaternion Identity()
+    {
+        return RotationIdentity();
+    }
+
+
     static GenericQuaternion FromMatrix(const Matrix33 &R)
     {
         double a = R.a(0,0);
@@ -315,7 +337,7 @@ public:
             return GenericQuaternion(x,y,z,t);
         } else
         {
-            double r = sqrt(1 + c - a - c);
+            double r = sqrt(1 + c - a - b);
             double t = (R.a(1,0) - R.a(0,1)) / (2.0 * r);
             double x = (R.a(0,2) + R.a(2,0)) / (2.0 * r);
             double y = (R.a(1,2) + R.a(2,1)) / (2.0 * r);
@@ -344,6 +366,27 @@ public:
         result.normalise();
         return result;
     }
+
+
+template<class VisitorType>
+    void accept(VisitorType &visitor)
+    {
+        visitor.visit(x(), ElementType(0), "x");
+        visitor.visit(y(), ElementType(0), "y");
+        visitor.visit(z(), ElementType(0), "z");
+        visitor.visit(t(), ElementType(0), "t");
+
+    }
+
+    void printAxisAndAngle(std::ostream &out = cout)
+    {
+        GenericQuaternion o = this->normalised().positivised();
+        Vector3dd axis = o.getAxis();
+        double   angle = radToDeg(o.getAngle());
+
+        out << "Rotation around: " << axis << " angle " << angle << "(" << angle << " deg)" << std::endl;
+    }
+
 
 };
 

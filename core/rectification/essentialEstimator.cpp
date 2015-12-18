@@ -11,6 +11,10 @@
 #include "levenmarq.h"
 #include "gradientDescent.h"
 #include "classicKalman.h"
+
+#ifdef NONFREE
+#include "polynomialSolver.h"
+#endif
 //#include "kalman.h"
 
 namespace corecvs {
@@ -67,28 +71,78 @@ EssentialEstimator::EssentialEstimator()
  *    = \vec 0
  * \f]
  **/
-EssentialMatrix EssentialEstimator::getEssentialLSE(const vector<Correspondance*> & samples)
+EssentialMatrix EssentialEstimator::getEssentialLSE(const vector<Correspondence*> & samples)
 {
-    Matrix X((int)samples.size(), 9);
+    Matrix X(std::max(9, (int)samples.size()), 9, 0.0);
     Matrix W(1,9);
     Matrix V(9,9);
     Matrix33 F(0.0);
 
+#if 1
+    corecvs::Vector2dd meanL(0.0, 0.0), meanR(0.0, 0.0);
+    corecvs::Vector2dd stdevL(0.0, 0.0), stdevR(0.0, 0.0);
+    for (size_t i = 0; i < samples.size(); ++i)
+    {
+        auto L = samples[i]->start;
+        auto R = samples[i]->end;
+        meanL += L;
+        meanR += R;
+
+        stdevL += L * L;
+        stdevR += R * R;
+    }
+    double N = 1.0 / samples.size();
+    meanL *= N;
+    meanR *= N;
+    stdevL = stdevL * N - meanL * meanL;
+    stdevR = stdevR * N - meanR * meanR;
+    for (size_t i = 0; i < 2; ++i)
+    {
+        stdevL[i] = std::sqrt(stdevL[i]);       // TODO: this must be present in statistics/approx blocks...
+        stdevR[i] = std::sqrt(stdevR[i]);
+    }
+#if 1
+    corecvs::Matrix33 TL = corecvs::Matrix33(
+            stdevL[0],       0.0, meanL[0],
+                  0.0, stdevL[1], meanL[1],
+                  0.0,       0.0,      1.0).inv();
+    corecvs::Matrix33 TR = corecvs::Matrix33(
+            stdevR[0],       0.0, meanR[0],
+                  0.0, stdevR[1], meanR[1],
+                  0.0,       0.0,      1.0).inv();
+#else
+    corecvs::Matrix33 TL(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0);
+    corecvs::Matrix33 TR(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0);
+#endif
+#endif
+
+    corecvs::Vector2dd ml(0.0, 0.0), mr(0.0, 0.0);
     for (unsigned i = 0; i < samples.size(); i++)
     {
         Vector2dd first  = samples[i]->start;
         Vector2dd second = samples[i]->end;
-
+#if 1
+        auto firstP = TL * corecvs::Vector3dd(first.x(), first.y(), 1.0);
+        auto secondP = TR * corecvs::Vector3dd(second.x(), second.y(), 1.0);
+        firstP /= firstP[2];
+        secondP /= secondP[2];
+        first = corecvs::Vector2dd(firstP[0], firstP[1]);
+        second = corecvs::Vector2dd(secondP[0], secondP[1]);
+        ml += first;
+        mr += second;
+#endif
         X.fillLineWithArgs(i,
         first.x() * second.x(), first.x() * second.y(), first.x(),
         first.y() * second.x(), first.y() * second.y(), first.y(),
         second.x(), second.y(),  1.0);
     }
+//    X.a(samples.size(), 0) = 1.0;
+//    std::cout << ml << std::endl << mr << std::endl;
 
 #ifdef DEEP_TRACE
-        X.print();
-        cout << endl;
-        fflush(stdout);
+//        X.print();
+//        cout << endl;
+//        fflush(stdout);
 #endif
 
     /** \todo TODO Here the transform should be done to increase the precision.
@@ -97,9 +151,13 @@ EssentialMatrix EssentialEstimator::getEssentialLSE(const vector<Correspondance*
     Matrix::svd(&X, &W, &V);
 
 #ifdef DEEP_TRACE
-    printf("The singular values:\n");
-    W.print();
-    printf("\n");
+//    printf("The singular values:\n");
+//    W.print();
+//    printf("\n");
+//    X.print();
+//    printf("\n");
+//    V.print();
+//    printf("\n");
 #endif
 
 
@@ -120,6 +178,7 @@ EssentialMatrix EssentialEstimator::getEssentialLSE(const vector<Correspondance*
         V.a(6,min), V.a(7,min), V.a(8,min)
     );
 
+    F = TL.transposed() * F * TR;
     if (F.a(2,1) < 0) {
         F = -F;
     }
@@ -128,7 +187,7 @@ EssentialMatrix EssentialEstimator::getEssentialLSE(const vector<Correspondance*
 }
 
 
-EssentialMatrix EssentialEstimator::getEssentialLM(const vector<Correspondance*> & samples)
+EssentialMatrix EssentialEstimator::getEssentialLM(const vector<Correspondence*> & samples)
 {
     CostFunction7toN costFunction(&samples);
     NormalizeFunction normalise;
@@ -165,7 +224,7 @@ EssentialMatrix EssentialEstimator::getEssentialLM(const vector<Correspondance*>
     return CostFunctionBase::getEssential(&optInput[0]);
 }
 
-EssentialMatrix EssentialEstimator::getEssentialGrad(const vector<Correspondance*> & samples)
+EssentialMatrix EssentialEstimator::getEssentialGrad(const vector<Correspondence*> & samples)
 {
     CostFunction7to1 costFunction(&samples);
     NormalizeFunction normalise;
@@ -185,7 +244,7 @@ EssentialMatrix EssentialEstimator::getEssentialGrad(const vector<Correspondance
     return CostFunctionBase::getEssential(&optInput[0]);
 }
 
-EssentialMatrix EssentialEstimator::getEssentialGradToRm(const vector<Correspondance*> & samples)
+EssentialMatrix EssentialEstimator::getEssentialGradToRm(const vector<Correspondence*> & samples)
 {
     CostFunction7toN costFunction(&samples);
     NormalizeFunction normalise;
@@ -209,7 +268,7 @@ EssentialMatrix EssentialEstimator::getEssentialGradToRm(const vector<Correspond
     return CostFunctionBase::getEssential(&optInput[0]);
 }
 
-EssentialMatrix EssentialEstimator::getEssentialSimpleKalman (const vector<Correspondance *> &samples)
+EssentialMatrix EssentialEstimator::getEssentialSimpleKalman (const vector<Correspondence *> &samples)
 {
     IdentityFunction F(CostFunctionBase::VECTOR_SIZE);
     CostFunction7to1 H(&samples);
@@ -263,7 +322,7 @@ EssentialMatrix EssentialEstimator::getEssentialSimpleKalman (const vector<Corre
 }
 
 #if 0
-EssentialMatrix EssentialEstimator::getEssentialKalman(const vector<Correspondance *> &samples)
+EssentialMatrix EssentialEstimator::getEssentialKalman(const vector<Correspondence *> &samples)
 {
     /* Setting up P, Q, R */
     CostFunction7to1 F(&samples);
@@ -319,7 +378,7 @@ EssentialMatrix EssentialEstimator::getEssentialKalman(const vector<Correspondan
 }
 
 
-EssentialMatrix EssentialEstimator::getEssentialMultiKalman(const vector<Correspondance *> &samples)
+EssentialMatrix EssentialEstimator::getEssentialMultiKalman(const vector<Correspondence *> &samples)
 {
     /* Setting up P, Q, R */
     CostFunction7toN F(&samples);
@@ -375,7 +434,7 @@ EssentialMatrix EssentialEstimator::getEssentialMultiKalman(const vector<Corresp
 #endif
 
 EssentialMatrix EssentialEstimator::getEssential             (
-        const vector<Correspondance *> &samples,
+        const vector<Correspondence *> &samples,
         OptimisationMethod method)
 {
     switch (method)
@@ -490,7 +549,7 @@ Matrix EssentialEstimator::CostFunction7to1::getJacobian(const double in[], doub
 
        for (unsigned j = 0; j < samples->size(); j++)
        {
-           Correspondance *corr = samples->at(j);
+           Correspondence *corr = samples->at(j);
            double value_plus  = m_plus .epipolarDistance(*corr);
            double value_minus = m_minus.epipolarDistance(*corr);
            sum_plus  += value_plus  * value_plus ;
@@ -503,7 +562,7 @@ Matrix EssentialEstimator::CostFunction7to1::getJacobian(const double in[], doub
 
        for (unsigned j = 0; j < samples->size(); j++)
        {
-           Correspondance *corr = samples->at(j);
+           Correspondence *corr = samples->at(j);
            double value_plus  = m_plus .epipolarDistance(*corr);
            double value_minus = m_minus.epipolarDistance(*corr);
            double value       = m.      epipolarDistance(*corr);
@@ -518,7 +577,7 @@ Matrix EssentialEstimator::CostFunction7to1::getJacobian(const double in[], doub
 
        for (unsigned j = 0; j < samples->size(); j++)
        {
-           Correspondance *corr = samples->at(j);
+           Correspondence *corr = samples->at(j);
            double value_plus  = m_plus .epipolarDistance(*corr);
            double value_minus = m_minus.epipolarDistance(*corr);
            double value       = m.      epipolarDistance(*corr);
@@ -533,7 +592,7 @@ Matrix EssentialEstimator::CostFunction7to1::getJacobian(const double in[], doub
 
        for (unsigned j = 0; j < samples->size(); j++)
        {
-           Correspondance *corr = samples->at(j);
+           Correspondence *corr = samples->at(j);
            double value_plus  = m_plus .epipolarDistance(*corr);
            double value_minus = m_minus.epipolarDistance(*corr);
            double value       = m.      epipolarDistance(*corr);

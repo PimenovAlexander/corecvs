@@ -9,7 +9,7 @@ HEADERS += \
     utils/log.h \
     utils/countedPtr.h \
     utils/atomicOps.h \
-#    utils/binaryStream.h
+    utils/typesafeBitmaskEnums.h
 
 
 SOURCES += \
@@ -21,5 +21,4 @@ SOURCES += \
     utils/visitors/basePathVisitor.cpp \
     utils/utils.cpp \
     utils/log.cpp \
-#    utils/binaryStream.cpp
 

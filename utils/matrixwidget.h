@@ -1,7 +1,7 @@
 #ifndef MATRIXWIDGET_H
 #define MATRIXWIDGET_H
 
-#include <QWidget>
+#include <QtGui/QWidget>
 #include "matrix.h"
 #include "ui_matrixwidget.h"
 #include "projectiveTransform.h"

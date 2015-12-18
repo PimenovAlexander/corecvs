@@ -15,6 +15,8 @@
 namespace Triangulation
 {
 
+using namespace std;
+
 int orientation (const Point &p0, const Point &p1, const Point &p2)
 {
     Point a = p1  - p0;
@@ -453,7 +455,7 @@ std::vector<Edge>    triangulate4(const vector<Point> &points, list<Point> &cent
   //cerr << "splitPoints Real time: " << microseconds << " microseconds, " << microseconds/1000000.0 << " secs\n";
     //return vector<Edge>();
 
-    cout << "(triangulate4) Points: " << points.size() << endl;
+    cout << "(triangulate4) Points: " << points.size() << std::endl;
 
     size_t countOfEdges = 0;
 
@@ -481,7 +483,7 @@ std::vector<Edge>    triangulate4(const vector<Point> &points, list<Point> &cent
         countOfEdges += edges[t].size();
     }
 
-    cout << "Total edges: " << countOfEdges << endl;
+    cout << "Total edges: " << countOfEdges << std::endl;
 
     vector<Edge> result(countOfEdges);
 
@@ -514,8 +516,8 @@ void printPoints(const vector<Point> &points)
 {
     cout << "printPoints: ";
     for (vector<Point>::const_iterator i = points.begin(); i != points.end(); i++)
-        cout << *i << endl;
-    cout << endl;
+        cout << *i << std::endl;
+    cout << std::endl;
 }
 
 std::vector<Edge>    triangulate(const vector<Point> &points)

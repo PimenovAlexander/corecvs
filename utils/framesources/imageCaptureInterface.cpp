@@ -40,14 +40,11 @@
 #ifdef WITH_AVCODEC
 #include "aviCapture.h"
 #include "rtspCapture.h"
-#include "aviListBase.h"
-#include "aviTGListBase.h"
-
 #endif
 
 #ifdef WITH_OPENCV
-# include "openCVCapture.h"
-# include "openCVFileCapture.h"
+ #include "opencv/openCVCapture.h"
+ #include "opencv/openCVFileCapture.h"
 #endif
 
 char const *CaptureStatistics::names[] =
@@ -55,20 +52,15 @@ char const *CaptureStatistics::names[] =
     "Desync time",
     "Internal desync",
     "Decoding time",
-    "Converting time",
     "Interframe delay",
     "Frame Data size"
 };
-
-bool ImageCaptureInterface::isRgb = false;
 
 STATIC_ASSERT(CORE_COUNT_OF(CaptureStatistics::names) == CaptureStatistics::MAX_ID, wrong_comment_num_capture_stats);
 
 
 ImageCaptureInterface* ImageCaptureInterface::fabric(string input, bool isRGB)
 {
-    isRgb = isRGB;
-
     string file("file:");
     if (input.substr(0, file.size()).compare(file) == 0)
     {
@@ -87,7 +79,6 @@ ImageCaptureInterface* ImageCaptureInterface::fabric(string input, bool isRGB)
     string sync("sync:");
     if (input.substr(0, sync.size()).compare(sync) == 0)
     {
-        //isRgb = false;
         string tmp = input.substr(sync.size());
         return new SyncCamerasCaptureInterface(tmp);
     }
@@ -98,7 +89,7 @@ ImageCaptureInterface* ImageCaptureInterface::fabric(string input, bool isRGB)
     if (input.substr(0, v4l2.size()).compare(v4l2) == 0)
     {
         string tmp = input.substr(v4l2.size());
-        return new V4L2CaptureInterface(tmp, isRgb);
+        return new V4L2CaptureInterface(tmp, isRGB);
     }
 
     string v4l2d("v4l2d:");
@@ -123,7 +114,7 @@ ImageCaptureInterface* ImageCaptureInterface::fabric(string input, bool isRGB)
     if (input.substr(0, dshow.size()).compare(dshow) == 0)
     {
         string tmp = input.substr(dshow.size());
-        return new DirectShowCaptureInterface(tmp);
+        return new DirectShowCaptureInterface(tmp, isRGB);
     }
 
     string dshowd("dshowd:");
@@ -142,28 +133,14 @@ ImageCaptureInterface* ImageCaptureInterface::fabric(string input, bool isRGB)
         string tmp = input.substr(avcodec.size());
         return new AviCapture(QString(tmp.c_str()));
     }
+#if 0
     string rtsp("rtsp:");
     if (input.substr(0, rtsp.size()).compare(rtsp) == 0)
     {
-        SYNC_PRINT(("ImageCaptureInterface::fabric(): Creating rtsp input"));
+        SYNC_PRINT(("ImageCaptureInterface::fabric(): Creating avcodec input"));
         return new RTSPCapture(QString(input.c_str()));
     }
-    string avlist("avlist:");
-    if (input.substr(0, avlist.size()).compare(avlist) == 0)
-    {
-        SYNC_PRINT(("ImageCaptureInterface::fabric(): Creating avlist input"));
-        string tmp = input.substr(avlist.size());
-        return new AviListBase(QString(tmp.c_str()));
-    }
-
-    string avtg("avtg:");
-    if (input.substr(0, avtg.size()).compare(avtg) == 0)
-    {
-        SYNC_PRINT(("ImageCaptureInterface::fabric(): Creating avtg input"));
-        string tmp = input.substr(avtg.size());
-        return new AviTGListBase(QString(tmp.c_str()));
-    }
-
+#endif
 #endif
 
 #ifdef WITH_OPENCV
@@ -207,8 +184,9 @@ void ImageCaptureInterface::notifyAboutNewFrame(frame_data_t frameData)
 }
 
 ImageCaptureInterface::ImageCaptureInterface()
+   : mIsRgb(false)
 {
-   qRegisterMetaType<frame_data_t>("frame_data_t");
+    qRegisterMetaType<frame_data_t>("frame_data_t");
 }
 
 ImageCaptureInterface::~ImageCaptureInterface()
@@ -231,7 +209,7 @@ ImageCaptureInterface::CapErrorCode ImageCaptureInterface::getCaptureName(QStrin
     return FAILURE;
 }
 
-ImageCaptureInterface::CapErrorCode ImageCaptureInterface::getFormats(int * /*num*/, CameraFormat *& /*format*/)
+ImageCaptureInterface::CapErrorCode ImageCaptureInterface::getFormats(int * /*num*/, CameraFormat *& /*formats*/)
 {
     return FAILURE;
 }
@@ -246,7 +224,12 @@ ImageCaptureInterface::CapErrorCode ImageCaptureInterface::getDeviceName(int /*n
     return FAILURE;
 }
 
-ImageCaptureInterface::CapErrorCode ImageCaptureInterface::initCapture()
+string ImageCaptureInterface::getDeviceSerial(int /*num*/)
+{
+    return "";
+}
+
+ImageCaptureInterface::CapErrorCode ImageCaptureInterface::initCapture(CameraFormat * /*actualFormat*/)
 {
     return FAILURE;
 }

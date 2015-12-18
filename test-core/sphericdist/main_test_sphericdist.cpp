@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <stdio.h>
+#include "gtest/gtest.h"
 
 #include "global.h"
 #include "g12Buffer.h"
@@ -71,10 +72,7 @@ double UnwarpToWarpLUT[LUT_LEN][2] = {
         {17832297.206513,0.138434},
         {63593741.644753,0.075052} };
 
-
-
-
-void testUndistored(void)
+TEST(Sphericdist, DISABLED_testUndistored)
 {
     G12Buffer *input = BufferFactory::getInstance()->loadG12Bitmap("data/distored.pgm");
 
@@ -100,10 +98,10 @@ void testUndistored(void)
 }
 
 
-int main (int /*argC*/, char ** /*argV*/)
-{
-    testUndistored();
-        cout << "PASSED" << endl;
-        return 0;
-}
+//int main (int /*argC*/, char ** /*argV*/)
+//{
+//    testUndistored();
+//        cout << "PASSED" << endl;
+//        return 0;
+//}
 

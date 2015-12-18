@@ -31,7 +31,7 @@ public:
         method(_method)
     {}
 
-    EssentialMatrix getEssential   (const vector<Correspondance *> &samples);
+    EssentialMatrix getEssential   (const vector<Correspondence *> &samples);
 
     virtual ~IterativeEstimator();
 };

@@ -36,7 +36,9 @@ HEADERS += \
     buffers/kernels/spatialGradient.h \
     buffers/morphological/morphological.h \
     buffers/rgb24/rgbColor.h \
+#    buffers/rgb24/rgbTColor.h \
     buffers/rgb24/rgb24Buffer.h \
+#    buffers/rgb24/rgbTBuffer.h \
     buffers/rgb24/hardcodeFont.h \
     buffers/rgb24/hersheyVectorFont.h \
     buffers/rgb24/abstractPainter.h \
@@ -48,8 +50,12 @@ HEADERS += \
     buffers/g12Buffer3d.h \
     buffers/buffer3d.h \
     buffers/transformationCache.h \
-#    buffers/rgb192/rgb192Color.h \
-#    buffers/rgb192/rgb192Buffer.h
+    buffers/runtimeTypeBuffer.h \
+    buffers/deformMap.h \
+#    buffers/focusEstimator.h \
+#    buffers/converters/debayer.h \
+#    buffers/converters/labConverter.h \
+#    buffers/converters/errorMetrics.h \
 
 
 SOURCES += \
@@ -76,15 +82,18 @@ SOURCES += \
     buffers/kernels/spatialGradient.cpp \
     buffers/kernels/logicKernels.cpp \    
     buffers/morphological/morphological.cpp \
-    buffers/rgb24/rgb24Buffer.cpp \
     buffers/rgb24/rgbColor.cpp \
     buffers/rgb24/hardcodeFont.cpp \
     buffers/rgb24/hersheyVectorFont.cpp \    
+    buffers/rgb24/rgb24Buffer.cpp \
     buffers/rgb24/abstractPainter.cpp \
     buffers/g12Buffer3d.cpp \
     buffers/buffer3d.cpp \
     buffers/transformationCache.cpp \
-#    buffers/rgb192/rgb192Color.cpp \
-#    buffers/rgb192/rgb192Buffer.cpp
+    buffers/runtimeTypeBuffer.cpp \
+    buffers/deformMap.cpp \
+#    buffers/focusEstimator.cpp \
+#    buffers/converters/debayer.cpp \
+#    buffers/converters/errorMetrics.cpp \
 
 

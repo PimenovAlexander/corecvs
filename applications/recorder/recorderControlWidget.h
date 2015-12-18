@@ -1,7 +1,7 @@
-#pragma once
 
-#include <QWidget>
-#include <QLineEdit>
+#pragma once
+#include <QtGui/QWidget>
+#include <QtGui/QLineEdit>
 #include "generatedParameters/recorder.h"
 #include "ui_recorderControlWidget.h"
 #include "parametersControlWidgetBase.h"

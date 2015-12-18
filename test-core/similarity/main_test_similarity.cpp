@@ -11,8 +11,10 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include "gtest/gtest.h"
 
 #include "global.h"
+
 #include "vector3d.h"
 #include "similarityReconstructor.h"
 #include "mesh3d.h"
@@ -20,8 +22,7 @@
 using namespace std;
 using namespace corecvs;
 
-
-void testSimilarity()
+TEST(Similarity, testSimilarity)
 {
     Matrix44 transform = Quaternion::Rotation(Vector3dd(0.345,-0.2,-123), 0.12).toMatrix() * Matrix44::Scale(2.0);
 
@@ -76,16 +77,13 @@ void testSimilarity()
     cout << "Result LM(N):" << cost * cost  << endl;
 
 
-
     std::fstream file;
     file.open("out.ply", std::ios::out);
     mesh.dumpPLY(file);
     file.close();
-
 }
 
-
-void testSimilarity1()
+TEST(Similarity, testSimilarity1)
 {
     vector<Vector3dd> data;
     vector<Vector3dd> out;
@@ -188,10 +186,9 @@ void testSimilarity1()
     file.open("out.ply", std::ios::out);
     mesh.dumpPLY(file);
     file.close();
-
 }
 
-void testCostFunction (void)
+TEST(Similarity, testCostFunction)
 {
     Similarity s;
     s.rotation = Quaternion::Rotation(Vector3dd(1.0,2.0,3.0), 4.0);
@@ -224,14 +221,11 @@ void testCostFunction (void)
     cout << matrix << endl;
     cout << "=======" << endl;
     cout << matrix1 << endl;
-
 }
 
-void testConverstions()
+
+TEST(Similarity, testConverstions)
 {
-    cout << "======================================================" << endl;
-    cout << "testConverstions" << endl;
-    cout << "======================================================" << endl;
     Similarity sim;
     sim.shiftL = Vector3dd(0.236471, -0.0143253, -0.399441);
     sim.scaleL = 0.148925;
@@ -239,22 +233,9 @@ void testConverstions()
     sim.scaleR = 2641.6;
     Quaternion Q(0.0914267, -0.686214, 0.716433, -0.0864643);
 
-
     cout << ((sim.toMatrix() * sim.shiftL) - sim.shiftR) << endl;
 
     Vector3dd test = sim.shiftL + Vector3dd(sim.scaleL);
 
     cout << ((sim.toMatrix() * test) - sim.shiftR - Vector3dd(sim.scaleR)) << endl;
-
-}
-
-int main (int /*argC*/, char ** /*argV*/)
-{
-    testSimilarity1();
-    //testConverstions();
-    //testSimilarity();
-    //testCostFunction();
-
-    cout << "PASSED" << endl;
-    return 0;
 }

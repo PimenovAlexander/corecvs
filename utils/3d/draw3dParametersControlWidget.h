@@ -18,6 +18,7 @@ public:
     ~Draw3dParametersControlWidget();
 
     Draw3dParameters* createParameters() const;
+    void getParameters(Draw3dParameters &params) const;
     void setParameters(const Draw3dParameters &input);
     virtual void setParametersVirtual(void *input);
 

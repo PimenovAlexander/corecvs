@@ -80,11 +80,16 @@ public:
      * \param newW
      *         Output Buffer Width
      **/
-    OutputType *doReverseDeformationBlPrecomp(const FixedPointDisplace *map, InternalIndexType newH, InternalIndexType newW)
+    OutputType *doReverseDeformationBlPrecomp(const FixedPointDisplace *map, InternalIndexType newH = -1, InternalIndexType newW = -1)
     {
+        InputType *realThis =  static_cast<InputType *>(this);
+
+        if (newH == -1) newH = realThis->getH();
+        if (newW == -1) newW = realThis->getW();
+
         OutputType *toReturn = new OutputType(newH, newW);
         DOTRACE(("Starting transform to %d %d...\n", newW - 1, newH - 1));
-        parallelable_for(0, newH - 1, ParallelDoReverseDeformationBlPrecomp(toReturn, map, static_cast<InputType *>(this)));
+        parallelable_for(0, newH - 1, ParallelDoReverseDeformationBlPrecomp(toReturn, map, realThis));
         return toReturn;
     }
 

@@ -13,11 +13,11 @@
 namespace corecvs {
 
 
-EssentialMatrix IterativeEstimator::getEssential (const vector<Correspondance *> &samples)
+EssentialMatrix IterativeEstimator::getEssential (const vector<Correspondence *> &samples)
 {
     EssentialMatrix model;
     int iteration;
-    vector<Correspondance *> workingSamples = samples;
+    vector<Correspondence *> workingSamples = samples;
 
     EssentialEstimator::CostFunction7to1 initialCost(&samples);
 
@@ -38,10 +38,10 @@ EssentialMatrix IterativeEstimator::getEssential (const vector<Correspondance *>
         int passed = 0;
         int rejected = 0;
 
-        vector<Correspondance *> passedSamples;
+        vector<Correspondence *> passedSamples;
         for (unsigned i = 0; i < workingSamples.size(); i++)
         {
-            Correspondance *corr = workingSamples[i];
+            Correspondence *corr = workingSamples[i];
             double value = model.epipolarDistance(*corr);
             if (value > sigma)
             {
@@ -77,13 +77,13 @@ EssentialMatrix IterativeEstimator::getEssential (const vector<Correspondance *>
 
     for (unsigned i = 0; i < samples.size(); i++)
     {
-        samples[i]->flags |= Correspondance::FLAG_FAILER;
+        samples[i]->flags |= Correspondence::FLAG_FAILER;
     }
 
     for (unsigned i = 0; i < workingSamples.size(); i++)
     {
-        workingSamples[i]->flags &= ~Correspondance::FLAG_FAILER;
-        workingSamples[i]->flags |=  Correspondance::FLAG_PASSER;
+        workingSamples[i]->flags &= ~Correspondence::FLAG_FAILER;
+        workingSamples[i]->flags |=  Correspondence::FLAG_PASSER;
         workingSamples[i]->value = iteration;
     }
 

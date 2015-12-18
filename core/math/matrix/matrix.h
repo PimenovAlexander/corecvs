@@ -10,6 +10,8 @@
 #include <algorithm>
 #include <vector>
 
+#include <functional>
+
 #include "global.h"
 
 #include "abstractBuffer.h"
@@ -67,6 +69,7 @@ public:
      */
     Matrix(int32_t h, int32_t w, double *data) : MatrixBase(h, w, data) {}
 
+    Matrix() : MatrixBase() {}
 #if 0
     /**
      * This function creates a matrix filling it with values form the given vector
@@ -99,29 +102,9 @@ public:
 
     Matrix(int32_t h, int32_t w, bool shouldInit) : MatrixBase(h, w, shouldInit) {}
 
-    explicit Matrix(Matrix33 &in);
-    explicit Matrix(Matrix44 &in);
+    explicit Matrix(const Matrix33 &in);
+    explicit Matrix(const Matrix44 &in);
 
-
-    /**
-     * The element getter for a matrix that is used like vector (i.e has height or width of 1)
-     *
-     * \remark !!!! IT IS UNTIMATELY DICOURAGED TO USE THIS FUNCTION NOW !!!!
-     *
-     * \param x
-     *         An index of the vector element
-     * \return
-     *         A matrix element
-     **/
-   /* inline double &a(int32_t x)
-    {
-        return data[x];
-    };
-
-    const inline double &a(int32_t x) const
-    {
-        return data[x];
-    }; */
 
     /**
      * Pseudonim to resemble the mathematics notation
@@ -143,6 +126,8 @@ public:
      *  Matrix multiplication.
      **/
     Matrix *mul(const Matrix& V);
+
+    friend Matrix operator -(const Matrix &A);
 
     friend Matrix operator *(const double &a, const Matrix &B);
     friend Matrix operator *(const Matrix &B, const double &a);
@@ -172,7 +157,9 @@ public:
     Matrix t() const;
     void transpose();
 
-    //double det(void) const; /* NYI*/
+#ifdef WITH_BLAS
+    double det(void) const;
+#endif
     double trace(void) const;
 
     double frobeniusNorm() const;
@@ -207,9 +194,7 @@ public:
 
     inline Matrix& operator *=(const double v)
     {
-        using std::multiplies;
-        binder2nd<multiplies<double> > multiplier(multiplies<double>(), v);
-        this->mapOperationElementwize<binder2nd<multiplies<double> > >(multiplier);
+        this->mapOperationElementwize([v] (Matrix::InternalElementType e) { return e * v; });
         return *this;
     }
 
@@ -219,9 +204,7 @@ public:
      * */
     inline Matrix& operator /=(const double v)
     {
-        using std::divides;
-        binder2nd<divides<double> > divider(divides<double>(), v);
-        this->mapOperationElementwize<binder2nd<divides<double> > >(divider);
+        this->mapOperationElementwize([v] (Matrix::InternalElementType e) { return e / v; });
         return *this;
     }
 
@@ -267,23 +250,44 @@ public:
     friend ostream & operator <<(ostream &out, const Matrix &matrix);
     void print(ostream &out);
 
-    inline bool notTooFar(const Matrix *V, double epsilon = 0.0) const
+    inline bool notTooFar(const Matrix *V, double epsilon = 0.0, bool trace = false ) const
     {
         int h = getH();
         int w = getW();
-        if (h != V->getH() || w != V->getW())
+        if (h != V->getH() || w != V->getW()) {
+            if (trace) {
+                SYNC_PRINT(("[%d x %d] != [%d x %d]", h, w, V->getH(), V->getW()));
+            }
             return false;
+        }
 
         for (int i = 0; i < h; i++)
             for (int j = 0; j < w; j++)
             if (  this->element(i,j) > V->element(i,j) + epsilon ||
                   this->element(i,j) < V->element(i,j) - epsilon )
+            {
+                if (trace) {
+                    SYNC_PRINT(("[%d x %d] %lf != %lf\n", i, j, this->element(i,j), V->element(i,j)));
+                }
                 return false;
+            }
         return true;
     }
 
-/*pivate:
-    static void svd (int h, int w, double *A, double *W, double *V);*/
+    inline bool isFinite()
+    {
+        bool result = true;
+        auto toucher = [&result] (int, int, Matrix::InternalElementType &e) -> void { result &= std::isfinite(e); };
+        this->touchOperationElementwize(toucher);
+        return result;
+    }
+
+/* Some more specific way to call multiplication */
+    static Matrix multiplyHomebrew(const Matrix &A, const Matrix &B, bool parallel = true, bool vectorize = true);
+#ifdef WITH_BLAS
+    static Matrix multiplyBlas(const Matrix &A, const Matrix &B);
+#endif
+
 };
 
 } //namespace corecvs

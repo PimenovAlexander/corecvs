@@ -45,7 +45,10 @@ int ThickeningParameters::staticInit()
           5000,
           "Power",
           "Power",
-          "Power"
+          "Power",
+          true,
+         0,
+         9999
         )
     );
    return 0;

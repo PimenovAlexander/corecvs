@@ -1,7 +1,7 @@
 #ifndef STATISTICSDIALOG_H
 #define STATISTICSDIALOG_H
 
-#include <QWidget>
+#include <QtGui/QWidget>
 
 #include "global.h"
 

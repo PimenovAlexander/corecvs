@@ -18,7 +18,7 @@ echo "UI    name: ${uiName}"
 
 cat >${fileName} <<EOF
 #pragma once
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "generated/${paramsFileName}"
 #include "${uiName}"
 #include "parametersControlWidgetBase.h"
@@ -37,6 +37,7 @@ public:
     ~${className}();
 
     ${paramsName}* createParameters() const;
+    void getParameters(${paramsName} &param) const;
     void setParameters(const ${paramsName} &input);
     virtual void setParametersVirtual(void *input);
     

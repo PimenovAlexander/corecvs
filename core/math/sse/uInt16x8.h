@@ -7,7 +7,7 @@
  *
  * \ingroup cppcorefiles
  * \date Sept 2, 2012
- * \author: a.melnikov
+ * \author: apimenov
  */
 
 #include <emmintrin.h>
