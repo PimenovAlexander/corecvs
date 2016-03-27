@@ -5,13 +5,13 @@ SUBDIRS +=                   \
     core                     \
     unitTests                \
     utils                    \
-    base_application         \
-    base_application_example \
-    recorder                 \
-    testbed                  \
-    cloudview                \
-    \
-    generator                \
+#    base_application         \
+#    base_application_example \
+#    recorder                 \
+#    testbed                  \
+#    cloudview                \
+#    \
+#    generator                \
 
     
 

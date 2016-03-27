@@ -438,3 +438,4 @@ template <class StreamType>
 } //namespace corecvs
 
 #endif /* CORECALCULATIONSTATS_H_ */
+

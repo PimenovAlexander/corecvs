@@ -1,3 +1,5 @@
+#ifndef PAINTERHELPERS_H_
+#define PAINTERHELPERS_H_
 /**
  * \file painterHelpers.h
  * \brief Add Comment Here
@@ -6,8 +8,6 @@
  * \author alexander
  */
 
-#ifndef PAINTERHELPERS_H_
-#define PAINTERHELPERS_H_
 
 #include <stdint.h>
 #include <QtCore/QRect>
@@ -17,11 +17,9 @@
 #include "global.h"
 
 #include "vector2d.h"
-
-
+#include "rectangle.h"
 
 using namespace corecvs;
-
 
 void drawLine(QPainter& painter, const Vector2dd &start, const Vector2dd &end);
 

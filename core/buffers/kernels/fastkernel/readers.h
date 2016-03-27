@@ -20,6 +20,41 @@ namespace corecvs {
 
 using std::endl;
 
+#if 0
+class SSEReader8D_Q {
+public:
+
+    static const int BYTE_STEP = 16;
+
+    /**
+     *  This function takes 8 2 byte records packed as
+     *
+     *  0                    4                     8                    12                   16
+     *  | A.0  A.1  B.0  B.1 | C.0  C.1  D.0  D.1  | E.0  E.1  F.0  F.1 | G.0  G.1  H.0  H.1 |
+     *
+     *  And Loads them to 2 SSE 4x32bit registers
+     *
+     *
+     *  | 0x00 0x00 A.0  A.1 | 0x00 0x00  B.0  B.1 | 0x00 0x00 C.0  C.1 | 0x00 0x00  D.0  D.1 |
+     *  | 0x00 0x00 E.0  E.1 | 0x00 0x00  F.0  F.1 | 0x00 0x00 G.0  G.1 | 0x00 0x00  H.0  H.1 |
+     *
+     *
+     **/
+    static FixedVector<Int32x4, 2> read(uint16_t *ptr)
+    {
+/*        FixedVector<Int32x4, 2> result;
+
+        Int16x8 input(ptr);
+        input.
+
+
+        return result;*/
+    }
+
+};
+#endif
+
+
 /**
  *   Reads a structure of 4 byte fields into SSE registers.
  *

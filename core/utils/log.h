@@ -56,29 +56,38 @@ public:
     void operator()(T* p)
     {
         CORE_UNUSED(p);
-        if (mNeedDel) {
-            SYNC_PRINT(("LogDrainDeleter():operator(%p): called\n", p));
+        if (mNeedDel)
             delete p;
-        }
     }
 };
 
-class LogDrainsKeeper : public std::vector<std::unique_ptr<LogDrain, LogDrainDeleter>>
+class LogDrainsKeeper : public std::vector<LogDrain *>
 {
 public:
-    typedef std::unique_ptr<LogDrain, LogDrainDeleter> LogDrainPtr;
+    std::mutex mMutex;
 
     LogDrainsKeeper() {}
-   ~LogDrainsKeeper() {}
+   ~LogDrainsKeeper()
+    {
+        for(auto it = begin(); it != end(); ++it)
+        {
+            delete_safe(*it);
+        }
+    }
 
-    std::mutex protector;
+   void add(LogDrain* p) {
+       mMutex.lock();
+       push_back(p);
+       mMutex.unlock();
+   }
 
-   void add(LogDrain* p, bool needDel = true)
-   {
-       SYNC_PRINT(("LogDrainsKeeper():add(%p, %s): called\n", p, needDel ? "true" : "false"));
-       protector.lock();
-       push_back(std::unique_ptr<LogDrain, LogDrainDeleter>(p, LogDrainDeleter(needDel)));
-       protector.unlock();
+   void detach(LogDrain* p) {
+       mMutex.lock();
+       const auto &it = std::find(begin(), end(), p);
+       if (it != end()){
+           erase(it);
+       }
+       mMutex.unlock();
    }
 
 };
@@ -112,8 +121,8 @@ public:
      * smart pointers and could be as large as needed. Its lifetime depends on the
      * connected drains.
      **/
-	class MessageInternal
-	{
+    class MessageInternal
+    {
         friend class Log;
     public:
 
@@ -146,17 +155,17 @@ public:
         cchar      *mOriginFunctionName;
         int         mThreadId;
         time_t      mTime;
-	};
+    };
 
-	/**
-	 * Message is a smart pointer to MessageInternal. MessageInternal is usually accessed only through this structure
-	 **/
-	typedef ObjectRef<MessageInternal> Message;
+    /**
+     * Message is a smart pointer to MessageInternal. MessageInternal is usually accessed only through this structure
+     **/
+    typedef ObjectRef<MessageInternal> Message;
 
-	/**
-	 *   If we want to use qDebug style for debugging we need an object that will be destroyed when leaving the scope.
-	 *   This will trigger the flush.
-	 **/
+    /**
+     *   If we want to use qDebug style for debugging we need an object that will be destroyed when leaving the scope.
+     *   This will trigger the flush.
+     **/
     class MessageScoped
     {
     public:
@@ -244,9 +253,9 @@ public:
         return MessageScoped(this, level, fileName, lineNumber, functionName);
     }
 
-	/**
-	 * Log a message
-	 **/
+    /**
+     * Log a message
+     **/
     void                message(Message &message);
 
     static std::string  formatted(const char *format, ... );

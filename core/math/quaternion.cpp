@@ -11,7 +11,5 @@
 namespace corecvs {
 
 
-
-
 } //namespace corecvs
 

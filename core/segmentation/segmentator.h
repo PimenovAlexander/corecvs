@@ -52,7 +52,7 @@ public:
     ThisType *getFather()
     {
         return father;
-    };
+    }
 
     /** Checks if it is a child segment or not */
     bool isTop()

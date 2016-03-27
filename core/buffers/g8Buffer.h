@@ -44,9 +44,13 @@ public:
     int countValues(uint8_t value, int x1 = -1, int y1 = -1, int x2 = -1, int y2 = - 1);
 
     void addBufferSat(G8Buffer *that);
+    void addValueSat (int16_t val);
+
     void averageWith(G8Buffer *that);
 
     //G8Buffer(int32_t h, int32_t w, uint16_t *data) : G8BufferBase(h, w, data) {};
+
+    G8Buffer *difference(G8Buffer *first, G8Buffer *second);
 };
 
 

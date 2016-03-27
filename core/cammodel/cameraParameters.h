@@ -37,7 +37,7 @@ public:
       , center(0.0)
       , f(1.0)
       , k(1.0)
-    {};
+    {}
 
     CameraIntrinsics(
         Vector2dd _resolution,
@@ -49,7 +49,7 @@ public:
       , center(_center)
       , f(_f)
       , k(_k)
-    {};
+    {}
 
    // Matrix44 getFrustumMatrix(double zNear = 1.0, double zFar = 1000.0)  const;
 

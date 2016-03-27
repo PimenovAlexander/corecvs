@@ -9,7 +9,7 @@ HEADERS += \
     utils/log.h \
     utils/countedPtr.h \
     utils/atomicOps.h \
-#    utils/typesafeBitmaskEnums.h
+    utils/typesafeBitmaskEnums.h
 
 
 SOURCES += \

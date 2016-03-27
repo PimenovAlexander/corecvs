@@ -10,13 +10,13 @@
 #include "rgb24Buffer.h"
 #include "flowBuffer.h"
 #include "vector2d.h"
-#include "correspondanceList.h"
+#include "correspondenceList.h"
 #include "OpenCVTools.h"
 
-#include <stdio.h>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
-#include <opencv2/legacy/legacy.hpp>
+#include <opencv2/legacy/legacy.hpp> // BruteForceMatcher
+
 #if ((CV_MAJOR_VERSION * 10 + CV_MINOR_VERSION) * 10 + CV_SUBMINOR_VERSION) > 220
 # include <opencv2/nonfree/features2d.hpp>    /* for new openCV */
 #else
@@ -100,7 +100,7 @@ public:
         process(iplImage, iplPattern);
     }
 
-    CorrespondanceList getCorrespondanceList()
+    CorrespondenceList getCorrespondenceList()
     {
         return mCorList;
     }
@@ -135,7 +135,7 @@ private:
         mMatcher.match( mDescriptorsPattern, mDescriptorsImage, mMatches );
 
         // fill correspondences
-        Correspondance tmpCorr;
+        Correspondence tmpCorr;
         for (uint i = 0; i < mMatches.size(); i++)
         {
             tmpCorr.end   = Vector2dd(mKeypointsImage  [ mMatches[i].trainIdx ].pt.x, mKeypointsImage  [ mMatches[i].trainIdx ].pt.y);
@@ -144,16 +144,17 @@ private:
         }
     }
 
-    CorrespondanceList mCorList; // output of algorithm
+    CorrespondenceList              mCorList; // output of algorithm
 
-    DetectorType mDetector;
-    vector<KeyPoint> mKeypointsImage, mKeypointsPattern;
+    DetectorType                    mDetector;
+    vector<KeyPoint>                mKeypointsImage, mKeypointsPattern;
 
-    DetectorType mDescriptor;
-    Mat mDescriptorsImage, mDescriptorsPattern;
+    DetectorType                    mDescriptor;
+    Mat                             mDescriptorsImage;
+    Mat                             mDescriptorsPattern;
 
-    BruteForceMatcher< L2<float> > mMatcher;
-    vector<DMatch> mMatches;
+    BruteForceMatcher< L2<float> >  mMatcher;
+    vector<DMatch>                  mMatches;
 };
 
 /* EOF */

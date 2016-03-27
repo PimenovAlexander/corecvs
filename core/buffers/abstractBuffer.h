@@ -128,7 +128,6 @@ class AbstractBuffer;
 template<typename ElementType, typename IndexType>
 class AbstractKernel;
 
-
 /**
  * These are useful methods to serialize integer types not depending on the current endianess
  */
@@ -1066,7 +1065,8 @@ template<typename ResultType>
         return true;
     }
 
-    bool isEqualTrace(const AbstractBuffer &that) const
+template<class PrintType = ElementType>
+    bool isEqualTrace(const AbstractBuffer &that, ElementType tolerance = 0) const
     {
         if (that.h != this->h || that.w != this->w)
             return false;
@@ -1077,10 +1077,18 @@ template<typename ResultType>
             const ElementType *thatElemRunner = &(that.element(i, 0));
             for (int j = 0; j < this->w; j++)
             {
-                if (*thatElemRunner != *thisElemRunner)
+                bool testpass = true;
+                if (tolerance <= 0) {
+                    testpass = (*thatElemRunner == *thisElemRunner);
+                } else {
+                    ElementType diff = (*thatElemRunner > *thisElemRunner) ? *thatElemRunner - *thisElemRunner : *thisElemRunner - *thatElemRunner;
+                    testpass = (CORE_ABS(diff) <= tolerance);
+                }
+
+                if (!testpass)
                 {
                     cout << "Differ Pos y="<< i << " x=" << j << " ";
-                    cout << "Fst = " <<  *thisElemRunner << " sec= " << *thatElemRunner << endl;
+                    cout << "Fst = " <<  (PrintType)(*thisElemRunner) << " sec= " << (PrintType)(*thatElemRunner) << endl;
                     diffs++;
                 }
                 thatElemRunner++;
@@ -1291,6 +1299,21 @@ protected:
     BufferType     flags;
 
 private:
+
+    void    setH     (int _h)
+    {
+        h = _h;
+    }
+
+    void    setW     (int _w)
+    {
+        w = _w;
+    }
+
+    void    setStride(int _stride)
+    {
+        stride = _stride;
+    }
 
     /**
      *  This is a helper method for constructing.

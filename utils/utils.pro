@@ -160,8 +160,6 @@ FORMS += \
 
 # =============================================================
 
-
-
 with_filters {
     include($$UTILSDIR/filters/ui/filterWidgets.pri)
     CONFIG += with_widgets

@@ -458,6 +458,11 @@ public:
         return RGBColor(fround(x * 255), fround((1.0 - x) * 255), 0);
     }
 
+    RGBColor invert() const
+    {
+        return RGBColor(255 - r(), 255 - g(), 255 - b());
+    }
+
     //#ifdef REFLECTION_IN_CORE
     //    Reflection reflect = staticInit();
     //#else
