@@ -22,6 +22,7 @@
 #include "tbbWrapper.h"
 #include "radialCorrection.h"
 #include "distortionCorrectTransform.h"
+#include "lensDistortionModelParameters.h"
 #include "../math/levenmarq.h"
 
 namespace corecvs {
@@ -77,6 +78,20 @@ public:
             for (int j = 0; j < w; j ++)
             {
                 Vector2dd mapped = inverseMap->map(i, j);
+                Vector2dd result = (Vector2dd(j, i) - mapped) * koef;
+                this->element(i, j) = result;
+            }
+        }
+    }
+
+    inline DisplacementBuffer (LensDistortionModelParameters &ldmp, int h, int w) : DisplacementBufferBase (h, w, false)
+    {
+        int koef = -1;
+        for (int i = 0; i < h; i ++)
+        {
+            for (int j = 0; j < w; j ++)
+            {
+                Vector2dd mapped = ldmp.map(Vector2dd(j, i));
                 Vector2dd result = (Vector2dd(j, i) - mapped) * koef;
                 this->element(i, j) = result;
             }

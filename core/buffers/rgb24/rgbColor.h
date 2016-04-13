@@ -304,6 +304,55 @@ public:
         return hue;
     }
 
+    /**
+     * hue \in [0; 360)
+     * saturation \in [0; 1)
+     * value \in [0; 1)
+     */
+    static RGBColor fromHue(double hue, double saturation, double value)
+    {
+        hue        = std::min(std::max(0.0, hue), 360.0 - 1e-10);
+        saturation = std::min(std::max(0.0, saturation), 1.0);
+        value      = std::min(std::max(0.0, value), 1.0);
+
+        double chroma = value * saturation;
+        hue /= 60.0;
+        double largest = chroma * (1.0 - std::abs(hue - 2.0 * floor(hue / 2.0) - 1.0));
+        int h = floor(hue);
+        double min = value - chroma;
+        double r = min, g = min, b = min;
+
+        switch(h)
+        {
+            case 0:
+                r += chroma;
+                g += largest;
+                break;
+            case 1:
+                r += largest;
+                g += chroma;
+                break;
+            case 2:
+                g += chroma;
+                b += largest;
+                break;
+            case 3:
+                g += largest;
+                b += chroma;
+                break;
+            case 4:
+                r += largest;
+                b += chroma;
+                break;
+            case 5:
+                r += chroma;
+                b += largest;
+                break;
+        }
+
+        return RGBColor(r * 255, g * 255, b * 255);
+    }
+
     static RGBColor gray(uint8_t gray)
     {
         return RGBColor(gray, gray, gray);
@@ -403,6 +452,16 @@ public:
         return RGBColor(143, 0, 255);
     }
 
+    static RGBColor Pink()
+    {
+        return RGBColor(255, 192, 203);
+    }
+
+    static RGBColor Navy()
+    {
+        return RGBColor(0, 0, 127);
+    }
+
     static RGBColor lerpColor(const RGBColor &first, const RGBColor &second, double alpha)
     {
         uint8_t r = (uint8_t)lerp<double>(first.r(), second.r(), alpha);
@@ -458,11 +517,6 @@ public:
         return RGBColor(fround(x * 255), fround((1.0 - x) * 255), 0);
     }
 
-    RGBColor invert() const
-    {
-        return RGBColor(255 - r(), 255 - g(), 255 - b());
-    }
-
     //#ifdef REFLECTION_IN_CORE
     //    Reflection reflect = staticInit();
     //#else
@@ -483,10 +537,11 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit(r(), static_cast<const IntField *>(reflect.fields[FIELD_R]));
-        visitor.visit(g(), static_cast<const IntField *>(reflect.fields[FIELD_G]));
-        visitor.visit(b(), static_cast<const IntField *>(reflect.fields[FIELD_B]));
-        visitor.visit(a(), static_cast<const IntField *>(reflect.fields[FIELD_A]));
+        int byte;
+        byte = r(); visitor.visit(byte, static_cast<const IntField *>(reflect.fields[FIELD_R])); r() = byte;
+        byte = g(); visitor.visit(byte, static_cast<const IntField *>(reflect.fields[FIELD_G])); g() = byte;
+        byte = b(); visitor.visit(byte, static_cast<const IntField *>(reflect.fields[FIELD_B])); b() = byte;
+        byte = a(); visitor.visit(byte, static_cast<const IntField *>(reflect.fields[FIELD_A])); a() = byte;
     }
 
     friend ostream & operator <<(ostream &out, const RGBColor &color)
@@ -545,15 +600,15 @@ template<class VisitorType>
 
         switch (swh) {
         case 0:
-            r =  c; g = x1; b = 0; break;
+            r =  c; g = x1; b =  0; break;
         case 1:
-            r = x2; g =  c; b = 0; break;
+            r = x2; g =  c; b =  0; break;
         case 2:
             r =  0; g =  c; b = x1; break;
         case 3:
-            r =  0; g = x2; b = c; break;
+            r =  0; g = x2; b =  c; break;
         case 4:
-            r =  x1; g =  0; b = c; break;
+            r = x1; g =  0; b =  c; break;
         case 5:
         default:
             r =  c; g =  0; b = x2; break;

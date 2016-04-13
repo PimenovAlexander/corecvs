@@ -211,6 +211,17 @@ void Mesh3D::addTriangle(Vector3dd point1, Vector3dd point2, Vector3dd point3)
     addFace(startId + Vector3d32(0, 1, 2));
 }
 
+void Mesh3D::addTriangle(const Triangle3dd &triangle)
+{
+    addTriangle(triangle.p1(), triangle.p2(), triangle.p3());
+}
+
+Triangle3dd Mesh3D::getFaceAsTrinagle(size_t number)
+{
+    Vector3d32 facei = faces[number];
+    return Triangle3dd(vertexes[facei[0]], vertexes[facei[1]], vertexes[facei[2]]);
+}
+
 void Mesh3D::addSphere(Vector3dd center, double radius, int step)
 {
     int vectorIndex = (int)vertexes.size();
@@ -440,7 +451,6 @@ void Mesh3D::addIcoSphere(const Sphere3d &sphere, int step)
     addIcoSphere(sphere.c, sphere.r, step);
 }
 
-
 void Mesh3D::addCamera(const CameraIntrinsicsLegacy &cam, double len)
 {
     //double aspect = cam.
@@ -584,7 +594,7 @@ void Mesh3D::addTruncatedCone(double r1, double r2, double length, int steps)
 }
 #endif
 
-void Mesh3D::dumpPLY(ostream &out)
+int Mesh3D::dumpPLY(ostream &out)
 {
     out << "ply" << std::endl;
     out << "format ascii 1.0" << std::endl;
@@ -658,7 +668,7 @@ void Mesh3D::dumpPLY(ostream &out)
     }
 
 //    SYNC_PRINT(("This 0x%X. Edges %d", this, edges.size()));
-
+    return 0;
 }
 
 int Mesh3D::dumpPLY(const std::string &filename)
@@ -693,8 +703,8 @@ Mesh3D Mesh3D::transformed(const Matrix44 &matrix)
 
 AxisAlignedBox3d Mesh3D::getBoundingBox()
 {
-    Vector3dd minP = Vector3dd( numeric_limits<double>::max());
-    Vector3dd maxP = Vector3dd(-numeric_limits<double>::max());
+    Vector3dd minP = Vector3dd(numeric_limits<double>::max());
+    Vector3dd maxP = Vector3dd(numeric_limits<double>::lowest());
 
     for (size_t i = 0; i < vertexes.size(); i++)
     {
@@ -796,5 +806,13 @@ void Mesh3D::fillTestScene()
     addAOB(Vector3dd(40.0,10.0,-40.0), Vector3dd(70.0,30.0,20.0), false);
 }
 
+void Mesh3D::dumpInfo(ostream &out)
+{
+    out << "Mesh3D::dumpInfo():" << endl;
+    out << " Edges   :" << edges.size() << endl;
+    out << " Vertexes:" << vertexes.size() << endl;
+    out << " Faces   :" << faces.size() << endl;
+    out << " Bounding box " << getBoundingBox() << endl;
+}
 
 } /* namespace corecvs */

@@ -50,18 +50,26 @@ class binary<0>
 
 /* */
 namespace HelperUtils {
+
     using std::string;
     using std::istream;
 
-    bool startsWith(const string &str, const string &prefix);
-    istream& getlineSafe(istream& is, string& str);
-}
+    bool        startsWith(const string &str, const string &prefix);
+    istream&    getlineSafe(istream& is, string& str);
+
+    string      getEnvDirPath(cchar *envVarName);
+    string      getFullPath(string& envDirPath, cchar* path, cchar* filename);
+    string      getFullPath(cchar *envVarName , cchar* path, cchar* filename);
+
+  //string      replaceSlashes(const string& str, const string& oldStr, const string& newStr);
+    string      toNativeSlashes(const string& str);
+
+} // namespace HelperUtils
+
 
 /* OS related stuff */
 void setStdTerminateHandler();
 
-
-
-
 } //namespace corecvs
+
 #endif /* UTILS_H_ */

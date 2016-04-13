@@ -1,5 +1,5 @@
-#ifndef MESHLOADER_H
-#define MESHLOADER_H
+#ifndef MESH_LOADER_H
+#define MESH_LOADER_H
 /**
  * \file ppmLoader.h
  * \brief This is a header for PPM file format reader
@@ -21,8 +21,12 @@ namespace corecvs {
 class MeshLoader
 {
 public:
+    static bool endsWith(const std::string &fileName, const char *extention);
+
     MeshLoader();
     static bool load(Mesh3D *mesh, const std::string &fileName);
+
+    static bool save(Mesh3D *mesh, const std::string &fileName);
 
     static std::string extentionList();
 
@@ -30,4 +34,4 @@ public:
 
 } // namespace corecvs
 
-#endif // MESHLOADER_H
+#endif // MESH_LOADER_H

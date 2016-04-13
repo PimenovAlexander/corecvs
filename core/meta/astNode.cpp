@@ -2,6 +2,8 @@
 
 namespace corecvs {
 
+ASTContext *ASTContext::MAIN_CONTEXT = NULL;
+
 void ASTNodeInt::codeGenCpp(const std::string &name, ASTRenderDec identSym)
 {
     printf("double %s() {\n", name.c_str());

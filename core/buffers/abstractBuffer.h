@@ -22,76 +22,17 @@
 #include <string>
 #include <functional>
 #include <type_traits>
-#include <memory>                       // shared_ptr
 
 #include "global.h"
 
 #include "vector2d.h"
 #include "memory/memoryBlock.h"
+#include "memory/alignedMemoryBlock.h"
 #include "tbbWrapper.h"                 // BlockedRange
 #include "mathUtils.h"                  // randRanged
 
-#if defined(WIN32)
-# define aligned_alloc(a, sz)   _aligned_malloc(sz, a)
-# define aligned_free(p)        _aligned_free(p)
-#else
-//# define aligned_alloc(a, sz) // is present at clib
-# define aligned_free(p)        free(p)
-#endif
-
 namespace corecvs {
 
-struct AlignedMemoryBlock
-{
-    AlignedMemoryBlock(size_t size, size_t align)
-    {
-        align = std::max(align, (size_t)1);
-        CORE_ASSERT_TRUE_S(CORE_IS_POW2N(align));
-        mData = aligned_alloc(align, ((size + align - 1) / align) * align);
-    }
-
-    AlignedMemoryBlock() : mData(nullptr)
-    {}
-
-    ~AlignedMemoryBlock()
-    {
-        aligned_free(mData);
-        mData = nullptr;
-    }
-
-    void* getAlignedStart()
-    {
-        return mData;
-    }
-
-private:
-    //AlignedMemoryBlock(const AlignedMemoryBlock&);
-
-    void* mData;
-};
-
-
-struct AMBReference
-{
-    template<typename D>
-    AMBReference(size_t size, size_t align, const D &deleter)
-        : mSharedPtrBlock(new AlignedMemoryBlock(size, align), deleter)
-    {}
-
-    AMBReference(size_t size, size_t align) : mSharedPtrBlock(new AlignedMemoryBlock(size, align))
-    {}
-
-    AMBReference() : mSharedPtrBlock(nullptr)
-    {}
-
-    void* getAlignedStart()
-    {
-        return mSharedPtrBlock->getAlignedStart();
-    }
-
-private:
-    std::shared_ptr<AlignedMemoryBlock> mSharedPtrBlock;
-};
 
 using std::string;
 using std::cout;
@@ -127,6 +68,7 @@ class AbstractBuffer;
 
 template<typename ElementType, typename IndexType>
 class AbstractKernel;
+
 
 /**
  * These are useful methods to serialize integer types not depending on the current endianess
@@ -585,6 +527,14 @@ template<typename ResultType>
     inline bool hasSameSize (const IndexType &otherH, const IndexType &otherW) const
     {
         return (this->h == otherH) && (this->w == otherW);
+    }
+
+    /**
+     * Checks if this buffer has zero size
+     */
+    inline bool hasZeroSize () const
+    {
+        return (this->h == 0) || (this->w == 0);
     }
 
     /**
@@ -1065,8 +1015,7 @@ template<typename ResultType>
         return true;
     }
 
-template<class PrintType = ElementType>
-    bool isEqualTrace(const AbstractBuffer &that, ElementType tolerance = 0) const
+    bool isEqualTrace(const AbstractBuffer &that) const
     {
         if (that.h != this->h || that.w != this->w)
             return false;
@@ -1077,18 +1026,10 @@ template<class PrintType = ElementType>
             const ElementType *thatElemRunner = &(that.element(i, 0));
             for (int j = 0; j < this->w; j++)
             {
-                bool testpass = true;
-                if (tolerance <= 0) {
-                    testpass = (*thatElemRunner == *thisElemRunner);
-                } else {
-                    ElementType diff = (*thatElemRunner > *thisElemRunner) ? *thatElemRunner - *thisElemRunner : *thisElemRunner - *thatElemRunner;
-                    testpass = (CORE_ABS(diff) <= tolerance);
-                }
-
-                if (!testpass)
+                if (*thatElemRunner != *thisElemRunner)
                 {
                     cout << "Differ Pos y="<< i << " x=" << j << " ";
-                    cout << "Fst = " <<  (PrintType)(*thisElemRunner) << " sec= " << (PrintType)(*thatElemRunner) << endl;
+                    cout << "Fst = " <<  *thisElemRunner << " sec= " << *thatElemRunner << endl;
                     diffs++;
                 }
                 thatElemRunner++;
@@ -1299,21 +1240,6 @@ protected:
     BufferType     flags;
 
 private:
-
-    void    setH     (int _h)
-    {
-        h = _h;
-    }
-
-    void    setW     (int _w)
-    {
-        w = _w;
-    }
-
-    void    setStride(int _stride)
-    {
-        stride = _stride;
-    }
 
     /**
      *  This is a helper method for constructing.

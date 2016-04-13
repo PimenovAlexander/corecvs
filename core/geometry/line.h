@@ -92,7 +92,7 @@ public:
      **/
     void normalise(void)
     {
-        double l = a.l2metric();
+        double l = a.l2Metric();
         if (l == 0.0)
             return;
         a /= l;
@@ -246,6 +246,11 @@ public:
     {
         Vector3dd coef = intersectCoef(other);
         return (getPoint(coef.x()) + other.getPoint(coef.y())) / 2.0;
+    }
+    
+    std::pair<corecvs::Vector3dd, corecvs::Vector3dd> pluckerize()
+    {
+        return std::make_pair(a.normalised(), p ^ a.normalised());
     }
 
     void transform(const Matrix44 &M)
@@ -834,6 +839,15 @@ public:
     }
 
     /**
+     *  This is a helper method that returns the normal of the points
+     *
+     **/
+    static Vector3dd NormalFromPoints(const Vector3dd &p, const Vector3dd &q, const Vector3dd &r)
+    {
+        return (p - q) ^ (p - r);
+    }
+
+    /**
      *  Construct the Plane from 3 points
      *
      *  \f[
@@ -842,7 +856,7 @@ public:
      **/
     static Plane3d FromPoints(const Vector3dd &p, const Vector3dd &q, const Vector3dd &r)
     {
-        return FormNormalAndPoint( (p - q) ^ (p - r), p);
+        return FormNormalAndPoint( NormalFromPoints(p, q, r), p);
     }
 
     /**

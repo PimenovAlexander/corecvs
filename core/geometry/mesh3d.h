@@ -14,6 +14,7 @@
 #include "axisAlignedBox.h"
 #include "rgbColor.h"
 #include "ellipticalApproximation.h"
+#include "polygons.h"
 
 #include "conic.h"
 
@@ -92,6 +93,9 @@ public:
 
     void addLine(Vector3dd point1, Vector3dd point2);
     void addTriangle(Vector3dd point1, Vector3dd point2, Vector3dd point3);
+    void addTriangle(const Triangle3dd &triangle);
+
+    Triangle3dd getFaceAsTrinagle(size_t number);
 
     void addSphere    (Vector3dd center, double radius, int step);
     void addCylinder  (Vector3dd center, double radius, double height, int step = 20, double phase = 0.0);
@@ -103,8 +107,8 @@ public:
     void addSphere   (const Sphere3d &sphere, int step = 20);
     void addIcoSphere(const Sphere3d &sphere, int step = 1);
 
-    void addCamera(const CameraIntrinsicsLegacy &cam, double len);
 
+    void addCamera(const CameraIntrinsicsLegacy &cam, double len);
 
     void add2AxisEllipse  (const EllipticalApproximation3d &approx);
     void addMatrixSurface (double *data, int h, int w);
@@ -120,8 +124,8 @@ public:
     void addTruncatedCone(double r1, double r2, double length, int steps = 16);
 #endif
 
-    void dumpPLY(ostream &out);
-    int  dumpPLY(const string &filename);
+    int dumpPLY(ostream &out);
+    int dumpPLY(const string &filename);
 
 
     void transform (const Matrix44 &matrix);
@@ -142,6 +146,8 @@ public:
     virtual ~Mesh3D() {}
 
     void fillTestScene();
+
+    void dumpInfo(ostream &out);
 };
 
 

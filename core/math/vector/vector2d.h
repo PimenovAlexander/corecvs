@@ -165,9 +165,20 @@ public:
         this->mapToHypercube(low, high);
     }
 
+    Vector2d mappedToRect(const Vector2d<ElementType> &low, const Vector2d<ElementType> &high)
+    {
+        Vector2d toReturn = *this;
+        toReturn.mapToRect(low, high);
+        return toReturn;
+    }
+
     bool isInRect(const Vector2d<ElementType> &low, const Vector2d<ElementType> &high) const
     {
         return this->isInHypercube(low, high);
+    }
+
+    static Vector2d<ElementType> Zero() {
+        return Vector2d<ElementType>(0.0, 0.0);
     }
 
 //#ifdef REFLECTION_IN_CORE
@@ -194,7 +205,7 @@ template<class VisitorType>
 };
 
 
-typedef Vector2d<double> Vector2dd;
+typedef Vector2d<double>   Vector2dd;
 typedef Vector2d<uint32_t> Vector2du32;
 typedef Vector2d<uint16_t> Vector2du16;
 

@@ -18,6 +18,8 @@ namespace corecvs {
 class Int32x8 : public Vector2d<Int32x4>
 {
 public:
+    static const int SIZE = 8;
+
     explicit Int32x8(const Int32x4 &lowAddr, const Int32x4 &highAddr) : Vector2d<Int32x4>(lowAddr, highAddr) {}
 
     explicit Int32x8(int32_t value) : Vector2d<Int32x4>(Int32x4(value)) {}

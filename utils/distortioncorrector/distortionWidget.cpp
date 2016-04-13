@@ -27,7 +27,9 @@
 # include <opencv2/calib3d/calib3d.hpp>
 # include "opencv2/core/core_c.h"
 # include "OpenCVTools.h"
+
 # include "openCvCheckerboardDetector.h"
+
 
 using namespace cv;
 

@@ -28,21 +28,70 @@ namespace corecvs {
 class PropertyListWriterVisitor : public BasePathVisitor
 {
 public:
+    bool isSaver () { return true;}
+    bool isLoader() { return false;}
+
+public:
+    bool autoInit = false;
+    string filename;
+    PropertyList *output;
+
     PropertyListWriterVisitor(PropertyList *_output) :
         output(_output)
     {}
 
+    PropertyListWriterVisitor(const std::string &filename) :
+        autoInit(true),
+        filename(filename),
+        output(new PropertyList())
+    {
+        //output->load(filename);
+    }
+
+    ~PropertyListWriterVisitor()
+    {
+        if (autoInit) {
+            output->save(filename);
+            delete_safe(output);
+        }
+    }
+
 template<class Type>
     void visit(Type &field, Type defaultValue, const char *fieldName);
+
+template <typename inputType>
+    void visit(inputType &field, const char *fieldName);
+
 
 template <typename inputType, typename reflectionType>
     void visit(inputType &field, const reflectionType *fieldDescriptor);
 
-    PropertyList *output;
+/* Generic array support*/
+    template <typename innerType>
+    void visit(std::vector<innerType> &field, const char* arrayName)
+    {
+        for (size_t i = 0; i < field.size(); i++)
+        {
+            std::ostringstream ss;
+            ss << arrayName << "[" <<  i << "]";
+            visit<innerType>(field[i], ss.str().c_str());
+        }
+    }
+
+
+
 };
 
 template<class Type>
 void PropertyListWriterVisitor::visit(Type &field, Type /*defaultValue*/, const char *fieldName)
+{
+    pushChild(fieldName);
+        field.accept(*this);
+    popChild();
+}
+
+template <typename inputType>
+    void PropertyListWriterVisitor::visit(inputType &field, const char *fieldName)
 {
     pushChild(fieldName);
         field.accept(*this);
@@ -76,10 +125,18 @@ template <>
     void PropertyListWriterVisitor::visit<int,    IntField>(int &field, const IntField *fieldDescriptor);
 
 template <>
+    void PropertyListWriterVisitor::visit<int,    EnumField>(int &field, const EnumField *fieldDescriptor);
+
+template <>
     void PropertyListWriterVisitor::visit<double, DoubleField>(double &field, const DoubleField *fieldDescriptor);
 
 template <>
     void PropertyListWriterVisitor::visit<bool,   BoolField>(bool &field, const BoolField *fieldDescriptor);
+
+
+/* Typed arrays */
+template <>
+    void PropertyListWriterVisitor::visit<std::vector<double>, DoubleVectorField>(std::vector<double> &field, const DoubleVectorField *fieldDescriptor);
 
 
 
@@ -90,6 +147,11 @@ template <>
 class PropertyListReaderVisitor : public BasePathVisitor
 {
 public:
+    bool isSaver () { return false;}
+    bool isLoader() { return true; }
+
+public:
+    bool autoInit = false;
     PropertyList *input;
     bool ignoreUnknown;
 
@@ -98,17 +160,58 @@ public:
         ignoreUnknown(_ignoreUnknown)
     {}
 
+    PropertyListReaderVisitor(const std::string &filename) :
+        autoInit(true),
+        input(new PropertyList()),
+        ignoreUnknown(false)
+    {
+        input->load(filename);
+    }
+
+    ~PropertyListReaderVisitor()
+    {
+        if (autoInit) {
+            delete_safe(input);
+        }
+    }
+
 template<class Type>
     void visit(Type &field, Type defaultValue, const char *fieldName);
 
+template <typename inputType>
+    void visit(inputType &field, const char *fieldName);
+
 template <typename inputType, typename reflectionType>
     void visit(inputType &field, const reflectionType *fieldDescriptor);
+
+
+
+
+/* Generic array support*/
+    template <typename innerType>
+    void visit(std::vector<innerType> &field, const char* arrayName)
+    {
+        for (size_t i = 0; i < field.size(); i++)
+        {
+            std::ostringstream ss;
+            ss << arrayName << "[" <<  i << "]";
+            visit<innerType>(field[i], ss.str().c_str());
+        }
+    }
 
 
 };
 
 template<class Type>
 void PropertyListReaderVisitor::visit(Type &field, Type /*defaultValue*/, const char *fieldName)
+{
+    pushChild(fieldName);
+        field.accept(*this);
+    popChild();
+}
+
+template <typename inputType>
+    void PropertyListReaderVisitor::visit(inputType &field, const char *fieldName)
 {
     pushChild(fieldName);
         field.accept(*this);
@@ -122,6 +225,7 @@ template <typename inputType, typename reflectionType>
         field.accept(*this);
     popChild();
 }
+
 
 template<>
     void PropertyListReaderVisitor::visit<int>(int &intField, int defaultValue, const char *fieldName);
@@ -141,10 +245,20 @@ template <>
     void PropertyListReaderVisitor::visit<int,    IntField>(int &field, const IntField *fieldDescriptor);
 
 template <>
+    void PropertyListReaderVisitor::visit<int,    EnumField>(int &field, const EnumField *fieldDescriptor);
+
+template <>
+    void PropertyListReaderVisitor::visit<int,    IntField>(int &field, const IntField *fieldDescriptor);
+
+template <>
     void PropertyListReaderVisitor::visit<double, DoubleField>(double &field, const DoubleField *fieldDescriptor);
 
 template <>
     void PropertyListReaderVisitor::visit<bool,   BoolField>(bool &field, const BoolField *fieldDescriptor);
+
+/* Typed arrays */
+template <>
+    void PropertyListReaderVisitor::visit<std::vector<double>, DoubleVectorField>(std::vector<double> &field, const DoubleVectorField *fieldDescriptor);
 
 
 

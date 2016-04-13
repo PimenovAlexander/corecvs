@@ -22,7 +22,7 @@ public:
     Vector2dd end;
 
     FloatFlowVector(Vector2dd _start, Vector2dd _end) :
-        start(_start), end(_end) {};
+        start(_start), end(_end) {}
 
     friend ostream & operator <<(ostream &out, const FloatFlowVector &flowVector)
     {

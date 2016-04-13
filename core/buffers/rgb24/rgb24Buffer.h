@@ -22,8 +22,8 @@
 #include "rectangle.h"
 #include "rgbColor.h"
 #include "function.h"
+#include "correspondenceList.h"
 #include "imageChannel.h"
-#include "interpolator.h"
 
 #include "conic.h"
 
@@ -80,10 +80,13 @@ public:
     void drawFlowBuffer1(FlowBuffer *src, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
     void drawFlowBuffer2(FlowBuffer *src, double colorShift = 0.0, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
     void drawFlowBuffer3(FlowBuffer *src, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
+    void drawCorrespondenceList(CorrespondenceList *src, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
 
-    //void drawCorrespondenceList(CorrespondenceList *src, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
-
-    //void drawRectangle(const Rectangle<int32_t> &rect, RGBColor color, int style = 0);
+    /**
+     *  Draw a rectangle
+     **/
+    void drawRectangle(const Rectangle<int32_t> &rect, RGBColor color, int style = 0);
+    void drawRectangle(int x, int y, int w, int h, RGBColor color, int style = 0);
 
     //void drawDisplacementBuffer(DisplacementBuffer *src, double step);
 
@@ -171,7 +174,17 @@ public:
             double zh, double zw,
             double steps,
             FunctionArgs &f);
+    /**
+     * Draw Double Buffer
+     **/
+    enum DoubleDrawStyle {
+        STYLE_RAINBOW,
+        STYLE_GRAY,
+        STYLE_LOG,
+        STYLE_ZBUFFER
+    };
 
+    void drawDoubleBuffer(const AbstractBuffer<double> &in, int style = STYLE_RAINBOW);
 
     void fillWithYUYV (uint8_t *yuyv);
     //void fillWith420P (uint8_t *y, uint8_t *u, uint8_t *v, int ly, int lu, int lv);

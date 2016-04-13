@@ -1,6 +1,8 @@
 #include "stlLoader.h"
 #include "utils.h"
 
+static const int STL_BINARY_HEADER_SIZE = 80;
+
 STLLoader::STLLoader()
 {
 }
@@ -44,16 +46,24 @@ Vector3dd readFloatVector(istream &input)
     return Vector3dd(x,y,z);
 }
 
+void writeFloatVector(ostream &output, Vector3dd &value)
+{
+    float x = value.x();
+    float y = value.y();
+    float z = value.z();
+    output.write((char *)&x, sizeof(float));
+    output.write((char *)&y, sizeof(float));
+    output.write((char *)&z, sizeof(float));
+}
+
 int STLLoader::loadBinarySTL(istream &input, Mesh3D &mesh)
 {
     if (sizeof(float) != 4) {
         return 2;
     }
 
-    static const int HEADER_SIZE = 80;
-
-    char * buffer = new char [HEADER_SIZE];
-    input.read(buffer, HEADER_SIZE);
+    char * buffer = new char [STL_BINARY_HEADER_SIZE];
+    input.read(buffer, STL_BINARY_HEADER_SIZE);
     if (input.bad()) {
         return 1;
     }
@@ -74,6 +84,67 @@ int STLLoader::loadBinarySTL(istream &input, Mesh3D &mesh)
         input.read((char *)&attribute, sizeof(attribute));
 
         mesh.addTriangle(v1,v2,v3);
+    }
+    deletearr_safe(buffer);
+    return 0;
+}
+
+int STLLoader::saveAsciiSTL(ostream &out, Mesh3D &mesh)
+{
+    out << "solid test" << endl;
+    for (size_t f = 0; f < mesh.faces.size(); f++)
+    {
+        Triangle3dd face = mesh.getFaceAsTrinagle(f);
+        Vector3dd normal = face.getNormal();
+
+        out << "  facet normal " << normal.x() << " " << normal.y() << " " << normal.z() << endl;
+        out << "     outer loop";
+
+        out << "       vertex " << face.p1().x() << " " << face.p1().y() << " " << face.p1().z() << endl;
+        out << "       vertex " << face.p2().x() << " " << face.p2().y() << " " << face.p2().z() << endl;
+        out << "       vertex " << face.p3().x() << " " << face.p3().y() << " " << face.p3().z() << endl;
+
+        out << "     end loop" << endl;
+        out << "  endfacet" << endl;
+    }
+    out << "endsolid test" << endl;
+    return 0;
+}
+
+int STLLoader::saveBinarySTL(ostream &out, Mesh3D &mesh)
+{
+    if (sizeof(float) != 4) {
+        return 2;
+    }
+
+    char * buffer = new char [STL_BINARY_HEADER_SIZE];
+
+    for (int i = 0; i < STL_BINARY_HEADER_SIZE; i++)
+        buffer[i] = 0x00;
+
+    out.write(buffer, STL_BINARY_HEADER_SIZE);
+    if (out.bad()) {
+        return 1;
+    }
+
+    uint32_t  numberTriangles = (int)mesh.faces.size();
+    out.write((char *)&numberTriangles, sizeof(uint32_t));
+
+    for (uint32_t i = 0; i < numberTriangles; i++)
+    {
+
+        Triangle3dd face = mesh.getFaceAsTrinagle(i);
+        Vector3dd normal = face.getNormal();
+
+        writeFloatVector(out, normal);
+
+        writeFloatVector(out, face.p1());
+        writeFloatVector(out, face.p2());
+        writeFloatVector(out, face.p3());
+
+        uint16_t attribute = 0;
+        out.write((char *)&attribute, sizeof(attribute));
+
     }
     deletearr_safe(buffer);
     return 0;

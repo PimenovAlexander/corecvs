@@ -2,6 +2,7 @@
 #define CONIC_H
 
 #include "line.h"
+#include "lineSpan.h"
 
 namespace corecvs {
 
@@ -96,6 +97,53 @@ public:
         return Plane3d::FormNormalAndPoint(normal, c);
     }
 };
+
+
+/* Circle 2d iterator */
+class CircleSpanIterator
+{
+public:
+    const Circle2d &circle;
+
+    double radSQ;
+    int currentY;
+    int currentDX;
+
+    CircleSpanIterator(const Circle2d &circle) : circle(circle)
+    {
+        radSQ = circle.r * circle.r;
+        currentY  = circle.c.y() - circle.r  - 1;
+        currentDX = 0;
+    }
+
+    bool step()
+    {
+        //SYNC_PRINT(("CircleSpanIterator::step(): called %d\n", currentY));
+        currentY++;
+        double h = currentY - 0.5 - circle.c.y();
+        double hsq = h * h;
+        currentDX = (int)sqrt((float)(radSQ - hsq));
+        if (currentY <= (circle.c.y() + circle.r))
+            return true;
+        return false;
+    }
+
+    void getSpan(int &y, int &x1, int &x2)
+    {
+        y = currentY;
+        x1 = circle.c.x() - currentDX;
+        x2 = circle.c.x() + currentDX;
+    }
+
+    LineSpanInt getSpan()
+    {
+        LineSpanInt span;
+        getSpan(span.cy, span.x1, span.x2);
+        return span;
+    }
+};
+
+
 
 } // namespace corecvs
 

@@ -15,6 +15,8 @@ void DefaultSetter::visit<double, DoubleField>(
         double &field,
         const DoubleField *fieldDescriptor)
 {
+//    SYNC_PRINT(("DefaultSetter::visit<double, DoubleField>: Called for %s\n", fieldDescriptor->getSimpleName()));
+
     field = fieldDescriptor->defaultValue;
 }
 
@@ -58,6 +60,15 @@ void DefaultSetter::visit<std::string, StringField>(
     field = fieldDescriptor->defaultValue;
 }
 
+template <>
+void DefaultSetter::visit<double, DoubleVectorField>(
+        std::vector<double> &field,
+        const DoubleVectorField *fieldDescriptor)
+{
+//    SYNC_PRINT(("DefaultSetter::visit<std::vector<double>, DoubleVectorField>: Called for %s\n", fieldDescriptor->getSimpleName()));
+    field = fieldDescriptor->defaultValue;
+}
+
 /* Old style */
 
 template <>
@@ -84,7 +95,7 @@ void DefaultSetter::visit<std::string>(std::string &stringField, std::string def
     stringField = defaultValue;
 }
 
-
+#if 0
 template<class Type>
 void DefaultSetter::visit(Type &field, Type /*defaultValue*/, const char *fieldName)
 {
@@ -92,5 +103,6 @@ void DefaultSetter::visit(Type &field, Type /*defaultValue*/, const char *fieldN
         field.accept(*this);
     /*popChild();*/
 }
+#endif
 
 } //namespace corecvs

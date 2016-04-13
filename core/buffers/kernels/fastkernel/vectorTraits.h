@@ -76,7 +76,7 @@ public:
 */
 #endif
 
-#ifdef WITH_AVX
+#if defined ( WITH_AVX )
 class TraitDoubleBufferVector {
 public:
     typedef TraitGeneric<double> FallbackTraits;
@@ -87,6 +87,30 @@ public:
     typedef Doublex4 Type;
     typedef Doublex4 SignedType;
     typedef Doublex4 ExtendedType;
+};
+
+class TraitDoubleBufferVector8 {
+public:
+    typedef TraitGeneric<double> FallbackTraits;
+
+    typedef TraitGeneric<double>::Type InternalType;
+    static const int step = Doublex8::SIZE;
+
+    typedef Doublex8 Type;
+    typedef Doublex8 SignedType;
+    typedef Doublex8 ExtendedType;
+};
+
+class TraitDoubleBufferVector4x5 {
+public:
+    typedef TraitGeneric<double> FallbackTraits;
+
+    typedef TraitGeneric<double>::Type InternalType;
+    static const int step = DoublexT4<3>::SIZE;
+
+    typedef DoublexT4<3> Type;
+    typedef DoublexT4<3> SignedType;
+    typedef DoublexT4<3> ExtendedType;
 };
 
 #elif defined( WITH_SSE )
@@ -180,6 +204,23 @@ class VectorAlgebraDouble
 public:
     typedef VectorAlgebraMulti<TraitDoubleBufferVector, inputNumber, outputNumber> Type;
 };
+
+#if defined(WITH_AVX)
+template<int inputNumber = 1, int outputNumber = 1>
+class VectorAlgebraDoubleEx
+{
+public:
+    typedef VectorAlgebraMulti<TraitDoubleBufferVector8, inputNumber, outputNumber> Type;
+};
+
+template<int inputNumber = 1, int outputNumber = 1>
+class VectorAlgebraDoubleEx5
+{
+public:
+    typedef VectorAlgebraMulti<TraitDoubleBufferVector4x5, inputNumber, outputNumber> Type;
+};
+#endif
+
 #else
 template<int inputNumber = 1, int outputNumber = 1>
 class AlgebraDouble

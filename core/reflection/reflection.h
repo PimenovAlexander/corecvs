@@ -304,8 +304,11 @@ public:
 
 };
 
+typedef SimpleScalarField<uint8_t>     ByteField;
 typedef SimpleScalarField<int>         IntField;
 typedef SimpleScalarField<int64_t>     TimestampField;
+typedef SimpleScalarField<int64_t>     Int64Field;
+typedef SimpleScalarField<int64_t>     UInt64Field;
 typedef SimpleScalarField<double>      DoubleField;
 typedef SimpleScalarField<float>       FloatField;
 typedef SimpleScalarField<bool>        BoolField;
@@ -319,10 +322,11 @@ template<typename Type>
 class SimpleVectorField : public BaseField
 {
 public:
+    /* Ok... lets try it...*/
     typedef vector<Type> CPPType;
     typedef Type CPPBaseType;
 
-    const Type  defaultValue;
+    const CPPType defaultValue;
     unsigned    defaultSize;
     bool        hasAdditionalValues;
     Type        min;
@@ -332,7 +336,7 @@ public:
     SimpleVectorField (
             int _id,
             int _offset,
-            const Type _defaultValue,
+            const CPPType _defaultValue,
             int _defaultSize,
             const char *_name,
             const char *_decription   = NULL,
@@ -354,7 +358,29 @@ public:
     SimpleVectorField (
             int _id,
             int _offset,
-            Type _defaultValue,
+            const Type & /*_defaultValue*/,
+            int _defaultSize,
+            const char *_name,
+            const char *_decription   = NULL,
+            const char *_comment      = NULL,
+            bool _hasAdditionalValues = false,
+            Type _min = 0,
+            Type _max = 0,
+            Type _step = 0
+    ) :
+        BaseField(_id, BaseField::getType<vector<Type> >(), ReflectionNaming(_name, _decription, _comment) , _offset),
+        /*defaultValue(),*/
+        defaultSize(_defaultSize),
+        hasAdditionalValues(_hasAdditionalValues),
+        min (_min),
+        max (_max),
+        step(_step)
+    {}
+
+    SimpleVectorField (
+            int _id,
+            int _offset,
+            CPPType _defaultValue,
             int _defaultSize,
             const ReflectionNaming &_naming,
             bool _hasAdditionalValues = false,
@@ -371,8 +397,17 @@ public:
         step(_step)
     {}
 
-    SimpleVectorField (int _id, Type _defaultValue, int _defaultSize, const char *_name) :
-        BaseField(_id, BaseField::getType<vector<Type> >(), _name, NULL, NULL, BaseField::UNKNOWN_OFFSET),
+    SimpleVectorField (int _id, int _defaultSize, const char *_name) :
+        BaseField(_id, BaseField::getType<CPPType >(), _name, NULL, NULL, BaseField::UNKNOWN_OFFSET),
+        defaultSize (_defaultSize),
+        hasAdditionalValues(false),
+        min (0),
+        max (0),
+        step(0)
+    {}
+
+    SimpleVectorField (int _id, CPPType _defaultValue, int _defaultSize, const char *_name) :
+        BaseField(_id, BaseField::getType<CPPType >(), _name, NULL, NULL, BaseField::UNKNOWN_OFFSET),
         defaultValue (_defaultValue),
         defaultSize (_defaultSize),
         hasAdditionalValues(false),
@@ -380,6 +415,15 @@ public:
         max (0),
         step(0)
     {}
+
+    Type getDefaultElement(size_t index) const
+    {
+        if (index < defaultValue.size())
+            return defaultValue[index];
+        if (!defaultValue.empty())
+            return defaultValue.back();
+        return Type(0);
+    }
 
 #ifdef REFLECTION_WITH_VIRTUAL_SUPPORT
     /**
@@ -537,8 +581,14 @@ public:
     /*virtual*/ ~Reflection()   // it may be non virtual
     {
 //#ifndef REFLECTION_STATIC_ALLOCATION
-        FOREACH (const BaseField * el, fields) {
-            delete el;
+        FOREACH(const BaseField * el, fields) {
+            // crash silly workaround // TODO: review this and fix the problem!
+            if (el->id < 0) {
+                SYNC_PRINT(("~Reflection: bad id in the reflection object: id:%d size:%d\n", el->id, (int)fields.size()));
+            }
+            else {
+                delete el;
+            }
         }
         fields.clear();
         FOREACH (const EmbedSubclass * el, embeds) {

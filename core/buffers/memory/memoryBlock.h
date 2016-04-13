@@ -38,11 +38,10 @@ public:
      * TODO: Check if it is good idea to set refcount here.
      *
      **/
-    ObjectBlock() :
-         flags(0)
-       , refcount(0)
-    {
-    }
+    ObjectBlock()
+        : flags(0)
+        , refcount(0)
+    {}
 
     atomic_int &refCount()
     {
@@ -165,7 +164,7 @@ public:
         CORE_ASSERT_FALSE_P(block->refCount() == 0, ("Block referenced by %p overfreed\n", (void *)this));
 
         DOTRACE(("Reference for block %p Decrement to %d\n", (void *)block, block->refCount() - 1));
-        atomic_int new_count = atomic_dec_and_fetch(&(block->refCount()));
+        int new_count = atomic_dec_and_fetch(&(block->refCount()));
         if (new_count == 0)
         {
             block->~ObjectBlock<Type>();

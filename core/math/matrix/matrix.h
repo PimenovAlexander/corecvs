@@ -156,6 +156,7 @@ public:
     Matrix *transposed() const;
     Matrix t() const;
     void transpose();
+    Matrix ata() const;
 
 #ifdef WITH_BLAS
     double det(void) const;
@@ -173,6 +174,9 @@ public:
     static int jacobi(Matrix *a, DiagonalMatrix *d, Matrix *v, int *nrotpt);
 
     static bool matrixSolveGaussian(Matrix *A, Matrix *B);
+
+    bool        linSolve(const corecvs::Vector &B, corecvs::Vector &res, bool symmetric = false, bool posDef = false) const;
+    static bool LinSolve(const corecvs::Matrix &A, const corecvs::Vector &B, corecvs::Vector &res, bool symmetric = false, bool posDef = false);
 
     inline Matrix& operator +=(const Matrix& V)
     {
@@ -217,8 +221,6 @@ public:
     }
 
     operator Matrix33() const;
-
-
 
     /**
      *  All elements are negated
@@ -283,7 +285,10 @@ public:
     }
 
 /* Some more specific way to call multiplication */
-    static Matrix multiplyHomebrew(const Matrix &A, const Matrix &B, bool parallel = true, bool vectorize = true);
+    static Matrix multiplyHomebrew  (const Matrix &A, const Matrix &B, bool parallel = true, bool vectorize = true);
+    static Matrix multiplyHomebrewMD(const Matrix &M, const DiagonalMatrix &D);
+    static Vector multiplyHomebrewMV(const Matrix &M, const Vector &V);
+
 #ifdef WITH_BLAS
     static Matrix multiplyBlas(const Matrix &A, const Matrix &B);
 #endif

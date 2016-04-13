@@ -32,7 +32,7 @@ int Log::staticInit()
 
 void Log::message(Message &message)
 {
-    FOREACH (auto& el, mLogDrains)
+    for (auto& el: mLogDrains)
     {
         el->drain(message);
     }

@@ -482,11 +482,11 @@ double HomographyReconstructor::getCostFunction(Matrix33 &H, double out[])
     for (unsigned i = 0; i < p2p.size(); i++)
     {
         Vector2dd point = (H * p2p[i].start);
-        Vector2dd diff = point - p2p[i].end;
+        auto diff = point - p2p[i].end;
         if (out)
         {
-            out[argout++] = diff.x();
-            out[argout++] = diff.y();
+            out[argout++] = diff[0];
+            out[argout++] = diff[1];
         }
         cost += (point - p2p[i].end).sumAllElementsSq();
     }
@@ -515,6 +515,8 @@ void HomographyReconstructor::CostFunction::operator()(const double in[], double
                in[6], in[7], 1.0);
     reconstructor->getCostFunction(H, out);
 }
+
+
 
 /*
 void HomographyReconstructor::CostFunctionBack::operator()(const double in[], double out[])

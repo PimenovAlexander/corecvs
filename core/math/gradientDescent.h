@@ -5,13 +5,15 @@
  * \file gradientDescent.h
  * \brief Gradient Descent algorithms for minimizing the functions
  *
- * \date Oct 20, 2011
- * \author alexander
+ * \date Oct 20, 2011 
  */
 
 #include <limits>
+
 #include "global.h"
+
 #include "function.h"
+
 namespace corecvs {
 
 
@@ -88,5 +90,5 @@ public:
 
 
 } //namespace corecvs
-#endif /* GRADIENTDESCENT_H_ */
 
+#endif /* GRADIENTDESCENT_H_ */

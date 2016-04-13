@@ -9,13 +9,15 @@
  * \date Oct 28, 2009
  * \author alexander
  */
-
-
 #include <vector>
+#include <chrono>
 
 #include "global.h"
 
+#include "cblasLapackeWrapper.h"
+
 #include "matrix.h"
+#include "sparseMatrix.h"
 #include "vector.h"
 
 namespace corecvs {
@@ -26,6 +28,7 @@ using std::vector;
  *
  *  TODO: Think of the similar class based on static polymorphism.
  **/
+class JacobianFunctor;
 class FunctionArgs
 {
 public:
@@ -73,32 +76,11 @@ public:
      *   TODO: Bring differencing out and use following information
      *   http://en.wikipedia.org/wiki/Numerical_differentiation#Practical_considerations_using_floating_point_arithmetic
      **/
-    virtual Matrix getJacobian(const double in[], double delta = 1e-7)
+    virtual Matrix getJacobian(const double in[], double delta = 1e-7);
+
+    Matrix getNativeJacobian(const double in[], double delta = 1e-7)
     {
-        Matrix result(outputs, inputs);
-        vector<double> xc(inputs);
-        vector<double> y_minus(outputs);
-        vector<double> y_plus (outputs);
-
-        for (int i = 0; i < inputs; i++)
-        {
-            xc[i] = in[i];
-        }
-
-        for (int i = 0; i < inputs; i++)
-        {
-            xc[i] = in[i] - delta;
-            operator()(&xc[0], &y_minus[0]);
-            xc[i] = in[i] + delta;
-            operator()(&xc[0], &y_plus[0]);
-            xc[i] = in[i];
-
-            for (int j = 0; j < outputs; j++)
-            {
-                result.element(j,i) = (y_plus[j] - y_minus[j]) / (2.0 * delta);
-            }
-        }
-        return result;
+        return getJacobian(in, delta);
     }
 
     virtual Matrix getJacobian(const Vector &in, double delta = 1e-7)
@@ -106,8 +88,91 @@ public:
         return getJacobian(in.element, delta);
     }
 
+    /*
+     * This function returns hessian matrices for all output functions
+     * Output is outputs x (inputs x inputs matrix) vector
+     * We use a second-order finite differences in order to get this,
+     * for example, for f(x,y) we will evaluate f at the following points:
+     *       +
+     *    *  +  *
+     * +  +  +  +  +
+     *    *  +  *
+     *       +
+     *  Where '+' points are used for f^{(2)}_{xx} or f^{(2)}_{yy} computations,
+     *  while '*' points are used for f^({2})_{xy} computations
+     */
+    virtual std::vector<Matrix> getHessians(const Vector &in, double delta = 1e-5);
+
+    // Gets Hessian for \frac{1}{2}\sum f_k(x_1,...,x_n)^2
+    virtual Matrix getLSQHessian(const double* in, double delta = 1e-5);
+
     virtual ~FunctionArgs() {}
 
+};
+
+// This class only reshapes jacobian of another function
+class JacobianFunctor : public FunctionArgs
+{
+public:
+    JacobianFunctor(FunctionArgs *fun) : FunctionArgs(fun->inputs, fun->inputs * fun->outputs), fun(fun)
+    {
+    }
+    void operator() (const double* in, double* out)
+    {
+        auto J = fun->getJacobian(in, 1e-9);
+        for (int i = 0; i < J.h; ++i)
+            for (int j = 0; j < J.w; ++j)
+                *out++ = J.a(i, j);
+    }
+    FunctionArgs *fun;
+};
+
+class SparseFunctionArgs : public FunctionArgs
+{
+public:
+    double feval = 0.0, transp = 0.0, construct = 0.0, prepare = 0.0, other = 0.0, subscale = 0.0;
+    SparseFunctionArgs(int inputs, int outputs, const std::vector<std::vector<int>> &dependencyList) : FunctionArgs(inputs, outputs), dependencyList(dependencyList), fullIdx(outputs)
+    {
+        std::cout << "Sparse: R^" << inputs << "->R^" << outputs << std::endl;
+        for (int i = 0; i < outputs; ++i)
+            fullIdx[i] = i;
+        minify();
+    }
+    //! \brief This should compute only needed indices
+    virtual void operator() (const double* in, double* out, const std::vector<int> &idx) = 0;
+    virtual void operator() (const double* in, double* out)
+    {
+        (*this)(in, out, fullIdx);
+    }
+
+    Matrix getJacobian(const double* in, double delta = 1e-7)
+    {
+        return (Matrix)getNativeJacobian(in, delta);
+    }
+
+    SparseMatrix getNativeJacobian(const double* in, double delta = 1e-7);
+
+    /*
+     * This function groups input variables using provided output dependency lists
+     * in order to minimize number of function calls during jacobian computation
+     */
+    void minify();
+
+    virtual ~SparseFunctionArgs()
+    {
+        double total = (feval + transp + construct + prepare + other + subscale);
+        std::cout << "Feval: " << feval << "s " << feval / total * 100.0 << "%" << std::endl;
+        std::cout << "Trans: " << transp<< "s " << transp/ total * 100.0 << "%" << std::endl;
+        std::cout << "Prep : " <<prepare << "s " <<prepare/ total * 100.0 << "%" << std::endl;
+        std::cout << "Const: " <<construct<< "s " <<construct / total * 100.0 << "%" << std::endl;
+        std::cout << "Subscale:" << subscale << "s " << subscale / total * 100.0 << "%" << std::endl;
+        std::cout << "Other: " <<other<< "s " <<other / total * 100.0 << "%" << std::endl;
+    }
+
+private:
+    std::vector<std::vector<int>> groupInputs, groupOutputs, remapIdx;
+    std::vector<std::vector<int>> dependencyList;
+    std::vector<int>              fullIdx;
 };
 
 class IdentityFunction : public FunctionArgs
@@ -227,109 +292,8 @@ public:
         return result;
     }
 
-#if 0
-    /**
-     *   \f[
-     *
-     *   J= \pmatrix{
-     *      \frac{\partial y_1}{\partial x_1} & \cdots & \frac{\partial y_1}{\partial x_n} \cr
-     *              \vdots                    & \ddots &                   \vdots          \cr
-     *      \frac{\partial y_m}{\partial x_1} & \cdots & \frac{\partial y_m}{\partial x_n}
-     *      }
-     *
-     *   \f]
-     *
-     *
-     *   TODO: Bring differencing out and use following information
-     *   http://en.wikipedia.org/wiki/Numerical_differentiation#Practical_considerations_using_floating_point_arithmetic
-     **/
-    Matrix getJacobian(const InputType &x, double delta = 1e-7)
-    {
-        Matrix result(outputDim, inputDim);
-        for (int i = 0; i < inputDim; i++)
-        {
-           Function::InputType xc = x;
-           xc[i] -= delta;
-           Function::InputType y_minus;
-           Function::InputType y_plus;
-           F(xc, y_minus);
-           xc[i] = x[i] + delta;
-           F(xc, y_plus);
-
-           for (int j = 0; j < Function::outputDim; j++)
-           {
-               result.element(j,i) = (y_plus[j] - y_minus[j]) / (2.0 * delta);
-           }
-        }
-        return result;
-    }
-#endif
 };
-
-#if 0
-double const delta = 0.1;
-
-class Function
-{
-public:
-    Function()
-    {
-        memset(args, '\0', sizeof(float) * dimension);
-    }
-
-    static const int dimension = 3;
-
-    float operator ()(float a, float b, float c)
-    {
-        return a + b*b + c*c*c;
-    }
-
-    float operator()()
-    {
-        return args[0] + args[1]*args[1] + args[2] * args[2] * args[2];
-    }
-
-    void setArg(int argNum, double arg)
-    {
-        args[argNum] = arg;
-    }
-
-    void modifyArg(int argNum, double delta)
-    {
-        args[argNum] += delta;
-    }
-
-private:
-    double args[dimension];
-
-};
-
-template <typename T>
-class Derivative
-{
-public:
-    float operator ()(int number, ...)
-    {
-        T f;
-        number--;
-        double val = 0.0;
-        va_list vl;
-        va_start(vl, number);
-        for (int i=0; i < Function::dimension; i++)
-        {
-            val = va_arg(vl, double);
-            f.setArg(i, val);
-        }
-        va_end(vl);
-        f.modifyArg(number, -delta);
-        double f1 = f();
-        f.modifyArg(number, 2 * delta);
-        double f2 = f();
-        return (f2 - f1) / (2 * delta);
-    }
-};
-#endif
 
 } //namespace corecvs
-#endif // _FUNCTION_H_
 
+#endif // _FUNCTION_H_

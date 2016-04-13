@@ -200,6 +200,11 @@ double Matrix44::frobeniusNorm() const
     return sqrt(sumAllElementsSq());
 }
 
+Matrix44 Matrix44::Identity()
+{
+    return Matrix44 (1.0);
+}
+
 FixedVector<double, 4> operator *(const Matrix44 &m, const FixedVector<double, 4> &v)
 {
     FixedVector<double, 4> toReturn;

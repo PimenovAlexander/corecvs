@@ -18,7 +18,7 @@
 
 namespace corecvs {
 
-class Doublex2
+class ALIGN_DATA(16) Doublex2
 {
 public:
     __m128d data;

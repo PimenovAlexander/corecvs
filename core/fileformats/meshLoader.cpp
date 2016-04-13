@@ -7,6 +7,14 @@
 namespace corecvs {
 using namespace std;
 
+bool MeshLoader::endsWith(const string &fileName, const char *extention)
+{
+    size_t extLen = strlen(extention);
+    if (fileName.compare(fileName.length() - extLen, extLen, extention) == 0)
+        return true;
+    return false;
+}
+
 MeshLoader::MeshLoader()
 {
 
@@ -25,8 +33,7 @@ bool MeshLoader::load(Mesh3D *mesh, const string &fileName)
         return false;
     }
 
-    const char *PLY_RES = ".ply";
-    if (fileName.compare(fileName.length() - strlen(PLY_RES), strlen(PLY_RES), PLY_RES) == 0)
+    if (endsWith(fileName, PLY_RES))
     {
         SYNC_PRINT(("MeshLoader::load(): Loading PLY <%s>\n", fileName.c_str()));
         PLYLoader loader;
@@ -38,8 +45,7 @@ bool MeshLoader::load(Mesh3D *mesh, const string &fileName)
         }
     }
 
-
-    if (fileName.compare(fileName.length() - strlen(STL_RES), strlen(STL_RES), STL_RES) == 0)
+    if (endsWith(fileName, STL_RES))
     {
         SYNC_PRINT(("MeshLoader::load(): Loading STL <%s>\n", fileName.c_str()));
         STLLoader loader;
@@ -51,11 +57,44 @@ bool MeshLoader::load(Mesh3D *mesh, const string &fileName)
         }
     }
 
-    cout << "Loaded mesh:" << endl;
-    cout << " Edges   :" << mesh->edges.size() << endl;
-    cout << " Vertexes:" << mesh->vertexes.size() << endl;
-    cout << " Faces   :" << mesh->faces.size() << endl;
-    cout << " Bounding box " << mesh->getBoundingBox() << endl;
+    mesh->dumpInfo(cout);
+    return true;
+}
+
+bool MeshLoader::save(Mesh3D *mesh, const string &fileName)
+{
+    ofstream file;
+    file.open(fileName, ios::out);
+    if (file.fail())
+    {
+        SYNC_PRINT(("MeshLoader::save(): Can't open mesh file <%s> for writing/n", fileName.c_str()));
+        return false;
+    }
+
+    if (endsWith(fileName, PLY_RES))
+    {
+        SYNC_PRINT(("MeshLoader::save(): Saving PLY <%s>\n", fileName.c_str()));
+        int res = mesh->dumpPLY(file);
+        if (res != 0)
+        {
+           SYNC_PRINT(("MeshLoader::save(): Unable to save mesh code=%d\n", res ));
+           file.close();
+           return false;
+        }
+    }
+
+    if (endsWith(fileName, STL_RES))
+    {
+        SYNC_PRINT(("MeshLoader::save(): Saving binary STL <%s>\n", fileName.c_str()));
+        STLLoader loader;
+        if (loader.saveBinarySTL(file, *mesh) != 0)
+        {
+           SYNC_PRINT(("MeshLoader::save(): Unable to load mesh"));
+           file.close();
+           return false;
+        }
+    }
+
 
     return true;
 }

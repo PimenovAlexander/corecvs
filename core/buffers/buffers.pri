@@ -36,9 +36,9 @@ HEADERS += \
     buffers/kernels/spatialGradient.h \
     buffers/morphological/morphological.h \
     buffers/rgb24/rgbColor.h \
-#    buffers/rgb24/rgbTColor.h \
+    buffers/rgb24/rgbTColor.h \
     buffers/rgb24/rgb24Buffer.h \
-#    buffers/rgb24/rgbTBuffer.h \
+    buffers/rgb24/rgbTBuffer.h \
     buffers/rgb24/hardcodeFont.h \
     buffers/rgb24/hersheyVectorFont.h \
     buffers/rgb24/abstractPainter.h \
@@ -52,10 +52,13 @@ HEADERS += \
     buffers/transformationCache.h \
     buffers/runtimeTypeBuffer.h \
     buffers/deformMap.h \
-#    buffers/focusEstimator.h \
+    buffers/focusEstimator.h \
 #    buffers/converters/debayer.h \
 #    buffers/converters/labConverter.h \
 #    buffers/converters/errorMetrics.h \
+    buffers/memory/alignedMemoryBlock.h \
+    buffers/convolver/convolver.h \
+    $$PWD/rgb24/lineSpan.h
 
 
 SOURCES += \
@@ -92,8 +95,10 @@ SOURCES += \
     buffers/transformationCache.cpp \
     buffers/runtimeTypeBuffer.cpp \
     buffers/deformMap.cpp \
-#    buffers/focusEstimator.cpp \
+    buffers/focusEstimator.cpp \
 #    buffers/converters/debayer.cpp \
 #    buffers/converters/errorMetrics.cpp \
+    buffers/convolver/convolver.cpp \
+    $$PWD/rgb24/lineSpan.cpp
 
 

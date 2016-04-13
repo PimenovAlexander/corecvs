@@ -17,10 +17,21 @@ namespace corecvs {
 
 class ASTNodeInt;
 
-class Context
+class ASTContext
 {
 public:
+    static ASTContext *MAIN_CONTEXT;
+
     std::vector<ASTNodeInt *> nodes;
+
+    ~ASTContext()
+    {
+        SYNC_PRINT(("ASTContext::~ASTContext(): there is %d garbage remaining\n", (int)nodes.size()));
+        for (auto it = nodes.begin(); it != nodes.end(); ++it)
+        {
+            delete_safe(*it);
+        }
+    }
 
 };
 
@@ -33,7 +44,17 @@ class ASTNodeInt
 {
 public:
 
-    ASTNodeInt() {}
+    void _init()
+    {
+        if (ASTContext::MAIN_CONTEXT == NULL)
+            return;
+
+        ASTContext::MAIN_CONTEXT->nodes.push_back(this);
+    }
+
+    ASTNodeInt() {
+        _init();
+    }
 
     enum Operator {
         OPREATOR_ID,
@@ -49,41 +70,40 @@ public:
 
 
     ASTNodeInt(/* Context *_owner,*/ Operator _op, ASTNodeInt *_left = NULL, ASTNodeInt *_right = NULL) :
-       /* owner(_owner),*/
         op   (_op),
         left (_left),
         right(_right)
     {
-       /* if (owner != NULL)
-            _owner->nodes.push_back(this);*/
+        _init();
     }
 
-    ASTNodeInt(/*Context *_owner,*/ double _value) :
-       /* owner(_owner),*/
+    ASTNodeInt(double _value) :
         op   (OPREATOR_NUM),
         val  (_value),
         left (NULL),
         right(NULL)
     {
+        _init();
     }
 
-    ASTNodeInt(/*Context *_owner,*/ const char *_name) :
-       /* owner(_owner),*/
+    ASTNodeInt(const char *_name) :
         op   (OPREATOR_ID),
         val  (0),
         name (_name),
         left (NULL),
         right(NULL)
     {
+        _init();
     }
 
     ~ASTNodeInt()
     {
-     /*   if (owner == NULL)
+        if (ASTContext::MAIN_CONTEXT == NULL)
             return;
-
+#if 0
         auto &vec = owner->nodes;
-        vec.erase(std::remove(vec.begin(), vec.end(), this), vec.end());*/
+        vec.erase(std::remove(vec.begin(), vec.end(), this), vec.end());
+#endif
     }
 
     Operator op;

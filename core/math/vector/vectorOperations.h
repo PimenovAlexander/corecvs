@@ -39,10 +39,6 @@
 #include <math.h>
 #include "reflection.h"
 
-/*TODO: Find the MSVC reason and fix this ASAP */
-//#undef min
-//#undef max
-
 using std::numeric_limits;
 using std::istream;
 using std::ostream;
@@ -261,7 +257,7 @@ public:
     friend inline ReturnType operator *(const RealType &V1, const RealType &V2)
     {
         int length = V1._size() < V2._size() ? V1._size() : V2._size();
-        RealType result = V1._createVector(length);
+        ReturnType result = V1._createVector(length);
 
         for (int i = 0; i < length; i++)
             result.at(i) = V1._at(i) * V2._at(i);

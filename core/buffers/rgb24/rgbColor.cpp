@@ -11,6 +11,8 @@
 
 namespace corecvs {
 
+Reflection RGBColor::reflect = RGBColor::staticInit();
+
 RGBColor RGBColor::rainbow(double x)
 {
     x *= 6;

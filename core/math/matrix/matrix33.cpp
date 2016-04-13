@@ -298,9 +298,9 @@ Matrix33 Matrix33::RotationY (double alpha)
  *
  *
  * \f[ P=\pmatrix{
- *       cos(\alpha)  & sin(\alpha)  & 0\cr
- *       -sin(\alpha) & cos(\alpha)  & 0\cr
- *                 0  &           0  & 1}
+ *       cos(\alpha)  & -sin(\alpha)  & 0\cr
+ *       sin(\alpha)  &  cos(\alpha)  & 0\cr
+ *                 0  &            0  & 1}
  * \f]
  *
  * \param alpha angle to rotate by

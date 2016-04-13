@@ -96,5 +96,9 @@ int16_t inline GenericMath<int16_t>::branchlessMask(const int16_t &val)
     return -(val);
 }
 
+inline double multiplyAdd(const double &mul1, const double &mul2, const double &add1) {
+    return mul1 * mul2 + add1;
+}
+
 } /* namespace corecvs */
 #endif /* GENERICMATH_H_ */

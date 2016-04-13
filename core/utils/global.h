@@ -198,7 +198,7 @@ do {                  \
 } while (0)
 
 #ifdef TRACE
-#   define DOTRACE(X) SYNC_PRINT(X)
+#   define DOTRACE(X)       SYNC_PRINT(X)
 #else
 #   define DOTRACE(X)
 #endif
@@ -292,9 +292,22 @@ inline int snprintf2buf(char (&d)[size], cchar* fmt, ...)
     return iLen;
 }
 
+#include <type_traits>
 #include <algorithm>
+#include <tuple>
 namespace std
 {
+#if 0
+    template<typename T>
+    struct hash
+    {
+        using boo = typename std::enable_if<std::is_enum<T>::value, T>::type;
+        size_t operator() (const boo &t) const
+        {
+            return hash<typename underlying_type<boo>::type>()(static_cast<typename underlying_type<boo>::type>(t));
+        }
+    };
+#endif
     template<typename U, typename V>
     struct hash<pair<U, V>>
     {
@@ -303,6 +316,37 @@ namespace std
             return std::hash<U>()(p.first) ^ std::hash<V>()(p.second);
         }
     };
+    // Numbers were stolen from boost (actually it very similar to LFG ideas)
+    template<typename T>
+    size_t hash_append(size_t seed, const T &t)
+    {
+        return std::hash<T>()(t) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+    }
+    template<typename T, size_t n = tuple_size<T>::value - 1>
+    struct hash_calc
+    {
+        size_t operator() (const T &t, size_t seed) const
+        {
+            auto foo = hash_calc<T, n - 1>()(t, seed);
+            return hash_append(foo, std::get<n>(t));
+        }
+    };
+    template<typename T>
+    struct hash_calc<T, 0>
+    {
+        size_t operator() (const T &t, size_t seed) const
+        {
+            return hash_append(seed, std::get<0>(t));
+        }
+    };
+    template<typename ... T>
+    struct hash<std::tuple<T...>>
+    {
+        size_t operator() (const std::tuple<T...> &t) const
+        {
+            return hash_calc<std::tuple<T...>>()(t, 0);
+        }
+   };
 };
 
 
@@ -344,7 +388,7 @@ template<typename Type>
 inline void delete_safe (Type * &ptr)
 {
     delete ptr;
-  //ptr = (Type *)(uintptr_t(NULL) - 1);		/* We are not hiding our mistakes by zeroing the pointer */
+  //ptr = (Type *)(uintptr_t(NULL) - 1);        /* We are not hiding our mistakes by zeroing the pointer */
     ptr = NULL;
 }
 
@@ -352,7 +396,7 @@ template<typename Type>
 inline void deletearr_safe (Type * &ptr)
 {
     delete[] ptr;
-  //ptr = (Type *)(uintptr_t(NULL) - 1);		/* We are not hiding our mistakes by zeroing the pointer */
+  //ptr = (Type *)(uintptr_t(NULL) - 1);        /* We are not hiding our mistakes by zeroing the pointer */
     ptr = NULL;
 }
 
@@ -381,6 +425,10 @@ inline void deletearr_safe (Type * &ptr)
 #define   QSTR_HAS_SLASH_AT_END(qstring)  ((qstring).length() > 1 && \
                                           ((qstring)[(qstring).length() - 1] == '/' || \
                                            (qstring)[(qstring).length() - 1] == '\\'))
+
+#define   STR_HAS_SLASH_AT_END(string)  ((string).length() > 1 && \
+                                        ((string)[(string).length() - 1] == '/' || \
+                                         (string)[(string).length() - 1] == '\\'))
 
 #endif // is__cplusplus
 

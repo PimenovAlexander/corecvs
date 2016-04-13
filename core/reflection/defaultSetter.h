@@ -18,18 +18,21 @@ public:
 
     /* Oldstyle */
     template <class Type>
-        void visit(Type &field, Type defaultValue, const char *fieldName);
-
-
-    template <typename inputType, typename reflectionType>
-        void visit(std::vector<inputType> &/*field*/, const reflectionType * /*fieldDescriptor*/)
+        void visit(Type &field, Type defaultValue, const char * /*fieldName*/)
     {
+        field = defaultValue;
     }
 
     template <typename inputType, typename reflectionType>
         void visit(inputType &field, const reflectionType * /*fieldDescriptor*/)
     {
         field.accept(*this);
+    }
+
+    template <typename inputType, typename reflectionType>
+        void visit(std::vector<inputType> &/*field*/, const reflectionType * /*fieldDescriptor*/)
+    {
+        SYNC_PRINT(("visit(std::vector<inputType> &/*field*/, const reflectionType * /*fieldDescriptor*/): ignoring\n"));
     }
 };
 
@@ -67,6 +70,19 @@ template <>
 void DefaultSetter::visit<std::string, StringField>(
         std::string &field,
         const StringField *fieldDescriptor);
+
+/*
+template <>
+void DefaultSetter::visit< std::vector<double>, DoubleVectorField>(
+        std::vector<double> &field,
+        const DoubleVectorField *fieldDescriptor);
+*/
+template <>
+void DefaultSetter::visit<double, DoubleVectorField>(
+        std::vector<double> &field,
+        const DoubleVectorField *fieldDescriptor);
+
+
 
 /* Oldstyle setter */
 template <>
