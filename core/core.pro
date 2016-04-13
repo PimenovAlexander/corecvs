@@ -36,21 +36,21 @@ win32 {
 # include sources and headers for each subdir
 #
 for (MODULE, CORE_SUBMODULES) {
-    message (Adding module $${MODULE} )
+    !build_pass: message (Adding core submodule $${MODULE})
     include($${MODULE}/$${MODULE}.pri)
 }
 
+
 include(xml/generated/generated.pri)
 
-
-
-OTHER_FILES +=            \
-    xml/parameters.xml    \
-    xml/bufferFilters.xml \
-    xml/clustering1.xml   \
-    xml/filterBlock.xml   \
-    xml/precise.xml       \
-    xml/distortion.xml    \
+OTHER_FILES +=              \
+    xml/parameters.xml      \
+    xml/bufferFilters.xml   \
+    xml/clustering1.xml     \
+    xml/filterBlock.xml     \
+    xml/precise.xml         \
+    xml/distortion.xml      \
+    xml/patternDetector.xml \
 
 OTHER_FILES +=            \
     ../tools/generator/regen-core.sh \

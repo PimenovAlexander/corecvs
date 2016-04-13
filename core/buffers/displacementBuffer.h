@@ -84,6 +84,7 @@ public:
         }
     }
 
+#ifdef NONFREE
     inline DisplacementBuffer (LensDistortionModelParameters &ldmp, int h, int w) : DisplacementBufferBase (h, w, false)
     {
         int koef = -1;
@@ -97,6 +98,7 @@ public:
             }
         }
     }
+#endif
 
     static DisplacementBuffer *CacheInverse(
             RadialCorrection *inverseMap,

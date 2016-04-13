@@ -10,43 +10,45 @@ COREDIR=$$PWD
 # Switching submodules on and off it not supported. However with some you can try. Risk is yours
 #
 CORE_SUBMODULES= \
-alignment     \
-assignment    \
-automotive    \
-boosting      \
-buffers       \
-cammodel      \
-fileformats   \
-filters       \
-function      \
-geometry      \
-kalman        \
-kltflow       \
-math          \
-meta          \
-meanshift     \
-rectification \
-reflection    \
-segmentation  \
-stats         \
-tbbwrapper    \
-utils         \
-clustering3d  \
-features2d    \
-patterndetection \
-cameracalibration \
-graphs        \
-reconstruction \
-polynomial    \
-\
-camerafixture \
+    alignment     \
+    assignment    \
+    automotive    \
+    boosting      \
+    buffers       \
+    cammodel      \
+    fileformats   \
+    filesystem    \
+    filters       \
+    function      \
+    geometry      \
+    kalman        \
+    kltflow       \
+    math          \
+    meta          \
+    meanshift     \
+    rectification \
+    reflection    \
+    segmentation  \
+    stats         \
+    tbbwrapper    \
+    utils         \
+    clustering3d  \
+   # features2d    \
+    patterndetection \
+   # cameracalibration \
+   # graphs        \
+   # polynomial    \
+   # camerafixture \
 
+with_blas {
+   # CORE_SUBMODULES += reconstruction
+}
 
 for (MODULE, CORE_SUBMODULES) {
     CORE_INCLUDEPATH += $${COREDIR}/$${MODULE}
 }
 
-# Some modules want to export more then one directory with inculdes. Add them here
+# Some modules want to export more then one directory with includes. Add them here
 CORE_INCLUDEPATH += \
     $$COREDIR/buffers/fixeddisp \
     $$COREDIR/buffers/flow \
@@ -65,7 +67,8 @@ CORE_INCLUDEPATH += \
     $$COREDIR/clustering3d \
     $$COREDIR/xml \
     $$COREDIR/xml/generated \
-    $$COREDIR/tinyxml \                  # to allow including of generated headers without directory name prefix
+    $$COREDIR/tinyxml \
+    $$COREDIR/../wrappers/cblasLapack \		# some of core's math algorithms use it
 
 
 INCLUDEPATH += $$CORE_INCLUDEPATH
@@ -100,4 +103,12 @@ contains(TARGET, cvs_core): !contains(TARGET, cvs_core_restricted) {
         CORE_TARGET_NAME = $$join(CORE_TARGET_NAME,,lib,.a)
     }
     PRE_TARGETDEPS += $$COREBINDIR/$$CORE_TARGET_NAME
+}
+
+# The filesystem module needs this
+with_unorthodox {
+!win32  {
+    LIBS += -lstdc++fs
+}
+    DEFINES+=CORE_UNSAFE_DEPS
 }
