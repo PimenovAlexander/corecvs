@@ -17,6 +17,10 @@ SOURCES+= $${UTILSDIR}/corestructs/coreWidgets/makePreciseParametersControlWidge
 HEADERS+= $${UTILSDIR}/corestructs/coreWidgets/makePreciseParametersControlWidget.h
 FORMS += $${UTILSDIR}/corestructs/coreWidgets/makePreciseParametersControlWidget.ui
 
+SOURCES+= $${UTILSDIR}/corestructs/coreWidgets/debayerParametersControlWidget.cpp
+HEADERS+= $${UTILSDIR}/corestructs/coreWidgets/debayerParametersControlWidget.h
+FORMS += $${UTILSDIR}/corestructs/coreWidgets/debayerParametersControlWidget.ui
+
 SOURCES+= $${UTILSDIR}/corestructs/coreWidgets/checkerboardDetectionParametersControlWidget.cpp
 HEADERS+= $${UTILSDIR}/corestructs/coreWidgets/checkerboardDetectionParametersControlWidget.h
 FORMS += $${UTILSDIR}/corestructs/coreWidgets/checkerboardDetectionParametersControlWidget.ui

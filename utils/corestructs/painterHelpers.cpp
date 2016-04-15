@@ -353,3 +353,19 @@ void drawMetaballs1(QPainter &painter, const Vector2dd &center1, int r1, const V
     }
 
 }
+
+
+QImage *checkerBoard(int h, int w, int square)
+{
+    QImage *toReturn = new QImage(w, h, QImage::Format_ARGB32);
+    for (int i = 0; i < h; i++)
+    {
+        for (int j = 0; j < w; j++)
+        {
+            bool color = ((i / square) % 2) ^ ((j / square) % 2);
+            toReturn->setPixel(j, i, color ?  0x0u : 0xFFFFFFFFu);
+        }
+    }
+
+    return toReturn;
+}

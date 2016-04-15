@@ -42,11 +42,14 @@ HEADERS += \
     math/sse/uInt8x16.h \
     math/sse/doublex2.h \
     math/sse/doublex4.h \
+    math/sse/doublex8.h \
     \
     math/mathUtils.h \
     math/eulerAngles.h \
     math/puzzleBlock.h \
     math/matrix/similarityReconstructor.h \
+    math/sse/doublexT4.h \
+
 
 SOURCES += \
     math/matrix/matrix.cpp \
@@ -54,13 +57,13 @@ SOURCES += \
     math/matrix/matrix33.cpp \
     math/matrix/matrix44.cpp \
     math/matrix/diagonalMatrix.cpp \
+    math/sparseMatrix.cpp \
     math/matrix/homographyReconstructor.cpp \
     math/vector/vector2d.cpp \
     math/lutAlgebra.cpp \
     math/affine.cpp \
     math/projectiveTransform.cpp \
     math/quaternion.cpp \
-    math/levenmarq.cpp \
     math/gradientDescent.cpp \
     math/helperFunctions.cpp \
     math/generic/genericMath.cpp \
@@ -68,7 +71,9 @@ SOURCES += \
     math/matrix/similarityReconstructor.cpp \
 
 
-contains(DEFINES, WITH_FFTW) {
+contains(DEFINES, "WITH_FFTW") {
+    !build_pass: message(Adding core submodule math : fftw wrapper)
+
 HEADERS += \
     math/fftw/fftwWrapper.h \
 

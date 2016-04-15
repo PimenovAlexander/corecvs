@@ -94,7 +94,7 @@ void SimpleRenderer::render(Mesh3D *mesh, RGB24Buffer *buffer)
     }
 }
 
-void SimpleRenderer::fragmentShader(AttributedLineSpan &span)
+void SimpleRenderer::fragmentShader(AttributedLineSpan &/*span*/)
 {
     /**/
 }

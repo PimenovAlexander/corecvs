@@ -10,8 +10,10 @@
  */
 
 #ifdef WITH_SSE
+
 #include <stdint.h>
 #include <emmintrin.h>
+
 namespace corecvs {
 
 inline uint32_t sse32(__m128i sse, int index)

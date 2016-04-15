@@ -6,6 +6,8 @@
 #define __XMLDocument_FWD_DEFINED__  // to omit conflict "msxml.h:3376: using typedef-name 'XMLDocument' after 'class'"
 #include <QtOpenGL/QGLWidget>
 
+#include <QTimer>
+
 #include "ui_viGLAreaWidget.h"
 
 
@@ -29,6 +31,10 @@ signals:
     void notifyParentKeyPressEvent   ( QKeyEvent * event );
     void notifyParentKeyReleaseEvent ( QKeyEvent * event );
 
+public slots:
+    void scheduleUpdate();
+    virtual void updateGL() override;
+    void setScheduleDelay(int delay);
 
 private:
     Ui_ViGLAreaWidgetClass ui;
@@ -44,6 +50,10 @@ private:
     virtual void keyPressEvent   ( QKeyEvent * event );
     virtual void keyReleaseEvent ( QKeyEvent * event );
 
+private:
+
+    int mScheduleDelay;
+    QTimer mTimer;
 
 };
 

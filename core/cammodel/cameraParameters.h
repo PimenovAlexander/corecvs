@@ -1,18 +1,16 @@
-#ifndef CAMERAPARAMETERS_H_
-#define CAMERAPARAMETERS_H_
+#ifndef CAMERA_PARAMETERS_H_
+#define CAMERA_PARAMETERS_H_
 /**
  * \file cameraParameters.h
  * \brief a header for cameraParameters.c
  *
  * \date Feb 10, 2011
  */
-
 #include "global.h"
 #include "vector2d.h"
 #include "matrix44.h"
 
 namespace corecvs {
-
 
 /**
  * This class describes the parameters of the ideal pin-hole camera
@@ -22,24 +20,25 @@ namespace corecvs {
  *
  *  Camera intrinsics scale and shift the image.
  *
+ *  THIS IS DEPRICATED.
+ *
  ***/
-
-class CameraIntrinsics
+class CameraIntrinsicsLegacy
 {
 public:
     Vector2dd resolution;   /**< Imager resolution (in pixel) */
     Vector2dd center;       /**< Principal point of optical axis on image plane (in pixel). Usually center of imager */
     double f;               /**< Focal length (in mm) */
-    double k;                /**< Pixel size (in mm)   */
+    double k;               /**< Pixel size (in mm)   */
 
-    CameraIntrinsics() :
+    CameraIntrinsicsLegacy() :
         resolution(0.0)
       , center(0.0)
       , f(1.0)
       , k(1.0)
     {}
 
-    CameraIntrinsics(
+    CameraIntrinsicsLegacy(
         Vector2dd _resolution,
         Vector2dd _center,
         double _f,
@@ -71,14 +70,8 @@ template<class VisitorType>
         visitor.visit(k, 1.0, "pixelMM");
     }
 
-
 };
 
-typedef CameraIntrinsics CameraIntrinsicsLegacy;
-
-
-
-
 } //namespace corecvs
-#endif  //CAMERAPARAMETERS_H_
 
+#endif // CAMERA_PARAMETERS_H_

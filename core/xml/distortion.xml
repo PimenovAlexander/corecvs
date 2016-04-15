@@ -2,7 +2,8 @@
   <include name="parameters.xml"/>
 
 
-  <class name="Lens Distortion Model Parameters" description="Lens Distortion Model Parameters">
+
+  <class name="Lens Distortion Model Parameters Base" description="Lens Distortion Model Parameters">
     <comment>
  * \ingroup distcorrect
  * \brief This structure holds the parameters to correct the image.
@@ -46,8 +47,12 @@
 
     <field type="double"    name="Normalizing Focal" defaultValue="1"/>
 
+    <field type="double" name="shift X" defaultValue="0" comment="Additional shift \f$x_s\f$" />
+    <field type="double" name="shift Y" defaultValue="0" comment="Additional shift \f$y_s\f$" />
 
-    <!-- <field type="double"    name="Normalize Focal" defaultValue="1.0"/> -->
+
+     <field type="bool" name="Map Forward"  defaultValue="false" comment="This one is used to identify direction of map" />
+
   </class>
 
 <!-- class name="Camera Extirinsic Parameteres" description="">

@@ -39,6 +39,13 @@ void JSONSetter::visit<int>(int &intField, int /*defaultValue*/, const char *fie
 }
 
 template <>
+void JSONSetter::visit<uint64_t>(uint64_t &intField, uint64_t /*defaultValue*/, const char *fieldName)
+{
+    QString packed = QString::number(intField) + "u64";
+    mNodePath.back().insert(fieldName, packed);
+}
+
+template <>
 void JSONSetter::visit<bool>(bool &boolField, bool /*defaultValue*/, const char *fieldName)
 {
     mNodePath.back().insert(fieldName, boolField);
@@ -69,6 +76,21 @@ template <>
 void JSONSetter::visit<int, IntField>(int &intField, const IntField *fieldDescriptor)
 {
     visit<int>(intField, fieldDescriptor->defaultValue, fieldDescriptor->name.name);
+}
+
+
+template <>
+void JSONSetter::visit<uint64_t, UInt64Field>(uint64_t &intField, const UInt64Field *fieldDescriptor)
+{
+    visit<uint64_t>(intField, fieldDescriptor->defaultValue, fieldDescriptor->name.name);
+}
+
+template <>
+void JSONSetter::visit<unsigned char, IntField>(unsigned char &intField, const IntField *fieldDescriptor)
+{
+    int foo = intField;
+    visit<int>(foo, fieldDescriptor->defaultValue, fieldDescriptor->name.name);
+    intField = foo;
 }
 
 template <>

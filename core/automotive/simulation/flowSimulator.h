@@ -36,7 +36,7 @@ public:
     static std::vector<Vector3dd> *applyTransform(std::vector<Vector3dd> * pointsA, const Matrix44 &A);
 
     static std::vector<FloatFlowVector> *simulateFlow(
-            const CameraIntrinsics &camIntrinsics,
+            const CameraIntrinsicsLegacy &camIntrinsics,
             const ShiftRotateTransformation &cameraExtrinsics,
             const ShiftRotateTransformation &carMovement,
             double maxZ = 7000.0,

@@ -18,6 +18,7 @@ using corecvs::BaseField;
 using corecvs::SimpleScalarField;
 using corecvs::SimpleVectorField;
 using corecvs::BoolField;
+using corecvs::IntField;
 using corecvs::DoubleField;
 using corecvs::StringField;
 using corecvs::CompositeField;
@@ -66,7 +67,7 @@ public:
     }
 };
 
-typedef SimpleScalarFieldGen<int>         IntFieldGen;
+//typedef SimpleScalarFieldGen<int>         IntFieldGen;
 typedef SimpleScalarFieldGen<int64_t>     TimestampFieldGen;
 //typedef SimpleScalarFieldGen<double>      DoubleFieldGen;
 //typedef SimpleScalarFieldGen<std::string> StringFieldGen;
@@ -76,8 +77,10 @@ template<typename Type>
 class SimpleVectorFieldGen : public SimpleVectorField<Type>
 {
 public:
+    typedef typename SimpleVectorField<Type>::CPPType CPPType;
+
     SimpleVectorFieldGen (
-            const Type _defaultValue,
+            const CPPType _defaultValue,
             int _defaultSize,
             const ReflectionNaming &_nameing,
             bool _hasAdditionalValues = false,
@@ -201,6 +204,40 @@ public:
     }
 };
 
+class IntFieldGen : public IntField
+{
+public:
+    QString prefix;
+    QString suffix;
+
+    IntFieldGen(
+        double _defaultValue,
+        QString _prefix,
+        QString _suffix,
+        const ReflectionNaming &_nameing,
+        bool _hasAdditionalValues = false,
+        double _min = 0.0,
+        double _max = 0.0,
+        double _step = 0.1
+        ) : IntField (
+            BaseField::UNKNOWN_ID,
+            BaseField::UNKNOWN_OFFSET,
+            _defaultValue,
+            _nameing,
+            _hasAdditionalValues,
+            _min,
+            _max,
+            _step
+        ),
+        prefix(_prefix),
+        suffix(_suffix)
+    {}
+
+    virtual BaseField* clone() const
+    {
+        return new IntFieldGen(*this);
+    }
+};
 
 class CompositeFieldGen : public CompositeField
 {

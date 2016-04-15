@@ -211,11 +211,11 @@ void HomographyReconstructor::addPoint2PointConstraintLSE(
    double tx =   to.x();
    double ty =   to.y();
 
-   A.fillLineWithArgs(num    , fx,  fy, 1.0, 0.0, 0.0, 0.0, -fx * tx, -fy * tx);
-   B.fillLineWithArgs(num    , tx);
+   A.fillLineWithArgs(num    ,  fx,  fy, 1.0, 0.0, 0.0, 0.0, -fx * tx, -fy * tx);
+   B.fillLineWithArgs(num    ,  tx);
 
    A.fillLineWithArgs(num + 1, 0.0, 0.0, 0.0,  fx,  fy, 1.0, -fx * ty, -fy * ty);
-   B.fillLineWithArgs(num + 1, ty);
+   B.fillLineWithArgs(num + 1,  ty);
 }
 
 void HomographyReconstructor::addPoint2PointConstraintLSEUnif(

@@ -132,8 +132,9 @@ inline Type randRanged(Type valMax, Type valMin = Type(0))
     return (Type)(valMin + ((double)rand() / RAND_MAX * (valMax - valMin)));   // no round for int to fit into [min, max] range
 }
 
-/** Useful function that finds nearest value equals to power of 2 that is not less of the given value
- */
+/**
+ * Useful function that finds nearest value equals to power of 2 that is not less of the given value
+ **/
 inline unsigned getNearUpperPowerOf2(unsigned value)
 {
     if (CORE_IS_POW2N(value))
@@ -187,5 +188,21 @@ inline double lerpLimit(double outStart, double outEnd, double value, double int
     if (value >= intervalEnd)   return outEnd;
     return lerp<double>(outStart, outEnd, value, intervalStart, intervalEnd);
 }
+
+/** Common functions **/
+
+/**
+ *  Probability density function for one-dimention normal distribution
+ *
+ *  \f[
+ *       f(x;\mu,\sigma^2) = \frac{1}{\sigma\sqrt{2\pi}} e^{ -\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2 }.
+ *  \f]
+ *
+ **/
+inline double normalPDF(double x, double sigma)
+{
+    return exp(-x * x / (2.0 * sigma * sigma)) / (sigma * sqrt(2.0 * M_PI));
+}
+
 
 } //namespace corecvs

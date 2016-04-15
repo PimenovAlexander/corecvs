@@ -143,7 +143,7 @@ void WidgetUiGenerator::generateWidgetUi()
     /* Merge two if blocks below */
     if (type == BaseField::TYPE_INT)
     {
-        const IntField *ifield = static_cast<const IntField *>(field);
+        const IntFieldGen *ifield = static_cast<const IntFieldGen *>(field);
         if (ifield->hasAdditionalValues)
             result +=
     "       <property name=\"minimum\">\n"
@@ -158,6 +158,31 @@ void WidgetUiGenerator::generateWidgetUi()
     "       <property name=\"value\">\n"
     "        <number>" + QString::number(ifield->defaultValue) + "</number>\n"
     "       </property>\n";
+
+        if (!ifield->prefix.isEmpty())
+            result +=
+    "       <property name=\"prefix\">\n"
+    "        <string>" + ifield->prefix + "</string>\n"
+    "       </property>\n";
+
+        if (!ifield->suffix.isEmpty())
+            result +=
+    "       <property name=\"suffix\">\n"
+    "        <string>" + ifield->suffix + "</string>\n"
+    "       </property>\n";
+    }
+
+    if (type == (BaseField::TYPE_DOUBLE | BaseField::TYPE_VECTOR_BIT))
+    {
+        const DoubleVectorFieldGen *dfield = static_cast<const DoubleVectorFieldGen *>(field);
+        if (dfield->hasAdditionalValues)
+            result +=
+    "       <property name=\"minimum\">\n"
+    "        <double>" + QString::number(dfield->min) + "</double>\n"
+    "       </property>\n"
+    "       <property name=\"maximum\">\n"
+    "        <double>" + QString::number(dfield->max) + "</double>\n"
+    "       </property>\n" ;
     }
 
     if (type == BaseField::TYPE_DOUBLE)
@@ -299,6 +324,23 @@ void WidgetUiGenerator::generateWidgetUi()
     "   <container>1</container>\n"
     "  </customwidget>\n";
     }
+    for (int i = 0; i < fieldNumber; i++ )
+    {
+        enterFieldContext(i);
+        if (type == (BaseField::TYPE_DOUBLE | BaseField::TYPE_VECTOR_BIT))
+        {
+    result +=
+    "  <customwidget>\n"
+    "   <class>DoubleVectorWidget</class>\n"
+    "   <extends>QWidget</extends>\n"
+    "   <header>vectorWidget.h</header>\n"
+    "   <container>1</container>\n"
+    "  </customwidget>\n";
+
+            break;
+        }
+    }
+
     result +=
     " </customwidgets>\n"
     "</ui>\n";

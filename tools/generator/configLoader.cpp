@@ -147,8 +147,13 @@ void ConfigLoader::loadClasses(QDomDocument const &config)
             {
                 if (type == "int")
                 {
+                    QString prefix = fieldElement.attribute("prefix");
+                    QString suffix = fieldElement.attribute("suffix");
+
                     field = new IntFieldGen(
                               defaultValue.toInt()
+                            , prefix
+                            , suffix
                             , fieldNameing
                             , hasAdditionalParameters
                             , minValue.toInt()
@@ -228,10 +233,25 @@ void ConfigLoader::loadClasses(QDomDocument const &config)
                 }
             } else {
                 /* vector types*/
+                vector<QString> defaultValues;
+
+                for (int defNum = 0; defNum < size; defNum++)
+                {
+                    defaultValues.push_back( getFromHierarcy(fieldElement, QString("def%1").arg(defNum)));
+                    qDebug("DefaultValue %i = %s", defNum, defaultValues.back().toLatin1().constData());
+                }
+
+
                 if (type == "int")
                 {
+                    vector<int> defaultValuesTyped;
+                    for (size_t defNum = 0; defNum < defaultValues.size(); defNum++)
+                    {
+                        defaultValuesTyped.push_back(defaultValues[defNum].toInt());
+                    }
+
                     field = new IntVectorFieldGen(
-                              defaultValue.toInt()
+                              defaultValuesTyped
                             , size
                             , fieldNameing
                             , hasAdditionalParameters
@@ -241,8 +261,14 @@ void ConfigLoader::loadClasses(QDomDocument const &config)
                 }
                 else if (type == "double")
                 {
+                    vector<double> defaultValuesTyped;
+                    for (size_t defNum = 0; defNum < defaultValues.size(); defNum++)
+                    {
+                        defaultValuesTyped.push_back(defaultValues[defNum].toDouble());
+                    }
+
                     field = new DoubleVectorFieldGen(
-                              defaultValue.toDouble()
+                              defaultValuesTyped
                             , size
                             /*, widgetType*/
                             , fieldNameing

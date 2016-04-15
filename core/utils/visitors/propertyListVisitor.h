@@ -133,6 +133,9 @@ template <>
 template <>
     void PropertyListWriterVisitor::visit<bool,   BoolField>(bool &field, const BoolField *fieldDescriptor);
 
+template <>
+    void PropertyListWriterVisitor::visit<std::string,   StringField>(std::string &field, const StringField *fieldDescriptor);
+
 
 /* Typed arrays */
 template <>
@@ -255,6 +258,10 @@ template <>
 
 template <>
     void PropertyListReaderVisitor::visit<bool,   BoolField>(bool &field, const BoolField *fieldDescriptor);
+
+template <>
+    void PropertyListReaderVisitor::visit<std::string,   StringField>(std::string &field, const StringField *fieldDescriptor);
+
 
 /* Typed arrays */
 template <>

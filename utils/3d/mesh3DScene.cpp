@@ -213,8 +213,9 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
     if (mParameters.pointColorOverride() || !hasColor ) {
         glColor3ub(mParameters.pointColor().r(), mParameters.pointColor().g(), mParameters.pointColor().b());
 
-        glDrawArrays (GL_POINTS, 0, vertexes.size());
-    } else {
+        glDrawArrays(GL_POINTS, 0, (int)vertexes.size());
+    }
+    else {
         glColor3ub(mParameters.pointColor().r(), mParameters.pointColor().g(), mParameters.pointColor().b());
         glPointSize(mParameters.pointSize());
         /*glEnableClientState(GL_COLOR_ARRAY);

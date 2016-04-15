@@ -21,6 +21,9 @@
 #include "coordinateFrame.h"
 #include "treeSceneController.h"
 
+#include "textLabelWidget.h"
+#include "calculationStats.h"
+
 
 using namespace corecvs;
 using std::vector;
@@ -91,6 +94,7 @@ public slots:
     void loadParameters();
 
 
+    void statsOpen();
 public:
     Ui_CloudViewDialogClass mUi;
 
@@ -158,11 +162,14 @@ public:
     GLuint mFancyTexture;
     TreeSceneController* addSubObject (QString name, QSharedPointer<Scene3D> scene, bool visible = true);
     void addMesh(QString name, Mesh3D *mesh);
+
 private:
     GLuint mCameraTexture[Frames::MAX_INPUTS_NUMBER];
 
 protected:
 
+    BaseTimeStatisticsCollector mStatsCollector;
+    TextLabelWidget             mStatisticsDialog;
 
     void setZoom(double value);
     void zoom(int delta);

@@ -590,6 +590,21 @@ void PDOGenerator::generatePDOCpp()
     {
         enterFieldContext(i);
 
+        if ( type == (BaseField::TYPE_DOUBLE | BaseField::TYPE_VECTOR_BIT))
+        {
+             const DoubleVectorField *vfield = static_cast<const DoubleVectorField *>(field);
+
+    result+=
+    "    double "+ cppName+"_dv[] = {";
+             for (size_t val = 0; val < vfield->defaultSize; val++)
+             {
+    result+= (val == 0 ? "" : "," ) + QString::number(vfield->getDefaultElement(val));
+             }
+    result+="};\n";
+
+
+        }
+
     result+=
     "    fields().push_back(\n"
     "        new "+fieldRefType+"\n"
@@ -598,13 +613,19 @@ void PDOGenerator::generatePDOCpp()
     "          offsetof("+className+", "+cppName+"),\n";
 
     if (type != BaseField::TYPE_COMPOSITE && type != BaseField::TYPE_COMPOSITE_ARRAY) {
+
+        if (type == (BaseField::TYPE_DOUBLE | BaseField::TYPE_VECTOR_BIT))
+        {
+            const DoubleVectorField *vfield = static_cast<const DoubleVectorField *>(field);
+            QString defaultSize = QString::number(vfield->defaultSize);
+    result+=
+    "          vector<double>("+cppName+"_dv, "+cppName+"_dv + "+defaultSize+"),\n"
+    "          "+defaultSize+",\n";
+
+        } else {
+
     result+=
     "          "+defaultValue+",\n";
-        if (type & BaseField::TYPE_VECTOR_BIT)
-        {
-            QString defaultSize = "0";
-    result+=
-    "          "+defaultSize+",\n";
 
         }
 

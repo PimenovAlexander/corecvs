@@ -24,7 +24,7 @@ namespace corecvs {
  * This matrix transform the 3D points form camera coordinate system to
  * image coordinate system
  **/
-Matrix44 CameraIntrinsics::getKMatrix() const
+Matrix44 CameraIntrinsicsLegacy::getKMatrix() const
 {
     double focal = f / k;
     return Matrix44 (
@@ -39,7 +39,7 @@ Matrix44 CameraIntrinsics::getKMatrix() const
  *  Returns inverse of K matrix.
  *  For K matrix read CameraIntrinsics::getKMatrix()
  **/
-Matrix44 CameraIntrinsics::getInvKMatrix() const
+Matrix44 CameraIntrinsicsLegacy::getInvKMatrix() const
 {
     double invFocal = k / f;
     return Matrix44 (
@@ -51,7 +51,7 @@ Matrix44 CameraIntrinsics::getInvKMatrix() const
 
 }
 
-Matrix33 CameraIntrinsics::getKMatrix33() const
+Matrix33 CameraIntrinsicsLegacy::getKMatrix33() const
 {
     double focal = f / k;
     return Matrix33 (
@@ -62,7 +62,7 @@ Matrix33 CameraIntrinsics::getKMatrix33() const
 }
 
 
-Matrix33 CameraIntrinsics::getInvKMatrix33() const
+Matrix33 CameraIntrinsicsLegacy::getInvKMatrix33() const
 {
     double invFocal = k / f;
     return Matrix33 (
@@ -72,13 +72,13 @@ Matrix33 CameraIntrinsics::getInvKMatrix33() const
     );
 }
 
-double CameraIntrinsics::getVFov() const
+double CameraIntrinsicsLegacy::getVFov() const
 {
     double focal = f / k;
     return atan((resolution.y() / 2.0) / focal) * 2.0;
 }
 
-double CameraIntrinsics::getHFov() const
+double CameraIntrinsicsLegacy::getHFov() const
 {
     double focal = f / k;
     return atan((resolution.x() / 2.0) / focal) * 2.0;

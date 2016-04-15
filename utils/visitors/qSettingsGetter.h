@@ -1,5 +1,6 @@
 #pragma once
 #include <QSettings>
+#include <sstream>
 #include "basePathVisitor.h"
 #include "reflection.h"
 
@@ -53,6 +54,27 @@ public:
             {
                 fields[i].accept(*this);
             }
+        }
+
+    /**
+     * Generic Array support
+     * String style
+     **/
+    template <typename inputType>
+        void visit(std::vector<inputType> &fields, const char* arrayName)
+        {
+            fields.clear();
+            mSettings->beginGroup(arrayName);
+            int size = mSettings->value("size", 0).toInt();
+            fields.resize(size);
+            for (int i = 0; i < size; i++ )
+            {
+                std::stringstream ss;
+                ss << arrayName << "[" << i << "]";
+
+                visit(fields[i], ss.str().c_str());
+            }
+            mSettings->endGroup();
         }
 
 

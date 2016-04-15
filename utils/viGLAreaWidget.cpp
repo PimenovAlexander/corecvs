@@ -6,9 +6,11 @@
 #include "g12Buffer.h"
 
 ViGLAreaWidget::ViGLAreaWidget(QWidget *parent) :
-    QGLWidget(parent)
+    QGLWidget(parent),
+    mScheduleDelay(10)
 {
     ui.setupUi(this);
+    connect(&mTimer, SIGNAL(timeout()), this, SLOT(updateGL()));
 }
 
 void ViGLAreaWidget::initializeGL()
@@ -35,6 +37,26 @@ void ViGLAreaWidget::mousePressEvent(QMouseEvent *event)
 void ViGLAreaWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     emit notifyParentMouseRelease(event);
+}
+
+void ViGLAreaWidget::scheduleUpdate()
+{
+    if (mTimer.isActive())
+        return;
+    mTimer.setSingleShot(true);
+    mTimer.setInterval(mScheduleDelay);
+    mTimer.start();
+}
+
+void ViGLAreaWidget::updateGL()
+{
+    QGLWidget::updateGL();
+    if (mTimer.isActive()) mTimer.stop();
+}
+
+void ViGLAreaWidget::setScheduleDelay(int delay)
+{
+    mScheduleDelay = delay;
 }
 
 void ViGLAreaWidget::paintGL()

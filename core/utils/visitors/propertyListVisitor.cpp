@@ -68,6 +68,13 @@ template<>
     }
 
 template <>
+    void PropertyListWriterVisitor::visit<std::string,   StringField>(std::string &field, const StringField *fieldDescriptor)
+    {
+        output->setStringProperty(fieldDescriptor->getSimpleName(), field);
+    }
+
+
+template <>
     void PropertyListWriterVisitor::visit<std::vector<double>, DoubleVectorField>(std::vector<double> &field, const DoubleVectorField *fieldDescriptor)
     {
         std::stringstream ss;
@@ -141,6 +148,13 @@ template<>
     void PropertyListReaderVisitor::visit<bool,   BoolField>(bool &boolField, const BoolField *fieldDescriptor)
     {
         boolField = input->getIntProperty(getChildPath(fieldDescriptor->getSimpleName()), fieldDescriptor->defaultValue);
+    }
+
+
+template <>
+    void PropertyListReaderVisitor::visit<std::string,   StringField>(std::string &field, const StringField *fieldDescriptor)
+    {
+        field = input->getStringProperty(fieldDescriptor->getSimpleName(), field);
     }
 
 

@@ -52,7 +52,7 @@ TestbedMainWindow::TestbedMainWindow(QWidget *parent)
 {
     mUi->setupUi(this);
 
-    Log::mLogDrains.add(mUi->loggingWidget, false);
+    Log::mLogDrains.add(mUi->loggingWidget);
 
     mImageWidget = new TestbedImageWidget(this);
     setCentralWidget(mImageWidget);

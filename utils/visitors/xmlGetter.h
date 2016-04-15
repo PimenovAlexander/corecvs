@@ -65,14 +65,20 @@ public:
         popChild();
     }
 
-/* Generic Array support */
+    /** Generic Array support **/
     template <typename inputType, typename reflectionType>
-    void visit(std::vector<inputType> &fields, const reflectionType * /*fieldDescriptor*/)
+        void visit(std::vector<inputType> &fields, const reflectionType * /*fieldDescriptor*/)
     {
         for (int i = 0; i < fields.size(); i++)
         {
             fields[i].accept(*this);
         }
+    }
+
+    template <typename inputType>
+        void visit(std::vector<inputType> &/*fields*/, const char* /*arrayName*/)
+    {
+         qDebug() << "XmlGetter::visit(std::vector<inputType> &fields, const char* arrayName) NOT YET SUPPORTED";
     }
 
     void pushChild(const char *childName)

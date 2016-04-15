@@ -87,6 +87,14 @@ QString BaseGenerator::getWidgetGetterMethodForType(BaseField::FieldType type)
 {
     if (field->type & BaseField::TYPE_VECTOR_BIT) {
        qDebug() << "Unsupported type for UI: vectors not supported so far";
+
+       switch(type & ~BaseField::TYPE_VECTOR_BIT)
+       {
+           case BaseField::TYPE_INT:
+           case BaseField::TYPE_DOUBLE:
+               return "value()";
+       }
+
     }
 
     switch(type)
@@ -117,6 +125,13 @@ QString BaseGenerator::getWidgetSetterMethodForType(BaseField::FieldType type)
 {
     if (field->type & BaseField::TYPE_VECTOR_BIT) {
        qDebug() << "Unsupported type for UI: vectors not supported so far";
+
+       switch(type & ~BaseField::TYPE_VECTOR_BIT)
+       {
+           case BaseField::TYPE_INT:
+           case BaseField::TYPE_DOUBLE:
+               return "setValue";
+       }
     }
 
     switch(type)
@@ -288,6 +303,13 @@ QString BaseGenerator::getUiWidgetForType(BaseField::FieldType type)
         {
             return getWidgetNameForName(static_cast<const CompositeField *>(field)->typeName);
         }
+
+        case (BaseField::TYPE_DOUBLE | BaseField::TYPE_VECTOR_BIT):
+        {
+            return "DoubleVectorWidget";
+        }
+
+
         default:
             return "";
     }
@@ -321,6 +343,8 @@ QString BaseGenerator::getSignalForType(BaseField::FieldType type)
             return "textChanged(QString)";
         case BaseField::TYPE_COMPOSITE:
             return "paramsChanged()";
+        case (BaseField::TYPE_DOUBLE | BaseField::TYPE_VECTOR_BIT):
+            return "valueChanged()";
         default:
             return "";
     }

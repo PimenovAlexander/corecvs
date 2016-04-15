@@ -154,7 +154,8 @@ template <typename OtherAlgebra>
         {
             for (int j = 0; j < elements->w; j++)
             {
-                 result += algebra.getInput(i,j) * Type(elements->element(i,j));
+                 //result += algebra.getInput(i,j) * Type(elements->element(i,j));
+                result = multiplyAdd(algebra.getInput(i,j), Type(elements->element(i,j)), result);
             }
         }
         algebra.putOutput(0,0,result);

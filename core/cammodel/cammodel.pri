@@ -3,6 +3,7 @@ HEADERS += \
     cammodel/imagerControl.h \
     cammodel/cameraParameters.h \
     cammodel/sphericalCorrectionLUT.h \
+    cammodel/cameraModel.h \
     
 
 SOURCES += \
@@ -10,4 +11,5 @@ SOURCES += \
     cammodel/imagerControl.cpp \
     cammodel/cameraParameters.cpp \
     cammodel/sphericalCorrectionLUT.cpp \
+    cammodel/cameraModel.cpp \
 

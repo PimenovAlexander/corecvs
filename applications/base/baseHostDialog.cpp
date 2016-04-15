@@ -29,6 +29,7 @@
 #include "foldableWidget.h"
 #include "parametersMapper/parametersMapperBase.h"
 
+#define WITH_OPENGL
 #ifdef WITH_OPENGL
 #include "cloudViewDialog.h"
 #endif
@@ -712,6 +713,11 @@ void BaseHostDialog::updateWidgets()
 
 ViAreaWidget *BaseHostDialog::addAdditionalWindow(QString const &name, ViAreaWidget *area, const QIcon &icon)
 {
+    if (area == NULL) {
+        SYNC_PRINT(("BaseHostDialog::addAdditionalWindow(%s, NULL, _): Called with NULL", name.toLatin1().constData() ));
+        return NULL;
+    }
+
     mWidgets[name] = area;
     area->setAccessibleName(name);
     area->setWindowTitle(name);

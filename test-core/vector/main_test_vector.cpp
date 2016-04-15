@@ -133,11 +133,19 @@ TEST(Vector, testFixedArray)
 {
     const int LENGTH = 8;
     FixedArray<int> arr(LENGTH);
+    ASSERT_EQ(arr.size(), LENGTH);
+}
+
+TEST(Vector, MulAllElements)
+{
+    const int LENGTH = 8;
+    FixedArray<int> arr(LENGTH);
     for (int i = 0; i < LENGTH; i++)
     {
         arr[i] = i + 1;
     }
     cout << arr.mulAllElements() << endl;
+    ASSERT_EQ(arr.mulAllElements(), 40320);
 }
 
 //int main (int /*argC*/, char ** /*argV*/)

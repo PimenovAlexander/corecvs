@@ -3,8 +3,8 @@
 using namespace corecvs;
 
 SettingsSetter::SettingsSetter(QString const & fileName, QString _root)
-    : mRoot(_root)
-    , mAllocated(true)
+    : mAllocated(true)
+    , mRoot(_root)
 {
     mSettings = new QSettings(fileName, QSettings::IniFormat);
     if (!mRoot.isEmpty())
@@ -12,9 +12,9 @@ SettingsSetter::SettingsSetter(QString const & fileName, QString _root)
 }
 
 SettingsSetter::SettingsSetter(QSettings *settings, QString _root )
-    : mSettings(settings)
+    : mAllocated(false)
+    , mSettings(settings)
     , mRoot(_root)
-    , mAllocated(false)
 {
     if (!mRoot.isEmpty())
         mSettings->beginGroup(mRoot);

@@ -5,9 +5,12 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+
 #include "reflection.h"
 
 using corecvs::IntField;
+using corecvs::Int64Field;
+using corecvs::UInt64Field;
 using corecvs::DoubleField;
 using corecvs::FloatField;
 using corecvs::BoolField;
@@ -16,32 +19,54 @@ using corecvs::PointerField;
 using corecvs::EnumField;
 using corecvs::DoubleVectorField;
 
-using namespace corecvs;
-
+/**
+ *    This class allows to read form JSON file
+ **/
 class JSONGetter
 {
 public:
+    bool isSaver () { return false;}
+    bool isLoader() { return true ;}
+
+public:
+    /**
+    *  Create a getter object that will use data from a file with a specified name.
+    *
+    * @brief JSONGetter
+    * @param fileName
+    **/
+    JSONGetter(const char * fileName) { init(fileName); }
+
     /**
      *  Create a getter object that will use data from a file with a specified name.
      *
+     * @brief JSONGetter
+     * @param fileName
      **/
-    JSONGetter(QString const & fileName);
+    explicit JSONGetter(QString const & fileName) { init(QSTR_DATA_PTR(fileName)); }
+
+    /**
+     *  Create a getter object that will use data from a file with a specified name.
+     *
+     * @brief JSONGetter
+     * @param fileName
+     */
+    explicit JSONGetter(std::string const & fileName) { init(fileName.c_str()); }
 
     /**
      *  Create a getter object that will use data from a given XML
      **/
-    JSONGetter(QJsonObject &document) :
-        mDocument(document)
+    JSONGetter(QJsonObject &document) : mDocument(document)
     {
         mNodePath.push_back(mDocument);
     }
 
     /**
-     *  Visitor method that will traverse xml and object tree and fill object with data form xml
+     *  Visitor method that will traverse json and object tree and fill object with data form xml
      *
      **/
     template <class Type>
-    void visit(Type &field, Type, const char *fieldName)
+    void visit(Type &field, const char *fieldName)
     {
         pushChild(fieldName);
             field.accept(*this);
@@ -49,12 +74,10 @@ public:
     }
 
     template <class Type>
-        void visit(Type &field, const char *fieldName)
-        {
-            pushChild(fieldName);
-                field.accept(*this);
-            popChild();
-        }
+    void visit(Type &field, Type, const char *fieldName)
+    {
+        visit<Type>(field, fieldName);
+    }
 
     template <typename inputType, typename reflectionType>
     void visit(inputType &field, const reflectionType * fieldDescriptor)
@@ -65,7 +88,10 @@ public:
     }
 
 
-    /* Generic Array support */
+    /**
+     * Generic Array support.
+     * Reflection style
+     **/
     template <typename inputType, typename reflectionType>
     void visit(std::vector<inputType> &fields, const reflectionType * /*fieldDescriptor*/)
     {
@@ -75,6 +101,10 @@ public:
         }
     }
 
+    /**
+     * Generic Array support
+     * String style
+     **/
     template <typename inputType>
     void visit(std::vector<inputType> &fields, const char* arrayName)
     {
@@ -94,6 +124,16 @@ public:
             }
         }
     }
+
+    void visit(std::vector<std::string> &fields, QJsonArray &array)
+    {
+        fields.clear();
+        foreach (QJsonValue v, array)
+        {
+            fields.push_back(v.toString().toStdString());
+        }
+    }
+
     template <typename innerType>
     void visit(std::vector<std::vector<innerType>> &fields, const char* arrayName)
     {
@@ -114,6 +154,23 @@ public:
             }
         }
     }
+
+    template <typename innerType>
+    void visit(std::vector<std::vector<innerType>> &fields, QJsonArray &array)
+    {
+        fields.clear();
+        foreach (QJsonValue v, array)
+        {
+            if (!v.isArray())
+                continue;
+            std::vector<innerType> inner;
+            QJsonArray array = v.toArray();
+            visit(inner, array);
+            fields.push_back(inner);
+        }
+    }
+
+
 
     template <typename innerType, typename std::enable_if<!std::is_arithmetic<innerType>::value,int>::type foo = 0>
     void visit(std::vector<innerType> &fields, QJsonArray &array)
@@ -153,22 +210,27 @@ public:
     }
 
 private:
+    void init(const char *fileName);
+
     std::vector<QJsonObject> mNodePath;
     QString     mFileName;
     QJsonObject mDocument;
 };
 
 template <>
-void JSONGetter::visit<int>(int &intField, int defaultValue, const char * /*fieldName*/);
+void JSONGetter::visit<int>   (int &intField, int defaultValue, const char * fieldName);
 
 template <>
-void JSONGetter::visit<double>(double &doubleField, double defaultValue, const char * /*fieldName*/);
+void JSONGetter::visit<uint64_t>(uint64_t &intField, uint64_t defaultValue, const char *fieldName);
 
 template <>
-void JSONGetter::visit<float>(float &floatField, float defaultValue, const char * /*fieldName*/);
+void JSONGetter::visit<double>(double &doubleField, double defaultValue, const char * fieldName);
 
 template <>
-void JSONGetter::visit<bool>(bool &boolField, bool defaultValue, const char * /*fieldName*/);
+void JSONGetter::visit<float> (float &floatField, float defaultValue, const char * fieldName);
+
+template <>
+void JSONGetter::visit<bool>  (bool &boolField, bool defaultValue, const char * fieldName);
 
 template <>
 void JSONGetter::visit<std::string>(std::string &stringField, std::string defaultValue, const char* fieldName);
@@ -176,7 +238,13 @@ void JSONGetter::visit<std::string>(std::string &stringField, std::string defaul
 /* New style visitor */
 
 template <>
+void JSONGetter::visit<unsigned char, IntField>(unsigned char &field, const IntField *fieldDescriptor);
+
+template <>
 void JSONGetter::visit<int, IntField>(int &field, const IntField *fieldDescriptor);
+
+template <>
+void JSONGetter::visit<uint64_t, UInt64Field>(uint64_t &field, const UInt64Field *fieldDescriptor);
 
 template <>
 void JSONGetter::visit<double, DoubleField>(double &field, const DoubleField *fieldDescriptor);

@@ -50,8 +50,18 @@ public:
 
     Matrix33 getBestHomography(int method);
 
+    /**
+     * Function was introduced for testing. Usage is discouraged. Use getBestHomographyLSE1
+     **/
     Matrix33 getBestHomographyLSE(void);
+
+    /**
+     *  This method uses SVD of (A^T A) matrix to solve
+     **/
     Matrix33 getBestHomographyLSE1(void);
+    /**
+     *  This method uses inverse SVD to solve
+     **/
     Matrix33 getBestHomographyLSE2(void);
     Matrix33 getBestHomographyClassicKalman(void);
     Matrix33 getBestHomographyFastKalman(void);

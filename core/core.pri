@@ -33,9 +33,9 @@ CORE_SUBMODULES= \
     tbbwrapper    \
     utils         \
     clustering3d  \
-   # features2d    \
+    features2d    \
     patterndetection \
-   # cameracalibration \
+    cameracalibration \
    # graphs        \
    # polynomial    \
    # camerafixture \

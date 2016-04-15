@@ -96,7 +96,8 @@ void SettingsGetter::visit<double, DoubleVectorField>(std::vector<double> &field
     int size = mSettings->value("size", 0).toInt();
     for (int i = 0; i < size; i++ )
     {
-        field.push_back(mSettings->value(QString::number(i), fieldDescriptor->defaultValue).toDouble());
+        QVariant def(fieldDescriptor->getDefaultElement(i));
+        field.push_back(mSettings->value(QString::number(i), def).toDouble());
     }
     mSettings->endGroup();
 }

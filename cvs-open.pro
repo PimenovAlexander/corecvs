@@ -5,11 +5,12 @@ SUBDIRS +=                   \
     core                     \
     unitTests                \
     utils                    \
-#    base_application         \
-#    base_application_example \
-#    recorder                 \
-#    testbed                  \
-#    cloudview                \
+    base_application         \
+    base_application_example \
+    recorder                 \
+    testbed                  \
+    cloudview                \
+    imageview                \
 #    \
 #    generator                \
 
@@ -36,7 +37,9 @@ directshow.depends       += core
 
 hostSoftStub.depends     += baseApplication utils
 recorder.depends         += baseApplication utils
+
 cloudview.depends        += utils
+imageview.depends        += utils
 testbed.depends          += utils
 
 
@@ -49,6 +52,7 @@ base_application.file         = applications/base/baseApplication.pro
 base_application_example.file = applications/base/baseApplicationExample.pro
 recorder.file                 = applications/recorder/recorder.pro
 cloudview.file                = applications/cloudview/cloudview.pro
+imageview.file                = applications/imageview/imageview.pro
 testbed.file                  = applications/testbed/testbed.pro
 generator.file                = tools/generator/generator.pro
 

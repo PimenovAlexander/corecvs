@@ -1,4 +1,5 @@
 #pragma once
+#include <sstream>
 #include <QtCore/QSettings>
 #include "basePathVisitor.h"
 #include "reflection.h"
@@ -44,7 +45,7 @@ public:
             mSettings->endGroup();
         }
 
-/* Generic Array support */
+    /* Generic Array support */
     template <typename inputType, typename reflectionType>
         void visit(std::vector<inputType> &fields, const reflectionType * /*fieldDescriptor*/)
         {
@@ -52,6 +53,25 @@ public:
             {
                 fields[i].accept(*this);
             }
+        }
+
+    /**
+     * Generic Array support
+     * String style
+     **/
+    template <typename inputType>
+        void visit(std::vector<inputType> &fields, const char* arrayName)
+        {
+            fields.clear();
+            mSettings->beginGroup(arrayName);
+            mSettings->setValue("size", QVariant((int)fields.size()));
+            for (size_t i = 0; i < fields.size(); i++ )
+            {
+                std::stringstream ss;
+                ss << arrayName << "[" << i << "]";
+                visit(fields[i], ss.str().c_str());
+            }
+            mSettings->endGroup();
         }
 
     QSettings *settings() { return mSettings; }

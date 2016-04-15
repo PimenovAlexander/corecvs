@@ -275,17 +275,19 @@ void GraphPlotDialog::exportToCSV()
 
     double gainX = mGraphPlotParameters->xScale();
 
-    for (unsigned graphId = 0; graphId < mData.size(); graphId++) {
+    for (unsigned graphId = 0; graphId < mData.size(); graphId++)
+    {
         GraphHistory &graph = mData[graphId];
         GraphHistory::iterator it;
         double x = 0;
-        for (it = graph.begin(); it != graph.end() && x < w - 1; ++it, x += gainX) {
+        for (it = graph.begin(); it != graph.end() && x < w - 1; ++it, x += gainX)
+        {
             if ((*it).isValid) {
                 file << (*it).value;
             }
             file << ",";
         }
-        file << endl;
+        file << std::endl;
     }
 
     file.close();

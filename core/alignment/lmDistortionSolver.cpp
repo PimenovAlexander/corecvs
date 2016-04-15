@@ -47,7 +47,9 @@ RadialCorrection LMDistortionSolver::solve()
                 polynomKoeff,
                 1.0,
                 1.0,
-                initialCenter.l2Metric());
+                initialCenter.l2Metric(),
+                0.0,
+                0.0);
 
 
     return RadialCorrection(lenCorrectParams);
@@ -78,7 +80,9 @@ RadialCorrection LMLinesDistortionSolver::solve()
        vector<double>(parameters.polinomDegree()),
        1.0,
        1.0,
-       initialCenter.l2Metric()
+       initialCenter.l2Metric(),
+       0.0,
+       0.0
     ));
 
     ModelToRadialCorrection modelFactory(

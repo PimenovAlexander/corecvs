@@ -9,13 +9,13 @@ class ViAreaWidget : public QWidget
 
 signals:
     void askParentRepaint(QPaintEvent *event, QWidget *who);
-    void notifyParentMouseMove(QMouseEvent* event);
-    void notifyParentMousePress(QMouseEvent* event);
-    void notifyParentMouseRelease(QMouseEvent* event);
-    void notifyParentWheelEvent ( QWheelEvent * event );
-    void notifyParentResize( QResizeEvent *event );
-    void notifyKeyPressEvent   ( QKeyEvent * event );
-    void notifyKeyReleaseEvent ( QKeyEvent * event );
+    void notifyParentMouseMove   (QMouseEvent*  event);
+    void notifyParentMousePress  (QMouseEvent*  event);
+    void notifyParentMouseRelease(QMouseEvent*  event);
+    void notifyParentWheelEvent  (QWheelEvent*  event);
+    void notifyParentResize      (QResizeEvent* event);
+    void notifyKeyPressEvent     (QKeyEvent*    event);
+    void notifyKeyReleaseEvent   (QKeyEvent*    event);
 
 
 public:
@@ -45,7 +45,9 @@ public:
     QImage *image;
 
     ImageWidget() : image(NULL) {}
+
     void setImage(QImage *_image);
+    void setSizeToImage();
 
     virtual void paintEvent(QPaintEvent * );
 

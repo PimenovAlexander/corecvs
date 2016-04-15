@@ -8,6 +8,7 @@
 #include "reflection.h"
 
 using corecvs::IntField;
+using corecvs::UInt64Field;
 using corecvs::DoubleField;
 using corecvs::FloatField;
 using corecvs::BoolField;
@@ -16,11 +17,17 @@ using corecvs::PointerField;
 using corecvs::EnumField;
 using corecvs::DoubleVectorField;
 
-using namespace corecvs;
-
 class JSONSetter
 {
 public:
+    bool isSaver () { return true ;}
+    bool isLoader() { return false;}
+
+
+public:
+
+
+
     /**
      *  Create a setter object that will store data to a file with a specified name.
      **/
@@ -36,14 +43,6 @@ public:
 
     virtual ~JSONSetter();
 
-    template <class Type>
-    void visit(Type &field, Type /*defaultValue*/, const char *fieldName)
-    {
-        pushChild(fieldName);
-           field.accept(*this);
-        popChild(fieldName);
-    }
-
     template <class inputType>
     void visit(inputType &field, const char *fieldName)
     {
@@ -52,12 +51,16 @@ public:
         popChild(fieldName);
     }
 
+    template <class Type>
+    void visit(Type &field, Type /*defaultValue*/, const char *fieldName)
+    {
+        visit(field, fieldName);
+    }
+
     template <typename inputType, typename reflectionType>
     void visit(inputType &field, const reflectionType * fieldDescriptor)
     {
-        pushChild(fieldDescriptor->getSimpleName());
-           field.accept(*this);
-        popChild(fieldDescriptor->getSimpleName());
+        visit(field, fieldDescriptor->getSimpleName());
     }
 
     /*
@@ -90,6 +93,25 @@ public:
         }
 
         mNodePath.back().insert(arrayName, arrayOuter);
+    }
+
+    template <typename innerType>
+    void visit(std::vector<std::vector<innerType>> &fields, QJsonArray &array)
+    {
+        for (size_t i = 0; i < fields.size(); ++i)
+        {
+            QJsonArray arrayInner;
+            visit(fields[i], arrayInner);
+            array.append(arrayInner);
+        }
+    }
+
+    void visit(std::vector<std::string> &fields, QJsonArray &array)
+    {
+        for (size_t i = 0; i < fields.size(); ++i)
+        {
+           array.append(QString::fromStdString(fields[i]));
+        }
     }
 
     // XXX: Here we hope that either stack is unwinded automatically or it is not too big
@@ -127,8 +149,6 @@ public:
     {
         CORE_UNUSED(childName);
         mNodePath.push_back(QJsonObject());
-     //   mChildName = childName;
-        //SYNC_PRINT(("push %s. Stack size %lu\n", childName, mNodePath.size()));
     }
 
     void popChild(const char *childName)
@@ -148,6 +168,9 @@ template <>
 void JSONSetter::visit<int>(int &intField, int defaultValue, const char *fieldName);
 
 template <>
+void JSONSetter::visit<uint64_t>(uint64_t &intField, uint64_t defaultValue, const char *fieldName);
+
+template <>
 void JSONSetter::visit<double>(double &doubleField, double defaultValue, const char *fieldName);
 
 template <>
@@ -163,7 +186,13 @@ void JSONSetter::visit<std::string>(std::string &stringField, std::string defaul
 /* New style visitor */
 
 template <>
+void JSONSetter::visit<unsigned char, IntField>(unsigned char &field, const IntField *fieldDescriptor);
+
+template <>
 void JSONSetter::visit<int, IntField>(int &field, const IntField *fieldDescriptor);
+
+template <>
+void JSONSetter::visit<uint64_t, UInt64Field>(uint64_t &field, const UInt64Field *fieldDescriptor);
 
 template <>
 void JSONSetter::visit<double, DoubleField>(double &field, const DoubleField *fieldDescriptor);

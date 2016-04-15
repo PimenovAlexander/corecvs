@@ -1,5 +1,5 @@
-#ifndef LENSDISTORTIOMMODELPARAMETERSCONTOLWIDGET_H
-#define LENSDISTORTIOMMODELPARAMETERSCONTOLWIDGET_H
+#ifndef LENS_DISTORTION_MODEL_PARAMETERS_CONTOL_WIDGET_H
+#define LENS_DISTORTION_MODEL_PARAMETERS_CONTOL_WIDGET_H
 
 #include <QWidget>
 
@@ -48,6 +48,8 @@ public slots:
     void delPower();
     void resetCx();
     void resetCy();
+    void resetSx();
+    void resetSy();
     void resetP1();
     void resetP2();
     void resetAspect();
@@ -67,6 +69,8 @@ public slots:
 
     void loadParams();
     void saveParams();
+
+    void toggleAdvanced(bool flag = false);
 
 signals:
     void valueChanged();
@@ -96,4 +100,4 @@ private:
 
 };
 
-#endif // LENSDISTORTIOMMODELPARAMETERSCONTOLWIDGET_H
+#endif // LENS_DISTORTION_MODEL_PARAMETERS_CONTOL_WIDGET_H

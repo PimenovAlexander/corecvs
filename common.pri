@@ -480,6 +480,7 @@ with_mkl {
     else {
         !build_pass: message (requested MKL is not installed and is deactivated)
     }
+    CONFIG += with_blas
 }
 
 with_openblas {
@@ -511,6 +512,7 @@ with_openblas {
     } else {
         !build_pass: message(requested openBLAS is not supported for Win and is deactivated)
     }
+    CONFIG += with_blas
 }
 
 with_fftw {

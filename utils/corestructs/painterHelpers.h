@@ -17,7 +17,6 @@
 #include "global.h"
 
 #include "vector2d.h"
-#include "rectangle.h"
 
 using namespace corecvs;
 
@@ -52,5 +51,7 @@ void disableComboBoxItem(QComboBox *box, int item);
 void uniteAnaglyph (const QImage *left, const QImage *right, QImage *result, uint32_t lmask = 0xFF00FF00, uint32_t rmask= 0xFFFF0000);
 
 QRect fixedAspectRescaleRect (QRect source, QRect target);
+
+QImage *checkerBoard(int h, int w, int square);
 
 #endif /* PAINTERHELPERS_H_ */

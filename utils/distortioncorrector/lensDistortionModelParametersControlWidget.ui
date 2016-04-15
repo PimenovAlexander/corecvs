@@ -6,107 +6,36 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>709</width>
-    <height>397</height>
+    <width>585</width>
+    <height>522</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>10</width>
+    <height>10</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
-    <number>3</number>
+    <number>0</number>
    </property>
    <property name="topMargin">
-    <number>3</number>
+    <number>0</number>
    </property>
    <property name="rightMargin">
-    <number>3</number>
+    <number>0</number>
    </property>
    <property name="bottomMargin">
-    <number>3</number>
+    <number>0</number>
    </property>
    <property name="spacing">
-    <number>2</number>
+    <number>1</number>
    </property>
-   <item row="0" column="1">
-    <widget class="QLabel" name="centerLabel">
-     <property name="text">
-      <string>Center</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="2">
-    <widget class="QDoubleSpinBox" name="centerXSpinBox">
-     <property name="minimum">
-      <double>-999999.000000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>99999.990000000005239</double>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="3">
-    <widget class="QPushButton" name="resetCxPushButton">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="../../../restricted/resources/resresource.qrc">
-       <normaloff>:/new/prefix1/bullet_blue.png</normaloff>:/new/prefix1/bullet_blue.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>16</width>
-       <height>16</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="4">
-    <widget class="QDoubleSpinBox" name="centerYSpinBox">
-     <property name="minimum">
-      <double>-99999.000000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>99999.990000000005239</double>
-     </property>
-     <property name="value">
-      <double>0.000000000000000</double>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="5" colspan="2">
-    <widget class="QPushButton" name="resetCyPushButton">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="../../../restricted/resources/resresource.qrc">
-       <normaloff>:/new/prefix1/bullet_blue.png</normaloff>:/new/prefix1/bullet_blue.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>16</width>
-       <height>16</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLabel" name="label_14">
-     <property name="text">
-      <string>Tangential</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
+   <item row="6" column="2">
     <widget class="QDoubleSpinBox" name="tangential1SpinBox">
      <property name="decimals">
       <number>9</number>
@@ -119,6 +48,240 @@
      </property>
     </widget>
    </item>
+   <item row="8" column="1" colspan="6">
+    <widget class="QWidget" name="bottomToolWidget" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>10</width>
+       <height>10</height>
+      </size>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QGridLayout" name="toolsLayout1">
+        <property name="spacing">
+         <number>2</number>
+        </property>
+        <item row="1" column="3">
+         <widget class="QPushButton" name="refreshButton">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/main.qrc">
+            <normaloff>:/new/prefix1/refresh.png</normaloff>:/new/prefix1/refresh.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QPushButton" name="loadPushButton">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/main.qrc">
+            <normaloff>:/new/prefix1/remove.png</normaloff>:/new/prefix1/remove.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QPushButton" name="savePushButton">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/main.qrc">
+            <normaloff>:/new/prefix1/install.png</normaloff>:/new/prefix1/install.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="5">
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="2">
+         <widget class="Line" name="line_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="4">
+         <widget class="QCheckBox" name="autoRefeshCheckBox">
+          <property name="text">
+           <string>Auto refresh</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="toolsLayout2">
+        <property name="spacing">
+         <number>2</number>
+        </property>
+        <item row="0" column="2">
+         <widget class="QComboBox" name="exampleComboBox">
+          <item>
+           <property name="text">
+            <string>Input</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Corrected</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Inverse</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Backproject</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Diff</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Field</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="levelGraphButton_2">
+          <property name="icon">
+           <iconset resource="../../resources/main.qrc">
+            <normaloff>:/new/prefix1/picture_save.png</normaloff>:/new/prefix1/picture_save.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QPushButton" name="graphButton">
+          <property name="icon">
+           <iconset resource="../../resources/main.qrc">
+            <normaloff>:/new/prefix1/Line Chart.png</normaloff>:/new/prefix1/Line Chart.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="5">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="3">
+         <widget class="QDoubleSpinBox" name="freeParamSpinBox">
+          <property name="minimum">
+           <double>-99999.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>99999.990000000005239</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.500000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="4">
+         <widget class="QCheckBox" name="bilinearCheckBox">
+          <property name="text">
+           <string>Bilnear</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="7" column="1" colspan="5">
+    <widget class="QTableWidget" name="koefTableWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Aspect</string>
+     </property>
+    </widget>
+   </item>
    <item row="2" column="1">
     <widget class="QLabel" name="label_13">
      <property name="text">
@@ -126,7 +289,17 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="3">
+   <item row="4" column="2">
+    <widget class="QDoubleSpinBox" name="normalizerSpinBox">
+     <property name="maximum">
+      <double>999999.989999999990687</double>
+     </property>
+     <property name="value">
+      <double>140.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="3">
     <widget class="QPushButton" name="resetP1PushButton">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -138,7 +311,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="../../../restricted/resources/resresource.qrc">
+      <iconset resource="../../resources/main.qrc">
        <normaloff>:/new/prefix1/bullet_blue.png</normaloff>:/new/prefix1/bullet_blue.png</iconset>
      </property>
      <property name="iconSize">
@@ -149,33 +322,20 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="4">
-    <widget class="QDoubleSpinBox" name="tangential2SpinBox">
-     <property name="decimals">
-      <number>9</number>
-     </property>
-     <property name="minimum">
-      <double>-99.000000000000000</double>
-     </property>
-     <property name="singleStep">
-      <double>0.000100000000000</double>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="5" colspan="2">
-    <widget class="QPushButton" name="resetP2PushButton">
+   <item row="4" column="1">
+    <widget class="QLabel" name="label_2">
      <property name="text">
-      <string/>
+      <string>Normalizer</string>
      </property>
-     <property name="icon">
-      <iconset resource="../../../restricted/resources/resresource.qrc">
-       <normaloff>:/new/prefix1/bullet_blue.png</normaloff>:/new/prefix1/bullet_blue.png</iconset>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QDoubleSpinBox" name="centerXSpinBox">
+     <property name="minimum">
+      <double>-999999.000000000000000</double>
      </property>
-     <property name="iconSize">
-      <size>
-       <width>16</width>
-       <height>16</height>
-      </size>
+     <property name="maximum">
+      <double>99999.990000000005239</double>
      </property>
     </widget>
    </item>
@@ -191,7 +351,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="../../../restricted/resources/resresource.qrc">
+      <iconset resource="../../resources/main.qrc">
        <normaloff>:/new/prefix1/bullet_blue.png</normaloff>:/new/prefix1/bullet_blue.png</iconset>
      </property>
      <property name="iconSize">
@@ -202,20 +362,16 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="2">
-    <widget class="QDoubleSpinBox" name="scaleSpinBox">
+   <item row="6" column="5">
+    <widget class="QDoubleSpinBox" name="tangential2SpinBox">
+     <property name="decimals">
+      <number>9</number>
+     </property>
+     <property name="minimum">
+      <double>-99.000000000000000</double>
+     </property>
      <property name="singleStep">
-      <double>0.100000000000000</double>
-     </property>
-     <property name="value">
-      <double>1.000000000000000</double>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="2">
-    <widget class="QDoubleSpinBox" name="aspectSpinBox">
-     <property name="value">
-      <double>1.000000000000000</double>
+      <double>0.000100000000000</double>
      </property>
     </widget>
    </item>
@@ -231,7 +387,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="../../../restricted/resources/resresource.qrc">
+      <iconset resource="../../resources/main.qrc">
        <normaloff>:/new/prefix1/bullet_blue.png</normaloff>:/new/prefix1/bullet_blue.png</iconset>
      </property>
      <property name="iconSize">
@@ -242,14 +398,14 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0" rowspan="2">
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+   <item row="1" column="1">
+    <widget class="QLabel" name="shiftLabel">
+     <property name="text">
+      <string>Shift</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="1" colspan="6">
+   <item row="7" column="6">
     <layout class="QGridLayout" name="gridLayout_2">
      <property name="spacing">
       <number>2</number>
@@ -260,7 +416,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../../../restricted/resources/resresource.qrc">
+        <iconset resource="../../resources/main.qrc">
          <normaloff>:/new/prefix1/plus.png</normaloff>:/new/prefix1/plus.png</iconset>
        </property>
        <property name="iconSize">
@@ -271,23 +427,13 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="0" rowspan="3">
-      <widget class="QTableWidget" name="koefTableWidget">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="1">
       <widget class="QPushButton" name="delPowerButton">
        <property name="text">
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../../../restricted/resources/resresource.qrc">
+        <iconset resource="../../resources/main.qrc">
          <normaloff>:/new/prefix1/minus.png</normaloff>:/new/prefix1/minus.png</iconset>
        </property>
        <property name="iconSize">
@@ -309,211 +455,196 @@
        <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
-         <height>40</height>
+         <height>0</height>
         </size>
        </property>
       </spacer>
      </item>
+     <item row="3" column="1">
+      <widget class="QPushButton" name="advancedButton">
+       <property name="toolTip">
+        <string>Advanced</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../resources/main.qrc">
+         <normaloff>:/new/prefix1/screwdriver.png</normaloff>:/new/prefix1/screwdriver.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
-   <item row="8" column="0" colspan="2">
-    <spacer name="verticalSpacer">
+   <item row="12" column="0" rowspan="2">
+    <widget class="Line" name="line">
      <property name="orientation">
-      <enum>Qt::Vertical</enum>
+      <enum>Qt::Horizontal</enum>
      </property>
-     <property name="sizeHint" stdset="0">
+    </widget>
+   </item>
+   <item row="0" column="6" colspan="2">
+    <widget class="QPushButton" name="resetCyPushButton">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/main.qrc">
+       <normaloff>:/new/prefix1/bullet_blue.png</normaloff>:/new/prefix1/bullet_blue.png</iconset>
+     </property>
+     <property name="iconSize">
       <size>
-       <width>20</width>
-       <height>40</height>
+       <width>24</width>
+       <height>16</height>
       </size>
      </property>
-    </spacer>
+    </widget>
    </item>
-   <item row="6" column="1" colspan="7">
-    <layout class="QGridLayout" name="gridLayout_4">
-     <item row="0" column="3">
-      <widget class="QPushButton" name="refreshButton">
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../../../restricted/resources/resresource.qrc">
-         <normaloff>:/new/prefix1/refresh.png</normaloff>:/new/prefix1/refresh.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>24</width>
-         <height>24</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QPushButton" name="loadPushButton">
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../../../restricted/resources/resresource.qrc">
-         <normaloff>:/new/prefix1/remove.png</normaloff>:/new/prefix1/remove.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>24</width>
-         <height>24</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QPushButton" name="savePushButton">
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../../../restricted/resources/resresource.qrc">
-         <normaloff>:/new/prefix1/install.png</normaloff>:/new/prefix1/install.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>24</width>
-         <height>24</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="5">
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="0" column="2">
-      <widget class="Line" name="line_2">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="4">
-      <widget class="QCheckBox" name="autoRefeshCheckBox">
-       <property name="text">
-        <string>Auto refresh</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+   <item row="0" column="3">
+    <widget class="QPushButton" name="resetCxPushButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/main.qrc">
+       <normaloff>:/new/prefix1/bullet_blue.png</normaloff>:/new/prefix1/bullet_blue.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>16</width>
+       <height>16</height>
+      </size>
+     </property>
+    </widget>
    </item>
-   <item row="7" column="1" colspan="7">
-    <layout class="QGridLayout" name="gridLayout_3">
-     <item row="0" column="2">
-      <widget class="QComboBox" name="exampleComboBox">
-       <item>
-        <property name="text">
-         <string>Input</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Corrected</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Inverse</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Backproject</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Diff</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Field</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QPushButton" name="levelGraphButton_2">
-       <property name="icon">
-        <iconset resource="../../../restricted/resources/resresource.qrc">
-         <normaloff>:/new/prefix1/picture_save.png</normaloff>:/new/prefix1/picture_save.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>24</width>
-         <height>24</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QPushButton" name="graphButton">
-       <property name="icon">
-        <iconset resource="../../../restricted/resources/resresource.qrc">
-         <normaloff>:/new/prefix1/Line Chart.png</normaloff>:/new/prefix1/Line Chart.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>24</width>
-         <height>24</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="5">
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="0" column="3">
-      <widget class="QDoubleSpinBox" name="freeParamSpinBox">
-       <property name="minimum">
-        <double>-99999.000000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>99999.990000000005239</double>
-       </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-       <property name="value">
-        <double>0.500000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="4">
-      <widget class="QCheckBox" name="bilinearCheckBox">
-       <property name="text">
-        <string>Bilnear</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+   <item row="0" column="5">
+    <widget class="QDoubleSpinBox" name="centerYSpinBox">
+     <property name="minimum">
+      <double>-99999.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>99999.990000000005239</double>
+     </property>
+     <property name="value">
+      <double>0.000000000000000</double>
+     </property>
+    </widget>
    </item>
-   <item row="1" column="8">
+   <item row="0" column="1">
+    <widget class="QLabel" name="centerLabel">
+     <property name="text">
+      <string>Center</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QDoubleSpinBox" name="scaleSpinBox">
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="value">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3">
+    <widget class="QPushButton" name="resetSxPushButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/main.qrc">
+       <normaloff>:/new/prefix1/bullet_blue.png</normaloff>:/new/prefix1/bullet_blue.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>16</width>
+       <height>16</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="3">
+    <widget class="QPushButton" name="resetNormalizePushButton">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/main.qrc">
+       <normaloff>:/new/prefix1/bullet_blue.png</normaloff>:/new/prefix1/bullet_blue.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QLabel" name="label_14">
+     <property name="text">
+      <string>Tangential</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="6">
+    <widget class="QPushButton" name="resetP2PushButton">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/main.qrc">
+       <normaloff>:/new/prefix1/bullet_blue.png</normaloff>:/new/prefix1/bullet_blue.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>16</width>
+       <height>16</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QCheckBox" name="forwardMapCheckBox">
+     <property name="text">
+      <string>Map forward</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="6">
+    <widget class="QPushButton" name="resetSyPushButton">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/main.qrc">
+       <normaloff>:/new/prefix1/bullet_blue.png</normaloff>:/new/prefix1/bullet_blue.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>16</width>
+       <height>16</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="10">
     <spacer name="horizontalSpacer_4">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -526,102 +657,119 @@
      </property>
     </spacer>
    </item>
-   <item row="0" column="7" rowspan="6">
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QPushButton" name="invertPushButton">
-       <property name="toolTip">
-        <string>Invert</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../../resources/main.qrc">
-         <normaloff>:/new/colors/colors/contrast.png</normaloff>:/new/colors/colors/contrast.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>24</width>
-         <height>24</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="comparePushButton">
-       <property name="toolTip">
-        <string>Compare with other deformation</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../../resources/main.qrc">
-         <normaloff>:/new/prefix1/price_comparison.png</normaloff>:/new/prefix1/price_comparison.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>24</width>
-         <height>24</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="verticalSpacer_3">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item row="3" column="1">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Aspect</string>
+   <item row="3" column="2">
+    <widget class="QDoubleSpinBox" name="aspectSpinBox">
+     <property name="value">
+      <double>1.000000000000000</double>
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Normalizer</string>
+   <item row="1" column="5">
+    <widget class="QDoubleSpinBox" name="shiftYSpinBox">
+     <property name="minimum">
+      <double>-99999.000000000000000</double>
      </property>
-    </widget>
-   </item>
-   <item row="4" column="2">
-    <widget class="QDoubleSpinBox" name="normalizerSpinBox">
      <property name="maximum">
-      <double>999999.989999999990687</double>
+      <double>99999.990000000005239</double>
      </property>
      <property name="value">
-      <double>140.000000000000000</double>
+      <double>0.000000000000000</double>
      </property>
     </widget>
    </item>
-   <item row="4" column="3">
-    <widget class="QPushButton" name="resetNormalizePushButton">
-     <property name="text">
-      <string/>
+   <item row="1" column="2">
+    <widget class="QDoubleSpinBox" name="shiftXSpinBox">
+     <property name="minimum">
+      <double>-999999.000000000000000</double>
      </property>
-     <property name="icon">
-      <iconset resource="../../../restricted/resources/resresource.qrc">
-       <normaloff>:/new/prefix1/bullet_blue.png</normaloff>:/new/prefix1/bullet_blue.png</iconset>
+     <property name="maximum">
+      <double>99999.990000000005239</double>
      </property>
+    </widget>
+   </item>
+   <item row="0" column="8" rowspan="9">
+    <widget class="QWidget" name="sideToolWidget" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>100</height>
+      </size>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="spacing">
+       <number>1</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QPushButton" name="invertPushButton">
+        <property name="toolTip">
+         <string>Invert</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/main.qrc">
+          <normaloff>:/new/colors/colors/contrast.png</normaloff>:/new/colors/colors/contrast.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="comparePushButton">
+        <property name="toolTip">
+         <string>Compare with other deformation</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/main.qrc">
+          <normaloff>:/new/prefix1/price_comparison.png</normaloff>:/new/prefix1/price_comparison.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>406</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
  </widget>
  <resources>
-  <include location="../../../restricted/resources/resresource.qrc"/>
   <include location="../../resources/main.qrc"/>
  </resources>
  <connections>
@@ -718,6 +866,38 @@
     <hint type="destinationlabel">
      <x>239</x>
      <y>76</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resetSxPushButton</sender>
+   <signal>released()</signal>
+   <receiver>LensDistortionModelParametersContolWidget</receiver>
+   <slot>resetSx()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resetSyPushButton</sender>
+   <signal>released()</signal>
+   <receiver>LensDistortionModelParametersContolWidget</receiver>
+   <slot>resetSy()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
     </hint>
    </hints>
   </connection>
@@ -858,6 +1038,8 @@
   <slot>exampleShow()</slot>
   <slot>resetCx()</slot>
   <slot>resetCy()</slot>
+  <slot>resetSx()</slot>
+  <slot>resetSy()</slot>
   <slot>resetP1()</slot>
   <slot>resetP2()</slot>
   <slot>loadParams()</slot>

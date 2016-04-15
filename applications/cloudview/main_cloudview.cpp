@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 
     app.exec();
 
-    cout << "Exiting Host application  \n";
+    cout << "Exiting Cloudview application  \n";
 
 }
 

@@ -70,8 +70,8 @@ HEADERS+= xml/generated/outputType.h
 #####################################################
 # Classes Section
 #####################################################
-SOURCES+= xml/generated/lensDistortionModelParameters.cpp
-HEADERS+= xml/generated/lensDistortionModelParameters.h
+SOURCES+= xml/generated/lensDistortionModelParametersBase.cpp
+HEADERS+= xml/generated/lensDistortionModelParametersBase.h
 
 #####################################################
 # UI Classes Section
@@ -90,6 +90,9 @@ HEADERS+= xml/generated/headSearchParameters.h
 
 SOURCES+= xml/generated/makePreciseParameters.cpp
 HEADERS+= xml/generated/makePreciseParameters.h
+
+SOURCES+= xml/generated/debayerParameters.cpp
+HEADERS+= xml/generated/debayerParameters.h
 
 SOURCES+= xml/generated/checkerboardDetectionParameters.cpp
 HEADERS+= xml/generated/checkerboardDetectionParameters.h
@@ -116,6 +119,8 @@ HEADERS+= xml/generated/makePreciseAlgorithm.h
 HEADERS+= xml/generated/preciseInterpolationType.h
 
 HEADERS+= xml/generated/imageChannel.h
+
+HEADERS+= xml/generated/debayerMethod.h
 
 HEADERS+= xml/generated/lineDistortionEstimatorCost.h
 

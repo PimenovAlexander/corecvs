@@ -27,9 +27,7 @@
 # include <opencv2/calib3d/calib3d.hpp>
 # include "opencv2/core/core_c.h"
 # include "OpenCVTools.h"
-
 # include "openCvCheckerboardDetector.h"
-
 
 using namespace cv;
 
@@ -484,7 +482,9 @@ void DistortionWidget::doDefaultTransform()
                 straightParams,
                 1.0,
                 scale,
-                center.l2Metric()
+                center.l2Metric(),
+                0.0,
+                0.0
              );
 
     RadialCorrection radCorrection(lenCorrectionParams);

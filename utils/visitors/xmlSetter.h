@@ -76,6 +76,13 @@ template <typename inputType, typename reflectionType>
         }
     }
 
+    template <typename inputType>
+        void visit(std::vector<inputType> &/*fields*/, const char* /*arrayName*/)
+    {
+         qDebug() << "XmlSetter::visit(std::vector<inputType> &fields, const char* arrayName) NOT YET SUPPORTED";
+    }
+
+
 private:
 
     QString mFileName;

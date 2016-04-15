@@ -34,5 +34,19 @@
       <item name="Value"      id="7" />
   </enum>
   
+
+  <enum name="Debayer Method">
+      <item name="Nearest"  id = "0" />
+      <item name="Bilinear" id = "1" />
+      <item name="AHD"      id = "2" />
+      <item name="Fourier"  id = "3" />
+  </enum>
+
+  <class name="Debayer Parameters">
+     <field type="Debayer Method" name="Method"    defaultValue="0"/>
+     <field type="int"            name="Bayer pos" min="-1" max="255" defaultValue="-1"/>
+  </enum>
+
+
 </poco>
 

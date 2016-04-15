@@ -33,10 +33,10 @@ struct SiftParams
     int nOctaveLayers;
 
     SiftParams(
-            double contrastThreshold = 0.01,
+            double contrastThreshold = 0.08,
             double edgeThreshold = 16.0,
             double sigma = 1.6,
-            int nOctaveLayers = 4) :
+            int nOctaveLayers = 3) :
         contrastThreshold(contrastThreshold),
         edgeThreshold(edgeThreshold),
         sigma(sigma),
@@ -94,7 +94,7 @@ struct OrbParams
     int scoreType;
     int patchSize;
 
-    OrbParams(double scaleFactor = 1.2, int nLevels = 8, int edgeThreshold = 31,
+    OrbParams(double scaleFactor = 1.2, int nLevels =16, int edgeThreshold = 31,
             int firstLevel = 0, int WTA_K = 2, int scoreType = 0, //cv::ORB::HARRIS_SCORE,
             int patchSize = 31):
         scaleFactor(scaleFactor), nLevels(nLevels), edgeThreshold(edgeThreshold), firstLevel(firstLevel),
