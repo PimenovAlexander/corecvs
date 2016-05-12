@@ -32,18 +32,18 @@ public:
     UEyeCaptureInterface(string _devname);
     virtual ~UEyeCaptureInterface();
 
-    virtual FramePair getFrame();
+    virtual FramePair getFrame() override;
 
     //void convertFromYUYV(G12Buffer *output, uint16_t * input);
 
-    virtual CapErrorCode setCaptureProperty(int id, int value);
-    virtual CapErrorCode getCaptureProperty(int id, int *value);
+    virtual CapErrorCode setCaptureProperty(int id, int value) override;
+    virtual CapErrorCode getCaptureProperty(int id, int *value) override;
 
-    virtual CapErrorCode queryCameraParameters(CameraParameters &parameter) ;
+    virtual CapErrorCode queryCameraParameters(CameraParameters &parameter) override;
 
 
-    virtual CapErrorCode initCapture();
-    virtual CapErrorCode startCapture();
+    virtual CapErrorCode initCapture() override;
+    virtual CapErrorCode startCapture() override;
 
 
     static int ueyeTrace(int);

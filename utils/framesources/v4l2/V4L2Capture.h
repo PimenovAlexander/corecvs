@@ -35,25 +35,25 @@ public:
 
     virtual int setConfigurationString(string _devname);
 
-    virtual FramePair getFrame();
-    virtual FramePair getFrameRGB24();
+    virtual FramePair getFrame() override;
+    virtual FramePair getFrameRGB24() override;
 
-    virtual CapErrorCode setCaptureProperty(int id, int value);
-    virtual CapErrorCode getCaptureProperty(int id, int *value);
+    virtual CapErrorCode setCaptureProperty(int id, int value) override;
+    virtual CapErrorCode getCaptureProperty(int id, int *value) override;
 
-    virtual CapErrorCode queryCameraParameters(CameraParameters &parameter) ;
+    virtual CapErrorCode queryCameraParameters(CameraParameters &parameter) override;
 
 
-    virtual CapErrorCode initCapture(CameraFormat *actualFormat = NULL);
-    virtual CapErrorCode startCapture();
+    virtual CapErrorCode initCapture() override;
+    virtual CapErrorCode startCapture() override;
 
-    virtual CapErrorCode getCaptureName(QString &value);
-    virtual CapErrorCode getFormats(int *num, CameraFormat *& formats);
+    virtual CapErrorCode getCaptureName(QString &value) override;
+    virtual CapErrorCode getFormats(int *num, CameraFormat *& formats) override;
 
-    virtual QString      getInterfaceName();
-    virtual CapErrorCode getDeviceName(int num, QString &name);
+    virtual QString      getInterfaceName() override;
+    virtual CapErrorCode getDeviceName(int num, QString &name) override;
 
-    virtual std::string  getDeviceSerial(int num = LEFT_FRAME);
+    virtual std::string  getDeviceSerial(int num = LEFT_FRAME) override;
 
     static void getAllCameras(int *num, int *&cameras);
 

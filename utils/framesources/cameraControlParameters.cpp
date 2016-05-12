@@ -51,4 +51,4 @@ const char *CameraParameters::names[] = {
     "SHUTTER DELAY",
 };
 
-STATIC_ASSERT(CORE_COUNT_OF(CameraParameters::names) == CameraParameters::LAST, wrong_camera_parameter_num);
+STATIC_ASSERT(CORE_COUNT_OF(CameraParameters::names) == CameraParameters::LAST, wrong_camera_parameter_num)

@@ -37,7 +37,7 @@ const char* V4L2CaptureInterface::CODEC_NAMES[] =
     "mjpeg fast decoder"
 };
 
-STATIC_ASSERT(CORE_COUNT_OF(V4L2CaptureInterface::CODEC_NAMES) == V4L2CaptureInterface::CODEC_NUMBER, wrong_codec_names_number);
+STATIC_ASSERT(CORE_COUNT_OF(V4L2CaptureInterface::CODEC_NAMES) == V4L2CaptureInterface::CODEC_NUMBER, wrong_codec_names_number)
 
 V4L2CaptureInterface::V4L2CaptureInterface(string _devname, bool isRgb)
     : spin(this)
@@ -504,7 +504,7 @@ ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::getCaptureProperty(int
     return SUCCESS;
 }
 
-ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::initCapture(CameraFormat * /*actualFormat*/)
+ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::initCapture()
 {
     formatH = 0;
     formatW = 0;
@@ -692,7 +692,7 @@ void V4L2CaptureInterface::getAllCameras(vector<std::string> &cameras, int maxDe
         if (isActive) {
             cameras.push_back(dev);
         }
-    }   
+    }
 }
 
 

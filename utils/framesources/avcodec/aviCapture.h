@@ -40,18 +40,18 @@ public:
     AviCapture(QString const &params);
     ~AviCapture();
 
-    virtual ImageCaptureInterface::CapErrorCode initCapture();
-    virtual ImageCaptureInterface::CapErrorCode startCapture();
-    virtual CapErrorCode pauseCapture();
-    virtual CapErrorCode nextFrame();
+    virtual ImageCaptureInterface::CapErrorCode initCapture()  override;
+    virtual ImageCaptureInterface::CapErrorCode startCapture() override;
+    virtual CapErrorCode pauseCapture() override;
+    virtual CapErrorCode nextFrame() override;
 
     /**
      * Check if particular image capturer support pausing.
      * This function can be called before starting or even initing the capture
      **/
-    virtual bool         supportPause();
+    virtual bool         supportPause() override;
 
-    virtual FramePair getFrame();
+    virtual FramePair getFrame() override;
 
     std::string mName;
     AVFormatContext* mFormatContext;
