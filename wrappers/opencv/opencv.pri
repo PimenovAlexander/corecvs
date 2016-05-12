@@ -38,12 +38,12 @@ contains(DEFINES, WITH_OPENCV) {                    # if it's installed properly
     HEADERS     += $$OPENCV_WRAPPER_DIR/faceDetect/faceDetect.h
     SOURCES     += $$OPENCV_WRAPPER_DIR/faceDetect/faceDetect.cpp
 
-    with_chessdetector {
-        HEADERS += \
-                    $$OPENCV_WRAPPER_DIR/openCvCheckerboardDetector.h
+#    with_chessdetector {
+    HEADERS += \
+                $$OPENCV_WRAPPER_DIR/openCvCheckerboardDetector.h
 
-        SOURCES += \
-                    $$OPENCV_WRAPPER_DIR/openCvCheckerboardDetector.cpp
-    }
+    SOURCES += \
+                $$OPENCV_WRAPPER_DIR/openCvCheckerboardDetector.cpp
+#    }
 
 }
