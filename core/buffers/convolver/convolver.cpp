@@ -390,7 +390,7 @@ void Convolver::unrolledWrapperExConvolutor(DpImage &src, DpKernel &kernel, DpIm
 
 void Convolver::fastkernelConvolutor(DpImage &src, DpKernel &kernel, DpImage &dst)
 {
-    ConvolveKernel<corecvs::DummyAlgebra> convKernel(&kernel, kernel.y, kernel.x);
+    ConvolveKernel<DummyAlgebra> convKernel(&kernel, kernel.y, kernel.x);
 
     DpImage *in  = &src;
     DpImage *out = &dst;
@@ -402,7 +402,7 @@ void Convolver::fastkernelConvolutor(DpImage &src, DpKernel &kernel, DpImage &ds
 #ifdef WITH_AVX
 void Convolver::fastkernelConvolutorExp(DpImage &src, DpKernel &kernel, DpImage &dst)
 {
-    ConvolveKernel<corecvs::DummyAlgebra> convKernel(&kernel, kernel.y, kernel.x);
+    ConvolveKernel<DummyAlgebra> convKernel(&kernel, kernel.y, kernel.x);
 
     DpImage *in  = &src;
     DpImage *out = &dst;
@@ -413,7 +413,7 @@ void Convolver::fastkernelConvolutorExp(DpImage &src, DpKernel &kernel, DpImage 
 
 void Convolver::fastkernelConvolutorExp5(DpImage &src, DpKernel &kernel, DpImage &dst)
 {
-    ConvolveKernel<corecvs::DummyAlgebra> convKernel(&kernel, kernel.y, kernel.x);
+    ConvolveKernel<DummyAlgebra> convKernel(&kernel, kernel.y, kernel.x);
 
     DpImage *in  = &src;
     DpImage *out = &dst;
@@ -421,6 +421,18 @@ void Convolver::fastkernelConvolutorExp5(DpImage &src, DpKernel &kernel, DpImage
     BufferProcessor<DpImage, DpImage, ConvolveKernel, VectorAlgebraDoubleEx5> proScalar;
     proScalar.process(&in, &out, convKernel);
 }
+
+void Convolver::fastkernelConvolutorExp5(FpImage &src, FpKernel &kernel, FpImage &dst)
+{
+    FloatConvolveKernel<DummyAlgebra> convKernel(&kernel, kernel.y, kernel.x);
+
+    FpImage *in  = &src;
+    FpImage *out = &dst;
+
+    BufferProcessor<FpImage, FpImage, FloatConvolveKernel, VectorAlgebraFloatEx5> proScalar;
+    proScalar.process(&in, &out, convKernel);
+}
+
 #endif
 
 Convolver::Convolver()
@@ -433,6 +445,10 @@ void Convolver::naiveConvolutor(DpImage &src, DpKernel &kernel, DpImage &dst)
     src.doConvolve<DpImage>(&dst, &kernel);
 }
 
+void Convolver::naiveConvolutor(FpImage &src, FpKernel &kernel, FpImage &dst)
+{
+    src.doConvolve<FpImage>(&dst, &kernel);
+}
 
 
 void Convolver::convolve(DpImage &src, DpKernel &kernel, DpImage &dst, Convolver::ConvolverImplementation impl)
@@ -515,6 +531,124 @@ void Convolver::convolve(DpImage &src, DpKernel &kernel, DpImage &dst, Convolver
     }
 }
 
+void Convolver::convolve(FpImage &src, FpKernel &kernel, FpImage &dst, Convolver::ConvolverImplementation impl)
+{
+    switch (impl) {
+        default:
+        case ALGORITHM_NAIVE:
+                naiveConvolutor(src, kernel, dst);  return;
+
+#ifdef WITH_AVX
+        case ALGORITHM_SSE_UNROLL_1:
+                unrolledWrapperConvolutor<1>(src, kernel, dst);  return;
+        case ALGORITHM_SSE_UNROLL_2:
+                unrolledWrapperConvolutor<2>(src, kernel, dst);  return;
+        case ALGORITHM_SSE_UNROLL_3:
+                unrolledWrapperConvolutor<3>(src, kernel, dst);  return;
+        case ALGORITHM_SSE_UNROLL_4:
+                unrolledWrapperConvolutor<4>(src, kernel, dst);  return;
+        case ALGORITHM_SSE_UNROLL_5:
+                unrolledWrapperConvolutor<5>(src, kernel, dst);  return;
+        case ALGORITHM_SSE_UNROLL_6:
+                unrolledWrapperConvolutor<6>(src, kernel, dst);  return;
+        case ALGORITHM_SSE_UNROLL_7:
+                unrolledWrapperConvolutor<7>(src, kernel, dst);  return;
+        case ALGORITHM_SSE_UNROLL_8:
+                unrolledWrapperConvolutor<8>(src, kernel, dst);  return;
+        case ALGORITHM_SSE_UNROLL_9:
+                unrolledWrapperConvolutor<9>(src, kernel, dst);  return;
+        case ALGORITHM_SSE_UNROLL_10:
+                unrolledWrapperConvolutor<10>(src, kernel, dst);  return;
+
+
+        case ALGORITHM_SSE_UNROLL_12:
+                unrolledWrapperConvolutor<12>(src, kernel, dst);  return;
+        case ALGORITHM_SSE_UNROLL_16:
+                unrolledWrapperConvolutor<16>(src, kernel, dst);  return;
+
+#endif
+
+#ifdef WITH_AVX
+        case ALGORITHM_SSE_WRAPPERS_UNROLL_1:
+                unrolledWrapperConvolutor<1>(src, kernel, dst);  return;
+        case ALGORITHM_SSE_WRAPPERS_UNROLL_5:
+                unrolledWrapperConvolutor<5>(src, kernel, dst);  return;
+        case ALGORITHM_SSE_WRAPPERS_UNROLL_10:
+                unrolledWrapperConvolutor<10>(src, kernel, dst);  return;
+
+        case ALGORITHM_SSE_FASTKERNEL_EXP5:
+        case ALGORITHM_SSE_DMITRY:
+                fastkernelConvolutorExp5(src, kernel, dst);  return;
+#endif
+    }
+}
+
+/**/
+
+template <int UNROLL = 5>
+struct ConvolutorImplWrappersUnrollFloat
+{
+    static const int SPRINT = UNROLL * Float32x8::SIZE;
+
+    void operator() (const corecvs::BlockedRange<int> &rr) const
+    {
+        for (int i = rr.begin(); i < rr.end(); ++i)
+        {
+            for (int j = l; j + SPRINT - 1 < r; j += SPRINT)
+            {
+                Float32x8 sum[UNROLL];
+                for (int r = 0; r < UNROLL; r++) {
+                    sum[r] = Float32x8::Zero();
+                }
+
+                for (int ii = 0; ii < kh; ++ii)
+                {
+                    float *kp = &kernel->element(ii, 0);
+                    float *ip[UNROLL];
+                    ip[0] = &src->element(ii + i - ky, j - kx);
+                    for (int r = 0; r < UNROLL - 1; r++) {
+                        ip[r + 1] = ip[r] +  Float32x8::SIZE;
+                    }
+                    for (int jj = 0; jj < kw; ++jj)
+                    {
+                        Float32x8 mul1 = Float32x8::Broadcast(kp++);
+
+                        for (int r = 0; r < UNROLL; r++) {
+                            Float32x8 mul2x(ip[r]++);
+                            sum[r] = multiplyAdd(mul1, mul2x, sum[r]);
+                        }
+                    }
+                }
+
+                for (int r = 0; r < UNROLL; r++) {
+                    sum[r].save(&dst->element(i, j + Float32x8::SIZE * r));
+                }
+            }
+        }
+    }
+
+    ConvolutorImplWrappersUnrollFloat(FpImage *src, FpImage *dst, FpKernel *kernel) : src(src), dst(dst), kernel(kernel)
+    {
+        h = src->h; w = src->w; kw = kernel->w; kh = kernel->h; kx = kernel->x; ky = kernel->y;
+        t = 0; l = 0; r = w; d = h;
+
+        t = std::max(t, ky);
+        l = std::max(l, kx);
+        d = std::min(d, h - kh + ky);
+        r = std::min(r, w - kw + kx);
+    }
+    FpImage *src, *dst;
+    FpKernel *kernel;
+    int h, w, kw, kh, kx, ky, t, l, d, r;
+};
+
+
+template<int UNROLL>
+void Convolver::unrolledWrapperConvolutor(FpImage &src, FpKernel &kernel, FpImage &dst)
+{
+    ConvolutorImplWrappersUnrollFloat<UNROLL> impl(&src, &dst, &kernel);
+    corecvs::parallelable_for(impl.t, impl.d, impl);
+}
 
 
 } //namespace corecvs

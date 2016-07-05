@@ -87,6 +87,32 @@ public:
         }
     }
 
+    inline void add(const Histogram *other)
+    {
+        int newMin = std::min(min, other->min);
+        int newMax = std::max(max, other->max);
+
+        int newSize = newMax - newMin + 1;
+        if (newSize != (int)data.size())
+        {
+            int s = data.size();
+            data.resize(newSize);
+            for (; s >= 0 ; s--) {
+                data[s + min - newMin] = data[s];
+            }
+        }
+        min = newMin;
+        max = newMax;
+
+        for (int i = other->min; i <= other->max; i++)
+        {
+            {
+                data[i - min] += other->getData(i);
+            }
+        }
+        totalSum +=  other->totalSum;
+    }
+
     inline void set(int argument, int value)
     {
         if (argument >= min && argument <= max)
@@ -151,14 +177,28 @@ public:
     }
 
 
-    int getData(int value)
+    int getData(int value) const
     {
         return data[value - min];
     }
 
-    int getTotalSum()
+    int getTotalSum() const
     {
         return totalSum;
+    }
+
+    int getIntervalSum(int intMin, int intMax) const
+    {
+        int sum = 0;
+        intMin = std::max(min, intMin);
+        intMax = std::min(max, intMax);
+
+        for (int i = intMin - min; i <= intMax - min; i++)
+        {
+            sum += data[i];
+        }
+
+        return sum;
     }
 
     int getOtsuThreshold();
@@ -240,6 +280,15 @@ public:
     }
 
     virtual ~Histogram();
+
+    friend ostream& operator << (ostream &out, Histogram &h)
+    {
+        for (int i = h.getArgumentMin(); i <= h.getArgumentMax(); i++)
+        {
+            out << i << " -> " << h.getData(i) << endl;
+        }
+        return out;
+    }
 
 
 private:

@@ -24,6 +24,9 @@ namespace corecvs {
 typedef AbstractBuffer<double> DpImage;
 typedef AbstractKernel<double> DpKernel;
 
+typedef AbstractBuffer<float> FpImage;
+typedef AbstractKernel<float> FpKernel;
+
 
 class Convolver
 {
@@ -72,7 +75,10 @@ public:
     Convolver();
 
     static void convolve(DpImage &src, DpKernel &kernel, DpImage &dst, ConvolverImplementation impl = ALGORITHM_SSE_DMITRY);
+    static void convolve(FpImage &src, FpKernel &kernel, FpImage &dst, ConvolverImplementation impl = ALGORITHM_SSE_UNROLL_8);
 
+
+    /* Double Implementations */
     static void naiveConvolutor       (DpImage &src, DpKernel &kernel, DpImage &dst);
     static void unrolledConvolutor    (DpImage &src, DpKernel &kernel, DpImage &dst);
 
@@ -93,6 +99,15 @@ template<int UNROLL = 5>
     static void unrolledWrapperConvolutor(DpImage &src, DpKernel &kernel, DpImage &dst);
 template<int UNROLL = 5>
     static void unrolledWrapperExConvolutor(DpImage &src, DpKernel &kernel, DpImage &dst);
+#endif
+
+
+    /* Float implementations */
+    static void naiveConvolutor          (FpImage &src, FpKernel &kernel, FpImage &dst);
+#ifdef WITH_AVX
+    static void fastkernelConvolutorExp5 (FpImage &src, FpKernel &kernel, FpImage &dst);
+template<int UNROLL = 5>
+    static void unrolledWrapperConvolutor(FpImage &src, FpKernel &kernel, FpImage &dst);
 #endif
 
 };
