@@ -29,17 +29,17 @@ public:
     V4L2CaptureDecoupleInterface(string _devname);
     virtual ~V4L2CaptureDecoupleInterface();
 
-    virtual FramePair getFrame();
+    virtual FramePair getFrame() override;
 
-    virtual CapErrorCode setCaptureProperty(int id, int value);
-    virtual CapErrorCode getCaptureProperty(int id, int *value);
+    virtual CapErrorCode setCaptureProperty(int id, int value) override;
+    virtual CapErrorCode getCaptureProperty(int id, int *value) override;
 
-    virtual CapErrorCode queryCameraParameters(CameraParameters &parameter) ;
+    virtual CapErrorCode queryCameraParameters(CameraParameters &parameter) override;
 
-    virtual QString getInterfaceName();
+    virtual QString getInterfaceName() override;
 
-    virtual CapErrorCode initCapture();
-    virtual CapErrorCode startCapture();
+    virtual CapErrorCode initCapture() override;
+    virtual CapErrorCode startCapture() override;
 
 private:
     static const unsigned LoopQueueBufferNumber = 8;

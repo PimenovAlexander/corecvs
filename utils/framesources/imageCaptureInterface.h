@@ -207,6 +207,17 @@ public:
     virtual CapErrorCode getFormats(int *num, CameraFormat *& formats);
 
     /**
+     * After the init returns currently set format.
+     * Children could implement this function ad lilbitum.
+     * Call in uninted state results in undefinded behaviour.
+     *
+     *  \param format - place to output result
+     *
+     *  \return  true if the reuslt is valid, false othervize;
+     **/
+    virtual bool getCurrentFormat(CameraFormat &format);
+
+    /**
      * Return the interface device string
      **/
     virtual QString      getInterfaceName();
@@ -226,9 +237,11 @@ public:
     virtual CapErrorCode queryCameraParameters(CameraParameters &parameter);
 
     /**
-     * Initialize capture with the given before parameters. If need it returns actually set format for cameras.
+     * Initialize capture with the given before parameters.
+     *
+     * Actually set format can then be queried by the call to getCurrentFormat()
      **/
-    virtual CapErrorCode initCapture(CameraFormat *actualFormat = NULL);
+    virtual CapErrorCode initCapture();
 
     virtual CapErrorCode startCapture();
     virtual CapErrorCode pauseCapture();

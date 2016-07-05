@@ -14,9 +14,9 @@ public:
     OpenCvFileCapture(QString const &params);
    ~OpenCvFileCapture();
 
-    virtual ImageCaptureInterface::CapErrorCode initCapture();
-    virtual ImageCaptureInterface::CapErrorCode startCapture();
-    virtual FramePair getFrame();
+    virtual ImageCaptureInterface::CapErrorCode initCapture() override;
+    virtual ImageCaptureInterface::CapErrorCode startCapture() override;
+    virtual FramePair getFrame() override;
 
     std::string mName;
     cv::VideoCapture mCapture;

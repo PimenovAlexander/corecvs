@@ -20,7 +20,7 @@ AbstractFileCapture::AbstractFileCapture(QString const &params)
     static const int delayGroup            = 6;
     static const int shouldSkipGroup       = 7;
 
-    printf ("Input string %s\n", params.toLatin1().constData());
+    SYNC_PRINT(("Input string %s\n", params.toLatin1().constData()));
     int result = deviceStringPattern.indexIn(params);
     if (result == -1)
     {
@@ -28,7 +28,7 @@ AbstractFileCapture::AbstractFileCapture(QString const &params)
         return;
     }
 
-    printf (
+    SYNC_PRINT((
         "Parsed data:\n"
         "  | - Filename Pattern: <%s>\n"
         "  | - FPS: <%s/%s>\n"
@@ -39,7 +39,7 @@ AbstractFileCapture::AbstractFileCapture(QString const &params)
         deviceStringPattern.cap(fpsDenumGroup)       .toLatin1().constData(),
         deviceStringPattern.cap(delayGroup)          .toLatin1().constData(),
         deviceStringPattern.cap(shouldSkipGroup)     .toLatin1().constData()
-        );
+        ));
 
     // store the given path format for further usage
     mPathFmt = deviceStringPattern.cap(filenamePatternGroup).toLatin1().constData();

@@ -33,7 +33,7 @@ const char *V4L2CameraDescriptor::STATE_NAMES[] =
     "STARTED"
 };
 
-STATIC_ASSERT(CORE_COUNT_OF(V4L2CameraDescriptor::STATE_NAMES) == V4L2CameraDescriptor::STATE_NUMBER, wrong_state_names_number);
+STATIC_ASSERT(CORE_COUNT_OF(V4L2CameraDescriptor::STATE_NAMES) == V4L2CameraDescriptor::STATE_NUMBER, wrong_state_names_number)
 
 int V4L2CameraDescriptor::initCamera(string deviceName, const V4L2CameraMode &mode)
 {
@@ -507,7 +507,7 @@ const V4L2CameraDescriptor::ParamIdMapStruct V4L2CameraDescriptor::paramIdMap[] 
 };
 
 
-STATIC_ASSERT(CORE_COUNT_OF(V4L2CameraDescriptor::paramIdMap) == V4L2CameraDescriptor::paramIdMapSize, wrong_array_size_constant);
+STATIC_ASSERT(CORE_COUNT_OF(V4L2CameraDescriptor::paramIdMap) == V4L2CameraDescriptor::paramIdMapSize, wrong_array_size_constant)
 
 uint32_t V4L2CameraDescriptor::getPropIdByVi(CameraParameters::CameraControls viId)
 {

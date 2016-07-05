@@ -28,12 +28,12 @@ public:
     RTSPCapture(const QString &params);
     ~RTSPCapture();
 
-    virtual ImageCaptureInterface::CapErrorCode initCapture();
-    virtual ImageCaptureInterface::CapErrorCode startCapture();
-    virtual CapErrorCode pauseCapture();
-    virtual CapErrorCode nextFrame();
-    virtual bool         supportPause();
-    virtual FramePair    getFrame();
+    virtual ImageCaptureInterface::CapErrorCode initCapture() override;
+    virtual ImageCaptureInterface::CapErrorCode startCapture() override;
+    virtual CapErrorCode pauseCapture() override;
+    virtual CapErrorCode nextFrame() override;
+    virtual bool         supportPause() override;
+    virtual FramePair    getFrame() override;
 
 
     std::string mName;

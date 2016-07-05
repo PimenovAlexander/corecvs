@@ -218,9 +218,20 @@ AviCapture::~AviCapture()
 {
     SYNC_PRINT(("AviCapture::~AviCapture(): called\n"));
 
-    av_free(mFrame);
-    avcodec_close(mCodecContext);
-    avformat_close_input(&mFormatContext);
+    if (mFrame != NULL) {
+        av_free(mFrame);
+        mFrame = NULL;
+    }
+
+    if (mCodecContext != NULL) {
+        avcodec_close(mCodecContext);
+        mCodecContext = NULL;
+    }
+
+    if (mFormatContext != NULL) {
+        avformat_close_input(&mFormatContext);
+        mFormatContext = NULL;
+    }
 
     SYNC_PRINT(("AviCapture::~AviCapture(): exited\n"));
 }
