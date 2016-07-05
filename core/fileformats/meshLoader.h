@@ -21,12 +21,14 @@ namespace corecvs {
 class MeshLoader
 {
 public:
+    bool trace;
+
     static bool endsWith(const std::string &fileName, const char *extention);
 
     MeshLoader();
-    static bool load(Mesh3D *mesh, const std::string &fileName);
+    bool load(Mesh3D *mesh, const std::string &fileName);
 
-    static bool save(Mesh3D *mesh, const std::string &fileName);
+    bool save(Mesh3D *mesh, const std::string &fileName);
 
     static std::string extentionList();
 

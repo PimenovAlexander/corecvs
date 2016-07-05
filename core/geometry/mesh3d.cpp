@@ -813,6 +813,12 @@ void Mesh3D::dumpInfo(ostream &out)
     out << " Vertexes:" << vertexes.size() << endl;
     out << " Faces   :" << faces.size() << endl;
     out << " Bounding box " << getBoundingBox() << endl;
+    if (hasColor) {
+        out << " -Edges    colors:" << edgesColor.size() << endl;
+        out << " -Vertexes colors:" << vertexesColor.size() << endl;
+        out << " -Faces    colors:" << facesColor.size() << endl;
+    }
+
 }
 
 } /* namespace corecvs */

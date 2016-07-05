@@ -13,10 +13,12 @@
 
 #include <vector>
 #include <algorithm>
+#include <ostream>
 
 #include "vector3d.h"
 #include "generated/axisAlignedBoxParameters.h"
 #include "line.h"
+#include "rectangle.h"
 
 namespace corecvs {
 
@@ -44,7 +46,6 @@ public:
         p2() = _p2;
         p3() = _p3;
     }
-
 
     Plane3d getPlane() const
     {
@@ -77,6 +78,29 @@ public:
 
     PointPath(int len) : vector<Vector2dd>(len)
     {}
+
+    friend std::ostream & operator <<(std::ostream &out, const PointPath &pointPath)
+    {
+        out << "[";
+        for (size_t i = 0; i < pointPath.size(); i++)
+           out << (i == 0 ? "" : ", ") << pointPath.at(i) << std::endl;
+        out << "]";
+        return out;
+    }
+
+    /* This function checks if the poligon is inside the buffer. It assumes that the poligon coorinate can be rounded to upper value  */
+    bool isInsideBuffer(const Vector2d<int> &bufferSize)
+    {
+        for (Vector2dd point : *this)
+        {
+            if (point.x() < 0 || point.y() < 0)
+                return false;
+            if (point.x() + 1 > bufferSize.x() || point.y() + 1 > bufferSize.y())
+                return false;
+
+        }
+        return true;
+    }
 };
 
 /**
@@ -94,8 +118,8 @@ public:
         }
     }
 
-    int isInside(const Vector2dd &point);
-    bool isConvex(bool *direction = NULL);
+    int  isInside(const Vector2dd &point) const;
+    bool isConvex(bool *direction = NULL) const;
 
     Vector2dd getPoint (int i) const
     {
@@ -110,58 +134,49 @@ public:
         return (r2 - r1).rightNormal();
     }
 
+    static Polygon FromRectagle(const Rectangled &rect) {
+        Polygon toReturn;
+        toReturn.reserve(4);
+        toReturn.push_back(rect.ulCorner());
+        toReturn.push_back(rect.urCorner());
+        toReturn.push_back(rect.lrCorner());
+        toReturn.push_back(rect.llCorner());
+        return toReturn;
+    }
+
+    Polygon transform(const Matrix33 &transform) {
+        Polygon toReturn;
+        toReturn.reserve(size());
+        for (Vector2dd p: *this ) {
+            toReturn.push_back(transform * p);
+        }
+        return toReturn;
+
+    }
+
+    /* non const versions */
+    double &x(int idx) {
+        return operator [](idx).x();
+    }
+
+    double &y(int idx) {
+        return operator [](idx).y();
+    }
+
+    /* const versions*/
+    const double &x(int idx) const {
+        return operator [](idx).x();
+    }
+
+    const double &y(int idx) const {
+        return operator [](idx).y();
+    }
+
+
+
     //bool clipRay(const Ray2d &ray, double &t1, double &t2);
 
 };
-
-/* So far we only support convex polygon*/
-class PolygonSpanIterator
-{
-public:
-    const Polygon &polygon;
-
-    double currentY;
-    double startX;
-    double endX;
-
-
-    vector<int> sortedIndex;
-    unsigned currentIndex;
-
-    PolygonSpanIterator(const Polygon &polygon) : polygon(polygon)
-    {
-        sortedIndex.reserve(polygon.size());
-        for (unsigned i = 0; i < polygon.size(); i++)
-            sortedIndex.push_back(i);
-
-        std::sort(sortedIndex.begin(), sortedIndex.end(), [=](int a, int b) { return polygon[a].y() > polygon[b].y(); });
-        currentIndex = 0;
-        currentY = polygon[sortedIndex[0]].y();
-        startX   = polygon[sortedIndex[0]].x();
-        endX    =  polygon[sortedIndex[0]].x();
-
-    }
-
-    bool step()
-    {
-        SYNC_PRINT(("PolygonSpanIterator::step(): called\n"));
-        if (currentIndex >= sortedIndex.size())
-            return false;
-    }
-
-    void getSpan(double &y, double &x1, double &x2)
-    {
-        y = currentY;
-        x1 = 0;
-        x2 = 0;
-    }
-
-
-
-
-
-};
-
 
 } //namespace corecvs
 #endif /* POLYGONS_H_ */

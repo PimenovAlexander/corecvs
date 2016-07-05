@@ -71,7 +71,7 @@ public:
     vector<double> fit(const vector<double> &input, const vector<double> &output)
     {
         if (traceProgress) {
-            cout << "================== Starting LM fit ================== " << endl;
+            cout << "================== Starting LM fit (" << f->inputs << " -> " << f->outputs << ")================== " << endl;
             cout << "[" << std::flush;
         }
 
@@ -162,7 +162,7 @@ public:
                     hasParadox = true;
                 }
 
-                cout << "Now  :" <<  norm << " " << lambda << endl;
+                cout << "Now  norm:" <<  norm << "( per param:" << sqrt(norm / diff.length) << ") lambda:" << lambda << endl;
             }
 
             while (true)

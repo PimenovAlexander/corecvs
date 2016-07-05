@@ -669,6 +669,5 @@ Matrix33 Matrix33::ProjectiveByPoints(int pointNumber, Vector2dd points[], Vecto
     return toReturn;
 }
 
-
 } //namespace corecvs
 

@@ -40,8 +40,9 @@ public:
      **/
     ObjectBlock()
         : flags(0)
-        , refcount(0)
-    {}
+    {
+        refcount.store(0);
+    }
 
     atomic_int &refCount()
     {

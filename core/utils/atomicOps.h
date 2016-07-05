@@ -5,10 +5,12 @@
  * \date Sep 27, 2012
  **/
 
-#if 0   // disable for a while using std atomic type and its opers
+#if 1   // disable for a while using std atomic type and its opers
 
 #include <atomic>
-using std::atomic_int;
+
+namespace corecvs {
+typedef std::atomic<int> atomic_int;
 
 inline int atomic_dec_and_fetch(atomic_int *ptr)
 {
@@ -18,6 +20,8 @@ inline int atomic_dec_and_fetch(atomic_int *ptr)
 inline int atomic_inc_and_fetch(atomic_int *ptr)
 {
     return ++(*ptr);
+}
+
 }
 
 #else

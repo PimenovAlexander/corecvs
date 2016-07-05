@@ -57,6 +57,10 @@ public:
             type(PROP_TYPE_CORRUPT),
             name(PROP_NAME_CORRUPT)
         {}
+
+        static const char *typeToStr(PropType type);
+        static const char *nameToStr(PropName name);
+
     };
 
     enum ObjType {

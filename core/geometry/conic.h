@@ -116,16 +116,17 @@ public:
         currentDX = 0;
     }
 
-    bool step()
+    void step()
     {
         //SYNC_PRINT(("CircleSpanIterator::step(): called %d\n", currentY));
         currentY++;
         double h = currentY - 0.5 - circle.c.y();
         double hsq = h * h;
         currentDX = (int)sqrt((float)(radSQ - hsq));
-        if (currentY <= (circle.c.y() + circle.r))
-            return true;
-        return false;
+    }
+
+    bool hasValue() {
+        return currentY <= (circle.c.y() + circle.r);
     }
 
     void getSpan(int &y, int &x1, int &x2)
@@ -140,6 +141,29 @@ public:
         LineSpanInt span;
         getSpan(span.cy, span.x1, span.x2);
         return span;
+    }
+
+    /**
+     * C++ style iteration
+     **/
+    CircleSpanIterator &begin() {
+        return *this;
+    }
+
+    CircleSpanIterator & end() {
+        return *this;
+    }
+
+    bool operator !=(const CircleSpanIterator & other) {
+        return this->currentY <= (other.circle.c.y() + other.circle.r);
+    }
+
+    LineSpanInt operator *() {
+        return getSpan();
+    }
+
+    void operator ++() {
+        step();
     }
 };
 

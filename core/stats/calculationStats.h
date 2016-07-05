@@ -112,7 +112,7 @@ public:
 
     Statistics* enterContext(string prefix) {
         stack.push_back(State(this->prefix, this->helperTimer));
-        this->prefix = prefix + this->prefix;
+        this->prefix = this->prefix + prefix;
         return this;
     }
 

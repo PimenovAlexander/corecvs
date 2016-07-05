@@ -116,14 +116,13 @@ template <typename OtherAlgebra>
 #define PROTO_KERNEL(input, outputs, sizeX, sizeY, centerX, centerY)
 
 /* Generic convolve for double */
-template <typename Algebra>
-class ConvolveKernel
+template <typename Algebra, typename KernelType = AbstractBuffer<double> >
+class GenericConvolveKernel
 {
 public:
-    AbstractBuffer<double> *elements;
+    KernelType *elements;
     int x;
     int y;
-
 
     static const int inputNumber = 1;
     static const int outputNumber = 1;
@@ -133,18 +132,17 @@ public:
     inline int getSizeX()  { return elements->w; }
     inline int getSizeY()  { return elements->h; }
 
-    ConvolveKernel(AbstractBuffer<double> *_elements, int _y, int _x) :
-        elements(_elements), x(_x), y(_y) {}
-
     typedef typename Algebra::InputType Type;
 
+    GenericConvolveKernel(KernelType *_elements, int _y, int _x) :
+        elements(_elements), x(_x), y(_y) {}
+
 template <typename OtherAlgebra>
-    ConvolveKernel(const ConvolveKernel<OtherAlgebra> & other)
-    {
-        this->x = other.x;
-        this->y = other.y;
-        this->elements = other.elements;
-    }
+    GenericConvolveKernel(const GenericConvolveKernel<OtherAlgebra, KernelType> & other) :
+        elements(other.elements),
+        x(other.x),
+        y(other.y)
+    {}
 
     inline void process(Algebra &algebra) const
     {
@@ -162,6 +160,36 @@ template <typename OtherAlgebra>
     }
 };
 
+template <typename Algebra>
+    class ConvolveKernel : public GenericConvolveKernel<Algebra, AbstractBuffer<double>>
+    {
+    public:
+        ConvolveKernel(AbstractBuffer<double> *_elements, int _y, int _x) :
+            GenericConvolveKernel<Algebra, AbstractBuffer<double>>(_elements, _y, _x)
+        {}
+
+    template <typename OtherAlgebra>
+        ConvolveKernel(const ConvolveKernel<OtherAlgebra> & other) :
+            GenericConvolveKernel<Algebra, AbstractBuffer<double>>(other)
+        {}
+
+    };
+
+
+template <typename Algebra>
+    class FloatConvolveKernel : public GenericConvolveKernel<Algebra, AbstractBuffer<float>>
+    {
+    public:
+        FloatConvolveKernel(AbstractBuffer<float> *_elements, int _y, int _x) :
+            GenericConvolveKernel<Algebra, AbstractBuffer<float> >(_elements, _y, _x)
+        {}
+
+    template <typename OtherAlgebra>
+        FloatConvolveKernel(const FloatConvolveKernel<OtherAlgebra> & other) :
+            GenericConvolveKernel<Algebra, AbstractBuffer<float> >(other)
+        {}
+
+    };
 
 
 

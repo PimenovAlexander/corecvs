@@ -168,7 +168,7 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
     {
         for (unsigned i = 0; i < objProps[k].size(); i++)
         {
-            LOCAL_PRINT((" %d %d \n", objProps[k][i].type, objProps[k][i].name));
+            LOCAL_PRINT(("%d %s %s \n",i , Prop::typeToStr(objProps[k][i].type), Prop::nameToStr(objProps[k][i].name)));
         }
         LOCAL_PRINT(("\n"));
     }
@@ -257,7 +257,7 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
             if (points != 3) {
                 SYNC_PRINT(("We only support faces with 3 sides not %d\n", points));
                 continue;
-            }         
+            }
             Vector3d32 face;
             work >> face.x() >> face.y() >> face.z();
 
@@ -347,8 +347,14 @@ istream &operator >>(istream &in, PLYLoader::Prop &toLoad)
         return in;
     }
     if (type == "float") toLoad.type = PLYLoader::PROP_TYPE_FLOAT;
+    if (type == "float32") toLoad.type = PLYLoader::PROP_TYPE_FLOAT;
+
     if (type == "uchar") toLoad.type = PLYLoader::PROP_TYPE_UCHAR;
+    if (type == "uint8") toLoad.type = PLYLoader::PROP_TYPE_UCHAR;
+
     if (type == "int")   toLoad.type = PLYLoader::PROP_TYPE_INT;
+    if (type == "int32")   toLoad.type = PLYLoader::PROP_TYPE_INT;
+
     if (type == "list") {
         toLoad.type = PLYLoader::PROP_TYPE_LIST;
         string dummy;
@@ -389,10 +395,47 @@ istream &operator >>(istream &in, PLYLoader::Prop &toLoad)
     if (name == "vertex1") toLoad.name = PLYLoader::PROP_NAME_VERTEX1;
     if (name == "vertex2") toLoad.name = PLYLoader::PROP_NAME_VERTEX2;
 
-    if (name == "vertex_index") toLoad.name = PLYLoader::PROP_NAME_VERTEX_INDEX;
+    if (name == "vertex_index")   toLoad.name = PLYLoader::PROP_NAME_VERTEX_INDEX;
+    if (name == "vertex_indices") toLoad.name = PLYLoader::PROP_NAME_VERTEX_INDEX;
 
     return in;
 
+}
+
+const char *PLYLoader::Prop::typeToStr(PLYLoader::PropType type)
+{
+    switch (type) {
+        case PROP_TYPE_FLOAT: return "float";
+        case PROP_TYPE_UCHAR: return "uchar";
+        case PROP_TYPE_INT  : return "int";
+        case PROP_TYPE_LIST : return "list";
+    default:
+        return "unknown";
+    }
+}
+
+const char *PLYLoader::Prop::nameToStr(PLYLoader::PropName name)
+{
+    switch (name) {
+
+        case PROP_NAME_X: return "x";
+        case PROP_NAME_Y: return "y";
+        case PROP_NAME_Z: return  "z";
+
+        case PROP_NAME_RED: return  "red";
+        case PROP_NAME_GREEN: return "green";
+        case PROP_NAME_BLUE : return "blue";
+
+        case PROP_NAME_VERTEX1: return  "vertex1";
+        case PROP_NAME_VERTEX2: return  "vertex2";
+
+        case PROP_NAME_VERTEX_INDEX: return  "vertex_index";
+
+        default:
+        case PROP_NAME_CORRUPT:
+            return "unknown";
+    }
+    return "unknown";
 }
 
 } // namespace corecvs

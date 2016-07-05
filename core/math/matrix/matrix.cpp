@@ -256,15 +256,12 @@ Matrix operator *(const Matrix &A, const Matrix &B)
     CORE_ASSERT_TRUE(A.w == B.h, "Matrices have wrong sizes");
     Matrix result(A.h, B.w, false);
 
-#ifdef WITH_MKL
-	//parallelable_for(0, result.h, 8, ParallelMM<>(&A, &B, &result), !(A.h < 64));
-    Matrix::multiplyHomebrew(A, B, true, !(A.h < 64));
-#elif defined(WITH_BLAS)
-	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A.h, B.w, A.w, 1.0, A.data, A.stride, B.data, B.stride, 0.0, result.data, result.stride);
-#else // !WITH_BLAS
-	CORE_ASSERT_TRUE(0, "There're no instaled MKL/openBLAS! Stop!");
-#endif // WITH_BLAS
-
+#ifndef WITH_BLAS
+    corecvs::parallelable_for(0, result.h, 8, ParallelMM<>(&A, &B, &result), !(A.h < 64));
+    //Matrix::multiplyHomebrew(A, B, true, !(A.h < 64)); // TODO: it has a bug, see testMatrixOperations!!!
+#else
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A.h, B.w, A.w, 1.0, A.data, A.stride, B.data, B.stride, 0.0, result.data, result.stride);
+#endif
     return result;
 }
 
@@ -281,21 +278,19 @@ Vector operator *(const Matrix &M, const Vector &V)
         cblas_dgemv (CblasRowMajor, CblasNoTrans, M.h, M.w, 1.0, &M.element(0, 0), M.stride, &V[0], 1, 0.0, &result[0], 1);
         return result;
 #endif
-    } else {
-        Vector result(M.h);
-        int row, column;
-        for (row = 0; row < M.h; row++)
-        {
-            double sum = 0.0;
-            for (column = 0; column < M.w; column++)
-            {
-               sum += V.at(column) * M.a(row, column);
-            }
-            result.at(row) = sum;
-        }
-        return result;
     }
-    return Vector(0);
+
+    Vector result(M.h);
+    for (int row = 0; row < M.h; row++)
+    {
+        double sum = 0.0;
+        for (int column = 0; column < M.w; column++)
+        {
+            sum += V.at(column) * M.a(row, column);
+        }
+        result.at(row) = sum;
+    }
+    return result;
 }
 
 Vector operator *(const Vector &V, const Matrix &M)
@@ -447,7 +442,7 @@ void Matrix::print(ostream &out)
 }
 
 
-/* Merge three functions below*/
+/* Merge three functions below */
 Matrix *Matrix::transposed() const
 {
     Matrix* result = new Matrix(this->w, this->h, false);

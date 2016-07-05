@@ -49,6 +49,7 @@ class  Matrix33 : public FixedVectorBase<Matrix33, double, 9>
 {
 public:
     typedef FixedVectorBase<Matrix33, double, 9> BaseClass;
+    typedef double ElementType;
 
     static const int H = 3;
     static const int W = H;
@@ -240,6 +241,25 @@ public:
     static Matrix33 ProjectiveByPoints(Vector2dd points[4], Vector2dd images[4]);
     static Matrix33 ProjectiveByPoints(int pointNumber, Vector2dd points[], Vector2dd images[]);
 
+    /* Matrix Operations interface */
+    double &atm(int i, int j) {
+        return a(i, j);
+    }
+    const double &atm(int i, int j) const {
+        return a(i, j);
+    }
+    int height() {return H; }
+    int width()  {return W; }
+    static Matrix33 createMatrix(int /*h*/, int /*w*/) {return Matrix33(); }
+
+    /* Additional helper function */
+    void fillWithArgs(
+             double _a00, double _a01, double _a02,
+             double _a10, double _a11, double _a12,
+             double _a20, double _a21, double _a22
+         );
+
+
 };
 
 
@@ -381,6 +401,18 @@ inline Matrix33::Matrix33(
     a(1,0) = _a10;  a(1,1) = _a11;   a(1,2) = _a12;
     a(2,0) = _a20;  a(2,1) = _a21;   a(2,2) = _a22;
 }
+
+inline void Matrix33::fillWithArgs(
+         double _a00, double _a01, double _a02,
+         double _a10, double _a11, double _a12,
+         double _a20, double _a21, double _a22
+     )
+{
+    a(0,0) = _a00;  a(0,1) = _a01;   a(0,2) = _a02;
+    a(1,0) = _a10;  a(1,1) = _a11;   a(1,2) = _a12;
+    a(2,0) = _a20;  a(2,1) = _a21;   a(2,2) = _a22;
+}
+
 /* *************************************************************************** */
 /*  Matrix                                                                     */
 /* *************************************************************************** */

@@ -103,6 +103,10 @@ public:
     }
     //@}
 
+    /**
+     *   Add xy(), yz() and other sub-methods
+     **/
+
     Vector2d<ElementType> xy() const
     {
         return Vector2d<ElementType>(x(), y());
@@ -117,6 +121,13 @@ public:
     {
         return Vector2d<ElementType>(y(), z());
     }
+
+    Vector3d<ElementType> yxz() const
+    {
+        return Vector3d<ElementType>(y(), x(), z());
+    }
+
+
 
     void setXY(const Vector2d<ElementType> &vec2d )
     {
@@ -199,13 +210,6 @@ public:
         }
         return Vector2d<ElementType>(this->x() / this->z(), this->y() / this->z());
     }
-
-    /**
-     *   Add xy(), yz() and other sub-methods
-     *
-     *
-     **/
-
 
     inline Vector3d<ElementType> normalizeProjective()
     {

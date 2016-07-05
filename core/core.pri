@@ -37,8 +37,8 @@ CORE_SUBMODULES= \
     patterndetection \
     cameracalibration \
    # graphs        \
-   # polynomial    \
-   # camerafixture \
+    polynomial    \
+    camerafixture \
 
 with_blas {
    # CORE_SUBMODULES += reconstruction

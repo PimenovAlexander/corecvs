@@ -105,7 +105,7 @@ public:
     }
 
     /*Print to stream helper */
-    friend ostream & operator << (ostream &out, const Doublex4 &vector);
+    //friend ostream & operator << (ostream &out, const Doublex4 &vector);
 
 
     /* Formated hex helper */

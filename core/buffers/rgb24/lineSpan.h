@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <vector>
+#include <ostream>
 
 #include <vector2d.h>
 
@@ -21,6 +22,11 @@ public:
         cy(y), x1(x1), x2(x2)
     {}
 
+    static LineSpanInt Empty() {
+        return LineSpanInt(0, 1, 0);
+    }
+
+
     void clip(int w, int h) {
         if (x1 > x2) std::swap(x1, x2);
         if (x1 <  0) x1 = 0;
@@ -32,8 +38,11 @@ public:
         }
     }
 
-    bool step() {
+    void step() {
         x1++;
+    }
+
+    bool hasValue() {
         return (x1 <= x2);
     }
 
@@ -49,6 +58,38 @@ public:
         return Vector2d<int>(x(), y());
     }
 
+    /**
+     * C++ style iteration
+     **/
+    LineSpanInt &begin() {
+        return *this;
+    }
+
+    LineSpanInt & end() {
+        return *this;
+    }
+
+    bool operator !=(const LineSpanInt & other) {
+        return this->x1 <= (other.x2);
+    }
+
+    Vector2d<int> operator *() {
+        return pos();
+    }
+
+    void operator ++() {
+        step();
+    }
+
+    /**
+     * Utility functions
+     **/
+
+    friend std::ostream& operator << (std::ostream &out, LineSpanInt &toSave)
+    {
+        out << toSave.y() << " [" << toSave.x1 << " -> " << toSave.x2 << "]" << std::endl;
+        return out;
+    }
 
 };
 
@@ -71,16 +112,22 @@ public:
         }
     }
 
-    bool step() {
+    void step() {
         for (size_t i = 0; i < catt.size(); i++) {
             catt[i] += datt[i];
         }
-        return LineSpanInt::step();
+        LineSpanInt::step();
+    }
+
+    bool hasValue() {
+        return LineSpanInt::hasValue();
     }
 
     FragmentAttributes att() {
         return catt;
     }
+
+
 
 };
 

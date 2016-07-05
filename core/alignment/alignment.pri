@@ -13,7 +13,6 @@ HEADERS += \
     alignment/pointObservation.h
 
 
-
 SOURCES += \
     alignment/radialCorrection.cpp \
     alignment/camerasCalibration/camerasCalibrationFunc.cpp \

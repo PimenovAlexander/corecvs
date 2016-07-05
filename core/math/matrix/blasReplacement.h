@@ -1,3 +1,6 @@
+#ifndef BLASREPLACEMENT_H
+#define BLASREPLACEMENT_H
+
 #include "global.h"
 #include "matrix.h"
 #include "matrix33.h"
@@ -454,7 +457,7 @@ struct ParallelMD
 };
 
 
-
+// TODO: it has a bug, see testMatrixOperations result when change the operator *(Matrix&, Matrix&) to use this!!!
 Matrix Matrix::multiplyHomebrew(const Matrix &A, const Matrix &B, bool parallel, bool vectorize)
 {
     CORE_ASSERT_TRUE(A.w == B.h, "Matrices have wrong sizes");
@@ -487,3 +490,5 @@ Vector Matrix::multiplyHomebrewMV(const Matrix &M, const Vector &V)
 
 
 } //namespace corecvs
+
+#endif  //BLASREPLACEMENT_H

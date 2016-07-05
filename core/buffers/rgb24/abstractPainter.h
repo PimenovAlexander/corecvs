@@ -188,6 +188,11 @@ public:
         drawCircle(circle.c.x(), circle.c.y(), circle.r, color);
     }
 
+    void drawCircle(const Vector2dd &center, double radius, RGBColor color)
+    {
+        drawCircle(center.x(), center.y(), radius, color);
+    }
+
     class EqualPredicate
     {
     private:
@@ -323,6 +328,13 @@ public:
 
     void drawPolygon(const Polygon &p, ElementType color )
     {
+        if (p.empty())
+            return;
+
+        if (p.size() == 1)
+        {
+            mTarget->drawLine(p[0].x(), p[0].y(), p[0].x(), p[0].y(), color);
+        }
         for (unsigned i = 0; i < p.size() - 1; i++ )
         {
             mTarget->drawLine(p[i].x(), p[i].y(), p[i + 1].x(), p[i + 1].y(), color);

@@ -8,7 +8,8 @@ HEADERS += \
     geometry/mesh3d.h \
     geometry/convexPolyhedron.h \
     geometry/simpleRenderer.h \
-    geometry/conic.h
+    geometry/conic.h \
+    geometry/polygonPointIterator.h
 
 
 SOURCES += \ 
@@ -20,5 +21,6 @@ SOURCES += \
     geometry/mesh3d.cpp \
     geometry/convexPolyhedron.cpp \
     geometry/simpleRenderer.cpp \
-    geometry/conic.cpp
+    geometry/conic.cpp \
+    geometry/polygonPointIterator.cpp
     

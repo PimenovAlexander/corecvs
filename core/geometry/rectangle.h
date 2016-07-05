@@ -18,20 +18,20 @@ template<typename ElementType>
 class Rectangle
 {
 public:
-    Rectangle(){};
-    ~Rectangle(){};
+    Rectangle() {}
+    ~Rectangle() {}
 
     Vector2d<ElementType> corner;
     Vector2d<ElementType> size;
-    Rectangle(Vector2d<ElementType> _corner, Vector2d<ElementType> _size) :
+    Rectangle(const Vector2d<ElementType> &_corner, const Vector2d<ElementType> &_size) :
         corner(_corner),
         size(_size)
-    {};
+    {}
 
     Rectangle(ElementType _x, ElementType _y, ElementType _w, ElementType _h) :
         corner(_x,_y),
         size  (_w,_h)
-    {};
+    {}
 
     Vector2d<ElementType> ulCorner() const
     {
@@ -41,6 +41,21 @@ public:
     Vector2d<ElementType> urCorner() const
     {
        return Vector2d<ElementType>(corner.x() + size.x(), corner.y());
+    }
+
+    Vector2d<ElementType> llCorner() const
+    {
+        return Vector2d<ElementType>(corner.x(), corner.y() + size.y());
+    }
+
+    Vector2d<ElementType> lrCorner() const
+    {
+       return corner + size;
+    }
+
+    static Rectangle SquareFromCenter(const Vector2d<ElementType> &center, ElementType radius)
+    {
+        return Rectangle(center - Vector2d<ElementType>(radius, radius), Vector2d<ElementType>(2 * radius, 2 * radius));
     }
 
     friend ostream & operator <<(ostream &out, const Rectangle &rect)
@@ -80,6 +95,7 @@ private:
 };
 
 typedef Rectangle<int32_t> Rectangle32;
+typedef Rectangle<double> Rectangled;
 
 } //namespace corecvs
 #endif /* RECTANGLE_H_ */

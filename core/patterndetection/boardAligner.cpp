@@ -7,6 +7,7 @@
 using corecvs::RGBColor;
 using corecvs::Matrix33;
 using corecvs::Vector3dd;
+using corecvs::Vector2dd;
 using corecvs::HomographyReconstructor;
 
 
@@ -40,8 +41,7 @@ CirclePatternGenerator* BoardAligner::FillGenerator(const BoardAlignerParams &pa
 }
 
 bool BoardAligner::align(DpImage &img)
-{
-    if (!bestBoard.size() || !bestBoard[0].size())
+{    if (!bestBoard.size() || !bestBoard[0].size())
         return false;
     observationList.clear();
     observationList.patternIdentity = -1;
@@ -110,16 +110,20 @@ void BoardAligner::fixOrientation()
         }
     }
 
-    double mr = 0.0, mc = 0.0;
+    double mr = 0.0;
+    double mc = 0.0;
+
     for (int i = 0; i < h; ++i)
     {
         sr[i] /= w;
-        mr += ssr[i] = std::sqrt(ssr[i] / w - sr[i] * sr[i]);
+        ssr[i] = std::sqrt(ssr[i] / w - sr[i] * sr[i]);
+        mr += ssr[i];
     }
     for (int j = 0; j < w; ++j)
     {
         sc[j] /= h;
-        mc += ssc[j] = std::sqrt(ssc[j] / h - sc[j] * sc[j]);
+        ssc[j] = std::sqrt(ssc[j] / h - sc[j] * sc[j]);
+        mc += ssc[j];
     }
     if (mr > mc)
         transpose();
@@ -127,7 +131,7 @@ void BoardAligner::fixOrientation()
     h = (int)bestBoard.size();
 
     for (auto& r: bestBoard)
-        std::sort(r.begin(), r.end(), [](const corecvs::Vector2dd &a, const corecvs::Vector2dd &b) { return a[0] < b[0]; });
+        std::sort(r.begin(), r.end(), [](const Vector2dd &a, const Vector2dd &b) { return a.x() < b.x(); });
 
     std::vector<std::pair<double, int>> ymeans(h);
     for (int i = 0; i < h; ++i)
@@ -377,7 +381,8 @@ void BoardAligner::drawDebugInfo(corecvs::RGB24Buffer &buffer)
             TriangleSpanIterator ts1(Triangle2dd(C[0], C[1], C[2]));
             TriangleSpanIterator ts2(Triangle2dd(C[3], C[1], C[2]));
 
-            while (ts1.step()) {
+            while (ts1.hasValue()) {
+                ts1.step();
                 LineSpanInt span = ts1.getSpan();
                 span.clip(mask.w, mask.h);
                 for (int k = span.x1; k < span.x2; k++)
@@ -386,7 +391,8 @@ void BoardAligner::drawDebugInfo(corecvs::RGB24Buffer &buffer)
                     buffer.element(span.y(), k) = RGBColor::lerpColor(buffer.element(span.y(), k), B, 0.3);
                 }
             }
-            while (ts2.step()) {
+            while (ts2.hasValue()) {
+                ts2.step();
                 LineSpanInt span = ts2.getSpan();
                 span.clip(mask.w, mask.h);
                 for (int k = span.x1; k < span.x2; k++)

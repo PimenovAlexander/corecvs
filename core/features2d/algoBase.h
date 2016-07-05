@@ -9,5 +9,5 @@ public:
 
 	virtual bool   isParallelable() { return true; }
 
-	virtual ~AlgoBase() {};
+    virtual ~AlgoBase() {}
 };

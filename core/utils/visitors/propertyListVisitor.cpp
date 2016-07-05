@@ -5,7 +5,7 @@
  * \date Nov 27, 2011
  * \author alexander
  */
-
+#include "global.h"
 #include "propertyListVisitor.h"
 
 namespace corecvs {
@@ -86,7 +86,7 @@ template <>
         {
             std::stringstream ss;
             ss << fieldDescriptor->getSimpleName() << "[" << i << "]";
-            output->setDoubleProperty(getChildPath(getChildPath(ss.str().c_str())), field[i]);
+            output->setDoubleProperty(getChildPath(ss.str().c_str()), field[i]);
         }
     }
 
@@ -171,6 +171,7 @@ void PropertyListReaderVisitor::visit<std::vector<double>, DoubleVectorField>(st
     {
         std::stringstream ss;
         ss << fieldDescriptor->getSimpleName() << "[" << i << "]";
+        SYNC_PRINT(("Loading <%s>\n", getChildPath(ss.str().c_str()).c_str() ));
         field[i] = input->getDoubleProperty(getChildPath(ss.str().c_str()), 0.0);
     }
 }

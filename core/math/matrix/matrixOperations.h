@@ -15,11 +15,13 @@
  * matrixes of different nature.
  *
  * This class uses static polymorphism to access the elements of the container.
- * Two (or three) methods should be implemented to use VectorOperations
+ * Two (or three) methods should be implemented to use MatrixOperationsBase
  *
- * ElementType &at(int i);
- * const ElementType &at(int i) const;
- * int size();
+ * ElementType &atm(int i, int j);
+ * const ElementType &atm(int i, int j) const;
+ * int height();
+ * int width();
+ * RealType createMatrix(int h, int w);
  *
  * Also this implementation expect that RealType has two defined subtype
  * InnerElementType
@@ -59,12 +61,12 @@ private:
     /**
      *  Interface related functions
      **/
-    inline ElementType &_at(int i, int j) {
-        return realThis()->at(i, j);
+    inline ElementType &_atm(int i, int j) {
+        return realThis()->atm(i, j);
     }
 
-    inline const ElementType &_at(int i, int j) const {
-        return realThis()->at(i, j);
+    inline const ElementType &_atm(int i, int j) const {
+        return realThis()->atm(i, j);
     }
 
     inline int _height() const {
@@ -80,6 +82,8 @@ private:
     }
 
 public:
+
+
 };
 
 

@@ -560,7 +560,7 @@ bool SparseMatrix::LinSolve(const SparseMatrix &m, const Vector &rhs, Vector &re
 
     dss_delete(dss_handle, delOptions);
     return true;
-#endif
+#endif // WITH_MKL
 }
 
 std::ostream& corecvs::operator<< (std::ostream &out, const SparseMatrix &sm)

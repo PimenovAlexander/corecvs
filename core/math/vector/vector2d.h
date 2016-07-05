@@ -24,6 +24,7 @@
 
 namespace corecvs {
 
+using std::sqrt;
 
 template<typename ElementType>
 class Vector2d : public FixedVectorBase<Vector2d<ElementType>, ElementType, 2>
@@ -78,8 +79,8 @@ public:
 
     inline double getLengthStable () const
     {
-        double ma = (x() > 0) ? x() : -x();
-        double mb = (y() > 0) ? y() : -y();
+        ElementType ma = (x() > 0) ? x() : -x();
+        ElementType mb = (y() > 0) ? y() : -y();
 
         if (ma == 0 && mb == 0) return 0;
         if (ma > mb)

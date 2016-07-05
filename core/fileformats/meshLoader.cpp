@@ -15,7 +15,8 @@ bool MeshLoader::endsWith(const string &fileName, const char *extention)
     return false;
 }
 
-MeshLoader::MeshLoader()
+MeshLoader::MeshLoader() :
+    trace(false)
 {
 
 }
@@ -37,6 +38,7 @@ bool MeshLoader::load(Mesh3D *mesh, const string &fileName)
     {
         SYNC_PRINT(("MeshLoader::load(): Loading PLY <%s>\n", fileName.c_str()));
         PLYLoader loader;
+        loader.trace = trace;
         if (loader.loadPLY(file, *mesh) != 0)
         {
            SYNC_PRINT(("MeshLoader::load(): Unable to load mesh\n"));

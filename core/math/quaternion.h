@@ -212,9 +212,10 @@ public:
     /**
      * This function is a reworked function form somewhere in Internet. License is unclear
      * */
-    inline Matrix33 toMatrix() const  {
-        double wx, wy, wz, xx, yy, yz, xy, xz, zz, x2, y2, z2;
-        double s  = 2.0f / this->operator !();
+    template <class MatrixType>
+    inline MatrixType toMatrixGeneric() const  {
+        typename MatrixType::ElementType wx, wy, wz, xx, yy, yz, xy, xz, zz, x2, y2, z2;
+        typename MatrixType::ElementType s  = 2.0 / this->operator !();
         x2 = x() * s;
         y2 = y() * s;
         z2 = z() * s;
@@ -222,11 +223,19 @@ public:
         yy = y() * y2;   yz = y() * z2;   zz = z() * z2;
         wx = t() * x2;   wy = t() * y2;   wz = t() * z2;
 
-        return Matrix33 (
-        1.0f - (yy + zz),     xy - wz     ,     xz + wy,
-             xy + wz    , 1.0f - (xx + zz),     yz - wx,
-             xz - wy    ,     yz + wx     ,  1.0f - (xx + yy)
+        MatrixType toReturn = MatrixType::createMatrix(3, 3);
+
+        toReturn.fillWithArgs(
+        1.0 - (yy + zz),     xy - wz     ,     xz + wy,
+             xy + wz   , 1.0 - (xx + zz),     yz - wx,
+             xz - wy   ,     yz + wx    ,  1.0 - (xx + yy)
         );
+
+        return toReturn;
+    }
+
+    inline Matrix33 toMatrix() const {
+        return toMatrixGeneric<Matrix33>();
     }
 
 

@@ -307,7 +307,8 @@ public:
     {
         if (&other != this)
         {
-            if (this->mInfMatrix) delete this->mInfMatrix;
+            delete_safe(this->mInfMatrix);
+
             this->mInfMatrix = new Matrix(other.mInfMatrix);
             this->mSum = other.mSum;
             this->mCount = other.mCount;
@@ -502,7 +503,6 @@ inline void EllipticalApproximationUnified<double>::addPoint (double point)
     mInfMatrix->a(0, 0) += point * point;
     mSum += point;
     mCount++;
-
 }
 
 
@@ -557,6 +557,46 @@ public:
         out << "Max:" << stats.getMax()  << endl;
         out << "Avg:" << stats.getMean() << endl;
         return out;
+    }
+
+};
+
+class SDevApproximation1d {
+public:
+    double mSqSum;
+    double mSum;
+    int    mCount;
+
+    SDevApproximation1d() :
+        mSqSum(0.0),
+        mSum(0.0),
+        mCount(0)
+    {
+
+    }
+
+    void addPoint (double point)
+    {
+       mSqSum += point * point;
+       mSum += point;
+       mCount ++;
+    }
+
+    double getAverage() const
+    {
+        if (mCount == 0)
+            return 0.0;
+
+        return mSum / mCount;
+    }
+
+    double getSDev() const
+    {
+        if (mCount == 0)
+            return 0.0;
+
+        double avg = getAverage();
+        return (mSqSum / mCount) - avg * avg;
     }
 
 };

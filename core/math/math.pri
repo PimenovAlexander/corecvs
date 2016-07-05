@@ -1,10 +1,12 @@
-HEADERS += \ 
+HEADERS += \
     math/eulerAngles.h \
     math/matrix/matrix.h \
     math/matrix/matrix22.h \
     math/matrix/matrix33.h \
     math/matrix/matrix44.h \
     math/matrix/diagonalMatrix.h \
+    math/matrix/blasReplacement.h \
+    math/sparseMatrix.h \
     math/matrix/homographyReconstructor.h \
     math/matrix/matrixOperations.h \
     math/vector/vectorOperations.h \
@@ -29,6 +31,8 @@ HEADERS += \
     math/sse/int32x4.h \
     math/sse/int32x8.h \
     math/sse/float32x4.h \
+    math/sse/float32x8.h \
+    math/sse/floatT8.h \
     math/sse/sseMath.h \
     \
     math/sse/intBase16x8.h \

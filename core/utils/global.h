@@ -432,4 +432,8 @@ inline void deletearr_safe (Type * &ptr)
 
 #endif // is__cplusplus
 
+#if defined(_WIN32)
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+#endif
 /* EOF */

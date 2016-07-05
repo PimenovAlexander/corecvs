@@ -12,6 +12,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <map>
 
 namespace corecvs {
 
@@ -38,8 +39,16 @@ public:
 struct ASTRenderDec {
     const char *ident;
     const char *lbr;
+
+    bool genParameters;
 };
 
+/**
+ *  Internal data structure for ASTTree - it records all operations with ASTNode.
+ *
+ *  We expect this structure to be immutable. So it is safe to make DAG like structures.
+ *
+ **/
 class ASTNodeInt
 {
 public:
@@ -65,8 +74,40 @@ public:
         OPERATOR_SUB,
         OPERATOR_MUL,
         OPERATOR_DIV,
+        OPERATOR_BINARY_LAST = OPERATOR_DIV,
+
+        /**/
+        OPERATOR_POW,
+        /**/
+        OPERATOR_SIN,
+        OPERATOR_COS,
+
         OPERATOR_LAST
     };
+
+    static inline const char *getName(const Operator &value)
+    {
+        switch (value)
+        {
+             case OPREATOR_ID  : return "ID"; break ;
+             case OPREATOR_NUM : return "value"; break ;
+
+             case OPERATOR_ADD : return "add"; break ;
+             case OPERATOR_SUB : return "sub"; break ;
+             case OPERATOR_MUL : return "mul"; break ;
+             case OPERATOR_DIV : return "div"; break ;
+
+            /**/
+             case OPERATOR_POW : return "pow"; break ;
+            /**/
+             case OPERATOR_SIN : return "sin"; break ;
+             case OPERATOR_COS : return "cos"; break ;
+
+             case OPERATOR_LAST : return "R"; break ;
+        }
+        return "Not in range";
+    }
+
 
 
     ASTNodeInt(/* Context *_owner,*/ Operator _op, ASTNodeInt *_left = NULL, ASTNodeInt *_right = NULL) :
@@ -77,7 +118,7 @@ public:
         _init();
     }
 
-    ASTNodeInt(double _value) :
+    explicit ASTNodeInt(double _value) :
         op   (OPREATOR_NUM),
         val  (_value),
         left (NULL),
@@ -86,7 +127,7 @@ public:
         _init();
     }
 
-    ASTNodeInt(const char *_name) :
+    explicit ASTNodeInt(const char *_name) :
         op   (OPREATOR_ID),
         val  (0),
         name (_name),
@@ -122,8 +163,15 @@ public:
     friend ASTNode operator /(const ASTNode &left, const ASTNode &right);*/
 
 
-    void codeGenCpp (const std::string &name, ASTRenderDec identSym = {" ", "\n"});
-    void codeGenCpp (int ident , ASTRenderDec identSym = {" ", "\n"});
+    void codeGenCpp (const std::string &name, ASTRenderDec identSym = {" ", "\n", true});
+    void codeGenCpp (int ident , ASTRenderDec identSym = {" ", "\n", true});
+
+    void print();
+    void getVars(std::vector<std::string> &result);
+
+    ASTNodeInt* derivative(const std::string &var);
+    ASTNodeInt* compute(const std::map<std::string, double>& bind = std::map<std::string, double>());
+
 
 };
 
@@ -136,29 +184,27 @@ public:
         p(new ASTNodeInt("UDEF"))
     {}
 
-    ASTNode(int _value) :
+    explicit ASTNode(int _value) :
         p(new ASTNodeInt((double)_value))
     {
-        SYNC_PRINT(("ASTNode(%i): with id %p\n", _value, p));
+//        SYNC_PRINT(("ASTNode(%i): with id %p\n", _value, p));
     }
 
-    ASTNode(double _value) :
+    explicit ASTNode(double _value) :
         p(new ASTNodeInt(_value))
     {
-        SYNC_PRINT(("ASTNode(%lf): with id %p\n", _value, p));
+//        SYNC_PRINT(("ASTNode(%lf): with id %p\n", _value, p));
     }
 
-    ASTNode(const char *_value) :
+    explicit ASTNode(const char *_value) :
         p(new ASTNodeInt(_value))
     {
-        SYNC_PRINT(("ASTNode(\"%s\"): with id %p\n", _value, p));
+//        SYNC_PRINT(("ASTNode(\"%s\"): with id %p\n", _value, p));
     }
 
     ASTNode(ASTNodeInt::Operator _op, const ASTNode &_left, const ASTNode &_right) :
         p(new ASTNodeInt(_op, _left.p, _right.p))
     {
-       /* if (owner != NULL)
-            _owner->nodes.push_back(this);*/
     }
 
 
@@ -170,8 +216,6 @@ public:
 
 inline ASTNode operator *(const ASTNode &left, const ASTNode &right)
 {
-
-    SYNC_PRINT(("Creating wrapper for (%p * %p)\n", left.p, right.p));
     return ASTNode(ASTNodeInt::OPERATOR_MUL, left, right);
 }
 
@@ -186,33 +230,66 @@ inline ASTNode operator +=(ASTNode &left, const  ASTNode &right)
     return left;
 }
 
-
 inline ASTNode operator -(const ASTNode &left, const ASTNode &right)
 {
     return ASTNode(ASTNodeInt::OPERATOR_SUB, left, right);
 }
-
 
 inline ASTNode operator /(const ASTNode &left, const ASTNode &right)
 {
     return ASTNode(ASTNodeInt::OPERATOR_DIV, left, right);
 }
 
-
-/*ASTNode operator +(const ASTNode &left, const ASTNode &right)
+inline ASTNode sqrt(const ASTNode &left)
 {
-    return ASTNode(ASTNode::OPERATOR_ADD, &left, &right);
+    return ASTNode(ASTNodeInt::OPERATOR_POW, left, ASTNode(0.5));
 }
 
-ASTNode operator -(const ASTNode &left, const ASTNode &right)
+/* King Midas style operators */
+
+inline ASTNode operator *(const ASTNode &left, const double &right)
 {
-    return ASTNode(ASTNode::OPERATOR_SUB, &left, &right);
+    return ASTNode(ASTNodeInt::OPERATOR_MUL, left, ASTNode(right));
 }
 
-ASTNode operator /(const ASTNode &left, const ASTNode &right)
+inline ASTNode operator *(const double &left, const ASTNode &right)
 {
-    return ASTNode(ASTNode::OPERATOR_DIV, &left, &right);
-}*/
+    return ASTNode(ASTNodeInt::OPERATOR_MUL, ASTNode(left), right);
+}
+
+inline ASTNode operator +(const ASTNode &left, const double &right)
+{
+    return ASTNode(ASTNodeInt::OPERATOR_ADD, left, ASTNode(right));
+}
+
+inline ASTNode operator +(const double &left, const ASTNode &right)
+{
+    return ASTNode(ASTNodeInt::OPERATOR_ADD, ASTNode(left), right);
+}
+
+
+inline ASTNode operator -(const ASTNode &left, const double &right)
+{
+    return ASTNode(ASTNodeInt::OPERATOR_SUB, left, ASTNode(right));
+}
+
+inline ASTNode operator -(const double &left, const ASTNode &right)
+{
+    return ASTNode(ASTNodeInt::OPERATOR_SUB, ASTNode(left), right);
+}
+
+
+inline ASTNode operator /(const double &left, const ASTNode &right)
+{
+    return ASTNode(ASTNodeInt::OPERATOR_DIV,  ASTNode(left), right);
+}
+
+
+inline ASTNode operator /(const ASTNode &left, const double &right)
+{
+    return ASTNode(ASTNodeInt::OPERATOR_DIV, left,  ASTNode(right));
+}
+
 
 } //namespace corecvs
 

@@ -137,29 +137,42 @@ public:
     }
 
     friend istream & operator >>(istream &in, Matrix44 &matrix)
-       {
-           for (int i = 0; i < matrix.H; i++)
-           {
-               for (int j = 0; j < matrix.W; j++)
-               {
-                   while (true)
-                   {
-                       in >> matrix.a(i,j);
-                       // cout << "Read:" << i << "," << j << " " << matrix.a(i,j) << endl;
-                       if (in.good())
-                           break;
-                       if (in.eof())
-                           return in;
-                       /* Not a number clean the error and advance*/
-                       in.clear();
-                       // cout << "Skipped:" << ((char)in.peek()) << endl;
-                       in.ignore();
-                   }
+    {
+        for (int i = 0; i < matrix.H; i++)
+        {
+            for (int j = 0; j < matrix.W; j++)
+            {
+                while (true)
+                {
+                    in >> matrix.a(i,j);
+                    // cout << "Read:" << i << "," << j << " " << matrix.a(i,j) << endl;
+                    if (in.good())
+                        break;
+                    if (in.eof())
+                       return in;
+                    /* Not a number clean the error and advance*/
+                    in.clear();
+                    // cout << "Skipped:" << ((char)in.peek()) << endl;
+                    in.ignore();
+                }
 
-               }
-           }
-           return in;
+            }
        }
+       return in;
+   }
+
+    /* Matrix Operations interface */
+    double &atm(int i, int j) {
+        return a(i, j);
+    }
+    const double &atm(int i, int j) const {
+        return a(i, j);
+    }
+    int height() {return H; }
+    int width()  {return W; }
+    static Matrix44 createMatrix(int /*h*/, int /*w*/) {return Matrix44(); }
+
+
 
 };
 

@@ -394,7 +394,29 @@ public:
     inline ElementType l2Metric() const
     {
         /* TODO ASAP: Correct this to select appropriate sqrt */
-        return (ElementType)sqrt((double)this->sumAllElementsSq());
+        return (ElementType)sqrt(this->sumAllElementsSq());
+    }
+
+    inline ElementType l2MetricStable() const
+    {
+        ElementType result(0);
+        ElementType w(0);
+
+        for (int i = 0; i < _size(); i++) {
+            ElementType el = std::abs(_at(i));
+            if (el > w)
+                w = el;
+        }
+
+        if (w == 0) return 0;
+
+        for (int i = 0; i < _size(); i++) {
+            ElementType tmp = _at(i) / w;
+            result += tmp * tmp;
+        }
+
+        /* TODO ASAP: Correct this to select appropriate sqrt */
+        return w * sqrt(result);
     }
 
     /**
@@ -438,6 +460,13 @@ public:
             this->operator /=(length);
     }
 
+    inline void normaliseStable()
+    {
+        ElementType length = this->l2MetricStable();
+        if (length != 0)
+            this->operator /=(length);
+    }
+
     /**
      * Return a normalized copy of vector
      *
@@ -447,6 +476,16 @@ public:
     inline ReturnType normalised() const
     {
         ElementType length = this->l2Metric();
+        if (length != ElementType(0))
+            return (*returnThis() / length);
+        else {
+            return this->cloneVector();
+        }
+    }
+
+    inline ReturnType normalisedStable() const
+    {
+        ElementType length = this->l2MetricStable();
         if (length != ElementType(0))
             return (*returnThis() / length);
         else {
@@ -523,7 +562,7 @@ public:
     {
         RealType result = _createVector(_size());
         for (int i = 0; i < _size(); i++)
-            result.at(i) = (ElementType)sqrt((double)_at(i));
+            result.at(i) = (ElementType)sqrt(_at(i));
         return result;
     }
 

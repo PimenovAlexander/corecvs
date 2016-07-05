@@ -22,7 +22,7 @@ namespace BufferType {
 		U8,
 		F32
 	};
-};
+}
 
 
 // TODO: add row-aligned allocation & getters

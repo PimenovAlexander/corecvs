@@ -43,10 +43,12 @@ void SimpleRenderer::render(Mesh3D *mesh, RGB24Buffer *buffer)
             }
 
             AttributedTriangleSpanIterator it(triang);
-            while (it.step())
+            while (it.hasValue())
             {
+                it.step();
                 AttributedLineSpan span = it.getAttrSpan();
-                do {
+                while (span.hasValue())
+                {
                     if (buffer->isValidCoord(span.pos()) )
                     {
                         double z = 1.0 / span.att()[0];
@@ -56,7 +58,8 @@ void SimpleRenderer::render(Mesh3D *mesh, RGB24Buffer *buffer)
                             buffer->element(span.pos()) = color;
                         }
                     }
-                } while (span.step());
+                    span.step();
+                }
             }
         }
     }

@@ -27,13 +27,12 @@
 #include "correspondenceList.h"
 #include "imageChannel.h"
 
+#include "rgb24Buffer.h"
 #include "conic.h"
 
 #include "readers.h"
 
 namespace corecvs {
-
-#define FLAGS_INCLUDE_MARGIN 0x1
 
 template<typename T>
 class RGBTBuffer : public AbstractContiniousBuffer<RGBTColor<T>, int32_t>
@@ -292,7 +291,7 @@ public:
         this->drawSprite(x, y, color, d, 8);
     }
 
-    void drawHistogram1024x512(Histogram *hist, int x, int y, uint16_t flags = FLAGS_INCLUDE_MARGIN)
+    void drawHistogram1024x512(Histogram *hist, int x, int y, uint16_t flags = RGB24Buffer::FLAGS_INCLUDE_MARGIN)
     {
         int i, j, k;
 
@@ -300,8 +299,8 @@ public:
         *  TODO: Add asserts
         **/
 
-        int intervalStart = (flags & FLAGS_INCLUDE_MARGIN) ? 0 : 1;
-        int intervalEnd = (flags & FLAGS_INCLUDE_MARGIN) ? G12Buffer::BUFFER_MAX_VALUE : G12Buffer::BUFFER_MAX_VALUE - 1;
+        int intervalStart = (flags & RGB24Buffer::FLAGS_INCLUDE_MARGIN) ? 0 : 1;
+        int intervalEnd = (flags & RGB24Buffer::FLAGS_INCLUDE_MARGIN) ? G12Buffer::BUFFER_MAX_VALUE : G12Buffer::BUFFER_MAX_VALUE - 1;
 
 
 

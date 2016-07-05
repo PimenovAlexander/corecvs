@@ -14,15 +14,15 @@ namespace corecvs {
  *
  * Check if point is inside the polygon
  **/
-int Polygon::isInside(const Vector2dd &a)
+int Polygon::isInside(const Vector2dd &a) const
 {
     double oldsign = 0;
     int len = (int)size();
     for (int i = 0; i < len; i++)
     {
-        Vector2dd &curr = operator [](i);
-        Vector2dd &next = operator []((i + 1) % len);
-        Vector2dd normal = (next - curr).rightNormal();
+        const Vector2dd &curr = operator [](i);
+        const Vector2dd &next = operator []((i + 1) % len);
+        const Vector2dd normal = (next - curr).rightNormal();
         Vector2dd diff = a - curr;
         double sign = diff & normal;
         if (oldsign > 0  && sign < 0)
@@ -34,15 +34,15 @@ int Polygon::isInside(const Vector2dd &a)
     return true;
 }
 
-bool Polygon::isConvex(bool *direction)
+bool Polygon::isConvex(bool *direction) const
 {
     double oldsign = 0;
     int len = (int)size();
     for (int i = 0; i < len; i++)
     {
-        Vector2dd &curr = operator [](i);
-        Vector2dd &next = operator []((i + 1) % len);
-        Vector2dd &nnext = operator []((i + 2) % len);
+        const Vector2dd &curr = operator [](i);
+        const Vector2dd &next = operator []((i + 1) % len);
+        const Vector2dd &nnext = operator []((i + 2) % len);
 
         double sign = (next - curr).rightNormal() & (nnext - next);
 

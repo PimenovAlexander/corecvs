@@ -147,7 +147,7 @@ public:
 
     void fillTestScene();
 
-    void dumpInfo(ostream &out);
+    void dumpInfo(ostream &out = std::cout);
 };
 
 

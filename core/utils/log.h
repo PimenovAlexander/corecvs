@@ -3,6 +3,8 @@
  * \file log.h
  * \brief This class will be used for logging
  **/
+#include "global.h"
+
 #include <stdio.h>
 #include <iostream>
 #include <stdarg.h>
@@ -23,8 +25,6 @@
 #include <sstream>
 #include <string>
 #include <mutex>        // std::mutex
-
-#include "global.h"
 
 #include "memoryBlock.h"
 
