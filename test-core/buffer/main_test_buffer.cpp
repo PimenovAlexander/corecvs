@@ -9,7 +9,7 @@
  */
 
 #ifndef TRACE
-#define TRACE
+//#define TRACE
 #endif
 
 #include <iostream>
@@ -41,10 +41,7 @@
 #include "abstractPainter.h"
 #include "g8Buffer.h"
 #include "booleanBuffer.h"
-
-#if NONFREE
 #include "polynomial.h"
-#endif
 
 using namespace std;
 using namespace corecvs;
@@ -153,10 +150,7 @@ TEST(Buffer, testG12Buffer)
 #endif
 
     ASSERT_FALSE(std::is_trivially_destructible<TestAbstractBufferClass>::value);
-
-#if NONFREE
     ASSERT_FALSE(std::is_trivially_destructible<Polynomial>::value);
-#endif
     /*
      * TODO: Check if we would (or would not) like this test to fail
      */

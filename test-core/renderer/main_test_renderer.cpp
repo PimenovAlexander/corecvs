@@ -1,11 +1,11 @@
 /**
  * \file main_test_renderer.cpp
- * \brief This is the main file for the test renderer 
+ * \brief This is the main file for the test renderer
  *
  * \date апр. 11, 2016
  * \author alexander
  *
- * \ingroup autotest  
+ * \ingroup autotest
  */
 
 #include <bmpLoader.h>

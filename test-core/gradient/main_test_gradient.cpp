@@ -58,6 +58,7 @@ public:
        }
     }
 };
+
 class GradientRnToRm2Test : FunctionArgs {
 public:
     GradientRnToRm2Test() : FunctionArgs(3,3) {};

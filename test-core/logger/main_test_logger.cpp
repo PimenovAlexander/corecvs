@@ -9,7 +9,7 @@
  */
 
 #ifndef TRACE
-#define TRACE
+//#define TRACE
 #endif
 
 #include <iostream>
