@@ -75,6 +75,20 @@ FrameProcessor::FrameProcessor(QObject *parent) :
 
 void FrameProcessor::processFrame(frame_data_t frameData)
 {
+    static int count=0;
+    count++;
+
+    static bool skipping = false;
+    if (skipping)
+    {
+        return;
+    }
+    skipping = true;
+    QApplication::processEvents();
+    skipping = false;
+
+
+
 //    SYNC_PRINT(("New frame arrived\n"));
     V4L2CaptureInterface::FramePair pair = input->getFrameRGB24();
     RGB24Buffer * result = pair.rgbBufferLeft;

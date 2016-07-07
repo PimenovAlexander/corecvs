@@ -17,6 +17,7 @@ SUBDIRS +=                   \
 #    \
     generator                \
     egomotion                \
+    applications/laserscan
 
 
     
