@@ -17,7 +17,7 @@ SUBDIRS +=                   \
 #    \
     generator                \
     egomotion                \
-    cap
+
 
     
 
