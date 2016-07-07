@@ -16,8 +16,6 @@ int main (int argc, char **argv)
 	input->initCapture();
 	input->startCapture();
 
-	sleep(2);
-
 	RGB24Buffer *result = NULL;
 
 	for(int i = 0; i < 40; i++) {

@@ -5,6 +5,9 @@ SUBDIRS +=                   \
     core                     \
     unitTests                \
     utils                    \
+    \
+    tests \
+    \
     base_application         \
     base_application_example \
     recorder                 \
@@ -14,6 +17,7 @@ SUBDIRS +=                   \
 #    \
     generator                \
     egomotion                \
+    cap
 
     
 
@@ -34,6 +38,8 @@ unitTests.depends        += core
 utils.depends            += core
 #utils.depends            += preprocSrc       # preprocSrc tool is needed to convert OpenCL sources into one binary archive
 baseApplication.depends  += core utils        # utils:    as libs building could be done in parallel except apps!
+tests.depends            += core utils        # utils:    as libs building could be done in parallel except apps!
+
 directshow.depends       += core
 
 hostSoftStub.depends     += baseApplication utils
@@ -48,6 +54,8 @@ testbed.depends          += utils
 core.file                     = core/core.pro
 unitTests.file                = test-core/test-core.pro
 utils.file                    = utils/utils.pro
+tests.file                    = test/tests.pro
+
 directshow.file               = wrappers/directShow/directShow.pro
 base_application.file         = applications/base/baseApplication.pro
 base_application_example.file = applications/base/baseApplicationExample.pro
