@@ -53,7 +53,7 @@ void ParametersMapperScanner::paramsChanged()
                "is still NULL but the mapper is already in use. This will cause crash.\n"
                "You should modify your <HostWidget>::createCalculator() function" << std::endl;
     }
-    emit scannerParamsChanged(QSharedPointer<ScannerParameters>(mScannerParametersControlWidget->createParameters()));
+    emit scannerParametersParamsChanged(QSharedPointer<ScannerParameters>(mScannerParametersControlWidget->createParameters()));
 
 
     if (mPresentationParametersControlWidget == NULL)

@@ -23,6 +23,8 @@ echo "Making a copy of recorder classes"
 copy_if_different Generated/scannerParametersControlWidget.cpp     $scanner/
 copy_if_different Generated/scannerParameters.cpp                  $scanner/generatedParameters
 copy_if_different Generated/scannerParameters.h                    $scanner/generatedParameters
+copy_if_different Generated/redRemovalType.h                       $scanner/generatedParameters
+#copy_if_different Generated/redRemovalType.cpp                     $scanner/generatedParameters
 
 copy_if_different Generated/parametersMapperScanner.cpp  $scanner/parametersMapper
 copy_if_different Generated/parametersMapperScanner.h    $scanner/parametersMapper

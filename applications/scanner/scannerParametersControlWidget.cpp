@@ -20,6 +20,7 @@ ScannerParametersControlWidget::ScannerParametersControlWidget(QWidget *parent, 
 {
     mUi->setupUi(this);
 
+    QObject::connect(mUi->algoComboBox, SIGNAL(currentIndexChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->redThresholdSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->heightSpinBox, SIGNAL(valueChanged(double)), this, SIGNAL(paramsChanged()));
 }
@@ -49,6 +50,7 @@ void ScannerParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 void ScannerParametersControlWidget::getParameters(ScannerParameters& params) const
 {
 
+    params.setAlgo             (static_cast<RedRemovalType::RedRemovalType>(mUi->algoComboBox->currentIndex()));
     params.setRedThreshold     (mUi->redThresholdSpinBox->value());
     params.setHeight           (mUi->heightSpinBox->value());
 
@@ -63,7 +65,8 @@ ScannerParameters *ScannerParametersControlWidget::createParameters() const
 
 
     ScannerParameters *result = new ScannerParameters(
-          mUi->redThresholdSpinBox->value()
+          static_cast<RedRemovalType::RedRemovalType>(mUi->algoComboBox->currentIndex())
+        , mUi->redThresholdSpinBox->value()
         , mUi->heightSpinBox->value()
     );
     return result;
@@ -73,6 +76,7 @@ void ScannerParametersControlWidget::setParameters(const ScannerParameters &inpu
 {
     // Block signals to send them all at once
     bool wasBlocked = blockSignals(true);
+    mUi->algoComboBox->setCurrentIndex(input.algo());
     mUi->redThresholdSpinBox->setValue(input.redThreshold());
     mUi->heightSpinBox->setValue(input.height());
     blockSignals(wasBlocked);

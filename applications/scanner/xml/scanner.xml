@@ -1,14 +1,20 @@
 <poco version="5.0">
   <include name="../../../tools/generator/xml/base.xml"/>
-    
+
+  <enum name="Red Removal Type">
+    <item name="Brightness" id="0" />
+    <item name="Hue"        id="1" />
+  </enum>
+
   <class name="Scanner Parameters" description="Scanner parameters">
+    <field type="Red Removal Type" name="algo"   defaultValue="0"/>
     <field type="int" name="red threshold"   defaultValue="200" min="0" max="255"/>
     <field type="double" name="height"  defaultValue="10"/>
   </class> 
   
   <parametersMapper name="Scanner">
     <field type="Base Parameters" name="Base Parameters"/>
-    <field type="Scanner"        name="Scanner"/>
+    <field type="Scanner Parameters"        name="Scanner Parameters"/>
     <field type="Presentation Parameters"   name="Presentation Parameters"/>
   </parametersMapper>
 </poco>

@@ -30,6 +30,7 @@ namespace corecvs {
 /*
  *  Additional includes for enum section.
  */
+#include "redRemovalType.h"
 
 /**
  * \brief Scanner parameters 
@@ -39,12 +40,19 @@ class ScannerParameters : public BaseReflection<ScannerParameters>
 {
 public:
     enum FieldId {
+        ALGO_ID,
         RED_THRESHOLD_ID,
         HEIGHT_ID,
         SCANNER_PARAMETERS_FIELD_ID_NUM
     };
 
     /** Section with variables */
+
+    /** 
+     * \brief algo 
+     * algo 
+     */
+    int mAlgo;
 
     /** 
      * \brief red threshold 
@@ -66,6 +74,11 @@ public:
     {
         return (const unsigned char *)(this) + fields()[fieldId]->offset;
     }
+    RedRemovalType::RedRemovalType algo() const
+    {
+        return static_cast<RedRemovalType::RedRemovalType>(mAlgo);
+    }
+
     int redThreshold() const
     {
         return mRedThreshold;
@@ -77,6 +90,11 @@ public:
     }
 
     /* Section with setters */
+    void setAlgo(RedRemovalType::RedRemovalType algo)
+    {
+        mAlgo = algo;
+    }
+
     void setRedThreshold(int redThreshold)
     {
         mRedThreshold = redThreshold;
@@ -92,6 +110,7 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
+        visitor.visit((int &)mAlgo,               static_cast<const EnumField *>    (fields()[ALGO_ID]));
         visitor.visit(mRedThreshold,              static_cast<const IntField *>     (fields()[RED_THRESHOLD_ID]));
         visitor.visit(mHeight,                    static_cast<const DoubleField *>  (fields()[HEIGHT_ID]));
     }
@@ -103,10 +122,12 @@ template<class VisitorType>
     }
 
     ScannerParameters(
-          int redThreshold
+          RedRemovalType::RedRemovalType algo
+        , int redThreshold
         , double height
     )
     {
+        mAlgo = algo;
         mRedThreshold = redThreshold;
         mHeight = height;
     }

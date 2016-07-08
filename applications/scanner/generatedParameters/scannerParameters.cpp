@@ -38,6 +38,21 @@ int ScannerParameters::staticInit()
      
 
     fields().push_back(
+        new EnumField
+        (
+          ScannerParameters::ALGO_ID,
+          offsetof(ScannerParameters, mAlgo),
+          0,
+          "algo",
+          "algo",
+          "algo",
+          new EnumReflection(2
+          , new EnumOption(0,"Brightness")
+          , new EnumOption(1,"Hue")
+          )
+        )
+    );
+    fields().push_back(
         new IntField
         (
           ScannerParameters::RED_THRESHOLD_ID,

@@ -29,6 +29,7 @@ HEADERS += \
     scannerThread.h \
     scannerParametersControlWidget.h \                           # control widgets
     generatedParameters/scannerParameters.h \                    # parameters for calculation threads, host dialogs etc.
+    generatedParameters/redRemovalType.h \
     parametersMapper/parametersMapperScanner.h \       # parameters for params mapper
 
 SOURCES += \

@@ -97,27 +97,47 @@ AbstractOutputData* ScannerThread::processNewData()
 
     recalculateCache();
 
-    RGB24Buffer *bufrgb = mFrames.getCurrentRgbFrame(Frames::RIGHT_FRAME);
-
-    stats.startInterval();
-    RGB24Buffer red(bufrgb);
-
-    for (int i = 0; i < red.h; i++)
-        for (int j = 0; j < red.w; j++)
-        {
-            RGBColor &pixel = red.element(i,j);
-            if (pixel.r() <= mScannerParameters->redThreshold())
-                pixel = RGBColor::Black();
-        }
-    stats.endInterval("Removing red");
+    RGB24Buffer *bufrgb = mFrames.getCurrentRgbFrame(Frames::LEFT_FRAME);
 
     ScannerOutputData* outputData = new ScannerOutputData();
 
-    outputData->mMainImage.addLayer(
-            new ImageResultLayer(                   
-                    &red
-            )
-    );
+    if (bufrgb != NULL || mScannerParameters.isNull())
+    {
+        stats.startInterval();
+        RGB24Buffer red(bufrgb);
+
+        if (mScannerParameters->algo() == RedRemovalType::BRIGHTNESS)
+        {
+
+            for (int i = 0; i < red.h; i++)
+            {
+                for (int j = 0; j < red.w; j++)
+                {
+                    RGBColor &pixel = red.element(i,j);
+                    if (pixel.r() <= mScannerParameters->redThreshold())
+                        pixel = RGBColor::Black();
+                }
+            }
+        } else {
+            /*for (int i = 0; i < red.h; i++)
+            {
+                for (int j = 0; j < red.w; j++)
+                {
+                    RGBColor &pixel = red.element(i,j);
+                    if (pixel.hue() <= mScannerParameters->redThreshold())
+                        pixel = RGBColor::Black();
+                }
+            }*/
+
+        }
+        stats.endInterval("Removing red");
+
+         outputData->mMainImage.addLayer(
+                new ImageResultLayer(
+                        &red
+                )
+        );
+    }
 
     outputData->mMainImage.setHeight(mBaseParams->h());
     outputData->mMainImage.setWidth (mBaseParams->w());
