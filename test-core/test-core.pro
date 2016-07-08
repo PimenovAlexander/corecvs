@@ -90,3 +90,4 @@ SOURCES += \
     deform/test_deform.cpp \
     camerafixture/main_test_camerafixture.cpp \
 	renderer/main_test_renderer.cpp \
+    meshdraw/circle_test_meshdraw.cpp
