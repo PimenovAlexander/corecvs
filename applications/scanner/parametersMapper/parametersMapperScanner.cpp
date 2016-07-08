@@ -10,11 +10,11 @@
 
 ParametersMapperScanner::ParametersMapperScanner() :
     mBaseParametersControlWidget(NULL)
-  , mScannerControlWidget(NULL)
+  , mScannerParametersControlWidget(NULL)
   , mPresentationParametersControlWidget(NULL)
 {
     qRegisterMetaType<QSharedPointer<BaseParameters> >("QSharedPointer<BaseParameters>");
-    qRegisterMetaType<QSharedPointer<Scanner> >("QSharedPointer<Scanner>");
+    qRegisterMetaType<QSharedPointer<ScannerParameters> >("QSharedPointer<ScannerParameters>");
     qRegisterMetaType<QSharedPointer<PresentationParameters> >("QSharedPointer<PresentationParameters>");
 }
 
@@ -24,10 +24,10 @@ void ParametersMapperScanner::setBaseParametersControlWidget(BaseParametersContr
     QObject::connect(mBaseParametersControlWidget, SIGNAL(paramsChanged()), this, SLOT(paramsChanged()));
 }
 
-void ParametersMapperScanner::setScannerControlWidget(ScannerControlWidget *widget)
+void ParametersMapperScanner::setScannerParametersControlWidget(ScannerParametersControlWidget *widget)
 {
-    mScannerControlWidget = widget;
-    QObject::connect(mScannerControlWidget, SIGNAL(paramsChanged()), this, SLOT(paramsChanged()));
+    mScannerParametersControlWidget = widget;
+    QObject::connect(mScannerParametersControlWidget, SIGNAL(paramsChanged()), this, SLOT(paramsChanged()));
 }
 
 void ParametersMapperScanner::setPresentationParametersControlWidget(PresentationParametersControlWidget *widget)
@@ -47,13 +47,13 @@ void ParametersMapperScanner::paramsChanged()
     emit baseParametersParamsChanged(QSharedPointer<BaseParameters>(mBaseParametersControlWidget->createParameters()));
 
 
-    if (mScannerControlWidget == NULL)
+    if (mScannerParametersControlWidget == NULL)
     {
           std::cout << "One of the fields for ParametersMapperScanner \n"
                "is still NULL but the mapper is already in use. This will cause crash.\n"
                "You should modify your <HostWidget>::createCalculator() function" << std::endl;
     }
-    emit scannerParamsChanged(QSharedPointer<Scanner>(mScannerControlWidget->createParameters()));
+    emit scannerParamsChanged(QSharedPointer<ScannerParameters>(mScannerParametersControlWidget->createParameters()));
 
 
     if (mPresentationParametersControlWidget == NULL)

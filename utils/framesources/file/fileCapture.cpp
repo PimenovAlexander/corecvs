@@ -31,26 +31,40 @@ FileCaptureInterface::FramePair FileCaptureInterface::getFrame()
     string name0 = getImageFileName(mCount, 0);
     string name1 = getImageFileName(mCount, 1);
 
+    mVerbose = true;
     if (mVerbose) {
-        printf("Grabbing frame from file: %s\n", name0.c_str());
+        printf("Grabbing frame from file: %s (%s)\n"
+               , name0.c_str()
+               , mIsRgb ? "rgb" : "gray");
     }
 
-    result.bufferLeft = BufferFactory::getInstance()->loadG12Bitmap(name0);
+    if (mIsRgb) {
+        result.rgbBufferLeft = BufferFactory::getInstance()->loadRGB24Bitmap(name0);
+        result.bufferLeft    = result.rgbBufferLeft->toG12Buffer();
 
-    if (result.bufferLeft)
+        result.rgbBufferRight = BufferFactory::getInstance()->loadRGB24Bitmap(name1);
+        result.bufferRight    = result.rgbBufferRight->toG12Buffer();
+
+    } else {
+        result.bufferLeft = BufferFactory::getInstance()->loadG12Bitmap(name0);
+        result.bufferRight = BufferFactory::getInstance()->loadG12Bitmap(name1);
+    }
+
+
+  /*  if (result.bufferLeft)
     {
         if (mVerbose) {
             printf("Grabbing frame from file: %s\n", name1.c_str());
         }
 
         result.bufferRight = BufferFactory::getInstance()->loadG12Bitmap(name1);
-    }
+    }*/
 
-    if (!result.bufferLeft || !result.bufferRight)
+    if (result.bufferLeft == NULL && result.bufferRight == NULL)
     {
         result.freeBuffers();
         if (mVerbose) {
-            printf("File not found, resetting to first image in the sequence.\n");
+            printf("Files not found, resetting to first image in the sequence.\n");
         }
         resetImageFileCounter();
         return getFrame();

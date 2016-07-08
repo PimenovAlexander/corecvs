@@ -27,19 +27,23 @@ INCLUDEPATH += .
 HEADERS += \
     scannerDialog.h \
     scannerThread.h \
-    scannerControlWidget.h \                           # control widgets
-    generatedParameters/scanner.h \                    # parameters for calculation threads, host dialogs etc.
+    scannerParametersControlWidget.h \                           # control widgets
+    generatedParameters/scannerParameters.h \                    # parameters for calculation threads, host dialogs etc.
     parametersMapper/parametersMapperScanner.h \       # parameters for params mapper
 
 SOURCES += \
     main_scanner.cpp \
     scannerDialog.cpp \
     scannerThread.cpp \
-    scannerControlWidget.cpp \                         # control widgets
-    generatedParameters/scanner.cpp \                  # parameters for calculation threads, host dialogs etc.
+    scannerParametersControlWidget.cpp \                         # control widgets
+    generatedParameters/scannerParameters.cpp \                  # parameters for calculation threads, host dialogs etc.
     parametersMapper/parametersMapperScanner.cpp \     # parameters for params mapper
 
 FORMS += \
-    ui/scannerControlWidget.ui \
+    ui/scannerParametersControlWidget.ui \
+
+OTHER_FILES += xml/scanner.xml
+OTHER_FILES += ../../tools/generator/regen-scanner.sh
+
 
 #RESOURCES += ../../resources/main.qrc

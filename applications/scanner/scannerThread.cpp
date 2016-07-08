@@ -31,6 +31,7 @@ ScannerThread::ScannerThread() :
 
 void ScannerThread::toggleRecording()
 {
+#if 0
     if (!mIsRecording)
     {
         if (mScannerParameters.isNull())
@@ -66,6 +67,8 @@ void ScannerThread::toggleRecording()
         printf("Recording paused.\n");
         emit recordingStateChanged(StateRecordingPaused);
     }
+#endif
+
 }
 
 AbstractOutputData* ScannerThread::processNewData()
@@ -94,51 +97,25 @@ AbstractOutputData* ScannerThread::processNewData()
 
     recalculateCache();
 
-    G12Buffer *result[Frames::MAX_INPUTS_NUMBER] = {NULL, NULL};
+    RGB24Buffer *bufrgb = mFrames.getCurrentRgbFrame(Frames::RIGHT_FRAME);
 
-    /*TODO: Logic here should be changed according to the host base change*/
-    for (int id = 0; id < mActiveInputsNumber; id++)
-    {
-        G12Buffer   *buf    = mFrames.getCurrentFrame   ((Frames::FrameSourceId)id);
-        RGB24Buffer *bufrgb = mFrames.getCurrentRgbFrame((Frames::FrameSourceId)id);
-        if (bufrgb != NULL) {
-            buf = bufrgb->toG12Buffer();
-        }
+    stats.startInterval();
+    RGB24Buffer red(bufrgb);
 
-
-        //result[id] = mTransformationCache[id] ? mTransformationCache[id]->doDeformation(mBaseParams->interpolationType(), buf) : buf;
-        result[id] = buf;
-
-        if (mIsRecording)
+    for (int i = 0; i < red.h; i++)
+        for (int j = 0; j < red.w; j++)
         {
-            char currentPath[256];
-            if (two_frames)
-                snprintf2buf(currentPath, mPath.toStdString().c_str(), mFrameCount, id);
-            else
-                snprintf2buf(currentPath, mPath.toStdString().c_str(), mFrameCount);
-
-            if (mSaver.save(currentPath, result[id]))
-            {
-                resetRecording();
-                emit errorMessage(QString("Error writing frame to file") + currentPath);
-                emit recordingStateChanged(StateRecordingFailure);
-            }
+            RGBColor &pixel = red.element(i,j);
+            if (pixel.r() <= mScannerParameters->redThreshold())
+                pixel = RGBColor::Black();
         }
-
-    }
-#if 0
-    stats.setTime(ViFlowStatisticsDescriptor::CORRECTON_TIME, startEl.usecsToNow());
-#endif
-    if (mIsRecording) {
-        mFrameCount++;
-    }
+    stats.endInterval("Removing red");
 
     ScannerOutputData* outputData = new ScannerOutputData();
 
     outputData->mMainImage.addLayer(
-            new ImageResultLayer(
-                    mPresentationParams->output(),
-                    result
+            new ImageResultLayer(                   
+                    &red
             )
     );
 
@@ -152,9 +129,7 @@ AbstractOutputData* ScannerThread::processNewData()
 
     for (int id = 0; id < mActiveInputsNumber; id++)
     {
-        if (result[id] != mFrames.getCurrentFrame((Frames::FrameSourceId)id)) {
-             delete_safe(result[id]);
-        }
+
     }
 
     outputData->frameCount = this->mFrameCount;
@@ -172,13 +147,13 @@ void ScannerThread::resetRecording()
     emit recordingStateChanged(StateRecordingReset);
 }
 
-void ScannerThread::scannerControlParametersChanged(QSharedPointer<Scanner> scannerParameters)
+void ScannerThread::scannerControlParametersChanged(QSharedPointer<ScannerParameters> scannerParameters)
 {
     if (!scannerParameters)
         return;
 
     mScannerParameters = scannerParameters;
-    mPath = QString(scannerParameters->path().c_str()) + "/" + QString(scannerParameters->fileTemplate().c_str());
+   // mPath = QString(scannerParameters->path().c_str()) + "/" + QString(scannerParameters->fileTemplate().c_str());
 }
 
 void ScannerThread::baseControlParametersChanged(QSharedPointer<BaseParameters> params)

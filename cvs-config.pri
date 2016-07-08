@@ -18,7 +18,7 @@
     CONFIG +=   \
                 \
         debug \
-#        release \
+        release \
 
 }
 

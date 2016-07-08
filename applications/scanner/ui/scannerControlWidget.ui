@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>RecorderControlWidget</class>
- <widget class="QWidget" name="RecorderControlWidget">
+ <class>ScannerControlWidget</class>
+ <widget class="QWidget" name="ScannerControlWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>337</width>
-    <height>182</height>
+    <height>371</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,7 +29,16 @@
    <double>1.000000000000000</double>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -38,7 +47,16 @@
       <string>Recorder Settings</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <property name="margin">
+      <property name="leftMargin">
+       <number>3</number>
+      </property>
+      <property name="topMargin">
+       <number>3</number>
+      </property>
+      <property name="rightMargin">
+       <number>3</number>
+      </property>
+      <property name="bottomMargin">
        <number>3</number>
       </property>
       <property name="spacing">
@@ -90,7 +108,7 @@
          <string>R</string>
         </property>
         <property name="icon">
-         <iconset resource="../../../../resources/main.qrc">
+         <iconset resource="../../../resources/main.qrc">
           <normaloff>:/new/prefix1/pause.png</normaloff>:/new/prefix1/pause.png</iconset>
         </property>
         <property name="iconSize">
@@ -116,7 +134,7 @@
          <string>R</string>
         </property>
         <property name="icon">
-         <iconset resource="../../../../resources/main.qrc">
+         <iconset resource="../../../resources/main.qrc">
           <normaloff>:/new/prefix1/stop.png</normaloff>:/new/prefix1/stop.png</iconset>
         </property>
         <property name="iconSize">
@@ -173,7 +191,7 @@
          <string>...</string>
         </property>
         <property name="icon">
-         <iconset resource="../../../../resources/main.qrc">
+         <iconset resource="../../../resources/main.qrc">
           <normaloff>:/new/prefix1/folder-grey-open-24x24.png</normaloff>:/new/prefix1/folder-grey-open-24x24.png</iconset>
         </property>
         <property name="iconSize">
@@ -190,16 +208,16 @@
   </layout>
  </widget>
  <resources>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../resources/main.qrc"/>
+  <include location="../../../resources/main.qrc"/>
+  <include location="../../../resources/main.qrc"/>
+  <include location="../../../resources/main.qrc"/>
  </resources>
  <connections>
   <connection>
    <sender>pathEdit</sender>
    <signal>textChanged(QString)</signal>
-   <receiver>RecorderControlWidget</receiver>
+   <receiver>ScannerControlWidget</receiver>
    <slot>changeParameters()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -215,7 +233,7 @@
   <connection>
    <sender>fileTemplateEdit</sender>
    <signal>textChanged(QString)</signal>
-   <receiver>RecorderControlWidget</receiver>
+   <receiver>ScannerControlWidget</receiver>
    <slot>changeParameters()</slot>
    <hints>
     <hint type="sourcelabel">

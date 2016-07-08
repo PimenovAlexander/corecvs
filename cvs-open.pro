@@ -3,21 +3,22 @@ CONFIG  += ordered
 
 SUBDIRS +=                   \
     core                     \
-    unitTests                \
+#    unitTests                \
     utils                    \
     \
-    tests \
+#    tests \
     \
     base_application         \
     base_application_example \
-    recorder                 \
+#    recorder                 \
+    scanner                  \
     testbed                  \
-    cloudview                \
-    imageview                \
+#    cloudview                \
+#    imageview                \
 #    \
-    generator                \
-    egomotion                \
-    applications/laserscan
+#    generator                \
+#    egomotion                \
+#    applications/laserscan
 
 
     
@@ -45,6 +46,7 @@ directshow.depends       += core
 
 hostSoftStub.depends     += baseApplication utils
 recorder.depends         += baseApplication utils
+scanner.depends          += baseApplication utils
 
 cloudview.depends        += utils
 imageview.depends        += utils
@@ -61,6 +63,7 @@ directshow.file               = wrappers/directShow/directShow.pro
 base_application.file         = applications/base/baseApplication.pro
 base_application_example.file = applications/base/baseApplicationExample.pro
 recorder.file                 = applications/recorder/recorder.pro
+scanner.file                 = applications/scanner/scanner.pro
 egomotion.file                = applications/egomotion/egomotion.pro
 cloudview.file                = applications/cloudview/cloudview.pro
 imageview.file                = applications/imageview/imageview.pro

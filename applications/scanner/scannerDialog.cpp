@@ -16,10 +16,11 @@
 #include <QMessageBox>
 #include "parametersMapper/parametersMapperScanner.h"
 
+
 ScannerDialog::ScannerDialog()
     : BaseHostDialog(),
       mIsRecording(false),
-      mScannerControlWidget(NULL)
+      mScannerParametersControlWidget(NULL)
 {
 //    this->resize(this->width(), this->height() - 65);
 
@@ -36,13 +37,13 @@ void ScannerDialog::initParameterWidgets()
 {
     BaseHostDialog::initParameterWidgets();
 
-    mScannerControlWidget = new ScannerControlWidget(this, true, UI_NAME_SCANNER);
-    dockWidget()->layout()->addWidget(mScannerControlWidget);
-    mSaveableWidgets.push_back(mScannerControlWidget);
+    mScannerParametersControlWidget = new ScannerParametersControlWidget(this, true, UI_NAME_SCANNER);
+    dockWidget()->layout()->addWidget(mScannerParametersControlWidget);
+    mSaveableWidgets.push_back(mScannerParametersControlWidget);
 
 
-    connect(mScannerControlWidget->ui()->choosePathButton, SIGNAL(clicked()), this, SLOT(openPathSelectDialog()));
-    connect(mScannerControlWidget->ui()->recStartButton, SIGNAL(clicked()), this, SLOT(toggleRecording()));
+    //connect(mScannerParametersControlWidget->ui()->choosePathButton, SIGNAL(clicked()), this, SLOT(openPathSelectDialog()));
+    //connect(mScannerParametersControlWidget->ui()->recStartButton, SIGNAL(clicked()), this, SLOT(toggleRecording()));
 
 }
 
@@ -50,12 +51,12 @@ void ScannerDialog::createCalculator()
 {
     ParametersMapperScanner *mapper = new ParametersMapperScanner();
 
-    mapper->setScannerControlWidget(mScannerControlWidget);
+    mapper->setScannerParametersControlWidget(mScannerParametersControlWidget);
     mapper->setBaseParametersControlWidget(mBaseControlWidget);
     mapper->setPresentationParametersControlWidget(mPresentationControlWidget);
 
-    connect(mapper, SIGNAL(scannerParamsChanged(QSharedPointer<Scanner>))
-            , this, SLOT(scannerControlParametersChanged(QSharedPointer<Scanner>)));
+    connect(mapper, SIGNAL(scannerParamsChanged(QSharedPointer<ScannerParameters>))
+            , this, SLOT(scannerControlParametersChanged(QSharedPointer<ScannerParameters>)));
 
   /*  connect(mapper, SIGNAL(baseParametersParamsChanged(QSharedPointer<BaseParameters>))
             , this, SLOT(baseControlParametersChanged(QSharedPointer<Base>)));*/
@@ -65,9 +66,9 @@ void ScannerDialog::createCalculator()
     connect(mapper, SIGNAL(baseParametersParamsChanged(QSharedPointer<BaseParameters>))
             , static_cast<ScannerThread*>(mCalculator)
             , SLOT(baseControlParametersChanged(QSharedPointer<BaseParameters>)));
-    connect(mapper, SIGNAL(scannerParamsChanged(QSharedPointer<Scanner>))
+    connect(mapper, SIGNAL(scannerParamsChanged(QSharedPointer<ScannerParameters>))
             , static_cast<ScannerThread*>(mCalculator)
-            , SLOT(scannerControlParametersChanged(QSharedPointer<Scanner>)));
+            , SLOT(scannerControlParametersChanged(QSharedPointer<ScannerParameters>)));
     connect(mapper, SIGNAL(presentationParametersParamsChanged(QSharedPointer<PresentationParameters>))
             , static_cast<ScannerThread*>(mCalculator)
             , SLOT(presentationControlParametersChanged(QSharedPointer<PresentationParameters>)));
@@ -78,8 +79,8 @@ void ScannerDialog::createCalculator()
 
     connect(this, SIGNAL(recordingTriggered()), mCalculator, SLOT(toggleRecording()), Qt::QueuedConnection);
 
-    connect(mScannerControlWidget->ui()->recRestartButton, SIGNAL(released()), mCalculator, SLOT(resetRecording()), Qt::QueuedConnection);
-    connect(mScannerControlWidget->ui()->recPauseButton, SIGNAL(released()), mCalculator, SLOT(toggleRecording()), Qt::QueuedConnection);
+    //connect(mScannerParametersControlWidget->ui()->recRestartButton, SIGNAL(released()), mCalculator, SLOT(resetRecording()), Qt::QueuedConnection);
+    //connect(mScannerParametersControlWidget->ui()->recPauseButton, SIGNAL(released()), mCalculator, SLOT(toggleRecording()), Qt::QueuedConnection);
 
     connect(mCalculator, SIGNAL(recordingStateChanged(ScannerThread::RecordingState)), this,
             SLOT(recordingStateChanged(ScannerThread::RecordingState)), Qt::QueuedConnection);
@@ -90,7 +91,7 @@ void ScannerDialog::createCalculator()
 }
 
 
-void ScannerDialog::scannerControlParametersChanged(QSharedPointer<Scanner> params)
+void ScannerDialog::scannerControlParametersChanged(QSharedPointer<ScannerParameters> params)
 {
     if (!params)
         return;
@@ -117,10 +118,10 @@ void ScannerDialog::openPathSelectDialog()
                                                           QDir::homePath()
                                                           );
 
-    if (dir_path.length() > 0)
+    /*if (dir_path.length() > 0)
     {
-        mScannerControlWidget->ui()->pathEdit->setText(dir_path);
-    }
+        mScannerParametersControlWidget->ui()->pathEdit->setText(dir_path);
+    }*/
 }
 
 void ScannerDialog::toggleRecording()
@@ -135,17 +136,18 @@ void ScannerDialog::resetRecording()
 
 void ScannerDialog::recordingStateChanged(ScannerThread::RecordingState state)
 {
+#if 0
     switch (state)
     {
         case ScannerThread::StateRecordingActive:
         {
             mIsRecording = true;
             mBaseControlWidget->setEnabled(false);
-            mScannerControlWidget->ui()->recStartButton->setEnabled(false);
-            mScannerControlWidget->ui()->recPauseButton->setEnabled(true);
-            mScannerControlWidget->ui()->recRestartButton->setEnabled(true);
-            mScannerControlWidget->ui()->pathEdit->setEnabled(false);
-            mScannerControlWidget->ui()->fileTemplateEdit->setEnabled(false);
+            mScannerParametersControlWidget->ui()->recStartButton->setEnabled(false);
+            mScannerParametersControlWidget->ui()->recPauseButton->setEnabled(true);
+            mScannerParametersControlWidget->ui()->recRestartButton->setEnabled(true);
+            mScannerParametersControlWidget->ui()->pathEdit->setEnabled(false);
+            mScannerParametersControlWidget->ui()->fileTemplateEdit->setEnabled(false);
             break;
         }
         case ScannerThread::StateRecordingPaused:
@@ -157,16 +159,17 @@ void ScannerDialog::recordingStateChanged(ScannerThread::RecordingState state)
         {
             mIsRecording = false;
             mBaseControlWidget->setEnabled(true);
-            mScannerControlWidget->ui()->recStartButton->setChecked(false);
-            mScannerControlWidget->ui()->recStartButton->setEnabled(true);
-            mScannerControlWidget->ui()->recPauseButton->setChecked(false);
-            mScannerControlWidget->ui()->recPauseButton->setEnabled(false);
-            mScannerControlWidget->ui()->recRestartButton->setEnabled(false);
-            mScannerControlWidget->ui()->pathEdit->setEnabled(true);
-            mScannerControlWidget->ui()->fileTemplateEdit->setEnabled(true);
+            mScannerParametersControlWidget->ui()->recStartButton->setChecked(false);
+            mScannerParametersControlWidget->ui()->recStartButton->setEnabled(true);
+            mScannerParametersControlWidget->ui()->recPauseButton->setChecked(false);
+            mScannerParametersControlWidget->ui()->recPauseButton->setEnabled(false);
+            mScannerParametersControlWidget->ui()->recRestartButton->setEnabled(false);
+            mScannerParametersControlWidget->ui()->pathEdit->setEnabled(true);
+            mScannerParametersControlWidget->ui()->fileTemplateEdit->setEnabled(true);
             break;
         }
     }
+#endif
 }
 
 void ScannerDialog::processResult()
@@ -180,9 +183,9 @@ void ScannerDialog::processResult()
 
         mStatsDialog.addStats(fod->stats);
 
-        if (mIsRecording)
-            mScannerControlWidget->ui()->frameCountLabel->setText(QString("Frame (frame pairs) written: %1").arg(fod->frameCount));
-
+       /* if (mIsRecording)
+            mScannerParametersControlWidget->ui()->frameCountLabel->setText(QString("Frame (frame pairs) written: %1").arg(fod->frameCount));
+        */
 
 //        fod->mMainImage.print();
 

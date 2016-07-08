@@ -19,16 +19,31 @@
 #include "scannerDialog.h"
 #include "mainWindow.h"
 #include "configManager.h"
+#include "qtFileLoader.h"
 
 
 using namespace std;
 
 int main(int argc, char *argv[])
 {
+    QTRGB24Loader::registerMyself();
+    QTG12Loader  ::registerMyself();
+
     setSegVHandler();
     setStdTerminateHandler();
 
     Q_INIT_RESOURCE(main);
+
+
+    /*
+    RGB24Buffer *test = BufferFactory::getInstance()->loadRGB24Bitmap("test.png");
+    if (test == NULL) {
+        printf ("Failed\n");
+
+        return 0;
+    } else {
+        cout << test->getSize();
+    }*/
 
     QString source;
     if (argc != 2)

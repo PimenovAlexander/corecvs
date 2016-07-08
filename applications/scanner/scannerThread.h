@@ -20,7 +20,7 @@
 #include "imageCaptureInterface.h"
 #include "ppmLoader.h"
 #include "preciseTimer.h"
-#include "generatedParameters/scanner.h"
+#include "generatedParameters/scannerParameters.h"
 #include "calculationStats.h"
 
 class ScannerOutputData : public BaseOutputData
@@ -49,7 +49,7 @@ public slots:
     void toggleRecording();
     void resetRecording();
 
-    void scannerControlParametersChanged(QSharedPointer<Scanner> params);
+    void scannerControlParametersChanged(QSharedPointer<ScannerParameters> params);
     void baseControlParametersChanged(QSharedPointer<BaseParameters> params);
     void camerasParametersChanged(QSharedPointer<CamerasConfigParameters> parameters);
 
@@ -71,7 +71,7 @@ private:
 
     uint32_t mFrameCount;
     QString mPath;
-    QSharedPointer<Scanner> mScannerParameters;
+    QSharedPointer<ScannerParameters> mScannerParameters;
 };
 
 #endif /* SCANNERTHREAD_H_ */

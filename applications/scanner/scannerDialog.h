@@ -15,7 +15,7 @@
 
 #include "baseHostDialog.h"
 #include "scannerThread.h"
-#include "scannerControlWidget.h"
+#include "scannerParametersControlWidget.h"
 
 #define UI_NAME_SCANNER "scanner"
 
@@ -42,7 +42,7 @@ public slots:
     void toggleRecording();
     void resetRecording();
     void recordingStateChanged(ScannerThread::RecordingState );
-    void scannerControlParametersChanged(QSharedPointer<Scanner> params);
+    void scannerControlParametersChanged(QSharedPointer<ScannerParameters> params);
 
     virtual void processResult();
 
@@ -50,9 +50,9 @@ public slots:
 private:
     bool mIsRecording;
 
-    ScannerControlWidget *mScannerControlWidget;
+    ScannerParametersControlWidget *mScannerParametersControlWidget;
 
-    QSharedPointer<Scanner> mScannerControlParams;
+    QSharedPointer<ScannerParameters> mScannerControlParams;
 
 };
 
