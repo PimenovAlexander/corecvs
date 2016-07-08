@@ -55,7 +55,7 @@ void ScannerDialog::createCalculator()
     mapper->setBaseParametersControlWidget(mBaseControlWidget);
     mapper->setPresentationParametersControlWidget(mPresentationControlWidget);
 
-    connect(mapper, SIGNAL(scannerParamsChanged(QSharedPointer<ScannerParameters>))
+    connect(mapper, SIGNAL(scannerParametersParamsChanged(QSharedPointer<ScannerParameters>))
             , this, SLOT(scannerControlParametersChanged(QSharedPointer<ScannerParameters>)));
 
   /*  connect(mapper, SIGNAL(baseParametersParamsChanged(QSharedPointer<BaseParameters>))
@@ -66,7 +66,7 @@ void ScannerDialog::createCalculator()
     connect(mapper, SIGNAL(baseParametersParamsChanged(QSharedPointer<BaseParameters>))
             , static_cast<ScannerThread*>(mCalculator)
             , SLOT(baseControlParametersChanged(QSharedPointer<BaseParameters>)));
-    connect(mapper, SIGNAL(scannerParamsChanged(QSharedPointer<ScannerParameters>))
+    connect(mapper, SIGNAL(scannerParametersParamsChanged(QSharedPointer<ScannerParameters>))
             , static_cast<ScannerThread*>(mCalculator)
             , SLOT(scannerControlParametersChanged(QSharedPointer<ScannerParameters>)));
     connect(mapper, SIGNAL(presentationParametersParamsChanged(QSharedPointer<PresentationParameters>))

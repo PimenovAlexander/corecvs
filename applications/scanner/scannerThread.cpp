@@ -101,7 +101,7 @@ AbstractOutputData* ScannerThread::processNewData()
 
     ScannerOutputData* outputData = new ScannerOutputData();
 
-    if (bufrgb != NULL || mScannerParameters.isNull())
+    if (bufrgb != NULL && !mScannerParameters.isNull())
     {
         stats.startInterval();
         RGB24Buffer red(bufrgb);
