@@ -123,7 +123,7 @@ public:
         return LineSpanInt::hasValue();
     }
 
-    FragmentAttributes att() {
+    const FragmentAttributes &att() {
         return catt;
     }
 

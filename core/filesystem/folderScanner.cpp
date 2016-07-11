@@ -1,4 +1,5 @@
 #include "folderScanner.h"
+#include "log.h"
 
 #include <iostream>
 
@@ -28,12 +29,12 @@ bool FolderScanner::scan(const string &path, vector<string> &childs, bool findFi
     fs::path p(path);
     if (!fs::exists(p))
     {
-        std::cout << p << " does not exist" << std::endl;
+        L_ERROR_P("<%s> does not exist", p.string().c_str());
         return false;
     }
     if (!fs::is_directory(p))
     {
-        std::cout << p << " is not a directory" << std::endl;
+        L_ERROR_P("<%s> is not a directory", p.string().c_str());
         return false;
     }
 
@@ -42,7 +43,7 @@ bool FolderScanner::scan(const string &path, vector<string> &childs, bool findFi
         fs::path pathChild(*it);            // pathChild has linux style slashes inside
         bool isDir = fs::is_directory(pathChild);
 
-        std::cout << p << " contains\t" << pathChild << " \tas a " << (isDir ? "dir" : "file") << std::endl;
+        L_DDEBUG_P("%s contains\t%s\tas a %s", p.string().c_str(), pathChild.string().c_str(), (isDir ? "dir" : "file"));
 
         if (!(findFiles ^ isDir))
             continue;

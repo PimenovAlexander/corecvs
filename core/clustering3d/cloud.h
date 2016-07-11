@@ -19,6 +19,7 @@ class Cloud : public CloudBase
 public:
     /*Cloud filtering*/
     Cloud* filterByAABB(const AxisAlignedBox3d &box);
+    void andToMesh(Mesh3D &mesh);
 };
 
 } /* namespace corecvs */

@@ -23,6 +23,7 @@ class ALIGN_DATA(16) Int32x4 : public SSEInteger<Int32x4>
 {
 public:
     static const int SIZE = 4;
+    static const uint16_t ALL_TOP_BITS = 0xFFFF;
 
     typedef SSEInteger<Int32x4> SSEBase;
 
@@ -61,50 +62,50 @@ public:
 
     /* Static fabrics */
     /** Load unaligned. */
-    static Int32x4 load(const int32_t data[8])
+    static Int32x4 load(const int32_t data[SIZE])
     {
         return SSEBase::load((__m128i *)data);
     }
 
-    static Int32x4 load(const uint32_t data[8])
+    static Int32x4 load(const uint32_t data[SIZE])
     {
         return SSEBase::load((__m128i *)data);
     }
 
     /** Load aligned. Not safe to use until you exactly know what you are doing */
-    static Int32x4 loadAligned(const int32_t data[8])
+    static Int32x4 loadAligned(const int32_t data[SIZE])
     {
         return SSEBase::loadAligned((__m128i *)data);
     }
 
-    void save(int32_t data[8]) const
+    void save(int32_t data[SIZE]) const
     {
         SSEBase::save((__m128i *)&data[0]);
     }
 
-    void save(uint32_t data[8]) const
+    void save(uint32_t data[SIZE]) const
     {
         SSEBase::save((__m128i *)&data[0]);
     }
 
     /** Save aligned. Not safe to use until you exactly know what you are doing */
-    void saveAligned(int32_t data[8]) const
+    void saveAligned(int32_t data[SIZE]) const
     {
         SSEBase::saveAligned((__m128i *)&data[0]);
     }
 
-    void saveAligned(uint32_t data[8]) const
+    void saveAligned(uint32_t data[SIZE]) const
     {
         SSEBase::saveAligned((__m128i *)&data[0]);
     }
 
     /** Stream aligned. Not safe to use until you exactly know what you are doing */
-    void streamAligned(int32_t data[8]) const
+    void streamAligned(int32_t data[SIZE]) const
     {
         SSEBase::streamAligned((__m128i *)&data[0]);
     }
 
-    void streamAligned(uint32_t data[8]) const
+    void streamAligned(uint32_t data[SIZE]) const
     {
         SSEBase::streamAligned((__m128i *)&data[0]);
     }

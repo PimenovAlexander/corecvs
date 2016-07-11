@@ -52,7 +52,7 @@ public:
     AbstractContiniousBuffer(Vector2d<IndexType> size, ElementType *data) :
         BaseClass(size, data) {}
 
-    AbstractContiniousBuffer(BaseClass *src, IndexType x1, IndexType y1, IndexType x2, IndexType y2) :
+    AbstractContiniousBuffer(const BaseClass &src, IndexType x1, IndexType y1, IndexType x2, IndexType y2) :
         BaseClass(src, x1, y1, x2, y2) {}
 
     /**

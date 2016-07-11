@@ -14,6 +14,10 @@
 
 #include "g12Image.h"
 #include "imageResultLayer.h"
+
+#include "gentryState.h"
+#include "calibrationHelpers.h"
+
 // TEST
 // #include "viFlowStatisticsDescriptor.h"
 
@@ -105,6 +109,8 @@ AbstractOutputData* ScannerThread::processNewData()
     {
         stats.startInterval();
         RGB24Buffer red(bufrgb);
+        vector<double> tops;
+        tops.reserve(red.w);
 
         if (mScannerParameters->algo() == RedRemovalType::BRIGHTNESS)
         {
@@ -130,9 +136,85 @@ AbstractOutputData* ScannerThread::processNewData()
             }*/
 
         }
+
+
+        if (mScannerParameters->algo() != RedRemovalType::DUMMY)
+        {
+            for (int j = 0; j < red.w; j++)
+            {
+                for (int i = 0; i < red.h; i++)
+                {
+                    RGBColor &pixel = red.element(i,j);
+                    if (pixel.r() > mScannerParameters->redThreshold())
+                    {
+                        tops.push_back(i);
+                        pixel = RGBColor::Cyan();
+                        break;
+                    }
+                }
+            }
+        } else {
+            for (int j = 0; j < red.w; j++)
+            {
+                tops.push_back( sin(j / 100.0) * 500 + red.h / 2 );
+            }
+        }
+
+        outputData->cut.reserve(red.h);
+        for (int i = 0; i < red.h; i++)
+        {
+            RGBColor &pixel = red.element(i,red.w/2);
+            outputData->cut.push_back(pixel.r());
+        }
+
         stats.endInterval("Removing red");
 
-         outputData->mMainImage.addLayer(
+        GentryState state;
+        Vector2dd resolution = Vector2dd(bufrgb->w, bufrgb->h);
+
+        state.camera.intrinsics = PinholeCameraIntrinsics(resolution,  degToRad(60));
+        state.camera.setLocation(
+                    Affine3DQ::Shift(0,0,10) *
+                    Affine3DQ::RotationX(degToRad(90.0))
+                    );
+        state.laserPlane = Plane3d::FormNormalAndPoint(
+                    Vector3dd(0,0,1),
+                    Vector3dd::Zero()
+                    );
+
+        outputData->outputMesh.switchColor();
+
+        for (size_t i = 0; i < tops.size(); i++)
+        {
+            Vector2dd pixel(i, tops[i]);
+            Ray3d ray = state.camera.rayFromPixel(pixel);
+
+            outputData->outputMesh.setColor(RGBColor::Green());
+            outputData->outputMesh.addLine(ray.p, ray.getPoint(60.0));
+
+            bool hasIntersection = false;
+            Vector3dd point = state.laserPlane.intersectWith(ray, &hasIntersection);
+
+            if (!hasIntersection || !state.camera.isInFront(point))
+            {
+                continue;
+            }
+
+            outputData->outputMesh.setColor(RGBColor::Yellow());
+            outputData->outputMesh.addPoint(point);
+
+
+        }
+        CalibrationHelpers drawer;
+        drawer.drawCamera(outputData->outputMesh, state.camera, 1.0);
+
+        Circle3d pd;
+        pd.c = Vector3dd::Zero();
+        pd.normal = state.laserPlane.normal();
+        pd.r = 70;
+        outputData->outputMesh.addCircle(pd);
+
+        outputData->mMainImage.addLayer(
                 new ImageResultLayer(
                         &red
                 )

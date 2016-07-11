@@ -28,12 +28,11 @@ class Mesh3D {
 public:
     friend class PLYLoader;
     friend class STLLoader;
+    friend class OBJLoader;
 
     Mesh3D() :
         centralPoint(0.0),
-        hasCentral(false),
-
-        hasTexCoords(false),
+        hasCentral(false),      
         hasColor(false),
 
         currentColor(RGBColor::Black()),
@@ -45,16 +44,12 @@ public:
     bool hasCentral;
 
 /* Data that is stored */
-    bool hasTexCoords;
     bool hasColor;
 
     /** Vertexes that from the mesh (faces or edges or noconnected) */
     vector<Vector3dd>  vertexes;
     vector<Vector3d32> faces;
     vector<Vector2d32> edges;
-
-    /* Texture Coords Channel */
-    vector<Vector2dd>  textureCoords;
 
     /* RGB Colors */
     vector<RGBColor> vertexesColor;
@@ -85,7 +80,7 @@ public:
     void addOrts(double length = 1.0, bool captions = false);
 
 
-    void addAOB(Vector3dd corner1, Vector3dd corner2, bool addFaces = true);
+    virtual void addAOB(const Vector3dd &corner1, const Vector3dd &corner2, bool addFaces = true);
     void addAOB(const AxisAlignedBoxParameters &box , bool addFaces = true);
     void addAOB(const AxisAlignedBox3d &box         , bool addFaces = true);
 
@@ -113,7 +108,7 @@ public:
     void add2AxisEllipse  (const EllipticalApproximation3d &approx);
     void addMatrixSurface (double *data, int h, int w);
 
-    void clear();
+    virtual void clear();
 
     /* For abstract painter */
     typedef int InternalElementType;
@@ -128,7 +123,7 @@ public:
     int dumpPLY(const string &filename);
 
 
-    void transform (const Matrix44 &matrix);
+    virtual void transform (const Matrix44 &matrix);
     Mesh3D transformed(const Matrix44 &matrix);
 
     AxisAlignedBox3d getBoundingBox();
@@ -147,7 +142,7 @@ public:
 
     void fillTestScene();
 
-    void dumpInfo(ostream &out = std::cout);
+    virtual void dumpInfo(ostream &out = std::cout);
 };
 
 

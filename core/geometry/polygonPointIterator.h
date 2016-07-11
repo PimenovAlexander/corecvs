@@ -64,8 +64,8 @@ public:
         int currentIndex = sortedIndex[0];
         Vector2dd origin = polygon[currentIndex];
 
-        cand1 = (currentIndex + polygon.size() + indexDelta) % polygon.size(); /* Right slope driver */
-        cand2 = (currentIndex + polygon.size() - indexDelta) % polygon.size(); /* Left  slope driver */
+        cand1 = (int)((currentIndex + polygon.size() + indexDelta) % polygon.size()); /* Right slope driver */
+        cand2 = (int)((currentIndex + polygon.size() - indexDelta) % polygon.size()); /* Left  slope driver */
 
         deep    = cand1;
         shallow = cand2;
@@ -102,18 +102,18 @@ public:
         {
             int cand1n = cand1;
             int cand2n = cand2;
-            //bool leftStep = false;
+            bool leftStep = false;
 
             Vector2dd  leftBegin = Vector2dd(part.x21, part.y2);
             Vector2dd rightBegin = Vector2dd(part.x22, part.y2);
 
             if (cand1 == shallow) {
                 /*Left end finished */
-                //leftStep = true;
-                cand1n = (cand1 + polygon.size() + indexDelta) % polygon.size(); /* Right slope driver */
+                leftStep = true;
+                cand1n = (int)((cand1 + polygon.size() + indexDelta) % polygon.size()); /* Right slope driver */
             } else {
                 /* Right end finished*/
-                cand2n = (cand2 + polygon.size() - indexDelta) % polygon.size(); /* Left  slope driver */
+                cand2n = (int)((cand2 + polygon.size() - indexDelta) % polygon.size()); /* Left  slope driver */
             }
 
             deep    = cand1n;
@@ -215,7 +215,7 @@ public:
     TrianglePointIterator it;
 
 
-    Triangle2dd getTriangle(int petle) {
+    Triangle2dd getTriangle(size_t petle) {
         return Triangle2dd(polygon[0], polygon[petle - 1], polygon[petle]);
     }
 

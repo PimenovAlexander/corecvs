@@ -11,6 +11,8 @@ HEADERS += \
     geometry/renderer/geometryIterator.h \
     geometry/conic.h \
     geometry/polygonPointIterator.h \
+    geometry/Projection.h \
+    geometry/gentryState.h \
     geometry/raytrace/raytraceRenderer.h \
     geometry/mesh3DDecorated.h
 
@@ -26,6 +28,8 @@ SOURCES += \
     geometry/renderer/simpleRenderer.cpp \
     geometry/conic.cpp \
     geometry/polygonPointIterator.cpp \
+    geometry/projection.cpp \
+    geometry/gentryState.cpp \
     geometry/raytrace/raytraceRenderer.cpp \
     geometry/mesh3DDecorated.cpp
     

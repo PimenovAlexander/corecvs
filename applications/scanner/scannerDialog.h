@@ -16,6 +16,7 @@
 #include "baseHostDialog.h"
 #include "scannerThread.h"
 #include "scannerParametersControlWidget.h"
+#include "cloudViewDialog.h"
 
 #define UI_NAME_SCANNER "scanner"
 
@@ -46,13 +47,16 @@ public slots:
 
     virtual void processResult();
 
-    void errorMessage(QString message);
+    void errorMessage(QString message);    
 private:
     bool mIsRecording;
 
     ScannerParametersControlWidget *mScannerParametersControlWidget;
 
     QSharedPointer<ScannerParameters> mScannerControlParams;
+
+    CloudViewDialog *cloud = NULL;
+    GraphPlotDialog *graph = NULL;
 
 };
 

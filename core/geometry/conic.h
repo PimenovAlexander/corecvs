@@ -47,6 +47,12 @@ public:
         xr = x;
         return true;
     }
+
+    friend ostream & operator <<(ostream &out, const UnifiedSphere &sphere)
+    {
+        out << "[" << sphere.c << "] (" << sphere.r << ")";
+        return out;
+    }
 };
 
 class Circle2d : public UnifiedSphere<Circle2d, Vector2dd>
@@ -71,7 +77,7 @@ class Sphere3d : public UnifiedSphere<Sphere3d, Vector3dd>
 public:
     Sphere3d(){}
 
-    Sphere3d(Vector3dd &c, double r) :
+    Sphere3d(const Vector3dd &c, double r) :
         UnifiedSphere(c, r)
     {}
 

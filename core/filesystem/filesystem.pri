@@ -1,5 +1,6 @@
 HEADERS += \
-    filesystem/folderScanner.h 
+    filesystem/folderScanner.h \
+
    
 SOURCES += \
-    filesystem/folderScanner.cpp
+    filesystem/folderScanner.cpp \

@@ -4,6 +4,8 @@
   <enum name="Red Removal Type">
     <item name="Brightness" id="0" />
     <item name="Hue"        id="1" />
+    <item name="Dummy"      id="2" />
+
   </enum>
 
   <class name="Scanner Parameters" description="Scanner parameters">

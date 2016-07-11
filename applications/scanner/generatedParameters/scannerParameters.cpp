@@ -46,9 +46,10 @@ int ScannerParameters::staticInit()
           "algo",
           "algo",
           "algo",
-          new EnumReflection(2
+          new EnumReflection(3
           , new EnumOption(0,"Brightness")
           , new EnumOption(1,"Hue")
+          , new EnumOption(2,"Dummy")
           )
         )
     );
