@@ -9,7 +9,8 @@ HEADERS += \
     geometry/convexPolyhedron.h \
     geometry/simpleRenderer.h \
     geometry/conic.h \
-    geometry/polygonPointIterator.h
+    geometry/polygonPointIterator.h \
+    geometry/Projection.h
 
 
 SOURCES += \ 
@@ -22,5 +23,6 @@ SOURCES += \
     geometry/convexPolyhedron.cpp \
     geometry/simpleRenderer.cpp \
     geometry/conic.cpp \
-    geometry/polygonPointIterator.cpp
+    geometry/polygonPointIterator.cpp \
+    geometry/projection.cpp
     
