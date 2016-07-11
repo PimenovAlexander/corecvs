@@ -134,7 +134,7 @@ void G8Buffer::addValueSat(int16_t val)
     }
 }
 
-void G8Buffer::averageWith(G8Buffer */*that*/)
+void G8Buffer::averageWith(G8Buffer * /*that*/)
 {
 
 }

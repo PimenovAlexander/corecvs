@@ -251,9 +251,10 @@ public:
         return (getPoint(coef.x()) + other.getPoint(coef.y())) / 2.0;
     }
     
-    std::pair<Vector3dd, Vector3dd> pluckerize()
+    std::pair<corecvs::Vector3dd, corecvs::Vector3dd> pluckerize() const
     {
-        return std::make_pair(a.normalised(), p ^ a.normalised());
+        auto an = a.normalised();
+        return std::make_pair(an, p ^ an);
     }
 
     void transform(const Matrix44 &M)

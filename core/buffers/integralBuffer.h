@@ -182,9 +182,8 @@ public:
         } else {
             // TODO: There is an overkill, it is enough to just zero the margins
             toReturn = new ReturnType(this->getEffectiveH(), this->getEffectiveW(), true);
-            ReturnType *view = toReturn->template createView<G12Buffer>(hSizeHalf, wSizeHalf, newh, neww);
-            parallelable_for(0, view->h, ParallelRectangularBlur<ReturnType>(view, hSizeHalf, wSizeHalf, this));
-            delete view;
+            ReturnType view = toReturn->template createView<ReturnType>(hSizeHalf, wSizeHalf, newh, neww);
+            parallelable_for(0, view.h, ParallelRectangularBlur<ReturnType>(&view, hSizeHalf, wSizeHalf, this));
             return toReturn;
         }
     }
@@ -250,7 +249,7 @@ public:
         Int32x4 c(&this->element(y2 + 1, x1    ));
         Int32x4 d(&this->element(y2 + 1,  x2 + 1));
         return a + d - b - c;
-    };
+    }
 
     class ParallelRectangularBlurSSE
     {

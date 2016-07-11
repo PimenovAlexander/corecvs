@@ -58,7 +58,7 @@ public:
 
     typedef UInt16x8 Type;
     typedef Int16x8 SignedType;
-    typedef Int32x8 ExtendedType;
+    typedef Int32x8v ExtendedType;
 };
 
 /*

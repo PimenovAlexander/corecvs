@@ -46,7 +46,7 @@ public:
     G12Buffer(int32_t h, int32_t w,   bool shouldInit = true) : G12BufferBase (h, w, shouldInit) {}
     G12Buffer(Vector2d<int32_t> size, bool shouldInit = true) : G12BufferBase (size, shouldInit) {}
 
-    G12Buffer(G12Buffer &that) : G12BufferBase (that) {}
+    G12Buffer(const G12Buffer &that) : G12BufferBase (that) {}
     G12Buffer(G12Buffer *that) : G12BufferBase (that) {}
 
     G12Buffer(G12Buffer *src, int32_t x1, int32_t y1, int32_t x2, int32_t y2) :

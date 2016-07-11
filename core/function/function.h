@@ -182,7 +182,7 @@ public:
         std::cout << "Other: " <<other<< "s " <<other / total * 100.0 << "%" << std::endl;
     }
 
-private:
+protected:
     std::vector<std::vector<int>> groupInputs, groupOutputs, remapIdx;
     std::vector<std::vector<int>> dependencyList;
     std::vector<int>              fullIdx;

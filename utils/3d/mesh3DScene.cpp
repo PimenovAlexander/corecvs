@@ -23,10 +23,10 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
     //qDebug("Mesh3DScene::drawMyself() : called" );
     //qDebug("V: %d E: %d F: %d ", );
 
-
     bool withTexture = false;
     withTexture |= (mParameters.style() == Draw3dStyle::TEXTURED) && (dialog->mFancyTexture != GLuint(-1));
-    bool withTexCoords = withTexture && !textureCoords.empty();
+    //bool withTexCoords = withTexture && !textureCoords.empty();
+    bool withTexCoords = false;
 
     /*Caption drawing*/
     if (mParameters.showCaption())
@@ -86,8 +86,6 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
             glTranslated(labelPos[0] * width / 2.0, labelPos[1] * height / 2.0, 0.0);
 
 
-
-
             double size = mParameters.fontSize() / 25.0;
             glScaled(size, -size, size);
 
@@ -126,7 +124,6 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
     commonSetup(dialog, &mParameters);
 
     GLenum mode;
-
     switch (mParameters.style()) {
         case Draw3dStyle::POINTS:
             mode = GL_POINT;
@@ -143,32 +140,37 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
 
     glEnableClientState(GL_VERTEX_ARRAY);
 
-
     if (withTexCoords) {
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
     if (mParameters.style() == Draw3dStyle::COLOR_2 && faces.size() > 0)
     {
-        glPolygonOffset ( -1.0, -2.0);
-        glEnable (  GL_POLYGON_OFFSET_LINE );
-        glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-        glColor3ub(mParameters.edgeColor().r(), mParameters.edgeColor().g(), mParameters.edgeColor().b());
+        glPolygonOffset(-1.0, -2.0);
+        glEnable       (GL_POLYGON_OFFSET_LINE);
+        glPolygonMode  (GL_FRONT_AND_BACK, GL_LINE);
+        glColor3ub     (mParameters.edgeColor().r(), mParameters.edgeColor().g(), mParameters.edgeColor().b());
         glVertexPointer(3, GL_DOUBLE, sizeof(Vector3dd), &(vertexes[0]));
-        glDrawElements(GL_TRIANGLES, GLsizei(faces.size() * 3), GL_UNSIGNED_INT, &(faces[0]));
+        glDrawElements (GL_TRIANGLES, GLsizei(faces.size() * 3), GL_UNSIGNED_INT, &(faces[0]));
 
 //        glDrawElements(GL_LINES    , GLsizei(edges.size() * 2), GL_UNSIGNED_INT, &(edges[0]));
-
-        glDisable (GL_POLYGON_OFFSET_LINE);
+        glDisable      (GL_POLYGON_OFFSET_LINE);
     }
 
-    glPolygonMode( GL_FRONT_AND_BACK, mode );
+    glPolygonMode(GL_FRONT_AND_BACK, mode);
 
    // glColor3ub(mParameters.color().r(), mParameters.color().g(), mParameters.color().b());
+    if (vertexes.size() > 0)
+    {
     glVertexPointer(3, GL_DOUBLE, sizeof(Vector3dd), &(vertexes[0]));
-    if (withTexCoords) {
+    }
+
+/*
+    if (withTexCoords && textureCoords.size() > 0)
+    {
         glTexCoordPointer(2, GL_DOUBLE, sizeof(Vector2dd), &(textureCoords[0]));
     }
+*/
 
     /* FACES */
     if (faces.size() > 0)
@@ -194,12 +196,13 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
 
     if (mParameters.edgeColorOverride() || !hasColor ) {
         OpenGLTools::glColorRGB(mParameters.edgeColor());
-        glDrawElements(GL_LINES    , GLsizei(edges.size() * 2), GL_UNSIGNED_INT, &(edges   [0]));
-    } else {
+        glDrawElements(GL_LINES, GLsizei(edges.size() * 2), GL_UNSIGNED_INT, &(edges[0]));
+    }
+    else {
         for (size_t ei = 0; ei < edges.size(); ei++)
         {
             OpenGLTools::glColorRGB(edgesColor[ei]);
-            glDrawElements(GL_LINES    , GLsizei(2), GL_UNSIGNED_INT, &(edges[ei]));
+            glDrawElements(GL_LINES, GLsizei(2), GL_UNSIGNED_INT, &(edges[ei]));
         }
     }
     glPointSize(oldLineWidth);
@@ -256,7 +259,8 @@ const int Grid3DScene::GRID_SIZE = 5;
 const int Grid3DScene::GRID_STEP = 250;
 
 
-void Grid3DScene::prepareMesh(CloudViewDialog* /*dialog*/) {
+void Grid3DScene::prepareMesh(CloudViewDialog* /*dialog*/)
+{
     //qDebug() << "Calling Grid3DScene::prepareMesh() for" << name;
 
     mGridId = glGenLists(1);
@@ -265,7 +269,7 @@ void Grid3DScene::prepareMesh(CloudViewDialog* /*dialog*/) {
         return;
     }
 
-    glNewList(mGridId,GL_COMPILE);
+    glNewList(mGridId, GL_COMPILE);
 
     glPointSize(2);
     glBegin(GL_POINTS);
@@ -302,8 +306,8 @@ void Grid3DScene::drawMyself(CloudViewDialog* /*dialog*/ /*, const Draw3dParamet
 }
 
 
-void Plane3DScene::prepareMesh(CloudViewDialog* /*dialog*/) {
-
+void Plane3DScene::prepareMesh(CloudViewDialog* /*dialog*/)
+{
     //qDebug() << "Calling Plane3DScene::prepareMesh() for" << name;
 
     mPlaneListId = glGenLists(1);
@@ -375,9 +379,7 @@ void Plane3DScene::drawMyself(CloudViewDialog* /*dialog*/)
 }
 
 void CameraScene::prepareMesh(CloudViewDialog * /*dialog*/)
-{
-}
-
+{}
 
 void CameraScene::drawMyself(CloudViewDialog * /*dialog*/ )
 {
@@ -449,12 +451,9 @@ void CameraScene::drawMyself(CloudViewDialog * /*dialog*/ )
 
 }
 
-StereoCameraScene::StereoCameraScene(const RectificationResult &result) :
-    mStereoPair(result)
-{
-
-
-}
+StereoCameraScene::StereoCameraScene(const RectificationResult &result)
+    : mStereoPair(result)
+{}
 
 void StereoCameraScene::prepareMesh(CloudViewDialog *dialog)
 {

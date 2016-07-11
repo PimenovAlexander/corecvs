@@ -45,8 +45,8 @@ class ScalarAlgebraMulti : public BaseAlgebraMulti<
                            public GenericMath<typename _InputTraits::InternalType>
 {
 public:
-    STATIC_ASSERT((_InputTraits ::step == 1), scalar_algebra_supports_only_single_step_input);
-    STATIC_ASSERT((_OutputTraits::step == 1), scalar_algebra_supports_only_single_step_output);
+    STATIC_ASSERT((_InputTraits ::step == 1), scalar_algebra_supports_only_single_step_input)
+    STATIC_ASSERT((_OutputTraits::step == 1), scalar_algebra_supports_only_single_step_output)
 
     typedef _InputTraits  InputTraits;
     typedef _OutputTraits OutputTraits;
