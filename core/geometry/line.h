@@ -209,6 +209,9 @@ public:
         BaseRay<Ray3d, Vector3dd>(_a, _p)
     {}
 
+    Ray3d(const BaseRay<Ray3d, Vector3dd> &base) : BaseRay<Ray3d, Vector3dd>(base)
+    {}
+
     double distanceTo(const Ray3d &other ) const
     {
         Vector3dd denum = a ^ other.a;
@@ -248,9 +251,10 @@ public:
         return (getPoint(coef.x()) + other.getPoint(coef.y())) / 2.0;
     }
     
-    std::pair<Vector3dd, Vector3dd> pluckerize()
+    std::pair<corecvs::Vector3dd, corecvs::Vector3dd> pluckerize() const
     {
-        return std::make_pair(a.normalised(), p ^ a.normalised());
+        auto an = a.normalised();
+        return std::make_pair(an, p ^ an);
     }
 
     void transform(const Matrix44 &M)
@@ -725,11 +729,16 @@ public:
      *  Finding intersection
      *
      *  \f[ \vec n (\vec a t + \vec p) + d = 0 \f]
-     *  \f[ t = \frac {\vec n \vec p + d} { \vec n \vec a } \f]
+     *  \f[ t = - \frac {\vec n \vec p + d} { \vec n \vec a } \f]
      *
      *
      **/
     Vector3dd intersectWith(const Ray3d &ray, bool *hasIntersection = NULL) const
+    {
+        return ray.getPoint(intersectWithP(ray, hasIntersection));
+    }
+
+    double intersectWithP(const Ray3d &ray, bool *hasIntersection = NULL) const
     {
         double denum = normal() & ray.a;
 
@@ -737,11 +746,11 @@ public:
         if (hasIntersection) *hasIntersection = intersects;
 
         if (!intersects)
-            return Vector3dd(0.0);
+            return 0.0;
 
-        double t = ((normal() & ray.p) + last()) / denum;
-        return ray.getPoint(t);
+        return -((normal() & ray.p) + last()) / denum;
     }
+
 
 
      /**
