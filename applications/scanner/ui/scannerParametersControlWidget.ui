@@ -42,6 +42,11 @@
          <string>Hue</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>Dummy</string>
+        </property>
+       </item>
        <property name="toolTip">
          <string>algo</string>
        </property>

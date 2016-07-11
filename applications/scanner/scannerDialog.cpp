@@ -16,6 +16,8 @@
 #include <QMessageBox>
 #include "parametersMapper/parametersMapperScanner.h"
 
+#include "mesh3DScene.h"
+
 
 ScannerDialog::ScannerDialog()
     : BaseHostDialog(),
@@ -40,6 +42,10 @@ void ScannerDialog::initParameterWidgets()
     mScannerParametersControlWidget = new ScannerParametersControlWidget(this, true, UI_NAME_SCANNER);
     dockWidget()->layout()->addWidget(mScannerParametersControlWidget);
     mSaveableWidgets.push_back(mScannerParametersControlWidget);
+
+
+    cloud = static_cast<CloudViewDialog *>(createAdditionalWindow("3d view", oglWindow, QIcon()));
+    graph = static_cast<GraphPlotDialog *>(createAdditionalWindow("Graph view", graphWindow, QIcon()));
 
 
     //connect(mScannerParametersControlWidget->ui()->choosePathButton, SIGNAL(clicked()), this, SLOT(openPathSelectDialog()));
@@ -192,6 +198,19 @@ void ScannerDialog::processResult()
         if (i == eventList.size() - 1) {
             mImage = QSharedPointer<QImage>(new QImage(fod->mMainImage.width(), fod->mMainImage.height(),  QImage::Format_RGB32));
             fod->mMainImage.drawImage(mImage.data());
+
+            QSharedPointer<Mesh3DScene> scene(new Mesh3DScene());
+            scene->switchColor(true);
+            scene->add(fod->outputMesh, true);
+
+            cloud->setNewScenePointer(scene);
+
+
+            for (size_t i = 0; i < fod->cut.size(); i++)
+            {
+                graph->addGraphPoint("R", fod->cut[i]);
+            }
+            graph->update();
         }
 
         delete fod;

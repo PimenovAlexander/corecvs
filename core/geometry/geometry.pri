@@ -10,7 +10,9 @@ HEADERS += \
     geometry/simpleRenderer.h \
     geometry/conic.h \
     geometry/polygonPointIterator.h \
-    geometry/Projection.h
+    geometry/Projection.h \
+    geometry/gentryState.h
+
 
 
 SOURCES += \ 
@@ -24,5 +26,6 @@ SOURCES += \
     geometry/simpleRenderer.cpp \
     geometry/conic.cpp \
     geometry/polygonPointIterator.cpp \
-    geometry/projection.cpp
+    geometry/projection.cpp \
+    geometry/gentryState.cpp
     

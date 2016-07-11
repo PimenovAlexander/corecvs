@@ -725,7 +725,7 @@ public:
      *  Finding intersection
      *
      *  \f[ \vec n (\vec a t + \vec p) + d = 0 \f]
-     *  \f[ t = \frac {\vec n \vec p + d} { \vec n \vec a } \f]
+     *  \f[ t = - \frac {\vec n \vec p + d} { \vec n \vec a } \f]
      *
      *
      **/
@@ -739,7 +739,7 @@ public:
         if (!intersects)
             return Vector3dd(0.0);
 
-        double t = ((normal() & ray.p) + last()) / denum;
+        double t = -((normal() & ray.p) + last()) / denum;
         return ray.getPoint(t);
     }
 

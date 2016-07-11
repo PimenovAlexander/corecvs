@@ -28,6 +28,10 @@ class ScannerOutputData : public BaseOutputData
 public:
     Statistics stats;
     unsigned frameCount;
+
+    Mesh3D outputMesh;
+
+    vector<double> cut;
 };
 
 class ScannerThread : public BaseCalculationThread
