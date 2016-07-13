@@ -79,7 +79,7 @@ ImageCaptureInterface::CapErrorCode RTSPCapture::initCapture()
     }
     SYNC_PRINT(("RTSPCapture::initCapture(): Video codec found\n"));
 
-    mFrame = avcodec_alloc_frame();
+    mFrame = av_frame_alloc();
 
     SYNC_PRINT(("RTSPCapture::initCapture(): exited\n"));
     return ImageCaptureInterface::SUCCESS;
@@ -108,12 +108,12 @@ ImageCaptureInterface::FramePair RTSPCapture::getFrame()
                 }
             }
             // Free the packet that was allocated by av_read_frame
-            av_free_packet(&mPacket);
+            av_packet_unref(&mPacket);
         }
 
         if (res >= 0)
         {
-            if (mFrame->format != PIX_FMT_YUV420P && mFrame->format != PIX_FMT_YUVJ420P)
+            if (mFrame->format != AV_PIX_FMT_YUV420P && mFrame->format != AV_PIX_FMT_YUVJ420P)
             {
                 SYNC_PRINT(("RTSPCapture::getFrame(): Not supported format %d\n", mFrame->format));
                 return result;
