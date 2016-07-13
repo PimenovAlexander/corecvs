@@ -14,7 +14,9 @@ HEADERS += \
     geometry/Projection.h \
     geometry/gentryState.h \
     geometry/raytrace/raytraceRenderer.h \
-    geometry/mesh3DDecorated.h
+    geometry/mesh3DDecorated.h \
+    geometry/polyLine.h \
+    geometry/polylinemesh.h \
 
 
 SOURCES += \ 
@@ -31,5 +33,7 @@ SOURCES += \
     geometry/projection.cpp \
     geometry/gentryState.cpp \
     geometry/raytrace/raytraceRenderer.cpp \
-    geometry/mesh3DDecorated.cpp
+    geometry/mesh3DDecorated.cpp \
+    geometry/polyLine.cpp \
+    geometry/polylinemesh.cpp \
     

@@ -210,11 +210,11 @@ TEST(Buffer, testG12Buffer)
     AbstractBuffer<TestAbstractBufferClass> *main = new AbstractBuffer<TestAbstractBufferClass>(10, 10);
     int oldCnt = TestAbstractBufferClass::counter;
     ASSERT_EQ(oldCnt, 100);
-    AbstractBuffer<TestAbstractBufferClass> *view1 = main->createView<AbstractBuffer<TestAbstractBufferClass>>();
+    AbstractBuffer<TestAbstractBufferClass> *view1 = main->createViewPtr<AbstractBuffer<TestAbstractBufferClass>>();
     ASSERT_EQ(oldCnt, TestAbstractBufferClass::counter);
     delete view1;
     ASSERT_EQ(oldCnt, TestAbstractBufferClass::counter);
-    AbstractBuffer<TestAbstractBufferClass> *view2 = main->createView<AbstractBuffer<TestAbstractBufferClass>>();
+    AbstractBuffer<TestAbstractBufferClass> *view2 = main->createViewPtr<AbstractBuffer<TestAbstractBufferClass>>();
     delete main;
     ASSERT_EQ(oldCnt, TestAbstractBufferClass::counter);
     delete view2;

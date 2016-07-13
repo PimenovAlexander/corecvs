@@ -23,6 +23,7 @@ ScannerParametersControlWidget::ScannerParametersControlWidget(QWidget *parent, 
     QObject::connect(mUi->algoComboBox, SIGNAL(currentIndexChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->redThresholdSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->heightSpinBox, SIGNAL(valueChanged(double)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->useSSECheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
 }
 
 ScannerParametersControlWidget::~ScannerParametersControlWidget()
@@ -53,6 +54,7 @@ void ScannerParametersControlWidget::getParameters(ScannerParameters& params) co
     params.setAlgo             (static_cast<RedRemovalType::RedRemovalType>(mUi->algoComboBox->currentIndex()));
     params.setRedThreshold     (mUi->redThresholdSpinBox->value());
     params.setHeight           (mUi->heightSpinBox->value());
+    params.setUseSSE           (mUi->useSSECheckBox->isChecked());
 
 }
 
@@ -68,6 +70,7 @@ ScannerParameters *ScannerParametersControlWidget::createParameters() const
           static_cast<RedRemovalType::RedRemovalType>(mUi->algoComboBox->currentIndex())
         , mUi->redThresholdSpinBox->value()
         , mUi->heightSpinBox->value()
+        , mUi->useSSECheckBox->isChecked()
     );
     return result;
 }
@@ -79,6 +82,7 @@ void ScannerParametersControlWidget::setParameters(const ScannerParameters &inpu
     mUi->algoComboBox->setCurrentIndex(input.algo());
     mUi->redThresholdSpinBox->setValue(input.redThreshold());
     mUi->heightSpinBox->setValue(input.height());
+    mUi->useSSECheckBox->setChecked(input.useSSE());
     blockSignals(wasBlocked);
     emit paramsChanged();
 }

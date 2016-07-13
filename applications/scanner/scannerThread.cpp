@@ -82,6 +82,7 @@ public:
 
     RGB24Buffer *in;
     G8Buffer   *out;
+    bool useSSE = false;
 
     ParallelConvolve(RGB24Buffer *in, G8Buffer *out) :
         in(in), out(out)
@@ -100,10 +101,10 @@ public:
 
             int j = r;
 #ifdef WITH_SSE
-            for (; j < in->w - r - 16; j+= 16)
+            for (; (j < in->w - r - 16) && useSSE; j+= 16)
             {
-                UInt16x8 sum0 = UInt16x8::Zero();
-                UInt16x8 sum1 = UInt16x8::Zero();
+                Int16x8 sum0 = Int16x8::Zero();
+                Int16x8 sum1 = Int16x8::Zero();
 
                 RGBColor* pos = &(lineStart[-r]);
 
@@ -118,14 +119,20 @@ public:
                     br1 = br1 >> 2;
 
 
-                    sum0 += UInt16x8((br0 * Int16x8(koef[c])).data);
-                    sum1 += UInt16x8((br1 * Int16x8(koef[c])).data);
+                    sum0 += (br0 * Int16x8(koef[c]));
+                    sum1 += (br1 * Int16x8(koef[c]));
                 }
 
-                sum0 = (SSEMath::div<5>(sum0)) + UInt16x8(128);
-                sum1 = (SSEMath::div<5>(sum1)) + UInt16x8(128);
+                sum0 += Int16x8(128*5);
+                sum1 += Int16x8(128*5);
 
-                UInt8x16 result = UInt8x16::packUnsigned(sum0, sum1);
+                UInt16x8 su0(sum0);
+                UInt16x8 su1(sum1);
+
+                su0 = SSEMath::div<5>(su0);
+                su1 = SSEMath::div<5>(su1);
+
+                UInt8x16 result = UInt8x16::packUnsigned(su0, su1);
                 result.save((uint8_t *)outStart);
                 outStart += 16;
                 lineStart += 16;
@@ -204,7 +211,8 @@ AbstractOutputData* ScannerThread::processNewData()
             stats.startInterval();
 
             ParallelConvolve par(&red, outputData->brightness);
-            parallelable_for(0, red.h, par);
+            par.useSSE = mScannerParameters->useSSE();
+            parallelable_for(0, red.h, par, mScannerParameters->useSSE());
 
 
 

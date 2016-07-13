@@ -250,7 +250,9 @@ TEST(meta, matrixExample)
 
 
     /*Packed derivative*/
-    GenericQuaternion<PackedDerivative> QP(PackedDerivative::X(in[0]), PackedDerivative(in[1]), PackedDerivative(in[2]), PackedDerivative(in[3]));
+    GenericQuaternion<PackedDerivative> QP(PackedDerivative::X(in[0]),
+            PackedDerivative(in[1]), PackedDerivative(in[2]),
+            PackedDerivative(in[3]));
     PDMatrix33 MP = QP.toMatrixGeneric<PDMatrix33>();
     for (int i = 0; i < 3; i++)
     {

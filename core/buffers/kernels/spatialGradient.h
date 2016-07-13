@@ -34,7 +34,7 @@ class SpatialGradient : public AbstractBuffer<Vector3dd, uint32_t>
 {
 public:
 
-    SpatialGradient(int h, int w) : AbstractBuffer<Vector3dd, uint32_t>(h, w) {};
+    SpatialGradient(int h, int w) : AbstractBuffer<Vector3dd, uint32_t>(h, w) {}
     SpatialGradient(G12Buffer *input);
 
     G12Buffer* findCornerPoints(double scaler = G12Buffer::BUFFER_MAX_VALUE);

@@ -78,6 +78,17 @@ int ScannerParameters::staticInit()
           "height"
         )
     );
+    fields().push_back(
+        new BoolField
+        (
+          ScannerParameters::USE_SSE_ID,
+          offsetof(ScannerParameters, mUseSSE),
+          true,
+          "Use SSE",
+          "Use SSE",
+          "Use SSE"
+        )
+    );
    return 0;
 }
 

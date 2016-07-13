@@ -23,9 +23,7 @@ TEMPLATE = app
 include($$ROOT_DIR/utils/utils.pri)                        # it uses TARGET, ROOT_DIR and detects UTILS_BINDIR, OBJECTS_DIR, DESTDIR, ...!
 
 
-SOURCES += main.cpp \
-    gentryState.cpp
+SOURCES += main.cpp
 
-HEADERS += \
-    gentryState.h
+HEADERS +=
 
