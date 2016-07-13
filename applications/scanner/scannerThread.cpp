@@ -17,6 +17,7 @@
 
 #include "gentryState.h"
 #include "calibrationHelpers.h"
+#include "abstractPainter.h"
 
 // TEST
 // #include "viFlowStatisticsDescriptor.h"
@@ -75,6 +76,88 @@ void ScannerThread::toggleRecording()
 
 }
 
+class ParallelConvolve
+{
+public:
+
+    RGB24Buffer *in;
+    G8Buffer   *out;
+
+    ParallelConvolve(RGB24Buffer *in, G8Buffer *out) :
+        in(in), out(out)
+    {}
+
+    void operator ()(const BlockedRange<int>& range) const
+    {
+        int32_t koef[5] = {-5, -5, 0, 5, 5};
+        int r = CORE_COUNT_OF(koef) / 2;
+
+
+        for (int i = range.begin(); i != range.end(); i++)
+        {
+            RGBColor* lineStart = &in->element(i,0);
+            uint8_t * outStart  = &out->element(i,0);
+
+            int j = r;
+#ifdef WITH_SSE
+            for (; j < in->w - r - 16; j+= 16)
+            {
+                UInt16x8 sum0 = UInt16x8::Zero();
+                UInt16x8 sum1 = UInt16x8::Zero();
+
+                RGBColor* pos = &(lineStart[-r]);
+
+                for (int c = 0; c < CORE_COUNT_OF(koef); c++, pos++)
+                {
+                    FixedVector<Int16x8, 4> pixel0 = SSEReader8BBBB_DDDD::read((uint32_t *)pos);
+                    FixedVector<Int16x8, 4> pixel1 = SSEReader8BBBB_DDDD::read((uint32_t *)(pos + 8));
+
+                    Int16x8 br0 = pixel0[0] + pixel0[1] + pixel0[2] + Int16x8(1);
+                    br0 = br0 >> 2;
+                    Int16x8 br1 = pixel1[0] + pixel1[1] + pixel1[2] + Int16x8(1);
+                    br1 = br1 >> 2;
+
+
+                    sum0 += UInt16x8((br0 * Int16x8(koef[c])).data);
+                    sum1 += UInt16x8((br1 * Int16x8(koef[c])).data);
+                }
+
+                sum0 = (SSEMath::div<5>(sum0)) + UInt16x8(128);
+                sum1 = (SSEMath::div<5>(sum1)) + UInt16x8(128);
+
+                UInt8x16 result = UInt8x16::packUnsigned(sum0, sum1);
+                result.save((uint8_t *)outStart);
+                outStart += 16;
+                lineStart += 16;
+            }
+#endif
+            for (; j < in->w - r; j++)
+            {
+                int32_t sum = 0;
+                RGBColor* pos = &(lineStart[-r]);
+
+                for (int c = 0; c < CORE_COUNT_OF(koef); c++, pos++)
+                {
+                     RGBColor &pixel = *pos;
+                     uint16_t r = pixel.r();
+                     uint16_t g = pixel.g();
+                     uint16_t b = pixel.b();
+
+                     uint16_t br = (r + g + b + 1) / 3;
+                     sum += br * koef[c];
+                }
+                sum /= 5;
+                sum += 128;
+                *outStart = sum;
+                outStart++;
+                lineStart++;
+            }
+        }
+    }
+
+};
+
+
 AbstractOutputData* ScannerThread::processNewData()
 {
     Statistics stats;
@@ -107,23 +190,25 @@ AbstractOutputData* ScannerThread::processNewData()
 
     if (bufrgb != NULL && !mScannerParameters.isNull())
     {
-        stats.startInterval();
         RGB24Buffer red(bufrgb);
+        outputData->brightness = new G8Buffer(red.getSize());
+        AbstractPainter<G8Buffer> painter(outputData->brightness);
+        painter.drawCircle(100,100, 70, 50);
+
+
         vector<double> tops;
         tops.reserve(red.w);
 
         if (mScannerParameters->algo() == RedRemovalType::BRIGHTNESS)
         {
+            stats.startInterval();
 
-            for (int i = 0; i < red.h; i++)
-            {
-                for (int j = 0; j < red.w; j++)
-                {
-                    RGBColor &pixel = red.element(i,j);
-                    if (pixel.r() <= mScannerParameters->redThreshold())
-                        pixel = RGBColor::Black();
-                }
-            }
+            ParallelConvolve par(&red, outputData->brightness);
+            parallelable_for(0, red.h, par);
+
+
+
+            stats.endInterval("Removing red");
         } else {
             /*for (int i = 0; i < red.h; i++)
             {
@@ -167,7 +252,7 @@ AbstractOutputData* ScannerThread::processNewData()
             outputData->cut.push_back(pixel.r());
         }
 
-        stats.endInterval("Removing red");
+
 
         GentryState state;
         Vector2dd resolution = Vector2dd(bufrgb->w, bufrgb->h);

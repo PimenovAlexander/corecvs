@@ -32,6 +32,14 @@ public:
     Mesh3D outputMesh;
 
     vector<double> cut;
+
+    G8Buffer *brightness = NULL;
+
+    virtual ~ScannerOutputData() override
+    {
+        delete_safe(brightness);
+    }
+
 };
 
 class ScannerThread : public BaseCalculationThread

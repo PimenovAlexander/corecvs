@@ -46,6 +46,7 @@ void ScannerDialog::initParameterWidgets()
 
     cloud = static_cast<CloudViewDialog *>(createAdditionalWindow("3d view", oglWindow, QIcon()));
     graph = static_cast<GraphPlotDialog *>(createAdditionalWindow("Graph view", graphWindow, QIcon()));
+    addImage = static_cast<AdvancedImageWidget *>(createAdditionalWindow("Addition", imageWindow, QIcon()));
 
 
     //connect(mScannerParametersControlWidget->ui()->choosePathButton, SIGNAL(clicked()), this, SLOT(openPathSelectDialog()));
@@ -211,6 +212,8 @@ void ScannerDialog::processResult()
                 graph->addGraphPoint("R", fod->cut[i]);
             }
             graph->update();
+
+            addImage->setImage(QSharedPointer<QImage>(new G8Image(fod->brightness)));
         }
 
         delete fod;

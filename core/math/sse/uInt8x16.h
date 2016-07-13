@@ -109,6 +109,11 @@ public:
         return UInt8x16(_mm_packus_epi16(first.data, second.data));
     }
 
+    static UInt8x16 packUnsigned(const UInt16x8 &first, const UInt16x8 &second)
+    {
+        return UInt8x16(_mm_packus_epi16(first.data, second.data));
+    }
+
 
     /** Load unaligned. Not safe to use until you exactly know what you are doing */
     static UInt8x16 load(const int8_t *data)
