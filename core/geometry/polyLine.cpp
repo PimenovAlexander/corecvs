@@ -1,7 +1,7 @@
 #include "polyLine.h"
 #include "vector3d.h"
 
-#define MAXD 1.5
+#define MAXD 6.25
 
 namespace corecvs {
     polyLine::polyLine(vector<Vector3dd> p)

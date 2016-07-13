@@ -78,7 +78,7 @@ namespace corecvs {
                         b2 += num2 - num1;
                     }
 
-                for (int t = 0; t < num2 - 1; t++)
+                for (int t = 0; t < num2; t++)
                 {
                     mesh.addTriangle(p_line.points[b2 + t], polyline.points[b1 + t], polyline.points[b1 + t + 1]);
                     mesh.addTriangle(p_line.points[b2 + t], polyline.points[b1 + t + 1], p_line.points[b2 + t + 1]);
