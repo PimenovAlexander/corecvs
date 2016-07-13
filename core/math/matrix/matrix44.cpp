@@ -76,6 +76,17 @@ Matrix44 Matrix44::Scale(const double &d)
     return result;
 }
 
+Matrix44 Matrix44::Scale(const double &d1, const double &d2, const double &d3)
+{
+    Matrix44 M;
+    double *y = M.element;
+    (*y++) =  d1;  (*y++) = 0.0;  (*y++) = 0.0; (*y++) = 0.0;
+    (*y++) = 0.0;  (*y++) =  d2;  (*y++) = 0.0; (*y++) = 0.0;
+    (*y++) = 0.0;  (*y++) = 0.0;  (*y++) =  d3; (*y++) = 0.0;
+    (*y++) = 0.0;  (*y++) = 0.0;  (*y++) = 0.0; (*y)   = 1.0;
+    return M;
+}
+
 
 Matrix44 Matrix44::RotationX (double alpha)
 {

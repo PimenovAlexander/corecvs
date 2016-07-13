@@ -15,7 +15,6 @@
 #include "rgb24Buffer.h"
 #include "../../core/fileformats/bmpLoader.h"
 
-using namespace std;
 using namespace corecvs;
 
 TEST(RGB24BufferTest, testDrawLine)

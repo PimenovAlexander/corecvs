@@ -267,15 +267,26 @@ AbstractOutputData* ScannerThread::processNewData()
 
         state.camera.intrinsics = PinholeCameraIntrinsics(resolution,  degToRad(60));
         state.camera.setLocation(
-                    Affine3DQ::Shift(0,0,10) *
+                    Affine3DQ::Shift(0,0,0) *
                     Affine3DQ::RotationX(degToRad(90.0))
                     );
         state.laserPlane = Plane3d::FormNormalAndPoint(
                     Vector3dd(0,0,1),
-                    Vector3dd::Zero()
+                    Vector3dd(0,0,-30)
                     );
 
         outputData->outputMesh.switchColor();
+
+        static int framecount=0;
+        static Mesh3D model;
+
+        framecount++;
+
+        if (framecount > 200) {
+            framecount = 0;
+            model.clear();
+        }
+
 
         for (size_t i = 0; i < tops.size(); i++)
         {
@@ -283,7 +294,7 @@ AbstractOutputData* ScannerThread::processNewData()
             Ray3d ray = state.camera.rayFromPixel(pixel);
 
             outputData->outputMesh.setColor(RGBColor::Green());
-            outputData->outputMesh.addLine(ray.p, ray.getPoint(60.0));
+            //outputData->outputMesh.addLine(ray.p, ray.getPoint(60.0));
 
             bool hasIntersection = false;
             Vector3dd point = state.laserPlane.intersectWith(ray, &hasIntersection);
@@ -296,8 +307,12 @@ AbstractOutputData* ScannerThread::processNewData()
             outputData->outputMesh.setColor(RGBColor::Yellow());
             outputData->outputMesh.addPoint(point);
 
+            model.addPoint(point + Vector3dd(0, 0, framecount * 2.0));
 
         }
+        outputData->outputMesh.setColor(RGBColor::Magenta());
+        outputData->outputMesh.add(model);
+
         CalibrationHelpers drawer;
         drawer.drawCamera(outputData->outputMesh, state.camera, 1.0);
 

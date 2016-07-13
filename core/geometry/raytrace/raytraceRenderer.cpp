@@ -53,6 +53,8 @@ void RaytraceRenderer::trace(RGB24Buffer *buffer)
                     currentY = i;
                     Vector2dd pixel(j, i);
                     Ray3d ray = Ray3d(intrisics.reverse(pixel), Vector3dd::Zero());
+                    ray = position * ray;
+
                     ray.normalise();
 
                     RayIntersection intersection;
@@ -97,13 +99,15 @@ void RaytraceRenderer::trace(RGB24Buffer *buffer)
     {
         for (int j = 0; j < buffer->w; j++)
         {
-            buffer->element(i, j) = RGBColor::FromDouble(energy->element(i,j) / 2.0);
+            buffer->element(i, j) = RGBColor::FromDouble(energy->element(i,j) / 2.1);
             if (markup->element(i, j) != 0)
             {
                 buffer->element(i, j) = RGBColor::Red();
             }
         }
     }
+
+    printf("\n");
 
     delete_safe(energy);
     delete_safe(markup);
@@ -315,6 +319,10 @@ void RaytraceableMaterial::getColor(RayIntersection &ray, RaytraceRenderer &rend
                 renderer.markup->element(renderer.currentY, renderer.currentX) = 1;*/
                 continue;
             }
+        }
+
+        if (!light->checkRay(lightRay)) {
+            continue;
         }
 
         // SYNC_PRINT(("Light visible: "));

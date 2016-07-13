@@ -257,13 +257,15 @@ public:
         return std::make_pair(an, p ^ an);
     }
 
-    void transform(const Matrix44 &M)
+    template <class Transformer>
+    void transform(const Transformer &M)
     {
         a = M * a;
         p = M * p;
     }
 
-    Ray3d transformed(const Matrix44 &M)
+    template <class Transformer>
+    Ray3d transformed(const Transformer &M)
     {
         return Ray3d((M * (p + a)) - (M * p), M * p);
     }

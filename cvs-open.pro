@@ -3,7 +3,7 @@ CONFIG  += ordered
 
 SUBDIRS +=                   \
     core                     \
-#    unitTests                \
+    unitTests                \
     utils                    \
     \
 #    tests \

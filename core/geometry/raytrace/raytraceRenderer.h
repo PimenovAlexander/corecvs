@@ -44,6 +44,10 @@ public:
     ) : color(_color),
         position(_position)
     {}
+
+    virtual bool checkRay(RayIntersection &ray) {
+        return true;
+    }
 };
 
 class RaytraceableMaterial {
@@ -183,6 +187,8 @@ class RaytraceRenderer
 {
 public:
     PinholeCameraIntrinsics intrisics;
+    Affine3DQ position;
+
     Raytraceable *object;
     vector<RaytraceablePointLight *> lights;
     TraceColor ambient;

@@ -89,5 +89,6 @@ SOURCES += \
     function/main_test_function.cpp \
     deform/test_deform.cpp \
     camerafixture/main_test_camerafixture.cpp \
-	renderer/main_test_renderer.cpp \
-    meshdraw/test_polymeshdraw.cpp
+    renderer/main_test_renderer.cpp \
+    meshdraw/test_polymeshdraw.cpp \
+    raytrace/main_test_raytrace.cpp \
