@@ -1,6 +1,10 @@
 #ifndef SCANNERCONTROL_H
 #define SCANNERCONTROL_H
 
+#include "QObject"
+#include "QString"
+#include "QtSerialPort/QSerialPort"
+
 class ScannerControl : public QObject
 {
     Q_OBJECT

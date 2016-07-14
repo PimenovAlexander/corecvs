@@ -1,6 +1,9 @@
 #include "scannercontrol.h"
+#include <QDebug>
+#include <QThread>
 
-ScannerControl::LaserController()
+
+ScannerControl::ScannerControl()
 {
     port = new QSerialPort();
     pos = 0;
@@ -47,7 +50,7 @@ bool ScannerControl::laserOff(){
 /*
  * negative argument moves back, positive - forward
  */
-bool ScannerControl::step(qint64 dist)
+bool ScannerControl::step(qreal dist)
 {
     QString command;
     command.sprintf("MOVE %i\n",quint64(dist));
@@ -77,11 +80,9 @@ int ScannerControl::getPos(){
 
 void ScannerControl::getMessage()
 {
-    QString messsage = port->readAll();
+    QString message = port->readAll();
     qDebug() << message;
     if(message.contains("STOP")){
         emit endOfMove();
     }
 }
-
-
