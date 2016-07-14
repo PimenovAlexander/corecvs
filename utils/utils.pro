@@ -88,6 +88,7 @@ HEADERS += \
     distortioncorrector/lensDistortionModelParametersControlWidget.h \
     distortioncorrector/calibrationFeaturesWidget.h \
     uis/cloudview/scene3dTreeView.h \
+    scannercontrol.h
 
 SOURCES += \
     frames.cpp \
@@ -150,6 +151,7 @@ SOURCES += \
     distortioncorrector/lensDistortionModelParametersControlWidget.cpp \
     distortioncorrector/calibrationFeaturesWidget.cpp \
     uis/cloudview/scene3dTreeView.cpp \
+    scannercontrol.cpp
 
 
 FORMS += \
@@ -420,12 +422,12 @@ with_opengl {
          3d/generated/draw3dParameters.h \
          3d/generated/draw3dStyle.h \
          3d/generated/draw3dCameraParameters.h \
-         3d/generated/viMouse3DStereoStyle.h \
-         3d/generated/viMouse3DFlowStyle.h \
-         3d/generated/viMouse3DStereoStyle.h \
-         3d/generated/viMouse3DFlowStyle.h \
+         3d/generated/viMouse3dStereoStyle.h \
+         3d/generated/viMouse3dFlowStyle.h \
+         3d/generated/viMouse3dStereoStyle.h \
+         3d/generated/viMouse3dFlowStyle.h \
          3d/generated/draw3dViMouseParameters.h \
-         3d/mesh3DScene.h \
+         3d/mesh3dScene.h \
          3d/coordinateFrame.h \
          \
 

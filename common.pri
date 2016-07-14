@@ -554,3 +554,6 @@ with_fftw {
 # QMAKE_CXXFLAGS += -Wunreachable-code
 
 #OPEN_ROOT_DIRECTORY = $$PWD
+
+DISTFILES += \
+    $$PWD/arduinoscancontrol.ino
