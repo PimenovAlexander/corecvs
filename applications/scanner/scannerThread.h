@@ -32,12 +32,14 @@ public:
     Mesh3D outputMesh;
 
     vector<double> cut;
+    vector<double> cutConvolution;
 
-    G8Buffer *brightness = NULL;
+
+    RGB24Buffer *convolution = NULL;
 
     virtual ~ScannerOutputData() override
     {
-        delete_safe(brightness);
+        delete_safe(convolution);
     }
 
 };

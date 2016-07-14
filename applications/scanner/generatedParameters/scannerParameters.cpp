@@ -89,6 +89,17 @@ int ScannerParameters::staticInit()
           "Use SSE"
         )
     );
+    fields().push_back(
+        new BoolField
+        (
+          ScannerParameters::CALCULATE_CONVOLUTION_ID,
+          offsetof(ScannerParameters, mCalculateConvolution),
+          true,
+          "Calculate convolution",
+          "Calculate convolution",
+          "Calculate convolution"
+        )
+    );
    return 0;
 }
 

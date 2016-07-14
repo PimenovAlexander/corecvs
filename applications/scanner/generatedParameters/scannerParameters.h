@@ -44,6 +44,7 @@ public:
         RED_THRESHOLD_ID,
         HEIGHT_ID,
         USE_SSE_ID,
+        CALCULATE_CONVOLUTION_ID,
         SCANNER_PARAMETERS_FIELD_ID_NUM
     };
 
@@ -73,6 +74,12 @@ public:
      */
     bool mUseSSE;
 
+    /** 
+     * \brief Calculate convolution 
+     * Calculate convolution 
+     */
+    bool mCalculateConvolution;
+
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
 
@@ -101,6 +108,11 @@ public:
         return mUseSSE;
     }
 
+    bool calculateConvolution() const
+    {
+        return mCalculateConvolution;
+    }
+
     /* Section with setters */
     void setAlgo(RedRemovalType::RedRemovalType algo)
     {
@@ -122,6 +134,11 @@ public:
         mUseSSE = useSSE;
     }
 
+    void setCalculateConvolution(bool calculateConvolution)
+    {
+        mCalculateConvolution = calculateConvolution;
+    }
+
     /* Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
@@ -131,6 +148,7 @@ template<class VisitorType>
         visitor.visit(mRedThreshold,              static_cast<const IntField *>     (fields()[RED_THRESHOLD_ID]));
         visitor.visit(mHeight,                    static_cast<const DoubleField *>  (fields()[HEIGHT_ID]));
         visitor.visit(mUseSSE,                    static_cast<const BoolField *>    (fields()[USE_SSE_ID]));
+        visitor.visit(mCalculateConvolution,      static_cast<const BoolField *>    (fields()[CALCULATE_CONVOLUTION_ID]));
     }
 
     ScannerParameters()
@@ -144,12 +162,14 @@ template<class VisitorType>
         , int redThreshold
         , double height
         , bool useSSE
+        , bool calculateConvolution
     )
     {
         mAlgo = algo;
         mRedThreshold = redThreshold;
         mHeight = height;
         mUseSSE = useSSE;
+        mCalculateConvolution = calculateConvolution;
     }
 
     friend ostream& operator << (ostream &out, ScannerParameters &toSave)
