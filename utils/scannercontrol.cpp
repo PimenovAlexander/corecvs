@@ -1,6 +1,9 @@
+#include <QThread>
+#include <QDebug>
+
 #include "scannercontrol.h"
 
-ScannerControl::LaserController()
+ScannerControl::ScannerControl()
 {
     port = new QSerialPort();
     pos = 0;
@@ -77,7 +80,7 @@ int ScannerControl::getPos(){
 
 void ScannerControl::getMessage()
 {
-    QString messsage = port->readAll();
+    QString message = port->readAll();
     qDebug() << message;
     if(message.contains("STOP")){
         emit endOfMove();

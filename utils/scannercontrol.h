@@ -1,6 +1,9 @@
 #ifndef SCANNERCONTROL_H
 #define SCANNERCONTROL_H
 
+#include <QObject>
+#include <QtSerialPort/QSerialPort>
+
 class ScannerControl : public QObject
 {
     Q_OBJECT
@@ -13,7 +16,7 @@ public slots:
     bool openDevice(QString name);
     bool laserOn();
     bool laserOff();
-    bool step(qreal dist);
+    bool step(qint64 dist);
     int getPos();
     int getRealPos();
     void close();
