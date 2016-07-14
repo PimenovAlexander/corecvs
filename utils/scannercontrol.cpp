@@ -1,3 +1,6 @@
+#include <QThread>
+#include <QDebug>
+
 #include "scannercontrol.h"
 #include <QDebug>
 #include <QThread>

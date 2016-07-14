@@ -14,6 +14,11 @@ TEMPLATE = lib
 TARGET   = cvs_utils
 CONFIG += staticlib
 
+QT += serialport
+
+CONFIG += serialport
+LIBS += -lserialport
+
 include(utils.pri)                      # it uses TARGET and detects UTILS_BINDIR, OBJECTS_DIR,...!
 
 QT += gui
