@@ -95,17 +95,29 @@
     <item row="3" column="0">
      <widget class="QLabel" name="label_3">
        <property name="text">
-         <string>Use SSE</string>
+         <string>corner Score</string>
        </property>
      </widget>
     </item>
     <item row="3" column="1">
-     <widget class="QCheckBox" name="useSSECheckBox">
+     <widget class="QDoubleSpinBox" name="cornerScoreSpinBox">
        <property name="toolTip">
-         <string>Use SSE</string>
+         <string>corner Score</string>
        </property>
-       <property name="checked">
-           <bool>true</bool>
+       <property name="minimum">
+        <double>0</double>
+       </property>
+       <property name="maximum">
+        <double>255</double>
+       </property>
+       <property name="singleStep">
+        <double>1</double>
+       </property>
+       <property name="value">
+        <double>0.05</double>
+       </property>
+       <property name="decimals">
+        <number>3</number>
        </property>
      </widget>
     </item>
@@ -159,8 +171,8 @@
    <slot>changeParameters()</slot>
   </connection>
   <connection>
-   <sender>useSSECheckBox</sender>
-   <signal>stateChanged(int)</signal>
+   <sender>cornerScoreSpinBox</sender>
+   <signal>valueChanged(double)</signal>
    <receiver>ScannerParametersControlWidget</receiver>
    <slot>changeParameters()</slot>
   </connection>

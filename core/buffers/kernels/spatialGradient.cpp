@@ -39,19 +39,47 @@ public:
     typedef TraitGeneric<Vector3dd> TraitVector33;
     typedef ScalarAlgebraMulti<TraitVector33, TraitVector33, inputNumber, outputNumber> Type;
 };
-
-G12Buffer* SpatialGradient::findCornerPoints(double scaler)
+/*
+ *  R=detM-(SCALLER*(traceM)^2)
+ * те точки R которых меньше scaler исключаются из рассмотрения
+*/
+G12Buffer* SpatialGradient::findCornerPoints(double scaler)//эпмпиричиская константа....?приблизительно 0.05
 {
+    int v = 27;
     SpatialGradient *start    = this;
     SpatialGradient *blurVert = new SpatialGradient(h, w);
     SpatialGradient *blur     = new SpatialGradient(h, w);
 
     /* TODO: Redo this to simplify for buffers */
-    BufferProcessor<SpatialGradient, SpatialGradient, Blur5Horisontal, ScalarAlgebraVector33> blurerH;
-    BufferProcessor<SpatialGradient, SpatialGradient, Blur5Vertical, ScalarAlgebraVector33>   blurerV;
+    if (v = 5)
+    {
+        BufferProcessor<SpatialGradient, SpatialGradient, Blur5Horisontal, ScalarAlgebraVector33> blurerH;
+        BufferProcessor<SpatialGradient, SpatialGradient, Blur5Vertical, ScalarAlgebraVector33>   blurerV;
 
-    blurerV.process(&start   , &blurVert);
-    blurerH.process(&blurVert, &blur);
+        blurerV.process(&start   , &blurVert);
+        blurerH.process(&blurVert, &blur);
+    } else {
+        for(int i = 0 ; i < start->h; i++)
+        {
+            for(int  j = 0; j < start->w; j++)
+            {
+                Vector3dd sum = Vector3dd::Zero();
+
+                for(int dy = i - v / 2 ; dy <= i + v / 2; dy++)
+                {
+                    for(int dx = j - v / 2 ; dx <= j + v / 2; dx++)
+                    {
+                        if (!start->isValidCoord(dy,dx))
+                            continue;
+                        sum += start->element(dy,dx);
+                    }
+                }
+
+                blur->element(i,j) = sum / (v*v);
+            }
+        }
+    }
+
 
     G12Buffer *toReturn = new G12Buffer(h, w);
 

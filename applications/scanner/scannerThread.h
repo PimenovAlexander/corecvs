@@ -34,10 +34,14 @@ public:
     vector<double> cut;
 
     G8Buffer *brightness = NULL;
+    G8Buffer *corners   = NULL;
+
 
     virtual ~ScannerOutputData() override
     {
         delete_safe(brightness);
+        delete_safe(corners);
+
     }
 
 };

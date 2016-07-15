@@ -79,14 +79,17 @@ int ScannerParameters::staticInit()
         )
     );
     fields().push_back(
-        new BoolField
+        new DoubleField
         (
-          ScannerParameters::USE_SSE_ID,
-          offsetof(ScannerParameters, mUseSSE),
+          ScannerParameters::CORNER_SCORE_ID,
+          offsetof(ScannerParameters, mCornerScore),
+          0.05,
+          "corner Score",
+          "corner Score",
+          "corner Score",
           true,
-          "Use SSE",
-          "Use SSE",
-          "Use SSE"
+         0,
+         255
         )
     );
    return 0;

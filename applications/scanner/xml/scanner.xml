@@ -12,7 +12,7 @@
     <field type="Red Removal Type" name="algo"   defaultValue="0"/>
     <field type="int" name="red threshold"   defaultValue="200" min="0" max="255"/>
     <field type="double" name="height"  defaultValue="10"/>
-    <field type="bool" name="Use SSE"  defaultValue="true"/>
+    <field type="double" name="corner Score"  defaultValue="0.05" min="0" max="255" decimals="3"/>
 
   </class> 
   

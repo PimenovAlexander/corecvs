@@ -43,7 +43,7 @@ public:
         ALGO_ID,
         RED_THRESHOLD_ID,
         HEIGHT_ID,
-        USE_SSE_ID,
+        CORNER_SCORE_ID,
         SCANNER_PARAMETERS_FIELD_ID_NUM
     };
 
@@ -68,10 +68,10 @@ public:
     double mHeight;
 
     /** 
-     * \brief Use SSE 
-     * Use SSE 
+     * \brief corner Score 
+     * corner Score 
      */
-    bool mUseSSE;
+    double mCornerScore;
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
@@ -96,9 +96,9 @@ public:
         return mHeight;
     }
 
-    bool useSSE() const
+    double cornerScore() const
     {
-        return mUseSSE;
+        return mCornerScore;
     }
 
     /* Section with setters */
@@ -117,9 +117,9 @@ public:
         mHeight = height;
     }
 
-    void setUseSSE(bool useSSE)
+    void setCornerScore(double cornerScore)
     {
-        mUseSSE = useSSE;
+        mCornerScore = cornerScore;
     }
 
     /* Section with embedded classes */
@@ -130,7 +130,7 @@ template<class VisitorType>
         visitor.visit((int &)mAlgo,               static_cast<const EnumField *>    (fields()[ALGO_ID]));
         visitor.visit(mRedThreshold,              static_cast<const IntField *>     (fields()[RED_THRESHOLD_ID]));
         visitor.visit(mHeight,                    static_cast<const DoubleField *>  (fields()[HEIGHT_ID]));
-        visitor.visit(mUseSSE,                    static_cast<const BoolField *>    (fields()[USE_SSE_ID]));
+        visitor.visit(mCornerScore,               static_cast<const DoubleField *>  (fields()[CORNER_SCORE_ID]));
     }
 
     ScannerParameters()
@@ -143,13 +143,13 @@ template<class VisitorType>
           RedRemovalType::RedRemovalType algo
         , int redThreshold
         , double height
-        , bool useSSE
+        , double cornerScore
     )
     {
         mAlgo = algo;
         mRedThreshold = redThreshold;
         mHeight = height;
-        mUseSSE = useSSE;
+        mCornerScore = cornerScore;
     }
 
     friend ostream& operator << (ostream &out, ScannerParameters &toSave)

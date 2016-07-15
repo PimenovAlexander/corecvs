@@ -58,6 +58,7 @@ private:
     CloudViewDialog *cloud = NULL;
     GraphPlotDialog *graph = NULL;
     AdvancedImageWidget *addImage = NULL;
+    AdvancedImageWidget *cornerImage = NULL;
 
 };
 
