@@ -210,10 +210,10 @@ void ScannerDialog::processResult()
             for (size_t i = 0; i < fod->cut.size(); i++)
             {
                 graph->addGraphPoint("R", fod->cut[i]);
+                graph->addGraphPoint("R_conv", fod->cutConvolution[i]);
             }
             graph->update();
-
-            addImage->setImage(QSharedPointer<QImage>(new G8Image(fod->brightness)));
+            addImage->setImage(QSharedPointer<QImage>(new RGB24Image(fod->convolution)));
         }
 
         delete fod;

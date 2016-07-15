@@ -24,6 +24,7 @@ ScannerParametersControlWidget::ScannerParametersControlWidget(QWidget *parent, 
     QObject::connect(mUi->redThresholdSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->heightSpinBox, SIGNAL(valueChanged(double)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->useSSECheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->calculateConvolutionCheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
 }
 
 ScannerParametersControlWidget::~ScannerParametersControlWidget()
@@ -55,6 +56,7 @@ void ScannerParametersControlWidget::getParameters(ScannerParameters& params) co
     params.setRedThreshold     (mUi->redThresholdSpinBox->value());
     params.setHeight           (mUi->heightSpinBox->value());
     params.setUseSSE           (mUi->useSSECheckBox->isChecked());
+    params.setCalculateConvolution(mUi->calculateConvolutionCheckBox->isChecked());
 
 }
 
@@ -71,6 +73,7 @@ ScannerParameters *ScannerParametersControlWidget::createParameters() const
         , mUi->redThresholdSpinBox->value()
         , mUi->heightSpinBox->value()
         , mUi->useSSECheckBox->isChecked()
+        , mUi->calculateConvolutionCheckBox->isChecked()
     );
     return result;
 }
@@ -83,6 +86,7 @@ void ScannerParametersControlWidget::setParameters(const ScannerParameters &inpu
     mUi->redThresholdSpinBox->setValue(input.redThreshold());
     mUi->heightSpinBox->setValue(input.height());
     mUi->useSSECheckBox->setChecked(input.useSSE());
+    mUi->calculateConvolutionCheckBox->setChecked(input.calculateConvolution());
     blockSignals(wasBlocked);
     emit paramsChanged();
 }
