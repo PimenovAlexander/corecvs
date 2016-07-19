@@ -72,6 +72,26 @@ TEST(FileFormats, testFileFormats)
     delete_safe(bmpLoader1);
 }
 
+TEST(FileFormats, DISABLED_testBMP24)
+{
+    BMPLoader *bmpLoader = new BMPLoader();
+    bmpLoader->trace = true;
+    G12Buffer   *bmp1 = bmpLoader->load   ("first.bmp");
+    RGB24Buffer *bmp2 = bmpLoader->loadRGB("first.bmp");
+
+    cout << bmp1->h << " " << bmp1->w << endl;
+    cout << bmp2->h << " " << bmp2->w << endl;
+
+    bmpLoader->save("saved.bmp"   , bmp1);
+    bmpLoader->save("savedrgb.bmp", bmp2);
+
+
+    CORE_ASSERT_TRUE(bmp1 != NULL, "BMP Image load failed");
+    CORE_ASSERT_TRUE(bmp1->verify(), "BMP Image verification failed");
+    delete_safe(bmp1);
+    delete_safe(bmpLoader);
+}
+
 TEST(FileFormats, testPlyLoader)
 {
     const char *tests[4];

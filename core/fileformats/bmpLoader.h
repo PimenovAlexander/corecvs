@@ -23,6 +23,9 @@ using std::string;
 
 class BMPHeader {
 public:
+    bool trace = false;
+
+public:
     static const unsigned HEADER_SIZE = 0x36;
     static uint8_t HEADER_SIGNATURE[2];
 
@@ -33,7 +36,10 @@ public:
     uint16_t planes;
     uint16_t bpp;
     uint32_t dataLen;
+
+
     int lineLength;
+    int bytesPerPixel;
 
     int parseHeader(FILE *fp);
 };
@@ -44,6 +50,8 @@ class BMPLoader : public BufferLoader<G12Buffer>
     static string prefix1;
 
 public:
+    bool trace = false;
+
     BMPLoader();
     virtual ~BMPLoader();
 
