@@ -40,6 +40,33 @@ int ScannerParameters::staticInit()
     fields().push_back(
         new EnumField
         (
+          ScannerParameters::CHANNEL_ID,
+          offsetof(ScannerParameters, mChannel),
+          0,
+          "channel",
+          "channel",
+          "channel",
+          new EnumReflection(14
+          , new EnumOption(0,"R")
+          , new EnumOption(1,"G")
+          , new EnumOption(2,"B")
+          , new EnumOption(3,"Alpha")
+          , new EnumOption(4,"Y")
+          , new EnumOption(5,"Cr")
+          , new EnumOption(6,"Cb")
+          , new EnumOption(7,"U")
+          , new EnumOption(8,"Chroma")
+          , new EnumOption(9,"Gray")
+          , new EnumOption(10,"Luma")
+          , new EnumOption(11,"Hue")
+          , new EnumOption(12,"Saturation")
+          , new EnumOption(13,"Value")
+          )
+        )
+    );
+    fields().push_back(
+        new EnumField
+        (
           ScannerParameters::ALGO_ID,
           offsetof(ScannerParameters, mAlgo),
           0,
@@ -79,6 +106,20 @@ int ScannerParameters::staticInit()
         )
     );
     fields().push_back(
+        new IntField
+        (
+          ScannerParameters::GRAPH_LINE_ID,
+          offsetof(ScannerParameters, mGraphLine),
+          960,
+          "Graph line",
+          "Graph line",
+          "Graph line",
+          true,
+         0,
+         1920
+        )
+    );
+    fields().push_back(
         new BoolField
         (
           ScannerParameters::USE_SSE_ID,
@@ -87,6 +128,17 @@ int ScannerParameters::staticInit()
           "Use SSE",
           "Use SSE",
           "Use SSE"
+        )
+    );
+    fields().push_back(
+        new BoolField
+        (
+          ScannerParameters::CALCULATE_CONVOLUTION_ID,
+          offsetof(ScannerParameters, mCalculateConvolution),
+          true,
+          "Calculate convolution",
+          "Calculate convolution",
+          "Calculate convolution"
         )
     );
    return 0;

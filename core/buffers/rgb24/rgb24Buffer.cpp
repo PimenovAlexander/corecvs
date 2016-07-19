@@ -1019,6 +1019,22 @@ G8Buffer* RGB24Buffer::getChannel(ImageChannel::ImageChannel channel)
                 case ImageChannel::B:
                     pixel = element(i,j).b();
                     break;
+                case ImageChannel::U:
+                    pixel = element(i,j).u();
+                    break;
+                case ImageChannel::V:
+                    pixel = element(i,j).v();
+                    break;
+                case ImageChannel::CR:
+                    pixel = element(i,j).cr();
+                    break;
+                case ImageChannel::CB:
+                    pixel = element(i,j).cb();
+                    break;
+                case ImageChannel::CHROMA:
+                    pixel = element(i,j).chroma();
+                    break;
+
                 default:
                 case ImageChannel::LUMA:
                     pixel = element(i,j).luma();

@@ -31,6 +31,8 @@ HEADERS += \
     generatedParameters/scannerParameters.h \                    # parameters for calculation threads, host dialogs etc.
     generatedParameters/redRemovalType.h \
     parametersMapper/parametersMapperScanner.h \       # parameters for params mapper
+    laserlinedetection.h
+
 
 SOURCES += \
     main_scanner.cpp \
@@ -39,6 +41,7 @@ SOURCES += \
     scannerParametersControlWidget.cpp \                         # control widgets
     generatedParameters/scannerParameters.cpp \                  # parameters for calculation threads, host dialogs etc.
     parametersMapper/parametersMapperScanner.cpp \     # parameters for params mapper
+    laserlinedetection.cpp
 
 FORMS += \
     ui/scannerParametersControlWidget.ui \

@@ -27,11 +27,22 @@
       <item name="R"          id="0" icon=":/new/colors/colors/color_red.png@main.qrc"/>
       <item name="G"          id="1" icon=":/new/colors/colors/color_green.png@main.qrc"/>
       <item name="B"          id="2" icon=":/new/colors/colors/color_blue.png@main.qrc"/>
-      <item name="Gray"       id="3" icon=":/new/colors/colors/color_gray.png@main.qrc"/>
-      <item name="Luma"       id="4" icon=":/new/colors/colors/color_gray.png@main.qrc"/>
-      <item name="Hue"        id="5" icon=":/new/colors/colors/color_wheel.png@main.qrc"/>
-      <item name="Saturation" id="6" />
-      <item name="Value"      id="7" />
+
+      <item name="Alpha"      id="3" />
+      <item name="Y"          id="4" />
+      <item name="Cr"         id="5" />
+      <item name="Cb"         id="6" />
+
+      <item name="U"          id="7" />
+      <item name="V"          id="8" />
+
+      <item name="Chroma"     id="9" />
+
+      <item name="Gray"       id="10" icon=":/new/colors/colors/color_gray.png@main.qrc"/>
+      <item name="Luma"       id="11" icon=":/new/colors/colors/color_gray.png@main.qrc"/>
+      <item name="Hue"        id="12" icon=":/new/colors/colors/color_wheel.png@main.qrc"/>
+      <item name="Saturation" id="13" />
+      <item name="Value"      id="14" />
   </enum>
   
 
