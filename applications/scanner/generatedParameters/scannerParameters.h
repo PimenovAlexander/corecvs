@@ -48,6 +48,7 @@ public:
         GRAPH_LINE_ID,
         USE_SSE_ID,
         CALCULATE_CONVOLUTION_ID,
+        CORNER_SCORE_ID,
         SCANNER_PARAMETERS_FIELD_ID_NUM
     };
 
@@ -95,6 +96,12 @@ public:
      */
     bool mCalculateConvolution;
 
+    /** 
+     * \brief corner Score 
+     * corner Score 
+     */
+    double mCornerScore;
+
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
 
@@ -138,6 +145,11 @@ public:
         return mCalculateConvolution;
     }
 
+    double cornerScore() const
+    {
+        return mCornerScore;
+    }
+
     /* Section with setters */
     void setChannel(ImageChannel::ImageChannel channel)
     {
@@ -174,6 +186,11 @@ public:
         mCalculateConvolution = calculateConvolution;
     }
 
+    void setCornerScore(double cornerScore)
+    {
+        mCornerScore = cornerScore;
+    }
+
     /* Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
@@ -186,6 +203,7 @@ template<class VisitorType>
         visitor.visit(mGraphLine,                 static_cast<const IntField *>     (fields()[GRAPH_LINE_ID]));
         visitor.visit(mUseSSE,                    static_cast<const BoolField *>    (fields()[USE_SSE_ID]));
         visitor.visit(mCalculateConvolution,      static_cast<const BoolField *>    (fields()[CALCULATE_CONVOLUTION_ID]));
+        visitor.visit(mCornerScore,               static_cast<const DoubleField *>  (fields()[CORNER_SCORE_ID]));
     }
 
     ScannerParameters()
@@ -202,6 +220,7 @@ template<class VisitorType>
         , int graphLine
         , bool useSSE
         , bool calculateConvolution
+        , double cornerScore
     )
     {
         mChannel = channel;
@@ -211,6 +230,7 @@ template<class VisitorType>
         mGraphLine = graphLine;
         mUseSSE = useSSE;
         mCalculateConvolution = calculateConvolution;
+        mCornerScore = cornerScore;
     }
 
     friend ostream& operator << (ostream &out, ScannerParameters &toSave)

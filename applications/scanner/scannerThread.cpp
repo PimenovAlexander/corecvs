@@ -92,7 +92,6 @@ public:
 
     RGB24Buffer *in;
     G8Buffer   *out;
-    bool useSSE = false;
 
     ParallelConvolve(RGB24Buffer *in, G8Buffer *out) :
         in(in), out(out) {}
@@ -110,10 +109,10 @@ public:
 
             int j = r;
 #ifdef WITH_SSE
-            for (; (j < in->w - r - 16) && useSSE; j+= 16)
+            for (; j < in->w - r - 16; j+= 16)
             {
-                Int16x8 sum0 = Int16x8::Zero();
-                Int16x8 sum1 = Int16x8::Zero();
+                UInt16x8 sum0 = UInt16x8::Zero();
+                UInt16x8 sum1 = UInt16x8::Zero();
 
                 RGBColor* pos = &(lineStart[-r]);
 
@@ -128,20 +127,14 @@ public:
                     br1 = br1 >> 2;
 
 
-                    sum0 += (br0 * Int16x8(koef[c]));
-                    sum1 += (br1 * Int16x8(koef[c]));
+                    sum0 += UInt16x8((br0 * Int16x8(koef[c])).data);
+                    sum1 += UInt16x8((br1 * Int16x8(koef[c])).data);
                 }
 
-                sum0 += Int16x8(128*5);
-                sum1 += Int16x8(128*5);
+                sum0 = (SSEMath::div<5>(sum0)) + UInt16x8(128);
+                sum1 = (SSEMath::div<5>(sum1)) + UInt16x8(128);
 
-                UInt16x8 su0(sum0);
-                UInt16x8 su1(sum1);
-
-                su0 = SSEMath::div<5>(su0);
-                su1 = SSEMath::div<5>(su1);
-
-                UInt8x16 result = UInt8x16::packUnsigned(su0, su1);
+                UInt8x16 result = UInt8x16::packUnsigned(sum0, sum1);
                 result.save((uint8_t *)outStart);
                 outStart += 16;
                 lineStart += 16;
@@ -385,8 +378,7 @@ AbstractOutputData* ScannerThread::processNewData()
             stats.startInterval();
 
             ParallelConvolve par(&red, outputData->brightness);
-            par.useSSE = mScannerParameters->useSSE();
-            parallelable_for(0, red.h, par, mScannerParameters->useSSE());
+            parallelable_for(0, red.h, par);
 
 
 
@@ -441,26 +433,15 @@ AbstractOutputData* ScannerThread::processNewData()
 
         state.camera.intrinsics = PinholeCameraIntrinsics(resolution,  degToRad(60));
         state.camera.setLocation(
-                    Affine3DQ::Shift(0,0,0) *
+                    Affine3DQ::Shift(0,0,10) *
                     Affine3DQ::RotationX(degToRad(90.0))
                     );
         state.laserPlane = Plane3d::FormNormalAndPoint(
                     Vector3dd(0,0,1),
-                    Vector3dd(0,0,-30)
+                    Vector3dd::Zero()
                     );
 
         outputData->outputMesh.switchColor();
-
-        static int framecount=0;
-        static Mesh3D model;
-
-        framecount++;
-
-        if (framecount > 200) {
-            framecount = 0;
-            model.clear();
-        }
-
 
         for (size_t i = 0; i < tops.size(); i++)
         {
@@ -468,7 +449,7 @@ AbstractOutputData* ScannerThread::processNewData()
             Ray3d ray = state.camera.rayFromPixel(pixel);
 
             outputData->outputMesh.setColor(RGBColor::Green());
-            //outputData->outputMesh.addLine(ray.p, ray.getPoint(60.0));
+            outputData->outputMesh.addLine(ray.p, ray.getPoint(60.0));
 
             bool hasIntersection = false;
             Vector3dd point = state.laserPlane.intersectWith(ray, &hasIntersection);
@@ -481,12 +462,8 @@ AbstractOutputData* ScannerThread::processNewData()
             outputData->outputMesh.setColor(RGBColor::Yellow());
             outputData->outputMesh.addPoint(point);
 
-            model.addPoint(point + Vector3dd(0, 0, framecount * 2.0));
 
         }
-        outputData->outputMesh.setColor(RGBColor::Magenta());
-        outputData->outputMesh.add(model);
-
         CalibrationHelpers drawer;
         drawer.drawCamera(outputData->outputMesh, state.camera, 1.0);
 
@@ -501,6 +478,17 @@ AbstractOutputData* ScannerThread::processNewData()
                         &red
                 )
         );
+
+        //
+        G12Buffer *inputGray = red.toG12Buffer();
+        SpatialGradient grad(inputGray);
+        G12Buffer *corners = grad.findCornerPoints(mScannerParameters->cornerScore());
+        outputData->corners = G8Buffer::FromG12Buffer(corners);
+
+        delete_safe(corners);
+        delete_safe(inputGray);
+
+
     }
 
     outputData->mMainImage.setHeight(mBaseParams->h());

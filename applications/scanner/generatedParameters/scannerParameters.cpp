@@ -46,7 +46,7 @@ int ScannerParameters::staticInit()
           "channel",
           "channel",
           "channel",
-          new EnumReflection(14
+          new EnumReflection(15
           , new EnumOption(0,"R")
           , new EnumOption(1,"G")
           , new EnumOption(2,"B")
@@ -55,12 +55,13 @@ int ScannerParameters::staticInit()
           , new EnumOption(5,"Cr")
           , new EnumOption(6,"Cb")
           , new EnumOption(7,"U")
-          , new EnumOption(8,"Chroma")
-          , new EnumOption(9,"Gray")
-          , new EnumOption(10,"Luma")
-          , new EnumOption(11,"Hue")
-          , new EnumOption(12,"Saturation")
-          , new EnumOption(13,"Value")
+          , new EnumOption(8,"V")
+          , new EnumOption(9,"Chroma")
+          , new EnumOption(10,"Gray")
+          , new EnumOption(11,"Luma")
+          , new EnumOption(12,"Hue")
+          , new EnumOption(13,"Saturation")
+          , new EnumOption(14,"Value")
           )
         )
     );
@@ -139,6 +140,20 @@ int ScannerParameters::staticInit()
           "Calculate convolution",
           "Calculate convolution",
           "Calculate convolution"
+        )
+    );
+    fields().push_back(
+        new DoubleField
+        (
+          ScannerParameters::CORNER_SCORE_ID,
+          offsetof(ScannerParameters, mCornerScore),
+          0.05,
+          "corner Score",
+          "corner Score",
+          "corner Score",
+          true,
+         0,
+         255
         )
     );
    return 0;

@@ -47,8 +47,9 @@ void ScannerDialog::initParameterWidgets()
     cloud = static_cast<CloudViewDialog *>(createAdditionalWindow("3d view", oglWindow, QIcon()));
     graph = static_cast<GraphPlotDialog *>(createAdditionalWindow("Graph view", graphWindow, QIcon()));
     addImage = static_cast<AdvancedImageWidget *>(createAdditionalWindow("Addition", imageWindow, QIcon()));
+    brightImage = static_cast<AdvancedImageWidget *>(createAdditionalWindow("Brightness", imageWindow, QIcon()));
     channelImage = static_cast<AdvancedImageWidget *>(createAdditionalWindow("Channel", imageWindow, QIcon(":/new/colors/colors/color_wheel.png")));
-
+    cornerImage = static_cast<AdvancedImageWidget *>(createAdditionalWindow("Corner", imageWindow, QIcon()));
 
 
     //connect(mScannerParametersControlWidget->ui()->choosePathButton, SIGNAL(clicked()), this, SLOT(openPathSelectDialog()));
@@ -217,6 +218,8 @@ void ScannerDialog::processResult()
             graph->update();
             addImage    ->setImage(QSharedPointer<QImage>(new RGB24Image(fod->convolution)));
             channelImage->setImage(QSharedPointer<QImage>(new G8Image(fod->channel)));
+            brightImage   ->setImage(QSharedPointer<QImage>(new G8Image(fod->brightness)));
+            cornerImage->setImage(QSharedPointer<QImage>(new G8Image(fod->corners)));
         }
 
         delete fod;

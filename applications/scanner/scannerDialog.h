@@ -59,7 +59,10 @@ private:
     GraphPlotDialog *graph = NULL;
     GraphPlotDialog *graphConvolution = NULL;
     AdvancedImageWidget *addImage = NULL;
+	AdvancedImageWidget *brightImage = NULL;
     AdvancedImageWidget *channelImage = NULL;
+    AdvancedImageWidget *cornerImage = NULL;
+
 };
 
 #endif // _SCANNER_DIALOG_H_
