@@ -216,10 +216,10 @@ void ScannerDialog::processResult()
                 graph->addGraphPoint("R_conv", fod->cutConvolution[i]);
             }
             graph->update();
-            addImage    ->setImage(QSharedPointer<QImage>(new RGB24Image(fod->convolution)));
-            channelImage->setImage(QSharedPointer<QImage>(new G8Image(fod->channel)));
-            brightImage   ->setImage(QSharedPointer<QImage>(new G8Image(fod->brightness)));
-            cornerImage->setImage(QSharedPointer<QImage>(new G8Image(fod->corners)));
+            if (fod->convolution) addImage    ->setImage(QSharedPointer<QImage>(new RGB24Image(fod->convolution)));
+            if (fod->channel)     channelImage->setImage(QSharedPointer<QImage>(new G8Image(fod->channel)));
+            if (fod->brightness)  brightImage ->setImage(QSharedPointer<QImage>(new G8Image(fod->brightness)));
+            if (fod->corners)     cornerImage ->setImage(QSharedPointer<QImage>(new G8Image(fod->corners)));
         }
 
         delete fod;
