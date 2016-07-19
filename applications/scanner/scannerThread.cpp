@@ -89,6 +89,7 @@ void ScannerThread::toggleScanning()
 
     if (!mIsScanning)
     {
+        mScanningStarted = true;
         if (!mScanningStarted)
         {
             mScanningStarted = true;
@@ -96,10 +97,11 @@ void ScannerThread::toggleScanning()
         }
         else
         {
-            printf("Scanning resumed.\n");
+            printf("Scanner homeing =) <(koko)...\n");
+            emit scanningStateChanged(HOMEING);
         }
-        mIsScanning = true;
-        emit scanningStateChanged(SCANNING);
+        //mIsScanning = true;
+        //emit scanningStateChanged(SCANNING);
     }
   /*  else
     {

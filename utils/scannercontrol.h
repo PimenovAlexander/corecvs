@@ -3,7 +3,7 @@
 
 #include "QObject"
 #include "QString"
-#include "QtSerialPort/QSerialPort"
+#include <QtSerialPort/QSerialPort>
 
 class ScannerControl : public QObject
 {
@@ -19,10 +19,10 @@ public slots:
     bool laserOff();
     bool step(qint64 dist);
     int getPos();
-    int getRealPos();
+    //int getRealPos();
     void close();
     bool  home();
-    bool end();
+    //bool end();
 
 private slots:
     void getMessage();

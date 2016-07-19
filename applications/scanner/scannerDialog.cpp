@@ -28,6 +28,12 @@ ScannerDialog::ScannerDialog()
 
 }
 
+ScannerDialog::ScannerDialog(QString scannerPath)
+{
+    ScannerDialog();
+    scanCtrl.openDevice(scannerPath);
+}
+
 ScannerDialog::~ScannerDialog()
 {
     terminateCalculator();
@@ -98,6 +104,9 @@ void ScannerDialog::createCalculator()
     connect(mCalculator, SIGNAL(errorMessage(QString)),
             this,        SLOT  (errorMessage(QString)), Qt::BlockingQueuedConnection);
     */
+    connect(calculatorTyped, SIGNAL(scanningStateChanged(ScannerThread::ScanningState)), this,
+                SLOT(scanningStateChanged(ScannerThread::ScanningState)), Qt::QueuedConnection);
+
 }
 
 
@@ -181,14 +190,43 @@ void ScannerDialog::scanningStateChanged(ScannerThread::ScanningState state)
     }
 #endif
 
-    /*switch (state)
+    switch (state)
     {
+        case ScannerThread::HOMEING:
+        {
+            scanCtrl.laserOff();
+            scanCtrl.home();
+            while(scanCtrl.getPos());
+
+
+            scanCtrl.laserOn();
+            sleep(1);
+            scanCtrl.laserOff();
+
+            scanCtrl.laserOn();
+            sleep(1);
+            scanCtrl.laserOff();
+
+            scanCtrl.laserOn();
+            sleep(1);
+            scanCtrl.laserOff();
+
+            emit scanningStateChanged(ScannerThread::IDLE);
+            break;
+        }
+
         case ScannerThread::SCANNING:
         {
             mIsScanning = true;
+            scanCtrl.laserOn();
+            scanCtrl.step(10000);
 
+            //kokokokoko
+
+            scanCtrl.laserOff();
+            emit scanningStateChanged(ScannerThread::PAUSED);
         }
-    }*/
+    }
 }
 
 void ScannerDialog::processResult()

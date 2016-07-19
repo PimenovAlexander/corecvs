@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     }*/
 
     QString source;
-    if (argc != 2)
+    if (argc == 3)
     {
         //source = string("prec:/media/media/storage/v3i/SafeTurn/image%04d_c%d.pgm");
         //source = string("prec:/media/media/storage/v3i/raws2/1024x512_12h_image_%d_%d.raw");
@@ -54,6 +54,7 @@ int main(int argc, char *argv[])
 
         //source = string("prec:/media/disk/home/alexander/frames/framegrabber/frame%06d_c%d.rawg");
         //source = string("v4l2:/dev/video0,/dev/video1:1/10");
+        source = QString(argv[2]);
 
     } else {
         source = QString(argv[1]);
@@ -79,7 +80,13 @@ int main(int argc, char *argv[])
         }
     }
 
-    MainWindow mainWindow(new ScannerDialog(), source, params, true);
+    if (argc == 3)
+       {
+
+        MainWindow mainWindow(new ScannerDialog(QString(argv[1])), source, params, true);
+        }
+    else
+        MainWindow mainWindow(new ScannerDialog(), source, params, true);
 
     app.exec();
 

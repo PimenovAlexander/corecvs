@@ -17,6 +17,7 @@
 #include "scannerThread.h"
 #include "scannerParametersControlWidget.h"
 #include "cloudViewDialog.h"
+#include "scannercontrol.h"
 
 #define UI_NAME_SCANNER "scanner"
 
@@ -27,6 +28,7 @@ class ScannerDialog : public BaseHostDialog
 public:
 
     ScannerDialog();
+    ScannerDialog(QString scannerPath);
     ~ScannerDialog();
 
 
@@ -50,6 +52,7 @@ public slots:
     void errorMessage(QString message);    
 private:
     bool mIsScanning;
+    ScannerControl scanCtrl;
 
     ScannerParametersControlWidgetAdv *mScannerParametersControlWidget;
 

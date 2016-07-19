@@ -18,6 +18,8 @@ TEMPLATE = app
 HOSTBASE_DIR=../base
 include ($$HOSTBASE_DIR/baseApplication.pri)                   # it uses HOSTBASE_DIR, detects HOSTBASE_BINDIR, OBJECTS_DIR, ...
 
+QT += serialport
+
 win32 {
     MOC_DIR = $$ROOT_DIR/.obj/$$TARGET_ORIG/$$BUILD_CFG_NAME  # resolve moc path for mocs to help qmake to unify those paths.
 }
