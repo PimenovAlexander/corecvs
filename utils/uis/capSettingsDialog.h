@@ -33,8 +33,8 @@ public:
         return sliders[i];
     }
 
-    virtual void loadFromQSettings (const QString &fileName, const QString &_root);
-    virtual void saveToQSettings   (const QString &fileName, const QString &_root);
+    virtual void loadFromQSettings (const QString &fileName, const QString &_root, bool interfaceGroup = true);
+    virtual void saveToQSettings   (const QString &fileName, const QString &_root, bool interfaceGroup = true);
 
 
 public slots:

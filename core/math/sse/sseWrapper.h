@@ -45,6 +45,18 @@
 
 namespace corecvs {
 
+#ifdef _MSC_VER
+# ifdef WITH_SSE4_2
+#  include <intrin.h>
+#  define __builtin_popcount __popcnt
+# else
+#  define __builtin_popcount popcount_lookup
+    unsigned int popcount_lookup(unsigned int a);
+# endif
+#else
+    // gcc 5.3 correctly manages the function "__builtin_popcount" depend on native mode for CPU during compiling for any kind of CPU. Check this!?
+#endif
+
 #ifdef WITH_AVX2
     typedef Doublex4 DoublexN;
     typedef Int32x8   Int32xN;

@@ -238,19 +238,23 @@ void GraphPlotDialog::childRepaint(QPaintEvent * /*event*/, QWidget *who)
     }
 
     // Calculate values for paused widget
-    if (mUi.pauseButton->isChecked()) {
-        if (mGraphPlotParameters->fixGridValue()) {
-            mGraphShowPoint = fround(double(mMouseClickedValue) / gainX);
-            if (mGraphShowPoint >= (int)mData[0].size()) {
-                mGraphShowPoint = (int)(mData[0].size() - mGraphShowPoint - 1);
+    if (mUi.pauseButton->isChecked())
+    {
+        int dataSize0 = mData.size() ? (int)mData[0].size() : 0;
+        if (mGraphPlotParameters->fixGridValue())
+        {
+            mGraphShowPoint = fround(mMouseClickedValue / gainX);
+            if (mGraphShowPoint >= dataSize0) {
+                mGraphShowPoint = dataSize0 - mGraphShowPoint - 1;
             }
         }
-        else {
+        else
+        {
             if (mGraphShowPoint < 0) {
-                mMouseClickedValue = fround(double(mData[0].size() - mGraphShowPoint - 1) * gainX);
+                mMouseClickedValue = fround((dataSize0 - mGraphShowPoint - 1) * gainX);
             }
             else {
-                mMouseClickedValue = fround(double(mGraphShowPoint) * gainX);
+                mMouseClickedValue = fround(mGraphShowPoint * gainX);
             }
 
             if (mMouseClickedValue >= mUi.widget->width()) {
@@ -386,7 +390,8 @@ void GraphPlotDialog::addGraphPoint(unsigned graphId, double value, bool isValid
         mData[graphId].pop_back();
     }
 
-    if (graphId == 0) {
+    if (graphId == 0)
+    {
         double gainX = mGraphPlotParameters->xScale();
         if (mGraphPlotParameters->fixGridValue())
         {
@@ -394,7 +399,9 @@ void GraphPlotDialog::addGraphPoint(unsigned graphId, double value, bool isValid
             if (mGraphShowPoint >= (int)mData[0].size()) {
                 mGraphShowPoint = (int)(mData[0].size() - mGraphShowPoint - 1);
             }
-        } else {
+        }
+        else
+        {
             if (mGraphShowPoint < 0) {
                 mMouseClickedValue = fround(double(mData[0].size() - mGraphShowPoint - 1) * gainX);
             }

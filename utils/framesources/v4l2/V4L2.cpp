@@ -488,7 +488,6 @@ void V4L2CameraDescriptor::setFromQueryCtrl(CaptureParameter &param, v4l2_queryc
 const V4L2CameraDescriptor::ParamIdMapStruct V4L2CameraDescriptor::paramIdMap[] =
 {
         {V4L2_CID_EXPOSURE_ABSOLUTE, CameraParameters::EXPOSURE},
-        {V4L2_CID_FOCUS_AUTO,        CameraParameters::AUTO_FOCUS},
         {V4L2_CID_EXPOSURE_AUTO    , CameraParameters::EXPOSURE_AUTO},
         {V4L2_CID_EXPOSURE         , CameraParameters::EXPOSURE_REL},
         {V4L2_CID_GAIN             , CameraParameters::GAIN},
@@ -505,6 +504,13 @@ const V4L2CameraDescriptor::ParamIdMapStruct V4L2CameraDescriptor::paramIdMap[] 
         {V4L2_CID_AUTO_WHITE_BALANCE, CameraParameters::AUTO_WHITE_BALANCE},
         {V4L2_CID_HFLIP, CameraParameters::HORIZONTAL_FLIP},
         {V4L2_CID_VFLIP, CameraParameters::VERTICAL_FLIP},
+
+        {V4L2_CID_FOCUS_ABSOLUTE, CameraParameters::FOCUS},
+        {V4L2_CID_FOCUS_RELATIVE, CameraParameters::FOCUS_RELATIVE},
+        {V4L2_CID_FOCUS_AUTO    , CameraParameters::AUTO_FOCUS},
+
+
+
 };
 
 
