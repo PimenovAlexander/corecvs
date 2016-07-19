@@ -47,6 +47,8 @@ void ScannerDialog::initParameterWidgets()
     cloud = static_cast<CloudViewDialog *>(createAdditionalWindow("3d view", oglWindow, QIcon()));
     graph = static_cast<GraphPlotDialog *>(createAdditionalWindow("Graph view", graphWindow, QIcon()));
     addImage = static_cast<AdvancedImageWidget *>(createAdditionalWindow("Addition", imageWindow, QIcon()));
+    channelImage = static_cast<AdvancedImageWidget *>(createAdditionalWindow("Channel", imageWindow, QIcon(":/new/colors/colors/color_wheel.png")));
+
 
 
     //connect(mScannerParametersControlWidget->ui()->choosePathButton, SIGNAL(clicked()), this, SLOT(openPathSelectDialog()));
@@ -213,7 +215,8 @@ void ScannerDialog::processResult()
                 graph->addGraphPoint("R_conv", fod->cutConvolution[i]);
             }
             graph->update();
-            addImage->setImage(QSharedPointer<QImage>(new RGB24Image(fod->convolution)));
+            addImage    ->setImage(QSharedPointer<QImage>(new RGB24Image(fod->convolution)));
+            channelImage->setImage(QSharedPointer<QImage>(new G8Image(fod->channel)));
         }
 
         delete fod;

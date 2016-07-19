@@ -35,30 +35,65 @@ enum ImageChannel {
      */
     B = 2,
     /** 
+     * \brief Alpha 
+     * Alpha 
+     */
+    ALPHA = 3,
+    /** 
+     * \brief Y 
+     * Y 
+     */
+    Y = 4,
+    /** 
+     * \brief Cr 
+     * Cr 
+     */
+    CR = 5,
+    /** 
+     * \brief Cb 
+     * Cb 
+     */
+    CB = 6,
+    /** 
+     * \brief U 
+     * U 
+     */
+    U = 7,
+    /** 
+     * \brief V 
+     * V 
+     */
+    V = 8,
+    /** 
+     * \brief Chroma 
+     * Chroma 
+     */
+    CHROMA = 9,
+    /** 
      * \brief Gray 
      * Gray 
      */
-    GRAY = 3,
+    GRAY = 10,
     /** 
      * \brief Luma 
      * Luma 
      */
-    LUMA = 4,
+    LUMA = 11,
     /** 
      * \brief Hue 
      * Hue 
      */
-    HUE = 5,
+    HUE = 12,
     /** 
      * \brief Saturation 
      * Saturation 
      */
-    SATURATION = 6,
+    SATURATION = 13,
     /** 
      * \brief Value 
      * Value 
      */
-    VALUE = 7,
+    VALUE = 14,
     /** 
      * \brief Last virtual option to run cycles to
      */
@@ -73,6 +108,13 @@ static inline const char *getName(const ImageChannel &value)
      case R : return "R"; break ;
      case G : return "G"; break ;
      case B : return "B"; break ;
+     case ALPHA : return "ALPHA"; break ;
+     case Y : return "Y"; break ;
+     case CR : return "CR"; break ;
+     case CB : return "CB"; break ;
+     case U : return "U"; break ;
+     case V : return "V"; break ;
+     case CHROMA : return "CHROMA"; break ;
      case GRAY : return "GRAY"; break ;
      case LUMA : return "LUMA"; break ;
      case HUE : return "HUE"; break ;

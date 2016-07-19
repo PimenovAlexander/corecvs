@@ -159,7 +159,7 @@ public:
 
 
    static const ParamIdMapStruct paramIdMap[];
-   static const int paramIdMapSize = 17;
+   static const int paramIdMapSize = 18;
 
    static uint32_t getPropIdByVi(CameraParameters::CameraControls viId);
    static CameraParameters::CameraControls  getViIdByProp(uint32_t v4l2Id);

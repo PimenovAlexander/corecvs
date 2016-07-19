@@ -316,6 +316,11 @@ AbstractOutputData* ScannerThread::processNewData()
                         &out
                 )
         );
+
+        /*Channel*/
+       outputData->channel = frame->getChannel(mScannerParameters->channel());
+
+
     }
 
     outputData->mMainImage.setHeight(mBaseParams->h());

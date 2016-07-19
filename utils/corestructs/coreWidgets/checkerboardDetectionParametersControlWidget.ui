@@ -125,6 +125,41 @@
        </item>
        <item>
         <property name="text">
+         <string>Alpha</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Y</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Cr</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Cb</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>U</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>V</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Chroma</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
          <string>Gray</string>
         </property>
         <property name="icon">

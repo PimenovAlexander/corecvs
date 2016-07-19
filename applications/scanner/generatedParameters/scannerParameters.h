@@ -30,6 +30,7 @@ namespace corecvs {
 /*
  *  Additional includes for enum section.
  */
+#include "imageChannel.h"
 #include "redRemovalType.h"
 
 /**
@@ -40,15 +41,23 @@ class ScannerParameters : public BaseReflection<ScannerParameters>
 {
 public:
     enum FieldId {
+        CHANNEL_ID,
         ALGO_ID,
         RED_THRESHOLD_ID,
         HEIGHT_ID,
+        GRAPH_LINE_ID,
         USE_SSE_ID,
         CALCULATE_CONVOLUTION_ID,
         SCANNER_PARAMETERS_FIELD_ID_NUM
     };
 
     /** Section with variables */
+
+    /** 
+     * \brief channel 
+     * channel 
+     */
+    int mChannel;
 
     /** 
      * \brief algo 
@@ -67,6 +76,12 @@ public:
      * height 
      */
     double mHeight;
+
+    /** 
+     * \brief Graph line 
+     * Graph line 
+     */
+    int mGraphLine;
 
     /** 
      * \brief Use SSE 
@@ -88,6 +103,11 @@ public:
     {
         return (const unsigned char *)(this) + fields()[fieldId]->offset;
     }
+    ImageChannel::ImageChannel channel() const
+    {
+        return static_cast<ImageChannel::ImageChannel>(mChannel);
+    }
+
     RedRemovalType::RedRemovalType algo() const
     {
         return static_cast<RedRemovalType::RedRemovalType>(mAlgo);
@@ -103,6 +123,11 @@ public:
         return mHeight;
     }
 
+    int graphLine() const
+    {
+        return mGraphLine;
+    }
+
     bool useSSE() const
     {
         return mUseSSE;
@@ -114,6 +139,11 @@ public:
     }
 
     /* Section with setters */
+    void setChannel(ImageChannel::ImageChannel channel)
+    {
+        mChannel = channel;
+    }
+
     void setAlgo(RedRemovalType::RedRemovalType algo)
     {
         mAlgo = algo;
@@ -127,6 +157,11 @@ public:
     void setHeight(double height)
     {
         mHeight = height;
+    }
+
+    void setGraphLine(int graphLine)
+    {
+        mGraphLine = graphLine;
     }
 
     void setUseSSE(bool useSSE)
@@ -144,9 +179,11 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
+        visitor.visit((int &)mChannel,            static_cast<const EnumField *>    (fields()[CHANNEL_ID]));
         visitor.visit((int &)mAlgo,               static_cast<const EnumField *>    (fields()[ALGO_ID]));
         visitor.visit(mRedThreshold,              static_cast<const IntField *>     (fields()[RED_THRESHOLD_ID]));
         visitor.visit(mHeight,                    static_cast<const DoubleField *>  (fields()[HEIGHT_ID]));
+        visitor.visit(mGraphLine,                 static_cast<const IntField *>     (fields()[GRAPH_LINE_ID]));
         visitor.visit(mUseSSE,                    static_cast<const BoolField *>    (fields()[USE_SSE_ID]));
         visitor.visit(mCalculateConvolution,      static_cast<const BoolField *>    (fields()[CALCULATE_CONVOLUTION_ID]));
     }
@@ -158,16 +195,20 @@ template<class VisitorType>
     }
 
     ScannerParameters(
-          RedRemovalType::RedRemovalType algo
+          ImageChannel::ImageChannel channel
+        , RedRemovalType::RedRemovalType algo
         , int redThreshold
         , double height
+        , int graphLine
         , bool useSSE
         , bool calculateConvolution
     )
     {
+        mChannel = channel;
         mAlgo = algo;
         mRedThreshold = redThreshold;
         mHeight = height;
+        mGraphLine = graphLine;
         mUseSSE = useSSE;
         mCalculateConvolution = calculateConvolution;
     }

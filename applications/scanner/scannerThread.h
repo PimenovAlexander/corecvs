@@ -36,10 +36,12 @@ public:
 
 
     RGB24Buffer *convolution = NULL;
+    G8Buffer *channel = NULL;
 
     virtual ~ScannerOutputData() override
     {
         delete_safe(convolution);
+        delete_safe(channel);
     }
 
 };
