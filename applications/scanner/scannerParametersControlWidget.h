@@ -2,9 +2,11 @@
 #pragma once
 #include <QWidget>
 #include <QLineEdit>
+#include <QPushButton>
 #include "generatedParameters/scannerParameters.h"
 #include "ui_scannerParametersControlWidget.h"
 #include "parametersControlWidgetBase.h"
+#include "scannerThread.h"
 
 namespace Ui {
     class ScannerParametersControlWidget;
@@ -43,10 +45,27 @@ signals:
     void valueChanged();
     void paramsChanged();
 
-private:
+protected:
     Ui::ScannerParametersControlWidget *mUi;
     bool autoInit;
     QString rootPath;
 };
 
+class ScannerParametersControlWidgetAdv : public ScannerParametersControlWidget
+{
+    Q_OBJECT
+
+public:
+    QPushButton *startButton = NULL;
+
+    explicit ScannerParametersControlWidgetAdv(QWidget *parent = 0, bool autoInit = false, QString rootPath = QString()) :
+        ScannerParametersControlWidget(parent, autoInit, rootPath)
+    {
+        startButton = new QPushButton(this);
+        startButton->setText("Start scan");
+        mUi->gridLayout->addWidget(startButton);
+    }
+
+
+};
 

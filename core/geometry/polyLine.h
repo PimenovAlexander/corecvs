@@ -14,6 +14,9 @@ public:
     PolyLine(){}
 
     Vector2d32 closestPointsGenerate(PolyLine p_line, int n1, int n2);
+
+    void clear();
+
 };
 
 }

@@ -1,7 +1,7 @@
 #include "polyLine.h"
 #include "vector3d.h"
 
-#define MAXD 6.25
+#define MAXD 64
 
 namespace corecvs {
 
@@ -71,4 +71,12 @@ Vector2d32 PolyLine::closestPointsGenerate(PolyLine p_line, int n1, int n2)
 
     return Vector2d32(closeset1, closeset2);
 }
+
+void PolyLine::clear()
+{
+    points.clear();
+    breaks.clear();
+    begins.clear();
+}
+
 } // namespace

@@ -23,6 +23,7 @@
 #include "generatedParameters/scannerParameters.h"
 #include "calculationStats.h"
 
+
 class ScannerOutputData : public BaseOutputData
 {
 public:
@@ -49,19 +50,27 @@ class ScannerThread : public BaseCalculationThread
     Q_OBJECT
 
 public:
-    enum RecordingState
+
+
+    enum ScanningState
     {
-        StateRecordingActive = 0,
-        StateRecordingPaused,
-        StateRecordingReset,
-        StateRecordingFailure
+        IDLE,
+        SCANNING,
+        MOVING,
+        HOMEING,
+        PAUSED
     };
+
+
+    int scanCount;
+    static const int MAX_COUNT=500;
+
+
 
     ScannerThread();
 
 public slots:
-    void toggleRecording();
-    void resetRecording();
+    void toggleScanning();
 
     void scannerControlParametersChanged(QSharedPointer<ScannerParameters> params);
     void baseControlParametersChanged(QSharedPointer<BaseParameters> params);
@@ -69,15 +78,14 @@ public slots:
 
 
 signals:
-    void recordingStateChanged(ScannerThread::RecordingState state);
-    void errorMessage(QString string);
+    void scanningStateChanged(ScannerThread::ScanningState state);
 
 protected:
     virtual AbstractOutputData *processNewData();
 
 private:
-    bool mRecordingStarted;
-    bool mIsRecording;
+    bool mScanningStarted;
+    bool mIsScanning;
     PreciseTimer mIdleTimer;
 
     /* Might be misleading, but PPMLoader handles saving as well */
@@ -86,6 +94,7 @@ private:
     uint32_t mFrameCount;
     QString mPath;
     QSharedPointer<ScannerParameters> mScannerParameters;
+
 };
 
 #endif /* SCANNERTHREAD_H_ */

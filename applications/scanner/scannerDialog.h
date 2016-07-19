@@ -40,18 +40,18 @@ signals:
 
 public slots:
     void openPathSelectDialog();
-    void toggleRecording();
-    void resetRecording();
-    void recordingStateChanged(ScannerThread::RecordingState );
+   // void toggleRecording();
+  //  void resetRecording();
+    void scanningStateChanged(ScannerThread::ScanningState);
     void scannerControlParametersChanged(QSharedPointer<ScannerParameters> params);
 
     virtual void processResult();
 
     void errorMessage(QString message);    
 private:
-    bool mIsRecording;
+    bool mIsScanning;
 
-    ScannerParametersControlWidget *mScannerParametersControlWidget;
+    ScannerParametersControlWidgetAdv *mScannerParametersControlWidget;
 
     QSharedPointer<ScannerParameters> mScannerControlParams;
 

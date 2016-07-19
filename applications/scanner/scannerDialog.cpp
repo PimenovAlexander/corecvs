@@ -21,7 +21,7 @@
 
 ScannerDialog::ScannerDialog()
     : BaseHostDialog(),
-      mIsRecording(false),
+      mIsScanning(false),
       mScannerParametersControlWidget(NULL)
 {
 //    this->resize(this->width(), this->height() - 65);
@@ -39,10 +39,9 @@ void ScannerDialog::initParameterWidgets()
 {
     BaseHostDialog::initParameterWidgets();
 
-    mScannerParametersControlWidget = new ScannerParametersControlWidget(this, true, UI_NAME_SCANNER);
+    mScannerParametersControlWidget = new ScannerParametersControlWidgetAdv(this, true, UI_NAME_SCANNER);
     dockWidget()->layout()->addWidget(mScannerParametersControlWidget);
     mSaveableWidgets.push_back(mScannerParametersControlWidget);
-
 
     cloud = static_cast<CloudViewDialog *>(createAdditionalWindow("3d view", oglWindow, QIcon()));
     graph = static_cast<GraphPlotDialog *>(createAdditionalWindow("Graph view", graphWindow, QIcon()));
@@ -68,33 +67,37 @@ void ScannerDialog::createCalculator()
   /*  connect(mapper, SIGNAL(baseParametersParamsChanged(QSharedPointer<BaseParameters>))
             , this, SLOT(baseControlParametersChanged(QSharedPointer<Base>)));*/
 
-    mCalculator = new ScannerThread();
+    ScannerThread *calculatorTyped = new ScannerThread();
+    mCalculator = calculatorTyped;
+
 
     connect(mapper, SIGNAL(baseParametersParamsChanged(QSharedPointer<BaseParameters>))
-            , static_cast<ScannerThread*>(mCalculator)
+            , calculatorTyped
             , SLOT(baseControlParametersChanged(QSharedPointer<BaseParameters>)));
     connect(mapper, SIGNAL(scannerParametersParamsChanged(QSharedPointer<ScannerParameters>))
-            , static_cast<ScannerThread*>(mCalculator)
+            , calculatorTyped
             , SLOT(scannerControlParametersChanged(QSharedPointer<ScannerParameters>)));
     connect(mapper, SIGNAL(presentationParametersParamsChanged(QSharedPointer<PresentationParameters>))
-            , static_cast<ScannerThread*>(mCalculator)
+            , calculatorTyped
             , SLOT(presentationControlParametersChanged(QSharedPointer<PresentationParameters>)));
 
     mapper->paramsChanged();
 
     mParamsMapper = mapper;
 
-    connect(this, SIGNAL(recordingTriggered()), mCalculator, SLOT(toggleRecording()), Qt::QueuedConnection);
+//    connect(this, SIGNAL(recordingTriggered()), calculatorTyped , SLOT(toggleScanning()), Qt::QueuedConnection);
 
-    //connect(mScannerParametersControlWidget->ui()->recRestartButton, SIGNAL(released()), mCalculator, SLOT(resetRecording()), Qt::QueuedConnection);
-    //connect(mScannerParametersControlWidget->ui()->recPauseButton, SIGNAL(released()), mCalculator, SLOT(toggleRecording()), Qt::QueuedConnection);
+    connect(mScannerParametersControlWidget->startButton, SIGNAL(released()),
+                     calculatorTyped, SLOT(toggleScanning()));
 
-    connect(mCalculator, SIGNAL(recordingStateChanged(ScannerThread::RecordingState)), this,
+
+
+    /*connect(mCalculator, SIGNAL(sctateChanged(ScannerThread::RecordingState)), this,
             SLOT(recordingStateChanged(ScannerThread::RecordingState)), Qt::QueuedConnection);
 
     connect(mCalculator, SIGNAL(errorMessage(QString)),
             this,        SLOT  (errorMessage(QString)), Qt::BlockingQueuedConnection);
-
+    */
 }
 
 
@@ -131,7 +134,7 @@ void ScannerDialog::openPathSelectDialog()
     }*/
 }
 
-void ScannerDialog::toggleRecording()
+/*void ScannerDialog::toggleRecording()
 {
     emit recordingTriggered();
 }
@@ -139,9 +142,9 @@ void ScannerDialog::toggleRecording()
 void ScannerDialog::resetRecording()
 {
     emit recordingReset();
-}
+}*/
 
-void ScannerDialog::recordingStateChanged(ScannerThread::RecordingState state)
+void ScannerDialog::scanningStateChanged(ScannerThread::ScanningState state)
 {
 #if 0
     switch (state)
@@ -177,6 +180,15 @@ void ScannerDialog::recordingStateChanged(ScannerThread::RecordingState state)
         }
     }
 #endif
+
+    /*switch (state)
+    {
+        case ScannerThread::SCANNING:
+        {
+            mIsScanning = true;
+
+        }
+    }*/
 }
 
 void ScannerDialog::processResult()

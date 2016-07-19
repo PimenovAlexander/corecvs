@@ -1,6 +1,3 @@
-#include <QThread>
-#include <QDebug>
-
 #include "scannercontrol.h"
 #include <QDebug>
 #include <QThread>
@@ -53,7 +50,7 @@ bool ScannerControl::laserOff(){
 /*
  * negative argument moves back, positive - forward
  */
-bool ScannerControl::step(qreal dist)
+bool ScannerControl::step(qint64 dist)
 {
     QString command;
     command.sprintf("MOVE %i\n",quint64(dist));

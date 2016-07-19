@@ -18,6 +18,8 @@ namespace corecvs {
         }
 
         void addPolyline(PolyLine p_line);
+
+        void clear();
     };
 }
 #endif // POLYLINEMESH_H

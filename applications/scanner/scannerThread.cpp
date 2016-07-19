@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <QMetaType>
 #include <QMessageBox>
+#include <vector>
 
 #include "g12Image.h"
 #include "imageResultLayer.h"
@@ -18,6 +19,8 @@
 #include "gentryState.h"
 #include "calibrationHelpers.h"
 #include "abstractPainter.h"
+#include "polylinemesh.h"
+
 
 // TEST
 // #include "viFlowStatisticsDescriptor.h"
@@ -34,17 +37,17 @@ double total(double a[], int size)
 
 ScannerThread::ScannerThread() :
    BaseCalculationThread()
-  , mRecordingStarted(false)
-  , mIsRecording(false)
+  , mScanningStarted(false)
+  , mIsScanning(false)
   , mFrameCount(0)
   , mPath("")
   , mScannerParameters(NULL)
 {
-    qRegisterMetaType<ScannerThread::RecordingState>("ScannerThread::RecordingState");
+    qRegisterMetaType<ScannerThread::ScanningState>("ScannerThread::ScanningState");
     mIdleTimer = PreciseTimer::currentTime();
 }
 
-void ScannerThread::toggleRecording()
+void ScannerThread::toggleScanning()
 {
 #if 0
     if (!mIsRecording)
@@ -83,6 +86,27 @@ void ScannerThread::toggleRecording()
         emit recordingStateChanged(StateRecordingPaused);
     }
 #endif
+
+    if (!mIsScanning)
+    {
+        if (!mScanningStarted)
+        {
+            mScanningStarted = true;
+            printf("Scanning started.\n");
+        }
+        else
+        {
+            printf("Scanning resumed.\n");
+        }
+        mIsScanning = true;
+        emit scanningStateChanged(SCANNING);
+    }
+  /*  else
+    {
+        mIsScanning = false;
+        printf("Scanning paused.\n");
+        emit scanningStateChanged(PAUSED);
+    }*/
 
 }
 
@@ -185,7 +209,7 @@ AbstractOutputData* ScannerThread::processNewData()
     if ((!mFrames.getCurrentFrame(Frames::LEFT_FRAME) ) ||
        ((!mFrames.getCurrentFrame(Frames::RIGHT_FRAME)) && (CamerasConfigParameters::TwoCapDev == mActiveInputsNumber)))
     {
-        emit errorMessage("Capture error.");
+        //emit errorMessage("Capture error.");
         pauseCalculation();
     }
 
@@ -267,15 +291,19 @@ AbstractOutputData* ScannerThread::processNewData()
         state.laserPlane = Plane3d::FormNormalAndPoint(Vector3dd(0,0,1), Vector3dd(0,0,-30));
         outputData->outputMesh.switchColor();
 
-        static int framecount=0;
-        static Mesh3D model;
+        static PolylineMesh model;
+       // static Mesh3D model;
 
-        framecount++;
+        scanCount++;
 
-        if (framecount > 200) {
-            framecount = 0;
+        if (scanCount == MAX_COUNT) {
+            scanCount = 0;
+            model.mesh.dumpPLY("3Dmodel.ply");
             model.clear();
         }
+
+        vector<Vector3dd> line;
+        PolyLine pl;
 
         for (size_t i = 0; i < laserPoints.size(); i++)
         {
@@ -293,14 +321,18 @@ AbstractOutputData* ScannerThread::processNewData()
                 continue;
             }
 
-            outputData->outputMesh.setColor(RGBColor::Yellow());
-            outputData->outputMesh.addPoint(point);
+           // outputData->outputMesh.setColor(RGBColor::Yellow());
+           // outputData->outputMesh.addPoint(point);
+            line.push_back(point + Vector3dd(0, 0, scanCount * 0.5));
 
-            model.addPoint(point + Vector3dd(0, 0, framecount * 2.0));
+           // model.addPoint(point + Vector3dd(0, 0, framecount * 0.5));
 
         }
+        pl = PolyLine(line);
+        model.addPolyline(pl);
+
         outputData->outputMesh.setColor(RGBColor::Magenta());
-        outputData->outputMesh.add(model);
+        outputData->outputMesh.add(model.mesh);
 
         CalibrationHelpers drawer;
         drawer.drawCamera(outputData->outputMesh, state.camera, 1.0);
@@ -354,7 +386,7 @@ AbstractOutputData* ScannerThread::processNewData()
     if ((!mFrames.getCurrentFrame(Frames::LEFT_FRAME) ) ||
        ((!mFrames.getCurrentFrame(Frames::RIGHT_FRAME)) && (CamerasConfigParameters::TwoCapDev == mActiveInputsNumber)))
     {
-        emit errorMessage("Capture error.");
+        emit errorMessage("Capture errAdding object "3d Main"or.");
         pauseCalculation();
     }
 
@@ -516,7 +548,7 @@ AbstractOutputData* ScannerThread::processNewData()
 
     return outputData;
 }*/
-
+/*
 void ScannerThread::resetRecording()
 {
     mIsRecording = false;
@@ -524,7 +556,7 @@ void ScannerThread::resetRecording()
     mPath = "";
     mFrameCount = 0;
     emit recordingStateChanged(StateRecordingReset);
-}
+}*/
 
 void ScannerThread::scannerControlParametersChanged(QSharedPointer<ScannerParameters> scannerParameters)
 {
