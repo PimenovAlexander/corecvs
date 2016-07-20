@@ -17,6 +17,7 @@
 #include "scannerThread.h"
 #include "scannerParametersControlWidget.h"
 #include "cloudViewDialog.h"
+#include "scannercontrol.h"
 
 #define UI_NAME_SCANNER "scanner"
 
@@ -34,30 +35,41 @@ public:
     virtual void createCalculator();
     virtual void connectFinishedRecalculation();
 
+    void addScannerPath(QString scannerPath);
+
 signals:
     void recordingTriggered();
     void recordingReset();
 
 public slots:
     void openPathSelectDialog();
-    void toggleRecording();
-    void resetRecording();
-    void recordingStateChanged(ScannerThread::RecordingState );
+   // void toggleRecording();
+  //  void resetRecording();
+    void scanningStateChanged(ScannerThread::ScanningState);
     void scannerControlParametersChanged(QSharedPointer<ScannerParameters> params);
 
     virtual void processResult();
 
     void errorMessage(QString message);    
 private:
-    bool mIsRecording;
+    bool mIsScanning;
 
-    ScannerParametersControlWidget *mScannerParametersControlWidget;
+
+
+    ScannerControl scanCtrl;
+
+    ScannerControl scanner;
+
+    ScannerParametersControlWidgetAdv *mScannerParametersControlWidget;
 
     QSharedPointer<ScannerParameters> mScannerControlParams;
 
     CloudViewDialog *cloud = NULL;
     GraphPlotDialog *graph = NULL;
+    GraphPlotDialog *graphConvolution = NULL;
     AdvancedImageWidget *addImage = NULL;
+	AdvancedImageWidget *brightImage = NULL;
+    AdvancedImageWidget *channelImage = NULL;
     AdvancedImageWidget *cornerImage = NULL;
 
 };

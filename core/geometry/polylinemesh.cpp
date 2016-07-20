@@ -89,4 +89,11 @@ void PolylineMesh::addPolyline(PolyLine p_line)
 
     polyline = p_line;
 }
+
+void PolylineMesh::clear()
+{
+    mesh.clear();
+    polyline.clear();
+}
+
 } // namespace corecvs

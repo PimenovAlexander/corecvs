@@ -232,8 +232,6 @@ inline UInt16x8 SSEMath::mul<5>(const UInt16x8 &val) {
     return (val << 2) + val;
 }
 
-
-
 template<>
 inline UInt16x8 SSEMath::div<5>(const UInt16x8 &val) {
     UInt16x8 a =  (val >> 1) + (val >> 2);

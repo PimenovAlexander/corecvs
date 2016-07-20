@@ -20,9 +20,13 @@ ScannerParametersControlWidget::ScannerParametersControlWidget(QWidget *parent, 
 {
     mUi->setupUi(this);
 
+    QObject::connect(mUi->channelComboBox, SIGNAL(currentIndexChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->algoComboBox, SIGNAL(currentIndexChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->redThresholdSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->heightSpinBox, SIGNAL(valueChanged(double)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->graphLineSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->useSSECheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->calculateConvolutionCheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->cornerScoreSpinBox, SIGNAL(valueChanged(double)), this, SIGNAL(paramsChanged()));
 }
 
@@ -51,9 +55,13 @@ void ScannerParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 void ScannerParametersControlWidget::getParameters(ScannerParameters& params) const
 {
 
+    params.setChannel          (static_cast<ImageChannel::ImageChannel>(mUi->channelComboBox->currentIndex()));
     params.setAlgo             (static_cast<RedRemovalType::RedRemovalType>(mUi->algoComboBox->currentIndex()));
     params.setRedThreshold     (mUi->redThresholdSpinBox->value());
     params.setHeight           (mUi->heightSpinBox->value());
+    params.setGraphLine        (mUi->graphLineSpinBox->value());
+    params.setUseSSE           (mUi->useSSECheckBox->isChecked());
+    params.setCalculateConvolution(mUi->calculateConvolutionCheckBox->isChecked());
     params.setCornerScore      (mUi->cornerScoreSpinBox->value());
 
 }
@@ -67,9 +75,13 @@ ScannerParameters *ScannerParametersControlWidget::createParameters() const
 
 
     ScannerParameters *result = new ScannerParameters(
-          static_cast<RedRemovalType::RedRemovalType>(mUi->algoComboBox->currentIndex())
+          static_cast<ImageChannel::ImageChannel>(mUi->channelComboBox->currentIndex())
+        , static_cast<RedRemovalType::RedRemovalType>(mUi->algoComboBox->currentIndex())
         , mUi->redThresholdSpinBox->value()
         , mUi->heightSpinBox->value()
+        , mUi->graphLineSpinBox->value()
+        , mUi->useSSECheckBox->isChecked()
+        , mUi->calculateConvolutionCheckBox->isChecked()
         , mUi->cornerScoreSpinBox->value()
     );
     return result;
@@ -79,9 +91,13 @@ void ScannerParametersControlWidget::setParameters(const ScannerParameters &inpu
 {
     // Block signals to send them all at once
     bool wasBlocked = blockSignals(true);
+    mUi->channelComboBox->setCurrentIndex(input.channel());
     mUi->algoComboBox->setCurrentIndex(input.algo());
     mUi->redThresholdSpinBox->setValue(input.redThreshold());
     mUi->heightSpinBox->setValue(input.height());
+    mUi->graphLineSpinBox->setValue(input.graphLine());
+    mUi->useSSECheckBox->setChecked(input.useSSE());
+    mUi->calculateConvolutionCheckBox->setChecked(input.calculateConvolution());
     mUi->cornerScoreSpinBox->setValue(input.cornerScore());
     blockSignals(wasBlocked);
     emit paramsChanged();
@@ -93,3 +109,5 @@ void ScannerParametersControlWidget::setParametersVirtual(void *input)
     ScannerParameters *inputCasted = static_cast<ScannerParameters *>(input);
     setParameters(*inputCasted);
 }
+
+

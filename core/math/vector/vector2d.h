@@ -95,6 +95,11 @@ public:
         }
     }
 
+    /**
+     * This function return the angle in the polar coordinates
+     *
+     * It returns the value in the range -pi..+pi
+     **/
     inline double argument() const
     {
         if (*this == Vector2d(0.0))

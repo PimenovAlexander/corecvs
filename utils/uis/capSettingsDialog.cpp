@@ -119,7 +119,7 @@ void CapSettingsDialog::refreshDialog()
 
 }
 
-void CapSettingsDialog::loadFromQSettings (const QString &fileName, const QString &_root)
+void CapSettingsDialog::loadFromQSettings (const QString &fileName, const QString &_root, bool interfaceGroup)
 {
     if (mCaptureInterface == NULL)
     {
@@ -137,7 +137,8 @@ void CapSettingsDialog::loadFromQSettings (const QString &fileName, const QStrin
     QSettings *settings = new QSettings(fileName, QSettings::IniFormat);
     settings->beginGroup(_root);
     settings->beginGroup(mRootPath);
-    settings->beginGroup(interfaceName);
+    if (interfaceGroup)
+        settings->beginGroup(interfaceName);
 
 
 
@@ -154,7 +155,8 @@ void CapSettingsDialog::loadFromQSettings (const QString &fileName, const QStrin
         widget->setValue(newValue);
     }
 
-    settings->endGroup();
+    if (interfaceGroup)
+        settings->endGroup();
     settings->endGroup();
     settings->endGroup();
 
@@ -162,17 +164,19 @@ void CapSettingsDialog::loadFromQSettings (const QString &fileName, const QStrin
 
 }
 
-void CapSettingsDialog::saveToQSettings   (const QString &fileName, const QString &_root)
+void CapSettingsDialog::saveToQSettings (const QString &fileName, const QString &_root, bool interfaceGroup)
 {
     qDebug() << QString("CapSettingsDialog::saveToQSettings(\"%1\", \"%2\"): called").arg(fileName, _root);
     if (mCaptureInterface == NULL)
     {
+        qDebug() << "CapSettingsDialog::saveToQSettings(): mCaptureInterface is null";
         return;
     }
 
     QString interfaceName = mCaptureInterface->getInterfaceName();
     if (interfaceName.isEmpty())
     {
+        qDebug() << "CapSettingsDialog::saveToQSettings(): interface name is empty";
         return;
     }
 
@@ -180,7 +184,8 @@ void CapSettingsDialog::saveToQSettings   (const QString &fileName, const QStrin
     QSettings *settings = new QSettings(fileName, QSettings::IniFormat);
     settings->beginGroup(_root);
     settings->beginGroup(mRootPath);
-    settings->beginGroup(interfaceName);
+    if (interfaceGroup)
+        settings->beginGroup(interfaceName);
 
     QMapIterator<int, ParameterEditorWidget *> i(sliders);
     while (i.hasNext())
@@ -194,7 +199,8 @@ void CapSettingsDialog::saveToQSettings   (const QString &fileName, const QStrin
         qDebug() << "   " << QString(name).leftJustified(16, ' ') << ": " << value;
     }
 
-    settings->endGroup();
+    if (interfaceGroup)
+        settings->endGroup();
     settings->endGroup();
     settings->endGroup();
     delete_safe(settings);

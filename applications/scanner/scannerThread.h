@@ -23,6 +23,7 @@
 #include "generatedParameters/scannerParameters.h"
 #include "calculationStats.h"
 
+
 class ScannerOutputData : public BaseOutputData
 {
 public:
@@ -32,16 +33,19 @@ public:
     Mesh3D outputMesh;
 
     vector<double> cut;
+    vector<double> cutConvolution;
 
     G8Buffer *brightness = NULL;
     G8Buffer *corners   = NULL;
-
+    RGB24Buffer *convolution = NULL;
+    G8Buffer *channel = NULL;
 
     virtual ~ScannerOutputData() override
     {
         delete_safe(brightness);
+        delete_safe(convolution);
+        delete_safe(channel);
         delete_safe(corners);
-
     }
 
 };
@@ -51,19 +55,27 @@ class ScannerThread : public BaseCalculationThread
     Q_OBJECT
 
 public:
-    enum RecordingState
+
+
+    enum ScanningState
     {
-        StateRecordingActive = 0,
-        StateRecordingPaused,
-        StateRecordingReset,
-        StateRecordingFailure
+        IDLE,
+        SCANNING,
+        MOVING,
+        HOMEING,
+        PAUSED
     };
+
+
+    int scanCount;
+    static const int MAX_COUNT=500;
+
+
 
     ScannerThread();
 
 public slots:
-    void toggleRecording();
-    void resetRecording();
+    void toggleScanning();
 
     void scannerControlParametersChanged(QSharedPointer<ScannerParameters> params);
     void baseControlParametersChanged(QSharedPointer<BaseParameters> params);
@@ -71,15 +83,14 @@ public slots:
 
 
 signals:
-    void recordingStateChanged(ScannerThread::RecordingState state);
-    void errorMessage(QString string);
+    void scanningStateChanged(ScannerThread::ScanningState state);
 
 protected:
     virtual AbstractOutputData *processNewData();
 
 private:
-    bool mRecordingStarted;
-    bool mIsRecording;
+    bool mScanningStarted;
+    bool mIsScanning;
     PreciseTimer mIdleTimer;
 
     /* Might be misleading, but PPMLoader handles saving as well */
@@ -88,6 +99,7 @@ private:
     uint32_t mFrameCount;
     QString mPath;
     QSharedPointer<ScannerParameters> mScannerParameters;
+
 };
 
 #endif /* SCANNERTHREAD_H_ */

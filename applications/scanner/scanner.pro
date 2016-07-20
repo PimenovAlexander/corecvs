@@ -18,6 +18,8 @@ TEMPLATE = app
 HOSTBASE_DIR=../base
 include ($$HOSTBASE_DIR/baseApplication.pri)                   # it uses HOSTBASE_DIR, detects HOSTBASE_BINDIR, OBJECTS_DIR, ...
 
+QT += serialport
+
 win32 {
     MOC_DIR = $$ROOT_DIR/.obj/$$TARGET_ORIG/$$BUILD_CFG_NAME  # resolve moc path for mocs to help qmake to unify those paths.
 }
@@ -31,6 +33,8 @@ HEADERS += \
     generatedParameters/scannerParameters.h \                    # parameters for calculation threads, host dialogs etc.
     generatedParameters/redRemovalType.h \
     parametersMapper/parametersMapperScanner.h \       # parameters for params mapper
+    laserlinedetection.h
+
 
 SOURCES += \
     main_scanner.cpp \
@@ -39,6 +43,7 @@ SOURCES += \
     scannerParametersControlWidget.cpp \                         # control widgets
     generatedParameters/scannerParameters.cpp \                  # parameters for calculation threads, host dialogs etc.
     parametersMapper/parametersMapperScanner.cpp \     # parameters for params mapper
+    laserlinedetection.cpp
 
 FORMS += \
     ui/scannerParametersControlWidget.ui \

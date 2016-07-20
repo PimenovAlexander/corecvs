@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <QMetaType>
 #include <QMessageBox>
+#include <vector>
 
 #include "g12Image.h"
 #include "imageResultLayer.h"
@@ -18,23 +19,35 @@
 #include "gentryState.h"
 #include "calibrationHelpers.h"
 #include "abstractPainter.h"
+#include "polylinemesh.h"
+
 
 // TEST
 // #include "viFlowStatisticsDescriptor.h"
 
+double total(double a[], int size)
+{
+    double sum = 0.0;
+
+    for (int i = 0; i < size; i++)
+        sum += a[i];
+
+    return sum;
+}
+
 ScannerThread::ScannerThread() :
    BaseCalculationThread()
-  , mRecordingStarted(false)
-  , mIsRecording(false)
+  , mScanningStarted(false)
+  , mIsScanning(false)
   , mFrameCount(0)
   , mPath("")
   , mScannerParameters(NULL)
 {
-    qRegisterMetaType<ScannerThread::RecordingState>("ScannerThread::RecordingState");
+    qRegisterMetaType<ScannerThread::ScanningState>("ScannerThread::ScanningState");
     mIdleTimer = PreciseTimer::currentTime();
 }
 
-void ScannerThread::toggleRecording()
+void ScannerThread::toggleScanning()
 {
 #if 0
     if (!mIsRecording)
@@ -74,6 +87,31 @@ void ScannerThread::toggleRecording()
     }
 #endif
 
+    if (!mIsScanning)
+    {
+       // mScanningStarted = true;
+        /*if (!mScanningStarted)
+        {
+            mScanningStarted = true;
+            printf("Scanning started.\n");
+            emit scanningStateChanged(SCANNING);
+        }
+        else
+        {
+            printf("Scanner homeing =) <(koko)...\n");
+            mScanningStarted = false;
+            emit scanningStateChanged(HOMEING);
+        }*/
+        emit scanningStateChanged(HOMEING);
+        mIsScanning = true;
+    }
+  /*  else
+    {
+        mIsScanning = false;
+        printf("Scanning paused.\n");
+        emit scanningStateChanged(PAUSED);
+    }*/
+
 }
 
 class ParallelConvolve
@@ -84,8 +122,7 @@ public:
     G8Buffer   *out;
 
     ParallelConvolve(RGB24Buffer *in, G8Buffer *out) :
-        in(in), out(out)
-    {}
+        in(in), out(out) {}
 
     void operator ()(const BlockedRange<int>& range) const
     {
@@ -157,16 +194,189 @@ public:
 
 };
 
-
 AbstractOutputData* ScannerThread::processNewData()
+{
+    Statistics stats;
+    PreciseTimer start = PreciseTimer::currentTime();
+
+    bool have_params = !(mScannerParameters.isNull());
+    bool two_frames = have_params && (CamerasConfigParameters::TwoCapDev == mActiveInputsNumber); // FIXME: additional params needed here
+
+    // We are missing data, so pause calculation
+    if ((!mFrames.getCurrentFrame(Frames::LEFT_FRAME) ) ||
+       ((!mFrames.getCurrentFrame(Frames::RIGHT_FRAME)) && (CamerasConfigParameters::TwoCapDev == mActiveInputsNumber)))
+    {
+        //emit errorMessage("Capture error.");
+        pauseCalculation();
+    }
+
+    recalculateCache();
+
+    RGB24Buffer *frame = mFrames.getCurrentRgbFrame(Frames::LEFT_FRAME);
+    RGB24Buffer out(frame);
+    ScannerOutputData* outputData = new ScannerOutputData();
+
+    double kernel[21] = {-0.00129578, -0.00141479, -0.00138429, -0.00114991, -0.000683535, 0, 0.000834312, 0.00170611, 0.00247478, 0.00300321, 0.00319154, 0.00300321, 0.00247478, 0.00170611, 0.000834312, 0, -0.000683535, -0.00114991, -0.00138429, -0.00141479, -0.00129578};
+    enum {
+        KERNEL_SIZE = CORE_COUNT_OF(kernel),
+        OFFSET = KERNEL_SIZE / 2,
+    };
+    double divisor = total(kernel, KERNEL_SIZE);
+
+    if (frame != NULL && !mScannerParameters.isNull())
+    {
+        outputData->convolution = new RGB24Buffer(frame->getSize());
+        vector<int> laserPoints;
+        laserPoints.reserve(frame->w);
+
+        if (mScannerParameters->calculateConvolution())
+        {
+            double values[frame->h];
+
+            for (int i = 0; i < frame->h; i++)
+                values[i] = 0.0;
+
+            double sum = 0.0;
+            double max = 0.0;
+            int maxIndex = 0;
+
+            for (int j = 0; j < frame->w; j++)
+            {
+                max = 0.0;
+
+                for (int i = OFFSET; i < (frame->h - OFFSET); i++)
+                {
+                    sum = 0.0;
+
+                    for (int c = 0; c < KERNEL_SIZE; c++)
+                        sum += kernel[c]*frame->element(i+OFFSET-c,j).r();
+
+                    outputData->convolution->setElement(i,j,RGBColor((uint8_t)(sum/divisor), 0, 0));
+                    values[i] = sum;
+                }
+
+                for (int c = 0; c < frame->h; c++) {
+
+                    if (values[c] > max)
+                    {
+                        max = values[c];
+                        maxIndex = c;
+                    }
+                }
+
+                if (j == out.w/2)
+                    for (int i = 0; i < out.h; i++)
+                        outputData->cutConvolution.push_back(values[i]/divisor);
+
+                laserPoints.push_back(maxIndex);
+                out.element(maxIndex, j) = RGBColor::Cyan();
+
+            }
+        }
+
+        outputData->cut.reserve(out.h);
+        outputData->cutConvolution.reserve(out.h);
+
+        for (int i = 0; i < out.h; i++)
+            outputData->cut.push_back(frame->element(i,out.w/2).r());
+
+        GentryState state;
+        Vector2dd resolution = Vector2dd(frame->w, frame->h);
+
+        state.camera.intrinsics = PinholeCameraIntrinsics(resolution,  degToRad(60));
+        state.camera.setLocation(Affine3DQ::Shift(0,0,0) *Affine3DQ::RotationX(degToRad(90.0)));
+        state.laserPlane = Plane3d::FormNormalAndPoint(Vector3dd(0,0,1), Vector3dd(0,0,-30));
+        outputData->outputMesh.switchColor();
+
+        static PolylineMesh model;
+       // static Mesh3D model;
+
+        scanCount++;
+
+        if (scanCount == MAX_COUNT) {
+            scanCount = 0;
+            model.mesh.dumpPLY("3Dmodel.ply");
+            model.clear();
+        }
+
+        vector<Vector3dd> line;
+        PolyLine pl;
+
+        for (size_t i = 0; i < laserPoints.size(); i++)
+        {
+            Vector2dd pixel(i, laserPoints[i]);
+            Ray3d ray = state.camera.rayFromPixel(pixel);
+
+            outputData->outputMesh.setColor(RGBColor::Green());
+            //outputData->outputMesh.addLine(ray.p, ray.getPoint(60.0));
+
+            bool hasIntersection = false;
+            Vector3dd point = state.laserPlane.intersectWith(ray, &hasIntersection);
+
+            if (!hasIntersection || !state.camera.isInFront(point))
+            {
+                continue;
+            }
+
+           // outputData->outputMesh.setColor(RGBColor::Yellow());
+           // outputData->outputMesh.addPoint(point);
+            line.push_back(point + Vector3dd(0, 0, scanCount * 0.5));
+
+           // model.addPoint(point + Vector3dd(0, 0, framecount * 0.5));
+
+        }
+        pl = PolyLine(line);
+        model.addPolyline(pl);
+
+        outputData->outputMesh.setColor(RGBColor::Magenta());
+        outputData->outputMesh.add(model.mesh);
+
+        CalibrationHelpers drawer;
+        drawer.drawCamera(outputData->outputMesh, state.camera, 1.0);
+
+        Circle3d pd;
+        pd.c = Vector3dd::Zero();
+        pd.normal = state.laserPlane.normal();
+        pd.r = 70;
+        outputData->outputMesh.addCircle(pd);
+
+        outputData->mMainImage.addLayer(
+                new ImageResultLayer(
+                        &out
+                )
+        );
+
+        /*Channel*/
+       outputData->channel = frame->getChannel(mScannerParameters->channel());
+
+
+    }
+
+    outputData->mMainImage.setHeight(mBaseParams->h());
+    outputData->mMainImage.setWidth (mBaseParams->w());
+
+#if 1
+    stats.setTime("Total time", start.usecsToNow());
+#endif
+    mIdleTimer = PreciseTimer::currentTime();
+
+    for (int id = 0; id < mActiveInputsNumber; id++)
+    {
+
+    }
+
+    outputData->frameCount = this->mFrameCount;
+    outputData->stats = stats;
+
+    return outputData;
+}
+/*AbstractOutputData* ScannerThread::processNewData()
 {
     Statistics stats;
 
 //    qDebug("ScannerThread::processNewData(): called");
 
-#if 0
-    stats.setTime(ViFlowStatisticsDescriptor::IDLE_TIME, mIdleTimer.usecsToNow());
-#endif
+    //stats.setTime(ViFlowStatisticsDescriptor::IDLE_TIME, mIdleTimer.usecsToNow());
 
     PreciseTimer start = PreciseTimer::currentTime();
 //    PreciseTimer startEl = PreciseTimer::currentTime();
@@ -178,19 +388,19 @@ AbstractOutputData* ScannerThread::processNewData()
     if ((!mFrames.getCurrentFrame(Frames::LEFT_FRAME) ) ||
        ((!mFrames.getCurrentFrame(Frames::RIGHT_FRAME)) && (CamerasConfigParameters::TwoCapDev == mActiveInputsNumber)))
     {
-        emit errorMessage("Capture error.");
+        emit errorMessage("Capture errAdding object "3d Main"or.");
         pauseCalculation();
     }
 
     recalculateCache();
 
-    RGB24Buffer *bufrgb = mFrames.getCurrentRgbFrame(Frames::LEFT_FRAME);
+    RGB24Buffer *frame = mFrames.getCurrentRgbFrame(Frames::LEFT_FRAME);
 
     ScannerOutputData* outputData = new ScannerOutputData();
 
-    if (bufrgb != NULL && !mScannerParameters.isNull())
+    if (frame != NULL && !mScannerParameters.isNull())
     {
-        RGB24Buffer red(bufrgb);
+        RGB24Buffer red(frame);
         outputData->brightness = new G8Buffer(red.getSize());
         AbstractPainter<G8Buffer> painter(outputData->brightness);
         painter.drawCircle(100,100, 70, 50);
@@ -218,7 +428,7 @@ AbstractOutputData* ScannerThread::processNewData()
                     if (pixel.hue() <= mScannerParameters->redThreshold())
                         pixel = RGBColor::Black();
                 }
-            }*/
+            }
 
         }
 
@@ -255,7 +465,7 @@ AbstractOutputData* ScannerThread::processNewData()
 
 
         GentryState state;
-        Vector2dd resolution = Vector2dd(bufrgb->w, bufrgb->h);
+        Vector2dd resolution = Vector2dd(frame->w, frame->h);
 
         state.camera.intrinsics = PinholeCameraIntrinsics(resolution,  degToRad(60));
         state.camera.setLocation(
@@ -334,8 +544,8 @@ AbstractOutputData* ScannerThread::processNewData()
     outputData->stats = stats;
 
     return outputData;
-}
-
+}*/
+/*
 void ScannerThread::resetRecording()
 {
     mIsRecording = false;
@@ -343,7 +553,7 @@ void ScannerThread::resetRecording()
     mPath = "";
     mFrameCount = 0;
     emit recordingStateChanged(StateRecordingReset);
-}
+}*/
 
 void ScannerThread::scannerControlParametersChanged(QSharedPointer<ScannerParameters> scannerParameters)
 {

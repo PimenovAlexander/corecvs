@@ -1,7 +1,6 @@
-#include <QThread>
-#include <QDebug>
-
 #include "scannercontrol.h"
+#include <QDebug>
+#include <QThread>
 
 ScannerControl::ScannerControl()
 {
@@ -36,8 +35,10 @@ void ScannerControl::close(){
         port->close();
 }
 bool ScannerControl::home(){
-    return sendCommand("HOME");
-    pos = 0;
+    bool b = sendCommand("HOME");
+    if (b)
+        pos = 0;
+    return b;
 }
 
 bool ScannerControl::laserOn(){
@@ -86,5 +87,3 @@ void ScannerControl::getMessage()
         emit endOfMove();
     }
 }
-
-

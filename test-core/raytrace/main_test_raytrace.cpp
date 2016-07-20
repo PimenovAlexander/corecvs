@@ -225,7 +225,6 @@ TEST(Raytrace, testRaytraceChess)
     scene.elements.push_back(&rtmesh1);
     scene.elements.push_back(&rtmesh2);
 
-
     for ( double pos = -150.0; pos < 150.0; pos+= 2.0, count++)
     {
         RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::Black());

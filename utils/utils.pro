@@ -14,6 +14,9 @@ TEMPLATE = lib
 TARGET   = cvs_utils
 CONFIG += staticlib
 
+CONFIG += serialport
+LIBS += -lserialport
+
 include(utils.pri)                      # it uses TARGET and detects UTILS_BINDIR, OBJECTS_DIR,...!
 
 QT += gui
@@ -89,7 +92,9 @@ HEADERS += \
     distortioncorrector/lensDistortionModelParametersControlWidget.h \
     distortioncorrector/calibrationFeaturesWidget.h \
     uis/cloudview/scene3dTreeView.h \
-    scannercontrol.h
+    scannercontrol.h \
+	uis/histogramDepthDialog.h \
+    3d/sceneShaded.h
 
 SOURCES += \
     frames.cpp \
@@ -152,7 +157,9 @@ SOURCES += \
     distortioncorrector/lensDistortionModelParametersControlWidget.cpp \
     distortioncorrector/calibrationFeaturesWidget.cpp \
     uis/cloudview/scene3dTreeView.cpp \
-    scannercontrol.cpp
+    scannercontrol.cpp \
+    uis/histogramDepthDialog.cpp \
+    3d/sceneShaded.cpp
 
 
 FORMS += \
@@ -274,7 +281,6 @@ HEADERS += \
     \
     uis/advancedImageWidget.h \
     uis/paintImageWidget.h \
-    uis/histogramdepthdialog.h \
     uis/capSettingsDialog.h \
     uis/osdBaseWidget.h \
     uis/graphPlotDialog.h \
@@ -329,7 +335,6 @@ SOURCES += \
     \
     uis/advancedImageWidget.cpp \
     uis/paintImageWidget.cpp \
-    uis/histogramdepthdialog.cpp \
     uis/capSettingsDialog.cpp \
     uis/osdBaseWidget.cpp \
     uis/graphPlotDialog.cpp \
@@ -370,7 +375,7 @@ FORMS += \
     \
     uis/advancedImageWidget.ui \
     uis/paintImageWidget.ui \
-    uis/histogramdepthdialog.ui \
+    uis/histogramDepthDialog.ui \
     uis/capSettingsDialog.ui \
     uis/graphPlotDialog.ui \
     uis/aboutDialog.ui \

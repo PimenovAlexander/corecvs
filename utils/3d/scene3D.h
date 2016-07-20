@@ -52,14 +52,14 @@ public:
     virtual void dumpPCD(ostream &out);
     virtual void dumpPLY(ostream &out);
 
-    virtual void setParameters(void * /*params*/){};
+    virtual void setParameters(void * /*params*/){}
 
     /* Not the best practice.*/
     virtual ParametersControlWidgetBase *getContolWidget()
     {
 //        qDebug("Scene3D::getContolWidget() : Called");
         return NULL;
-    };
+    }
 
     virtual bool isComplexObject()
     {

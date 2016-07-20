@@ -1,5 +1,5 @@
-#ifndef _SSEBINARY_H_
-#define _SSEBINARY_H_
+#ifndef _SSEINTEGER_H_
+#define _SSEINTEGER_H_
 /**
  * \file sseInteger.h
  * \brief This class holds the SSEInteger class
@@ -166,4 +166,4 @@ static uint64_t   streamedWrites;
 
 } //namespace corecvs
 
-#endif //_SSEBINARY_H_
+#endif //_SSEINTEGER_H_

@@ -8,6 +8,7 @@
  */
 
 #include <stdint.h>
+#include <cmath>
 
 #include "fixedVector.h"
 #include "vector3d.h"
@@ -581,7 +582,7 @@ template<class VisitorType>
     static RGBColor FromDouble(const Vector3dd &input)
     {
         Vector3dd input1 = input;
-        input1.mapToHypercube(Vector3dd(0.0,0.0,0.0), Vector3dd(255.0,255.0,255.0));
+        input1.mapToHypercube(Vector3dd(0.0, 0.0, 0.0), Vector3dd(255.0, 255.0, 255.0));
         return RGBColor(input1.x(), input1.y(), input1.z());
     }
 
