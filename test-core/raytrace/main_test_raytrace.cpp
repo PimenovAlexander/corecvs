@@ -149,6 +149,7 @@ TEST(Raytrace, testRaytraceExample)
     int w = 1920;
 
     int count = 0;
+
     for ( double pos = -150.0; pos < 150.0; pos+= 2.0, count++)
     {
         RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::Black());

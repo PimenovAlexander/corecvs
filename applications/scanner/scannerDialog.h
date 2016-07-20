@@ -17,6 +17,7 @@
 #include "scannerThread.h"
 #include "scannerParametersControlWidget.h"
 #include "cloudViewDialog.h"
+#include "scannercontrol.h"
 
 #define UI_NAME_SCANNER "scanner"
 
@@ -27,6 +28,7 @@ class ScannerDialog : public BaseHostDialog
 public:
 
     ScannerDialog();
+    ScannerDialog(QString scannerPath);
     ~ScannerDialog();
 
 
@@ -40,18 +42,19 @@ signals:
 
 public slots:
     void openPathSelectDialog();
-    void toggleRecording();
-    void resetRecording();
-    void recordingStateChanged(ScannerThread::RecordingState );
+   // void toggleRecording();
+  //  void resetRecording();
+    void scanningStateChanged(ScannerThread::ScanningState);
     void scannerControlParametersChanged(QSharedPointer<ScannerParameters> params);
 
     virtual void processResult();
 
     void errorMessage(QString message);    
 private:
-    bool mIsRecording;
+    bool mIsScanning;
+    ScannerControl scanCtrl;
 
-    ScannerParametersControlWidget *mScannerParametersControlWidget;
+    ScannerParametersControlWidgetAdv *mScannerParametersControlWidget;
 
     QSharedPointer<ScannerParameters> mScannerControlParams;
 

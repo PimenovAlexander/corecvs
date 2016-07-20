@@ -109,3 +109,5 @@ void ScannerParametersControlWidget::setParametersVirtual(void *input)
     ScannerParameters *inputCasted = static_cast<ScannerParameters *>(input);
     setParameters(*inputCasted);
 }
+
+

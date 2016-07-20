@@ -702,7 +702,6 @@ void Mesh3D::add(const Mesh3D &other, bool preserveColor)
 }
 
 
-
 void Mesh3D::addEdge(const Vector2d32 &edge)
 {
     edges.push_back(edge);
