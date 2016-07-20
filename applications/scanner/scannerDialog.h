@@ -17,6 +17,7 @@
 #include "scannerThread.h"
 #include "scannerParametersControlWidget.h"
 #include "cloudViewDialog.h"
+#include "scannercontrol.h"
 
 #define UI_NAME_SCANNER "scanner"
 
@@ -50,6 +51,8 @@ public slots:
     void errorMessage(QString message);    
 private:
     bool mIsScanning;
+
+    ScannerControl scanner;
 
     ScannerParametersControlWidgetAdv *mScannerParametersControlWidget;
 

@@ -15,7 +15,7 @@
 #include <QString>
 #include <QMessageBox>
 #include "parametersMapper/parametersMapperScanner.h"
-
+#include "scannerThread.h"
 #include "mesh3DScene.h"
 
 
@@ -181,14 +181,30 @@ void ScannerDialog::scanningStateChanged(ScannerThread::ScanningState state)
     }
 #endif
 
-    /*switch (state)
+    switch (state)
     {
+        case ScannerThread::IDLE:
+        {
+            break;
+        }
+        case ScannerThread::HOMEING:
+        {
+            scanner.home();
+            mIsScanning = false;
+            emit scanningStateChanged(ScannerThread::IDLE);
+        }
         case ScannerThread::SCANNING:
         {
             mIsScanning = true;
+            scanner.step(10000);2
 
         }
-    }*/
+        case ScannerThread::PAUSED:
+        {
+
+        }
+
+    }
 }
 
 void ScannerDialog::processResult()
