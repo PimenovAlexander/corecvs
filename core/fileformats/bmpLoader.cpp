@@ -15,14 +15,14 @@
 
 namespace corecvs {
 
-string  BMPLoader::prefix1(".bmp");
+string  BMPLoaderBase::prefix1(".bmp");
 uint8_t BMPHeader::HEADER_SIGNATURE[2] = {'B','M'};
 
-BMPLoader::BMPLoader()
+BMPLoaderBase::BMPLoaderBase()
 {
 }
 
-bool BMPLoader::acceptsFile(string name)
+bool BMPLoaderBase::acceptsFile(string name)
 {
     return (name.compare(name.length() - prefix1.length(), prefix1.length(), prefix1) == 0);
 }
@@ -116,7 +116,7 @@ fail:
 }
 
 
-int BMPLoader::parseBMP (string& name, BMPHeader *header, uint8_t **dataPtr)
+int BMPLoaderBase::parseBMP (string& name, BMPHeader *header, uint8_t **dataPtr)
 {
     int status = -1;
     FILE *fp = NULL;
@@ -151,7 +151,7 @@ fail:
 }
 
 
-G12Buffer * BMPLoader::load(string name)
+G12Buffer * BMPLoaderBase::loadG12(string name)
 {
     uint8_t *data = NULL;
     BMPHeader header;
@@ -198,7 +198,7 @@ fail:
 }
 
 
-RGB24Buffer * BMPLoader::loadRGB(string name)
+RGB24Buffer * BMPLoaderBase::loadRGB(string name)
 {
     uint8_t *data = NULL;
     BMPHeader header;
@@ -242,13 +242,13 @@ fail:
 }
 
 
-BMPLoader::~BMPLoader()
+BMPLoaderBase::~BMPLoaderBase()
 {
     // TODO Auto-generated destructor stub
 }
 
 
-bool BMPLoader::save(string name, G12Buffer *buffer)
+bool BMPLoaderBase::save(string name, G12Buffer *buffer)
 {
     RGB24Buffer *toSave = new RGB24Buffer(buffer);
     bool result = save(name, toSave);
@@ -256,7 +256,7 @@ bool BMPLoader::save(string name, G12Buffer *buffer)
     return result;
 }
 
-bool BMPLoader::save(string name, G8Buffer *buffer)
+bool BMPLoaderBase::save(string name, G8Buffer *buffer)
 {
     RGB24Buffer *toSave = new RGB24Buffer(buffer->getSize());
     toSave->drawG8Buffer(buffer);
@@ -270,7 +270,7 @@ bool BMPLoader::save(string name, G8Buffer *buffer)
  * TODO: Add error handling
  *
  * */
-bool BMPLoader::save(string name, RGB24Buffer *buffer)
+bool BMPLoaderBase::save(string name, RGB24Buffer *buffer)
 {
     CORE_ASSERT_TRUE(buffer != NULL, "Null buffer could not be saved");
     FILE *fp = fopen(name.c_str(), "wb");

@@ -45,19 +45,19 @@ public:
 };
 
 
-class BMPLoader : public BufferLoader<G12Buffer>
+class BMPLoaderBase
 {
     static string prefix1;
 
 public:
     bool trace = false;
 
-    BMPLoader();
-    virtual ~BMPLoader();
+    BMPLoaderBase();
+    virtual ~BMPLoaderBase();
 
-    virtual bool acceptsFile(string name);
+    bool acceptsFile(string name);
 
-    virtual G12Buffer   * load   (string name);
+    virtual G12Buffer   * loadG12(string name);
     virtual RGB24Buffer * loadRGB(string name);
 
     virtual bool save(string name, RGB24Buffer *buffer);
@@ -68,5 +68,37 @@ private:
     int parseBMP (string& name, BMPHeader *header, uint8_t **dataPtr);
 };
 
+/**
+ * @brief BMPLoader is a shortcut for BMPLoaderBase
+ */
+typedef BMPLoaderBase BMPLoader;
+
+class BMPLoaderG12 : public BufferLoader<G12Buffer>, public BMPLoaderBase
+{
+public:
+    virtual bool acceptsFile(string name) override
+    {
+        return BMPLoaderBase::acceptsFile(name);
+    }
+
+    virtual G12Buffer *load(string name) override
+    {
+        return BMPLoaderBase::loadG12(name);
+    }
+};
+
+class BMPLoaderRGB24 : public BufferLoader<RGB24Buffer>, public BMPLoaderBase
+{
+public:
+    virtual bool acceptsFile(string name) override
+    {
+       return BMPLoaderBase::acceptsFile(name);
+    }
+
+    virtual RGB24Buffer *load(string name) override
+    {
+        return BMPLoaderBase::loadRGB(name);
+    }
+};
 
 } //namespace corecvs

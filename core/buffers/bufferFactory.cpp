@@ -24,7 +24,9 @@ BufferFactory* BufferFactory::getInstance()
     {
         sThis.get()->registerLoader(new PPMLoader());
         sThis.get()->registerLoader(new RAWLoader());
-        sThis.get()->registerLoader(new BMPLoader());
+        sThis.get()->registerLoader(new BMPLoaderG12());
+
+        sThis.get()->registerLoader(new BMPLoaderRGB24());
     }
     return sThis.get();
 }

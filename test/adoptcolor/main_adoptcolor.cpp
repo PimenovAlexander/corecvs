@@ -75,7 +75,9 @@ int main (int argc, char **argv)
 {
 	QCoreApplication app(argc, argv);
 	printf("Loading mask...\n");
-	QTFileLoader::registerMyself();
+    QTG12Loader  ::registerMyself();
+    QTRGB24Loader::registerMyself();
+
 
 	QImage imageMask    ("data/adopt/orig.png");
 	QImage imageAlpha   ("data/adopt/alpha.bmp");
@@ -85,7 +87,7 @@ int main (int argc, char **argv)
     RGB24Buffer *mask    = QTFileLoader::RGB24BufferFromQImage(&imageMask);
     RGB24Buffer *face    = QTFileLoader::RGB24BufferFromQImage(&imageFace);
 
-    G8Buffer *alpha = alpha24->getChannel(RGB24Buffer::CHANNEL_GRAY);
+    G8Buffer *alpha = alpha24->getChannel(ImageChannel::GRAY);
 
     Vector3dd meanMask(0.0);
     Vector3dd meanFace(0.0);

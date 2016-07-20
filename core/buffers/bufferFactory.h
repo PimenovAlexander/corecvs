@@ -31,8 +31,9 @@ public:
      */
     static BufferFactory* getInstance();
 
-    /** Public function to add own buffer loader, i.e. QtFileLoader
-     */
+    /**
+     * Public function to add own buffer loader, i.e. QtFileLoader
+     **/
     bool registerLoader(BufferLoader<G12Buffer> * loader)
     {
         mLoadersG12.push_back(loader);
