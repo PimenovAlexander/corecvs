@@ -17,6 +17,7 @@ CONFIG += staticlib
 include(utils.pri)                      # it uses TARGET and detects UTILS_BINDIR, OBJECTS_DIR,...!
 
 QT += gui
+QT += serialport
 
 # TODO: split this huge project into parts by these keys: utils, utils_gui?
 CONFIG += with_filters
