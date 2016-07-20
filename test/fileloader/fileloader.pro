@@ -10,13 +10,14 @@ exists(../../../../config.pri) {
 }
 
 
-
+DESTDIR = $$ROOT_DIR/bin
 TEMPLATE = app
 CONFIG += console c++11
 CONFIG -= app_bundle
 CONFIG -= qt
 
-include(../core/core.pri)
+
+include($$ROOT_DIR/core/core.pri)
 
 SOURCES += main.cpp
 

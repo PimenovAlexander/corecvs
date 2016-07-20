@@ -55,6 +55,7 @@ namespace HelperUtils {
     using std::istream;
 
     bool        startsWith(const string &str, const string &prefix);
+    bool        endsWith  (const string &str, const string &postfix);
     istream&    getlineSafe(istream& is, string& str);
 
     string      getEnvDirPath(cchar *envVarName);

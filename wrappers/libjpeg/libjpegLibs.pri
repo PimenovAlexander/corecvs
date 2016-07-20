@@ -10,7 +10,7 @@ with_libjpeg {
         isEmpty(LIBJPEG_PATH) {
             !build_pass:message(Compiling with system Libjpeg)
         } else {
-            !build_pass:message(Compiling with Libjpeg from $$LIBJPEG_PATH)
+            !build_pass:message(Compiling with libJpeg from $$LIBJPEG_PATH)
             DEPENDPATH  += $$LIBJPEG_PATH/include
             INCLUDEPATH += $$LIBJPEG_PATH/include
             LIBS        += -$$LIBJPEG_PATH/lib/

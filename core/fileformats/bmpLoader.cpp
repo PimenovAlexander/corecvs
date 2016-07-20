@@ -8,6 +8,7 @@
  */
 
 #include "bmpLoader.h"
+#include "utils.h"
 
 #include <string>
 //#include <cstring>
@@ -24,7 +25,7 @@ BMPLoaderBase::BMPLoaderBase()
 
 bool BMPLoaderBase::acceptsFile(string name)
 {
-    return (name.compare(name.length() - prefix1.length(), prefix1.length(), prefix1) == 0);
+    return HelperUtils::endsWith(name, prefix1);
 }
 
 void doTrace(bool trace, cchar *format, ...)
