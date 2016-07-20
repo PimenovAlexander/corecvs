@@ -28,9 +28,8 @@ ScannerDialog::ScannerDialog()
 
 }
 
-ScannerDialog::ScannerDialog(QString scannerPath)
+void ScannerDialog::addScannerPath(QString scannerPath)
 {
-    ScannerDialog();
     scanCtrl.openDevice(scannerPath);
 }
 
@@ -197,6 +196,10 @@ void ScannerDialog::scanningStateChanged(ScannerThread::ScanningState state)
     {
         case ScannerThread::HOMEING:
         {
+            if (scanCtrl.getPos() == 0)
+            {
+
+            }
             scanCtrl.laserOff();
             scanCtrl.home();
             while(scanCtrl.getPos());
@@ -220,6 +223,11 @@ void ScannerDialog::scanningStateChanged(ScannerThread::ScanningState state)
 
         case ScannerThread::SCANNING:
         {
+            if (scanCtrl.getPos() == 15000)
+            {
+
+            }
+
             mIsScanning = true;
             scanCtrl.laserOn();
             scanCtrl.step(10000);

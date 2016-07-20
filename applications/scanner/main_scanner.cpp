@@ -46,19 +46,7 @@ int main(int argc, char *argv[])
     }*/
 
     QString source;
-    if (argc == 3)
-    {
-        //source = string("prec:/media/media/storage/v3i/SafeTurn/image%04d_c%d.pgm");
-        //source = string("prec:/media/media/storage/v3i/raws2/1024x512_12h_image_%d_%d.raw");
-//        source = QString("prec:/media/media/storage/v3i/framegrabbed1/1024x512_16h_image_%03d_c%d.raw");
-
-        //source = string("prec:/media/disk/home/alexander/frames/framegrabber/frame%06d_c%d.rawg");
-        //source = string("v4l2:/dev/video0,/dev/video1:1/10");
-        source = QString(argv[2]);
-
-    } else {
-        source = QString(argv[1]);
-    }
+    source = QString(argv[1]);
 
     printf("Starting scanner...\n");
 
@@ -80,13 +68,11 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (argc == 3)
-       {
+    ScannerDialog SD;
 
-        MainWindow mainWindow(new ScannerDialog(QString(argv[1])), source, params, true);
-        }
-    else
-        MainWindow mainWindow(new ScannerDialog(), source, params, true);
+    if ((argc == 3) && (argv[2] != "auto")) SD.addScannerPath(QString(argv[2]));
+
+    MainWindow mainWindow(&SD, source, params, true);
 
     app.exec();
 

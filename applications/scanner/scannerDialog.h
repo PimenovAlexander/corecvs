@@ -28,13 +28,14 @@ class ScannerDialog : public BaseHostDialog
 public:
 
     ScannerDialog();
-    ScannerDialog(QString scannerPath);
     ~ScannerDialog();
 
 
     virtual void initParameterWidgets();
     virtual void createCalculator();
     virtual void connectFinishedRecalculation();
+
+    void addScannerPath(QString scannerPath);
 
 signals:
     void recordingTriggered();
@@ -52,6 +53,9 @@ public slots:
     void errorMessage(QString message);    
 private:
     bool mIsScanning;
+
+
+
     ScannerControl scanCtrl;
 
     ScannerControl scanner;
