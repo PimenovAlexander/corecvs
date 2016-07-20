@@ -28,6 +28,12 @@ ScannerDialog::ScannerDialog()
 
 }
 
+ScannerDialog::ScannerDialog(QString scannerPath)
+{
+    ScannerDialog();
+    scanCtrl.openDevice(scannerPath);
+}
+
 ScannerDialog::~ScannerDialog()
 {
     terminateCalculator();
@@ -46,6 +52,9 @@ void ScannerDialog::initParameterWidgets()
     cloud = static_cast<CloudViewDialog *>(createAdditionalWindow("3d view", oglWindow, QIcon()));
     graph = static_cast<GraphPlotDialog *>(createAdditionalWindow("Graph view", graphWindow, QIcon()));
     addImage = static_cast<AdvancedImageWidget *>(createAdditionalWindow("Addition", imageWindow, QIcon()));
+    brightImage = static_cast<AdvancedImageWidget *>(createAdditionalWindow("Brightness", imageWindow, QIcon()));
+    channelImage = static_cast<AdvancedImageWidget *>(createAdditionalWindow("Channel", imageWindow, QIcon(":/new/colors/colors/color_wheel.png")));
+    cornerImage = static_cast<AdvancedImageWidget *>(createAdditionalWindow("Corner", imageWindow, QIcon()));
 
 
     //connect(mScannerParametersControlWidget->ui()->choosePathButton, SIGNAL(clicked()), this, SLOT(openPathSelectDialog()));
@@ -98,6 +107,9 @@ void ScannerDialog::createCalculator()
     connect(mCalculator, SIGNAL(errorMessage(QString)),
             this,        SLOT  (errorMessage(QString)), Qt::BlockingQueuedConnection);
     */
+    connect(calculatorTyped, SIGNAL(scanningStateChanged(ScannerThread::ScanningState)), this,
+                SLOT(scanningStateChanged(ScannerThread::ScanningState)), Qt::QueuedConnection);
+
 }
 
 
@@ -183,21 +195,39 @@ void ScannerDialog::scanningStateChanged(ScannerThread::ScanningState state)
 
     switch (state)
     {
-        case ScannerThread::IDLE:
-        {
-            break;
-        }
         case ScannerThread::HOMEING:
         {
-            scanner.home();
-            mIsScanning = false;
+            scanCtrl.laserOff();
+            scanCtrl.home();
+            while(scanCtrl.getPos());
+
+
+            scanCtrl.laserOn();
+            sleep(1);
+            scanCtrl.laserOff();
+
+            scanCtrl.laserOn();
+            sleep(1);
+            scanCtrl.laserOff();
+
+            scanCtrl.laserOn();
+            sleep(1);
+            scanCtrl.laserOff();
+
             emit scanningStateChanged(ScannerThread::IDLE);
+            break;
         }
+
         case ScannerThread::SCANNING:
         {
             mIsScanning = true;
-            scanner.step(10000);2
+            scanCtrl.laserOn();
+            scanCtrl.step(10000);
 
+            //kokokokoko
+
+            scanCtrl.laserOff();
+            emit scanningStateChanged(ScannerThread::PAUSED);
         }
         case ScannerThread::PAUSED:
         {
@@ -241,7 +271,10 @@ void ScannerDialog::processResult()
                 graph->addGraphPoint("R_conv", fod->cutConvolution[i]);
             }
             graph->update();
-            addImage->setImage(QSharedPointer<QImage>(new RGB24Image(fod->convolution)));
+            if (fod->convolution) addImage    ->setImage(QSharedPointer<QImage>(new RGB24Image(fod->convolution)));
+            if (fod->channel)     channelImage->setImage(QSharedPointer<QImage>(new G8Image(fod->channel)));
+            if (fod->brightness)  brightImage ->setImage(QSharedPointer<QImage>(new G8Image(fod->brightness)));
+            if (fod->corners)     cornerImage ->setImage(QSharedPointer<QImage>(new G8Image(fod->corners)));
         }
 
         delete fod;

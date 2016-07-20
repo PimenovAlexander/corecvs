@@ -1,13 +1,11 @@
 #include <QtCore/QDebug>
 
-#include "histogramdepthdialog.h"
-#include "ui_histogramdepthdialog.h"
+#include "histogramDepthDialog.h"
+#include "ui_histogramDepthDialog.h"
 
 // TODO: It shall be equal to maximum possible disparity, which seems to be dependent
 // on image resolution, so this value shall not be a constant at all.
 int const histogramMargin = 640;
-
-using namespace std;
 
 HistogramDepthDialog::HistogramDepthDialog(QWidget *parent) :
     QDialog(parent),
@@ -52,7 +50,7 @@ void HistogramDepthDialog::setDepthesSlot(/*const*/ QSharedPointer<QMap<int, int
     int maxX = (qMap.end()   - 1).key();
 
     mCoreHistogram = new Histogram(-histogramMargin, histogramMargin);
-    for (int i = max(minX, mCoreHistogram->min); i < min(maxX, mCoreHistogram->max); i++)
+    for (int i = std::max(minX, mCoreHistogram->min); i < std::min(maxX, mCoreHistogram->max); i++)
     {
         mCoreHistogram->set(i, qMap[i]);
     }

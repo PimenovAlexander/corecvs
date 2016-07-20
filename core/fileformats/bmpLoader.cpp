@@ -27,6 +27,18 @@ bool BMPLoader::acceptsFile(string name)
     return (name.compare(name.length() - prefix1.length(), prefix1.length(), prefix1) == 0);
 }
 
+void doTrace(bool trace, cchar *format, ...)
+{
+    if (trace) {
+        va_list args;
+        va_start (args, format);
+        vprintf(format, args);
+        fflush(stdout);
+        va_end (args);
+    }
+}
+
+
 int BMPHeader::parseHeader(FILE *fp)
 {
     int status = -1;
@@ -57,46 +69,49 @@ int BMPHeader::parseHeader(FILE *fp)
 
     if (planes != 1)
     {
-        DOTRACE(("Sorry, only BMP's with 1 plane are supported"));
+        doTrace(trace, "Sorry, only BMP's with 1 plane are supported (%d planes)\n", planes);
         goto fail;
     }
 
-    if (bpp != 24)
+    if (bpp != 24 && bpp != 32)
     {
-        DOTRACE(("Sorry, only BMP's with 24 bit depth are supported"));
+        doTrace(trace, "Sorry, only BMP's with 24 or 32 bit depth are supported (%d)\n", bpp);
         goto fail;
     }
 
-    lineLength = w * (bpp / 8);
+    bytesPerPixel = (bpp / 8);
+
+    lineLength = w * bytesPerPixel;
     lineLength = (lineLength & 0x3) ? (lineLength | 0x3) + 1 : lineLength;
 
     if (headerSize != BMPHeader::HEADER_SIZE)
     {
-        DOTRACE(("BMP Header seems to be malformed inner size is %d expected %d",
-                headerSize, BMPHeader::HEADER_SIZE));
+        doTrace(trace, "BMP Header seems to be malformed inner size is %d expected %d\n",
+                headerSize, BMPHeader::HEADER_SIZE);
+
+        fseek(fp, (headerSize - BMPHeader::HEADER_SIZE), SEEK_CUR);
     }
 
     if (dataLen != bmpSize - headerSize)
     {
-        DOTRACE(("BMP data about the size of the pixel array is contradictory\n"
+        doTrace(trace, "BMP data about the size of the pixel array is contradictory\n"
                  "bmp size says %d and header says %d.\n We will choose maximium\n",
-                  bmpSize - headerSize, dataLen));
+                  bmpSize - headerSize, dataLen);
         if ((bmpSize - headerSize) > dataLen)
             dataLen = bmpSize - headerSize;
     }
 
     if (dataLen != lineLength * h)
     {
-        DOTRACE(("BMP data about the size of the pixel array is contradictory\n"
+        doTrace(trace, "BMP data about the size of the pixel array is contradictory\n"
                  "bmp size says %d and width and bpp says %d.\n Choosing minimum\n",
-                 dataLen, lineLength * h));
+                 dataLen, lineLength * h);
         dataLen = dataLen < lineLength * h ? dataLen : lineLength * h;
     }
 
     status = 0;
 fail:
-    if (header)
-        delete[] header;
+    deletearr_safe(header);
     return status;
 }
 
@@ -140,6 +155,7 @@ G12Buffer * BMPLoader::load(string name)
 {
     uint8_t *data = NULL;
     BMPHeader header;
+    header.trace = trace;
 
     G12Buffer *toReturn = NULL;
 
@@ -152,15 +168,26 @@ G12Buffer * BMPLoader::load(string name)
     {
         uint8_t  *src = &(data[header.lineLength * (header.h - i - 1)]);
         uint16_t *dest = &toReturn->element(i,0);
+
         for (unsigned j = 0; j < header.w; j++)
         {
-            uint8_t b = src[0];
-            uint8_t g = src[1];
-            uint8_t r = src[2];
+            uint16_t gray;
 
-            uint16_t gray = RGBColor(r,g,b).luma12();
+            if (header.bytesPerPixel == 3) /*or we can just adjust one pixel at offset*/
+            {
+                uint8_t b = src[0];
+                uint8_t g = src[1];
+                uint8_t r = src[2];
+                gray = RGBColor(r,g,b).luma12();
+            } else {
+                uint8_t b = src[1];
+                uint8_t g = src[2];
+                uint8_t r = src[3];
+                gray = RGBColor(r,g,b).luma12();
+            }
+
             *dest = gray;
-            src += 3;
+            src += header.bytesPerPixel;
             dest++;
         }
     }
@@ -189,11 +216,22 @@ RGB24Buffer * BMPLoader::loadRGB(string name)
         RGBColor *dest = &toReturn->element(i,0);
         for (unsigned j = 0; j < header.w; j++)
         {
-            uint32_t b = src[0];
-            uint32_t g = src[1];
-            uint32_t r = src[2];
-            *dest = RGBColor(r,g,b);
-            src+=3;
+            RGBColor color;
+            if (header.bytesPerPixel == 3) /*or we can just adjust one pixel at offset*/
+            {
+                uint32_t b = src[0];
+                uint32_t g = src[1];
+                uint32_t r = src[2];
+                color = RGBColor(r,g,b);
+            } else {
+                uint32_t a = src[0];
+                uint32_t b = src[1];
+                uint32_t g = src[2];
+                uint32_t r = src[3];
+                color = RGBColor(r,g,b,a);
+            }
+            *dest = color;
+            src += header.bytesPerPixel;
             dest++;
         }
     }
@@ -226,6 +264,7 @@ bool BMPLoader::save(string name, G8Buffer *buffer)
     delete toSave;
     return result;
 }
+
 
 /**
  * TODO: Add error handling
@@ -294,7 +333,7 @@ bool BMPLoader::save(string name, RGB24Buffer *buffer)
     fwrite(data, sizeof(uint8_t), fileSize, fp);
     fclose(fp);
 
-    delete[] data;
+    deletearr_safe(data);
     return true;
 }
 

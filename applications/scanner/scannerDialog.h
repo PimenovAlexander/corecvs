@@ -28,6 +28,7 @@ class ScannerDialog : public BaseHostDialog
 public:
 
     ScannerDialog();
+    ScannerDialog(QString scannerPath);
     ~ScannerDialog();
 
 
@@ -51,6 +52,7 @@ public slots:
     void errorMessage(QString message);    
 private:
     bool mIsScanning;
+    ScannerControl scanCtrl;
 
     ScannerControl scanner;
 
@@ -62,6 +64,9 @@ private:
     GraphPlotDialog *graph = NULL;
     GraphPlotDialog *graphConvolution = NULL;
     AdvancedImageWidget *addImage = NULL;
+	AdvancedImageWidget *brightImage = NULL;
+    AdvancedImageWidget *channelImage = NULL;
+    AdvancedImageWidget *cornerImage = NULL;
 
 };
 

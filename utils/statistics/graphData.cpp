@@ -5,8 +5,6 @@
 
 #include <QDebug>
 
-using namespace std;
-
 void GraphData::addGraphPoint(unsigned graphId, double value, bool isValid)
 {
     if (graphId >= mData.size()) {

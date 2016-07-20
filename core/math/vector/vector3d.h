@@ -250,6 +250,27 @@ public:
         return Vector3d(cos(angle) * length, sin(angle) * length, height);
     }
 
+    static Vector3d FromSpherical(double latitude, double longitude, double length = 1.0)
+    {
+
+        return Vector3d(cos(longitude) * sin(latitude), cos(longitude) * cos(latitude), sin(longitude)) * length;
+    }
+
+    static Vector3d toSpherical(const Vector3d &vector)
+    {
+        double length = vector.l2Metric();
+        Vector3d l = vector / length;
+        double longitude = asin(l.z());
+
+        double lcos = sqrt(1.0 - l.z() * l.z());
+        if (lcos > 0.0) {
+            Vector2d<ElementType> p = l.xy() / lcos;
+            double latitude =  p.argument();
+            return Vector3d(latitude, longitude, length);
+        } else {
+            return Vector3d(0.0, longitude, length);
+        }
+    }
 
 
     /*template<typename OtherType>
