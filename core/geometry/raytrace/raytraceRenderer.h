@@ -193,6 +193,9 @@ public:
     vector<RaytraceablePointLight *> lights;
     TraceColor ambient;
 
+    bool supersample = false;
+    int  sampleNum = 20;
+
     /**/
     AbstractBuffer<TraceColor> *energy = NULL;
     AbstractBuffer<int> *markup = NULL;

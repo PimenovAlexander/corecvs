@@ -154,7 +154,7 @@ TEST(Raytrace, testRaytraceChess)
     Matrix44 Rotation_mesh1 = Matrix44::RotationY(M_PI_4);
     Matrix44 Rotation_mesh2 = Matrix44::RotationZ(M_PI);
 
-    int Face_number = 1;
+    int faceNumber = 8;
 
     Mesh3D mesh1, mesh2;
 
@@ -165,8 +165,8 @@ TEST(Raytrace, testRaytraceChess)
     mesh1.mulTransform(Rotation_mesh1);
     mesh2.mulTransform(Rotation_mesh1);
 
-    for ( int x = 0;x < Face_number;x++ )
-              for ( int y = 0;y < Face_number;y++){
+    for ( int x = 0;x < faceNumber;x++ )
+              for ( int y = 0;y < faceNumber;y++){
                     if((x + y) % 2 == 0){
 
 
@@ -225,7 +225,9 @@ TEST(Raytrace, testRaytraceChess)
     scene.elements.push_back(&rtmesh1);
     scene.elements.push_back(&rtmesh2);
 
-    for ( double pos = -150.0; pos < 150.0; pos+= 2.0, count++)
+    //for ( double pos = -150.0; pos < 150.0; pos+= 2.0, count++)
+    for ( double pos = -80.0; pos <= -80.0; pos+= 2.0, count++)
+
     {
         RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::Black());
 
@@ -235,7 +237,7 @@ TEST(Raytrace, testRaytraceChess)
                     degToRad(60.0));
         renderer.position = Affine3DQ::Shift(0, pos, -250.0);
 
-        RaytraceablePointLight light1(RGBColor::White() .toDouble(), Vector3dd( -200, -190, -100));
+        RaytraceablePointLight light1(RGBColor::White().toDouble(), Vector3dd( -200, -190, -100));
         RaytraceablePointLight light2(RGBColor::Black().toDouble(), Vector3dd( 120, -70,  -200));
         LaserPlaneLight laser(
                     Plane3d::FormNormalAndPoint(
@@ -250,8 +252,12 @@ TEST(Raytrace, testRaytraceChess)
 
         renderer.ambient = RGBColor(20,20,20).toDouble();
 
-        printf("Processinf frame %d for position %lf\n", count, pos );
+        renderer.supersample = true;
+        renderer.sampleNum = 200;
+
+        printf("Processing frame %d for position %lf\n", count, pos );
         renderer.trace(buffer);
+
         char name[100];
         snprintf2buf(name, "raytrace%d.bmp", count);
         BMPLoader().save(name, buffer);

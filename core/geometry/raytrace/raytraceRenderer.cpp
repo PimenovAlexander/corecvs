@@ -43,35 +43,81 @@ void RaytraceRenderer::trace(RGB24Buffer *buffer)
 
     int inc = 0;
 
-    parallelable_for(0, buffer->h, [&](const BlockedRange<int>& r )
-        {
-            for (int i = r.begin() ; i < r.end(); i++)
+    if (!supersample)
+    {
+        parallelable_for(0, buffer->h, [&](const BlockedRange<int>& r )
             {
-                for (int j = 0; j < buffer->w; j++)
+                for (int i = r.begin() ; i < r.end(); i++)
                 {
-                    currentX = j;
-                    currentY = i;
-                    Vector2dd pixel(j, i);
-                    Ray3d ray = Ray3d(intrisics.reverse(pixel), Vector3dd::Zero());
-                    ray = position * ray;
+                    for (int j = 0; j < buffer->w; j++)
+                    {
+                        currentX = j;
+                        currentY = i;
+                        Vector2dd pixel(j, i);
+                        Ray3d ray = Ray3d(intrisics.reverse(pixel), Vector3dd::Zero());
+                        ray = position * ray;
 
-                    ray.normalise();
+                        ray.normalise();
 
-                    RayIntersection intersection;
-                    intersection.ray = ray;
-                    intersection.weight = 1.0;
-                    intersection.depth = 0;
-                    trace(intersection);
-                    if (intersection.object != NULL) {
-                        energy->element(i, j) = intersection.ownColor;
+                        RayIntersection intersection;
+                        intersection.ray = ray;
+                        intersection.weight = 1.0;
+                        intersection.depth = 0;
+                        trace(intersection);
+                        if (intersection.object != NULL) {
+                            energy->element(i, j) = intersection.ownColor;
+                        }
                     }
+                    SYNC_PRINT(("\r[%d]", inc));
+                    inc++;
                 }
-                SYNC_PRINT(("\r[%d]", inc));
-                inc++;
             }
-        }
 
-    );
+        );
+    } else {
+        parallelable_for(0, buffer->h, [&](const BlockedRange<int>& r )
+            {
+                for (int i = r.begin() ; i < r.end(); i++)
+                {
+                    for (int j = 0; j < buffer->w; j++)
+                    {
+                        TraceColor sumColor = TraceColor(0);
+
+                        for (int sample = 0; sample < sampleNum; sample++)
+                        {
+
+                            currentX = j;
+                            currentY = i;
+                            Vector2dd pixel(j, i);
+                            pixel.x() += ((rand() % 1000) - 500) / 1000.0;
+                            pixel.y() += ((rand() % 1000) - 500) / 1000.0;
+
+                            Ray3d ray = Ray3d(intrisics.reverse(pixel), Vector3dd::Zero());
+                            ray = position * ray;
+                            ray.normalise();
+
+
+
+                            RayIntersection intersection;
+                            intersection.ray = ray;
+                            intersection.weight = 1.0;
+                            intersection.depth = 0;
+                            trace(intersection);
+                            if (intersection.object != NULL) {
+                                sumColor += intersection.ownColor;
+                            } else {
+
+                            }
+                        }
+                        energy->element(i, j) = sumColor / sampleNum;
+                    }
+                    SYNC_PRINT(("\rsupersample[%d]", inc));
+                    inc++;
+                }
+            }
+
+        );
+    }
 
     /*for (int i = 0; i < buffer->h; i++)
     {
