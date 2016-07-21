@@ -71,7 +71,7 @@ void RaytraceRenderer::trace(RGB24Buffer *buffer)
                     SYNC_PRINT(("\r[%d]", inc));
                     inc++;
                 }
-            }, false
+            }, true
 
         );
     } else {
@@ -563,11 +563,11 @@ bool RaytraceableOptiMesh::TreeNode::intersect(RayIntersection &intersection)
     double t = 0;
 
     double d1,d2;
-    /*if (!bound.intersectWith(intersection.ray, d1, d2))
+    if (!bound.intersectWith(intersection.ray, d1, d2))
         return false;
 
     if (d1 < 0 && d2 < 0)
-        return false;*/
+        return false;
 
     RayIntersection best = intersection;
     best.t = std::numeric_limits<double>::max();
@@ -579,21 +579,29 @@ bool RaytraceableOptiMesh::TreeNode::intersect(RayIntersection &intersection)
 
         if (t > 0.000001 && t < best.t) {
             best.t = t;
-            best.normal = triangle.getNormal();
-            return true;
+            best.normal = triangle.getNormal();            
         }
     }
 
-    if (left != NULL) {
-        bool result = left->intersect(intersection);
+    bool side = plane.pointWeight(intersection.ray.p) > 0;
+    TreeNode *close = side ? left : right;
+    TreeNode *far   = side ? right : left;
+
+
+    if (close != NULL) {
+        bool result = close->intersect(intersection);
         if (result) {
             if (intersection.t > 0.000001 && intersection.t < best.t) {
                 best = intersection;
             }
         }
     }
-    if (right != NULL) {
-        bool result = right->intersect(intersection);
+
+
+
+
+    if (far != NULL) {
+        bool result = far->intersect(intersection);
         if (result) {
             if (intersection.t > 0.000001 && intersection.t < best.t) {
                 best = intersection;
@@ -601,37 +609,12 @@ bool RaytraceableOptiMesh::TreeNode::intersect(RayIntersection &intersection)
         }
     }
 
-
-    //if (plane.pointWeight(intersection.ray.p) > 0)
-    /*{
-        if (left != NULL) {
-            bool result = left->intersect(intersection);
-            if (result) return true;
-        }
-        if (right != NULL) {
-            bool result = right->intersect(intersection);
-            if (result) return true;
-        }
-
-    }*/ /*else {
-        if (right != NULL) {
-            bool result = right->intersect(intersection);
-            if (result) return true;
-        }
-        if (left != NULL) {
-            bool result = left->intersect(intersection);
-            if (result) return true;
-        }
-    }*/
-
-
-    if (best.t == std::numeric_limits<double>::max()) {
-
-        return false;
+    if (best.t != std::numeric_limits<double>::max()) {
+        intersection = best;
+        return true;
     }
 
-    intersection = best;
-    return true;
+    return false;
 }
 
 void RaytraceableOptiMesh::TreeNode::subdivide()

@@ -209,6 +209,11 @@ public:
     void dumpToMesh(Mesh3D &mesh, bool plane, bool volume);
 
     virtual bool intersect(RayIntersection &intersection) override;
+
+    virtual ~RaytraceableOptiMesh()
+    {
+        delete_safe(opt);
+    }
 };
 
 

@@ -129,9 +129,10 @@ TEST(Raytrace, testRaytraceBase)
 
 TEST(Raytrace, testRaytraceSpeedup)
 {
-    int h = 100;
-    int w = 100;
-    RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::Black());
+    int h = 200;
+    int w = 200;
+    RGB24Buffer *bufferS = new RGB24Buffer(h, w, RGBColor::Black());
+    RGB24Buffer *bufferF = new RGB24Buffer(h, w, RGBColor::Black());
 
     RaytraceRenderer renderer;
     renderer.intrisics = PinholeCameraIntrinsics(Vector2dd(w, h), degToRad(80.0));
@@ -182,9 +183,9 @@ TEST(Raytrace, testRaytraceSpeedup)
     renderer.ambient = RGBColor(20,20,20).toDouble();
 
     PreciseTimer timer = PreciseTimer::currentTime();
-    renderer.trace(buffer);
+    //renderer.trace(bufferS);
     SYNC_PRINT(("Slow render time %lf ms\n", timer.usecsToNow() / 1000.0));
-    BMPLoader().save("trace-slow.bmp", buffer);
+    BMPLoader().save("trace-slow.bmp", bufferS);
 
 
     RaytraceableOptiMesh roMesh(&mesh);
@@ -210,12 +211,19 @@ TEST(Raytrace, testRaytraceSpeedup)
     renderer.object = &scene1;
 
     timer = PreciseTimer::currentTime();
-    renderer.trace(buffer);
+    renderer.trace(bufferF);
     SYNC_PRINT(("Fast render time %lf ms\n", timer.usecsToNow() / 1000.0));
-    BMPLoader().save("trace-fast.bmp", buffer);
+    BMPLoader().save("trace-fast.bmp", bufferF);
+
+    if (!bufferF->isEqualTrace(*bufferS))
+    {
+        SYNC_PRINT(("Erorr"));
+    }
 
 
-    delete_safe(buffer);
+    delete_safe(bufferS);
+    delete_safe(bufferF);
+
 
 }
 
