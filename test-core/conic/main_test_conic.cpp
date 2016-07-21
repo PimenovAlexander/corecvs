@@ -128,3 +128,38 @@ TEST(conic, testSphereIntersection)
 
     mesh.dumpPLY("sphere-int.ply");
 }
+
+
+TEST(conic, testRayIntersection)
+{
+    Mesh3D mesh;
+    Sphere3d s( 0.0,  0.0,  0.0, 20.0);
+
+    mesh.switchColor();
+    mesh.setColor(RGBColor::Red());
+    mesh.addIcoSphere(s, 2);
+
+    for (double x = -30; x <= 30.0; x+=10.0 )
+    {
+        for (double y = -30; y <= 30.0; y+=10.0 )
+        {
+            Ray3d ray;
+            ray.a = Vector3dd::OrtZ();
+            ray.p = Vector3dd(x,y,-40);
+
+            double d1,d2;
+            if (s.intersectWith(ray, d1, d2))
+            {
+                mesh.setColor(RGBColor::Blue());
+                mesh.addLine(ray.getPoint(d1), ray.getPoint(d2));
+
+            } else {
+                mesh.setColor(RGBColor::Green());
+                //mesh.addLine(ray.p, ray.getPoint(50));
+            }
+        }
+    }
+
+    mesh.dumpPLY("sphere-ray.ply");
+
+}

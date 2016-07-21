@@ -17,7 +17,7 @@
 !gen_vsproj {
     CONFIG +=   \
                 \
-        debug \
+        debug   \
         release \
 
 }

@@ -71,7 +71,7 @@ void RaytraceRenderer::trace(RGB24Buffer *buffer)
                     SYNC_PRINT(("\r[%d]", inc));
                     inc++;
                 }
-            }
+            }, false
 
         );
     } else {
@@ -479,9 +479,9 @@ bool RaytraceableMesh::intersect(RayIntersection &intersection)
 
     RayIntersection best = intersection;
     best.t = std::numeric_limits<double>::max();
-//    SYNC_PRINT(("RaytraceableMesh::intersect(): entered\n"));
+    // SYNC_PRINT(("RaytraceableMesh::intersect(): entered\n"));
 
-    for (int i = 0; i < mMesh->faces.size(); i++)
+    for (size_t i = 0; i < mMesh->faces.size(); i++)
     {
         Triangle3dd triangle = mMesh->getFaceAsTrinagle(i);
 
@@ -499,9 +499,9 @@ bool RaytraceableMesh::intersect(RayIntersection &intersection)
         }
     }
 
-//    SYNC_PRINT(("RaytraceableMesh::intersect(): passed\n"));
-
     if (best.t == std::numeric_limits<double>::max()) {
+        // SYNC_PRINT(("RaytraceableMesh::intersect(): passed\n"));
+
         return false;
     }
 
@@ -555,4 +555,231 @@ bool RaytraceableTransform::inside(Vector3dd &point)
 {
     Vector3dd p = mMatrix * point;
     return mObject->inside(p);
+}
+
+bool RaytraceableOptiMesh::TreeNode::intersect(RayIntersection &intersection)
+{
+    intersection.object = NULL;
+    double t = 0;
+
+    double d1,d2;
+    /*if (!bound.intersectWith(intersection.ray, d1, d2))
+        return false;
+
+    if (d1 < 0 && d2 < 0)
+        return false;*/
+
+    RayIntersection best = intersection;
+    best.t = std::numeric_limits<double>::max();
+
+    for (Triangle3dd &triangle : middle)
+    {
+        if (!triangle.intersectWithP(intersection.ray, t))
+            continue;
+
+        if (t > 0.000001 && t < best.t) {
+            best.t = t;
+            best.normal = triangle.getNormal();
+            return true;
+        }
+    }
+
+    if (left != NULL) {
+        bool result = left->intersect(intersection);
+        if (result) {
+            if (intersection.t > 0.000001 && intersection.t < best.t) {
+                best = intersection;
+            }
+        }
+    }
+    if (right != NULL) {
+        bool result = right->intersect(intersection);
+        if (result) {
+            if (intersection.t > 0.000001 && intersection.t < best.t) {
+                best = intersection;
+            }
+        }
+    }
+
+
+    //if (plane.pointWeight(intersection.ray.p) > 0)
+    /*{
+        if (left != NULL) {
+            bool result = left->intersect(intersection);
+            if (result) return true;
+        }
+        if (right != NULL) {
+            bool result = right->intersect(intersection);
+            if (result) return true;
+        }
+
+    }*/ /*else {
+        if (right != NULL) {
+            bool result = right->intersect(intersection);
+            if (result) return true;
+        }
+        if (left != NULL) {
+            bool result = left->intersect(intersection);
+            if (result) return true;
+        }
+    }*/
+
+
+    if (best.t == std::numeric_limits<double>::max()) {
+
+        return false;
+    }
+
+    intersection = best;
+    return true;
+}
+
+void RaytraceableOptiMesh::TreeNode::subdivide()
+{
+    //SYNC_PRINT(("RaytraceableOptiMesh::TreeNode::subdivide() : %u nodes", middle.size()));
+
+    EllipticalApproximation3d approx;
+    for (const Triangle3dd &triangle : middle)
+    {
+        approx.addPoint(triangle.p1());
+        approx.addPoint(triangle.p2());
+        approx.addPoint(triangle.p3());
+    }
+
+    Vector3dd center = approx.getCenter();
+    approx.getEllipseParameters();
+
+    Vector3dd normal = approx.mAxes[0];
+    plane = Plane3d::FromNormalAndPoint(normal, center);
+
+    double radius = 0;
+    for (const Triangle3dd &triangle : middle)
+    {
+        for (int p = 0; p < 3; p++)
+        {
+            double d = (triangle.p[p] - center).l2Metric();
+            if (radius < d)
+                radius = d;
+        }
+    }
+    bound = Sphere3d(center, radius);
+
+    if (middle.size() <= 3)
+        return;
+
+    vector<Triangle3dd> m;
+    vector<Triangle3dd> l;
+    vector<Triangle3dd> r;
+    for (const Triangle3dd &triangle : middle)
+    {
+        bool b1 = (plane.pointWeight(triangle.p1()) > 0);
+        bool b2 = (plane.pointWeight(triangle.p2()) > 0);
+        bool b3 = (plane.pointWeight(triangle.p3()) > 0);
+
+        if (b1 && b2 && b3) {
+            l.push_back(triangle);
+            continue;
+        }
+
+        if (!b1 && !b2 && !b3) {
+            r.push_back(triangle);
+            continue;
+        }
+
+        m.push_back(triangle);
+    }
+
+    middle = m;
+    delete_safe(left);
+    delete_safe(right);
+
+    //SYNC_PRINT(("RaytraceableOptiMesh::TreeNode::subdivide() : groups %u (%u | %u) nodes\n", m.size(), l.size(), r.size()));
+
+    if (!l.empty()) {
+        left = new TreeNode;
+        left->middle = l;
+        left->subdivide();
+    }
+
+    if (!r.empty()) {
+        right = new TreeNode;
+        right->middle = r;
+        right->subdivide();
+    }
+}
+
+int RaytraceableOptiMesh::TreeNode::childCount()
+{
+    int sum = 1;
+    if (left) {
+        sum += left->childCount();
+    }
+    if (right) {
+        sum += right->childCount();
+    }
+    return sum;
+}
+
+int RaytraceableOptiMesh::TreeNode::triangleCount()
+{
+    int sum = middle.size();
+    if (left) {
+        sum += left->triangleCount();
+    }
+    if (right) {
+        sum += right->triangleCount();
+    }
+    return sum;
+}
+
+void RaytraceableOptiMesh::TreeNode::dumpToMesh(Mesh3D &mesh, int depth, bool plane, bool volume)
+{
+    mesh.addIcoSphere(bound, 3);
+
+    if (left)  left->dumpToMesh(mesh, depth + 1, plane, volume);
+    if (right) right->dumpToMesh(mesh, depth + 1, plane, volume);
+
+
+}
+
+void RaytraceableOptiMesh::optimize()
+{
+    delete_safe(opt);
+    opt = new TreeNode();
+    for (int i = 0; i < mMesh->faces.size(); i++)
+    {
+        Triangle3dd triangle = mMesh->getFaceAsTrinagle(i);
+        opt->middle.push_back(triangle);
+    }
+    opt->subdivide();
+
+}
+
+void RaytraceableOptiMesh::dumpToMesh(Mesh3D &mesh, bool plane, bool volume)
+{
+    if (opt == NULL) {
+        SYNC_PRINT(("RaytraceableOptiMesh: not optimized"));
+        return;
+    }
+
+    opt->dumpToMesh(mesh, 0, plane, volume);
+
+}
+
+bool RaytraceableOptiMesh::intersect(RayIntersection &intersection)
+{
+    intersection.object = NULL;
+
+    if (opt == NULL) {
+        // SYNC_PRINT(("RaytraceableOptiMesh::intersect(): not optimized"));
+        return false;
+    }
+
+    if (opt->intersect(intersection))
+    {
+        // SYNC_PRINT(("RaytraceableOptiMesh::intersect(): We have intersection (%lf)\n", intersection.t));
+        intersection.object = this;
+        return true;
+    }
+    return false;
 }

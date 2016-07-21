@@ -172,6 +172,45 @@ public:
     virtual bool inside (Vector3dd &point)  override;
 };
 
+class RaytraceableOptiMesh : public RaytraceableMesh {
+public:
+    static const double EPSILON;
+
+    struct TreeNode {
+        vector<Triangle3dd> middle;
+        TreeNode *left = NULL;
+        TreeNode *right = NULL;
+
+        Sphere3d bound;
+        Plane3d  plane;
+
+        bool intersect(RayIntersection &intersection);
+        void subdivide();
+        int childCount();
+        int triangleCount();
+
+
+        void dumpToMesh(Mesh3D &mesh, int depth, bool plane, bool volume);
+
+        ~TreeNode()
+        {
+            delete_safe(left);
+            delete_safe(right);
+        }
+    };
+
+    TreeNode *opt = NULL;
+
+    RaytraceableOptiMesh(Mesh3D *mesh) :
+        RaytraceableMesh(mesh)
+    {}
+
+    void optimize();
+    void dumpToMesh(Mesh3D &mesh, bool plane, bool volume);
+
+    virtual bool intersect(RayIntersection &intersection) override;
+};
+
 
 class RaytraceableUnion : public Raytraceable {
 public:

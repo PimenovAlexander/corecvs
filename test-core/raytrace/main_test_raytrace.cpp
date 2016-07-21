@@ -15,6 +15,7 @@
 #include "raytrace/raytraceRenderer.h"
 #include "bmpLoader.h"
 #include "meshLoader.h"
+#include "preciseTimer.h"
 
 using namespace std;
 using namespace corecvs;
@@ -115,9 +116,105 @@ TEST(Raytrace, testRaytraceBase)
 
     renderer.ambient = RGBColor(20,20,20).toDouble();
 
+    PreciseTimer timer;
+    timer = PreciseTimer::currentTime();
     renderer.trace(buffer);
+    SYNC_PRINT(("Total time %ld us", timer.usecsToNow()));
+
 
     BMPLoader().save("raytrace.bmp", buffer);
+    delete_safe(buffer);
+
+}
+
+TEST(Raytrace, testRaytraceSpeedup)
+{
+    int h = 100;
+    int w = 100;
+    RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::Black());
+
+    RaytraceRenderer renderer;
+    renderer.intrisics = PinholeCameraIntrinsics(Vector2dd(w, h), degToRad(80.0));
+
+    /* Materials */
+    RaytraceableMaterial blueMirror;
+    blueMirror.ambient = RGBColor::Blue().toDouble() * 0.2 ;
+    blueMirror.diffuse = RGBColor::White().toDouble() / 255.0;
+    blueMirror.reflCoef = 0.0;
+    blueMirror.refrCoef = 0;
+    blueMirror.specular = RGBColor::Blue().toDouble() / 255.0;
+
+    RaytraceableMaterial redMirror;
+    redMirror.ambient = RGBColor::Red().toDouble() * 0.2 ;
+    redMirror.diffuse = RGBColor::White().toDouble() / 255.0;
+    redMirror.reflCoef = 0.0;
+    redMirror.refrCoef = 0;
+    redMirror.specular = RGBColor(250.0, 220.0, 255.0).toDouble() / 255.0;
+
+    RaytraceableSphere sphere1(Sphere3d(Vector3dd(0,0, 500.0), 5.00));
+    sphere1.name = "Sphere1";
+    sphere1.color = RGBColor::Red().toDouble();
+    sphere1.material = &redMirror;
+
+
+    RaytraceablePointLight light1(RGBColor::White() .toDouble(), Vector3dd( 0, -190, 150));
+    RaytraceablePointLight light2(RGBColor::Yellow().toDouble(), Vector3dd(-120, -70,  50));
+
+    Mesh3D mesh;
+    MeshLoader loader;
+    loader.load(&mesh, "bunny.ply");
+    mesh.transform(Matrix44::Shift(0, 20, 180) * Matrix44::Scale(1.5) * Matrix44::RotationX(degToRad(180)));
+    mesh.dumpInfo();
+
+    RaytraceableMesh rMesh(&mesh);
+    rMesh.name = "Bunny1";
+    rMesh.color = RGBColor::Blue().toDouble();
+    rMesh.material = &blueMirror;
+
+    RaytraceableUnion scene;
+    scene.elements.push_back(&rMesh);
+    scene.elements.push_back(&sphere1);
+
+    renderer.object = &scene;
+    renderer.lights.push_back(&light1);
+    renderer.lights.push_back(&light2);
+
+    renderer.ambient = RGBColor(20,20,20).toDouble();
+
+    PreciseTimer timer = PreciseTimer::currentTime();
+    renderer.trace(buffer);
+    SYNC_PRINT(("Slow render time %lf ms\n", timer.usecsToNow() / 1000.0));
+    BMPLoader().save("trace-slow.bmp", buffer);
+
+
+    RaytraceableOptiMesh roMesh(&mesh);
+    roMesh.name = "Bunny1";
+    roMesh.color = RGBColor::Blue().toDouble();
+    roMesh.material = &blueMirror;
+
+    timer = PreciseTimer::currentTime();
+    roMesh.optimize();
+    SYNC_PRINT(("Mesh optimise time %lf us\n", timer.usecsToNow() / 1000.0));
+    SYNC_PRINT(("Mesh tree size is   %d\n", roMesh.opt->childCount()));
+    SYNC_PRINT(("Mesh tree triangles %d\n", roMesh.opt->triangleCount()));
+
+    //Mesh3D dumpTreeMesh;
+    //dumpTreeMesh.switchColor(true);
+    //roMesh.dumpToMesh(dumpTreeMesh, true, true);
+    //dumpTreeMesh.dumpPLY("subtree.ply");
+
+    RaytraceableUnion scene1;
+    scene1.elements.push_back(&roMesh);
+    scene1.elements.push_back(&sphere1);
+
+    renderer.object = &scene1;
+
+    timer = PreciseTimer::currentTime();
+    renderer.trace(buffer);
+    SYNC_PRINT(("Fast render time %lf ms\n", timer.usecsToNow() / 1000.0));
+    BMPLoader().save("trace-fast.bmp", buffer);
+
+
     delete_safe(buffer);
 
 }
@@ -240,7 +337,7 @@ TEST(Raytrace, testRaytraceChess)
         RaytraceablePointLight light1(RGBColor::White().toDouble(), Vector3dd( -200, -190, -100));
         RaytraceablePointLight light2(RGBColor::Black().toDouble(), Vector3dd( 120, -70,  -200));
         LaserPlaneLight laser(
-                    Plane3d::FormNormalAndPoint(
+                    Plane3d::FromNormalAndPoint(
                         Vector3dd::OrtY(),
                         Vector3dd(0, pos - 30, 0)
                     ));

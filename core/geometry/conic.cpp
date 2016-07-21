@@ -70,6 +70,40 @@ Vector3dd Circle3d::getPoint(double angle)
 }
 
 
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *   *----------------------------
+ *
+ *
+ *
+ *
+ **/
+bool corecvs::Sphere3d::intersectWith(const corecvs::Ray3d &ray, double &t1, double &t2)
+{
+    Vector3dd toCenter  = c  - ray.p;
+    double toCen2 = toCenter & toCenter;
+    double proj  = ray.a & toCenter;
+    double hdist  = (r * r) - toCen2 + proj * proj;
+
+    if (hdist < 0) {
+        return false;
+    }
+
+    hdist = sqrt (hdist);
+
+    t1 =  proj + hdist;
+    t2 =  proj - hdist;
+    return true;
+}
+
+
 
 } // namespace corecvs
 

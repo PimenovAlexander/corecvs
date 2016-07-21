@@ -87,6 +87,7 @@ public:
 
     bool intersectWith(const Sphere3d &other, Circle3d &result);
     bool intersectWith(const  Plane3d &plane, Circle3d &intersection);
+    bool intersectWith(const  Ray3d   &ray, double &t1, double &t2);
 
 };
 
@@ -100,7 +101,7 @@ public:
     Vector3dd getPoint(double angle);
 
     Plane3d getPlane() {
-        return Plane3d::FormNormalAndPoint(normal, c);
+        return Plane3d::FromNormalAndPoint(normal, c);
     }
 };
 

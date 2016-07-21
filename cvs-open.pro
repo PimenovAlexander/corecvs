@@ -13,7 +13,7 @@ SUBDIRS +=                   \
 #    recorder                 \
     scanner                  \
     testbed                  \
-#    cloudview                \
+    cloudview                \
 #    imageview                \
 #    \
 #    generator                \

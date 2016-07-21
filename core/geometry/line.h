@@ -844,7 +844,7 @@ public:
      *      \vec x \vec n - \vec p \vec n = \vec 0
      *  \f]
      **/
-    static Plane3d FormNormalAndPoint(const Vector3dd &normal, const Vector3dd &point)
+    static Plane3d FromNormalAndPoint(const Vector3dd &normal, const Vector3dd &point)
     {
         return Plane3d(normal, -(normal & point));
     }
@@ -867,7 +867,7 @@ public:
      **/
     static Plane3d FromPoints(const Vector3dd &p, const Vector3dd &q, const Vector3dd &r)
     {
-        return FormNormalAndPoint( NormalFromPoints(p, q, r), p);
+        return FromNormalAndPoint( NormalFromPoints(p, q, r), p);
     }
 
     /**
@@ -876,7 +876,7 @@ public:
      **/
     static Plane3d FromPointAndVectors(const Vector3dd &p, const Vector3dd &v1, const Vector3dd &v2)
     {
-        return FormNormalAndPoint( v1 ^ v2, p);
+        return FromNormalAndPoint( v1 ^ v2, p);
     }
 
 };
