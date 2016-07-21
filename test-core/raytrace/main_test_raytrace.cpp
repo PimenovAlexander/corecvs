@@ -129,8 +129,8 @@ TEST(Raytrace, testRaytraceBase)
 
 TEST(Raytrace, testRaytraceSpeedup)
 {
-    int h = 200;
-    int w = 200;
+    int h = 1500;
+    int w = 1500;
     RGB24Buffer *bufferS = new RGB24Buffer(h, w, RGBColor::Black());
     RGB24Buffer *bufferF = new RGB24Buffer(h, w, RGBColor::Black());
 
@@ -215,10 +215,10 @@ TEST(Raytrace, testRaytraceSpeedup)
     SYNC_PRINT(("Fast render time %lf ms\n", timer.usecsToNow() / 1000.0));
     BMPLoader().save("trace-fast.bmp", bufferF);
 
-    if (!bufferF->isEqualTrace(*bufferS))
+    /*if (!bufferF->isEqualTrace(*bufferS))
     {
         SYNC_PRINT(("Erorr"));
-    }
+    }*/
 
 
     delete_safe(bufferS);

@@ -178,6 +178,9 @@ public:
 
     struct TreeNode {
         vector<Triangle3dd> middle;
+        vector<PlaneFrame>  cached;
+
+
         TreeNode *left = NULL;
         TreeNode *right = NULL;
 
@@ -186,6 +189,8 @@ public:
 
         bool intersect(RayIntersection &intersection);
         void subdivide();
+        void cache();
+
         int childCount();
         int triangleCount();
 
@@ -239,6 +244,8 @@ public:
 
     bool supersample = false;
     int  sampleNum = 20;
+
+    bool parallel = true;
 
     /**/
     AbstractBuffer<TraceColor> *energy = NULL;

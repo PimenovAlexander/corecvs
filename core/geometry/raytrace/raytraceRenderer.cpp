@@ -71,7 +71,7 @@ void RaytraceRenderer::trace(RGB24Buffer *buffer)
                     SYNC_PRINT(("\r[%d]", inc));
                     inc++;
                 }
-            }, true
+            }, parallel
 
         );
     } else {
@@ -114,7 +114,7 @@ void RaytraceRenderer::trace(RGB24Buffer *buffer)
                     SYNC_PRINT(("\rsupersample[%d]", inc));
                     inc++;
                 }
-            }
+            }, parallel
 
         );
     }
@@ -572,7 +572,7 @@ bool RaytraceableOptiMesh::TreeNode::intersect(RayIntersection &intersection)
     RayIntersection best = intersection;
     best.t = std::numeric_limits<double>::max();
 
-    for (Triangle3dd &triangle : middle)
+    /*for (Triangle3dd &triangle : middle)
     {
         if (!triangle.intersectWithP(intersection.ray, t))
             continue;
@@ -580,6 +580,18 @@ bool RaytraceableOptiMesh::TreeNode::intersect(RayIntersection &intersection)
         if (t > 0.000001 && t < best.t) {
             best.t = t;
             best.normal = triangle.getNormal();            
+        }
+    }*/
+
+    for (PlaneFrame &triangle : cached)
+    {
+        double u, v;
+        if (!triangle.intersectWithP(intersection.ray, t, u, v))
+            continue;
+
+        if (t > 0.000001 && t < best.t) {
+            best.t = t;
+            best.normal = triangle.getNormal();
         }
     }
 
@@ -598,8 +610,6 @@ bool RaytraceableOptiMesh::TreeNode::intersect(RayIntersection &intersection)
     }
 
 
-
-
     if (far != NULL) {
         bool result = far->intersect(intersection);
         if (result) {
@@ -613,7 +623,6 @@ bool RaytraceableOptiMesh::TreeNode::intersect(RayIntersection &intersection)
         intersection = best;
         return true;
     }
-
     return false;
 }
 
@@ -645,7 +654,7 @@ void RaytraceableOptiMesh::TreeNode::subdivide()
                 radius = d;
         }
     }
-    bound = Sphere3d(center, radius);
+    bound = Sphere3d(center, radius + 0.000001);
 
     if (middle.size() <= 3)
         return;
@@ -691,6 +700,18 @@ void RaytraceableOptiMesh::TreeNode::subdivide()
     }
 }
 
+void RaytraceableOptiMesh::TreeNode::cache()
+{
+    cached.clear();
+    for (const Triangle3dd &triangle : middle)
+    {
+        cached.push_back(triangle.toPlaneFrame());
+    }
+    if (left  != NULL)  left->cache();
+    if (right != NULL) right->cache();
+
+}
+
 int RaytraceableOptiMesh::TreeNode::childCount()
 {
     int sum = 1;
@@ -729,12 +750,13 @@ void RaytraceableOptiMesh::optimize()
 {
     delete_safe(opt);
     opt = new TreeNode();
-    for (int i = 0; i < mMesh->faces.size(); i++)
+    for (size_t i = 0; i < mMesh->faces.size(); i++)
     {
         Triangle3dd triangle = mMesh->getFaceAsTrinagle(i);
         opt->middle.push_back(triangle);
     }
     opt->subdivide();
+    opt->cache();
 
 }
 
