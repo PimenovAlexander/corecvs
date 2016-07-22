@@ -27,7 +27,9 @@ ScannerParametersControlWidget::ScannerParametersControlWidget(QWidget *parent, 
     QObject::connect(mUi->graphLineSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->useSSECheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->calculateConvolutionCheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->calibrationModeCheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->cornerScoreSpinBox, SIGNAL(valueChanged(double)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->harrisAppertureSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
 }
 
 ScannerParametersControlWidget::~ScannerParametersControlWidget()
@@ -62,7 +64,9 @@ void ScannerParametersControlWidget::getParameters(ScannerParameters& params) co
     params.setGraphLine        (mUi->graphLineSpinBox->value());
     params.setUseSSE           (mUi->useSSECheckBox->isChecked());
     params.setCalculateConvolution(mUi->calculateConvolutionCheckBox->isChecked());
+    params.setCalibrationMode  (mUi->calibrationModeCheckBox->isChecked());
     params.setCornerScore      (mUi->cornerScoreSpinBox->value());
+    params.setHarrisApperture  (mUi->harrisAppertureSpinBox->value());
 
 }
 
@@ -82,7 +86,9 @@ ScannerParameters *ScannerParametersControlWidget::createParameters() const
         , mUi->graphLineSpinBox->value()
         , mUi->useSSECheckBox->isChecked()
         , mUi->calculateConvolutionCheckBox->isChecked()
+        , mUi->calibrationModeCheckBox->isChecked()
         , mUi->cornerScoreSpinBox->value()
+        , mUi->harrisAppertureSpinBox->value()
     );
     return result;
 }
@@ -98,7 +104,9 @@ void ScannerParametersControlWidget::setParameters(const ScannerParameters &inpu
     mUi->graphLineSpinBox->setValue(input.graphLine());
     mUi->useSSECheckBox->setChecked(input.useSSE());
     mUi->calculateConvolutionCheckBox->setChecked(input.calculateConvolution());
+    mUi->calibrationModeCheckBox->setChecked(input.calibrationMode());
     mUi->cornerScoreSpinBox->setValue(input.cornerScore());
+    mUi->harrisAppertureSpinBox->setValue(input.harrisApperture());
     blockSignals(wasBlocked);
     emit paramsChanged();
 }
@@ -109,5 +117,3 @@ void ScannerParametersControlWidget::setParametersVirtual(void *input)
     ScannerParameters *inputCasted = static_cast<ScannerParameters *>(input);
     setParameters(*inputCasted);
 }
-
-

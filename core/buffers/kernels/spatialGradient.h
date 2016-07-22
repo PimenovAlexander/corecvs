@@ -37,7 +37,7 @@ public:
     SpatialGradient(int h, int w) : AbstractBuffer<Vector3dd, uint32_t>(h, w) {}
     SpatialGradient(G12Buffer *input);
 
-    G12Buffer* findCornerPoints(double scaler = G12Buffer::BUFFER_MAX_VALUE);
+    G12Buffer* findCornerPoints(double scaler = G12Buffer::BUFFER_MAX_VALUE, int apperture = 5);
 };
 
 typedef IntegralBuffer<Vector3dd, Vector3dd, uint32_t>  SpatialGradientIntegralBuffer;
