@@ -48,6 +48,7 @@ public:
         GRAPH_LINE_ID,
         USE_SSE_ID,
         CALCULATE_CONVOLUTION_ID,
+        CALIBRATIONMODE_ID,
         CORNER_SCORE_ID,
         HARRIS_APPERTURE_ID,
         SCANNER_PARAMETERS_FIELD_ID_NUM
@@ -96,6 +97,12 @@ public:
      * Calculate convolution 
      */
     bool mCalculateConvolution;
+
+    /** 
+     * \brief CalibrationMode 
+     * CalibrationMode 
+     */
+    bool mCalibrationMode;
 
     /** 
      * \brief Corner Score 
@@ -152,6 +159,11 @@ public:
         return mCalculateConvolution;
     }
 
+    bool calibrationMode() const
+    {
+        return mCalibrationMode;
+    }
+
     double cornerScore() const
     {
         return mCornerScore;
@@ -198,6 +210,11 @@ public:
         mCalculateConvolution = calculateConvolution;
     }
 
+    void setCalibrationMode(bool calibrationMode)
+    {
+        mCalibrationMode = calibrationMode;
+    }
+
     void setCornerScore(double cornerScore)
     {
         mCornerScore = cornerScore;
@@ -220,6 +237,7 @@ template<class VisitorType>
         visitor.visit(mGraphLine,                 static_cast<const IntField *>     (fields()[GRAPH_LINE_ID]));
         visitor.visit(mUseSSE,                    static_cast<const BoolField *>    (fields()[USE_SSE_ID]));
         visitor.visit(mCalculateConvolution,      static_cast<const BoolField *>    (fields()[CALCULATE_CONVOLUTION_ID]));
+        visitor.visit(mCalibrationMode,           static_cast<const BoolField *>    (fields()[CALIBRATIONMODE_ID]));
         visitor.visit(mCornerScore,               static_cast<const DoubleField *>  (fields()[CORNER_SCORE_ID]));
         visitor.visit(mHarrisApperture,           static_cast<const IntField *>     (fields()[HARRIS_APPERTURE_ID]));
     }
@@ -238,6 +256,7 @@ template<class VisitorType>
         , int graphLine
         , bool useSSE
         , bool calculateConvolution
+        , bool calibrationMode
         , double cornerScore
         , int harrisApperture
     )
@@ -249,6 +268,7 @@ template<class VisitorType>
         mGraphLine = graphLine;
         mUseSSE = useSSE;
         mCalculateConvolution = calculateConvolution;
+        mCalibrationMode = calibrationMode;
         mCornerScore = cornerScore;
         mHarrisApperture = harrisApperture;
     }

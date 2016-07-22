@@ -331,7 +331,7 @@ TEST(Raytrace, testRaytraceChess)
     scene.elements.push_back(&rtmesh2);
 
     //for ( double pos = -150.0; pos < 150.0; pos+= 2.0, count++)
-    for ( double pos = -80.0; pos <= -80.0; pos+= 2.0, count++)
+    for ( double pos = -100.0; pos <= -100.0; pos+= 2.0, count++)
 
     {
         RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::Black());
@@ -371,4 +371,67 @@ TEST(Raytrace, testRaytraceChess)
 }
 
 
+TEST(Raytrace, testRaytraceExample)
+{
+    int h = 1080;
+    int w = 1920;
 
+    int count = 0;
+    for ( double pos = -150.0; pos < 150.0; pos+= 2.0, count++)
+    {
+        RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::Black());
+
+        RaytraceRenderer renderer;
+        renderer.intrisics = PinholeCameraIntrinsics(
+                    Vector2dd(w, h),
+                    degToRad(60.0));
+        renderer.position = Affine3DQ::Shift(0, pos, 0);
+
+        /* Materials */
+        RaytraceableMaterial blueMirror;
+        blueMirror.ambient = RGBColor::Blue().toDouble() * 0.2 ;
+        blueMirror.diffuse = RGBColor::White().toDouble() / 255.0;
+        blueMirror.reflCoef = 0.0;
+        blueMirror.refrCoef = 0;
+        blueMirror.specular = RGBColor::Blue().toDouble() / 255.0;
+
+
+        RaytraceableSphere sphere1(Sphere3d(Vector3dd(0,20, 250.0), 80.0));
+        sphere1.name = "Sphere1";
+        sphere1.color = RGBColor::Red().toDouble();
+        sphere1.material = &blueMirror;
+
+        RaytraceableSphere sphere2(Sphere3d(Vector3dd(0, -50, 250.0), 60.0));
+        sphere2.name = "Sphere2";
+        sphere2.color = RGBColor::Green().toDouble();
+        sphere2.material = &blueMirror;
+
+
+        RaytraceableUnion scene;
+        scene.elements.push_back(&sphere1);
+        scene.elements.push_back(&sphere2);
+
+        RaytraceablePointLight light1(RGBColor::White() .toDouble(), Vector3dd( -200, -190, 150));
+        RaytraceablePointLight light2(RGBColor::Yellow().toDouble(), Vector3dd( 120, -70,  50));
+        LaserPlaneLight laser(
+                    Plane3d::FromNormalAndPoint(
+                        Vector3dd::OrtY(),
+                        Vector3dd(0, pos - 30, 0)
+                    ));
+
+        renderer.object = &scene;
+        renderer.lights.push_back(&light1);
+        renderer.lights.push_back(&light2);
+        renderer.lights.push_back(&laser);
+
+        renderer.ambient = RGBColor(20,20,20).toDouble();
+
+        printf("Processinf frame %d for position %lf\n", count, pos );
+        renderer.trace(buffer);
+
+        char name[100];
+        snprintf2buf(name, "raytrace%d.bmp", count);
+        BMPLoader().save(name, buffer);
+        delete_safe(buffer);
+    }
+}

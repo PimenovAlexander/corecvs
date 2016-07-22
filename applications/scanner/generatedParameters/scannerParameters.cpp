@@ -143,6 +143,17 @@ int ScannerParameters::staticInit()
         )
     );
     fields().push_back(
+        new BoolField
+        (
+          ScannerParameters::CALIBRATIONMODE_ID,
+          offsetof(ScannerParameters, mCalibrationMode),
+          false,
+          "CalibrationMode",
+          "CalibrationMode",
+          "CalibrationMode"
+        )
+    );
+    fields().push_back(
         new DoubleField
         (
           ScannerParameters::CORNER_SCORE_ID,

@@ -277,11 +277,25 @@
     <item row="7" column="0">
      <widget class="QLabel" name="label_7">
        <property name="text">
-         <string>Corner Score</string>
+         <string>CalibrationMode</string>
        </property>
      </widget>
     </item>
     <item row="7" column="1">
+     <widget class="QCheckBox" name="calibrationModeCheckBox">
+       <property name="toolTip">
+         <string>CalibrationMode</string>
+       </property>
+     </widget>
+    </item>
+    <item row="8" column="0">
+     <widget class="QLabel" name="label_8">
+       <property name="text">
+         <string>Corner Score</string>
+       </property>
+     </widget>
+    </item>
+    <item row="8" column="1">
      <widget class="QDoubleSpinBox" name="cornerScoreSpinBox">
        <property name="toolTip">
          <string>Corner Score</string>
@@ -303,14 +317,14 @@
        </property>
      </widget>
     </item>
-    <item row="8" column="0">
-     <widget class="QLabel" name="label_8">
+    <item row="9" column="0">
+     <widget class="QLabel" name="label_9">
        <property name="text">
          <string>Harris Apperture</string>
        </property>
      </widget>
     </item>
-    <item row="8" column="1">
+    <item row="9" column="1">
      <widget class="QSpinBox" name="harrisAppertureSpinBox">
        <property name="toolTip">
          <string>Harris Apperture</string>
@@ -329,7 +343,7 @@
        </property>
      </widget>
     </item>
-   <item row="9" column="0">
+   <item row="10" column="0">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -342,7 +356,7 @@
      </property>
     </spacer>
    </item>
-   <item row="9" column="2">
+   <item row="10" column="2">
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -398,6 +412,12 @@
   </connection>
   <connection>
    <sender>calculateConvolutionCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>ScannerParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>calibrationModeCheckBox</sender>
    <signal>stateChanged(int)</signal>
    <receiver>ScannerParametersControlWidget</receiver>
    <slot>changeParameters()</slot>

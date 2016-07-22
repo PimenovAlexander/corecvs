@@ -47,14 +47,14 @@ public:
 G12Buffer* SpatialGradient::findCornerPoints(double scaler, int apperture)
 {
     int v = apperture;
-    printf("SpatialGradient::findCornerPoints(%d, %d)", scaler, apperture);
+    printf("SpatialGradient::findCornerPoints(%lf, %d):called\n", scaler, apperture);
 
     SpatialGradient *start    = this;
     SpatialGradient *blurVert = new SpatialGradient(h, w);
     SpatialGradient *blur     = new SpatialGradient(h, w);
 
     /* TODO: Redo this to simplify for buffers */
-    if (v = 5)
+    if (v == 5)
     {
         BufferProcessor<SpatialGradient, SpatialGradient, Blur5Horisontal, ScalarAlgebraVector33> blurerH;
         BufferProcessor<SpatialGradient, SpatialGradient, Blur5Vertical, ScalarAlgebraVector33>   blurerV;
@@ -62,6 +62,8 @@ G12Buffer* SpatialGradient::findCornerPoints(double scaler, int apperture)
         blurerV.process(&start   , &blurVert);
         blurerH.process(&blurVert, &blur);
     } else {
+        printf("SpatialGradient::findCornerPoints() %d\n", v);
+
         for(int i = 0 ; i < start->h; i++)
         {
             for(int  j = 0; j < start->w; j++)

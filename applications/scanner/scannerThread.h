@@ -36,7 +36,7 @@ public:
     vector<double> cutConvolution;
 
     G8Buffer *brightness = NULL;
-    G8Buffer *corners   = NULL;
+    RGB24Buffer *corners   = NULL;
     RGB24Buffer *convolution = NULL;
     G8Buffer *channel = NULL;
 

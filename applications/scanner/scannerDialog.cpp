@@ -323,7 +323,7 @@ void ScannerDialog::processResult()
             if (fod->convolution) addImage    ->setImage(QSharedPointer<QImage>(new RGB24Image(fod->convolution)));
             if (fod->channel)     channelImage->setImage(QSharedPointer<QImage>(new G8Image(fod->channel)));
             if (fod->brightness)  brightImage ->setImage(QSharedPointer<QImage>(new G8Image(fod->brightness)));
-            if (fod->corners)     cornerImage ->setImage(QSharedPointer<QImage>(new G8Image(fod->corners)));
+            if (fod->corners)     cornerImage ->setImage(QSharedPointer<QImage>(new RGB24Image(fod->corners)));
         }
 
         delete fod;

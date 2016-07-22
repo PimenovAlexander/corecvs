@@ -81,8 +81,13 @@ void PolylineMesh::addPolyline(PolyLine p_line)
 
             for (int t = 0; t < num2; t++)
             {
+                if (p_line.colors.size() >= b2 + t)
+                {
+                    mesh.setColor(p_line.colors[b2 + t]);
+                }
                 mesh.addTriangle(p_line.points[b2 + t], polyline.points[b1 + t], polyline.points[b1 + t + 1]);
                 mesh.addTriangle(p_line.points[b2 + t], polyline.points[b1 + t + 1], p_line.points[b2 + t + 1]);
+
             }
         }
     }

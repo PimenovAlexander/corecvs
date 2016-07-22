@@ -5,9 +5,10 @@
 
 namespace corecvs {
 
-PolyLine::PolyLine(vector<Vector3dd> p)
+PolyLine::PolyLine(const vector<Vector3dd> &p, const vector<RGBColor> &colors)
 {
     points = p;
+    this->colors = colors;
     begins.push_back(0);
 
     for (int i = 0; i < points.size(); i++)
