@@ -73,7 +73,6 @@ int main(int argc, char *argv[])
     if ((argc == 3) && (argv[2] != "auto")) SD.addScannerPath(QString(argv[2]));
 
     MainWindow mainWindow(&SD, source, params, true);
-
     app.exec();
 
     cout << "Exiting Host application  \n";
