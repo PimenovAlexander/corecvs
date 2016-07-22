@@ -98,8 +98,8 @@ bool corecvs::Sphere3d::intersectWith(const corecvs::Ray3d &ray, double &t1, dou
 
     hdist = sqrt (hdist);
 
-    t1 =  proj + hdist;
-    t2 =  proj - hdist;
+    t1 =  proj - hdist;
+    t2 =  proj + hdist;
     return true;
 }
 

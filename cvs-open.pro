@@ -4,16 +4,16 @@ CONFIG  += ordered
 SUBDIRS +=                   \
     core                     \
     unitTests                \
-    utils                    \
+#    utils                    \
     \
-    tests \
+#    tests \
     \
-    base_application         \
-    base_application_example \
+#    base_application         \
+#    base_application_example \
 #    recorder                 \
-    scanner                  \
-    testbed                  \
-    cloudview                \
+#    scanner                  \
+#    testbed                  \
+#    cloudview                \
 #    imageview                \
 #    \
 #    generator                \

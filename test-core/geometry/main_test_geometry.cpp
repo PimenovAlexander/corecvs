@@ -141,6 +141,45 @@ TEST(Geometry, testIntersection3D)
 }
 
 
+TEST(Geometry, testIntersection3DFast)
+{
+    Mesh3D mesh;
+    AxisAlignedBox3d box(Vector3dd(-100, -100, -100), Vector3dd(100, 100, 100));
+
+    mesh.switchColor();
+    mesh.currentColor = RGBColor::Blue();
+    mesh.addAOB(box, false);
+    Ray3d ray(Vector3dd(2.0,1.1,1.5), Vector3dd(-120, -90, -80));
+
+    mesh.currentColor = RGBColor::White();
+    mesh.addLine(ray.getPoint(0), ray.getPoint(2.0));
+
+
+    double t1, t2;
+    bool result = box.intersectWith(ray, t1, t2);
+
+    mesh.currentColor = result ? RGBColor::Green() : RGBColor::Red();
+    mesh.addLine(ray.getPoint(t1), ray.getPoint(t2));
+
+    mesh.setColor(RGBColor::Green());
+    mesh.addIcoSphere(ray.getPoint(t1), 0.1);
+
+    mesh.setColor(RGBColor::Red());
+    mesh.addIcoSphere(ray.getPoint(t2), 0.1);
+
+    SYNC_PRINT((" Intersect %s at (%lf %lf)", result ? "yes" : "no", t1, t2 ));
+    cout << "In " <<  ray.getPoint(t1) << endl;
+    cout << "Out" <<  ray.getPoint(t2) << endl;
+
+
+    ofstream file("testf.ply", std::ios::out);
+    mesh.dumpPLY(file);
+    file.close();
+
+}
+
+
+
 TEST(Geometry, rayBasics)
 {
     Ray3d ray(Vector3dd::OrtX(), Vector3dd::Zero());

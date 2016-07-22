@@ -143,7 +143,7 @@ public:
      *
      * */
     template<typename ConvexType>
-    bool clip(const ConvexType &convex, double &t1, double &t2)
+    bool clip(const ConvexType &convex, double &t1, double &t2) const
     {
         t1 = -numeric_limits<double>::max();
         t2 =  numeric_limits<double>::max();
@@ -168,7 +168,7 @@ public:
                 t2 = t;
             }
 
-            cout << "Intersection " << t << " at " << getPoint(t) << " is " << (numen > 0 ? "enter" : "exit") << std::endl;
+            //cout << "Intersection " << t << " at " << getPoint(t) << " is " << (numen > 0 ? "enter" : "exit") << std::endl;
 
         }
         return t2 > t1;

@@ -657,8 +657,8 @@ AxisAlignedBox3d Mesh3D::getBoundingBox()
     {
         for (int j = 0; j < Vector3dd::LENGTH; j++)
         {
-            if (minP[j] < vertexes[i][j]) minP[j] = vertexes[i][j];
-            if (maxP[j] > vertexes[i][j]) maxP[j] = vertexes[i][j];
+            if (minP[j] > vertexes[i][j]) minP[j] = vertexes[i][j];
+            if (maxP[j] < vertexes[i][j]) maxP[j] = vertexes[i][j];
         }
     }
     return AxisAlignedBox3d(minP, maxP);

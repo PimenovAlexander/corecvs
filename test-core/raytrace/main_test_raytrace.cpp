@@ -152,7 +152,7 @@ TEST(Raytrace, testRaytraceSpeedup)
     redMirror.refrCoef = 0;
     redMirror.specular = RGBColor(250.0, 220.0, 255.0).toDouble() / 255.0;
 
-    RaytraceableSphere sphere1(Sphere3d(Vector3dd(0, 0, 120.0), 35.00));
+    RaytraceableSphere sphere1(Sphere3d(Vector3dd(0, 0, 120.0), 15.00));
     sphere1.name = "Sphere1";
     sphere1.color = RGBColor::Red().toDouble();
     sphere1.material = &redMirror;
@@ -164,7 +164,7 @@ TEST(Raytrace, testRaytraceSpeedup)
     Mesh3D mesh;
     MeshLoader loader;
     loader.load(&mesh, "bunny.ply");
-    mesh.transform(Matrix44::Shift(0, 20, 180) * Matrix44::Scale(1.2) * Matrix44::RotationX(degToRad(180)));
+    mesh.transform(Matrix44::Shift(0, 20, 180) * Matrix44::Scale(1.2) * Matrix44::RotationY(degToRad(-90)) * Matrix44::RotationX(degToRad(180)));
     mesh.dumpInfo();
 
     RaytraceableMesh rMesh(&mesh);
@@ -209,6 +209,8 @@ TEST(Raytrace, testRaytraceSpeedup)
     scene1.elements.push_back(&sphere1);
 
     renderer.object = &scene1;
+    renderer.supersample = true;
+    renderer.sampleNum = 30;
 
     timer = PreciseTimer::currentTime();
     renderer.trace(bufferF);

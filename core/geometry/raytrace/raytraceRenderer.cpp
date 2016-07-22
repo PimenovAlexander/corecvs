@@ -68,7 +68,7 @@ void RaytraceRenderer::trace(RGB24Buffer *buffer)
                             energy->element(i, j) = intersection.ownColor;
                         }
                     }
-                    SYNC_PRINT(("\r[%d]", inc));
+                    SYNC_PRINT(("\r[%d / %d]", inc, buffer->h));
                     inc++;
                 }
             }, parallel
@@ -563,11 +563,13 @@ bool RaytraceableOptiMesh::TreeNode::intersect(RayIntersection &intersection)
     double t = 0;
 
     double d1,d2;
-    if (!bound.intersectWith(intersection.ray, d1, d2))
+    if (!box.intersectWith(intersection.ray, d1, d2))
         return false;
 
-    if (d1 < 0 && d2 < 0)
+    if (d2 <= 0)
         return false;
+    /*if (!box.intersectWith(intersection.ray, d1, d2))
+        return false;*/
 
     RayIntersection best = intersection;
     best.t = std::numeric_limits<double>::max();
@@ -644,12 +646,24 @@ void RaytraceableOptiMesh::TreeNode::subdivide()
         return;
     }
 
+    Vector3dd minP = Vector3dd(numeric_limits<double>::max());
+    Vector3dd maxP = Vector3dd(numeric_limits<double>::lowest());
+
     EllipticalApproximation3d approx;
     for (const Triangle3dd &triangle : submesh)
     {
         approx.addPoint(triangle.p1());
         approx.addPoint(triangle.p2());
         approx.addPoint(triangle.p3());
+
+        for (int i = 0; i < Triangle3dd::SIZE; i++)
+        {
+            for (int j = 0; j < Vector3dd::LENGTH; j++)
+            {
+                if (minP[j] > triangle.p[i][j]) minP[j] = triangle.p[i][j];
+                if (maxP[j] < triangle.p[i][j]) maxP[j] = triangle.p[i][j];
+            }
+        }
     }
 
     Vector3dd center = approx.getCenter();
@@ -669,6 +683,7 @@ void RaytraceableOptiMesh::TreeNode::subdivide()
         }
     }
     bound = Sphere3d(center, radius + 0.000001);
+    box = AxisAlignedBox3d(minP, maxP);
 
     if (submesh.size() <= 3)
         return;

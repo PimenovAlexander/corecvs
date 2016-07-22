@@ -35,6 +35,11 @@ public:
         return faces[i].normal();
     }
 
+    bool intersectWith(const Ray3d &ray, double &t1, double &t2)
+    {
+        return ray.clip<ConvexPolyhedron> (*this, t1, t2);
+    }
+
 };
 
 } // namespace corecvs

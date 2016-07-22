@@ -186,6 +186,7 @@ public:
         TreeNode *right = NULL;
 
         Sphere3d bound;
+        AxisAlignedBox3d box;
         Plane3d  plane;
 
         bool intersect(RayIntersection &intersection);
