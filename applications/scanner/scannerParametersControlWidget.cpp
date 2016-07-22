@@ -28,6 +28,7 @@ ScannerParametersControlWidget::ScannerParametersControlWidget(QWidget *parent, 
     QObject::connect(mUi->useSSECheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->calculateConvolutionCheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->cornerScoreSpinBox, SIGNAL(valueChanged(double)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->harrisAppertureSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
 }
 
 ScannerParametersControlWidget::~ScannerParametersControlWidget()
@@ -63,6 +64,7 @@ void ScannerParametersControlWidget::getParameters(ScannerParameters& params) co
     params.setUseSSE           (mUi->useSSECheckBox->isChecked());
     params.setCalculateConvolution(mUi->calculateConvolutionCheckBox->isChecked());
     params.setCornerScore      (mUi->cornerScoreSpinBox->value());
+    params.setHarrisApperture  (mUi->harrisAppertureSpinBox->value());
 
 }
 
@@ -83,6 +85,7 @@ ScannerParameters *ScannerParametersControlWidget::createParameters() const
         , mUi->useSSECheckBox->isChecked()
         , mUi->calculateConvolutionCheckBox->isChecked()
         , mUi->cornerScoreSpinBox->value()
+        , mUi->harrisAppertureSpinBox->value()
     );
     return result;
 }
@@ -99,6 +102,7 @@ void ScannerParametersControlWidget::setParameters(const ScannerParameters &inpu
     mUi->useSSECheckBox->setChecked(input.useSSE());
     mUi->calculateConvolutionCheckBox->setChecked(input.calculateConvolution());
     mUi->cornerScoreSpinBox->setValue(input.cornerScore());
+    mUi->harrisAppertureSpinBox->setValue(input.harrisApperture());
     blockSignals(wasBlocked);
     emit paramsChanged();
 }
@@ -109,5 +113,3 @@ void ScannerParametersControlWidget::setParametersVirtual(void *input)
     ScannerParameters *inputCasted = static_cast<ScannerParameters *>(input);
     setParameters(*inputCasted);
 }
-
-

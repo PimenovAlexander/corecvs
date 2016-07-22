@@ -350,6 +350,15 @@ AbstractOutputData* ScannerThread::processNewData()
        outputData->channel = frame->getChannel(mScannerParameters->channel());
 
 
+       G12Buffer *inputGray = frame->toG12Buffer();
+       SpatialGradient grad(inputGray);
+       G12Buffer *corners = grad.findCornerPoints(mScannerParameters->cornerScore(), mScannerParameters->harrisApperture());
+       outputData->corners = G8Buffer::FromG12Buffer(corners);
+
+       delete_safe(corners);
+       delete_safe(inputGray);
+
+
     }
 
     outputData->mMainImage.setHeight(mBaseParams->h());

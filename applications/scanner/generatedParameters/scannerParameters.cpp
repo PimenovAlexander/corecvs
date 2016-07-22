@@ -148,9 +148,23 @@ int ScannerParameters::staticInit()
           ScannerParameters::CORNER_SCORE_ID,
           offsetof(ScannerParameters, mCornerScore),
           0.05,
-          "corner Score",
-          "corner Score",
-          "corner Score",
+          "Corner Score",
+          "Corner Score",
+          "Corner Score",
+          true,
+         0,
+         255
+        )
+    );
+    fields().push_back(
+        new IntField
+        (
+          ScannerParameters::HARRIS_APPERTURE_ID,
+          offsetof(ScannerParameters, mHarrisApperture),
+          5,
+          "Harris Apperture",
+          "Harris Apperture",
+          "Harris Apperture",
           true,
          0,
          255

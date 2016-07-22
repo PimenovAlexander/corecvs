@@ -39,13 +39,16 @@ public:
     typedef TraitGeneric<Vector3dd> TraitVector33;
     typedef ScalarAlgebraMulti<TraitVector33, TraitVector33, inputNumber, outputNumber> Type;
 };
-/*
+
+/**
  *  R=detM-(SCALLER*(traceM)^2)
- * те точки R которых меньше scaler исключаются из рассмотрения
-*/
-G12Buffer* SpatialGradient::findCornerPoints(double scaler)//эпмпиричиская константа....?приблизительно 0.05
+ * points in which R is smaller then scaler are forced to zero color
+ **/
+G12Buffer* SpatialGradient::findCornerPoints(double scaler, int apperture)
 {
-    int v = 27;
+    int v = apperture;
+    printf("SpatialGradient::findCornerPoints(%d, %d)", scaler, apperture);
+
     SpatialGradient *start    = this;
     SpatialGradient *blurVert = new SpatialGradient(h, w);
     SpatialGradient *blur     = new SpatialGradient(h, w);
