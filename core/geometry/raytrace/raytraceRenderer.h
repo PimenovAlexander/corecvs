@@ -177,10 +177,11 @@ public:
     static const double EPSILON;
 
     struct TreeNode {
-        vector<Triangle3dd> middle;
+        vector<Triangle3dd> submesh;
         vector<PlaneFrame>  cached;
 
 
+        TreeNode *middle = NULL;
         TreeNode *left = NULL;
         TreeNode *right = NULL;
 

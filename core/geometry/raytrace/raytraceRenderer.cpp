@@ -595,6 +595,15 @@ bool RaytraceableOptiMesh::TreeNode::intersect(RayIntersection &intersection)
         }
     }
 
+    if (middle != NULL) {
+        bool result = middle->intersect(intersection);
+        if (result) {
+            if (intersection.t > 0.000001 && intersection.t < best.t) {
+                best = intersection;
+            }
+        }
+    }
+
     bool side = plane.pointWeight(intersection.ray.p) > 0;
     TreeNode *close = side ? left : right;
     TreeNode *far   = side ? right : left;
@@ -629,9 +638,14 @@ bool RaytraceableOptiMesh::TreeNode::intersect(RayIntersection &intersection)
 void RaytraceableOptiMesh::TreeNode::subdivide()
 {
     //SYNC_PRINT(("RaytraceableOptiMesh::TreeNode::subdivide() : %u nodes", middle.size()));
+    if (submesh.size() == 0)
+    {
+        SYNC_PRINT(("RaytraceableOptiMesh::TreeNode::subdivide() : empty node\n"));
+        return;
+    }
 
     EllipticalApproximation3d approx;
-    for (const Triangle3dd &triangle : middle)
+    for (const Triangle3dd &triangle : submesh)
     {
         approx.addPoint(triangle.p1());
         approx.addPoint(triangle.p2());
@@ -645,7 +659,7 @@ void RaytraceableOptiMesh::TreeNode::subdivide()
     plane = Plane3d::FromNormalAndPoint(normal, center);
 
     double radius = 0;
-    for (const Triangle3dd &triangle : middle)
+    for (const Triangle3dd &triangle : submesh)
     {
         for (int p = 0; p < 3; p++)
         {
@@ -656,13 +670,13 @@ void RaytraceableOptiMesh::TreeNode::subdivide()
     }
     bound = Sphere3d(center, radius + 0.000001);
 
-    if (middle.size() <= 3)
+    if (submesh.size() <= 3)
         return;
 
     vector<Triangle3dd> m;
     vector<Triangle3dd> l;
     vector<Triangle3dd> r;
-    for (const Triangle3dd &triangle : middle)
+    for (const Triangle3dd &triangle : submesh)
     {
         bool b1 = (plane.pointWeight(triangle.p1()) > 0);
         bool b2 = (plane.pointWeight(triangle.p2()) > 0);
@@ -681,21 +695,38 @@ void RaytraceableOptiMesh::TreeNode::subdivide()
         m.push_back(triangle);
     }
 
-    middle = m;
+    /* Check if there was a subdivison actually */
+    if (m.size() == submesh.size())
+        return;
+    if (l.size() == submesh.size())
+        return;
+    if (r.size() == submesh.size())
+        return;
+
+
+    //submesh = m;
+    delete_safe(middle);
     delete_safe(left);
     delete_safe(right);
 
     //SYNC_PRINT(("RaytraceableOptiMesh::TreeNode::subdivide() : groups %u (%u | %u) nodes\n", m.size(), l.size(), r.size()));
 
+    if (!m.empty()) {
+        middle = new TreeNode;
+        middle->submesh = m;
+        middle->subdivide();
+    }
+    submesh.clear();
+
     if (!l.empty()) {
         left = new TreeNode;
-        left->middle = l;
+        left->submesh = l;
         left->subdivide();
     }
 
     if (!r.empty()) {
         right = new TreeNode;
-        right->middle = r;
+        right->submesh = r;
         right->subdivide();
     }
 }
@@ -703,12 +734,13 @@ void RaytraceableOptiMesh::TreeNode::subdivide()
 void RaytraceableOptiMesh::TreeNode::cache()
 {
     cached.clear();
-    for (const Triangle3dd &triangle : middle)
+    for (const Triangle3dd &triangle : submesh)
     {
         cached.push_back(triangle.toPlaneFrame());
     }
     if (left  != NULL)  left->cache();
     if (right != NULL) right->cache();
+    if (middle != NULL) middle->cache();
 
 }
 
@@ -721,17 +753,23 @@ int RaytraceableOptiMesh::TreeNode::childCount()
     if (right) {
         sum += right->childCount();
     }
+    if (middle) {
+        sum += middle->childCount();
+    }
     return sum;
 }
 
 int RaytraceableOptiMesh::TreeNode::triangleCount()
 {
-    int sum = middle.size();
+    int sum = submesh.size();
     if (left) {
         sum += left->triangleCount();
     }
     if (right) {
         sum += right->triangleCount();
+    }
+    if (middle) {
+        sum += middle->triangleCount();
     }
     return sum;
 }
@@ -740,8 +778,9 @@ void RaytraceableOptiMesh::TreeNode::dumpToMesh(Mesh3D &mesh, int depth, bool pl
 {
     mesh.addIcoSphere(bound, 3);
 
-    if (left)  left->dumpToMesh(mesh, depth + 1, plane, volume);
-    if (right) right->dumpToMesh(mesh, depth + 1, plane, volume);
+    if (left)   left  ->dumpToMesh(mesh, depth + 1, plane, volume);
+    if (right)  right ->dumpToMesh(mesh, depth + 1, plane, volume);
+    if (middle) middle->dumpToMesh(mesh, depth + 1, plane, volume);
 
 
 }
@@ -753,7 +792,7 @@ void RaytraceableOptiMesh::optimize()
     for (size_t i = 0; i < mMesh->faces.size(); i++)
     {
         Triangle3dd triangle = mMesh->getFaceAsTrinagle(i);
-        opt->middle.push_back(triangle);
+        opt->submesh.push_back(triangle);
     }
     opt->subdivide();
     opt->cache();
