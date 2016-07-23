@@ -14,9 +14,12 @@ HEADERS += \
     geometry/Projection.h \
     geometry/gentryState.h \
     geometry/raytrace/raytraceRenderer.h \
+    geometry/raytrace/raytraceObjects.h \
     geometry/mesh3DDecorated.h \
     geometry/polyLine.h \
     geometry/polylinemesh.h \
+    $$PWD/raytrace/perlinNoise.h \
+    $$PWD/raytrace/sdfRenderable.h
 
 
 SOURCES += \ 
@@ -33,7 +36,10 @@ SOURCES += \
     geometry/projection.cpp \
     geometry/gentryState.cpp \
     geometry/raytrace/raytraceRenderer.cpp \
+    geometry/raytrace/raytraceObjects.cpp \
     geometry/mesh3DDecorated.cpp \
     geometry/polyLine.cpp \
     geometry/polylinemesh.cpp \
+    $$PWD/raytrace/perlinNoise.cpp \
+    $$PWD/raytrace/sdfRenderable.cpp
     

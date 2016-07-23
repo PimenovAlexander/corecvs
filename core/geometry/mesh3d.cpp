@@ -416,7 +416,7 @@ void Mesh3D::addIcoSphere(Vector3dd center, double radius, int step)
 
 }
 
-void Mesh3D::addCircle(const Circle3d &circle, int step)
+void Mesh3D::addCircle(const focal &circle, int step)
 {
     Vector3dd ort1;
     Vector3dd ort2;

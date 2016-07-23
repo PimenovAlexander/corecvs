@@ -13,9 +13,12 @@
 
 #include "global.h"
 #include "raytrace/raytraceRenderer.h"
+#include "raytrace/raytraceObjects.h"
+#include "raytrace/sdfRenderable.h"
 #include "bmpLoader.h"
 #include "meshLoader.h"
 #include "preciseTimer.h"
+#include "perlinNoise.h"
 
 using namespace std;
 using namespace corecvs;
@@ -127,36 +130,55 @@ TEST(Raytrace, testRaytraceBase)
 
 }
 
+class BumpyMaterial : public  RaytraceableMaterial
+{
+public:
+    double power = 4 / 10.0;
+    double scale = 2.0;
+
+    PerlinNoise noise;
+    BumpyMaterial() : RaytraceableMaterial() {}
+
+    void getColor(RayIntersection &ray, RaytraceRenderer &renderer)
+    {
+        Vector3dd oldN = ray.normal;
+
+        Vector3dd bumped = noise.turbulence3d(ray.getPoint() / scale);
+
+        ray.normal += (bumped - Vector3dd(0.5)) * power;
+        ray.normal.normalise();
+        double k = ray.normal & ray.ray.a;
+        if (k > 0){
+            ray.normal = oldN;
+        }
+        RaytraceableMaterial::getColor(ray, renderer);
+    }
+};
+
 TEST(Raytrace, testRaytraceSpeedup)
 {
-    int h = 1500;
-    int w = 1500;
+    int h = 400;
+    int w = 400;
     RGB24Buffer *bufferS = new RGB24Buffer(h, w, RGBColor::Black());
     RGB24Buffer *bufferF = new RGB24Buffer(h, w, RGBColor::Black());
 
     RaytraceRenderer renderer;
-    renderer.intrisics = PinholeCameraIntrinsics(Vector2dd(w, h), degToRad(80.0));
+    renderer.intrisics = PinholeCameraIntrinsics(Vector2dd(w, h), degToRad(60.0));
 
     /* Materials */
     RaytraceableMaterial blueMirror;
     blueMirror.ambient = RGBColor::Blue().toDouble() * 0.2 ;
     blueMirror.diffuse = RGBColor::White().toDouble() / 255.0;
     blueMirror.reflCoef = 0.3;
-    blueMirror.refrCoef = 0;
+    blueMirror.refrCoef = 0.2;
     blueMirror.specular = RGBColor::Blue().toDouble() / 255.0;
 
-    RaytraceableMaterial redMirror;
+    BumpyMaterial redMirror;
     redMirror.ambient = RGBColor::Red().toDouble() * 0.2 ;
     redMirror.diffuse = RGBColor::White().toDouble() / 255.0;
     redMirror.reflCoef = 0.3;
-    redMirror.refrCoef = 0;
+    redMirror.refrCoef = 0.2;
     redMirror.specular = RGBColor(250.0, 220.0, 255.0).toDouble() / 255.0;
-
-    RaytraceableSphere sphere1(Sphere3d(Vector3dd(0, 0, 120.0), 15.00));
-    sphere1.name = "Sphere1";
-    sphere1.color = RGBColor::Red().toDouble();
-    sphere1.material = &redMirror;
-
 
     RaytraceablePointLight light1(RGBColor::White() .toDouble(), Vector3dd( 0, -190, 150));
     RaytraceablePointLight light2(RGBColor::Yellow().toDouble(), Vector3dd(-120, -70,  50));
@@ -164,7 +186,7 @@ TEST(Raytrace, testRaytraceSpeedup)
     Mesh3D mesh;
     MeshLoader loader;
     loader.load(&mesh, "bunny.ply");
-    mesh.transform(Matrix44::Shift(0, 20, 180) * Matrix44::Scale(1.2) * Matrix44::RotationY(degToRad(-90)) * Matrix44::RotationX(degToRad(180)));
+    mesh.transform(Matrix44::Shift(0, 50, 180) * Matrix44::Scale(1.4) * Matrix44::RotationZ(degToRad(-90)) * Matrix44::RotationY(degToRad(-90)) * Matrix44::RotationX(degToRad(180)));
     mesh.dumpInfo();
 
     RaytraceableMesh rMesh(&mesh);
@@ -174,7 +196,14 @@ TEST(Raytrace, testRaytraceSpeedup)
 
     RaytraceableUnion scene;
     scene.elements.push_back(&rMesh);
-    scene.elements.push_back(&sphere1);
+
+    for (double d = 60; d < 200; d+=30) {
+        RaytraceableSphere* sphere1 = new RaytraceableSphere(Sphere3d(Vector3dd(-30, 0, 120.0), 15.00));
+        sphere1->name = "Sphere1";
+        sphere1->color = RGBColor::Red().toDouble();
+        sphere1->material = &redMirror;
+        scene.elements.push_back(sphere1);
+    }
 
     renderer.object = &scene;
     renderer.lights.push_back(&light1);
@@ -206,14 +235,21 @@ TEST(Raytrace, testRaytraceSpeedup)
 
     RaytraceableUnion scene1;
     scene1.elements.push_back(&roMesh);
-    scene1.elements.push_back(&sphere1);
+
+    for (double d = 60; d < 280; d+=30) {
+        RaytraceableSphere* sphere1 = new RaytraceableSphere(Sphere3d(Vector3dd(-60 + d / 10.0 , 0, d), 15.00));
+        sphere1->name = "Sphere1";
+        sphere1->color = RGBColor::Red().toDouble();
+        sphere1->material = &redMirror;
+        scene1.elements.push_back(sphere1);
+    }
 
     renderer.object = &scene1;
     renderer.supersample = true;
-    renderer.sampleNum = 30;
+    renderer.sampleNum = 90;
 
     timer = PreciseTimer::currentTime();
-    renderer.trace(bufferF);
+    renderer.traceFOV(bufferF, 8, 140);
     SYNC_PRINT(("Fast render time %lf ms\n", timer.usecsToNow() / 1000.0));
     BMPLoader().save("trace-fast.bmp", bufferF);
 
@@ -436,4 +472,152 @@ TEST(Raytrace, testRaytraceExample)
         BMPLoader().save(name, buffer);
         delete_safe(buffer);
     }
+}
+
+
+TEST(Raytrace, testRaytraceModifiers)
+{
+    int h = 1500;
+    int w = 1500;
+    RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::Black());
+
+    RaytraceRenderer renderer;
+    renderer.intrisics = PinholeCameraIntrinsics(
+                Vector2dd(w, h),
+                degToRad(60.0));
+    renderer.position = Affine3DQ::Identity();
+
+    /* Materials */
+    BumpyMaterial blueMirror;
+    blueMirror.ambient = RGBColor::Blue().toDouble() * 0.2 ;
+    blueMirror.diffuse = RGBColor::White().toDouble() / 255.0;
+    blueMirror.reflCoef = 0.3;
+    blueMirror.refrCoef = 0.0;
+    blueMirror.specular = RGBColor::Blue().toDouble() / 255.0;
+
+    RaytraceableMaterial redMirror;
+    redMirror.ambient = RGBColor::Red().toDouble() * 0.03 ;
+    redMirror.diffuse = RGBColor::White().toDouble() / 255.0;
+    redMirror.reflCoef = 0.0;
+    redMirror.refrCoef = 0.7;
+    //redMirror.opticalDens = 1.2;
+    redMirror.opticalDens = 0.85;
+    redMirror.specular = RGBColor::Gray(120.0).toDouble() / 255.0;
+
+    RaytraceablePointLight light1(RGBColor::White() .toDouble(), Vector3dd( 0, -190, 150));
+    RaytraceablePointLight light2(RGBColor::Yellow().toDouble(), Vector3dd(-120, -70,  50));
+
+    RaytraceableSphere sphere1(Sphere3d(Vector3dd(0,0, 150.0), 50.0));
+    sphere1.name = "Sphere1";
+    sphere1.color = RGBColor::Red().toDouble();
+    sphere1.material = &redMirror;
+
+    RaytraceableSphere sphere2(Sphere3d(Vector3dd(-80,0, 250.0), 50.0));
+    sphere2.name = "Sphere1";
+    sphere2.color = RGBColor::Red().toDouble();
+    sphere2.material = &blueMirror;
+
+    RaytraceableUnion scene;
+    scene.elements.push_back(&sphere1);
+    scene.elements.push_back(&sphere2);
+
+    renderer.object = &scene;
+    renderer.lights.push_back(&light1);
+    renderer.lights.push_back(&light2);
+
+    renderer.trace(buffer);
+
+    BMPLoader().save("trace-noise.bmp", buffer);
+
+
+    delete_safe(buffer);
+}
+
+TEST(Raytrace, testSDF)
+{
+    SDFRenderable object;
+    object.F = [](Vector3dd v) { return 50.0 - (v - Vector3dd(0,0, 150.0)).l2Metric(); };
+
+    RayIntersection ray;
+    ray.ray = Ray3d(Vector3dd::OrtZ(), Vector3dd::Zero());
+    object.intersect(ray);
+
+    cout << "R:" << ray.ray << endl;
+    cout << "P:" << ray.getPoint() << endl;
+    cout << "N:" << ray.normal << endl;
+
+    ray.ray = Ray3d(Vector3dd(0.1, 0, 1.0).normalised(), Vector3dd::Zero());
+    object.intersect(ray);
+    cout << "R:" << ray.ray << endl;
+    cout << "P:" << ray.getPoint() << endl;
+    cout << "N:" << ray.normal << endl;
+
+
+}
+
+TEST(Raytrace, testRaytraceSDF)
+{
+    int h = 1500;
+    int w = 1500;
+    RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::Black());
+
+    RaytraceRenderer renderer;
+    renderer.intrisics = PinholeCameraIntrinsics(
+                Vector2dd(w, h),
+                degToRad(60.0));
+    renderer.position = Affine3DQ::Identity();
+
+    /* Materials */
+    BumpyMaterial blueMirror;
+    blueMirror.ambient = RGBColor::Blue().toDouble() * 0.2 ;
+    blueMirror.diffuse = RGBColor::White().toDouble() / 255.0;
+    blueMirror.reflCoef = 0.0;
+    blueMirror.refrCoef = 0.0;
+    blueMirror.specular = RGBColor::Blue().toDouble() / 255.0;
+
+    RaytraceableMaterial redMirror;
+    redMirror.ambient = RGBColor::Red().toDouble() * 0.03 ;
+    redMirror.diffuse = RGBColor::White().toDouble() / 255.0;
+    redMirror.reflCoef = 0.0;
+    redMirror.refrCoef = 0.0;
+    //redMirror.opticalDens = 1.2;
+    redMirror.opticalDens = 0.0;
+    redMirror.specular = RGBColor::Gray(120.0).toDouble() / 255.0;
+
+    RaytraceablePointLight light1(RGBColor::White() .toDouble(), Vector3dd( 0, -190, 150));
+    RaytraceablePointLight light2(RGBColor::Yellow().toDouble(), Vector3dd(-120, -70,  50));
+
+    SDFRenderable object;
+    object.F = [](Vector3dd v) {
+        Vector3dd c1 = Vector3dd(0,-30, 150.0);
+        Vector3dd c2 = Vector3dd(0, 30, 150.0);
+
+
+        return  sqrt(400.0 / ((v - c1).sumAllElementsSq() +
+                              (v - c2).sumAllElementsSq()));
+
+    };
+    object.name = "Sphere1";
+    object.color = RGBColor::Red().toDouble();
+    object.material = &blueMirror;
+
+    RaytraceableSphere sphere2(Sphere3d(Vector3dd(-80,0, 250.0), 50.0));
+    sphere2.name = "Sphere2";
+    sphere2.color = RGBColor::Red().toDouble();
+    sphere2.material = &blueMirror;
+
+    RaytraceableUnion scene;
+    scene.elements.push_back(&object);
+    scene.elements.push_back(&sphere2);
+
+    renderer.object = &scene;
+    renderer.lights.push_back(&light1);
+    renderer.lights.push_back(&light2);
+
+    renderer.trace(buffer);
+
+    BMPLoader().save("trace-noise.bmp", buffer);
+
+
+    delete_safe(buffer);
 }

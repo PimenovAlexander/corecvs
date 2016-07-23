@@ -97,7 +97,7 @@ public:
 
     void addIcoSphere(Vector3dd center, double radius, int step = 1);
 
-    void addCircle   (const Circle3d &circle, int step = 20);
+    void addCircle   (const focal &circle, int step = 20);
     void drawCircle  (Vector3dd center, double radius, int step=20, Vector3dd normal=Vector3dd(0, 0, 1));
 
     void addSphere   (const Sphere3d &sphere, int step = 20);

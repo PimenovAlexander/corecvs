@@ -569,6 +569,33 @@ public:
         return result;
     }
 
+    /**
+     * Per-element cast
+     *
+     *  Casts each element to the diven type, then back.
+     *  useful for rounding all elements
+     *
+     **/
+    template <typename Type>
+    ReturnType inline perElementCast() const
+    {
+        RealType result = _createVector(_size());
+        for (int i = 0; i < _size(); i++)
+            result.at(i) = (ElementType)static_cast<Type>(_at(i));
+        return result;
+    }
+
+    /**
+     *  Classic map function
+     **/
+    template<typename F>
+    ReturnType inline mapF(const F& lambda) const
+    {
+        RealType result = _createVector(_size());
+        for (int i = 0; i < _size(); i++)
+            result.at(i) = lambda(_at(i));
+        return result;
+    }
 
     /**
      *   Check if current vector is inside the n dimensional cube

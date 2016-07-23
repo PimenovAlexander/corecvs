@@ -13,6 +13,9 @@
 
 #include "global.h"
 #include "memoryBlock.h"
+#include "vector2d.h"
+#include "vector3d.h"
+
 namespace corecvs {
 
 /**
@@ -50,6 +53,7 @@ class VoxelBufferBase
 {
 public:
     typedef ElementType InternalElementType;
+    typedef int IndexType;
 
     /**
      * Memory block that holds the data
@@ -59,7 +63,7 @@ public:
     /**
      * The array of the data elements
      **/
-    ElementType *element;
+    ElementType *data;
 
     int l;
     int h;
@@ -93,13 +97,13 @@ public:
      **/
     inline ElementType &element(const IndexType z, const IndexType y, const IndexType x)
     {
-        return element[z * w * h + y * w + x];
-    };
+        return data[z * w * h + y * w + x];
+    }
 
     inline const ElementType &element(const IndexType z, const IndexType y, const IndexType x) const
     {
-        return element[z * w * h + y * w + x];
-    };
+        return data[z * w * h + y * w + x];
+    }
 
     /**
      * The element getter
@@ -107,12 +111,12 @@ public:
     inline ElementType &element(const Vector3d32 &p)
     {
         return element(p.z(), p.y(), p.x());
-    };
+    }
 
     inline const ElementType &element(const Vector3d32 &p) const
     {
         return element(p.z(), p.y(), p.x());
-    };
+    }
 
     /**
      *  Checks if coordinate lies within the buffer area
@@ -122,15 +126,15 @@ public:
         return (x >= 0) && (x < w) &&
                (y >= 0) && (y < h) &&
                (z >= 0) && (z < l);
-    };
+    }
 
     /**
      *  Checks if coordinate lies within the buffer area
      **/
-    inline bool isValidCoord(const Vector2d<IndexType> &p) const
+    inline bool isValidCoord(const Vector3d<IndexType> &p) const
     {
         return isValidCoord(p.z(), p.y(), p.x());
-    };
+    }
 
     /**
      * Checks if this buffer has the same size as the other
@@ -140,7 +144,7 @@ public:
         return (this->h == other->h) &&
                (this->w == other->w) &&
                (this->l == other->l);
-    };
+    }
 
     /**
      * Checks if this buffer has the same size as the parameters given
@@ -150,7 +154,7 @@ public:
         return (this->l == otherL) &&
                (this->h == otherH) &&
                (this->w == otherW);
-    };
+    }
 
     /**
      *  Length getter
@@ -181,17 +185,17 @@ public:
         return Vector2d32(w, h, l);
     }
 
-    ~FixedArrayBase()
+    ~VoxelBufferBase()
     {
-        if (this->element)
+        if (this->data)
         {
             for (int i = 0; i < size; i++)
             {
-                element[i].~ElementType();
+                data[i].~ElementType();
             }
 
         }
-        this->element = NULL;
+        this->data = NULL;
     }
 
 private:
@@ -203,7 +207,7 @@ private:
 
         this->size = this->l * this->h * this->w;
         memoryBlock.allocate(this->size * sizeof(ElementType), 0x0);
-        this->element = new(memoryBlock.getAlignedStart(0x0)) ElementType[this->size];
+        this->data = new(memoryBlock.getAlignedStart(0x0)) ElementType[this->size];
     }
 
 
