@@ -64,6 +64,7 @@ CONFIG +=                   \
 #        with_httpserver     \
         with_avcodec        \
         with_libjpeg        \
+        with_libpng         \
 
 
 win32 {
