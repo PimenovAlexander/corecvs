@@ -17,7 +17,6 @@
 #include "homographyReconstructor.h"
 #include "matrix33.h"
 
-using namespace std;
 using namespace corecvs;
 
 TEST(Homography, testProjectiveFromPoints)

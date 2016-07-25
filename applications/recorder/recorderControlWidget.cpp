@@ -8,6 +8,7 @@
 
 #include "recorderControlWidget.h"
 #include "ui_recorderControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -32,27 +33,21 @@ RecorderControlWidget::~RecorderControlWidget()
 
 void RecorderControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    Recorder *params = createParameters();
+    std::unique_ptr<Recorder> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void RecorderControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    Recorder *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<Recorder>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void RecorderControlWidget::getParameters(Recorder& params) const
 {
-
-    params.setPath             (mUi->pathEdit->text().toStdString());
-    params.setFileTemplate     (mUi->fileTemplateEdit->text().toStdString());
-
+    params = *std::unique_ptr<Recorder>(createParameters());
 }
+
 
 Recorder *RecorderControlWidget::createParameters() const
 {
@@ -62,11 +57,10 @@ Recorder *RecorderControlWidget::createParameters() const
      **/
 
 
-    Recorder *result = new Recorder(
+    return new Recorder(
           mUi->pathEdit->text().toStdString()
         , mUi->fileTemplateEdit->text().toStdString()
     );
-    return result;
 }
 
 void RecorderControlWidget::setParameters(const Recorder &input)

@@ -18,7 +18,6 @@
 #include "bmpLoader.h"
 #include "bufferFactory.h"
 
-using namespace std;
 using namespace corecvs;
 
 TEST(Histogram, testBinarization)

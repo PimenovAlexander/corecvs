@@ -34,6 +34,7 @@ class FunctionArgs
 public:
     int inputs;
     int outputs;
+    std::vector<int> schurBlocks;
 
     FunctionArgs(int _inputs, int _outputs) :
         inputs (_inputs),
@@ -144,8 +145,20 @@ class SparseFunctionArgs : public FunctionArgs
 {
 public:
     double feval = 0.0, transp = 0.0, construct = 0.0, prepare = 0.0, other = 0.0, subscale = 0.0;
+    SparseFunctionArgs() : FunctionArgs(0, 0) {}
     SparseFunctionArgs(int inputs, int outputs, const std::vector<std::vector<int>> &dependencyList) : FunctionArgs(inputs, outputs), dependencyList(dependencyList), fullIdx(outputs)
     {
+        init(inputs, outputs, dependencyList);
+    }
+
+    void init(int in, int out, const std::vector<std::vector<int>> &dep)
+    {
+        inputs = in;
+        outputs = out;
+        dependencyList  = dep;
+        fullIdx.clear();
+        fullIdx.resize(outputs);
+
         std::cout << "Sparse: R^" << inputs << "->R^" << outputs << std::endl;
         for (int i = 0; i < outputs; ++i)
             fullIdx[i] = i;

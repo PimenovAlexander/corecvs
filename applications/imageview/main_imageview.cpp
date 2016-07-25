@@ -20,12 +20,9 @@
 
 #include "imageViewMainWindow.h"
 
-using namespace std;
-
 int main(int argc, char *argv[])
 {
-    setSegVHandler();
-    setStdTerminateHandler();
+    SET_HANDLERS();
 
     Q_INIT_RESOURCE(main);
 

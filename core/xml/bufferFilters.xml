@@ -5,13 +5,13 @@
     <item name="Gain Offset"         id="1" />
     <item name="Sobel Filter"        id="2" />
     <item name="Canny Filter"        id="3" />
-    <item name="Background Filter"   id="4" />    
-    <item name="Input Filter"        id="5" />    
-    <item name="Output Filter"       id="6" />    
+    <item name="Background Filter"   id="4" />
+    <item name="Input Filter"        id="5" />
+    <item name="Output Filter"       id="6" />
   </enum>
 
   <class name="Bit Selector Parameters" uibase="FilterParametersControlWidgetBase">
-    <field type="int" name="shift"   defaultValue = "0" />
+    <field type="int" name="shift"   defaultValue = "0" min="-16"   max="16" />
 
     <field type="bool" name="bit 0"  defaultValue="true" />
     <field type="bool" name="bit 1"  defaultValue="true" />

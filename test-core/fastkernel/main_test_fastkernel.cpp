@@ -34,7 +34,6 @@
 #include "../../core/buffers/kernels/logicKernels.h"
 #include "../../core/buffers/rgb24/abstractPainter.h"
 
-using namespace std;
 using namespace corecvs;
 
 /**

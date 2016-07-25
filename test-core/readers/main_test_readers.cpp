@@ -16,24 +16,25 @@
 #include "readers.h"
 #include "rgbColor.h"
 
-using namespace std;
 using namespace corecvs;
 
+#ifdef WITH_SSE
 TEST(Readers, testRGBReaders)  // TODO: add some checks...
 {
-    cout << "testRGBReaders()" << endl;
+    std::cout << "testRGBReaders()" << std::endl;
 
     RGBColor data[16] = { RGBColor::Yellow(), RGBColor::Indigo(), RGBColor::Violet(), RGBColor::Cyan() };
 
     FixedVector<Int32x4, 2> color = SSEReader2BBBB_QQQQ::read((uint8_t *)data);
 
-    cout << color[0][0] << endl;
-    cout << color[0][1] << endl;
-    cout << color[0][2] << endl;
+    std::cout << color[0][0] << std::endl;
+    std::cout << color[0][1] << std::endl;
+    std::cout << color[0][2] << std::endl;
 
-    cout << color[1][0] << endl;
-    cout << color[1][1] << endl;
-    cout << color[1][2] << endl;
+    std::cout << color[1][0] << std::endl;
+    std::cout << color[1][1] << std::endl;
+    std::cout << color[1][2] << std::endl;
 
-    cout << data[0] << " " << data[1] << endl;
+    std::cout << data[0] << " " << data[1] << std::endl;
 }
+#endif

@@ -2,6 +2,7 @@
 
 #include "log.h"
 #include "commandLineSetter.h"
+#include "tbbWrapper.h"
 
 const char *Log::level_names[] =
 {
@@ -13,7 +14,7 @@ const char *Log::level_names[] =
                    // LEVEL_LAST            /**< Last enum value for iterating*/
 };
 
-STATIC_ASSERT(CORE_COUNT_OF(Log::level_names) == Log::LEVEL_LAST, wrong_number_of_log_levels);
+STATIC_ASSERT(CORE_COUNT_OF(Log::level_names) == Log::LEVEL_LAST, wrong_number_of_log_levels)
 
 /**
  * It is impossible to tell when this function will be executed, so you should not log from
@@ -113,6 +114,8 @@ void Log::addAppLog(int argc, char* argv[], cchar* logFileName)
     Log::mMinLogLevel = LEVEL_DETAILED_DEBUG;
     L_INFO_P("App Log Level: %s", Log::levelName(minLogLevel));
     Log::mMinLogLevel = minLogLevel;
+
+    L_INFO_P("%s", corecvs::tbbInfo().c_str());
 
     // Some MSVC stuff code to activate the memory leak detector dump if we have >1 exits!
 #ifdef USE_MSVC_DEBUG_MEM

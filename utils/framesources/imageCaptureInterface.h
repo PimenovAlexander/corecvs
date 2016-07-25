@@ -184,7 +184,9 @@ public:
     /**
      *  Fabric to create particular implementation of the capturer
      **/
+    static void getAllCameras(vector<std::string> &cameras);
     static ImageCaptureInterface *fabric(string input, bool isRgb = false);
+    static ImageCaptureInterface *fabric(string input, int h, int w, int fps, bool isRgb = false);
 
     /**
      *  Main function to request frames from image interface

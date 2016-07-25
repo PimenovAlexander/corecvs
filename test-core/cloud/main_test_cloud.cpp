@@ -19,8 +19,6 @@
 #include "clustering3d.h"
 #include "buffer3d.h"
 
-using namespace std;
-
 TEST(CloudTest, main)
 {
 //    srand(int64_t(0));

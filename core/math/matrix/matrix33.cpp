@@ -121,13 +121,17 @@ void Matrix33::swapColumns(int r1, int r2)
 /**
  *  Returning transposed matrix
  **/
-Matrix33 Matrix33::transposed() const
+Matrix33 Matrix33::t() const
 {
    return Matrix33(
        a(0,0), a(1,0), a(2,0),
        a(0,1), a(1,1), a(2,1),
        a(0,2), a(1,2), a(2,2)
    );
+}
+Matrix33 Matrix33::transposed() const
+{
+    return t();
 }
 
 
@@ -668,6 +672,7 @@ Matrix33 Matrix33::ProjectiveByPoints(int pointNumber, Vector2dd points[], Vecto
 
     return toReturn;
 }
+
 
 } //namespace corecvs
 

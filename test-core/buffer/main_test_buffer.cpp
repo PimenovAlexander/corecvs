@@ -43,7 +43,6 @@
 #include "booleanBuffer.h"
 #include "polynomial.h"
 
-using namespace std;
 using namespace corecvs;
 
 TEST(Generic, DISABLED_testAlwaysFail)
@@ -142,8 +141,8 @@ TEST(Buffer, testG12Buffer)
     ASSERT_TRUE(std::is_trivially_destructible<double>::value);
     ASSERT_TRUE(std::is_trivially_destructible<RGBColor>::value);
 #if __GNUG__ && __GNUC__ < 5
-    ASSERT_TRUE(has_trivial_default_constructor<int>());
-    ASSERT_TRUE(has_trivial_default_constructor<double>());
+    ASSERT_TRUE(std::has_trivial_default_constructor<int>());
+    ASSERT_TRUE(std::has_trivial_default_constructor<double>());
 #else
     ASSERT_TRUE(std::is_trivially_constructible<int>::value);
     ASSERT_TRUE(std::is_trivially_constructible<double>::value);
@@ -210,14 +209,16 @@ TEST(Buffer, testG12Buffer)
     AbstractBuffer<TestAbstractBufferClass> *main = new AbstractBuffer<TestAbstractBufferClass>(10, 10);
     int oldCnt = TestAbstractBufferClass::counter;
     ASSERT_EQ(oldCnt, 100);
-    AbstractBuffer<TestAbstractBufferClass> *view1 = main->createViewPtr<AbstractBuffer<TestAbstractBufferClass>>();
+    {
+        AbstractBuffer<TestAbstractBufferClass> view1 = main->createView<AbstractBuffer<TestAbstractBufferClass>>();
     ASSERT_EQ(oldCnt, TestAbstractBufferClass::counter);
-    delete view1;
+    }
     ASSERT_EQ(oldCnt, TestAbstractBufferClass::counter);
-    AbstractBuffer<TestAbstractBufferClass> *view2 = main->createViewPtr<AbstractBuffer<TestAbstractBufferClass>>();
+    {
+        AbstractBuffer<TestAbstractBufferClass> view2 = main->createView<AbstractBuffer<TestAbstractBufferClass>>();
     delete main;
     ASSERT_EQ(oldCnt, TestAbstractBufferClass::counter);
-    delete view2;
+    }
     ASSERT_EQ(0, TestAbstractBufferClass::counter);
     ASSERT_TRUE(TestAbstractBufferClass::checkCorrectness());
 }
@@ -496,4 +497,26 @@ TEST(Buffer, testBoolean)
     delete_safe(image);
     delete_safe(sourceImage);
     delete_safe(buffer);
+}
+
+TEST(Buffer, SubBufferCopy)
+{
+    double foo[] =
+    {
+        0.0, 1.0, 2.0, 3.0, 4.0,
+        5.0, 6.0, 7.0, 8.0, 9.0,
+        10., 11., 12., 13., 14.
+    };
+
+    const int FROM_X = 1, FROM_Y = 1, TO_X = 3, TO_Y = 3;
+
+    AbstractBuffer<double> src(3, 5, foo);
+    AbstractBuffer<double> dst(src, FROM_Y, FROM_X, TO_X, TO_Y);
+
+    ASSERT_EQ(dst.h, TO_Y - FROM_Y);
+    ASSERT_EQ(dst.w, TO_X - FROM_X);
+
+    for (int i = FROM_X; i < TO_X; ++i)
+        for (int j = FROM_Y; j < TO_Y; ++j)
+            ASSERT_EQ(dst.element(j - FROM_Y, i - FROM_X), src.element(j, i));
 }

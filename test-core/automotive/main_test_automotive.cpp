@@ -22,7 +22,6 @@
 #include "simulation/flowSimulator.h"
 #include "mathUtils.h"
 
-using namespace std;
 using namespace corecvs;
 
 void drawSituation(

@@ -347,9 +347,11 @@ struct ConvolutorImplWrappersExUnroll : public BaseConvolutorImpl
         BaseConvolutorImpl(src, dst, kernel)
     {}
 };
-#endif
+
+#endif // WITH_AVX
 
 #if WITH_AVX
+
 void Convolver::unrolledConvolutor(DpImage &src, DpKernel &kernel, DpImage &dst)
 {
     ConvolutorImplIntUnroll5 impl(&src, &dst, &kernel);
@@ -382,7 +384,8 @@ void Convolver::unrolledWrapperExConvolutor(DpImage &src, DpKernel &kernel, DpIm
     ConvolutorImplWrappersExUnroll<UNROLL> impl(&src, &dst, &kernel);
     corecvs::parallelable_for(impl.t, impl.d, impl);
 }
-#endif
+
+#endif // WITH_AVX
 
 /**
  *  Fast kernel implemenation
@@ -400,6 +403,7 @@ void Convolver::fastkernelConvolutor(DpImage &src, DpKernel &kernel, DpImage &ds
 }
 
 #ifdef WITH_AVX
+
 void Convolver::fastkernelConvolutorExp(DpImage &src, DpKernel &kernel, DpImage &dst)
 {
     ConvolveKernel<DummyAlgebra> convKernel(&kernel, kernel.y, kernel.x);
@@ -433,12 +437,10 @@ void Convolver::fastkernelConvolutorExp5(FpImage &src, FpKernel &kernel, FpImage
     proScalar.process(&in, &out, convKernel);
 }
 
-#endif
+#endif // WITH_AVX
 
 Convolver::Convolver()
-{
-}
-
+{}
 
 void Convolver::naiveConvolutor(DpImage &src, DpKernel &kernel, DpImage &dst)
 {
@@ -449,7 +451,6 @@ void Convolver::naiveConvolutor(FpImage &src, FpKernel &kernel, FpImage &dst)
 {
     src.doConvolve<FpImage>(&dst, &kernel);
 }
-
 
 void Convolver::convolve(DpImage &src, DpKernel &kernel, DpImage &dst, Convolver::ConvolverImplementation impl)
 {
@@ -526,8 +527,6 @@ void Convolver::convolve(DpImage &src, DpKernel &kernel, DpImage &dst, Convolver
                 fastkernelConvolutorExp5(src, kernel, dst);  return;
 #endif
 
-
-
     }
 }
 
@@ -565,7 +564,6 @@ void Convolver::convolve(FpImage &src, FpKernel &kernel, FpImage &dst, Convolver
                 unrolledWrapperConvolutor<12>(src, kernel, dst);  return;
         case ALGORITHM_SSE_UNROLL_16:
                 unrolledWrapperConvolutor<16>(src, kernel, dst);  return;
-
 #endif
 
 #ifdef WITH_AVX
@@ -643,6 +641,8 @@ struct ConvolutorImplWrappersUnrollFloat
 };
 
 
+#if WITH_AVX
+
 template<int UNROLL>
 void Convolver::unrolledWrapperConvolutor(FpImage &src, FpKernel &kernel, FpImage &dst)
 {
@@ -650,6 +650,7 @@ void Convolver::unrolledWrapperConvolutor(FpImage &src, FpKernel &kernel, FpImag
     corecvs::parallelable_for(impl.t, impl.d, impl);
 }
 
+#endif
 
 } //namespace corecvs
 

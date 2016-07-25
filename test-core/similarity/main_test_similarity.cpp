@@ -19,7 +19,6 @@
 #include "similarityReconstructor.h"
 #include "mesh3d.h"
 
-using namespace std;
 using namespace corecvs;
 
 TEST(Similarity, testSimilarity)

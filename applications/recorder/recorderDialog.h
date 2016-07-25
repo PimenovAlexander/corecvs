@@ -54,6 +54,14 @@ private:
 
     QSharedPointer<Recorder> mRecorderControlParams;
 
+    /* These slots are for silencing error, created due current to misdesign */
+public slots:
+    void showHistogram();
+    void show3DHistogram();
+    void showRectificationDialog();
+    void doRectify();
+    void resetRectification();
+
 };
 
 #endif // _RECORDER_DIALOG_H_

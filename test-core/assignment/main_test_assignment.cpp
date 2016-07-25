@@ -17,7 +17,6 @@
 #include "assignmentOptimal.h"
 
 
-using namespace std;
 using namespace corecvs;
 
 void printAssignment(AbstractBuffer<int> *assignment, unsigned h, unsigned w)

@@ -97,19 +97,18 @@ public:
         // SYNC_PRINT(("PolygonSpanIterator::step(): called\n"));
         part.step();
 
-
         while (!part.hasValue() && hasValue())
         {
             int cand1n = cand1;
             int cand2n = cand2;
-            bool leftStep = false;
+            //bool leftStep = false;
 
             Vector2dd  leftBegin = Vector2dd(part.x21, part.y2);
             Vector2dd rightBegin = Vector2dd(part.x22, part.y2);
 
             if (cand1 == shallow) {
                 /*Left end finished */
-                leftStep = true;
+                //leftStep = true;
                 cand1n = (int)((cand1 + polygon.size() + indexDelta) % polygon.size()); /* Right slope driver */
             } else {
                 /* Right end finished*/
@@ -132,7 +131,6 @@ public:
                 std::swap(deep, shallow);
                 std::swap(deepBegin, shallowBegin);
             }
-
 
 #if 0
             if (polygon.y(deep) - deepBegin.y()) {
@@ -162,7 +160,6 @@ public:
                 part.currentY++;
             }           
         }
-
     }
 
     void getSpan(int &y, int &x1, int &x2)

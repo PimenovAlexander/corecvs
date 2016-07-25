@@ -1,7 +1,7 @@
 #include "function.h"
 
-namespace corecvs
-{
+namespace corecvs {
+
 Matrix FunctionArgs::getLSQHessian(const double* in, double delta)
 {
     Vector v(inputs, in), F(outputs);
@@ -293,4 +293,5 @@ void SparseFunctionArgs::minify()
     }
     std::cout << "REMAPANAL: " << inputs << "->" << groupInputs.size() << std::endl;
 }
-};
+
+} // namespace corecvs

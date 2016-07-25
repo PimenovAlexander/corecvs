@@ -19,10 +19,16 @@ Matrix33 CameraModel::essentialTo  (const CameraModel &right) const
 
 EssentialDecomposition CameraModel::essentialDecomposition(const CameraModel &right) const
 {
-    Quaternion R =  extrinsics.orientation ^ right.extrinsics.orientation.conjugated();
-    Vector3dd  T =  extrinsics.orientation * (-extrinsics.position + right.extrinsics.position);
+    return CameraModel::ComputeEssentialDecomposition(extrinsics, right.extrinsics);
+}
+
+EssentialDecomposition CameraModel::ComputeEssentialDecomposition(const CameraLocationData &thisData, const CameraLocationData &otherData)
+{
+    Quaternion R =  thisData.orientation ^ otherData.orientation.conjugated();
+    Vector3dd  T =  thisData.orientation * (-thisData.position + otherData.position);
     return EssentialDecomposition(R.toMatrix(), T);
 }
+
 
 PinholeCameraIntrinsics::PinholeCameraIntrinsics(Vector2dd resolution, double hfov)
   : principal(resolution / 2.0)
@@ -61,7 +67,6 @@ Matrix44 PinholeCameraIntrinsics::getKMatrix() const
  **/
 Matrix44 PinholeCameraIntrinsics::getInvKMatrix() const
 {
-
     return Matrix44( getInvKMatrix33());
 }
 
@@ -233,7 +238,13 @@ void corecvs::CameraModel::estimateUndistortedSize(const DistortionApplicationPa
     }
     else
     {
-        intrinsics.principal += shift - Vector2dd(distortion.mShiftX, distortion.mShiftY);
+        /*
+         * In order to maintain idempotence of undistorted size estimation
+         * one needs to update intrinsics.principal only by shift,
+         * because [in the next call with the same DistortionApplicationParameters]
+         * shift should be ~0, since it will be eliminated by distortion.mShift*
+         */
+        intrinsics.principal += shift;
         distortion.mShiftX += shift[0];
         distortion.mShiftY += shift[1];
     }

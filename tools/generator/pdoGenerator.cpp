@@ -754,6 +754,7 @@ void PDOGenerator::generateControlWidgetCpp()
     "\n"
     "#include \""+fileNameH+"\"\n"
     "#include \""+fileNameUi+"\"\n"
+	"#include <memory>\n"
     "#include \"qSettingsGetter.h\"\n"
     "#include \"qSettingsSetter.h\"\n"
     "\n";
@@ -843,19 +844,19 @@ void PDOGenerator::generateControlWidgetCpp()
     "\n"
     "void "+className+"::loadParamWidget(WidgetLoader &loader)\n"
     "{\n"
-    "    "+parametersName+" *params = createParameters();\n"
+    "    std::unique_ptr<"+parametersName+"> params(createParameters());\n"
     "    loader.loadParameters(*params, rootPath);\n"
     "    setParameters(*params);\n"
-    "    delete params;\n"
     "}\n"
     "\n"
     "void "+className+"::saveParamWidget(WidgetSaver  &saver)\n"
     "{\n"
-    "    "+parametersName+" *params = createParameters();\n"
-    "    saver.saveParameters(*params, rootPath);\n"
-    "    delete params;\n"
+    "    saver.saveParameters(*std::unique_ptr<"+parametersName+">(createParameters()), rootPath);\n"
     "}\n"
     "\n"
+    // Why we cannot use composite fields, while createParameters ()
+    // works like a charm?!
+#if 0
     " /* Composite fields are NOT supported so far */\n"
     "void "+className+"::getParameters("+parametersName+"& params) const\n"
     "{\n"
@@ -871,10 +872,14 @@ void PDOGenerator::generateControlWidgetCpp()
         result+=
     "    params."+j(setterName,20)+"("+prefix+"mUi->"+boxName+"->"+getWidgetGetterMethodForType(type)+suffix+");\n";
     }
-
-    result+=
-    "\n"
+#else
+	"void "+className+"::getParameters("+parametersName+"& params) const\n"
+	"{\n"
+	"    params = *std::unique_ptr<"+parametersName+">(createParameters());\n"
     "}\n"
+	"\n";
+#endif
+    result+=
     "\n"
     ""+parametersName+" *"+className+"::createParameters() const\n"
     "{\n"
@@ -884,18 +889,9 @@ void PDOGenerator::generateControlWidgetCpp()
     "     **/\n"
     "\n";
 
-    /* We need to make temporary variables for composite fields */
-    for (int i = 0; i < fieldNumber; i++ )
-    {
-        enterFieldContext(i);
-        if (type != BaseField::TYPE_COMPOSITE)  continue;
-    result+=
-    "    "+cppType+" *tmp"+QString::number(i)+" = NULL;\n";
-    }
-
     result+=
     "\n"
-    "    "+parametersName+" *result = new "+parametersName+"(\n";
+    "    return new "+parametersName+"(\n";
 
     for (int i = 0; i < fieldNumber; i++ )
     {
@@ -903,7 +899,7 @@ void PDOGenerator::generateControlWidgetCpp()
 
         if (type == BaseField::TYPE_COMPOSITE)
         {
-            prefix = "* (tmp"+QString::number(i) + " = ";
+            prefix = "*std::unique_ptr<" + cppType + ">(";
             suffix = ")";
         }
 
@@ -922,19 +918,7 @@ void PDOGenerator::generateControlWidgetCpp()
     }
 
     result+=
-    "    );\n";
-
-    for (int i = 0; i < fieldNumber; i++ )
-    {
-        enterFieldContext(i);
-        if (type != BaseField::TYPE_COMPOSITE) continue;
-    result+=
-    "    delete tmp"+QString::number(i)+";\n";
-
-    }
-
-    result+=
-    "    return result;\n"
+    "    );\n"
     "}\n"
     "\n"
     "void "+className+"::setParameters(const "+parametersName+" &input)\n"

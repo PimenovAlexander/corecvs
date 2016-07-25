@@ -22,6 +22,17 @@ void Affine3DQ::prettyPrint1(std::ostream &out)  const
     out << "Rotation around: " << axis << " angle " << angle << "deg" << std::endl;
 }
 
+template <>
+corecvs::Affine3D<Matrix33>::operator corecvs::Matrix44() const
+{
+    return corecvs::Matrix44::Shift(shift[0], shift[1], shift[2]) * corecvs::Matrix44(rotor);
+}
+template <>
+corecvs::Affine3D<Quaternion>::operator corecvs::Matrix44() const
+{
+    return corecvs::Matrix44::Shift(shift[0], shift[1], shift[2]) * corecvs::Matrix44(rotor.toMatrix());
+}
+
 
 } //namespace corecvs
 

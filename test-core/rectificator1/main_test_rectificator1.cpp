@@ -28,7 +28,6 @@
 #include "ransacEstimator.h"
 #include "stereoAligner.h"
 
-using namespace std;
 using namespace corecvs;
 
 

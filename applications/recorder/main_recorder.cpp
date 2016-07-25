@@ -25,13 +25,13 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    setSegVHandler();
-    setStdTerminateHandler();
+ SET_HANDLERS();
+
 
     Q_INIT_RESOURCE(main);
 
     QString source;
-    if (argc != 2)
+    if (argc < 2)
     {
         //source = string("prec:/media/media/storage/v3i/SafeTurn/image%04d_c%d.pgm");
         //source = string("prec:/media/media/storage/v3i/raws2/1024x512_12h_image_%d_%d.raw");

@@ -5,7 +5,7 @@
  * \date Sep 27, 2012
  **/
 
-#if 1   // disable for a while using std atomic type and its opers
+#if 1   // enable using std atomic type and its opers
 
 #include <atomic>
 
@@ -52,7 +52,7 @@ typedef int atomic_int;
 #   undef small
 #   undef DIFFERENCE
 
-    STATIC_ASSERT(sizeof(int) == sizeof(LONG), wrongUsageOfAtomicOperationsOnMSVC);
+    STATIC_ASSERT(sizeof(int) == sizeof(LONG), wrongUsageOfAtomicOperationsOnMSVC)
 
     inline int atomic_dec_and_fetch(atomic_int *ptr)
     {

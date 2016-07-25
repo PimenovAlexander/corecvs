@@ -235,4 +235,3 @@ unsigned int popcount_lookup(unsigned int a)
 #endif // _MSC_VER
 
 } //namespace corecvs
-

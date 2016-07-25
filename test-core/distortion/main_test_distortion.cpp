@@ -22,7 +22,6 @@
 #include "radialFunc.h"
 
 
-using namespace std;
 using corecvs::AnglePointsFunction;
 using corecvs::FunctionArgs;
 using corecvs::Vector2dd;
@@ -72,9 +71,9 @@ TEST(Distortion, testRadialModel)
    f(&(in[0]), &(out[0].x()));
    for (unsigned i = 0; i < line.size(); i++)
    {
-       cout << setprecision(15) << out[i] << " ,";
+       std::cout << std::setprecision(15) << out[i] << " ,";
    }
-   cout << endl;
+   std::cout << std::endl;
 }
 
 
@@ -103,12 +102,12 @@ TEST(Distortion, testRadialJacobian)
     vector<double> in(function->inputs, 0);
 
     Matrix classicJacobian = function->FunctionArgs::getJacobian(&(in[0]));
-    cout << "Classic Jacobian" << endl;
-    cout << classicJacobian;
+    std::cout << "Classic Jacobian" << std::endl
+        << classicJacobian;
 
     Matrix manualJacobian = function->getJacobian(&(in[0]));
-    cout << "Manual Jacobian" << endl;
-    cout << manualJacobian;
+    std::cout << "Manual Jacobian" << std::endl
+        << manualJacobian;
 
     delete function;
 }

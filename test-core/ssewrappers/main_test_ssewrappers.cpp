@@ -17,7 +17,6 @@
 #include "readers.h"
 #include "genericMath.h"
 
-using namespace std;
 using namespace corecvs;
 
 #ifdef WITH_SSE
@@ -497,9 +496,9 @@ TEST(SSEWrappers, testPack)
     cout << "b =" << Int8x16(b.data) << endl;
 
     Int16x8 f((int16_t)0);
-    cout << "ppack =" << hex << Int8x16(f.data) << dec << endl;
+    std::cout << "ppack =" << std::hex << Int8x16(f.data) << std::dec << std::endl;
     f = Int16x8::pack(a, b);
-    cout << " pack =" << hex << Int8x16(f.data) << dec << endl;
+    std::cout << " pack =" << std::hex << Int8x16(f.data) << std::dec << std::endl;
 }
 
 TEST(SSEWrappers, testSelector)
@@ -508,15 +507,15 @@ TEST(SSEWrappers, testSelector)
     Int16x8 con0bit((int16_t)0x00);
 
     Int16x8 a(256, 257, 2, 340, 1, 23, 45, 625);
-    cout << "input  " << a << endl;
+    std::cout << "input  " << a << std::endl;
 
     a = SSEMath::selector(a > con8bit, con8bit, a);
-    cout << "cliptop" << a << endl;
+    std::cout << "cliptop" << a << std::endl;
 
     Int16x8 b(-256, 257, -2, 340, 1, 23, -45, 625);
-    cout << "input  " << b << endl;
+    std::cout << "input  " << b << std::endl;
     b = SSEMath::selector(b < con0bit, con0bit, b);
-    cout << "clipbottom" << b << endl;
+    std::cout << "clipbottom" << b << std::endl;
 }
 
 TEST(SSEWrappers, testExtendingReader)
@@ -529,72 +528,85 @@ TEST(SSEWrappers, testExtendingReader)
             data[i * 2 + j] = (j * 16) + i;
             cout << (int)data[i * 2 + j] << " ";
         }
-        cout << endl;
+        std::cout << endl;
     }
     FixedVector<Int16x8,2> r = SSEReader8DD_DD::read((uint32_t *)data);
-    cout << r[0] << endl;
-    cout << r[1] << endl;
+    std::cout << r[0] << std::endl;
+    std::cout << r[1] << std::endl;
 
     uint16_t outData[2 * 8];
 
     SSEReader8DD_DD::write(r, (uint32_t *)outData);
 
-    cout << "Result written back" << endl;
+    std::cout << "Result written back" << endl;
     for (unsigned i = 0; i < 8; i++)
     {
         for (unsigned j = 0; j < 2; j++)
         {
-            cout << (int)outData[i*2 + j] << " ";
+            std::cout << (int)outData[i * 2 + j] << " ";
         }
-        cout << endl;
+        std::cout << std::endl;
     }
-    cout << endl;
+    std::cout << std::endl;
 }
 
 TEST(SSEWrappers, test64bit)
 {
-    cout << "Testing 64 bit sse wrapper" << endl;
-    cout << "Testing 64 bit to 16bit" << endl;
+    std::cout << "Testing 64 bit sse wrapper" << std::endl;
+    std::cout << "Testing 64 bit to 16bit" << std::endl;
 
 #if _MSC_VER != 1600    // TODO: for msvc2010 it doesn't linking, why?
     Int64x2 l64(0xFF);
-    cout << "Lower byte in 64 bit" << l64 << endl;
+    std::cout << "Lower byte in 64 bit" << l64 << std::endl;
 #else
     Int64x2 l64;
-    cout << "test64bit() FAILED on msvc2010" << endl;
+    std::cout << "test64bit() FAILED on msvc2010" << std::endl;
     CORE_ASSERT_FAIL("STOP");
 #endif
 
     UInt8x16 l8(l64.data);
-    cout << "Lower byte in 8 bit"  << l8 << endl;
+    std::cout << "Lower byte in 8 bit" << l8 << std::endl;
 
     Int64x2 l64back(l8.data);
-    cout << "Lower byte in 64 bit back" << l64back << endl;
+    std::cout << "Lower byte in 64 bit back" << l64back << std::endl;
 
     Int64x2 l64backeq = Int64x2(l8.data);
-    cout << "Lower byte in 64 bit back =" << l64backeq << endl;
+    std::cout << "Lower byte in 64 bit back =" << l64backeq << std::endl;
 
     UInt8x16 a8(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16);
-    cout << "Test vector 8 bit"<< a8 << endl;
+    std::cout << "Test vector 8 bit" << a8 << std::endl;
 
     Int64x2 a64(a8.data);
-    cout << "Test vector 64 bit" << a64 << endl;
+    std::cout << "Test vector 64 bit" << a64 << std::endl;
 
     UInt8x16 a8back(a64.data);
-    cout << "Test vector back in 16 bit"<< a8back << endl;
+    std::cout << "Test vector back in 16 bit" << a8back << std::endl;
 
     Int64x2 a64l64 = a64 & l64;
-    cout << "And in 64 form presented in 64" << a64l64 << endl;
+    std::cout << "And in 64 form presented in 64" << a64l64 << std::endl;
 
     UInt8x16 a64l8 = UInt8x16(a64l64.data);
-    cout << "And in 64 form presented in 64" << a64l8 << endl;
+    std::cout << "And in 64 form presented in 64" << a64l8 << std::endl;
 
     UInt8x16 a8l8 = a8 & l8;
-    cout << "And in 8 form presented in 8" << a8l8 << endl;
+    std::cout << "And in 8 form presented in 8" << a8l8 << std::endl;
 
     /*UInt8x16 al16 = UInt8x16(al.data);
-    cout << al16 << endl;*/
-    cout << endl;
+    std::cout << al16 << std::endl;*/
+    std::cout << std::endl;
 }
 
 #endif // WITH_SSE
+
+TEST(SSEWrappers, popcnt)
+{
+    unsigned int a, res;
+
+    res = __builtin_popcount(a = 0x2F63A150);
+    std::cout << "The value 0x" << std::hex << a << std::dec << " should have 14 ones :" << res << std::endl;
+    CORE_ASSERT_TRUE_S(res == 14);
+
+    res = __builtin_popcount(a = 0xAAAAAAAA);
+    std::cout << "The value 0x" << std::hex << a << std::dec << " should have 16 ones :" << res << std::endl;
+    CORE_ASSERT_TRUE_S(res == 16);
+}

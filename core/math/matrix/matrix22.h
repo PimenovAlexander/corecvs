@@ -18,9 +18,9 @@
 #include <iostream>
 #include <limits>
 #include <algorithm>
-
-#include <math.h>
 #include <string.h>
+
+#include "global.h"
 
 #include "vector3d.h"
 #include "fixedVector.h"
@@ -93,6 +93,7 @@ public:
 
 
     void transpose();
+    Matrix22 t() const;
     Matrix22 transposed() const;
 
     bool isInvertable(double tolerance = 1e-9);

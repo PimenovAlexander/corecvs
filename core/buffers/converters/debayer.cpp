@@ -265,10 +265,10 @@ void Debayer::ahd(RGB48Buffer *result)
             int offset = i * mBayer->w + j;
 
             // luminance difference in 4 directions for 2 images
-            float dl[2][4];
+            float dl[2][4] = {0};
 
             // chrominance difference in 4 directions for 2 images
-            float dc[2][4];
+            float dc[2][4] = {0};
 
             for (int d = 0; d < 2; d++)
             {

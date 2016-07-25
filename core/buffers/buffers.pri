@@ -58,8 +58,8 @@ HEADERS += \
     buffers/converters/errorMetrics.h \
     buffers/memory/alignedMemoryBlock.h \
     buffers/convolver/convolver.h \
-    $$PWD/rgb24/lineSpan.h \
-    buffers/nonMaximalSuperssor.h
+    buffers/rgb24/lineSpan.h \
+    buffers/nonMaximalSuperssor.h \
 
 
 SOURCES += \
@@ -100,7 +100,7 @@ SOURCES += \
     buffers/converters/debayer.cpp \
     buffers/converters/errorMetrics.cpp \
     buffers/convolver/convolver.cpp \
-    $$PWD/rgb24/lineSpan.cpp \
-    buffers/nonMaximalSuperssor.cpp
+    buffers/rgb24/lineSpan.cpp \
+    buffers/nonMaximalSuperssor.cpp \
 
 

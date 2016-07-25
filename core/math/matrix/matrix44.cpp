@@ -188,7 +188,7 @@ void Matrix44::transpose()
 /**
  *  Returning transposed matrix
  **/
-Matrix44 Matrix44::transposed() const
+Matrix44 Matrix44::t() const
 {
    return Matrix44(
        a(0,0), a(1,0), a(2,0), a(3,0),
@@ -196,6 +196,10 @@ Matrix44 Matrix44::transposed() const
        a(0,2), a(1,2), a(2,2), a(3,2),
        a(0,3), a(1,3), a(2,3), a(3,3)
    );
+}
+Matrix44 Matrix44::transposed() const
+{
+    return t();
 }
 
 /**

@@ -22,7 +22,6 @@
 #include "essentialEstimator.h"
 #include "calibrationCamera.h"
 
-using namespace std;
 using namespace corecvs;
 
 
@@ -89,7 +88,6 @@ TEST(Rectification, testEssentialDecomposition)
 		auto K1 = cam1.intrinsics.getKMatrix33().inv();
 		auto K2 = cam2.intrinsics.getKMatrix33().inv();
 		ed.getScaler(K1 * ptl, K2 * ptr, scaleL, scaleR, foo);
-		std::cout << scaleL << " " << scaleR << " " << foo << std::endl;
 		ASSERT_TRUE(scaleL > 0.0 && scaleR > 0.0);
 	}
 	for (int i = 0; i < RNG_RETRIES; ++i)
@@ -101,7 +99,6 @@ TEST(Rectification, testEssentialDecomposition)
 		auto K1 = cam1.intrinsics.getKMatrix33().inv();
 		auto K2 = cam2.intrinsics.getKMatrix33().inv();
 		ed.getScaler(K1 * ptl, K2 * ptr, scaleL, scaleR, foo);
-		std::cout << scaleL << " " << scaleR << " " << foo << std::endl;
 		ASSERT_TRUE(scaleL < 0.0 && scaleR < 0.0);
 	}
 }
@@ -303,7 +300,8 @@ TEST(Rectification, test5point)
     }
 
 }
-#endif
+#endif // WITH_BLAS
+
 TEST(Rectification, testEssentialEstimator)
 {
     using corecvs::Matrix33;

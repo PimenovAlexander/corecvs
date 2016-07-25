@@ -25,7 +25,6 @@
 
 #include "preciseTimer.h"
 
-using namespace std;
 using corecvs::Matrix33;
 using corecvs::ProjectiveTransform;
 using corecvs::G12Buffer;

@@ -7,6 +7,7 @@
  * \ingroup autotest
  */
 #include <sstream>
+#include <fstream>
 #include <iostream>
 #include "gtest/gtest.h"
 
@@ -16,8 +17,8 @@
 #include "bmpLoader.h"
 #include "ppmLoader.h"
 #include "plyLoader.h"
+#include "objLoader.h"
 
-using namespace std;
 using namespace corecvs;
 
 TEST(FileFormats, testFileFormats)
@@ -53,7 +54,7 @@ TEST(FileFormats, testFileFormats)
     /** Test case 4 */
     PPMLoader *metappmLoader = new PPMLoader();
     MetaData *metadata = new MetaData;
-    G12Buffer *metappm = metappmLoader->load("data/testdata/test_pgm_metadata.pgm", metadata);
+    G12Buffer *metappm = metappmLoader->loadMeta("data/testdata/test_pgm_metadata.pgm", metadata);
     CORE_ASSERT_TRUE(metappm != NULL, "PGM with Metadata Image load failed");
     CORE_ASSERT_TRUE(metappm->h == metappm->w, "PGM with Metadata Image sizes corrupted");
     CORE_ASSERT_TRUE(metappm->verify(), "PGM with Metadata Image verification failed");
@@ -148,4 +149,15 @@ TEST(FileFormats, testPlyLoader)
         int result = loader.loadPLY(stream, mesh);
         printf("Test case %d result: %d\n", i, result);
     }
+}
+
+using std::ifstream;
+
+TEST(FileFormats, DISABLED_testObjLoader)
+{
+    OBJLoader loader;
+    ifstream file("body-v2.obj", ifstream::in);
+
+    Mesh3D mesh;
+    loader.loadOBJSimple(file, mesh);
 }

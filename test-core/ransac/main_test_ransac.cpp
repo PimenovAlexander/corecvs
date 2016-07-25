@@ -15,7 +15,6 @@
 
 #include "ransac.h"
 
-using namespace std;
 using namespace corecvs;
 
 TEST(Ransac, testDummy)

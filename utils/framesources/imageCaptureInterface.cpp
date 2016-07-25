@@ -176,6 +176,38 @@ ImageCaptureInterface* ImageCaptureInterface::fabric(string input, bool isRGB)
     return NULL;
 }
 
+ImageCaptureInterface *ImageCaptureInterface::fabric(string input, int h, int w, int fps, bool isRgb)
+{
+#ifdef Q_OS_LINUX
+    string v4l2("v4l2:");
+    if (input.substr(0, v4l2.size()).compare(v4l2) == 0)
+    {
+        string tmp = input.substr(v4l2.size());
+        return new V4L2CaptureInterface(tmp, h, w, fps, isRgb);
+    }
+#endif
+
+#ifdef WITH_UEYE
+    string ueye("ueye:");
+    if (input.substr(0, ueye.size()).compare(ueye) == 0)
+    {
+        string tmp = input.substr(ueye.size());
+        return new UEyeCaptureInterface(tmp, h, w, fps, isRgb);
+    }
+#endif
+
+#ifdef WITH_DIRECTSHOW
+    string dshow("dshow:");
+    if (input.substr(0, dshow.size()).compare(dshow) == 0)
+    {
+        string tmp = input.substr(dshow.size());
+        return new DirectShowCaptureInterface(tmp, h, w, fps, isRgb);
+    }
+#endif
+
+    return NULL;
+}
+
 void ImageCaptureInterface::notifyAboutNewFrame(frame_data_t frameData)
 {
 //    SYNC_PRINT(("ImageCaptureInterface::notifyAboutNewFrame()\n"));
@@ -192,6 +224,34 @@ ImageCaptureInterface::ImageCaptureInterface()
 ImageCaptureInterface::~ImageCaptureInterface()
 {
     return;
+}
+
+void ImageCaptureInterface::getAllCameras(vector<string> &cameras)
+{
+#ifdef Q_OS_WIN
+# ifdef WITH_DIRECTSHOW
+    vector<string> dshowcams;
+    DirectShowCaptureInterface::getAllCameras(dshowcams);
+    for (const string& cam : dshowcams) {
+        cameras.push_back(std::string("dshow:" + cam));
+    }
+# endif
+#endif
+
+#ifdef Q_OS_LINUX
+    vector<string> v4lcams;
+    V4L2CaptureInterface::getAllCameras(v4lcams);
+    for (string cam: v4lcams) {
+        cameras.push_back(std::string("v4l2:" + cam));
+    }
+#endif
+#ifdef WITH_UEYE
+    vector<string> ueyecams;
+    UEyeCaptureInterface::getAllCameras(ueyecams);
+    for (string cam: ueyecams) {
+        cameras.push_back(std::string("ueye:" + cam));
+    }
+#endif
 }
 
 ImageCaptureInterface::CapErrorCode ImageCaptureInterface::setCaptureProperty(int /*id*/, int /*value*/)

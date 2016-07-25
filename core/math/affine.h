@@ -119,6 +119,8 @@ public:
 
     Affine3D inverted() const;
 
+    explicit operator corecvs::Matrix44() const;
+
     template<class VisitorType>
     void accept(VisitorType &visitor)
     {
@@ -149,6 +151,13 @@ inline Affine3D<Matrix33> Affine3D<Matrix33>::inverted() const
     Matrix33 inv = this->rotor.inv();
     return Affine3D<Matrix33>(inv,  - (inv * this->shift));
 }
+
+template <>
+corecvs::Affine3D<Matrix33>::operator corecvs::Matrix44() const;
+template <>
+corecvs::Affine3D<Quaternion>::operator corecvs::Matrix44() const;
+
+
 
 /**/
 template<>

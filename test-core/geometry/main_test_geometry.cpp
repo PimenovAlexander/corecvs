@@ -22,7 +22,7 @@
 #include "convexPolyhedron.h"
 #include "mesh3d.h"
 
-using namespace std;
+
 using corecvs::Polygon;
 using corecvs::Mesh3D;
 using corecvs::AxisAlignedBox3d;
@@ -134,10 +134,9 @@ TEST(Geometry, testIntersection3D)
     mesh.currentColor = result ? RGBColor::Green() : RGBColor::Red();
     mesh.addLine(ray.getPoint(t1), ray.getPoint(t2));
 
-    ofstream file("test.ply", std::ios::out);
+    std::ofstream file("test.ply", std::ios::out);
     mesh.dumpPLY(file);
     file.close();
-
 }
 
 
@@ -205,7 +204,7 @@ TEST(Geometry, testIntersection3DFast)
         //ASSERT_TRUE(result);
     }
 
-    ofstream file("testf.ply", std::ios::out);
+    std::ofstream file("testf.ply", std::ios::out);
     mesh.dumpPLY(file);
     file.close();
 

@@ -15,7 +15,7 @@
  *  http://stackoverflow.com/questions/105659/how-can-one-grab-a-stack-trace-in-c/127012#127012
  **/
 
-void stackTraceHandler(int sig) { CORE_UNUSED(sig); }
+void printStackTrace() {}
 void setSegVHandler() {}
 
 #else
@@ -28,7 +28,7 @@ void setSegVHandler() {}
 
 #include "global.h"
 
-#if 0
+#if 0 //defined(__GNUC__) && !defined(WIN32)
 void prettyTraceHandler(int sig)
 {
     fprintf(stderr, "Error: signal %d:\n", sig);
@@ -46,16 +46,18 @@ void prettyTraceHandler(int sig)
     char** frameNames = backtrace_symbols(frameArray, frameNum);
     char funcname[255];
 
-    for (int i = 1; i < frameNum; i++)
+    int i;
+    for (i = 1; i < frameNum; i++)
     {
         char *beginName = 0;
         char *begin = 0;
         char *end = 0;
 
-        for (char *p = frameName[i]; *p != 0; p++)
+        char *p;
+        for (p = frameNames[i]; *p != 0; p++)
         {
             if (*p == '(')
-                begin_name = p;
+                beginName = p;
             else if (*p == '+')
                 begin = p;
             else if (*p == ')' && begin) {
@@ -96,16 +98,24 @@ void prettyTraceHandler(int sig)
 }
 #endif
 
-void stackTraceHandler(int sig)
+void printStackTrace()
 {
-    void *array[10];
+    void *arr[10];
 
     // get void*'s for all entries on the stack
-    size_t size = backtrace(array, CORE_COUNT_OF(array));
+    size_t size = backtrace(arr, CORE_COUNT_OF(arr));
 
     // print out all the frames to stderr
+    fprintf(stderr, "StackTrace:\n");
+
+    backtrace_symbols_fd(arr, size, 2);
+}
+
+static void stackTraceHandler(int sig)
+{
     fprintf(stderr, "stackTraceHandler (signal=%d):\n", sig);
-    backtrace_symbols_fd(array, size, 2);
+    printStackTrace();
+    exit(2);                                // stop the execution immediately
 }
 
 void setSegVHandler()

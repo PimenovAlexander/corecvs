@@ -14,8 +14,6 @@
 #include "global.h"
 #include "function.h"
 
-
-using namespace std;
 using namespace corecvs;
 
 class SineCosine : public FunctionArgs

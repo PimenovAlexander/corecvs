@@ -15,7 +15,6 @@
 
 #include "matrix.h"
 
-using namespace std;
 using namespace corecvs;
 
 TEST(Eigen, testJacobi)

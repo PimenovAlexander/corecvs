@@ -9,6 +9,7 @@
  */
 
 #include <iostream>
+#include <random>
 #include "gtest/gtest.h"
 
 #include "global.h"
@@ -22,8 +23,6 @@
 
 #include "polygonPointIterator.h"
 
-
-using namespace std;
 using namespace corecvs;
 
 
@@ -230,6 +229,88 @@ TEST(Draw, testSpanDrawTriangle)
 
 }
 
+TEST(Draw, testSpanDrawTriangle1)
+{
+    int h = 2000;
+    int w = 2000;
+    int sample = 40;
+
+    std::mt19937 rng;
+    std::uniform_real_distribution<double> runif(2, sample - 2);
+
+    RGB24Buffer *buffer  = new RGB24Buffer(h, w, RGBColor::Black());
+    RGB24Buffer *bufferA = new RGB24Buffer(h, w, RGBColor::Black());
+
+
+    vector<Triangle2dd> t;
+    for (int i = 0; i < (h / sample); i++)
+        for (int j = 0; j < (w / sample); j++)
+        {
+            Triangle2dd tri(Vector2dd(runif(rng), runif(rng)), Vector2dd(runif(rng), runif(rng)), Vector2dd(runif(rng), runif(rng)));
+            tri.transform(Matrix33::ShiftProj(j * sample, i * sample));
+            t.push_back(tri);
+        }
+
+    for (int i = 0; i < (h / sample); i++)
+        for (int j = 0; j < (w / sample); j++)
+        {
+            int offset = i  * (w / sample) + j;
+            AbstractPainter<RGB24Buffer> p(buffer);
+            p.drawFormat(j * sample, i * sample, RGBColor::Blue(), 2, "%d", offset);
+            AbstractPainter<RGB24Buffer> pA(bufferA);
+            pA.drawFormat(j * sample, i * sample, RGBColor::Blue(), 2, "%d", offset);
+
+            Triangle2dd &tri = t[offset];
+
+            {
+                TriangleSpanIterator it(tri);
+                while (it.hasValue())
+                {
+                    LineSpanInt span = it.getSpan();
+                    buffer->drawHLine(span.x1, span.y(), span.x2, RGBColor::Green());
+
+                    if (offset == 2)
+                        cout << span << endl;
+
+
+                    it.step();
+                }
+            }
+            /**/
+            {
+                AttributedTriangle triA = AttributedTriangle(tri.p1(), tri.p2(), tri.p3());
+                AttributedTriangleSpanIterator itA(triA);
+                while (itA.hasValue())
+                {
+                    AttributedLineSpan span = itA.getAttrSpan();
+                    bufferA->drawHLine(span.x1, span.y(), span.x2, RGBColor::Green());
+                    itA.step();
+                }
+            }
+
+
+            /* Mark the corners */
+            for (int k = 0; k < tri.SIZE; k++) {
+                buffer ->element(fround(tri.p[k].y()), fround(tri.p[k].x())) =  RGBColor::Red();
+                bufferA->element(fround(tri.p[k].y()), fround(tri.p[k].x())) =  RGBColor::Red();
+
+            }
+
+
+
+    }
+    /**/
+
+
+
+
+    BMPLoader().save("trianglemany.bmp", buffer);
+    BMPLoader().save("triangleAmany.bmp", buffer);
+    delete_safe(bufferA);
+    delete_safe(buffer);
+
+}
+
 TEST(Draw, testAttributedTriangle)
 {
     int h = 300;
@@ -363,7 +444,7 @@ TEST(Draw, polygonDraw)
 
     AbstractPainter<RGB24Buffer> painter(buffer);
 
-    Polygon p;
+    corecvs::Polygon p;
     for (int i = 0; i < 7; i++) {
         p.push_back(Vector2dd::FromPolar((2 * M_PI / 7.0) * i, 100.0) + center);
     }
@@ -389,8 +470,6 @@ TEST(Draw, polygonDraw1)
     int h = 240;
     int w = 240;
 
-
-
     RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::Black());
     Vector2dd center(buffer->h / 12, buffer->h / 12);
     double radius = center.x() / 10.0 * 9.0;
@@ -401,7 +480,7 @@ TEST(Draw, polygonDraw1)
     {
         for (int pj = 0; pj < 3; pj ++)
         {
-            Polygon p;
+            corecvs::Polygon p;
             int count = pi * 3 + pj + 3;
             for (int i = 0; i < count; i++) {
                 p.push_back(Vector2dd::FromPolar((2 * M_PI / count) * i, radius) + center * Vector2dd(pi * 2 + 1, pj * 2 + 1));
@@ -427,7 +506,7 @@ TEST(Draw, polygonDraw1)
     {
         for (int pj = 0; pj < 3; pj ++)
         {
-            Polygon p;
+            corecvs::Polygon p;
             int count = pi * 3 + pj + 3;
             for (int i = 0; i < count; i++) {
                 p.push_back(Vector2dd::FromPolar(-(2 * M_PI / count) * i, radius) + center * Vector2dd(pi * 2 + 1, pj * 2 + 1) + Vector2dd(0.0, buffer->h / 2));
@@ -454,7 +533,7 @@ TEST(Draw, polygonDraw1)
     {
         for (int pj = 0; pj < 3; pj ++)
         {
-            Polygon p;
+            corecvs::Polygon p;
             int count = pi * 3 + pj + 3;
             for (int i = 0; i < count; i++) {
                 p.push_back(Vector2dd::FromPolar(-(2 * M_PI / count) * i, radius) + center * Vector2dd(pi * 2 + 1, pj * 2 + 1) + Vector2dd(buffer->w / 2, 0.0));
@@ -481,7 +560,7 @@ TEST(Draw, polygonDraw2)
     int h = 240;
     int w = 240;
 
-    Polygon p;
+    corecvs::Polygon p;
     RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::Black());
 
     p.push_back(Vector2dd(57.439, 16.983));

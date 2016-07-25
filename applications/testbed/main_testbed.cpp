@@ -7,7 +7,6 @@
 #include <string>
 #include <iostream>
 
-#include <QtCore/qglobal.h>
 #include <QtGui/QtGui>
 #include <QApplication>
 
@@ -16,7 +15,6 @@
 
 #include "testbedMainWindow.h"
 #include "qtFileLoader.h"
-
 
 
 
@@ -29,8 +27,8 @@ int main(int argc, char *argv[])
     QTG12Loader::registerMyself();
     QTRGB24Loader::registerMyself();
 
-    setSegVHandler();
-    setStdTerminateHandler();
+
+ SET_HANDLERS();
 
     printf("Starting testbed...\n");
 

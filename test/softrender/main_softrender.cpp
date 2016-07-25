@@ -15,8 +15,6 @@
 #include "cameraModel.h"
 #include "bmpLoader.h"
 
-using namespace corecvs;
-
 #if 0
 int main(int argc, const char **argv)
 {

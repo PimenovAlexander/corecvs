@@ -20,7 +20,6 @@
 #include "printerVisitor.h"
 
 
-using namespace std;
 using namespace corecvs;
 
 TEST(Serializer, testReflectionDEATH)

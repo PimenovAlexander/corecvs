@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <time.h>
+#include <ostream>
 
 #include <uEye.h>
 
@@ -26,7 +27,16 @@ struct sBufferProps
     int bitspp;
     QImage::Format imgformat;
     int imageformat;
+
+    friend std::ostream& operator << (std::ostream &out, sBufferProps &toSave)
+    {
+        out << "Buffer" << "[" << toSave.width << " x " << toSave.height << "]" << std::endl;
+        out << "  Format " << toSave.colorformat << std::endl;
+        out << "  Bits Per Pixel " << toSave.bitspp << std::endl;
+        return out;
+    }
 };
+
 
 class BufferDescriptorType
 {
@@ -91,7 +101,7 @@ public:
 class UEyeCameraDescriptor
 {
 public:
-
+    bool inited;
     INT deviceID;
     HIDS mCamera;
 
@@ -99,29 +109,36 @@ public:
     HANDLE mWinEvent;
 #endif
 
-    static const unsigned IMAGE_BUFFER_COUNT = 5;
+    UEyeCameraDescriptor() :
+        inited(false),
+        deviceID(-1),
+        mCamera(0)
+    {}
 
+    static const unsigned IMAGE_BUFFER_COUNT = 5;
     BufferDescriptorType images[IMAGE_BUFFER_COUNT];
 
     struct sCameraProps cameraProps;
     struct sBufferProps bufferProps;
 
     int searchDefImageFormats(int suppportMask);
-    static int getBitsPerPixel(int colormode);
-    QImage::Format getQImageFormat(int colormode);
 
-    int initBuffer();
-    int init(int deviceID, bool binning, bool globalShutter = true, int pixelClock=85, double fps=50.0);
+    int init(int deviceID, int binning, bool globalShutter = true, int pixelClock=85, double fps=50.0, bool isRgb = false);
+
+    int initBuffer();   
     int waitUEyeFrameEvent(int timeout);
 
     uint16_t* getFrame();
 
     bool allocImages();
-    bool deAllocImages();
+    bool deallocImages();
 
     BufferDescriptorType* getDescriptorByAddress (char* pbuf);
 
     double getTemperature();
+
+    static int getBitsPerPixel(int colormode);
+    static QImage::Format getQImageFormat(int colormode);
 };
 
 

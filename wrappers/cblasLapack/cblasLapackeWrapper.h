@@ -1,5 +1,8 @@
 #ifndef CBLASLAPACKEWRAPPER
+#define CBLASLAPACKEWRAPPER
+
 #ifdef WITH_BLAS
+
 #ifdef WITH_MKL
     #include <mkl.h>
 #elif defined(WITH_BLAS)
@@ -9,5 +12,7 @@
     #include <cblas.h>
     #include <lapacke.h>
 #endif
-#endif
-#endif
+
+#endif // WITH_BLAS
+
+#endif // CBLASLAPACKEWRAPPER

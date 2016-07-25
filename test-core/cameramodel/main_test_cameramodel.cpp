@@ -1,11 +1,11 @@
 /**
  * \file main_test_cameramodel.cpp
- * \brief This is the main file for the test cameramodel 
+ * \brief This is the main file for the test cameramodel
  *
  * \date Nov 21, 2012
  * \author apimenov
  *
- * \ingroup autotest  
+ * \ingroup autotest
  */
 
 #include <iostream>
@@ -25,7 +25,6 @@
 #include "mathUtils.h"
 #include "abstractPainter.h"
 
-using namespace std;
 using corecvs::G12Buffer;
 using corecvs::PPMLoader;
 using corecvs::PPMLoader;
@@ -82,7 +81,7 @@ TEST(Cameramodel, generateReality)
 	Matrix44 leftCamera  = LK * leftCameraMatrix.inverted();
 	Matrix44 rightCamera = RK * rightCameraMatrix.inverted();
 
-	cout << "Left Matrix:\n"  << leftCamera  << "\n";
+    cout << "Left Matrix :\n"  << leftCamera  << "\n";
 	cout << "Right Matrix:\n" << rightCamera << "\n";
 
 	/* Now let's project some points */

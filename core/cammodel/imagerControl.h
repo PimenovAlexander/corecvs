@@ -1,5 +1,5 @@
-#ifndef IMAGERSTATE_H_
-#define IMAGERSTATE_H_
+#ifndef IMAGERCONTROL_H_
+#define IMAGERCONTROL_H_
 /**
  * \file imagerControl.h
  * \brief Add Comment Here
@@ -9,8 +9,8 @@
  * \author alexander
  */
 
-#include <math.h>
 #include "histogram.h"
+
 namespace corecvs {
 
 class ImagerState
@@ -38,6 +38,7 @@ protected:
     ImagerState nextState;
     double persentile;
     int lastchange;
+
 public:
     static double getMultipierForDb (double db);
 
@@ -57,5 +58,5 @@ public:
 
 
 } //namespace corecvs
-#endif /* IMAGERSTATE_H_ */
 
+#endif /* IMAGERCONTROL_H_ */

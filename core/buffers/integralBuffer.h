@@ -247,7 +247,7 @@ public:
         Int32x4 a(&this->element(y1,     x1    ));
         Int32x4 b(&this->element(y1,     x2 + 1));
         Int32x4 c(&this->element(y2 + 1, x1    ));
-        Int32x4 d(&this->element(y2 + 1,  x2 + 1));
+        Int32x4 d(&this->element(y2 + 1, x2 + 1));
         return a + d - b - c;
     }
 

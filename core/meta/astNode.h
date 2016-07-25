@@ -187,19 +187,19 @@ public:
     explicit ASTNode(int _value) :
         p(new ASTNodeInt((double)_value))
     {
-//        SYNC_PRINT(("ASTNode(%i): with id %p\n", _value, p));
+//        SYNC_PRINT(("ASTNode(%i): with id %p\n", _value, static_cast<void*>(p)));
     }
 
     explicit ASTNode(double _value) :
         p(new ASTNodeInt(_value))
     {
-//        SYNC_PRINT(("ASTNode(%lf): with id %p\n", _value, p));
+//        SYNC_PRINT(("ASTNode(%lf): with id %p\n", _value, static_cast<void*>(p)));
     }
 
     explicit ASTNode(const char *_value) :
         p(new ASTNodeInt(_value))
     {
-//        SYNC_PRINT(("ASTNode(\"%s\"): with id %p\n", _value, p));
+//        SYNC_PRINT(("ASTNode(\"%s\"): with id %p\n", _value, static_cast<void*>(p)));
     }
 
     ASTNode(ASTNodeInt::Operator _op, const ASTNode &_left, const ASTNode &_right) :

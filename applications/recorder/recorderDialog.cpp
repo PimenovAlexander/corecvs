@@ -202,3 +202,23 @@ void RecorderDialog::errorMessage(QString message)
     msgBox.setText(message);
     msgBox.exec();
 }
+
+void RecorderDialog::showHistogram()
+{
+}
+
+void RecorderDialog::show3DHistogram()
+{
+}
+
+void RecorderDialog::showRectificationDialog()
+{
+}
+
+void RecorderDialog::doRectify()
+{
+}
+
+void RecorderDialog::resetRectification()
+{
+}

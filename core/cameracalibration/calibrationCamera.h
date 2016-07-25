@@ -272,6 +272,7 @@ public:
     Matrix33 fundamentalTo(const CameraModel &right) const;
     Matrix33 essentialTo  (const CameraModel &right) const;
     EssentialDecomposition essentialDecomposition(const CameraModel &right) const;
+    static EssentialDecomposition ComputeEssentialDecomposition(const CameraLocationData &thisData, const CameraLocationData &otherData);
 
     /**
      * Only checks for the fact that point belongs to viewport.

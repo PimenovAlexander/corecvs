@@ -16,11 +16,15 @@ void Matrix22::transpose()
 /**
  *  Returning transposed matrix
  **/
-Matrix22 Matrix22::transposed() const
+Matrix22 Matrix22::t() const
 {
    return Matrix22(
        a(0,0), a(1,0),
        a(0,1), a(1,1));
+}
+Matrix22 Matrix22::transposed() const
+{
+    return t();
 }
 
 double Matrix22::trace() const

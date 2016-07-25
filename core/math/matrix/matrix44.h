@@ -83,6 +83,7 @@ public:
 
     void transpose();
     Matrix44 transposed() const;
+    Matrix44 t() const;
 
     Matrix44 inverted() const;
     double trace() const;

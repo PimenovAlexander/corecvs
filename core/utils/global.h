@@ -96,7 +96,7 @@ typedef int                bool_t;                          // fast Boolean type
     do {                                                        \
         printf("Assert at %s:%d - %s\n", __FILE__, __LINE__, X);\
         fflush(stdout);                                         \
-        stackTraceHandler(0xFF);                                \
+        printStackTrace();                                      \
         RAISE_ASSERT(X);                                        \
     } while (0)
 
@@ -104,8 +104,9 @@ typedef int                bool_t;                          // fast Boolean type
     do {                                                        \
         printf("Assert at %s:%d - ", __FILE__, __LINE__);       \
         printf X;                                               \
+        printf("\n");                                           \
         fflush(stdout);                                         \
-        stackTraceHandler(0xFF);                                \
+        printStackTrace();                                      \
         RAISE_ASSERT(#X);                                       \
     } while (0)
 
@@ -188,7 +189,7 @@ typedef int                bool_t;                          // fast Boolean type
      _Pragma("GCC diagnostic pop")
 
 #else
-   #define STATIC_ASSERT(CONDITION, VALUE) typedef int foo_##VALUE[(CONDITION) ? 1 : -1]
+   #define STATIC_ASSERT(CONDITION, VALUE) typedef int foo_##VALUE[(CONDITION) ? 1 : -1];
 #endif
 
 #define SYNC_PRINT(X) \
@@ -218,8 +219,7 @@ do {                  \
 #ifdef is__cplusplus
 extern "C" {
 #endif
-    void stackTraceHandler(int sig);
-    void setSegVHandler();
+    void printStackTrace();
 #ifdef is__cplusplus
 } // extern "C"
 #endif
@@ -347,7 +347,12 @@ namespace std
             return hash_calc<std::tuple<T...>>()(t, 0);
         }
    };
-};
+    template<typename C, typename T>
+    auto contains(const C& c, const T& t) -> decltype(end(c), true)
+    {
+        return end(c) != std::find(c.begin(), c.end(), t);
+    }
+}
 
 
 #ifdef USE_SAFE_RUNTIME_FUNCS
@@ -433,7 +438,11 @@ inline void deletearr_safe (Type * &ptr)
 #endif // is__cplusplus
 
 #if defined(_WIN32)
-#define NOMINMAX
-#define WIN32_LEAN_AND_MEAN
-#endif
+# define NOMINMAX
+# define WIN32_LEAN_AND_MEAN
+# ifdef _MSC_VER
+#  pragma warning(disable: 4503)  // decorated name length exceeded, name was truncated
+# endif
+#endif // WIN32
+
 /* EOF */

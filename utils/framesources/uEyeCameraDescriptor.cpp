@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "uEyeCameraDescriptor.h"
 #include "ueye_deprecated.h"
 
@@ -65,10 +67,20 @@ bool UEyeCameraDescriptor::allocImages()
     UINT absPosX;
     UINT absPosY;
 
-    is_AOI(mCamera, IS_AOI_IMAGE_GET_POS_X_ABS, (void*)&absPosX , sizeof(absPosX));
-    is_AOI(mCamera, IS_AOI_IMAGE_GET_POS_Y_ABS, (void*)&absPosY , sizeof(absPosY));
+    if (is_AOI(mCamera, IS_AOI_IMAGE_GET_POS_X_ABS, (void*)&absPosX , sizeof(absPosX)) != IS_SUCCESS)
+    {
+        SYNC_PRINT(("UEyeCameraDescriptor::allocImages(): is_AOI failed for X\n"));
+    }
 
-    is_ClearSequence(mCamera);
+    if (is_AOI(mCamera, IS_AOI_IMAGE_GET_POS_Y_ABS, (void*)&absPosY , sizeof(absPosY)) != IS_SUCCESS)
+    {
+        SYNC_PRINT(("UEyeCameraDescriptor::allocImages(): is_AOI failed for Y\n"));
+    }
+
+    if (is_ClearSequence(mCamera) != IS_SUCCESS)
+    {
+        SYNC_PRINT(("UEyeCameraDescriptor::allocImages(): is_ClearSequence failed\n"));
+    }
     for (unsigned int i = 0; i < IMAGE_BUFFER_COUNT; i++)
     {
         if (images[i].buffer)
@@ -94,10 +106,16 @@ bool UEyeCameraDescriptor::allocImages()
                 mCamera,
                 width, height,
                 bufferProps.bitspp, (char **)&images[i].buffer, &images[i].imageID) != IS_SUCCESS)
+        {
+            SYNC_PRINT(("Unable to allocate buffers\n"));
             return false;
+        }
 
         if (is_AddToSequence (mCamera, (char *)images[i].buffer, images[i].imageID) != IS_SUCCESS)
+        {
+            SYNC_PRINT(("Unable to append buffers to sequence\n"));
             return false;
+        }
 
         images[i].imageSeqNum = i + 1;
         images[i].bufferSize = (width * height * bufferProps.bitspp) / 8;
@@ -106,7 +124,7 @@ bool UEyeCameraDescriptor::allocImages()
     return TRUE;
 }
 
-bool UEyeCameraDescriptor::deAllocImages()
+bool UEyeCameraDescriptor::deallocImages()
 {
     for (unsigned int i = 0; i < sizeof(images) / sizeof(images[0]); i++)
     {
@@ -157,15 +175,17 @@ int UEyeCameraDescriptor::initBuffer()
 
     IS_RECT rectAOI;
     INT ret = is_AOI(mCamera, IS_AOI_IMAGE_GET_AOI, (void*)&rectAOI, sizeof(rectAOI));
-    if (ret != IS_SUCCESS)
+    if (ret != IS_SUCCESS) {
+        SYNC_PRINT(("UEyeCameraDescriptor::initBuffer(): is_AOI failed\n"));
         return 0;
+    }
 
     width  = rectAOI.s32Width;
     height = rectAOI.s32Height;
 
     // get current colormode
     int colormode = is_SetColorMode(mCamera, IS_GET_COLOR_MODE);
-    qDebug("SDK colormode: %d", colormode);
+    SYNC_PRINT(("UEyeCameraDescriptor::initBuffer(): SDK colormode: %d\n", colormode));
 
     // fill memorybuffer properties
     memset (&bufferProps, 0, sizeof(bufferProps));
@@ -173,8 +193,10 @@ int UEyeCameraDescriptor::initBuffer()
     bufferProps.height = height;
     bufferProps.colorformat = colormode;
     bufferProps.bitspp = getBitsPerPixel(colormode);
-
     bufferProps.imgformat = getQImageFormat(colormode);
+
+    std::cout << "Expected buffer format" << std::endl;
+    std::cout << bufferProps << std::endl;
 
     // Reallocate image buffers
     allocImages();
@@ -266,12 +288,15 @@ int UEyeCameraDescriptor::searchDefImageFormats(int suppportMask)
 }
 
 
-int UEyeCameraDescriptor::init(int deviceID, bool binning, bool globalShutter, int pixelClock, double fps)
+int UEyeCameraDescriptor::init(int deviceID, int binning, bool globalShutter, int pixelClock, double fps, bool isRgb)
 {
-    qDebug("Entering: init(deviceID=%d)", deviceID);
-    HIDS cam = (HIDS) (deviceID | IS_USE_DEVICE_ID);
+    qDebug("Entering: init(deviceID=%d, %d)", deviceID, binning);
+    if (deviceID == -1) {
+        SYNC_PRINT(("Not initializing camera\n"));
+        return IS_NO_SUCCESS;
+    }
 
-    //CAMINFO m_CamInfo;
+    HIDS cam = (HIDS) (deviceID | IS_USE_DEVICE_ID);
 
     unsigned int initialParameterSet = IS_CONFIG_INITIAL_PARAMETERSET_NONE;
 
@@ -292,7 +317,11 @@ int UEyeCameraDescriptor::init(int deviceID, bool binning, bool globalShutter, i
             ret = is_ResetToDefault (cam);
         }
 
-        int colormode = IS_CM_MONO12; //0;
+        //int colormode = IS_CM_MONO12; //0;
+        int colormode = IS_CM_MONO16;
+        if (isRgb) {
+            colormode = IS_CM_RGB8_PACKED;
+        }
         if (is_SetColorMode (cam, colormode) != IS_SUCCESS)
         {
             qDebug("  Can't set color mode");
@@ -300,10 +329,26 @@ int UEyeCameraDescriptor::init(int deviceID, bool binning, bool globalShutter, i
             qDebug("  Color mode is set");
         }
 
-        if (binning) {
+        if (binning == 2) {
             qDebug("   Setting 2x2  binning...");
             is_SetBinning (cam, IS_BINNING_2X_VERTICAL | IS_BINNING_2X_HORIZONTAL);
         }
+
+        if (binning == 4) {
+            qDebug("   Setting 4x4  binning...");
+            is_SetBinning (cam, IS_BINNING_4X_VERTICAL | IS_BINNING_4X_HORIZONTAL);
+        }
+
+        int result = is_SetRopEffect(cam, IS_SET_ROP_NONE, 0, 0);
+        if (result != IS_SUCCESS)
+        {
+            qDebug("   PROBLEM...");
+            char * str = 0;
+            is_GetError(1,&result,&str);
+            qDebug("   %s", str);
+
+        }
+
 
         /* Shutter block */
         unsigned shutter;
@@ -333,12 +378,11 @@ int UEyeCameraDescriptor::init(int deviceID, bool binning, bool globalShutter, i
         is_SetFrameRate (cam, fps, &fps);
         qDebug("   New fps is: %lf", fps);
 
-
-
     }
 
     this->mCamera = cam;
     this->deviceID = deviceID;
+    this->inited = true;
 
     /* get some special camera properties */
     ZeroMemory (&cameraProps, sizeof(cameraProps));
@@ -374,8 +418,17 @@ int UEyeCameraDescriptor::init(int deviceID, bool binning, bool globalShutter, i
 /** This functions fixes the difference in windows and linux uEye API*/
 int UEyeCameraDescriptor::waitUEyeFrameEvent(int timeout)
 {
+//    SYNC_PRINT(("UEyeCameraDescriptor::waitUEyeFrameEvent() for: %d\n", mCamera ));
 #ifdef Q_OS_LINUX
-    return is_WaitEvent (mCamera, IS_SET_EVENT_FRAME, timeout);
+    int result = is_WaitEvent (mCamera, IS_SET_EVENT_FRAME, timeout);
+    if (result == IS_TIMED_OUT) {
+        SYNC_PRINT(("UEyeCameraDescriptor::waitUEyeFrameEvent() is_WaitEvent timeouted\n"));
+    } else {
+        if (result != IS_SUCCESS) {
+            SYNC_PRINT(("UEyeCameraDescriptor::waitUEyeFrameEvent() is_WaitEvent failed\n"));
+        }
+    }
+    return result;
 #endif
 #ifdef Q_OS_WIN
     DWORD dwRet = WaitForSingleObject(mWinEvent, timeout);
