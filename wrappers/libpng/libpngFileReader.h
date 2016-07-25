@@ -6,24 +6,31 @@
 
 #include "global.h"
 
+
 #include "bufferLoader.h"
+#include "bufferFactory.h"
 #include "g12Buffer.h"
 #include "rgb24Buffer.h"
 
-namespace corecvs {
-
 using std::string;
 
-
-
-class PNGLoader
+class LibpngFileReader : public corecvs::BufferLoader<corecvs::RGB24Buffer>
 {
-    public:
-        virtual RGB24Buffer * loadRGB(string name);
-        virtual bool save(string name, RGB24Buffer *buffer);
+    static string prefix1;
+
+public:
+    static int registerMyself()
+    {
+        corecvs::BufferFactory::getInstance()->registerLoader(new LibpngFileReader());
+        return 0;
+    }
+
+    virtual bool acceptsFile(string name) override;
+    virtual RGB24Buffer * load(string name) override;
+    virtual bool save(string name, RGB24Buffer *buffer);
+
 };
 
 
-} //namespace corecvs
 #endif // LIBPNGFILEREADER_H
 

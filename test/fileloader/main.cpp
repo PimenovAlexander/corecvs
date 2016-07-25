@@ -7,16 +7,21 @@
 using namespace std;
 using namespace corecvs;
 
-int main()
+int main(int argc, char *argv[])
 {
-    PNGLoader reader;
-    RGB24Buffer *out = reader.loadRGB("first.png");
-    BMPLoader().save("first.bmp", out);
+#ifdef WITH_LIBJPEG
+    LibjpegFileReader::registerMyself();
+#endif
+#ifdef WITH_LIBPNG
+    LibpngFileReader::registerMyself();
+#endif
+
+    if (argc != 2)
+       return 1;
+
+    RGB24Buffer *out = BufferFactory::getInstance()->loadRGB24Bitmap(argv[1]);
+    BMPLoader().save("out.bmp", out);
     delete_safe(out);
-    RGB24Buffer *out1 = BMPLoader().loadRGB("first.bmp");
-    PNGLoader().save("out.png", out1);
-    delete_safe(out1);
-    cout << "out" << endl;
     return 0;
 }
 
