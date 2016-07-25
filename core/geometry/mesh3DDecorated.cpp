@@ -24,14 +24,14 @@ void Mesh3DDecorated::switchTextures(bool on)
 
 void Mesh3DDecorated::switchNormals(bool on)
 {
-    if (hasColor == on)
+    if (hasNormals == on)
         return;
     if (on) {
         normalId.resize(faces.size(), Vector3d32(-1));
     } else {
         normalId.clear();
     }
-    hasColor = on;
+    hasNormals = on;
 }
 
 void Mesh3DDecorated::addAOB(const Vector3dd &c1, const Vector3dd &c2, bool addFaces)
@@ -77,10 +77,44 @@ void Mesh3DDecorated::clear()
 void Mesh3DDecorated::dumpInfo(ostream &out)
 {
     Mesh3D::dumpInfo(out);
-    out << " Normals   :" << normalCoords.size() << endl;
-    out << " Textures  :" << textureCoords.size() << endl;
-    out << " Norm Idxes:" << normalId.size() << endl;
-    out << " Tex  Idxes:" << texId.size() << endl;
+    out << " Normals On:"  << (hasNormals ? "on" : "off") << endl;
+    out << " Textures On:"  << (hasTexCoords ? "on" : "off") << endl;
+
+    out << "  Normals   :" << normalCoords.size() << endl;
+    out << "  Textures  :" << textureCoords.size() << endl;
+    out << "  Norm Idxes:" << normalId.size() << endl;
+    out << "  Tex  Idxes:" << texId.size() << endl;
+}
+
+void Mesh3DDecorated::recomputeMeanNormals()
+{
+    switchNormals(true);
+
+    normalCoords.clear();
+    normalId.clear();
+
+    /* We don't need this, just normalise */
+    vector<int> counts;
+    normalCoords.resize(vertexes.size(), Vector3dd::Zero());
+    counts.resize(vertexes.size(), 0 );
+
+    for (size_t f = 0; f < faces.size(); f++)
+    {
+        Triangle3dd triangle = getFaceAsTrinagle(f);
+        Vector3dd normal = triangle.getNormal();
+        for (int c = 0; c < 3; c++) {
+            int vertexId = faces[f][c];
+            normalCoords[vertexId] += normal;
+            counts[vertexId] ++;
+        }
+        normalId.push_back(faces[f]);
+    }
+
+    for (size_t n = 0; n < normalCoords.size(); n++)
+    {
+        normalCoords[n] /= counts[n];
+        normalCoords[n].normalise();
+    }
 }
 
 bool Mesh3DDecorated::verify( void )

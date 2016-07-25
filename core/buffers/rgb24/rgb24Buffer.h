@@ -387,7 +387,7 @@ public:
         return elementBlSSE(y,x);
     }
 
-    RGB24Buffer::InternalElementType elementBl(Vector2dd &point)
+    RGB24Buffer::InternalElementType elementBl(const Vector2dd &point)
     {
         return elementBlSSE(point.y(), point.x());
     }

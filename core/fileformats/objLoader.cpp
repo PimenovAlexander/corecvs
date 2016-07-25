@@ -103,6 +103,12 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
         }
     }
 
+    if (!mesh.normalCoords.empty())
+        mesh.hasNormals = true;
+
+    if (!mesh.textureCoords.empty())
+        mesh.hasTexCoords = true;
+
     /* sanity checking */
     mesh.dumpInfo(cout);
 

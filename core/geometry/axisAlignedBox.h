@@ -128,7 +128,10 @@ public:
         Vector3dd v1 =  mLow - ray.p;
         Vector3dd v2 = mHigh - ray.p;
 
+        /* Last enter */
         t1 = -std::numeric_limits<double>::max();
+
+        /* First leave */
         t2 =  std::numeric_limits<double>::max();
 
         const Vector3dd &a = ray.a;
@@ -136,10 +139,10 @@ public:
         double t1x = v1.x() / a.x();
         double t2x = v2.x() / a.x();
 
-        if (a.x() > 0) {
+        if        (a.x() > 0) {
             if (t1x > t1) t1 = t1x;
             if (t2x < t2) t2 = t2x;
-        } else {
+        } else if (a.x() < 0) {
             if (t2x > t1) t1 = t2x;
             if (t1x < t2) t2 = t1x;
         }
@@ -147,10 +150,10 @@ public:
         double t1y = v1.y() / a.y();
         double t2y = v2.y() / a.y();
 
-        if (a.y() > 0) {
+        if        (a.y() > 0) {
             if (t1y > t1) t1 = t1y;
             if (t2y < t2) t2 = t2y;
-        } else {
+        } else if (a.y() < 0) {
             if (t2y > t1) t1 = t2y;
             if (t1y < t2) t2 = t1y;
         }
@@ -159,10 +162,10 @@ public:
         double t2z = v2.z() / a.z();
 
 
-        if (a.z() > 0) {
+        if        (a.z() > 0) {
             if (t1z > t1) t1 = t1z;
             if (t2z < t2) t2 = t2z;
-        } else {
+        } else if (a.z() < 0) {
             if (t2z > t1) t1 = t2z;
             if (t1z < t2) t2 = t1z;
         }

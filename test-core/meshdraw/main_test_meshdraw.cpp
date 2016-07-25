@@ -13,6 +13,7 @@
 
 #include "global.h"
 #include "mesh3d.h"
+#include "mesh3DDecorated.h"
 #include "meshLoader.h"
 
 using namespace std;
@@ -38,4 +39,30 @@ TEST(meshdraw, testmeshdraw)
     loader.save(&mesh, "mesh-icosphere.stl");
     loader.save(&mesh, "mesh-icosphere.ply");
 
+}
+
+
+
+TEST(meshdraw, normalGenerate)
+{
+    cout << "Starting test <meshdraw>. This is a manual test" << endl;
+    Mesh3DDecorated mesh;
+    mesh.switchColor();
+
+    mesh.setColor(RGBColor::Red());
+    mesh.addCylinder(Vector3dd::Zero(), 10, 10, 3);
+    mesh.recomputeMeanNormals();
+
+    for (int f = 0; f <  mesh.normalId.size(); f++)
+    {
+        Vector3d32  ids = mesh.normalId[f];
+        Triangle3dd face = mesh.getFaceAsTrinagle(f);
+
+        mesh.setColor(RGBColor::Green());
+        mesh.addLine(face.p1(), face.p1() + mesh.normalCoords[ids.x()]);
+        mesh.addLine(face.p2(), face.p2() + mesh.normalCoords[ids.y()]);
+        mesh.addLine(face.p3(), face.p3() + mesh.normalCoords[ids.z()]);
+    }
+
+    mesh.dumpPLY("mesh-normals.ply");
 }

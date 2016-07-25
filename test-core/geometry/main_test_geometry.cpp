@@ -171,6 +171,39 @@ TEST(Geometry, testIntersection3DFast)
     cout << "In " <<  ray.getPoint(t1) << endl;
     cout << "Out" <<  ray.getPoint(t2) << endl;
 
+    /* Ok */
+    Ray3d rays[] = {
+        Ray3d(Vector3dd(1.0, 0.01, 0.01), Vector3dd(-150,    0,    0)),
+        Ray3d(Vector3dd(0.01, 1.0, 0.01), Vector3dd(   0, -150,    0)),
+        Ray3d(Vector3dd(0.01, 0.01, 1.0), Vector3dd(   0,    0, -150)),
+
+
+        Ray3d(Vector3dd(-1.0, 0.01, 0.0), Vector3dd(150,   0,   0)),
+        Ray3d(Vector3dd(0.01, -1.0, 0.0), Vector3dd(  0, 150,   0)),
+        Ray3d(Vector3dd(0.0, 0.01, -1.0), Vector3dd(  0,   0, 150)),
+
+        Ray3d(Vector3dd(1.0, 0.01, 0.0), Vector3dd(-150,    0,    0)),
+        Ray3d(Vector3dd(0.01, 1.0, 0.0), Vector3dd(   0, -150,    0)),
+        Ray3d(Vector3dd(0.0, 0.01, 1.0), Vector3dd(   0,    0, -150)),
+
+
+        Ray3d(Vector3dd(1.0, 0.0, 0.0), Vector3dd(-200,    0,    0)),
+        Ray3d(Vector3dd(0.0, 1.0, 0.0), Vector3dd(   0, -200,    0)),
+        Ray3d(Vector3dd(0.0, 0.0, 1.0), Vector3dd(   0,    0, -200)),
+    };
+
+    for (int r = 0; r < CORE_COUNT_OF(rays); r++)
+    {
+        bool result = box.intersectWith(rays[r], t1, t2);
+        cout << "Testing:" << r << " - " << (result ? "true" : "false") << "(" << t1 << "," << t2 << ")" << endl;
+
+        mesh.currentColor = RGBColor::White();
+        mesh.addLine(rays[r].getPoint(0), rays[r].getPoint(7.0));
+        mesh.currentColor = result ? RGBColor::Green() : RGBColor::Red();
+        mesh.addLine(rays[r].getPoint(t1), rays[r].getPoint(t2));
+
+        //ASSERT_TRUE(result);
+    }
 
     ofstream file("testf.ply", std::ios::out);
     mesh.dumpPLY(file);

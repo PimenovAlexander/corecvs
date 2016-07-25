@@ -19,7 +19,8 @@ HEADERS += \
     geometry/polyLine.h \
     geometry/polylinemesh.h \
     $$PWD/raytrace/perlinNoise.h \
-    $$PWD/raytrace/sdfRenderable.h
+    $$PWD/raytrace/sdfRenderable.h \
+    $$PWD/raytrace/materialExamples.h
 
 
 SOURCES += \ 
@@ -41,5 +42,6 @@ SOURCES += \
     geometry/polyLine.cpp \
     geometry/polylinemesh.cpp \
     $$PWD/raytrace/perlinNoise.cpp \
-    $$PWD/raytrace/sdfRenderable.cpp
+    $$PWD/raytrace/sdfRenderable.cpp \
+    $$PWD/raytrace/materialExamples.cpp
     

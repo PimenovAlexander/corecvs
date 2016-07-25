@@ -1,4 +1,5 @@
 #include "raytraceRenderer.h"
+#include "preciseTimer.h"
 
 RaytraceRenderer::RaytraceRenderer()
 {
@@ -16,7 +17,7 @@ void RaytraceRenderer::trace(RayIntersection &intersection)
 
     Raytraceable *obj = intersection.object;
 
-    obj->normal(intersection.ray.getPoint(intersection.t), intersection.normal);
+    obj->normal(intersection);
 
     if ((intersection.normal & intersection.ray.a) > 0 ) {
         intersection.normal = -intersection.normal;
@@ -118,40 +119,7 @@ void RaytraceRenderer::trace(RGB24Buffer *buffer)
         );
     }
 
-    /*for (int i = 0; i < buffer->h; i++)
-    {
-        for (int j = 0; j < buffer->w; j++)
-        {
-            currentX = j;
-            currentY = i;
-            Vector2dd pixel(j, i);
-            Ray3d ray = Ray3d(intrisics.reverse(pixel), Vector3dd::Zero());
-            ray.normalise();
-
-            RayIntersection intersection;
-            intersection.ray = ray;
-            intersection.weight = 1.0;
-            intersection.depth = 0;
-            trace(intersection);
-            if (intersection.object != NULL) {
-                energy->element(i, j) = intersection.ownColor;
-            }
-            SYNC_PRINT(("\r[%d %d]", i, j));
-        }
-    }*/
-
-    for (int i = 0; i < buffer->h; i++)
-    {
-        for (int j = 0; j < buffer->w; j++)
-        {
-            buffer->element(i, j) = RGBColor::FromDouble(energy->element(i,j) / 2.1);
-            if (markup->element(i, j) != 0)
-            {
-                buffer->element(i, j) = RGBColor::Red();
-            }
-        }
-    }
-
+    pack(buffer, energy, markup);
     printf("\n");
 
     delete_safe(energy);
@@ -160,10 +128,12 @@ void RaytraceRenderer::trace(RGB24Buffer *buffer)
 
 void RaytraceRenderer::traceFOV(RGB24Buffer *buffer, double apperture, double focus)
 {
-    energy = new AbstractBuffer<TraceColor>(buffer->getSize());
-    markup = new AbstractBuffer<int>(buffer->getSize());
+    energy = new ColorBuffer(buffer->getSize());
+    markup = new MarkupType(buffer->getSize());
 
     int inc = 0;
+
+    PreciseTimer timer = PreciseTimer::currentTime();
 
     parallelable_for(0, buffer->h, [&](const BlockedRange<int>& r )
         {
@@ -206,27 +176,34 @@ void RaytraceRenderer::traceFOV(RGB24Buffer *buffer, double apperture, double fo
                     }
                     energy->element(i, j) = sumColor / sampleNum;
                 }
-                SYNC_PRINT(("\rsupersample[%d]", inc));
+                SYNC_PRINT(("\rfocal[%d / %d]", inc, buffer->h));
                 inc++;
+
+
             }
         }, parallel
     );
 
-    for (int i = 0; i < buffer->h; i++)
-    {
-        for (int j = 0; j < buffer->w; j++)
-        {
-            buffer->element(i, j) = RGBColor::FromDouble(energy->element(i,j) / 2.1);
-            if (markup->element(i, j) != 0)
-            {
-                buffer->element(i, j) = RGBColor::Red();
-            }
-        }
-    }
+    pack(buffer, energy, markup);
     printf("\n");
 
     delete_safe(energy);
     delete_safe(markup);
+}
+
+void RaytraceRenderer::pack(RGB24Buffer *target, RaytraceRenderer::ColorBuffer *energy, RaytraceRenderer::MarkupType *markup)
+{
+    for (int i = 0; i < target->h; i++)
+    {
+        for (int j = 0; j < target->w; j++)
+        {
+            target->element(i, j) = RGBColor::FromDouble(energy->element(i,j) / 2.1);
+            if (markup && markup->element(i, j) != 0)
+            {
+                target->element(i, j) = RGBColor::Red();
+            }
+        }
+    }
 }
 
 
@@ -385,7 +362,7 @@ Vector3dd RayIntersection::getPoint()
     return ray.getPoint(t);
 }
 
-void RaytraceableChessMaterial::getColor(RayIntersection &ray, RaytraceRenderer &renderer)
+void RaytraceableChessMaterial::getColor(RayIntersection &ray, RaytraceRenderer &/*renderer*/)
 {
     Vector3dd intersection = ray.getPoint();
     intersection = intersection / 10.0;
@@ -402,12 +379,17 @@ void RaytraceableChessMaterial::getColor(RayIntersection &ray, RaytraceRenderer 
     int vz = (int)intersection.z();
     b3 = (vz % 2);
 
-    bool white = (((int)intersection.x()) % 2) ^ (((int)intersection.y()) % 2) ^ (((int)intersection.z()) % 2);
+    //bool white = (((int)intersection.x()) % 2) ^ (((int)intersection.y()) % 2) ^ (((int)intersection.z()) % 2);
     ray.ownColor = (!b1 ^  !b2 ^ !b3) ? TraceColor::Zero() : RGBColor::White().toDouble();
 }
 
 
 
+
+void Raytraceable::normal(RayIntersection &/*intersection*/)
+{
+
+}
 
 Raytraceable::~Raytraceable()
 {

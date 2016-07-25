@@ -48,9 +48,9 @@ bool RaytraceableSphere::intersect(RayIntersection &intersection)
     return false;
 }
 
-void RaytraceableSphere::normal(const Vector3dd &vector, Vector3dd &normal)
+void RaytraceableSphere::normal(RayIntersection &intersection)
 {
-    normal = Vector3dd( (vector - mSphere.c) / mSphere.r);
+    intersection.normal = Vector3dd( (intersection.getPoint() - mSphere.c) / mSphere.r);
 }
 
 bool RaytraceableSphere::inside(Vector3dd &point)
@@ -84,7 +84,7 @@ bool RaytraceableUnion::intersect(RayIntersection &intersection)
     return true;
 }
 
-void RaytraceableUnion::normal(const Vector3dd &vector, Vector3dd &normal)
+void RaytraceableUnion::normal(RayIntersection &intersection)
 {
     return;
 }
@@ -116,9 +116,9 @@ bool RaytraceablePlane::intersect(RayIntersection &intersection)
     return false;
 }
 
-void RaytraceablePlane::normal(const Vector3dd &vector, Vector3dd &normal)
+void RaytraceablePlane::normal(RayIntersection &intersection)
 {
-    normal = mPlane.normal();
+    intersection.normal = mPlane.normal();
 }
 
 bool RaytraceablePlane::inside(Vector3dd &point)
@@ -143,9 +143,9 @@ bool RaytraceableTriangle::intersect(RayIntersection &intersection)
     return false;
 }
 
-void RaytraceableTriangle::normal(const Vector3dd &vector, Vector3dd &normal)
+void RaytraceableTriangle::normal(RayIntersection &intersection)
 {
-    normal = mTriangle.getNormal();
+    intersection.normal = mTriangle.getNormal();
 }
 
 bool RaytraceableTriangle::inside(Vector3dd &point)
@@ -153,7 +153,7 @@ bool RaytraceableTriangle::inside(Vector3dd &point)
     return false;
 }
 
-RaytraceableMesh::RaytraceableMesh(Mesh3D *mesh) :
+RaytraceableMesh::RaytraceableMesh(Mesh3DDecorated *mesh) :
     mMesh(mesh)
 {
 
@@ -196,7 +196,7 @@ bool RaytraceableMesh::intersect(RayIntersection &intersection)
 
 }
 
-void RaytraceableMesh::normal(const Vector3dd &vector, Vector3dd &normal)
+void RaytraceableMesh::normal(RayIntersection &intersection)
 {
     return;
 }
@@ -228,13 +228,18 @@ bool RaytraceableTransform::intersect(RayIntersection &intersection)
     return false;
 }
 
-void RaytraceableTransform::normal(const Vector3dd &vector, Vector3dd &normal)
+void RaytraceableTransform::normal(RayIntersection &intersection)
 {
     //normal = Vector3dd::OrtZ();
-    Vector3dd p = mMatrixInv * vector;
-    mObject->normal(p, normal);
-    normal = mMatrix * normal;
-    normal.normalise();
+    RayIntersection trans = intersection;
+    double scale1 = trans.ray.a.l2Metric();
+    trans.ray.transform(mMatrixInv);
+    double scale2 = trans.ray.a.l2Metric();
+    trans.t = trans.t / scale2 * scale1;
+
+    mObject->normal(trans);
+    intersection.normal = mMatrix * intersection.normal;
+    intersection.normal.normalise();
 }
 
 bool RaytraceableTransform::inside(Vector3dd &point)
@@ -260,18 +265,7 @@ bool RaytraceableOptiMesh::TreeNode::intersect(RayIntersection &intersection)
     RayIntersection best = intersection;
     best.t = std::numeric_limits<double>::max();
 
-    /*for (Triangle3dd &triangle : middle)
-    {
-        if (!triangle.intersectWithP(intersection.ray, t))
-            continue;
-
-        if (t > 0.000001 && t < best.t) {
-            best.t = t;
-            best.normal = triangle.getNormal();
-        }
-    }*/
-
-    for (PlaneFrame &triangle : cached)
+    for (NumPlaneFrame &triangle : cached)
     {
         double u, v;
         if (!triangle.intersectWithP(intersection.ray, t, u, v))
@@ -281,6 +275,7 @@ bool RaytraceableOptiMesh::TreeNode::intersect(RayIntersection &intersection)
             best.t = t;
             best.normal = triangle.getNormal();
             best.texCoord = Vector2dd(u, v);
+            best.payload = triangle.num;
         }
     }
 
@@ -337,7 +332,7 @@ void RaytraceableOptiMesh::TreeNode::subdivide()
     Vector3dd maxP = Vector3dd(numeric_limits<double>::lowest());
 
     EllipticalApproximation3d approx;
-    for (const Triangle3dd &triangle : submesh)
+    for (const NumTriangle3dd &triangle : submesh)
     {
         approx.addPoint(triangle.p1());
         approx.addPoint(triangle.p2());
@@ -360,7 +355,7 @@ void RaytraceableOptiMesh::TreeNode::subdivide()
     plane = Plane3d::FromNormalAndPoint(normal, center);
 
     double radius = 0;
-    for (const Triangle3dd &triangle : submesh)
+    for (const NumTriangle3dd &triangle : submesh)
     {
         for (int p = 0; p < 3; p++)
         {
@@ -370,15 +365,17 @@ void RaytraceableOptiMesh::TreeNode::subdivide()
         }
     }
     bound = Sphere3d(center, radius + 0.000001);
+    minP -= Vector3dd(0.000001);
+    maxP += Vector3dd(0.000001);
     box = AxisAlignedBox3d(minP, maxP);
 
     if (submesh.size() <= 3)
         return;
 
-    vector<Triangle3dd> m;
-    vector<Triangle3dd> l;
-    vector<Triangle3dd> r;
-    for (const Triangle3dd &triangle : submesh)
+    vector<NumTriangle3dd> m;
+    vector<NumTriangle3dd> l;
+    vector<NumTriangle3dd> r;
+    for (const NumTriangle3dd &triangle : submesh)
     {
         bool b1 = (plane.pointWeight(triangle.p1()) > 0);
         bool b2 = (plane.pointWeight(triangle.p2()) > 0);
@@ -436,9 +433,9 @@ void RaytraceableOptiMesh::TreeNode::subdivide()
 void RaytraceableOptiMesh::TreeNode::cache()
 {
     cached.clear();
-    for (const Triangle3dd &triangle : submesh)
+    for (const NumTriangle3dd &triangle : submesh)
     {
-        cached.push_back(triangle.toPlaneFrame());
+        cached.push_back(triangle.toNumPlaneFrame());
     }
     if (left  != NULL)  left->cache();
     if (right != NULL) right->cache();
@@ -483,8 +480,6 @@ void RaytraceableOptiMesh::TreeNode::dumpToMesh(Mesh3D &mesh, int depth, bool pl
     if (left)   left  ->dumpToMesh(mesh, depth + 1, plane, volume);
     if (right)  right ->dumpToMesh(mesh, depth + 1, plane, volume);
     if (middle) middle->dumpToMesh(mesh, depth + 1, plane, volume);
-
-
 }
 
 void RaytraceableOptiMesh::optimize()
@@ -493,12 +488,11 @@ void RaytraceableOptiMesh::optimize()
     opt = new TreeNode();
     for (size_t i = 0; i < mMesh->faces.size(); i++)
     {
-        Triangle3dd triangle = mMesh->getFaceAsTrinagle(i);
+        NumTriangle3dd triangle(mMesh->getFaceAsTrinagle(i), i);
         opt->submesh.push_back(triangle);
     }
     opt->subdivide();
     opt->cache();
-
 }
 
 void RaytraceableOptiMesh::dumpToMesh(Mesh3D &mesh, bool plane, bool volume)
@@ -528,4 +522,35 @@ bool RaytraceableOptiMesh::intersect(RayIntersection &intersection)
         return true;
     }
     return false;
+}
+
+void RaytraceableOptiMesh::normal(RayIntersection &intersection)
+{
+//    SYNC_PRINT(("RaytraceableOptiMesh::normal(%d, %d)\n", intersection.payload, mMesh->hasNormals));
+
+    if (intersection.payload != -1 )
+    {
+        Vector3d32 face = mMesh->faces[intersection.payload];
+        double u = intersection.texCoord.x();
+        double v = intersection.texCoord.y();
+
+        if(mMesh->hasNormals) {
+            Vector3dd n =
+                    mMesh->normalCoords[face.x()] * (1 - u - v) +
+                    mMesh->normalCoords[face.y()] * u +
+                    mMesh->normalCoords[face.z()] * v;
+            intersection.normal = n.normalised();
+        }
+
+        if (mMesh->hasTexCoords) {
+            Vector2dd tex =
+                    mMesh->textureCoords[face.x()] * (1 - u - v) +
+                    mMesh->textureCoords[face.y()] * u +
+                    mMesh->textureCoords[face.z()] * v;
+            intersection.texCoord = tex;
+
+        }
+//        SYNC_PRINT(("Augmented Normal\n"));
+    }
+    //intersection.texCoord = mMesh->textureCoords[face.x()];
 }

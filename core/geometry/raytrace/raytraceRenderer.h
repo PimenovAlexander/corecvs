@@ -16,20 +16,18 @@ class RaytraceRenderer;
 class RayIntersection {
 public:
     Raytraceable *object = NULL;
+    int payload = -1;
     Ray3d ray;
 
     Vector2dd texCoord;
     Vector3dd normal;
-    double t;
-
-//    Ray3d reflection;
-//    Ray3d refraction;
-
-    double weight;
-    int depth;
+    double t = 0;
+    double weight = 1.0;
+    int depth = 0;
 
     /* This needs to be separated */
     TraceColor ownColor;
+
     Vector3dd getPoint();
 
 };
@@ -81,8 +79,15 @@ public:
     TraceColor color;
     RaytraceableMaterial *material = NULL;
 
+    /**
+     *  This function updates the intersection with
+     *  t - closest intersection
+     *  object - object that will then handle the material
+     *  payload - optional payload
+     **/
     virtual bool intersect(RayIntersection &intersection) = 0;
-    virtual void normal(const Vector3dd &vector, Vector3dd &normal) = 0;
+
+    virtual void normal(RayIntersection &intersection);
     virtual bool inside (Vector3dd &point) = 0;
 
     virtual ~Raytraceable();
@@ -93,6 +98,10 @@ public:
 class RaytraceRenderer
 {
 public:
+
+    typedef AbstractBuffer<TraceColor> ColorBuffer;
+    typedef AbstractBuffer<int> MarkupType;
+
     PinholeCameraIntrinsics intrisics;
     Affine3DQ position;
 
@@ -100,14 +109,16 @@ public:
     vector<RaytraceablePointLight *> lights;
     TraceColor ambient;
 
-    /* Exit condition */
+    /* Ray trace end condition */
     int maxDepth = 4;
     double minWeight = 1.0 / 255.0;
 
+    /* Renderer global parameters */
     bool supersample = false;
     int  sampleNum = 20;
 
     bool parallel = true;
+    bool traceProgress = true;
 
     /**/
     AbstractBuffer<TraceColor> *energy = NULL;
@@ -122,6 +133,9 @@ public:
 
     void traceFOV(RGB24Buffer *buffer, double apperture, double focus);
 
+
+private:
+    void pack(RGB24Buffer *target, ColorBuffer *energy, MarkupType *markup = NULL);
 
 };
 

@@ -12,4 +12,8 @@ TEMPLATE = subdirs
 SUBDIRS +=     \
     grab24     \
     adoptcolor \
-    fileloader
+    fileloader \
+    softrender  \
+
+
+softrender.file                     = softrender/softrender.pro

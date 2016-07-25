@@ -1,6 +1,7 @@
 #ifndef RAYTRACEOBJECTS_H
 #define RAYTRACEOBJECTS_H
 
+#include "mesh3DDecorated.h"
 #include "raytrace/raytraceRenderer.h"
 
 class RaytraceableTransform : public Raytraceable
@@ -19,7 +20,7 @@ public:
     }
 
     virtual bool intersect(RayIntersection &intersection) override;
-    virtual void normal(const Vector3dd &vector, Vector3dd &normal)   override;
+    virtual void normal(RayIntersection &intersection)   override;
     virtual bool inside (Vector3dd &point)  override;
 };
 
@@ -37,7 +38,7 @@ public:
     }
 
     virtual bool intersect(RayIntersection &intersection) override;
-    virtual void normal(const Vector3dd &vector, Vector3dd &normal)   override;
+    virtual void normal(RayIntersection &intersection)   override;
     virtual bool inside (Vector3dd &point)  override;
 };
 
@@ -56,7 +57,7 @@ public:
     }
 
     virtual bool intersect(RayIntersection &intersection) override;
-    virtual void normal(const Vector3dd &vector, Vector3dd &normal) override;
+    virtual void normal(RayIntersection &intersection) override;
     virtual bool inside (Vector3dd &point)  override;
 };
 
@@ -73,7 +74,7 @@ public:
     }
 
     virtual bool intersect(RayIntersection &intersection) override;
-    virtual void normal(const Vector3dd &vector, Vector3dd &normal) override;
+    virtual void normal(RayIntersection &intersection) override;
     virtual bool inside (Vector3dd &point)  override;
 };
 
@@ -82,12 +83,12 @@ class RaytraceableMesh : public Raytraceable {
 public:
     static const double EPSILON;
 
-    Mesh3D *mMesh;
+    Mesh3DDecorated *mMesh;
 
-    RaytraceableMesh(Mesh3D *mesh);
+    RaytraceableMesh(Mesh3DDecorated *mesh);
 
     virtual bool intersect(RayIntersection &intersection) override;
-    virtual void normal(const Vector3dd &vector, Vector3dd &normal) override;
+    virtual void normal(RayIntersection &intersection) override;
     virtual bool inside (Vector3dd &point)  override;
 };
 
@@ -95,9 +96,34 @@ class RaytraceableOptiMesh : public RaytraceableMesh {
 public:
     static const double EPSILON;
 
+    class NumPlaneFrame : public PlaneFrame {
+    public:
+        int num;
+
+        NumPlaneFrame(const PlaneFrame &frame, int num) :
+            PlaneFrame(frame),
+            num(num)
+        {}
+    };
+
+    class NumTriangle3dd : public Triangle3dd {
+    public:
+        int num;
+
+        NumTriangle3dd(const Triangle3dd &triangle, int num) :
+            Triangle3dd(triangle),
+            num(num)
+        {}
+
+        NumPlaneFrame toNumPlaneFrame() const
+        {
+            return NumPlaneFrame(toPlaneFrame(), num);
+        }
+    };
+
     struct TreeNode {
-        vector<Triangle3dd> submesh;
-        vector<PlaneFrame>  cached;
+        vector<NumTriangle3dd> submesh;
+        vector<NumPlaneFrame>  cached;
 
 
         TreeNode *middle = NULL;
@@ -109,6 +135,7 @@ public:
         Plane3d  plane;
 
         bool intersect(RayIntersection &intersection);
+
         void subdivide();
         void cache();
 
@@ -127,7 +154,7 @@ public:
 
     TreeNode *opt = NULL;
 
-    RaytraceableOptiMesh(Mesh3D *mesh) :
+    RaytraceableOptiMesh(Mesh3DDecorated *mesh) :
         RaytraceableMesh(mesh)
     {}
 
@@ -135,6 +162,7 @@ public:
     void dumpToMesh(Mesh3D &mesh, bool plane, bool volume);
 
     virtual bool intersect(RayIntersection &intersection) override;
+    virtual void normal(RayIntersection &intersection) override;
 
     virtual ~RaytraceableOptiMesh()
     {
@@ -148,7 +176,7 @@ public:
     vector<Raytraceable *> elements;
 
     virtual bool intersect(RayIntersection &intersection) override;
-    virtual void normal(const Vector3dd &vector, Vector3dd &normal) override;
+    virtual void normal(RayIntersection &intersection) override;
     virtual bool inside (Vector3dd &point)  override;
 };
 
