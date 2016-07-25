@@ -159,7 +159,7 @@ TEST(Raytrace, testRaytraceSpeedup)
     //Matrix44::Shift(0, 0 , 3500)
     //Matrix44::Shift(0, 50, 180)
 
-    mesh.transform(Matrix44::Shift(0, 50, 180) * Matrix44::Scale(0.4) * Matrix44::RotationZ(degToRad(-90)) * Matrix44::RotationY(degToRad(-90)) * Matrix44::RotationX(degToRad(180)));
+    mesh.transform(Matrix44::Shift(0, 50, 180) * Matrix44::Scale(1.5) * Matrix44::RotationZ(degToRad(-90)) * Matrix44::RotationY(degToRad(-90)) * Matrix44::RotationX(degToRad(180)));
     mesh.dumpInfo();
     mesh.recomputeMeanNormals();
 
@@ -221,11 +221,11 @@ TEST(Raytrace, testRaytraceSpeedup)
 
     renderer.object = &scene1;
     renderer.supersample = false;
-    renderer.sampleNum = 60;
+    renderer.sampleNum = 70;
 
     timer = PreciseTimer::currentTime();
-    renderer.trace(bufferF);
-    //renderer.traceFOV(bufferF, 8, 140);
+    //renderer.trace(bufferF);
+    renderer.traceFOV(bufferF, 8, 140);
     SYNC_PRINT(("Fast render time %lf ms\n", timer.usecsToNow() / 1000.0));
     BMPLoader().save("trace-fast.bmp", bufferF);
 

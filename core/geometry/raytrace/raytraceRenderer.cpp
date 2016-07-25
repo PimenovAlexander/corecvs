@@ -1,5 +1,6 @@
 #include "raytraceRenderer.h"
 #include "preciseTimer.h"
+#include "bmpLoader.h"
 
 RaytraceRenderer::RaytraceRenderer()
 {
@@ -133,7 +134,8 @@ void RaytraceRenderer::traceFOV(RGB24Buffer *buffer, double apperture, double fo
 
     int inc = 0;
 
-    PreciseTimer timer = PreciseTimer::currentTime();
+    PreciseTimer startTime = PreciseTimer::currentTime();
+    PreciseTimer lastDump = startTime;
 
     parallelable_for(0, buffer->h, [&](const BlockedRange<int>& r )
         {
@@ -176,9 +178,23 @@ void RaytraceRenderer::traceFOV(RGB24Buffer *buffer, double apperture, double fo
                     }
                     energy->element(i, j) = sumColor / sampleNum;
                 }
-                SYNC_PRINT(("\rfocal[%d / %d]", inc, buffer->h));
+
+
                 inc++;
 
+                double passed = startTime.usecsToNow();
+                double left = passed / inc * (buffer->h - inc);
+                SYNC_PRINT(("\rfocal[%d / %d] passed:%5.2lfs left %5.2lfs", inc, buffer->h, passed / 1000000.0, left / 1000000.0));
+
+                if (traceProgress && (lastDump.usecsToNow() > 30 * 1000 * 1000))
+                {
+                     // Need mutex here...
+                    RGB24Buffer *temp = new RGB24Buffer(buffer->getSize());
+                    pack(temp, energy, markup);
+                    BMPLoader().save("trace.bmp", temp);
+                    lastDump = PreciseTimer::currentTime();
+                    delete_safe(temp);
+                }
 
             }
         }, parallel
