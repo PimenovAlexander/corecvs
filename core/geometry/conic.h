@@ -70,7 +70,7 @@ public:
     bool intersectWith(const Circle2d &other, Vector2dd &point1, Vector2dd &point2);
 };
 
-class focal;
+class Circle3d;
 
 class Sphere3d : public UnifiedSphere<Sphere3d, Vector3dd>
 {
@@ -85,13 +85,13 @@ public:
         UnifiedSphere(Vector3dd(x,y,z), r)
     {}
 
-    bool intersectWith(const Sphere3d &other, focal &result);
-    bool intersectWith(const  Plane3d &plane, focal &intersection);
+    bool intersectWith(const Sphere3d &other, Circle3d &result);
+    bool intersectWith(const  Plane3d &plane, Circle3d &intersection);
     bool intersectWith(const  Ray3d   &ray, double &t1, double &t2);
 
 };
 
-class focal : public Sphere3d
+class Circle3d : public Sphere3d
 {
 public:
     Vector3dd normal;

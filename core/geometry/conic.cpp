@@ -18,7 +18,7 @@ bool Circle2d::intersectWith(const Circle2d &other, Vector2dd &point1, Vector2dd
     return true;
 }
 
-bool Sphere3d::intersectWith(const Sphere3d &other, focal &result)
+bool Sphere3d::intersectWith(const Sphere3d &other, Circle3d &result)
 {
     double a;
     double x;
@@ -35,10 +35,10 @@ bool Sphere3d::intersectWith(const Sphere3d &other, focal &result)
     return true;
 }
 
-bool Sphere3d::intersectWith(const Plane3d &plane, focal &intersection)
+bool Sphere3d::intersectWith(const Plane3d &plane, Circle3d &intersection)
 {
     Vector3dd projection = plane.projectPointTo(c);
-    focal result;
+    Circle3d result;
     result.normal = plane.normal();
     result.c = projection;
 
@@ -52,7 +52,7 @@ bool Sphere3d::intersectWith(const Plane3d &plane, focal &intersection)
     return true;
 }
 
-void focal::getPoints(Vector3dd &out1, Vector3dd &out2)
+void Circle3d::getPoints(Vector3dd &out1, Vector3dd &out2)
 {
     Vector3dd ort1;
     Vector3dd ort2;
@@ -61,7 +61,7 @@ void focal::getPoints(Vector3dd &out1, Vector3dd &out2)
     out2 = c + ort2 * r;
 }
 
-Vector3dd focal::getPoint(double angle)
+Vector3dd Circle3d::getPoint(double angle)
 {
     Vector3dd ort1;
     Vector3dd ort2;

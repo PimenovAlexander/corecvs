@@ -12,6 +12,7 @@
 #include <QMetaType>
 #include <QMessageBox>
 #include <vector>
+#include "conic.h"
 
 #include "g12Image.h"
 #include "imageResultLayer.h"

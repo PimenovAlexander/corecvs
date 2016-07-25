@@ -102,7 +102,7 @@ TEST(conic, testSphereIntersection)
     Sphere3d s1( 0.0,  0.0,  0.0, 20.0);
     Sphere3d s2(10.0, 20.0, 20.0, 20.0);
 
-    focal c1;
+    Circle3d c1;
     ASSERT_TRUE(s1.intersectWith(s2, c1));
 
     for (int i = 0; i < 8; i++) {
@@ -111,7 +111,7 @@ TEST(conic, testSphereIntersection)
     }
 
     Sphere3d s3( 100.0,  100.0,  0.0, 20.0);
-    focal c2;
+    Circle3d c2;
     ASSERT_FALSE(s1.intersectWith(s3, c2));
 
 
