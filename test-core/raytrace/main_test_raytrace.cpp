@@ -514,7 +514,7 @@ TEST(Raytrace, testRaytraceTextures)
     std::ifstream file("body-v2.obj", std::ifstream::in);
     loader.loadOBJ(file, mesh);
     //mesh.transform(Matrix44::Shift(0, 50, 2180) * Matrix44::Scale(1) * Matrix44::RotationZ(degToRad(-90)) * Matrix44::RotationY(degToRad(-90)) * Matrix44::RotationX(degToRad(180)));
-    mesh.transform(Matrix44::Shift(0, 600, 1580) * Matrix44::Scale(0.4) * Matrix44::RotationZ(degToRad(-90)) * Matrix44::RotationY(degToRad(-90)) * Matrix44::RotationX(degToRad(180)));
+    mesh.transform(Matrix44::Shift(0, 1200, 1580) * Matrix44::Scale(1.1) * Matrix44::RotationZ(degToRad(-90)) * Matrix44::RotationY(degToRad(-90)) * Matrix44::RotationX(degToRad(180)));
 
     mesh.dumpInfo();
 

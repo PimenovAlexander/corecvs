@@ -19,6 +19,7 @@ public:
     int payload = -1;
     Ray3d ray;
 
+    Vector2dd uvCoord;
     Vector2dd texCoord;
     Vector3dd normal;
     double t = 0;

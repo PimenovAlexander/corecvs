@@ -274,7 +274,7 @@ bool RaytraceableOptiMesh::TreeNode::intersect(RayIntersection &intersection)
         if (t > 0.000001 && t < best.t) {
             best.t = t;
             best.normal = triangle.getNormal();
-            best.texCoord = Vector2dd(u, v);
+            best.uvCoord = Vector2dd(u, v);
             best.payload = triangle.num;
         }
     }
@@ -531,22 +531,25 @@ void RaytraceableOptiMesh::normal(RayIntersection &intersection)
     if (intersection.payload != -1 )
     {
         Vector3d32 face = mMesh->faces[intersection.payload];
-        double u = intersection.texCoord.x();
-        double v = intersection.texCoord.y();
+        Vector3d32 normalId  = mMesh->normalId[intersection.payload];
+        Vector3d32 textureId = mMesh->texId   [intersection.payload];
+
+        double u = intersection.uvCoord.x();
+        double v = intersection.uvCoord.y();
 
         if(mMesh->hasNormals) {
             Vector3dd n =
-                    mMesh->normalCoords[face.x()] * (1 - u - v) +
-                    mMesh->normalCoords[face.y()] * u +
-                    mMesh->normalCoords[face.z()] * v;
+                    mMesh->normalCoords[normalId.x()] * (1 - u - v) +
+                    mMesh->normalCoords[normalId.y()] * u +
+                    mMesh->normalCoords[normalId.z()] * v;
             intersection.normal = n.normalised();
         }
 
         if (mMesh->hasTexCoords) {
             Vector2dd tex =
-                    mMesh->textureCoords[face.x()] * (1 - u - v) +
-                    mMesh->textureCoords[face.y()] * u +
-                    mMesh->textureCoords[face.z()] * v;
+                    mMesh->textureCoords[textureId.x()] * (1 - u - v) +
+                    mMesh->textureCoords[textureId.y()] * u +
+                    mMesh->textureCoords[textureId.z()] * v;
             intersection.texCoord = tex;
 
         }
