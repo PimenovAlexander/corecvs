@@ -10,7 +10,7 @@
 
 using namespace corecvs;
 
-string  LibpngFileReader::prefix1(".jpg");
+string  LibpngFileReader::prefix1(".png");
 
 
 bool LibpngFileReader::acceptsFile(std::string name)
