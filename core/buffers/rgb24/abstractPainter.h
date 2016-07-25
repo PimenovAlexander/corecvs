@@ -326,7 +326,7 @@ public:
     }
 
 
-    void drawPolygon(const Polygon &p, ElementType color )
+    void drawPolygon(const Polygon &p, ElementType color)
     {
         if (p.empty())
             return;
@@ -335,21 +335,20 @@ public:
         {
             mTarget->drawLine(p[0].x(), p[0].y(), p[0].x(), p[0].y(), color);
         }
-        for (unsigned i = 0; i < p.size() - 1; i++ )
+        for (unsigned i = 0; i < p.size() - 1; i++)
         {
             mTarget->drawLine(p[i].x(), p[i].y(), p[i + 1].x(), p[i + 1].y(), color);
         }
         mTarget->drawLine(p[p.size() - 1].x(), p[p.size() - 1].y(), p[0].x(), p[0].y(), color);
     }
 
-    void drawHLine(int x1, int y1, int x2, ElementType &color )
+    void drawHLine(int x1, int y1, int x2, ElementType &color)
     {
         drawSpan(LineSpanInt(y1, x1, x2), color);
     }
 
-    void drawSpan(const LineSpanInt &span, ElementType &color )
+    void drawSpan(const LineSpanInt &span, ElementType &color)
     {
-
         LineSpanInt tspan = span;
         tspan.clip(mTarget->w, mTarget->h);
         for (int j = tspan.x1; j < tspan.x2; j++)

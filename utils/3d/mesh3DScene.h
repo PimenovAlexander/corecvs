@@ -111,7 +111,7 @@ public:
     virtual void prepareMesh(CloudViewDialog * /*dialog*/);
     virtual void drawMyself(CloudViewDialog *dialog);
 
-    virtual ~CameraScene() {};
+    virtual ~CameraScene() {}
 };
 
 class StereoCameraScene : public Mesh3DScene {

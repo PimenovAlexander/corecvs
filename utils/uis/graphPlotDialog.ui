@@ -11,10 +11,19 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>GraphPlotDialog</string>
+   <string>Graph Plot</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <property name="spacing">
@@ -79,7 +88,7 @@
          <string comment="Reset settings" extracomment="Reset settings"/>
         </property>
         <property name="icon">
-         <iconset resource="../../../../resources/main.qrc">
+         <iconset resource="../../../restricted/cvs/resources/resresource.qrc">
           <normaloff>:/new/prefix1/refresh.png</normaloff>:/new/prefix1/refresh.png</iconset>
         </property>
        </widget>
@@ -99,7 +108,7 @@
          <string comment="Save settings" extracomment="Save settings"/>
         </property>
         <property name="icon">
-         <iconset resource="../../../../resources/main.qrc">
+         <iconset resource="../../../restricted/cvs/resources/resresource.qrc">
           <normaloff>:/new/prefix1/install.png</normaloff>:/new/prefix1/install.png</iconset>
         </property>
        </widget>
@@ -119,7 +128,7 @@
          <string comment="Load settings" extracomment="Load settings"/>
         </property>
         <property name="icon">
-         <iconset resource="../../../../resources/main.qrc">
+         <iconset resource="../../../restricted/cvs/resources/resresource.qrc">
           <normaloff>:/new/prefix1/remove.png</normaloff>:/new/prefix1/remove.png</iconset>
         </property>
        </widget>
@@ -139,7 +148,7 @@
          <string>to CSV</string>
         </property>
         <property name="icon">
-         <iconset resource="../../../../resources/main.qrc">
+         <iconset resource="../../../restricted/cvs/resources/resresource.qrc">
           <normaloff>:/new/prefix1/install.png</normaloff>:/new/prefix1/install.png</iconset>
         </property>
         <property name="iconSize">
@@ -165,7 +174,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../../../resources/main.qrc">
+         <iconset resource="../../../restricted/cvs/resources/resresource.qrc">
           <normaloff>:/new/prefix1/pause.png</normaloff>
           <normalon>:/new/prefix1/play.png</normalon>:/new/prefix1/pause.png</iconset>
         </property>
@@ -293,27 +302,6 @@
          <attribute name="verticalHeaderDefaultSectionSize">
           <number>21</number>
          </attribute>
-         <attribute name="verticalHeaderVisible">
-          <bool>false</bool>
-         </attribute>
-         <attribute name="verticalHeaderDefaultSectionSize">
-          <number>21</number>
-         </attribute>
-         <attribute name="horizontalHeaderStretchLastSection">
-          <bool>true</bool>
-         </attribute>
-         <attribute name="horizontalHeaderCascadingSectionResizes">
-          <bool>false</bool>
-         </attribute>
-         <attribute name="horizontalHeaderVisible">
-          <bool>true</bool>
-         </attribute>
-         <attribute name="horizontalHeaderMinimumSectionSize">
-          <number>40</number>
-         </attribute>
-         <attribute name="horizontalHeaderDefaultSectionSize">
-          <number>68</number>
-         </attribute>
          <column>
           <property name="text">
            <string>Name</string>
@@ -332,7 +320,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="../../../../resources/main.qrc">
+          <iconset resource="../../../restricted/cvs/resources/resresource.qrc">
            <normaloff>:/new/prefix1/up_alt.png</normaloff>:/new/prefix1/up_alt.png</iconset>
          </property>
         </widget>
@@ -343,7 +331,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="../../../../resources/main.qrc">
+          <iconset resource="../../../restricted/cvs/resources/resresource.qrc">
            <normaloff>:/new/prefix1/down_alt.png</normaloff>:/new/prefix1/down_alt.png</iconset>
          </property>
         </widget>
@@ -401,21 +389,6 @@
          </attribute>
          <attribute name="verticalHeaderDefaultSectionSize">
           <number>21</number>
-         </attribute>
-         <attribute name="verticalHeaderVisible">
-          <bool>false</bool>
-         </attribute>
-         <attribute name="verticalHeaderDefaultSectionSize">
-          <number>21</number>
-         </attribute>
-         <attribute name="horizontalHeaderStretchLastSection">
-          <bool>true</bool>
-         </attribute>
-         <attribute name="horizontalHeaderMinimumSectionSize">
-          <number>40</number>
-         </attribute>
-         <attribute name="horizontalHeaderDefaultSectionSize">
-          <number>68</number>
          </attribute>
          <column>
           <property name="text">
@@ -483,19 +456,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
-  <include location="../../../../resources/main.qrc"/>
+  <include location="../../../restricted/cvs/resources/resresource.qrc"/>
  </resources>
  <connections/>
  <slots>

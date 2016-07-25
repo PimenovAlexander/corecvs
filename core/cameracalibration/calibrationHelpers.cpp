@@ -1,7 +1,7 @@
 #include "calibrationHelpers.h"
 #include "mesh3d.h"
 #include "calibrationCamera.h"
-#include "calibrationPhotostation.h"
+//#include "calibrationPhotostation.h"
 #include "fixtureScene.h"
 #include "selectableGeometryFeatures.h"
 #include "abstractPainter.h"
@@ -74,7 +74,7 @@ void CalibrationHelpers::drawCamera(Mesh3D &mesh, const CameraModel &cam, double
     //mesh.addLine(ppv, qc * (invK * center) + cc);
 }
 
-
+#if 0
 void CalibrationHelpers::drawPly(Mesh3D &mesh, const Photostation &ps, double scale)
 {
     // Colorblind-safe palette
@@ -111,6 +111,7 @@ void CalibrationHelpers::drawPly(Mesh3D &mesh, const Photostation &ps, double sc
         mesh.popTransform();
     }
 }
+#endif
 
 void CalibrationHelpers::drawPly(Mesh3D &mesh, const CameraFixture &ps, double scale)
 {
@@ -166,11 +167,13 @@ void CalibrationHelpers::drawPly(Mesh3D &mesh, const ObservationList &list)
     }
 }
 
+#if 0
 void CalibrationHelpers::drawPly(Mesh3D &mesh, const Photostation &ps, const ObservationList &list, double scale)
 {
     drawPly(mesh, list);
     drawPly(mesh, ps, scale);
 }
+#endif
 
 void CalibrationHelpers::drawPly(Mesh3D &mesh, SceneFeaturePoint fp, double scale)
 {

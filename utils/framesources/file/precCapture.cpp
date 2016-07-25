@@ -19,10 +19,11 @@
 
 /** Capture interface with precise simulation from the value "fps" view point
  */
-FilePreciseCapture::FilePreciseCapture(QString const &params, bool isVerbose)
+FilePreciseCapture::FilePreciseCapture(QString const &params, bool isVerbose, bool isRGB)
     : AbstractFileCapture(params)
     , mCurrentCount(-1)
 {
+    mIsRgb = isRGB;
     mVerbose = isVerbose;
 
     mSpin = new FileSpinThread(this, mDelay, mCurrent);
@@ -33,6 +34,7 @@ FilePreciseCapture::FilePreciseCapture(QString const &params, bool isVerbose)
 FilePreciseCapture::FramePair FilePreciseCapture::getFrame()
 {
     FramePair result;
+    mVerbose = true;
 
     if (mCurrentCount < 0)
     {
@@ -40,19 +42,34 @@ FilePreciseCapture::FramePair FilePreciseCapture::getFrame()
         return result;
     }
 
+    if (mVerbose)
+    {
+        printf("prec: Will load (%s)", mIsRgb ? "rgb" : "gray");
+    }
+
     mProtectFrame.lock();
         string leftFileName = getImageFileName(mCurrentCount, 0);
         if (mVerbose)
             printf("prec: grabbing left  :%s\n", leftFileName.c_str());
 
-        result.bufferLeft    = BufferFactory::getInstance()->loadG12Bitmap(leftFileName.c_str());
+        if (mIsRgb) {
+            result.rgbBufferLeft = BufferFactory::getInstance()->loadRGB24Bitmap(leftFileName.c_str());
+            result.bufferLeft    = result.rgbBufferLeft->toG12Buffer();
+        } else {
+            result.bufferLeft    = BufferFactory::getInstance()->loadG12Bitmap(leftFileName.c_str());
+        }
         result.timeStampLeft = mTimeStamp;
 
         string rightFileName = getImageFileName(mCurrentCount, 1);
         if (mVerbose)
             printf("prec: grabbing right :%s, %d\n", rightFileName.c_str(), mShouldSkipUnclaimed != false);
 
-        result.bufferRight    = BufferFactory::getInstance()->loadG12Bitmap(rightFileName.c_str());
+        if (mIsRgb) {
+            result.rgbBufferRight = BufferFactory::getInstance()->loadRGB24Bitmap(rightFileName.c_str());
+            result.bufferRight    = result.rgbBufferRight->toG12Buffer();
+        } else {
+            result.bufferRight    = BufferFactory::getInstance()->loadG12Bitmap(rightFileName.c_str());
+        }
         result.timeStampRight = mTimeStamp;
 
         if (!mShouldSkipUnclaimed) {

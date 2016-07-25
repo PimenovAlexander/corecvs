@@ -12,25 +12,26 @@
 #include <immintrin.h>
 #include <stdint.h>
 
+#include "avxInteger.h"
 #include "global.h"
 #include "fixedVector.h"
+
 namespace corecvs {
 
 
-class ALIGN_DATA(16) Int16x16
+class ALIGN_DATA(32) Int16x16 : public AVXInteger<Int16x16>
 {
-public:
-    __m256i data;
-    /* Constructors */
+public:  
+    static const int SIZE = 16;
 
-    Int16x16(){};
+    Int16x16(){}
 
     /**
      *  Copy constructor
      **/
-    Int16x16(const Int16x16 &other) {
-        this->data = other.data;
-    }
+    Int16x16(const Int16x16 &other) :
+        AVXInteger<Int16x16>(other.data)
+    {}
 
     /**
      *  Create SSE integer vector from integer constant
@@ -38,6 +39,10 @@ public:
     explicit Int16x16(const __m256i &_data) {
         this->data = _data;
     }
+
+    template<class Sibling>
+    explicit Int16x16(const AVXInteger<Sibling> &other)  : AVXInteger<Int16x16>(other.data) {}
+
 
     explicit Int16x16(int16_t constant) {
         this->data = _mm256_set1_epi16(constant);
@@ -160,7 +165,11 @@ static uint64_t   streamedWrites;
 template<int idx>
     uint16_t getInt() const
     {
+#ifdef WIN32
+        return 0xFFFF;
+#else
         return _mm256_extract_epi16(this->data, idx);
+#endif
     }
 
     inline uint16_t operator[] (uint32_t idx) const
@@ -286,129 +295,95 @@ template<int idx>
 
 };
 
-FORCE_INLINE inline Int16x16 operator &(const Int16x16 &left, const Int16x16 &right) {
-    return Int16x16(_mm256_and_si128(left.data, right.data));
-}
-
-FORCE_INLINE inline Int16x16 operator |(const Int16x16 &left, const Int16x16 &right) {
-    return Int16x16(_mm256_or_si128(left.data, right.data));
-}
-
-FORCE_INLINE inline Int16x16 operator ^(const Int16x16 &left, const Int16x16 &right) {
-    return Int16x16(_mm256_xor_si128(left.data, right.data));
-}
-
-FORCE_INLINE inline Int16x16 andNot    (const Int16x16 &left, const Int16x16 &right) {
-    return Int16x16(_mm256_andnot_si128(left.data, right.data));
-}
-
-FORCE_INLINE inline Int16x16 operator &=(Int16x16 &left, const Int16x16 &right) {
-    left.data = _mm256_and_si128(left.data, right.data);
-    return left;
-}
-
-FORCE_INLINE inline Int16x16 operator |=(Int16x16 &left, const Int16x16 &right) {
-    left.data = _mm256_or_si128(left.data, right.data);
-    return left;
-}
-
-FORCE_INLINE inline Int16x16 operator ^=(Int16x16 &left, const Int16x16 &right) {
-    left.data = _mm256_xor_si128(left.data, right.data);
-    return left;
-}
-
-FORCE_INLINE inline Int16x16 andNotThis (Int16x16 &left, const Int16x16 &right) {
-    left.data = _mm256_andnot_si128(left.data, right.data);
-    return left;
-}
-
-FORCE_INLINE inline Int16x16 operator +(const Int16x16 &left, const Int16x16 &right) {
+FORCE_INLINE Int16x16 operator +(const Int16x16 &left, const Int16x16 &right) {
     return Int16x16(_mm256_add_epi16(left.data, right.data));
 }
 
-FORCE_INLINE inline Int16x16 operator -(const Int16x16 &left, const Int16x16 &right) {
+FORCE_INLINE Int16x16 operator -(const Int16x16 &left, const Int16x16 &right) {
     return Int16x16(_mm256_sub_epi16(left.data, right.data));
 }
 
-FORCE_INLINE inline Int16x16 operator +=(Int16x16 &left, const Int16x16 &right) {
+FORCE_INLINE Int16x16 operator +=(Int16x16 &left, const Int16x16 &right) {
     left.data = _mm256_add_epi16(left.data, right.data);
     return left;
 }
 
-FORCE_INLINE inline Int16x16 operator -=(Int16x16 &left, const Int16x16 &right) {
+FORCE_INLINE Int16x16 operator -=(Int16x16 &left, const Int16x16 &right) {
     left.data = _mm256_sub_epi16(left.data, right.data);
     return left;
 }
 
-FORCE_INLINE inline Int16x16 operator <<    (const Int16x16 &left, uint32_t count) {
+FORCE_INLINE Int16x16 operator <<    (const Int16x16 &left, uint32_t count) {
     return Int16x16(_mm256_slli_epi16(left.data, count));
 }
 
-FORCE_INLINE inline Int16x16 operator >>    (const Int16x16 &left, uint32_t count) {
+FORCE_INLINE Int16x16 operator >>    (const Int16x16 &left, uint32_t count) {
     return Int16x16(_mm256_srli_epi16(left.data, count));
 }
 
-FORCE_INLINE inline Int16x16 shiftArithmetic(const Int16x16 &left, uint32_t count) {
+FORCE_INLINE Int16x16 shiftArithmetic(const Int16x16 &left, uint32_t count) {
     return Int16x16(_mm256_srai_epi16(left.data, count));
 }
 
-FORCE_INLINE inline Int16x16 operator <<=(Int16x16 &left, uint32_t count) {
+FORCE_INLINE Int16x16 operator <<=(Int16x16 &left, uint32_t count) {
     left.data = _mm256_slli_epi16(left.data, count);
     return left;
 }
 
-FORCE_INLINE inline Int16x16 operator >>=(Int16x16 &left, uint32_t count) {
+FORCE_INLINE Int16x16 operator >>=(Int16x16 &left, uint32_t count) {
     left.data = _mm256_srli_epi16(left.data, count);
     return left;
 }
 
-FORCE_INLINE inline Int16x16 operator <<    (const Int16x16 &left, const Int16x16 &right) {
+#if 0
+FORCE_INLINE Int16x16 operator <<    (const Int16x16 &left, const Int16x16 &right) {
     return Int16x16(_mm256_sll_epi16(left.data, right.data));
 }
 
-FORCE_INLINE inline Int16x16 operator >>    (const Int16x16 &left, const Int16x16 &right) {
+FORCE_INLINE Int16x16 operator >>    (const Int16x16 &left, const Int16x16 &right) {
     return Int16x16(_mm256_srl_epi16(left.data, right.data));
 }
 
-FORCE_INLINE inline Int16x16 shiftArithmetic(const Int16x16 &left, const Int16x16 &right) {
+FORCE_INLINE Int16x16 shiftArithmetic(const Int16x16 &left, const Int16x16 &right) {
     return Int16x16(_mm256_sra_epi16(left.data, right.data));
 }
 
-FORCE_INLINE inline Int16x16 operator <<=(Int16x16 &left, const Int16x16 &right) {
+FORCE_INLINE Int16x16 operator <<=(Int16x16 &left, const Int16x16 &right) {
     left.data = _mm256_sll_epi16(left.data, right.data);
     return left;
 }
 
-FORCE_INLINE inline Int16x16 operator >>=(Int16x16 &left, const Int16x16 &right) {
+FORCE_INLINE Int16x16 operator >>=(Int16x16 &left, const Int16x16 &right) {
     left.data = _mm256_srl_epi16(left.data, right.data);
     return left;
 }
 
-FORCE_INLINE inline Int16x16 operator <    (const Int16x16 &left, const Int16x16 &right) {
+FORCE_INLINE Int16x16 operator <    (const Int16x16 &left, const Int16x16 &right) {
     return Int16x16(_mm256_cmplt_epi16(left.data, right.data));
 }
+#endif
 
-FORCE_INLINE inline Int16x16 operator >    (const Int16x16 &left, const Int16x16 &right) {
+FORCE_INLINE Int16x16 operator >    (const Int16x16 &left, const Int16x16 &right) {
     return Int16x16(_mm256_cmpgt_epi16(left.data, right.data));
 }
 
-FORCE_INLINE inline Int16x16 operator ==   (const Int16x16 &left, const Int16x16 &right) {
+FORCE_INLINE Int16x16 operator ==   (const Int16x16 &left, const Int16x16 &right) {
     return Int16x16(_mm256_cmpeq_epi16(left.data, right.data));
 }
 
-FORCE_INLINE inline Int16x16 productLowerPart  (const Int16x16 &left, const Int16x16 &right) {
+FORCE_INLINE Int16x16 productLowerPart  (const Int16x16 &left, const Int16x16 &right) {
     return Int16x16(_mm256_mullo_epi16(left.data, right.data));
 }
 
-FORCE_INLINE inline Int16x16 productHigherPart (const Int16x16 &left, const Int16x16 &right) {
+FORCE_INLINE Int16x16 productHigherPart (const Int16x16 &left, const Int16x16 &right) {
     return Int16x16(_mm256_mulhi_epi16(left.data, right.data));
 }
 
-FORCE_INLINE inline Int16x16 operator *    (const Int16x16 &left, const Int16x16 &right) {
+FORCE_INLINE Int16x16 operator *    (const Int16x16 &left, const Int16x16 &right) {
     return productLowerPart(left, right);
 }
 
-FORCE_INLINE inline Int16x16 operator *=   (Int16x16 &left, const Int16x16 &right) {
+FORCE_INLINE Int16x16 operator *=   (Int16x16 &left, const Int16x16 &right) {
     left = productLowerPart(left, right);
     return left;
 }
@@ -433,15 +408,15 @@ FORCE_INLINE inline Int32x8 productExtending (const Int16x16 &left, const Int16x
     return Int32x8(unpackLower4(lowParts,highParts), unpackHigher4 (lowParts,highParts));
 }*/
 
-FORCE_INLINE inline  Int16x16 operator *  (      int16_t left, Int16x16 &right) {
+FORCE_INLINE Int16x16 operator *  (      int16_t left, Int16x16 &right) {
     return right * Int16x16(left);
 }
 
-FORCE_INLINE inline  Int16x16 operator *  (const Int16x16 &left, int16_t right) {
+FORCE_INLINE Int16x16 operator *  (const Int16x16 &left, int16_t right) {
     return left * Int16x16(right);
 }
 
-FORCE_INLINE inline  Int16x16 operator *= (Int16x16 &left, int16_t right) {
+FORCE_INLINE Int16x16 operator *= (Int16x16 &left, int16_t right) {
     left = left * right;
     return left;
 }

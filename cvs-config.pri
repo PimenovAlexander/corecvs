@@ -18,7 +18,7 @@
     CONFIG +=   \
                 \
         debug \
-#        release \
+        release \
 
 }
 
@@ -31,7 +31,7 @@ CONFIG +=       \
    with_sse3    \
    with_sse4    \
    with_avx     \
-   with_avx2    \
+#   with_avx2    \
    with_tbb     \
    with_blas    \
 
@@ -63,6 +63,8 @@ CONFIG +=                   \
         with_ueye           \
 #        with_httpserver     \
         with_avcodec        \
+        with_libjpeg        \
+        with_libpng         \
 
 
 win32 {
@@ -73,7 +75,7 @@ win32 {
 win32 {
 #    CONFIG += with_opencv
 } else {
-#     CONFIG += with_opencv
+     CONFIG += with_opencv
 }
 
 win32 {

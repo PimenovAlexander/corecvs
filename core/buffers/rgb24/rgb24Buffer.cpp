@@ -800,17 +800,10 @@ void RGB24Buffer::fillWithUYVU(uint8_t *data)
 
 void RGB24Buffer::fillWithYUVFormat (uint8_t *yuyv, bool fillAsUYVY)
 {
-    int iy1 = 0;
-    int iu  = 1;
-    int iy2 = 2;
-    int iv  = 3;
-    if(fillAsUYVY)
-    {
-        iu  = 0;
-        iy1 = 1;
-        iv  = 2;
-        iy2 = 3;
-    }
+    cint iy1 = fillAsUYVY ? 1 : 0;
+    cint iu  = fillAsUYVY ? 0 : 1;
+    cint iy2 = fillAsUYVY ? 3 : 2;
+    cint iv  = fillAsUYVY ? 2 : 3;
 
     for (int i = 0; i < h; i++)
     {
@@ -1026,6 +1019,22 @@ G8Buffer* RGB24Buffer::getChannel(ImageChannel::ImageChannel channel)
                 case ImageChannel::B:
                     pixel = element(i,j).b();
                     break;
+                case ImageChannel::U:
+                    pixel = element(i,j).u();
+                    break;
+                case ImageChannel::V:
+                    pixel = element(i,j).v();
+                    break;
+                case ImageChannel::CR:
+                    pixel = element(i,j).cr();
+                    break;
+                case ImageChannel::CB:
+                    pixel = element(i,j).cb();
+                    break;
+                case ImageChannel::CHROMA:
+                    pixel = element(i,j).chroma();
+                    break;
+
                 default:
                 case ImageChannel::LUMA:
                     pixel = element(i,j).luma();

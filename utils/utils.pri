@@ -144,6 +144,7 @@ with_opencv {                                       # all this stuff was extract
     }
 }
 
+
 with_siftgpu {
     SIFTGPU_WRAPPER_DIR = $$UTILSDIR/../wrappers/siftgpu
     DEFINES += WITH_SIFTGPU

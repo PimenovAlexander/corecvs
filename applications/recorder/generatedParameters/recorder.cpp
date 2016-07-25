@@ -56,7 +56,7 @@ int Recorder::staticInit()
           "sequence_%04d_c%d.pgm",
           "fileTemplate",
           "fileTemplate",
-          "fileTemplate"
+          "fileTemplate"ay
         )
     );
    return 0;

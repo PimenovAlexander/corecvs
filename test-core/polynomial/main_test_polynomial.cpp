@@ -163,7 +163,7 @@ TEST(PolynomialMatrixTest, testDet)
     ASSERT_NEAR(P[4],-5.0, 1e-9);
     ASSERT_NEAR(P[5], 2.0, 1e-9);
 }
-#endif
+#endif // WITH_BLAS
 
 
 TEST(PolynomialTest, testInterpolation)
@@ -361,4 +361,4 @@ TEST(PolynomialSolversTest, testPowN2)
             ASSERT_NEAR(roots[i], roots2[i], REL_SOL_TOLERANCE * std::abs(roots[i]));
     }
 }
-#endif
+#endif // WITH_BLAS

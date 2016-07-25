@@ -13,7 +13,7 @@
 
 namespace corecvs {
 
-class ALIGN_DATA(16) Float32x8
+class ALIGN_DATA(32) Float32x8
 {
 public:
     __m256 data;

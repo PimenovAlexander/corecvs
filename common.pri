@@ -246,8 +246,8 @@ isEmpty(CCACHE_TOOLCHAIN_ON) {
 
     QMAKE_CFLAGS_RELEASE   += -O3
     QMAKE_CXXFLAGS_RELEASE += -O3
-#   QMAKE_CFLAGS_RELEASE   += -g3
-#   QMAKE_CXXFLAGS_RELEASE += -g3
+   QMAKE_CFLAGS_RELEASE   += -g3
+   QMAKE_CXXFLAGS_RELEASE += -g3
 #   QMAKE_CFLAGS_RELEASE   += -mtune=native     # TODO: native doesn't work while we could use (SSE & !AVX)
 #   QMAKE_CXXFLAGS_RELEASE += -mtune=native     # TODO: native doesn't work while we could use (SSE & !AVX)
 
@@ -554,3 +554,6 @@ with_fftw {
 # QMAKE_CXXFLAGS += -Wunreachable-code
 
 #OPEN_ROOT_DIRECTORY = $$PWD
+
+DISTFILES += \
+    $$PWD/arduinoscancontrol.ino

@@ -21,4 +21,12 @@ Cloud* Cloud::filterByAABB(const AxisAlignedBox3d &box)
     return result;
 }
 
+void Cloud::andToMesh(Mesh3D &mesh)
+{
+    for (Cloud::iterator it = this->begin(); it != this->end(); ++it)
+    {
+        mesh.addPoint((*it).point);
+    }
+}
+
 } //namespace corecvs

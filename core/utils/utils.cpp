@@ -42,6 +42,12 @@ bool startsWith(const string &str, const string &prefix)
     return (str.compare(0, prefix.size(), prefix) == 0);
 }
 
+bool endsWith(const std::string &str, const std::string &postfix)
+{
+    return (str.compare(str.length() - postfix.length(), postfix.length(), postfix) == 0);
+}
+
+
 string getEnvDirPath(cchar *envVarName)
 {
     cchar* dir = std::getenv(envVarName);

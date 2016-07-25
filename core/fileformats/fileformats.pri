@@ -6,7 +6,8 @@ HEADERS += \
     fileformats/plyLoader.h \
     fileformats/stlLoader.h \
     fileformats/metamap.h \
-    fileformats/meshLoader.h
+    fileformats/meshLoader.h \
+    fileformats/objLoader.h
 
 
 SOURCES += \
@@ -16,6 +17,7 @@ SOURCES += \
     fileformats/rawLoader.cpp \
     fileformats/plyLoader.cpp \
     fileformats/stlLoader.cpp \
-    fileformats/meshLoader.cpp
+    fileformats/meshLoader.cpp \
+    fileformats/objLoader.cpp
     
     

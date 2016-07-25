@@ -79,7 +79,7 @@ public:
         this->data = value.data;
     }
 
-    explicit inline UInt8x16(const Int32x8 &value)
+    explicit inline UInt8x16(const Int32x8v &value)
     {
         this->data =  _mm_packs_epi32(value.element[0].data, value.element[1].data);
     }
@@ -105,6 +105,11 @@ public:
     }
 
     static UInt8x16 packUnsigned(const Int16x8 &first, const Int16x8 &second)
+    {
+        return UInt8x16(_mm_packus_epi16(first.data, second.data));
+    }
+
+    static UInt8x16 packUnsigned(const UInt16x8 &first, const UInt16x8 &second)
     {
         return UInt8x16(_mm_packus_epi16(first.data, second.data));
     }
@@ -221,7 +226,7 @@ template<int idx>
     }
 
 #ifdef NYI
-    inline Int32x8 expand() const
+    inline Int32x8v expand() const
     {
         return Int32x8(
                 unpackLower4 (*this, UInt8x16((uint16_t)0)),
@@ -261,7 +266,7 @@ template<int idx>
 
     friend UInt8x16 productLowerPart (const UInt8x16 &left, const UInt8x16 &right);
     friend UInt8x16 productHigherPart(const UInt8x16 &left, const UInt8x16 &right);
-    friend Int32x8 productExtending (const UInt8x16 &left, const UInt8x16 &right);
+    friend Int32x8v productExtending (const UInt8x16 &left, const UInt8x16 &right);
 
     /* Slow but helpful */
     friend UInt8x16 operator *  (      int16_t right, UInt8x16 &left);

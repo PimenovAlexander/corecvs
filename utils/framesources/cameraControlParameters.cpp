@@ -37,6 +37,7 @@ const char *CameraParameters::names[] = {
     "AUTO WHITE BALANCE",
     "POWER LINE FREQUENCY",
     "BACKLIGHT COMPENSATION",
+    "FOCUS RELATIVE",
     "AUTO_FOCUS",
 
     "UEYE MASTER FLASH DELAY",

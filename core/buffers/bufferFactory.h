@@ -1,11 +1,10 @@
 #pragma once
 /**
  * \file bufferFactory.h
- * \brief This file contains the expendable interface for loading bitmaps from files and/or streams
+ * \brief This file contains the expandable interface for loading bitmaps from files and/or streams
  *
  * \ingroup cppcorefiles
  * \date Jun 22, 2010
- * \author alexander
  */
 #include <string>
 #include <vector>
@@ -31,8 +30,9 @@ public:
      */
     static BufferFactory* getInstance();
 
-    /** Public function to add own buffer loader, i.e. QtFileLoader
-     */
+    /**
+     * Public function to add own buffer loader, i.e. QtFileLoader
+     **/
     bool registerLoader(BufferLoader<G12Buffer> * loader)
     {
         mLoadersG12.push_back(loader);

@@ -75,10 +75,12 @@ public:
     friend istream &operator >> (istream &in, Prop &toLoad);
 
     PLYLoader() :
-        trace (false)
+        trace (true)
     {}
 
     int loadPLY(istream &input, Mesh3D &mesh);
+    int savePLY(ostream &out, Mesh3D &mesh);
+
     virtual ~PLYLoader();
 };
 

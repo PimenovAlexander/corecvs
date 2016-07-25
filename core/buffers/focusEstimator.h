@@ -1,11 +1,11 @@
-#pragma once
+#ifndef FOCUS_ESTIMATOR_H
+#define FOCUS_ESTIMATOR_H
 /**
  * \file focusEstimator.h
  * \brief a header for focusEstimator.cpp
  *
  * \ingroup cppcorefiles
  * \date Sept 21, 2015
- * \author alexander
  */
 
 namespace corecvs {
@@ -43,3 +43,5 @@ public:
 };
 
 } //namespace corecvs
+
+#endif // FOCUS_ESTIMATOR_H

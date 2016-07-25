@@ -72,7 +72,7 @@ ImageCaptureInterface* ImageCaptureInterface::fabric(string input, bool isRGB)
     if (input.substr(0, prec.size()).compare(prec) == 0)
     {
         string tmp = input.substr(prec.size());
-        return new FilePreciseCapture(QString(tmp.c_str()), false);
+        return new FilePreciseCapture(QString(tmp.c_str()), false, isRGB);
     }
 
 #ifdef WITH_SYNCCAM

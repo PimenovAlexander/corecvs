@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ScannerParametersControlWidget</class>
+ <widget class="QWidget" name="ScannerParametersControlWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>ScannerParameters</string>
+  </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <property name="margin">
+     <number>3</number>
+    </property>
+    <property name="spacing">
+     <number>3</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_0">
+       <property name="text">
+         <string>channel</string>
+       </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="channelComboBox">
+       <property name="currentIndex">
+         <number>0</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>R</string>
+        </property>
+        <property name="icon">
+        <iconset resource="main.qrc">
+         <normaloff>:/new/colors/colors/color_red.png</normaloff>:/new/colors/colors/color_red.png
+        </iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>G</string>
+        </property>
+        <property name="icon">
+        <iconset resource="main.qrc">
+         <normaloff>:/new/colors/colors/color_green.png</normaloff>:/new/colors/colors/color_green.png
+        </iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>B</string>
+        </property>
+        <property name="icon">
+        <iconset resource="main.qrc">
+         <normaloff>:/new/colors/colors/color_blue.png</normaloff>:/new/colors/colors/color_blue.png
+        </iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Alpha</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Y</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Cr</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Cb</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>U</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>V</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Chroma</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Gray</string>
+        </property>
+        <property name="icon">
+        <iconset resource="main.qrc">
+         <normaloff>:/new/colors/colors/color_gray.png</normaloff>:/new/colors/colors/color_gray.png
+        </iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Luma</string>
+        </property>
+        <property name="icon">
+        <iconset resource="main.qrc">
+         <normaloff>:/new/colors/colors/color_gray.png</normaloff>:/new/colors/colors/color_gray.png
+        </iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Hue</string>
+        </property>
+        <property name="icon">
+        <iconset resource="main.qrc">
+         <normaloff>:/new/colors/colors/color_wheel.png</normaloff>:/new/colors/colors/color_wheel.png
+        </iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Saturation</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Value</string>
+        </property>
+       </item>
+       <property name="toolTip">
+         <string>channel</string>
+       </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_1">
+       <property name="text">
+         <string>algo</string>
+       </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QComboBox" name="algoComboBox">
+       <property name="currentIndex">
+         <number>0</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>Brightness</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Hue</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Dummy</string>
+        </property>
+       </item>
+       <property name="toolTip">
+         <string>algo</string>
+       </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_2">
+       <property name="text">
+         <string>red threshold</string>
+       </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QSpinBox" name="redThresholdSpinBox">
+       <property name="toolTip">
+         <string>red threshold</string>
+       </property>
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>255</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>200</number>
+       </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_3">
+       <property name="text">
+         <string>height</string>
+       </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QDoubleSpinBox" name="heightSpinBox">
+       <property name="toolTip">
+         <string>height</string>
+       </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_4">
+       <property name="text">
+         <string>Graph line</string>
+       </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QSpinBox" name="graphLineSpinBox">
+       <property name="toolTip">
+         <string>Graph line</string>
+       </property>
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>1920</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>960</number>
+       </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="label_5">
+       <property name="text">
+         <string>Use SSE</string>
+       </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QCheckBox" name="useSSECheckBox">
+       <property name="toolTip">
+         <string>Use SSE</string>
+       </property>
+       <property name="checked">
+           <bool>true</bool>
+       </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="label_6">
+       <property name="text">
+         <string>Calculate convolution</string>
+       </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="QCheckBox" name="calculateConvolutionCheckBox">
+       <property name="toolTip">
+         <string>Calculate convolution</string>
+       </property>
+       <property name="checked">
+           <bool>true</bool>
+       </property>
+     </widget>
+    </item>
+    <item row="7" column="0">
+     <widget class="QLabel" name="label_7">
+       <property name="text">
+         <string>corner Score</string>
+       </property>
+     </widget>
+    </item>
+    <item row="7" column="1">
+     <widget class="QDoubleSpinBox" name="cornerScoreSpinBox">
+       <property name="toolTip">
+         <string>corner Score</string>
+       </property>
+       <property name="minimum">
+        <double>0</double>
+       </property>
+       <property name="maximum">
+        <double>255</double>
+       </property>
+       <property name="singleStep">
+        <double>1</double>
+       </property>
+       <property name="value">
+        <double>0.05</double>
+       </property>
+       <property name="decimals">
+        <number>3</number>
+       </property>
+     </widget>
+    </item>
+   <item row="8" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="8" column="2">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="3" margin="3"/>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>channelComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>ScannerParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>algoComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>ScannerParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>redThresholdSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>ScannerParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>heightSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>ScannerParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>graphLineSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>ScannerParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>useSSECheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>ScannerParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>calculateConvolutionCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>ScannerParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>cornerScoreSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>ScannerParametersControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+ </connections>
+ <slots>
+  <slot>changeParameters()</slot>
+ </slots>
+ <customwidgets>
+ </customwidgets>
+</ui>

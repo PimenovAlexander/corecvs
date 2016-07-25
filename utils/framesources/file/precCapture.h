@@ -16,7 +16,7 @@
 class FilePreciseCapture : public AbstractFileCapture
 {
 public:
-    FilePreciseCapture(QString const &params, bool isVerbose = true);
+    FilePreciseCapture(QString const &params, bool isVerbose = true, bool isRGB = true);
 
     virtual FramePair getFrame();
 

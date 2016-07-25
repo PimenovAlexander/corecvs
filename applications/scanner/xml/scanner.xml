@@ -1,0 +1,34 @@
+<poco version="5.0">
+
+  <include name="../../../tools/generator/xml/base.xml"/>
+  <include name="../../../core/xml/parameters.xml"/>
+
+  <enum name="Red Removal Type">
+    <item name="Brightness" id="0" />
+    <item name="Hue"        id="1" />
+    <item name="Dummy"      id="2" />
+
+  </enum>
+
+  <class name="Scanner Parameters" description="Scanner parameters">
+    <field type="ImageChannel" name="channel"   defaultValue="0"/>
+
+
+    <field type="Red Removal Type" name="algo"   defaultValue="0"/>
+    <field type="int" name="red threshold"   defaultValue="200" min="0" max="255"/>
+    <field type="double" name="height"  defaultValue="10"/>
+    <field type="int" name="Graph line"   defaultValue="960" min="0" max="1920"/>
+    <field type="bool" name="Use SSE"  defaultValue="true"/>
+    <field type="bool" name="Calculate convolution"  defaultValue="true"/>
+    <field type="double" name="corner Score"  defaultValue="0.05" min="0" max="255" decimals="3"/>
+
+
+  </class> 
+  
+  <parametersMapper name="Scanner">
+    <field type="Base Parameters" name="Base Parameters"/>
+    <field type="Scanner Parameters"        name="Scanner Parameters"/>
+    <field type="Presentation Parameters"   name="Presentation Parameters"/>
+  </parametersMapper>
+</poco>
+

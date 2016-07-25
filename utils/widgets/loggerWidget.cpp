@@ -10,7 +10,7 @@ const char *LoggerWidget::iconResources[] =
     ":/new/prefix1/stop.png"
 };
 
-STATIC_ASSERT(CORE_COUNT_OF(LoggerWidget::iconResources) == Log::LEVEL_LAST, wrong_number_of_icon_resources);
+STATIC_ASSERT(CORE_COUNT_OF(LoggerWidget::iconResources) == Log::LEVEL_LAST, wrong_number_of_icon_resources)
 
 LoggerWidget::LoggerWidget(QWidget *parent)
     : QWidget(parent)

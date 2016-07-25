@@ -25,28 +25,32 @@ HEADERS += \
     math/gradientDescent.h \
     math/helperFunctions.h \
     math/generic/genericMath.h \
+    \
     math/sse/sseWrapper.h \
     math/sse/sseInteger.h \
     math/sse/int64x2.h \
     math/sse/int32x4.h \
-    math/sse/int32x8.h \
+    math/sse/int32x8v.h \
     math/sse/float32x4.h \
     math/sse/float32x8.h \
     math/sse/floatT8.h \
     math/sse/sseMath.h \
     \
     math/sse/intBase16x8.h \
-    math/sse/__int16x8.h \
     math/sse/int16x8.h \
     math/sse/uInt16x8.h \
     \
     math/sse/intBase8x16.h \
     math/sse/int8x16.h \
-#    math/sse/uint8x16.h \
     math/sse/uInt8x16.h \
     math/sse/doublex2.h \
     math/sse/doublex4.h \
     math/sse/doublex8.h \
+    \
+    math/avx/avxInteger.h \
+    math/avx/int16x16.h \
+    math/avx/int32x8.h \
+    math/avx/int64x4.h \
     \
     math/mathUtils.h \
     math/eulerAngles.h \

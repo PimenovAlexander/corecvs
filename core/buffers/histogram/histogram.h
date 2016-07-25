@@ -95,7 +95,7 @@ public:
         int newSize = newMax - newMin + 1;
         if (newSize != (int)data.size())
         {
-            int s = data.size();
+            int s = (int)data.size();
             data.resize(newSize);
             for (; s >= 0 ; s--) {
                 data[s + min - newMin] = data[s];

@@ -24,6 +24,8 @@ class ALIGN_DATA(16) Int16x8 : public IntBase16x8<Int16x8>
 public:
     typedef IntBase16x8<Int16x8> BaseClass;
 
+    static const int SIZE = 8;
+
     /**
      * Constructors
      **/
@@ -79,14 +81,14 @@ public:
             BaseClass(value) {}
 
 
-    explicit inline Int16x8(const Int32x8 &value) :
+    explicit inline Int16x8(const Int32x8v &value) :
             BaseClass(value) {}
 
 
     /* Static fabrics */
-    inline Int32x8 expand() const
+    inline Int32x8v expand() const
     {
-        return Int32x8(
+        return Int32x8v(
                 Int16x8::unpackLower (*this, Int16x8((int16_t)0)),
                 Int16x8::unpackHigher(*this, Int16x8((int16_t)0))
                 );
@@ -118,7 +120,7 @@ public:
     /* Multiplication beware - overrun is possible*/
     friend Int16x8 productHigherPart (const Int16x8 &left, const Int16x8 &right);
 
-    friend Int32x8 productExtending (const Int16x8 &left, const Int16x8 &right);
+    friend Int32x8v productExtending (const Int16x8 &left, const Int16x8 &right);
 
     /**
      *   Create a 32bit word mixing and interleaving even parts of the input
@@ -198,12 +200,12 @@ FORCE_INLINE Int16x8 productHigherPart (const Int16x8 &left, const Int16x8 &righ
     return Int16x8(_mm_mulhi_epi16(left.data, right.data));
 }
 
-FORCE_INLINE Int32x8 productExtending (const Int16x8 &left, const Int16x8 &right)
+FORCE_INLINE Int32x8v productExtending (const Int16x8 &left, const Int16x8 &right)
 {
     Int16x8  lowParts(productLowerPart (left, right));
     Int16x8 highParts(productHigherPart(left, right));
 
-    return Int32x8(Int16x8::unpackLower (lowParts, highParts)
+    return Int32x8v(Int16x8::unpackLower (lowParts, highParts)
                  , Int16x8::unpackHigher(lowParts, highParts));
 }
 

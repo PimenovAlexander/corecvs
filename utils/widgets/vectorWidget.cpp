@@ -48,7 +48,7 @@ DoubleVectorWidget::DoubleVectorWidget(QWidget *parent) :
 
 DoubleVectorWidget::~DoubleVectorWidget()
 {
-
+    delete ui;
 }
 
 void DoubleVectorWidget::addEntry()

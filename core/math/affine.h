@@ -11,6 +11,8 @@
 #include "vector3d.h"
 #include "quaternion.h"
 #include "matrix33.h"
+#include "line.h"
+
 namespace corecvs {
 
 
@@ -55,6 +57,11 @@ public:
     friend inline Vector3dd operator *(const Affine3D &affine, const Vector3dd &x)
     {
         return affine.rotor * x + affine.shift;
+    }
+
+    friend inline Ray3d operator *(const Affine3D &affine, const Ray3d &r)
+    {
+        return Ray3d(affine.rotor * r.a, affine * r.p);
     }
 
     inline Vector3dd apply(const Vector3dd &x) const

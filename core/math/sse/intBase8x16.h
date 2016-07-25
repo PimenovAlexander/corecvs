@@ -78,7 +78,7 @@ public:
     }
 #endif
 
-    explicit inline IntBase8x16(const Int32x8 &value)
+    explicit inline IntBase8x16(const Int32x8v &value)
     {
         this->data =  _mm_packs_epi32(value.element[0].data, value.element[1].data);
     }
@@ -219,7 +219,7 @@ template<int idx>
     }
 
 #ifdef NYI
-    inline Int32x8 expand() const
+    inline Int32x8v expand() const
     {
         return Int32x8(
                 unpackLower4 (*this, IntBase8x16((uint16_t)0)),
@@ -306,7 +306,7 @@ template<int idx>
 #ifdef UNSUPPORTED
     friend IntBase8x16 productLowerPart (const IntBase8x16 &left, const IntBase8x16 &right);
     friend IntBase8x16 productHigherPart(const IntBase8x16 &left, const IntBase8x16 &right);
-    friend Int32x8 productExtending (const IntBase8x16 &left, const IntBase8x16 &right);
+    friend Int32x8v productExtending (const IntBase8x16 &left, const IntBase8x16 &right);
 
     /* Multiplication beware - overrun is possible*/
     friend FORCE_INLINE IntBase8x16 operator * (const IntBase8x16 &left, const IntBase8x16 &right) {

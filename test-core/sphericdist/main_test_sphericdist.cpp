@@ -18,7 +18,6 @@
 #include "sphericalCorrectionLUT.h"
 
 
-using namespace std;
 using namespace corecvs;
 
 #define LUT_LEN 48

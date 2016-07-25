@@ -61,6 +61,15 @@ public:
 #define CFLOW_UNKNOWN_X_SSE Int32x4(INT16_MAX)
 #define CFLOW_UNKNOWN_Y_SSE Int32x4(INT16_MAX << 16)
 #define CFLOW_UNKNOWN_SSE   Int32x4((INT16_MAX << 16) | INT16_MAX)
+
+
+#define CFLOW_X_MASK_VEC    Int32xN(0xFFFF)
+#define CFLOW_Y_MASK_VEC    Int32xN(0xFFFF0000)
+#define CFLOW_UNKNOWN_X_VEC Int32xN(INT16_MAX)
+#define CFLOW_UNKNOWN_Y_VEC Int32xN(INT16_MAX << 16)
+#define CFLOW_UNKNOWN_VEC   Int32xN((INT16_MAX << 16) | INT16_MAX)
+
+
 #endif
 
     FlowBuffer(int32_t h, int32_t w) :
@@ -132,7 +141,33 @@ public:
     ALIGN_STACK_SSE inline void setElement_sse(const int32_t y, const int32_t x, const Int32x4 &item) {
         item.save((int32_t *)&element(y,x));
     }
+
+    /* Wrapper for the largest possible type */
+
+
+    ALIGN_STACK_SSE static inline Int32xN l1metric_vec(const Int16xN &dist) {
+        // Note, it is absolutely equal to the integer operations
+        return (Int32xN(dist.data) & CFLOW_X_MASK_VEC) + shiftLogical(Int32xN(dist.data), 16);
+    }
+
+    ALIGN_STACK_SSE inline Int32xN element_vec_w(const int32_t y, const int32_t x) {
+        return Int32xN((int32_t *)&(this->element(y, x)));
+    }
+    /* Note this differs form the normal version a little bit */
+    ALIGN_STACK_SSE inline static Int32xN isFlowUnknown_vec(const Int32xN &item) {
+        return (item == CFLOW_UNKNOWN_VEC);
+    }
+
+    ALIGN_STACK_SSE inline void setElement_vec(const int32_t y, const int32_t x, const Int32xN &item) {
+        item.save((int32_t *)&element(y,x));
+    }
+
+
+
+
 #endif
+
+
 
     static FlowBuffer* load(const string& path);
     bool               dump(const string& path) const;

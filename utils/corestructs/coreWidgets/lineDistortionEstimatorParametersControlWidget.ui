@@ -97,6 +97,9 @@
        <property name="value">
         <number>6</number>
        </property>
+       <property name="prefix">
+        <string>x^</string>
+       </property>
      </widget>
     </item>
     <item row="3" column="0">

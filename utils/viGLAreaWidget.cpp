@@ -1,7 +1,3 @@
-
-
-#include <math.h>
-
 #include "viGLAreaWidget.h"
 #include "g12Buffer.h"
 

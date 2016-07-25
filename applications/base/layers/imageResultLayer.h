@@ -92,8 +92,8 @@ ImageResultLayer::ImageResultLayer(
     : ResultLayerBase(LAYER_CLASS_ID)
     , mStyle(style)
 {
-    qDebug() << "ImageResultLayer::ImageResultLayer()"
-    << (images[0] ? "non null" : "null")   << ", " << (images[1] ? "non null" : "null");
+    //qDebug() << "ImageResultLayer::ImageResultLayer():"
+    //<< (images[0] ? "non null" : "null")   << ", " << (images[1] ? "non null" : "null");
 
     for (int id = 0; id < Frames::MAX_INPUTS_NUMBER; id++ )
     {

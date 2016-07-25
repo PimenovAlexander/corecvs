@@ -503,7 +503,14 @@ const V4L2CameraDescriptor::ParamIdMapStruct V4L2CameraDescriptor::paramIdMap[] 
         {V4L2_CID_WHITE_BALANCE_TEMPERATURE, CameraParameters::WHITE_BALANCE},
         {V4L2_CID_AUTO_WHITE_BALANCE, CameraParameters::AUTO_WHITE_BALANCE},
         {V4L2_CID_HFLIP, CameraParameters::HORIZONTAL_FLIP},
-        {V4L2_CID_VFLIP, CameraParameters::VERTICAL_FLIP}
+        {V4L2_CID_VFLIP, CameraParameters::VERTICAL_FLIP},
+
+        {V4L2_CID_FOCUS_ABSOLUTE, CameraParameters::FOCUS},
+        {V4L2_CID_FOCUS_RELATIVE, CameraParameters::FOCUS_RELATIVE},
+        {V4L2_CID_FOCUS_AUTO    , CameraParameters::AUTO_FOCUS},
+
+
+
 };
 
 

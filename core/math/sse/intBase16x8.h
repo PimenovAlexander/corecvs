@@ -16,7 +16,7 @@
 #include "fixedVector.h"
 #include "sseInteger.h"
 #include "int32x4.h"
-#include "int32x8.h"
+#include "int32x8v.h"
 
 namespace corecvs {
 
@@ -74,7 +74,7 @@ public:
 #endif
 
 
-    explicit inline IntBase16x8(const Int32x8 &value) :
+    explicit inline IntBase16x8(const Int32x8v &value) :
             SSEBase(
                 _mm_packs_epi32(
                     value.element[0].data,
@@ -166,7 +166,7 @@ template<int idx>
         return _mm_movemask_epi8(this->data);
     }
 
-    //inline Int32x8 expand() const
+    //inline Int32x8v expand() const
 
     /* Shuffle */
     template<int imm>

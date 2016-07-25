@@ -9,6 +9,7 @@
 
 #include "global.h"
 
+#include "sseWrapper.h"
 #include "puzzleBlock.h"
 #ifdef WITH_SSE4
 #include <smmintrin.h>
@@ -71,12 +72,17 @@ public:
         return UInt16x8((condition & ifTrue) | (andNot(condition, ifFalse)));
     }
 
-
-
     ALIGN_STACK_SSE static inline Int32x4 selector(const Int32x4 &condition, const Int32x4 &ifTrue, const Int32x4 &ifFalse)
     {
         return (condition & ifTrue) | (andNot(condition, ifFalse));
     }
+
+#ifdef WITH_AVX2
+    ALIGN_STACK_SSE static inline Int32x8 selector(const Int32x8 &condition, const Int32x8 &ifTrue, const Int32x8 &ifFalse)
+    {
+        return (condition & ifTrue) | (andNot(condition, ifFalse));
+    }
+#endif
 
     ALIGN_STACK_SSE static inline void fillOnes(UInt16x8 &var)
     {
@@ -143,6 +149,16 @@ public:
 
     ALIGN_STACK_SSE inline static UInt16x8 min (const UInt16x8 &left, const UInt16x8 &right) {
         return UInt16x8(_mm_min_epu16(left.data, right.data));
+    }
+#endif
+
+#ifdef WITH_AVX2
+    ALIGN_STACK_SSE inline static Int16x16 max (const Int16x16 &left, const Int16x16 &right) {
+        return Int16x16(_mm256_max_epi16(left.data, right.data));
+    }
+
+    ALIGN_STACK_SSE inline static Int16x16 min (const Int16x16 &left, const Int16x16 &right) {
+        return Int16x16(_mm256_min_epi16(left.data, right.data));
     }
 #endif
 

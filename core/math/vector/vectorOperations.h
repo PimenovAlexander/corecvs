@@ -37,6 +37,9 @@
 
 #include <stdio.h>
 #include <math.h>
+
+#include "global.h"
+
 #include "reflection.h"
 
 using std::numeric_limits;
@@ -589,7 +592,6 @@ public:
     }
 
 
-    //void mapToHypercube(const VectorOperationsBase &low, const VectorOperationsBase &high)
     void mapToHypercube(const RealType &low, const RealType &high)
     {
         for (int i = 0; i < _size(); i++)
@@ -599,7 +601,6 @@ public:
         }
     }
 
-    //friend ostream & operator <<(ostream &out, const VectorOperationsBase &vector)
     friend ostream & operator <<(ostream &out, const RealType &vector)
     {
         out << "[";
@@ -609,7 +610,6 @@ public:
         return out;
     }
 
-    // friend istream & operator >>(istream &in, VectorOperationsBase &vector)
     friend istream & operator >>(istream &in, RealType &vector)
     {
         for (int i = 0; i < vector._size(); i++)

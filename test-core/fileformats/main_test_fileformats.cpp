@@ -33,7 +33,7 @@ TEST(FileFormats, testFileFormats)
 
     /** Test case 2 */
     BMPLoader *bmpLoader = new BMPLoader();
-    G12Buffer *bmp = bmpLoader->load("data/testdata/test_bmp.bmp");
+    G12Buffer *bmp = bmpLoader->loadG12("data/testdata/test_bmp.bmp");
     CORE_ASSERT_TRUE(bmp->h == bmp->w, "BMP Image sizes corrupted");
     CORE_ASSERT_TRUE(bmp != NULL, "BMP Image load failed");
     CORE_ASSERT_TRUE(bmp->verify(), "BMP Image verification failed");
@@ -65,11 +65,31 @@ TEST(FileFormats, testFileFormats)
 
     /** Test case 5 */
     BMPLoader *bmpLoader1 = new BMPLoader();
-    G12Buffer *bmp1 = bmpLoader1->load("data/calib-object.bmp");
+    G12Buffer *bmp1 = bmpLoader1->loadG12("data/calib-object.bmp");
     CORE_ASSERT_TRUE(bmp1 != NULL, "BMP Image load failed");
     CORE_ASSERT_TRUE(bmp1->verify(), "BMP Image verification failed");
     delete_safe(bmp1);
     delete_safe(bmpLoader1);
+}
+
+TEST(FileFormats, DISABLED_testBMP24)
+{
+    BMPLoader *bmpLoader = new BMPLoader();
+    bmpLoader->trace = true;
+    G12Buffer   *bmp1 = bmpLoader->loadG12("first.bmp");
+    RGB24Buffer *bmp2 = bmpLoader->loadRGB("first.bmp");
+
+    cout << bmp1->h << " " << bmp1->w << endl;
+    cout << bmp2->h << " " << bmp2->w << endl;
+
+    bmpLoader->save("saved.bmp"   , bmp1);
+    bmpLoader->save("savedrgb.bmp", bmp2);
+
+
+    CORE_ASSERT_TRUE(bmp1 != NULL, "BMP Image load failed");
+    CORE_ASSERT_TRUE(bmp1->verify(), "BMP Image verification failed");
+    delete_safe(bmp1);
+    delete_safe(bmpLoader);
 }
 
 TEST(FileFormats, testPlyLoader)

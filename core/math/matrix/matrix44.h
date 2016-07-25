@@ -108,6 +108,7 @@ public:
     static Matrix44 Shift(double x, double y, double z);
     static Matrix44 Shift(const Vector3dd &v);
     static Matrix44 Scale(const double &d);
+    static Matrix44 Scale(const double &d1, const double &d2, const double &d3);
 
     static Matrix44 RotationX(double angle);
     static Matrix44 RotationY(double angle);
