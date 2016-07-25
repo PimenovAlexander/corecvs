@@ -21,7 +21,7 @@ include($$ROOT_DIR/core/core.pri)
 
 SOURCES += main.cpp
 
-with_libjpeg {                                       # all this stuff was extracted from opencv.pri to speedup including
+with_libjpeg {
     LIBJPEG_WRAPPER_DIR = $$ROOT_DIR/wrappers/libjpeg
     include($$LIBJPEG_WRAPPER_DIR/libjpeg.pri)
 
@@ -30,3 +30,16 @@ with_libjpeg {                                       # all this stuff was extrac
     }
 }
 
+with_libpng {
+    message(We have libpng)
+    LIBPNG_WRAPPER_DIR = $$ROOT_DIR/wrappers/libpng
+    include($$LIBPNG_WRAPPER_DIR/libpng.pri)
+
+    contains(DEFINES, WITH_LIBPNG) {
+        INCLUDEPATH += $$LIBPNG_WRAPPER_DIR
+    }
+}
+
+OTHER_FILES +=
+
+HEADERS +=
