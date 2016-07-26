@@ -75,7 +75,7 @@ win32 {
 win32 {
 #    CONFIG += with_opencv
 } else {
-     CONFIG += with_opencv
+#     CONFIG += with_opencv
 }
 
 win32 {

@@ -1,7 +1,6 @@
 #include "polyLine.h"
 #include "vector3d.h"
 
-#define MAXD 64
 
 namespace corecvs {
 
@@ -9,9 +8,9 @@ PolyLine::PolyLine(const vector<Vector3dd> &p, const vector<RGBColor> &colors)
 {
     points = p;
     this->colors = colors;
-    begins.push_back(0);
+   // begins.push_back(0);
 
-    for (int i = 0; i < points.size(); i++)
+   /* for (int i = 0; i < points.size(); i++)
     {
         if (i > 0)
         {
@@ -24,11 +23,12 @@ PolyLine::PolyLine(const vector<Vector3dd> &p, const vector<RGBColor> &colors)
                 begins.push_back(i);
             }
         }
-    }
+    }*/
 
-    breaks.push_back(points.size() - 1);
+    //breaks.push_back(points.size() - 1);
 }
 
+/*
 Vector2d32 PolyLine::closestPointsGenerate(PolyLine p_line, int n1, int n2)
 {
     Vector3dd v1 = points[begins[n1]];
@@ -72,12 +72,13 @@ Vector2d32 PolyLine::closestPointsGenerate(PolyLine p_line, int n1, int n2)
 
     return Vector2d32(closeset1, closeset2);
 }
+*/
 
 void PolyLine::clear()
 {
     points.clear();
-    breaks.clear();
-    begins.clear();
+  //  breaks.clear();
+  // begins.clear();
 }
 
-} // namespace
+} // namespace corecvs

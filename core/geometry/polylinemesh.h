@@ -8,6 +8,7 @@ namespace corecvs {
     class PolylineMesh{
     public:
         Mesh3D mesh;
+
         PolyLine polyline;
         bool exist;
 
@@ -18,8 +19,8 @@ namespace corecvs {
         }
 
         void addPolyline(PolyLine p_line);
-
         void clear();
+
     };
 }
 #endif // POLYLINEMESH_H

@@ -39,8 +39,8 @@ double total(double a[], int size)
 
 ScannerThread::ScannerThread() :
    BaseCalculationThread()
-  , mScanningStarted(false)
-  , mIsScanning(false)
+  , mScanningStarted(true)
+  , mIsScanning(true)
   , timeToSave(false)
   , mFrameCount(0)
   , mPath("")
@@ -317,13 +317,23 @@ AbstractOutputData* ScannerThread::processNewData()
 
                 // outputData->outputMesh.setColor(RGBColor::Yellow());
                 // outputData->outputMesh.addPoint(point);
-                line.push_back(point + Vector3dd(0, 0, scanCount * 0.5));
+               // line.push_back(point + Vector3dd(0, 0, scanCount * 0.5));
 
-                RGBColor color = RGBColor::Green();
-                if (frame->isValidCoord(i-3, laserPoints[i])) {
-                    color = frame->element(i-3, laserPoints[i]);
+
+                if (point.y() > -180.0)
+                {
+                    point += Vector3dd(0, 0, scanCount * 0.5);
+
+                    line.push_back(Vector3dd(point.x() , point.z(), point.y()));
+
+                    RGBColor color = RGBColor::Green();
+                     if (frame->isValidCoord(laserPoints[i]-3, i)) {
+                         color = frame->element(laserPoints[i]-3, i);
+                     }
+                     colors.push_back(color);
+                    //line.push_back(point + Vector3dd(0, 0, scanCount * 0.5));
+              //      model2.addPoint(Vector3dd(point.x() + 100.0, -point.z(), -point.y()));
                 }
-                colors.push_back(color);
 
                 // model.addPoint(point + Vector3dd(0, 0, framecount * 0.5));
 

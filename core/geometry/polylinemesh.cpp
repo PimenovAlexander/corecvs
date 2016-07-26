@@ -2,6 +2,7 @@
 
 namespace corecvs {
 
+/*
 void PolylineMesh::addPolyline(PolyLine p_line)
 {
     if (p_line.points.size() == 0)
@@ -92,6 +93,74 @@ void PolylineMesh::addPolyline(PolyLine p_line)
         }
     }
 
+    polyline = p_line;
+}
+*/
+
+void PolylineMesh::addPolyline(PolyLine p_line)
+{
+    if (polyline.points.size() != 0)
+    for(int i = 0; i < p_line.points.size() - 1; i++)
+    {
+        Vector3dd v1(p_line.points[i]), v1n(p_line.points[i + 1]);
+        Vector3dd dv = v1 - v1n;
+
+        bool l1(true), l2(true);
+
+        if (dv.l2Metric() > MAXD)
+            l1 = false;
+
+        Vector3dd v0, v0n;
+
+        v0 = polyline.points[0];
+        int n = 0;
+        for(int k = 1; k < polyline.points.size() - 1; k++)
+        {
+            Vector3dd v = polyline.points[k];
+            Vector3dd dvv1 = v - v1, dv1v0 = v0 - v1;
+
+            if (dvv1[0] * dvv1[0] < dv1v0[0] * dv1v0[0])
+            {
+                v0 = v;
+                n = k;
+            }
+        }
+
+        Vector3dd dv1v0 = v1 - v0;
+        if (dv1v0.l2Metric() > MAXD)
+            continue;
+
+        v0n = polyline.points[(n + 1 < polyline.points.size()) ? n + 1 : n];
+
+        Vector3dd dv2 = v0n - v0;
+        if (dv2.l2Metric() > MAXD)
+            l2 = false;
+
+        if (l1 && l2)
+        {
+            if (p_line.colors.size() > i - 1)
+                mesh.setColor(p_line.colors[i]);
+
+            mesh.addTriangle(v1,v1n,v0);
+            mesh.addTriangle(v0,v0n,v1n);
+        }
+        else
+            if (l1)
+            {
+                if (p_line.colors.size() > i - 1)
+                    mesh.setColor(p_line.colors[i]);
+
+                mesh.addTriangle(v1,v0,v1n);
+            }
+            else
+                if (l2)
+                {
+                    if (p_line.colors.size() > i - 1)
+                        mesh.setColor(p_line.colors[i]);
+
+                    mesh.addTriangle(v1,v0,v0n);
+                }
+    }
     polyline = p_line;
 }
 
