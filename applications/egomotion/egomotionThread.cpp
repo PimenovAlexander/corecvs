@@ -16,9 +16,10 @@
 #include "imageResultLayer.h"
 // TEST
 // #include "viFlowStatisticsDescriptor.h"
-
+static G12Buffer* oldFrame;
+static bool mark = false;
 EgomotionThread::EgomotionThread() :
-   BaseCalculationThread() 
+   BaseCalculationThread()
   , mFrameCount(0)
   , mRecorderParameters(NULL)
 {
@@ -63,8 +64,28 @@ AbstractOutputData* EgomotionThread::processNewData()
         if (bufrgb != NULL) {
             buf = bufrgb->toG12Buffer();
         }
+        if (mark){
+            SpatialGradient *sg = new SpatialGradient(buf);
+
+            KLTCalculationContext context;
+            context.first  = buf;
+            context.second = oldFrame;
+            context.gradient = new SpatialGradientIntegralBuffer(sg);
 
 
+            KLTGenerator<BilinearInterpolator> generator(Vector2d32(2,2), 5);
+            Vector2dd guess(0,0);
+            generator.kltIteration(context, Vector2d32(3,3), &guess, 2.0);
+
+            Vector2dd guessSubpixel(0,0);
+            generator.kltIterationSubpixel(context, Vector2dd(3,3), &guessSubpixel, 2.0);
+
+            cout << "Result shift is " << guess.x() << ":" << guess.y() << "\n";
+            cout << "Result shift is " << guessSubpixel.x() << ":" << guessSubpixel.y() << "\n";
+            delete_safe(oldFrame);
+        }
+        oldFrame = new G12Buffer(buf);
+        mark = true;
         //result[id] = mTransformationCache[id] ? mTransformationCache[id]->doDeformation(mBaseParams->interpolationType(), buf) : buf;
         result[id] = buf;
 
