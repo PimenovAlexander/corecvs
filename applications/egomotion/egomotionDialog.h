@@ -52,6 +52,9 @@ private:
 
     QSharedPointer<EgomotionParameters> mEgomotionControlParams;
 
+    AdvancedImageWidget *addImage = NULL;
+    GraphPlotDialog *graph = NULL;
+
 };
 
 #endif // _EGOMOTION_DIALOG_H_

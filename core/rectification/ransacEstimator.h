@@ -27,13 +27,13 @@ public:
 
 
     RansacEstimator(
-            unsigned  _trySize,
-            unsigned _maxIterations,
-            double _treshold ) :
+            unsigned  _trySize = 9,
+            unsigned _maxIterations = 1000,
+            double _treshold = 1) :
         trySize(_trySize),
         maxIterations(_maxIterations),
         treshold(_treshold)
-    {};
+    {}
 
     Matrix33 getFundamentalRansac1(CorrespondenceList *list);
     Matrix33 getEssentialRansac1  (CorrespondenceList *list);

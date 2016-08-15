@@ -1,8 +1,21 @@
 <poco version="5.0">
   <include name="base.xml"/>
     
+
+
   <class name="Egomotion Parameters" description="Egomotion Parameters">
-    <field type="double" name="test"   defaultValue="1.0"/>
+    <field type="double"    name="test"   defaultValue="1.0"/>
+    <field type="bool"      name="useOpenCV" defaultValue="true" />
+
+    <!--  OpenCV flow params. Need to be brought to separate class -->
+
+    <field type="double"    name="selectorQuality"  defaultValue="0.01"  min="0" max="1" decimals="3"/>
+    <field type="double"    name="selectorDistance" defaultValue="4.0"   min="0" max="9999"/>
+    <field type="int"       name="selectorSize"     defaultValue="4"     min="1" max="9999"  />
+    <field type="int"       name="useHarris"        defaultValue="0"     min="0" max="9"      />
+    <field type="double"    name="harrisK"          defaultValue="0.04"  min="0" max="1" decimals="3"/>
+    <field type="int"       name="kltSize"          defaultValue="5"     min="1" max="9999"  />
+
   </class> 
   
   <parametersMapper name="Egomotion">

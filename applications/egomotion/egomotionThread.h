@@ -28,7 +28,18 @@ class EgomotionOutputData : public BaseOutputData
 public:
     Statistics stats;
     unsigned frameCount;
+
+    RGB24Buffer *debugOutput = NULL;
+    Matrix33 rot[4];
+    Vector3dd trans[4];
+
+
+    virtual ~EgomotionOutputData()
+    {
+        delete_safe(debugOutput);
+    }
 };
+
 
 class EgomotionThread : public BaseCalculationThread
 {
@@ -67,7 +78,12 @@ private:
 
 
     uint32_t mFrameCount;
-    QSharedPointer<EgomotionParameters> mRecorderParameters;
+    QSharedPointer<EgomotionParameters> mEgomotionParameters;
+
+    /*Egomotion compultation state */
+    G12Buffer* oldFrame = NULL;
+    bool mark = false;
+
 };
 
 #endif /* EGOMOTION_THREAD_H_ */

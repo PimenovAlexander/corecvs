@@ -11,17 +11,22 @@
 #include <stdio.h>
 #include <QMetaType>
 #include <QMessageBox>
+#include <essentialEstimator.h>
+#include <ransacEstimator.h>
 
 #include "g12Image.h"
 #include "imageResultLayer.h"
-// TEST
+
+#ifdef WITH_OPENCV
+#include "KLTFlow.h"
+#endif
+
 // #include "viFlowStatisticsDescriptor.h"
-static G12Buffer* oldFrame;
-static bool mark = false;
+
 EgomotionThread::EgomotionThread() :
    BaseCalculationThread()
   , mFrameCount(0)
-  , mRecorderParameters(NULL)
+  , mEgomotionParameters(NULL)
 {
     qRegisterMetaType<EgomotionThread::RecordingState>("EgomotionThread::RecordingState");
     mIdleTimer = PreciseTimer::currentTime();
@@ -41,7 +46,7 @@ AbstractOutputData* EgomotionThread::processNewData()
     PreciseTimer start = PreciseTimer::currentTime();
 //    PreciseTimer startEl = PreciseTimer::currentTime();
 
-    bool have_params = !(mRecorderParameters.isNull());
+    bool have_params = !(mEgomotionParameters.isNull());
     bool two_frames = have_params && (CamerasConfigParameters::TwoCapDev == mActiveInputsNumber); // FIXME: additional params needed here
 
     // We are missing data, so pause calculation
@@ -56,6 +61,10 @@ AbstractOutputData* EgomotionThread::processNewData()
 
     G12Buffer *result[Frames::MAX_INPUTS_NUMBER] = {NULL, NULL};
 
+
+    EgomotionOutputData* outputData = new EgomotionOutputData();
+
+
     /*TODO: Logic here should be changed according to the host base change*/
     for (int id = 0; id < mActiveInputsNumber; id++)
     {
@@ -64,7 +73,9 @@ AbstractOutputData* EgomotionThread::processNewData()
         if (bufrgb != NULL) {
             buf = bufrgb->toG12Buffer();
         }
-        if (mark){
+        if (mark && oldFrame != NULL && buf != NULL){
+
+#if 0
             SpatialGradient *sg = new SpatialGradient(buf);
 
             KLTCalculationContext context;
@@ -82,8 +93,86 @@ AbstractOutputData* EgomotionThread::processNewData()
 
             cout << "Result shift is " << guess.x() << ":" << guess.y() << "\n";
             cout << "Result shift is " << guessSubpixel.x() << ":" << guessSubpixel.y() << "\n";
+#endif
+            /* Calculating flow*/
+
+            FlowBuffer *flow = NULL;
+
+            if (!mEgomotionParameters->useOpenCV())
+            {
+                KLTGenerator<BilinearInterpolator> generator;
+                flow  = generator.calculateHierarchicalKLTFlow(oldFrame, buf);
+            } else {
+#ifdef WITH_OPENCV
+                vector<FloatFlowVector> *flowVectors = KLTFlow::getOpenCVKLT(oldFrame, buf,
+                                             mEgomotionParameters->selectorQuality(),
+                                             mEgomotionParameters->selectorDistance(),
+                                             mEgomotionParameters->selectorSize(),
+                                             mEgomotionParameters->useHarris(),
+                                             mEgomotionParameters->harrisK(),
+                                             mEgomotionParameters->kltSize()
+                                           );
+                flow = new FlowBuffer(buf->getSize());
+                for (FloatFlowVector &v : *flowVectors)
+                {
+                    if (flow->isValidCoord(v.start.y(), v.start.x()))
+                    {
+                        Vector2dd delta = v.end - v.start;
+                        flow->element(v.start.y(), v.start.x()) = FlowElement(delta.x(), delta.y());
+                    }
+
+                }
+
+                double focal = 820.428;
+                Vector2dd center(305.2, 239.8);
+
+                /* Egomotion magic */
+                vector<Correspondence> cv;
+                for (FloatFlowVector &v : *flowVectors)
+                {
+                    Correspondence c;
+                    c.start = (v.start - center) / focal;
+                    c.end   = (v.end   - center) / focal;
+                    cv.push_back(c);
+                }
+
+
+                std::vector<Correspondence*> cl;
+                for (auto& cc: cv)
+                    cl.push_back(&cc);
+
+                EssentialMatrix E;
+                RansacEstimator estimator;
+                estimator.trySize = 9;
+                estimator.maxIterations = 1000;
+                estimator.treshold = 0.01;
+
+                E = estimator.getEssentialRansac(&cl);
+                E.decompose( outputData->rot, outputData->trans);
+                for (int var = 0; var < 4; var++)
+                {
+                    qDebug() << "Version " << var;
+                    Quaternion q = Quaternion::FromMatrix( outputData->rot[var]);
+                    q.printAxisAndAngle();
+                }
+
+
+                delete_safe(flowVectors);
+#endif
+
+            }
+
+            if (flow != NULL)
+            {
+                outputData->debugOutput = new RGB24Buffer(flow->getSize());
+                outputData->debugOutput->drawFlowBuffer3(flow);
+            }
+
+            delete_safe(flow);
             delete_safe(oldFrame);
         }
+
+        delete_safe(oldFrame);
         oldFrame = new G12Buffer(buf);
         mark = true;
         //result[id] = mTransformationCache[id] ? mTransformationCache[id]->doDeformation(mBaseParams->interpolationType(), buf) : buf;
@@ -96,7 +185,6 @@ AbstractOutputData* EgomotionThread::processNewData()
 #endif
     mFrameCount++;
 
-    EgomotionOutputData* outputData = new EgomotionOutputData();
 
     outputData->mMainImage.addLayer(
             new ImageResultLayer(
@@ -104,6 +192,8 @@ AbstractOutputData* EgomotionThread::processNewData()
                     result
             )
     );
+
+
 
     outputData->mMainImage.setHeight(mBaseParams->h());
     outputData->mMainImage.setWidth (mBaseParams->w());
@@ -132,7 +222,7 @@ void EgomotionThread::egomotionControlParametersChanged(QSharedPointer<Egomotion
     if (!egomotionParameters)
         return;
 
-    mRecorderParameters = egomotionParameters;
+    mEgomotionParameters = egomotionParameters;
 }
 
 void EgomotionThread::baseControlParametersChanged(QSharedPointer<BaseParameters> params)

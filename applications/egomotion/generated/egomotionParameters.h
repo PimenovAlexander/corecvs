@@ -40,6 +40,13 @@ class EgomotionParameters : public BaseReflection<EgomotionParameters>
 public:
     enum FieldId {
         TEST_ID,
+        USEOPENCV_ID,
+        SELECTORQUALITY_ID,
+        SELECTORDISTANCE_ID,
+        SELECTORSIZE_ID,
+        USEHARRIS_ID,
+        HARRISK_ID,
+        KLTSIZE_ID,
         EGOMOTION_PARAMETERS_FIELD_ID_NUM
     };
 
@@ -50,6 +57,48 @@ public:
      * test 
      */
     double mTest;
+
+    /** 
+     * \brief useOpenCV 
+     * useOpenCV 
+     */
+    bool mUseOpenCV;
+
+    /** 
+     * \brief selectorQuality 
+     * selectorQuality 
+     */
+    double mSelectorQuality;
+
+    /** 
+     * \brief selectorDistance 
+     * selectorDistance 
+     */
+    double mSelectorDistance;
+
+    /** 
+     * \brief selectorSize 
+     * selectorSize 
+     */
+    int mSelectorSize;
+
+    /** 
+     * \brief useHarris 
+     * useHarris 
+     */
+    int mUseHarris;
+
+    /** 
+     * \brief harrisK 
+     * harrisK 
+     */
+    double mHarrisK;
+
+    /** 
+     * \brief kltSize 
+     * kltSize 
+     */
+    int mKltSize;
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
@@ -64,10 +113,80 @@ public:
         return mTest;
     }
 
+    bool useOpenCV() const
+    {
+        return mUseOpenCV;
+    }
+
+    double selectorQuality() const
+    {
+        return mSelectorQuality;
+    }
+
+    double selectorDistance() const
+    {
+        return mSelectorDistance;
+    }
+
+    int selectorSize() const
+    {
+        return mSelectorSize;
+    }
+
+    int useHarris() const
+    {
+        return mUseHarris;
+    }
+
+    double harrisK() const
+    {
+        return mHarrisK;
+    }
+
+    int kltSize() const
+    {
+        return mKltSize;
+    }
+
     /* Section with setters */
     void setTest(double test)
     {
         mTest = test;
+    }
+
+    void setUseOpenCV(bool useOpenCV)
+    {
+        mUseOpenCV = useOpenCV;
+    }
+
+    void setSelectorQuality(double selectorQuality)
+    {
+        mSelectorQuality = selectorQuality;
+    }
+
+    void setSelectorDistance(double selectorDistance)
+    {
+        mSelectorDistance = selectorDistance;
+    }
+
+    void setSelectorSize(int selectorSize)
+    {
+        mSelectorSize = selectorSize;
+    }
+
+    void setUseHarris(int useHarris)
+    {
+        mUseHarris = useHarris;
+    }
+
+    void setHarrisK(double harrisK)
+    {
+        mHarrisK = harrisK;
+    }
+
+    void setKltSize(int kltSize)
+    {
+        mKltSize = kltSize;
     }
 
     /* Section with embedded classes */
@@ -76,6 +195,13 @@ template<class VisitorType>
     void accept(VisitorType &visitor)
     {
         visitor.visit(mTest,                      static_cast<const DoubleField *>  (fields()[TEST_ID]));
+        visitor.visit(mUseOpenCV,                 static_cast<const BoolField *>    (fields()[USEOPENCV_ID]));
+        visitor.visit(mSelectorQuality,           static_cast<const DoubleField *>  (fields()[SELECTORQUALITY_ID]));
+        visitor.visit(mSelectorDistance,          static_cast<const DoubleField *>  (fields()[SELECTORDISTANCE_ID]));
+        visitor.visit(mSelectorSize,              static_cast<const IntField *>     (fields()[SELECTORSIZE_ID]));
+        visitor.visit(mUseHarris,                 static_cast<const IntField *>     (fields()[USEHARRIS_ID]));
+        visitor.visit(mHarrisK,                   static_cast<const DoubleField *>  (fields()[HARRISK_ID]));
+        visitor.visit(mKltSize,                   static_cast<const IntField *>     (fields()[KLTSIZE_ID]));
     }
 
     EgomotionParameters()
@@ -86,9 +212,23 @@ template<class VisitorType>
 
     EgomotionParameters(
           double test
+        , bool useOpenCV
+        , double selectorQuality
+        , double selectorDistance
+        , int selectorSize
+        , int useHarris
+        , double harrisK
+        , int kltSize
     )
     {
         mTest = test;
+        mUseOpenCV = useOpenCV;
+        mSelectorQuality = selectorQuality;
+        mSelectorDistance = selectorDistance;
+        mSelectorSize = selectorSize;
+        mUseHarris = useHarris;
+        mHarrisK = harrisK;
+        mKltSize = kltSize;
     }
 
     friend ostream& operator << (ostream &out, EgomotionParameters &toSave)

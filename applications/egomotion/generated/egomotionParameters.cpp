@@ -48,6 +48,101 @@ int EgomotionParameters::staticInit()
           "test"
         )
     );
+    fields().push_back(
+        new BoolField
+        (
+          EgomotionParameters::USEOPENCV_ID,
+          offsetof(EgomotionParameters, mUseOpenCV),
+          true,
+          "useOpenCV",
+          "useOpenCV",
+          "useOpenCV"
+        )
+    );
+    fields().push_back(
+        new DoubleField
+        (
+          EgomotionParameters::SELECTORQUALITY_ID,
+          offsetof(EgomotionParameters, mSelectorQuality),
+          0.01,
+          "selectorQuality",
+          "selectorQuality",
+          "selectorQuality",
+          true,
+         0,
+         1
+        )
+    );
+    fields().push_back(
+        new DoubleField
+        (
+          EgomotionParameters::SELECTORDISTANCE_ID,
+          offsetof(EgomotionParameters, mSelectorDistance),
+          4,
+          "selectorDistance",
+          "selectorDistance",
+          "selectorDistance",
+          true,
+         0,
+         9999
+        )
+    );
+    fields().push_back(
+        new IntField
+        (
+          EgomotionParameters::SELECTORSIZE_ID,
+          offsetof(EgomotionParameters, mSelectorSize),
+          4,
+          "selectorSize",
+          "selectorSize",
+          "selectorSize",
+          true,
+         1,
+         9999
+        )
+    );
+    fields().push_back(
+        new IntField
+        (
+          EgomotionParameters::USEHARRIS_ID,
+          offsetof(EgomotionParameters, mUseHarris),
+          0,
+          "useHarris",
+          "useHarris",
+          "useHarris",
+          true,
+         0,
+         9
+        )
+    );
+    fields().push_back(
+        new DoubleField
+        (
+          EgomotionParameters::HARRISK_ID,
+          offsetof(EgomotionParameters, mHarrisK),
+          0.04,
+          "harrisK",
+          "harrisK",
+          "harrisK",
+          true,
+         0,
+         1
+        )
+    );
+    fields().push_back(
+        new IntField
+        (
+          EgomotionParameters::KLTSIZE_ID,
+          offsetof(EgomotionParameters, mKltSize),
+          5,
+          "kltSize",
+          "kltSize",
+          "kltSize",
+          true,
+         1,
+         9999
+        )
+    );
    return 0;
 }
 

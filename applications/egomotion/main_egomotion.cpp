@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
         source = QString(argv[1]);
     }
 
-    printf("Starting recorder...\n");
+    printf("Starting egomotion...\n");
 
     ConfigManager::setConfigName("cvs.conf");
     ConfigManager::setCamConfigName("cvs-camera.conf");
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    MainWindow mainWindow(new EgomotionDialog(), source, params, true);
+    MainWindow mainWindow(new EgomotionDialog(), source, params, false);
 
     app.exec();
 

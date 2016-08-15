@@ -8,6 +8,7 @@
 
 #include "egomotionParametersControlWidget.h"
 #include "ui_egomotionParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -21,6 +22,13 @@ EgomotionParametersControlWidget::EgomotionParametersControlWidget(QWidget *pare
     mUi->setupUi(this);
 
     QObject::connect(mUi->testSpinBox, SIGNAL(valueChanged(double)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->useOpenCVCheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->selectorQualitySpinBox, SIGNAL(valueChanged(double)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->selectorDistanceSpinBox, SIGNAL(valueChanged(double)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->selectorSizeSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->useHarrisSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->harrisKSpinBox, SIGNAL(valueChanged(double)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->kltSizeSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
 }
 
 EgomotionParametersControlWidget::~EgomotionParametersControlWidget()
@@ -31,26 +39,21 @@ EgomotionParametersControlWidget::~EgomotionParametersControlWidget()
 
 void EgomotionParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    EgomotionParameters *params = createParameters();
+    std::unique_ptr<EgomotionParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void EgomotionParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    EgomotionParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<EgomotionParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void EgomotionParametersControlWidget::getParameters(EgomotionParameters& params) const
 {
-
-    params.setTest             (mUi->testSpinBox->value());
-
+    params = *std::unique_ptr<EgomotionParameters>(createParameters());
 }
+
 
 EgomotionParameters *EgomotionParametersControlWidget::createParameters() const
 {
@@ -60,10 +63,16 @@ EgomotionParameters *EgomotionParametersControlWidget::createParameters() const
      **/
 
 
-    EgomotionParameters *result = new EgomotionParameters(
+    return new EgomotionParameters(
           mUi->testSpinBox->value()
+        , mUi->useOpenCVCheckBox->isChecked()
+        , mUi->selectorQualitySpinBox->value()
+        , mUi->selectorDistanceSpinBox->value()
+        , mUi->selectorSizeSpinBox->value()
+        , mUi->useHarrisSpinBox->value()
+        , mUi->harrisKSpinBox->value()
+        , mUi->kltSizeSpinBox->value()
     );
-    return result;
 }
 
 void EgomotionParametersControlWidget::setParameters(const EgomotionParameters &input)
@@ -71,6 +80,13 @@ void EgomotionParametersControlWidget::setParameters(const EgomotionParameters &
     // Block signals to send them all at once
     bool wasBlocked = blockSignals(true);
     mUi->testSpinBox->setValue(input.test());
+    mUi->useOpenCVCheckBox->setChecked(input.useOpenCV());
+    mUi->selectorQualitySpinBox->setValue(input.selectorQuality());
+    mUi->selectorDistanceSpinBox->setValue(input.selectorDistance());
+    mUi->selectorSizeSpinBox->setValue(input.selectorSize());
+    mUi->useHarrisSpinBox->setValue(input.useHarris());
+    mUi->harrisKSpinBox->setValue(input.harrisK());
+    mUi->kltSizeSpinBox->setValue(input.kltSize());
     blockSignals(wasBlocked);
     emit paramsChanged();
 }

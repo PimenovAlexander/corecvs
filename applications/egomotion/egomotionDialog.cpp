@@ -36,6 +36,11 @@ void EgomotionDialog::initParameterWidgets()
 {
     BaseHostDialog::initParameterWidgets();
 
+
+    addImage = static_cast<AdvancedImageWidget *>(createAdditionalWindow("Flow", imageWindow, QIcon()));
+    graph = static_cast<GraphPlotDialog *>(createAdditionalWindow("Graph view", graphWindow, QIcon()));
+
+
     mEgomotionParametersControlWidget = new EgomotionParametersControlWidget(this, true, UI_NAME_RECORDER);
     dockWidget()->layout()->addWidget(mEgomotionParametersControlWidget);
     mSaveableWidgets.push_back(mEgomotionParametersControlWidget);
@@ -119,12 +124,29 @@ void EgomotionDialog::processResult()
 
         mStatsDialog.addStats(fod->stats);
 
+        {
+            for (int var = 0 ; var < 4; var++)
+            {
+                Quaternion rot = Quaternion::FromMatrix(fod->rot[var]);
+                double d = rot.getAngle();
+                graph->addGraphPoint(var, d);
+            }
+
+        }
+
 
 //        fod->mMainImage.print();
 
         if (i == eventList.size() - 1) {
             mImage = QSharedPointer<QImage>(new QImage(fod->mMainImage.width(), fod->mMainImage.height(),  QImage::Format_RGB32));
             fod->mMainImage.drawImage(mImage.data());
+
+
+            if (fod->debugOutput != NULL) {
+                addImage->setImage(QSharedPointer<QImage>(new RGB24Image(fod->debugOutput)));
+            }
+
+            graph->update();
         }
 
         delete fod;

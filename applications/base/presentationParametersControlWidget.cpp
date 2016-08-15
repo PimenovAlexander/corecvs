@@ -8,6 +8,7 @@
 
 #include "presentationParametersControlWidget.h"
 #include "ui_presentationParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -40,35 +41,21 @@ PresentationParametersControlWidget::~PresentationParametersControlWidget()
 
 void PresentationParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    PresentationParameters *params = createParameters();
+    std::unique_ptr<PresentationParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void PresentationParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    PresentationParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<PresentationParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void PresentationParametersControlWidget::getParameters(PresentationParameters& params) const
 {
-
-    params.setOutput           (static_cast<OutputStyle::OutputStyle>(mUi->outputComboBox->currentIndex()));
-    params.setStereo           (static_cast<StereoStyle::StereoStyle>(mUi->stereoComboBox->currentIndex()));
-    params.setFlow             (static_cast<FlowStyle::FlowStyle>(mUi->flowComboBox->currentIndex()));
-    params.setShowClusters     (mUi->showClustersCheckBox->isChecked());
-    params.setShowHistogram    (mUi->showHistogramCheckBox->isChecked());
-    params.setAutoUpdateHistogram(mUi->autoUpdateHistogramCheckBox->isChecked());
-    params.setShowAreaOfInterest(mUi->showAreaOfInterestCheckBox->isChecked());
-    params.setProduce3D        (mUi->produce3DCheckBox->isChecked());
-    params.setProduce6D        (mUi->produce6DCheckBox->isChecked());
-    params.setDump3D           (mUi->dump3DCheckBox->isChecked());
-
+    params = *std::unique_ptr<PresentationParameters>(createParameters());
 }
+
 
 PresentationParameters *PresentationParametersControlWidget::createParameters() const
 {
@@ -78,7 +65,7 @@ PresentationParameters *PresentationParametersControlWidget::createParameters() 
      **/
 
 
-    PresentationParameters *result = new PresentationParameters(
+    return new PresentationParameters(
           static_cast<OutputStyle::OutputStyle>(mUi->outputComboBox->currentIndex())
         , static_cast<StereoStyle::StereoStyle>(mUi->stereoComboBox->currentIndex())
         , static_cast<FlowStyle::FlowStyle>(mUi->flowComboBox->currentIndex())
@@ -90,7 +77,6 @@ PresentationParameters *PresentationParametersControlWidget::createParameters() 
         , mUi->produce6DCheckBox->isChecked()
         , mUi->dump3DCheckBox->isChecked()
     );
-    return result;
 }
 
 void PresentationParametersControlWidget::setParameters(const PresentationParameters &input)

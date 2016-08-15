@@ -12,12 +12,12 @@ SUBDIRS +=                   \
     base_application_example \
     recorder                 \
     scanner                  \
-#    testbed                  \
-#    cloudview                \
+    testbed                  \
+    cloudview                \
 #    imageview                \
 #    \
 #    generator                \
-#    egomotion                \
+    egomotion                \
 #    applications/laserscan
 
 
