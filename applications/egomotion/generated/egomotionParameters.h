@@ -47,6 +47,9 @@ public:
         USEHARRIS_ID,
         HARRISK_ID,
         KLTSIZE_ID,
+        CAMERAFOCAL_ID,
+        CAMERAPRINCIPALX_ID,
+        CAMERAPRINCIPALY_ID,
         EGOMOTION_PARAMETERS_FIELD_ID_NUM
     };
 
@@ -100,6 +103,24 @@ public:
      */
     int mKltSize;
 
+    /** 
+     * \brief cameraFocal 
+     * cameraFocal 
+     */
+    double mCameraFocal;
+
+    /** 
+     * \brief cameraPrincipalX 
+     * cameraPrincipalX 
+     */
+    double mCameraPrincipalX;
+
+    /** 
+     * \brief cameraPrincipalY 
+     * cameraPrincipalY 
+     */
+    double mCameraPrincipalY;
+
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
 
@@ -148,6 +169,21 @@ public:
         return mKltSize;
     }
 
+    double cameraFocal() const
+    {
+        return mCameraFocal;
+    }
+
+    double cameraPrincipalX() const
+    {
+        return mCameraPrincipalX;
+    }
+
+    double cameraPrincipalY() const
+    {
+        return mCameraPrincipalY;
+    }
+
     /* Section with setters */
     void setTest(double test)
     {
@@ -189,6 +225,21 @@ public:
         mKltSize = kltSize;
     }
 
+    void setCameraFocal(double cameraFocal)
+    {
+        mCameraFocal = cameraFocal;
+    }
+
+    void setCameraPrincipalX(double cameraPrincipalX)
+    {
+        mCameraPrincipalX = cameraPrincipalX;
+    }
+
+    void setCameraPrincipalY(double cameraPrincipalY)
+    {
+        mCameraPrincipalY = cameraPrincipalY;
+    }
+
     /* Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
@@ -202,6 +253,9 @@ template<class VisitorType>
         visitor.visit(mUseHarris,                 static_cast<const IntField *>     (fields()[USEHARRIS_ID]));
         visitor.visit(mHarrisK,                   static_cast<const DoubleField *>  (fields()[HARRISK_ID]));
         visitor.visit(mKltSize,                   static_cast<const IntField *>     (fields()[KLTSIZE_ID]));
+        visitor.visit(mCameraFocal,               static_cast<const DoubleField *>  (fields()[CAMERAFOCAL_ID]));
+        visitor.visit(mCameraPrincipalX,          static_cast<const DoubleField *>  (fields()[CAMERAPRINCIPALX_ID]));
+        visitor.visit(mCameraPrincipalY,          static_cast<const DoubleField *>  (fields()[CAMERAPRINCIPALY_ID]));
     }
 
     EgomotionParameters()
@@ -219,6 +273,9 @@ template<class VisitorType>
         , int useHarris
         , double harrisK
         , int kltSize
+        , double cameraFocal
+        , double cameraPrincipalX
+        , double cameraPrincipalY
     )
     {
         mTest = test;
@@ -229,6 +286,9 @@ template<class VisitorType>
         mUseHarris = useHarris;
         mHarrisK = harrisK;
         mKltSize = kltSize;
+        mCameraFocal = cameraFocal;
+        mCameraPrincipalX = cameraPrincipalX;
+        mCameraPrincipalY = cameraPrincipalY;
     }
 
     friend ostream& operator << (ostream &out, EgomotionParameters &toSave)

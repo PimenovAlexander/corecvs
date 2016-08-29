@@ -108,6 +108,25 @@ AbstractOutputData* EgomotionThread::processNewData()
             } else {
 #ifdef WITH_OPENCV
                 stats.startInterval();
+
+                outputData->debugOutput = new RGB24Buffer(buf->getSize());
+
+                for (int i = 0; i < buf->h; i ++)
+                {
+                    for (int j = 0; j < buf->w; j ++)
+                    {
+                        //int mean = (buf->element(i,j) + oldFrame->element(i,j)) / 2.0;
+                        //outputData->debugOutput->element(i,j) = RGBColor::gray(mean / 16);
+                        outputData->debugOutput->element(i,j) =
+                                RGBColor(
+                                    buf->element(i,j) / 16,
+                                    oldFrame->element(i,j) / 16,
+                                    buf->element(i,j) / 16
+                                    );
+
+                    }
+                }
+
                 vector<FloatFlowVector> *flowVectors = KLTFlow::getOpenCVKLT(oldFrame, buf,
                                              mEgomotionParameters->selectorQuality(),
                                              mEgomotionParameters->selectorDistance(),
@@ -125,14 +144,19 @@ AbstractOutputData* EgomotionThread::processNewData()
                     {
                         Vector2dd delta = v.end - v.start;
                         flow->element(v.start.y(), v.start.x()) = FlowElement(delta.x(), delta.y());
+
+                        outputData->debugOutput->element(v.start.y(), v.start.x()) = RGBColor::Green();
+                        outputData->debugOutput->element(v.end.y(), v.end.x()) = RGBColor::Magenta();
+
+
                     }
 
                 }
 
                 stats.resetInterval("Forming a buffer");
 
-                double focal = 820.428;
-                Vector2dd center(305.2, 239.8);
+                double focal = mEgomotionParameters->cameraFocal();
+                Vector2dd center(mEgomotionParameters->cameraPrincipalX(), mEgomotionParameters->cameraPrincipalX());
 
                 /* Egomotion magic */
                 vector<Correspondence> cv;
@@ -225,7 +249,7 @@ AbstractOutputData* EgomotionThread::processNewData()
             }
 
             stats.startInterval();
-            if (flow != NULL)
+            if (flow != NULL && outputData->debugOutput == NULL)
             {
                 outputData->debugOutput = new RGB24Buffer(flow->getSize());
                 outputData->debugOutput->drawFlowBuffer3(flow);

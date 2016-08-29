@@ -143,6 +143,48 @@ int EgomotionParameters::staticInit()
          9999
         )
     );
+    fields().push_back(
+        new DoubleField
+        (
+          EgomotionParameters::CAMERAFOCAL_ID,
+          offsetof(EgomotionParameters, mCameraFocal),
+          820.428,
+          "cameraFocal",
+          "cameraFocal",
+          "cameraFocal",
+          true,
+         0,
+         1
+        )
+    );
+    fields().push_back(
+        new DoubleField
+        (
+          EgomotionParameters::CAMERAPRINCIPALX_ID,
+          offsetof(EgomotionParameters, mCameraPrincipalX),
+          305.2,
+          "cameraPrincipalX",
+          "cameraPrincipalX",
+          "cameraPrincipalX",
+          true,
+         0,
+         9999
+        )
+    );
+    fields().push_back(
+        new DoubleField
+        (
+          EgomotionParameters::CAMERAPRINCIPALY_ID,
+          offsetof(EgomotionParameters, mCameraPrincipalY),
+          239.8,
+          "cameraPrincipalY",
+          "cameraPrincipalY",
+          "cameraPrincipalY",
+          true,
+         0,
+         9999
+        )
+    );
    return 0;
 }
 

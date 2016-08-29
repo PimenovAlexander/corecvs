@@ -29,6 +29,9 @@ EgomotionParametersControlWidget::EgomotionParametersControlWidget(QWidget *pare
     QObject::connect(mUi->useHarrisSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->harrisKSpinBox, SIGNAL(valueChanged(double)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->kltSizeSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->cameraFocalSpinBox, SIGNAL(valueChanged(double)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->cameraPrincipalXSpinBox, SIGNAL(valueChanged(double)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->cameraPrincipalYSpinBox, SIGNAL(valueChanged(double)), this, SIGNAL(paramsChanged()));
 }
 
 EgomotionParametersControlWidget::~EgomotionParametersControlWidget()
@@ -72,6 +75,9 @@ EgomotionParameters *EgomotionParametersControlWidget::createParameters() const
         , mUi->useHarrisSpinBox->value()
         , mUi->harrisKSpinBox->value()
         , mUi->kltSizeSpinBox->value()
+        , mUi->cameraFocalSpinBox->value()
+        , mUi->cameraPrincipalXSpinBox->value()
+        , mUi->cameraPrincipalYSpinBox->value()
     );
 }
 
@@ -87,6 +93,9 @@ void EgomotionParametersControlWidget::setParameters(const EgomotionParameters &
     mUi->useHarrisSpinBox->setValue(input.useHarris());
     mUi->harrisKSpinBox->setValue(input.harrisK());
     mUi->kltSizeSpinBox->setValue(input.kltSize());
+    mUi->cameraFocalSpinBox->setValue(input.cameraFocal());
+    mUi->cameraPrincipalXSpinBox->setValue(input.cameraPrincipalX());
+    mUi->cameraPrincipalYSpinBox->setValue(input.cameraPrincipalY());
     blockSignals(wasBlocked);
     emit paramsChanged();
 }
