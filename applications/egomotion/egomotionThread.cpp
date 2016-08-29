@@ -121,7 +121,7 @@ AbstractOutputData* EgomotionThread::processNewData()
                 flow = new FlowBuffer(buf->getSize());
                 for (FloatFlowVector &v : *flowVectors)
                 {
-                    if (flow->isValidCoord(v.start.y(), v.start.x()))
+                    if (flow->isValidCoord(v.start.y(), v.start.x()) &&  flow->isValidCoord(v.end.y(), v.end.x()))
                     {
                         Vector2dd delta = v.end - v.start;
                         flow->element(v.start.y(), v.start.x()) = FlowElement(delta.x(), delta.y());
