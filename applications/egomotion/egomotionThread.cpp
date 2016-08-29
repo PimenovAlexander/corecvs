@@ -66,7 +66,7 @@ AbstractOutputData* EgomotionThread::processNewData()
 
 
     /*TODO: Logic here should be changed according to the host base change*/
-    for (int id = 0; id < mActiveInputsNumber; id++)
+    for (int id = 0; id < 1; id++)
     {
         G12Buffer   *buf    = mFrames.getCurrentFrame   ((Frames::FrameSourceId)id);
         RGB24Buffer *bufrgb = mFrames.getCurrentRgbFrame((Frames::FrameSourceId)id);
@@ -181,6 +181,29 @@ AbstractOutputData* EgomotionThread::processNewData()
 
                 E = estimator.getEssentialRansac(&cl);
                 stats.resetInterval("Essential estimation");
+
+                for (size_t id = 0; id < flowVectors->size(); id++)
+                {
+                    FloatFlowVector &v = flowVectors->at(id);
+                    if (flow->isValidCoord(v.start.y(), v.start.x()) &&  flow->isValidCoord(v.end.y(), v.end.x()))
+                    {
+
+                       if (cv[id].flags & Correspondence::FLAG_FAILER)
+                            outputData->debugOutput->drawCrosshare1(v.start.x(), v.start.y(), RGBColor::Red());
+                       if (cv[id].flags & Correspondence::FLAG_PASSER)
+                            outputData->debugOutput->drawCrosshare1(v.start.x(), v.start.y(), RGBColor::Cyan());
+
+                       if (cv[id].flags & Correspondence::FLAG_IS_BASED_ON)
+                            outputData->debugOutput->drawCrosshare2(v.start.x(), v.start.y(), RGBColor::Yellow());
+
+                    }
+
+                }
+
+
+
+
+
 #if 0
                 E.decompose( outputData->rot, outputData->trans);
                 for (int var = 0; var < 4; var++)

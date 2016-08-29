@@ -40,13 +40,13 @@ public:
     uint16_t value;   /**< \brief The weight of the correspondence */
     uint16_t flags;   /**< \brief Some flags */
 
-    PrimitiveCorrespondence() {};
+    PrimitiveCorrespondence() {}
     PrimitiveCorrespondence(FirstType _start, SecondType _end) :
         start(_start),
         end(_end),
         value(0),
         flags(FLAG_NONE)
-    {};
+    {}
 
     void clearFlags( void )
     {
