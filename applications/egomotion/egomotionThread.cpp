@@ -216,6 +216,7 @@ AbstractOutputData* EgomotionThread::processNewData()
                 cout << "pitch: " << angles.pitch() << " yaw: " << angles.yaw() << " roll: " << angles.roll() << endl;
                 //////////////////////////////////////////////////////////////////////////
                 ///
+                outputData->result = angles;
 
                 delete_safe(flowVectors);
                 stats.endInterval("Essential decomposition");

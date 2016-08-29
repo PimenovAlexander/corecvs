@@ -77,6 +77,8 @@ public:
 class CameraAnglesLegacy : public EulerAngles
 {
 public:
+    CameraAnglesLegacy() {}
+
     CameraAnglesLegacy(double pitch, double yaw, double roll) :
         EulerAngles(pitch, yaw, roll)
     {}

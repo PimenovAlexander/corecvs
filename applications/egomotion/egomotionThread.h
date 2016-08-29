@@ -22,6 +22,7 @@
 #include "preciseTimer.h"
 #include "generated/egomotionParameters.h"
 #include "calculationStats.h"
+#include "eulerAngles.h"
 
 class EgomotionOutputData : public BaseOutputData
 {
@@ -32,6 +33,8 @@ public:
     RGB24Buffer *debugOutput = NULL;
     Matrix33 rot[4];
     Vector3dd trans[4];
+
+    CameraAnglesLegacy result;
 
 
     virtual ~EgomotionOutputData()

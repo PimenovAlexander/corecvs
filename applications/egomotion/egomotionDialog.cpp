@@ -132,6 +132,10 @@ void EgomotionDialog::processResult()
                 graph->addGraphPoint(var, d);
             }
 
+            graph->addGraphPoint("Pitch", fod->result.pitch());
+            graph->addGraphPoint("Yaw", fod->result.yaw());
+            graph->addGraphPoint("Roll", fod->result.roll());
+
         }
 
 
