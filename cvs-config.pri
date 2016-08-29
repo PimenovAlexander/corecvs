@@ -30,10 +30,10 @@ CONFIG +=       \
    with_sse     \
    with_sse3    \
    with_sse4    \
-   with_avx     \
+#   with_avx     \
 #   with_avx2    \
    with_tbb     \
-   with_blas    \
+#   with_blas    \
 
 
 !win32:!macx {
@@ -60,9 +60,9 @@ CONFIG +=       \
 }
 
 CONFIG +=                   \
-        with_ueye           \
+#        with_ueye           \
 #        with_httpserver     \
-        with_avcodec        \
+#       with_avcodec        \
         with_libjpeg        \
         with_libpng         \
 

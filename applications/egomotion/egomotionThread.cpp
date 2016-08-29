@@ -13,6 +13,7 @@
 #include <QMessageBox>
 #include <essentialEstimator.h>
 #include <ransacEstimator.h>
+#include <eulerAngles.h>
 
 #include "g12Image.h"
 #include "imageResultLayer.h"
@@ -44,7 +45,6 @@ AbstractOutputData* EgomotionThread::processNewData()
 #endif
 
     PreciseTimer start = PreciseTimer::currentTime();
-//    PreciseTimer startEl = PreciseTimer::currentTime();
 
     bool have_params = !(mEgomotionParameters.isNull());
     bool two_frames = have_params && (CamerasConfigParameters::TwoCapDev == mActiveInputsNumber); // FIXME: additional params needed here
@@ -95,15 +95,19 @@ AbstractOutputData* EgomotionThread::processNewData()
             cout << "Result shift is " << guessSubpixel.x() << ":" << guessSubpixel.y() << "\n";
 #endif
             /* Calculating flow*/
+            PreciseTimer startEl = PreciseTimer::currentTime();
 
             FlowBuffer *flow = NULL;
 
             if (!mEgomotionParameters->useOpenCV())
             {
                 KLTGenerator<BilinearInterpolator> generator;
+                stats.startInterval();
                 flow  = generator.calculateHierarchicalKLTFlow(oldFrame, buf);
+                stats.endInterval("Without OpenCV Flow");
             } else {
 #ifdef WITH_OPENCV
+                stats.startInterval();
                 vector<FloatFlowVector> *flowVectors = KLTFlow::getOpenCVKLT(oldFrame, buf,
                                              mEgomotionParameters->selectorQuality(),
                                              mEgomotionParameters->selectorDistance(),
@@ -112,6 +116,8 @@ AbstractOutputData* EgomotionThread::processNewData()
                                              mEgomotionParameters->harrisK(),
                                              mEgomotionParameters->kltSize()
                                            );
+
+                stats.resetInterval("Opencv Flow");
                 flow = new FlowBuffer(buf->getSize());
                 for (FloatFlowVector &v : *flowVectors)
                 {
@@ -122,6 +128,8 @@ AbstractOutputData* EgomotionThread::processNewData()
                     }
 
                 }
+
+                stats.resetInterval("Forming a buffer");
 
                 double focal = 820.428;
                 Vector2dd center(305.2, 239.8);
@@ -148,6 +156,8 @@ AbstractOutputData* EgomotionThread::processNewData()
                 estimator.treshold = 0.01;
 
                 E = estimator.getEssentialRansac(&cl);
+                stats.resetInterval("Essential estimation");
+#if 0
                 E.decompose( outputData->rot, outputData->trans);
                 for (int var = 0; var < 4; var++)
                 {
@@ -155,18 +165,71 @@ AbstractOutputData* EgomotionThread::processNewData()
                     Quaternion q = Quaternion::FromMatrix( outputData->rot[var]);
                     q.printAxisAndAngle();
                 }
+#endif
 
+                ////////////////////////////////////////////////////////////
+                EssentialDecomposition decomposition[4];
+                for (int i = 0; i < 4; i++)
+                {
+                    decomposition[i] = EssentialDecomposition(outputData->rot[i], outputData->trans[i]);
+                }
+                double cost[4];
+                RectificationResult result;
+                cout << "=============================================================" << endl;
+                E.decompose(decomposition);
+                int selected = 0;
+                for (selected = 0; selected < 4; selected++)
+                {
+                     cout << "Decomposition " << selected << endl << decomposition[selected];
+
+                    double d1;
+                    double d2;
+                    double err;
+                    cost[selected] = 0.0;
+                    EssentialDecomposition *dec = &(decomposition[selected]);
+                    for (unsigned i = 0; i < cl.size(); i++)
+                    {
+                        dec->getScaler(*cl.at(i), d1, d2, err);
+                        if (d1 > 0.0 && d2 > 0.0)
+                            cost[selected]++;
+                    }
+                    cout << "decomposition cost:" << cost[selected] << endl << endl;
+                }
+
+                double maxCost = 0.0;
+                int finalSelection = 0;
+                for (selected = 0; selected < 4; selected++)
+                {
+                    if (cost[selected] > maxCost)
+                    {
+                        maxCost = cost[selected];
+                        finalSelection = selected;
+                    }
+                }
+                cout << endl << endl;
+
+                result.decomposition = decomposition[finalSelection];
+                Quaternion q = Quaternion::FromMatrix( result.decomposition.rotation);
+                CameraAnglesLegacy angles = CameraAnglesLegacy::FromQuaternion(q);
+                q.printAxisAndAngle();
+                cout << "Chosen decomposition" << endl << result.decomposition << endl;
+                cout << "pitch: " << angles.pitch() << " yaw: " << angles.yaw() << " roll: " << angles.roll() << endl;
+                //////////////////////////////////////////////////////////////////////////
+                ///
 
                 delete_safe(flowVectors);
+                stats.endInterval("Essential decomposition");
 #endif
 
             }
 
+            stats.startInterval();
             if (flow != NULL)
             {
                 outputData->debugOutput = new RGB24Buffer(flow->getSize());
                 outputData->debugOutput->drawFlowBuffer3(flow);
             }
+            stats.endInterval("Drawing the result on a debug canvas");
 
             delete_safe(flow);
             delete_safe(oldFrame);
