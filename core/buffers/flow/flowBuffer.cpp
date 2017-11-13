@@ -9,12 +9,12 @@
  */
 #include <fstream>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "flowBuffer.h"
-#include "sseWrapper.h"
-#include "tbbWrapper.h"
-#include "floatFlowBuffer.h"
+#include "core/buffers/flow/flowBuffer.h"
+#include "core/math/sse/sseWrapper.h"
+#include "core/tbbwrapper/tbbWrapper.h"
+#include "core/buffers/flow/floatFlowBuffer.h"
 
 namespace corecvs {
 

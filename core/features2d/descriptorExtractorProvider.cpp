@@ -1,6 +1,6 @@
-#include "descriptorExtractorProvider.h"
+#include "core/features2d/descriptorExtractorProvider.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
 
 DescriptorExtractor* DescriptorExtractorProvider::getDescriptorExtractor(const DescriptorType &type)

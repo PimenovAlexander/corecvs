@@ -1,4 +1,4 @@
-#include "bufferReaderProvider.h"
+#include "core/features2d/bufferReaderProvider.h"
 
 BufferReader* BufferReaderProvider::getBufferReader(const std::string &filename)
 {

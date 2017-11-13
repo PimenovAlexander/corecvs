@@ -1,10 +1,10 @@
 #include <algorithm>
 
-#include "affine.h"
+#include "core/math/affine.h"
 
-#include "multicameraTriangulator.h"
-#include "cameraFixture.h"
-#include "fixtureScene.h"
+#include "core/rectification/multicameraTriangulator.h"
+#include "core/camerafixture/cameraFixture.h"
+#include "core/camerafixture/fixtureScene.h"
 
 using namespace corecvs;
 

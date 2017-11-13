@@ -10,11 +10,12 @@
 #include <stdint.h>
 #include <cmath>
 
-#include "fixedVector.h"
-#include "vector3d.h"
-#include "mathUtils.h"
+#include "core/math/vector/fixedVector.h"
+#include "core/math/vector/vector3d.h"
+#include "core/math/mathUtils.h"
+#include "core/reflection/reflection.h"
 
-#include "generated/rgbColorParameters.h"
+#include "core/xml/generated/rgbColorParameters.h"
 
 namespace corecvs {
 /**
@@ -39,6 +40,7 @@ public:
         FIELD_B = 0,
         FIELD_A = 3
     };
+
     /**
      *
      *
@@ -319,7 +321,7 @@ public:
         double chroma = value * saturation;
         hue /= 60.0;
         double largest = chroma * (1.0 - std::abs(hue - 2.0 * floor(hue / 2.0) - 1.0));
-        int h = floor(hue);
+        int h = (int)floor(hue);
         double min = value - chroma;
         double r = min, g = min, b = min;
 
@@ -351,7 +353,7 @@ public:
                 break;
         }
 
-        return RGBColor(r * 255, g * 255, b * 255);
+        return RGBColor((uint8_t)(r * 255), (uint8_t)(g * 255), (uint8_t)(b * 255));
     }
 
     /**
@@ -392,19 +394,24 @@ public:
         int g =  ((298 * c - 100 * d - 208 * e + 128) >> 8);
         int b =  ((298 * c + 516 * d           + 128) >> 8);
 
-/*        int r =  ((298 * c           + 409 * e + 128) / 256);
-        int g =  ((298 * c - 100 * d - 208 * e + 128) / 256);
-        int b =  ((298 * c + 516 * d           + 128) / 256);*/
+        return RGBColor(clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255));
+    }
 
+    /**
+    *  Format "Y′UV420sp (NV21) to RGB conversion (Android)" of the article at:
+    *  https://en.wikipedia.org/wiki/YUV#Y.E2.80.B2UV420p_.28and_Y.E2.80.B2V12_or_YV12.29_to_RGB888_conversion
+    *
+    **/
+    static RGBColor FromYUV420sp(uint8_t y, uint8_t u, uint8_t v)
+    {
+        int d = u - 128;
+        int e = v - 128;
 
-        if (r < 0) r = 0;
-        if (g < 0) g = 0;
-        if (b < 0) b = 0;
-        if (r > 255) r = 255;
-        if (g > 255) g = 255;
-        if (b > 255) b = 255;
+        int r = y + roundShiftUp(          1404 * e, 10);
+        int g = y - roundShiftUp( 346 * d + 715 * e, 10);
+        int b = y + roundShiftUp(1774 * d          , 10);
 
-        return RGBColor(r,g,b);
+        return RGBColor(clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255));
     }
 
     static RGBColor Black()
@@ -432,6 +439,16 @@ public:
         return RGBColor(255, 255, 0);
     }
 
+    static RGBColor Goldenrod()
+    {
+        return RGBColor(218, 165, 32);
+    }
+
+    static RGBColor Khaki()
+    {
+        return RGBColor(195, 176, 145);
+    }
+
     static RGBColor Green()
     {
         return RGBColor(0, 255, 0);
@@ -450,6 +467,11 @@ public:
     static RGBColor Blue()
     {
         return RGBColor(0, 0, 255);
+    }
+
+    static RGBColor TiffanyBlue()
+    {
+        return RGBColor(129, 216, 208);
     }
 
     static RGBColor Indigo()
@@ -472,12 +494,33 @@ public:
         return RGBColor(0, 0, 127);
     }
 
+    static RGBColor Brown()
+    {
+        return RGBColor(150, 75, 0);
+    }
+
+    static RGBColor Amber()
+    {
+        return RGBColor(255, 191, 0);
+    }
+
+
     static RGBColor lerpColor(const RGBColor &first, const RGBColor &second, double alpha)
     {
         uint8_t r = (uint8_t)lerp<double>(first.r(), second.r(), alpha);
         uint8_t g = (uint8_t)lerp<double>(first.g(), second.g(), alpha);
         uint8_t b = (uint8_t)lerp<double>(first.b(), second.b(), alpha);
         return RGBColor(r, g, b);
+    }
+
+    /**
+     *    This function is slow. Use for debugging and fancy effects only.
+     **/
+    void blendWith(const RGBColor &second, double alpha = 0.5)
+    {
+        r() = (uint8_t)lerp<double>(r(), second.r(), alpha);
+        g() = (uint8_t)lerp<double>(g(), second.g(), alpha);
+        b() = (uint8_t)lerp<double>(b(), second.b(), alpha);
     }
 
     static RGBColor diff(const RGBColor &first, const RGBColor &second)
@@ -527,22 +570,9 @@ public:
         return RGBColor(fround(x * 255), fround((1.0 - x) * 255), 0);
     }
 
-    //#ifdef REFLECTION_IN_CORE
-    //    Reflection reflect = staticInit();
-    //#else
-    //    Reflection reflect;
-    //#endif
     static Reflection reflect;
-
-    static Reflection staticInit()
-    {
-        Reflection reflection;
-        reflection.fields.push_back(new IntField(FIELD_R, 0, "r"));
-        reflection.fields.push_back(new IntField(FIELD_G, 0, "g"));
-        reflection.fields.push_back(new IntField(FIELD_B, 0, "b"));
-        reflection.fields.push_back(new IntField(FIELD_A, 0, "a"));
-        return reflection;
-    }
+    static int        dummy;
+    static int        staticInit();
 
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -579,9 +609,23 @@ template<class VisitorType>
         return Vector3dd(r(), g(), b());
     }
 
+    Vector3df toFloat() const
+    {
+        return Vector3df(r(), g(), b());
+    }
+
+    RgbColorParameters toRGBParameters() const
+    {
+        return RgbColorParameters(r(), g(), b());
+    }
+
     uint32_t toRGBInt() const
     {
         return ((uint32_t)r() << 16) | ((uint32_t)g() << 8) | ((uint32_t)b());
+    }
+    uint32_t toBGRInt() const
+    {
+        return ((uint32_t)b() << 16) | ((uint32_t)g() << 8) | ((uint32_t)r());
     }
     uint32_t toBRGInt() const
     {
@@ -592,7 +636,7 @@ template<class VisitorType>
     {
         Vector3dd input1 = input;
         input1.mapToHypercube(Vector3dd(0.0, 0.0, 0.0), Vector3dd(255.0, 255.0, 255.0));
-        return RGBColor(input1.x(), input1.y(), input1.z());
+        return RGBColor((uint8_t)input1.x(), (uint8_t)input1.y(), (uint8_t)input1.z());
     }
 
     static RGBColor FromHSV(uint16_t h, uint8_t s, uint8_t v)
@@ -602,7 +646,7 @@ template<class VisitorType>
         int r,g,b;
 
         int swh = h / 60;
-        int dh = h - swh * 60.0;
+        int dh = h - swh * 60;
 
         int x1 = c * dh / 60;
         int x2 = c - x1;

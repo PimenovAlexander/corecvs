@@ -5,7 +5,7 @@
  *      Author: alexander
  */
 
-#include "genericMath.h"
+#include "core/math/generic/genericMath.h"
 
 namespace corecvs
 {

@@ -6,8 +6,8 @@
  * \author alexander
  */
 
-#include "global.h"
-#include "basePathVisitor.h"
+#include "core/utils/global.h"
+#include "core/utils/visitors/basePathVisitor.h"
 
 namespace corecvs {
 

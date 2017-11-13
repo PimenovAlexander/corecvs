@@ -1,4 +1,4 @@
-#include "sdfRenderable.h"
+#include "core/geometry/raytrace/sdfRenderable.h"
 
 SDFRenderable::SDFRenderable()
 {
@@ -44,7 +44,7 @@ bool SDFRenderable::intersect(RayIntersection &intersection)
     return false;
 }
 
-void SDFRenderable::normal(const Vector3dd &vector, Vector3dd &normal)
+void SDFRenderable::normal(const Vector3dd &/*vector*/, Vector3dd &/*normal*/)
 {
 
 }

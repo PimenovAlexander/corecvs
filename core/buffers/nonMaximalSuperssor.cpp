@@ -1,4 +1,4 @@
-#include "nonMaximalSuperssor.h"
+#include "core/buffers/nonMaximalSuperssor.h"
 
 namespace corecvs {
 

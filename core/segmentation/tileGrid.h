@@ -10,12 +10,12 @@
  * \author alexander
  */
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "abstractContiniousBuffer.h"
-#include "segmentator.h"
-#include "histogram.h"
-#include "ellipticalApproximation.h"
+#include "core/buffers/abstractContiniousBuffer.h"
+#include "core/segmentation/segmentator.h"
+#include "core/buffers/histogram/histogram.h"
+#include "core/geometry/ellipticalApproximation.h"
 #include "../math/mathUtils.h"
 
 

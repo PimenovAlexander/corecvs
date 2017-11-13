@@ -1,9 +1,9 @@
 #ifndef INPUTFILTERBLOCK_H
 #define INPUTFILTERBLOCK_H
-#include "filterBlock.h"
-#include "g12Buffer.h"
+#include "core/filters/blocks/filterBlock.h"
+#include "core/buffers/g12Buffer.h"
 #include "../xml/generated/inputFilterParameters.h"
-#include "filtersCollection.h"
+#include "core/filters/filtersCollection.h"
 
 namespace corecvs
 {

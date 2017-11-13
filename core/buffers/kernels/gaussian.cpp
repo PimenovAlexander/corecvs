@@ -8,9 +8,9 @@
  * \author alexander
  */
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "gaussian.h"
+#include "core/buffers/kernels/gaussian.h"
 namespace corecvs {
 
 double Gaussian3x3::data[9] = {

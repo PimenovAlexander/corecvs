@@ -12,17 +12,17 @@
 
 #include <stdint.h>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "mathUtils.h"
-#include "abstractContiniousBuffer.h"
-#include "g12Buffer.h"
-#include "vector2d.h"
-#include "matrix33.h"
-#include "tbbWrapper.h"
-#include "radialCorrection.h"
-#include "distortionCorrectTransform.h"
-#include "lensDistortionModelParameters.h"
+#include "core/math/mathUtils.h"
+#include "core/buffers/abstractContiniousBuffer.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/math/vector/vector2d.h"
+#include "core/math/matrix/matrix33.h"
+#include "core/tbbwrapper/tbbWrapper.h"
+#include "core/alignment/radialCorrection.h"
+#include "core/alignment/distortionCorrectTransform.h"
+#include "core/alignment/lensDistortionModelParameters.h"
 #include "../math/levenmarq.h"
 
 namespace corecvs {

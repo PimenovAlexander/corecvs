@@ -6,7 +6,7 @@
  * \date Jan 17, 2013
  */
 
-#include "filterBlock.h"
+#include "core/filters/blocks/filterBlock.h"
 #include "../xml/generated/maskingParameters.h"
 
 namespace corecvs

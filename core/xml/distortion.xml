@@ -51,9 +51,9 @@
     <field type="double" name="shift Y" defaultValue="0" comment="Additional shift \f$y_s\f$" />
 
 
-     <field type="bool" name="Map Forward"  defaultValue="false" comment="This one is used to identify direction of map" />
+     <field type="bool" name="Map Forward"  defaultValue="false" comment="This one is used to identify map direction, true if undistorted->distorted" />
 
-  </class>
+</class>
 
 <!-- class name="Camera Extirinsic Parameteres" description="">
     <field type="double" name="yaw"            defaultValue="0.0"    />
@@ -65,35 +65,7 @@
     <field type="double" name="posZ"            defaultValue="0.0"    />
 </class> -->
 
-  <enum name="Checkerboard Detection Algorithm">
-    <item name="Homebrew Detector" id="0" />
-    <item name="OpenCV Detector"   id="1" />
-  </enum>
 
-  <class name="Checkerboard Detection Parameters">  
-    <field type="bool"         name="Estimate undistorted from distorted" defaultValue="true"/>
-    <field type="bool"         name="Use Undistortion"      defaultValue="true"/>
-
-    <field type="Checkerboard Detection Algorithm" name="Algorithm" defaultValue="0" />
-
-
-    <field type="ImageChannel" name="Channel"            defaultValue="3"   />
-    <field type="double"       name="Cell Size Hor"      defaultValue="50"   suffix="mm" />
-    <field type="double"       name="Cell Size Vert"     defaultValue="50"   suffix="mm" />
-
-    <field type="bool"         name="Clean existing"     defaultValue="true" />
-
-    <field type="int"          name="Precise Diameter"   defaultValue="50"      min="0"   max="999999"  />
-    <field type="int"          name="Iteration count"    defaultValue="50"      min="1"   max="999999"  />
-    <field type="double"       name="Min accuracy"       defaultValue="0.01"    min="0.0" max="999999" suffix="px" decimals="4"/>
-
-
-    <field type="bool"         name="Partial Board"       defaultValue="true"/>
-    <field type="bool"         name="Fast board Speedup"  defaultValue="true"/>
-    <field type="bool"         name="Draw SGFs on boards" defaultValue="true"/>
-    <field type="bool"         name="Skip undistorted with no distorted board" defaultValue="false"/>
-
-  </class>
 
   <enum name="Line Distortion Estimator Cost">
     <item name="Line Deviation Cost" id="0" />
@@ -104,7 +76,7 @@
     <field type="Line Distortion Estimator Cost"   name="Cost Algorithm"  defaultValue="0" />
 
     <field type="int"       name="Iteration Number"  defaultValue="1000"  max="99999" min="0"/>
-    <field type="int"       name="Polinom Degree"    defaultValue="6"  prefix="x^" max="20" min="0"/>
+    <field type="int"       name="Polynom Degree"    defaultValue="6"  prefix="x^" max="20" min="0"/>
 
     <field type="bool"      name="Simple Jacobian"   defaultValue="true" />
     <field type="bool"      name="Even powers only"  defaultValue="false" />

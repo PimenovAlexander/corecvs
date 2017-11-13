@@ -1,5 +1,5 @@
-#include "curvatureFunc.h"
-#include "radialFunc.h"
+#include "core/alignment/curvatureFunc.h"
+#include "core/alignment/radialFunc.h"
 
 namespace corecvs
 {
@@ -24,7 +24,7 @@ void CurvatureFunc::operator ()(const double in[], double out[])
         Vector newStraight((int)straight.size() * 2);
         RadialFunc f(straight, mCenter, mPolynomDegree);
         f.setScaleFactor(mScaleFactor);
-        f(in, newStraight.element);
+        f(in, newStraight);
         vector<Vector2dd> newVector;
         for (unsigned j = 0; j < straight.size(); j ++)
         {
@@ -59,7 +59,7 @@ Matrix CurvatureFunc::getJacobian(const double in[], double delta)
         Vector newStraight((int)straight.size() * 2);
         f.setScaleFactor(mScaleFactor);
         Matrix dPointsDKoeff = f.getJacobian(in);
-        f(in, newStraight.element);
+        f(in, newStraight);
         Matrix dFuncDPoints(1, (int)straight.size() * 2);
         for (unsigned j = 0; j < straight.size() * 2; j ++)
         {

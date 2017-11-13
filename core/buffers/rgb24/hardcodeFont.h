@@ -11,7 +11,7 @@
 #define HARDCODEFONT_H_
 #include <stdint.h>
 
-#include "global.h"
+#include "core/utils/global.h"
 namespace corecvs {
 
 

@@ -11,22 +11,19 @@
 #define SEEWRAPPER_H_
 
 #ifdef WITH_NEON
-#include "int64x2.h"
-#include "int32x4.h"
-#include "int32x8.h"
-#include "int16x8.h"
+#include "core/math/neon/int64x2.h"
+#include "core/math/neon/int32x4.h"
+#include "core/math/neon/int32x8.h"
+#include "core/math/neon/int16x8.h"
 
 
-#include "float32x4.h"
+#include "core/math/neon/float32x4.h"
 
 #include "ssemath.h"
-namespace corecvs {
-
-
 
 #endif //WITH_NEON
 
-
+namespace corecvs {
 
 } //namespace corecvs
 #endif /* SEEWRAPPER_H_ */

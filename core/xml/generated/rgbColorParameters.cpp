@@ -8,7 +8,7 @@
 
 #include <vector>
 #include <stddef.h>
-#include "rgbColorParameters.h"
+#include "core/xml/generated/rgbColorParameters.h"
 
 /**
  *  Looks extremely unsafe because it depends on the order of static initialization.

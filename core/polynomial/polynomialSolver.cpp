@@ -1,8 +1,8 @@
-#include "polynomialSolver.h"
+#include "core/polynomial/polynomialSolver.h"
 
-#include "global.h"
-#include "matrix.h"
-#include "vector.h"
+#include "core/utils/global.h"
+#include "core/math/matrix/matrix.h"
+#include "core/math/vector/vector.h"
 
 #include "cblasLapackeWrapper.h"
 

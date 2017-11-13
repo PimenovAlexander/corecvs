@@ -7,9 +7,9 @@
  * \author alexander
  */
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "cascadeClassifier.h"
+#include "core/boosting/cascadeClassifier.h"
 namespace corecvs {
 
 CascadeClassifier::CascadeClassifier()

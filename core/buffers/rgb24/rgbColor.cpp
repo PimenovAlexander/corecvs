@@ -5,19 +5,39 @@
  * \date Dec 4, 2011
  * \author alexander
  */
-
-#include "global.h"
-#include "rgbColor.h"
+#include "core/utils/global.h"
+#include "core/buffers/rgb24/rgbColor.h"
 
 namespace corecvs {
 
-Reflection RGBColor::reflect = RGBColor::staticInit();
+/**
+ *  Looks extremely unsafe because it depends on the order of static initialization.
+ *  Should check standard if this is ok
+ **/
+Reflection RGBColor::reflect;
+int RGBColor::dummy = RGBColor::staticInit();
+
+int RGBColor::staticInit()
+{
+    reflect.name = ReflectionNaming(
+        "RGBColor",
+        "RGBColor",
+        ""
+    );
+
+    reflect.objectSize = sizeof(RGBColor);
+
+    reflect.fields.push_back(new IntField(FIELD_R, 0, "r"));
+    reflect.fields.push_back(new IntField(FIELD_G, 0, "g"));
+    reflect.fields.push_back(new IntField(FIELD_B, 0, "b"));
+    reflect.fields.push_back(new IntField(FIELD_A, 0, "a"));
+    return 0;
+}
 
 RGBColor RGBColor::rainbow(double x)
 {
     x *= 6;
-    if (x < 0.0) x = 0.0;
-    if (x > 6.0) x = 6.0;
+    x = clamp(x, 0., 6.); 
 
     switch ((int)x)
     {

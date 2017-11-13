@@ -12,8 +12,8 @@
 #include <string>
 
 
-#include "global.h"
-#include "mesh3d.h"
+#include "core/utils/global.h"
+#include "core/geometry/mesh3d.h"
 
 namespace corecvs {
 
@@ -21,14 +21,34 @@ namespace corecvs {
 class MeshLoader
 {
 public:
+    enum DumpFormat {
+        FORMAT_PLY,
+        FORMAT_STL,
+        FORMAT_OBJ
+    };
+
+    static inline const char *getName(const DumpFormat &value)
+    {
+        switch (value)
+        {
+         case FORMAT_PLY : return "FORMAT_PLY"; break ;
+         case FORMAT_STL : return "FORMAT_STL"; break ;
+         case FORMAT_OBJ : return "FORMAT_OBJ"; break ;
+        }
+        return "Not in range";
+    }
+
+
     bool trace;
 
-    static bool endsWith(const std::string &fileName, const char *extention);
+    // Depricated
+    //static bool endsWith(const std::string &fileName, const char *extention);
 
     MeshLoader();
     bool load(Mesh3D *mesh, const std::string &fileName);
 
     bool save(Mesh3D *mesh, const std::string &fileName);
+    //bool save(Mesh3D *mesh, const DumpFormat &format);
 
     static std::string extentionList();
 

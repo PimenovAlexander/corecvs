@@ -11,8 +11,8 @@
 #include <functional>
 #include <stdint.h>
 
-#include "abstractBuffer.h"
-#include "g12Buffer.h"
+#include "core/buffers/abstractBuffer.h"
+#include "core/buffers/g12Buffer.h"
 
 namespace corecvs {
 

@@ -1,11 +1,11 @@
 #ifndef PATTERNDETECTOR
 #define PATTERNDETECTOR
 
-#include "calculationStats.h"
+#include "core/stats/calculationStats.h"
 
-#include "selectableGeometryFeatures.h"
-#include "g8Buffer.h"
-#include "rgb24Buffer.h"
+#include "core/alignment/selectableGeometryFeatures.h"
+#include "core/buffers/g8Buffer.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
 
 
 /**

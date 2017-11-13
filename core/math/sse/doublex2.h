@@ -10,7 +10,7 @@
  * \author: alexander
  */
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #ifdef WITH_FMA
 #   include <immintrin.h>

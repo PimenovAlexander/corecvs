@@ -4,45 +4,47 @@
 # output parameter: $$COREBINDIR - path to the output|used core library
 #
 
+!contains(CORECVS_INCLUDED, "core.pri") {
+CORECVS_INCLUDED +=  core.pri
+
 COREDIR=$$PWD
 
 #
-# Switching submodules on and off it not supported. However with some you can try. Risk is yours
+# Switching submodules on and off is not supported. However with some you can try. Risk is yours
 #
-CORE_SUBMODULES= \
-    alignment     \
-    assignment    \
-    automotive    \
-    boosting      \
-    buffers       \
-    cammodel      \
-    fileformats   \
-    filesystem    \
-    filters       \
-    function      \
-    geometry      \
-    kalman        \
-    kltflow       \
-    math          \
-    meta          \
-    meanshift     \
-    rectification \
-    reflection    \
-    segmentation  \
-    stats         \
-    tbbwrapper    \
-    utils         \
-    clustering3d  \
-    features2d    \
-    patterndetection \
-    cameracalibration \
-   # graphs        \
-    polynomial    \
-    camerafixture \
-
-with_blas {
-   # CORE_SUBMODULES += reconstruction
-}
+CORE_SUBMODULES =       \
+    alignment           \
+    assignment          \
+    automotive          \
+    boosting            \
+    buffers             \
+    cammodel            \
+    fileformats         \
+    filesystem          \
+    filters             \
+    function            \
+    geometry            \
+    kalman              \
+    kltflow             \
+    math                \
+    meta                \
+    meanshift           \
+    rectification       \
+    reflection          \
+    segmentation        \
+    stats               \
+    tbbwrapper          \
+    utils               \
+    clustering3d        \
+    features2d          \
+    patterndetection    \
+    cameracalibration   \
+    device \
+    graphs              \
+    polynomial          \
+    camerafixture       \
+    iterative           \
+    stereointerface     \
 
 for (MODULE, CORE_SUBMODULES) {
     CORE_INCLUDEPATH += $${COREDIR}/$${MODULE}
@@ -73,16 +75,26 @@ CORE_INCLUDEPATH += \
     $$COREDIR/tinyxml \
     $$COREDIR/../wrappers/cblasLapack \		# some of core's math algorithms use it
 
+CORE_INCLUDEPATH_SUPP=$$COREDIR/..
 
-INCLUDEPATH += $$CORE_INCLUDEPATH
+!equals(SUPPRESSINCLUDES, "true") {
+    INCLUDEPATH += $$CORE_INCLUDEPATH_SUPP $$CORE_INCLUDEPATH
+} else {
+    INCLUDEPATH += $$CORE_INCLUDEPATH_SUPP
+    message(Per-Folder includes are supperssed. Only including $$CORE_INCLUDEPATH_SUPP)
+}
+
+
 DEPENDPATH  += $$CORE_INCLUDEPATH
 
-exists(../../../config.pri) {
+exists($$COREDIR/../../../config.pri) {
     COREBINDIR = $$COREDIR/../../../bin
 } else {
     message(Using local core. Global config should be at $$COREDIR/../../../config.pri)
     COREBINDIR = $$COREDIR/../bin
 }
+
+#message(Corebindir is $$COREBINDIR)
 
 contains(TARGET, cvs_core): !contains(TARGET, cvs_core_restricted) {
     win32-msvc* {
@@ -98,7 +110,7 @@ contains(TARGET, cvs_core): !contains(TARGET, cvs_core_restricted) {
     CORE_TARGET_NAME = cvs_core
     CORE_TARGET_NAME = $$join(CORE_TARGET_NAME,,,$$BUILD_CFG_SFX)
 
-    LIBS = -L$$COREBINDIR -l$$CORE_TARGET_NAME $$LIBS
+    LIBS = -L$$COREBINDIR -l$$CORE_TARGET_NAME $$LIBS  
 
     win32-msvc* {
         CORE_TARGET_NAME = $$join(CORE_TARGET_NAME,,,.lib)
@@ -106,13 +118,21 @@ contains(TARGET, cvs_core): !contains(TARGET, cvs_core_restricted) {
         CORE_TARGET_NAME = $$join(CORE_TARGET_NAME,,lib,.a)
     }
     PRE_TARGETDEPS += $$COREBINDIR/$$CORE_TARGET_NAME
+
+    #message(Adding core lib to the linkinglist $$LIBS and targetdeps $$PRE_TARGETDEPS)
 }
 
 # The filesystem module needs this
 with_unorthodox {
+    DEFINES += CORE_UNSAFE_DEPS
+}
+
+
 !win32  {
     LIBS += -lstdc++fs
 }
-    DEFINES += CORE_UNSAFE_DEPS
-}
+
+
+} # !contains(CORECVS_INCLUDED, "core.pri")
+
 

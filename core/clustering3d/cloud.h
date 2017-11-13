@@ -5,9 +5,9 @@
  * \date Feb 20, 2013
  */
 
-#include "global.h"
-#include "swarmPoint.h"
-#include "mesh3d.h"
+#include "core/utils/global.h"
+#include "core/clustering3d/swarmPoint.h"
+#include "core/geometry/mesh3d.h"
 
 namespace corecvs {
 

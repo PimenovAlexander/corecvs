@@ -1,6 +1,6 @@
 #include <string.h> // NULL
 
-#include "focusEstimator.h"
+#include "core/buffers/focusEstimator.h"
 
 namespace corecvs {
 

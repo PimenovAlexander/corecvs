@@ -8,7 +8,7 @@
 
 #include <vector>
 #include <stddef.h>
-#include "thickeningParameters.h"
+#include "core/xml/generated/thickeningParameters.h"
 
 /**
  *  Looks extremely unsafe because it depends on the order of static initialization.

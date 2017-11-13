@@ -7,7 +7,7 @@
  * \author alexander
  */
 
-#include "threshold.h"
+#include "core/buffers/kernels/threshold.h"
 namespace corecvs {
 
 

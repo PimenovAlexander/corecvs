@@ -1,6 +1,6 @@
-#include "imageMatches.h"
+#include "core/features2d/imageMatches.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include <fstream>
 #include <iomanip>

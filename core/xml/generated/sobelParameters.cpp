@@ -8,7 +8,7 @@
 
 #include <vector>
 #include <stddef.h>
-#include "sobelParameters.h"
+#include "core/xml/generated/sobelParameters.h"
 
 /**
  *  Looks extremely unsafe because it depends on the order of static initialization.

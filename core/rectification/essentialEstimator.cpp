@@ -6,14 +6,14 @@
  * \author alexander
  */
 
-#include "essentialEstimator.h"
-#include "quaternion.h"
-#include "levenmarq.h"
-#include "gradientDescent.h"
-#include "classicKalman.h"
+#include "core/rectification/essentialEstimator.h"
+#include "core/math/quaternion.h"
+#include "core/math/levenmarq.h"
+#include "core/math/gradientDescent.h"
+#include "core/kalman/classicKalman.h"
 
 #ifdef NONFREE
-#include "polynomialSolver.h"
+#include "core/polynomial/polynomialSolver.h"
 #endif
 //#include "kalman.h"
 

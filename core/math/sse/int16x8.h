@@ -12,9 +12,9 @@
 #include <emmintrin.h>
 #include <stdint.h>
 
-#include "global.h"
-#include "fixedVector.h"
-#include "intBase16x8.h"
+#include "core/utils/global.h"
+#include "core/math/vector/fixedVector.h"
+#include "core/math/sse/intBase16x8.h"
 
 namespace corecvs {
 
@@ -101,10 +101,10 @@ public:
     }
 
     /* Immediate shift operations */
-    friend Int16x8 operator >> (const Int16x8 &left, uint32_t count);
-    friend Int16x8 shiftLogical(const Int16x8 &left, uint32_t count);
-    friend Int16x8 operator >>= (     Int16x8 &left, uint32_t count);
-           Int16x8&shiftLogical(uint32_t count);
+    friend Int16x8  operator >> (const Int16x8 &left, uint32_t count);
+    friend Int16x8  shiftLogical(const Int16x8 &left, uint32_t count);
+    friend Int16x8  operator >>= (     Int16x8 &left, uint32_t count);
+           Int16x8& shiftLogical(uint32_t count);
 
     /* Shift operations */
     friend Int16x8 operator >> (const Int16x8 &left, const Int16x8 &right);

@@ -7,8 +7,8 @@
  * \author alexander
  */
 
-#include "flowSimulator.h"
-#include "FCostFunction.h"
+#include "core/automotive/simulation/flowSimulator.h"
+#include "core/automotive/FCostFunction.h"
 namespace corecvs {
 
 FlowSimulator::FlowSimulator()
@@ -104,13 +104,13 @@ std::vector<Vector3dd> *FlowSimulator::applyTransform(std::vector<Vector3dd> * p
 }
 
 std::vector<FloatFlowVector> *FlowSimulator::simulateFlow(
-        const CameraIntrinsicsLegacy &camIntrinsics,
+        const PinholeCameraIntrinsics   &camIntrinsics,
         const ShiftRotateTransformation &cameraExtrinsics,
         const ShiftRotateTransformation &carMovement,
         double maxZ,
         double minLength )
 {
-    Vector2dd imageSize = camIntrinsics.center * 2.0;
+    Vector2dd imageSize = camIntrinsics.principal * 2.0;
 
     std::vector<FloatFlowVector> *result = new std::vector<FloatFlowVector>();
 

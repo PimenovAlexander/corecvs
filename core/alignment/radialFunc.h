@@ -1,6 +1,6 @@
 #pragma once
-#include "function.h"
-#include "radialCorrection.h"
+#include "core/function/function.h"
+#include "core/alignment/radialCorrection.h"
 
 namespace corecvs {
 

@@ -1,4 +1,4 @@
-#include "patternDetector.h"
+#include "core/patterndetection/patternDetector.h"
 
 bool PatternDetector::detectPattern(corecvs::RGB24Buffer &rgbBuffer)
 {

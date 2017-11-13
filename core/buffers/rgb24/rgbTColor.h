@@ -11,11 +11,11 @@
 
 #include <stdint.h>
 
-#include "fixedVector.h"
-#include "vector3d.h"
-#include "mathUtils.h"
+#include "core/math/vector/fixedVector.h"
+#include "core/math/vector/vector3d.h"
+#include "core/math/mathUtils.h"
 
-#include "generated/rgbColorParameters.h"
+#include "core/xml/generated/rgbColorParameters.h"
 
 namespace corecvs {
 
@@ -499,17 +499,16 @@ public:
         return RGBTColor(fround(x * max), fround((1.0 - x) * max), 0);
     }
 
-    static Reflection staticInit()
+    static Reflection reflect;
+    static int dummy;
+    static int staticInit()
     {
-        Reflection reflection;
-        reflection.fields.push_back(new IntField(FIELD_R, 0, "r"));
-        reflection.fields.push_back(new IntField(FIELD_G, 0, "g"));
-        reflection.fields.push_back(new IntField(FIELD_B, 0, "b"));
-        reflection.fields.push_back(new IntField(FIELD_A, 0, "a"));
-        return reflection;
+        reflect.fields.push_back(new IntField(FIELD_R, 0, "r"));
+        reflect.fields.push_back(new IntField(FIELD_G, 0, "g"));
+        reflect.fields.push_back(new IntField(FIELD_B, 0, "b"));
+        reflect.fields.push_back(new IntField(FIELD_A, 0, "a"));
+        return 0;
     }
-
-    static Reflection const reflect;
 
     template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -603,14 +602,15 @@ public:
 
 typedef RGBTColor<uint16_t> RGBColor48;
 
+#ifdef REFLECTION_IN_CORE
+    template<typename T>
+    int RGBTColor<T>::dummy = staticInit();
+#else
+    template<typename T>
+    const Reflection RGBTColor<T>::reflect;
+#endif
+
 } //namespace corecvs
 
-#ifdef REFLECTION_IN_CORE
-template<typename T>
-const Reflection RGBTColor<T>::reflect = staticInit();
-#else
-template<typename T>
-const Reflection RGBTColor<T>::reflect;
-#endif
 
 #endif // CRGBTCOLOR_H_

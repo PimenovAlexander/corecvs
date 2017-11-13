@@ -12,9 +12,9 @@
 #include <immintrin.h>
 #include <stdint.h>
 
-#include "avxInteger.h"
-#include "global.h"
-#include "fixedVector.h"
+#include "core/math/avx/avxInteger.h"
+#include "core/utils/global.h"
+#include "core/math/vector/fixedVector.h"
 
 namespace corecvs {
 
@@ -23,6 +23,7 @@ class ALIGN_DATA(32) Int16x16 : public AVXInteger<Int16x16>
 {
 public:  
     static const int SIZE = 16;
+    static const uint32_t ALL_TOP_BITS = 0xFFFFFFFF;
 
     Int16x16(){}
 
@@ -86,11 +87,11 @@ public:
 
     /* Static fabrics */
 
- /*   static Int16x16 pack(const Int32x4 &first, const Int32x4 &second)
+    static Int16x16 pack(const Int32x8 &first, const Int32x8 &second)
     {
         return Int16x16(_mm256_packs_epi32(first.data, second.data));
 
-    }*/
+    }
 
     /** Load unaligned. */
     static Int16x16 load(const int16_t *data)
@@ -187,12 +188,12 @@ template<int idx>
         return 0;
     }
 
-    /*
-    inline uint16_t maskToInt() const
+    inline uint32_t maskToInt() const
     {
         return _mm256_movemask_epi8(this->data);
     }
 
+    /*
     inline Int32x8 expand() const
     {
         return Int32x8(
@@ -202,7 +203,7 @@ template<int idx>
     }*/
 
     /* Logical operations */
-    friend Int16x16 operator &(const Int16x16 &left, const Int16x16 &right);
+/*    friend Int16x16 operator &(const Int16x16 &left, const Int16x16 &right);
     friend Int16x16 operator |(const Int16x16 &left, const Int16x16 &right);
     friend Int16x16 operator ^(const Int16x16 &left, const Int16x16 &right);
     friend Int16x16 andNot    (const Int16x16 &left, const Int16x16 &right);
@@ -210,7 +211,7 @@ template<int idx>
     friend Int16x16 operator &=(Int16x16 &left, const Int16x16 &right);
     friend Int16x16 operator |=(Int16x16 &left, const Int16x16 &right);
     friend Int16x16 operator ^=(Int16x16 &left, const Int16x16 &right);
-    friend Int16x16 andNotThis (Int16x16 &left, const Int16x16 &right);
+    friend Int16x16 andNotThis (Int16x16 &left, const Int16x16 &right);*/
 
     /* Arithmetics operations */
     friend Int16x16 operator +(const Int16x16 &left, const Int16x16 &right);
@@ -221,7 +222,7 @@ template<int idx>
 
     Int16x16 operator -( ) {
         return (Int16x16((int16_t)0) - *this);
-    };
+    }
 
     /* Immediate shift operations */
     friend Int16x16 operator <<    (const Int16x16 &left, uint32_t count);
@@ -230,6 +231,9 @@ template<int idx>
 
     friend Int16x16 operator <<=   (Int16x16 &left, uint32_t count);
     friend Int16x16 operator >>=   (Int16x16 &left, uint32_t count);
+
+    friend Int16x16  shiftLogical(const Int16x16 &left, uint32_t count);
+           Int16x16& shiftLogical(uint32_t count);
 
     /* Shift operations */
 
@@ -313,6 +317,15 @@ FORCE_INLINE Int16x16 operator -=(Int16x16 &left, const Int16x16 &right) {
     return left;
 }
 
+FORCE_INLINE Int16x16 shiftLogical(const Int16x16 &left, uint32_t count) {
+    return Int16x16(_mm256_srli_epi16(left.data, count));
+}
+
+FORCE_INLINE Int16x16 & Int16x16::shiftLogical(uint32_t count) {
+    data = _mm256_srli_epi16(data, count);
+    return *this;
+}
+
 FORCE_INLINE Int16x16 operator <<    (const Int16x16 &left, uint32_t count) {
     return Int16x16(_mm256_slli_epi16(left.data, count));
 }
@@ -388,25 +401,24 @@ FORCE_INLINE Int16x16 operator *=   (Int16x16 &left, const Int16x16 &right) {
     return left;
 }
 
-/*
-FORCE_INLINE inline Int32x4 unpackLower4  (const Int16x16 &left, const Int16x16 &right) {
-    return Int32x4(_mm256_unpacklo_epi16(left.data, right.data));
+
+FORCE_INLINE Int32x8 unpackLower4  (const Int16x16 &left, const Int16x16 &right) {
+    return Int32x8(_mm256_unpacklo_epi16(left.data, right.data));
 }
 
-FORCE_INLINE inline Int32x4 unpackHigher4 (const Int16x16 &left, const Int16x16 &right) {
-    return Int32x4(_mm256_unpackhi_epi16(left.data, right.data));
+FORCE_INLINE Int32x8 unpackHigher4 (const Int16x16 &left, const Int16x16 &right) {
+    return Int32x8(_mm256_unpackhi_epi16(left.data, right.data));
 }
-*/
 
-/*
-FORCE_INLINE inline Int32x8 productExtending (const Int16x16 &left, const Int16x16 &right)
+
+FORCE_INLINE Int32x16v productExtending (const Int16x16 &left, const Int16x16 &right)
 {
     Int16x16  lowParts;
     Int16x16 highParts;
     lowParts  = productLowerPart (left, right);
     highParts = productHigherPart(left, right);
-    return Int32x8(unpackLower4(lowParts,highParts), unpackHigher4 (lowParts,highParts));
-}*/
+    return Int32x16v(unpackLower4(lowParts,highParts), unpackHigher4 (lowParts,highParts));
+}
 
 FORCE_INLINE Int16x16 operator *  (      int16_t left, Int16x16 &right) {
     return right * Int16x16(left);

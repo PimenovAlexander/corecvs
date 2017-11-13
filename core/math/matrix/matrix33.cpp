@@ -9,8 +9,8 @@
  **/
 
 
-#include "matrix33.h"
-#include "matrix.h"
+#include "core/math/matrix/matrix33.h"
+#include "core/math/matrix/matrix.h"
 namespace corecvs {
 
 //#define ACCURATE

@@ -8,10 +8,10 @@
  * \author alexander
  */
 
-#include "filterBlock.h"
-#include "g12Buffer.h"
+#include "core/filters/blocks/filterBlock.h"
+#include "core/buffers/g12Buffer.h"
 #include "../xml/generated/sobelParameters.h"
-#include "filtersCollection.h"
+#include "core/filters/filtersCollection.h"
 
 namespace corecvs
 {

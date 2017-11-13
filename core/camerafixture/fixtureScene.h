@@ -1,9 +1,9 @@
 #ifndef FIXTURE_SCENE_H_
 #define FIXTURE_SCENE_H_
 
-#include "fixtureCamera.h"
-#include "cameraFixture.h"
-#include "sceneFeaturePoint.h"
+#include "core/camerafixture/fixtureCamera.h"
+#include "core/camerafixture/cameraFixture.h"
+#include "core/camerafixture/sceneFeaturePoint.h"
 
 namespace corecvs {
 

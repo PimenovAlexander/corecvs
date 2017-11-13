@@ -8,13 +8,13 @@
 
 #include <vector>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "ransacEstimator.h"
-#include "essentialMatrix.h"
-#include "essentialEstimator.h"
-#include "ransac.h"
-#include "correspondenceList.h"
+#include "core/rectification/ransacEstimator.h"
+#include "core/rectification/essentialMatrix.h"
+#include "core/rectification/essentialEstimator.h"
+#include "core/rectification/ransac.h"
+#include "core/rectification/correspondenceList.h"
 namespace corecvs {
 
 

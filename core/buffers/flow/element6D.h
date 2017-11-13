@@ -8,7 +8,7 @@
  * \author alexander
  */
 
-#include "flowBuffer.h"
+#include "core/buffers/flow/flowBuffer.h"
 namespace corecvs {
 
 

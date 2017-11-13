@@ -8,7 +8,7 @@
 #include <tbb/reader_writer_lock.h>
 #endif
 
-#include "global.h"
+#include "core/utils/global.h"
 
 struct CancelExecutionException : public AssertException
 {

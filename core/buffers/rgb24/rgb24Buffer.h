@@ -11,23 +11,23 @@
 
 #include <stdint.h>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "fixedPointBlMapper.h"
-#include "abstractContiniousBuffer.h"
-#include "g12Buffer.h"
-#include "g8Buffer.h"
-#include "flowBuffer.h"
-#include "histogram.h"
-#include "rectangle.h"
-#include "rgbColor.h"
-#include "function.h"
-#include "correspondenceList.h"
-#include "imageChannel.h"
+#include "core/buffers/fixeddisp/fixedPointBlMapper.h"
+#include "core/buffers/abstractContiniousBuffer.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/g8Buffer.h"
+#include "core/buffers/flow/flowBuffer.h"
+#include "core/buffers/histogram/histogram.h"
+#include "core/geometry/rectangle.h"
+#include "core/buffers/rgb24/rgbColor.h"
+#include "core/function/function.h"
+#include "core/rectification/correspondenceList.h"
+#include "core/xml/generated/imageChannel.h"
 
-#include "conic.h"
+#include "core/geometry/conic.h"
 
-#include "readers.h"
+#include "core/buffers/kernels/fastkernel/readers.h"
 
 namespace corecvs {
 
@@ -52,6 +52,7 @@ public:
 
     RGB24Buffer(int32_t h, int32_t w, bool shouldInit = true) : RGB24BufferBase (h, w, shouldInit) {}
     RGB24Buffer(Vector2d<int32_t> size, bool shouldInit = true) : RGB24BufferBase (size, shouldInit) {}
+    RGB24Buffer(Vector2d<int32_t> size, const RGBColor &data  ) : RGB24BufferBase (size, data) {}
 
     /*Helper Constructors form the relative types*/
     RGB24Buffer(G12Buffer *buffer) : RGB24BufferBase (buffer->h, buffer->w, false)
@@ -84,6 +85,7 @@ public:
      **/
     void drawRectangle(const Rectangle<int32_t> &rect, RGBColor color, int style = 0);
     void drawRectangle(int x, int y, int w, int h, RGBColor color, int style = 0);
+    void drawRectangle(const Rectangled &rect, RGBColor color, int style = 0);
 
     //void drawDisplacementBuffer(DisplacementBuffer *src, double step);
 
@@ -106,6 +108,8 @@ public:
      *
      **/
     void drawCrosshare1 ( int x, int y, RGBColor color);
+    void drawCrosshare1 (const Vector2dd &point, RGBColor color);
+
 
     /**
      * This function is used to draw a sort of marker over the buffer
@@ -126,7 +130,7 @@ public:
      *
      **/
     void drawCrosshare3 ( int x, int y, RGBColor color);
-
+    void drawCrosshare3 (const Vector2dd &point, RGBColor color);
 
 
 
@@ -337,8 +341,8 @@ public:
         /* Fixed point */
         uint32_t value = 255 * 16;
 
-        uint32_t k1 = (x - j) * value;
-        uint32_t k2 = (y - i) * value;
+        uint32_t k1 = (uint32_t)((x - j) * value);
+        uint32_t k2 = (uint32_t)((y - i) * value);
 
         RGBEx32 a = RGBEx32(this->element(i    ,j    ));
         RGBEx32 b = RGBEx32(this->element(i    ,j + 1));

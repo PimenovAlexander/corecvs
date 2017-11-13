@@ -1,5 +1,5 @@
-#include "fixtureCamera.h"
-#include "cameraFixture.h"
+#include "core/camerafixture/fixtureCamera.h"
+#include "core/camerafixture/cameraFixture.h"
 
 namespace corecvs {
 

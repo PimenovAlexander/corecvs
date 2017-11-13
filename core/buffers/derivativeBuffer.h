@@ -12,11 +12,11 @@
 
 #include <stdint.h>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "vector2d.h"
-#include "abstractBuffer.h"
-#include "g12Buffer.h"
+#include "core/math/vector/vector2d.h"
+#include "core/buffers/abstractBuffer.h"
+#include "core/buffers/g12Buffer.h"
 namespace corecvs {
 
 

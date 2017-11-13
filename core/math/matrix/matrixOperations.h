@@ -39,7 +39,7 @@
  * \date Aug 28, 2015
  **/
 
-#include "global.h"
+#include "core/utils/global.h"
 namespace corecvs {
 
 template<typename RealType, typename ElementType, typename ReturnType = RealType>

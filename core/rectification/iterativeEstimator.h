@@ -8,7 +8,7 @@
  * \author alexander
  */
 
-#include "essentialEstimator.h"
+#include "core/rectification/essentialEstimator.h"
 namespace corecvs {
 
 class IterativeEstimator

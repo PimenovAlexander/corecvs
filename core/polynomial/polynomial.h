@@ -1,9 +1,9 @@
 #ifndef POLYNOMIAL_H
 #define POLYNOMIAL_H
 
-#include "vector.h"
-#include "abstractBuffer.h"
-#include "matrix.h"
+#include "core/math/vector/vector.h"
+#include "core/buffers/abstractBuffer.h"
+#include "core/math/matrix/matrix.h"
 
 #include <vector>
 

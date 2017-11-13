@@ -11,7 +11,7 @@
 #include <vector>
 #include <algorithm>
 
-#include "global.h"
+#include "core/utils/global.h"
 namespace corecvs {
 
 using std::vector;

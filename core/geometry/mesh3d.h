@@ -6,23 +6,23 @@
  * \date Dec 13, 2012
  **/
 
-#include "generated/axisAlignedBoxParameters.h"
-#include "vector3d.h"
-#include "matrix33.h"
-#include "matrix44.h"
-#include "cameraParameters.h"
-#include "axisAlignedBox.h"
-#include "rgbColor.h"
-#include "ellipticalApproximation.h"
-#include "polygons.h"
+#include "core/xml/generated/axisAlignedBoxParameters.h"
+#include "core/math/vector/vector3d.h"
+#include "core/math/matrix/matrix33.h"
+#include "core/math/matrix/matrix44.h"
+#include "core/cammodel/cameraParameters.h"
+#include "core/geometry/axisAlignedBox.h"
+#include "core/buffers/rgb24/rgbColor.h"
+#include "core/geometry/ellipticalApproximation.h"
+#include "core/geometry/polygons.h"
 
-#include "conic.h"
+#include "core/geometry/conic.h"
 
 namespace corecvs
 {
 
 /**
- *  This class is overcompliced. Break it into several ones
+ *  This class is overcomplicated. Break it into several ones
  **/
 class Mesh3D {
 public:
@@ -67,6 +67,9 @@ public:
 
     vector<Matrix44> transformStack;
 
+    /* All subsecquent draws would be as if origin is moved be affine transform */
+    void mulTransform(const Affine3DQ &transform);
+
     void mulTransform(const Matrix33 &transform);
     void mulTransform(const Matrix44 &transform);
     void popTransform();
@@ -77,22 +80,32 @@ public:
 
     void setCentral(Vector3dd _central);
 
-    void addOrts(double length = 1.0, bool captions = false);
+    void addOrts      (double length = 1.0, bool captions = false);
+    void addPlaneFrame(const PlaneFrame &frame, double length = 1.0);
 
 
     virtual void addAOB(const Vector3dd &corner1, const Vector3dd &corner2, bool addFaces = true);
     void addAOB(const AxisAlignedBoxParameters &box , bool addFaces = true);
     void addAOB(const AxisAlignedBox3d &box         , bool addFaces = true);
 
-    int addPoint(Vector3dd point);
+    int addPoint(const Vector3dd &point);
 
-    void addLine(Vector3dd point1, Vector3dd point2);
+    void addLine(const Vector3dd &point1, const Vector3dd &point2);
     void addTriangle(Vector3dd point1, Vector3dd point2, Vector3dd point3);
     void addTriangle(const Triangle3dd &triangle);
+    void addFlatPolygon(const FlatPolygon &polygon);
 
     Triangle3dd getFaceAsTrinagle(size_t number);
 
-    void addSphere    (Vector3dd center, double radius, int step);
+    void addSphere    (Vector3dd center, double radius, int step = 10);
+
+    /**
+     *  Adds a cylinder to the Mesh.
+     *
+     *  \param center - center of the cylinder(center of the axis)
+     *  \param radius - cylinder radius
+     *
+     **/
     void addCylinder  (Vector3dd center, double radius, double height, int step = 20, double phase = 0.0);
 
     void addIcoSphere(Vector3dd center, double radius, int step = 1);
@@ -141,7 +154,7 @@ private:
 public:
     virtual ~Mesh3D() {}
 
-    void fillTestScene();
+    virtual void fillTestScene();
 
     virtual void dumpInfo(ostream &out = std::cout);
 };

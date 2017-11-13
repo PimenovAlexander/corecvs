@@ -1,4 +1,4 @@
-#include "polylinemesh.h"
+#include "core/geometry/polylinemesh.h"
 
 namespace corecvs {
 

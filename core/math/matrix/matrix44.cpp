@@ -7,7 +7,7 @@
  * \author alexander
  */
 
-#include "matrix44.h"
+#include "core/math/matrix/matrix44.h"
 namespace corecvs {
 
 Matrix44::Matrix44()

@@ -7,7 +7,7 @@
  * \author alexander
  */
 
-#include "rectangle.h"
+#include "core/geometry/rectangle.h"
 namespace corecvs {
 
 

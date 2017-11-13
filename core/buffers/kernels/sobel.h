@@ -11,9 +11,9 @@
 #ifndef SOBEL_H_
 #define SOBEL_H_
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "abstractKernel.h"
+#include "core/buffers/abstractKernel.h"
 
 namespace corecvs {
 

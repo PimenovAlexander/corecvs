@@ -8,10 +8,10 @@
 
 #ifndef AFFINE_H_
 #define AFFINE_H_
-#include "vector3d.h"
-#include "quaternion.h"
-#include "matrix33.h"
-#include "line.h"
+#include "core/math/vector/vector3d.h"
+#include "core/math/quaternion.h"
+#include "core/math/matrix/matrix33.h"
+#include "core/geometry/line.h"
 
 namespace corecvs {
 

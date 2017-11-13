@@ -10,12 +10,12 @@
  * \author alexander
  */
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "g12Buffer.h"
-#include "abstractBuffer.h"
-#include "vector3d.h"
-#include "integralBuffer.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/abstractBuffer.h"
+#include "core/math/vector/vector3d.h"
+#include "core/buffers/integralBuffer.h"
 namespace corecvs {
 
 /**

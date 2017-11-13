@@ -4,7 +4,7 @@
  * \date Dec 8, 2012
  **/
 
-#include "hersheyVectorFont.h"
+#include "core/buffers/rgb24/hersheyVectorFont.h"
 
 namespace corecvs
 {

@@ -10,8 +10,8 @@
 
 #include <vector>
 
-#include "matrix33.h"
-#include "correspondenceList.h"
+#include "core/math/matrix/matrix33.h"
+#include "core/rectification/correspondenceList.h"
 namespace corecvs {
 
 

@@ -6,9 +6,9 @@
 #include <string.h>
 #include <sstream>
 
-#include "filterBlock.h"
-#include "filtersCollection.h"
-#include "calculationStats.h"
+#include "core/filters/blocks/filterBlock.h"
+#include "core/filters/filtersCollection.h"
+#include "core/stats/calculationStats.h"
 
 namespace corecvs
 {

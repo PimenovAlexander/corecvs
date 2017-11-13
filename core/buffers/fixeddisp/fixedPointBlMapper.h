@@ -11,7 +11,7 @@
  * \ingroup cppcorefiles
  */
 
-#include "fixedPointDisplace.h"
+#include "core/buffers/fixeddisp/fixedPointDisplace.h"
 
 namespace corecvs {
 

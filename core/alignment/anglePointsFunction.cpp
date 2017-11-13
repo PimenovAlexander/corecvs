@@ -1,4 +1,4 @@
-#include "anglePointsFunction.h"
+#include "core/alignment/anglePointsFunction.h"
 
 namespace corecvs {
 

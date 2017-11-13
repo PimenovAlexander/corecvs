@@ -1,10 +1,11 @@
 #ifndef RAYTRACERENDERER_H
 #define RAYTRACERENDERER_H
 
-#include "polygons.h"
-#include "calibrationCamera.h"
-#include "mesh3d.h"
-#include "line.h"
+#include "core/geometry/polygons.h"
+#include "core/cameracalibration/calibrationCamera.h"
+#include "core/geometry/mesh3d.h"
+#include "core/geometry/line.h"
+#include "core/cameracalibration/projectionModels.h"
 
 namespace corecvs {
 
@@ -67,9 +68,26 @@ public:
     virtual Ray3d getRefraction(RayIntersection &ray);
 };
 
+class RaytraceableSky : public RaytraceableMaterial {
+public:
+    TraceColor low  = RGBColor::Black().toDouble();
+    TraceColor high = RGBColor::Cyan().toDouble();
+    Vector3dd direction = Vector3dd::OrtY();
+
+    virtual void getColor(RayIntersection &ray, RaytraceRenderer &) override;
+
+};
+
+
 class RaytraceableChessMaterial : public RaytraceableMaterial {
 public:
-    virtual void getColor(RayIntersection &ray, RaytraceRenderer &renderer);
+    double cellSize;
+
+    RaytraceableChessMaterial(double cellSize = 10.0) :
+        cellSize(cellSize)
+    {}
+
+    virtual void getColor(RayIntersection &ray, RaytraceRenderer &renderer) override;
 };
 
 
@@ -91,6 +109,11 @@ public:
     virtual void normal(RayIntersection &intersection);
     virtual bool inside (Vector3dd &point) = 0;
 
+    /* Helper function to help debuging */
+    virtual bool toMesh (Mesh3D & /*target*/) { return false; }
+
+    virtual AxisAlignedBox3d getBoundingBox(); /* < not mandtory*/
+
     virtual ~Raytraceable();
 };
 
@@ -98,17 +121,22 @@ public:
 
 class RaytraceRenderer
 {
+private:
+    CameraProjection *projection = NULL;
+
 public:
 
     typedef AbstractBuffer<TraceColor> ColorBuffer;
     typedef AbstractBuffer<int> MarkupType;
 
-    PinholeCameraIntrinsics intrisics;
+    //PinholeCameraIntrinsics intrisics;
+
     Affine3DQ position;
 
-    Raytraceable *object;
+    Raytraceable *object = NULL; /**< Owned by renderer */
     vector<RaytraceablePointLight *> lights;
     TraceColor ambient;
+    RaytraceableMaterial *sky = NULL;
 
     /* Ray trace end condition */
     int maxDepth = 4;
@@ -116,7 +144,7 @@ public:
 
     /* Renderer global parameters */
     bool supersample = false;
-    int  sampleNum = 20;
+    int  sampleNum = 20;   
 
     bool parallel = true;
     bool traceProgress = true;
@@ -128,12 +156,15 @@ public:
     int currentY, currentX;
 
     RaytraceRenderer();
+    ~RaytraceRenderer();
 
     void trace(RayIntersection &intersection);
     void trace(RGB24Buffer *buffer);
 
     void traceFOV(RGB24Buffer *buffer, double apperture, double focus);
 
+/* Getters and setters */
+    void setProjection(CameraProjection *projection); /**< takes ownership */
 
 private:
     void pack(RGB24Buffer *target, ColorBuffer *energy, MarkupType *markup = NULL);

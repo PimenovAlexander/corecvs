@@ -1,4 +1,4 @@
-#include "compoundFilter.h"
+#include "core/filters/blocks/compoundFilter.h"
 
 namespace corecvs
 {

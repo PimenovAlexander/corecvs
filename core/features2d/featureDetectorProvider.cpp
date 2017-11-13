@@ -1,6 +1,6 @@
-#include "featureDetectorProvider.h"
+#include "core/features2d/featureDetectorProvider.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
 FeatureDetector* FeatureDetectorProvider::getDetector(const DetectorType &type)
 {

@@ -6,7 +6,7 @@
  * \author alexander
  */
 
-#include "abstractFilter.h"
+#include "core/filters/abstractFilter.h"
 
 namespace corecvs
 {

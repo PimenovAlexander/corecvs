@@ -8,7 +8,8 @@
  */
 #include <string>
 
-#include "rawLoader.h"
+#include "core/utils/utils.h"
+#include "core/fileformats/rawLoader.h"
 
 namespace corecvs {
 
@@ -16,7 +17,7 @@ string RAWLoader::prefix1(".raw");
 
 bool RAWLoader::acceptsFile(string name)
 {
-    return (name.compare(name.length() - prefix1.length(), prefix1.length(), prefix1) == 0);
+    return HelperUtils::endsWith(name, prefix1);
 }
 
 RAWLoader::RawFileType RAWLoader::typeByParams(int bits, char type)

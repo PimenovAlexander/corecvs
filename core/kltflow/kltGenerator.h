@@ -8,17 +8,17 @@
  * \date Feb 23, 2010
  * \author alexander
  */
-#include "mipmapPyramid.h"
-#include "integralBuffer.h"
-#include "g12Buffer.h"
-#include "flowBuffer.h"
-#include "vector3d.h"
-#include "vector2d.h"
-#include "interpolator.h"
-#include "spatialGradient.h"
-#include "global.h"
-#include "mathUtils.h"
-#include "mipmapPyramid.h"
+#include "core/buffers/mipmapPyramid.h"
+#include "core/buffers/integralBuffer.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/flow/flowBuffer.h"
+#include "core/math/vector/vector3d.h"
+#include "core/math/vector/vector2d.h"
+#include "core/buffers/interpolator.h"
+#include "core/buffers/kernels/spatialGradient.h"
+#include "core/utils/global.h"
+#include "core/math/mathUtils.h"
+#include "core/buffers/mipmapPyramid.h"
 
 #ifdef _MSC_VER
 # pragma warning(disable: 4101)  // 'interpolator' : unreferenced local variable

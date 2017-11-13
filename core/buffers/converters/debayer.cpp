@@ -1,5 +1,5 @@
-#include "debayer.h"
-#include "labConverter.h"
+#include "core/buffers/converters/debayer.h"
+#include "core/buffers/converters/labConverter.h"
 #include "math/fftw/fftwWrapper.h"
 
 using std::pow;

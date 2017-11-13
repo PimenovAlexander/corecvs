@@ -1,4 +1,6 @@
 <poco version="5.0">
+  <include name="parameters.xml"/>
+  <include name="stereoAlign.xml"/>
 
   <enum name="Filter Blocks">
     <item name="Bit Selector"        id="0" />
@@ -35,14 +37,14 @@
     <field type="double" name="gain"   defaultValue = "1.0" min="-10.0"   max="10.0"  step="0.05"/>
     <field type="double" name="offset" defaultValue = "0.0" min="-5000.0" max="5000.0" step="1"/>
   </class>
-  
-  
+
+
   <enum name="Sobel Mixing Type">
     <item name="Sum of Absolute" id="0" />
     <item name="L2"              id="1" />
   </enum>
-  
-  
+
+
   <class name="Sobel Parameters" uibase="FilterParametersControlWidgetBase">
     <field type="Sobel Mixing Type"   name="Mixing Type"/>
     <field type="bool"                name="Horizontal"  defaultValue="false" />
@@ -65,7 +67,7 @@
     <field type="int"                name="Param1"   defaultValue="50"  min="0"   max="10000"  step="1" />
     <field type="int"                name="Param2"   defaultValue="100" min="0"   max="10000"  step="1" />
   </class>
-  
+
   <class name="Background Filter Parameters" uibase="FilterParametersControlWidgetBase">
     <field type="int"                name="Threshold"   defaultValue="100" min="0"   max="10000"  step="1" />
   </class>
@@ -75,31 +77,74 @@
     <item name="Left Frame"  id="0" />
     <item name="Right Frame" id="1" />
   </enum>
-  
+
   <class name="Input Filter Parameters" uibase="FilterParametersControlWidgetBase">
     <field type="Input Type"   name="Input Type"/>
   </class>
-  
+
 
   <enum name="Output Type">
     <item name="Left Frame"  id="0" />
     <item name="Right Frame" id="1" />
   </enum>
-  
+
   <class name="Output Filter Parameters" uibase="FilterParametersControlWidgetBase">
     <field type="Output Type"   name="Output Type"/>
   </class>
-  
+
   <class name="Binarize Parameters" uibase="FilterParametersControlWidgetBase">
     <field type="int"   name="Threshold" defaultValue="2000"  min="0"   max="4096"  step="1" />
   </class>
-  
+
   <class name="Thickening Parameters" uibase="FilterParametersControlWidgetBase">
     <field type="int"   name="Power" defaultValue="5000"  min="0"   max="9999"  step="1" />
   </class>
-  
+
   <class name="Masking Parameters" uibase="FilterParametersControlWidgetBase">
     <field type="bool"   name="Invert"/>
   </class>
-  
+
+
+  <!-- Some new stuff to galvanize old block structure -->
+
+  <class name="HomorgaphyReconstructorBlockBase">
+     <field type="pointer" target="corecvs::CorrespondenceList" name="in0" />
+     <field type="pointer" target="corecvs::Matrix33" name="out0" />
+     <field type="Homography Algorithm" name="algorithm" defaultValue="4" />
+  </class>
+
+  <class name="SceneStereoAlignerBlockBase">
+      <field type="pointer"  target="corecvs::FixtureScene" name="inScene" />
+
+      <field type="int" name="inFixture1" comment="fixture1" />
+      <field type="int" name="inCamera1"  comment="camera1"  />
+
+      <field type="int" name="inFixture2" comment="fixture2" />
+      <field type="int" name="inCamera2"  comment="camera2"  />
+
+      <field type="Stereo Align Parameters" name="parameters"   />
+
+      <field type="pointer"  target="corecvs::RGB24Buffer" name="inImage1" />
+      <field type="pointer"  target="corecvs::RGB24Buffer" name="inImage2" />
+
+      <field type="pointer"  target="corecvs::RGB24Buffer" name="outImage1" />
+      <field type="pointer"  target="corecvs::RGB24Buffer" name="outImage2" />
+
+      <field type="pointer"  target="corecvs::FixtureCamera" name="outCamera1" />
+      <field type="pointer"  target="corecvs::FixtureCamera" name="outCamera2" />
+
+  </class>
+
+  <class name="Adder Substractor Parameters Base">
+    <field type="double"   name="input1"/>
+    <field type="double"   name="input2"/>
+
+    <field type="bool"     name="parameter"/>
+
+    <field type="double"   name="output1"/>
+    <field type="double"   name="output2"/>
+  </class>
+
+
+
 </poco>

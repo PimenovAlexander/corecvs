@@ -7,7 +7,7 @@
  * \date Mar 4, 2010
  * \author alexander
  */
-#include "global.h"
+#include "core/utils/global.h"
 
 #ifndef M_PI
 #define _USE_MATH_DEFINES
@@ -161,6 +161,12 @@ inline double degToRad (double angle)
 }
 
 template<class TypeName>
+TypeName clamp(TypeName x, TypeName a, TypeName b)
+{
+    return (x < a) ? a : (x > b ? b : x);
+}
+
+template<class TypeName>
 TypeName lerp(TypeName x1, TypeName x2, double alpha)
 {
     return x1 * (1.0 - alpha) + x2 * alpha;
@@ -182,7 +188,7 @@ inline double lerpLimit(double outStart, double outEnd, double value, double int
 /** Common functions **/
 
 /**
- *  Probability density function for one-dimention normal distribution
+ *  Probability density function for one-dimension normal distribution
  *
  *  \f[
  *       f(x;\mu,\sigma^2) = \frac{1}{\sigma\sqrt{2\pi}} e^{ -\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2 }.

@@ -10,11 +10,11 @@
 #ifndef FASTKERNEL_H_
 #define FASTKERNEL_H_
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "baseKernel.h"
-#include "scalarAlgebra.h"
-#include "tbbWrapper.h"
+#include "core/buffers/kernels/fastkernel/baseKernel.h"
+#include "core/buffers/kernels/fastkernel/scalarAlgebra.h"
+#include "core/tbbwrapper/tbbWrapper.h"
 namespace corecvs {
 
 

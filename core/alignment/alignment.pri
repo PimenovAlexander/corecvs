@@ -10,7 +10,7 @@ HEADERS += \
     alignment/selectableGeometryFeatures.h \
     alignment/lmDistortionSolver.h \
     alignment/lensDistortionModelParameters.h \
-    alignment/pointObservation.h
+    alignment/pointObservation.h \
 
 
 SOURCES += \
@@ -24,6 +24,6 @@ SOURCES += \
     alignment/selectableGeometryFeatures.cpp \
     alignment/lmDistortionSolver.cpp \
     alignment/lensDistortionModelParameters.cpp \
-    alignment/pointObservation.cpp
+    alignment/pointObservation.cpp \
 
 

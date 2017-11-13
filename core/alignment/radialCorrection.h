@@ -11,14 +11,14 @@
 #ifndef RADIALCORRECTION_H_
 #define RADIALCORRECTION_H_
 
-#include "ellipticalApproximation.h"
-#include "lensDistortionModelParameters.h"
-#include "global.h"
-#include "vector2d.h"
-#include "g12Buffer.h"
-#include "rgb24Buffer.h"
-#include "function.h"
-#include "deformMap.h"
+#include "core/geometry/ellipticalApproximation.h"
+#include "core/alignment/lensDistortionModelParameters.h"
+#include "core/utils/global.h"
+#include "core/math/vector/vector2d.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/function/function.h"
+#include "core/buffers/deformMap.h"
 
 namespace corecvs {
 

@@ -11,9 +11,9 @@
 
 #include <stdio.h>
 
-#include "abstractBuffer.h"
-#include "abstractContiniousBuffer.h"
-#include "g12Buffer.h"
+#include "core/buffers/abstractBuffer.h"
+#include "core/buffers/abstractContiniousBuffer.h"
+#include "core/buffers/g12Buffer.h"
 
 namespace corecvs {
 

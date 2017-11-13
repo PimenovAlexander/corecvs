@@ -6,7 +6,7 @@
  * \date Mar 21, 2010
  * \author alexander
  */
-#include "displacementBuffer.h"
+#include "core/buffers/displacementBuffer.h"
 
 namespace corecvs {
 

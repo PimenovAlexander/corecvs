@@ -16,16 +16,16 @@
 #include <stdio.h>
 #ifdef WITH_SSE
 #include <emmintrin.h>
-#include "sseWrapper.h"
+#include "core/math/sse/sseWrapper.h"
 #endif
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "abstractBuffer.h"
-#include "g12Buffer.h"
-#include "g8Buffer.h"
+#include "core/buffers/abstractBuffer.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/g8Buffer.h"
 
-#include "tbbWrapper.h"
+#include "core/tbbwrapper/tbbWrapper.h"
 
 namespace corecvs {
 

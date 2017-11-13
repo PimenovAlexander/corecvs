@@ -9,7 +9,7 @@
  * \author: alexander
  */
 
-#include "global.h"
+#include "core/utils/global.h"
 
 namespace corecvs {
 

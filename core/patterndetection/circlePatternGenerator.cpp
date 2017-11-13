@@ -1,5 +1,5 @@
-#include "circlePatternGenerator.h"
-#include "homographyReconstructor.h"
+#include "core/patterndetection/circlePatternGenerator.h"
+#include "core/math/matrix/homographyReconstructor.h"
 
 CirclePatternGenerator::CirclePatternGenerator(CirclePatternGeneratorParams params) : CirclePatternGeneratorParams(params)
 {

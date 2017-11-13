@@ -7,7 +7,7 @@
  * \author tbryksin
  * \author ylitvinov
  */
-#include "meanShiftWindow.h"
+#include "core/meanshift/meanShiftWindow.h"
 
 namespace corecvs {
 

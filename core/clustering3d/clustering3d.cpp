@@ -1,4 +1,4 @@
-#include "clustering3d.h"
+#include "core/clustering3d/clustering3d.h"
 
 namespace corecvs {
 

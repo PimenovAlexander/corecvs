@@ -6,8 +6,8 @@
 
 #include <sstream>
 
-#include "plyLoader.h"
-#include "utils.h"
+#include "core/fileformats/plyLoader.h"
+#include "core/utils/utils.h"
 
 namespace corecvs {
 
@@ -45,6 +45,10 @@ using std::istringstream;
 
 int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
 {
+#ifndef _DEBUG
+    trace = false;  // turn off tracing for release
+#endif
+
     string line;
 
     HelperUtils::getlineSafe (input, line);
@@ -61,8 +65,6 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
     const char *form_ascii     = "ascii";
     const char *form_binaryle  = "binary_little_endian";
 
-
-
     const char *el_vertex = "vertex";
     const char *el_face   = "face";
     const char *el_edge   = "edge";
@@ -70,7 +72,6 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
     int objNumber[OBJ_LAST] = {-1, -1, -1};
     PlyFormat plyFormat = OTHER;
     ObjType propState = OBJ_VERTEX;
-
 
     vector<Prop> objProps[OBJ_LAST];
 
@@ -124,7 +125,6 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
 
         if (command == com_element)
         {
-
             string objtype;
             work >> objtype;
 
@@ -145,7 +145,7 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
 
             work >> objNumber[propState];
             if (work.bad()) {
-               SYNC_PRINT(("Number is not found"));
+               SYNC_PRINT(("Number is not found "));
             }
             LOCAL_PRINT(("Number %d %d\n", propState, objNumber[propState]));
             continue;
@@ -214,11 +214,11 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
     bool edgeColor = (objProps[OBJ_EDGE].size() == 5);
 
     if (!supportVertex || !supportFace || !supportEdge) {
-         LOCAL_PRINT(("Unsupported format\n"));
+        SYNC_PRINT(("Unsupported format\n"));
         return 1;
     }
 
-    bool hasColor = vertexColor && edgeColor && faceColor;
+    bool hasColor = vertexColor || edgeColor || faceColor;
     mesh.switchColor(hasColor);
 
     if (plyFormat == ASCII)
@@ -231,10 +231,9 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
             Vector3dd vertex;            
             work >> vertex.x() >> vertex.y() >> vertex.z();
 
-            if (hasColor) {
+            if (vertexColor) {
                 work >> mesh.currentColor;
                 LOCAL_PRINT(("Color %d %d %d\n", mesh.currentColor.r(), mesh.currentColor.g(), mesh.currentColor.b()));
-
             }
 
             if (work.bad()) {
@@ -245,7 +244,7 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
             mesh.addVertex(vertex);
         }
 
-        for (int i = 0; i <  objNumber[OBJ_FACE]; i++)
+        for (int i = 0; i < objNumber[OBJ_FACE]; i++)
         {
             HelperUtils::getlineSafe (input, line);
             istringstream work(line);
@@ -256,7 +255,7 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
                 return 1;
             }
             if (points != 3) {
-                SYNC_PRINT(("We only support faces with 3 sides not %d\n", points));
+                SYNC_PRINT(("We only support faces with 3 sides (not %d)\n", points));
                 continue;
             }
             Vector3d32 face;
@@ -267,7 +266,7 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
                 return 1;
             }
 
-            if (hasColor) {
+            if (faceColor) {
                 work >> mesh.currentColor;
                 LOCAL_PRINT(("Color %d %d %d\n", mesh.currentColor.r(), mesh.currentColor.g(), mesh.currentColor.b()));
             }
@@ -284,7 +283,7 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
             mesh.addFace(face);
         }
 
-        for (int i = 0; i <  objNumber[OBJ_EDGE]; i++)
+        for (int i = 0; i < objNumber[OBJ_EDGE]; i++)
         {
             HelperUtils::getlineSafe (input, line);
             istringstream work(line);
@@ -297,10 +296,9 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
                 return 1;
             }
 
-            if (hasColor) {
+            if (edgeColor) {
                 work >> mesh.currentColor;
                 LOCAL_PRINT(("Color %d %d %d\n", mesh.currentColor.r(), mesh.currentColor.g(), mesh.currentColor.b()));
-
             }
 
             if (!edge.isInHypercube(
@@ -314,7 +312,9 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
 
             mesh.addEdge(edge);
         }
-    } else if (!hasColor){
+    }
+    else if (!hasColor)
+    {
         for (int i = 0; i < objNumber[OBJ_VERTEX]; i++)
         {
             float f;
@@ -359,11 +359,11 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
 
             mesh.addFace(face);
         }
-
     }
 
     return 0;
 }
+
 #undef LOCAL_PRINT
 
 int PLYLoader::savePLY(ostream &out, Mesh3D &mesh)

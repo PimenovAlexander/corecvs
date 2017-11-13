@@ -1,10 +1,10 @@
 #ifndef SDFRENDERABLE_H
 #define SDFRENDERABLE_H
 
-#include <function.h>
+#include "core/function/function.h"
 
-#include "vector3d.h"
-#include "raytraceObjects.h"
+#include "core/math/vector/vector3d.h"
+#include "core/geometry/raytrace/raytraceObjects.h"
 
 
 class SDFRenderable : public Raytraceable

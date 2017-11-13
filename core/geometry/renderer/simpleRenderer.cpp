@@ -1,6 +1,6 @@
-#include "simpleRenderer.h"
-#include "mesh3d.h"
-#include "rgb24Buffer.h"
+#include "core/geometry/renderer/simpleRenderer.h"
+#include "core/geometry/mesh3d.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
 
 namespace corecvs {
 
@@ -45,7 +45,7 @@ void SimpleRenderer::render(Mesh3D *mesh, RGB24Buffer *buffer)
             while (it.hasValue())
             {
                 it.step();
-                AttributedLineSpan span = it.getAttrSpan();
+                AttributedHLineSpan span = it.getAttrSpan();
                 while (span.hasValue())
                 {
                     if (buffer->isValidCoord(span.pos()) )
@@ -96,7 +96,7 @@ void SimpleRenderer::render(Mesh3D *mesh, RGB24Buffer *buffer)
     }
 }
 
-void SimpleRenderer::fragmentShader(AttributedLineSpan &/*span*/)
+void SimpleRenderer::fragmentShader(AttributedHLineSpan &/*span*/)
 {
     /**/
 }
@@ -189,7 +189,7 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
         AttributedTriangleSpanIterator it(triang);
         while (it.hasValue())
         {
-            AttributedLineSpan span = it.getAttrSpan();
+            AttributedHLineSpan span = it.getAttrSpan();
             fragmentShader(span);
             it.step();
         }
@@ -198,7 +198,7 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
 
 }
 
-void ClassicRenderer::fragmentShader(AttributedLineSpan &span)
+void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
 {
     while (span.hasValue())
     {

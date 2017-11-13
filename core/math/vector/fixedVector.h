@@ -12,7 +12,7 @@
  */
 
 #include <stdio.h>
-#include "vectorOperations.h"
+#include "core/math/vector/vectorOperations.h"
 
 
 namespace corecvs {
@@ -163,8 +163,9 @@ public:
             this->element[i] = V.element[i];
     }
 
+    template<typename SmallSibling>
     inline FixedVector(
-            const FixedVector<ElementType, length - 1> &V,
+            const FixedVectorBase<SmallSibling, ElementType, length - 1> &V,
             const ElementType &lastElement) :
         BaseClass(V, lastElement)
     {}

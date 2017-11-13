@@ -8,7 +8,7 @@
  * \author ylitvinov
  */
 
-#include "meanShiftCalculator.h"
+#include "core/meanshift/meanShiftCalculator.h"
 
 namespace corecvs {
 

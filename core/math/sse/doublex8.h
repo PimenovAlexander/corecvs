@@ -10,9 +10,9 @@
  * \author: alexander
  */
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "doublex4.h"
+#include "core/math/sse/doublex4.h"
 
 
 namespace corecvs {

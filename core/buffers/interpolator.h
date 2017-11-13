@@ -8,9 +8,9 @@
  * \date Jul 6, 2010
  * \author alexander
  */
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "g12Buffer.h"
+#include "core/buffers/g12Buffer.h"
 
 namespace corecvs {
 

@@ -13,10 +13,10 @@
 
 #include <vector>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "g12Buffer.h"
-#include "commonMappers.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/commonMappers.h"
 namespace corecvs {
 
 using std::vector;

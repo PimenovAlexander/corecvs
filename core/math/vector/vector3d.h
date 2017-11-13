@@ -12,8 +12,8 @@
 
 #include <math.h>
 
-#include "vector2d.h"
-#include "vector.h"
+#include "core/math/vector/vector2d.h"
+#include "core/math/vector/vector.h"
 
 namespace corecvs {
 
@@ -42,6 +42,13 @@ public:
 
     inline Vector3d(const BaseClass &V) : BaseClass(V) {}
     inline explicit Vector3d(const ElementType &x) : BaseClass((ElementType)x) {}
+    inline explicit Vector3d(const FixedVector<ElementType, 3> &v)
+    {
+        (*this)[0] = v[0];
+        (*this)[1] = v[1];
+        (*this)[2] = v[2];
+    }
+
     inline Vector3d(): BaseClass() {}
 
     inline Vector3d(const Vector2d<ElementType> &V, const ElementType &x) :
@@ -164,6 +171,17 @@ public:
         return Vector3d(x, y, z);
     }
 
+    Vector3d crossProduct(const Vector3d &other)
+    {
+        return (*this) ^ other;
+    }
+
+    friend Vector3d crossProduct(const Vector3d &V, const Vector3d &U)
+    {
+        return V ^ U;
+    }
+
+
     double sineTo(const Vector3d &other) const
     {
         double thisLength  = !(*this);
@@ -220,6 +238,11 @@ public:
         return Vector3d<ElementType>(this->x() / this->z(), this->y() / this->z(), ElementType(1.0));
     }
 
+    inline static Vector3d<ElementType> FromProjective(const Vector2d<ElementType> &projected)
+    {
+        return Vector3d<ElementType>(projected.x(), projected.y(), ElementType(1.0));
+    }
+
 
     bool isInCube(const Vector3d<ElementType> &low, const Vector3d<ElementType> &high) const
     {
@@ -253,7 +276,7 @@ public:
     static Vector3d FromSpherical(double latitude, double longitude, double length = 1.0)
     {
 
-        return Vector3d(cos(longitude) * sin(latitude), cos(longitude) * cos(latitude), sin(longitude)) * length;
+        return Vector3d(cos(longitude) * cos(latitude), cos(longitude) * sin(latitude), sin(longitude)) * length;
     }
 
     static Vector3d toSpherical(const Vector3d &vector)
@@ -306,6 +329,7 @@ template<class VisitorType>
 };
 
 typedef Vector3d<double>   Vector3dd;
+typedef Vector3d<float>    Vector3df;
 typedef Vector3d<uint32_t> Vector3du32;
 typedef Vector3d<uint16_t> Vector3du16;
 

@@ -7,10 +7,10 @@
  * \author alexander
  */
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "vjPattern.h"
-#include "tbbWrapper.h"
+#include "core/boosting/vjPattern.h"
+#include "core/tbbwrapper/tbbWrapper.h"
 
 namespace corecvs {
 

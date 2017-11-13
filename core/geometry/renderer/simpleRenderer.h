@@ -5,10 +5,10 @@
  *  \file  simpleRenderer.h
  **/
 
-#include "geometryIterator.h"
-#include "abstractBuffer.h"
-#include "abstractPainter.h"
-#include "mesh3DDecorated.h"
+#include "core/geometry/renderer/geometryIterator.h"
+#include "core/buffers/abstractBuffer.h"
+#include "core/buffers/rgb24/abstractPainter.h"
+#include "core/geometry/mesh3DDecorated.h"
 
 
 namespace corecvs {
@@ -31,7 +31,7 @@ public:
     void render (Mesh3D *mesh, RGB24Buffer *buffer);
 
     /* Add support for face and vertex shaders */
-    void fragmentShader(AttributedLineSpan & span);
+    void fragmentShader(AttributedHLineSpan & span);
 
     ~SimpleRenderer();
 };
@@ -55,7 +55,7 @@ public:
     /* */
     RGBColor color;
 
-    virtual void fragmentShader(AttributedLineSpan & span);
+    virtual void fragmentShader(AttributedHLineSpan & span);
     virtual ~ClassicRenderer();
 };
 

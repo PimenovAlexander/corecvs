@@ -13,10 +13,10 @@
 
 #include <stdint.h>
 
-#include "global.h"
-#include "abstractBuffer.h"
-#include "matrix33.h"
-#include "bilinearMapPoint.h"
+#include "core/utils/global.h"
+#include "core/buffers/abstractBuffer.h"
+#include "core/math/matrix/matrix33.h"
+#include "core/buffers/fixeddisp/bilinearMapPoint.h"
 
 namespace corecvs {
 

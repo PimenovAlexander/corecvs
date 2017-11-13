@@ -11,9 +11,9 @@
 #ifndef GAUSSIAN3X3_H_
 #define GAUSSIAN3X3_H_
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "abstractKernel.h"
+#include "core/buffers/abstractKernel.h"
 namespace corecvs {
 
 class Gaussian3x3 : public AbstractKernel<double, int32_t>

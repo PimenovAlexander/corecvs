@@ -8,7 +8,7 @@
 
 #include <vector>
 #include <stddef.h>
-#include "distortionApplicationParameters.h"
+#include "core/xml/generated/distortionApplicationParameters.h"
 
 /**
  *  Looks extremely unsafe because it depends on the order of static initialization.

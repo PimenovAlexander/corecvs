@@ -6,7 +6,7 @@
  * \author alexander
  */
 
-#include "detectedObject.h"
+#include "core/boosting/detectedObject.h"
 
 namespace corecvs
 {

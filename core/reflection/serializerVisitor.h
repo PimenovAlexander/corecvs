@@ -1,8 +1,8 @@
 #ifndef MYXMLVISITOR_H
 #define MYXMLVISITOR_H
 
-#include "reflection.h"
-#include "tinyxml2.h"
+#include "core/reflection/reflection.h"
+#include "core/tinyxml/tinyxml2.h"
 
 namespace corecvs {
 

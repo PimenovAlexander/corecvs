@@ -1,5 +1,5 @@
-#include "filterGraph.h"
-#include "compoundFilter.h"
+#include "core/filters/blocks/filterGraph.h"
+#include "core/filters/blocks/compoundFilter.h"
 
 namespace corecvs
 {
@@ -149,11 +149,9 @@ void FilterGraph::execute()
             block->inputPins[j]->setPin(block->inputPins[j]->takeFrom);
         }
 
-        PreciseTimer blockExecutionTime = PreciseTimer::currentTime();
-        block->operator ()();
-        if (stats != NULL) {
-            stats->setTime(block->getFullName(), blockExecutionTime.usecsToNow());
-        }
+        Statistics::startInterval(stats);
+            block->operator ()();
+        Statistics::endInterval(stats, block->getFullName());
     } // for
 
     for (unsigned int i = 0; i < blocks.size(); i++)
@@ -168,7 +166,7 @@ void FilterGraph::clearAllData()
 
 void FilterGraph::print()
 {
-    printf("Quantity of blocks: %d\n", (int)blocks.size());
+    printf("Quantity of blocks: %" PRISIZE_T "\n", blocks.size());
     vector<FilterBlock *>::iterator itBlocks;
     for (itBlocks = blocks.begin(); itBlocks != blocks.end(); ++itBlocks)
     {

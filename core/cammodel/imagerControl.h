@@ -9,7 +9,7 @@
  * \author alexander
  */
 
-#include "histogram.h"
+#include "core/buffers/histogram/histogram.h"
 
 namespace corecvs {
 

@@ -7,11 +7,11 @@
  */
 #pragma once
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include <vector>
-#include "matrix.h"
-#include "function.h"
+#include "core/math/matrix/matrix.h"
+#include "core/function/function.h"
 
 namespace corecvs {
 

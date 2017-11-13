@@ -1,11 +1,6 @@
-#include "packedDerivative.h"
+#include "core/meta/packedDerivative.h"
 
 namespace corecvs {
-
-PackedDerivative::PackedDerivative()
-{
-
-}
 
 } // namespace corecvs
 

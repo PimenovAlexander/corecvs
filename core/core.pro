@@ -14,7 +14,7 @@ TARGET   = cvs_core
 CONFIG  += staticlib
 
 include(core.pri)                                   # it uses TARGET and detects COREBINDIR!
-include($$ROOT_DIR/git-version.pri)
+include(../git-version.pri)
 
 OBJECTS_DIR = $$ROOT_DIR/.obj/cvs_core$$BUILD_CFG_NAME
 MOC_DIR     = $$OBJECTS_DIR
@@ -51,9 +51,13 @@ OTHER_FILES +=              \
     xml/precise.xml         \
     xml/distortion.xml      \
     xml/patternDetector.xml \
+    xml/reconstruction.xml  \
+    xml/calibration.xml     \
+    xml/stereoAlign.xml     \
+
 
 OTHER_FILES +=            \
+    ../tools/generator/helper-regen.sh \
     ../tools/generator/regen-core.sh \
     ../tools/generator/h_stub.sh \
-
-
+    ../cvs-mainpage.h

@@ -7,7 +7,7 @@
  * \author alexander
  */
 
-#include "segmentator.h"
+#include "core/segmentation/segmentator.h"
 namespace corecvs {
 
 

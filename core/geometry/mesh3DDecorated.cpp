@@ -1,4 +1,4 @@
-#include "mesh3DDecorated.h"
+#include "core/geometry/mesh3DDecorated.h"
 
 
 namespace corecvs
@@ -36,7 +36,7 @@ void Mesh3DDecorated::switchNormals(bool on)
 
 void Mesh3DDecorated::addAOB(const Vector3dd &c1, const Vector3dd &c2, bool addFaces)
 {
-    addAOB(c1, c2, addFaces);
+    Mesh3D::addAOB(c1, c2, addFaces);
 
   /*  textureCoords.push_back(Vector2dd(0.0,0.0));
     textureCoords.push_back(Vector2dd(1.0,0.0));
@@ -84,6 +84,25 @@ void Mesh3DDecorated::dumpInfo(ostream &out)
     out << "  Textures  :" << textureCoords.size() << endl;
     out << "  Norm Idxes:" << normalId.size() << endl;
     out << "  Tex  Idxes:" << texId.size() << endl;
+}
+
+void Mesh3DDecorated::fillTestScene()
+{
+    Mesh3D::fillTestScene();
+
+    /* Normals */
+    recomputeMeanNormals();
+
+    /* Texture coordinates */
+    textureCoords.push_back(Vector2dd(0.0, 0.0));
+    textureCoords.push_back(Vector2dd(0.0, 1.0));
+    textureCoords.push_back(Vector2dd(1.0, 0.0));
+
+    for (size_t face = 0; face < faces.size(); face++ )
+    {
+        texId.push_back(Vector3d32(0, 1, 2));
+    }
+    hasTexCoords = true;
 }
 
 void Mesh3DDecorated::recomputeMeanNormals()
@@ -146,7 +165,7 @@ bool Mesh3DDecorated::verify( void )
     for (size_t i = 0; i < normalId.size(); i++) {
         for (int j = 0; j < 3; j++) {
             if (normalId[i][j] > (int)normalCoords.size() && normalId[i][j] != -1) {
-                SYNC_PRINT(("Wrong normal index for face %u - [%d %d %d]\n",
+                SYNC_PRINT(("Wrong normal index for face %" PRISIZE_T " - [%d %d %d]\n",
                      i, normalId[i][0], normalId[i][1], normalId[i][2]));
                 return false;
             }

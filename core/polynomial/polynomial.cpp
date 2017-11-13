@@ -1,4 +1,4 @@
-#include "polynomial.h"
+#include "core/polynomial/polynomial.h"
 
 #include <iomanip>
 

@@ -11,7 +11,7 @@
  */
 
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include <math.h>
 #include <assert.h>
@@ -23,8 +23,8 @@
 #include <list>
 #include <map>
 
-#include "vector2d.h"
-#include "vector3d.h"
+#include "core/math/vector/vector2d.h"
+#include "core/math/vector/vector3d.h"
 
 // allow of using "Fast" split algorithm which is better for huge ammount of points
 #define FAST_SPLIT

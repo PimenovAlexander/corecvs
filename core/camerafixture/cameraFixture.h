@@ -8,12 +8,12 @@
 #include <type_traits>
 #include <cstring>
 
-#include "pointObservation.h"
+#include "core/alignment/pointObservation.h"
 
-#include "typesafeBitmaskEnums.h"
-#include "calibrationLocation.h"  // LocationData
-#include "fixtureCamera.h"
-//#include "fixtureScene.h"
+#include "core/utils/typesafeBitmaskEnums.h"
+#include "core/cameracalibration/calibrationLocation.h"  // LocationData
+#include "core/camerafixture/fixtureCamera.h"
+//#include "core/camerafixture/fixtureScene.h"
 
 namespace corecvs {
 

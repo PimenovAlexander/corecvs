@@ -6,7 +6,7 @@
  * \author alexander
  */
 
-#include "flowVectorInformation.h"
+#include "core/automotive/flowVectorInformation.h"
 namespace corecvs {
 
 const char *FlowVectorInformation::REASON_NAMES[] =

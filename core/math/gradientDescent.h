@@ -10,9 +10,9 @@
 
 #include <limits>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "function.h"
+#include "core/function/function.h"
 
 namespace corecvs {
 

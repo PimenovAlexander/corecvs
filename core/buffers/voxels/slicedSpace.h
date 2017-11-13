@@ -9,7 +9,7 @@
 #ifndef SLICEDSPACE_H_
 #define SLICEDSPACE_H_
 
-#include "global.h"
+#include "core/utils/global.h"
 namespace corecvs {
 
 class SlicedSpace

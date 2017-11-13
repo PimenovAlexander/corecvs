@@ -10,13 +10,13 @@
 #include <iostream>
 #include <vector>
 
-#include "vector2d.h"
-#include "matrix33.h"
-#include "polygons.h"
-#include "correspondenceList.h"
-#include "matrix.h"
-#include "function.h"
-#include "line.h"
+#include "core/math/vector/vector2d.h"
+#include "core/math/matrix/matrix33.h"
+#include "core/geometry/polygons.h"
+#include "core/rectification/correspondenceList.h"
+#include "core/math/matrix/matrix.h"
+#include "core/function/function.h"
+#include "core/geometry/line.h"
 namespace corecvs {
 
 using std::vector;

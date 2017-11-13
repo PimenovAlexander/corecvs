@@ -1,6 +1,6 @@
-#include "descriptorMatcherProvider.h"
+#include "core/features2d/descriptorMatcherProvider.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
 DescriptorMatcher* DescriptorMatcherProvider::getMatcher(const DescriptorType &type, const MatcherType &matcher)
 {

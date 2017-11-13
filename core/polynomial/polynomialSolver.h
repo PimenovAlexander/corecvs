@@ -1,8 +1,8 @@
 #ifndef POLYNOMIALSOLVER_H
 #define POLYNOMIALSOLVER_H
 
-#include "global.h"
-#include "polynomial.h"
+#include "core/utils/global.h"
+#include "core/polynomial/polynomial.h"
 
 #define FIEDLER
 

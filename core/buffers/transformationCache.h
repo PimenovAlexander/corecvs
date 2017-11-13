@@ -1,7 +1,7 @@
 #pragma once
-#include "displacementBuffer.h"
-#include "generated/interpolationType.h"
-#include "rgb24Buffer.h"
+#include "core/buffers/displacementBuffer.h"
+#include "core/xml/generated/interpolationType.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
 
 namespace corecvs {
 

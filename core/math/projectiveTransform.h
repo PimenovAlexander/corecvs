@@ -10,10 +10,10 @@
 #ifndef PROJECTIVETRANSFORM_H_
 #define PROJECTIVETRANSFORM_H_
 
-#include "deformMap.h"
-#include "abstractBuffer.h"
-#include "matrix33.h"
-#include "vector2d.h"
+#include "core/buffers/deformMap.h"
+#include "core/buffers/abstractBuffer.h"
+#include "core/math/matrix/matrix33.h"
+#include "core/math/vector/vector2d.h"
 namespace corecvs {
 
 /**

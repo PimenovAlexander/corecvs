@@ -13,7 +13,7 @@
     extern "C" {
 #endif
 
-#include "matrix.h"
+#include "core/math/matrix/matrix.h"
 namespace corecvs {
 
 #ifdef __cplusplus

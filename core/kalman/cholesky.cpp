@@ -6,7 +6,7 @@
  * \author alexander
  */
 
-#include "cholesky.h"
+#include "core/kalman/cholesky.h"
 namespace corecvs {
 
 Cholesky::Cholesky()
@@ -124,6 +124,39 @@ void Cholesky::udutDecompose(Matrix *A, Matrix **Uresult, DiagonalMatrix **Dresu
     } else {
         delete d;
     }
+}
+
+bool Cholesky::uutDecompose(Matrix *A, Matrix **Uresult)
+{
+    bool isPositive = true;
+    Matrix *U;
+    DiagonalMatrix *D;
+    Cholesky::udutDecompose(A, &U, &D);
+    if (Uresult != NULL) {
+        cout << "D" << *D << endl;
+        for (int j = 0; j < U->w; j++)
+        {
+            if (D->a(j) < 0) {
+                SYNC_PRINT(("One diagonal value is negative\n"));
+                isPositive = false;
+            }
+        }
+        for (int j = 0; j < U->w; j++)
+        {
+
+            double v = 0;
+            if (D->a(j) > 0) /* We try to make small corrections...*/
+                v = sqrt(D->a(j));
+            for (int i = 0; i < U->h; i++)
+            {
+                U->element(i,j) = U->element(i,j) * v;
+            }
+        }
+        *Uresult = U;
+    } else {
+        delete U;
+    }
+    return isPositive;
 }
 
 

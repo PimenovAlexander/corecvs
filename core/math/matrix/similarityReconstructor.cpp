@@ -1,5 +1,5 @@
-#include "similarityReconstructor.h"
-#include "levenmarq.h"
+#include "core/math/matrix/similarityReconstructor.h"
+#include "core/math/levenmarq.h"
 
 namespace corecvs {
 

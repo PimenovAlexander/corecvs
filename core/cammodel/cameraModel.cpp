@@ -3,14 +3,14 @@
 #include <cstddef>
 #include <string>
 
-#include "cameraModel.h"
+#include "core/cammodel/cameraModel.h"
 
-#include "log.h"
-#include "vector2d.h"
-#include "vector3d.h"
-#include "quaternion.h"
-#include "matrix33.h"
-#include "line.h"
+#include "core/utils/log.h"
+#include "core/math/vector/vector2d.h"
+#include "core/math/vector/vector3d.h"
+#include "core/math/quaternion.h"
+#include "core/math/matrix/matrix33.h"
+#include "core/geometry/line.h"
 
 using std::ifstream;
 using std::ofstream;

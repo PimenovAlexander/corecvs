@@ -8,10 +8,10 @@
  * \date Sep 25, 2010
  * \author: alexander
  */
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "vector2d.h"
-#include "int32x4.h"
+#include "core/math/vector/vector2d.h"
+#include "core/math/sse/int32x4.h"
 
 namespace corecvs {
 

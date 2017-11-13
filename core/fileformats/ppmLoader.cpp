@@ -10,24 +10,63 @@
  */
 #include <string>
 
-#include "global.h"
+#include "core/utils/global.h"
+#include "core/utils/utils.h"
 
-#include "ppmLoader.h"
+#include "core/fileformats/ppmLoader.h"
+
+namespace corecvs {
 
 string PPMLoader::prefix1(".pgm");
 string PPMLoader::prefix2(".ppm");
 
 bool PPMLoader::acceptsFile(string name)
 {
-    return (
-        name.compare(name.length() - prefix1.length(), prefix1.length(), prefix1) == 0 ||
-        name.compare(name.length() - prefix2.length(), prefix2.length(), prefix2) == 0
-        );
+    if (HelperUtils::endsWith(name, prefix1))
+        return true;
+    if (HelperUtils::endsWith(name, prefix2))
+        return true;
+    return false;
 }
 
-G12Buffer* PPMLoader::load(string name)
+G12Buffer* PPMLoader::loadG12(string name)
 {
     return loadMeta(name, nullptr);
+}
+
+G12Buffer* PPMLoader::loadG16(string name)
+{
+    if (HelperUtils::endsWith(name, prefix1))   // == pgm
+    {
+        return PPMLoader().g16BufferCreateFromPPM(name);
+    }
+
+    G12Buffer *result = NULL;
+    FILE *In = fopen(name.c_str(), "rb");
+    while (In != NULL)
+    {
+        uint32_t h = 0, w = 0;
+        if (fread(&h, sizeof(h), 1, In) != 1 ||
+            fread(&w, sizeof(w), 1, In) != 1 ||
+            h > 2000 || w > 2000)
+            break;
+
+        result = new G12Buffer(h, w);
+        if (result)
+        for (uint32_t i = 0; i < h; ++i) {
+            for (uint32_t j = 0; j < w; ++j) {
+                uint16_t d = 0;
+                if (fread(&d, sizeof(d), 1, In) != 1) {
+                    j = w, i = h;
+                    break;
+                }
+                result->element(i, j) = d;
+            }
+        }
+        fclose(In);
+        break;
+    }
+    return result;
 }
 
 G12Buffer* PPMLoader::loadMeta(const string& name, MetaData *metadata)
@@ -39,14 +78,12 @@ G12Buffer* PPMLoader::loadMeta(const string& name, MetaData *metadata)
         DOTRACE(("Will load the file %s as PPM (ignoring any available metadata)\n ", name.c_str()));
     }
 
-    G12Buffer *toReturn = g12BufferCreateFromPGM(name, metadata);
-    return toReturn;
+    return g12BufferCreateFromPGM(name, metadata);
 }
 
 RGB48Buffer* PPMLoader::loadRGB(const string& name, MetaData *metadata)
 {
-    RGB48Buffer *toReturn = rgb48BufferCreateFromPPM(name, metadata);
-    return toReturn;
+    return rgb48BufferCreateFromPPM(name, metadata);
 }
 
 G12Buffer* PPMLoader::g12BufferCreateFromPGM(const string& name, MetaData *meta)
@@ -144,11 +181,9 @@ done:
 RGB48Buffer* PPMLoader::rgb48BufferCreateFromPPM(const string& name, MetaData *meta)
 {
     // PPM headers variable declaration
-    unsigned long int i, j;
     unsigned long int h, w;
     uint8_t type;
     unsigned short int maxval;
-    int8_t c;
 
     // open file for reading in binary mode
     FILE *fp = fopen(name.c_str(), "rb");
@@ -195,7 +230,7 @@ RGB48Buffer* PPMLoader::rgb48BufferCreateFromPPM(const string& name, MetaData *m
     uint8_t *charImage = new uint8_t[size];
     if (charImage == nullptr)
     {
-        CORE_ASSERT_FAIL_P(("out of memory on allocate %d bytes", (int)size));
+        CORE_ASSERT_FAIL_P(("out of memory on allocate %" PRISIZE_T " bytes", size));
         goto done;
     }
 
@@ -208,31 +243,26 @@ RGB48Buffer* PPMLoader::rgb48BufferCreateFromPPM(const string& name, MetaData *m
     if (maxval <= 0xff)
     {
         // 1-byte case
-        for (i = 0; i < h; i++)
-            for (j = 0; j < w; j++)
+        for (uint k = 0, i = 0; i < h; ++i)
+            for (uint j = 0; j < w; ++j, ++k)
             {
-                for (c = 0; c < 3; c++)
-                {
-                    result->element(i, j)[2 - c] = (charImage[i * w * 3 + j * 3 + c]);
-                }
+                auto& out = result->element(i, j);
+                out[2] = (charImage[k * 3 + 0]);
+                out[1] = (charImage[k * 3 + 1]);
+                out[0] = (charImage[k * 3 + 2]);
             }
     }
     else
     {
         // 2-byte case
-        for (i = 0; i < h; i++)
-        {
-            for (j = 0; j < w * 2; j++)
+        for (uint k = 0, i = 0; i < h; ++i)
+            for (uint j = 0; j < w; ++j, ++k)
             {
-                for (c = 2; c >= 0; c--)
-                {
-                    int offset = (i * w + j) * 6;
-                    result->element(i, j)[2 - c] = ((charImage[offset + 0]) << 8 |
-                                                    (charImage[offset + 1]));
-                }
+                auto& out = result->element(i, j);
+                out[2] = (charImage[k * 6 + 0] << 8) | charImage[k * 6 + 1];
+                out[1] = (charImage[k * 6 + 2] << 8) | charImage[k * 6 + 3];
+                out[0] = (charImage[k * 6 + 4] << 8) | charImage[k * 6 + 5];
             }
-        }
-
     }
 
     if (calcWhite)
@@ -380,7 +410,7 @@ bool PPMLoader::writeHeader(FILE *fp, unsigned long int h, unsigned long int w, 
     {
         for (MetaData::iterator i = metadata.begin(); i != metadata.end(); i++)
         {
-            fprintf(fp, "# @meta %s\t@values %i\t", i->first.c_str(), (int)i->second.size());
+            fprintf(fp, "# @meta %s\t@values %" PRISIZE_T "\t", i->first.c_str(), i->second.size());
             for (uint j = 0; j < i->second.size(); j++)
                 fprintf(fp, "%f ", i->second[j]);
             fprintf(fp, "\n");
@@ -671,3 +701,5 @@ done:
     deletearr_safe(charImage);
     return result;
 }
+
+} //namespace corecvs

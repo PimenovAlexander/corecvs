@@ -11,9 +11,9 @@
 
 #include <vector>
 
-#include "abstractBuffer.h"
-#include "vector2d.h"
-#include "deformMap.h"
+#include "core/buffers/abstractBuffer.h"
+#include "core/math/vector/vector2d.h"
+#include "core/buffers/deformMap.h"
 
 namespace corecvs {
 

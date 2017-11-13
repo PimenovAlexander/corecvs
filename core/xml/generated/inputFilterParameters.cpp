@@ -8,7 +8,7 @@
 
 #include <vector>
 #include <stddef.h>
-#include "inputFilterParameters.h"
+#include "core/xml/generated/inputFilterParameters.h"
 
 /**
  *  Looks extremely unsafe because it depends on the order of static initialization.

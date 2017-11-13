@@ -3,7 +3,7 @@
  *
  * \date Dec 6, 2012
  **/
-#include "depthBuffer.h"
+#include "core/buffers/flow/depthBuffer.h"
 
 namespace corecvs
 {

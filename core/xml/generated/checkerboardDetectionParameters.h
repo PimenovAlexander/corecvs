@@ -8,9 +8,9 @@
  * \author autoGenerator
  */
 
-#include "reflection.h"
-#include "defaultSetter.h"
-#include "printerVisitor.h"
+#include "core/reflection/reflection.h"
+#include "core/reflection/defaultSetter.h"
+#include "core/reflection/printerVisitor.h"
 
 /*
  *  Embed includes.
@@ -30,8 +30,8 @@ namespace corecvs {
 /*
  *  Additional includes for enum section.
  */
-#include "checkerboardDetectionAlgorithm.h"
-#include "imageChannel.h"
+#include "core/xml/generated/checkerboardDetectionAlgorithm.h"
+#include "core/xml/generated/imageChannel.h"
 
 /**
  * \brief Checkerboard Detection Parameters 

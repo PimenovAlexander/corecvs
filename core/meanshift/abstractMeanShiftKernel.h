@@ -11,7 +11,7 @@
  * \author ylitvinov
  */
 
-#include "global.h"
+#include "core/utils/global.h"
 namespace corecvs {
 
 class AbstractMeanShiftKernel

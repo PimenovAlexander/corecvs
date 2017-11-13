@@ -3,8 +3,8 @@
 #include <vector>
 #include <iostream>
 
-#include "runtimeTypeBuffer.h"
-#include "rgbColor.h"
+#include "core/buffers/runtimeTypeBuffer.h"
+#include "core/buffers/rgb24/rgbColor.h"
 
 typedef std::string DescriptorType;
 typedef std::string DetectorType;

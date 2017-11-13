@@ -6,7 +6,7 @@
  * \author alexander
  */
 
-#include "fixedPoint24p8.h"
+#include "core/math/fixed/fixedPoint24p8.h"
 
 namespace corecvs
 {

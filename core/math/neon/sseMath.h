@@ -10,7 +10,7 @@
 #ifndef SSEMATH_H_
 #define SSEMATH_H_
 
-#include "global.h"
+#include "core/utils/global.h"
 namespace corecvs {
 
 class SSEMath

@@ -8,10 +8,10 @@
  * \author a.melnikov
  */
 
-#include "filterBlock.h"
+#include "core/filters/blocks/filterBlock.h"
 #include "../xml/generated/cannyParameters.h"
-#include "filtersCollection.h"
-#include "g12Buffer.h"
+#include "core/filters/filtersCollection.h"
+#include "core/buffers/g12Buffer.h"
 #include "../buffers/derivativeBuffer.h"
 
 namespace corecvs

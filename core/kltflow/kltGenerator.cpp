@@ -11,12 +11,12 @@
 
 #undef TRACE
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "mathUtils.h"
-#include "mipmapPyramid.h"
-#include "kltGenerator.h"
-#include "vector2d.h"
+#include "core/math/mathUtils.h"
+#include "core/buffers/mipmapPyramid.h"
+#include "core/kltflow/kltGenerator.h"
+#include "core/math/vector/vector2d.h"
 
 namespace corecvs {
 

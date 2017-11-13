@@ -11,9 +11,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "atomicOps.h"
+#include "core/utils/atomicOps.h"
 
 namespace corecvs {
 

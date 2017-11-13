@@ -12,13 +12,13 @@
 
 #include <vector>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "vector3d.h"
-#include "matrix44.h"
-#include "flowVector.h"
-#include "cameraParameters.h"
-#include "eulerAngles.h"
+#include "core/math/vector/vector3d.h"
+#include "core/math/matrix/matrix44.h"
+#include "core/buffers/flow/flowVector.h"
+#include "core/cameracalibration/calibrationCamera.h"
+#include "core/math/eulerAngles.h"
 
 namespace corecvs {
 
@@ -36,7 +36,7 @@ public:
     static std::vector<Vector3dd> *applyTransform(std::vector<Vector3dd> * pointsA, const Matrix44 &A);
 
     static std::vector<FloatFlowVector> *simulateFlow(
-            const CameraIntrinsicsLegacy &camIntrinsics,
+            const PinholeCameraIntrinsics   &camIntrinsics,
             const ShiftRotateTransformation &cameraExtrinsics,
             const ShiftRotateTransformation &carMovement,
             double maxZ = 7000.0,

@@ -4,7 +4,12 @@ SOURCES += \
     reflection/printerVisitor.cpp \
     reflection/serializerVisitor.cpp \
     reflection/deserializerVisitor.cpp \
-    reflection/commandLineSetter.cpp
+    reflection/commandLineSetter.cpp \
+    reflection/reflection.cpp \
+    reflection/extendedVisitor.cpp \
+    reflection/commandLineGetter.cpp \
+    reflection/jsonPrinter.cpp \
+    $$PWD/dynamicObject.cpp
     
     
 HEADERS += \
@@ -14,4 +19,8 @@ HEADERS += \
     reflection/printerVisitor.h \
     reflection/serializerVisitor.h \
     reflection/deserializerVisitor.h \
-    reflection/commandLineSetter.h
+    reflection/commandLineSetter.h \
+    reflection/extendedVisitor.h \
+    reflection/commandLineGetter.h \
+    reflection/jsonPrinter.h \
+    $$PWD/dynamicObject.h

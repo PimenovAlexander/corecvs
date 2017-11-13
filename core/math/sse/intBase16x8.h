@@ -12,11 +12,11 @@
 #include <emmintrin.h>
 #include <stdint.h>
 
-#include "global.h"
-#include "fixedVector.h"
-#include "sseInteger.h"
-#include "int32x4.h"
-#include "int32x8v.h"
+#include "core/utils/global.h"
+#include "core/math/vector/fixedVector.h"
+#include "core/math/sse/sseInteger.h"
+#include "core/math/sse/int32x4.h"
+#include "core/math/sse/int32x8v.h"
 
 namespace corecvs {
 

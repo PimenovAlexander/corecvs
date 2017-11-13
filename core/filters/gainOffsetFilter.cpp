@@ -6,11 +6,11 @@
  * \author alexander
  */
 
-#include "gainOffsetFilter.h"
-#include "g12Buffer.h"
+#include "core/filters/gainOffsetFilter.h"
+#include "core/buffers/g12Buffer.h"
 #include "../buffers/commonMappers.h"
-#include "serializerVisitor.h"
-#include "deserializerVisitor.h"
+#include "core/reflection/serializerVisitor.h"
+#include "core/reflection/deserializerVisitor.h"
 
 namespace corecvs
 {

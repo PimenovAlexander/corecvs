@@ -10,7 +10,7 @@
 #define DIAGONALMATRIX_H_
 
 #include <stdlib.h>
-#include "fixedArray.h"
+#include "core/math/vector/fixedArray.h"
 namespace corecvs {
 
 class Matrix;

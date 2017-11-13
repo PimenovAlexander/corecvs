@@ -3,8 +3,8 @@
 #include <algorithm>
 #include <vector>
 #include <sstream>
-#include "rgb24Buffer.h"
-#include "pointObservation.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/alignment/pointObservation.h"
 
 
 namespace corecvs {

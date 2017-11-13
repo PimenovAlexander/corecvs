@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
-#include "runtimeTypeBuffer.h"
-#include "rgb24Buffer.h"
+#include "core/buffers/runtimeTypeBuffer.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
 
 class BufferReader
 {

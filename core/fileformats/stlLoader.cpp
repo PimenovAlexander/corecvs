@@ -1,5 +1,7 @@
-#include "stlLoader.h"
-#include "utils.h"
+#include "core/fileformats/stlLoader.h"
+#include "core/utils/utils.h"
+
+namespace corecvs {
 
 static const int STL_BINARY_HEADER_SIZE = 80;
 
@@ -149,3 +151,5 @@ int STLLoader::saveBinarySTL(ostream &out, Mesh3D &mesh)
     deletearr_safe(buffer);
     return 0;
 }
+
+} //namespace corecvs

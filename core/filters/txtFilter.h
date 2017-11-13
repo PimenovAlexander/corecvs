@@ -8,8 +8,8 @@
  * \author dpiatkin
  */
 
-#include "filterBlock.h"
-#include "filtersCollection.h"
+#include "core/filters/blocks/filterBlock.h"
+#include "core/filters/filtersCollection.h"
 
 namespace corecvs
 {

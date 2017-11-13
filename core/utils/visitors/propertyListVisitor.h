@@ -13,11 +13,11 @@
 #include <string>
 #include <vector>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "propertyList.h"
-#include "basePathVisitor.h"
-#include "reflection.h"
+#include "core/utils/propertyList.h"
+#include "core/utils/visitors/basePathVisitor.h"
+#include "core/reflection/reflection.h"
 
 namespace corecvs {
 
@@ -66,7 +66,7 @@ template <typename inputType>
 template <typename inputType, typename reflectionType>
     void visit(inputType &field, const reflectionType *fieldDescriptor);
 
-/* Generic array support*/
+    /* Generic array support. Could be made much more compact */
     template <typename innerType>
     void visit(std::vector<innerType> &field, const char* arrayName)
     {
@@ -76,10 +76,11 @@ template <typename inputType, typename reflectionType>
             ss << arrayName << "[" <<  i << "]";
             visit<innerType>(field[i], ss.str().c_str());
         }
+        std::ostringstream ss;
+        ss << arrayName << ".size";
+        int length = (int)field.size();
+        visit<int>(length, 0, ss.str().c_str());
     }
-
-
-
 };
 
 template<class Type>
@@ -136,6 +137,9 @@ template <>
 template <>
     void PropertyListWriterVisitor::visit<std::string,   StringField>(std::string &field, const StringField *fieldDescriptor);
 
+template <>
+    void PropertyListWriterVisitor::visit<std::wstring,   WStringField>(std::wstring &field, const WStringField *fieldDescriptor);
+
 
 /* Typed arrays */
 template <>
@@ -188,12 +192,16 @@ template <typename inputType, typename reflectionType>
     void visit(inputType &field, const reflectionType *fieldDescriptor);
 
 
-
-
-/* Generic array support*/
+    /* Generic array support*/
     template <typename innerType>
     void visit(std::vector<innerType> &field, const char* arrayName)
     {
+        int length = 0;
+        std::ostringstream ss;
+        ss << arrayName << ".size";
+        visit(length, 0, ss.str().c_str());
+        field.resize(length);
+
         for (size_t i = 0; i < field.size(); i++)
         {
             std::ostringstream ss;
@@ -201,8 +209,6 @@ template <typename inputType, typename reflectionType>
             visit<innerType>(field[i], ss.str().c_str());
         }
     }
-
-
 };
 
 template<class Type>
@@ -261,6 +267,9 @@ template <>
 
 template <>
     void PropertyListReaderVisitor::visit<std::string,   StringField>(std::string &field, const StringField *fieldDescriptor);
+
+template <>
+    void PropertyListReaderVisitor::visit<std::wstring,   WStringField>(std::wstring &field, const WStringField *fieldDescriptor);
 
 
 /* Typed arrays */

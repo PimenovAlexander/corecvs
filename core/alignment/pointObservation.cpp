@@ -1,2 +1,2 @@
-#include "pointObservation.h"
+#include "core/alignment/pointObservation.h"
 

@@ -6,7 +6,7 @@
  * \author alexander
  */
 
-#include "memoryBlock.h"
+#include "core/buffers/memory/memoryBlock.h"
 namespace corecvs {
 
 } //namespace corecvs

@@ -1,6 +1,6 @@
-#include "errorMetrics.h"
-#include "debayer.h"
-#include "ppmLoader.h"
+#include "core/buffers/converters/errorMetrics.h"
+#include "core/buffers/converters/debayer.h"
+#include "core/fileformats/ppmLoader.h"
 
 using namespace corecvs;
 

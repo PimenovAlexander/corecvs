@@ -5,9 +5,9 @@
  * \date Jan 17, 2013
  */
 
-#include "thickeningBlock.h"
-#include "serializerVisitor.h"
-#include "deserializerVisitor.h"
+#include "core/filters/thickeningBlock.h"
+#include "core/reflection/serializerVisitor.h"
+#include "core/reflection/deserializerVisitor.h"
 
 namespace corecvs
 {

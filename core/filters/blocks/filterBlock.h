@@ -10,9 +10,9 @@
 #include <string.h>
 #include <sstream>
 
-#include "global.h"
-#include "reflection.h"
-#include "pins.h"
+#include "core/utils/global.h"
+#include "core/reflection/reflection.h"
+#include "core/filters/blocks/pins.h"
 #include <typeinfo>
 
 namespace corecvs

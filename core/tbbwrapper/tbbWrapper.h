@@ -6,22 +6,30 @@
  *
  * This class allows system to work transparently with or without TBB
  *
- *
- * \date Apr 24, 2011
- * \author alexander
- * \author ivarfolomeev
- */
-
+ **/
 #include <cstddef>
+#include <iostream>
 
 #ifdef WITH_TBB
+/*
+ * This jump around is beacause tbb indirectly includes windows.h
+   This is a fail. TBB needs to be abolished
+*/
+#define Polygon Polygon_
+#define Ellipse Ellipse_
 #include <tbb/parallel_for.h>
 #include <tbb/parallel_reduce.h>
 #include <tbb/blocked_range.h>
+#include <tbb/reader_writer_lock.h>
+#include <tbb/spin_mutex.h>
+#include <tbb/task_scheduler_init.h>
+#undef Ellipse
+#undef Polygon
+
 using namespace tbb;
 #endif
 
-#include "global.h"
+#include "core/utils/global.h"
 
 namespace corecvs {
 
@@ -78,11 +86,28 @@ public:
      *
      **/
 #ifdef WITH_TBB
+    static const bool is_splittable_in_proportion = true;
+
     BlockedRange(BlockedRange& r, tbb::split) :
         myGrainsize(r.myGrainsize)
     {
         myEnd = r.myEnd;
         myBegin = do_split(r);
+    }
+
+    BlockedRange(BlockedRange &r, tbb::proportional_split &proportion)
+        : myGrainsize(r.myGrainsize)
+    {
+        myEnd = r.myEnd;
+        myBegin = do_split(r, proportion);
+    }
+
+    static IndexType do_split(BlockedRange &r, tbb::proportional_split &proportion)
+    {
+        CORE_ASSERT_TRUE(r.is_divisible(), "TBB Wrapper internal error\n");
+        auto middle = r.myBegin + (r.myEnd - r.myBegin) / 2u;
+        r.myEnd = middle;
+        return middle;
     }
 #endif
 
@@ -93,11 +118,45 @@ public:
         return middle;
     }
 
+    template<typename R, typename C>
+    friend class BlockedRange2d;
 private:
     IndexType myBegin;
     IndexType myEnd;
     size_type myGrainsize;
 
+};
+
+template<typename R, typename C>
+class BlockedRange2d
+{
+public:
+    typedef BlockedRange<R> row_range_type;
+    typedef BlockedRange<C> col_range_type;
+
+    bool empty() const
+    {
+        return rows.empty() || cols.empty();
+    }
+
+    bool is_divisible() const
+    {
+        return rows.is_divisible() || cols.is_divisible();
+    }
+
+    static const bool is_splittable_in_proportion = true;
+private:
+
+    template <typename Split>
+    void do_split (BlockedRange2d &r, Split &split)
+    {
+        if (rows.size() * double(cols.grainsize()) < cols.size() * double(rows.grainsize()))
+            cols.begin = col_range_type::do_split(r.cols, split);
+        else
+            rows.begin = row_range_type::do_split(r.cols, split);
+    }
+    row_range_type rows;
+    col_range_type cols;
 };
 
 /**
@@ -149,6 +208,27 @@ void parallelable_for(IndexType begin, IndexType end, std::size_t /*grainsize*/,
 #endif // !WITH_TBB
 /**@}*/
 
+template <typename RR, typename V, typename F, typename R>
+V parallelable_reduce(const RR& range, const V& id, const F &f, const R &r)
+{
+#ifndef WITH_TBB
+    return f(range, id);
+#else
+    return tbb::parallel_reduce(range, id, f, r);
+#endif
+}
+
+template <typename I, typename V, typename F, typename R>
+V parallelable_reduce(const I& from, const I& to, const V& id, const F &f, const R &r)
+{
+    return parallel_reduce(corecvs::BlockedRange<I>(from, to), id, f, r);
+}
+
+template <typename I, typename V, typename F, typename R>
+V parallelable_reduce(const I& from, const I& to, const typename BlockedRange<I>::size_type &grainsize, const V& id, const F &f, const R &r)
+{
+    return parallelable_reduce(corecvs::BlockedRange<I>(from, to, grainsize), id, f, r);
+}
 
 
 template <typename IndexType, class Function>
@@ -186,6 +266,28 @@ inline std::string tbbInfo()
 #endif
     return info;
 }
+
+/** Useful class to setmaximum number of working threads for the whole TBB environment for any application on startup
+ */
+#ifdef WITH_TBB
+    class TbbSchedulerInitializer : public tbb::task_scheduler_init
+    {
+    public:
+        TbbSchedulerInitializer(const char* varName = "CALIBRATION_TEST_THREAD_LIMIT")
+            : tbb::task_scheduler_init(std::getenv(varName) ? std::stoi(std::getenv(varName)) : automatic)
+        {
+            char* var = std::getenv(varName);
+            if (var) {
+                std::cout << "Detected thread limit env.var: " << var << std::endl;
+            }
+        }
+    };
+#else
+    class TbbSchedulerInitializer {
+    public:
+        TbbSchedulerInitializer(const char* var = "") {}
+    };
+#endif
 
 } //namespace corecvs
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "rgbColor.h"
+#include "core/buffers/rgb24/rgbColor.h"
 
 namespace corecvs {
 

@@ -6,7 +6,7 @@
  * \author alexander
  */
 
-#include "helperFunctions.h"
+#include "core/math/helperFunctions.h"
 namespace corecvs {
 
 } //namespace corecvs

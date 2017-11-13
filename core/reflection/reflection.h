@@ -15,11 +15,12 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-//#include "vector3d.h"
-//#include "vector2d.h"
+//#include "core/math/vector/vector3d.h"
+//#include "core/math/vector/vector2d.h"
 
 #undef min
 #undef max
@@ -36,6 +37,11 @@ using std::vector;
 #else
 #define SUPPRESS_OFFSET_WARNING_BEGIN
 #define SUPPRESS_OFFSET_WARNING_END
+#endif
+
+
+#ifndef REFLECTION_DIRECTORY_OFF
+#include <map>
 #endif
 
 
@@ -109,6 +115,7 @@ public:
         TYPE_BOOL,
         TYPE_STRING,
         TYPE_ENUM,
+        TYPE_WSTRING,
 
         /* CoreTypes */
         TYPE_VECTOR2DD,
@@ -124,7 +131,10 @@ public:
         TYPE_COMPOSITE_ARRAY,
         TYPE_LAST,
 
-        TYPE_VECTOR_BIT = 0x80
+        TYPE_VECTOR_BIT = 0x80,
+        /* Suppressing warnings */
+        TYPE_DOUBLE_VECTOR = TYPE_DOUBLE | TYPE_VECTOR_BIT
+
     };
 
     /**
@@ -185,6 +195,48 @@ template<typename Type>
     /** flags */
     bool                isAdvanced;
 
+    /**
+     * This is an attempt to make processing blocks based on the reflection
+     * So far this is experimental
+     ***/
+    bool isInputPin() const;
+
+    bool isOuputPin() const;
+
+    /** These fields are related to persentaion only and probably should be moved out. **/
+    /** This is obviously out of place. But too much code needed to make design clean */
+    enum WidgetHint{
+        DEFAULT_HINT,
+        COMBO_BOX,
+        CHECK_BOX,
+        RADIO_BUTTON,
+        SPIN_BOX,
+        SLIDER,
+        TAB_WIDGET
+    };
+
+    static inline const char *getString(const WidgetHint &value)
+    {
+        switch (value)
+        {
+           case DEFAULT_HINT : return "DEFAULT_HINT"; break ;
+           case COMBO_BOX    : return "COMBO_BOX";    break ;
+           case CHECK_BOX    : return "CHECK_BOX";    break ;
+           case RADIO_BUTTON : return "RADIO_BUTTON"; break ;
+           case SPIN_BOX     : return "SPIN_BOX";     break ;
+           case SLIDER       : return "SLIDER";       break ;
+           case TAB_WIDGET   : return "TAB_WIDGET";   break ;
+        }
+        return "Not in range";
+    }
+
+
+    int precision = -1;                   /**< Precision that we expect form the field */
+    WidgetHint widgetHint = DEFAULT_HINT; /**< Best type of widget to repersent field*/
+    const char *prefixHint = NULL;        /**< prefix for the field that can add some semantics (i.e koefficient could have "*" prefix)*/
+    const char *suffixHint = NULL;        /**< postfix for the field that can add some semantics (i.e mesurement unit) */
+
+
     const char *getSimpleName() const
     {
         return name.name;
@@ -215,6 +267,7 @@ template<> inline BaseField::FieldType BaseField::getType<double>()             
 template<> inline BaseField::FieldType BaseField::getType<float>()                { return TYPE_FLOAT;     }
 template<> inline BaseField::FieldType BaseField::getType<bool>()                 { return TYPE_BOOL;      }
 template<> inline BaseField::FieldType BaseField::getType<std::string>()          { return TYPE_STRING;    }
+template<> inline BaseField::FieldType BaseField::getType<std::wstring>()         { return TYPE_WSTRING;   }
 
 template<> inline BaseField::FieldType BaseField::getType<vector<int> >()         { return (FieldType)(TYPE_VECTOR_BIT | TYPE_INT);       }
 template<> inline BaseField::FieldType BaseField::getType<vector<int64_t> >()     { return (FieldType)(TYPE_VECTOR_BIT | TYPE_TIMESTAMP); }
@@ -222,6 +275,7 @@ template<> inline BaseField::FieldType BaseField::getType<vector<double> >()    
 template<> inline BaseField::FieldType BaseField::getType<vector<float> >()       { return (FieldType)(TYPE_VECTOR_BIT | TYPE_FLOAT);     }
 template<> inline BaseField::FieldType BaseField::getType<vector<bool> >()        { return (FieldType)(TYPE_VECTOR_BIT | TYPE_BOOL);      }
 template<> inline BaseField::FieldType BaseField::getType<vector<std::string> >() { return (FieldType)(TYPE_VECTOR_BIT | TYPE_STRING);    }
+template<> inline BaseField::FieldType BaseField::getType<vector<std::wstring> >(){ return (FieldType)(TYPE_VECTOR_BIT | TYPE_WSTRING);   }
 
 //template<> inline BaseField::FieldType BaseField::getType<corecvs::Vector2dd>() { return TYPE_VECTOR2DD; }
 //template<> inline BaseField::FieldType BaseField::getType<corecvs::Vector3dd>() { return TYPE_VECTOR3DD; }
@@ -344,7 +398,7 @@ public:
             bool _hasAdditionalValues = false,
             Type _min = 0,
             Type _max = 0,
-            Type _step = 0
+            Type _step = 1
     ) :
         BaseField(_id, BaseField::getType<vector<Type> >(), ReflectionNaming(_name, _decription, _comment) , _offset),
         defaultValue (_defaultValue),
@@ -487,7 +541,48 @@ public:
 
     virtual ~StringField() {}
 #endif
+};
 
+
+class WStringField : public BaseField
+{
+public:
+    typedef std::wstring CPPType;
+    std::wstring     defaultValue;
+
+    WStringField (
+            int _id,
+            int _offset,
+            std::wstring _defaultValue,
+            const char *_name,
+            const char *_decription,
+            const char *_comment
+    ) :
+        BaseField(_id, getType<std::wstring>(), _name, _decription, _comment, _offset),
+        defaultValue (_defaultValue)
+    {}
+
+    WStringField (
+            int _id,
+            int _offset,
+            std::wstring _defaultValue,
+            const ReflectionNaming &_naming
+    ) :
+        BaseField(_id, getType<std::wstring>(), _naming, _offset),
+        defaultValue (_defaultValue)
+    {}
+
+#ifdef REFLECTION_WITH_VIRTUAL_SUPPORT
+    /**
+     * Make a bit-by-bit clone
+     **/
+    virtual BaseField* clone() const
+    {
+        return new WStringField(*this);
+    }
+
+    virtual ~WStringField() {}
+#endif
 };
 
 class Reflection;
@@ -535,6 +630,7 @@ public:
     vector<const BaseField *>       fields;
     /* Seems like used only in generator */
     vector<const EmbedSubclass *>   embeds;
+    int                             objectSize;
 
     Reflection() {}
 
@@ -551,7 +647,7 @@ public:
     }
 
 
-    int fieldNumber()
+    int fieldNumber() const
     {
         return (int)fields.size();
     }
@@ -566,7 +662,7 @@ public:
         return fields[fieldId]->name.comment;
     }
 
-    int idByName(const char *name)
+    int idByName(const char *name) const
     {
         for (int i = 0; i < fieldNumber(); i++)
         {
@@ -578,26 +674,85 @@ public:
         return -1;
     }
 
+    bool isActionBlock() const;
+
+
     /*virtual*/ ~Reflection()   // it may be non virtual
     {
-//#ifndef REFLECTION_STATIC_ALLOCATION
-        FOREACH(const BaseField * el, fields) {
-            // crash silly workaround // TODO: review this and fix the problem!
-            if (el->id < 0) {
-                SYNC_PRINT(("~Reflection: bad id in the reflection object: id:%d size:%d\n", el->id, (int)fields.size()));
+#ifndef REFLECTION_STATIC_ALLOCATION
+        for(size_t i = 0; i < fields.size(); i++)
+        {
+            const BaseField * &el = fields[i];
+            if (el->id < 0) {                
+                /* Why all this spam? */
+                //SYNC_PRINT(("Reflection::~Reflection(): bad id in the reflection object: id:%d size:%" PRISIZE_T "\n", el->id, fields.size()));
+                continue;
             }
-            else {
-                delete el;
-            }
+            delete_safe(el);
         }
+
         fields.clear();
-        FOREACH (const EmbedSubclass * el, embeds) {
-            delete el;
+        for(const EmbedSubclass * el: embeds) {
+            delete_safe(el);
         }
         embeds.clear();
-//#endif
+#endif
+    }
+
+    static const char* printableType (BaseField::FieldType type)
+    {
+        switch(type)
+        {
+            case BaseField::TYPE_INT:
+                return "int";
+            case BaseField::TYPE_TIMESTAMP:
+                return "int64_t";
+            case BaseField::TYPE_DOUBLE:
+                return "double";
+            case BaseField::TYPE_BOOL:
+                return "bool";
+            case BaseField::TYPE_STRING:
+                return "std::string";
+            case BaseField::TYPE_WSTRING:
+                return "std::wstring";
+            default:
+                break;
+        }
+        return "na";
+    }
+
+    void print()
+    {
+        printf("%20.20s %20.20s (%s)\n", name.name, name.decription, name.comment);
+        printf("Size: %d\n", (int)objectSize);
+        printf("--------- Fields -----------\n");
+        for (size_t fieldId = 0; fieldId < fields.size(); fieldId++)
+        {
+            const BaseField *bf = fields[fieldId];
+            printf("%35.35s | %d | %8.8s\n" , bf->name.name, bf->offset, printableType(bf->type));
+        }
+        if (!embeds.empty())
+        {
+            printf("--------- Embeds -----------\n");
+            for (size_t embedsId = 0; embedsId < embeds.size(); embedsId++)
+            {
+                const EmbedSubclass *em = embeds[embedsId];
+                printf("%35.35s \n" , em->name.name);
+            }
+        }
+    }
+
+};
+
+
+class ReflectionActionBlock : public Reflection {
+public:
+    virtual void operator ()()
+    {
+        SYNC_PRINT(("ReflectionActionBlock::operator (): You are calling empty operator()\n"));
     }
 };
+
 
 
 class CompositeField : public BaseField
@@ -704,14 +859,17 @@ class EnumOption
 public:
     int              id;
     ReflectionNaming name;
+    const char *presentationHint = NULL;
 
     EnumOption() {}
     EnumOption(int _id,
         const char *_name,
+        const char *_presentationHint = NULL,
         const char *_decription = NULL,
         const char *_comment = NULL)
         : id(_id)
         , name(_name, _decription, _comment)
+        , presentationHint(_presentationHint)
     {}
 
     EnumOption(int _id, const ReflectionNaming &_nameing)
@@ -908,36 +1066,25 @@ public:
     }
 };
 
-
-class DynamicObject
+class ReflectionDirectory : public std::map<std::string, Reflection *>
 {
-public:
-    Reflection *reflection;
-    void       *rawObject;
-
-    DynamicObject() :
-        reflection(NULL),
-        rawObject(NULL)
-    {}
-
-    template<typename Object>
-    DynamicObject(Object *object):
-        reflection(BaseReflection<Object>::getReflection()),
-        rawObject((void *) object)
-    {}
-
-    template<typename Type>
-    Type *getField(int fieldId)
-    {
-        return (Type *)&(((uint8_t*)rawObject)[reflection->fields[fieldId]->offset]);
-    }
-
-    const BaseField* getFieldReflection(int fieldId)
-    {
-        return reflection->fields[fieldId];
-    }
 
 };
+
+class ReflectionDirectoryHolder
+{
+private:
+    static std::unique_ptr<ReflectionDirectory> reflectionDirectory;
+public:
+    /**
+     * Main reflection directory
+     **/
+    static ReflectionDirectory* getReflectionDirectory();
+
+};
+
+
+
 
 } //namespace corecvs
 

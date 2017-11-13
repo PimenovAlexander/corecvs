@@ -1,4 +1,4 @@
-#include "printerVisitor.h"
+#include "core/reflection/printerVisitor.h"
 
 namespace corecvs {
 
@@ -41,6 +41,16 @@ void PrinterVisitor::visit<string, StringField>(std::string &field, const String
 }
 
 template <>
+void PrinterVisitor::visit<wstring, WStringField>(std::wstring &field, const WStringField *fieldDescriptor)
+{
+    if (stream == NULL) return;
+    /* Truncate so far */
+    std::string str( field.begin(), field.end() );
+
+    *stream << indent() << fieldDescriptor->getSimpleName() << "=" << str << endl;
+}
+
+template <>
 void PrinterVisitor::visit<void *, PointerField>(void * &field, const PointerField *fieldDescriptor)
 {
     if (stream == NULL) return;
@@ -72,39 +82,10 @@ void PrinterVisitor::visit<double, DoubleVectorField>(std::vector<double> &field
 /* Old style visitor */
 
 template <>
-void PrinterVisitor::visit<int>(int &intField, int /*defaultValue*/, const char *fieldName)
-{
-    if (stream == NULL) return;
-    *stream << indent() << fieldName << "=" << intField << endl;
-}
-
-template <>
-void PrinterVisitor::visit<uint64_t>(uint64_t &intField, uint64_t /*defaultValue*/, const char *fieldName)
-{
-    if (stream == NULL) return;
-    *stream << indent() << fieldName << "=" << intField << endl;
-}
-
-
-template <>
-void PrinterVisitor::visit<double>(double &doubleField, double /*defaultValue*/, const char *fieldName)
-{
-    if (stream == NULL) return;
-    *stream << indent() << fieldName << "=" << doubleField << endl;
-}
-
-template <>
-void PrinterVisitor::visit<float>(float &floatField, float /*defaultValue*/, const char *fieldName)
-{
-    if (stream == NULL) return;
-    *stream << indent() << fieldName << "=" << floatField << endl;
-}
-
-template <>
 void PrinterVisitor::visit<bool>(bool &boolField, bool /*defaultValue*/, const char *fieldName)
 {
     if (stream == NULL) return;
-    *stream << indent() << fieldName << "=" << boolField << endl;
+    *stream << indent() << fieldName << "=" << (boolField ? "true" : "false") << endl;
 }
 
 template <>

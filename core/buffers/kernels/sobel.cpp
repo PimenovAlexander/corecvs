@@ -8,9 +8,9 @@
  * \author alexander
  */
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "sobel.h"
+#include "core/buffers/kernels/sobel.h"
 
 namespace corecvs {
 

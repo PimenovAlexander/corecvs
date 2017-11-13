@@ -1,9 +1,9 @@
 #ifndef GAIN_OFFSET_FILTER_H_
 #define GAIN_OFFSET_FILTER_H_
-#include "filterBlock.h"
-#include "g12Buffer.h"
+#include "core/filters/blocks/filterBlock.h"
+#include "core/buffers/g12Buffer.h"
 #include "../xml/generated/gainOffsetParameters.h"
-#include "filtersCollection.h"
+#include "core/filters/filtersCollection.h"
 
 /**
  * \file gainOffsetFilter.h

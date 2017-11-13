@@ -9,12 +9,12 @@
 #include <math.h>
 #include <vector>
 
-#include "global.h"
-#include "hardcodeFont.h"
-#include "hersheyVectorFont.h"
-#include "rgbColor.h"
-#include "polygons.h"
-#include "conic.h"
+#include "core/utils/global.h"
+#include "core/buffers/rgb24/hardcodeFont.h"
+#include "core/buffers/rgb24/hersheyVectorFont.h"
+#include "core/buffers/rgb24/rgbColor.h"
+#include "core/geometry/polygons.h"
+#include "core/geometry/conic.h"
 
 namespace corecvs {
 
@@ -76,6 +76,12 @@ public:
             char_ptr = HardcodeFont::symbols_glyphs + HardcodeFont::GLYPH_HEIGHT * 13;
         if (theChar == '.')
             char_ptr = HardcodeFont::symbols_glyphs + HardcodeFont::GLYPH_HEIGHT * 14;
+
+        if (theChar == '[')
+            char_ptr = HardcodeFont::symbols_glyphs + HardcodeFont::GLYPH_HEIGHT * 15;
+        if (theChar == ']')
+            char_ptr = HardcodeFont::symbols_glyphs + HardcodeFont::GLYPH_HEIGHT * 16;
+
 
         if (char_ptr == NULL)
             char_ptr = HardcodeFont::symbols_glyphs + HardcodeFont::GLYPH_HEIGHT * 10;
@@ -342,18 +348,18 @@ public:
         mTarget->drawLine(p[p.size() - 1].x(), p[p.size() - 1].y(), p[0].x(), p[0].y(), color);
     }
 
-    void drawHLine(int x1, int y1, int x2, ElementType &color)
+    void drawHLine(int x1, int y1, int x2, const ElementType &color)
     {
-        drawSpan(LineSpanInt(y1, x1, x2), color);
+        drawSpan(HLineSpanInt(y1, x1, x2), color);
     }
 
-    void drawSpan(const LineSpanInt &span, ElementType &color)
+    void drawSpan(const HLineSpanInt &span, const ElementType &color)
     {
-        LineSpanInt tspan = span;
+        HLineSpanInt tspan = span;
         tspan.clip(mTarget->w, mTarget->h);
         for (int j = tspan.x1; j < tspan.x2; j++)
         {
-            mTarget->element(tspan.y, j) = color;
+            mTarget->element(tspan.y(), j) = color;
         }
     }
 

@@ -4,7 +4,7 @@
  * \date May 12, 2014
  **/
 
-#include "stringPrinterVisitor.h"
+#include "core/reflection/stringPrinterVisitor.h"
 
 namespace corecvs
 {

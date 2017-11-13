@@ -10,10 +10,10 @@
 #ifndef CASCADECLASSIFIER_H_
 #define CASCADECLASSIFIER_H_
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "g12Buffer.h"
-#include "mipmapPyramid.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/mipmapPyramid.h"
 namespace corecvs {
 
 class CascadeClassifier

@@ -1,6 +1,6 @@
-#include "imageKeyPoints.h"
+#include "core/features2d/imageKeyPoints.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include <iomanip>
 #include <fstream>

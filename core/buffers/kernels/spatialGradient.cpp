@@ -7,13 +7,13 @@
  * \author alexander
  */
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "spatialGradient.h"
-#include "fastKernel.h"
-#include "scalarAlgebra.h"
-#include "gaussian.h"
-#include "vectorTraits.h"
+#include "core/buffers/kernels/spatialGradient.h"
+#include "core/buffers/kernels/fastkernel/fastKernel.h"
+#include "core/buffers/kernels/fastkernel/scalarAlgebra.h"
+#include "core/buffers/kernels/gaussian.h"
+#include "core/buffers/kernels/fastkernel/vectorTraits.h"
 namespace corecvs {
 
 

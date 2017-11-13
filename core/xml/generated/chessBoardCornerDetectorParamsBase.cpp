@@ -8,7 +8,7 @@
 
 #include <vector>
 #include <stddef.h>
-#include "chessBoardCornerDetectorParamsBase.h"
+#include "core/xml/generated/chessBoardCornerDetectorParamsBase.h"
 
 /**
  *  Looks extremely unsafe because it depends on the order of static initialization.

@@ -10,9 +10,9 @@
  * \author ylitvinov
  */
 
-#include "flowBuffer.h"
-#include "tileGrid.h"
-#include "abstractMeanShiftKernel.h"
+#include "core/buffers/flow/flowBuffer.h"
+#include "core/segmentation/tileGrid.h"
+#include "core/meanshift/abstractMeanShiftKernel.h"
 #include <vector>
 namespace corecvs {
 

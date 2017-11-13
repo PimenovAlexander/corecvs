@@ -8,9 +8,9 @@
 
 #include <limits>
 
-#include "homographyReconstructor.h"
-#include "matrix.h"
-#include "line.h"
+#include "core/math/matrix/homographyReconstructor.h"
+#include "core/math/matrix/matrix.h"
+#include "core/geometry/line.h"
 #include "../vector/vector.h"
 #include "../../kalman/classicKalman.h"
 #include "../levenmarq.h"

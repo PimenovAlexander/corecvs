@@ -17,7 +17,8 @@ HEADERS +=                            \
     filters/binarizeBlock.h \
     filters/maskFilterBlock.h \
     filters/thickeningBlock.h \
-    filters/blocks/compoundFilter.h
+    filters/blocks/compoundFilter.h \
+    $$PWD/blocks/newStyleBlock.h
 
 
 SOURCES +=                              \
@@ -39,4 +40,5 @@ SOURCES +=                              \
     filters/binarizeBlock.cpp \
     filters/maskFilterBlock.cpp \
     filters/thickeningBlock.cpp \
-    filters/blocks/compoundFilter.cpp
+    filters/blocks/compoundFilter.cpp \
+    $$PWD/blocks/newStyleBlock.cpp

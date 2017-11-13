@@ -8,9 +8,9 @@
 #include <iostream>
 #include <vector>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "mesh3d.h"
+#include "core/geometry/mesh3d.h"
 
 namespace corecvs {
 

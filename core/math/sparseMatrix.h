@@ -5,8 +5,8 @@
 #include <map>
 #include <iostream>
 
-#include "matrix.h"
-#include "vector.h"
+#include "core/math/matrix/matrix.h"
+#include "core/math/vector/vector.h"
 
 #ifdef WITH_MKL
 #include <mkl.h>

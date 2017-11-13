@@ -23,6 +23,17 @@
     <field type="int" name="B"  min="0" max="255" defaultValue="128"/>
   </class>  
 
+  <class name="Euclidian Move Parameters">
+    <field type="double" name="X"  defaultValue="0" min="-50000" max="50000"/>
+    <field type="double" name="Y"  defaultValue="0" min="-50000" max="50000"/>
+    <field type="double" name="Z"  defaultValue="0" min="-50000" max="50000"/>
+
+    <field type="double" name="alpha" suffix="deg" defaultValue="0" min="-50000" max="50000"/>
+    <field type="double" name="beta"  suffix="deg" defaultValue="0" min="-50000" max="50000"/>
+    <field type="double" name="gamma" suffix="deg" defaultValue="0" min="-50000" max="50000"/>
+
+  </class>
+
   <enum name="ImageChannel">
       <item name="R"          id="0" icon=":/new/colors/colors/color_red.png@main.qrc"/>
       <item name="G"          id="1" icon=":/new/colors/colors/color_green.png@main.qrc"/>
@@ -56,7 +67,69 @@
   <class name="Debayer Parameters">
      <field type="Debayer Method" name="Method"    defaultValue="0"/>
      <field type="int"            name="Bayer pos" min="-1" max="255" defaultValue="-1"/>
+  </class>
+
+  <enum name="Homography Algorithm">
+      <item name="LSE"          id = "0" />
+      <item name="LSE1"         id = "1" />
+      <item name="LSE2"         id = "2" />
+      <item name="ML"           id = "3" />
+      <item name="ML_AFTER_LSE" id = "4" />
   </enum>
+
+  <class name="Focus Estimation Parameters">
+    <field type="double" name="JunctionCoef"      defaultValue="0.1" min="0.0" max="1.0" />
+    <field type="double" name="Center Coef"       defaultValue="0.6" min="0.0" max="1.0" />
+    <field type="bool"   name="Produce Debug"     default="false"/>
+    <field type="bool"   name="Compute Noise"     default="true"/>
+    <field type="bool"   name="Compute Old Stats" default="true"/>
+
+    <field type="int"    name="edge Threshold"    default="10"/>
+
+
+  </class>
+
+  <class name="Focus Estimation Result">
+        <field type="int" name="score"     defaultValue="0" comment="result for the whole image" />
+        <field type="int" name="scoreROI"  defaultValue="0" comment="result for the chosen rectangular ROI" />
+
+        <field type="int" name="fullScore" defaultValue="0" comment="result for the full image" />
+
+        <field type="bool"   name="boardProcessed" defaultValue="false" />
+        <field type="double" name="bnoise"    defaultValue="0" comment="amount of noise on black parts of the board (per pixel)" />
+        <field type="double" name="wnoise"    defaultValue="0" comment="amount of noise on white parts of the board (per pixel)" />
+
+        <field type="double" name="sharpness" defaultValue="0" comment="sharpness per pixel" />
+  </class>
+
+
+<!--
+  <class name="Dummy">
+     <field type="Homography Algorithm" name="Method"    defaultValue="0"/>
+  </class>
+-->
+
+   <enum name="GCode Coloring Sheme">
+       <item name="Color From GCode"          id = "0" />
+       <item name="Color From Extrusion Rate" id = "1" />
+       <item name="Color From Temperature"    id = "2" />
+       <item name="Color From Speed"          id = "3" />
+  </enum>
+
+
+
+  <class name="draw GCode Parameters">
+     <field type="GCode Coloring Sheme"  name="scheme"  />
+
+     <field type="double"  name="minTemp"   min="0" max="1000"   defaultValue="200" step="1"/>
+     <field type="double"  name="maxTemp"   min="0" max="1000"   defaultValue="250" step="1"/>
+
+     <field type="double"  name="minExtrude"  min="0" max="1000"   defaultValue="200" step="1"/>
+     <field type="double"  name="maxExtrude"  min="0" max="1000"   defaultValue="950" step="1"/>
+
+     <field type="double"  name="minSpeed"   min="0" max="1000"   defaultValue="200" step="1"/>
+     <field type="double"  name="maxSpeed"   min="0" max="1000"   defaultValue="950" step="1"/>
+  </class>
 
 
 </poco>

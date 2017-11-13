@@ -1,3 +1,6 @@
+#ifndef VECTOR2D_H_
+#define VECTOR2D_H_
+
 /**
  * \file vector2d.h
  * \brief Add Comment Here
@@ -7,20 +10,18 @@
  * \author alexander
  */
 
-#ifndef VECTOR2D_H_
-#define VECTOR2D_H_
-
 #include <math.h>
+#include <cmath>
 #include <stdint.h>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 //#ifdef REFLECTION_IN_CORE
-#include "reflection.h"
+#include "core/reflection/reflection.h"
 //#endif // REFLECTION_IN_CORE
 
-#include "fixedVector.h"
-#include "vector.h"
+#include "core/math/vector/fixedVector.h"
+#include "core/math/vector/vector.h"
 
 namespace corecvs {
 
@@ -187,16 +188,30 @@ public:
         return Vector2d<ElementType>(0.0, 0.0);
     }
 
+
+    static Vector2d<ElementType> OrtX() {
+        return Vector2d<ElementType>(1.0, 0.0);
+    }
+
+    static Vector2d<ElementType> OrtY() {
+        return Vector2d<ElementType>(0.0, 1.0);
+    }
+
 //#ifdef REFLECTION_IN_CORE
     static Reflection reflection;
     static int        dummy;
 
     typedef typename ReflectionHelper<ElementType>::Type ReflectionType;
 
-    static int staticInit()
-    {        
+    static int staticInit(const char *name = "")
+    {
+        reflection.name = name;
         reflection.fields.push_back(new ReflectionType(FIELD_X, ElementType(0), "x"));
         reflection.fields.push_back(new ReflectionType(FIELD_Y, ElementType(0), "y"));
+
+        ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
+        directory[std::string(name)]= &reflection;
+        // cout << "Adding:" << name << " to directory" << std::endl;
         return 0;
     }
 //#endif
@@ -212,6 +227,7 @@ template<class VisitorType>
 
 
 typedef Vector2d<double>   Vector2dd;
+typedef Vector2d<float>    Vector2df;
 typedef Vector2d<uint32_t> Vector2du32;
 typedef Vector2d<uint16_t> Vector2du16;
 

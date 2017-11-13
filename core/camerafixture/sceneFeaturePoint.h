@@ -4,11 +4,11 @@
 #include <string>
 #include <unordered_map>
 
-#include "fixtureCamera.h"
+#include "core/camerafixture/fixtureCamera.h"
 
 
 /* Presentation related */
-#include "rgbColor.h"
+#include "core/buffers/rgb24/rgbColor.h"
 
 namespace corecvs
 {

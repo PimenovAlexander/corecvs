@@ -9,16 +9,16 @@
  */
 #include <iostream>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "vector2d.h"
-#include "flowBuffer.h"
-#include "g12Buffer.h"
-#include "abstractContiniousBuffer.h"
-#include "kltGenerator.h"
+#include "core/math/vector/vector2d.h"
+#include "core/buffers/flow/flowBuffer.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/abstractContiniousBuffer.h"
+#include "core/kltflow/kltGenerator.h"
 
-#include "preciseInterpolationType.h"
-#include "makePreciseParameters.h"
+#include "core/xml/generated/preciseInterpolationType.h"
+#include "core/xml/generated/makePreciseParameters.h"
 
 namespace corecvs {
 

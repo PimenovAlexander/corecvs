@@ -8,7 +8,7 @@
 
 #include <vector>
 #include <stddef.h>
-#include "maskingParameters.h"
+#include "core/xml/generated/maskingParameters.h"
 
 /**
  *  Looks extremely unsafe because it depends on the order of static initialization.

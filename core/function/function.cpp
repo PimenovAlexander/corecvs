@@ -1,4 +1,4 @@
-#include "function.h"
+#include "core/function/function.h"
 
 namespace corecvs {
 
@@ -27,7 +27,7 @@ Matrix FunctionArgs::getLSQHessian(const double* in, double delta)
 
 Matrix FunctionArgs::getJacobian(const double *in, double delta)
 {
-    Matrix result(outputs, inputs);
+    Matrix result(outputs, inputs, false);
     vector<double> xc(inputs);
     vector<double> y_minus(outputs);
     vector<double> y_plus (outputs);

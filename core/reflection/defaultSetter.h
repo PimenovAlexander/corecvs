@@ -3,9 +3,9 @@
 
 #include <iostream>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "reflection.h"
+#include "core/reflection/reflection.h"
 
 namespace corecvs {
 
@@ -32,7 +32,13 @@ public:
     template <typename inputType, typename reflectionType>
         void visit(std::vector<inputType> &/*field*/, const reflectionType * /*fieldDescriptor*/)
     {
-        SYNC_PRINT(("visit(std::vector<inputType> &/*field*/, const reflectionType * /*fieldDescriptor*/): ignoring\n"));
+        // SYNC_PRINT(("visit(std::vector<inputType> &/*field*/, const reflectionType * /*fieldDescriptor*/): ignoring\n"));
+    }
+
+    template <typename inputType>
+        void visit(std::vector<inputType> &/*field*/, const char * /*name*/)
+    {
+       // SYNC_PRINT(("visit(std::vector<inputType> &/*field*/, \"%s\""): ignoring\n", name));
     }
 };
 
@@ -70,6 +76,12 @@ template <>
 void DefaultSetter::visit<std::string, StringField>(
         std::string &field,
         const StringField *fieldDescriptor);
+
+template <>
+void DefaultSetter::visit<std::wstring, WStringField>(
+        std::wstring &field,
+        const WStringField *fieldDescriptor);
+
 
 /*
 template <>

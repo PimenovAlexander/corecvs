@@ -19,7 +19,7 @@
 #include <string>
 #include <vector>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include "math.h"
 
@@ -268,7 +268,7 @@ class AdaBoost
                 }
             }
             outbreaks.close();
-            printf("Boosted Result %zu classifiers so far TP=%d TN=%d FP=%d FN=%d\n",
+            printf("Boosted Result %" PRISIZE_T " classifiers so far TP=%d TN=%d FP=%d FN=%d\n",
                    classifier->children.size(),
                    totalStats.truePositive, totalStats.trueNegative,
                    totalStats.falsePositive, totalStats.falseNegative);
@@ -279,7 +279,7 @@ class AdaBoost
     }
 
 
-    virtual ~AdaBoost(){};
+    virtual ~AdaBoost(){}
 };
 
 

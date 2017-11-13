@@ -12,10 +12,10 @@
 
 
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "vector2d.h"
-#include "tbbWrapper.h"
+#include "core/math/vector/vector2d.h"
+#include "core/tbbwrapper/tbbWrapper.h"
 namespace corecvs {
 
 template<typename ThisTypeName, typename ElementType>

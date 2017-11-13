@@ -12,8 +12,8 @@
 
 #include <stdint.h>
 
-#include "sseWrapper.h"
-#include "fixedVector.h"
+#include "core/math/sse/sseWrapper.h"
+#include "core/math/vector/fixedVector.h"
 
 
 namespace corecvs {

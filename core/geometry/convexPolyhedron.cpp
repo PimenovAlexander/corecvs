@@ -1,4 +1,4 @@
-#include "convexPolyhedron.h"
+#include "core/geometry/convexPolyhedron.h"
 
 namespace corecvs {
 
@@ -17,6 +17,5 @@ ConvexPolyhedron::ConvexPolyhedron(const AxisAlignedBox3d &box)
     faces.push_back(Plane3d::FromNormalAndPoint(Vector3dd(-1,  0,  0), box.high()));
 
 }
-
 
 } // namespace corecvs

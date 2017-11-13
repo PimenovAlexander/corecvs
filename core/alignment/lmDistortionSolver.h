@@ -1,10 +1,10 @@
 #ifndef LMDISTORTIONSOLVER_H
 #define LMDISTORTIONSOLVER_H
 
-#include "radialCorrection.h"
-#include "selectableGeometryFeatures.h"
-#include "lineDistortionEstimatorParameters.h"
-#include "ellipticalApproximation.h"
+#include "core/alignment/radialCorrection.h"
+#include "core/alignment/selectableGeometryFeatures.h"
+#include "core/xml/generated/lineDistortionEstimatorParameters.h"
+#include "core/geometry/ellipticalApproximation.h"
 
 namespace corecvs {
 

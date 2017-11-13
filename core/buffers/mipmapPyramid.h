@@ -12,10 +12,10 @@
 
 #include <vector>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "abstractBuffer.h"
-#include "gaussian.h"
+#include "core/buffers/abstractBuffer.h"
+#include "core/buffers/kernels/gaussian.h"
 
 namespace corecvs {
 

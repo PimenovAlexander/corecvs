@@ -1,8 +1,8 @@
-#include "multicameraTriangulator.h"
+#include "core/rectification/multicameraTriangulator.h"
 
 #include <iostream>
-#include "levenmarq.h"
-#include "ellipticalApproximation.h"
+#include "core/math/levenmarq.h"
+#include "core/geometry/ellipticalApproximation.h"
 
 using std::cout;
 using std::endl;

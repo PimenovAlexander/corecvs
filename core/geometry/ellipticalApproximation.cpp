@@ -5,7 +5,7 @@
  * \date Apr 14, 2011
  * \author alexander
  */
-#include "ellipticalApproximation.h"
+#include "core/geometry/ellipticalApproximation.h"
 
 namespace corecvs {
 

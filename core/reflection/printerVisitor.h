@@ -5,13 +5,29 @@
 #include <iostream>
 #include <sstream>
 
-#include "reflection.h"
+#include "core/reflection/reflection.h"
 
 namespace corecvs {
 
 using std::string;
+using std::wstring;
 using std::ostream;
 using std::cout;
+
+
+/* In c++17 this is done in more compact and typesafe way */
+
+#define TR_ENABLE_IF(X)       typename std::enable_if<(X)>::type
+#define TR_ENABLE_IF_T(X , Y) typename std::enable_if<(X), (Y)>::type
+#define TR_ENABLE_IF_P(X)     typename std::enable_if<X,int>::type foo = 0
+
+
+#define TR_IS_BOOL(X)         std::is_same<X, bool>::value
+#define TR_IS_ENUM(X)         std::is_enum<X>::value
+
+#define TR_IS_SAME(X, Y)      std::is_same<X, Y>::value
+#define TR_IS_ARITHM(X)       std::is_arithmetic<(X), (Y)>::value
+
 
 class PrinterVisitor
 {
@@ -47,9 +63,12 @@ public:
         return std::string(indentation, ' ');
     }
 
-/* Generic Array support */
-    template <typename inputType, typename reflectionType>
-    void visit(std::vector<inputType> &fields, const reflectionType * /*fieldDescriptor*/)
+
+    /**
+     * Generic Array support. New Style
+     **/
+    template <typename inputType, typename ReflectionType, TR_ENABLE_IF_P(!TR_IS_SAME(ReflectionType, char))>
+    void visit(std::vector<inputType> &fields, const ReflectionType * /*fieldDescriptor*/)
     {
         indentation += dIndent;
         for (int i = 0; i < fields.size(); i++)
@@ -59,47 +78,94 @@ public:
         indentation -= dIndent;
     }
 
-    template <typename innerType>
-    void visit(std::vector<innerType> &field, const char* arrayName)
+    /**
+     * Generic Array support. Old Style
+     **/
+#if 1
+    template <typename InnerType>
+    void visit(std::vector<InnerType> &field, const char* arrayName)
     {
         indentation += dIndent;
         for (size_t i = 0; i < field.size(); i++)
         {
             std::ostringstream ss;
             ss << arrayName << "[" <<  i << "]";
-            visit<innerType>(field[i], innerType(), ss.str().c_str());
+            visit<InnerType>(field[i], InnerType(), ss.str().c_str());
         }
         indentation -= dIndent;
     }
+#endif
 
-template <typename inputType, typename reflectionType>
-    void visit(inputType &field, const reflectionType * fieldDescriptor)
+#if 0
+    /*Ok there seem to be no easy way to check for beeing a desent contanier */
+    template <template <typename> class ContainerType, typename ElementType>
+    typename std::enable_if< std::is_object<typename ContainerType<ElementType>::iterator>::value , void>::type
+    visit(ContainerType<ElementType> &field, const char* containerName)
     {
-        if (stream != NULL) {
-            *stream << indent() << fieldDescriptor->getSimpleName() << ":" << std::endl;
-        }
         indentation += dIndent;
-        field.accept(*this);
+
+        int i = 0;
+        for (auto &element: field)
+        {
+            std::ostringstream ss;
+            ss << containerName << "[" <<  i << "]";
+            visit(element, ss.str().c_str());
+            i++;
+        }
         indentation -= dIndent;
     }
+#endif
 
-template <class Type>
-    void visit(Type &field, const char * fieldName)
+    template <typename Type, class ReflectionType, TR_ENABLE_IF_P(!TR_IS_SAME(ReflectionType, char))>
+    void visit(Type &field, const ReflectionType * fieldDescriptor)
+        {
+            if (stream != NULL) {
+                *stream << indent() << fieldDescriptor->getSimpleName() << ":" << std::endl;
+            }
+            indentation += dIndent;
+            field.accept(*this);
+            indentation -= dIndent;
+        }
+
+    template <class Type>
+        void visit(Type &field, const char * fieldName)
+        {
+            if (stream != NULL) {
+                *stream << indent() << fieldName << ":" << std::endl;
+            }
+            indentation += dIndent;
+            field.accept(*this);
+            indentation -= dIndent;
+        }
+
+
+    template <typename FirstType, typename SecondType>
+    void visit(std::pair<FirstType, SecondType> &field, const char* name)
     {
-        if (stream != NULL) {
-            *stream << indent() << fieldName << ":" << std::endl;
-        }
-        indentation += dIndent;
-        field.accept(*this);
-        indentation -= dIndent;
+        SYNC_PRINT(("void visit(std::pair<FirstType, SecondType> &field, const char* name): called"));
     }
 
-template <class Type>
+    template <typename Type, typename std::enable_if<!(std::is_enum<Type>::value || (std::is_arithmetic<Type>::value && !std::is_same<bool, Type>::value)), int>::type foo = 0>
     void visit(Type &field, Type /*defaultValue*/, const char * fieldName)
-	{
+    {
         visit<Type>(field, fieldName);
-	}
+    }
 
+    template <typename type, typename std::enable_if<std::is_arithmetic<type>::value && !std::is_same<bool, type>::value, int>::type foo = 0>
+    void visit(type &field, type, const char *fieldName)
+    {
+        if (stream == NULL) return;
+        *stream << indent() << fieldName << "=" << field << std::endl;
+    }
+
+    template <typename type, TR_ENABLE_IF_P(TR_IS_ENUM(type))>
+    void visit(type &field, type defaultValue, const char *fieldName)
+    {
+        using U = typename std::underlying_type<type>::type;
+        U u = static_cast<U>(field);
+        visit(u, static_cast<U>(defaultValue), fieldName);
+        field = static_cast<type>(u);
+    }
 };
 
 
@@ -117,6 +183,9 @@ void PrinterVisitor::visit<bool,   BoolField>(bool &field, const BoolField *fiel
 
 template <>
 void PrinterVisitor::visit<string, StringField>(string &field, const StringField *fieldDescriptor);
+
+template <>
+void PrinterVisitor::visit<wstring, WStringField>(wstring &field, const WStringField *fieldDescriptor);
 
 template <>
 void PrinterVisitor::visit<void *, PointerField>(void * &field, const PointerField *fieldDescriptor);
@@ -137,18 +206,6 @@ void PrinterVisitor::visit<double, DoubleVectorField>(std::vector<double> &field
  *
  * this methods can be made universal, but are separated to make it a bit more controllable
  **/
-
-template <>
-void PrinterVisitor::visit<int>(int &intField, int defaultValue, const char *fieldName);
-
-template <>
-void PrinterVisitor::visit<uint64_t>(uint64_t &intField, uint64_t defaultValue, const char *fieldName);
-
-template <>
-void PrinterVisitor::visit<double>(double &doubleField, double defaultValue, const char *fieldName);
-
-template <>
-void PrinterVisitor::visit<float>(float &floatField, float defaultValue, const char *fieldName);
 
 template <>
 void PrinterVisitor::visit<bool>(bool &boolField, bool defaultValue, const char *fieldName);

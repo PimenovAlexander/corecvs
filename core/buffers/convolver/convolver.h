@@ -10,13 +10,13 @@
  * \author alexander
  */
 
-#include "global.h"
-#include "matrix.h"
+#include "core/utils/global.h"
+#include "core/math/matrix/matrix.h"
 
-#include "abstractBuffer.h"
-#include "abstractKernel.h"
+#include "core/buffers/abstractBuffer.h"
+#include "core/buffers/abstractKernel.h"
 
-#include "rgb24Buffer.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
 
 namespace corecvs {
 

@@ -8,11 +8,11 @@
  * \author autoGenerator
  */
 
-#include "lensDistortionModelParametersBase.h"
-#include "reflection.h"
-#include "defaultSetter.h"
-#include "printerVisitor.h"
-#include "levenmarq.h"
+#include "core/xml/generated/lensDistortionModelParametersBase.h"
+#include "core/reflection/reflection.h"
+#include "core/reflection/defaultSetter.h"
+#include "core/reflection/printerVisitor.h"
+#include "core/math/levenmarq.h"
 
 /*
  *  Embed includes.

@@ -17,11 +17,11 @@
 #include <string>
 #include <deque>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "fixedVector.h"
-#include "preciseTimer.h"
-#include "calculationStats.h"
+#include "core/math/vector/fixedVector.h"
+#include "core/utils/preciseTimer.h"
+#include "core/stats/calculationStats.h"
 
 namespace corecvs {
 

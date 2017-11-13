@@ -10,10 +10,10 @@
  * \author: alexander
  */
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "fixedVector.h"
-#include "doublex4.h"
+#include "core/math/vector/fixedVector.h"
+#include "core/math/sse/doublex4.h"
 
 
 namespace corecvs {

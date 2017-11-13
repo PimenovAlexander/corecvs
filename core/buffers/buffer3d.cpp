@@ -1,4 +1,4 @@
-#include "buffer3d.h"
+#include "core/buffers/buffer3d.h"
 
 namespace corecvs {
 

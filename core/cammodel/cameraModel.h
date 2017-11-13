@@ -9,17 +9,17 @@
 #define cbrt(x)  pow(x, 1./3)
 #endif
 
-#include "cameraParameters.h"
-#include "vector2d.h"
-#include "vector3d.h"
-#include "quaternion.h"
-#include "matrix33.h"
-#include "rgbColor.h"
-#include "line.h"
-//#include "similarityReconstructor.h"
-#include "rgb24Buffer.h"
-#include "ellipticalApproximation.h"
-#include "convexPolyhedron.h"
+#include "core/cammodel/cameraParameters.h"
+#include "core/math/vector/vector2d.h"
+#include "core/math/vector/vector3d.h"
+#include "core/math/quaternion.h"
+#include "core/math/matrix/matrix33.h"
+#include "core/buffers/rgb24/rgbColor.h"
+#include "core/geometry/line.h"
+//#include "core/math/matrix/similarityReconstructor.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/geometry/ellipticalApproximation.h"
+#include "core/geometry/convexPolyhedron.h"
 
 using std::vector;
 using std::istream;

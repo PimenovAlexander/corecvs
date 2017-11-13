@@ -3,10 +3,10 @@
 
 #include <stdint.h>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "sseWrapper.h"
-#include "vectorAlgebra.h"
+#include "core/math/neon/sseWrapper.h"
+#include "core/buffers/kernels/fastkernel/vectorAlgebra.h"
 
 namespace corecvs {
 

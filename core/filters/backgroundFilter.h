@@ -6,9 +6,9 @@
  * \date Oct 11, 2012
  */
 
-#include "filterBlock.h"
+#include "core/filters/blocks/filterBlock.h"
 #include "../xml/generated/backgroundFilterParameters.h"
-#include "filtersCollection.h"
+#include "core/filters/filtersCollection.h"
 
 namespace corecvs
 {

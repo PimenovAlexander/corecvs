@@ -3,17 +3,17 @@
 
 #include <unordered_map>
 
-#include "calibrationLocation.h"  // LocationData
-#include "lensDistortionModelParameters.h"
-#include "line.h"
-#include "convexPolyhedron.h"
-#include "pointObservation.h"
-#include "selectableGeometryFeatures.h"
-#include "essentialMatrix.h"
-#include "distortionApplicationParameters.h"
+#include "core/cameracalibration/calibrationLocation.h"  // LocationData
+#include "core/alignment/lensDistortionModelParameters.h"
+#include "core/geometry/line.h"
+#include "core/geometry/convexPolyhedron.h"
+#include "core/alignment/pointObservation.h"
+#include "core/alignment/selectableGeometryFeatures.h"
+#include "core/rectification/essentialMatrix.h"
+#include "core/xml/generated/distortionApplicationParameters.h"
 
 /* Future derived */
-//#include "rgb24Buffer.h"
+//#include "core/buffers/rgb24/rgb24Buffer.h"
 
 namespace corecvs {
 

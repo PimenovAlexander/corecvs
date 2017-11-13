@@ -1,6 +1,6 @@
-#include "mathUtils.h"
-#include "calibrationLocation.h"
-#include "printerVisitor.h"
+#include "core/math/mathUtils.h"
+#include "core/cameracalibration/calibrationLocation.h"
+#include "core/reflection/printerVisitor.h"
 
 namespace corecvs {
 

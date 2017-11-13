@@ -11,10 +11,14 @@
  * \author alexander
  */
 
+#include <type_traits>
 #include <string>
+#include <vector>
 #include <iostream>
+#include <vector>
+#include <unordered_map>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 
 namespace corecvs {
@@ -43,20 +47,32 @@ class binary<0>
 
 //@}
 
-/** Useful class of some tasty things
-*/
+/** Useful class for some tasty things
+ */
 namespace HelperUtils
 {
     using std::string;
     using std::istream;
+    using std::vector;
 
     bool            startsWith(const string &str, const string &prefix);
     bool            endsWith  (const string &str, const string &postfix);
     istream&        getlineSafe(istream& is, string& str);
 
+    std::string     removeLeading(const string &str, const string &symbols = " ");
+
+    void            stringSplit(const string &s, char delim, vector<string> &elems);
+    vector<string>  stringSplit(const string &s, char delim);
+
+    string          escapeString  (const string &s, const std::unordered_map<char, char> &symbols, const std::string &escape);
+    string          unescapeString(const string &s, const std::unordered_map<char, char> &symbols, char guard);
+
+
+    string          stringCombine(vector<string> parts, char delim);
+
     string          toNativeSlashes(const string& str);
 
-    string          getEnvDirPath(cchar *envVarName);
+    string          getEnvDirPath(cchar *envVarName);       // returns path to dir with slash at the end
     string          getEnvVar(cchar *envVarName);
     string          getFullPath(const string& envDirPath, cchar* path, cchar* filename = NULL);
 
@@ -67,7 +83,8 @@ namespace HelperUtils
 
     inline string   getFileNameFromFilePath(const string &filePath)
     {
-        return filePath.substr(filePath.find_last_of("/\\") + 1);
+        size_t pos = filePath.find_last_of("/\\");
+        return filePath.substr(pos == string::npos ? 0 : (pos + 1));
     }
 
     inline string   getPathWithoutFilename(const string &filePath)
@@ -80,14 +97,29 @@ namespace HelperUtils
         return filePath.substr(0, filePath.find_last_of("."));
     }
 
+    inline string   getFullPathWithNewExt(const string &filePath, const string &newExt)
+    {
+        return getFullPathWithoutExt(filePath) + newExt;
+    }
+
     /// Add suffix to file name before extension: filename.ext -> filenameSuffix.ext
     inline string   getFilePathWithSuffixAtName(const string& filePath, const string& suffix)
     {
-        size_t extPosition = filePath.find_last_of(".");
-        return filePath.substr(0, extPosition) + suffix + filePath.substr(extPosition);
+        size_t pos = filePath.find_last_of(".");
+        return filePath.substr(0, pos) + suffix + (pos == string::npos ? "" : filePath.substr(pos));
     }
 
+    /* these wrappers are not essential, but it removes the clutter of handling fs:: namespace */
+    string concatPath  (const string &path1, const string &path2);
+    bool isAbsolutePath(const string &path);
+    bool pathExists    (const string &path);
 
+
+    /* Qt rewritten to std */
+    string addFileExtIfNotExist(const string& fileName, const string& ext);
+    string getDirectory(const string& absoluteFilePath);
+    string getFileName(const string& fileName);
+    string getFileNameIfExist(const string& fileName, const string& relativePath);
 
 } // namespace HelperUtils
 

@@ -1,7 +1,9 @@
 #ifndef PERLINNOISE_H
 #define PERLINNOISE_H
 
-#include "voxels/voxelBuffer.h"
+#include <random>
+
+#include "core/buffers/voxels/voxelBuffer.h"
 
 namespace corecvs {
 
@@ -23,6 +25,7 @@ public:
 
     /**
      *  3d order hermitian polinom, needed as a smooth interpolator for [0..1]
+     *  todo: move it close to lerp
      **/
     static double hermit3(double t)
     {
@@ -40,10 +43,13 @@ public:
     PerlinNoise() {
         n = new PerlinNoiseContainer(SIZE, SIZE, SIZE);
 
+        std::mt19937 mt;
+        std::uniform_real_distribution<double> dis(0, 1);
+
         for (int i = 0; i < n->l; i++)
             for (int j = 0; j < n->h; j++)
                 for (int k = 0; k < n->w; k++)
-                    n->element(i,j,k) = (double)rand() / RAND_MAX;
+                    n->element(i,j,k) = dis(mt);
 
     }
 

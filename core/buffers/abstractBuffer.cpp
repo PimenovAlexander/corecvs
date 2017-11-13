@@ -6,7 +6,7 @@
  * \date Dec 21, 2012
  * \author sf
  */
-#include "abstractBuffer.h"
+#include "core/buffers/abstractBuffer.h"
 
 namespace corecvs {
 

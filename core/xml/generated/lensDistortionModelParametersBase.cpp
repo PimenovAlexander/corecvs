@@ -8,7 +8,7 @@
 
 #include <vector>
 #include <stddef.h>
-#include "lensDistortionModelParametersBase.h"
+#include "core/xml/generated/lensDistortionModelParametersBase.h"
 
 /**
  *  Looks extremely unsafe because it depends on the order of static initialization.

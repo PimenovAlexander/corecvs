@@ -14,12 +14,12 @@
 
 #include <stdint.h>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "abstractContiniousBuffer.h"
-#include "element6D.h"
-#include "punchedBufferOperations.h"
-#include "floatFlowBuffer.h"
+#include "core/buffers/abstractContiniousBuffer.h"
+#include "core/buffers/flow/element6D.h"
+#include "core/buffers/flow/punchedBufferOperations.h"
+#include "core/buffers/flow/floatFlowBuffer.h"
 
 namespace corecvs {
 

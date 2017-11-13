@@ -8,7 +8,7 @@
 
 #include <vector>
 #include <stddef.h>
-#include "cannyParameters.h"
+#include "core/xml/generated/cannyParameters.h"
 
 /**
  *  Looks extremely unsafe because it depends on the order of static initialization.

@@ -1,16 +1,16 @@
+/**
+* \file eulerAngles.h
+* \brief a header for eulerAngles.c
+*
+* \date Feb 9, 2011
+* \author: alexander
+*/
 #ifndef EULERANGLES_H_
 #define EULERANGLES_H_
-#include "quaternion.h"
+
+#include "core/math/quaternion.h"
+
 namespace corecvs {
-/**
- * \file eulerAngles.h
- * \brief a header for eulerAngles.c
- *
- * \date Feb 9, 2011
- * \author: alexander
- */
-
-
 
 /**
  * Inside the project angles are in radians
@@ -39,7 +39,6 @@ public:
         out << "[alpha=" << angels.alpha << ", beta=" << angels.beta <<  ", gamma=" << angels.gamma  << "]";
         return out;
     }
-
 };
 
 
@@ -69,9 +68,6 @@ public:
  *     v  Y
  *
  *   </pre>
- *
- *
-
  *
  **/
 class CameraAnglesLegacy : public EulerAngles
@@ -149,7 +145,6 @@ public:
         visitor.visit(gamma, 0.0, "roll" );
     }
 
-
 };
 
 /**
@@ -177,7 +172,6 @@ public:
 };
 
 
-
 } //namespace corecvs
-#endif  //EULERANGLES_H_
 
+#endif  //EULERANGLES_H_

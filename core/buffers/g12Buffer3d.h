@@ -1,11 +1,11 @@
 #ifndef G12BUFFER3D_H
 #define G12BUFFER3D_H
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "vector3d.h"
-#include "triangulator.h"
-#include "abstractContiniousBuffer.h"
+#include "core/math/vector/vector3d.h"
+#include "core/rectification/triangulator.h"
+#include "core/buffers/abstractContiniousBuffer.h"
 
 namespace corecvs {
 

@@ -8,7 +8,7 @@
 
 #include <vector>
 #include <stddef.h>
-#include "backgroundFilterParameters.h"
+#include "core/xml/generated/backgroundFilterParameters.h"
 
 /**
  *  Looks extremely unsafe because it depends on the order of static initialization.

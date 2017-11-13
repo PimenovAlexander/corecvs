@@ -6,8 +6,8 @@
  * \author alexander
  */
 
-#include "global.h"
-#include "sixDBuffer.h"
+#include "core/utils/global.h"
+#include "core/buffers/flow/sixDBuffer.h"
 
 namespace corecvs {
 

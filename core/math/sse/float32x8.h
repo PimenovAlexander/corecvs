@@ -9,7 +9,8 @@
  * \author: alexander
  */
 
-#include "global.h"
+#include "core/utils/global.h"
+#include "core/math/avx/int32x8.h"
 
 namespace corecvs {
 
@@ -46,9 +47,9 @@ public:
     /**
     *  Constructor from integer type
     **/
-    /*explicit Float32x8(const Int32x4 &other) {
-        this->data = _mm_cvtepi32_ps(other.data);
-    }*/
+    explicit Float32x8(const Int32x8 &other) {
+        this->data = _mm256_cvtepi32_ps(other.data);
+    }
 
     inline static Float32x8 Zero()
     {
@@ -91,10 +92,10 @@ public:
      *    \end{array}
      *  \f]
      **/
-    /*inline Int32x4 trunc() const
+    inline Int32x8 trunc() const
     {
-        return Int32x4(_mm256_cvttps_epi32(this->data));
-    }*/
+        return Int32x8(_mm256_cvttps_epi32(this->data));
+    }
 
 
     void load(float * const data)

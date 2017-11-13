@@ -12,7 +12,7 @@
 #include <stdio.h>
 
 
-#include "matrix.h"
+#include "core/math/matrix/matrix.h"
 namespace corecvs {
 
 /**

@@ -1,4 +1,4 @@
-#include "featureMatchingPipeline.h"
+#include "core/features2d/featureMatchingPipeline.h"
 
 #include <fstream>
 #include <iomanip>
@@ -6,13 +6,13 @@
 #include <algorithm>
 #include <ctime>  // clock???  Please use PreciseTimer!!!
 
-#include "featureDetectorProvider.h"
-#include "descriptorExtractorProvider.h"
-#include "descriptorMatcherProvider.h"
-#include "bufferReaderProvider.h"
-#include "vsfmIo.h"
+#include "core/features2d/featureDetectorProvider.h"
+#include "core/features2d/descriptorExtractorProvider.h"
+#include "core/features2d/descriptorMatcherProvider.h"
+#include "core/features2d/bufferReaderProvider.h"
+#include "core/features2d/vsfmIo.h"
 
-#include "tbbWrapper.h"
+#include "core/tbbwrapper/tbbWrapper.h"
 
 static const char* KEYPOINT_EXTENSION   = "keypoints";
 static const char* DESCRIPTOR_EXTENSION = "descriptors";

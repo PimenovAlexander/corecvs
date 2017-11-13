@@ -10,11 +10,11 @@
 #include <string>
 #include <stdint.h>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "bufferLoader.h"
-#include "g12Buffer.h"
-#include "rgb24Buffer.h"
+#include "core/fileformats/bufferLoader.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
 
 namespace corecvs {
 
@@ -47,6 +47,7 @@ public:
 
 class BMPLoaderBase
 {
+protected:
     static string prefix1;
 
 public:
@@ -85,6 +86,11 @@ public:
     {
         return BMPLoaderBase::loadG12(name);
     }
+
+    virtual std::string name() override { return "BMPLoaderG12"; }
+    virtual std::vector<std::string> extentions() override {
+        return std::vector<std::string>({ BMPLoaderBase::prefix1 });
+    }
 };
 
 class BMPLoaderRGB24 : public BufferLoader<RGB24Buffer>, public BMPLoaderBase
@@ -99,6 +105,27 @@ public:
     {
         return BMPLoaderBase::loadRGB(name);
     }
+
+    virtual std::string name() override { return "BMPLoaderRGB24"; }
+    virtual std::vector<std::string> extentions() override {
+        return std::vector<std::string>({ BMPLoaderBase::prefix1 });
+    }
+};
+
+class BMPSaverRGB24 : public BufferSaver<RGB24Buffer>, public BMPLoaderBase
+{
+    virtual bool acceptsFile(string name) {
+        return BMPLoaderBase::acceptsFile(name);
+    }
+    virtual bool save(RGB24Buffer &buffer, string name) override {
+        return BMPLoaderBase::save(name, &buffer);
+    }
+
+    virtual std::string name() override { return "BMPSaverRGB24"; }
+    virtual std::vector<std::string> extentions() override {
+        return std::vector<std::string>({BMPLoaderBase::prefix1});
+    }
+    virtual ~BMPSaverRGB24() {}
 };
 
 } //namespace corecvs

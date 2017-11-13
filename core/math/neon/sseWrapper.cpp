@@ -7,7 +7,7 @@
  * \author alexander
  */
 
-#include "sseWrapper.h"
+#include "core/math/sse/sseWrapper.h"
 namespace corecvs {
 
 #ifdef PROFILE_ACCESS_ALIGNMENT

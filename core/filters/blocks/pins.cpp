@@ -1,6 +1,6 @@
-#include "pins.h"
-#include "filterBlock.h"
-#include "filterGraph.h"
+#include "core/filters/blocks/pins.h"
+#include "core/filters/blocks/filterBlock.h"
+#include "core/filters/blocks/filterGraph.h"
 
 namespace corecvs {
 

@@ -1,8 +1,9 @@
 #include <sstream>
 #include <regex>
 
-#include "objLoader.h"
-#include "utils.h"
+#include "core/fileformats/objLoader.h"
+#include "core/utils/utils.h"
+#include "core/buffers/bufferFactory.h"
 
 using namespace std;
 
@@ -82,17 +83,17 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
                 for (int j = 0; j < 3 && std::getline(splitter, part, '/'); j++)
                 {
                     if (j == 0) {
-                        size_t id = std::stoi(part);
+                        int id = std::stoi(part);
                         face[i] = id - 1;
                     }
 
                     if (j == 1) {
-                        size_t id = std::stoi(part);
+                        int id = std::stoi(part);
                         texId[i] = id - 1;
                     }
 
                     if (j == 2) {
-                        size_t id = std::stoi(part);
+                        int id = std::stoi(part);
                         normId[i] = id - 1;
                     }
                 }
@@ -114,9 +115,76 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
 
     mesh.verify();
 
-
-
     return 0;
+}
+
+int OBJLoader::loadMaterial(istream &input, OBJMaterial &material, const std::string &path)
+{
+    string line;
+    while (!input.eof())
+    {
+        HelperUtils::getlineSafe (input, line);
+
+        if (HelperUtils::startsWith(line, "#")) {
+            cout << "Skipping comment " << line << endl;
+            continue;
+        }
+
+        istringstream work(line);
+        string command;
+        work >> command;
+
+        cout << "command: " << command << endl;
+
+        int koef_id = OBJMaterial::KOEF_LAST;
+        if (command == "Ka")
+            koef_id = OBJMaterial::KOEF_AMBIENT;
+        if (command == "Kd")
+            koef_id = OBJMaterial::KOEF_DIFFUSE;
+        if (command == "Ks")
+            koef_id = OBJMaterial::KOEF_SPECULAR;
+
+        if (koef_id != OBJMaterial::KOEF_LAST)
+        {
+            cout << "Will load koef" << endl;
+            work >> material.koefs[koef_id].x();
+            work >> material.koefs[koef_id].y();
+            work >> material.koefs[koef_id].z();
+        }
+
+
+        int tex_id = OBJMaterial::TEX_LAST;
+        std::string tex_name;
+        if (command == "map_Ka")
+            tex_id =  OBJMaterial::TEX_AMBIENT;
+        if (command == "map_Kd")
+            tex_id =  OBJMaterial::TEX_DIFFUSE;
+        if (command == "map_Ks")
+            tex_id =  OBJMaterial::TEX_SPECULAR;
+        if (command == "map_bump")
+            tex_id =  OBJMaterial::TEX_BUMP;
+
+        if (tex_id != OBJMaterial::TEX_LAST)
+        {
+            work >> tex_name;
+            std::string fullpath = path + PATH_SEPARATOR + tex_name;
+            cout << "Will load texture <" << tex_name << ">";
+            cout << "full path <" << fullpath << ">" << endl;
+
+            RGB24Buffer *texture = BufferFactory::getInstance()->loadRGB24Bitmap(fullpath);
+            if (texture != NULL) {
+                cout << "Texture <" << texture->getSize() << ">" << endl;
+            } else {
+                cout << "Failed to load texture" << endl;
+            }
+
+            material.tex[tex_id] = texture;
+        }
+    }
+
+    cout << "Loaded" << endl;
+    cout << material << endl;
+	return 0;
 }
 
 int OBJLoader::loadOBJSimple(istream &input, Mesh3D &mesh)
@@ -164,7 +232,7 @@ int OBJLoader::loadOBJSimple(istream &input, Mesh3D &mesh)
 
                 for (int j = 0; j < 1 && std::getline(splitter, part, '/'); j++)
                 {
-                    size_t id = std::stoi(part);
+                    int id = std::stoi(part);
                     face[i] = id - 1;
                 }
             }
@@ -181,7 +249,7 @@ int OBJLoader::saveOBJSimple(ostream &out, Mesh3D &mesh)
 {
     vector<Vector3dd>  &vertexes = mesh.vertexes;
     vector<Vector3d32> &faces    = mesh.faces;
-    vector<Vector2d32> &edges    = mesh.edges;
+    //vector<Vector2d32> &edges    = mesh.edges;
 
     for (unsigned i = 0; i < vertexes.size(); i++)
     {

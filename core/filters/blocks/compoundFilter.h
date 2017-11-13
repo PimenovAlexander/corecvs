@@ -1,9 +1,9 @@
 #ifndef COMPOUNDFILTER_H
 #define COMPOUNDFILTER_H
 
-#include "filterBlock.h"
-#include "filterGraph.h"
-#include "filtersCollection.h"
+#include "core/filters/blocks/filterBlock.h"
+#include "core/filters/blocks/filterGraph.h"
+#include "core/filters/filtersCollection.h"
 
 namespace corecvs
 {

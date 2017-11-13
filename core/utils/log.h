@@ -3,7 +3,7 @@
  * \file log.h
  * \brief This class will be used for logging
  **/
-#include "global.h"
+#include "core/utils/global.h"
 
 #include <stdio.h>
 #include <iostream>
@@ -26,7 +26,7 @@
 #include <string>
 #include <mutex>        // std::mutex
 
-#include "memoryBlock.h"
+#include "core/buffers/memory/memoryBlock.h"
 
 using corecvs::ObjectRef;
 

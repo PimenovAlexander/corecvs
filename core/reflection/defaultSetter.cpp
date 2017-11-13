@@ -1,4 +1,4 @@
-#include "defaultSetter.h"
+#include "core/reflection/defaultSetter.h"
 
 namespace corecvs {
 
@@ -59,6 +59,15 @@ void DefaultSetter::visit<std::string, StringField>(
 {
     field = fieldDescriptor->defaultValue;
 }
+
+template <>
+void DefaultSetter::visit<std::wstring, WStringField>(
+        std::wstring &field,
+        const WStringField *fieldDescriptor)
+{
+    field = fieldDescriptor->defaultValue;
+}
+
 
 template <>
 void DefaultSetter::visit<double, DoubleVectorField>(

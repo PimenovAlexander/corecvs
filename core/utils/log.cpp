@@ -1,8 +1,8 @@
 #include <iostream>
 
-#include "log.h"
-#include "commandLineSetter.h"
-#include "tbbWrapper.h"
+#include "core/utils/log.h"
+#include "core/reflection/commandLineSetter.h"
+#include "core/tbbwrapper/tbbWrapper.h"
 
 const char *Log::level_names[] =
 {

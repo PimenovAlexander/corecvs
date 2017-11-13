@@ -11,10 +11,10 @@
 #define CCorrespondenceLIST_H_
 
 #include <vector>
-#include "vector2d.h"
-#include "flowBuffer.h"
-#include "floatFlowBuffer.h"
-#include "projectiveTransform.h"
+#include "core/math/vector/vector2d.h"
+#include "core/buffers/flow/flowBuffer.h"
+#include "core/buffers/flow/floatFlowBuffer.h"
+#include "core/math/projectiveTransform.h"
 
 namespace corecvs {
 

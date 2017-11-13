@@ -7,10 +7,10 @@
  * \author alexander
  */
 
-#include "global.h"
-#include "radialCorrection.h"
-#include "levenmarq.h"
-#include "ellipticalApproximation.h"
+#include "core/utils/global.h"
+#include "core/alignment/radialCorrection.h"
+#include "core/math/levenmarq.h"
+#include "core/geometry/ellipticalApproximation.h"
 
 namespace corecvs {
 

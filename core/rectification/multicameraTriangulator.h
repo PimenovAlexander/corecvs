@@ -1,12 +1,12 @@
 #ifndef MULTICAMERATRIANGULATOR_H
 #define MULTICAMERATRIANGULATOR_H
 
-#include "vector3d.h"
-#include "vector2d.h"
-#include "matrix.h"
-#include "matrix44.h"
+#include "core/math/vector/vector3d.h"
+#include "core/math/vector/vector2d.h"
+#include "core/math/matrix/matrix.h"
+#include "core/math/matrix/matrix44.h"
 
-#include "function.h"
+#include "core/function/function.h"
 
 namespace corecvs {
 

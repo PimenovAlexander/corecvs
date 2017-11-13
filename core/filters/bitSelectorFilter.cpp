@@ -6,10 +6,10 @@
  * \author alexander
  */
 
-#include "bitSelectorFilter.h"
+#include "core/filters/bitSelectorFilter.h"
 #include "../buffers/commonMappers.h"
-#include "serializerVisitor.h"
-#include "deserializerVisitor.h"
+#include "core/reflection/serializerVisitor.h"
+#include "core/reflection/deserializerVisitor.h"
 
 namespace corecvs
 {

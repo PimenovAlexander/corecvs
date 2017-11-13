@@ -8,8 +8,8 @@
  * \author dpiatkin
  */
 
-#include "g12Buffer.h"
-#include "tinyxml2.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/tinyxml/tinyxml2.h"
 
 namespace corecvs {
 

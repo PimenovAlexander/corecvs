@@ -6,9 +6,9 @@
  * \date Jul 20, 2010
  * \author alexander
  */
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "floatFlowBuffer.h"
+#include "core/buffers/flow/floatFlowBuffer.h"
 
 namespace corecvs {
 

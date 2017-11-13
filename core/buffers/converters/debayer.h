@@ -10,14 +10,14 @@
 #ifndef DEBAYER_H
 #define DEBAYER_H
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "generated/debayerMethod.h"
+#include "core/xml/generated/debayerMethod.h"
 
-#include "g12Buffer.h"
-#include "rgbTBuffer.h"
-#include "rgb24Buffer.h"
-#include "metamap.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/rgb24/rgbTBuffer.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/fileformats/metamap.h"
 
 namespace corecvs {
 

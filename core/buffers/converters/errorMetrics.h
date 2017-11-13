@@ -7,9 +7,9 @@
 * \author  pavel.vasilev
 */
 
-#include "global.h"
-#include "rgbTBuffer.h"
-#include "g12Buffer.h"
+#include "core/utils/global.h"
+#include "core/buffers/rgb24/rgbTBuffer.h"
+#include "core/buffers/g12Buffer.h"
 
 namespace corecvs {
 

@@ -6,7 +6,7 @@
  * \author alexander
  */
 
-#include "essentialMatrix.h"
+#include "core/rectification/essentialMatrix.h"
 namespace corecvs {
 
 

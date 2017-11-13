@@ -8,9 +8,9 @@
  * \date Sep 26, 2010
  * \author alexander
  */
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "fastKernel.h"
+#include "core/buffers/kernels/fastkernel/fastKernel.h"
 namespace corecvs {
 
 template <typename Algebra>

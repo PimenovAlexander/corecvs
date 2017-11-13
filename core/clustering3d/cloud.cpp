@@ -4,7 +4,7 @@
  * \date Feb 26, 2013
  */
 
-#include "cloud.h"
+#include "core/clustering3d/cloud.h"
 
 namespace corecvs {
 

@@ -5,25 +5,27 @@
 #include <vector>
 #include <ostream>
 
-#include <vector2d.h>
+#include "core/math/vector/vector2d.h"
+#include "core/geometry/line.h"
+
 
 namespace corecvs {
 
 
-class LineSpanInt {
+class HLineSpanInt {
 public:
     int cy;
     int x1;
     int x2;
 
-    LineSpanInt() {}
+    HLineSpanInt() {}
 
-    LineSpanInt(int y, int x1, int x2) :
+    HLineSpanInt(int y, int x1, int x2) :
         cy(y), x1(x1), x2(x2)
     {}
 
-    static LineSpanInt Empty() {
-        return LineSpanInt(0, 1, 0);
+    static HLineSpanInt Empty() {
+        return HLineSpanInt(0, 1, 0);
     }
 
 
@@ -61,15 +63,15 @@ public:
     /**
      * C++ style iteration
      **/
-    LineSpanInt &begin() {
+    HLineSpanInt &begin() {
         return *this;
     }
 
-    LineSpanInt & end() {
+    HLineSpanInt & end() {
         return *this;
     }
 
-    bool operator !=(const LineSpanInt & other) {
+    bool operator !=(const HLineSpanInt & other) {
         return this->x1 <= (other.x2);
     }
 
@@ -85,7 +87,7 @@ public:
      * Utility functions
      **/
 
-    friend std::ostream& operator << (std::ostream &out, LineSpanInt &toSave)
+    friend std::ostream& operator << (std::ostream &out, HLineSpanInt &toSave)
     {
         out << toSave.y() << " [" << toSave.x1 << " -> " << toSave.x2 << "]" << std::endl;
         return out;
@@ -95,15 +97,25 @@ public:
 
 typedef std::vector<double> FragmentAttributes;
 
-class AttributedLineSpan : public LineSpanInt {
+
+inline static ostream & operator <<(ostream &out, const FragmentAttributes &vector)
+{
+    out << "[";
+    for (size_t i = 0; i < vector.size(); i++)
+       out << (i == 0 ? "" : ", ") << vector.at(i);
+    out << "]";
+    return out;
+}
+
+class AttributedHLineSpan : public HLineSpanInt {
 public:
     FragmentAttributes catt;
     FragmentAttributes datt;
 
-    AttributedLineSpan() : LineSpanInt(0,1,0) {}
+    AttributedHLineSpan() : HLineSpanInt(0,1,0) {}
 
-    AttributedLineSpan(int y, int x1, int x2, const FragmentAttributes &a1, const FragmentAttributes &a2) :
-        LineSpanInt(y, x1, x2),
+    AttributedHLineSpan(int y, int x1, int x2, const FragmentAttributes &a1, const FragmentAttributes &a2) :
+        HLineSpanInt(y, x1, x2),
         catt(a1)
     {
         datt.resize(catt.size());
@@ -116,20 +128,185 @@ public:
         for (size_t i = 0; i < catt.size(); i++) {
             catt[i] += datt[i];
         }
-        LineSpanInt::step();
+        HLineSpanInt::step();
     }
 
     bool hasValue() {
-        return LineSpanInt::hasValue();
+        return HLineSpanInt::hasValue();
     }
 
     const FragmentAttributes &att() {
         return catt;
     }
 
+    AttributedHLineSpan &begin() {
+        return *this;
+    }
+
+    AttributedHLineSpan & end() {
+        return *this;
+    }
+
+    void operator ++() {
+        step();
+    }
+};
+
+/* Simple itretrator. Not optimized for speed */
+
+class LineSpanIterator {
+public:
+    int x1;
+    int y1;
+
+    int x2;
+    int y2;
+
+    double dx;
+    double dy;
+    double cx;
+    double cy;
+
+    int count = 0;
+
+    LineSpanIterator(int x1, int y1, int x2, int y2) :
+        x1(x1), y1(y1), x2(x2), y2(y2)
+    {
+        cx = x1;
+        cy = y1;
+        dx = x2 - x1;
+        dy = y2 - y1;
+
+        double adx = fabs(dx);
+        double ady = fabs(dy);
+        if (adx > ady)
+        {
+            count = adx;
+            dy /= adx;
+            dx /= adx;
+        } else {
+            count = ady;
+            dx /= ady;
+            dy /= ady;
+        }
+    }
+
+    LineSpanIterator(const Segment<Vector2d32> &segment) :
+        LineSpanIterator(
+            segment.a.x(), segment.a.y(),
+            segment.b.x(), segment.b.y())
+    {
+    }
+
+    int x() {
+        return cx;
+    }
+
+    int y() {
+        return cy;
+    }
+
+    Vector2d<int> pos() {
+        return Vector2d<int>(x(), y());
+    }
+
+    void step() {
+        count--;
+        cx += dx;
+        cy += dy;
+    }
+
+    bool hasValue() {
+        return (count > 0);
+    }
+
+    /**
+     * C++ style iteration
+     **/
+    LineSpanIterator &begin() {
+        return *this;
+    }
+
+    LineSpanIterator & end() {
+        return *this;
+    }
+
+    bool operator !=(const LineSpanIterator & /*other*/) {
+        return this->hasValue();
+    }
+
+    void operator ++() {
+        step();
+    }
+
+    Vector2d<int> operator *() {
+        return pos();
+    }
+
+};
+
+class AttributedLineSpanIterator : public LineSpanIterator {
+public:
+    FragmentAttributes catt;
+    FragmentAttributes datt;
+
+    //AttributedLineSpanIterator() : LineSpanIterator(0,1,0) {}
+
+    AttributedLineSpanIterator(int x1, int y1, int x2, int y2,
+                               const FragmentAttributes &a1,
+                               const FragmentAttributes &a2
+                              ) :
+        LineSpanIterator(x1, y1, x2, y2),
+        catt(a1)
+    {
+        datt.resize(catt.size());
+        if (count != 0) {
+            for (size_t i = 0; i < datt.size(); i++) {
+                datt[i] = (a2[i] - a1[i]) / count;
+            }
+        }
+
+//        SYNC_PRINT(("AttributedLineSpanIterator::AttributedLineSpanIterator(): called\n"));
+//        cout << "CATTR" << catt << std::endl;
+//        cout << "DATTR" << datt << std::endl;
+
+    }
+
+    void step() {
+//        SYNC_PRINT(("AttributedLineSpanIterator::step(): called\n"));
+        for (size_t i = 0; i < catt.size(); i++) {
+            catt[i] += datt[i];
+        }
+//        cout << "CATTR" << catt << std::endl;
+        LineSpanIterator::step();
+    }
+
+    bool hasValue() {
+        return LineSpanIterator::hasValue();
+    }
+
+    const FragmentAttributes &att() {
+        return catt;
+    }
+
+    void operator ++() {
+//        SYNC_PRINT(("AttributedLineSpanIterator::operator ++(): called\n"));
+        AttributedLineSpanIterator::step();
+    }
+
+    AttributedLineSpanIterator &begin() {
+        return *this;
+    }
+
+    AttributedLineSpanIterator & end() {
+        return *this;
+    }
+
+
 
 
 };
+
 
 } // namespace corecvs
 

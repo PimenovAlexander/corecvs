@@ -12,8 +12,11 @@
 #include <emmintrin.h>
 #include <stdint.h>
 
-#include "global.h"
-#include "fixedVector.h"
+#include "core/utils/global.h"
+
+#include "core/math/vector/fixedVector.h"
+#include "core/math/sse/sseInteger.h"
+
 namespace corecvs {
 
 class ALIGN_DATA(16) Int64x2 : public SSEInteger<Int64x2>
@@ -47,7 +50,12 @@ public:
     /*  TODO: Could fail for 32 bit build */
     Int64x2(int64_t constant) {
 #if 1
+#	if defined(_MSC_VER) && (_MSC_VER < 1900) && !defined(_M_X64) // fix bug of vs2013 x86, where _mm_set1_epi64x is not implemented
+		const int64_t data[2] = { constant, constant };
+		this->data = _mm_loadu_si128((__m128i *)&data[0]);
+#	else
         this->data = _mm_set1_epi64x(constant);
+#	endif
 #else
         __m64 input;
         input.m64_i64 = constant;

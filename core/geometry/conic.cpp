@@ -1,4 +1,4 @@
-#include "conic.h"
+#include "core/geometry/conic.h"
 
 namespace corecvs {
 
@@ -7,7 +7,7 @@ bool Circle2d::intersectWith(const Circle2d &other, Vector2dd &point1, Vector2dd
     double a;
     double x;
 
-    if (!intersectHelper(other, x, a))
+    if (!intersectConicHelper(other, x, a))
         return false;
 
     Vector2dd dir = (other.c - c);
@@ -18,12 +18,17 @@ bool Circle2d::intersectWith(const Circle2d &other, Vector2dd &point1, Vector2dd
     return true;
 }
 
+bool Circle2d::intersectWith(const Ray2d &ray, double &t1, double &t2)
+{
+    return intersectRayHelper(ray, t1, t2);
+}
+
 bool Sphere3d::intersectWith(const Sphere3d &other, Circle3d &result)
 {
     double a;
     double x;
 
-    if (!intersectHelper(other, x, a)) {
+    if (!intersectConicHelper(other, x, a)) {
         return false;
     }
 
@@ -70,37 +75,9 @@ Vector3dd Circle3d::getPoint(double angle)
 }
 
 
-/**
- *
- *
- *
- *
- *
- *
- *
- *
- *   *----------------------------
- *
- *
- *
- *
- **/
-bool corecvs::Sphere3d::intersectWith(const corecvs::Ray3d &ray, double &t1, double &t2)
+bool Sphere3d::intersectWith(const corecvs::Ray3d &ray, double &t1, double &t2)
 {
-    Vector3dd toCenter  = c  - ray.p;
-    double toCen2 = toCenter & toCenter;
-    double proj  = ray.a & toCenter;
-    double hdist  = (r * r) - toCen2 + proj * proj;
-
-    if (hdist < 0) {
-        return false;
-    }
-
-    hdist = sqrt (hdist);
-
-    t1 =  proj - hdist;
-    t2 =  proj + hdist;
-    return true;
+    return UnifiedSphere::intersectRayHelper(ray, t1, t2);
 }
 
 

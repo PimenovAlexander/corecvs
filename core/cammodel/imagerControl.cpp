@@ -7,7 +7,7 @@
  * \author alexander
  */
 
-#include "imagerControl.h"
+#include "core/cammodel/imagerControl.h"
 namespace corecvs {
 
 #define TRACE_CONTROL_DETAILS

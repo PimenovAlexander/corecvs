@@ -9,10 +9,10 @@
 #ifndef ESSENTIALESTIMATOR_H_
 #define ESSENTIALESTIMATOR_H_
 #include <vector>
-#include "correspondenceList.h"
-#include "essentialMatrix.h"
-#include "function.h"
-#include "quaternion.h"
+#include "core/rectification/correspondenceList.h"
+#include "core/rectification/essentialMatrix.h"
+#include "core/function/function.h"
+#include "core/math/quaternion.h"
 namespace corecvs {
 
 class EssentialEstimator

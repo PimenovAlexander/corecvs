@@ -1,5 +1,5 @@
 #pragma once
-#include "abstractBuffer.h"
+#include "core/buffers/abstractBuffer.h"
 
 namespace corecvs {
 

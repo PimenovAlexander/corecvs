@@ -4,44 +4,70 @@
  * \brief Add Comment Here
  *
  * \ingroup cppcorefiles
- * \date Mar 24, 2010
- * \author alexander
+ *
+ *  This class is a wrapper over a set of time measure functions, typically of usec or better resolution
+ *
+ *   Common implemetations are
+ *    * std::chrono based
+ *    * win32 based (QueryPerformanceCounter)
+ *    * gettimeofday on linux
  */
 #include <stdint.h>
-#include "mathUtils.h"
+#include "core/math/mathUtils.h"
 
 namespace corecvs {
 
 class PreciseTimer
 {
 public:
-    PreciseTimer()                                 { init(); }
-    PreciseTimer(int msec) : mTime(msec*1000)      {}
+    PreciseTimer()                                  { mTime = -1; }
 
-    static  PreciseTimer currentTime();
+    /**
+     *   We should and want to use CurrentTime name.
+     *   Unfortunately X11 has an evil define of the same name in X.h
+     *
+     **/
+    static  PreciseTimer CurrentETime();
 
-    void    init()                                 { mTime = -1;                            }
-    bool    isCorrect() const                      { return mTime != -1;                    }
-    void    setTime(int64_t time)                  { mTime = time;                          }
+    /**
+     *  \deprecated
+     **/
+    static  PreciseTimer currentTime()              { return CurrentETime(); }
 
-    int64_t msec(int64_t time) const               { return _roundDivUp(time, 1000);        }
+    bool    isCorrect() const                       { return mTime != -1;    }
 
-    int64_t usecsTo(PreciseTimer const &end) const { return end.mTime - this->mTime;        }
-    int64_t usecsToNow() const                     { return isCorrect() ? usecsTo(currentTime()) : 0; }
-    int64_t usec() const                           { return mTime;                          }
-    int64_t msec() const                           { return msec(mTime);                    }
+    void    setTime(int64_t time)                   { mTime = time;          }
 
-    int operator-(PreciseTimer& other)             { return msec(mTime - other.mTime);      }
-    int operator-(int& msecOther)                  { return msec(mTime - msecOther * 1000); }
+    int64_t usec() const                            { return mTime;          }
+    int64_t msec() const                            { return msec(mTime);    }
+
+    static int64_t msec(int64_t time)               { return _roundDivUp(time, 1000 * 1000);           }
+
+    int64_t msecsTo(PreciseTimer const &end) const  { return _roundDivUp(nsecsTo(end), 1000 * 1000);   }
+    int64_t usecsTo(PreciseTimer const &end) const  { return _roundDivUp(nsecsTo(end), 1000);          }
+    int64_t nsecsTo(PreciseTimer const &end) const  { return end.mTime - this->mTime;                  }
+
+    int64_t usecsToNow() const                      { return isCorrect() ? usecsTo(currentTime()) : 0; }
+    int64_t nsecsToNow() const                      { return isCorrect() ? nsecsTo(currentTime()) : 0; }
+    int64_t msecsToNow() const                      { return isCorrect() ? msecsTo(currentTime()) : 0; }
+
+    int     operator-(PreciseTimer& other) const    { return (int)msec(mTime - other.mTime);           }
 
 private:
-    int64_t mTime;                                          // keeps the time in mks (usecs)
+    /**
+     *  keeps the time in nanoseconds (nsecs)
+     *  Around 150 years will fit in 63 bits.
+     *  2^62  / 10^9 / (60*60*24) / 365 ~=~ 146.2 years
+     **/
+    int64_t mTime;
 
 #ifdef WIN32
-    static int64_t mFreq;
+    static double mFreq;
 #endif
 };
 
+
+#if 0
 class PreciseTimerEx : public PreciseTimer
 {
 public:
@@ -58,5 +84,6 @@ public:
 private:
     uint64_t *mpAccTime;
 };
+#endif
 
 } //namespace corecvs

@@ -4,7 +4,7 @@
  * \date Sep 24, 2013
  **/
 
-#include "logicKernels.h"
+#include "core/buffers/kernels/logicKernels.h"
 
 namespace corecvs
 {

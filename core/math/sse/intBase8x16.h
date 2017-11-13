@@ -12,8 +12,8 @@
 #include <emmintrin.h>
 #include <stdint.h>
 
-#include "global.h"
-#include "fixedVector.h"
+#include "core/utils/global.h"
+#include "core/math/vector/fixedVector.h"
 
 namespace corecvs {
 

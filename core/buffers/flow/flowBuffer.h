@@ -15,16 +15,16 @@
 #include <stdint.h>
 #ifdef WITH_SSE
 #include <emmintrin.h>
-#include "sseWrapper.h"
+#include "core/math/sse/sseWrapper.h"
 #endif
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "punchedBufferOperations.h"
-#include "abstractContiniousBuffer.h"
-#include "vector2d.h"
-#include "flowVector.h"
-#include "matrix33.h"
+#include "core/buffers/flow/punchedBufferOperations.h"
+#include "core/buffers/abstractContiniousBuffer.h"
+#include "core/math/vector/vector2d.h"
+#include "core/buffers/flow/flowVector.h"
+#include "core/math/matrix/matrix33.h"
 
 namespace corecvs {
 

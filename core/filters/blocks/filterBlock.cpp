@@ -4,9 +4,9 @@
  * \date Nov 9, 2012
  **/
 
-#include "filterBlock.h"
-//#include "filterGraph.h"
-#include "serializerVisitor.h"
+#include "core/filters/blocks/filterBlock.h"
+//#include "core/filters/blocks/filterGraph.h"
+#include "core/reflection/serializerVisitor.h"
 
 namespace corecvs
 {

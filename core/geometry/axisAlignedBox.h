@@ -1,9 +1,9 @@
 #ifndef AXIS_ALIGNED_BOX_H
 #define AXIS_ALIGNED_BOX_H
 
-#include "vector3d.h"
-#include "line.h"
-#include "axisAlignedBoxParameters.h"
+#include "core/math/vector/vector3d.h"
+#include "core/geometry/line.h"
+#include "core/xml/generated/axisAlignedBoxParameters.h"
 
 /**
  * \file mesh3d.h
@@ -14,65 +14,109 @@
 namespace corecvs
 {
 
-class AxisAlignedBox3d
+template<class VectorType>
+class UnifedAxisAlignedBox
 {
-    Vector3dd mLow;
-    Vector3dd mHigh;
+    VectorType mLow;
+    VectorType mHigh;
 public:
 
-    AxisAlignedBox3d()
+    UnifedAxisAlignedBox()
     {
-        _initByLowHigh(Vector3dd(0.0), Vector3dd(0.0));
+        _initByLowHigh(VectorType::Zero(), Vector3dd::Zero());
     }
 
-    AxisAlignedBox3d(const Vector3dd &low, const Vector3dd &high)
+    UnifedAxisAlignedBox(const VectorType &low, const VectorType &high)
     {
         _initByLowHigh(low, high);
     }
 
-    AxisAlignedBox3d(const AxisAlignedBoxParameters &params)
+    UnifedAxisAlignedBox(const AxisAlignedBoxParameters &params)
     {
-        Vector3dd measure(params.width(), params.height(), params.depth());
-        Vector3dd center (params.x()    , params.y()     , params.z    ());
+        VectorType measure(params.width(), params.height(), params.depth());
+        VectorType center (params.x()    , params.y()     , params.z    ());
 
         _initByCenter(center, measure);
     }
 
-    void _initByLowHigh(const Vector3dd &low, const Vector3dd &high)
+    UnifedAxisAlignedBox(const UnifedAxisAlignedBox &first, const UnifedAxisAlignedBox &second)
     {
-        /* TODO: Move this to vector operations and use cycle */
-        mLow .x() = CORE_MIN(low.x(), high.x());
-        mHigh.x() = CORE_MAX(low.x(), high.x());
+        _initByLowHigh(
+            first. low().perElementMin(second. low()),
+            first.high().perElementMax(second.high())
+        );
 
-        mLow .y() = CORE_MIN(low.y(), high.y());
-        mHigh.y() = CORE_MAX(low.y(), high.y());
-
-        mLow .z() = CORE_MIN(low.z(), high.z());
-        mHigh.z() = CORE_MAX(low.z(), high.z());
     }
 
-    void _initByCenter(const Vector3dd &center, const Vector3dd &measure)
+    void _initByLowHigh(const VectorType &low, const VectorType &high)
+    {
+        /* TODO: Move this to vector operations and use cycle */
+        for (int i = 0; i < VectorType::LENGTH; i++)
+        {
+            mLow [i] = CORE_MIN(low[i], high[i]);
+            mHigh[i] = CORE_MAX(low[i], high[i]);
+        }
+    }
+
+    void _initByCenter(const VectorType &center, const VectorType &measure)
     {
         _initByLowHigh((center - measure / 2.0), (center + measure / 2.0));
     }
 
-    static AxisAlignedBox3d ByCenter(const Vector3dd &center, const Vector3dd &measure)
+    static UnifedAxisAlignedBox ByCenter(const VectorType &center, const VectorType &measure)
     {
-        AxisAlignedBox3d box;
+        UnifedAxisAlignedBox box;
         box._initByCenter(center, measure);
         return box;
     }
 
-    bool contains (const Vector3dd &vector) const
+    static UnifedAxisAlignedBox FromPoints(const vector<VectorType> &points)
+    {
+       UnifedAxisAlignedBox box = UnifedAxisAlignedBox::Empty();
+       for (const VectorType &v : points)
+       {
+           box.mLow  = box.mLow .perElementMin(v);
+           box.mHigh = box.mHigh.perElementMax(v);
+       }
+       return box;
+    }
+
+    /**
+     * Use this construction function with caution.
+     * It breaks general assumption of mLow beeing smaller in all coordinates then mHigh
+     **/
+    static UnifedAxisAlignedBox Empty()
+    {
+        UnifedAxisAlignedBox result;
+        for (int i = 0; i < VectorType::LENGTH; i++)
+        {
+            result.mLow [i] =  std::numeric_limits<double>::max();
+            result.mHigh[i] = -std::numeric_limits<double>::max();
+        }
+        return result;
+    }
+
+    static UnifedAxisAlignedBox AllSpace()
+    {
+        UnifedAxisAlignedBox result;
+        for (int i = 0; i < VectorType::LENGTH; i++)
+        {
+            result.mLow [i] = -std::numeric_limits<double>::max();
+            result.mHigh[i] =  std::numeric_limits<double>::max();
+        }
+        return result;
+    }
+
+    bool contains (const VectorType &vector) const
     {
         return vector.isInCube(mLow, mHigh);
     }
 
-    const Vector3dd &low()  const {
+    const VectorType &low()  const {
         return mLow;
     }
 
-    const Vector3dd &high() const {
+    const VectorType &high() const {
         return mHigh;
     }
 
@@ -88,12 +132,12 @@ public:
         return mHigh.z() - mLow.z();
     }
 
-    Vector3dd getCenter()
+    VectorType getCenter()
     {
         return ((mLow + mHigh) / 2.0);
     }
 
-    Vector3dd measure()
+    VectorType measure()
     {
         return mHigh - mLow;
     }
@@ -110,12 +154,37 @@ public:
         points[7] = Vector3dd(mLow .x() , mHigh.y(), mHigh.z());
     }
 
-    AxisAlignedBox3d outset(double value) const
-    {
-        return AxisAlignedBox3d(mLow - Vector3dd(value), mHigh + Vector3dd(value));
+    vector<Vector3dd> getPointsVector() {
+        vector<Vector3dd> result;
+        result.resize(8);
+        getPoints(result.data());
+        return result;
     }
 
-    friend ostream & operator <<(ostream &out, const AxisAlignedBox3d &box)
+    /**
+     * Please note this method returns an axis aligned bounding box
+     * for a current transformed box
+     **/
+    template<typename TransformType>
+    UnifedAxisAlignedBox transformedBound(const TransformType &transform)
+    {
+        vector<Vector3dd> result;
+        result.resize(8);
+        getPoints(result.data());
+        for (size_t i = 0; i < result.size(); i++)
+        {
+            result[i] = transform * result[i];
+        }
+        return UnifedAxisAlignedBox::FromPoints(result);
+    }
+
+
+    UnifedAxisAlignedBox outset(double value) const
+    {
+        return UnifedAxisAlignedBox(mLow - VectorType(value), mHigh + VectorType(value));
+    }
+
+    friend ostream & operator <<(ostream &out, const UnifedAxisAlignedBox &box)
     {
         out << "[";
             out << box.low() << " -> " << box.high();
@@ -130,50 +199,31 @@ public:
 
         /* Last enter */
         t1 = -std::numeric_limits<double>::max();
-
         /* First leave */
         t2 =  std::numeric_limits<double>::max();
 
         const Vector3dd &a = ray.a;
 
-        double t1x = v1.x() / a.x();
-        double t2x = v2.x() / a.x();
+        for (int i = 0; i < Vector3dd::LENGTH; i++ )
+        {
+            double t1n = v1[i] / a[i];
+            double t2n = v2[i] / a[i];
 
-        if        (a.x() > 0) {
-            if (t1x > t1) t1 = t1x;
-            if (t2x < t2) t2 = t2x;
-        } else if (a.x() < 0) {
-            if (t2x > t1) t1 = t2x;
-            if (t1x < t2) t2 = t1x;
+            if        (a[i] > 0) {
+                if (t1n > t1) t1 = t1n;
+                if (t2n < t2) t2 = t2n;
+            } else if (a[i] < 0) {
+                if (t2n > t1) t1 = t2n;
+                if (t1n < t2) t2 = t1n;
+            }
         }
-
-        double t1y = v1.y() / a.y();
-        double t2y = v2.y() / a.y();
-
-        if        (a.y() > 0) {
-            if (t1y > t1) t1 = t1y;
-            if (t2y < t2) t2 = t2y;
-        } else if (a.y() < 0) {
-            if (t2y > t1) t1 = t2y;
-            if (t1y < t2) t2 = t1y;
-        }
-
-        double t1z = v1.z() / a.z();
-        double t2z = v2.z() / a.z();
-
-
-        if        (a.z() > 0) {
-            if (t1z > t1) t1 = t1z;
-            if (t2z < t2) t2 = t2z;
-        } else if (a.z() < 0) {
-            if (t2z > t1) t1 = t2z;
-            if (t1z < t2) t2 = t1z;
-        }
-
         return (t1 <= t2);
     }
 
 };
+
+
+typedef UnifedAxisAlignedBox<Vector3dd> AxisAlignedBox3d;
 
 
 } // namespace corecvs

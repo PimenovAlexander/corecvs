@@ -8,7 +8,7 @@
 
 #include <vector>
 #include <stddef.h>
-#include "lensDistortionModelParameters.h"
+#include "core/alignment/lensDistortionModelParameters.h"
 
 /**
  *  Looks extremely unsafe because it depends on the order of static initialization.

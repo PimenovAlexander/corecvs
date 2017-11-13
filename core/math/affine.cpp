@@ -6,8 +6,8 @@
  * \author alexander
  */
 
-#include "affine.h"
-#include "mathUtils.h"
+#include "core/math/affine.h"
+#include "core/math/mathUtils.h"
 
 namespace corecvs {
 

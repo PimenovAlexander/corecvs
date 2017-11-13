@@ -8,9 +8,9 @@
 
 #ifndef FLOWVECTORINFORMATION_H_
 #define FLOWVECTORINFORMATION_H_
-#include "floatFlowBuffer.h"
-#include "FCostFunction.h"
-#include "vector3d.h"
+#include "core/buffers/flow/floatFlowBuffer.h"
+#include "core/automotive/FCostFunction.h"
+#include "core/math/vector/vector3d.h"
 namespace corecvs {
 
 class FlowVectorInformation

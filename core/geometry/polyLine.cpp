@@ -1,5 +1,5 @@
-#include "polyLine.h"
-#include "vector3d.h"
+#include "core/geometry/polyLine.h"
+#include "core/math/vector/vector3d.h"
 
 #define MAXD 64
 

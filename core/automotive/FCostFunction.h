@@ -1,43 +1,44 @@
+#ifndef FCOSTFUNCTION_H_
+#define FCOSTFUNCTION_H_
+
 /**
  * \file FCostFunction.h
  * \brief This file holds the data primitives for compensated flow cost function
+ *
+ * This stuff is seriouly outdated
  *
  * \date Feb 6, 2011
  * \author alexander
  */
 
-#ifndef FCOSTFUNCTION_H_
-#define FCOSTFUNCTION_H_
-#include "matrix44.h"
-#include "cameraParameters.h"
-#include "eulerAngles.h"
-#include "floatFlowBuffer.h"
+
+#include "core/cameracalibration/calibrationCamera.h"
+#include "core/math/matrix/matrix44.h"
+#include "core/cammodel/cameraParameters.h"
+#include "core/math/eulerAngles.h"
+#include "core/buffers/flow/floatFlowBuffer.h"
 namespace corecvs {
 
 class FCostFunction
 {
 public:
 
-enum CameraId {
-    FIRST_CAMERA_NUMBER = 0,
-    FRONT_VIEW_CAMERA = FIRST_CAMERA_NUMBER,
-    REAR_VIEW_CAMERA,
-    LEFT_SIDE_VIEW_CAMERA,
-    RIGHT_SIDE_VIEW_CAMERA,
-    CAMERA_NUMBER
-};
+    enum CameraId {
+        FIRST_CAMERA_NUMBER = 0,
+        FRONT_VIEW_CAMERA = FIRST_CAMERA_NUMBER,
+        REAR_VIEW_CAMERA,
+        LEFT_SIDE_VIEW_CAMERA,
+        RIGHT_SIDE_VIEW_CAMERA,
+        CAMERA_NUMBER
+    };
 
-enum CostFunctionType {
-    FU = 0,
-    FV,
-    AUTO
-};
-
-
+    enum CostFunctionType {
+        FU = 0,
+        FV,
+        AUTO
+    };
 
 public:
-
-
 
     FCostFunction();
     virtual ~FCostFunction();
@@ -58,19 +59,18 @@ public:
 
     static Matrix44 getDMatrix(
           CameraId cameraId,
-          const CameraIntrinsicsLegacy          &cameraIntrinsics,
+          const PinholeCameraIntrinsics   &cameraIntrinsics,
           const ShiftRotateTransformation &cameraExtrinsics
      );
 
-    static Matrix44 getInvDMatrix(
-         CameraId cameraId,
-         const CameraIntrinsicsLegacy          &cameraIntrinsics,
+    static Matrix44 getInvDMatrix(CameraId cameraId,
+         const PinholeCameraIntrinsics &cameraIntrinsics,
          const ShiftRotateTransformation &cameraExtrinsics
      );
 
     static Matrix44 getBMatrix(
         CameraId cameraId,
-        const CameraIntrinsicsLegacy &cameraIntrinsics,
+        const PinholeCameraIntrinsics  &cameraIntrinsics,
         const ShiftRotateTransformation &cameraExtrinsics,
         const ShiftRotateTransformation &carEvolution
     );
@@ -91,17 +91,16 @@ public:
          CostFunctionType *typePtr /*<[out]*/
    );
 
-   static double function(
-       const FloatFlowVector &flow,
+   static double function(const FloatFlowVector &flow,
        CameraId cameraId,
-       const CameraIntrinsicsLegacy &cameraIntrinsics,
+       const PinholeCameraIntrinsics &cameraIntrinsics,
        const ShiftRotateTransformation &cameraExtrinsics,
        const ShiftRotateTransformation &carEvolution);
 
    static double functionPro(
        const FloatFlowVector &flow,
        CameraId cameraId,
-       const CameraIntrinsicsLegacy &cameraIntrinsics,
+       const PinholeCameraIntrinsics &cameraIntrinsics,
        const ShiftRotateTransformation &cameraExtrinsics,
        const ShiftRotateTransformation &carEvolution,
        double *distancePtr, /*<[out]*/

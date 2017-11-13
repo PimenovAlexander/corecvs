@@ -12,8 +12,8 @@
 #include <arm_neon.h>
 #include <stdint.h>
 
-#include "global.h"
-#include "fixedVector.h"
+#include "core/utils/global.h"
+#include "core/math/vector/fixedVector.h"
 namespace corecvs {
 
 class ALIGN_DATA(16) Int64x2

@@ -7,10 +7,10 @@
  * \author alexander
  */
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "blurProcessor.h"
-#include "tbbWrapper.h"
+#include "core/buffers/kernels/blurProcessor.h"
+#include "core/tbbwrapper/tbbWrapper.h"
 namespace corecvs {
 
 /*TODO: Hide this*/

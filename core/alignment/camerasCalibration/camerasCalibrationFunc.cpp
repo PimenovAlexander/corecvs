@@ -1,4 +1,4 @@
-#include "camerasCalibrationFunc.h"
+#include "core/alignment/camerasCalibration/camerasCalibrationFunc.h"
 
 namespace corecvs {
 

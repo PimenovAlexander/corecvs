@@ -13,9 +13,9 @@
 #include <stdio.h>
 #include <limits>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "assignmentOptimal.h"
+#include "core/assignment/assignmentOptimal.h"
 namespace corecvs {
 
 /**

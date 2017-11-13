@@ -13,7 +13,7 @@
 
 
 #include <vector>
-#include "matrix.h"
+#include "core/math/matrix/matrix.h"
 namespace corecvs {
 /**
  *

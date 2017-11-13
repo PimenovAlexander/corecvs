@@ -5,10 +5,10 @@
  **/
 #include <fstream>
 
-#include "mathUtils.h"      // M_PI
-#include "abstractPainter.h"
-#include "mesh3d.h"
-#include "plyLoader.h"
+#include "core/math/mathUtils.h"      // M_PI
+#include "core/buffers/rgb24/abstractPainter.h"
+#include "core/geometry/mesh3d.h"
+#include "core/fileformats/plyLoader.h"
 
 namespace corecvs {
 
@@ -31,6 +31,13 @@ void Mesh3D::switchColor(bool on)
 void Mesh3D::setColor(const RGBColor &color)
 {
     currentColor = color;
+}
+
+
+void Mesh3D::mulTransform(const Affine3DQ &transform)
+{
+    transformStack.push_back(currentTransform);
+    currentTransform = currentTransform * static_cast<Matrix44>(transform);
 }
 
 void Mesh3D::mulTransform(const Matrix33 &transform)
@@ -110,6 +117,14 @@ void Mesh3D::addOrts(double length, bool captions)
 
 }
 
+void Mesh3D::addPlaneFrame(const PlaneFrame &frame, double length)
+{
+    setColor(RGBColor::Red());
+    addLine(frame.p1, frame.p1 + frame.e1 * length);
+    setColor(RGBColor::Green());
+    addLine(frame.p1, frame.p1 + frame.e2 * length);
+}
+
 void Mesh3D::addAOB(const Vector3dd &c1, const Vector3dd &c2, bool addFaces)
 {
     int vectorIndex = (int)vertexes.size();
@@ -172,13 +187,13 @@ void Mesh3D::addAOB(const AxisAlignedBox3d &box, bool addFaces)
     addAOB(box.low(), box.high(), addFaces);
 }
 
-int Mesh3D::addPoint(Vector3dd point)
+int Mesh3D::addPoint(const Vector3dd &point)
 {
     addVertex(point);
     return (int)vertexes.size() - 1;
 }
 
-void Mesh3D::addLine(Vector3dd point1, Vector3dd point2)
+void Mesh3D::addLine(const Vector3dd &point1, const Vector3dd &point2)
 {
     int vectorIndex = (int)vertexes.size();
     Vector2d32 startId(vectorIndex, vectorIndex);
@@ -205,6 +220,20 @@ void Mesh3D::addTriangle(Vector3dd point1, Vector3dd point2, Vector3dd point3)
 void Mesh3D::addTriangle(const Triangle3dd &triangle)
 {
     addTriangle(triangle.p1(), triangle.p2(), triangle.p3());
+}
+
+void Mesh3D::addFlatPolygon(const FlatPolygon &polygon)
+{
+    /* Simple way */
+    for (size_t i = 0; i < polygon.polygon.size(); i++)
+    {
+        Vector2dd p1 = polygon.polygon.getPoint((int)i);
+        Vector2dd p2 = polygon.polygon.getNextPoint((int)i);
+
+        Vector3dd point1 = polygon.frame.getPoint(p1);
+        Vector3dd point2 = polygon.frame.getPoint(p2);
+        addLine(point1, point2);
+    }
 }
 
 Triangle3dd Mesh3D::getFaceAsTrinagle(size_t number)
@@ -364,7 +393,7 @@ void Mesh3D::addIcoSphere(Vector3dd center, double radius, int step)
          addFace(startId + Vector3d32(LAST_P, ((i + 1) % 5) + ROUND_2, i + ROUND_2));
      }
 
-     /*No we start the subdivision*/
+     /*Now we start the subdivision*/
 
      int faceIndex = primaryIndex;
 
@@ -377,8 +406,9 @@ void Mesh3D::addIcoSphere(Vector3dd center, double radius, int step)
          {
              Vector3d32 face = faces[f];
 
+#if 1
              /**/
-             int startId = (int)vertexes.size();
+             int startId = (int)vertexes.size();             
 
              for (int k = 0; k < 3; k++)
              {
@@ -396,11 +426,18 @@ void Mesh3D::addIcoSphere(Vector3dd center, double radius, int step)
 
                 addVertex(add);
              }
-             addFace(Vector3d32(face[0], startId, startId + 2));
-             addFace(Vector3d32(startId, face[1], startId + 1));
-             addFace(Vector3d32(startId + 1, face[2], startId + 2));
+             int nv1 = startId;
+             int nv2 = startId + 1;
+             int nv3 = startId + 2;
+#else
+            /* We need a clean implementation that glues subdivision references */
 
-             addFace(Vector3d32(startId, startId + 1, startId + 2));
+#endif
+             addFace(Vector3d32(face[0], nv1, nv3));
+             addFace(Vector3d32(nv1, face[1], nv2));
+             addFace(Vector3d32(nv2, face[2], nv3));
+
+             addFace(Vector3d32(nv1, nv2, nv3));
          }
          faceIndex = lastIndex;
      }
@@ -615,7 +652,7 @@ void Mesh3D::addTruncatedCone(double r1, double r2, double length, int steps)
 
 int Mesh3D::dumpPLY(ostream &out)
 {
-    PLYLoader().savePLY(out, *this);
+    return PLYLoader().savePLY(out, *this);
 }
 
 int Mesh3D::dumpPLY(const std::string &filename)
@@ -735,17 +772,33 @@ void Mesh3D::fillTestScene()
     addSphere(Vector3dd(0), 50, 10);
 
     /* Face sphere */
-    //int colorStart = (int)facesColor.size();
+    size_t vertexColorStart = vertexesColor.size();
+    size_t faceColorStart   = facesColor.size();
+    size_t edgesColorStart  = edgesColor.size();
 
     currentColor = RGBColor::Red();
 
     addIcoSphere(Vector3dd(100.0,0.0,100.0), 50.0, 1);
-    //int colorEnd = facesColor.size();
+    size_t vertexColorEnd = vertexesColor.size();
+    size_t faceColorEnd   = facesColor.size();
+    size_t edgesColorEnd  = edgesColor.size();
 
-    /*for (int c = colorStart; c < colorEnd; c++)
+    for (size_t c = faceColorStart; c < faceColorEnd; c++)
     {
-        facesColor[c] = RGBColor::rainbow(lerpLimit(0.0, 1.0, c, colorStart, colorEnd));
-    }*/
+        facesColor[c] = RGBColor::rainbow(lerpLimit(0.0, 1.0, c, faceColorStart, faceColorEnd));
+    }
+
+    for (size_t c = vertexColorStart; c < vertexColorEnd; c++)
+    {
+        vertexesColor[c] = RGBColor::rainbow(lerpLimit(0.0, 1.0, c, vertexColorStart, vertexColorEnd));
+    }
+
+    for (size_t c = edgesColorStart; c < edgesColorEnd; c++)
+    {
+        edgesColor[c] = RGBColor::rainbow(lerpLimit(0.0, 1.0, c, edgesColorStart, edgesColorEnd));
+    }
+
+
 
     /* Edge box */
     currentColor = RGBColor::Blue();

@@ -1,6 +1,6 @@
-#include "sceneFeaturePoint.h"
-#include "fixtureScene.h"
-#include "multicameraTriangulator.h"
+#include "core/camerafixture/sceneFeaturePoint.h"
+#include "core/camerafixture/fixtureScene.h"
+#include "core/rectification/multicameraTriangulator.h"
 
 
 #ifdef WITH_BOOST

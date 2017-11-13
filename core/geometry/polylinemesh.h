@@ -1,8 +1,8 @@
 #ifndef POLYLINEMESH_H
 #define POLYLINEMESH_H
 
-#include "polyLine.h"
-#include "mesh3d.h"
+#include "core/geometry/polyLine.h"
+#include "core/geometry/mesh3d.h"
 
 namespace corecvs {
     class PolylineMesh{

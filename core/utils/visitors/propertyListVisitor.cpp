@@ -5,8 +5,8 @@
  * \date Nov 27, 2011
  * \author alexander
  */
-#include "global.h"
-#include "propertyListVisitor.h"
+#include "core/utils/global.h"
+#include "core/utils/visitors/propertyListVisitor.h"
 
 namespace corecvs {
 
@@ -41,6 +41,7 @@ template<>
         output->setStringProperty(getChildPath(fieldName), stringField);
     }
 
+
 /* New style fields*/
 
 template<>
@@ -73,6 +74,14 @@ template <>
         output->setStringProperty(fieldDescriptor->getSimpleName(), field);
     }
 
+template <>
+    void PropertyListWriterVisitor::visit<std::wstring,   WStringField>(std::wstring &field, const WStringField *fieldDescriptor)
+    {
+        CORE_UNUSED(field);
+        SYNC_PRINT(("Wide strings are not supported yet. <%s> won't be saved\n", fieldDescriptor->name.name));
+        //output->setStringProperty(fieldDescriptor->getSimpleName(), field);
+    }
+
 
 template <>
     void PropertyListWriterVisitor::visit<std::vector<double>, DoubleVectorField>(std::vector<double> &field, const DoubleVectorField *fieldDescriptor)
@@ -81,8 +90,8 @@ template <>
         ss << fieldDescriptor->getSimpleName();
         ss << ".size";
 
-        output->setIntProperty(getChildPath(ss.str().c_str()), field.size());
-        for (size_t i = 0; i < field.size(); i++ )
+        output->setIntProperty(getChildPath(ss.str().c_str()), (int)field.size());
+        for (size_t i = 0; i < field.size(); i++)
         {
             std::stringstream ss;
             ss << fieldDescriptor->getSimpleName() << "[" << i << "]";
@@ -156,6 +165,14 @@ template <>
     {
         field = input->getStringProperty(fieldDescriptor->getSimpleName(), field);
     }
+
+template <>
+    void PropertyListReaderVisitor::visit<std::wstring,   WStringField>(std::wstring &field, const WStringField *fieldDescriptor)
+    {
+        SYNC_PRINT(("Wide strings are not supported yet\n"));
+        field = fieldDescriptor->defaultValue;
+    }
+
 
 
 template <>

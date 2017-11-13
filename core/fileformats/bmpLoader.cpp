@@ -7,11 +7,10 @@
  * \author alexander
  */
 
-#include "bmpLoader.h"
-#include "utils.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/utils/utils.h"
 
 #include <string>
-//#include <cstring>
 #include <stdio.h>
 
 namespace corecvs {

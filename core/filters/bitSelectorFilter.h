@@ -8,9 +8,9 @@
  * \author alexander
  */
 
-#include "filterBlock.h"
+#include "core/filters/blocks/filterBlock.h"
 #include "../xml/generated/bitSelectorParameters.h"
-#include "filtersCollection.h"
+#include "core/filters/filtersCollection.h"
 
 namespace corecvs
 {

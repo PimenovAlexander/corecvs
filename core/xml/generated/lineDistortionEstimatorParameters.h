@@ -8,9 +8,9 @@
  * \author autoGenerator
  */
 
-#include "reflection.h"
-#include "defaultSetter.h"
-#include "printerVisitor.h"
+#include "core/reflection/reflection.h"
+#include "core/reflection/defaultSetter.h"
+#include "core/reflection/printerVisitor.h"
 
 /*
  *  Embed includes.
@@ -30,7 +30,7 @@ namespace corecvs {
 /*
  *  Additional includes for enum section.
  */
-#include "lineDistortionEstimatorCost.h"
+#include "core/xml/generated/lineDistortionEstimatorCost.h"
 
 /**
  * \brief Line Distortion Estimator Parameters 

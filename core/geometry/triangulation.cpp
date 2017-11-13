@@ -9,9 +9,9 @@
  */
 
 #include <limits>
-#include "preciseTimer.h"
+#include "core/utils/preciseTimer.h"
 
-#include "triangulation.h"
+#include "core/geometry/triangulation.h"
 namespace Triangulation
 {
 

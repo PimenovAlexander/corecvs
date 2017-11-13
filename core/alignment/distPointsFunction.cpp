@@ -4,7 +4,7 @@
  * \date Jun 11, 2013
  **/
 
-#include "distPointsFunction.h"
+#include "core/alignment/distPointsFunction.h"
 #include "../geometry/ellipticalApproximation.h"
 
 namespace corecvs

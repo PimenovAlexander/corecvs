@@ -1,4 +1,6 @@
-#pragma once
+#ifndef VECTOROPERATIONS_H
+#define VECTOROPERATIONS_H
+
 /**
  * \file vectorOperations.h
  * \brief This file holds the operations that are commonly used with
@@ -36,16 +38,17 @@
 #include <iostream>
 
 #include <stdio.h>
-#include <math.h>
+#include <cmath>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "reflection.h"
+#include "core/reflection/reflection.h"
 
 using std::numeric_limits;
 using std::istream;
 using std::ostream;
 using std::cout;
+using std::sqrt;
 
 namespace corecvs {
 
@@ -273,7 +276,7 @@ public:
      *
      * \param V1
      * \param V2
-     **/    
+     **/
     friend inline ReturnType operator /(const RealType &V1, const RealType &V2)
     {
         int length = V1._size() < V2._size() ? V1._size() : V2._size();
@@ -344,6 +347,32 @@ public:
         for (int i = 0; i < length; i++)
             result += V1._at(i) * V2._at(i);
         return result;
+    }
+
+    ReturnType dotProduct(const RealType &other)
+    {
+        return (*this) & other;
+    }
+
+    friend ReturnType dotProduct(const RealType &V, const RealType &U)
+    {
+        return V & U;
+    }
+
+    /**
+     * returns l-inf on [min(abs(x_i), abs(x_i/y_i))]
+     */
+    inline ElementType absRelInfNorm(const RealType& wrt) const
+    {
+        CORE_ASSERT_TRUE_S(_size() == wrt._size());
+        ElementType norm = 0;
+        for (int i = 0; i < _size(); ++i)
+        {
+            auto wrt_i = wrt._at(i), this_i = _at(i);
+            auto norm_i = std::abs(this_i) / (std::abs(wrt_i) > 1.0 ? std::abs(wrt_i) : 1);
+            norm = std::max(norm, norm_i);
+        }
+        return norm;
     }
 
     /**
@@ -569,10 +598,43 @@ public:
         return result;
     }
 
+
+    /**
+     * Per-element Abs
+     *
+     * \f[W_i = sqrt(V_i) \f]
+     *
+     **/
+    ReturnType inline perElementAbs() const
+    {
+        RealType result = _createVector(_size());
+        for (int i = 0; i < _size(); i++)
+            result.at(i) = (ElementType)CORE_ABS(_at(i));
+        return result;
+    }
+
+    ReturnType inline perElementMax(const RealType &other) const
+    {
+        int size = CORE_MIN(_size(), other._size());
+        RealType result = _createVector(size);
+        for (int i = 0; i < size; i++)
+            result.at(i) = (ElementType)CORE_MAX(_at(i), other._at(i));
+        return result;
+    }
+
+    ReturnType inline perElementMin(const RealType &other) const
+    {
+        int size = CORE_MIN(_size(), other._size());
+        RealType result = _createVector(size);
+        for (int i = 0; i < size; i++)
+            result.at(i) = (ElementType)CORE_MIN(_at(i), other._at(i));
+        return result;
+    }
+
     /**
      * Per-element cast
      *
-     *  Casts each element to the diven type, then back.
+     *  Casts each element to the given type, then back.
      *  useful for rounding all elements
      *
      **/
@@ -752,6 +814,19 @@ template<class VisitorType>
         }
     }
 
+    bool hasNans()
+    {
+        for (int i = 0; i < _size() ; i++)
+        {
+            if (std::isnan(_at(i)))
+                return true;
+        }
+        return false;
+    }
+
 };
 
 } //namespace corecvs
+
+#endif // VECTOROPERATIONS_H
+

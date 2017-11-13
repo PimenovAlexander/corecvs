@@ -10,9 +10,9 @@
  */
 #include <stdint.h>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "abstractBuffer.h"
+#include "core/buffers/abstractBuffer.h"
 namespace corecvs {
 
 

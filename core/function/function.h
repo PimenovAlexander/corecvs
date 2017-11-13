@@ -12,21 +12,25 @@
 #include <vector>
 #include <chrono>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "cblasLapackeWrapper.h"
+#include "wrappers/cblasLapack/cblasLapackeWrapper.h"
 
-#include "matrix.h"
-#include "sparseMatrix.h"
-#include "vector.h"
+#include "core/math/matrix/matrix.h"
+#include "core/math/sparseMatrix.h"
+#include "core/math/vector/vector.h"
 
 namespace corecvs {
+
 using std::vector;
 
 /**
  *  This class is a virtual version of a \f$ f: R^n \mapsto R^m\f$
  *
  *  TODO: Think of the similar class based on static polymorphism.
+ *
+ *
+ *
  **/
 class JacobianFunctor;
 class FunctionArgs
@@ -43,13 +47,16 @@ public:
 
 
     /**
-     *  Operator that computes funсtion
+     *  Operator that computes function
+     *  There are several synonimical functions.
+     *
+     *  It is expected they all work the exactly same way
      **/
     virtual void operator()(const double in[], double out[]) = 0;
 
     virtual void operator()(const Vector &in, Vector &out)
     {
-        return operator()(in.element, out.element);
+        return operator()(in.begin(), out.begin());
     }
 
     virtual void operator()(const vector<double> &in, vector<double> &out)
@@ -57,7 +64,7 @@ public:
         CORE_ASSERT_TRUE( (int)  in.size() > inputs , "Too few input numbers");
         CORE_ASSERT_TRUE( (int) out.size() > outputs, "Too few output numbers");
 
-        return operator()(&in[0], &out[1]);
+        return operator()(in.data(), out.data());
     }
 
     /**
@@ -87,7 +94,7 @@ public:
     {
         vector<double> out(outputs);
 
-        operator ()(in, &out[0]);
+        operator ()(in, out.data());
         double sumsq = 0.0;
         for (double d : out)
         {
@@ -99,7 +106,7 @@ public:
 
     virtual Matrix getJacobian(const Vector &in, double delta = 1e-7)
     {
-        return getJacobian(in.element, delta);
+        return getJacobian(&in[0], delta);
     }
 
     /*

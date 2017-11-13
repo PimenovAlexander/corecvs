@@ -1,13 +1,18 @@
 #include <fstream>
 
-#include "meshLoader.h"
-#include "plyLoader.h"
-#include "stlLoader.h"
-#include "objLoader.h"
+#include "core/utils/utils.h"
+
+#include "core/fileformats/meshLoader.h"
+#include "core/fileformats/plyLoader.h"
+#include "core/fileformats/stlLoader.h"
+#include "core/fileformats/objLoader.h"
+#include "core/fileformats/gcodeLoader.h"
 
 namespace corecvs {
 using namespace std;
 
+/*
+ // Depricated
 bool MeshLoader::endsWith(const string &fileName, const char *extention)
 {
     size_t extLen = strlen(extention);
@@ -15,6 +20,7 @@ bool MeshLoader::endsWith(const string &fileName, const char *extention)
         return true;
     return false;
 }
+*/
 
 MeshLoader::MeshLoader() :
     trace(false)
@@ -25,6 +31,7 @@ MeshLoader::MeshLoader() :
 static const char *PLY_RES = ".ply";
 static const char *STL_RES = ".stl";
 static const char *OBJ_RES = ".obj";
+static const char *GCODE_RES = ".gcode";
 
 bool MeshLoader::load(Mesh3D *mesh, const string &fileName)
 {
@@ -32,11 +39,11 @@ bool MeshLoader::load(Mesh3D *mesh, const string &fileName)
     file.open(fileName, ios::in);
     if (file.fail())
     {
-        SYNC_PRINT(("MeshLoader::load(): Can't open mesh file <%s>/n", fileName.c_str()));
+        SYNC_PRINT(("MeshLoader::load(): Can't open mesh file <%s>\n", fileName.c_str()));
         return false;
     }
 
-    if (endsWith(fileName, PLY_RES))
+    if (HelperUtils::endsWith(fileName, PLY_RES))
     {
         SYNC_PRINT(("MeshLoader::load(): Loading PLY <%s>\n", fileName.c_str()));
         PLYLoader loader;
@@ -49,7 +56,7 @@ bool MeshLoader::load(Mesh3D *mesh, const string &fileName)
         }
     }
 
-    if (endsWith(fileName, STL_RES))
+    if (HelperUtils::endsWith(fileName, STL_RES))
     {
         SYNC_PRINT(("MeshLoader::load(): Loading STL <%s>\n", fileName.c_str()));
         STLLoader loader;
@@ -61,11 +68,23 @@ bool MeshLoader::load(Mesh3D *mesh, const string &fileName)
         }
     }
 
-    if (endsWith(fileName, OBJ_RES))
+    if (HelperUtils::endsWith(fileName, OBJ_RES))
     {
         SYNC_PRINT(("MeshLoader::load(): Loading OBJ <%s>\n", fileName.c_str()));
         OBJLoader loader;
         if (loader.loadOBJSimple(file, *mesh) != 0)
+        {
+           SYNC_PRINT(("MeshLoader::load(): Unable to load mesh"));
+           file.close();
+           return false;
+        }
+    }
+
+    if (HelperUtils::endsWith(fileName, GCODE_RES))
+    {
+        SYNC_PRINT(("MeshLoader::load(): Loading GCODE <%s>\n", fileName.c_str()));
+        GcodeLoader loader;
+        if (loader.loadGcode(file, *mesh) != 0)
         {
            SYNC_PRINT(("MeshLoader::load(): Unable to load mesh"));
            file.close();
@@ -83,11 +102,11 @@ bool MeshLoader::save(Mesh3D *mesh, const string &fileName)
     file.open(fileName, ios::out);
     if (file.fail())
     {
-        SYNC_PRINT(("MeshLoader::save(): Can't open mesh file <%s> for writing/n", fileName.c_str()));
+        SYNC_PRINT(("MeshLoader::save(): Can't open mesh file <%s> for writing\n", fileName.c_str()));
         return false;
     }
 
-    if (endsWith(fileName, PLY_RES))
+    if (HelperUtils::endsWith(fileName, PLY_RES))
     {
         SYNC_PRINT(("MeshLoader::save(): Saving PLY <%s>\n", fileName.c_str()));
         PLYLoader loader;
@@ -100,7 +119,7 @@ bool MeshLoader::save(Mesh3D *mesh, const string &fileName)
         }
     }
 
-    if (endsWith(fileName, OBJ_RES))
+    if (HelperUtils::endsWith(fileName, OBJ_RES))
     {
         SYNC_PRINT(("MeshLoader::save(): Saving OBJ <%s>\n", fileName.c_str()));
         OBJLoader loader;
@@ -113,7 +132,7 @@ bool MeshLoader::save(Mesh3D *mesh, const string &fileName)
         }
     }
 
-    if (endsWith(fileName, STL_RES))
+    if (HelperUtils::endsWith(fileName, STL_RES))
     {
         SYNC_PRINT(("MeshLoader::save(): Saving binary STL <%s>\n", fileName.c_str()));
         STLLoader loader;
@@ -131,7 +150,7 @@ bool MeshLoader::save(Mesh3D *mesh, const string &fileName)
 
 std::string MeshLoader::extentionList()
 {
-    return string("*") + string(PLY_RES) + " *" + string(STL_RES) + " *" + string(OBJ_RES) ;
+    return string("*") + string(PLY_RES) + " *" + string(STL_RES) + " *" + string(OBJ_RES) + " *" + string(GCODE_RES);
 }
 
 } //namespace corecvs

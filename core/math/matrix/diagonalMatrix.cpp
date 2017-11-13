@@ -6,7 +6,7 @@
  * \author alexander
  */
 
-#include "diagonalMatrix.h"
+#include "core/math/matrix/diagonalMatrix.h"
 namespace corecvs {
 
 double DiagonalMatrix::det() const

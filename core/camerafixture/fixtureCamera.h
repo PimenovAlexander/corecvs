@@ -2,12 +2,12 @@
 
 #include <unordered_map>
 
-#include "calibrationLocation.h"  // LocationData
-#include "lensDistortionModelParameters.h"
-#include "line.h"
-#include "convexPolyhedron.h"
-#include "pointObservation.h"
-#include "calibrationCamera.h"
+#include "core/cameracalibration/calibrationLocation.h"  // LocationData
+#include "core/alignment/lensDistortionModelParameters.h"
+#include "core/geometry/line.h"
+#include "core/geometry/convexPolyhedron.h"
+#include "core/alignment/pointObservation.h"
+#include "core/cameracalibration/calibrationCamera.h"
 
 namespace corecvs {
 

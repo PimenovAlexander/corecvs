@@ -10,8 +10,8 @@
  * \author: alexander
  */
 
-#include "commonMappers.h"
-#include "g12Buffer.h"
+#include "core/buffers/commonMappers.h"
+#include "core/buffers/g12Buffer.h"
 namespace corecvs {
 
 

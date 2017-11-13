@@ -1,12 +1,12 @@
 #ifndef BLASREPLACEMENT_H
 #define BLASREPLACEMENT_H
 
-#include "global.h"
-#include "matrix.h"
-#include "matrix33.h"
+#include "core/utils/global.h"
+#include "core/math/matrix/matrix.h"
+#include "core/math/matrix/matrix33.h"
 
-#include "tbbWrapper.h"
-#include "sseWrapper.h"
+#include "core/tbbwrapper/tbbWrapper.h"
+#include "core/math/sse/sseWrapper.h"
 
 namespace corecvs {
 

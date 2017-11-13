@@ -1,7 +1,7 @@
 #ifndef POLYLINE_H
 #define POLYLINE_H
-#include "vector3d.h"
-#include "rgbColor.h"
+#include "core/math/vector/vector3d.h"
+#include "core/buffers/rgb24/rgbColor.h"
 
 namespace corecvs {
 

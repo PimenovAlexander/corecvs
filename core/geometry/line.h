@@ -1,8 +1,11 @@
 #ifndef LINE_H_
 #define LINE_H_
-#include "vector2d.h"
-#include "vector3d.h"
-#include "matrix44.h"
+
+#include <cmath>
+
+#include "core/math/vector/vector2d.h"
+#include "core/math/vector/vector3d.h"
+#include "core/math/matrix/matrix44.h"
 
 
 namespace corecvs {
@@ -48,8 +51,20 @@ public:
  * Line segment in 2D and 3D
  *
  */
-typedef Segment<Vector2dd> Segment2d;
+//typedef Segment<Vector2dd> Segment2d;
 typedef Segment<Vector3dd> Segment3d;
+
+class Segment2d : public Segment<Vector2dd>
+{
+public:
+    Segment2d(const Vector2dd &_a, const Vector2dd &_b) :
+        Segment<Vector2dd>(_a,_b)
+    {}
+
+   static Vector2dd intersect(const Segment2d &s1, const Segment2d &s2, bool &hasIntersection);
+
+};
+
 
 
 /**
@@ -75,9 +90,26 @@ public:
         p(_p)
     {}
 
+          VectorType &direction()       {return a;}
+    const VectorType &direction() const {return a;}
+
+          VectorType &origin()       {return p;}
+    const VectorType &origin() const {return p;}
+
+
     VectorType getPoint(double t) const
     {
         return p + a * t;
+    }
+
+    VectorType getStart() const
+    {
+        return p;
+    }
+
+    VectorType getEnd() const
+    {
+        return getPoint(1.0);
     }
 
     VectorType projectOnRay(const VectorType &q)
@@ -103,6 +135,17 @@ public:
         RealType toReturn(*this);
         toReturn.normalise();
         return toReturn;
+    }
+
+    static RealType FromOriginAndDirection(const VectorType &origin, const VectorType &direction)
+    {
+        return RealType(direction, origin);
+    }
+
+
+    static RealType FromDirectionAndOrigin(const VectorType &direction, const VectorType &origin)
+    {
+        return RealType(direction, origin);
     }
 
     /**
@@ -145,8 +188,8 @@ public:
     template<typename ConvexType>
     bool clip(const ConvexType &convex, double &t1, double &t2) const
     {
-        t1 = -numeric_limits<double>::max();
-        t2 =  numeric_limits<double>::max();
+        t1 = -numeric_limits<double>::infinity();
+        t2 =  numeric_limits<double>::infinity();
 
         for (unsigned i = 0; i < convex.size();  i++) {
             VectorType r = convex.getPoint(i);
@@ -156,7 +199,15 @@ public:
 
             double numen = diff & n;
             double denum = a & n;
-            if (denum == 0.0) {
+            if (denum == 0.0) { /* We are parallel */
+                if (numen > 0) /* We are parallel and outside. Fail. Leaving. */
+                {
+                    t1 = -numeric_limits<double>::infinity();
+                    t2 =  numeric_limits<double>::infinity();
+                    return false;
+                }
+
+                /* We were on the right side. Still a chance for intersection */
                 continue;
             }
             double t = numen / denum;
@@ -179,6 +230,7 @@ public:
         out << ray.p << "->" << ray.a;
         return out;
     }
+
 };
 
 /**
@@ -195,18 +247,35 @@ public:
         BaseRay<Ray2d, Vector2dd>(s.b - s.a, s.a)
     {}
 
+    static Ray2d FromPoints(const Vector2dd &start, const Vector2dd &end)
+    {
+        return Ray2d(end - start, start);
+    }
+
+    static Ray2d FromPointAndDirection(const Vector2dd &point, const Vector2dd &direction)
+    {
+        return Ray2d(direction, point);
+    }
+
+    static bool hasIntersection(const Ray2d &ray1, const Ray2d &ray2);
+
+
+    static Vector2dd intersectionPoint(const Ray2d &ray1, const Ray2d &ray2, bool *hasIntersection);
+    static Vector2dd intersection(const Ray2d &ray1, const Ray2d &ray2, double &t1, double &t2);
+
+
 };
 
 /**
- * Ray2d is 3D version of Ray
+ * Ray3d is 3D version of Ray
  **/
 class Ray3d : public BaseRay<Ray3d, Vector3dd>
 {
 public:
     Ray3d() {}
 
-    Ray3d(const Vector3dd &_a, const Vector3dd & _p) :
-        BaseRay<Ray3d, Vector3dd>(_a, _p)
+    Ray3d(const Vector3dd &direction, const Vector3dd & origin) :
+        BaseRay<Ray3d, Vector3dd>(direction, origin)
     {}
 
     Ray3d(const BaseRay<Ray3d, Vector3dd> &base) : BaseRay<Ray3d, Vector3dd>(base)
@@ -226,8 +295,34 @@ public:
         return fabs(dp & denum) / l;
     }
 
+    double projectionP(const Vector3dd &point) const
+    {
+        Vector3dd d  = point - p;
+        return (d & a) / a.l2Metric();
+
+    }
+
+    Vector3dd projection(const Vector3dd &point) const
+    {
+        return getPoint(projectionP(point));
+    }
+
+    double distanceTo(const Vector3dd &point) const
+    {
+        return (point - projection(point)).l2Metric();
+    }
+
     /**
-     *    This is a helpful method to estimate properties of skew lines
+     *  This is a helpful method to estimate properties of skew lines
+     *  Assuming A and B - are points closest to each other on *this and other
+     *  respectively.
+     *
+     *  As a result there will be a vector that holds
+     *
+     *   x() - the parameter value to travel *this to get to A
+     *   y() - the parameter value to travel other to get to B
+     *   z() - the distance between A and B
+     *
      **/
     Vector3dd intersectCoef(Ray3d &other)
     {
@@ -251,9 +346,9 @@ public:
         return (getPoint(coef.x()) + other.getPoint(coef.y())) / 2.0;
     }
     
-    std::pair<corecvs::Vector3dd, corecvs::Vector3dd> pluckerize() const
+    std::pair<Vector3dd, Vector3dd> pluckerize() const
     {
-        auto an = a.normalised();
+        Vector3dd an = a.normalised();
         return std::make_pair(an, p ^ an);
     }
 
@@ -279,6 +374,20 @@ public:
         return Vector3dd(0.0);
     }
 
+    /**
+     *  This is a getPoint variant that respects infinitely distant points
+     **/
+    FixedVector<double, 4> getProjectivePoint(double t)
+    {
+        if (std::isinf(t)) {
+            if (t > 0) {
+                return FixedVector<double, 4>(a, 0.0);
+            } else {
+                return FixedVector<double, 4>(-a, 0.0);
+            }
+        }
+        return FixedVector<double, 4>(getPoint(t), 1.0);
+    }
 };
 
 #if 0
@@ -460,11 +569,6 @@ private:
  *  denotes a plane that pass throw the 0 point.
  *
  *
- *
- *
- *
- *
- *
  **/
 
 class Line2d : public Vector3dd
@@ -490,7 +594,7 @@ public:
      **/
     Line2d(const Segment2d &segment)
     {
-       (*this) = fromSegment(segment);
+       (*this) = FromSegment(segment);
     }
 
     /**
@@ -498,10 +602,10 @@ public:
      **/
     Line2d(const Ray2d &ray)
     {
-       (*this) = fromRay(ray);
+       (*this) = FromRay(ray);
     }
 
-    static Line2d fromRay(const Ray2d &ray)
+    static Line2d FromRay(const Ray2d &ray)
     {
        Vector2dd a = ray.a;
        Vector2dd p = ray.p;
@@ -509,9 +613,9 @@ public:
        return Line2d(n, -(p & n));
     }
 
-    static Line2d fromSegment(const Segment2d &segment)
+    static Line2d FromSegment(const Segment2d &segment)
     {
-        return fromRay(Ray2d(segment));
+        return FromRay(Ray2d(segment));
     }
 
     Vector2dd normal(void) const
@@ -519,10 +623,16 @@ public:
         return Vector2dd(element[0], element[1]);
     }
 
-    double last(void) const
+    double &last(void)
     {
         return element[2];
     }
+
+    const double &last(void) const
+    {
+        return element[2];
+    }
+
 
     /**
      *   Normalizes the normal vector without changing the line itself
@@ -591,6 +701,16 @@ public:
     double pointWeight(const Vector2dd & point) const
     {
         return (normal() & point) + last();
+    }
+
+    /**
+     *   Returns -1, 0, 1 depending on the size on which point lies relative to the line
+     **/
+    int side(const Vector2dd & point)
+    {
+        double weight = pointWeight(point);
+        if (weight == 0) return 0;
+        return weight > 0 ? 1 : -1;
     }
 
     /**
@@ -680,6 +800,17 @@ public:
         return result;
     }
 
+    Plane3d flippedNormal(void) const
+    {
+        return Plane3d(-normal(), last());
+    }
+
+    void flipNormal(void)
+    {
+        for (int i = 0; i < size() - 1; i++)
+            element[i] = - element[i];
+    }
+
     Vector3dd normal(void) const
     {
         return Vector3dd(element[0], element[1], element[2]);
@@ -754,7 +885,6 @@ public:
     }
 
 
-
      /**
       * \f$ a x_0 + b y_0 + c z_0 + d \f$
       *
@@ -816,6 +946,20 @@ public:
          return point - t * normal();
      }
 
+
+     Ray3d projectRayTo(const Ray3d &ray) const
+     {
+         double l2 = normal().sumAllElementsSq();
+
+         double dp = pointWeight(ray.p);
+         double tp = (dp / l2);
+
+         double da = normal() & ray.a;
+         double ta = (da / l2);
+
+         return Ray3d(ray.a - ta * normal(), ray.p - tp * normal());
+     }
+
      /**
       *   projecting zero to the current plane
       **/
@@ -829,7 +973,7 @@ public:
     /**
      *  Construct a plane from normal
      **/
-    static Plane3d FormNormal(const Vector3dd &normal)
+    static Plane3d FromNormal(const Vector3dd &normal)
     {
         return Plane3d(normal);
     }
@@ -880,6 +1024,102 @@ public:
     }
 
 };
+
+inline bool Ray2d::hasIntersection(const Ray2d &ray1, const Ray2d &ray2)
+{
+    Line2d l1 = Line2d::FromRay(ray1);
+    Line2d l2 = Line2d::FromRay(ray2);
+
+    int flag01 = l1.side(ray2.getStart());
+    int flag02 = l1.side(ray2.getEnd());
+
+    int flag11 = l2.side(ray1.getStart());
+    int flag12 = l2.side(ray1.getEnd());
+
+    return (flag01 != flag02) && (flag11 != flag12);
+}
+
+inline Vector2dd Ray2d::intersectionPoint(const Ray2d &ray1, const Ray2d &ray2, bool *hasIntersection = NULL)
+{
+    double t1, t2;
+    Vector2dd v  = intersection(ray1, ray2, t1, t2);
+
+    if (hasIntersection != NULL)
+    {
+        *hasIntersection = (t1 != std::numeric_limits<double>::infinity());
+    }
+
+    return v;
+}
+
+ /**
+  *  This is basically Kramer method
+  *
+  * \f[
+  *  a_{1x} * t_1 - a_{2x} * t_2 = p_{1x} - p_{2x};
+  *  a_{1y} * t_1 - a_{2y} * t_2 = p_{1y} - p_{2y};
+  * \f]
+  *
+  * however, because dist has geometric meaning as the parallelogram area
+  * we can easily find geomtic interpertation
+  *
+  *
+  **/
+inline Vector2dd Ray2d::intersection(const Ray2d &ray1, const Ray2d &ray2, double &t1, double &t2)
+{
+/*    SYNC_PRINT(("Ray2d::intersection((%lf %lf -> %lf %lf), (%lf %lf -> %lf %lf)): called\n",
+        ray1.a.x(), ray1.a.y(),
+        ray1.p.x(), ray1.p.y(),
+
+        ray2.a.x(), ray2.a.y(),
+        ray2.p.x(), ray2.p.y()
+    ));*/
+
+    Vector2dd dist = ray2.p - ray1.p;
+
+    double ortog = ray2.a & ray1.a.leftNormal(); /*  This is det of main matrix */
+    if (ortog == 0) {
+        t1 = std::numeric_limits<double>::infinity();
+        t2 = std::numeric_limits<double>::infinity();
+//        SYNC_PRINT(("Ray2d::intersection(): no intersection\n"));
+        return Vector2dd(0, 0);
+    }
+
+    t2 = -(dist & ray1.a.leftNormal()) / ortog;
+    t1 = -(dist & ray2.a.leftNormal()) / ortog;
+
+//    SYNC_PRINT(("Ray2d::intersection(): t1=%lf t2=%lf\n", t1, t2 ));
+    return ray1.getPoint(t1);
+}
+
+inline Vector2dd Segment2d::intersect(const Segment2d &s1, const Segment2d &s2, bool &hasIntersection)
+{
+    Ray2d r1(s1);
+    Ray2d r2(s2);
+
+    double t1 = 0;
+    double t2 = 0;
+
+    //cout << "Segment2d::intersect(): " << r1 << " and " << r2 << std::endl;
+
+    Vector2dd x = Ray2d::intersection(r1, r2, t1, t2);
+
+    if (t1 == std::numeric_limits<double>::infinity())
+    {
+        hasIntersection = false;
+        return Vector2dd::Zero();
+    }
+
+    if ((t1 < 0.0 || t1 > 1.0) ||
+        (t2 < 0.0 || t2 > 1.0))
+    {
+        hasIntersection = false;
+        return Vector2dd::Zero();
+    }
+
+    hasIntersection = true;
+    return x;
+}
 
 } //namespace corecvs
 

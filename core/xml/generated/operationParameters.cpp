@@ -8,7 +8,7 @@
 
 #include <vector>
 #include <stddef.h>
-#include "operationParameters.h"
+#include "core/xml/generated/operationParameters.h"
 
 /**
  *  Looks extremely unsafe because it depends on the order of static initialization.

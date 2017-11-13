@@ -9,9 +9,9 @@
  * \author alexander
  */
 
-#include "vector3d.h"
-#include "quaternion.h"
-#include "vector2d.h"
+#include "core/math/vector/vector3d.h"
+#include "core/math/quaternion.h"
+#include "core/math/vector/vector2d.h"
 
 using corecvs::Vector3dd;
 using corecvs::Quaternion;
