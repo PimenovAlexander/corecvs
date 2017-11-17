@@ -2,7 +2,7 @@
 #define POLYGONPOINTITERATOR_H
 
 #include "core/geometry/polygons.h"
-#include "core/geometry/simpleRenderer.h"
+#include "core/geometry/renderer/simpleRenderer.h"
 
 namespace corecvs {
 
@@ -33,20 +33,22 @@ public:
 
     PolygonSpanIterator(const Polygon &polygon) : polygon(polygon)
     {
-        /* Prepare the sorted array. We don't need is do far, we only need max and min. But non-convex polygon support */
+        /* Prepare the sorted array. We don't need is so far, we only need max and min. But non-convex polygon support */
         side.resize(polygon.size());
         sortedIndex.reserve(polygon.size());
         for (unsigned i = 0; i < polygon.size(); i++)
             sortedIndex.push_back(i);
 
         std::sort(sortedIndex.begin(), sortedIndex.end(), [=](int a, int b) { return polygon[a].y() < polygon[b].y(); });
-        int idx = sortedIndex.front() + 1;
+
+        /*There could be a one point polygon */
+        int idx = (sortedIndex.front() + 1) % polygon.size();
         while (idx != sortedIndex.back()) {
             side[idx] = true;
             idx = (idx + 1) % polygon.size();
         }
 
-        /** So far only convex poligons are supported **/
+        /** So far only convex polygons are supported **/
         bool orientation = true;
         bool isConvex = polygon.isConvex(&orientation);
         if (!isConvex) {
@@ -79,17 +81,17 @@ public:
         cout << "Indexes:" << currentIndex << " " << deep << " " << shallow << endl;
 #endif
 
-        if (polygon.y(deep) < polygon.y(shallow)) std::swap(deep, shallow);
+        if (polygon.y(deep) < polygon.y(shallow))
+            std::swap(deep, shallow);
 
         double longslope = (polygon.x(deep) - origin.x()) / (polygon.y(deep) - origin.y());
         double centerx1 = origin.x() + longslope * (polygon.y(shallow) - origin.y());
         double centerx2 = polygon.x(shallow);
 
-        if (centerx2 < centerx1) std::swap(centerx2, centerx1);
-
+        if (centerx2 < centerx1)
+            std::swap(centerx2, centerx1);
 
         part = TrapezoidSpanIterator(origin.y(), polygon.y(shallow), origin.x(), origin.x(), centerx1, centerx2);
-
     }
 
     void step()
@@ -167,9 +169,9 @@ public:
         part.getSpan(y, x1, x2);
     }
 
-    LineSpanInt getSpan()
+    HLineSpanInt getSpan()
     {
-        LineSpanInt span;
+        HLineSpanInt span;
         getSpan(span.cy, span.x1, span.x2);
         return span;
     }
@@ -193,7 +195,7 @@ public:
         return this->hasValue();
     }
 
-    LineSpanInt operator *() {
+    HLineSpanInt operator *() {
         return getSpan();
     }
 
@@ -273,7 +275,7 @@ class PolygonPointIterator
 public:
     const Polygon &polygon;
     PolygonSpanIterator it;
-    LineSpanInt spanIt;
+    HLineSpanInt spanIt;
 
     PolygonPointIterator(const Polygon &polygon) :
         polygon(polygon),
@@ -288,7 +290,7 @@ public:
             if (it.hasValue()) {
                 spanIt = it.getSpan();
             } else {
-                spanIt = LineSpanInt::Empty();
+                spanIt = HLineSpanInt::Empty();
             }
         }
         //while(spanIt.step())

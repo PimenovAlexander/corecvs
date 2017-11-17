@@ -12,12 +12,7 @@
 #ifndef _MSC_VER
 # include <sys/time.h>
 #endif
-#ifdef WIN32
-# include <windows.h>       // GetCurrentThreadId
-#else
-# include <unistd.h>
-# include <sys/syscall.h>
-#endif
+
 
 #include <fstream>
 #include <vector>
@@ -56,8 +51,9 @@ public:
     void operator()(T* p)
     {
         CORE_UNUSED(p);
-        if (mNeedDel)
+        if (mNeedDel) {
             delete p;
+        }
     }
 };
 
@@ -67,29 +63,44 @@ public:
     std::mutex mMutex;
 
     LogDrainsKeeper() {}
+
    ~LogDrainsKeeper()
     {
-        for(auto it = begin(); it != end(); ++it)
+        SYNC_PRINT(("LogDrainsKeeper::~LogDrainsKeeper():called\n"));
+
+        while (!empty())
         {
-            delete_safe(*it);
+            LogDrain *drain = back();
+            pop_back();
+            delete_safe(drain);
         }
     }
 
-   void add(LogDrain* p) {
-       mMutex.lock();
-       push_back(p);
-       mMutex.unlock();
-   }
+    void add(LogDrain* p)
+    {
+        std::lock_guard<std::mutex> locker(mMutex);
+        push_back(p);
+    }
 
-   void detach(LogDrain* p) {
-       mMutex.lock();
-       const auto &it = std::find(begin(), end(), p);
-       if (it != end()){
-           erase(it);
-       }
-       mMutex.unlock();
-   }
+    void detach(LogDrain* p)
+    {
+        std::lock_guard<std::mutex> locker(mMutex);
+        const auto &it = std::find(begin(), end(), p);
+        if (it != end()) {
+            erase(it);
+        }
+    }
 
+    void detachLastAddedLog()
+    {
+        std::lock_guard<std::mutex> locker(mMutex);
+        if (size() > 1) {                // detach a log just have been added before
+            LogDrain* log = (*this)[size() - 1];
+            //detach(log);                  // to don't lock twice
+            resize(size() - 1);
+            delete_safe(log);
+        }
+    }
 };
 
 /** \class Log
@@ -110,6 +121,7 @@ public:
         , LEVEL_LAST                          /**< Last enum value for iterating */
     };
 
+    static int getCurrentThreadId();
     static const char *level_names[];
 
     Log(const LogLevel maxLocalLevel = LEVEL_ERROR);
@@ -184,11 +196,8 @@ public:
             message.get()->mOriginFileName     = originFileName;
             message.get()->mOriginFunctionName = originFunctionName;
             message.get()->mOriginLineNumber   = originLineNumber;
-#ifdef WIN32
-            message.get()->mThreadId = (int)GetCurrentThreadId();
-#else
-            message.get()->mThreadId = syscall(SYS_gettid);
-#endif
+            message.get()->mThreadId = Log::getCurrentThreadId();
+
             time(&message.get()->mTime);
         }
 
@@ -267,7 +276,7 @@ public:
     static bool         shouldWrite(LogLevel messageLevel) { return messageLevel >= mMinLogLevel; }
 
     /** add needed log drains for the app */
-    static void         addAppLog(int argc, char* argv[], cchar* logFileName = NULL);
+    static void         addAppLog(int argc, char* argv[], cchar* logFileName = nullptr, cchar *projectEnvVar = nullptr);
 
     static LogLevel         mMinLogLevel;
     static LogDrainsKeeper  mLogDrains;
@@ -322,6 +331,7 @@ public:
 
 class FileLogDrain : public LogDrain
 {
+    std::string    mPath;
     std::ofstream  mFile;
 
 public:

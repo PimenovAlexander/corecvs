@@ -26,6 +26,9 @@ int BaseReflection<OperationParameters>::dummy = OperationParameters::staticInit
 
 SUPPRESS_OFFSET_WARNING_BEGIN
 
+
+using namespace corecvs;
+
 int OperationParameters::staticInit()
 {
 
@@ -35,10 +38,11 @@ int OperationParameters::staticInit()
         "Operation Parameters",
         ""
     );
+
+     getReflection()->objectSize = sizeof(OperationParameters);
      
 
-    fields().push_back(
-        new EnumField
+    EnumField* field0 = new EnumField
         (
           OperationParameters::OPERATION_ID,
           offsetof(OperationParameters, mOperation),
@@ -54,8 +58,16 @@ int OperationParameters::staticInit()
           , new EnumOption(4,"Min")
           , new EnumOption(5,"Max")
           )
-        )
-    );
+        );
+    field0->widgetHint=BaseField::COMBO_BOX;
+    fields().push_back(field0);
+    /*  */ 
+    ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
+    directory[std::string("Operation Parameters")]= &reflection;
+   return 0;
+}
+int OperationParameters::relinkCompositeFields()
+{
    return 0;
 }
 

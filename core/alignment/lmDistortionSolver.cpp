@@ -67,17 +67,20 @@ LMLinesDistortionSolver::LMLinesDistortionSolver()
 RadialCorrection LMLinesDistortionSolver::solve()
 {
     lineList->print();
-    cout << "Parameters:" << parameters << std::endl;
-    cout << "Guess center:" << initialCenter << std::endl;
+    std::cout << "Parameters:"   << parameters    << std::endl;
+    std::cout << "Guess center:" << initialCenter << std::endl;
 
     vector<vector<Vector2dd> > straights = lineList->getLines();
-    L_INFO_P("Starting distortion calibration on %d lines", straights.size());
+
+    /*L_INFO*/std::cout << "Starting distortion calibration on " << straights.size() << " lines" << std::endl;
+
+    CORE_ASSERT_TRUE_S(straights.size() > 0);
 
     RadialCorrection correction(LensDistortionModelParameters(
        initialCenter.x(),
        initialCenter.y(),
        0.0 ,0.0,
-       vector<double>(parameters.polinomDegree()),
+       vector<double>(parameters.polynomDegree()),
        1.0,
        1.0,
        initialCenter.l2Metric(),
@@ -89,7 +92,7 @@ RadialCorrection LMLinesDistortionSolver::solve()
         correction,
         parameters.estimateCenter(),
         parameters.estimateTangent(),
-        parameters.polinomDegree(),
+        parameters.polynomDegree(),
         parameters.evenPowersOnly()
     );
 
@@ -110,11 +113,12 @@ RadialCorrection LMLinesDistortionSolver::solve()
     vector<double> value(costFunction->outputs, 0);
     vector<double> straightParams = straightLevMarq.fit(first, value);
 
-    L_INFO_P("Ending distortion calibration");
+    /*L_INFO_P*/std::cout << "Ending distortion calibration" << std::endl;
+
 //    updateScore();
     delete costFunction;
-    return modelFactory.getRadial(&straightParams[0]);
 
+    return modelFactory.getRadial(&straightParams[0]);
 }
 
 void LMLinesDistortionSolver::computeCosts(const RadialCorrection &correction, bool updatePoints)
@@ -125,7 +129,7 @@ void LMLinesDistortionSolver::computeCosts(const RadialCorrection &correction, b
         correction,
         parameters.estimateCenter(),
         parameters.estimateTangent(),
-        parameters.polinomDegree(),
+        parameters.polynomDegree(),
         parameters.evenPowersOnly()
     );
 

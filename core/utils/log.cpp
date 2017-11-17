@@ -1,8 +1,17 @@
 #include <iostream>
 
+#ifdef WIN32
+# include <windows.h>       // GetCurrentThreadId
+#else
+# include <unistd.h>
+# include <sys/syscall.h>
+#endif
+
 #include "core/utils/log.h"
 #include "core/reflection/commandLineSetter.h"
 #include "core/tbbwrapper/tbbWrapper.h"
+#include "core/filesystem/tempFolder.h"
+#include "core/utils/utils.h"
 
 const char *Log::level_names[] =
 {
@@ -33,10 +42,19 @@ int Log::staticInit()
 
 void Log::message(Message &message)
 {
-    for (auto& el: mLogDrains)
+    for (LogDrain *el: mLogDrains)
     {
         el->drain(message);
     }
+}
+
+int Log::getCurrentThreadId()
+{
+#ifdef WIN32
+            return (int)GetCurrentThreadId();
+#else
+            return syscall(SYS_gettid);
+#endif
 }
 
 Log::Log(const LogLevel /*maxLocalLevel*/)
@@ -79,13 +97,19 @@ std::string Log::formatted(const char *format, ...)
     return result;
 }
 
-void Log::addAppLog(int argc, char* argv[], cchar* logFileName)
+void Log::addAppLog(int argc, char* argv[], cchar* logFileName, cchar *projectEnvVar)
 {
     /** Detect min LogLevel and log filename from params
      */
     corecvs::CommandLineSetter setter(argc, (const char **)argv);
     Log::LogLevel minLogLevel = (Log::LogLevel)setter.getInt("logLevel", Log::LEVEL_INFO);
     std::string   logFile = setter.getString("logFile", logFileName ? logFileName : "");
+    auto logLevel = corecvs::HelperUtils::getEnvVar("CVSDK_LOG_LEVEL");
+    if (!logLevel.empty())
+    {
+        minLogLevel = (Log::LogLevel)std::stoi(logLevel.c_str());
+        std::cout << "Detected minLogLevel env.var.: set to " << minLogLevel << std::endl;
+    }
 
     /** add needed log drains
     */
@@ -116,6 +140,13 @@ void Log::addAppLog(int argc, char* argv[], cchar* logFileName)
     Log::mMinLogLevel = minLogLevel;
 
     L_INFO_P("%s", corecvs::tbbInfo().c_str());
+
+    if (projectEnvVar != nullptr)
+    {
+        auto path = corecvs::TempFolder::TempFolderPath(projectEnvVar, true);  // clear it
+        L_INFO_P("Working temp dir is <%s>", path.c_str());
+    }
+
 
     // Some MSVC stuff code to activate the memory leak detector dump if we have >1 exits!
 #ifdef USE_MSVC_DEBUG_MEM
@@ -200,15 +231,19 @@ void StdStreamLogDrain::drain(Log::Message &message)
 /////////////////////////////////////////////////////////////////////////////
 
 FileLogDrain::FileLogDrain(const std::string &path, bool bAppend, bool fullInfo)
-    : mFile(path.c_str(), bAppend ? std::ios_base::app : std::ios_base::trunc)
+    : mPath(path)
+    , mFile(path.c_str(), bAppend ? std::ios_base::app : std::ios_base::trunc)
 {
     mFullInfo = fullInfo;
 }
 
 FileLogDrain::~FileLogDrain()
 {
+    SYNC_PRINT(("FileLogDrain::~FileLogDrain():called\n"));
     mFile.flush();
     mFile.close();
+
+    SYNC_PRINT(("log <%s> saved\n", mPath.c_str()));
 }
 
 void FileLogDrain::drain(Log::Message &message)

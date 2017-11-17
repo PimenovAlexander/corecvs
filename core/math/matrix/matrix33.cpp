@@ -7,10 +7,9 @@
  * \date Jan 27, 2007
  * \author Alexander Pimenov
  **/
-
-
 #include "core/math/matrix/matrix33.h"
 #include "core/math/matrix/matrix.h"
+
 namespace corecvs {
 
 //#define ACCURATE
@@ -37,6 +36,60 @@ void Matrix33::invert()
  *
  * \return The \f$I^{-1}\f$
  */
+
+std::array<Vector3dd, 2> Matrix33::rank2Nullvectors() const
+{
+    double maxVal = std::abs(a(0, 0)), va;
+    int maxI = 0, maxJ = 0;
+    for (int i = 0; i < 3; ++i)
+        for (int j = 0; j < 3; ++j)
+            if (maxVal <= (va = std::abs(a(i, j))))
+            {
+                maxVal = va;
+                maxI = i;
+                maxJ = j;
+            }
+    int rI = -1, rJ = -1, cI = -1, cJ = -1;
+    double rMax = 0, cMax = 0;
+    double pivot = a(maxI, maxJ);
+
+    for (int i = 0; i < 3; ++i)
+        for (int j = 0; j < 3; ++j)
+            if (i != maxI && j != maxJ)
+            {
+                double vr = a(i, j) - a(maxI, j) * a(i, maxJ) / pivot;
+                double vc = a(i, j) - a(i, maxJ) * a(maxI, j) / pivot;
+
+                if (rMax <= (va = std::abs(vr)))
+                {
+                    rMax = va;
+                    rI = i;
+                    rJ = j;
+                }
+
+                if (cMax <= (va = std::abs(vc)))
+                {
+                    cMax = va;
+                    cI = i;
+                    cJ = j;
+                }
+            }
+    std::array<Vector3dd, 2> res;
+    int rFree = 3 - maxJ - rJ, cFree = 3 - maxI - cI;
+    res[1][rFree] = 1.0;
+    res[0][cFree] = 1.0;
+    double A = a(maxI, maxJ), B = a(maxI, rJ), C = a(maxI, rFree),
+           D = a(  rI, maxJ), E = a(  rI, rJ), F = a(  rI, rFree);
+    res[1][rJ  ] = -(F - D * C / A) / (E - D * B / A);
+    res[1][maxJ] = -(B * res[1][rJ] + C) / A;
+                        D = a( maxI, cJ);
+    B = a(   cI, maxJ); E = a(   cI, cJ);
+    C = a(cFree, maxJ); F = a(cFree, cJ);
+    res[0][cI  ] = -(F - D * C / A) / (E - D * B / A);
+    res[0][maxI] = -(B * res[0][cI] + C) / A;
+    return res;
+}
+
 Matrix33 Matrix33::inv() const
 {
     Matrix33 toReturn;
@@ -67,18 +120,16 @@ Matrix33 Matrix33::inv() const
 /**
  *   Computing determinant of the matrix.
  **/
-
 double Matrix33::det() const
 {
- return    a(0,0) * (a(1,1) * a(2,2) - a(1,2) * a(2,1))
-         - a(0,1) * (a(1,0) * a(2,2) - a(1,2) * a(2,0))
-         + a(0,2) * (a(1,0) * a(2,1) - a(1,1) * a(2,0));
+    return    a(0,0) * (a(1,1) * a(2,2) - a(1,2) * a(2,1))
+            - a(0,1) * (a(1,0) * a(2,2) - a(1,2) * a(2,0))
+            + a(0,2) * (a(1,0) * a(2,1) - a(1,1) * a(2,0));
 }
 
 /**
- *   Computing the trace  of the matrix. The sum of diagonal elements
+ *   Computing the trace of the matrix. The sum of diagonal elements
  **/
-
 double Matrix33::trace() const
 {
     return a(0,0) + a(1,1) + a(2,2);
@@ -123,7 +174,7 @@ void Matrix33::swapColumns(int r1, int r2)
  **/
 Matrix33 Matrix33::t() const
 {
-   return Matrix33(
+   return Matrix33 (
        a(0,0), a(1,0), a(2,0),
        a(0,1), a(1,1), a(2,1),
        a(0,2), a(1,2), a(2,2)
@@ -133,9 +184,6 @@ Matrix33 Matrix33::transposed() const
 {
     return t();
 }
-
-
-
 
 double Matrix33::frobeniusNorm() const
 {
@@ -157,7 +205,6 @@ double Matrix33::frobeniusNorm() const
  *  Matrix multiplication
  *  ACCURATE version is slower 1.5 - 2 times
  **/
-
 Matrix33 operator* (const Matrix33 &m1, const Matrix33 &m2)
 {
 #ifdef ACCURATE
@@ -237,10 +284,9 @@ Vector3dd Matrix33::diagonal() const
 }
 
 
-
 Matrix33 Matrix33::Identity()
 {
-  return Matrix33 (1.0);
+    return Matrix33 (1.0);
 }
 
 /**
@@ -257,16 +303,15 @@ Matrix33 Matrix33::Identity()
  * \param alpha angle to rotate by
  * \return the rotation matrix
  */
-
 Matrix33 Matrix33::RotationX (double alpha)
 {
-  double  sinA = sin(alpha);
-  double  cosA = cos(alpha);
-  return Matrix33 (
-      1,    0,     0,
-      0, cosA, -sinA,
-      0, sinA,  cosA
-  );
+    double  sinA = sin(alpha);
+    double  cosA = cos(alpha);
+    return Matrix33 (
+        1,    0,     0,
+        0, cosA, -sinA,
+        0, sinA,  cosA
+    );
 }
 
 /**
@@ -285,16 +330,14 @@ Matrix33 Matrix33::RotationX (double alpha)
  */
 Matrix33 Matrix33::RotationY (double alpha)
 {
-  double  sinA = sin(alpha);
-  double  cosA = cos(alpha);
-  return Matrix33 (
-      cosA,  0,  sinA,
-         0,  1,     0,
-     -sinA,  0,  cosA
-  );
-
+    double  sinA = sin(alpha);
+    double  cosA = cos(alpha);
+    return Matrix33 (
+        cosA,   0,  sinA,
+            0,  1,     0,
+        -sinA,  0,  cosA
+    );
 }
-
 
 /**
  * Creates a 2D projective transform for the rotation by the angle alpha
@@ -312,13 +355,13 @@ Matrix33 Matrix33::RotationY (double alpha)
  **/
 Matrix33 Matrix33::RotationZ (double alpha)
 {
-  double  sinA = sin(alpha);
-  double  cosA = cos(alpha);
-  return Matrix33 (
-      cosA, -sinA,  0,
-      sinA,  cosA,  0,
-         0,     0,  1
-  );
+    double  sinA = sin(alpha);
+    double  cosA = cos(alpha);
+    return Matrix33 (
+        cosA, -sinA,  0,
+        sinA,  cosA,  0,
+           0,     0,  1
+    );
 }
 
 Matrix33 Matrix33::RotationZ90()
@@ -368,25 +411,25 @@ Matrix33 Matrix33::RotationZ270()
  *  \return the rotation matrix
  *
  */
-Matrix33 Rotate (const Vector3dd& v, double alpha)
+Matrix33 Matrix33::Rotate (const Vector3dd& v, double alpha)
 {
     double c = cos(alpha);
     double s = sin(alpha);
 
     Vector3dd u = v / !v;
 
-    return Matrix33(
-     u.x() * u.x() + (1 - u.x() * u.x() ) * c,
-     u.x() * u.y() * (1 - c) - u.z() * s,
-     u.x() * u.z() * (1 - c) + u.y() * s,
+    return Matrix33 (
+        u.x() * u.x() + (1 - u.x() * u.x() ) * c,
+        u.x() * u.y() * (1 - c) - u.z() * s,
+        u.x() * u.z() * (1 - c) + u.y() * s,
 
-     u.x() * u.y() * (1 - c) + u.z() * s,
-     u.y() * u.y() + (1 - u.y() * u.y() ) * c,
-     u.y() * u.z() * (1 - c) - u.x() * s,
+        u.x() * u.y() * (1 - c) + u.z() * s,
+        u.y() * u.y() + (1 - u.y() * u.y() ) * c,
+        u.y() * u.z() * (1 - c) - u.x() * s,
 
-     u.x() * u.z() * (1 - c) - u.y() * s,
-     u.y() * u.z() * (1 - c) + u.x() * s,
-     u.z() * u.z() + (1 - u.z() * u.z()) * c
+        u.x() * u.z() * (1 - c) - u.y() * s,
+        u.y() * u.z() * (1 - c) + u.x() * s,
+        u.z() * u.z() + (1 - u.z() * u.z()) * c
     );
 }
 
@@ -419,6 +462,15 @@ Matrix33 Matrix33::MirrorXZ()
     return Matrix33 (
         1,  0,  0,
         0, -1,  0,
+        0,  0,  1
+    );
+}
+
+Matrix33 Matrix33::SwapXY()
+{
+    return Matrix33 (
+        0,  1,  0,
+        1,  0,  0,
         0,  0,  1
     );
 }
@@ -531,13 +583,12 @@ Matrix33 Matrix33::CrossProductRight(const Vector3dd &vector)
  * */
 Matrix33 Matrix33::CrossProductLeft(const Vector3dd &vector)
 {
-    return Matrix33(
+    return Matrix33 (
                0.0, -vector.z(),  vector.y(),
         vector.z(),         0.0, -vector.x(),
        -vector.y(),  vector.x(),         0.0
-       );
+    );
 }
-
 
 /**
  * \brief This function returns a matrix constucted as a product of two vectors
@@ -552,11 +603,11 @@ Matrix33 Matrix33::CrossProductLeft(const Vector3dd &vector)
  **/
 Matrix33 Matrix33::VectorByVector(const Vector3dd &a, const Vector3dd &b)
 {
-   return Matrix33(
+    return Matrix33(
         b.x() * a.x(), b.y() * a.x(), b.z() * a.x(),
         b.x() * a.y(), b.y() * a.y(), b.z() * a.y(),
         b.x() * a.z(), b.y() * a.z(), b.z() * a.z()
-   );
+    );
 }
 
 /**
@@ -642,8 +693,8 @@ Matrix33 Matrix33::ProjectiveByPoints(int pointNumber, Vector2dd points[], Vecto
     if (pointNumber == 4)
         return ProjectiveByPoints(points, images);
 
-    Matrix X(pointNumber * 2,8);
-    Matrix B(pointNumber * 2,1);
+    Matrix X(pointNumber * 2, 8);
+    Matrix B(pointNumber * 2, 1);
 
     for (int i = 0; i < pointNumber; i++)
     {
@@ -675,4 +726,3 @@ Matrix33 Matrix33::ProjectiveByPoints(int pointNumber, Vector2dd points[], Vecto
 
 
 } //namespace corecvs
-

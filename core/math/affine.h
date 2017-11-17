@@ -5,19 +5,19 @@
  * \date Apr 24, 2011
  * \author alexander
  */
-
 #ifndef AFFINE_H_
 #define AFFINE_H_
+
 #include "core/math/vector/vector3d.h"
 #include "core/math/quaternion.h"
 #include "core/math/matrix/matrix33.h"
+#include "core/math/matrix/matrix22.h"
 #include "core/geometry/line.h"
 
 namespace corecvs {
 
-
 /**
- *  \brief Template class that holds the affine transformation of the space in form of rotational/shear part
+ *  \brief Template class that holds the affine transformation of the space in form of rotational/scale/shear part
  *  and shift part.
  *
  *  Generally it is either quaternion based (and can't hold shear/scale on this case) or Matrix33 based.
@@ -31,20 +31,15 @@ public:
     LinearType rotor;
     Vector3dd  shift;
 
-    explicit Affine3D(
-            LinearType _rotor = LinearType::Identity(),
-            Vector3dd  _shift = Vector3dd(0.0, 0.0, 0.0)
-           ) :
-        rotor(_rotor),
-        shift(_shift)
-    {
-    }
+    explicit Affine3D(LinearType _rotor = LinearType::Identity(), Vector3dd _shift = Vector3dd::Zero())
+        : rotor(_rotor)
+        , shift(_shift)
+    {}
 
-    explicit Affine3D(Vector3dd  _shift) :
-        rotor(LinearType::Identity()),
-        shift(_shift)
-    {
-    }
+    explicit Affine3D(Vector3dd _shift)
+        : rotor(LinearType::Identity())
+        , shift(_shift)
+    {}
 
     static LinearType superpose(const LinearType &l1, const LinearType &l2);
 
@@ -129,9 +124,8 @@ public:
     }
 
     /* Pretty print */
-    void prettyPrint (ostream &out = cout) const;
-    void prettyPrint1(ostream &out = cout) const;
-
+    //void prettyPrint (ostream &out = cout) const;
+      void prettyPrint1(ostream &out = cout) const;
 };
 
 /**
@@ -153,7 +147,7 @@ inline Affine3D<Matrix33> Affine3D<Matrix33>::inverted() const
 }
 
 template <>
-corecvs::Affine3D<Matrix33>::operator corecvs::Matrix44() const;
+corecvs::Affine3D<Matrix33>  ::operator corecvs::Matrix44() const;
 template <>
 corecvs::Affine3D<Quaternion>::operator corecvs::Matrix44() const;
 
@@ -182,9 +176,108 @@ typedef Affine3D<Quaternion> Affine3DQ;
 typedef Affine3D<Matrix33>   Affine3DM;
 
 
-/*Affine 2d*/
+/**
+ * Affine 2d
+   TODO: Merge common code in CRTP style
+**/
+
+template <typename LinearType>
+class Affine2D
+{
+public:
+    LinearType rotor;
+    Vector2dd  shift;
+
+    explicit Affine2D(LinearType _rotor = LinearType::Identity(), Vector2dd _shift = Vector2dd::Zero())
+        : rotor(_rotor)
+        , shift(_shift)
+    {}
+
+    explicit Affine2D(Vector2dd _shift)
+        : rotor(LinearType::Identity())
+        , shift(_shift)
+    {}
+
+    static LinearType superpose(const LinearType &l1, const LinearType &l2);
+
+    friend std::ostream& operator<< (std::ostream& os, const Affine2D &t)
+    {
+        os << t.shift << " " << t.rotor;
+        return os;
+    }
+
+    friend inline Vector2dd operator *(const Affine2D &affine, const Vector2dd &x)
+    {
+        return affine.rotor * x + affine.shift;
+    }
+
+    friend inline Ray2d operator *(const Affine2D &affine, const Ray2d &r)
+    {
+        return Ray2d(affine.rotor * r.a, affine * r.p);
+    }
+
+    inline Vector2dd apply(const Vector2dd &x) const
+    {
+        return (*this) * x;
+    }
+
+    //inline Vector2dd applyInv(const Vector2dd &x) const;
+
+    /**
+     *
+     *   A2 := ax + b
+     *   A1 := cx + d
+     *
+     *   A1 * A2 := c(ax + b) + d = ca(x) +  (cb + d)
+     *
+     **/
+    friend inline Affine2D operator *(const Affine2D &A1, const Affine2D &A2)
+    {
+        return Affine2D(
+             superpose(A1.rotor, A2.rotor),
+             A1.rotor * A2.shift + A1.shift
+        );
+    }
+
+    static Affine2D Rotation(double angle)
+    {
+        return Affine2D(LinearType::RotationX(angle));
+    }
+
+    static Affine2D Identity()
+    {
+        return Affine2D(LinearType::Identity());
+    }
+
+    static Affine2D Shift(const Vector3dd &translation)
+    {
+        return Affine2D(LinearType::Identity(), translation);
+    }
+
+    static Affine2D Shift(double x, double y, double z)
+    {
+        return Affine2D(LinearType::Identity(), Vector3dd(x, y, z));
+    }
+
+    //Affine2D inverted() const;
+
+    //explicit operator corecvs::Matrix33() const;
+
+    template<class VisitorType>
+    void accept(VisitorType &visitor)
+    {
+        visitor.visit(shift, Vector3dd(0.0, 0.0, 0.0) , "shift");
+        visitor.visit(rotor, Quaternion::Identity()   , "rotor");
+    }
+
+    /* Pretty print */
+    //void prettyPrint (ostream &out = cout) const;
+    //void prettyPrint1(ostream &out = cout) const;
+};
+
+typedef Affine2D<Matrix22>  Affine2DM;
 
 
 } // namespace corecvs
-#endif /* AFFINE_H_ */
 
+#endif /* AFFINE_H_ */

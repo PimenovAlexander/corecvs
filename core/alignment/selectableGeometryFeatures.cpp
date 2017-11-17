@@ -25,7 +25,7 @@ void SelectableGeometryFeatures::addSelection(SelectableGeometryFeatures::Vertex
 void SelectableGeometryFeatures::removeSelection(SelectableGeometryFeatures::Vertex *vertex)
 {
     vector<Vertex*>::iterator it = std::remove(mSelectedPoints.begin(), mSelectedPoints.end(), vertex);
-    mSelectedPoints.erase( it, mSelectedPoints.end() );
+    mSelectedPoints.erase(it, mSelectedPoints.end());
     vertex->mSelected = false;
 }
 
@@ -66,12 +66,14 @@ void SelectableGeometryFeatures::deletePath(SelectableGeometryFeatures::VertexPa
     {
         removeSelection(path);
     }
+
     for (unsigned i = 0; i < path->vertexes.size(); i++)
     {
         path->vertexes[i]->ownerPath = NULL;
     }
+
     vector<VertexPath *>::iterator it = std::remove(mPaths.begin(), mPaths.end(), path);
-    mPaths.erase( it, mPaths.end() );
+    mPaths.erase(it, mPaths.end());
     delete path;
 }
 
@@ -81,7 +83,6 @@ SelectableGeometryFeatures::Vertex* SelectableGeometryFeatures::appendNewVertex(
     mPoints.back()->ownerPath = NULL;
     return mPoints.back();
 }
-
 
 void SelectableGeometryFeatures::deselectAllPath()
 {
@@ -101,14 +102,11 @@ void SelectableGeometryFeatures::addVertexToPath(SelectableGeometryFeatures::Ver
 void SelectableGeometryFeatures::removeVertexFromPath(SelectableGeometryFeatures::Vertex *vertex, bool purgeEmptyPath)
 {
     VertexPath *ownerPath = vertex->ownerPath;
-
     if (ownerPath == NULL)
-    {
         return;
-    }
 
-    vector<Vertex*>::iterator it = std::remove(ownerPath->vertexes.begin(), mSelectedPoints.end(), vertex);
-    ownerPath->vertexes.erase( it, mSelectedPoints.end() );
+    vector<Vertex*>::iterator it = std::remove(ownerPath->vertexes.begin(), ownerPath->vertexes.end(), vertex);
+    ownerPath->vertexes.erase(it, ownerPath->vertexes.end());
 
     if (ownerPath->isEmpty() && purgeEmptyPath)
     {
@@ -140,7 +138,7 @@ void SelectableGeometryFeatures::deleteVertex(Vertex *vertex)
     }
 
     vector<Vertex *>::iterator it = std::remove(mPoints.begin(), mPoints.end(), vertex);
-    mPoints.erase( it, mPoints.end() );
+    mPoints.erase(it, mPoints.end());
     delete_safe (vertex);
 }
 
@@ -407,14 +405,14 @@ void SelectableGeometryFeatures::draw(RGB24Buffer &buffer)
                 corecvs::Vector2dd to   = v_ptr->position;
 
                 auto diff = from - to;
-                int sx = std::abs(diff[0]) * 2 + 1;
-                int sy = std::abs(diff[1]) * 2 + 1;
+                int sx = (int)(std::abs(diff[0]) * 2 + 1);
+                int sy = (int)(std::abs(diff[1]) * 2 + 1);
                 int steps = std::max(sx, sy);
 
                 for (double alpha = 0.0; alpha < 1.0; alpha += 1.0 / steps)
                 {
                     auto p = from * alpha + (1.0 - alpha) * to;
-                    int px = p[0] + 0.5, py = p[1] + 0.5;
+                    int px = (int)(p[0] + 0.5), py = (int)(p[1] + 0.5);
                     for (int y = py - 1; y < py + 2; ++y)
                         for (int x = px - 1; x < px + 2; ++x)
                             if (std::abs(x - p[0]) < 0.5 && std::abs(y - p[1]) < 0.5 && x >= 0 && x < buffer.w && y >= 0 && y < buffer.h)
@@ -427,7 +425,7 @@ void SelectableGeometryFeatures::draw(RGB24Buffer &buffer)
 
     for (auto& p: mPoints)
     {
-        int px = p->position[0], py = p->position[1];
+        int px = (int)p->position[0], py = (int)p->position[1];
         if (px >= 0 && px < buffer.w && py >= 0 && py < buffer.h)
             buffer.element(py, px) = corecvs::RGBColor(0x00ff00);
     }

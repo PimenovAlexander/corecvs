@@ -1,6 +1,4 @@
 #include "core/polynomial/polynomialSolver.h"
-
-#include "core/utils/global.h"
 #include "core/math/matrix/matrix.h"
 #include "core/math/vector/vector.h"
 

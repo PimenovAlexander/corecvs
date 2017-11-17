@@ -12,6 +12,7 @@
 #include "core/math/quaternion.h"
 #include "core/geometry/line.h"
 #include "core/rectification/correspondenceList.h"
+#include "core/math/affine.h"
 
 namespace corecvs {
 
@@ -23,6 +24,8 @@ namespace corecvs {
  *  \f[
  *   (x_{2}, y_{2}, z_{2}) = T R (x_{2}, y_{2}, z_{2})^T
  *  \f]
+ *
+ *  Most probably it should be ansector to Affine3DQ
  *
  **/
 class EssentialDecomposition
@@ -192,6 +195,42 @@ template<class VisitorType>
 		return out;
     }
 
+
+    static EssentialDecomposition FromAffine(const Affine3DQ &affine )
+    {
+        EssentialDecomposition result;
+        result.direction = affine.shift;
+        result.rotation  = affine.rotor.toMatrix();
+        return result;
+    }
+
+
+    /**
+     *  This method returns the rotation of the camera in the reference frame in which the baseline is OX.
+     *  Result is obviously not unique and looses precision if one camera is behind.
+     *
+     *  \param q1  first  rotation
+     *  \param q2  second rotation
+     *
+     **/
+    void toTwoRotations(Quaternion &q1, Quaternion &q2)
+    {
+        Vector3dd oX = direction.normalised();
+        Vector3dd dir1 = Vector3dd::OrtZ();
+        Vector3dd dir2 = rotation * Vector3dd::OrtZ();
+        Vector3dd oZ = (dir1 + dir2).normalised(); /* Drama would happen sometimes. So far oZ and oX are not orthogonal */
+        Vector3dd oY = (  oZ ^   oX).normalised(); /* More drama possible here     */
+        oZ = (oX ^ oY).normalised();
+
+        Matrix33 rotator = Matrix33::FromColumns(oX, oY, oZ);
+        q1 =  Quaternion::FromMatrix(rotator).conjugated();
+        q2 =  q1 ^ Quaternion::FromMatrix(rotation);
+    }
+
+    Affine3DQ toSecondCameraAffine(double scale = 1.0)
+    {
+        return Affine3DQ(Quaternion::FromMatrix(rotation), direction * scale);
+    }
 
 };
 
@@ -492,6 +531,51 @@ public:
     }
 
     /**
+     *
+     *   \param input
+     *   \param decomposition
+     **/
+    EssentialDecomposition decompose(std::vector<Correspondence *> *input, EssentialDecomposition decomposition[4])
+    {
+        double cost[4];
+        cout << "=============================================================" << endl;
+        this->decompose(decomposition);
+        int selected = 0;
+        for (selected = 0; selected < 4; selected++)
+        {
+             cout << "Decomposition " << selected << endl << decomposition[selected] << endl;
+
+            double d1;
+            double d2;
+            double err;
+            cost[selected] = 0.0;
+            EssentialDecomposition *dec = &(decomposition[selected]);
+            for (unsigned i = 0; i < input->size(); i++)
+            {
+                dec->getScaler(*(input->at(i)), d1, d2, err);
+                if (d1 > 0.0 && d2 > 0.0)
+                    cost[selected]++;
+            }
+
+            cout << "decomposition cost:" << cost[selected] << endl;
+        }
+
+        double maxCost = 0.0;
+        int finalSelection = 0;
+        for (selected = 0; selected < 4; selected++)
+        {
+            if (cost[selected] > maxCost)
+            {
+                maxCost = cost[selected];
+                finalSelection = selected;
+            }
+        }
+        cout << endl;
+        cout << "Chosen decomposition" << endl << decomposition[finalSelection] << endl;
+        return decomposition[finalSelection];
+    }
+
+    /**
      * Calculating vectors for left and right nullspaces of the 3 by 3 matrix of rank 2
      *
      * \f[ e_1 F = 0 \f]
@@ -637,6 +721,16 @@ public:
         V.transpose();
 
         *this = *this * Wbig * V;
+    }
+
+    void prettyPrint()
+    {
+        EssentialDecomposition d[4];
+        decompose(d);
+        for (size_t i = 0; i < CORE_COUNT_OF(d); i++)
+        {
+            cout << d[i] << endl;
+        }
     }
 
 

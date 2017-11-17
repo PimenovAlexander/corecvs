@@ -54,6 +54,11 @@ public:
         return map(v);
     }
 
+    static ProjectiveTransform Identity() {
+        return ProjectiveTransform(1.0);
+    }
+
+
     ~ProjectiveTransform(){}
 };
 

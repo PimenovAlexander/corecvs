@@ -140,7 +140,7 @@ vector<double> GradientDescentRnToRm::fit(const vector<double> &input, const vec
     for (int g = 0; g < maxIterations; g++)
     {
         Matrix J = f->getJacobian(&(beta[0]));
-        f->operator()(beta.element, F.element);
+        f->operator()(beta, F);
 #ifdef TRACE
         cout << "Current Guess:" << endl << beta << endl;
         cout << "Current Jacobian:" << endl << J << endl;

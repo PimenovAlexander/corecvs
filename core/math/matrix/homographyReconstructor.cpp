@@ -14,6 +14,7 @@
 #include "../vector/vector.h"
 #include "../../kalman/classicKalman.h"
 #include "../levenmarq.h"
+
 namespace corecvs {
 
 HomographyReconstructor::HomographyReconstructor()
@@ -23,6 +24,11 @@ HomographyReconstructor::HomographyReconstructor()
 void HomographyReconstructor::addPoint2PointConstraint(const Vector2dd &from, const Vector2dd &to)
 {
     p2p.push_back(Correspondence(from,to));
+}
+
+void HomographyReconstructor::addPoint2PointConstraint(const Correspondence &correspondence)
+{
+    p2p.push_back(correspondence);
 }
 
 void HomographyReconstructor::addPoint2LineConstraint(const Vector2dd &from, const Line2d &line)
@@ -40,8 +46,6 @@ bool HomographyReconstructor::hasEnoughtConstraints()
     size_t constraintSize  = p2l.size() + p2s.size() + p2p.size() * 2;
     return (constraintSize >= 8);
 }
-
-
 
 void HomographyReconstructor::reset(void)
 {
@@ -470,6 +474,7 @@ Matrix33 HomographyReconstructor::getBestHomographyLSE2( void )
 
 
 
+
 /**
  *   This function computes the classical Euklidian cost.
  *
@@ -482,11 +487,11 @@ double HomographyReconstructor::getCostFunction(Matrix33 &H, double out[])
     for (unsigned i = 0; i < p2p.size(); i++)
     {
         Vector2dd point = (H * p2p[i].start);
-        auto diff = point - p2p[i].end;
+        Vector2dd diff = point - p2p[i].end;
         if (out)
         {
-            out[argout++] = diff[0];
-            out[argout++] = diff[1];
+            out[argout++] = diff.x();
+            out[argout++] = diff.y();
         }
         cost += (point - p2p[i].end).sumAllElementsSq();
     }
@@ -502,11 +507,49 @@ double HomographyReconstructor::getCostFunction(Matrix33 &H, double out[])
     return cost;
 }
 
+Matrix HomographyReconstructor::getJacobian(const Matrix33 &H) const
+{
+    CORE_ASSERT_TRUE(((uint)(p2p.size() * 2 + p2l.size())) == (p2p.size() * 2 + p2l.size()), ("too much elements int HomographyReconstructor"));
+
+    Matrix J((uint)(p2p.size() * 2 + p2l.size()), 8);
+    int argout = 0;
+    for (auto& pp: p2p)
+    {
+        Vector3dd ppp = H * Vector3dd(pp.start[0], pp.start[1], 1.0);
+        auto u = ppp[0] / ppp[2], v = ppp[1] / ppp[2], w = ppp[2],
+             x = pp.start[0],     y = pp.start[1];
+        J.a(argout, 0) = x / w;      J.a(argout, 1) = y / w;      J.a(argout, 2) = 1.0 / w;
+        J.a(argout, 3) = 0.0;        J.a(argout, 4) = 0.0;        J.a(argout, 5) = 0.0;
+        J.a(argout, 6) = -x * u / w; J.a(argout, 7) = -y * u / w;
+        ++argout;
+        J.a(argout, 0) = 0.0;        J.a(argout, 1) = 0.0;        J.a(argout, 2) = 0.0;
+        J.a(argout, 3) = x / w;      J.a(argout, 4) = y / w;      J.a(argout, 5) = 1.0 / w;
+        J.a(argout, 6) = -x * v / w; J.a(argout, 7) = -y * v / w;
+        ++argout;
+    }
+    for (auto& pp: p2l)
+    {
+        Vector3dd ppp = H * Vector3dd(pp.start[0], pp.start[1], 1.0);
+        auto u = ppp[0] / ppp[2], v = ppp[1] / ppp[2], w = ppp[2],
+             x = pp.start[0],     y = pp.start[1];
+        auto nx = pp.end.normal()[0], ny = pp.end.normal()[1];
+        auto n = std::sqrt(nx * nx + ny * ny);
+        auto c = nx / n, s = ny / n;
+
+        J.a(argout, 0) = x * c / w; J.a(argout, 1) = y * c / w; J.a(argout, 2) = 1.0 / (w * n);
+        J.a(argout, 3) = x * s / w; J.a(argout, 4) = y * s / w; J.a(argout, 5) = 1.0 / (w * n);
+        J.a(argout, 6) = -c * x * u / w - s * x * v / w;
+        J.a(argout, 7) = -c * y * u / w - s * y * v / w;
+        ++argout;
+    }
+    CORE_ASSERT_TRUE_S(J.h == argout);
+    return J;
+}
+
 int HomographyReconstructor::getConstraintNumber()
 {
     return (int)p2l.size() + (int)p2s.size() + (int)p2p.size() * 2;
 }
-
 
 void HomographyReconstructor::CostFunction::operator()(const double in[], double out[])
 {
@@ -516,6 +559,14 @@ void HomographyReconstructor::CostFunction::operator()(const double in[], double
     reconstructor->getCostFunction(H, out);
 }
 
+Matrix HomographyReconstructor::CostFunction::getJacobian(const double in[], double /*dlta*/)
+{
+    auto J1 = reconstructor->getJacobian(
+       Matrix33(in[0], in[1], in[2],
+                in[3], in[4], in[5],
+                in[6], in[7], 1.0));
+    return J1;
+}
 
 
 /*
@@ -552,6 +603,7 @@ Matrix33 HomographyReconstructor::CostFunctionWize::matrixFromState(const double
 }
 
 
+#ifdef DEPRECATED
 /**
  *  This block is devoted to Kalman reconstruction
  **/
@@ -595,6 +647,7 @@ Matrix33 HomographyReconstructor::getBestHomographyClassicKalman()
     );
 
 }
+#endif
 
 /**
  *  This block is devoted to LM reconstruction
@@ -606,7 +659,9 @@ Matrix33 HomographyReconstructor::getBestHomographyLM(Matrix33 guess)
     LevenbergMarquardt LMfit;
 
     LMfit.f = &F;
-    LMfit.maxIterations = 25;
+    LMfit.maxIterations = 250;
+    LMfit.trace = trace;
+    LMfit.traceProgress = trace;
 
     vector<double> input(8);
     for(int i = 0; i < 3; ++i)
@@ -627,8 +682,30 @@ Matrix33 HomographyReconstructor::getBestHomographyLM(Matrix33 guess)
             optInput[0], optInput[1], optInput[2],
             optInput[3], optInput[4], optInput[5],
             optInput[6], optInput[7], 1.0
-       );
+            );
 }
+
+Matrix33 HomographyReconstructor::getBestHomographyLSEandLM()
+{
+    Matrix33 guess = getBestHomographyLSE2();
+    return getBestHomographyLM(guess);
+}
+
+
+
+Matrix33 HomographyReconstructor::getBestHomography(const HomographyAlgorithm::HomographyAlgorithm &method)
+{
+    switch (method) {
+        case HomographyAlgorithm::LSE:  return getBestHomographyLSE(); break;
+        case HomographyAlgorithm::LSE1: return getBestHomographyLSE1(); break;
+        case HomographyAlgorithm::LSE2: return getBestHomographyLSE2(); break;
+        case HomographyAlgorithm::ML:   return getBestHomographyLM(); break;
+        default:
+        case HomographyAlgorithm::ML_AFTER_LSE: return getBestHomographyLSEandLM(); break;
+    }
+    return Matrix33::Identity();
+}
+
 
 } //namespace corecvs
 

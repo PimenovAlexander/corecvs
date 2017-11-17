@@ -84,6 +84,26 @@ double CameraIntrinsicsLegacy::getHFov() const
     return atan((resolution.x() / 2.0) / focal) * 2.0;
 }
 
+PinholeCameraIntrinsics CameraIntrinsicsLegacy::toPinholeCameraIntrinsics() const
+{
+    PinholeCameraIntrinsics intrinsics;
+    intrinsics.principal.x() = center.x();
+    intrinsics.principal.y() = center.y();
+
+    intrinsics.size.x() = resolution.x();
+    intrinsics.size.y() = resolution.y();
+
+    SYNC_PRINT(("CameraIntrinsicsLegacy::toPinholeCameraIntrinsics() f=%lf k=%lf resolutionx=%lf\n", f, k, resolution.x()));
+
+    intrinsics.focal.x() = /*resolution.x() **/ f / k;
+    intrinsics.focal.y() = /*resolution.y() **/ f / k;
+
+    intrinsics.skew = 0;
+    intrinsics.distortedSize  = intrinsics.size;
+
+    return intrinsics;
+}
+
 /*
 Matrix44 CameraIntrinsics::getFrustumMatrix(double zNear, double zFar)  const
 {

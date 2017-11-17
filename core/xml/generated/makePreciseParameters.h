@@ -19,14 +19,14 @@
  *  Additional includes for Composite Types.
  */
 
-using namespace corecvs;
+// using namespace corecvs;
 
 /*
  *  Additional includes for Pointer Types.
  */
 
-namespace corecvs {
-}
+// namespace corecvs {
+// }
 /*
  *  Additional includes for enum section.
  */
@@ -37,7 +37,7 @@ namespace corecvs {
  * \brief Make Precise Parameters 
  * Make Precise Parameters 
  **/
-class MakePreciseParameters : public BaseReflection<MakePreciseParameters>
+class MakePreciseParameters : public corecvs::BaseReflection<MakePreciseParameters>
 {
 public:
     enum FieldId {
@@ -97,6 +97,8 @@ public:
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
+
+    static int relinkCompositeFields();
 
     /** Section with getters */
     const void *getPtrById(int fieldId) const
@@ -179,18 +181,18 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit(mShouldMakePrecise,         static_cast<const BoolField *>    (fields()[SHOULD_MAKE_PRECISE_ID]));
-        visitor.visit((int &)mAlgorithm,          static_cast<const EnumField *>    (fields()[ALGORITHM_ID]));
-        visitor.visit((int &)mInterpolation,      static_cast<const EnumField *>    (fields()[INTERPOLATION_ID]));
-        visitor.visit(mKLTIterations,             static_cast<const IntField *>     (fields()[KLT_ITERATIONS_ID]));
-        visitor.visit(mKLTRadiusH,                static_cast<const IntField *>     (fields()[KLT_RADIUS_H_ID]));
-        visitor.visit(mKLTRadiusW,                static_cast<const IntField *>     (fields()[KLT_RADIUS_W_ID]));
-        visitor.visit(mKLTThreshold,              static_cast<const DoubleField *>  (fields()[KLT_THRESHOLD_ID]));
+        visitor.visit(mShouldMakePrecise,         static_cast<const corecvs::BoolField *>(fields()[SHOULD_MAKE_PRECISE_ID]));
+        visitor.visit((int &)mAlgorithm,          static_cast<const corecvs::EnumField *>(fields()[ALGORITHM_ID]));
+        visitor.visit((int &)mInterpolation,      static_cast<const corecvs::EnumField *>(fields()[INTERPOLATION_ID]));
+        visitor.visit(mKLTIterations,             static_cast<const corecvs::IntField *>(fields()[KLT_ITERATIONS_ID]));
+        visitor.visit(mKLTRadiusH,                static_cast<const corecvs::IntField *>(fields()[KLT_RADIUS_H_ID]));
+        visitor.visit(mKLTRadiusW,                static_cast<const corecvs::IntField *>(fields()[KLT_RADIUS_W_ID]));
+        visitor.visit(mKLTThreshold,              static_cast<const corecvs::DoubleField *>(fields()[KLT_THRESHOLD_ID]));
     }
 
     MakePreciseParameters()
     {
-        DefaultSetter setter;
+        corecvs::DefaultSetter setter;
         accept(setter);
     }
 
@@ -213,16 +215,16 @@ template<class VisitorType>
         mKLTThreshold = kLTThreshold;
     }
 
-    friend ostream& operator << (ostream &out, MakePreciseParameters &toSave)
+    friend std::ostream& operator << (std::ostream &out, MakePreciseParameters &toSave)
     {
-        PrinterVisitor printer(out);
-        toSave.accept<PrinterVisitor>(printer);
+        corecvs::PrinterVisitor printer(out);
+        toSave.accept<corecvs::PrinterVisitor>(printer);
         return out;
     }
 
     void print ()
     {
-        cout << *this;
+        std::cout << *this;
     }
 };
 #endif  //MAKE_PRECISE_PARAMETERS_H_

@@ -2,13 +2,17 @@
 
 #include "core/buffers/rgb24/abstractPainter.h"
 #include "core/math/matrix/homographyReconstructor.h"
-#include "core/geometry/simpleRenderer.h"
+#include "core/geometry/renderer/simpleRenderer.h"
 
 using corecvs::RGBColor;
 using corecvs::Matrix33;
 using corecvs::Vector3dd;
 using corecvs::Vector2dd;
 using corecvs::HomographyReconstructor;
+using corecvs::TriangleSpanIterator;
+using corecvs::Triangle2dd;
+using corecvs::HLineSpanInt;
+using corecvs::AbstractPainter;
 
 
 BoardAligner::BoardAligner(BoardAlignerParams params) : BoardAlignerParams(params), generator(FillGenerator(params))
@@ -153,7 +157,8 @@ bool BoardAligner::alignDim(DpImage &img, bool fitW, bool fitH)
     if (!fitW && !fitH)
         return false;
 
-    int w = (int)bestBoard[0].size(), h = (int)bestBoard.size();
+    int w = (int)bestBoard[0].size();
+    int h = (int)bestBoard.size();
 //    std::cout << "Best board: " << w << " x " << h << "; Req: " << idealWidth << " x " << idealHeight << std::endl;
     if (fitW && fitH)
     {
@@ -177,7 +182,7 @@ bool BoardAligner::alignDim(DpImage &img, bool fitW, bool fitH)
         }
     }
 //    std::cout << "Ok, continue..." << std::endl;
-    corecvs::Vector2dd mean(0.0);
+    Vector2dd mean(0.0);
     for (auto& r: bestBoard)
         for (auto& c: r)
             mean += c;
@@ -383,27 +388,27 @@ void BoardAligner::drawDebugInfo(corecvs::RGB24Buffer &buffer)
 
             while (ts1.hasValue()) {
                 ts1.step();
-                LineSpanInt span = ts1.getSpan();
+                HLineSpanInt span = ts1.getSpan();
                 span.clip(mask.w, mask.h);
                 for (int k = span.x1; k < span.x2; k++)
-                {
+            {
                     mask.element(span.y(), k) = 1.0;
                     buffer.element(span.y(), k) = RGBColor::lerpColor(buffer.element(span.y(), k), B, 0.3);
                 }
             }
             while (ts2.hasValue()) {
                 ts2.step();
-                LineSpanInt span = ts2.getSpan();
+                HLineSpanInt span = ts2.getSpan();
                 span.clip(mask.w, mask.h);
                 for (int k = span.x1; k < span.x2; k++)
                 {
                     mask.element(span.y(), k) = 1.0;
                     buffer.element(span.y(), k) = RGBColor::lerpColor(buffer.element(span.y(), k), B, 0.3);
+                    }
                 }
-            }
 
+            }
         }
-    }
     /*for (int i = 0; i < buffer.h; ++i)
     {
         for (int j = 0; j < buffer.w; ++j)

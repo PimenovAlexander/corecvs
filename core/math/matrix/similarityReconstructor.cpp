@@ -1,6 +1,8 @@
 #include "core/math/matrix/similarityReconstructor.h"
 #include "core/math/levenmarq.h"
 
+#include <calibrationLocation.h>
+
 namespace corecvs {
 
 SimilarityReconstructor::SimilarityReconstructor() :
@@ -13,6 +15,11 @@ void SimilarityReconstructor::addPoint2PointConstraint(const Vector3dd &from, co
     p2p.push_back(Correspondence3D(from,to));
 }
 
+void SimilarityReconstructor::addPoint2PointConstraint(double fromX, double fromY, double fromZ, double toX, double toY, double toZ)
+{
+    addPoint2PointConstraint(Vector3dd(fromX, fromY, fromZ), Vector3dd(toX, toY, toZ));
+}
+
 void SimilarityReconstructor::reset(void)
 {
     p2p.clear();
@@ -22,6 +29,11 @@ void SimilarityReconstructor::reset(void)
 Matrix44 Similarity::toMatrix() const
 {
     return Matrix44::Shift(shiftR) * Matrix44::Scale(scaleR) * rotation.toMatrix() * Matrix44::Scale(1.0 / scaleL) * Matrix44::Shift(-shiftL);
+}
+
+Vector3dd Similarity::transform(const Vector3dd &point) const
+{
+    return (rotation * ((point - shiftL) / scaleL)) * scaleR + shiftR;
 }
 
 double Similarity::getScale()
@@ -48,6 +60,41 @@ Matrix33 Similarity::getRotation()
 {
     return rotation.toMatrix();
 }
+
+
+#if 0
+
+/**
+    X -> AX  - in space 1
+	
+	Similarity maps space1 to space2
+
+	SX -  position in space2
+	SAX - transformed position in space2
+
+	this funtion returns B : BSX = SAX
+	in operator form B = SAS^-1
+
+ **/
+Affine3DQ Similarity::transform(const Affine3DQ &A)
+{
+	Matrix44 result =
+		Matrix44::Shift(shiftR) * Matrix44::Scale(scaleR) * Matrix44(rotation.toMatrix()) * Matrix44::Scale(1.0 / scaleL) * Matrix44::Shift(-shiftL) * // S
+		corecvs::Matrix44::Shift(A.shift[0], A.shift[1], A.shift[2]) * corecvs::Matrix44(A.rotor.toMatrix())
+		* Matrix44::Shift(shiftL) *  Matrix44::Scale(scaleL) * Matrix44(rotation.conjugated().toMatrix()) * Matrix44::Scale(1.0 / scaleR) * Matrix44::Shift(-shiftR);
+
+	Vector3dd translation;
+	Vector3dd scale;
+	Matrix33  rotation;
+
+	Affine3DQ qResult;
+	result.decomposeTRS(scale, translation, rotation);
+	qResult.shift = translation;
+	qResult.rotor = Quaternion::FromMatrix(rotation);
+	return qResult;
+}
+
+#endif
 
 void Similarity::fillFunctionInput(double in[])
 {
@@ -78,6 +125,20 @@ Similarity Similarity::getInterpolated(double t)
     toReturn.shiftR = lerp(Vector3dd(0.0), shiftR, t);
 
     toReturn.rotation = Quaternion::slerp(Quaternion::RotationIdentity(), rotation, t);
+
+    return toReturn;
+}
+
+Similarity Similarity::inverted()
+{
+    Similarity toReturn;
+    toReturn.shiftL = shiftR;
+    toReturn.shiftR = shiftL;
+    toReturn.scaleL = scaleR;
+    toReturn.scaleR = scaleL;
+
+    toReturn.rotation = rotation.conjugated();
+
 
     return toReturn;
 }
@@ -174,7 +235,7 @@ Similarity SimilarityReconstructor::getBestSimilarity()
         cout << "Maximum eigenvalue:" << max << " at row/column " << maxi << endl;
     }
 
-    /* make an eigenvalue cheak */
+    /* make an eigenvalue check */
     FixedVector<double, 4> eigen;
     eigen[0] = VT.a(0, maxi);
     eigen[1] = VT.a(1, maxi);
@@ -253,25 +314,54 @@ double SimilarityReconstructor::getCostFunction(const Similarity &input)
 
 SimilarityReconstructor::~SimilarityReconstructor()
 {
-
 }
 
-
-ostream &operator << (ostream &out, const Similarity &reconstructor)
+void SimilarityReconstructor::reportInputQuality()
 {
-    out << "Shift Left  by: "  << reconstructor.shiftL << endl;
-    out << "Scale Left  by: "  << reconstructor.scaleL << " (" << (1 / reconstructor.scaleL) << ")"<< endl;
+    /* Check all tha pairs of correspondance */
 
-    out << "Shift Right by: "  << reconstructor.shiftR << endl;
-    out << "Scale Right by: "  << reconstructor.scaleR << " (" << (1 / reconstructor.scaleR) << ")" << endl;
+    //double meanScaler = 1.0; /* arithmetic average? Really? */
 
-    out << "Quaternion:" << reconstructor.rotation << endl;
-    double angle = reconstructor.rotation.normalised().getAngle();
-    out << "Rotate by: " << angle << " (" << radToDeg(angle) << "deg) around " << reconstructor.rotation.getAxis() << endl;
-    Quaternion rot = reconstructor.rotation;
+    cout << "Pairs ratio (expected to be constant):" << endl;
+    for (size_t i = 0; i < p2p.size(); i++)
+    {
+        for (size_t j = i + 1; j < p2p.size(); j++)
+        {
+            double d1 = (p2p[i].start - p2p[j].start).l2Metric();
+            double d2 = (p2p[i].end   - p2p[j].end  ).l2Metric();
+
+            double scaler = d1 / d2;
+            cout << i << " " << j << " " << scaler << endl;
+        }
+    }
+}
+
+void Similarity::print(ostream &out)
+{
+    out << "Shift Left  by: "  << shiftL << endl;
+    out << "Scale Left  by: "  << scaleL << " (" << (1 / scaleL) << ")"<< endl;
+
+    out << "Shift Right by: "  << shiftR << endl;
+    out << "Scale Right by: "  << scaleR << " (" << (1 / scaleR) << ")" << endl;
+
+    out << "Scale coef: " << (getScale() * 100.0) << "%" << endl;
+
+    out << "Quaternion:" << rotation << endl;
+    double angle = rotation.normalised().getAngle();
+    out << "Rotate by: " <<  angle << "rad (" << radToDeg(angle) << "deg) around " << rotation.getAxis() << endl;
+    Quaternion rot = rotation;
     rot = -rot;
-    out << "Rotate by: " << rot.normalised().getAngle() << " around " << rot.getAxis() << endl;
-    return  out;
+    double angle1 = rot.normalised().getAngle();
+    out << "       Or: " << angle1 << "rad (" << radToDeg(angle1) << "deg) around " << rot.getAxis() << endl;
+
+    out << "In Euler Angels (cam)" << endl;
+    CameraLocationAngles a0 = CameraLocationAngles::FromQuaternion(rotation);
+    out << "Yaw   (around vertical cam axis (Up)   ): " << a0.yaw()   << " rad   " << radToDeg(a0.yaw())   << " deg" << endl;
+    out << "Pitch (around side cam axis     (Right)): " << a0.pitch() << " rad   " << radToDeg(a0.pitch()) << " deg" << endl;
+    out << "Roll  (around cam front Axis    (Front)): " << a0.roll()  << " rad   " << radToDeg(a0.roll())  << " deg" << endl;
+
+
+
 }
 
 void SimilarityReconstructor::CostFunction::operator()(const double in[], double out[])
@@ -296,6 +386,7 @@ void SimilarityReconstructor::CostFunctionToN::operator()(const double in[], dou
         out[i] = sqrt((corr.end - trans * corr.start).sumAllElementsSq());
     }
 }
+
 
 
 } // namespace corecvs

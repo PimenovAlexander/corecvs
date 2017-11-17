@@ -50,12 +50,12 @@ public:
         levels[0] = new BufferType(input);
         for (int i = 1; i < _levelNumber; i++)
         {
-            levels[i] = downsample(levels[i-1], factor);
+            levels[i] = downsampleSmall(levels[i-1], factor);
         }
     }
 
 
-    static BufferType *downsample(BufferType *input)
+    static BufferType *downsample2(BufferType *input)
     {
         BufferType* toReturn = new BufferType(input->h / 2, input->w / 2);
         for (int32_t i = 0; i < toReturn->h; i++)
@@ -73,7 +73,7 @@ public:
      * This is designed for small factors of about 1.1-1.6
      *
      * */
-    static BufferType *downsample(BufferType *input, double factor)
+    static BufferType *downsampleSmall(BufferType *input, double factor)
     {
         BufferType* toReturn = new BufferType(input->h / factor, input->w / factor, false);
         for (int32_t i = 0; i < toReturn->h; i++)
@@ -87,7 +87,6 @@ public:
 
         return toReturn;
     }
-
 
 };
 

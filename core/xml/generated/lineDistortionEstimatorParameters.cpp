@@ -26,6 +26,9 @@ int BaseReflection<LineDistortionEstimatorParameters>::dummy = LineDistortionEst
 
 SUPPRESS_OFFSET_WARNING_BEGIN
 
+
+using namespace corecvs;
+
 int LineDistortionEstimatorParameters::staticInit()
 {
 
@@ -35,10 +38,11 @@ int LineDistortionEstimatorParameters::staticInit()
         "Line Distortion Estimator Parameters",
         ""
     );
+
+     getReflection()->objectSize = sizeof(LineDistortionEstimatorParameters);
      
 
-    fields().push_back(
-        new EnumField
+    EnumField* field0 = new EnumField
         (
           LineDistortionEstimatorParameters::COST_ALGORITHM_ID,
           offsetof(LineDistortionEstimatorParameters, mCostAlgorithm),
@@ -50,10 +54,11 @@ int LineDistortionEstimatorParameters::staticInit()
           , new EnumOption(0,"Line Deviation Cost")
           , new EnumOption(1,"Joint Angle Cost")
           )
-        )
-    );
-    fields().push_back(
-        new IntField
+        );
+    field0->widgetHint=BaseField::COMBO_BOX;
+    fields().push_back(field0);
+    /*  */ 
+    IntField* field1 = new IntField
         (
           LineDistortionEstimatorParameters::ITERATION_NUMBER_ID,
           offsetof(LineDistortionEstimatorParameters, mIterationNumber),
@@ -64,24 +69,25 @@ int LineDistortionEstimatorParameters::staticInit()
           true,
          0,
          99999
-        )
-    );
-    fields().push_back(
-        new IntField
+        );
+    fields().push_back(field1);
+    /*  */ 
+    IntField* field2 = new IntField
         (
-          LineDistortionEstimatorParameters::POLINOM_DEGREE_ID,
-          offsetof(LineDistortionEstimatorParameters, mPolinomDegree),
+          LineDistortionEstimatorParameters::POLYNOM_DEGREE_ID,
+          offsetof(LineDistortionEstimatorParameters, mPolynomDegree),
           6,
-          "Polinom Degree",
-          "Polinom Degree",
-          "Polinom Degree",
+          "Polynom Degree",
+          "Polynom Degree",
+          "Polynom Degree",
           true,
          0,
          20
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field2->prefixHint="x^";
+    fields().push_back(field2);
+    /*  */ 
+    BoolField* field3 = new BoolField
         (
           LineDistortionEstimatorParameters::SIMPLE_JACOBIAN_ID,
           offsetof(LineDistortionEstimatorParameters, mSimpleJacobian),
@@ -89,10 +95,11 @@ int LineDistortionEstimatorParameters::staticInit()
           "Simple Jacobian",
           "Simple Jacobian",
           "Simple Jacobian"
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field3->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field3);
+    /*  */ 
+    BoolField* field4 = new BoolField
         (
           LineDistortionEstimatorParameters::EVEN_POWERS_ONLY_ID,
           offsetof(LineDistortionEstimatorParameters, mEvenPowersOnly),
@@ -100,10 +107,11 @@ int LineDistortionEstimatorParameters::staticInit()
           "Even powers only",
           "Even powers only",
           "Even powers only"
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field4->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field4);
+    /*  */ 
+    BoolField* field5 = new BoolField
         (
           LineDistortionEstimatorParameters::ESTIMATE_TANGENT_ID,
           offsetof(LineDistortionEstimatorParameters, mEstimateTangent),
@@ -111,10 +119,11 @@ int LineDistortionEstimatorParameters::staticInit()
           "Estimate Tangent",
           "Estimate Tangent",
           "Estimate Tangent"
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field5->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field5);
+    /*  */ 
+    BoolField* field6 = new BoolField
         (
           LineDistortionEstimatorParameters::ESTIMATE_CENTER_ID,
           offsetof(LineDistortionEstimatorParameters, mEstimateCenter),
@@ -122,8 +131,16 @@ int LineDistortionEstimatorParameters::staticInit()
           "Estimate Center",
           "Estimate Center",
           "Estimate Center"
-        )
-    );
+        );
+    field6->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field6);
+    /*  */ 
+    ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
+    directory[std::string("Line Distortion Estimator Parameters")]= &reflection;
+   return 0;
+}
+int LineDistortionEstimatorParameters::relinkCompositeFields()
+{
    return 0;
 }
 

@@ -10,6 +10,9 @@
 #include "core/math/vector/vector2d.h"
 #include "core/math/matrix/matrix44.h"
 
+#include "core/cameracalibration/calibrationCamera.h"
+
+
 namespace corecvs {
 
 /**
@@ -60,6 +63,8 @@ public:
 
     double getVFov() const;
     double getHFov() const;
+
+    PinholeCameraIntrinsics toPinholeCameraIntrinsics() const;
 
 template<class VisitorType>
     void accept(VisitorType &visitor)

@@ -19,30 +19,19 @@ struct PointObservation
     {}
 
 
-    inline double &x()
-    {
-        return point.x();
-    }
+    inline double &x() { return point.x(); }
+    inline double &y() { return point.y(); }
+    inline double &z() { return point.z(); }
 
-    inline double &y()
-    {
-        return point.y();
-    }
+    inline double &u() { return projection.x(); }
+    inline double &v() { return projection.y(); }
 
-    inline double &z()
-    {
-        return point.z();
-    }
+    inline const double &x() const { return point.x(); }
+    inline const double &y() const { return point.y(); }
+    inline const double &z() const { return point.z(); }
 
-    inline double &u()
-    {
-        return projection.x();
-    }
-
-    inline double &v()
-    {
-        return projection.y();
-    }
+    inline const double &u() const { return projection.x(); }
+    inline const double &v() const { return projection.y(); }
 
     template<class VisitorType>
         void accept(VisitorType &visitor)

@@ -8,18 +8,21 @@
 #include "core/patterndetection/circlePatternGenerator.h"
 #include "core/alignment/selectableGeometryFeatures.h"
 #include "core/utils/typesafeBitmaskEnums.h"
+#include "core/buffers/convolver/convolver.h"    // corecvs::DpImage
+
 
 using std::vector;
 using corecvs::Vector2dd;
 using corecvs::RGB24Buffer;
+using corecvs::DpImage;
 
 enum class AlignmentType
 {
-    FIT_ALL,                /**< Fit all = fit 2 dimensions regardless of orientations    */
-    FIT_WIDTH,              /**< Fit width = fit width (e.g. dimension along X axis)      */
-    FIT_HEIGHT,             /**< Fit height = fit height (e.g. dimension along Y)         */
-    FIT_MARKER_ORIENTATION, /**< Keep orientaion and select position using central marker */
-    FIT_MARKERS             /**< Detect orientation                                       */
+    FIT_ALL,                /**< Fit all = fit 2 dimensions regardless of orientations     */
+    FIT_WIDTH,              /**< Fit width = fit width (e.g. dimension along X axis)       */
+    FIT_HEIGHT,             /**< Fit height = fit height (e.g. dimension along Y)          */
+    FIT_MARKER_ORIENTATION, /**< Keep orientation and select position using central marker */
+    FIT_MARKERS             /**< Detect orientation                                        */
 //    // Detect orientation and board ids
 //    FIT_MARKERS_MULTIPLE
 };
@@ -33,8 +36,8 @@ struct BoardMarkerDescription
     int boardId;
 
     BoardMarkerDescription() {
-        DefaultSetter setter;
-         accept(setter);
+        corecvs::DefaultSetter setter;
+        accept(setter);
     }
 
     template<typename VisitorType>
@@ -46,25 +49,31 @@ struct BoardMarkerDescription
         visitor.visit(circleRadius, 0.08, "circleRadius");
         visitor.visit(boardId, 0, "boardId");
     }
-
 };
 
 struct BoardAlignerParams
 {
-    AlignmentType type = AlignmentType::FIT_WIDTH;
+    AlignmentType   type;                                   ///< type of the board orientation detection
+    int             idealWidth;                             ///< number of chessboard W-nodes (crosses), that is number of cellsW - 1
+    int             idealHeight;                            ///< number of chessboard H-nodes (crosses), that is number of cellsH - 1
     vector<BoardMarkerDescription> boardMarkers;
-    int idealWidth  = 18;
-    int idealHeight = 11;
+
+    BoardAlignerParams() {
+        corecvs::DefaultSetter setter;
+        accept(setter);
+    }
 
     template<typename VisitorType>
     void accept(VisitorType &visitor)
     {
-        auto m = asInteger(type);
-        visitor.visit(m, m, "alignmentType");
+        // default ctor: old board FIT_WIDTH_18x11_noMarkers of the old chessboard with 19x12 cells
+        int m = corecvs::asInteger(type);
+        visitor.visit(m, corecvs::asInteger(AlignmentType::FIT_WIDTH), "alignmentType");
         type = static_cast<AlignmentType>(m);
-        visitor.visit(idealWidth  , 18, "idealWidth");
-        visitor.visit(idealHeight , 11, "idealHeight");
-        visitor.visit(boardMarkers, "boardMarkers");
+
+        visitor.visit(idealWidth,  18, "idealWidth");
+        visitor.visit(idealHeight, 11, "idealHeight");
+        visitor.visit(boardMarkers,    "boardMarkers");
     }
 
     static BoardAlignerParams GetIndoorsBoard();
@@ -79,10 +88,8 @@ public:
     BoardAligner(BoardAlignerParams params = BoardAlignerParams());
     BoardAligner(BoardAlignerParams params, const std::shared_ptr<CirclePatternGenerator> &sharedGenerator);
 
-
     void setAlignerParams(const BoardAlignerParams &params);
     BoardAlignerParams getAlignerParams(void);
-
 
     bool align(DpImage &img);
     void drawDebugInfo(RGB24Buffer &buffer);

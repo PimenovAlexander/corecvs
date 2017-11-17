@@ -4,8 +4,7 @@
 #include <stdint.h>
 
 #include "core/utils/global.h"
-
-#include "core/math/neon/sseWrapper.h"
+#include "core/math/sse/sseWrapper.h"
 #include "core/buffers/kernels/fastkernel/vectorAlgebra.h"
 
 namespace corecvs {

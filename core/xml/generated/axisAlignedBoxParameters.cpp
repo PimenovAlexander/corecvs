@@ -26,6 +26,9 @@ int BaseReflection<AxisAlignedBoxParameters>::dummy = AxisAlignedBoxParameters::
 
 SUPPRESS_OFFSET_WARNING_BEGIN
 
+
+using namespace corecvs;
+
 int AxisAlignedBoxParameters::staticInit()
 {
 
@@ -35,10 +38,11 @@ int AxisAlignedBoxParameters::staticInit()
         "Axis Aligned Box Parameters",
         ""
     );
+
+     getReflection()->objectSize = sizeof(AxisAlignedBoxParameters);
      
 
-    fields().push_back(
-        new DoubleField
+    DoubleField* field0 = new DoubleField
         (
           AxisAlignedBoxParameters::X_ID,
           offsetof(AxisAlignedBoxParameters, mX),
@@ -49,10 +53,12 @@ int AxisAlignedBoxParameters::staticInit()
           true,
          -50000,
          50000
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field0->widgetHint=BaseField::SPIN_BOX;
+    field0->precision=2;
+    fields().push_back(field0);
+    /*  */ 
+    DoubleField* field1 = new DoubleField
         (
           AxisAlignedBoxParameters::Y_ID,
           offsetof(AxisAlignedBoxParameters, mY),
@@ -63,10 +69,12 @@ int AxisAlignedBoxParameters::staticInit()
           true,
          -50000,
          50000
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field1->widgetHint=BaseField::SPIN_BOX;
+    field1->precision=2;
+    fields().push_back(field1);
+    /*  */ 
+    DoubleField* field2 = new DoubleField
         (
           AxisAlignedBoxParameters::Z_ID,
           offsetof(AxisAlignedBoxParameters, mZ),
@@ -77,10 +85,12 @@ int AxisAlignedBoxParameters::staticInit()
           true,
          -50000,
          50000
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field2->widgetHint=BaseField::SPIN_BOX;
+    field2->precision=2;
+    fields().push_back(field2);
+    /*  */ 
+    DoubleField* field3 = new DoubleField
         (
           AxisAlignedBoxParameters::WIDTH_ID,
           offsetof(AxisAlignedBoxParameters, mWidth),
@@ -91,10 +101,12 @@ int AxisAlignedBoxParameters::staticInit()
           true,
          -50000,
          50000
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field3->widgetHint=BaseField::SPIN_BOX;
+    field3->precision=2;
+    fields().push_back(field3);
+    /*  */ 
+    DoubleField* field4 = new DoubleField
         (
           AxisAlignedBoxParameters::HEIGHT_ID,
           offsetof(AxisAlignedBoxParameters, mHeight),
@@ -105,10 +117,12 @@ int AxisAlignedBoxParameters::staticInit()
           true,
          -50000,
          50000
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field4->widgetHint=BaseField::SPIN_BOX;
+    field4->precision=2;
+    fields().push_back(field4);
+    /*  */ 
+    DoubleField* field5 = new DoubleField
         (
           AxisAlignedBoxParameters::DEPTH_ID,
           offsetof(AxisAlignedBoxParameters, mDepth),
@@ -119,8 +133,17 @@ int AxisAlignedBoxParameters::staticInit()
           true,
          -50000,
          50000
-        )
-    );
+        );
+    field5->widgetHint=BaseField::SPIN_BOX;
+    field5->precision=2;
+    fields().push_back(field5);
+    /*  */ 
+    ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
+    directory[std::string("Axis Aligned Box Parameters")]= &reflection;
+   return 0;
+}
+int AxisAlignedBoxParameters::relinkCompositeFields()
+{
    return 0;
 }
 

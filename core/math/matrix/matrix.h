@@ -9,7 +9,7 @@
  */
 #include <algorithm>
 #include <vector>
-
+#include <cmath>
 #include <functional>
 
 #include "core/utils/global.h"
@@ -33,6 +33,7 @@ typedef AbstractBuffer<double, int32_t> MatrixBase;
 class Matrix : public MatrixBase
 {
 public:
+    void promoteToGpu() { }
     enum InverstionAlgorithm{
         INVERT_LU,
         INVERT_SVD
@@ -40,20 +41,29 @@ public:
 
 
     /**
-     * This function creates a matrix with all zero elements
+     * This function creates a matrix with all zero or uninitailized elements
      *
+     * \attention
+     *          Generally using this method could create undefined behavior.
+     *          Use it only when you would immediatly fill whole matrix with elements.
+     *          Otherwise, please explicitly state that some elements are uninitialzed.
      * \param h
      *         The height of the matrix
      * \param w
      *         The width of the matrix
+     * \param fillWithZero
+     *         if true matrix would be filled with zero
+     *
      */
-    Matrix(int32_t h, int32_t w) : MatrixBase (h, w) {}
+
+    Matrix(int32_t h, int32_t w, bool fillWithZero = true) : MatrixBase (h, w, fillWithZero) {}
+
 
     Matrix(const Matrix &that) : MatrixBase (that) {}
     explicit Matrix(const Matrix *that) : MatrixBase (that) {}
     explicit Matrix(const DiagonalMatrix &that);
 
-    Matrix(Matrix *src, int32_t x1, int32_t y1, int32_t x2, int32_t y2) :
+    Matrix(const Matrix &src, int32_t x1, int32_t y1, int32_t x2, int32_t y2) :
         MatrixBase(src, x1, y1, x2, y2) {}
 
     /**
@@ -99,8 +109,6 @@ public:
      *
      **/
     Matrix(int32_t h, int32_t w, double value);
-
-    Matrix(int32_t h, int32_t w, bool shouldInit) : MatrixBase(h, w, shouldInit) {}
 
     explicit Matrix(const Matrix33 &in);
     explicit Matrix(const Matrix44 &in);
@@ -167,6 +175,14 @@ public:
 
     static void svd (Matrix  *A, Matrix *W, Matrix *V);
     static void svd (Matrix  *A, DiagonalMatrix *W, Matrix *V);
+    /*
+     * Computes "square root" of symmetrical posdef matrix and applies additional
+     * transform pretransform (on the left)
+     *
+     * This routine returns A^{-1}
+     */
+
+    Matrix invPosdefSqrt(const Matrix* preTransform = nullptr) const;
 
     static void svd (Matrix33 *A, Vector3dd *W, Matrix33 *V);
     static void svdDesc (Matrix33 *A, Vector3dd *W, Matrix33 *V);
@@ -175,8 +191,17 @@ public:
 
     static bool matrixSolveGaussian(Matrix *A, Matrix *B);
 
+    /*
+     * Linear system solving with different paths for factoring posdef/symmetric matrices
+     */
     bool        linSolve(const corecvs::Vector &B, corecvs::Vector &res, bool symmetric = false, bool posDef = false) const;
     static bool LinSolve(const corecvs::Matrix &A, const corecvs::Vector &B, corecvs::Vector &res, bool symmetric = false, bool posDef = false);
+    /*
+     * Linear system solving with use of schur-complement structure (only with block-diagonal lower-right part)
+     * Note that you shoul use it only when you are sure that lower (block-diagonal) part is well-conditioned
+     */
+    static bool LinSolveSchurComplement(const corecvs::Matrix &A, const corecvs::Vector &B, const std::vector<int> &diagBlocks, corecvs::Vector &res, bool symmetric = false, bool posDef = false, bool explicitInvers = false);
+    bool        linSolveSchurComplement(const corecvs::Vector &B, const std::vector<int> &diagBlocks, corecvs::Vector &res, bool symmetric = false, bool posDef = false);
 
     inline Matrix& operator +=(const Matrix& V)
     {
@@ -235,11 +260,24 @@ public:
     Matrix negative() const;
 
     Matrix inv() const;
+    std::pair<bool, Matrix> incompleteCholseky();
     Matrix invSVD() const;
     double detSVD() const;
 
     Vector2d32 getMinCoord() const;
     Vector2d32 getMaxCoord() const;
+    Vector trsv(const Vector &v, const char* trans, bool up, int N) const
+    {
+        Vector res(v);
+        for (int i = 0; i < N; ++i)
+            res = dtrsv(res, up, trans[i] == 'N');
+        return res;
+    }
+    Vector dtrsv(const Vector &v, bool upper = true, bool notrans = true) const;
+    Vector dtrsv_un(const Vector &v) const { return dtrsv(v, true, true); }
+    Vector dtrsv_ut(const Vector &v) const { return dtrsv(v, true, false); }
+    Vector dtrsv_ln(const Vector &v) const { return dtrsv(v, false, true); }
+    Vector dtrsv_lt(const Vector &v) const { return dtrsv(v, false, false); }
 
     Matrix column(int column);
     Matrix row   (int row);

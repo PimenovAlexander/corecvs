@@ -112,14 +112,14 @@ public:
         DOTRACE(("Calling allocate for MemoryBlockRef:\n"
         		 "   Position is %p\n"
                  "   Raw position %p\n"
-        		 "   Size is %d\n"
-        		 "   Allocated size is %d\n"
+        		 "   Size is %" PRISIZE_T "\n"
+        		 "   Allocated size is %" PRISIZE_T "\n"
         		 "   Data start is %p\n"
         		 "   Align start is %p\n",
                 this->block,
                 (void *)rawBlock,
-                (int)size,
-                (int)totalSize,
+                size,
+                totalSize,
                 getBlockStart(),
                 getAlignedStart(alignMask)));
 

@@ -21,6 +21,12 @@ class FolderScanner {
 public:
     static bool scan(const string &path, vector<string> &childs, bool findFiles = true);
 
+    static bool isDir(const string &path);
+
+    static bool createDir(const string &path, bool allowRecursive = true);
+
+    static void emptyDir(const string &path);       // delete folder to create it later probably
+
 };
 
 } // namespace corecvs

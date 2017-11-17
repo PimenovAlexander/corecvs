@@ -26,6 +26,9 @@ int BaseReflection<RgbColorParameters>::dummy = RgbColorParameters::staticInit()
 
 SUPPRESS_OFFSET_WARNING_BEGIN
 
+
+using namespace corecvs;
+
 int RgbColorParameters::staticInit()
 {
 
@@ -35,10 +38,11 @@ int RgbColorParameters::staticInit()
         "rgb Color Parameters",
         ""
     );
+
+     getReflection()->objectSize = sizeof(RgbColorParameters);
      
 
-    fields().push_back(
-        new IntField
+    IntField* field0 = new IntField
         (
           RgbColorParameters::R_ID,
           offsetof(RgbColorParameters, mR),
@@ -49,10 +53,10 @@ int RgbColorParameters::staticInit()
           true,
          0,
          255
-        )
-    );
-    fields().push_back(
-        new IntField
+        );
+    fields().push_back(field0);
+    /*  */ 
+    IntField* field1 = new IntField
         (
           RgbColorParameters::G_ID,
           offsetof(RgbColorParameters, mG),
@@ -63,10 +67,10 @@ int RgbColorParameters::staticInit()
           true,
          0,
          255
-        )
-    );
-    fields().push_back(
-        new IntField
+        );
+    fields().push_back(field1);
+    /*  */ 
+    IntField* field2 = new IntField
         (
           RgbColorParameters::B_ID,
           offsetof(RgbColorParameters, mB),
@@ -77,8 +81,15 @@ int RgbColorParameters::staticInit()
           true,
          0,
          255
-        )
-    );
+        );
+    fields().push_back(field2);
+    /*  */ 
+    ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
+    directory[std::string("rgb Color Parameters")]= &reflection;
+   return 0;
+}
+int RgbColorParameters::relinkCompositeFields()
+{
    return 0;
 }
 

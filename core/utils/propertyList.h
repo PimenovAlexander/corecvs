@@ -24,12 +24,10 @@
 
 namespace corecvs {
 
-using namespace std;
-
-class PropertyListVectorContainer : public vector< pair <string, string> >
+class PropertyListVectorContainer : public std::vector<std::pair<std::string, std::string>>
 {
 protected:
-    PropertyListVectorContainer::iterator find (string name)
+    PropertyListVectorContainer::iterator find(std::string name)
     {
         PropertyListVectorContainer::iterator it;
         for(it = begin(); it != end(); ++it)
@@ -42,7 +40,7 @@ protected:
         return it;
     }
 
-    void insert(pair <string, string> pair)
+    void insert(std::pair<std::string, std::string> pair)
     {
         push_back(pair);
     }
@@ -52,35 +50,36 @@ class PropertyList : public PropertyListVectorContainer
 {
 private:
 template<typename ValueType>
-    ValueType getTypedProperty(string name, ValueType defaultValue)
+    ValueType getTypedProperty(std::string name, ValueType defaultValue)
     {
-        string* value = getProperty(name);
+        std::string* value = getProperty(name);
         if (value == NULL)
             return defaultValue;
-        istringstream i(*value);
+        std::istringstream i(*value);
         ValueType result = defaultValue;
         i >> result;
         return result;
     }
 
 template<typename ValueType>
-    void setTypedProperty(string name, ValueType value)
+    void setTypedProperty(std::string name, ValueType value)
     {
         PropertyList::iterator it = this->find(name);
-        ostringstream o;
-        o.precision(numeric_limits<double>::digits10 + 3);
+        std::ostringstream o;
+        o.precision(std::numeric_limits<double>::digits10 + 3);
         o << value;
-        string tosave = o.str();
+        std::string tosave = o.str();
 
         if (it == this->end())
         {
-            insert (pair<string, string>(name,tosave));
+            insert(std::pair<std::string, std::string>(name, tosave));
             return;
         }
         (*it).second = value;
     }
+
 public:
-    string *getProperty(string name)
+    std::string *getProperty(std::string name)
     {
          PropertyList::iterator it = this->find(name);
         if (it == this->end())
@@ -90,42 +89,41 @@ public:
     }
 
 
-    int getIntProperty(string name, int defaultValue)
+    int getIntProperty(std::string name, int defaultValue)
     {
         return getTypedProperty<int>(name, defaultValue);
     }
 
-    double getDoubleProperty(string name, double defaultValue)
+    double getDoubleProperty(std::string name, double defaultValue)
     {
         return getTypedProperty<double>(name, defaultValue);
     }
 
-    string getStringProperty(string name, string defaultValue)
+    std::string getStringProperty(std::string name, std::string defaultValue)
     {
-        return getTypedProperty<string>(name, defaultValue);
+        return getTypedProperty<std::string>(name, defaultValue);
     }
 
 
-    void setIntProperty(string name, int value)
+    void setIntProperty(std::string name, int value)
     {
         setTypedProperty<int>(name, value);
     }
 
-    void setDoubleProperty(string name, double value)
+    void setDoubleProperty(std::string name, double value)
     {
-
         setTypedProperty<double>(name, value);
     }
 
-    void setStringProperty(string name, string value)
+    void setStringProperty(std::string name, std::string value)
     {
-        setTypedProperty<string>(name, value);
+        setTypedProperty<std::string>(name, value);
     }
 
     /* Fix the limited line length */
-    int load(istream &inStream)
+    int load(std::istream &inStream)
     {
-        string line;
+        std::string line;
 
         while (!inStream.eof())
         {
@@ -133,9 +131,7 @@ public:
             std::istringstream streamLine(line);
             //cout << "Parsing:" << line << endl;
 
-            string name;
-            string dummy;
-            string value;
+            std::string name, dummy, value;
             streamLine >> name;
             streamLine >> dummy;
 
@@ -153,14 +149,14 @@ public:
         return true;
     }
 
-    int load(string fileName)
+    int load(std::string fileName)
     {
-        ifstream file;
-        file.open (fileName.c_str(),ios::in);
-        cout << "Opening:" << fileName << endl;
+        std::ifstream file;
+        file.open(fileName.c_str(), std::ios::in);
+        std::cout << "Opening:" << fileName << std::endl;
         if (file.fail())
         {
-            cout << "Can't open property list file" << endl;
+            std::cout << "Can't open property list file" << std::endl;
             return false;
         }
 
@@ -169,7 +165,7 @@ public:
         return result;
     }
 
-    void save(ostream &outStream)
+    void save(std::ostream &outStream)
     {
         outStream << "#There are " << size() << " parameters\n";
         PropertyList::iterator it;
@@ -179,18 +175,15 @@ public:
         }
     }
 
-    void save(string fileName)
+    void save(std::string fileName)
     {
-        ofstream file;
-        file.open (fileName.c_str(),ios::out );
+        std::ofstream file;
+        file.open(fileName.c_str(), std::ios::out);
         save(file);
         file.close();
     }
 };
 
-
-
-
 } //namespace corecvs
-#endif /* PROPERTY_LIST_H_ */
 
+#endif /* PROPERTY_LIST_H_ */

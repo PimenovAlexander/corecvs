@@ -59,6 +59,15 @@ Vector2dd Matrix22::column(int i) const
     return aW(i);
 }
 
+Matrix22 Matrix22::Identity()
+{
+    return Matrix22(1.0);
+}
+
+Matrix22 Matrix22::Scale2(double v)
+{
+    return Matrix22(v);
+}
 
 Matrix22 Matrix22::VectorByVector(const Vector2dd &a, const Vector2dd &b)
 {

@@ -25,7 +25,7 @@ RadialCorrection ModelToRadialCorrection::getRadial(const double in[]) const
     {
         for (int i = 0; i < mPolynomialDegree; i++)
         {
-            if (i % 2) {   /*even powers are stored at odd indexes */
+            if (i % 2) {   /*even powers are stored at odd indices */
                 result.mParams.mKoeff.push_back(in[count++]);
             }
             else {

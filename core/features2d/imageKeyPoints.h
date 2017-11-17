@@ -1,4 +1,5 @@
-#pragma once
+#ifndef IMAGEKEYPOINTS_H
+#define IMAGEKEYPOINTS_H
 
 #include <vector>
 #include <iostream>
@@ -6,36 +7,69 @@
 #include "core/buffers/runtimeTypeBuffer.h"
 #include "core/buffers/rgb24/rgbColor.h"
 
-typedef std::string DescriptorType;
-typedef std::string DetectorType;
-typedef std::string MatcherType;
+#include "core/features2d/algoBase.h"
 
-struct KeyPoint
+struct KeyPointArea
 {
-	KeyPoint(double x = 0.0, double y = 0.0, double size = 0.0, double angle = -1.0, double response = 0.0, int octave = 0)
-		: x(x), y(y), size(size), angle(angle), response(response), octave(octave)
+    double size;
+    double angle;
+    double response;
+    int    octave;
+    corecvs::RGBColor color;
+
+    template<typename V>
+    void accept(V &visitor)
+    {
+        visitor.visit(size,      0.0, "size");
+        visitor.visit(angle,    -1.0, "angle");
+        visitor.visit(response,  0.0, "response");
+        visitor.visit(octave,      0, "octave");
+    }
+
+    KeyPointArea(
+            double size = 0.0,
+            double angle = -1.0,
+            double response = 0.0,
+            int octave = 0)
+        : size(size), angle(angle), response(response), octave(octave)
+    {}
+};
+
+struct KeyPoint : public KeyPointArea
+{
+    KeyPoint(
+            double x = 0.0,
+            double y = 0.0,
+            double size = 0.0,
+            double angle = -1.0,
+            double response = 0.0,
+            int octave = 0)
+        : KeyPointArea(size, angle, response, octave),
+          position(x,y)
 	{}
 
 	friend std::ostream& operator<<(std::ostream& os, const KeyPoint &kp);
 	friend std::istream& operator>>(std::istream& is, KeyPoint &kp);
 
-	double x;
-	double y;
-	double size;
-	double angle;
-	double response;
-	int    octave;
-	corecvs::RGBColor color;
+    corecvs::Vector2dd position;
+
+    inline double &x()
+    {
+        return position.x();
+    }
+
+    inline double &y()
+    {
+        return position.y();
+    }
+
 
     template<typename V>
     void accept(V &visitor)
     {
-        visitor.visit(x,         0.0, "x");
-        visitor.visit(y,         0.0, "y");
-        visitor.visit(size,      0.0, "size");
-        visitor.visit(angle,    -1.0, "angle");
-        visitor.visit(response,  0.0, "response");
-        visitor.visit(octave,      0, "octave");
+        visitor.visit(position.x(), 0.0, "x");
+        visitor.visit(position.y(), 0.0, "y");
+        KeyPointArea::accept<V>(visitor);
     }
 };
 
@@ -55,7 +89,7 @@ struct ImageKeyPoints
 
 struct ImageDescriptors
 {
-	RuntimeTypeBuffer mat;
+    corecvs::RuntimeTypeBuffer mat;
 	DescriptorType    type;
 
 	void load(std::istream &is);
@@ -73,7 +107,10 @@ struct Image
 
 	size_t           id;
 	std::string      filename;
+	void*            remapCache;
 
 	Image(const size_t &id);
-	Image(const size_t &id, const std::string &filename);
+	Image(const size_t &id, const std::string &filename, void* remapCache = 0);
 };
+
+#endif // IMAGEKEYPOINTS_H

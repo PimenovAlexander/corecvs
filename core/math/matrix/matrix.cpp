@@ -7,13 +7,14 @@
  * \author alexander
  */
 #include "core/utils/global.h"
+#include "core/math/sparseMatrix.h"
 #include "core/math/matrix/matrix.h"
 #include "core/math/matrix/matrix33.h"
 
-#include "cblasLapackeWrapper.h"
 #include "core/tbbwrapper/tbbWrapper.h"
 #include "core/math/sse/sseWrapper.h"
 
+#include "cblasLapackeWrapper.h"
 #include "core/math/matrix/blasReplacement.h"
 
 namespace corecvs {
@@ -253,30 +254,31 @@ Matrix Matrix::multiplyBlas(const Matrix &A, const Matrix &B)
 
 Matrix operator *(const Matrix &A, const Matrix &B)
 {
+#ifdef WITH_BLAS
+    return Matrix::multiplyBlas(A, B);
+#else
     CORE_ASSERT_TRUE(A.w == B.h, "Matrices have wrong sizes");
     Matrix result(A.h, B.w, false);
 
-#ifndef WITH_BLAS
     corecvs::parallelable_for(0, result.h, 8, ParallelMM<>(&A, &B, &result), !(A.h < 64));
-    //Matrix::multiplyHomebrew(A, B, true, !(A.h < 64)); // TODO: it has a bug, see testMatrixOperations!!!
-#else
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A.h, B.w, A.w, 1.0, A.data, A.stride, B.data, B.stride, 0.0, result.data, result.stride);
-#endif
-    return result;
-}
 
+    //Matrix::multiplyHomebrew(A, B, true, !(A.h < 64)); // TODO: it has a bug, see testMatrixOperations!!!
+
+    return result;
+#endif
+}
 
 Vector operator *(const Matrix &M, const Vector &V)
 {
     CORE_ASSERT_TRUE(M.w == V.size(), "Matrix and vector have wrong sizes");
     if (M.h >= 64)
     {
-#if !defined(WITH_BLAS)
-        return Matrix::multiplyHomebrewMV(M, V);
-#else
+#ifdef WITH_BLAS
         Vector result(M.h);
         cblas_dgemv (CblasRowMajor, CblasNoTrans, M.h, M.w, 1.0, &M.element(0, 0), M.stride, &V[0], 1, 0.0, &result[0], 1);
         return result;
+#else
+        return Matrix::multiplyHomebrewMV(M, V);
 #endif
     }
 
@@ -295,17 +297,17 @@ Vector operator *(const Matrix &M, const Vector &V)
 
 Vector operator *(const Vector &V, const Matrix &M)
 {
-    CORE_ASSERT_TRUE(M.h == V.size(), "Matrix and vector have wrong sizes");
+    CORE_ASSERT_TRUE_P(M.h == V.size(), ("Matrix and vector have wrong sizes [%dx%d] %d", M.h, M.w, V.size()));
     Vector result(M.w);
-    int row, column;
+
 #ifdef WITH_BLAS
     if (M.h < 32)
     {
 #endif
-       for (column = 0; column < M.w; column++)
+       for (int column = 0; column < M.w; ++column)
        {
            double sum = 0.0;
-           for (row = 0; row < M.h; row++)
+           for (int row = 0; row < M.h; ++row)
            {
                sum += V.at(row) * M.a(row, column);
            }
@@ -325,7 +327,7 @@ Vector operator *(const Vector &V, const Matrix &M)
 Matrix operator *=(Matrix &M, const DiagonalMatrix &D)
 {
     CORE_ASSERT_TRUE(false, "TODO: Matrix operator *=(Matrix &M, const DiagonalMatrix &D) is implemented badly");       // TODO: check the implementation: result is squared matrix!
-    int32_t minDim = CORE_MIN(M.h,M.w);
+    int32_t minDim = CORE_MIN(M.h, M.w);
     minDim = CORE_MIN(minDim, D.size());
     for (int i = 0; i < minDim; i++)
     {
@@ -357,7 +359,7 @@ Matrix operator *(const Matrix &M, const DiagonalMatrix &D)
     return Matrix::multiplyHomebrewMD(M, D);
 }
 
-Matrix operator *(DiagonalMatrix &D, const Matrix &M)
+Matrix operator *(const DiagonalMatrix &D, const Matrix &M)
 {
     CORE_ASSERT_TRUE(M.h == D.size(), "DiagonalMatrix and Matrix have wrong sizes");
     Matrix result(M.h, M.w);
@@ -551,6 +553,38 @@ void Matrix::svd (Matrix33 *A, Vector3dd *W, Matrix33 *V)
     *V = (Matrix33)mV;
 }
 
+Matrix Matrix::invPosdefSqrt(const Matrix* preTransform) const
+{
+    CORE_ASSERT_TRUE_S(h == w);
+    CORE_ASSERT_TRUE_S(!preTransform || (preTransform->h == preTransform->w && preTransform->h == h));
+#ifndef WITH_BLAS
+    Matrix U(w, w), W(1, h), V(*this);
+    DiagonalMatrix d(h);
+    Matrix::jacobi(&V, &d, &U, 0);
+    for (int i = 0; i < h; ++i)
+        W.a(0, i) = d.a(i, i);
+#else
+    Matrix A(*this);
+    //int lwork, liwork;
+    int m;
+    std::unique_ptr<int[]> isuppz(new int[2*h]);
+    Matrix W(1, h), U(h, h);
+    double vl = 0.0, vu = 0.0, abstol = -1.0;
+    int il = 1, iu = h;
+    LAPACKE_dsyevr(LAPACK_ROW_MAJOR, 'V', 'A', 'U', h, &A.a(0, 0), A.stride, vl, vu, il, iu, abstol, &m, &W.a(0,0), &U.a(0, 0), U.stride, isuppz.get());
+    CORE_ASSERT_TRUE_S(m == h);
+#endif
+    for (int i = 0; i < h; ++i)
+    {
+        auto sqrt = std::sqrt(W.a(0, i));
+        for (int j = 0; j < w; ++j)
+        {
+            U.a(j, i) /= sqrt;
+        }
+    }
+    return preTransform ? U ** preTransform : U;
+}
+
 /**
  * \brief Solves the linear equation.
  *
@@ -666,17 +700,15 @@ Matrix Matrix::inv() const
      */
 #ifdef WITH_BLAS
     corecvs::Matrix copy(*this);
-#ifndef WIN32
-    int pivot[h];
-#else
     std::unique_ptr<int[]> pivot_(new int[h]);
     int* pivot = pivot_.get();
-#endif
     CORE_ASSERT_TRUE_S(h == w);
     LAPACKE_dgetrf(LAPACK_ROW_MAJOR, copy.h, copy.w, &copy.a(0, 0), copy.stride, pivot);
     LAPACKE_dgetri(LAPACK_ROW_MAJOR, copy.h, &copy.a(0, 0), copy.stride, pivot);
     return copy;
-#else
+
+#else // WITH_BLAS
+
     unsigned i, j, k;
     double multiplier;
 
@@ -750,7 +782,7 @@ Matrix Matrix::inv() const
     }
 
     return result;
-#endif
+#endif // !WITH_BLAS
 }
 
 bool corecvs::Matrix::linSolve(const corecvs::Vector &B, corecvs::Vector &res, bool symmetric, bool posDef) const
@@ -758,7 +790,10 @@ bool corecvs::Matrix::linSolve(const corecvs::Vector &B, corecvs::Vector &res, b
     return LinSolve(*this, B, res, symmetric, posDef);
 }
 
-bool corecvs::Matrix::LinSolve(const corecvs::Matrix &A, const corecvs::Vector &B, corecvs::Vector &res, bool symmetric, bool posDef)
+bool corecvs::Matrix::LinSolve(const corecvs::Matrix &A, const corecvs::Vector &B
+    , corecvs::Vector &res
+    , bool symmetric
+    , bool posDef)
 {
     CORE_ASSERT_TRUE_S(A.h == B.size());
     CORE_ASSERT_TRUE_S(A.h == A.w);
@@ -768,12 +803,8 @@ bool corecvs::Matrix::LinSolve(const corecvs::Matrix &A, const corecvs::Vector &
     decltype(LAPACKE_dgetrf(0, 0, 0, 0, 0, 0)) info;
     if (!posDef)
     {
-#ifndef WIN32
-        int pivot[std::min(A.h, A.w)];
-#else
         std::unique_ptr<int[]> pivot_(new int[std::min(A.h, A.w)]);
         int *pivot = pivot_.get();
-#endif
         if (!symmetric)
         {
             info = LAPACKE_dgetrf(LAPACK_ROW_MAJOR, copy.h, copy.w, &copy.a(0, 0), copy.stride, pivot);
@@ -791,10 +822,231 @@ bool corecvs::Matrix::LinSolve(const corecvs::Matrix &A, const corecvs::Vector &
         if (!info) LAPACKE_dpotrs(LAPACK_ROW_MAJOR, 'U', copy.w, 1, &copy.a(0, 0), copy.stride, &res[0], 1);
     }
     return info == 0;
-#else
+#else // WITH_BLAS
+
     res = A.inv() * B;
     return true;
+
+#endif // !WITH_BLAS
+}
+
+bool corecvs::Matrix::LinSolveSchurComplement(const corecvs::Matrix &M, const corecvs::Vector &Bv, const std::vector<int> &diagBlocks, corecvs::Vector &res, bool symmetric, bool posDef, bool)
+{
+    /*
+     * So we partition M and B into
+     * +---+---+   /   \   /   \
+     * | A | B |   | x |   | a |
+     * +---+---+ * +---+ = +---+
+     * | C | D |   | y |   | b |
+     * +---+---+   \   /   \   /
+     * Where D is block-diagonal well-conditioned matrix
+     *
+     * Then we invert D explicitly and solve
+     * x = (A-BD^{-1}C)^{-1}(a-BD^{-1}b)
+     * y = D^{-1}(b-Cx)
+     *
+     * Note that M is symmetric => D is symmetric, (A-BD^{-1}C) is symmetric
+     *           M is posdef    => D is posdef,    (A-BD^{-1}C) is symmetric (TODO: isposdef)
+     */
+
+    auto Ah = diagBlocks[0],
+         Aw = diagBlocks[0];
+    auto Bw = M.w - Aw,
+         Bh = Ah;
+    auto Cw = Aw,
+         Ch = M.h - Ah;
+    auto Dw = Bw;
+
+#ifndef WITH_BLAS
+    auto N = M.h;
+
+    std::vector<corecvs::Matrix> matrices;
+
+    // "Factorizing"
+    for (size_t i = 0; i + 1 < diagBlocks.size(); ++i)
+    {
+        auto from = diagBlocks[i], to = diagBlocks[i + 1];
+        matrices.emplace_back(M, from, from, to, to);
+    }
+    corecvs::parallelable_for(0, (int)matrices.size(), [&](const corecvs::BlockedRange<int> &r)
+    {
+        for (int i = r.begin(); i < r.end(); ++i)
+            matrices[i] = matrices[i].inv();
+    });
+
+    auto A = const_cast<corecvs::Matrix&>(M).createView<corecvs::Matrix>(0, 0, Ah, Aw),
+         B = const_cast<corecvs::Matrix&>(M).createView<corecvs::Matrix>(0, Aw, Bh, Bw),
+         C = const_cast<corecvs::Matrix&>(M).createView<corecvs::Matrix>(Ah, 0, Ch, Cw);
+
+    // Computing BD^{-1}
+    corecvs::Matrix BDinv(Bh, Dw);
+    corecvs::parallelable_for(0, (int)matrices.size(), [&](const corecvs::BlockedRange<int> &r)
+    {
+        for (int i = r.begin(); i < r.end(); ++i)
+        {
+            auto begin = diagBlocks[i], end = diagBlocks[i + 1];
+            auto len = end - begin;
+
+            auto bv  = B.createView<corecvs::Matrix>(0, begin - Aw, Bh, len);
+
+            auto foo = bv * matrices[i];
+
+            for (int k = 0; k < foo.h; ++k)
+                for (int j = begin; j < end; ++j)
+                    BDinv.a(k, j - Aw) = foo.a(k, j - begin);
+
+        }
+    });
+
+    // Computing lhs/rhs
+    corecvs::Vector a(Ah, &Bv[0]), b(Ch, &Bv[Ah]);
+    auto rhs = a - BDinv * b;
+    auto lhs = A - BDinv * C;
+
+    // Solving for x
+    corecvs::Vector x(Aw), y(Bw);
+    bool foo = lhs.linSolve(rhs, x, symmetric, false);
+
+    if (!foo) return false;
+
+    // Solving for y
+    rhs = b - C * x;
+    corecvs::parallelable_for(0, (int)matrices.size(), [&](const corecvs::BlockedRange<int> &r)
+    {
+        for (int i = r.begin(); i < r.end(); ++i)
+        {
+            auto begin = diagBlocks[i], end = diagBlocks[i + 1];
+            auto len = end - begin;
+            corecvs::Vector bcx(len);
+            for (int j = 0; j < len; ++j)
+                bcx[j] = rhs[j + begin - Aw];
+            auto res = matrices[i] * bcx;
+            for (int j = begin; j < end; ++j)
+                y[j - Aw] = res[j - begin];
+        }
+    });
+
+    for (int i = 0; i < Aw; ++i)
+        res[i] = x[i];
+    for (int j = 0; j < Bw; ++j)
+        res[j + Aw] = y[j];
+#else
+    /*
+     * The same as above, but with fancy LAPACK
+     */
+    auto N = diagBlocks.size() - 1;
+    std::vector<int> pivots(Dw), pivotIdx(N);
+
+    std::vector<corecvs::Matrix> qrd(N);
+    for (size_t i = 0; i < N; ++i)
+    {
+        qrd[i] = corecvs::Matrix(M, diagBlocks[i], diagBlocks[i], diagBlocks[i + 1], diagBlocks[i + 1]);
+        pivotIdx[i] = diagBlocks[i] - diagBlocks[0];
+    }
+
+    // Factorizing (without "\"")
+    corecvs::parallelable_for(0, (int)N, [&](const corecvs::BlockedRange<int> &r)
+            {
+                for (int i = r.begin(); i < r.end(); ++i)
+                {
+                    auto& MM = qrd[i];
+                    if (!symmetric)
+                    {
+                        LAPACKE_dgetrf(LAPACK_ROW_MAJOR, MM.h, MM.w, MM.data, MM.stride, &pivots[pivotIdx[i]]);
+                    }
+                    else
+                    {
+                        if (posDef)
+                            LAPACKE_dpotrf(LAPACK_ROW_MAJOR, 'U', MM.h, MM.data, MM.stride);
+                        else
+                            LAPACKE_dsytrf(LAPACK_ROW_MAJOR, 'U', MM.h, MM.data, MM.stride, &pivots[pivotIdx[i]]);
+                    }
+                }
+            });
+
+    // Computing BD^{-1}
+    auto A = const_cast<corecvs::Matrix&>(M).createView<corecvs::Matrix>(0, 0, Ah, Aw),
+         B = const_cast<corecvs::Matrix&>(M).createView<corecvs::Matrix>(0, Aw, Bh, Bw),
+         C = const_cast<corecvs::Matrix&>(M).createView<corecvs::Matrix>(Ah, 0, Ch, Cw);
+
+    // Computing BD^{-1}
+    //recvs::Matrix BDinv(Bh, Dw);
+    corecvs::Matrix DinvtBt = B.t();
+    CORE_ASSERT_TRUE_S(DinvtBt.h == Dw && DinvtBt.w == Bh);
+    corecvs::parallelable_for(0, (int)qrd.size(), [&](const corecvs::BlockedRange<int> &r)
+    {
+        for (int i = r.begin(); i < r.end(); ++i)
+        {
+            auto begin = diagBlocks[i], end = diagBlocks[i + 1];
+            auto len = end - begin;
+            auto& MM = qrd[i];
+            auto ptr = &DinvtBt.a(diagBlocks[i] - diagBlocks[0], 0);
+            if (!symmetric)
+            {
+                LAPACKE_dgetrs(LAPACK_ROW_MAJOR, 'T', len, Bh, MM.data, MM.stride, &pivots[pivotIdx[i]], ptr, DinvtBt.stride);
+            }
+            else
+            {
+                if (posDef)
+                    LAPACKE_dpotrs(LAPACK_ROW_MAJOR, 'U', len, Bh, MM.data, MM.stride, ptr, DinvtBt.stride);
+                else
+                    LAPACKE_dsytrs(LAPACK_ROW_MAJOR, 'U', len, Bh, MM.data, MM.stride, &pivots[pivotIdx[i]], ptr, DinvtBt.stride);
+            }
+        }
+    });
+    // Computing lhs/rhs
+    corecvs::Vector a(Ah, &Bv[0]), b(Ch, &Bv[Ah]);
+    auto rhs = a - b * DinvtBt;
+
+    auto lhs = A;
+    cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans, lhs.h, lhs.w, C.h, -1.0, DinvtBt.data, DinvtBt.stride, C.data, C.stride, 1.0, lhs.data, lhs.stride);
+
+    // Solving for x
+    corecvs::Vector x(Aw), y(Bw);
+    bool foo = lhs.linSolve(rhs, x, symmetric, false);
+
+    if (!foo) return false;
+
+    // Solving for y
+    rhs = b - C * x;
+    corecvs::parallelable_for(0, (int)qrd.size(), [&](const corecvs::BlockedRange<int> &r)
+    {
+        for (int i = r.begin(); i < r.end(); ++i)
+        {
+            auto begin = diagBlocks[i], end = diagBlocks[i + 1];
+            auto len = end - begin;
+            auto& MM = qrd[i];
+            corecvs::Vector bcx(len);
+            for (int j = 0; j < len; ++j)
+                bcx[j] = rhs[j + begin - Aw];
+            if (!symmetric)
+            {
+                LAPACKE_dgetrs(LAPACK_ROW_MAJOR, 'N', len, 1, MM.data, MM.stride, &pivots[pivotIdx[i]], &bcx[0], 1);
+            }
+            else
+            {
+                if (posDef)
+                    LAPACKE_dpotrs(LAPACK_ROW_MAJOR, 'U', len, 1, MM.data, MM.stride, &bcx[0], 1);
+                else
+                    LAPACKE_dsytrs(LAPACK_ROW_MAJOR, 'U', len, 1, MM.data, MM.stride, &pivots[pivotIdx[i]], &bcx[0], 1);
+            }
+            auto res = bcx;
+            for (int j = begin; j < end; ++j)
+                y[j - Aw] = res[j - begin];
+        }
+    });
+
+    for (int i = 0; i < Aw; ++i)
+        res[i] = x[i];
+    for (int j = 0; j < Bw; ++j)
+        res[j + Aw] = y[j];
+    return true;
 #endif
+}
+
+bool corecvs::Matrix::linSolveSchurComplement(const corecvs::Vector &B, const std::vector<int> &diagBlocks, corecvs::Vector &res, bool symmetric, bool posDef)
+{
+    return corecvs::Matrix::LinSolveSchurComplement(*this, B, diagBlocks, res, symmetric, posDef);
 }
 
 Matrix Matrix::invSVD() const
@@ -861,7 +1113,7 @@ double corecvs::Matrix::det() const
             tauM *= -1.0;
     return det * tauM;
 }
-#endif
+#endif // WITH_BLAS
 
 Vector2d32 Matrix::getMinCoord() const
 {
@@ -916,7 +1168,7 @@ Matrix Matrix::row(int row)
     Matrix toReturn(1, w);
     for (int column = 0; column < w; column++)
     {
-        toReturn.a(0, column) = toReturn.a(row, column);
+        toReturn.a(0, column) = this->a(row, column);
     }
     return toReturn;
 }
@@ -953,16 +1205,21 @@ void Matrix::svd (Matrix *A, Matrix *W, Matrix *V)
     int n = A->w;
     int m = A->h;
 
-    /* BUG `nm' may be used uninitialized in this function */
-    int     flag, i, its, j, jj, k, l=0, nm, nm1 = n - 1, mm1 = m - 1;
+    CORE_ASSERT_FALSE((m < n), "SVDCMP: You must augment A with extra zero rows");
+    CORE_ASSERT_TRUE(n > 0, "A width should not be zero");
+
+#ifdef WITH_BLAS
+    // Stupidity remains here, just non-super-stupid method
+    Vector vv(n);
+    LAPACKE_dgesvd(LAPACK_ROW_MAJOR, 'O', 'A', m, n, &A->a(0, 0), A->stride, &W->a(0, 0), 0, 1, &V->a(0, 0), V->stride, &vv[0]);
+    V->transpose();
+#else
+    int     i, its, j, jj, k, l=0, nm = 0, nm1 = n - 1, mm1 = m - 1;
     double  c, f, h, s, x, y, z;
     double  anorm = 0.0;
     double  g = 0.0;
     double scale = 0.0;
     double *rv1;
-
-    CORE_ASSERT_FALSE((m < n), "SVDCMP: You must augment A with extra zero rows");
-    CORE_ASSERT_TRUE(n > 0, "A width should not be zero");
 
     rv1 = new double[n];
 
@@ -1038,171 +1295,245 @@ void Matrix::svd (Matrix *A, Matrix *W, Matrix *V)
         anorm = Max(anorm, (fabs(W->a( 0, i)) + fabs(rv1[i])));
     }
 
-        /* Accumulation of right-hand transformations */
-        for (i = n - 1; i >= 0; i--)
+    /* Accumulation of right-hand transformations */
+    for (i = n - 1; i >= 0; i--)
+    {
+        if (i < nm1)
         {
-            if (i < nm1)
-            {
-                if (g)
-                {
-                    /* double division to avoid possible underflow */
-                    for (j = l; j < n; j++)
-                        V->a( j, i) = (A->a( i, j) / A->a( i, l)) / g;
-                    for (j = l; j < n; j++)
-                    {
-                        for (s = 0.0, k = l; k < n; k++)
-                            s += A->a(i, k) * V->a(k, j);
-                        for (k = l; k < n; k++)
-                            V->a(k, j) += s * V->a(k, i);
-                    }
-                }
-                for (j = l; j < n; j++)
-                    V->a(i, j) = V->a(j, i) = 0.0;
-            }
-            V->a(i, i) = 1.0;
-            g = rv1[i];
-            l = i;
-        }
-        /* Accumulation of left-hand transformations */
-        for (i = n - 1; i >= 0; i--)
-        {
-            l = i + 1;
-            g = W->a(0, i);
-            if (i < nm1)
-                for (j = l; j < n; j++)
-                    A->a(i, j) = 0.0;
             if (g)
             {
-                g = 1.0 / g;
-                if (i != nm1)
+                /* double division to avoid possible underflow */
+                for (j = l; j < n; j++)
+                    V->a( j, i) = (A->a( i, j) / A->a( i, l)) / g;
+                for (j = l; j < n; j++)
                 {
-                    for (j = l; j < n; j++)
-                    {
-                        for (s = 0.0, k = l; k < m; k++)
-                            s += A->a(k, i) * A->a(k, j);
-                        f = (s / A->a(i, i)) * g;
-                        for (k = i; k < m; k++)
-                            A->a(k, j) += f * A->a(k, i);
-                    }
+                    for (s = 0.0, k = l; k < n; k++)
+                        s += A->a(i, k) * V->a(k, j);
+                    for (k = l; k < n; k++)
+                        V->a(k, j) += s * V->a(k, i);
                 }
-                for (j = i; j < m; j++)
-                    A->a(j, i) *= g;
-            } else
-                for (j = i; j < m; j++)
-                    A->a(j, i) = 0.0;
-            ++A->a(i, i);
+            }
+            for (j = l; j < n; j++)
+                V->a(i, j) = V->a(j, i) = 0.0;
         }
-        /* diagonalization of the bidigonal form */
-        for (k = n - 1; k >= 0; k--)
-        {                           /* loop over singlar values */
-            for (its = 0; its < 30; its++)
-            {                       /* loop over allowed iterations */
-                flag = 1;
-                for (l = k; l >= 0; l--)
-                {                   /* test for splitting */
-                    nm = l - 1;     /* note that rv1[l] is always zero */
-                    if (Abs(rv1[l]) + anorm == anorm)
-                    {
-                        flag = 0;
-                        break;
-                    }
-                    if (fabs(W->a(0, nm)) + anorm == anorm)
-                        break;
-                }
-                if (flag)
+        V->a(i, i) = 1.0;
+        g = rv1[i];
+        l = i;
+    }
+
+    /* Accumulation of left-hand transformations */
+    for (i = n - 1; i >= 0; i--)
+    {
+        l = i + 1;
+        g = W->a(0, i);
+        if (i < nm1)
+            for (j = l; j < n; j++)
+                A->a(i, j) = 0.0;
+        if (g)
+        {
+            g = 1.0 / g;
+            if (i != nm1)
+            {
+                for (j = l; j < n; j++)
                 {
-                    c = 0.0;        /* cancellation of rv1[l], if l>1 */
-                    s = 1.0;
-                    for (i = l; i <= k; i++)
+                    for (s = 0.0, k = l; k < m; k++)
+                        s += A->a(k, i) * A->a(k, j);
+                    f = (s / A->a(i, i)) * g;
+                    for (k = i; k < m; k++)
+                        A->a(k, j) += f * A->a(k, i);
+                }
+            }
+            for (j = i; j < m; j++)
+                A->a(j, i) *= g;
+        }
+        else {
+            for (j = i; j < m; j++)
+                A->a(j, i) = 0.0;
+        }
+        ++A->a(i, i);
+    }
+
+    /* diagonalization of the bidigonal form */
+    for (k = n - 1; k >= 0; k--)
+    {                           /* loop over singlar values */
+        for (its = 0; its < 30; its++)
+        {                       /* loop over allowed iterations */
+            int flag = 1;
+            for (l = k; l >= 0; l--)
+            {                   /* test for splitting */
+                nm = l - 1;     /* note that rv1[l] is always zero */
+                if (Abs(rv1[l]) + anorm == anorm)
+                {
+                    flag = 0;
+                    break;
+                }
+                if (nm >= 0 && fabs(W->a(0, nm)) + anorm == anorm)
+                    break;
+            }
+            if (l < 0) {
+                printf("possible bugfix: l=-1 => 0\n");
+                l = 0;      // bugfix: negative l is possible here!
+            }
+            if (flag)
+            {
+                c = 0.0;        /* cancellation of rv1[l], if l>1 */
+                s = 1.0;
+                for (i = l; i <= k; i++)
+                {
+                    f = s * rv1[i];
+                    if (Abs(f) + anorm != anorm)
                     {
-                        f = s * rv1[i];
-                        if (Abs(f) + anorm != anorm)
+                        g = W->a(0, i);
+                        h = Vector2dd(f, g).getLengthStable();
+                        W->a(0, i) = h;
+                        h = 1.0 / h;
+                        c = g * h;
+                        s = (-f * h);
+                        for (j = 0; j < m; j++)
                         {
-                            g = W->a(0, i);
-                            h = Vector2dd(f, g).getLengthStable();
-                            W->a(0, i) = h;
-                            h = 1.0 / h;
-                            c = g * h;
-                            s = (-f * h);
-                            for (j = 0; j < m; j++)
-                            {
-                                y = A->a(j, nm);
-                                z = A->a(j, i);
-                                A->a( j, nm) = y * c + z * s;
-                                A->a( j, i) = z * c - y * s;
-                            }
+                            y = A->a(j, nm);
+                            z = A->a(j, i);
+                            A->a(j, nm) = y * c + z * s;
+                            A->a(j,  i) = z * c - y * s;
                         }
                     }
                 }
-                z = W->a(0, k);
-                if (l == k)
-                {                   /* convergence */
-                    if (z < 0.0)
-                    {
-                        W->a(0, k) = -z;
-                        for (j = 0; j < n; j++)
-                            V->a(j, k) = (-V->a(j, k));
-                    }
-                    break;
-                }
-                if (its == 30)
-                    printf("No convergence in 30 SVDCMP iterations");
-                x = W->a(0, l);           /* shift from bottom 2-by-2 minor */
-                nm = k - 1;
-                y = W->a(0, nm);
-                g = rv1[nm];
-                h = rv1[k];
-                f = ((y - z) * (y + z) + (g - h) * (g + h)) / (2.0 * h * y);
-                g = Vector2dd(f, 1.0).getLengthStable();
-                /* next QR transformation */
-                f = ((x - z) * (x + z) + h * ((y / (f + Sign(g, f))) - h)) / x;
-                c = s = 1.0;
-                for (j = l; j <= nm; j++)
-                {
-                    i = j + 1;
-                    g = rv1[i];
-                    y = W->a(0, i);
-                    h = s * g;
-                    g = c * g;
-                    z = Vector2dd(f,h).getLengthStable();
-                    rv1[j] = z;
-                    c = f / z;
-                    s = h / z;
-                    f = x * c + g * s;
-                    g = g * c - x * s;
-                    h = y * s;
-                    y = y * c;
-                    for (jj = 0; jj < n; jj++)
-                    {
-                        x = V->a(jj, j);
-                        z = V->a(jj, i);
-                        V->a(jj, j) = x * c + z * s;
-                        V->a(jj, i) = z * c - x * s;
-                    }
-                    z = Vector2dd(f,h).getLengthStable();
-                    W->a(0, j) = z;       /* rotation can be arbitrary id z=0 */
-                    if (z)
-                    {
-                        z = 1.0 / z;
-                        c = f * z;
-                        s = h * z;
-                    }
-                    f = (c * g) + (s * y);
-                    x = (c * y) - (s * g);
-                    for (jj = 0; jj < m; jj++)
-                    {
-                        y = A->a(jj, j);
-                        z = A->a(jj, i);
-                        A->a(jj, j) = y * c + z * s;
-                        A->a(jj, i) = z * c - y * s;
-                    }
-                }
-                rv1[l] = 0.0;
-                rv1[k] = f;
-                W->a(0, k) = x;
             }
+
+            z = W->a(0, k);
+            if (l == k)
+            {                   /* convergence */
+                if (z < 0.0)
+                {
+                    W->a(0, k) = -z;
+                    for (j = 0; j < n; j++)
+                        V->a(j, k) = (-V->a(j, k));
+                }
+                break;
+            }
+            if (its == 30)
+                printf("No convergence in 30 SVDCMP iterations");
+
+            x = W->a(0, l);           /* shift from bottom 2-by-2 minor */
+            nm = k - 1;
+            y = W->a(0, nm);
+            g = rv1[nm];
+            h = rv1[k];
+            f = ((y - z) * (y + z) + (g - h) * (g + h)) / (2.0 * h * y);
+            g = Vector2dd(f, 1.0).getLengthStable();
+            /* next QR transformation */
+            f = ((x - z) * (x + z) + h * ((y / (f + Sign(g, f))) - h)) / x;
+            c = s = 1.0;
+            for (j = l; j <= nm; j++)
+            {
+                i = j + 1;
+                g = rv1[i];
+                y = W->a(0, i);
+                h = s * g;
+                g = c * g;
+                z = Vector2dd(f,h).getLengthStable();
+                rv1[j] = z;
+                c = f / z;
+                s = h / z;
+                f = x * c + g * s;
+                g = g * c - x * s;
+                h = y * s;
+                y = y * c;
+                for (jj = 0; jj < n; jj++)
+                {
+                    x = V->a(jj, j);
+                    z = V->a(jj, i);
+                    V->a(jj, j) = x * c + z * s;
+                    V->a(jj, i) = z * c - x * s;
+                }
+                z = Vector2dd(f,h).getLengthStable();
+                W->a(0, j) = z;       /* rotation can be arbitrary id z=0 */
+                if (z)
+                {
+                    z = 1.0 / z;
+                    c = f * z;
+                    s = h * z;
+                }
+                f = (c * g) + (s * y);
+                x = (c * y) - (s * g);
+                for (jj = 0; jj < m; jj++)
+                {
+                    y = A->a(jj, j);
+                    z = A->a(jj, i);
+                    A->a(jj, j) = y * c + z * s;
+                    A->a(jj, i) = z * c - y * s;
+                }
+            }
+            rv1[l] = 0.0;
+            rv1[k] = f;
+            W->a(0, k) = x;
         }
-        delete[] rv1;
+    }
+    delete[] rv1;
+#endif
+}
+
+std::pair<bool, Matrix> Matrix::incompleteCholseky()
+{
+    auto res = SparseMatrix(*this).incompleteCholseky();
+    return std::make_pair(res.first, Matrix(res.second));
+}
+
+
+Vector Matrix::dtrsv(const Vector &v, bool upper, bool notrans) const
+{
+    Vector res(v);
+    CORE_ASSERT_TRUE_S(v.size() == h && v.size() == w);
+#ifdef WITH_BLAS
+    cblas_dtrsv(CblasRowMajor, upper ? CblasUpper : CblasLower, notrans ? CblasNoTrans : CblasTrans, CblasNonUnit, w, &a(0, 0), stride, &res[0], 1);
+#else
+    int cs = (upper ? 0 : 2) + (notrans ? 0 : 1);
+    switch (cs)
+    {
+    case 0:
+        for (int i = h - 1; i >= 0; --i)
+        {
+            double pivot = a(i, i), sum = res[i];
+            CORE_ASSERT_TRUE_S(pivot != 0.0);
+            for (int j = i + 1; j < w; ++j)
+                sum -= res[j] * a(i, j);
+            res[i] = sum / pivot;
+        }
+        break;
+    case 1:
+        for (int j = 0; j < w; ++j)
+        {
+            double pivot = a(j, j), sum = res[j];
+            CORE_ASSERT_TRUE_S(pivot != 0.0);
+            for (int i = j - 1; i >= 0; --i)
+                sum -= res[i] * a(i, j);
+            res[j] = sum / pivot;
+        }
+        break;
+    case 2:
+        for (int i = 0; i < h; ++i)
+        {
+            double pivot = a(i, i), sum = res[i];
+            CORE_ASSERT_TRUE_S(pivot != 0.0);
+            for (int j = 0; j < i; ++j)
+                sum -= res[j] * a(i, j);
+            res[i] = sum / pivot;
+        }
+        break;
+    case 3:
+        for (int j = w - 1; j >= 0; --j)
+        {
+            double pivot = a(j, j), sum = res[j];
+            CORE_ASSERT_TRUE_S(pivot != 0.0);
+            for (int i = j + 1; i < h; ++i)
+                sum -= res[i] * a(i, j);
+            res[j] = sum / pivot;
+        }
+    default:
+        break;
+    }
+#endif
+    return res;
 }
 
 void Matrix::svd(Matrix *A, DiagonalMatrix *W, Matrix *V)
@@ -1222,9 +1553,6 @@ void Matrix::svd(Matrix *A, DiagonalMatrix *W, Matrix *V)
   *   Computes all eigenvalues and eigenvectors of a real symmetric matrix a[1..n][1..n].
   *   On output, elements of a above the diagonal are destroyed. d[1..n] returns the eigenvalues of a v[1..n][1..n]
   *   is a matrix whose columns contain, on output, the normalized eigenvectors of a nrot returns the number of Jacobi rotations that were required.
-  *
-  *
-  *
   **/
 
 #define ROTATE(mat,i,j,k,l) g = mat->a(i,j); h = mat->a(k,l); mat->a(i,j) = g - s * ( h + g * tau); mat->a(k,l) = h + s * ( g - h * tau);

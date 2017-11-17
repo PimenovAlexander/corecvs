@@ -26,6 +26,9 @@ int BaseReflection<CannyParameters>::dummy = CannyParameters::staticInit();
 
 SUPPRESS_OFFSET_WARNING_BEGIN
 
+
+using namespace corecvs;
+
 int CannyParameters::staticInit()
 {
 
@@ -35,10 +38,11 @@ int CannyParameters::staticInit()
         "Canny Parameters",
         ""
     );
+
+     getReflection()->objectSize = sizeof(CannyParameters);
      
 
-    fields().push_back(
-        new BoolField
+    BoolField* field0 = new BoolField
         (
           CannyParameters::SHOULD_EDGE_DETECT_ID,
           offsetof(CannyParameters, mShouldEdgeDetect),
@@ -46,10 +50,11 @@ int CannyParameters::staticInit()
           "Should edge detect",
           "Should edge detect",
           "Should edge detect"
-        )
-    );
-    fields().push_back(
-        new IntField
+        );
+    field0->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field0);
+    /*  */ 
+    IntField* field1 = new IntField
         (
           CannyParameters::MINIMUM_THRESHOLD_ID,
           offsetof(CannyParameters, mMinimumThreshold),
@@ -60,10 +65,10 @@ int CannyParameters::staticInit()
           true,
          0,
          10000
-        )
-    );
-    fields().push_back(
-        new IntField
+        );
+    fields().push_back(field1);
+    /*  */ 
+    IntField* field2 = new IntField
         (
           CannyParameters::MAXIMUM_THRESHOLD_ID,
           offsetof(CannyParameters, mMaximumThreshold),
@@ -74,8 +79,15 @@ int CannyParameters::staticInit()
           true,
          0,
          10000
-        )
-    );
+        );
+    fields().push_back(field2);
+    /*  */ 
+    ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
+    directory[std::string("Canny Parameters")]= &reflection;
+   return 0;
+}
+int CannyParameters::relinkCompositeFields()
+{
    return 0;
 }
 

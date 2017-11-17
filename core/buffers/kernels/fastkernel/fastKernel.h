@@ -125,7 +125,7 @@ public:
                 {
                     mKernel->process(mAlgebra);
                     mAlgebra.advance();
-                }
+                    }
 
                 fAlgebra.copyPos(mAlgebra);
                 for (; j + fStep <= wLimit; j += fStep)   // the next step index is validated

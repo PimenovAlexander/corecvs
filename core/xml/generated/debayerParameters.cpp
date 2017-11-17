@@ -26,6 +26,9 @@ int BaseReflection<DebayerParameters>::dummy = DebayerParameters::staticInit();
 
 SUPPRESS_OFFSET_WARNING_BEGIN
 
+
+using namespace corecvs;
+
 int DebayerParameters::staticInit()
 {
 
@@ -35,10 +38,11 @@ int DebayerParameters::staticInit()
         "Debayer Parameters",
         ""
     );
+
+     getReflection()->objectSize = sizeof(DebayerParameters);
      
 
-    fields().push_back(
-        new EnumField
+    EnumField* field0 = new EnumField
         (
           DebayerParameters::METHOD_ID,
           offsetof(DebayerParameters, mMethod),
@@ -52,10 +56,11 @@ int DebayerParameters::staticInit()
           , new EnumOption(2,"AHD")
           , new EnumOption(3,"Fourier")
           )
-        )
-    );
-    fields().push_back(
-        new IntField
+        );
+    field0->widgetHint=BaseField::COMBO_BOX;
+    fields().push_back(field0);
+    /*  */ 
+    IntField* field1 = new IntField
         (
           DebayerParameters::BAYER_POS_ID,
           offsetof(DebayerParameters, mBayerPos),
@@ -66,8 +71,15 @@ int DebayerParameters::staticInit()
           true,
          -1,
          255
-        )
-    );
+        );
+    fields().push_back(field1);
+    /*  */ 
+    ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
+    directory[std::string("Debayer Parameters")]= &reflection;
+   return 0;
+}
+int DebayerParameters::relinkCompositeFields()
+{
    return 0;
 }
 

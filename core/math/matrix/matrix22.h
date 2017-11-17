@@ -125,6 +125,8 @@ public:
     friend inline Vector2dd operator *(const Matrix22 &matrix, const Vector2dd &V);
     friend inline Vector2dd operator *(const Vector2dd &V, const Matrix22 &matrix);
 
+    static Matrix22 Identity();
+    static Matrix22 Scale2(double v);
     static Matrix22 VectorByVector(const Vector2dd &a, const Vector2dd &b);
 
     Vector2dd     aV(int i) const;

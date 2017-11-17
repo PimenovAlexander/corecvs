@@ -149,8 +149,6 @@ public:
 };
 
 
-} // namespace corecvs
-
 const float LabConverter::lab_eps(0.008856451586f);
 const float LabConverter::lab_coeff(903.3f);
 const float LabConverter::srgb2xyz[3][3] {
@@ -159,4 +157,6 @@ const float LabConverter::srgb2xyz[3][3] {
     { 0.019334f, 0.119193f, 0.950227f }
 };
 const float LabConverter::white[3]{ 95.047f, 100.000f, 108.883f };
+
+} // namespace corecvs
 #endif //LABCONVERTER_H_

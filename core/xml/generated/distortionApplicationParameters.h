@@ -19,14 +19,14 @@
  *  Additional includes for Composite Types.
  */
 
-using namespace corecvs;
+// using namespace corecvs;
 
 /*
  *  Additional includes for Pointer Types.
  */
 
-namespace corecvs {
-}
+// namespace corecvs {
+// }
 /*
  *  Additional includes for enum section.
  */
@@ -36,7 +36,7 @@ namespace corecvs {
  * \brief Distortion Application Parameters 
  * Distortion Application Parameters 
  **/
-class DistortionApplicationParameters : public BaseReflection<DistortionApplicationParameters>
+class DistortionApplicationParameters : public corecvs::BaseReflection<DistortionApplicationParameters>
 {
 public:
     enum FieldId {
@@ -82,6 +82,8 @@ public:
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
+
+    static int relinkCompositeFields();
 
     /** Section with getters */
     const void *getPtrById(int fieldId) const
@@ -144,16 +146,16 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit(mForceScale,                static_cast<const BoolField *>    (fields()[FORCE_SCALE_ID]));
-        visitor.visit(mAdoptScale,                static_cast<const BoolField *>    (fields()[ADOPT_SCALE_ID]));
-        visitor.visit((int &)mResizePolicy,       static_cast<const EnumField *>    (fields()[RESIZE_POLICY_ID]));
-        visitor.visit(mNewH,                      static_cast<const IntField *>     (fields()[NEW_H_ID]));
-        visitor.visit(mNewW,                      static_cast<const IntField *>     (fields()[NEW_W_ID]));
+        visitor.visit(mForceScale,                static_cast<const corecvs::BoolField *>(fields()[FORCE_SCALE_ID]));
+        visitor.visit(mAdoptScale,                static_cast<const corecvs::BoolField *>(fields()[ADOPT_SCALE_ID]));
+        visitor.visit((int &)mResizePolicy,       static_cast<const corecvs::EnumField *>(fields()[RESIZE_POLICY_ID]));
+        visitor.visit(mNewH,                      static_cast<const corecvs::IntField *>(fields()[NEW_H_ID]));
+        visitor.visit(mNewW,                      static_cast<const corecvs::IntField *>(fields()[NEW_W_ID]));
     }
 
     DistortionApplicationParameters()
     {
-        DefaultSetter setter;
+        corecvs::DefaultSetter setter;
         accept(setter);
     }
 
@@ -172,16 +174,16 @@ template<class VisitorType>
         mNewW = newW;
     }
 
-    friend ostream& operator << (ostream &out, DistortionApplicationParameters &toSave)
+    friend std::ostream& operator << (std::ostream &out, DistortionApplicationParameters &toSave)
     {
-        PrinterVisitor printer(out);
-        toSave.accept<PrinterVisitor>(printer);
+        corecvs::PrinterVisitor printer(out);
+        toSave.accept<corecvs::PrinterVisitor>(printer);
         return out;
     }
 
     void print ()
     {
-        cout << *this;
+        std::cout << *this;
     }
 };
 #endif  //DISTORTION_APPLICATION_PARAMETERS_H_

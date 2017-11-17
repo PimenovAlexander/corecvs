@@ -17,15 +17,9 @@
 #include <stdlib.h>
 #include <limits>
 
-#ifdef WITH_TBB
-#include <tbb/parallel_for.h>
-#include <tbb/spin_mutex.h>
-#include <tbb/blocked_range.h>
-using namespace tbb;
-#endif
-
 #include "core/utils/global.h"
 
+#include "core/tbbwrapper/tbbWrapper.h"
 #include "core/math/mathUtils.h"
 #include "core/buffers/integralBuffer.h"
 #include "core/math/vector/vector3d.h"
@@ -578,10 +572,9 @@ public:
 
 class VJSimpleClassifierGenerator : public WeakHypothesisGenerator<VJSimpleClassifier>
 {
-
 public:
 #ifdef WITH_TBB
-    spin_mutex VJSimpleClassifierGeneratorMutex;
+    tbb::spin_mutex VJSimpleClassifierGeneratorMutex;
 #endif
     double minEpsilonGlobal;
     VJPattern *bestPattern;

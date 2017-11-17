@@ -70,10 +70,44 @@ public:
              double _a30, double _a31, double _a32, double _a33
              );
 
+	Matrix44(const Vector4dd& row0, const Vector4dd& row1, const Vector4dd& row2, const Vector4dd& row3);
 
     Matrix44(const Matrix33 &_m, const Vector3dd &_shift = Vector3dd(0,0,0));
+    static void FillWithArgs(
+            Matrix44 &m,
+            const double &a00, const double &a01, const double &a02, const double &a03,
+            const double &a10, const double &a11, const double &a12, const double &a13,
+            const double &a20, const double &a21, const double &a22, const double &a23,
+            const double &a30, const double &a31, const double &a32, const double &a33);
+
+    static void FillWithArgsT(
+            Matrix44 &m,
+            const double &a00, const double &a01, const double &a02, const double &a03,
+            const double &a10, const double &a11, const double &a12, const double &a13,
+            const double &a20, const double &a21, const double &a22, const double &a23,
+            const double &a30, const double &a31, const double &a32, const double &a33);
+
+    static Matrix44 Diagonal(double d0, double d1, double d2, double d3)
+    {
+        Matrix44 toReturn(0);
+        toReturn.a(0,0) = d0;
+        toReturn.a(1,1) = d1;
+        toReturn.a(2,2) = d2;
+        toReturn.a(3,3) = d3;
+        return toReturn;
+    }
+
     Matrix33 topLeft33() const;
     Vector3dd translationPart() const;
+	Vector4dd row(int i) const
+	{
+		return Vector4dd(a(i, 0), a(i, 1), a(i, 2), a(i, 3));
+	}
+
+	Vector4dd column(int i) const
+	{
+		return Vector4dd(a(0, i), a(1, i), a(2, i), a(3, i));
+	}
 
     double &a(int i,int j);
     const double &a(int i,int j) const;
@@ -84,6 +118,9 @@ public:
     void transpose();
     Matrix44 transposed() const;
     Matrix44 t() const;
+
+	// if successful, returns 4x4 matrix decomposion [ Matrix = Translation * Rotation * Scale ]
+	bool decomposeTRS(Vector3dd& scale, Vector3dd& translate, Matrix33& rotate);
 
     Matrix44 inverted() const;
     double trace() const;
@@ -101,7 +138,7 @@ public:
 
 
     friend Vector3dd operator *(const Matrix44 &M1, const Vector3dd &v);
-    friend FixedVector<double, 4> operator *(const Matrix44 &m, const FixedVector<double, 4> &v);
+    friend FixedVector<double, 4> operator *(const Matrix44 &m, const FixedVector<double, 4> &v);    
     friend Vector4dd operator *(const Matrix44 &m, const Vector4dd &v);
 
     static Matrix44 Identity();
@@ -161,9 +198,29 @@ public:
             }
        }
        return in;
-   }
+    }
 
-    /* Matrix Operations interface */
+    /**
+     * Visitor. So far lazy version
+     **/
+    template<class VisitorType>
+        void accept(VisitorType &visitor)
+        {
+            const char *names[] = {"a00", "a01", "a02", "a03",
+                                   "a10", "a11", "a12", "a13",
+                                   "a20", "a21", "a22", "a23",
+                                   "a30", "a31", "a32", "a33"};
+
+            for (int i = 0; i < LENGTH; i++) {
+                visitor.visit(element[i], 0.0, names[i]);
+            }
+        }
+
+
+    /**
+     * Matrix Operations interface
+     **/
+
     double &atm(int i, int j) {
         return a(i, j);
     }
@@ -189,6 +246,14 @@ inline Matrix44::Matrix44(
     a(1,0) = _a10;   a(1,1) = _a11;   a(1,2) = _a12;   a(1,3) = _a13;
     a(2,0) = _a20;   a(2,1) = _a21;   a(2,2) = _a22;   a(2,3) = _a23;
     a(3,0) = _a30;   a(3,1) = _a31;   a(3,2) = _a32;   a(3,3) = _a33;
+}
+
+inline Matrix44::Matrix44(const Vector4dd& row0, const Vector4dd& row1, const Vector4dd& row2, const Vector4dd& row3)
+{
+	a(0, 0) = row0.x();   a(0, 1) = row0.y();   a(0, 2) = row0.z();   a(0, 3) = row0.w();
+	a(1, 0) = row1.x();   a(1, 1) = row1.y();   a(1, 2) = row1.z();   a(1, 3) = row1.w();
+	a(2, 0) = row2.x();   a(2, 1) = row2.y();   a(2, 2) = row2.z();   a(2, 3) = row2.w();
+	a(3, 0) = row3.x();   a(3, 1) = row3.y();   a(3, 2) = row3.z();   a(3, 3) = row3.w();
 }
 
 /**
@@ -225,6 +290,39 @@ inline Matrix44::Matrix44(const Matrix33 &_matrix, const Vector3dd &_shift)
     a(3,1)  = 0;
     a(3,2)  = 0;
     a(3,3)  = 1;
+}
+
+inline void Matrix44::FillWithArgs(Matrix44 &m,
+                    const double &a00, const double &a01, const double &a02, const double &a03,
+                    const double &a10, const double &a11, const double &a12, const double &a13,
+                    const double &a20, const double &a21, const double &a22, const double &a23,
+                    const double &a30, const double &a31, const double &a32, const double &a33)
+{
+    #define  F(i, j) m.a(i, j) = a ## i ## j;
+    #define FF(i) F(i, 0) F(i, 1) F(i, 2) F(i, 3)
+         FF(0)
+         FF(1)
+         FF(2)
+         FF(3)
+    #undef FF
+    #undef F
+}
+
+inline void Matrix44::FillWithArgsT(
+        Matrix44 &m,
+        const double &a00, const double &a01, const double &a02, const double &a03,
+        const double &a10, const double &a11, const double &a12, const double &a13,
+        const double &a20, const double &a21, const double &a22, const double &a23,
+        const double &a30, const double &a31, const double &a32, const double &a33)
+{
+    #define  F(i, j) m.a(i, j) = a ## j ## i;
+    #define FF(i) F(i, 0) F(i, 1) F(i, 2) F(i, 3)
+        FF(0)
+        FF(1)
+        FF(2)
+        FF(3)
+    #undef FF
+    #undef F
 }
 
 inline Matrix33 Matrix44::topLeft33() const

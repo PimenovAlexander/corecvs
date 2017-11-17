@@ -11,12 +11,14 @@
 #include <iostream>
 #include <vector>
 
+#include "core/math/affine.h"
 #include "core/math/vector/vector2d.h"
 #include "core/math/matrix/matrix33.h"
 #include "core/rectification/correspondenceList.h"
 #include "core/math/matrix/matrix.h"
 #include "core/math/quaternion.h"
 #include "core/function/function.h"
+#include "core/math/affine.h"
 
 namespace corecvs {
 
@@ -51,6 +53,13 @@ public:
      **/
     Matrix44 toMatrix() const;
 
+	Affine3DQ transform(const Affine3DQ &input);
+
+    /**
+     *    Transform
+     **/
+    Vector3dd transform(const Vector3dd &point) const;
+
     friend ostream & operator << (ostream &out, const Similarity &reconstructor);
 
     enum {
@@ -76,7 +85,7 @@ public:
     {}
 
     Similarity getInterpolated(double t);
-
+    Similarity inverted();
 
     /* Get simple params*/
     double getScale();
@@ -84,6 +93,80 @@ public:
 
     Vector3dd getShift();
     Matrix33 getRotation();
+
+    /* Some nice visitor */
+template<class VisitorType>
+    void accept(VisitorType &visitor)
+    {
+        visitor.visit(shiftL, "ShiftL");
+        visitor.visit(shiftR, "ShiftR");
+
+        visitor.visit(scaleL, 1.0, "ScaleL");
+        visitor.visit(scaleR, 1.0, "ScaleR");
+
+        visitor.visit(rotation, "rotation");
+    }
+
+    friend std::ostream& operator << (std::ostream &out, Similarity &toSave)
+    {
+        corecvs::PrinterVisitor printer(out);
+        toSave.accept<corecvs::PrinterVisitor>(printer);
+        return out;
+    }
+
+    void print(ostream &out = std::cout);
+    /**
+     * This is an exact syntactic comparison
+     * Even if the action is acting the same way this would only return true if data structures are per-field equal
+     **/
+    bool operator == (const Similarity &other)
+    {
+        if (scaleL != other.scaleL)
+            return false;
+        if (scaleR != other.scaleR)
+            return false;
+        if (shiftL != other.shiftL)
+            return false;
+        if (shiftR != other.shiftR)
+            return false;
+        if (rotation != other.rotation)
+            return false;
+
+        return true;
+    }
+
+};
+
+
+/**
+   Sim3 group
+
+   This class stores scale in quaternion
+
+ **/
+class SRTTransform : public Affine3D<Quaternion>{
+public:
+    SRTTransform(double scale, const Quaternion &rotate, const Vector3dd  &translate) :
+        Affine3D<Quaternion>(rotate * sqrt(scale), translate)
+    {}
+
+
+
+    /**
+     *    To matrix transformation
+     **/
+    Matrix44 toMatrix() const;
+
+
+    void print()
+    {
+        std::cout << *this;
+        std::cout << "Scale:" << rotor.l2Metric();
+        std::cout << "Rotation: ";
+        rotor.normalised().printAxisAndAngle();
+        std::cout << "Translate" << shift;
+    }
+
 };
 
 typedef PrimitiveCorrespondence<Vector3dd, Vector3dd> Correspondence3D;
@@ -97,6 +180,8 @@ public:
 
     SimilarityReconstructor();
     void addPoint2PointConstraint(const Vector3dd &from, const Vector3dd &to);
+    void addPoint2PointConstraint(double fromX, double fromY, double fromZ, double toX, double toY, double toZ);
+
     void reset(void);
 
     /**
@@ -154,6 +239,8 @@ public:
         //using FunctionArgs::operator();
     };
 
+    /* This method checks one of the invariants. It just prints the result */
+    void reportInputQuality();
 };
 
 

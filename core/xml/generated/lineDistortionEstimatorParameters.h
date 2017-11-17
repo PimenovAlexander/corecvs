@@ -19,14 +19,14 @@
  *  Additional includes for Composite Types.
  */
 
-using namespace corecvs;
+// using namespace corecvs;
 
 /*
  *  Additional includes for Pointer Types.
  */
 
-namespace corecvs {
-}
+// namespace corecvs {
+// }
 /*
  *  Additional includes for enum section.
  */
@@ -36,13 +36,13 @@ namespace corecvs {
  * \brief Line Distortion Estimator Parameters 
  * Line Distortion Estimator Parameters 
  **/
-class LineDistortionEstimatorParameters : public BaseReflection<LineDistortionEstimatorParameters>
+class LineDistortionEstimatorParameters : public corecvs::BaseReflection<LineDistortionEstimatorParameters>
 {
 public:
     enum FieldId {
         COST_ALGORITHM_ID,
         ITERATION_NUMBER_ID,
-        POLINOM_DEGREE_ID,
+        POLYNOM_DEGREE_ID,
         SIMPLE_JACOBIAN_ID,
         EVEN_POWERS_ONLY_ID,
         ESTIMATE_TANGENT_ID,
@@ -65,10 +65,10 @@ public:
     int mIterationNumber;
 
     /** 
-     * \brief Polinom Degree 
-     * Polinom Degree 
+     * \brief Polynom Degree 
+     * Polynom Degree 
      */
-    int mPolinomDegree;
+    int mPolynomDegree;
 
     /** 
      * \brief Simple Jacobian 
@@ -97,6 +97,8 @@ public:
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
 
+    static int relinkCompositeFields();
+
     /** Section with getters */
     const void *getPtrById(int fieldId) const
     {
@@ -112,9 +114,9 @@ public:
         return mIterationNumber;
     }
 
-    int polinomDegree() const
+    int polynomDegree() const
     {
-        return mPolinomDegree;
+        return mPolynomDegree;
     }
 
     bool simpleJacobian() const
@@ -148,9 +150,9 @@ public:
         mIterationNumber = iterationNumber;
     }
 
-    void setPolinomDegree(int polinomDegree)
+    void setPolynomDegree(int polynomDegree)
     {
-        mPolinomDegree = polinomDegree;
+        mPolynomDegree = polynomDegree;
     }
 
     void setSimpleJacobian(bool simpleJacobian)
@@ -178,25 +180,25 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit((int &)mCostAlgorithm,      static_cast<const EnumField *>    (fields()[COST_ALGORITHM_ID]));
-        visitor.visit(mIterationNumber,           static_cast<const IntField *>     (fields()[ITERATION_NUMBER_ID]));
-        visitor.visit(mPolinomDegree,             static_cast<const IntField *>     (fields()[POLINOM_DEGREE_ID]));
-        visitor.visit(mSimpleJacobian,            static_cast<const BoolField *>    (fields()[SIMPLE_JACOBIAN_ID]));
-        visitor.visit(mEvenPowersOnly,            static_cast<const BoolField *>    (fields()[EVEN_POWERS_ONLY_ID]));
-        visitor.visit(mEstimateTangent,           static_cast<const BoolField *>    (fields()[ESTIMATE_TANGENT_ID]));
-        visitor.visit(mEstimateCenter,            static_cast<const BoolField *>    (fields()[ESTIMATE_CENTER_ID]));
+        visitor.visit((int &)mCostAlgorithm,      static_cast<const corecvs::EnumField *>(fields()[COST_ALGORITHM_ID]));
+        visitor.visit(mIterationNumber,           static_cast<const corecvs::IntField *>(fields()[ITERATION_NUMBER_ID]));
+        visitor.visit(mPolynomDegree,             static_cast<const corecvs::IntField *>(fields()[POLYNOM_DEGREE_ID]));
+        visitor.visit(mSimpleJacobian,            static_cast<const corecvs::BoolField *>(fields()[SIMPLE_JACOBIAN_ID]));
+        visitor.visit(mEvenPowersOnly,            static_cast<const corecvs::BoolField *>(fields()[EVEN_POWERS_ONLY_ID]));
+        visitor.visit(mEstimateTangent,           static_cast<const corecvs::BoolField *>(fields()[ESTIMATE_TANGENT_ID]));
+        visitor.visit(mEstimateCenter,            static_cast<const corecvs::BoolField *>(fields()[ESTIMATE_CENTER_ID]));
     }
 
     LineDistortionEstimatorParameters()
     {
-        DefaultSetter setter;
+        corecvs::DefaultSetter setter;
         accept(setter);
     }
 
     LineDistortionEstimatorParameters(
           LineDistortionEstimatorCost::LineDistortionEstimatorCost costAlgorithm
         , int iterationNumber
-        , int polinomDegree
+        , int polynomDegree
         , bool simpleJacobian
         , bool evenPowersOnly
         , bool estimateTangent
@@ -205,23 +207,23 @@ template<class VisitorType>
     {
         mCostAlgorithm = costAlgorithm;
         mIterationNumber = iterationNumber;
-        mPolinomDegree = polinomDegree;
+        mPolynomDegree = polynomDegree;
         mSimpleJacobian = simpleJacobian;
         mEvenPowersOnly = evenPowersOnly;
         mEstimateTangent = estimateTangent;
         mEstimateCenter = estimateCenter;
     }
 
-    friend ostream& operator << (ostream &out, LineDistortionEstimatorParameters &toSave)
+    friend std::ostream& operator << (std::ostream &out, LineDistortionEstimatorParameters &toSave)
     {
-        PrinterVisitor printer(out);
-        toSave.accept<PrinterVisitor>(printer);
+        corecvs::PrinterVisitor printer(out);
+        toSave.accept<corecvs::PrinterVisitor>(printer);
         return out;
     }
 
     void print ()
     {
-        cout << *this;
+        std::cout << *this;
     }
 };
 #endif  //LINE_DISTORTION_ESTIMATOR_PARAMETERS_H_

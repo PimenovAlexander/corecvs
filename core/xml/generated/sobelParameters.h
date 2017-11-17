@@ -19,14 +19,14 @@
  *  Additional includes for Composite Types.
  */
 
-using namespace corecvs;
+// using namespace corecvs;
 
 /*
  *  Additional includes for Pointer Types.
  */
 
-namespace corecvs {
-}
+// namespace corecvs {
+// }
 /*
  *  Additional includes for enum section.
  */
@@ -36,7 +36,7 @@ namespace corecvs {
  * \brief Sobel Parameters 
  * Sobel Parameters 
  **/
-class SobelParameters : public BaseReflection<SobelParameters>
+class SobelParameters : public corecvs::BaseReflection<SobelParameters>
 {
 public:
     enum FieldId {
@@ -68,6 +68,8 @@ public:
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
+
+    static int relinkCompositeFields();
 
     /** Section with getters */
     const void *getPtrById(int fieldId) const
@@ -110,14 +112,14 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit((int &)mMixingType,         static_cast<const EnumField *>    (fields()[MIXING_TYPE_ID]));
-        visitor.visit(mHorizontal,                static_cast<const BoolField *>    (fields()[HORIZONTAL_ID]));
-        visitor.visit(mVertical,                  static_cast<const BoolField *>    (fields()[VERTICAL_ID]));
+        visitor.visit((int &)mMixingType,         static_cast<const corecvs::EnumField *>(fields()[MIXING_TYPE_ID]));
+        visitor.visit(mHorizontal,                static_cast<const corecvs::BoolField *>(fields()[HORIZONTAL_ID]));
+        visitor.visit(mVertical,                  static_cast<const corecvs::BoolField *>(fields()[VERTICAL_ID]));
     }
 
     SobelParameters()
     {
-        DefaultSetter setter;
+        corecvs::DefaultSetter setter;
         accept(setter);
     }
 
@@ -132,16 +134,16 @@ template<class VisitorType>
         mVertical = vertical;
     }
 
-    friend ostream& operator << (ostream &out, SobelParameters &toSave)
+    friend std::ostream& operator << (std::ostream &out, SobelParameters &toSave)
     {
-        PrinterVisitor printer(out);
-        toSave.accept<PrinterVisitor>(printer);
+        corecvs::PrinterVisitor printer(out);
+        toSave.accept<corecvs::PrinterVisitor>(printer);
         return out;
     }
 
     void print ()
     {
-        cout << *this;
+        std::cout << *this;
     }
 };
 #endif  //SOBEL_PARAMETERS_H_

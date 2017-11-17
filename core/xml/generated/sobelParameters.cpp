@@ -26,6 +26,9 @@ int BaseReflection<SobelParameters>::dummy = SobelParameters::staticInit();
 
 SUPPRESS_OFFSET_WARNING_BEGIN
 
+
+using namespace corecvs;
+
 int SobelParameters::staticInit()
 {
 
@@ -35,10 +38,11 @@ int SobelParameters::staticInit()
         "Sobel Parameters",
         ""
     );
+
+     getReflection()->objectSize = sizeof(SobelParameters);
      
 
-    fields().push_back(
-        new EnumField
+    EnumField* field0 = new EnumField
         (
           SobelParameters::MIXING_TYPE_ID,
           offsetof(SobelParameters, mMixingType),
@@ -50,10 +54,11 @@ int SobelParameters::staticInit()
           , new EnumOption(0,"Sum of Absolute")
           , new EnumOption(1,"L2")
           )
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field0->widgetHint=BaseField::COMBO_BOX;
+    fields().push_back(field0);
+    /*  */ 
+    BoolField* field1 = new BoolField
         (
           SobelParameters::HORIZONTAL_ID,
           offsetof(SobelParameters, mHorizontal),
@@ -61,10 +66,11 @@ int SobelParameters::staticInit()
           "Horizontal",
           "Horizontal",
           "Horizontal"
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field1->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field1);
+    /*  */ 
+    BoolField* field2 = new BoolField
         (
           SobelParameters::VERTICAL_ID,
           offsetof(SobelParameters, mVertical),
@@ -72,8 +78,16 @@ int SobelParameters::staticInit()
           "Vertical",
           "Vertical",
           "Vertical"
-        )
-    );
+        );
+    field2->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field2);
+    /*  */ 
+    ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
+    directory[std::string("Sobel Parameters")]= &reflection;
+   return 0;
+}
+int SobelParameters::relinkCompositeFields()
+{
    return 0;
 }
 

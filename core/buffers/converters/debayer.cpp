@@ -2,6 +2,8 @@
 #include "core/buffers/converters/labConverter.h"
 #include "math/fftw/fftwWrapper.h"
 
+namespace corecvs {
+
 using std::pow;
 using std::max;
 using std::min;
@@ -92,14 +94,14 @@ void Debayer::linear(RGB48Buffer *result)
             b = (mBayer->element(i - 1, j - 1) + mBayer->element(i - 1, j + 1) +
                  mBayer->element(i + 1, j - 1) + mBayer->element(i + 1, j + 1)) / 4;
 
-            result->element(i, j) = { outR(r), outG(g), outB(b) };
+            result->element(i, j) = { mCurve[outR(r)], mCurve[outG(g)], mCurve[outB(b)] };
 
             // G1 pixel
             g =  mBayer->element(i, j + 1);
             r = (mBayer->element(i,     j    ) + mBayer->element(i,     j + 2)) / 2;
             b = (mBayer->element(i + 1, j + 1) + mBayer->element(i - 1, j + 1)) / 2;
 
-            result->element(i, j + 1) = { outR(r), outG(g), outB(b) };
+            result->element(i, j + 1) = { mCurve[outR(r)], mCurve[outG(g)], mCurve[outB(b)] };
 
 
             // G2 pixel - G1 inverted
@@ -107,7 +109,7 @@ void Debayer::linear(RGB48Buffer *result)
             b = (mBayer->element(i + 1, j - 1) + mBayer->element(i + 1, j + 1)) / 2;
             r = (mBayer->element(i + 2, j    ) + mBayer->element(i,     j    )) / 2;
 
-            result->element(i + 1, j) = { outR(r), outG(g), outB(b) };
+            result->element(i + 1, j) = { mCurve[outR(r)], mCurve[outG(g)], mCurve[outB(b)] };
 
             // B pixel - R inverted
             b =  mBayer->element(i + 1, j + 1);
@@ -115,7 +117,7 @@ void Debayer::linear(RGB48Buffer *result)
             r = (mBayer->element(i,     j) + mBayer->element(i,     j + 2) +
                  mBayer->element(i + 2, j) + mBayer->element(i + 2, j + 2)) / 4;
 
-            result->element(i + 1, j + 1) = { outR(r), outG(g), outB(b) };
+            result->element(i + 1, j + 1) = { mCurve[outR(r)], mCurve[outG(g)], mCurve[outB(b)] };
         }
 //#endif
     }
@@ -125,11 +127,10 @@ int compare(const void * a, const void * b)
 {
     return (*(int*)a - *(int*)b);
 }
-
-int compared(const void * a, const void * b)
-{
-    return int(*(double*)a - *(double*)b);
-}
+//inline int compared(const void * a, const void * b)
+//{
+//    return int(*(double*)a - *(double*)b);
+//}
 
 void Debayer::ahd(RGB48Buffer *result)
 {
@@ -898,6 +899,32 @@ int Debayer::toRGB48(DebayerMethod::DebayerMethod method, RGB48Buffer *output)
     return 0;
 }
 
+int Debayer::toRGB24(DebayerMethod::DebayerMethod method, RGB24Buffer *out)
+{
+    double scaler = 1. / (1 << (mDepth - 8));
+
+    RGB48Buffer *outputDraft = new RGB48Buffer(out->getSize(), false);
+    int result = toRGB48(method, outputDraft);
+
+    auto oldMax = mMaximum;
+    mMaximum = 255; // to work clip properly
+    for (int i = 0; i < out->h; i++)
+    {
+        for (int j = 0; j < out->w; j++)
+        {
+            RGBColor48 color = outputDraft->element(i,j);
+            uint8_t r = clip(roundUp(color.r() * scaler));
+            uint8_t g = clip(roundUp(color.g() * scaler));
+            uint8_t b = clip(roundUp(color.b() * scaler));
+
+            out->element(i,j) = RGBColor(r, g, b);
+        }
+    }
+    delete_safe(outputDraft);
+    mMaximum = oldMax;
+    return result;
+}
+
 void Debayer::preprocess(bool overwrite)
 {
     // recalculate white balance coefficients
@@ -996,3 +1023,5 @@ void Debayer::fromRgb(RGB48Buffer *inRgb)
         }
     }
 }
+
+} //namespace corecvs

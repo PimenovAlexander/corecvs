@@ -260,6 +260,13 @@ extern "C" {
 # define PRIi64 "I64d"
 #endif
 
+#if defined(_MSC_VER) && (_MSC_VER < 1900)      // fix bug for older vs than msvc2015
+# define PRISIZE_T  PRIu64
+#else
+# define PRISIZE_T "zu"
+#endif
+
+
 #define REFLECTION_IN_CORE
 
 
@@ -346,7 +353,7 @@ namespace std
         {
             return hash_calc<std::tuple<T...>>()(t, 0);
         }
-   };
+    };
     template<typename C, typename T>
     auto contains(const C& c, const T& t) -> decltype(end(c), true)
     {
@@ -362,7 +369,7 @@ namespace std
 #endif
 
 /** MSVC: macro to help in memory leaks detection */
-#if defined(_MSC_VER) && defined(_DEBUG)
+#if defined(_MSC_VER) && defined(_DEBUG) && (_MSC_VER < 1900)   // msvc2015 suggestion - to don't use it so!
 # define USE_MSVC_DEBUG_MEM
 # define _CRTDBG_MAP_ALLOC
 # define _CRTDBG_MAP_ALLOC_NEW
@@ -386,6 +393,23 @@ inline void * __CRTDECL operator new(size_t _Size) {
 //}
 #endif
 
+/** Invite support of the file system */
+
+#ifdef __GNUC__
+# if __cplusplus >= 201703L
+#  include <filesystem>
+   namespace fs = std::filesystem;
+# else
+#  include <experimental/filesystem>
+   namespace fs = std::experimental::filesystem;
+# endif
+#else
+# ifdef _MSC_VER
+#  include <filesystem>
+   namespace fs = std::tr2::sys;
+# endif
+#endif
+
 /** Function for safe deleting objects and arrays */
 #include <stdlib.h>
 
@@ -407,9 +431,9 @@ inline void deletearr_safe (Type * &ptr)
 
 /** Compatibility with old STL library versions without data() method of the vector object */
 #if defined(_MSC_VER) && _MSC_VER <= 1500
-# define VEC_DATA_PTR(vec)      &(vec[0])
+# define VEC_DATA_PTR(vec)                  &(vec[0])
 #else
-# define VEC_DATA_PTR(vec)      vec.data()
+# define VEC_DATA_PTR(vec)                  vec.data()
 #endif
 
 #ifdef _WIN32
@@ -418,22 +442,21 @@ inline void deletearr_safe (Type * &ptr)
 #   define PATH_SEPARATOR  "/"
 #endif
 
+/* Helper to detect if the symbol is a slash for both platforms. It's not enough to check for PATH_SEPARATOR only */
+#define   IS_SLASH_SYMBOL(ch)               ((ch) == '/' || (ch) == '\\')
+
 #if defined(_WIN32) && defined(_MSC_VER) && _MSC_VER < 1800
 #   define FOREACH(X, Y) for each (X in Y)      // msvc understands standard since vc12
 #else
 #   define FOREACH(X, Y) for (X : Y)
 #endif
 
-//#define QSTR_DATA_PTR(qstring)        (qstring).toLatin1().data()
-#define   QSTR_DATA_PTR(qstring)        (qstring).toStdString().c_str()  // after using textCodecs we should use this
+//#define QSTR_DATA_PTR(qstring)            (qstring).toLatin1().data()
+#define   QSTR_DATA_PTR(qstring)            (qstring).toStdString().c_str()  // after using textCodecs we should use this
 
-#define   QSTR_HAS_SLASH_AT_END(qstring)  ((qstring).length() > 1 && \
-                                          ((qstring)[(qstring).length() - 1] == '/' || \
-                                           (qstring)[(qstring).length() - 1] == '\\'))
+#define   QSTR_HAS_SLASH_AT_END(qstring)    ((qstring).length() > 1 && IS_SLASH_SYMBOL((qstring)[(qstring).length() - 1]))
 
-#define   STR_HAS_SLASH_AT_END(string)  ((string).length() > 1 && \
-                                        ((string)[(string).length() - 1] == '/' || \
-                                         (string)[(string).length() - 1] == '\\'))
+#define   STR_HAS_SLASH_AT_END(string)      ((string).length() > 1 && IS_SLASH_SYMBOL((string)[(string).length() - 1]))
 
 #endif // is__cplusplus
 
@@ -441,6 +464,7 @@ inline void deletearr_safe (Type * &ptr)
 # define NOMINMAX
 # define WIN32_LEAN_AND_MEAN
 # ifdef _MSC_VER
+#  define aligned_alloc(a, s) _aligned_malloc(s, a)
 #  pragma warning(disable: 4503)  // decorated name length exceeded, name was truncated
 # endif
 #endif // WIN32

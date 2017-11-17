@@ -2,6 +2,39 @@
 
 #include <iomanip>
 
+double corecvs::Polynomial::polishRoot(double x0, int N) const
+{
+    int it = 0;
+    double val = std::abs((*this)(x0));
+//    double v0 = val;
+    do
+    {
+        double df = 0.0, d2f = 0.0;
+        double v1 = 1.0, v2 = 0.0;
+        for (size_t i = 1; i <= degree(); ++i)
+        {
+            double c = (*this)[i];
+            df += i * v1 * c;
+            d2f+= i * (i - 1) * v2 * c;
+            v2 = v1;
+            v1 *= x0;
+        }
+        // d(0.5f^2)/dx=f'f
+        // d2(0.5f^2)/dx2=f''f+f'f'
+        double dx = -(df * val) / (d2f * val + df * df);
+        double x1 = x0 + dx;
+        double vn = std::abs((*this)(x0 + dx));
+        if (vn >= val)
+            break;
+        val = vn;
+        ++it;
+        x0 = x1;
+    } while (it < N);
+//    double vfin = val;
+//    std::cout << v0 / vfin << "x improvement" << std::endl;
+    return x0;
+}
+
 const double* corecvs::Polynomial::data() const
 {
     return &static_cast<const std::vector<double>&>(*this)[0];
@@ -237,4 +270,4 @@ corecvs::Polynomial corecvs::PolynomialMatrix::det(const size_t requiredPower) c
 
     return corecvs::Polynomial::Interpolate(evaluationPoints, evaluatedValues);
 }
-#endif
+#endif // WITH_BLAS

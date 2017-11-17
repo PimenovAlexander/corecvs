@@ -19,14 +19,14 @@
  *  Additional includes for Composite Types.
  */
 
-using namespace corecvs;
+// using namespace corecvs;
 
 /*
  *  Additional includes for Pointer Types.
  */
 
-namespace corecvs {
-}
+// namespace corecvs {
+// }
 /*
  *  Additional includes for enum section.
  */
@@ -35,7 +35,7 @@ namespace corecvs {
  * \brief Bit Selector Parameters 
  * Bit Selector Parameters 
  **/
-class BitSelectorParameters : public BaseReflection<BitSelectorParameters>
+class BitSelectorParameters : public corecvs::BaseReflection<BitSelectorParameters>
 {
 public:
     enum FieldId {
@@ -165,6 +165,8 @@ public:
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
+
+    static int relinkCompositeFields();
 
     /** Section with getters */
     const void *getPtrById(int fieldId) const
@@ -347,28 +349,28 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit(mShift,                     static_cast<const IntField *>     (fields()[SHIFT_ID]));
-        visitor.visit(mBit0,                      static_cast<const BoolField *>    (fields()[BIT_0_ID]));
-        visitor.visit(mBit1,                      static_cast<const BoolField *>    (fields()[BIT_1_ID]));
-        visitor.visit(mBit2,                      static_cast<const BoolField *>    (fields()[BIT_2_ID]));
-        visitor.visit(mBit3,                      static_cast<const BoolField *>    (fields()[BIT_3_ID]));
-        visitor.visit(mBit4,                      static_cast<const BoolField *>    (fields()[BIT_4_ID]));
-        visitor.visit(mBit5,                      static_cast<const BoolField *>    (fields()[BIT_5_ID]));
-        visitor.visit(mBit6,                      static_cast<const BoolField *>    (fields()[BIT_6_ID]));
-        visitor.visit(mBit7,                      static_cast<const BoolField *>    (fields()[BIT_7_ID]));
-        visitor.visit(mBit8,                      static_cast<const BoolField *>    (fields()[BIT_8_ID]));
-        visitor.visit(mBit9,                      static_cast<const BoolField *>    (fields()[BIT_9_ID]));
-        visitor.visit(mBit10,                     static_cast<const BoolField *>    (fields()[BIT_10_ID]));
-        visitor.visit(mBit11,                     static_cast<const BoolField *>    (fields()[BIT_11_ID]));
-        visitor.visit(mBit12,                     static_cast<const BoolField *>    (fields()[BIT_12_ID]));
-        visitor.visit(mBit13,                     static_cast<const BoolField *>    (fields()[BIT_13_ID]));
-        visitor.visit(mBit14,                     static_cast<const BoolField *>    (fields()[BIT_14_ID]));
-        visitor.visit(mBit15,                     static_cast<const BoolField *>    (fields()[BIT_15_ID]));
+        visitor.visit(mShift,                     static_cast<const corecvs::IntField *>(fields()[SHIFT_ID]));
+        visitor.visit(mBit0,                      static_cast<const corecvs::BoolField *>(fields()[BIT_0_ID]));
+        visitor.visit(mBit1,                      static_cast<const corecvs::BoolField *>(fields()[BIT_1_ID]));
+        visitor.visit(mBit2,                      static_cast<const corecvs::BoolField *>(fields()[BIT_2_ID]));
+        visitor.visit(mBit3,                      static_cast<const corecvs::BoolField *>(fields()[BIT_3_ID]));
+        visitor.visit(mBit4,                      static_cast<const corecvs::BoolField *>(fields()[BIT_4_ID]));
+        visitor.visit(mBit5,                      static_cast<const corecvs::BoolField *>(fields()[BIT_5_ID]));
+        visitor.visit(mBit6,                      static_cast<const corecvs::BoolField *>(fields()[BIT_6_ID]));
+        visitor.visit(mBit7,                      static_cast<const corecvs::BoolField *>(fields()[BIT_7_ID]));
+        visitor.visit(mBit8,                      static_cast<const corecvs::BoolField *>(fields()[BIT_8_ID]));
+        visitor.visit(mBit9,                      static_cast<const corecvs::BoolField *>(fields()[BIT_9_ID]));
+        visitor.visit(mBit10,                     static_cast<const corecvs::BoolField *>(fields()[BIT_10_ID]));
+        visitor.visit(mBit11,                     static_cast<const corecvs::BoolField *>(fields()[BIT_11_ID]));
+        visitor.visit(mBit12,                     static_cast<const corecvs::BoolField *>(fields()[BIT_12_ID]));
+        visitor.visit(mBit13,                     static_cast<const corecvs::BoolField *>(fields()[BIT_13_ID]));
+        visitor.visit(mBit14,                     static_cast<const corecvs::BoolField *>(fields()[BIT_14_ID]));
+        visitor.visit(mBit15,                     static_cast<const corecvs::BoolField *>(fields()[BIT_15_ID]));
     }
 
     BitSelectorParameters()
     {
-        DefaultSetter setter;
+        corecvs::DefaultSetter setter;
         accept(setter);
     }
 
@@ -411,16 +413,16 @@ template<class VisitorType>
         mBit15 = bit15;
     }
 
-    friend ostream& operator << (ostream &out, BitSelectorParameters &toSave)
+    friend std::ostream& operator << (std::ostream &out, BitSelectorParameters &toSave)
     {
-        PrinterVisitor printer(out);
-        toSave.accept<PrinterVisitor>(printer);
+        corecvs::PrinterVisitor printer(out);
+        toSave.accept<corecvs::PrinterVisitor>(printer);
         return out;
     }
 
     void print ()
     {
-        cout << *this;
+        std::cout << *this;
     }
 };
 #endif  //BIT_SELECTOR_PARAMETERS_H_

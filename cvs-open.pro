@@ -3,15 +3,15 @@ CONFIG  += ordered
 
 SUBDIRS +=                   \
     core                     \
-    unitTests                \
-    utils                    \
-    \
-    tests \
-    \
-    base_application         \
-    base_application_example \
-    recorder                 \
-    scanner                  \
+#    unitTests                \
+#    utils                    \
+#    \
+#    tests \
+#    \
+#    base_application         \
+#    base_application_example \
+#    recorder                 \
+#    scanner                  \
 #    testbed                  \
 #    cloudview                \
 #    imageview                \

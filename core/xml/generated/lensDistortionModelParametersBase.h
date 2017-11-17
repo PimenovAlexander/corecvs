@@ -19,14 +19,14 @@
  *  Additional includes for Composite Types.
  */
 
-using namespace corecvs;
+// using namespace corecvs;
 
 /*
  *  Additional includes for Pointer Types.
  */
 
-namespace corecvs {
-}
+// namespace corecvs {
+// }
 /*
  *  Additional includes for enum section.
  */
@@ -63,7 +63,7 @@ namespace corecvs {
  *   for more details please read the code of getCorrectionForPoint() or read the Heikkila paper
      
  **/
-class LensDistortionModelParametersBase : public BaseReflection<LensDistortionModelParametersBase>
+class LensDistortionModelParametersBase : public corecvs::BaseReflection<LensDistortionModelParametersBase>
 {
 public:
     enum FieldId {
@@ -145,12 +145,14 @@ public:
 
     /** 
      * \brief Map Forward 
-     * This one is used to identify direction of map 
+     * This one is used to identify map direction, true if undistorted->distorted 
      */
     bool mMapForward;
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
+
+    static int relinkCompositeFields();
 
     /** Section with getters */
     const void *getPtrById(int fieldId) const
@@ -273,22 +275,22 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit(mPrincipalX,                static_cast<const DoubleField *>  (fields()[PRINCIPALX_ID]));
-        visitor.visit(mPrincipalY,                static_cast<const DoubleField *>  (fields()[PRINCIPALY_ID]));
-        visitor.visit(mTangentialX,               static_cast<const DoubleField *>  (fields()[TANGENTIALX_ID]));
-        visitor.visit(mTangentialY,               static_cast<const DoubleField *>  (fields()[TANGENTIALY_ID]));
-        visitor.visit(mKoeff,                     static_cast<const DoubleVectorField *>(fields()[KOEFF_ID]));
-        visitor.visit(mAspect,                    static_cast<const DoubleField *>  (fields()[ASPECT_ID]));
-        visitor.visit(mScale,                     static_cast<const DoubleField *>  (fields()[SCALE_ID]));
-        visitor.visit(mNormalizingFocal,          static_cast<const DoubleField *>  (fields()[NORMALIZING_FOCAL_ID]));
-        visitor.visit(mShiftX,                    static_cast<const DoubleField *>  (fields()[SHIFT_X_ID]));
-        visitor.visit(mShiftY,                    static_cast<const DoubleField *>  (fields()[SHIFT_Y_ID]));
-        visitor.visit(mMapForward,                static_cast<const BoolField *>    (fields()[MAP_FORWARD_ID]));
+        visitor.visit(mPrincipalX,                static_cast<const corecvs::DoubleField *>(fields()[PRINCIPALX_ID]));
+        visitor.visit(mPrincipalY,                static_cast<const corecvs::DoubleField *>(fields()[PRINCIPALY_ID]));
+        visitor.visit(mTangentialX,               static_cast<const corecvs::DoubleField *>(fields()[TANGENTIALX_ID]));
+        visitor.visit(mTangentialY,               static_cast<const corecvs::DoubleField *>(fields()[TANGENTIALY_ID]));
+        visitor.visit(mKoeff,                     static_cast<const corecvs::DoubleVectorField *>(fields()[KOEFF_ID]));
+        visitor.visit(mAspect,                    static_cast<const corecvs::DoubleField *>(fields()[ASPECT_ID]));
+        visitor.visit(mScale,                     static_cast<const corecvs::DoubleField *>(fields()[SCALE_ID]));
+        visitor.visit(mNormalizingFocal,          static_cast<const corecvs::DoubleField *>(fields()[NORMALIZING_FOCAL_ID]));
+        visitor.visit(mShiftX,                    static_cast<const corecvs::DoubleField *>(fields()[SHIFT_X_ID]));
+        visitor.visit(mShiftY,                    static_cast<const corecvs::DoubleField *>(fields()[SHIFT_Y_ID]));
+        visitor.visit(mMapForward,                static_cast<const corecvs::BoolField *>(fields()[MAP_FORWARD_ID]));
     }
 
     LensDistortionModelParametersBase()
     {
-        DefaultSetter setter;
+        corecvs::DefaultSetter setter;
         accept(setter);
     }
 
@@ -319,16 +321,16 @@ template<class VisitorType>
         mMapForward = mapForward;
     }
 
-    friend ostream& operator << (ostream &out, LensDistortionModelParametersBase &toSave)
+    friend std::ostream& operator << (std::ostream &out, LensDistortionModelParametersBase &toSave)
     {
-        PrinterVisitor printer(out);
-        toSave.accept<PrinterVisitor>(printer);
+        corecvs::PrinterVisitor printer(out);
+        toSave.accept<corecvs::PrinterVisitor>(printer);
         return out;
     }
 
     void print ()
     {
-        cout << *this;
+        std::cout << *this;
     }
 };
 #endif  //LENS_DISTORTION_MODEL_PARAMETERS_BASE_H_

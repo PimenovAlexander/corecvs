@@ -106,8 +106,8 @@ public:
 
     static double interpolate(double y, double x, G12Buffer * buffer)
     {
-        int32_t i = floor(y);
-        int32_t j = floor(x);
+        int32_t i = (int32_t)floor(y);
+        int32_t j = (int32_t)floor(x);
 
         CORE_ASSERT_TRUE_P(buffer->isValidCoordBl(y, x),
                 ("Invalid coordinate in AbstractContiniousBuffer::elementBl(double y=%lf, double x=%lf) buffer sizes is [%dx%d]",
@@ -199,8 +199,8 @@ public:
 
     static double interpolate(double y, double x, G12Buffer * buffer)
     {
-        int32_t i = floor(y);
-        int32_t j = floor(x);
+        int32_t i = (int32_t)floor(y);
+        int32_t j = (int32_t)floor(x);
 
         CORE_ASSERT_TRUE_P(buffer->isValidCoordBl(y, x),
             ("Invalid coordinate in AbstractContiniousBuffer::elementBl(double y=%lf, double x=%lf) buffer sizes is [%dx%d]",
@@ -226,8 +226,8 @@ class PolynomInterpolator
 public:
     static double interpolate(double y, double x, G12Buffer * buffer)
     {
-        int32_t i = floor(y);
-        int32_t j = floor(x);
+        int32_t i = (int32_t)floor(y);
+        int32_t j = (int32_t)floor(x);
 
         int w = buffer->getW();
         int h = buffer->getH();

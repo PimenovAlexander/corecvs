@@ -1,7 +1,6 @@
-#include "core/cameracalibration/calibrationHelpers.h"
+#include "core/cameracalibration/calibrationDrawHelpers.h"
 #include "core/geometry/mesh3d.h"
 #include "core/cameracalibration/calibrationCamera.h"
-//#include "calibrationPhotostation.h"
 #include "core/camerafixture/fixtureScene.h"
 #include "core/alignment/selectableGeometryFeatures.h"
 #include "core/buffers/rgb24/abstractPainter.h"
@@ -9,7 +8,7 @@
 
 using namespace corecvs;
 
-RGBColor CalibrationHelpers::palette[] =
+RGBColor CalibrationDrawHelpers::palette[] =
 {
     RGBColor(0x762a83u),
     RGBColor(0xaf8dc3u),
@@ -19,8 +18,16 @@ RGBColor CalibrationHelpers::palette[] =
     RGBColor(0x1b7837u)
 };
 
-void CalibrationHelpers::drawCamera(Mesh3D &mesh, const CameraModel &cam, double scale)
+void CalibrationDrawHelpers::setParameters(const CalibrationDrawHelpersParameters &params)
 {
+    *static_cast<CalibrationDrawHelpersParameters *>(this) = params;
+}
+
+void CalibrationDrawHelpers::drawCamera(Mesh3D &mesh, const CameraModel &cam, double scale)
+{
+    //SYNC_PRINT(("CalibrationDrawHelpers::drawCamera(): called \n"));
+    //cout << "Camera color: " << mesh.currentColor << endl;
+
     double w = cam.intrinsics.w();
     double h = cam.intrinsics.h();
 
@@ -60,7 +67,43 @@ void CalibrationHelpers::drawCamera(Mesh3D &mesh, const CameraModel &cam, double
      //   cout << v1 << " " << v2 << endl;
     }
 
-    if (printNames)
+    RGBColor color = mesh.currentColor;
+
+    if (solidCameras())
+    {
+        Vector3dd faces[] =
+        {
+            topLeft , topRight   , bottomLeft,
+            topRight, bottomRight, bottomLeft,
+
+            center  , topLeft    , bottomLeft,
+            center  , bottomLeft , bottomRight,
+            center  , bottomRight, topRight,
+            center  , topRight   , topLeft
+        };
+
+        const int facenumber = CORE_COUNT_OF(faces) / 3;
+
+        for (int i = 0; i < facenumber; ++i)
+        {
+            if (i == 0) {
+                mesh.setColor(color);
+            } else {
+                mesh.setColor(RGBColor::Yellow());
+
+            }
+
+            Vector3dd v1 = cam.extrinsics.camToWorld(invK * faces[i * 3    ]);
+            Vector3dd v2 = cam.extrinsics.camToWorld(invK * faces[i * 3 + 1]);
+            Vector3dd v3 = cam.extrinsics.camToWorld(invK * faces[i * 3 + 2]);
+
+            mesh.addTriangle(v1, v2, v3);
+         //   cout << v1 << " " << v2 << endl;
+        }
+    }
+
+
+    if (printNames())
     {
         AbstractPainter<Mesh3D> p(&mesh);
             mesh.mulTransform(Matrix44::Shift(cam.extrinsics.position));
@@ -69,51 +112,14 @@ void CalibrationHelpers::drawCamera(Mesh3D &mesh, const CameraModel &cam, double
         mesh.popTransform();
     }
 
+    mesh.setColor(color);
+
     //Vector3dd ppv = qc * (invK.mulBy2dRight(cam.intrinsics.principal) * scale) + cc;
 
     //mesh.addLine(ppv, qc * (invK * center) + cc);
 }
 
-#if 0
-void CalibrationHelpers::drawPly(Mesh3D &mesh, const Photostation &ps, double scale)
-{
-    // Colorblind-safe palette
-    CameraLocationData loc = ps.getLocation();
-    Quaternion qs = loc.orientation.conjugated();
-    std::cout << qs << std::endl;
-
-    int colorId = 0;
-    for (size_t cam = 0; cam < ps.cameras.size(); cam++)
-    {
-        mesh.setColor(palette[colorId]);
-        colorId = (colorId + 1) % CORE_COUNT_OF(palette);
-        drawCamera(mesh, ps.getRawCamera((int)cam), scale);
-    }
-
-
-    corecvs::Vector3dd xps(scale,   0.0,   0.0),
-                       yps(  0.0, scale,   0.0),
-                       zps(  0.0,   0.0, scale),
-                       ori(  0.0,   0.0,   0.0);
-    mesh.currentColor = corecvs::RGBColor(255,   0,   0);
-    mesh.addLine(ps.location * ori, ps.location * xps);
-    mesh.currentColor = corecvs::RGBColor(  0, 255,   0);
-    mesh.addLine(ps.location * ori, ps.location * yps);
-    mesh.currentColor = corecvs::RGBColor(  0,   0, 255);
-    mesh.addLine(ps.location * ori, ps.location * zps);
-
-    if (printNames)
-    {
-        AbstractPainter<Mesh3D> p(&mesh);
-        mesh.mulTransform(Matrix44::Shift(ps.location.shift) * Matrix44::Scale(scale / 22.0));
-        mesh.setColor(RGBColor::Blue());
-        p.drawFormatVector(scale / 5.0, scale / 5.0, 0, scale / 3.0, "%s", ps.name.c_str());
-        mesh.popTransform();
-    }
-}
-#endif
-
-void CalibrationHelpers::drawPly(Mesh3D &mesh, const CameraFixture &ps, double scale)
+void CalibrationDrawHelpers::drawPly(Mesh3D &mesh, const CameraFixture &ps, double scale)
 {
 //    SYNC_PRINT(("CalibrationHelpers::drawPly():called\n"));
 
@@ -125,11 +131,12 @@ void CalibrationHelpers::drawPly(Mesh3D &mesh, const CameraFixture &ps, double s
 
     int colorId = 0;
 
-    if (drawFixtureCams)
+    if (drawFixtureCams())
     {
         for (size_t cam = 0; cam < ps.cameras.size(); cam++)
         {
             mesh.setColor(palette[colorId]);
+            //SYNC_PRINT(("CalibrationDrawHelpers::drawPly color %d(%d)\n", colorId, CORE_COUNT_OF(palette)));
             colorId = (colorId + 1) % CORE_COUNT_OF(palette);
             drawCamera(mesh, ps.getRawCamera((int)cam), scale);
         }
@@ -147,7 +154,7 @@ void CalibrationHelpers::drawPly(Mesh3D &mesh, const CameraFixture &ps, double s
     mesh.currentColor = corecvs::RGBColor::Blue();
     mesh.addLine(ps.location * ori, ps.location * zps);
 
-    if (printNames)
+    if (printNames())
     {
         AbstractPainter<Mesh3D> p(&mesh);
         mesh.mulTransform(Matrix44::Shift(ps.location.shift) * Matrix44::Scale(scale / 22.0));
@@ -157,8 +164,26 @@ void CalibrationHelpers::drawPly(Mesh3D &mesh, const CameraFixture &ps, double s
     }
 }
 
+void CalibrationDrawHelpers::drawPly(Mesh3D &mesh, const FixtureSceneGeometry &fg, double /*scale*/)
+{
+    mesh.setColor(RGBColor::Red());
+#if 0
+    /* Simple way */
+    for (size_t i = 0; i < fg.polygon.size(); i++)
+    {
+        Vector2dd p1 = fg.polygon.getPoint((int)i);
+        Vector2dd p2 = fg.polygon.getNextPoint((int)i);
 
-void CalibrationHelpers::drawPly(Mesh3D &mesh, const ObservationList &list)
+        Vector3dd point1 = fg.frame.getPoint(p1);
+        Vector3dd point2 = fg.frame.getPoint(p2);
+        mesh.addLine(point1, point2);
+    }
+#endif
+    mesh.addFlatPolygon(fg);
+}
+
+
+void CalibrationDrawHelpers::drawPly(Mesh3D &mesh, const ObservationList &list)
 {
     mesh.currentColor = RGBColor(~0u);
     for (const PointObservation& pt: list)
@@ -167,35 +192,26 @@ void CalibrationHelpers::drawPly(Mesh3D &mesh, const ObservationList &list)
     }
 }
 
-#if 0
-void CalibrationHelpers::drawPly(Mesh3D &mesh, const Photostation &ps, const ObservationList &list, double scale)
+void CalibrationDrawHelpers::drawPly(Mesh3D &mesh, const SceneFeaturePoint &fp, double scale)
 {
-    drawPly(mesh, list);
-    drawPly(mesh, ps, scale);
-}
-#endif
-
-void CalibrationHelpers::drawPly(Mesh3D &mesh, SceneFeaturePoint fp, double scale)
-{
-
     mesh.setColor(fp.color);
-    if (!fp.hasKnownPosition)
-        fp.position = fp.reprojectedPosition;
-    if (!largePoints) {
-        mesh.addPoint(fp.position);
+    Vector3dd pos = fp.getDrawPosition(preferReprojected(), forceKnown());
+
+    if (!largePoints()) {
+        mesh.addPoint(pos);
     } else {
-        mesh.addIcoSphere(fp.position, scale / 100.0, 2);
+        mesh.addIcoSphere(pos, scale / 100.0, 2);
     }
 
-    if (printNames) {
+    if (printNames()) {
         AbstractPainter<Mesh3D> p(&mesh);
-        mesh.mulTransform(Matrix44::Shift(fp.position) * Matrix44::Scale(scale / 22.0));
+        mesh.mulTransform(Matrix44::Shift(pos) * Matrix44::Scale(scale / 22.0));
         mesh.setColor(RGBColor::Blue());
         p.drawFormatVector(1.0, 1.0, 0, 1.0, "%s", fp.name.c_str());
         mesh.popTransform();
     }
 
-    if (drawObservations) {
+    if (drawObservations()) {
         for (auto it = fp.observations.begin(); it != fp.observations.end(); ++it)
         {
             FixtureCamera *cam = it->first;
@@ -203,48 +219,50 @@ void CalibrationHelpers::drawPly(Mesh3D &mesh, SceneFeaturePoint fp, double scal
             CameraFixture *fixture = cam->cameraFixture;
             FixtureCamera rawCam = fixture->getWorldCamera(cam);
 
-            if (fp.hasKnownPosition) {
+            if (fp.hasKnownPosition && drawTrueLines()) {
                 mesh.addLine(rawCam.extrinsics.position, fp.position);
             } else {
-
             }
 
-            Ray3d ray = rawCam.rayFromPixel(observ.observation);
-            Vector3dd p2 = ray.getPoint(scale);
+            Ray3d ray = rawCam.rayFromPixel(observ.getUndist());
+            Vector3dd p2 = ray.getPoint(projectionRayLength() * scale);
             mesh.addLine(ray.p, p2);
 
             /*Ray3d rayDir(rawCam.extrinsics.position, observ.observDir);
             Vector3dd p3 = rayDir.getPoint(scale);
             mesh.addLine(rayDir.p, p3);*/
 
-
-            if (!largePoints) {
+            if (!largePoints()) {
                 mesh.addPoint(p2);
             } else {
                 mesh.addIcoSphere(p2, scale / 100.0, 2);
             }
-
         }
-
     }
 }
 
-void CalibrationHelpers::drawScene(Mesh3D &mesh, const FixtureScene &scene, double scale)
+void CalibrationDrawHelpers::drawScene(Mesh3D &mesh, const FixtureScene &scene, double scale)
 {
-    for (FixtureCamera *cam: scene.orphanCameras)
+    for (FixtureCamera *cam: scene.orphanCameras())
     {
         drawCamera(mesh, *cam, scale);
     }
 
-    for (CameraFixture *ps: scene.fixtures)
+    for (CameraFixture *ps: scene.fixtures())
     {
         drawPly(mesh, *ps, scale);
     }
 
-    for (SceneFeaturePoint *fp: scene.points)
+    for (SceneFeaturePoint *fp: scene.featurePoints())
     {
         drawPly(mesh, *fp, scale);
     }
+
+    for (FixtureSceneGeometry *fg: scene.geometries())
+    {
+        drawPly(mesh, *fg, scale);
+    }
+
 }
 
 

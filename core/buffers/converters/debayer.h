@@ -52,6 +52,9 @@ public:
      */
     int         toRGB48(DebayerMethod::DebayerMethod method, RGB48Buffer* out);
 
+    /** this is quick and dirty helper **/
+    int         toRGB24(DebayerMethod::DebayerMethod method, RGB24Buffer* out);
+
     /**
     * Fill bayer data from RGB48 image applying Bayerian grid to it.
     *
@@ -69,7 +72,7 @@ private:
     uint8_t     mBayerPos   = 0;
     uint16_t*   mCurve      = nullptr;
     uint16_t    mMaximum    = 0;
-    bool        mScale      = false;
+    bool        mScale      = true;
 
     G12Buffer*  mBayer;
     MetaData *  mMetadata;

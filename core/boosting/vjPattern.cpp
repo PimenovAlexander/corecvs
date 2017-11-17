@@ -6,11 +6,7 @@
  * \date Jun 22, 2010
  * \author alexander
  */
-
-#include "core/utils/global.h"
-
 #include "core/boosting/vjPattern.h"
-#include "core/tbbwrapper/tbbWrapper.h"
 
 namespace corecvs {
 
@@ -114,11 +110,10 @@ public:
                     }
                 }
             }
+
             /* TODO: Replace this with reduce operation */
 #ifdef WITH_TBB
-            spin_mutex::scoped_lock lock;
-            lock.acquire(gen->VJSimpleClassifierGeneratorMutex);
-            {
+            {   tbb::spin_mutex::scoped_lock lock(gen->VJSimpleClassifierGeneratorMutex);
 #endif
                 if (minEpsilon < gen->minEpsilonGlobal)
                 {
@@ -128,18 +123,14 @@ public:
                     currentPattern = tmp;
                     gen->bestZ = threshold;
                 }
-
-                gen->globalCount++;
-                if (gen->globalCount % 500 == 0)
+                if (++gen->globalCount % 500 == 0)
                 {
                     printf("Pattern attempt %d\n", gen->globalCount);
                     fflush(stdout);
                 }
 #ifdef WITH_TBB
             }
-            lock.release();
 #endif
-
             if (currentPattern != NULL)
                 delete currentPattern;
         }

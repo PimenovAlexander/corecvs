@@ -19,14 +19,14 @@
  *  Additional includes for Composite Types.
  */
 
-using namespace corecvs;
+// using namespace corecvs;
 
 /*
  *  Additional includes for Pointer Types.
  */
 
-namespace corecvs {
-}
+// namespace corecvs {
+// }
 /*
  *  Additional includes for enum section.
  */
@@ -35,7 +35,7 @@ namespace corecvs {
  * \brief Canny Parameters 
  * Canny Parameters 
  **/
-class CannyParameters : public BaseReflection<CannyParameters>
+class CannyParameters : public corecvs::BaseReflection<CannyParameters>
 {
 public:
     enum FieldId {
@@ -67,6 +67,8 @@ public:
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
+
+    static int relinkCompositeFields();
 
     /** Section with getters */
     const void *getPtrById(int fieldId) const
@@ -109,14 +111,14 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit(mShouldEdgeDetect,          static_cast<const BoolField *>    (fields()[SHOULD_EDGE_DETECT_ID]));
-        visitor.visit(mMinimumThreshold,          static_cast<const IntField *>     (fields()[MINIMUM_THRESHOLD_ID]));
-        visitor.visit(mMaximumThreshold,          static_cast<const IntField *>     (fields()[MAXIMUM_THRESHOLD_ID]));
+        visitor.visit(mShouldEdgeDetect,          static_cast<const corecvs::BoolField *>(fields()[SHOULD_EDGE_DETECT_ID]));
+        visitor.visit(mMinimumThreshold,          static_cast<const corecvs::IntField *>(fields()[MINIMUM_THRESHOLD_ID]));
+        visitor.visit(mMaximumThreshold,          static_cast<const corecvs::IntField *>(fields()[MAXIMUM_THRESHOLD_ID]));
     }
 
     CannyParameters()
     {
-        DefaultSetter setter;
+        corecvs::DefaultSetter setter;
         accept(setter);
     }
 
@@ -131,16 +133,16 @@ template<class VisitorType>
         mMaximumThreshold = maximumThreshold;
     }
 
-    friend ostream& operator << (ostream &out, CannyParameters &toSave)
+    friend std::ostream& operator << (std::ostream &out, CannyParameters &toSave)
     {
-        PrinterVisitor printer(out);
-        toSave.accept<PrinterVisitor>(printer);
+        corecvs::PrinterVisitor printer(out);
+        toSave.accept<corecvs::PrinterVisitor>(printer);
         return out;
     }
 
     void print ()
     {
-        cout << *this;
+        std::cout << *this;
     }
 };
 #endif  //CANNY_PARAMETERS_H_

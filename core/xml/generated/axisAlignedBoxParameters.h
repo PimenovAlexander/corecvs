@@ -19,14 +19,14 @@
  *  Additional includes for Composite Types.
  */
 
-using namespace corecvs;
+// using namespace corecvs;
 
 /*
  *  Additional includes for Pointer Types.
  */
 
-namespace corecvs {
-}
+// namespace corecvs {
+// }
 /*
  *  Additional includes for enum section.
  */
@@ -35,7 +35,7 @@ namespace corecvs {
  * \brief Axis Aligned Box Parameters 
  * Axis Aligned Box Parameters 
  **/
-class AxisAlignedBoxParameters : public BaseReflection<AxisAlignedBoxParameters>
+class AxisAlignedBoxParameters : public corecvs::BaseReflection<AxisAlignedBoxParameters>
 {
 public:
     enum FieldId {
@@ -88,6 +88,8 @@ public:
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
+
+    static int relinkCompositeFields();
 
     /** Section with getters */
     const void *getPtrById(int fieldId) const
@@ -160,17 +162,17 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit(mX,                         static_cast<const DoubleField *>  (fields()[X_ID]));
-        visitor.visit(mY,                         static_cast<const DoubleField *>  (fields()[Y_ID]));
-        visitor.visit(mZ,                         static_cast<const DoubleField *>  (fields()[Z_ID]));
-        visitor.visit(mWidth,                     static_cast<const DoubleField *>  (fields()[WIDTH_ID]));
-        visitor.visit(mHeight,                    static_cast<const DoubleField *>  (fields()[HEIGHT_ID]));
-        visitor.visit(mDepth,                     static_cast<const DoubleField *>  (fields()[DEPTH_ID]));
+        visitor.visit(mX,                         static_cast<const corecvs::DoubleField *>(fields()[X_ID]));
+        visitor.visit(mY,                         static_cast<const corecvs::DoubleField *>(fields()[Y_ID]));
+        visitor.visit(mZ,                         static_cast<const corecvs::DoubleField *>(fields()[Z_ID]));
+        visitor.visit(mWidth,                     static_cast<const corecvs::DoubleField *>(fields()[WIDTH_ID]));
+        visitor.visit(mHeight,                    static_cast<const corecvs::DoubleField *>(fields()[HEIGHT_ID]));
+        visitor.visit(mDepth,                     static_cast<const corecvs::DoubleField *>(fields()[DEPTH_ID]));
     }
 
     AxisAlignedBoxParameters()
     {
-        DefaultSetter setter;
+        corecvs::DefaultSetter setter;
         accept(setter);
     }
 
@@ -191,16 +193,16 @@ template<class VisitorType>
         mDepth = depth;
     }
 
-    friend ostream& operator << (ostream &out, AxisAlignedBoxParameters &toSave)
+    friend std::ostream& operator << (std::ostream &out, AxisAlignedBoxParameters &toSave)
     {
-        PrinterVisitor printer(out);
-        toSave.accept<PrinterVisitor>(printer);
+        corecvs::PrinterVisitor printer(out);
+        toSave.accept<corecvs::PrinterVisitor>(printer);
         return out;
     }
 
     void print ()
     {
-        cout << *this;
+        std::cout << *this;
     }
 };
 #endif  //AXIS_ALIGNED_BOX_PARAMETERS_H_

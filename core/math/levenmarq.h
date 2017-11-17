@@ -10,13 +10,10 @@
  * \author alexander
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
 #include <limits>
 #include <vector>
-#include <chrono>
+#include <thread>
+#include <cmath>
 
 #include "core/utils/global.h"
 
@@ -25,19 +22,51 @@
 #include "core/function/function.h"
 #include "core/math/sparseMatrix.h"
 #include "core/math/vector/vector.h"
-
+#include "core/iterative/minresQLP.h"
+#include "core/iterative/pcg.h"
+#include "core/utils/statusTracker.h"
+#include "core/utils/preciseTimer.h"
+#include "core/stats/calculationStats.h"
 
 namespace corecvs {
+
+enum class LinearSolver
+{
+    NATIVE,
+    SCHUR_COMPLEMENT,
+    MINRESQLP,
+    MINRESQLP_IC0,
+    CG,
+    PCG_IC0
+};
 
 template<typename MatrixClass, typename FunctionClass>
 class LevenbergMarquardtImpl
 {
+private:
+    enum LocalStats {
+        FEVAL_TIME,
+        JEVAL_TIME,
+        LIN_SOLVE_TIME,
+        JATA_TIME,
+        TOTAL_TIME,
+        LOCAL_STATS_LAST
+    };
 public:
+    enum class Dampening
+    {
+        EQUAL,
+        DIAGONAL,
+        GAUSS_NEWTON
+    };
+
+
     FunctionClass *f;
     //FunctionArgs *f;
     FunctionArgs *normalisation;
     double startLambda;
-    double maxLambda;
+    double maxLambda,
+           maxLambdaLogscale = 64;
     double lambdaFactor;
     int    maxIterations;
 
@@ -46,8 +75,25 @@ public:
     bool trace         = false;
     bool traceMatrix   = false;
     bool traceJacobian = false;
+    Dampening dampening = Dampening::EQUAL;
+
+    Statistics *stats;
+
+    double f0, x0;
+    double fTolerance = 1e-9,
+           xTolerance = 1e-9;
+    int    nonToleratedIterationsLimit = 2;
+    int    nonToleratedIterations = 0;
+#if 0
     bool useConjugatedGradient = false;
     int  conjugatedGradientIterations = 100;
+#endif
+
+    bool useExplicitInverse = false;
+    bool terminateOnDegeneracy = false;
+    LinearSolver linearSolver = LinearSolver::NATIVE;
+
+    StatusTracker* state = nullptr;
 
     /* Additional outputs */
     bool hasParadox = false;
@@ -96,30 +142,43 @@ public:
 
         double norm = std::numeric_limits<double>::max();
 
-        double totalEval = 0.0, totalJEval = 0.0, totalLinSolve = 0.0, totalATA = 0.0, totalTotal = 0.0;
+        Vector initial = diff;
+        F(beta, initial);
+
+        initial -= target;
+        Vector xx0 = beta;
+        nonToleratedIterations = 0;
+        double initialNorm = f0 = initial.sumAllElementsSq();
+        x0 = !beta;
+        int LSc = 0;
+
+        //double totalEval = 0.0, totalJEval = 0.0, totalLinSolve = 0.0, totalATA = 0.0, totalTotal = 0.0;
+        int64_t totalTimes[LOCAL_STATS_LAST] = {0};
+
         int g = 0;
+        StatusTracker::Reset(state, "Fit", maxIterations);
+
         for (g = 0; (g < maxIterations) && (lambda < maxlambda) && !converged; g++)
         {
-            double timeEval = 0.0, timeJEval = 0.0, timeLinSolve = 0.0, timeATA = 0.0, timeTotal = 0.0;
-            auto beginT = std::chrono::high_resolution_clock::now();
+            int LSc_curr = 0;
+            auto boo = StatusTracker::CreateAutoTrackerCalculationObject(state);
 
-            if (traceProgress) {
-                if ((g % ((maxIterations / 100) + 1) == 0))
-                {
-                    cout << "#" << std::flush;
-                }
+            int64_t iterationTimes[LOCAL_STATS_LAST] = {0};
+            PreciseTimer start = PreciseTimer::CurrentETime();
+            PreciseTimer interval;
+
+            if (traceProgress && ((g % ((maxIterations / 100) + 1) == 0))) {
+                cout << "#" << std::flush;
             }
 
-            auto Jbegin = std::chrono::high_resolution_clock::now();
+            interval = PreciseTimer::CurrentETime();
             MatrixClass J = f->getNativeJacobian(&(beta[0]));
-            auto Jend = std::chrono::high_resolution_clock::now();
-            timeJEval += (Jend - Jbegin).count() / 1e9;
+            iterationTimes[JEVAL_TIME] = interval.nsecsToNow();
 
             if (traceJacobian) {
                 cout << "New Jacobian:" << endl << J << endl;
             }
 
-            auto ATAbegin = std::chrono::high_resolution_clock::now();
             /*
              * Note: Using obscure profiling techniques we found that out L-M implementation is slow
              *       for big tasks. So we changed this stuff into calls to BLAS.
@@ -131,14 +190,14 @@ public:
              *       J's QR decomposition (Q term cancels out and is not needed explicitly),
              *       but we are using JTJ in user-enableable ouput, so I do not implement QR-way
              */
+            interval = PreciseTimer::CurrentETime();
             MatrixClass JTJ = J.ata();
-            auto ATAend = std::chrono::high_resolution_clock::now();
-            timeATA += (ATAend - ATAbegin).count() / 1e9;
+            iterationTimes[JATA_TIME] = interval.nsecsToNow();
 
-            auto Fbegin = std::chrono::high_resolution_clock::now();
+
+            interval = PreciseTimer::CurrentETime();
             F(beta, y);
-            auto Fend = std::chrono::high_resolution_clock::now();
-            timeEval += (Fend - Fbegin).count() / 1e9;
+            iterationTimes[FEVAL_TIME] = interval.nsecsToNow();
 
             diff = target - y;
 #if 0
@@ -162,12 +221,11 @@ public:
                     hasParadox = true;
                 }
 
-                cout << "Now  norm:" <<  norm << "( per param:" << sqrt(norm / diff.length) << ") lambda:" << lambda << endl;
+                cout << "Now  norm:" <<  norm << "( per param:" << sqrt(norm / diff.size()) << ") lambda:" << lambda << endl;
             }
 
             while (true)
             {
-
                 if (norm == 0.0)
                 {
                     if (traceCrucial)
@@ -219,13 +277,27 @@ public:
                 MatrixClass A(JTJ);
                 Vector B(d);
 
-                for (int j = 0; j < A.h; j++)
+                switch(dampening)
                 {
-                    double a = A.a(j, j) + lambda;
-                    //double b = A.a(j, j) * (1.0 + lambda);
-                    A.a(j, j) = a;
+                case Dampening::EQUAL:
+                    for (int j = 0; j < A.h; j++)
+                    {
+                        double a = A.a(j, j) + lambda;
+                        A.a(j, j) = a;
+                    }
+                    break;
+                case Dampening::DIAGONAL:
+                    for (int j = 0; j < A.h; j++)
+                    {
+                        double b = A.a(j, j) * (1.0 + lambda);
+                        A.a(j, j) = b;
+                    }
+                    break;
+                case Dampening::GAUSS_NEWTON:
+                    // NOTE: if G-N stucks we'll terminate, but make
+                    //       some pointless iterations
+                    break;
                 }
-
                 /*
                  * NOTE: A'A (generally) is semi-positive-definite, but if you are
                  *       solving well-posed problems then diag(A'A) > 0 and A'A is
@@ -235,27 +307,85 @@ public:
                  *       degeneracy
                  */
 
-                auto LSbegin = std::chrono::high_resolution_clock::now();
-//                for (int ijk = 0; ijk < B.size(); ++ijk)
-//                    CORE_ASSERT_TRUE_S(!std::isnan(B[ijk]));
-//                std::cout << "A.det " << A.det() << std::endl;
-                if (!useConjugatedGradient)
+                LSc_curr++;
+                LSc++;
+                interval = PreciseTimer::CurrentETime();
+                if (traceMatrix)
+                    std::cout << A << std::endl << std::endl;
+                bool shouldExit = false;
+                switch (linearSolver)
                 {
-                   A.linSolve(B, delta, true, true);
+                    case LinearSolver::NATIVE:
+                        A.linSolve(B, delta, true, true);
+                        break;
+                    case LinearSolver::SCHUR_COMPLEMENT:
+                        CORE_ASSERT_TRUE_S(F.schurBlocks.size());
+                        MatrixClass::LinSolveSchurComplement(A, B, F.schurBlocks, delta, true, true, useExplicitInverse);
+                        break;
+                    case LinearSolver::MINRESQLP:
+                        {
+                        auto res = MinresQLP<MatrixClass>::Solve(A, B, delta);
+                        auto P = A.incompleteCholseky();
+                        auto PP = [&](const Vector& x)->Vector { return P.second.trsv(x, "TN", true, 2); };
+                        auto res2 = MinresQLP<MatrixClass>::Solve(A, PP, B, delta);
+                        if (res != res2)
+                        {
+                            std::cout << "CURIOUS: NON-PRECONDITIONED:" << res << " PRECONDITIONED: " << res2 << std::endl;
+                        }
+                        if (res != MinresQLPStatus::SOLVED_RTOL &&
+                            res != MinresQLPStatus::SOLVED_EPS  &&
+                            res != MinresQLPStatus::MINLEN_RTOL &&
+                            res != MinresQLPStatus::MINLEN_EPS  &&
+                            terminateOnDegeneracy)
+                            shouldExit = true;
+                        }
+                        break;
+                    case LinearSolver::MINRESQLP_IC0:
+                        {
+                        auto P123 = A.incompleteCholseky();
+                        MinresQLPStatus res123;
+                        if (P123.first)
+                        {
+                            auto PP123 = [&](const Vector& x)->Vector { return P123.second.trsv(x, "TN", true, 2); };
+                            res123 = MinresQLP<MatrixClass>::Solve(A, PP123, B, delta);
+                        }
+                        else
+                        {
+                            std::cout << "!!!IC0 failed, running without preconditioner!!!" << std::endl;
+                            res123 = MinresQLP<MatrixClass>::Solve(A, B, delta);
+                        }
+                        if (res123 != MinresQLPStatus::SOLVED_RTOL &&
+                            res123 != MinresQLPStatus::SOLVED_EPS  &&
+                            res123 != MinresQLPStatus::MINLEN_RTOL &&
+                            res123 != MinresQLPStatus::MINLEN_EPS  &&
+                            terminateOnDegeneracy)
+                            shouldExit = true;
+                        }
+                        break;
+                    case LinearSolver::CG:
+                        PCG<MatrixClass>::Solve(A, B, delta);
+                        break;
+                    case LinearSolver::PCG_IC0:
+                        auto P = A.incompleteCholseky();
+                        auto PP = [&](const Vector& x)->Vector { return P.second.dtrsv_un(P.second.dtrsv_ut(x)); };
+                        auto res2 = PCG<MatrixClass>::Solve(A, PP, B, delta);
+                        if (res2 != PCGStatus::CONVERGED && terminateOnDegeneracy)
+                            shouldExit = true;
+                        break;
                 }
-                else
+                if (shouldExit)
                 {
-                    delta = conjugatedGradient(A, B);
+                    converged = true;
+                    break;
                 }
-                auto LSend = std::chrono::high_resolution_clock::now();
+                iterationTimes[LIN_SOLVE_TIME] = interval.nsecsToNow();
+
 //                for (int ijk = 0; ijk < delta.size(); ++ijk)
 //                    CORE_ASSERT_TRUE_S(!std::isnan(delta[ijk]));
-                timeLinSolve += (LSend - LSbegin).count() / 1e9;
 
-                auto EVbegin = std::chrono::high_resolution_clock::now();
+                interval = PreciseTimer::CurrentETime();
                 F(beta + delta, yNew);
-                auto EVend = std::chrono::high_resolution_clock::now();
-                timeEval += (EVend - EVbegin).count() / 1e9;
+                iterationTimes[FEVAL_TIME] += interval.nsecsToNow();
 
                 diffNew = target - yNew;
                 double normNew = diffNew.sumAllElementsSq();
@@ -263,16 +393,39 @@ public:
                     cout << "  Guess:" <<  normNew << " - ";
                 }
 
-                if (normNew < norm) // If the current solution is better
+                auto dnorm = (diff - diffNew) & (diff + diffNew);
+                if (dnorm > 0.0) // If the current solution is better
                 {
+                    if (g == 0)
+                    {
+                        maxLambda = lambda * std::pow(2.0, maxLambdaLogscale);
+                    }
                     if (trace) {
                         cout << "Accepted" << endl;
+                        std::cout << initialNorm - normNew << " decrease in " << LSc << " linsolves" << std::endl;
+                        std::cout << norm - normNew << " current decrease (" << LSc_curr << " linsolves" << std::endl;
+                        std::cout << "NLO: " << initialNorm - normNew << ", " << LSc << ", " << norm - normNew << ", " << LSc_curr << ", " << lambda << std::endl;
                     }
 
                     if (traceMatrix) {
                         cout << "Old soluton:" << endl << beta << endl;
                     }
-
+                    double funTolerance = (diffNew - diff).absRelInfNorm(diff);
+                    double xxTolerance = delta.absRelInfNorm(beta);
+                    if (trace)
+                    std::cout << "Tolerances: dF: " << funTolerance << " dx: " << xxTolerance << std::endl;
+                    if (funTolerance < fTolerance && xxTolerance < xTolerance)
+                    {
+                        nonToleratedIterations++;
+                        if (nonToleratedIterations >= nonToleratedIterationsLimit)
+                        {
+                            converged = true;
+                            if (trace)
+                                std::cout << "CONVERGED (FTOL+XTOL)" << std::endl;
+                        }
+                    }
+                    else
+                        nonToleratedIterations = 0;
                     lambda /= lambdaFactor;
                     norm = normNew;
                     beta += delta;
@@ -299,35 +452,23 @@ public:
                     }
                 }
             }
-            auto Tend = std::chrono::high_resolution_clock::now();
-            timeTotal = (Tend - beginT).count() / 1e9;
+
+            iterationTimes[TOTAL_TIME] += start.nsecsToNow();
     #if 0
             if (traceProgress)
             {
-                std::cout << "Total : " << timeTotal    << "s " << std::endl
-                          << "Eval  : " << timeEval     << "s (" << timeEval     / timeTotal * 100.0 << ")" << std::endl
-                          << "JEval : " << timeJEval    << "s (" << timeJEval    / timeTotal * 100.0 << ")" << std::endl
-                          << "ATA   : " << timeATA      << "s (" << timeATA      / timeTotal * 100.0 << ")" << std::endl
-                          << "LS    : " << timeLinSolve << "s (" << timeLinSolve / timeTotal * 100.0 << ")" << std::endl
-                          << "Other : " << (timeTotal - timeEval - timeJEval - timeATA - timeLinSolve) << "s (" << (timeTotal - timeEval - timeJEval - timeATA - timeLinSolve) / timeTotal * 100.0 << ")" << std::endl;
+                printStats(iterationTimes);
             }
     #endif
-            totalTotal += timeTotal;
-            totalEval += timeEval;
-            totalJEval += timeJEval;
-            totalATA += timeATA;
-            totalLinSolve += timeLinSolve;
+            for (int statId = 0; statId < LOCAL_STATS_LAST; statId++)
+            {
+                totalTimes[statId] += iterationTimes[statId];
+            }
         }
 
-            if (traceProgress)
-            {
-                std::cout << "Total : " << totalTotal    << "s " << std::endl
-                          << "Eval  : " << totalEval     << "s (" << totalEval     / totalTotal * 100.0 << ")" << std::endl
-                          << "JEval : " << totalJEval    << "s (" << totalJEval    / totalTotal * 100.0 << ")" << std::endl
-                          << "ATA   : " << totalATA      << "s (" << totalATA      / totalTotal * 100.0 << ")" << std::endl
-                          << "LS    : " << totalLinSolve << "s (" << totalLinSolve / totalTotal * 100.0 << ")" << std::endl
-                          << "Other : " << (totalTotal - totalEval - totalJEval - totalATA - totalLinSolve) << "s (" << (totalTotal - totalEval - totalJEval - totalATA - totalLinSolve) / totalTotal * 100.0 << ")" << std::endl;
-            }
+        if (traceProgress) {
+            printStats(totalTimes);
+        }
 
         if (traceProgress) {
             cout << "]" << endl;
@@ -343,6 +484,26 @@ public:
         return result;
     }
 
+
+    void printStats(int64_t stats[LOCAL_STATS_LAST])
+    {
+        double secStats[LOCAL_STATS_LAST];
+        for (int statId = 0; statId < LOCAL_STATS_LAST; statId++)
+        {
+            secStats[statId] = stats[statId] / 1e9;
+        }
+        double leftover = secStats[TOTAL_TIME] -  secStats[FEVAL_TIME] - secStats[JEVAL_TIME] - secStats[JATA_TIME] - secStats[LIN_SOLVE_TIME];
+
+        std::cout << "Total : " << secStats[TOTAL_TIME]     << "s " << std::endl
+                  << "Eval  : " << secStats[FEVAL_TIME]     << "s (" << secStats[FEVAL_TIME]     / secStats[TOTAL_TIME] * 100.0 << ")" << std::endl
+                  << "JEval : " << secStats[JEVAL_TIME]     << "s (" << secStats[JEVAL_TIME]     / secStats[TOTAL_TIME] * 100.0 << ")" << std::endl
+                  << "ATA   : " << secStats[JATA_TIME]      << "s (" << secStats[JATA_TIME]      / secStats[TOTAL_TIME] * 100.0 << ")" << std::endl
+                  << "LS    : " << secStats[LIN_SOLVE_TIME] << "s (" << secStats[LIN_SOLVE_TIME] / secStats[TOTAL_TIME] * 100.0 << ")" << std::endl
+                  << "Other : " << leftover << "s (" << leftover / secStats[TOTAL_TIME] * 100.0 << ")" << std::endl;
+    }
+
+
+#if 0
     corecvs::Vector conjugatedGradient(const MatrixClass &A, const corecvs::Vector &B)
     {
         corecvs::Vector X(A.w), R = B, p = B;
@@ -382,7 +543,7 @@ public:
         std::cout << "POST-CG: " << !(A*X-B) << " cg failures: " << ((double)cgf) / (double)((cgf + cgo + 1.0)) * 100.0 << "%" << std::endl;
         return X;
     }
-
+#endif
 };
 
 typedef LevenbergMarquardtImpl<Matrix, FunctionArgs> LevenbergMarquardt;

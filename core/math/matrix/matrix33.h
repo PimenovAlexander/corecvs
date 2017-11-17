@@ -18,6 +18,7 @@
 
 #include <iostream>
 #include <limits>
+#include <array>
 #include <string.h>
 
 #include "core/utils/global.h"
@@ -86,6 +87,9 @@ public:
     void swapRows(int r1, int r2);
     void swapColumns(int r1, int r2);
 
+    // \brief Returns left and right null-space basis for the matrix of rank 2
+    std::array<Vector3dd, 2> rank2Nullvectors() const;
+
     Matrix33 t() const;
     Matrix33 transposed() const;
 
@@ -135,9 +139,11 @@ public:
     static Matrix33 MirrorYZ();
     static Matrix33 MirrorXZ();
 
+    static Matrix33 SwapXY();
+
     /* Constructing 3D scale matrix */
     static Matrix33 Scale3(const Vector3dd& v);
-    static Matrix33 Scale3(double s1, double s2, double s3);
+    static Matrix33 Scale3(double s1, double s2, double s3 = 1.0);
     static Matrix33 Scale3(double v);
 
 
@@ -195,6 +201,7 @@ public:
         out.precision(oldPrec);
     }
 
+    /* TODO: to matrixOperations */
     friend ostream & operator <<(ostream &out, const Matrix33 &matrix)
     {
         //streamsize wasPrecision = out.precision(6);
@@ -213,7 +220,7 @@ public:
         return out;
     }
 
-
+    /* TODO: to matrixOperations */
     friend istream & operator >>(istream &in, Matrix33 &matrix)
     {
         for (int i = 0; i < matrix.H; i++)
@@ -233,7 +240,6 @@ public:
                     // cout << "Skipped:" << ((char)in.peek()) << endl;
                     in.ignore();
                 }
-
             }
         }
         return in;
@@ -261,9 +267,7 @@ public:
              double _a20, double _a21, double _a22
          );
 
-
 };
-
 
 
 /*****************************************************************************/
@@ -274,27 +278,25 @@ public:
  *  Geting Matrix element functions block
  **/
 
-inline double & Matrix33::a(int i,int j)
+inline double & Matrix33::a(int i, int j)
 {
    return (*this)[i * W + j];
 }
 
-inline const double &Matrix33::a(int i,int j) const
+inline const double &Matrix33::a(int i, int j) const
 {
    return (*this)[i * W + j];
 }
 
-inline double &Matrix33::operator ()(int i,int j)
+inline double &Matrix33::operator ()(int i, int j)
 {
     return (*this)[i * W + j];
 }
 
-inline const double &Matrix33::operator ()(int i,int j) const
+inline const double &Matrix33::operator ()(int i, int j) const
 {
     return (*this)[i * W + j];
 }
-
-
 
 
 /**
@@ -316,9 +318,9 @@ inline const double &Matrix33::operator ()(int i,int j) const
  **/
 inline Matrix33::Matrix33(const Vector3dd& _V1, const  Vector3dd& _V2, const Vector3dd& _V3)
 {
-   a(0,0) = _V1.x();   a(0,1) = _V1.y();   a(0,2) = _V1.z();
-   a(1,0) = _V2.x();   a(1,1) = _V2.y();   a(1,2) = _V2.z();
-   a(2,0) = _V3.x();   a(2,1) = _V3.y();   a(2,2) = _V3.z();
+    a(0,0) = _V1.x();   a(0,1) = _V1.y();   a(0,2) = _V1.z();
+    a(1,0) = _V2.x();   a(1,1) = _V2.y();   a(1,2) = _V2.z();
+    a(2,0) = _V3.x();   a(2,1) = _V3.y();   a(2,2) = _V3.z();
 }
 
 /**
@@ -375,23 +377,20 @@ inline Matrix33 Matrix33::FromColumns(const Vector3dd &W1, const Vector3dd &W2, 
  *   GCC due to ISO C++ conversion rules.
  *
  **/
-
 inline Matrix33::Matrix33(double _A)
 {
-   a(0,0) = _A;
-   a(0,1) =  0.0;
-   a(0,2) =  0.0;
+    a(0,0) = _A;
+    a(0,1) =  0.0;
+    a(0,2) =  0.0;
 
-   a(1,0) =  0.0;
-   a(1,1) = _A;
-   a(1,2) =  0.0;
+    a(1,0) =  0.0;
+    a(1,1) = _A;
+    a(1,2) =  0.0;
 
-   a(2,0) =  0.0;
-   a(2,1) =  0.0;
-   a(2,2)   = _A;
+    a(2,0) =  0.0;
+    a(2,1) =  0.0;
+    a(2,2) = _A;
 }
-
-
 
 
 inline Matrix33::Matrix33(
@@ -457,11 +456,11 @@ inline Vector3dd operator * (const Matrix33 &matrix, const Vector3dd &V)
 
 inline Vector3dd operator * (const Vector3dd &V,const Matrix33 &matrix)
 {
-  double a,b,c;
-  a = matrix.a(0,0) * V.x() + matrix.a(1,0) * V.y() + matrix.a(2,0) * V.z();
-  b = matrix.a(0,1) * V.x() + matrix.a(1,1) * V.y() + matrix.a(2,1) * V.z();
-  c = matrix.a(0,2) * V.x() + matrix.a(1,2) * V.y() + matrix.a(2,2) * V.z();
-  return Vector3dd(a,b,c);
+    double a,b,c;
+    a = matrix.a(0,0) * V.x() + matrix.a(1,0) * V.y() + matrix.a(2,0) * V.z();
+    b = matrix.a(0,1) * V.x() + matrix.a(1,1) * V.y() + matrix.a(2,1) * V.z();
+    c = matrix.a(0,2) * V.x() + matrix.a(1,2) * V.y() + matrix.a(2,2) * V.z();
+    return Vector3dd(a,b,c);
 }
 
 

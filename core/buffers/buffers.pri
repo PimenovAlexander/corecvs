@@ -60,6 +60,8 @@ HEADERS += \
     buffers/convolver/convolver.h \
     buffers/rgb24/lineSpan.h \
     buffers/nonMaximalSuperssor.h \
+    buffers/rgb24/bresenhamRasteriser.h \
+    buffers/abstractBufferParams.h \
 
 
 SOURCES += \
@@ -102,5 +104,7 @@ SOURCES += \
     buffers/convolver/convolver.cpp \
     buffers/rgb24/lineSpan.cpp \
     buffers/nonMaximalSuperssor.cpp \
+    buffers/rgb24/bresenhamRasteriser.cpp \
+
 
 

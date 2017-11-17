@@ -19,14 +19,14 @@
  *  Additional includes for Composite Types.
  */
 
-using namespace corecvs;
+// using namespace corecvs;
 
 /*
  *  Additional includes for Pointer Types.
  */
 
-namespace corecvs {
-}
+// namespace corecvs {
+// }
 /*
  *  Additional includes for enum section.
  */
@@ -35,7 +35,7 @@ namespace corecvs {
  * \brief rgb Color Parameters 
  * rgb Color Parameters 
  **/
-class RgbColorParameters : public BaseReflection<RgbColorParameters>
+class RgbColorParameters : public corecvs::BaseReflection<RgbColorParameters>
 {
 public:
     enum FieldId {
@@ -67,6 +67,8 @@ public:
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
+
+    static int relinkCompositeFields();
 
     /** Section with getters */
     const void *getPtrById(int fieldId) const
@@ -109,14 +111,14 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit(mR,                         static_cast<const IntField *>     (fields()[R_ID]));
-        visitor.visit(mG,                         static_cast<const IntField *>     (fields()[G_ID]));
-        visitor.visit(mB,                         static_cast<const IntField *>     (fields()[B_ID]));
+        visitor.visit(mR,                         static_cast<const corecvs::IntField *>(fields()[R_ID]));
+        visitor.visit(mG,                         static_cast<const corecvs::IntField *>(fields()[G_ID]));
+        visitor.visit(mB,                         static_cast<const corecvs::IntField *>(fields()[B_ID]));
     }
 
     RgbColorParameters()
     {
-        DefaultSetter setter;
+        corecvs::DefaultSetter setter;
         accept(setter);
     }
 
@@ -131,16 +133,16 @@ template<class VisitorType>
         mB = b;
     }
 
-    friend ostream& operator << (ostream &out, RgbColorParameters &toSave)
+    friend std::ostream& operator << (std::ostream &out, RgbColorParameters &toSave)
     {
-        PrinterVisitor printer(out);
-        toSave.accept<PrinterVisitor>(printer);
+        corecvs::PrinterVisitor printer(out);
+        toSave.accept<corecvs::PrinterVisitor>(printer);
         return out;
     }
 
     void print ()
     {
-        cout << *this;
+        std::cout << *this;
     }
 };
 #endif  //RGB_COLOR_PARAMETERS_H_

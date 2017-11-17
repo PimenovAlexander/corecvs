@@ -19,14 +19,14 @@
  *  Additional includes for Composite Types.
  */
 
-using namespace corecvs;
+// using namespace corecvs;
 
 /*
  *  Additional includes for Pointer Types.
  */
 
-namespace corecvs {
-}
+// namespace corecvs {
+// }
 /*
  *  Additional includes for enum section.
  */
@@ -35,7 +35,7 @@ namespace corecvs {
  * \brief Gain Offset Parameters 
  * Gain Offset Parameters 
  **/
-class GainOffsetParameters : public BaseReflection<GainOffsetParameters>
+class GainOffsetParameters : public corecvs::BaseReflection<GainOffsetParameters>
 {
 public:
     enum FieldId {
@@ -60,6 +60,8 @@ public:
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
+
+    static int relinkCompositeFields();
 
     /** Section with getters */
     const void *getPtrById(int fieldId) const
@@ -92,13 +94,13 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit(mGain,                      static_cast<const DoubleField *>  (fields()[GAIN_ID]));
-        visitor.visit(mOffset,                    static_cast<const DoubleField *>  (fields()[OFFSET_ID]));
+        visitor.visit(mGain,                      static_cast<const corecvs::DoubleField *>(fields()[GAIN_ID]));
+        visitor.visit(mOffset,                    static_cast<const corecvs::DoubleField *>(fields()[OFFSET_ID]));
     }
 
     GainOffsetParameters()
     {
-        DefaultSetter setter;
+        corecvs::DefaultSetter setter;
         accept(setter);
     }
 
@@ -111,16 +113,16 @@ template<class VisitorType>
         mOffset = offset;
     }
 
-    friend ostream& operator << (ostream &out, GainOffsetParameters &toSave)
+    friend std::ostream& operator << (std::ostream &out, GainOffsetParameters &toSave)
     {
-        PrinterVisitor printer(out);
-        toSave.accept<PrinterVisitor>(printer);
+        corecvs::PrinterVisitor printer(out);
+        toSave.accept<corecvs::PrinterVisitor>(printer);
         return out;
     }
 
     void print ()
     {
-        cout << *this;
+        std::cout << *this;
     }
 };
 #endif  //GAIN_OFFSET_PARAMETERS_H_

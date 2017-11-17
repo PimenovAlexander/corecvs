@@ -288,8 +288,6 @@ double Matrix44::trace() const
     return sum;
 }
 
-
-
 double Matrix44::det() const {
    double det =
        a(0,3)*a(1,2)*a(2,1)*a(3,0) - a(0,2)*a(1,3)*a(2,1)*a(3,0) - a(0,3)*a(1,1)*a(2,2)*a(3,0) + a(0,1)*a(1,3)*a(2,2)*a(3,0)+
@@ -300,6 +298,155 @@ double Matrix44::det() const {
        a(0,2)*a(1,0)*a(2,1)*a(3,3) - a(0,0)*a(1,2)*a(2,1)*a(3,3) - a(0,1)*a(1,0)*a(2,2)*a(3,3) + a(0,0)*a(1,1)*a(2,2)*a(3,3);
    return det;
 }
+
+#define DECOMPOSE_EPSILON	0.000001
+#define RANKDECOMPOSE(a, b, c, x, y, z)      \
+    if ((x) < (y))                   \
+    {                               \
+        if ((y) < (z))               \
+        {                           \
+            (a) = 2;                \
+            (b) = 1;                \
+            (c) = 0;                \
+        }                           \
+        else                        \
+        {                           \
+            (a) = 1;                \
+                                    \
+            if ((x) < (z))           \
+            {                       \
+                (b) = 2;            \
+                (c) = 0;            \
+            }                       \
+            else                    \
+            {                       \
+                (b) = 0;            \
+                (c) = 2;            \
+            }                       \
+        }                           \
+    }                               \
+    else                            \
+    {                               \
+        if ((x) < (z))               \
+        {                           \
+            (a) = 2;                \
+            (b) = 0;                \
+            (c) = 1;                \
+        }                           \
+        else                        \
+        {                           \
+            (a) = 0;                \
+                                    \
+            if ((y) < (z))           \
+            {                       \
+                (b) = 2;            \
+                (c) = 1;            \
+            }                       \
+            else                    \
+            {                       \
+                (b) = 1;            \
+                (c) = 2;            \
+            }                       \
+        }                           \
+    }            
+
+bool			Matrix44::decomposeTRS(Vector3dd& scale, Vector3dd& translate, Matrix33& rotate)
+{
+	double det;
+	double *pScales;
+	Vector4dd *ppvBasis[3];
+	Vector4dd matTemp[4];
+
+	static const Vector4dd x4 = { 1, 0, 0, 0 };
+	static const Vector4dd y4 = { 0, 1, 0, 0 };
+	static const Vector4dd z4 = { 0, 0, 1, 0 };
+	static const Vector4dd w4 = { 0, 0, 0, 1 };
+
+	uint a, b, c;
+	static const Vector4dd *pvCanonicalBasis[3] = {
+		&x4,
+		&y4,
+		&z4
+	};
+
+	const Matrix44 m = transposed();
+
+	// Get the translation
+	translate = translationPart();
+
+	matTemp[0] = m.row(0);
+	matTemp[1] = m.row(1);
+	matTemp[2] = m.row(2);
+	matTemp[3] = w4;
+
+	ppvBasis[0] = &matTemp[0];
+	ppvBasis[1] = &matTemp[1];
+	ppvBasis[2] = &matTemp[2];
+
+	pScales = scale.element;
+
+	pScales[0] = ppvBasis[0]->l2Metric();
+	pScales[1] = ppvBasis[1]->l2Metric();
+	pScales[2] = ppvBasis[2]->l2Metric();
+
+	RANKDECOMPOSE(a, b, c, pScales[0], pScales[1], pScales[2])
+		if (pScales[a] < DECOMPOSE_EPSILON)
+		{
+			*ppvBasis[a] = *pvCanonicalBasis[a];
+		}
+
+	*ppvBasis[a] = Vector4dd(ppvBasis[a]->xyz().normalised(), 0.0f);
+
+	if (pScales[b] < DECOMPOSE_EPSILON)
+	{
+		uint aa, bb, cc;
+		double fAbsX, fAbsY, fAbsZ;
+
+		fAbsX = abs(ppvBasis[a]->x());
+		fAbsY = abs(ppvBasis[a]->y());
+		fAbsZ = abs(ppvBasis[a]->z());
+
+		RANKDECOMPOSE(aa, bb, cc, fAbsX, fAbsY, fAbsZ);
+		*ppvBasis[b] = Vector4dd(ppvBasis[a]->xyz() ^ pvCanonicalBasis[cc]->xyz(), 0);
+	}
+
+	*ppvBasis[b] = Vector4dd(ppvBasis[b]->xyz().normalised(), 0);
+
+	if (pScales[c] < DECOMPOSE_EPSILON)
+	{
+		*ppvBasis[c] = Vector4dd(ppvBasis[a]->xyz() ^ ppvBasis[b]->xyz(), 0);
+	}
+
+	*ppvBasis[c] = Vector4dd(ppvBasis[c]->xyz().normalised(), 0.0f);
+
+	det = Matrix44(matTemp[0], matTemp[1], matTemp[2], matTemp[3]).det();
+
+	// use Kramer's rule to check for  handedness of coordinate system
+	if (det < 0.0f)
+	{
+		// switch coordinate system by negating the scale and inverting the basis vector on the x-axis
+		pScales[a] = -pScales[a];
+		*ppvBasis[a] = *ppvBasis[a] * -1.0f;
+
+		det = -det;
+	}
+
+	det -= 1.0f;
+	det *= det;
+
+	if (DECOMPOSE_EPSILON < det)
+	{
+		//		Non-SRT matrix encountered
+		return false;
+	}
+
+	// generate the quaternion from the matrix
+	rotate = Matrix44(matTemp[0], matTemp[1], matTemp[2], matTemp[3]).transposed().topLeft33();
+	return true;
+}
+
+#undef DECOMPOSE_EPSILON
+#undef RANKDECOMPOSE
 
 Matrix44::~Matrix44()
 {

@@ -26,6 +26,9 @@ int BaseReflection<DistortionApplicationParameters>::dummy = DistortionApplicati
 
 SUPPRESS_OFFSET_WARNING_BEGIN
 
+
+using namespace corecvs;
+
 int DistortionApplicationParameters::staticInit()
 {
 
@@ -35,10 +38,11 @@ int DistortionApplicationParameters::staticInit()
         "Distortion Application Parameters",
         ""
     );
+
+     getReflection()->objectSize = sizeof(DistortionApplicationParameters);
      
 
-    fields().push_back(
-        new BoolField
+    BoolField* field0 = new BoolField
         (
           DistortionApplicationParameters::FORCE_SCALE_ID,
           offsetof(DistortionApplicationParameters, mForceScale),
@@ -46,10 +50,11 @@ int DistortionApplicationParameters::staticInit()
           "Force Scale",
           "Force Scale",
           "Force Scale"
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field0->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field0);
+    /*  */ 
+    BoolField* field1 = new BoolField
         (
           DistortionApplicationParameters::ADOPT_SCALE_ID,
           offsetof(DistortionApplicationParameters, mAdoptScale),
@@ -57,10 +62,11 @@ int DistortionApplicationParameters::staticInit()
           "Adopt Scale",
           "Adopt Scale",
           "Adopt Scale"
-        )
-    );
-    fields().push_back(
-        new EnumField
+        );
+    field1->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field1);
+    /*  */ 
+    EnumField* field2 = new EnumField
         (
           DistortionApplicationParameters::RESIZE_POLICY_ID,
           offsetof(DistortionApplicationParameters, mResizePolicy),
@@ -74,10 +80,11 @@ int DistortionApplicationParameters::staticInit()
           , new EnumOption(2,"To Fit Result")
           , new EnumOption(3,"To No Gaps")
           )
-        )
-    );
-    fields().push_back(
-        new IntField
+        );
+    field2->widgetHint=BaseField::COMBO_BOX;
+    fields().push_back(field2);
+    /*  */ 
+    IntField* field3 = new IntField
         (
           DistortionApplicationParameters::NEW_H_ID,
           offsetof(DistortionApplicationParameters, mNewH),
@@ -85,10 +92,10 @@ int DistortionApplicationParameters::staticInit()
           "New H",
           "New H",
           "New H"
-        )
-    );
-    fields().push_back(
-        new IntField
+        );
+    fields().push_back(field3);
+    /*  */ 
+    IntField* field4 = new IntField
         (
           DistortionApplicationParameters::NEW_W_ID,
           offsetof(DistortionApplicationParameters, mNewW),
@@ -96,8 +103,15 @@ int DistortionApplicationParameters::staticInit()
           "New W",
           "New W",
           "New W"
-        )
-    );
+        );
+    fields().push_back(field4);
+    /*  */ 
+    ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
+    directory[std::string("Distortion Application Parameters")]= &reflection;
+   return 0;
+}
+int DistortionApplicationParameters::relinkCompositeFields()
+{
    return 0;
 }
 

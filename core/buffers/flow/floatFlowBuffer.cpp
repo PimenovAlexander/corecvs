@@ -12,19 +12,18 @@
 
 namespace corecvs {
 
-FloatFlowBuffer::FloatFlowBuffer(FlowBuffer *that) :
-        FloatFlowBufferBase(that->h, that->w, true)
+FloatFlowBuffer::FloatFlowBuffer(FlowBuffer *that)
+    : FloatFlowBufferBase(that->h, that->w, true)
 {
     for (int i = 0; i < that->h; i++)
     {
         for (int j = 0; j < that->w; j++)
         {
-            if (!that->isElementKnown(i,j))
+            if (!that->isElementKnown(i, j))
                 continue;
 
-            FlowElement shift = that->element(i,j);
-            FloatFlow floatFlow = FloatFlow(Vector2dd(shift.x(), shift.y()));
-            this->element(i,j) = floatFlow;
+            FlowElement shift = that->element(i, j);
+            this->element(i, j) = FloatFlow(Vector2dd(shift.x(), shift.y()));
         }
     }
 }

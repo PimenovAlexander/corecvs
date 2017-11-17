@@ -19,14 +19,14 @@
  *  Additional includes for Composite Types.
  */
 
-using namespace corecvs;
+// using namespace corecvs;
 
 /*
  *  Additional includes for Pointer Types.
  */
 
-namespace corecvs {
-}
+// namespace corecvs {
+// }
 /*
  *  Additional includes for enum section.
  */
@@ -35,7 +35,7 @@ namespace corecvs {
  * \brief Head Search Parameters 
  * Head Search Parameters 
  **/
-class HeadSearchParameters : public BaseReflection<HeadSearchParameters>
+class HeadSearchParameters : public corecvs::BaseReflection<HeadSearchParameters>
 {
 public:
     enum FieldId {
@@ -81,6 +81,8 @@ public:
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
+
+    static int relinkCompositeFields();
 
     /** Section with getters */
     const void *getPtrById(int fieldId) const
@@ -143,16 +145,16 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit(mThresholdDistance,         static_cast<const DoubleField *>  (fields()[THRESHOLD_DISTANCE_ID]));
-        visitor.visit(mClusterDepth,              static_cast<const DoubleField *>  (fields()[CLUSTER_DEPTH_ID]));
-        visitor.visit(mClusterMinSize,            static_cast<const IntField *>     (fields()[CLUSTER_MIN_SIZE_ID]));
-        visitor.visit(mHeadAreaRadius,            static_cast<const DoubleField *>  (fields()[HEAD_AREA_RADIUS_ID]));
-        visitor.visit(mHeadNumber,                static_cast<const IntField *>     (fields()[HEAD_NUMBER_ID]));
+        visitor.visit(mThresholdDistance,         static_cast<const corecvs::DoubleField *>(fields()[THRESHOLD_DISTANCE_ID]));
+        visitor.visit(mClusterDepth,              static_cast<const corecvs::DoubleField *>(fields()[CLUSTER_DEPTH_ID]));
+        visitor.visit(mClusterMinSize,            static_cast<const corecvs::IntField *>(fields()[CLUSTER_MIN_SIZE_ID]));
+        visitor.visit(mHeadAreaRadius,            static_cast<const corecvs::DoubleField *>(fields()[HEAD_AREA_RADIUS_ID]));
+        visitor.visit(mHeadNumber,                static_cast<const corecvs::IntField *>(fields()[HEAD_NUMBER_ID]));
     }
 
     HeadSearchParameters()
     {
-        DefaultSetter setter;
+        corecvs::DefaultSetter setter;
         accept(setter);
     }
 
@@ -171,16 +173,16 @@ template<class VisitorType>
         mHeadNumber = headNumber;
     }
 
-    friend ostream& operator << (ostream &out, HeadSearchParameters &toSave)
+    friend std::ostream& operator << (std::ostream &out, HeadSearchParameters &toSave)
     {
-        PrinterVisitor printer(out);
-        toSave.accept<PrinterVisitor>(printer);
+        corecvs::PrinterVisitor printer(out);
+        toSave.accept<corecvs::PrinterVisitor>(printer);
         return out;
     }
 
     void print ()
     {
-        cout << *this;
+        std::cout << *this;
     }
 };
 #endif  //HEAD_SEARCH_PARAMETERS_H_

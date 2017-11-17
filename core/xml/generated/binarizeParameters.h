@@ -19,14 +19,14 @@
  *  Additional includes for Composite Types.
  */
 
-using namespace corecvs;
+// using namespace corecvs;
 
 /*
  *  Additional includes for Pointer Types.
  */
 
-namespace corecvs {
-}
+// namespace corecvs {
+// }
 /*
  *  Additional includes for enum section.
  */
@@ -35,7 +35,7 @@ namespace corecvs {
  * \brief Binarize Parameters 
  * Binarize Parameters 
  **/
-class BinarizeParameters : public BaseReflection<BinarizeParameters>
+class BinarizeParameters : public corecvs::BaseReflection<BinarizeParameters>
 {
 public:
     enum FieldId {
@@ -53,6 +53,8 @@ public:
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
+
+    static int relinkCompositeFields();
 
     /** Section with getters */
     const void *getPtrById(int fieldId) const
@@ -75,12 +77,12 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit(mThreshold,                 static_cast<const IntField *>     (fields()[THRESHOLD_ID]));
+        visitor.visit(mThreshold,                 static_cast<const corecvs::IntField *>(fields()[THRESHOLD_ID]));
     }
 
     BinarizeParameters()
     {
-        DefaultSetter setter;
+        corecvs::DefaultSetter setter;
         accept(setter);
     }
 
@@ -91,16 +93,16 @@ template<class VisitorType>
         mThreshold = threshold;
     }
 
-    friend ostream& operator << (ostream &out, BinarizeParameters &toSave)
+    friend std::ostream& operator << (std::ostream &out, BinarizeParameters &toSave)
     {
-        PrinterVisitor printer(out);
-        toSave.accept<PrinterVisitor>(printer);
+        corecvs::PrinterVisitor printer(out);
+        toSave.accept<corecvs::PrinterVisitor>(printer);
         return out;
     }
 
     void print ()
     {
-        cout << *this;
+        std::cout << *this;
     }
 };
 #endif  //BINARIZE_PARAMETERS_H_
