@@ -12,8 +12,8 @@
 #include <QWidget>
 #include <QtGui>
 
-#include "vector2d.h"
-#include "matrix33.h"
+#include "core/math/vector/vector2d.h"
+#include "core/math/matrix/matrix33.h"
 #include "viAreaWidget.h"
 #include "saveFlowSettings.h"
 #include "parametersControlWidgetBase.h"
@@ -43,8 +43,18 @@ public:
     void            setCollapseTitle(bool collapse);
 
 public slots:
+    /**
+     * Actual repaint is broken down in two calls repaint of the background (image itself)
+     * and the top - tools etc.
+     **/
     virtual void    childRepaint(QPaintEvent *event, QWidget *who);
+    virtual void    repaintImage(QPainter &p);
+    virtual void    repaintTools(QPainter &p);
+
+
     void            freezeImage();
+
+
 
    /**
     *   This could be reimplemented to add additional tools
@@ -69,6 +79,7 @@ public slots:
     void            fitToggled();
     void            setFitWindow(bool flag = true);
     void            setKeepAspect(bool flag = true);
+    void            setRightDrag(bool flag = true);
 
     void            setCompactStyle(bool flag = true);
 
@@ -126,9 +137,14 @@ protected:
     QRect                   mOutputRect;
     QRect                   mInputRect;
 
-    bool                    mIsMousePressed;
+    bool                    mIsMouseLeftPressed;
+    bool                    mIsMouseRightPressed;
     QPoint                  mSelectionStart;
     QPoint                  mSelectionEnd;
+
+    /** Right mouse **/
+    bool                    mRightMouseButtonDrag;
+
 
     /**
      * Image is transformed only once. If transformation is done, result is saved to
@@ -187,6 +203,8 @@ public:
 
     QRect       getClientArea();
 
+    Vector2dd   getVisibleImageCenter();
+
 protected:
     QRect       computeInputRect();
 
@@ -195,6 +213,12 @@ protected:
     void        recomputeRects();
     void        saveFlowImage(QImage * image);
     void        recalculateZoomCenter();
+
+    virtual void showEvent(QShowEvent *event) override;
+    virtual void hideEvent(QHideEvent *event) override;
+
+protected slots:
+    void        showScheduledHint();
 
 public:
     /* Saving loading parameters to/from widget */

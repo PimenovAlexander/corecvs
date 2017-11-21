@@ -25,6 +25,7 @@ void PDOGenerator::enterFieldContext(int i)
 {
     field = clazz->fields[i];
     name = field->name.name;
+    fieldPlaceholder=QString("field%1").arg(i);
     type = field->type;
     cppName = QString("m") + toCamelCase(name, true);
     getterName = toCamelCase(name, false);
@@ -196,9 +197,9 @@ void PDOGenerator::generatePDOH()
     " * \\author autoGenerator\n"
     " */\n"
     "\n"
-    "#include \"reflection.h\"\n"
-    "#include \"defaultSetter.h\"\n"
-    "#include \"printerVisitor.h\"\n"
+    "#include \"core/reflection/reflection.h\"\n"
+    "#include \"core/reflection/defaultSetter.h\"\n"
+    "#include \"core/reflection/printerVisitor.h\"\n"
     "\n"
     "/*\n"
     " *  Embed includes.\n"
@@ -249,7 +250,7 @@ void PDOGenerator::generatePDOH()
 
     result +=
     "\n"
-    "using namespace corecvs;\n"
+    "// using namespace corecvs;\n"
     "\n";
 
     /* Probably we don't need actual includes here.
@@ -259,7 +260,7 @@ void PDOGenerator::generatePDOH()
     " *  Additional includes for Pointer Types.\n"
     " */\n"
     "\n"
-    "namespace corecvs {\n";
+    "// namespace corecvs {\n";
 
     /* We don't bother vector is fast enough */
     vector<QString> pointedTypes;
@@ -272,13 +273,25 @@ void PDOGenerator::generatePDOH()
         QString target = QString(cfield->targetClass);
         if (std::find(pointedTypes.begin(), pointedTypes.end(), target) != pointedTypes.end())
             continue;
+        QStringList namespaces = target.split("::");
+        for (int n = 0; n < namespaces.size() - 1; n++)
+        {
+    result += "namespace " + namespaces[n] + " {\n";
+        }
+
     result +=
-    "class " + target + ";\n";
+    "class " + namespaces.last() + ";\n";
+
+        for (int n = 0; n < namespaces.size() - 1; n++)
+        {
+    result += "}\n";
+        }
+
         pointedTypes.push_back(target);
     }
 
     result +=
-    "}\n"
+    "// }\n"
     "/*\n"
     " *  Additional includes for enum section.\n"
     " */\n";
@@ -306,7 +319,7 @@ void PDOGenerator::generatePDOH()
     " * \\brief "+classDescr+" \n"
     " * "+classComment+" \n"
     " **/\n"
-    "class "+className+" : public BaseReflection<"+className+">\n"
+    "class "+className+" : public corecvs::BaseReflection<"+className+">\n"
     "{\n"
     "public:\n"
 
@@ -360,6 +373,7 @@ void PDOGenerator::generatePDOH()
     "\n"
     "    /** Static fields init function, this is used for \"dynamic\" field initialization */ \n"
     "    static int staticInit();\n\n"
+    "    static int relinkCompositeFields();\n\n"
     "    /** Section with getters */\n"
     "    const void *getPtrById(int fieldId) const\n"
     "    {\n"
@@ -466,7 +480,7 @@ void PDOGenerator::generatePDOH()
         enterFieldContext(i);
 
     result+=
-    "        visitor.visit("+ j(simplifiedType+cppName+",",27) + j(" static_cast<const "+fieldRefType+" *>", 35)+"(fields()["+fieldEnumId+"]));\n";
+    "        visitor.visit("+ j(simplifiedType+cppName+",",27) + j(" static_cast<const corecvs::"+fieldRefType+" *>", 35)+"(fields()["+fieldEnumId+"]));\n";
 
     }
 
@@ -475,7 +489,7 @@ void PDOGenerator::generatePDOH()
     "\n"
     "    "+className+"()\n"
     "    {\n"
-    "        DefaultSetter setter;\n"
+    "        corecvs::DefaultSetter setter;\n"
     "        accept(setter);\n"
     "    }\n"
     "\n";
@@ -505,19 +519,19 @@ void PDOGenerator::generatePDOH()
     }
 
     result+=
-//    "        DefaultSetter setter;\n"
+//    "        corecvs::DefaultSetter setter;\n"
 //    "        accept(setter);\n"
     "    }\n\n"
-    "    friend ostream& operator << (ostream &out, "+className+" &toSave)\n"
+    "    friend std::ostream& operator << (std::ostream &out, "+className+" &toSave)\n"
     "    {\n"
-    "        PrinterVisitor printer(out);\n"
-    "        toSave.accept<PrinterVisitor>(printer);\n"
+    "        corecvs::PrinterVisitor printer(out);\n"
+    "        toSave.accept<corecvs::PrinterVisitor>(printer);\n"
     "        return out;\n"
     "    }\n"
     "\n"
     "    void print ()\n"
     "    {\n"
-    "        cout << *this;\n"
+    "        std::cout << *this;\n"
     "    }\n";
 
     /* OGL style getter and setter */
@@ -574,6 +588,9 @@ void PDOGenerator::generatePDOCpp()
     "\n"
     "SUPPRESS_OFFSET_WARNING_BEGIN\n"
     "\n"
+    "\n"
+    "using namespace corecvs;\n"
+    "\n"
     "int "+className+"::staticInit()\n"
     "{\n"
     "\n"
@@ -583,6 +600,8 @@ void PDOGenerator::generatePDOCpp()
     "        \"" + clazz->name.decription + "\",\n"
     "        \"" /*+ clazz->name.comment +*/ "\"\n"  //  We need to decorate comment
     "    );\n"
+    "\n"
+    "     getReflection()->objectSize = sizeof("+className+");\n"
     "     \n"
     "\n";
 
@@ -606,8 +625,7 @@ void PDOGenerator::generatePDOCpp()
         }
 
     result+=
-    "    fields().push_back(\n"
-    "        new "+fieldRefType+"\n"
+    "    "+fieldRefType+"* "+fieldPlaceholder+" = new "+fieldRefType+"\n"
     "        (\n"
     "          "+className+"::"+fieldEnumId+",\n"
     "          offsetof("+className+", "+cppName+"),\n";
@@ -686,11 +704,17 @@ void PDOGenerator::generatePDOCpp()
                      ",\n";
         result+=
     "          new EnumReflection("+QString::number(enumOptions->options.size())+"\n" ;
-        for(int enumCount = 0; enumCount < enumOptions->options.size(); enumCount++)
+        for(size_t enumCount = 0; enumCount < enumOptions->options.size(); enumCount++)
         {
             const EnumOption *option = enumOptions->options[enumCount];
+            if(option->presentationHint == NULL)
+            {
             result+=
     "          , new EnumOption("+QString::number(option->id)+",\""+option->name.name+"\")\n";
+            } else {
+                result+=
+    "          , new EnumOption("+QString::number(option->id)+",\""+option->name.name+"\",\""+option->presentationHint+"\")\n";
+            }
         }
         result+=
     "          )\n";
@@ -699,7 +723,7 @@ void PDOGenerator::generatePDOCpp()
                      ",\n"
     "           NULL\n";
     } else if (type == BaseField::TYPE_POINTER) {
-    result+=
+        result+=
                 ",\n"
     "          \""+QString(static_cast<const PointerField *>(field)->targetClass)+"\"\n";
     } else {
@@ -707,10 +731,75 @@ void PDOGenerator::generatePDOCpp()
     }
 
     result+=
-    "        )\n"
-    "    );\n";
+    "        );\n";
+    if (field->widgetHint != BaseField::DEFAULT_HINT)
+       result+=
+    "    "+fieldPlaceholder+"->widgetHint=BaseField::"+BaseField::getString(field->widgetHint)+";\n";
+    if (field->prefixHint != NULL && strlen(field->prefixHint) != 0)
+       result+=
+    "    "+fieldPlaceholder+"->prefixHint=\""+field->prefixHint+"\";\n";
+    if (field->suffixHint != NULL && strlen(field->suffixHint) != 0)
+       result+=
+    "    "+fieldPlaceholder+"->suffixHint=\""+field->suffixHint+"\";\n";
+
+    if (field->precision >= 0)
+        result+=
+     "    "+fieldPlaceholder+"->precision="+QString::number(field->precision)+";\n";
+
+
+    if (type == BaseField::TYPE_COMPOSITE) {
+        const CompositeField *cfield = static_cast<const CompositeField *>(field);
+        const Reflection *referent = cfield->reflection;
+        result+=
+    "    {\n"
+    "        ReflectionDirectory* directory = ReflectionDirectoryHolder::getReflectionDirectory();\n"
+    "        std::string name(\""+QString(referent->name.name)+"\");\n"
+    "        ReflectionDirectory::iterator it = directory->find(name);\n"
+    "        if(it != directory->end()) {\n"
+    "             "+fieldPlaceholder+"->reflection = it->second;\n"
+    "        } else {\n"
+    "             printf(\"Reflection "+className+" to the subclass "+QString(referent->name.name)+" can't be linked\\n\");\n"
+    "        }\n"
+    "    }\n";
+
     }
 
+    result+=
+    "    fields().push_back("+fieldPlaceholder+");\n"
+    "    /*  */ \n";
+    }    
+
+    result+=
+    "    ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();\n"
+    "    directory[std::string(\""+QString(clazz->name.name)+"\")]= &reflection;\n";
+
+
+    result+=
+    "   return 0;\n"
+    "}\n"
+    "int "+className+"::relinkCompositeFields()\n"
+    "{\n";
+    for (int i = 0; i < fieldNumber; i++ )
+    {
+        enterFieldContext(i);
+        if (type == BaseField::TYPE_COMPOSITE) {
+            const CompositeField *cfield = static_cast<const CompositeField *>(field);
+            const Reflection *referent = cfield->reflection;
+        result+=
+    "    {\n"
+    "        ReflectionDirectory* directory = ReflectionDirectoryHolder::getReflectionDirectory();\n"
+    "        std::string name(\""+QString(referent->name.name)+"\");\n"
+    "        ReflectionDirectory::iterator it = directory->find(name);\n"
+    "        if(it != directory->end()) {\n"
+    "             const CompositeField* field = static_cast<const CompositeField*>(getReflection()->fields["+QString::number(i)+"]);\n"
+    "             const_cast<CompositeField*>(field)->reflection = it->second;\n"
+    "        } else {\n"
+    "             printf(\"Reflection "+className+" to the subclass "+QString(referent->name.name)+" can't be linked\\n\");\n"
+    "        }\n"
+    "    }\n";
+
+        }
+    }
     result+=
     "   return 0;\n"
     "}\n"
@@ -787,7 +876,7 @@ void PDOGenerator::generateControlWidgetCpp()
         if (type == BaseField::TYPE_DOUBLE)
         {
             const DoubleFieldGen *dfield = static_cast<const DoubleFieldGen *>(field);
-            if (dfield->widgetType == exponentialSlider && dfield->max > 0)
+            if (dfield->widgetHint == BaseField::SLIDER && dfield->max > 0)
             {
                 result+=
                 "mUi->"+boxName+"->setMaxZoom("+QString::number(dfield->max)+");\n"
@@ -876,7 +965,7 @@ void PDOGenerator::generateControlWidgetCpp()
 	"void "+className+"::getParameters("+parametersName+"& params) const\n"
 	"{\n"
 	"    params = *std::unique_ptr<"+parametersName+">(createParameters());\n"
-    "}\n"
+	"}\n"
 	"\n";
 #endif
     result+=
@@ -888,7 +977,7 @@ void PDOGenerator::generateControlWidgetCpp()
     "     * We should think of returning parameters by value or saving them in a preallocated place\n"
     "     **/\n"
     "\n";
-
+    
     result+=
     "\n"
     "    return new "+parametersName+"(\n";
@@ -907,7 +996,7 @@ void PDOGenerator::generateControlWidgetCpp()
 
         if (type == BaseField::TYPE_POINTER)
         {
-    result+=
+	result+=
     "        "+separator+" NULL\n";
             continue;
         }
@@ -932,16 +1021,25 @@ void PDOGenerator::generateControlWidgetCpp()
 
         if (type == BaseField::TYPE_POINTER)
             continue;
-
-        QString suffix = (type == BaseField::TYPE_STRING) ? ".c_str()" : "";
-
-        if (type == BaseField::TYPE_ENUM)
+        if       (type == BaseField::TYPE_STRING)
         {
-            prefix = "";
-        }
+    result+=
+    "    "+prefix+"mUi->"+boxName+"->"+getWidgetSetterMethodForType(type)+"(QString::fromStdString(input."+getterName+"()));\n";
+        } else if(type == BaseField::TYPE_WSTRING)
+        {
+    result+=
+    "    "+prefix+"mUi->"+boxName+"->"+getWidgetSetterMethodForType(type)+"(QString::fromStdWString(input."+getterName+"()));\n";
+        } else {
+
+            if (type == BaseField::TYPE_ENUM)
+            {
+                prefix = "";
+            }
 
     result+=
-    "    "+prefix+"mUi->"+boxName+"->"+getWidgetSetterMethodForType(type)+"(input."+getterName+"()"+suffix+");\n";
+    "    "+prefix+"mUi->"+boxName+"->"+getWidgetSetterMethodForType(type)+"(input."+getterName+"());\n";
+        }
+
     }
 
     result+=

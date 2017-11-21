@@ -1,6 +1,6 @@
 #pragma once
 #include <QWidget>
-#include "generated/axisAlignedBoxParameters.h"
+#include "core/xml/generated/axisAlignedBoxParameters.h"
 #include "ui_axisAlignedBoxParametersControlWidget.h"
 #include "parametersControlWidgetBase.h"
 
@@ -18,14 +18,13 @@ public:
     ~AxisAlignedBoxParametersControlWidget();
 
     AxisAlignedBoxParameters* createParameters() const;
-    void getParameters(AxisAlignedBoxParameters &params) const;
+    void getParameters(AxisAlignedBoxParameters &param) const;
     void setParameters(const AxisAlignedBoxParameters &input);
     virtual void setParametersVirtual(void *input);
-
-
+    
     virtual void loadParamWidget(WidgetLoader &loader);
     virtual void saveParamWidget(WidgetSaver  &saver);
-
+    
 public slots:
     void changeParameters()
     {

@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "global.h"
+#include "core/utils/global.h"
 #include "gtswrapper.h"
 #include <gts.h>
 

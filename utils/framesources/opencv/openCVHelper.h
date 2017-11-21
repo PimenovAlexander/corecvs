@@ -5,7 +5,7 @@
 
 #include <opencv2/highgui/highgui.hpp>
 
-#include "g12Buffer.h"
+#include "core/buffers/g12Buffer.h"
 
 using corecvs::G12Buffer;
 

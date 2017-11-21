@@ -12,19 +12,19 @@
 #include <errno.h>
 #include <linux/videodev2.h>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include "V4L2.h"
-#include "rgb24Buffer.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
 #include "cameraControlParameters.h"
 #include "imageCaptureInterface.h"
-#include "preciseTimer.h"
+#include "core/utils/preciseTimer.h"
 #include "../../frames.h"
 
 using namespace std;
 
 
-class V4L2CaptureInterface : public ImageCaptureInterface
+class V4L2CaptureInterface : public virtual ImageCaptureInterface
 {
 public:
     V4L2CaptureInterface(string _devname, bool isRgb = false);
@@ -47,11 +47,11 @@ public:
     virtual CapErrorCode initCapture() override;
     virtual CapErrorCode startCapture() override;
 
-    virtual CapErrorCode getCaptureName(QString &value) override;
+    virtual CapErrorCode getCaptureName(std::string &value) override;
     virtual CapErrorCode getFormats(int *num, CameraFormat *& formats) override;
 
-    virtual QString      getInterfaceName() override;
-    virtual CapErrorCode getDeviceName(int num, QString &name) override;
+    virtual std::string  getInterfaceName() override;
+    virtual CapErrorCode getDeviceName(int num, std::string &name) override;
 
     virtual std::string  getDeviceSerial(int num = LEFT_FRAME) override;
 

@@ -8,9 +8,9 @@
  * \author autoGenerator
  */
 
-#include "reflection.h"
-#include "defaultSetter.h"
-#include "printerVisitor.h"
+#include "core/reflection/reflection.h"
+#include "core/reflection/defaultSetter.h"
+#include "core/reflection/printerVisitor.h"
 
 /*
  *  Embed includes.
@@ -19,14 +19,14 @@
  *  Additional includes for Composite Types.
  */
 
-using namespace corecvs;
+// using namespace corecvs;
 
 /*
  *  Additional includes for Pointer Types.
  */
 
-namespace corecvs {
-}
+// namespace corecvs {
+// }
 /*
  *  Additional includes for enum section.
  */
@@ -37,7 +37,7 @@ namespace corecvs {
  * \brief draw 3d ViMouse Parameters 
  * draw 3d ViMouse Parameters 
  **/
-class Draw3dViMouseParameters : public BaseReflection<Draw3dViMouseParameters>
+class Draw3dViMouseParameters : public corecvs::BaseReflection<Draw3dViMouseParameters>
 {
 public:
     enum FieldId {
@@ -83,6 +83,8 @@ public:
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
+
+    static int relinkCompositeFields();
 
     /** Section with getters */
     const void *getPtrById(int fieldId) const
@@ -145,16 +147,16 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit(mRedDist,                   static_cast<const DoubleField *>  (fields()[REDDIST_ID]));
-        visitor.visit(mBlueDist,                  static_cast<const DoubleField *>  (fields()[BLUEDIST_ID]));
-        visitor.visit(mFlowZoom,                  static_cast<const DoubleField *>  (fields()[FLOWZOOM_ID]));
-        visitor.visit((int &)mPointColorType,     static_cast<const EnumField *>    (fields()[POINT_COLOR_TYPE_ID]));
-        visitor.visit((int &)mFlowColorType,      static_cast<const EnumField *>    (fields()[FLOW_COLOR_TYPE_ID]));
+        visitor.visit(mRedDist,                   static_cast<const corecvs::DoubleField *>(fields()[REDDIST_ID]));
+        visitor.visit(mBlueDist,                  static_cast<const corecvs::DoubleField *>(fields()[BLUEDIST_ID]));
+        visitor.visit(mFlowZoom,                  static_cast<const corecvs::DoubleField *>(fields()[FLOWZOOM_ID]));
+        visitor.visit((int &)mPointColorType,     static_cast<const corecvs::EnumField *>(fields()[POINT_COLOR_TYPE_ID]));
+        visitor.visit((int &)mFlowColorType,      static_cast<const corecvs::EnumField *>(fields()[FLOW_COLOR_TYPE_ID]));
     }
 
     Draw3dViMouseParameters()
     {
-        DefaultSetter setter;
+        corecvs::DefaultSetter setter;
         accept(setter);
     }
 
@@ -173,16 +175,16 @@ template<class VisitorType>
         mFlowColorType = flowColorType;
     }
 
-    friend ostream& operator << (ostream &out, Draw3dViMouseParameters &toSave)
+    friend std::ostream& operator << (std::ostream &out, Draw3dViMouseParameters &toSave)
     {
-        PrinterVisitor printer(out);
-        toSave.accept<PrinterVisitor>(printer);
+        corecvs::PrinterVisitor printer(out);
+        toSave.accept<corecvs::PrinterVisitor>(printer);
         return out;
     }
 
     void print ()
     {
-        cout << *this;
+        std::cout << *this;
     }
 };
 #endif  //DRAW_3D_VIMOUSE_PARAMETERS_H_

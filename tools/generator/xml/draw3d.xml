@@ -79,8 +79,7 @@
     <item name="Heat"    id="2"/>
     <item name="By Flag" id="3"/>    
   </enum>
-  
-  
+
   <class name="draw 3d ViMouse Parameters">
     <!--  
     double redDist  = dialog->mUi.redZBox ->value();
@@ -97,5 +96,7 @@
     <field type="ViMouse 3d Stereo Style" name="Point Color Type"  defaultValue="0" />
     <field type="ViMouse 3d Flow Style"   name="Flow Color Type"   defaultValue="0" />
   </class>
+
+
   
 </poco>

@@ -9,13 +9,14 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "sse_trace.h"
-#include "sseWrapper.h"
-#include "preciseTimer.h"
-#include "readers.h"
-#include "genericMath.h"
+#include "core/utils/sse_trace.h"
+#include "core/math/sse/sseWrapper.h"
+#include "core/utils/preciseTimer.h"
+#include "core/buffers/kernels/fastkernel/readers.h"
+#include "core/math/generic/genericMath.h"
+#include "core/math/avx/int32x8.h"
 
 using namespace corecvs;
 
@@ -609,4 +610,31 @@ TEST(SSEWrappers, popcnt)
     res = __builtin_popcount(a = 0xAAAAAAAA);
     std::cout << "The value 0x" << std::hex << a << std::dec << " should have 16 ones :" << res << std::endl;
     CORE_ASSERT_TRUE_S(res == 16);
+}
+
+
+uintptr_t getMask(uintptr_t addr)
+{
+    uintptr_t a = 1;
+    while (!(a & addr))
+        a <<= 1;
+    return a;
+}
+
+typedef Int32x8 TestAlignmentTarget;
+class TestAlignmentHolder
+{
+public:
+    TestAlignmentTarget bar;
+};
+
+TEST(SSEWrappers, AlignmentTest)
+{
+    uintptr_t alignment = 0;
+    for (int i = 0; i < 10000; ++i)
+    {
+        alignment |= reinterpret_cast<uintptr_t>(&(new TestAlignmentHolder)->bar);
+    }
+    uintptr_t a = getMask(alignment);
+    std::cout << "C++ standard in general " <<  (a >= 32 ? "rock-n-rolls" : "sucks") << " 'cause alignment is " << a  << std::endl;
 }

@@ -11,10 +11,10 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
-#include "mesh3d.h"
-#include "mesh3DDecorated.h"
-#include "meshLoader.h"
+#include "core/utils/global.h"
+#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh3DDecorated.h"
+#include "core/fileformats/meshLoader.h"
 
 using namespace std;
 using namespace corecvs;

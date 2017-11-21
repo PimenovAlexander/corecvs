@@ -8,16 +8,18 @@
  * \ingroup autotest
  */
 
-#include <bmpLoader.h>
-#include <calibrationCamera.h>
 #include <iostream>
-#include <mesh3d.h>
-#include <rgb24Buffer.h>
-#include <simpleRenderer.h>
 
 #include "gtest/gtest.h"
+#include "core/utils/global.h"
 
-#include "global.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/cameracalibration/calibrationCamera.h"
+
+#include "core/geometry/mesh3d.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/geometry/renderer/simpleRenderer.h"
+
 
 
 using namespace std;

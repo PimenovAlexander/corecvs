@@ -5,7 +5,7 @@
  **/
 
 #include "filterBlockPresentation.h"
-#include "filterBlock.h"
+#include "core/filters/blocks/filterBlock.h"
 
 FilterBlockPresentation::FilterBlockPresentation(FilterBlock *block,
                                                  FilterParametersControlWidgetBase* _widget,

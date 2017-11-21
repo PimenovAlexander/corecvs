@@ -8,6 +8,7 @@
 
 #include "graphPlotParametersControlWidget.h"
 #include "ui_graphPlotParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -43,36 +44,21 @@ GraphPlotParametersControlWidget::~GraphPlotParametersControlWidget()
 
 void GraphPlotParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    GraphPlotParameters *params = createParameters();
+    std::unique_ptr<GraphPlotParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void GraphPlotParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    GraphPlotParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<GraphPlotParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void GraphPlotParametersControlWidget::getParameters(GraphPlotParameters& params) const
 {
-
-    params.setGraphStyle       (static_cast<GraphStyle::GraphStyle>(mUi->graphStyleComboBox->currentIndex()));
-    params.setWidth            (mUi->widthSpinBox->value());
-    params.setCenterAt         (mUi->centerAtSpinBox->value());
-    params.setXGrid            (mUi->xGridCheckBox->isChecked());
-    params.setYGrid            (mUi->yGridCheckBox->isChecked());
-    params.setXScale           (mUi->xScaleSlider->value());
-    params.setYScale           (mUi->yScaleSlider->value());
-    params.setContrast         (mUi->contrastSpinBox->value());
-    params.setSelectGraph      (mUi->selectGraphCheckBox->isChecked());
-    params.setFixTimeValue     (mUi->fixTimeValueButton->isChecked());
-    params.setFixGridValue     (mUi->fixGridValueButton->isChecked());
-
+    params = *std::unique_ptr<GraphPlotParameters>(createParameters());
 }
+
 
 GraphPlotParameters *GraphPlotParametersControlWidget::createParameters() const
 {
@@ -82,7 +68,7 @@ GraphPlotParameters *GraphPlotParametersControlWidget::createParameters() const
      **/
 
 
-    GraphPlotParameters *result = new GraphPlotParameters(
+    return new GraphPlotParameters(
           static_cast<GraphStyle::GraphStyle>(mUi->graphStyleComboBox->currentIndex())
         , mUi->widthSpinBox->value()
         , mUi->centerAtSpinBox->value()
@@ -95,7 +81,6 @@ GraphPlotParameters *GraphPlotParametersControlWidget::createParameters() const
         , mUi->fixTimeValueButton->isChecked()
         , mUi->fixGridValueButton->isChecked()
     );
-    return result;
 }
 
 void GraphPlotParametersControlWidget::setParameters(const GraphPlotParameters &input)

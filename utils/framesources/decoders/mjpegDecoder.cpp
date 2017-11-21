@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include "mjpegDecoder.h"
 

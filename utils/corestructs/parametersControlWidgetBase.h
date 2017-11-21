@@ -11,16 +11,16 @@
 
 #include <QWidget>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "reflection.h"
+#include "core/reflection/reflection.h"
 #include "visitors/qSettingsSetter.h"
 #include "visitors/xmlSetter.h"
 #include "visitors/qSettingsGetter.h"
 #include "visitors/xmlGetter.h"
 #include "visitors/jsonSetter.h"
 #include "visitors/jsonGetter.h"
-#include "propertyListVisitor.h"
+#include "core/utils/visitors/propertyListVisitor.h"
 
 using corecvs::BaseReflectionStatic;
 
@@ -207,7 +207,7 @@ template <class ParametersClass>
 	}
 
     ~WidgetLoader() {
-         qDebug("WidgetLoader::~WidgetLoader(): called");
+//         qDebug("WidgetLoader::~WidgetLoader(): called");
         if (autoInit) {
             delete_safe(mQtSettings);
             delete_safe(mXmlGetter);
@@ -261,6 +261,9 @@ public:
 
     virtual BaseReflectionStatic *createParametersVirtual() const;
     virtual ~ParametersControlWidgetBase();
+
+signals:
+    void paramsChanged();
 };
 
 

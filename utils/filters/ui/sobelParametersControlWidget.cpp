@@ -8,6 +8,7 @@
 
 #include "sobelParametersControlWidget.h"
 #include "ui_sobelParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -33,28 +34,21 @@ SobelParametersControlWidget::~SobelParametersControlWidget()
 
 void SobelParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    SobelParameters *params = createParameters();
+    std::unique_ptr<SobelParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void SobelParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    SobelParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<SobelParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void SobelParametersControlWidget::getParameters(SobelParameters& params) const
 {
-
-    params.setMixingType       (static_cast<SobelMixingType::SobelMixingType>(mUi->mixingTypeComboBox->currentIndex()));
-    params.setHorizontal       (mUi->horizontalCheckBox->isChecked());
-    params.setVertical         (mUi->verticalCheckBox->isChecked());
-
+    params = *std::unique_ptr<SobelParameters>(createParameters());
 }
+
 
 SobelParameters *SobelParametersControlWidget::createParameters() const
 {
@@ -64,12 +58,11 @@ SobelParameters *SobelParametersControlWidget::createParameters() const
      **/
 
 
-    SobelParameters *result = new SobelParameters(
+    return new SobelParameters(
           static_cast<SobelMixingType::SobelMixingType>(mUi->mixingTypeComboBox->currentIndex())
         , mUi->horizontalCheckBox->isChecked()
         , mUi->verticalCheckBox->isChecked()
     );
-    return result;
 }
 
 void SobelParametersControlWidget::setParameters(const SobelParameters &input)

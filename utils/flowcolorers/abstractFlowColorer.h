@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <QColor>
 
-#include "vector2d.h"
+#include "core/math/vector/vector2d.h"
 
 using namespace corecvs;
 

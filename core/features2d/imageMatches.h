@@ -7,16 +7,19 @@
 #include <stdint.h>
 #include <deque>
 
+
 struct RawMatch
 {
-	uint16_t featureQ;
-	uint16_t featureT;
+    typedef uint32_t FeatureId;
+
+    FeatureId featureQ;
+    FeatureId featureT;
 
 	double distance;
 	double best2ndBest;
-	static const uint16_t INVALID_MARKER;
+    static const FeatureId INVALID_MARKER;
 
-	RawMatch(const uint16_t &featureQ = INVALID_MARKER, const uint16_t &featureT = INVALID_MARKER, const double &distance = 1000.0, double best2ndBest = 1.0)
+    RawMatch(const FeatureId &featureQ = INVALID_MARKER, const FeatureId &featureT = INVALID_MARKER, const double &distance = 1000.0, double best2ndBest = 1.0)
 		: featureQ(featureQ), featureT(featureT), distance(distance), best2ndBest(best2ndBest)
 	{
 	}
@@ -35,8 +38,8 @@ struct Match
 	uint16_t imgA;
 	uint16_t imgB;
 
-	uint16_t featureA;
-	uint16_t featureB;
+    RawMatch::FeatureId featureA;
+    RawMatch::FeatureId featureB;
 
 	double distance;
 	double best2ndBest;
@@ -44,7 +47,7 @@ struct Match
 	Match()
 	{
 	}
-	Match(const uint16_t &imgA, const uint16_t &imgB, const uint16_t &featureA, const uint16_t &featureB, const double &distance, double best2ndBest = 1.0) : distance(distance), best2ndBest(best2ndBest)
+    Match(const uint16_t &imgA, const uint16_t &imgB, const RawMatch::FeatureId &featureA, const RawMatch::FeatureId &featureB, const double &distance, double best2ndBest = 1.0) : distance(distance), best2ndBest(best2ndBest)
 	{
 		if (imgA < imgB)
 		{

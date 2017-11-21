@@ -1,6 +1,6 @@
 #pragma once
 #include <QWidget>
-#include "generated/binarizeParameters.h"
+#include "core/xml/generated/binarizeParameters.h"
 #include "ui_binarizeParametersControlWidget.h"
 #include "filterParametersControlWidgetBase.h"
 

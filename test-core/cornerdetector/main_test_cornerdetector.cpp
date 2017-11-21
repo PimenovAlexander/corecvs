@@ -11,15 +11,15 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "mathUtils.h"
-#include "g12Buffer.h"
-#include "spatialGradient.h"
-#include "bufferFactory.h"
-#include "bmpLoader.h"
-#include "segmentator.h"
-#include "rgb24Buffer.h"
+#include "core/math/mathUtils.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/kernels/spatialGradient.h"
+#include "core/buffers/bufferFactory.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/segmentation/segmentator.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
 
 
 using namespace std;

@@ -12,10 +12,10 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
-#include "g12Buffer.h"
-#include "bmpLoader.h"
-#include "morphological.h"
+#include "core/utils/global.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/buffers/morphological/morphological.h"
 
 using namespace std;
 using namespace corecvs;

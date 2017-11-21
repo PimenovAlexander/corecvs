@@ -52,6 +52,8 @@ QString BaseGenerator::getCppTypeForElementType(const BaseField::FieldType type)
             return "bool";
         case BaseField::TYPE_STRING:
             return "std::string";
+        case BaseField::TYPE_WSTRING:
+            return "std::wstring";
         case BaseField::TYPE_ENUM:
         {
             QString enumName = toCamelCase(QString(static_cast<const EnumField*>(field)->enumReflection->name.name), true);
@@ -86,14 +88,14 @@ QString BaseGenerator::getCppTypeForType(const BaseField *field)
 QString BaseGenerator::getWidgetGetterMethodForType(BaseField::FieldType type)
 {
     if (field->type & BaseField::TYPE_VECTOR_BIT) {
-       qDebug() << "Unsupported type for UI: vectors not supported so far";
-
        switch(type & ~BaseField::TYPE_VECTOR_BIT)
        {
            case BaseField::TYPE_INT:
            case BaseField::TYPE_DOUBLE:
                return "value()";
        }
+
+       qDebug() << "Unsupported type for UI: vectors not supported so far";
 
     }
 
@@ -108,6 +110,8 @@ QString BaseGenerator::getWidgetGetterMethodForType(BaseField::FieldType type)
             return "currentIndex()";
         case BaseField::TYPE_STRING:
             return "text().toStdString()";
+        case BaseField::TYPE_WSTRING:
+            return "text().toStdWString()";
         case BaseField::TYPE_COMPOSITE:
             return "createParameters()";
         default:
@@ -123,8 +127,7 @@ QString BaseGenerator::getWidgetNameForName(QString name)
 
 QString BaseGenerator::getWidgetSetterMethodForType(BaseField::FieldType type)
 {
-    if (field->type & BaseField::TYPE_VECTOR_BIT) {
-       qDebug() << "Unsupported type for UI: vectors not supported so far";
+    if (field->type & BaseField::TYPE_VECTOR_BIT) {       
 
        switch(type & ~BaseField::TYPE_VECTOR_BIT)
        {
@@ -132,6 +135,8 @@ QString BaseGenerator::getWidgetSetterMethodForType(BaseField::FieldType type)
            case BaseField::TYPE_DOUBLE:
                return "setValue";
        }
+
+       qDebug() << "Unsupported type for UI: vectors not supported so far";
     }
 
     switch(type)
@@ -144,6 +149,8 @@ QString BaseGenerator::getWidgetSetterMethodForType(BaseField::FieldType type)
         case BaseField::TYPE_ENUM:
             return "setCurrentIndex";
         case BaseField::TYPE_STRING:
+            return "setText";
+        case BaseField::TYPE_WSTRING:
             return "setText";
         case BaseField::TYPE_COMPOSITE:
             return "setParameters";
@@ -167,7 +174,21 @@ QString BaseGenerator::getDefaultElementValue(const BaseField *field)
         case BaseField::TYPE_ENUM:
             return QString::number(static_cast<const EnumField *>(field)->defaultValue);
         case BaseField::TYPE_STRING:
-            return QString("\"") + QString(static_cast<const StringField *>(field)->defaultValue.c_str()) + QString("\"");
+            return QString("\"") + QString::fromStdString (static_cast<const StringField  *>(field)->defaultValue) + QString("\"");
+        case BaseField::TYPE_WSTRING:
+        {
+            QString result;
+            result += "L\"";
+            std::wstring wstr = static_cast<const WStringField *>(field)->defaultValue;
+            for (std::wstring::size_type i = 0; i < wstr.size(); i++)
+            {
+                uint32_t c = (uint32_t)wstr[i];
+                result += "\\u";
+                result += QString("%1").arg((uint)c, 4, 16, QLatin1Char('0'));
+            }
+            result += "\"";
+            return result;
+        }
         case BaseField::TYPE_POINTER:
             return "NULL";
         case BaseField::TYPE_COMPOSITE:
@@ -214,6 +235,8 @@ QString BaseGenerator::getFieldRefTypeForElementType(BaseField::FieldType type)
             return "Enum";
         case BaseField::TYPE_STRING:
            return "String";
+        case BaseField::TYPE_WSTRING:
+           return "WString";
         case BaseField::TYPE_POINTER:
             return "Pointer";
         case BaseField::TYPE_COMPOSITE:
@@ -248,23 +271,26 @@ QString BaseGenerator::getWidgetSuffixForType(BaseField::FieldType type)
             return "SpinBox";
         case BaseField::TYPE_DOUBLE:
         {
-            switch (static_cast<const DoubleFieldGen *>(field)->widgetType)
-            {
-                case doubleSpinBox:     return "SpinBox";
-                case exponentialSlider: return "Slider";
-            }
+            if (field->widgetHint == BaseField::SPIN_BOX || field->widgetHint == BaseField::DEFAULT_HINT)
+                return "SpinBox";
+            if (field->widgetHint == BaseField::SLIDER)
+                return "Slider";
+            return "UNSUPPORTED";
         }
         case BaseField::TYPE_BOOL:
         {
-            switch (static_cast<const BoolFieldGen *>(field)->widgetType)
-            {
-            case checkBox:    return "CheckBox";
-            case radioButton: return "Button";
-            }
+            if (field->widgetHint == BaseField::CHECK_BOX || field->widgetHint == BaseField::DEFAULT_HINT)
+                return "CheckBox";
+            if (field->widgetHint == BaseField::RADIO_BUTTON)
+                return "Button";
+            return "UNSUPPORTED";
+
         }
         case BaseField::TYPE_ENUM:
             return "ComboBox";
         case BaseField::TYPE_STRING:
+            return "Edit";
+        case BaseField::TYPE_WSTRING:
             return "Edit";
         case BaseField::TYPE_COMPOSITE:
             return "ControlWidget";
@@ -281,23 +307,25 @@ QString BaseGenerator::getUiWidgetForType(BaseField::FieldType type)
             return "QSpinBox";
         case BaseField::TYPE_DOUBLE:
         {
-            switch (static_cast<const DoubleFieldGen *>(field)->widgetType)
-            {
-                case doubleSpinBox:     return "QDoubleSpinBox";
-                case exponentialSlider: return "ExponentialSlider";
-            }
+            if (field->widgetHint == BaseField::SLIDER)
+                return "ExponentialSlider";
+            if (field->widgetHint == BaseField::SPIN_BOX || field->widgetHint == BaseField::DEFAULT_HINT)
+                return "QDoubleSpinBox";
+            return "UNSUPPORTED";
         }
         case BaseField::TYPE_BOOL:
         {
-            switch (static_cast<const BoolFieldGen *>(field)->widgetType)
-            {
-            case checkBox:    return "QCheckBox";
-            case radioButton: return "QRadioButton";
-            }
+            if (field->widgetHint == BaseField::RADIO_BUTTON)
+                return "QRadioButton";
+            if (field->widgetHint == BaseField::CHECK_BOX || field->widgetHint == BaseField::DEFAULT_HINT)
+                return "QCheckBox";
+            return "UNSUPPORTED";
         }
         case BaseField::TYPE_ENUM:
             return "QComboBox";
         case BaseField::TYPE_STRING:
+            return "QLineEdit";
+        case BaseField::TYPE_WSTRING:
             return "QLineEdit";
         case BaseField::TYPE_COMPOSITE:
         {
@@ -325,21 +353,23 @@ QString BaseGenerator::getSignalForType(BaseField::FieldType type)
             return "valueChanged(double)";
         case BaseField::TYPE_BOOL:
         {
-            switch (static_cast<const BoolFieldGen *>(field)->widgetType)
-            {
-              case checkBox:    return "stateChanged(int)";
-              case radioButton: return "clicked(bool)";
-            }
+            if (field->widgetHint == BaseField::CHECK_BOX || field->widgetHint == BaseField::DEFAULT_HINT)
+                return "stateChanged(int)";
+            if (field->widgetHint == BaseField::RADIO_BUTTON)
+                return "clicked(bool)";
+            return "UNSUPPORTED";
         }
         case BaseField::TYPE_ENUM:
         {
-            switch (static_cast<const EnumFieldGen *>(field)->widgetType)
-            {
-                case comboBox:    return "currentIndexChanged(int)";
-                case tabWidget:   return "currentChanged(int)";
-            }
+            if (field->widgetHint == BaseField::COMBO_BOX || field->widgetHint == BaseField::DEFAULT_HINT)
+                return "currentIndexChanged(int)";
+            if (field->widgetHint == BaseField::TAB_WIDGET)
+                return "currentChanged(int)";
+            return "UNSUPPORTED";
         }
         case BaseField::TYPE_STRING:
+            return "textChanged(QString)";
+        case BaseField::TYPE_WSTRING:
             return "textChanged(QString)";
         case BaseField::TYPE_COMPOSITE:
             return "paramsChanged()";

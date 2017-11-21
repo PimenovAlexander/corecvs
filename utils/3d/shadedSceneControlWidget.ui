@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ShadedSceneControlWidget</class>
+ <widget class="QWidget" name="ShadedSceneControlWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>936</width>
+    <height>830</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_3">
+   <item row="0" column="0">
+    <widget class="QComboBox" name="presetComboBox">
+     <item>
+      <property name="text">
+       <string>Default</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Vertex Shader</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QPushButton" name="pushButton_2">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/main.qrc">
+       <normaloff>:/new/prefix1/install.png</normaloff>:/new/prefix1/install.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Fragment Shader</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="QTextEdit" name="fragmentShaderTextEdit"/>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="QTextEdit" name="vetrexShaderTextEdit"/>
+   </item>
+   <item row="0" column="2" rowspan="7">
+    <widget class="Draw3dParametersControlWidget" name="genericParams" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="2">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Point Shader</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Edge Shader</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Face Shader</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QComboBox" name="pointComboBox">
+       <property name="currentIndex">
+        <number>1</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>None</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Default</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Default Phong</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QComboBox" name="edgeComboBox">
+       <property name="currentIndex">
+        <number>1</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>None</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Default</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Default Phong</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QComboBox" name="faceComboBox">
+       <property name="currentIndex">
+        <number>1</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>None</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Default</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Default Phong</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="5" column="0">
+    <widget class="QPushButton" name="applyButton">
+     <property name="text">
+      <string>Apply</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Draw3dParametersControlWidget</class>
+   <extends>QWidget</extends>
+   <header>draw3dParametersControlWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../../resources/main.qrc"/>
+ </resources>
+ <connections/>
+</ui>

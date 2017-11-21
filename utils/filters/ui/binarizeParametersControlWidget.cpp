@@ -8,6 +8,7 @@
 
 #include "binarizeParametersControlWidget.h"
 #include "ui_binarizeParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -31,26 +32,21 @@ BinarizeParametersControlWidget::~BinarizeParametersControlWidget()
 
 void BinarizeParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    BinarizeParameters *params = createParameters();
+    std::unique_ptr<BinarizeParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void BinarizeParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    BinarizeParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<BinarizeParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void BinarizeParametersControlWidget::getParameters(BinarizeParameters& params) const
 {
-
-    params.setThreshold        (mUi->thresholdSpinBox->value());
-
+    params = *std::unique_ptr<BinarizeParameters>(createParameters());
 }
+
 
 BinarizeParameters *BinarizeParametersControlWidget::createParameters() const
 {
@@ -60,10 +56,9 @@ BinarizeParameters *BinarizeParametersControlWidget::createParameters() const
      **/
 
 
-    BinarizeParameters *result = new BinarizeParameters(
+    return new BinarizeParameters(
           mUi->thresholdSpinBox->value()
     );
-    return result;
 }
 
 void BinarizeParametersControlWidget::setParameters(const BinarizeParameters &input)

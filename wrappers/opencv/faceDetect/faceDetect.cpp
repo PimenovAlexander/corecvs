@@ -4,13 +4,12 @@
 #include <iostream>
 #include <stdio.h>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include "faceDetect.h"
 #include "OpenCVTools.h"
 
 
-using namespace std;
 using namespace cv;
 
 const char * FaceDetectorOpenCV::cascadeNames[] = {
@@ -24,7 +23,7 @@ const char * FaceDetectorOpenCV::cascadeNames[] = {
 CascadeClassifier *FaceDetectorOpenCV::cascades[] = {NULL, NULL, NULL, NULL, NULL};
 
 STATIC_ASSERT(CORE_COUNT_OF(FaceDetectorOpenCV::cascadeNames) ==
-              CORE_COUNT_OF(FaceDetectorOpenCV::cascades), open_cv_cascades_data);
+              CORE_COUNT_OF(FaceDetectorOpenCV::cascades), open_cv_cascades_data)
 
 const int FaceDetectorOpenCV::MAX_ID = CORE_COUNT_OF(FaceDetectorOpenCV::cascadeNames);
 
@@ -44,7 +43,7 @@ void FaceDetectorOpenCV::detectFacesOpenCV(G12Buffer *input, vector<DetectedObje
         cascades[id] = new CascadeClassifier();
         if( !cascades[id]->load( cascadeNames[id] ) )
         {
-            cerr << "ERROR: Could not load classifier cascade:" << cascadeNames[id] << endl;
+            std::cerr << "ERROR: Could not load classifier cascade:" << cascadeNames[id] << std::endl;
             return;
         }
     }
@@ -52,7 +51,7 @@ void FaceDetectorOpenCV::detectFacesOpenCV(G12Buffer *input, vector<DetectedObje
     CascadeClassifier *cascade = cascades[id];
 
     IplImage *inputIpl = OpenCVTools::getCVImageFromG12Buffer(input);
-    Mat matrix(inputIpl, false);
+    CVMAT_FROM_IPLIMAGE( matrix, inputIpl, false );
 
     vector<Rect> faces;
 

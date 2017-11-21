@@ -12,10 +12,10 @@
 #include <limits>
 #include <vector>
 
-#include "rgbColor.h"
-#include "histogram.h"
-#include "ellipticalApproximation.h"
-#include "segmentator.h"
+#include "core/buffers/rgb24/rgbColor.h"
+#include "core/buffers/histogram/histogram.h"
+#include "core/geometry/ellipticalApproximation.h"
+#include "core/segmentation/segmentator.h"
 
 
 class ReflectionPayload;

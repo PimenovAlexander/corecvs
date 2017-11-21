@@ -6,14 +6,15 @@
 
 #include <QtCore/QDebug>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "mathUtils.h"
+#include "core/math/mathUtils.h"
+#include "core/fileformats/meshLoader.h"
 #include "mesh3DScene.h"
 #include "opengl/openGLTools.h"
 #include "generated/draw3dParameters.h"
 #include "painterHelpers.h"
-#include "mathUtils.h"
+#include "core/math/mathUtils.h"
 #include "qtHelper.h"
 
 using corecvs::lerp;
@@ -162,7 +163,7 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
    // glColor3ub(mParameters.color().r(), mParameters.color().g(), mParameters.color().b());
     if (vertexes.size() > 0)
     {
-    glVertexPointer(3, GL_DOUBLE, sizeof(Vector3dd), &(vertexes[0]));
+        glVertexPointer(3, GL_DOUBLE, sizeof(Vector3dd), &(vertexes[0]));
     }
 
 /*
@@ -249,6 +250,19 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
     glDisable(GL_TEXTURE_2D);
 }
 
+bool Mesh3DScene::dump(const QString &targetFile)
+{
+   /*if (owned != NULL)
+   {
+       qDebug("Mesh3DScene::dump(): saving owned scene\n");
+       return MeshLoader().save(owned, targetFile.toLatin1().constData());
+   } else {
+       qDebug("Mesh3DScene::dump(): there is no owned scene\n");
+       return false;
+   }*/
+
+    return MeshLoader().save(this, targetFile.toLatin1().constData());
+}
 
 Mesh3DScene::~Mesh3DScene() {
     // TODO Auto-generated destructor stub
@@ -299,6 +313,7 @@ void Grid3DScene::drawMyself(CloudViewDialog* /*dialog*/ /*, const Draw3dParamet
     }
     GLboolean textureState = glIsEnabled(GL_TEXTURE_2D);
     glDisable(GL_TEXTURE_2D);
+    glShadeModel(GL_FLAT);
     glCallList(mGridId);
     if (textureState) {
         glEnable(GL_TEXTURE_2D);
@@ -354,8 +369,6 @@ void Plane3DScene::prepareMesh(CloudViewDialog* /*dialog*/)
             glColor3ub( 0, 64, 64);
         }
 
-
-
         glVertex3d(x, 0, 0);
         glVertex3d(x, 0, z);
     }
@@ -371,12 +384,101 @@ void Plane3DScene::drawMyself(CloudViewDialog* /*dialog*/)
 
     if (mPlaneListId == 0)
     {
-        qDebug("Grid3DScene was not initialized");
+        qDebug("Plane3DScene was not initialized");
     }
+    GLboolean textureState = glIsEnabled(GL_TEXTURE_2D);
     glDisable(GL_TEXTURE_2D);
+
     glCallList(mPlaneListId);
-   // glEnable(GL_TEXTURE_2D);
+
+    if (textureState) {
+        glEnable(GL_TEXTURE_2D);
+    }
 }
+
+void Plane3DGeodesicScene::prepareMesh(CloudViewDialog* /*dialog*/)
+{
+    //qDebug() << "Calling Plane3DGeodesicScene::prepareMesh() for" << name;
+
+    mPlaneListId = glGenLists(1);
+    if (mPlaneListId == 0) {
+        qDebug("Plane3DGeodesicScene failed to create display list");
+        return;
+    }
+
+    glNewList(mPlaneListId,GL_COMPILE);
+
+
+    glBegin(GL_LINES);
+    glColor3ub(0,255,255);
+
+    const double STEP = 10;
+    const int    PLANE_SIZE = 50;
+
+    // South to North lines
+    for (int i = -PLANE_SIZE; i <= PLANE_SIZE; i++)
+    {
+        double x =  PLANE_SIZE * STEP;
+        double y =  i * STEP;
+        if        (i % 10 == 0) {
+            glColor3ub( 128,128,0);
+        } else if (i % 2 == 0) {
+            glColor3ub( 0,128,128);
+        } else {
+            glColor3ub( 0, 64, 64);
+        }
+        glVertex3d(-x, y, 0);
+        glVertex3d( x, y, 0);
+    }
+    // West to East lines
+    for (int i = -PLANE_SIZE; i <= PLANE_SIZE; i++)
+    {
+        double x =  i * STEP;
+        double y =  PLANE_SIZE * STEP;
+        if        (i % 10 == 0) {
+            glColor3ub( 128,128,0);
+        } else if (i % 2 == 0) {
+            glColor3ub( 0,128,128);
+        } else {
+            glColor3ub( 0, 64, 64);
+        }
+        glVertex3d( x, -y, 0);
+        glVertex3d( x,  y, 0);
+    }
+    glEnd();
+    glDisable(GL_LINE_STIPPLE);
+
+    glPushMatrix();
+    OpenGLTools::glMultMatrixMatrix33(Matrix33::MirrorXY());
+    OpenGLTools::GLWrapper wrapper;
+    GLPainter painter(&wrapper);
+    painter.drawGlyph(0,  PLANE_SIZE * STEP - 20, 'N', RGBColor::Blue(), 5);
+    painter.drawGlyph(0, -PLANE_SIZE * STEP, 'S', RGBColor::Red(), 5);
+    painter.drawGlyph(PLANE_SIZE * STEP,  0, 'E', RGBColor::Yellow(), 5);
+    painter.drawGlyph(-PLANE_SIZE * STEP - 20,  0, 'W', RGBColor::Cyan(), 5);
+    glPopMatrix();
+
+    glEndList();
+}
+
+void Plane3DGeodesicScene::drawMyself(CloudViewDialog* /*dialog*/)
+{
+    //qDebug() << "Calling Plane3DScene::drawMyself() for" << name;
+
+    if (mPlaneListId == 0)
+    {
+        qDebug("Plane3DGeodesicScene was not initialized");
+    }
+    GLboolean textureState = glIsEnabled(GL_TEXTURE_2D);
+    glDisable(GL_TEXTURE_2D);
+
+    glCallList(mPlaneListId);
+
+    if (textureState) {
+        glEnable(GL_TEXTURE_2D);
+    }
+}
+
 
 void CameraScene::prepareMesh(CloudViewDialog * /*dialog*/)
 {}
@@ -491,5 +593,4 @@ void StereoCameraScene::drawMyself(CloudViewDialog *dialog)
     painter.drawFormatVector(0, 0, RGBColor(20,20,200), 1, "Left");
     glPopMatrix();
 }
-
 

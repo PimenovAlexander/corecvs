@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Distortion</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <property name="leftMargin">
@@ -465,7 +465,7 @@
              <string>Recalculate</string>
             </property>
             <property name="icon">
-             <iconset resource="../../resources/main.qrc">
+             <iconset resource="../../../restricted/cvs/resources/resresource.qrc">
               <normaloff>:/new/prefix1/calculator.png</normaloff>:/new/prefix1/calculator.png</iconset>
             </property>
             <property name="iconSize">
@@ -482,7 +482,7 @@
              <string>Reset</string>
             </property>
             <property name="icon">
-             <iconset resource="../../resources/main.qrc">
+             <iconset resource="../../../restricted/cvs/resources/resresource.qrc">
               <normaloff>:/new/prefix1/refresh.png</normaloff>:/new/prefix1/refresh.png</iconset>
             </property>
             <property name="iconSize">
@@ -640,9 +640,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>CheckerboardDetectionParametersControlWidget</class>
+   <class>LensDistortionModelParametersControlWidget</class>
    <extends>QWidget</extends>
-   <header>checkerboardDetectionParametersControlWidget.h</header>
+   <header>lensDistortionModelParametersControlWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -652,9 +652,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>LensDistortionModelParametersControlWidget</class>
+   <class>CheckerboardDetectionParametersControlWidget</class>
    <extends>QWidget</extends>
-   <header>lensDistortionModelParametersControlWidget.h</header>
+   <header>checkerboardDetectionParametersControlWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -671,7 +671,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../resources/main.qrc"/>
+  <include location="../../../restricted/cvs/resources/resresource.qrc"/>
  </resources>
  <connections>
   <connection>

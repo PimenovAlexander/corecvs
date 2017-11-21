@@ -1,6 +1,6 @@
 #pragma once
 #include <QWidget>
-#include "generated/lineDistortionEstimatorParameters.h"
+#include "core/xml/generated/lineDistortionEstimatorParameters.h"
 #include "ui_lineDistortionEstimatorParametersControlWidget.h"
 #include "parametersControlWidgetBase.h"
 
@@ -18,7 +18,7 @@ public:
     ~LineDistortionEstimatorParametersControlWidget();
 
     LineDistortionEstimatorParameters* createParameters() const;
-    void getParameters(LineDistortionEstimatorParameters &params) const;
+    void getParameters(LineDistortionEstimatorParameters &param) const;
     void setParameters(const LineDistortionEstimatorParameters &input);
     virtual void setParametersVirtual(void *input);
     

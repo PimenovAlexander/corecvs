@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>FeaturePointControlWidget</class>
+ <widget class="QWidget" name="FeaturePointControlWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>306</width>
+    <height>411</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>2</number>
+   </property>
+   <property name="leftMargin">
+    <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>2</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
+    <number>2</number>
+   </property>
+   <item>
+    <widget class="QLineEdit" name="nameLineEdit"/>
+   </item>
+   <item>
+    <widget class="RgbColorParametersControlWidget" name="color" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="hasPositionCheckBox">
+     <property name="text">
+      <string>Is position known</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="poistionLayout">
+     <property name="spacing">
+      <number>2</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_8">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>X</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_10">
+       <property name="text">
+        <string>Z</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_9">
+       <property name="text">
+        <string>Y</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QDoubleSpinBox" name="xSpinBox">
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1000000.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>10000000.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QDoubleSpinBox" name="ySpinBox">
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1000000.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>10000000.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QDoubleSpinBox" name="zSpinBox">
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1000000.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1000000.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QWidget" name="widget" native="true">
+     <layout class="QGridLayout" name="gridLayout">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <property name="spacing">
+       <number>2</number>
+      </property>
+      <item row="0" column="1">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="posToReprojButton">
+        <property name="toolTip">
+         <string>Copy Position to Trinangulation Guess</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../../resources/main.qrc">
+          <normaloff>:/new/prefix1/down_alt.png</normaloff>:/new/prefix1/down_alt.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QPushButton" name="reprojToPosButton">
+        <property name="toolTip">
+         <string>Copy Trinangulation Guess to Position</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../../resources/main.qrc">
+          <normaloff>:/new/prefix1/up_alt.png</normaloff>:/new/prefix1/up_alt.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="hasReprojectedCheckBox">
+        <property name="text">
+         <string>Is reprojected known</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="reprojectionLayout">
+     <property name="spacing">
+      <number>2</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_11">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>X</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_12">
+       <property name="text">
+        <string>Z</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_13">
+       <property name="text">
+        <string>Y</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QDoubleSpinBox" name="xReprSpinBox">
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1000000.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>10000000.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QDoubleSpinBox" name="yReprSpinBox">
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1000000.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>10000000.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QDoubleSpinBox" name="zReprSpinBox">
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1000000.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1000000.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="errLabel">
+     <property name="text">
+      <string>Err:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>10</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>RgbColorParametersControlWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">rgbColorParametersControlWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../../../resources/main.qrc"/>
+ </resources>
+ <connections/>
+</ui>

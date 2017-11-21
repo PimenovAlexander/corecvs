@@ -8,6 +8,7 @@
 
 #include "operationParametersControlWidget.h"
 #include "ui_operationParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -31,26 +32,21 @@ OperationParametersControlWidget::~OperationParametersControlWidget()
 
 void OperationParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    OperationParameters *params = createParameters();
+    std::unique_ptr<OperationParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void OperationParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    OperationParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<OperationParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void OperationParametersControlWidget::getParameters(OperationParameters& params) const
 {
-
-    params.setOperation        (static_cast<Operation::Operation>(mUi->operationComboBox->currentIndex()));
-
+    params = *std::unique_ptr<OperationParameters>(createParameters());
 }
+
 
 OperationParameters *OperationParametersControlWidget::createParameters() const
 {
@@ -60,10 +56,9 @@ OperationParameters *OperationParametersControlWidget::createParameters() const
      **/
 
 
-    OperationParameters *result = new OperationParameters(
+    return new OperationParameters(
           static_cast<Operation::Operation>(mUi->operationComboBox->currentIndex())
     );
-    return result;
 }
 
 void OperationParametersControlWidget::setParameters(const OperationParameters &input)

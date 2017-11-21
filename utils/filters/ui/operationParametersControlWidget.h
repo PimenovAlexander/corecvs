@@ -1,6 +1,6 @@
 #pragma once
 #include <QWidget>
-#include "generated/operationParameters.h"
+#include "core/xml/generated/operationParameters.h"
 #include "ui_operationParametersControlWidget.h"
 #include "parametersControlWidgetBase.h"
 #include "filterParametersControlWidgetBase.h"

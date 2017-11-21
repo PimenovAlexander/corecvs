@@ -16,6 +16,17 @@ FlowBuffer* BMOpenCV::getStereoBM(G12Buffer* InputBufferLeft, G12Buffer* InputBu
     int bSize   = (params.blockSize() & -2) + 1;
     if(bSize < 5 ) bSize = 5;
 
+#ifdef WITH_OPENCV_3x
+    bm = StereoBM::create( dSearch, bSize );
+
+    bm->setPreFilterCap     ( params.preFilterCap() );
+    bm->setMinDisparity     ( params.minDisparity() );
+    bm->setTextureThreshold ( params.textureThreshold() );
+    bm->setUniquenessRatio  ( params.uniquenessRatio() );
+    bm->setSpeckleWindowSize( params.speckleWindowSize() );
+    bm->setSpeckleRange     ( params.speckleRange() );
+    bm->setDisp12MaxDiff    ( params.disp12MaxDiff() );
+#else
     bm.init(StereoBM::BASIC_PRESET,
             dSearch,
             bSize);
@@ -27,16 +38,21 @@ FlowBuffer* BMOpenCV::getStereoBM(G12Buffer* InputBufferLeft, G12Buffer* InputBu
     bm.state->speckleWindowSize   = params.speckleWindowSize();
     bm.state->speckleRange        = params.speckleRange();
     bm.state->disp12MaxDiff       = params.disp12MaxDiff();
+#endif
 
     IplImage* leftIpl  = OpenCVTools::getCVImageFromG12Buffer(InputBufferLeft);
     IplImage* rightIpl = OpenCVTools::getCVImageFromG12Buffer(InputBufferRight);
 
-    Mat imgLeft(leftIpl, false);
-    Mat imgRight(rightIpl, false);
+    CVMAT_FROM_IPLIMAGE( imgLeft, leftIpl, false );
+    CVMAT_FROM_IPLIMAGE( imgRight, rightIpl, false );
 
     Mat disp, disp8;
 
+#ifdef WITH_OPENCV_3x
+    bm->compute( imgLeft, imgRight, disp );
+#else
     bm(imgLeft, imgRight, disp);
+#endif
 
     disp.convertTo(disp8, CV_8U, 1/16.);
 
@@ -66,7 +82,22 @@ FlowBuffer* SGBMOpenCV::getStereoSGBM(G12Buffer* InputBufferLeft, G12Buffer* Inp
 
     FlowBuffer* stereo = new FlowBuffer(h,w,true);
 
-    sgbm.numberOfDisparities = ((w/5) + 15) & -16;
+#ifdef WITH_OPENCV_3x
+    const int sADWindowSize = params.sADWindowSize();
+
+    sgbm = StereoSGBM::create( params.minDisparity(),
+        /* num disparities */ ( ( w / 5 ) + 15 ) & -16,
+        sADWindowSize,
+        params.p1Multiplier() * sADWindowSize * sADWindowSize,
+        params.p2Multiplier() * sADWindowSize * sADWindowSize,
+        params.disp12MaxDiff(),
+        params.preFilterCap(),
+        params.uniquenessRatio(),
+        params.speckleWindowSize(),
+        params.speckleRange(),
+        params.fullDP() ? StereoSGBM::MODE_SGBM : StereoSGBM::MODE_HH );
+#else
+	sgbm.numberOfDisparities = ((w / 5) + 15) & -16;
     sgbm.preFilterCap        = params.preFilterCap();
     sgbm.SADWindowSize       = params.sADWindowSize();
     sgbm.P1                  = params.p1Multiplier() * sgbm.SADWindowSize * sgbm.SADWindowSize;
@@ -77,6 +108,7 @@ FlowBuffer* SGBMOpenCV::getStereoSGBM(G12Buffer* InputBufferLeft, G12Buffer* Inp
     sgbm.speckleRange        = params.speckleRange();
     sgbm.disp12MaxDiff       = params.disp12MaxDiff();
     sgbm.fullDP              = params.fullDP();
+#endif
 
 #define DIRECT_CONVERSION
 #ifndef DIRECT_CONVERSION
@@ -97,12 +129,16 @@ FlowBuffer* SGBMOpenCV::getStereoSGBM(G12Buffer* InputBufferLeft, G12Buffer* Inp
     IplImage* rightIpl = OpenCVTools::getCVImageFromG12Buffer(InputBufferRight);
 #endif
 
-    Mat imgLeft(leftIpl, false);
-    Mat imgRight(rightIpl, false);
+    CVMAT_FROM_IPLIMAGE( imgLeft, leftIpl, false );
+    CVMAT_FROM_IPLIMAGE( imgRight, rightIpl, false );
 
     Mat disp, disp8;
 
+#ifdef WITH_OPENCV_3x
+    sgbm->compute( imgLeft, imgRight, disp );
+#else
     sgbm(imgLeft, imgRight, disp);
+#endif
 
     disp.convertTo(disp8, CV_8U,1/16.);
 

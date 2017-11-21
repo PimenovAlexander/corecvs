@@ -8,10 +8,10 @@
 
 #include "imageCaptureInterface.h"
 
-class OpenCvFileCapture : public ImageCaptureInterface
+class OpenCvFileCapture : public virtual ImageCaptureInterface
 {
 public:
-    OpenCvFileCapture(QString const &params);
+    OpenCvFileCapture(const std::string &params);
    ~OpenCvFileCapture();
 
     virtual ImageCaptureInterface::CapErrorCode initCapture() override;

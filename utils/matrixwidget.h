@@ -2,9 +2,9 @@
 #define MATRIXWIDGET_H
 
 #include <QWidget>
-#include "matrix.h"
+#include "core/math/matrix/matrix.h"
 #include "ui_matrixwidget.h"
-#include "projectiveTransform.h"
+#include "core/math/projectiveTransform.h"
 
 using namespace corecvs;
 
@@ -17,6 +17,7 @@ public:
     ~MatrixWidget();
 
     void setProjectiveTransform(ProjectiveTransform *F);
+    void setMatrix33(Matrix33 *F);
 
 
 private:

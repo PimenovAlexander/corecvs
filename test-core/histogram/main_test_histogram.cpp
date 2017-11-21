@@ -11,18 +11,23 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "g12Buffer.h"
-#include "histogram.h"
-#include "bmpLoader.h"
-#include "bufferFactory.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/histogram/histogram.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/buffers/bufferFactory.h"
 
 using namespace corecvs;
 
 TEST(Histogram, testBinarization)
 {
     G12Buffer *image = BufferFactory::getInstance()->loadG12Bitmap("data/pair/image0001_c0.pgm");
+    if (image == nullptr)
+    {
+        cout << "Could not open test image" << endl;
+        return;
+    }
     CORE_ASSERT_TRUE(image != NULL, "missed testBinarization input data");
 
     Histogram *histogram = new Histogram(image);

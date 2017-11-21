@@ -8,6 +8,7 @@
 
 #include "draw3dViMouseParametersControlWidget.h"
 #include "ui_draw3dViMouseParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -35,30 +36,21 @@ Draw3dViMouseParametersControlWidget::~Draw3dViMouseParametersControlWidget()
 
 void Draw3dViMouseParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    Draw3dViMouseParameters *params = createParameters();
+    std::unique_ptr<Draw3dViMouseParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void Draw3dViMouseParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    Draw3dViMouseParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<Draw3dViMouseParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void Draw3dViMouseParametersControlWidget::getParameters(Draw3dViMouseParameters& params) const
 {
-
-    params.setRedDist          (mUi->redDistSpinBox->value());
-    params.setBlueDist         (mUi->blueDistSpinBox->value());
-    params.setFlowZoom         (mUi->flowZoomSpinBox->value());
-    params.setPointColorType   (static_cast<ViMouse3dStereoStyle::ViMouse3dStereoStyle>(mUi->pointColorTypeComboBox->currentIndex()));
-    params.setFlowColorType    (static_cast<ViMouse3dFlowStyle::ViMouse3dFlowStyle>(mUi->flowColorTypeComboBox->currentIndex()));
-
+    params = *std::unique_ptr<Draw3dViMouseParameters>(createParameters());
 }
+
 
 Draw3dViMouseParameters *Draw3dViMouseParametersControlWidget::createParameters() const
 {
@@ -68,14 +60,13 @@ Draw3dViMouseParameters *Draw3dViMouseParametersControlWidget::createParameters(
      **/
 
 
-    Draw3dViMouseParameters *result = new Draw3dViMouseParameters(
+    return new Draw3dViMouseParameters(
           mUi->redDistSpinBox->value()
         , mUi->blueDistSpinBox->value()
         , mUi->flowZoomSpinBox->value()
         , static_cast<ViMouse3dStereoStyle::ViMouse3dStereoStyle>(mUi->pointColorTypeComboBox->currentIndex())
         , static_cast<ViMouse3dFlowStyle::ViMouse3dFlowStyle>(mUi->flowColorTypeComboBox->currentIndex())
     );
-    return result;
 }
 
 void Draw3dViMouseParametersControlWidget::setParameters(const Draw3dViMouseParameters &input)

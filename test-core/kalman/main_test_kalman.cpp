@@ -9,8 +9,8 @@
 #include <stdlib.h>
 #include "gtest/gtest.h"
 
-#include "matrix.h"
-#include "classicKalman.h"
+#include "core/math/matrix/matrix.h"
+#include "core/kalman/classicKalman.h"
 
 using namespace corecvs;
 

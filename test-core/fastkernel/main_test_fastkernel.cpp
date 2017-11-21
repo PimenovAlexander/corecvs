@@ -12,25 +12,25 @@
 #include <stdint.h>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "mathUtils.h"
-#include "g12Buffer.h"
-#include "scalarAlgebra.h"
-#include "vectorAlgebra.h"
-#include "fastKernel.h"
-#include "vector3d.h"
-#include "gaussian.h"
-#include "copyKernel.h"
-#include "sobel.h"
-#include "preciseTimer.h"
-#include "arithmetic.h"
-#include "threshold.h"
-#include "bufferFactory.h"
-#include "bmpLoader.h"
-#include "integralBuffer.h"
-#include "morphological.h"
-#include "vectorTraits.h"
+#include "core/math/mathUtils.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/kernels/fastkernel/scalarAlgebra.h"
+#include "core/buffers/kernels/fastkernel/vectorAlgebra.h"
+#include "core/buffers/kernels/fastkernel/fastKernel.h"
+#include "core/math/vector/vector3d.h"
+#include "core/buffers/kernels/gaussian.h"
+#include "core/buffers/kernels/copyKernel.h"
+#include "core/buffers/kernels/sobel.h"
+#include "core/utils/preciseTimer.h"
+#include "core/buffers/kernels/arithmetic.h"
+#include "core/buffers/kernels/threshold.h"
+#include "core/buffers/bufferFactory.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/buffers/integralBuffer.h"
+#include "core/buffers/morphological/morphological.h"
+#include "core/buffers/kernels/fastkernel/vectorTraits.h"
 #include "../../core/buffers/kernels/logicKernels.h"
 #include "../../core/buffers/rgb24/abstractPainter.h"
 
@@ -194,6 +194,11 @@ void _profileManualAddStream (void)
 TEST(FastKernel, testEdgeDetector)
 {
     G12Buffer *input = BufferFactory::getInstance()->loadG12Bitmap("data/pair/image0001_c0.pgm");
+    if (input == nullptr)
+    {
+        cout << "Could not open test image" << endl;
+        return;
+    }
     BufferProcessor<G12Buffer, G12Buffer, EdgeMagnitude, G12BufferAlgebra> processor;
     G12Buffer *edges = new G12Buffer(input->h, input->w);
 
@@ -221,6 +226,11 @@ TEST(FastKernel, profileEdgeDetector)  // it could be moved to perf-tests...
     for (unsigned i = 0; i < LIMIT; i++)
     {
         inputs[i] = BufferFactory::getInstance()->loadG12Bitmap("data/pair/image0001_c0.pgm");
+        if (inputs[i] == nullptr)
+        {
+            cout << "Could not open test image" << endl;
+            return;
+        }
     }
 
     BufferProcessor<G12Buffer, G12Buffer, EdgeMagnitude, G12BufferAlgebra> processor;

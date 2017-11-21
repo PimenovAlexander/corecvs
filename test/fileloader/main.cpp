@@ -1,6 +1,6 @@
 #include <iostream>
-#include "bmpLoader.h"
-#include "rgb24Buffer.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
 #include "libjpegFileReader.h"
 #include "libpngFileReader.h"
 

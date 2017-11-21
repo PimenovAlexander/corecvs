@@ -11,12 +11,12 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
-#include "fixtureScene.h"
-#include "printerVisitor.h"
+#include "core/utils/global.h"
+#include "core/camerafixture/fixtureScene.h"
+#include "core/camerafixture/cameraFixture.h"
+#include "core/reflection/printerVisitor.h"
+#include "core/reflection/jsonPrinter.h"
 
-
-using namespace std;
 using namespace corecvs;
 
 TEST(Fixture, testAllocations)
@@ -34,6 +34,30 @@ TEST(Fixture, testAllocations)
 
     scene->dumpInfo(cout);
 
+    delete_safe(scene);
+}
+
+/**
+ *  In general it is possible for one camera to belong to several fixtures.
+ *
+ *  It violates the invariant, but fixture scene should not crash
+ **/
+TEST(Fixture, testSceneWithCams)
+{
+    FixtureScene *scene = new FixtureScene();
+    CameraFixture *fixture1 = scene->createCameraFixture();
+    fixture1->name = "Fixture1";
+
+    CameraFixture *fixture2 = scene->createCameraFixture();
+    fixture2->name = "Fixture2";
+
+    FixtureCamera *camera1 = scene->createCamera();
+    camera1->nameId = "Camera1";
+
+    scene->addCameraToFixture(camera1, fixture1);
+    scene->addCameraToFixture(camera1, fixture2);
+
+    scene->dumpInfo(cout);
 
     delete_safe(scene);
 }
@@ -56,11 +80,36 @@ TEST(Fixture, testVisitors)
     PrinterVisitor visitor;
     scene->accept<PrinterVisitor, FixtureScene>(visitor);
 
-
-
-
     delete_safe(scene);
 }
+
+TEST(Fixture, testVisitorJSON)
+{
+    cout << "----------------Running the test-------------" << std::endl;
+    FixtureScene *scene = new FixtureScene();
+    CameraFixture *fixture1 = scene->createCameraFixture();
+    fixture1->name = "Fixture1";
+
+    FixtureCamera *camera1 = scene->createCamera();
+    camera1->nameId = "Camera1";
+    FixtureCamera *camera2 = scene->createCamera();
+    camera2->nameId = "Camera2";
+
+    scene->addCameraToFixture(camera1, fixture1);
+
+    scene->dumpInfo(cout);
+
+    cout << "==========================" << endl;
+
+    {
+        JSONPrinter visitor(&cout);
+        scene->accept<JSONPrinter, FixtureScene>(visitor);
+    }
+
+    cout << "==========================" << endl;
+    delete_safe(scene);
+}
+
 
 FixtureScene *createTestScene()
 {
@@ -101,9 +150,9 @@ FixtureScene *createTestScene()
 
         //SYNC_PRINT(("Length: %d\n", scene->fixtures.size()));
 
-        for (size_t i = 0; i < scene->fixtures.size(); i++)
+        for (size_t i = 0; i < scene->fixtures().size(); i++)
         {
-            CameraFixture *fixture = scene->fixtures[i];
+            CameraFixture *fixture = scene->fixtures()[i];
             FixtureCamera *camera = scene->createCamera();
             char buffer[100];
             snprintf2buf(buffer, "camera %d(%d)", j, i);
@@ -141,9 +190,64 @@ TEST(Fixture, testMerge)
 
   scene2->merge(scene1);
 
-  scene1->dumpInfo();
-  scene2->dumpInfo();
+  std::ostream &s = std::cout;
+
+  scene1->dumpInfo(s);
+  scene2->dumpInfo(s);
 
   delete_safe(scene1);
   delete_safe(scene2);
 }
+
+TEST(Fixture, testAddAndDelete)
+{
+  FixtureScene *scene1 = createTestScene();
+
+  FixtureScene *scene = new FixtureScene();
+
+  CameraFixture *start = scene->createCameraFixture();
+  start->name = "Start";
+  CameraFixture *fixture2 = scene->createCameraFixture();
+  fixture2->name = "Fixture2";
+  CameraFixture *fixture3 = scene->createCameraFixture();
+  fixture3->name = "Fixture3";
+
+  //CameraFixture *output = scene->createCameraFixture();
+  //output ->name = "Output";
+
+  FixtureCamera *lCam = scene->createCamera(); lCam->nameId = "left";
+  scene->addCameraToFixture(lCam, start);
+  FixtureCamera *rCam = scene->createCamera(); rCam->nameId = "right";
+  scene->addCameraToFixture(rCam, start);
+
+
+  FixtureCamera *cam1 = scene->createCamera(); cam1->nameId = "cam1";
+  scene->addCameraToFixture(cam1, fixture2);
+
+  FixtureCamera *cam2 = scene->createCamera(); cam2->nameId = "cam2";
+  scene->addCameraToFixture(cam2, fixture3);
+
+  //scene->addCameraToFixture(scene->createCamera(), output);
+  //scene->addCameraToFixture(scene->createCamera(), output);
+
+  scene->dumpInfo();
+
+
+  {
+      FixtureScene *mDirectory = scene;
+
+      cout << "Directory integrity is" << mDirectory->checkIntegrity() << endl;
+      mDirectory->beforeChange();
+      while (!mDirectory->featurePoints().empty())
+      {
+          mDirectory->deleteFeaturePoint(mDirectory->featurePoints().back());
+      }
+
+      mDirectory->setFixtureCount(2);
+      mDirectory->setOrphanCameraCount(0);
+      mDirectory->afterChange();
+  }
+
+
+}
+

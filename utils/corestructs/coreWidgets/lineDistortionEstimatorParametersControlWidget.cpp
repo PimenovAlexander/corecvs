@@ -8,6 +8,7 @@
 
 #include "lineDistortionEstimatorParametersControlWidget.h"
 #include "ui_lineDistortionEstimatorParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -22,7 +23,7 @@ LineDistortionEstimatorParametersControlWidget::LineDistortionEstimatorParameter
 
     QObject::connect(mUi->costAlgorithmComboBox, SIGNAL(currentIndexChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->iterationNumberSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
-    QObject::connect(mUi->polinomDegreeSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->polynomDegreeSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->simpleJacobianCheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->evenPowersOnlyCheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->estimateTangentCheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
@@ -37,32 +38,21 @@ LineDistortionEstimatorParametersControlWidget::~LineDistortionEstimatorParamete
 
 void LineDistortionEstimatorParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    LineDistortionEstimatorParameters *params = createParameters();
+    std::unique_ptr<LineDistortionEstimatorParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void LineDistortionEstimatorParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    LineDistortionEstimatorParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<LineDistortionEstimatorParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void LineDistortionEstimatorParametersControlWidget::getParameters(LineDistortionEstimatorParameters& params) const
 {
-
-    params.setCostAlgorithm    (static_cast<LineDistortionEstimatorCost::LineDistortionEstimatorCost>(mUi->costAlgorithmComboBox->currentIndex()));
-    params.setIterationNumber  (mUi->iterationNumberSpinBox->value());
-    params.setPolinomDegree    (mUi->polinomDegreeSpinBox->value());
-    params.setSimpleJacobian   (mUi->simpleJacobianCheckBox->isChecked());
-    params.setEvenPowersOnly   (mUi->evenPowersOnlyCheckBox->isChecked());
-    params.setEstimateTangent  (mUi->estimateTangentCheckBox->isChecked());
-    params.setEstimateCenter   (mUi->estimateCenterCheckBox->isChecked());
-
+    params = *std::unique_ptr<LineDistortionEstimatorParameters>(createParameters());
 }
+
 
 LineDistortionEstimatorParameters *LineDistortionEstimatorParametersControlWidget::createParameters() const
 {
@@ -72,16 +62,15 @@ LineDistortionEstimatorParameters *LineDistortionEstimatorParametersControlWidge
      **/
 
 
-    LineDistortionEstimatorParameters *result = new LineDistortionEstimatorParameters(
+    return new LineDistortionEstimatorParameters(
           static_cast<LineDistortionEstimatorCost::LineDistortionEstimatorCost>(mUi->costAlgorithmComboBox->currentIndex())
         , mUi->iterationNumberSpinBox->value()
-        , mUi->polinomDegreeSpinBox->value()
+        , mUi->polynomDegreeSpinBox->value()
         , mUi->simpleJacobianCheckBox->isChecked()
         , mUi->evenPowersOnlyCheckBox->isChecked()
         , mUi->estimateTangentCheckBox->isChecked()
         , mUi->estimateCenterCheckBox->isChecked()
     );
-    return result;
 }
 
 void LineDistortionEstimatorParametersControlWidget::setParameters(const LineDistortionEstimatorParameters &input)
@@ -90,7 +79,7 @@ void LineDistortionEstimatorParametersControlWidget::setParameters(const LineDis
     bool wasBlocked = blockSignals(true);
     mUi->costAlgorithmComboBox->setCurrentIndex(input.costAlgorithm());
     mUi->iterationNumberSpinBox->setValue(input.iterationNumber());
-    mUi->polinomDegreeSpinBox->setValue(input.polinomDegree());
+    mUi->polynomDegreeSpinBox->setValue(input.polynomDegree());
     mUi->simpleJacobianCheckBox->setChecked(input.simpleJacobian());
     mUi->evenPowersOnlyCheckBox->setChecked(input.evenPowersOnly());
     mUi->estimateTangentCheckBox->setChecked(input.estimateTangent());

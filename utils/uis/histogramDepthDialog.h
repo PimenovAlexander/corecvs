@@ -4,7 +4,7 @@
 #include <QtCore/QMap>
 #include <iostream>
 
-#include "histogram.h"
+#include "core/buffers/histogram/histogram.h"
 
 namespace Ui {
     class HistogramDepthDialog;

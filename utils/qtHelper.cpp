@@ -1,11 +1,10 @@
-#include <QtCore/QtCore>
 /**
  * \file qtHelper.cpp
  *
  * \date Apr 27, 2013
  **/
-
 #include "qtHelper.h"
+#include <QtCore/QtCore>
 
 using corecvs::Vector2dd;
 using corecvs::Vector3dd;
@@ -19,7 +18,6 @@ QDebug & operator<< (QDebug & stream, const Vector2dd & vector)
 QDebug & operator<< (QDebug & stream, const Vector3dd & vector)
 {
     stream << "[" << vector.x() << "," << vector.y() << "," << vector.z() << "]";
-
     return stream;
 }
 
@@ -108,7 +106,7 @@ QString printWindowState(const Qt::WindowStates &state)
     return text;
 }
 
-QString printSelecionModel(const QItemSelectionModel::SelectionFlags &flag)
+QString printSelectionModel(const QItemSelectionModel::SelectionFlags &flag)
 {
     QString text;
 
@@ -119,17 +117,14 @@ QString printSelecionModel(const QItemSelectionModel::SelectionFlags &flag)
     if (flag & QItemSelectionModel::Deselect) text += "deselected.";
     if (flag & QItemSelectionModel::Toggle  ) text += "selected or deselected depending on their current state.";
     if (flag & QItemSelectionModel::Current ) text += "The current selection will be updated.";
-    if (flag & QItemSelectionModel::Rows    ) text += "All indexes will be expanded to span rows.";
-    if (flag & QItemSelectionModel::Columns ) text += "All indexes will be expanded to span columns.";
+    if (flag & QItemSelectionModel::Rows    ) text += "All indices will be expanded to span rows.";
+    if (flag & QItemSelectionModel::Columns ) text += "All indices will be expanded to span columns.";
 
     return text;
 }
 
-
-
 QString printWidgetAttributes(QWidget *widget)
 {
-
     QString text;
 
     struct AttrName {
@@ -237,8 +232,6 @@ QString printWidgetAttributes(QWidget *widget)
     return text;
 }
 
-
-
 QTransform Core2Qt::QTransformFromMatrix(const corecvs::Matrix33 &m)
 {
 #if 0
@@ -254,4 +247,140 @@ QTransform Core2Qt::QTransformFromMatrix(const corecvs::Matrix33 &m)
         m.a(0, 2), m.a(1, 2), m.a(2, 2)
     );
 #endif
+}
+
+QString printQImageFormat(const QImage::Format &format)
+{
+    QString text;
+
+    struct FormatName {
+        QImage::Format format;
+        const char *name;
+    };
+
+#define PAIR(X) { QImage::X, #X }
+
+    FormatName formats[] = {
+        PAIR(Format_Invalid),
+        PAIR(Format_Mono),
+        PAIR(Format_MonoLSB),
+        PAIR(Format_Indexed8),
+        PAIR(Format_RGB32),
+        PAIR(Format_ARGB32),
+        PAIR(Format_ARGB32_Premultiplied),
+        PAIR(Format_RGB16),
+        PAIR(Format_ARGB8565_Premultiplied),
+        PAIR(Format_RGB666),
+        PAIR(Format_ARGB6666_Premultiplied),
+        PAIR(Format_RGB555),
+        PAIR(Format_ARGB8555_Premultiplied),
+        PAIR(Format_RGB888),
+        PAIR(Format_RGB444),
+        PAIR(Format_ARGB4444_Premultiplied),
+        PAIR(Format_RGBX8888),
+        PAIR(Format_RGBA8888),
+        PAIR(Format_RGBA8888_Premultiplied)
+    };
+
+#undef PAIR
+
+    for (size_t i = 0; i < CORE_COUNT_OF(formats); i++)
+    {
+        if (formats[i].format == format) {
+            text += formats[i].name;
+            text += " ";
+        }
+    }
+
+    return text;
+}
+
+QString printModelItemRole(int role)
+{
+    QString text;
+
+#define PAIR(X) { Qt::X, #X }
+
+    struct RoleName {
+        int role;
+        const char *name;
+    };
+
+    RoleName roles[] =
+    {
+        PAIR(DisplayRole),
+        PAIR(DecorationRole),
+        PAIR(EditRole),
+        PAIR(ToolTipRole),
+        PAIR(StatusTipRole),
+        PAIR(WhatsThisRole),
+        PAIR(SizeHintRole),
+
+        PAIR(FontRole),
+        PAIR(TextAlignmentRole),
+        PAIR(BackgroundRole),
+        PAIR(BackgroundColorRole),
+        PAIR(ForegroundRole),
+        PAIR(TextColorRole),
+        PAIR(CheckStateRole),
+        PAIR(InitialSortOrderRole),
+
+        PAIR(UserRole)
+
+    };
+#undef PAIR
+
+    for (size_t i = 0; i < CORE_COUNT_OF(roles); i++)
+    {
+        if (role == roles[i].role) {
+            text += roles[i].name;
+            text += " ";
+        }
+    }
+
+    return text;
+
+}
+
+
+const QString RecentPathKeeper::LAST_INPUT_DIRECTORY_KEY  = "lastInputDirectory";
+const QString RecentPathKeeper::LAST_OUTPUT_DIRECTORY_KEY = "lastOutputDirectory";
+const QString RecentPathKeeper::RECENT_SCENES_KEY         = "recent";
+
+void RecentPathKeeper::loadFromQSettings(const QString &fileName, const QString &_root)
+{
+    QSettings settings(fileName, QSettings::IniFormat);
+    settings.beginGroup(_root);
+    updateIn (settings.value(LAST_INPUT_DIRECTORY_KEY, ".").toString());
+    updateOut(settings.value(LAST_OUTPUT_DIRECTORY_KEY, ".").toString());
+
+    unsigned size = settings.beginReadArray(RECENT_SCENES_KEY);
+    for (unsigned j = 0; j < size; j++) {
+        settings.setArrayIndex(j);
+        lastScenes.push_back(settings.value("path", ".").toString().toStdString());
+    }
+    settings.endArray();
+    settings.endGroup();
+
+}
+
+void RecentPathKeeper::saveToQSettings(const QString &fileName, const QString &_root)
+{
+    QSettings settings(fileName, QSettings::IniFormat);
+    settings.beginGroup(_root);
+    settings.setValue(LAST_INPUT_DIRECTORY_KEY,  in);
+    settings.setValue(LAST_OUTPUT_DIRECTORY_KEY, out);
+
+    settings.beginWriteArray(RECENT_SCENES_KEY);
+    for (unsigned j = 0; j < lastScenes.size(); j++) {
+        settings.setArrayIndex(j);
+        settings.setValue("path", QString::fromStdString(lastScenes[j]));
+    }
+    settings.endArray();
+    settings.endGroup();
+}
+
+RecentPathKeeper::~RecentPathKeeper()
+{
+
 }

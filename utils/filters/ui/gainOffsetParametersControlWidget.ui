@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>GainOffsetParametersControlWidget</class>
+ <class>GainOffsetParametersControlWidget</class> 
  <widget class="QWidget" name="GainOffsetParametersControlWidget">
   <property name="geometry">
    <rect>
@@ -13,13 +13,13 @@
   <property name="windowTitle">
    <string>GainOffsetParameters</string>
   </property>
-   <layout class="QGridLayout" name="gridLayout">
-    <property name="margin">
-     <number>3</number>
-    </property>
-    <property name="spacing">
-     <number>3</number>
-    </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="margin">
+    <number>3</number>
+   </property>
+   <property name="spacing">
+    <number>3</number>
+   </property>
     <item row="0" column="0">
      <widget class="QLabel" name="label_0">
        <property name="text">
@@ -43,6 +43,12 @@
        </property>
        <property name="value">
         <double>1</double>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
        </property>
      </widget>
     </item>
@@ -69,6 +75,12 @@
        </property>
        <property name="value">
         <double>0</double>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
        </property>
      </widget>
     </item>

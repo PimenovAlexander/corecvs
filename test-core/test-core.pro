@@ -20,6 +20,10 @@ SOURCES += \
      fftw/main_test_fftw.cpp \
 }
 
+!win32 {
+  LIBS += -ldl
+}
+
 SOURCES += \
     main.cpp \
     \
@@ -92,4 +96,8 @@ SOURCES += \
     renderer/main_test_renderer.cpp \
     meshdraw/test_polymeshdraw.cpp \
     raytrace/main_test_raytrace.cpp \
+    json/main_test_json.cpp \
+    utils/main_test_utils.cpp \
+    quadric/main_test_quadric.cpp \
+    planefit/main_test_planefit.cpp \
     noise/main_test_noise.cpp \

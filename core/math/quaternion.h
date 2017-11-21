@@ -540,9 +540,9 @@ template<class VisitorType>
     {
         GenericQuaternion o = this->normalised().positivised();
         Vector3dd axis = o.getAxis();
-        double   angle = radToDeg(o.getAngle());
+        double   angle = o.getAngle();
 
-        out << "Rotation around normalized axis:" << axis << " angle " << angle << "(" << angle << " deg)" << std::endl;
+        out << "Rotation around normalized axis:" << axis << " angle " << angle << "(" << radToDeg(angle) << " deg)" << std::endl;
     }
 
 };

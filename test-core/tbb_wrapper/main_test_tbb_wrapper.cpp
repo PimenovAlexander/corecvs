@@ -14,16 +14,14 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "tbbWrapper.h"
+#include "core/tbbwrapper/tbbWrapper.h"
 #ifdef WITH_TBB
 #include <tbb/task.h>
 #endif
 
-using namespace std;
 using namespace corecvs;
-
 
 class ParallelTestTBBWrapper
 {

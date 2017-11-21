@@ -11,11 +11,14 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "vector2d.h"
-#include "homographyReconstructor.h"
-#include "matrix33.h"
+#include "core/math/vector/vector2d.h"
+#include "core/math/matrix/homographyReconstructor.h"
+#include "core/math/matrix/matrix33.h"
+
+#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/fileformats/bmpLoader.h"
 
 using namespace corecvs;
 
@@ -307,8 +310,7 @@ TEST(Homography, testProjectiveFromPoints1)
 
     Matrix33 resultLSE  = reconstructor.getBestHomographyLSE();
     Matrix33 resultLSE1 = reconstructor.getBestHomographyLSE1();
-    Matrix33 resultLSE2 = reconstructor.getBestHomographyLSE2();
-    //Matrix33 resultKal  = reconstructor.getBestHomographyClassicKalman();
+    Matrix33 resultLSE2 = reconstructor.getBestHomographyLSE2();  
     Matrix33 resultLMq  = reconstructor.getBestHomographyLM();
 
     cout << "LSE Cost Function is:" << reconstructor.getCostFunction(resultLSE) << endl << endl;
@@ -389,4 +391,81 @@ TEST(Homography, testProjectiveFromLine)
     cout << H << endl;
 
     CORE_ASSERT_TRUE(H.notTooFar(Matrix33::Scale2(2.0), 1e-7), "Wrong line based reconstructions");
+}
+
+
+TEST(Homography, testStability)
+{
+
+    Vector2dd corners[9][2] = {
+        {{ 0.0 , 0    } , {2437.83, 1692.57}},
+        {{ 0.05, 0    } , {2441.2 , 1692.66}},
+        {{ 0.1 , 0    } , {2445.79, 1692.79}},
+        {{ 0.0 , 0.05 } , {2437.82, 1696.71}},
+        {{ 0.05, 0.05 } , {2441.19, 1696.62}},
+        {{ 0.1 , 0.05 } , {2445.78, 1696.49}},
+        {{ 0.0 , 0.1  } , {2437.83, 1700.44}},
+        {{ 0.05, 0.1  } , {2441.2 , 1700.54}},
+        {{ 0.1 , 0.1  } , {2445.79, 1700.67}}
+    };
+
+    Matrix33 expected(
+         -5813.48, 267.084, 2437.79,
+         -4087.58, 255.313, 1693.1,
+         -2.40965, 0.109391, 1);
+
+
+    HomographyReconstructor reconstructor;
+    RGB24Buffer *image = new RGB24Buffer(300, 300);
+    Matrix33 transform = Matrix33::ScaleProj(30) * Matrix33::ShiftProj(-2436.0, -1691.5);
+
+    for (unsigned i = 0; i < CORE_COUNT_OF(corners); i++)
+    {
+        reconstructor.addPoint2PointConstraint(corners[i][0],corners[i][1]);
+        Vector2dd out = transform * corners[i][1];
+        Vector2d<int> outi(fround(out.x()), fround(out.y()));
+
+        if (image->isValidCoord(outi)) {
+            image->element(outi) = RGBColor::White();
+        }
+    }
+
+    Matrix33 H[HomographyAlgorithm::HOMOGRAPHY_ALGORITHM_LAST];
+
+    cout << reconstructor << endl;
+
+
+    for (unsigned i = 0; i < CORE_COUNT_OF(corners); i++)
+    {
+        {
+            Vector2dd out = transform * expected * corners[i][0];
+            Vector2d<int> outi(fround(out.x()), fround(out.y()));
+            if (image->isValidCoord(outi)) {
+                image->element(outi) = RGBColor::Green();
+            }
+        }
+    }
+
+    for (int method = 0; method < HomographyAlgorithm::HOMOGRAPHY_ALGORITHM_LAST; method++)
+    {
+        H[method] = reconstructor.getBestHomography((HomographyAlgorithm::HomographyAlgorithm)method);
+        cout << "Method: " << HomographyAlgorithm::getName((HomographyAlgorithm::HomographyAlgorithm)method)  << endl;
+
+        cout << H[method] << endl;
+        for (unsigned i = 0; i < CORE_COUNT_OF(corners); i++)
+        {
+            Vector2dd out = transform * H[method] * corners[i][0];
+            Vector2d<int> outi(fround(out.x()), fround(out.y()));
+            if (image->isValidCoord(outi)) {
+                image->element(outi) = RGBColor::rainbow(lerp(0.0, 1.0, method, 0.0, HomographyAlgorithm::HOMOGRAPHY_ALGORITHM_LAST));
+            }
+        }
+
+        cout << "cost:" << reconstructor.getCostFunction(H[method]) << endl;
+
+    }
+
+    cout << "outsize:" << reconstructor.getCostFunction(expected) << endl;
+
+    BMPLoaderBase().save("homograpy-draw.bmp", image);
 }

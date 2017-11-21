@@ -12,14 +12,14 @@
 #include <fstream>
 #include "gtest/gtest.h"
 
-#include "global.h"
-#include "vjPattern.h"
-#include "g12Buffer.h"
-#include "ppmLoader.h"
-#include "bmpLoader.h"
-#include "integralBuffer.h"
-#include "mipmapPyramid.h"
-#include "bufferFactory.h"
+#include "core/utils/global.h"
+#include "core/boosting/vjPattern.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/fileformats/ppmLoader.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/buffers/integralBuffer.h"
+#include "core/buffers/mipmapPyramid.h"
+#include "core/buffers/bufferFactory.h"
 
 using namespace std;
 using namespace corecvs;

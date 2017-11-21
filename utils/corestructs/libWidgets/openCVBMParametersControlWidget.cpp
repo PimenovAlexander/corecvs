@@ -8,6 +8,7 @@
 
 #include "openCVBMParametersControlWidget.h"
 #include "ui_openCVBMParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -39,34 +40,21 @@ OpenCVBMParametersControlWidget::~OpenCVBMParametersControlWidget()
 
 void OpenCVBMParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    OpenCVBMParameters *params = createParameters();
+    std::unique_ptr<OpenCVBMParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void OpenCVBMParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    OpenCVBMParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<OpenCVBMParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void OpenCVBMParametersControlWidget::getParameters(OpenCVBMParameters& params) const
 {
-
-    params.setBlockSize        (mUi->blockSizeSpinBox->value());
-    params.setDisparitySearch  (mUi->disparitySearchSpinBox->value());
-    params.setPreFilterCap     (mUi->preFilterCapSpinBox->value());
-    params.setMinDisparity     (mUi->minDisparitySpinBox->value());
-    params.setTextureThreshold (mUi->textureThresholdSpinBox->value());
-    params.setUniquenessRatio  (mUi->uniquenessRatioSpinBox->value());
-    params.setSpeckleWindowSize(mUi->speckleWindowSizeSpinBox->value());
-    params.setSpeckleRange     (mUi->speckleRangeSpinBox->value());
-    params.setDisp12MaxDiff    (mUi->disp12MaxDiffSpinBox->value());
-
+    params = *std::unique_ptr<OpenCVBMParameters>(createParameters());
 }
+
 
 OpenCVBMParameters *OpenCVBMParametersControlWidget::createParameters() const
 {
@@ -76,7 +64,7 @@ OpenCVBMParameters *OpenCVBMParametersControlWidget::createParameters() const
      **/
 
 
-    OpenCVBMParameters *result = new OpenCVBMParameters(
+    return new OpenCVBMParameters(
           mUi->blockSizeSpinBox->value()
         , mUi->disparitySearchSpinBox->value()
         , mUi->preFilterCapSpinBox->value()
@@ -87,7 +75,6 @@ OpenCVBMParameters *OpenCVBMParametersControlWidget::createParameters() const
         , mUi->speckleRangeSpinBox->value()
         , mUi->disp12MaxDiffSpinBox->value()
     );
-    return result;
 }
 
 void OpenCVBMParametersControlWidget::setParameters(const OpenCVBMParameters &input)

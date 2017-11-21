@@ -16,17 +16,17 @@
 #include <QImage>
 #include <QDebug>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include "uEyeCameraDescriptor.h"
 #include "cameraControlParameters.h"
 #include "imageCaptureInterface.h"
-#include "preciseTimer.h"
+#include "core/utils/preciseTimer.h"
 
 using namespace std;
 
 
-class UEyeCaptureInterface : public ImageCaptureInterface
+class UEyeCaptureInterface : public virtual ImageCaptureInterface
 {
 public:
     UEyeCaptureInterface(string _devname);

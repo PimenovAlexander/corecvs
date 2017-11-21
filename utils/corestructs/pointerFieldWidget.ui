@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PointerFieldWidget</class>
+ <widget class="QWidget" name="PointerFieldWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>323</width>
+    <height>52</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QLabel" name="isNull">
+     <property name="text">
+      <string>NULL</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="loadPushButton">
+     <property name="text">
+      <string>Load</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/main.qrc">
+       <normaloff>:/new/prefix1/remove.png</normaloff>:/new/prefix1/remove.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="savePushButton">
+     <property name="text">
+      <string>Save</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/main.qrc">
+       <normaloff>:/new/prefix1/install.png</normaloff>:/new/prefix1/install.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="showPushButton">
+     <property name="text">
+      <string>Show</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../resources/main.qrc">
+       <normaloff>:/new/prefix1/picture_frame.png</normaloff>:/new/prefix1/picture_frame.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../../resources/main.qrc"/>
+ </resources>
+ <connections/>
+</ui>

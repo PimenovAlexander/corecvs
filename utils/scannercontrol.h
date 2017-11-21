@@ -4,7 +4,7 @@
 #include "QObject"
 #include "QString"
 #include <QtSerialPort/QSerialPort>
-#include "global.h"
+#include "core/utils/global.h"
 
 class ScannerControl : public QObject
 {

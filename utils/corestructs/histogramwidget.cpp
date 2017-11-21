@@ -1,9 +1,9 @@
 #include <QPainter>
 #include <limits>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "g12Buffer.h"
+#include "core/buffers/g12Buffer.h"
 #include "histogramwidget.h"
 #include "ui_histogramwidget.h"
 

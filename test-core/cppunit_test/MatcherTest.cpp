@@ -5,18 +5,18 @@
 
 #include <limits>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "mathUtils.h"
+#include "core/math/mathUtils.h"
 #include "featureVectorBuffer.h"
-#include "g12Buffer.h"
-#include "bufferFactory.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/bufferFactory.h"
 #include "featuringParameters.h"
 #include "featureVectorBuffer.h"
 #include "cortageListSorter.h"
 #include "cortageListMatcher.h"
 #include "featureProducer.h"
-#include "preciseTimer.h"
+#include "core/utils/preciseTimer.h"
 #include "cortageStripeMatcher.h"
 #include "MatcherTest.h"
 

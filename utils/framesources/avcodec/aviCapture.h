@@ -30,14 +30,14 @@ extern "C" {
 }
 
 #include "imageCaptureInterface.h"
-#include "preciseTimer.h"
+#include "core/utils/preciseTimer.h"
 
-class AviCapture : public ImageCaptureInterface
+class AviCapture : public virtual ImageCaptureInterface
 {
     static bool avCodecInited;
 
 public:
-    AviCapture(QString const &params);
+    AviCapture(std::string const &params);
     ~AviCapture();
 
     virtual ImageCaptureInterface::CapErrorCode initCapture()  override;

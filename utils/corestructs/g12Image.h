@@ -9,8 +9,8 @@
 
 #include <QWidget>
 
-#include "g12Buffer.h"
-#include "rgb24Buffer.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
 
 using namespace corecvs;
 

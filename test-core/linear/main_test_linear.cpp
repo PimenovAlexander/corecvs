@@ -11,14 +11,11 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "line.h"
+#include "core/geometry/line.h"
 
-
-using namespace std;
 using namespace corecvs;
-
 
 TEST(Linear, testPlane2Point)
 {
@@ -33,11 +30,72 @@ TEST(Linear, testPlane2Point)
     CORE_ASSERT_DOUBLE_EQUAL(p.distanceTo(point), sqrt(1.0/3), "Wrong plane to point distance");
 
     Vector3dd proj = p.projectPointTo(point);
-    cout << "Projection: " << proj << endl;
+    std::cout << "Projection: " << proj << std::endl;
     Vector3dd rproj = Vector3dd(1.0,1.0,1.0) / 3.0;
-    cout << "Expected:   " << rproj << endl;
+    std::cout << "Expected:   " << rproj << std::endl;
 
     CORE_ASSERT_TRUE(proj.notTooFar(rproj, 1e-7), "Wrong projection");
+}
+
+TEST(Linear, testPlaneAndRay)
+{
+    {
+         Plane3d plane(Vector3dd::OrtY(), -10);
+
+         Ray3d ray(Vector3dd(0.0, -1.0, 1.0), Vector3dd::Zero());
+
+         Vector3dd point = plane.intersectWith(ray);
+
+         std::cout << "Point:" << std::endl;
+         std::cout << point << std::endl;
+         CORE_ASSERT_TRUE(point.notTooFar(Vector3dd(0, 10, -10)), "Wrong intersection");
+         CORE_ASSERT_TRUE(plane.distanceTo(point) < 1e-3, "Wrong intersection");
+
+         double t = plane.intersectWithP(ray);
+         std::cout << "T:" << std::endl;
+         std::cout << t << std::endl;
+
+         std::cout << "P(t):" << std::endl;
+         std::cout << ray.getPoint(t) << std::endl;
+    }
+
+     /**/
+    {
+         Ray3d ray1;
+         ray1.p = Vector3dd(23.1231, -26.9769, 114.821);
+         ray1.a = Vector3dd(-143.123, -43.0231, -64.8209);
+         ray1.a.normalise();
+
+         Plane3d plane1(Vector3dd::OrtY(), 25.0);
+
+         Vector3dd point = plane1.intersectWith(ray1);
+
+         std::cout << "Point:" << std::endl;
+         std::cout << point << std::endl;
+         CORE_ASSERT_TRUE(plane1.distanceTo(point) < 1e-3, "Wrong intersection");
+
+         double t = plane1.intersectWithP(ray1);
+         std::cout << "T:" << std::endl;
+         std::cout << t << std::endl;
+
+         std::cout << "P(t):" << std::endl;
+         std::cout << ray1.getPoint(t) << std::endl;
+         CORE_ASSERT_TRUE(plane1.distanceTo(ray1.getPoint(t)) < 1e-3, "Wrong intersection");
+
+/*
+         double denum = plane1.normal() & ray1.a;
+         double num   = ((plane1.normal() & ray1.p) + plane1.last());
+         std::cout << "Plane normal " << plane1.normal() << std::endl;
+         std::cout << "Plane last   " << plane1.last() << std::endl;
+
+
+         std::cout << "Denum " << denum << std::endl;
+         std::cout << "Num " << num << std::endl;
+         std::cout << "T1 " << num / denum << std::endl;
+*/
+    }
+
+
 }
 
 
@@ -57,17 +115,17 @@ TEST(Linear, testPlane2Plane)
 
     Ray3d ray = diagonal.intersectWith(vertical);
 
-    cout << "Ray:" << endl;
-    cout << ray << endl;
+    std::cout << "Ray:" << std::endl;
+    std::cout << ray << std::endl;
 
     Vector3dd p1 = ray.getPoint(0.0);
     Vector3dd p2 = ray.getPoint(1.0);
 
-    cout << "Deviations:" << endl;
-    cout << diagonal.deviationTo(p1) << endl;
-    cout << diagonal.deviationTo(p2) << endl;
-    cout << vertical.deviationTo(p1) << endl;
-    cout << vertical.deviationTo(p2) << endl;
+    std::cout << "Deviations:" << std::endl;
+    std::cout << diagonal.deviationTo(p1) << std::endl;
+    std::cout << diagonal.deviationTo(p2) << std::endl;
+    std::cout << vertical.deviationTo(p1) << std::endl;
+    std::cout << vertical.deviationTo(p2) << std::endl;
 
     CORE_ASSERT_DOUBLE_EQUAL(diagonal.deviationTo(p1), 0.0, "Wrong plane intersection1");
     CORE_ASSERT_DOUBLE_EQUAL(diagonal.deviationTo(p2), 0.0, "Wrong plane intersection2");
@@ -123,14 +181,12 @@ TEST(Linear, testSegment2LineIn2d)
     Ray2d r(s);
     Line2d l(s);
 
-    cout << "P1: " << p1 << endl;
-    cout << "P2: " << p2 << endl;
+    std::cout << "P1: " << p1 << std::endl;
+    std::cout << "P2: " << p2 << std::endl;
 
-    cout << "S :" << s << endl;
-    cout << "R :" << r << endl;
-    cout << "L :" << l << endl;
-
-
+    std::cout << "S :" << s << std::endl;
+    std::cout << "R :" << r << std::endl;
+    std::cout << "L :" << l << std::endl;
 
     ASSERT_TRUE(l.distanceTo(p1) < 1e-10);
     ASSERT_TRUE(l.distanceTo(p2) < 1e-10);
@@ -142,7 +198,7 @@ int main (int /*argC*/, char ** /*argV*/)
     testPlane2Point();
     testRay2Ray();
     testPlane2Plane();
-    cout << "PASSED" << endl;
+    std::cout << "PASSED" << std::endl;
     return 0;
 }
 #endif

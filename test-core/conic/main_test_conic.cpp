@@ -11,15 +11,15 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "vector2d.h"
-#include "conic.h"
-#include "rgb24Buffer.h"
-#include "bmpLoader.h"
-#include "abstractPainter.h"
+#include "core/math/vector/vector2d.h"
+#include "core/geometry/conic.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/buffers/rgb24/abstractPainter.h"
 
-#include "mesh3d.h"
+#include "core/geometry/mesh3d.h"
 
 using namespace corecvs;
 
@@ -151,7 +151,8 @@ TEST(conic, testRayIntersection)
             {
                 mesh.setColor(RGBColor::Blue());
                 mesh.addLine(ray.getPoint(d1), ray.getPoint(d2));
-
+                CORE_ASSERT_DOUBLE_EQUAL_E((ray.getPoint(d1) - s.c).l2Metric(), 20.0, 1e-7, "Point not on sphere");
+                CORE_ASSERT_DOUBLE_EQUAL_E((ray.getPoint(d2) - s.c).l2Metric(), 20.0, 1e-7, "Point not on sphere");
             } else {
                 mesh.setColor(RGBColor::Green());
                 //mesh.addLine(ray.p, ray.getPoint(50));
@@ -160,5 +161,30 @@ TEST(conic, testRayIntersection)
     }
 
     mesh.dumpPLY("sphere-ray.ply");
+}
 
+TEST(conic, testRayIntersection1)
+{
+    Circle2d circle(Vector2dd(10.0, 0.0), 5.0);
+    for (double y = -1.0; y <= 1.0; y+=0.1 )
+    {
+        Ray2d ray(Vector2dd(1.0, y), Vector2dd::Zero());
+        //ray.normalise();
+        double d1,d2;
+        if (circle.intersectWith(ray, d1, d2))
+        {
+
+            SYNC_PRINT(("Intersection at %lf %lf at (%lf %lf) and (%lf %lf) dist %lf and %lf\n",
+                    d1,
+                    d2,
+                    ray.getPoint(d1).x(), ray.getPoint(d1).y(),
+                    ray.getPoint(d2).x(), ray.getPoint(d2).y(),
+                    (ray.getPoint(d1) - circle.c).l2Metric(),
+                    (ray.getPoint(d2) - circle.c).l2Metric()
+            ));
+        } else {
+            SYNC_PRINT(("No intersection\n"));
+        }
+
+    }
 }

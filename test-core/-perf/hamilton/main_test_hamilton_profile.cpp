@@ -13,13 +13,11 @@
 #include <limits>
 #include "gtest/gtest.h"
 
-#include "global.h"
-#include "quaternion.h"
-#include "preciseTimer.h"
+#include "core/utils/global.h"
+#include "core/math/quaternion.h"
+#include "core/utils/preciseTimer.h"
 
-using namespace std;
 using namespace corecvs;
-
 
 
 TEST(Affine, profileHamilton)
@@ -58,7 +56,7 @@ TEST(Affine, profileHamilton)
     }
     delay = timer.usecsToNow();
     printf("Classic   : %8" PRIu64 "us\n", delay); fflush(stdout);
-    cout << a << endl;
+    std::cout << a << std::endl;
 
     timer = PreciseTimer::currentTime();
     a = Quaternion(0.5, 0.5, 0.5, 0.5);
@@ -71,6 +69,7 @@ TEST(Affine, profileHamilton)
         }
     }
     delay = timer.usecsToNow();
-    printf("Additions: %8" PRIu64 "us\n", delay); fflush(stdout);
-    cout << a << endl;
+    printf("Additions: %8" PRIu64 "us\n", delay);
+    fflush(stdout);
+    std::cout << a << std::endl;
 }

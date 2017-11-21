@@ -12,15 +12,15 @@
 #include <fstream>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "mathUtils.h"
-#include "correspondenceList.h"
-#include "matrix.h"
-#include "essentialMatrix.h"
-#include "ransacEstimator.h"
-#include "essentialEstimator.h"
-#include "calibrationCamera.h"
+#include "core/math/mathUtils.h"
+#include "core/rectification/correspondenceList.h"
+#include "core/math/matrix/matrix.h"
+#include "core/rectification/essentialMatrix.h"
+#include "core/rectification/ransacEstimator.h"
+#include "core/rectification/essentialEstimator.h"
+#include "core/cameracalibration/calibrationCamera.h"
 
 using namespace corecvs;
 

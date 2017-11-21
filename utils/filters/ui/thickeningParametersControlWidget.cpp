@@ -8,6 +8,7 @@
 
 #include "thickeningParametersControlWidget.h"
 #include "ui_thickeningParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -31,26 +32,21 @@ ThickeningParametersControlWidget::~ThickeningParametersControlWidget()
 
 void ThickeningParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    ThickeningParameters *params = createParameters();
+    std::unique_ptr<ThickeningParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void ThickeningParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    ThickeningParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<ThickeningParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void ThickeningParametersControlWidget::getParameters(ThickeningParameters& params) const
 {
-
-    params.setPower            (mUi->powerSpinBox->value());
-
+    params = *std::unique_ptr<ThickeningParameters>(createParameters());
 }
+
 
 ThickeningParameters *ThickeningParametersControlWidget::createParameters() const
 {
@@ -60,10 +56,9 @@ ThickeningParameters *ThickeningParametersControlWidget::createParameters() cons
      **/
 
 
-    ThickeningParameters *result = new ThickeningParameters(
+    return new ThickeningParameters(
           mUi->powerSpinBox->value()
     );
-    return result;
 }
 
 void ThickeningParametersControlWidget::setParameters(const ThickeningParameters &input)

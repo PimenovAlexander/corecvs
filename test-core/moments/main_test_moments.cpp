@@ -11,12 +11,10 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
-#include "mathUtils.h"
-#include "ellipticalApproximation.h"
+#include "core/utils/global.h"
+#include "core/math/mathUtils.h"
+#include "core/geometry/ellipticalApproximation.h"
 
-
-using namespace std;
 using namespace corecvs;
 
 TEST(Moments, testRotations)

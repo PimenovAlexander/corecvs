@@ -11,16 +11,17 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
-#include "g12Buffer.h"
-#include "g8Buffer.h"
+#include "core/utils/global.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/g8Buffer.h"
 
-#include "rgb24Buffer.h"
-#include "bmpLoader.h"
-#include "perlinNoise.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/geometry/raytrace/perlinNoise.h"
 
 
 using namespace std;
+using namespace corecvs;
 
 TEST(noise, testnoise)
 {

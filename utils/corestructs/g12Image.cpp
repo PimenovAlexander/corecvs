@@ -7,10 +7,10 @@
 //#include <QPainter>
 
 #include "g12Image.h"
-#include "preciseTimer.h"
+//#include "core/utils/preciseTimer.h"
 
 #ifdef WITH_SSE
-# include "sseWrapper.h"
+#include "core/math/sse/sseWrapper.h"
     //using corecvs::Int32x4;
 #endif
 

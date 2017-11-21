@@ -7,10 +7,10 @@
  * \author alexander
  */
 #include <string>
-#include <QtCore/QObject>
 
-#include "g12Buffer.h"
-#include "rgb24Buffer.h"
+
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
 
 using namespace corecvs;
 
@@ -64,10 +64,22 @@ public:
 
 //---------------------------------------------------------------------------
 
-class ImageCaptureInterface : public QObject
+/**
+ *  Callback style without Qt slots and signals
+ *
+ *  The target here is to prepare separation from Qt. So far we have to use virtual multiple inheritance.
+ **/
+class ImageInterfaceReceiver
 {
-    Q_OBJECT
+public:
+    virtual void newFrameReadyCallback(frame_data_t frameData) = 0;
+    virtual void newImageReadyCallback() = 0;
+    virtual void newStatisticsReadyCallback(CaptureStatistics stats) = 0;
+    virtual void streamPausedCallback() = 0;
+};
 
+class ImageCaptureInterface
+{
 public:
     /**
      *   Error code for init functions
@@ -83,6 +95,8 @@ public:
         LEFT_FRAME,
         DEFAULT_FRAME = LEFT_FRAME,
         RIGHT_FRAME,
+        THIRD_FRAME,
+        FOURTH_FRAME,
         MAX_INPUTS_NUMBER
     };
 
@@ -104,56 +118,85 @@ public:
     class FramePair
     {
     public:
-        G12Buffer   *bufferLeft;      /**< Pointer to left  gray scale buffer*/
-        G12Buffer   *bufferRight;     /**< Pointer to right gray scale buffer*/
-        RGB24Buffer *rgbBufferLeft;
-        RGB24Buffer *rgbBufferRight;
-        uint64_t     timeStampLeft;
-        uint64_t     timeStampRight;
+        struct FrameData {
+            G12Buffer    *g12Buffer = NULL;
+            RGB24Buffer  *rgbBuffer = NULL;
+            uint64_t     timeStamp = 0;
+        };
+
+        FrameData buffers[MAX_INPUTS_NUMBER];
+
+        G12Buffer   *bufferLeft()     const { return buffers[LEFT_FRAME  ].g12Buffer;} /**< Pointer to left  gray scale buffer*/
+        G12Buffer   *bufferRight()    const { return buffers[RIGHT_FRAME ].g12Buffer;} /**< Pointer to right gray scale buffer*/
+        RGB24Buffer *rgbBufferLeft()  const { return buffers[LEFT_FRAME  ].rgbBuffer;}
+        RGB24Buffer *rgbBufferRight() const { return buffers[RIGHT_FRAME ].rgbBuffer;}
+
+
+        void setBufferLeft    (G12Buffer   *buf)  {  buffers[LEFT_FRAME  ].g12Buffer = buf;} /**< Pointer to left  gray scale buffer*/
+        void setBufferRight   (G12Buffer   *buf)  {  buffers[RIGHT_FRAME ].g12Buffer = buf;} /**< Pointer to right gray scale buffer*/
+        void setRgbBufferLeft (RGB24Buffer *buf)  {  buffers[LEFT_FRAME  ].rgbBuffer = buf;}
+        void setRgbBufferRight(RGB24Buffer *buf)  {  buffers[RIGHT_FRAME ].rgbBuffer = buf;}
+
+
+        uint64_t     timeStampLeft()  { return buffers[LEFT_FRAME  ].timeStamp;}
+        uint64_t     timeStampRight() { return buffers[RIGHT_FRAME ].timeStamp;}
+        void setTimeStampLeft (uint64_t stamp)  { buffers[LEFT_FRAME ].timeStamp = stamp; }
+        void setTimeStampRight(uint64_t stamp)  { buffers[RIGHT_FRAME].timeStamp = stamp; }
+
+
+
 
         FramePair(G12Buffer   *_bufferLeft     = NULL
                 , G12Buffer   *_bufferRight    = NULL
                 , RGB24Buffer *_rgbBufferLeft  = NULL
-                , RGB24Buffer *_rgbBufferRight = NULL)
-            : bufferLeft (_bufferLeft )
-            , bufferRight(_bufferRight)
-            , rgbBufferLeft(_rgbBufferLeft)
-            , rgbBufferRight(_rgbBufferRight)
-            , timeStampLeft(0)
-            , timeStampRight(0)
-        {}
+                , RGB24Buffer *_rgbBufferRight = NULL)            
+        {
+            buffers[LEFT_FRAME ].g12Buffer = _bufferLeft ;
+            buffers[RIGHT_FRAME].g12Buffer = _bufferRight;
+
+            buffers[LEFT_FRAME ].rgbBuffer = _rgbBufferLeft ;
+            buffers[RIGHT_FRAME].rgbBuffer = _rgbBufferRight;
+        }
 
         bool allocBuffers(uint height, uint width, bool shouldInit = false)
         {
             freeBuffers();
-            bufferLeft  = new G12Buffer(height, width, shouldInit);
-            bufferRight = new G12Buffer(height, width, shouldInit);
+            for (int i = 0; i < MAX_INPUTS_NUMBER; i++)
+            {
+                buffers[i].g12Buffer  = new G12Buffer(height, width, shouldInit);
+            }
             return hasBoth();
         }
 
         void freeBuffers()
         {
-            delete_safe(bufferLeft);
-            delete_safe(bufferRight);
-            delete_safe(rgbBufferLeft);
-            delete_safe(rgbBufferRight);
+            for (int i = 0; i < MAX_INPUTS_NUMBER; i++)
+            {
+                delete_safe(buffers[i].g12Buffer);
+                delete_safe(buffers[i].rgbBuffer);
+            }
         }
 
         FramePair clone() const
         {
-            FramePair result(new G12Buffer(bufferLeft), new G12Buffer(bufferRight));
-            if (rgbBufferLeft != NULL)
-                result.rgbBufferLeft = new RGB24Buffer(rgbBufferLeft);
-            if (rgbBufferRight != NULL)
-                result.rgbBufferRight = new RGB24Buffer(rgbBufferRight);
-            result.timeStampLeft  = timeStampLeft;
-            result.timeStampRight = timeStampRight;
+            FramePair result(new G12Buffer(bufferLeft()), new G12Buffer(bufferRight()));
+
+            if (rgbBufferLeft() != NULL)
+                result.buffers[LEFT_FRAME ].rgbBuffer = new RGB24Buffer(buffers[LEFT_FRAME ].rgbBuffer);
+            if (buffers[RIGHT_FRAME].rgbBuffer != NULL)
+                result.buffers[RIGHT_FRAME].rgbBuffer = new RGB24Buffer(buffers[RIGHT_FRAME].rgbBuffer);
+
+            result.setTimeStampLeft (buffers[LEFT_FRAME ].timeStamp);
+            result.setTimeStampRight(buffers[RIGHT_FRAME].timeStamp);
             return result;
         }
 
-        bool        hasBoth() const         { return bufferLeft != NULL && bufferRight != NULL; }
-        uint64_t    timeStamp() const       { return timeStampLeft / 2 + timeStampRight / 2;    }
-        int64_t     diffTimeStamps() const  { return timeStampLeft     - timeStampRight;        }
+
+        bool        hasBoth() const         { return buffers[LEFT_FRAME].g12Buffer != NULL && buffers[RIGHT_FRAME].g12Buffer != NULL; }
+
+        /* This is still legacy */
+        uint64_t    timeStamp() const       { return buffers[LEFT_FRAME].timeStamp / 2 + buffers[RIGHT_FRAME].timeStamp / 2;    }
+        int64_t     diffTimeStamps() const  { return buffers[LEFT_FRAME].timeStamp     - buffers[RIGHT_FRAME].timeStamp;        }
     };
 
     bool mIsRgb;                                            // flag that camera supports colors
@@ -171,22 +214,19 @@ public:
         bool operator!()                   const { return height == 0 && width == 0 && fps == 0; }
     };
 
-signals:
-    void    newFrameReady(frame_data_t frameData);
-    void    newImageReady();
-    void    newStatisticsReady(CaptureStatistics stats);
-    void    streamPaused();
-
 public:
     ImageCaptureInterface();
     virtual ~ImageCaptureInterface();
+
+    /*Callback reciever*/
+    ImageInterfaceReceiver *imageInterfaceReceiver;
 
     /**
      *  Fabric to create particular implementation of the capturer
      **/
     static void getAllCameras(vector<std::string> &cameras);
-    static ImageCaptureInterface *fabric(string input, bool isRgb = false);
-    static ImageCaptureInterface *fabric(string input, int h, int w, int fps, bool isRgb = false);
+//    static ImageCaptureInterface *fabric(string input, bool isRgb = false);
+//    static ImageCaptureInterface *fabric(string input, int h, int w, int fps, bool isRgb = false);
 
     /**
      *  Main function to request frames from image interface
@@ -201,7 +241,7 @@ public:
 
     virtual CapErrorCode getCaptureProperty(int id, int *value);
 
-    virtual CapErrorCode getCaptureName(QString &value);
+    virtual CapErrorCode getCaptureName(std::string &value);
 
     /**
      *  Enumerates camera formats
@@ -217,16 +257,16 @@ public:
      *
      *  \return  true if the reuslt is valid, false othervize;
      **/
-    virtual bool getCurrentFormat(CameraFormat &format);
+    virtual bool         getCurrentFormat(CameraFormat &format);
 
     /**
      * Return the interface device string
      **/
-    virtual QString      getInterfaceName();
+    virtual std::string      getInterfaceName();
     /**
      * Return some id of one of the stereo-/multi- camera sub-device
      **/
-    virtual CapErrorCode getDeviceName(int num, QString &name);
+    virtual CapErrorCode getDeviceName(int num, std::string &name);
 
     /**
      * Return serial number stereo-/multi- camera sub-device if applicable
@@ -262,3 +302,5 @@ protected:
     virtual void notifyAboutNewFrame(frame_data_t frameData);
 
 };
+
+

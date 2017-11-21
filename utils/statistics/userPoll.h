@@ -8,7 +8,7 @@
 
 #include <QtCore/QString>
 #include <QtCore/QHash>
-#include "calculationStats.h"
+#include "core/stats/calculationStats.h"
 
 using corecvs::Statistics;
 

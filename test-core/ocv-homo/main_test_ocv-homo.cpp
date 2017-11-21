@@ -21,9 +21,9 @@ int main (int /*argC*/, char** /*argV*/)
 #include <iostream>
 #include <opencv2/highgui/highgui.hpp>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "vector2d.h"
+#include "core/math/vector/vector2d.h"
 
 using namespace std;
 

@@ -5,6 +5,7 @@
  * \brief A header for reflectionGenerator.c
  *
  *
+ *  Seems like this class is becoming obsolete
  *
  * \date Apr 19, 2012
  * \author alexander
@@ -21,6 +22,7 @@ using corecvs::BoolField;
 using corecvs::IntField;
 using corecvs::DoubleField;
 using corecvs::StringField;
+using corecvs::WStringField;
 using corecvs::CompositeField;
 using corecvs::CompositeArrayField;
 using corecvs::EnumField;
@@ -128,6 +130,24 @@ public:
     }
 };
 
+class WStringFieldGen : public WStringField
+{
+public:
+    WStringFieldGen (
+            const std::wstring _defaultValue,
+            const ReflectionNaming &_nameing
+    ) : WStringField (
+            BaseField::UNKNOWN_ID,
+            BaseField::UNKNOWN_OFFSET,
+            _defaultValue,
+            _nameing
+    ) {}
+
+    virtual BaseField* clone() const
+    {
+        return new WStringFieldGen(*this);
+    }
+};
 
 enum BoolWidgetType {
     checkBox,
@@ -137,19 +157,15 @@ enum BoolWidgetType {
 class BoolFieldGen : public BoolField
 {
 public:
-    BoolWidgetType widgetType;
-
     BoolFieldGen(
             bool _defaultValue,
-            BoolWidgetType _widgetType,
             const ReflectionNaming &_nameing
     ) : BoolField (
             BaseField::UNKNOWN_ID,
             BaseField::UNKNOWN_OFFSET,
             _defaultValue,
             _nameing
-        ),
-        widgetType(_widgetType)
+        )
     {}
 
     virtual BaseField* clone() const
@@ -166,17 +182,8 @@ enum DoubleWidgetType {
 class DoubleFieldGen : public DoubleField
 {
 public:
-    DoubleWidgetType widgetType;
-    QString prefix;
-    QString suffix;
-    int decimals;
-
     DoubleFieldGen(
         double _defaultValue,
-        DoubleWidgetType _widgetType,
-        QString _prefix,
-        QString _suffix,
-        int _decimals,
         const ReflectionNaming &_nameing,
         bool _hasAdditionalValues = false,
         double _min = 0.0,
@@ -191,12 +198,7 @@ public:
             _min,
             _max,
             _step
-        ),
-        widgetType(_widgetType),
-        prefix(_prefix),
-        suffix(_suffix),
-        decimals(_decimals)
-    {}
+        ){}
 
     virtual BaseField* clone() const
     {
@@ -207,13 +209,8 @@ public:
 class IntFieldGen : public IntField
 {
 public:
-    QString prefix;
-    QString suffix;
-
     IntFieldGen(
         double _defaultValue,
-        QString _prefix,
-        QString _suffix,
         const ReflectionNaming &_nameing,
         bool _hasAdditionalValues = false,
         double _min = 0.0,
@@ -222,15 +219,13 @@ public:
         ) : IntField (
             BaseField::UNKNOWN_ID,
             BaseField::UNKNOWN_OFFSET,
-            _defaultValue,
+                _defaultValue,
             _nameing,
             _hasAdditionalValues,
             _min,
             _max,
             _step
-        ),
-        prefix(_prefix),
-        suffix(_suffix)
+        )
     {}
 
     virtual BaseField* clone() const
@@ -284,36 +279,23 @@ public:
 };
 
 
-enum EnumWidgetType {
-    comboBox,
-    tabWidget
-};
-
 class EnumOptionGen : public EnumOption
 {
 public:
-    QString icon;
-
     EnumOptionGen(
         int _id,
-        const ReflectionNaming &_nameing,
-        QString _icon = QString("")
-    ) : EnumOption(_id,_nameing),
-        icon(_icon)
+        const ReflectionNaming &_nameing
+    ) : EnumOption(_id,_nameing)
     {
-
     }
 };
 
 class EnumFieldGen : public EnumField
 {
 public:
-    EnumWidgetType widgetType;
-
 
     EnumFieldGen(
             int _defaultValue,
-            EnumWidgetType _widgetType,
             const ReflectionNaming &_nameing,
             const EnumReflection *_enumReflection
     ) : EnumField (
@@ -322,8 +304,7 @@ public:
             _defaultValue,
             _nameing,
             _enumReflection
-        ),
-        widgetType(_widgetType)
+        )
     {}
 
     virtual BaseField* clone() const

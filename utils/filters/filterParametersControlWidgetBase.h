@@ -11,9 +11,9 @@
 
 #include <QWidget>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "reflection.h"
+#include "core/reflection/reflection.h"
 #include "parametersControlWidgetBase.h"
 
 class FilterParametersControlWidgetBase : public QWidget

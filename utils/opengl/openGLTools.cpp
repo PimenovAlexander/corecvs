@@ -7,7 +7,7 @@
  */
 
 #include "openGLTools.h"
-#include "matrix44.h"
+#include "core/math/matrix/matrix44.h"
 
 void OpenGLTools::drawArrow(double length, double width)
 {

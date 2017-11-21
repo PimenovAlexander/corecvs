@@ -10,18 +10,21 @@
 
 #include <iostream>
 #include <random>
+#include <fstream>
+
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "rgb24Buffer.h"
-#include "bmpLoader.h"
-#include "abstractPainter.h"
-#include "simpleRenderer.h"
-#include "mesh3d.h"
-#include "calibrationCamera.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/buffers/rgb24/abstractPainter.h"
+#include "core/geometry/renderer/simpleRenderer.h"
+#include "core/geometry/mesh3d.h"
+#include "core/cameracalibration/calibrationCamera.h"
 
-#include "polygonPointIterator.h"
+#include "core/geometry/polygonPointIterator.h"
+#include "core/buffers/bufferFactory.h"
 
 using namespace corecvs;
 
@@ -44,6 +47,19 @@ TEST(Draw, testHistogram)
 
     BMPLoader().save("hists.bmp", buffer);
     delete_safe(buffer);
+}
+
+TEST(Draw, testBitBlt)
+{
+    RGB24Buffer in (48,48, RGBColor::Yellow());
+    RGB24Buffer out(100,100, RGBColor::Green());
+
+    out.fillWith(in, 1, 1);
+    out.fillWith(in, 1, 51);
+    out.fillWith(in, 51, 1);
+    out.fillWith(in, 51, 51);
+
+    BMPLoader().save("bitBlt.bmp", &out);
 }
 
 
@@ -97,7 +113,7 @@ TEST(Draw, testCircleIterator)
     CircleSpanIterator inner(Circle2d(50, 50, 30));
     while (inner.hasValue())
     {
-        LineSpanInt span = inner.getSpan();
+        HLineSpanInt span = inner.getSpan();
         while (span.hasValue()) {
             if (buffer->isValidCoord(span.pos())) {
                 buffer->element(span.pos()) = RGBColor::Red();
@@ -111,6 +127,67 @@ TEST(Draw, testCircleIterator)
     BMPLoader().save("circles-it.bmp", buffer);
     delete_safe(buffer);
 }
+
+
+TEST(Draw, testLineterator)
+{
+    RGB24Buffer *buffer = new RGB24Buffer(100, 100);
+    RGB24Buffer *buffer1 = new RGB24Buffer(100, 100);
+
+    Segment<Vector2d32> segments[4] =
+    {
+        {{15, 10}, {50, 95}},
+        {{10, 15}, {95, 50}},
+        {{40, 85}, { 5,  5}},
+        {{85, 40}, { 5,  5}}
+    };
+
+    RGBColor colors[4] = {
+        RGBColor::Red(),
+        RGBColor::Green(),
+        RGBColor::Blue(),
+        RGBColor::Cyan()
+    };
+
+    for (size_t i = 0; i <  CORE_COUNT_OF(segments); i++)
+    {
+        LineSpanIterator iterator(segments[i]);
+        for (auto point : iterator)
+        {
+            buffer->element(point) = colors[i];
+        }
+
+        Vector3dd color1 = colors[i].toDouble();
+        Vector3dd color2 = colors[(i + 1) % CORE_COUNT_OF(segments)].toDouble();
+
+        FragmentAttributes c1(color1.element, color1.element + 3);
+        FragmentAttributes c2(color2.element, color2.element + 3);
+
+        cout << "Color1:" << color1 << endl;
+        cout << "Color2:" << color2 << endl;
+
+        cout << "Attr1:" << c1[0] << " " << c1[1] << " " << c1[2] << " "  << endl;
+        cout << "Attr2:" << c2[0] << " " << c2[1] << " " << c2[2] << " " << endl;
+
+        AttributedLineSpanIterator attIterator(segments[i].a.x(), segments[i].a.y(), segments[i].b.x(), segments[i].b.y(), c1, c2);
+        while (attIterator.hasValue())
+        {
+            Vector2d<int> point = attIterator.pos();
+            RGBColor color = RGBColor(attIterator.att()[0], attIterator.att()[1], attIterator.att()[2]);
+            SYNC_PRINT(("We are at [%d %d] (%d %d %d)\n", point.x(), point.y(), color.r(), color.g(), color.b()));
+            buffer1->element(point) = color;
+            attIterator.step();
+        }
+    }
+
+    BMPLoader().save("segments-it.bmp" , buffer);
+    BMPLoader().save("segments1-it.bmp", buffer1);
+
+    delete_safe(buffer);
+    delete_safe(buffer1);
+
+}
+
 
 TEST(Draw, testRectangles)
 {
@@ -146,7 +223,7 @@ TEST(Draw, testSpanDraw)
         TrapezoidSpanIterator it(10, 40, 10, 30, 40, 90);
         while (it.hasValue())
         {
-            LineSpanInt span = it.getSpan();
+            HLineSpanInt span = it.getSpan();
             buffer->drawHLine(span.x1, span.y(), span.x2, RGBColor::Red());
             it.step();
         }
@@ -156,7 +233,7 @@ TEST(Draw, testSpanDraw)
         TrapezoidSpanIterator it(110, 170, 10, 30, 5, 35);
         while (it.hasValue())
         {
-            LineSpanInt span = it.getSpan();
+            HLineSpanInt span = it.getSpan();
             buffer->drawHLine(span.x1, span.y(), span.x2, RGBColor::Green());
             it.step();
         }
@@ -167,7 +244,7 @@ TEST(Draw, testSpanDraw)
         TriangleSpanIterator it(t);
         while (it.hasValue())
         {
-            LineSpanInt span = it.getSpan();
+            HLineSpanInt span = it.getSpan();
             buffer->drawHLine(span.x1, span.y(), span.x2, RGBColor::Pink());
             it.step();
         }
@@ -186,7 +263,7 @@ TEST(Draw, testSpanDraw)
 
     {
         TrapezoidSpanIterator it(10, 40, 10, 30, 40, 90);
-        for(LineSpanInt span: it) {
+        for(HLineSpanInt span: it) {
               buffer->drawHLine(span.x1, span.y(), span.x2, RGBColor::Pink());
         }
 
@@ -218,7 +295,7 @@ TEST(Draw, testSpanDrawTriangle)
         TriangleSpanIterator it(t[i]);
         while (it.hasValue())
         {           
-            LineSpanInt span = it.getSpan();
+            HLineSpanInt span = it.getSpan();
             buffer->drawHLine(span.x1, span.y(), span.x2, c[i]);
             it.step();
         }
@@ -266,7 +343,7 @@ TEST(Draw, testSpanDrawTriangle1)
                 TriangleSpanIterator it(tri);
                 while (it.hasValue())
                 {
-                    LineSpanInt span = it.getSpan();
+                    HLineSpanInt span = it.getSpan();
                     buffer->drawHLine(span.x1, span.y(), span.x2, RGBColor::Green());
 
                     if (offset == 2)
@@ -282,7 +359,7 @@ TEST(Draw, testSpanDrawTriangle1)
                 AttributedTriangleSpanIterator itA(triA);
                 while (itA.hasValue())
                 {
-                    AttributedLineSpan span = itA.getAttrSpan();
+                    AttributedHLineSpan span = itA.getAttrSpan();
                     bufferA->drawHLine(span.x1, span.y(), span.x2, RGBColor::Green());
                     itA.step();
                 }
@@ -305,7 +382,7 @@ TEST(Draw, testSpanDrawTriangle1)
 
 
     BMPLoader().save("trianglemany.bmp", buffer);
-    BMPLoader().save("triangleAmany.bmp", buffer);
+    BMPLoader().save("triangleAmany.bmp", bufferA);
     delete_safe(bufferA);
     delete_safe(buffer);
 
@@ -330,7 +407,7 @@ TEST(Draw, testAttributedTriangle)
 
     while (it.hasValue())
     {        
-        AttributedLineSpan span = it.getAttrSpan();
+        AttributedHLineSpan span = it.getAttrSpan();
         while (span.hasValue())
         {
             if (buffer->isValidCoord(span.pos()) ) {
@@ -374,7 +451,7 @@ TEST(Draw, testSpanRenderTriangle)
         TriangleSpanIterator it(p[i]);
         while (it.hasValue())
         {          
-            LineSpanInt span = it.getSpan();
+            HLineSpanInt span = it.getSpan();
             buffer->drawHLine(span.x1, span.y(), span.x2, c[i]);
             it.step();
         }
@@ -403,7 +480,7 @@ TEST(Draw, testSpanRenderTriangle)
 
         while (it.hasValue())
         {            
-            LineSpanInt span = it.getSpan();
+            HLineSpanInt span = it.getSpan();
             double z1 = it.part.a1[0];
             double z2 = it.part.a2[0];
 
@@ -491,7 +568,7 @@ TEST(Draw, polygonDraw1)
             painter.drawPolygon(p, RGBColor::Blue());
 
             PolygonSpanIterator it(p);
-            for (LineSpanInt l: it)
+            for (HLineSpanInt l: it)
             {
                 for (Vector2d<int> point : l) {
                     if (buffer->isValidCoord(point)) {
@@ -517,7 +594,7 @@ TEST(Draw, polygonDraw1)
             painter.drawPolygon(p, RGBColor::Green());
 
             PolygonSpanIterator it(p);
-            for (LineSpanInt l: it)
+            for (HLineSpanInt l: it)
             {
 //                cout << l << endl;
                 for (Vector2d<int> point : l) {
@@ -649,13 +726,13 @@ TEST(Draw, testRobot)
     CircleSpanIterator outer(center);
     while (outer.hasValue())
     {
-        LineSpanInt span = outer.getSpan();
+        HLineSpanInt span = outer.getSpan();
         for (int s = span.x1; s < span.x2; s++ )
         {
             CircleSpanIterator inner(Circle2d(s, span.y(), r/2));
             while (inner.hasValue())
             {
-                LineSpanInt span = inner.getSpan();
+                HLineSpanInt span = inner.getSpan();
                 for (int s1 = span.x1; s1 < span.x2; s1++ )
                 {
                     if (acc.isValidCoord(span.y(), s1))
@@ -675,13 +752,13 @@ TEST(Draw, testRobot)
         CircleSpanIterator outer(perifery[c]);
         while (outer.hasValue())
         {
-            LineSpanInt span = outer.getSpan();
+            HLineSpanInt span = outer.getSpan();
             for (int s = span.x1; s < span.x2; s++ )
             {
                 CircleSpanIterator inner(Circle2d(s, span.y(), l2));
                 while (inner.hasValue())
                 {
-                    LineSpanInt span = inner.getSpan();
+                    HLineSpanInt span = inner.getSpan();
                     for (int s1 = span.x1; s1 < span.x2; s1++ )
                     {
                         //SYNC_PRINT(("#"));
@@ -696,7 +773,7 @@ TEST(Draw, testRobot)
                 CircleSpanIterator inner1(Circle2d(s, span.y(), l1));
                 while (inner1.hasValue())
                 {
-                    LineSpanInt span = inner1.getSpan();
+                    HLineSpanInt span = inner1.getSpan();
                     for (int s1 = span.x1; s1 < span.x2; s1++ )
                     {
                         //SYNC_PRINT(("#"));
@@ -718,4 +795,107 @@ TEST(Draw, testRobot)
     BMPLoader().save("robot2.bmp", buffer);
 
     delete_safe(buffer);
+}
+
+TEST(Draw, DISABLED_testPack)
+{
+    RGB24Buffer *buffer = BufferFactory::getInstance()->loadRGB24Bitmap("input.bmp");
+    if (buffer == NULL)
+        return;
+
+    SYNC_PRINT(("Loaded [%d %d]\n", buffer->h, buffer->w));
+
+    RGB24Buffer *block = new RGB24Buffer(48,48);
+    block->fillWith(*buffer);
+
+    AbstractPainter<RGB24Buffer> painter(block);
+    block->fillWith(RGBColor::White());
+
+    //painter.drawCircle(24, 24, 10, RGBColor::Blue());
+    //painter.drawCircle(24, 24,  4, RGBColor::Red());
+    //painter.drawHLine(0, 0, 47, RGBColor::Blue());
+    painter.drawFormat(0, 10, RGBColor::Yellow(), 1, "Test");
+
+    BMPLoader().save("test.bmp", block);
+
+    #define BLOCK_NUM  6
+
+    uint8_t lines[6][16 * BLOCK_NUM * 8][2];
+    for (int lineid = 0; lineid < 6; lineid++)
+    {
+        for (int pixel = 0; pixel < 16; pixel++) /* over pixels */
+        {
+            for (int blockn = 0; blockn < BLOCK_NUM; blockn++) /* over blocks */
+            {
+                uint32_t x  =  0;
+                if (pixel & 0x8) {
+                  x = (pixel & 0x07) + (blockn * 8);
+                } else {
+                  x = (blockn * 8) + 7 - (pixel & 0x07);
+                }
+
+                uint32_t y1 =  lineid + ((pixel & 0x08) ?  0 : 6);
+
+
+                uint32_t  px3 = block->element(y1     , x).toBGRInt();
+                uint32_t  px4 = block->element(y1 + 12, x).toBGRInt();
+                uint32_t  px1 = block->element(y1 + 24, x).toBGRInt();
+                uint32_t  px2 = block->element(y1 + 36, x).toBGRInt();
+
+                /*
+                uint32_t  px1 = 0xFFFFFF;
+                uint32_t  px2 = 0xFFFFFF;
+                uint32_t  px3 = 0xFFFFFF;
+                uint32_t  px4 = 0xFF00FF;
+                */
+
+
+               /* We have 4 colors now. */
+
+                for (int bitn = 0; bitn < 8; bitn++) /* over bits */
+                {
+                        uint8_t c =  ((px1 & 0x800000) >> 18) | ((px1 & 0x8000) >> 11) | ((px1 & 0x80) >> 4)   |  ((px2 & 0x800000) >> 21) | ((px2 & 0x8000) >> 14) | ((px2 & 0x80) >> 7) ;
+                        uint8_t b =  ((px3 & 0x800000) >> 18) | ((px3 & 0x8000) >> 11) | ((px3 & 0x80) >> 4)   |  ((px4 & 0x800000) >> 21) | ((px4 & 0x8000) >> 14) | ((px4 & 0x80) >> 7) ;
+                        px1 <<= 1;
+                        px2 <<= 1;
+                        px3 <<= 1;
+                        px4 <<= 1;
+
+                        lines[lineid][pixel * BLOCK_NUM * 8 + blockn * 8 + bitn][0] = c;
+                        lines[lineid][pixel * BLOCK_NUM * 8 + blockn * 8 + bitn][1] = b;
+                }
+            }
+        }
+
+    }
+
+
+    std::ofstream os;
+    os.open("out.c", std::ofstream::out);
+
+    os << "#include <avr/pgmspace.h>\n";
+    os << "\n";
+    os << "const unsigned char packed[] PROGMEM = {\n";
+
+    for (int lineid = 0; lineid < 6; lineid++)
+    {
+        for (int data = 0; data < 16 * BLOCK_NUM * 8; data++)
+        {
+            if ((data % 16) == 0) {
+                 os << "\n";
+            }
+
+            os << (( lineid == 0 && data == 0 )? "  " : ", ") <<  (uint)lines[lineid][data][0] << ", " << (uint)lines[lineid][data][1] ;
+
+        }
+        os << "/* */\n";
+    }
+
+    os << "};\n";
+
+    os.close();
+
+    delete_safe(buffer);
+    delete_safe(block);
+
 }

@@ -11,9 +11,9 @@
 
 #include <vector>
 
-#include "flowBuffer.h"
-#include "g12Buffer.h"
-#include "flowVector.h"
+#include "core/buffers/flow/flowBuffer.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/flow/flowVector.h"
 
 using corecvs::FloatFlowVector;
 using corecvs::G12Buffer;

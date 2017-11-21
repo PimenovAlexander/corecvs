@@ -2,7 +2,7 @@
 
 
 #include "filterParametersControlWidgetBase.h"
-#include "generated/gainOffsetParameters.h"
+#include "core/xml/generated/gainOffsetParameters.h"
 #include "ui_gainOffsetParametersControlWidget.h"
 
 namespace Ui {

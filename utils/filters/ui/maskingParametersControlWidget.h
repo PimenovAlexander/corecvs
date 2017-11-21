@@ -1,6 +1,6 @@
 #pragma once
 #include <QWidget>
-#include "generated/maskingParameters.h"
+#include "core/xml/generated/maskingParameters.h"
 #include "ui_maskingParametersControlWidget.h"
 #include "filterParametersControlWidgetBase.h"
 

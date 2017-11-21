@@ -44,7 +44,7 @@
 #include <QGraphicsScene>
 #include "diagramitem.h"
 #include "diagramtextitem.h"
-#include "filterGraph.h"
+#include "core/filters/blocks/filterGraph.h"
 
 class DiagramScene : public QGraphicsScene
 {

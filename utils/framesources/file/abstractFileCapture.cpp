@@ -5,7 +5,7 @@
 
 #include "abstractFileCapture.h"
 
-AbstractFileCapture::AbstractFileCapture(QString const &params)
+AbstractFileCapture::AbstractFileCapture(const std::string &params)
     : mDelay(0)
     , mSpin(NULL)
     , mShouldSkipUnclaimed(false)
@@ -20,8 +20,8 @@ AbstractFileCapture::AbstractFileCapture(QString const &params)
     static const int delayGroup            = 6;
     static const int shouldSkipGroup       = 7;
 
-    SYNC_PRINT(("Input string %s\n", params.toLatin1().constData()));
-    int result = deviceStringPattern.indexIn(params);
+    SYNC_PRINT(("Input string %s\n", params.c_str()));
+    int result = deviceStringPattern.indexIn(QString::fromStdString(params));
     if (result == -1)
     {
         printf("Error in device string format\n");
@@ -120,7 +120,11 @@ QMutex& AbstractFileCapture::protectFrameMutex()
 
 void AbstractFileCapture::notifyAboutStreamPaused()
 {
-    emit streamPaused();
+    if (imageInterfaceReceiver != NULL) {
+        imageInterfaceReceiver->streamPausedCallback();
+    } else {
+        SYNC_PRINT(("AbstractFileCapture::notifyAboutStreamPaused() : imageInterfaceReceiver is NULL\n"));
+    }
 }
 
 bool AbstractFileCapture::supportPause()

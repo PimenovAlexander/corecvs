@@ -12,15 +12,16 @@
 //#define TRACE
 #endif
 
+#include <string>
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
-
-#include "log.h"
-
+#include "core/utils/global.h"
+#include "core/utils/utils.h"
+#include "core/utils/log.h"
 
 using namespace std;
+using namespace corecvs;
 
 TEST(Logger, testDummy)  // TODO: add log to file and then check its content!
 {
@@ -32,6 +33,8 @@ TEST(Logger, testDummy)  // TODO: add log to file and then check its content!
     Log::MessageScoped(&logger, Log::LEVEL_ERROR, "A", 0, "F");
 
     cout << Log::formatted("Here we go %d\n", 1, 2, "three");
+   // Note that std::endl is designed to work with std::basic_ostream. Thus it is not supported
+   // L_INFO << "corecvs::Log sucks" << std::endl;
 }
 
 class Foo {
@@ -40,14 +43,14 @@ public:
     int data;
 };
 
-inline ostream & operator<<(ostream &os, const Foo &o) {
+inline std::ostream & operator<<(std::ostream &os, const Foo &o) {
     os << "foo data=" << o.data;
     return os;
 }
 
 TEST(Logger, testObjectLog)
 {
-    ostringstream os;
+    std::ostringstream os;
     {
         //auto &prev = Log::mLogDrains[0];
         {
@@ -71,4 +74,15 @@ TEST(Logger, testObjectLog)
 
     CORE_ASSERT_TRUE_P(pos + checkStr.length() + 1 == out.length(), ("incorrect log content"));
     CORE_ASSERT_TRUE_P(out[out.length() - 1]       == '\n'        , ("incorrect last char"));
+}
+
+TEST(Logger, testFileLogging)
+{
+    string pathLog = corecvs::HelperUtils::getFullPathWithoutExt("some_test_file.something") +  "_calibration.txt";
+    Log::mLogDrains.add(new FileLogDrain(pathLog));
+    {
+        L_INFO_P("test:") << " test1" << " test2";
+        SYNC_PRINT(("Leaving test logging context\n"));
+    }
+    SYNC_PRINT(("Leaving logger\n"));
 }

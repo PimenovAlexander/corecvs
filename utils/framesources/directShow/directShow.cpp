@@ -1,12 +1,12 @@
 #include "directShow.h"
-#include "log.h"
+#include "core/utils/log.h"
 
 cchar* DirectShowCameraDescriptor::codec_names[] = {
-    "yuyv",  "rgb",   "mjpeg",   "fjpeg"
+    "yuyv",  "rgb", "bayer8", "uyvy",  "mjpeg",   "fjpeg"
 };
 
 CAPTURE_FORMAT_TYPE DirectShowCameraDescriptor::codec_types[] = {
-    CAP_YUV, CAP_RGB, CAP_MJPEG, CAP_MJPEG //, CAP_I420
+    CAP_YUV, CAP_RGB, CAP_BAYER8, CAP_UYVY, CAP_MJPEG, CAP_MJPEG  //, CAP_I420
 };
 
 uint DirectShowCameraDescriptor::codec_size = CORE_COUNT_OF(codec_names);
@@ -37,8 +37,8 @@ int DirectShowCameraDescriptor::queryCameraParameters(CameraParameters &paramete
     expAuto.setMaximum(1);
     expAuto.setStep(1);
     expAuto.setDefaultValue(0);
-    expAuto.pushMenuItem(QString("OFF"), 0);
-    expAuto.pushMenuItem(QString("ON") , 1);
+    expAuto.pushMenuItem(std::string("OFF"), 0);
+    expAuto.pushMenuItem(std::string("ON") , 1);
 
     DirectShowCapDll_getCameraProp(deviceHandle, CAPDLL_Control_Iris, &paramsFromCamera);
     setFromCameraParam(parameters.mCameraControls[CameraParameters::IRIS], paramsFromCamera);
@@ -54,8 +54,8 @@ int DirectShowCameraDescriptor::queryCameraParameters(CameraParameters &paramete
     focusAuto.setMaximum(1);
     focusAuto.setStep(1);
     focusAuto.setDefaultValue(0);
-    focusAuto.pushMenuItem(QString("OFF"), 0);
-    focusAuto.pushMenuItem(QString("ON") , 1);
+    focusAuto.pushMenuItem(std::string("OFF"), 0);
+    focusAuto.pushMenuItem(std::string("ON") , 1);
 
     /*Amp contols*/
 

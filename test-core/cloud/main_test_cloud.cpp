@@ -11,13 +11,14 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "cloud.h"
-#include "preciseTimer.h"
-#include "ellipticalApproximation.h"
-#include "clustering3d.h"
-#include "buffer3d.h"
+#include "core/clustering3d/cloud.h"
+#include "core/geometry/ellipticalApproximation.h"
+#include "core/clustering3d/clustering3d.h"
+#include "core/buffers/buffer3d.h"
+
+using namespace corecvs;
 
 TEST(CloudTest, main)
 {

@@ -1,7 +1,7 @@
 #include "openCvCheckerboardDetector.h"
-#include "selectableGeometryFeatures.h"  // ObservationList
-#include "checkerboardDetectionParameters.h"
-#include "preciseTimer.h"
+#include "core/alignment/selectableGeometryFeatures.h"  // ObservationList
+#include "core/xml/generated/checkerboardDetectionParameters.h"
+
 /// OpenCV wrapper
 #include "OpenCVTools.h"
 
@@ -13,10 +13,11 @@
 #pragma warning (disable:4482)
 #endif
 
-OpenCvCheckerboardDetector::OpenCvCheckerboardDetector(const CheckerboardDetectionParameters &params, BoardAlignerParams boardAlignerParams)
-    : CheckerboardDetectionParameters(params), BoardAligner(boardAlignerParams)
-{
-}
+OpenCvCheckerboardDetector::OpenCvCheckerboardDetector(const CheckerboardDetectionParameters &params
+    , BoardAlignerParams boardAlignerParams)
+    : CheckerboardDetectionParameters(params)
+    , BoardAligner(boardAlignerParams)
+{}
 
 bool OpenCvCheckerboardDetector::detectPattern(corecvs::G8Buffer &buffer)
 {
@@ -33,7 +34,7 @@ bool OpenCvCheckerboardDetector::detectPattern(corecvs::G8Buffer &buffer)
 bool OpenCvCheckerboardDetector::detectChessBoardOpenCv(corecvs::G8Buffer &buffer)
 {
     IplImage *iplImage = OpenCVTools::getCVImageFromG8Buffer(&buffer);
-    cv::Mat view = cv::Mat(iplImage);
+    CVMAT_FROM_IPLIMAGE( view, iplImage, false );
 
     // TODO: check if we can add full support of aligner (seems to be impossible)
     int hbegin = mPartialBoard ? 3 : idealHeight, hend = idealHeight;
@@ -84,4 +85,3 @@ void OpenCvCheckerboardDetector::getPointData(corecvs::ObservationList &observat
 {
     observations = result;
 }
-

@@ -1,17 +1,3 @@
-# try use global config
-exists(../../../../config.pri) {
-    ROOT_DIR=../../../..
-    #message(Using global config)
-    ROOT_DIR=$$PWD/$$ROOT_DIR
-    include($$ROOT_DIR/config.pri)
-} else {
-    message(Using local config)
-    ROOT_DIR=../..
-    ROOT_DIR=$$PWD/$$ROOT_DIR
-    include($$ROOT_DIR/cvs-config.pri)
-}
-
-
 TEMPLATE = app
 TARGET   = generator
 QT      += core xml
@@ -19,13 +5,36 @@ QT      -= gui
 CONFIG  += console
 CONFIG  -= app_bundle
 CONFIG  += debug
+CONFIG  += c++11
+
+ROOT_DIR=../../../..
+include($$ROOT_DIR/config.pri)
 
 OBJECTS_DIR = $$ROOT_DIR/.obj/generator$$BUILD_CFG_NAME
 MOC_DIR  = $$OBJECTS_DIR
 #UI_DIR  = $$OBJECTS_DIR
 #RCC_DIR = $$OBJECTS_DIR
 
-include(../../core/core.pri)
+#include(../../core/core.pri)
+
+# CORE SUBSET
+COREDIR=../../core
+
+INCLUDEPATH += \
+    $$COREDIR/.. \
+    $$COREDIR/reflection \
+    $$COREDIR/utils   \
+
+SOURCES += $$COREDIR/utils/util.c
+SOURCES += $$COREDIR/utils/utils.cpp
+
+!win32  {
+    LIBS += -lstdc++fs
+}
+
+
+# ACTUAL GENERATOR
+
 
 SOURCES += \
     main.cpp \
@@ -48,6 +57,11 @@ HEADERS += \
 #    qSettingsVisitors.h \
     parametersMapperGenerator.h \
     configLoader.h
+
+OTHER_FILES += \
+    xml/test.xml \
+    selftest.sh  \
+
 
 #SOURCES += Generated/Example.cpp
 #HEADERS += Generated/Example.h

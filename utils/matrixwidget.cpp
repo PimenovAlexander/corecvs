@@ -18,10 +18,22 @@ MatrixWidget::MatrixWidget(QWidget *parent)
         boxes[i]->setMaximum(1e100);
         boxes[i]->setMinimum(-1e100);
         boxes[i]->setEnabled(false);
+        boxes[i]->setDecimals(10);
     }
 }
 
 void MatrixWidget::setProjectiveTransform(ProjectiveTransform *F)
+{
+    int i;
+    for (i = 0; i < 9; i++)
+    {
+        boxes[i]->setValue(F->element[i]);
+    }
+
+    this->update();
+}
+
+void MatrixWidget::setMatrix33(Matrix33 *F)
 {
     int i;
     for (i = 0; i < 9; i++)

@@ -59,11 +59,11 @@ public:
     void setAutoSupported(bool autoSupported)     { mAutoSupported = autoSupported; }
 
     bool hasMenuItems() const                     { return getMenuItemNumber() != 0;    }
-    unsigned      getMenuItemNumber() const       { return (unsigned)mMenuItems.size(); }
-    const QString getMenuItem (int index) const   { return mMenuItems[index]; }
-    int           getMenuValue(int index) const   { return mMenuValue[index]; }
+    unsigned          getMenuItemNumber() const       { return (unsigned)mMenuItems.size(); }
+    const std::string getMenuItem (int index) const   { return mMenuItems[index]; }
+    int               getMenuValue(int index) const   { return mMenuValue[index]; }
 
-    void pushMenuItem (QString name, int value)
+    void pushMenuItem (std::string name, int value)
     {
         mMenuItems.push_back(name);
         mMenuValue.push_back(value);
@@ -79,7 +79,7 @@ private:
     int  mMinimum;
     int  mStep;
     bool mIsMenu;
-    vector<QString> mMenuItems;
+    vector<std::string> mMenuItems;
     vector<int>     mMenuValue;
 };
 

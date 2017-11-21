@@ -29,4 +29,18 @@ void CameraLocationAngles::prettyPrint(std::ostream &out)
     out << "Roll :" <<  roll()  << " (" << radToDeg(roll ()) << "°)" << endl;
 }
 
+/* World */
+
+void WorldLocationAngles::prettyPrint(std::ostream &out)
+{
+    out << "World" << endl;
+    out << "Yaw  :" <<  yaw()   << " (" << radToDeg(yaw  ()) << "°)" << endl;
+    out << "Pitch:" <<  pitch() << " (" << radToDeg(pitch()) << "°)" << endl;
+    out << "Roll :" <<  roll()  << " (" << radToDeg(roll ()) << "°)" << endl;
+}
+
+
+
+
+
 } // namespace corecvs

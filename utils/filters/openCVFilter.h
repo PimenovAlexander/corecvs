@@ -1,12 +1,11 @@
 #ifndef OPENCVFILTER_H
 #define OPENCVFILTER_H
 
+#include "core/buffers/g12Buffer.h"
+#include "core/xml/generated/openCVFilterParameters.h"
+#include "core/filters/blocks/filterBlock.h"
 
-#include "g12Buffer.h"
-#include "generated/openCVFilterParameters.h"
-#include "filterBlock.h"
-
-class OpenCVFilter: public FilterBlock
+class OpenCVFilter: public corecvs::FilterBlock
 {
 public:
     OpenCVFilter();
@@ -34,8 +33,8 @@ public:
     virtual ~OpenCVFilter();
 
 private:
-    G12Buffer *input;
-    G12Buffer *result;
+    corecvs::G12Buffer *input;
+    corecvs::G12Buffer *result;
 };
 
 #endif // OPENCVFILTER_H

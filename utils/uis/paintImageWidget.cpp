@@ -1,7 +1,7 @@
 #include "paintImageWidget.h"
 #include "ui_paintImageWidget.h"
 #include "../corestructs/painterHelpers.h"
-#include "rgbColor.h"
+#include "core/buffers/rgb24/rgbColor.h"
 #include "qtHelper.h"
 
 double PaintImageWidget::SELECTION_RADIUS = 5.0;
@@ -150,6 +150,9 @@ void PaintImageWidget::childMousePressed(QMouseEvent *event)
 {
     AdvancedImageWidget::childMousePressed(event);
 
+    if (! (event->buttons() & Qt::LeftButton))
+        return;
+
     if ((PaintImageWidget::PaintToolClass)mCurrentToolClass == SELECT_TOOL)
     {
         Vector2dd releasePoint = Vector2dd(event->x(), event->y());
@@ -190,24 +193,24 @@ void PaintImageWidget::childMouseMoved(QMouseEvent * event)
     //qDebug() << "Doing the drag";
     switch (mCurrentToolClass)
     {
-    case SELECT_TOOL:
-    {
-        //   qDebug() << "Drag in selected tool";
-        if (!mIsMousePressed)
-            break;
-
-        Vector2dd dragStart    = widgetToImageF(Qt2Core::Vector2ddFromQPoint(mSelectionEnd));
-        Vector2dd currentPoint = widgetToImageF(Qt2Core::Vector2ddFromQPoint(event->pos()));
-        Vector2dd shift = (dragStart - currentPoint);
-
-        for (unsigned i = 0; i < mFeatures.mSelectedPoints.size(); i++)
+        case SELECT_TOOL:
         {
-            mFeatures.mSelectedPoints[i]->position -= shift;
+            //   qDebug() << "Drag in selected tool";
+            if (!mIsMouseLeftPressed)
+                break;
+
+            Vector2dd dragStart    = widgetToImageF(Qt2Core::Vector2ddFromQPoint(mSelectionEnd));
+            Vector2dd currentPoint = widgetToImageF(Qt2Core::Vector2ddFromQPoint(event->pos()));
+            Vector2dd shift = (dragStart - currentPoint);
+
+            for (unsigned i = 0; i < mFeatures.mSelectedPoints.size(); i++)
+            {
+                mFeatures.mSelectedPoints[i]->position -= shift;
+            }
+            mUi->widget->update();
         }
-        mUi->widget->update();
-    }
-    default:
-        break;
+        default:
+            break;
     }
     AdvancedImageWidget::childMouseMoved(event);
 }

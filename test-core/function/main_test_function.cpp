@@ -1,6 +1,6 @@
-#include "function.h"
+#include "core/function/function.h"
 #include "gtest/gtest.h"
-#include "global.h"
+#include "core/utils/global.h"
 
 struct CountingFunctor
 {

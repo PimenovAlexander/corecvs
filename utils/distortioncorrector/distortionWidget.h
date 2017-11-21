@@ -2,20 +2,12 @@
 
 #include <QWidget>
 
-#include "rgb24Buffer.h"
-#include "advancedImageWidget.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
 #include "distortionParameters.h"
-#include "vector3d.h"
-#include "radialCorrection.h"
-#include "distortionCorrectTransform.h"
-#include "displacementBuffer.h"
-#include "levenmarq.h"
-#include "spatialGradient.h"
-#include "segmentator.h"
-#include "graphPlotDialog.h"
-#include "calibrationFeaturesWidget.h"
-
-
+#include "core/math/vector/vector3d.h"
+#include "core/buffers/displacementBuffer.h"
+#include "core/segmentation/segmentator.h"
+#include "observationListModel.h"
 
 namespace Ui {
 class DistortionWidget;
@@ -35,16 +27,13 @@ public:
 
 private:
     /* Images */
-    RGB24Buffer *mBufferInput;
-    RGB24Buffer *mBufferWithCorners;
-
-    QList<QLine> mCorrectionVectors;
-
-    ObservationList mObservationList;
+    RGB24Buffer         *mBufferInput;
+    RGB24Buffer         *mBufferWithCorners;
+    QList<QLine>         mCorrectionVectors;
+    ObservationList      mObservationList;
     ObservationListModel mObservationListModel;
 
     //vector<PointObservation> mCorrectionMap;
-    void setCameraParameters();
 
     /* Parameters */
     DistortionParameters *mDistortionParameters;
@@ -64,7 +53,6 @@ private:
     /* Some data for semiautomatic corner detection*/
     Segmentator<CornerSegmentator, CornerSegment>::SegmentationResult *mResult;
 
-    void printVectorPair(const Vector3dd &spacePoint, const Vector2dd &imagePoint);
     void addPointPair(const Vector3dd &spacePoint, const Vector2dd &imagePoint);
 
 private slots:

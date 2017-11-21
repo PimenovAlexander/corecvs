@@ -3,7 +3,7 @@
 
 #include <QtGui/QWidget>
 #include "ui_sobelfilter.h"
-#include "g12Buffer.h"
+#include "core/buffers/g12Buffer.h"
 #include "basefilter.h"
 
 class SobelFilter : public BaseFilter

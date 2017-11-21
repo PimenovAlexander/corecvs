@@ -12,12 +12,13 @@
 #include "core/rectification/essentialMatrix.h"
 #include "core/xml/generated/distortionApplicationParameters.h"
 
-/* Future derived */
-//#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/geometry/polygons.h"
+#include "core/cameracalibration/pinholeCameraIntrinsics.h"
+#include "core/alignment/radialCorrection.h"
+#include "core/buffers/displacementBuffer.h"
 
 namespace corecvs {
 
-/*class RGB24Buffer;*/
 class FixtureScene;
 
 /**
@@ -38,7 +39,6 @@ public:
         OBJECT_COUNT++;
     }
 
-
     virtual ~ScenePart() {
         OBJECT_COUNT++;
     }
@@ -48,139 +48,7 @@ public:
 typedef std::unordered_map<std::string, void *> MetaContainer;
 
 
-
-/**
- * XXX: We already have intrinsics class somewhere (CameraIntrinsicsLegacy), but
- *      it is not full enough to hold abstract projective pin-hole model (e.g. skewed/non-rectangular)
- *      So this one is now the one to use
- *
- *
- *  TODO: The idea is that if we merge distorsion calibration WITH extrinsics/intrinsics
- *        calibration, then this method will project point using forward distorsion map
- *
- **/
-
-struct PinholeCameraIntrinsics
-{
-    const static int DEFAULT_SIZE_X = 2592;
-    const static int DEFAULT_SIZE_Y = 1944;
-
-
-    Vector2dd focal;            /**< Focal length (in px) in two directions */
-    Vector2dd principal;        /**< Principal point of optical axis on image plane (in pixel). Usually center of imager */
-    double    skew;             /**< Skew parameter to compensate for optical axis tilt */
-    Vector2dd size;             /**< Imager resolution (in pixel) */
-    Vector2dd distortedSize;    /**< Source image resolution (FIXME: probably should move it somewhere) */
-
-
-    PinholeCameraIntrinsics(
-            double fx = 1.0,
-            double fy = 1.0,
-            double cx = DEFAULT_SIZE_X / 2.0,
-            double cy = DEFAULT_SIZE_Y / 2.0,
-            double skew = 0.0,
-            Vector2dd size = Vector2dd(DEFAULT_SIZE_X, DEFAULT_SIZE_Y),
-            Vector2dd distortedSize = Vector2dd(DEFAULT_SIZE_X, DEFAULT_SIZE_Y))
-      : focal         (fx, fy)
-      , principal     (cx, cy)
-      , skew          (skew)
-      , size          (size)
-      , distortedSize (distortedSize)
-    {}
-
-    PinholeCameraIntrinsics(Vector2dd resolution, double hfov);
-
-
-    /**
-     * This actually doesn't differ from matrix multiplication, just is a little bit more lightweight
-     *
-     **/
-    Vector2dd project(const Vector3dd &p) const
-    {
-        Vector2dd result = (focal * p.xy() + Vector2dd(skew * p.y(), 0.0)) / p.z() + principal;
-        return result;
-    }
-
-    Vector2dd reprojectionError(const Vector3dd &p, const Vector2dd &pp) const
-    {
-        return project(p) - pp;
-    }
-    Vector3dd crossProductError(const Vector3dd &p, const Vector2dd &pp)
-    {
-        return p.normalised() ^ reverse(pp).normalised();
-    }
-    double angleError(const Vector3dd &p, const Vector2dd &pp)
-    {
-        return reverse(pp).normalised().angleTo(p.normalised()) * 180.0 / M_PI;
-    }
-    Vector3dd rayDiffError(const Vector3dd &p, const Vector2dd &pp)
-    {
-        return reverse(pp).normalised() - p.normalised();
-    }
-
-
-    Vector3dd reverse(const Vector2dd &p) const
-    {
-        Vector2dd result;
-        result[1] = (p[1] - principal[1]) / focal[1];
-        result[0] = (p[0] - skew * result[1] - principal[0]) / focal[0];
-        return Vector3dd(result.x(), result.y(), 1.0);
-    }
-
-    bool isVisible(const Vector3dd &p) const
-    {
-        if (p[2] <= 0.0) {
-            return false;
-        }
-        Vector2dd proj = project(p);
-
-        if (!proj.isInRect(Vector2dd(0.0, 0.0), size))
-        {
-            return false;
-        }
-        return true;
-    }
-
-    explicit operator Matrix33() const  { return getKMatrix33(); }
-
-    Matrix44 getKMatrix() const;
-    Matrix44 getInvKMatrix() const;
-
-    Matrix33 getKMatrix33() const;
-    Matrix33 getInvKMatrix33() const;
-
-    double   getVFov() const;
-    double   getHFov() const;
-
-    double   getAspect() const          { return size.y() / size.x(); }
-
-    template<class VisitorType>
-    void accept(VisitorType &visitor)
-    {
-        static const Vector2dd DEFAULT_SIZE(DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
-
-        visitor.visit(focal.x()    , 1.0                 , "fx"  );
-        visitor.visit(focal.y()    , 1.0                 , "fy"  );
-        visitor.visit(principal.x(), DEFAULT_SIZE_X / 2.0, "cx"  );
-        visitor.visit(principal.y(), DEFAULT_SIZE_Y / 2.0, "cy"  );
-        visitor.visit(skew         , 0.0                 , "skew");
-        visitor.visit(size         , DEFAULT_SIZE        , "size");
-        visitor.visit(distortedSize, DEFAULT_SIZE        , "distortedSize");
-    }
-
-    /* Helper pseudonim getters */
-    double  w() const    { return size.x();      }
-    double  h() const    { return size.y();      }
-
-    double cx() const    { return principal.x(); }
-    double cy() const    { return principal.y(); }
-    double fx() const    { return focal.x(); }
-    double fy() const    { return focal.y(); }
-
-};
-
-
-class CameraModel /*: public ScenePart*/
+class CameraModel
 {
 public:
     /**/
@@ -200,8 +68,7 @@ public:
     std::string     nameId;
 
 public:
-    CameraModel(/*FixtureScene * owner = NULL*/) /*:
-        ScenePart(owner)*/
+    CameraModel()
     {}
 
     CameraModel(
@@ -270,9 +137,19 @@ public:
     }
 
     Matrix33 fundamentalTo(const CameraModel &right) const;
+    static Matrix33 Fundamental(const Matrix44 &Pl, const Matrix44 &Pr);
     Matrix33 essentialTo  (const CameraModel &right) const;
     EssentialDecomposition essentialDecomposition(const CameraModel &right) const;
     static EssentialDecomposition ComputeEssentialDecomposition(const CameraLocationData &thisData, const CameraLocationData &otherData);
+
+
+    PlaneFrame getVirtualScreen(double distance) const;
+
+    /** 
+      double pyramidLength1
+      double pyramidLength2
+     **/
+    Polygon projectViewport(const CameraModel &right, double pyramidLength1 = -1, double pyramidLength2 = -1) const;
 
     /**
      * Only checks for the fact that point belongs to viewport.
@@ -314,16 +191,49 @@ public:
     Vector3dd           rightDirection() const;
 
     Matrix33            getRotationMatrix() const;
-    Matrix44            getCameraMatrix() const;
     Vector3dd           getCameraTVector() const;
+    Matrix44            getPositionMatrix() const;
+    Matrix44            getCameraMatrix() const;
 
-    ConvexPolyhedron    getViewport(const Vector2dd &p1, const Vector2dd &p2);
+    /* These methods ignore distortion */
+    ConvexPolyhedron    getViewport(const Vector2dd &p1, const Vector2dd &p2) const;
+    ConvexPolyhedron    getCameraViewport( double farPlane = -1) const;
+
+    /**
+     * Sides of the viewport are triangles with points at infinity, so they are stored in projective space
+     **/
+    vector<GenericTriangle<Vector4dd>> getCameraViewportSides() const;
+
+    /**
+     * Some points of the viewport are at infinity, so they are stored in projective space
+     **/
+    vector<Vector4dd> getCameraViewportPyramid() const;
+
+    Polygon getCameraViewportPolygon() const;
+
+
 
 
     void copyModelFrom(const CameraModel &other) {
         intrinsics = other.intrinsics;
         distortion = other.distortion;
         extrinsics = other.extrinsics;
+    }
+
+    /* This method produces camera model that is a copy, but works for downsampled image */
+    CameraModel scaledModel(double scaleFactor = 0.5)
+    {
+        CameraModel model = *this;
+        model.intrinsics.principal = model.intrinsics.principal * scaleFactor;
+        model.intrinsics.focal = model.intrinsics.focal * scaleFactor;
+        model.intrinsics.size  = model.intrinsics.size  * scaleFactor;
+        model.intrinsics.distortedSize = model.intrinsics.distortedSize  * scaleFactor;
+
+        model.distortion.setNormalizingFocal(model.distortion.normalizingFocal() * scaleFactor);
+        model.distortion.setPrincipalPoint  (model.distortion.principalPoint() * scaleFactor);
+        model.distortion.setShiftX(model.distortion.shiftX() * scaleFactor);
+        model.distortion.setShiftY(model.distortion.shiftY() * scaleFactor);
+        return model;
     }
 
     void setLocation(const Affine3DQ &location)
@@ -351,6 +261,21 @@ public:
         PrinterVisitor printer(out);
         toSave.accept<PrinterVisitor>(printer);
         return out;
+    }
+
+    DisplacementBuffer transform(const DistortionApplicationParameters &applicationParams)
+    {
+        estimateUndistortedSize(applicationParams);
+        int newW = (int)intrinsics.size.x();
+        int newH = (int)intrinsics.size.y();
+        if (newH < 0 || newW < 0)
+        {
+            SYNC_PRINT(("invalid distortion data for camId=%s outSize(%dx%d)", nameId.c_str(), newW, newH));
+            return DisplacementBuffer();
+        }
+
+        return RadialCorrection(distortion).getUndistortionTransformation(intrinsics.size
+            ,intrinsics.distortedSize, 0.25, false);
     }
 
     void prettyPrint(std::ostream &out = cout);

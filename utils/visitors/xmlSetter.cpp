@@ -12,7 +12,7 @@ XmlSetter::XmlSetter(const QString &fileName) :
     mFileName = fileName;
     /*QFile file(mFileName);
     if (!file.open(QFile::ReadWrite)) {
-        qDebug() << "Can't open file <" << fileName << ">" << endl;
+        qDebug() << "XmlSetter::XmlSetter(): Can't open file <" << fileName << ">" << endl;
         return;
     }
 
@@ -27,7 +27,7 @@ XmlSetter::~XmlSetter()
 
     QFile file(mFileName);
     if (!file.open(QFile::WriteOnly)) {
-        qDebug() << "Can't open file <" << mFileName << ">" << endl;
+        qDebug() << "XmlSetter::XmlSetter(): Can't open file <" << mFileName << ">" << endl;
         return;
     }
 
@@ -137,7 +137,15 @@ void XmlSetter::visit<bool, BoolField>(bool &field, const BoolField *fieldDescri
 template <>
 void XmlSetter::visit<std::string, StringField>(std::string &field, const StringField *fieldDescriptor)
 {
-	saveValue(fieldDescriptor->name.name, field.c_str());
+    saveValue(fieldDescriptor->name.name, QString::fromStdString(field));
+}
+
+
+template <>
+void XmlSetter::visit<std::wstring, WStringField>(std::wstring &field, const WStringField *fieldDescriptor)
+{
+//    SYNC_PRINT(("XML doesn't support wide strings so far"));
+    saveValue(fieldDescriptor->name.name, QString::fromStdWString(field));
 }
 
 template <>

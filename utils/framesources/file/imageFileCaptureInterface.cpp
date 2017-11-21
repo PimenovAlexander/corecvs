@@ -8,7 +8,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include "imageFileCaptureInterface.h"
 

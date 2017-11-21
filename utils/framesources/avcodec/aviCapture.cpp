@@ -4,16 +4,16 @@
 #include <QtCore/QRegExp>
 #include <QtCore/QString>
 
-#include "preciseTimer.h"
+#include "core/utils/preciseTimer.h"
 
 #include "aviCapture.h"
 
 
 bool AviCapture::avCodecInited = false;
 
-AviCapture::AviCapture(QString const &params)
+AviCapture::AviCapture(const std::string &params)
     : /*AbstractFileCapture(params),*/
-       mName(params.toStdString())
+       mName(params)
      , mFormatContext(NULL)
      , mCodecContext(NULL)
      , mCodec(NULL)
@@ -21,7 +21,7 @@ AviCapture::AviCapture(QString const &params)
      , mFrame(NULL)
      , count(1)
 {
-    SYNC_PRINT(("AviCapture::AviCapture(%s): called\n", params.toLatin1().constData()));
+    SYNC_PRINT(("AviCapture::AviCapture(%s): called\n", params.c_str()));
     if (!avCodecInited)
     {
         SYNC_PRINT(("Registering the codecs...\n"));
@@ -117,8 +117,8 @@ ImageCaptureInterface::FramePair AviCapture::getFrame()
                 return result;
             }
 
-            result.rgbBufferLeft = new RGB24Buffer(mFrame->height, mFrame->width);
-            result.bufferLeft    = new G12Buffer  (mFrame->height, mFrame->width);
+            result.setRgbBufferLeft(new RGB24Buffer(mFrame->height, mFrame->width));
+            result.setBufferLeft   (new G12Buffer  (mFrame->height, mFrame->width));
             for (int i = 0; i < mFrame->height; i++)
             {
                 for (int j = 0; j < mFrame->width; j++)
@@ -128,18 +128,18 @@ ImageCaptureInterface::FramePair AviCapture::getFrame()
                     uint8_t u = (mFrame->data[1])[(i / 2) * mFrame->linesize[1] + (j / 2)];
                     uint8_t v = (mFrame->data[2])[(i / 2) * mFrame->linesize[2] + (j / 2)];
 
-                    result.rgbBufferLeft->element(i,j) = RGBColor::FromYUV(y,u,v);
-                    result.bufferLeft   ->element(i,j) = (int)y << 4;
+                    result.rgbBufferLeft()->element(i,j) = RGBColor::FromYUV(y,u,v);
+                    result.bufferLeft()   ->element(i,j) = (int)y << 4;
                 }
             }
 
-            result.rgbBufferRight = new RGB24Buffer(result.rgbBufferLeft);
-            result.bufferRight = new G12Buffer(result.bufferLeft);
+            result.setRgbBufferRight (new RGB24Buffer(result.rgbBufferLeft()));
+            result.setBufferRight    (new G12Buffer(result.bufferLeft()));
         }
 
 
-        result.timeStampLeft  = count * 10;
-        result.timeStampRight  = count * 10;
+        result.setTimeStampLeft (count * 10);
+        result.setTimeStampRight(count * 10);
 
     //mProtectFrame.unlock();
     stats.values[CaptureStatistics::DECODING_TIME] = start.usecsToNow();
@@ -150,7 +150,10 @@ ImageCaptureInterface::FramePair AviCapture::getFrame()
     }
     mLastFrameTime = PreciseTimer::currentTime();
     stats.values[CaptureStatistics::DATA_SIZE] = 0;
-    emit newStatisticsReady(stats);
+    if (imageInterfaceReceiver != NULL)
+    {
+        imageInterfaceReceiver->newStatisticsReadyCallback(stats);
+    }
 
     if (!mIsPaused)
     {
@@ -219,17 +222,17 @@ AviCapture::~AviCapture()
     SYNC_PRINT(("AviCapture::~AviCapture(): called\n"));
 
     if (mFrame != NULL) {
-        av_free(mFrame);
+    av_free(mFrame);
         mFrame = NULL;
     }
 
     if (mCodecContext != NULL) {
-        avcodec_close(mCodecContext);
+    avcodec_close(mCodecContext);
         mCodecContext = NULL;
     }
 
     if (mFormatContext != NULL) {
-        avformat_close_input(&mFormatContext);
+    avformat_close_input(&mFormatContext);
         mFormatContext = NULL;
     }
 

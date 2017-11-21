@@ -1,12 +1,12 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
-#include "rgb24Buffer.h"
-#include "radialCorrection.h"
-#include "preciseTimer.h"
-#include "displacementBuffer.h"
-#include "bmpLoader.h"
+#include "core/utils/global.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/alignment/radialCorrection.h"
+#include "core/utils/preciseTimer.h"
+#include "core/buffers/displacementBuffer.h"
+#include "core/fileformats/bmpLoader.h"
 
 using std::flush;
 

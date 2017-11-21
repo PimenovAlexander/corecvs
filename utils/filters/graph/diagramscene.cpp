@@ -43,8 +43,6 @@
 #include "iostream"
 #include "filterGraphPresentation.h"
 
-using namespace std;
-
 DiagramScene::DiagramScene(QObject *parent)
     : QGraphicsScene(parent)
 {

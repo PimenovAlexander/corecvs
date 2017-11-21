@@ -1,12 +1,15 @@
 #ifndef JSONGETTER_H
 #define JSONGETTER_H
 
+#include <string>
+#include <vector>
+
 #include <QtCore/QString>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 
-#include "reflection.h"
+#include "core/reflection/reflection.h"
 
 using corecvs::IntField;
 using corecvs::Int64Field;
@@ -15,6 +18,7 @@ using corecvs::DoubleField;
 using corecvs::FloatField;
 using corecvs::BoolField;
 using corecvs::StringField;
+using corecvs::WStringField;
 using corecvs::PointerField;
 using corecvs::EnumField;
 using corecvs::DoubleVectorField;
@@ -26,7 +30,7 @@ class JSONGetter
 {
 public:
     bool isSaver () { return false;}
-    bool isLoader() { return true ;}
+    bool isLoader() { return true; }
 
 public:
     /**
@@ -35,7 +39,7 @@ public:
     * @brief JSONGetter
     * @param fileName
     **/
-    JSONGetter(const char * fileName) { init(fileName); }
+    explicit JSONGetter(const char * fileName) { init(fileName); }
 
     /**
      *  Create a getter object that will use data from a file with a specified name.
@@ -56,10 +60,16 @@ public:
     /**
      *  Create a getter object that will use data from a given XML
      **/
-    JSONGetter(QJsonObject &document) : mDocument(document)
+    explicit JSONGetter(QJsonObject &document) : mDocument(document)
     {
         mNodePath.push_back(mDocument);
     }
+
+    explicit JSONGetter(const QByteArray &array)
+    {
+        init(array);
+    }
+
 
     /**
      *  Visitor method that will traverse json and object tree and fill object with data form xml
@@ -73,7 +83,7 @@ public:
         popChild();
     }
 
-    template <class Type>
+    template <typename Type, typename std::enable_if<!(std::is_enum<Type>::value || (std::is_arithmetic<Type>::value && !(std::is_same<bool, Type>::value || std::is_same<uint64_t, Type>::value))), int>::type foo = 0>
     void visit(Type &field, Type, const char *fieldName)
     {
         visit<Type>(field, fieldName);
@@ -197,6 +207,29 @@ public:
         }
     }
 
+    template <typename type, typename std::enable_if<std::is_arithmetic<type>::value && !std::is_same<bool, type>::value && !std::is_same<uint64_t, type>::value, int>::type foo = 0>
+    void visit(type &field, type defaultValue, const char *fieldName)
+    {
+        auto value = mNodePath.back().value(fieldName);
+        if (value.isDouble())
+        {
+            field = static_cast<type>(value.toDouble());
+        }
+        else
+        {
+            field = defaultValue;
+        }
+    }
+
+    template <typename type, typename std::enable_if<std::is_enum<type>::value, int>::type foo = 0>
+    void visit(type &field, type defaultValue, const char *fieldName)
+    {
+        using U = typename std::underlying_type<type>::type;
+        U u = static_cast<U>(field);
+        visit(u, static_cast<U>(defaultValue), fieldName);
+        field = static_cast<type>(u);
+    }
+
     void pushChild(const char *childName)
     {
         QJsonObject mainNode = mNodePath.back();
@@ -209,31 +242,32 @@ public:
         mNodePath.pop_back();
     }
 
+    bool hasError() const
+    {
+        return mHasError;
+    }
+
 private:
     void init(const char *fileName);
+    bool init(const QByteArray &array);
 
     std::vector<QJsonObject> mNodePath;
-    QString     mFileName;
-    QJsonObject mDocument;
+    QString                  mFileName;
+    QJsonObject              mDocument;
+    bool                     mHasError = false;
 };
 
 template <>
-void JSONGetter::visit<int>   (int &intField, int defaultValue, const char * fieldName);
-
-template <>
 void JSONGetter::visit<uint64_t>(uint64_t &intField, uint64_t defaultValue, const char *fieldName);
-
-template <>
-void JSONGetter::visit<double>(double &doubleField, double defaultValue, const char * fieldName);
-
-template <>
-void JSONGetter::visit<float> (float &floatField, float defaultValue, const char * fieldName);
 
 template <>
 void JSONGetter::visit<bool>  (bool &boolField, bool defaultValue, const char * fieldName);
 
 template <>
 void JSONGetter::visit<std::string>(std::string &stringField, std::string defaultValue, const char* fieldName);
+
+template <>
+void JSONGetter::visit<std::wstring>(std::wstring &stringField, std::wstring defaultValue, const char *fieldName);
 
 /* New style visitor */
 
@@ -257,6 +291,9 @@ void JSONGetter::visit<bool, BoolField>(bool &field, const BoolField *fieldDescr
 
 template <>
 void JSONGetter::visit<std::string, StringField>(std::string &field, const StringField *fieldDescriptor);
+
+template <>
+void JSONGetter::visit<std::wstring, WStringField>(std::wstring &field, const WStringField *fieldDescriptor);
 
 template <>
 void JSONGetter::visit<void *, PointerField>(void * &field, const PointerField *fieldDescriptor);

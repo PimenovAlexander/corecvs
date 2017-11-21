@@ -4,7 +4,7 @@
  * \date Mar 1, 2013
  **/
 
-#include "reflection.h"
+#include "core/reflection/reflection.h"
 
 #include "treeSceneController.h"
 
@@ -14,10 +14,10 @@ using corecvs::BaseReflectionStatic;
 
 void TreeSceneController::paramtersChanged()
 {
+    // SYNC_PRINT(("TreeSceneController::paramtersChanged()\n"));
+
     if (mObject.isNull() || mParametersWidget == NULL)
-    {
         return;
-    }
 
     BaseReflectionStatic *params = mParametersWidget->createParametersVirtual();
     if (params != NULL)
@@ -30,9 +30,7 @@ void TreeSceneController::paramtersChanged()
 void TreeSceneController::transformationChanged()
 {
     if (mObject.isNull())
-    {
         return;
-    }
 
     mObject->transform = mTransform3DWidget->getTransform();
     emit redrawRequest();
@@ -41,9 +39,8 @@ void TreeSceneController::transformationChanged()
 void TreeSceneController::visibilityChanged(bool state)
 {
     if (mObject.isNull())
-    {
         return;
-    }
+
     //qDebug () << mFrame->name << "is now:" << (state ? "visible" : "invisible");
     mObject->visible = state;
     emit redrawRequest();
@@ -62,10 +59,10 @@ void TreeSceneController::clicked()
 }
 
 TreeSceneController::TreeSceneController(
-        QString name,
-        QSharedPointer<Scene3D> object,
-        TreeSceneModel *treeModel,
-        bool visible
+    QString name,
+    QSharedPointer<Scene3D> object,
+    TreeSceneModel *treeModel,
+    bool visible
 ) :
     mTreeModel(treeModel),
     mParentController(NULL),
@@ -93,34 +90,24 @@ TreeSceneController::TreeSceneController(
 void TreeSceneController::generateWidget()
 {
     if (mObject.isNull())
-    {
         return;
-    }
 
     if (mParametersWidget != NULL)
-    {
         return;
-    }
 
     //qDebug("TreeSceneController::generateWidget() : Calling creating Control widget");
     mParametersWidget = mObject->getContolWidget();
-
     if (mParametersWidget == NULL)
-    {
         return;
-    }
 
     mParametersWidget->setWindowTitle(QString("Parameters for: ") + mName);
     connect(mParametersWidget,  SIGNAL(paramsChanged()),     this, SLOT(paramtersChanged()));
 }
 
-
 void TreeSceneController::replaceScene(QSharedPointer<Scene3D> newObject)
 {
     if (newObject.isNull())
-    {
         return;
-    }
 
     /* Rearrange mesh hierarchy according to the controller */
     if (mParentController != NULL && !mParentController->mObject.isNull())
@@ -143,7 +130,6 @@ void TreeSceneController::replaceScene(QSharedPointer<Scene3D> newObject)
                 break;
             }
         }
-
         if (i >= parent->mChildren.size())
         {
             qDebug("Seems like internal error\n");
@@ -182,13 +168,11 @@ QString TreeSceneController::print(const QString &prefix)
     return result;
 }
 
-TreeSceneController * TreeSceneController::addChildObject (
-    QString name, QSharedPointer<Scene3D> object, TreeSceneModel *treeModel, bool visible )
+TreeSceneController * TreeSceneController::addChildObject(
+    QString name, QSharedPointer<Scene3D> object, TreeSceneModel *treeModel, bool visible)
 {
     if (!mObject->isComplexObject())
-    {
         return NULL;
-    }
 
     TreeSceneController *newController = new  TreeSceneController(name, object, treeModel, visible);
     mChildren.push_back(newController);
@@ -211,15 +195,12 @@ TreeSceneController * TreeSceneController::addChildObject (
     return newController;
 }
 
-
 TreeSceneController * TreeSceneController::addChildObjectRecursive(
     QString name, QSharedPointer<Scene3D> object, TreeSceneModel *treeModel, bool visible )
 {
     TreeSceneController *newController = addChildObject (name, object, treeModel, visible);
     if (newController == NULL)
-    {
         return NULL;
-    }
 
     if (object->isComplexObject())
     {
@@ -235,7 +216,6 @@ TreeSceneController * TreeSceneController::addChildObjectRecursive(
     return newController;
 }
 
-
 TreeSceneController::~TreeSceneController()
 {
     delete_safe(mTransform3DWidget);
@@ -245,7 +225,6 @@ TreeSceneController::~TreeSceneController()
     {
        delete_safe(mChildren[i]);
     }
-
 }
 
 template <>
@@ -275,10 +254,9 @@ void TreeSceneController::accept<SettingsGetter>(SettingsGetter &visitor)
 
 const QString TreeSceneModel::MIME_TYPE = "application/x-vimouse-internal";
 
-
-TreeSceneModel::TreeSceneModel(QObject * parent) :
-    QAbstractItemModel(parent),
-    mTopItem(NULL)
+TreeSceneModel::TreeSceneModel(QObject * parent)
+    : QAbstractItemModel(parent)
+    , mTopItem(NULL)
 {
     mTopItem = new TreeSceneController(
         "root",
@@ -293,19 +271,18 @@ TreeSceneModel::~TreeSceneModel()
 }
 
 TreeSceneController * TreeSceneModel::addObject(
-        QString name,
-        QSharedPointer<Scene3D> object,
-        bool visible)
+    QString name,
+    QSharedPointer<Scene3D> object,
+    bool visible)
 {
     if (mTopItem == NULL)
-    {
         return NULL;
-    }
 
     beginInsertRows(QModelIndex(), (int)mTopItem->mChildren.size(), (int)mTopItem->mChildren.size());
     //TreeSceneController *result = mTopItem->addChildObject(name, object, visible);
     TreeSceneController *result = mTopItem->addChildObjectRecursive(name, object, this, visible);
     endInsertRows();
+
     return result;
 }
 
@@ -336,9 +313,7 @@ Qt::ItemFlags TreeSceneModel::flags(const QModelIndex &index) const
 QVariant TreeSceneModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
-    {
         return QVariant();
-    }
 
     TreeSceneController *scene = indexToScene(index);
 
@@ -353,7 +328,8 @@ QVariant TreeSceneModel::data(const QModelIndex &index, int role) const
         default:
             break;
         }
-    } else if (role == Qt::ToolTipRole)
+    }
+    else if (role == Qt::ToolTipRole)
     {
         switch (index.column())
         {
@@ -366,7 +342,8 @@ QVariant TreeSceneModel::data(const QModelIndex &index, int role) const
         default:
             break;
         }
-    } else if ( role == Qt::CheckStateRole )
+    }
+    else if ( role == Qt::CheckStateRole )
     {
         switch (index.column())
         {
@@ -380,7 +357,8 @@ QVariant TreeSceneModel::data(const QModelIndex &index, int role) const
             default:
                 break;
         }
-    } else  if (role == Qt::DecorationRole)
+    }
+    else  if (role == Qt::DecorationRole)
     {
         if (index.column() == NAME_COLUMN)
         {
@@ -402,9 +380,7 @@ QVariant TreeSceneModel::data(const QModelIndex &index, int role) const
 bool TreeSceneModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if (!index.isValid())
-    {
         return false;
-    }
 
 //    qDebug("TreeSceneModel::setData((%d x %d), %d, %d)", index.row(), index.column(), value.toBool(), role);
 
@@ -422,9 +398,7 @@ bool TreeSceneModel::setData(const QModelIndex &index, const QVariant &value, in
             /* Well... this should be called */
             emit dataChanged(index, index);
 
-            qDebug() << scene->mObject->name <<
-                    "(" << scene->mObject.data() << ")" <<
-                    " is now:" << scene->mObject->visible;
+            //qDebug() << scene->mObject->name << "(" << scene->mObject.data() << ")" << " is now:" << scene->mObject->visible;
             return true;
         }
     }
@@ -474,13 +448,11 @@ int TreeSceneModel::columnCount(const QModelIndex &/*parent*/ ) const
 QModelIndex TreeSceneModel::index(int row, int column, const QModelIndex &parent ) const
 {
     if (!hasIndex(row, column, parent))
-    {
         return QModelIndex();
-    }
 
     TreeSceneController *parentController = (!parent.isValid() ? mTopItem : indexToScene(parent));
 
-    if( row < (int)parentController->mChildren.size() )
+    if (row < (int)parentController->mChildren.size())
     {
         return createIndex( row, column, parentController->mChildren[row]);
     }
@@ -491,15 +463,13 @@ QModelIndex TreeSceneModel::index(int row, int column, const QModelIndex &parent
 
 QModelIndex TreeSceneModel::parent(const QModelIndex &index) const
 {
-    if( !index.isValid() )
-    {
+    if (!index.isValid() )
         return QModelIndex();
-    }
 
     TreeSceneController *indexObject = indexToScene(index);
     TreeSceneController *parentObject = indexObject->mParentController;
 
-    if( parentObject == mTopItem )
+    if (parentObject == mTopItem)
         return QModelIndex();
 
     TreeSceneController *grandParentObject = parentObject->mParentController;
@@ -561,7 +531,7 @@ QModelIndex  TreeSceneModel::unpackPath(QDataStream &stream) const
     return pathIter;
 }
 
-QMimeData *TreeSceneModel::mimeData(const QModelIndexList &indexes) const
+QMimeData *TreeSceneModel::mimeData(const QModelIndexList &indices) const
 {
     //qDebug() << "Packing object to mime";
     QMimeData *mimeData = new QMimeData();
@@ -569,11 +539,10 @@ QMimeData *TreeSceneModel::mimeData(const QModelIndexList &indexes) const
 
     QDataStream stream(&encodedData, QIODevice::WriteOnly);
 
-    if (indexes.size() == 0)
-    {
+    if (indices.size() == 0)
         return NULL;
-    }
-    packPath(indexes[0], stream);
+
+    packPath(indices[0], stream);
     mimeData->setData(MIME_TYPE, encodedData);
     return mimeData;
 }
@@ -586,14 +555,10 @@ bool TreeSceneModel::dropMimeData(
         const QModelIndex &target)
 {
     if (action == Qt::IgnoreAction)
-    {
         return true;
-    }
 
     if (!data->hasFormat(MIME_TYPE))
-    {
         return false;
-    }
 
     QByteArray encodedData = data->data(MIME_TYPE);
     QDataStream stream(&encodedData, QIODevice::ReadOnly);
@@ -616,9 +581,7 @@ bool TreeSceneModel::dropMimeData(
 
     TreeSceneController *targetController = indexToScene(target);
     if (targetController->mObject.isNull())
-    {
         return false;
-    }
 
     QModelIndex insertParent = target;
     if (!targetController->mObject->isComplexObject())
@@ -647,7 +610,6 @@ bool TreeSceneModel::dropMimeData(
             break;
         }
     }
-
     if (indexToDetach >= parentController->mChildren.size())
         return false;
 
@@ -700,10 +662,7 @@ bool TreeSceneModel::clicked(const QModelIndex &index)
 TreeSceneController *TreeSceneModel::indexToScene(const QModelIndex &index) const
 {
     if (index != QModelIndex())
-    {
-        return static_cast<TreeSceneController*>( index.internalPointer() );
-    } else {
-        return mTopItem;
-    }
-}
+        return static_cast<TreeSceneController*>(index.internalPointer());
 
+    return mTopItem;
+}

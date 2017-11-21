@@ -72,6 +72,13 @@ void SettingsGetter::visit<std::string, StringField>(std::string &field, const S
 }
 
 template <>
+void SettingsGetter::visit<std::wstring, WStringField>(std::wstring &field, const WStringField *fieldDescriptor)
+{
+    field = mSettings->value(fieldDescriptor->name.name, QString::fromStdWString(fieldDescriptor->defaultValue)).toString().toStdWString();
+}
+
+
+template <>
 void SettingsGetter::visit<void *, PointerField>(void * &field, const PointerField * /*fieldDescriptor*/)
 {
     // not supported yet

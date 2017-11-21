@@ -2,7 +2,7 @@
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
 
-#include "global.h"
+#include "core/utils/global.h"
 #include "capSettingsDialog.h"
 
 #include "parameterSelector.h"
@@ -86,7 +86,7 @@ void CapSettingsDialog::refreshDialog()
            for (unsigned index = 0; index < params.getMenuItemNumber(); index++)
            {
                paramSelector->pushOption(
-                   params.getMenuItem(index),
+                   QString::fromStdString(params.getMenuItem(index)),
                    params.getMenuValue(index));
            }
            paramEditor = paramSelector;
@@ -126,7 +126,7 @@ void CapSettingsDialog::loadFromQSettings (const QString &fileName, const QStrin
         return;
     }
 
-    QString interfaceName = mCaptureInterface->getInterfaceName();
+    QString interfaceName = QString::fromStdString(mCaptureInterface->getInterfaceName());
     if (interfaceName.isEmpty())
     {
         qDebug("CapSettingsDialog::loadFromQSettings(): Loading won't happen. Interface is NULL");
@@ -173,7 +173,7 @@ void CapSettingsDialog::saveToQSettings (const QString &fileName, const QString 
         return;
     }
 
-    QString interfaceName = mCaptureInterface->getInterfaceName();
+    QString interfaceName = QString::fromStdString(mCaptureInterface->getInterfaceName());
     if (interfaceName.isEmpty())
     {
         qDebug() << "CapSettingsDialog::saveToQSettings(): interface name is empty";

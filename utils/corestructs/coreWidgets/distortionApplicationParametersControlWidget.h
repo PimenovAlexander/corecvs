@@ -1,6 +1,6 @@
 #pragma once
 #include <QWidget>
-#include "generated/distortionApplicationParameters.h"
+#include "core/xml/generated/distortionApplicationParameters.h"
 #include "ui_distortionApplicationParametersControlWidget.h"
 #include "parametersControlWidgetBase.h"
 

@@ -9,16 +9,16 @@
  */
 
 #include <iostream>
-#include "global.h"
-#include "rgb24Buffer.h"
-#include "bmpLoader.h"
-#include "mathUtils.h"
-#include "matrix33.h"
-#include "projectiveTransform.h"
-#include "polygons.h"
-#include "segmentator.h"
-#include "g8Buffer.h"
-#include "ellipticalApproximation.h"
+#include "core/utils/global.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/math/mathUtils.h"
+#include "core/math/matrix/matrix33.h"
+#include "core/math/projectiveTransform.h"
+#include "core/geometry/polygons.h"
+#include "core/segmentation/segmentator.h"
+#include "core/buffers/g8Buffer.h"
+#include "core/geometry/ellipticalApproximation.h"
 
 
 #include "snookerSegmentator.h"

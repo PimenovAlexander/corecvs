@@ -13,20 +13,20 @@
 #include <limits>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "matrix.h"
-#include "matrix33.h"
-#include "matrix44.h"
-#include "vector3d.h"
-#include "correspondenceList.h"
-#include "bmpLoader.h"
-#include "essentialMatrix.h"
-#include "cameraParameters.h"
-#include "mathUtils.h"
-#include "simulation/flowSimulator.h"
-#include "ransacEstimator.h"
-#include "stereoAligner.h"
+#include "core/math/matrix/matrix.h"
+#include "core/math/matrix/matrix33.h"
+#include "core/math/matrix/matrix44.h"
+#include "core/math/vector/vector3d.h"
+#include "core/rectification/correspondenceList.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/rectification/essentialMatrix.h"
+#include "core/cammodel/cameraParameters.h"
+#include "core/math/mathUtils.h"
+#include "core/automotive/simulation/flowSimulator.h"
+#include "core/rectification/ransacEstimator.h"
+#include "core/rectification/stereoAligner.h"
 
 using namespace corecvs;
 

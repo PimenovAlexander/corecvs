@@ -1,6 +1,6 @@
 #pragma once
 #include <QWidget>
-#include "generated/openCVFilterParameters.h"
+#include "core/xml/generated/openCVFilterParameters.h"
 #include "ui_openCVFilterParametersControlWidget.h"
 #include "filterParametersControlWidgetBase.h"
 

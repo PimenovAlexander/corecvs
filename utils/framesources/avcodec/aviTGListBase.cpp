@@ -2,7 +2,7 @@
  * \brief Capture video stream from avi file using avcodec library
  */
 
-#include "global.h"
+#include "core/utils/global.h"
 #include "aviTGListBase.h"
 
 #include <QDir>

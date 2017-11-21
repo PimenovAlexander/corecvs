@@ -20,10 +20,10 @@
 #include <QtCore/QString>
 #include <QtCore/QtCore>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include "uEyeCapture.h"
-#include "preciseTimer.h"
+#include "core/utils/preciseTimer.h"
 
 
 #ifdef PROFILE_DEQUEUE
@@ -269,7 +269,9 @@ UEyeCaptureInterface::FramePair UEyeCaptureInterface::getFrame()
 
     //stats.values[CaptureStatistics::DATA_SIZE] = currentLeft.bytesused;
 
-    emit newStatisticsReady(stats);
+    if (imageInterfaceReceiver != NULL) {
+        imageInterfaceReceiver->newStatisticsReadyCallback(stats);
+    }
 
 //    printf("Finished getFrame\n");
     return result;
@@ -330,7 +332,8 @@ UEyeCaptureInterface::FramePair UEyeCaptureInterface::getFrameRGB24()
 
     //stats.values[CaptureStatistics::DATA_SIZE] = currentLeft.bytesused;
 
-    emit newStatisticsReady(stats);
+    if (imageInterfaceReceiver)
+        imageInterfaceReceiver->newStatisticsReadyCallback(stats);
 
 //    printf("Finished getFrame\n");
     return result;

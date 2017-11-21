@@ -1,16 +1,16 @@
 #include <stdio.h>
 #include <QtCore/QCoreApplication>
-#include <unistd.h>
+//#include <unistd.h>
 
-#include <QtGui/QImage>
+#include <QImage>
 
 #include "qtFileLoader.h"
 
 #include "imageCaptureInterface.h"
-#include "V4L2Capture.h"
-#include "bmpLoader.h"
-#include "ellipticalApproximation.h"
-#include "rgb24Buffer.h"
+//#include "V4L2Capture.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/geometry/ellipticalApproximation.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
 
 #if 0
 void func (void)
@@ -75,9 +75,7 @@ int main (int argc, char **argv)
 {
 	QCoreApplication app(argc, argv);
 	printf("Loading mask...\n");
-    QTG12Loader  ::registerMyself();
-    QTRGB24Loader::registerMyself();
-
+	QTFileLoader::registerMyself();
 
 	QImage imageMask    ("data/adopt/orig.png");
 	QImage imageAlpha   ("data/adopt/alpha.bmp");
@@ -87,7 +85,7 @@ int main (int argc, char **argv)
     RGB24Buffer *mask    = QTFileLoader::RGB24BufferFromQImage(&imageMask);
     RGB24Buffer *face    = QTFileLoader::RGB24BufferFromQImage(&imageFace);
 
-    G8Buffer *alpha = alpha24->getChannel(ImageChannel::GRAY);
+    G8Buffer *alpha = alpha24->getChannel(RGB24Buffer::CHANNEL_GRAY);
 
     Vector3dd meanMask(0.0);
     Vector3dd meanFace(0.0);

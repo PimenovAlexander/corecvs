@@ -119,8 +119,8 @@ ImageCaptureInterface::FramePair RTSPCapture::getFrame()
                 return result;
             }
 
-            result.rgbBufferLeft = new RGB24Buffer(mFrame->height, mFrame->width);
-            result.bufferLeft    = new G12Buffer  (mFrame->height, mFrame->width);
+            result.setRgbBufferLeft(new RGB24Buffer(mFrame->height, mFrame->width));
+            result.setBufferLeft   (new G12Buffer  (mFrame->height, mFrame->width));
             for (int i = 0; i < mFrame->height; i++)
             {
                 for (int j = 0; j < mFrame->width; j++)
@@ -130,18 +130,18 @@ ImageCaptureInterface::FramePair RTSPCapture::getFrame()
                     uint8_t u = (mFrame->data[1])[(i / 2) * mFrame->linesize[1] + (j / 2)];
                     uint8_t v = (mFrame->data[2])[(i / 2) * mFrame->linesize[2] + (j / 2)];
 
-                    result.rgbBufferLeft->element(i,j) = RGBColor::FromYUV(y,u,v);
-                    result.bufferLeft   ->element(i,j) = (int)y << 4;
+                    result.rgbBufferLeft()->element(i,j) = RGBColor::FromYUV(y,u,v);
+                    result.bufferLeft()   ->element(i,j) = (int)y << 4;
                 }
             }
 
-            result.rgbBufferRight = new RGB24Buffer(result.rgbBufferLeft);
-            result.bufferRight = new G12Buffer(result.bufferLeft);
+            result.setRgbBufferRight(new RGB24Buffer(result.rgbBufferLeft()));
+            result.setBufferRight   (new G12Buffer(result.bufferLeft()));
         }
 
 
-        result.timeStampLeft  = count * 10;
-        result.timeStampRight = count * 10;
+        result.setTimeStampLeft (count * 10);
+        result.setTimeStampRight(count * 10);
 
     //mProtectFrame.unlock();
     stats.values[CaptureStatistics::DECODING_TIME] = start.usecsToNow();
@@ -152,7 +152,11 @@ ImageCaptureInterface::FramePair RTSPCapture::getFrame()
     }
     mLastFrameTime = PreciseTimer::currentTime();
     stats.values[CaptureStatistics::DATA_SIZE] = 0;
-    emit newStatisticsReady(stats);
+
+    if (imageInterfaceReceiver != NULL)
+    {
+        imageInterfaceReceiver->newStatisticsReadyCallback(stats);
+    }
 
     if (!mIsPaused)
     {

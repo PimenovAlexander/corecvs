@@ -8,6 +8,7 @@
 
 #include "draw3dCameraParametersControlWidget.h"
 #include "ui_draw3dCameraParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -59,50 +60,21 @@ Draw3dCameraParametersControlWidget::~Draw3dCameraParametersControlWidget()
 
 void Draw3dCameraParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    Draw3dCameraParameters *params = createParameters();
+    std::unique_ptr<Draw3dCameraParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void Draw3dCameraParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    Draw3dCameraParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<Draw3dCameraParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void Draw3dCameraParametersControlWidget::getParameters(Draw3dCameraParameters& params) const
 {
-
-    params.setFovH             (mUi->fovHSpinBox->value());
-    params.setFovV             (mUi->fovVSpinBox->value());
-    params.setNearPlane        (mUi->nearPlaneSpinBox->value());
-    params.setFarPlane         (mUi->farPlaneSpinBox->value());
-    params.setStyle            (static_cast<Draw3dStyle::Draw3dStyle>(mUi->styleComboBox->currentIndex()));
-//    params.setPointColor       (mUi->pointColorControlWidget->createParameters());
-    params.setPointColorOverride(mUi->pointColorOverrideCheckBox->isChecked());
-    params.setPointSize        (mUi->pointSizeSpinBox->value());
-//    params.setEdgeColor        (mUi->edgeColorControlWidget->createParameters());
-    params.setEdgeColorOverride(mUi->edgeColorOverrideCheckBox->isChecked());
-    params.setEdgeWidth        (mUi->edgeWidthSpinBox->value());
-//    params.setFaceColor        (mUi->faceColorControlWidget->createParameters());
-    params.setFaceColorOverride(mUi->faceColorOverrideCheckBox->isChecked());
-    params.setShowCaption      (mUi->showCaptionCheckBox->isChecked());
-    params.setFontSize         (mUi->fontSizeSpinBox->value());
-    params.setFontWidth        (mUi->fontWidthSpinBox->value());
-//    params.setFontColor        (mUi->fontColorControlWidget->createParameters());
-    params.setTextureCorrodinates(static_cast<Draw3dTextureGen::Draw3dTextureGen>(mUi->textureCorrodinatesComboBox->currentIndex()));
-    params.setTextureAlpha     (mUi->textureAlphaSpinBox->value());
-    params.setTextureScale     (mUi->textureScaleSpinBox->value());
-    params.setDecalMatrixType  (mUi->decalMatrixTypeSpinBox->value());
-    params.setDecalLeftCam     (mUi->decalLeftCamCheckBox->isChecked());
-    params.setDecalLeftAlpha   (mUi->decalLeftAlphaSpinBox->value());
-    params.setDecalRightCam    (mUi->decalRightCamCheckBox->isChecked());
-    params.setDecalRightAlpha  (mUi->decalRightAlphaSpinBox->value());
-
+    params = *std::unique_ptr<Draw3dCameraParameters>(createParameters());
 }
+
 
 Draw3dCameraParameters *Draw3dCameraParametersControlWidget::createParameters() const
 {
@@ -111,29 +83,25 @@ Draw3dCameraParameters *Draw3dCameraParametersControlWidget::createParameters() 
      * We should think of returning parameters by value or saving them in a preallocated place
      **/
 
-    RgbColorParameters *tmp5 = NULL;
-    RgbColorParameters *tmp8 = NULL;
-    RgbColorParameters *tmp11 = NULL;
-    RgbColorParameters *tmp16 = NULL;
 
-    Draw3dCameraParameters *result = new Draw3dCameraParameters(
+    return new Draw3dCameraParameters(
           mUi->fovHSpinBox->value()
         , mUi->fovVSpinBox->value()
         , mUi->nearPlaneSpinBox->value()
         , mUi->farPlaneSpinBox->value()
         , static_cast<Draw3dStyle::Draw3dStyle>(mUi->styleComboBox->currentIndex())
-        , * (tmp5 = mUi->pointColorControlWidget->createParameters())
+        , *std::unique_ptr<RgbColorParameters>(mUi->pointColorControlWidget->createParameters())
         , mUi->pointColorOverrideCheckBox->isChecked()
         , mUi->pointSizeSpinBox->value()
-        , * (tmp8 = mUi->edgeColorControlWidget->createParameters())
+        , *std::unique_ptr<RgbColorParameters>(mUi->edgeColorControlWidget->createParameters())
         , mUi->edgeColorOverrideCheckBox->isChecked()
         , mUi->edgeWidthSpinBox->value()
-        , * (tmp11 = mUi->faceColorControlWidget->createParameters())
+        , *std::unique_ptr<RgbColorParameters>(mUi->faceColorControlWidget->createParameters())
         , mUi->faceColorOverrideCheckBox->isChecked()
         , mUi->showCaptionCheckBox->isChecked()
         , mUi->fontSizeSpinBox->value()
         , mUi->fontWidthSpinBox->value()
-        , * (tmp16 = mUi->fontColorControlWidget->createParameters())
+        , *std::unique_ptr<RgbColorParameters>(mUi->fontColorControlWidget->createParameters())
         , static_cast<Draw3dTextureGen::Draw3dTextureGen>(mUi->textureCorrodinatesComboBox->currentIndex())
         , mUi->textureAlphaSpinBox->value()
         , mUi->textureScaleSpinBox->value()
@@ -143,11 +111,6 @@ Draw3dCameraParameters *Draw3dCameraParametersControlWidget::createParameters() 
         , mUi->decalRightCamCheckBox->isChecked()
         , mUi->decalRightAlphaSpinBox->value()
     );
-    delete tmp5;
-    delete tmp8;
-    delete tmp11;
-    delete tmp16;
-    return result;
 }
 
 void Draw3dCameraParametersControlWidget::setParameters(const Draw3dCameraParameters &input)

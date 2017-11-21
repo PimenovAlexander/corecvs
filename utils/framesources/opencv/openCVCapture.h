@@ -28,8 +28,8 @@
 #undef interface
 #endif
 
- class OpenCVCaptureInterface : public ImageCaptureInterface
- {
+class OpenCVCaptureInterface : public virtual ImageCaptureInterface
+{
  private:
 
     /* This is a private helper class */

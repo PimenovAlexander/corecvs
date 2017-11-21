@@ -8,6 +8,7 @@
 
 #include "checkerboardDetectionParametersControlWidget.h"
 #include "ui_checkerboardDetectionParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -44,39 +45,21 @@ CheckerboardDetectionParametersControlWidget::~CheckerboardDetectionParametersCo
 
 void CheckerboardDetectionParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    CheckerboardDetectionParameters *params = createParameters();
+    std::unique_ptr<CheckerboardDetectionParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void CheckerboardDetectionParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    CheckerboardDetectionParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<CheckerboardDetectionParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void CheckerboardDetectionParametersControlWidget::getParameters(CheckerboardDetectionParameters& params) const
 {
-
-    params.setEstimateUndistortedFromDistorted(mUi->estimateUndistortedFromDistortedCheckBox->isChecked());
-    params.setUseUndistortion  (mUi->useUndistortionCheckBox->isChecked());
-    params.setAlgorithm        (static_cast<CheckerboardDetectionAlgorithm::CheckerboardDetectionAlgorithm>(mUi->algorithmComboBox->currentIndex()));
-    params.setChannel          (static_cast<ImageChannel::ImageChannel>(mUi->channelComboBox->currentIndex()));
-    params.setCellSizeHor      (mUi->cellSizeHorSpinBox->value());
-    params.setCellSizeVert     (mUi->cellSizeVertSpinBox->value());
-    params.setCleanExisting    (mUi->cleanExistingCheckBox->isChecked());
-    params.setPreciseDiameter  (mUi->preciseDiameterSpinBox->value());
-    params.setIterationCount   (mUi->iterationCountSpinBox->value());
-    params.setMinAccuracy      (mUi->minAccuracySpinBox->value());
-    params.setPartialBoard     (mUi->partialBoardCheckBox->isChecked());
-    params.setFastBoardSpeedup (mUi->fastBoardSpeedupCheckBox->isChecked());
-    params.setDrawSGFsOnBoards (mUi->drawSGFsOnBoardsCheckBox->isChecked());
-    params.setSkipUndistortedWithNoDistortedBoard(mUi->skipUndistortedWithNoDistortedBoardCheckBox->isChecked());
-
+    params = *std::unique_ptr<CheckerboardDetectionParameters>(createParameters());
 }
+
 
 CheckerboardDetectionParameters *CheckerboardDetectionParametersControlWidget::createParameters() const
 {
@@ -86,7 +69,7 @@ CheckerboardDetectionParameters *CheckerboardDetectionParametersControlWidget::c
      **/
 
 
-    CheckerboardDetectionParameters *result = new CheckerboardDetectionParameters(
+    return new CheckerboardDetectionParameters(
           mUi->estimateUndistortedFromDistortedCheckBox->isChecked()
         , mUi->useUndistortionCheckBox->isChecked()
         , static_cast<CheckerboardDetectionAlgorithm::CheckerboardDetectionAlgorithm>(mUi->algorithmComboBox->currentIndex())
@@ -102,7 +85,6 @@ CheckerboardDetectionParameters *CheckerboardDetectionParametersControlWidget::c
         , mUi->drawSGFsOnBoardsCheckBox->isChecked()
         , mUi->skipUndistortedWithNoDistortedBoardCheckBox->isChecked()
     );
-    return result;
 }
 
 void CheckerboardDetectionParametersControlWidget::setParameters(const CheckerboardDetectionParameters &input)

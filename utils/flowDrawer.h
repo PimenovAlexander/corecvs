@@ -2,7 +2,7 @@
 
 #include <QPainter>
 
-#include "flowBuffer.h"
+#include "core/buffers/flow/flowBuffer.h"
 #include "flowcolorers/abstractFlowColorer.h"
 
 enum DrawMode {

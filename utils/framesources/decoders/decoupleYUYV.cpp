@@ -67,8 +67,8 @@ void DecoupleYUYV::decoupleAnaglythSSE(unsigned formatH, unsigned formatW, uint8
                 green[k] = SSEMath::selector(green[k] > con0, green[k], con0);
             }
 
-            SSEReader8DD_DD::write(red, (uint32_t *)&result.bufferLeft ->element(i,j));
-            SSEReader8DD_DD::write(green, (uint32_t *)&result.bufferRight->element(i,j));
+            SSEReader8DD_DD::write(red, (uint32_t *)&result.bufferLeft() ->element(i,j));
+            SSEReader8DD_DD::write(green, (uint32_t *)&result.bufferRight()->element(i,j));
             ptr += SSEReader8BBBB_DDDD::BYTE_STEP;
         }
 #endif
@@ -101,11 +101,11 @@ void DecoupleYUYV::decoupleAnaglythSSE(unsigned formatH, unsigned formatW, uint8
             if (g2 > 255) g2 = 255;  if (g2 < 0) g2 = 0;
             if (b2 > 255) b2 = 255;  if (b2 < 0) b2 = 0;
 
-            result.bufferLeft ->element(i,j    ) = (r1 << 4);
-            result.bufferLeft ->element(i,j + 1) = (r2 << 4);
+            result.bufferLeft() ->element(i,j    ) = (r1 << 4);
+            result.bufferLeft() ->element(i,j + 1) = (r2 << 4);
 
-            result.bufferRight->element(i,j    ) = ((b1 + g1) << 3);
-            result.bufferRight->element(i,j + 1) = ((b2 + g2) << 3);
+            result.bufferRight()->element(i,j    ) = ((b1 + g1) << 3);
+            result.bufferRight()->element(i,j + 1) = ((b2 + g2) << 3);
 
             ptr += 4;
         }
@@ -148,16 +148,16 @@ void DecoupleYUYV::decoupleAnaglythSyncCam1(unsigned formatH, unsigned formatW, 
 {
     //FixMe: use result.allocBuffersRGB(formatH, formatW / 2); ?
     //
-    result.rgbBufferLeft  = new RGB24Buffer(formatH, formatW / 2, false);
-    result.rgbBufferRight = new RGB24Buffer(formatH, formatW / 2, false);
+    result.setRgbBufferLeft ( new RGB24Buffer(formatH, formatW / 2, false) );
+    result.setRgbBufferRight( new RGB24Buffer(formatH, formatW / 2, false) );
 
     for (unsigned i = 0; i + 1 < formatH; i += 2)
     {
         uint8_t *line0 = ptr   + 2 * formatW * i;
         uint8_t *line1 = line0 + 2 * formatW;
 
-        RGBColor *outLine0Left = &result.rgbBufferLeft->element(    i, 0);
-        RGBColor *outLine1Left = &result.rgbBufferLeft->element(i + 1, 0);
+        RGBColor *outLine0Left = &result.rgbBufferLeft()->element(    i, 0);
+        RGBColor *outLine1Left = &result.rgbBufferLeft()->element(i + 1, 0);
 
         for (unsigned j = 0; j < formatW / 4; j++)
         {
@@ -178,8 +178,8 @@ void DecoupleYUYV::decoupleAnaglythSyncCam1(unsigned formatH, unsigned formatW, 
             outLine1Left += 2;
         }
 
-        RGBColor *outLine0Right = &result.rgbBufferRight->element(    i, 0);
-        RGBColor *outLine1Right = &result.rgbBufferRight->element(i + 1, 0);
+        RGBColor *outLine0Right = &result.rgbBufferRight()->element(    i, 0);
+        RGBColor *outLine1Right = &result.rgbBufferRight()->element(i + 1, 0);
 
         for (unsigned j = 0; j < formatW / 4; j++)
         {
@@ -201,8 +201,8 @@ void DecoupleYUYV::decoupleAnaglythSyncCam1(unsigned formatH, unsigned formatW, 
         }
     }
 
-    result.bufferLeft  = result.rgbBufferLeft ->toG12Buffer();
-    result.bufferRight = result.rgbBufferRight->toG12Buffer();
+    result.setBufferLeft ( result.rgbBufferLeft() ->toG12Buffer());
+    result.setBufferRight( result.rgbBufferRight()->toG12Buffer());
 }
 
 
@@ -215,12 +215,12 @@ void DecoupleYUYV::decoupleSideBySide(unsigned formatH, unsigned formatW, uint8_
         for (unsigned j = 0; j < formatW / 2; j++)
         {
 
-            result.bufferLeft ->element(i,j) = (ptr[0] << 4);
+            result.bufferLeft() ->element(i,j) = (ptr[0] << 4);
             ptr += 2;
         }
         for (unsigned j = 0; j < formatW / 2; j++)
         {
-            result.bufferRight->element(i,j) = (ptr[0] << 4);
+            result.bufferRight()->element(i,j) = (ptr[0] << 4);
             ptr += 2;
         }
     }
@@ -254,8 +254,8 @@ void DecoupleYUYV::decoupleAnaglythUnrolled(unsigned formatH, unsigned formatW, 
             if (g > 255) g = 255;  if (g < 0) g = 0;
             if (b > 255) b = 255;  if (b < 0) b = 0;
 
-            result.bufferLeft ->element(i,j) = (r << 4);
-            result.bufferRight->element(i,j) = ((b + g) << 3);
+            result.bufferLeft() ->element(i,j) = (r << 4);
+            result.bufferRight()->element(i,j) = ((b + g) << 3);
 
             // line 2
             y = (ptr2[0] + ptr2[2]) / 2;
@@ -274,11 +274,11 @@ void DecoupleYUYV::decoupleAnaglythUnrolled(unsigned formatH, unsigned formatW, 
             if (g > 255) g = 255;  if (g < 0) g = 0;
             if (b > 255) b = 255;  if (b < 0) b = 0;
 
-            result.bufferLeft ->element(i,j) += (r << 4);
-            result.bufferRight->element(i,j) += ((b + g) << 3);
+            result.bufferLeft() ->element(i,j) += (r << 4);
+            result.bufferRight()->element(i,j) += ((b + g) << 3);
 
-            result.bufferLeft ->element(i,j) /= 2;
-            result.bufferRight->element(i,j) /= 2;
+            result.bufferLeft() ->element(i,j) /= 2;
+            result.bufferRight()->element(i,j) /= 2;
 
             ptr1 += 4;
             ptr2 += 4;

@@ -5,6 +5,10 @@
 # Output parameters - $$UTILS_BINDIR
 #
 
+!contains(CORECVS_INCLUDED, "utils.pri") {
+CORECVS_INCLUDED +=  utils.pri
+
+SUPPRESSINCLUDES=true
 include(../core/core.pri)                         # it uses TARGET and detects COREBINDIR!
 
 UTILSDIR=$$PWD
@@ -17,6 +21,7 @@ UTILS_INCLUDEPATH = \
     $$UTILSDIR/corestructs/coreWidgets \
     $$UTILSDIR/corestructs/libWidgets \
     $$UTILSDIR/corestructs/parametersMapper \
+    $$UTILSDIR/corestructs/cameraModel \
     $$UTILSDIR/distortioncorrector \                # include isn't used, but need for DEPENDPATH!
     $$UTILSDIR/fileformats \
     $$UTILSDIR/filters \
@@ -40,6 +45,7 @@ UTILS_INCLUDEPATH = \
     $$UTILSDIR/tablecontrol \
     $$UTILSDIR/capture     \
     $$UTILSDIR/reconstruction
+    $$UTILSDIR/memoryuse
 
 
 !win32 {
@@ -92,6 +98,13 @@ with_x11extras {
     CONFIG += with_opengl                       # always include here OpenGL dependent modules as utils's and related projects need it
 }
 
+with_qscript {
+    QT += script
+
+    DEFINES += WITH_QSCRIPT
+    INCLUDEPATH += $$UTILSDIR/scripting
+}
+
 with_opengl {
     QT += opengl                                # this must be defined for utils's and all related sources
 
@@ -127,6 +140,7 @@ with_ueye {
             !build_pass:message(Unable to find uEye at <$$UEYE_PATH>)
         }
     } else:exists("/usr/lib/libueye_api.so") {
+        !build_pass:message(Using uEye at </usr/lib/libueye_api.so>)
         DEFINES += WITH_UEYE
         LIBS    += -lueye_api
     } else {
@@ -144,6 +158,24 @@ with_opencv {                                       # all this stuff was extract
     }
 }
 
+with_rapidjson {
+    RAPIDJSON_WRAPPER_DIR = $$UTILSDIR/../wrappers/rapidjson
+    include($$RAPIDJSON_WRAPPER_DIR/rapidjson.pri)
+
+    contains(DEFINES, WITH_RAPIDJSON) {
+       INCLUDEPATH += $$RAPIDJSON_WRAPPER_DIR
+    }
+}
+
+
+with_jsonmodern {
+    JSONMODERN_WRAPPER_DIR = $$UTILSDIR/../wrappers/jsonmodern
+    include($$JSONMODERN_WRAPPER_DIR/jsonmodern.pri)
+
+    contains(DEFINES, WITH_JSONMODERN) {
+       INCLUDEPATH += $$JSONMODERN_WRAPPER_DIR
+    }
+}
 
 with_siftgpu {
     SIFTGPU_WRAPPER_DIR = $$UTILSDIR/../wrappers/siftgpu
@@ -212,6 +244,8 @@ with_synccam {
 }
 
 
+
+
 ###############################################
 #   Useful common part for all cvs projects   #
 ###############################################
@@ -260,3 +294,5 @@ win32 {
         QMAKE_CLEAN += "$$MOC_DIR/mocinclude.tmp"       # it doesn't killed some-why...
     }
 }
+
+} #!contains(CORECVS_INCLUDED, "utils.pri")

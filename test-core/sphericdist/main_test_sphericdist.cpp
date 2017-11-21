@@ -11,11 +11,11 @@
 #include <stdio.h>
 #include "gtest/gtest.h"
 
-#include "global.h"
-#include "g12Buffer.h"
-#include "bmpLoader.h"
-#include "bufferFactory.h"
-#include "sphericalCorrectionLUT.h"
+#include "core/utils/global.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/buffers/bufferFactory.h"
+#include "core/cammodel/sphericalCorrectionLUT.h"
 
 
 using namespace corecvs;
@@ -74,6 +74,11 @@ double UnwarpToWarpLUT[LUT_LEN][2] = {
 TEST(Sphericdist, DISABLED_testUndistored)
 {
     G12Buffer *input = BufferFactory::getInstance()->loadG12Bitmap("data/distored.pgm");
+    if (input == nullptr)
+    {
+        cout << "Could not open test image" << endl;
+        return;
+    }
 
     vector<Vector2dd> lut;
     for (unsigned i = 0; i < LUT_LEN; i++)
@@ -81,17 +86,16 @@ TEST(Sphericdist, DISABLED_testUndistored)
         lut.push_back(Vector2dd(UnwarpToWarpLUT[i][0] / 2.0, UnwarpToWarpLUT[i][1]));
     }
 
-    RadiusCorrectionLUT radiusLUT(&lut);
+    RadiusCorrectionLUTSq radiusLUT(&lut);
     for (int i = 0; i < 400; i++)
     {
         printf("%lf %lf\n", (double)i, (double)radiusLUT.transformRadiusSquare(i * i));
     }
 
     Vector2dd center(input->w / 2.0, input->h / 2.0);
-    SphericalCorrectionLUT corrector(center, &radiusLUT);
+    SphericalCorrectionLUTSq corrector(center, &radiusLUT);
 
-    G12Buffer *output = input->doReverseDeformationBl<G12Buffer, SphericalCorrectionLUT>(&corrector,
-            input->h, input->w);
+    G12Buffer *output = input->doReverseDeformationBl<G12Buffer, SphericalCorrectionLUTSq>(&corrector, input->h, input->w);
 
     BMPLoader().save("out.bmp", output);
 }

@@ -14,9 +14,9 @@
 #include <QPainter>
 #include <QComboBox>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "vector2d.h"
+#include "core/math/vector/vector2d.h"
 
 using namespace corecvs;
 

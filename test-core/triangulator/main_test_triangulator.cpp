@@ -11,12 +11,12 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "essentialMatrix.h"
-#include "vector3d.h"
-#include "triangulator.h"
-#include "cameraParameters.h"
+#include "core/rectification/essentialMatrix.h"
+#include "core/math/vector/vector3d.h"
+#include "core/rectification/triangulator.h"
+#include "core/cammodel/cameraParameters.h"
 
 
 using namespace std;

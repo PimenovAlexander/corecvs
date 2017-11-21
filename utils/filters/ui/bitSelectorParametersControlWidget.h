@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ui_bitSelectorParametersControlWidget.h"
-#include "generated/bitSelectorParameters.h"
+#include "core/xml/generated/bitSelectorParameters.h"
 #include "filterParametersControlWidgetBase.h"
 
 namespace Ui {

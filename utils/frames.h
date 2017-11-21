@@ -10,9 +10,9 @@
 
 #include <stdint.h>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "g12Buffer.h"
+#include "core/buffers/g12Buffer.h"
 #include "imageCaptureInterface.h"
 
 class Frames

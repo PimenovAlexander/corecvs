@@ -9,8 +9,8 @@
 #include <QtCore/QObject>
 #include <QtCore/QtDebug>
 
-#include "preciseTimer.h"
-#include "calculationStats.h"
+#include "core/utils/preciseTimer.h"
+#include "core/stats/calculationStats.h"
 
 using corecvs::PreciseTimer;
 using corecvs::SingleStat;

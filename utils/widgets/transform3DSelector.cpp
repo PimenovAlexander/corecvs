@@ -1,7 +1,7 @@
 #include "transform3DSelector.h"
-#include "matrix33.h"
-#include "mathUtils.h"
-#include "vector3d.h"
+#include "core/math/matrix/matrix33.h"
+#include "core/math/mathUtils.h"
+#include "core/math/vector/vector3d.h"
 
 using corecvs::Matrix33;
 using corecvs::degToRad;

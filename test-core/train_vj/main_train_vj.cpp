@@ -8,14 +8,14 @@
 #include <stdint.h>
 #include "gtest/gtest.h"
 
-#include "utils.h"
-#include "g12Buffer.h"
-#include "integralBuffer.h"
-#include "mipmapPyramid.h"
-#include "bufferFactory.h"
-#include "vjPattern.h"
-#include "adaBoost.h"
-#include "bmpLoader.h"
+#include "core/utils/utils.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/integralBuffer.h"
+#include "core/buffers/mipmapPyramid.h"
+#include "core/buffers/bufferFactory.h"
+#include "core/boosting/vjPattern.h"
+#include "core/boosting/adaBoost.h"
+#include "core/fileformats/bmpLoader.h"
 
 using namespace std;
 using namespace corecvs;

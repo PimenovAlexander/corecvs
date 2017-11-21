@@ -18,7 +18,7 @@ JSONSetter::~JSONSetter()
 
     QFile file(mFileName);
     if (!file.open(QFile::WriteOnly)) {
-        qDebug() << "Can't open file <" << mFileName << ">" << endl;
+        qDebug() << "JSONSetter::~JSONSetter(): Can't open file <" << mFileName << ">" << endl;
         return;
     }
 
@@ -31,12 +31,6 @@ JSONSetter::~JSONSetter()
 
 
 /*=================*/
-
-template <>
-void JSONSetter::visit<int>(int &intField, int /*defaultValue*/, const char *fieldName)
-{
-    mNodePath.back().insert(fieldName, intField);
-}
 
 template <>
 void JSONSetter::visit<uint64_t>(uint64_t &intField, uint64_t /*defaultValue*/, const char *fieldName)
@@ -52,21 +46,15 @@ void JSONSetter::visit<bool>(bool &boolField, bool /*defaultValue*/, const char 
 }
 
 template <>
-void JSONSetter::visit<double>(double &doubleField, double /*defaultValue*/, const char *fieldName)
-{
-    mNodePath.back().insert(fieldName, doubleField);
-}
-
-template <>
-void JSONSetter::visit<float>(float &floatField, float /*defaultValue*/, const char *fieldName)
-{
-    mNodePath.back().insert(fieldName, floatField);
-}
-
-template <>
 void JSONSetter::visit<std::string>(std::string &stringField, std::string /*defaultValue*/, const char *fieldName)
 {
     mNodePath.back().insert(fieldName, QString::fromStdString(stringField));
+}
+
+template <>
+void JSONSetter::visit<std::wstring>(std::wstring &wstringField, std::wstring /*defaultValue*/, const char *fieldName)
+{
+    mNodePath.back().insert(fieldName, QString::fromStdWString(wstringField));
 }
 
 
@@ -116,6 +104,13 @@ void JSONSetter::visit<std::string, StringField>(std::string &stringField, const
 {
     visit<std::string>(stringField, fieldDescriptor->defaultValue, fieldDescriptor->name.name);
 }
+
+template <>
+void JSONSetter::visit<std::wstring, WStringField>(std::wstring &wstringField, const WStringField *fieldDescriptor)
+{
+    visit<std::wstring>(wstringField, fieldDescriptor->defaultValue, fieldDescriptor->name.name);
+}
+
 
 template <>
 void JSONSetter::visit<void *, PointerField>(void * &/*field*/, const PointerField * /*fieldDescriptor*/)

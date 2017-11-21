@@ -4,9 +4,9 @@
 
 #include "gtest/gtest.h"
 
-#include "global.h"
-#include "polynomial.h"
-#include "polynomialSolver.h"
+#include "core/utils/global.h"
+#include "core/polynomial/polynomial.h"
+#include "core/polynomial/polynomialSolver.h"
 
 #include <random>
 

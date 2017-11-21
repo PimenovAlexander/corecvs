@@ -8,6 +8,7 @@
 
 #include "distortionApplicationParametersControlWidget.h"
 #include "ui_distortionApplicationParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -35,30 +36,21 @@ DistortionApplicationParametersControlWidget::~DistortionApplicationParametersCo
 
 void DistortionApplicationParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    DistortionApplicationParameters *params = createParameters();
+    std::unique_ptr<DistortionApplicationParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void DistortionApplicationParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    DistortionApplicationParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<DistortionApplicationParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void DistortionApplicationParametersControlWidget::getParameters(DistortionApplicationParameters& params) const
 {
-
-    params.setForceScale       (mUi->forceScaleCheckBox->isChecked());
-    params.setAdoptScale       (mUi->adoptScaleCheckBox->isChecked());
-    params.setResizePolicy     (static_cast<DistortionResizePolicy::DistortionResizePolicy>(mUi->resizePolicyComboBox->currentIndex()));
-    params.setNewH             (mUi->newHSpinBox->value());
-    params.setNewW             (mUi->newWSpinBox->value());
-
+    params = *std::unique_ptr<DistortionApplicationParameters>(createParameters());
 }
+
 
 DistortionApplicationParameters *DistortionApplicationParametersControlWidget::createParameters() const
 {
@@ -68,14 +60,13 @@ DistortionApplicationParameters *DistortionApplicationParametersControlWidget::c
      **/
 
 
-    DistortionApplicationParameters *result = new DistortionApplicationParameters(
+    return new DistortionApplicationParameters(
           mUi->forceScaleCheckBox->isChecked()
         , mUi->adoptScaleCheckBox->isChecked()
         , static_cast<DistortionResizePolicy::DistortionResizePolicy>(mUi->resizePolicyComboBox->currentIndex())
         , mUi->newHSpinBox->value()
         , mUi->newWSpinBox->value()
     );
-    return result;
 }
 
 void DistortionApplicationParametersControlWidget::setParameters(const DistortionApplicationParameters &input)

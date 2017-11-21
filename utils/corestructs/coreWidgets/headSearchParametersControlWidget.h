@@ -1,7 +1,6 @@
 #pragma once
 #include <QWidget>
-
-#include "generated/headSearchParameters.h"
+#include "core/xml/generated/headSearchParameters.h"
 #include "ui_headSearchParametersControlWidget.h"
 #include "parametersControlWidgetBase.h"
 
@@ -19,14 +18,13 @@ public:
     ~HeadSearchParametersControlWidget();
 
     HeadSearchParameters* createParameters() const;
-    void getParameters(HeadSearchParameters &params) const;
+    void getParameters(HeadSearchParameters &param) const;
     void setParameters(const HeadSearchParameters &input);
-
-    void setParametersVirtual(void *input);
-
+    virtual void setParametersVirtual(void *input);
+    
     virtual void loadParamWidget(WidgetLoader &loader);
     virtual void saveParamWidget(WidgetSaver  &saver);
-
+    
 public slots:
     void changeParameters()
     {

@@ -8,6 +8,7 @@
 
 #include "openCVSGMParametersControlWidget.h"
 #include "ui_openCVSGMParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -40,35 +41,21 @@ OpenCVSGMParametersControlWidget::~OpenCVSGMParametersControlWidget()
 
 void OpenCVSGMParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    OpenCVSGMParameters *params = createParameters();
+    std::unique_ptr<OpenCVSGMParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void OpenCVSGMParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    OpenCVSGMParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<OpenCVSGMParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void OpenCVSGMParametersControlWidget::getParameters(OpenCVSGMParameters& params) const
 {
-
-    params.setPreFilterCap     (mUi->preFilterCapSpinBox->value());
-    params.setSADWindowSize    (mUi->sADWindowSizeSpinBox->value());
-    params.setP1Multiplier     (mUi->p1MultiplierSpinBox->value());
-    params.setP2Multiplier     (mUi->p2MultiplierSpinBox->value());
-    params.setMinDisparity     (mUi->minDisparitySpinBox->value());
-    params.setUniquenessRatio  (mUi->uniquenessRatioSpinBox->value());
-    params.setSpeckleWindowSize(mUi->speckleWindowSizeSpinBox->value());
-    params.setSpeckleRange     (mUi->speckleRangeSpinBox->value());
-    params.setDisp12MaxDiff    (mUi->disp12MaxDiffSpinBox->value());
-    params.setFullDP           (mUi->fullDPCheckBox->isChecked());
-
+    params = *std::unique_ptr<OpenCVSGMParameters>(createParameters());
 }
+
 
 OpenCVSGMParameters *OpenCVSGMParametersControlWidget::createParameters() const
 {
@@ -78,7 +65,7 @@ OpenCVSGMParameters *OpenCVSGMParametersControlWidget::createParameters() const
      **/
 
 
-    OpenCVSGMParameters *result = new OpenCVSGMParameters(
+    return new OpenCVSGMParameters(
           mUi->preFilterCapSpinBox->value()
         , mUi->sADWindowSizeSpinBox->value()
         , mUi->p1MultiplierSpinBox->value()
@@ -90,7 +77,6 @@ OpenCVSGMParameters *OpenCVSGMParametersControlWidget::createParameters() const
         , mUi->disp12MaxDiffSpinBox->value()
         , mUi->fullDPCheckBox->isChecked()
     );
-    return result;
 }
 
 void OpenCVSGMParametersControlWidget::setParameters(const OpenCVSGMParameters &input)

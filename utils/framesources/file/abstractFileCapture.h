@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QtCore/QMutex>
-#include <QtCore/QString>
 
 #include "imageFileCaptureInterface.h"
 #include "abstractFileCaptureSpinThread.h"
@@ -13,7 +12,7 @@
 class AbstractFileCapture : public ImageFileCaptureInterface
 {
 public:
-    AbstractFileCapture(QString const &params);
+    AbstractFileCapture(std::string const &params);
     virtual ~AbstractFileCapture();
 
     virtual FramePair getFrame() = 0;

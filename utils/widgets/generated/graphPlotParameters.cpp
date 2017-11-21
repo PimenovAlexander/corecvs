@@ -26,6 +26,9 @@ int BaseReflection<GraphPlotParameters>::dummy = GraphPlotParameters::staticInit
 
 SUPPRESS_OFFSET_WARNING_BEGIN
 
+
+using namespace corecvs;
+
 int GraphPlotParameters::staticInit()
 {
 
@@ -35,10 +38,11 @@ int GraphPlotParameters::staticInit()
         "Graph Plot Parameters",
         ""
     );
+
+     getReflection()->objectSize = sizeof(GraphPlotParameters);
      
 
-    fields().push_back(
-        new EnumField
+    EnumField* field0 = new EnumField
         (
           GraphPlotParameters::GRAPHSTYLE_ID,
           offsetof(GraphPlotParameters, mGraphStyle),
@@ -50,10 +54,11 @@ int GraphPlotParameters::staticInit()
           , new EnumOption(0,"Draw Lines")
           , new EnumOption(1,"Draw Dots")
           )
-        )
-    );
-    fields().push_back(
-        new IntField
+        );
+    field0->widgetHint=BaseField::COMBO_BOX;
+    fields().push_back(field0);
+    /*  */ 
+    IntField* field1 = new IntField
         (
           GraphPlotParameters::WIDTH_ID,
           offsetof(GraphPlotParameters, mWidth),
@@ -64,10 +69,10 @@ int GraphPlotParameters::staticInit()
           true,
          1,
          99
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    fields().push_back(field1);
+    /*  */ 
+    DoubleField* field2 = new DoubleField
         (
           GraphPlotParameters::CENTERAT_ID,
           offsetof(GraphPlotParameters, mCenterAt),
@@ -78,10 +83,12 @@ int GraphPlotParameters::staticInit()
           true,
          -9999,
          9999.99
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field2->widgetHint=BaseField::SPIN_BOX;
+    field2->precision=2;
+    fields().push_back(field2);
+    /*  */ 
+    BoolField* field3 = new BoolField
         (
           GraphPlotParameters::XGRID_ID,
           offsetof(GraphPlotParameters, mXGrid),
@@ -89,10 +96,11 @@ int GraphPlotParameters::staticInit()
           "xGrid",
           "xGrid",
           "xGrid"
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field3->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field3);
+    /*  */ 
+    BoolField* field4 = new BoolField
         (
           GraphPlotParameters::YGRID_ID,
           offsetof(GraphPlotParameters, mYGrid),
@@ -100,10 +108,11 @@ int GraphPlotParameters::staticInit()
           "yGrid",
           "yGrid",
           "yGrid"
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field4->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field4);
+    /*  */ 
+    DoubleField* field5 = new DoubleField
         (
           GraphPlotParameters::XSCALE_ID,
           offsetof(GraphPlotParameters, mXScale),
@@ -111,10 +120,12 @@ int GraphPlotParameters::staticInit()
           "xScale",
           "xScale",
           "xScale"
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field5->widgetHint=BaseField::SLIDER;
+    field5->precision=2;
+    fields().push_back(field5);
+    /*  */ 
+    DoubleField* field6 = new DoubleField
         (
           GraphPlotParameters::YSCALE_ID,
           offsetof(GraphPlotParameters, mYScale),
@@ -125,10 +136,12 @@ int GraphPlotParameters::staticInit()
           true,
          0,
          1000
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field6->widgetHint=BaseField::SLIDER;
+    field6->precision=2;
+    fields().push_back(field6);
+    /*  */ 
+    DoubleField* field7 = new DoubleField
         (
           GraphPlotParameters::CONTRAST_ID,
           offsetof(GraphPlotParameters, mContrast),
@@ -139,10 +152,12 @@ int GraphPlotParameters::staticInit()
           true,
          0,
          100
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field7->widgetHint=BaseField::SPIN_BOX;
+    field7->precision=2;
+    fields().push_back(field7);
+    /*  */ 
+    BoolField* field8 = new BoolField
         (
           GraphPlotParameters::SELECTGRAPH_ID,
           offsetof(GraphPlotParameters, mSelectGraph),
@@ -150,10 +165,11 @@ int GraphPlotParameters::staticInit()
           "selectGraph",
           "selectGraph",
           "selectGraph"
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field8->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field8);
+    /*  */ 
+    BoolField* field9 = new BoolField
         (
           GraphPlotParameters::FIX_TIME_VALUE_ID,
           offsetof(GraphPlotParameters, mFixTimeValue),
@@ -161,10 +177,11 @@ int GraphPlotParameters::staticInit()
           "Fix Time value",
           "Fix Time value",
           "Fix Time value"
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field9->widgetHint=BaseField::RADIO_BUTTON;
+    fields().push_back(field9);
+    /*  */ 
+    BoolField* field10 = new BoolField
         (
           GraphPlotParameters::FIX_GRID_VALUE_ID,
           offsetof(GraphPlotParameters, mFixGridValue),
@@ -172,8 +189,16 @@ int GraphPlotParameters::staticInit()
           "Fix Grid value",
           "Fix Grid value",
           "Fix Grid value"
-        )
-    );
+        );
+    field10->widgetHint=BaseField::RADIO_BUTTON;
+    fields().push_back(field10);
+    /*  */ 
+    ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
+    directory[std::string("Graph Plot Parameters")]= &reflection;
+   return 0;
+}
+int GraphPlotParameters::relinkCompositeFields()
+{
    return 0;
 }
 

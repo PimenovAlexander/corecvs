@@ -3,10 +3,10 @@ CONFIG  += ordered
 
 SUBDIRS +=                   \
     core                     \
-#    unitTests                \
-#    utils                    \
-#    \
-#    tests \
+    unitTests                \
+    utils                    \
+    \
+    tests \
 #    \
 #    base_application         \
 #    base_application_example \
@@ -16,7 +16,7 @@ SUBDIRS +=                   \
 #    cloudview                \
 #    imageview                \
 #    \
-#    generator                \
+     generator                \
 #    egomotion                \
 #    applications/laserscan
 

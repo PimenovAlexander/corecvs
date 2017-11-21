@@ -3,7 +3,7 @@
 #include <QPaintEvent>
 
 #include "viAreaWidget.h"
-#include "global.h"
+#include "core/utils/global.h"
 
 ViAreaWidget::ViAreaWidget(QWidget *parent, bool forwardEvents)
     : QWidget(parent),
@@ -14,6 +14,7 @@ ViAreaWidget::ViAreaWidget(QWidget *parent, bool forwardEvents)
 
 void ViAreaWidget::paintEvent(QPaintEvent *event)
 {
+//    SYNC_PRINT(("ViAreaWidget::paintEvent():called\n"));
     if (!mForwardEvents) return;
     emit askParentRepaint(event, this);
 }

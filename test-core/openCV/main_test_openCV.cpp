@@ -21,12 +21,12 @@ int main (int /*argC*/, char** /*argV*/)
 
 #include <iostream>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "g12Buffer.h"
+#include "core/buffers/g12Buffer.h"
 #include "featureDetectorCV.h"
-#include "bmpLoader.h"
-#include "preciseTimer.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/utils/preciseTimer.h"
 
 
 using namespace std;

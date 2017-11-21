@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>FixtureControlWidget</class>
+ <widget class="QWidget" name="FixtureControlWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>368</width>
+    <height>230</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>2</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
+    <number>2</number>
+   </property>
+   <property name="spacing">
+    <number>2</number>
+   </property>
+   <item row="3" column="1">
+    <widget class="QPushButton" name="savePushButton">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../../resources/main.qrc">
+       <normaloff>:/new/prefix1/install.png</normaloff>:/new/prefix1/install.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>315</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="3" column="0">
+    <widget class="QPushButton" name="loadPushButton">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../../resources/main.qrc">
+       <normaloff>:/new/prefix1/remove.png</normaloff>:/new/prefix1/remove.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="3">
+    <widget class="Affine3dControlWidget" name="locationWidget" native="true"/>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Name</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QLineEdit" name="nameEdit"/>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Affine3dControlWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">affine3dControlWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../../../resources/main.qrc"/>
+ </resources>
+ <connections/>
+</ui>

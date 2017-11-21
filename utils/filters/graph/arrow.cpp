@@ -38,18 +38,17 @@
 **
 ****************************************************************************/
 
+#include "arrow.h"
+
+#include <math.h>
+#include <iostream>
+
 #include <QtGui>
 
-#include "arrow.h"
-#include <math.h>
-#include "iostream"
-using namespace std;
-
-const qreal Pi = 3.14;
+const qreal Pi = M_PI;
 
 //! [0]
-Arrow::Arrow(DiagramItem *startItem, DiagramItem *endItem,
-         QGraphicsItem *parent, QGraphicsScene * /*scene*/)
+Arrow::Arrow(DiagramItem *startItem, DiagramItem *endItem, QGraphicsItem *parent, QGraphicsScene * /*scene*/)
     : QGraphicsLineItem(parent/*, scene*/)
 {
 //    cout<<"Arrow::Arrow"<<endl;
@@ -97,10 +96,8 @@ void Arrow::updatePosition()
 //! [3]
 
 //! [4]
-void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
-          QWidget *)
+void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
-
     QColor currentColor;
     if (isSelected())
         currentColor = Qt::red;

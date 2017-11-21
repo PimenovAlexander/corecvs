@@ -26,19 +26,23 @@ int BaseReflection<RectifyParameters>::dummy = RectifyParameters::staticInit();
 
 SUPPRESS_OFFSET_WARNING_BEGIN
 
+
+using namespace corecvs;
+
 int RectifyParameters::staticInit()
 {
 
     ReflectionNaming &nameing = naming();
     nameing = ReflectionNaming(
         "Rectify Parameters",
-        "osd parameters",
+        "Rectify Parameters",
         ""
     );
+
+     getReflection()->objectSize = sizeof(RectifyParameters);
      
 
-    fields().push_back(
-        new EnumField
+    EnumField* field0 = new EnumField
         (
           RectifyParameters::MATCHINGMETHOD_ID,
           offsetof(RectifyParameters, mMatchingMethod),
@@ -50,10 +54,11 @@ int RectifyParameters::staticInit()
           , new EnumOption(0,"SurfCV")
           , new EnumOption(1,"viTech")
           )
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field0->widgetHint=BaseField::COMBO_BOX;
+    fields().push_back(field0);
+    /*  */ 
+    DoubleField* field1 = new DoubleField
         (
           RectifyParameters::HESSIANTHRESHOLD_ID,
           offsetof(RectifyParameters, mHessianThreshold),
@@ -61,10 +66,12 @@ int RectifyParameters::staticInit()
           "hessianThreshold",
           "hessianThreshold",
           "hessianThreshold"
-        )
-    );
-    fields().push_back(
-        new IntField
+        );
+    field1->widgetHint=BaseField::SPIN_BOX;
+    field1->precision=2;
+    fields().push_back(field1);
+    /*  */ 
+    IntField* field2 = new IntField
         (
           RectifyParameters::OCTAVES_ID,
           offsetof(RectifyParameters, mOctaves),
@@ -72,10 +79,10 @@ int RectifyParameters::staticInit()
           "octaves",
           "octaves",
           "octaves"
-        )
-    );
-    fields().push_back(
-        new IntField
+        );
+    fields().push_back(field2);
+    /*  */ 
+    IntField* field3 = new IntField
         (
           RectifyParameters::OCTAVELAYERS_ID,
           offsetof(RectifyParameters, mOctaveLayers),
@@ -83,10 +90,10 @@ int RectifyParameters::staticInit()
           "octaveLayers",
           "octaveLayers",
           "octaveLayers"
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    fields().push_back(field3);
+    /*  */ 
+    BoolField* field4 = new BoolField
         (
           RectifyParameters::EXTENDED_ID,
           offsetof(RectifyParameters, mExtended),
@@ -94,10 +101,11 @@ int RectifyParameters::staticInit()
           "extended",
           "extended",
           "extended"
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field4->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field4);
+    /*  */ 
+    DoubleField* field5 = new DoubleField
         (
           RectifyParameters::FILTERMINIMUMLENGTH_ID,
           offsetof(RectifyParameters, mFilterMinimumLength),
@@ -108,10 +116,12 @@ int RectifyParameters::staticInit()
           true,
          0,
          99
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field5->widgetHint=BaseField::SPIN_BOX;
+    field5->precision=2;
+    fields().push_back(field5);
+    /*  */ 
+    BoolField* field6 = new BoolField
         (
           RectifyParameters::USEKLT_ID,
           offsetof(RectifyParameters, mUseKLT),
@@ -119,10 +129,11 @@ int RectifyParameters::staticInit()
           "useKLT",
           "useKLT",
           "useKLT"
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field6->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field6);
+    /*  */ 
+    BoolField* field7 = new BoolField
         (
           RectifyParameters::COMPUTEESSENTIAL_ID,
           offsetof(RectifyParameters, mComputeEssential),
@@ -130,10 +141,11 @@ int RectifyParameters::staticInit()
           "computeEssential",
           "computeEssential",
           "computeEssential"
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field7->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field7);
+    /*  */ 
+    DoubleField* field8 = new DoubleField
         (
           RectifyParameters::PRIORFOCAL_ID,
           offsetof(RectifyParameters, mPriorFocal),
@@ -144,10 +156,12 @@ int RectifyParameters::staticInit()
           true,
          0,
          99999
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field8->widgetHint=BaseField::SPIN_BOX;
+    field8->precision=2;
+    fields().push_back(field8);
+    /*  */ 
+    DoubleField* field9 = new DoubleField
         (
           RectifyParameters::PRIORFOCAL2_ID,
           offsetof(RectifyParameters, mPriorFocal2),
@@ -158,10 +172,12 @@ int RectifyParameters::staticInit()
           true,
          0,
          99999
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field9->widgetHint=BaseField::SPIN_BOX;
+    field9->precision=2;
+    fields().push_back(field9);
+    /*  */ 
+    DoubleField* field10 = new DoubleField
         (
           RectifyParameters::BASELINELENGTH_ID,
           offsetof(RectifyParameters, mBaselineLength),
@@ -172,10 +188,12 @@ int RectifyParameters::staticInit()
           true,
          -1000,
          1000
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field10->widgetHint=BaseField::SPIN_BOX;
+    field10->precision=2;
+    fields().push_back(field10);
+    /*  */ 
+    DoubleField* field11 = new DoubleField
         (
           RectifyParameters::FOVANGLE_ID,
           offsetof(RectifyParameters, mFovAngle),
@@ -186,10 +204,12 @@ int RectifyParameters::staticInit()
           true,
          0,
          20
-        )
-    );
-    fields().push_back(
-        new EnumField
+        );
+    field11->widgetHint=BaseField::SPIN_BOX;
+    field11->precision=2;
+    fields().push_back(field11);
+    /*  */ 
+    EnumField* field12 = new EnumField
         (
           RectifyParameters::ESTIMATIONMETHOD_ID,
           offsetof(RectifyParameters, mEstimationMethod),
@@ -202,10 +222,11 @@ int RectifyParameters::staticInit()
           , new EnumOption(1,"Iterative")
           , new EnumOption(2,"Manual")
           )
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field12->widgetHint=BaseField::COMBO_BOX;
+    fields().push_back(field12);
+    /*  */ 
+    BoolField* field13 = new BoolField
         (
           RectifyParameters::NORMALISE_ID,
           offsetof(RectifyParameters, mNormalise),
@@ -213,10 +234,11 @@ int RectifyParameters::staticInit()
           "normalise",
           "normalise",
           "normalise"
-        )
-    );
-    fields().push_back(
-        new IntField
+        );
+    field13->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field13);
+    /*  */ 
+    IntField* field14 = new IntField
         (
           RectifyParameters::RANSACITERATIONS_ID,
           offsetof(RectifyParameters, mRansacIterations),
@@ -227,10 +249,10 @@ int RectifyParameters::staticInit()
           true,
          1,
          9999
-        )
-    );
-    fields().push_back(
-        new IntField
+        );
+    fields().push_back(field14);
+    /*  */ 
+    IntField* field15 = new IntField
         (
           RectifyParameters::RANSACTESTSIZE_ID,
           offsetof(RectifyParameters, mRansacTestSize),
@@ -241,10 +263,10 @@ int RectifyParameters::staticInit()
           true,
          1,
          9999
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    fields().push_back(field15);
+    /*  */ 
+    DoubleField* field16 = new DoubleField
         (
           RectifyParameters::RANSACTHRESHOLD_ID,
           offsetof(RectifyParameters, mRansacThreshold),
@@ -255,10 +277,12 @@ int RectifyParameters::staticInit()
           true,
          1,
          20
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field16->widgetHint=BaseField::SPIN_BOX;
+    field16->precision=2;
+    fields().push_back(field16);
+    /*  */ 
+    DoubleField* field17 = new DoubleField
         (
           RectifyParameters::BASELINEX_ID,
           offsetof(RectifyParameters, mBaselineX),
@@ -269,10 +293,12 @@ int RectifyParameters::staticInit()
           true,
          -20,
          20
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field17->widgetHint=BaseField::SPIN_BOX;
+    field17->precision=2;
+    fields().push_back(field17);
+    /*  */ 
+    DoubleField* field18 = new DoubleField
         (
           RectifyParameters::BASELINEY_ID,
           offsetof(RectifyParameters, mBaselineY),
@@ -283,10 +309,12 @@ int RectifyParameters::staticInit()
           true,
          -20,
          20
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field18->widgetHint=BaseField::SPIN_BOX;
+    field18->precision=2;
+    fields().push_back(field18);
+    /*  */ 
+    DoubleField* field19 = new DoubleField
         (
           RectifyParameters::BASELINEZ_ID,
           offsetof(RectifyParameters, mBaselineZ),
@@ -297,10 +325,12 @@ int RectifyParameters::staticInit()
           true,
          -20,
          20
-        )
-    );
-    fields().push_back(
-        new EnumField
+        );
+    field19->widgetHint=BaseField::SPIN_BOX;
+    field19->precision=2;
+    fields().push_back(field19);
+    /*  */ 
+    EnumField* field20 = new EnumField
         (
           RectifyParameters::ITERATIVEMETHOD_ID,
           offsetof(RectifyParameters, mIterativeMethod),
@@ -315,10 +345,11 @@ int RectifyParameters::staticInit()
           , new EnumOption(3,"Classic Kalman")
           , new EnumOption(4,"Kalman")
           )
-        )
-    );
-    fields().push_back(
-        new IntField
+        );
+    field20->widgetHint=BaseField::COMBO_BOX;
+    fields().push_back(field20);
+    /*  */ 
+    IntField* field21 = new IntField
         (
           RectifyParameters::ITERATIVEITERATIONS_ID,
           offsetof(RectifyParameters, mIterativeIterations),
@@ -329,10 +360,10 @@ int RectifyParameters::staticInit()
           true,
          1,
          9999
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    fields().push_back(field21);
+    /*  */ 
+    DoubleField* field22 = new DoubleField
         (
           RectifyParameters::ITERATIVEINITIALSIGMA_ID,
           offsetof(RectifyParameters, mIterativeInitialSigma),
@@ -343,10 +374,12 @@ int RectifyParameters::staticInit()
           true,
          0,
          20
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field22->widgetHint=BaseField::SPIN_BOX;
+    field22->precision=2;
+    fields().push_back(field22);
+    /*  */ 
+    DoubleField* field23 = new DoubleField
         (
           RectifyParameters::ITERATIVEFACTORSIGMA_ID,
           offsetof(RectifyParameters, mIterativeFactorSigma),
@@ -357,10 +390,12 @@ int RectifyParameters::staticInit()
           true,
          0,
          20
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field23->widgetHint=BaseField::SPIN_BOX;
+    field23->precision=2;
+    fields().push_back(field23);
+    /*  */ 
+    DoubleField* field24 = new DoubleField
         (
           RectifyParameters::MANUALX_ID,
           offsetof(RectifyParameters, mManualX),
@@ -371,10 +406,12 @@ int RectifyParameters::staticInit()
           true,
          -20,
          20
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field24->widgetHint=BaseField::SPIN_BOX;
+    field24->precision=2;
+    fields().push_back(field24);
+    /*  */ 
+    DoubleField* field25 = new DoubleField
         (
           RectifyParameters::MANUALY_ID,
           offsetof(RectifyParameters, mManualY),
@@ -385,10 +422,12 @@ int RectifyParameters::staticInit()
           true,
          -20,
          20
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field25->widgetHint=BaseField::SPIN_BOX;
+    field25->precision=2;
+    fields().push_back(field25);
+    /*  */ 
+    DoubleField* field26 = new DoubleField
         (
           RectifyParameters::MANUALZ_ID,
           offsetof(RectifyParameters, mManualZ),
@@ -399,10 +438,12 @@ int RectifyParameters::staticInit()
           true,
          -20,
          20
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field26->widgetHint=BaseField::SPIN_BOX;
+    field26->precision=2;
+    fields().push_back(field26);
+    /*  */ 
+    DoubleField* field27 = new DoubleField
         (
           RectifyParameters::MANUALPITCH_ID,
           offsetof(RectifyParameters, mManualPitch),
@@ -413,10 +454,12 @@ int RectifyParameters::staticInit()
           true,
          -20,
          20
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field27->widgetHint=BaseField::SPIN_BOX;
+    field27->precision=2;
+    fields().push_back(field27);
+    /*  */ 
+    DoubleField* field28 = new DoubleField
         (
           RectifyParameters::MANUALYAW_ID,
           offsetof(RectifyParameters, mManualYaw),
@@ -427,10 +470,12 @@ int RectifyParameters::staticInit()
           true,
          -20,
          20
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field28->widgetHint=BaseField::SPIN_BOX;
+    field28->precision=2;
+    fields().push_back(field28);
+    /*  */ 
+    DoubleField* field29 = new DoubleField
         (
           RectifyParameters::MANUALROLL_ID,
           offsetof(RectifyParameters, mManualRoll),
@@ -441,10 +486,12 @@ int RectifyParameters::staticInit()
           true,
          -20,
          20
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field29->widgetHint=BaseField::SPIN_BOX;
+    field29->precision=2;
+    fields().push_back(field29);
+    /*  */ 
+    DoubleField* field30 = new DoubleField
         (
           RectifyParameters::ZDIRX_ID,
           offsetof(RectifyParameters, mZdirX),
@@ -455,10 +502,12 @@ int RectifyParameters::staticInit()
           true,
          -20,
          20
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field30->widgetHint=BaseField::SPIN_BOX;
+    field30->precision=2;
+    fields().push_back(field30);
+    /*  */ 
+    DoubleField* field31 = new DoubleField
         (
           RectifyParameters::ZDIRY_ID,
           offsetof(RectifyParameters, mZdirY),
@@ -469,10 +518,12 @@ int RectifyParameters::staticInit()
           true,
          -20,
          20
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field31->widgetHint=BaseField::SPIN_BOX;
+    field31->precision=2;
+    fields().push_back(field31);
+    /*  */ 
+    DoubleField* field32 = new DoubleField
         (
           RectifyParameters::ZDIRZ_ID,
           offsetof(RectifyParameters, mZdirZ),
@@ -483,10 +534,12 @@ int RectifyParameters::staticInit()
           true,
          -20,
          20
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field32->widgetHint=BaseField::SPIN_BOX;
+    field32->precision=2;
+    fields().push_back(field32);
+    /*  */ 
+    BoolField* field33 = new BoolField
         (
           RectifyParameters::AUTOZ_ID,
           offsetof(RectifyParameters, mAutoZ),
@@ -494,10 +547,11 @@ int RectifyParameters::staticInit()
           "autoZ",
           "autoZ",
           "autoZ"
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field33->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field33);
+    /*  */ 
+    BoolField* field34 = new BoolField
         (
           RectifyParameters::AUTOSHIFT_ID,
           offsetof(RectifyParameters, mAutoShift),
@@ -505,10 +559,11 @@ int RectifyParameters::staticInit()
           "autoShift",
           "autoShift",
           "autoShift"
-        )
-    );
-    fields().push_back(
-        new IntField
+        );
+    field34->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field34);
+    /*  */ 
+    IntField* field35 = new IntField
         (
           RectifyParameters::PRESHIFT_ID,
           offsetof(RectifyParameters, mPreShift),
@@ -519,10 +574,10 @@ int RectifyParameters::staticInit()
           true,
          -9999,
          9999
-        )
-    );
-    fields().push_back(
-        new IntField
+        );
+    fields().push_back(field35);
+    /*  */ 
+    IntField* field36 = new IntField
         (
           RectifyParameters::GUESSSHIFTTHRESHOLD_ID,
           offsetof(RectifyParameters, mGuessShiftThreshold),
@@ -533,8 +588,15 @@ int RectifyParameters::staticInit()
           true,
          0,
          99999
-        )
-    );
+        );
+    fields().push_back(field36);
+    /*  */ 
+    ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
+    directory[std::string("Rectify Parameters")]= &reflection;
+   return 0;
+}
+int RectifyParameters::relinkCompositeFields()
+{
    return 0;
 }
 

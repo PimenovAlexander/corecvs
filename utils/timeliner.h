@@ -13,9 +13,9 @@
 #include <stdint.h>
 #include <QtCore/QString>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "fixedVector.h"
+#include "core/math/vector/fixedVector.h"
 
 using namespace corecvs;
 

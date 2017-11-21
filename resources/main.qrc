@@ -55,6 +55,8 @@
         <file>zoom_out.png</file>
         <file>record.png</file>
         <file>stop.png</file>
+        <file>stop_sign.png</file>
+        <file>stop_2.png</file>
         <file>user.png</file>
         <file>user_silhouette.png</file>
         <file>sphere.png</file>
@@ -93,15 +95,27 @@
         <file>radioactivity_drum.png</file>
         <file>transform_rotate.png</file>
         <file>tree_list.png</file>
+        <file>matchpoints.png</file>
         <file>inbox_download.png</file>
         <file>inbox_upload.png</file>
         <file>screwdriver.png</file>
+        <file>report_images.png</file>
         <file>connect.png</file>
         <file>disconnect.png</file>
         <file>gear_in.png</file>
         <file>arrow_rotate_anticlockwise.png</file>
         <file>arrow_rotate_clockwise.png</file>
+        <file>bitboard.png</file>
         <file>question.png</file>
+        <file>inbox_upload_add.png</file>
+        <file>shape_rotate_clockwise_exec.png</file>
+        <file>shape_rotate_clockwise.png</file>
+        <file>lighthouse.png</file>
+        <file>draw_polygon.png</file>
+        <file>merge_two_tables.png</file>
+        <file>fingerprint.png</file>
+        <file>setting_tools.png</file>
+        <file>page_copy.png</file>
     </qresource>
     <qresource prefix="/new/colors">
         <file>colors/color_blue.png</file>
@@ -148,5 +162,9 @@
         <file>zoom_extend.png</file>
         <file>layer_resize_actual.png</file>
         <file>layer_resize.png</file>
+    </qresource>
+    <qresource prefix="/new/shaders">
+        <file>shaders/_trivial.fsh</file>
+        <file>shaders/_trivial.vsh</file>
     </qresource>
 </RCC>

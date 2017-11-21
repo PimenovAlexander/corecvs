@@ -1,17 +1,48 @@
+#include <QFileDialog>
+
 #include "cameraModelParametersControlWidget.h"
 #include "ui_cameraModelParametersControlWidget.h"
+
+#include "core/camerafixture/fixtureScene.h"
 
 CameraModelParametersControlWidget::CameraModelParametersControlWidget(QWidget *parent) :
     ParametersControlWidgetBase(parent),
     ui(new Ui::CameraModelParametersControlWidget)
 {
     ui->setupUi(this);
-    writeUi();
+
+    ui->lensDistortionWidget->toggleAdvanced(false);
+
+
+    QObject::connect(ui->cameraNameEdit      , SIGNAL(textChanged(QString)), this, SLOT(paramsChangedInUI()));
+    QObject::connect(ui->lensDistortionWidget, SIGNAL(paramsChanged())     , this, SLOT(paramsChangedInUI()));
+    QObject::connect(ui->extrinsicWorldWidget, SIGNAL(paramsChanged())     , this, SLOT(paramsChangedInUI()));
+
+    QObject::connect(ui->spinBoxFocalX, SIGNAL(valueChanged(double)), this, SLOT(paramsChangedInUI()));
+    QObject::connect(ui->spinBoxFocalY, SIGNAL(valueChanged(double)), this, SLOT(paramsChangedInUI()));
+
+    QObject::connect(ui->spinBoxCx, SIGNAL(valueChanged(double)), this, SLOT(paramsChangedInUI()));
+    QObject::connect(ui->spinBoxCy, SIGNAL(valueChanged(double)), this, SLOT(paramsChangedInUI()));
+
+    QObject::connect(ui->spinBoxSkew, SIGNAL(valueChanged(double)), this, SLOT(paramsChangedInUI()));
+//    writeUi();
+    /* Addintional buttons */
+
+    QObject::connect(ui->loadPushButton, SIGNAL(released()), this, SLOT(loadPressed()));
+    QObject::connect(ui->savePushButton, SIGNAL(released()), this, SLOT(savePressed()));
+    QObject::connect(ui->revertButton  , SIGNAL(released()), this, SLOT(revertPressed()));
+
+    /* Extrinsics reset button */
+    QObject::connect(ui->zeroExtrinsicsPushButton , SIGNAL(released()), this, SLOT( zeroPressed()));
+    QObject::connect(ui->resetExtrinsicsPushButton, SIGNAL(released()), this, SLOT(resetPressed()));
+
+    ui->extrinsicCamWidget->setEnabled(false);
+
 }
 
 CameraModelParametersControlWidget::~CameraModelParametersControlWidget()
 {
-    delete ui;
+    delete_safe(ui);
 }
 
 LensDistortionModelParameters CameraModelParametersControlWidget::lensDistortionParameters()
@@ -29,85 +60,148 @@ void CameraModelParametersControlWidget::setLensDistortionParameters(const LensD
 void CameraModelParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
     ui->lensDistortionWidget->loadParamWidget(loader);
-
-
-}
-
-void CameraModelParametersControlWidget::getCameraParameters(double &fx, double &fy, double &cx, double &cy, double &skew, corecvs::Vector3dd &_pos, corecvs::Quaternion &_orientation, corecvs::Vector2dd &size, corecvs::Vector2dd &distortedSize)
-{
-    readUi();
-    fx = this->fx;
-    fy = this->fy;
-    cx = this->cx;
-    cy = this->cy;
-    skew = this->skew;
-    _pos = this->_pos;
-    _orientation = this->_orientation;
-    size = _size;
-    distortedSize = _distortedSize;
-}
-
-void CameraModelParametersControlWidget::setCameraParameters(double &fx, double &fy, double &cx, double &cy, double &skew, corecvs::Vector3dd &_pos, corecvs::Quaternion &_dir, corecvs::Vector2dd &size, corecvs::Vector2dd &distortedSize)
-{
-    this->fx = fx;
-    this->fy = fy;
-    this->cx = cx;
-    this->cy = cy;
-    this->skew = skew;
-    this->_pos = _pos;
-    this->_orientation = _dir;
-    _size = size;
-    _distortedSize = distortedSize;
-    writeUi();
-}
-
-void CameraModelParametersControlWidget::readUi()
-{
-    fx = ui->spinBoxFocalX->value();
-    fy = ui->spinBoxFocalY->value();
-    cx = ui->spinBoxCx->value();
-    cy = ui->spinBoxCy->value();
-    skew = ui->spinBoxSkew->value();
-    _pos[0] =  ui->spinBoxX->value();
-    _pos[1] =  ui->spinBoxY->value();
-    _pos[2] =  ui->spinBoxZ->value();
-
-    double yaw = ui->widgetYaw->value() / 2.0, pitch = ui->widgetPitch->value() / 2.0, roll = ui->widgetRoll->value() / 2.0;
-    // FIXME: I just selected arbitrary values
-    double t = cos(roll)*cos(pitch)*cos(yaw)+sin(roll)*sin(pitch)*sin(yaw);
-    double x = sin(roll)*cos(pitch)*cos(yaw)-cos(roll)*sin(pitch)*sin(yaw);
-    double y = cos(roll)*sin(pitch)*cos(yaw)+sin(roll)*cos(pitch)*sin(yaw);
-    double z = cos(roll)*cos(pitch)*sin(yaw)-sin(roll)*sin(pitch)*cos(yaw);
-
-
-    _orientation = Quaternion(x, y, z, t);
-}
-
-void CameraModelParametersControlWidget::writeUi()
-{
-    ui->spinBoxFocalX->setValue(fx);
-    ui->spinBoxFocalY->setValue(fy);
-    ui->spinBoxCx->setValue(cx);
-    ui->spinBoxCy->setValue(cy);
-    ui->spinBoxSkew->setValue(skew);
-    ui->spinBoxX->setValue(_pos[0]);
-    ui->spinBoxY->setValue(_pos[1]);
-    ui->spinBoxZ->setValue(_pos[2]);
-    // FIXME: hope it works
-    double q0 = _orientation[3], q1 = _orientation[0], q2 = _orientation[1], q3 = _orientation[2];
-    double roll = atan2(2.0 * (q0 * q1 + q2 * q3), 1.0 - 2.0 * (q1 * q1 + q2 * q2));
-    double pitch= asin(2.0 * (q0 * q2 - q3 * q1));
-    double yaw  = atan2(2.0 * (q0 * q3 + q1 * q2), 1.0 - 2.0 * (q2 * q2 + q3 * q3));
-
-    ui->widgetYaw->setValue(yaw);
-    ui->widgetPitch->setValue(pitch);
-    ui->widgetRoll->setValue(roll);
+   /**/
 }
 
 
 void CameraModelParametersControlWidget::saveParamWidget(WidgetSaver &saver)
 {
     ui->lensDistortionWidget->saveParamWidget(saver);
+    /**/
+}
+
+void CameraModelParametersControlWidget::loadPressed()
+{
+    QString filename = QFileDialog::getOpenFileName(
+        this,
+        "LOAD: Choose an camera config name",
+        ".",
+        "Text (*.json)"
+    );
+    if (!filename.isEmpty()) {
+        emit loadRequest(filename);
+    }
+}
+
+void CameraModelParametersControlWidget::savePressed()
+{
+    QString filename = QFileDialog::getSaveFileName(
+        this,
+        "SAVE: Choose an camera config name",
+        ".",
+        "Text (*.json)"
+    );
+    if (!filename.isEmpty()) {
+        emit saveRequest(filename);
+    }
+}
+
+void CameraModelParametersControlWidget::revertPressed()
+{
+//    qDebug() << "CameraModelParametersControlWidget::revertPressed(): pressed";
+    setParameters(backup);
+}
+
+void CameraModelParametersControlWidget::zeroPressed()
+{
+    Affine3DQ zero = Affine3DQ::Identity();
+    ui->extrinsicWorldWidget->setParameters(zero);
+    emit paramsChanged();
+}
+
+void CameraModelParametersControlWidget::resetPressed()
+{
+    Affine3DQ zero = FixtureScene::DEFAULT_WORLD_TO_CAMERA.inverted();
+    ui->extrinsicWorldWidget->setParameters(zero);
+    emit paramsChanged();
+}
+
+void CameraModelParametersControlWidget::paramsChangedInUI()
+{
+//    qDebug() << "CameraModelParametersControlWidget::paramsChangedInUI(): pressed";
+    ui->revertButton->setEnabled(true);
+    emit paramsChanged();
+}
+
+/**/
+
+void CameraModelParametersControlWidget::getParameters(CameraModel& params) const
+{    
+    ui->lensDistortionWidget->getParameters(params.distortion);
+
+    params.nameId = ui->cameraNameEdit->text().toStdString();
+
+    Affine3DQ location;
+    ui->extrinsicWorldWidget->getParameters(location);
+    params.setLocation(location);
+
+    params.intrinsics.focal.x() = ui->spinBoxFocalX->value();
+    params.intrinsics.focal.y() = ui->spinBoxFocalY->value();
+
+    params.intrinsics.principal.x() = ui->spinBoxCx->value();
+    params.intrinsics.principal.y() = ui->spinBoxCy->value();
+
+    params.intrinsics.skew = ui->spinBoxSkew->value();
+}
+
+CameraModel *CameraModelParametersControlWidget::createParameters() const
+{
+
+    /**
+     * We should think of returning parameters by value or saving them in a preallocated place
+     **/
+    CameraModel *result = new CameraModel();
+    getParameters(*result);
+    return result;
+}
+
+void CameraModelParametersControlWidget::setParameters(const CameraModel &input)
+{
+    // Block signals to send them all at once
+    bool wasBlocked = blockSignals(true);
+
+    ui->cameraNameEdit->setText(QString::fromStdString(input.nameId));
+    ui->lensDistortionWidget->setParameters(input.distortion);
+
+    ui->extrinsicWorldWidget->setParameters(input.getAffine());
+    ui->extrinsicCamWidget->setParameters(FixtureScene::DEFAULT_WORLD_TO_CAMERA * input.getAffine());
+
+    ui->spinBoxFocalX->setValue(input.intrinsics.fx());
+    ui->spinBoxFocalY->setValue(input.intrinsics.fy());
+
+    ui->spinBoxCx->setValue(input.intrinsics.cx());
+    ui->spinBoxCy->setValue(input.intrinsics.cy());
+
+    ui->spinBoxSkew->setValue(input.intrinsics.skew);
+
+    ui->infoLabel->setText(QString("Size(xy):[%1 x %2] dist:[%3 x %4]")
+                .arg(input.intrinsics.size.x()).arg(input.intrinsics.size.y())
+                .arg(input.intrinsics.distortedSize.x()).arg(input.intrinsics.distortedSize.y()));
 
 
+    blockSignals(wasBlocked);
+    backup = input;
+    ui->revertButton->setEnabled(false);
+
+    emit paramsChanged();
+}
+
+void CameraModelParametersControlWidget::setParametersVirtual(void *input)
+{
+    // Modify widget parameters from outside
+    CameraModel *inputCasted = static_cast<CameraModel *>(input);
+    setParameters(*inputCasted);
+}
+
+
+
+
+FixtureCameraParametersControlWidget::FixtureCameraParametersControlWidget(QWidget *parent) :
+    CameraModelParametersControlWidget(parent)
+{
+    QComboBox *prototypeBox = new QComboBox();
+    prototypeBox->addItem("NULL");
+    prototypeBox->addItem("Dummy");
+
+    ui->mainLayout->addWidget(prototypeBox, 0, 0, 1, 1);
 }

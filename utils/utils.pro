@@ -12,10 +12,9 @@ ROOT_DIR=$$PWD/$$ROOT_DIR
 
 TEMPLATE = lib
 TARGET   = cvs_utils
-CONFIG += staticlib
+CONFIG  += staticlib
 
-CONFIG += serialport
-LIBS += -lserialport
+include($$ROOT_DIR/git-version.pri)
 
 include(utils.pri)                      # it uses TARGET and detects UTILS_BINDIR, OBJECTS_DIR,...!
 
@@ -38,8 +37,6 @@ HEADERS += \
     framesources/decoders/decoupleYUYV.h \
     \
     framesources/file/imageFileCaptureInterface.h \
-    framesources/file/fileCapture.h \
-    framesources/file/precCapture.h \
     framesources/file/abstractFileCapture.h \
     framesources/file/abstractFileCaptureSpinThread.h \
     \
@@ -83,8 +80,9 @@ HEADERS += \
     \
     configManager.h \
     corestructs/lockableObject.h \
-    statistics/graphData.h \
     corestructs/g12Image.h \
+    \
+    statistics/graphData.h \
     visitors/jsonGetter.h \
     visitors/jsonSetter.h \
     widgets/vectorWidget.h \
@@ -103,6 +101,7 @@ SOURCES += \
     framesources/decoders/mjpegDecoder.cpp \
     framesources/decoders/mjpegDecoderLazy.cpp \
     framesources/decoders/decoupleYUYV.cpp \
+    framesources/decoders/aLowCodec.cpp \
     \
     framesources/file/imageFileCaptureInterface.cpp \
     framesources/file/fileCapture.cpp \
@@ -147,9 +146,11 @@ SOURCES += \
     widgets/generated/graphPlotParameters.cpp \
     \
     configManager.cpp \
+    \
     corestructs/lockableObject.cpp \
-    statistics/graphData.cpp \
     corestructs/g12Image.cpp \
+    \
+    statistics/graphData.cpp \
     visitors/jsonGetter.cpp \
     visitors/jsonSetter.cpp \
     widgets/vectorWidget.cpp \
@@ -157,8 +158,27 @@ SOURCES += \
     distortioncorrector/lensDistortionModelParametersControlWidget.cpp \
     distortioncorrector/calibrationFeaturesWidget.cpp \
     uis/cloudview/scene3dTreeView.cpp \
+#    tablecontrol/rotaryTableControlWidget.cpp \
+#    tablecontrol/rotaryTableMeshModel.cpp \
+#    tablecontrol/rotationPlanGenerator.cpp \
+    corestructs/cameraModel/affine3dControlWidget.cpp \
+    corestructs/cameraModel/fixtureControlWidget.cpp \
+    widgets/observationListModel.cpp \
+    distortioncorrector/pointListEditImageWidget.cpp \
+    corestructs/cameraModel/featurePointControlWidget.cpp \
+    uis/aboutPropsTableWidget.cpp \
     scannercontrol.cpp \
     uis/histogramDepthDialog.cpp \
+    3d/sceneShaded.cpp \
+    corestructs/reflectionWidget.cpp \
+    3d/shadedSceneControlWidget.cpp \
+    3d/billboardCaption3DScene.cpp \
+    3d/gCodeScene.cpp \
+    corestructs/cameraModel/fixtureGeometryControlWidget.cpp \
+    corestructs/pointerFieldWidget.cpp \
+    corestructs/widgetBlockHarness.cpp \
+    corestructs/cameraModel/fixtureGlobalParametersWidget.cpp \
+    framesources/imageCaptureInterfaceQt.cpp
     3d/sceneShaded.cpp
 
 
@@ -167,8 +187,57 @@ FORMS += \
     distortioncorrector/cameraModelParametersControlWidget.ui \
     distortioncorrector/lensDistortionModelParametersControlWidget.ui \
     distortioncorrector/calibrationFeaturesWidget.ui \
+#    tablecontrol/rotaryTableControlWidget.ui \
+#    tablecontrol/rotationPlanGenerator.ui \
+    corestructs/cameraModel/affine3dControlWidget.ui \
+    corestructs/cameraModel/fixtureControlWidget.ui \
+    corestructs/cameraModel/featurePointControlWidget.ui \
+    3d/shadedSceneControlWidget.ui \
+    corestructs/cameraModel/fixtureGeometryControlWidget.ui \
+    corestructs/pointerFieldWidget.ui \
+    corestructs/cameraModel/fixtureGlobalParametersWidget.ui
 
 # =============================================================
+
+# PREC
+CONFIG += with_framesource_prec
+
+with_framesource_prec {
+HEADERS +=  framesources/file/precCapture.h
+SOURCES +=  framesources/file/precCapture.cpp
+DEFINES += WITH_FRAMESOURCE_PREC
+}
+
+# FILE
+CONFIG += with_framesource_file
+
+with_framesource_file {
+HEADERS +=  framesources/file/fileCapture.h
+SOURCES +=  framesources/file/fileCapture.cpp
+DEFINES += WITH_FRAMESOURCE_FILE
+}
+
+
+# =============================================================
+
+HEADERS += memoryuse/memoryUsageCalculator.h
+SOURCES += memoryuse/memoryUsageCalculator.cpp
+
+win32 {
+   HEADERS += memoryuse/windowsMemoryUsageCalculator.h
+   SOURCES += memoryuse/windowsMemoryUsageCalculator.cpp
+} else:macx {
+   HEADERS += memoryuse/macMemoryUsageCalculator.h
+   SOURCES += memoryuse/macMemoryUsageCalculator.cpp
+} else {
+   HEADERS += memoryuse/linuxMemoryUsageCalculator.h
+   SOURCES += memoryuse/linuxMemoryUsageCalculator.cpp
+}
+
+
+# =============================================================
+
+
 
 with_filters {
     include($$UTILSDIR/filters/ui/filterWidgets.pri)
@@ -287,7 +356,6 @@ HEADERS += \
     uis/aboutDialog.h \
     uis/textLabelWidget.h \
     uis/pointsRectificationWidget.h \
-    \
 
 SOURCES += \
     widgets/generated/graphPlotParametersControlWidget.cpp \
@@ -341,7 +409,7 @@ SOURCES += \
     uis/aboutDialog.cpp \
     uis/textLabelWidget.cpp \
     uis/pointsRectificationWidget.cpp \
-    \
+
 
 
 FORMS += \
@@ -384,7 +452,7 @@ FORMS += \
     \
     rectifier/rectifyParametersControlWidget.ui \
     distortioncorrector/distortionWidget.ui \
-    \
+
 
 }
 
@@ -392,6 +460,10 @@ RESOURCES += \
    ../resources/main.qrc
 
 unix:!macx:!win32 {
+    CONFIG += with_framesource_v4l2
+}
+
+with_framesource_v4l2 {
     message (Switching on V4L2 support)
 
     HEADERS += \
@@ -404,6 +476,7 @@ unix:!macx:!win32 {
         framesources/v4l2/V4L2Capture.cpp \
         framesources/v4l2/V4L2CaptureDecouple.cpp \
 
+    DEFINES += WITH_FRAMESOURCE_V4L2
 }
 
 
@@ -428,12 +501,12 @@ with_opengl {
          3d/generated/draw3dParameters.h \
          3d/generated/draw3dStyle.h \
          3d/generated/draw3dCameraParameters.h \
-         3d/generated/viMouse3dStereoStyle.h \
-         3d/generated/viMouse3dFlowStyle.h \
-         3d/generated/viMouse3dStereoStyle.h \
-         3d/generated/viMouse3dFlowStyle.h \
+         3d/generated/viMouse3DStereoStyle.h \
+         3d/generated/viMouse3DFlowStyle.h \
+         3d/generated/viMouse3DStereoStyle.h \
+         3d/generated/viMouse3DFlowStyle.h \
          3d/generated/draw3dViMouseParameters.h \
-         3d/mesh3dScene.h \
+         3d/mesh3DScene.h \
          3d/coordinateFrame.h \
          \
 
@@ -493,6 +566,28 @@ with_opencv {
     }
 }
 
+with_rapidjson {
+    RAPIDJSON_WRAPPER_DIR = $$UTILSDIR/../wrappers/rapidjson
+    include($$RAPIDJSON_WRAPPER_DIR/rapidjson.pri)
+
+    contains(DEFINES, WITH_RAPIDJSON) {
+        HEADERS +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONReader.h
+        SOURCES +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONReader.cpp
+       #HEADERS +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONWriter.h
+       #SOURCES +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONWriter.cpp
+    }
+}
+
+with_jsonmodern {
+    JSONMODERN_WRAPPER_DIR = $$UTILSDIR/../wrappers/jsonmodern
+    include($$JSONMODERN_WRAPPER_DIR/jsonmodern.pri)
+
+    contains(DEFINES, WITH_JSONMODERN) {
+         HEADERS += $$JSONMODERN_WRAPPER_DIR/jsonModernReader.h
+         SOURCES += $$JSONMODERN_WRAPPER_DIR/jsonModernReader.cpp
+    }
+}
+
 with_siftgpu {
         DEFINES += WITH_SIFTGPU
         SIFTGPU_WRAPPER_DIR = $$UTILSDIR/../wrappers/siftgpu
@@ -527,13 +622,17 @@ with_avcodec {
 }
 
 with_synccam {
-    HEADERS += \
-        framesources/syncCam/syncCamerasCaptureInterface.h \
-
-    SOURCES += \
-        framesources/syncCam/syncCamerasCaptureInterface.cpp \
+    HEADERS += framesources/syncCam/syncCamerasCaptureInterface.h
+    SOURCES += framesources/syncCam/syncCamerasCaptureInterface.cpp
 
     DEFINES += WITH_SYNCCAM
+}
+
+
+with_qscript {
+    SOURCES += scripting/scriptWindow.cpp
+    HEADERS += scripting/scriptWindow.h
+    FORMS   += scripting/scriptWindow.ui
 }
 
 OTHER_FILES += ../tools/generator/xml/draw3d.xml

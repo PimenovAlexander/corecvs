@@ -1,13 +1,17 @@
 #pragma once
+/**
+    rgbColorParametersControlWidget.h
+**/
+
 
 #include <QWidget>
 #include <QColorDialog>
 #include <QPainter>
 
-#include "generated/rgbColorParameters.h"
+#include "core/xml/generated/rgbColorParameters.h"
 #include "ui_rgbColorParametersControlWidget.h"
 #include "parametersControlWidgetBase.h"
-#include "rgbColor.h"
+#include "core/buffers/rgb24/rgbColor.h"
 
 
 namespace Ui {
@@ -38,6 +42,24 @@ public:
           mUi->rSpinBox->value()
         , mUi->gSpinBox->value()
         , mUi->bSpinBox->value());
+    }
+
+    void setRGBColor(const RGBColor &color)
+    {
+        RgbColorParameters params;
+        params.setR(color.r());
+        params.setG(color.g());
+        params.setB(color.b());
+        setParameters(params);
+    }
+
+
+    void setEnabled(bool flag)
+    {
+        mUi->rSpinBox->setEnabled(flag);
+        mUi->gSpinBox->setEnabled(flag);
+        mUi->bSpinBox->setEnabled(flag);
+        mUi->pickerWidget->setEnabled(flag);
     }
 
 public slots:

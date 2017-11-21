@@ -132,6 +132,21 @@
              </item>
              <item>
               <property name="text">
+               <string>Orth Top (Left)</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Orth Left (Left)</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Orth Front (Left)</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
                <string>Pinhole at 0</string>
               </property>
              </item>
@@ -150,9 +165,52 @@
                <string>Face Camera</string>
               </property>
              </item>
+             <item>
+              <property name="text">
+               <string>User Camera</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>User Orto Camera</string>
+              </property>
+             </item>
             </widget>
            </item>
-           <item row="0" column="1" rowspan="3">
+           <item row="3" column="0">
+            <widget class="QDoubleSpinBox" name="frustumFarBox">
+             <property name="decimals">
+              <number>2</number>
+             </property>
+             <property name="maximum">
+              <double>100000.000000000000000</double>
+             </property>
+             <property name="value">
+              <double>2000.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Frustum Far:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3">
+            <spacer name="horizontalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="0" column="2">
             <widget class="QPushButton" name="centerButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -187,38 +245,31 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="0">
-            <widget class="QDoubleSpinBox" name="frustumFarBox">
-             <property name="decimals">
-              <number>2</number>
-             </property>
-             <property name="maximum">
-              <double>100000.000000000000000</double>
-             </property>
-             <property name="value">
-              <double>2000.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_3">
-             <property name="text">
-              <string>Frustum Far:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2">
-            <spacer name="horizontalSpacer_4">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
+           <item row="3" column="2" colspan="2">
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QPushButton" name="rotateClockPushButton">
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../../resources/main.qrc">
+                 <normaloff>:/new/prefix1/arrow_rotate_clockwise.png</normaloff>:/new/prefix1/arrow_rotate_clockwise.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="rotateAntiClockPushButton">
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../../resources/main.qrc">
+                 <normaloff>:/new/prefix1/arrow_rotate_anticlockwise.png</normaloff>:/new/prefix1/arrow_rotate_anticlockwise.png</iconset>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </widget>
@@ -305,6 +356,42 @@
              </property>
             </spacer>
            </item>
+           <item row="2" column="2" rowspan="2" colspan="2">
+            <widget class="QPushButton" name="rightButton">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>32</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../../resources/main.qrc">
+               <normaloff>:/new/prefix1/back_alt.png</normaloff>:/new/prefix1/back_alt.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="6">
+            <widget class="QLabel" name="zoomLabel">
+             <property name="text">
+              <string>x1</string>
+             </property>
+            </widget>
+           </item>
            <item row="1" column="0" rowspan="3">
             <widget class="QPushButton" name="pauseButton">
              <property name="text">
@@ -326,35 +413,6 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="2" rowspan="2" colspan="2">
-            <widget class="QPushButton" name="rightButton">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>40</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../../../resources/main.qrc">
-               <normaloff>:/new/prefix1/back_alt.png</normaloff>:/new/prefix1/back_alt.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-            </widget>
-           </item>
            <item row="2" column="4" rowspan="2">
             <widget class="QPushButton" name="leftButton">
              <property name="minimumSize">
@@ -365,8 +423,8 @@
              </property>
              <property name="maximumSize">
               <size>
-               <width>40</width>
-               <height>16777215</height>
+               <width>32</width>
+               <height>32</height>
               </size>
              </property>
              <property name="text">
@@ -384,13 +442,6 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="6">
-            <widget class="QLabel" name="zoomLabel">
-             <property name="text">
-              <string>x1</string>
-             </property>
-            </widget>
-           </item>
            <item row="4" column="3" colspan="2">
             <widget class="QPushButton" name="downButton">
              <property name="minimumSize">
@@ -401,8 +452,8 @@
              </property>
              <property name="maximumSize">
               <size>
-               <width>40</width>
-               <height>16777215</height>
+               <width>32</width>
+               <height>32</height>
               </size>
              </property>
              <property name="text">
@@ -430,8 +481,8 @@
              </property>
              <property name="maximumSize">
               <size>
-               <width>40</width>
-               <height>16777215</height>
+               <width>32</width>
+               <height>32</height>
               </size>
              </property>
              <property name="text">
@@ -445,6 +496,22 @@
               <size>
                <width>24</width>
                <height>24</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0" colspan="9">
+            <widget class="RgbColorParametersControlWidget" name="backgroudColorWidget" native="true">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>10</width>
+               <height>40</height>
               </size>
              </property>
             </widget>
@@ -547,7 +614,7 @@
            <item row="0" column="1">
             <widget class="QPushButton" name="exportPLYButton">
              <property name="text">
-              <string>Export PLY</string>
+              <string>Quick Export</string>
              </property>
              <property name="icon">
               <iconset resource="../../../resources/main.qrc">
@@ -562,9 +629,9 @@
             </widget>
            </item>
            <item row="0" column="0">
-            <widget class="QPushButton" name="exportPCLButton">
+            <widget class="QPushButton" name="exportMeshButton">
              <property name="text">
-              <string>Export PCL</string>
+              <string>Export Mesh</string>
              </property>
              <property name="icon">
               <iconset resource="../../../resources/main.qrc">
@@ -632,16 +699,22 @@
    <extends>QTreeView</extends>
    <header>scene3dTreeView.h</header>
   </customwidget>
+  <customwidget>
+   <class>RgbColorParametersControlWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">rgbColorParametersControlWidget.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources>
   <include location="../../../resources/main.qrc"/>
  </resources>
  <connections>
   <connection>
-   <sender>exportPCLButton</sender>
+   <sender>exportMeshButton</sender>
    <signal>released()</signal>
    <receiver>CloudViewDialogClass</receiver>
-   <slot>savePointsPCD()</slot>
+   <slot>saveMesh()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>913</x>
@@ -704,7 +777,7 @@
  </connections>
  <slots>
   <slot>updateHelperObjects()</slot>
-  <slot>savePointsPCD()</slot>
+  <slot>saveMesh()</slot>
   <slot>savePointsPLY()</slot>
   <slot>saveParameters()</slot>
   <slot>loadParameters()</slot>

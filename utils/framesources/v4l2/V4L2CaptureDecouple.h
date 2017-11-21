@@ -11,9 +11,9 @@
 #include <QtCore/QMutex>
 #include <string>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "preciseTimer.h"
+#include "core/utils/preciseTimer.h"
 #include "imageCaptureInterface.h"
 #include "cameraControlParameters.h"
 #include "decoupleYUYV.h"
@@ -23,7 +23,7 @@
 using std::string;
 
 
-class V4L2CaptureDecoupleInterface : public ImageCaptureInterface
+class V4L2CaptureDecoupleInterface : public virtual ImageCaptureInterface
 {
 public:
     V4L2CaptureDecoupleInterface(string _devname);
@@ -36,7 +36,7 @@ public:
 
     virtual CapErrorCode queryCameraParameters(CameraParameters &parameter) override;
 
-    virtual QString getInterfaceName() override;
+    virtual std::string getInterfaceName() override;
 
     virtual CapErrorCode initCapture() override;
     virtual CapErrorCode startCapture() override;

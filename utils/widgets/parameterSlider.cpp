@@ -1,8 +1,5 @@
-#include <math.h>
-#include <stdio.h>
-
 #include "parameterSlider.h"
-#include "mathUtils.h"
+#include "core/math/mathUtils.h"
 
 ParameterSlider::ParameterSlider(QWidget *parent)
     : ParameterEditorWidget(parent)
@@ -13,9 +10,7 @@ ParameterSlider::ParameterSlider(QWidget *parent)
 }
 
 ParameterSlider::~ParameterSlider()
-{
-
-}
+{}
 
 
 void ParameterSlider::setName (QString name)

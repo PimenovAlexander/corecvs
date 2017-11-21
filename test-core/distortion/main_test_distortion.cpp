@@ -13,13 +13,13 @@
 #include <vector>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "vector2d.h"
-#include "anglePointsFunction.h"
-#include "matrix.h"
-#include "radialCorrection.h"
-#include "radialFunc.h"
+#include "core/math/vector/vector2d.h"
+#include "core/alignment/anglePointsFunction.h"
+#include "core/math/matrix/matrix.h"
+#include "core/alignment/radialCorrection.h"
+#include "core/alignment/radialFunc.h"
 
 
 using corecvs::AnglePointsFunction;

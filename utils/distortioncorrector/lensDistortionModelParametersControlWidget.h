@@ -4,10 +4,10 @@
 #include <QWidget>
 
 #include "parametersControlWidgetBase.h"
-#include "radialCorrection.h"
+#include "core/alignment/radialCorrection.h"
 #include "advancedImageWidget.h"
 #include "graphPlotDialog.h"
-#include "rgb24Buffer.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
 
 namespace Ui {
 class LensDistortionModelParametersContolWidget;

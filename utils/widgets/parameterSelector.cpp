@@ -1,6 +1,6 @@
 
 #include "parameterSelector.h"
-#include "log.h"
+#include "core/utils/log.h"
 
 
 ParameterSelector::ParameterSelector(QWidget *parent)

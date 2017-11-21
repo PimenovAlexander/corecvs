@@ -22,11 +22,11 @@
 #include <QtCore/QString>
 #include <QtCore/QtCore>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include "V4L2Capture.h"
 #include "mjpegDecoder.h"
-#include "preciseTimer.h"
+#include "core/utils/preciseTimer.h"
 #include "mjpegDecoderLazy.h"
 
 
@@ -170,12 +170,12 @@ V4L2CaptureInterface::FramePair V4L2CaptureInterface::getFrame()
 
     protectFrame.lock();
     G12Buffer **results[Frames::MAX_INPUTS_NUMBER] = {
-            &result.bufferLeft,
-            &result.bufferRight
+            &result.buffers[Frames::LEFT_FRAME ].g12Buffer,
+            &result.buffers[Frames::RIGHT_FRAME].g12Buffer
     };
 
-    result.rgbBufferRight = NULL;
-    result.rgbBufferLeft = NULL;
+    result.setRgbBufferRight(NULL);
+    result.setRgbBufferLeft (NULL);
 
     //SYNC_PRINT(("LF:%s RF:%s\n",
     //           currentFrame[Frames::LEFT_FRAME ].isFilled ? "filled" : "empty" ,
@@ -191,10 +191,10 @@ V4L2CaptureInterface::FramePair V4L2CaptureInterface::getFrame()
     }
 
     if (currentFrame[Frames::LEFT_FRAME].isFilled)
-        result.timeStampLeft  = currentFrame[Frames::LEFT_FRAME].usecsTimeStamp();
+        result.setTimeStampLeft (currentFrame[Frames::LEFT_FRAME].usecsTimeStamp());
 
     if (currentFrame[Frames::RIGHT_FRAME].isFilled)
-        result.timeStampRight = currentFrame[Frames::RIGHT_FRAME].usecsTimeStamp();
+        result.setTimeStampRight   (currentFrame[Frames::RIGHT_FRAME].usecsTimeStamp());
 
     if (skippedCount == 0)
     {
@@ -212,7 +212,9 @@ V4L2CaptureInterface::FramePair V4L2CaptureInterface::getFrame()
     stats.values[CaptureStatistics::DESYNC_TIME] = desync > 0 ? desync : -desync;
     stats.values[CaptureStatistics::DATA_SIZE] = currentFrame[Frames::LEFT_FRAME].bytesused;
 
-    emit newStatisticsReady(stats);
+    if (imageInterfaceReceiver != NULL) {
+        imageInterfaceReceiver->newStatisticsReadyCallback(stats);
+    }
 
     return result;
 }
@@ -228,8 +230,8 @@ V4L2CaptureInterface::FramePair V4L2CaptureInterface::getFrameRGB24()
     FramePair result;
 
     RGB24Buffer **results[Frames::MAX_INPUTS_NUMBER] = {
-        &result.rgbBufferLeft,
-        &result.rgbBufferRight
+        &result.buffers[LEFT_FRAME ].rgbBuffer,
+        &result.buffers[RIGHT_FRAME].rgbBuffer
     };
 
     for (int i = 0; i < Frames::MAX_INPUTS_NUMBER; i++)
@@ -241,18 +243,18 @@ V4L2CaptureInterface::FramePair V4L2CaptureInterface::getFrameRGB24()
         }
     }
 
-    if (result.rgbBufferLeft != NULL) {
-        result.bufferLeft  = result.rgbBufferLeft ->toG12Buffer(); // FIXME
+    if (result.rgbBufferLeft() != NULL) {
+        result.setBufferLeft  ( result.rgbBufferLeft() ->toG12Buffer() ); // FIXME
     }
-    if (result.rgbBufferRight != NULL) {
-        result.bufferRight = result.rgbBufferRight->toG12Buffer();
+    if (result.rgbBufferRight() != NULL) {
+        result.setBufferRight ( result.rgbBufferRight()->toG12Buffer() );
     }
 
     if (currentFrame[Frames::LEFT_FRAME].isFilled)
-        result.timeStampLeft  = currentFrame[Frames::LEFT_FRAME].usecsTimeStamp();
+        result.setTimeStampLeft  (currentFrame[Frames::LEFT_FRAME].usecsTimeStamp());
 
     if (currentFrame[Frames::RIGHT_FRAME].isFilled)
-        result.timeStampRight = currentFrame[Frames::RIGHT_FRAME].usecsTimeStamp();
+        result.setTimeStampRight (currentFrame[Frames::RIGHT_FRAME].usecsTimeStamp());
 
     if (skippedCount == 0)
     {
@@ -270,7 +272,11 @@ V4L2CaptureInterface::FramePair V4L2CaptureInterface::getFrameRGB24()
 
     stats.values[CaptureStatistics::DESYNC_TIME] = CORE_ABS(desync);
     stats.values[CaptureStatistics::DATA_SIZE]   = currentFrame[Frames::LEFT_FRAME].bytesused;
-    emit newStatisticsReady(stats);
+    if (imageInterfaceReceiver != NULL) {
+        imageInterfaceReceiver->newStatisticsReadyCallback(stats);
+    } else {
+        SYNC_PRINT(("Warning:  V4L2CaptureInterface::getFrameRGB24(): imageInterfaceReceiver is NULL\n"));
+    }
 
     return result;
 }
@@ -588,14 +594,14 @@ ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::startCapture()
     return (CapErrorCode) ((bool) res[Frames::LEFT_FRAME] + (bool) res[Frames::RIGHT_FRAME]);
 }
 
-ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::getCaptureName(QString &value)
+ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::getCaptureName(string &value)
 {
     string name;
     if (camera[0].getCaptureName(name) != 0)
     {
         camera[1].getCaptureName(name);
     }
-    value = QString(name.c_str());
+    value = name;
     return ImageCaptureInterface::SUCCESS;
 }
 
@@ -608,18 +614,18 @@ ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::getFormats(int *num, I
     return ImageCaptureInterface::SUCCESS;
 }
 
-QString V4L2CaptureInterface::getInterfaceName()
+string V4L2CaptureInterface::getInterfaceName()
 {
-    return QString("v4l2:") + QString(interfaceName.c_str());
+    return std::string("v4l2:") + interfaceName;
 }
 
-ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::getDeviceName(int num, QString &name)
+ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::getDeviceName(int num, string &name)
 {
     if (num  < 0 || num >= Frames::MAX_INPUTS_NUMBER)
     {
         return ImageCaptureInterface::FAILURE;
     }
-    name = QString(deviceName[num].c_str());
+    name = deviceName[num];
     return ImageCaptureInterface::SUCCESS;
 }
 

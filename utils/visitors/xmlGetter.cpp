@@ -9,7 +9,7 @@ XmlGetter::XmlGetter(const QString &fileName)
     mFileName = fileName;
     QFile file(mFileName);
     if (!file.open(QFile::ReadWrite)) {
-        qDebug() << "Can't open file <" << mFileName << ">";
+        qDebug() << "XmlGetter::XmlGetter(): Can't open file <" << mFileName << ">";
         return;
     }
     QDomDocument doc("document");
@@ -81,8 +81,22 @@ void XmlGetter::visit<std::string>(std::string &stringField, std::string default
         return;
     }
 
-    stringField = childElement.attribute("value", QString::fromStdString(defaultValue)).toUtf8().constData();
+    stringField = childElement.attribute("value", QString::fromStdString(defaultValue)).toStdString();
 }
+
+template <>
+void XmlGetter::visit<std::wstring>(std::wstring &stringField, std::wstring defaultValue, const char *fieldName)
+{
+    QDomElement childElement = getChildByTag(fieldName);
+    if (childElement.isNull())
+    {
+        stringField = defaultValue;
+        return;
+    }
+
+    stringField = childElement.attribute("value", QString::fromStdWString(defaultValue)).toStdWString();
+}
+
 
 /* And new style visitor method */
 
@@ -119,6 +133,12 @@ void XmlGetter::visit<std::string, StringField>(std::string &stringField, const 
 {
     visit<std::string>(stringField, fieldDescriptor->defaultValue, fieldDescriptor->name.name);
 //	qDebug() << "XmlGetter::visit<int, StringField>(std::string &field, const StringField *fieldDescriptor) NOT YET SUPPORTED";
+}
+
+template <>
+void XmlGetter::visit<std::wstring, WStringField>(std::wstring &stringField, const WStringField *fieldDescriptor)
+{
+    visit<std::wstring>(stringField, fieldDescriptor->defaultValue, fieldDescriptor->name.name);
 }
 
 template <>

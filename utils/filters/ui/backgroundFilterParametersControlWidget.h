@@ -1,6 +1,6 @@
 #pragma once
 #include <QWidget>
-#include "generated/backgroundFilterParameters.h"
+#include "core/xml/generated/backgroundFilterParameters.h"
 #include "ui_backgroundFilterParametersControlWidget.h"
 #include "filterParametersControlWidgetBase.h"
 

@@ -1,6 +1,6 @@
 #pragma once
 #include <QWidget>
-#include "generated/inputFilterParameters.h"
+#include "core/xml/generated/inputFilterParameters.h"
 #include "ui_inputFilterParametersControlWidget.h"
 #include "filterParametersControlWidgetBase.h"
 

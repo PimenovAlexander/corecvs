@@ -1,6 +1,6 @@
 #pragma once
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include <QObject>
 #include "diagramscene.h"

@@ -3,7 +3,7 @@
 #include "directShow.h"
 #include "decoupleYUYV.h"
 
-class DirectShowCaptureDecoupleInterface : public ImageCaptureInterface
+class DirectShowCaptureDecoupleInterface : public virtual ImageCaptureInterface
 {
 public:
    typedef ImageCaptureInterface::CapErrorCode CapErrorCode;

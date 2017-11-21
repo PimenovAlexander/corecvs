@@ -1,26 +1,19 @@
 # try use global config
 exists(../../../../config.pri) {
-    #message(Using global config)
     ROOT_DIR=../../../..
+    #message(Using global config)
     include($$ROOT_DIR/config.pri)
-} else {
+} else { 
     message(Using local config)
     ROOT_DIR=../..
     include($$ROOT_DIR/cvs-config.pri)
 }
+ROOT_DIR=$$PWD/$$ROOT_DIR
 
+TEMPLATE = app
+TARGET   = test_adoptcolor
 
-
-TEMPLATE=app
-TARGET=test_adoptcolor
-
-TEST_DIR = $$PWD
-#TEST_DIR = .
-#message (Original PWD $$PWD  $$TEST_DIR)
-UTILSDIR = $$TEST_DIR/../../utils
-include($$UTILSDIR/utils.pri)
-
+include($$ROOT_DIR/src/open/utils/utils.pri)                        # it uses TARGET, ROOT_DIR and detects UTILS_BINDIR, OBJECTS_DIR, DESTDIR, ...!
 
 SOURCES += main_adoptcolor.cpp
-
 HEADERS += main_adoptcolor.h

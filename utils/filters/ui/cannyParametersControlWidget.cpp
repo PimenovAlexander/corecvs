@@ -8,6 +8,7 @@
 
 #include "cannyParametersControlWidget.h"
 #include "ui_cannyParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -33,28 +34,21 @@ CannyParametersControlWidget::~CannyParametersControlWidget()
 
 void CannyParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    CannyParameters *params = createParameters();
+    std::unique_ptr<CannyParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void CannyParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    CannyParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<CannyParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void CannyParametersControlWidget::getParameters(CannyParameters& params) const
 {
-
-    params.setShouldEdgeDetect (mUi->shouldEdgeDetectCheckBox->isChecked());
-    params.setMinimumThreshold (mUi->minimumThresholdSpinBox->value());
-    params.setMaximumThreshold (mUi->maximumThresholdSpinBox->value());
-
+    params = *std::unique_ptr<CannyParameters>(createParameters());
 }
+
 
 CannyParameters *CannyParametersControlWidget::createParameters() const
 {
@@ -64,12 +58,11 @@ CannyParameters *CannyParametersControlWidget::createParameters() const
      **/
 
 
-    CannyParameters *result = new CannyParameters(
+    return new CannyParameters(
           mUi->shouldEdgeDetectCheckBox->isChecked()
         , mUi->minimumThresholdSpinBox->value()
         , mUi->maximumThresholdSpinBox->value()
     );
-    return result;
 }
 
 void CannyParametersControlWidget::setParameters(const CannyParameters &input)

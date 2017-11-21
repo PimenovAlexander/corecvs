@@ -20,3 +20,9 @@ SOURCES += \
     rectification/triangulator.cpp \
     rectification/multicameraTriangulator.cpp \
 
+
+
+SOURCES += \
+    xml/generated/essentialDerivative.cpp \
+    xml/generated/essentialDerivative1.cpp \
+    xml/generated/essentialDerivative2.cpp \

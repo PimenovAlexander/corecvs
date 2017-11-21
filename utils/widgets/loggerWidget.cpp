@@ -28,7 +28,7 @@ LoggerWidget::LoggerWidget(QWidget *parent)
 	mLevelIcons   = new QIcon *      [Log::LEVEL_LAST];
 	mLevelFilters = new QPushButton *[Log::LEVEL_LAST];
 
-    QGridLayout *gridLayout = new QGridLayout(this);
+    QGridLayout *gridLayout = new QGridLayout(ui.filterGroupBox);
     ui.filterGroupBox->setLayout(gridLayout);
     gridLayout->setContentsMargins(3,3,3,3);
 
@@ -65,7 +65,12 @@ LoggerWidget::~LoggerWidget()
 void LoggerWidget::drain(Log::Message &message)
 {
     DOTRACE(("Log is in the LoggerWidget drain"));
-	QMetaObject::invokeMethod(this, "doDrain", Qt::QueuedConnection, Q_ARG(Log::Message, message));
+
+    // TODO: message may have pointers to dynamic strings for File and FunctionName fields, and
+    //       after this call they become invalid, which should be fixed properly for such cases!
+    //       By now we are to use these strings as static.
+    //
+    QMetaObject::invokeMethod(this, "doDrain", Qt::QueuedConnection, Q_ARG(Log::Message, message));
 	//doDrain(message);
 }
 
@@ -82,11 +87,21 @@ void LoggerWidget::doDrain(Log::Message message)
     ui.tableWidget->setItem(lastRow, 0, new QTableWidgetItem((*mLevelIcons  [ message.get()->mLevel ]),
                                                        QString(Log::levelName(message.get()->mLevel)),             0));
     ui.tableWidget->setItem(lastRow, 1, new QTableWidgetItem(QString(time2str(message.get()->mTime)),              0));
-    ui.tableWidget->setItem(lastRow, 2, new QTableWidgetItem(QString(         message.get()->mOriginFileName),     0));
-    ui.tableWidget->setItem(lastRow, 3, new QTableWidgetItem(QString::number( message.get()->mOriginLineNumber),   0));
-    ui.tableWidget->setItem(lastRow, 4, new QTableWidgetItem(QString(         message.get()->mOriginFunctionName), 0));
 
-    QTableWidgetItem *item =            new QTableWidgetItem(QString(         message.get()->s.str().c_str()),     0);
+    QString fileName = "NA";
+    if (message.get()->mOriginFileName != NULL) {
+        fileName  = QString(message.get()->mOriginFileName);
+    }
+    QString functionName = "NA";
+    if (message.get()->mOriginFunctionName != NULL) {
+        functionName  = QString(message.get()->mOriginFunctionName);
+    }
+
+
+    ui.tableWidget->setItem(lastRow, 2, new QTableWidgetItem(fileName                                          , 0));
+    ui.tableWidget->setItem(lastRow, 3, new QTableWidgetItem(QString::number( message.get()->mOriginLineNumber), 0));
+    ui.tableWidget->setItem(lastRow, 4, new QTableWidgetItem(functionName                                      , 0));
+    QTableWidgetItem *item =            new QTableWidgetItem(QString(         message.get()->s.str().c_str())  , 0);
     item->setFont(*logFont);
     ui.tableWidget->setItem(lastRow, 5, item);
 

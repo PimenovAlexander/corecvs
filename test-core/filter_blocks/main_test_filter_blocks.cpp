@@ -11,13 +11,13 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "operationFilter.h"
-#include "sobelFilter.h"
-#include "txtFilter.h"
-#include "bmpLoader.h"
-#include "filterGraph.h"
+#include "core/filters/operationFilter.h"
+#include "core/filters/sobelFilter.h"
+#include "core/filters/txtFilter.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/filters/blocks/filterGraph.h"
 
 using namespace std;
 using corecvs::FilterGraph;

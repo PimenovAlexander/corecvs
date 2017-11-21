@@ -3,10 +3,12 @@
 
 #include <QWidget>
 #include "parametersControlWidgetBase.h"
-#include "lensDistortionModelParameters.h"
+#include "core/alignment/lensDistortionModelParameters.h"
 
-#include "quaternion.h"
-#include "vector3d.h"
+#include "core/cameracalibration/calibrationCamera.h"
+
+#include "core/math/quaternion.h"
+#include "core/math/vector/vector3d.h"
 
 namespace Ui {
 class CameraModelParametersControlWidget;
@@ -23,23 +25,53 @@ public:
     LensDistortionModelParameters lensDistortionParameters();
     void setLensDistortionParameters(const LensDistortionModelParameters &params);
 
-    void getCameraParameters(double &fx, double &fy, double &cx, double &cy, double &skew, corecvs::Vector3dd &pos, corecvs::Quaternion &dir, corecvs::Vector2dd &size, corecvs::Vector2dd &distortedSize);
-    void setCameraParameters(double &fx, double &fy, double &cx, double &cy, double &skew, corecvs::Vector3dd &pos, corecvs::Quaternion &dir, corecvs::Vector2dd &size, corecvs::Vector2dd &distortedSize);
+
+    CameraModel* createParameters() const;
+    void getParameters(CameraModel &params) const;
+    void setParameters(const CameraModel &input);
+    virtual void setParametersVirtual(void *input);
+
 
     virtual void loadParamWidget(WidgetLoader &/*loader*/);
     virtual void saveParamWidget(WidgetSaver  &/*saver*/ );
 
-private:
-    void writeUi();
-    void readUi();
+public slots:
+    /** We should consider who is responsible for what **/
+    void loadPressed();
+    void savePressed();
 
-    // FIXME: decide what model to use as camera parameters and change this members to corresponding struct
-    // TODO: replace this dirty hacks with "real" camera model struct and add UI for all members
-    double fx = 1.0, fy = 1.0, skew = 0.0, cx = 100.0, cy = 100.0;
-    corecvs::Vector3dd _pos = corecvs::Vector3dd(0, 0, -10);
-    corecvs::Quaternion _orientation = corecvs::Quaternion(0, 0, 0, 1);
-    corecvs::Vector2dd _size = corecvs::Vector2dd(0, 0), _distortedSize = corecvs::Vector2dd(0, 0);
+    void revertPressed();
+
+    void zeroPressed ();
+    void resetPressed();
+
+
+    void paramsChangedInUI();
+
+signals:
+    void valueChanged();
+    void paramsChanged();
+
+
+    void loadRequest(QString filename);
+    void saveRequest(QString filename);
+
+
+protected:
+
     Ui::CameraModelParametersControlWidget *ui;
+    CameraModel backup;
+
+};
+
+
+/* Should support additional protype field*/
+class FixtureCameraParametersControlWidget : public CameraModelParametersControlWidget
+{
+public:
+    explicit FixtureCameraParametersControlWidget(QWidget *parent = 0);
+
+
 };
 
 #endif // CAMERAMODELPARAMETERSCONTROLWIDGET_H

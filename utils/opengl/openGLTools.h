@@ -10,13 +10,16 @@
 
 #include "QtOpenGL/QGLWidget"
 
-#include "rgbColor.h"
-#include "matrix44.h"
-#include "matrix33.h"
-#include "abstractPainter.h"
+#include "core/buffers/rgb24/rgbColor.h"
+#include "core/math/matrix/matrix44.h"
+#include "core/math/matrix/matrix33.h"
+#include "core/buffers/rgb24/abstractPainter.h"
 
 using namespace corecvs;
 
+/**
+ *  With new style Qt this class seem to become deprecated
+ **/
 class OpenGLTools
 {
 public:

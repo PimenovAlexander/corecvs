@@ -8,9 +8,9 @@
  * \author autoGenerator
  */
 
-#include "reflection.h"
-#include "defaultSetter.h"
-#include "printerVisitor.h"
+#include "core/reflection/reflection.h"
+#include "core/reflection/defaultSetter.h"
+#include "core/reflection/printerVisitor.h"
 
 /*
  *  Embed includes.
@@ -19,16 +19,16 @@
 /*
  *  Additional includes for Composite Types.
  */
-#include "rgbColorParameters.h"
+#include "core/xml/generated/rgbColorParameters.h"
 
-using namespace corecvs;
+// using namespace corecvs;
 
 /*
  *  Additional includes for Pointer Types.
  */
 
-namespace corecvs {
-}
+// namespace corecvs {
+// }
 /*
  *  Additional includes for enum section.
  */
@@ -39,7 +39,7 @@ namespace corecvs {
  * \brief draw 3d Camera Parameters 
  * draw 3d Camera Parameters 
  **/
-class Draw3dCameraParameters : public BaseReflection<Draw3dCameraParameters>
+class Draw3dCameraParameters : public corecvs::BaseReflection<Draw3dCameraParameters>
 {
 public:
     enum FieldId {
@@ -225,6 +225,8 @@ public:
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
+
+    static int relinkCompositeFields();
 
     /** Section with getters */
     const void *getPtrById(int fieldId) const
@@ -543,36 +545,36 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit(mFovH,                      static_cast<const DoubleField *>  (fields()[FOVH_ID]));
-        visitor.visit(mFovV,                      static_cast<const DoubleField *>  (fields()[FOVV_ID]));
-        visitor.visit(mNearPlane,                 static_cast<const DoubleField *>  (fields()[NEARPLANE_ID]));
-        visitor.visit(mFarPlane,                  static_cast<const DoubleField *>  (fields()[FARPLANE_ID]));
-        visitor.visit((int &)mStyle,              static_cast<const EnumField *>    (fields()[STYLE_ID]));
-        visitor.visit(mPointColor,                static_cast<const CompositeField *>(fields()[POINT_COLOR_ID]));
-        visitor.visit(mPointColorOverride,        static_cast<const BoolField *>    (fields()[POINT_COLOR_OVERRIDE_ID]));
-        visitor.visit(mPointSize,                 static_cast<const IntField *>     (fields()[POINT_SIZE_ID]));
-        visitor.visit(mEdgeColor,                 static_cast<const CompositeField *>(fields()[EDGE_COLOR_ID]));
-        visitor.visit(mEdgeColorOverride,         static_cast<const BoolField *>    (fields()[EDGE_COLOR_OVERRIDE_ID]));
-        visitor.visit(mEdgeWidth,                 static_cast<const IntField *>     (fields()[EDGE_WIDTH_ID]));
-        visitor.visit(mFaceColor,                 static_cast<const CompositeField *>(fields()[FACE_COLOR_ID]));
-        visitor.visit(mFaceColorOverride,         static_cast<const BoolField *>    (fields()[FACE_COLOR_OVERRIDE_ID]));
-        visitor.visit(mShowCaption,               static_cast<const BoolField *>    (fields()[SHOW_CAPTION_ID]));
-        visitor.visit(mFontSize,                  static_cast<const IntField *>     (fields()[FONT_SIZE_ID]));
-        visitor.visit(mFontWidth,                 static_cast<const IntField *>     (fields()[FONT_WIDTH_ID]));
-        visitor.visit(mFontColor,                 static_cast<const CompositeField *>(fields()[FONT_COLOR_ID]));
-        visitor.visit((int &)mTextureCorrodinates, static_cast<const EnumField *>    (fields()[TEXTURE_CORRODINATES_ID]));
-        visitor.visit(mTextureAlpha,              static_cast<const IntField *>     (fields()[TEXTURE_ALPHA_ID]));
-        visitor.visit(mTextureScale,              static_cast<const DoubleField *>  (fields()[TEXTURE_SCALE_ID]));
-        visitor.visit(mDecalMatrixType,           static_cast<const IntField *>     (fields()[DECAL_MATRIX_TYPE_ID]));
-        visitor.visit(mDecalLeftCam,              static_cast<const BoolField *>    (fields()[DECAL_LEFT_CAM_ID]));
-        visitor.visit(mDecalLeftAlpha,            static_cast<const IntField *>     (fields()[DECAL_LEFT_ALPHA_ID]));
-        visitor.visit(mDecalRightCam,             static_cast<const BoolField *>    (fields()[DECAL_RIGHT_CAM_ID]));
-        visitor.visit(mDecalRightAlpha,           static_cast<const IntField *>     (fields()[DECAL_RIGHT_ALPHA_ID]));
+        visitor.visit(mFovH,                      static_cast<const corecvs::DoubleField *>(fields()[FOVH_ID]));
+        visitor.visit(mFovV,                      static_cast<const corecvs::DoubleField *>(fields()[FOVV_ID]));
+        visitor.visit(mNearPlane,                 static_cast<const corecvs::DoubleField *>(fields()[NEARPLANE_ID]));
+        visitor.visit(mFarPlane,                  static_cast<const corecvs::DoubleField *>(fields()[FARPLANE_ID]));
+        visitor.visit((int &)mStyle,              static_cast<const corecvs::EnumField *>(fields()[STYLE_ID]));
+        visitor.visit(mPointColor,                static_cast<const corecvs::CompositeField *>(fields()[POINT_COLOR_ID]));
+        visitor.visit(mPointColorOverride,        static_cast<const corecvs::BoolField *>(fields()[POINT_COLOR_OVERRIDE_ID]));
+        visitor.visit(mPointSize,                 static_cast<const corecvs::IntField *>(fields()[POINT_SIZE_ID]));
+        visitor.visit(mEdgeColor,                 static_cast<const corecvs::CompositeField *>(fields()[EDGE_COLOR_ID]));
+        visitor.visit(mEdgeColorOverride,         static_cast<const corecvs::BoolField *>(fields()[EDGE_COLOR_OVERRIDE_ID]));
+        visitor.visit(mEdgeWidth,                 static_cast<const corecvs::IntField *>(fields()[EDGE_WIDTH_ID]));
+        visitor.visit(mFaceColor,                 static_cast<const corecvs::CompositeField *>(fields()[FACE_COLOR_ID]));
+        visitor.visit(mFaceColorOverride,         static_cast<const corecvs::BoolField *>(fields()[FACE_COLOR_OVERRIDE_ID]));
+        visitor.visit(mShowCaption,               static_cast<const corecvs::BoolField *>(fields()[SHOW_CAPTION_ID]));
+        visitor.visit(mFontSize,                  static_cast<const corecvs::IntField *>(fields()[FONT_SIZE_ID]));
+        visitor.visit(mFontWidth,                 static_cast<const corecvs::IntField *>(fields()[FONT_WIDTH_ID]));
+        visitor.visit(mFontColor,                 static_cast<const corecvs::CompositeField *>(fields()[FONT_COLOR_ID]));
+        visitor.visit((int &)mTextureCorrodinates, static_cast<const corecvs::EnumField *>(fields()[TEXTURE_CORRODINATES_ID]));
+        visitor.visit(mTextureAlpha,              static_cast<const corecvs::IntField *>(fields()[TEXTURE_ALPHA_ID]));
+        visitor.visit(mTextureScale,              static_cast<const corecvs::DoubleField *>(fields()[TEXTURE_SCALE_ID]));
+        visitor.visit(mDecalMatrixType,           static_cast<const corecvs::IntField *>(fields()[DECAL_MATRIX_TYPE_ID]));
+        visitor.visit(mDecalLeftCam,              static_cast<const corecvs::BoolField *>(fields()[DECAL_LEFT_CAM_ID]));
+        visitor.visit(mDecalLeftAlpha,            static_cast<const corecvs::IntField *>(fields()[DECAL_LEFT_ALPHA_ID]));
+        visitor.visit(mDecalRightCam,             static_cast<const corecvs::BoolField *>(fields()[DECAL_RIGHT_CAM_ID]));
+        visitor.visit(mDecalRightAlpha,           static_cast<const corecvs::IntField *>(fields()[DECAL_RIGHT_ALPHA_ID]));
     }
 
     Draw3dCameraParameters()
     {
-        DefaultSetter setter;
+        corecvs::DefaultSetter setter;
         accept(setter);
     }
 
@@ -631,16 +633,16 @@ template<class VisitorType>
         mDecalRightAlpha = decalRightAlpha;
     }
 
-    friend ostream& operator << (ostream &out, Draw3dCameraParameters &toSave)
+    friend std::ostream& operator << (std::ostream &out, Draw3dCameraParameters &toSave)
     {
-        PrinterVisitor printer(out);
-        toSave.accept<PrinterVisitor>(printer);
+        corecvs::PrinterVisitor printer(out);
+        toSave.accept<corecvs::PrinterVisitor>(printer);
         return out;
     }
 
     void print ()
     {
-        cout << *this;
+        std::cout << *this;
     }
 };
 #endif  //DRAW_3D_CAMERA_PARAMETERS_H_

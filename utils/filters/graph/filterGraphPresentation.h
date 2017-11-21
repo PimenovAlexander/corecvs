@@ -1,10 +1,11 @@
-//#pragma once
 #ifndef FILTERGRAPHPRESENTATION_H
 #define FILTERGRAPHPRESENTATION_H
 
 #include <QListWidgetItem>
 
 #include "ui_filterGraphPresentation.h"
+
+
 #include "arrow.h"
 #include "exponentialSlider.h"
 #include "filterPresentationsCollection.h"

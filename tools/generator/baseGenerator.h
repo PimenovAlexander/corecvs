@@ -54,6 +54,7 @@ protected:
     QString name;
     QString descr;
     QString comment;
+    QString fieldPlaceholder;
 };
 
 #endif // BASEGENERATOR_H_

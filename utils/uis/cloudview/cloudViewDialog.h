@@ -6,13 +6,13 @@
 #include <QFileDialog>
 #include <QImage>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include "ui_cloudViewDialog.h"
-#include "g12Buffer.h"
-#include "bufferFactory.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/bufferFactory.h"
 #include "viAreaWidget.h"
-#include "triangulator.h"
+#include "core/rectification/triangulator.h"
 #include "transform3DSelector.h"
 #include "3d/scene3D.h"
 #include "3d/draw3dParametersControlWidget.h"
@@ -20,9 +20,10 @@
 #include "frames.h"
 #include "coordinateFrame.h"
 #include "treeSceneController.h"
+#include "core/cameracalibration/calibrationCamera.h"
 
 #include "textLabelWidget.h"
-#include "calculationStats.h"
+#include "core/stats/calculationStats.h"
 
 
 using namespace corecvs;
@@ -43,16 +44,23 @@ public:
     const static double START_Z;
 
 
-    CloudViewDialog(QWidget *parent = 0);
+    CloudViewDialog(QWidget *parent = 0, QString name = QString());
     ~CloudViewDialog();
 
 public slots:
     void setCollapseTree(bool collapse);
 
+    /*These rotate model*/
     void downRotate();
     void upRotate();
     void leftRotate();
     void rightRotate();
+    /* These rotate camera */
+    void clockRotate();
+    void anticlockRotate();
+
+    void backgroundColorChanged();
+
     void resetCameraPos();
     void resetCamera();
     void resetCameraSlot();
@@ -79,7 +87,7 @@ public slots:
     void updateCameraMatrix();
     void updateHelperObjects();
 
-    void savePointsPCD();
+    void saveMesh();
     void savePointsPLY();
 
     /* Tree manipulation functions */
@@ -95,6 +103,7 @@ public slots:
 
 
     void statsOpen();
+
 public:
     Ui_CloudViewDialogClass mUi;
 
@@ -125,6 +134,9 @@ public:
     QSharedPointer<RectificationResult> mRectificationResult;
     QSharedPointer<QImage>              mCameraImage[Frames::MAX_INPUTS_NUMBER];
 
+    /**
+     * mCamera stores "sort of" modelview matrix
+     ***/
     Matrix44                            mCamera;
     double                              mCameraZoom;
 
@@ -134,6 +146,11 @@ public:
     void setNewScenePointer (QSharedPointer<Scene3D> scene, int sceneId = MAIN_SCENE);
     void setNewRectificationResult (QSharedPointer<RectificationResult> rectificationResult);
     void setNewCameraImage (QSharedPointer<QImage> texture, int cameraId = Frames::RIGHT_FRAME);
+
+
+    void setCamera(const CameraModel &model);
+    void lookAt   (const Vector3dd   &point);
+
 
     enum SubScene {
         SUBSCENE_PLANE,
@@ -146,22 +163,55 @@ public:
         ORTHO_TOP,
         ORTHO_LEFT,
         ORTHO_FRONT,
+
+        ORTHO_TOP_LEFT,
+        ORTHO_LEFT_LEFT,
+        ORTHO_FRONT_LEFT,
+
         PINHOLE_AT_0,
         RIGHT_CAMERA,
         LEFT_CAMERA,
-        FACE_CAMERA
+        FACE_CAMERA,
+        USER_CAMERA,
+        USER_ORTHO_CAMERA
     };
+
+
+    bool isOrtho(CameraType type)
+    {
+        if (type == ORTHO_TOP      || type == ORTHO_LEFT      || type == ORTHO_FRONT      ||
+            type == ORTHO_TOP_LEFT || type == ORTHO_LEFT_LEFT || type == ORTHO_FRONT_LEFT ||
+            type == USER_ORTHO_CAMERA)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    bool isLeft(CameraType type)
+    {
+        if (type == ORTHO_TOP_LEFT || type == ORTHO_LEFT_LEFT || type == ORTHO_FRONT_LEFT )
+        {
+            return true;
+        }
+        return false;
+    }
+
+
+    const QOpenGLContext *getAreaContext();
 
     /* OpenGL textures */
 public:
     TreeSceneController* addSubObject (QString name, QSharedPointer<Scene3D> scene, bool visible = true);
     void addMesh(QString name, Mesh3D *mesh);
-
 private:
     GLuint                      mCameraTexture[Frames::MAX_INPUTS_NUMBER];
 
+    RGBColor mBackgroundColor;
+
 protected:
   //vector<TreeSceneController*> mControllers;
+    bool                        mIsLeft = false;
     int                         mIsTracking;
     QPoint                      mTrack;
     TreeSceneModel              mTreeModel;

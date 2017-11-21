@@ -10,7 +10,7 @@
 
 #include <QImage>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 struct sCameraProps
 {

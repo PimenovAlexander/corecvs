@@ -1,11 +1,11 @@
 #include <QMessageBox>
 #include <QFileDialog>
-#include "abstractPainter.h"
+#include "core/buffers/rgb24/abstractPainter.h"
 #include "qtFileLoader.h"
 
 #include "lensDistortionModelParametersControlWidget.h"
 #include "ui_lensDistortionModelParametersControlWidget.h"
-#include "displacementBuffer.h"
+#include "core/buffers/displacementBuffer.h"
 #include "g12Image.h"
 
 LensDistortionModelParametersControlWidget::LensDistortionModelParametersControlWidget(QWidget *parent) :
@@ -90,7 +90,7 @@ void LensDistortionModelParametersControlWidget::getParameters(LensDistortionMod
 
     params.setMapForward(ui->forwardMapCheckBox->isChecked());
 
-    params.mKoeff.empty();
+    params.mKoeff.clear();
     for (int i = 0; i < ui->koefTableWidget->rowCount(); i++)
     {
         QDoubleSpinBox *box = static_cast<QDoubleSpinBox *>(ui->koefTableWidget->cellWidget(i,COLUMN_EDIT));

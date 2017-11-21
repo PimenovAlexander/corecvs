@@ -5,10 +5,8 @@
 
 namespace corecvs {
 
-SimilarityReconstructor::SimilarityReconstructor() :
-    trace(false)
-{
-}
+SimilarityReconstructor::SimilarityReconstructor() : trace(false)
+{}
 
 void SimilarityReconstructor::addPoint2PointConstraint(const Vector3dd &from, const Vector3dd &to)
 {
@@ -136,13 +134,9 @@ Similarity Similarity::inverted()
     toReturn.shiftR = shiftL;
     toReturn.scaleL = scaleR;
     toReturn.scaleR = scaleL;
-
     toReturn.rotation = rotation.conjugated();
-
-
     return toReturn;
 }
-
 
 
 /**
@@ -313,8 +307,7 @@ double SimilarityReconstructor::getCostFunction(const Similarity &input)
 }
 
 SimilarityReconstructor::~SimilarityReconstructor()
-{
-}
+{}
 
 void SimilarityReconstructor::reportInputQuality()
 {
@@ -386,7 +379,6 @@ void SimilarityReconstructor::CostFunctionToN::operator()(const double in[], dou
         out[i] = sqrt((corr.end - trans * corr.start).sumAllElementsSq());
     }
 }
-
 
 
 } // namespace corecvs

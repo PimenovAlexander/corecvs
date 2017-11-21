@@ -8,6 +8,7 @@
 
 #include "headSearchParametersControlWidget.h"
 #include "ui_headSearchParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -35,30 +36,21 @@ HeadSearchParametersControlWidget::~HeadSearchParametersControlWidget()
 
 void HeadSearchParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    HeadSearchParameters *params = createParameters();
+    std::unique_ptr<HeadSearchParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void HeadSearchParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    HeadSearchParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<HeadSearchParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void HeadSearchParametersControlWidget::getParameters(HeadSearchParameters& params) const
 {
-
-    params.setThresholdDistance(mUi->thresholdDistanceSpinBox->value());
-    params.setClusterDepth     (mUi->clusterDepthSpinBox->value());
-    params.setClusterMinSize   (mUi->clusterMinSizeSpinBox->value());
-    params.setHeadAreaRadius   (mUi->headAreaRadiusSpinBox->value());
-    params.setHeadNumber       (mUi->headNumberSpinBox->value());
-
+    params = *std::unique_ptr<HeadSearchParameters>(createParameters());
 }
+
 
 HeadSearchParameters *HeadSearchParametersControlWidget::createParameters() const
 {
@@ -68,14 +60,13 @@ HeadSearchParameters *HeadSearchParametersControlWidget::createParameters() cons
      **/
 
 
-    HeadSearchParameters *result = new HeadSearchParameters(
+    return new HeadSearchParameters(
           mUi->thresholdDistanceSpinBox->value()
         , mUi->clusterDepthSpinBox->value()
         , mUi->clusterMinSizeSpinBox->value()
         , mUi->headAreaRadiusSpinBox->value()
         , mUi->headNumberSpinBox->value()
     );
-    return result;
 }
 
 void HeadSearchParametersControlWidget::setParameters(const HeadSearchParameters &input)

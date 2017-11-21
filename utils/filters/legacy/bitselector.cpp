@@ -1,5 +1,5 @@
 #include "bitselector.h"
-#include "commonMappers.h"
+#include "core/buffers/commonMappers.h"
 
 QString BitSelector::name = QString("Bit Selector");
 

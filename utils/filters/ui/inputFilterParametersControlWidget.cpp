@@ -8,6 +8,7 @@
 
 #include "inputFilterParametersControlWidget.h"
 #include "ui_inputFilterParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -31,26 +32,21 @@ InputFilterParametersControlWidget::~InputFilterParametersControlWidget()
 
 void InputFilterParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    InputFilterParameters *params = createParameters();
+    std::unique_ptr<InputFilterParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void InputFilterParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    InputFilterParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<InputFilterParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void InputFilterParametersControlWidget::getParameters(InputFilterParameters& params) const
 {
-
-    params.setInputType        (static_cast<InputType::InputType>(mUi->inputTypeComboBox->currentIndex()));
-
+    params = *std::unique_ptr<InputFilterParameters>(createParameters());
 }
+
 
 InputFilterParameters *InputFilterParametersControlWidget::createParameters() const
 {
@@ -60,10 +56,9 @@ InputFilterParameters *InputFilterParametersControlWidget::createParameters() co
      **/
 
 
-    InputFilterParameters *result = new InputFilterParameters(
+    return new InputFilterParameters(
           static_cast<InputType::InputType>(mUi->inputTypeComboBox->currentIndex())
     );
-    return result;
 }
 
 void InputFilterParametersControlWidget::setParameters(const InputFilterParameters &input)

@@ -16,15 +16,13 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "sse_trace.h"
-#include "preciseTimer.h"
+#include "core/utils/sse_trace.h"
+#include "core/utils/preciseTimer.h"
+#include "core/math/sse/sseWrapper.h"
 
-
-using namespace std;
 using namespace corecvs;
-
 
 #ifdef WITH_SSE
 ALIGN_STACK_SSE inline __m128i sse_div_u32_by_25(__m128i n) {
@@ -41,7 +39,7 @@ ALIGN_STACK_SSE inline __m128i sse_div_u32_by_25(__m128i n) {
 }
 
 ALIGN_STACK_SSE inline __m128i sse_div_u32_by_25_fast(__m128i n) {
-    __m128i inverse = _mm_set1_epi16   (0xA3D7);
+    __m128i inverse = _mm_set1_epi16   (static_cast<short>(0xA3D7));
     __m128i shifted = _mm_srli_epi32  (n, 1);
     /* Now high 16 bits of n are empty*/
     __m128i mulhi   = _mm_mulhi_epu16(inverse, shifted);
@@ -214,6 +212,8 @@ TEST(Arithmetics, testDivisionBy25)
             printf("New SSE       : %d\n", sse32(result1, 0));
 //            printf("FP SSE div    : %d\n", sse32(result3, 0));
             printf("FP SSE mul    : %d\n", sse32(result4, 0));
+
+            ASSERT_TRUE(false);
             break;
         }
     }
@@ -222,21 +222,25 @@ TEST(Arithmetics, testDivisionBy25)
 ALIGN_STACK_SSE
 TEST(Arithmetics, profileDivisionBy25)
 {
-    const unsigned  LIMIT = 500;
+    const unsigned  LIMIT = 50000;
     PreciseTimer start;
     uint64_t delay;
 
-    printf("Profiling Old /25:");
+    __m128i rOld;
+    __m128i rFast;
+    __m128i rFp;
+
+    printf("Profiling Old /25  :");
     start = PreciseTimer::currentTime();
     for (unsigned j = 0; j < LIMIT ; j++)
         for (unsigned i = 0; i < 0x1000 * 25; i++)
         {
            __m128i input   = _mm_set1_epi32(i);
            __m128i result  = sse_div_u32_by_25(input);
-           result = result;
+           rOld = result;
         }
     delay = start.usecsToNow();
-    printf("%8" PRIu64 "us\n", delay);
+    printf("%9" PRIu64 "us\n", delay);
 
     printf("Profiling _fast /25:");
     start = PreciseTimer::currentTime();
@@ -245,22 +249,27 @@ TEST(Arithmetics, profileDivisionBy25)
         {
            __m128i input   = _mm_set1_epi32(i);
            __m128i result1 = sse_div_u32_by_25_fast(input);
-           result1 = result1;
+           rFast = result1;
         }
     delay = start.usecsToNow();
-    printf("%8" PRIu64 "us\n", delay);
+    printf("%9" PRIu64 "us\n", delay);
 
-    printf("Profiling _fp /25:");
+    printf("Profiling _fp /25  :");
     start = PreciseTimer::currentTime();
     for (unsigned j = 0; j < LIMIT ; j++)
         for (unsigned i = 0; i < 0x1000 * 25; i++)
         {
            __m128i input   = _mm_set1_epi32(i);
            __m128i result1 = sse_div_u32_by_25_fp(input);
-           result1 = result1;
+           rFp = result1;
         }
     delay = start.usecsToNow();
-    printf("%8" PRIu64 "us\n", delay);
+    printf("%9" PRIu64 "us\n", delay);
+
+
+    std::cout << Int32x4(rOld)  << std::endl;
+    std::cout << Int32x4(rFast) << std::endl;
+    std::cout << Int32x4(rFp)   << std::endl;
 
     printf("And once again in reverse order:\n");
     _MM_SET_ROUNDING_MODE(_MM_ROUND_DOWN);
@@ -288,7 +297,7 @@ TEST(Arithmetics, profileDivisionBy25)
     delay = start.usecsToNow();
     printf("%8" PRIu64 "us\n", delay);
 
-    printf("Profiling _fast /25:");
+    printf("Profiling _fast /25    :");
     start = PreciseTimer::currentTime();
     for (unsigned j = 0; j < LIMIT ; j++)
         for (unsigned i = 0; i < 0x1000 * 25; i++)

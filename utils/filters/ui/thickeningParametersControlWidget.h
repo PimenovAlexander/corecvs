@@ -1,6 +1,6 @@
 #pragma once
 #include <QWidget>
-#include "generated/thickeningParameters.h"
+#include "core/xml/generated/thickeningParameters.h"
 #include "ui_thickeningParametersControlWidget.h"
 #include "filterParametersControlWidgetBase.h"
 

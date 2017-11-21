@@ -9,18 +9,18 @@
 #include <QImage>
 #include <QPainter>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include "universalRectifier.h"
-#include "essentialEstimator.h"
-#include "cameraParameters.h"
-#include "iterativeEstimator.h"
-#include "eulerAngles.h"
-#include "rgb24Buffer.h"
-#include "bmpLoader.h"
-#include "ransacEstimator.h"
-#include "stereoAligner.h"
-#include "mathUtils.h"
+#include "core/rectification/essentialEstimator.h"
+#include "core/cammodel/cameraParameters.h"
+#include "core/rectification/iterativeEstimator.h"
+#include "core/math/eulerAngles.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/rectification/ransacEstimator.h"
+#include "core/rectification/stereoAligner.h"
+#include "core/math/mathUtils.h"
 
 class LengthFilterPredicate
 {

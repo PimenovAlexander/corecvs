@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DistortionApplicationParametersControlWidget</class>
+ <class>DistortionApplicationParametersControlWidget</class> 
  <widget class="QWidget" name="DistortionApplicationParametersControlWidget">
   <property name="geometry">
    <rect>
@@ -13,13 +13,13 @@
   <property name="windowTitle">
    <string>DistortionApplicationParameters</string>
   </property>
-   <layout class="QGridLayout" name="gridLayout">
-    <property name="margin">
-     <number>3</number>
-    </property>
-    <property name="spacing">
-     <number>3</number>
-    </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="margin">
+    <number>3</number>
+   </property>
+   <property name="spacing">
+    <number>3</number>
+   </property>
     <item row="0" column="0">
      <widget class="QLabel" name="label_0">
        <property name="text">
@@ -31,6 +31,9 @@
      <widget class="QCheckBox" name="forceScaleCheckBox">
        <property name="toolTip">
          <string>Force Scale</string>
+       </property>
+       <property name="checked">
+           <bool>0</bool>
        </property>
      </widget>
     </item>
@@ -46,6 +49,9 @@
        <property name="toolTip">
          <string>Adopt Scale</string>
        </property>
+       <property name="checked">
+           <bool>0</bool>
+       </property>
      </widget>
     </item>
     <item row="2" column="0">
@@ -57,6 +63,9 @@
     </item>
     <item row="2" column="1">
      <widget class="QComboBox" name="resizePolicyComboBox">
+       <property name="toolTip">
+         <string>Resize policy</string>
+       </property>
        <property name="currentIndex">
          <number>3</number>
        </property>
@@ -80,9 +89,6 @@
          <string>To No Gaps</string>
         </property>
        </item>
-       <property name="toolTip">
-         <string>Resize policy</string>
-       </property>
      </widget>
     </item>
     <item row="3" column="0">
@@ -97,6 +103,12 @@
        <property name="toolTip">
          <string>New H</string>
        </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
      </widget>
     </item>
     <item row="4" column="0">
@@ -110,6 +122,12 @@
      <widget class="QSpinBox" name="newWSpinBox">
        <property name="toolTip">
          <string>New W</string>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
        </property>
      </widget>
     </item>

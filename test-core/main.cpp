@@ -2,9 +2,9 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "fixedArray.h"
+#include "core/math/vector/fixedArray.h"
 
 using namespace std;
 using namespace corecvs;

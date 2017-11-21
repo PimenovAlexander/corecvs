@@ -8,6 +8,7 @@
 
 #include "debayerParametersControlWidget.h"
 #include "ui_debayerParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -32,27 +33,21 @@ DebayerParametersControlWidget::~DebayerParametersControlWidget()
 
 void DebayerParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    DebayerParameters *params = createParameters();
+    std::unique_ptr<DebayerParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void DebayerParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    DebayerParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<DebayerParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void DebayerParametersControlWidget::getParameters(DebayerParameters& params) const
 {
-
-    params.setMethod           (static_cast<DebayerMethod::DebayerMethod>(mUi->methodComboBox->currentIndex()));
-    params.setBayerPos         (mUi->bayerPosSpinBox->value());
-
+    params = *std::unique_ptr<DebayerParameters>(createParameters());
 }
+
 
 DebayerParameters *DebayerParametersControlWidget::createParameters() const
 {
@@ -62,11 +57,10 @@ DebayerParameters *DebayerParametersControlWidget::createParameters() const
      **/
 
 
-    DebayerParameters *result = new DebayerParameters(
+    return new DebayerParameters(
           static_cast<DebayerMethod::DebayerMethod>(mUi->methodComboBox->currentIndex())
         , mUi->bayerPosSpinBox->value()
     );
-    return result;
 }
 
 void DebayerParametersControlWidget::setParameters(const DebayerParameters &input)

@@ -33,7 +33,7 @@ extern "C" {
 }
 
 #include "imageCaptureInterface.h"
-#include "preciseTimer.h"
+#include "core/utils/preciseTimer.h"
 
 class AviListBase : public ImageCaptureInterface
 {

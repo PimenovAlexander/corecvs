@@ -1,7 +1,7 @@
 #include <QtGlobal>
 
 #include "openCVFilter.h"
-#include "g12Buffer.h"
+#include "core/buffers/g12Buffer.h"
 
 #ifdef WITH_OPENCV
 # include "opencv2/imgproc/imgproc.hpp"
@@ -21,7 +21,7 @@ int OpenCVFilter::operator()()
 #ifdef WITH_OPENCV
     IplImage *inputIpl = OpenCVTools::getCVImageFromG12Buffer(input);
 
-    cv::Mat detected_edges(inputIpl, false);
+    CVMAT_FROM_IPLIMAGE( detected_edges, inputIpl, false );
 
     Canny( detected_edges, detected_edges, mOpenCVParameters.param1() , mOpenCVParameters.param2() , 3 );
 

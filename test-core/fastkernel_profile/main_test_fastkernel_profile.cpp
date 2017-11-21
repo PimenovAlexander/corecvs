@@ -17,23 +17,23 @@
 #define ASSERTS
 #endif*/
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "mathUtils.h"
-#include "g12Buffer.h"
-#include "sseWrapper.h"
-#include "preciseTimer.h"
+#include "core/math/mathUtils.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/math/sse/sseWrapper.h"
+#include "core/utils/preciseTimer.h"
 
-#include "gaussian.h"
-#include "sobel.h"
-#include "copyKernel.h"
-#include "arithmetic.h"
-#include "morphological.h"
-#include "threshold.h"
+#include "core/buffers/kernels/gaussian.h"
+#include "core/buffers/kernels/sobel.h"
+#include "core/buffers/kernels/copyKernel.h"
+#include "core/buffers/kernels/arithmetic.h"
+#include "core/buffers/morphological/morphological.h"
+#include "core/buffers/kernels/threshold.h"
 
-#include "baseAlgebra.h"
-#include "fastKernel.h"
-#include "vectorTraits.h"
+#include "core/buffers/kernels/fastkernel/baseAlgebra.h"
+#include "core/buffers/kernels/fastkernel/fastKernel.h"
+#include "core/buffers/kernels/fastkernel/vectorTraits.h"
 
 using namespace std;
 

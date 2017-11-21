@@ -1,79 +1,41 @@
-#pragma once
+#ifndef FIXTURE_CAMERA_H
+#define FIXTURE_CAMERA_H
 
+#include <stdint.h>
 #include <unordered_map>
 
+#include "core/utils/atomicOps.h"
 #include "core/cameracalibration/calibrationLocation.h"  // LocationData
 #include "core/alignment/lensDistortionModelParameters.h"
 #include "core/geometry/line.h"
 #include "core/geometry/convexPolyhedron.h"
 #include "core/alignment/pointObservation.h"
 #include "core/cameracalibration/calibrationCamera.h"
+#include "core/camerafixture/fixtureScenePart.h"
+
+//#include "core/camerafixture/cameraPrototype.h"  // pls see comment below
 
 namespace corecvs {
 
-class FixtureScene;
 class CameraFixture;
+class ImageRelatedData;
+class SceneFeaturePoint;
 
-/**
- * This class is so far just a common base for all objects in scene heap.
- * Should bring this to other file
- **/
-class FixtureScenePart {
-
-public:
-    /* No particular reason for this, except to encourage leak checks */
-    static atomic_int OBJECT_COUNT;
-
-    FixtureScene *ownerScene;
-
-    /**
-     * Ok this id should be reworked...
-     * Nice idea is for the id to be pointer itself.
-     *
-     * This can't be true in case of the moment after serialisation...
-     * we need to invent a way how to make sure it is ok.
-     *
-     **/
-
-     typedef uint64_t IdType;
-private:
-    IdType id;
-public:
-    IdType getObjectId() {
-        if (id == 0) {
-            id = reinterpret_cast<IdType>(this);
-        }
-        return id;
-    }
-
-    void setObjectId(IdType id) {
-        this->id = id;
-    }
-
-    /* We could have copy constructors and stuff... but so far this is enough */
-    FixtureScenePart(FixtureScene * owner = NULL) :
-        ownerScene(owner),
-        id (0)
-    {
-        atomic_inc_and_fetch(&OBJECT_COUNT);
-    }
-
-
-    virtual ~FixtureScenePart() {
-        atomic_dec_and_fetch(&OBJECT_COUNT);
-    }
-};
-
-
-typedef std::unordered_map<std::string, void *> MetaContainer;
 
 class FixtureCamera : public FixtureScenePart, public CameraModel
 {
 public:
-    CameraFixture   *cameraFixture;
+    CameraFixture   *cameraFixture = NULL;
 
-    /* This variable is not contorlled and maintained */
-    int sequenceNumber;
+    /**
+     *   We are now in transition. Camera prototype should prevail and the inheritance of CameraModel
+     *   should be removed. So far, open it when it will be ready.
+     *   Don't forget to open proper code at the FixtureScene::deleteCameraPrototype(CameraPrototype *cameraPrototype).
+     **/
+    //CameraPrototype *cameraPrototype = NULL;
+
+    /* This variable is not controlled and maintained */
+    int             sequenceNumber;
 
     FixtureCamera(FixtureScene * owner = NULL) :
         FixtureScenePart(owner),
@@ -84,29 +46,59 @@ public:
             const PinholeCameraIntrinsics &_intrinsics,
             const CameraLocationData &_extrinsics = CameraLocationData(),
             const LensDistortionModelParameters &_distortion = LensDistortionModelParameters(),
-            FixtureScene * owner = NULL) :
-        FixtureScenePart(owner),
-        CameraModel(_intrinsics, _extrinsics, _distortion),
-        cameraFixture(NULL)
+            FixtureScene * owner = NULL)
+        : FixtureScenePart(owner)
+        , CameraModel(_intrinsics, _extrinsics, _distortion)
+        , cameraFixture(NULL)
     {}
 
-    template<class VisitorType>
+    template<class VisitorType, class SceneType = FixtureScene>
     void accept(VisitorType &visitor)
     {
+        typedef typename SceneType::ImageType          RealImageType;
+
         CameraModel::accept(visitor);
         IdType id = getObjectId();
         visitor.visit(id, IdType(0) , "id");
         setObjectId(id);
-    }
 
+        int imageSize = (int)mImages.size();
+        visitor.visit(imageSize, 0, "image.size");
+        // cout << "Camera will have " << imageSize << " images" << endl;
+        setImageCount(imageSize);
+
+        for (int i = 0; i < imageSize; i++)
+        {
+            char buffer[100]; snprintf2buf(buffer, "image[%d]", i);
+            visitor.visit(*static_cast<RealImageType *>(mImages[i]), buffer);
+        }
+    }
 
     /** This is an experimental block of functions  it may change. Please use with caution **/
 
     /** WHY SO SLOW? **/
-    bool projectPointFromWorld(const Vector3dd &point, Vector2dd *projetionPtr = NULL);
+    bool projectPointFromWorld(const Vector3dd &point, Vector2dd *projectionPtr = NULL);
 
+    Affine3DQ getWorldLocation();
+    void setWorldLocation(const Affine3DQ &location, bool moveFixture = false);
+
+    CameraModel getWorldCameraModel();
+
+    /** Images **/
+    void addImageToCamera(ImageRelatedData *data);
+
+    void setImageCount       (size_t count);
+    std::vector<ImageRelatedData *> mImages;  /*< Not owned*/
+
+    /** Helper functions **/
+    bool addObservation(SceneFeaturePoint *point, bool setUserType);
 
 };
 
 
+
+
+
 } // namespace corecvs
+
+#endif // #ifndef FIXTURE_CAMERA_H

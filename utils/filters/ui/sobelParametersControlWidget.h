@@ -1,6 +1,6 @@
 #pragma once
 #include <QWidget>
-#include "generated/sobelParameters.h"
+#include "core/xml/generated/sobelParameters.h"
 #include "ui_sobelParametersControlWidget.h"
 #include "filterParametersControlWidgetBase.h"
 

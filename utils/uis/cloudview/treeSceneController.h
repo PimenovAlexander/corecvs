@@ -141,7 +141,7 @@ public:
     QModelIndex unpackPath(QDataStream &stream) const;
 
     QStringList mimeTypes() const;
-    QMimeData *mimeData(const QModelIndexList &indexes) const;
+    QMimeData *mimeData(const QModelIndexList &indices) const;
 
     bool dropMimeData(
         const QMimeData *data,

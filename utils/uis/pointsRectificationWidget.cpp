@@ -107,22 +107,29 @@ PointsRectificationWidget::~PointsRectificationWidget()
     delete_safe(mRightBuffer);
 }
 
-void PointsRectificationWidget::setImage(G12Buffer *buffer, Frames::FrameSourceId id)
+void PointsRectificationWidget::setImage(RGB24Buffer *buffer, Frames::FrameSourceId id)
 {
+    qDebug("PointsRectificationWidget::setImage(%p [%d x %d], %d (%s)):called",
+           static_cast<void*>(buffer),
+           (buffer != NULL ? buffer->h : 0 ),
+           (buffer != NULL ? buffer->w : 0 ),
+           id,
+           Frames::getEnumName(id));
+
     if (buffer == NULL) {
         return;
     }
     switch (id)
     {
     case Frames::LEFT_FRAME :
-        delete mLeftBuffer;
-        mLeftBuffer = new G12Buffer(buffer);
-        mUi->leftWidget->setImage(QSharedPointer<QImage>(new G12Image(buffer)));
+        delete_safe(mLeftBuffer);
+        mLeftBuffer = new RGB24Buffer(buffer);
+        mUi->leftWidget->setImage(QSharedPointer<QImage>(new RGB24Image(buffer)));
         break;
     case Frames::RIGHT_FRAME :
-        delete mRightBuffer;
-        mRightBuffer = new G12Buffer(buffer);
-        mUi->rightWidget->setImage(QSharedPointer<QImage>(new G12Image(buffer)));
+        delete_safe(mRightBuffer);
+        mRightBuffer = new RGB24Buffer(buffer);
+        mUi->rightWidget->setImage(QSharedPointer<QImage>(new RGB24Image(buffer)));
         break;
     default:
         break;

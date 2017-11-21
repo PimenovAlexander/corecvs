@@ -1,8 +1,8 @@
+#include "exponentialSlider.h"
+#include "core/math/mathUtils.h"
+
 #include <math.h>
 #include <stdio.h>
-
-#include "exponentialSlider.h"
-#include "mathUtils.h"
 
 ExponentialSlider::ExponentialSlider(QWidget *parent)
     : QWidget(parent)
@@ -14,9 +14,7 @@ ExponentialSlider::ExponentialSlider(QWidget *parent)
 }
 
 ExponentialSlider::~ExponentialSlider()
-{
-
-}
+{}
 
 void ExponentialSlider::setMaxZoom(double value, double sliderSteps)
 {

@@ -8,6 +8,7 @@
 
 #include "openCVFilterParametersControlWidget.h"
 #include "ui_openCVFilterParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -33,28 +34,21 @@ OpenCVFilterParametersControlWidget::~OpenCVFilterParametersControlWidget()
 
 void OpenCVFilterParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    OpenCVFilterParameters *params = createParameters();
+    std::unique_ptr<OpenCVFilterParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void OpenCVFilterParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    OpenCVFilterParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<OpenCVFilterParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void OpenCVFilterParametersControlWidget::getParameters(OpenCVFilterParameters& params) const
 {
-
-    params.setOpenCVFilter     (static_cast<OpenCVBinaryFilterType::OpenCVBinaryFilterType>(mUi->openCVFilterComboBox->currentIndex()));
-    params.setParam1           (mUi->param1SpinBox->value());
-    params.setParam2           (mUi->param2SpinBox->value());
-
+    params = *std::unique_ptr<OpenCVFilterParameters>(createParameters());
 }
+
 
 OpenCVFilterParameters *OpenCVFilterParametersControlWidget::createParameters() const
 {
@@ -64,12 +58,11 @@ OpenCVFilterParameters *OpenCVFilterParametersControlWidget::createParameters() 
      **/
 
 
-    OpenCVFilterParameters *result = new OpenCVFilterParameters(
+    return new OpenCVFilterParameters(
           static_cast<OpenCVBinaryFilterType::OpenCVBinaryFilterType>(mUi->openCVFilterComboBox->currentIndex())
         , mUi->param1SpinBox->value()
         , mUi->param2SpinBox->value()
     );
-    return result;
 }
 
 void OpenCVFilterParametersControlWidget::setParameters(const OpenCVFilterParameters &input)

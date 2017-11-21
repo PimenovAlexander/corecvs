@@ -1,18 +1,55 @@
 <poco version="5.0">
  
-  
-  <class name="Test Class" description="Recorder parameters">
-    <field type="int" name="p1x"   defaultValue="0"/>
-    <field type="int" name="p1y"   defaultValue="0"/>
-    <field type="int" name="p2x"   defaultValue="0"/>
-    <field type="int" name="p2y"   defaultValue="0"/>    
-  </class> 
-  
-  <class name="TestArray" description="Recorder parameters">
-    <field name="test1" type="Test Class" size="1"/>
-    
-  </class> 
-      
+
+
+<!--  
+        This is an example class that tries to test generator
+  -->
+
+  <enum name="Test Enum">
+      <item name="item1" id="0" />
+      <item name="item2" id="1" />
+      <item name="itemWithIcon" id="2" icon=":/new/colors/colors/color_red.png@main.qrc" />
+  </enum>
+
+  <class name="Test SubClass" description="Test SubClass">
+      <field type="int"    name="Int Field0"    defaultValue="0"/>
+      <field type="double" name="Double field0" defaultValue="2.0"/>
+  </class>
+
+  <class name="Test Class" description="Test Class with no practical use">
+     <field type="bool"   name="Bool Field"    defaultValue="0"/>
+     <field type="int"    name="Int Field0"    defaultValue="0"/>
+     <field type="int"    name="Int Field1"    defaultValue="0" min="-5" max="5"/>
+     <field type="int"    name="Int Field2"    defaultValue="0" suffix="%" prefix="/"/>
+
+     <field type="double" name="Double field0" defaultValue="2.0"/>
+     <field type="double" name="Double field1" defaultValue="1.0"  widget="ExponentialSlider"/>
+
+     <field type="string"  name="String field"  defaultValue="Test string field"/>
+     <field type="wstring" name="WString field"  defaultValue="Test こんにちは ÄäËëḦḧÏïN̈n̈ÖöT̈ẗÜüṲṳẄẅẌẍŸÿ"/>
+
+     <field type="Test Enum" name="Enum Field0" defaultValue="0"/>
+     <field type="Test Enum" name="Enum Field1" defaultValue="0" widget="TabWidget"/>
+
+     <field type="double" name="Vector Field0"  size="2" defaultValue="0"/>
+     <field type="double" name="Vector Field1"  size="2" defaultValue="0">
+         <def0>4</def0>
+         <def1>8</def1>
+         <def2>12</def2>
+     </field>
+
+     <field type="Test SubClass" name="Subclass Field"/>
+  </class>
+
+
+  <class name="Test Block" description="Test Block">
+    <field type="pointer"  target="G12Buffer"   name="in0" />
+    <field type="pointer"  target="RGB24Buffer" name="in1" />
+
+    <field type="Test Class" name="params" />
+    <field type="pointer"  target="G12Buffer"   name="out0" />
+  </class>
 
   
 </poco>

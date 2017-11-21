@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>BitcodeBoardParamsBaseControlWidget</class> 
+ <widget class="QWidget" name="BitcodeBoardParamsBaseControlWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>BitcodeBoardParamsBase</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="margin">
+    <number>3</number>
+   </property>
+   <property name="spacing">
+    <number>3</number>
+   </property>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_0">
+       <property name="text">
+         <string>vertical</string>
+       </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QCheckBox" name="verticalCheckBox">
+       <property name="toolTip">
+         <string>Orientation</string>
+       </property>
+       <property name="checked">
+           <bool>1</bool>
+       </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_1">
+       <property name="text">
+         <string>cellSize</string>
+       </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QSpinBox" name="cellSizeSpinBox">
+       <property name="toolTip">
+         <string>Chess cells size in pixels</string>
+       </property>
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>999999</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>256</number>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string>px</string>
+       </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_2">
+       <property name="text">
+         <string>blackColor</string>
+       </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QSpinBox" name="blackColorSpinBox">
+       <property name="toolTip">
+         <string>shades of gray for black chesses</string>
+       </property>
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>255</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>0</number>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_3">
+       <property name="text">
+         <string>whiteColor</string>
+       </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QSpinBox" name="whiteColorSpinBox">
+       <property name="toolTip">
+         <string>shades of gray for white chesses</string>
+       </property>
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>255</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>255</number>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_4">
+       <property name="text">
+         <string>identSize</string>
+       </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QDoubleSpinBox" name="identSizeSpinBox">
+       <property name="toolTip">
+         <string>white ident size around chessboard in chesses</string>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string>cells</string>
+       </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="label_5">
+       <property name="text">
+         <string>boardHeight</string>
+       </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QSpinBox" name="boardHeightSpinBox">
+       <property name="toolTip">
+         <string>size of the chessboard in chesses</string>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string>cells</string>
+       </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="label_6">
+       <property name="text">
+         <string>boardWidth</string>
+       </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="QSpinBox" name="boardWidthSpinBox">
+       <property name="toolTip">
+         <string>size of the chessboard in chesses</string>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string>cells</string>
+       </property>
+     </widget>
+    </item>
+    <item row="7" column="0">
+     <widget class="QLabel" name="label_7">
+       <property name="text">
+         <string>codeWidth</string>
+       </property>
+     </widget>
+    </item>
+    <item row="7" column="1">
+     <widget class="QSpinBox" name="codeWidthSpinBox">
+       <property name="toolTip">
+         <string>width and height of the bitcode in chesses</string>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string>cells</string>
+       </property>
+     </widget>
+    </item>
+    <item row="8" column="0">
+     <widget class="QLabel" name="label_8">
+       <property name="text">
+         <string>codeHeight</string>
+       </property>
+     </widget>
+    </item>
+    <item row="8" column="1">
+     <widget class="QSpinBox" name="codeHeightSpinBox">
+       <property name="toolTip">
+         <string>width and height of the bitcode in chesses</string>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string>cells</string>
+       </property>
+     </widget>
+    </item>
+    <item row="9" column="0">
+     <widget class="QLabel" name="label_9">
+       <property name="text">
+         <string>bitcodeIdentSize</string>
+       </property>
+     </widget>
+    </item>
+    <item row="9" column="1">
+     <widget class="QDoubleSpinBox" name="bitcodeIdentSizeSpinBox">
+       <property name="toolTip">
+         <string>ident between chessboard and bitcode in chesses</string>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string>cells</string>
+       </property>
+     </widget>
+    </item>
+    <item row="10" column="0">
+     <widget class="QLabel" name="label_10">
+       <property name="text">
+         <string>bitcodeConfidence</string>
+       </property>
+     </widget>
+    </item>
+    <item row="10" column="1">
+     <widget class="QDoubleSpinBox" name="bitcodeConfidenceSpinBox">
+       <property name="toolTip">
+         <string>Area in which the stats are collected during detection</string>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string>cells</string>
+       </property>
+     </widget>
+    </item>
+    <item row="11" column="0">
+     <widget class="QLabel" name="label_11">
+       <property name="text">
+         <string>bitcodeOrientation</string>
+       </property>
+     </widget>
+    </item>
+    <item row="11" column="1">
+     <widget class="QComboBox" name="bitcodeOrientationComboBox">
+       <property name="toolTip">
+         <string>bitcodeOrientation</string>
+       </property>
+       <property name="currentIndex">
+         <number>4</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>Below</string>
+        </property>
+        <property name="icon">
+        <iconset resource="main.qrc">
+         <normaloff>:/new/prefix1/down_alt.png</normaloff>:/new/prefix1/down_alt.png
+        </iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Left</string>
+        </property>
+        <property name="icon">
+        <iconset resource="main.qrc">
+         <normaloff>:/new/prefix1/back_alt.png</normaloff>:/new/prefix1/back_alt.png
+        </iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Above</string>
+        </property>
+        <property name="icon">
+        <iconset resource="main.qrc">
+         <normaloff>:/new/prefix1/up_alt.png</normaloff>:/new/prefix1/up_alt.png
+        </iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Right</string>
+        </property>
+        <property name="icon">
+        <iconset resource="main.qrc">
+         <normaloff>:/new/prefix1/forward_alt.png</normaloff>:/new/prefix1/forward_alt.png
+        </iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Any</string>
+        </property>
+        <property name="icon">
+        <iconset resource="main.qrc">
+         <normaloff>:/new/prefix1/question.png</normaloff>:/new/prefix1/question.png
+        </iconset>
+        </property>
+       </item>
+     </widget>
+    </item>
+    <item row="12" column="0">
+     <widget class="QLabel" name="label_12">
+       <property name="text">
+         <string>CenterToZeroX</string>
+       </property>
+     </widget>
+    </item>
+    <item row="12" column="1">
+     <widget class="QDoubleSpinBox" name="centerToZeroXSpinBox">
+       <property name="toolTip">
+         <string>X Distance from grid center to Traget Point</string>
+       </property>
+       <property name="minimum">
+        <double>-255</double>
+       </property>
+       <property name="maximum">
+        <double>255</double>
+       </property>
+       <property name="singleStep">
+        <double>1</double>
+       </property>
+       <property name="value">
+        <double>-3.3</double>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string>cells</string>
+       </property>
+     </widget>
+    </item>
+    <item row="13" column="0">
+     <widget class="QLabel" name="label_13">
+       <property name="text">
+         <string>CenterToZeroY</string>
+       </property>
+     </widget>
+    </item>
+    <item row="13" column="1">
+     <widget class="QDoubleSpinBox" name="centerToZeroYSpinBox">
+       <property name="toolTip">
+         <string>Y Distance from grid center to Traget Point</string>
+       </property>
+       <property name="minimum">
+        <double>-255</double>
+       </property>
+       <property name="maximum">
+        <double>255</double>
+       </property>
+       <property name="singleStep">
+        <double>1</double>
+       </property>
+       <property name="value">
+        <double>6</double>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string>cells</string>
+       </property>
+     </widget>
+    </item>
+   <item row="14" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="14" column="2">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="3" margin="3"/>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>verticalCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>BitcodeBoardParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>cellSizeSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>BitcodeBoardParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>blackColorSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>BitcodeBoardParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>whiteColorSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>BitcodeBoardParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>identSizeSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>BitcodeBoardParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>boardHeightSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>BitcodeBoardParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>boardWidthSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>BitcodeBoardParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>codeWidthSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>BitcodeBoardParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>codeHeightSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>BitcodeBoardParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>bitcodeIdentSizeSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>BitcodeBoardParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>bitcodeConfidenceSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>BitcodeBoardParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>bitcodeOrientationComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>BitcodeBoardParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>centerToZeroXSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>BitcodeBoardParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>centerToZeroYSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>BitcodeBoardParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+ </connections>
+ <slots>
+  <slot>changeParameters()</slot>
+ </slots>
+ <customwidgets>
+ </customwidgets>
+</ui>

@@ -4,7 +4,6 @@
  * \ingroup cppcorefiles
  *
  **/
-
 #include <type_traits>
 #include <cstring>
 
@@ -12,8 +11,8 @@
 
 #include "core/utils/typesafeBitmaskEnums.h"
 #include "core/cameracalibration/calibrationLocation.h"  // LocationData
-#include "core/camerafixture/fixtureCamera.h"
-//#include "core/camerafixture/fixtureScene.h"
+#include "fixtureCamera.h"
+#include "fixtureScenePart.h"
 
 namespace corecvs {
 
@@ -67,10 +66,15 @@ public:
         location = _location;
     }
 
+	void transformLocation(const Matrix44& coordinatesTransform);
+	       Affine3DQ getTransformedLocation(const Matrix44& coordinatesTransform) const;
+    static Affine3DQ getTransformedLocation(const Matrix44& coordinatesTransform, const Affine3DQ &location);
+
     FixtureCamera getWorldCamera(FixtureCamera *camPtr) const
     {
         FixtureCamera toReturn = *camPtr;
         toReturn.extrinsics.transform(location);
+        toReturn.cameraFixture = nullptr;           // as we've detached camera from the fixture for proper working camera.getWorldLocation()
         return toReturn;
     }
 
@@ -88,14 +92,13 @@ public:
         return getWorldCamera(cam);
     }
 
-	double scoreFundamental(FixtureCamera *thisCamera, Vector2dd thisPoint, CameraFixture *otherFixture, FixtureCamera *otherCamera, Vector2dd otherPoint)
-	{
-		auto FAB = getWorldCamera(thisCamera).fundamentalTo(
-				otherFixture->getWorldCamera(otherCamera));
-		corecvs::Line2d left = FAB.mulBy2dRight(otherPoint);
-		corecvs::Line2d right= FAB.mulBy2dLeft (thisPoint);
-		return std::max(left.distanceTo(thisPoint), right.distanceTo(otherPoint));
-	}
+    double scoreFundamental(FixtureCamera *thisCamera, Vector2dd thisPoint, CameraFixture *otherFixture, FixtureCamera *otherCamera, Vector2dd otherPoint)
+    {
+        auto FAB = fundamentalTo(thisCamera, otherFixture, otherCamera);
+        corecvs::Line2d left = FAB.mulBy2dRight(otherPoint);
+        corecvs::Line2d right= FAB.mulBy2dLeft (thisPoint);
+        return std::max(left.distanceTo(thisPoint), right.distanceTo(otherPoint));
+    }
 
     int getCameraId(FixtureCamera* ptr) const
     {
@@ -164,6 +167,26 @@ public:
         return false;
     }
 
+    Matrix33 fundamentalTo(FixtureCamera *thisCam, CameraFixture *other, FixtureCamera *otherCam)
+    {
+        Matrix33 K1 = thisCam->intrinsics.getKMatrix33();
+        Matrix33 K2 = otherCam->intrinsics.getKMatrix33();
+        return K1.inv().transposed() * essentialTo(thisCam, other, otherCam) * K2.inv();
+    }
+
+    EssentialDecomposition essentialTo(FixtureCamera *thisCam, CameraFixture *other, FixtureCamera *otherCam)
+    {
+        auto thisExtrinsics = thisCam->extrinsics,
+             otherExtrinsics = otherCam->extrinsics;
+        thisExtrinsics.transform(location);
+        otherExtrinsics.transform(other->location);
+        return CameraModel::ComputeEssentialDecomposition(thisExtrinsics, otherExtrinsics);
+    }
+
+    inline Ray3d rayFromPixel(FixtureCamera *cam, const Vector2dd &point) const
+    {
+        return location * cam->rayFromPixel(point);
+    }
 
     template<class VisitorType, class SceneType = FixtureScene>
     void accept(VisitorType &visitor)
@@ -171,7 +194,6 @@ public:
         typedef typename SceneType::CameraType   RealCameraType;
 //        typedef typename SceneType::FixtureType  RealFixtureType;
 //        typedef typename SceneType::PointType    RealPointType;
-
 
         /* So far compatibilty is on */
         int camsize = (int)cameras.size();
@@ -195,8 +217,6 @@ public:
         visitor.visit(name, std::string(""), "name");
     }
 
-
 };
 
 } // namespace corecvs
-

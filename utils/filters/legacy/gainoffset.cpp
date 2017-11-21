@@ -2,7 +2,7 @@
 
 
 #include "gainoffset.h"
-#include "commonMappers.h"
+#include "core/buffers/commonMappers.h"
 
 #define MAX_GAIN  G12BUFFER_MAX_VALUE
 #define MIN_GAIN  (1 / 1000.0)

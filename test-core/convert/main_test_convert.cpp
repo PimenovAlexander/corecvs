@@ -9,9 +9,9 @@
  */
 
 #include <iostream>
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "sseWrapper.h"
+#include "core/math/sse/sseWrapper.h"
 
 using namespace std;
 using namespace corecvs;

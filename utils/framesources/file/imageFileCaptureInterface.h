@@ -5,7 +5,7 @@ using std::string;
 
 #include "imageCaptureInterface.h"
 
-class ImageFileCaptureInterface : public ImageCaptureInterface
+class ImageFileCaptureInterface : public virtual ImageCaptureInterface
 {
 public:
     ImageFileCaptureInterface(const string *pathFmt = NULL, bool isVerbose = false);

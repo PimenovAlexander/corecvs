@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>609</width>
-    <height>756</height>
+    <height>873</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -912,7 +912,7 @@
        <property name="spacing">
         <number>3</number>
        </property>
-       <item row="0" column="0" colspan="3">
+       <item row="0" column="0" colspan="4">
         <widget class="QGroupBox" name="groupBox_8">
          <property name="title">
           <string>Baseline Direction</string>
@@ -1043,7 +1043,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="2">
+       <item row="1" column="3">
         <spacer name="horizontalSpacer_2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -1114,6 +1114,13 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="1" column="2" rowspan="3">
+        <widget class="QLabel" name="deltaLabel">
+         <property name="text">
+          <string>Delta</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

@@ -2,16 +2,17 @@
 #define LOCKABLEOBJECT_H
 
 #include <QMutex>
-#include "reflection.h"
+#include "core/reflection/reflection.h"
+#include "core/reflection/dynamicObject.h"
 
-class LockableObject : public corecvs::DynamicObject
+class LockableObject : public corecvs::DynamicObjectWrapper
 {
     QMutex mutex;
 public:
     LockableObject() {}
 
     template<typename Object>
-    LockableObject(Object *object) : corecvs::DynamicObject(object)
+    LockableObject(Object *object) : corecvs::DynamicObjectWrapper(object)
     {}
 
     void lock() {

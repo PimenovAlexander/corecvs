@@ -15,7 +15,13 @@
 namespace corecvs {
 
 /**
- *    The classical rotation storage is in format yaw, pitch and roll
+ *    The classical rotation storage is in format yaw, pitch and roll.
+ *    This class works in CAMERA reference frame with
+ *
+ *     X - horisontaly to the image right
+ *     Y - downwards
+ *     Z - following optical axis from camera, forward
+ *
  *
  *    Yaw/Athimuth [0..2pi]
  *    Pitch
@@ -28,7 +34,7 @@ public:
         EulerAngles(yaw, pitch, roll)
     {}
 
-    static CameraLocationAngles FromAngles(double yawDeg, double pitchDeg, double rollDeg)
+    static CameraLocationAngles FromAnglesDeg(double yawDeg, double pitchDeg, double rollDeg)
     {
         return CameraLocationAngles(degToRad(yawDeg), degToRad(pitchDeg), degToRad(rollDeg));
     }
@@ -139,6 +145,161 @@ public:
 
 
 /**
+ *    The classical rotation storage is in format yaw, pitch and roll.
+ *    This class works in WORLD reference frame with
+ *
+ *     X - to the North
+ *     Y - to the East
+ *     Z - to the sky
+ *
+ *
+ *    Yaw/Athimuth [0..2pi]
+ *    Pitch
+ *    Roll
+ *
+ *    Order of application while rotating the object is Yaw first, Pitch, Roll last
+ *
+ **/
+class WorldLocationAngles : public EulerAngles
+{
+public:
+    WorldLocationAngles(double yaw = 0.0, double pitch = 0.0, double roll = 0.0) :
+        EulerAngles(roll, pitch, yaw)
+    {}
+
+    static WorldLocationAngles FromAngles(double yawDeg, double pitchDeg, double rollDeg)
+    {
+        return WorldLocationAngles(degToRad(yawDeg), degToRad(pitchDeg), degToRad(rollDeg));
+    }
+
+    double  yaw() const
+    {
+        return gamma;
+    }
+
+    void setYaw(double yaw)
+    {
+        gamma = yaw;
+    }
+
+    double  pitch() const
+    {
+        return beta;
+    }
+
+    void setPitch(double pitch)
+    {
+        beta = pitch;
+    }
+
+    double  roll() const
+    {
+        return alpha;
+    }
+
+    void setRoll(double roll)
+    {
+        alpha = roll;
+    }
+
+    Matrix33 toMatrix() const
+    {
+        return
+            Matrix33::RotationZ(yaw()) *
+            Matrix33::RotationY(pitch()) *
+            Matrix33::RotationX(roll());
+    }
+
+    Quaternion toQuaternion() const
+    {
+        return
+            Quaternion::RotationZ(yaw()) ^
+            Quaternion::RotationY(pitch()) ^
+            Quaternion::RotationX(roll());
+    }
+
+    /**
+     *  \f[
+     *  \pmatrix{ \phi \cr \theta \cr \psi } =
+     *
+     *  \pmatrix{
+     *     atan2  (2(q_0 q_1 + q_2 q_3),1 - 2(q_1^2 + q_2^2)) \cr
+     *     arcsin (2(q_0 q_2 - q_3 q_1)) \cr
+     *     atan2  (2(q_0 q_3 + q_1 q_2),1 - 2(q_2^2 + q_3^2))
+     *  }
+     *
+     *  \f]
+     *
+     */
+    static WorldLocationAngles FromQuaternion(const Quaternion &Q)
+    {
+        /*
+        double roll  = asin  (2.0 * (Q.t() * Q.y() - Q.z() * Q.x()));
+        double pitch = atan2 (2.0 * (Q.t() * Q.x() + Q.y() * Q.z()),1.0 - 2.0 * (Q.x() * Q.x() + Q.y() * Q.y()));
+        double yaw   = atan2 (2.0 * (Q.t() * Q.z() + Q.x() * Q.y()),1.0 - 2.0 * (Q.y() * Q.y() + Q.z() * Q.z()));
+        */
+
+        double roll, pitch, yaw;
+        // roll (x-axis rotation)
+        double sinr = +2.0 * (Q.t() * Q.x() + Q.y() * Q.z());
+        double cosr = +1.0 - 2.0 * (Q.x() * Q.x() + Q.y() * Q.y());
+        roll = atan2(sinr, cosr);
+
+        // pitch (y-axis rotation)
+        double sinp = +2.0 * (Q.t() * Q.y() - Q.z() * Q.x());
+            if (fabs(sinp) >= 1)
+                pitch = copysign(M_PI / 2, sinp); // use 90 degrees if out of range
+            else
+            pitch = asin(sinp);
+
+        // yaw (z-axis rotation)
+        double siny = +2.0 * (Q.t() * Q.z() + Q.x() * Q.y());
+        double cosy = +1.0 - 2.0 * (Q.y() * Q.y() + Q.z() * Q.z());
+        yaw = atan2(siny, cosy);
+        return WorldLocationAngles(yaw, pitch, roll);
+    }
+
+
+    template<class VisitorType>
+    void accept(VisitorType &visitor)
+    {
+        visitor.visit(gamma, 0.0, "yaw"  );
+        visitor.visit(beta , 0.0, "pitch");
+        visitor.visit(alpha, 0.0, "roll" );
+    }
+
+    WorldLocationAngles toDeg() const {
+        return WorldLocationAngles(
+                    radToDeg(yaw()),
+                    radToDeg(pitch()),
+                    radToDeg(roll())
+                    );
+    }
+
+    WorldLocationAngles toRad() const {
+        return WorldLocationAngles(
+                    degToRad(yaw()),
+                    degToRad(pitch()),
+                    degToRad(roll())
+                    );
+    }
+
+    friend ostream& operator << (ostream &out, WorldLocationAngles &toSave)
+    {
+        PrinterVisitor printer(out);
+        toSave.accept<PrinterVisitor>(printer);
+        return out;
+    }
+
+    void prettyPrint (ostream &out = cout);
+
+};
+
+
+
+
+
+/**
  *   Contrary to what Affine3D does this class holds reference frame transformation in camera related terms
  *
  *
@@ -218,7 +379,7 @@ public:
      *
      *  X' = CR * X  + (- CR * CT)
      *
-     *  \attention Generally you don't need to use this function, untill you know exactly that you need it
+     *  \attention Generally you don't need to use this function, until you know exactly that you need it
      *
      **/
     Affine3DQ toMockAffine3D() const
@@ -279,15 +440,15 @@ public:
      *    R' = R * A^-1
      *
      **/
-    void transform(const Quaternion &rotate, const Vector3dd &translate)
+    void transform(const Quaternion &rotate, const Vector3dd &translate, const double scale = 1.0)
     {
-        position    = rotate * position + translate;
+        position    = (rotate * position + translate) * scale;
         orientation = orientation ^ rotate.conjugated();
     }
 
-    void transform(const Affine3DQ &affine)
+    void transform(const Affine3DQ &affine, const double scale = 1.0)
     {
-        transform(affine.rotor, affine.shift);
+        transform(affine.rotor, affine.shift, scale);
     }
 
     CameraLocationAngles getAngles() const
@@ -311,6 +472,22 @@ public:
     {
         visitor.visit(position,    Vector3dd(0.0, 0.0, -1.0), "position");
         visitor.visit(orientation, Quaternion::Identity()   , "orientation");
+
+        if (visitor.isLoader())
+        {
+            Quaternion rotation = Quaternion::NaN();
+            visitor.visit(rotation, Quaternion::NaN(), "rotation");
+            if (!rotation.hasNans()) {
+                orientation = rotation.conjugated();
+            }
+        } else {
+            Quaternion rotation = orientation.conjugated();
+            visitor.visit(rotation, Quaternion::Identity(), "rotation");
+            std::string comment("rotation - is Camera to World and has priority over orientation");
+            visitor.visit(comment, std::string()  , "comment");
+        }
+
+
     }
 
     /* Pretty print */
@@ -318,6 +495,32 @@ public:
     void prettyPrint1(ostream &out = cout);
 };
 
+
+template<typename DoubleType>
+class GenericCameraLocationData
+{
+public:
+    Vector3d<DoubleType> position;
+    GenericQuaternion<DoubleType> orientation;
+
+
+    GenericCameraLocationData(const CameraLocationData &data) :
+        position(DoubleType(data.position.x()), DoubleType(data.position.y()), DoubleType(data.position.z())),
+        orientation(DoubleType(data.orientation.x()), DoubleType(data.orientation.y()), DoubleType(data.orientation.z()), DoubleType(data.orientation.t()))
+    {}
+
+    void transform(const GenericQuaternion<DoubleType> &rotate, const Vector3d<DoubleType> &translate)
+    {
+        position    = rotate * position + translate;
+        orientation = orientation ^ rotate.conjugated();
+    }
+
+    Vector3d<DoubleType> project(const Vector3d<DoubleType> &pt) const
+    {
+        return orientation * (pt - position);
+    }
+
+};
 
 
 } // namespace corecvs

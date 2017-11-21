@@ -11,10 +11,10 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "g12Buffer.h"
-#include "assignmentOptimal.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/assignment/assignmentOptimal.h"
 
 
 using namespace corecvs;

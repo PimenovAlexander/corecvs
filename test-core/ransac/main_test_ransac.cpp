@@ -11,9 +11,9 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "ransac.h"
+#include "core/rectification/ransac.h"
 
 using namespace corecvs;
 

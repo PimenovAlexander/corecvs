@@ -8,6 +8,7 @@
 
 #include "axisAlignedBoxParametersControlWidget.h"
 #include "ui_axisAlignedBoxParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -36,31 +37,21 @@ AxisAlignedBoxParametersControlWidget::~AxisAlignedBoxParametersControlWidget()
 
 void AxisAlignedBoxParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    AxisAlignedBoxParameters *params = createParameters();
+    std::unique_ptr<AxisAlignedBoxParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void AxisAlignedBoxParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    AxisAlignedBoxParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<AxisAlignedBoxParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void AxisAlignedBoxParametersControlWidget::getParameters(AxisAlignedBoxParameters& params) const
 {
-
-    params.setX                (mUi->xSpinBox->value());
-    params.setY                (mUi->ySpinBox->value());
-    params.setZ                (mUi->zSpinBox->value());
-    params.setWidth            (mUi->widthSpinBox->value());
-    params.setHeight           (mUi->heightSpinBox->value());
-    params.setDepth            (mUi->depthSpinBox->value());
-
+    params = *std::unique_ptr<AxisAlignedBoxParameters>(createParameters());
 }
+
 
 AxisAlignedBoxParameters *AxisAlignedBoxParametersControlWidget::createParameters() const
 {
@@ -70,7 +61,7 @@ AxisAlignedBoxParameters *AxisAlignedBoxParametersControlWidget::createParameter
      **/
 
 
-    AxisAlignedBoxParameters *result = new AxisAlignedBoxParameters(
+    return new AxisAlignedBoxParameters(
           mUi->xSpinBox->value()
         , mUi->ySpinBox->value()
         , mUi->zSpinBox->value()
@@ -78,7 +69,6 @@ AxisAlignedBoxParameters *AxisAlignedBoxParametersControlWidget::createParameter
         , mUi->heightSpinBox->value()
         , mUi->depthSpinBox->value()
     );
-    return result;
 }
 
 void AxisAlignedBoxParametersControlWidget::setParameters(const AxisAlignedBoxParameters &input)

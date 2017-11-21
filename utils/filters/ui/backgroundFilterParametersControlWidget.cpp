@@ -8,6 +8,7 @@
 
 #include "backgroundFilterParametersControlWidget.h"
 #include "ui_backgroundFilterParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -31,26 +32,21 @@ BackgroundFilterParametersControlWidget::~BackgroundFilterParametersControlWidge
 
 void BackgroundFilterParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    BackgroundFilterParameters *params = createParameters();
+    std::unique_ptr<BackgroundFilterParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void BackgroundFilterParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    BackgroundFilterParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<BackgroundFilterParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void BackgroundFilterParametersControlWidget::getParameters(BackgroundFilterParameters& params) const
 {
-
-    params.setThreshold        (mUi->thresholdSpinBox->value());
-
+    params = *std::unique_ptr<BackgroundFilterParameters>(createParameters());
 }
+
 
 BackgroundFilterParameters *BackgroundFilterParametersControlWidget::createParameters() const
 {
@@ -60,10 +56,9 @@ BackgroundFilterParameters *BackgroundFilterParametersControlWidget::createParam
      **/
 
 
-    BackgroundFilterParameters *result = new BackgroundFilterParameters(
+    return new BackgroundFilterParameters(
           mUi->thresholdSpinBox->value()
     );
-    return result;
 }
 
 void BackgroundFilterParametersControlWidget::setParameters(const BackgroundFilterParameters &input)

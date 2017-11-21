@@ -1,40 +1,19 @@
-#include <QTableWidgetItem>
-
-#include "log.h"
-#include "rgb24Buffer.h"
-#include "curvatureFunc.h"
-#include "radialFunc.h"
-#include "qtHelper.h"
-
-#include "camerasCalibration/camerasCalibrationFunc.h"
-#include "lmDistortionSolver.h"
-
-#include "g12Image.h"
-#include "displacementBuffer.h"
-#include "angleFunction.h"
-#include "anglePointsFunction.h"
 #include "distortionWidget.h"
+#include "core/utils/log.h"
+#include "qtHelper.h"
+#include "core/alignment/camerasCalibration/camerasCalibrationFunc.h"
+#include "core/alignment/lmDistortionSolver.h"
+#include "g12Image.h"
+#include "core/buffers/displacementBuffer.h"
 #include "ui_distortionWidget.h"
-#include "distPointsFunction.h"
-
-#if NONFREE
-#include "chessBoardDetector.h"
-#endif
+#include "core/alignment/distPointsFunction.h"
+//#include "core/patterndetection/chessBoardDetector.h"
 
 #ifdef WITH_OPENCV
-# include "opencv2/imgproc/imgproc.hpp"
-# include "opencv2/highgui/highgui.hpp"
-# include <opencv2/calib3d/calib3d.hpp>
-# include "opencv2/core/core_c.h"
-# include "OpenCVTools.h"
 # include "openCvCheckerboardDetector.h"
-
-using namespace cv;
-
 #endif
 
 using corecvs::DistPointsFunction;
-
 
 const double EPSILON = 0.0005;
 
@@ -50,10 +29,10 @@ DistortionWidget::DistortionWidget(QWidget *parent) :
     mUi->setupUi(this);
     this->setWindowTitle("Distortion correction");
 
-    connect(mUi->widget, SIGNAL(newPolygonPointSelected(int,QPointF)), this, SLOT(tryAddPointToPolygon(int,QPointF)));
+  //  connect(mUi->widget, SIGNAL(newPolygonPointSelected(int,QPointF)), this, SLOT(tryAddPointToPolygon(int,QPointF)));
     connect(mUi->widget, SIGNAL(newPointFSelected(int, QPointF)), this, SLOT(tryAddPoint(int, QPointF)));
     connect(mUi->widget, SIGNAL(existedPointSelected(int, QPointF)), this, SLOT(initExistingPoint(int,QPointF)));
-    connect(mUi->widget, SIGNAL(editPoint(QPointF, QPointF)), this, SLOT(editPoint(QPointF,QPointF)));
+  //  connect(mUi->widget, SIGNAL(editPoint(QPointF, QPointF)), this, SLOT(editPoint(QPointF,QPointF)));
 
   //  connect(mUi->pointsTableWidget, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(choosePoint(int,int)));
   //  connect(mUi->saveButton,             SIGNAL(released()), this, SLOT(addVector()));
@@ -151,10 +130,9 @@ void DistortionWidget::clearParameters()
 /**
  *  Using corner detector as a helper
  **/
-
 void DistortionWidget::detectCorners()
 {
-    if(mBufferInput == NULL) {
+    if (mBufferInput == NULL) {
         return;
     }
 
@@ -181,51 +159,59 @@ void DistortionWidget::detectCorners()
 
 void DistortionWidget::detectCheckerboard()
 {
-#ifdef WITH_OPENCV
     CheckerboardDetectionParameters params;
     mUi->checkerboardParametersWidget->getParameters(params);
 
-    if(mBufferInput == NULL) {
+    if (mBufferInput == NULL)
         return;
-    }
 
-    G8Buffer *workChannel = mBufferInput->getChannel(params.channel());
-
-    PaintImageWidget *canvas = mUi->widget;
-
-    if(params.cleanExisting())
+    switch ((int)params.algorithm())
     {
-       // mUi->calibrationFeatures->clearObservationPoints();
-        canvas->mFeatures.mPaths.clear();
+    case CheckerboardDetectionAlgorithm::CheckerboardDetectionAlgorithm::OPENCV_DETECTOR:
+        {
+#ifdef WITH_OPENCV
+        G8Buffer *workChannel = mBufferInput->getChannel(params.channel());
+        PaintImageWidget *canvas = mUi->widget;
+
+        if (params.cleanExisting()) {
+            // mUi->calibrationFeatures->clearObservationPoints();
+            canvas->mFeatures.mPaths.clear();
+        }
+
+        OpenCvCheckerboardDetector detector(params);
+
+        //ChessBoardDetectorParams cdp;
+        //cdp.w = params.mHorCrossesCount;
+        //cdp.h = params.mVertCrossesCount;
+        //ChessboardDetector detector(cdp);
+
+        PatternDetector& patternDetector = detector;
+        // FIXME: Not sure if we should ever allow user to tune what channel to use, let us just pass full buffer
+        // TODO:  Check if drawing points over buffer is detector's part of work
+        bool found = patternDetector.detectPattern(*mBufferInput);
+        if (found)
+        {
+            mObservationListModel.clearObservationPoints();
+            patternDetector.getPointData(mObservationList);
+            mObservationListModel.setObservationList(&mObservationList);
+
+            patternDetector.getPointData(canvas->mFeatures);
+        }
+
+        delete_safe(workChannel);
+#else // WITH_OPENCV
+        L_ERROR_P("The code was compiled without OpenCvCheckerboardDetector support");
+#endif // !WITH_OPENCV
+        }
+        break;
+
+    case CheckerboardDetectionAlgorithm::CheckerboardDetectionAlgorithm::HOMEBREW_DETECTOR:
+        L_ERROR_P("DistortionWidget::detectCheckerboard(): Homebrew algo is not implemented");
+        break;
+
+    default:
+        L_ERROR_P("DistortionWidget::detectCheckerboard(): unknown CheckerboardDetector (%d)", (int)params.algorithm());
     }
-
-#define  OPENCV_DETECTOR
-#ifdef OPENCV_DETECTOR
-    OpenCvCheckerboardDetector detector(params);
-#else
-    ChessBoardDetectorParams cdp;
-    cdp.w = params.mHorCrossesCount;
-    cdp.h = params.mVertCrossesCount;
-    ChessboardDetector detector(cdp);
-#endif
-    PatternDetector& patternDetector = detector;
-    // FIXME: Not sure if we should ever allow user to tune what channel to use, let us just pass full buffer
-    // TODO:  Check if drawing points over buffer is detector's part of work
-    bool found = patternDetector.detectPattern(*mBufferInput);
-    if (found)
-    {
-        mObservationListModel.clearObservationPoints();
-        patternDetector.getPointData(mObservationList);
-        mObservationListModel.setObservationList(&mObservationList);
-
-        patternDetector.getPointData(canvas->mFeatures);
-    }
-
-    delete_safe(workChannel);
-    return;
-#else
-    return;
-#endif
 }
 
 void DistortionWidget::tryAddPoint(int toolID, const QPointF &point)
@@ -338,6 +324,11 @@ void DistortionWidget::doLinesTransform()
     solver.lineList = &mUi->widget->mFeatures;
     solver.parameters = params;
 
+    if (solver.lineList->mPaths.size() == 0) {
+        L_ERROR_P("doLinesTransform(): no data to process!");
+        return;
+    }
+
     RadialCorrection correction = solver.solve();
 
     L_INFO_P("Inverting the distortion buffer");
@@ -356,6 +347,7 @@ void DistortionWidget::doLinesTransform()
 
     mUi->lensCorrectionWidget->setParameters(correction.mParams);
     L_INFO_P("Ending distortion calibration");
+
     updateScore();
 }
 

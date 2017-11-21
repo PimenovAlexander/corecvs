@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QPushButton>
 
-#include "log.h"
+#include "core/utils/log.h"
 #include "ui_loggerWidget.h"
 
 

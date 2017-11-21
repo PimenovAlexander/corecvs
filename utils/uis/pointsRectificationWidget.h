@@ -5,7 +5,7 @@
 
 #include "paintImageWidget.h"
 #include "frames.h"
-#include "correspondenceList.h"
+#include "core/rectification/correspondenceList.h"
 
 namespace Ui {
 class PointsRectificationWidget;
@@ -18,7 +18,7 @@ class PointsRectificationWidget : public QWidget
 public:
     explicit PointsRectificationWidget(QWidget *parent = 0);
     ~PointsRectificationWidget();
-    void setImage(G12Buffer *buffer, Frames::FrameSourceId id);
+    void setImage(RGB24Buffer *buffer, Frames::FrameSourceId id);
     void addPointPair(QPointF const &leftPoint, QPointF const &rightPoint);
 
 private:
@@ -28,8 +28,8 @@ private:
     void initModel();
     void setNewPointsCoord(QPointF const &prevPoint, QPointF const &newPoint, bool isLeftImage);
     CorrespondenceList *mCorrespondencePoints;
-    G12Buffer *mLeftBuffer;
-    G12Buffer *mRightBuffer;
+    RGB24Buffer *mLeftBuffer;
+    RGB24Buffer *mRightBuffer;
 
 private slots:
     void deletePairs();
@@ -49,6 +49,6 @@ private slots:
 
 
 signals:
-    void readyCorrespondencePoints(CorrespondenceList *correspondencePoints, G12Buffer *leftBuffer, G12Buffer *rightBuffer);
+    void readyCorrespondencePoints(CorrespondenceList *correspondencePoints, RGB24Buffer *leftBuffer, RGB24Buffer *rightBuffer);
 };
 

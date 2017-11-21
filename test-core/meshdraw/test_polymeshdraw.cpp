@@ -2,10 +2,10 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
-#include "mesh3d.h"
-#include "meshLoader.h"
-#include "polylinemesh.h"
+#include "core/utils/global.h"
+#include "core/geometry/mesh3d.h"
+#include "core/fileformats/meshLoader.h"
+#include "core/geometry/polylinemesh.h"
 
 using namespace std;
 using namespace corecvs;

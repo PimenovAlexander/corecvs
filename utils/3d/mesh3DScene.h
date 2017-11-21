@@ -7,11 +7,11 @@
 
 #include <ostream>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include "scene3D.h"
 #include "cloudViewDialog.h"
-#include "plyLoader.h"
+#include "core/fileformats/plyLoader.h"
 #include "generated/draw3dParameters.h"
 #include "draw3dParametersControlWidget.h"
 #include "draw3dCameraParametersControlWidget.h"
@@ -20,6 +20,8 @@ class Mesh3DScene : public Mesh3D, public Scene3D {
 
 public:
     Draw3dParameters mParameters;
+
+    /* This mesh is not used so far.*/
     Mesh3D *owned;
 
     Mesh3DScene() :
@@ -29,8 +31,7 @@ public:
     virtual void prepareMesh(CloudViewDialog * /*dialog*/) {}
     virtual void drawMyself(CloudViewDialog * /*dialog*/);
 
-    virtual void dumpPCD(ostream &/*out*/){}
-    virtual void dumpPLY(ostream &/*out*/){}
+    virtual bool dump(const QString &targetFile) override;
 
     virtual void setParameters(void * params)
     {
@@ -88,6 +89,19 @@ public:
 };
 
 
+class Plane3DGeodesicScene : public Scene3D {
+    GLuint mPlaneListId;
+
+public:
+    Plane3DGeodesicScene() :
+        mPlaneListId(0)
+    {}
+
+    virtual void prepareMesh(CloudViewDialog *dialog);
+    virtual void drawMyself(CloudViewDialog *dialog);
+};
+
+
 class CameraScene : public Mesh3DScene {
 
 public:
@@ -124,7 +138,7 @@ public:
     virtual void prepareMesh(CloudViewDialog * /*dialog*/);
     virtual void drawMyself(CloudViewDialog *dialog);
 
-    virtual ~StereoCameraScene() {};
+    virtual ~StereoCameraScene() {}
 
 };
 

@@ -11,10 +11,10 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "readers.h"
-#include "rgbColor.h"
+#include "core/buffers/kernels/fastkernel/readers.h"
+#include "core/buffers/rgb24/rgbColor.h"
 
 using namespace corecvs;
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MakePreciseParametersControlWidget</class>
+ <class>MakePreciseParametersControlWidget</class> 
  <widget class="QWidget" name="MakePreciseParametersControlWidget">
   <property name="geometry">
    <rect>
@@ -13,13 +13,13 @@
   <property name="windowTitle">
    <string>MakePreciseParameters</string>
   </property>
-   <layout class="QGridLayout" name="gridLayout">
-    <property name="margin">
-     <number>3</number>
-    </property>
-    <property name="spacing">
-     <number>3</number>
-    </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="margin">
+    <number>3</number>
+   </property>
+   <property name="spacing">
+    <number>3</number>
+   </property>
     <item row="0" column="0">
      <widget class="QLabel" name="label_0">
        <property name="text">
@@ -32,6 +32,9 @@
        <property name="toolTip">
          <string>Should Make Precise</string>
        </property>
+       <property name="checked">
+           <bool>0</bool>
+       </property>
      </widget>
     </item>
     <item row="1" column="0">
@@ -43,6 +46,9 @@
     </item>
     <item row="1" column="1">
      <widget class="QComboBox" name="algorithmComboBox">
+       <property name="toolTip">
+         <string>Algorithm</string>
+       </property>
        <property name="currentIndex">
          <number>0</number>
        </property>
@@ -51,9 +57,6 @@
          <string>KLT</string>
         </property>
        </item>
-       <property name="toolTip">
-         <string>Algorithm</string>
-       </property>
      </widget>
     </item>
     <item row="2" column="0">
@@ -65,6 +68,9 @@
     </item>
     <item row="2" column="1">
      <widget class="QComboBox" name="interpolationComboBox">
+       <property name="toolTip">
+         <string>Interpolation</string>
+       </property>
        <property name="currentIndex">
          <number>0</number>
        </property>
@@ -83,9 +89,6 @@
          <string>Polynom</string>
         </property>
        </item>
-       <property name="toolTip">
-         <string>Interpolation</string>
-       </property>
      </widget>
     </item>
     <item row="3" column="0">
@@ -111,6 +114,12 @@
        </property>
        <property name="value">
         <number>0</number>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
        </property>
      </widget>
     </item>
@@ -138,6 +147,12 @@
        <property name="value">
         <number>0</number>
        </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
      </widget>
     </item>
     <item row="5" column="0">
@@ -164,6 +179,12 @@
        <property name="value">
         <number>0</number>
        </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
      </widget>
     </item>
     <item row="6" column="0">
@@ -189,6 +210,12 @@
        </property>
        <property name="value">
         <double>0</double>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
        </property>
      </widget>
     </item>

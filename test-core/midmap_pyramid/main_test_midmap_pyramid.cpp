@@ -9,12 +9,12 @@
 #include <stdlib.h>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "g12Buffer.h"
-#include "bufferFactory.h"
-#include "bmpLoader.h"
-#include "mipmapPyramid.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/bufferFactory.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/buffers/mipmapPyramid.h"
 
 using namespace corecvs;
 

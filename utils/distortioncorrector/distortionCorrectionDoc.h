@@ -1,4 +1,4 @@
-/*! \page pDistortionCorrection Distortion correction documentation page
+/** \page pDistortionCorrection Distortion correction documentation page
 
   \author Osechkina Maria
 

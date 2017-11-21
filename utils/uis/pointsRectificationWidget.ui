@@ -14,10 +14,25 @@
    <string>Points Selector</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../../../resources/main.qrc">
+   <iconset resource="../../resources/main.qrc">
     <normaloff>:/new/graph/draw_points.png</normaloff>:/new/graph/draw_points.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>3</number>
+   </property>
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
+    <number>3</number>
+   </property>
    <item>
     <widget class="QSplitter" name="splitter_2">
      <property name="orientation">
@@ -31,7 +46,16 @@
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>3</number>
+       </property>
+       <property name="topMargin">
+        <number>3</number>
+       </property>
+       <property name="rightMargin">
+        <number>3</number>
+       </property>
+       <property name="bottomMargin">
         <number>3</number>
        </property>
        <item>
@@ -67,7 +91,16 @@
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>3</number>
+       </property>
+       <property name="topMargin">
+        <number>3</number>
+       </property>
+       <property name="rightMargin">
+        <number>3</number>
+       </property>
+       <property name="bottomMargin">
         <number>3</number>
        </property>
        <item row="0" column="1" rowspan="7">
@@ -82,7 +115,7 @@
           <string>Lock Zoom</string>
          </property>
          <property name="icon">
-          <iconset resource="../../../../resources/main.qrc">
+          <iconset resource="../../resources/main.qrc">
            <normaloff>:/new/prefix1/lock.png</normaloff>
            <normalon>:/new/prefix1/unlock.png</normalon>:/new/prefix1/lock.png</iconset>
          </property>
@@ -106,7 +139,7 @@
           <string>Add pair</string>
          </property>
          <property name="icon">
-          <iconset resource="../../../../resources/main.qrc">
+          <iconset resource="../../resources/main.qrc">
            <normaloff>:/new/prefix1/plus.png</normaloff>:/new/prefix1/plus.png</iconset>
          </property>
          <property name="iconSize">
@@ -126,7 +159,7 @@
           <string>Delete pair</string>
          </property>
          <property name="icon">
-          <iconset resource="../../../../resources/main.qrc">
+          <iconset resource="../../resources/main.qrc">
            <normaloff>:/new/prefix1/minus.png</normaloff>:/new/prefix1/minus.png</iconset>
          </property>
          <property name="iconSize">
@@ -146,7 +179,7 @@
           <string>Rectify</string>
          </property>
          <property name="icon">
-          <iconset resource="../../../../resources/main.qrc">
+          <iconset resource="../../resources/main.qrc">
            <normaloff>:/new/prefix1/georectify.png</normaloff>:/new/prefix1/georectify.png</iconset>
          </property>
          <property name="iconSize">
@@ -175,7 +208,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../../resources/main.qrc"/>
+  <include location="../../resources/main.qrc"/>
  </resources>
  <connections/>
 </ui>

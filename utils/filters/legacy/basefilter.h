@@ -3,7 +3,7 @@
 
 #include <QtGui/QWidget>
 #include "ui_basefilter.h"
-#include "g12Buffer.h"
+#include "core/buffers/g12Buffer.h"
 
 using namespace corecvs;
 

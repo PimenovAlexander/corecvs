@@ -3,8 +3,8 @@
 
 #include <vector>
 
-#include "g12Buffer.h"
-#include "detectedObject.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/boosting/detectedObject.h"
 
 using corecvs::G12Buffer;
 using corecvs::DetectedObject;

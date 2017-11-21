@@ -8,6 +8,7 @@
 
 #include "outputFilterParametersControlWidget.h"
 #include "ui_outputFilterParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -31,26 +32,21 @@ OutputFilterParametersControlWidget::~OutputFilterParametersControlWidget()
 
 void OutputFilterParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    OutputFilterParameters *params = createParameters();
+    std::unique_ptr<OutputFilterParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void OutputFilterParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    OutputFilterParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<OutputFilterParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void OutputFilterParametersControlWidget::getParameters(OutputFilterParameters& params) const
 {
-
-    params.setOutputType       (static_cast<OutputType::OutputType>(mUi->outputTypeComboBox->currentIndex()));
-
+    params = *std::unique_ptr<OutputFilterParameters>(createParameters());
 }
+
 
 OutputFilterParameters *OutputFilterParametersControlWidget::createParameters() const
 {
@@ -60,10 +56,9 @@ OutputFilterParameters *OutputFilterParametersControlWidget::createParameters() 
      **/
 
 
-    OutputFilterParameters *result = new OutputFilterParameters(
+    return new OutputFilterParameters(
           static_cast<OutputType::OutputType>(mUi->outputTypeComboBox->currentIndex())
     );
-    return result;
 }
 
 void OutputFilterParametersControlWidget::setParameters(const OutputFilterParameters &input)

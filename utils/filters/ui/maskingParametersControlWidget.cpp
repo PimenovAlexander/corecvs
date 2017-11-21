@@ -8,6 +8,7 @@
 
 #include "maskingParametersControlWidget.h"
 #include "ui_maskingParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -31,26 +32,21 @@ MaskingParametersControlWidget::~MaskingParametersControlWidget()
 
 void MaskingParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    MaskingParameters *params = createParameters();
+    std::unique_ptr<MaskingParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void MaskingParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    MaskingParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<MaskingParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void MaskingParametersControlWidget::getParameters(MaskingParameters& params) const
 {
-
-    params.setInvert           (mUi->invertCheckBox->isChecked());
-
+    params = *std::unique_ptr<MaskingParameters>(createParameters());
 }
+
 
 MaskingParameters *MaskingParametersControlWidget::createParameters() const
 {
@@ -60,10 +56,9 @@ MaskingParameters *MaskingParametersControlWidget::createParameters() const
      **/
 
 
-    MaskingParameters *result = new MaskingParameters(
+    return new MaskingParameters(
           mUi->invertCheckBox->isChecked()
     );
-    return result;
 }
 
 void MaskingParametersControlWidget::setParameters(const MaskingParameters &input)

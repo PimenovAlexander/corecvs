@@ -2,18 +2,19 @@
 
 #include <QtCore/QString>
 #include <QtXml/QDomElement>
-#include "reflection.h"
+#include "core/reflection/reflection.h"
 
 using corecvs::IntField;
 using corecvs::DoubleField;
 using corecvs::FloatField;
 using corecvs::BoolField;
 using corecvs::StringField;
+using corecvs::WStringField;
 using corecvs::PointerField;
 using corecvs::EnumField;
 using corecvs::DoubleVectorField;
 
-#include "basePathVisitor.h"
+#include "core/utils/visitors/basePathVisitor.h"
 #include "baseXMLVisitor.h"
 
 using namespace corecvs;
@@ -109,6 +110,13 @@ void XmlGetter::visit<float>(float &floatField, float defaultValue, const char *
 template <>
 void XmlGetter::visit<bool>(bool &boolField, bool defaultValue, const char * /*fieldName*/);
 
+template <>
+void XmlGetter::visit<std::string>(std::string &stringField, std::string defaultValue, const char *fieldName);
+
+template <>
+void XmlGetter::visit<std::wstring>(std::wstring &stringField, std::wstring defaultValue, const char *fieldName);
+
+
 /* New style visitor */
 
 template <>
@@ -125,6 +133,9 @@ void XmlGetter::visit<bool, BoolField>(bool &field, const BoolField *fieldDescri
 
 template <>
 void XmlGetter::visit<std::string, StringField>(std::string &field, const StringField *fieldDescriptor);
+
+template <>
+void XmlGetter::visit<std::wstring, WStringField>(std::wstring &field, const WStringField *fieldDescriptor);
 
 template <>
 void XmlGetter::visit<void *, PointerField>(void * &field, const PointerField *fieldDescriptor);

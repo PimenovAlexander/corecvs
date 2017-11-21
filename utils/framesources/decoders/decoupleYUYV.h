@@ -10,9 +10,9 @@
 
 
 #include "imageCaptureInterface.h"
-#include "readers.h"
-#include "fixedVector.h"
-#include "sseWrapper.h"
+#include "core/buffers/kernels/fastkernel/readers.h"
+#include "core/math/vector/fixedVector.h"
+#include "core/math/sse/sseWrapper.h"
 
 namespace corecvs
 {

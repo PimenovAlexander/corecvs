@@ -3,9 +3,9 @@
 
 #include "opencv2/calib3d/calib3d.hpp"
 
-#include "g12Buffer.h"
-#include "flowBuffer.h"
-#include "vector2d.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/flow/flowBuffer.h"
+#include "core/math/vector/vector2d.h"
 
 #include "openCVSGMParameters.h"
 #include "openCVBMParameters.h"
@@ -19,7 +19,11 @@ class BMOpenCV
 {
 public:
 
+#ifdef WITH_OPENCV_3x
+    cv::Ptr< StereoBM > bm;
+#else
     StereoBM bm;
+#endif
 
     FlowBuffer* getStereoBM(
             G12Buffer *InputBufferLeft,
@@ -32,7 +36,11 @@ class SGBMOpenCV
 {
 public:
 
+#ifdef WITH_OPENCV_3x
+    cv::Ptr< StereoSGBM > sgbm;
+#else
     StereoSGBM sgbm;
+#endif
 
     FlowBuffer* getStereoSGBM(
             G12Buffer *InputBufferLeft,

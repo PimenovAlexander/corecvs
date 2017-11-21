@@ -8,6 +8,7 @@
 
 #include "bitSelectorParametersControlWidget.h"
 #include "ui_bitSelectorParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -47,42 +48,21 @@ BitSelectorParametersControlWidget::~BitSelectorParametersControlWidget()
 
 void BitSelectorParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    BitSelectorParameters *params = createParameters();
+    std::unique_ptr<BitSelectorParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void BitSelectorParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    BitSelectorParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<BitSelectorParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void BitSelectorParametersControlWidget::getParameters(BitSelectorParameters& params) const
 {
-
-    params.setShift            (mUi->shiftSpinBox->value());
-    params.setBit0             (mUi->bit0CheckBox->isChecked());
-    params.setBit1             (mUi->bit1CheckBox->isChecked());
-    params.setBit2             (mUi->bit2CheckBox->isChecked());
-    params.setBit3             (mUi->bit3CheckBox->isChecked());
-    params.setBit4             (mUi->bit4CheckBox->isChecked());
-    params.setBit5             (mUi->bit5CheckBox->isChecked());
-    params.setBit6             (mUi->bit6CheckBox->isChecked());
-    params.setBit7             (mUi->bit7CheckBox->isChecked());
-    params.setBit8             (mUi->bit8CheckBox->isChecked());
-    params.setBit9             (mUi->bit9CheckBox->isChecked());
-    params.setBit10            (mUi->bit10CheckBox->isChecked());
-    params.setBit11            (mUi->bit11CheckBox->isChecked());
-    params.setBit12            (mUi->bit12CheckBox->isChecked());
-    params.setBit13            (mUi->bit13CheckBox->isChecked());
-    params.setBit14            (mUi->bit14CheckBox->isChecked());
-    params.setBit15            (mUi->bit15CheckBox->isChecked());
-
+    params = *std::unique_ptr<BitSelectorParameters>(createParameters());
 }
+
 
 BitSelectorParameters *BitSelectorParametersControlWidget::createParameters() const
 {
@@ -92,7 +72,7 @@ BitSelectorParameters *BitSelectorParametersControlWidget::createParameters() co
      **/
 
 
-    BitSelectorParameters *result = new BitSelectorParameters(
+    return new BitSelectorParameters(
           mUi->shiftSpinBox->value()
         , mUi->bit0CheckBox->isChecked()
         , mUi->bit1CheckBox->isChecked()
@@ -111,7 +91,6 @@ BitSelectorParameters *BitSelectorParametersControlWidget::createParameters() co
         , mUi->bit14CheckBox->isChecked()
         , mUi->bit15CheckBox->isChecked()
     );
-    return result;
 }
 
 void BitSelectorParametersControlWidget::setParameters(const BitSelectorParameters &input)

@@ -12,15 +12,17 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "vectorOperations.h"
-#include "preciseTimer.h"
-#include "fixedVector.h"
-#include "fixedArray.h"
+#include "core/math/vector/vectorOperations.h"
+#include "core/utils/preciseTimer.h"
+#include "core/math/vector/fixedVector.h"
+#include "core/math/vector/fixedArray.h"
 
-using namespace std;
+#include "core/math/vector/vector3d.h"
+
 using namespace corecvs;
+using namespace std;
 
 template<int length>
 class TestVector : public VectorOperationsBase< TestVector<length>, int>
@@ -96,7 +98,7 @@ TEST(Vector, profileVectorOperations)
     }
     delay = start.usecsToNow();
     printf("%8" PRIu64 "us %8" PRIu64 "ms SP: %8" PRIu64 "us\n", delay, delay / 1000, delay / CYCLES); fflush(stdout);
-    cout << sum << endl;
+    std::cout << sum << std::endl;
 
     printf("Profiling Vector Operation Implementation\n");
     start = PreciseTimer::currentTime();
@@ -107,7 +109,7 @@ TEST(Vector, profileVectorOperations)
     }
     delay = start.usecsToNow();
     printf("%8" PRIu64 "us %8" PRIu64 "ms SP: %8" PRIu64 "us\n", delay, delay / 1000, delay / CYCLES); fflush(stdout);
-    cout << sum << endl;
+    std::cout << sum << std::endl;
 
     printf("Profiling Fixed Vector Implementation\n");
     start = PreciseTimer::currentTime();
@@ -118,7 +120,7 @@ TEST(Vector, profileVectorOperations)
     }
     delay = start.usecsToNow();
     printf("%8" PRIu64 "us %8" PRIu64 "ms SP: %8" PRIu64 "us\n", delay, delay / 1000, delay / CYCLES); fflush(stdout);
-    cout << sum << endl;
+    std::cout << sum << std::endl;
 
 
 
@@ -144,8 +146,60 @@ TEST(Vector, MulAllElements)
     {
         arr[i] = i + 1;
     }
-    cout << arr.mulAllElements() << endl;
+    std::cout << arr.mulAllElements() << std::endl;
     ASSERT_EQ(arr.mulAllElements(), 40320);
+}
+
+TEST(Vector, testSpherical)
+{
+    cout << "Case 1:" << endl;
+    {
+        double longitude = degToRad(45.0);
+        double latitude  = degToRad(45.0);
+        double length    = 45.0;
+
+        Vector3dd vec = Vector3dd::FromSpherical(latitude, longitude, length);
+        cout << "Vector:" << vec << std::endl;
+
+        cout << "Length:" << vec.l2Metric() << std::endl;
+
+
+        Vector3dd back = Vector3dd::toSpherical(vec);
+        cout << "Back:" << back << std::endl;
+
+        ASSERT_DOUBLE_EQ( length, back.z());
+
+        ASSERT_DOUBLE_EQ(latitude , back.x());
+        ASSERT_DOUBLE_EQ(longitude, back.y());
+    }
+
+    cout << "Case 2:" << endl;
+    {
+        double longitude = degToRad(50.0);
+        double latitude  = degToRad(20.0);
+        double length    = 45.0;
+
+        Vector3dd vec = Vector3dd::FromSpherical(latitude, longitude, length);
+        cout << "Vector:" << vec << std::endl;
+
+        cout << "Length:" << vec.l2Metric() << std::endl;
+
+
+        Vector3dd back = Vector3dd::toSpherical(vec);
+        cout << "Back:" << back << std::endl;
+
+        ASSERT_DOUBLE_EQ( length, back.z());
+
+        ASSERT_DOUBLE_EQ(latitude , back.x());
+        ASSERT_DOUBLE_EQ(longitude, back.y());
+    }
+
+
+    {
+        Vector3dd vec(0.0, 0.0, 50.0);
+        Vector3dd back = Vector3dd::toSpherical(vec);
+        CORE_UNUSED(back);
+    }
 }
 
 //int main (int /*argC*/, char ** /*argV*/)

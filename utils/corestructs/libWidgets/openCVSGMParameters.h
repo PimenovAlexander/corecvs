@@ -8,9 +8,9 @@
  * \author autoGenerator
  */
 
-#include "reflection.h"
-#include "defaultSetter.h"
-#include "printerVisitor.h"
+#include "core/reflection/reflection.h"
+#include "core/reflection/defaultSetter.h"
+#include "core/reflection/printerVisitor.h"
 
 /*
  *  Embed includes.
@@ -19,14 +19,14 @@
  *  Additional includes for Composite Types.
  */
 
-using namespace corecvs;
+// using namespace corecvs;
 
 /*
  *  Additional includes for Pointer Types.
  */
 
-namespace corecvs {
-}
+// namespace corecvs {
+// }
 /*
  *  Additional includes for enum section.
  */
@@ -35,7 +35,7 @@ namespace corecvs {
  * \brief OpenCV SGM Parameters Class 
  * OpenCV SGM Parameters Class 
  **/
-class OpenCVSGMParameters : public BaseReflection<OpenCVSGMParameters>
+class OpenCVSGMParameters : public corecvs::BaseReflection<OpenCVSGMParameters>
 {
 public:
     enum FieldId {
@@ -116,6 +116,8 @@ public:
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
+
+    static int relinkCompositeFields();
 
     /** Section with getters */
     const void *getPtrById(int fieldId) const
@@ -228,21 +230,21 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit(mPreFilterCap,              static_cast<const IntField *>     (fields()[PRE_FILTER_CAP_ID]));
-        visitor.visit(mSADWindowSize,             static_cast<const IntField *>     (fields()[SAD_WINDOW_SIZE_ID]));
-        visitor.visit(mP1Multiplier,              static_cast<const IntField *>     (fields()[P1_MULTIPLIER_ID]));
-        visitor.visit(mP2Multiplier,              static_cast<const IntField *>     (fields()[P2_MULTIPLIER_ID]));
-        visitor.visit(mMinDisparity,              static_cast<const IntField *>     (fields()[MIN_DISPARITY_ID]));
-        visitor.visit(mUniquenessRatio,           static_cast<const IntField *>     (fields()[UNIQUENESS_RATIO_ID]));
-        visitor.visit(mSpeckleWindowSize,         static_cast<const IntField *>     (fields()[SPECKLE_WINDOW_SIZE_ID]));
-        visitor.visit(mSpeckleRange,              static_cast<const IntField *>     (fields()[SPECKLE_RANGE_ID]));
-        visitor.visit(mDisp12MaxDiff,             static_cast<const IntField *>     (fields()[DISP_12_MAX_DIFF_ID]));
-        visitor.visit(mFullDP,                    static_cast<const BoolField *>    (fields()[FULL_DP_ID]));
+        visitor.visit(mPreFilterCap,              static_cast<const corecvs::IntField *>(fields()[PRE_FILTER_CAP_ID]));
+        visitor.visit(mSADWindowSize,             static_cast<const corecvs::IntField *>(fields()[SAD_WINDOW_SIZE_ID]));
+        visitor.visit(mP1Multiplier,              static_cast<const corecvs::IntField *>(fields()[P1_MULTIPLIER_ID]));
+        visitor.visit(mP2Multiplier,              static_cast<const corecvs::IntField *>(fields()[P2_MULTIPLIER_ID]));
+        visitor.visit(mMinDisparity,              static_cast<const corecvs::IntField *>(fields()[MIN_DISPARITY_ID]));
+        visitor.visit(mUniquenessRatio,           static_cast<const corecvs::IntField *>(fields()[UNIQUENESS_RATIO_ID]));
+        visitor.visit(mSpeckleWindowSize,         static_cast<const corecvs::IntField *>(fields()[SPECKLE_WINDOW_SIZE_ID]));
+        visitor.visit(mSpeckleRange,              static_cast<const corecvs::IntField *>(fields()[SPECKLE_RANGE_ID]));
+        visitor.visit(mDisp12MaxDiff,             static_cast<const corecvs::IntField *>(fields()[DISP_12_MAX_DIFF_ID]));
+        visitor.visit(mFullDP,                    static_cast<const corecvs::BoolField *>(fields()[FULL_DP_ID]));
     }
 
     OpenCVSGMParameters()
     {
-        DefaultSetter setter;
+        corecvs::DefaultSetter setter;
         accept(setter);
     }
 
@@ -271,16 +273,16 @@ template<class VisitorType>
         mFullDP = fullDP;
     }
 
-    friend ostream& operator << (ostream &out, OpenCVSGMParameters &toSave)
+    friend std::ostream& operator << (std::ostream &out, OpenCVSGMParameters &toSave)
     {
-        PrinterVisitor printer(out);
-        toSave.accept<PrinterVisitor>(printer);
+        corecvs::PrinterVisitor printer(out);
+        toSave.accept<corecvs::PrinterVisitor>(printer);
         return out;
     }
 
     void print ()
     {
-        cout << *this;
+        std::cout << *this;
     }
 };
 #endif  //OPENCV_SGM_PARAMETERS_H_

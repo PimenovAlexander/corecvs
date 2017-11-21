@@ -1,0 +1,629 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ChessBoardCornerDetectorParamsBaseControlWidget</class> 
+ <widget class="QWidget" name="ChessBoardCornerDetectorParamsBaseControlWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>ChessBoardCornerDetectorParamsBase</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="margin">
+    <number>3</number>
+   </property>
+   <property name="spacing">
+    <number>3</number>
+   </property>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_0">
+       <property name="text">
+         <string>produceDebug</string>
+       </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QCheckBox" name="produceDebugCheckBox">
+       <property name="toolTip">
+         <string>produceDebug</string>
+       </property>
+       <property name="checked">
+           <bool>0</bool>
+       </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_1">
+       <property name="text">
+         <string>floatSpeedup</string>
+       </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QCheckBox" name="floatSpeedupCheckBox">
+       <property name="toolTip">
+         <string>floatSpeedup</string>
+       </property>
+       <property name="checked">
+           <bool>1</bool>
+       </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_2">
+       <property name="text">
+         <string>normalizePercentile</string>
+       </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QDoubleSpinBox" name="normalizePercentileSpinBox">
+       <property name="toolTip">
+         <string>Brightness percentile to be cut</string>
+       </property>
+       <property name="minimum">
+        <double>0</double>
+       </property>
+       <property name="maximum">
+        <double>100</double>
+       </property>
+       <property name="singleStep">
+        <double>1</double>
+       </property>
+       <property name="value">
+        <double>5</double>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string>%</string>
+       </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_3">
+       <property name="text">
+         <string>sectorSizeDeg</string>
+       </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QDoubleSpinBox" name="sectorSizeDegSpinBox">
+       <property name="toolTip">
+         <string>Sector size in deg</string>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string>deg</string>
+       </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_4">
+       <property name="text">
+         <string>histogramBins</string>
+       </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QSpinBox" name="histogramBinsSpinBox">
+       <property name="toolTip">
+         <string>Number of bins for computing edge direction histogram</string>
+       </property>
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>999999</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>50</number>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="label_5">
+       <property name="text">
+         <string>minAngleDeg</string>
+       </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QDoubleSpinBox" name="minAngleDegSpinBox">
+       <property name="toolTip">
+         <string>Minimal angle between edges in deg</string>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string>deg</string>
+       </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="label_6">
+       <property name="text">
+         <string>neighborhood</string>
+       </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="QSpinBox" name="neighborhoodSpinBox">
+       <property name="toolTip">
+         <string>Typical radius for estimating edge-related data and refinig corner positions</string>
+       </property>
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>999999</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>25</number>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
+     </widget>
+    </item>
+    <item row="7" column="0">
+     <widget class="QLabel" name="label_7">
+       <property name="text">
+         <string>gradThreshold</string>
+       </property>
+     </widget>
+    </item>
+    <item row="7" column="1">
+     <widget class="QDoubleSpinBox" name="gradThresholdSpinBox">
+       <property name="toolTip">
+         <string>Gradient magnitude threshold</string>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
+     </widget>
+    </item>
+    <item row="8" column="0">
+     <widget class="QLabel" name="label_8">
+       <property name="text">
+         <string>orientationInlierThreshold</string>
+       </property>
+     </widget>
+    </item>
+    <item row="8" column="1">
+     <widget class="QDoubleSpinBox" name="orientationInlierThresholdSpinBox">
+       <property name="toolTip">
+         <string>Gradient orientation inlier threshold</string>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
+     </widget>
+    </item>
+    <item row="9" column="0">
+     <widget class="QLabel" name="label_9">
+       <property name="text">
+         <string>inlierDistanceThreshold</string>
+       </property>
+     </widget>
+    </item>
+    <item row="9" column="1">
+     <widget class="QDoubleSpinBox" name="inlierDistanceThresholdSpinBox">
+       <property name="toolTip">
+         <string>Threshold for distance to edge</string>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
+     </widget>
+    </item>
+    <item row="10" column="0">
+     <widget class="QLabel" name="label_10">
+       <property name="text">
+         <string>updateThreshold</string>
+       </property>
+     </widget>
+    </item>
+    <item row="10" column="1">
+     <widget class="QDoubleSpinBox" name="updateThresholdSpinBox">
+       <property name="toolTip">
+         <string>Threshold for maximal corner-position update</string>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
+     </widget>
+    </item>
+    <item row="11" column="0">
+     <widget class="QLabel" name="label_11">
+       <property name="text">
+         <string>scoreThreshold</string>
+       </property>
+     </widget>
+    </item>
+    <item row="11" column="1">
+     <widget class="QDoubleSpinBox" name="scoreThresholdSpinBox">
+       <property name="toolTip">
+         <string>Threshold for final score</string>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
+     </widget>
+    </item>
+    <item row="12" column="0">
+     <widget class="QLabel" name="label_12">
+       <property name="text">
+         <string>nRounds</string>
+       </property>
+     </widget>
+    </item>
+    <item row="12" column="1">
+     <widget class="QSpinBox" name="nRoundsSpinBox">
+       <property name="toolTip">
+         <string>Number of orientation/position refinement rounds</string>
+       </property>
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>999999</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>3</number>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
+     </widget>
+    </item>
+    <item row="13" column="0">
+     <widget class="QLabel" name="label_13">
+       <property name="text">
+         <string>meanshiftBandwidth</string>
+       </property>
+     </widget>
+    </item>
+    <item row="13" column="1">
+     <widget class="QDoubleSpinBox" name="meanshiftBandwidthSpinBox">
+       <property name="toolTip">
+         <string>Meanshift smoothing stdev</string>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
+     </widget>
+    </item>
+    <item row="14" column="0">
+     <widget class="QLabel" name="label_14">
+       <property name="text">
+         <string>nmsLocality</string>
+       </property>
+     </widget>
+    </item>
+    <item row="14" column="1">
+     <widget class="QSpinBox" name="nmsLocalitySpinBox">
+       <property name="toolTip">
+         <string>Non Minimal Supresstion locality area</string>
+       </property>
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>999999</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>20</number>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
+     </widget>
+    </item>
+    <item row="15" column="0">
+     <widget class="QLabel" name="label_15">
+       <property name="text">
+         <string>nmsThreshold</string>
+       </property>
+     </widget>
+    </item>
+    <item row="15" column="1">
+     <widget class="QDoubleSpinBox" name="nmsThresholdSpinBox">
+       <property name="toolTip">
+         <string>Non Minimal Supresstion threshold</string>
+       </property>
+       <property name="decimals">
+        <number>3</number>
+       </property>
+       <property name="minimum">
+        <double>0</double>
+       </property>
+       <property name="maximum">
+        <double>99</double>
+       </property>
+       <property name="singleStep">
+        <double>1</double>
+       </property>
+       <property name="value">
+        <double>0.025</double>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
+     </widget>
+    </item>
+    <item row="16" column="0">
+     <widget class="QLabel" name="label_16">
+       <property name="text">
+         <string>patternRadius</string>
+       </property>
+     </widget>
+    </item>
+    <item row="16" column="1">
+     <widget class="DoubleVectorWidget" name="patternRadius">
+       <property name="toolTip">
+         <string>Radius for multi-scale pattern detection</string>
+       </property>
+       <property name="minimum">
+        <double>0</double>
+       </property>
+       <property name="maximum">
+        <double>999999</double>
+       </property>
+     </widget>
+    </item>
+    <item row="17" column="0">
+     <widget class="QLabel" name="label_17">
+       <property name="text">
+         <string>patternStartAngleDeg</string>
+       </property>
+     </widget>
+    </item>
+    <item row="17" column="1">
+     <widget class="DoubleVectorWidget" name="patternStartAngleDeg">
+       <property name="toolTip">
+         <string>Angle for rotation-variant detection</string>
+       </property>
+       <property name="minimum">
+        <double>0</double>
+       </property>
+       <property name="maximum">
+        <double>999999</double>
+       </property>
+     </widget>
+    </item>
+    <item row="18" column="0">
+     <widget class="QLabel" name="label_18">
+       <property name="text">
+         <string>cornerScores</string>
+       </property>
+     </widget>
+    </item>
+    <item row="18" column="1">
+     <widget class="DoubleVectorWidget" name="cornerScores">
+       <property name="toolTip">
+         <string>Radius for corner-scoring</string>
+       </property>
+       <property name="minimum">
+        <double>0</double>
+       </property>
+       <property name="maximum">
+        <double>999999</double>
+       </property>
+     </widget>
+    </item>
+   <item row="19" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="19" column="2">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="3" margin="3"/>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>produceDebugCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>ChessBoardCornerDetectorParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>floatSpeedupCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>ChessBoardCornerDetectorParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>normalizePercentileSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>ChessBoardCornerDetectorParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>sectorSizeDegSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>ChessBoardCornerDetectorParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>histogramBinsSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>ChessBoardCornerDetectorParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>minAngleDegSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>ChessBoardCornerDetectorParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>neighborhoodSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>ChessBoardCornerDetectorParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>gradThresholdSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>ChessBoardCornerDetectorParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>orientationInlierThresholdSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>ChessBoardCornerDetectorParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>inlierDistanceThresholdSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>ChessBoardCornerDetectorParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>updateThresholdSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>ChessBoardCornerDetectorParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>scoreThresholdSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>ChessBoardCornerDetectorParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>nRoundsSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>ChessBoardCornerDetectorParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>meanshiftBandwidthSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>ChessBoardCornerDetectorParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>nmsLocalitySpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>ChessBoardCornerDetectorParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>nmsThresholdSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>ChessBoardCornerDetectorParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>patternRadius</sender>
+   <signal>valueChanged()</signal>
+   <receiver>ChessBoardCornerDetectorParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>patternStartAngleDeg</sender>
+   <signal>valueChanged()</signal>
+   <receiver>ChessBoardCornerDetectorParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>cornerScores</sender>
+   <signal>valueChanged()</signal>
+   <receiver>ChessBoardCornerDetectorParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+ </connections>
+ <slots>
+  <slot>changeParameters()</slot>
+ </slots>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleVectorWidget</class>
+   <extends>QWidget</extends>
+   <header>vectorWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+</ui>

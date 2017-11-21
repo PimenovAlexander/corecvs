@@ -8,9 +8,9 @@
  * \author autoGenerator
  */
 
-#include "reflection.h"
-#include "defaultSetter.h"
-#include "printerVisitor.h"
+#include "core/reflection/reflection.h"
+#include "core/reflection/defaultSetter.h"
+#include "core/reflection/printerVisitor.h"
 
 /*
  *  Embed includes.
@@ -19,14 +19,14 @@
  *  Additional includes for Composite Types.
  */
 
-using namespace corecvs;
+// using namespace corecvs;
 
 /*
  *  Additional includes for Pointer Types.
  */
 
-namespace corecvs {
-}
+// namespace corecvs {
+// }
 /*
  *  Additional includes for enum section.
  */
@@ -36,7 +36,7 @@ namespace corecvs {
  * \brief Graph Plot Parameters 
  * Graph Plot Parameters 
  **/
-class GraphPlotParameters : public BaseReflection<GraphPlotParameters>
+class GraphPlotParameters : public corecvs::BaseReflection<GraphPlotParameters>
 {
 public:
     enum FieldId {
@@ -124,6 +124,8 @@ public:
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
+
+    static int relinkCompositeFields();
 
     /** Section with getters */
     const void *getPtrById(int fieldId) const
@@ -246,22 +248,22 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit((int &)mGraphStyle,         static_cast<const EnumField *>    (fields()[GRAPHSTYLE_ID]));
-        visitor.visit(mWidth,                     static_cast<const IntField *>     (fields()[WIDTH_ID]));
-        visitor.visit(mCenterAt,                  static_cast<const DoubleField *>  (fields()[CENTERAT_ID]));
-        visitor.visit(mXGrid,                     static_cast<const BoolField *>    (fields()[XGRID_ID]));
-        visitor.visit(mYGrid,                     static_cast<const BoolField *>    (fields()[YGRID_ID]));
-        visitor.visit(mXScale,                    static_cast<const DoubleField *>  (fields()[XSCALE_ID]));
-        visitor.visit(mYScale,                    static_cast<const DoubleField *>  (fields()[YSCALE_ID]));
-        visitor.visit(mContrast,                  static_cast<const DoubleField *>  (fields()[CONTRAST_ID]));
-        visitor.visit(mSelectGraph,               static_cast<const BoolField *>    (fields()[SELECTGRAPH_ID]));
-        visitor.visit(mFixTimeValue,              static_cast<const BoolField *>    (fields()[FIX_TIME_VALUE_ID]));
-        visitor.visit(mFixGridValue,              static_cast<const BoolField *>    (fields()[FIX_GRID_VALUE_ID]));
+        visitor.visit((int &)mGraphStyle,         static_cast<const corecvs::EnumField *>(fields()[GRAPHSTYLE_ID]));
+        visitor.visit(mWidth,                     static_cast<const corecvs::IntField *>(fields()[WIDTH_ID]));
+        visitor.visit(mCenterAt,                  static_cast<const corecvs::DoubleField *>(fields()[CENTERAT_ID]));
+        visitor.visit(mXGrid,                     static_cast<const corecvs::BoolField *>(fields()[XGRID_ID]));
+        visitor.visit(mYGrid,                     static_cast<const corecvs::BoolField *>(fields()[YGRID_ID]));
+        visitor.visit(mXScale,                    static_cast<const corecvs::DoubleField *>(fields()[XSCALE_ID]));
+        visitor.visit(mYScale,                    static_cast<const corecvs::DoubleField *>(fields()[YSCALE_ID]));
+        visitor.visit(mContrast,                  static_cast<const corecvs::DoubleField *>(fields()[CONTRAST_ID]));
+        visitor.visit(mSelectGraph,               static_cast<const corecvs::BoolField *>(fields()[SELECTGRAPH_ID]));
+        visitor.visit(mFixTimeValue,              static_cast<const corecvs::BoolField *>(fields()[FIX_TIME_VALUE_ID]));
+        visitor.visit(mFixGridValue,              static_cast<const corecvs::BoolField *>(fields()[FIX_GRID_VALUE_ID]));
     }
 
     GraphPlotParameters()
     {
-        DefaultSetter setter;
+        corecvs::DefaultSetter setter;
         accept(setter);
     }
 
@@ -292,16 +294,16 @@ template<class VisitorType>
         mFixGridValue = fixGridValue;
     }
 
-    friend ostream& operator << (ostream &out, GraphPlotParameters &toSave)
+    friend std::ostream& operator << (std::ostream &out, GraphPlotParameters &toSave)
     {
-        PrinterVisitor printer(out);
-        toSave.accept<PrinterVisitor>(printer);
+        corecvs::PrinterVisitor printer(out);
+        toSave.accept<corecvs::PrinterVisitor>(printer);
         return out;
     }
 
     void print ()
     {
-        cout << *this;
+        std::cout << *this;
     }
 };
 #endif  //GRAPH_PLOT_PARAMETERS_H_

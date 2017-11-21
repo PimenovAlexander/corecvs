@@ -8,6 +8,7 @@
 
 #include "rgbColorParametersControlWidget.h"
 #include "ui_rgbColorParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -33,28 +34,21 @@ RgbColorParametersControlWidget::~RgbColorParametersControlWidget()
 
 void RgbColorParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    RgbColorParameters *params = createParameters();
+    std::unique_ptr<RgbColorParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void RgbColorParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    RgbColorParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<RgbColorParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void RgbColorParametersControlWidget::getParameters(RgbColorParameters& params) const
 {
-
-    params.setR                (mUi->rSpinBox->value());
-    params.setG                (mUi->gSpinBox->value());
-    params.setB                (mUi->bSpinBox->value());
-
+    params = *std::unique_ptr<RgbColorParameters>(createParameters());
 }
+
 
 RgbColorParameters *RgbColorParametersControlWidget::createParameters() const
 {
@@ -64,12 +58,11 @@ RgbColorParameters *RgbColorParametersControlWidget::createParameters() const
      **/
 
 
-    RgbColorParameters *result = new RgbColorParameters(
+    return new RgbColorParameters(
           mUi->rSpinBox->value()
         , mUi->gSpinBox->value()
         , mUi->bSpinBox->value()
     );
-    return result;
 }
 
 void RgbColorParametersControlWidget::setParameters(const RgbColorParameters &input)

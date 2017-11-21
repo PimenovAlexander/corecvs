@@ -10,22 +10,99 @@
 
 #include <fstream>
 #include <iostream>
+#include <random>
+#include <vector>
+#include <chrono>
 #include "gtest/gtest.h"
 
-#include "global.h"
-#include "polygons.h"
-#include "vector2d.h"
+#include "core/utils/global.h"
+#include "core/geometry/polygons.h"
+#include "core/math/vector/vector2d.h"
 
-#include "rgb24Buffer.h"
-#include "abstractPainter.h"
-#include "bmpLoader.h"
-#include "convexPolyhedron.h"
-#include "mesh3d.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/buffers/rgb24/abstractPainter.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/geometry/convexPolyhedron.h"
+#include "core/geometry/mesh3d.h"
 
+#include "core/geometry/kdtree.h"
+
+using namespace corecvs;
 
 using corecvs::Polygon;
 using corecvs::Mesh3D;
 using corecvs::AxisAlignedBox3d;
+
+TEST(Geometry, KDTree)
+{
+    std::vector<corecvs::Vector3dd > vec;
+    std::vector<corecvs::Vector3dd*> vecP;
+
+    int N = 65536, M = 32;
+    std::uniform_real_distribution<double> runif(-1.0, 1.0);
+    std::mt19937 rng;
+    for (int i = 0; i < N; ++i)
+        vec.emplace_back(runif(rng), runif(rng), runif(rng));
+
+    for (auto& v: vec)
+        vecP.push_back(&v);
+
+    auto start = std::chrono::high_resolution_clock::now();
+    corecvs::KDTree<corecvs::Vector3dd, 3> kdtree(vecP, 6);
+    auto stop  = std::chrono::high_resolution_clock::now();
+    std::cout << (stop - start).count() / 1e9 << "s for building K-d tree" << std::endl;
+
+    for (int i = 0; i < M; ++i)
+    {
+        corecvs::Vector3dd query(runif(rng), runif(rng), runif(rng));
+        auto res = kdtree.nearestNeighbour(query);
+        ASSERT_NE(res, nullptr);
+
+        double minDiff = std::numeric_limits<double>::max();
+        for (auto &vv: vec)
+            if (minDiff > !(vv - query))
+                minDiff = !(vv - query);
+        double gotDiff = !(*res - query);
+        ASSERT_LE(std::abs(1.0 - minDiff / gotDiff), 1e-9);
+    }
+}
+TEST(Geometry, KDTreePredicate)
+{
+    std::vector<corecvs::Vector3dd > vec;
+    std::vector<corecvs::Vector3dd*> vecP;
+    std::vector<int> used;
+
+    int N = 65536, M = 32;
+    std::uniform_real_distribution<double> runif(-1.0, 1.0);
+    std::mt19937 rng;
+    for (int i = 0; i < N; ++i)
+    {
+        vec.emplace_back(runif(rng), runif(rng), runif(rng));
+        used.push_back(runif(rng) < 0.0 ? 0 : 1);
+    }
+
+    for (auto& v: vec)
+        vecP.push_back(&v);
+
+    auto start = std::chrono::high_resolution_clock::now();
+    corecvs::KDTree<corecvs::Vector3dd, 3> kdtree(vecP);
+    auto stop  = std::chrono::high_resolution_clock::now();
+    std::cout << (stop - start).count() / 1e9 << "s for building K-d tree" << std::endl;
+
+    for (int i = 0; i < M; ++i)
+    {
+        corecvs::Vector3dd query(runif(rng), runif(rng), runif(rng));
+        auto res = kdtree.nearestNeighbour(query, [&](Vector3dd *v) { return used[v - &vec[0]] == 0; });
+        ASSERT_NE(res, nullptr);
+
+        double minDiff = std::numeric_limits<double>::max();
+        for (auto &vv: vec)
+            if (minDiff > !(vv - query) && !used[&vv - &vec[0]])
+                minDiff = !(vv - query);
+        double gotDiff = !(*res - query);
+        ASSERT_LE(std::abs(1.0 - minDiff / gotDiff), 1e-9);
+    }
+}
 
 TEST(Geometry, testPolygonInside)
 {
@@ -186,12 +263,12 @@ TEST(Geometry, testIntersection3DFast)
         Ray3d(Vector3dd(0.0, 0.01, 1.0), Vector3dd(   0,    0, -150)),
 
 
-        Ray3d(Vector3dd(1.0, 0.0, 0.0), Vector3dd(-200,    0,    0)),
-        Ray3d(Vector3dd(0.0, 1.0, 0.0), Vector3dd(   0, -200,    0)),
-        Ray3d(Vector3dd(0.0, 0.0, 1.0), Vector3dd(   0,    0, -200)),
+        Ray3d(Vector3dd(1.0, 0.0, 0.0), Vector3dd(-150,    0,    0)),
+        Ray3d(Vector3dd(0.0, 1.0, 0.0), Vector3dd(   0, -150,    0)),
+        Ray3d(Vector3dd(0.0, 0.0, 1.0), Vector3dd(   0,    0, -150)),
     };
 
-    for (int r = 0; r < CORE_COUNT_OF(rays); r++)
+    for (size_t r = 0; r < CORE_COUNT_OF(rays); r++)
     {
         bool result = box.intersectWith(rays[r], t1, t2);
         cout << "Testing:" << r << " - " << (result ? "true" : "false") << "(" << t1 << "," << t2 << ")" << endl;
@@ -201,12 +278,42 @@ TEST(Geometry, testIntersection3DFast)
         mesh.currentColor = result ? RGBColor::Green() : RGBColor::Red();
         mesh.addLine(rays[r].getPoint(t1), rays[r].getPoint(t2));
 
-        //ASSERT_TRUE(result);
+        ASSERT_TRUE(result);
+        ASSERT_TRUE(t1 == 50);
+        ASSERT_TRUE(t2 == 250);
     }
 
     std::ofstream file("testf.ply", std::ios::out);
     mesh.dumpPLY(file);
     file.close();
+
+}
+
+TEST(Geometry, testIntersection)
+{
+    Ray3d r1 = Ray3d::FromOriginAndDirection( Vector3dd(0.0, 0.0, 100.0), Vector3dd(1.0, -0.375, 0.0));
+    Ray3d r2 = Ray3d::FromOriginAndDirection( Vector3dd(0.0, 0.0, 100.0), Vector3dd(1.0, -0.375, 1.7938e-16));
+
+    ConvexPolyhedron cp;
+
+    cp.faces.push_back(Plane3d(    0,  1, 0.375, -0));
+    cp.faces.push_back(Plane3d(-0.75,  0, 0.375, -0));
+    cp.faces.push_back(Plane3d(    0, -1, 0.375, -0));
+    cp.faces.push_back(Plane3d(0.75,   0, 0.375, -0));
+    cp.faces.push_back(Plane3d(  -0,  -0,    -1,  1));
+
+    {
+        double t1,t2;
+        bool b1 = cp.intersectWith(r1, t1, t2);
+        cout << b1 << " " << t1 << " " << t2 << endl;
+    }
+
+    {
+        double t1,t2;
+        bool b2 = cp.intersectWith(r2, t1, t2);
+        cout << b2 << " " << t1 << " " << t2 << endl;
+    }
+
 
 }
 

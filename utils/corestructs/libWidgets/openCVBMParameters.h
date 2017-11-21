@@ -8,9 +8,9 @@
  * \author autoGenerator
  */
 
-#include "reflection.h"
-#include "defaultSetter.h"
-#include "printerVisitor.h"
+#include "core/reflection/reflection.h"
+#include "core/reflection/defaultSetter.h"
+#include "core/reflection/printerVisitor.h"
 
 /*
  *  Embed includes.
@@ -19,14 +19,14 @@
  *  Additional includes for Composite Types.
  */
 
-using namespace corecvs;
+// using namespace corecvs;
 
 /*
  *  Additional includes for Pointer Types.
  */
 
-namespace corecvs {
-}
+// namespace corecvs {
+// }
 /*
  *  Additional includes for enum section.
  */
@@ -35,7 +35,7 @@ namespace corecvs {
  * \brief OpenCV BM Parameters Class 
  * OpenCV BM Parameters Class 
  **/
-class OpenCVBMParameters : public BaseReflection<OpenCVBMParameters>
+class OpenCVBMParameters : public corecvs::BaseReflection<OpenCVBMParameters>
 {
 public:
     enum FieldId {
@@ -109,6 +109,8 @@ public:
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
+
+    static int relinkCompositeFields();
 
     /** Section with getters */
     const void *getPtrById(int fieldId) const
@@ -211,20 +213,20 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit(mBlockSize,                 static_cast<const IntField *>     (fields()[BLOCK_SIZE_ID]));
-        visitor.visit(mDisparitySearch,           static_cast<const IntField *>     (fields()[DISPARITY_SEARCH_ID]));
-        visitor.visit(mPreFilterCap,              static_cast<const IntField *>     (fields()[PREFILTERCAP_ID]));
-        visitor.visit(mMinDisparity,              static_cast<const IntField *>     (fields()[MINDISPARITY_ID]));
-        visitor.visit(mTextureThreshold,          static_cast<const IntField *>     (fields()[TEXTURETHRESHOLD_ID]));
-        visitor.visit(mUniquenessRatio,           static_cast<const IntField *>     (fields()[UNIQUENESSRATIO_ID]));
-        visitor.visit(mSpeckleWindowSize,         static_cast<const IntField *>     (fields()[SPECKLEWINDOWSIZE_ID]));
-        visitor.visit(mSpeckleRange,              static_cast<const IntField *>     (fields()[SPECKLERANGE_ID]));
-        visitor.visit(mDisp12MaxDiff,             static_cast<const IntField *>     (fields()[DISP12MAXDIFF_ID]));
+        visitor.visit(mBlockSize,                 static_cast<const corecvs::IntField *>(fields()[BLOCK_SIZE_ID]));
+        visitor.visit(mDisparitySearch,           static_cast<const corecvs::IntField *>(fields()[DISPARITY_SEARCH_ID]));
+        visitor.visit(mPreFilterCap,              static_cast<const corecvs::IntField *>(fields()[PREFILTERCAP_ID]));
+        visitor.visit(mMinDisparity,              static_cast<const corecvs::IntField *>(fields()[MINDISPARITY_ID]));
+        visitor.visit(mTextureThreshold,          static_cast<const corecvs::IntField *>(fields()[TEXTURETHRESHOLD_ID]));
+        visitor.visit(mUniquenessRatio,           static_cast<const corecvs::IntField *>(fields()[UNIQUENESSRATIO_ID]));
+        visitor.visit(mSpeckleWindowSize,         static_cast<const corecvs::IntField *>(fields()[SPECKLEWINDOWSIZE_ID]));
+        visitor.visit(mSpeckleRange,              static_cast<const corecvs::IntField *>(fields()[SPECKLERANGE_ID]));
+        visitor.visit(mDisp12MaxDiff,             static_cast<const corecvs::IntField *>(fields()[DISP12MAXDIFF_ID]));
     }
 
     OpenCVBMParameters()
     {
-        DefaultSetter setter;
+        corecvs::DefaultSetter setter;
         accept(setter);
     }
 
@@ -251,16 +253,16 @@ template<class VisitorType>
         mDisp12MaxDiff = disp12MaxDiff;
     }
 
-    friend ostream& operator << (ostream &out, OpenCVBMParameters &toSave)
+    friend std::ostream& operator << (std::ostream &out, OpenCVBMParameters &toSave)
     {
-        PrinterVisitor printer(out);
-        toSave.accept<PrinterVisitor>(printer);
+        corecvs::PrinterVisitor printer(out);
+        toSave.accept<corecvs::PrinterVisitor>(printer);
         return out;
     }
 
     void print ()
     {
-        cout << *this;
+        std::cout << *this;
     }
 };
 #endif  //OPENCV_BM_PARAMETERS_H_

@@ -11,11 +11,11 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "mathUtils.h"
-#include "gradientDescent.h"
-#include "vector3d.h"
+#include "core/math/mathUtils.h"
+#include "core/math/gradientDescent.h"
+#include "core/math/vector/vector3d.h"
 
 using namespace corecvs;
 

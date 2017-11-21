@@ -17,8 +17,8 @@ struct MatchPlanEntry
 	uint16_t queryImg;
 	uint16_t trainImg;
 
-	std::deque<uint16_t> queryFeatures;
-	std::deque<uint16_t> trainFeatures;
+    std::deque<uint32_t> queryFeatures;
+    std::deque<uint32_t> trainFeatures;
 };
 
 struct MatchPlan

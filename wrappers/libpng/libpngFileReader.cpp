@@ -1,21 +1,21 @@
 #include "libpngFileReader.h"
+#include "core/utils/utils.h"
 
 #include <string>
 #include <cstdio>
 #include <cstdlib>
 #include <png.h>
 
-
-#include "utils.h"
-
 using namespace corecvs;
 
 string  LibpngFileReader::prefix1(".png");
+string  LibpngFileReader::prefix2(".PNG");
 
 
-bool LibpngFileReader::acceptsFile(std::string name)
+bool LibpngFileReader::acceptsFile(string name)
 {
-    return HelperUtils::endsWith(name, prefix1);
+    return HelperUtils::endsWith(name, prefix1) ||
+           HelperUtils::endsWith(name, prefix2);
 }
 
 RGB24Buffer *LibpngFileReader::load(string name)
@@ -77,7 +77,7 @@ RGB24Buffer *LibpngFileReader::load(string name)
 
 
     row_pointers = (png_byte **) png_malloc(png_ptr, height * sizeof (png_byte *));
-    for (int y = 0; y < height; y++)
+    for (png_uint_32 y = 0; y < height; y++)
         row_pointers[y] = (png_byte *) png_malloc (png_ptr, sizeof (uint8_t) * width * 3);
 
     png_read_image(png_ptr, row_pointers);
@@ -90,7 +90,9 @@ RGB24Buffer *LibpngFileReader::load(string name)
         png_byte *row = row_pointers[y];
         for (uint32_t x = 0; x < width; x++) {
             RGBColor *dest = &toReturn->element(y,x);
-            uint32_t r = *row++, g = *row++, b = *row++;
+            uint32_t r = *row++;
+            uint32_t g = *row++;
+            uint32_t b = *row++;
             *dest = RGBColor(r,g,b);
         }
         png_free (png_ptr, row_pointers[y]);
@@ -183,3 +185,22 @@ bool LibpngFileReader::save(string name, RGB24Buffer *buffer)
         return status;
 }
 
+corecvs::RuntimeTypeBuffer *LibpngRuntimeTypeBufferLoader::load(string name)
+{
+    RGB24Buffer *tmp = LibpngFileReader().load(name);
+    if (tmp == NULL)
+        return NULL;
+
+    RuntimeTypeBuffer *result = new RuntimeTypeBuffer(tmp->h, tmp->w, BufferType::U8);
+    
+    for (RGB24Buffer::InternalIndexType y = 0; y < tmp->h; ++y) {
+        for (RGB24Buffer::InternalIndexType x = 0; x < tmp->w; ++x) {
+            RGBColor pixel = tmp->element(y, x);
+
+            result->at<uint8_t>(y, x) = pixel.brightness();
+        }
+    }
+    delete tmp;
+
+    return result;
+}

@@ -11,13 +11,13 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "vector3d.h"
-#include "propertyList.h"
-#include "propertyListVisitor.h"
-#include "triangulator.h"
-#include "printerVisitor.h"
+#include "core/math/vector/vector3d.h"
+#include "core/utils/propertyList.h"
+#include "core/utils/visitors/propertyListVisitor.h"
+#include "core/rectification/triangulator.h"
+#include "core/reflection/printerVisitor.h"
 
 
 using namespace corecvs;

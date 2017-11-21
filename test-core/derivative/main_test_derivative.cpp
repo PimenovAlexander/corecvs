@@ -11,8 +11,8 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
-#include "function.h"
+#include "core/utils/global.h"
+#include "core/function/function.h"
 
 using namespace corecvs;
 

@@ -2,9 +2,9 @@
 
 #include <QWidget>
 
-#include "selectableGeometryFeatures.h"
+#include "core/alignment/selectableGeometryFeatures.h"
 #include "advancedImageWidget.h"
-#include "polygons.h"
+#include "core/geometry/polygons.h"
 
 namespace Ui {
 class PaintImageWidget;

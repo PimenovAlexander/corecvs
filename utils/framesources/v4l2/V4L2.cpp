@@ -458,15 +458,15 @@ void V4L2CameraDescriptor::setFromQueryCtrl(CaptureParameter &param, v4l2_queryc
                     return;
                 } else {
                  //   printf( "       MenuItem: %s\n", menuRequest.name);
-                    param.pushMenuItem(QString("%1").arg((const char *)menuRequest.name), index);
+                    param.pushMenuItem(std::string((const char *)menuRequest.name), index);
                 }
             }
         } else {
             printf( "   Menu V4L2_EXPOSURE\n");
-            param.pushMenuItem(QString("Manual Exposture"),             V4L2_EXPOSURE_MANUAL);
-            param.pushMenuItem(QString("Auto Exposture"),               V4L2_EXPOSURE_AUTO);
-            param.pushMenuItem(QString("Shutter Priotiry Exposture"),   V4L2_EXPOSURE_SHUTTER_PRIORITY);
-            param.pushMenuItem(QString("Apperture Priority Exposture"), V4L2_EXPOSURE_APERTURE_PRIORITY);
+            param.pushMenuItem(std::string("Manual Exposture"),             V4L2_EXPOSURE_MANUAL);
+            param.pushMenuItem(std::string("Auto Exposture"),               V4L2_EXPOSURE_AUTO);
+            param.pushMenuItem(std::string("Shutter Priotiry Exposture"),   V4L2_EXPOSURE_SHUTTER_PRIORITY);
+            param.pushMenuItem(std::string("Apperture Priority Exposture"), V4L2_EXPOSURE_APERTURE_PRIORITY);
 
         }
     }
@@ -474,8 +474,8 @@ void V4L2CameraDescriptor::setFromQueryCtrl(CaptureParameter &param, v4l2_queryc
     if (ctrl.type == V4L2_CTRL_TYPE_BOOLEAN)
     {
         param.setIsMenu(true);
-        param.pushMenuItem(QString("False"), 0);
-        param.pushMenuItem(QString("True") , 1);
+        param.pushMenuItem(std::string("False"), 0);
+        param.pushMenuItem(std::string("True") , 1);
     }
 
     if (!(ctrl.flags & (V4L2_CTRL_FLAG_DISABLED | V4L2_CTRL_FLAG_GRABBED | V4L2_CTRL_FLAG_READ_ONLY | V4L2_CTRL_FLAG_INACTIVE)))

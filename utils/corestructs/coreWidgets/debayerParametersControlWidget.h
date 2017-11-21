@@ -1,6 +1,6 @@
 #pragma once
 #include <QWidget>
-#include "generated/debayerParameters.h"
+#include "core/xml/generated/debayerParameters.h"
 #include "ui_debayerParametersControlWidget.h"
 #include "parametersControlWidgetBase.h"
 

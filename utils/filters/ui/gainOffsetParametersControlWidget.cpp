@@ -8,6 +8,7 @@
 
 #include "gainOffsetParametersControlWidget.h"
 #include "ui_gainOffsetParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -32,27 +33,21 @@ GainOffsetParametersControlWidget::~GainOffsetParametersControlWidget()
 
 void GainOffsetParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    GainOffsetParameters *params = createParameters();
+    std::unique_ptr<GainOffsetParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void GainOffsetParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    GainOffsetParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<GainOffsetParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void GainOffsetParametersControlWidget::getParameters(GainOffsetParameters& params) const
 {
-
-    params.setGain             (mUi->gainSpinBox->value());
-    params.setOffset           (mUi->offsetSpinBox->value());
-
+    params = *std::unique_ptr<GainOffsetParameters>(createParameters());
 }
+
 
 GainOffsetParameters *GainOffsetParametersControlWidget::createParameters() const
 {
@@ -62,11 +57,10 @@ GainOffsetParameters *GainOffsetParametersControlWidget::createParameters() cons
      **/
 
 
-    GainOffsetParameters *result = new GainOffsetParameters(
+    return new GainOffsetParameters(
           mUi->gainSpinBox->value()
         , mUi->offsetSpinBox->value()
     );
-    return result;
 }
 
 void GainOffsetParametersControlWidget::setParameters(const GainOffsetParameters &input)

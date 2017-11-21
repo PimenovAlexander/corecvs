@@ -1,16 +1,22 @@
-#ifndef CAMERAPROTOTYPE_H
-#define CAMERAPROTOTYPE_H
+#ifndef CAMERA_PROTOTYPE_H
+#define CAMERA_PROTOTYPE_H
 
-#if 0
+#include "core/camerafixture/fixtureScenePart.h"
+#include "core/cameracalibration/calibrationCamera.h"
+
+namespace corecvs {
+
+class FixtureScene;
+class CameraFixture;
 
 class CameraPrototype : public FixtureScenePart, public CameraModel
 {
 public:
-    CameraFixture   *cameraFixture;
+//    CameraFixture   *cameraFixture;
 
     CameraPrototype(FixtureScene * owner = NULL) :
-        FixtureScenePart(owner),
-        cameraFixture(NULL)
+         FixtureScenePart(owner)
+//       , cameraFixture(NULL)
     {}
 
     CameraPrototype(
@@ -18,9 +24,9 @@ public:
             const CameraLocationData &_extrinsics = CameraLocationData(),
             const LensDistortionModelParameters &_distortion = LensDistortionModelParameters(),
             FixtureScene * owner = NULL) :
-        FixtureScenePart(owner),
-        CameraModel(_intrinsics, _extrinsics, _distortion),
-        cameraFixture(NULL)
+          FixtureScenePart(owner)
+        , CameraModel(_intrinsics, _extrinsics, _distortion)
+//        , cameraFixture(NULL)
     {}
 
     template<class VisitorType>
@@ -36,10 +42,9 @@ public:
     /** This is an experimental block of functions  it may change. Please use with caution **/
 
     /** WHY SO SLOW? **/
-    bool projectPointFromWorld(const Vector3dd &point, Vector2dd *projetionPtr = NULL);
-
+    //bool projectPointFromWorld(const Vector3dd &point, Vector2dd *projetionPtr = NULL);
 };
 
-#endif
+}  // namespace corecvs
 
-#endif // CAMERAPROTOTYPE_H
+#endif // CAMERA_PROTOTYPE_H

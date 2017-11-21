@@ -8,6 +8,7 @@
 
 #include "makePreciseParametersControlWidget.h"
 #include "ui_makePreciseParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -37,32 +38,21 @@ MakePreciseParametersControlWidget::~MakePreciseParametersControlWidget()
 
 void MakePreciseParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    MakePreciseParameters *params = createParameters();
+    std::unique_ptr<MakePreciseParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void MakePreciseParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    MakePreciseParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<MakePreciseParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void MakePreciseParametersControlWidget::getParameters(MakePreciseParameters& params) const
 {
-
-    params.setShouldMakePrecise(mUi->shouldMakePreciseCheckBox->isChecked());
-    params.setAlgorithm        (static_cast<MakePreciseAlgorithm::MakePreciseAlgorithm>(mUi->algorithmComboBox->currentIndex()));
-    params.setInterpolation    (static_cast<PreciseInterpolationType::PreciseInterpolationType>(mUi->interpolationComboBox->currentIndex()));
-    params.setKLTIterations    (mUi->kLTIterationsSpinBox->value());
-    params.setKLTRadiusH       (mUi->kLTRadiusHSpinBox->value());
-    params.setKLTRadiusW       (mUi->kLTRadiusWSpinBox->value());
-    params.setKLTThreshold     (mUi->kLTThresholdSpinBox->value());
-
+    params = *std::unique_ptr<MakePreciseParameters>(createParameters());
 }
+
 
 MakePreciseParameters *MakePreciseParametersControlWidget::createParameters() const
 {
@@ -72,7 +62,7 @@ MakePreciseParameters *MakePreciseParametersControlWidget::createParameters() co
      **/
 
 
-    MakePreciseParameters *result = new MakePreciseParameters(
+    return new MakePreciseParameters(
           mUi->shouldMakePreciseCheckBox->isChecked()
         , static_cast<MakePreciseAlgorithm::MakePreciseAlgorithm>(mUi->algorithmComboBox->currentIndex())
         , static_cast<PreciseInterpolationType::PreciseInterpolationType>(mUi->interpolationComboBox->currentIndex())
@@ -81,7 +71,6 @@ MakePreciseParameters *MakePreciseParametersControlWidget::createParameters() co
         , mUi->kLTRadiusWSpinBox->value()
         , mUi->kLTThresholdSpinBox->value()
     );
-    return result;
 }
 
 void MakePreciseParametersControlWidget::setParameters(const MakePreciseParameters &input)

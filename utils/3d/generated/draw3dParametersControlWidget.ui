@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Draw3dParametersControlWidget</class>
+ <class>Draw3dParametersControlWidget</class> 
  <widget class="QWidget" name="Draw3dParametersControlWidget">
   <property name="geometry">
    <rect>
@@ -13,13 +13,13 @@
   <property name="windowTitle">
    <string>Draw3dParameters</string>
   </property>
-   <layout class="QGridLayout" name="gridLayout">
-    <property name="margin">
-     <number>3</number>
-    </property>
-    <property name="spacing">
-     <number>3</number>
-    </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="margin">
+    <number>3</number>
+   </property>
+   <property name="spacing">
+    <number>3</number>
+   </property>
     <item row="0" column="0">
      <widget class="QLabel" name="label_0">
        <property name="text">
@@ -29,6 +29,9 @@
     </item>
     <item row="0" column="1">
      <widget class="QComboBox" name="styleComboBox">
+       <property name="toolTip">
+         <string>style</string>
+       </property>
        <property name="currentIndex">
          <number>3</number>
        </property>
@@ -57,9 +60,6 @@
          <string>Textured</string>
         </property>
        </item>
-       <property name="toolTip">
-         <string>style</string>
-       </property>
      </widget>
     </item>
     <item row="1" column="0">
@@ -88,6 +88,9 @@
        <property name="toolTip">
          <string>Point Color Override</string>
        </property>
+       <property name="checked">
+           <bool>0</bool>
+       </property>
      </widget>
     </item>
     <item row="3" column="0">
@@ -113,6 +116,12 @@
        </property>
        <property name="value">
         <number>1</number>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
        </property>
      </widget>
     </item>
@@ -142,6 +151,9 @@
        <property name="toolTip">
          <string>Edge Color Override</string>
        </property>
+       <property name="checked">
+           <bool>0</bool>
+       </property>
      </widget>
     </item>
     <item row="6" column="0">
@@ -167,6 +179,12 @@
        </property>
        <property name="value">
         <number>1</number>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
        </property>
      </widget>
     </item>
@@ -196,6 +214,9 @@
        <property name="toolTip">
          <string>Face Color Override</string>
        </property>
+       <property name="checked">
+           <bool>0</bool>
+       </property>
      </widget>
     </item>
     <item row="9" column="0">
@@ -209,6 +230,9 @@
      <widget class="QCheckBox" name="showCaptionCheckBox">
        <property name="toolTip">
          <string>Show caption</string>
+       </property>
+       <property name="checked">
+           <bool>0</bool>
        </property>
      </widget>
     </item>
@@ -236,6 +260,12 @@
        <property name="value">
         <number>8</number>
        </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
      </widget>
     </item>
     <item row="11" column="0">
@@ -262,6 +292,12 @@
        <property name="value">
         <number>1</number>
        </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
      </widget>
     </item>
     <item row="12" column="0">
@@ -287,6 +323,9 @@
     </item>
     <item row="13" column="1">
      <widget class="QComboBox" name="textureCorrodinatesComboBox">
+       <property name="toolTip">
+         <string>Texture Corrodinates</string>
+       </property>
        <property name="currentIndex">
          <number>0</number>
        </property>
@@ -305,9 +344,6 @@
          <string>Force Texture</string>
         </property>
        </item>
-       <property name="toolTip">
-         <string>Texture Corrodinates</string>
-       </property>
      </widget>
     </item>
     <item row="14" column="0">
@@ -333,6 +369,12 @@
        </property>
        <property name="value">
         <number>255</number>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
        </property>
      </widget>
     </item>
@@ -360,6 +402,12 @@
        <property name="value">
         <double>1</double>
        </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
      </widget>
     </item>
     <item row="16" column="0">
@@ -386,6 +434,12 @@
        <property name="value">
         <number>11</number>
        </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
      </widget>
     </item>
     <item row="17" column="0">
@@ -399,6 +453,9 @@
      <widget class="QCheckBox" name="decalLeftCamCheckBox">
        <property name="toolTip">
          <string>Decal Left Cam</string>
+       </property>
+       <property name="checked">
+           <bool>0</bool>
        </property>
      </widget>
     </item>
@@ -426,6 +483,12 @@
        <property name="value">
         <number>255</number>
        </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
      </widget>
     </item>
     <item row="19" column="0">
@@ -439,6 +502,9 @@
      <widget class="QCheckBox" name="decalRightCamCheckBox">
        <property name="toolTip">
          <string>Decal Right Cam</string>
+       </property>
+       <property name="checked">
+           <bool>0</bool>
        </property>
      </widget>
     </item>
@@ -465,6 +531,12 @@
        </property>
        <property name="value">
         <number>255</number>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
        </property>
      </widget>
     </item>

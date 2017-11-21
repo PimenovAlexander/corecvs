@@ -4,14 +4,14 @@
 #include <QMouseEvent>
 #include <QWheelEvent>
 #define __XMLDocument_FWD_DEFINED__  // to omit conflict "msxml.h:3376: using typedef-name 'XMLDocument' after 'class'"
-#include <QtOpenGL/QGLWidget>
+#include <QOpenGLWidget>
 
 #include <QTimer>
 
 #include "ui_viGLAreaWidget.h"
 
 
-class ViGLAreaWidget : public QGLWidget
+class ViGLAreaWidget : public QOpenGLWidget
 {
     Q_OBJECT
 
@@ -33,7 +33,7 @@ signals:
 
 public slots:
     void scheduleUpdate();
-    virtual void updateGL() override;
+    void update();
     void setScheduleDelay(int delay);
 
 private:

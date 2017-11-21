@@ -11,19 +11,19 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "fixedPointDisplace.h"
-#include "matrix33.h"
-#include "projectiveTransform.h"
-#include "g12Buffer.h"
-#include "bufferFactory.h"
-#include "bmpLoader.h"
-#include "rgb24Buffer.h"
-#include "radialCorrection.h"
-#include "displacementBuffer.h"
+#include "core/buffers/fixeddisp/fixedPointDisplace.h"
+#include "core/math/matrix/matrix33.h"
+#include "core/math/projectiveTransform.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/bufferFactory.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/alignment/radialCorrection.h"
+#include "core/buffers/displacementBuffer.h"
 
-#include "preciseTimer.h"
+#include "core/utils/preciseTimer.h"
 
 using corecvs::Matrix33;
 using corecvs::ProjectiveTransform;

@@ -7,35 +7,30 @@
 class DescriptorExtractor : public virtual AlgoBase
 {
 public:
-	void compute(RuntimeTypeBuffer &image, std::vector<KeyPoint> &keyPoints, RuntimeTypeBuffer &descriptors);
-	virtual ~DescriptorExtractor() {}
-
+    void compute(corecvs::RuntimeTypeBuffer &image, std::vector<KeyPoint> &keyPoints, corecvs::RuntimeTypeBuffer &descriptors, void* pRemapCache);
+    virtual ~DescriptorExtractor() {}
 protected:
-	virtual void computeImpl(RuntimeTypeBuffer &image, std::vector<KeyPoint> &keyPoints, RuntimeTypeBuffer &descriptors) = 0;
+    virtual void computeImpl(corecvs::RuntimeTypeBuffer &image, std::vector<KeyPoint> &keyPoints, corecvs::RuntimeTypeBuffer &descriptors, void* pRemapCache) = 0;
 };
 
-class DescriptorExtractorProviderImpl
+class DescriptorExtractorProviderImpl : public AlgoNaming
 {
 public:
-	virtual DescriptorExtractor* getDescriptorExtractor(const DescriptorType &type) = 0;
-	virtual bool provides(const DescriptorType &type) = 0;
-
-	virtual ~DescriptorExtractorProviderImpl() {}
+    virtual bool provides(const DescriptorType &type) = 0;
+    virtual DescriptorExtractor* getDescriptorExtractor(const DescriptorType &type, const std::string &params = "") = 0;
+    virtual ~DescriptorExtractorProviderImpl() {}
 };
 
-class DescriptorExtractorProvider
+class DescriptorExtractorProvider : public AlgoCollectionNaming<DescriptorExtractorProviderImpl>
 {
 public:
-	void add(DescriptorExtractorProviderImpl *provider);
-	DescriptorExtractor* getDescriptorExtractor(const DescriptorType &type);
+    DescriptorExtractor* getDescriptorExtractor(const DescriptorType &type, const std::string &params = "");
 
-	static DescriptorExtractorProvider& getInstance();
-	~DescriptorExtractorProvider();
+    static DescriptorExtractorProvider& getInstance();
+    virtual ~DescriptorExtractorProvider();
 
 private:
-	DescriptorExtractorProvider();
-	DescriptorExtractorProvider(const DescriptorExtractorProvider&);
-	DescriptorExtractorProvider& operator=(const DescriptorExtractorProvider&);
-
-	std::vector<DescriptorExtractorProviderImpl*> providers;
+    DescriptorExtractorProvider();
+    DescriptorExtractorProvider(const DescriptorExtractorProvider&);
+    DescriptorExtractorProvider& operator=(const DescriptorExtractorProvider&);
 };

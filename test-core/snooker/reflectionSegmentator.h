@@ -9,9 +9,9 @@
 #ifndef REFLECTIONSEGMENTATOR_H_
 #define REFLECTIONSEGMENTATOR_H_
 
-#include "vector2d.h"
-#include "segmentator.h"
-#include "ellipticalApproximation.h"
+#include "core/math/vector/vector2d.h"
+#include "core/segmentation/segmentator.h"
+#include "core/geometry/ellipticalApproximation.h"
 
 class SnookerPayload;
 

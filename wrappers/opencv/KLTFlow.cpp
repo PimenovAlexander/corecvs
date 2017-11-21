@@ -11,11 +11,16 @@
 
 #include <opencv2/core/core_c.h>        // cvCreateImage
 #include <opencv2/imgproc/imgproc_c.h>  // cvGoodFeaturesToTrack
-#include <opencv2/video/tracking.hpp>   // cvCalcOpticalFlowPyrLK
+#ifdef WITH_OPENCV_3x
+    #include <opencv2/video/tracking_c.h>   // cvCalcOpticalFlowPyrLK
+#else
+    #include <opencv2/video/tracking.hpp>   // cvCalcOpticalFlowPyrLK
+#endif
 
-#include "vector2d.h"
+
+#include "core/math/vector/vector2d.h"
 #include "KLTFlow.h"
-#include "mathUtils.h"
+#include "core/math/mathUtils.h"
 #include "OpenCVTools.h"
 
 using namespace corecvs;
@@ -101,7 +106,6 @@ std::vector<FloatFlowVector> *KLTFlow::getOpenCVKLT(
                 cvTermCriteria( CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 20, 0.03 ) );
 
     // Call Lucas Kanade algorithm
-
     cvCalcOpticalFlowPyrLK(
                 algo_image_A_p,
                 algo_image_B_p,

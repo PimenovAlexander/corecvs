@@ -8,9 +8,9 @@
  * \author autoGenerator
  */
 
-#include "reflection.h"
-#include "defaultSetter.h"
-#include "printerVisitor.h"
+#include "core/reflection/reflection.h"
+#include "core/reflection/defaultSetter.h"
+#include "core/reflection/printerVisitor.h"
 
 /*
  *  Embed includes.
@@ -19,14 +19,14 @@
  *  Additional includes for Composite Types.
  */
 
-using namespace corecvs;
+// using namespace corecvs;
 
 /*
  *  Additional includes for Pointer Types.
  */
 
-namespace corecvs {
-}
+// namespace corecvs {
+// }
 /*
  *  Additional includes for enum section.
  */
@@ -35,10 +35,10 @@ namespace corecvs {
 #include "optimizationMethodType.h"
 
 /**
- * \brief osd parameters 
- * osd parameters 
+ * \brief Rectify Parameters 
+ * Rectify Parameters 
  **/
-class RectifyParameters : public BaseReflection<RectifyParameters>
+class RectifyParameters : public corecvs::BaseReflection<RectifyParameters>
 {
 public:
     enum FieldId {
@@ -308,6 +308,8 @@ public:
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
+
+    static int relinkCompositeFields();
 
     /** Section with getters */
     const void *getPtrById(int fieldId) const
@@ -690,48 +692,48 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit((int &)mMatchingMethod,     static_cast<const EnumField *>    (fields()[MATCHINGMETHOD_ID]));
-        visitor.visit(mHessianThreshold,          static_cast<const DoubleField *>  (fields()[HESSIANTHRESHOLD_ID]));
-        visitor.visit(mOctaves,                   static_cast<const IntField *>     (fields()[OCTAVES_ID]));
-        visitor.visit(mOctaveLayers,              static_cast<const IntField *>     (fields()[OCTAVELAYERS_ID]));
-        visitor.visit(mExtended,                  static_cast<const BoolField *>    (fields()[EXTENDED_ID]));
-        visitor.visit(mFilterMinimumLength,       static_cast<const DoubleField *>  (fields()[FILTERMINIMUMLENGTH_ID]));
-        visitor.visit(mUseKLT,                    static_cast<const BoolField *>    (fields()[USEKLT_ID]));
-        visitor.visit(mComputeEssential,          static_cast<const BoolField *>    (fields()[COMPUTEESSENTIAL_ID]));
-        visitor.visit(mPriorFocal,                static_cast<const DoubleField *>  (fields()[PRIORFOCAL_ID]));
-        visitor.visit(mPriorFocal2,               static_cast<const DoubleField *>  (fields()[PRIORFOCAL2_ID]));
-        visitor.visit(mBaselineLength,            static_cast<const DoubleField *>  (fields()[BASELINELENGTH_ID]));
-        visitor.visit(mFovAngle,                  static_cast<const DoubleField *>  (fields()[FOVANGLE_ID]));
-        visitor.visit((int &)mEstimationMethod,   static_cast<const EnumField *>    (fields()[ESTIMATIONMETHOD_ID]));
-        visitor.visit(mNormalise,                 static_cast<const BoolField *>    (fields()[NORMALISE_ID]));
-        visitor.visit(mRansacIterations,          static_cast<const IntField *>     (fields()[RANSACITERATIONS_ID]));
-        visitor.visit(mRansacTestSize,            static_cast<const IntField *>     (fields()[RANSACTESTSIZE_ID]));
-        visitor.visit(mRansacThreshold,           static_cast<const DoubleField *>  (fields()[RANSACTHRESHOLD_ID]));
-        visitor.visit(mBaselineX,                 static_cast<const DoubleField *>  (fields()[BASELINEX_ID]));
-        visitor.visit(mBaselineY,                 static_cast<const DoubleField *>  (fields()[BASELINEY_ID]));
-        visitor.visit(mBaselineZ,                 static_cast<const DoubleField *>  (fields()[BASELINEZ_ID]));
-        visitor.visit((int &)mIterativeMethod,    static_cast<const EnumField *>    (fields()[ITERATIVEMETHOD_ID]));
-        visitor.visit(mIterativeIterations,       static_cast<const IntField *>     (fields()[ITERATIVEITERATIONS_ID]));
-        visitor.visit(mIterativeInitialSigma,     static_cast<const DoubleField *>  (fields()[ITERATIVEINITIALSIGMA_ID]));
-        visitor.visit(mIterativeFactorSigma,      static_cast<const DoubleField *>  (fields()[ITERATIVEFACTORSIGMA_ID]));
-        visitor.visit(mManualX,                   static_cast<const DoubleField *>  (fields()[MANUALX_ID]));
-        visitor.visit(mManualY,                   static_cast<const DoubleField *>  (fields()[MANUALY_ID]));
-        visitor.visit(mManualZ,                   static_cast<const DoubleField *>  (fields()[MANUALZ_ID]));
-        visitor.visit(mManualPitch,               static_cast<const DoubleField *>  (fields()[MANUALPITCH_ID]));
-        visitor.visit(mManualYaw,                 static_cast<const DoubleField *>  (fields()[MANUALYAW_ID]));
-        visitor.visit(mManualRoll,                static_cast<const DoubleField *>  (fields()[MANUALROLL_ID]));
-        visitor.visit(mZdirX,                     static_cast<const DoubleField *>  (fields()[ZDIRX_ID]));
-        visitor.visit(mZdirY,                     static_cast<const DoubleField *>  (fields()[ZDIRY_ID]));
-        visitor.visit(mZdirZ,                     static_cast<const DoubleField *>  (fields()[ZDIRZ_ID]));
-        visitor.visit(mAutoZ,                     static_cast<const BoolField *>    (fields()[AUTOZ_ID]));
-        visitor.visit(mAutoShift,                 static_cast<const BoolField *>    (fields()[AUTOSHIFT_ID]));
-        visitor.visit(mPreShift,                  static_cast<const IntField *>     (fields()[PRESHIFT_ID]));
-        visitor.visit(mGuessShiftThreshold,       static_cast<const IntField *>     (fields()[GUESSSHIFTTHRESHOLD_ID]));
+        visitor.visit((int &)mMatchingMethod,     static_cast<const corecvs::EnumField *>(fields()[MATCHINGMETHOD_ID]));
+        visitor.visit(mHessianThreshold,          static_cast<const corecvs::DoubleField *>(fields()[HESSIANTHRESHOLD_ID]));
+        visitor.visit(mOctaves,                   static_cast<const corecvs::IntField *>(fields()[OCTAVES_ID]));
+        visitor.visit(mOctaveLayers,              static_cast<const corecvs::IntField *>(fields()[OCTAVELAYERS_ID]));
+        visitor.visit(mExtended,                  static_cast<const corecvs::BoolField *>(fields()[EXTENDED_ID]));
+        visitor.visit(mFilterMinimumLength,       static_cast<const corecvs::DoubleField *>(fields()[FILTERMINIMUMLENGTH_ID]));
+        visitor.visit(mUseKLT,                    static_cast<const corecvs::BoolField *>(fields()[USEKLT_ID]));
+        visitor.visit(mComputeEssential,          static_cast<const corecvs::BoolField *>(fields()[COMPUTEESSENTIAL_ID]));
+        visitor.visit(mPriorFocal,                static_cast<const corecvs::DoubleField *>(fields()[PRIORFOCAL_ID]));
+        visitor.visit(mPriorFocal2,               static_cast<const corecvs::DoubleField *>(fields()[PRIORFOCAL2_ID]));
+        visitor.visit(mBaselineLength,            static_cast<const corecvs::DoubleField *>(fields()[BASELINELENGTH_ID]));
+        visitor.visit(mFovAngle,                  static_cast<const corecvs::DoubleField *>(fields()[FOVANGLE_ID]));
+        visitor.visit((int &)mEstimationMethod,   static_cast<const corecvs::EnumField *>(fields()[ESTIMATIONMETHOD_ID]));
+        visitor.visit(mNormalise,                 static_cast<const corecvs::BoolField *>(fields()[NORMALISE_ID]));
+        visitor.visit(mRansacIterations,          static_cast<const corecvs::IntField *>(fields()[RANSACITERATIONS_ID]));
+        visitor.visit(mRansacTestSize,            static_cast<const corecvs::IntField *>(fields()[RANSACTESTSIZE_ID]));
+        visitor.visit(mRansacThreshold,           static_cast<const corecvs::DoubleField *>(fields()[RANSACTHRESHOLD_ID]));
+        visitor.visit(mBaselineX,                 static_cast<const corecvs::DoubleField *>(fields()[BASELINEX_ID]));
+        visitor.visit(mBaselineY,                 static_cast<const corecvs::DoubleField *>(fields()[BASELINEY_ID]));
+        visitor.visit(mBaselineZ,                 static_cast<const corecvs::DoubleField *>(fields()[BASELINEZ_ID]));
+        visitor.visit((int &)mIterativeMethod,    static_cast<const corecvs::EnumField *>(fields()[ITERATIVEMETHOD_ID]));
+        visitor.visit(mIterativeIterations,       static_cast<const corecvs::IntField *>(fields()[ITERATIVEITERATIONS_ID]));
+        visitor.visit(mIterativeInitialSigma,     static_cast<const corecvs::DoubleField *>(fields()[ITERATIVEINITIALSIGMA_ID]));
+        visitor.visit(mIterativeFactorSigma,      static_cast<const corecvs::DoubleField *>(fields()[ITERATIVEFACTORSIGMA_ID]));
+        visitor.visit(mManualX,                   static_cast<const corecvs::DoubleField *>(fields()[MANUALX_ID]));
+        visitor.visit(mManualY,                   static_cast<const corecvs::DoubleField *>(fields()[MANUALY_ID]));
+        visitor.visit(mManualZ,                   static_cast<const corecvs::DoubleField *>(fields()[MANUALZ_ID]));
+        visitor.visit(mManualPitch,               static_cast<const corecvs::DoubleField *>(fields()[MANUALPITCH_ID]));
+        visitor.visit(mManualYaw,                 static_cast<const corecvs::DoubleField *>(fields()[MANUALYAW_ID]));
+        visitor.visit(mManualRoll,                static_cast<const corecvs::DoubleField *>(fields()[MANUALROLL_ID]));
+        visitor.visit(mZdirX,                     static_cast<const corecvs::DoubleField *>(fields()[ZDIRX_ID]));
+        visitor.visit(mZdirY,                     static_cast<const corecvs::DoubleField *>(fields()[ZDIRY_ID]));
+        visitor.visit(mZdirZ,                     static_cast<const corecvs::DoubleField *>(fields()[ZDIRZ_ID]));
+        visitor.visit(mAutoZ,                     static_cast<const corecvs::BoolField *>(fields()[AUTOZ_ID]));
+        visitor.visit(mAutoShift,                 static_cast<const corecvs::BoolField *>(fields()[AUTOSHIFT_ID]));
+        visitor.visit(mPreShift,                  static_cast<const corecvs::IntField *>(fields()[PRESHIFT_ID]));
+        visitor.visit(mGuessShiftThreshold,       static_cast<const corecvs::IntField *>(fields()[GUESSSHIFTTHRESHOLD_ID]));
     }
 
     RectifyParameters()
     {
-        DefaultSetter setter;
+        corecvs::DefaultSetter setter;
         accept(setter);
     }
 
@@ -814,16 +816,16 @@ template<class VisitorType>
         mGuessShiftThreshold = guessShiftThreshold;
     }
 
-    friend ostream& operator << (ostream &out, RectifyParameters &toSave)
+    friend std::ostream& operator << (std::ostream &out, RectifyParameters &toSave)
     {
-        PrinterVisitor printer(out);
-        toSave.accept<PrinterVisitor>(printer);
+        corecvs::PrinterVisitor printer(out);
+        toSave.accept<corecvs::PrinterVisitor>(printer);
         return out;
     }
 
     void print ()
     {
-        cout << *this;
+        std::cout << *this;
     }
 };
 #endif  //RECTIFY_PARAMETERS_H_

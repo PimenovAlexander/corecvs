@@ -18,7 +18,7 @@
     <item name="viTech"   id="1" comment="viTech"/>
   </enum>
 
-  <class name="Rectify Parameters" description="osd parameters">
+  <class name="Rectify Parameters" description="Rectify Parameters">
     <field type="Matching Method Type" name="matchingMethod" defaultValue="1"/>
     
     <field type="double"   name="hessianThreshold"    defaultValue="400.0"/>      

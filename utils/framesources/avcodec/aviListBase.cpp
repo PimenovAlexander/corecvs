@@ -6,7 +6,7 @@
 
 #include <QtCore/QDateTime>
 
-#include "preciseTimer.h"
+#include "core/utils/preciseTimer.h"
 
 #include "aviListBase.h"
 

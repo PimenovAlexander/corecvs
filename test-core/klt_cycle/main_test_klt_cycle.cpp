@@ -9,10 +9,10 @@
 #include <iostream>
 #include "gtest/gtest.h"
 
-#include "g12Buffer.h"
-#include "kltGenerator.h"
-#include "bufferFactory.h"
-#include "bmpLoader.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/kltflow/kltGenerator.h"
+#include "core/buffers/bufferFactory.h"
+#include "core/fileformats/bmpLoader.h"
 
 using namespace corecvs;
 

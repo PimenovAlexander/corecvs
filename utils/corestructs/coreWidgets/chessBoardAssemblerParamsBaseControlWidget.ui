@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ChessBoardAssemblerParamsBaseControlWidget</class> 
+ <widget class="QWidget" name="ChessBoardAssemblerParamsBaseControlWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>ChessBoardAssemblerParamsBase</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="margin">
+    <number>3</number>
+   </property>
+   <property name="spacing">
+    <number>3</number>
+   </property>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_0">
+       <property name="text">
+         <string>seedThreshold</string>
+       </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QDoubleSpinBox" name="seedThresholdSpinBox">
+       <property name="toolTip">
+         <string>Threshold for seed grid non-regularity</string>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_1">
+       <property name="text">
+         <string>seedTgPenalty</string>
+       </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QDoubleSpinBox" name="seedTgPenaltySpinBox">
+       <property name="toolTip">
+         <string>Factor for orthogonal error in seed estimation</string>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_2">
+       <property name="text">
+         <string>conservativity</string>
+       </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QDoubleSpinBox" name="conservativitySpinBox">
+       <property name="toolTip">
+         <string>Factor of conservativity in next row prediction (should be lower to high-distorted boards)</string>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_3">
+       <property name="text">
+         <string>costThreshold</string>
+       </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QDoubleSpinBox" name="costThresholdSpinBox">
+       <property name="toolTip">
+         <string> Maximal cost for real board</string>
+       </property>
+       <property name="minimum">
+        <double>-999999</double>
+       </property>
+       <property name="maximum">
+        <double>999999</double>
+       </property>
+       <property name="singleStep">
+        <double>1</double>
+       </property>
+       <property name="value">
+        <double>-10</double>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_4">
+       <property name="text">
+         <string>minSeedDistance</string>
+       </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QDoubleSpinBox" name="minSeedDistanceSpinBox">
+       <property name="toolTip">
+         <string>Minimal seed distance</string>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="label_5">
+       <property name="text">
+         <string>hypothesisDimensions</string>
+       </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QSpinBox" name="hypothesisDimensionsSpinBox">
+       <property name="toolTip">
+         <string>Hypothesis type: consider only hypothesis that fits specified number of dims</string>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="label_6">
+       <property name="text">
+         <string>kdtree</string>
+       </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="QCheckBox" name="kdtreeCheckBox">
+       <property name="toolTip">
+         <string>Use k-d tree for greedy expansion</string>
+       </property>
+       <property name="checked">
+           <bool>0</bool>
+       </property>
+     </widget>
+    </item>
+    <item row="7" column="0">
+     <widget class="QLabel" name="label_7">
+       <property name="text">
+         <string>hypothesisDimFirst</string>
+       </property>
+     </widget>
+    </item>
+    <item row="7" column="1">
+     <widget class="QSpinBox" name="hypothesisDimFirstSpinBox">
+       <property name="toolTip">
+         <string>hypothesisDimFirst</string>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
+     </widget>
+    </item>
+    <item row="8" column="0">
+     <widget class="QLabel" name="label_8">
+       <property name="text">
+         <string>hypothesisDimSecond</string>
+       </property>
+     </widget>
+    </item>
+    <item row="8" column="1">
+     <widget class="QSpinBox" name="hypothesisDimSecondSpinBox">
+       <property name="toolTip">
+         <string>hypothesisDimSecond</string>
+       </property>
+       <property name="prefix">
+        <string></string>
+       </property>
+       <property name="suffix">
+        <string></string>
+       </property>
+     </widget>
+    </item>
+   <item row="9" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="9" column="2">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="3" margin="3"/>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>seedThresholdSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>ChessBoardAssemblerParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>seedTgPenaltySpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>ChessBoardAssemblerParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>conservativitySpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>ChessBoardAssemblerParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>costThresholdSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>ChessBoardAssemblerParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>minSeedDistanceSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>ChessBoardAssemblerParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>hypothesisDimensionsSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>ChessBoardAssemblerParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>kdtreeCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>ChessBoardAssemblerParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>hypothesisDimFirstSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>ChessBoardAssemblerParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+  <connection>
+   <sender>hypothesisDimSecondSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>ChessBoardAssemblerParamsBaseControlWidget</receiver>
+   <slot>changeParameters()</slot>
+  </connection>
+ </connections>
+ <slots>
+  <slot>changeParameters()</slot>
+ </slots>
+ <customwidgets>
+ </customwidgets>
+</ui>

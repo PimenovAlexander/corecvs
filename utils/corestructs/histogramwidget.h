@@ -2,7 +2,7 @@
 
 #include <QWidget>
 #include <QtGui/QMouseEvent>
-#include "histogram.h"
+#include "core/buffers/histogram/histogram.h"
 
 using namespace corecvs;
 

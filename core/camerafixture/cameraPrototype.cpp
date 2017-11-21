@@ -1,10 +1,5 @@
 #include "core/camerafixture/cameraPrototype.h"
 
-#if 0
+namespace corecvs {
 
-CameraPrototype::CameraPrototype()
-{
 }
-
-
-#endif

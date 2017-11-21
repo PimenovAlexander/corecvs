@@ -13,12 +13,12 @@
 #include <limits>
 #include "gtest/gtest.h"
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "mathUtils.h"
-#include "matrix33.h"
-#include "matrix.h"
-#include "preciseTimer.h"
+#include "core/math/mathUtils.h"
+#include "core/math/matrix/matrix33.h"
+#include "core/math/matrix/matrix.h"
+#include "core/utils/preciseTimer.h"
 
 using namespace std;
 using namespace corecvs;

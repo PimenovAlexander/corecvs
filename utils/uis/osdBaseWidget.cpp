@@ -4,7 +4,7 @@
 #include <QPainter>
 #include <QFont>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include "osdBaseWidget.h"
 

@@ -4,10 +4,10 @@
 
 #include <fstream>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include "graphPlotDialog.h"
-#include "mathUtils.h"
+#include "core/math/mathUtils.h"
 
 
 using namespace corecvs;
@@ -579,6 +579,8 @@ void GraphPlotDialog::drawGridFixLine(QPainter &painter)
     painter.setPen(gridPen);
     painter.drawLine(mMouseClickedValue, 0,
                      mMouseClickedValue, mUi.widget->height() - 1);
+
+    painter.drawText(mMouseClickedValue, 10, QString::number(mGraphShowPoint));
 }
 
 

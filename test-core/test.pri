@@ -29,23 +29,24 @@ QT      -= opengl
 
 DESTDIR = $$ROOT_DIR/bin
 
+SUPPRESSINCLUDES=true
 include(../core/core.pri)
 include(../wrappers/gtest/gtest.pri)
 
-isEmpty(TARGET_ORIG) {                                  # be careful of multiple including of this file
-    TARGET_ORIG = $$TARGET                              # store original target name for proper detection of the obj.dir
-    !contains(OBJECTS_DIRNAME_TESTS, tests_restricted) {# first include file is "testsCommon.pri" (open tests), second - "testsRestricted.pri" (restricted tests)
-        TARGET = $$join(TARGET,,test_,)                 # use target name common format for all open tests as  "test_<name of the test>"
+isEmpty(TARGET_ORIG) {                                      # be careful of multiple including of this file
+    TARGET_ORIG = $$TARGET                                  # store original target name for proper detection of the obj.dir
+    !contains(OBJECTS_DIRNAME_TESTS, cvs_tests_restricted) {# first include file is "testsCommon.pri" (open tests), second - "testsRestricted.pri" (restricted tests)
+        TARGET = $$join(TARGET,,test_,)                     # use target name common format for all open tests as  "test_<name of the test>"
     } else {
-        TARGET = $$join(TARGET,,test_res_,)             # use target name common format for all restricted tests as  "test_res_<name of the test>"
+        TARGET = $$join(TARGET,,cvs_test_res_,)             # use target name common format for all restricted tests as  "test_res_<name of the test>"
     }
-    TARGET = $$join(TARGET,,,$$BUILD_CFG_SFX)           # add 'd' at the end for debug versions
+    TARGET = $$join(TARGET,,,$$BUILD_CFG_SFX)               # add 'd' at the end for debug versions
 }
 isEmpty(OBJECTS_DIRNAME_TESTS) {
-    OBJECTS_DIRNAME_TESTS = test_core                   # by default put current project's obj-files to this subfolder
+    OBJECTS_DIRNAME_TESTS = test_core                       # by default put current project's obj-files to this subfolder
 }
 OBJECTS_DIR = $$ROOT_DIR/.obj/$$OBJECTS_DIRNAME_TESTS/$$TARGET_ORIG$$BUILD_CFG_NAME
 
-MOC_DIR = $$OBJECTS_DIR                                 # we have to set it to omit creating dummy dirs: debug,release
+MOC_DIR = $$OBJECTS_DIR                                     # we have to set it to omit creating dummy dirs: debug,release
 UI_DIR  = $$OBJECTS_DIR
 RCC_DIR = $$OBJECTS_DIR

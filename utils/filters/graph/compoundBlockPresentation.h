@@ -1,7 +1,7 @@
 #ifndef COMPOUNDBLOCKPRESENTATION_H
 #define COMPOUNDBLOCKPRESENTATION_H
 
-#include "compoundFilter.h"
+#include "core/filters/blocks/compoundFilter.h"
 #include "filterBlockPresentation.h"
 
 class FilterGraphPresentation;

@@ -5,9 +5,9 @@
 #include <QtCore/qlist.h>
 
 #include "ui_filterSelector.h"
-#include "g12Buffer.h"
-#include "abstractFilter.h"
-#include "reflection.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/filters/abstractFilter.h"
+#include "core/reflection/reflection.h"
 #include "filterParametersControlWidgetBase.h"
 
 using corecvs::BaseReflectionStatic;
@@ -91,7 +91,7 @@ public slots:
 signals:
     void parametersChanged( void );
 public:
-    FilterSelector(QString name = QString("FilterSelector"), QWidget *parent = 0);
+    FilterSelector(QWidget *parent = NULL, QString name = QString("FilterSelector"));
     ~FilterSelector(){}
 
     FilterSelectorParameters *getParameters ();
