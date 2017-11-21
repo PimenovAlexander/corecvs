@@ -6,7 +6,7 @@ SUBDIRS +=                   \
     unitTests                \
     utils                    \
     \
-#    tests \
+    tests \
 #    \
     base_application         \
 #    base_application_example \

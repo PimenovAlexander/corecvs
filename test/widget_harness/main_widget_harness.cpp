@@ -21,7 +21,7 @@
 
 #include "core/math/vector/vector2d.h"
 #include "core/math/matrix/homographyReconstructor.h"
-#include "core/rectification/sceneStereoAlignerBlock.h"
+//#include "core/rectification/sceneStereoAlignerBlock.h"
 
 void initLoaders()
 {
@@ -46,10 +46,10 @@ int main(int argc, char **argv)
 
     /* Assert modules are linked */
     cout << "Fields:" << HomorgaphyReconstructorBlockBase::reflection.fields.size() << std::endl;
-    cout << "Fields:" << SceneStereoAlignerBlockBase     ::reflection.fields.size() << std::endl;
     cout << "Fields:" << AdderSubstractor                ::reflection.fields.size() << std::endl;
 
-    SceneStereoAlignerBlock::relinkCompositeFields();
+//   cout << "Fields:" << SceneStereoAlignerBlockBase     ::reflection.fields.size() << std::endl;
+//   SceneStereoAlignerBlock::relinkCompositeFields();
 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
 
@@ -95,11 +95,13 @@ int main(int argc, char **argv)
             blockReflection = DynamicObjectWrapper(static_cast<HomorgaphyReconstructorBlockBase *>(theBlock));
             block = theBlock;
         }
+#if 0
         if (blockName == "stereo_aligner") {
             SceneStereoAlignerBlock *theBlock = new SceneStereoAlignerBlock();
             blockReflection = DynamicObjectWrapper(static_cast<SceneStereoAlignerBlockBase *>(theBlock));
             block = theBlock;
         }
+#endif
         if (blockName == "adder_test") {
             AdderSubstractor *theBlock = new AdderSubstractor();
             blockReflection = DynamicObjectWrapper(static_cast<AdderSubstractorParametersBase *>(theBlock));

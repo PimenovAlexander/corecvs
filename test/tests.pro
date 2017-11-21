@@ -15,15 +15,15 @@ SUBDIRS +=     \
     fileloader \
     softrender  \
     raytracerender   \
-    stereo_generator \
-    widgets_test \
+#    stereo_generator \
+#    widgets_test \
     widget_harness \
 #    command_harness \
     example_scene \
 
 !win32 {
-    SUBDIRS += jitplayground
-    SUBDIRS += gcodeplayground
+#    SUBDIRS += jitplayground
+#    SUBDIRS += gcodeplayground
 }
 
 with_qscript {

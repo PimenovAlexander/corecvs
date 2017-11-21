@@ -39,7 +39,7 @@ SOURCES += \
     color/main_test_color.cpp \
     commandline/main_test_commandline.cpp \
     convolve/main_test_convolve.cpp \
-    cornerdetector/main_test_cornerdetector.cpp \
+#    cornerdetector/main_test_cornerdetector.cpp \
 #    debayer/main_test_debayer.cpp \
     deform/main_test_deform.cpp \
     derivative/main_test_derivative.cpp \

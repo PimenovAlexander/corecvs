@@ -91,9 +91,6 @@ HEADERS += \
     distortioncorrector/calibrationFeaturesWidget.h \
     uis/cloudview/scene3dTreeView.h \
     scannercontrol.h \
-    tablecontrol/rotaryTableControlWidget.h \
-    tablecontrol/rotaryTableMeshModel.h \
-    tablecontrol/rotationPlanGenerator.h \
     capture/abstractManipulatorInterface.h \
     corestructs/cameraModel/affine3dControlWidget.h \
     corestructs/cameraModel/fixtureControlWidget.h \
