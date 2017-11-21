@@ -1,13 +1,15 @@
 #include <QFileDialog>
+#include "core/buffers/bufferFactory.h"
+#include "pointListEditImageWidget.h"
 
 #include "imageViewMainWindow.h"
 #include "ui_imageViewMainWindow.h"
-#include "rgb24Buffer.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
 #include "g12Image.h"
 
 #include "g12Image.h"
-#include "ppmLoader.h"
-#include "converters/debayer.h"
+#include "core/fileformats/ppmLoader.h"
+#include "core/buffers/converters/debayer.h"
 
 ImageViewMainWindow::ImageViewMainWindow(QWidget *parent) :
     QWidget(parent),
@@ -16,6 +18,13 @@ ImageViewMainWindow::ImageViewMainWindow(QWidget *parent) :
     ui(new Ui::ImageViewMainWindow)
 {
     ui->setupUi(this);
+#if 0
+    delete(ui->widget);
+    PointListEditImageWidgetUnited *pointList = new PointListEditImageWidgetUnited(this);
+    pointList->setRightDrag(true);
+    ui->widget = pointList;
+    ui->mainLayout->addWidget(ui->widget, 0, 0, 3, 1);
+#endif
 
     BitSelectorParameters defaultSelector;
     defaultSelector.setShift(-2);
@@ -23,6 +32,7 @@ ImageViewMainWindow::ImageViewMainWindow(QWidget *parent) :
 
     ui->widget->setFitWindow(true);
     ui->widget->setKeepAspect(true);
+    ui->widget->setRightDrag(true);
 
     connect(ui->bitSelector, SIGNAL(paramsChanged()), this, SLOT(paramsChanged()));
     connect(ui->loadButton, SIGNAL(released())      , this, SLOT(loadImageAction()));
@@ -44,7 +54,7 @@ void ImageViewMainWindow::setImage(RGB48Buffer *image)
 
 void ImageViewMainWindow::paramsChanged()
 {
-    if(input == NULL)
+    if (input == NULL)
         return;
 
     BitSelectorParameters mBitSelectorParameters;
@@ -93,18 +103,25 @@ void ImageViewMainWindow::paramsChanged()
             result->element(i,j) = colorOut;
         }
     }
+    // SYNC_PRINT(("Updating widget with [%d x %d]\n", result->w, result->h));
     ui->widget->setImage(QSharedPointer<QImage>(new RGB24Image(result)));
+    ui->widget->update();
     delete_safe(result);
 }
 
 void ImageViewMainWindow::loadImageAction()
 {
+    BufferFactory::getInstance()->printCaps();
+
     QString name = QFileDialog::getOpenFileName(
                 this,
-                "Choose an file name",
+                "Choose filename with Bayer or demosaic image",
                 ".",
-                "Images (*.pgm)"
+                "PPM Images (*.pgm *.ppm);;Generic Images (*.png *.jpg *.bmp)"
             );
+    if (name.isEmpty())
+        return;
+
     loadImage(name);
 }
 
@@ -112,15 +129,55 @@ void ImageViewMainWindow::loadImage(QString name)
 {
     delete_safe(bayer);
     ui->widget->setInfoString("Loading...");
-    bayer = PPMLoader().g12BufferCreateFromPGM(name.toStdString(), &meta);
-    ui->widget->setInfoString("---");
+    int shift = 0;
+    if (name.endsWith(".ppm"))
+    {
+        SYNC_PRINT(("Loading PPM <%s>\n", name.toLatin1().constData()));
+        RGB48Buffer* result = PPMLoader().rgb48BufferCreateFromPPM(name.toStdString(), &meta);
+        setImage(result);
+        shift = 8 - meta["bits"][0];                // left shift:  8 => 0,  10 => -2,  12 => -4
 
-    if (bayer == NULL) {
-        qDebug("Can't' open bayer file: %s", name.toLatin1().constData());
-    } else {
+    }
+    else if (name.endsWith(".raw"))
+    {
+        SYNC_PRINT(("Loading RAW <%s>\n", name.toLatin1().constData()));
+        bayer = PPMLoader().g12BufferCreateFromPGM(name.toStdString(), &meta);
+        if (bayer == NULL) {
+            qDebug("Can't open Bayer file: %s", name.toLatin1().constData());
+        }
         debayer();
+        shift = 8 - meta["bits"][0];                // left shift:  8 => 0,  10 => -2,  12 => -4
+    } else {
+        SYNC_PRINT(("Loading Generic <%s>\n", name.toLatin1().constData()));
+        RGB24Buffer *input = BufferFactory::getInstance()->loadRGB24Bitmap(name.toStdString());
+        if (input == NULL)
+        {
+            qDebug() << "Unable to load" << name;
+            return;
+        }
+
+        SYNC_PRINT(("Loaded size %d x %d\n", input->w, input->h ));
+        RGB48Buffer *image = new RGB48Buffer(input->getSize());
+
+        for (int i = 0; i < image->h; i ++)
+        {
+            for (int j = 0; j < image->w; j ++)
+            {
+                RGBColor   c = input->element(i,j);
+                RGBColor48 c48(c.r() << 8, c.g() << 8, c.b() << 8);
+                image->element(i,j) = c48;
+            }
+        }
+        setImage(image);
     }
 
+
+    ui->widget->setInfoString("---");
+
+    BitSelectorParameters bitSelector;
+    ui->bitSelector->getParameters(bitSelector);
+    bitSelector.setShift(shift);
+    ui->bitSelector->setParameters(bitSelector);
 }
 
 void ImageViewMainWindow::debayer()

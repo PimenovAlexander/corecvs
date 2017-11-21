@@ -130,13 +130,23 @@ void ImageResultLayer::drawImage (QImage *image)
 
         case OutputStyle::LEFT_FRAME:
         case OutputStyle::RIGHT_FRAME:
+            {
+                Frames::FrameSourceId id = (mStyle == OutputStyle::LEFT_FRAME) ? Frames::LEFT_FRAME : Frames::RIGHT_FRAME;
 
-            Frames::FrameSourceId id = (mStyle == OutputStyle::LEFT_FRAME) ? Frames::LEFT_FRAME : Frames::RIGHT_FRAME;
-
-            if (mImages[id] != NULL) {
-                painter.drawImage(QPoint(0,0), *(mImages[id]));
-            } else {
-                qDebug("ImageResultLayer::drawImage (): %d (%s) image is NULL", id, Frames::getEnumName(id));
+                if (mImages[id] != NULL) {
+                    painter.drawImage(QPoint(0,0), *(mImages[id]));
+                } else {
+                    qDebug("ImageResultLayer::drawImage (): %d (%s) image is NULL", id, Frames::getEnumName(id));
+                }
+            }
+            break;
+        case OutputStyle::ALL:
+            {
+                for (int i = 0; i < Frames::MAX_INPUTS_NUMBER; i++)
+                {
+                    if (mImages[i] != NULL)
+                        painter.drawImage(QPoint(mImages[i]->width() * i, 0), *(mImages[i]));
+                }
             }
             break;
     }

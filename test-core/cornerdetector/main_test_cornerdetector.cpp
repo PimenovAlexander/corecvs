@@ -9,6 +9,7 @@
  */
 
 #include <iostream>
+#include <memory>
 #include "gtest/gtest.h"
 
 #include "core/utils/global.h"
@@ -22,12 +23,20 @@
 #include "core/buffers/rgb24/rgb24Buffer.h"
 
 
-using namespace std;
+#include "core/patterndetection/chessBoardCornerDetector.h"
+
+
 using namespace corecvs;
+using namespace std;
 
 TEST(Cornerdetector, DISABLED_testCornerDetector)
 {
     G12Buffer *input = BufferFactory::getInstance()->loadG12Bitmap("data/calib-object.bmp");
+    if (input == nullptr)
+    {
+        cout << "Could not open test image" << endl;
+        return;
+    }
     SpatialGradient *grad = new SpatialGradient(input);
     G12Buffer *corners = grad->findCornerPoints(180.0);
 
@@ -52,3 +61,35 @@ TEST(Cornerdetector, DISABLED_testCornerDetector)
     delete corners;
     delete result;
 }
+
+
+TEST(Cornerdetector, DISABLED_testChessCornerDetector)
+{
+    unique_ptr<RGB24Buffer> input(BufferFactory::getInstance()->loadRGB24Bitmap("data/calib-object.bmp"));
+    if (input.get() == nullptr)
+    {
+        cout << "Could not open test image" << endl;
+        return;
+    }
+
+    DpImage grayscale(input->getSize());
+    grayscale.binaryOperationInPlace(*input, [](const double & /*a*/, const corecvs::RGBColor &b) {
+        return b.yd() / 255.0;
+    });
+
+    vector<OrientedCorner> corners;
+
+    ChessBoardCornerDetectorParams params;
+
+    params.setProduceDebug(true);
+    ChessBoardCornerDetector detector(params);
+
+    detector.detectCorners(grayscale, corners);
+
+    for (std::string name: detector.debugBuffers())
+    {
+        unique_ptr<RGB24Buffer> debug(detector.getDebugBuffer(name));
+        BMPLoader().save(name, debug.get());
+    }
+}
+

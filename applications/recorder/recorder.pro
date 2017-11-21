@@ -2,25 +2,19 @@
 exists(../../../../config.pri) {
     ROOT_DIR=../../../..
     #message(Using global config)
-    ROOT_DIR=$$PWD/$$ROOT_DIR
     include($$ROOT_DIR/config.pri)
 } else { 
     message(Using local config)
     ROOT_DIR=../..
-    ROOT_DIR=$$PWD/$$ROOT_DIR
     include($$ROOT_DIR/cvs-config.pri)
 }
+ROOT_DIR=$$PWD/$$ROOT_DIR
 
-
-TARGET   = recorder
 TEMPLATE = app
+TARGET   = recorder
 
 HOSTBASE_DIR=../base
-include ($$HOSTBASE_DIR/baseApplication.pri)                   # it uses HOSTBASE_DIR, detects HOSTBASE_BINDIR, OBJECTS_DIR, ...
-
-win32 {
-    MOC_DIR = $$ROOT_DIR/.obj/$$TARGET_ORIG/$$BUILD_CFG_NAME  # resolve moc path for mocs to help qmake to unify those paths.
-}
+include ($$HOSTBASE_DIR/baseApplication.pri)            # it uses HOSTBASE_DIR, detects HOSTBASE_BINDIR, OBJECTS_DIR, ...
 
 INCLUDEPATH += .
 

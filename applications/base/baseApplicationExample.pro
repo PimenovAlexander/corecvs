@@ -16,4 +16,4 @@ TARGET   = cvs_application_stub
 HOSTBASE_DIR=.
 include ($$HOSTBASE_DIR/baseApplication.pri)                   # it uses HOSTBASE_DIR, detects HOSTBASE_BINDIR, OBJECTS_DIR, ...
 
-SOURCES += main_base.cpp
+SOURCES += main_vibase.cpp

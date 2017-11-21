@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdio.h>
-#include "abstractBuffer.h"
+#include "core/buffers/abstractBuffer.h"
 
 using corecvs::AbstractBuffer;
 

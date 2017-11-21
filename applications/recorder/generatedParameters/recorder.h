@@ -8,9 +8,9 @@
  * \author autoGenerator
  */
 
-#include "reflection.h"
-#include "defaultSetter.h"
-#include "printerVisitor.h"
+#include "core/reflection/reflection.h"
+#include "core/reflection/defaultSetter.h"
+#include "core/reflection/printerVisitor.h"
 
 /*
  *  Embed includes.
@@ -19,14 +19,14 @@
  *  Additional includes for Composite Types.
  */
 
-using namespace corecvs;
+// using namespace corecvs;
 
 /*
  *  Additional includes for Pointer Types.
  */
 
-namespace corecvs {
-}
+// namespace corecvs {
+// }
 /*
  *  Additional includes for enum section.
  */
@@ -35,7 +35,7 @@ namespace corecvs {
  * \brief Recorder parameters 
  * Recorder parameters 
  **/
-class Recorder : public BaseReflection<Recorder>
+class Recorder : public corecvs::BaseReflection<Recorder>
 {
 public:
     enum FieldId {
@@ -60,6 +60,8 @@ public:
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
+
+    static int relinkCompositeFields();
 
     /** Section with getters */
     const void *getPtrById(int fieldId) const
@@ -92,13 +94,13 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit(mPath,                      static_cast<const StringField *>  (fields()[PATH_ID]));
-        visitor.visit(mFileTemplate,              static_cast<const StringField *>  (fields()[FILETEMPLATE_ID]));
+        visitor.visit(mPath,                      static_cast<const corecvs::StringField *>(fields()[PATH_ID]));
+        visitor.visit(mFileTemplate,              static_cast<const corecvs::StringField *>(fields()[FILETEMPLATE_ID]));
     }
 
     Recorder()
     {
-        DefaultSetter setter;
+        corecvs::DefaultSetter setter;
         accept(setter);
     }
 
@@ -111,16 +113,16 @@ template<class VisitorType>
         mFileTemplate = fileTemplate;
     }
 
-    friend ostream& operator << (ostream &out, Recorder &toSave)
+    friend std::ostream& operator << (std::ostream &out, Recorder &toSave)
     {
-        PrinterVisitor printer(out);
-        toSave.accept<PrinterVisitor>(printer);
+        corecvs::PrinterVisitor printer(out);
+        toSave.accept<corecvs::PrinterVisitor>(printer);
         return out;
     }
 
     void print ()
     {
-        cout << *this;
+        std::cout << *this;
     }
 };
 #endif  //RECORDER_H_

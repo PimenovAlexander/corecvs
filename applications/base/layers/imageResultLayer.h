@@ -8,7 +8,7 @@
 #include <QPainter>
 #include <QDebug>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include "resultImage.h"
 #include "outputStyle.h"
@@ -59,7 +59,9 @@ template<class BufferType>
 
     virtual int  modifyWidth (int width)
     {
-        if (mStyle == OutputStyle::SIDEBYSIDE_STEREO) {
+        if (mStyle == OutputStyle::ALL) {
+            return Frames::MAX_INPUTS_NUMBER * width;
+        } else if (mStyle == OutputStyle::SIDEBYSIDE_STEREO) {
             return 2 * width;
         } else {
             return width;
@@ -108,8 +110,17 @@ ImageResultLayer::ImageResultLayer(
 
         case OutputStyle::ANAGLYPH_RC:
         case OutputStyle::ANAGLYPH_RG:
-        case OutputStyle::SIDEBYSIDE_STEREO:
+        case OutputStyle::SIDEBYSIDE_STEREO:        
         case OutputStyle::BLEND:
+            for (int id = 0; id <= Frames::RIGHT_FRAME; id++ )
+            {
+                if (images[id] == NULL) {
+                    continue;
+                }
+                mImages[id] = toQImage(images[id]);
+            }
+            break;
+        case OutputStyle::ALL:
             for (int id = 0; id < Frames::MAX_INPUTS_NUMBER; id++ )
             {
                 if (images[id] == NULL) {

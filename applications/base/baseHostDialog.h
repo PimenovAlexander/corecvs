@@ -22,9 +22,9 @@
 
 #include "ui_hostDialogStub.h"
 
-#include "global.h"
-#include "matrix33.h"
-#include "propertyList.h"
+#include "core/utils/global.h"
+#include "core/math/matrix/matrix33.h"
+#include "core/utils/propertyList.h"
 
 #include "aboutDialog.h"
 
@@ -38,7 +38,7 @@
 #include "pointsRectificationWidget.h"
 #include "distortioncorrector/distortionWidget.h"
 #include "cameraCalculatorWidget.h"
-#include "distortionCorrectTransform.h"
+#include "core/alignment/distortionCorrectTransform.h"
 
 #include "generatedParameters/baseParameters.h"
 #include "camerasConfigParameters.h"
@@ -97,7 +97,7 @@ public:
      *  should have ability to dock, and are brought outside of BaseHostDialog.
      *  They should be transfered in this constructor
      **/
-    void init(QWidget *parameterHolderWidget, QTextEdit *loggerWidget = NULL);
+    void init(bool isRGB, QWidget *parameterHolderWidget, QTextEdit *loggerWidget = NULL);
     void initGraphPresentation();
 
     /**
@@ -111,7 +111,7 @@ public:
      * and initializes inputs
      *
      **/
-    virtual void initCapture(QString const &initString = QString(), bool isRgb = false);
+    virtual void initCapture(QString const &initString = QString()/*, bool isRgb = false*/);
 
 
 
@@ -264,8 +264,9 @@ protected:
     CameraCalculatorWidget mCameraCalculatorWidget;
 
     /*TODO: Move this to ImageCaptureInterface*/
+    bool mIsRGB;
     bool mCameraStarted;
-    ImageCaptureInterface *mCamera;
+    ImageCaptureInterfaceQt *mCamera;
 
     /*TODO: Rename this */
     CapSettingsDialog mCapSettings;
@@ -317,7 +318,7 @@ private slots:
     void handleMemoryOverflow();
     void distortionEstimationFinished();
 
-private:
+protected:
     AboutDialog mAboutDialog;
     InputSelectorWidget mInputSelectorDialog;
     QSharedPointer<DisplacementBuffer> mDistortionTransform;

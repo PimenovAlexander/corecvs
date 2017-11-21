@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout" name="mainLayout">
    <item row="0" column="0" rowspan="3">
     <widget class="AdvancedImageWidget" name="widget" native="true"/>
    </item>
@@ -35,7 +35,7 @@
          <string>Load</string>
         </property>
         <property name="icon">
-         <iconset resource="../../resources/main.qrc">
+         <iconset resource="../../../restricted/cvs/resources/resresource.qrc">
           <normaloff>:/new/prefix1/remove.png</normaloff>:/new/prefix1/remove.png</iconset>
         </property>
         <property name="iconSize">
@@ -105,7 +105,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../resources/main.qrc"/>
+  <include location="../../../restricted/cvs/resources/resresource.qrc"/>
  </resources>
  <connections/>
 </ui>

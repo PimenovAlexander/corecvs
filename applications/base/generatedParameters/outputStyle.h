@@ -55,6 +55,11 @@ enum OutputStyle {
      */
     NONE = 6,
     /** 
+     * \brief all 
+     * All. Show all output 
+     */
+    ALL = 7,
+    /** 
      * \brief Last virtual option to run cycles to
      */
     OUTPUT_STYLE_LAST
@@ -72,6 +77,7 @@ static inline const char *getName(const OutputStyle &value)
      case ANAGLYPH_RC : return "ANAGLYPH_RC"; break ;
      case BLEND : return "BLEND"; break ;
      case NONE : return "NONE"; break ;
+     case ALL : return "ALL"; break ;
      default : return "Not in range"; break ;
      
     }

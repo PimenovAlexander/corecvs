@@ -11,8 +11,8 @@
 #include <QtGui/QtGui>
 #include <QApplication>
 
-#include "global.h"
-#include "utils.h"
+#include "core/utils/global.h"
+#include "core/utils/utils.h"
 
 #include "robodetectMainWindow.h"
 #include "qtFileLoader.h"

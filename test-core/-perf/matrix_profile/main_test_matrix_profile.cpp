@@ -20,9 +20,7 @@
 #include "core/math/matrix/matrix.h"
 #include "core/utils/preciseTimer.h"
 
-using namespace std;
 using namespace corecvs;
-
 
 const static unsigned POLUTING_INPUTS = 20;
 const static unsigned LIMIT = 5;
@@ -211,8 +209,8 @@ TEST(MatrixProfile, testMulSize3)
                 AB = Matrix::multiplyBlas(A, B);
             }
             uint64_t delayBlas = start.usecsToNow();
-           printResult(gflop, delayBlas, LIMIT);
-#endif
+            printResult(gflop, delayBlas, LIMIT);
+#endif // WITH_BLAS
         }
 
         for (unsigned i = 0; i < POLUTING_INPUTS; i++) {

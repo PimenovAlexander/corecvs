@@ -8,7 +8,7 @@
 #include <vector>
 #include <QtGui/QImage>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 
 using std::vector;

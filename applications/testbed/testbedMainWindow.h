@@ -6,7 +6,7 @@
 
 #include "ui_testbedMainWindow.h"
 #include "advancedImageWidget.h"
-#include "rgb24Buffer.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
 #include "cloudViewDialog.h"
 #include "localHistogram.h"
 #include "widgets/testbedImageWidget.h"

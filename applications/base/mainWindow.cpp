@@ -10,9 +10,9 @@ MainWindow::MainWindow(BaseHostDialog *dialog, const QString &source,
     mUi->setupUi(this);
     Log::mLogDrains.add(mUi->loggingWidget);
 
-    mMainDialog->init(mUi->widget);
+    mMainDialog->init(isRgb, mUi->widget);
 //    mMainDialog->init(mUi->scrollAreaWidgetContents);
-    mMainDialog->initCapture(source, isRgb);
+    mMainDialog->initCapture(source);
     mMainDialog->show();
     setCentralWidget(mMainDialog);
 

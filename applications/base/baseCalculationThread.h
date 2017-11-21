@@ -10,10 +10,10 @@
 #include <QtCore/QSharedPointer>
 #include <QtGui/QImage>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "matrix33.h"
-#include "displacementBuffer.h"
+#include "core/math/matrix/matrix33.h"
+#include "core/buffers/displacementBuffer.h"
 
 #include "abstractCalculationThread.h"
 #include "imageCaptureInterface.h"
@@ -23,9 +23,9 @@
 #include "camerasConfigParameters.h"
 #include "filters/filterSelector.h"
 #include "filters/filterExecuter.h"
-#include "filterGraph.h"
+#include "core/filters/blocks/filterGraph.h"
 #include "baseOutputData.h"
-#include "transformationCache.h"
+#include "core/buffers/transformationCache.h"
 
 #ifdef WITH_HARDWARE
 #include <vector>
@@ -44,7 +44,7 @@ class BaseCalculationThread : public AbstractCalculationThread
 {
     Q_OBJECT
 public:
-    BaseCalculationThread();
+    BaseCalculationThread(int inputNumbers = CamerasConfigParameters::TwoCapDev);
 
     virtual ~BaseCalculationThread();
 

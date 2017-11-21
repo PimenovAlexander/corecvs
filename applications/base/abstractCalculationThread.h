@@ -17,9 +17,9 @@
 #include <iostream>
 
 #include "frames.h"
-#include "imageCaptureInterface.h"
+#include "imageCaptureInterfaceQt.h"
 
-#include "filterGraph.h"
+#include "core/filters/blocks/filterGraph.h"
 
 /**
  * An empty stub for the output data obtained as the result of the calculation.
@@ -104,7 +104,7 @@ class AbstractCalculationThread : public QThread
 
 //        QWaitCondition threadPaused;
 
-        void setImageCaptureInterface(ImageCaptureInterface *captureInterface)
+        void setImageCaptureInterface(ImageCaptureInterfaceQt *captureInterface)
         {
             mCaptureInterface = captureInterface;
             mLastFrameTimeStamp = 0;
@@ -114,7 +114,7 @@ class AbstractCalculationThread : public QThread
         /**
          * The capture interface we fetch the frames from
          **/
-        ImageCaptureInterface *mCaptureInterface;
+        ImageCaptureInterfaceQt *mCaptureInterface;
 
         /**
          * Holds the last two sets of frames acquired from the capture device(s)

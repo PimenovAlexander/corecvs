@@ -26,6 +26,9 @@ int BaseReflection<PresentationParameters>::dummy = PresentationParameters::stat
 
 SUPPRESS_OFFSET_WARNING_BEGIN
 
+
+using namespace corecvs;
+
 int PresentationParameters::staticInit()
 {
 
@@ -35,10 +38,11 @@ int PresentationParameters::staticInit()
         "Presentation parameters",
         ""
     );
+
+     getReflection()->objectSize = sizeof(PresentationParameters);
      
 
-    fields().push_back(
-        new EnumField
+    EnumField* field0 = new EnumField
         (
           PresentationParameters::OUTPUT_ID,
           offsetof(PresentationParameters, mOutput),
@@ -46,7 +50,7 @@ int PresentationParameters::staticInit()
           "Output",
           "Output",
           "View - views are more or less self-explenatory",
-          new EnumReflection(7
+          new EnumReflection(8
           , new EnumOption(0,"right Frame")
           , new EnumOption(1,"left Frame")
           , new EnumOption(2,"sidebyside stereo")
@@ -54,11 +58,13 @@ int PresentationParameters::staticInit()
           , new EnumOption(4,"anaglyph RC")
           , new EnumOption(5,"blend")
           , new EnumOption(6,"none")
+          , new EnumOption(7,"all")
           )
-        )
-    );
-    fields().push_back(
-        new EnumField
+        );
+    field0->widgetHint=BaseField::COMBO_BOX;
+    fields().push_back(field0);
+    /*  */ 
+    EnumField* field1 = new EnumField
         (
           PresentationParameters::STEREO_ID,
           offsetof(PresentationParameters, mStereo),
@@ -74,10 +80,11 @@ int PresentationParameters::staticInit()
           , new EnumOption(4,"show all stereo")
           , new EnumOption(5,"show dots stereo")
           )
-        )
-    );
-    fields().push_back(
-        new EnumField
+        );
+    field1->widgetHint=BaseField::COMBO_BOX;
+    fields().push_back(field1);
+    /*  */ 
+    EnumField* field2 = new EnumField
         (
           PresentationParameters::FLOW_ID,
           offsetof(PresentationParameters, mFlow),
@@ -93,10 +100,11 @@ int PresentationParameters::staticInit()
           , new EnumOption(4,"show colored lines")
           , new EnumOption(5,"show heat coloring")
           )
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field2->widgetHint=BaseField::COMBO_BOX;
+    fields().push_back(field2);
+    /*  */ 
+    BoolField* field3 = new BoolField
         (
           PresentationParameters::SHOWCLUSTERS_ID,
           offsetof(PresentationParameters, mShowClusters),
@@ -104,10 +112,11 @@ int PresentationParameters::staticInit()
           "showClusters",
           "showClusters",
           "showClusters"
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field3->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field3);
+    /*  */ 
+    BoolField* field4 = new BoolField
         (
           PresentationParameters::SHOWHISTOGRAM_ID,
           offsetof(PresentationParameters, mShowHistogram),
@@ -115,10 +124,11 @@ int PresentationParameters::staticInit()
           "showHistogram",
           "showHistogram",
           "showHistogram"
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field4->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field4);
+    /*  */ 
+    BoolField* field5 = new BoolField
         (
           PresentationParameters::AUTO_UPDATE_HISTOGRAM_ID,
           offsetof(PresentationParameters, mAutoUpdateHistogram),
@@ -126,10 +136,11 @@ int PresentationParameters::staticInit()
           "Auto Update Histogram",
           "Auto Update Histogram",
           "Auto Update Histogram"
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field5->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field5);
+    /*  */ 
+    BoolField* field6 = new BoolField
         (
           PresentationParameters::SHOWAREAOFINTEREST_ID,
           offsetof(PresentationParameters, mShowAreaOfInterest),
@@ -137,10 +148,11 @@ int PresentationParameters::staticInit()
           "showAreaOfInterest",
           "showAreaOfInterest",
           "showAreaOfInterest"
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field6->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field6);
+    /*  */ 
+    BoolField* field7 = new BoolField
         (
           PresentationParameters::PRODUCE3D_ID,
           offsetof(PresentationParameters, mProduce3D),
@@ -148,10 +160,11 @@ int PresentationParameters::staticInit()
           "produce3D",
           "produce3D",
           "produce3D"
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field7->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field7);
+    /*  */ 
+    BoolField* field8 = new BoolField
         (
           PresentationParameters::PRODUCE6D_ID,
           offsetof(PresentationParameters, mProduce6D),
@@ -159,10 +172,11 @@ int PresentationParameters::staticInit()
           "produce6D",
           "produce6D",
           "produce6D"
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field8->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field8);
+    /*  */ 
+    BoolField* field9 = new BoolField
         (
           PresentationParameters::DUMP3D_ID,
           offsetof(PresentationParameters, mDump3D),
@@ -170,8 +184,28 @@ int PresentationParameters::staticInit()
           "dump3D",
           "dump3D",
           "dump3D"
-        )
-    );
+        );
+    field9->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field9);
+    /*  */ 
+    BoolField* field10 = new BoolField
+        (
+          PresentationParameters::DUMPSCENEJSON_ID,
+          offsetof(PresentationParameters, mDumpSceneJSON),
+          false,
+          "dumpSceneJSON",
+          "dumpSceneJSON",
+          "dumpSceneJSON"
+        );
+    field10->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field10);
+    /*  */ 
+    ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
+    directory[std::string("Presentation Parameters")]= &reflection;
+   return 0;
+}
+int PresentationParameters::relinkCompositeFields()
+{
    return 0;
 }
 

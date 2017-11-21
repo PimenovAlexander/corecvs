@@ -2,18 +2,17 @@
 exists(../../../../config.pri) {
     ROOT_DIR=../../../..
     #message(Using global config)
-    ROOT_DIR=$$PWD/$$ROOT_DIR
     include($$ROOT_DIR/config.pri)
 } else { 
     message(Using local config)
     ROOT_DIR=../..
-    ROOT_DIR=$$PWD/$$ROOT_DIR
     include($$ROOT_DIR/cvs-config.pri)
 }
+ROOT_DIR=$$PWD/$$ROOT_DIR
 
-CONFIG  += staticlib
-TARGET   = cvs_application_base
 TEMPLATE = lib
+TARGET   = cvs_application_base
+CONFIG  += staticlib
 
 HOSTBASE_DIR = $$PWD
 include ($$HOSTBASE_DIR/baseApplication.pri)        # it uses HOSTBASE_DIR, detects HOSTBASE_BINDIR, OBJECTS_DIR, ...
@@ -27,8 +26,7 @@ HEADERS += \
     generatedParameters/outputStyle.h \    
     layers/resultImage.h \
     layers/imageResultLayer.h \
-    layers/geometryResultLayer.h \
-    memoryUsageCalculator/memoryUsageCalculator.h \
+    layers/geometryResultLayer.h \    
     parametersMapper/parametersMapperBase.h \
     statistics/statisticsDialog.h \
     statistics/qtStatisticsCollector.h \
@@ -40,16 +38,15 @@ HEADERS += \
     baseParametersControlWidget.h \
     presentationParametersControlWidget.h \
     camerasConfigParameters.h \
-    
 
+    
 
 SOURCES += \
     generatedParameters/baseParameters.cpp \
     generatedParameters/presentationParameters.cpp \
     layers/resultImage.cpp \
     layers/imageResultLayer.cpp \
-    layers/geometryResultLayer.cpp \
-    memoryUsageCalculator/memoryUsageCalculator.cpp \
+    layers/geometryResultLayer.cpp \  
     parametersMapper/parametersMapperBase.cpp \
     statistics/statisticsDialog.cpp \
     abstractCalculationThread.cpp \
@@ -72,16 +69,5 @@ FORMS += \
 with_opengl {
     HEADERS += scene3DMouse.h
     SOURCES += scene3DMouse.cpp
-}
-
-win32 {
-   HEADERS += memoryUsageCalculator/windowsMemoryUsageCalculator.h
-   SOURCES += memoryUsageCalculator/windowsMemoryUsageCalculator.cpp
-} else:macx {
-   HEADERS += memoryUsageCalculator/macMemoryUsageCalculator.h
-   SOURCES += memoryUsageCalculator/macMemoryUsageCalculator.cpp
-} else {
-   HEADERS += memoryUsageCalculator/linuxMemoryUsageCalculator.h
-   SOURCES += memoryUsageCalculator/linuxMemoryUsageCalculator.cpp
 }
 

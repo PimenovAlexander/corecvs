@@ -2,13 +2,13 @@
 
 #include <vector>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include "scene3D.h"
-#include "vector3d.h"
-#include "rgbColor.h"
-#include "rgb24Buffer.h"
-#include "ellipticalApproximation.h"
+#include "core/math/vector/vector3d.h"
+#include "core/buffers/rgb24/rgbColor.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/geometry/ellipticalApproximation.h"
 
 
 /**

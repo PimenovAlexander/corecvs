@@ -5,19 +5,18 @@
  * \file scannerDialog.h
  * \brief Defines a scanner dialog class derived from BaseHostDialog
  *
- * \date Sep 17, 2010
- * \author Sergey Levi
  */
 
 #include <QString>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include "baseHostDialog.h"
 #include "scannerThread.h"
 #include "scannerParametersControlWidget.h"
 #include "cloudViewDialog.h"
 #include "scannercontrol.h"
+#include "graphPlotDialog.h"
 
 #define UI_NAME_SCANNER "scanner"
 

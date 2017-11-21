@@ -91,8 +91,28 @@ HEADERS += \
     distortioncorrector/calibrationFeaturesWidget.h \
     uis/cloudview/scene3dTreeView.h \
     scannercontrol.h \
-	uis/histogramDepthDialog.h \
-    3d/sceneShaded.h
+    tablecontrol/rotaryTableControlWidget.h \
+    tablecontrol/rotaryTableMeshModel.h \
+    tablecontrol/rotationPlanGenerator.h \
+    capture/abstractManipulatorInterface.h \
+    corestructs/cameraModel/affine3dControlWidget.h \
+    corestructs/cameraModel/fixtureControlWidget.h \
+    widgets/observationListModel.h \
+    distortioncorrector/pointListEditImageWidget.h \
+    corestructs/cameraModel/featurePointControlWidget.h \
+    uis/aboutPropsTableWidget.h \
+    uis/histogramDepthDialog.h \
+    3d/sceneShaded.h \
+    corestructs/reflectionWidget.h \
+    3d/shadedSceneControlWidget.h \
+    scripting/coreToScript.h \
+    3d/billboardCaption3DScene.h \
+    3d/gCodeScene.h \
+    corestructs/cameraModel/fixtureGeometryControlWidget.h \
+    corestructs/pointerFieldWidget.h \
+    corestructs/widgetBlockHarness.h \
+    corestructs/cameraModel/fixtureGlobalParametersWidget.h \
+    framesources/imageCaptureInterfaceQt.h
 
 SOURCES += \
     frames.cpp \
@@ -104,8 +124,6 @@ SOURCES += \
     framesources/decoders/aLowCodec.cpp \
     \
     framesources/file/imageFileCaptureInterface.cpp \
-    framesources/file/fileCapture.cpp \
-    framesources/file/precCapture.cpp \
     framesources/file/abstractFileCapture.cpp \
     framesources/file/abstractFileCaptureSpinThread.cpp \
     \

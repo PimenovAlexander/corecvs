@@ -10,35 +10,45 @@
 #include <QtCore/QDebug>
 #include <QtGui/QImage>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include "g12Image.h"
 #include "rotationPresets.h"
 #include "baseCalculationThread.h"
 #include "layers/imageResultLayer.h"
-#include "inputFilter.h"
-#include "outputFilter.h"
+#include "core/filters/inputFilter.h"
+#include "core/filters/outputFilter.h"
 
 #ifdef WITH_HARDWARE
 #include "../../hardware/platform/xparameters.h"
 #endif
 
-BaseCalculationThread::BaseCalculationThread()
+BaseCalculationThread::BaseCalculationThread(int inputNumbers)
     : AbstractCalculationThread()
     , mDistortionTransform(NULL)
-    , mActiveInputsNumber(CamerasConfigParameters::TwoCapDev)
+    , mActiveInputsNumber(inputNumbers)
     , mBaseParams(NULL)
     , mCacheUpdateNeeded(true)
 {
     qDebug() <<  "BaseCalculationThread::BaseCalculationThread() : hardware initialized";
 
+
+    mInputPretransform =  Matrix33::Identity();
+    mInputPretransformInv = Matrix33::Identity();
+
+
+
     for (int i = 0; i < Frames::MAX_INPUTS_NUMBER; i++)
     {
+        mFrameTransforms   [i] = Matrix33::Identity();
+        mFrameTransformsInv[i] = Matrix33::Identity();
+
+
         mFrameTransforms    [i] = Matrix33(1.0);
         mTransformationCache[i] = NULL;
 
-        mTransformedBuffers[i]  = NULL;
-        mFilterExecuter    [i]  = NULL;
+        mTransformedBuffers [i]  = NULL;
+        mFilterExecuter     [i]  = NULL;
 #ifdef WITH_HARDWARE
         if (i >= 2) {
             qDebug() << "We have only 2 hardware correctors!" << endl;
@@ -108,15 +118,15 @@ void BaseCalculationThread::executeFilterGraph(Statistics *stats)
     PreciseTimer timer = PreciseTimer::currentTime();
     if (stats != NULL)
     {
-        oldPrefix = stats->prefix;
-        stats->prefix += "Input Graph> ";
+        oldPrefix = stats->mPrefix;
+        stats->mPrefix += "Input Graph> ";
     }
     mProcessorGraph->stats = stats;
     mProcessorGraph->execute();
     if (stats != NULL)
     {
         stats->setTime("Total", timer.usecsToNow());
-        stats->prefix = oldPrefix;
+        stats->mPrefix = oldPrefix;
     }
 
     int currentOutputBlocks = Frames::DEFAULT_FRAME;
@@ -328,6 +338,7 @@ void BaseCalculationThread::camerasParametersChanged(QSharedPointer<CamerasConfi
  **/
 void BaseCalculationThread::recalculateCache()
 {
+    // SYNC_PRINT(("void BaseCalculationThread::recalculateCache():called\n"));
     G12Buffer *firstInput = mFrames.getCurrentFrame(Frames::LEFT_FRAME);
     if (!mCacheUpdateNeeded || firstInput == NULL)
         return;
@@ -383,7 +394,7 @@ void BaseCalculationThread::recalculateCache()
         Q_ASSERT(currentBuffer->hasSameSize(firstInput));
 
         delete_safe(mTransformationCache[i]);
-        mTransformationCache[i] = new TransformationCache(mFrameTransformsInv[i], w, h, currentBuffer->getSize());
+        mTransformationCache[i] = new TransformationCache(mInputPretransformInv, w, h, currentBuffer->getSize());
 #ifdef WITH_HARDWARE
         //Matrix33 mat = Matrix33::Scale2(1.08) * Matrix33::ShiftProj(-39.5, -39.5) * Matrix33::RotateProj(6.0 / 128.0);
         try {

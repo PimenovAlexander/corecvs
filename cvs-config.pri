@@ -60,7 +60,7 @@ CONFIG +=       \
 }
 
 CONFIG +=                   \
-        with_ueye           \
+#        with_ueye           \
 #        with_httpserver     \
         with_avcodec        \
         with_libjpeg        \

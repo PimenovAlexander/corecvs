@@ -13,9 +13,9 @@
 #include <QApplication>
 #include <QtCore/qobjectdefs.h>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "utils.h"
+#include "core/utils/utils.h"
 #include "scannerDialog.h"
 #include "mainWindow.h"
 #include "configManager.h"

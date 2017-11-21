@@ -11,7 +11,7 @@
 
 #include <QString>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include "baseHostDialog.h"
 #include "egomotionThread.h"

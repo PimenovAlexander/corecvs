@@ -67,8 +67,8 @@ void RecorderControlWidget::setParameters(const Recorder &input)
 {
     // Block signals to send them all at once
     bool wasBlocked = blockSignals(true);
-    mUi->pathEdit->setText(input.path().c_str());
-    mUi->fileTemplateEdit->setText(input.fileTemplate().c_str());
+    mUi->pathEdit->setText(QString::fromStdString(input.path()));
+    mUi->fileTemplateEdit->setText(QString::fromStdString(input.fileTemplate()));
     blockSignals(wasBlocked);
     emit paramsChanged();
 }

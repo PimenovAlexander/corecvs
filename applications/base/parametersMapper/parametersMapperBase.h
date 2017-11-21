@@ -11,8 +11,8 @@
 #include <iostream>
 #include <QtCore/QSharedPointer>
 
-#include "reflection.h"
-#include "defaultSetter.h"
+#include "core/reflection/reflection.h"
+#include "core/reflection/defaultSetter.h"
 
 #include "baseParametersControlWidget.h"
 #include "presentationParametersControlWidget.h"

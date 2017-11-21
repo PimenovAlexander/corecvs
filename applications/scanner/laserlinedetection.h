@@ -2,8 +2,8 @@
 #define LASERLINEDETECTION_H
 #include <cmath>
 #include <vector>
-#include "abstractBuffer.h"
-#include "rgb24Buffer.h"
+#include "core/buffers/abstractBuffer.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
 
 struct Kernel1D {
     std::vector<double> kernel;

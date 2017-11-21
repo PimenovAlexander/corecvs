@@ -5,7 +5,7 @@
  *      Author: alexander
  */
 
-#include "global.h"
+#include "core/utils/global.h"
 #include "resultImage.h"
 
 const char* ResultLayerBase::LAYER_TYPE_NAMES[] =

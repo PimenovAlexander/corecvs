@@ -12,7 +12,8 @@ CONFIG += console                                   # create console log for all
 
 # All our hostBased apps use utils.lib
 #
-include($$ROOT_DIR/utils/utils.pri)                        # it uses TARGET, ROOT_DIR and detects UTILS_BINDIR, OBJECTS_DIR, DESTDIR, ...!
+#include($$ROOT_DIR/src/open/utils/utils.pri)                        # it uses TARGET, ROOT_DIR and detects UTILS_BINDIR, OBJECTS_DIR, DESTDIR, ...!
+include(../../utils/utils.pri)
 
 #message(Utils dir $$UTILSDIR)
 #message(Utils bin dir $$UTILS_BINDIR)

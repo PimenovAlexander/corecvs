@@ -8,6 +8,7 @@
 
 #include "baseParametersControlWidget.h"
 #include "ui_baseParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -43,38 +44,21 @@ BaseParametersControlWidget::~BaseParametersControlWidget()
 
 void BaseParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    BaseParameters *params = createParameters();
+    std::unique_ptr<BaseParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void BaseParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    BaseParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<BaseParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void BaseParametersControlWidget::getParameters(BaseParameters& params) const
 {
-
-    params.setRotation         (static_cast<RotationPresets::RotationPresets>(mUi->rotationComboBox->currentIndex()));
-    params.setMirror           (mUi->mirrorCheckBox->isChecked());
-    params.setSwapCameras      (mUi->swapCamerasButton->isChecked());
-    params.setFilterLock       (mUi->filterLockButton->isChecked());
-    params.setEnableFilterGraph(mUi->enableFilterGraphCheckBox->isChecked());
-    params.setDownsample       (mUi->downsampleSpinBox->value());
-    params.setH                (mUi->hSpinBox->value());
-    params.setW                (mUi->wSpinBox->value());
-    params.setAutoH            (mUi->autoHCheckBox->isChecked());
-    params.setAutoW            (mUi->autoWCheckBox->isChecked());
-    params.setX                (mUi->xSpinBox->value());
-    params.setY                (mUi->ySpinBox->value());
-    params.setInterpolationType(static_cast<InterpolationType::InterpolationType>(mUi->interpolationTypeComboBox->currentIndex()));
-
+    params = *std::unique_ptr<BaseParameters>(createParameters());
 }
+
 
 BaseParameters *BaseParametersControlWidget::createParameters() const
 {
@@ -84,7 +68,7 @@ BaseParameters *BaseParametersControlWidget::createParameters() const
      **/
 
 
-    BaseParameters *result = new BaseParameters(
+    return new BaseParameters(
           static_cast<RotationPresets::RotationPresets>(mUi->rotationComboBox->currentIndex())
         , mUi->mirrorCheckBox->isChecked()
         , mUi->swapCamerasButton->isChecked()
@@ -99,7 +83,6 @@ BaseParameters *BaseParametersControlWidget::createParameters() const
         , mUi->ySpinBox->value()
         , static_cast<InterpolationType::InterpolationType>(mUi->interpolationTypeComboBox->currentIndex())
     );
-    return result;
 }
 
 void BaseParametersControlWidget::setParameters(const BaseParameters &input)

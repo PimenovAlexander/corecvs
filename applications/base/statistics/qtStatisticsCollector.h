@@ -15,10 +15,10 @@
 #include <algorithm>
 #include <QtCore/QString>
 
-#include "global.h"
+#include "core/utils/global.h"
 
-#include "fixedVector.h"
-#include "calculationStats.h"
+#include "core/math/vector/fixedVector.h"
+#include "core/stats/calculationStats.h"
 
 // TESTOPENSOURCE
 //#include "viFlowStatisticsDescriptor.h"

@@ -23,8 +23,6 @@
 #include "core/alignment/radialCorrection.h"
 #include "core/buffers/displacementBuffer.h"
 
-#include "core/utils/preciseTimer.h"
-
 using corecvs::Matrix33;
 using corecvs::ProjectiveTransform;
 using corecvs::G12Buffer;

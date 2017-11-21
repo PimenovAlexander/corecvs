@@ -12,16 +12,16 @@
 #include <QMetaType>
 #include <QMessageBox>
 #include <vector>
-#include "conic.h"
+#include "core/geometry/conic.h"
 
 #include "g12Image.h"
 #include "imageResultLayer.h"
 
-#include "gentryState.h"
-#include "calibrationHelpers.h"
-#include "abstractPainter.h"
-#include "polylinemesh.h"
-#include "segmentator.h"
+#include "core/geometry/gentryState.h"
+#include "core/cameracalibration/calibrationDrawHelpers.h"
+#include "core/buffers/rgb24/abstractPainter.h"
+#include "core/geometry/polylinemesh.h"
+#include "core/segmentation/segmentator.h"
 
 
 // TEST
@@ -334,7 +334,7 @@ AbstractOutputData* ScannerThread::processNewData()
             outputData->outputMesh.setColor(RGBColor::Magenta());
             outputData->outputMesh.add(model.mesh);
 
-            CalibrationHelpers drawer;
+            CalibrationDrawHelpers drawer;
             drawer.drawCamera(outputData->outputMesh, state.camera, 1.0);
 
             Circle3d pd;

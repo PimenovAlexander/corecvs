@@ -6,15 +6,15 @@ SUBDIRS +=                   \
     unitTests                \
     utils                    \
     \
-    tests \
+#    tests \
 #    \
-#    base_application         \
+    base_application         \
 #    base_application_example \
-#    recorder                 \
-#    scanner                  \
-#    testbed                  \
-#    cloudview                \
-#    imageview                \
+    recorder                 \
+    scanner                  \
+    testbed                  \
+    cloudview                \
+    imageview                \
 #    \
      generator                \
 #    egomotion                \

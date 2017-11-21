@@ -11,7 +11,7 @@
 
 #include <QString>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include "baseHostDialog.h"
 #include "recorderThread.h"
@@ -29,8 +29,8 @@ public:
     ~RecorderDialog();
 
 
-    virtual void initParameterWidgets();
-    virtual void createCalculator();
+    virtual void initParameterWidgets() override;
+    virtual void createCalculator() override;
     virtual void connectFinishedRecalculation();
 
 signals:
@@ -44,7 +44,7 @@ public slots:
     void recordingStateChanged(RecorderThread::RecordingState );
     void recorderControlParametersChanged(QSharedPointer<Recorder> params);
 
-    virtual void processResult();
+    virtual void processResult() override;
 
     void errorMessage(QString message);
 private:

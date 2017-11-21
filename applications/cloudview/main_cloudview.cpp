@@ -13,11 +13,12 @@
 #include <QApplication>
 
 
-#include "global.h"
-#include "utils.h"
+#include "core/utils/global.h"
+#include "core/utils/utils.h"
 #include "cloudViewDialog.h"
 #include "mesh3DScene.h"
-#include "meshLoader.h"
+#include "core/fileformats/meshLoader.h"
+#include "qtFileLoader.h"
 
 
 int main(int argc, char *argv[])
@@ -25,10 +26,11 @@ int main(int argc, char *argv[])
     SET_HANDLERS();
 
     Q_INIT_RESOURCE(main);
+    QTRGB24Loader::registerMyself();
 
     printf("Starting cloudView...\n");
     QApplication app(argc, argv);
-    CloudViewDialog mainWindow;
+    CloudViewDialog mainWindow(NULL, "Cloud view executable main window");
     MeshLoader loader;
 
     mainWindow.show();

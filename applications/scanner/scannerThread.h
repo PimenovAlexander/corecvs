@@ -14,14 +14,14 @@
 #include <stdint.h>
 #include <QString>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include "baseCalculationThread.h"
 #include "imageCaptureInterface.h"
-#include "ppmLoader.h"
-#include "preciseTimer.h"
+#include "core/fileformats/ppmLoader.h"
+#include "core/utils/preciseTimer.h"
 #include "generatedParameters/scannerParameters.h"
-#include "calculationStats.h"
+#include "core/stats/calculationStats.h"
 
 
 class ScannerOutputData : public BaseOutputData

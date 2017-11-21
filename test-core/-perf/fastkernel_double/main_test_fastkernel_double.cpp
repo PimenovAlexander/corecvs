@@ -14,14 +14,14 @@
 #include "core/utils/global.h"
 
 #include "core/utils/preciseTimer.h"
-#include "chessBoardCornerDetector.h"
+#include "core/patterndetection/chessBoardCornerDetector.h"
 #include "core/buffers/kernels/fastkernel/fastKernel.h"
 #include "core/buffers/kernels/sobel.h"
 #include "core/buffers/kernels/fastkernel/vectorTraits.h"
 #include "core/buffers/kernels/arithmetic.h"
 #include "core/buffers/kernels/copyKernel.h"
 
-#include "convolver/convolver.h"
+#include "core/buffers/convolver/convolver.h"
 
 using corecvs::SobelVerticalKernel;
 using corecvs::ScalarAlgebraDouble;
@@ -120,7 +120,7 @@ TEST(FastKernelDouble, testDoubleConvolve)  // TODO: it fails on the line 244!
     }
 
     SYNC_PRINT(("Profiling Vertical edge detection:\n"));
-    SYNC_PRINT(("   We will %d times pump [%dx%d] buffers with double elements (%lu bytes):\n", LIMIT, TEST_H_SIZE, TEST_W_SIZE, sizeof(double)));
+    SYNC_PRINT(("   We will %d times pump [%dx%d] buffers with double elements (%" PRISIZE_T " bytes):\n", LIMIT, TEST_H_SIZE, TEST_W_SIZE, sizeof(double)));
     uint64_t bytesr = LIMIT * TEST_H_SIZE * TEST_W_SIZE * sizeof(double);
     uint64_t bytesw = bytesr;
     SYNC_PRINT(("   Totally read  - %" PRIu64 " bytes = %.2f Mb \n", bytesr, bytesr / 1000000.0));
@@ -390,10 +390,10 @@ TEST(FastKernelDouble, testConvolver)
         , { Convolver::ALGORITHM_SSE_UNROLL_8               , 150, 5, "unroll 8", false, NULL, NULL, 0 }
         , { Convolver::ALGORITHM_SSE_UNROLL_9               , 150, 5, "unroll 9", false, NULL, NULL, 0 }
         , { Convolver::ALGORITHM_SSE_UNROLL_10              , 150, 5, "unroll10", false, NULL, NULL, 0 }
-
+        
         , { Convolver::ALGORITHM_SSE_UNROLL_12              , 150, 5, "unroll12", false, NULL, NULL, 0 }
         , { Convolver::ALGORITHM_SSE_UNROLL_16              , 150, 5, "unroll16", false, NULL, NULL, 0}
-
+        
         , { Convolver::ALGORITHM_SSE_UNROLL_20              , 150, 5, "unroll20", false, NULL, NULL, 0 }
         , { Convolver::ALGORITHM_SSE_UNROLL_40              , 150, 5, "unroll40", false, NULL, NULL, 0 }
         , { Convolver::ALGORITHM_SSE_UNROLL_100             , 150, 5, "unroll100", false, NULL, NULL, 0 }

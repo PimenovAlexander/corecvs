@@ -16,12 +16,8 @@ TEMPLATE = app
 TARGET   = softrender
 CONFIG  += console
 
-TEST_DIR = $$PWD
-#TEST_DIR = .
-#message (Original PWD $$PWD  $$TEST_DIR)
-UTILSDIR = $$TEST_DIR/../../utils
-include($$UTILSDIR/utils.pri)
-
+#include(../../core/core.pri)
+include($$ROOT_DIR/src/open/utils/utils.pri)                        # it uses TARGET, ROOT_DIR and detects UTILS_BINDIR, OBJECTS_DIR, DESTDIR, ...!
 
 TARGET_ORIG = $$TARGET
 TARGET      = $$join(TARGET,,,$$BUILD_CFG_SFX)  # add 'd' at the end for debug versions

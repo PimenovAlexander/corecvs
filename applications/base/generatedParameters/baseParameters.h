@@ -8,9 +8,9 @@
  * \author autoGenerator
  */
 
-#include "reflection.h"
-#include "defaultSetter.h"
-#include "printerVisitor.h"
+#include "core/reflection/reflection.h"
+#include "core/reflection/defaultSetter.h"
+#include "core/reflection/printerVisitor.h"
 
 /*
  *  Embed includes.
@@ -19,25 +19,25 @@
  *  Additional includes for Composite Types.
  */
 
-using namespace corecvs;
+// using namespace corecvs;
 
 /*
  *  Additional includes for Pointer Types.
  */
 
-namespace corecvs {
-}
+// namespace corecvs {
+// }
 /*
  *  Additional includes for enum section.
  */
 #include "rotationPresets.h"
-#include "interpolationType.h"
+#include "core/xml/generated/interpolationType.h"
 
 /**
  * \brief Base parameters 
  * Base parameters 
  **/
-class BaseParameters : public BaseReflection<BaseParameters>
+class BaseParameters : public corecvs::BaseReflection<BaseParameters>
 {
 public:
     enum FieldId {
@@ -139,6 +139,8 @@ public:
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
+
+    static int relinkCompositeFields();
 
     /** Section with getters */
     const void *getPtrById(int fieldId) const
@@ -281,24 +283,24 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit((int &)mRotation,           static_cast<const EnumField *>    (fields()[ROTATION_ID]));
-        visitor.visit(mMirror,                    static_cast<const BoolField *>    (fields()[MIRROR_ID]));
-        visitor.visit(mSwapCameras,               static_cast<const BoolField *>    (fields()[SWAPCAMERAS_ID]));
-        visitor.visit(mFilterLock,                static_cast<const BoolField *>    (fields()[FILTERLOCK_ID]));
-        visitor.visit(mEnableFilterGraph,         static_cast<const BoolField *>    (fields()[ENABLEFILTERGRAPH_ID]));
-        visitor.visit(mDownsample,                static_cast<const DoubleField *>  (fields()[DOWNSAMPLE_ID]));
-        visitor.visit(mH,                         static_cast<const IntField *>     (fields()[H_ID]));
-        visitor.visit(mW,                         static_cast<const IntField *>     (fields()[W_ID]));
-        visitor.visit(mAutoH,                     static_cast<const BoolField *>    (fields()[AUTOH_ID]));
-        visitor.visit(mAutoW,                     static_cast<const BoolField *>    (fields()[AUTOW_ID]));
-        visitor.visit(mX,                         static_cast<const IntField *>     (fields()[X_ID]));
-        visitor.visit(mY,                         static_cast<const IntField *>     (fields()[Y_ID]));
-        visitor.visit((int &)mInterpolationType,  static_cast<const EnumField *>    (fields()[INTERPOLATIONTYPE_ID]));
+        visitor.visit((int &)mRotation,           static_cast<const corecvs::EnumField *>(fields()[ROTATION_ID]));
+        visitor.visit(mMirror,                    static_cast<const corecvs::BoolField *>(fields()[MIRROR_ID]));
+        visitor.visit(mSwapCameras,               static_cast<const corecvs::BoolField *>(fields()[SWAPCAMERAS_ID]));
+        visitor.visit(mFilterLock,                static_cast<const corecvs::BoolField *>(fields()[FILTERLOCK_ID]));
+        visitor.visit(mEnableFilterGraph,         static_cast<const corecvs::BoolField *>(fields()[ENABLEFILTERGRAPH_ID]));
+        visitor.visit(mDownsample,                static_cast<const corecvs::DoubleField *>(fields()[DOWNSAMPLE_ID]));
+        visitor.visit(mH,                         static_cast<const corecvs::IntField *>(fields()[H_ID]));
+        visitor.visit(mW,                         static_cast<const corecvs::IntField *>(fields()[W_ID]));
+        visitor.visit(mAutoH,                     static_cast<const corecvs::BoolField *>(fields()[AUTOH_ID]));
+        visitor.visit(mAutoW,                     static_cast<const corecvs::BoolField *>(fields()[AUTOW_ID]));
+        visitor.visit(mX,                         static_cast<const corecvs::IntField *>(fields()[X_ID]));
+        visitor.visit(mY,                         static_cast<const corecvs::IntField *>(fields()[Y_ID]));
+        visitor.visit((int &)mInterpolationType,  static_cast<const corecvs::EnumField *>(fields()[INTERPOLATIONTYPE_ID]));
     }
 
     BaseParameters()
     {
-        DefaultSetter setter;
+        corecvs::DefaultSetter setter;
         accept(setter);
     }
 
@@ -333,16 +335,16 @@ template<class VisitorType>
         mInterpolationType = interpolationType;
     }
 
-    friend ostream& operator << (ostream &out, BaseParameters &toSave)
+    friend std::ostream& operator << (std::ostream &out, BaseParameters &toSave)
     {
-        PrinterVisitor printer(out);
-        toSave.accept<PrinterVisitor>(printer);
+        corecvs::PrinterVisitor printer(out);
+        toSave.accept<corecvs::PrinterVisitor>(printer);
         return out;
     }
 
     void print ()
     {
-        cout << *this;
+        std::cout << *this;
     }
 };
 #endif  //BASE_PARAMETERS_H_

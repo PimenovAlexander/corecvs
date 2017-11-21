@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include "ui_statisticsDialog.h"
 #include "qtStatisticsCollector.h"

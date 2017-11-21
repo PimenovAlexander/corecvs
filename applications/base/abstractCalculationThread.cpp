@@ -12,10 +12,10 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDebug>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include "abstractCalculationThread.h"
-#include "log.h"
+#include "core/utils/log.h"
 
 using namespace std;
 

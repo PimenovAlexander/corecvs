@@ -3,12 +3,12 @@
 #include <QtCore/QRect>
 #include <QtCore/QSharedPointer>
 
-#include "global.h"
+#include "core/utils/global.h"
 
 #include "universalRectifier.h"
-#include "matrix33.h"
-#include "distortionCorrectTransform.h"     // "../../core/src/alignment"
-#include "displacementBuffer.h"
+#include "core/math/matrix/matrix33.h"
+#include "core/alignment/distortionCorrectTransform.h"     // "../../core/src/alignment"
+#include "core/buffers/displacementBuffer.h"
 
 
 class CamerasConfigParameters

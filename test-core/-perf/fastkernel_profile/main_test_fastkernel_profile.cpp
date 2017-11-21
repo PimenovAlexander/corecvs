@@ -31,8 +31,6 @@
 #include "core/buffers/kernels/fastkernel/fastKernel.h"
 #include "core/buffers/kernels/fastkernel/vectorTraits.h"
 
-using namespace std;
-
 #ifdef WITH_SSE
 using corecvs::Int32x4;
 using corecvs::G12BufferAlgebraStreaming;
@@ -86,7 +84,7 @@ void _profileAlgnmentAccessSpeed( void )
 {
 
 #ifdef WITH_SSE
-	cout << "This test profile sse access speed depending on the alignment" << endl;
+    std::cout << "This test profile sse access speed depending on the alignment" << std::endl;
     //  800Mb
     //                           '  '
     static const int LIMIT =  400000000;
@@ -366,8 +364,8 @@ void _profileMemcpy()
  **/
 void _profileManualSobelH (void)
 {
-     int const TEST_H_SIZE = 600;
-     int const TEST_W_SIZE = 1100;
+     //int const TEST_H_SIZE = 600;
+     //int const TEST_W_SIZE = 1100;
      PreciseTimer start;
      uint64_t delay;
 
@@ -410,6 +408,99 @@ void _profileManualSobelH (void)
      printf("%8" PRIu64 "us %8" PRIu64 "ms SP: %8" PRIu64 "us\n", delay, delay / 1000, delay / LIMIT); fflush(stdout);
 }
 
+void _profileManualSobelHSimple (void)
+{
+     PreciseTimer start;
+     uint64_t delay;
+
+     G12Buffer * input[POLUTING_INPUTS];
+     G12Buffer * output[POLUTING_INPUTS];
+
+     VisiterSemiRandom<> vis;
+     for (unsigned i = 0; i < POLUTING_INPUTS; i++)
+     {
+         input[i]  = new G12Buffer(TEST_H_SIZE ,TEST_W_SIZE);
+         input[i]->touchOperationElementwize(vis);
+         output[i] = new G12Buffer(TEST_H_SIZE ,TEST_W_SIZE);
+     }
+     printf("Profiling ManualS Kernel       %5.5s %d.%d:", "Sob H", 1, 1);
+     start = PreciseTimer::currentTime();
+     for (unsigned k = 0; k < LIMIT; k++) {
+         G12Buffer *in  = input[k % POLUTING_INPUTS];
+         G12Buffer *out = output[k % POLUTING_INPUTS];
+         for (int i = 1; i < in->h - 1; i++)
+         {
+             for (int j = 1; j < in->w - 1; j++)
+             {
+                 out->element(i,j) =
+                         (    in->element(i - 1, j - 1) +
+                         2 * in->element(i    , j - 1) +
+                             in->element(i + 1, j - 1) -
+                             in->element(i - 1, j + 1) -
+                         2 * in->element(i    , j + 1) -
+                             in->element(i + 1, j + 1)) / 8;
+             }
+         }
+     }
+     delay = start.usecsToNow();
+     printf("%8" PRIu64 "us %8" PRIu64 "ms SP: %8" PRIu64 "us\n", delay, delay / 1000, delay / LIMIT); fflush(stdout);
+}
+
+
+void _profileManualEdgeSimple (void)
+{
+     PreciseTimer start;
+     uint64_t delay;
+
+     G12Buffer * input[POLUTING_INPUTS];
+     G12Buffer * output[POLUTING_INPUTS];
+
+     VisiterSemiRandom<> vis;
+     for (unsigned i = 0; i < POLUTING_INPUTS; i++)
+     {
+         input[i]  = new G12Buffer(TEST_H_SIZE ,TEST_W_SIZE);
+         input[i]->touchOperationElementwize(vis);
+         output[i] = new G12Buffer(TEST_H_SIZE ,TEST_W_SIZE);
+     }
+     printf("Profiling ManualS Kernel       %5.5s %d.%d:", "Edge", 1, 1);
+     start = PreciseTimer::currentTime();
+     for (unsigned k = 0; k < LIMIT; k++) {
+         G12Buffer *in  = input[k % POLUTING_INPUTS];
+         G12Buffer *out = output[k % POLUTING_INPUTS];
+         for (int i = 0; i < in->h - 2; i++)
+         {
+             for (int j = 0; j < in->w - 2; j++)
+             {
+                uint16_t a00 = in->element(i + 0, j + 0);
+                uint16_t a01 = in->element(i + 0, j + 1);
+                uint16_t a02 = in->element(i + 0, j + 2);
+                uint16_t a10 = in->element(i + 1, j + 0);
+                uint16_t a12 = in->element(i + 1, j + 2);
+                uint16_t a20 = in->element(i + 2, j + 0);
+                uint16_t a21 = in->element(i + 2, j + 1);
+                uint16_t a22 = in->element(i + 2, j + 2);
+
+                int16_t positiveH = int16_t (a00 + a20 + 2 * a10);
+                int16_t negativeH = int16_t (a02 + a22 + 2 * a12);
+                int16_t resultH = ( positiveH - negativeH ) / 4;
+
+
+                int16_t positiveV = int16_t (a00 + a02 + 2 * a01);
+                int16_t negativeV = int16_t (a20 + a22 + 2 * a21);
+                int16_t resultV = ( positiveV - negativeV ) / 4;
+
+                uint16_t final = std::abs(resultV) + std::abs(resultH);
+
+                out->element(i,j) = final;
+             }
+         }
+    }
+    delay = start.usecsToNow();
+    printf("%8" PRIu64 "us %8" PRIu64 "ms SP: %8" PRIu64 "us\n", delay, delay / 1000, delay / LIMIT); fflush(stdout);
+}
+
+
+
 TEST(FastKernelProfile, main)
 {
     _profileAlgnmentAccessSpeed();
@@ -418,6 +509,7 @@ TEST(FastKernelProfile, main)
 
     _profileVectorKernel<SobelHorizontalKernel>("Sob H");
     _profileManualSobelH();
+    _profileManualSobelHSimple();
 
     _profileVectorKernel<SobelVerticalKernel>("Sob V");
     _profileVectorKernel<Gaussian3x3Kernel>("Ga3x3");
@@ -445,6 +537,7 @@ TEST(FastKernelProfile, main)
     delete element;
 
     _profileVectorKernel<EdgeMagnitude>("Edge");
+    _profileManualEdgeSimple();
     _profileVectorKernel<CopyKernel>("Copy");
     _profileMemcpy();
 }

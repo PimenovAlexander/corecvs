@@ -1,15 +1,17 @@
 #ifndef IMAGEVIEWMAINWINDOW_H
 #define IMAGEVIEWMAINWINDOW_H
 
-#include "rgbTBuffer.h"
-#include "g12Buffer.h"
-#include "converters/debayer.h"
+#include "core/buffers/rgb24/rgbTBuffer.h"
+#include "core/buffers/g12Buffer.h"
+#include "core/buffers/converters/debayer.h"
 
 #include <QWidget>
 
 namespace Ui {
 class ImageViewMainWindow;
 }
+
+using namespace corecvs;
 
 class ImageViewMainWindow : public QWidget
 {

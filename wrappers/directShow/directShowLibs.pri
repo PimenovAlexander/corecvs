@@ -16,11 +16,12 @@ DEPENDPATH  +=   $$DSHOW_LIB_PATH
 INCLUDEPATH +=   $$DSHOW_LIB_PATH
 
 win32-msvc* {
-    win32-msvc2013 {
-      LIBS  += -L$$DSHOW_LIB_PATH -lcapdll_vc12
-    } else {
-      LIBS  += -L$$DSHOW_LIB_PATH -lcapdll_vc10
+           win32-msvc2010 {	CAPDLL_MSVC_VER = capdll_vc10
+    } else:win32-msvc2013 {	CAPDLL_MSVC_VER = capdll_vc12
+    } else:win32-msvc2015 {	CAPDLL_MSVC_VER = capdll_vc14
+    } else {                CAPDLL_MSVC_VER = capdll_vc1x
     }
+    LIBS  += -L$$DSHOW_LIB_PATH -l$$CAPDLL_MSVC_VER
 } else {
     # The "mingw" toolchain is able to generate library file from the present capdll.dll module at the same dir.
     # The capdll.lib presence from MSVC at that dir disturbs it!

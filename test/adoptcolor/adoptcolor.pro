@@ -13,7 +13,7 @@ ROOT_DIR=$$PWD/$$ROOT_DIR
 TEMPLATE = app
 TARGET   = test_adoptcolor
 
-include($$ROOT_DIR/src/open/utils/utils.pri)                        # it uses TARGET, ROOT_DIR and detects UTILS_BINDIR, OBJECTS_DIR, DESTDIR, ...!
+include(../../utils/utils.pri)                        # it uses TARGET, ROOT_DIR and detects UTILS_BINDIR, OBJECTS_DIR, DESTDIR, ...!
 
 SOURCES += main_adoptcolor.cpp
 HEADERS += main_adoptcolor.h
