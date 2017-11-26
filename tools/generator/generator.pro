@@ -7,7 +7,7 @@ CONFIG  -= app_bundle
 CONFIG  += debug
 CONFIG  += c++11
 
-ROOT_DIR=../../../..
+ROOT_DIR=../..
 include($$ROOT_DIR/config.pri)
 
 OBJECTS_DIR = $$ROOT_DIR/.obj/generator$$BUILD_CFG_NAME

@@ -3,7 +3,8 @@ CONFIG  += ordered
 
 SUBDIRS +=                   \
     core                     \
-    unitTests                \
+    test-core                \
+    test-core-perf           \
     utils                    \
     \
     tests \
@@ -36,11 +37,13 @@ win32 {
 }
 
 generator.depends        += core
-unitTests.depends        += core
+test-core.depends        += core
+test-core-perf.depends   += core
 utils.depends            += core
 #utils.depends            += preprocSrc       # preprocSrc tool is needed to convert OpenCL sources into one binary archive
 baseApplication.depends  += core utils        # utils:    as libs building could be done in parallel except apps!
 tests.depends            += core utils        # utils:    as libs building could be done in parallel except apps!
+
 
 directshow.depends       += core
 
@@ -55,7 +58,8 @@ testbed.depends          += utils
 
 
 core.file                     = core/core.pro
-unitTests.file                = test-core/test-core.pro
+test-core.file                = test-core/test-core.pro
+test-core-perf.file           = test-core/-perf/test-core-perf.pro
 utils.file                    = utils/utils.pro
 tests.file                    = test/tests.pro
 

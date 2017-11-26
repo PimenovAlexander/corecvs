@@ -104,13 +104,23 @@ with_sse3 {
 #       DEFINES -= WITH_SSE3
     }
 }
-
-with_sse4 {
-    DEFINES += WITH_SSE4
+with_sse4_1 {
+    DEFINES += WITH_SSE4_1
     !win32-msvc* {
         QMAKE_CFLAGS   += -msse4.1
         QMAKE_CXXFLAGS += -msse4.1
     } else {
+#       DEFINES -= WITH_SSE4_1
+    }
+}
+with_sse4_2 {
+    DEFINES += WITH_SSE4_2
+    DEFINES += WITH_SSE4                    # means that both SSE4.1 and SSE4.2 are supported
+    !win32-msvc* {
+        QMAKE_CFLAGS   += -msse4.2
+        QMAKE_CXXFLAGS += -msse4.2
+    } else {
+#       DEFINES -= WITH_SSE4_2
 #       DEFINES -= WITH_SSE4
     }
 }
@@ -282,9 +292,7 @@ isEmpty(CCACHE_TOOLCHAIN_ON) {
 
     # We keep all pdb files at intermediate directories
     #
-    win32-msvc2013 {
-        # Since [Qt5.5.0 + msvc2013] pdb management is added automatically into bin folder
-    } else {
+    win32-msvc2010 {
         gen_vsproj {
             QMAKE_CXXFLAGS += -Fd"$(IntDir)"
             QMAKE_LFLAGS   += /PDB:"$(IntDir)\\$(TargetName).pdb"
@@ -293,6 +301,20 @@ isEmpty(CCACHE_TOOLCHAIN_ON) {
             QMAKE_LFLAGS   += /PDB:"$(OBJECTS_DIR)\\$(QMAKE_TARGET).pdb"
         }
     }
+    else {
+        # Since [Qt5.5.0 + msvc2013] pdb management is added automatically into bin folder
+    }
+
+    # msvc floating point model: "strict" helped to unify results on different compiler versions
+    # For more info look at: https://msdn.microsoft.com/en-us/library/e7s85ffb%28v=vs.120%29.aspx
+    #
+    QMAKE_CFLAGS   += /fp:strict
+    QMAKE_CXXFLAGS += /fp:strict
+
+    # add debug info for release build rules to catch app crash details
+    #
+    QMAKE_LFLAGS_RELEASE   += /DEBUG     # add debug info to the linked module
+    QMAKE_CXXFLAGS_RELEASE += /Zi        # add debug info to the compiling module
 }
 
 
@@ -400,49 +422,71 @@ gcov {
 }
 
 with_tbb:!contains(DEFINES, WITH_TBB) {
-    TBB_PATH = $$(TBB_PATH)
+    TBB_PATH = "$$(TBB_PATH)"
     win32 {
         !isEmpty(TBB_PATH) {
             DEFINES += WITH_TBB
 
             win32-msvc*:!contains(QMAKE_HOST.arch, x86_64) {
-                TBB_LIBDIR = $(TBB_PATH)/lib/ia32/vc10
+                win32-msvc2010 {
+                    TBB_LIBDIR = "$(TBB_PATH)"/lib/ia32/vc10
+                } else:win32-msvc2013 {
+                    TBB_LIBDIR = "$(TBB_PATH)"/lib/ia32/vc12
+                } else:win32-msvc* {
+                   TBB_LIBDIR = "$(TBB_PATH)"/lib/ia32/vc14
+                }
             } else:win32-msvc2010 {
-                TBB_LIBDIR = $(TBB_PATH)/lib/intel64/vc10
+                TBB_LIBDIR = "$(TBB_PATH)"/lib/intel64/vc10
+            } else:win32-msvc2013 {
+                TBB_LIBDIR = "$(TBB_PATH)"/lib/intel64/vc12
             } else:win32-msvc* {
-                TBB_LIBDIR = $(TBB_PATH)/lib/intel64/vc12
-            } else:exists($(TBB_PATH)/lib/tbb.dll) {
+                TBB_LIBDIR = "$(TBB_PATH)"/lib/intel64/vc14
+            } else:exists("$(TBB_PATH)"/lib/tbb.dll) {
                 # old config when TBB's bins&libs were placed at TBB's lib dir
-                TBB_LIBDIR = $(TBB_PATH)/lib
+                TBB_LIBDIR = "$(TBB_PATH)"/lib
             } else {
                 GCC_VER    = $$system(gcc -dumpversion)
-                TBB_LIBDIR = $(TBB_PATH)/lib/intel64/mingw$$GCC_VER
+                TBB_LIBDIR = "$(TBB_PATH)"/lib/intel64/mingw$$GCC_VER
                 # the "script/windows/.tbb_build_mingw.bat" places libs there
             }
-            INCLUDEPATH += $(TBB_PATH)/include
+            INCLUDEPATH += "$(TBB_PATH)"/include
             LIBS        += -L"$$TBB_LIBDIR" -ltbb
-            !build_pass: contains(TARGET, cvs_core): message(Using <$$TBB_LIBDIR>)
+            !build_pass: contains(TARGET, cvs_core): message(Using <"$$TBB_LIBDIR">)
         } else {
            !build_pass: message(TBB not found. Please set TBB_PATH system variable to a root folder of TBB to use it)
         }
     } else:macx {
-        #message (Using TBB at $$TBB_PATH)
+        #message (Using TBB at "$$TBB_PATH")
         DEFINES     += WITH_TBB
-        INCLUDEPATH += $$TBB_PATH/include
-        LIBS        += -L$$TBB_PATH/lib -ltbb
+        INCLUDEPATH += "$$TBB_PATH"/include
+        LIBS        += -L"$$TBB_PATH"/lib -ltbb
 
-        DEPENDPATH  += $$TBB_PATH/include
+        DEPENDPATH  += "$$TBB_PATH"/include
     } else {
         !isEmpty(TBB_PATH) {
-            #message (Using TBB at $$TBB_PATH)
-            INCLUDEPATH += $$TBB_PATH/include
-            LIBS        += -L$$TBB_PATH/lib/
+            #message (Using TBB at "$$TBB_PATH")
+            INCLUDEPATH += "$$TBB_PATH"/include
+            LIBS        += -L"$$TBB_PATH"/lib/
         }
         else {
             !build_pass: message (Using System TBB)
         }
         DEFINES     += WITH_TBB
         LIBS        += -ltbb
+    }
+}
+
+# Boost is yet another fancy and cool library that contains
+# many features that we will definitely see in upcoming
+# STL implemenations
+with_boost {
+    BOOST_PATH=$$(BOOST_PATH)
+    DEFINES += WITH_BOOST
+    
+    # Since we are not (yet?) using any binary boost components,
+    # we can think about it as header-only lib
+    !isEmpty(BOOST_PATH) {
+        INCLUDEPATH += "$$BOOST_PATH"
     }
 }
 
@@ -463,24 +507,49 @@ with_mkl {
             with_tbb {
                 LIBS    += -lmkl_tbb_thread -lstdc++ -lpthread -lm      # -ltbb was already included above
             } else {
-                LIBS    += -lmkl_gnu_thread -ldl -lpthread -lm          # with OpenMP's threading layer, GNU's OpenMP library (libgomp)
+                QMAKE_CXXFLAGS += -fopenmp
+                QMAKE_CFLAGS   += -fopenmp
+                QMAKE_LFLAGS   += -fopenmp
+                LIBS    += -lmkl_gnu_thread -ldl -lpthread -lm -lgomp   # with OpenMP's threading layer, GNU's OpenMP library (libgomp)
             }
         } else {
             LIBS        += -L"$$MKLROOT"/lib/intel64 -lmkl_intel_lp64_dll -lmkl_core_dll
             with_tbb {
                 LIBS    += -lmkl_tbb_thread_dll                         # -ltbb was already included above
             } else {
-                LIBS    += -lmkl_intel_thread_dll -llibiomp5md          # with OpenMP's threading layer, Intel's OpenMP library (libiomp5)
+                LIBS    += -L"$$MKLROOT"/../compiler/lib/intel64_win -lmkl_intel_thread_dll -llibiomp5md          # with OpenMP's threading layer, Intel's OpenMP library (libiomp5)
             }
         }
         INCLUDEPATH += "$$MKLROOT"/include
-        DEFINES     += WITH_BLAS
         DEFINES     += WITH_MKL
+        DEFINES     += WITH_BLAS
+        CONFIG      += with_blas
     }
     else {
         !build_pass: message (requested MKL is not installed and is deactivated)
     }
-    CONFIG += with_blas
+}
+
+with_cusparse {
+    CUDA_PATH = $$(CUDA_PATH)
+    !isEmpty(CUDA_PATH) {
+        exists("$$CUDA_PATH"/include/cusparse_v2.h) {
+            INCLUDEPATH += "$(CUDA_PATH)"/include
+            !win32 {
+                LIBS += -L"$$CUDA_PATH"/lib64
+	    } else {
+                LIBS += -L"$$CUDA_PATH"/lib/x64
+	    }
+            LIBS += -lcusparse -lcudart -lcuda
+            DEFINES += WITH_CUSPARSE
+            DEFINES += WITH_CUDA
+            !build_pass: message(using <$$CUDA_PATH>)
+        } else {
+            error("cuSPARSE header file not found");
+        }
+    } else {
+        !build_pass: message("CUDA_PATH is empty, with_cusparse mode is ignored")
+    }
 }
 
 with_openblas {
@@ -492,9 +561,11 @@ with_openblas {
         !isEmpty(BLAS_PATH) {
             exists("$$BLAS_PATH"/include/cblas.h) {
                 !build_pass: message(Using BLAS from <$$BLAS_PATH>)
-                INCLUDEPATH += $(BLAS_PATH)/include
+                INCLUDEPATH += "$(BLAS_PATH)"/include
                 LIBS        += -lopenblas
+                DEFINES     += WITH_OPENBLAS
                 DEFINES     += WITH_BLAS
+                CONFIG      += with_blas
             }
             else {
                 !build_pass: message(requested openBLAS via BLAS_PATH is not found and is deactivated)
@@ -503,7 +574,9 @@ with_openblas {
             exists(/usr/include/cblas.h) {
                 !build_pass: message (Using System BLAS)
                 LIBS        += -lopenblas -llapacke
+                DEFINES     += WITH_OPENBLAS
                 DEFINES     += WITH_BLAS
+                CONFIG      += with_blas
             }
             else {
                 !build_pass: message(requested system BLAS is not found and is deactivated)
@@ -512,7 +585,6 @@ with_openblas {
     } else {
         !build_pass: message(requested openBLAS is not supported for Win and is deactivated)
     }
-    CONFIG += with_blas
 }
 
 with_fftw {
@@ -530,7 +602,7 @@ with_fftw {
         }
         exists("$$FFTW_PREFIX"/include/fftw3.h) {
             !build_pass: message(Using FFTW from <$$FFTW_PREFIX>)
-            INCLUDEPATH += $(FFTW_PREFIX)/include
+            INCLUDEPATH += "$(FFTW_PREFIX)"/include
             LIBS        += -lfftw3
             DEFINES     += WITH_FFTW
         }

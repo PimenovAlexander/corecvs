@@ -14,7 +14,7 @@
 #include "core/utils/global.h"
 
 #include "core/utils/preciseTimer.h"
-#include "core/patterndetection/chessBoardCornerDetector.h"
+// #include "core/patterndetection/chessBoardCornerDetector.h"
 #include "core/buffers/kernels/fastkernel/fastKernel.h"
 #include "core/buffers/kernels/sobel.h"
 #include "core/buffers/kernels/fastkernel/vectorTraits.h"

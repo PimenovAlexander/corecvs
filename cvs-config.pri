@@ -11,6 +11,9 @@
 #CONFIG -= debug_and_release
 #CONFIG -= debug_and_release_target
 
+!contains(CORECVS_INCLUDED, "config.pri") {
+CORECVS_INCLUDED +=  config.pri
+
 # By generating VS projects only, neither debug nor release must be chosen!
 # For makefiles we ask to generate both config makefiles and build only one chosen below config.
 #
@@ -27,14 +30,21 @@ CONFIG +=       \
 #   trace       \
    asserts     \
                 \
-   with_sse     \
-   with_sse3    \
-   with_sse4    \
-   with_avx     \
-#   with_avx2    \
-   with_tbb     \
-   with_blas    \
+      with_sse     \    # all present CPUs support SSE* instructions
+      with_sse3    \
+      with_sse4_1  \    # all the CPUs Core2 and above support the set of instructions above
+#      with_sse4_2 \    # implemented in the Nehalem-based Intel Core i7 product line CPUs; "popcnt" instruction beginning with Nehalem
+#      with_avx    \
+#      with_avx2   \
+#      with_fma    \
+   with_native     \
+   \
+   with_tbb        \
+   with_openblas   \
+   with_unorthodox \   # allow use an experimental filesystem
+   with_qscript    \   # experimental...
 
+include(config-cpu-features.pri)
 
 !win32:!macx {
     CONFIG +=             \
@@ -102,3 +112,6 @@ win32-msvc* {
 # include standard part for any project that tunes some specific parameters that depend of the config been set above
 #
 include(common.pri)
+
+} # !contains(CORECVS_INCLUDED, "config.pri")
+
