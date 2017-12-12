@@ -60,6 +60,7 @@ HEADERS += \
     math/sse/doublexT4.h \
     math/extensiveCoding.h \
     math/wisdom.h \
+    $$PWD/vector/vectorUtils.h
 
 SOURCES += \
     math/matrix/matrix.cpp \

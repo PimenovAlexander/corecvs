@@ -25,7 +25,8 @@ HEADERS += \
     geometry/ellipse.h \
     geometry/ellipseFit.h \
     geometry/plane3dFit.h \
-    $$PWD/meshClicker.h
+    $$PWD/meshClicker.h \
+    $$PWD/raytrace/sdfRenderableObjects.h
 
 
 SOURCES += \ 
@@ -52,5 +53,6 @@ SOURCES += \
     geometry/ellipse.cpp \
     geometry/ellipseFit.cpp \
     geometry/plane3dFit.cpp \
-    $$PWD/meshClicker.cpp
+    $$PWD/meshClicker.cpp \
+    $$PWD/raytrace/sdfRenderableObjects.cpp
 
