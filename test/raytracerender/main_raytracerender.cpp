@@ -35,6 +35,8 @@ extern void raytrace_scene_pole( void );
 extern void raytrace_scene_large( void );
 extern void raytrace_scene_tree(void);
 
+extern void raytrace_scene_union_and_blend(void);
+
 int main(int argc, char **argv)
 {
     QApplication a(argc, argv);
@@ -68,6 +70,8 @@ int main(int argc, char **argv)
                 raytrace_scene_large(); break;
         case 7:
                 raytrace_scene_tree(); break;
+        case 8:
+                raytrace_scene_union_and_blend(); break;
     }
 
 }

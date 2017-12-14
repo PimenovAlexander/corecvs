@@ -6,7 +6,7 @@ SDFRenderableSphere::SDFRenderableSphere(const Vector3dd &sphere, double r) :
     r(r)
 {
     this->F = [this](Vector3dd v) {
-        return this->r - lengthVec3dd(v - this->sphere);
+        return lengthVec3dd(v - this->sphere) - this->r;
     };
 }
 
@@ -118,5 +118,32 @@ SDFRenderableSubstraction::SDFRenderableSubstraction(const SDFRenderable &d1,
 {
     this->F = [this](Vector3dd v) {
         return std::max(-this->d2.F(v), this->d1.F(v));
+    };
+}
+
+SDFRenderableUnion::SDFRenderableUnion(const SDFRenderable &d1,
+                                                     const SDFRenderable &d2):
+    d1(d1),
+    d2(d2)
+{
+    this->F = [this](Vector3dd v) {
+      double d1 = this->d2.F(v);
+      double d2 = this->d1.F(v);
+      return std::min(d1, d2);
+    };
+}
+
+SDFRenderableBlend::SDFRenderableBlend(const SDFRenderable &d1,
+                                                     const SDFRenderable &d2):
+    d1(d1),
+    d2(d2)
+{
+    this->F = [this](Vector3dd v) {
+        long double a = this->d2.F(v);
+        long double b = this->d1.F(v);
+        long double k = 6.00;
+        a = pow( a, k );
+        b = pow( b, k );
+        return pow( ((long double)a * b)/(a + b), 1.0/k );
     };
 }

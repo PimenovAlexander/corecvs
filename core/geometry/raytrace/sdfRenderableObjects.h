@@ -85,5 +85,21 @@ class SDFRenderableSubstraction : public SDFRenderable{
 public:
     SDFRenderableSubstraction(const SDFRenderable &d1, const SDFRenderable &d2);
 };
+
+class SDFRenderableUnion : public SDFRenderable{
+    SDFRenderable d1;
+    SDFRenderable d2;
+
+public:
+    SDFRenderableUnion(const SDFRenderable &d1, const SDFRenderable &d2);
+};
+
+class SDFRenderableBlend : public SDFRenderable{
+    SDFRenderable d1;
+    SDFRenderable d2;
+
+public:
+    SDFRenderableBlend(const SDFRenderable &d1, const SDFRenderable &d2);
+};
 #endif // SDFRENDERABLEOBJECTS_H
 

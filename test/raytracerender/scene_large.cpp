@@ -5,9 +5,7 @@
 #include "core/fileformats/bmpLoader.h"
 #include "core/utils/preciseTimer.h"
 #include "core/buffers/bufferFactory.h"
-#include "core/geometry/raytrace/sdfRenderable.h"
 #include "core/geometry/raytrace/sdfRenderableObjects.h"
-//#include "core/math/vector/vector3ddUtils.h"
 
 void raytrace_scene_large( void )
 {
@@ -171,6 +169,79 @@ bool addLevel(const Matrix44 &transform, RaytraceableUnion &output, int depth, d
     return true;
 }
 
+void raytrace_scene_union_and_blend( void )
+{
+      SYNC_PRINT(("raytrace_scene_union_and_blend( void )\n"));
+
+
+      int h = 400;
+      int w = 400;
+      RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::Black());
+
+      RaytraceRenderer renderer;
+      renderer.setProjection(new PinholeCameraIntrinsics(
+                  Vector2dd(w, h),
+                  degToRad(60.0)));
+
+      renderer.position = Affine3DQ::Identity();
+      renderer.sky = new RaytraceableSky1();
+
+      RaytraceablePointLight light1(RGBColor::White() .toDouble(), Vector3dd(  0, -190, 150));
+      RaytraceablePointLight light2(RGBColor::Yellow().toDouble(), Vector3dd(-120, -70,  50));
+
+
+/*
+      SDFRenderableCylinder spherer = SDFRenderableCylinder(
+                        Vector3dd(20.0, 40.0, 150.0), Vector2d<double>(5.0, 12.0));
+      SDFRenderableBox box2 = SDFRenderableBox(
+                  Vector3dd(15.0, 40.0, 150.0), Vector3dd(7.0, 5.0, 12.0));
+
+      SDFRenderableCylinder spherer2 = SDFRenderableCylinder(
+                        Vector3dd(-20.0, 40.0, 150.0), Vector2d<double>(5.0, 12.0));
+      SDFRenderableBox box22 = SDFRenderableBox(
+                  Vector3dd(-15.0, 40.0, 150.0), Vector3dd(7.0, 5.0, 12.0));
+*/
+      SDFRenderableSphere spherer = SDFRenderableSphere(
+                  Vector3dd(50,20, 150.0), 10.0);
+      SDFRenderableSphere box2 = SDFRenderableSphere(
+                  Vector3dd(43,20, 150.0), 10.0);
+
+      SDFRenderableSphere spherer2 = SDFRenderableSphere(
+                  Vector3dd(0,-20, 150.0), 10.0);
+      SDFRenderableSphere box22 = SDFRenderableSphere(
+                  Vector3dd(-7,-20, 150.0), 10.0);
+
+      SDFRenderableBlend sphereSub = SDFRenderableBlend(
+                  box2, spherer);
+      SDFRenderableUnion sphereUn = SDFRenderableUnion(
+                  box22, spherer2);
+
+      RGBColor color = RGBColor::lerpColor(RGBColor::Brown(), RGBColor::Brown(), (double) 50/ 5.0);
+
+
+      sphereSub.name = "SphereSubstraction";
+      sphereSub.color = RGBColor::Red().toDouble();
+      sphereSub.material = MaterialExamples::ex3(color);
+
+
+      sphereUn.name = "SphereSubstraction";
+      sphereUn.color = RGBColor::Red().toDouble();
+      sphereUn.material = MaterialExamples::ex3(color);
+
+      RaytraceableUnion scene;
+      scene.elements.push_back(&sphereSub);
+      scene.elements.push_back(&sphereUn);
+
+      renderer.object = &scene;
+      renderer.lights.push_back(&light1);
+      renderer.lights.push_back(&light2);
+
+      renderer.trace(buffer);
+
+      BMPLoader().save("union-vs-blend.bmp", buffer);
+
+      delete_safe(buffer);
+}
 void raytrace_scene_tree( void )
 {
       SYNC_PRINT(("raytrace_scene_tree( void )\n"));
