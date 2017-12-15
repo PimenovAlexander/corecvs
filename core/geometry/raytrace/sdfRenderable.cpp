@@ -17,7 +17,7 @@ bool SDFRenderable::intersect(RayIntersection &intersection)
     for (int i = 0; i < LIMIT; i++)
     {
         double d = F(walk);
-        l += fabs(d);
+
 
         if (fabs(d) < 0.00000001) {
 
@@ -35,6 +35,7 @@ bool SDFRenderable::intersect(RayIntersection &intersection)
             //SYNC_PRINT(("d=%lf (%lf) (%lf %lf %lf)\n", l, d, normal.x(), normal.y(), normal.z()));
             return true;
         }
+        l += fabs(d);
         if (fabs(d) > 1e10) {
             return false;
         }

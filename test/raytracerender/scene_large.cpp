@@ -5,8 +5,7 @@
 #include "core/fileformats/bmpLoader.h"
 #include "core/utils/preciseTimer.h"
 #include "core/buffers/bufferFactory.h"
-#include "core/geometry/raytrace/sdfRenderable.h"
-
+#include "core/geometry/raytrace/sdfRenderableObjects.h"
 
 void raytrace_scene_large( void )
 {
@@ -27,52 +26,85 @@ void raytrace_scene_large( void )
       RaytraceablePointLight light1(RGBColor::White() .toDouble(), Vector3dd(  0, -190, 150));
       RaytraceablePointLight light2(RGBColor::Yellow().toDouble(), Vector3dd(-120, -70,  50));
 
-      SDFRenderable object;
-      object.F = [](Vector3dd v) {
-          //double step = 200;
-          Vector3dd c1 = Vector3dd(0,-30, 150.0);
-          Vector3dd c2 = Vector3dd(0, 40, 150.0);
 
-          double d1 = 20.0 - sqrt((v - c1).sumAllElementsSq());
-          double d2 = 20.0 - sqrt((v - c2).sumAllElementsSq());
+      SDFRenderableBox box = SDFRenderableBox(
+                  Vector3dd(-50.0, 40.0, 110.0), Vector3dd(5.0, 20.0, 2.0));
+      SDFRenderableEllipsoid ellipsoid = SDFRenderableEllipsoid(
+                  Vector3dd(-50.0, 0.0, 140.0), Vector3dd(20.0, 7.0, 25.0));
+      SDFRenderableRoundedBox roundBox = SDFRenderableRoundedBox(
+                  Vector3dd(-50.0, -40.0, 110.0), Vector3dd(7.0, 10.0, 3.0), 1.0);
+      SDFRenderableTorus torus = SDFRenderableTorus(
+                  Vector3dd(60.0, 60.0, 130.0), Vector2d<double>(10.0, 2.0));
+      SDFRenderableCone cone = SDFRenderableCone(
+                  Vector3dd(0.0, 40.0, 120.0), Vector3dd(1.5, 2.1, 4.1));
+      SDFRenderableCylinder cylinder = SDFRenderableCylinder(
+                  Vector3dd(50.0, -40.0, 130.0), Vector2d<double>(15.0, 12.0));
+      SDFRenderableSphere spherer = SDFRenderableSphere(
+                  Vector3dd(50,20, 150.0), 20.0);
+      SDFRenderableSphere sphere = SDFRenderableSphere(
+                  Vector3dd(-10, -20, 150.0), 20.0);
+      SDFRenderableTorus88 torus88 = SDFRenderableTorus88(
+                  Vector3dd(20.0, 60.0, 130.0), Vector2d<double>(10.0, 2.0));
+      SDFRenderableTorus82 torus82 = SDFRenderableTorus82(
+                  Vector3dd(-20.0, 60.0, 130.0), Vector2d<double>(7.0, 2.0));
+      SDFRenderableBox box2 = SDFRenderableBox(
+                  Vector3dd(50, 20, 150.0), Vector3dd(18.0, 18.0, 18.0));
+      SDFRenderableSubstraction sphereSub = SDFRenderableSubstraction(
+                  box2, spherer);
 
-          if (fabs(d1) > fabs(d2))
-          {
-              return d2;
-          }
-          return d1;
-      };
+      ellipsoid.name = "ellipsoid";
+      ellipsoid.color = RGBColor::Red().toDouble();
+      ellipsoid.material = MaterialExamples::bumpy();
 
-      SDFRenderable object1;
-      object1.F = [](Vector3dd v) {
-          //double step = 200;
-          Vector3dd c1 = Vector3dd(50,-15, 150.0);
-          Vector3dd c2 = Vector3dd(50, 15, 150.0);
+      sphere.name = "Sphere1";
+      sphere.color = RGBColor::Red().toDouble();
+      sphere.material = MaterialExamples::bumpy();
 
-          double d1 = 20.0 - sqrt((v - c1).sumAllElementsSq());
-          double d2 = 20.0 - sqrt((v - c2).sumAllElementsSq());
+      RGBColor color = RGBColor::lerpColor(RGBColor::Brown(), RGBColor::Green(), (double) 50/ 5.0);
+      box.name = "Box";
+      box.color = RGBColor::Red().toDouble();
+      box.material = MaterialExamples::ex3(color);
 
-          return -1 / ((-1 / d1) + (-1 / d2));
-      };
+      roundBox.name = "RoundBox";
+      roundBox.color = RGBColor::Red().toDouble();
+      roundBox.material = MaterialExamples::ex3(color);
 
-      object.name = "Sphere1";
-      object.color = RGBColor::Red().toDouble();
-      object.material = MaterialExamples::bumpy();
+      torus.name = "Torus";
+      torus.color = RGBColor::Red().toDouble();
+      torus.material = MaterialExamples::bumpy();
 
-      object1.name = "Sphere2";
-      object1.color = RGBColor::Red().toDouble();
-      object1.material = MaterialExamples::bumpy();
+      torus88.name = "Torus88";
+      torus88.color = RGBColor::Red().toDouble();
+      torus88.material = MaterialExamples::ex3(color);
 
+      torus82.name = "Torus82";
+      torus82.color = RGBColor::Red().toDouble();
+      torus82.material = MaterialExamples::bumpy();
 
-      RaytraceableSphere sphere2(Sphere3d(Vector3dd(-80,0, 250.0), 50.0));
-      sphere2.name = "Sphere2";
-      sphere2.color = RGBColor::Red().toDouble();
-      sphere2.material = MaterialExamples::bumpy();
+      cone.name = "Cone";
+      cone.color = RGBColor::Red().toDouble();
+      cone.material = MaterialExamples::ex3(color);
+
+      cylinder.name = "Cylinder";
+      cylinder.color = RGBColor::Red().toDouble();
+      cylinder.material = MaterialExamples::bumpy();
+
+      sphereSub.name = "SphereSubstraction";
+      sphereSub.color = RGBColor::Red().toDouble();
+      sphereSub.material = MaterialExamples::ex3(color);
 
       RaytraceableUnion scene;
-      scene.elements.push_back(&object);
-      scene.elements.push_back(&object1);
-      scene.elements.push_back(&sphere2);
+      scene.elements.push_back(&ellipsoid);
+      scene.elements.push_back(&sphere);
+      scene.elements.push_back(&sphereSub);
+      scene.elements.push_back(&torus);
+      scene.elements.push_back(&torus88);
+      scene.elements.push_back(&torus82);
+      scene.elements.push_back(&roundBox);
+      scene.elements.push_back(&box);
+      scene.elements.push_back(&cone);
+      scene.elements.push_back(&cylinder);
+
 
       renderer.object = &scene;
       renderer.lights.push_back(&light1);
@@ -137,6 +169,79 @@ bool addLevel(const Matrix44 &transform, RaytraceableUnion &output, int depth, d
     return true;
 }
 
+void raytrace_scene_union_and_blend( void )
+{
+      SYNC_PRINT(("raytrace_scene_union_and_blend( void )\n"));
+
+
+      int h = 400;
+      int w = 400;
+      RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::Black());
+
+      RaytraceRenderer renderer;
+      renderer.setProjection(new PinholeCameraIntrinsics(
+                  Vector2dd(w, h),
+                  degToRad(60.0)));
+
+      renderer.position = Affine3DQ::Identity();
+      renderer.sky = new RaytraceableSky1();
+
+      RaytraceablePointLight light1(RGBColor::White() .toDouble(), Vector3dd(  0, -190, 150));
+      RaytraceablePointLight light2(RGBColor::Yellow().toDouble(), Vector3dd(-120, -70,  50));
+
+
+/*
+      SDFRenderableCylinder spherer = SDFRenderableCylinder(
+                        Vector3dd(20.0, 40.0, 150.0), Vector2d<double>(5.0, 12.0));
+      SDFRenderableBox box2 = SDFRenderableBox(
+                  Vector3dd(15.0, 40.0, 150.0), Vector3dd(7.0, 5.0, 12.0));
+
+      SDFRenderableCylinder spherer2 = SDFRenderableCylinder(
+                        Vector3dd(-20.0, 40.0, 150.0), Vector2d<double>(5.0, 12.0));
+      SDFRenderableBox box22 = SDFRenderableBox(
+                  Vector3dd(-15.0, 40.0, 150.0), Vector3dd(7.0, 5.0, 12.0));
+*/
+      SDFRenderableSphere spherer = SDFRenderableSphere(
+                  Vector3dd(50,20, 150.0), 10.0);
+      SDFRenderableSphere box2 = SDFRenderableSphere(
+                  Vector3dd(43,20, 150.0), 10.0);
+
+      SDFRenderableSphere spherer2 = SDFRenderableSphere(
+                  Vector3dd(0,-20, 150.0), 10.0);
+      SDFRenderableSphere box22 = SDFRenderableSphere(
+                  Vector3dd(-7,-20, 150.0), 10.0);
+
+      SDFRenderableBlend sphereSub = SDFRenderableBlend(
+                  box2, spherer);
+      SDFRenderableUnion sphereUn = SDFRenderableUnion(
+                  box22, spherer2);
+
+      RGBColor color = RGBColor::lerpColor(RGBColor::Brown(), RGBColor::Brown(), (double) 50/ 5.0);
+
+
+      sphereSub.name = "SphereSubstraction";
+      sphereSub.color = RGBColor::Red().toDouble();
+      sphereSub.material = MaterialExamples::ex3(color);
+
+
+      sphereUn.name = "SphereSubstraction";
+      sphereUn.color = RGBColor::Red().toDouble();
+      sphereUn.material = MaterialExamples::ex3(color);
+
+      RaytraceableUnion scene;
+      scene.elements.push_back(&sphereSub);
+      scene.elements.push_back(&sphereUn);
+
+      renderer.object = &scene;
+      renderer.lights.push_back(&light1);
+      renderer.lights.push_back(&light2);
+
+      renderer.trace(buffer);
+
+      BMPLoader().save("union-vs-blend.bmp", buffer);
+
+      delete_safe(buffer);
+}
 void raytrace_scene_tree( void )
 {
       SYNC_PRINT(("raytrace_scene_tree( void )\n"));
