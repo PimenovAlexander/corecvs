@@ -59,8 +59,7 @@ HEADERS += \
     math/matrix/similarityReconstructor.h \
     math/sse/doublexT4.h \
     math/extensiveCoding.h \
-    math/wisdom.h \
-    $$PWD/vector/vectorUtils.h
+    math/wisdom.h
 
 SOURCES += \
     math/matrix/matrix.cpp \

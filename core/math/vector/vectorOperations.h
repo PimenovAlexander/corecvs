@@ -418,6 +418,21 @@ public:
     }
 
     /**
+     * Sum of the powers of element of the vector.
+     *
+     * \f[\sum_{i=0}^n {V_i^k}\f]
+     *
+     **/
+    template<int pow>
+    inline ElementType sumAllElementsPow() const
+    {
+        ElementType result(0);
+        for (int i = 0; i < _size(); i++)
+            result += pow(_at(i), pow);
+        return result;
+    }
+
+    /**
      * Euclidean distance
      *
      * \f[D = \sqrt{\sum_{i=0}^n {V_i^2}} \f]
@@ -427,6 +442,19 @@ public:
     {
         /* TODO ASAP: Correct this to select appropriate sqrt */
         return (ElementType)sqrt(this->sumAllElementsSq());
+    }
+
+    /**
+     * Ln norm distance
+     *
+     * \f[D = \sqrt{\sum_{i=0}^n {V_i^2}} \f]
+     *
+     **/
+    template <int pow>
+    inline ElementType lnMetric() const
+    {
+        /* TODO ASAP: Correct this to select appropriate sqrt */
+        return (ElementType)pow(sumAllElementsPow<pow>, (1.0 / (double)pow));
     }
 
     inline ElementType l2MetricStable() const
