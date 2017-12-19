@@ -6,7 +6,7 @@ SDFRenderableSphere::SDFRenderableSphere(const Vector3dd &sphere, double r) :
     r(r)
 {
     this->F = [this](Vector3dd v) {
-        return lengthVec3dd(v - this->sphere) - this->r;
+        return (v - this->sphere).l2Metric() - this->r;
     };
 }
 
@@ -17,7 +17,7 @@ SDFRenderableEllipsoid::SDFRenderableEllipsoid(const Vector3dd &pos, const Vecto
     this->F = [this](Vector3dd v) {
         Vector3dd p = v - this->pos;
         Vector3dd r = this->dim;
-        return (lengthVec3dd( p/r ) - 1.0) * std::min(std::min(r.x(),r.y()),r.z());
+        return (( p/r ).l2Metric() - 1.0) * std::min(std::min(r.x(),r.y()),r.z());
     };
 }
 
@@ -27,9 +27,9 @@ SDFRenderableBox::SDFRenderableBox(const Vector3dd &pos, const Vector3dd dim):
      dim(dim)
  {
      this->F = [this](Vector3dd v) {
-         Vector3dd d = absVec3dd(v -this-> pos) - this->dim;
+         Vector3dd d = (v - this->pos).perElementAbs() - this->dim;
          return std::min(std::max(d.x(),std::max(d.y(),d.z())),0.0)
-                 + lengthVec3dd(maxVec3dd(d,Vector3dd(0.0, 0.0, 0.0)));
+                 + d.perElementMax(Vector3dd::Zero()).l2Metric();
      };
  }
 
@@ -41,7 +41,7 @@ SDFRenderableRoundedBox::SDFRenderableRoundedBox(
 {
     this->F = [this](Vector3dd v) {
         Vector3dd d = (v - this-> pos);
-        return lengthVec3dd(maxVec3dd(absVec3dd(d)-this->dim,Vector3dd(0.0, 0.0, 0.0)))-this->r;
+        return ((d.perElementAbs() - this->dim).perElementMax(Vector3dd::Zero())).l2Metric() - this->r;
     };
 }
 
@@ -52,7 +52,7 @@ SDFRenderableTorus::SDFRenderableTorus(const Vector3dd &pos, const Vector2dd dim
 {
     this->F = [this](Vector3dd v) {
         Vector3dd d = v - this->pos;
-        double xzlen = sqrt(d.x()*d.x() + d.z()*d.z()) - this->dim.x();
+        double xzlen = d.xz().l2Metric() - this->dim.x();
         return sqrt(xzlen*xzlen + d.y()*d.y()) - this->dim.y();
     };
 }
@@ -76,7 +76,7 @@ SDFRenderableTorus82::SDFRenderableTorus82(const Vector3dd &pos, const Vector2dd
     this->F = [this](Vector3dd v) {
         Vector3dd d = v - this->pos;
         Vector2dd t = this->dim;
-        Vector2dd q = Vector2dd(lengthVec2dd(Vector2dd(d.x(), d.z())) - t.x(), d.y());
+        Vector2dd q = Vector2dd((Vector2dd(d.x(), d.z())).l2Metric() - t.x(), d.y());
         return length8Vec2dd(q) - t.y();
     };
 }
@@ -87,12 +87,11 @@ SDFRenderableCone::SDFRenderableCone(const Vector3dd &pos, const Vector3dd dim):
 {
     this->F = [this](Vector3dd v) {
         Vector3dd p = v - this->pos;
-        Vector2dd q = Vector2dd(lengthVec2dd(Vector2dd(p.x(), p.z())), p.y());
+        Vector2dd q = Vector2dd(Vector2dd(p.x(), p.z()).l2Metric(), p.y());
         Vector3dd c = this->dim;
         double d1 = -q.y()-c.z();
-        double d2 = std::max(dotVec2dd(q,Vector2dd(c.x(),c.y())), q.y());
-        return lengthVec2dd(
-                    maxVec2dd(Vector2dd(d1,d2),Vector2dd(0.0, 0.0)))
+        double d2 = std::max(q & Vector2dd(c.x(),c.y()), q.y());
+        return Vector2dd(d1,d2).perElementMax(Vector2dd(0.0, 0.0)).l2Metric()
                 + std::min(std::max(d1,d2), 0.0);
     };
 }
@@ -104,10 +103,10 @@ SDFRenderableCylinder::SDFRenderableCylinder(const Vector3dd &pos, const Vector2
     this->F = [this](Vector3dd v) {
         Vector3dd d = v - this->pos;
         Vector2dd ne = Vector2d<double>(
-                    std::abs(sqrt(d.x() * d.x() + d.z() * d.z())),
+                    std::abs(d.xz().l2Metric()),
                     std::abs(d.y()));
         Vector2dd dd = ne - this->dim;
-        return std::min(std::max(dd.x(),dd.y()),0.0) + lengthVec2dd(maxVec2dd(dd,Vector2dd(0.0, 0.0)));
+        return std::min(std::max(dd.x(),dd.y()),0.0) + dd.perElementMax(Vector2dd(0.0, 0.0)).l2Metric();
     };
 }
 
