@@ -1064,7 +1064,7 @@ template<typename operation>
         }
     }
 
-friend ostream & operator <<(ostream &out, const AbstractBuffer &buffer)
+friend std::ostream & operator <<(std::ostream &out, const AbstractBuffer &buffer)
     {
         // typedef AbstractBuffer::InternalIndexType IndexType;
         //
@@ -1081,7 +1081,7 @@ friend ostream & operator <<(ostream &out, const AbstractBuffer &buffer)
 
     template<typename T=ElementType, typename I=IndexType>
     typename std::enable_if<AbstractBuffer<T, I>::TRIVIALLY_COPY_CONSTRUCTIBLE, bool>::type
-    dump(ostream& s, bool binaryMode) const
+    dump(std::ostream& s, bool binaryMode) const
     {
         AbstractBufferParams<I>::dump(s, sizeof(ElementType), binaryMode);
         if (binaryMode) {
@@ -1092,7 +1092,7 @@ friend ostream & operator <<(ostream &out, const AbstractBuffer &buffer)
 
     template<typename T=ElementType, typename I=IndexType>
     typename std::enable_if<AbstractBuffer<T, I>::TRIVIALLY_COPY_CONSTRUCTIBLE, bool>::type
-    load(istream& s, bool binaryMode)
+    load(std::istream& s, bool binaryMode)
     {
         if (!AbstractBufferParams<I>::load(s, sizeof(ElementType), binaryMode))
             return false;

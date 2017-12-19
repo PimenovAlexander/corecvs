@@ -111,7 +111,7 @@ public:
     friend UInt16x8 productHigherPart (const UInt16x8 &left, const UInt16x8 &right);
 
     /*Print to stream helper */
-    friend ostream & operator << (ostream &out, const UInt16x8 &vector);
+    friend std::ostream & operator << (std::ostream &out, const UInt16x8 &vector);
 };
 
 

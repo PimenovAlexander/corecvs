@@ -91,7 +91,7 @@ HEADERS += \
     distortioncorrector/calibrationFeaturesWidget.h \
     uis/cloudview/scene3dTreeView.h \
     scannercontrol.h \
-    capture/abstractManipulatorInterface.h \
+#    capture/abstractManipulatorInterface.h \
     corestructs/cameraModel/affine3dControlWidget.h \
     corestructs/cameraModel/fixtureControlWidget.h \
     widgets/observationListModel.h \

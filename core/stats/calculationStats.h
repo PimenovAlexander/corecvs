@@ -238,7 +238,7 @@ public:
     }
 
 
-    friend ostream & operator <<(ostream &out, const Statistics &stats)
+    friend std::ostream & operator <<(std::ostream &out, const Statistics &stats)
     {
         for(auto &stat : stats.mValues)
         {
@@ -457,9 +457,9 @@ template <class StreamType>
 
     class AdvancedSteamPrinter {
     public:
-        ostream &outStream;
+        std::ostream &outStream;
 
-        AdvancedSteamPrinter(ostream &stream) : outStream(stream)
+        AdvancedSteamPrinter(std::ostream &stream) : outStream(stream)
         {}
 
         void printUnitedStat(const string &name, int length, const UnitedStat &stat, int /*lineNum*/)
@@ -486,7 +486,7 @@ template <class StreamType>
         }
     };
 
-    virtual void printAdvanced(ostream &stream)
+    virtual void printAdvanced(std::ostream &stream)
     {
         stream << "=============================================================\n";
         AdvancedSteamPrinter printer(stream);

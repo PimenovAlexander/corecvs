@@ -536,7 +536,7 @@ template<class VisitorType>
         visitor.visit(t(), ElementType(0), "t");
     }
 
-    void printAxisAndAngle(std::ostream &out = cout)
+    void printAxisAndAngle(std::ostream &out = std::cout)
     {
         GenericQuaternion o = this->normalised().positivised();
         Vector3dd axis = o.getAxis();

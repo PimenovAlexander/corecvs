@@ -6,6 +6,9 @@
 
 namespace corecvs {
 
+using std::istream;
+using std::ostream;
+
 struct PointObservation
 {
     Vector3dd point;
@@ -41,7 +44,7 @@ struct PointObservation
         }
 
 
-    friend ostream & operator <<(ostream &out, const PointObservation &observation)
+    friend std::ostream & operator <<(std::ostream &out, const PointObservation &observation)
     {
         out << "(" << observation.point << " -> " << observation.projection << ")";
         return out;

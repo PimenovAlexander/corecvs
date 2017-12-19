@@ -14,6 +14,9 @@
 namespace corecvs {
 
 using std::hex;
+using std::istream;
+using std::ostream;
+using std::cout;
 
 void LUTable::generateCCode()
 {

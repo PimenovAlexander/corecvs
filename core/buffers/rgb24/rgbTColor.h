@@ -519,7 +519,7 @@ public:
         visitor.visit(a(), static_cast<const IntField *>(reflect.fields[FIELD_A]));
     }
 
-    friend ostream & operator <<(ostream &out, const RGBTColor &color)
+    friend std::ostream & operator <<(std::ostream &out, const RGBTColor &color)
     {
         out << "[";
         out << (uint64_t)color.r() << ", " << (uint64_t)color.g() << ", " << (uint64_t)color.b() << " (" << (uint64_t)color.a() << ")";
@@ -527,7 +527,7 @@ public:
         return out;
     }
 
-    friend istream & operator >>(istream &out, RGBTColor &color)
+    friend std::istream & operator >>(std::istream &out, RGBTColor &color)
     {
         T v;
         out >> v;

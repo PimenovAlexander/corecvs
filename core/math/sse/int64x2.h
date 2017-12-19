@@ -139,7 +139,7 @@ public:
 
 
     /* Print to stream helper */
-    friend ostream & operator << (ostream &out, const Int64x2 &vector);
+    friend std::ostream & operator << (std::ostream &out, const Int64x2 &vector);
 
 };
 

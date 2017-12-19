@@ -22,6 +22,10 @@ uint64_t Int16x8::streamedWrites   = 0;
 
 #ifdef WITH_SSE
 
+using std::istream;
+using std::ostream;
+using std::cout;
+
 ostream & operator <<(ostream &out, const Int16x8 &vector)
 {
    ALIGN_DATA(16) int16_t data[8];

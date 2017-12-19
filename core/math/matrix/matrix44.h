@@ -157,7 +157,7 @@ public:
     ~Matrix44();
 
 
-    friend ostream & operator <<(ostream &out, const Matrix44 &matrix)
+    friend std::ostream & operator <<(std::ostream &out, const Matrix44 &matrix)
     {
         streamsize wasPrecision = out.precision(6);
         for (int i = 0; i < matrix.H; i++)
@@ -175,7 +175,7 @@ public:
         return out;
     }
 
-    friend istream & operator >>(istream &in, Matrix44 &matrix)
+    friend std::istream & operator >>(std::istream &in, Matrix44 &matrix)
     {
         for (int i = 0; i < matrix.H; i++)
         {

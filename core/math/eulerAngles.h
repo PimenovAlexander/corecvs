@@ -34,7 +34,7 @@ public:
     , gamma(_gamma)
     {}
 
-    friend ostream & operator <<(ostream &out, const EulerAngles &angels)
+    friend std::ostream & operator <<(std::ostream &out, const EulerAngles &angels)
     {
         out << "[alpha=" << angels.alpha << ", beta=" << angels.beta <<  ", gamma=" << angels.gamma  << "]";
         return out;

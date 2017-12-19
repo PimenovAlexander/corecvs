@@ -85,7 +85,7 @@ public:
 
 
 
-    friend ostream & operator <<(ostream &out, const UnifiedSphere &sphere)
+    friend std::ostream & operator <<(std::ostream &out, const UnifiedSphere &sphere)
     {
         out << "[" << sphere.c << "] (" << sphere.r << ")";
         return out;

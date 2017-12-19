@@ -276,7 +276,7 @@ template<int idx>
 
     /*Print to stream helper */
 
-    friend ostream & operator << (ostream &out, const UInt8x16 &vector);
+    friend std::ostream & operator << (std::ostream &out, const UInt8x16 &vector);
 
     /*TODO: Add shuffling*/
 

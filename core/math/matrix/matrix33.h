@@ -191,10 +191,10 @@ public:
 
     void print() const
     {
-        cout << *this;
+        std::cout << *this;
     }
 
-    void serialise (ostream &out) const
+    void serialise (std::ostream &out) const
     {
         streamsize oldPrec = out.precision(numeric_limits<double>::digits10 + 3);
         out << *this;
@@ -202,7 +202,7 @@ public:
     }
 
     /* TODO: to matrixOperations */
-    friend ostream & operator <<(ostream &out, const Matrix33 &matrix)
+    friend std::ostream & operator <<(std::ostream &out, const Matrix33 &matrix)
     {
         //streamsize wasPrecision = out.precision(6);
         for (int i = 0; i < matrix.H; i++)
@@ -221,7 +221,7 @@ public:
     }
 
     /* TODO: to matrixOperations */
-    friend istream & operator >>(istream &in, Matrix33 &matrix)
+    friend std::istream & operator >>(std::istream &in, Matrix33 &matrix)
     {
         for (int i = 0; i < matrix.H; i++)
         {

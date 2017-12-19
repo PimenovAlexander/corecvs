@@ -11,7 +11,7 @@ namespace corecvs {
  * These are useful methods to serialize integer types not depending on the current endianess
  */
 template <typename IntegerType>
-ostream& write_integer_bin(ostream& os, IntegerType value)
+std::ostream& write_integer_bin(std::ostream& os, IntegerType value)
 {
     for (unsigned size = sizeof(IntegerType); size != 0; size--, value >>= 8) {
         os.put(static_cast<char>(value & 0xFF));
@@ -20,7 +20,7 @@ ostream& write_integer_bin(ostream& os, IntegerType value)
 }
 
 template <typename IntegerType>
-istream& read_integer_bin(istream& is, IntegerType& value)
+std::istream& read_integer_bin(std::istream& is, IntegerType& value)
 {
     value = 0;
     for (unsigned size = 0; size < sizeof(IntegerType); size++) {
@@ -57,19 +57,19 @@ protected:
     void    setW     (IndexType _w)           { w      = _w; }
     void    setStride(IndexType _s)           { stride = _s; }
 
-    static  bool_t dump(ostream& s, int  h, int  w, int  stride, uint elemSize, bool_t binaryMode);
-    static  bool_t load(istream& s, int &h, int &w, int &stride, uint elemSize, bool_t binaryMode);
+    static  bool_t dump(std::ostream& s, int  h, int  w, int  stride, uint elemSize, bool_t binaryMode);
+    static  bool_t load(std::istream& s, int &h, int &w, int &stride, uint elemSize, bool_t binaryMode);
 
-    static  bool_t write(ostream& s, int    val, bool_t binaryMode);
-    static  bool_t read (istream& s, int   &val, bool_t binaryMode);
-    static  bool_t write(ostream& s, cchar* str, bool_t binaryMode);
-    static  bool_t read (istream& s,  char* str, size_t size, bool_t binaryMode);
+    static  bool_t write(std::ostream& s, int    val, bool_t binaryMode);
+    static  bool_t read (std::istream& s, int   &val, bool_t binaryMode);
+    static  bool_t write(std::ostream& s, cchar* str, bool_t binaryMode);
+    static  bool_t read (std::istream& s,  char* str, size_t size, bool_t binaryMode);
 
 template<size_t size>
-    static  bool_t read (istream& s, char (&str)[size], bool_t binaryMode) { return read(s, (char*)str, size, binaryMode); }
+    static  bool_t read (std::istream& s, char (&str)[size], bool_t binaryMode) { return read(s, (char*)str, size, binaryMode); }
 
-    bool_t  dump(ostream& s, uint elemSize, bool_t binaryMode) const { return dump(s, h, w, stride, elemSize, binaryMode); }
-    bool_t  load(istream& s, uint elemSize, bool_t binaryMode)       { return load(s, h, w, stride, elemSize, binaryMode); }
+    bool_t  dump(std::ostream& s, uint elemSize, bool_t binaryMode) const { return dump(s, h, w, stride, elemSize, binaryMode); }
+    bool_t  load(std::istream& s, uint elemSize, bool_t binaryMode)       { return load(s, h, w, stride, elemSize, binaryMode); }
 };
 
 
@@ -78,7 +78,7 @@ const cchar* AbstractBufferParams<IndexType>::sFormatStr = "#dims:%d (%d) x %d x
 
 
 template<typename IndexType>
-bool_t AbstractBufferParams<IndexType>::dump(ostream& s, int h, int w, int stride, uint elemSize, bool_t binaryMode)
+bool_t AbstractBufferParams<IndexType>::dump(std::ostream& s, int h, int w, int stride, uint elemSize, bool_t binaryMode)
 {
     if (binaryMode)
     {
@@ -97,7 +97,7 @@ bool_t AbstractBufferParams<IndexType>::dump(ostream& s, int h, int w, int strid
 }
 
 template<typename IndexType>
-bool_t AbstractBufferParams<IndexType>::load(istream& s, int &h, int &w, int &stride, uint elemSize, bool_t binaryMode)
+bool_t AbstractBufferParams<IndexType>::load(std::istream& s, int &h, int &w, int &stride, uint elemSize, bool_t binaryMode)
 {
     int width, stridePix, height, elSize;
     size_t pos = s.tellg();
@@ -130,7 +130,7 @@ bool_t AbstractBufferParams<IndexType>::load(istream& s, int &h, int &w, int &st
 }
 
 template<typename IndexType>
-bool_t AbstractBufferParams<IndexType>::write(ostream& s, int val, bool_t binaryMode)
+bool_t AbstractBufferParams<IndexType>::write(std::ostream& s, int val, bool_t binaryMode)
 {
     if (binaryMode)
     {
@@ -145,7 +145,7 @@ bool_t AbstractBufferParams<IndexType>::write(ostream& s, int val, bool_t binary
 
 
 template<typename IndexType>
-bool_t AbstractBufferParams<IndexType>::read(istream& s, int &val, bool_t binaryMode)
+bool_t AbstractBufferParams<IndexType>::read(std::istream& s, int &val, bool_t binaryMode)
 {
     int value;
     size_t pos = s.tellg();
@@ -171,7 +171,7 @@ bool_t AbstractBufferParams<IndexType>::read(istream& s, int &val, bool_t binary
 
 
 template<typename IndexType>
-bool_t AbstractBufferParams<IndexType>::write(ostream& s, cchar* str, bool_t binaryMode)
+bool_t AbstractBufferParams<IndexType>::write(std::ostream& s, cchar* str, bool_t binaryMode)
 {
     s << str << std::endl;
     CORE_UNUSED(binaryMode);
@@ -180,7 +180,7 @@ bool_t AbstractBufferParams<IndexType>::write(ostream& s, cchar* str, bool_t bin
 
 
 template<typename IndexType>
-bool_t AbstractBufferParams<IndexType>::read(istream& s, char* str, size_t size, bool_t binaryMode)
+bool_t AbstractBufferParams<IndexType>::read(std::istream& s, char* str, size_t size, bool_t binaryMode)
 {
     if (str != NULL && size) {
         s.getline(str, size);                               // read one line to the output buffer

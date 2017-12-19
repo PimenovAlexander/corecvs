@@ -24,7 +24,7 @@ public:
     FloatFlowVector(Vector2dd _start, Vector2dd _end) :
         start(_start), end(_end) {}
 
-    friend ostream & operator <<(ostream &out, const FloatFlowVector &flowVector)
+    friend std::ostream & operator <<(std::ostream &out, const FloatFlowVector &flowVector)
     {
         out << "[" << flowVector.start << " = > " << flowVector.end << "]";
         return out;

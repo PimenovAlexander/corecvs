@@ -573,7 +573,7 @@ public:
     }
 
 
-    friend ostream & operator <<(ostream &out, const EllipticalApproximation1d &stats)
+    friend std::ostream & operator <<(std::ostream &out, const EllipticalApproximation1d &stats)
     {
         out << "Min:" << stats.getMin()  << endl;
         out << "Max:" << stats.getMax()  << endl;

@@ -138,7 +138,7 @@ template<typename DeformMapType>
     void print();
     bool verify();
 
-    friend ostream & operator <<(ostream &out, const G12Buffer &buffer);
+    friend std::ostream & operator <<(std::ostream &out, const G12Buffer &buffer);
 
     virtual ~G12Buffer();
 

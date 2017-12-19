@@ -138,7 +138,7 @@ template<int idx>
     friend Doublex4 operator /=(Doublex4 &left, const Doublex4 &right);
 
     /*Print to stream helper */
-    friend ostream & operator << (ostream &out, const Doublex4 &vector);
+    friend std::ostream & operator << (std::ostream &out, const Doublex4 &vector);
 
 };
 

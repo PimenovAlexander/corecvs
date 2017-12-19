@@ -147,7 +147,7 @@ public:
         return 1.0;
     }
 
-    friend ostream & operator <<(ostream &out, const UpperUnitaryMatrix &matrix)
+    friend std::ostream & operator <<(std::ostream &out, const UpperUnitaryMatrix &matrix)
     {
         streamsize wasPrecision = out.precision(6);
         int count = 0;

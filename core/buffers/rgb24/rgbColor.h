@@ -592,7 +592,7 @@ template<class VisitorType>
         return out;
     }
 
-    friend istream & operator >>(istream &out, RGBColor &color)
+    friend std::istream & operator >>(std::istream &out, RGBColor &color)
     {
        int v;
        out >> v;

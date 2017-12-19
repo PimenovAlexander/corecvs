@@ -19,6 +19,11 @@
 
 using namespace corecvs;
 
+using std::istream;
+using std::ostream;
+using std::cout;
+
+
 TEST(CommandLine, testAdditionalFunction)
 {
     const char *argv[] = {"--bool", "--int=42", "--double=3.14", "--string=test1"};

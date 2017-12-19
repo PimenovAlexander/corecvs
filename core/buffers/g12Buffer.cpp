@@ -20,6 +20,12 @@
 
 namespace corecvs {
 
+using std::ostream;
+using std::istream;
+using std::cout;
+
+
+
 G12Buffer::~G12Buffer()
 {
 }

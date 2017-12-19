@@ -1,5 +1,4 @@
 #include "core/geometry/raytrace/sdfRenderableObjects.h"
-#include "core/math/vector/vectorUtils.h"
 
 SDFRenderableSphere::SDFRenderableSphere(const Vector3dd &sphere, double r) :
     sphere(sphere),
@@ -64,8 +63,8 @@ SDFRenderableTorus88::SDFRenderableTorus88(const Vector3dd &pos, const Vector2dd
     this->F = [this](Vector3dd v) {
         Vector3dd d = v - this->pos;
         Vector2dd t = this->dim;
-        Vector2dd q = Vector2dd(length8Vec2dd(Vector2dd(d.x(), d.z())) - t.x(), d.y());
-        return length8Vec2dd(q) - t.y();
+        Vector2dd q = Vector2dd(Vector2dd(d.x(), d.z()).lnMetric<8>() - t.x(), d.y());
+        return q.lnMetric<8>() - t.y();
     };
 }
 
@@ -77,7 +76,7 @@ SDFRenderableTorus82::SDFRenderableTorus82(const Vector3dd &pos, const Vector2dd
         Vector3dd d = v - this->pos;
         Vector2dd t = this->dim;
         Vector2dd q = Vector2dd((Vector2dd(d.x(), d.z())).l2Metric() - t.x(), d.y());
-        return length8Vec2dd(q) - t.y();
+        return q.lnMetric<8>() - t.y();
     };
 }
 

@@ -83,7 +83,7 @@ private:
 
 public:
 
-    friend ostream & operator <<(ostream &out, const RealType &matrix)
+    friend std::ostream & operator <<(std::ostream &out, const RealType &matrix)
     {
         //streamsize wasPrecision = out.precision(6);
         for (int i = 0; i < matrix._height(); i++)
@@ -101,7 +101,7 @@ public:
         return out;
     }
 
-    friend istream & operator >>(istream &in, RealType &matrix)
+    friend std::istream & operator >>(std::istream &in, RealType &matrix)
     {
         for (int i = 0; i < matrix._height(); i++)
         {

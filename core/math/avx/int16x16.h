@@ -271,7 +271,7 @@ template<int idx>
 
     /*Print to stream helper */
 
-    friend ostream & operator <<(ostream &out, const Int16x16 &vector);
+    friend std::ostream & operator <<(std::ostream &out, const Int16x16 &vector);
 
     /* Shuffle */
     template<int imm>

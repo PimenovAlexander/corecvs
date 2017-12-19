@@ -109,7 +109,7 @@ public:
 
 
     /* Formated hex helper */
-    void hexDump (ostream &out);
+    void hexDump (std::ostream &out);
 };
 
 template<int ELEMENTS>

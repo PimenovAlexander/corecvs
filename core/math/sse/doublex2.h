@@ -124,7 +124,7 @@ template<int idx>
     friend Doublex2 operator /=(Doublex2 &left, const Doublex2 &right);
 
     /*Print to stream helper */
-    friend ostream & operator << (ostream &out, const Doublex2 &vector);
+    friend std::ostream & operator << (std::ostream &out, const Doublex2 &vector);
 
 };
 

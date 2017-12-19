@@ -200,10 +200,10 @@ public:
 #endif
 
     /* Print to stream helper */
-    friend ostream & operator << (ostream &out, const Int64x4 &vector);
+    friend std::ostream & operator << (std::ostream &out, const Int64x4 &vector);
 
     /* Formated hex helper */
-    void hexDump (ostream &out);
+    void hexDump (std::ostream &out);
 #if 1
     // Producers
     inline static Int64x4 unpackLower(const Int64x4 &left, const Int64x4 &right) {

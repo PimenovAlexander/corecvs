@@ -226,11 +226,13 @@ public:
         Int32x4 a(ptr      );
         Int32x4 b(ptr + 0x4);
 
-        cout << "a" << a << endl;
-        cout << "b" << b << endl;
+/*
+        std::cout << "a" << a << endl;
+        std::cout << "b" << b << endl;
 
-        cout << "a" << Int16x8(a.data) << endl;
-        cout << "b" << Int16x8(b.data) << endl;
+        std::cout << "a" << Int16x8(a.data) << endl;
+        std::cout << "b" << Int16x8(b.data) << endl;
+*/
 
 
         /* Rearranging the data cycling trough the fields of the structure*/
@@ -238,10 +240,10 @@ public:
         {
             Int32x4 al = a & Int32x4(0xFFFF);
             Int32x4 bl = b & Int32x4(0xFFFF);
-
-            cout << "al" << al << endl;
-            cout << "bl" << bl << endl;
-
+/*
+            std::cout << "al" << al << endl;
+            std::cout << "bl" << bl << endl;
+*/
             result[i] = Int16x8::pack(al, bl);
 
             a.shiftLogical(16);

@@ -32,6 +32,10 @@ using std::vector;
 
 namespace corecvs {
 
+using std::ostream;
+using std::istream;
+using std::cout;
+
 /**
  *  The data that is needed for fast classification
  *

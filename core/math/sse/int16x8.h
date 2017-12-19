@@ -151,10 +151,10 @@ public:
     }
 
     /*Print to stream helper */
-    friend ostream & operator << (ostream &out, const Int16x8 &vector);
+    friend std::ostream & operator << (std::ostream &out, const Int16x8 &vector);
 
     /* Formated hex helper */
-    void hexDump (ostream &out);
+    void hexDump (std::ostream &out);
 };
 
 FORCE_INLINE Int16x8 operator >> (const Int16x8 &left, uint32_t count) {

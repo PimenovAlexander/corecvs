@@ -287,8 +287,8 @@ public:
         cout << *this;
     }
 
-    friend ostream & operator <<(ostream &out, const Matrix &matrix);
-    void print(ostream &out);
+    friend std::ostream & operator <<(std::ostream &out, const Matrix &matrix);
+    void print(std::ostream &out);
 
     inline bool notTooFar(const Matrix *V, double epsilon = 0.0, bool trace = false ) const
     {

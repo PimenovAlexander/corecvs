@@ -19,6 +19,10 @@
 
 namespace corecvs {
 
+using std::ostream;
+using std::istream;
+
+
 /* The constructor is not in single cycle due to possible stride of the matrix */
 Matrix::Matrix(const Matrix33 &in) : MatrixBase(3, 3, false)
 {

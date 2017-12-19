@@ -286,10 +286,10 @@ template<int idx>
 
     /* Print to stream helper */
 
-    friend ostream & operator << (ostream &out, const Int8x16 &vector);
+    friend std::ostream & operator << (std::ostream &out, const Int8x16 &vector);
 
     /* Formated hex helper */
-    void hexDump (ostream &out);
+    void hexDump (std::ostream &out);
 };
 
 #ifdef UNSUPPORTED

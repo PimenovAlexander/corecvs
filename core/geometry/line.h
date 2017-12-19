@@ -39,7 +39,7 @@ public:
         return (a + b) / 2.0;
     }
 
-    friend ostream & operator <<(ostream &out, const Segment &ray)
+    friend std::ostream & operator <<(std::ostream &out, const Segment &ray)
     {
         out << "[" << ray.a << " - " << ray.b << "]";
         return out;
@@ -225,7 +225,7 @@ public:
         return t2 > t1;
     }
 
-    friend ostream & operator <<(ostream &out, const BaseRay &ray)
+    friend std::ostream & operator <<(std::ostream &out, const BaseRay &ray)
     {
         out << ray.p << "->" << ray.a;
         return out;

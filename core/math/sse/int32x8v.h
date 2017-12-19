@@ -44,7 +44,7 @@ public:
     }
 
     /* Formated hex helper */
-    void hexDump (ostream &out);
+    void hexDump (std::ostream &out);
 };
 
 FORCE_INLINE Int32x8v operator >> (const Int32x8v &left, uint32_t count) {

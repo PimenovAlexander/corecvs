@@ -147,7 +147,7 @@ public:
     }
 
 
-    friend ostream & operator <<(ostream &out, const Rectangle &rect)
+    friend std::ostream & operator <<(std::ostream &out, const Rectangle &rect)
     {
         out << rect.corner << " -> " << rect.size;
         return out;

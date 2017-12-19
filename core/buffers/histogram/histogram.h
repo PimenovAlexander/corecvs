@@ -281,7 +281,7 @@ public:
 
     virtual ~Histogram();
 
-    friend ostream& operator << (ostream &out, Histogram &h)
+    friend std::ostream& operator << (std::ostream &out, Histogram &h)
     {
         for (int i = h.getArgumentMin(); i <= h.getArgumentMax(); i++)
         {

@@ -22,6 +22,12 @@ using namespace corecvs;
 
 #ifdef WITH_SSE
 
+
+using std::istream;
+using std::ostream;
+using std::cout;
+
+
 /* Test reverse function in 16x8 types */
 TEST(SSEWrappers, testSSEWrapperReverse)
 {

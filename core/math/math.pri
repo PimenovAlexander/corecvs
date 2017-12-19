@@ -58,7 +58,7 @@ HEADERS += \
     math/puzzleBlock.h \
     math/matrix/similarityReconstructor.h \
     math/sse/doublexT4.h \
-    math/extensiveCoding.h \
+#    math/extensiveCoding.h \
     math/wisdom.h
 
 SOURCES += \
