@@ -44,13 +44,15 @@ ConvexHull an abstract class for convex hull
 */
 class ConvexHull {
 public:
+    virtual bool is3D() = 0;
     virtual void print() = 0;
 };
 
 class ConvexHull2D : public ConvexHull {
 public:
     ConvexHull2D(vector<MyVector> points) {}
-    void print() {}
+    bool is3D() override { return false; }
+    void print() override {}
 };
 
 
@@ -60,10 +62,13 @@ ConvexHull3D. Used incremetal algorithm
 class ConvexHull3D : public ConvexHull {
 private:
     MyVector center;
+
+public:
     set <Face> faces;
 public:
     ConvexHull3D(vector<MyVector> points, double eps);
-    void print();
+    virtual bool is3D() override { return true; }
+    virtual void print() override;
 };
 
 /*

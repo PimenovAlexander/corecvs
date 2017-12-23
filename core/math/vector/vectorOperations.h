@@ -423,12 +423,12 @@ public:
      * \f[\sum_{i=0}^n {V_i^k}\f]
      *
      **/
-    template<int pow>
+    template<int power>
     inline ElementType sumAllElementsPow() const
     {
         ElementType result(0);
         for (int i = 0; i < _size(); i++)
-            result += pow(_at(i), pow);
+            result += pow(_at(i), power);
         return result;
     }
 
@@ -450,11 +450,11 @@ public:
      * \f[D = \sqrt{\sum_{i=0}^n {V_i^2}} \f]
      *
      **/
-    template <int pow>
+    template <int power>
     inline ElementType lnMetric() const
     {
         /* TODO ASAP: Correct this to select appropriate sqrt */
-        return (ElementType)pow(sumAllElementsPow<pow>(), (1.0 / (double)pow));
+        return (ElementType)pow(sumAllElementsPow<power>(), (1.0 / (double)power));
     }
 
     inline ElementType l2MetricStable() const

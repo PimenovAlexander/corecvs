@@ -20,6 +20,7 @@ HEADERS += \
     geometry/raytrace/materialExamples.h \
     geometry/raytrace/bspTree.h \
     geometry/mesh3DDecorated.h \
+    geometry/convexhull.h \
     geometry/polyLine.h \
     geometry/polylinemesh.h \
     geometry/ellipse.h \
@@ -48,6 +49,7 @@ SOURCES += \
     geometry/raytrace/sdfRenderable.cpp \
     geometry/raytrace/materialExamples.cpp \
     geometry/mesh3DDecorated.cpp \
+    geometry/convexhull.cpp \
     geometry/polyLine.cpp \
     geometry/polylinemesh.cpp \
     geometry/ellipse.cpp \
