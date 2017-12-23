@@ -454,7 +454,7 @@ public:
     inline ElementType lnMetric() const
     {
         /* TODO ASAP: Correct this to select appropriate sqrt */
-        return (ElementType)pow(sumAllElementsPow<pow>, (1.0 / (double)pow));
+        return (ElementType)pow(sumAllElementsPow<pow>(), (1.0 / (double)pow));
     }
 
     inline ElementType l2MetricStable() const
