@@ -4,38 +4,19 @@ using namespace corecvs;
 using namespace std;
 
 
-MyVector::MyVector(MyVector &V, MyVector &U) : Vector3dd(U.x() - V.x(), U.y() - V.y(), U.z() - V.z()) {}
+MyVector::MyVector(Vector3dd &V, Vector3dd &U) : Vector3dd(U - V) {}
 
 MyVector::MyVector(const double x, const double y, const double z) : Vector3dd(x, y , z) {}
 
-MyVector::MyVector(const MyVector &U) {
-    (*this)[0] = U.x();
-    (*this)[1] = U.y();
-    (*this)[2] = U.z();
-}
+MyVector::MyVector(const Vector3dd &U) : Vector3dd(U)
+{}
+
 MyVector::MyVector()
 {
     (*this)[0] = .0;
     (*this)[1] = .0;
     (*this)[2] = .0;
 }
-
-double MyVector::dotProduct(const MyVector &U) {
-    double ans = this->x() * U.x();
-    ans += this->y() * U.y();
-    ans += this->z() * U.z();
-    return ans;
-}
-
-MyVector MyVector::operator ^(const MyVector &U)
-{
-    double x, y, z;
-    x = this->y() * U.z() - U.y() * this->z();
-    y = U.x() * this->z() - U.z() * this->x();
-    z = U.y() * this->x() - U.x() * this->y();
-    return MyVector(x, y, z);
-}
-
 
 MyVector& MyVector::operator=(const MyVector &U) {
     (*this)[0] = U.x();
@@ -67,29 +48,18 @@ double MyVector::len2() {
     return this->x() * this->x() + this->y() * this->y() + this->z() * this->z();
 }
 
-Face::Face(MyVector &A, MyVector B, MyVector C) {
-    points.push_back(A);
-    points.push_back(B);
-    points.push_back(C);
-}
-
-MyVector Face::A() const {
-    return points[0];
-}
-
-MyVector Face::B() const {
-    return points[1];
-}
-
-MyVector Face::C() const {
-    return points[2];
+Face::Face(const MyVector &A, const MyVector &B, const MyVector &C) :
+    Triangle3dd(A, B, C)
+{
 }
 
 bool Face::operator <(const Face &right) const{
-    vector<MyVector> left_a = {this->A(), this->B(), this->C()};
-    vector<MyVector> right_a = {right.A(), right.B(), right.C()};
+    vector<MyVector> left_a  = {this->p1(), this->p2(), this->p3()};
+    vector<MyVector> right_a = {right.p1(), right.p2(), right.p3()};
+
     sort(left_a.begin(), left_a.end());
     sort(right_a.begin(), right_a.end());
+
     if (left_a[0] < right_a[0]) {
         return true;
     }
@@ -102,20 +72,20 @@ bool Face::operator <(const Face &right) const{
     return false;
 }
 bool Face::operator ==(const Face &right) const{
-    return (this->A() == right.A()) && (this->B() == right.B()) && (this->C() == right.C());
+    return (this->p1() == right.p1()) && (this->p2() == right.p2()) && (this->p3() == right.p3());
 }
 bool Face::isUnder(MyVector &U, MyVector &center) {
-    MyVector pivot1(points[0], points[1]);
-    MyVector pivot2(points[0], points[2]);
-    MyVector pivot3(points[0], U);
-    MyVector pivot4(points[0], center);
-    if (pivot3.dotProduct(pivot2 ^ pivot1) * pivot4.dotProduct(pivot2 ^ pivot1) < 0) { //right
+    MyVector pivot1(p[0], p[1]);
+    MyVector pivot2(p[0], p[2]);
+    MyVector pivot3(p[0], U);
+    MyVector pivot4(p[0], center);
+    if ((pivot3 & (pivot2 ^ pivot1)) * (pivot4 & (pivot2 ^ pivot1)) < 0) { //right
         return true;
     }
     return false;
 }
 void Face::print() {
-    for (auto point : points) {
+    for (auto point : p) {
         cout << point.x() << " " << point.y() << " " << point.z() << endl;
     }
 }
@@ -135,7 +105,7 @@ ConvexHull3D::ConvexHull3D(vector<MyVector> points, double eps) {
     while (idx < points.size()) {
         MyVector temp(points[0], points[idx]);
         idx++;
-        double product = pivot1.dotProduct(temp);
+        double product = pivot1 & temp;
         product *= product;
         if (abs(product - pivot1.len2() * temp.len2()) > eps) {
             pivot2 = temp;
@@ -147,7 +117,7 @@ ConvexHull3D::ConvexHull3D(vector<MyVector> points, double eps) {
     while (idx < points.size()) {
         MyVector temp(points[0], points[idx]);
         idx++;
-        if (abs(pivot1.dotProduct(temp ^ pivot2)) > eps) {
+        if (abs(pivot1 & (temp ^ pivot2)) > eps) {
             pivot3 = temp;
             simplex.push_back(points[idx - 1]);
             swap(points[3], points[idx - 1]);
@@ -157,7 +127,7 @@ ConvexHull3D::ConvexHull3D(vector<MyVector> points, double eps) {
     double cX = .0;
     double cY = .0;
     double cZ = .0;
-    for (int i = 0; i < simplex.size(); ++i) {
+    for (size_t i = 0; i < simplex.size(); ++i) {
         cX += simplex[i].x();
         cY += simplex[i].y();
         cZ += simplex[i].z();
@@ -167,23 +137,23 @@ ConvexHull3D::ConvexHull3D(vector<MyVector> points, double eps) {
     faces.insert(Face(simplex[0], simplex[1], simplex[3]));
     faces.insert(Face(simplex[0], simplex[2], simplex[3]));
     faces.insert(Face(simplex[1], simplex[2], simplex[3]));
-    for (int i = 4; i < points.size(); ++i) {
+    for (size_t i = 4; i < points.size(); ++i) {
         set <pair<MyVector, MyVector>> visible;
         set <pair<MyVector, MyVector>> inVisible;
         vector<Face> toDel;
         for (auto face : faces) {
             if (face.isUnder(points[i], center)) {
-                visible.insert({face.A(), face.B()});
-                visible.insert({face.A(), face.C()});
-                visible.insert({face.C(), face.B()});
+                visible.insert({face.p1(), face.p2()});
+                visible.insert({face.p1(), face.p3()});
+                visible.insert({face.p3(), face.p2()});
                 toDel.push_back(face);
             } else {
-                inVisible.insert({face.A(), face.B()});
-                inVisible.insert({face.A(), face.C()});
-                inVisible.insert({face.C(), face.B()});
+                inVisible.insert({face.p1(), face.p2()});
+                inVisible.insert({face.p1(), face.p3()});
+                inVisible.insert({face.p3(), face.p2()});
             }
         }
-        for (int i = 0; i < toDel.size(); ++i) {
+        for (size_t i = 0; i < toDel.size(); ++i) {
             faces.erase(toDel[i]);
         }
         for (auto edge : inVisible) {
@@ -226,9 +196,9 @@ void ConvexHullCalc::deleteDuplicates() {
 
 bool ConvexHullCalc::isTheSameLine() {
     MyVector pivot(points[0], points[1]);
-    for (int i = 2; i < points.size(); ++i) {
+    for (size_t i = 2; i < points.size(); ++i) {
         MyVector temp(points[0], points[i]);
-        double product = pivot.dotProduct(temp);
+        double product = pivot & temp;
         product *= product;
         if (abs(product - pivot.len2() * temp.len2()) > eps) {
             return false;
@@ -240,11 +210,11 @@ bool ConvexHullCalc::isTheSameLine() {
 bool ConvexHullCalc::isTheSamePlane() {
     MyVector pivot1(points[0], points[1]);
     MyVector pivot2(.0, .0, .0);
-    int idx = 2;
+    size_t idx = 2;
     while (idx < points.size()) {
         MyVector temp(points[0], points[idx]);
         idx++;
-        double product = pivot1.dotProduct(temp);
+        double product = pivot1 & temp;
         product *= product;
         if (abs(product - pivot1.len2() * temp.len2()) > eps) {
             pivot2 = temp;
@@ -253,7 +223,7 @@ bool ConvexHullCalc::isTheSamePlane() {
     }
     for (; idx < points.size(); ++idx) {
         MyVector temp(points[0], points[idx]);
-        if (abs(pivot1.dotProduct(temp ^ pivot2)) > eps) {
+        if (abs(pivot1 & (temp ^ pivot2)) > eps) {
             return false;
         }
     }
@@ -295,7 +265,7 @@ void ConvexHullCalc::calc() {
     convexHull = new ConvexHull3D(points, eps);
 }
 
-ConvexHull* ConvexHullCalc::getHull() {
+ConvexHullResult* ConvexHullCalc::getHull() {
     return convexHull;
 }
 

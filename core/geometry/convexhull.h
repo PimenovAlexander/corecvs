@@ -1,5 +1,8 @@
-#include "../math/vector/vector3d.h"
-#include<set>
+#include <set>
+
+#include "core/math/vector/vector3d.h"
+#include "core/geometry/polygons.h"
+
 
 using namespace corecvs;
 using namespace std;
@@ -7,33 +10,23 @@ using namespace std;
 class MyVector : public Vector3dd
 {
 public:
-    MyVector(MyVector &V, MyVector &U);
+    MyVector(Vector3dd &V, Vector3dd &U);
     MyVector(const double x, const double y, const double z);
-    MyVector(const MyVector &U);
+    MyVector(const Vector3dd &U);
     MyVector();
-
-    double dotProduct(const MyVector &U);
-
-    MyVector operator ^(const MyVector &U);
 
     MyVector& operator=(const MyVector &U);
 
     bool operator ==(const MyVector &V) const;
-
 
     bool operator <(const MyVector &V) const;
 
     double len2();
 };
 
-class Face {
-private:
-    vector<MyVector> points;
+class Face : public Triangle3dd {
 public:
-    Face(MyVector &A, MyVector B, MyVector C);
-    MyVector A() const;
-    MyVector B() const;
-    MyVector C() const;
+    Face(const MyVector &A, const MyVector &B, const MyVector &C);
     bool operator <(const Face &right) const;
     bool operator ==(const Face &right) const;
     bool isUnder(MyVector &U, MyVector &center);
@@ -42,13 +35,13 @@ public:
 /*
 ConvexHull an abstract class for convex hull
 */
-class ConvexHull {
+class ConvexHullResult {
 public:
     virtual bool is3D() = 0;
     virtual void print() = 0;
 };
 
-class ConvexHull2D : public ConvexHull {
+class ConvexHull2D : public ConvexHullResult {
 public:
     ConvexHull2D(vector<MyVector> points) {}
     bool is3D() override { return false; }
@@ -59,7 +52,7 @@ public:
 /*
 ConvexHull3D. Used incremetal algorithm
 */
-class ConvexHull3D : public ConvexHull {
+class ConvexHull3D : public ConvexHullResult {
 private:
     MyVector center;
 
@@ -71,31 +64,31 @@ public:
     virtual void print() override;
 };
 
-/*
-ConvexHullCalc. Calculate convex hull.
-It takes vector of points and epsilon(optional) as constructor parameters.
-To caculate convex hull use calc()
-To get convex hull object use getHull()
-example:
-    MyVector a1(0, 0, 0);
-    MyVector a2(5, 0, 0);
-    MyVector a3(0, 5, 0);
-    MyVector a4(0, 0, 5);
-    MyVector a5(5, 5, 5);
-    MyVector a6(5, 5, 0);
-    MyVector a7(5, 0, 5);
-    MyVector a8(0, 5, 5);
-    vector<MyVector> temp = {a1, a2, a3, a4, a5, a6, a7, a8};
-    ConvexHullCalc temp(temp, 1e-20);
-    temp.calc();
-    ConvexHull *hull = temp.getHull(); --get convex hull
-    hull->print(); --print convex hull (set of faces)
-*/
+/**
+    ConvexHullCalc. Calculate convex hull.
+    It takes vector of points and epsilon(optional) as constructor parameters.
+    To caculate convex hull use calc()
+    To get convex hull object use getHull()
+    example:
+        MyVector a1(0, 0, 0);
+        MyVector a2(5, 0, 0);
+        MyVector a3(0, 5, 0);
+        MyVector a4(0, 0, 5);
+        MyVector a5(5, 5, 5);
+        MyVector a6(5, 5, 0);
+        MyVector a7(5, 0, 5);
+        MyVector a8(0, 5, 5);
+        vector<MyVector> temp = {a1, a2, a3, a4, a5, a6, a7, a8};
+        ConvexHullCalc temp(temp, 1e-20);
+        temp.calc();
+        ConvexHull *hull = temp.getHull(); --get convex hull
+        hull->print(); --print convex hull (set of faces)
+**/
 class ConvexHullCalc {
 private:
     vector<MyVector> points;
     double eps;
-    ConvexHull *convexHull;
+    ConvexHullResult *convexHull;
 
     bool equals(const MyVector &U, MyVector &V);
 
@@ -111,6 +104,6 @@ public:
 
     void calc();
 
-    ConvexHull *getHull();
+    ConvexHullResult *getHull();
 };
 
