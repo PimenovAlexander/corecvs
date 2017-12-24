@@ -63,7 +63,7 @@ SDFRenderableTorus88::SDFRenderableTorus88(const Vector3dd &pos, const Vector2dd
     this->F = [this](Vector3dd v) {
         Vector3dd d = v - this->pos;
         Vector2dd t = this->dim;
-        Vector2dd q = Vector2dd(Vector2dd(d.x(), d.z()).lnMetric<8>() - t.x(), d.y());
+        Vector2dd q = Vector2dd((Vector2dd(d.x(), d.z())).lnMetric<8>() - t.x(), d.y());
         return q.lnMetric<8>() - t.y();
     };
 }
