@@ -10,7 +10,7 @@ using namespace std;
 class MyVector : public Vector3dd
 {
 public:
-    MyVector(Vector3dd &V, Vector3dd &U);
+    MyVector(const Vector3dd &V, const Vector3dd &U);
     MyVector(const double x, const double y, const double z);
     MyVector(const Vector3dd &U);
     MyVector();
@@ -29,7 +29,7 @@ public:
     Face(const MyVector &A, const MyVector &B, const MyVector &C);
     bool operator <(const Face &right) const;
     bool operator ==(const Face &right) const;
-    bool isUnder(MyVector &U, MyVector &center);
+    bool isUnder(const Vector3dd &U, const Vector3dd &center);
     void print();
 };
 /*
@@ -43,9 +43,9 @@ public:
 
 class ConvexHull2D : public ConvexHullResult {
 public:
-    ConvexHull2D(vector<MyVector> points) {}
-    bool is3D() override { return false; }
-    void print() override {}
+    ConvexHull2D(const vector<Vector3dd> &points) {}
+    virtual bool is3D() override { return false; }
+    virtual void print() override {}
 };
 
 
@@ -59,7 +59,7 @@ private:
 public:
     set <Face> faces;
 public:
-    ConvexHull3D(vector<MyVector> points, double eps);
+    ConvexHull3D(const vector<Vector3dd> &points, double eps);
     virtual bool is3D() override { return true; }
     virtual void print() override;
 };
@@ -86,11 +86,11 @@ public:
 **/
 class ConvexHullCalc {
 private:
-    vector<MyVector> points;
+    vector<Vector3dd> points;
     double eps;
-    ConvexHullResult *convexHull;
+    ConvexHullResult *convexHull = NULL;
 
-    bool equals(const MyVector &U, MyVector &V);
+    bool equals(const Vector3dd &U, Vector3dd &V);
 
     void deleteDuplicates();
     bool isTheSameLine();
@@ -98,9 +98,7 @@ private:
     bool isTheSamePlane();
 
 public:
-    ConvexHullCalc(vector<MyVector> pointsIn);
-
-    ConvexHullCalc(vector<MyVector> pointsIn, double epsIn);
+    ConvexHullCalc(const vector<Vector3dd> &pointsIn, double epsIn=1e-9);
 
     void calc();
 

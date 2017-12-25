@@ -41,13 +41,12 @@ TEST(convexhull, testconvexhull)
     }
 
 
-
     ConvexHullCalc hull(vectors);
     hull.calc();
 
     Mesh3D mesh;
     mesh.switchColor(true);
-    ::ConvexHull *hullResult = hull.getHull();
+    ConvexHullResult *hullResult = hull.getHull();
     if (hullResult->is3D())
     {
         ConvexHull3D *hull3D = static_cast<ConvexHull3D *>(hullResult);
@@ -56,7 +55,7 @@ TEST(convexhull, testconvexhull)
             static int i = 0;
             i++;
             mesh.setColor(RGBColor::rainbow1((double)i / hull3D->faces.size() ));
-            mesh.addTriangle(face.A(), face.B(), face.C());
+            mesh.addTriangle(face);
         }
     } else {
         SYNC_PRINT(("Hull is planar"));
@@ -67,4 +66,14 @@ TEST(convexhull, testconvexhull)
 
     cout << "Starting test <convexhull>" << endl;
     cout << "Test <convexhull> PASSED" << endl;
+}
+
+
+TEST(convexhull, testconvexhull)
+{
+    Mesh3D mesh;
+
+    mesh.addIcoSphere(Vector3dd::Zero(), 10, 0);
+
+
 }

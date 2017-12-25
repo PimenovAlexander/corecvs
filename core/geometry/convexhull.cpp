@@ -4,7 +4,7 @@ using namespace corecvs;
 using namespace std;
 
 
-MyVector::MyVector(Vector3dd &V, Vector3dd &U) : Vector3dd(U - V) {}
+MyVector::MyVector(const Vector3dd &V, const Vector3dd &U) : Vector3dd(U - V) {}
 
 MyVector::MyVector(const double x, const double y, const double z) : Vector3dd(x, y , z) {}
 
@@ -71,10 +71,12 @@ bool Face::operator <(const Face &right) const{
     }
     return false;
 }
+
 bool Face::operator ==(const Face &right) const{
     return (this->p1() == right.p1()) && (this->p2() == right.p2()) && (this->p3() == right.p3());
 }
-bool Face::isUnder(MyVector &U, MyVector &center) {
+
+bool Face::isUnder(const Vector3dd &U, const Vector3dd &center) {
     MyVector pivot1(p[0], p[1]);
     MyVector pivot2(p[0], p[2]);
     MyVector pivot3(p[0], U);
@@ -94,7 +96,7 @@ void Face::print() {
 ConvexHull3D. Used incremetal algorithm
 */
 
-ConvexHull3D::ConvexHull3D(vector<MyVector> points, double eps) {
+ConvexHull3D::ConvexHull3D(const vector<Vector3dd> &points, double eps) {
     MyVector pivot1(points[0], points[1]);
     MyVector pivot2;
     MyVector pivot3;
@@ -176,7 +178,7 @@ void ConvexHull3D::print() {
     }
 }
 
-bool ConvexHullCalc::equals(const MyVector &U, MyVector &V) {
+bool ConvexHullCalc::equals(const Vector3dd &U, Vector3dd &V) {
     return (abs(V.x() - U.x()) < eps) && (abs(V.y() - U.y()) < eps) && (abs(V.z() - U.z()) < eps);
 }
 
@@ -230,19 +232,11 @@ bool ConvexHullCalc::isTheSamePlane() {
     return true;
 }
 
-ConvexHullCalc::ConvexHullCalc(vector<MyVector> pointsIn) {
-    this->points = pointsIn;
-    this->eps = 1e-9;
-    this->convexHull = nullptr;
-}
-
-ConvexHullCalc::ConvexHullCalc(vector<MyVector> pointsIn, double epsIn) {
-    if (epsIn < 0) {
-    }
-    this->points = pointsIn;
-    this->eps = epsIn;
-    this->convexHull = nullptr;
-}
+ConvexHullCalc::ConvexHullCalc(const vector<Vector3dd> &pointsIn, double epsIn) :
+    points(pointsIn),
+    eps(epsIn),
+    convexHull(NULL)
+{}
 
 void ConvexHullCalc::calc() {
     deleteDuplicates();
