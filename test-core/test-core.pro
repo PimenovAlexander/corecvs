@@ -101,4 +101,5 @@ SOURCES += \
     quadric/main_test_quadric.cpp \
     planefit/main_test_planefit.cpp \
     noise/main_test_noise.cpp \
+    meshfilter/main_test_meshfilter.cpp
     convexhull/main_test_convexhull.cpp \
