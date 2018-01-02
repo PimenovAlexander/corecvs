@@ -202,14 +202,14 @@ void raytrace_scene_union_and_blend( void )
                   Vector3dd(-15.0, 40.0, 150.0), Vector3dd(7.0, 5.0, 12.0));
 */
       SDFRenderableSphere spherer = SDFRenderableSphere(
-                  Vector3dd(50,20, 150.0), 10.0);
+                  Vector3dd(50,20, 100.0), 10.0);
       SDFRenderableSphere box2 = SDFRenderableSphere(
-                  Vector3dd(43,20, 150.0), 10.0);
+                  Vector3dd(43,20, 100.0), 10.0);
 
       SDFRenderableSphere spherer2 = SDFRenderableSphere(
-                  Vector3dd(0,-20, 150.0), 10.0);
+                  Vector3dd(0,-20, 100.0), 10.0);
       SDFRenderableSphere box22 = SDFRenderableSphere(
-                  Vector3dd(-7,-20, 150.0), 10.0);
+                  Vector3dd(-7,-20, 100.0), 10.0);
 
       SDFRenderableBlend sphereSub = SDFRenderableBlend(
                   box2, spherer);

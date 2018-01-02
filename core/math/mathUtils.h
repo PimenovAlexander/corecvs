@@ -178,11 +178,12 @@ TypeName lerp(TypeName x1, TypeName x2, double value, double intervalStart, doub
     return lerp<TypeName>(x1, x2, (value - intervalStart) / (intervalEnd - intervalStart));
 }
 
-inline double lerpLimit(double outStart, double outEnd, double value, double intervalStart, double intervalEnd)
+template<class TypeName>
+inline TypeName lerpLimit(const TypeName &outStart, const TypeName &outEnd, double value, double intervalStart, double intervalEnd)
 {
     if (value <= intervalStart) return outStart;
     if (value >= intervalEnd)   return outEnd;
-    return lerp<double>(outStart, outEnd, value, intervalStart, intervalEnd);
+    return lerp<TypeName>(outStart, outEnd, value, intervalStart, intervalEnd);
 }
 
 /** Common functions **/

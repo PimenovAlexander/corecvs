@@ -96,7 +96,7 @@ void Face::print() {
 ConvexHull3D. Used incremetal algorithm
 */
 
-ConvexHull3D::ConvexHull3D(const vector<Vector3dd> &points, double eps) {
+ConvexHull3D::ConvexHull3D(vector<Vector3dd> &points, double eps) {
     MyVector pivot1(points[0], points[1]);
     MyVector pivot2;
     MyVector pivot3;

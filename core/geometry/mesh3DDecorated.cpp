@@ -502,12 +502,13 @@ float getArea(
     const Vector3d32& tr)
 {
 
+
     auto A = mesh.vertexes[tr[0]];
     auto B = mesh.vertexes[tr[1]];
     auto C = mesh.vertexes[tr[2]];
     auto f = B - A;
     auto s = C - A;
-    auto n = f.crossProduct(s);
+    auto n = f ^ s;
     return 0.5 * n.l2Metric();
 
 }

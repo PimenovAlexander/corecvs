@@ -59,7 +59,7 @@ private:
 public:
     set <Face> faces;
 public:
-    ConvexHull3D(const vector<Vector3dd> &points, double eps);
+    ConvexHull3D(vector<Vector3dd> &points, double eps);
     virtual bool is3D() override { return true; }
     virtual void print() override;
 };

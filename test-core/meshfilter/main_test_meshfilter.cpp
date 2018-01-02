@@ -164,6 +164,8 @@ TEST(FilterTest, IsolPiecesAllTest)
     ASSERT_EQ(mesh.vertexes.size(), 9);
     ASSERT_EQ(mesh.faces.size(), 3);
 
+
+    mesh.dumpPLY("iso-before.ply");
     MeshFilter::removeIsolatedPieces(mesh, 2);
 
     ASSERT_EQ(mesh.vertexes.size(), 0);

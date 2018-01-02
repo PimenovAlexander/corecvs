@@ -113,14 +113,22 @@ void TextureMaterial::getColor(RayIntersection &ray, RaytraceRenderer &/*rendere
 void RaytraceableSky1::getColor(RayIntersection &ray, RaytraceRenderer &/*renderer*/)
 {
     double v = noise.turbulence(ray.ray.a * 10.0);
-    if (v <= skyLevel || v >= 1.0)
+    if (v <= skyLevel) {
         ray.ownColor = sky;
-    else {
-        ray.ownColor = lerp(low, high, v, skyLevel, 1.0);
+    } else {
+        ray.ownColor = lerpLimit(low, high, v, skyLevel, 2.0);
     }
 
     //ray.ownColor;
 }
+
+void RaytraceableSky2::getColor(RayIntersection &ray, RaytraceRenderer &renderer)
+{
+    double v = noise.turbulence(ray.ray.a * 10.0);
+    ray.ownColor = RGBColor::rainbow1(v / 2.0).toDouble();
+
+}
+
 
 
 void RaytraceableCubemap::getColor(RayIntersection &ray, RaytraceRenderer &/*renderer*/)
@@ -194,3 +202,4 @@ void RaytraceableCubemap::getColor(RayIntersection &ray, RaytraceRenderer &/*ren
     }
 
 }
+
