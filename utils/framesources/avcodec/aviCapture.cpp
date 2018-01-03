@@ -76,7 +76,7 @@ ImageCaptureInterface::CapErrorCode AviCapture::initCapture()
     }
     SYNC_PRINT(("AviCapture::initCapture(): Video codec found\n"));
 
-    mFrame = avcodec_alloc_frame();
+    mFrame = av_frame_alloc();
 
     SYNC_PRINT(("AviCapture::initCapture(): exited\n"));
     return ImageCaptureInterface::SUCCESS_1CAM;
@@ -97,21 +97,19 @@ ImageCaptureInterface::FramePair AviCapture::getFrame()
             {
                 int frame_finished;
                 avcodec_decode_video2(mCodecContext, mFrame, &frame_finished, &mPacket);
-                av_free_packet(&mPacket);
+                av_packet_unref(&mPacket);
                 if (frame_finished) {
 //                    SYNC_PRINT(("AviCapture::getFrame(): Frame ready\n"));
                     break;
                 }
             } else {
-                av_free_packet(&mPacket);
+                av_packet_unref(&mPacket);
             }
         }
 
         if (res >= 0)
         {
-            if (mFrame->format != PIX_FMT_YUV420P && mFrame->format != PIX_FMT_YUVJ420P)
-
-            //if (mFrame->format != AV_PIX_FMT_YUV420P && mFrame->format != AV_PIX_FMT_YUVJ420P)
+            if (mFrame->format != AV_PIX_FMT_YUV420P && mFrame->format != AV_PIX_FMT_YUVJ420P)
             {
                 SYNC_PRINT(("AviCapture::getFrame(): Not supported format %d\n", mFrame->format));
                 return result;
