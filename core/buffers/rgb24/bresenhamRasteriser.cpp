@@ -1,6 +1,6 @@
-#include "core/buffers/rgb24/bresenhamRasteriser.h"
+#include "core/buffers/rgb24/bresenhamRasterizer.h"
 
-BresenhamRasteriser::BresenhamRasteriser()
+BresenhamRasterizer::BresenhamRasterizer()
 {
 
 }

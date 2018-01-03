@@ -532,6 +532,10 @@ public:
         return RGBColor(CORE_ABS(r), CORE_ABS(g), CORE_ABS(b));
     }
 
+    RGBColor operator *(float f) {
+        return RGBColor(r() * f, g() * f, b() * f);
+    }
+
     /**
      *  Helper method that allows to represent the double value in interval 0..1
      *  With a real rainbow color coding.

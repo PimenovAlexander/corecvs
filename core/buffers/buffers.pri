@@ -60,9 +60,9 @@ HEADERS += \
     buffers/convolver/convolver.h \
     buffers/rgb24/lineSpan.h \
     buffers/nonMaximalSuperssor.h \
-    buffers/rgb24/bresenhamRasteriser.h \
     buffers/rgb24/wuRasterizer.h \
     buffers/abstractBufferParams.h \
+    $$PWD/rgb24/bresenhamRasterizer.h
 
 
 SOURCES += \

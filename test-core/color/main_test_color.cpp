@@ -38,6 +38,16 @@ TEST(Color, testRGB)
     CORE_ASSERT_TRUE_P(cyan.hue()  == 180, ("Cyan  %d %d\n", cyan.hue(),  180));
 }
 
+TEST(Color, testRGBMulFloat)
+{
+    RGBColor white = RGBColor::White();
+
+    RGBColor color = white * 0.5;
+    cout << white << endl;
+    cout << color << endl;
+    ASSERT_TRUE(color.notTooFar(RGBColor::Gray(255*0.5)));
+}
+
 TEST(Color, testHSVCoversion)
 {
     RGBColor testColors[] = {

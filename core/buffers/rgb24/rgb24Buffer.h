@@ -144,8 +144,12 @@ public:
     };
     void drawHistogram1024x512(Histogram *hist, int x, int y, uint16_t flags = FLAGS_INCLUDE_MARGIN, int hw = 1024, int hh = 512);
 
-    void drawLineSimple (int x1, int y1, int x2, int y2, RGBColor color );
-    void drawLine(int x1, int y1, int x2, int y2, RGBColor color );
+    /** You must clip yourself for these function. Use carefully **/
+    void drawLineSimple     (int x1, int y1, int x2, int y2, RGBColor color );
+    void drawLineSimpleFancy(int x1, int y1, int x2, int y2, RGBColor color);
+
+
+    void drawLine           (int x1, int y1, int x2, int y2, RGBColor color );
 
     void drawHLine(int x1, int y1, int x2, RGBColor color );
     void drawVLine(int x1, int y1, int y2, RGBColor color );

@@ -1,5 +1,5 @@
-#ifndef WURASTERISER_H
-#define WURASTERISER_H
+#ifndef WU_RASTERISER_H
+#define WU_RASTERISER_H
 
 #include <cstdlib>
 #include <climits>
@@ -142,4 +142,4 @@ public:
 
 };
 
-#endif // WURASTERISER_H
+#endif // WU_RASTERISER_H

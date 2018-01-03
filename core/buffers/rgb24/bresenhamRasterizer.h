@@ -1,11 +1,11 @@
-#ifndef BRESENHAMRASTERISER_H
-#define BRESENHAMRASTERISER_H
+#ifndef BRESENHAMRASTERIZER_H
+#define BRESENHAMRASTERIZER_H
 
 
-class BresenhamRasteriser
+class BresenhamRasterizer
 {
 public:
-    BresenhamRasteriser();
+    BresenhamRasterizer();
 
     /**
      * This function implements the Bresenham algorithm.
@@ -83,4 +83,4 @@ template<class BufferType>
     }
 };
 
-#endif // BRESENHAMRASTERISER_H
+#endif // BRESENHAMRASTERIZER_H

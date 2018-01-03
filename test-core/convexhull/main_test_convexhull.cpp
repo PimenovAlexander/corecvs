@@ -30,7 +30,7 @@ using namespace corecvs;
 
 TEST(convexhull, testconvexhull)
 {
-    vector<MyVector> vectors;
+    vector<Vector3dd> vectors;
 
     std::mt19937 mt;
     std::uniform_real_distribution<double> dis(-1000, 1000);
@@ -68,8 +68,8 @@ TEST(convexhull, testconvexhull)
     cout << "Test <convexhull> PASSED" << endl;
 }
 
-
-TEST(convexhull, testconvexhull)
+#if 0
+TEST(convexhull, testconvexhull1)
 {
     Mesh3D mesh;
 
@@ -77,3 +77,4 @@ TEST(convexhull, testconvexhull)
 
 
 }
+#endif
