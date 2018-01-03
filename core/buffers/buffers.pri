@@ -61,6 +61,7 @@ HEADERS += \
     buffers/rgb24/lineSpan.h \
     buffers/nonMaximalSuperssor.h \
     buffers/rgb24/bresenhamRasteriser.h \
+    buffers/rgb24/wuRasterizer.h \
     buffers/abstractBufferParams.h \
 
 
@@ -105,6 +106,7 @@ SOURCES += \
     buffers/rgb24/lineSpan.cpp \
     buffers/nonMaximalSuperssor.cpp \
     buffers/rgb24/bresenhamRasteriser.cpp \
+    buffers/rgb24/wuRasterizer.cpp \
 
 
 
