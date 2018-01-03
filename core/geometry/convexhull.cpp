@@ -3,6 +3,8 @@
 using namespace corecvs;
 using namespace std;
 
+// https://cw.fel.cvut.cz/wiki/_media/misc/projects/oppa_oi_english/courses/ae4m39vg/lectures/05-convexhull-3d.pdf
+
 
 MyVector::MyVector(const Vector3dd &V, const Vector3dd &U) : Vector3dd(U - V) {}
 
