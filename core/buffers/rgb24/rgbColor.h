@@ -532,8 +532,11 @@ public:
         return RGBColor(CORE_ABS(r), CORE_ABS(g), CORE_ABS(b));
     }
 
-    RGBColor operator *(float f) {
-        return RGBColor(r() * f, g() * f, b() * f);
+    RGBColor operator *(float f)
+    {
+        return RGBColor(clamp((int)(r() * f), 0, 255),
+                        clamp((int)(g() * f), 0, 255),
+                        clamp((int)(b() * f), 0, 255));
     }
 
     /**
