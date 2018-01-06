@@ -1,4 +1,4 @@
-#include "core/geometry/convexhull.h"
+#include "core/geometry/convexHull.h"
 
 using namespace corecvs;
 using namespace std;
@@ -44,10 +44,6 @@ bool MyVector::operator <(const MyVector &V) const{
         return true;
     }
     return false;
-}
-
-double MyVector::len2() {
-    return this->x() * this->x() + this->y() * this->y() + this->z() * this->z();
 }
 
 Face::Face(const MyVector &A, const MyVector &B, const MyVector &C) :
@@ -105,13 +101,13 @@ ConvexHull3D::ConvexHull3D(vector<Vector3dd> &points, double eps) {
     vector<MyVector> simplex;
     simplex.push_back(points[0]);
     simplex.push_back(points[1]);
-    int idx = 2;
+    size_t idx = 2;
     while (idx < points.size()) {
         MyVector temp(points[0], points[idx]);
         idx++;
         double product = pivot1 & temp;
         product *= product;
-        if (abs(product - pivot1.len2() * temp.len2()) > eps) {
+        if (abs(product - pivot1.l2Metric() * temp.l2Metric()) > eps) {
             pivot2 = temp;
             simplex.push_back(points[idx - 1]);
             swap(points[2], points[idx - 1]);
@@ -204,7 +200,7 @@ bool ConvexHullCalc::isTheSameLine() {
         MyVector temp(points[0], points[i]);
         double product = pivot & temp;
         product *= product;
-        if (abs(product - pivot.len2() * temp.len2()) > eps) {
+        if (abs(product - pivot.l2Metric() * temp.l2Metric()) > eps) {
             return false;
         }
     }
@@ -220,7 +216,7 @@ bool ConvexHullCalc::isTheSamePlane() {
         idx++;
         double product = pivot1 & temp;
         product *= product;
-        if (abs(product - pivot1.len2() * temp.len2()) > eps) {
+        if (abs(product - pivot1.l2Metric() * temp.l2Metric()) > eps) {
             pivot2 = temp;
             break;
         }

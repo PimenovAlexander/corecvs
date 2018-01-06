@@ -6,6 +6,7 @@ HEADERS += \
     geometry/triangulation.h \
     geometry/polygons.h \
     geometry/mesh3d.h \
+    geometry/vptree.h \
     geometry/convexPolyhedron.h \
     geometry/renderer/simpleRenderer.h \
     geometry/renderer/geometryIterator.h \
@@ -20,14 +21,15 @@ HEADERS += \
     geometry/raytrace/materialExamples.h \
     geometry/raytrace/bspTree.h \
     geometry/mesh3DDecorated.h \
-    geometry/convexhull.h \
     geometry/polyLine.h \
     geometry/polylinemesh.h \
     geometry/ellipse.h \
     geometry/ellipseFit.h \
     geometry/plane3dFit.h \
     $$PWD/meshClicker.h \
-    $$PWD/raytrace/sdfRenderableObjects.h
+    $$PWD/raytrace/sdfRenderableObjects.h \
+    $$PWD/convexHull.h \
+    $$PWD/convexQuickHull.h
 
 
 SOURCES += \ 
@@ -49,12 +51,13 @@ SOURCES += \
     geometry/raytrace/sdfRenderable.cpp \
     geometry/raytrace/materialExamples.cpp \
     geometry/mesh3DDecorated.cpp \
-    geometry/convexhull.cpp \
     geometry/polyLine.cpp \
     geometry/polylinemesh.cpp \
     geometry/ellipse.cpp \
     geometry/ellipseFit.cpp \
     geometry/plane3dFit.cpp \
     $$PWD/meshClicker.cpp \
-    $$PWD/raytrace/sdfRenderableObjects.cpp
+    $$PWD/raytrace/sdfRenderableObjects.cpp \
+    $$PWD/convexHull.cpp \
+    $$PWD/convexQuickHull.cpp
 

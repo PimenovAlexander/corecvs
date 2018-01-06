@@ -13,7 +13,9 @@
 #include "gtest/gtest.h"
 
 #include "core/utils/global.h"
-#include "core/geometry/convexhull.h"
+#include "core/geometry/convexHull.h"
+#include "core/geometry/convexQuickHull.h"
+
 #include "core/geometry/mesh3d.h"
 
 
@@ -40,31 +42,55 @@ TEST(convexhull, testconvexhull)
         vectors.push_back(MyVector( dis(mt), dis(mt), dis(mt)));
     }
 
-
-    ConvexHullCalc hull(vectors);
-    hull.calc();
-
-    Mesh3D mesh;
-    mesh.switchColor(true);
-    ConvexHullResult *hullResult = hull.getHull();
-    if (hullResult->is3D())
     {
-        ConvexHull3D *hull3D = static_cast<ConvexHull3D *>(hullResult);
-        for (const Face &face :hull3D->faces)
+        ConvexHullCalc hull(vectors);
+
+        PreciseTimer timer = PreciseTimer::currentTime();
+        hull.calc();
+        uint64_t delay = timer.usecsToNow();
+        printf("Convex Hull :%8" PRIu64 "us \n", delay);
+
+
+        Mesh3D mesh;
+        mesh.switchColor(true);
+
+        ConvexHullResult *hullResult = hull.getHull();
+
+        if (hullResult->is3D())
         {
-            static int i = 0;
-            i++;
-            mesh.setColor(RGBColor::rainbow1((double)i / hull3D->faces.size() ));
-            mesh.addTriangle(face);
+            ConvexHull3D *hull3D = static_cast<ConvexHull3D *>(hullResult);
+            for (const Face &face :hull3D->faces)
+            {
+                static int i = 0;
+                i++;
+                mesh.setColor(RGBColor::rainbow1((double)i / hull3D->faces.size() ));
+                mesh.addTriangle(face);
+            }
+        } else {
+            SYNC_PRINT(("Hull is planar"));
         }
-    } else {
-        SYNC_PRINT(("Hull is planar"));
+
+        mesh.dumpPLY("hull.ply");
     }
 
-    mesh.dumpPLY("hull.ply");
+    {
+         PreciseTimer timer = PreciseTimer::currentTime();
+         tFaces result = ConvexQuickHull::quickHull(vectors, 1e-9);
+         uint64_t delay = timer.usecsToNow();
+         printf("Quick Hull :%8" PRIu64 "us \n", delay);
 
+         Mesh3D mesh;
+         mesh.switchColor(true);
 
-    cout << "Starting test <convexhull>" << endl;
+         for (size_t i = 0; i < result.size(); i++)
+         {
+             mesh.setColor(RGBColor::rainbow1((double)i / result.size() ));
+             mesh.addTriangle(result[i].plane);
+         }
+
+         mesh.dumpPLY("qhull.ply");
+    }
+
     cout << "Test <convexhull> PASSED" << endl;
 }
 
@@ -78,3 +104,175 @@ TEST(convexhull, testconvexhull1)
 
 }
 #endif
+
+bool isEqual(const Triangle3dd &t1, const Triangle3dd &t2)
+{
+    for (int i = 0; i < Triangle3dd::SIZE; i++)
+    {
+        int j = 0;
+        for (; j < Triangle3dd::SIZE; j++)
+        {
+            if (t1.p[i].notTooFar(t2.p[j], 1e-7))
+            {
+                break;
+
+            }
+        }
+        if (j == Triangle3dd::SIZE)
+            return false;
+    }
+
+    return true;
+}
+
+
+void testHull(const vertices &verts, const tFaces &goldValue) {
+    double eps = 0.00001;
+    tFaces faces = ConvexQuickHull::quickHull(verts, eps);
+    bool test = true;
+    if (faces.size() != goldValue.size())
+        test = false;
+    else {
+        for (int i = 0; i < goldValue.size(); i++)
+            if (!isEqual(goldValue[i].plane, faces[i].plane))
+                test = false;
+    }
+    int i = 0;
+    for (auto face : faces) {
+        printf("(%F, %F, %F)\n", face.plane.p1().x(), face.plane.p1().y(), face.plane.p1().z());
+        printf("(%F, %F, %F)\n", face.plane.p2().x(), face.plane.p2().y(), face.plane.p2().z());
+        printf("(%F, %F, %F)\n", face.plane.p3().x(), face.plane.p3().y(), face.plane.p3().z());
+        printf("\n");
+        ++i;
+    }
+    if (test)
+        printf("test completed\n");
+    else
+        printf("test failed\n");
+    printf("number of facets: %i\n", i);
+}
+
+
+TEST(convexhull, testquickhull)
+{
+    printf("First test: one point\n");
+    vertices verts = {{1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}};
+    tFaces goldValue = {};
+    testHull(verts, goldValue);
+    printf("\nSecond test: line\n");
+    verts = {{1,0,0}, {1,0,0}, {2,0,0}, {3,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}};
+    goldValue = {};
+    testHull(verts, goldValue);
+    printf("\nThird test: plane\n");
+    verts = {{1,0,0}, {1,0,0}, {2,0,0}, {0,3,0}, {0,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}};
+    goldValue = {};
+    testHull(verts, goldValue);
+    printf("\nForth test: cube with (0,0,0) point inside\n");
+    verts = {{0, 0, 0}, {-1, -1, 1}, {1, -1, 1}, {-1, -1, -1}, {1, -1, -1}, {-1, 1, 1}, {1, 1, 1}, {-1, 1, -1}, {1, 1, -1}};
+    goldValue = {
+        {{ {1, -1, -1}, {1, 1, -1}, {1,  1,  1}}},
+        {{ {-1, 1, -1}, {1, 1,  1}, {1,  1, -1}}},
+        {{ {-1, 1, -1}, {1, 1, -1}, {1, -1, -1}}},
+        {{ {-1, -1, 1}, {-1, -1, -1}, {1, -1, -1}}},
+        {{ {-1, 1, -1}, {1, -1, -1}, {-1, -1, -1}}},
+        {{ {-1, 1, -1}, {-1, -1, -1}, {-1, -1, 1}}},
+        {{ {1, -1, -1}, {1, -1, 1}, {-1, -1, 1}}},
+        {{ {1, 1, 1}, {-1, -1, 1}, {1, -1, 1}}},
+        {{ {1, 1, 1}, {1, -1, 1}, {1, -1, -1}}},
+        {{ {1, 1, 1}, {-1, 1, 1}, {-1, -1, 1}}},
+        {{ {-1, 1, -1}, {-1, -1, 1}, {-1, 1, 1}}},
+        {{ {-1, 1, -1}, {-1, 1, 1}, {1, 1, 1}}}
+    };
+
+    testHull(verts, goldValue);
+    printf("\nFifth test: dodecahedron\n");
+    verts = {{0.469, 0.469, 0.469}, {0.290, 0.000, 0.759}, {-0.759, -0.290, 0.000}, {0.759, 0.290, 0.000}, {-0.469, 0.469, -0.469}, {0.000, -0.759, -0.290}, {-0.759, 0.290, 0.000}, {0.469, -0.469, 0.469}, {-0.469, 0.469, 0.469}, {-0.469, -0.469, 0.469}, {0.469, -0.469, -0.469}, {0.290, 0.000, -0.759}, {-0.469, -0.469, -0.469}, {0.000, -0.759, 0.290}, {0.000, 0.759, -0.290}, {-0.290, 0.000, 0.759}, {0.759, -0.290, 0.000}, {-0.290, 0.000, -0.759}, {0.469, 0.469, -0.469}, {0.000, 0.759, 0.290}};
+    goldValue = {
+        {{     {0.000000, 0.759000, 0.290000}, {-0.290000, 0.000000, 0.759000}, {0.290000, 0.000000, 0.759000}}},
+        {{    {0.000000, 0.759000, 0.290000}, {-0.469000, 0.469000, 0.469000}, {-0.290000, 0.000000, 0.759000}}},
+        {{    {-0.759000, 0.290000, 0.000000}, {-0.290000, 0.000000, 0.759000}, {-0.469000, 0.469000, 0.469000}}},
+        {{    {-0.759000, 0.290000, 0.000000}, {-0.469000, 0.469000, 0.469000}, {0.000000, 0.759000, 0.290000}}},
+        {{    {0.759000, -0.290000, 0.000000}, {0.290000, 0.000000, -0.759000}, {0.759000, 0.290000, 0.000000}}},
+        {{    {0.759000, -0.290000, 0.000000}, {0.759000, 0.290000, 0.000000}, {0.290000, 0.000000, 0.759000}}},
+        {{    {0.759000, -0.290000, 0.000000}, {0.000000, -0.759000, 0.290000}, {0.000000, -0.759000, -0.290000}}},
+        {{    {-0.290000, 0.000000, 0.759000}, {0.000000, -0.759000, 0.290000}, {0.290000, 0.000000, 0.759000}}},
+        {{    {-0.759000, 0.290000, 0.000000}, {-0.759000, -0.290000, 0.000000}, {-0.290000, 0.000000, 0.759000}}},
+        {{    {0.000000, -0.759000, -0.290000}, {0.000000, -0.759000, 0.290000}, {-0.759000, -0.290000, 0.000000}}},
+        {{    {0.000000, -0.759000, -0.290000}, {-0.759000, -0.290000, 0.000000}, {-0.469000, -0.469000, -0.469000}}},
+        {{    {0.290000, 0.000000, -0.759000}, {0.469000, -0.469000, -0.469000}, {0.000000, -0.759000, -0.290000}}},
+        {{    {0.759000, -0.290000, 0.000000}, {0.000000, -0.759000, -0.290000}, {0.469000, -0.469000, -0.469000}}},
+        {{    {0.759000, -0.290000, 0.000000}, {0.469000, -0.469000, -0.469000}, {0.290000, 0.000000, -0.759000}}},
+        {{    {0.759000, 0.290000, 0.000000}, {0.469000, 0.469000, 0.469000}, {0.290000, 0.000000, 0.759000}}},
+        {{    {0.000000, 0.759000, 0.290000}, {0.290000, 0.000000, 0.759000}, {0.469000, 0.469000, 0.469000}}},
+        {{    {0.000000, 0.759000, 0.290000}, {0.469000, 0.469000, 0.469000}, {0.759000, 0.290000, 0.000000}}},
+        {{    {0.000000, -0.759000, 0.290000}, {-0.469000, -0.469000, 0.469000}, {-0.759000, -0.290000, 0.000000}}},
+        {{    {-0.290000, 0.000000, 0.759000}, {-0.759000, -0.290000, 0.000000}, {-0.469000, -0.469000, 0.469000}}},
+        {{    {-0.290000, 0.000000, 0.759000}, {-0.469000, -0.469000, 0.469000}, {0.000000, -0.759000, 0.290000}}},
+        {{    {0.000000, 0.759000, 0.290000}, {0.759000, 0.290000, 0.000000}, {0.000000, 0.759000, -0.290000}}},
+        {{    {-0.759000, 0.290000, 0.000000}, {0.000000, 0.759000, 0.290000}, {0.000000, 0.759000, -0.290000}}},
+        {{    {-0.759000, 0.290000, 0.000000}, {0.000000, 0.759000, -0.290000}, {-0.469000, 0.469000, -0.469000}}},
+        {{    {0.000000, -0.759000, -0.290000}, {-0.469000, -0.469000, -0.469000}, {-0.290000, 0.000000, -0.759000}}},
+        {{    {0.000000, -0.759000, -0.290000}, {-0.290000, 0.000000, -0.759000}, {0.290000, 0.000000, -0.759000}}},
+        {{    {-0.759000, 0.290000, 0.000000}, {-0.469000, 0.469000, -0.469000}, {-0.290000, 0.000000, -0.759000}}},
+        {{    {-0.759000, -0.290000, 0.000000}, {-0.290000, 0.000000, -0.759000}, {-0.469000, -0.469000, -0.469000}}},
+        {{    {-0.759000, 0.290000, 0.000000}, {-0.290000, 0.000000, -0.759000}, {-0.759000, -0.290000, 0.000000}}},
+        {{    {0.000000, 0.759000, -0.290000}, {-0.290000, 0.000000, -0.759000}, {-0.469000, 0.469000, -0.469000}}},
+        {{    {0.290000, 0.000000, -0.759000}, {-0.290000, 0.000000, -0.759000}, {0.000000, 0.759000, -0.290000}}},
+        {{    {0.000000, -0.759000, 0.290000}, {0.469000, -0.469000, 0.469000}, {0.290000, 0.000000, 0.759000}}},
+        {{    {0.759000, -0.290000, 0.000000}, {0.290000, 0.000000, 0.759000}, {0.469000, -0.469000, 0.469000}}},
+        {{    {0.759000, -0.290000, 0.000000}, {0.469000, -0.469000, 0.469000}, {0.000000, -0.759000, 0.290000}}},
+        {{    {0.759000, 0.290000, 0.000000}, {0.469000, 0.469000, -0.469000}, {0.000000, 0.759000, -0.290000}}},
+        {{    {0.290000, 0.000000, -0.759000}, {0.000000, 0.759000, -0.290000}, {0.469000, 0.469000, -0.469000}}},
+        {{    {0.290000, 0.000000, -0.759000}, {0.469000, 0.469000, -0.469000}, {0.759000, 0.290000, 0.000000}}}};
+
+    testHull(verts, goldValue);
+
+}
+
+TEST(convexhull, testquickfazzer)
+{
+    Mesh3D inputMesh;
+    inputMesh.addIcoSphere(Vector3dd::Zero(), 100, 0);
+
+    mt19937 mt;
+    vector<Vector3dd> input = inputMesh.vertexes;
+    for (int i=0; i < 1000; i++)
+    {
+        /* Add some point */
+        std::uniform_int_distribution<int> d(0, input.size() - 1);
+        Vector3dd a = input[d(mt)];
+        Vector3dd b = input[d(mt)];
+        Vector3dd c = input[d(mt)];
+
+        input.push_back((a+b+c) / 3.0);
+
+        Vector3dd add = input[d(mt)];
+        input.insert(input.begin() + d(mt), add);
+
+        SYNC_PRINT(("Testing size: %d\n", input.size()));
+        tFaces faces = ConvexQuickHull::quickHull(input, 1e-9);
+        SYNC_PRINT(("Faces: %d\n", faces.size()));
+
+        ASSERT_TRUE((faces.size() == 20));
+
+    }
+}
+
+TEST(convexhull, teststrange)
+{
+    vector<Vector3dd> input;
+    input.push_back(Vector3dd::Zero());
+    input.push_back(Vector3dd::OrtX());
+    input.push_back(Vector3dd::OrtY());
+    input.push_back(Vector3dd::OrtZ());
+
+    input.push_back(Vector3dd::OrtZ() * 2);
+
+    SYNC_PRINT(("Input points\n"));
+    for (size_t t = 0; t < input.size(); t++ )
+    {
+        cout << t << " " << input[t] << endl;
+    }
+    tFaces faces = ConvexQuickHull::quickHull(input, 1e-9);
+    SYNC_PRINT(("Faces: %d\n", faces.size()));
+}

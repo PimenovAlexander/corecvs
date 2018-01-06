@@ -20,8 +20,6 @@ public:
     bool operator ==(const MyVector &V) const;
 
     bool operator <(const MyVector &V) const;
-
-    double len2();
 };
 
 class Face : public Triangle3dd {
