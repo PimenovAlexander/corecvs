@@ -23,7 +23,8 @@ public:
 
     static const int SIZE = 4;
 
-    Doublex4() {}
+    Doublex4() : data(_mm256_setzero_pd())
+    {}
 
     explicit Doublex4(const double value) {
         this->data = _mm256_set1_pd(value);
