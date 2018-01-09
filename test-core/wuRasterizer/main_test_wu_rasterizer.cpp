@@ -40,10 +40,10 @@ public:
 TEST(wuRasterizer, testwuRasterizer) {
     AbstractBuffer<float> buffer1(100, 100, true);
     WuRasterizer::drawLine(buffer1, 0, 10, 10, 10, 2.);
-    ASSERT_EQ(buffer1.element(0,10), 1.0);
-    ASSERT_EQ(buffer1.element(0,11), 0.0);
+    ASSERT_EQ(buffer1.element(10,0), 1.0);
+    ASSERT_EQ(buffer1.element(11,0), 0.0);
     ASSERT_EQ(buffer1.element(10,10), 1.0);
-    ASSERT_EQ(buffer1.element(10,11), 0.0);
+    ASSERT_EQ(buffer1.element(11,10), 0.0);
 
     AbstractBuffer<float> buffer2(100, 100, true);
     WuRasterizer::drawLine(buffer2, 0, 0, 10, 10, 2.);
