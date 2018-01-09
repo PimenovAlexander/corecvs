@@ -209,11 +209,10 @@ struct ParallelMM8
                 for (; column <= colCycleEnd; column += BLOCK)
                 {
                     /*Ok. Here we have a 8x8 block to update*/
-                    /*Doublex4() init data with zeros*/
-                    Doublex4 s00 = Doublex4(); Doublex4 s01 = Doublex4();
-                    Doublex4 s10 = Doublex4(); Doublex4 s11 = Doublex4();
-                    Doublex4 s20 = Doublex4(); Doublex4 s21 = Doublex4();
-                    Doublex4 s30 = Doublex4(); Doublex4 s31 = Doublex4();
+                    Doublex4 s00 = Doublex4::Zero(); Doublex4 s01 = Doublex4::Zero();
+                    Doublex4 s10 = Doublex4::Zero(); Doublex4 s11 = Doublex4::Zero();
+                    Doublex4 s20 = Doublex4::Zero(); Doublex4 s21 = Doublex4::Zero();
+                    Doublex4 s30 = Doublex4::Zero(); Doublex4 s31 = Doublex4::Zero();
 
                     Doublex4 a0, a1, b0, b1;
 

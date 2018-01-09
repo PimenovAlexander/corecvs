@@ -63,14 +63,14 @@ TEST(wuRasterizer, testwuRasterizer) {
 }
 
 TEST(wuRasterizer, testwuRasterizerGraphics) {
-    const static int H = 100;
-    const static int W = 100;
+    const static int H = 200;
+    const static int W = 200;
 
-    const static int N = 8;
+    const static int N = 20;
 
 
     RGB24Buffer buffer(H, W * 2);
-    buffer.checkerBoard(10, RGBColor::White(), RGBColor::Gray(50));
+    //buffer.checkerBoard(10, RGBColor::White(), RGBColor::Gray(50));
 
     double c = 0;
     for (int i = 0; i < N; i++, c+= (1.0 / N))

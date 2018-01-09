@@ -90,7 +90,7 @@ vertices createSimplex(const vertices& listVertices) {
     maxDist = 0;
     Vector3dd apex = EP[0];
     for (auto point : listVertices) {
-        double dist = pointPlaneDist(triangleP1, triangleP2, triangleP3, point);
+        double dist = abs(pointPlaneDist(triangleP1, triangleP2, triangleP3, point));
         if (dist > maxDist) {
             maxDist = dist;
             apex = point;

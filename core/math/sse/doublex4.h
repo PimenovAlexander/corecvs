@@ -23,7 +23,7 @@ public:
 
     static const int SIZE = 4;
 
-    Doublex4() : data(_mm256_setzero_pd())
+    Doublex4() : data()
     {}
 
     explicit Doublex4(const double value) {
