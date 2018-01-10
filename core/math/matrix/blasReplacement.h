@@ -208,24 +208,22 @@ struct ParallelMM8
                 int column = 0;
                 for (; column <= colCycleEnd; column += BLOCK)
                 {
-                    /*Ok. Here we have a 8x8 block to update*/
-                    /*Doublex4() init data with zeros*/
-                    Doublex4 s00 = Doublex4(); Doublex4 s01 = Doublex4();
-                    Doublex4 s10 = Doublex4(); Doublex4 s11 = Doublex4();
-                    Doublex4 s20 = Doublex4(); Doublex4 s21 = Doublex4();
-                    Doublex4 s30 = Doublex4(); Doublex4 s31 = Doublex4();
+                    Doublex4 s00 = Doublex4::Zero(); Doublex4 s01 = Doublex4::Zero();
+                    Doublex4 s10 = Doublex4::Zero(); Doublex4 s11 = Doublex4::Zero();
+                    Doublex4 s20 = Doublex4::Zero(); Doublex4 s21 = Doublex4::Zero();
+                    Doublex4 s30 = Doublex4::Zero(); Doublex4 s31 = Doublex4::Zero();
 
                     Doublex4 a0, a1, b0, b1;
 
                     const double *As = &A.a(row, 0);
                     const double *Bs = &B.a(0, column);
 
-                    for (int runner = result.w; runner != 0; runner--)
+                    for (int runner = 0; runner < A.w; runner++)
                     {
 
                         b0 = Doublex4(Bs);
                         b1 = Doublex4(Bs + 4);
-	
+
                         Bs+=Bd;
 
                         const double *Of = As;
@@ -260,12 +258,12 @@ struct ParallelMM8
                     As = &A.a(row, 0);
                     Bs = &B.a(0, column);
 
-                    for (int runner = result.w; runner != 0; runner--)
+                    for (int runner = 0; runner < A.w; runner++)
                     {
 
                         b0 = Doublex4(Bs);
                         b1 = Doublex4(Bs + 4);
-	
+
                         Bs+=Bd;
 
                         const double *Of = As;
@@ -299,7 +297,7 @@ struct ParallelMM8
                     for (int dr = 0; dr < BLOCK; dr++)
                     {
                         double sum = 0;
-                        for (int runner = A.w; runner != 0; runner--)
+                        for (int runner = 0; runner < A.w; runner++)
                         {
                             sum += A.a(row + dr, runner) * B.a(runner, column);
                         }
