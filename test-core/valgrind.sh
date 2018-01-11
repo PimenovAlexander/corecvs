@@ -62,9 +62,9 @@ for test in $test_list; do
  fi;
 done;
 
-echo -e "Total Runned: " $totalrun
-echo -e "Total Runned: ${greenText}${totalpassed}${normalText}\n"
-echo -e "Total Runned: ${redText}${totalfailed}${normalText}\n"
+echo -e "Total Runned  : " $totalrun
+echo -e "Total Passed  : ${greenText}${totalpassed}${normalText}\n"
+echo -e "Total Failed  : ${redText}${totalfailed}${normalText}\n"
 echo -e "Total Disabled: " $totaldis
 
 
