@@ -26,26 +26,45 @@ done;
 
 echo $len;
 
+totalrun=0
+totaldis=0
+totalpassed=0
+totalfailed=0
+
 for test in $test_list; do
  if echo $test | grep "\.DISABLED" >/dev/null; then
     printf "DISABLED %*s \n" $len $test
+    ((totaldis++));
     continue;
  fi;
 
+ ((totalrun++));
+ 
  printf "Will run %*s " $len $test
  $EXECUTABLE --gtest_filter=$test >/dev/null 2>/dev/null
  result=$?
  echo -n "res:$result "
 
- $VALGRIND --error-exitcode=7 $EXECUTABLE --gtest_filter=$test >/dev/null 2>/dev/null
- vresult=$?
- echo -n "val:$vresult "
+
+ vresult=0
+ if [[ $1 != "0" ]]; then 
+   $VALGRIND --error-exitcode=7 $EXECUTABLE --gtest_filter=$test >/dev/null 2>/dev/null
+   vresult=$?
+   echo -n "val:$vresult "
+ fi
 
  if [[ ("$result" == "0") && ("$vresult" == "0") ]]; then
+     ((totalpassed++));
      echo -n -e "${greenText}Done${normalText}\n";
  else
-     echo -n -e "${redText}Done${normalText}\n";
+     ((totalfailed++));
+      echo -n -e "${redText}Done${normalText}\n";
  fi;
 done;
+
+echo -e "Total Runned: " $totalrun
+echo -e "Total Runned: ${greenText}${totalpassed}${normalText}\n"
+echo -e "Total Runned: ${redText}${totalfailed}${normalText}\n"
+echo -e "Total Disabled: " $totaldis
 
 

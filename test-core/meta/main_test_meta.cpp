@@ -376,7 +376,7 @@ TEST(meta, testEssentialCostFunction)
     }
 
     vector<Correspondence *> dataPtr;
-    for (int i = 0; i < data.size(); i++) {
+    for (size_t i = 0; i < data.size(); i++) {
         dataPtr.push_back(&data[i]);
     }
 

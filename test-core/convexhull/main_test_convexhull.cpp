@@ -149,6 +149,8 @@ void testHull(const vertices &verts, const tFaces &goldValue) {
         printf("test completed\n");
     else
         printf("test failed\n");
+    CORE_ASSERT_TRUE(test, "Ground truth not matched");
+
     printf("number of facets: %i\n", i);
 }
 
@@ -157,19 +159,20 @@ TEST(convexhull, testquickhull)
 {
     printf("First test: one point\n");
     vertices verts = {{1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}};
-    tFaces goldValue = {};
-    testHull(verts, goldValue);
+    tFaces groundTruth = {};
+    testHull(verts, groundTruth);
     printf("\nSecond test: line\n");
+
     verts = {{1,0,0}, {1,0,0}, {2,0,0}, {3,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}};
-    goldValue = {};
-    testHull(verts, goldValue);
+    groundTruth = {};
+    testHull(verts, groundTruth);
     printf("\nThird test: plane\n");
     verts = {{1,0,0}, {1,0,0}, {2,0,0}, {0,3,0}, {0,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}};
-    goldValue = {};
-    testHull(verts, goldValue);
+    groundTruth = {};
+    testHull(verts, groundTruth);
     printf("\nForth test: cube with (0,0,0) point inside\n");
     verts = {{0, 0, 0}, {-1, -1, 1}, {1, -1, 1}, {-1, -1, -1}, {1, -1, -1}, {-1, 1, 1}, {1, 1, 1}, {-1, 1, -1}, {1, 1, -1}};
-    goldValue = {
+    groundTruth = {
         {{ {1, -1, -1}, {1, 1, -1}, {1,  1,  1}}},
         {{ {-1, 1, -1}, {1, 1,  1}, {1,  1, -1}}},
         {{ {-1, 1, -1}, {1, 1, -1}, {1, -1, -1}}},
@@ -184,10 +187,10 @@ TEST(convexhull, testquickhull)
         {{ {-1, 1, -1}, {-1, 1, 1}, {1, 1, 1}}}
     };
 
-    testHull(verts, goldValue);
+    testHull(verts, groundTruth);
     printf("\nFifth test: dodecahedron\n");
     verts = {{0.469, 0.469, 0.469}, {0.290, 0.000, 0.759}, {-0.759, -0.290, 0.000}, {0.759, 0.290, 0.000}, {-0.469, 0.469, -0.469}, {0.000, -0.759, -0.290}, {-0.759, 0.290, 0.000}, {0.469, -0.469, 0.469}, {-0.469, 0.469, 0.469}, {-0.469, -0.469, 0.469}, {0.469, -0.469, -0.469}, {0.290, 0.000, -0.759}, {-0.469, -0.469, -0.469}, {0.000, -0.759, 0.290}, {0.000, 0.759, -0.290}, {-0.290, 0.000, 0.759}, {0.759, -0.290, 0.000}, {-0.290, 0.000, -0.759}, {0.469, 0.469, -0.469}, {0.000, 0.759, 0.290}};
-    goldValue = {
+    groundTruth = {
         {{     {0.000000, 0.759000, 0.290000}, {-0.290000, 0.000000, 0.759000}, {0.290000, 0.000000, 0.759000}}},
         {{    {0.000000, 0.759000, 0.290000}, {-0.469000, 0.469000, 0.469000}, {-0.290000, 0.000000, 0.759000}}},
         {{    {-0.759000, 0.290000, 0.000000}, {-0.290000, 0.000000, 0.759000}, {-0.469000, 0.469000, 0.469000}}},
@@ -225,7 +228,7 @@ TEST(convexhull, testquickhull)
         {{    {0.290000, 0.000000, -0.759000}, {0.000000, 0.759000, -0.290000}, {0.469000, 0.469000, -0.469000}}},
         {{    {0.290000, 0.000000, -0.759000}, {0.469000, 0.469000, -0.469000}, {0.759000, 0.290000, 0.000000}}}};
 
-    testHull(verts, goldValue);
+    testHull(verts, groundTruth);
 
 }
 
@@ -249,9 +252,9 @@ TEST(convexhull, testquickfazzer)
         Vector3dd add = input[d(mt)];
         input.insert(input.begin() + d(mt), add);
 
-        SYNC_PRINT(("Testing size: %d\n", input.size()));
+        SYNC_PRINT(("Testing size: %d\n", (int)input.size()));
         tFaces faces = ConvexQuickHull::quickHull(input, 1e-9);
-        SYNC_PRINT(("Faces: %d\n", faces.size()));
+        SYNC_PRINT(("Faces: %d\n", (int)faces.size()));
 
         ASSERT_TRUE((faces.size() == 20));
 

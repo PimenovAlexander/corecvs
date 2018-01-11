@@ -35,7 +35,7 @@ TEST(VPTreeTest, BuildingLight) {
 	for (int i = 0; i < 100; i++) {
 		std::vector<GeoCor> results;
 		std::vector<double> distances;
-		GeoCor searchPoint = { i, i };
+        GeoCor searchPoint = { (double)i, (double)i };
 		tree.search(searchPoint, 1, &results, &distances);
 
 		ASSERT_EQ(results.size(), 1);
@@ -51,14 +51,14 @@ TEST(VPTreeTest, InsertingLight) {
 	}
 
 	VpTree<GeoCor> tree;
-	for (int i = 0; i < points.size(); i++) {
+    for (size_t i = 0; i < points.size(); i++) {
 		tree.insert(points[i]);
 	}
 
-	for (int i = 0; i < 100; i++) {
+    for (size_t i = 0; i < 100; i++) {
 		std::vector<GeoCor> results;
 		std::vector<double> distances;
-		GeoCor searchPoint = { i, i };
+        GeoCor searchPoint = { (double)i, (double)i };
 		tree.search(searchPoint, 1, &results, &distances);
 
 		ASSERT_EQ(results.size(), 1);
@@ -85,7 +85,7 @@ TEST(VPTreeTest, BuildingHard) {
 	for (double i = 0; i < 12; i++) {
 		GeoCor cur = { i, i };
 		bool check = false;
-		for (int j = 0; j < results.size(); j++) {
+        for (size_t j = 0; j < results.size(); j++) {
 			if (abs(results[j].latitude - cur.latitude) + abs(results[j].longitude - cur.longitude) < 1e9) {
 				check = true;
 			}

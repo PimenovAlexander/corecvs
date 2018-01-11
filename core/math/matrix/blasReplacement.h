@@ -186,7 +186,7 @@ struct ParallelMM4
 template<int vectorize = true>
 struct ParallelMM8
 {
-    static constexpr int BLOCK = 8;
+    static const int BLOCK = 8;
 
     void operator() (const corecvs::BlockedRange<int> &r) const
     {
@@ -198,112 +198,90 @@ struct ParallelMM8
         size_t Bd = B.stride;
 
         int row = r.begin();
-        int rowCycleEnd = r.end() - BLOCK;
-        int colCycleEnd = result.w - BLOCK;
+
 #ifdef WITH_AVX
-        if (vectorize)
+        for (; (row + BLOCK <= r.end()) && vectorize; row += BLOCK)
         {
-            for (; (row <= rowCycleEnd); row += BLOCK)
+            int column = 0;
+            for (; column + BLOCK <= result.w; column += BLOCK)
             {
-                int column = 0;
-                for (; column <= colCycleEnd; column += BLOCK)
+                /*Ok. Here we have a 8x8 block to update*/
+                Doublex4 s00 = Doublex4::Zero(); Doublex4 s01 = Doublex4::Zero();
+                Doublex4 s10 = Doublex4::Zero(); Doublex4 s11 = Doublex4::Zero();
+                Doublex4 s20 = Doublex4::Zero(); Doublex4 s21 = Doublex4::Zero();
+                Doublex4 s30 = Doublex4::Zero(); Doublex4 s31 = Doublex4::Zero();
+
+                Doublex4 s40 = Doublex4::Zero(); Doublex4 s41 = Doublex4::Zero();
+                Doublex4 s50 = Doublex4::Zero(); Doublex4 s51 = Doublex4::Zero();
+                Doublex4 s60 = Doublex4::Zero(); Doublex4 s61 = Doublex4::Zero();
+                Doublex4 s70 = Doublex4::Zero(); Doublex4 s71 = Doublex4::Zero();
+
+                Doublex4 a0, a1, a2, a3, b0, b1;
+
+                const double *As = &A.a(row, 0);
+                const double *Bs = &B.a(0, column);
+
+                for (int runner = 0; runner < A.w; runner++)
                 {
-                    /*Ok. Here we have a 8x8 block to update*/
-                    Doublex4 s00 = Doublex4::Zero(); Doublex4 s01 = Doublex4::Zero();
-                    Doublex4 s10 = Doublex4::Zero(); Doublex4 s11 = Doublex4::Zero();
-                    Doublex4 s20 = Doublex4::Zero(); Doublex4 s21 = Doublex4::Zero();
-                    Doublex4 s30 = Doublex4::Zero(); Doublex4 s31 = Doublex4::Zero();
 
-                    Doublex4 a0, a1, b0, b1;
+                    b0 = Doublex4(Bs);
+                    b1 = Doublex4(Bs + 4);
 
-                    const double *As = &A.a(row, 0);
-                    const double *Bs = &B.a(0, column);
+                    Bs+=Bd;
 
-                    for (int runner = result.w; runner != 0; runner--)
-                    {
+                    const double *Of = As;
 
-                        b0 = Doublex4(Bs);
-                        b1 = Doublex4(Bs + 4);
-	
-                        Bs+=Bd;
+                    a0 = Doublex4::Broadcast(Of);  Of += Ad;
+                    a1 = Doublex4::Broadcast(Of);  Of += Ad;
 
-                        const double *Of = As;
+                    s00 = multiplyAdd(a0, b0, s00); s01 = multiplyAdd(a0, b1, s01);
+                    s10 = multiplyAdd(a1, b0, s10); s11 = multiplyAdd(a1, b1, s11);
 
-                        a0 = Doublex4::Broadcast(Of);  Of += Ad;
-                        a1 = Doublex4::Broadcast(Of);  Of += Ad;
+                    a2 = Doublex4::Broadcast(Of); Of += Ad;
+                    a3 = Doublex4::Broadcast(Of); Of += Ad;
 
-                        s00 = multiplyAdd(a0, b0, s00); s01 = multiplyAdd(a0, b1, s01);
-                        s10 = multiplyAdd(a1, b0, s10); s11 = multiplyAdd(a1, b1, s11);
+                    s20 = multiplyAdd(a2, b0, s20); s21 = multiplyAdd(a2, b1, s21);
+                    s30 = multiplyAdd(a3, b0, s30); s31 = multiplyAdd(a3, b1, s31);
 
-                        a0 = Doublex4::Broadcast(Of); Of += Ad;
-                        a1 = Doublex4::Broadcast(Of); Of += Ad;
+                    a0 = Doublex4::Broadcast(Of); Of += Ad;
+                    a1 = Doublex4::Broadcast(Of); Of += Ad;
 
-                        s20 = multiplyAdd(a0, b0, s20); s21 = multiplyAdd(a0, b1, s21);
-                        s30 = multiplyAdd(a1, b0, s30); s31 = multiplyAdd(a1, b1, s31);
+                    s40 = multiplyAdd(a0, b0, s40); s41 = multiplyAdd(a0, b1, s41);
+                    s50 = multiplyAdd(a1, b0, s50); s51 = multiplyAdd(a1, b1, s51);
 
-                        Of += 4 * Ad;
-                        As++;
+                    a2 = Doublex4::Broadcast(Of); Of += Ad;
+                    a3 = Doublex4::Broadcast(Of); Of += Ad;
 
-                    }
+                    s60 = multiplyAdd(a2, b0, s60); s61 = multiplyAdd(a2, b1, s61);
+                    s70 = multiplyAdd(a3, b0, s70); s71 = multiplyAdd(a3, b1, s71);
 
-                    s00.save(&result.a(row + 0, column)); s01.save(&result.a(row + 0, column + 4));
-                    s10.save(&result.a(row + 1, column)); s11.save(&result.a(row + 1, column + 4));
-                    s20.save(&result.a(row + 2, column)); s21.save(&result.a(row + 2, column + 4));
-                    s30.save(&result.a(row + 3, column)); s31.save(&result.a(row + 3, column + 4));
+                    As++;
 
-                    s00 = Doublex4::Zero(); s01 = Doublex4::Zero();
-                    s10 = Doublex4::Zero(); s11 = Doublex4::Zero();
-                    s20 = Doublex4::Zero(); s21 = Doublex4::Zero();
-                    s30 = Doublex4::Zero(); s31 = Doublex4::Zero();
-
-                    As = &A.a(row, 0);
-                    Bs = &B.a(0, column);
-
-                    for (int runner = result.w; runner != 0; runner--)
-                    {
-
-                        b0 = Doublex4(Bs);
-                        b1 = Doublex4(Bs + 4);
-	
-                        Bs+=Bd;
-
-                        const double *Of = As;
-
-                        Of += 4 * Ad;
-
-                        a0 = Doublex4::Broadcast(Of);  Of += Ad;
-                        a1 = Doublex4::Broadcast(Of);  Of += Ad;
-
-                        s00 = multiplyAdd(a0, b0, s00); s01 = multiplyAdd(a0, b1, s01);
-                        s10 = multiplyAdd(a1, b0, s10); s11 = multiplyAdd(a1, b1, s11);
-
-                        a0 = Doublex4::Broadcast(Of); Of += Ad;
-                        a1 = Doublex4::Broadcast(Of); Of += Ad;
-
-                        s20 = multiplyAdd(a0, b0, s20); s21 = multiplyAdd(a0, b1, s21);
-                        s30 = multiplyAdd(a1, b0, s30); s31 = multiplyAdd(a1, b1, s31);
-
-                        As++;
-
-                    }
-
-                    s00.save(&result.a(row + 4, column)); s01.save(&result.a(row + 4, column + 4));
-                    s10.save(&result.a(row + 5, column)); s11.save(&result.a(row + 5, column + 4));
-                    s20.save(&result.a(row + 6, column)); s21.save(&result.a(row + 6, column + 4));
-                    s30.save(&result.a(row + 7, column)); s31.save(&result.a(row + 7, column + 4));
                 }
 
-                for (; column < result.w; column++)
+                s00.save(&result.a(row + 0, column)); s01.save(&result.a(row + 0, column + 4));
+                s10.save(&result.a(row + 1, column)); s11.save(&result.a(row + 1, column + 4));
+                s20.save(&result.a(row + 2, column)); s21.save(&result.a(row + 2, column + 4));
+                s30.save(&result.a(row + 3, column)); s31.save(&result.a(row + 3, column + 4));
+
+                s40.save(&result.a(row + 4, column)); s41.save(&result.a(row + 4, column + 4));
+                s50.save(&result.a(row + 5, column)); s51.save(&result.a(row + 5, column + 4));
+                s60.save(&result.a(row + 6, column)); s61.save(&result.a(row + 6, column + 4));
+                s70.save(&result.a(row + 7, column)); s71.save(&result.a(row + 7, column + 4));
+
+
+            }
+
+            for (; column < result.w; column++)
+            {
+                for (int dr = 0; dr < BLOCK; dr++)
                 {
-                    for (int dr = 0; dr < BLOCK; dr++)
+                    double sum = 0;
+                    for (int runner = 0; runner < A.w; runner++)
                     {
-                        double sum = 0;
-                        for (int runner = A.w; runner != 0; runner--)
-                        {
-                            sum += A.a(row + dr, runner) * B.a(runner, column);
-                        }
-                        result.a(row + dr, column) = sum;
+                        sum += A.a(row + dr, runner) * B.a(runner, column);
                     }
+                    result.a(row + dr, column) = sum;
                 }
             }
         }

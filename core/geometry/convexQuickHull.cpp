@@ -21,7 +21,7 @@ Vector3dd createVect(const Vector3dd &p1, const Vector3dd &p2) {
 }
 
 
-
+#if 0
 double vectMod (const Vector3dd &vect) {
     return sqrt(pow(vect.x(), 2) + pow(vect.y(), 2) + pow(vect.z(), 2));
 }
@@ -33,24 +33,21 @@ double scalarProd(const Vector3dd &v1, const Vector3dd &v2) {
 Vector3dd vectProd(const Vector3dd &v1, const Vector3dd &v2){
     return  { v1.y() * v2.z() - v1.z() * v2.y(), v1.z() * v2.x() - v1.x() * v2.z(), v1.x() * v2.y() - v1.y() * v2.x() };
 }
+#endif
 
 double tripleProd(const Vector3dd &v1, const Vector3dd &v2, const Vector3dd &v3) {
-    return scalarProd(v1, vectProd(v2, v3));
-}
-
-double pointDist(const Vector3dd &p1, const Vector3dd &p2) {
-    return vectMod(createVect(p1, p2));
+    return  v1 & (v2 ^ v3);
 }
 
 double pointLineDist(const Vector3dd &lineP1, const Vector3dd &lineP2, const Vector3dd &point) {
-    Vector3dd lineVect = createVect(lineP1, lineP2);
-    return vectMod(vectProd(lineVect, createVect(lineP1, point))) / vectMod(lineVect);
+    Vector3dd lineVect = lineP2 - lineP1;
+    return (lineVect ^ (point - lineP1)).l2Metric() / lineVect.l2Metric();
 }
 
 double pointPlaneDist(const Vector3dd &planeP1, const Vector3dd &planeP2, const Vector3dd &planeP3, const Vector3dd &point) {
     Vector3dd baseV1 = createVect(planeP1, planeP2);
     Vector3dd baseV2 = createVect(planeP1, planeP3);
-    return tripleProd(baseV1, baseV2, createVect(planeP1, point)) / vectMod(vectProd(baseV1, baseV2));
+    return tripleProd(baseV1, baseV2, point - planeP1) / ((baseV1 ^ baseV2).l2Metric());
 }
 
 vertices createSimplex(const vertices& listVertices) {
@@ -70,7 +67,7 @@ vertices createSimplex(const vertices& listVertices) {
     Vector3dd triangleP1 = EP[0], triangleP2 = EP[0], triangleP3 = EP[0];
     for (auto point1 : EP)
         for (auto point2 : EP) {
-            double dist = pointDist(point1, point2);
+            double dist = (point2 - point1).l2Metric();
             if (dist > maxDist) {
                 maxDist = dist;
                 triangleP1 = point1;

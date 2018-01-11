@@ -53,7 +53,7 @@ TEST(meshdraw, normalGenerate)
     mesh.addCylinder(Vector3dd::Zero(), 10, 10, 3);
     mesh.recomputeMeanNormals();
 
-    for (int f = 0; f <  mesh.normalId.size(); f++)
+    for (size_t f = 0; f <  mesh.normalId.size(); f++)
     {
         Vector3d32  ids = mesh.normalId[f];
         Triangle3dd face = mesh.getFaceAsTrinagle(f);
