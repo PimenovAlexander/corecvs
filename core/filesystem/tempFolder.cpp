@@ -81,8 +81,8 @@ string TempFolder::TempFolderPath(const string &projectEnviromentVariable, bool 
 
         // the created folder is automatically considered cleared
         clearedFolders.push_back(projectEnviromentVariable);
-    }    
-    
+    }
+
     return res;
 }
 

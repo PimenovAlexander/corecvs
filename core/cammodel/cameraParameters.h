@@ -10,7 +10,7 @@
 #include "core/math/vector/vector2d.h"
 #include "core/math/matrix/matrix44.h"
 
-#include "core/cameracalibration/calibrationCamera.h"
+#include "core/cameracalibration/cameraModel.h"
 
 
 namespace corecvs {

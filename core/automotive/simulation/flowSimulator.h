@@ -17,7 +17,7 @@
 #include "core/math/vector/vector3d.h"
 #include "core/math/matrix/matrix44.h"
 #include "core/buffers/flow/flowVector.h"
-#include "core/cameracalibration/calibrationCamera.h"
+#include "core/cameracalibration/cameraModel.h"
 #include "core/math/eulerAngles.h"
 
 namespace corecvs {

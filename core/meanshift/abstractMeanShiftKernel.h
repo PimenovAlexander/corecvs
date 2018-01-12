@@ -27,7 +27,7 @@ public:
             unsigned const x,
             unsigned const y) const = 0;
 
-    virtual ~AbstractMeanShiftKernel() {};
+    virtual ~AbstractMeanShiftKernel() {}
 };
 
 

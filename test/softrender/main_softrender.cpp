@@ -6,7 +6,7 @@
 #include "qtFileLoader.h"
 
 
-#include "core/cameracalibration/calibrationCamera.h"
+#include "core/cameracalibration/cameraModel.h"
 #include "core/geometry/renderer/simpleRenderer.h"
 #include "core/geometry/mesh3d.h"
 #include "core/fileformats/meshLoader.h"
@@ -82,8 +82,10 @@ void prepareMesh(Mesh3DDecorated &mesh, RGB24Buffer * /*texture*/)
 
     for (size_t j = 0; j < mesh.faces.size(); j++)
     {
+        Vector4d32 texIdAndName(mesh.faces[j], 0);
+
         mesh.normalId.push_back(mesh.faces[j]);
-        mesh.texId.push_back(mesh.faces[j]);
+        mesh.texId   .push_back(texIdAndName);
         mesh.facesColor[j] = RGBColor::rainbow1((double) j / mesh.faces.size());
 
     }

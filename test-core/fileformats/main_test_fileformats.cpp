@@ -175,10 +175,10 @@ TEST(FileFormats, DISABLED_testObjMaterialLoader)
     OBJLoader loader;
     ifstream file("/home/alexander/work/data/3d/source/Mesh.obj1.mtl", ifstream::in);
 
-    OBJMaterial material;
-    loader.loadMaterial(file, material, "/home/alexander/work/data/3d/source");
+    vector<OBJMaterial> materials;
+    loader.loadMaterials(file, materials, "/home/alexander/work/data/3d/source");
 
-    cout << material << endl;
+    cout << materials.size() << endl;
 }
 
 

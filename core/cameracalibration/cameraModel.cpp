@@ -1,15 +1,6 @@
-#include "core/cameracalibration/calibrationCamera.h"
-
-#include <array>
-
-#include "core/buffers/rgb24/abstractPainter.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/fileformats/bmpLoader.h"
+#include "cameraModel.h"
 
 namespace corecvs {
-
-int ScenePart::OBJECT_COUNT = 0;
-
 
 Matrix33 CameraModel::Fundamental(const Matrix44 &L, const Matrix44 &R)
 {
@@ -168,7 +159,7 @@ Polygon CameraModel::projectViewport(const CameraModel &right, double pyramidLen
 
         if (hasIntersection && t2 > 0.0)
         {
-            if (t1 < 0.0) t1 = 0.0;           
+            if (t1 < 0.0) t1 = 0.0;
             if (t2 > 1.0 && pyramidLength2 > 0) t2 = 1.0;
 
             FixedVector<double, 4> out1 = (T * ray.getProjectivePoint(t1));
@@ -499,3 +490,4 @@ void CameraModel::prettyPrint(std::ostream &out)
 
 
 } // namespace corecvs
+

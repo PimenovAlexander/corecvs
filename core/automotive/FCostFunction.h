@@ -12,7 +12,7 @@
  */
 
 
-#include "core/cameracalibration/calibrationCamera.h"
+#include "core/cameracalibration/cameraModel.h"
 #include "core/math/matrix/matrix44.h"
 #include "core/cammodel/cameraParameters.h"
 #include "core/math/eulerAngles.h"

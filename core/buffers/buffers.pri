@@ -62,7 +62,7 @@ HEADERS += \
     buffers/nonMaximalSuperssor.h \
     buffers/rgb24/wuRasterizer.h \
     buffers/abstractBufferParams.h \
-    $$PWD/rgb24/bresenhamRasterizer.h
+    buffers/rgb24/bresenhamRasterizer.h
 
 
 SOURCES += \
@@ -105,7 +105,7 @@ SOURCES += \
     buffers/convolver/convolver.cpp \
     buffers/rgb24/lineSpan.cpp \
     buffers/nonMaximalSuperssor.cpp \
-    buffers/rgb24/bresenhamRasteriser.cpp \
+    buffers/rgb24/bresenhamRasterizer.cpp \
     buffers/rgb24/wuRasterizer.cpp \
 
 

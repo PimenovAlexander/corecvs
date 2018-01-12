@@ -18,7 +18,11 @@ namespace corecvs {
 
 class MeanShiftCalculator {
 public:
-    MeanShiftCalculator(AbstractMeanShiftKernel * const kernel, unsigned minX, unsigned minY, unsigned maxX, unsigned maxY);
+    MeanShiftCalculator(
+            AbstractMeanShiftKernel * const kernel,
+            unsigned minX, unsigned minY,
+            unsigned maxX, unsigned maxY);
+
     ~MeanShiftCalculator();
 
     void calculate(unsigned numberOfWindows, unsigned overlay, unsigned minimalMovement

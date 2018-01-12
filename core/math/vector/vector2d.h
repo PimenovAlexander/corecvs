@@ -115,6 +115,13 @@ public:
         return Vector2d<OtherType>((OtherType)((*this)[0]),(OtherType)((*this)[1]));
     }*/
 
+    template<typename OtherType>
+    inline Vector2d<OtherType> cast() const
+    {
+        return Vector2d<OtherType>((OtherType)((*this)[0]),(OtherType)((*this)[1]));
+    }
+
+
     inline Vector2d<ElementType> leftNormal() const
     {
         return Vector2d(-y(),x());

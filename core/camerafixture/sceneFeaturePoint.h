@@ -272,7 +272,7 @@ public:
         visitor.visit(hasKnownPosition           , false             , "hasKnownPosition");
         visitor.visit(reprojectedPosition        , Vector3dd(0.0)    , "reprojectedPosition");
         visitor.visit(hasKnownReprojectedPosition, false             , "hasKnownReprojectedPosition");
-        visitor.visit(type                       , POINT_UNKNOWN     , "type");
+        visitor.visit((int &)type                , (int)POINT_UNKNOWN     , "type");
         visitor.visit(color                      , RGBColor::Black() , "color");
 
         int observeSize = (int)observations.size();
@@ -332,8 +332,8 @@ public:
     void projectForward(FixtureCamera *camera, CameraFixture *fixture, bool round);
 
     /* L2 reprojection error per observation */
-    std::vector< double > estimateReconstructedReprojectionErrorL2() const;
-    std::vector< double > estimateReprojectionErrorL2() const;
+    std::vector<double> estimateReconstructedReprojectionErrorL2() const;
+    std::vector<double> estimateReprojectionErrorL2() const;
 
     static bool checkTriangulationAngle(const corecvs::Vector3dd& point, const corecvs::Vector3dd& camera0, const corecvs::Vector3dd& camera1, double thresholdCos = triangulatorCosAngleThreshold);
     static bool checkTriangulationAngle(const corecvs::Vector3dd& point, const std::vector<corecvs::Vector3dd>& cameras, double thresholdCos = triangulatorCosAngleThreshold);

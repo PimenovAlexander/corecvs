@@ -48,6 +48,53 @@ TEST(Affine, testRotations)
     CORE_ASSERT_TRUE_P(t3q.notTooFar(r1, 1e-8), (" Y rotation returned a mistake with Clean Quaternion"));
 }
 
+TEST(Affine, DISABLED_testCoordinateMirror)
+{
+    Quaternion xr = Quaternion::RotationX(0.3);
+    Quaternion yr = Quaternion::RotationY(0.3);
+    Quaternion zr = Quaternion::RotationZ(0.3);
+
+    Quaternion tr = Quaternion::RotationZ(0.3) ^ Quaternion::RotationY(0.2) ^ Quaternion::RotationX(0.4);
+
+
+    /*Vector3dd i1a = Vector3dd(2,3,4);
+    Vector3dd i1b = i1a.yxz();
+
+    Quaternion xr1 = Quaternion::RotationX(0.3);
+    Quaternion yr1 = Quaternion::RotationX(0.3);
+    Quaternion zr1 = Quaternion::RotationX(0.3);
+
+
+    cout << "Orig" << (xr * i1a) << std::endl;
+    cout << "Orig" << (xr * i1b) << std::endl;*/
+
+    Matrix33 T = Matrix33::SwapXY();
+    cout << "Orig : " << xr << std::endl;
+    cout << "Trans: " <<  Quaternion::FromMatrix(T * xr.toMatrix() * T.inv()) << std::endl;
+
+    cout << "Orig : " << yr << std::endl;
+    cout << "Trans: " <<  Quaternion::FromMatrix(T * yr.toMatrix() * T.inv()) << std::endl;
+
+    cout << "Orig : " << zr << std::endl;
+    cout << "Trans: " <<  Quaternion::FromMatrix(T * zr.toMatrix() * T.inv()) << std::endl;
+
+    cout << "Orig : " << tr << std::endl;
+    cout << "Trans: " <<  Quaternion::FromMatrix(T * tr.toMatrix() * T.inv()) << std::endl;
+
+
+
+    //CORE_ASSERT_TRUE_P((xr * i1a).notTooFar( xr1 * i1b , 1e-8), (" Y rotation returned a mistake with Matrix Affine"));
+
+
+}
+
+
+TEST(Affine, foo)
+{
+    auto Q = Quaternion::FromMatrix(corecvs::Matrix33(0, -1, 0, 0, 0, -1, 1, 0, 0));
+    std::cout << Q.toMatrix() << std::endl;
+}
+
 TEST(Affine, testMatrixToQuaternion)
 {
     const int TEST_SIZE = 9;
@@ -79,10 +126,10 @@ TEST(Affine, testMatrixToQuaternion)
         Quaternion Q = Quaternion::Rotation(axis[i], angle[i]);
         Matrix33 M = Q.toMatrix();
         Quaternion Q1 = Quaternion::FromMatrix(M);
-        cout << "Case " << i << endl;
-        cout << Q  << " l= " << Q .l2Metric() << endl;
+        std::cout << "Case " << i << std::endl;
+        std::cout << Q << " l= " << Q.l2Metric() << std::endl;
         //cout << M << endl;
-        cout << Q1 << " l= " << Q1.l2Metric() << endl;
+        std::cout << Q1 << " l= " << Q1.l2Metric() << std::endl;
         ASSERT_TRUE(Q.notTooFar(Q1, 1e-7));
     }
 
@@ -149,14 +196,14 @@ TEST(Affine, testEulerAngles)
     CameraAnglesLegacy anglesCam1 = CameraAnglesLegacy::FromQuaternion(quatCam);
 
 
-    cout << "A:(" << anglesCam.pitch() << ", "
-                  << anglesCam.yaw()   << ", "
-                  << anglesCam.roll()  << ")" << endl;
+    std::cout << "A:("  << anglesCam.pitch() << ", "
+                        << anglesCam.yaw()   << ", "
+                        << anglesCam.roll() << ")" << std::endl;
 
-    cout << "M:" << endl << matrixCam << endl;
-    cout << "Q:" << endl << quatCam << endl;
+    std::cout << "M:"   << std::endl << matrixCam << std::endl;
+    std::cout << "Q:"   << std::endl << quatCam << std::endl;
 
-    cout << "A:(" << anglesCam1.pitch() << ", "
-                  << anglesCam1.yaw()   << ", "
-                  << anglesCam1.roll()  << ")" << endl;
+    std::cout << "A:("  << anglesCam1.pitch() << ", "
+                        << anglesCam1.yaw()   << ", "
+                        << anglesCam1.roll() << ")" << std::endl;
 }

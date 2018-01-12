@@ -741,12 +741,15 @@ void FixtureScene::dumpInfo(ostream &out, bool brief)
                 FixtureCamera *cam = fixture->cameras[j];
                 out << "     " << "Camera <" << cam->nameId << "> "  << endl;
                 out << "        " << "Size [" << cam->intrinsics.w() << " x " << cam->intrinsics.h() << "] "  << endl;
+                out << "        " << "Images "  <<   cam->mImages.size() << endl;
 
             }
         }
 
     out << "Points: " << mSceneFeaturePoints.size() << endl;
     out << "   Observations: " <<  totalObservations() << endl;
+    out << "Geometries: " << mGeomtery.size() << endl;
+    out << "Images: "     << mImages.size() << endl;
 }
 
 void FixtureScene::setFixtureCount(size_t count)

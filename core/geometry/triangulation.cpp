@@ -23,7 +23,7 @@ int orientation (const Point &p0, const Point &p1, const Point &p2)
     Point b = p2  - p0;
 
     //double sa = a.x() * b.y() - b.x() * a.y();
-  double sa = a.triangleOrientedAreaTo(b);
+    double sa = a.triangleOrientedAreaTo(b);
 
     if (sa > 0.0)
         return 1;
@@ -583,7 +583,7 @@ std::vector<Edge>    triangulate(const vector<Point> &points)
         newEdges[j++].dest = (*i)[0];
     }
 
-    cout << "Triangles:" << triangles.size() << " Edges: " << newEdges.size() << " Points: " << points.size() << endl;
+    std::cout << "Triangles:" << triangles.size() << " Edges: " << newEdges.size() << " Points: " << points.size() << std::endl;
     return newEdges;
 }
 
@@ -591,7 +591,7 @@ std::vector<Edge> vertexHull(const vector<Point> &points)
 {
     if (points.size() < 3)
     {
-        cout << "No enought data!\n";
+        std::cout << "No enought data!\n";
         return std::vector<Edge>();
     }
 
@@ -607,14 +607,15 @@ std::vector<Edge> vertexHullFromTriangulation(const std::vector<Edge> &edges, co
 {
     int i = 0;
     std::vector<Edge> result(pointsCount);
-    multimap<Point, Edge> edgeList;
-    multimap<Point, Edge>::const_iterator it;
-    pair<multimap<Point, Edge>::iterator, multimap<Point, Edge>::iterator> ret;
+    std::multimap<Point, Edge> edgeList;
+    std::multimap<Point, Edge>::const_iterator it;
+    std::pair<std::multimap<Point, Edge>::iterator, std::multimap<Point, Edge>::iterator> ret;
 
     // creating data structure in which it is easy to find the edges originating from a given point
     for (vector<Edge>::const_iterator i = edges.begin() + 1; i != edges.end(); i++)
-        edgeList.insert(make_pair(i->org, *i));
-
+    {
+        edgeList.insert(std::make_pair(i->org, *i));
+    }
 
     //cout << "========================\n";
     Point point0 = edges[0].org;

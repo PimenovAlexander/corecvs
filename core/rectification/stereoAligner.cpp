@@ -195,19 +195,21 @@ namespace corecvs {
  * Finally align transformations and there inverses are
  *
  * \f{eqnarray*}
- *   H_{G1}       &=& ({A^T}^{-1} H_{1}^T)^T = H_{1} A^{-1} \\
+ *   H_{G1}      &=& ({A^T}^{-1} H_{1}^T)^T = H_{1} A^{-1} \\
  *   H_{G2}      &=& H_{2} B^{-1} \\
- *   H_{G1}^{-1}  &=& A H_{1}^{-1} \\
+ *   H_{G1}^{-1} &=& A H_{1}^{-1} \\
  *   H_{G2}^{-1} &=& B H_{2}^{-1}
  *
  * \f}
  *
  * \param[in]  F               input fundamental or essential matrix
- * \param[out] leftTransform   output left transform \f$H_{1}\f$
- * \param[out] rightTransform  output right transform \f$H_{2}\f$
+ * \param[out] firstTransform   output left transform \f$H_{1}\f$
+ * \param[out] secondTransform  output right transform \f$H_{2}\f$
  * \param[in]  z               free vector \f$z\f$
  *
  */
+
+#define TRACE
 
 void StereoAligner::getAlignmentTransformation(
         const Matrix33 &F,
@@ -234,10 +236,7 @@ void StereoAligner::getAlignmentTransformation(
 #endif
 
     /// \todo TODO In fact this vector should be guessed
-    //vector3Dd z = {-0.75,0.75,0};
-    //vector3Dd z = {0.75,-0.75,0};
-    //Vector3dd z1 = Vector3dd(1.,0.,0.);
-
+    ///
     Vector3dd w1 = z ^ E1;
     Vector3dd w2 = z * F;
 
@@ -308,7 +307,7 @@ void StereoAligner::getAlignmentTransformation(
     Matrix33 second =  rotationalPartSecond * projectivePartSecond;
 
 
-//#ifdef ASSERTS
+#ifdef ASSERTS
     Matrix33 Ix(
              0,  0,  0,
              0,  0, -1,
@@ -322,8 +321,14 @@ void StereoAligner::getAlignmentTransformation(
     printf("Old Matrix was\n");
     F.print();
     printf("\n");
-    CORE_ASSERT_TRUE(Fprim.notTooFar(F, 1e-5), "Matrix reconstruction failed");
-//#endif // ASSERTS
+
+    if (Fprim.notTooFar(F, 1e-5) || Fprim.notTooFar(-F, 1e-5)) {
+        SYNC_PRINT(("Matrix reconstruction ok\n"));
+    } else {
+        SYNC_PRINT(("Matrix reconstruction failed\n"));
+    }
+
+#endif // ASSERTS
 
     double det1 = rotationalPartFirst .det();
     double det2 = rotationalPartSecond.det();
@@ -341,7 +346,7 @@ void StereoAligner::getAlignmentTransformation(
     *firstTransform  = scale * first;
     *secondTransform = scale * second;
 
-#ifdef TRACE
+#if 0
     printf("Final L %lg:\n", detL);
     leftTransform->print();
     printf("Final R %lg:\n", detR);
@@ -356,14 +361,16 @@ Vector3dd StereoAligner::getBestZ(const Matrix33 &F, const Vector2dd &rect, unsi
     Vector3dd E2;
     EssentialMatrix(F).nullspaces(&E2, &E1);
 
+    SYNC_PRINT(("StereoAligner::getBestZ(): called\n"));
 
     double minsum = numeric_limits<double>::max();
     double minalpha  = 0;
+    Vector3dd bestZ = Vector3dd::OrtY();
 
     for (unsigned i = 0; i < granularity; i++)
     {
         double alpha = i / (double)granularity * (M_PI * 2.0);
-        Vector3dd z = Vector3dd(cos(alpha), sin(alpha), 0.0);
+        Vector3dd z = Vector3dd(0.0, cos(alpha), sin(alpha));
 
         Vector3dd w1 = z ^ E1;
         Vector3dd w2 = F * z;
@@ -371,22 +378,26 @@ Vector3dd StereoAligner::getBestZ(const Matrix33 &F, const Vector2dd &rect, unsi
         w1 = w1.normalizeProjective();
         w2 = w2.normalizeProjective();
 
-        double distLeft = getDistortion(w1, rect);
+        double distLeft  = getDistortion(w1, rect);
         double distRight = getDistortion(w2, rect);
         if (leftDistortions != NULL)
             leftDistortions[i] = distLeft;
         if (rightDistortions != NULL)
             rightDistortions[i] = distRight;
 
-        CORE_ASSERT_TRUE(distLeft > 0 && distRight > 0, "Internal error");
+        // CORE_ASSERT_TRUE(distLeft > 0 && distRight > 0, "Internal error");
 
         if (distLeft + distRight <  minsum)
         {
             minsum = distLeft + distRight;
             minalpha = alpha;
+            bestZ = z;
         }
+        // cout << "Alpha: " << radToDeg(alpha) << "deg weight " << (distLeft + distRight) << " dl:" << distLeft << " dr:" << distRight << std::endl;
     }
-    return Vector3dd(cos(minalpha), sin(minalpha), 0.0);
+
+    cout << "StereoAligner::getBestZ():Best Alpha: " << radToDeg(minalpha) << endl;
+    return bestZ;
 }
 
 /*

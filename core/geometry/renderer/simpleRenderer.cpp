@@ -132,7 +132,7 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
     {
         Vector3d32 face = mesh->faces[f];
         Vector3d32 normalId = mesh->normalId[f];
-        Vector3d32 textureId = mesh->texId[f];
+        Vector4d32 textureId = mesh->texId[f];
 
         bool hasNormal = (normalId[0] != -1) && (normalId[1] != -1) && (normalId[2] != -1);
         /**/

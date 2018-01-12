@@ -123,6 +123,9 @@ public:
     virtual RGB24Buffer *load(string name) override
     {
         G12Buffer *buffer = PPMLoader::loadG12(name);
+        if (buffer == NULL) {
+            return NULL;
+        }
         RGB24Buffer *result = new RGB24Buffer(buffer);
         delete_safe(buffer);
         return result;

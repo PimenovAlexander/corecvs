@@ -10,12 +10,11 @@
 #include "core/math/sparseMatrix.h"
 #include "core/math/matrix/matrix.h"
 #include "core/math/matrix/matrix33.h"
-
-#include "core/tbbwrapper/tbbWrapper.h"
-#include "core/math/sse/sseWrapper.h"
-
-#include "cblasLapackeWrapper.h"
 #include "core/math/matrix/blasReplacement.h"
+#include "core/math/sse/sseWrapper.h"
+#include "core/tbbwrapper/tbbWrapper.h"
+
+#include "wrappers/cblasLapack/cblasLapackeWrapper.h"
 
 namespace corecvs {
 

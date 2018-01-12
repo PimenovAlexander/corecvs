@@ -9,6 +9,8 @@ namespace corecvs
 
 class OBJMaterial {
 public:
+    std::string name;
+
     enum  {
         KOEF_AMBIENT,
         KOEF_DIFFUSE,
@@ -72,15 +74,16 @@ public:
 
     /* Texture Coords Channel */
     vector<Vector2dd>   textureCoords;
+
     vector<Vector3dd>   normalCoords;
 
     /* Per face ids*/
-    vector<Vector3d32>  texId;
+    vector<Vector4d32>  texId;
     vector<Vector3d32>  normalId;
 
     /* We are not sure what we expect from material.
      * We will use wavefront so far */
-    OBJMaterial material;
+    vector<OBJMaterial> materials;
 
     Mesh3DDecorated();
 

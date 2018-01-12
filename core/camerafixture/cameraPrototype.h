@@ -2,7 +2,7 @@
 #define CAMERA_PROTOTYPE_H
 
 #include "core/camerafixture/fixtureScenePart.h"
-#include "core/cameracalibration/calibrationCamera.h"
+#include "core/cameracalibration/cameraModel.h"
 
 namespace corecvs {
 

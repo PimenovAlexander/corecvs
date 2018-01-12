@@ -19,7 +19,7 @@
 #include "core/fileformats/bmpLoader.h"
 #include "core/buffers/rgb24/abstractPainter.h"
 
-#include "core/cameracalibration/calibrationCamera.h"
+#include "core/cameracalibration/cameraModel.h"
 #include "core/geometry/raytrace/raytraceRenderer.h"
 #include "core/geometry/raytrace/raytraceObjects.h"
 #include "core/cameracalibration/calibrationDrawHelpers.h"

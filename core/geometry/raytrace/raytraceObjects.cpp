@@ -343,7 +343,7 @@ void RaytraceableOptiMesh::normal(RayIntersection &intersection)
         }
 
         if (mMesh->hasTexCoords) {
-            Vector3d32 textureId = mMesh->texId   [intersection.payload];
+            Vector3d32 textureId = mMesh->texId   [intersection.payload].xyz();
             Vector2dd tex =
                     mMesh->textureCoords[textureId.x()] * (1 - u - v) +
                     mMesh->textureCoords[textureId.y()] * u +

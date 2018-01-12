@@ -729,7 +729,7 @@ public:
         for (size_t fieldId = 0; fieldId < fields.size(); fieldId++)
         {
             const BaseField *bf = fields[fieldId];
-            printf("%35.35s | %d | %8.8s\n" , bf->name.name, bf->offset, printableType(bf->type));
+            printf("%35.35s | % .3d | %20.20s\n" , bf->name.name, bf->offset, printableType(bf->type));
         }
         if (!embeds.empty())
         {

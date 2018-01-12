@@ -1,8 +1,7 @@
 #include "core/polynomial/polynomialSolver.h"
 #include "core/math/matrix/matrix.h"
 #include "core/math/vector/vector.h"
-
-#include "cblasLapackeWrapper.h"
+#include "wrappers/cblasLapack/cblasLapackeWrapper.h"
 
 const double corecvs::PolynomialSolver::RELATIVE_TOLERANCE = 1e-9;
 

@@ -1,5 +1,5 @@
 #include "core/math/sparseMatrix.h"
-#include "cblasLapackeWrapper.h"
+#include "wrappers/cblasLapack/cblasLapackeWrapper.h"
 
 #include <chrono>
 #include <thread>

@@ -10,7 +10,7 @@
 #include "core/geometry/line.h"
 #include "core/geometry/convexPolyhedron.h"
 #include "core/alignment/pointObservation.h"
-#include "core/cameracalibration/calibrationCamera.h"
+#include "core/cameracalibration/cameraModel.h"
 #include "core/camerafixture/fixtureScenePart.h"
 
 //#include "core/camerafixture/cameraPrototype.h"  // pls see comment below
@@ -28,7 +28,7 @@ public:
     CameraFixture   *cameraFixture = NULL;
 
     /**
-     *   We are now in transition. Camera prototype should prevail and the inheritance of CameraModel
+     *   We are now in transition (since 2016 and probably forever). Camera prototype should prevail and the inheritance of CameraModel
      *   should be removed. So far, open it when it will be ready.
      *   Don't forget to open proper code at the FixtureScene::deleteCameraPrototype(CameraPrototype *cameraPrototype).
      **/

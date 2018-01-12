@@ -8,7 +8,12 @@
  * \ingroup autotest  
  */
 
+#include <unordered_map>
 #include <iostream>
+#include "core/camerafixture/fixtureScene.h"
+#include "core/camerafixture/cameraFixture.h"
+#include "core/xml/generated/checkerboardDetectionParameters.h"
+#include "core/reflection/jsonPrinter.h"
 #include "gtest/gtest.h"
 
 #include "core/utils/global.h"
@@ -18,7 +23,12 @@
 #include "core/utils/visitors/propertyListVisitor.h"
 #include "core/rectification/triangulator.h"
 #include "core/reflection/printerVisitor.h"
+#include "core/reflection/dynamicObject.h"
+#include "core/reflection/binaryReader.h"
+#include "core/reflection/binaryWriter.h"
 
+#include "core/reflection/advanced/advancedBinaryReader.h"
+#include "core/reflection/advanced/advancedBinaryWriter.h"
 
 using namespace corecvs;
 
@@ -114,4 +124,178 @@ TEST(Serializer, testSerializer1)
     writerVisitor.visit(result, result, "RectificationResult");
 
     list.save(cout);
+}
+
+TEST(Serializer, printIterable)
+{
+    PrinterVisitor visitor;
+
+    std::vector<int>       vectorOfInt    = {1,2,3,4};
+    std::vector<Vector2dd> vectorOfVector = {Vector2dd::OrtX(), Vector2dd::OrtY()};
+
+    std::unordered_map<int, Vector2dd> mapIntToVec = {{1, Vector2dd::OrtX()}, {1, Vector2dd::OrtY()}};
+
+    visitor.visit(vectorOfInt, "vector of integers");
+    visitor.visit(vectorOfVector, "vector of vector2dd");
+
+    //visitor.visit(mapIntToVec, "map of int to vector2dd");
+}
+
+TEST(Serializer, printReflection)
+{
+    PrinterVisitor visitor;
+    CheckerboardDetectionParameters params;
+
+
+    DynamicObject obj(&params);
+    BoolField testField(0,0,false, "me");
+    bool me;
+    visitor.visit(me, &testField);
+    visitor.visit(obj, "example");
+}
+
+TEST(Serializer, jsonEscape)
+{
+    std::ostringstream os;
+    {
+        JSONPrinter printer(&os);
+        std::string in("ABC\\ \n \t \r \b \"");
+        std::string def;
+        printer.visit<std::string>(in, def, "test");
+    }
+    std::string out(
+    "{\n"
+    "\"test\":\"ABC\\\\ \\n \\t \\r \\b \\\"\"\n"
+    "}");
+    CORE_ASSERT_TRUE_P(os.str() == out, ("<%s> and <%s>", os.str().c_str(), out.c_str() ));
+    std::cout << os.str() << endl;
+}
+
+TEST(Serializer, jsonDoubleArray)
+{
+    std::vector<std::vector<RgbColorParameters>> rgbArray;
+    for (int i = 0; i < 3; i++) {
+        rgbArray.push_back(std::vector<RgbColorParameters>());
+    }
+    rgbArray[0].push_back(RGBColor::Amber().toRGBParameters());
+    rgbArray[0].push_back(RGBColor::Indigo().toRGBParameters());
+    rgbArray[1].push_back(RGBColor::Yellow().toRGBParameters());
+    rgbArray[2].push_back(RGBColor::Black().toRGBParameters());
+    rgbArray[2].push_back(RGBColor::Blue().toRGBParameters());
+
+    std::ostringstream os;
+    {
+        JSONPrinter printer(&os);
+        printer.visit(rgbArray, "test");
+    }
+    std::cout << os.str() << endl;
+}
+
+
+
+TEST(Serializer, binarySerializer)
+{
+
+    Vector3dd   test  = Vector3dd(1.0, 2.0, 3.0);
+    RGBColor    testc = RGBColor::Indigo();
+    std::string teststr   = "Example";
+
+    CheckerboardDetectionParameters testcb;
+
+    {
+        BinaryWriter writer("out.txt");
+        writer.visit(test ,   "out");
+        writer.visit(testc,   "out1");
+        writer.visit(teststr, teststr, "out2");
+        writer.visit(testcb,  testcb, "out3");
+
+    }
+
+    Vector3dd   result;
+    RGBColor    resultc;
+    std::string resultstr   = "Example";
+    CheckerboardDetectionParameters resultcb;
+
+    {
+        BinaryReader reader("out.txt");
+        reader.visit(result   , "out");
+        reader.visit(resultc  , "out1");
+        reader.visit(resultstr, resultstr, "out2");
+        reader.visit(resultcb,  "out3");
+    }
+
+    cout << "Loaded result : " << result << std::endl;
+    cout << "Loaded result : " << resultc << std::endl;
+    cout << "Loaded result : " << resultstr << std::endl;
+    cout << "Loaded result : " << resultcb << std::endl;
+
+    CORE_ASSERT_TRUE(result.notTooFar(test)  , "Double vector not loaded");
+    CORE_ASSERT_TRUE(resultc.notTooFar(testc), "Int vector not loaded");
+    CORE_ASSERT_TRUE(resultstr == teststr    , "String not loaded");
+
+}
+
+TEST(Serializer, advancedBinarySerializer)
+{
+    Vector3dd   test  = Vector3dd(1.0, 2.0, 3.0);
+    RGBColor    testc = RGBColor::Indigo();
+    std::string teststr   = "Example";
+
+    CheckerboardDetectionParameters testcb;
+
+    {
+        AdvancedBinaryWriter writer("out.txt");
+        writer.visit(test ,   "out");
+        writer.visit(testc,   "out1");
+        writer.visit(teststr, teststr, "out2");
+        writer.visit(testcb,  testcb, "out3");
+    }
+    {
+        AdvancedBinaryReader reader("out.txt");
+//        reader.readDictionary();
+    }
+
+    Vector3dd   result;
+    RGBColor    resultc;
+    std::string resultstr   = "Example";
+    CheckerboardDetectionParameters resultcb;
+    memset(&resultcb, 0xA5, sizeof(resultcb));
+
+    {
+        AdvancedBinaryReader reader("out.txt");
+        reader.visit(result   , "out");
+        reader.visit(resultc  , "out1");
+        reader.visit(resultstr, resultstr, "out2");
+        reader.visit(resultcb,  "out3");
+    }
+
+    cout << "Loaded result : " << result << std::endl;
+    cout << "Loaded result : " << resultc << std::endl;
+    cout << "Loaded result : " << resultstr << std::endl;
+    cout << "Initial data  : " << testcb << std::endl;
+    cout << "Loaded result : " << resultcb << std::endl;
+
+    CORE_ASSERT_TRUE(result.notTooFar(test)  , "Double vector not loaded");
+    CORE_ASSERT_TRUE(resultc.notTooFar(testc), "Int vector not loaded");
+    CORE_ASSERT_TRUE(resultstr == teststr    , "String not loaded");
+
+    CORE_ASSERT_TRUE(resultcb == testcb    , "Large structure not loaded");
+
+
+}
+
+
+TEST(Serializer, binarySerializerScene)
+{
+    FixtureScene scene;
+
+    {
+        AdvancedBinaryWriter writer("scene.bin");
+        writer.visit(scene,   "scene");
+    }
+
+    {
+        BinaryReader reader("scene.bin");
+        reader.visit(scene, "scene");
+    }
 }

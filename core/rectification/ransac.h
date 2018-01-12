@@ -67,7 +67,7 @@ public:
     {        
         if (data->empty())
         {
-            SYNC_PRINT(("Epic fail\n"));
+            SYNC_PRINT(("Ransac::randomSelect(): Somehow we were called with empty data\n"));
             return;
         }
         std::uniform_int_distribution<int> uniform(0, (int)data->size() - 1);
@@ -89,76 +89,6 @@ public:
     }
 
     ModelType getModelRansac()
-    {
-        bestInliers = 0;
-        iteration = 0;
-        std::vector<double> costs;
-        costs.reserve(data->size());
-
-        double old_median = std::numeric_limits<double>::max();
-
-        if (trace) {
-             //SYNC_PRINT(("getModelRansac(): called with threshold %lf\n", ge));
-             std::cout << "getModelRansac(): called with\n" << *this << std::endl;
-        }
-
-        while (true)
-        {
-            randomSelect();
-            ModelType model = ModelType(samples);
-
-            int inliers = 0;
-            costs.clear();
-            for (size_t i = 0; i < data->size(); i++)
-            {
-                if (model.fits(*(data->at(i)), inlierThreshold()))
-                    inliers++;
-
-                costs.push_back(model.getCost(*(data->at(i))));
-            }
-
-            auto it = costs.begin() + (costs.size() / 2);
-            std::nth_element(costs.begin(), it, costs.end());
-            double median = *it;
-
-            if (inliers > bestInliers)
-            {
-                bestSamples = samples;
-                bestInliers = inliers;
-                bestModel = model;
-            }
-
-            if (useMedian() && median < old_median)
-            {
-                bestSamples = samples;
-                bestInliers = inliers;
-                bestModel = model;
-                old_median = median;
-            }
-
-            if (trace && !useMedian())
-                        SYNC_PRINT(("iteration %d : %d inliers (max so far %d) out of %d (%lf%%)\n",
-                                   iteration, inliers, bestInliers, (int)data->size(), (double)100.0 * bestInliers / data->size() ));
-
-            if (trace && useMedian())
-                        SYNC_PRINT(("iteration %d : %d inliers (max so far %d) (median %lf %lf) out of %d (%lf%%)\n",
-                               iteration, inliers, bestInliers, median, old_median, (int)data->size(), (double)100.0 * bestInliers / data->size() ));
-
-
-            if (bestInliers >  data->size() * inliersPercent() / 100.0 ||
-                iteration >= iterationsNumber() )
-            {
-                if (trace) {
-                    std::cout << "Fininshing:" << std::endl;
-                    std::cout << "BestInliers:" << bestInliers << std::endl;
-                }
-                return bestModel;
-            }
-            iteration++;
-        }
-    }
-
-    ModelType getModelRansacMultimodel()
     {
         bestInliers = 0;
         iteration = 0;

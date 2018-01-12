@@ -70,6 +70,11 @@ public:
                 visitor.visit(*getField<int>(count),  static_cast<const IntField *>(field));
                 break;
             }
+            case BaseField::TYPE_ENUM:
+            {
+                visitor.visit(*getField<int>(count),  static_cast<const EnumField *>(field));
+                break;
+            }
             case BaseField::TYPE_DOUBLE:
             {
                 visitor.visit(*getField<double>(count),  static_cast<const DoubleField *>(field));
@@ -173,10 +178,7 @@ public:
         }
     }
 
-    ~DynamicObject()
-    {
-        free(rawObject);
-    }
+    ~DynamicObject();
 
     template<typename Object>
     DynamicObject(Object *object):

@@ -32,13 +32,15 @@ bool DynamicObjectWrapper::simulateConstructor()
         case BaseField::TYPE_STRING:
         {
             const StringField *tfield = static_cast<const StringField *>(field);
-            *getField<std::string>(count) = tfield->defaultValue;
+            std::string *target = getField<std::string>(count);
+            target = new (target) std::string(tfield->defaultValue);
             break;
         }
         case BaseField::TYPE_WSTRING:
         {
             const WStringField *tfield = static_cast<const WStringField *>(field);
-            *getField<std::wstring>(count) = tfield->defaultValue;
+            std::wstring *target = getField<std::wstring>(count);
+            target = new (target) std::wstring(tfield->defaultValue);;
             break;
         }
         case (BaseField::FieldType)(BaseField::TYPE_VECTOR_BIT | BaseField::TYPE_DOUBLE) :
@@ -68,6 +70,37 @@ bool DynamicObjectWrapper::simulateConstructor()
     }
 
     return true;
+}
+
+DynamicObject::~DynamicObject()
+{
+    if (reflection != NULL && rawObject != NULL)
+    {
+        for (int count = 0; count < reflection->fieldNumber(); count++)
+        {
+            const BaseField *field = reflection->fields[count];
+            switch (field->type) {
+                case BaseField::TYPE_STRING:
+                {
+                    std::string *target = getField<std::string>(count);
+                    target->~basic_string();
+                    break;
+                }
+                case BaseField::TYPE_WSTRING:
+                {
+                    std::wstring *target = getField<std::wstring>(count);
+                    target->~basic_string();
+                    break;
+                }
+                default:
+                    break;
+            }
+
+        }
+    }
+
+
+    free(rawObject);
 }
 
 } // namespace corecvs

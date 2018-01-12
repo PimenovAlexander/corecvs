@@ -262,6 +262,13 @@ public:
         return false;
     }
 
+    double getArea()
+    {
+        Vector3dd f = p2() - p1();
+        Vector3dd s = p3() - p1();
+        return  0.5 * !(f ^ s);
+    }
+
     /** NOTE: This could swap the normal **/
     void sortByY() {
         if (p1().y() > p2().y()) std::swap(p1(), p2());

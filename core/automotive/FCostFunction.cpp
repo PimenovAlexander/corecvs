@@ -217,7 +217,7 @@
  **/
 
 
-#include "core/cameracalibration/calibrationCamera.h"
+#include "core/cameracalibration/cameraModel.h"
 #include "core/automotive/FCostFunction.h"
 #include "core/math/matrix/matrix44.h"
 #include "core/math/eulerAngles.h"

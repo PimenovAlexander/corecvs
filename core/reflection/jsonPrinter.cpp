@@ -90,6 +90,13 @@ void JSONPrinter::visit<string, StringField>(std::string &field, const StringFie
 }
 
 template <>
+void JSONPrinter::visit<std::wstring, WStringField>(std::wstring &field, const WStringField *fieldDescriptor)
+{
+    if (stream == NULL) return;
+    *stream << separate() << indent() << decorateName(fieldDescriptor) <<  FIELD_VALUE_SEPARATOR <<  NAME_DECORATOR << /*escapeString(field)*/ "Unsupported" << NAME_DECORATOR;
+}
+
+template <>
 void JSONPrinter::visit<void *, PointerField>(void * &field, const PointerField *fieldDescriptor)
 {
     if (stream == NULL) return;
@@ -139,6 +146,13 @@ void JSONPrinter::visit<std::string>(std::string &stringField, std::string /*def
 {
     if (stream == NULL) return;
     *stream << separate() << indent() << decorateName(fieldName) <<  FIELD_VALUE_SEPARATOR << NAME_DECORATOR << escapeString(stringField) << NAME_DECORATOR;
+}
+
+template <>
+void JSONPrinter::visit<std::wstring>(std::wstring &stringField, std::wstring /*defaultValue*/, const char *fieldName)
+{
+    if (stream == NULL) return;
+    *stream << separate() << indent() << decorateName(fieldName) <<  FIELD_VALUE_SEPARATOR << NAME_DECORATOR << /*escapeString(stringField)*/ "Unsupported" << NAME_DECORATOR;
 }
 
 

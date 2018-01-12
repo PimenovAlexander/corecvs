@@ -28,7 +28,7 @@ public:
             plane = Plane3d::FromNormal(Vector3dd::OrtX());
         }
 
-        PlaneReconstructionModel (vector<Vector3dd *> points)
+        PlaneReconstructionModel (vector<Vector3dd *> &points)
         {
             for (Vector3dd *v: points) {
                 approx.addPoint(*v);
@@ -36,6 +36,13 @@ public:
             approx.getEllipseParameters();
             plane = Plane3d::FromNormalAndPoint(approx.mAxes[2], approx.getMean());
             plane.normalise();
+        }
+
+        static vector<PlaneReconstructionModel> getModels(vector<Vector3dd *> &points)
+        {
+            vector<PlaneReconstructionModel> result;
+            result.push_back(PlaneReconstructionModel(points));
+            return result;
         }
 
 

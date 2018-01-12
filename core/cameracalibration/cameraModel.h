@@ -1,58 +1,25 @@
-#ifndef CALIBRATION_CAMERA_H
-#define CALIBRATION_CAMERA_H
+#ifndef CAMERAMODEL_H
+#define CAMERAMODEL_H
 
-#include <unordered_map>
-
-#include "core/cameracalibration/calibrationLocation.h"  // LocationData
-#include "core/alignment/lensDistortionModelParameters.h"
-#include "core/geometry/line.h"
-#include "core/geometry/convexPolyhedron.h"
-#include "core/alignment/pointObservation.h"
-#include "core/alignment/selectableGeometryFeatures.h"
-#include "core/rectification/essentialMatrix.h"
-#include "core/xml/generated/distortionApplicationParameters.h"
-
-#include "core/geometry/polygons.h"
-#include "core/cameracalibration/pinholeCameraIntrinsics.h"
-#include "core/alignment/radialCorrection.h"
+#include "calibrationLocation.h"
+#include "pinholeCameraIntrinsics.h"
 #include "core/buffers/displacementBuffer.h"
+#include "core/xml/generated/distortionApplicationParameters.h"
+#include "core/rectification/essentialMatrix.h"
+#include "core/alignment/lensDistortionModelParameters.h"
+#include "core/alignment/pointObservation.h"
+#include "core/geometry/polygons.h"
+
+#include "core/alignment/selectableGeometryFeatures.h"
+
 
 namespace corecvs {
-
-class FixtureScene;
-
-/**
- * This class is so far just a common base for all objects in scene heap.
- * Should bring this to other file
- **/
-class ScenePart {
-public:
-    /* No particular reason for this, except to encourage leak checks */
-    static int OBJECT_COUNT;
-
-    FixtureScene *ownerScene;
-
-    /* We could have copy constructors and stuff... but so far this is enough */
-    ScenePart(FixtureScene * owner = NULL) :
-        ownerScene(owner)
-    {
-        OBJECT_COUNT++;
-    }
-
-    virtual ~ScenePart() {
-        OBJECT_COUNT++;
-    }
-};
-
-
-typedef std::unordered_map<std::string, void *> MetaContainer;
-
 
 class CameraModel
 {
 public:
     /**/
-    PinholeCameraIntrinsics         intrinsics;
+    PinholeCameraIntrinsics  intrinsics;
     /**/
     LensDistortionModelParameters   distortion;
     /**/
@@ -145,7 +112,7 @@ public:
 
     PlaneFrame getVirtualScreen(double distance) const;
 
-    /** 
+    /**
       double pyramidLength1
       double pyramidLength2
      **/
@@ -281,10 +248,10 @@ public:
     void prettyPrint(std::ostream &out = cout);
 };
 
-//typedef std::vector<PointObservation> PatternPoints3d;
+
 typedef std::vector<ObservationList>  MultiCameraPatternPoints;
 
 
 } // namespace corecvs
 
-#endif // CALIBRATION_CAMERA_H
+#endif // CAMERAMODEL_H

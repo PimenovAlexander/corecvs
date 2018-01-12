@@ -5,8 +5,8 @@
 #include <algorithm>
 #include <array>
 #include "queue"
-#include "../corecvs/core/math/vector/vector3d.h"
-#include "../corecvs/core/geometry/polygons.h"
+#include "core/math/vector/vector3d.h"
+#include "core/geometry/polygons.h"
 
 using namespace corecvs;
 using namespace std;

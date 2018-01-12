@@ -1,6 +1,6 @@
 #include "core/cameracalibration/calibrationDrawHelpers.h"
 #include "core/geometry/mesh3d.h"
-#include "core/cameracalibration/calibrationCamera.h"
+#include "core/cameracalibration/cameraModel.h"
 #include "core/camerafixture/fixtureScene.h"
 #include "core/alignment/selectableGeometryFeatures.h"
 #include "core/buffers/rgb24/abstractPainter.h"

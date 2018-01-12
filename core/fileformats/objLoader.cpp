@@ -15,6 +15,9 @@ static const char *com_vertex_texture  = "vt";
 static const char *com_vertex_normal   = "vn";
 static const char *com_face            = "f";
 
+static const char *com_use_material    = "usemtl";
+static const char *com_material_lib    = "mtllib";
+
 OBJLoader::OBJLoader()
 {
 }
@@ -27,6 +30,8 @@ OBJLoader::~OBJLoader()
 
 int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
 {
+    int texName = 0;
+
     string line;
     while (!input.eof())
     {
@@ -55,7 +60,7 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
             Vector2dd tex;
             work >> tex.x() >> tex.y();
          //   LOCAL_PRINT(("Tex: %lf %lf\n", tex.x(), tex.y()));
-            mesh.textureCoords.push_back(tex);
+            mesh.textureCoords.push_back(tex);         
         }
         if (command == com_vertex_normal)
         {
@@ -70,7 +75,7 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
             work >> strs[0] >> strs[1] >> strs[2];
             Vector3d32 face;
             Vector3d32 normId(-1);
-            Vector3d32 texId(-1);
+            Vector4d32 texId(-1, -1, -1, texName);
 
             //LOCAL_PRINT(("Face line: %s\n", work.str().c_str()));
 
@@ -102,6 +107,27 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
             mesh.texId.push_back(texId);
             mesh.normalId.push_back(normId);
         }
+        if (command == com_use_material)
+        {
+            string name;
+            work >> name;
+
+            texName = 0;
+            for (size_t t = 0; t < mesh.materials.size(); t++)
+            {
+                if (mesh.materials[t].name == name)
+                {
+                    texName = (int)t;
+                }
+            }
+
+             cout << "Use material command: <" << name << "> id " << texName << " (" << mesh.materials.size() << ")" << endl;
+        }
+        if (command == com_material_lib)
+        {
+            cout << "Material library command: This is not fully supported" << endl;
+
+        }
     }
 
     if (!mesh.normalCoords.empty())
@@ -118,15 +144,22 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
     return 0;
 }
 
-int OBJLoader::loadMaterial(istream &input, OBJMaterial &material, const std::string &path)
+int OBJLoader::loadMaterials(istream &input, vector<OBJMaterial> &materials, const std::string &path)
 {
+    int count = 0;
     string line;
-    while (!input.eof())
+
+    OBJMaterial material;
+
+    while (input.good())
     {
+        count++;
         HelperUtils::getlineSafe (input, line);
 
+        cout << "Line " << count << " <" <<  line << ">" << endl;
+
         if (HelperUtils::startsWith(line, "#")) {
-            cout << "Skipping comment " << line << endl;
+            cout << "OBJLoader::loadMaterial: Skipping comment " << line << endl;
             continue;
         }
 
@@ -134,7 +167,19 @@ int OBJLoader::loadMaterial(istream &input, OBJMaterial &material, const std::st
         string command;
         work >> command;
 
-        cout << "command: " << command << endl;
+        cout << "OBJLoader::loadMaterial: command: " << command << endl;
+
+        if (command == "newmtl") {
+            if (!material.name.empty())
+                materials.push_back(material);
+            material = OBJMaterial();
+
+            std::string material_name;
+            work >> material_name;
+            material.name = material_name;
+        }
+
+
 
         int koef_id = OBJMaterial::KOEF_LAST;
         if (command == "Ka")
@@ -168,7 +213,7 @@ int OBJLoader::loadMaterial(istream &input, OBJMaterial &material, const std::st
         {
             work >> tex_name;
             std::string fullpath = path + PATH_SEPARATOR + tex_name;
-            cout << "Will load texture <" << tex_name << ">";
+            cout << "Will load texture <" << tex_name << "> ";
             cout << "full path <" << fullpath << ">" << endl;
 
             RGB24Buffer *texture = BufferFactory::getInstance()->loadRGB24Bitmap(fullpath);
@@ -181,10 +226,16 @@ int OBJLoader::loadMaterial(istream &input, OBJMaterial &material, const std::st
             material.tex[tex_id] = texture;
         }
     }
+    if (!material.name.empty())
+        materials.push_back(material);
 
-    cout << "Loaded" << endl;
-    cout << material << endl;
-	return 0;
+    cout << "Loaded :" << materials.size() << endl;
+    for (OBJMaterial &m : materials)
+    {
+        cout << "    <" << m.name << ">" << endl;
+    }
+
+    return 0;
 }
 
 int OBJLoader::loadOBJSimple(istream &input, Mesh3D &mesh)

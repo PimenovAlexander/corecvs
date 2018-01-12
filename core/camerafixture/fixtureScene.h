@@ -411,9 +411,9 @@ public:
                 bool loadPrototypes = true,
                 bool loadGeometry = true)
     {
-        visitor.visit(relativeImageDataPath, std::string(""),                "relativeImageDataPath");
-        visitor.visit(coordinateSystemState, CoordinateSystemState::initial, "coordinateSystemState");
-        visitor.visit(localToWorld, Matrix44::Identity(),                    "localToWorld");
+        visitor.visit(relativeImageDataPath       , std::string(""),                     "relativeImageDataPath");
+        visitor.visit((int &)coordinateSystemState, (int)CoordinateSystemState::initial, "coordinateSystemState");
+        visitor.visit(localToWorld                , Matrix44::Identity(),                "localToWorld");
 
         if (visitor.isLoader())
         {

@@ -2,7 +2,7 @@
 #define RAYTRACERENDERER_H
 
 #include "core/geometry/polygons.h"
-#include "core/cameracalibration/calibrationCamera.h"
+#include "core/cameracalibration/cameraModel.h"
 #include "core/geometry/mesh3d.h"
 #include "core/geometry/line.h"
 #include "core/cameracalibration/projectionModels.h"

@@ -155,6 +155,22 @@ void FolderScanner::emptyDir(const string &path)
     L_INFO_P("The <%s> folder is deleted.", path.c_str());
 }
 
+bool FolderScanner::isAccessible(const string &path)
+{
+    auto p = path;
+    if (!STR_HAS_SLASH_AT_END(p))
+        p += PATH_SEPARATOR;
+    p += "checkFolderScanner.tmp";
+
+    std::ofstream f(p, std::ios::app);
+    if (f.is_open())
+    {
+        f.close();
+        HelperUtils::pathRemove(p);
+        return true;
+    }
+    return false;
+}
 
 } // namespace corecvs
 

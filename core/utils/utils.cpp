@@ -19,6 +19,7 @@
 #include <sstream>
 
 #include "core/utils/utils.h"
+
 namespace corecvs {
 
 namespace HelperUtils {
@@ -163,7 +164,6 @@ string escapeString(const string &s, const std::unordered_map<char, char> &symbo
 
      for (const char &symbol : s)
      {
-
          auto p = symbols.find(symbol);
          if (p != symbols.end())
          {
@@ -209,18 +209,12 @@ std::string getDirectory(const std::string &absoluteFilePath)
 
     fs::path filePath(absoluteFilePath);
     return fs::absolute(filePath.parent_path()).string();
-
-/*    QFileInfo info(absoluteFilePath);
-    return info.dir().absolutePath();*/
 }
 
 std::string getFileName(const std::string &fileName)
 {
     fs::path filePath(fileName);
     return filePath.filename().string();
-
-    /*QFileInfo info(fileName);
-    return info.fileName();*/
 }
 
 std::string concatPath(const std::string &path1, const std::string &path2)
@@ -238,10 +232,16 @@ bool pathExists(const std::string &path)
     return fs::exists(path);
 }
 
+bool pathRemove(const std::string &path)
+{
+    fs::path p(path);
+    if (fs::exists(p))
+        return fs::remove(p);
+    return false;
+}
+
 std::string getFileNameIfExist(const std::string &fileName, const std::string &relativePath)
 {
-    //std::cout << fileName.toStdString() << std::endl;
-
     fs::path filePath(fileName);
     if (fs::exists(filePath))
         return fileName;
@@ -249,21 +249,9 @@ std::string getFileNameIfExist(const std::string &fileName, const std::string &r
     fs::path infoNew = fs::path(relativePath) / fs::path(fileName); /* this is concatenation */
     if (fs::exists(infoNew))
         return fs::absolute(infoNew).string();
+
     std::cout << "couldn't locate <" << fileName << "> with relativePath:" << relativePath << std::endl;
     return "";
-
-#if 0
-    QFileInfo info(fileName);
-    if (info.exists())
-        return fileName;
-
-    QFileInfo infoNew(relativePath + PATH_SEPARATOR + info.fileName());
-    if (infoNew.exists())
-        return infoNew.absoluteFilePath();
-
-    std::cout << "couldn't locate <" << fileName.toStdString() << "> with relativePath:" << relativePath.toStdString() << std::endl;
-    return "";
-#endif
 }
 
 } // namespace HelperUtils

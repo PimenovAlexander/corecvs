@@ -179,7 +179,7 @@ TEST(Cameramodel, generateReality)
     delete_safe(input);
 }
 
-#include "core/cameracalibration/calibrationCamera.h"
+#include "core/cameracalibration/cameraModel.h"
 
 using corecvs::PinholeCameraIntrinsics;
 

@@ -27,6 +27,7 @@ public:
 
     static void emptyDir(const string &path);       // delete folder to create it later probably
 
+    static bool isAccessible(const string &path);
 };
 
 } // namespace corecvs

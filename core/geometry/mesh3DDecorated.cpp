@@ -10,13 +10,12 @@ Mesh3DDecorated::Mesh3DDecorated() :
 {
 }
 
-
 void Mesh3DDecorated::switchTextures(bool on)
 {
     if (hasTexCoords == on)
         return;
     if (on) {
-        texId.resize(faces.size(), Vector3d32(-1));
+        texId.resize(faces.size(), Vector4d32(-1,-1,-1, 0));
     } else {
         texId.clear();
     }
@@ -101,7 +100,7 @@ void Mesh3DDecorated::fillTestScene()
 
     for (size_t face = 0; face < faces.size(); face++ )
     {
-        texId.push_back(Vector3d32(0, 1, 2));
+        texId.push_back(Vector4d32(0, 1, 2, 0));
     }
     hasTexCoords = true;
 }
@@ -127,7 +126,6 @@ void Mesh3DDecorated::recomputeMeanNormals()
             normalCoords[vertexId] += normal;
             counts[vertexId] ++;
         }
-
         normalId.push_back(faces[f]);
     }
 
@@ -159,6 +157,11 @@ bool Mesh3DDecorated::verify( void )
         for (int j = 0; j < 3; j++) {
             if (texId[i][j] > (int)textureCoords.size() ) {
                 SYNC_PRINT(("Wrong texture index\n"));
+                return false;
+            }
+            if (texId[i][3] < 0 || texId[i][3] >= materials.size())
+            {
+                SYNC_PRINT(("Wrong texture name\n"));
                 return false;
             }
         }
@@ -235,7 +238,14 @@ void MeshFilter::removeDuplicatedFaces(Mesh3DDecorated &mesh)
         if (mesh.hasNormals)
             mesh.normalId = mesh.faces;
         if (mesh.hasTexCoords)
-            mesh.texId = mesh.faces;
+        {
+            mesh.texId.clear();
+            mesh.texId.reserve(mesh.faces.size());
+            for (size_t i = 0; i < mesh.faces.size(); i++)
+            {
+                mesh.texId.push_back(Vector4d32(mesh.faces[i], 0));
+            }
+        }
 
 }
 
@@ -314,7 +324,9 @@ void MeshFilter::removeDuplicatedVertices(Mesh3DDecorated &mesh)
                 if (!mesh.normalCoords.empty())
                     mesh.normalId[index] = newTr;
                 if (!mesh.textureCoords.empty())
-                    mesh.texId[index] = newTr;
+                {
+                    mesh.texId[index] = Vector4d32(newTr, 0);
+                }
             }
         }
 }
@@ -395,8 +407,14 @@ void MeshFilter::removeUnreferencedVertices(
 
     if (mesh.hasNormals)
         mesh.normalId = mesh.faces;
-    if (mesh.hasTexCoords)
-        mesh.texId = mesh.faces;
+    if (mesh.hasTexCoords) {
+        mesh.texId.clear();
+        mesh.texId.reserve(mesh.faces.size());
+        for (size_t i = 0; i < mesh.faces.size(); i++)
+        {
+            mesh.texId.push_back(Vector4d32(mesh.faces[i], 0));
+        }
+    }
 
 }
 
@@ -487,8 +505,14 @@ void MeshFilter::removeIsolatedPieces(Mesh3DDecorated &mesh, int minCountOfFaces
 
         if (mesh.hasNormals)
             mesh.normalId = mesh.faces;
-        if (mesh.hasTexCoords)
-            mesh.texId = mesh.faces;
+        if (mesh.hasTexCoords) {
+            mesh.texId.clear();
+            mesh.texId.reserve(mesh.faces.size());
+            for (size_t i = 0; i < mesh.faces.size(); i++)
+            {
+                mesh.texId.push_back(Vector4d32(mesh.faces[i], 0));
+            }
+        }
 
         // assume that all component faces and vertices have to be removed
         // now triangles removed, but vertices on them is not
@@ -497,32 +521,16 @@ void MeshFilter::removeIsolatedPieces(Mesh3DDecorated &mesh, int minCountOfFaces
             MeshFilter::removeUnreferencedVertices(mesh);
 }
 
-float getArea(
-    const Mesh3DDecorated& mesh,
-    const Vector3d32& tr)
-{
-
-
-    auto A = mesh.vertexes[tr[0]];
-    auto B = mesh.vertexes[tr[1]];
-    auto C = mesh.vertexes[tr[2]];
-    auto f = B - A;
-    auto s = C - A;
-    auto n = f ^ s;
-    return 0.5 * n.l2Metric();
-
-}
 void MeshFilter::removeZeroAreaFaces(Mesh3DDecorated &mesh)
 {
-    for (int i = 0; i < mesh.faces.size(); ++i)
+    for (size_t i = 0; i < mesh.faces.size(); ++i)
+    {
+        if (mesh.getFaceAsTrinagle(i).getArea() <= 1e-5)
         {
-            auto triangle = mesh.faces[i];
-            if (getArea(mesh, triangle) <= 1e-5)
-            {
-                mesh.faces.erase(mesh.faces.begin() + i);
-                i--;
-            }
+            mesh.faces.erase(mesh.faces.begin() + i);
+            i--;
         }
+    }
 
 
     //all triangles remove, but vertices on them is not
@@ -531,8 +539,14 @@ void MeshFilter::removeZeroAreaFaces(Mesh3DDecorated &mesh)
         MeshFilter::removeUnreferencedVertices(mesh);
     if (mesh.hasNormals)
         mesh.normalId = mesh.faces;
-    if (mesh.hasTexCoords)
-        mesh.texId = mesh.faces;
+    if (mesh.hasTexCoords) {
+        mesh.texId.clear();
+        mesh.texId.reserve(mesh.faces.size());
+        for (size_t i = 0; i < mesh.faces.size(); i++)
+        {
+            mesh.texId.push_back(Vector4d32(mesh.faces[i], 0));
+        }
+    }
 }
 
 } // namespace corecvs

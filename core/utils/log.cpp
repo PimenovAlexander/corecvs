@@ -186,8 +186,9 @@ void LogDrain::prefix2os(std::ostringstream &os, Log::Message &message)
     os << time2str(message.get()->mTime) << ";"
        << Log::levelName(message.get()->mLevel) << ";";
 
-    if (message.get()->mOriginFileName != NULL)
-        os << message.get()->mOriginFileName << ";";
+    if (message.get()->mOriginFileName != NULL) {
+        os << corecvs::HelperUtils::getFileNameFromFilePath(message.get()->mOriginFileName) << ";";
+    }
 
     if (message.get()->mOriginLineNumber >= 0)
         os << message.get()->mOriginLineNumber << ";";
