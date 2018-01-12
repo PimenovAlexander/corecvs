@@ -75,7 +75,7 @@ TEST(convexhull, testconvexhull)
 
     {
          PreciseTimer timer = PreciseTimer::currentTime();
-         tFaces result = ConvexQuickHull::quickHull(vectors, 1e-9);
+         ConvexQuickHull::HullFaces result = ConvexQuickHull::quickHull(vectors, 1e-9);
          uint64_t delay = timer.usecsToNow();
          printf("Quick Hull :%8" PRIu64 "us \n", delay);
 
@@ -126,15 +126,15 @@ bool isEqual(const Triangle3dd &t1, const Triangle3dd &t2)
 }
 
 
-void testHull(const vertices &verts, const tFaces &goldValue) {
+void testHull(const ConvexQuickHull::vertices &verts, const ConvexQuickHull::HullFaces &groundTruth) {
     double eps = 0.00001;
-    tFaces faces = ConvexQuickHull::quickHull(verts, eps);
+    ConvexQuickHull::HullFaces faces = ConvexQuickHull::quickHull(verts, eps);
     bool test = true;
-    if (faces.size() != goldValue.size())
+    if (faces.size() != groundTruth.size())
         test = false;
     else {
-        for (int i = 0; i < goldValue.size(); i++)
-            if (!isEqual(goldValue[i].plane, faces[i].plane))
+        for (int i = 0; i < groundTruth.size(); i++)
+            if (!isEqual(groundTruth[i].plane, faces[i].plane))
                 test = false;
     }
     int i = 0;
@@ -158,8 +158,9 @@ void testHull(const vertices &verts, const tFaces &goldValue) {
 TEST(convexhull, testquickhull)
 {
     printf("First test: one point\n");
-    vertices verts = {{1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}};
-    tFaces groundTruth = {};
+    ConvexQuickHull::vertices verts = {{1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}, {1,0,0}};
+    ConvexQuickHull::HullFaces groundTruth = {};
+
     testHull(verts, groundTruth);
     printf("\nSecond test: line\n");
 
@@ -253,7 +254,7 @@ TEST(convexhull, testquickfazzer)
         input.insert(input.begin() + d(mt), add);
 
         SYNC_PRINT(("Testing size: %d\n", (int)input.size()));
-        tFaces faces = ConvexQuickHull::quickHull(input, 1e-9);
+        ConvexQuickHull::HullFaces faces = ConvexQuickHull::quickHull(input, 1e-9);
         SYNC_PRINT(("Faces: %d\n", (int)faces.size()));
 
         ASSERT_TRUE((faces.size() == 20));
@@ -276,6 +277,6 @@ TEST(convexhull, teststrange)
     {
         cout << t << " " << input[t] << endl;
     }
-    tFaces faces = ConvexQuickHull::quickHull(input, 1e-9);
+    ConvexQuickHull::HullFaces faces = ConvexQuickHull::quickHull(input, 1e-9);
     SYNC_PRINT(("Faces: %d\n", faces.size()));
 }

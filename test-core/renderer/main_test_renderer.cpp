@@ -14,7 +14,7 @@
 #include "core/utils/global.h"
 
 #include "core/fileformats/bmpLoader.h"
-#include "core/cameracalibration/calibrationCamera.h"
+#include "core/cameracalibration/cameraModel.h"
 
 #include "core/geometry/mesh3d.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"

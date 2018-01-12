@@ -30,7 +30,7 @@
 /*
  *  Additional includes for enum section.
  */
-#include "core/xml/generated/operation.h"
+#include "operation.h"
 
 /**
  * \brief Operation Parameters 
@@ -94,6 +94,11 @@ template<class VisitorType>
         mOperation = operation;
     }
 
+    bool operator ==(const OperationParameters &other) const 
+    {
+        if ( !(this->mOperation == other.mOperation)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, OperationParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

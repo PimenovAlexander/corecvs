@@ -93,6 +93,11 @@ template<class VisitorType>
         mInvert = invert;
     }
 
+    bool operator ==(const MaskingParameters &other) const 
+    {
+        if ( !(this->mInvert == other.mInvert)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, MaskingParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

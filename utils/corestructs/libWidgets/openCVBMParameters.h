@@ -253,6 +253,19 @@ template<class VisitorType>
         mDisp12MaxDiff = disp12MaxDiff;
     }
 
+    bool operator ==(const OpenCVBMParameters &other) const 
+    {
+        if ( !(this->mBlockSize == other.mBlockSize)) return false;
+        if ( !(this->mDisparitySearch == other.mDisparitySearch)) return false;
+        if ( !(this->mPreFilterCap == other.mPreFilterCap)) return false;
+        if ( !(this->mMinDisparity == other.mMinDisparity)) return false;
+        if ( !(this->mTextureThreshold == other.mTextureThreshold)) return false;
+        if ( !(this->mUniquenessRatio == other.mUniquenessRatio)) return false;
+        if ( !(this->mSpeckleWindowSize == other.mSpeckleWindowSize)) return false;
+        if ( !(this->mSpeckleRange == other.mSpeckleRange)) return false;
+        if ( !(this->mDisp12MaxDiff == other.mDisp12MaxDiff)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, OpenCVBMParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

@@ -68,7 +68,7 @@ public:
     {}
 
     /**
-     *   This method makes current RectificationResult that was created for a perticular input image corresponded
+     *   This method makes current RectificationResult that was created for a particular input image corresponded
      *  to the transformed image. Say if you have rectified the full resolution, full frame image, and now want to
      *  tringulate a scaled subregion.
      **/
@@ -77,6 +77,9 @@ public:
         RectificationResult toReturn = *this;
         toReturn.leftTransform  = transform * this->leftTransform;
         toReturn.rightTransform = transform * this->rightTransform;
+
+        cout << "Left  Pretransform: " << this->leftTransform << std::endl;
+        cout << "Right Pretransform: " << this->rightTransform << std::endl;
         return toReturn;
     }
 

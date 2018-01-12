@@ -24,6 +24,12 @@ CameraModelParametersControlWidget::CameraModelParametersControlWidget(QWidget *
     QObject::connect(ui->spinBoxCx, SIGNAL(valueChanged(double)), this, SLOT(paramsChangedInUI()));
     QObject::connect(ui->spinBoxCy, SIGNAL(valueChanged(double)), this, SLOT(paramsChangedInUI()));
 
+    QObject::connect(ui->spinBoxSizeX, SIGNAL(valueChanged(double)), this, SLOT(paramsChangedInUI()));
+    QObject::connect(ui->spinBoxSizeY, SIGNAL(valueChanged(double)), this, SLOT(paramsChangedInUI()));
+
+    QObject::connect(ui->spinBoxSizeDistortedX, SIGNAL(valueChanged(double)), this, SLOT(paramsChangedInUI()));
+    QObject::connect(ui->spinBoxSizeDistortedY, SIGNAL(valueChanged(double)), this, SLOT(paramsChangedInUI()));
+
     QObject::connect(ui->spinBoxSkew, SIGNAL(valueChanged(double)), this, SLOT(paramsChangedInUI()));
 //    writeUi();
     /* Addintional buttons */
@@ -141,6 +147,13 @@ void CameraModelParametersControlWidget::getParameters(CameraModel& params) cons
     params.intrinsics.principal.x() = ui->spinBoxCx->value();
     params.intrinsics.principal.y() = ui->spinBoxCy->value();
 
+
+    params.intrinsics.size.x() =  ui->spinBoxSizeX->value();
+    params.intrinsics.size.y() =  ui->spinBoxSizeY->value();
+
+    params.intrinsics.distortedSize.x() =  ui->spinBoxSizeDistortedX->value();
+    params.intrinsics.distortedSize.y() =  ui->spinBoxSizeDistortedY->value();
+
     params.intrinsics.skew = ui->spinBoxSkew->value();
 }
 
@@ -171,6 +184,12 @@ void CameraModelParametersControlWidget::setParameters(const CameraModel &input)
 
     ui->spinBoxCx->setValue(input.intrinsics.cx());
     ui->spinBoxCy->setValue(input.intrinsics.cy());
+
+    ui->spinBoxSizeX->setValue(input.intrinsics.size.x());
+    ui->spinBoxSizeX->setValue(input.intrinsics.size.y());
+
+    ui->spinBoxSizeDistortedX->setValue(input.intrinsics.distortedSize.x());
+    ui->spinBoxSizeDistortedY->setValue(input.intrinsics.distortedSize.y());
 
     ui->spinBoxSkew->setValue(input.intrinsics.skew);
 

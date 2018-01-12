@@ -353,6 +353,24 @@ template<class VisitorType>
         mDrawRays = drawRays;
     }
 
+    bool operator ==(const CalibrationDrawHelpersParameters &other) const 
+    {
+        if ( !(this->mUseOldBackend == other.mUseOldBackend)) return false;
+        if ( !(this->mScaleForCameras == other.mScaleForCameras)) return false;
+        if ( !(this->mPrintNames == other.mPrintNames)) return false;
+        if ( !(this->mBillboardNames == other.mBillboardNames)) return false;
+        if ( !(this->mPreferReprojected == other.mPreferReprojected)) return false;
+        if ( !(this->mForceKnown == other.mForceKnown)) return false;
+        if ( !(this->mPrivateColor == other.mPrivateColor)) return false;
+        if ( !(this->mLargePoints == other.mLargePoints)) return false;
+        if ( !(this->mDrawFixtureCams == other.mDrawFixtureCams)) return false;
+        if ( !(this->mSolidCameras == other.mSolidCameras)) return false;
+        if ( !(this->mDrawObservations == other.mDrawObservations)) return false;
+        if ( !(this->mDrawTrueLines == other.mDrawTrueLines)) return false;
+        if ( !(this->mProjectionRayLength == other.mProjectionRayLength)) return false;
+        if ( !(this->mDrawRays == other.mDrawRays)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, CalibrationDrawHelpersParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

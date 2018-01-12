@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>247</width>
-    <height>26</height>
+    <width>318</width>
+    <height>34</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -85,6 +85,9 @@
      </property>
      <property name="maximum">
       <double>9999.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
      </property>
     </widget>
    </item>

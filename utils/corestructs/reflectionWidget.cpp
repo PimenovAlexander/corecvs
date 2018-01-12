@@ -7,6 +7,8 @@
 #include <QTextEdit>
 #include <QPushButton>
 
+#include "core/reflection/jsonPrinter.h"
+
 #include "pointerFieldWidget.h"
 #include "core/reflection/reflection.h"
 #include "reflectionWidget.h"
@@ -16,7 +18,7 @@
 
 using namespace corecvs;
 
-ReflectionWidget::ReflectionWidget(const Reflection *reflection, FieldsType type, QWidget *parent) :
+ReflectionWidget::ReflectionWidget(const Reflection *reflection, FieldsType type, bool addButtons, QWidget *parent) :
     ParametersControlWidgetBase(parent),
     reflection(reflection)
 {
@@ -34,7 +36,7 @@ ReflectionWidget::ReflectionWidget(const Reflection *reflection, FieldsType type
     for (int i = 0; i < (int)reflection->fields.size(); i++)
     {
         const BaseField *field = reflection->fields[i];
-        // qDebug() << "Processing field:" <<  field->getSimpleName();
+        if (trace) qDebug() << "Processing field:" <<  field->getSimpleName();
 
         if (type == TYPE_INPUT_PINS && !field->isInputPin())
             continue;
@@ -292,6 +294,31 @@ ReflectionWidget::ReflectionWidget(const Reflection *reflection, FieldsType type
         connect(executeButton, SIGNAL(released()), this, SIGNAL(executeCalled()));
     }*/
 
+    if (addButtons)
+    {
+        QGridLayout *buttonLayout = new QGridLayout(this);
+
+        QPushButton *loadButton = new QPushButton(this);
+        loadButton->setIcon(QIcon(":/new/prefix1/remove.png"));
+        loadButton->setText("Load");
+        buttonLayout->addWidget(loadButton, 0, 0, 1, 1);
+        connect(loadButton, SIGNAL(released()), this, SLOT(loadCalled()));
+
+        QPushButton *saveButton = new QPushButton(this);
+        saveButton->setIcon(QIcon(":/new/prefix1/install.png"));
+        saveButton->setText("Save");
+        buttonLayout->addWidget(saveButton, 0, 1, 1, 1);
+        connect(saveButton, SIGNAL(released()), this, SLOT(saveCalled()));
+
+        QPushButton *resetButton = new QPushButton(this);
+        resetButton->setIcon(QIcon(":/new/prefix1/bullet_blue.png"));
+        resetButton->setText("Reset");
+        buttonLayout->addWidget(resetButton, 0, 2, 1, 1);
+        connect(resetButton, SIGNAL(released()), this, SLOT(resetCalled()));
+
+        gridLayout->addLayout(buttonLayout, gridLayout->rowCount(), 1, 1, 3);
+    }
+
     setLayout(gridLayout);
     // qDebug() << "Reflection had: " << reflection->fields.size();
     // qDebug() << "Widget has positions: " << position;
@@ -317,7 +344,7 @@ bool ReflectionWidget::getParameters(void *param) const
     {
         int fieldId = positionToField[i];
         const BaseField *field = reflection->fields[fieldId];
-        qDebug() << "Processing field:" <<  field->getSimpleName() << " type " << field->type;
+        if (trace) qDebug() << "Processing field:" <<  field->getSimpleName() << " type " << field->type;
 
         switch (field->type) {
             case BaseField::TYPE_INT:
@@ -350,10 +377,10 @@ bool ReflectionWidget::getParameters(void *param) const
                  QLineEdit *textBox = static_cast<QLineEdit *>(positionToWidget[i]);
                  std::string *targetStr = obj.getField<std::string>(fieldId);
                  std::string value = textBox->text().toStdString();
-                 cout << "Obj address:" << obj.rawObject << std::endl;
-                 cout << "Target address:" << targetStr << std::endl;
-                 cout << "Old target value:" << (*targetStr) << std::endl;
-                 cout << "ReflectionWidget::getParameters(): We have parameter <" << value << ">" << std::endl;
+                 // cout << "Obj address:" << obj.rawObject << std::endl;
+                 // cout << "Target address:" << targetStr << std::endl;
+                 // cout << "Old target value:" << (*targetStr) << std::endl;
+                 // cout << "ReflectionWidget::getParameters(): We have parameter <" << value << ">" << std::endl;
                 *targetStr = value;
                 break;
             }
@@ -440,7 +467,7 @@ bool ReflectionWidget::setParameters(void *param) const
         int fieldId = positionToField[i];
 
         const BaseField *field = reflection->fields[fieldId];
-        // qDebug() << "Processing field:" <<  field->getSimpleName();
+        if (trace) qDebug() << "Processing field:" <<  field->getSimpleName();
 
         switch (field->type) {
             case BaseField::TYPE_INT:
@@ -531,5 +558,55 @@ bool ReflectionWidget::setParameters(void *param) const
     }
 
     return true;
+}
+
+
+void ReflectionWidget::loadCalled()
+{
+    qDebug() << "ReflectionWidget::loadParams(): called";
+    QString filename = QFileDialog::getOpenFileName(
+                this,
+                "Choose an file name",
+                ".",
+                "json params (*.json)"
+                );
+
+    if (!filename.isEmpty())
+    {
+        DynamicObject obj(reflection);
+        JSONGetter getter(filename);
+        getter.visit(obj, "params");
+        setParameters(obj.rawObject);
+        /*WidgetLoader loader(&getter);
+        loadParamWidget(loader);*/
+    }
+}
+
+void ReflectionWidget::saveCalled()
+{
+    qDebug() << "ReflectionWidget::saveParams(): called";
+    QString filename = QFileDialog::getSaveFileName(
+                this,
+                "Choose an file name",
+                ".",
+                "json params (*.json)"
+                );
+    if (!filename.isEmpty())
+    {
+        DynamicObject obj(reflection);
+        getParameters(obj.rawObject);
+        std::ofstream file;
+        file.open(filename.toStdString(), std::ofstream::out);
+        JSONPrinter setter(file);
+        setter.visit(obj, "params");
+    }
+
+}
+
+void ReflectionWidget::resetCalled()
+{
+    qDebug() << "ReflectionWidget::resetCalled(): called";
+    DynamicObject obj(reflection);
+    setParameters(obj.rawObject);
 }
 

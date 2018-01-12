@@ -93,6 +93,11 @@ template<class VisitorType>
         mPower = power;
     }
 
+    bool operator ==(const ThickeningParameters &other) const 
+    {
+        if ( !(this->mPower == other.mPower)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, ThickeningParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

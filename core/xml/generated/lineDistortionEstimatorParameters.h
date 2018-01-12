@@ -30,7 +30,7 @@
 /*
  *  Additional includes for enum section.
  */
-#include "core/xml/generated/lineDistortionEstimatorCost.h"
+#include "lineDistortionEstimatorCost.h"
 
 /**
  * \brief Line Distortion Estimator Parameters 
@@ -214,6 +214,17 @@ template<class VisitorType>
         mEstimateCenter = estimateCenter;
     }
 
+    bool operator ==(const LineDistortionEstimatorParameters &other) const 
+    {
+        if ( !(this->mCostAlgorithm == other.mCostAlgorithm)) return false;
+        if ( !(this->mIterationNumber == other.mIterationNumber)) return false;
+        if ( !(this->mPolynomDegree == other.mPolynomDegree)) return false;
+        if ( !(this->mSimpleJacobian == other.mSimpleJacobian)) return false;
+        if ( !(this->mEvenPowersOnly == other.mEvenPowersOnly)) return false;
+        if ( !(this->mEstimateTangent == other.mEstimateTangent)) return false;
+        if ( !(this->mEstimateCenter == other.mEstimateCenter)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, LineDistortionEstimatorParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

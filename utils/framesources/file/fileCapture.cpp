@@ -18,9 +18,10 @@
 #include "core/buffers/bufferFactory.h"
 
 /* File capture interface */
-FileCaptureInterface::FileCaptureInterface(string pathFmt, bool isVerbose)
+FileCaptureInterface::FileCaptureInterface(string pathFmt, bool isVerbose, bool isRGB)
     : ImageFileCaptureInterface(&pathFmt, isVerbose)
 {
+    mIsRgb = isRGB;
     cout << "Starting capture form file with pattern:" << mPathFmt << "\n";
 }
 
@@ -71,6 +72,7 @@ FileCaptureInterface::FramePair FileCaptureInterface::getFrame()
     }
 
     increaseImageFileCounter();
+    nextFrame();
     return result;
 }
 
@@ -81,6 +83,14 @@ ImageCaptureInterface::CapErrorCode FileCaptureInterface::initCapture()
 
 ImageCaptureInterface::CapErrorCode FileCaptureInterface::startCapture()
 {
+    return ImageCaptureInterface::SUCCESS;
+}
+
+ImageCaptureInterface::CapErrorCode FileCaptureInterface::nextFrame()
+{
+    frame_data_t frameData;
+    frameData.timestamp = mCount * 10;
+    notifyAboutNewFrame(frameData);
     return ImageCaptureInterface::SUCCESS;
 }
 

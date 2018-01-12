@@ -133,6 +133,13 @@ template<class VisitorType>
         mMaximumThreshold = maximumThreshold;
     }
 
+    bool operator ==(const CannyParameters &other) const 
+    {
+        if ( !(this->mShouldEdgeDetect == other.mShouldEdgeDetect)) return false;
+        if ( !(this->mMinimumThreshold == other.mMinimumThreshold)) return false;
+        if ( !(this->mMaximumThreshold == other.mMaximumThreshold)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, CannyParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

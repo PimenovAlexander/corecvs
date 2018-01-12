@@ -173,6 +173,15 @@ template<class VisitorType>
         mSigmaFactor = sigmaFactor;
     }
 
+    bool operator ==(const IterativeEstimateParameters &other) const 
+    {
+        if ( !(this->mLimitSamples == other.mLimitSamples)) return false;
+        if ( !(this->mIterationsNumber == other.mIterationsNumber)) return false;
+        if ( !(this->mUseInitial == other.mUseInitial)) return false;
+        if ( !(this->mInitialSigma == other.mInitialSigma)) return false;
+        if ( !(this->mSigmaFactor == other.mSigmaFactor)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, IterativeEstimateParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

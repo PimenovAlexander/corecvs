@@ -30,7 +30,7 @@
 /*
  *  Additional includes for enum section.
  */
-#include "core/xml/generated/sobelMixingType.h"
+#include "sobelMixingType.h"
 
 /**
  * \brief Sobel Parameters 
@@ -134,6 +134,13 @@ template<class VisitorType>
         mVertical = vertical;
     }
 
+    bool operator ==(const SobelParameters &other) const 
+    {
+        if ( !(this->mMixingType == other.mMixingType)) return false;
+        if ( !(this->mHorizontal == other.mHorizontal)) return false;
+        if ( !(this->mVertical == other.mVertical)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, SobelParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

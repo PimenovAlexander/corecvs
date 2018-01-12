@@ -2,7 +2,8 @@
 #define SCENESHADED_H
 
 #include <QtOpenGL/QtOpenGL>
-#include <QOpenGLFunctions>
+//#include <QOpenGLFunctions>
+#include <QOpenGLFunctions_4_4_Core>
 
 #include "draw3dCameraParametersControlWidget.h"
 #include "scene3D.h"
@@ -13,7 +14,7 @@ class QOpenGLShaderProgram;
 
 
 
-class SceneShaded : public Scene3D, public QOpenGLFunctions
+class SceneShaded : public Scene3D, public /*QOpenGLFunctions*/ QOpenGLFunctions_4_4_Core
 {
 public:
     ShadedSceneControlParameters mParameters;
@@ -43,9 +44,11 @@ public:
 
     GLuint mFaceColAttr;
     GLuint mTexAttr;
+    GLuint mTexIdAttr;
     GLuint mNormalAttr;
 
     GLuint mTextureSampler;
+    GLuint mMultiTextureSampler;
     GLuint mBumpSampler;
 
 
@@ -53,13 +56,36 @@ public:
     GLuint mProjectionMatrix;
 
     /*Textures*/
-    GLuint mTexture = -1;
+    GLuint mTexture  = -1;
+    GLuint mTexArray = -1;
+
     GLuint mBumpmap = -1;
 
 
 
     /* Some test data */
     Mesh3DDecorated *mMesh = NULL;
+
+    /* Caches in OpenGL format*/
+    /* For vertex draw */
+    vector<Vector3df> positions;
+
+    /* For edges draw */
+    vector<Vector3df> edgePositions;
+    vector<RGBColor>  edgeVertexColors;
+    vector<RGBColor>  edgeColors;
+    vector<uint32_t>  edgeIds;
+
+    /* For face draw */
+    vector<Vector3df> facePositions;
+    vector<RGBColor>  faceVertexColors;
+    vector<RGBColor>  faceColors;
+    vector<Vector3df> faceNormals;
+    vector<Vector2df> faceTexCoords;
+    vector<uint32_t>  faceTexNums;
+    vector<uint32_t>  faceIds;
+
+
 
     SceneShaded()
     {       

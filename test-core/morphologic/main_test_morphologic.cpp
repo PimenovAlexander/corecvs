@@ -17,7 +17,6 @@
 #include "core/fileformats/bmpLoader.h"
 #include "core/buffers/morphological/morphological.h"
 
-using namespace std;
 using namespace corecvs;
 
 uint16_t inputData12[10*10] =

@@ -633,6 +633,35 @@ template<class VisitorType>
         mDecalRightAlpha = decalRightAlpha;
     }
 
+    bool operator ==(const Draw3dCameraParameters &other) const 
+    {
+        if ( !(this->mFovH == other.mFovH)) return false;
+        if ( !(this->mFovV == other.mFovV)) return false;
+        if ( !(this->mNearPlane == other.mNearPlane)) return false;
+        if ( !(this->mFarPlane == other.mFarPlane)) return false;
+        if ( !(this->mStyle == other.mStyle)) return false;
+        if ( !(this->mPointColor == other.mPointColor)) return false;
+        if ( !(this->mPointColorOverride == other.mPointColorOverride)) return false;
+        if ( !(this->mPointSize == other.mPointSize)) return false;
+        if ( !(this->mEdgeColor == other.mEdgeColor)) return false;
+        if ( !(this->mEdgeColorOverride == other.mEdgeColorOverride)) return false;
+        if ( !(this->mEdgeWidth == other.mEdgeWidth)) return false;
+        if ( !(this->mFaceColor == other.mFaceColor)) return false;
+        if ( !(this->mFaceColorOverride == other.mFaceColorOverride)) return false;
+        if ( !(this->mShowCaption == other.mShowCaption)) return false;
+        if ( !(this->mFontSize == other.mFontSize)) return false;
+        if ( !(this->mFontWidth == other.mFontWidth)) return false;
+        if ( !(this->mFontColor == other.mFontColor)) return false;
+        if ( !(this->mTextureCorrodinates == other.mTextureCorrodinates)) return false;
+        if ( !(this->mTextureAlpha == other.mTextureAlpha)) return false;
+        if ( !(this->mTextureScale == other.mTextureScale)) return false;
+        if ( !(this->mDecalMatrixType == other.mDecalMatrixType)) return false;
+        if ( !(this->mDecalLeftCam == other.mDecalLeftCam)) return false;
+        if ( !(this->mDecalLeftAlpha == other.mDecalLeftAlpha)) return false;
+        if ( !(this->mDecalRightCam == other.mDecalRightCam)) return false;
+        if ( !(this->mDecalRightAlpha == other.mDecalRightAlpha)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, Draw3dCameraParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

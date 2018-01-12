@@ -14,7 +14,7 @@
 #include "qtFileLoader.h"
 
 
-#include "core/cameracalibration/calibrationCamera.h"
+#include "core/cameracalibration/cameraModel.h"
 #include "core/geometry/renderer/simpleRenderer.h"
 #include "core/geometry/mesh3d.h"
 #include "core/fileformats/meshLoader.h"

@@ -294,6 +294,21 @@ template<class VisitorType>
         mFixGridValue = fixGridValue;
     }
 
+    bool operator ==(const GraphPlotParameters &other) const 
+    {
+        if ( !(this->mGraphStyle == other.mGraphStyle)) return false;
+        if ( !(this->mWidth == other.mWidth)) return false;
+        if ( !(this->mCenterAt == other.mCenterAt)) return false;
+        if ( !(this->mXGrid == other.mXGrid)) return false;
+        if ( !(this->mYGrid == other.mYGrid)) return false;
+        if ( !(this->mXScale == other.mXScale)) return false;
+        if ( !(this->mYScale == other.mYScale)) return false;
+        if ( !(this->mContrast == other.mContrast)) return false;
+        if ( !(this->mSelectGraph == other.mSelectGraph)) return false;
+        if ( !(this->mFixTimeValue == other.mFixTimeValue)) return false;
+        if ( !(this->mFixGridValue == other.mFixGridValue)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, GraphPlotParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

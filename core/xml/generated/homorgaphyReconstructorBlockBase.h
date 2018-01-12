@@ -36,7 +36,7 @@ class Matrix33;
 /*
  *  Additional includes for enum section.
  */
-#include "core/xml/generated/homographyAlgorithm.h"
+#include "homographyAlgorithm.h"
 
 /**
  * \brief HomorgaphyReconstructorBlockBase 
@@ -140,6 +140,11 @@ template<class VisitorType>
         mAlgorithm = algorithm;
     }
 
+    bool operator ==(const HomorgaphyReconstructorBlockBase &other) const 
+    {
+        if ( !(this->mAlgorithm == other.mAlgorithm)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, HomorgaphyReconstructorBlockBase &toSave)
     {
         corecvs::PrinterVisitor printer(out);

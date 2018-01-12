@@ -9,7 +9,7 @@
  */
 
 #include <limits>
-#include "core/utils/preciseTimer.h"
+//#include "core/utils/preciseTimer.h"
 
 #include "core/geometry/triangulation.h"
 namespace Triangulation
@@ -202,7 +202,7 @@ Edge hullEdge (const vector<Point> &points)
 
 // updating the "hull"
 // in attempt to add "dead" point, returns 1
-int updateFrontier(set<Edge,    EdgeCmp> &frontier, const Point &a, const Point &b, set<Edge,    EdgeCmp> &died)
+int updateFrontier(set<Edge, EdgeCmp> &frontier, const Point &a, const Point &b, set<Edge, EdgeCmp> &died)
 {
 #if !defined(_MSC_VER) || (_MSC_VER > 1500)         // TODO: VS2008 doesn't compile this code!?
     Edge e(a,b);

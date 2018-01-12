@@ -253,6 +253,19 @@ template<class VisitorType>
         mGuessShiftThreshold = guessShiftThreshold;
     }
 
+    bool operator ==(const StereoAlignParameters &other) const 
+    {
+        if ( !(this->mProduceCameras == other.mProduceCameras)) return false;
+        if ( !(this->mProduceObservations == other.mProduceObservations)) return false;
+        if ( !(this->mZdirX == other.mZdirX)) return false;
+        if ( !(this->mZdirY == other.mZdirY)) return false;
+        if ( !(this->mZdirZ == other.mZdirZ)) return false;
+        if ( !(this->mAutoZ == other.mAutoZ)) return false;
+        if ( !(this->mAutoShift == other.mAutoShift)) return false;
+        if ( !(this->mPreShift == other.mPreShift)) return false;
+        if ( !(this->mGuessShiftThreshold == other.mGuessShiftThreshold)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, StereoAlignParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

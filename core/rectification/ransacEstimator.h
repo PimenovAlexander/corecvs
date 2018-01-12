@@ -41,7 +41,6 @@ public:
     Matrix33 getEssentialRansac  (vector<Correspondence *> *data);
 };
 
-#if 0
 class RansacEstimatorScene
 {
 public:
@@ -52,7 +51,7 @@ public:
     //EssentialDecomposition getEssentialRansac(FixtureScene *scene, FixtureCamera *cam1, FixtureCamera *cam2);
 
 };
-#endif
+
 
 
 } //namespace corecvs

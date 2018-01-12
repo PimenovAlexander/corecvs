@@ -8,7 +8,7 @@
 
 #include <vector>
 #include <stddef.h>
-#include "core/xml/generated/sceneStereoAlignerBlockBase.h"
+#include "sceneStereoAlignerBlockBase.h"
 
 /**
  *  Looks extremely unsafe because it depends on the order of static initialization.

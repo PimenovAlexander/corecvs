@@ -30,7 +30,7 @@
 /*
  *  Additional includes for enum section.
  */
-#include "core/xml/generated/distortionResizePolicy.h"
+#include "distortionResizePolicy.h"
 
 /**
  * \brief Distortion Application Parameters 
@@ -174,6 +174,15 @@ template<class VisitorType>
         mNewW = newW;
     }
 
+    bool operator ==(const DistortionApplicationParameters &other) const 
+    {
+        if ( !(this->mForceScale == other.mForceScale)) return false;
+        if ( !(this->mAdoptScale == other.mAdoptScale)) return false;
+        if ( !(this->mResizePolicy == other.mResizePolicy)) return false;
+        if ( !(this->mNewH == other.mNewH)) return false;
+        if ( !(this->mNewW == other.mNewW)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, DistortionApplicationParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

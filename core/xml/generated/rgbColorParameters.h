@@ -133,6 +133,13 @@ template<class VisitorType>
         mB = b;
     }
 
+    bool operator ==(const RgbColorParameters &other) const 
+    {
+        if ( !(this->mR == other.mR)) return false;
+        if ( !(this->mG == other.mG)) return false;
+        if ( !(this->mB == other.mB)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, RgbColorParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

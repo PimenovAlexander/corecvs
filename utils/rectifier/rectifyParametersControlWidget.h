@@ -44,7 +44,7 @@ public:
         Vector3dd old(mUi->manualXSpinBox->value(), mUi->manualYSpinBox->value(), mUi->manualZSpinBox->value());
         double shiftDelta = (old - dir).l2Metric() * mUi->baselineLengthSpinBox->value();
 
-        QString deltaText = QString("pitch=%1deg\nyaw=%1deg\nroll=%1deg\ndelta=%1unit")
+        QString deltaText = QString("pitch=%1deg\nyaw=%2deg\nroll=%3deg\ndelta=%4unit")
                 .arg(radToDeg(pitchDelta))
                 .arg(radToDeg(yawDelta))
                 .arg(radToDeg(rollDelta))

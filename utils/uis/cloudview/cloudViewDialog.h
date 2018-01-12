@@ -20,7 +20,7 @@
 #include "frames.h"
 #include "coordinateFrame.h"
 #include "treeSceneController.h"
-#include "core/cameracalibration/calibrationCamera.h"
+#include "core/cameracalibration/cameraModel.h"
 
 #include "textLabelWidget.h"
 #include "core/stats/calculationStats.h"

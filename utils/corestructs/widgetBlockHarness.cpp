@@ -13,7 +13,7 @@ WidgetBlockHarness::WidgetBlockHarness(corecvs::DynamicObjectWrapper *blockRefle
     block(block)
 {
     inputs  = new ReflectionWidget(blockReflection->reflection, ReflectionWidget::TYPE_INPUT_PINS);
-    params  = new ReflectionWidget(blockReflection->reflection, ReflectionWidget::TYPE_PARAMS);
+    params  = new ReflectionWidget(blockReflection->reflection, ReflectionWidget::TYPE_PARAMS, true);
     outputs = new ReflectionWidget(blockReflection->reflection, ReflectionWidget::TYPE_OUTPUT_PINS);
 
     QGridLayout *layout = new QGridLayout(this);

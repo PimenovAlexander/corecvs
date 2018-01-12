@@ -213,6 +213,17 @@ template<class VisitorType>
         mSharpness = sharpness;
     }
 
+    bool operator ==(const FocusEstimationResult &other) const 
+    {
+        if ( !(this->mScore == other.mScore)) return false;
+        if ( !(this->mScoreROI == other.mScoreROI)) return false;
+        if ( !(this->mFullScore == other.mFullScore)) return false;
+        if ( !(this->mBoardProcessed == other.mBoardProcessed)) return false;
+        if ( !(this->mBnoise == other.mBnoise)) return false;
+        if ( !(this->mWnoise == other.mWnoise)) return false;
+        if ( !(this->mSharpness == other.mSharpness)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, FocusEstimationResult &toSave)
     {
         corecvs::PrinterVisitor printer(out);

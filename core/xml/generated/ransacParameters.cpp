@@ -8,7 +8,7 @@
 
 #include <vector>
 #include <stddef.h>
-#include "core/xml/generated/ransacParameters.h"
+#include "ransacParameters.h"
 
 /**
  *  Looks extremely unsafe because it depends on the order of static initialization.

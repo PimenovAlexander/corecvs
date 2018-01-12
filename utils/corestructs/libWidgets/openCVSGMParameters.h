@@ -273,6 +273,20 @@ template<class VisitorType>
         mFullDP = fullDP;
     }
 
+    bool operator ==(const OpenCVSGMParameters &other) const 
+    {
+        if ( !(this->mPreFilterCap == other.mPreFilterCap)) return false;
+        if ( !(this->mSADWindowSize == other.mSADWindowSize)) return false;
+        if ( !(this->mP1Multiplier == other.mP1Multiplier)) return false;
+        if ( !(this->mP2Multiplier == other.mP2Multiplier)) return false;
+        if ( !(this->mMinDisparity == other.mMinDisparity)) return false;
+        if ( !(this->mUniquenessRatio == other.mUniquenessRatio)) return false;
+        if ( !(this->mSpeckleWindowSize == other.mSpeckleWindowSize)) return false;
+        if ( !(this->mSpeckleRange == other.mSpeckleRange)) return false;
+        if ( !(this->mDisp12MaxDiff == other.mDisp12MaxDiff)) return false;
+        if ( !(this->mFullDP == other.mFullDP)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, OpenCVSGMParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

@@ -30,7 +30,7 @@
 /*
  *  Additional includes for enum section.
  */
-#include "core/xml/generated/inputType.h"
+#include "inputType.h"
 
 /**
  * \brief Input Filter Parameters 
@@ -94,6 +94,11 @@ template<class VisitorType>
         mInputType = inputType;
     }
 
+    bool operator ==(const InputFilterParameters &other) const 
+    {
+        if ( !(this->mInputType == other.mInputType)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, InputFilterParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

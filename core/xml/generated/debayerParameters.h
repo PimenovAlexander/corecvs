@@ -30,7 +30,7 @@
 /*
  *  Additional includes for enum section.
  */
-#include "core/xml/generated/debayerMethod.h"
+#include "debayerMethod.h"
 
 /**
  * \brief Debayer Parameters 
@@ -114,6 +114,12 @@ template<class VisitorType>
         mBayerPos = bayerPos;
     }
 
+    bool operator ==(const DebayerParameters &other) const 
+    {
+        if ( !(this->mMethod == other.mMethod)) return false;
+        if ( !(this->mBayerPos == other.mBayerPos)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, DebayerParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

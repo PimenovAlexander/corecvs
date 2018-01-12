@@ -19,6 +19,9 @@ public:
     struct HullFace {
         Triangle3dd plane;
         vertices points;
+
+        HullFace(Triangle3dd plane) : plane(plane)
+        {}
     };
 
     typedef vector<HullFace> HullFaces;
@@ -31,7 +34,7 @@ protected:
 
     static bool faceIsVisible(const Vector3dd &eyePoint, const HullFace &face, double eps);
 
-    static void addPointsToFaces(HullFace* faces, unsigned long faces_count, const vertices &listVertices, double eps);
+    static void addPointsToFaces(HullFace* faces, size_t facesCount, const vertices &listVertices, double eps);
 
 };
 

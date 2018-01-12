@@ -93,6 +93,11 @@ template<class VisitorType>
         mThreshold = threshold;
     }
 
+    bool operator ==(const BackgroundFilterParameters &other) const 
+    {
+        if ( !(this->mThreshold == other.mThreshold)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, BackgroundFilterParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

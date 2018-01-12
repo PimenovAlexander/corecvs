@@ -193,6 +193,16 @@ template<class VisitorType>
         mDepth = depth;
     }
 
+    bool operator ==(const AxisAlignedBoxParameters &other) const 
+    {
+        if ( !(this->mX == other.mX)) return false;
+        if ( !(this->mY == other.mY)) return false;
+        if ( !(this->mZ == other.mZ)) return false;
+        if ( !(this->mWidth == other.mWidth)) return false;
+        if ( !(this->mHeight == other.mHeight)) return false;
+        if ( !(this->mDepth == other.mDepth)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, AxisAlignedBoxParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

@@ -321,6 +321,21 @@ template<class VisitorType>
         mMapForward = mapForward;
     }
 
+    bool operator ==(const LensDistortionModelParametersBase &other) const 
+    {
+        if ( !(this->mPrincipalX == other.mPrincipalX)) return false;
+        if ( !(this->mPrincipalY == other.mPrincipalY)) return false;
+        if ( !(this->mTangentialX == other.mTangentialX)) return false;
+        if ( !(this->mTangentialY == other.mTangentialY)) return false;
+        if ( !(this->mKoeff == other.mKoeff)) return false;
+        if ( !(this->mAspect == other.mAspect)) return false;
+        if ( !(this->mScale == other.mScale)) return false;
+        if ( !(this->mNormalizingFocal == other.mNormalizingFocal)) return false;
+        if ( !(this->mShiftX == other.mShiftX)) return false;
+        if ( !(this->mShiftY == other.mShiftY)) return false;
+        if ( !(this->mMapForward == other.mMapForward)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, LensDistortionModelParametersBase &toSave)
     {
         corecvs::PrinterVisitor printer(out);

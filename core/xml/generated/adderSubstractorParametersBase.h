@@ -173,6 +173,15 @@ template<class VisitorType>
         mOutput2 = output2;
     }
 
+    bool operator ==(const AdderSubstractorParametersBase &other) const 
+    {
+        if ( !(this->mInput1 == other.mInput1)) return false;
+        if ( !(this->mInput2 == other.mInput2)) return false;
+        if ( !(this->mParameter == other.mParameter)) return false;
+        if ( !(this->mOutput1 == other.mOutput1)) return false;
+        if ( !(this->mOutput2 == other.mOutput2)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, AdderSubstractorParametersBase &toSave)
     {
         corecvs::PrinterVisitor printer(out);

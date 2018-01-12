@@ -20,7 +20,12 @@
 #include "core/rectification/essentialMatrix.h"
 #include "core/rectification/ransacEstimator.h"
 #include "core/rectification/essentialEstimator.h"
-#include "core/cameracalibration/calibrationCamera.h"
+#include "core/cameracalibration/cameraModel.h"
+#include "core/geometry/polygons.h"
+#include "core/geometry/mesh3d.h"
+#include "core/cameracalibration/calibrationDrawHelpers.h"
+
+#include "core/rectification/iterativeEstimator.h"
 
 using namespace corecvs;
 
@@ -150,6 +155,55 @@ TEST(Rectification, testFundamentalEstimator)
     printf("====================================\n");
     printMatrixInfo(E1);
 
+}
+
+#define GRID_STEP1 4
+
+TEST(Rectification, testIterativeEstimator)
+{
+    cout << "=================Iterative Estimator test===============" << endl;
+
+    CorrespondenceList *points = new CorrespondenceList;
+    for (unsigned i = 0; i < GRID_STEP1; i++)
+    {
+        for (unsigned j = 0; j < GRID_STEP1; j++)
+        {
+
+            Correspondence corr;
+            double step = 1.0 / (GRID_STEP - 1);
+            double x = (step * j) - 0.5;
+            double y = (step * i) - 0.5;
+            double alpha = 0.05;
+
+            Matrix33 rotation = Matrix33::RotationZ(alpha);
+
+            /*TODO: Shift only causes the memory error */
+            corr.start = Vector2dd(x, y);
+            corr.end = rotation * corr.start + Vector2dd (+ 0.01, - 0.1);
+
+            corr.flags = 0;
+            corr.value = 1;
+
+            points->push_back(corr);
+
+        }
+    }
+
+    /* This can be created only when data is fully formed */
+    vector<Correspondence *> pointsPtr;
+    pointsPtr.reserve(points->size());
+    for (size_t p = 0; p < points->size(); p++)
+    {
+        pointsPtr.push_back(&points->operator [](p));
+    }
+
+    IterativeEstimator iterativeEstimator;
+    iterativeEstimator.params.setIterationsNumber(1);
+    srand(1);
+    Matrix33 F = iterativeEstimator.getEssential(pointsPtr);
+    printMatrixInfo(F);
+    printf("====================================\n");
+    delete_safe(points);
 }
 
 TEST(Rectification, testSVDDesc)
@@ -431,6 +485,315 @@ TEST(Rectification, testEssentialEstimator)
         of << r << ",";
     of << "];";
 }
+
+#if 1
+
+TEST(Rectification, testRectifiedModel)
+{
+    /* Trivial camera */
+    CameraModel model;
+    model.setLocation(Affine3DQ::Identity());
+    model.intrinsics = PinholeCameraIntrinsics(Vector2dd(200,200), degToRad(60));
+
+    /* New Plane */
+    PlaneFrame xy = PlaneFrame::PlaneXY();
+
+    cout << "Original:" << xy << endl;    
+    Affine3DQ move = Affine3DQ(
+                Quaternion::RotationY(degToRad(10)) ^ Quaternion::RotationZ(degToRad(10)),
+                Vector3dd(0.0, 0.0, 1.0)
+                );
+    cout << "Move:" << move << endl;
+
+    xy.transform(move);
+    cout << "Transformed:" << xy << endl;
+
+
+    /* Carefully creating new camera and homography */
+    Vector3dd norm = xy.getNormal();
+
+    CameraModel model1;
+    Affine3DQ location;
+    location.shift = model.getAffine().shift;
+
+    Vector3dd cameraX = xy.e1;
+    Vector3dd cameraY = xy.e2;
+    Vector3dd cameraAxis = norm;
+
+    Matrix33 newCameraRotation = Matrix33::FromRows(cameraX, cameraY, cameraAxis);
+    location.rotor = Quaternion::FromMatrix(newCameraRotation);
+
+
+    model1.setLocation(location);
+
+
+
+
+
+
+
+    /* Mesh3d */
+    Mesh3D mesh;
+    mesh.switchColor(true);
+    CalibrationDrawHelpers helpers;
+    mesh.setColor(RGBColor::White());
+    helpers.drawCamera(mesh, model, 1.0);
+    mesh.addPlaneFrame(xy, 3.0);
+
+    mesh.setColor(RGBColor::Green());
+    helpers.drawCamera(mesh, model1, 1.0);
+
+    mesh.dumpPLY("debug.ply");
+
+}
+
+
+TEST(Rectification, testEssentialDecompositionToRotations)
+{
+    EssentialDecomposition D;
+    D.direction = Vector3dd(5,2,1);
+    D.rotation  =
+            // Matrix33::Identity();
+            //Quaternion::RotationX(degToRad(10)).toMatrix();
+             (Quaternion::RotationZ(degToRad(25)) ^ Quaternion::RotationY(degToRad(35)) ^ Quaternion::RotationX(degToRad(40))).toMatrix();
+
+    Quaternion q1 = Quaternion::Identity();
+    Quaternion q2 = Quaternion::Identity();
+
+    D.toTwoRotations(q1,q2);
+    cout << q1 << endl;
+    cout << q2 << endl;
+
+    Mesh3D debug;
+    debug.switchColor();
+
+    debug.addOrts(1.0, true);
+    debug.mulTransform(D.toSecondCameraAffine());
+    debug.addOrts(1.0, true);
+    debug.popTransform();
+
+
+    debug.mulTransform(Affine3DQ(q1));
+    debug.addOrts(1.0);
+    debug.popTransform();
+
+    debug.mulTransform(Affine3DQ::Shift( Vector3dd::OrtX() * D.direction.l2Metric() ));
+    debug.mulTransform(Affine3DQ(q2));
+    debug.addOrts(1.0);
+    debug.popTransform();
+    debug.popTransform();
+
+
+
+    /* Some Checks */
+    Vector3dd A1x = Vector3dd::OrtX();
+    Vector3dd A1y = Vector3dd::OrtY();
+    Vector3dd A1z = Vector3dd::OrtZ();
+
+    Vector3dd A2x = D.rotation * Vector3dd::OrtX() + D.direction;
+    Vector3dd A2y = D.rotation * Vector3dd::OrtY() + D.direction;
+    Vector3dd A2z = D.rotation * Vector3dd::OrtZ() + D.direction;
+
+    Vector3dd B1x = q1 * Vector3dd::OrtX();
+    Vector3dd B1y = q1 * Vector3dd::OrtY();
+    Vector3dd B1z = q1 * Vector3dd::OrtZ();
+
+    Vector3dd B2x = q2 * Vector3dd::OrtX() + Vector3dd::OrtX() * D.direction.l2Metric();
+    Vector3dd B2y = q2 * Vector3dd::OrtY() + Vector3dd::OrtX() * D.direction.l2Metric();
+    Vector3dd B2z = q2 * Vector3dd::OrtZ() + Vector3dd::OrtX() * D.direction.l2Metric();
+
+    cout << "Debug" << debug.vertexes.size() << endl;
+
+    double r = 0.05;
+
+    debug.setColor(RGBColor::Red());
+    debug.addIcoSphere(A1x, r); debug.addIcoSphere(A1y, r); debug.addIcoSphere(A1z, r);
+    debug.addIcoSphere(A2x, r); debug.addIcoSphere(A2y, r); debug.addIcoSphere(A2z, r);
+
+    debug.setColor(RGBColor::Green());
+    debug.addIcoSphere(B1x, r); debug.addIcoSphere(B1y, r); debug.addIcoSphere(B1z, r);
+    debug.addIcoSphere(B2x, r); debug.addIcoSphere(B2y, r); debug.addIcoSphere(B2z, r);
+
+    cout << "Debug" << debug.vertexes.size() << endl;
+
+    cout << (A1x-A2x) << " " << !(A1x-A2x) << " vs " <<  (B1x-B2x) << " " << !(B1x-B2x) << endl;
+    cout << (A1y-A2y) << " " << !(A1y-A2y) << " vs " <<  (B1y-B2y) << " " << !(B1y-B2y) << endl;
+    cout << (A1z-A2z) << " " << !(A1z-A2z) << " vs " <<  (B1z-B2z) << " " << !(B1z-B2z) << endl;
+
+    debug.dumpPLY("decomposeR.ply");
+
+    CORE_ASSERT_DOUBLE_EQUAL_E(!(A1x-A2x),!(B1x-B2x), 1e-7, "This is not a shift X");
+    CORE_ASSERT_DOUBLE_EQUAL_E(!(A1y-A2y),!(B1y-B2y), 1e-7, "This is not a shift Y");
+    CORE_ASSERT_DOUBLE_EQUAL_E(!(A1z-A2z),!(B1z-B2z), 1e-7, "This is not a shift Z");
+}
+
+TEST(Rectification, testMoveCameras)
+{
+    EssentialDecomposition D;
+    D.direction = Vector3dd(5,2,1).normalised();
+    D.rotation  =
+            // Matrix33::Identity();
+            // Quaternion::RotationX(degToRad(10)).toMatrix();
+             (Quaternion::RotationZ(degToRad(25)) ^ Quaternion::RotationY(degToRad(35)) ^ Quaternion::RotationX(degToRad(40))).toMatrix();
+
+    Quaternion q1 = Quaternion::Identity();
+    Quaternion q2 = Quaternion::Identity();
+    D.toTwoRotations(q1,q2);
+
+    /* */
+    Affine3DQ posOrig1 = Affine3DQ::Shift(20, 10, 12) * Affine3DQ::RotationY(degToRad(10.0)) * Affine3DQ::RotationZ(degToRad( 10.0));
+    Affine3DQ posOrig2 = Affine3DQ::Shift(27, 12, 11) * Affine3DQ::RotationX(degToRad(10.0)) * Affine3DQ::RotationZ(degToRad(-10.0));
+
+    Vector3dd realDirection =  posOrig2.shift - posOrig1.shift;
+
+    /* Ok Let's see how cameras are positioned now */
+
+    Vector3dd dir1 = posOrig1.rotor * Vector3dd::OrtZ();
+    Vector3dd dir2 = posOrig2.rotor * Vector3dd::OrtZ();
+
+    Vector3dd ox = realDirection.normalised();
+    Vector3dd oz1 = (dir1 + dir2).normalised();
+    Vector3dd oy = (oz1 ^ ox).normalised();
+    Vector3dd oz = (ox ^ oy).normalised();
+    Matrix33 currentRotationM = Matrix33::FromColumns(ox, oy, oz);  /*Common rotation frame*/
+    SYNC_PRINT(("Rotation is right: %lf\n", currentRotationM.det()));
+
+    Quaternion currentRotation = Quaternion::FromMatrix(currentRotationM);
+
+    /* */
+
+    Affine3DQ pos1 = posOrig1;
+    Affine3DQ pos2 = posOrig2;
+    pos1.rotor = currentRotation ^ q1;
+    pos2.rotor = currentRotation ^ q2;
+
+    Affine3DQ pos1id = posOrig1;
+    Affine3DQ pos2id = posOrig2;
+    pos1id.rotor = currentRotation;
+    pos2id.rotor = currentRotation;
+
+
+    Mesh3D debug;
+    debug.switchColor();
+
+#if 1
+    /* Some Checks */
+    double scale = realDirection.l2Metric();
+
+    Vector3dd A1o = Vector3dd::Zero();
+    Vector3dd A1x = Vector3dd::OrtX();
+    Vector3dd A1y = Vector3dd::OrtY();
+    Vector3dd A1z = Vector3dd::OrtZ();
+
+    Vector3dd B1o = pos1 * Vector3dd::Zero();
+    Vector3dd B1x = pos1 * Vector3dd::OrtX();
+    Vector3dd B1y = pos1 * Vector3dd::OrtY();
+    Vector3dd B1z = pos1 * Vector3dd::OrtZ();
+
+    Vector3dd A2o = D.rotation * Vector3dd::Zero() + D.direction * scale;
+    Vector3dd A2x = D.rotation * Vector3dd::OrtX() + D.direction * scale;
+    Vector3dd A2y = D.rotation * Vector3dd::OrtY() + D.direction * scale;
+    Vector3dd A2z = D.rotation * Vector3dd::OrtZ() + D.direction * scale;
+
+    Vector3dd B2o = pos2 * Vector3dd::Zero();
+    Vector3dd B2x = pos2 * Vector3dd::OrtX();
+    Vector3dd B2y = pos2 * Vector3dd::OrtY();
+    Vector3dd B2z = pos2 * Vector3dd::OrtZ();
+
+    cout << "Debug" << debug.vertexes.size() << endl;
+
+    double r = 0.05;
+
+    debug.setColor(RGBColor::Red());
+    debug.addIcoSphere(A1o, r); debug.addIcoSphere(A1x, r); debug.addIcoSphere(A1y, r); debug.addIcoSphere(A1z, r);
+    debug.addIcoSphere(A2o, r); debug.addIcoSphere(A2x, r); debug.addIcoSphere(A2y, r); debug.addIcoSphere(A2z, r);
+
+    debug.setColor(RGBColor::Green());
+    debug.addIcoSphere(B1o, r); debug.addIcoSphere(B1x, r); debug.addIcoSphere(B1y, r); debug.addIcoSphere(B1z, r);
+    debug.addIcoSphere(B2o, r); debug.addIcoSphere(B2x, r); debug.addIcoSphere(B2y, r); debug.addIcoSphere(B2z, r);
+
+    cout << "Debug" << debug.vertexes.size() << endl;
+
+    cout << (A1x-A2x) << " " << !(A1x-A2x)  << " vs " <<  (B1x-B2x) << " " << !(B1x-B2x) << endl;
+    cout << (A1y-A2y) << " " << !(A1y-A2y)  << " vs " <<  (B1y-B2y) << " " << !(B1y-B2y) << endl;
+    cout << (A1z-A2z) << " " << !(A1z-A2z)  << " vs " <<  (B1z-B2z) << " " << !(B1z-B2z) << endl;
+
+    debug.dumpPLY("moveR1.ply");
+
+    CORE_ASSERT_DOUBLE_EQUAL_E(!(A1x-A2x),!(B1x-B2x), 1e-7, "This is not a shift X");
+    CORE_ASSERT_DOUBLE_EQUAL_E(!(A1y-A2y),!(B1y-B2y), 1e-7, "This is not a shift Y");
+    CORE_ASSERT_DOUBLE_EQUAL_E(!(A1z-A2z),!(B1z-B2z), 1e-7, "This is not a shift Z");
+
+#endif
+
+
+#if 1
+    cout << "Sanity1:" << (currentRotation *  Vector3dd::OrtX()).normalised() << endl;
+    cout << "Sanity2:" << realDirection.normalised() << endl;
+
+    CameraModel dummy;
+    dummy.intrinsics = PinholeCameraIntrinsics(Vector2dd(300,200), degToRad(50));
+    dummy.setLocation(Affine3DQ::Identity());
+
+    CalibrationDrawHelpers drawer;
+    //drawer.setSolidCameras(true);
+
+    Vector3dd zero = posOrig1.shift;
+    posOrig1.shift -= zero;
+    posOrig2.shift -= zero;
+    pos1.shift -= zero;
+    pos2.shift -= zero;
+    pos1id.shift -= zero;
+    pos2id.shift -= zero;
+
+    debug.setColor(RGBColor::Red());
+    debug.mulTransform(posOrig1);
+    drawer.drawCamera(debug, dummy, 2);
+    debug.popTransform();
+
+    debug.mulTransform(posOrig2);
+    drawer.drawCamera(debug, dummy, 2);
+    debug.popTransform();
+
+    debug.setColor(RGBColor::Blue());
+    debug.mulTransform(pos1id);
+    drawer.drawCamera(debug, dummy, 2);
+    debug.popTransform();
+
+    debug.mulTransform(pos2id);
+    drawer.drawCamera(debug, dummy, 2);
+    debug.popTransform();
+
+    debug.setColor(RGBColor::Green());
+    debug.mulTransform(pos1);
+    drawer.drawCamera(debug, dummy, 2);
+    debug.popTransform();
+
+    debug.mulTransform(pos2);
+    drawer.drawCamera(debug, dummy, 2);
+    debug.popTransform();
+
+
+    debug.setColor(RGBColor::Cyan());
+    debug.addLine(Vector3dd::Zero(), ox * 4);
+    debug.setColor(RGBColor::Yellow());
+    debug.addLine(Vector3dd::Zero(), dir1 * 3);
+    debug.addLine(Vector3dd::Zero(), dir2 * 3);
+    debug.addLine(Vector3dd::Zero(), oz1 * 4);
+    debug.setColor(RGBColor::Magenta());
+    debug.addLine(Vector3dd::Zero(), oy * 4);
+    debug.setColor(RGBColor::Khaki());
+    debug.addLine(Vector3dd::Zero(), oz * 4);
+
+    debug.dumpPLY("moveR.ply");
+#endif
+
+
+
+
+}
+
+#endif
 
 //int main (int /*argC*/, char ** /*argV*/)
 //{

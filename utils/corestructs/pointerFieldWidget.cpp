@@ -25,6 +25,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <sceneShaded.h>
+#include <mesh3DScene.h>
 
 using namespace corecvs;
 using namespace std;
@@ -231,10 +232,13 @@ void PointerFieldWidget::showMesh3d()
         cloud = new CloudViewDialog;
 
     corecvs::Mesh3D *mesh = static_cast<corecvs::Mesh3D *>(rawPointer);
-    SceneShaded *scene = new SceneShaded;
+    /*SceneShaded *scene = new SceneShaded;
     corecvs::Mesh3DDecorated *targetMesh = new corecvs::Mesh3DDecorated;
     targetMesh->add(*mesh, true);
-    scene->mMesh = targetMesh;
+    scene->mMesh = targetMesh;*/
+    Mesh3DScene  *scene = new Mesh3DScene;
+    scene->switchColor(true);
+    scene->add(*mesh, true);
     cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene));
     cloud->show();
     cloud->raise();

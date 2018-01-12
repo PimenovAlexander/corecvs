@@ -173,6 +173,15 @@ template<class VisitorType>
         mHeadNumber = headNumber;
     }
 
+    bool operator ==(const HeadSearchParameters &other) const 
+    {
+        if ( !(this->mThresholdDistance == other.mThresholdDistance)) return false;
+        if ( !(this->mClusterDepth == other.mClusterDepth)) return false;
+        if ( !(this->mClusterMinSize == other.mClusterMinSize)) return false;
+        if ( !(this->mHeadAreaRadius == other.mHeadAreaRadius)) return false;
+        if ( !(this->mHeadNumber == other.mHeadNumber)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, HeadSearchParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

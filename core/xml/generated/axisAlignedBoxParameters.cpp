@@ -8,7 +8,7 @@
 
 #include <vector>
 #include <stddef.h>
-#include "core/xml/generated/axisAlignedBoxParameters.h"
+#include "axisAlignedBoxParameters.h"
 
 /**
  *  Looks extremely unsafe because it depends on the order of static initialization.

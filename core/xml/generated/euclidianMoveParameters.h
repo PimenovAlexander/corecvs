@@ -193,6 +193,16 @@ template<class VisitorType>
         mGamma = gamma;
     }
 
+    bool operator ==(const EuclidianMoveParameters &other) const 
+    {
+        if ( !(this->mX == other.mX)) return false;
+        if ( !(this->mY == other.mY)) return false;
+        if ( !(this->mZ == other.mZ)) return false;
+        if ( !(this->mAlpha == other.mAlpha)) return false;
+        if ( !(this->mBeta == other.mBeta)) return false;
+        if ( !(this->mGamma == other.mGamma)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, EuclidianMoveParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

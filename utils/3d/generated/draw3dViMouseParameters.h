@@ -175,6 +175,15 @@ template<class VisitorType>
         mFlowColorType = flowColorType;
     }
 
+    bool operator ==(const Draw3dViMouseParameters &other) const 
+    {
+        if ( !(this->mRedDist == other.mRedDist)) return false;
+        if ( !(this->mBlueDist == other.mBlueDist)) return false;
+        if ( !(this->mFlowZoom == other.mFlowZoom)) return false;
+        if ( !(this->mPointColorType == other.mPointColorType)) return false;
+        if ( !(this->mFlowColorType == other.mFlowColorType)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, Draw3dViMouseParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

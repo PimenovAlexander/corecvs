@@ -30,7 +30,7 @@
 /*
  *  Additional includes for enum section.
  */
-#include "core/xml/generated/gCodeColoringSheme.h"
+#include "gCodeColoringSheme.h"
 
 /**
  * \brief draw GCode Parameters 
@@ -214,6 +214,17 @@ template<class VisitorType>
         mMaxSpeed = maxSpeed;
     }
 
+    bool operator ==(const DrawGCodeParameters &other) const 
+    {
+        if ( !(this->mScheme == other.mScheme)) return false;
+        if ( !(this->mMinTemp == other.mMinTemp)) return false;
+        if ( !(this->mMaxTemp == other.mMaxTemp)) return false;
+        if ( !(this->mMinExtrude == other.mMinExtrude)) return false;
+        if ( !(this->mMaxExtrude == other.mMaxExtrude)) return false;
+        if ( !(this->mMinSpeed == other.mMinSpeed)) return false;
+        if ( !(this->mMaxSpeed == other.mMaxSpeed)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, DrawGCodeParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

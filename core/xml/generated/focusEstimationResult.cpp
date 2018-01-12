@@ -8,7 +8,7 @@
 
 #include <vector>
 #include <stddef.h>
-#include "core/xml/generated/focusEstimationResult.h"
+#include "focusEstimationResult.h"
 
 /**
  *  Looks extremely unsafe because it depends on the order of static initialization.

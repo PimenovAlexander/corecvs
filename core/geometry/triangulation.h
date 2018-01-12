@@ -10,10 +10,6 @@
  * \author alexander
  */
 
-
-#include "core/utils/global.h"
-
-#include <math.h>
 #include <assert.h>
 #include <limits>
 #include <list>
@@ -22,6 +18,8 @@
 #include <set>
 #include <list>
 #include <map>
+
+#include "core/utils/global.h"
 
 #include "core/math/vector/vector2d.h"
 #include "core/math/vector/vector3d.h"
@@ -243,7 +241,7 @@ struct TriangulationBeginnings
 struct EdgeCmp
 {
     // Strict_weak_ordering
-    bool operator()(const Edge &a, const Edge &b)
+    bool operator()(const Edge &a, const Edge &b) const
     {
         if (a.org < b.org)
             return true;

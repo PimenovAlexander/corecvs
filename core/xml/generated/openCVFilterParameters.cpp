@@ -8,7 +8,7 @@
 
 #include <vector>
 #include <stddef.h>
-#include "core/xml/generated/openCVFilterParameters.h"
+#include "openCVFilterParameters.h"
 
 /**
  *  Looks extremely unsafe because it depends on the order of static initialization.

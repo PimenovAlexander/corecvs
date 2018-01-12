@@ -1,11 +1,11 @@
 /**
  * \file main_test_levenberg.cpp
- * \brief This is the main file for the test levenberg 
+ * \brief This is the main file for the test levenberg
  *
  * \date Jul 05, 2011
  * \author alexander
  *
- * \ingroup autotest  
+ * \ingroup autotest
  */
 
 #include <iostream>
@@ -15,16 +15,15 @@
 
 #include "core/function/function.h"
 #include "core/math/levenmarq.h"
+//#include "core/math/dogleg.h"
 #include "core/math/helperFunctions.h"
 #include "core/fileformats/bmpLoader.h"
 
-using namespace std;
 using namespace corecvs;
-
 
 class LevenbergTest : FunctionArgs {
 public:
-    LevenbergTest() : FunctionArgs(2,10) {};
+    LevenbergTest() : FunctionArgs(2,10) {}
 
     virtual void operator()(const double in[], double out[])
     {
@@ -44,7 +43,6 @@ TEST(Levenberg, testMarquardtLevenberg)
     LevenbergTest function;
 
     LevenbergMarquardt optimiser;
-
     optimiser.f = (FunctionArgs *)&function;
     optimiser.maxIterations = 20;
 
@@ -71,6 +69,41 @@ TEST(Levenberg, testMarquardtLevenberg)
     CORE_ASSERT_DOUBLE_EQUAL_E(result[0], toguess[0], 1e-7, "Wrong result");
     CORE_ASSERT_DOUBLE_EQUAL_E(result[1], toguess[1], 1e-7, "Wrong result");
 }
+
+#if OPENED
+TEST(Levenberg, testDogLeg)
+{
+    LevenbergTest function;
+
+    corecvs::DogLeg optimiser;
+
+    optimiser.f = (FunctionArgs *)&function;
+    optimiser.maxIterations = 20000000;
+
+    double toguess[2] = {100.2, 105.1};
+    vector<double> target(10);
+
+    function(toguess, &(target[0]));
+
+    vector<double> startguess(2);
+    startguess[0] = 100.1;
+    startguess[1] = 105.8;
+
+    vector<double> result = optimiser.fit(startguess, target);
+
+    cout << "Answer:" << endl;
+    for (int i = 0; i < 2; i++)
+        cout << result[i] << ",";
+    cout << endl;
+
+    for (int i = 0; i < 10; i++)
+        cout << target[i] << ",";
+    cout << endl;
+
+    CORE_ASSERT_DOUBLE_EQUAL_E(result[0], toguess[0], 1e-7, "Wrong result");
+    CORE_ASSERT_DOUBLE_EQUAL_E(result[1], toguess[1], 1e-7, "Wrong result");
+}
+#endif
 
 TEST(Levenberg, DISABLED_plotRosenberg)
 {

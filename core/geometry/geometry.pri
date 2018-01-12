@@ -20,6 +20,7 @@ HEADERS += \
     geometry/raytrace/sdfRenderable.h \
     geometry/raytrace/materialExamples.h \
     geometry/raytrace/bspTree.h \
+    geometry/twoViewOptimalTriangulation.h \
     geometry/mesh3DDecorated.h \
     geometry/polyLine.h \
     geometry/polylinemesh.h \
@@ -53,6 +54,7 @@ SOURCES += \
     geometry/mesh3DDecorated.cpp \
     geometry/polyLine.cpp \
     geometry/polylinemesh.cpp \
+    geometry/twoViewOptimalTriangulation.cpp \
     geometry/ellipse.cpp \
     geometry/ellipseFit.cpp \
     geometry/plane3dFit.cpp \

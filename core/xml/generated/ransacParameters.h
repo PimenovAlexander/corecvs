@@ -153,6 +153,14 @@ template<class VisitorType>
         mInlierThreshold = inlierThreshold;
     }
 
+    bool operator ==(const RansacParameters &other) const 
+    {
+        if ( !(this->mIterationsNumber == other.mIterationsNumber)) return false;
+        if ( !(this->mUseMedian == other.mUseMedian)) return false;
+        if ( !(this->mInliersPercent == other.mInliersPercent)) return false;
+        if ( !(this->mInlierThreshold == other.mInlierThreshold)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, RansacParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

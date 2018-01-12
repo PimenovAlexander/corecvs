@@ -323,6 +323,15 @@ template<class VisitorType>
         mOutCamera2 = outCamera2;
     }
 
+    bool operator ==(const SceneStereoAlignerBlockBase &other) const 
+    {
+        if ( !(this->mInFixture1 == other.mInFixture1)) return false;
+        if ( !(this->mInCamera1 == other.mInCamera1)) return false;
+        if ( !(this->mInFixture2 == other.mInFixture2)) return false;
+        if ( !(this->mInCamera2 == other.mInCamera2)) return false;
+        if ( !(this->mParameters == other.mParameters)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, SceneStereoAlignerBlockBase &toSave)
     {
         corecvs::PrinterVisitor printer(out);

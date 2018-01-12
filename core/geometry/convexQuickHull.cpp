@@ -174,9 +174,9 @@ bool ConvexQuickHull::faceIsVisible(const Vector3dd &eyePoint, const ConvexQuick
     return pointFaceDist(face.plane, eyePoint) > eps;
 }
 
-void ConvexQuickHull::addPointsToFaces(HullFace *faces, unsigned long faces_count, const vertices &listVertices, double eps) {
+void ConvexQuickHull::addPointsToFaces(HullFace *faces, size_t facesCount, const vertices &listVertices, double eps) {
     for (auto vertex : listVertices)
-        for (int i = 0; i < faces_count; i++) {
+        for (size_t i = 0; i < facesCount; i++) {
             HullFace face = faces[i];
             if ((vertex != face.plane.p1()) && (vertex != face.plane.p2()) && (vertex != face.plane.p3()) && faceIsVisible(vertex, face, eps)) {
                 faces[i].points.push_back(vertex);

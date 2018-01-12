@@ -30,7 +30,7 @@
 /*
  *  Additional includes for enum section.
  */
-#include "core/xml/generated/openCVBinaryFilterType.h"
+#include "openCVBinaryFilterType.h"
 
 /**
  * \brief OpenCV Filter Parameters 
@@ -134,6 +134,13 @@ template<class VisitorType>
         mParam2 = param2;
     }
 
+    bool operator ==(const OpenCVFilterParameters &other) const 
+    {
+        if ( !(this->mOpenCVFilter == other.mOpenCVFilter)) return false;
+        if ( !(this->mParam1 == other.mParam1)) return false;
+        if ( !(this->mParam2 == other.mParam2)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, OpenCVFilterParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

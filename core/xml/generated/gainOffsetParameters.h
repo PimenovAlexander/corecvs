@@ -113,6 +113,12 @@ template<class VisitorType>
         mOffset = offset;
     }
 
+    bool operator ==(const GainOffsetParameters &other) const 
+    {
+        if ( !(this->mGain == other.mGain)) return false;
+        if ( !(this->mOffset == other.mOffset)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, GainOffsetParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

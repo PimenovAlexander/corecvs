@@ -193,6 +193,16 @@ template<class VisitorType>
         mEdgeThreshold = edgeThreshold;
     }
 
+    bool operator ==(const FocusEstimationParameters &other) const 
+    {
+        if ( !(this->mJunctionCoef == other.mJunctionCoef)) return false;
+        if ( !(this->mCenterCoef == other.mCenterCoef)) return false;
+        if ( !(this->mProduceDebug == other.mProduceDebug)) return false;
+        if ( !(this->mComputeNoise == other.mComputeNoise)) return false;
+        if ( !(this->mComputeOldStats == other.mComputeOldStats)) return false;
+        if ( !(this->mEdgeThreshold == other.mEdgeThreshold)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, FocusEstimationParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

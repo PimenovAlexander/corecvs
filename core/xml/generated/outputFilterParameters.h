@@ -30,7 +30,7 @@
 /*
  *  Additional includes for enum section.
  */
-#include "core/xml/generated/outputType.h"
+#include "outputType.h"
 
 /**
  * \brief Output Filter Parameters 
@@ -94,6 +94,11 @@ template<class VisitorType>
         mOutputType = outputType;
     }
 
+    bool operator ==(const OutputFilterParameters &other) const 
+    {
+        if ( !(this->mOutputType == other.mOutputType)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, OutputFilterParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

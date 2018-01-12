@@ -93,6 +93,11 @@ template<class VisitorType>
         mThreshold = threshold;
     }
 
+    bool operator ==(const BinarizeParameters &other) const 
+    {
+        if ( !(this->mThreshold == other.mThreshold)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, BinarizeParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);
