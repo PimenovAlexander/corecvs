@@ -11,29 +11,27 @@
 using namespace corecvs;
 using namespace std;
 
-typedef vector<Vector3dd> vertices;
-
-typedef struct {
-    Triangle3dd plane;
-    vertices points;
-} tFace;
-
-
-typedef vector<tFace> tFaces;
-
 class ConvexQuickHull
 {
 public:
+    typedef vector<Vector3dd> vertices;
 
-    static tFaces quickHull(const vertices& listVertices, double epsilon);
+    struct HullFace {
+        Triangle3dd plane;
+        vertices points;
+    };
+
+    typedef vector<HullFace> HullFaces;
+
+    static HullFaces quickHull(const vertices& listVertices, double epsilon);
 
 protected:
 
     static double pointFaceDist(const Triangle3dd &face, const Vector3dd &point);
 
-    static bool faceIsVisible(const Vector3dd &eyePoint, const tFace &face, double eps);
+    static bool faceIsVisible(const Vector3dd &eyePoint, const HullFace &face, double eps);
 
-    static void addPointsToFaces(tFace* faces, unsigned long faces_count, const vertices &listVertices, double eps);
+    static void addPointsToFaces(HullFace* faces, unsigned long faces_count, const vertices &listVertices, double eps);
 
 };
 

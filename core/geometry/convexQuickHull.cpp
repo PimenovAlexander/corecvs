@@ -11,7 +11,7 @@ bool operator !=(const Triangle3dd &a, const Triangle3dd &b) {
     return !(a == b);
 }
 
-bool operator ==(const tFace &a, const tFace &b)
+bool operator ==(const ConvexQuickHull::HullFace &a, const ConvexQuickHull::HullFace &b)
 {
     return a.plane == b.plane;
 }
@@ -20,20 +20,6 @@ Vector3dd createVect(const Vector3dd &p1, const Vector3dd &p2) {
     return { p2.x() - p1.x(), p2.y() - p1.y(), p2.z() - p1.z() };
 }
 
-
-#if 0
-double vectMod (const Vector3dd &vect) {
-    return sqrt(pow(vect.x(), 2) + pow(vect.y(), 2) + pow(vect.z(), 2));
-}
-
-double scalarProd(const Vector3dd &v1, const Vector3dd &v2) {
-    return v1.x() * v2.x() + v1.y() * v2.y() + v1.z() * v2.z();
-}
-
-Vector3dd vectProd(const Vector3dd &v1, const Vector3dd &v2){
-    return  { v1.y() * v2.z() - v1.z() * v2.y(), v1.z() * v2.x() - v1.x() * v2.z(), v1.x() * v2.y() - v1.y() * v2.x() };
-}
-#endif
 
 double tripleProd(const Vector3dd &v1, const Vector3dd &v2, const Vector3dd &v3) {
     return  v1 & (v2 ^ v3);
@@ -50,7 +36,7 @@ double pointPlaneDist(const Vector3dd &planeP1, const Vector3dd &planeP2, const 
     return tripleProd(baseV1, baseV2, point - planeP1) / ((baseV1 ^ baseV2).l2Metric());
 }
 
-vertices createSimplex(const vertices& listVertices) {
+ConvexQuickHull::vertices createSimplex(const ConvexQuickHull::vertices& listVertices) {
     Vector3dd first = listVertices.front();
     Vector3dd EP[6] = {first, first, first, first, first, first};
 
@@ -93,7 +79,7 @@ vertices createSimplex(const vertices& listVertices) {
             apex = point;
         }
     }
-    vertices Res;
+    ConvexQuickHull::vertices Res;
     if (pointPlaneDist(triangleP1, triangleP2, triangleP3, apex) > 0)
          Res = { triangleP1, triangleP3, triangleP2, apex };
     else Res = { triangleP1, triangleP2, triangleP3, apex };
@@ -103,8 +89,8 @@ vertices createSimplex(const vertices& listVertices) {
 
 
 
-tFaces ConvexQuickHull::quickHull(const vertices &listVertices, double epsilon) {
-    queue<tFace> Queue;
+ConvexQuickHull::HullFaces ConvexQuickHull::quickHull(const ConvexQuickHull::vertices &listVertices, double epsilon) {
+    queue<HullFace> Queue;
     vertices simplex = createSimplex(listVertices);
     vertices uniqueSimplex;
     for (auto elem : simplex)
@@ -125,7 +111,7 @@ tFaces ConvexQuickHull::quickHull(const vertices &listVertices, double epsilon) 
         return {};
     }
 
-    tFaces faces = {{{simplex[0], simplex[1], simplex[2]}},
+    HullFaces faces = {{{simplex[0], simplex[1], simplex[2]}},
                     {{simplex[0], simplex[2], simplex[3]}},
                     {{simplex[1], simplex[3], simplex[2]}},
                     {{simplex[0], simplex[3], simplex[1]}}};
@@ -134,7 +120,7 @@ tFaces ConvexQuickHull::quickHull(const vertices &listVertices, double epsilon) 
         if (!face.points.empty()) Queue.push(face);
 
     while (!Queue.empty()) {
-        tFace face = Queue.front();
+        HullFace face = Queue.front();
         Queue.pop();
         if (!face.points.empty()) {
             double maxDist = -1;
@@ -148,13 +134,13 @@ tFaces ConvexQuickHull::quickHull(const vertices &listVertices, double epsilon) 
             }
 
             vertices listUnclaimedVertices;
-            tFaces newFaces;
-            tFaces needToDelete;
+            HullFaces newFaces;
+            HullFaces needToDelete;
             for (auto curFace : faces)
                 if (faceIsVisible(furthest, curFace, epsilon)) {
                     for (auto point : curFace.points)
                         listUnclaimedVertices.push_back(point);
-                    tFaces tmpFaces = {{{curFace.plane.p3(), furthest, curFace.plane.p2()}},
+                    HullFaces tmpFaces = {{{curFace.plane.p3(), furthest, curFace.plane.p2()}},
                                        {{curFace.plane.p1(), curFace.plane.p2(), furthest}},
                                        {{curFace.plane.p1(), furthest, curFace.plane.p3()}}};
                     for (auto &tmpFace : tmpFaces) {
@@ -184,14 +170,14 @@ double ConvexQuickHull::pointFaceDist(const Triangle3dd &face, const Vector3dd &
     return pointPlaneDist(face.p1(), face.p2(), face.p3(), point);
 }
 
-bool ConvexQuickHull::faceIsVisible(const Vector3dd &eyePoint, const tFace &face, double eps) {
+bool ConvexQuickHull::faceIsVisible(const Vector3dd &eyePoint, const ConvexQuickHull::HullFace &face, double eps) {
     return pointFaceDist(face.plane, eyePoint) > eps;
 }
 
-void ConvexQuickHull::addPointsToFaces(tFace *faces, unsigned long faces_count, const vertices &listVertices, double eps) {
+void ConvexQuickHull::addPointsToFaces(HullFace *faces, unsigned long faces_count, const vertices &listVertices, double eps) {
     for (auto vertex : listVertices)
         for (int i = 0; i < faces_count; i++) {
-            tFace face = faces[i];
+            HullFace face = faces[i];
             if ((vertex != face.plane.p1()) && (vertex != face.plane.p2()) && (vertex != face.plane.p3()) && faceIsVisible(vertex, face, eps)) {
                 faces[i].points.push_back(vertex);
                 break;

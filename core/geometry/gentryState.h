@@ -3,7 +3,7 @@
 
 #include "core/math/vector/vector3d.h"
 #include "core/geometry/line.h"
-#include "core/cameracalibration/calibrationCamera.h"
+#include "core/cameracalibration/cameraModel.h"
 
 using namespace corecvs;
 
