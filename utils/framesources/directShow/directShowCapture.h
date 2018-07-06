@@ -5,26 +5,22 @@
  * \date Jul 15, 2010
  * \author sergeyle
  */
-
 #ifndef _DIRECT_SHOW_CVCAPTURE_H_
 #define _DIRECT_SHOW_CVCAPTURE_H_
 
 #include <stdint.h>
-#include <QtCore/QThread>
-#include <QtCore/QMutex>
 #include <string>
+#include <mutex>
 
 #include "directShow.h"
-#include "imageCaptureInterface.h"
+#include "core/framesources/imageCaptureInterface.h"
+#include "core/framesources/cameraControlParameters.h"    // CameraParameters
 #include "core/utils/preciseTimer.h"
-#include "../../frames.h"
-
-#include "cameraControlParameters.h"
+#include "../../frames.h"     // Frames::
 
 #define PREFFERED_RGB_BPP 24
-#define AUTUSELECT_FORMAT_FEATURE -255
+#define AUTOSELECT_FORMAT_FEATURE -255
 
-using namespace std;
 
  class DirectShowCaptureInterface : public virtual ImageCaptureInterface
  {
@@ -32,7 +28,7 @@ using namespace std;
     typedef ImageCaptureInterface::CapErrorCode CapErrorCode;
 
     /* Main fields */
-    QMutex                      mProtectFrame;
+    std::mutex                  mProtectFrame;
     string                      mDevname;  /**< Stores the device name*/
     DirectShowCameraDescriptor  mCameras  [MAX_INPUTS_NUMBER];
     CaptureTypeFormat           mFormats  [MAX_INPUTS_NUMBER];
@@ -53,11 +49,11 @@ using namespace std;
     DirectShowCaptureInterface(const string &devname, int h, int w, int fps, bool isRgb);
     DirectShowCaptureInterface(const string &devname, ImageCaptureInterface::CameraFormat format, bool isRgb);
 
-    virtual FramePair    getFrame();
-    virtual FramePair    getFrameRGB24();
+    virtual FramePair    getFrame() override;
+    virtual FramePair    getFrameRGB24() override;
 
-    virtual CapErrorCode initCapture();
-    virtual CapErrorCode startCapture();
+    virtual CapErrorCode initCapture() override;
+    virtual CapErrorCode startCapture() override;
 
     virtual bool         getCurrentFormat(CameraFormat &format);
 
@@ -80,14 +76,13 @@ using namespace std;
     virtual ~DirectShowCaptureInterface();
 
  private:
-    void init(const string &devname, int h, int w, int fps, bool isRgb, int bpp, int compressed);
-    void initForAutoFormat(const string &devname, int h, int w, int fps, bool isRgb);
+    void         init(const string &devname, int h, int w, int fps, bool isRgb, int bpp, int compressed);
+    void         initForAutoFormat(const string &devname, int h, int w, int fps, bool isRgb);
 
-    bool isCorrectDeviceHandle(int cameraNum);
+    bool         isCorrectDeviceHandle(int cameraNum);
     CapErrorCode getCaptureFormats(int &number, CaptureTypeFormat *&list);
     CapErrorCode getCameraFormatsForResolution(int h, int w, std::vector<CAPTURE_FORMAT_TYPE> &formats);
-    int selectCameraFormat(int h, int w);
+    int          selectCameraFormat(int h, int w);
  };
 
 #endif /* _DIRECT_SHOW_CVCAPTURE_H_ */
-

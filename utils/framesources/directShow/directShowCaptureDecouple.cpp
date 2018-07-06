@@ -1,15 +1,11 @@
-#include <QtCore/QRegExp>
-#include <QtCore/QString>
-#include <QtCore/QDebug>
-
-#include "core/utils/global.h"
+#include "directShowCaptureDecouple.h"
 #include "core/math/mathUtils.h" // roundDivUp
 #include "core/utils/preciseTimer.h"
-#include "directShowCaptureDecouple.h"
 //#include "mjpegDecoderLazy.h"
-#include "cameraControlParameters.h"
+#include "core/framesources/cameraControlParameters.h"
+#include "core/framesources/decoders/decoupleYUYV.h"
 
-#include "decoupleYUYV.h"
+#include <QtCore/QRegExp>
 
 
 DirectShowCaptureDecoupleInterface::DirectShowCaptureDecoupleInterface(string _devname)
@@ -17,7 +13,7 @@ DirectShowCaptureDecoupleInterface::DirectShowCaptureDecoupleInterface(string _d
     devname = _devname;
 
     //     Group Number                   1       2 3      4       56        7       8         9 10     11     1213    14
-    QRegExp deviceStringPattern(QString("^([^,:]*)(:(\\d*)/(\\d*))?((:mjpeg)|(:yuyv)|(:fjpeg))?(:(\\d*)x(\\d*))?((:rc)|(:rc2)|(:sbs)|(:rcf))?$"));
+    QRegExp deviceStringPattern("^([^,:]*)(:(\\d*)/(\\d*))?((:mjpeg)|(:yuyv)|(:fjpeg))?(:(\\d*)x(\\d*))?((:rc)|(:rc2)|(:sbs)|(:rcf))?$");
     static const int DeviceGroup      = 1;
     static const int FpsNumGroup      = 3;
     static const int FpsDenumGroup    = 4;
@@ -26,10 +22,9 @@ DirectShowCaptureDecoupleInterface::DirectShowCaptureDecoupleInterface(string _d
     static const int HeightGroup      = 11;
     static const int CouplingGroup    = 12;
 
-
     printf ("Input string %s\n", _devname.c_str());
-    QString qdevname(_devname.c_str());
-    int result = deviceStringPattern.indexIn(qdevname);
+
+    int result = deviceStringPattern.indexIn(_devname.c_str());
     if (result == -1)
     {
         printf("Error in device string format:%s\n", _devname.c_str());
@@ -125,9 +120,9 @@ void DirectShowCaptureDecoupleInterface::callback (void *thiz, DSCapDeviceId dev
 ALIGN_STACK_SSE void DirectShowCaptureDecoupleInterface::memberCallback(DSCapDeviceId dev, FrameData data)
 {
     CORE_UNUSED(dev);
-
 //    SYNC_PRINT(("Received new frame in a member %d\n", dev));
-    protectFrame.lock();
+
+    std::lock_guard<std::mutex> locker(protectFrame);
 
     DirectShowCameraDescriptor *camera = &cameras[0];
 
@@ -168,23 +163,19 @@ ALIGN_STACK_SSE void DirectShowCaptureDecoupleInterface::memberCallback(DSCapDev
         imageInterfaceReceiver->newFrameReadyCallback(frameData);
         imageInterfaceReceiver->newStatisticsReadyCallback(stats);
     }
-
-    protectFrame.unlock();
 }
-
 
 ImageCaptureInterface::FramePair DirectShowCaptureDecoupleInterface::getFrame()
 {
-    protectFrame.lock();
-        FramePair result;
+    std::lock_guard<std::mutex> locker(protectFrame);
 
-        uint8_t *ptr = cameras[0].rawBuffer;
-        DecoupleYUYV::decouple(height, width, ptr, coupling, result);
+    FramePair result;
+    uint8_t *ptr = cameras[0].rawBuffer;
+    DecoupleYUYV::decouple(height, width, ptr, coupling, result);
 
-        auto stamp = cameras[0].timestamp;
-        result.setTimeStampLeft(stamp);
-        result.setTimeStampRight(stamp);
-    protectFrame.unlock();
+    auto stamp = cameras[0].timestamp;
+    result.setTimeStampLeft(stamp);
+    result.setTimeStampRight(stamp);
     return result;
 }
 
@@ -244,7 +235,7 @@ int DirectShowCaptureDecoupleInterface::devicesNumber()
     return num;
 }
 
-ImageCaptureInterface::CapErrorCode DirectShowCaptureDecoupleInterface::getCaptureName(QString &value)
+ImageCaptureInterface::CapErrorCode DirectShowCaptureDecoupleInterface::getCaptureName(string &value)
 {
     char *name = NULL;
     if (DirectShowCapDll_deviceName(cameras[0].deviceHandle, &name))

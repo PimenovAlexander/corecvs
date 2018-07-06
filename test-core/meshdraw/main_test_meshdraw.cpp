@@ -13,14 +13,12 @@
 
 #include "core/utils/global.h"
 #include "core/geometry/mesh3d.h"
-#include "core/geometry/mesh3DDecorated.h"
 #include "core/fileformats/meshLoader.h"
+#include "core/geometry/mesh3DDecorated.h"
 
-using namespace std;
 using namespace corecvs;
 
-
-TEST(meshdraw, testmeshdraw)
+TEST(Meshdraw, testMeshDraw)
 {
     cout << "Starting test <meshdraw>. This is a manual test" << endl;
     Mesh3D mesh;
@@ -38,31 +36,20 @@ TEST(meshdraw, testmeshdraw)
     MeshLoader loader;
     loader.save(&mesh, "mesh-icosphere.stl");
     loader.save(&mesh, "mesh-icosphere.ply");
+    loader.save(&mesh, "mesh-icosphere.obj");
 
 }
 
-
-
-TEST(meshdraw, normalGenerate)
+TEST(Meshdraw, testMeshScene)
 {
     cout << "Starting test <meshdraw>. This is a manual test" << endl;
-    Mesh3DDecorated mesh;
-    mesh.switchColor();
+    Mesh3D mesh;
+    mesh.fillTestScene();
+    mesh.dumpPLY("mesh-example.ply");
 
-    mesh.setColor(RGBColor::Red());
-    mesh.addCylinder(Vector3dd::Zero(), 10, 10, 3);
-    mesh.recomputeMeanNormals();
+    Mesh3DDecorated mesh1;
+    mesh1.fillTestScene();
+    mesh1.dumpPLY("mesh-example1.ply");
 
-    for (size_t f = 0; f <  mesh.normalId.size(); f++)
-    {
-        Vector3d32  ids = mesh.normalId[f];
-        Triangle3dd face = mesh.getFaceAsTrinagle(f);
 
-        mesh.setColor(RGBColor::Green());
-        mesh.addLine(face.p1(), face.p1() + mesh.normalCoords[ids.x()]);
-        mesh.addLine(face.p2(), face.p2() + mesh.normalCoords[ids.y()]);
-        mesh.addLine(face.p3(), face.p3() + mesh.normalCoords[ids.z()]);
-    }
-
-    mesh.dumpPLY("mesh-normals.ply");
 }

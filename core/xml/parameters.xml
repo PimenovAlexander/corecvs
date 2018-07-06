@@ -65,8 +65,18 @@
   </enum>
 
   <class name="Debayer Parameters">
-     <field type="Debayer Method" name="Method"    defaultValue="0"/>
-     <field type="int"            name="Bayer pos" min="-1" max="255" defaultValue="-1"/>
+     <field type="Debayer Method" name="Method"    defaultValue="1"/>
+     <field type="int"            name="Bayer pos" min="-1" max="3" defaultValue="-1"/>
+     <field type="int"            name="numBitsOut" min="-1" max="15" defaultValue="12"/>
+     <field type="double" name="gains" size="3" min="0.1" max="8" defaultValue="1.0" comment="RGB gains" >
+          <def0>1.0</def0>
+          <def1>1.0</def1>
+          <def2>1.0</def2>
+     </field>
+     <field type="double" name="gamma" size="2" min="0.2" max="2.9" defaultValue="1.0" comment="Gamma values" >
+          <def0>1.0</def0>
+          <def1>1.0</def1>
+     </field>
   </class>
 
   <enum name="Homography Algorithm">
@@ -130,7 +140,6 @@
      <field type="double"  name="minSpeed"   min="0" max="1000"   defaultValue="200" step="1"/>
      <field type="double"  name="maxSpeed"   min="0" max="1000"   defaultValue="950" step="1"/>
   </class>
-
 
 </poco>
 

@@ -3,9 +3,9 @@
 
 #include "g12Image.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/buffers/bufferFactory.h"
 #include "core/camerafixture/fixtureCamera.h"
 #include "core/camerafixture/cameraFixture.h"
-#include "core/buffers/bufferFactory.h"
 #include "core/camerafixture/fixtureScene.h"
 
 #ifdef WITH_JSONMODERN
@@ -198,7 +198,7 @@ void PointerFieldWidget::showFixtureScene()
 {
     if (std::string(fieldReflection->targetClass) != "corecvs::FixtureScene" || rawPointer == NULL )
     {
-        cout << "Nothing to show" << endl;
+        std::cout << "Nothing to show" << std::endl;
         return;
     }
     corecvs::FixtureScene *scene = static_cast<corecvs::FixtureScene *>(rawPointer);

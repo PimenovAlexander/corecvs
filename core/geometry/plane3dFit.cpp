@@ -26,7 +26,7 @@ void Plane3dFit::setParameters(const Plane3dFitParameters &parameters)
 
 void Plane3dFit::operator ()()
 {
-    Ransac<Vector3dd, PlaneReconstructionModel> estimator(mParameters.sampleNumber);
+    Ransac<PlaneReconstructionModel> estimator(mParameters.sampleNumber);
 
     estimator.setInlierThreshold  (mParameters.tolerance);
     estimator.setIterationsNumber (1000);

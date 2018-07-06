@@ -3,14 +3,14 @@
   <include name="../../../core/xml/parameters.xml"/>
   <include name="presentation.xml"/>
   
-  <enum name="Rotation Presets">
+  <enum name="Rotation Presets" incpath="">
     <item name="No rotation"      id="0" comment="Do not rotate"/>
     <item name="Clockwise 90deg"  id="1" comment="!transform_rotate_90.png!Rotate 90 deg clockwise"/>
     <item name="Clockwise 180deg" id="2" comment="!transform_rotate_180.png!Rotate 180 deg clockwise"/>
     <item name="Clockwise 270deg" id="3" comment="!transform_rotate_270.png!Rotate 270 deg clockwise"/>
   </enum>
   
-  <class name="Base Parameters" description="Base parameters">
+  <class name="Base Parameters" description="Base parameters" incpath="">
     <field type="Rotation Presets" name="rotation"/>
     <field type="bool"             name="mirror"       defaultValue="false"/>
     <field type="bool"             name="swapCameras"  defaultValue="false" widget="RadioButton"/>

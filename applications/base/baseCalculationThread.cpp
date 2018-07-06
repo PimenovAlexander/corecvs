@@ -289,6 +289,7 @@ void BaseCalculationThread::presentationControlParametersChanged(QSharedPointer<
 
 void BaseCalculationThread::camerasParametersChanged(QSharedPointer<CamerasConfigParameters> parametersShPtr)
 {
+    SYNC_PRINT(("BaseCalculationThread::camerasParametersChanged():called\n"));
     mActiveInputsNumber = parametersShPtr->inputsN();
     mRectificationData  = parametersShPtr->rectifierData();
     mCacheUpdateNeeded  = true;
@@ -296,6 +297,9 @@ void BaseCalculationThread::camerasParametersChanged(QSharedPointer<CamerasConfi
     {
         mDistortionTransform = parametersShPtr->distortionTransform();
     }
+
+    cout << "Updated: mRectificationData.F : " << mRectificationData.F << std::endl;
+
 }
 
 
@@ -338,10 +342,13 @@ void BaseCalculationThread::camerasParametersChanged(QSharedPointer<CamerasConfi
  **/
 void BaseCalculationThread::recalculateCache()
 {
-    // SYNC_PRINT(("void BaseCalculationThread::recalculateCache():called\n"));
     G12Buffer *firstInput = mFrames.getCurrentFrame(Frames::LEFT_FRAME);
     if (!mCacheUpdateNeeded || firstInput == NULL)
         return;
+
+    SYNC_PRINT(("void BaseCalculationThread::recalculateCache(): cache should be updated\n"));
+    cout << "mRectificationData.F : " << mRectificationData.F << std::endl;
+
 
     if (mBaseParams->downsample() == 0)
         mBaseParams->setDownsample(1);
@@ -381,10 +388,14 @@ void BaseCalculationThread::recalculateCache()
     mInputPretransform    = Matrix33::Scale2(1.0 / mDownsample) * Matrix33::ShiftProj(-x, -y) * centerBackShift * centerAction * centerShift;
     mInputPretransformInv = mInputPretransform.inv();
 
+    cout << "mInputPretransformInv:" << mInputPretransformInv << endl;
     mPretransformedRectificationData = mRectificationData.addPretransform(mInputPretransform);
 
     mFrameTransformsInv[Frames::RIGHT_FRAME] = mPretransformedRectificationData.rightTransform.inv();
     mFrameTransformsInv[Frames::LEFT_FRAME]  = mPretransformedRectificationData.leftTransform .inv();
+
+    /*--------------*/
+
 
     for (int i = 0; i < mActiveInputsNumber; i++)
     {
@@ -394,7 +405,7 @@ void BaseCalculationThread::recalculateCache()
         Q_ASSERT(currentBuffer->hasSameSize(firstInput));
 
         delete_safe(mTransformationCache[i]);
-        mTransformationCache[i] = new TransformationCache(mInputPretransformInv, w, h, currentBuffer->getSize());
+        mTransformationCache[i] = new TransformationCache(mFrameTransformsInv[i], w, h, currentBuffer->getSize());
 #ifdef WITH_HARDWARE
         //Matrix33 mat = Matrix33::Scale2(1.08) * Matrix33::ShiftProj(-39.5, -39.5) * Matrix33::RotateProj(6.0 / 128.0);
         try {

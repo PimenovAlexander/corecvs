@@ -123,6 +123,15 @@ public:
         }
     }
 
+    inline void clear()
+    {
+        totalSum = 0;
+        for (unsigned &val : data)
+        {
+            val = 0;
+        }
+    }
+
     inline int getArgumentMax()
     {
         return max;

@@ -14,10 +14,10 @@
 class PDOGenerator : public BaseGenerator
 {
 public:
-    explicit PDOGenerator(const Reflection *_clazz);
+    explicit PDOGenerator(const ReflectionGen *_clazz);
 
     void generatePDOH();
-    void generatePDOEnumSubH(const EnumReflection *eref);
+    void generatePDOEnumSubH(const EnumReflectionGen *eref);
     void generatePDOCpp();
     void generateControlWidgetCpp();
 

@@ -9,6 +9,8 @@
 #include <math.h>
 #include <vector>
 
+#include <utils/statistics/graphData.h>
+
 #include "core/utils/global.h"
 #include "core/buffers/rgb24/hardcodeFont.h"
 #include "core/buffers/rgb24/hersheyVectorFont.h"
@@ -99,8 +101,7 @@ public:
                     {
                         for (int dx = 0; dx < scale; dx++)
                         {
-                            if (mTarget->isValidCoord(ry + dy, rx + dx))
-                                mTarget->element(ry + dy, rx + dx) = color;
+                            mTarget->setElement(ry + dy, rx + dx, color);
                         }
                     }
 
@@ -181,10 +182,8 @@ public:
             int dx = (int)sqrt((float)(radsq - (dy - 0.5) * (dy - 0.5)));
             for (int j= x - dx; j <= x + dx; j++)
             {
-                if (mTarget->isValidCoord(y - dy, j))
-                    mTarget->element(y - dy, j) = color;
-                if (mTarget->isValidCoord(y + dy, j))
-                    mTarget->element(y + dy, j) = color;
+                mTarget->setElement(y - dy, j, color);
+                mTarget->setElement(y + dy, j, color);
             }
         }
     }
@@ -361,6 +360,9 @@ public:
         {
             mTarget->element(tspan.y(), j) = color;
         }
+    }
+
+    void drawGraph(const GraphData &data) {
     }
 
     virtual ~AbstractPainter() {}

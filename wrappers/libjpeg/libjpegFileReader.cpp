@@ -13,7 +13,7 @@ string  LibjpegFileReader::prefix2(".jpeg");
 string  LibjpegFileReader::prefix3(".JPG");
 string  LibjpegFileReader::prefix4(".JPEG");
 
-bool LibjpegFileReader::acceptsFile(string name)
+bool LibjpegFileReader::acceptsFile(const std::string &name)
 {
     return HelperUtils::endsWith(name, prefix1) ||
            HelperUtils::endsWith(name, prefix2) ||
@@ -21,9 +21,8 @@ bool LibjpegFileReader::acceptsFile(string name)
            HelperUtils::endsWith(name, prefix4);
 }
 
-RGB24Buffer *LibjpegFileReader::load(string name)
+RGB24Buffer *LibjpegFileReader::load(const std::string & name)
 {
-
     struct jpeg_decompress_struct cinfo;
     struct jpeg_error_mgr jerr;
     JSAMPARRAY buffer;
@@ -91,24 +90,83 @@ RGB24Buffer *LibjpegFileReader::load(string name)
     return result;
 }
 
-LibjpegFileReader::LibjpegFileReader()
+/** based on https://github.com/LuaDist/libjpeg/blob/master/example.c */
+bool LibjpegFileReader::saveJPEG(const std::string &name, const RGB24Buffer *buffer, int quality, bool alpha)
 {
+    CORE_UNUSED(alpha);
+    struct jpeg_compress_struct cinfo;
+    struct jpeg_error_mgr jerr;
 
+    if (buffer == NULL) {
+        return false;
+    }
+
+    FILE * outfile = NULL;		/* target file */
+    JSAMPROW row_pointer[1];	/* pointer to JSAMPLE row[s] */
+    int row_stride;		        /* physical row width in image buffer */
+
+    cinfo.err = jpeg_std_error(&jerr);
+
+    jpeg_create_compress(&cinfo);
+
+    if ((outfile = fopen(name.c_str(), "wb")) == NULL) {
+      SYNC_PRINT(("LibjpegFileReader::saveJPEG(): can't open %s\n", name.c_str()));
+      return false;
+    }
+    jpeg_stdio_dest(&cinfo, outfile);
+
+    cinfo.image_width  = buffer->w; 	/* image width and height, in pixels */
+    cinfo.image_height = buffer->h;
+    cinfo.input_components = 3;		    /* # of color components per pixel */
+    cinfo.in_color_space = JCS_RGB; 	/* colorspace of input image */
+
+    jpeg_set_defaults(&cinfo);
+    jpeg_set_quality(&cinfo, quality, TRUE /* limit to baseline-JPEG values */);
+
+    jpeg_start_compress(&cinfo, TRUE);
+
+    row_stride = buffer->w * 3;	/* JSAMPLEs per row in image_buffer */
+
+    uint8_t *scratch = new uint8_t[row_stride];
+    row_pointer[0] = scratch;
+
+    while (cinfo.next_scanline < (JDIMENSION)buffer->h) {
+        const RGBColor *c = &buffer->element(cinfo.next_scanline, 0);
+        for (int j = 0; j < buffer->w; j++)
+        {
+            scratch[3 * j + 0] = c->r();
+            scratch[3 * j + 1] = c->g();
+            scratch[3 * j + 2] = c->b();
+            c++;
+        }
+       (void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
+    }
+
+    deletearr_safe(scratch);
+
+    jpeg_finish_compress(&cinfo);
+    fclose(outfile);
+    jpeg_destroy_compress(&cinfo);
+
+    return true;
 }
+
+LibjpegFileReader::LibjpegFileReader()
+{}
 
 LibjpegFileReader::~LibjpegFileReader()
-{
-
-}
+{}
 
 
-bool LibjpegRuntimeTypeBufferLoader::acceptsFile(std::string name)
+bool LibjpegRuntimeTypeBufferLoader::acceptsFile(const std::string &name)
 {
     return HelperUtils::endsWith(name, LibjpegFileReader::prefix1) ||
-           HelperUtils::endsWith(name, LibjpegFileReader::prefix2) ;
+           HelperUtils::endsWith(name, LibjpegFileReader::prefix2) ||
+           HelperUtils::endsWith(name, LibjpegFileReader::prefix3) ||
+           HelperUtils::endsWith(name, LibjpegFileReader::prefix4);
 }
 
-RuntimeTypeBuffer *LibjpegRuntimeTypeBufferLoader::load(std::string name)
+RuntimeTypeBuffer *LibjpegRuntimeTypeBufferLoader::load(const std::string & name)
 {
     struct jpeg_decompress_struct cinfo;
     struct jpeg_error_mgr jerr;
@@ -161,13 +219,12 @@ RuntimeTypeBuffer *LibjpegRuntimeTypeBufferLoader::load(std::string name)
                 SYNC_PRINT(("-(%dx%d)\n", i, j ));
             }
 #endif
-
             uint8_t gray = RGBColor(
                 buffer[0][j*cinfo.output_components + 0],
                 buffer[0][j*cinfo.output_components + 1],
                 buffer[0][j*cinfo.output_components + 2]).brightness();
 
-            result->at<uint8_t>(i,j) =  gray;
+            result->at<uint8_t>(i,j) = gray;
         }
     }
 
@@ -179,11 +236,7 @@ RuntimeTypeBuffer *LibjpegRuntimeTypeBufferLoader::load(std::string name)
 }
 
 LibjpegRuntimeTypeBufferLoader::LibjpegRuntimeTypeBufferLoader()
-{
-
-}
+{}
 
 LibjpegRuntimeTypeBufferLoader::~LibjpegRuntimeTypeBufferLoader()
-{
-
-}
+{}

@@ -13,7 +13,7 @@
 #include "core/cameracalibration/cameraModel.h"
 #include "core/camerafixture/fixtureScenePart.h"
 
-//#include "core/camerafixture/cameraPrototype.h"  // pls see comment below
+#include "core/camerafixture/cameraPrototype.h"  // pls see comment below
 
 namespace corecvs {
 
@@ -32,7 +32,7 @@ public:
      *   should be removed. So far, open it when it will be ready.
      *   Don't forget to open proper code at the FixtureScene::deleteCameraPrototype(CameraPrototype *cameraPrototype).
      **/
-    //CameraPrototype *cameraPrototype = NULL;
+    CameraPrototype *cameraPrototype = NULL;
 
     /* This variable is not controlled and maintained */
     int             sequenceNumber;
@@ -59,7 +59,7 @@ public:
 
         CameraModel::accept(visitor);
         IdType id = getObjectId();
-        visitor.visit(id, IdType(0) , "id");
+        visitor.visit(id, IdType(0), "id");
         setObjectId(id);
 
         int imageSize = (int)mImages.size();

@@ -43,7 +43,6 @@ HEADERS += \
     buffers/rgb24/hersheyVectorFont.h \
     buffers/rgb24/abstractPainter.h \
     buffers/voxels/voxelBuffer.h \
-    buffers/fixeddisp/fixedPointDisplace.h \
     buffers/fixeddisp/bilinearMapPoint.h \
     buffers/fixeddisp/fixedPointBlMapper.h \
     buffers/interpolator.h \
@@ -54,6 +53,7 @@ HEADERS += \
     buffers/deformMap.h \
     buffers/focusEstimator.h \
     buffers/converters/debayer.h \
+    buffers/converters/debayerTool.h \
     buffers/converters/labConverter.h \
     buffers/converters/errorMetrics.h \
     buffers/memory/alignedMemoryBlock.h \
@@ -62,7 +62,10 @@ HEADERS += \
     buffers/nonMaximalSuperssor.h \
     buffers/rgb24/wuRasterizer.h \
     buffers/abstractBufferParams.h \
-    buffers/rgb24/bresenhamRasterizer.h
+#    buffers/focusEstimator1.h \
+    buffers/rgb24/bresenhamRasterizer.h \
+    $$PWD/fixeddisp/fixedPointRemapper.h \
+    $$PWD/remapBuffer.h
 
 
 SOURCES += \
@@ -101,12 +104,15 @@ SOURCES += \
     buffers/deformMap.cpp \
     buffers/focusEstimator.cpp \
     buffers/converters/debayer.cpp \
+    buffers/converters/debayerTool.cpp \
     buffers/converters/errorMetrics.cpp \
     buffers/convolver/convolver.cpp \
     buffers/rgb24/lineSpan.cpp \
     buffers/nonMaximalSuperssor.cpp \
-    buffers/rgb24/bresenhamRasterizer.cpp \
+#    buffers/focusEstimator1.cpp \
     buffers/rgb24/wuRasterizer.cpp \
+    $$PWD/rgb24/bresenhamRasterizer.cpp \
+    $$PWD/remapBuffer.cpp
 
 
 

@@ -172,8 +172,8 @@ EssentialDecomposition IterativeEstimatorScene::getEssentialIterative(FixtureSce
             Vector2dd startPixel = obs1->getUndist();
             Vector2dd endPixel   = obs2->getUndist();
 
-            c.start = camera1->intrinsics.reverse(startPixel).xy();
-            c.end   = camera2->intrinsics.reverse(endPixel  ).xy();
+            c.start = camera1->intrinsics->reverse(startPixel).xy();
+            c.end   = camera2->intrinsics->reverse(endPixel  ).xy();
 
             data.push_back(c);
         }
@@ -188,7 +188,8 @@ EssentialDecomposition IterativeEstimatorScene::getEssentialIterative(FixtureSce
         dataPtr.push_back(&data[p]);
     }
 
-    double thresholdScaler = camera1->intrinsics.fx();
+    // MEFIXASAP
+    double thresholdScaler = 1000;//camera1->intrinsics.fx();
 
     IterativeEstimator estimator;
     estimator.params = params;

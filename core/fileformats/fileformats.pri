@@ -9,6 +9,8 @@ HEADERS += \
     fileformats/meshLoader.h \
     fileformats/objLoader.h \
     fileformats/gcodeLoader.h \
+    $$PWD/pltLoader.h \
+    $$PWD/xyzListLoader.h
 
 
 SOURCES += \
@@ -21,4 +23,6 @@ SOURCES += \
     fileformats/meshLoader.cpp \
     fileformats/objLoader.cpp \
     fileformats/gcodeLoader.cpp \
+    $$PWD/pltLoader.cpp \
+    $$PWD/xyzListLoader.cpp
 

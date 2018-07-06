@@ -6,7 +6,7 @@
 
 #include <opencv2/highgui/highgui.hpp>  // cv::VideoCapture
 
-#include "imageCaptureInterface.h"
+#include "core/framesources/imageCaptureInterface.h"
 
 class OpenCvFileCapture : public virtual ImageCaptureInterface
 {
@@ -21,4 +21,21 @@ public:
     std::string mName;
     cv::VideoCapture mCapture;
     int count;
+};
+
+class OpenCvFileCaptureProducer : public ImageCaptureInterfaceProducer
+{
+public:
+    OpenCvFileCaptureProducer()
+    {}
+
+    virtual std::string getPrefix() override
+    {
+        return "opencv_file:";
+    }
+
+    virtual ImageCaptureInterface *produce(std::string &name, bool /*isRGB*/) override
+    {
+        return new OpenCvFileCapture(name);
+    }
 };

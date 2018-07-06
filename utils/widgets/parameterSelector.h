@@ -3,12 +3,8 @@
 
 #include <vector>
 
-#include <QWidget>
-
-#include "ui_parameterSelector.h"
 #include "parameterEditorWidget.h"
-
-using std::vector;
+#include "ui_parameterSelector.h"
 
 class ParameterSelector : public ParameterEditorWidget
 {
@@ -16,24 +12,25 @@ class ParameterSelector : public ParameterEditorWidget
 
 public:
     ParameterSelector(QWidget *parent = 0);
-    ~ParameterSelector();
+   ~ParameterSelector();
 
-    virtual double minimum (void);
-    virtual double maximum (void);
-    virtual double value   (void);
+    virtual double minimum (void) override;
+    virtual double maximum (void) override;
+    virtual double value   (void) override;
 
-    virtual void setValue  (double value);
+    virtual void setValue  (double value) override;
   /*  virtual void setMinimum(double value);
     virtual void setMaximum(double value);
     virtual void setStep   (double value);*/
+
     virtual void pushOption(QString name, int value);
-    virtual void setAutoSupported(bool value);
 
+    virtual void setAutoSupported(bool value) override;
 
-    virtual void stepUp  ();
-    virtual void stepDown();
+    virtual void stepUp  () override;
+    virtual void stepDown() override;
 
-    virtual void setName (QString name);
+    virtual void setName(QString name) override;
 
 signals:
     void valueChanged(int value);
@@ -41,14 +38,11 @@ signals:
     void resetPressed();
 
 public slots:
-    void currentIndexChanged (int value);
+    void currentIndexChanged(int value);
 
 private:
-    void regenComboBox();
-
     Ui::ParameterSelectorClass ui;
-    vector<int> mIndexToValue;
-
+    std::vector<int>           mIndexToValue;
 };
 
 #endif // PARAMETERSELECTOR_H

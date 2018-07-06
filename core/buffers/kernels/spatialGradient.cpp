@@ -17,47 +17,47 @@
 namespace corecvs {
 
 
-
-SpatialGradient::SpatialGradient(G12Buffer *input) : AbstractBuffer<Vector3dd, uint32_t>(input->h, input->w)
+template<typename ContainerType>
+AbstractSpatialGradient<ContainerType>::AbstractSpatialGradient(G12Buffer *input) : AbstractBuffer<ContainerType, int32_t>(input->h, input->w)
 {
     for (int32_t i = 1; i < input->h - 1; i++)
     {
         for (int32_t j = 1; j < input->w - 1; j++)
         {
-            double Ix = (double)(input->element(i, j + 1) - input->element(i, j - 1))/2;
-            double Iy = (double)(input->element(i + 1, j) - input->element(i - 1, j))/2;
-            element(i,j) = Vector3dd(Ix*Ix, Ix*Iy, Iy*Iy);
+            InternalDoubleType Ix = (InternalDoubleType)(input->element(i, j + 1) - input->element(i, j - 1))/2;
+            InternalDoubleType Iy = (InternalDoubleType)(input->element(i + 1, j) - input->element(i - 1, j))/2;
+            this->element(i,j) = ContainerType(Ix*Ix, Ix*Iy, Iy*Iy);
         }
     }
 }
 
 
-template<int inputNumber, int outputNumber>
-class ScalarAlgebraVector33
-{
-public:
-    typedef TraitGeneric<Vector3dd> TraitVector33;
-    typedef ScalarAlgebraMulti<TraitVector33, TraitVector33, inputNumber, outputNumber> Type;
-};
+
+
 
 /**
  *  R=detM-(SCALLER*(traceM)^2)
  * points in which R is smaller then scaler are forced to zero color
  **/
-G12Buffer* SpatialGradient::findCornerPoints(double scaler, int apperture)
+
+template<typename ContainerType>
+G12Buffer* AbstractSpatialGradient<ContainerType>::findCornerPoints(double scaler, int apperture)
 {
     int v = apperture;
     printf("SpatialGradient::findCornerPoints(%lf, %d):called\n", scaler, apperture);
 
-    SpatialGradient *start    = this;
-    SpatialGradient *blurVert = new SpatialGradient(h, w);
-    SpatialGradient *blur     = new SpatialGradient(h, w);
+    AbstractSpatialGradient *start    = this;
+
+    AbstractSpatialGradient *blurVert = new AbstractSpatialGradient(this->getSize());
+    AbstractSpatialGradient *blur     = new AbstractSpatialGradient(this->getSize());
 
     /* TODO: Redo this to simplify for buffers */
     if (v == 5)
     {
-        BufferProcessor<SpatialGradient, SpatialGradient, Blur5Horisontal, ScalarAlgebraVector33> blurerH;
-        BufferProcessor<SpatialGradient, SpatialGradient, Blur5Vertical, ScalarAlgebraVector33>   blurerV;
+
+
+        BufferProcessor<AbstractSpatialGradient, AbstractSpatialGradient, Blur5Horisontal, SpacialGradientScalarAlgebra> blurerH;
+        BufferProcessor<AbstractSpatialGradient, AbstractSpatialGradient, Blur5Vertical  , SpacialGradientScalarAlgebra> blurerV;
 
         blurerV.process(&start   , &blurVert);
         blurerH.process(&blurVert, &blur);
@@ -66,11 +66,11 @@ G12Buffer* SpatialGradient::findCornerPoints(double scaler, int apperture)
     {
         printf("SpatialGradient::findCornerPoints() %d\n", v);
 
-        for (uint32_t i = 0 ; i < start->h; i++)
+        for (int32_t i = 0 ; i < start->h; i++)
         {
-            for (uint32_t j = 0; j < start->w; j++)
+            for (int32_t j = 0; j < start->w; j++)
             {
-                Vector3dd sum = Vector3dd::Zero();
+                ContainerType sum = ContainerType::Zero();
 
                 for (int dy = i - v / 2 ; dy <= (int)i + v / 2; dy++)
                 {
@@ -88,13 +88,13 @@ G12Buffer* SpatialGradient::findCornerPoints(double scaler, int apperture)
     }
 
 
-    G12Buffer *toReturn = new G12Buffer(h, w);
+    G12Buffer *toReturn = new G12Buffer(this->getSize());
 
-    for (int i = 2; i < (int)h - 2; i++)
+    for (int i = 2; i < (int)this->h - 2; i++)
     {
-        for (int j = 2; j < (int)w - 2; j++)
+        for (int j = 2; j < (int)this->w - 2; j++)
         {
-            Vector3dd grad = blur->element(i,j);
+            ContainerType grad = blur->element(i,j);
             // Counting eigenvalues
             double a = 1.0;
             double b = - (grad.x() + grad.z());
@@ -124,6 +124,11 @@ G12Buffer* SpatialGradient::findCornerPoints(double scaler, int apperture)
     delete blurVert;
     return toReturn;
 }
+
+template class AbstractSpatialGradient<Vector3dd>;
+template class AbstractSpatialGradient<Vector3df>;
+
+
 
 } //namespace corecvs
 

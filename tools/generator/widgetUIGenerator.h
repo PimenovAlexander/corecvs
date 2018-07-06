@@ -13,7 +13,7 @@
 class WidgetUiGenerator : public BaseGenerator
 {
 public:
-    WidgetUiGenerator(const Reflection *_clazz);
+    WidgetUiGenerator(const ReflectionGen *_clazz);
     void generateWidgetUi();
 
 private:

@@ -52,7 +52,8 @@ int AxisAlignedBoxParameters::staticInit()
           "X",
           true,
          -50000,
-         50000
+         50000,
+         100
         );
     field0->widgetHint=BaseField::SPIN_BOX;
     field0->precision=2;
@@ -68,7 +69,8 @@ int AxisAlignedBoxParameters::staticInit()
           "Y",
           true,
          -50000,
-         50000
+         50000,
+         100
         );
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->precision=2;
@@ -84,7 +86,8 @@ int AxisAlignedBoxParameters::staticInit()
           "Z",
           true,
          -50000,
-         50000
+         50000,
+         100
         );
     field2->widgetHint=BaseField::SPIN_BOX;
     field2->precision=2;
@@ -100,7 +103,8 @@ int AxisAlignedBoxParameters::staticInit()
           "width",
           true,
          -50000,
-         50000
+         50000,
+         100
         );
     field3->widgetHint=BaseField::SPIN_BOX;
     field3->precision=2;
@@ -116,7 +120,8 @@ int AxisAlignedBoxParameters::staticInit()
           "height",
           true,
          -50000,
-         50000
+         50000,
+         100
         );
     field4->widgetHint=BaseField::SPIN_BOX;
     field4->precision=2;
@@ -132,7 +137,8 @@ int AxisAlignedBoxParameters::staticInit()
           "depth",
           true,
          -50000,
-         50000
+         50000,
+         100
         );
     field5->widgetHint=BaseField::SPIN_BOX;
     field5->precision=2;

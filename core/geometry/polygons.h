@@ -146,7 +146,7 @@ public:
        </pre>
 
     **/
-    bool intersectWithRay(Ray3d &ray, double &resT, double &u, double &v)
+    bool intersectWithRay(const Ray3d &ray, double &resT, double &u, double &v)
     {
         Vector3dd d = p1 - ray.p;
         Matrix33 M = Matrix33::FromColumns(ray.a, e1, e2);
@@ -160,6 +160,14 @@ public:
         v    = -res.z();
 
         return true;
+    }
+
+    Vector2dd intersectWithRayPoint(const Ray3d &ray)
+    {
+        double t = 0;
+        Vector2dd result(std::numeric_limits<double>::quiet_NaN());
+        intersectWithRay(ray, t, result.x(), result.y());
+        return result;
     }
 
     template<class VisitorType>
@@ -217,6 +225,12 @@ public:
     const PointType &p2() const {return p[1];}
     const PointType &p3() const {return p[2];}
 
+
+    Ray3d r1() const {return Ray3d::FromPoints(p[0], p[1]);}
+    Ray3d r2() const {return Ray3d::FromPoints(p[1], p[2]);}
+    Ray3d r3() const {return Ray3d::FromPoints(p[2], p[0]);}
+
+
     GenericTriangle() {}
 
     GenericTriangle(const PointType _p1, const PointType _p2, const PointType _p3)
@@ -239,6 +253,11 @@ public:
     PlaneFrame toPlaneFrame() const
     {
         return PlaneFrame(p1(), p2() - p1(), p3() - p1());
+    }
+
+    PointType getCenter() const
+    {
+        return (p1() + p2() + p3()) / 3.0;
     }
 
 
@@ -283,6 +302,13 @@ public:
         {
             p[i] = transform * p[i];
         }
+    }
+
+
+    friend ostream & operator <<(ostream &out, const GenericTriangle &triangle)
+    {
+        out << "(" << triangle.p1() << triangle.p2() << " " << triangle.p3() << ") " << std::endl;
+        return out;
     }
 
 };
@@ -334,6 +360,14 @@ public:
     }
 
     Vector2dd center();
+
+
+    void transform(const Matrix33 &transform)
+    {
+        for (Vector2dd &p: *this ) {
+            p = transform * p;
+        }
+    }
 
     template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -440,6 +474,10 @@ public:
         return Segment2d(getPoint(i), getNextPoint(i));
     }
 
+    Line2d getLine(int i) const {
+        return Line2d(getSegment(i));
+    }
+
     /** This method uses the index by module of size() **/
     Vector2dd &getPointM(int idx)
     {
@@ -485,13 +523,6 @@ public:
         return toReturn;
     }
 
-    void transform(const Matrix33 &transform)
-    {
-        for (Vector2dd &p: *this ) {
-            p = transform * p;
-        }
-    }
-
     /* non const versions */
     double &x(int idx) {
         return operator [](idx).x();
@@ -526,6 +557,64 @@ public:
 
     //bool clipRay(const Ray2d &ray, double &t1, double &t2);
 };
+
+class ProjectivePolygon : public vector<Vector3dd>
+{
+public:
+    ProjectivePolygon() {}
+
+    ProjectivePolygon(const vector<Vector3dd> &in)
+    {
+        *(static_cast<vector<Vector3dd> *>(this)) = in;
+    }
+
+    ProjectivePolygon(const vector<Vector2dd> &in)
+    {
+        reserve(in.size());
+        for (const Vector2dd &p : in) {
+            push_back(Vector3dd(p, 1.0));
+        }
+    }
+
+    void transform(const Matrix33 &transform)
+    {
+        for (Vector3dd &p: *this ) {
+            p = transform * p;
+        }
+    }
+
+
+    ProjectivePolygon transformed(const Matrix33 &transform) const
+    {
+        ProjectivePolygon toReturn;
+        toReturn.reserve(size());
+        for (Vector3dd p: *this ) {
+            toReturn.push_back(transform * p);
+        }
+        return toReturn;
+    }
+
+    /* Returns approxiamiton */
+    Polygon getApproximation(double farDist);
+
+    friend std::ostream & operator <<(std::ostream &out, const ProjectivePolygon &pPolygon)
+    {
+        out << "[";
+        for (size_t i = 0; i < pPolygon.size(); i++) {
+            if (pPolygon.at(i).z() == 0) {
+                out << (i == 0 ? "" : ", ") << "infto:" << pPolygon.at(i).xy() <<  std::endl;
+            } else {
+                out << (i == 0 ? "" : ", ") << pPolygon.at(i).normalisedProjective().xy() << std::endl;
+            }
+        }
+        out << "]";
+        return out;
+    }
+
+
+
+};
+
 
 
 class FlatPolygon
@@ -679,6 +768,14 @@ public:
      ***/
     static Polygon GiftWrap(const std::vector<Vector2dd> &list);
     static Polygon GrahamScan(std::vector<Vector2dd> points);
+
+    static ProjectivePolygon GrahamScan(std::vector<Vector3dd> points);
+
+
+template<typename PointType>
+    static Polygon GrahamScan(std::vector<PointType> points);
+
+
 
     enum ConvexHullMethod {
         GIFT_WARP,

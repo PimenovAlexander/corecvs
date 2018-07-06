@@ -1,3 +1,13 @@
+# try use global config
+exists(../../../../config.pri) {
+    ROOT_DIR=../../../..
+    include($$ROOT_DIR/config.pri)
+} else {
+    !build_pass: message(Using local config in core.pro)
+    ROOT_DIR=../..
+    include($$ROOT_DIR/cvs-config.pri)
+}
+
 TEMPLATE = app
 TARGET   = generator
 QT      += core xml
@@ -7,15 +17,11 @@ CONFIG  -= app_bundle
 CONFIG  += debug
 CONFIG  += c++11
 
-ROOT_DIR=../..
-include($$ROOT_DIR/config.pri)
 
 OBJECTS_DIR = $$ROOT_DIR/.obj/generator$$BUILD_CFG_NAME
 MOC_DIR  = $$OBJECTS_DIR
 #UI_DIR  = $$OBJECTS_DIR
 #RCC_DIR = $$OBJECTS_DIR
-
-#include(../../core/core.pri)
 
 # CORE SUBSET
 COREDIR=../../core

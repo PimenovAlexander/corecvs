@@ -26,15 +26,15 @@ int main(int argc, char *argv[])
     /* Generate all classes */
     foreach (Reflection *result, reflections->values())
     {
-        WidgetUiGenerator generatorUI(result);
+        WidgetUiGenerator generatorUI((ReflectionGen *)result);
         generatorUI.generateWidgetUi();
 
-        PDOGenerator generator(result);
+        PDOGenerator generator((ReflectionGen *)result);
         generator.generatePDOH();
         generator.generatePDOCpp();
         generator.generateControlWidgetCpp();
 
-        DocumentationGenerator generatorDoc(result);
+        DocumentationGenerator generatorDoc((ReflectionGen *)result);
         generatorDoc.generateDocumentation();
     }
 
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
     foreach (EnumReflection *eref, enums->values())
     {
         PDOGenerator generator(NULL);
-        generator.generatePDOEnumSubH(eref);
+        generator.generatePDOEnumSubH((EnumReflectionGen *)eref);
     }
 
     ParametersMapperGenerator mapperGenerator(reflections, loader.paramsMapperFields(), loader.mapperPostfix());

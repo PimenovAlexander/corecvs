@@ -1,7 +1,4 @@
-
 #include "parameterSelector.h"
-#include "core/utils/log.h"
-
 
 ParameterSelector::ParameterSelector(QWidget *parent)
     : ParameterEditorWidget(parent)
@@ -10,7 +7,7 @@ ParameterSelector::ParameterSelector(QWidget *parent)
     connect(ui.resetButton, SIGNAL(released()), this, SIGNAL(resetPressed()));
 }
 
-void ParameterSelector::setName (QString name)
+void ParameterSelector::setName(QString name)
 {
     ui.label->setText(name);
     setWindowTitle(name);
@@ -22,12 +19,12 @@ void ParameterSelector::setAutoSupported(bool value)
     ui.autoBox->setEnabled(value);
 }
 
-double ParameterSelector::minimum (void)
+double ParameterSelector::minimum(void)
 {
     return mIndexToValue[0];
 }
 
-double ParameterSelector::maximum (void)
+double ParameterSelector::maximum(void)
 {
     return mIndexToValue[mIndexToValue.size() - 1];
 }
@@ -41,10 +38,9 @@ double ParameterSelector::value()
         return 0;
 }
 
-
 void ParameterSelector::setValue(double value)
 {
-    for (unsigned i = 0; i < mIndexToValue.size(); i++ )
+    for (unsigned i = 0; i < mIndexToValue.size(); i++)
     {
         if (mIndexToValue[i] == value)
         {
@@ -61,7 +57,7 @@ void ParameterSelector::pushOption(QString name, int value)
     mIndexToValue.push_back(value);
 }
 
-void ParameterSelector::stepUp  ()
+void ParameterSelector::stepUp()
 {
     ui.comboBox->setCurrentIndex(ui.comboBox->currentIndex() + 1);
 }
@@ -88,6 +84,4 @@ void ParameterSelector::regenComboBox()
 }
 */
 ParameterSelector::~ParameterSelector()
-{
-
-}
+{}

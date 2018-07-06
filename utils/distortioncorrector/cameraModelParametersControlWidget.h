@@ -2,6 +2,8 @@
 #define CAMERAMODELPARAMETERSCONTROLWIDGET_H
 
 #include <QWidget>
+#include <QComboBox>
+
 #include "parametersControlWidgetBase.h"
 #include "core/alignment/lensDistortionModelParameters.h"
 
@@ -9,6 +11,8 @@
 
 #include "core/math/quaternion.h"
 #include "core/math/vector/vector3d.h"
+
+#include "reflectionWidget.h"
 
 namespace Ui {
 class CameraModelParametersControlWidget;
@@ -22,9 +26,10 @@ public:
     explicit CameraModelParametersControlWidget(QWidget *parent = 0);
     ~CameraModelParametersControlWidget();
 
+#if 0
     LensDistortionModelParameters lensDistortionParameters();
     void setLensDistortionParameters(const LensDistortionModelParameters &params);
-
+#endif
 
     CameraModel* createParameters() const;
     void getParameters(CameraModel &params) const;
@@ -57,14 +62,21 @@ signals:
     void saveRequest(QString filename);
 
 
-protected:
+public: /*For more flexibility*/
 
     Ui::CameraModelParametersControlWidget *ui;
+
+protected:
     CameraModel backup;
 
+    /**/
+    //QComboBox *intrinsicsType = NULL;
+    ReflectionWidget *intrinsicsWidget = NULL;
+
+    void assertProjectionMatch();
 };
 
-
+#if 0
 /* Should support additional protype field*/
 class FixtureCameraParametersControlWidget : public CameraModelParametersControlWidget
 {
@@ -73,5 +85,6 @@ public:
 
 
 };
+#endif
 
 #endif // CAMERAMODELPARAMETERSCONTROLWIDGET_H

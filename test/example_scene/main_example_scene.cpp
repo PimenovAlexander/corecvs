@@ -6,11 +6,17 @@
 #include <vector>
 #include <fstream>
 
+#include "core/reflection/commandLineSetter.h"
+#include "core/utils/utils.h"
+
 #include "core/buffers/rgb24/abstractPainter.h"
+#include "core/buffers/bufferFactory.h"
+
 #include "core/fileformats/bmpLoader.h"
 
 #include "core/camerafixture/fixtureScene.h"
 #include "core/camerafixture/cameraFixture.h"
+#include "core/cameracalibration/ilFormat.h"
 
 #include "core/math/vector/vector3d.h"
 #include "xmlSetter.h"
@@ -20,6 +26,7 @@
 #include "jsonSetter.h"
 
 #include "core/reflection/jsonPrinter.h"
+#include "core/geometry/mesh3d.h"
 
 using namespace std;
 
@@ -54,13 +61,15 @@ void testJSON_FixtureScene()
         Affine3DQ position(Quaternion::RotationZ(angle), Vector3dd::FromCylindrical(angle, 5.0, 0.0));
 
         model.extrinsics = CameraLocationData(position);
-        model.intrinsics.principal.x() = 100;
-        model.intrinsics.principal.y() = 100;
 
-        model.intrinsics.focal.x() = 100;
-        model.intrinsics.focal.y() = 100;
+        model.getPinhole()->setCx(100);
+        model.getPinhole()->setCy(100);
 
-        model.intrinsics.size = Vector2dd(200, 200);
+        model.getPinhole()->setFx(100);
+        model.getPinhole()->setFy(100);
+
+        model.getPinhole()->setSize(Vector2dd(200, 200));
+        model.getPinhole()->setDistortedSize(Vector2dd(200, 200));
 
         //SYNC_PRINT(("Length: %d\n", scene->fixtures.size()));
 
@@ -91,17 +100,16 @@ void testJSON_FixtureScene()
 
     scene->projectForward(SceneFeaturePoint::POINT_ALL);
 
-    cout << "Original scene:" << endl;
-    cout << "================================" << endl;
+    cout << "Original scene:" << std::endl;
+    cout << "================================" << std::endl;
     scene->dumpInfo(cout);
-    cout << "================================" << endl;
+    cout << "================================" << std::endl;
 
     {
         JSONSetter setter("scene.json");
         setter.visit(*scene, "scene");
     }
     delete_safe(scene);
-
 
 
     /** Now loading **/
@@ -111,17 +119,17 @@ void testJSON_FixtureScene()
         getter.visit(*loaded, "scene");
     }
 
-    cout << "Loaded scene:" << endl;
-    cout << "================================" << endl;
+    cout << "Loaded scene:" << std::endl;
+    cout << "================================" << std::endl;
     loaded->dumpInfo(cout);
-    cout << "================================" << endl;
+    cout << "================================" << std::endl;
 }
 
 void testJSON_StereoScene(int targetSize = 3, bool useDistortion = false )
 {
     cout << "----------------Running the test-------------" << std::endl;
     if (useDistortion) {
-        cout << "Distortion would be applied" << endl;
+        cout << "Distortion would be applied" << std::endl;
     }
     FixtureScene *scene = new FixtureScene();
 
@@ -130,11 +138,16 @@ void testJSON_StereoScene(int targetSize = 3, bool useDistortion = false )
 
 
     CameraModel model;
-    model.intrinsics.principal.x() = 320;
-    model.intrinsics.principal.y() = 240;
-    model.intrinsics.focal.x() = 589;
-    model.intrinsics.focal.y() = 589;
-    model.intrinsics.size = Vector2dd(640, 480);
+
+    model.getPinhole()->setCx(320);
+    model.getPinhole()->setCy(240);
+
+    model.getPinhole()->setFx(589);
+    model.getPinhole()->setFy(589);
+
+    model.getPinhole()->setSize(Vector2dd(640, 480));
+    model.getPinhole()->setDistortedSize(Vector2dd(640, 480));
+
     model.distortion.mKoeff = std::vector<double>({std::numeric_limits<double>::min()});
 
     if (useDistortion)
@@ -145,7 +158,7 @@ void testJSON_StereoScene(int targetSize = 3, bool useDistortion = false )
         model.distortion.setTangentialX(0.01);
         model.distortion.setTangentialY(0.01);
         model.distortion.mKoeff.push_back(0.5);
-        model.distortion.setNormalizingFocal(model.intrinsics.size.l2Metric());
+        model.distortion.setNormalizingFocal(model.getPinhole()->size().l2Metric());
     }
 
 
@@ -165,9 +178,9 @@ void testJSON_StereoScene(int targetSize = 3, bool useDistortion = false )
     scene->positionCameraInFixture(fixture, camera2
                                    , Affine3DQ(Vector3dd::OrtY() * 10.0));
 
-    RGB24Buffer *image1 = new RGB24Buffer(model.intrinsics.h(), model.intrinsics.w(), RGBColor::gray(39));
-    RGB24Buffer *image2 = new RGB24Buffer(model.intrinsics.h(), model.intrinsics.w(), RGBColor::gray(56));
-    RGB24Buffer *image3 = new RGB24Buffer(model.intrinsics.h(), model.intrinsics.w(), RGBColor::gray(75));
+    RGB24Buffer *image1 = new RGB24Buffer(model.intrinsics->h(), model.intrinsics->w(), RGBColor::gray(39));
+    RGB24Buffer *image2 = new RGB24Buffer(model.intrinsics->h(), model.intrinsics->w(), RGBColor::gray(56));
+    RGB24Buffer *image3 = new RGB24Buffer(model.intrinsics->h(), model.intrinsics->w(), RGBColor::gray(75));
 
     image1->checkerBoard(20, RGBColor::Gray(50));
     image2->checkerBoard(20, RGBColor::Gray(50));
@@ -280,7 +293,7 @@ void testJSON_StereoScene(int targetSize = 3, bool useDistortion = false )
         SYNC_PRINT(("Saving ideal images\n"));
 
     } else {
-        FixedPointDisplace displacer(model.distortion, model.intrinsics.h(), model.intrinsics.w());
+        FixedPointRemapper displacer(model.distortion, model.intrinsics->h(), model.intrinsics->w());
         RGB24Buffer *dist1 = image1->doReverseDeformationBlPrecomp(&displacer, displacer.h, displacer.w);
         RGB24Buffer *dist2 = image2->doReverseDeformationBlPrecomp(&displacer, displacer.h, displacer.w);
         RGB24Buffer *dist3 = image3->doReverseDeformationBlPrecomp(&displacer, displacer.h, displacer.w);
@@ -302,18 +315,39 @@ void testJSON_StereoScene(int targetSize = 3, bool useDistortion = false )
 
     /** Geometry **/
     FixtureSceneGeometry *geometry = scene->createSceneGeometry();
+    geometry->color   = RGBColor::Red();
     geometry->frame   = PlaneFrame(Vector3dd(100,0,0), Vector3dd(0,1,0), Vector3dd(0,0,1));
     geometry->polygon = Polygon::RegularPolygon(5, Vector2dd::Zero(), 50, 0);
     geometry->relatedPoints.push_back(scene->featurePoints()[0]);
     geometry->relatedPoints.push_back(scene->featurePoints()[1]);
     geometry->relatedPoints.push_back(scene->featurePoints()[2]);
 
+    /** Two additional cameras with non pinhole models */
+
+    /** Equidistant **/
+    CameraModel equidist;
+    equidist.intrinsics.reset(new EquidistantProjection(Vector2dd(100,100), 100, Vector2dd(200,200)));
+    equidist.setLocation(Affine3DQ::Shift(0,30,0));
+
+    FixtureCamera *cameraEq = scene->createCamera();
+    cameraEq->nameId = "equidist";
+    cameraEq->copyModelFrom(equidist);
+
+    /** Omnidirectional **/
+    CameraModel catadioptric;
+    catadioptric.intrinsics.reset(new OmnidirectionalProjection(Vector2dd(100,100), 100, Vector2dd(200,200)));
+    catadioptric.setLocation(Affine3DQ::Shift(0,40,0));
+
+    FixtureCamera *cameraCat = scene->createCamera();
+    cameraCat->nameId = "catadioptric";
+    cameraCat->copyModelFrom(catadioptric);
 
 
-    cout << "Original scene:" << endl;
-    cout << "================================" << endl;
+
+    cout << "Original scene:" << std::endl;
+    cout << "================================" << std::endl;
     scene->dumpInfo(cout);
-    cout << "================================" << endl;
+    cout << "================================" << std::endl;
 
     {
         JSONSetter setter("stereo.json");
@@ -333,25 +367,177 @@ void testJSON_StereoScene(int targetSize = 3, bool useDistortion = false )
 
 }
 
+
+void testJSON_CarScene(CommandLineSetter &params)
+{
+    bool addNoise = params.getBool("noise");
+
+    FixtureScene *scene = new FixtureScene();
+
+    CameraFixture *fixture = scene->createCameraFixture();
+    fixture->name = "Car Body";
+
+
+    Mesh3D mesh;
+    mesh.addIcoSphere(Vector3dd::Zero(), 20.0, 1);
+
+    for (size_t i = 0; i < mesh.vertexes.size(); i++)
+    {
+        Vector3dd pos = mesh.vertexes[i];
+        if (pos.z() < 0) {
+            continue;
+        }
+
+        SceneFeaturePoint *point = scene->createFeaturePoint();
+        point->setPosition(pos);
+        point->color = RGBColor::Yellow();
+    }
+
+    std::string input =
+    "omnidirectional\n"
+    "1578 1.35292 1.12018 5 0.520776 -0.561115 -0.560149 1.01397 -0.870155";
+    std::istringstream ss(input);
+
+    CameraModel model;
+    model.intrinsics.reset(ILFormat::loadIntrisics(ss));
+
+    FixtureCamera *front = scene->createCamera(); scene->addCameraToFixture(front, fixture);
+    front->nameId = "Front";
+    FixtureCamera *right = scene->createCamera(); scene->addCameraToFixture(right, fixture);
+    right->nameId = "Right";
+    FixtureCamera *back  = scene->createCamera(); scene->addCameraToFixture(back , fixture);
+    back->nameId = "Back";
+    FixtureCamera *left  = scene->createCamera(); scene->addCameraToFixture(left , fixture);
+    left->nameId = "Left";
+
+    FixtureCamera *cams[] = {front, right, back, left};
+
+    front->copyModelFrom(model);
+    right->copyModelFrom(model);
+    back ->copyModelFrom(model);
+    left ->copyModelFrom(model);
+
+    scene->positionCameraInFixture(fixture, front, Affine3DQ(Quaternion::RotationZ(degToRad(  0)), Vector3dd( 1, 0, 0)));
+    scene->positionCameraInFixture(fixture, right, Affine3DQ(Quaternion::RotationZ(degToRad( 90)), Vector3dd( 0, 1, 0)));
+    scene->positionCameraInFixture(fixture,  left, Affine3DQ(Quaternion::RotationZ(degToRad(180)), Vector3dd(-3, 0, 0)));
+    scene->positionCameraInFixture(fixture,  back, Affine3DQ(Quaternion::RotationZ(degToRad(270)), Vector3dd( 0,-1, 0)));
+
+
+    scene->projectForward(SceneFeaturePoint::POINT_ALL, addNoise);
+
+
+    for (int i = 0; i < 4; i++)
+    {
+        RGB24Buffer *image = new RGB24Buffer(model.intrinsics->h(), model.intrinsics->w(), RGBColor::gray(75));
+
+        image->checkerBoard(100, RGBColor::Gray(50));
+
+        AbstractPainter<RGB24Buffer> painter(image);
+
+        for (size_t pId = 0; pId < scene->featurePoints().size(); pId++)
+        {
+            SceneFeaturePoint *point = scene->featurePoints()[pId];
+
+            if (point->getObservation(cams[i]) != NULL) {
+                Vector2dd p = point->getObservation(cams[i])->getUndist();
+                painter.drawCircle(p.x(), p.y(), 30, point->color);
+
+                SYNC_PRINT(("Drawing point at %lf %lf\n", p.x(), p.y()));
+            }
+        }
+        std::string name = std::string("SP") /*+  fixture->name*/ + cams[i]->nameId + ".bmp";
+        BufferFactory::getInstance()->saveRGB24Bitmap(image, name);
+
+        ImageRelatedData *sceneImage = scene->createImageData();
+        sceneImage->mImagePath = name;
+        cams[i]->addImageToCamera(sceneImage);
+
+        delete_safe(image);
+    }
+
+    cout << "Car scene:" << std::endl;
+    cout << "================================" << std::endl;
+    scene->dumpInfo(cout);
+    cout << "================================" << std::endl;
+
+    {
+        JSONSetter setter("car.json");
+        setter.visit(*scene, "scene");
+    }
+
+
+    delete_safe(scene);
+}
+
 void testJSON_StereoRecheck()
 {
-     FixtureSceneFactory::getInstance()->print();
-     FixtureScene *scene = FixtureSceneFactory::getInstance()->sceneFactory();
+
+}
+
+void usage()
+{
+    SYNC_PRINT(("Example scene generator:\n"));
+    SYNC_PRINT(("example_scene --help\n"));
+    SYNC_PRINT(("       - print help\n"));
+    SYNC_PRINT(("example_scene --car\n"));
+    SYNC_PRINT(("       - create an example car scene\n"));
+    SYNC_PRINT(("example_scene --resave  --file in.json [--format <format>] \n"));
+    SYNC_PRINT(("       - loads a file to internal scene format and saves back.\n"
+                "         this is used to check if legacy format is still readable\n"));
+
+}
+
+void doResave(CommandLineSetter &params)
+{
+    SYNC_PRINT(("Resaveing\n"));
+    FixtureSceneFactory::getInstance()->print();
 
 
-     {
-         JSONGetter getter("stereo.json");
-         getter.visit(*scene, "scene");
-     }
-     {
-         JSONSetter setter("stereo-secondary.json");
-         setter.visit(*scene, "scene");
-     }
+    std::string name = "stereo.json";
+    name = params.getString("file", name);
+
+    SYNC_PRINT(("Loading <%s>\n", name.c_str()));
+    FixtureScene *scene = FixtureSceneFactory::getInstance()->sceneFactory();
+
+    {
+        JSONGetter getter(name);
+        getter.visit(*scene, "scene");
+    }
+
+
+    std::string outname = corecvs::HelperUtils::getFullPathWithNewExt(name, "-secondary.json");
+    SYNC_PRINT(("Saveing <%s>\n", outname.c_str()));
+
+    {
+        JSONSetter setter(outname);
+        setter.visit(*scene, "scene");
+    }
+    SYNC_PRINT(("Done\n"));
 }
 
 int main (int argc, char ** argv)
 {
     printf("Generate some test scenes\n");
+
+    CommandLineSetter s(argc, argv);
+    bool help = s.getBool("help");
+    if (help || argc < 2) {
+        usage();
+        return 0;
+    }
+
+    bool resave = s.getBool("resave");
+    if (resave) {
+        doResave(s);
+        return 0;
+    }
+
+    bool carScene = s.getBool("car");
+    if (carScene) {
+        testJSON_CarScene(s);
+        return 0;
+    }
+
 
     int size = 3;
     bool custom     = false;

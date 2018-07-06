@@ -1,0 +1,16 @@
+<poco version="5.0">
+  <!-- This is a temporary class to make tests how corecvs existing base types could be intergated into the generated classes -->
+
+
+  <class name="Vector 3d Parameters">
+    <field type="double" name="x"  defaultValue="0" decimals="6" min="-50000" max="50000"/>
+    <field type="double" name="y"  defaultValue="0" decimals="6" min="-50000" max="50000"/>
+    <field type="double" name="z"  defaultValue="0" decimals="6" min="-50000" max="50000"/>
+  </class>
+
+
+  <class name="Vector 2d Parameters">
+    <field type="double" name="x"  defaultValue="0" decimals="6" min="-50000" max="50000"/>
+    <field type="double" name="y"  defaultValue="0" decimals="6" min="-50000" max="50000"/>
+  </class>
+</poco>

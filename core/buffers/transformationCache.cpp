@@ -10,7 +10,7 @@ TransformationCache::TransformationCache(Matrix33 matrix, int w, int h, Vector2d
 
     mRemap      = new DirectRemapper    (&matrix, inputSize, Vector2d<int>(w, h));
     mDisplace   = new DisplacementBuffer(&matrix, h, w);
-    mF8Displace = new FixedPointDisplace( ProjectiveTransform(matrix), h, w);
+    mF8Displace = new FixedPointRemapper( ProjectiveTransform(matrix), h, w);
 }
 
 G12Buffer *TransformationCache::doDeformation(InterpolationType::InterpolationType type, G12Buffer *inputFrame)

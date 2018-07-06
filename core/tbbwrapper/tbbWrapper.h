@@ -23,6 +23,9 @@
 #include <tbb/reader_writer_lock.h>
 #include <tbb/spin_mutex.h>
 #include <tbb/task_scheduler_init.h>
+#include <tbb/parallel_sort.h>
+#include <tbb/tbb_stddef.h>
+
 #undef Ellipse
 #undef Polygon
 
@@ -251,6 +254,24 @@ void parallelable_reduce(IndexType begin, IndexType end, Function &f)
 }
 #endif
 
+/**
+ *  Sorting
+ **/
+
+#ifdef WITH_TBB
+template<typename RandomAccessIterator, typename Compare>
+void parallelable_sort( RandomAccessIterator begin, RandomAccessIterator end, const Compare& comp) {
+    parallel_sort(begin, end, comp);
+}
+#else
+template<typename RandomAccessIterator, typename Compare>
+void parallelable_sort( RandomAccessIterator begin, RandomAccessIterator end, const Compare& comp) {
+    sort(begin, end, comp);
+}
+#endif
+
+
+
 inline std::string tbbInfo()
 {
     char info[256];
@@ -285,7 +306,7 @@ inline std::string tbbInfo()
 #else
     class TbbSchedulerInitializer {
     public:
-        TbbSchedulerInitializer(const char* var = "") {}
+        TbbSchedulerInitializer(const char* /*var*/ = "") {}
     };
 #endif
 

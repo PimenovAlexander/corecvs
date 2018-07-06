@@ -6,6 +6,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from patternDetector.xml
  */
 
 #include "core/reflection/reflection.h"

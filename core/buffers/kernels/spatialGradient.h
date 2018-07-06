@@ -16,7 +16,19 @@
 #include "core/buffers/abstractBuffer.h"
 #include "core/math/vector/vector3d.h"
 #include "core/buffers/integralBuffer.h"
+
+#include "core/buffers/kernels/fastkernel/vectorTraits.h"
 namespace corecvs {
+
+
+template<typename ContanierType, int inputNumber, int outputNumber>
+class ScalarAlgebraVector33d
+{
+public:
+    typedef TraitGeneric<ContanierType> TraitVector33;
+    typedef ScalarAlgebraMulti<TraitVector33, TraitVector33, inputNumber, outputNumber> Type;
+};
+
 
 /**
  * This class holds the spatial gradient matrix square elements
@@ -30,17 +42,33 @@ namespace corecvs {
  * TODO: Use mapper
  *
  **/
-class SpatialGradient : public AbstractBuffer<Vector3dd, uint32_t>
+template<typename ContainerType>
+class AbstractSpatialGradient : public AbstractBuffer<ContainerType, int32_t>
 {
 public:
+    typedef ContainerType                             InternalContainerType;
+    typedef typename ContainerType::InnerElementType  InternalDoubleType;
 
-    SpatialGradient(int h, int w) : AbstractBuffer<Vector3dd, uint32_t>(h, w) {}
-    SpatialGradient(G12Buffer *input);
+    template <int inputNumber, int outputNumber>
+    using SpacialGradientScalarAlgebra = ScalarAlgebraVector33d<ContainerType, inputNumber, outputNumber>;
+
+
+    AbstractSpatialGradient(int h, int w) : AbstractBuffer<ContainerType, int32_t>(h, w) {}
+    AbstractSpatialGradient(const Vector2d<int32_t> &size) : AbstractBuffer<ContainerType, int32_t>(size) {}
+
+    AbstractSpatialGradient(G12Buffer *input);
 
     G12Buffer* findCornerPoints(double scaler = G12Buffer::BUFFER_MAX_VALUE, int apperture = 5);
 };
 
-typedef IntegralBuffer<Vector3dd, Vector3dd, uint32_t>  SpatialGradientIntegralBuffer;
+extern template class AbstractSpatialGradient<Vector3dd>;
+extern template class AbstractSpatialGradient<Vector3df>;
+
+
+typedef AbstractSpatialGradient<Vector3dd> SpatialGradient;
+typedef AbstractSpatialGradient<Vector3df> SpatialGradientF;
+
+typedef IntegralBuffer<Vector3dd, Vector3dd, int32_t>  SpatialGradientIntegralBuffer;
 
 
 } //namespace corecvs

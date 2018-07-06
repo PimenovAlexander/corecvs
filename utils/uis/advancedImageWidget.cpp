@@ -549,8 +549,8 @@ void AdvancedImageWidget::childMouseReleased(QMouseEvent * event)
     bool leftReleased  = mIsMouseLeftPressed  && !(event->buttons() & Qt::LeftButton);
     bool rightReleased = mIsMouseRightPressed && !(event->buttons() & Qt::RightButton);
 
-    qDebug() << "AdvancedImageWidget::childMouseReleased: leftReleased " << leftReleased;
-    qDebug() << "AdvancedImageWidget::childMouseReleased: rightReleased " << rightReleased;
+    // qDebug() << "AdvancedImageWidget::childMouseReleased: leftReleased " << leftReleased;
+    // qDebug() << "AdvancedImageWidget::childMouseReleased: rightReleased " << rightReleased;
 
 
     mIsMouseLeftPressed = (event->buttons() & Qt::LeftButton) != 0;

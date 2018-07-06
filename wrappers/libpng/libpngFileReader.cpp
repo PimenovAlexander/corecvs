@@ -1,5 +1,5 @@
 #include "libpngFileReader.h"
-#include "core/utils/utils.h"
+#include "core/utils/utils.h" // HelperUtils
 
 #include <string>
 #include <cstdio>
@@ -11,14 +11,13 @@ using namespace corecvs;
 string  LibpngFileReader::prefix1(".png");
 string  LibpngFileReader::prefix2(".PNG");
 
-
-bool LibpngFileReader::acceptsFile(string name)
+bool LibpngFileReader::acceptsFile(const string & name)
 {
     return HelperUtils::endsWith(name, prefix1) ||
            HelperUtils::endsWith(name, prefix2);
 }
 
-RGB24Buffer *LibpngFileReader::load(string name)
+RGB24Buffer *LibpngFileReader::load(const string & name)
 {
     RGB24Buffer *toReturn;
     png_byte ** row_pointers;
@@ -102,105 +101,107 @@ RGB24Buffer *LibpngFileReader::load(string name)
     return toReturn;
 }
 
-bool LibpngFileReader::save(string name, RGB24Buffer *buffer)
+bool LibpngFileReader::save(const string &name, const RGB24Buffer *buffer, int quality, bool alpha)
 {
-    FILE * fp;
-    png_byte ** row_pointers;
-    png_structp png_ptr = nullptr;
-    png_infop info_ptr = nullptr;
-    size_t x, y;
-    int status = -1;
-    int pixel_size = 3;
+    return savePNG(name, buffer, quality, alpha);
+}
+
+bool LibpngFileReader::savePNG(const string &name, const RGB24Buffer *buffer, int quality, bool alpha)
+{
+    //CORE_UNUSED(quality); /*TODO: connect with PNG_COMPRESSION_TYPE_DEFAULT below*/
+    bool toReturn = false;
+    int pixel_size = alpha ? 4 : 3;
     int depth = 8;
     png_uint_32 width = buffer->w, height = buffer->h;
+    png_structp png_ptr;
+    png_infop info_ptr;
+    png_byte **row_pointers;
 
-    fp = fopen (name.c_str(), "wb");
-    if (! fp) {
-        goto fopen_failed;
-    }
+    FILE *fp = fopen(name.c_str(), "wb");
+    if (!fp)
+        return toReturn;
 
-    png_ptr = png_create_write_struct (PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+    png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
     if (png_ptr == nullptr) {
         goto png_create_write_struct_failed;
     }
 
-    info_ptr = png_create_info_struct (png_ptr);
+    info_ptr = png_create_info_struct(png_ptr);
     if (info_ptr == nullptr) {
         goto png_create_info_struct_failed;
     }
 
     /* Set up error handling. */
-
-    if (setjmp (png_jmpbuf (png_ptr))) {
+    if (setjmp (png_jmpbuf(png_ptr))) {
         goto png_failure;
     }
 
     /* Set image attributes. */
-
-
-    png_set_IHDR (png_ptr,
-                  info_ptr,
-                  width,
-                  height,
-                  depth,
-                  PNG_COLOR_TYPE_RGB,
-                  PNG_INTERLACE_NONE,
-                  PNG_COMPRESSION_TYPE_DEFAULT,
-                  PNG_FILTER_TYPE_DEFAULT);
+    png_set_IHDR(png_ptr,
+                 info_ptr,
+                 width,
+                 height,
+                 depth,
+                 alpha ? PNG_COLOR_TYPE_RGBA : PNG_COLOR_TYPE_RGB,
+                 PNG_INTERLACE_NONE,
+                 PNG_COMPRESSION_TYPE_DEFAULT,
+                 PNG_FILTER_TYPE_DEFAULT);
 
     /* Initialize rows of PNG. */
-
-    row_pointers = (png_byte **) png_malloc (png_ptr, height * sizeof (png_byte *));
-    for (y = 0; y < height; ++y) {
-        png_byte *row =
-            (png_byte *) png_malloc (png_ptr, sizeof (uint8_t) * width * pixel_size);
+    row_pointers = (png_byte **)png_malloc(png_ptr, height * sizeof(png_byte *));
+    for (uint32_t y = 0; y < height; ++y)
+    {
+        auto row = (png_byte *)png_malloc(png_ptr, sizeof(uint8_t) * width * pixel_size);
         row_pointers[y] = row;
-        for (x = 0; x < width; ++x) {
+        for (uint32_t x = 0; x < width; ++x)
+        {
             RGBColor pixel = buffer->element(y, x);
             *row++ = pixel.r();
             *row++ = pixel.g();
             *row++ = pixel.b();
+            if (alpha) {
+                *row++ = pixel.a();
+            }
         }
     }
 
     /* Write the image data to "fp". */
-
-    png_init_io (png_ptr, fp);
+    png_init_io  (png_ptr, fp);
     png_set_rows (png_ptr, info_ptr, row_pointers);
-    png_write_png (png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
+    png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
+    
+    toReturn = true;
 
-    status = 0;
-
-    for (y = 0; y < height; y++) {
-        png_free (png_ptr, row_pointers[y]);
+    for (uint32_t y = 0; y < height; ++y) {
+        png_free(png_ptr, row_pointers[y]);
     }
-    png_free (png_ptr, row_pointers);
+    png_free(png_ptr, row_pointers);
 
     png_failure:
-        png_create_info_struct_failed:
-        png_destroy_write_struct (&png_ptr, &info_ptr);
+    png_create_info_struct_failed:
+        png_destroy_write_struct(&png_ptr, &info_ptr);
     png_create_write_struct_failed:
         fclose (fp);
-    fopen_failed:
-        return status;
+
+    return toReturn;
 }
 
-corecvs::RuntimeTypeBuffer *LibpngRuntimeTypeBufferLoader::load(string name)
+corecvs::RuntimeTypeBuffer *LibpngRuntimeTypeBufferLoader::load(const string &name)
 {
     RGB24Buffer *tmp = LibpngFileReader().load(name);
-    if (tmp == NULL)
-        return NULL;
+    if (tmp == nullptr)
+        return nullptr;
 
     RuntimeTypeBuffer *result = new RuntimeTypeBuffer(tmp->h, tmp->w, BufferType::U8);
     
-    for (RGB24Buffer::InternalIndexType y = 0; y < tmp->h; ++y) {
-        for (RGB24Buffer::InternalIndexType x = 0; x < tmp->w; ++x) {
+    for (RGB24Buffer::InternalIndexType y = 0; y < tmp->h; ++y)
+    {
+        for (RGB24Buffer::InternalIndexType x = 0; x < tmp->w; ++x)
+        {
             RGBColor pixel = tmp->element(y, x);
-
             result->at<uint8_t>(y, x) = pixel.brightness();
         }
     }
     delete tmp;
-
     return result;
 }

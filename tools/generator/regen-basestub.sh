@@ -28,6 +28,7 @@ echo "done"
 
 rectifier_dest="../../utils/rectifier"
 
+copy_if_different Generated/matchingMethodType.h                $rectifier_dest
 copy_if_different Generated/estimationMethodType.h              $rectifier_dest
 copy_if_different Generated/optimizationMethodType.h            $rectifier_dest 
 copy_if_different Generated/rectifyParameters.cpp               $rectifier_dest

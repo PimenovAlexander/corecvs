@@ -52,7 +52,8 @@ int IterativeEstimateParameters::staticInit()
           "Limit Samples",
           true,
          -1,
-         99999999
+         99999999,
+         1
         );
     fields().push_back(field0);
     /*  */ 
@@ -66,7 +67,8 @@ int IterativeEstimateParameters::staticInit()
           "Iterations Number",
           true,
          0,
-         9999999
+         9999999,
+         1
         );
     fields().push_back(field1);
     /*  */ 
@@ -92,7 +94,8 @@ int IterativeEstimateParameters::staticInit()
           "Initial Sigma",
           true,
          0,
-         1e+07
+         1e+7,
+         1
         );
     field3->widgetHint=BaseField::SPIN_BOX;
     field3->precision=2;
@@ -108,7 +111,8 @@ int IterativeEstimateParameters::staticInit()
           "Sigma Factor",
           true,
          0,
-         1
+         1,
+         0.01
         );
     field4->widgetHint=BaseField::SPIN_BOX;
     field4->precision=5;

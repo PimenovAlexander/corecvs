@@ -45,11 +45,17 @@
 #include "core/math/sse/sseMath.h"
 #endif
 
+#ifdef _MSC_VER
+# ifdef WITH_SSE4_2
+#  include <intrin.h>
+# endif
+#endif
+
 namespace corecvs {
 
 #ifdef _MSC_VER
 # ifdef WITH_SSE4_2
-#  include <intrin.h>
+    //#  include <intrin.h> // must be above
 #  define __builtin_popcount __popcnt
 # else
 #  define __builtin_popcount popcount_lookup

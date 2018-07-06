@@ -11,25 +11,28 @@
 
 namespace corecvs {
 
-
-class HLineSpanInt {
+template<typename TypeY, typename TypeX>
+class HLineSpan {
 public:
-    int cy;
-    int x1;
-    int x2;
+    typedef TypeY InternalTypeY;
+    typedef TypeX InternalaTypeX;
 
-    HLineSpanInt() {}
+    TypeY cy;
+    TypeX x1;
+    TypeX x2;
 
-    HLineSpanInt(int y, int x1, int x2) :
+    HLineSpan() {}
+
+    HLineSpan(int y, int x1, int x2) :
         cy(y), x1(x1), x2(x2)
     {}
 
-    static HLineSpanInt Empty() {
-        return HLineSpanInt(0, 1, 0);
+    static HLineSpan Empty() {
+        return HLineSpan(0, 1, 0);
     }
 
 
-    void clip(int w, int h) {
+    void clip(TypeX w, TypeY h) {
         if (x1 > x2) std::swap(x1, x2);
         if (x1 <  0) x1 = 0;
         if (x2 >= w) x2 = w - 1;
@@ -44,15 +47,19 @@ public:
         x1++;
     }
 
+    void stepTo(int X) {
+        x1 = X;
+    }
+
     bool hasValue() {
         return (x1 <= x2);
     }
 
-    int x() {
+    TypeX x() {
         return x1;
     }
 
-    int y() {
+    TypeY y() {
         return cy;
     }
 
@@ -60,18 +67,22 @@ public:
         return Vector2d<int>(x(), y());
     }
 
+    Vector2dd posD() {
+        return Vector2d<int>(x(), y());
+    }
+
     /**
      * C++ style iteration
      **/
-    HLineSpanInt &begin() {
+    HLineSpan &begin() {
         return *this;
     }
 
-    HLineSpanInt & end() {
+    HLineSpan & end() {
         return *this;
     }
 
-    bool operator !=(const HLineSpanInt & other) {
+    bool operator !=(const HLineSpan & other) {
         return this->x1 <= (other.x2);
     }
 
@@ -87,13 +98,17 @@ public:
      * Utility functions
      **/
 
-    friend std::ostream& operator << (std::ostream &out, HLineSpanInt &toSave)
+    friend std::ostream& operator << (std::ostream &out, HLineSpan &toSave)
     {
         out << toSave.y() << " [" << toSave.x1 << " -> " << toSave.x2 << "]" << std::endl;
         return out;
     }
 
 };
+
+typedef HLineSpan<int, int   > HLineSpanInt;
+typedef HLineSpan<int, double> HLineSpanDouble;
+
 
 typedef std::vector<double> FragmentAttributes;
 
@@ -107,15 +122,19 @@ inline static std::ostream & operator <<(std::ostream &out, const FragmentAttrib
     return out;
 }
 
-class AttributedHLineSpan : public HLineSpanInt {
+
+template<typename SpanType, typename AttributesType>
+class AttributedSpan : public SpanType {
 public:
-    FragmentAttributes catt;
-    FragmentAttributes datt;
+    AttributesType catt;
+    AttributesType datt;
 
-    AttributedHLineSpan() : HLineSpanInt(0,1,0) {}
+    AttributedSpan() : SpanType(SpanType::Empty()) {
 
-    AttributedHLineSpan(int y, int x1, int x2, const FragmentAttributes &a1, const FragmentAttributes &a2) :
-        HLineSpanInt(y, x1, x2),
+    }
+
+    AttributedSpan(int y, int x1, int x2, const AttributesType &a1, const AttributesType &a2) :
+        SpanType(y, x1, x2),
         catt(a1)
     {
         datt.resize(catt.size());
@@ -128,22 +147,30 @@ public:
         for (size_t i = 0; i < catt.size(); i++) {
             catt[i] += datt[i];
         }
-        HLineSpanInt::step();
+        SpanType::step();
+    }
+
+    void stepTo(int X) {
+        int stepX = X - this->x1;
+        for (size_t i = 0; i < catt.size(); i++) {
+            catt[i] += datt[i] * stepX;
+        }
+        SpanType::stepTo(X);
     }
 
     bool hasValue() {
-        return HLineSpanInt::hasValue();
+        return SpanType::hasValue();
     }
 
     const FragmentAttributes &att() {
         return catt;
     }
 
-    AttributedHLineSpan &begin() {
+    AttributedSpan &begin() {
         return *this;
     }
 
-    AttributedHLineSpan & end() {
+    AttributedSpan & end() {
         return *this;
     }
 
@@ -151,6 +178,9 @@ public:
         step();
     }
 };
+
+typedef AttributedSpan<HLineSpanInt, FragmentAttributes> AttributedHLineSpan;
+
 
 /* Simple itretrator. Not optimized for speed */
 

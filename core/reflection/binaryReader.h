@@ -126,7 +126,7 @@ public:
      * Complex objects support with new style reflection
      **/
 template <typename inputType, typename reflectionType>
-    void visit(inputType &field, const reflectionType * fieldDescriptor)
+    void visit(inputType &field, const reflectionType * /*fieldDescriptor*/)
     {       
         field.accept(*this);       
     }
@@ -136,7 +136,7 @@ template <typename inputType, typename reflectionType>
      * Complex objects support with old style calls
      **/
 template <class Type>
-    void visit(Type &field, const char * fieldName)
+    void visit(Type &field, const char * /*fieldName*/)
     {
         field.accept(*this);
     }

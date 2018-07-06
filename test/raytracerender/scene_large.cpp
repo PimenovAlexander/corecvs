@@ -153,7 +153,7 @@ bool addLevel(const Matrix44 &transform, RaytraceableUnion &output, int depth, d
 
     double zRot0 = azimuth0(rnd);
 
-    int recusition = depth < CORE_COUNT_OF(branches) ? branches[depth] :  3;
+    int recusition = depth < (int)CORE_COUNT_OF(branches) ? branches[depth] : 3;
     for (int i = 0; i < recusition; i++)
     {
         double zRot = zRot0 + i * (degToRad(360) / recusition) + azimuthD(rnd);
@@ -165,7 +165,6 @@ bool addLevel(const Matrix44 &transform, RaytraceableUnion &output, int depth, d
     addLevel(atTop * Matrix44::RotationY(-degToRad(angle)), output, depth + 1, height * 0.7, width * 0.7);
     addLevel(atTop * Matrix44::RotationY( degToRad(angle)), output, depth + 1, height * 0.7, width * 0.7);
     */
-
     return true;
 }
 

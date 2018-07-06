@@ -1,7 +1,13 @@
 #pragma once
 
+#include <string>
+#include <mutex>
+
+#include "core/utils/global.h"
+#include "core/utils/preciseTimer.h"
+#include "core/framesources/imageCaptureInterface.h"
+#include "core/framesources/decoders/decoupleYUYV.h"
 #include "directShow.h"
-#include "decoupleYUYV.h"
 
 class DirectShowCaptureDecoupleInterface : public virtual ImageCaptureInterface
 {
@@ -12,8 +18,8 @@ public:
    DecoupleYUYV::ImageCouplingType coupling;
 
    /* Main fields */
-   QMutex protectFrame;
-   string devname;  /**< Stores the device name*/
+   std::mutex  protectFrame;
+   std::string devname;  /**< Stores the device name*/
    DirectShowCameraDescriptor cameras[2];
 
    int width;
@@ -31,8 +37,7 @@ public:
    static void callback (void *thiz, DSCapDeviceId dev, FrameData data);
    void memberCallback(DSCapDeviceId dev, FrameData data);
 
-
-   DirectShowCaptureDecoupleInterface(string _devname);
+   DirectShowCaptureDecoupleInterface(std::string _devname);
    virtual ~DirectShowCaptureDecoupleInterface();
 
    virtual FramePair getFrame();
@@ -40,14 +45,14 @@ public:
    virtual CapErrorCode initCapture();
    virtual CapErrorCode startCapture();
 
-   virtual CapErrorCode queryCameraParameters(CameraParameters &parameters);
-   virtual CapErrorCode setCaptureProperty(int id, int value);
-   virtual CapErrorCode getCaptureProperty(int id, int *value);
-   virtual CapErrorCode getCaptureName(QString &value);
-   virtual CapErrorCode getFormats(int *num, CameraFormat *&format);
+   virtual CapErrorCode queryCameraParameters(CameraParameters &parameters) override;
+   virtual CapErrorCode setCaptureProperty(int id, int value) override;
+   virtual CapErrorCode getCaptureProperty(int id, int *value) override;
+   virtual CapErrorCode getCaptureName(std::string &value) override;
+   virtual CapErrorCode getFormats(int *num, CameraFormat *&format) override;
 
    static int devicesNumber();
 
 private:
-   void setFromCameraParam(CaptureParameter &param, CameraParameter &camParam);
+   //void setFromCameraParam(CaptureParameter &param, CameraParameter &camParam);
 };

@@ -13,12 +13,10 @@
 #include <chrono>
 
 #include "core/utils/global.h"
-
-#include "wrappers/cblasLapack/cblasLapackeWrapper.h"
-
 #include "core/math/matrix/matrix.h"
 #include "core/math/sparseMatrix.h"
 #include "core/math/vector/vector.h"
+#include "wrappers/cblasLapack/cblasLapackeWrapper.h"
 
 namespace corecvs {
 
@@ -61,8 +59,8 @@ public:
 
     virtual void operator()(const vector<double> &in, vector<double> &out)
     {
-        CORE_ASSERT_TRUE( (int)  in.size() > inputs , "Too few input numbers");
-        CORE_ASSERT_TRUE( (int) out.size() > outputs, "Too few output numbers");
+        CORE_ASSERT_TRUE( (int)  in.size() >= inputs , "Too few input numbers");
+        CORE_ASSERT_TRUE( (int) out.size() >= outputs, "Too few output numbers");
 
         return operator()(in.data(), out.data());
     }
@@ -128,7 +126,6 @@ public:
     virtual Matrix getLSQHessian(const double* in, double delta = 1e-5);
 
     virtual ~FunctionArgs() {}
-
 };
 
 // This class only reshapes jacobian of another function
@@ -136,8 +133,7 @@ class JacobianFunctor : public FunctionArgs
 {
 public:
     JacobianFunctor(FunctionArgs *fun) : FunctionArgs(fun->inputs, fun->inputs * fun->outputs), fun(fun)
-    {
-    }
+    {}
     void operator() (const double* in, double* out)
     {
         auto J = fun->getJacobian(in, 1e-9);

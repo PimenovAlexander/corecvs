@@ -6,11 +6,12 @@
  * \date Sep 19, 2010
  * \author alexander
  */
-
-#include "core/utils/global.h"
-
 #include "core/buffers/kernels/blurProcessor.h"
 #include "core/tbbwrapper/tbbWrapper.h"
+
+#include "core/math/sse/sseWrapper.h"
+#include "core/math/neon/neonWrapper.h"
+
 namespace corecvs {
 
 /*TODO: Hide this*/
@@ -155,7 +156,7 @@ void BlurProcessor::prepareBlurBuffers(G12IntegralBuffer *integral,
 }
 
 
-#ifdef WITH_SSE
+#if defined(WITH_SSE) || defined(WITH_NEON)
 
 class ParallelPrepareBlurBuffersSSE
 {
@@ -210,7 +211,7 @@ public:
                 Int16x8 pv = Int16x8::pack(dv,dv2);
 
                 /* Now the order is 3 1 2 0 7 5 6 4 */
-                Int16x8 sv0 = pv.shuffled<_MM_SHUFFLE(3,1,2,0)>();
+                Int16x8 sv0 = Int16x8(Int32x4(pv.data).shuffled<_MM_SHUFFLE(3,1,2,0)>());
                 //__m128i sv0 = _mm_shuffle_epi32(pv,_MM_SHUFFLE(3,1,2,0));
                 /**
                  * Now the order is 6 4 2 0 7 5 3 1
@@ -219,7 +220,7 @@ public:
                 sv0.saveLower(outoffset1);
                 //_mm_storel_epi64((__m128i*)outoffset1, sv0);
 
-                Int16x8 sv1 = pv.shuffled<_MM_SHUFFLE(2,0,3,1)>();
+                Int16x8 sv1 = Int16x8(Int32x4(pv.data).shuffled<_MM_SHUFFLE(2,0,3,1)>());
                 //__m128i sv1 = _mm_shuffle_epi32(pv,_MM_SHUFFLE(2,0,3,1));
                 /* Now the order is 7 5 3 1 6 4 2 0 */
                 sv1.saveLower(outoffset2);
@@ -273,7 +274,7 @@ ALIGN_STACK_SSE void BlurProcessor::prepareBlurBuffersSSE(G12IntegralBuffer *int
     parallelable_for(0u, h - 4, ParallelPrepareBlurBuffersSSE(integral, blur));
 }
 
-#endif // WITH_SSE
+#endif // defined(WITH_SSE) || defined(WITH_NEON)
 
 } //namespace corecvs
 

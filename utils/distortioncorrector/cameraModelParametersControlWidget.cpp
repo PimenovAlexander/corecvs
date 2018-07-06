@@ -18,7 +18,7 @@ CameraModelParametersControlWidget::CameraModelParametersControlWidget(QWidget *
     QObject::connect(ui->lensDistortionWidget, SIGNAL(paramsChanged())     , this, SLOT(paramsChangedInUI()));
     QObject::connect(ui->extrinsicWorldWidget, SIGNAL(paramsChanged())     , this, SLOT(paramsChangedInUI()));
 
-    QObject::connect(ui->spinBoxFocalX, SIGNAL(valueChanged(double)), this, SLOT(paramsChangedInUI()));
+    /*QObject::connect(ui->spinBoxFocalX, SIGNAL(valueChanged(double)), this, SLOT(paramsChangedInUI()));
     QObject::connect(ui->spinBoxFocalY, SIGNAL(valueChanged(double)), this, SLOT(paramsChangedInUI()));
 
     QObject::connect(ui->spinBoxCx, SIGNAL(valueChanged(double)), this, SLOT(paramsChangedInUI()));
@@ -30,7 +30,32 @@ CameraModelParametersControlWidget::CameraModelParametersControlWidget(QWidget *
     QObject::connect(ui->spinBoxSizeDistortedX, SIGNAL(valueChanged(double)), this, SLOT(paramsChangedInUI()));
     QObject::connect(ui->spinBoxSizeDistortedY, SIGNAL(valueChanged(double)), this, SLOT(paramsChangedInUI()));
 
-    QObject::connect(ui->spinBoxSkew, SIGNAL(valueChanged(double)), this, SLOT(paramsChangedInUI()));
+    QObject::connect(ui->spinBoxSkew, SIGNAL(valueChanged(double)), this, SLOT(paramsChangedInUI()));*/
+
+    /* So far just hide old stuff*/
+    /*if (true)
+    {
+        ui->oldFrame->hide();
+        ui->spinBoxFocalX->hide();
+        ui->spinBoxFocalY->hide();
+
+        ui->spinBoxCx->hide();
+        ui->spinBoxCy->hide();
+
+        ui->spinBoxSizeX->hide();
+        ui->spinBoxSizeY->hide();
+
+        ui->spinBoxSizeDistortedX->hide();
+        ui->spinBoxSizeDistortedY->hide();
+
+        ui->spinBoxSkew->hide();
+    }*/
+
+
+    //QObject::connect(ui->showDistortionCheckBox, SIGNAL(toggled(bool)), ui->lensDistortionWidget, SLOT(setVisible(bool)));
+    // QObject::connect(ui->showProjection        , SIGNAL(toggled(bool)), ui->projection, SLOT(setVisible(bool));
+    //QObject::connect(ui->showExtrinsicsCheckBox, SIGNAL(toggled(bool)), ui->tabWidget,            SLOT(setVisible(bool)));
+
 //    writeUi();
     /* Addintional buttons */
 
@@ -44,6 +69,19 @@ CameraModelParametersControlWidget::CameraModelParametersControlWidget(QWidget *
 
     ui->extrinsicCamWidget->setEnabled(false);
 
+    /* */
+    for (int i = 0; i < ProjectionType::PROJECTIONTYPE_LAST; i++)
+    {
+        ui->projectionTypeComboBox->addItem(ProjectionType::getName((ProjectionType::ProjectionType)i));
+    }
+    QObject::connect(ui->projectionTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(paramsChangedInUI()));
+
+    QGridLayout *glayout = new QGridLayout;
+    glayout->setMargin(2);
+    glayout->setContentsMargins(2,2,2,2);
+    glayout->setHorizontalSpacing(2);
+    glayout->setVerticalSpacing(2);
+    ui->projectionFrame->setLayout(glayout);
 }
 
 CameraModelParametersControlWidget::~CameraModelParametersControlWidget()
@@ -51,6 +89,7 @@ CameraModelParametersControlWidget::~CameraModelParametersControlWidget()
     delete_safe(ui);
 }
 
+#if 0
 LensDistortionModelParameters CameraModelParametersControlWidget::lensDistortionParameters()
 {
     LensDistortionModelParameters result;
@@ -62,6 +101,7 @@ void CameraModelParametersControlWidget::setLensDistortionParameters(const LensD
 {
     ui->lensDistortionWidget->setParameters(params);
 }
+#endif
 
 void CameraModelParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
@@ -82,7 +122,7 @@ void CameraModelParametersControlWidget::loadPressed()
         this,
         "LOAD: Choose an camera config name",
         ".",
-        "Text (*.json)"
+        "Text (*.json *.txt)"
     );
     if (!filename.isEmpty()) {
         emit loadRequest(filename);
@@ -122,8 +162,22 @@ void CameraModelParametersControlWidget::resetPressed()
     emit paramsChanged();
 }
 
+void CameraModelParametersControlWidget::assertProjectionMatch()
+{
+    Reflection *ref = ProjectionFactory::reflectionById((ProjectionType::ProjectionType)ui->projectionTypeComboBox->currentIndex());
+    if (intrinsicsWidget == NULL || ref != intrinsicsWidget->reflection)
+    {
+        delete_safe(intrinsicsWidget);
+        intrinsicsWidget = new ReflectionWidget(ref);
+        QObject::connect(intrinsicsWidget, SIGNAL(paramsChanged()), this, SLOT(paramsChangedInUI()));
+        ui->projectionFrame->layout()->addWidget(intrinsicsWidget);
+     }
+}
+
 void CameraModelParametersControlWidget::paramsChangedInUI()
 {
+    assertProjectionMatch();
+
 //    qDebug() << "CameraModelParametersControlWidget::paramsChangedInUI(): pressed";
     ui->revertButton->setEnabled(true);
     emit paramsChanged();
@@ -141,20 +195,20 @@ void CameraModelParametersControlWidget::getParameters(CameraModel& params) cons
     ui->extrinsicWorldWidget->getParameters(location);
     params.setLocation(location);
 
-    params.intrinsics.focal.x() = ui->spinBoxFocalX->value();
-    params.intrinsics.focal.y() = ui->spinBoxFocalY->value();
+    ProjectionType::ProjectionType curId = (ProjectionType::ProjectionType) ui->projectionTypeComboBox->currentIndex();
+    if (params.intrinsics->projection != curId)
+    {
+        params.intrinsics.reset(ProjectionFactory::projectionById(curId));
+    }
 
-    params.intrinsics.principal.x() = ui->spinBoxCx->value();
-    params.intrinsics.principal.y() = ui->spinBoxCy->value();
+    Reflection *ref = ProjectionFactory::reflectionById(params.intrinsics->projection);
+    if (intrinsicsWidget != NULL && intrinsicsWidget->reflection == ref)
+    {
+        DynamicObjectWrapper wrapper = params.intrinsics->getDynamicWrapper();
+        intrinsicsWidget->getParameters(wrapper.rawObject);
+    }
 
 
-    params.intrinsics.size.x() =  ui->spinBoxSizeX->value();
-    params.intrinsics.size.y() =  ui->spinBoxSizeY->value();
-
-    params.intrinsics.distortedSize.x() =  ui->spinBoxSizeDistortedX->value();
-    params.intrinsics.distortedSize.y() =  ui->spinBoxSizeDistortedY->value();
-
-    params.intrinsics.skew = ui->spinBoxSkew->value();
 }
 
 CameraModel *CameraModelParametersControlWidget::createParameters() const
@@ -170,6 +224,7 @@ CameraModel *CameraModelParametersControlWidget::createParameters() const
 
 void CameraModelParametersControlWidget::setParameters(const CameraModel &input)
 {
+    SYNC_PRINT(("CameraModelParametersControlWidget::setParameters()\n"));
     // Block signals to send them all at once
     bool wasBlocked = blockSignals(true);
 
@@ -179,24 +234,37 @@ void CameraModelParametersControlWidget::setParameters(const CameraModel &input)
     ui->extrinsicWorldWidget->setParameters(input.getAffine());
     ui->extrinsicCamWidget->setParameters(FixtureScene::DEFAULT_WORLD_TO_CAMERA * input.getAffine());
 
-    ui->spinBoxFocalX->setValue(input.intrinsics.fx());
-    ui->spinBoxFocalY->setValue(input.intrinsics.fy());
+#if 0
+    PinholeCameraIntrinsics *pinhole = input.getPinhole();
 
-    ui->spinBoxCx->setValue(input.intrinsics.cx());
-    ui->spinBoxCy->setValue(input.intrinsics.cy());
+    if (pinhole != NULL)
+    {
+        ui->spinBoxFocalX->setValue(pinhole->focalX());
+        ui->spinBoxFocalY->setValue(pinhole->focalY());
 
-    ui->spinBoxSizeX->setValue(input.intrinsics.size.x());
-    ui->spinBoxSizeX->setValue(input.intrinsics.size.y());
+        ui->spinBoxCx->setValue(pinhole->principalX());
+        ui->spinBoxCy->setValue(pinhole->principalY());
 
-    ui->spinBoxSizeDistortedX->setValue(input.intrinsics.distortedSize.x());
-    ui->spinBoxSizeDistortedY->setValue(input.intrinsics.distortedSize.y());
+        ui->spinBoxSizeX->setValue(pinhole->sizeX());
+        ui->spinBoxSizeX->setValue(pinhole->sizeY());
 
-    ui->spinBoxSkew->setValue(input.intrinsics.skew);
+        ui->spinBoxSizeDistortedX->setValue(pinhole->distortedSizeX());
+        ui->spinBoxSizeDistortedY->setValue(pinhole->distortedSizeY());
 
-    ui->infoLabel->setText(QString("Size(xy):[%1 x %2] dist:[%3 x %4]")
-                .arg(input.intrinsics.size.x()).arg(input.intrinsics.size.y())
-                .arg(input.intrinsics.distortedSize.x()).arg(input.intrinsics.distortedSize.y()));
+        ui->spinBoxSkew->setValue(pinhole->skew());
 
+        /*ui->infoLabel->setText(QString("Size(xy):[%1 x %2] dist:[%3 x %4]")
+                    .arg(pinhole->sizeX())         .arg(pinhole->sizeY())
+                    .arg(pinhole->distortedSizeX()).arg(pinhole->distortedSizeY()));*/
+    }
+#endif
+
+    /**/
+    ui->projectionTypeComboBox->setCurrentIndex(input.intrinsics->projection);
+
+    assertProjectionMatch();
+    DynamicObjectWrapper wrapper = input.intrinsics->getDynamicWrapper();
+    intrinsicsWidget->setParameters(wrapper.rawObject);
 
     blockSignals(wasBlocked);
     backup = input;
@@ -214,7 +282,7 @@ void CameraModelParametersControlWidget::setParametersVirtual(void *input)
 
 
 
-
+#if 0
 FixtureCameraParametersControlWidget::FixtureCameraParametersControlWidget(QWidget *parent) :
     CameraModelParametersControlWidget(parent)
 {
@@ -224,3 +292,4 @@ FixtureCameraParametersControlWidget::FixtureCameraParametersControlWidget(QWidg
 
     ui->mainLayout->addWidget(prototypeBox, 0, 0, 1, 1);
 }
+#endif

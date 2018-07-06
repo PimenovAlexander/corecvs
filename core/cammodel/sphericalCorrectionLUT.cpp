@@ -9,8 +9,7 @@
 #include "core/cammodel/sphericalCorrectionLUT.h"
 namespace corecvs {
 
-
-
+const size_t RadiusCorrectionLUT::LUT_SIZE_LIMIT;
 
 
 } //namespace corecvs

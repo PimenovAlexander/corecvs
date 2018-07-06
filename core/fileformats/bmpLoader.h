@@ -61,9 +61,9 @@ public:
     virtual G12Buffer   * loadG12(string name);
     virtual RGB24Buffer * loadRGB(string name);
 
-    virtual bool save(string name, RGB24Buffer *buffer);
-    virtual bool save(string name, G12Buffer   *buffer);
-    virtual bool save(string name, G8Buffer   *buffer);
+    virtual bool save(const string& name, const RGB24Buffer *buffer);
+    virtual bool save(const string& name, const G12Buffer   *buffer);
+    virtual bool save(const string& name, const G8Buffer    *buffer);
 
 private:
     int parseBMP (string& name, BMPHeader *header, uint8_t **dataPtr);
@@ -77,12 +77,12 @@ typedef BMPLoaderBase BMPLoader;
 class BMPLoaderG12 : public BufferLoader<G12Buffer>, public BMPLoaderBase
 {
 public:
-    virtual bool acceptsFile(string name) override
+    virtual bool acceptsFile(const string & name) override
     {
         return BMPLoaderBase::acceptsFile(name);
     }
 
-    virtual G12Buffer *load(string name) override
+    virtual G12Buffer *load(const string & name) override
     {
         return BMPLoaderBase::loadG12(name);
     }
@@ -96,12 +96,12 @@ public:
 class BMPLoaderRGB24 : public BufferLoader<RGB24Buffer>, public BMPLoaderBase
 {
 public:
-    virtual bool acceptsFile(string name) override
+    virtual bool acceptsFile(const string &name) override
     {
        return BMPLoaderBase::acceptsFile(name);
     }
 
-    virtual RGB24Buffer *load(string name) override
+    virtual RGB24Buffer *load(const string &name) override
     {
         return BMPLoaderBase::loadRGB(name);
     }
@@ -114,10 +114,11 @@ public:
 
 class BMPSaverRGB24 : public BufferSaver<RGB24Buffer>, public BMPLoaderBase
 {
-    virtual bool acceptsFile(string name) {
+    virtual bool acceptsFile(const std::string & name) {
         return BMPLoaderBase::acceptsFile(name);
     }
-    virtual bool save(RGB24Buffer &buffer, string name) override {
+    virtual bool save(const RGB24Buffer &buffer, const string& name, int quality = 95) override {
+        CORE_UNUSED(quality);
         return BMPLoaderBase::save(name, &buffer);
     }
 

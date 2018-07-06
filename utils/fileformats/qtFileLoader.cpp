@@ -88,7 +88,7 @@ QImage* QTFileLoader::RGB24BufferToQImage(RGB24Buffer &buffer)
     return img;
 }
 
-void QTFileLoader::save(const std::string& name, corecvs::RGB24Buffer *input, int quality)
+void QTFileLoader::save(const std::string& name, const corecvs::RGB24Buffer *input, int quality)
 {
     //qDebug() << "Saving to" << name.c_str() << "[" << input->w << "x" << input->h << " st:" << input->stride << " sz:" << input->sizeInBytes() << "] ptr:" << hex << (void *)input->data;
     //{
@@ -117,7 +117,7 @@ QTemporaryFile* QTFileLoader::saveTemporary(const QImage& image)
 }
 
 
-G12Buffer* QTG12Loader::load(string name)
+G12Buffer* QTG12Loader::load(const string &name)
 {
     QImage image(QString::fromStdString(name));
     if (image.isNull())
@@ -143,12 +143,12 @@ G12Buffer* QTG12Loader::load(string name)
     return result;
 }
 
-bool QTG12Loader::acceptsFile(string /*name*/)
+bool QTG12Loader::acceptsFile(const std::string & /*name*/)
 {
     return true;
 }
 
-corecvs::RGB24Buffer* QTRGB24Loader::load(string name)
+corecvs::RGB24Buffer* QTRGB24Loader::load(const std::string &name)
 {
     SYNC_PRINT(("QTRGB24Loader::load(%s): called\n", name.c_str()));
 
@@ -162,7 +162,7 @@ corecvs::RGB24Buffer* QTRGB24Loader::load(string name)
     return QTFileLoader::RGB24BufferFromQImage(&image);
 }
 
-bool QTRGB24Loader::acceptsFile(string /*name*/)
+bool QTRGB24Loader::acceptsFile(const string & /*name*/)
 {
     return true;
 }
@@ -174,12 +174,12 @@ QTG12Loader::~QTG12Loader()
 QTRGB24Loader::~QTRGB24Loader()
 {}
 
-bool QTRuntimeLoader::acceptsFile(std::string /*name*/)
+bool QTRuntimeLoader::acceptsFile(const std::string & /*name*/)
 {
     return true;
 }
 
-RuntimeTypeBuffer *QTRuntimeLoader::load(std::string name)
+RuntimeTypeBuffer *QTRuntimeLoader::load(const std::string &name)
 {
     QImage image(QString::fromStdString(name));
     if (image.isNull())
@@ -207,14 +207,14 @@ RuntimeTypeBuffer *QTRuntimeLoader::load(std::string name)
 QTRuntimeLoader::~QTRuntimeLoader()
 {}
 
-bool QTRGB24Saver::acceptsFile(std::string name)
+bool QTRGB24Saver::acceptsFile(const std::string &name)
 {
     CORE_UNUSED(name);
     return true;
 }
 
-bool QTRGB24Saver::save(RGB24Buffer &buffer, std::string name)
+bool QTRGB24Saver::save(const corecvs::RGB24Buffer &buffer, const std::string& name, int quality)
 {
-    QTFileLoader().save(name, &buffer, 100);
+    QTFileLoader().save(name, &buffer, quality);
     return true;
 }

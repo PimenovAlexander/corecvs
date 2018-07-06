@@ -29,9 +29,13 @@ public:
     virtual ~OBJLoader();
     int loadOBJ(istream &input, Mesh3DDecorated &mesh);
     int loadMaterials(istream &input, vector<OBJMaterial> &materials, const std::string &path = "");
+    int saveMaterials(const std::string &fileName, vector<OBJMaterial> &materials, const std::string &path = "");
 
     int loadOBJSimple(istream &input, Mesh3D &mesh);
     int saveOBJSimple(ostream &out, Mesh3D &mesh);
+
+    /** Not yet finished **/
+    int saveObj(const std::string &fileName, Mesh3DDecorated &mesh);
 };
 
 } // namespace corecvs

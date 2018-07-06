@@ -51,20 +51,22 @@ echo "draw3d copied"
 
 # Unified 
 
-echo -n "Running generator on xml/opencvsgm.xml..."
-${GENERATOR_BIN} xml/opencvsgm.xml
-echo "done"
 
-dest="../../utils/corestructs/libWidgets"
 
-copy_if_different Generated/openCVSGMParametersControlWidget.ui   $dest/
-copy_if_different Generated/openCVSGMParametersControlWidget.cpp  $dest/
-copy_if_different Generated/openCVSGMParameters.cpp               $dest/
-copy_if_different Generated/openCVSGMParameters.h                 $dest/
+#echo -n "Running generator on xml/opencvsgm.xml..."
+#${GENERATOR_BIN} xml/opencvsgm.xml
+#echo "done"
+#
+#dest="../../utils/corestructs/libWidgets"
+#
+#copy_if_different Generated/openCVSGMParametersControlWidget.ui   $dest/
+#copy_if_different Generated/openCVSGMParametersControlWidget.cpp  $dest/
+#copy_if_different Generated/openCVSGMParameters.cpp               $dest/
+#copy_if_different Generated/openCVSGMParameters.h                 $dest/
 
-copy_if_different Generated/openCVBMParametersControlWidget.ui    $dest/
-copy_if_different Generated/openCVBMParametersControlWidget.cpp   $dest/
-copy_if_different Generated/openCVBMParameters.cpp                $dest/
-copy_if_different Generated/openCVBMParameters.h                  $dest/
+#copy_if_different Generated/openCVBMParametersControlWidget.ui    $dest/
+#copy_if_different Generated/openCVBMParametersControlWidget.cpp   $dest/
+#copy_if_different Generated/openCVBMParameters.cpp                $dest/
+#copy_if_different Generated/openCVBMParameters.h                  $dest/
 
 

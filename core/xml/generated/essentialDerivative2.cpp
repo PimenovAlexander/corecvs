@@ -5,8 +5,9 @@
 using namespace std;
 namespace corecvs {
 
-Matrix derivative2(const double in[], const vector<Correspondence *> *samples) {
-    Matrix result(samples->size(), EssentialEstimator::CostFunctionBase::VECTOR_SIZE, false);
+Matrix derivative2(const double in[], const vector<Correspondence *> *samples)
+{
+    Matrix result((int)samples->size(), EssentialEstimator::CostFunctionBase::VECTOR_SIZE, false);
     double Qx = in[EssentialEstimator::CostFunctionBase::ROTATION_Q_X]; 
     double Qy = in[EssentialEstimator::CostFunctionBase::ROTATION_Q_Y]; 
     double Qz = in[EssentialEstimator::CostFunctionBase::ROTATION_Q_Z]; 
@@ -287,7 +288,7 @@ md[62] = 0;
                 ((l1*endx + l2*endy + l3)*sqrt1-
                  (v1)*((m1*l1+l2*m2) / sqrt1))/denum;
 
-                result.element(i,j) = (v < 0) ? -r : r;
+                result.element((int)i, (int)j) = (v < 0) ? -r : r;
          }
 #else
          {

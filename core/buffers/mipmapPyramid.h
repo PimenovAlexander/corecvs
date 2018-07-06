@@ -39,7 +39,7 @@ public:
         levels[0] = new BufferType(input);
         for (int i = 1; i < _levelNumber; i++)
         {
-            levels[i] = downsample(levels[i-1]);
+            levels[i] = downsample2(levels[i-1]);
         }
     }
 

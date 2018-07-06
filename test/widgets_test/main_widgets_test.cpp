@@ -122,7 +122,8 @@ int main(int argc, char **argv)
             refName = argv[2];
 
         auto it = directory.find(refName);
-        if (it == directory.end()) {
+        if (it == directory.end())
+        {
 /*
             {
                 Reflection *widget_ref = &AxisAlignedBoxParameters::reflection;
@@ -159,26 +160,30 @@ int main(int argc, char **argv)
                 ReflectionWidget *aabWidget = new ReflectionWidget(widget_ref);
                 aabWidget->show();
             } */
-        } else {
+        }
+        else
+        {
             Reflection *widget_ref = (*it).second;
             aabWidget = new ReflectionWidget(widget_ref);
             aabWidget->show();
 
-            bool isBlock = false;
+            //bool isBlock = false;
             for (int fieldId = 0; fieldId < widget_ref->fieldNumber(); fieldId++)
             {
                 const BaseField *field = widget_ref->fields[fieldId];
                 if (field->isInputPin()) {
                     SYNC_PRINT(("We have an input field %s\n", field->name.name));
-                    isBlock = true;
+              //      isBlock = true;
                 }
                 if (field->isOuputPin()) {
                     SYNC_PRINT(("We have an output field %s\n", field->name.name));
-                    isBlock = true;
+              //      isBlock = true;
                 }
             }
+            //SYNC_PRINT(("isBlock %d\n", isBlock));
         }
-    } else if ( mode == "block")
+    }
+    else if (mode == "block")
     {
         std::string blockName;
         if (argc >= 2)
@@ -208,4 +213,3 @@ int main(int argc, char **argv)
     delete_safe(reciever);
     return 0;
 }
-

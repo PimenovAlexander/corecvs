@@ -148,22 +148,53 @@ void testRadialInversion(int scale)
     };
     touchOperationElementwize(image, operation);
 
+#if 0
     LensDistortionModelParameters deformator;
     deformator.setPrincipalX(image->w / 2);
     deformator.setPrincipalY(image->h / 2);
+    deformator.setNormalizingFocal(deformator.principalPoint().l2Metric());
 
-    deformator.setTangentialX(0.000001);
-    deformator.setTangentialY(0.000001);
+    deformator.setTangentialX(0.001);
+    deformator.setTangentialY(0.001);
 
     deformator.setAspect(1.0);
     deformator.setScale(1.0);
 
-    deformator.mKoeff.push_back( 0.0001);
-    deformator.mKoeff.push_back(-0.00000002);
-    deformator.mKoeff.push_back( 0.00000000000003);
+    deformator.mKoeff.push_back( 0.1);
+    deformator.mKoeff.push_back(-0.2);
+    deformator.mKoeff.push_back( 0.3);
+#else
+    LensDistortionModelParameters deformator;
+    deformator.setMapForward(false);
+    deformator.setPrincipalX(480);
+    deformator.setPrincipalY(360);
+    deformator.setNormalizingFocal(734.29999999999995);
+
+    deformator.setTangentialX(0.00);
+    deformator.setTangentialY(0.00);
+
+    deformator.setShiftX(0.00);
+    deformator.setShiftY(0.00);
+
+
+    deformator.setAspect(1.0);
+    deformator.setScale (1.0);
+
+    deformator.mKoeff.clear();
+    deformator.mKoeff.push_back( 0);
+    deformator.mKoeff.push_back( -0.65545);
+    deformator.mKoeff.push_back( 0);
+    deformator.mKoeff.push_back( 8.2439);
+//    deformator.mKoeff.push_back( 0);
+//    deformator.mKoeff.push_back( 8.01);
+#endif
+
 
     RadialCorrection T(deformator);
     PreciseTimer timer;
+
+    cout << "Initial deformation... " << endl;
+    cout << T.mParams << flush;;
 
     cout << "Starting deformation... " << flush;
     timer = PreciseTimer::currentTime();
@@ -171,8 +202,10 @@ void testRadialInversion(int scale)
     cout << "done in: " << timer.usecsToNow() << "us" << endl;
 
     /* */
+    int inversionGridStep = 30;
+
     cout << "Starting invertion... " << flush;
-    RadialCorrection invert = T.invertCorrection(image->h, image->w, 30);
+    RadialCorrection invert = T.invertCorrection(image->h, image->w, inversionGridStep);
     cout << "done" << endl;
 
     cout << "Starting backprojection... " << flush;
@@ -181,11 +214,31 @@ void testRadialInversion(int scale)
     cout << "done in: " << timer.usecsToNow() << "us" << endl;
     cout << "done" << endl;
 
+
+    RGB24Buffer *debug = new RGB24Buffer(image->getSize());
+    /* Show visual */
+    double dh = (double)image->h / (inversionGridStep - 1);
+    double dw = (double)image->w / (inversionGridStep - 1);
+    for (int i = 0; i < inversionGridStep; i++)
+    {
+        for (int j = 0; j < inversionGridStep; j++)
+        {
+             Vector2dd point(dw * j, dh * i);
+             debug->drawCrosshare1(point, RGBColor::Yellow());
+             Vector2dd deformed    = T.mapToUndistorted(point); /* this could be cached */
+             Vector2dd backproject = invert.mapToUndistorted(deformed);
+
+             debug->drawCrosshare1(backproject, RGBColor::Green());
+        }
+    }
+
     BMPLoader().save("input.bmp"      , image);
+    BMPLoader().save("debug.bmp"      , debug);
     BMPLoader().save("forward.bmp"    , deformed);
     BMPLoader().save("backproject.bmp", backproject);
 
     delete_safe(image);
+    delete_safe(debug);
     delete_safe(deformed);
     delete_safe(backproject);
 }

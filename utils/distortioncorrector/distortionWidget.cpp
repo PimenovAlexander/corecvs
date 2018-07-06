@@ -409,7 +409,7 @@ void DistortionWidget::showBufferChanged()
                 break;
             }
 
-            FixedPointDisplace displace(*mDistortionCorrectTransform, mDistortionCorrectTransform->h, mDistortionCorrectTransform->w);
+            FixedPointRemapper displace(*mDistortionCorrectTransform, mDistortionCorrectTransform->h, mDistortionCorrectTransform->w);
             RGB24Buffer *buffer = mBufferInput->doReverseDeformationBlPrecomp(&displace);
 
             image = new RGB24Image(buffer);

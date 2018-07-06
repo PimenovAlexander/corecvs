@@ -1,8 +1,8 @@
 #ifndef BILINEARMAPPOINT_H_
 #define BILINEARMAPPOINT_H_
 /**
- * \file fixedPointDisplace.h
- * \brief A header for fixedPointDisplace.c
+ * \file bilinearMapPoint.h
+ * \brief A header for bilinearMapPoint.cpp
  *
  *
  *

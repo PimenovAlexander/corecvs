@@ -26,7 +26,9 @@
 #include "core/iterative/minresQLP.h"
 #include "core/iterative/pcg.h"
 
-// #include "core/math/em.h"
+#if 0
+#include "core/math/em.h"
+#endif
 
 using namespace corecvs;
 
@@ -1677,7 +1679,7 @@ TEST(SparseMatrix, denseCols2)
     auto D = F.denseCols(0, 0, 1, 2, rowIdx);
     ASSERT_EQ(D.w, 1);
     ASSERT_EQ(D.h, 1);
-    ASSERT_EQ(rowIdx.size(), 1);
+    ASSERT_EQ(rowIdx.size(), (size_t)1);
     ASSERT_EQ(rowIdx[0], 1);
 }
 
@@ -1693,7 +1695,7 @@ TEST(SparseMatrix, denseRows2)
     auto D = F.denseRows(0, 0, 2, 1, rowIdx);
     ASSERT_EQ(D.w, 1);
     ASSERT_EQ(D.h, 1);
-    ASSERT_EQ(rowIdx.size(), 1);
+    ASSERT_EQ(rowIdx.size(), (size_t)1);
     ASSERT_EQ(rowIdx[0], 1);
 }
 
@@ -1710,7 +1712,7 @@ TEST(SparseMatrix, denseCols3)
     auto D = F.denseCols(1, 0, 2, 2, rowIdx);
     ASSERT_EQ(D.w, 1);
     ASSERT_EQ(D.h, 0);
-    ASSERT_EQ(rowIdx.size(), 0);
+    ASSERT_EQ(rowIdx.size(), (size_t)0);
 }
 
 TEST(SparseMatrix, denseCols4)
@@ -1725,10 +1727,11 @@ TEST(SparseMatrix, denseCols4)
     auto D = F.denseCols(2, 0, 3, 2, rowIdx);
     ASSERT_EQ(D.w, 1);
     ASSERT_EQ(D.h, 1);
-    ASSERT_EQ(rowIdx.size(), 1);
+    ASSERT_EQ(rowIdx.size(), (size_t)1);
     ASSERT_EQ(rowIdx[0], 1);
     ASSERT_EQ(D.a(0, 0), 5.0);
 }
+
 
 #if 0
 TEST(EM, EM)

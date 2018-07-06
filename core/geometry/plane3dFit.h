@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "core/math/vector/vector3d.h"
-#include "core/geometry/line.h"
+#include "core/geometry/plane.h"
 #include "core/geometry/ellipticalApproximation.h"
 
 namespace corecvs {
@@ -19,7 +19,10 @@ class Plane3dFit
 {
 public:
     class PlaneReconstructionModel {
-    public:
+    public:        
+        typedef Vector3dd                SampleType;
+        typedef PlaneReconstructionModel ModelType;
+
         EllipticalApproximation3d approx;
         Plane3d plane;
 
@@ -38,7 +41,7 @@ public:
             plane.normalise();
         }
 
-        static vector<PlaneReconstructionModel> getModels(vector<Vector3dd *> &points)
+        static vector<PlaneReconstructionModel> getModels(vector<Vector3dd *> &points, PlaneReconstructionModel * /*context*/ = NULL)
         {
             vector<PlaneReconstructionModel> result;
             result.push_back(PlaneReconstructionModel(points));

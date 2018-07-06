@@ -20,12 +20,16 @@ namespace corecvs {
 class RansacEstimator
 {
 public:
-    unsigned trySize;
+    int algorithm = 0;
+    bool trace = false;
+    int trySize;
     RansacParameters ransacParams;
 
+    /*Addintional outputs*/
+    double fitPercent = 0.0;
 
     RansacEstimator(
-            unsigned  _trySize,
+            int  _trySize, /* Negative values force default try size */
             unsigned _maxIterations,
             double _treshold ) :
         trySize(_trySize)
@@ -34,11 +38,17 @@ public:
         ransacParams.setInlierThreshold(_treshold);
     }
 
+
+
     Matrix33 getFundamentalRansac1(CorrespondenceList *list);
     Matrix33 getEssentialRansac1  (CorrespondenceList *list);
 
     Matrix33 getFundamentalRansac(vector<Correspondence *> *data);
-    Matrix33 getEssentialRansac  (vector<Correspondence *> *data);
+
+    template <class Subestimator>
+    Matrix33 getEssentialRansacS (vector<Correspondence *> *data);
+
+    Matrix33 getEssentialRansac  (vector<Correspondence *> *data);    
 };
 
 class RansacEstimatorScene

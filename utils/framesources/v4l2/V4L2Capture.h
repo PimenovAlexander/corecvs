@@ -16,8 +16,8 @@
 
 #include "V4L2.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
-#include "cameraControlParameters.h"
-#include "imageCaptureInterface.h"
+#include "core/framesources/cameraControlParameters.h"
+#include "core/framesources/imageCaptureInterface.h"
 #include "core/utils/preciseTimer.h"
 #include "../../frames.h"
 

@@ -8,6 +8,8 @@ echo -n "Building generator... "
 qmake && make
 echo "done"
 
+mkdir -p Generated
+
 echo -n "Running generator on xml/merger.xml..."
 ${GENERATOR_BIN} xml/merger.xml
 echo "done"

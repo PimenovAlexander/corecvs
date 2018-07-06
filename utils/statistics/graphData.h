@@ -4,6 +4,8 @@
 #include <vector>
 #include <deque>
 #include <string>
+#include <limits>
+#include <algorithm>   // for std::min, std::max
 
 
 class GraphValue
@@ -22,6 +24,22 @@ class GraphHistory : public std::deque<GraphValue>
 public:
     bool isSelected;
     std::string name;
+
+    double minValue () {
+        double result = std::numeric_limits<double>::max();
+        for(GraphValue g: *this) {
+            if (g.isValid) result = std::min(result, g.value);
+        }
+        return result;
+    }
+
+    double maxValue () {
+        double result = std::numeric_limits<double>::lowest();
+        for(GraphValue g: *this) {
+            if (g.isValid) result = std::max(result, g.value);
+        }
+        return result;
+    }
 };
 
 class GraphData {

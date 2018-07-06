@@ -14,13 +14,13 @@
 #include "core/utils/global.h"
 
 #include "core/reflection/reflection.h"
+#include "core/utils/visitors/propertyListVisitor.h"
 #include "visitors/qSettingsSetter.h"
-#include "visitors/xmlSetter.h"
 #include "visitors/qSettingsGetter.h"
+#include "visitors/xmlSetter.h"
 #include "visitors/xmlGetter.h"
 #include "visitors/jsonSetter.h"
 #include "visitors/jsonGetter.h"
-#include "core/utils/visitors/propertyListVisitor.h"
 
 using corecvs::BaseReflectionStatic;
 
@@ -223,7 +223,6 @@ private:
     XmlGetter                 *mXmlGetter = NULL;
     JSONGetter                *mJsonGetter = NULL;
     PropertyListReaderVisitor *mPropertyListGetter = NULL;
-
 };
 
 class SaveableWidget
@@ -284,9 +283,4 @@ public:
     }
 };
 
-
-
-
 #endif  /* #ifndef PARAMETERS_CONTROL_WIDGET_BASE_H_ */
-
-

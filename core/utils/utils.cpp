@@ -254,6 +254,12 @@ std::string getFileNameIfExist(const std::string &fileName, const std::string &r
     return "";
 }
 
+bool isDirectory(const std::string &path)
+{
+    fs::path filePath(path);
+    return fs::is_directory(filePath);
+}
+
 } // namespace HelperUtils
 
 } //namespace corecvs

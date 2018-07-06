@@ -350,7 +350,8 @@ double Matrix44::det() const {
         }                           \
     }            
 
-bool			Matrix44::decomposeTRS(Vector3dd& scale, Vector3dd& translate, Matrix33& rotate)
+
+bool Matrix44::decomposeTRS(Vector3dd& scale, Vector3dd& translate, Matrix33& rotate)
 {
 	double det;
 	double *pScales;
@@ -400,13 +401,16 @@ bool			Matrix44::decomposeTRS(Vector3dd& scale, Vector3dd& translate, Matrix33& 
 	if (pScales[b] < DECOMPOSE_EPSILON)
 	{
 		uint aa, bb, cc;
-		double fAbsX, fAbsY, fAbsZ;
 
-		fAbsX = abs(ppvBasis[a]->x());
-		fAbsY = abs(ppvBasis[a]->y());
-		fAbsZ = abs(ppvBasis[a]->z());
+        double fAbsX = abs(ppvBasis[a]->x());
+        double fAbsY = abs(ppvBasis[a]->y());
+        double fAbsZ = abs(ppvBasis[a]->z());
 
 		RANKDECOMPOSE(aa, bb, cc, fAbsX, fAbsY, fAbsZ);
+
+        CORE_UNUSED(aa);
+        CORE_UNUSED(bb);
+
 		*ppvBasis[b] = Vector4dd(ppvBasis[a]->xyz() ^ pvCanonicalBasis[cc]->xyz(), 0);
 	}
 

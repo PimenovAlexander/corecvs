@@ -19,7 +19,6 @@ include($$ROOT_DIR/git-version.pri)
 include(utils.pri)                      # it uses TARGET and detects UTILS_BINDIR, OBJECTS_DIR,...!
 
 QT += gui
-QT += serialport
 
 # TODO: split this huge project into parts by these keys: utils, utils_gui?
 CONFIG += with_filters
@@ -30,15 +29,16 @@ CONFIG += with_widgets
 #
 HEADERS += \
     frames.h \
-    framesources/imageCaptureInterface.h \
-    framesources/cameraControlParameters.h \
-    framesources/decoders/mjpegDecoder.h \
-    framesources/decoders/mjpegDecoderLazy.h \
-    framesources/decoders/decoupleYUYV.h \
+#    framesources/imageCaptureInterface.h \
+#    framesources/cameraControlParameters.h \
+#    framesources/decoders/mjpegDecoder.h \
+#    framesources/decoders/mjpegDecoderLazy.h \
+#    framesources/decoders/decoupleYUYV.h \
+#    framesources/decoders/aLowCodec.h \
     \
-    framesources/file/imageFileCaptureInterface.h \
-    framesources/file/abstractFileCapture.h \
-    framesources/file/abstractFileCaptureSpinThread.h \
+#   framesources/file/core/framesources/file/imageFileCaptureInterface.h \
+#   framesources/file/abstractFileCapture.h \
+#   framesources/file/abstractFileCaptureSpinThread.h \
     \
     fileformats/qtFileLoader.h \
     \
@@ -79,6 +79,7 @@ HEADERS += \
     widgets/generated/graphStyle.h \
     \
     configManager.h \
+    \
     corestructs/lockableObject.h \
     corestructs/g12Image.h \
     \
@@ -109,20 +110,21 @@ HEADERS += \
     corestructs/pointerFieldWidget.h \
     corestructs/widgetBlockHarness.h \
     corestructs/cameraModel/fixtureGlobalParametersWidget.h \
-    framesources/imageCaptureInterfaceQt.h
+    framesources/imageCaptureInterfaceQt.h \
+    corestructs/cameraModel/fixtureCameraControlWidget.h
 
 SOURCES += \
     frames.cpp \
-    framesources/imageCaptureInterface.cpp \        # it uses WITH_DIRECTSHOW, WITH_UEYE, WITH_OPENCV
-    framesources/cameraControlParameters.cpp \
-    framesources/decoders/mjpegDecoder.cpp \
-    framesources/decoders/mjpegDecoderLazy.cpp \
-    framesources/decoders/decoupleYUYV.cpp \
-    framesources/decoders/aLowCodec.cpp \
+#    framesources/imageCaptureInterface.cpp \        # it uses WITH_DIRECTSHOW, WITH_UEYE, WITH_OPENCV
+#    framesources/cameraControlParameters.cpp \
+#    framesources/decoders/mjpegDecoder.cpp \
+#    framesources/decoders/mjpegDecoderLazy.cpp \
+#    framesources/decoders/decoupleYUYV.cpp \
+#    framesources/decoders/aLowCodec.cpp \
     \
-    framesources/file/imageFileCaptureInterface.cpp \
-    framesources/file/abstractFileCapture.cpp \
-    framesources/file/abstractFileCaptureSpinThread.cpp \
+#    framesources/file/imageFileCaptureInterface.cpp \
+#    framesources/file/abstractFileCapture.cpp \
+#    framesources/file/abstractFileCaptureSpinThread.cpp \
     \
     fileformats/qtFileLoader.cpp \
     \
@@ -193,8 +195,8 @@ SOURCES += \
     corestructs/pointerFieldWidget.cpp \
     corestructs/widgetBlockHarness.cpp \
     corestructs/cameraModel/fixtureGlobalParametersWidget.cpp \
-    framesources/imageCaptureInterfaceQt.cpp
-    3d/sceneShaded.cpp
+    framesources/imageCaptureInterfaceQt.cpp \
+    corestructs/cameraModel/fixtureCameraControlWidget.cpp
 
 
 FORMS += \
@@ -210,27 +212,16 @@ FORMS += \
     3d/shadedSceneControlWidget.ui \
     corestructs/cameraModel/fixtureGeometryControlWidget.ui \
     corestructs/pointerFieldWidget.ui \
-    corestructs/cameraModel/fixtureGlobalParametersWidget.ui
+    corestructs/cameraModel/fixtureGlobalParametersWidget.ui \
+    corestructs/cameraModel/fixtureCameraControlWidget.ui
 
 # =============================================================
 
 # PREC
 CONFIG += with_framesource_prec
 
-with_framesource_prec {
-HEADERS +=  framesources/file/precCapture.h
-SOURCES +=  framesources/file/precCapture.cpp
-DEFINES += WITH_FRAMESOURCE_PREC
-}
-
 # FILE
 CONFIG += with_framesource_file
-
-with_framesource_file {
-HEADERS +=  framesources/file/fileCapture.h
-SOURCES +=  framesources/file/fileCapture.cpp
-DEFINES += WITH_FRAMESOURCE_FILE
-}
 
 
 # =============================================================
@@ -342,10 +333,10 @@ HEADERS += \
 #    filters/graph/arrow.h \
 #    filters/graph/diagramtextitem.h \
     \
-    corestructs/libWidgets/openCVBMParameters.h \
-    corestructs/libWidgets/openCVSGMParameters.h \
-    corestructs/libWidgets/openCVBMParametersControlWidget.h \
-    corestructs/libWidgets/openCVSGMParametersControlWidget.h \
+#    corestructs/libWidgets/openCVBMParameters.h \
+#    corestructs/libWidgets/openCVSGMParameters.h \
+#    corestructs/libWidgets/openCVBMParametersControlWidget.h \
+#    corestructs/libWidgets/openCVSGMParametersControlWidget.h \
     \
     corestructs/histogramdialog.h \
     \
@@ -398,10 +389,10 @@ SOURCES += \
 #    filters/graph/diagramtextitem.cpp \
 #    filters/graph/diagramscene.cpp \
     \
-    corestructs/libWidgets/openCVBMParameters.cpp \
-    corestructs/libWidgets/openCVSGMParameters.cpp \
-    corestructs/libWidgets/openCVBMParametersControlWidget.cpp \
-    corestructs/libWidgets/openCVSGMParametersControlWidget.cpp \
+#    corestructs/libWidgets/openCVBMParameters.cpp \
+#    corestructs/libWidgets/openCVSGMParameters.cpp \
+#    corestructs/libWidgets/openCVBMParametersControlWidget.cpp \
+#    corestructs/libWidgets/openCVSGMParametersControlWidget.cpp \
     \
     rectifier/rectifyParametersControlWidget.cpp \
     \
@@ -448,8 +439,8 @@ FORMS += \
     widgets/angleEditBox.ui \
     widgets/shift3DWidget.ui \
     \
-    corestructs/libWidgets/openCVBMParametersControlWidget.ui \
-    corestructs/libWidgets/openCVSGMParametersControlWidget.ui \
+#    corestructs/libWidgets/openCVBMParametersControlWidget.ui \
+#    corestructs/libWidgets/openCVSGMParametersControlWidget.ui \
     \
 #    filters/filterSelector.ui \
     \
@@ -626,14 +617,8 @@ with_directshow {
 
 
 with_avcodec {
-    HEADERS += \
-        framesources/avcodec/aviCapture.h \
-        framesources/avcodec/rtspCapture.h \
-
-    SOURCES += \
-        framesources/avcodec/aviCapture.cpp \
-        framesources/avcodec/rtspCapture.cpp \
-
+    AVCODEC_WRAPPER_DIR = $$UTILSDIR/../wrappers/avcodec
+    include($$AVCODEC_WRAPPER_DIR/avcodec.pri)
 }
 
 with_synccam {

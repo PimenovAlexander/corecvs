@@ -133,8 +133,7 @@ public:
         SSEBase::streamAligned((__m128i *)&data[0]);
     }
 
-    /* Reads the lower 64 bits of b and stores them into the lower 64 bits of a.  */
-    void saveLower(uint16_t data[8]) const
+    void saveLower(uint16_t data[4]) const
     {
         _mm_storel_epi64((__m128i *)&data[0], this->data);
     }

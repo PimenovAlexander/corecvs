@@ -111,7 +111,7 @@ void BaseHostDialog::initGraphPresentation()
             , mCalculator
             , SLOT(graphChanged(tinyxml2::XMLDocument*)));
 
-    cout << "Trying to start loading Graph" << endl;
+    cout << "Trying to start loading Graph" << std::endl;
     mFilterGraphPresentation->filterGraph->loadFromFile("graph.conf");
     mFilterGraphPresentation->restoreFromGraph();
 
@@ -341,20 +341,20 @@ void BaseHostDialog::initCapture(QString const &init/*, bool isRgb*/)
 
     if (mCamera == NULL)
     {
-        cout << "BaseHostDialog::initCapture(): Error initializing capture device." << endl;
+        cout << "BaseHostDialog::initCapture(): Error initializing capture device." << std::endl;
         return;
     }
     ImageCaptureInterface::CapErrorCode res = mCamera->initCapture();
 
     if (res == ImageCaptureInterface::FAILURE)
     {
-        cout << "BaseHostDialog::initCapture(): Error: none of the capture devices started.\n" << endl;
+        cout << "BaseHostDialog::initCapture(): Error: none of the capture devices started.\n" << std::endl;
         QMessageBox::warning(this, "Error: none of the capture devices started.","Error: none of the capture devices started.");
         return;
     }
     else if (res == ImageCaptureInterface::SUCCESS_1CAM)
     {
-        cout << "BaseHostDialog::initCapture(): Will be using only one capture device.\n" << endl;
+        cout << "BaseHostDialog::initCapture(): Will be using only one capture device.\n" << std::endl;
         mUseOneCaptureDevice = true;
         mPresentationControlWidget->ui()->outputComboBox->setCurrentIndex(0);
     }
@@ -658,6 +658,8 @@ void BaseHostDialog::camerasParamsChanged()
 {
     qDebug("BaseHostDialog::camerasParamsChanged(): called");
     QSharedPointer<CamerasConfigParameters> parametersShPtr = QSharedPointer<CamerasConfigParameters>(getAdditionalParams());
+    cout << parametersShPtr->rectifierData().F << std::endl;
+
 
     emit camerasParametersChanged(parametersShPtr);
 }

@@ -24,6 +24,8 @@ BMPLoaderBase::BMPLoaderBase()
 
 bool BMPLoaderBase::acceptsFile(string name)
 {
+    std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+
     return HelperUtils::endsWith(name, prefix1);
 }
 
@@ -247,8 +249,7 @@ BMPLoaderBase::~BMPLoaderBase()
     // TODO Auto-generated destructor stub
 }
 
-
-bool BMPLoaderBase::save(string name, G12Buffer *buffer)
+bool BMPLoaderBase::save(const string& name, const G12Buffer *buffer)
 {
     RGB24Buffer *toSave = new RGB24Buffer(buffer);
     bool result = save(name, toSave);
@@ -256,7 +257,7 @@ bool BMPLoaderBase::save(string name, G12Buffer *buffer)
     return result;
 }
 
-bool BMPLoaderBase::save(string name, G8Buffer *buffer)
+bool BMPLoaderBase::save(const string& name, const G8Buffer *buffer)
 {
     RGB24Buffer *toSave = new RGB24Buffer(buffer->getSize());
     toSave->drawG8Buffer(buffer);
@@ -270,7 +271,7 @@ bool BMPLoaderBase::save(string name, G8Buffer *buffer)
  * TODO: Add error handling
  *
  * */
-bool BMPLoaderBase::save(string name, RGB24Buffer *buffer)
+bool BMPLoaderBase::save(const string& name, const RGB24Buffer *buffer)
 {
     CORE_ASSERT_TRUE(buffer != NULL, "Null buffer could not be saved");
     FILE *fp = fopen(name.c_str(), "wb");

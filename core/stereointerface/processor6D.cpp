@@ -1,5 +1,6 @@
 #include "core/stereointerface/processor6D.h"
 
+namespace corecvs {
 
 /** -- **/
 std::unique_ptr<Processor6DFactoryHolder> Processor6DFactoryHolder::sThis(new Processor6DFactoryHolder);
@@ -29,6 +30,16 @@ void Processor6DFactoryHolder::printCaps()
     }
 }
 
+bool Processor6DFactoryHolder::hasProvider(const std::string &name)
+{
+    for (Processor6DFactory *provider : mProviders)
+    {
+        if (provider->getName() == name)
+            return true;
+    }
+    return false;
+}
+
 Processor6D *Processor6DFactoryHolder::getProcessor(const std::string &name)
 {
     Processor6DFactoryHolder *holder = getInstance();
@@ -52,3 +63,5 @@ vector<std::string> Processor6DFactoryHolder::getHints()
     }
     return hints;
 }
+
+} //namespace

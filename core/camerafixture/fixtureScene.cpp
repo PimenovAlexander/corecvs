@@ -198,28 +198,26 @@ void FixtureScene::deleteCamera(FixtureCamera *camera)
 
 void FixtureScene::deleteCameraPrototype(CameraPrototype *cameraPrototype)
 {
-     //mOrphanCameras.erase(
-     //   std::remove_if(mOrphanCameras.begin(), mOrphanCameras.end(),
-     //       [=](FixtureCamera *cam) {return cam->cameraPrototype == cameraPrototype;} ),
-     //   mOrphanCameras.end()
-     //);
+     for (FixtureCamera *cam: mOrphanCameras)
+     {
+         if (cam->cameraPrototype == cameraPrototype)
+             cam->cameraPrototype = NULL;
+     }
 
-     //for (size_t i = 0; i < mFixtures.size(); i++)
-     //{
-     //   CameraFixture *station = mFixtures[i];
-     //   if (station == NULL)
-     //       continue;
+     for (size_t i = 0; i < mFixtures.size(); i++)
+     {
+        CameraFixture *fixture = mFixtures[i];
+        if (fixture == NULL)
+            continue;
 
-     //   auto cameras = station->cameras;
-     //   cameras.erase(
-     //      std::remove_if(cameras.begin(), cameras.end(),
-     //          [=](FixtureCamera *cam) {return cam->cameraPrototype == cameraPrototype;} ),
-     //      cameras.end()
-     //   );
-     //}
+        for (FixtureCamera *cam: fixture->cameras)
+        {
+            if (cam->cameraPrototype == cameraPrototype)
+                cam->cameraPrototype = NULL;
+        }
+     }
 
      vectorErase(mCameraPrototypes, cameraPrototype);
-
      delete_safe(cameraPrototype);
 }
 
@@ -528,6 +526,7 @@ bool FixtureScene::integrityRelink()
         FixtureCamera *cam = mOrphanCameras[i];
         cam->ownerScene = this;
         cam->cameraFixture = NULL;
+        cam->sequenceNumber = (int)i;
         for (size_t c = 0; c < cam->mImages.size(); c++)
         {
             ImageRelatedData *image = cam->mImages[c];
@@ -541,6 +540,7 @@ bool FixtureScene::integrityRelink()
     {
         CameraFixture *fixture = mFixtures[i];
         fixture->ownerScene = this;
+        fixture->sequenceNumber = (int)i;
 
         vectorErase(fixture->cameras, (FixtureCamera *)NULL);
 
@@ -549,6 +549,7 @@ bool FixtureScene::integrityRelink()
             FixtureCamera *cam = fixture->cameras[j];
             cam->ownerScene = this;
             cam->cameraFixture = fixture;
+            cam->sequenceNumber = (int)j;
             for (size_t c = 0; c < cam->mImages.size(); c++)
             {
                 ImageRelatedData *image = cam->mImages[c];
@@ -597,7 +598,7 @@ void FixtureScene::merge(FixtureScene *other)
     for(size_t i = 0; i < other->mOrphanCameras.size(); i++)
     {
         FixtureCamera *cam = createCamera();
-        *static_cast<CameraModel *>(cam) = *(other->mOrphanCameras[i]);
+        cam->copyModelFrom(*other->mOrphanCameras[i]);
     }
 
     int oldFixtureNumber = (int)mFixtures.size();
@@ -613,7 +614,7 @@ void FixtureScene::merge(FixtureScene *other)
         for(size_t j = 0; j < otherFixture->cameras.size(); j++)
         {
             FixtureCamera *cam = createCamera();
-            *static_cast<CameraModel *>(cam) = *(otherFixture->cameras[j]);
+            cam->copyModelFrom(*otherFixture->cameras[j]);
             addCameraToFixture(cam, newFixture);
         }
     }
@@ -679,6 +680,16 @@ void FixtureScene::addCameraToFixture(FixtureCamera *cam, CameraFixture *fixture
     cam->sequenceNumber = (int)fixture->cameras.size() - 1;
 }
 
+ImageRelatedData * FixtureScene::addImageToCamera(FixtureCamera *cam, std::string path)
+{
+    if (cam == NULL)
+        return NULL;
+    ImageRelatedData *image = createImageData();
+    image->mImagePath = path;
+    cam->addImageToCamera(image);
+    return image;
+}
+
 int FixtureScene::getObservationNumber(CameraFixture *fixture)
 {
     int count = 0;
@@ -728,7 +739,7 @@ void FixtureScene::dumpInfo(ostream &out, bool brief)
         for (size_t j = 0; j < mOrphanCameras.size(); j++)
         {
             FixtureCamera *cam = mOrphanCameras[j];
-            out << "     " << "Camera <" << cam->nameId << "> "  << endl;
+            out << "     " << "Camera <" << cam->nameId << "> " << endl;
         }
     out << "Fixtures: " << mFixtures.size() << endl;
     if (!brief)
@@ -740,7 +751,7 @@ void FixtureScene::dumpInfo(ostream &out, bool brief)
             {
                 FixtureCamera *cam = fixture->cameras[j];
                 out << "     " << "Camera <" << cam->nameId << "> "  << endl;
-                out << "        " << "Size [" << cam->intrinsics.w() << " x " << cam->intrinsics.h() << "] "  << endl;
+                out << "        " << "Size [" << cam->intrinsics->w() << " x " << cam->intrinsics->h() << "] "  << endl;
                 out << "        " << "Images "  <<   cam->mImages.size() << endl;
 
             }
@@ -1051,8 +1062,8 @@ RGB24Buffer *ImageRelatedData::getUndistRGB24BufferPtr()
     DisplacementBuffer transform = camera->transform(DistortionApplicationParameters());
     corecvs::RGB24Buffer* buffer = getImage()->doReverseDeformationBlTyped<corecvs::DisplacementBuffer>(
                 &transform,
-                camera->intrinsics.size.y(),
-                camera->intrinsics.size.x());
+                camera->intrinsics->size().y(),
+                camera->intrinsics->size().x());
     return buffer;
 }
 

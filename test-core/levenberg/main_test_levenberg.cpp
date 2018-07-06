@@ -15,9 +15,12 @@
 
 #include "core/function/function.h"
 #include "core/math/levenmarq.h"
-//#include "core/math/dogleg.h"
 #include "core/math/helperFunctions.h"
 #include "core/fileformats/bmpLoader.h"
+
+#if 0
+#include "core/math/dogleg.h"
+#endif
 
 using namespace corecvs;
 
@@ -70,7 +73,7 @@ TEST(Levenberg, testMarquardtLevenberg)
     CORE_ASSERT_DOUBLE_EQUAL_E(result[1], toguess[1], 1e-7, "Wrong result");
 }
 
-#if OPENED
+#if 0
 TEST(Levenberg, testDogLeg)
 {
     LevenbergTest function;

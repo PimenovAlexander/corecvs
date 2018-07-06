@@ -1,25 +1,24 @@
-#pragma once
-
+#ifndef MESH3D_H
+#define MESH3D_H
 /**
  * \file mesh3d.h
  *
  * \date Dec 13, 2012
  **/
 
-#include "core/xml/generated/axisAlignedBoxParameters.h"
 #include "core/math/vector/vector3d.h"
 #include "core/math/matrix/matrix33.h"
 #include "core/math/matrix/matrix44.h"
-#include "core/cammodel/cameraParameters.h"
 #include "core/geometry/axisAlignedBox.h"
-#include "core/buffers/rgb24/rgbColor.h"
 #include "core/geometry/ellipticalApproximation.h"
 #include "core/geometry/polygons.h"
-
 #include "core/geometry/conic.h"
+#include "core/geometry/orientedBox.h"
+#include "core/buffers/rgb24/rgbColor.h"
+#include "core/cammodel/cameraParameters.h"
+#include "core/xml/generated/axisAlignedBoxParameters.h"
 
-namespace corecvs
-{
+namespace corecvs {
 
 /**
  *  This class is overcomplicated. Break it into several ones
@@ -31,27 +30,39 @@ public:
     friend class OBJLoader;
 
     Mesh3D() :
-        centralPoint(0.0),
-        hasCentral(false),      
-        hasColor(false),
+        hookPoint(0.0),
+        hasHook(false),
+        hasAttributes(false),
+        currentAttribute(0),
 
+        hasColor(false),        
         currentColor(RGBColor::Black()),
         currentTransform(1.0)
     {}
 
 
-    Vector3dd  centralPoint;
-    bool hasCentral;
+    Vector3dd  hookPoint;
+    bool hasHook;
 
 /* Data that is stored */
-    bool hasColor;
 
     /** Vertexes that from the mesh (faces or edges or noconnected) */
     vector<Vector3dd>  vertexes;
     vector<Vector3d32> faces;
     vector<Vector2d32> edges;
 
+    /*  Additional attributes. It is encouraged to use attribute as an index in another unrelated to Mesh3D */
+    bool hasAttributes;
+    vector<int> attributes;
+
+    void switchAttributes(bool on = true);
+    void setAttribute(int attr);
+
+    int currentAttribute;
+
     /* RGB Colors */
+    bool hasColor;
+
     vector<RGBColor> vertexesColor;
     vector<RGBColor> facesColor;
     vector<RGBColor> edgesColor;
@@ -62,10 +73,13 @@ public:
     void setColor(const RGBColor &color);
 
 
+
+
     RGBColor currentColor;
     Matrix44 currentTransform;
 
     vector<Matrix44> transformStack;
+    vector<RGBColor> colorStack;
 
     /* All subsecquent draws would be as if origin is moved be affine transform */
     void mulTransform(const Affine3DQ &transform);
@@ -74,11 +88,15 @@ public:
     void mulTransform(const Matrix44 &transform);
     void popTransform();
 
+    void pushColor(const RGBColor &color);
+    void pushColor();
+    void popColor();
+
 
 /* Methods */
 
 
-    void setCentral(Vector3dd _central);
+    void setHook(const Vector3dd &_hook);
 
     void addOrts      (double length = 1.0, bool captions = false);
     void addPlaneFrame(const PlaneFrame &frame, double length = 1.0);
@@ -87,6 +105,7 @@ public:
     virtual void addAOB(const Vector3dd &corner1, const Vector3dd &corner2, bool addFaces = true);
     void addAOB(const AxisAlignedBoxParameters &box , bool addFaces = true);
     void addAOB(const AxisAlignedBox3d &box         , bool addFaces = true);
+    void addOOB(const OrientedBox      &box         , bool addFaces = true);
 
     int addPoint(const Vector3dd &point);
 
@@ -106,9 +125,9 @@ public:
      *  \param radius - cylinder radius
      *
      **/
-    void addCylinder  (Vector3dd center, double radius, double height, int step = 20, double phase = 0.0);
+    void addCylinder (const Vector3dd &center, double radius, double height, int step = 20, double phase = 0.0);
 
-    void addIcoSphere(Vector3dd center, double radius, int step = 1);
+    void addIcoSphere(const Vector3dd &center, double radius, int step = 1);
 
     void addCircle   (const Circle3d &circle, int step = 20);
     void drawCircle  (Vector3dd center, double radius, int step=20, Vector3dd normal=Vector3dd(0, 0, 1));
@@ -117,9 +136,11 @@ public:
     void addIcoSphere(const Sphere3d &sphere, int step = 1);
 
 
-    void addCamera(const CameraIntrinsicsLegacy &cam, double len);
+    void addCamera   (const CameraIntrinsicsLegacy &cam, double len);
 
-    void add2AxisEllipse  (const EllipticalApproximation3d &approx);
+    void add2AxisEllipse  (const EllipticalApproximation3d &approx, int axis1, int axis2);
+    void addAxisEllipse   (const EllipticalApproximation3d &approx);
+
     void addMatrixSurface (double *data, int h, int w);
 
     virtual void clear();
@@ -127,7 +148,6 @@ public:
     /* For abstract painter */
     typedef int InternalElementType;
     void drawLine(double x1, double y1, double x2, double y2, int);
-
 
 #if 0
     void addTruncatedCone(double r1, double r2, double length, int steps = 16);
@@ -149,7 +169,6 @@ private:
     virtual void addVertex(const Vector3dd &vector);
     virtual void addFace(const Vector3d32 &faceId);
 
-
     //, Vector2dd &texCoord
 public:
     virtual ~Mesh3D() {}
@@ -157,9 +176,12 @@ public:
     virtual void fillTestScene();
 
     virtual void dumpInfo(ostream &out = std::cout);
+
+    Vector3dd getVertexBarycenter() const; /*Based on vertexes only*/
+
 };
 
 
-
 } /* namespace corecvs */
-/* EOF */
+
+#endif // MESH3D_H

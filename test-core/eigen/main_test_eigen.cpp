@@ -11,6 +11,8 @@
 #include <iostream>
 #include <random>
 
+#include <fenv.h>
+
 #include "gtest/gtest.h"
 
 #include "core/utils/global.h"
@@ -73,6 +75,56 @@ TEST(Eigen, testJacobi)
         cout << D.a(i) * T << endl;
         cout << "================" << endl;
     }
+}
+
+
+TEST(Eigen, testJacobiConverge)
+{
+    /*
+    double data[] =
+             {
+              1.440000000000002e+02, -4.092000000000002e+03, -7.080000000000003e+02,
+             -4.092000000000002e+03,  1.162820000000000e+05,  2.011900000000000e+04,
+             -7.080000000000003e+02,  2.011900000000000e+04,  3.482000000000000e+03 };
+    double data[] =
+    {
+        7.48030000000000000e+04, 7.99990000000000000e+04, 3.70590000000000000e+04,
+        7.99990000000000000e+04, 8.55570000000000000e+04, 3.96340000000000000e+04,
+        3.70590000000000000e+04, 3.96340000000000000e+04, 1.83610000000000000e+04
+    };    */
+
+    double data[] =
+    {
+         9.23705556488130115e-14, -5.32907051820075139e-15, 3.73034936274052598e-14,
+        -5.32907051820075139e-15,  2.50000000000000000e-01, 0.00000000000000000e+00,
+         3.73034936274052598e-14,  0.00000000000000000e+00, 2.50000000000000000e-01
+    };
+
+    //feenableexcept(FE_INVALID | FE_OVERFLOW);
+
+    Matrix A(3, 3, data);
+
+    cout << "Matrix A:" << endl;
+    cout << A;
+    cout << endl;
+
+    Matrix A1(A);
+    DiagonalMatrix D(A.h);
+    Matrix V(A.h, A.w);
+    int res = Matrix::jacobi(&A1, &D, &V, NULL, true);
+
+    if (res != 0) {
+        cout << "Not Converged";
+        CORE_ASSERT_FAIL("Not Converged");
+    }
+
+    cout << "Eigen values:" << D << endl;
+    cout << "Eigen vectors:" << V << endl;
+
+    cout << endl;
+    cout << "================" << endl;
+    cout << endl;
+
 }
 
 TEST(Eigen, testEllipse)

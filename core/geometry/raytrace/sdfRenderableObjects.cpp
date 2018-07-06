@@ -26,9 +26,9 @@ SDFRenderableBox::SDFRenderableBox(const Vector3dd &pos, const Vector3dd dim):
      dim(dim)
  {
      this->F = [this](Vector3dd v) {
-         Vector3dd d = (v - this->pos).perElementAbs() - this->dim;
-         return std::min(std::max(d.x(),std::max(d.y(),d.z())),0.0)
-                 + d.perElementMax(Vector3dd::Zero()).l2Metric();
+         Vector3dd d = (v - this->pos).cwiseAbs() - this->dim;
+         return std::min(std::max(d.x(), std::max(d.y(), d.z())), 0.0)
+                 + d.cwiseMax(Vector3dd::Zero()).l2Metric();
      };
  }
 
@@ -40,7 +40,7 @@ SDFRenderableRoundedBox::SDFRenderableRoundedBox(
 {
     this->F = [this](Vector3dd v) {
         Vector3dd d = (v - this-> pos);
-        return ((d.perElementAbs() - this->dim).perElementMax(Vector3dd::Zero())).l2Metric() - this->r;
+        return ((d.cwiseAbs() - this->dim).cwiseMax(Vector3dd::Zero())).l2Metric() - this->r;
     };
 }
 
@@ -90,7 +90,7 @@ SDFRenderableCone::SDFRenderableCone(const Vector3dd &pos, const Vector3dd dim):
         Vector3dd c = this->dim;
         double d1 = -q.y()-c.z();
         double d2 = std::max(q & Vector2dd(c.x(),c.y()), q.y());
-        return Vector2dd(d1,d2).perElementMax(Vector2dd(0.0, 0.0)).l2Metric()
+        return Vector2dd(d1,d2).cwiseMax(Vector2dd(0.0, 0.0)).l2Metric()
                 + std::min(std::max(d1,d2), 0.0);
     };
 }
@@ -105,7 +105,7 @@ SDFRenderableCylinder::SDFRenderableCylinder(const Vector3dd &pos, const Vector2
                     std::abs(d.xz().l2Metric()),
                     std::abs(d.y()));
         Vector2dd dd = ne - this->dim;
-        return std::min(std::max(dd.x(),dd.y()),0.0) + dd.perElementMax(Vector2dd(0.0, 0.0)).l2Metric();
+        return std::min(std::max(dd.x(),dd.y()),0.0) + dd.cwiseMax(Vector2dd(0.0, 0.0)).l2Metric();
     };
 }
 

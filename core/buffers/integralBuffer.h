@@ -16,8 +16,9 @@
 #include <stdio.h>
 #ifdef WITH_SSE
 #include <emmintrin.h>
-#include "core/math/sse/sseWrapper.h"
 #endif
+#include "core/math/sse/sseWrapper.h"
+#include "core/math/neon/neonWrapper.h"
 
 #include "core/utils/global.h"
 
@@ -26,6 +27,8 @@
 #include "core/buffers/g8Buffer.h"
 
 #include "core/tbbwrapper/tbbWrapper.h"
+
+#include "core/geometry/rectangle.h"
 
 namespace corecvs {
 
@@ -111,6 +114,11 @@ public:
     {
         return    this->element(y1, x1    ) + this->element(y2 + 1, x2 + 1)
                 - this->element(y1, x2 + 1) - this->element(y2 + 1, x1);
+    }
+
+    inline ElementType rectangle (const Rectangle<IndexType> &rect)
+    {
+        return rectangle(rect.left(), rect.top(), rect.right(), rect.bottom());
     }
 
     template<typename ReturnType>
@@ -215,7 +223,7 @@ public:
 class G12IntegralBuffer : public IntegralBuffer<uint32_t, G12Buffer::InternalElementType, int32_t> {
 public:
     G12IntegralBuffer(G12Buffer *input) :
-        IntegralBuffer<uint32_t, G12Buffer::InternalElementType, int32_t>(input) {};
+        IntegralBuffer<uint32_t, G12Buffer::InternalElementType, int32_t>(input) {}
 
 #ifdef WITH_SSE
     /**
@@ -240,7 +248,10 @@ public:
                    );
   //         Int32x4 a(&this->element(y1,     x1    ));
   //          return a + c - b - d;
-    };
+    }
+#endif
+
+#if defined(WITH_SSE) || defined(WITH_NEON)
 
     ALIGN_STACK_SSE inline Int32x4 rectangle_sse_new(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
     {
@@ -281,7 +292,7 @@ public:
                 uint16_t *dest = &(toReturn->element(i,0));
 
                 int j;
-                for ( j = 0; j + 3 < toReturn->w; j += 8)
+                for ( j = 0; j + 7 < toReturn->w; j += 8)
                 {
 
                     Int32x4 a(aCorner);
@@ -346,7 +357,7 @@ public:
 
         parallelable_for(0, toReturn->h, ParallelRectangularBlurSSE(toReturn, hSizeHalf, wSizeHalf, this));
         return toReturn;
-    };
+    }
 
 
 #endif
@@ -356,7 +367,7 @@ public:
     class G8IntegralBuffer : public IntegralBuffer<uint32_t, G8Buffer::InternalElementType, int32_t> {
 public:
     G8IntegralBuffer(G8Buffer *input) :
-        IntegralBuffer<uint32_t, G8Buffer::InternalElementType, int32_t>(input) {};
+        IntegralBuffer<uint32_t, G8Buffer::InternalElementType, int32_t>(input) {}
 
 #ifdef WITH_SSE
     /**
@@ -371,6 +382,9 @@ public:
         return _mm_sub_epi32(_mm_add_epi32(_mm_loadu_si128((__m128i*)&this->element(y1,x1    )),_mm_loadu_si128((__m128i*)&this->element(y2 + 1,x2 + 1))),
                              _mm_add_epi32(_mm_loadu_si128((__m128i*)&this->element(y1,x2 + 1)),_mm_loadu_si128((__m128i*)&this->element(y2 + 1,x1    ))));
     }
+#endif
+
+#if defined(WITH_SSE) || defined(WITH_NEON)
     ALIGN_STACK_SSE Int32x4 rectangle_sse_new(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
     {
         Int32x4 a(this->element(y1,    x1    ));

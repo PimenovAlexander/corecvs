@@ -19,10 +19,8 @@ class GCodeProgram
 {
 public:
     struct Record {
-
         char address;
         double value;
-
     };
 
     struct Code {
@@ -114,10 +112,7 @@ public:
 //    GCodeColoringSheme::GCodeColoringSheme coloring = GCodeColoringSheme::COLOR_FROM_SPEED;
     DrawGCodeParameters mParameters;
 
-
-
     int renderToMeshOld(const GCodeProgram &in, Mesh3D &mesh);
-
 
     /* New style controllable converter */
     class MeshInterpreter : public GCodeInterpreter {
@@ -158,6 +153,8 @@ public:
 
     virtual ~GcodeLoader();
 
+public:
+    static vector<std::pair<char, double> > parseLine(const string &gline);
 };
 
 } // namespace corecvs

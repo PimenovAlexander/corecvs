@@ -152,7 +152,7 @@ public:
      **/
 
 
-    inline Vector4d<ElementType> normalizeProjective()
+    inline Vector4d<ElementType> normalisedProjective()
     {
         if (this->w() == 0.0)
         {

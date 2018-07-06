@@ -200,3 +200,33 @@ void JSONGetter::visit<double, DoubleVectorField>(std::vector<double> &field, co
         }
     }
 }
+
+template <>
+void JSONGetter::visit<int, IntVectorField>(std::vector<int> &field, const IntVectorField *fieldDescriptor)
+{
+    field.clear();
+
+    QJsonValue arrayValue = mNodePath.back().value(fieldDescriptor->name.name);
+    if (arrayValue.isArray())
+    {
+        QJsonArray array = arrayValue.toArray();
+
+        for (int i = 0; i < array.size(); i++)
+        {
+            QJsonValue value = array[i];
+            if (value.isDouble()) {
+                field.push_back(value.toInt());
+            }
+            else {
+                field.push_back(fieldDescriptor->getDefaultElement(i));
+            }
+        }
+    }
+    else
+    {
+        for (uint i = 0; i < fieldDescriptor->defaultSize; i++)
+        {
+            field.push_back(fieldDescriptor->getDefaultElement(i));
+        }
+    }
+}

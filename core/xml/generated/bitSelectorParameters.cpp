@@ -52,7 +52,8 @@ int BitSelectorParameters::staticInit()
           "shift",
           true,
          -16,
-         16
+         16,
+         1
         );
     fields().push_back(field0);
     /*  */ 

@@ -2,15 +2,17 @@
 #define CAMERAMODEL_H
 
 #include "calibrationLocation.h"
-#include "pinholeCameraIntrinsics.h"
 #include "core/buffers/displacementBuffer.h"
 #include "core/xml/generated/distortionApplicationParameters.h"
 #include "core/rectification/essentialMatrix.h"
 #include "core/alignment/lensDistortionModelParameters.h"
 #include "core/alignment/pointObservation.h"
 #include "core/geometry/polygons.h"
+#include "core/reflection/dynamicObject.h"
 
 #include "core/alignment/selectableGeometryFeatures.h"
+
+#include "core/cameracalibration/projection/projectionFactory.h"
 
 
 namespace corecvs {
@@ -19,7 +21,8 @@ class CameraModel
 {
 public:
     /**/
-    PinholeCameraIntrinsics  intrinsics;
+    //PinholeCameraIntrinsics  intrinsics;
+    std::unique_ptr<CameraProjection> intrinsics;
     /**/
     LensDistortionModelParameters   distortion;
     /**/
@@ -35,24 +38,43 @@ public:
     std::string     nameId;
 
 public:
-    CameraModel()
+    CameraModel(CameraProjection *projecton = new PinholeCameraIntrinsics) :
+        intrinsics(projecton)
     {}
 
     CameraModel(
             const PinholeCameraIntrinsics &_intrinsics,
             const CameraLocationData &_extrinsics = CameraLocationData(),
             const LensDistortionModelParameters &_distortion = LensDistortionModelParameters())
-      : intrinsics(_intrinsics)
+      : intrinsics(_intrinsics.clone())
       , distortion(_distortion)
       , extrinsics(_extrinsics)
     {}
 
+    CameraModel(const CameraModel &other)
+    {
+        copyModelFrom(other);
+    }
 
+    CameraModel &operator =(const CameraModel &other)
+    {
+        copyModelFrom(other);
+        return *this;
+    }
+
+    /*
+    bool operator ==(const CameraModel &other)
+    {
+        if (!(distortion == other.distortion)) return false;
+        if (!(extrinsics == other.extrinsics)) return false;
+
+        return true;
+    }*/
 
     template <bool full=false>
     Vector2dd project(const Vector3dd &p) const
     {
-        Vector2dd v = intrinsics.project(extrinsics.project(p));
+        Vector2dd v = intrinsics->project(extrinsics.project(p));
         if (full)
             return distortion.mapForward(v);
         return v;
@@ -70,16 +92,19 @@ public:
 
     Vector2dd reprojectionError(const Vector3dd &p, const Vector2dd &pp) const
     {
-        return intrinsics.reprojectionError(extrinsics.project(p), pp);
+        return intrinsics->reprojectionError(extrinsics.project(p), pp);
     }
+
     Vector3dd crossProductError(const Vector3dd &p, const Vector2dd &pp)
     {
-        return intrinsics.crossProductError(extrinsics.project(p), pp);
+        return intrinsics->crossProductError(extrinsics.project(p), pp);
     }
-    double angleError(const Vector3dd &p, const Vector2dd &pp)
+
+    double angleErrorRad(const Vector3dd &p, const Vector2dd &pp)
     {
-        return intrinsics.angleError(extrinsics.project(p), pp);
+        return intrinsics->angleErrorRad(extrinsics.project(p), pp);
     }
+
     Vector3dd rayDiffError(const Vector3dd &p, const Vector2dd &pp)
     {
         bool fail = std::isnan(p[2]);
@@ -87,7 +112,7 @@ public:
             fail |= std::isnan(p[i]) || std::isnan(pp[i]);
         if (fail)
             std::cout << "CAM:" << p << " " << pp << std::endl;
-        return intrinsics.rayDiffError(extrinsics.project(p), pp);
+        return intrinsics->rayDiffError(extrinsics.project(p), pp);
     }
 
     /**
@@ -118,21 +143,23 @@ public:
      **/
     Polygon projectViewport(const CameraModel &right, double pyramidLength1 = -1, double pyramidLength2 = -1) const;
 
+#if 0 // depricated
     /**
      * Only checks for the fact that point belongs to viewport.
      * If you are projecting 3d point you should be sure that point is in front
      **/
     bool isVisible(const Vector2dd &point)
     {
-        return point.isInRect(Vector2dd(0.0,0.0), intrinsics.size);
+        return intrinsics->isVisible(point);
     }
+#endif
 
     /**
      * Checks full visibility of 3d point
      **/
     bool isVisible(const Vector3dd &pt) const
     {
-       return intrinsics.isVisible(extrinsics.project(pt));
+       return intrinsics->isVisible(extrinsics.project(pt));
     }
 
     bool isInFront(const Vector3dd &pt)
@@ -149,7 +176,7 @@ public:
     Ray3d               rayFromPixel(const Vector2dd &point) const;
     Vector3dd           dirFromPixel(const Vector2dd &point) const
     {
-        return (extrinsics.orientation.conjugated() * intrinsics.reverse(point)).normalised();
+        return (extrinsics.orientation.conjugated() * intrinsics->reverse(point)).normalised();
     }
     Ray3d               rayFromCenter();
 
@@ -176,25 +203,33 @@ public:
      **/
     vector<Vector4dd> getCameraViewportPyramid() const;
 
-    Polygon getCameraViewportPolygon() const;
+    Polygon           getCameraViewportPolygon() const;
 
 
-
-
-    void copyModelFrom(const CameraModel &other) {
-        intrinsics = other.intrinsics;
+    void copyModelFrom(const CameraModel &other)
+    {
+        if (other.intrinsics != NULL) {
+            intrinsics.reset(other.intrinsics->clone());
+        } else {
+            intrinsics.reset(NULL);
+        }
         distortion = other.distortion;
         extrinsics = other.extrinsics;
+        nameId     = other.nameId;
     }
 
     /* This method produces camera model that is a copy, but works for downsampled image */
     CameraModel scaledModel(double scaleFactor = 0.5)
     {
         CameraModel model = *this;
-        model.intrinsics.principal = model.intrinsics.principal * scaleFactor;
-        model.intrinsics.focal = model.intrinsics.focal * scaleFactor;
-        model.intrinsics.size  = model.intrinsics.size  * scaleFactor;
-        model.intrinsics.distortedSize = model.intrinsics.distortedSize  * scaleFactor;
+        if (!model.intrinsics->isPinhole())
+        {
+            return model;
+        }
+
+        PinholeCameraIntrinsics *intr = static_cast<PinholeCameraIntrinsics *>(model.intrinsics.get());
+
+        intr->scale(scaleFactor);
 
         model.distortion.setNormalizingFocal(model.distortion.normalizingFocal() * scaleFactor);
         model.distortion.setPrincipalPoint  (model.distortion.principalPoint() * scaleFactor);
@@ -216,7 +251,9 @@ public:
     template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit(intrinsics, PinholeCameraIntrinsics()      , "intrinsics");
+        ProjectionFactory wrapper(intrinsics);
+        visitor.visit(wrapper, "intrinsics");
+
         visitor.visit(extrinsics, CameraLocationData()           , "extrinsics");
         visitor.visit(distortion, LensDistortionModelParameters(), "distortion");
         visitor.visit(nameId,     std::string("")                , "nameId"    );
@@ -233,19 +270,41 @@ public:
     DisplacementBuffer transform(const DistortionApplicationParameters &applicationParams)
     {
         estimateUndistortedSize(applicationParams);
-        int newW = (int)intrinsics.size.x();
-        int newH = (int)intrinsics.size.y();
+        int newW = (int)intrinsics->w();
+        int newH = (int)intrinsics->h();
         if (newH < 0 || newW < 0)
         {
             SYNC_PRINT(("invalid distortion data for camId=%s outSize(%dx%d)", nameId.c_str(), newW, newH));
             return DisplacementBuffer();
         }
 
-        return RadialCorrection(distortion).getUndistortionTransformation(intrinsics.size
-            ,intrinsics.distortedSize, 0.25, false);
+        return RadialCorrection(distortion).getUndistortionTransformation(
+             intrinsics->size()
+            ,intrinsics->distortedSize(), 0.25, false);
     }
 
     void prettyPrint(std::ostream &out = cout);
+
+    /**
+       Shortcut for most popular distortion type -
+            returns PinholeCameraIntrinsics intrisics if this model is pinhole
+            returns NULL otherwise;
+     **/
+    PinholeCameraIntrinsics *getPinhole() const
+    {
+        if (intrinsics->isPinhole()) {
+            return static_cast<PinholeCameraIntrinsics *>(intrinsics.get());
+        }
+        return NULL;
+    }
+    OmnidirectionalProjection *getOmnidirectional() const
+    {
+        if (intrinsics->isOmnidirectional()) {
+            return static_cast<OmnidirectionalProjection *>(intrinsics.get());
+        }
+        return NULL;
+    }
+
 };
 
 

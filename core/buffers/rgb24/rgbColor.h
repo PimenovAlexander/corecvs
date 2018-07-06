@@ -504,6 +504,12 @@ public:
         return RGBColor(255, 191, 0);
     }
 
+    static RGBColor Purple()
+    {
+        return RGBColor(128, 0, 128);
+    }
+
+
 
     static RGBColor lerpColor(const RGBColor &first, const RGBColor &second, double alpha)
     {
@@ -646,6 +652,13 @@ template<class VisitorType>
         return RGBColor((uint8_t)input1.x(), (uint8_t)input1.y(), (uint8_t)input1.z());
     }
 
+    static RGBColor FromFloat(const Vector3df &input)
+    {
+        Vector3df input1 = input;
+        input1.mapToHypercube(Vector3df(0.0, 0.0, 0.0), Vector3df(255.0, 255.0, 255.0));
+        return RGBColor((uint8_t)input1.x(), (uint8_t)input1.y(), (uint8_t)input1.z());
+    }
+
     static RGBColor FromHSV(uint16_t h, uint8_t s, uint8_t v)
     {
         int c = ((int)(s * v)) / 255;
@@ -677,6 +690,22 @@ template<class VisitorType>
 
         return RGBColor(r + m, g + m, b + m);
     }
+
+
+    static RGBColor colorBlindPalette[6];
+
+    static RGBColor getPalleteColor(int id)
+    {
+        return colorBlindPalette[id % 6];
+    }
+
+    static RGBColor brightPalette[6];
+
+    static RGBColor getPalleteColor1(int id)
+    {
+        return brightPalette[id % 6];
+    }
+
 
 };
 

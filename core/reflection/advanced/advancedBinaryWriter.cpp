@@ -32,6 +32,7 @@ void AdvancedBinaryWriter::visit<double, DoubleField>(double &field, const Doubl
 template <>
 void AdvancedBinaryWriter::visit<float,  FloatField>(float &field, const FloatField *fieldDescriptor)
 {
+    CORE_UNUSED(fieldDescriptor);
     SYNC_PRINT(("AdvancedBinaryWriter::visit<float,  FloatField>(%f):called\n", field));
     if (stream == NULL) return;
     stream->write((char *) &field, sizeof(field));
@@ -68,6 +69,8 @@ void AdvancedBinaryWriter::visit<string, StringField>(std::string &field, const 
 template <>
 void AdvancedBinaryWriter::visit<std::wstring, WStringField>(std::wstring &field, const WStringField *fieldDescriptor)
 {
+    CORE_UNUSED(field);
+    CORE_UNUSED(fieldDescriptor);
     if (stream == NULL) return;
     SYNC_PRINT(("%s : NYI\n", __FUNCTION__));
 }
@@ -75,6 +78,8 @@ void AdvancedBinaryWriter::visit<std::wstring, WStringField>(std::wstring &field
 template <>
 void AdvancedBinaryWriter::visit<void *, PointerField>(void * &field, const PointerField *fieldDescriptor)
 {
+    CORE_UNUSED(field);
+    CORE_UNUSED(fieldDescriptor);
     if (stream == NULL) return;
     SYNC_PRINT(("%s : NYI\n", __FUNCTION__));
 }
@@ -94,6 +99,8 @@ void AdvancedBinaryWriter::visit<int, EnumField>(int &field, const EnumField *fi
 template <>
 void AdvancedBinaryWriter::visit<double, DoubleVectorField>(std::vector<double> &field, const DoubleVectorField *fieldDescriptor)
 {
+    CORE_UNUSED(field);
+    CORE_UNUSED(fieldDescriptor);
     if (stream == NULL) return;
     SYNC_PRINT(("%s : NYI\n", __FUNCTION__));
 }
@@ -121,6 +128,7 @@ void AdvancedBinaryWriter::visit<bool>(bool &boolField, bool /*defaultValue*/, c
 template <>
 void AdvancedBinaryWriter::visit<int>(int &intField, int defaultValue, const char *fieldName)
 {
+    CORE_UNUSED(defaultValue);
     if (stream == NULL) return;
     size_t pos = fieldOpening(fieldName);
     stream->write((char *) &intField, sizeof(intField));
@@ -153,11 +161,11 @@ void AdvancedBinaryWriter::visit<std::string>(std::string &field, std::string /*
 template <>
 void AdvancedBinaryWriter::visit<std::wstring>(std::wstring &stringField, std::wstring /*defaultValue*/, const char *fieldName)
 {
+    CORE_UNUSED(stringField);
+    CORE_UNUSED(fieldName);
     if (stream == NULL) return;
     SYNC_PRINT(("%s : NYI\n", __FUNCTION__));
 }
-
-
 
 
 } //namespace corecvs

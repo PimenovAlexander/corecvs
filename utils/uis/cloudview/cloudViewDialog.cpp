@@ -94,7 +94,7 @@ CloudViewDialog::CloudViewDialog(QWidget *parent, QString name)
     mUi.treeView->setModel(&mTreeModel);
     mUi.treeView->setDragEnabled(true);
     mUi.treeView->setAcceptDrops(true);
-    //mUi.treeView->setDropIndicatDraw3dParametersorShown(true);
+    //mUi.treeView->setDropIndicatorShown(true);
 
     mUi.treeView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     mUi.treeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -539,13 +539,17 @@ void CloudViewDialog::setCamera(const CameraModel &model)
 
     qDebug() << "CloudViewDialog::setCamera() : setting camera";
 
-    glViewport(0, 0, width, height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    OpenGLTools::glMultMatrixMatrix44(model.intrinsics.getFrustumMatrix());
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    mCamera = model.getPositionMatrix();
+    PinholeCameraIntrinsics *pinhole = model.getPinhole();
+    if (pinhole != NULL)
+    {
+        glViewport(0, 0, width, height);
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        OpenGLTools::glMultMatrixMatrix44(pinhole->getFrustumMatrix());
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        mCamera = model.getPositionMatrix();
+    }
 
     mUi.widget->update();
 }
@@ -885,7 +889,7 @@ void CloudViewDialog::setNewRectificationResult (QSharedPointer<RectificationRes
     StereoCameraScene *cameraModels = new StereoCameraScene(*(mRectificationResult.data()));
     Draw3dCameraParameters parameters;
     cameraModels->setParameters(&parameters);
-    setNewScenePointer(QSharedPointer<Scene3D>(cameraModels), CAMERA_PAIR);
+    setNewScenePointer(QSharedPointer<Scene3D>(cameraModels), FIXTUE_SCENE);
 
     mUi.widget->update();
 }

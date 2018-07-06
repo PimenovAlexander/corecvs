@@ -19,8 +19,7 @@
 #include "core/cammodel/cameraParameters.h"
 
 
-using namespace std;
-using corecvs::EssentialDecomposition;
+using namespace corecvs;
 
 TEST(Triangulator, testDepthAndDisparity)
 {
@@ -34,7 +33,7 @@ TEST(Triangulator, testDepthAndDisparity)
 
     RectificationResult rectification;
     rectification.F              = EssentialMatrix();
-    rectification.leftCamera     = CameraIntrinsicsLegacy(Vector2dd(1.0, 1.0), Vector2dd(0.0, 0.0), 1.0, 1.0);
+    rectification.leftCamera     = CameraIntrinsicsLegacy(Vector2dd(1000.0, 1000.0), Vector2dd(500.0, 500.0), 1.0, 1.0);
     rectification.rightCamera    = CameraIntrinsicsLegacy(Vector2dd(1.0, 1.0), Vector2dd(0.0, 0.0), 1.0, 1.0);
     rectification.baseline       = 1.0;
     rectification.leftTransform  = Matrix33(1.0);

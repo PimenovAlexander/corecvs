@@ -1,9 +1,8 @@
 #ifndef PARAMETERSLIDER_H
 #define PARAMETERSLIDER_H
 
-#include <QWidget>
-#include "ui_parameterSlider.h"
 #include "parameterEditorWidget.h"
+#include "ui_parameterSlider.h"
 
 class ParameterSlider : public ParameterEditorWidget
 {
@@ -13,20 +12,21 @@ public:
     ParameterSlider(QWidget *parent = 0);
     ~ParameterSlider();
 
-    virtual double minimum (void);
-    virtual double maximum (void);
-    virtual double value   (void);
+    virtual double minimum (void) override;
+    virtual double maximum (void) override;
+    virtual double value   (void) override;
 
-    virtual void setValue  (double value);
+    virtual void setValue  (double value) override;
     virtual void setMinimum(double value);
     virtual void setMaximum(double value);
     virtual void setStep   (double value);
-    virtual void setAutoSupported(bool value);
 
-    virtual void stepUp  ();
-    virtual void stepDown();
+    virtual void setAutoSupported(bool value) override;
 
-    virtual void setName (QString name);
+    virtual void stepUp  () override;
+    virtual void stepDown() override;
+
+    virtual void setName (QString name) override;
 
 public slots:
     virtual void textChanged   (int value);

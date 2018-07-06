@@ -284,7 +284,7 @@ AbstractOutputData* ScannerThread::processNewData()
         GentryState state;
         Vector2dd resolution = Vector2dd(frame->w, frame->h);
 
-        state.camera.intrinsics = PinholeCameraIntrinsics(resolution,  degToRad(60));
+        state.camera.intrinsics.reset(new PinholeCameraIntrinsics(resolution,  degToRad(60)));
         state.camera.setLocation(Affine3DQ::Shift(0,0,0) *Affine3DQ::RotationX(degToRad(90.0)));
         state.laserPlane = Plane3d::FromNormalAndPoint(Vector3dd(0,0,1), Vector3dd(0,0,-30));
         outputData->outputMesh.switchColor();

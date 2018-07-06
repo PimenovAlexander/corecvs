@@ -24,7 +24,8 @@ using std::ostream;
 using std::istream;
 using std::cout;
 
-
+const int G12Buffer::BUFFER_BITS;
+const int G12Buffer::BUFFER_MAX_VALUE;
 
 G12Buffer::~G12Buffer()
 {

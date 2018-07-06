@@ -125,6 +125,8 @@ public:
         HAND_2,
         HAND_FIRST = HAND_1,
         HAND_LAST  = HAND_2,
+
+        FIXTUE_SCENE,
         /* Should be the last one*/
         SCENE_NUMBER
     };

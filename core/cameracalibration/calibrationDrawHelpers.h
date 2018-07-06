@@ -3,6 +3,9 @@
 #include "core/buffers/rgb24/rgbColor.h"
 #include "core/xml/generated/calibrationDrawHelpersParameters.h"
 
+#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh3DDecorated.h"
+
 namespace corecvs {
 
 class Mesh3D;
@@ -23,42 +26,27 @@ public:
         COLOR_PER_STATION
     };
 
-    static RGBColor palette[6];
-
-
-#if 0
-    bool    printNames;
-    bool    privateColor;
-    bool    largePoints;
-
-    /* */
-    bool    drawFixtureCams;
-    bool    drawObservations;
-    bool    drawRays;
-#endif
-
     CalibrationDrawHelpers()
-#if 0
-      : printNames(false)
-      , privateColor(false)
-      , largePoints(false)
-      , drawFixtureCams(true)
-      , drawObservations(false)
-      , drawRays(false)
-#endif
     {}
 
     void setParameters(const CalibrationDrawHelpersParameters &params);
 
-    void drawCamera (Mesh3D &mesh, const CameraModel &cam, double scale);
+    void drawCamera   (Mesh3D          &mesh, const CameraModel &cam, double scale);
+    void drawCameraEx (Mesh3DDecorated &mesh, const CameraModel &cam, double scale, int id);
 
-    void drawPly    (Mesh3D &mesh, const ObservationList &list);
-    void drawPly    (Mesh3D &mesh, const CameraFixture &ps   , double scale);
-    void drawPly    (Mesh3D &mesh, const SceneFeaturePoint &fp, double scale);
-    void drawPly    (Mesh3D &mesh, const FixtureSceneGeometry &fg, double scale);
+    void drawObservationList (Mesh3D &mesh, const ObservationList &list);
+
+    void drawFixture   (Mesh3D          &mesh, const CameraFixture &ps   , double scale);
+    void drawFixtureEx (Mesh3DDecorated &mesh, const CameraFixture &ps   , double scale);
+
+    void drawScenePoint    (Mesh3D &mesh, const SceneFeaturePoint &fp, double scale);
+    void drawSceneGeometry (Mesh3D &mesh, const FixtureSceneGeometry &fg, double scale);
 
 
-    void drawScene  (Mesh3D &mesh, const FixtureScene &scene, double scale = 1.0);
+    void drawScene  (Mesh3D          &mesh, const FixtureScene &scene, double scale = 1.0);
+    void drawScene  (Mesh3DDecorated &mesh, const FixtureScene &scene, double scale = 1.0);
+
+
 };
 
 } // namespace corecvs

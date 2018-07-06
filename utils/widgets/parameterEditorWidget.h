@@ -6,9 +6,7 @@
  *  Created on: Oct 12, 2012
  *      Author: alexander
  */
-
-
-
+#include <QString>
 #include <QWidget>
 
 class ParameterEditorWidget: public QWidget
@@ -33,7 +31,6 @@ public:
     virtual void stepDown() = 0;
 
     virtual void setName (QString name) = 0;
-
 };
 
 #endif /* PARAMETEREDITORWIDGET_H_ */

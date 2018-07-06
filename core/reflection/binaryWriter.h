@@ -128,7 +128,7 @@ template <typename inputType, typename reflectionType>
      * Complex objects support with old style calls
      **/
 template <class Type>
-    void visit(Type &field, const char * fieldName)
+    void visit(Type &field, const char * /*fieldName*/)
     {
         field.accept(*this);
     }

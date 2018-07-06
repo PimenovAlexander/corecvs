@@ -5,18 +5,14 @@
  * \date Jul 15, 2010
  * \author apimenov
  */
-#include <QtCore/QRegExp>
-#include <QtCore/QString>
+#include "directShowCapture.h"
+#include "core/framesources/decoders/mjpegDecoderLazy.h"
+#include "core/utils/preciseTimer.h"
+#include "core/utils/log.h"
 
 #include <sstream>
 
-#include "core/utils/global.h"
-
-#include "core/utils/log.h"
-#include "core/utils/preciseTimer.h"
-#include "directShowCapture.h"
-#include "mjpegDecoderLazy.h"
-#include "cameraControlParameters.h"
+#include <QtCore/QRegExp>
 
 
 void DirectShowCaptureInterface::init(const string &devname, int h, int w, int fps,  bool isRgb, int bpp, int compressed)
@@ -24,13 +20,20 @@ void DirectShowCaptureInterface::init(const string &devname, int h, int w, int f
     CORE_ASSERT_TRUE_P((uint)compressed < DirectShowCameraDescriptor::codec_size, ("invalid 'compressed' in DirectShowCaptureInterface::init()"));
 
     mAutoFormat = false;
-    mDevname = QString("%1:1/%2:%3:%4x%5")
-        .arg(devname.c_str())
-        .arg(fps)
-        .arg(DirectShowCameraDescriptor::codec_names[compressed])
-        .arg(w)
-        .arg(h)
-        .toStdString();
+
+    std::stringstream ss;
+    ss << devname << ":1/"
+        << fps << ":"
+        << DirectShowCameraDescriptor::codec_names[compressed] << ":"
+        << w << "x" << h;
+    //mDevname = QString("%1:1/%2:%3:%4x%5")
+    //    .arg(devname.c_str())
+    //    .arg(fps)
+    //    .arg(DirectShowCameraDescriptor::codec_names[compressed])
+    //    .arg(w)
+    //    .arg(h)
+    //    .toStdString();
+    mDevname = ss.str();
 
     mDeviceIDs[LEFT_FRAME] = atoi(devname.c_str());
     mDeviceIDs[RIGHT_FRAME] = -1;
@@ -60,11 +63,11 @@ void DirectShowCaptureInterface::initForAutoFormat(const string &devname, int h,
 
     for (int i = 0; i < MAX_INPUTS_NUMBER; i++)
     {
-        mFormats[i].type   = AUTUSELECT_FORMAT_FEATURE;
+        mFormats[i].type   = AUTOSELECT_FORMAT_FEATURE;
         mFormats[i].height = h;
         mFormats[i].width  = w;
         mFormats[i].fps    = fps;
-        mFormats[i].bpp    = AUTUSELECT_FORMAT_FEATURE;
+        mFormats[i].bpp    = AUTOSELECT_FORMAT_FEATURE;
     }
 
     mIsRgb       = isRgb;
@@ -89,7 +92,7 @@ DirectShowCaptureInterface::DirectShowCaptureInterface(const string &devname, bo
     mAutoFormat = false;
 
     //     Group Number                   1       2 3        4 5      6       7 8       9       10     11        1213     14
-    QRegExp deviceStringPattern(QString("^([^,:]*)(,([^:]*))?(:(\\d*)/(\\d*))?((:mjpeg)|(:yuyv)|(:rgb)|(:fjpeg))?(:(\\d*)x(\\d*))?$"));
+    QRegExp deviceStringPattern("^([^,:]*)(,([^:]*))?(:(\\d*)/(\\d*))?((:mjpeg)|(:yuyv)|(:rgb)|(:fjpeg))?(:(\\d*)x(\\d*))?$");
     static const int Device1Group     = 1;
     static const int Device2Group     = 3;
     static const int FpsNumGroup      = 5;
@@ -99,8 +102,8 @@ DirectShowCaptureInterface::DirectShowCaptureInterface(const string &devname, bo
     static const int HeightGroup      = 14;
 
     L_DDEBUG_P("Input string <%s>", devname.c_str());
-    QString qdevname(devname.c_str());
-    int result = deviceStringPattern.indexIn(qdevname);
+
+    int result = deviceStringPattern.indexIn(devname.c_str());
     if (result == -1)
     {
         L_ERROR_P("Error in device string format:<%s>", devname.c_str());
@@ -190,11 +193,10 @@ ImageCaptureInterface::CapErrorCode DirectShowCaptureInterface::initCapture()
             continue;
         }
 
-        if(mAutoFormat)
+        if (mAutoFormat)
         {
-
             int format = selectCameraFormat(mFormats[i].height, mFormats[i].width);
-            int bpp = format == DirectShowCameraDescriptor::UNCOMPRESSED_RGB ? PREFFERED_RGB_BPP : AUTUSELECT_FORMAT_FEATURE;
+            int bpp = format == DirectShowCameraDescriptor::UNCOMPRESSED_RGB ? PREFFERED_RGB_BPP : AUTOSELECT_FORMAT_FEATURE;
             init(devname, mFormats[i].height, mFormats[i].width, mFormats[i].fps, mIsRgb, bpp, format);
             mAutoFormat = i < Frames::MAX_INPUTS_NUMBER - 1;
         }
@@ -240,179 +242,174 @@ void DirectShowCaptureInterface::callback(void *thiz, DSCapDeviceId dev, FrameDa
 ALIGN_STACK_SSE void DirectShowCaptureInterface::memberCallback(DSCapDeviceId dev, FrameData data)
 {
     //SYNC_PRINT(("Received new frame in a member %d\n", dev));
-    mProtectFrame.lock();
+    std::lock_guard<std::mutex> locker(mProtectFrame);
 
     DirectShowCameraDescriptor *camera = NULL;
     if (mCameras[0].deviceHandle == dev) camera = &mCameras[0];
     else
     if (mCameras[1].deviceHandle == dev) camera = &mCameras[1];
     else
-        goto exit;
+        return;
 
+    PreciseTimer timer = PreciseTimer::currentTime();
+    camera->gotBuffer = true;
+    camera->timestamp = (data.timestamp + 5) / 10;
+    delete_safe (camera->buffer);
+    delete_safe (camera->buffer24);
+
+    if (data.format.type == CAP_YUV || data.format.type == CAP_UYVY)
     {
-        PreciseTimer timer = PreciseTimer::currentTime();
-        camera->gotBuffer = true;
-        camera->timestamp = (data.timestamp + 5) / 10;
-        delete_safe (camera->buffer);
-        delete_safe (camera->buffer24);
-
-        if (data.format.type == CAP_YUV || data.format.type == CAP_UYVY)
-        {
-            bool uyvy = data.format.type == CAP_UYVY;
-            if (mIsRgb) {
-                camera->buffer24 = new RGB24Buffer(data.format.height, data.format.width, false);
-                camera->buffer24->fillWithYUVFormat((uint8_t *)data.data, uyvy);
-            }
-            else {
-                if(!uyvy)
-                {
-                    camera->buffer = new G12Buffer(data.format.height, data.format.width, false);
-                    camera->buffer->fillWithYUYV((uint16_t *)data.data);
-                }
-                else
-                {
-                    //TODO: to be replaced by UYVU->G12 converter as soon as it's implemented
-                    RGB24Buffer *rgbBuffer = new RGB24Buffer(data.format.height, data.format.width, false);
-                    rgbBuffer->fillWithYUVFormat((uint8_t *)data.data, uyvy);
-                    camera->buffer = rgbBuffer->toG12Buffer();
-                    delete_safe (rgbBuffer);
-                }
-            }
+        bool uyvy = data.format.type == CAP_UYVY;
+        if (mIsRgb) {
+            camera->buffer24 = new RGB24Buffer(data.format.height, data.format.width, false);
+            camera->buffer24->fillWithYUVFormat((uint8_t *)data.data, uyvy);
         }
-        else if (data.format.type == CAP_MJPEG)
-        {
-            MjpegDecoderLazy *lazyDecoder = new MjpegDecoderLazy;   // don't place it at stack, it's too huge!
-            if (mIsRgb)
-                camera->buffer24 = lazyDecoder->decodeRGB24((uchar *)data.data);
-            else
-                camera->buffer   = lazyDecoder->decode((uchar *)data.data);
-            delete lazyDecoder;
-        }
-        else if (data.format.type == CAP_RGB)
-        {
-            if(3 * (data.format.height - 1) * data.format.width >= data.size)
+        else {
+            if(!uyvy)
             {
-                L_INFO_P("Driver returned inconsistent data. %ld bytes recived.", data.size);
-            }
-            else if (mIsRgb) {
-                camera->buffer24 = new RGB24Buffer(data.format.height, data.format.width, true);
-                int w = camera->buffer24->w;
-                int h = camera->buffer24->h;
-                for (int i = 0; i < h; i++) {
-                    uint8_t  *rgbData = ((uint8_t *)data.data) + 3 * (h - i - 1) * w;
-                    RGBColor *rgb24Data = &(camera->buffer24->element(i, 0));
-                    for (int j = 0; j < w; j++) {
-                        RGBColor rgb(rgbData[2], rgbData[1], rgbData[0]);   // the given data format has B,G,R order
-                        *rgb24Data++ = rgb;
-                        rgbData += 3;
-                    }
-                }
-            }
-            else {
                 camera->buffer = new G12Buffer(data.format.height, data.format.width, false);
-                int w = camera->buffer->w;
-                int h = camera->buffer->h;
-                for (int i = 0; i < h; i++) {
-                    uint8_t  *rgbData = ((uint8_t *)data.data) + 3 * (h - i - 1) * w;
-                    uint16_t *greyData = &(camera->buffer->element(i, 0));
-                    for (int j = 0; j < w; j++) {
-                        RGBColor rgb(rgbData[2], rgbData[1], rgbData[0]);   // the given data format has B,G,R order
-                        *greyData++ = rgb.luma12();
-                        rgbData += 3;
-                    }
+                camera->buffer->fillWithYUYV((uint16_t *)data.data);
+            }
+            else
+            {
+                //TODO: to be replaced by UYVU->G12 converter as soon as it's implemented
+                RGB24Buffer *rgbBuffer = new RGB24Buffer(data.format.height, data.format.width, false);
+                rgbBuffer->fillWithYUVFormat((uint8_t *)data.data, uyvy);
+                camera->buffer = rgbBuffer->toG12Buffer();
+                delete_safe (rgbBuffer);
+            }
+        }
+    }
+    else if (data.format.type == CAP_MJPEG)
+    {
+        MjpegDecoderLazy *lazyDecoder = new MjpegDecoderLazy;   // don't place it at stack, it's too huge!
+        if (mIsRgb)
+            camera->buffer24 = lazyDecoder->decodeRGB24((uchar *)data.data);
+        else
+            camera->buffer   = lazyDecoder->decode((uchar *)data.data);
+        delete lazyDecoder;
+    }
+    else if (data.format.type == CAP_RGB)
+    {
+        if(3 * (data.format.height - 1) * data.format.width >= data.size)
+        {
+            L_INFO_P("Driver returned inconsistent data. %ld bytes recived.", data.size);
+        }
+        else if (mIsRgb) {
+            camera->buffer24 = new RGB24Buffer(data.format.height, data.format.width, true);
+            int w = camera->buffer24->w;
+            int h = camera->buffer24->h;
+            for (int i = 0; i < h; i++) {
+                uint8_t  *rgbData = ((uint8_t *)data.data) + 3 * (h - i - 1) * w;
+                RGBColor *rgb24Data = &(camera->buffer24->element(i, 0));
+                for (int j = 0; j < w; j++) {
+                    RGBColor rgb(rgbData[2], rgbData[1], rgbData[0]);   // the given data format has B,G,R order
+                    *rgb24Data++ = rgb;
+                    rgbData += 3;
                 }
             }
         }
         else {
             camera->buffer = new G12Buffer(data.format.height, data.format.width, false);
-        }
-
-        camera->decodeTime = timer.usecsToNow();
-        /* If both frames are in place */
-
-        if (mCameras[0].gotBuffer && mCameras[1].gotBuffer)
-        {
-            mCameras[0].gotBuffer = false;
-            mCameras[1].gotBuffer = false;
-
-            CaptureStatistics stats;
-            int64_t desync = mCameras[0].timestamp - mCameras[1].timestamp;
-            stats.values[CaptureStatistics::DESYNC_TIME] = desync > 0 ? desync : -desync;
-            stats.values[CaptureStatistics::DECODING_TIME] = mCameras[0].decodeTime + mCameras[1].decodeTime;
-            if (lastFrameTime.usecsTo(PreciseTimer()) != 0)
-            {
-                stats.values[CaptureStatistics::INTERFRAME_DELAY] = lastFrameTime.usecsToNow();
+            int w = camera->buffer->w;
+            int h = camera->buffer->h;
+            for (int i = 0; i < h; i++) {
+                uint8_t  *rgbData = ((uint8_t *)data.data) + 3 * (h - i - 1) * w;
+                uint16_t *greyData = &(camera->buffer->element(i, 0));
+                for (int j = 0; j < w; j++) {
+                    RGBColor rgb(rgbData[2], rgbData[1], rgbData[0]);   // the given data format has B,G,R order
+                    *greyData++ = rgb.luma12();
+                    rgbData += 3;
+                }
             }
-            lastFrameTime = PreciseTimer::currentTime();
-
-            frame_data_t frameData;
-            frameData.timestamp = mCameras[0].timestamp / 2 + mCameras[1].timestamp / 2;
-
-            if (imageInterfaceReceiver != NULL)
-            {
-                imageInterfaceReceiver->newFrameReadyCallback(frameData);
-                imageInterfaceReceiver->newStatisticsReadyCallback(stats);
-            }
-        }
-        else {
-            frame_data_t frameData;
-            frameData.timestamp = mCameras[0].timestamp;
-
-            if (imageInterfaceReceiver != NULL)
-            {
-                imageInterfaceReceiver->newFrameReadyCallback(frameData);
-            }
-
-            //newStatisticsReady(stats);
-            skippedCount++;
         }
     }
-exit:
-    mProtectFrame.unlock();
-}
+    else {
+        camera->buffer = new G12Buffer(data.format.height, data.format.width, false);
+    }
 
+    camera->decodeTime = timer.usecsToNow();
+    /* If both frames are in place */
+
+    if (mCameras[0].gotBuffer && mCameras[1].gotBuffer)
+    {
+        mCameras[0].gotBuffer = false;
+        mCameras[1].gotBuffer = false;
+
+        CaptureStatistics stats;
+        int64_t desync = mCameras[0].timestamp - mCameras[1].timestamp;
+        stats.values[CaptureStatistics::DESYNC_TIME] = desync > 0 ? desync : -desync;
+        stats.values[CaptureStatistics::DECODING_TIME] = mCameras[0].decodeTime + mCameras[1].decodeTime;
+        if (lastFrameTime.usecsTo(PreciseTimer()) != 0)
+        {
+            stats.values[CaptureStatistics::INTERFRAME_DELAY] = lastFrameTime.usecsToNow();
+        }
+        lastFrameTime = PreciseTimer::currentTime();
+
+        frame_data_t frameData;
+        frameData.timestamp = mCameras[0].timestamp / 2 + mCameras[1].timestamp / 2;
+
+        if (imageInterfaceReceiver != NULL)
+        {
+            imageInterfaceReceiver->newFrameReadyCallback(frameData);
+            imageInterfaceReceiver->newStatisticsReadyCallback(stats);
+        }
+    }
+    else {
+        frame_data_t frameData;
+        frameData.timestamp = mCameras[0].timestamp;
+
+        if (imageInterfaceReceiver != NULL)
+        {
+            imageInterfaceReceiver->newFrameReadyCallback(frameData);
+        }
+
+        //newStatisticsReady(stats);
+        skippedCount++;
+    }
+}
 
 ImageCaptureInterface::FramePair DirectShowCaptureInterface::getFrame()
 {
-    mProtectFrame.lock();
-        FramePair result;
-        if (mCameras[0].buffer != NULL)
-        {
-            result.setBufferLeft(new G12Buffer(mCameras[0].buffer));
-        }
-        if (mCameras[1].buffer != NULL)
-        {
-            result.setBufferRight(new G12Buffer(mCameras[1].buffer));
-        }
-        result.setTimeStampLeft (mCameras[0].timestamp);
-        result.setTimeStampRight(mCameras[1].timestamp);
-    mProtectFrame.unlock();
+    std::lock_guard<std::mutex> locker(mProtectFrame);
+
+    FramePair result;
+    if (mCameras[0].buffer != NULL)
+    {
+        result.setBufferLeft(new G12Buffer(mCameras[0].buffer));
+    }
+    if (mCameras[1].buffer != NULL)
+    {
+        result.setBufferRight(new G12Buffer(mCameras[1].buffer));
+    }
+    result.setTimeStampLeft (mCameras[0].timestamp);
+    result.setTimeStampRight(mCameras[1].timestamp);
     return result;
 }
 
 ImageCaptureInterface::FramePair DirectShowCaptureInterface::getFrameRGB24()
 {
-    mProtectFrame.lock();
-        FramePair result;
-        if (mCameras[0].buffer != NULL)
-        {
-            result.setBufferLeft(new G12Buffer(mCameras[0].buffer));
-        }
-        if (mCameras[1].buffer != NULL)
-        {
-            result.setBufferRight(new G12Buffer(mCameras[1].buffer));
-        }
-        if (mCameras[0].buffer24 != NULL)
-        {
-            result.setRgbBufferLeft(new RGB24Buffer(mCameras[0].buffer24));
-        }
-        if (mCameras[1].buffer24 != NULL)
-        {
-            result.setRgbBufferRight(new RGB24Buffer(mCameras[1].buffer24));
-        }
-        result.setTimeStampLeft (mCameras[0].timestamp);
-        result.setTimeStampRight(mCameras[1].timestamp);
-    mProtectFrame.unlock();
+    std::lock_guard<std::mutex> locker(mProtectFrame);
+
+    FramePair result;
+    if (mCameras[0].buffer != NULL)
+    {
+        result.setBufferLeft(new G12Buffer(mCameras[0].buffer));
+    }
+    if (mCameras[1].buffer != NULL)
+    {
+        result.setBufferRight(new G12Buffer(mCameras[1].buffer));
+    }
+    if (mCameras[0].buffer24 != NULL)
+    {
+        result.setRgbBufferLeft(new RGB24Buffer(mCameras[0].buffer24));
+    }
+    if (mCameras[1].buffer24 != NULL)
+    {
+        result.setRgbBufferRight(new RGB24Buffer(mCameras[1].buffer24));
+    }
+    result.setTimeStampLeft (mCameras[0].timestamp);
+    result.setTimeStampRight(mCameras[1].timestamp);
     return result;
 }
 
@@ -596,9 +593,7 @@ void DirectShowCaptureInterface::getAllCameras(vector<string> &cameras)
     DirectShowCapDll_devicesNumber(&num);
     for (int i = 0; i < num; i++)
     {
-        std::ostringstream s;
-        s << i;
-        cameras.push_back(s.str());
+        cameras.push_back(std::to_string(i));
     }
 }
 
@@ -635,17 +630,17 @@ ImageCaptureInterface::CapErrorCode DirectShowCaptureInterface::getCaptureFormat
 
 DirectShowCaptureInterface::CapErrorCode DirectShowCaptureInterface::getCameraFormatsForResolution(int h, int w, std::vector<CAPTURE_FORMAT_TYPE> &formats)
 {
+    formats.clear();
+
     int number;
     CaptureTypeFormat* captureTypeFormats = nullptr;
-    formats.clear();
-    if(getCaptureFormats(number, captureTypeFormats)  == ImageCaptureInterface::FAILURE)
-    {
+    if (getCaptureFormats(number, captureTypeFormats)  == ImageCaptureInterface::FAILURE)
         return ImageCaptureInterface::FAILURE;
-    }
+
     for (int i = 0; i < number; i++)
     {
-        if(captureTypeFormats[i].height == h
-                && captureTypeFormats[i].width == w)
+        if (captureTypeFormats[i].height == h &&
+            captureTypeFormats[i].width == w)
         {
             formats.push_back((CAPTURE_FORMAT_TYPE)captureTypeFormats[i].type);
         }
@@ -660,9 +655,10 @@ int DirectShowCaptureInterface::selectCameraFormat(int h, int w)
     bool canYUV = false;
     bool canUYVY = false;
     getCameraFormatsForResolution(h, w, formats);
-    for(CAPTURE_FORMAT_TYPE &format: formats)
+
+    for (CAPTURE_FORMAT_TYPE format : formats)
     {
-        switch(format)
+        switch (format)
         {
         case CAP_RGB:
             canRGB = true;
@@ -674,11 +670,11 @@ int DirectShowCaptureInterface::selectCameraFormat(int h, int w)
             canUYVY = true;
         }
     }
-    if(canRGB)
+    if (canRGB)
         return DirectShowCameraDescriptor::UNCOMPRESSED_RGB;
-    if(canYUV)
+    if (canYUV)
         return DirectShowCameraDescriptor::UNCOMPRESSED_YUV;
-    if(canUYVY)
+    if (canUYVY)
         return DirectShowCameraDescriptor::UNCOMPRESSED_UYVY;
 
     L_ERROR_P("Error to get supported formats for cameraId: %d. Try RGB", (int)mCameras[0].deviceHandle);

@@ -10,6 +10,9 @@
 #include <fstream>
 #include <iostream>
 
+#include <core/fileformats/pltLoader.h>
+#include <core/fileformats/xyzListLoader.h>
+
 #include "gtest/gtest.h"
 
 #include "core/utils/global.h"
@@ -27,8 +30,8 @@ using namespace corecvs;
 TEST(FileFormats, testFileFormats)
 {
     /** Test case 1 */
-    RAWLoader *rawLoader = new RAWLoader();
-    G12Buffer *raw = rawLoader->load("data/testdata/32x32_12h_test_raw.raw");
+    RAWLoaderBase *rawLoader = new RAWLoaderBase();
+    G12Buffer *raw = rawLoader->loadG12("data/testdata/32x32_12h_test_raw.raw");
     if (raw == nullptr)
     {
         cout << "Could not open test image" << endl;
@@ -41,42 +44,34 @@ TEST(FileFormats, testFileFormats)
     delete_safe(rawLoader);
 
     /** Test case 2 */
-    BMPLoader *bmpLoader = new BMPLoader();
-    G12Buffer *bmp = bmpLoader->loadG12("data/testdata/test_bmp.bmp");
+    G12Buffer *bmp = BMPLoader().loadG12("data/testdata/test_bmp.bmp");
     CORE_ASSERT_TRUE(bmp->h == bmp->w, "BMP Image sizes corrupted");
     CORE_ASSERT_TRUE(bmp != NULL, "BMP Image load failed");
     CORE_ASSERT_TRUE(bmp->verify(), "BMP Image verification failed");
     delete_safe(bmp);
-    delete_safe(bmpLoader);
 
     /** Test case 3 */
-    PPMLoader *ppmLoader = new PPMLoader();
-    G12Buffer *ppm = ppmLoader->loadG12("data/testdata/test_ppm.ppm");
-    CORE_ASSERT_TRUE(ppm != NULL, "PPM Image load failed");
-    CORE_ASSERT_TRUE(ppm->h == ppm->w, "PPM Image sizes corrupted");
-    CORE_ASSERT_TRUE(ppm->verify(), "PPM Image verification failed");
+    G12Buffer *ppm = PPMLoader().loadG12("data/testdata/test_ppm.ppm");
+    CORE_ASSERT_TRUE(ppm == NULL, "test PPM with type:6 image has been loaded but shouldn't!");
+    //CORE_ASSERT_TRUE(ppm->h == ppm->w, "PPM Image sizes corrupted");
+    //CORE_ASSERT_TRUE(ppm->verify(), "PPM Image verification failed");
     delete_safe(ppm);
-    delete_safe(ppmLoader);
 
     /** Test case 4 */
-    PPMLoader *metappmLoader = new PPMLoader();
     MetaData *metadata = new MetaData;
-    G12Buffer *metappm = metappmLoader->loadMeta("data/testdata/test_pgm_metadata.pgm", metadata);
+    G12Buffer *metappm = PPMLoader().loadG12("data/testdata/test_pgm_metadata.pgm", metadata);
     CORE_ASSERT_TRUE(metappm != NULL, "PGM with Metadata Image load failed");
     CORE_ASSERT_TRUE(metappm->h == metappm->w, "PGM with Metadata Image sizes corrupted");
     CORE_ASSERT_TRUE(metappm->verify(), "PGM with Metadata Image verification failed");
     CORE_ASSERT_TRUE(metadata->at("hello_world")[0] == 42, "PGM Metadata read failed");
     delete_safe(metappm);
-    delete_safe(metappmLoader);
     delete_safe(metadata);
 
     /** Test case 5 */
-    BMPLoader *bmpLoader1 = new BMPLoader();
-    G12Buffer *bmp1 = bmpLoader1->loadG12("data/calib-object.bmp");
+    G12Buffer *bmp1 = BMPLoader().loadG12("data/calib-object.bmp");
     CORE_ASSERT_TRUE(bmp1 != NULL, "BMP Image load failed");
     CORE_ASSERT_TRUE(bmp1->verify(), "BMP Image verification failed");
     delete_safe(bmp1);
-    delete_safe(bmpLoader1);
 }
 
 TEST(FileFormats, DISABLED_testBMP24)
@@ -234,4 +229,90 @@ TEST(FileFormats, testGcodeLoader1)
     std::string str(input);
     std::istringstream stream(str);
     loader.loadGcode(stream, mesh);
+}
+
+TEST(FileFormats, testhpglLoader)
+{
+    const char input[] =
+            "IN;\n"
+            "PT0;\n"
+            "PU;\n"
+            "SP3;\n"
+            "PA88,3478;\n"
+            "PD;\n"
+            "PA103,3481;\n"
+            "PA116,3490;\n"
+            "PA125,3502;\n"
+            "PA128,3518;\n"
+            "PA125,3533;\n"
+            "PA116,3546;\n"
+            "PA109,3551;\n";
+
+
+    HPGLLoader loader;
+    HPGLProgram program;
+    std::string str(input);
+    std::istringstream stream(str);
+    loader.loadHPGLcode(stream, program);
+
+    cout << program << std::endl;
+}
+
+
+TEST(FileFormats, testXYZListLoader)
+{
+    const char input[] =
+    "0 1 2\n"
+    "3 4 5\n"
+    "6 7 8\n"
+    "9 10 11\n"
+    "12 13 14\n";
+
+    Mesh3D mesh;
+
+    XYZListLoader loader;
+    std::string str(input);
+    std::istringstream stream(str);
+    loader.loadXYZ(stream, mesh);
+
+    loader.saveXYZ(cout, mesh);
+}
+
+TEST(FileFormats, testXYZListLoader1)
+{
+    const char input[] =
+    "0 1 2 0\n"
+    "3 4 5 1\n"
+    "6 7 8 2\n"
+    "9 10 11 3\n"
+    "12 13 14 4\n";
+
+    Mesh3D mesh;
+    mesh.switchAttributes();
+
+    XYZListLoader loader;
+    std::string str(input);
+    std::istringstream stream(str);
+    loader.loadXYZ(stream, mesh);
+
+    loader.saveXYZ(cout, mesh);
+}
+
+TEST(FileFormats, testLabelList)
+{
+    const char input[] =
+    "-0.751001 -3.26496 0.213015 0.001927 id:4\n"
+    "-0.751065 -3.26494 0.213870 0.002132 id:4\n"
+    "-0.878894 -3.49883 0.184953 0.002388 id:4\n"
+    "-0.690898 -3.65771 0.235221 0.003894 id:4\n";
+
+    LabelList list;
+    XYZListLoader loader;
+    std::string str(input);
+    std::istringstream stream(str);
+
+    loader.loadLabelList(stream, list);
+
+    CORE_ASSERT_TRUE(list.size() == 4, "Reading problem" );
+    loader.saveLabelList(cout  , list);
 }

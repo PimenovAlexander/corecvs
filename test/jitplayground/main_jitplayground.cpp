@@ -1,4 +1,3 @@
-#include <abstractFileCaptureSpinThread.h>
 #include <cmath>
 #include <stdio.h>
 #include <fstream>
@@ -41,11 +40,11 @@ FixtureScene *genTest()
     FixtureScene *scene = new FixtureScene;
 
     CameraModel model;
-    model.intrinsics.principal.x() = 320;
-    model.intrinsics.principal.y() = 240;
-    model.intrinsics.focal.x() = 589;
-    model.intrinsics.focal.y() = 589;
-    model.intrinsics.size = Vector2dd(640, 480);
+    model.getPinhole()->setCx(320);
+    model.getPinhole()->setCy(240);
+    model.getPinhole()->setFx(589);
+    model.getPinhole()->setFy(589);
+    model.getPinhole()->setSize(Vector2dd(640, 480));
 
 
     for (int idf = 0; idf < FIXTURE_NUM; idf++)

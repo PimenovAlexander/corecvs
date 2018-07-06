@@ -45,6 +45,8 @@ TEST(Serializer, testReflectionDEATH)
 #endif
 }
 
+
+
 TEST(Serializer, testReflection1)
 {
     Vector3dd vec3a(5.0, 0.4, -1.0);
@@ -298,4 +300,24 @@ TEST(Serializer, binarySerializerScene)
         BinaryReader reader("scene.bin");
         reader.visit(scene, "scene");
     }
+}
+
+TEST(Serializer, testCameraModels)
+{
+    OmnidirectionalBaseParameters baseParams;
+    JSONPrinter printer;
+    printer.visit(baseParams, "test1");
+
+    CameraModel catadioptric;
+    catadioptric.intrinsics.reset(new OmnidirectionalProjection(Vector2dd(100,100), 100, Vector2dd(200,200)));
+    catadioptric.setLocation(Affine3DQ::Shift(40,0,0));
+
+    FixtureCamera *cameraCat = new FixtureCamera;
+    cameraCat->nameId = "catadioptric";
+    cameraCat->copyModelFrom(catadioptric);
+
+    printer.visit(*cameraCat, "test2");
+
+
+
 }

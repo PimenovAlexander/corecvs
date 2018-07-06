@@ -21,6 +21,7 @@ CORE_SUBMODULES =       \
     cammodel            \
     fileformats         \
     filesystem          \
+    framesources        \
     filters             \
     function            \
     geometry            \
@@ -52,6 +53,7 @@ for (MODULE, CORE_SUBMODULES) {
 
 # Some modules want to export more then one directory with includes. Add them here
 CORE_INCLUDEPATH += \
+    $$COREDIR/cameracalibration/projection \
     $$COREDIR/buffers/fixeddisp \
     $$COREDIR/buffers/flow \
     $$COREDIR/buffers/histogram \
@@ -70,6 +72,7 @@ CORE_INCLUDEPATH += \
     $$COREDIR/clustering3d \
     $$COREDIR/geometry/raytrace \
     $$COREDIR/geometry/renderer \
+    $$COREDIR/framesources/file \
     $$COREDIR/xml \
     $$COREDIR/xml/generated \
     $$COREDIR/tinyxml \
@@ -77,11 +80,19 @@ CORE_INCLUDEPATH += \
 
 CORE_INCLUDEPATH_SUPP=$$COREDIR/..
 
+DEFINES += WITH_FRAMESOURCE_PREC
+DEFINES += WITH_FRAMESOURCE_FILE
+
+CONFIG += with_suppressincs			# activate this mode forever
+with_suppressincs {
+    SUPPRESSINCLUDES=true
+}
 !equals(SUPPRESSINCLUDES, "true") {
     INCLUDEPATH += $$CORE_INCLUDEPATH_SUPP $$CORE_INCLUDEPATH
 } else {
     INCLUDEPATH += $$CORE_INCLUDEPATH_SUPP
-    message(Per-Folder includes are supperssed. Only including $$CORE_INCLUDEPATH_SUPP)
+
+# less flood    !build_pass: message(Per-Folder includes are suppressed. Only including $$CORE_INCLUDEPATH_SUPP)
 }
 
 
@@ -90,7 +101,7 @@ DEPENDPATH  += $$CORE_INCLUDEPATH
 exists($$COREDIR/../../../config.pri) {
     COREBINDIR = $$COREDIR/../../../bin
 } else {
-    message(Using local core. Global config should be at $$COREDIR/../../../config.pri)
+# less flood  !build_pass: message(Using local core. Global config should be at $$COREDIR/../../../config.pri)
     COREBINDIR = $$COREDIR/../bin
 }
 

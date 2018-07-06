@@ -272,7 +272,9 @@ TEST(PolynomialSolversTest, testPow2)
         {
             ASSERT_NEAR(corecvs::PolynomialSolver::evaluate(coeff, roots[0], 2), 0.0, mc * REL_SOL_TOLERANCE);
             if (rootsN > 1)
+            {
                 ASSERT_NEAR(corecvs::PolynomialSolver::evaluate(coeff, roots[1], 2), 0.0, mc * REL_SOL_TOLERANCE);
+            }
         }
     }
 }

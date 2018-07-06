@@ -71,16 +71,25 @@ TEST(KltCycle, testKLT)
     context.gradient = new SpatialGradientIntegralBuffer(sg);
 
 
-    KLTGenerator<BilinearInterpolator> generator(Vector2d32(2,2), 5);
+    KLTGenerator<BilinearInterpolatorD> generator(Vector2d32(2,2), 5);
     Vector2dd guess(0,0);
     generator.kltIteration(context, Vector2d32(3,3), &guess, 2.0);
 
     Vector2dd guessSubpixel(0,0);
+    generator.trace = true;
     generator.kltIterationSubpixel(context, Vector2dd(3,3), &guessSubpixel, 2.0);
 
-    cout << "Result shift is " << guess.x() << ":" << guess.y() << "\n";
-    cout << "Result shift is " << guessSubpixel.x() << ":" << guessSubpixel.y() << "\n";
+    cout << "============================================================" << endl;
+    cout << "Fast: " << endl;
 
+    Vector2df guessSubpixelFast(0,0);
+    generator.trace = true;
+    generator.kltIterationSubpixelFast(context, Vector2df(3,3), &guessSubpixelFast, 2.0);
+
+
+    cout << "Result      shift is " << guess.x() << ":" << guess.y() << "\n";
+    cout << "Result      shift is " << guessSubpixel.x() << ":" << guessSubpixel.y() << "\n";
+    cout << "Result fast shift is " << guessSubpixelFast.x() << ":" << guessSubpixelFast.y() << "\n";
 
 
     delete sg;

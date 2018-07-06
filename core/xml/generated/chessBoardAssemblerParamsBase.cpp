@@ -91,7 +91,8 @@ int ChessBoardAssemblerParamsBase::staticInit()
           " Maximal cost for real board",
           true,
          -999999,
-         999999
+         999999,
+         1
         );
     field3->widgetHint=BaseField::SPIN_BOX;
     field3->precision=2;

@@ -52,6 +52,7 @@ int FocusEstimationParameters::staticInit()
           "JunctionCoef",
           true,
          0,
+         1,
          1
         );
     field0->widgetHint=BaseField::SPIN_BOX;
@@ -68,6 +69,7 @@ int FocusEstimationParameters::staticInit()
           "Center Coef",
           true,
          0,
+         1,
          1
         );
     field1->widgetHint=BaseField::SPIN_BOX;

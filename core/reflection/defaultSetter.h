@@ -13,6 +13,10 @@ class DefaultSetter
 {
 public:
 
+    bool isSaver () { return false;}
+    bool isLoader() { return true;}
+
+
 /*template <typename FieldReflectionType>
     void visit(typename FieldReflectionType::CPPType &field, const FieldReflectionType *fieldDescriptor);*/
 

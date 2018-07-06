@@ -8,7 +8,7 @@
 #include <QtCore/QRegExp>
 
 #include "V4L2CaptureDecouple.h"
-#include "decoupleYUYV.h"
+#include "core/framesources/decoders/decoupleYUYV.h"
 
 V4L2CaptureDecoupleInterface::V4L2CaptureDecoupleInterface(string _devname)
     : spin(this)

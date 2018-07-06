@@ -79,4 +79,126 @@ void CommandLineSetter::visit(Type &field, Type /*defaultValue*/, const char *fi
     /*popChild();*/
 }
 
+bool CommandLineSetter::hasOption(const std::string &option, unsigned *pos) const
+{
+    string decorated  = mArgPrefix + option;
+    string decorated1 = mArgPrefix + option + mArgSeparator;
+
+
+    for (unsigned i = 0; i < mArgs.size(); i++)
+    {
+        //SYNC_PRINT(("%d - <%s> <%s> <%s>\n", i,  decorated.c_str(), decorated1.c_str(), mArgs[i].c_str()));
+        if ((mArgs[i] == decorated) ||
+                (mArgs[i].compare(0, decorated1.length(), decorated1) == 0))
+        {
+            if (pos != 0) {
+                *pos = i;
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+const std::string CommandLineSetter::getOption(const std::string &option, bool *found) const
+{
+    string decorated = mArgPrefix + option + mArgSeparator;
+
+    if (found != NULL) *found = false;
+    for (unsigned i = 0; i < mArgs.size(); i++)
+    {
+        if (mArgs[i].compare(0, decorated.length(), decorated) == 0)
+        {
+            if (found != NULL) *found = true;
+            return mArgs[i].substr(decorated.length());
+        }
+    }
+    return "";
+}
+
+vector<std::string> CommandLineSetter::nonPrefix() const
+{
+    vector<string> result;
+
+    for (unsigned i = 0; i < mArgs.size(); i++)
+    {
+        if (mArgs[i].compare(0, mArgPrefix.length(), mArgPrefix) != 0)
+        {
+            result.push_back(mArgs[i]);
+        }
+    }
+    return result;
+}
+
+std::string CommandLineSetter::getNonPrefixParam(int id) const
+{
+    int num = 0;
+    for (unsigned i = 0; i < mArgs.size(); i++)
+    {
+        if (mArgs[i].compare(0, mArgPrefix.length(), mArgPrefix) != 0)
+        {
+            if (num == id) {
+                return (mArgs[i]);
+            }
+            num++;
+        }
+    }
+    return "";
+}
+
+int CommandLineSetter::getInt(const std::string &option, int defaultInt) const
+{
+    const string& argument = getOption(option);
+
+    if (argument.empty())
+    {
+        return defaultInt;
+    }
+
+    std::size_t pos = 0;
+    int result = stoi(argument, &pos);
+    if (pos != 0) {
+        return result;
+    } else {
+        return defaultInt;
+    }
+}
+
+bool CommandLineSetter::getBool(const std::string &option) const
+{
+    //const string& argument = getOption(option);
+    return hasOption(option);
+}
+
+double CommandLineSetter::getDouble(const std::string &option, double defaultDouble) const
+{
+    const string& argument = getOption(option);
+
+    if (argument.empty())
+    {
+        return defaultDouble;
+    }
+
+    std::size_t pos = 0;
+    double result = stod(argument, &pos);
+    if (pos != 0) {
+        return result;
+    } else {
+        return defaultDouble;
+    }
+}
+
+std::string CommandLineSetter::getString(const std::string &option, const std::string &defaultString) const
+{
+    bool found = false;
+    const std::string& argument = getOption(option, &found);
+
+    if (!found)
+    {
+        return std::string(defaultString);
+    }
+
+    return std::string(argument);
+}
+
 } //namespace corecvs

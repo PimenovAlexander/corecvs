@@ -220,7 +220,7 @@ TEST(Arithmetics, testDivisionBy25)
 }
 
 ALIGN_STACK_SSE
-TEST(Arithmetics, profileDivisionBy25)
+TEST(Arithmetics, DISABLED_profileDivisionBy25)
 {
     const unsigned  LIMIT = 50000;
     PreciseTimer start;

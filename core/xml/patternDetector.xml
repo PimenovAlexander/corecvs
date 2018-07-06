@@ -1,0 +1,131 @@
+<poco version="5.0">
+  <include name="parameters.xml"/>
+
+  <enum name="Checkerboard Detection Algorithm">
+    <item name="Homebrew Detector" id="0" />
+    <item name="OpenCV Detector"   id="1" />
+  </enum>
+
+  <class name="Checkerboard Detection Parameters">
+    <field type="bool"         name="Estimate undistorted from distorted" defaultValue="true"/>
+    <field type="bool"         name="Use Undistortion"      defaultValue="false"/>
+
+    <field type="Checkerboard Detection Algorithm" name="Algorithm" defaultValue="0" />
+
+
+    <field type="ImageChannel" name="Channel"          defaultValue="3"   />
+    <field type="double"       name="cellSizeHor"      defaultValue="0.05"   min="0.0" max="1.0" suffix="m" decimals="3" />
+    <field type="double"       name="cellSizeVert"     defaultValue="0.05"   min="0.0" max="1.0" suffix="m" decimals="3" />
+
+    <field type="bool"         name="cleanExisting"     defaultValue="true" />
+
+    <field type="int"          name="preciseDiameter"   defaultValue="50"      min="0"   max="999999"  />
+    <field type="int"          name="iterationCount"    defaultValue="50"      min="1"   max="999999"  />
+    <field type="double"       name="minAccuracy"       defaultValue="0.01"    min="0.0" max="999999" suffix="px" decimals="4"/>
+
+
+    <field type="bool"         name="partialBoard"      defaultValue="true"/>
+    <field type="bool"         name="fastBoardSpeedup"  defaultValue="true"/>
+    <field type="bool"         name="Draw SGFs on boards" defaultValue="true"/>
+    <field type="bool"         name="Skip undistorted with no distorted board" defaultValue="false"/>
+
+  </class>
+
+
+  <class name="Chess Board Corner Detector Params Base">
+     <field type="bool"   name="produceDebug"        defaultValue="false"/>
+     <field type="bool"   name="floatSpeedup"        defaultValue="true"/>
+
+
+     <field type="double" name="normalizePercentile"  suffix="%" defaultValue="5"    comment="Brightness percentile to be cut" min="0"   max="100" />
+
+
+     <field type="double" name="sectorSizeDeg"  suffix="deg" defaultValue="90"    comment="Sector size in deg" />
+     <field type="int"    name="histogramBins"               defaultValue="50"    comment="Number of bins for computing edge direction histogram" min="0"   max="999999"  />
+
+     <field type="double" name="minAngleDeg"    suffix="deg" defaultValue="30"      comment="Minimal angle between edges in deg" />
+     <field type="int"    name="neighborhood"                defaultValue="25"      comment="Typical radius for estimating edge-related data and refinig corner positions" min="0"   max="999999"  />
+     <field type="double" name="gradThreshold"               defaultValue="0.1"     comment="Gradient magnitude threshold" />
+
+     <field type="double" name="orientationInlierThreshold"  defaultValue="0.25" comment="Gradient orientation inlier threshold" />
+     <field type="double" name="inlierDistanceThreshold"     defaultValue="5.0"  comment="Threshold for distance to edge" />
+     <field type="double" name="updateThreshold"             defaultValue="4.0"  comment="Threshold for maximal corner-position update" />
+
+
+     <field type="double" name="scoreThreshold"            defaultValue="0.0"   comment="Threshold for final score" />
+     <field type="int"    name="nRounds"                   defaultValue="3"     comment="Number of orientation/position refinement rounds" min="0"   max="999999"  />
+
+
+     <field type="double" name="meanshiftBandwidth"        defaultValue="1.0"   comment="Meanshift smoothing stdev" />
+     <field type="int"    name="nmsLocality"               defaultValue="20"    comment="Non Minimal Supresstion locality area" min="0"   max="999999" />
+     <field type="double" name="nmsThreshold"              defaultValue="0.025" comment="Non Minimal Supresstion threshold"     min="0"   max="99"     decimals="3" />
+
+     <field type="double" name="patternRadius"             size="3" min="0" max="999999" defaultValue="0" comment="Radius for multi-scale pattern detection" >
+          <def0>4</def0>
+          <def1>8</def1>
+          <def2>12</def2>
+     </field>
+     <field type="double" name="patternStartAngleDeg"      size="2" min="0" max="999999" defaultValue="0" comment="Angle for rotation-variant detection" >
+         <def0>0</def0>
+         <def1>45</def1>
+     </field>
+     <field type="double" name="cornerScores"              size="3" min="0" max="999999" defaultValue="0" comment="Radius for corner-scoring" >
+         <def0>4</def0>
+         <def1>8</def1>
+         <def2>12</def2>
+     </field>
+
+  </class>
+
+  <class name="Chess Board Assembler Params Base">
+    <field type="double" name="seedThreshold"        defaultValue="0.3"    comment="Threshold for seed grid non-regularity" />
+    <field type="double" name="seedTgPenalty"        defaultValue="5.0"    comment="Factor for orthogonal error in seed estimation" />
+    <field type="double" name="conservativity"       defaultValue="0.9"    comment="Factor of conservativity in next row prediction (should be lower to high-distorted boards)" />
+    <field type="double" name="costThreshold"        defaultValue="-10.0"  min="-999999"   max="999999"  comment=" Maximal cost for real board" />
+    <field type="double" name="minSeedDistance"      defaultValue="15.0"   comment="Minimal seed distance" />
+    <field type="int"    name="hypothesisDimensions" defaultValue="1"      comment="Hypothesis type: consider only hypothesis that fits specified number of dims" />
+
+	<field type="bool"   name="kdtree" defaultValue="false" comment="Use k-d tree for greedy expansion" />
+    <field type="int"    name="hypothesisDimFirst"   defaultValue="18" />
+    <field type="int"    name="hypothesisDimSecond"  defaultValue="11" />
+  </class>
+
+  <enum name="Bitcode Board Orientation">
+    <item name="Below" id="0" icon=":/new/prefix1/down_alt.png@main.qrc"/>
+    <item name="Left"  id="1" icon=":/new/prefix1/back_alt.png@main.qrc"/>
+    <item name="Above" id="2" icon=":/new/prefix1/up_alt.png@main.qrc"/>
+    <item name="Right" id="3" icon=":/new/prefix1/forward_alt.png@main.qrc"/>
+    <item name="Any"   id="4" icon=":/new/prefix1/question.png@main.qrc"/>
+  </enum>
+
+  <class name="Bitcode Board Params Base">
+    <field type="bool"   name="vertical"    defaultValue="true" comment="Orientation" />
+
+    <field type="int"    name="cellSize"    defaultValue="256" min="0" max="999999" suffix="px" comment="Chess cells size in pixels" />
+
+    <field type="int"    name="blackColor"  defaultValue="0"   min="0" max="255" comment="shades of gray for black chesses" />
+    <field type="int"    name="whiteColor"  defaultValue="255" min="0" max="255" comment="shades of gray for white chesses" />
+
+    <field type="double" name="identSize"   defaultValue="1"   suffix="cells" comment="white ident size around chessboard in chesses" />
+
+    <field type="int"    name="boardHeight" defaultValue="4"   suffix="cells" comment="size of the chessboard in chesses" />
+    <field type="int"    name="boardWidth"  defaultValue="4"   suffix="cells" comment="size of the chessboard in chesses" />
+
+    <field type="int"    name="codeWidth"   defaultValue="4"   suffix="cells" comment="width and height of the bitcode in chesses" />
+    <field type="int"    name="codeHeight"  defaultValue="2"   suffix="cells" comment="width and height of the bitcode in chesses" />
+
+    <field type="double" name="bitcodeIdentSize" defaultValue="1" suffix="cells" comment="ident between chessboard and bitcode in chesses" />
+
+    <!-- Fields below are detection related only-->
+
+    <field type="double" name="bitcodeConfidence" defaultValue="0.25" suffix="cells" comment="Area in which the stats are collected during detection" />
+    <field type="Bitcode Board Orientation" name="bitcodeOrientation" defaultValue="4" />
+
+    <!-- 3cm cell and 10.5cm;  to the side -->
+    <field type="double" name="CenterToZeroX"   defaultValue="-3.3"   suffix="cells" min="-255" max="255" comment="X Distance from grid center to Traget Point" />
+    <field type="double" name="CenterToZeroY"   defaultValue=" 6.0"   suffix="cells" min="-255" max="255" comment="Y Distance from grid center to Traget Point" />
+
+  </class>
+
+</poco>
+

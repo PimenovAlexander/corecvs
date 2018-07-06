@@ -106,6 +106,8 @@ void AdvancedBinaryReader::visit<string, StringField>(std::string &field, const 
 template <>
 void AdvancedBinaryReader::visit<std::wstring, WStringField>(std::wstring &field, const WStringField *fieldDescriptor)
 {
+    CORE_UNUSED(field);
+    CORE_UNUSED(fieldDescriptor);
     if (stream == NULL) return;
     SYNC_PRINT(("%s : NYI\n", __FUNCTION__));
 }
@@ -113,6 +115,8 @@ void AdvancedBinaryReader::visit<std::wstring, WStringField>(std::wstring &field
 template <>
 void AdvancedBinaryReader::visit<void *, PointerField>(void * &field, const PointerField *fieldDescriptor)
 {
+    CORE_UNUSED(field);
+    CORE_UNUSED(fieldDescriptor);
     if (stream == NULL) return;
     SYNC_PRINT(("%s : NYI\n", __FUNCTION__));
 }
@@ -120,6 +124,8 @@ void AdvancedBinaryReader::visit<void *, PointerField>(void * &field, const Poin
 template <>
 void AdvancedBinaryReader::visit<int, EnumField>(int &field, const EnumField *fieldDescriptor)
 {
+    CORE_UNUSED(field);
+    CORE_UNUSED(fieldDescriptor);
     if (stream == NULL) return;
     loadField<int>(field, fieldDescriptor->name.name);
 }
@@ -130,8 +136,9 @@ void AdvancedBinaryReader::visit<int, EnumField>(int &field, const EnumField *fi
 template <>
 void AdvancedBinaryReader::visit<double, DoubleVectorField>(std::vector<double> &field, const DoubleVectorField *fieldDescriptor)
 {
+    CORE_UNUSED(field);
+    CORE_UNUSED(fieldDescriptor);
     if (stream == NULL) return;
-
     SYNC_PRINT(("%s : NYI\n", __FUNCTION__));
 }
 
@@ -160,6 +167,7 @@ void AdvancedBinaryReader::visit<bool>(bool &field, bool defaultValue, const cha
 template <>
 void AdvancedBinaryReader::visit<int>(int &field, int defaultValue, const char *fieldName)
 {
+    CORE_UNUSED(defaultValue);
     if (stream == NULL) return;
     loadField<int>(field, fieldName);
     SYNC_PRINT(("AdvancedBinaryReader::visit<int>(): read %d\n", field));
@@ -169,6 +177,7 @@ void AdvancedBinaryReader::visit<int>(int &field, int defaultValue, const char *
 template <>
 void AdvancedBinaryReader::visit<double>(double &field, double defaultValue, const char *fieldName)
 {
+    CORE_UNUSED(defaultValue);
     if (stream == NULL) return;
     loadField<double>(field, fieldName);
     SYNC_PRINT(("AdvancedBinaryReader::visit<double>(): read %lf\n", field));
@@ -193,6 +202,8 @@ void AdvancedBinaryReader::visit<std::string>(std::string &stringField, std::str
 template <>
 void AdvancedBinaryReader::visit<std::wstring>(std::wstring &stringField, std::wstring /*defaultValue*/, const char *fieldName)
 {
+    CORE_UNUSED(stringField);
+    CORE_UNUSED(fieldName);
     if (stream == NULL) return;
     SYNC_PRINT(("%s : NYI\n", __FUNCTION__));
 }

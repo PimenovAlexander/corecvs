@@ -4,10 +4,10 @@
 #include <QWidget>
 
 #include "core/utils/global.h"
+#include "core/framesources/imageCaptureInterface.h"
 
 #include "ui_statisticsDialog.h"
 #include "qtStatisticsCollector.h"
-#include "imageCaptureInterface.h"
 #include "viAreaWidget.h"
 
 class StatisticsDialog : public ViAreaWidget

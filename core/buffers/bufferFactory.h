@@ -68,19 +68,19 @@ public:
 
     /** Main function to get a 12-bits buffer from the file with the given path name
      */
-    virtual G12Buffer* loadG12Bitmap(string name);
+    virtual G12Buffer* loadG12Bitmap(string name, const string &loaderHint = "");
 
     /** Main function to get a 32-bits buffer from the file with the given path name
      */
-    virtual RGB24Buffer* loadRGB24Bitmap(string name);
+    virtual RGB24Buffer* loadRGB24Bitmap(string name, const string &loaderHint = "");
 
     /** Main function to get a fixed 8|32 bits buffer from the file with the given path name
      */
-    virtual RuntimeTypeBuffer* loadRuntimeTypeBitmap(string name);
+    virtual RuntimeTypeBuffer* loadRuntimeTypeBitmap(string name, const string &loaderHint = "");
 
     /** Main function to get a 16-bits buffer from the file with the given path name
      */
-    virtual G12Buffer* loadG16Bitmap(string name);
+    virtual G12Buffer* loadG16Bitmap(string name, const string &loaderHint = "");
 
 
     /** Main function to save a 32-bits buffer to the file with the given path name
@@ -106,17 +106,27 @@ public:
         return saveRGB24Bitmap(*buffer, name);
     }
 
+    bool saveRGB24Bitmap(G8Buffer* buffer8, const string &name)
+    {
+        corecvs::RGB24Buffer image24(buffer8);
+        return saveRGB24Bitmap(image24, name);  //TODO: change factory ifc to support 8-bits saving
+    }
+
     /**
      **/
-    virtual std::vector<std::string> resolutionsRGB24();
-    virtual std::vector<std::string> resolutionsG12();
-    virtual std::vector<std::string> resolutionsRuntimeType();
+    virtual std::vector<std::string> extentionsRGB24();
+    virtual std::vector<std::string> extentionsG12();
+    virtual std::vector<std::string> extentionsRuntimeType();
+
+
+    BufferLoader<RGB24Buffer> *getLoaderRGB24ByName(const std::string &name);
 
 
 private:
     BufferFactory();
     virtual ~BufferFactory();
 
+public:
     /**
      * List of loaders - the supported formats
      */

@@ -14,7 +14,7 @@
 #include "core/utils/global.h"
 
 #include "core/utils/preciseTimer.h"
-// #include "core/patterndetection/chessBoardCornerDetector.h"
+//#include "core/patterndetection/chessBoardCornerDetector.h"
 #include "core/buffers/kernels/fastkernel/fastKernel.h"
 #include "core/buffers/kernels/sobel.h"
 #include "core/buffers/kernels/fastkernel/vectorTraits.h"
@@ -377,42 +377,40 @@ TEST(FastKernelDouble, testConvolver)
     const int kernelSize = 11;
 
     TestDescr tests[] = {
-          { Convolver::ALGORITHM_SSE_DMITRY                 , 150, 5, "Dmitry"  , true, NULL, NULL, 0 }
+          { Convolver::ALGORITHM_SSE_DMITRY                 , 150, 5, "Dmitry",         true, NULL, NULL, 0 }
 
-        , { Convolver::ALGORITHM_NAIVE                      ,  20, 5, "Naive", true, NULL, NULL, 0 }
-        , { Convolver::ALGORITHM_SSE_UNROLL_1               , 150, 5, "unroll 1", true, NULL, NULL, 0 }
-        , { Convolver::ALGORITHM_SSE_UNROLL_2               , 150, 5, "unroll 2", true, NULL, NULL, 0 }
-        , { Convolver::ALGORITHM_SSE_UNROLL_3               , 150, 5, "unroll 3", true, NULL, NULL, 0 }
-        , { Convolver::ALGORITHM_SSE_UNROLL_4               , 150, 5, "unroll 4", true, NULL, NULL, 0 }
-        , { Convolver::ALGORITHM_SSE_UNROLL_5               , 150, 5, "unroll 5", true, NULL, NULL, 0 }
-        , { Convolver::ALGORITHM_SSE_UNROLL_6               , 150, 5, "unroll 6", false, NULL, NULL, 0 }
-        , { Convolver::ALGORITHM_SSE_UNROLL_7               , 150, 5, "unroll 7", false, NULL, NULL, 0 }
-        , { Convolver::ALGORITHM_SSE_UNROLL_8               , 150, 5, "unroll 8", false, NULL, NULL, 0 }
-        , { Convolver::ALGORITHM_SSE_UNROLL_9               , 150, 5, "unroll 9", false, NULL, NULL, 0 }
-        , { Convolver::ALGORITHM_SSE_UNROLL_10              , 150, 5, "unroll10", false, NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_NAIVE                      ,  20, 5, "Naive",          true, NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_UNROLL_1               , 150, 5, "unroll 1",       true, NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_UNROLL_2               , 150, 5, "unroll 2",       true, NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_UNROLL_3               , 150, 5, "unroll 3",       true, NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_UNROLL_4               , 150, 5, "unroll 4",       true, NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_UNROLL_5               , 150, 5, "unroll 5",       true, NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_UNROLL_6               , 150, 5, "unroll 6",       false, NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_UNROLL_7               , 150, 5, "unroll 7",       false, NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_UNROLL_8               , 150, 5, "unroll 8",       false, NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_UNROLL_9               , 150, 5, "unroll 9",       false, NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_UNROLL_10              , 150, 5, "unroll10",       false, NULL, NULL, 0 }
         
-        , { Convolver::ALGORITHM_SSE_UNROLL_12              , 150, 5, "unroll12", false, NULL, NULL, 0 }
-        , { Convolver::ALGORITHM_SSE_UNROLL_16              , 150, 5, "unroll16", false, NULL, NULL, 0}
+        , { Convolver::ALGORITHM_SSE_UNROLL_12              , 150, 5, "unroll12",       false, NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_UNROLL_16              , 150, 5, "unroll16",       false, NULL, NULL, 0}
         
-        , { Convolver::ALGORITHM_SSE_UNROLL_20              , 150, 5, "unroll20", false, NULL, NULL, 0 }
-        , { Convolver::ALGORITHM_SSE_UNROLL_40              , 150, 5, "unroll40", false, NULL, NULL, 0 }
-        , { Convolver::ALGORITHM_SSE_UNROLL_100             , 150, 5, "unroll100", false, NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_UNROLL_20              , 150, 5, "unroll20",       false, NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_UNROLL_40              , 150, 5, "unroll40",       false, NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_UNROLL_100             , 150, 5, "unroll100",      false, NULL, NULL, 0 }
 
-        , { Convolver::ALGORITHM_SSE_FASTKERNEL             ,  60, 5, "Fastkernel", true, NULL, NULL, 0 }
-        , { Convolver::ALGORITHM_SSE_FASTKERNEL_EXP         ,  60, 5, "FastkernelE", true, NULL, NULL, 0 }
-        , { Convolver::ALGORITHM_SSE_FASTKERNEL_EXP5        ,  60, 5, "FastkernelE5", true, NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_FASTKERNEL             ,  60, 5, "Fastkernel",     true,  NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_FASTKERNEL_EXP         ,  60, 5, "FastkernelE",    true,  NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_FASTKERNEL_EXP5        ,  60, 5, "FastkernelE5",   true,  NULL, NULL, 0 }
 
-        , { Convolver::ALGORITHM_SSE_WRAPPERS               ,  60, 5, "Wrappers", true, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_WRAPPERS               ,  60, 5, "Wrappers",       true,  NULL, NULL, 0 }
 
-        , { Convolver::ALGORITHM_SSE_WRAPPERS_UNROLL_1      , 150, 5, "Wrappers u1", true, NULL, NULL, 0 }
-        , { Convolver::ALGORITHM_SSE_WRAPPERS_UNROLL_5      , 150, 5, "Wrappers u5", true, NULL, NULL, 0 }
-        , { Convolver::ALGORITHM_SSE_WRAPPERS_UNROLL_10     , 150, 5, "Wrappers u10", false, NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_WRAPPERS_UNROLL_1      , 150, 5, "Wrappers u1",    true,  NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_WRAPPERS_UNROLL_5      , 150, 5, "Wrappers u5",    true,  NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_WRAPPERS_UNROLL_10     , 150, 5, "Wrappers u10",   false, NULL, NULL, 0 }
 
-        , { Convolver::ALGORITHM_SSE_WRAPPERS_EX_UNROLL_1   , 150, 5, "Wrap Ex u1", true, NULL, NULL, 0 }
-        , { Convolver::ALGORITHM_SSE_WRAPPERS_EX_UNROLL_2   , 150, 5, "Wrap Ex u2", true, NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_WRAPPERS_EX_UNROLL_1   , 150, 5, "Wrap Ex u1",     true,  NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_WRAPPERS_EX_UNROLL_2   , 150, 5, "Wrap Ex u2",     true,  NULL, NULL, 0 }
     };
-
-
 
     /* Results are stored to compare */
     for (size_t i = 0; i < CORE_COUNT_OF(tests); i++) {

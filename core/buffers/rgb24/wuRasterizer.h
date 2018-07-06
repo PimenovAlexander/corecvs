@@ -7,18 +7,12 @@
 #include <cfloat>
 #include <iostream>
 
+#include "core/math/mathUtils.h"
+
 class WuRasterizer {
     // integer part of x
-    static int ipart(float x) {
-        return floor(x);
-    }
-
-    static int round(float x) {
-        return ipart(x + 0.5);
-    }
-
     static float fpart(float x) {
-        return x - floor(x);
+        return x - (int)x;
     }
 
     static float rfpart(float x) {
@@ -34,19 +28,21 @@ class WuRasterizer {
         float yend = y + gradient * (float(xend) - x);
         float xgap = rfpart(x + 0.5);
         int xpxl1 = xend; // this will be used in the main loop
-        int ypxl1 = ipart(yend);
+
+        int ypxl1 = (int)yend;
+
         if (steep) {
             if (xpxl1 >= 0 && xpxl1 < h) {
                 if (ypxl1 >= 0 && ypxl1 < w) {
                     float factor = rfpart(yend) * xgap;
-                    buffer.element(ypxl1, xpxl1) = buffer.element(ypxl1, xpxl1) * (1. - factor);
+                    buffer.element(ypxl1, xpxl1) = buffer.element(ypxl1, xpxl1) * (1.0f - factor);
                     auto color1 = color;
                     color1 = color1 * factor;
                     buffer.element(ypxl1, xpxl1) = buffer.element(ypxl1, xpxl1) + color1;
                 }
                 if ((ypxl1 + 1) >= 0 && (ypxl1 + 1) < w) {
                     float factor = fpart(yend) * xgap;
-                    buffer.element(ypxl1 + 1, xpxl1) = buffer.element(ypxl1 + 1, xpxl1) * (1. - factor);
+                    buffer.element(ypxl1 + 1, xpxl1) = buffer.element(ypxl1 + 1, xpxl1) * (1.0f - factor);
                     auto color1 = color;
                     color1 = color1 * factor;
                     buffer.element(ypxl1 + 1, xpxl1) = buffer.element(ypxl1 + 1, xpxl1) + color1;
@@ -57,14 +53,14 @@ class WuRasterizer {
             if (xpxl1 >= 0 && xpxl1 < w) {
                 if (ypxl1 >= 0 && ypxl1 < h) {
                     float factor = rfpart(yend) * xgap;
-                    buffer.element(xpxl1, ypxl1) = buffer.element(xpxl1, ypxl1) * (1. - factor);
+                    buffer.element(xpxl1, ypxl1) = buffer.element(xpxl1, ypxl1) * (1.0f - factor);
                     auto color1 = color;
                     color1 = color1 * factor;
                     buffer.element(xpxl1, ypxl1) = buffer.element(xpxl1, ypxl1) + color1;
                 }
                 if ((ypxl1 + 1) >= 0 && (ypxl1 + 1) < h) {
                     float factor = fpart(yend) * xgap;
-                    buffer.element(xpxl1, ypxl1 + 1) = buffer.element(xpxl1, ypxl1 + 1) * (1. - factor);
+                    buffer.element(xpxl1, ypxl1 + 1) = buffer.element(xpxl1, ypxl1 + 1) * (1.0f - factor);
                     auto color1 = color;
                     color1 = color1 * factor;
                     buffer.element(xpxl1, ypxl1 + 1) = buffer.element(xpxl1, ypxl1 + 1) + color1;
@@ -123,15 +119,15 @@ public:
         for (int x = xpxl1 + 1; x <= xpxl2 - 1; x++) {
             if (steep) {
                 if (x >= 0 && x < h) {
-                    int y = ipart(intery);
+                    int y = (int)intery;
                     if (y >= 0 && y < w) {
-                        buffer.element(y, x) = buffer.element(y, x) * (1. - rfpart(intery));
+                        buffer.element(y, x) = buffer.element(y, x) * (1.0f - rfpart(intery));
                         auto color1 = color;
                         color1 = color1 * rfpart(intery);
                         buffer.element(y, x) = buffer.element(y, x) + color1;
                     }
                     if ((y + 1) >= 0 && (y + 1) < w) {
-                        buffer.element(y + 1, x) = buffer.element(y + 1, x) * (1. - fpart(intery));
+                        buffer.element(y + 1, x) = buffer.element(y + 1, x) * (1.0f - fpart(intery));
                         auto color1 = color;
                         color1 = color1 * fpart(intery);
                         buffer.element(y + 1, x) = buffer.element(y + 1, x) + color1;
@@ -141,15 +137,15 @@ public:
             }
             else {
                 if (x >= 0 && x < w) {
-                    int y = ipart(intery);
+                    int y = (int)intery;
                     if (y >= 0 && y < h) {
-                        buffer.element(x, y) = buffer.element(x, y) * (1. - rfpart(intery));
+                        buffer.element(x, y) = buffer.element(x, y) * (1.0f - rfpart(intery));
                         auto color1 = color;
                         color1 = color1 * rfpart(intery);
                         buffer.element(x, y) = buffer.element(x, y) + color1;
                     }
                     if ((y + 1) >= 0 && (y + 1) < h) {
-                        buffer.element(x, y + 1) = buffer.element(x, y + 1) * (1. - fpart(intery));
+                        buffer.element(x, y + 1) = buffer.element(x, y + 1) * (1.0f - fpart(intery));
                         auto color1 = color;
                         color1 = color1 * fpart(intery);
                         buffer.element(x, y + 1) = buffer.element(x, y + 1) + color1;

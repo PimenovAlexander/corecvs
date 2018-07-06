@@ -68,7 +68,8 @@ int GraphPlotParameters::staticInit()
           "width",
           true,
          1,
-         99
+         99,
+         1
         );
     fields().push_back(field1);
     /*  */ 
@@ -82,7 +83,8 @@ int GraphPlotParameters::staticInit()
           "centerAt",
           true,
          -9999,
-         9999.99
+         9999.99,
+         1
         );
     field2->widgetHint=BaseField::SPIN_BOX;
     field2->precision=2;
@@ -135,7 +137,8 @@ int GraphPlotParameters::staticInit()
           "yScale",
           true,
          0,
-         1000
+         1000,
+         1
         );
     field6->widgetHint=BaseField::SLIDER;
     field6->precision=2;
@@ -151,7 +154,8 @@ int GraphPlotParameters::staticInit()
           "contrast",
           true,
          0,
-         100
+         100,
+         1
         );
     field7->widgetHint=BaseField::SPIN_BOX;
     field7->precision=2;

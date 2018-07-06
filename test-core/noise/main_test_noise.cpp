@@ -48,14 +48,15 @@ TEST(noise, testnoise)
             Vector3dd p = Vector3dd(i,j,0) / 40.0;
 
             double sample = gen.noise(p);
-            cout << sample << " " << endl;
+
+            if ((i % 100) == 0 && (j % 100) == 0)
+                cout << sample << " " << endl;
 
             noise ->element(i,j) = sample * 255.0;
             noiser->element(i,j) = RGBColor::FromDouble(gen.noise3d(p) * 255.0);
 
             turb ->element(i,j) = gen.turbulence(p) * 255.0;
             turbr->element(i,j) = RGBColor::FromDouble(gen.turbulence3d(p) * 255.0);
-
         }
     }
 
@@ -73,6 +74,4 @@ TEST(noise, testnoise)
     delete_safe(noiser);
     delete_safe(turb);
     delete_safe(turbr);
-
-
 }

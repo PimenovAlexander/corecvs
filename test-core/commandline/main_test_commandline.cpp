@@ -68,3 +68,17 @@ TEST(CommandLine, testVisitor)
     CORE_ASSERT_TRUE(in.z() == 3.14, "Error in visitor z");
 }
 
+TEST(CommandLine, testSubstring)
+{
+    const char *argv[] = {"./bin/test_cloud_match", "--icplist", "test", "test"};
+    int argc = CORE_COUNT_OF(argv);
+
+    CommandLineSetter setter(argc, argv);
+
+    cout << setter.getBool("icp") << "  " << setter.getBool("icplist") << std::endl;
+
+    CORE_ASSERT_TRUE(setter.getBool("icp")     == false, "False positive");
+    CORE_ASSERT_TRUE(setter.getBool("icplist") == true, "False negative");
+
+}
+

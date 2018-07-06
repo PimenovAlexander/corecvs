@@ -112,8 +112,9 @@ struct AcceleratorController
     {
         auto &v = GetInstance().controllers;
         for (auto vv : v)
-            if (vv.first == a)
+            if (vv.first == a) {
                 CORE_ASSERT_TRUE_S(false);
+            }
         v.emplace_back(a, impl);
     }
 private:

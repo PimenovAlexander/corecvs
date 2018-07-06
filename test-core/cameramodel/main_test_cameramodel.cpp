@@ -193,8 +193,9 @@ TEST(Cameramodel, newPinholeCameraIntrinsics)
     SYNC_PRINT(("Default input\n"));
     input.accept(printer);
 
-    input.skew = 0.01;
-    input.focal = Vector2dd(input.size.x() - 100, input.size.x() + 100);
+    input.setSkew(0.01);
+    input.setFx(input.size().x() - 100);
+    input.setFy(input.size().y() + 100);
     SYNC_PRINT(("With skew and focal\n"));
     input.accept(printer);
 
@@ -245,7 +246,7 @@ TEST(Cameramodel, testViewport)
 
     PinholeCameraIntrinsics pinhole(Vector2dd(RESOLUTION_X, RESOLUTION_Y), Vector2dd(RESOLUTION_X, RESOLUTION_Y) / 2, FOCAL);
 
-    m1.intrinsics = pinhole;
+    m1.intrinsics.reset(pinhole.clone());
     m1.setLocation(Affine3DQ::Identity());
 
     ConvexPolyhedron viewport = m1.getCameraViewport(10);
@@ -281,8 +282,8 @@ TEST(Cameramodel, testViewportProject)
 
     PinholeCameraIntrinsics pinhole(Vector2dd(RESOLUTION_X, RESOLUTION_Y), Vector2dd(RESOLUTION_X, RESOLUTION_Y) / 2, FOCAL);
 
-    m1.intrinsics = pinhole;
-    m2.intrinsics = pinhole;
+    m1.intrinsics.reset(pinhole.clone());
+    m2.intrinsics.reset(pinhole.clone());
 
     m1.setLocation(Affine3DQ::Identity());
     m2.setLocation(Affine3DQ::Shift(0,0,100) * Affine3DQ::RotationY(degToRad(90)));
@@ -315,7 +316,7 @@ TEST(Cameramodel, testViewportProject)
 
     /* --------------------- */
     {
-        Polygon pentacle = Polygon::RegularPolygon(5, pinhole.principal, 200, 0);
+        Polygon pentacle = Polygon::RegularPolygon(5, pinhole.principal(), 200, 0);
         FlatPolygon fp;
         fp.polygon = pentacle;
         fp.frame = m1.getVirtualScreen(5.0);

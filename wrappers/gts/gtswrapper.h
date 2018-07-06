@@ -3,13 +3,13 @@
 
 #include <vector>
 #include <list>
-#include <triangulation.h>
 #include <stdlib.h>
 
+#include "core/geometry/triangulation.h"
 
 using Triangulation::Edge;
 using Triangulation::Point;
 
-std::vector<Edge>    triangulateGts(const vector<Point> &points);
+std::vector<Edge>    triangulateGts(const std::vector<Point> &points);
 
 #endif // GTSWRAPPER_H

@@ -36,9 +36,22 @@ using corecvs::EnumOption;
 class ReflectionGen : public Reflection
 {
 public:
-    const char *uiBaseClass;
+    const char *uiBaseClass = NULL;
+    const char *includePath = NULL;
+    const char *sourceXml = "";
 
-    ReflectionGen () : uiBaseClass(NULL) {}
+    ReflectionGen () :
+        uiBaseClass(NULL),
+        includePath(NULL)
+    {}
+};
+
+class EnumReflectionGen : public EnumReflection
+{
+public:
+   const char *includePath = NULL;
+   const char *sourceXml = "";
+
 };
 
 template<typename Type>

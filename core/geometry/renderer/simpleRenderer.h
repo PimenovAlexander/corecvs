@@ -41,6 +41,10 @@ class ClassicRenderer
 {
 public:
     ClassicRenderer();
+
+    bool drawFaces = true;
+    bool drawVertexes = false;
+
     bool trueTexture;
     Matrix44 modelviewMatrix;
     vector<RGB24Buffer *> textures;

@@ -55,13 +55,13 @@ public:
     RGB24Buffer(Vector2d<int32_t> size, const RGBColor &data  ) : RGB24BufferBase (size, data) {}
 
     /*Helper Constructors form the relative types*/
-    RGB24Buffer(G12Buffer *buffer) : RGB24BufferBase (buffer->h, buffer->w, false)
+    RGB24Buffer(const G12Buffer *buffer) : RGB24BufferBase (buffer->h, buffer->w, false)
     {
         drawG12Buffer(buffer);
     }
 
     /*Helper Constructors form the relative types*/
-    RGB24Buffer(G8Buffer *buffer) : RGB24BufferBase (buffer->h, buffer->w, false)
+    RGB24Buffer(const G8Buffer *buffer) : RGB24BufferBase (buffer->h, buffer->w, false)
     {
         drawG8Buffer(buffer);
     }
@@ -72,8 +72,8 @@ public:
      **/
     RGB24Buffer() {}
 
-    void drawG12Buffer(G12Buffer *src, int32_t y = 0, int32_t x = 0);
-    void drawG8Buffer(G8Buffer *src, int32_t y = 0, int32_t x = 0);
+    void drawG12Buffer (const G12Buffer *src, int32_t y = 0, int32_t x = 0);
+    void drawG8Buffer  (const G8Buffer  *src, int32_t y = 0, int32_t x = 0);
     void drawFlowBuffer(FlowBuffer *src, int32_t y = 0, int32_t x = 0);
     void drawFlowBuffer1(FlowBuffer *src, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
     void drawFlowBuffer2(FlowBuffer *src, double colorShift = 0.0, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
@@ -97,7 +97,8 @@ public:
      * \param x
      * \param color
      **/
-    void drawPixel ( int x, int y, RGBColor color);
+    void drawPixel(int    x, int    y, RGBColor color);
+    void drawPixel(double x, double y, RGBColor color);
 
     /**
      * This function is used to draw a sort of marker over the buffer
@@ -120,6 +121,7 @@ public:
      *
      **/
     void drawCrosshare2 ( int x, int y, RGBColor color);
+    void drawCrosshare2 (const Vector2dd &point, RGBColor color);
 
     /**
      * This function is used to draw a sort of marker over the buffer
@@ -166,7 +168,9 @@ public:
 
     /* Some alternatives */
     void drawLine(double x1, double y1, double x2, double y2, RGBColor color );
+    void drawLine(float x1, float y1, float x2, float y2, RGBColor color );
     void drawLine(const Vector2dd &v1, const Vector2dd &v2, RGBColor color );
+    void drawLine(const Vector2df &v1, const Vector2df &v2, RGBColor color );
 
     //void drawLineSimple (int x1, int y1, int x2, int y2, int color );
     //void drawLineSafe (int x1, int y1, int x2, int y2, int color );
@@ -192,10 +196,18 @@ public:
         STYLE_RAINBOW,
         STYLE_GRAY,
         STYLE_LOG,
-        STYLE_ZBUFFER
+        STYLE_ZBUFFER   /**< ignores std::numeric_limits<double>::max() values, not to affect palette */
     };
 
-    void drawDoubleBuffer(const AbstractBuffer<double> &in, int style = STYLE_RAINBOW);
+    inline void drawDoubleBuffer(const AbstractBuffer<double> &in, int style = STYLE_RAINBOW)
+    {
+        drawContinuousBuffer<double>(in, style);
+    }
+
+    template<typename ContinuousType>
+    void drawContinuousBuffer(const AbstractBuffer<ContinuousType> &in, int style = STYLE_RAINBOW);
+    void drawDoubleVecBuffer(const AbstractBuffer<Vector2dd> &in);
+
 
     void fillWithYUYV(uint8_t *data);
     void fillWithUYVU(uint8_t *data);
@@ -303,10 +315,11 @@ public:
         RGB24Buffer::InternalIndexType i = (RGB24Buffer::InternalIndexType)floor(y);
         RGB24Buffer::InternalIndexType j = (RGB24Buffer::InternalIndexType)floor(x);
 
+#if 0
         CORE_ASSERT_TRUE_P(this->isValidCoordBl(y, x),
                 ("Invalid coordinate in AbstractContiniousBuffer::elementBl(double y=%lf, double x=%lf) buffer sizes is [%dx%d]",
                    y, x, this->w, this->h));
-
+#endif
         /* Fixed point */
         const int FIXED_SHIFT = 11;
         uint32_t value = (1 << FIXED_SHIFT);
@@ -337,11 +350,11 @@ public:
          * rounded to 0 and cause error */
         RGB24Buffer::InternalIndexType i = (RGB24Buffer::InternalIndexType)floor(y);
         RGB24Buffer::InternalIndexType j = (RGB24Buffer::InternalIndexType)floor(x);
-
+#if 0
         CORE_ASSERT_TRUE_P(this->isValidCoordBl(y, x),
                 ("Invalid coordinate in AbstractContiniousBuffer::elementBl(double y=%lf, double x=%lf) buffer sizes is [%dx%d]",
                    y, x, this->w, this->h));
-
+#endif
         /* Fixed point */
         uint32_t value = 255 * 16;
 
@@ -370,10 +383,11 @@ public:
         RGB24Buffer::InternalIndexType i = (RGB24Buffer::InternalIndexType)floor(y);
         RGB24Buffer::InternalIndexType j = (RGB24Buffer::InternalIndexType)floor(x);
 
+#if 0
         CORE_ASSERT_TRUE_P(this->isValidCoordBl(y, x),
                 ("Invalid coordinate in AbstractContiniousBuffer::elementBl(double y=%lf, double x=%lf) buffer sizes is [%dx%d]",
                    y, x, this->w, this->h));
-
+#endif
         /* So far use slow version. Generally this sould be done with fixed point */
         double k1 = x - j;
         double k2 = y - i;

@@ -6,6 +6,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from parameters.xml
  */
 
 #include "core/reflection/reflection.h"
@@ -30,7 +31,7 @@
 /*
  *  Additional includes for enum section.
  */
-#include "debayerMethod.h"
+#include "core/xml/generated/debayerMethod.h"
 
 /**
  * \brief Debayer Parameters 
@@ -42,6 +43,9 @@ public:
     enum FieldId {
         METHOD_ID,
         BAYER_POS_ID,
+        NUMBITSOUT_ID,
+        GAINS_ID,
+        GAMMA_ID,
         DEBAYER_PARAMETERS_FIELD_ID_NUM
     };
 
@@ -58,6 +62,24 @@ public:
      * Bayer pos 
      */
     int mBayerPos;
+
+    /** 
+     * \brief numBitsOut 
+     * numBitsOut 
+     */
+    int mNumBitsOut;
+
+    /** 
+     * \brief gains 
+     * RGB gains 
+     */
+    vector<double> mGains;
+
+    /** 
+     * \brief gamma 
+     * Gamma values 
+     */
+    vector<double> mGamma;
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit();
@@ -79,6 +101,21 @@ public:
         return mBayerPos;
     }
 
+    int numBitsOut() const
+    {
+        return mNumBitsOut;
+    }
+
+    vector<double> gains() const
+    {
+        return mGains;
+    }
+
+    vector<double> gamma() const
+    {
+        return mGamma;
+    }
+
     /* Section with setters */
     void setMethod(DebayerMethod::DebayerMethod method)
     {
@@ -90,6 +127,21 @@ public:
         mBayerPos = bayerPos;
     }
 
+    void setNumBitsOut(int numBitsOut)
+    {
+        mNumBitsOut = numBitsOut;
+    }
+
+    void setGains(vector<double> gains)
+    {
+        mGains = gains;
+    }
+
+    void setGamma(vector<double> gamma)
+    {
+        mGamma = gamma;
+    }
+
     /* Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
@@ -97,6 +149,9 @@ template<class VisitorType>
     {
         visitor.visit((int &)mMethod,             static_cast<const corecvs::EnumField *>(fields()[METHOD_ID]));
         visitor.visit(mBayerPos,                  static_cast<const corecvs::IntField *>(fields()[BAYER_POS_ID]));
+        visitor.visit(mNumBitsOut,                static_cast<const corecvs::IntField *>(fields()[NUMBITSOUT_ID]));
+        visitor.visit(mGains,                     static_cast<const corecvs::DoubleVectorField *>(fields()[GAINS_ID]));
+        visitor.visit(mGamma,                     static_cast<const corecvs::DoubleVectorField *>(fields()[GAMMA_ID]));
     }
 
     DebayerParameters()
@@ -108,16 +163,25 @@ template<class VisitorType>
     DebayerParameters(
           DebayerMethod::DebayerMethod method
         , int bayerPos
+        , int numBitsOut
+        , vector<double> gains
+        , vector<double> gamma
     )
     {
         mMethod = method;
         mBayerPos = bayerPos;
+        mNumBitsOut = numBitsOut;
+        mGains = gains;
+        mGamma = gamma;
     }
 
     bool operator ==(const DebayerParameters &other) const 
     {
         if ( !(this->mMethod == other.mMethod)) return false;
         if ( !(this->mBayerPos == other.mBayerPos)) return false;
+        if ( !(this->mNumBitsOut == other.mNumBitsOut)) return false;
+        if ( !(this->mGains == other.mGains)) return false;
+        if ( !(this->mGamma == other.mGamma)) return false;
         return true;
     }
     friend std::ostream& operator << (std::ostream &out, DebayerParameters &toSave)

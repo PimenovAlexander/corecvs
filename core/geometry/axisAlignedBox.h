@@ -6,7 +6,7 @@
 #include "core/xml/generated/axisAlignedBoxParameters.h"
 
 /**
- * \file mesh3d.h
+ * \file axisAlignedBox.h
  *
  * \date Dec 13, 2012
  **/
@@ -42,20 +42,15 @@ public:
     UnifedAxisAlignedBox(const UnifedAxisAlignedBox &first, const UnifedAxisAlignedBox &second)
     {
         _initByLowHigh(
-            first. low().perElementMin(second. low()),
-            first.high().perElementMax(second.high())
+            first. low().cwiseMin(second.low()),
+            first.high().cwiseMax(second.high())
         );
-
     }
 
     void _initByLowHigh(const VectorType &low, const VectorType &high)
     {
-        /* TODO: Move this to vector operations and use cycle */
-        for (int i = 0; i < VectorType::LENGTH; i++)
-        {
-            mLow [i] = CORE_MIN(low[i], high[i]);
-            mHigh[i] = CORE_MAX(low[i], high[i]);
-        }
+        mLow  = low.cwiseMin(high);
+        mHigh = low.cwiseMax(high);
     }
 
     void _initByCenter(const VectorType &center, const VectorType &measure)
@@ -75,8 +70,8 @@ public:
        UnifedAxisAlignedBox box = UnifedAxisAlignedBox::Empty();
        for (const VectorType &v : points)
        {
-           box.mLow  = box.mLow .perElementMin(v);
-           box.mHigh = box.mHigh.perElementMax(v);
+           box.mLow  = box.mLow .cwiseMin(v);
+           box.mHigh = box.mHigh.cwiseMax(v);
        }
        return box;
     }
@@ -132,17 +127,17 @@ public:
         return mHigh.z() - mLow.z();
     }
 
-    VectorType getCenter()
+    VectorType getCenter() const
     {
         return ((mLow + mHigh) / 2.0);
     }
 
-    VectorType measure()
+    VectorType measure() const
     {
         return mHigh - mLow;
     }
 
-    void getPoints(Vector3dd points[8])
+    void fillWithPoints(Vector3dd points[8])
     {
         points[0] = Vector3dd(mLow .x() , mLow .y(), mLow.z());
         points[1] = Vector3dd(mHigh.x() , mLow .y(), mLow.z());
@@ -154,10 +149,10 @@ public:
         points[7] = Vector3dd(mLow .x() , mHigh.y(), mHigh.z());
     }
 
-    vector<Vector3dd> getPointsVector() {
+    vector<Vector3dd> getPoints() {
         vector<Vector3dd> result;
         result.resize(8);
-        getPoints(result.data());
+        fillWithPoints(result.data());
         return result;
     }
 
@@ -170,7 +165,7 @@ public:
     {
         vector<Vector3dd> result;
         result.resize(8);
-        getPoints(result.data());
+        fillWithPoints(result.data());
         for (size_t i = 0; i < result.size(); i++)
         {
             result[i] = transform * result[i];

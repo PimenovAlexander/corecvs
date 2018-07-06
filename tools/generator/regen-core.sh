@@ -231,6 +231,11 @@ enums+=" lineDistortionEstimatorCost"
 enums+=" distortionResizePolicy"
 enums+=" checkerboardDetectionAlgorithm"
 enums+=" bitcodeBoardOrientation"
+enums+=" projectionType"
+enums+=" sceneDrawBackendType"
+
+classes+=" vector2dParameters"
+classes+=" vector3dParameters"
 
 classes+=" lensDistortionModelParametersBase"
 classes+=" homorgaphyReconstructorBlockBase"
@@ -240,6 +245,10 @@ classes+=" adderSubstractorParametersBase"
 classes+=" ransacParameters"
 classes+=" iterativeEstimateParameters"
 
+classes+=" projectionBaseParameters"
+classes+=" pinholeCameraIntrinsicsBaseParameters"
+classes+=" omnidirectionalBaseParameters"
+
 
 # We will try to use reflectionWidget
 classes+=" calibrationDrawHelpersParameters"
@@ -248,6 +257,7 @@ classes+=" focusEstimationResult"
 classes+=" drawGCodeParameters"
 classes+=" stereoAlignParameters"
 
+classes+=" extrinsicsPlacerParameters"
 
 full_ui_classes+=" checkerboardDetectionParameters"
 full_ui_classes+=" lineDistortionEstimatorParameters"
@@ -255,6 +265,10 @@ full_ui_classes+=" distortionApplicationParameters"
 full_ui_classes+=" chessBoardCornerDetectorParamsBase"
 full_ui_classes+=" chessBoardAssemblerParamsBase"
 full_ui_classes+=" bitcodeBoardParamsBase"
+
+full_ui_classes+=" openCVBMParameters"
+full_ui_classes+=" openCVSGMParameters"
+
 
 
 # Reconstruction

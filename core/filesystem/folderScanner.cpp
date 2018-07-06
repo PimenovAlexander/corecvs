@@ -31,7 +31,7 @@ bool FolderScanner::createDir(const string &path, bool allowRecursive)
     return res;
 }
 
-bool FolderScanner::scan(const string &path, vector<string> &childs, bool findFiles)
+bool FolderScanner::scan(const string &path, vector<string> &children, bool findFiles)
 {
     if (!isDir(path))
     {
@@ -57,7 +57,7 @@ bool FolderScanner::scan(const string &path, vector<string> &childs, bool findFi
 #ifdef _MSC_VER
         childs.push_back(corecvs::HelperUtils::toNativeSlashes(pathChild.string()));
 #else
-        childs.push_back(pathChild);
+        children.push_back(pathChild);
 #endif
     }
 

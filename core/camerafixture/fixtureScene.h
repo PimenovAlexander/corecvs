@@ -9,6 +9,7 @@
 #include "core/camerafixture/fixtureCamera.h"
 #include "core/camerafixture/sceneFeaturePoint.h"
 #include "core/camerafixture/cameraPrototype.h"
+#include "core/utils/typesafeBitmaskEnums.h"
 
 /* In future Scene would like to control memory management for child objects */
 //#define SCENE_OWN_ALLOCATOR_DRAFT
@@ -140,7 +141,7 @@ public:
      *    Y      -Z     |    Y       -X
      *    X      -Y     |    Z       -Y
      *
-     *  This transform only happens when you use ::positionCameraInStation() method. Thoough we encourage you to do so.
+     *  This transform only happens when you use ::positionCameraInFixture() method. Though we encourage you to do so.
      *
      **/
     static Affine3DQ              DEFAULT_WORLD_TO_CAMERA;
@@ -154,18 +155,17 @@ public:
     {
         initial = 0,                ///< initial state and "localToWorld" matrix is invalid
         final = 1,                  ///< final state and "localToWorld" matrix is valid (and must be identity)
-        convertable = 2             ///< intermediate state and  "localToWorld" is a valid matrix to convert from parrot to target coordinates
+        convertible = 2             ///< intermediate state and  "localToWorld" is a valid matrix to convert from parrot to target coordinates
     };
     static inline const char *getSystemName(const CoordinateSystemState &value)
     {
         switch (value)
         {
-         case initial     : return "initial";     break ;
-         case final       : return "final";       break ;
-         case convertable : return "convertable"; break ;
-         default : return "Not in range"; break ;
+         case initial    : return "initial";      break;
+         case final      : return "final";        break;
+         case convertible: return "convertible";  break;
+         default:          return "Not in range"; break;
         }
-        return "Not in range";
     }
     CoordinateSystemState         coordinateSystemState = CoordinateSystemState::initial;  
 
@@ -350,6 +350,9 @@ public:
     virtual void positionCameraInFixture(CameraFixture *station, FixtureCamera *camera, const Affine3DQ &location);
     virtual void addCameraToFixture     (FixtureCamera *cam, CameraFixture *fixture);
 
+    /** Helper function that creates new ImageRelatedData and adds it to given camera **/
+    virtual ImageRelatedData * addImageToCamera       (FixtureCamera *cam, std::string path);
+
     /**/
     virtual int getObservationNumber(CameraFixture *fixture);
     virtual int getObservationNumber(FixtureCamera *cam);
@@ -411,9 +414,9 @@ public:
                 bool loadPrototypes = true,
                 bool loadGeometry = true)
     {
-        visitor.visit(relativeImageDataPath       , std::string(""),                     "relativeImageDataPath");
-        visitor.visit((int &)coordinateSystemState, (int)CoordinateSystemState::initial, "coordinateSystemState");
-        visitor.visit(localToWorld                , Matrix44::Identity(),                "localToWorld");
+        visitor.visit(relativeImageDataPath       , std::string(""),      "relativeImageDataPath");
+        visitor.visit((int &)coordinateSystemState, (int)/*corecvs::asInteger*/(CoordinateSystemState::initial), "coordinateSystemState");
+        visitor.visit(localToWorld                , Matrix44::Identity(), "localToWorld");
 
         if (visitor.isLoader())
         {

@@ -122,6 +122,10 @@ public:
         return ReturnType();
     }
 
+    static ReturnType NaN(){
+        return ReturnType(std::numeric_limits<ElementType>::quiet_NaN());
+    }
+
 };
 
 #if 0

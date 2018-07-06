@@ -114,6 +114,7 @@ namespace HelperUtils
     bool isAbsolutePath(const string &path);
     bool pathExists    (const string &path);
     bool pathRemove    (const string &path);
+    bool isDirectory   (const string &path);
 
     /* Qt rewritten to std */
     string addFileExtIfNotExist(const string& fileName, const string& ext);

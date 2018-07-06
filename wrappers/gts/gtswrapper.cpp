@@ -1,7 +1,5 @@
-#include <stdlib.h>
-
-#include "core/utils/global.h"
 #include "gtswrapper.h"
+#include <stdlib.h>
 #include <gts.h>
 
 namespace Triangulation

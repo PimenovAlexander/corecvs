@@ -41,17 +41,21 @@ using std::streamsize;
  *
  **/
 
-class  Matrix22 : public FixedVectorBase<Matrix22, double, 4>
+template<typename ElementType>
+class  GenericMatrix22 : public FixedVectorBase<GenericMatrix22<ElementType>, ElementType, 4>
 {
+    /*TODO: Add MatrixOperations  */
+
 public:
-    typedef FixedVectorBase<Matrix22, double, 4> BaseClass;
+    typedef FixedVectorBase<GenericMatrix22<ElementType>, ElementType, 4> BaseClass;
+    typedef Vector2d<ElementType> VectorType;
 
     static const int H = 2;
     static const int W = H;
     static const int ELEM_NUM = H * W;
 
 
-    Matrix22() {}
+    GenericMatrix22() {}
 
     /**
      * Constructs the 2 by 2 Matrix with the given diagonal element
@@ -62,50 +66,51 @@ public:
      *        0 & d  }
      * \f]
      **/
-    explicit Matrix22(double d) : BaseClass(0.0)
+    explicit GenericMatrix22(ElementType d) : BaseClass(0.0)
     {
         for (int i = 0; i < H; i++)
             a(i,i) = d;
     }
 
-    Matrix22(const FixedVector<double, 4> &data) : BaseClass(data)
+    GenericMatrix22(const FixedVector<ElementType, 4> &data) : BaseClass(data)
     { }
 
-    Matrix22(double _a00, double _a01,
-             double _a10, double _a11);
+    GenericMatrix22(ElementType _a00, ElementType _a01,
+             ElementType _a10, ElementType _a11);
 
     /* Element accessors */
-    double &a(int i,int j);
-    const double &a(int i,int j) const;
+    ElementType &a(int i,int j);
+    const ElementType &a(int i,int j) const;
 
-    double &operator ()(int i,int j);
-    const double &operator ()(int i,int j) const;
+    ElementType &operator ()(int i,int j);
+    const ElementType &operator ()(int i,int j) const;
 
     /* Matrix is so small that for convenience we could provide an accessor for all elements*/
-    double &a00();
-    double &a01();
-    double &a10();
-    double &a11();
-    const double &a00() const;
-    const double &a01() const;
-    const double &a10() const;
-    const double &a11() const;
+    ElementType &a00();
+    ElementType &a01();
+    ElementType &a10();
+    ElementType &a11();
+
+    const ElementType &a00() const;
+    const ElementType &a01() const;
+    const ElementType &a10() const;
+    const ElementType &a11() const;
 
 
     void transpose();
-    Matrix22 t() const;
-    Matrix22 transposed() const;
+    GenericMatrix22 t() const;
+    GenericMatrix22 transposed() const;
 
-    bool isInvertable(double tolerance = 1e-9);
-    Matrix22 inverted() const;
-    double det() const;
-    double trace() const;
+    bool isInvertable(ElementType tolerance = 1e-9);
+    GenericMatrix22 inverted() const;
+    ElementType det() const;
+    ElementType trace() const;
 
     /**
      *  This method solves the system
      *  Ax=b by Kramer method
      **/
-    static Vector2dd solve(const Matrix22 &A, const Vector2dd &b);
+    static Vector2d<ElementType> solve(const GenericMatrix22 &A, const VectorType &b);
 
     /**
      * Comuting eigen values and vectors
@@ -117,121 +122,162 @@ public:
      * \param e2             - second eigenvector
      * \param EIGTOLERANCE
      **/
-    static void eigen(const Matrix22 &A, double &lambda1, Vector2dd &e1, double &lambda2, Vector2dd &e2, double EIGTOLERANCE = 1e-9);
+    static void eigen(const GenericMatrix22 &A,
+                      ElementType &lambda1, VectorType &e1,
+                      ElementType &lambda2, VectorType &e2, ElementType EIGTOLERANCE = 1e-9);
 
-    friend Matrix22 operator * (const Matrix22 &M1, const Matrix22 &M2);
-    friend Matrix22 operator *=(      Matrix22 &M1, const Matrix22 &M2);
+    friend inline GenericMatrix22 operator * (const GenericMatrix22 &M1, const GenericMatrix22 &M2)
+    {
+       return GenericMatrix22(
+               M1.a(0,0) * M2.a(0,0) + M1.a(0,1) * M2.a(1,0),
+               M1.a(0,0) * M2.a(0,1) + M1.a(0,1) * M2.a(1,1),
 
-    friend inline Vector2dd operator *(const Matrix22 &matrix, const Vector2dd &V);
-    friend inline Vector2dd operator *(const Vector2dd &V, const Matrix22 &matrix);
+               M1.a(1,0) * M2.a(0,0) + M1.a(1,1) * M2.a(1,0),
+               M1.a(1,0) * M2.a(0,1) + M1.a(1,1) * M2.a(1,1)
+       );
+    }
 
-    static Matrix22 Identity();
-    static Matrix22 Scale2(double v);
-    static Matrix22 VectorByVector(const Vector2dd &a, const Vector2dd &b);
+    friend inline GenericMatrix22 operator*= (GenericMatrix22 &M1, const GenericMatrix22 &M2)
+    {
+        M1 = M1 * M2;
+        return M1;
+    }
 
-    Vector2dd     aV(int i) const;
-    Vector2dd    row(int i) const;
-    Vector2dd     aW(int i) const;
-    Vector2dd column(int i) const;
+    friend inline VectorType operator *(const GenericMatrix22 &matrix, const VectorType &V)
+    {
+        return Vector2d<ElementType>(
+            matrix.a00() * V.x() + matrix.a01() * V.y(),
+            matrix.a10() * V.x() + matrix.a11() * V.y()
+        );
+    }
+
+    friend inline VectorType operator *(const VectorType &V, const GenericMatrix22 &matrix)
+    {
+        return VectorType(
+           matrix.a00() * V.x() + matrix.a01() * V.x(),
+           matrix.a10() * V.y() + matrix.a11() * V.y()
+       );
+    }
+
+
+    static GenericMatrix22 Identity();
+    static GenericMatrix22 Scale2(ElementType v);
+    static GenericMatrix22 VectorByVector(const VectorType &a, const VectorType &b);
+
+    Vector2d<ElementType>     aV(int i) const;
+    Vector2d<ElementType>    row(int i) const;
+    Vector2d<ElementType>     aW(int i) const;
+    Vector2d<ElementType> column(int i) const;
+
+
+
+
 };
+
+typedef GenericMatrix22<double> Matrix22d;
+typedef GenericMatrix22<float> Matrix22f;
+
+typedef Matrix22d Matrix22;
 
 /**
  *  Geting Matrix element functions block
  **/
 
-inline Matrix22::Matrix22(double _a00, double _a01, double _a10, double _a11)
+template<typename ElementType>
+inline GenericMatrix22<ElementType>::GenericMatrix22(ElementType _a00, ElementType _a01, ElementType _a10, ElementType _a11)
 {
     a(0,0) = _a00;  a(0,1) = _a01;
     a(1,0) = _a10;  a(1,1) = _a11;
 }
 
-inline double &Matrix22::a(int i,int j)
+template<typename ElementType>
+inline ElementType &GenericMatrix22<ElementType>::a(int i,int j)
 {
     return (*this)[i * W + j];
 }
 
-inline const double &Matrix22::a(int i,int j) const
+template<typename ElementType>
+inline const ElementType &GenericMatrix22<ElementType>::a(int i,int j) const
 {
     return (*this)[i * W + j];
 }
 
-inline double &Matrix22::operator ()(int i,int j)
+template<typename ElementType>
+inline ElementType &GenericMatrix22<ElementType>::operator ()(int i,int j)
 {
     return (*this)[i * W + j];
 }
 
-inline const double &Matrix22::operator ()(int i,int j) const
+template<typename ElementType>
+inline const ElementType &GenericMatrix22<ElementType>::operator ()(int i,int j) const
 {
     return (*this)[i * W + j];
 }
 
-inline double &Matrix22::a00()
+template<typename ElementType>
+inline ElementType &GenericMatrix22<ElementType>::a00()
 {
     return (*this)[0];
 }
 
-inline double &Matrix22::a01()
+template<typename ElementType>
+inline ElementType &GenericMatrix22<ElementType>::a01()
 {
     return (*this)[1];
 }
 
-inline double &Matrix22::a10()
+template<typename ElementType>
+inline ElementType &GenericMatrix22<ElementType>::a10()
 {
     return (*this)[2];
 }
 
-inline double &Matrix22::a11()
+template<typename ElementType>
+inline ElementType &GenericMatrix22<ElementType>::a11()
 {
     return (*this)[3];
 }
 
-inline const double &Matrix22::a00() const
+template<typename ElementType>
+inline const ElementType &GenericMatrix22<ElementType>::a00() const
 {
     return (*this)[0];
 }
 
-inline const double &Matrix22::a01() const
+template<typename ElementType>
+inline const ElementType &GenericMatrix22<ElementType>::a01() const
 {
     return (*this)[1];
 }
 
-inline const double &Matrix22::a10() const
+template<typename ElementType>
+inline const ElementType &GenericMatrix22<ElementType>::a10() const
 {
     return (*this)[2];
 }
 
-inline const double &Matrix22::a11() const
+template<typename ElementType>
+inline const ElementType &GenericMatrix22<ElementType>::a11() const
 {
     return (*this)[3];
 }
 
-inline bool Matrix22::isInvertable(double tolerance)
+template<typename ElementType>
+inline bool GenericMatrix22<ElementType>::isInvertable(ElementType tolerance)
 {
     return det() > tolerance;
 }
 
-inline double Matrix22::det() const {
+template<typename ElementType>
+inline ElementType GenericMatrix22<ElementType>::det() const {
     return a00() * a11() - a01() * a10();
 }
 
-inline Vector2dd Matrix22::solve(const Matrix22 &A, const Vector2dd &b)
+template<typename ElementType>
+inline Vector2d<ElementType> GenericMatrix22<ElementType>::solve(const GenericMatrix22 &A, const Vector2d<ElementType> &b)
 {
-    double D = A.det();
-    return Vector2dd (( A.a11() * b[0] - A.a01() * b[1]), (-A.a10() * b[0] + A.a00() * b[1])) / D;
-}
-
-inline Vector2dd operator *(const Matrix22 &matrix, const Vector2dd &V)
-{
-    return Vector2dd(
-        matrix.a00() * V.x() + matrix.a01() * V.y(),
-        matrix.a10() * V.x() + matrix.a11() * V.y()
-    );
-}
-
-inline Matrix22 operator*= (Matrix22 &M1, const Matrix22 &M2)
-{
-    M1 = M1 * M2;
-    return M1;
+    ElementType D = A.det();
+    return Vector2d<ElementType> (( A.a11() * b[0] - A.a01() * b[1]), (-A.a10() * b[0] + A.a00() * b[1])) / D;
 }
 
 

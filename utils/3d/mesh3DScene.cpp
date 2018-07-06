@@ -32,13 +32,13 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
     /*Caption drawing*/
     if (mParameters.showCaption())
     {
-        if (hasCentral)
+        if (hasHook)
         {
             OpenGLTools::GLWrapper wrapper;
             GLPainter painter(&wrapper);
 
             QString text = QString("[%1, %2, %3]")
-                    .arg(centralPoint.x(), 0, 'f', 2).arg(centralPoint.y(), 0, 'f', 2).arg(centralPoint.z(), 0, 'f', 2);
+                    .arg(hookPoint.x(), 0, 'f', 2).arg(hookPoint.y(), 0, 'f', 2).arg(hookPoint.z(), 0, 'f', 2);
 
             /*glPushMatrix();
                glTranslated(centralPoint.x(),centralPoint.y(), centralPoint.z());
@@ -83,7 +83,7 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
             FixedVector<double, 4> labelPos = glMatrix * cent4;
             glTranslated(labelPos[0] / labelPos[3] * width / 2, labelPos[1] / labelPos[3] * height / 2, 0.0);
 */
-            Vector3dd labelPos = glMatrix * centralPoint;
+            Vector3dd labelPos = glMatrix * hookPoint;
             glTranslated(labelPos[0] * width / 2.0, labelPos[1] * height / 2.0, 0.0);
 
 

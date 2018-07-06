@@ -398,7 +398,7 @@ public:
      * \f[\prod_{i=0}^n {V_i}\f]
      *
      **/
-    inline ElementType mulAllElements() const
+    inline ElementType prod() const
     {
         ElementType result(1.0);
         for (int i = 0; i < _size(); i++)
@@ -445,6 +445,11 @@ public:
     {
         /* TODO ASAP: Correct this to select appropriate sqrt */
         return (ElementType)sqrt(this->sumAllElementsSq());
+    }
+
+    inline ElementType distanceTo(const RealType &other) const
+    {
+        return !(other - (*realThis()));
     }
 
     /**
@@ -621,7 +626,7 @@ public:
      * \f[W_i = sqrt(V_i) \f]
      *
      **/
-    ReturnType inline perElementSqrt() const
+    inline ReturnType cwiseSqrt() const
     {
         RealType result = _createVector(_size());
         for (int i = 0; i < _size(); i++)
@@ -629,36 +634,49 @@ public:
         return result;
     }
 
-
     /**
      * Per-element Abs
      *
-     * \f[W_i = sqrt(V_i) \f]
+     * \f[W_i = abs(V_i) \f]
      *
      **/
-    ReturnType inline perElementAbs() const
+    inline ReturnType cwiseAbs() const
     {
         RealType result = _createVector(_size());
         for (int i = 0; i < _size(); i++)
-            result.at(i) = (ElementType)CORE_ABS(_at(i));
+            result.at(i) = (ElementType)std::abs(_at(i));
         return result;
     }
 
-    ReturnType inline perElementMax(const RealType &other) const
+    /**
+    * Per-element Max
+    *
+    * \f[W_i = max(X_i, Y_i) \f]
+    *
+    **/
+    inline ReturnType cwiseMax(const RealType &other) const
     {
-        int size = CORE_MIN(_size(), other._size());
+        CORE_ASSERT_TRUE_S(_size() == other._size());
+        int size = std::min(_size(), other._size());
         RealType result = _createVector(size);
         for (int i = 0; i < size; i++)
-            result.at(i) = (ElementType)CORE_MAX(_at(i), other._at(i));
+            result.at(i) = (ElementType)std::max(_at(i), other._at(i));
         return result;
     }
 
-    ReturnType inline perElementMin(const RealType &other) const
+    /**
+    * Per-element Min
+    *
+    * \f[W_i = min(X_i, Y_i) \f]
+    *
+    **/
+    inline ReturnType cwiseMin(const RealType &other) const
     {
-        int size = CORE_MIN(_size(), other._size());
+        CORE_ASSERT_TRUE_S(_size() == other._size());
+        int size = std::min(_size(), other._size());
         RealType result = _createVector(size);
         for (int i = 0; i < size; i++)
-            result.at(i) = (ElementType)CORE_MIN(_at(i), other._at(i));
+            result.at(i) = (ElementType)std::min(_at(i), other._at(i));
         return result;
     }
 
@@ -670,7 +688,7 @@ public:
      *
      **/
     template <typename Type>
-    ReturnType inline perElementCast() const
+    ReturnType inline cwiseCast() const
     {
         RealType result = _createVector(_size());
         for (int i = 0; i < _size(); i++)
@@ -749,6 +767,60 @@ public:
         std::cout << "\n";
     }
 
+    /**/
+    void loadFrom(const ElementType *in)
+    {
+        for (int i = 0; i < _size(); i++)
+        {
+            _at(i) = in[i];
+        }
+    }
+
+    void loadFromStream(const ElementType * &in, bool *mask = NULL)
+    {
+        if (mask == NULL) {
+            this->loadFrom(in);
+            in += _size();
+            return;
+        }
+
+        for (int i = 0; i < _size(); i++)
+        {
+            if (mask[i]) {
+                _at(i) = *in;
+                in++;
+            }
+        }
+    }
+
+    void storeTo(ElementType *out) const
+    {
+        for (int i = 0; i < _size(); i++)
+        {
+            out[i] = _at(i);
+        }
+    }
+
+    void storeToStream(ElementType * &out, bool *mask = NULL) const
+    {
+        if (mask == NULL) {
+            this->storeTo(out);
+            out += _size();
+            return;
+        }
+
+        for (int i = 0; i < _size(); i++)
+        {
+            if (mask[i]) {
+                *out = _at(i);
+                out++;
+            }
+        }
+    }
+
+
+    /* Per element */
+
     inline ElementType minimum() const
     {
         ElementType minimum = numeric_limits<ElementType>::max();
@@ -806,7 +878,7 @@ public:
         int minId = 0;
         for (int i = 0; i < _size(); i++)
         {
-            ElementType absolute = CORE_ABS(_at(i));
+            ElementType absolute = std::abs(_at(i));
             if (absolute < minimum) {
                 minimum = absolute;
                 minId = i;

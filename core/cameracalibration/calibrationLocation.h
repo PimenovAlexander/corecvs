@@ -3,14 +3,13 @@
 
 #include "core/math/vector/vector2d.h"
 #include "core/math/vector/vector3d.h"
+#include "core/math/affine.h"
+#include "core/math/eulerAngles.h"
 #include "core/math/quaternion.h"
+#include "core/math/mathUtils.h"
 #include "core/math/matrix/matrix44.h"
 #include "core/geometry/line.h"
-#include "core/math/eulerAngles.h"
-#include "core/math/affine.h"
 #include "core/reflection/printerVisitor.h"
-
-#include "core/math/mathUtils.h"
 
 namespace corecvs {
 
@@ -470,8 +469,8 @@ public:
     template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit(position,    Vector3dd(0.0, 0.0, -1.0), "position");
-        visitor.visit(orientation, Quaternion::Identity()   , "orientation");
+        visitor.visit(position,    Vector3dd(0.0, 0.0, 0.0), "position");
+        visitor.visit(orientation, Quaternion::Identity(), "orientation");
 
         if (visitor.isLoader())
         {
@@ -483,12 +482,25 @@ public:
         } else {
             Quaternion rotation = orientation.conjugated();
             visitor.visit(rotation, Quaternion::Identity(), "rotation");
-            std::string comment("rotation - is Camera to World and has priority over orientation");
-            visitor.visit(comment, std::string()  , "comment");
+            std::string comment("rotation - is Cam2World, has priority over orientation");
+            visitor.visit(comment, std::string(), "comment");
         }
-
-
     }
+
+    /* This checks for exact equality.We better create something like hash() instead */
+    bool operator ==(const CameraLocationData &other) const
+    {
+        if (position    != other.position   ) return false;
+        if (orientation != other.orientation) return false;
+        return true;
+    }
+
+    friend ostream& operator << (ostream &out, CameraLocationData &toPrint)
+    {
+        out << "Camera at:"  << toPrint.position << " rotor "<< toPrint.orientation << std::endl;
+        return out;
+    }
+
 
     /* Pretty print */
     void prettyPrint (ostream &out = cout);
@@ -500,7 +512,7 @@ template<typename DoubleType>
 class GenericCameraLocationData
 {
 public:
-    Vector3d<DoubleType> position;
+    Vector3d<DoubleType>          position;
     GenericQuaternion<DoubleType> orientation;
 
 

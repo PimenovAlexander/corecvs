@@ -49,8 +49,8 @@ AutoTracker::~AutoTracker()
     StatusTracker::IncrementCompleted(st);
 }
 
-#define WRITE_LOCK write_lock l(lock)
-#define READ_LOCK  read_lock  l(lock)
+#define WRITE_LOCK write_lock l(lock); CORE_UNUSED(l)
+#define READ_LOCK  read_lock  l(lock); CORE_UNUSED(l)
 
 void corecvs::StatusTracker::setTotalActions(size_t totalActions)
 {

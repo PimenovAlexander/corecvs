@@ -76,7 +76,8 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
           "Brightness percentile to be cut",
           true,
          0,
-         100
+         100,
+         1
         );
     field2->widgetHint=BaseField::SPIN_BOX;
     field2->suffixHint="%";
@@ -107,7 +108,8 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
           "Number of bins for computing edge direction histogram",
           true,
          0,
-         999999
+         999999,
+         1
         );
     fields().push_back(field4);
     /*  */ 
@@ -135,7 +137,8 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
           "Typical radius for estimating edge-related data and refinig corner positions",
           true,
          0,
-         999999
+         999999,
+         1
         );
     fields().push_back(field6);
     /*  */ 
@@ -214,7 +217,8 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
           "Number of orientation/position refinement rounds",
           true,
          0,
-         999999
+         999999,
+         1
         );
     fields().push_back(field12);
     /*  */ 
@@ -241,7 +245,8 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
           "Non Minimal Supresstion locality area",
           true,
          0,
-         999999
+         999999,
+         1
         );
     fields().push_back(field14);
     /*  */ 
@@ -255,7 +260,8 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
           "Non Minimal Supresstion threshold",
           true,
          0,
-         99
+         99,
+         1
         );
     field15->widgetHint=BaseField::SPIN_BOX;
     field15->precision=3;
@@ -270,8 +276,13 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
           3,
           "patternRadius",
           "patternRadius",
-          "Radius for multi-scale pattern detection"
+          "Radius for multi-scale pattern detection",
+          true,
+         0,
+         999999,
+         1
         );
+    field16->precision=2;
     fields().push_back(field16);
     /*  */ 
     double mPatternStartAngleDeg_dv[] = {0,45};
@@ -283,8 +294,13 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
           2,
           "patternStartAngleDeg",
           "patternStartAngleDeg",
-          "Angle for rotation-variant detection"
+          "Angle for rotation-variant detection",
+          true,
+         0,
+         999999,
+         1
         );
+    field17->precision=2;
     fields().push_back(field17);
     /*  */ 
     double mCornerScores_dv[] = {4,8,12};
@@ -296,8 +312,13 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
           3,
           "cornerScores",
           "cornerScores",
-          "Radius for corner-scoring"
+          "Radius for corner-scoring",
+          true,
+         0,
+         999999,
+         1
         );
+    field18->precision=2;
     fields().push_back(field18);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();

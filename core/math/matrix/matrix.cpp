@@ -414,20 +414,27 @@ Matrix operator -(const Matrix &A, const Matrix &B)
 
 ostream & operator <<(ostream &out, const Matrix &matrix)
 {
-    streamsize wasPrecision = out.precision(15);
+    streamsize wasPrecision = out.precision(std::numeric_limits<double>::digits10 + 2);
+    std::ios_base::fmtflags wasFlags(out.flags());
+    int wasWidth = out.width();
+    out << std::scientific;
+
     out << "[";
+
     for (int i = 0; i < matrix.h; i++)
     {
         for (int j = 0; j < matrix.w; j++)
         {
             out.width(20);
-            out << std::scientific << matrix.a(i, j) << " ";
+            out << matrix.a(i, j) << " ";
         }
         if (i + 1 < matrix.h)
             out << ";\n";
     }
     out << "]" << std::endl;
     out.precision(wasPrecision);
+    out.flags(wasFlags);
+    out.width(wasWidth);
     return out;
 }
 
@@ -826,14 +833,20 @@ bool corecvs::Matrix::LinSolve(const corecvs::Matrix &A, const corecvs::Vector &
     }
     return info == 0;
 #else // WITH_BLAS
-
+    CORE_UNUSED(symmetric);
+    CORE_UNUSED(posDef);
     res = A.inv() * B;
     return true;
 
 #endif // !WITH_BLAS
 }
 
-bool corecvs::Matrix::LinSolveSchurComplement(const corecvs::Matrix &M, const corecvs::Vector &Bv, const std::vector<int> &diagBlocks, corecvs::Vector &res, bool symmetric, bool posDef, bool)
+bool corecvs::Matrix::LinSolveSchurComplement(const corecvs::Matrix &M, const corecvs::Vector &Bv
+    , const std::vector<int> &diagBlocks
+    , corecvs::Vector &res
+    , bool symmetric
+    , bool posDef
+    , bool)
 {
     /*
      * So we partition M and B into
@@ -861,7 +874,7 @@ bool corecvs::Matrix::LinSolveSchurComplement(const corecvs::Matrix &M, const co
     auto Dw = Bw;
 
 #ifndef WITH_BLAS
-    auto N = M.h;
+    CORE_UNUSED(posDef);
 
     std::vector<corecvs::Matrix> matrices;
 
@@ -929,11 +942,8 @@ bool corecvs::Matrix::LinSolveSchurComplement(const corecvs::Matrix &M, const co
         }
     });
 
-    for (int i = 0; i < Aw; ++i)
-        res[i] = x[i];
-    for (int j = 0; j < Bw; ++j)
-        res[j + Aw] = y[j];
-#else
+#else // !WITH_BLAS
+
     /*
      * The same as above, but with fancy LAPACK
      */
@@ -1039,12 +1049,14 @@ bool corecvs::Matrix::LinSolveSchurComplement(const corecvs::Matrix &M, const co
         }
     });
 
+#endif // WITH_BLAS
+
     for (int i = 0; i < Aw; ++i)
         res[i] = x[i];
     for (int j = 0; j < Bw; ++j)
         res[j + Aw] = y[j];
+
     return true;
-#endif
 }
 
 bool corecvs::Matrix::linSolveSchurComplement(const corecvs::Vector &B, const std::vector<int> &diagBlocks, corecvs::Vector &res, bool symmetric, bool posDef)
@@ -1558,9 +1570,12 @@ void Matrix::svd(Matrix *A, DiagonalMatrix *W, Matrix *V)
   *   is a matrix whose columns contain, on output, the normalized eigenvectors of a nrot returns the number of Jacobi rotations that were required.
   **/
 
-#define ROTATE(mat,i,j,k,l) g = mat->a(i,j); h = mat->a(k,l); mat->a(i,j) = g - s * ( h + g * tau); mat->a(k,l) = h + s * ( g - h * tau);
+#define ROTATE(mat,i,j,k,l) g = mat->a(i,j); \
+                            h = mat->a(k,l); \
+                            mat->a(i,j) = g - s * ( h + g * tau); \
+                            mat->a(k,l) = h + s * ( g - h * tau);
 
-int Matrix::jacobi(Matrix *a, DiagonalMatrix *d, Matrix *v, int *nrotpt)
+int Matrix::jacobi(Matrix *a, DiagonalMatrix *d, Matrix *v, int *nrotpt, bool trace)
 {
     CORE_ASSERT_TRUE((a != NULL && d != NULL && v != NULL), "NULL input Matrix\n");
     CORE_ASSERT_TRUE((a->h == a->w), "Matrix A is not square\n");
@@ -1591,14 +1606,17 @@ int Matrix::jacobi(Matrix *a, DiagonalMatrix *d, Matrix *v, int *nrotpt)
 
     int nrot=0;
 
-    for (i = 0; i < 50; i++) {
+    for (i = 0; i < 50; i++)
+    {
         sm = 0.0;
-        for (ip = 0;ip < n - 1; ip++)   //  Sum off-diagonal elements.
+        for (ip = 0; ip < n - 1; ip++)   //  Sum off-diagonal elements.
         {
-            for (iq = ip + 1;iq < n; iq++) {
+            for (iq = ip + 1; iq < n; iq++) {
                 sm += fabs(a->a(ip,iq));
             }
         }
+
+        if (trace) SYNC_PRINT(("Matrix::jacobi(): It:%d val:%.17g\n", i, sm));
 
         if (sm == 0.0) { // The normal return, which relies on quadratic convergence to machine underflow.
             deletearr_safe (z);
@@ -1629,7 +1647,7 @@ int Matrix::jacobi(Matrix *a, DiagonalMatrix *d, Matrix *v, int *nrotpt)
                 else if (fabs(a->a(ip,iq)) > tresh)
                 {
                     h = d->a(iq) - d->a(ip);
-                    if ((float)(fabs(h) + g) == (float)fabs(h)) {
+                    if ((fabs(h) + g) == fabs(h)) {
                         t = (a->a(ip,iq)) / h;  // t =1 /(2 \tau)
                     } else {
                         theta = 0.5 * h / (a->a(ip,iq));
@@ -1637,9 +1655,9 @@ int Matrix::jacobi(Matrix *a, DiagonalMatrix *d, Matrix *v, int *nrotpt)
                         if (theta < 0.0) t = -t;
                     }
 
-                    c = 1.0 / sqrt(1 + t*t);
+                    c = 1.0 / sqrt(1.0 + t * t);
                     s = t * c;
-                    tau = s / (1.0+c);
+                    tau = s / (1.0 + c);
                     h = t * a->a(ip,iq);
                     z[ip] -= h;
                     z[iq] += h;
@@ -1670,9 +1688,11 @@ int Matrix::jacobi(Matrix *a, DiagonalMatrix *d, Matrix *v, int *nrotpt)
             z[ip] = 0.0;
         }
     }
-    delete b;
-    delete z;
-    SYNC_PRINT(("Too many iterations in routine jacobi"));
+    deletearr_safe (b);
+    deletearr_safe (z);
+
+    SYNC_PRINT(("Too many iterations in routine jacobi\n"));
+
     return 1;
 }
 #undef ROTATE

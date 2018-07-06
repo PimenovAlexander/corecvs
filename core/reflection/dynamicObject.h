@@ -2,6 +2,7 @@
 #define DYNAMICOBJECT_H
 
 #include "core/reflection/reflection.h"
+#include "core/reflection/printerVisitor.h"
 
 namespace corecvs {
 
@@ -234,7 +235,7 @@ public:
             SYNC_PRINT(("Seem to copyTo object of the wrong type"));
             return false;
         }
-        target = static_cast<Type *>(rawObject);
+        *target = *static_cast<Type *>(rawObject);
         return true;
     }
 
@@ -247,6 +248,14 @@ public:
     void printRawObject()
     {
          DynamicObjectWrapper(reflection, rawObject).printRawObject();
+    }
+
+    friend std::ostream & operator << (std::ostream &out, const DynamicObject &object)
+    {
+        corecvs::PrinterVisitor printer(out);
+        /* We can garantee that Printer maintains constness*/
+        (const_cast<DynamicObject &>(object)).accept<corecvs::PrinterVisitor>(printer);
+        return out;
     }
 
 private:

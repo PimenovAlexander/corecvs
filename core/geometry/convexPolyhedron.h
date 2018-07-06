@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "core/geometry/line.h"
+#include "core/geometry/plane.h"
 #include "core/geometry/axisAlignedBox.h"
 
 namespace corecvs {
@@ -78,6 +79,13 @@ public:
 class ConvexPolygon : public ConvexPolyhedronGeneric< Line2d, Vector2dd>
 {
 public:   
+
+    void append(const ConvexPolygon &other);
+    void simplify();
+
+    void intersectWith(const ConvexPolygon &other);
+    friend ConvexPolygon intersect (const ConvexPolygon &a1, const ConvexPolygon &a2);
+//    friend       Polygon intersectP(const ConvexPolygon &a1, const ConvexPolygon &a2);
 };
 
 

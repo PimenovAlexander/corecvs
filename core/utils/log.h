@@ -66,7 +66,7 @@ public:
 
    ~LogDrainsKeeper()
     {
-        SYNC_PRINT(("LogDrainsKeeper::~LogDrainsKeeper():called\n"));
+        DOTRACE(("LogDrainsKeeper::~LogDrainsKeeper():called\n"));
 
         while (!empty())
         {

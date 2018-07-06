@@ -17,7 +17,7 @@
 #include "core/utils/global.h"
 
 #include "baseCalculationThread.h"
-#include "imageCaptureInterface.h"
+//#include "imageCaptureInterface.h"
 #include "core/fileformats/ppmLoader.h"
 #include "core/utils/preciseTimer.h"
 #include "generatedParameters/scannerParameters.h"

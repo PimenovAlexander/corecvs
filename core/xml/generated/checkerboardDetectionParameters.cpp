@@ -121,6 +121,7 @@ int CheckerboardDetectionParameters::staticInit()
           "cellSizeHor",
           true,
          0,
+         1,
          1
         );
     field4->widgetHint=BaseField::SPIN_BOX;
@@ -138,6 +139,7 @@ int CheckerboardDetectionParameters::staticInit()
           "cellSizeVert",
           true,
          0,
+         1,
          1
         );
     field5->widgetHint=BaseField::SPIN_BOX;
@@ -167,7 +169,8 @@ int CheckerboardDetectionParameters::staticInit()
           "preciseDiameter",
           true,
          0,
-         999999
+         999999,
+         1
         );
     fields().push_back(field7);
     /*  */ 
@@ -181,7 +184,8 @@ int CheckerboardDetectionParameters::staticInit()
           "iterationCount",
           true,
          1,
-         999999
+         999999,
+         1
         );
     fields().push_back(field8);
     /*  */ 
@@ -195,7 +199,8 @@ int CheckerboardDetectionParameters::staticInit()
           "minAccuracy",
           true,
          0,
-         999999
+         999999,
+         1
         );
     field9->widgetHint=BaseField::SPIN_BOX;
     field9->suffixHint="px";

@@ -1,3 +1,4 @@
+#include <fstream>
 #include "cameraModel.h"
 
 namespace corecvs {
@@ -36,8 +37,17 @@ Matrix33 CameraModel::Fundamental(const Matrix44 &L, const Matrix44 &R)
 
 Matrix33 CameraModel::fundamentalTo(const CameraModel &right) const
 {
-    Matrix33 K1 =       intrinsics.getKMatrix33();
-    Matrix33 K2 = right.intrinsics.getKMatrix33();
+    if (!intrinsics->isPinhole() || !right.intrinsics->isPinhole())
+    {
+        return EssentialMatrix();
+    }
+
+    PinholeCameraIntrinsics *pinhole1 = static_cast<PinholeCameraIntrinsics *>(intrinsics.get());
+    PinholeCameraIntrinsics *pinhole2 = static_cast<PinholeCameraIntrinsics *>(right.intrinsics.get());
+
+
+    Matrix33 K1 = pinhole1->getKMatrix33();
+    Matrix33 K2 = pinhole2->getKMatrix33();
     return K1.inv().transposed() * essentialTo(right) * K2.inv();
 }
 Matrix33 CameraModel::essentialTo  (const CameraModel &right) const
@@ -59,19 +69,26 @@ EssentialDecomposition CameraModel::ComputeEssentialDecomposition(const CameraLo
 
 PlaneFrame CameraModel::getVirtualScreen(double distance) const
 {
-    Vector3dd topLeft     = Vector3dd(              0,               0,  1) * distance;
-    Vector3dd topRight    = Vector3dd( intrinsics.w(),               0,  1) * distance;
-    Vector3dd bottomLeft  = Vector3dd(              0,  intrinsics.h(),  1) * distance;
+    if (!intrinsics->isPinhole())
+    {
+        return PlaneFrame();
+    }
+    PinholeCameraIntrinsics *pinhole = static_cast<PinholeCameraIntrinsics *>(intrinsics.get());
+
+
+    Vector3dd topLeft     = Vector3dd(              0,             0,  1) * distance;
+    Vector3dd topRight    = Vector3dd( pinhole->w()  ,             0,  1) * distance;
+    Vector3dd bottomLeft  = Vector3dd(              0,  pinhole->h(),  1) * distance;
 
     PlaneFrame toReturn;
 
-    Matrix33 invK = intrinsics.getInvKMatrix33();
+    Matrix33 invK = pinhole->getInvKMatrix33();
     toReturn.p1  = extrinsics.camToWorld(invK * topLeft);
     Vector3dd d1 = extrinsics.camToWorld(invK * topRight  ) - toReturn.p1;
     Vector3dd d2 = extrinsics.camToWorld(invK * bottomLeft) - toReturn.p1;
 
-    toReturn.e1 = (d1 / intrinsics.w() );
-    toReturn.e2 = (d2 / intrinsics.h() );
+    toReturn.e1 = (d1 / pinhole->w() );
+    toReturn.e2 = (d2 / pinhole->h() );
 
     return toReturn;
 }
@@ -182,85 +199,6 @@ Polygon CameraModel::projectViewport(const CameraModel &right, double pyramidLen
 }
 
 
-PinholeCameraIntrinsics::PinholeCameraIntrinsics(Vector2dd resolution, double hfov)
-  : principal(resolution / 2.0)
-  , skew(0.0)
-  , size(resolution)
-{
-    double ratio = tan(hfov / 2.0);
-    double f = (size.x() / 2.0) / ratio;
-
-    focal = Vector2dd(f,f);
-}
-
-
-/**
- *  We will denote it by matrix \f$K\f$.
- *
- *  \f[K =  \pmatrix{
- *       f_x  &   s  & I_x & 0 \cr
- *        0   &  f_y & I_y & 0 \cr
- *        0   &   0  & 1   & 0 \cr
- *        0   &   0  & 0   & 1  }
- * \f]
- *
- *
- * This matrix transform the 3D points form camera coordinate system to
- * image coordinate system
- **/
-Matrix44 PinholeCameraIntrinsics::getKMatrix() const
-{
-    return Matrix44 (getKMatrix33());
-}
-
-/**
- *  Returns inverse of K matrix.
- *  For K matrix read CameraIntrinsics::getKMatrix()
- **/
-Matrix44 PinholeCameraIntrinsics::getInvKMatrix() const
-{
-    return Matrix44( getInvKMatrix33());
-}
-
-Matrix33 PinholeCameraIntrinsics::getKMatrix33() const
-{
-    return Matrix33 (
-        focal.x(),   skew   , principal.x(),
-           0.0   , focal.y(), principal.y(),
-           0.0   ,    0.0   ,     1.0
-    );
-}
-
-/**
- *
- * \f[ K^{-1} = \pmatrix{
- *      \frac{1}{f_x} & {- s} \over {f_x f_y} & {{{c_y s} \over {f_y}} - {c_x}} \over {f_x} \cr
- *            0       &   {1} \over {f_y}      &          {- c_y} \over {f_y}             \cr
- *            0       &         0              &                   1                     }
- * \f]
- *
- **/
-
-Matrix33 PinholeCameraIntrinsics::getInvKMatrix33() const
-{
-    Vector2dd invF = Vector2dd(1.0, 1.0) / focal;
-
-    return Matrix33 (
-       invF.x() , - skew * invF.x() * invF.y() ,   ( principal.y() * skew * invF.y() - principal.x()) * invF.x(),
-          0.0   ,          invF.y()            ,                                      -principal.y()  * invF.y(),
-          0.0   ,            0.0               ,                             1.0
-    );
-}
-
-double PinholeCameraIntrinsics::getVFov() const
-{
-    return atan((size.y() / 2.0) / focal.y()) * 2.0;
-}
-
-double PinholeCameraIntrinsics::getHFov() const
-{
-    return atan((size.x() / 2.0) / focal.x()) * 2.0;
-}
 
 /* Camera */
 
@@ -273,14 +211,14 @@ double PinholeCameraIntrinsics::getHFov() const
  **/
 Ray3d CameraModel::rayFromPixel(const Vector2dd &point) const
 {
-    Vector3dd direction = intrinsics.reverse(point);
+    Vector3dd direction = intrinsics->reverse(point);
     Ray3d ray(extrinsics.orientation.conjugated() * direction, extrinsics.position);
     return ray;
 }
 
 Ray3d CameraModel::rayFromCenter()
 {
-    return rayFromPixel(intrinsics.principal);
+    return rayFromPixel(intrinsics->principal());
 }
 
 Vector3dd CameraModel::forwardDirection() const
@@ -306,7 +244,12 @@ Matrix33 CameraModel::getRotationMatrix() const
 
 Matrix44 CameraModel::getCameraMatrix() const
 {
-    return intrinsics.getKMatrix() * Matrix44(getRotationMatrix()) * Matrix44::Shift(-extrinsics.position);
+    PinholeCameraIntrinsics *p = getPinhole();
+
+    if (p != NULL) {
+        return p->getKMatrix() * Matrix44(getRotationMatrix()) * Matrix44::Shift(-extrinsics.position);
+    }
+    return Matrix44(getRotationMatrix()) * Matrix44::Shift(-extrinsics.position);
 }
 
 Matrix44 CameraModel::getPositionMatrix() const
@@ -329,10 +272,10 @@ ConvexPolyhedron CameraModel::getViewport(const Vector2dd &p1, const Vector2dd &
     Vector2dd p2 = Vector2dd(p3.x(), p1.y());
     Vector2dd p4 = Vector2dd(p1.x(), p3.y());
 
-    Vector3dd d1 = extrinsics.camToWorld(intrinsics.reverse(p1));
-    Vector3dd d2 = extrinsics.camToWorld(intrinsics.reverse(p2));
-    Vector3dd d3 = extrinsics.camToWorld(intrinsics.reverse(p3));
-    Vector3dd d4 = extrinsics.camToWorld(intrinsics.reverse(p4));
+    Vector3dd d1 = extrinsics.camToWorld(intrinsics->reverse(p1));
+    Vector3dd d2 = extrinsics.camToWorld(intrinsics->reverse(p2));
+    Vector3dd d3 = extrinsics.camToWorld(intrinsics->reverse(p3));
+    Vector3dd d4 = extrinsics.camToWorld(intrinsics->reverse(p4));
 
     toReturn.faces.push_back( Plane3d::FromPoints(position, d1, d2) );
     toReturn.faces.push_back( Plane3d::FromPoints(position, d2, d3) );
@@ -346,11 +289,13 @@ ConvexPolyhedron CameraModel::getViewport(const Vector2dd &p1, const Vector2dd &
 
 ConvexPolyhedron  CameraModel::getCameraViewport(double farPlane) const
 {
-    ConvexPolyhedron p = getViewport( Vector2dd::Zero(), intrinsics.size );
+
+
+    ConvexPolyhedron p = getViewport( Vector2dd::Zero(), intrinsics->size() );
     if ( farPlane > 0 )
     {
         Vector3dd position = extrinsics.position;
-        Vector3dd center = extrinsics.camToWorld( intrinsics.reverse( intrinsics.principal ));
+        Vector3dd center = extrinsics.camToWorld( intrinsics->reverse( intrinsics->principal() ));
         p.faces.push_back( Plane3d::FromNormalAndPoint( -center, position + center.normalised() * farPlane));
      }
     return p;
@@ -361,15 +306,15 @@ vector<GenericTriangle<Vector4dd> > CameraModel::getCameraViewportSides() const
     vector<GenericTriangle<Vector4dd> > sides;
 
     Vector2dd p1 = Vector2dd::Zero();
-    Vector2dd p3 = intrinsics.size;
+    Vector2dd p3 = intrinsics->size();
     Vector2dd p2 = Vector2dd(p3.x(), p1.y());
     Vector2dd p4 = Vector2dd(p1.x(), p3.y());
 
     Vector4dd position(extrinsics.position, 1.0);
-    Vector4dd d1(extrinsics.camToWorld(intrinsics.reverse(p1)), 0.0);
-    Vector4dd d2(extrinsics.camToWorld(intrinsics.reverse(p2)), 0.0);
-    Vector4dd d3(extrinsics.camToWorld(intrinsics.reverse(p3)), 0.0);
-    Vector4dd d4(extrinsics.camToWorld(intrinsics.reverse(p4)), 0.0);
+    Vector4dd d1(extrinsics.camToWorld(intrinsics->reverse(p1)), 0.0);
+    Vector4dd d2(extrinsics.camToWorld(intrinsics->reverse(p2)), 0.0);
+    Vector4dd d3(extrinsics.camToWorld(intrinsics->reverse(p3)), 0.0);
+    Vector4dd d4(extrinsics.camToWorld(intrinsics->reverse(p4)), 0.0);
 
     sides.push_back(GenericTriangle<Vector4dd>(position, d1, d2));
     sides.push_back(GenericTriangle<Vector4dd>(position, d2, d3));
@@ -384,15 +329,15 @@ vector<Vector4dd> CameraModel::getCameraViewportPyramid() const
     vector<Vector4dd> pyramid;
 
     Vector2dd p1 = Vector2dd::Zero();
-    Vector2dd p3 = intrinsics.size;
+    Vector2dd p3 = intrinsics->size();
     Vector2dd p2 = Vector2dd(p3.x(), p1.y());
     Vector2dd p4 = Vector2dd(p1.x(), p3.y());
 
     Vector4dd position(extrinsics.position, 1.0);
-    Vector4dd d1(extrinsics.camToWorld(intrinsics.reverse(p1)), 0.0);
-    Vector4dd d2(extrinsics.camToWorld(intrinsics.reverse(p2)), 0.0);
-    Vector4dd d3(extrinsics.camToWorld(intrinsics.reverse(p3)), 0.0);
-    Vector4dd d4(extrinsics.camToWorld(intrinsics.reverse(p4)), 0.0);
+    Vector4dd d1(extrinsics.camToWorld(intrinsics->reverse(p1)), 0.0);
+    Vector4dd d2(extrinsics.camToWorld(intrinsics->reverse(p2)), 0.0);
+    Vector4dd d3(extrinsics.camToWorld(intrinsics->reverse(p3)), 0.0);
+    Vector4dd d4(extrinsics.camToWorld(intrinsics->reverse(p4)), 0.0);
 
     pyramid.push_back(position);
     pyramid.push_back(d1);
@@ -407,9 +352,9 @@ Polygon CameraModel::getCameraViewportPolygon() const
 {
     Polygon polygon = {
         Vector2dd::Zero(),
-        Vector2dd(intrinsics.w(), 0),
-        intrinsics.size,
-        Vector2dd(0, intrinsics.h()),
+        Vector2dd(intrinsics->w(), 0),
+        intrinsics->size(),
+        Vector2dd(0, intrinsics->h()),
     };
     return polygon;
 }
@@ -422,7 +367,7 @@ typedef std::array<corecvs::Vector2dd, 2> Rect;
 
 void corecvs::CameraModel::estimateUndistortedSize(const DistortionApplicationParameters &applicationParams)
 {
-    Rect input = { corecvs::Vector2dd(0.0, 0.0), intrinsics.distortedSize }, output;
+    Rect input = { corecvs::Vector2dd(0.0, 0.0), intrinsics->distortedSize() }, output;
     Rect outCir, outIns;
 
     distortion.getCircumscribedImageRect(input[0], input[1], outCir[0], outCir[1]);
@@ -434,9 +379,9 @@ void corecvs::CameraModel::estimateUndistortedSize(const DistortionApplicationPa
     switch (applicationParams.resizePolicy())
     {
         case DistortionResizePolicy::FORCE_SIZE:
-            output = { corecvs::Vector2dd(0.0, 0.0), intrinsics.size };
-            shift[0] = distortion.principalX() / intrinsics.distortedSize[0] * output[1][0];
-            shift[1] = distortion.principalY() / intrinsics.distortedSize[1] * output[1][1];
+            output = { corecvs::Vector2dd(0.0, 0.0), intrinsics->size() };
+            shift[0] = distortion.principalX() / intrinsics->distortedSize().x() * output[1][0];
+            shift[1] = distortion.principalY() / intrinsics->distortedSize().y() * output[1][1];
             break;
         case DistortionResizePolicy::TO_FIT_RESULT:
             output = outCir;
@@ -455,11 +400,12 @@ void corecvs::CameraModel::estimateUndistortedSize(const DistortionApplicationPa
             break;
     }
 
-    double w = intrinsics.distortedSize[0];
-    double h = intrinsics.distortedSize[1];
-    intrinsics.size = output[1] - output[0];
-    double newW = intrinsics.size[0];
-    double newH = intrinsics.size[1];
+    double w = intrinsics->distortedSize().x();
+    double h = intrinsics->distortedSize().y();
+
+    intrinsics->size() = output[1] - output[0];
+    double newW = intrinsics->size().x();
+    double newH = intrinsics->size().y();
 
     if (applicationParams.adoptScale())
     {
@@ -474,7 +420,9 @@ void corecvs::CameraModel::estimateUndistortedSize(const DistortionApplicationPa
          * because [in the next call with the same DistortionApplicationParameters]
          * shift should be ~0, since it will be eliminated by distortion.mShift*
          */
-        intrinsics.principal += shift;
+        // MEFIXASAP
+
+        //intrinsics.principal += shift;
         distortion.mShiftX += shift[0];
         distortion.mShiftY += shift[1];
     }
@@ -487,6 +435,9 @@ void CameraModel::prettyPrint(std::ostream &out)
     cout << "Camera:" << nameId << std::endl;
     accept(visitor);
 }
+
+
+
 
 
 } // namespace corecvs

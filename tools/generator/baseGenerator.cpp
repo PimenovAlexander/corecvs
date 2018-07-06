@@ -1,7 +1,7 @@
 #include <QDebug>
 #include "baseGenerator.h"
 
-BaseGenerator::BaseGenerator(const Reflection *_clazz)
+BaseGenerator::BaseGenerator(const ReflectionGen *_clazz)
     : clazz(_clazz)
 {
 }

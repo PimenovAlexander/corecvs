@@ -1,6 +1,7 @@
 #include "core/geometry/renderer/simpleRenderer.h"
 #include "core/geometry/mesh3d.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/geometry/renderer/attributedTriangleSpanIterator.h"
 
 namespace corecvs {
 
@@ -128,78 +129,123 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
 
     Matrix44 normalTransform = modelviewMatrix.inverted().transposed();
 
-    for(size_t f = 0; f < mesh->faces.size(); f++)
+    if (drawFaces)
     {
-        Vector3d32 face = mesh->faces[f];
-        Vector3d32 normalId = mesh->normalId[f];
-        Vector4d32 textureId = mesh->texId[f];
-
-        bool hasNormal = (normalId[0] != -1) && (normalId[1] != -1) && (normalId[2] != -1);
-        /**/
-        Vector3dd positions[3];
-        Vector3dd normals  [3];
-        Vector2dd texture  [3];
-
-        AttributedTriangle triang;
-
-        for (int i = 0; i < 3; i++) {
-            positions[i] = modelviewMatrix * mesh->vertexes[face[i]];
-            if (hasNormal) {
-                normals[i] = /*normalTransform **/ mesh->normalCoords[normalId[i]].normalised();
-            } else {
-                normals[i] = mesh->getFaceAsTrinagle(f).getNormal();
-            }
-
-            texture[i] = mesh->textureCoords[textureId[i]];
-
-            AttributedPoint &p = triang.p[i];
-
-            p = positions[i].project();
-
-            double invz = 1.0 / positions[i].z();
-            p.attributes.push_back(invz);
-
-            p.attributes.push_back(normals[i].x());
-            p.attributes.push_back(normals[i].y());
-            p.attributes.push_back(normals[i].z());
-
-            if (!trueTexture) {
-                p.attributes.push_back(texture[i].x());
-                p.attributes.push_back(texture[i].y());
-            } else {
-                p.attributes.push_back(texture[i].x() * invz);
-                p.attributes.push_back(texture[i].y() * invz);
-            }
-
-#if 0
-            cout << "P" << i << " :";
-            for (int ac = 0; ac < p.attributes.size(); ac++)
-            {
-                cout << p.attributes[ac] << " ";
-            }
-            cout << endl;
-#endif
-        }
-
-        color = RGBColor::Blue();
-        if (mesh->hasColor) {
-            color = mesh->facesColor[f];
-        }
-
-        AttributedTriangleSpanIterator it(triang);
-        while (it.hasValue())
+        for(size_t f = 0; f < mesh->faces.size(); f++)
         {
-            AttributedHLineSpan span = it.getAttrSpan();
-            fragmentShader(span);
-            it.step();
+            Vector3d32 face = mesh->faces[f];
+            Vector3d32 normalId = mesh->normalId[f];
+            Vector4d32 textureId = mesh->texId[f];
+
+            bool hasNormal = (normalId[0] != -1) && (normalId[1] != -1) && (normalId[2] != -1);
+            /**/
+            Vector3dd positions[3];
+            Vector3dd normals  [3];
+            Vector2dd texture  [3];
+            double texId = textureId[3];
+
+            AttributedTriangle triang;
+
+            for (int i = 0; i < 3; i++) {
+                positions[i] = modelviewMatrix * mesh->vertexes[face[i]];
+                if (hasNormal) {
+                    normals[i] = /*normalTransform **/ mesh->normalCoords[normalId[i]].normalised();
+                } else {
+                    normals[i] = mesh->getFaceAsTrinagle(f).getNormal();
+                }
+
+                texture[i] = mesh->textureCoords[textureId[i]];
+
+                AttributedPoint &p = triang.p[i];
+
+                p = positions[i].project();
+
+                double invz = 1.0 / positions[i].z();
+                p.attributes.push_back(invz);
+
+                p.attributes.push_back(normals[i].x());
+                p.attributes.push_back(normals[i].y());
+                p.attributes.push_back(normals[i].z());
+
+                if (!trueTexture) {
+                    p.attributes.push_back(texture[i].x());
+                    p.attributes.push_back(texture[i].y());
+                } else {
+                    p.attributes.push_back(texture[i].x() * invz);
+                    p.attributes.push_back(texture[i].y() * invz);
+                }
+                p.attributes.push_back(texId);
+
+    #if 0
+                cout << "P" << i << " :";
+                for (int ac = 0; ac < p.attributes.size(); ac++)
+                {
+                    cout << p.attributes[ac] << " ";
+                }
+                cout << endl;
+    #endif
+            }
+
+            color = RGBColor::Blue();
+            if (mesh->hasColor) {
+                color = mesh->facesColor[f];
+            }
+
+            AttributedTriangleSpanIterator it(triang);
+            // Triangle is above viewport
+            if (it.sortedt.p3().y() < 0)
+                continue;
+
+            // Skip lines untill the first that fits in the buffer
+            if (it.sortedt.p1().y() < 0 && it.hasValue())
+                it.stepTo(0);
+
+            while (it.hasValue())
+            {
+                AttributedHLineSpan span = it.getAttrSpan();
+                fragmentShader(span);
+                it.step();
+            }
         }
     }
 
+    if (drawVertexes)
+    {
+        for(size_t v = 0; v < mesh->vertexes.size(); v++)
+        {
+             Vector3dd position = modelviewMatrix * mesh->vertexes[v];
+             AttributedHLineSpan span;
+             span.x1 = fround(position.x());
+             span.x2 = fround(position.x());
+             span.cy = fround(position.y());
 
+             double invz = 1.0 / position.z();
+             span.catt.push_back(invz);
+
+             span.catt.push_back(0.0);
+             span.catt.push_back(0.0);
+             span.catt.push_back(0.0);
+
+             if (!trueTexture) {
+                 span.catt.push_back(0.0);
+                 span.catt.push_back(0.0);
+             } else {
+                 span.catt.push_back(0.0);
+                 span.catt.push_back(0.0);
+             }
+             span.catt.push_back(0);
+
+             fragmentShader(span);
+
+        }
+    }
 }
 
 void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
 {
+    if (span.hasValue() && span.x() < 0)
+        span.stepTo(0);
+
     while (span.hasValue())
     {
         if (cBuffer->isValidCoord(span.pos()) )
@@ -208,6 +254,7 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
             double z = 1.0 / att[0];
             Vector3dd normal = Vector3dd(att[1], att[2], att[3]).normalised();
             Vector2dd tex = Vector2dd(att[4], att[5]);
+            int texId = att[6];
             if (trueTexture) {
                 tex *= z;
             }
@@ -222,12 +269,19 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
                 RGBColor c = color;
 
                 /* Texture block*/
-                RGB24Buffer *texture = textures[0];
-                tex = tex * Vector2dd(texture->w, texture->h);
-                if (texture->isValidCoordBl(tex)) {
-                    c = texture->elementBl(tex);
+                if (texId < (int)textures.size() && textures[texId] != NULL)
+                {
+
+                    RGB24Buffer *texture = textures[texId];
+
+                    tex = tex * Vector2dd(texture->w, texture->h);
+                    if (texture->isValidCoordBl(tex)) {
+                        c = texture->elementBl(tex);
+                    } else {
+                        SYNC_PRINT(("Tex miss %lf %lf\n", tex.x(), tex.y()));
+                    }
                 } else {
-                    SYNC_PRINT(("Tex miss %lf %lf\n", tex.x(), tex.y()));
+                    SYNC_PRINT(("Tex is NULL or non-existent %d\n", texId));
                 }
 
 

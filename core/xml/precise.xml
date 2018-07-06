@@ -1,6 +1,8 @@
 <poco version="5.0">
   <enum name="Make Precise Algorithm">
-    <item name="KLT"   id="0" />
+    <item name="KLT"       id="0" />
+    <item name="KLT Float" id="1" />
+    <item name="KLT Fast"  id="2" />
   </enum>
   
   <enum name="Precise Interpolation Type">

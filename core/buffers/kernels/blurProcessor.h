@@ -30,7 +30,7 @@ public:
             unsigned stepW,
             G12Buffer** blur);
 
-#ifdef WITH_SSE
+#if defined(WITH_SSE) || defined(WITH_NEON)
     static void prepareBlurBuffersSSE(G12IntegralBuffer *integral, G12Buffer* blur[4]);
 #endif
 

@@ -97,6 +97,12 @@ public:
         return toReturn;
     }
 
+    static Matrix44 FromRawRows(const double *data) {
+        Matrix44 result;
+        memcpy(result.element, data, sizeof(double) * ELEM_NUM);
+        return result;
+    }
+
     Matrix33 topLeft33() const;
     Vector3dd translationPart() const;
 	Vector4dd row(int i) const

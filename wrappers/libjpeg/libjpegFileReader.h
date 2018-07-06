@@ -12,6 +12,7 @@ public:
     static std::string prefix2;
     static std::string prefix3;
     static std::string prefix4;
+
 public:
     static int registerMyself()
     {
@@ -19,14 +20,31 @@ public:
         return 0;
     }
 
-    virtual bool acceptsFile(std::string name) override;
-    virtual corecvs::RGB24Buffer *load(std::string name) override;
+    virtual bool acceptsFile(const std::string & name) override;
+    virtual corecvs::RGB24Buffer *load(const std::string &name) override;
     virtual std::string name() override { return "LibJpeg"; }
+
+    bool saveJPEG(const std::string& name, const corecvs::RGB24Buffer *buffer, int quality = 95, bool alpha=false);
 
     LibjpegFileReader();
     virtual ~LibjpegFileReader();
 };
 
+class LibjpegFileSaver : public corecvs::BufferSaver<corecvs::RGB24Buffer>
+{
+public:
+    static int registerMyself()
+    {
+        corecvs::BufferFactory::getInstance()->registerSaver(new LibjpegFileSaver());
+        return 0;
+    }
+
+    virtual bool acceptsFile(const std::string & name)  { return LibjpegFileReader().acceptsFile(name); }
+    virtual bool save(const corecvs::RGB24Buffer& buffer, const std::string& name, int quality = 95) override { return LibjpegFileReader().saveJPEG(name, &buffer, quality); }
+    virtual std::string              name()       override { return "LibJpeg_Saver"; }
+    virtual std::vector<std::string> extentions() override { return LibjpegFileReader().extentions(); }
+    virtual ~LibjpegFileSaver() {}
+};
 
 class LibjpegRuntimeTypeBufferLoader : public corecvs::BufferLoader<corecvs::RuntimeTypeBuffer>
 {
@@ -37,8 +55,8 @@ public:
         return 0;
     }
 
-    virtual bool acceptsFile(std::string name) override;
-    virtual corecvs::RuntimeTypeBuffer *load(std::string name) override;
+    virtual bool acceptsFile(const std::string & name) override;
+    virtual corecvs::RuntimeTypeBuffer *load(const std::string &name) override;
     virtual std::string name() override {return "LibJpeg";}
 
     LibjpegRuntimeTypeBufferLoader();

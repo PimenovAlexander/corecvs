@@ -84,7 +84,8 @@ public:
     {
         CONDITIONAL_TRACE(("JSONModernReader::visit(Type &field, %s)\n", fieldName));
         if (mNodePath.empty() || mNodePath.back() == NULL) {
-            SYNC_PRINT(("JSONModernReader::visit(Type &field, %s)\n", fieldName));
+            SYNC_PRINT(("JSONModernReader::visit(Type &field, %s) is impossible\n", fieldName));
+            return;
         }
         if (mNodePath.back()->count(fieldName) == 0) {
             CONDITIONAL_TRACE(("JSONModernReader::visit(): member %s not found\n", fieldName));
@@ -104,8 +105,12 @@ public:
     template <typename inputType, typename reflectionType>
     void visit(inputType &field, const reflectionType * fieldDescriptor)
     {
+        if (mNodePath.empty() || mNodePath.back() == NULL || !fieldDescriptor) {
+            SYNC_PRINT(("JSONModernReader::visit(inputType &field, field:%s) is impossible\n", fieldDescriptor ? fieldDescriptor->getSimpleName() : "none"));
+            return;
+        }
         if (mNodePath.back()->count(fieldDescriptor->getSimpleName()) == 0) {
-            CONDITIONAL_TRACE(("JSONModernReader::visit(): member %s not found\n", fieldDescriptor->getSimpleName()));
+            CONDITIONAL_TRACE(("JSONModernReader::visit(): member field:%s not found\n", fieldDescriptor->getSimpleName()));
             return;
         }
 
@@ -229,7 +234,7 @@ public:
     template <typename type, typename std::enable_if<std::is_arithmetic<type>::value && !std::is_same<bool, type>::value && !std::is_same<uint64_t, type>::value, int>::type foo = 0>
     void visit(type &field, type defaultValue, const char *fieldName)
     {
-        CONDITIONAL_TRACE(("JSONModernReader::visit(type &field, type defaultValue, %s) v1 \n", fieldName ));
+        CONDITIONAL_TRACE(("JSONModernReader::visit(type &field, type defaultValue, %s) v1 \n", fieldName));
         if (mNodePath.back()->count(fieldName) == 0) {
             CONDITIONAL_TRACE(("JSONModernReader::visit v1(_,_,%s): member not found\n", fieldName));
             return;
@@ -290,7 +295,7 @@ private:
 
     std::vector<nlohmann::json *> mNodePath;
     std::string                   mFileName;
-    nlohmann::json               mDocument;
+    nlohmann::json                mDocument;
    
     bool mHasError = false;
 public:

@@ -12,7 +12,8 @@ FilterPinPresentation::FilterPinPresentation(Pin* pin, DiagramScene *_scene, Dia
     if (pin->instanceName)
         pinName = pin->instanceName;
     else
-    {   pinName = strdup(pin->instanceName);
+    {
+        pinName = strdup("pin->instanceName");
         pin->instanceName = pinName;
     }
 

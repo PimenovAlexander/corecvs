@@ -108,7 +108,7 @@ public:
 
                 Vector3d<DoubleType>  cameraCoords = camLocation.project(pointPosition);
 
-                Vector2d<DoubleType> fromModel = GenericPinholeCameraIntrinsics<DoubleType>(camera->intrinsics).project(cameraCoords);
+                Vector2d<DoubleType> fromModel = GenericPinholeCameraIntrinsics<DoubleType>(*camera->getPinhole()).project(cameraCoords);
 
                 Vector2dd undist = it->second.getUndist();
                 Vector2d<DoubleType> fromCam(DoubleType(undist.x()), DoubleType(undist.y()));

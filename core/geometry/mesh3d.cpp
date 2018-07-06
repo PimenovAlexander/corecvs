@@ -12,6 +12,23 @@
 
 namespace corecvs {
 
+void Mesh3D::switchAttributes(bool on)
+{
+    if (hasAttributes == on)
+        return;
+    if (on) {
+        attributes.resize(vertexes.size(), currentAttribute);
+    } else {
+        attributes.clear();
+    }
+    hasAttributes = on;
+}
+
+void Mesh3D::setAttribute(int attr)
+{
+    currentAttribute = attr;
+}
+
 void Mesh3D::switchColor(bool on)
 {
     if (hasColor == on)
@@ -62,10 +79,31 @@ void Mesh3D::popTransform()
     transformStack.pop_back();
 }
 
-void Mesh3D::setCentral(Vector3dd _central)
+void Mesh3D::pushColor(const RGBColor &color)
 {
-    centralPoint = _central;
-    hasCentral = true;
+    colorStack.push_back(currentColor);
+    currentColor = color;
+}
+
+void Mesh3D::pushColor()
+{
+     colorStack.push_back(currentColor);
+}
+
+void Mesh3D::popColor()
+{
+    if (colorStack.empty()) {
+        SYNC_PRINT(("Mesh3D::popColor(): Poping on empty stack\n"));
+        return;
+    }
+    currentColor = colorStack.back();
+    colorStack.pop_back();
+}
+
+void Mesh3D::setHook(const Vector3dd &_hook)
+{
+    hookPoint = _hook;
+    hasHook = true;
 }
 
 void Mesh3D::addOrts(double length, bool captions)
@@ -187,6 +225,21 @@ void Mesh3D::addAOB(const AxisAlignedBox3d &box, bool addFaces)
     addAOB(box.low(), box.high(), addFaces);
 }
 
+void Mesh3D::addOOB(const OrientedBox &box, bool addFaces)
+{
+   /* Matrix33 axis = box.axis;
+    Matrix33 unit = Matrix33::FromRows(
+        axis.row(0),
+        axis.row(1),
+        axis.row(2)
+    );*/
+
+    mulTransform(Matrix44(box.axis.transposed(), box.position));
+    addAOB(AxisAlignedBox3d(Vector3dd(-1,-1,-1), Vector3dd(1,1,1)), addFaces);
+    popTransform();
+
+}
+
 int Mesh3D::addPoint(const Vector3dd &point)
 {
     addVertex(point);
@@ -265,7 +318,7 @@ void Mesh3D::addSphere(Vector3dd center, double radius, int step)
     }
 }
 
-void Mesh3D::addCylinder(Vector3dd center, double radius, double height, int step, double phase)
+void Mesh3D::addCylinder(const Vector3dd &center, double radius, double height, int step, double phase)
 {
     int vectorIndex = (int)vertexes.size();
     Vector3d32 startId(vectorIndex, vectorIndex, vectorIndex);
@@ -300,7 +353,7 @@ void Mesh3D::addCylinder(Vector3dd center, double radius, double height, int ste
 /**
  *   https://en.wikipedia.org/wiki/Regular_icosahedron#Cartesian_coordinates
  **/
-void Mesh3D::addIcoSphere(Vector3dd center, double radius, int step)
+void Mesh3D::addIcoSphere(const Vector3dd &center, double radius, int step)
 {
     //double scaler = radius * sqrt(5);
     int vectorIndex = (int)vertexes.size();
@@ -546,7 +599,7 @@ void Mesh3D::addCamera(const CameraIntrinsicsLegacy &cam, double len)
 
 }
 
-void Mesh3D::add2AxisEllipse(const EllipticalApproximation3d &approx)
+void Mesh3D::add2AxisEllipse(const EllipticalApproximation3d &approx, int axis1 = 0, int axis2 = 1)
 {
     if (approx.isEmpty() || approx.mAxes.empty()) {
         return;
@@ -563,8 +616,8 @@ void Mesh3D::add2AxisEllipse(const EllipticalApproximation3d &approx)
         double y = sin(dpsi * i);
         double x = cos(dpsi * i);
         Vector3dd curr = center +
-               approx.mAxes[0] * sqrt(approx.mValues[0]) * x +
-               approx.mAxes[1] * sqrt(approx.mValues[1]) * y;
+               approx.mAxes[axis1] * sqrt(approx.mValues[axis1]) * x +
+               approx.mAxes[axis2] * sqrt(approx.mValues[axis2]) * y;
         if (i != 0) {
             addLine(prev, curr);
         }
@@ -572,6 +625,13 @@ void Mesh3D::add2AxisEllipse(const EllipticalApproximation3d &approx)
     }
 
 
+}
+
+void Mesh3D::addAxisEllipse(const EllipticalApproximation3d &approx)
+{
+    add2AxisEllipse (approx, 0, 1);
+    add2AxisEllipse (approx, 1, 2);
+    add2AxisEllipse (approx, 2, 0);
 }
 
 void Mesh3D::addMatrixSurface(double *data, int h, int w)
@@ -608,8 +668,6 @@ void Mesh3D::clear()
     vertexes.clear();
     faces.clear();
     edges.clear();
-
-
 
     vertexesColor.clear();
     facesColor.clear();
@@ -753,6 +811,9 @@ void Mesh3D::addVertex(const Vector3dd &vector)
     if (hasColor) {
         vertexesColor.push_back(currentColor);
     }
+    if (hasAttributes) {
+        attributes.push_back(currentAttribute);
+    }
 }
 
 void Mesh3D::addFace(const Vector3d32 &faceId)
@@ -818,6 +879,16 @@ void Mesh3D::dumpInfo(ostream &out)
         out << " -Faces    colors:" << facesColor.size() << endl;
     }
 
+}
+
+Vector3dd Mesh3D::getVertexBarycenter() const
+{
+    Vector3dd mean(0.0);
+    for (const Vector3dd &v : vertexes)
+    {
+        mean += v;
+    }
+    return mean / vertexes.size();
 }
 
 } /* namespace corecvs */

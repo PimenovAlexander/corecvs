@@ -28,7 +28,7 @@ public:
     int64x2_t data;
 
     /* Constructors */
-    Int64x2(){};
+    Int64x2(){}
     /**
      *  Copy constructor
      **/
@@ -107,7 +107,7 @@ public:
     /* converters */
     uint64_t getInt(uint32_t idx)
     {
-        ASSERT_TRUE(idx < 2, "Wrong idx in getInt()");
+        CORE_ASSERT_TRUE(idx < 2, "Wrong idx in getInt()");
         ALIGN_DATA(16) int64_t result[2];
         saveAligned(result);
         return result[idx];

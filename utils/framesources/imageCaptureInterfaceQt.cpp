@@ -1,12 +1,7 @@
 #include "imageCaptureInterfaceQt.h"
 
-#ifdef WITH_FRAMESOURCE_FILE
-#include "fileCapture.h"
-#endif
-
-#ifdef WITH_FRAMESOURCE_PREC
-#include "precCapture.h"
-#endif
+#include "core/framesources/file/fileCapture.h"
+#include "core/framesources/file/precCapture.h"
 
 #ifdef WITH_FRAMESOURCE_V4L2
 # include "V4L2Capture.h"
@@ -41,23 +36,19 @@ ImageCaptureInterfaceQt* ImageCaptureInterfaceQtFactory::fabric(string input, bo
     SYNC_PRINT(("ImageCaptureInterfaceQtFactory::fabric(%s, rgb=%s):called\n", input.c_str(), isRGB ? "true" : "false"));
 
 
-#ifdef WITH_FRAMESOURCE_FILE
     string file("file:");
     if (input.substr(0, file.size()).compare(file) == 0)
     {
         string tmp = input.substr(file.size());
         return new ImageCaptureInterfaceWrapper<FileCaptureInterface>(tmp);
     }
-#endif
 
-#ifdef WITH_FRAMESOURCE_PREC
     string prec("prec:");
     if (input.substr(0, prec.size()).compare(prec) == 0)
     {
         string tmp = input.substr(prec.size());
         return new ImageCaptureInterfaceWrapper<FilePreciseCapture>(tmp, true, isRGB);
     }
-#endif
 
 #ifdef WITH_SYNCCAM
     string sync("sync:");
@@ -117,14 +108,14 @@ ImageCaptureInterfaceQt* ImageCaptureInterfaceQtFactory::fabric(string input, bo
         string tmp = input.substr(avcodec.size());
         return new ImageCaptureInterfaceWrapper<AviCapture>(tmp);
     }
-#if 0
+
     string rtsp("rtsp:");
     if (input.substr(0, rtsp.size()).compare(rtsp) == 0)
     {
         SYNC_PRINT(("ImageCaptureInterface::fabric(): Creating avcodec input"));
-        return new ImageCaptureInterfaceWrapper<RTSPCapture>(QString(input.c_str()));
+        string tmp = input.substr(rtsp.size());
+        return new ImageCaptureInterfaceWrapper<RTSPCapture>(tmp);
     }
-#endif
 #endif
 
 #ifdef WITH_OPENCV
@@ -132,21 +123,21 @@ ImageCaptureInterfaceQt* ImageCaptureInterfaceQtFactory::fabric(string input, bo
     if (input.substr(0, any.size()).compare(any) == 0)
     {
         string tmp = input.substr(any.size());
-        return new ImageCaptureInterfaceWrapper<OpenCVCaptureInterface>(tmp, CAP_ANY);
+        return new ImageCaptureInterfaceWrapper<OpenCVCaptureInterface>(tmp, (uint)OPENCV_CAP_ANY);
     }
 
     string vfw("vfw:");
     if (input.substr(0, vfw.size()).compare(vfw) == 0)
     {
         string tmp = input.substr(vfw.size());
-        return new ImageCaptureInterfaceWrapper<OpenCVCaptureInterface>(tmp, CAP_VFW);
+        return new ImageCaptureInterfaceWrapper<OpenCVCaptureInterface>(tmp, (uint)OPENCV_CAP_VFW);
     }
 
     string ds("ds:");
     if (input.substr(0, ds.size()).compare(ds) == 0)
     {
         string tmp = input.substr(ds.size());
-        return new ImageCaptureInterfaceWrapper<OpenCVCaptureInterface>(tmp, CAP_DS);
+        return new ImageCaptureInterfaceWrapper<OpenCVCaptureInterface>(tmp, (uint)OPENCV_CAP_DS);
     }
 
     string opencv_file("opencv_file:");

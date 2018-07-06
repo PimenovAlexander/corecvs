@@ -22,6 +22,7 @@ using corecvs::WStringField;
 using corecvs::PointerField;
 using corecvs::EnumField;
 using corecvs::DoubleVectorField;
+using corecvs::IntVectorField;
 
 /**
  *    This class allows to read form JSON file
@@ -304,6 +305,9 @@ void JSONGetter::visit<int, EnumField>(int &field, const EnumField *fieldDescrip
 /* Arrays */
 template <>
 void JSONGetter::visit<double, DoubleVectorField>(std::vector<double> &field, const DoubleVectorField *fieldDescriptor);
+
+template <>
+void JSONGetter::visit<int, IntVectorField>(std::vector<int> &field, const IntVectorField *fieldDescriptor);
 
 
 #endif // JSONGETTER_H

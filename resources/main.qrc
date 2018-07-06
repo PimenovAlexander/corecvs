@@ -116,6 +116,7 @@
         <file>fingerprint.png</file>
         <file>setting_tools.png</file>
         <file>page_copy.png</file>
+        <file>car.png</file>
     </qresource>
     <qresource prefix="/new/colors">
         <file>colors/color_blue.png</file>
@@ -166,5 +167,7 @@
     <qresource prefix="/new/shaders">
         <file>shaders/_trivial.fsh</file>
         <file>shaders/_trivial.vsh</file>
+        <file>shaders/default_fast.fsh</file>
+        <file>shaders/default_fast.vsh</file>
     </qresource>
 </RCC>

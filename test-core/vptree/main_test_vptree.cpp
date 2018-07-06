@@ -1,6 +1,8 @@
 #include "core/utils/global.h"
 #include "core/geometry/vptree.h"
 #include "gtest/gtest.h"
+
+#include <cmath>
 #include <bitset>
 
 struct GeoCor {

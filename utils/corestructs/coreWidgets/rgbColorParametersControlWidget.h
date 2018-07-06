@@ -2,17 +2,22 @@
 /**
     rgbColorParametersControlWidget.h
 **/
-
-
 #include <QWidget>
 #include <QColorDialog>
 #include <QPainter>
 
+#include "core/buffers/rgb24/rgbColor.h"
 #include "core/xml/generated/rgbColorParameters.h"
+
 #include "ui_rgbColorParametersControlWidget.h"
 #include "parametersControlWidgetBase.h"
-#include "core/buffers/rgb24/rgbColor.h"
 
+//#ifndef WIN32
+//EM: said that it crashes on her Linux
+//TODO: clarify and fix it
+//AP: Uncommented. Need this function. Most probably Xwindow/GTK/QT issue
+//#define DISABLE_COLOR_PICKER
+//#endif
 
 namespace Ui {
     class RgbColorParametersControlWidget;
@@ -21,8 +26,10 @@ namespace Ui {
 class RgbColorParametersControlWidget : public ParametersControlWidgetBase
 {
     Q_OBJECT
-    QColorDialog mColorPicker;
     QColor color;
+#ifndef DISABLE_COLOR_PICKER
+    QColorDialog mColorPicker;
+#endif
 
 public:
     explicit RgbColorParametersControlWidget(QWidget *parent = 0, bool autoInit = false, QString rootPath = QString());
@@ -75,6 +82,7 @@ public slots:
 
     void pickerClicked(QMouseEvent * /*event*/)
     {
+#ifndef DISABLE_COLOR_PICKER
         mColorPicker.show();
 
         bool signalState = mColorPicker.blockSignals(true);
@@ -87,6 +95,7 @@ public slots:
 
         connect(&mColorPicker, SIGNAL(currentColorChanged (QColor)),
                 this, SLOT(colorSelected(QColor)), Qt::UniqueConnection);
+#endif
     }
 
     void colorSelected(const QColor &color)

@@ -1,0 +1,38 @@
+<poco version="5.0">
+  <class name="Ransac Parameters">
+      <field type="int"      name="Iterations Number" defaultValue="1000"               min="1"       max="9999999"  step="1" />
+
+      <field type="bool"     name="Use Median"        defaultValue="false"/>
+
+      <field type="double"   name="Inliers Percent"   defaultValue="98"                 min=" 0"      max="146.0"    step="1" suffix="%" />
+      <field type="double"   name="Inlier Threshold"  defaultValue="1"     decimals="5" min="-999999" max="999999"   step="1" />
+
+
+ </class>
+
+
+  <class name="Iterative Estimate Parameters">
+      <comment>Parameters for step by step convergence to solution. We make an estimation and throw out outliers, then throw away again</comment>
+      <field type="int"      name="Limit Samples"      defaultValue="-1"    min="-1"     max="99999999"   step="1" />
+      <field type="int"      name="Iterations Number"  defaultValue="5"    min="0"       max="9999999"   step="1" />
+      <field type="bool"     name="Use initial"        defaultValue="true"/>
+      <field type="double"   name="Initial Sigma"      defaultValue="5.0"  min=" 0"      max="9999999"   step="1" />
+      <field type="double"   name="Sigma Factor"       defaultValue="0.9"  decimals="5"  min="0" max="1" step="0.01" />
+  </class>
+
+  <class name="Stereo Align Parameters" description="Stereo Align Parameters">
+
+    <field type="bool"   name="Produce Cameras"      defaultValue="true"/>
+    <field type="bool"   name="Produce Observations" defaultValue="true"/>
+
+    <field type="double"   name="zdirX"   defaultValue="0"     min="-20"      max="20.0"    step="1"/>
+    <field type="double"   name="zdirY"   defaultValue="1"     min="-20"      max="20.0"    step="1"/>
+    <field type="double"   name="zdirZ"   defaultValue="0"     min="-20"      max="20.0"    step="1"/>
+
+    <field type="bool"   name="autoZ"    defaultValue="true"/>
+
+    <field type="bool"   name="autoShift"           defaultValue="true"/>
+    <field type="int"    name="preShift"            defaultValue="0"    min="-9999"  max="9999"  step="1"/>
+    <field type="int"    name="guessShiftThreshold" defaultValue="0"    min="0"      max="99999" step="1"/>
+  </class>
+</poco>

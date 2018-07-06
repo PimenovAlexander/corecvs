@@ -57,9 +57,9 @@ TEST(Convolve, DISABLED_main)
     SpatialGradient *sg = new SpatialGradient(buffer);
     SpatialGradientIntegralBuffer *gradient = new SpatialGradientIntegralBuffer(sg);
 
-    for (uint i = 1; i < gradient->h; i++)
+    for (int i = 1; i < gradient->h; i++)
     {
-        for (uint j = 1; j < gradient->w; j++)
+        for (int j = 1; j < gradient->w; j++)
         {
             double *grad1 = (double *)(&gradient->element(i,j));
             double *grad2 = (double *)(&gradient->element(i - 1,j));

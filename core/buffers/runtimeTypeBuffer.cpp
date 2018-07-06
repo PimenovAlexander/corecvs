@@ -2,14 +2,18 @@
 
 #include <iomanip>
 
-void corecvs::RuntimeTypeBuffer::load(std::istream &is)
+namespace corecvs {
+
+void RuntimeTypeBuffer::load(std::istream &is)
 {
     is >> (*this);
 }
 
-void corecvs::RuntimeTypeBuffer::save(std::ostream &os) const
+void RuntimeTypeBuffer::save(std::ostream &os) const
 {
     os << (*this);
+}
+
 }
 
 template< typename T, typename U >
@@ -234,7 +238,7 @@ G8Buffer *RuntimeTypeBuffer::toG8Buffer()
         {
             for (size_t j = 0; j < cols; j++)
             {
-                buffer->element(i, j) = (uint8_t)(at<float>(i, j));
+                buffer->element((int)i, (int)j) = (uint8_t)(at<float>(i, j));
             }
         }
     }
@@ -253,7 +257,7 @@ G12Buffer *RuntimeTypeBuffer::toG12Buffer(double min, double max)
         {
             for (size_t j = 0; j < cols; j++)
             {
-                buffer->element(i, j) = at<uint8_t>(i, j) << 4;
+                buffer->element((int)i, (int)j) = at<uint8_t>(i, j) << 4;
             }
         }
     }
@@ -263,8 +267,9 @@ G12Buffer *RuntimeTypeBuffer::toG12Buffer(double min, double max)
         {
             for (size_t j = 0; j < cols; j++)
             {
-                double value = lerpLimit(0, G12Buffer::BUFFER_MAX_VALUE, at<float>(i, j), min, max);
-                buffer->element(i, j) = (uint16_t)value;
+                int maxVal = G12Buffer::BUFFER_MAX_VALUE;
+                double value = lerpLimit(0, maxVal, at<float>(i, j), min, max);
+                buffer->element((int)i, (int)j) = (uint16_t)value;
             }
         }
     }
@@ -283,7 +288,7 @@ RGB24Buffer *RuntimeTypeBuffer::toRGB24Buffer(double min, double max)
         {
             for (size_t j = 0; j < cols; j++)
             {
-                buffer->element(i, j) = RGBColor::gray(at<uint8_t>(i, j));
+                buffer->element((int)i, (int)j) = RGBColor::gray(at<uint8_t>(i, j));
             }
         }
     }
@@ -294,7 +299,7 @@ RGB24Buffer *RuntimeTypeBuffer::toRGB24Buffer(double min, double max)
             for (size_t j = 0; j < cols; j++)
             {
                 double value = lerpLimit(0, 0xFF, at<float>(i, j), min, max);
-                buffer->element(i, j) = RGBColor::gray(value);
+                buffer->element((int)i, (int)j) = RGBColor::gray(value);
             }
         }
     }

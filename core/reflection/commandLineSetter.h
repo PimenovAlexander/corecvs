@@ -19,116 +19,38 @@ class CommandLineSetter
 public:
     string mArgPrefix;
     string mArgSeparator;
-
     vector<string> mArgs;
 
-    CommandLineSetter() :
-        mArgPrefix("--"),
-        mArgSeparator("=")
-    {
-    }
+    CommandLineSetter() : mArgPrefix("--"), mArgSeparator("=")
+    {}
 
-    CommandLineSetter(const vector<string> &args) :
-        CommandLineSetter()
+    CommandLineSetter(const vector<string> &args) : CommandLineSetter()
     {
         mArgs = args;
     }
 
-    CommandLineSetter(int argc, const char **argv) :
-        CommandLineSetter()
+    CommandLineSetter(int argc, const char **argv) : CommandLineSetter()
     {
         mArgs.assign(argv, argv + argc);
     }
 
+    CommandLineSetter(int argc, char **argv) : CommandLineSetter(argc, (const char **)argv)
+    {}
+
     /* Helper getters */
-    bool hasOption(const string& option, unsigned* pos = NULL)
-    {
-        string decorated = mArgPrefix + option;
+    bool hasOption(const std::string& option, unsigned* pos = NULL) const;
 
-        for (unsigned i = 0; i < mArgs.size(); i++)
-        {
-            if (mArgs[i].compare(0, decorated.length(), decorated) == 0)
-            {
-                if (pos != 0) {
-                    *pos = i;
-                }
-                return true;
-            }
-        }
-        return false;
-    }
+    const std::string getOption(const std::string& option, bool *found = NULL) const;
 
-    const string getOption(const string& option, bool *found = NULL)
-    {
-        string decorated = mArgPrefix + option + mArgSeparator;
+    vector<std::string> nonPrefix() const;
 
-        if (found != NULL) *found = false;
-        for (unsigned i = 0; i < mArgs.size(); i++)
-        {
-            if (mArgs[i].compare(0, decorated.length(), decorated) == 0)
-            {
-                if (found != NULL) *found = true;
-                return mArgs[i].substr(decorated.length());
-            }
-        }
-        return "";
-    }
+    /* Returns first parameter */
+    std::string getNonPrefixParam(int id = 1) const;
 
-
-    int getInt(const string & option, int defaultInf = 0)
-    {
-        const string& argument = getOption(option);
-
-        if (argument.empty())
-        {
-            return defaultInf;
-        }
-
-        std::size_t pos = 0;
-        int result = stoi(argument, &pos);
-        if (pos != 0) {
-            return result;
-        } else {
-            return defaultInf;
-        }
-    }
-
-    bool getBool(const string & option)
-    {
-        //const string& argument = getOption(option);
-        return hasOption(option);
-    }
-
-    double getDouble(const string & option, double defaultDouble = 0.0)
-    {
-        const string& argument = getOption(option);
-
-        if (argument.empty())
-        {
-            return defaultDouble;
-        }
-
-        std::size_t pos = 0;
-        double result = stod(argument, &pos);
-        if (pos != 0) {
-            return result;
-        } else {
-            return defaultDouble;
-        }
-    }
-
-    string getString(const string & option, const std::string & defaultString)
-    {
-        bool found = false;
-        const string& argument = getOption(option, &found);
-
-        if (!found)
-        {
-            return string(defaultString);
-        }
-
-        return string(argument);
-    }
+    int         getInt   (const std::string & option, int defaultInf = 0) const;
+    bool        getBool  (const std::string & option) const;
+    double      getDouble(const std::string & option, double defaultDouble = 0.0) const;
+    std::string getString(const std::string & option, const std::string & defaultString = "") const;
 
     /* Oldstyle */
     template <class Type>

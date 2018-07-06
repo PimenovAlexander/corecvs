@@ -70,7 +70,8 @@ int DrawGCodeParameters::staticInit()
           "minTemp",
           true,
          0,
-         1000
+         1000,
+         1
         );
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->precision=2;
@@ -86,7 +87,8 @@ int DrawGCodeParameters::staticInit()
           "maxTemp",
           true,
          0,
-         1000
+         1000,
+         1
         );
     field2->widgetHint=BaseField::SPIN_BOX;
     field2->precision=2;
@@ -102,7 +104,8 @@ int DrawGCodeParameters::staticInit()
           "minExtrude",
           true,
          0,
-         1000
+         1000,
+         1
         );
     field3->widgetHint=BaseField::SPIN_BOX;
     field3->precision=2;
@@ -118,7 +121,8 @@ int DrawGCodeParameters::staticInit()
           "maxExtrude",
           true,
          0,
-         1000
+         1000,
+         1
         );
     field4->widgetHint=BaseField::SPIN_BOX;
     field4->precision=2;
@@ -134,7 +138,8 @@ int DrawGCodeParameters::staticInit()
           "minSpeed",
           true,
          0,
-         1000
+         1000,
+         1
         );
     field5->widgetHint=BaseField::SPIN_BOX;
     field5->precision=2;
@@ -150,7 +155,8 @@ int DrawGCodeParameters::staticInit()
           "maxSpeed",
           true,
          0,
-         1000
+         1000,
+         1
         );
     field6->widgetHint=BaseField::SPIN_BOX;
     field6->precision=2;

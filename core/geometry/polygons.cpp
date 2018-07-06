@@ -799,13 +799,14 @@ double ccw(const Vector2dd& p1, const Vector2dd& p2, const Vector2dd& p3)
     return (p2 - p1) & (p3 - p1).leftNormal();
 }
 
-#if 0
+
 double ccwProjective(const Vector3dd& p1, const Vector3dd& p2, const Vector3dd& p3)
 {
+    return -(p1 ^ p2) & p3;
 }
-#endif
 
-Polygon ConvexHull::GrahamScan(std::vector<Vector2dd> points)
+template<typename PointType>
+Polygon ConvexHull::GrahamScan(std::vector<PointType> points)
 {
     if (points.size() < 3)
         return Polygon();
@@ -862,6 +863,125 @@ Polygon ConvexHull::GrahamScan(std::vector<Vector2dd> points)
     return hull;
 }
 
+
+Polygon ConvexHull::GrahamScan(std::vector<Vector2dd> points)
+{
+    if (points.size() < 3)
+        return Polygon();
+
+    //find value with lowest y-coordinate
+    size_t idx = 0;
+    double yMin = std::numeric_limits<double>::max();
+    for (size_t i = 0; i < points.size(); i++)
+    {
+        bool less = points[i].y() < yMin;
+        less |= (points[i].y() == yMin) && (points[i].x() < points[idx].x());
+        if (less)
+        {
+            yMin = points[i].y();
+            idx = i;
+        }
+    }
+
+    //sort ascending polar angle around lowest y-coordinate value
+    std::swap(points[0], points[idx]);
+    std::sort(points.begin() + 1, points.end(), [=](const Vector2dd& a, const Vector2dd& b) -> bool
+        {
+            Vector2dd ab = b - a;
+            double polar = ccw(points[0], a, b);
+
+            if (polar != 0.0)
+                return (polar > 0);
+            else
+                return (ab.y() > 0);
+        }
+    );
+
+    /* Dedup */
+    auto last = std::unique(points.begin(), points.end());
+    points.erase(last, points.end());
+
+    //pass of Graham scan
+    Polygon hull;
+    hull.push_back(points[0]);
+    hull.push_back(points[1]);
+    for (size_t i = 2; i < points.size(); i++)
+    {
+        int M = (int)hull.size();
+        while (ccw(hull[M - 2], hull[M - 1], points[i]) < 0)
+        {
+            hull.pop_back();
+            M = (int)hull.size();
+            if (hull.size() < 2)
+                break;
+        }
+        hull.push_back(points[i]);
+    }
+
+    return hull;
+}
+
+ProjectivePolygon ConvexHull::GrahamScan(std::vector<Vector3dd> points)
+{
+    /* Need to be corrected*/
+    if (points.size() < 3)
+        return ProjectivePolygon();
+
+    //find value with lowest y-coordinate
+    size_t iMin = 0;
+    double yMin = std::numeric_limits<double>::max();
+
+    for (size_t i = 0; i < points.size(); i++)
+    {
+        double ycost = points[i].normalised() & Vector3dd::OrtY();
+        if (ycost < yMin)
+        {
+            yMin = ycost;
+            iMin = i;
+        }
+    }
+
+    //cout << "Chosen point " << points[iMin] << endl;
+
+    //sort ascending polar angle around lowest y-coordinate value
+    std::swap(points[0], points[iMin]);
+    std::sort(points.begin() + 1, points.end(), [=](const Vector3dd& a, const Vector3dd& b) -> bool
+        {
+            Vector3dd ab = b - a;
+            double polar = ccwProjective(points[0], a, b);
+
+            if (polar != 0.0)
+                return (polar > 0);
+            else
+                return (ab.y() > 0);
+        }
+    );
+
+    /* Dedup */
+    auto last = std::unique(points.begin(), points.end());
+    points.erase(last, points.end());
+
+    //pass of Graham scan
+    ProjectivePolygon hull;
+    hull.push_back(points[0]);
+    hull.push_back(points[1]);
+    for (size_t i = 2; i < points.size(); i++)
+    {
+        int M = (int)hull.size();
+        while (ccwProjective(hull[M - 2], hull[M - 1], points[i]) < 0)
+        {
+            hull.pop_back();
+            M = (int)hull.size();
+            if (hull.size() < 2)
+                break;
+        }
+        hull.push_back(points[i]);
+    }
+
+    return hull;
+}
+
+
 Polygon ConvexHull::ConvexHullCompute(std::vector<Vector2dd> points, ConvexHull::ConvexHullMethod &method)
 {
     switch (method) {
@@ -873,6 +993,23 @@ Polygon ConvexHull::ConvexHullCompute(std::vector<Vector2dd> points, ConvexHull:
         break;
     }
 }
+
+Polygon ProjectivePolygon::getApproximation(double farDist)
+{
+    Polygon toReturn;
+    toReturn.reserve(this->size());
+
+    for (const Vector3dd &proj : *this)
+    {
+        if (proj.z() == 0) {
+            toReturn.push_back(proj.xy() * farDist);
+        } else {
+            toReturn.push_back(proj.normalisedProjective().xy());
+        }
+    }
+    return toReturn;
+}
+
 
 
 

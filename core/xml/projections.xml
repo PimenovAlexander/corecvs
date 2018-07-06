@@ -1,0 +1,88 @@
+<poco version="5.0">
+  <include name="basemock.xml"/>
+
+  <enum name="ProjectionType">
+    <item name="PINHOLE"         id="0" />
+    <item name="EQUIDISTANT"     id="1" />
+    <item name="OMNIDIRECTIONAL" id="2" />
+    <item name="STEREOGRAPHIC"   id="3" />
+    <item name="EQUISOLID"       id="4" />
+    <item name="ORTHOGRAPHIC"    id="5" />
+  </enum>
+
+
+  <class name="Projection Base Parameters" description="">
+    <field type="double"    name="principalX"     suffix="px" defaultValue="240" min="-99999" max="99999" step="1" comment="The center of projection \f$x_c\f$" />
+    <field type="double"    name="principalY"     suffix="px" defaultValue="320" min="-99999" max="99999" step="1" comment="The center of projection \f$y_c\f$"/>
+
+    <field type="double"    name="focal"      defaultValue="820.427" min="0"      max="99999.0" step="1"/>
+
+    <field type="double"    name="sizeX"          suffix="px" defaultValue="240" min="0"      max="99999" step="1" comment="Model image resolution X" />
+    <field type="double"    name="sizeY"          suffix="px" defaultValue="320" min="0"      max="99999" step="1" comment="Model image resolution Y"/>
+
+    <field type="double"    name="distortedSizeX" suffix="px" defaultValue="240" min="0"      max="99999" step="1" comment="Source image resolution X" />
+    <field type="double"    name="distortedSizeY" suffix="px" defaultValue="320" min="0"      max="99999" step="1" comment="Source image resolution Y"/>
+  </class>
+
+
+  <!--
+  const static int DEFAULT_SIZE_X = 2592;
+  const static int DEFAULT_SIZE_Y = 1944;
+
+  Vector2dd focal;            /**< Focal length (in px) in two directions */
+  Vector2dd principal;        /**< Principal point of optical axis on image plane (in pixel). Usually center of imager */
+  double    skew;             /**< Skew parameter to compensate for optical axis tilt */
+  Vector2dd size;             /**< Model image resolution (in pixel) */
+  Vector2dd distortedSize;    /**< Source image resolution (FIXME: probably should move it somewhere) */
+
+
+  PinholeCameraIntrinsics(
+          double fx = 1.0,
+          double fy = 1.0,
+          double cx = DEFAULT_SIZE_X / 2.0,
+          double cy = DEFAULT_SIZE_Y / 2.0,
+          double skew = 0.0,
+          Vector2dd size = Vector2dd(DEFAULT_SIZE_X, DEFAULT_SIZE_Y),
+          Vector2dd distortedSize = Vector2dd(DEFAULT_SIZE_X, DEFAULT_SIZE_Y))
+
+   -->
+  <class name="Pinhole Camera Intrinsics Base Parameters" description="Pinhole Camera Intrinsics Base Parameters">
+    <field type="double"    name="fx" description="focalX"         defaultValue="820.427" min="0"      max="99999.0" step="1"/>
+    <field type="double"    name="fy" description="focalY"         defaultValue="820.427" min="0"      max="99999.0" step="1"/>
+
+    <field type="double"    name="cx" description="principalX"  suffix="px"   defaultValue="1296" max="99999.0" comment="The center of projection \f$x_c\f$" />
+    <field type="double"    name="cy" description="principalY"  suffix="px"   defaultValue="972"  max="99999.0" comment="The center of projection \f$y_c\f$"/>
+
+    <field type="double"    name="skew"        decimals="5"  defaultValue="0.0" min="-99999.0"  max="99999.0" step="0.001"/>
+
+    <field type="Vector 2d Parameters"    name="size"           comment="Model image resolution" />
+    <field type="Vector 2d Parameters"    name="distortedSize"  comment="Source image resolution" />
+
+
+    <!--
+    <field type="double"    name="sizeX"   suffix="px"   defaultValue="2592" max="99999.0" comment="Model image resolution X" />
+    <field type="double"    name="sizeY"   suffix="px"   defaultValue="1944" max="99999.0" comment="Model image resolution Y"/>
+
+    <field type="double"    name="distortedSizeX" defaultValue="2592" max="99999.0" comment="Source image resolution X" />
+    <field type="double"    name="distortedSizeY" defaultValue="1944" max="99999.0" comment="Source image resolution Y"/>
+    -->
+  </class>
+
+
+  <class name="Omnidirectional Base Parameters" description="">
+    <field type="double"    name="principalX"   suffix="px" defaultValue="240" min="0"   max="99999.0" step="1" comment="The center of projection \f$x_c\f$" />
+    <field type="double"    name="principalY"   suffix="px" defaultValue="320" min="0"   max="99999.0" step="1" comment="The center of projection \f$y_c\f$"/>
+
+    <field type="double"    name="focal"          defaultValue="820.427" decimals="6"    min="-99999.0"   max="99999.0" step="1"/>
+
+    <field type="double"    name="n"  size="6"    defaultValue="0" decimals="6"    min="-99999.0"  max="99999.0" step="0.01"/>
+
+    <field type="double"    name="sizeX"          suffix="px" defaultValue="240" max="99999.0" step="1" comment="Model image resolution X" />
+    <field type="double"    name="sizeY"          suffix="px" defaultValue="320" max="99999.0" step="1" comment="Model image resolution Y"/>
+
+    <field type="double"    name="distortedSizeX" suffix="px" defaultValue="240" max="99999.0" step="1" comment="Source image resolution X" />
+    <field type="double"    name="distortedSizeY" suffix="px" defaultValue="320" max="99999.0" step="1" comment="Source image resolution Y"/>
+  </class>
+
+
+</poco>

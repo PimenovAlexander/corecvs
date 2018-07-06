@@ -124,6 +124,8 @@ void RaytraceableSky1::getColor(RayIntersection &ray, RaytraceRenderer &/*render
 
 void RaytraceableSky2::getColor(RayIntersection &ray, RaytraceRenderer &renderer)
 {
+    CORE_UNUSED(renderer);
+
     double v = noise.turbulence(ray.ray.a * 10.0);
     ray.ownColor = RGBColor::rainbow1(v / 2.0).toDouble();
 

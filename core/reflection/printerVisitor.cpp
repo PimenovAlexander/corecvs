@@ -61,7 +61,23 @@ template <>
 void PrinterVisitor::visit<int, EnumField>(int &field, const EnumField *fieldDescriptor)
 {
     if (stream == NULL) return;
-    *stream << indent() << fieldDescriptor->getSimpleName() << "=" << field << endl;
+    *stream << indent() << fieldDescriptor->getSimpleName() << "=" << field ;
+
+    if (fieldDescriptor->enumReflection != NULL)
+    {
+        *stream << "(";
+        if (field < (int)fieldDescriptor->enumReflection->options.size())
+        {
+            if (fieldDescriptor->enumReflection->options[field]) {
+                *stream << fieldDescriptor->enumReflection->options[field]->name.name;
+            }
+        } else {
+            *stream << "Out of range";
+        }
+        *stream << ")";
+    }
+
+    *stream << endl;
 }
 
 
@@ -69,6 +85,18 @@ void PrinterVisitor::visit<int, EnumField>(int &field, const EnumField *fieldDes
 
 template <>
 void PrinterVisitor::visit<double, DoubleVectorField>(std::vector<double> &field, const DoubleVectorField *fieldDescriptor)
+{
+    if (stream == NULL) return;
+    *stream << indent() << fieldDescriptor->getSimpleName() << "= [";
+    for (size_t i = 0; i < field.size(); i++ )
+    {
+        *stream << ( i == 0 ? " " : ", ") << field[i] ;
+    }
+    *stream << "]" << endl;
+}
+
+template <>
+void PrinterVisitor::visit<int, IntVectorField>(std::vector<int> &field, const IntVectorField *fieldDescriptor)
 {
     if (stream == NULL) return;
     *stream << indent() << fieldDescriptor->getSimpleName() << "= [";

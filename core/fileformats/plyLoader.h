@@ -41,8 +41,10 @@ public:
         PROP_NAME_GREEN,
         PROP_NAME_BLUE,
 
+        PROP_NAME_CLUSTER,
+
         PROP_NAME_VERTEX1,
-        PROP_NAME_VERTEX2,
+        PROP_NAME_VERTEX2,        
 
         PROP_NAME_VERTEX_INDEX,
 

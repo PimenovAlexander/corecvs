@@ -3,7 +3,7 @@
 #include "core/camerafixture/cameraFixture.h"
 #include "core/rectification/multicameraTriangulator.h"
 #include "core/utils/visitors/propertyListVisitor.h"
-
+#include "core/geometry/mesh3d.h"
 
 #ifdef WITH_BOOST
 #include <boost/math/special_functions/gamma.hpp>
@@ -16,21 +16,6 @@ std::string SceneObservation::getPointName()
     return featurePoint ? featurePoint->name : "";
 }
 
-Vector2dd SceneObservation::getUndist() const
-{
-    if (validityFlags & ValidFlags::DIRECTION_VALID) {
-        return observDir.xy();
-    }
-
-    if (camera != NULL && (validityFlags & ValidFlags::OBSERVATION_VALID))
-    {
-        // This is a temporary solution. Z value should be computed, not just set to focal
-        observDir = Vector3dd(camera->distortion.mapBackward(observation), camera->intrinsics.focal.x());
-        validityFlags |= (int)ValidFlags::DIRECTION_VALID;
-        return observDir.xy();
-    }
-    return Vector2dd::Zero(); /* Should I return NaN? */
-}
 
 Vector2dd SceneObservation::getDist() const
 {
@@ -38,13 +23,79 @@ Vector2dd SceneObservation::getDist() const
         return observation;
     }
 
-    if (camera != NULL && (validityFlags & ValidFlags::DIRECTION_VALID))
+    if (camera != NULL && (validityFlags & ValidFlags::UNDISTORTED_VALID))
     {
-        observation = camera->distortion.mapForward(observDir.xy());
+        observation = camera->distortion.mapForward(undistorted);
         validityFlags |= (int)ValidFlags::OBSERVATION_VALID;
         return observation;
     }
+
+    if (camera != NULL && (validityFlags & ValidFlags::DIRECTION_VALID))
+    {
+        undistorted = camera->intrinsics->project(observDir);
+        validityFlags |= (int)ValidFlags::UNDISTORTED_VALID;
+        observation = camera->distortion.mapForward(undistorted);
+        validityFlags |= (int)ValidFlags::OBSERVATION_VALID;
+        return observation;
+    }
+
+
     return Vector2dd::Zero(); /* Should I return NaN? */
+}
+
+
+Vector2dd SceneObservation::getUndist() const
+{
+    if (validityFlags & ValidFlags::UNDISTORTED_VALID) {
+        return undistorted;
+    }
+
+    if (camera != NULL && (validityFlags & ValidFlags::OBSERVATION_VALID))
+    {
+        undistorted = camera->distortion.mapBackward(observation);
+        validityFlags |= (int)ValidFlags::UNDISTORTED_VALID;
+        return undistorted;
+    }
+
+    if (camera != NULL && (validityFlags & ValidFlags::DIRECTION_VALID))
+    {
+        undistorted = camera->intrinsics->project(observDir);
+        validityFlags |= (int)ValidFlags::UNDISTORTED_VALID;
+        return undistorted;
+    }
+
+    return Vector2dd::Zero(); /* Should I return NaN? */
+}
+
+Vector3dd SceneObservation::getRay() const
+{
+    if (validityFlags & ValidFlags::DIRECTION_VALID) {
+        return observDir;
+    }
+
+    if (camera != NULL &&  (validityFlags & ValidFlags::UNDISTORTED_VALID)) {
+        observDir = camera->intrinsics->reverse(undistorted);
+        validityFlags |= ValidFlags::DIRECTION_VALID;
+        return observDir;
+    }
+
+    if (camera != NULL &&  (validityFlags & ValidFlags::OBSERVATION_VALID)) {
+        undistorted = camera->distortion.mapBackward(observation);
+        validityFlags |= (int)ValidFlags::UNDISTORTED_VALID;
+        observDir = camera->intrinsics->reverse(undistorted);
+        validityFlags |= ValidFlags::DIRECTION_VALID;
+        return observDir;
+    }
+
+    return Vector3dd::Zero(); /* Should I return NaN? */
+
+}
+
+Ray3d SceneObservation::getFullRay() const
+{
+   return Ray3d::FromOriginAndDirection(
+               (camera == NULL) ? Vector3dd::Zero() : camera->getAffine().shift,
+               camera->getAffine().rotor * getRay());
 }
 
 void SceneObservation::setUndist(const Vector2dd &undist)
@@ -52,8 +103,8 @@ void SceneObservation::setUndist(const Vector2dd &undist)
     if (camera != NULL)
     {
         // This is a temporary solution. Z value should be computed, not just set to focal
-        observDir = Vector3dd(undist, camera->intrinsics.focal.x());
-        validityFlags = ValidFlags::DIRECTION_VALID;
+        undistorted = undist;
+        validityFlags = ValidFlags::UNDISTORTED_VALID;
     }
     else {
         SYNC_PRINT(("SceneObservation::setUndist(): ignored coord as camera is nul\n"));
@@ -64,6 +115,12 @@ void SceneObservation::setDist(const Vector2dd &dist)
 {
     observation = dist;
     validityFlags = ValidFlags::OBSERVATION_VALID;
+}
+
+void SceneObservation::setRay(const Vector3dd &rayDir)
+{
+    observDir = rayDir;
+    validityFlags = ValidFlags::DIRECTION_VALID;
 }
 
 FixtureCamera *SceneObservation::getCameraById(FixtureCamera::IdType id)
@@ -246,10 +303,42 @@ Vector3dd SceneFeaturePoint::triangulate(bool use__, std::vector<int> *mask, boo
     if (succeeded != nullptr)
         *succeeded = ok;
 
-    //if (ok && ownerScene && ownerScene->coordinateSystemState == FixtureScene::CoordinateSystemState::convertable)
+    //if (ok && ownerScene && ownerScene->coordinateSystemState == FixtureScene::CoordinateSystemState::convertible)
      //   res = ownerScene->localToWorld * res;
 
     return res;
+}
+
+Vector3dd SceneFeaturePoint::triangulateByRays( bool* succeeded)
+{
+    if (observations.size() < 2) {
+        if (succeeded != NULL) *succeeded = false;
+        return Vector3dd::Zero();
+    }
+
+    auto it = observations.begin();
+    SceneObservation &obs1 = (*it).second;
+    it++;
+    SceneObservation &obs2 = (*it).second;
+
+    Ray3d ray1 = obs1.getFullRay();
+    Ray3d ray2 = obs2.getFullRay();
+
+    Vector3dd coef = ray1.intersectCoef(ray2);
+
+    Vector3dd x1 = ray1.getPoint(coef[0]);
+    Vector3dd x2 = ray2.getPoint(coef[1]);
+    Vector3dd x = (x1 + x2) / 2.0;
+
+    if (coef[0] < 0 || coef[1] < 0 ) {
+        if (succeeded != NULL) *succeeded = false;
+    } else {
+        if (succeeded != NULL) *succeeded = true;
+    }
+    return x;
+
+
+
 }
 
 double SceneFeaturePoint::queryPValue(const corecvs::Vector3dd &query) const
@@ -345,7 +434,6 @@ PointPath SceneFeaturePoint::getEpipath(FixtureCamera *camera1, FixtureCamera *c
     PointPath result;
 
     CameraModel secondCamera = camera2->getWorldCameraModel();
-    ConvexPolyhedron secondViewport = secondCamera.getCameraViewport();
 
     SceneObservation *obs1 = getObservation(camera1);
 
@@ -354,8 +442,9 @@ PointPath SceneFeaturePoint::getEpipath(FixtureCamera *camera1, FixtureCamera *c
     }
 
     Vector2dd m = obs1->getUndist(); /*We work with geometry, so we take projective undistorted objservation */
-    PrinterVisitor printer;
-    printer.visit(*obs1, "observation");
+    //cout << "SceneFeaturePoint::getEpipath()\n";
+    //PrinterVisitor printer;
+    //printer.visit(*obs1, "observation");
 
     CameraModel model = camera1->getWorldCameraModel();
     Ray3d ray = model.rayFromPixel(m);
@@ -365,40 +454,80 @@ PointPath SceneFeaturePoint::getEpipath(FixtureCamera *camera1, FixtureCamera *c
     /* We go with ray analysis instead of essential matrix beacause it possibly gives
      * more semanticly valuable info
 	 */
-    double t1 = 0;
-    double t2 = 0;
-    bool hasIntersection = secondViewport.intersectWith(ray, t1, t2);
-    if (hasIntersection)
-	{
-        if (t1 < 0.0) t1 = 0.0;
 
-        //cout << "t1 : " << t1 << " t2 : " << t2 << endl;
-
-        FixedVector<double, 4> out1 = (secondCamera.getCameraMatrix() * ray.getProjectivePoint(t1));
-        FixedVector<double, 4> out2 = (secondCamera.getCameraMatrix() * ray.getProjectivePoint(t2));
-
-        //cout << "out1: " << out1 << endl;
-        //cout << "out2: " << out2 << endl;
-
-        Vector2dd pos1 = Vector2dd( out1[0], out1[1]) / out1[2];
-        Vector2dd pos2 = Vector2dd( out2[0], out2[1]) / out2[2];
-
-        //cout << "pos1:" << pos1 << endl;
-        //cout << "pos2:" << pos2 << endl;
-
-        /* We should apply distorion here */
-
-        for (int segm = 0; segm <= segments; segm++)
+    if (model.getPinhole())
+    {
+        ConvexPolyhedron secondViewport = secondCamera.getCameraViewport();
+        double t1 = 0;
+        double t2 = 0;
+        bool hasIntersection = secondViewport.intersectWith(ray, t1, t2);
+        if (hasIntersection)
         {
-            Vector2dd ssP = lerp(pos1, pos2, segm    , 0, segments);
-            Vector2dd ssI = secondCamera.distortion.mapForward(ssP);
+            if (t1 < 0.0) t1 = 0.0;
 
-            //cout << "Undistortion: " << ssP << " - " << ssI << endl;
-            //cout << "Undistortion: " << seP << " - " << seI << endl;
+            //cout << "t1 : " << t1 << " t2 : " << t2 << endl;
 
-            result.push_back(ssI);
+            FixedVector<double, 4> out1 = (secondCamera.getCameraMatrix() * ray.getProjectivePoint(t1));
+            FixedVector<double, 4> out2 = (secondCamera.getCameraMatrix() * ray.getProjectivePoint(t2));
+
+            Vector2dd pos1 = Vector2dd( out1[0], out1[1]) / out1[2];
+            Vector2dd pos2 = Vector2dd( out2[0], out2[1]) / out2[2];
+
+            /* We should apply distorion here */
+
+            for (int segm = 0; segm <= segments; segm++)
+            {
+                Vector2dd ssP = lerp(pos1, pos2, segm    , 0, segments);
+                Vector2dd ssI = secondCamera.distortion.mapForward(ssP);
+
+                //cout << "Undistortion: " << ssP << " - " << ssI << endl;
+                //cout << "Undistortion: " << seP << " - " << seI << endl;
+
+                result.push_back(ssI);
+            }
+
         }
+    } else {
+        Mesh3D mesh;
+        mesh.switchColor(true);
 
+        Vector3dd spos = secondCamera.getAffine().shift;
+        Vector3dd org = ray.p - spos;
+        Vector3dd dis = ray.a;
+
+
+        Vector3dd orgN = org.normalised();
+        Vector3dd disN = dis.normalised();
+
+        // cout << orgN << endl;
+        // cout << disN << endl;
+
+        mesh.addPoint(spos);
+        mesh.setColor(RGBColor::Red());
+        mesh.addLine(spos, spos + orgN);
+        mesh.setColor(RGBColor::Green());
+        mesh.addLine(spos, spos + disN);
+
+        mesh.setColor(RGBColor::Blue());
+
+        for (int segm = 0; segm < segments; segm++)
+        {
+            double a = lerp(0.0, M_PI / 2, segm, 0, segments);
+            Vector3dd inter = orgN * cos(a) + disN * sin (a);
+            mesh.addLine(spos, spos + inter);
+            Ray3d r2(inter, spos);
+            Vector3dd p = ray.intersect(r2);
+            mesh.addPoint(p);
+
+            if (secondCamera.isVisible(p)) {
+                Vector2dd ssI = secondCamera.project(p, true);
+                result.push_back(ssI);
+            }
+        }
+        Vector2dd ssI = secondCamera.project(spos + ray.a, true);
+        result.push_back(ssI);
+
+        mesh.dumpPLY("epiline.ply");
     }
 
     return result;
@@ -410,7 +539,7 @@ void SceneFeaturePoint::projectForward(FixtureCamera *camera, CameraFixture *fix
     CameraModel worldCam = camera->getWorldCameraModel();
 
     Vector2dd projection = worldCam.project(position);
-    if (!worldCam.isVisible(projection) || !worldCam.isInFront(position))
+    if (!worldCam.isVisible(position))
         return;
 
     if (round) {

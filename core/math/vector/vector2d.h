@@ -23,6 +23,9 @@
 #include "core/math/vector/fixedVector.h"
 #include "core/math/vector/vector.h"
 
+// This is discussable if there should be such a dependancy
+#include "core/xml/generated/vector2dParameters.h"
+
 namespace corecvs {
 
 using std::sqrt;
@@ -56,6 +59,12 @@ public:
         v[0] = (*this)[0];
         v[1] = (*this)[1];
         return v;
+    }
+
+    Vector2d(const Vector& v)
+    {
+        (*this)[0] = v[0];
+        (*this)[1] = v[1];
     }
 
     inline ElementType &x()
@@ -230,6 +239,21 @@ template<class VisitorType>
         visitor.visit(x(), static_cast<const ReflectionType *>(reflection.fields[FIELD_X]));
         visitor.visit(y(), static_cast<const ReflectionType *>(reflection.fields[FIELD_Y]));
     }
+
+#ifdef VECTOR_2D_PARAMETERS_H_
+    explicit Vector2d(const Vector2dParameters &v)
+    {
+        x() = v.x();
+        y() = v.y();
+    }
+
+    explicit operator Vector2dParameters() const
+    {
+        return Vector2dParameters(x(), y());
+    }
+
+#endif
+
 };
 
 
@@ -253,23 +277,6 @@ template<typename ElementType>
 int Vector2d<ElementType>::dummy = Vector2d<ElementType>::staticInit();
 
 #else
-
-// It's moved to vector2d.cpp
-
-//template<> Reflection Vector2d<double>::reflection = Reflection();
-//template<> int        Vector2d<double>::dummy = Vector2d<double>::staticInit();
-//
-//template<> Reflection Vector2d<uint32_t>::reflection = Reflection();
-//template<> int        Vector2d<uint32_t>::dummy = Vector2d<uint32_t>::staticInit();
-//
-//template<> Reflection Vector2d<uint16_t>::reflection = Reflection();
-//template<> int        Vector2d<uint16_t>::dummy = Vector2d<uint16_t>::staticInit();
-//
-//template<> Reflection Vector2d<int32_t>::reflection = Reflection();
-//template<> int        Vector2d<int32_t>::dummy = Vector2d<int32_t>::staticInit();
-//
-//template<> Reflection Vector2d<int16_t>::reflection = Reflection();
-//template<> int        Vector2d<int16_t>::dummy = Vector2d<int16_t>::staticInit();
 
 #endif
 

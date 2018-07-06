@@ -52,7 +52,8 @@ int Draw3dCameraParameters::staticInit()
           "fovH",
           true,
          0,
-         180
+         180,
+         1
         );
     field0->widgetHint=BaseField::SPIN_BOX;
     field0->precision=2;
@@ -68,7 +69,8 @@ int Draw3dCameraParameters::staticInit()
           "fovV",
           true,
          0,
-         180
+         180,
+         1
         );
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->precision=2;
@@ -84,7 +86,8 @@ int Draw3dCameraParameters::staticInit()
           "nearPlane",
           true,
          0,
-         20000
+         20000,
+         1
         );
     field2->widgetHint=BaseField::SPIN_BOX;
     field2->precision=2;
@@ -100,7 +103,8 @@ int Draw3dCameraParameters::staticInit()
           "farPlane",
           true,
          0,
-         20000
+         20000,
+         1
         );
     field3->widgetHint=BaseField::SPIN_BOX;
     field3->precision=2;
@@ -169,7 +173,8 @@ int Draw3dCameraParameters::staticInit()
           "Point Size",
           true,
          0,
-         255
+         255,
+         1
         );
     fields().push_back(field7);
     /*  */ 
@@ -217,7 +222,8 @@ int Draw3dCameraParameters::staticInit()
           "Edge Width",
           true,
          0,
-         255
+         255,
+         1
         );
     fields().push_back(field10);
     /*  */ 
@@ -277,7 +283,8 @@ int Draw3dCameraParameters::staticInit()
           "Font Size",
           true,
          0,
-         255
+         255,
+         1
         );
     fields().push_back(field14);
     /*  */ 
@@ -291,7 +298,8 @@ int Draw3dCameraParameters::staticInit()
           "Font Width",
           true,
          0,
-         255
+         255,
+         1
         );
     fields().push_back(field15);
     /*  */ 
@@ -344,7 +352,8 @@ int Draw3dCameraParameters::staticInit()
           "Texture Alpha",
           true,
          0,
-         255
+         255,
+         1
         );
     fields().push_back(field18);
     /*  */ 
@@ -358,7 +367,8 @@ int Draw3dCameraParameters::staticInit()
           "Texture Scale",
           true,
          0,
-         2000
+         2000,
+         1
         );
     field19->widgetHint=BaseField::SPIN_BOX;
     field19->precision=2;
@@ -374,7 +384,8 @@ int Draw3dCameraParameters::staticInit()
           "Decal Matrix Type",
           true,
          0,
-         19
+         19,
+         1
         );
     fields().push_back(field20);
     /*  */ 
@@ -400,7 +411,8 @@ int Draw3dCameraParameters::staticInit()
           "Decal Left Alpha",
           true,
          0,
-         255
+         255,
+         1
         );
     fields().push_back(field22);
     /*  */ 
@@ -426,7 +438,8 @@ int Draw3dCameraParameters::staticInit()
           "Decal Right Alpha",
           true,
          0,
-         255
+         255,
+         1
         );
     fields().push_back(field24);
     /*  */ 

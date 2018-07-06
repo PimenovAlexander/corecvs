@@ -24,7 +24,7 @@
 #include "core/rectification/essentialMatrix.h"
 #include "core/cammodel/cameraParameters.h"
 #include "core/math/mathUtils.h"
-#include "core/automotive/simulation/flowSimulator.h"
+#include "core/automotive/simulation/testSceneSimulator.h"
 #include "core/rectification/ransacEstimator.h"
 #include "core/rectification/stereoAligner.h"
 
@@ -130,8 +130,8 @@ TEST(Rectification1, __testUnDistortion)
         Vector3dd w1 = z ^ E1;
         Vector3dd w2 = F * z;
 
-        w1 = w1.normalizeProjective();
-        w2 = w2.normalizeProjective();
+        w1 = w1.normalisedProjective();
+        w2 = w2.normalisedProjective();
 
         dist[i][0] = StereoAligner::getDistortion(w1, Vector2dd(100.0,100.0));
         dist[i][1] = StereoAligner::getDistortion(w2, Vector2dd(100.0,100.0));
@@ -176,7 +176,7 @@ TEST(Rectification1, __testUnDistortion)
 
 TEST(Rectification1, DISABLED_testRectificatorCubeEssential)
 {
-    vector<Vector3dd> *pointsIn3d = NULL;
+    vector<Vector3dd> pointsIn3d;
     vector<Vector2dd> imagesL;
     vector<Vector2dd> imagesR;
 
@@ -185,10 +185,10 @@ TEST(Rectification1, DISABLED_testRectificatorCubeEssential)
 
     // A cube of 1.5 m side at the distance of 2 meters
     Matrix44 modelViewMatrix = Matrix44::Shift(0.0, 0.0, 2000.0) * Matrix44::Scale(1500);
-    pointsIn3d = FlowSimulator::unitCube(3);
+    TestSceneSimulator::unitCube(3, pointsIn3d);
 
-    for (unsigned i = 0; i < pointsIn3d->size(); i++)
-        pointsIn3d->at(i) = modelViewMatrix * pointsIn3d->at(i);
+    for (unsigned i = 0; i < pointsIn3d.size(); i++)
+        pointsIn3d[i] = modelViewMatrix * pointsIn3d[i];
 
 
     /**
@@ -234,11 +234,11 @@ TEST(Rectification1, DISABLED_testRectificatorCubeEssential)
     cout << "After: \n" << rightCamera * in << "\n";
 
 
-    for (unsigned i = 0; i < pointsIn3d-> size(); i++)
+    for (unsigned i = 0; i < pointsIn3d.size(); i++)
     {
         Correspondence corr;
-        Vector3dd left3D  =  leftCamera * pointsIn3d->at(i);
-        Vector3dd right3D = rightCamera * pointsIn3d->at(i);
+        Vector3dd left3D  =  leftCamera * pointsIn3d[i];
+        Vector3dd right3D = rightCamera * pointsIn3d[i];
 
         Vector2dd imageL = left3D .project();
         Vector2dd imageR = right3D.project();
@@ -284,9 +284,9 @@ TEST(Rectification1, DISABLED_testRectificatorCubeEssential)
                 imagesL[i].y(),
                 imagesR[i].x(),
                 imagesR[i].y(),
-                pointsIn3d->at(i).x(),
-                pointsIn3d->at(i).y(),
-                pointsIn3d->at(i).z()
+                pointsIn3d[i].x(),
+                pointsIn3d[i].y(),
+                pointsIn3d[i].z()
                 );
     }
 
@@ -353,24 +353,22 @@ TEST(Rectification1, DISABLED_testRectificatorCubeEssential)
 
             Vector3dd dist = m.inv() * st;
             Vector3dd position = left * dist.x();
-            double percent = (dist.x() - pointsIn3d->at(i).z()) / (pointsIn3d->at(i).z()) * 100.0;
-            cout << dist << " " << position  << " <=> " << pointsIn3d->at(i) << " err=" << percent << "%" << endl;
+            double percent = (dist.x() - pointsIn3d[i].z()) / (pointsIn3d[i].z()) * 100.0;
+            cout << dist << " " << position  << " <=> " << pointsIn3d[i] << " err=" << percent << "%" << endl;
 
             fprintf(gnuplot, "%lf %lf %lf %lf %lf %lf\n",
                     position.x(),
                     position.y(),
                     position.z(),
-                    pointsIn3d->at(i).x(),
-                    pointsIn3d->at(i).y(),
-                    pointsIn3d->at(i).z()
+                    pointsIn3d[i].x(),
+                    pointsIn3d[i].y(),
+                    pointsIn3d[i].z()
             );
         }
 
         fclose(gnuplot);
 
-    }
-    delete pointsIn3d;
-
+    }   
 }
 
 TEST(Rectification1, DISABLED_testRectificatorCube)
@@ -378,7 +376,8 @@ TEST(Rectification1, DISABLED_testRectificatorCube)
     cout << "=============================Testing old style rectificator=================================" << endl;
 
     CorrespondenceList points;
-    vector<Vector3dd> *pointsIn3d = FlowSimulator::unitCube(GRID_STEP);
+    vector<Vector3dd> pointsIn3d;
+    TestSceneSimulator::unitCube(GRID_STEP, pointsIn3d);
 
 
     Matrix44 leftCamera  = Matrix44::ProjectParallelToZ() * Matrix44(Matrix33(1.0), Vector3dd(0,0,4));
@@ -393,11 +392,11 @@ TEST(Rectification1, DISABLED_testRectificatorCube)
     cout << "After: \n" << rightCamera * in << "\n";
 
 
-    for (unsigned i = 0; i < pointsIn3d->size(); i++)
+    for (unsigned i = 0; i < pointsIn3d.size(); i++)
     {
         Correspondence corr;
-        Vector3dd left3D  =  leftCamera * pointsIn3d->at(i);
-        Vector3dd right3D = rightCamera * pointsIn3d->at(i);
+        Vector3dd left3D  =  leftCamera * pointsIn3d[i];
+        Vector3dd right3D = rightCamera * pointsIn3d[i];
 
         corr.start = Vector2dd( left3D.x(),  left3D.y());
         corr.end   = Vector2dd(right3D.x(), right3D.y());
@@ -475,9 +474,6 @@ TEST(Rectification1, DISABLED_testRectificatorCube)
     F.print();
     printf("\n");
     CORE_ASSERT_TRUE(Fprim.notTooFar(F, 1e-5), "Matrix reconstruction failed");
-
-    delete pointsIn3d;
-
 }
 
 //int main (int /*argC*/, char ** /*argV*/)

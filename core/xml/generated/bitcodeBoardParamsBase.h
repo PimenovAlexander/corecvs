@@ -6,6 +6,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from patternDetector.xml
  */
 
 #include "core/reflection/reflection.h"
@@ -30,7 +31,7 @@
 /*
  *  Additional includes for enum section.
  */
-#include "bitcodeBoardOrientation.h"
+#include "core/xml/generated/bitcodeBoardOrientation.h"
 
 /**
  * \brief Bitcode Board Params Base 

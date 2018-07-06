@@ -15,11 +15,12 @@
 #include "core/reflection/dynamicObject.h"
 
 #include "core/buffers/g12Buffer.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/buffers/flow/flowBuffer.h"
 #include "core/buffers/flow/sixDBuffer.h"
 #include "core/stats/calculationStats.h"
 
-using namespace corecvs;
+namespace corecvs {
 
 class Processor6D
 {
@@ -36,7 +37,8 @@ public:
        RESULT_STEREO = 0x02,
        RESULT_6D = 0x04,
        RESULT_FLOAT_FLOW   = 0x08,
-       RESULT_FLOAT_STEREO = 0x10
+       RESULT_FLOAT_STEREO = 0x10,
+       RESULT_FLOAT_FLOW_LIST = 0x20
     };
 
     enum FrameNames {
@@ -46,11 +48,28 @@ public:
     };
 
     virtual int beginFrame() = 0;
+
+    /** Completly reset internal data structures. parameters are left intact **/
+    virtual int reset() = 0;
+
+    /** Implemetation may allow you to reset some internal structures at will **/
     virtual int clean(int mask) = 0;
-    virtual int setFrameG12(FrameNames frameType, G12Buffer *frame) = 0;
+
+    /**
+     * You are responisble to delete the frame sometime after endFrame() is called
+     * Implemetation may (and will) store additinal views (pointers) to actual image data
+     * for as long as implementation need them.
+     *
+     * see AbstractBuffer::createViewPtr<> for details on this mechanism
+     *
+     * To get consistent result don't modify frame data after the call to setFrame*
+     **/
+    virtual int setFrameG12  (FrameNames frameType, G12Buffer   *frame) = 0;
+    virtual int setFrameRGB24(FrameNames frameType, RGB24Buffer *frame) = 0;
 
     virtual int setDisparityBufferS16(FrameNames frameType, FlowBuffer *frame) = 0;
 
+    /** sets statistics data. Implementation should support stats == NULL **/
     virtual int setStats(Statistics *stats) = 0;
     virtual int endFrame() = 0;
 
@@ -58,13 +77,20 @@ public:
     virtual std::map<std::string, DynamicObject> getParameters() = 0;
     virtual bool setParameters(std::string name, const DynamicObject &param) = 0;
 
-    virtual int setParameteri(int parameterName, int parameterValue) = 0;
 
-    virtual int requestResultsi(int parameterValue) = 0;
+    /** Oldstyle calls **/
+    virtual int setParameteri(int parameterName, int parameterValue) = 0;
+    virtual int requestResultsi(int parameterName) = 0;
+
+    /**
+     * Methods below return the pointers to the internal data structures that are only valid
+     * untill next beginFrame() is called. If you want them to persist - make a copy
+     **/
 
     /* This method computes flow form current frame to previous */
     virtual FlowBuffer *getFlow() = 0;
     virtual FlowBuffer *getStereo() = 0;
+    virtual CorrespondenceList *getFlowList() = 0;
 
     virtual int getError(std::string *errorString) = 0;
 
@@ -104,9 +130,12 @@ public:
         return true;
     }
 
+    bool hasProvider(const std::string &name);
+
 
     vector<Processor6DFactory *> mProviders;
 };
 
+} // namespace
 
 #endif /* PROCESSOR6D_H_ */

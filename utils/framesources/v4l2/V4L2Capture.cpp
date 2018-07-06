@@ -23,11 +23,11 @@
 #include <QtCore/QtCore>
 
 #include "core/utils/global.h"
+#include "core/framesources/decoders/mjpegDecoder.h"
+#include "core/framesources/decoders/mjpegDecoderLazy.h"
 
 #include "V4L2Capture.h"
-#include "mjpegDecoder.h"
 #include "core/utils/preciseTimer.h"
-#include "mjpegDecoderLazy.h"
 
 
 const char* V4L2CaptureInterface::CODEC_NAMES[] =
@@ -50,6 +50,7 @@ V4L2CaptureInterface::V4L2CaptureInterface(string _devname, int h, int w, int fp
     : spin(this)
 {
     mIsRgb = isRgb;
+
     interfaceName = QString("%1:1/%2:yuyv:%3x%4").arg(_devname.c_str()).arg(fps).arg(w).arg(h).toStdString();
     deviceName[Frames::LEFT_FRAME] =  _devname;
 
@@ -230,8 +231,10 @@ V4L2CaptureInterface::FramePair V4L2CaptureInterface::getFrameRGB24()
     FramePair result;
 
     RGB24Buffer **results[Frames::MAX_INPUTS_NUMBER] = {
-        &result.buffers[LEFT_FRAME ].rgbBuffer,
-        &result.buffers[RIGHT_FRAME].rgbBuffer
+        &result.buffers[LEFT_FRAME  ].rgbBuffer,
+        &result.buffers[RIGHT_FRAME ].rgbBuffer,
+        &result.buffers[THIRD_FRAME ].rgbBuffer,
+        &result.buffers[FOURTH_FRAME].rgbBuffer
     };
 
     for (int i = 0; i < Frames::MAX_INPUTS_NUMBER; i++)

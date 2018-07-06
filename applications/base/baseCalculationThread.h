@@ -14,9 +14,9 @@
 
 #include "core/math/matrix/matrix33.h"
 #include "core/buffers/displacementBuffer.h"
+#include "core/framesources/imageCaptureInterface.h"
 
 #include "abstractCalculationThread.h"
-#include "imageCaptureInterface.h"
 #include "frames.h"
 #include "generatedParameters/baseParameters.h"
 #include "generatedParameters/presentationParameters.h"

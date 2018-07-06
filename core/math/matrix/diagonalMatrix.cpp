@@ -11,7 +11,7 @@ namespace corecvs {
 
 double DiagonalMatrix::det() const
 {
-    return mulAllElements();
+    return prod();
 }
 
 double DiagonalMatrix::trace() const

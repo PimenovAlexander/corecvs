@@ -1,15 +1,12 @@
 #include <QFileDialog>
-#include "core/buffers/bufferFactory.h"
 #include "pointListEditImageWidget.h"
-
 #include "imageViewMainWindow.h"
 #include "ui_imageViewMainWindow.h"
+#include "core/buffers/bufferFactory.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
-#include "g12Image.h"
-
-#include "g12Image.h"
-#include "core/fileformats/ppmLoader.h"
 #include "core/buffers/converters/debayer.h"
+#include "core/fileformats/ppmLoader.h"
+#include "utils/corestructs/g12Image.h"
 
 ImageViewMainWindow::ImageViewMainWindow(QWidget *parent) :
     QWidget(parent),
@@ -129,48 +126,59 @@ void ImageViewMainWindow::loadImage(QString name)
 {
     delete_safe(bayer);
     ui->widget->setInfoString("Loading...");
+    meta.clear();
     int shift = 0;
     if (name.endsWith(".ppm"))
     {
         SYNC_PRINT(("Loading PPM <%s>\n", name.toLatin1().constData()));
-        RGB48Buffer* result = PPMLoader().rgb48BufferCreateFromPPM(name.toStdString(), &meta);
+        RGB48Buffer* result = PPMLoader().loadRgb48(name.toStdString(), &meta);
         setImage(result);
         shift = 8 - meta["bits"][0];                // left shift:  8 => 0,  10 => -2,  12 => -4
-
     }
-    else if (name.endsWith(".raw"))
+    else if (name.endsWith(".pgm"))
     {
-        SYNC_PRINT(("Loading RAW <%s>\n", name.toLatin1().constData()));
-        bayer = PPMLoader().g12BufferCreateFromPGM(name.toStdString(), &meta);
+        SYNC_PRINT(("Loading PGM <%s>\n", name.toLatin1().constData()));
+        bayer = PPMLoader().loadG12(name.toStdString(), &meta);
         if (bayer == NULL) {
             qDebug("Can't open Bayer file: %s", name.toLatin1().constData());
         }
         debayer();
         shift = 8 - meta["bits"][0];                // left shift:  8 => 0,  10 => -2,  12 => -4
-    } else {
+    }
+#if 0
+    else if (name.endsWith(".raw"))
+    {
+
+        SYNC_PRINT(("Loading RAW <%s> - is not supported\n", name.toLatin1().constData()));
+        bayer = 0;// TopconRAWLoader24().loadAsBayer(name.toStdString());  // TODO: not restricted code
+        if (bayer == NULL) {
+            qDebug("Can't open Bayer file: %s", name.toLatin1().constData());
+        }
+        debayer();
+        shift = 8 - meta["bits"][0];                // left shift:  8 => 0,  10 => -2,  12 => -4
+    }
+#endif
+
+    else
+    {
         SYNC_PRINT(("Loading Generic <%s>\n", name.toLatin1().constData()));
-        RGB24Buffer *input = BufferFactory::getInstance()->loadRGB24Bitmap(name.toStdString());
-        if (input == NULL)
-        {
+        RGB24Buffer* input = NULL;
+        try {
+            input = BufferFactory::getInstance()->loadRGB24Bitmap(name.toStdString());
+        }
+        catch (...) {
+            input = nullptr;
+        }
+        if (!input) {
             qDebug() << "Unable to load" << name;
             return;
         }
-
-        SYNC_PRINT(("Loaded size %d x %d\n", input->w, input->h ));
-        RGB48Buffer *image = new RGB48Buffer(input->getSize());
-
-        for (int i = 0; i < image->h; i ++)
-        {
-            for (int j = 0; j < image->w; j ++)
-            {
-                RGBColor   c = input->element(i,j);
-                RGBColor48 c48(c.r() << 8, c.g() << 8, c.b() << 8);
-                image->element(i,j) = c48;
-            }
-        }
+        SYNC_PRINT(("Loaded size %d x %d\n", input->w, input->h));
+        RGB48Buffer *image = new RGB48Buffer(input->getSize(), false);
+        Debayer::ConvertRgb24toRgb48(input, image);
         setImage(image);
+        delete_safe(input);
     }
-
 
     ui->widget->setInfoString("---");
 
@@ -182,15 +190,19 @@ void ImageViewMainWindow::loadImage(QString name)
 
 void ImageViewMainWindow::debayer()
 {
-    if (bayer == NULL) {
+    if (bayer == NULL)
         return;
-    }
 
-    DebayerParameters params;
+    Debayer::Parameters params;
     ui->parameters->getParameters(params);
 
+#if 0
     Debayer d(bayer, meta["bits"][0], &meta, params.bayerPos());
     RGB48Buffer* result = new RGB48Buffer(bayer->h, bayer->w, false);
     d.toRGB48(params.method(), result);
+#else
+    RGB48Buffer* result = Debayer::DemosaicRgb48(bayer, params, meta);
+#endif
+
     setImage(result);
 }

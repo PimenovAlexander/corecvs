@@ -181,7 +181,7 @@ bool ConvexHullCalc::equals(const Vector3dd &U, Vector3dd &V) {
 }
 
 void ConvexHullCalc::deleteDuplicates() {
-    int size = points.size();
+    int size = (int)points.size();
     for (int i = 0; i < size; ++i) {
         for (int j = i + 1; j < size; ++j) {
             if (equals(points[i], points[j])) {

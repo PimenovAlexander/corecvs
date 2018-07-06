@@ -21,6 +21,10 @@
 #include "core/utils/preciseTimer.h"
 #include "core/math/mathUtils.h"
 
+/* This is for osd */
+#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/buffers/rgb24/abstractPainter.h"
+
 namespace corecvs {
 
 //using std::map;
@@ -446,6 +450,29 @@ template <class StreamType>
          }
     };
 
+    class AdvancedPrinter1 {
+    public:
+        void printUnitedStat(const string &name, int length, const UnitedStat &stat, int /*lineNum*/)
+        {
+            if (stat.type == SingleStat::TIME)
+            {
+                printf("%-*s : %7" PRIu64 " us : %7" PRIu64 " ms : %7" PRIu64 " us : %7" PRIu64 " times  \n",
+                    length,
+                    name.c_str(),
+                    stat.max,
+                    _roundDivUp(stat.sum, 1000),
+                    stat.mean(),
+                    stat.number);
+                return;
+            }
+
+            printf("%-*s : %7" PRIu64 "\n",
+                length,
+                name.c_str(),
+                stat.mean());
+         }
+    };
+
     virtual void printAdvanced()
     {
         printf("=============================================================\n");
@@ -560,6 +587,61 @@ template <class StreamType>
         printf("\n");
         printf("=============================================================\n");
     }
+
+
+    class OSDDrawer {
+    public:
+        AbstractPainter<RGB24Buffer> *p;
+        RGBColor color1;
+        RGBColor color2;
+
+
+    public:
+        void printUnitedStat(const string &name, int length, const UnitedStat &stat, int lineNum)
+        {
+            if (stat.type == SingleStat::TIME) {
+                p->drawFormat(5, lineNum * 10, color1, 1,
+                    "%-*s : %7" PRIu64 " us : %7" PRIu64 " ms : %7" PRIu64 " us",
+                    length,
+                    name.c_str(),
+                    stat.mean(),
+                    _roundDivUp(stat.mean(), 1000),
+                    stat.minimum());
+                p->drawFormat(6, lineNum * 10 + 1, color2, 1,
+                    "%-*s : %7" PRIu64 " us : %7" PRIu64 " ms : %7" PRIu64 " us",
+                    length,
+                    name.c_str(),
+                    stat.mean(),
+                    _roundDivUp(stat.mean(), 1000),
+                    stat.minimum());
+            } else {
+                p->drawFormat(5, lineNum * 10, color1, 1,
+                    "%-*s : %7" PRIu64 " %7" PRIu64 " ",
+                    length,
+                    name.c_str(),
+                    stat.last,
+                    stat.mean());
+                p->drawFormat(6, lineNum * 10 + 1, color2, 1,
+                    "%-*s : %7" PRIu64 " %7" PRIu64 " ",
+                    length,
+                    name.c_str(),
+                    stat.last,
+                    stat.mean());
+            }
+        }
+    };
+
+    void drawOSD(RGB24Buffer *image)
+    {
+        AbstractPainter<RGB24Buffer> p(image);
+        OSDDrawer d;
+        d.p = &p;
+        d.color1 = RGBColor::Black();
+        d.color2 = RGBColor::White();
+
+        printStats(d);
+    }
+
 };
 
 

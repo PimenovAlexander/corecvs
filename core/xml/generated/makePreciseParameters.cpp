@@ -62,8 +62,10 @@ int MakePreciseParameters::staticInit()
           "Algorithm",
           "Algorithm",
           "Algorithm",
-          new EnumReflection(1
+          new EnumReflection(3
           , new EnumOption(0,"KLT")
+          , new EnumOption(1,"KLT Float")
+          , new EnumOption(2,"KLT Fast")
           )
         );
     field1->widgetHint=BaseField::COMBO_BOX;
@@ -96,7 +98,8 @@ int MakePreciseParameters::staticInit()
           "KLT iterations",
           true,
          1,
-         100
+         100,
+         1
         );
     fields().push_back(field3);
     /*  */ 
@@ -110,7 +113,8 @@ int MakePreciseParameters::staticInit()
           "KLT Radius H",
           true,
          1,
-         100
+         100,
+         1
         );
     fields().push_back(field4);
     /*  */ 
@@ -124,7 +128,8 @@ int MakePreciseParameters::staticInit()
           "KLT Radius W",
           true,
          1,
-         100
+         100,
+         1
         );
     fields().push_back(field5);
     /*  */ 
@@ -138,7 +143,8 @@ int MakePreciseParameters::staticInit()
           "KLT Threshold",
           true,
          1,
-         100
+         100,
+         1
         );
     field6->widgetHint=BaseField::SPIN_BOX;
     field6->precision=2;

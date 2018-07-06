@@ -1,11 +1,11 @@
 <poco version="5.0">
-  <enum name="Estimation Method Type">
+  <enum name="Estimation Method Type" incpath="rectifier/" >
     <item name="RANSAC"    id="0" comment="RANSAC"/>
     <item name="Iterative" id="1" comment="Iterative"/>
     <item name="Manual"    id="2" comment="Manual"/>
   </enum>
   
-  <enum name="Optimization Method Type">
+  <enum name="Optimization Method Type" incpath="rectifier/" >
     <item name="SVD"                 id="0" comment="SVD"/>
     <item name="Gradient Descent"    id="1" comment="Gradient Descent"/>
     <item name="Marquardt Levenberg" id="2" comment="Marquardt-Levenberg"/>
@@ -13,7 +13,7 @@
     <item name="Kalman"              id="4" comment="Kalman"/>
   </enum>
   
-  <enum name="Matching Method Type">
+  <enum name="Matching Method Type" incpath="rectifier/" >
     <item name="SurfCV"   id="0" comment="SurfCV"/>
     <item name="viTech"   id="1" comment="viTech"/>
   </enum>

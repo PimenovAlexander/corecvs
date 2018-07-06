@@ -8,28 +8,38 @@
 #include <thread>
 #include <atomic>
 #include "core/tbbwrapper/tbbWrapper.h"
-#ifdef WITH_TBB
-#include <tbb/parallel_sort.h>
-#endif
 
 namespace corecvs
 {
 
+/**
+ *  KD Tree
+ *    \param V - element type (vector with overloaded [] )
+ *    \param N - dimention number
+ *
+ **/
 template<typename V, int N>
 class KDTree
 {
     typedef typename std::remove_reference<decltype(V()[0])>::type InnerType;
+
     struct KDNode
     {
-        KDNode(V* v = nullptr) : item(v), left(nullptr), right(nullptr)
-        {
-        }
+        V* item = NULL;
+        KDNode *left  = NULL;
+        KDNode *right = NULL;
+
+        KDNode(V* v = nullptr) :
+            item(v),
+            left(nullptr),
+            right(nullptr)
+        {}
+
         bool isLeaf()
         {
-            return !left && !right;
+            return (left == NULL) && (right == NULL);
         }
-        V* item;
-        KDNode *left, *right;
+
     };
 
     std::vector<V*> temporary;
@@ -44,6 +54,7 @@ public:
     {
         print(os, root, 0);
     }
+
     void print(std::ostream& os, KDNode *node, int depth) const
     {
         for (int i = 0; i < depth; ++i)
@@ -57,8 +68,10 @@ public:
         if (node->right)
             print(os, node->right, depth + 1);
     }
-    template <typename R, int S>
-    friend std::ostream& operator<<(std::ostream& o, const KDTree<R, S> &tree);
+
+    template <typename _V, int _N>
+    friend std::ostream& operator<<(std::ostream& o, const KDTree<_V, _N> &tree);
+
     KDTree(const std::vector<V*> &items, int T = 0) : items(items), root(nullptr), T(T), usedNodes(0)
     {
         createKDTree();
@@ -77,10 +90,12 @@ public:
         //std::cout << " (" << v << " / " << items.size() << " : " << double(v) / items.size() << ")" << std::endl;
         return res;
     }
+
     V* nearestNeighbour(const V& ref)
     {
         return nearestNeighbour(ref, [](V* /*q*/) { return true; });
     }
+
 private:
     template <typename P>
     V* nearestNeighbour(const P& predicate, KDNode* node, const V& ref, V* &bestPivot, InnerType &bestDistance, int depth)
@@ -113,6 +128,7 @@ private:
             nearestNeighbour(predicate, otherDir , ref, bestPivot, bestDistance, depth + 1);
         return bestPivot;
     }
+
     void createKDTree()
     {
         nodes.resize(items.size());
@@ -122,20 +138,13 @@ private:
             {
                 for (int i = r.begin(); i != r.end(); ++i)
                 {
-#ifndef WITH_TBB
-                    std::sort(references[i].begin(), references[i].end(), [&](V* const a, V* const b)
-                    {
-                        auto res = cmp(a, b, i);
-                        return res  < 0;
-                    });
-#else
-                    tbb::parallel_sort(references[i].begin(), references[i].end(), [&](V* const a, V* const b)
+                    parallelable_sort(references[i].begin(), references[i].end(), [&](V* const a, V* const b)
                     {
                         auto res = cmp(a, b, i);
                         CORE_ASSERT_TRUE_S(res != 0);
                         return res  < 0;
                     });
-#endif
+
                     int validRef = 0;
                     for (size_t j = 1; j < references[i].size(); j++)
                         if (cmp(references[i][validRef], references[i][j], i) != 0)
@@ -146,6 +155,7 @@ private:
         temporary.resize(items.size());
         root = buildKDTree(0, (int)items.size() - 1, 0);
     }
+
     InnerType computeDiff(const V& a, const V &b)
     {
         InnerType dist = 0;
@@ -153,9 +163,10 @@ private:
             dist += (a[i] - b[i]) * (a[i] - b[i]);
         return dist;
     }
+
     InnerType  cmp(const V* const a, const V* const b, int dim)
     {
-        for (int j = 0;    j < N; ++j)
+        for (int j = 0; j < N; ++j)
         {
             int idx = (j + dim) % N;
             auto diff = (*a)[idx] - (*b)[idx];
@@ -164,10 +175,11 @@ private:
         }
         return 0;
     }
+
     KDNode* buildKDTree(int start, int end, int depth)
     {
         int axis = depth % N;
-        auto node = &nodes[usedNodes++];
+        KDNode *node = &nodes[usedNodes++];
         if (end == start)
         {
             node->item = references[0][start];
@@ -224,8 +236,10 @@ private:
             references[N - 1][i] = temporary[i];
         if (depth < T)
         {
-            std::thread lhs([&]() { node->right = buildKDTree(median + 1, upper, depth + 1); });
-            node->left  = buildKDTree(start,      lower, depth + 1);
+            std::thread lhs([&]() {
+                node->right = buildKDTree(median + 1, upper, depth + 1);
+            });
+                node->left  = buildKDTree(start,      lower, depth + 1);
             lhs.join();
         }
         else

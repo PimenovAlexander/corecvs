@@ -52,7 +52,8 @@ int RansacParameters::staticInit()
           "Iterations Number",
           true,
          1,
-         9999999
+         9999999,
+         1
         );
     fields().push_back(field0);
     /*  */ 
@@ -78,7 +79,8 @@ int RansacParameters::staticInit()
           "Inliers Percent",
           true,
          0,
-         146
+         146,
+         1
         );
     field2->widgetHint=BaseField::SPIN_BOX;
     field2->suffixHint="%";
@@ -95,7 +97,8 @@ int RansacParameters::staticInit()
           "Inlier Threshold",
           true,
          -999999,
-         999999
+         999999,
+         1
         );
     field3->widgetHint=BaseField::SPIN_BOX;
     field3->precision=5;

@@ -25,12 +25,12 @@ CorrespondenceList::~CorrespondenceList()
 }
 
 template<bool swap = false>
-class CFlowBufferToucherOperator
+class FlowBufferToucherOperator
 {
 public:
     CorrespondenceList *parent;
 
-    CFlowBufferToucherOperator(CorrespondenceList *_parent) : parent(_parent){};
+    FlowBufferToucherOperator(CorrespondenceList *_parent) : parent(_parent){}
 
     void operator ()(int32_t i, int32_t j, const FlowElement &flow)
     {
@@ -51,7 +51,7 @@ public:
     {
         if (!flow.isKnown)
             return;
-        Correspondence corr(Vector2dd(j,i), flow.vector);
+        Correspondence corr(Vector2dd(j,i), Vector2dd(j,i) + flow.vector);
         parent->push_back(corr);
     }
 
@@ -114,10 +114,10 @@ CorrespondenceList::CorrespondenceList(FlowBuffer *input, bool swap) :
 {
     if (swap)
     {
-        CFlowBufferToucherOperator<true> toucher(this);
+        FlowBufferToucherOperator<true> toucher(this);
         input->touchOperationElementwize(toucher);
     } else {
-        CFlowBufferToucherOperator<false> toucher(this);
+        FlowBufferToucherOperator<false> toucher(this);
         input->touchOperationElementwize(toucher);
     }
 }
@@ -126,7 +126,8 @@ CorrespondenceList::CorrespondenceList(FloatFlowBuffer *input) :
             h(input->h),
             w(input->w)
 {
-    CFlowBufferToucherOperator<> toucher(this);
+    // SYNC_PRINT(("CorrespondenceList::CorrespondenceList():called\n"));
+    FlowBufferToucherOperator<> toucher(this);
     input->touchOperationElementwize(toucher);
 }
 
@@ -141,7 +142,7 @@ CorrespondenceList * CorrespondenceList::makePreciseCopy(G12Buffer *first, G12Bu
     context.second = second;
     context.gradient = gradient;
 
-    KLTGenerator<BilinearInterpolator> kltGenerator;
+    KLTGenerator<BilinearInterpolatorD> kltGenerator;
 
     CorrespondenceList *toReturn = new CorrespondenceList();
     toReturn->h = this->h;
@@ -181,7 +182,7 @@ void CorrespondenceList::makePrecise(G12Buffer *first, G12Buffer *second)
     context.second = second;
     context.gradient = gradient;
 
-    KLTGenerator<BilinearInterpolator> kltGenerator;
+    KLTGenerator<BilinearInterpolatorD> kltGenerator;
 
     for (unsigned i = 0; i < this->size(); i++)
     {

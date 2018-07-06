@@ -187,7 +187,7 @@ public:
     static void svd (Matrix33 *A, Vector3dd *W, Matrix33 *V);
     static void svdDesc (Matrix33 *A, Vector3dd *W, Matrix33 *V);
 
-    static int jacobi(Matrix *a, DiagonalMatrix *d, Matrix *v, int *nrotpt);
+    static int jacobi(Matrix *a, DiagonalMatrix *d, Matrix *v, int *nrotpt, bool trace = false);
 
     static bool matrixSolveGaussian(Matrix *A, Matrix *B);
 

@@ -108,28 +108,30 @@ void raytrace_scene1( void )
     }
 
     {
-        renderer.setProjection(new StereographicProjection(Vector2dd(w, h) / 2.0, std::max(h,w) / 2));
+        renderer.setProjection(new StereographicProjection(Vector2dd(w, h) / 2.0, std::max(h,w) / 2, Vector2dd(w, h)));
         renderer.trace(buffer);
         BMPLoader().save("raytrace-sh.bmp", buffer);
     }
 
     {
-        renderer.setProjection(new EquidistantProjection(Vector2dd(w, h) / 2.0, std::max(h,w) / 2));
+        renderer.setProjection(new EquidistantProjection(Vector2dd(w, h) / 2.0, std::max(h,w) / 2, Vector2dd(w, h)));
         renderer.trace(buffer);
         BMPLoader().save("raytrace-eq-d.bmp", buffer);
     }
 
     {
-        renderer.setProjection(new EquisolidAngleProjection(Vector2dd(w, h) / 2.0, std::max(h,w) / 2));
+        renderer.setProjection(new EquisolidAngleProjection(Vector2dd(w, h) / 2.0, std::max(h,w) / 2, Vector2dd(w, h)));
         renderer.trace(buffer);
         BMPLoader().save("raytrace-eq-s.bmp", buffer);
     }
 
+/*
     {
-        renderer.setProjection(new OrthographicProjection(Vector2dd(w, h) / 2.0, std::max(h,w) / 2 ));
+        renderer.setProjection(new OrthographicProjection(Vector2dd(w, h) / 2.0, std::max(h,w) / 2, Vector2dd(w, h)));
         renderer.trace(buffer);
         BMPLoader().save("raytrace-ort.bmp", buffer);
     }
+*/
 
     delete_safe(buffer);
 

@@ -85,12 +85,19 @@ public:
      * We will use wavefront so far */
     vector<OBJMaterial> materials;
 
+    /* */
+    size_t currentTexture = 0;
+
     Mesh3DDecorated();
 
     void switchTextures(bool on = true);
     void switchNormals(bool on = true);
 
     virtual void addAOB(const Vector3dd &corner1, const Vector3dd &corner2, bool addFaces = true) override;
+
+    void addTriangleT(const Vector3dd &p1, const Vector2dd &t1,
+                      const Vector3dd &p2, const Vector2dd &t2,
+                      const Vector3dd &p3, const Vector2dd &t3);
 
     virtual void transform(const Matrix44 &matrix) override;
 
@@ -115,7 +122,7 @@ public:
     void removeUnreferencedVertices(Mesh3DDecorated &mesh);
 
     static
-    void removeIsolatedPieces(Mesh3DDecorated &mesh,  int minCountOfFaces);
+    void removeIsolatedPieces(Mesh3DDecorated &mesh,  unsigned minCountOfFaces);
 
     static
     void removeZeroAreaFaces(Mesh3DDecorated &mesh);

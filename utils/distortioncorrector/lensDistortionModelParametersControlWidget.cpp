@@ -383,7 +383,7 @@ void LensDistortionModelParametersControlWidget::updateAdditionalData()
         if (!ui->bilinearCheckBox->isChecked()) {
             mCorrected = mInput->doReverseDeformation<RGB24Buffer, DisplacementBuffer>(*mDistortionCorrectTransform);
         } else {
-            FixedPointDisplace displace(*mDistortionCorrectTransform, mDistortionCorrectTransform->h, mDistortionCorrectTransform->w);
+            FixedPointRemapper displace(*mDistortionCorrectTransform, mDistortionCorrectTransform->h, mDistortionCorrectTransform->w);
             mCorrected = mInput->doReverseDeformationBlPrecomp(&displace);
         }
 

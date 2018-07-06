@@ -14,7 +14,7 @@
 
 using std::ios;
 
-DocumentationGenerator::DocumentationGenerator(const Reflection *_clazz)
+DocumentationGenerator::DocumentationGenerator(const ReflectionGen *_clazz)
     : BaseGenerator(_clazz)
 {
 
@@ -28,7 +28,7 @@ void DocumentationGenerator::enterFieldContext(int i)
     type = field->type;
 /*    ui = getUiWidgetForType(type);
     boxSignal = getSignalForType(type);*/
-    descr = field->name.decription;
+    descr = field->name.description;
     comment = field->name.comment;           
 /*    pos = QString::number(i);
     boxName = toCamelCase(name, false) + getWidgetSuffixForType(type);*/

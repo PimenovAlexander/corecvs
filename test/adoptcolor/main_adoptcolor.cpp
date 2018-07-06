@@ -6,11 +6,13 @@
 
 #include "qtFileLoader.h"
 
-#include "imageCaptureInterface.h"
+//#include "imageCaptureInterface.h"
 //#include "V4L2Capture.h"
 #include "core/fileformats/bmpLoader.h"
 #include "core/geometry/ellipticalApproximation.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
+
+using namespace corecvs;
 
 #if 0
 void func (void)

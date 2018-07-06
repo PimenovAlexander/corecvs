@@ -32,9 +32,9 @@ public:
 
 private:
     void loadIncludes(QDomDocument const &config, const QFileInfo &currentFile);
-    void loadEnums(QDomDocument const &config);
-    void loadClasses(QDomDocument const &config);
-    void loadParamsMapper(QDomDocument const &config);
+    void loadEnums(QDomDocument const &config, const QFileInfo &currentFile);
+    void loadClasses(QDomDocument const &config, QFileInfo const &currentFile);
+    void loadParamsMapper(QDomDocument const &config, QFileInfo const &currentFile);
 
     QString getFromHierarcy(QDomElement const &classElement, QString const &name);
     ReflectionNaming getNamingFromXML(QDomElement const &classElement);

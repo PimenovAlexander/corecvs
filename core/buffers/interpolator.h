@@ -193,33 +193,39 @@ public:
     }
 };
 
-class BilinearInterpolator
+
+template <typename FloatType = double>
+class BilinearInterpolatorClass
 {
 public:
 
-    static double interpolate(double y, double x, G12Buffer * buffer)
+    static FloatType interpolate(FloatType y, FloatType x, G12Buffer * buffer)
     {
         int32_t i = (int32_t)floor(y);
         int32_t j = (int32_t)floor(x);
 
+#if 0
         CORE_ASSERT_TRUE_P(buffer->isValidCoordBl(y, x),
             ("Invalid coordinate in AbstractContiniousBuffer::elementBl(double y=%lf, double x=%lf) buffer sizes is [%dx%d]",
                y, x, buffer->w, buffer->h));
+#endif
 
-        double a = (double)buffer->element(i    ,j    );
-        double b = (double)buffer->element(i    ,j + 1);
-        double c = (double)buffer->element(i + 1,j    );
-        double d = (double)buffer->element(i + 1,j + 1);
+        FloatType a = (FloatType)buffer->element(i    ,j    );
+        FloatType b = (FloatType)buffer->element(i    ,j + 1);
+        FloatType c = (FloatType)buffer->element(i + 1,j    );
+        FloatType d = (FloatType)buffer->element(i + 1,j + 1);
 
-        double k1 = x - j;
-        double k2 = y - i;
+        FloatType k1 = x - j;
+        FloatType k2 = y - i;
 
-        double result =
+        FloatType result =
          (a * (1 - k1) + k1 * b) * (1 - k2) +
          (c * (1 - k1) + k1 * d) *      k2;
         return result;
     }
 };
+typedef BilinearInterpolatorClass<float> BilinearInterpolator;
+typedef BilinearInterpolatorClass<> BilinearInterpolatorD;
 
 class PolynomInterpolator
 {

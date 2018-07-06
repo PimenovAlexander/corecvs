@@ -76,7 +76,8 @@ int StereoAlignParameters::staticInit()
           "zdirX",
           true,
          -20,
-         20
+         20,
+         1
         );
     field2->widgetHint=BaseField::SPIN_BOX;
     field2->precision=2;
@@ -92,7 +93,8 @@ int StereoAlignParameters::staticInit()
           "zdirY",
           true,
          -20,
-         20
+         20,
+         1
         );
     field3->widgetHint=BaseField::SPIN_BOX;
     field3->precision=2;
@@ -108,7 +110,8 @@ int StereoAlignParameters::staticInit()
           "zdirZ",
           true,
          -20,
-         20
+         20,
+         1
         );
     field4->widgetHint=BaseField::SPIN_BOX;
     field4->precision=2;
@@ -148,7 +151,8 @@ int StereoAlignParameters::staticInit()
           "preShift",
           true,
          -9999,
-         9999
+         9999,
+         1
         );
     fields().push_back(field7);
     /*  */ 
@@ -162,7 +166,8 @@ int StereoAlignParameters::staticInit()
           "guessShiftThreshold",
           true,
          0,
-         99999
+         99999,
+         1
         );
     fields().push_back(field8);
     /*  */ 

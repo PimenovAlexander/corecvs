@@ -6,6 +6,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from bufferFilters.xml
  */
 
 #include "core/reflection/reflection.h"
@@ -36,7 +37,7 @@ class Matrix33;
 /*
  *  Additional includes for enum section.
  */
-#include "homographyAlgorithm.h"
+#include "core/xml/generated/homographyAlgorithm.h"
 
 /**
  * \brief HomorgaphyReconstructorBlockBase 

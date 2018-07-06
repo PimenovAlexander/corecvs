@@ -148,6 +148,22 @@ void Int8x16::hexDump(ostream &out)
 
 #endif // WITH_SSE
 
+#ifdef WITH_AVX2
+
+std::ostream & operator << (std::ostream &out, const Int32x8 &vector)
+{
+   ALIGN_DATA(16) int32_t data[8];
+   vector.saveAligned(data);
+   out << "[";
+   for (unsigned i = 0; i < 8; i++) {
+       out << (i == 0 ? "" : ", ") << (int32_t)data[i];
+   }
+   out << "]";
+   return out;
+}
+
+#endif
+
 
 #ifdef _MSC_VER
 

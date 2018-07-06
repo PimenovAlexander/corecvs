@@ -104,7 +104,9 @@ void OSDBaseWidget::offscreenChanged(QImage *newOffscreen)
     static int hackCount = 0;
     if ((hackCount % 20) == 0)
     {
+#ifdef WITH_X11EXTRAS
         runOnTopCommand();
+#endif
     }
     hackCount++;
 /*#endif*/

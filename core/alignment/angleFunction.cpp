@@ -6,7 +6,7 @@ namespace corecvs
 AngleFunction::AngleFunction(const vector<vector<Vector2dd> > &sample, const Vector2d32 &center, int polynomDegree, double scaleFactor) :
     FunctionArgs(polynomDegree, (int)sample.size()),
     mSample(sample),
-    mCenter(center),
+    mCenter(center.x(), center.y()),
     mPolynomDegree(polynomDegree),
     mScaleFactor(scaleFactor)
 {

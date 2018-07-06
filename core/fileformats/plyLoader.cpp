@@ -45,13 +45,13 @@ using std::istringstream;
 
 int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
 {
-#ifndef _DEBUG
-    trace = false;  // turn off tracing for release
-#endif
+    /*#ifndef _DEBUG
+        trace = false;  // turn off tracing for release
+    #endif*/
 
     string line;
 
-    HelperUtils::getlineSafe (input, line);
+    HelperUtils::getlineSafe(input, line);
     if (line != "ply") {
         LOCAL_PRINT(("Not a PLY file\n"));
         return 1;
@@ -145,7 +145,7 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
 
             work >> objNumber[propState];
             if (work.bad()) {
-               SYNC_PRINT(("Number is not found "));
+               SYNC_PRINT(("Number of elements is not found in the line: %s", line.c_str()));
             }
             LOCAL_PRINT(("Number %d %d\n", propState, objNumber[propState]));
             continue;
@@ -159,7 +159,7 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
 
     if (objNumber[OBJ_VERTEX] == -1)
     {
-        SYNC_PRINT(("Necessary data was missing form the header\n"));
+        SYNC_PRINT(("Necessary data was missing from the header\n"));
         return 1;
     }
 
@@ -225,7 +225,11 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
     {
         for (int i = 0; i < objNumber[OBJ_VERTEX]; i++)
         {
-            HelperUtils::getlineSafe (input, line);
+            if (input.eof()) {
+                SYNC_PRINT(("Unexpected EOF on vertex number %d\n", i));
+                return 1;
+            }
+            HelperUtils::getlineSafe(input, line);
             istringstream work(line);
 
             Vector3dd vertex;            
@@ -246,7 +250,11 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
 
         for (int i = 0; i < objNumber[OBJ_FACE]; i++)
         {
-            HelperUtils::getlineSafe (input, line);
+            if (input.eof()) {
+                SYNC_PRINT(("Unexpected EOF on face number %d\n", i));
+                return 1;
+            }
+            HelperUtils::getlineSafe(input, line);
             istringstream work(line);
             int points;
             work >> points;
@@ -285,6 +293,10 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
 
         for (int i = 0; i < objNumber[OBJ_EDGE]; i++)
         {
+            if (input.eof()) {
+                SYNC_PRINT(("Unexpected EOF on edge number %d\n", i));
+                return 1;
+            }
             HelperUtils::getlineSafe (input, line);
             istringstream work(line);
             Vector2d32 edge;
@@ -313,51 +325,96 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
             mesh.addEdge(edge);
         }
     }
-    else if (!hasColor)
+    else if (plyFormat == BINARY_LITTLE_ENDIAN)
     {
-        for (int i = 0; i < objNumber[OBJ_VERTEX]; i++)
+        mesh.vertexes.reserve(objNumber[OBJ_VERTEX]);
+        if (!hasColor)
         {
-            float f;
-            Vector3dd vertex;
-            input.read((char *)&f, sizeof(f)); vertex.x() = f;
-            input.read((char *)&f, sizeof(f)); vertex.y() = f;
-            input.read((char *)&f, sizeof(f)); vertex.z() = f;
-            mesh.vertexes.push_back(vertex);
-        }
-        for (int i = 0; i <  objNumber[OBJ_FACE]; i++)
-        {
-            uint8_t points;
-            input.read((char *)&points, sizeof(points));
-            if (input.bad()) {
-                SYNC_PRINT(("Corrupted face number %d\n", i));
-                return 1;
-            }
-
-            if (points != 3) {
-                SYNC_PRINT(("We only support faces with 3 sides not %d\n", points));
-                continue;
-            }
-            Vector3d32 face;
-            uint32_t value;
-            input.read((char *)&value, sizeof(value)); face.x() = value;
-            input.read((char *)&value, sizeof(value)); face.y() = value;
-            input.read((char *)&value, sizeof(value)); face.z() = value;
-
-            if (input.bad()) {
-                SYNC_PRINT(("Corrupted face number %d\n", i));
-                return 1;
-            }
-
-            if (!face.isInCube(
-                    Vector3d32(                        0,                         0,                          0),
-                    Vector3d32(objNumber[OBJ_VERTEX] - 1, objNumber[OBJ_VERTEX] - 1, objNumber[OBJ_VERTEX] - 1)))
+            for (int i = 0; i < objNumber[OBJ_VERTEX]; i++)
             {
-                SYNC_PRINT(("Vertex index is wrong on face %i\n", i));
-                return 1;
-            }
-            LOCAL_PRINT(("%d %d %d\n", face.x(), face.y(), face.z()));
+                if (input.eof()) {
+                    SYNC_PRINT(("Unexpected EOF on vertex number %d\n", i));
+                    return 1;
+                }
+                float f;
+                Vector3dd vertex;
+                input.read((char *)&f, sizeof(f)); vertex.x() = f;
+                input.read((char *)&f, sizeof(f)); vertex.y() = f;
+                input.read((char *)&f, sizeof(f)); vertex.z() = f;
 
-            mesh.addFace(face);
+                if (input.bad()) {
+                    SYNC_PRINT(("Corrupted vertex number %d\n", i));
+                    return 1;
+                }
+                mesh.vertexes.push_back(vertex);
+            }
+
+            for (int i = 0; i < objNumber[OBJ_FACE]; i++)
+            {
+                if (input.eof()) {
+                    SYNC_PRINT(("Unexpected EOF on face number %d\n", i));
+                    return 1;
+                }
+                uint8_t points;
+                input.read((char *)&points, sizeof(points));
+                if (input.bad()) {
+                    SYNC_PRINT(("Corrupted face number %d\n", i));
+                    return 1;
+                }
+
+                if (points != 3) {
+                    SYNC_PRINT(("We only support faces with 3 sides not %d\n", points));
+                    continue;
+                }
+                Vector3d32 face;
+                uint32_t value;
+                input.read((char *)&value, sizeof(value)); face.x() = value;
+                input.read((char *)&value, sizeof(value)); face.y() = value;
+                input.read((char *)&value, sizeof(value)); face.z() = value;
+
+                if (input.bad()) {
+                    SYNC_PRINT(("Corrupted face number %d\n", i));
+                    return 1;
+                }
+
+                if (!face.isInCube(
+                        Vector3d32(                        0,                         0,                          0),
+                        Vector3d32(objNumber[OBJ_VERTEX] - 1, objNumber[OBJ_VERTEX] - 1, objNumber[OBJ_VERTEX] - 1)))
+                {
+                    SYNC_PRINT(("Vertex index is wrong on face %i\n", i));
+                    return 1;
+                }
+                LOCAL_PRINT(("%d %d %d\n", face.x(), face.y(), face.z()));
+
+                mesh.addFace(face);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < objNumber[OBJ_VERTEX]; i++)
+            {
+                if (input.eof()) {
+                    SYNC_PRINT(("Unexpected EOF on vertex number %d\n", i));
+                    return 1;
+                }
+                float f;
+                Vector3dd vertex;
+                input.read((char *)&f, sizeof(f)); vertex.x() = f;
+                input.read((char *)&f, sizeof(f)); vertex.y() = f;
+                input.read((char *)&f, sizeof(f)); vertex.z() = f;
+
+                if (vertexColor) {
+                    input.read((char *)&mesh.currentColor.r(), sizeof(uint8_t));
+                    input.read((char *)&mesh.currentColor.g(), sizeof(uint8_t));
+                    input.read((char *)&mesh.currentColor.b(), sizeof(uint8_t));
+                    LOCAL_PRINT(("Color %d %d %d\n", mesh.currentColor.r(), mesh.currentColor.g(), mesh.currentColor.b()));
+                }
+                if (input.bad()) {
+                    SYNC_PRINT(("Corrupted vertex number %d\n", i));
+                    return 1;
+                }
+                mesh.addVertex(vertex);
+            }
         }
     }
 
@@ -378,8 +435,7 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh)
 
     out << "ply" << std::endl;
     out << "format ascii 1.0" << std::endl;
-    out << "comment made by ViMouse software" << std::endl;
-    out << "comment This file is a saved stereo-reconstruction" << std::endl;
+    out << "comment made by CVS software" << std::endl;
     out << "element vertex " << vertexes.size() << std::endl;
     out << "property float x" << std::endl;
     out << "property float y" << std::endl;
@@ -387,6 +443,10 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh)
     out << "property uchar red" << std::endl;
     out << "property uchar green" << std::endl;
     out << "property uchar blue" << std::endl;
+
+    if (mesh.hasAttributes) {
+        out << "property int cluster" << std::endl;
+    }
     out << "element face " << faces.size() << std::endl;
     out << "property list uchar int vertex_index" << std::endl;
     if (mesh.hasColor) {
@@ -412,12 +472,17 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh)
         if (mesh.hasColor) {
             out << (unsigned)(vertexesColor[i].r()) << " "
                 << (unsigned)(vertexesColor[i].g()) << " "
-                << (unsigned)(vertexesColor[i].b()) << std::endl;
+                << (unsigned)(vertexesColor[i].b()) << " ";
         } else {
             out << (unsigned)(128) << " "
                 << (unsigned)(128) << " "
-                << (unsigned)(128) << std::endl;
+                << (unsigned)(128) << " ";
         }
+
+        if (mesh.hasAttributes) {
+            out << mesh.attributes[i] << " ";
+        }
+        out << std::endl;
     }
 
     for (unsigned i = 0; i < faces.size(); i++)
@@ -436,7 +501,6 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh)
 
     for (unsigned i = 0; i < edges.size(); i++)
     {
-
         out << edges[i].x() << " "
             << edges[i].y() << " ";
         if (mesh.hasColor) {
@@ -453,8 +517,7 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh)
 
 
 PLYLoader::~PLYLoader()
-{
-}
+{}
 
 // PROP_TYPE_FLOAT,
 // PROP_TYPE_UCHAR,
@@ -513,6 +576,8 @@ istream &operator >>(istream &in, PLYLoader::Prop &toLoad)
     if (name == "red")   toLoad.name = PLYLoader::PROP_NAME_RED;
     if (name == "green") toLoad.name = PLYLoader::PROP_NAME_GREEN;
     if (name == "blue")  toLoad.name = PLYLoader::PROP_NAME_BLUE;
+
+    if (name == "cluster") toLoad.name = PLYLoader::PROP_NAME_CLUSTER;
 
     if (name == "vertex1") toLoad.name = PLYLoader::PROP_NAME_VERTEX1;
     if (name == "vertex2") toLoad.name = PLYLoader::PROP_NAME_VERTEX2;

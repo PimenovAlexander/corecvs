@@ -40,7 +40,7 @@ void Affine3dControlWidget::getParameters(Affine3DQ& params) const
         angles.setPitch(ui->widgetPitch->value());
         angles.setRoll (ui->widgetRoll ->value());
 
-        qDebug("Affine3dControlWidget::getParameters(world): called" );
+//        qDebug("Affine3dControlWidget::getParameters(world): called" );
         angles.prettyPrint();
         params.rotor = angles.toQuaternion();
     } else {
@@ -49,7 +49,7 @@ void Affine3dControlWidget::getParameters(Affine3DQ& params) const
         angles.setPitch(ui->widgetPitch->value());
         angles.setRoll (ui->widgetRoll ->value());
 
-        qDebug("Affine3dControlWidget::getParameters(camera): called" );
+//        qDebug("Affine3dControlWidget::getParameters(camera): called" );
         angles.prettyPrint();
         params.rotor = angles.toQuaternion();
     }

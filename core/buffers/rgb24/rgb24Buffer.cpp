@@ -21,8 +21,7 @@
 
 namespace corecvs {
 
-
-void RGB24Buffer::drawG12Buffer(G12Buffer *src, int32_t y, int32_t x)
+void RGB24Buffer::drawG12Buffer(const G12Buffer *src, int32_t y, int32_t x)
 {
     CORE_ASSERT_TRUE((this->h == src->h && this->w == src->w), "Wrong sizes");
     int i,j;
@@ -36,7 +35,7 @@ void RGB24Buffer::drawG12Buffer(G12Buffer *src, int32_t y, int32_t x)
     }
 }
 
-void RGB24Buffer::drawG8Buffer(G8Buffer *src, int32_t y, int32_t x)
+void RGB24Buffer::drawG8Buffer(const G8Buffer *src, int32_t y, int32_t x)
 {
     CORE_ASSERT_TRUE((this->h == src->h && this->w == src->w), "Wrong sizes");
     int i,j;
@@ -50,9 +49,7 @@ void RGB24Buffer::drawG8Buffer(G8Buffer *src, int32_t y, int32_t x)
     }
 }
 
-
-
-void RGB24Buffer::drawPixel ( int x, int y, RGBColor color)
+void RGB24Buffer::drawPixel(int x, int y, RGBColor color)
 {
     if (this->isValidCoord(y, x))
     {
@@ -60,7 +57,12 @@ void RGB24Buffer::drawPixel ( int x, int y, RGBColor color)
     }
 }
 
-void RGB24Buffer::drawLine(int x1, int y1, int x2, int y2, RGBColor color )
+void RGB24Buffer::drawPixel(double x, double y, RGBColor color)
+{
+    this->drawPixel(fround(x), fround(y), color);
+}
+
+void RGB24Buffer::drawLine(int x1, int y1, int x2, int y2, RGBColor color)
 {
     Rectangle<int> rect;
     rect.corner = Vector2d<int>(0,0);
@@ -71,12 +73,22 @@ void RGB24Buffer::drawLine(int x1, int y1, int x2, int y2, RGBColor color )
     drawLineSimple(lineStart.x(), lineStart.y(),lineEnd.x(), lineEnd.y(), color);
 }
 
-void RGB24Buffer::drawLine(double x1, double y1, double x2, double y2, RGBColor color )
+void RGB24Buffer::drawLine(double x1, double y1, double x2, double y2, RGBColor color)
 {
     drawLine(fround(x1), fround(y1), fround(x2), fround(y2), color);
 }
 
-void RGB24Buffer::drawLine(const Vector2dd &v1, const Vector2dd &v2, RGBColor color )
+void RGB24Buffer::drawLine(float x1, float y1, float x2, float y2, RGBColor color)
+{
+    drawLine(fround(x1), fround(y1), fround(x2), fround(y2), color);
+}
+
+void RGB24Buffer::drawLine(const Vector2dd &v1, const Vector2dd &v2, RGBColor color)
+{
+    drawLine(v1.x(), v1.y(), v2.x(), v2.y(), color);
+}
+
+void RGB24Buffer::drawLine(const Vector2df &v1, const Vector2df &v2, RGBColor color)
 {
     drawLine(v1.x(), v1.y(), v2.x(), v2.y(), color);
 }
@@ -97,7 +109,7 @@ void RGB24Buffer::drawHLine(int x1, int y1, int x2, RGBColor color )
     }
 }
 
-void RGB24Buffer::drawVLine(int x1, int y1, int y2, RGBColor color )
+void RGB24Buffer::drawVLine(int x1, int y1, int y2, RGBColor color)
 {
     if (y1 > y2)  {int tmp = y1; y1 = y2; y2 = tmp;}
     if (y1 <  0) y1 = 0;
@@ -111,7 +123,6 @@ void RGB24Buffer::drawVLine(int x1, int y1, int y2, RGBColor color )
         this->element(i, x1) = color;
     }
 }
-
 
 void RGB24Buffer::drawSprite(int x, int y, RGBColor color, int d[][2], int pointNum)
 {
@@ -166,6 +177,14 @@ void RGB24Buffer::drawCrosshare2 (int x, int y, RGBColor color)
     this->drawSprite(x, y, color, d, 16);
 }
 
+
+void RGB24Buffer::drawCrosshare2 (const Vector2dd &point, RGBColor color)
+{
+    int d[16][2] = {{1,1},{2,2},{-1,-1},{-2,-2},{-1,1},{-2,2},{1,-1},{2,-2},
+            {1,3},{3,1},{-1,-3},{-3,-1},{1,-3},{3,-1},{-1,3},{-3,1}};
+    this->drawSprite(fround(point.x()), fround(point.y()), color, d, 16);
+}
+
 /**  Draws a marker at the point having the form of
  *  <pre>
  *   \#\#\#
@@ -200,7 +219,7 @@ void RGB24Buffer::drawFlowBuffer(FlowBuffer *src, int32_t y, int32_t x)
             FlowElement vec = src->element(i,j);
 
 #ifdef ASSERTS
-            Vector2d32 res(vec);
+            Vector2d32 res(vec.x(), vec.y());
             res += Vector2d32(j, i);
             if (!this->isValidCoord(res))
             {
@@ -317,14 +336,14 @@ void RGB24Buffer::drawRectangle(int x, int y, int w, int h, RGBColor color, int 
     {
         for (int i = 0; i <= h; i++)
         {
-            this->element(y + i, x    ) = color;
-            this->element(y + i, x + w) = color;
+            this->setElement(y + i, x    , color);
+            this->setElement(y + i, x + w, color);
         }
 
         for (int j = 1; j <= w; j++)
         {
-            this->element(y    , x + j) = color;
-            this->element(y + h, x + j) = color;
+            this->setElement(y    , x + j, color);
+            this->setElement(y + h, x + j, color);
         }
     }
 
@@ -683,13 +702,14 @@ void RGB24Buffer::drawIsolines(
    delete_safe(values);
 }
 
-void RGB24Buffer::drawDoubleBuffer(const AbstractBuffer<double> &in, int style)
+template<typename ContinuousType>
+void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<ContinuousType> &in, int style)
 {
     int mh = CORE_MIN(h, in.h);
     int mw = CORE_MIN(w, in.w);
 
-    double min = std::numeric_limits<double>::max();
-    double max = std::numeric_limits<double>::lowest();
+    ContinuousType min = std::numeric_limits<ContinuousType>::max();
+    ContinuousType max = std::numeric_limits<ContinuousType>::lowest();
 
     if (style != STYLE_ZBUFFER) {
         for (int i = 0; i < mh; i++)
@@ -706,14 +726,14 @@ void RGB24Buffer::drawDoubleBuffer(const AbstractBuffer<double> &in, int style)
             for (int j = 0; j < mw; j++)
             {
                 min = CORE_MIN(min, in.element(i,j));
-                if (in.element(i,j) != std::numeric_limits<double>::max()) {
+                if (in.element(i,j) != std::numeric_limits<ContinuousType>::max()) {
                     max = CORE_MAX(max, in.element(i,j));
                 }
             }
         }
     }
 
-    SYNC_PRINT(("RGB24Buffer::drawDoubleBuffer(): min %lf max %lf\n", min, max));
+//    SYNC_PRINT(("RGB24Buffer::drawDoubleBuffer(): min %lf max %lf\n", min, max));
 
     if (style == STYLE_RAINBOW)
     {
@@ -743,12 +763,46 @@ void RGB24Buffer::drawDoubleBuffer(const AbstractBuffer<double> &in, int style)
         {
             for (int j = 0; j < mw; j++)
             {
-                if (in.element(i,j) != std::numeric_limits<double>::max()) {
+                if (in.element(i,j) != std::numeric_limits<ContinuousType>::max()) {
                     element(i, j) = RGBColor::rainbow(lerp(0.0, 1.0, in.element(i,j), min, max));
                 } else {
                     element(i, j) = RGBColor::Black();
                 }
             }
+        }
+    }
+
+}
+
+template void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<double> &in, int style);
+template void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<float> &in, int style);
+
+
+void RGB24Buffer::drawDoubleVecBuffer(const AbstractBuffer<Vector2dd> &in)
+{
+    int mh = std::min(h, in.h);
+    int mw = std::min(w, in.w);
+
+    Vector2dd min = Vector2dd(std::numeric_limits<double>::max   ());
+    Vector2dd max = Vector2dd(std::numeric_limits<double>::lowest());
+
+    for (int i = 0; i < mh; i++)
+    {
+        for (int j = 0; j < mw; j++)
+        {
+            min = min.cwiseMin(in.element(i,j));
+            max = min.cwiseMax(in.element(i,j));
+        }
+    }
+
+    cout << "RGB24Buffer::drawDoubleVecBuffer(): " << min << " " << max << endl;
+
+    for (int i = 0; i < mh; i++)
+    {
+        for (int j = 0; j < mw; j++)
+        {
+            Vector3dd c = Vector3dd((in.element(i,j) - min) / (max - min)  * 255.0, 0.0);
+            element(i, j) = RGBColor::FromDouble(c);
         }
     }
 
@@ -859,7 +913,7 @@ void RGB24Buffer::fillWithYUVFormat (uint8_t *yuyv, bool fillAsUYVY)
         }
 #endif
 
-        for (; j + 2 <= w; j+=2)
+        for (; j + 2 <= w; j += 2)
         {
             int y1 = yuyv[iy1];
             int u  = yuyv[iu];
@@ -875,20 +929,12 @@ void RGB24Buffer::fillWithYUVFormat (uint8_t *yuyv, bool fillAsUYVY)
             int g1 = ((298 * cy1 - 100 * cu - 208 * cv + 128) >> 8);
             int b1 = ((298 * cy1 + 516 * cu            + 128) >> 8);
 
-            if (r1 > 255) r1 = 255;  if (r1 < 0) r1 = 0;
-            if (g1 > 255) g1 = 255;  if (g1 < 0) g1 = 0;
-            if (b1 > 255) b1 = 255;  if (b1 < 0) b1 = 0;
-
             int r2 = ((298 * cy2            + 409 * cv + 128) >> 8);
             int g2 = ((298 * cy2 - 100 * cu - 208 * cv + 128) >> 8);
             int b2 = ((298 * cy2 + 516 * cu            + 128) >> 8);
 
-            if (r2 > 255) r2 = 255;  if (r2 < 0) r2 = 0;
-            if (g2 > 255) g2 = 255;  if (g2 < 0) g2 = 0;
-            if (b2 > 255) b2 = 255;  if (b2 < 0) b2 = 0;
-
-            element(i,j) = RGBColor(r1,g1,b1);
-            element(i,j + 1) = RGBColor(r2,g2,b2);
+            element(i,j)     = RGBColor(clamp(r1, 0, 255), clamp(g1, 0, 255), clamp(b1, 0, 255));
+            element(i,j + 1) = RGBColor(clamp(r2, 0, 255), clamp(g2, 0, 255), clamp(b2, 0, 255));
             yuyv += 4;
         }
     }
@@ -1069,6 +1115,4 @@ RGB24Buffer *RGB24Buffer::diff(RGB24Buffer *buffer1, RGB24Buffer *buffer2, int *
     return toReturn;
 }
 
-
 } //namespace corecvs
-

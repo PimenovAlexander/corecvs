@@ -22,6 +22,8 @@
 #include "core/segmentation/segmentator.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
 
+#include "core/buffers/convolver/convolver.h"
+
 
 #include "core/patterndetection/chessBoardCornerDetector.h"
 
@@ -72,17 +74,17 @@ TEST(Cornerdetector, DISABLED_testChessCornerDetector)
         return;
     }
 
-    DpImage grayscale(input->getSize());
-    grayscale.binaryOperationInPlace(*input, [](const double & /*a*/, const corecvs::RGBColor &b) {
+    FpImage grayscale(input->getSize());
+    grayscale.binaryOperationInPlace(*input, [](const float & /*a*/, const corecvs::RGBColor &b) {
         return b.yd() / 255.0;
     });
 
-    vector<OrientedCorner> corners;
+    vector<OrientedCorner<float>> corners;
 
     ChessBoardCornerDetectorParams params;
 
     params.setProduceDebug(true);
-    ChessBoardCornerDetector detector(params);
+    ChessBoardCornerDetector<float> detector(params);
 
     detector.detectCorners(grayscale, corners);
 

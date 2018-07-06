@@ -17,6 +17,7 @@ using corecvs::WStringField;
 using corecvs::PointerField;
 using corecvs::EnumField;
 using corecvs::DoubleVectorField;
+using corecvs::IntVectorField;
 
 class JSONSetter
 {
@@ -24,15 +25,15 @@ public:
     bool isSaver () { return true ;}
     bool isLoader() { return false;}
 
-
 public:
-
-
 
     /**
      *  Create a setter object that will store data to a file with a specified name.
      **/
     JSONSetter(QString const & filename);
+
+    explicit JSONSetter(std::string const & filename) : JSONSetter(QString(filename.c_str())) {}
+    explicit JSONSetter(const char *filename) : JSONSetter(QString(filename)) {}
 
     /**
      *  Create a setter object that will store data to a given XML
@@ -230,5 +231,8 @@ void JSONSetter::visit<int, EnumField>(int &field, const EnumField *fieldDescrip
 /* Arrays */
 template <>
 void JSONSetter::visit<double, DoubleVectorField>(std::vector<double> &field, const DoubleVectorField *fieldDescriptor);
+
+template <>
+void JSONSetter::visit<int, IntVectorField>(std::vector<int> &field, const IntVectorField *fieldDescriptor);
 
 #endif // JSONSETTER_H

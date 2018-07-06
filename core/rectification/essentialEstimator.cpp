@@ -548,10 +548,7 @@ EssentialMatrix EssentialEstimator::getEssentialGradToRm(const vector<Correspond
     Vector3dd  translation = Vector3dd(-1.0, 0.0, 0.0);
     CostFunctionBase::packState(&input[0], rotation, translation);
 
-    vector<double> output(samples.size());
-    /* This is an overkill*/
-    for (unsigned i = 0; i < output.size(); i++)
-        output[i] = 0.0;
+    vector<double> output(samples.size(), 0.0);
 
     vector<double> optInput = GDfit.fit(input, output);
     return CostFunctionBase::getEssential(&optInput[0]);
@@ -610,118 +607,6 @@ EssentialMatrix EssentialEstimator::getEssentialSimpleKalman (const vector<Corre
     return CostFunctionBase::getEssential(&kalmanFilter.x[0]);
 }
 
-#if 0
-EssentialMatrix EssentialEstimator::getEssentialKalman(const vector<Correspondence *> &samples)
-{
-    /* Setting up P, Q, R */
-    CostFunction7to1 F(&samples);
-    NormalizeFunction N;
-    KalmanFilter kalmanFilter(CostFunctionBase::VECTOR_SIZE, 0.0);
-    *(kalmanFilter.P->diagonal) *= 500.0;
-
-    DyVector misfit(1);
-    misfit.dy[0] = 0.0;
-    misfit.index[0] = 0;
-    misfit.number = 1;
-
-    static int maxIterations = 2500000;
-
-    cout << "================ Starting Innovating Kalman optimisation ================ " << endl;
-    cout << "[" << flush;
-
-    Vector input(CostFunctionBase::VECTOR_SIZE);
-    Quaternion rotation    = Quaternion::RotationIdentity();
-    Vector3dd  translation = Vector3dd(-1.0, 0.0, 0.0);
-    CostFunctionBase::packState(&input[0], rotation, translation);
-
-    Vector normalised(CostFunctionBase::VECTOR_SIZE);
-
-    for (int step = 0; step < maxIterations; step++)
-    {
-        if ((step % ((maxIterations / 100) + 1) == 0))
-        {
-            cout << "#" << flush;
-        }
-
-        for (int i = 0; i < CostFunctionBase::VECTOR_SIZE; i++)
-            kalmanFilter.currentState->a(0, i) = input[i];
-
-        Matrix R(1,1,2.0);
-        misfit.dy[0] = F.getCost(CostFunctionBase::getEssential(&input[0]));
-
-        Matrix H(1, CostFunctionBase::VECTOR_SIZE);
-        H = F.getJacobian(&input[0]);
-        H.neg();
-
-        kalmanFilter.step(&R, &misfit,  &H);
-
-        for (int i = 0; i < CostFunctionBase::VECTOR_SIZE; i++)
-            input[i] = kalmanFilter.currentState->a(0, i);
-
-        N(input, normalised);
-        input = normalised;
-    }
-    cout << "]" << endl;
-
-    return CostFunctionBase::getEssential(&input[0]);
-}
-
-
-EssentialMatrix EssentialEstimator::getEssentialMultiKalman(const vector<Correspondence *> &samples)
-{
-    /* Setting up P, Q, R */
-    CostFunction7toN F(&samples);
-    NormalizeFunction N;
-    KalmanFilter kalmanFilter(CostFunctionBase::VECTOR_SIZE, 0.0);
-    *(kalmanFilter.P->diagonal) *= 1000.0;
-
-    DyVector misfit((int)samples.size());
-    misfit.number = (int)samples.size();
-    for (unsigned i = 0; i < samples.size(); i++)
-        misfit.index[i] = i;
-
-    static int maxIterations = 250000;
-
-    cout << "================ Starting Innovating Kalman Multi Optimisation ================ " << endl;
-    cout << "[" << flush;
-
-    Vector input(CostFunctionBase::VECTOR_SIZE);
-    Quaternion rotation    = Quaternion::RotationIdentity();
-    Vector3dd  translation = Vector3dd(-1.0, 0.0, 0.0);
-    CostFunctionBase::packState(&input[0], rotation, translation);
-
-    Vector normalised(CostFunctionBase::VECTOR_SIZE);
-
-    for (int step = 0; step < maxIterations; step++)
-    {
-        if ((step % ((maxIterations / 100) + 1) == 0))
-        {
-            cout << "#" << flush;
-        }
-
-        for (int i = 0; i < CostFunctionBase::VECTOR_SIZE; i++)
-            kalmanFilter.currentState->a(0, i) = input[i];
-
-        Matrix R(misfit.number, misfit.number,10.0);
-        F(&input[0], misfit.dy);
-
-        Matrix H = F.getJacobian(&input[0]);
-        H.neg();
-
-        kalmanFilter.step(&R, &misfit,  &H);
-
-        for (int i = 0; i < CostFunctionBase::VECTOR_SIZE; i++)
-            input[i] = kalmanFilter.currentState->a(0, i);
-
-        N(input, normalised);
-        input = normalised;
-    }
-    cout << "]" << endl;
-
-    return CostFunctionBase::getEssential(&input[0]);
-}
-#endif
-
 EssentialMatrix EssentialEstimator::getEssential             (
         const vector<Correspondence *> &samples,
         OptimisationMethod method)
@@ -736,16 +621,42 @@ EssentialMatrix EssentialEstimator::getEssential             (
             return getEssentialLM(samples);
         case METHOD_CLASSIC_KALMAN:
             return getEssentialSimpleKalman(samples);
-        case METHOD_ITERATIVE_KALMAN:
-//            return getEssentialKalman(samples);
         case METHOD_GRAD_DESC_RM:
-//            return getEssentialGradToRm(samples);
+           return getEssentialGradToRm(samples);
 
         default:
             return getEssentialLM(samples);
     }
 
     return EssentialMatrix();
+}
+
+std::vector<EssentialMatrix> EssentialEstimator::getEssentials(const vector<Correspondence *> &samples, EssentialEstimator::OptimisationMethod method)
+{
+    std::vector<EssentialMatrix> result;
+
+    switch (method)
+    {
+        case METHOD_SVD_LSE:
+            result.push_back(getEssentialLSE(samples)); break;
+        case METHOD_GRAD_DESC:
+            result.push_back(getEssentialGrad(samples)); break;
+        case METHOD_GRAD_DESC_RM:
+            result.push_back(getEssentialGradToRm(samples)); break;
+
+        case METHOD_5_POINT:
+            result = getEssential5point(samples); break;
+        case METHOD_7_POINT:
+            result = getEssential5point(samples); break;
+        case METHOD_MARQ_LEV:
+            result.push_back(getEssentialLM(samples)); break;
+        case METHOD_CLASSIC_KALMAN:
+            result.push_back(getEssentialSimpleKalman(samples)); break;
+        default:
+            result.push_back(getEssentialLM(samples)); break;
+    }
+
+    return result;
 }
 
 

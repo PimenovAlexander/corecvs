@@ -9,8 +9,7 @@
 class ReflectionWidget : public ParametersControlWidgetBase
 {
      Q_OBJECT
-protected:
-    const corecvs::Reflection *reflection;
+protected:    
 
     std::vector<int>       positionToField;
     std::vector<int>       fieldToPosition;
@@ -18,6 +17,8 @@ protected:
     std::vector<QWidget *> positionToWidget;
 
 public:
+    const corecvs::Reflection *reflection;
+
     enum FieldsType {
         TYPE_ALL,
         TYPE_PARAMS,

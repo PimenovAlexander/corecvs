@@ -71,18 +71,23 @@ typedef int                bool_t;                          // fast Boolean type
 # endif
 #endif
 
-#ifdef is__cplusplus
-# ifdef ASSERTS
 
-#   include <stdexcept>
-    /** This structure need to issue the exception, which nobody catches
-     *  that allow gtest to continue tests execution,
-     *  but for the application it dues to stop unless we catch this exception.
-     */
-    struct AssertException : public std::runtime_error
-    {
-        AssertException(const char* codeExpr) : std::runtime_error(codeExpr) {}
-    };
+/** Here is the beginning of uncontrollabele trash introduced by exeptions. We need this for unused and ill-designed
+StatusTracker. But this would be  now included everywere. Rework this ASAP. **/
+
+#ifdef is__cplusplus
+
+#include <stdexcept>
+/** This structure need to issue the exception, which nobody catches
+ *  that allow gtest to continue tests execution,
+ *  but for the application it dues to stop unless we catch this exception.
+ */
+struct AssertException : public std::runtime_error
+{
+    AssertException(const char* codeExpr) : std::runtime_error(codeExpr) {}
+};
+
+# ifdef ASSERTS
 
 #  define RAISE_ASSERT(text)    throw AssertException(text);
 # else
@@ -395,7 +400,7 @@ inline void * __CRTDECL operator new(size_t _Size) {
 
 /** Invite support of the file system */
 
-#ifdef __GNUC__
+#if defined(__GNUC__)
 # if __cplusplus >= 201703L
 #  include <filesystem>
    namespace fs = std::filesystem;

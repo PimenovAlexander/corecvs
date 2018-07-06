@@ -6,6 +6,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from presentation.xml
  */
 
 #include "core/reflection/reflection.h"
@@ -296,6 +297,21 @@ template<class VisitorType>
         mDumpSceneJSON = dumpSceneJSON;
     }
 
+    bool operator ==(const PresentationParameters &other) const 
+    {
+        if ( !(this->mOutput == other.mOutput)) return false;
+        if ( !(this->mStereo == other.mStereo)) return false;
+        if ( !(this->mFlow == other.mFlow)) return false;
+        if ( !(this->mShowClusters == other.mShowClusters)) return false;
+        if ( !(this->mShowHistogram == other.mShowHistogram)) return false;
+        if ( !(this->mAutoUpdateHistogram == other.mAutoUpdateHistogram)) return false;
+        if ( !(this->mShowAreaOfInterest == other.mShowAreaOfInterest)) return false;
+        if ( !(this->mProduce3D == other.mProduce3D)) return false;
+        if ( !(this->mProduce6D == other.mProduce6D)) return false;
+        if ( !(this->mDump3D == other.mDump3D)) return false;
+        if ( !(this->mDumpSceneJSON == other.mDumpSceneJSON)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, PresentationParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

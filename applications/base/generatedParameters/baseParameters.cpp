@@ -118,7 +118,8 @@ int BaseParameters::staticInit()
           "Prescale coefficient for input image",
           true,
          0.5,
-         16
+         16,
+         0.1
         );
     field5->widgetHint=BaseField::SPIN_BOX;
     field5->precision=2;
@@ -134,7 +135,8 @@ int BaseParameters::staticInit()
           "Input crop height",
           true,
          0,
-         2024
+         2024,
+         1
         );
     fields().push_back(field6);
     /*  */ 
@@ -148,7 +150,8 @@ int BaseParameters::staticInit()
           "Input crop width",
           true,
          0,
-         4096
+         4096,
+         1
         );
     fields().push_back(field7);
     /*  */ 
@@ -186,7 +189,8 @@ int BaseParameters::staticInit()
           "Scaled image horizonal shift before crop",
           true,
          0,
-         1024
+         1024,
+         1
         );
     fields().push_back(field10);
     /*  */ 
@@ -200,7 +204,8 @@ int BaseParameters::staticInit()
           "Scaled image vertical shift before crop",
           true,
          0,
-         2048
+         2048,
+         1
         );
     fields().push_back(field11);
     /*  */ 

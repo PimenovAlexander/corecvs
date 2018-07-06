@@ -260,7 +260,7 @@ template<class VisitorType>
 class EssentialMatrix : public Matrix33
 {
 public:
-    EssentialMatrix() : Matrix33(Matrix33::CrossProductLeft(Vector3dd(1.0,0.0,0.0))) {}
+    EssentialMatrix() : Matrix33(Matrix33::CrossProductLeft(Vector3dd::OrtX())) {}
     EssentialMatrix(const Matrix33 &other) : Matrix33(other) {}
 
     /**
@@ -535,15 +535,19 @@ public:
      *   \param input
      *   \param decomposition
      **/
-    EssentialDecomposition decompose(std::vector<Correspondence *> *input, EssentialDecomposition decomposition[4])
+    EssentialDecomposition decompose(std::vector<Correspondence *> *input, EssentialDecomposition decomposition[4], bool trace = false)
     {
         double cost[4];
-        cout << "=============================================================" << endl;
+        if (trace) {
+            cout << "=================================" << endl;
+        }
         this->decompose(decomposition);
         int selected = 0;
         for (selected = 0; selected < 4; selected++)
         {
-             cout << "Decomposition " << selected << endl << decomposition[selected] << endl;
+            if (trace) {
+                cout << "Decomposition " << selected << endl << decomposition[selected] << endl;
+            }
 
             double d1;
             double d2;
@@ -556,8 +560,9 @@ public:
                 if (d1 > 0.0 && d2 > 0.0)
                     cost[selected]++;
             }
-
-            cout << "decomposition cost:" << cost[selected] << endl;
+            if (trace) {
+                cout << "decomposition cost:" << cost[selected] << endl;
+            }
         }
 
         double maxCost = 0.0;
@@ -570,8 +575,11 @@ public:
                 finalSelection = selected;
             }
         }
-        cout << endl;
-        cout << "Chosen decomposition" << endl << decomposition[finalSelection] << endl;
+
+        if (trace) {
+            cout << endl;
+            cout << "Chosen decomposition" << endl << decomposition[finalSelection] << endl;
+        }
         return decomposition[finalSelection];
     }
 

@@ -25,7 +25,7 @@ public:
     Vector2d<ElementType> corner;
     Vector2d<ElementType> size;
 
-    Rectangle(Vector2d<ElementType> _corner, Vector2d<ElementType> _size)
+    Rectangle(const Vector2d<ElementType> &_corner, const Vector2d<ElementType> &_size)
         : corner(_corner)
         , size(_size)
     {}
@@ -65,6 +65,22 @@ public:
         };
     }
 
+    bool contains(const Vector2d<ElementType> &point) const
+    {
+        return point.isInHypercube(corner, corner + size);
+    }
+
+    template<typename OtherRectType>
+    bool contains(const OtherRectType &rect) const
+    {
+        if (rect.left() < left()) return false;
+        if (rect.top () < top ()) return false;
+
+        if (rect.right() > right()) return false;
+        if (rect.bottom() > bottom()) return false;
+        return true;
+    }
+
     void extend (const ElementType& value)
     {
         if (isEmpty())
@@ -74,6 +90,19 @@ public:
         corner.y() -= value;
         size.x() += 2 * value;
         size.y() += 2 * value;
+    }
+
+    Rectangle extendedBy(const ElementType& value)
+    {
+        Rectangle toReturn = *this;
+        toReturn.extend(value);
+        return toReturn;
+    }
+
+    void scale(const ElementType& value)
+    {
+        corner *= value;
+        size   *= value;
     }
 
     bool isEmpty() const
@@ -136,14 +165,53 @@ public:
         return Rectangle(center - Vector2d<ElementType>(radius, radius), Vector2d<ElementType>(2 * radius, 2 * radius));
     }
 
+    static Rectangle SquareFromCenter(const Vector2d<ElementType> &center, const Vector2d<ElementType> &radius)
+    {
+        return Rectangle(center - radius, 2 * radius);
+    }
+
     static Rectangle FromCorners(const Vector2d<ElementType> &corner1, const Vector2d<ElementType> &corner2)
     {
         return Rectangle(corner1, corner2 - corner1);
     }
 
+    static Rectangle FromCorners(const ElementType &x1, const ElementType &y1,
+                                 const ElementType &x2, const ElementType &y2)
+    {
+        return Rectangle(x1, y1, x2 - x1, y2 - y1);
+    }
+
+    static Rectangle FromSize(const Vector2d<ElementType> &_size)
+    {
+        return Rectangle(Vector2d<ElementType>::Zero(), _size);
+    }
+
+    static Rectangle FromSize(const ElementType &width, const ElementType &height)
+    {
+        return Rectangle(0, 0, width, height);
+    }
+
     static Rectangle Empty()
     {
         return Rectangle(0,0,0,0);
+    }
+
+
+    Rectangle intersect (Rectangle &r1)
+    {
+        ElementType newLeft  = std::max(left() , r1.left());
+        ElementType newRight = std::min(right(), r1.right());
+
+        ElementType newTop    = std::max(top()   , r1.top());
+        ElementType newBottom = std::min(bottom(), r1.bottom());
+
+        if (newLeft > newRight)
+            return Empty();
+
+        if (newTop > newBottom)
+            return Empty();
+
+        return FromCorners(newLeft, newTop, newRight, newBottom);
     }
 
 
@@ -188,7 +256,8 @@ private:
 };
 
 typedef Rectangle<int32_t> Rectangle32;
-typedef Rectangle<double> Rectangled;
+typedef Rectangle<double>  Rectangled;
+typedef Rectangle<float>   Rectanglef;
 
 } //namespace corecvs
 

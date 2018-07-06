@@ -11,6 +11,8 @@
 #include "core/math/matrix/matrix44.h"
 
 #include "core/cameracalibration/cameraModel.h"
+#include "core/cameracalibration/projection/pinholeCameraIntrinsics.h"
+
 
 
 namespace corecvs {

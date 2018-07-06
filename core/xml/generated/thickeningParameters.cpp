@@ -52,7 +52,8 @@ int ThickeningParameters::staticInit()
           "Power",
           true,
          0,
-         9999
+         9999,
+         1
         );
     fields().push_back(field0);
     /*  */ 

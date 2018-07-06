@@ -13,6 +13,7 @@
 
 #include "core/buffers/flow/flowBuffer.h"
 #include "core/math/sse/sseWrapper.h"
+#include "core/math/neon/neonWrapper.h"
 #include "core/tbbwrapper/tbbWrapper.h"
 #include "core/buffers/flow/floatFlowBuffer.h"
 
@@ -40,6 +41,7 @@ std::vector<FloatFlowVector> *FlowBuffer::toVectorForm()
     }
     return result;
 }
+
 
 FlowBuffer *FlowBuffer::invert()
 {
@@ -71,7 +73,7 @@ Vector2dd FlowBuffer::getMeanDifference()
         {
             if (!this->isElementKnown(i,j))
                 continue;
-            mean += Vector2dd(this->element(i,j));
+            mean += Vector2dd(this->element(i,j).x(), this->element(i,j).y());
             num++;
         }
     return (num != 0) ? mean / double(num) : mean;

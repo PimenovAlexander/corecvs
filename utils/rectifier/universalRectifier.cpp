@@ -75,7 +75,6 @@ void UniversalRectifier::iterativeMethod( void )
 		case 1: method = EssentialEstimator::METHOD_GRAD_DESC;        break;
 		case 2: method = EssentialEstimator::METHOD_MARQ_LEV;         break;
 		case 3: method = EssentialEstimator::METHOD_CLASSIC_KALMAN;   break;
-		case 4: method = EssentialEstimator::METHOD_ITERATIVE_KALMAN; break;
 		default: break;
 	}
 

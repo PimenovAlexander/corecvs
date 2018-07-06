@@ -375,8 +375,8 @@ Vector3dd StereoAligner::getBestZ(const Matrix33 &F, const Vector2dd &rect, unsi
         Vector3dd w1 = z ^ E1;
         Vector3dd w2 = F * z;
 
-        w1 = w1.normalizeProjective();
-        w2 = w2.normalizeProjective();
+        w1 = w1.normalisedProjective();
+        w2 = w2.normalisedProjective();
 
         double distLeft  = getDistortion(w1, rect);
         double distRight = getDistortion(w2, rect);

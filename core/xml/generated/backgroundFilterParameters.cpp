@@ -52,7 +52,8 @@ int BackgroundFilterParameters::staticInit()
           "Threshold",
           true,
          0,
-         10000
+         10000,
+         1
         );
     fields().push_back(field0);
     /*  */ 

@@ -5,7 +5,7 @@
 
 
 using namespace corecvs;
-using namespace std;
+
 
 class MyVector : public Vector3dd
 {
@@ -41,7 +41,7 @@ public:
 
 class ConvexHull2D : public ConvexHullResult {
 public:
-    ConvexHull2D(const vector<Vector3dd> &points) {}
+    ConvexHull2D(const vector<Vector3dd> &/*points*/) {}
     virtual bool is3D() override { return false; }
     virtual void print() override {}
 };
@@ -55,7 +55,7 @@ private:
     MyVector center;
 
 public:
-    set <Face> faces;
+    std::set <Face> faces;
 public:
     ConvexHull3D(vector<Vector3dd> &points, double eps);
     virtual bool is3D() override { return true; }
@@ -68,14 +68,14 @@ public:
     To caculate convex hull use calc()
     To get convex hull object use getHull()
     example:
-        MyVector a1(0, 0, 0);
-        MyVector a2(5, 0, 0);
-        MyVector a3(0, 5, 0);
-        MyVector a4(0, 0, 5);
-        MyVector a5(5, 5, 5);
-        MyVector a6(5, 5, 0);
-        MyVector a7(5, 0, 5);
-        MyVector a8(0, 5, 5);
+        Vector3dd a1(0, 0, 0);
+        Vector3dd a2(5, 0, 0);
+        Vector3dd a3(0, 5, 0);
+        Vector3dd a4(0, 0, 5);
+        Vector3dd a5(5, 5, 5);
+        Vector3dd a6(5, 5, 0);
+        Vector3dd a7(5, 0, 5);
+        Vector3dd a8(0, 5, 5);
         vector<MyVector> temp = {a1, a2, a3, a4, a5, a6, a7, a8};
         ConvexHullCalc temp(temp, 1e-20);
         temp.calc();

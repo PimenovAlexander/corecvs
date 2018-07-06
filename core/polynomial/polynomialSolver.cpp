@@ -100,6 +100,8 @@ size_t corecvs::PolynomialSolver::solve_companion(const double* coeff, double* r
      * For further reading you may consider 
      * Fernando De Teran Backward stability of polynomial root-finding using Fiedler companion matrices [IMA Journal of Numerical Analysis (2014)]
      */
+    //SYNC_PRINT(("PolynomialSolver::solve_companion(): called\n"));
+
     corecvs::Matrix companion((int)degree, (int)degree);
     double max_coeff = coeff[degree];
 #ifndef FIEDLER

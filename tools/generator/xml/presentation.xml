@@ -1,6 +1,6 @@
 <poco version="5.0">
 
-  <enum name="Stereo Style">
+  <enum name="Stereo Style" incpath="">
     <item name="dont show stereo"   id="0" comment="Style in which color coded disparity is not shown"/>
     <item name="fast large dots"    id="1" comment="Fast mode for large color coded disparity dots"/>
     <item name="fast dots"          id="2" comment="Fast mode for small color coded disparity dots"/>
@@ -9,7 +9,7 @@
     <item name="show dots stereo"   id="5" comment="show dots stereo"/>
   </enum>
 
-  <enum name="Flow Style">
+  <enum name="Flow Style" incpath="">
     <item name="dont show flow"      id="0" comment="don't show flow"/>
     <item name="fast colored dots"   id="1" comment="fast colored dots"/>
     <item name="show lines only"     id="2" comment="show lines only"/>
@@ -18,7 +18,7 @@
     <item name="show heat coloring"  id="5" comment="show heat coloring"/>
   </enum>
 
-  <enum name="Output Style">
+  <enum name="Output Style" incpath="">
     <item name="right Frame"         id="0" comment="!right-cam.png! Frame from the right camera"/>    
     <item name="left Frame"          id="1" comment="!left-cam.png! Frame from the  left camera"/>
     <item name="sidebyside stereo"   id="2" comment="!2cam-active.png! Side-by-side images from right and left cameras"/>

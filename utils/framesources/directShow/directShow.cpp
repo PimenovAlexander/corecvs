@@ -37,8 +37,8 @@ int DirectShowCameraDescriptor::queryCameraParameters(CameraParameters &paramete
     expAuto.setMaximum(1);
     expAuto.setStep(1);
     expAuto.setDefaultValue(0);
-    expAuto.pushMenuItem(std::string("OFF"), 0);
-    expAuto.pushMenuItem(std::string("ON") , 1);
+    expAuto.pushMenuItem("OFF", 0);
+    expAuto.pushMenuItem("ON" , 1);
 
     DirectShowCapDll_getCameraProp(deviceHandle, CAPDLL_Control_Iris, &paramsFromCamera);
     setFromCameraParam(parameters.mCameraControls[CameraParameters::IRIS], paramsFromCamera);
@@ -54,8 +54,8 @@ int DirectShowCameraDescriptor::queryCameraParameters(CameraParameters &paramete
     focusAuto.setMaximum(1);
     focusAuto.setStep(1);
     focusAuto.setDefaultValue(0);
-    focusAuto.pushMenuItem(std::string("OFF"), 0);
-    focusAuto.pushMenuItem(std::string("ON") , 1);
+    focusAuto.pushMenuItem("OFF", 0);
+    focusAuto.pushMenuItem("ON" , 1);
 
     /*Amp contols*/
 

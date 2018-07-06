@@ -116,7 +116,7 @@ public:
      * It is 16 bytes now to work with SSE and possibly with OPENCL.
      *
      **/
-#if defined(WITH_SSE) /*|| defined(WITH_OPENCL)*/           // WITH_OPENCL is never defined for core projects to simplify projects deps
+#if defined(WITH_SSE) || defined(WITH_NEON) /*|| defined(WITH_OPENCL)*/           // WITH_OPENCL is never defined for core projects to simplify projects deps
     static const size_t DATA_ALIGN_GRANULARITY = 0xF;          // alignment by 16 bytes
 #else
     static const size_t DATA_ALIGN_GRANULARITY = 0xF;
@@ -367,6 +367,10 @@ public:
 template<typename ResultType>
     ResultType createView(const IndexType y, const IndexType x, const IndexType h, const IndexType w)
     {
+        if (y < 0 || x < 0 || x >= w || y >= h) {
+            SYNC_PRINT(("AbstractBuffer::createView(y=%d x=%d h=%d w=%d)", y, x, h, w));
+        }
+
         // This is the only legitimate place to use default constructor
         ResultType toReturn;
 
@@ -667,21 +671,21 @@ template<typename ResultType>
         _copy(data, other.data, copyH, copyW, this->stride, other.stride);
     }
 
-    inline void fillWith(const AbstractBuffer &other, IndexType y, IndexType x)
+    inline void fillWith(const AbstractBuffer &other, IndexType targetY, IndexType targetX)
     {
-        IndexType copyH = CORE_MIN(this->h - y, other.h);
-        IndexType copyW = CORE_MIN(this->w - x, other.w);
+        IndexType copyH = CORE_MIN(this->h - targetY, other.h);
+        IndexType copyW = CORE_MIN(this->w - targetX, other.w);
 
         /* If buffers have same horizontal geometry use fast method*/
         if (TRIVIALLY_COPY_CONSTRUCTIBLE)
         {
             for (IndexType i = 0; i < copyH; i++)
             {
-                memcpy(&this->element(i + y, x), &other.element(i, 0), sizeof(ElementType) * copyW);
+                memcpy(&this->element(i + targetY, targetX), &other.element(i, 0), sizeof(ElementType) * copyW);
             }
             return;
         }
-        _copy(&this->element(y, x), other.data , copyH, copyW, this->stride, other.stride);
+        _copy(&this->element(targetY, targetX), other.data , copyH, copyW, this->stride, other.stride);
     }
 
     /**
@@ -731,6 +735,7 @@ template<typename ResultType>
 
     void checkerBoard(IndexType square, ElementType valueMax /*= ElementType::max()*/, ElementType valueMin = ElementType(0))
     {
+        if (square <= 0) square = 1;
         for (IndexType i = 0; i < this->h; i++)
         {
             for (IndexType j = 0; j < this->w; j++)

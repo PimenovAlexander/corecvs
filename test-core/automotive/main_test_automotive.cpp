@@ -19,7 +19,7 @@
 #include "core/cammodel/cameraParameters.h"
 #include "core/math/eulerAngles.h"
 #include "core/automotive/FCostFunction.h"
-#include "core/automotive/simulation/flowSimulator.h"
+#include "core/automotive/simulation/testSceneSimulator.h"
 #include "core/math/mathUtils.h"
 
 using namespace corecvs;
@@ -40,7 +40,7 @@ void drawSituation(
 
    PinholeCameraIntrinsics camIntr(imageSize, degToRad(60.0));
 
-   std::vector<FloatFlowVector> *flowVectors = FlowSimulator::simulateFlow(camIntr, realCameraExtr, realCarMovement);
+   std::vector<FloatFlowVector> *flowVectors = TestSceneSimulator::simulateFlow(camIntr, realCameraExtr, realCarMovement);
 
    for (unsigned i = 0; i < flowVectors->size(); i++)
    {

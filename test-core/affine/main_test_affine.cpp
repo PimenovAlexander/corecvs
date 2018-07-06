@@ -84,8 +84,35 @@ TEST(Affine, DISABLED_testCoordinateMirror)
 
 
     //CORE_ASSERT_TRUE_P((xr * i1a).notTooFar( xr1 * i1b , 1e-8), (" Y rotation returned a mistake with Matrix Affine"));
+}
 
+TEST(Affine, QuaternionFromMatix)
+{
+    {
+        Matrix33 m = Matrix33::RotationZ(degToRad(45));
+        Quaternion q = Quaternion::FromMatrix(m);
+        q.printAxisAndAngle();
+    }
 
+    {
+        Matrix33 m(
+         1.07789e-19, -0.204477   ,  0.978871,
+        -2.69472e-19,  0.978871   ,  0.204477,
+         1          ,  2.85818e-19, -5.04103e-20);
+
+        Quaternion q = Quaternion::FromMatrix(m);
+        q.printAxisAndAngle();
+    }
+
+    {
+        Matrix33 m(
+                   0, -0.204477   ,  0.978871,
+                   0,  0.978871   ,  0.204477,
+                   1,            0,         0);
+
+        Quaternion q = Quaternion::FromMatrix(m);
+        q.printAxisAndAngle();
+    }
 }
 
 

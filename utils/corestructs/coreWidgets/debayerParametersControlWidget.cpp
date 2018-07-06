@@ -23,6 +23,9 @@ DebayerParametersControlWidget::DebayerParametersControlWidget(QWidget *parent, 
 
     QObject::connect(mUi->methodComboBox, SIGNAL(currentIndexChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->bayerPosSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->numBitsOutSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->gains, SIGNAL(valueChanged()), this, SIGNAL(paramsChanged()));
+    QObject::connect(mUi->gamma, SIGNAL(valueChanged()), this, SIGNAL(paramsChanged()));
 }
 
 DebayerParametersControlWidget::~DebayerParametersControlWidget()
@@ -60,6 +63,9 @@ DebayerParameters *DebayerParametersControlWidget::createParameters() const
     return new DebayerParameters(
           static_cast<DebayerMethod::DebayerMethod>(mUi->methodComboBox->currentIndex())
         , mUi->bayerPosSpinBox->value()
+        , mUi->numBitsOutSpinBox->value()
+        , mUi->gains->value()
+        , mUi->gamma->value()
     );
 }
 
@@ -69,6 +75,9 @@ void DebayerParametersControlWidget::setParameters(const DebayerParameters &inpu
     bool wasBlocked = blockSignals(true);
     mUi->methodComboBox->setCurrentIndex(input.method());
     mUi->bayerPosSpinBox->setValue(input.bayerPos());
+    mUi->numBitsOutSpinBox->setValue(input.numBitsOut());
+    mUi->gains->setValue(input.gains());
+    mUi->gamma->setValue(input.gamma());
     blockSignals(wasBlocked);
     emit paramsChanged();
 }

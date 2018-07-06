@@ -115,7 +115,8 @@ int RectifyParameters::staticInit()
           "filterMinimumLength",
           true,
          0,
-         99
+         99,
+         1
         );
     field5->widgetHint=BaseField::SPIN_BOX;
     field5->precision=2;
@@ -155,7 +156,8 @@ int RectifyParameters::staticInit()
           "priorFocal",
           true,
          0,
-         99999
+         99999,
+         1
         );
     field8->widgetHint=BaseField::SPIN_BOX;
     field8->precision=2;
@@ -171,7 +173,8 @@ int RectifyParameters::staticInit()
           "priorFocal2",
           true,
          0,
-         99999
+         99999,
+         1
         );
     field9->widgetHint=BaseField::SPIN_BOX;
     field9->precision=2;
@@ -187,7 +190,8 @@ int RectifyParameters::staticInit()
           "baselineLength",
           true,
          -1000,
-         1000
+         1000,
+         1
         );
     field10->widgetHint=BaseField::SPIN_BOX;
     field10->precision=2;
@@ -203,7 +207,8 @@ int RectifyParameters::staticInit()
           "fovAngle",
           true,
          0,
-         20
+         20,
+         1
         );
     field11->widgetHint=BaseField::SPIN_BOX;
     field11->precision=2;
@@ -248,7 +253,8 @@ int RectifyParameters::staticInit()
           "ransacIterations",
           true,
          1,
-         9999
+         9999,
+         1
         );
     fields().push_back(field14);
     /*  */ 
@@ -262,7 +268,8 @@ int RectifyParameters::staticInit()
           "ransacTestSize",
           true,
          1,
-         9999
+         9999,
+         1
         );
     fields().push_back(field15);
     /*  */ 
@@ -276,7 +283,8 @@ int RectifyParameters::staticInit()
           "ransacThreshold",
           true,
          1,
-         20
+         20,
+         1
         );
     field16->widgetHint=BaseField::SPIN_BOX;
     field16->precision=2;
@@ -292,7 +300,8 @@ int RectifyParameters::staticInit()
           "baselineX",
           true,
          -20,
-         20
+         20,
+         1
         );
     field17->widgetHint=BaseField::SPIN_BOX;
     field17->precision=2;
@@ -308,7 +317,8 @@ int RectifyParameters::staticInit()
           "baselineY",
           true,
          -20,
-         20
+         20,
+         1
         );
     field18->widgetHint=BaseField::SPIN_BOX;
     field18->precision=2;
@@ -324,7 +334,8 @@ int RectifyParameters::staticInit()
           "baselineZ",
           true,
          -20,
-         20
+         20,
+         1
         );
     field19->widgetHint=BaseField::SPIN_BOX;
     field19->precision=2;
@@ -359,7 +370,8 @@ int RectifyParameters::staticInit()
           "iterativeIterations",
           true,
          1,
-         9999
+         9999,
+         1
         );
     fields().push_back(field21);
     /*  */ 
@@ -373,7 +385,8 @@ int RectifyParameters::staticInit()
           "iterativeInitialSigma",
           true,
          0,
-         20
+         20,
+         0.1
         );
     field22->widgetHint=BaseField::SPIN_BOX;
     field22->precision=2;
@@ -389,7 +402,8 @@ int RectifyParameters::staticInit()
           "iterativeFactorSigma",
           true,
          0,
-         20
+         20,
+         0.01
         );
     field23->widgetHint=BaseField::SPIN_BOX;
     field23->precision=2;
@@ -405,7 +419,8 @@ int RectifyParameters::staticInit()
           "manualX",
           true,
          -20,
-         20
+         20,
+         1
         );
     field24->widgetHint=BaseField::SPIN_BOX;
     field24->precision=2;
@@ -421,7 +436,8 @@ int RectifyParameters::staticInit()
           "manualY",
           true,
          -20,
-         20
+         20,
+         1
         );
     field25->widgetHint=BaseField::SPIN_BOX;
     field25->precision=2;
@@ -437,7 +453,8 @@ int RectifyParameters::staticInit()
           "manualZ",
           true,
          -20,
-         20
+         20,
+         1
         );
     field26->widgetHint=BaseField::SPIN_BOX;
     field26->precision=2;
@@ -453,7 +470,8 @@ int RectifyParameters::staticInit()
           "manualPitch",
           true,
          -20,
-         20
+         20,
+         0.05
         );
     field27->widgetHint=BaseField::SPIN_BOX;
     field27->precision=2;
@@ -469,7 +487,8 @@ int RectifyParameters::staticInit()
           "manualYaw",
           true,
          -20,
-         20
+         20,
+         0.05
         );
     field28->widgetHint=BaseField::SPIN_BOX;
     field28->precision=2;
@@ -485,7 +504,8 @@ int RectifyParameters::staticInit()
           "manualRoll",
           true,
          -20,
-         20
+         20,
+         0.05
         );
     field29->widgetHint=BaseField::SPIN_BOX;
     field29->precision=2;
@@ -501,7 +521,8 @@ int RectifyParameters::staticInit()
           "zdirX",
           true,
          -20,
-         20
+         20,
+         1
         );
     field30->widgetHint=BaseField::SPIN_BOX;
     field30->precision=2;
@@ -517,7 +538,8 @@ int RectifyParameters::staticInit()
           "zdirY",
           true,
          -20,
-         20
+         20,
+         1
         );
     field31->widgetHint=BaseField::SPIN_BOX;
     field31->precision=2;
@@ -533,7 +555,8 @@ int RectifyParameters::staticInit()
           "zdirZ",
           true,
          -20,
-         20
+         20,
+         1
         );
     field32->widgetHint=BaseField::SPIN_BOX;
     field32->precision=2;
@@ -573,7 +596,8 @@ int RectifyParameters::staticInit()
           "preShift",
           true,
          -9999,
-         9999
+         9999,
+         1
         );
     fields().push_back(field35);
     /*  */ 
@@ -587,7 +611,8 @@ int RectifyParameters::staticInit()
           "guessShiftThreshold",
           true,
          0,
-         99999
+         99999,
+         1
         );
     fields().push_back(field36);
     /*  */ 

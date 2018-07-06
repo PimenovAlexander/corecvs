@@ -4,6 +4,7 @@
 #include "core/geometry/raytrace/bspTree.h"
 #include "core/geometry/mesh3DDecorated.h"
 #include "core/geometry/raytrace/raytraceRenderer.h"
+#include "core/geometry/raytrace/raytraceableNodeWrapper.h"
 
 class RaytraceableTransform : public Raytraceable
 {
@@ -229,7 +230,7 @@ public:
 class RaytraceableOptiMesh : public RaytraceableMesh {
 public:
     static const double EPSILON;
-    typedef BSPTreeNode<NumTriangle3dd, NumPlaneFrame> RaytraceableMeshTree;
+    typedef BSPTreeNodeRender<NumTriangle3dd, NumPlaneFrame> RaytraceableMeshTree;
 
     RaytraceableMeshTree *opt = NULL;
 
@@ -254,7 +255,7 @@ class RaytraceableUnion : public Raytraceable {
 public:
     vector<Raytraceable *> elements;
 
-    typedef BSPTreeNode<RaytraceableNodeWrapper, RaytraceableNodeWrapper> RaytraceableSubTree;
+    typedef BSPTreeNodeRender<RaytraceableNodeWrapper, RaytraceableNodeWrapper> RaytraceableSubTree;
     RaytraceableSubTree *opt = NULL;
     void optimize();
 

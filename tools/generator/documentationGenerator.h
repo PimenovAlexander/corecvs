@@ -11,7 +11,7 @@
 class DocumentationGenerator : public BaseGenerator
 {
 public:
-    DocumentationGenerator(const Reflection *_clazz);
+    DocumentationGenerator(const ReflectionGen *_clazz);
     void generateDocumentation();
 
 private:

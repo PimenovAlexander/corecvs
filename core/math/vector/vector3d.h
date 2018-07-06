@@ -181,7 +181,6 @@ public:
         return V ^ U;
     }
 
-
     double sineTo(const Vector3d &other) const
     {
         double thisLength  = !(*this);
@@ -213,6 +212,13 @@ public:
         return atan2(cross, dot);
     }
 
+    /**
+     *  Optional inteface part that automates projection usage as function
+     **/
+    ElementType angleToZ() const
+    {
+        return atan2(this->xy().l2Metric(), this->z());
+    }
 
     /**
      *  Do the conversion form projective coordinates to the 2D ones
@@ -229,13 +235,22 @@ public:
         return Vector2d<ElementType>(this->x() / this->z(), this->y() / this->z());
     }
 
-    inline Vector3d<ElementType> normalizeProjective()
+    inline Vector3d<ElementType> normalisedProjective() const
     {
         if (this->z() == 0.0)
         {
             return Vector3d<ElementType>(0.0);
         }
         return Vector3d<ElementType>(this->x() / this->z(), this->y() / this->z(), ElementType(1.0));
+    }
+
+    inline void normaliseProjective()
+    {
+        if (this->z() == 0.0)
+        {
+            *this = Vector3d<ElementType>(0.0);
+        }
+        *this = Vector3d<ElementType>(this->x() / this->z(), this->y() / this->z(), ElementType(1.0));
     }
 
     inline static Vector3d<ElementType> FromProjective(const Vector2d<ElementType> &projected)

@@ -5,49 +5,46 @@
  * \date Jul 15, 2010
  * \author sergeyle
  */
-#include <QtCore/QRegExp>
-#include <QtCore/QString>
-
-#include <opencv2/highgui/highgui.hpp> // cvCaptureFromCAM
-
-#include "core/utils/global.h"
-
 #include "openCVCapture.h"
 #include "openCVHelper.h"
 
-OpenCVCaptureInterface::OpenCVCaptureInterface(string _devname,  unsigned int mode) :
-     spin(this)
-   , captureLeft(NULL)
-   , captureRight(NULL)
+#include <QtCore/QRegExp>
+#include <QtCore/QString>
+
+#include <opencv2/highgui/highgui.hpp> // cvCapture, cvCaptureFromCAM
+
+OpenCVCaptureInterface::OpenCVCaptureInterface(string _devname, unsigned int mode)
+    : spin(this)
+    , captureLeft(NULL)
+    , captureRight(NULL)
 {
     unsigned int domain = 0;
 
-    if      (mode == CAP_ANY)
+    if   (mode == OPENCV_CAP_ANY)
     {
         domain = CV_CAP_ANY;
         printf("OpenCVCaptureInterface(): using ANY. Input: %s\n", _devname.c_str());
         fflush(stdout);
     }
-    else if (mode == CAP_VFW)
+    else if (mode == OPENCV_CAP_VFW)
     {
         domain = CV_CAP_VFW;
         printf("OpenCVCaptureInterface(): using VFW. Input: %s\n", _devname.c_str());
         fflush(stdout);
     }
-    else if (mode == CAP_DS)
+    else if (mode == OPENCV_CAP_DS)
     {
         domain = CV_CAP_DSHOW;
         printf("OpenCVCaptureInterface(): using DirectShow. Input: %s\n", _devname.c_str());
         fflush(stdout);
     }
 
-    QRegExp devStringPattern(QString("^(\\d*)(,(\\d*))?(,(\\d*)ms)?$"));
+    QRegExp devStringPattern("^(\\d*)(,(\\d*))?(,(\\d*)ms)?$");
     static const int DEVICE_1_GROUP  = 1;
     static const int DEVICE_2_GROUP  = 3;
     static const int DELAY_GROUP     = 5;
 
-    QString qdevname = QString::fromStdString(_devname);
-    int result = devStringPattern.indexIn(qdevname);
+    int result = devStringPattern.indexIn(_devname.c_str());
     if (result == -1)
     {
         printf("Error in device string format <%s>\n", _devname.c_str());

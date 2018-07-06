@@ -10,7 +10,7 @@ using namespace corecvs;
 class BaseGenerator
 {
 public:
-    BaseGenerator(const Reflection *_clazz);
+    BaseGenerator(const ReflectionGen *_clazz);
 
 protected:
     QString getGenerateDir();
@@ -46,7 +46,7 @@ protected:
 
 
     std::ofstream out;
-    const Reflection *clazz;
+    const ReflectionGen *clazz;
 
     /* GeneratorState */
     const BaseField *field;

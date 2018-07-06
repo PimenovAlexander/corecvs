@@ -11,7 +11,7 @@
  * \ingroup cppcorefiles
  */
 
-#include "core/buffers/fixeddisp/fixedPointDisplace.h"
+#include "core/buffers/fixeddisp/fixedPointRemapper.h"
 
 namespace corecvs {
 
@@ -30,13 +30,13 @@ public:
     class ParallelDoReverseDeformationBlPrecomp
     {
         OutputType *toReturn;
-        const FixedPointDisplace *map;
+        const FixedPointRemapper *map;
         InputType *buf;
 
     public:
         ParallelDoReverseDeformationBlPrecomp(
             OutputType *_toReturn,
-            const FixedPointDisplace *_map,
+            const FixedPointRemapper *_map,
             InputType *_buf
             ) :
         toReturn(_toReturn), map(_map), buf(_buf)
@@ -80,7 +80,7 @@ public:
      * \param newW
      *         Output Buffer Width
      **/
-    OutputType *doReverseDeformationBlPrecomp(const FixedPointDisplace *map, InternalIndexType newH = -1, InternalIndexType newW = -1)
+    OutputType *doReverseDeformationBlPrecomp(const FixedPointRemapper *map, InternalIndexType newH = -1, InternalIndexType newW = -1)
     {
         InputType *realThis =  static_cast<InputType *>(this);
 

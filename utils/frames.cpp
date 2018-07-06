@@ -13,27 +13,12 @@
 */
 #include <QtCore/QSettings>
 
-#include "core/utils/global.h"
-
 #include "frames.h"
 
 Frames::Frames()
-  : mSwapped(false)
-  , mTimestamp(0)
-  , mDesyncTime(0)
-  , mStartProcessTimestamp(0)
 {
     DOTRACE(("Frames::Frames() called\n"));
-    for (int id = 0; id < MAX_INPUTS_NUMBER; id++)
-    {
-        currentFrames[id]    = NULL;
-        currentRgbFrames[id] = NULL;
-    }
-    frameCount = 0;
-
-    /* Remove this. BaseParametersWidget should store the state*/
-    /*QSettings settings("Lanit-Tercom", "CVS");
-    mSwapped = settings.value("swapCameras", false).toBool();*/
+    CORE_CLEAR_STRUCT(*this);
 }
 
 /**
@@ -85,12 +70,9 @@ void Frames::fetchNewFrames(ImageCaptureInterface *input)
          currentRgbFrames[i] = pair.buffers[i].rgbBuffer;
     }
 
-
     mTimestamp  = pair.timeStamp();
-
     mDesyncTime = !mSwapped ? pair.diffTimeStamps() : -pair.diffTimeStamps();
     frameCount++;
-
 
 #if 0
     SYNC_PRINT(("Frames::fetchNewFrames(): G12: ["));
@@ -106,7 +88,6 @@ void Frames::fetchNewFrames(ImageCaptureInterface *input)
     }
     SYNC_PRINT(("]\n"));
 #endif
-
 }
 
 void Frames::swapFrameSources(bool shouldSwap)

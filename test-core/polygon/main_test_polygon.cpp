@@ -31,7 +31,7 @@ using namespace corecvs;
 using corecvs::Polygon;
 
 
-void drawPolygon(RGB24Buffer *target, const Polygon &p, RGBColor color1, RGBColor color2)
+static void drawPolygon(RGB24Buffer *target, const Polygon &p, RGBColor color1, RGBColor color2)
 {
     if (p.empty())
         return;
@@ -186,212 +186,7 @@ Polygon  p =
     BMPLoader().save("convex-tesr.bmp", &buffer);
 }
 
-TEST(ConvexHullTest, testConvexHull1)
-{
-    Polygon  p;
-    p.push_back(Vector2dd(0.0, 0.0));
-    p.push_back(Vector2dd(2.0, 0.0));
-    p.push_back(Vector2dd(2.0, 4.0));
-    p.push_back(Vector2dd(4.0, 4.0));
-    p.push_back(Vector2dd(4.0, 0.0));
-    p.push_back(Vector2dd(6.0, 0.0));
-    p.push_back(Vector2dd(6.0, 6.0));
-    p.push_back(Vector2dd(0.0, 6.0));
 
-    /* Test Gift Wrap */
-    Polygon result1 = ConvexHull::GiftWrap(p);
-    cout << result1 << endl;
-    for (size_t i = 0; i < result1.size(); i++)
-    {
-        Vector2dd point = result1[i];
-        bool perefery = !point.isInRect(Vector2dd(0.01,0.01), Vector2dd(5.99,5.99));
-        CORE_ASSERT_TRUE(perefery, "GiftWrap: Convex hull is wrong");
-    }
-
-    /* Test GrahamScan */
-    Polygon pCopy(p);
-    Polygon result2 = ConvexHull::GrahamScan(pCopy);
-    cout << result2 << endl;
-    for (size_t i = 0; i < result2.size(); i++)
-    {
-        Vector2dd point = result2[i];
-        bool perefery = !point.isInRect(Vector2dd(0.01,0.01), Vector2dd(5.99,5.99));
-        CORE_ASSERT_TRUE(perefery, "GrahamScan: Convex hull is wrong");
-    }
-
-}
-
-TEST(ConvexHullTest, testConvexHull2)
-{
-    std::vector<Vector2dd> points;
-
-    double radius = 1.0;
-    double eps = 1e-6;
-    size_t N = 10;
-    for (size_t i = 0; i < N; i++)
-    {
-        double angle = 2*M_PI/N*i;
-        points.emplace_back(radius*std::cos(angle), radius*std::sin(angle));
-    }
-
-    std::vector<Vector2dd> pointsCopy(points);
-    Polygon p1 = ConvexHull::GrahamScan(pointsCopy);
-    ASSERT_TRUE(p1.size() == N);
-    ASSERT_TRUE(p1.isConvex());
-
-    Polygon p2 = ConvexHull::GiftWrap(points);
-    ASSERT_TRUE(p2.size() == N);
-    ASSERT_TRUE(p2.isConvex());
-
-
-    for (size_t i = 0; i < N; i++)
-    {
-        double angle = 2*M_PI/N*i;
-        double rho = radius*(1.0 - eps);
-        Vector2dd point = Vector2dd(rho*std::cos(angle), rho*std::sin(angle));
-        ASSERT_TRUE(p1.isInsideConvex(point));
-        ASSERT_TRUE(p2.isInsideConvex(point));
-    }
-
-    for (size_t i = 0; i < N; i++)
-    {
-        double angle = 2*M_PI/N*i;
-        double rho = radius*(1.0 + eps);
-        Vector2dd point = Vector2dd(rho*std::cos(angle), rho*std::sin(angle));        
-        ASSERT_FALSE(p1.isInsideConvex(point));
-        ASSERT_FALSE(p2.isInsideConvex(point));
-    }
-}
-
-
-
-TEST(ConvexHullTest, testConvexHull3)
-{
-    std::vector<Vector2dd> points = {{640, 120}, {320, 240}
- , {640, 120} , {640, 120}
- , {640, 360} , {640, 360}
- , {640, 360} , {640, 355.2}
- , {640, 355.2} , {640, 350.4}
- , {640, 350.4} , {640, 345.6}
- , {640, 345.6} , {640, 340.8}
- , {640, 340.8} , {640, 336}
- , {640, 336} , {640, 331.2}
- , {640, 331.2} , {640, 326.4}
- , {640, 326.4} , {640, 321.6}
- , {640, 321.6} , {640, 316.8}
- , {640, 316.8} , {640, 312}
- , {640, 312} , {640, 307.2}
- , {640, 307.2} , {640, 302.4}
- , {640, 302.4} , {640, 297.6}
- , {640, 297.6} , {640, 292.8}
- , {640, 292.8} , {640, 288}
- , {640, 288} , {640, 283.2}
- , {640, 283.2} , {640, 278.4}
- , {640, 278.4} , {640, 273.6}
- /*, {640, 273.6} , {640, 268.8}
- , {640, 268.8} , {640, 264}
- , {640, 264} , {640, 259.2}
- , {640, 259.2} , {640, 254.4}
- , {640, 254.4} , {640, 249.6}
- , {640, 249.6} , {640, 244.8}
- , {640, 244.8} , {640, 360}
- , {640, 240} , {640, 240}
- , {640, 360} , {640, 360}
- , {640, 235.2} , {640, 235.2}
- , {640, 230.4} , {640, 230.4}
- , {640, 225.6} , {640, 225.6}
- , {640, 220.8} , {640, 220.8}
- , {640, 216} , {640, 216}
- , {640, 211.2} , {640, 211.2}
- , {640, 206.4} , {640, 206.4}
- , {640, 201.6} , {640, 201.6}
- , {640, 196.8} , {640, 196.8}
- , {640, 192} , {640, 192}
- , {640, 187.2} , {640, 187.2}
- , {640, 182.4} , {640, 182.4}
- , {640, 177.6} , {640, 177.6}
- , {640, 172.8} , {640, 172.8}
- , {640, 168} , {640, 168}
- , {640, 163.2} , {640, 163.2}
- , {640, 158.4} , {640, 158.4}
- , {640, 153.6} , {640, 153.6}
- , {640, 148.8} , {640, 148.8}
- , {640, 144} , {640, 144}
- , {640, 139.2} , {640, 139.2}
- , {640, 134.4} , {640, 134.4}
- , {640, 129.6} , {640, 129.6}
- , {640, 124.8} , {640, 124.8}*/
- , {640, 120} , {640, 120}
- , {640, 120}};
-
-    std::vector<Vector2dd> pointsCopy(points);
-    Polygon p1 = ConvexHull::GrahamScan(pointsCopy);
-    //ASSERT_TRUE(p1.size() == N);
-    cout << p1 << endl;
-    cout << "Convex :" << (p1.isConvex() ? "true" : "false") << endl;
-    ASSERT_TRUE(p1.isConvex());
-
-    RGB24Buffer buffer(1000,1000);
-    drawPolygon(&buffer, p1, RGBColor::Blue(), RGBColor::Red());
-    for (size_t id = 0; id < points.size(); id++)
-    {
-        buffer.drawCrosshare1(points[id].x(), points[id].y(), RGBColor:: White());
-    }
-
-    BMPLoader().save("triangle.bmp", &buffer);
-
-}
-
-
-TEST(ConvexHullTest, wrapClose)
-{
-    /*creates a circle of points and a slightly smaller circle inside*/
-    std::vector<Vector2dd> points;
-
-    double radius = 1.0;
-    double eps = 1e-6;
-    size_t N = 10;
-    for (size_t i = 0; i < N; i++)
-    {
-        double angle = 2 * M_PI / N * i;
-        points.emplace_back(radius*std::cos(angle), radius*std::sin(angle));
-    }
-
-    for (size_t i = 0; i < N; i++)
-    {
-        double angle = 2 * M_PI / N * i;
-        double rho = radius * (1.0 - eps);
-        points.emplace_back(rho*std::cos(angle), rho*std::sin(angle));
-    }
-
-    std::vector<Vector2dd> pointsCopy(points);
-    Polygon p1 = ConvexHull::GrahamScan(pointsCopy);
-    ASSERT_EQ(p1.size(), N);
-    ASSERT_TRUE(p1.isConvex());
-
-    Polygon p2 = ConvexHull::GiftWrap(points);
-    ASSERT_TRUE(p2.size() == N);
-    ASSERT_TRUE(p2.isConvex());
-
-
-    for (size_t i = 0; i < N; i++)
-    {
-        double angle = 2 * M_PI / N * i;
-        double rho = radius * (1.0 - eps);
-        Vector2dd point = Vector2dd(rho*std::cos(angle), rho*std::sin(angle));
-        ASSERT_TRUE(p1.isInsideConvex(point));
-        ASSERT_TRUE(p2.isInsideConvex(point));
-    }
-
-    for (size_t i = 0; i < N; i++)
-    {
-        double angle = 2 * M_PI / N * i;
-        double rho = radius * (1.0 + eps);
-        Vector2dd point = Vector2dd(rho*std::cos(angle), rho*std::sin(angle));
-        ASSERT_FALSE(p1.isInsideConvex(point));
-        ASSERT_FALSE(p2.isInsideConvex(point));
-    }
-}
 
 
 TEST(polygon, DISABLED_testGiftWrap1)
@@ -1019,8 +814,8 @@ TEST(polygon, CameraView)
 {
     CameraModel cam1, cam2;
 
-    cam1.intrinsics = PinholeCameraIntrinsics(Vector2dd(400,400), degToRad(50));
-    cam2.intrinsics = PinholeCameraIntrinsics(Vector2dd(400,400), degToRad(50));
+    cam1.intrinsics.reset(new PinholeCameraIntrinsics(Vector2dd(400,400), degToRad(50)));
+    cam2.intrinsics.reset(new PinholeCameraIntrinsics(Vector2dd(400,400), degToRad(50)));
 
     cam1.setLocation(Affine3DQ::Shift(-10, 0, 0) * Affine3DQ::RotationY(degToRad(10)) * Affine3DQ::RotationX(degToRad(4)));
     cam1.setLocation(Affine3DQ::Shift( 10, 0, 0) * Affine3DQ::RotationY(degToRad(-10)));
@@ -1131,8 +926,8 @@ TEST(polygon, CameraView)
     mesh.setColor(RGBColor::Yellow());
     for (size_t i = 0; i < p3.size(); i++)
     {
-        Vector2dd curr = p3.getPoint(i);
-        Vector2dd next = p3.getNextPoint(i);
+        Vector2dd curr = p3.getPoint((int)i);
+        Vector2dd next = p3.getNextPoint((int)i);
 
         Vector3dd sph1 = sphereRot.inverted() * Vector3dd::FromSpherical(curr.x(), curr.y(), s.r);
         Vector3dd sph2 = sphereRot.inverted() * Vector3dd::FromSpherical(next.x(), next.y(), s.r);
@@ -1141,5 +936,33 @@ TEST(polygon, CameraView)
     }
 
     mesh.dumpPLY("out.ply");
+
+}
+
+
+TEST(Rectangle, noIntersection)
+{
+    Rectangled r1(100,100, 10,10);
+    Rectangled r2(200,200, 10,10);
+
+    Rectangled r3 = r1.intersect(r2);
+    CORE_ASSERT_TRUE(r3.isEmpty(), "Wrong intrsection");
+}
+
+TEST(Rectangle, intersection)
+{
+    Rectangled r1(100,100, 110,110);
+    Rectangled r2(200,200, 10,10);
+
+    Rectangled r3 = r1.intersect(r2);
+    cout << r3 << endl;
+
+    Rectangled r4 = r2.intersect(r1);
+    cout << r4 << endl;
+    CORE_ASSERT_TRUE(r3.ulCorner() == Vector2dd(200,200), "Wrong intrsection");
+    CORE_ASSERT_TRUE(r3.lrCorner() == Vector2dd(210,210), "Wrong intrsection");
+
+    CORE_ASSERT_TRUE(r4.ulCorner() == Vector2dd(200,200), "Wrong intrsection");
+    CORE_ASSERT_TRUE(r4.lrCorner() == Vector2dd(210,210), "Wrong intrsection");
 
 }

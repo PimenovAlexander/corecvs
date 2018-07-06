@@ -10,6 +10,7 @@ with_jsonmodern {
         !build_pass: message(Json for Modern C++ module is ready for use)
 
         #JSONMODERN_PATH = $$(JSONMODERN_PATH)
+        INCLUDEPATH += $$JSONMODERN_WRAPPER_DIR/sources/src/
         DEFINES += WITH_JSONMODERN
     }
 }

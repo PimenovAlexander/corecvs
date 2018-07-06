@@ -1,5 +1,6 @@
 #include "core/buffers/converters/debayer.h"
 #include "core/buffers/converters/labConverter.h"
+#include "core/utils/log.h"
 #include "math/fftw/fftwWrapper.h"
 
 namespace corecvs {
@@ -8,6 +9,164 @@ using std::pow;
 using std::max;
 using std::min;
 using std::abs;
+
+std::map<std::string, Debayer::Parameters> Debayer::Parameters::bestDefsMap;
+
+Debayer::Parameters& Debayer::Parameters::BestDefaultsByExt(const string& ext)
+{
+    if (bestDefsMap.size() == 0)
+    {
+        Debayer::Parameters raw;
+        raw.setGains({ 1.3, 1.0, 1.8 });
+        raw.setGamma({ 0.4, 2.8 });
+        bestDefsMap["raw"] = raw;
+
+        Debayer::Parameters pgm(1); // bpos=1
+        pgm.setGains({ 1.34, 1.0, 1.75 });
+        bestDefsMap["pgm"] = pgm;
+    }
+
+    string s(ext);
+    if (s[0] == '.') s = s.substr(1);       // remove dot if present
+
+    if (!bestDefsMap.count(s))
+    {
+        bestDefsMap[s] = Debayer::Parameters();
+    }
+    return bestDefsMap[s];
+}
+
+corecvs::RGB48Buffer *Debayer::DemosaicRgb48(corecvs::G12Buffer* bayer, const Debayer::Parameters &params, MetaData &meta)
+{
+    auto toReturn = new RGB48Buffer(bayer->h, bayer->w, false);
+
+    cint outBits = 12;
+    cint maxVal = (1 << params.numBitsOut()) - 1; // real wished maxVal by given #bits
+
+    if (meta["bits"].empty())                   // do overwrite possible data from PGM by given params
+        meta["bits"].push_back(outBits);
+    else
+        meta["bits"][0] = outBits;
+
+    if (meta["white"].empty())                  // do overwrite possible data from PGM by given params
+        meta["white"].push_back(maxVal);
+    else
+        meta["white"][0] = maxVal;
+
+    //while (maxVal >> int(meta["bits"][0])) { meta["bits"][0]++; }
+
+    if (meta["gamm"].empty() && Vector2dd(params.gamma()) != Vector2dd(1, 1))  // don't overwrite data from PGM
+    {
+        meta["gamm"] = MetaValue(5, 0);
+        meta["gamm"][0] = params.gamma()[0];
+        meta["gamm"][1] = params.gamma()[1];
+    }
+
+    if (meta["cam_mul"].empty() && Vector3dd(params.gains()) != Vector3dd(1, 1, 1))  // don't overwrite data from PGM
+    {
+        meta["cam_mul"] = MetaValue(4, -1.0);
+        meta["cam_mul"][0] = params.gains()[0];
+        meta["cam_mul"][1] = params.gains()[1];
+        meta["cam_mul"][2] = params.gains()[2];
+    }
+
+    L_INFO_P("bits:%d maxval:%d outBits:%d bpos:%d method:%s gamma:[%.1f,%.1f] gains:[%.1f,%.1f,%.1f]"
+        , (int)meta["bits"][0]
+        , (int)meta["white"][0]
+        , params.numBitsOut()
+        , params.bayerPos()
+        , DebayerMethod::getName(params.method())
+        , meta["gamm"].empty() ? 1. : meta["gamm"][0]
+        , meta["gamm"].empty() ? 1. : meta["gamm"][1]
+        , meta["cam_mul"].empty() ? 1. : meta["cam_mul"][0]
+        , meta["cam_mul"].empty() ? 1. : meta["cam_mul"][1]
+        , meta["cam_mul"].empty() ? 1. : meta["cam_mul"][2]
+    );
+
+    Debayer debayer(bayer, outBits, &meta, params.bayerPos());
+
+    int code = debayer.toRGB48(params.method(), toReturn);
+    if (code != 0) {
+        L_ERROR_P("debayer returned error code: %d", code);
+    }
+
+    return toReturn;
+}
+
+corecvs::RGB24Buffer *Debayer::Demosaic(corecvs::G12Buffer* bayer, const Debayer::Parameters &params)
+{
+    auto toReturn = new RGB24Buffer(bayer->h, bayer->w, false);
+
+#ifdef BASIC
+    for (int i = 0; i < bayer->h; i += 2)
+    {
+        for (int j = 0; j < bayer->w; j += 2)
+        {
+            /* Copy paste so far. Integrate it into debayer*/
+            uint32_t g1 = ((uint32_t)bayer->element(i, j + 1)) >> 2;
+            uint32_t r = ((uint32_t)bayer->element(i, j)) >> 2;
+            uint32_t b = ((uint32_t)bayer->element(i + 1, j + 1)) >> 2;
+            uint32_t g2 = ((uint32_t)bayer->element(i + 1, j)) >> 2;
+
+            if (r > 255 || g1 > 255 || g2 > 255 || b > 255) {
+                printf("trouble\n");
+            }
+            RGBColor color = RGBColor((uint8_t)r, (uint8_t)((g1 + g2) / 2), (uint8_t)b);
+            toReturn->element(i, j) = color;
+            toReturn->element(i, j + 1) = color;
+            toReturn->element(i + 1, j) = color;
+            toReturn->element(i + 1, j + 1) = color;
+        }
+    }
+#else // BASIC
+
+    MetaData meta;
+    std::unique_ptr<RGB48Buffer> rgb48(DemosaicRgb48(bayer, params, meta));
+
+    cint outBits = 12;
+    cint shift = outBits - 8;        // 16: 8, 12: 4, 10: 2
+    ConvertRgb48toRgb24(rgb48.get(), toReturn, shift);
+
+#endif // !BASIC
+
+    return toReturn;
+}
+
+void Debayer::ConvertRgb48toRgb24(const RGB48Buffer *in, RGB24Buffer *out, int shift)
+{
+    CORE_ASSERT_TRUE_S(out->getSize() == in->getSize());
+
+    for (int i = 0; i < out->h; ++i)
+    {
+        for (int j = 0; j < out->w; ++j)
+        {
+            RGBColor48 color = in->element(i, j);
+            uint8_t r = (uint8_t)(color.r() >> shift);  // clip not needed
+            uint8_t g = (uint8_t)(color.g() >> shift);
+            uint8_t b = (uint8_t)(color.b() >> shift);
+
+            out->element(i, j) = RGBColor(r, g, b);
+        }
+    }
+}
+
+void Debayer::ConvertRgb24toRgb48(const RGB24Buffer *in, RGB48Buffer *out)
+{
+    CORE_ASSERT_TRUE_S(out->getSize() == in->getSize());
+
+    for (int i = 0; i < out->h; ++i)
+    {
+        for (int j = 0; j < out->w; ++j)
+        {
+            RGBColor c = in->element(i, j);
+            RGBColor48 c48(c.r() << 8, c.g() << 8, c.b() << 8);
+
+            out->element(i, j) = c48;
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////
 
 Debayer::Debayer(G12Buffer *bayer, int depth, MetaData *metadata, int bayerPos)
     : mBayer(bayer)
@@ -752,15 +911,14 @@ void Debayer::scaleCoeffs()
     // alias for ease of use
     MetaData &metadata = *mMetadata;
     
-    double factor = 1.0;
-
     // scale colors to the desired bit-depth
+    double factor = 1.0;
     if (mScale)
     {
         if (!metadata["white"].empty())
-            factor = ((1 << mDepth) - 1) / metadata["white"][0];
+            factor = mMaximum / metadata["white"][0];
         else if (!metadata["bits"].empty())
-            factor = ((1 << mDepth) - 1) / ((1 << int(metadata["bits"][0])) - 1);
+            factor = mMaximum / ((1 << int(metadata["bits"][0])) - 1);
     }
 
     // check if metadata valid
@@ -875,7 +1033,7 @@ void Debayer::gammaCurve(uint16_t *curve, int imax)
 
     for (i = 0; i < 0x10000; i++)
     {
-        curve[i] = (1 << mDepth) - 1;
+        curve[i] = mMaximum;
         if ((r = (double)i / imax) < 1)
             curve[i] = (1 << mDepth) * (r < g[3] ? r * g[1] : (g[0] ? pow(r, g[0]) * (1 + g[4]) - g[4] : log(r) * g[2] + 1));
     }
@@ -891,37 +1049,22 @@ int Debayer::toRGB48(DebayerMethod::DebayerMethod method, RGB48Buffer *output)
     switch (method)
     {
         case DebayerMethod::NEAREST:   nearest(output); break;
+        default:
         case DebayerMethod::BILINEAR:  linear(output);  break;
+        case DebayerMethod::AHD:       ahd(output);     break;
         case DebayerMethod::FOURIER:   fourier(output); break;
-        case DebayerMethod::AHD:
-        default:        ahd(output);
     }
     return 0;
 }
 
 int Debayer::toRGB24(DebayerMethod::DebayerMethod method, RGB24Buffer *out)
 {
-    double scaler = 1. / (1 << (mDepth - 8));
+    std::unique_ptr<RGB48Buffer> outputDraft(new RGB48Buffer(out->getSize(), false));
+    int result = toRGB48(method, outputDraft.get());
 
-    RGB48Buffer *outputDraft = new RGB48Buffer(out->getSize(), false);
-    int result = toRGB48(method, outputDraft);
+    cint shift = mDepth - 8;        // 16: 8, 12: 4, 10: 2
+    ConvertRgb48toRgb24(outputDraft.get(), out, shift);
 
-    auto oldMax = mMaximum;
-    mMaximum = 255; // to work clip properly
-    for (int i = 0; i < out->h; i++)
-    {
-        for (int j = 0; j < out->w; j++)
-        {
-            RGBColor48 color = outputDraft->element(i,j);
-            uint8_t r = clip(roundUp(color.r() * scaler));
-            uint8_t g = clip(roundUp(color.g() * scaler));
-            uint8_t b = clip(roundUp(color.b() * scaler));
-
-            out->element(i,j) = RGBColor(r, g, b);
-        }
-    }
-    delete_safe(outputDraft);
-    mMaximum = oldMax;
     return result;
 }
 
@@ -934,14 +1077,13 @@ void Debayer::preprocess(bool overwrite)
 
     if (mMetadata != nullptr && !mMetadata->empty() && (overwrite || mCurve == nullptr))
     {
-        // alias for ease of use
-        MetaData &metadata = *mMetadata;
-        int bits  = metadata["bits"][0] ? metadata["bits"][0] : mDepth;
+        MetaData &md = *mMetadata;
+        int bits  = md["bits"][0] ? md["bits"][0] : mDepth;
         int shift = bits - mDepth;
 
-        mBlack = !metadata["black"  ].empty() && metadata["black"  ][0] ?      metadata["black"  ][0] : 0;
-        white  = !metadata["white"  ].empty() && metadata["white"  ][0] ?      metadata["white"  ][0] : (1 << mDepth) - 1;
-        white  = !metadata["t_white"].empty() && metadata["t_white"][0] ? (int)metadata["t_white"][0] : white;
+        mBlack = !md["black"  ].empty() && md["black"  ][0] ?      md["black"  ][0] : 0;
+        white  = !md["white"  ].empty() && md["white"  ][0] ?      md["white"  ][0] : mMaximum;
+        white  = !md["t_white"].empty() && md["t_white"][0] ? (int)md["t_white"][0] : white;
         white  = (shift < 0 ? white << -shift : white >> shift);
     }
 

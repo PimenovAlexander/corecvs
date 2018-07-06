@@ -14,6 +14,8 @@
 #include "core/utils/global.h"
 
 #include "core/geometry/line.h"
+#include "core/geometry/plane.h"
+
 
 using namespace corecvs;
 
@@ -191,6 +193,31 @@ TEST(Linear, testSegment2LineIn2d)
     ASSERT_TRUE(l.distanceTo(p1) < 1e-10);
     ASSERT_TRUE(l.distanceTo(p2) < 1e-10);
 }
+
+TEST(Linear, testDuality)
+{
+    Line2d line(3,3,3);
+    Vector2dd dual = line.toDual();
+    Line2d line1 = Line2d::FromDual(dual);
+
+    cout << "L :" << line  << std::endl << "LN  :" << line .normalised()  << std::endl;
+    cout << "L1:" << line1 << std::endl << "LN1 :" << line1.normalised()  << std::endl;
+
+    CORE_ASSERT_TRUE(line.normalised().notTooFar(line1.normalised(), 1e-8), "Wrong duality");
+}
+
+TEST(Linear, testDuality1)
+{
+    Plane3d plane(3,4,5,3);
+    Vector3dd dual = plane.toDual();
+    Plane3d plane1 = Plane3d::FromDual(dual);
+
+    cout << "P :" << plane  << std::endl << "PN  :" << plane .normalised()  << std::endl;
+    cout << "P1:" << plane1 << std::endl << "PN1 :" << plane1.normalised()  << std::endl;
+
+    CORE_ASSERT_TRUE(plane.normalised().notTooFar(plane1.normalised(), 1e-8), "Wrong duality");
+}
+
 
 #if 0
 int main (int /*argC*/, char ** /*argV*/)

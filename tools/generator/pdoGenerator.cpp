@@ -16,7 +16,7 @@
 
 using namespace std;
 
-PDOGenerator::PDOGenerator(const Reflection *_clazz)
+PDOGenerator::PDOGenerator(const ReflectionGen *_clazz)
     : BaseGenerator(_clazz)
 {
 }
@@ -33,7 +33,7 @@ void PDOGenerator::enterFieldContext(int i)
 
     cppType = getCppTypeForType(field);
     fieldRefType = getFieldRefTypeForType(type);
-    descr = field->name.decription;
+    descr = field->name.description;
     comment = field->name.comment;
 
     defaultValue = getDefaultValue(field);
@@ -73,14 +73,14 @@ void PDOGenerator::enterFieldContext(int i)
     }
 }
 
-void PDOGenerator::generatePDOEnumSubH(const EnumReflection *eref)
+void PDOGenerator::generatePDOEnumSubH(const EnumReflectionGen *eref)
 {
     QString result;
   //  const EnumReflection *eref = efield->enumReflection;
 
     QString enumName = toCamelCase(QString(eref->name.name), true);
     QString enumComment = eref->name.comment;
-    QString enumDescr   = eref->name.decription;
+    QString enumDescr   = eref->name.description;
 
 //    qDebug() << "Generating enum " << enumName;
 
@@ -100,6 +100,7 @@ void PDOGenerator::generatePDOEnumSubH(const EnumReflection *eref)
     " *\n"
     " * \\date MMM DD, 20YY\n"
     " * \\author autoGenerator\n"
+    " * Generated from "+eref->sourceXml+"\n"
     " */\n"
     "\n"
     "/**\n"
@@ -119,7 +120,7 @@ void PDOGenerator::generatePDOEnumSubH(const EnumReflection *eref)
         const EnumOption *option = eref->options[j];
         QString optionName = toEnumName(QString(option->name.name));
         QString optionComment = option->name.comment;
-        QString optionDescr   = option->name.decription;
+        QString optionDescr   = option->name.description;
         QString optionID   = QString::number(option->id);
 
     result+=
@@ -181,7 +182,7 @@ void PDOGenerator::generatePDOH()
     QString guardDefine = classCapitalName + "_H_";
     QString className   = toCamelCase(clazz->name.name, true);
     QString classComment = clazz->name.comment;
-    QString classDescr   = clazz->name.decription;
+    QString classDescr   = clazz->name.description;
 
     out.close();
     out.open(QString(getGenerateDir() + QDir::separator() + fileName).toLatin1(), ios::out);
@@ -195,6 +196,7 @@ void PDOGenerator::generatePDOH()
     " *\n"
     " * \\date MMM DD, 20YY\n"
     " * \\author autoGenerator\n"
+    " * Generated from "+clazz->sourceXml+"\n"
     " */\n"
     "\n"
     "#include \"core/reflection/reflection.h\"\n"
@@ -209,11 +211,17 @@ void PDOGenerator::generatePDOH()
     vector<const Reflection *> references;
     for (int i = 0; i < embeddedNumber; i++ )
     {
-        const Reflection *referent = clazz->embeds.at(i)->subclass;
+        const ReflectionGen *referent = static_cast<const ReflectionGen *>(clazz->embeds.at(i)->subclass);
         if (std::find(references.begin(), references.end(), referent) != references.end())
             continue;
+
+        //QString incPath = "";
+        QString incPath = "core/xml/generated/";
+        if (referent->includePath != NULL)
+            incPath = referent->includePath;
+
     result +=
-    "#include \"" + toCamelCase(referent->name.name) + ".h\"\n";
+    "#include \"" + incPath + toCamelCase(referent->name.name) + ".h\"\n";
         references.push_back(referent);
     }
 
@@ -225,16 +233,16 @@ void PDOGenerator::generatePDOH()
     for (int i = 0; i < fieldNumber; i++ )
     {
         enterFieldContext(i);
-        const Reflection *referent = NULL;
+        const ReflectionGen *referent = NULL;
         if (field->type == BaseField::TYPE_COMPOSITE)
         {
             const CompositeField *cfield = static_cast<const CompositeField *>(field);
-            referent = cfield->reflection;
+            referent = static_cast<const ReflectionGen *>(cfield->reflection);
         }
         if (field->type == BaseField::TYPE_COMPOSITE_ARRAY)
         {
             const CompositeArrayField *cafield = static_cast<const CompositeArrayField *>(field);
-            referent = cafield->reflection;
+            referent = static_cast<const ReflectionGen *>(cafield->reflection);
         }
 
         if (referent == NULL) {
@@ -243,8 +251,13 @@ void PDOGenerator::generatePDOH()
 
         if (std::find(references.begin(), references.end(), referent) != references.end())
             continue;
+
+        QString incPath = "core/xml/generated/";
+        if (referent->includePath != NULL)
+            incPath = referent->includePath;
+
     result +=
-    "#include \"" + toCamelCase(referent->name.name) + ".h\"\n";
+    "#include \"" + incPath + toCamelCase(referent->name.name) + ".h\"\n";
         references.push_back(referent);
     }
 
@@ -304,12 +317,18 @@ void PDOGenerator::generatePDOH()
             continue;
 
         const EnumField *efield = static_cast<const EnumField *>(field);
-        const EnumReflection *eref = efield->enumReflection;
+        const EnumReflectionGen *eref = static_cast<const EnumReflectionGen *>(efield->enumReflection);
+
+        QString incPath = "core/xml/generated/";
+        if (eref->includePath != NULL)
+            incPath = eref->includePath;
 
         QString fileName = toCamelCase(eref->name.name) + ".h";
 
+
+
     result+=
-    "#include \"" + fileName + "\"\n";
+    "#include \"" + incPath + fileName + "\"\n";
 
     }
 
@@ -355,14 +374,14 @@ void PDOGenerator::generatePDOH()
 
         if (type == BaseField::TYPE_COMPOSITE)
         {
-            PDOGenerator generator(static_cast<const CompositeField*>(field)->reflection);
+            PDOGenerator generator((const ReflectionGen *)static_cast<const CompositeField*>(field)->reflection);
             generator.generatePDOH();
             generator.generatePDOCpp();
             generator.generateControlWidgetCpp();
         }
         if (type == BaseField::TYPE_COMPOSITE_ARRAY)
         {
-            PDOGenerator generator(static_cast<const CompositeArrayField*>(field)->reflection);
+            PDOGenerator generator((const ReflectionGen *)static_cast<const CompositeArrayField*>(field)->reflection);
             generator.generatePDOH();
             generator.generatePDOCpp();
             generator.generateControlWidgetCpp();
@@ -422,7 +441,7 @@ void PDOGenerator::generatePDOH()
         const Reflection    *embedReflection = embed->subclass;
         name       = embed->name.name;
         comment    = embed->name.comment;
-        descr      = embed->name.decription;
+        descr      = embed->name.description;
         cppType    = toCamelCase(embedReflection->name.name, true);
         getterName = toCamelCase(name, false);
         setterName = QString("set") + toCamelCase(name, true);
@@ -494,6 +513,7 @@ void PDOGenerator::generatePDOH()
     "    }\n"
     "\n";
 
+    /** Constructor with fields **/
     result+=
     "    "+className+"(\n";
 
@@ -519,9 +539,25 @@ void PDOGenerator::generatePDOH()
     }
 
     result+=
-//    "        corecvs::DefaultSetter setter;\n"
-//    "        accept(setter);\n"
-    "    }\n\n"
+    "    }\n\n";
+    /** Comparator **/
+    result+=
+    "    bool operator ==(const "+className+" &other) const \n"
+    "    {\n";
+    for (int i = 0; i < fieldNumber; i++ )
+    {
+        enterFieldContext(i);
+        if (type == BaseField::TYPE_POINTER) {
+            continue;
+        }
+    result+=
+    "        if ( !(this->"+cppName+" == other."+cppName+")) return false;\n";
+    }
+    result+=
+    "        return true;\n"
+    "    }\n";
+
+    result+=
     "    friend std::ostream& operator << (std::ostream &out, "+className+" &toSave)\n"
     "    {\n"
     "        corecvs::PrinterVisitor printer(out);\n"
@@ -554,7 +590,7 @@ void PDOGenerator::generatePDOCpp()
     QString className   = toCamelCase(clazz->name.name, true);
 
     QString classComment = clazz->name.comment;
-    QString classDescr   = clazz->name.decription;
+    QString classDescr   = clazz->name.description;
 
     out.close();
     out.open(QString(getGenerateDir() + QDir::separator() + fileName).toLatin1(), ios::out);
@@ -597,7 +633,7 @@ void PDOGenerator::generatePDOCpp()
     "    ReflectionNaming &nameing = naming();\n"
     "    nameing = ReflectionNaming(\n"
     "        \"" + clazz->name.name + "\",\n"
-    "        \"" + clazz->name.decription + "\",\n"
+    "        \"" + clazz->name.description + "\",\n"
     "        \"" /*+ clazz->name.comment +*/ "\"\n"  //  We need to decorate comment
     "    );\n"
     "\n"
@@ -660,7 +696,8 @@ void PDOGenerator::generatePDOCpp()
     ",\n"
     "          true,\n"
     "         " + QString::number(ifield->min) + ",\n"
-    "         " + QString::number(ifield->max);
+    "         " + QString::number(ifield->max) + ",\n"
+    "         " + QString::number(ifield->step);
 
             }
         }
@@ -672,11 +709,24 @@ void PDOGenerator::generatePDOCpp()
     ",\n"
     "          true,\n"
     "         " + QString::number(dfield->min) + ",\n"
-    "         " + QString::number(dfield->max);
+    "         " + QString::number(dfield->max) + ",\n"
+    "         " + QString::number(dfield->step);
 
             }
         }
+        if (type == BaseField::TYPE_DOUBLE_VECTOR) {
+            const DoubleVectorField *dfield = static_cast<const DoubleVectorField *>(field);
+            if (dfield->hasAdditionalValues)
+            {
+    result+=
+    ",\n"
+    "          true,\n"
+    "         " + QString::number(dfield->min) + ",\n"
+    "         " + QString::number(dfield->max) + ",\n"
+    "         " + QString::number(dfield->step);
 
+            }
+        }
 
     } else if (type == BaseField::TYPE_COMPOSITE) {
         const CompositeField *cfield = static_cast<const CompositeField *>(field);

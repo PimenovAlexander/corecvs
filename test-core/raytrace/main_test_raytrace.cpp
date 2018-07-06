@@ -746,8 +746,8 @@ public:
 
     double operator ()(Vector3dd &p)
     {
-        Vector3dd d = p.perElementAbs() - b;
-        return std::min(d.maximum(), 0.0) + d.perElementMax(Vector3dd::Zero()).l2Metric() + over;
+        Vector3dd d = p.cwiseAbs() - b;
+        return std::min(d.maximum(), 0.0) + d.cwiseMax(Vector3dd::Zero()).l2Metric() + over;
     }
 
     SDFCube()

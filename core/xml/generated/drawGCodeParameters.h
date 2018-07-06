@@ -6,6 +6,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from parameters.xml
  */
 
 #include "core/reflection/reflection.h"
@@ -30,7 +31,7 @@
 /*
  *  Additional includes for enum section.
  */
-#include "gCodeColoringSheme.h"
+#include "core/xml/generated/gCodeColoringSheme.h"
 
 /**
  * \brief draw GCode Parameters 

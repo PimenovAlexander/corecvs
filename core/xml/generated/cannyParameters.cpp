@@ -64,7 +64,8 @@ int CannyParameters::staticInit()
           "Minimum threshold",
           true,
          0,
-         10000
+         10000,
+         1
         );
     fields().push_back(field1);
     /*  */ 
@@ -78,7 +79,8 @@ int CannyParameters::staticInit()
           "Maximum threshold",
           true,
          0,
-         10000
+         10000,
+         1
         );
     fields().push_back(field2);
     /*  */ 

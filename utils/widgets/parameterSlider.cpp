@@ -12,8 +12,7 @@ ParameterSlider::ParameterSlider(QWidget *parent)
 ParameterSlider::~ParameterSlider()
 {}
 
-
-void ParameterSlider::setName (QString name)
+void ParameterSlider::setName(QString name)
 {
     ui.label->setText(name);
     setWindowTitle(name);
@@ -25,12 +24,12 @@ void ParameterSlider::setAutoSupported(bool value)
     ui.autoBox->setEnabled(value);
 }
 
-double ParameterSlider::minimum (void)
+double ParameterSlider::minimum(void)
 {
     return ui.spinBox->minimum();
 }
 
-double ParameterSlider::maximum (void)
+double ParameterSlider::maximum(void)
 {
     return ui.spinBox->maximum();
 }
@@ -59,13 +58,13 @@ void ParameterSlider::setMaximum(double value)
     ui.maxLabel->setText(QString::number(value));
 }
 
-void ParameterSlider::setStep (double value)
+void ParameterSlider::setStep(double value)
 {
     ui.spinBox->setSingleStep(value);
     ui.slider->setSingleStep(value);
 }
 
-void ParameterSlider::stepUp  ()
+void ParameterSlider::stepUp()
 {
     ui.slider->setValue(ui.slider->value() + 1);
 }
@@ -75,7 +74,7 @@ void ParameterSlider::stepDown()
     ui.slider->setValue(ui.slider->value() - 1);
 }
 
-void ParameterSlider::textChanged   (int value)
+void ParameterSlider::textChanged(int value)
 {
     bool blocked = ui.slider->blockSignals(true);
     ui.slider->setValue(value);
@@ -84,7 +83,7 @@ void ParameterSlider::textChanged   (int value)
     emit valueChanged(value);
 }
 
-void ParameterSlider::sliderChanged (int value)
+void ParameterSlider::sliderChanged(int value)
 {
     bool blocked = ui.spinBox->blockSignals(true);
     ui.spinBox->setValue(value);
@@ -92,4 +91,3 @@ void ParameterSlider::sliderChanged (int value)
 
     emit valueChanged(value);
 }
-

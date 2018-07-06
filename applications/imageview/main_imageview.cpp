@@ -15,7 +15,6 @@
 #include "core/utils/global.h"
 
 #include "core/utils/utils.h"
-#include "advancedImageWidget.h"
 #include "qtFileLoader.h"
 #include "imageViewMainWindow.h"
 
@@ -26,6 +25,8 @@ int main(int argc, char *argv[])
     Q_INIT_RESOURCE(main);
 
     SYNC_PRINT(("Starting ImageView...\n"));
+    BufferFactory::printCaps();
+
     QApplication app(argc, argv);
     ImageViewMainWindow mainWindow;
 
@@ -36,16 +37,6 @@ int main(int argc, char *argv[])
     {
         qDebug("Main: %s", argv[1]);
         mainWindow.loadImage(QString(argv[1]));
-
-#if 0
-        RGB48Buffer *buffer = PPMLoader().rgb48BufferCreateFromPPM(str);
-        if (buffer == NULL)
-        {
-            qDebug("Can't' open file: %s", str.c_str());
-        } else {
-            mainWindow.input = buffer;
-        }
-#endif
     }
 
     mainWindow.show();

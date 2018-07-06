@@ -15,8 +15,9 @@
 #include <stdint.h>
 #ifdef WITH_SSE
 #include <emmintrin.h>
-#include "core/math/sse/sseWrapper.h"
 #endif
+#include "core/math/sse/sseWrapper.h"
+#include "core/math/neon/neonWrapper.h"
 
 #include "core/utils/global.h"
 
@@ -55,7 +56,7 @@ public:
     static const int FLOW_UNKNOWN_Y = INT16_MAX;
     //@}
 
-#ifdef WITH_SSE
+#if defined(WITH_SSE) || defined(WITH_NEON)
 #define CFLOW_X_MASK_SSE    Int32x4(0xFFFF)
 #define CFLOW_Y_MASK_SSE    Int32x4(0xFFFF0000)
 #define CFLOW_UNKNOWN_X_SSE Int32x4(INT16_MAX)
@@ -120,7 +121,7 @@ public:
     Vector2dd   getMeanDifference();
 
 
-#ifdef WITH_SSE
+#if defined(WITH_SSE) || defined(WITH_NEON)
     /*TODO: Move this to some more generic place*/
 
     /* Same with wrappers */

@@ -122,8 +122,6 @@ TEST(Vector, profileVectorOperations)
     printf("%8" PRIu64 "us %8" PRIu64 "ms SP: %8" PRIu64 "us\n", delay, delay / 1000, delay / CYCLES); fflush(stdout);
     std::cout << sum << std::endl;
 
-
-
     delete[] vec1;
     delete[] vec2;
 
@@ -138,7 +136,7 @@ TEST(Vector, testFixedArray)
     ASSERT_EQ(arr.size(), LENGTH);
 }
 
-TEST(Vector, MulAllElements)
+TEST(Vector, prod)
 {
     const int LENGTH = 8;
     FixedArray<int> arr(LENGTH);
@@ -146,8 +144,20 @@ TEST(Vector, MulAllElements)
     {
         arr[i] = i + 1;
     }
-    std::cout << arr.mulAllElements() << std::endl;
-    ASSERT_EQ(arr.mulAllElements(), 40320);
+    ASSERT_EQ(arr.prod(), 1*2*3*4*5*6*7*8);
+}
+
+TEST(Vector, cwise)
+{
+    FixedArray<int> r({  1,   2,  3,  4,  5,  6,  7,  8 });
+    FixedArray<int> a({  1,  -2,  3, -4,  5, -6,  7, -8 });
+    FixedArray<int> b({ -1,   2, -3,  4, -5,  6, -7,  8 });
+
+    ASSERT_EQ(a.cwiseAbs(), r);
+    ASSERT_EQ(a.cwiseMin(b), -r);
+    ASSERT_EQ(a.cwiseMax(b), r);
+
+    ASSERT_EQ(FixedArray<double>({ 1, 4, 9, 16, 25 }).cwiseSqrt(), FixedArray<double>({ 1, 2, 3, 4, 5 }));
 }
 
 TEST(Vector, testSpherical)
@@ -200,6 +210,34 @@ TEST(Vector, testSpherical)
         Vector3dd back = Vector3dd::toSpherical(vec);
         CORE_UNUSED(back);
     }
+}
+
+
+TEST(Vector, streamVectors)
+{
+    vector<double> v;
+    v.resize(6);
+    double *buffer = v.data();
+
+    Vector3dd a1(1.0, 2.0, 3.0);
+    Vector3dd a2(4.0, 5.0, 6.0);
+
+    a1.storeToStream(buffer);
+    a2.storeToStream(buffer);
+
+    Vector3dd b1(0.0);
+    Vector3dd b2(0.0);
+
+    const double *input = v.data();
+
+    b1.loadFromStream(input);
+    b2.loadFromStream(input);
+
+    cout << a1 << " = " << b1 << endl;
+    cout << a2 << " = " << b2 << endl;
+
+    CORE_ASSERT_TRUE(a1 == b1, "Load Error");
+    CORE_ASSERT_TRUE(a2 == b2, "Load Error2");
 }
 
 //int main (int /*argC*/, char ** /*argV*/)

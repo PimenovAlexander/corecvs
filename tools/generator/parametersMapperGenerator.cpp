@@ -123,8 +123,8 @@ void ParametersMapperGenerator::generateHeader()
     "#include <iostream>\n"
     "#include <QtCore/QSharedPointer>\n"
     "\n"
-    "#include \"reflection.h\"\n"
-    "#include \"defaultSetter.h\"\n"
+    "#include \"core/reflection/reflection.h\"\n"
+    "#include \"core/reflection/defaultSetter.h\"\n"
     "\n";
 
 

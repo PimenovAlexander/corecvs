@@ -52,7 +52,8 @@ int EuclidianMoveParameters::staticInit()
           "X",
           true,
          -50000,
-         50000
+         50000,
+         1
         );
     field0->widgetHint=BaseField::SPIN_BOX;
     field0->precision=2;
@@ -68,7 +69,8 @@ int EuclidianMoveParameters::staticInit()
           "Y",
           true,
          -50000,
-         50000
+         50000,
+         1
         );
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->precision=2;
@@ -84,7 +86,8 @@ int EuclidianMoveParameters::staticInit()
           "Z",
           true,
          -50000,
-         50000
+         50000,
+         1
         );
     field2->widgetHint=BaseField::SPIN_BOX;
     field2->precision=2;
@@ -100,7 +103,8 @@ int EuclidianMoveParameters::staticInit()
           "alpha",
           true,
          -50000,
-         50000
+         50000,
+         1
         );
     field3->widgetHint=BaseField::SPIN_BOX;
     field3->suffixHint="deg";
@@ -117,7 +121,8 @@ int EuclidianMoveParameters::staticInit()
           "beta",
           true,
          -50000,
-         50000
+         50000,
+         1
         );
     field4->widgetHint=BaseField::SPIN_BOX;
     field4->suffixHint="deg";
@@ -134,7 +139,8 @@ int EuclidianMoveParameters::staticInit()
           "gamma",
           true,
          -50000,
-         50000
+         50000,
+         1
         );
     field5->widgetHint=BaseField::SPIN_BOX;
     field5->suffixHint="deg";

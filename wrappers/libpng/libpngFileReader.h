@@ -26,11 +26,12 @@ public:
         return 0;
     }
 
-    virtual bool acceptsFile(string name) override;
-    virtual corecvs::RGB24Buffer * load(string name) override;
+    virtual bool acceptsFile(const string &name) override;
+    virtual corecvs::RGB24Buffer * load(const string & name) override;
     virtual std::vector<string> extentions() override   { return std::vector<string>({prefix1, prefix2}); }
     virtual string name() override                      { return "LibPNG"; }
-    virtual bool save(string name, corecvs::RGB24Buffer *buffer);
+    virtual bool save(const string& name, const corecvs::RGB24Buffer *buffer, int quality = 95, bool alpha=false);
+    bool savePNG(const string& name, const corecvs::RGB24Buffer *buffer, int quality = 95, bool alpha=false);
     virtual ~LibpngFileReader() {}
 };
 
@@ -43,8 +44,8 @@ public:
         return 0;
     }
     
-    virtual bool acceptsFile(string name)             { return LibpngFileReader().acceptsFile(name); }
-    virtual bool save(corecvs::RGB24Buffer &buffer, string name) override { return LibpngFileReader().save(name, &buffer); }
+    virtual bool acceptsFile(const string & name)     { return LibpngFileReader().acceptsFile(name); }
+    virtual bool save(const corecvs::RGB24Buffer& buffer, const string& name, int quality = 95) override { return LibpngFileReader().save(name, &buffer, quality); }
     virtual string              name()       override { return "LibPNG_Saver"; }
     virtual std::vector<string> extentions() override { return LibpngFileReader().extentions(); }
     virtual ~LibpngFileSaver() {}
@@ -59,8 +60,8 @@ public:
         return 0;
     }
 
-    virtual bool acceptsFile(string name) override    { return LibpngFileReader().acceptsFile(name); }
-    virtual corecvs::RuntimeTypeBuffer *load(string name) override;
+    virtual bool acceptsFile(const string & name) override    { return LibpngFileReader().acceptsFile(name); }
+    virtual corecvs::RuntimeTypeBuffer *load(const string & name) override;
     virtual string name() override                    { return "LibPNG_RuntimeTypeLoader"; }
     virtual std::vector<string> extentions() override { return LibpngFileReader().extentions(); }
     virtual ~LibpngRuntimeTypeBufferLoader() {}

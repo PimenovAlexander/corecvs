@@ -14,9 +14,9 @@
 #include "core/utils/global.h"
 
 #include "core/utils/preciseTimer.h"
-#include "imageCaptureInterface.h"
-#include "cameraControlParameters.h"
-#include "decoupleYUYV.h"
+#include "core/framesources/imageCaptureInterface.h"
+#include "core/framesources/cameraControlParameters.h"
+#include "core/framesources/decoders/decoupleYUYV.h"
 #include "V4L2Capture.h"
 #include "V4L2.h"
 

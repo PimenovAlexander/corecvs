@@ -6,6 +6,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from distortion.xml
  */
 
 #include "core/reflection/reflection.h"
@@ -30,7 +31,7 @@
 /*
  *  Additional includes for enum section.
  */
-#include "distortionResizePolicy.h"
+#include "core/xml/generated/distortionResizePolicy.h"
 
 /**
  * \brief Distortion Application Parameters 

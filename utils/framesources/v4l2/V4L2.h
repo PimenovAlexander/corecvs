@@ -14,7 +14,7 @@
 #include <linux/videodev2.h>
 
 
-#include "cameraControlParameters.h"
+#include "core/framesources/cameraControlParameters.h"
 
 
 using std::string;

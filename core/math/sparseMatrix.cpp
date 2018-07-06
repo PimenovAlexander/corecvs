@@ -1535,7 +1535,11 @@ void SparseMatrix::print(std::ostream& out) const
 
 #if !defined(_WIN32) || defined(_WIN64)
 
-bool SparseMatrix::LinSolveSchurComplementInv(const SparseMatrix &M, const corecvs::Vector &Bv, const std::vector<int> &diagBlocks, corecvs::Vector &res, bool symmetric, bool posDef)
+bool SparseMatrix::LinSolveSchurComplementInv(const SparseMatrix &M, const corecvs::Vector &Bv
+    , const std::vector<int> &diagBlocks
+    , corecvs::Vector &res
+    , bool symmetric
+    , bool posDef)
 {
     /*
      * So we partition M and B into
@@ -1554,6 +1558,21 @@ bool SparseMatrix::LinSolveSchurComplementInv(const SparseMatrix &M, const corec
      *           M is posdef    => D is posdef,    (A-BD^{-1}C) is symmetric (TODO: isposdef)
      */
 
+#ifndef WITH_BLAS
+#  if defined(_MSC_VER)
+#    pragma message ("SparseMatrix::LinSolveSchurComplementInv(): NIY")
+#  else
+#	 warning SparseMatrix::LinSolveSchurComplementInv(): NIY
+#  endif
+    CORE_UNUSED(M);
+    CORE_UNUSED(Bv);
+    CORE_UNUSED(diagBlocks);
+    CORE_UNUSED(res);
+    CORE_UNUSED(symmetric);
+    CORE_UNUSED(posDef);
+    return false;
+#else
+
     auto Ah = diagBlocks[0],
          Aw = diagBlocks[0];
     auto Bw = M.w - Aw,
@@ -1562,14 +1581,6 @@ bool SparseMatrix::LinSolveSchurComplementInv(const SparseMatrix &M, const corec
          Ch = M.h - Ah;
     auto Dw = Bw;
 
-#ifndef WITH_BLAS
-#  if defined(_MSC_VER)
-#    pragma message ("NIY")
-#  else
-#	 warning NIY
-#  endif
-    return false;
-#else
     /*
      * The same as above, but with fancy LAPACK
      */
@@ -1714,7 +1725,11 @@ bool SparseMatrix::LinSolveSchurComplementInv(const SparseMatrix &M, const corec
 #endif
 }
 
-bool SparseMatrix::LinSolveSchurComplementNew(const SparseMatrix &M, const corecvs::Vector &Bv, const std::vector<int> &diagBlocks, corecvs::Vector &res, bool symmetric, bool posDef)
+bool SparseMatrix::LinSolveSchurComplementNew(const SparseMatrix &M, const corecvs::Vector &Bv
+    , const std::vector<int> &diagBlocks
+    , corecvs::Vector &res
+    , bool symmetric
+    , bool posDef)
 {
     /*
      * So we partition M and B into
@@ -1733,6 +1748,21 @@ bool SparseMatrix::LinSolveSchurComplementNew(const SparseMatrix &M, const corec
      *           M is posdef    => D is posdef,    (A-BD^{-1}C) is symmetric (TODO: isposdef)
      */
 
+#ifndef WITH_BLAS
+#  if defined(_MSC_VER)
+#    pragma message ("SparseMatrix::LinSolveSchurComplementNew(): NIY")
+#  else
+#	 warning SparseMatrix::LinSolveSchurComplementNew(): NIY
+#  endif
+    CORE_UNUSED(M);
+    CORE_UNUSED(Bv);
+    CORE_UNUSED(diagBlocks);
+    CORE_UNUSED(res);
+    CORE_UNUSED(symmetric);
+    CORE_UNUSED(posDef);
+    return false;
+#else
+
     auto Ah = diagBlocks[0],
          Aw = diagBlocks[0];
     auto Bw = M.w - Aw,
@@ -1741,14 +1771,6 @@ bool SparseMatrix::LinSolveSchurComplementNew(const SparseMatrix &M, const corec
          Ch = M.h - Ah;
     auto Dw = Bw;
 
-#ifndef WITH_BLAS
-#  if defined(_MSC_VER)
-#    pragma message ("NIY")
-#  else
-#	 warning NIY
-#  endif
-    return false;
-#else
     /*
      * The same as above, but with fancy LAPACK
      */
@@ -1962,7 +1984,11 @@ bool SparseMatrix::LinSolveSchurComplementNew(const SparseMatrix &M, const corec
 #endif
 }
 
-bool SparseMatrix::LinSolveSchurComplementOld(const SparseMatrix &M, const corecvs::Vector &Bv, const std::vector<int> &diagBlocks, corecvs::Vector &res, bool symmetric, bool posDef)
+bool SparseMatrix::LinSolveSchurComplementOld(const SparseMatrix &M, const corecvs::Vector &Bv
+    , const std::vector<int> &diagBlocks
+    , corecvs::Vector &res
+    , bool symmetric
+    , bool posDef)
 {
     /*
      * So we partition M and B into
@@ -1981,6 +2007,21 @@ bool SparseMatrix::LinSolveSchurComplementOld(const SparseMatrix &M, const corec
      *           M is posdef    => D is posdef,    (A-BD^{-1}C) is symmetric (TODO: isposdef)
      */
 
+#ifndef WITH_BLAS
+#  if defined(_MSC_VER)
+#    pragma message ("SparseMatrix::LinSolveSchurComplementOld(): NIY")
+#  else
+#	 warning SparseMatrix::LinSolveSchurComplementOld(): NIY
+#  endif
+    CORE_UNUSED(M);
+    CORE_UNUSED(Bv);
+    CORE_UNUSED(diagBlocks);
+    CORE_UNUSED(res);
+    CORE_UNUSED(symmetric);
+    CORE_UNUSED(posDef);
+    return false;
+#else
+
     auto Ah = diagBlocks[0],
          Aw = diagBlocks[0];
     auto Bw = M.w - Aw,
@@ -1989,14 +2030,6 @@ bool SparseMatrix::LinSolveSchurComplementOld(const SparseMatrix &M, const corec
          Ch = M.h - Ah;
     auto Dw = Bw;
 
-#ifndef WITH_BLAS
-#  if defined(_MSC_VER)
-#    pragma message ("NIY")
-#  else
-#	 warning NIY
-#  endif
-    return false;
-#else
     /*
      * The same as above, but with fancy LAPACK
      */

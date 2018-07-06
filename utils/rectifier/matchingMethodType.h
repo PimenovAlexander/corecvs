@@ -6,6 +6,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from rectify.xml
  */
 
 /**
@@ -34,6 +35,19 @@ enum MatchingMethodType {
      */
     MATCHING_METHOD_TYPE_LAST
 };
+
+
+static inline const char *getName(const MatchingMethodType &value)
+{
+    switch (value) 
+    {
+     case SURFCV : return "SURFCV"; break ;
+     case VITECH : return "VITECH"; break ;
+     default : return "Not in range"; break ;
+     
+    }
+    return "Not in range";
+}
 
 } //namespace MatchingMethodType
 

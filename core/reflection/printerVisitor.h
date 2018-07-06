@@ -201,6 +201,9 @@ void PrinterVisitor::visit<std::string, StringField>(std::string &field, const S
 template <>
 void PrinterVisitor::visit<double, DoubleVectorField>(std::vector<double> &field, const DoubleVectorField *fieldDescriptor);
 
+template <>
+void PrinterVisitor::visit<int, IntVectorField>(std::vector<int> &field, const IntVectorField *fieldDescriptor);
+
 /**
  * Old Style
  *

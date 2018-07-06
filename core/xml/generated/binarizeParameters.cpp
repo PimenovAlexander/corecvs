@@ -52,7 +52,8 @@ int BinarizeParameters::staticInit()
           "Threshold",
           true,
          0,
-         4096
+         4096,
+         1
         );
     fields().push_back(field0);
     /*  */ 

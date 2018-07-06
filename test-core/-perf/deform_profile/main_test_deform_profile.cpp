@@ -13,7 +13,6 @@
 
 #include "core/utils/global.h"
 
-#include "core/buffers/fixeddisp/fixedPointDisplace.h"
 #include "core/math/matrix/matrix33.h"
 #include "core/math/projectiveTransform.h"
 #include "core/buffers/g12Buffer.h"
@@ -27,7 +26,7 @@ using corecvs::Matrix33;
 using corecvs::ProjectiveTransform;
 using corecvs::G12Buffer;
 using corecvs::BufferFactory;
-using corecvs::FixedPointDisplace;
+using corecvs::FixedPointRemapper;
 using corecvs::BMPLoader;
 using corecvs::RGB24Buffer;
 

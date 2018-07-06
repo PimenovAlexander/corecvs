@@ -1,6 +1,6 @@
 <poco version="5.0">
 
-  <enum name="Graph Style">
+  <enum name="Graph Style" incpath="" >
     <item name="Draw Lines"     id="0"/>
     <item name="Draw Dots"      id="1"/>
   </enum>

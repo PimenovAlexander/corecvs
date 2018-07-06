@@ -8,9 +8,7 @@
 #include "core/math/levenmarq.h"
 #include "core/alignment/radialFunc.h"
 
-using namespace std;
 using namespace corecvs;
-
 
 //p1 = p2 = 0;
 
@@ -45,7 +43,7 @@ TEST(PolynomDistortion, DISABLED_testAproximation)  // commented as it fails!
 //    params[4] = k5;
     params[2] = p1;
     params[3] = p2;
-    radFunc(params.element, distortedPoints.element);
+    radFunc(params, distortedPoints);
     LevenbergMarquardt lmTransform(10000);
     lmTransform.f = &radFunc;
     vector<double> beginParams(polynomDegree + 2, 0);

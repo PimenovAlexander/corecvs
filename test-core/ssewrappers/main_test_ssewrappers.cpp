@@ -12,38 +12,24 @@
 #include "core/utils/global.h"
 
 #include "core/utils/sse_trace.h"
+
 #include "core/math/sse/sseWrapper.h"
+#include "core/math/neon/neonWrapper.h"
+
 #include "core/utils/preciseTimer.h"
 #include "core/buffers/kernels/fastkernel/readers.h"
 #include "core/math/generic/genericMath.h"
-#include "core/math/avx/int32x8.h"
+
+//#include "core/math/avx/int32x8.h"
 
 using namespace corecvs;
-
-#ifdef WITH_SSE
 
 
 using std::istream;
 using std::ostream;
 using std::cout;
 
-
-/* Test reverse function in 16x8 types */
-TEST(SSEWrappers, testSSEWrapperReverse)
-{
-    uint16_t data[8] = {1,2,3,4,5,6,7,8};
-    uint16_t dataRes[8];
-    Int16x8 sse(data);
-    sse.reverse();
-    sse.save(dataRes);
-
-    for (unsigned i = 0; i < 8; i++)
-    {
-        CORE_ASSERT_TRUE_P(data[i] == dataRes[7 - i], ("Reversing error:%i [%d != %d]", i, data[i], dataRes[7 - i]));
-        cout << dataRes[i] << " ";
-    }
-    cout << endl;
-}
+#ifdef WITH_SSE
 
 TEST(SSEWrappers, testSSEWrapper)
 {
@@ -133,119 +119,6 @@ TEST(SSEWrappers, profileSSEWrapper)
 #endif
 }
 
-TEST(SSEWrappers, testBasicArithmetics)
-{
-#ifdef WITH_SSE
-    //2763 3070 3377 3684 3991
-    //0xFFF
-
-    uint16_t a[8] = {0xFFF, 0,0,0, 0,0,0,0};
-    uint16_t b[8] = {0xFFF, 0,0,0, 0,0,0,0};
-    uint16_t c[8] = {0xFFF, 0,0,0, 0,0,0,0};
-    uint16_t d[8] = {0xFFF, 0,0,0, 0,0,0,0};
-    uint16_t e[8] = {0xFFF, 0,0,0, 0,0,0,0};
-
-    printf ("Blur Input: [%d %d %d %d %d]\n", a[0], b[0], c[0] ,d[0] ,e[0]);
-    uint16_t result = (
-            a[0] +
-            2 * b[0] +
-            4 * c[0] +
-            2 * d[0] +
-            e[0]);
-    printf ("Wsum: %d\n", result);
-    ASSERT_EQ(result, 10 * 0xFFF);
-
-    result = result / 10;
-    printf ("Normal Blur: %d\n", result);
-    ASSERT_EQ(result, 0xFFF);
-
-    Int16x8 sa(a);
-    Int16x8 sb(b);
-    Int16x8 sc(c);
-    Int16x8 sd(d);
-    Int16x8 se(e);
-    printf ("Blur Input: [%d %d %d %d %d]\n", sa[0], sb[0], sc[0] ,sd[0] ,se[0]);
-
-    Int16x8 sresult =
-            sb + SSEMath::mul<2>(sc) + sd;
-
-    printf ("Wsum: %d\n", sresult[0]);
-    ASSERT_TRUE(sresult[0] == 4 * 0xFFF);
-
-    sresult = SSEMath::div<2>(sa + se) + sresult;
-    printf ("Wsum2: %d\n", sresult[0]);
-    ASSERT_TRUE(sresult[0] == 5 * 0xFFF);
-
-    sresult = Int16x8(SSEMath::div<5>(UInt16x8(sresult)));
-    printf ("Wsum10: %d\n", sresult[0]);
-    ASSERT_TRUE(result == 0xFFF);
-
-    printf ("SSE Blur: %d\n", sresult[0]);
-#endif
-}
-
-TEST(SSEWrappers, testSignUnsign16)
-{
-#ifdef WITH_SSE
-    //2763 3070 3377 3684 3991
-    //0xFFF
-
-    //5   312   619 2212  2519  2826 323   630   937
-
-    int16_t a00t[8] = {    5, 0,0,0, 0,0,0,0};
-    int16_t a01t[8] = {  312, 0,0,0, 0,0,0,0};
-    int16_t a02t[8] = {  619, 0,0,0, 0,0,0,0};
-
-    int16_t a10t[8] = { 2212, 0,0,0, 0,0,0,0};
-    int16_t a11t[8] = { 2519, 0,0,0, 0,0,0,0};
-    int16_t a12t[8] = { 2826, 0,0,0, 0,0,0,0};
-
-    int16_t a20t[8] = {  323, 0,0,0, 0,0,0,0};
-    int16_t a21t[8] = {  630, 0,0,0, 0,0,0,0};
-    int16_t a22t[8] = {  937, 0,0,0, 0,0,0,0};
-
-
-    Int16x8 a00(a00t);
-    Int16x8 a01(a01t);
-    Int16x8 a02(a02t);
-
-    Int16x8 a10(a10t);
-    Int16x8 a11(a11t);
-    Int16x8 a12(a12t);
-
-    Int16x8 a20(a20t);
-    Int16x8 a21(a21t);
-    Int16x8 a22(a22t);
-
-    printf ("Loading result:\n%d %d  %d\n%d %d  %d\n%d %d  %d\n",
-            a00[0], a01[0], a02[0],
-            a10[0], a11[0], a12[0],
-            a20[0], a21[0], a22[0]
-        );
-
-   /* Int16x8 center = SSEMath::mul<2>(a10 - a12);
-    printf ("center: %d\n", center[0]);
-
-    Int16x8 result = SSEMath::div<4>(a00 + a20 - a02 - a22 + center);
-    printf ("result: %d\n", result[0]);*/
-
-    Int16x8 positive = Int16x8(a00 + a20 + SSEMath::mul<2>(a10));
-    Int16x8 negative = Int16x8(a02 + a22 + SSEMath::mul<2>(a12));
-
-    UInt16x8 result = UInt16x8(SSEMath::div<4>( positive - negative ) + Int16x8((int16_t)0));
-    cout << result << endl;    
-
-    int16_t positiveS = int16_t(a00t[0] + a20t[0] + GenericMath<uint16_t>::mul<2>(a10t[0]));
-    int16_t negativeS = int16_t(a02t[0] + a22t[0] + GenericMath<uint16_t>::mul<2>(a12t[0]));
-
-    uint16_t resultS = uint16_t(GenericMath<uint16_t>::div<4>( positiveS - negativeS ) + int16_t((int16_t)0));
-    cout << resultS << endl;
-
-    ASSERT_EQ(result[0], resultS);
-
-#endif // WITH_SSE
-}
-
 TEST(SSEWrappers, testSaturatedArithmetics)
 {
 #ifdef WITH_SSE
@@ -272,9 +145,10 @@ TEST(SSEWrappers, testSaturatedArithmetics)
 
     cout << "Unsigned Sum :" << uSum << endl;
     cout << "Unsigned Diff:" << uDif << endl;
-
-#endif // WITH_SSE
+#endif
 }
+
+
 
 TEST(SSEWrappers, testAdditionalFunctions)
 {
@@ -508,23 +382,6 @@ TEST(SSEWrappers, testPack)
     std::cout << " pack =" << std::hex << Int8x16(f.data) << std::dec << std::endl;
 }
 
-TEST(SSEWrappers, testSelector)
-{
-    Int16x8 con8bit((int16_t)0xFF);
-    Int16x8 con0bit((int16_t)0x00);
-
-    Int16x8 a(256, 257, 2, 340, 1, 23, 45, 625);
-    std::cout << "input  " << a << std::endl;
-
-    a = SSEMath::selector(a > con8bit, con8bit, a);
-    std::cout << "cliptop" << a << std::endl;
-
-    Int16x8 b(-256, 257, -2, 340, 1, 23, -45, 625);
-    std::cout << "input  " << b << std::endl;
-    b = SSEMath::selector(b < con0bit, con0bit, b);
-    std::cout << "clipbottom" << b << std::endl;
-}
-
 TEST(SSEWrappers, testExtendingReader)
 {
     uint16_t data[2 * 8];
@@ -605,6 +462,7 @@ TEST(SSEWrappers, test64bit)
 
 #endif // WITH_SSE
 
+#ifdef WITH_SSE
 TEST(SSEWrappers, popcnt)
 {
     unsigned int a, res;
@@ -617,7 +475,7 @@ TEST(SSEWrappers, popcnt)
     std::cout << "The value 0x" << std::hex << a << std::dec << " should have 16 ones :" << res << std::endl;
     CORE_ASSERT_TRUE_S(res == 16);
 }
-
+#endif
 
 uintptr_t getMask(uintptr_t addr)
 {
@@ -627,7 +485,9 @@ uintptr_t getMask(uintptr_t addr)
     return a;
 }
 
-typedef Int32x8 TestAlignmentTarget;
+#if defined(WITH_SSE) || defined(WITH_NEON)
+
+typedef Int32x4 TestAlignmentTarget;
 class TestAlignmentHolder
 {
 public:
@@ -644,3 +504,5 @@ TEST(SSEWrappers, AlignmentTest)
     uintptr_t a = getMask(alignment);
     std::cout << "C++ standard in general " <<  (a >= 32 ? "rock-n-rolls" : "sucks") << " 'cause alignment is " << a  << std::endl;
 }
+
+#endif

@@ -9,9 +9,11 @@
 #include <string>
 #include <iostream>
 #include <sceneShaded.h>
+#include <billboardCaption3DScene.h>
 
 #include <QtGui/QtGui>
 #include <QApplication>
+#include <core/fileformats/xyzListLoader.h>
 
 #include "core/fileformats/objLoader.h"
 #include "core/utils/global.h"
@@ -46,6 +48,19 @@ int main(int argc, char *argv[])
             oldStyle = false;
         }
 
+
+        if (corecvs::HelperUtils::endsWith(path, ".list"))
+        {
+            BillboardCaption3DScene *billBoard = new BillboardCaption3DScene;
+            XYZListLoader loader;
+            std::ifstream in(path, std::ios_base::in);
+            loader.loadLabelList(in, billBoard->mLabels);
+            cout << "Loaded labels " << billBoard->mLabels.size() << endl;
+
+            mainWindow.addSubObject(QString::fromStdString(path), QSharedPointer<Scene3D>((Scene3D*)billBoard));
+            continue;
+        }
+
         if (oldStyle)
         {
             Mesh3DScene *mesh = new Mesh3DScene();
@@ -56,15 +71,41 @@ int main(int argc, char *argv[])
                 continue;
             }
             mainWindow.addSubObject(QString::fromStdString(path), QSharedPointer<Scene3D>((Scene3D*)mesh));
-        } else {
+        } else {            
             SceneShaded *shaded = new SceneShaded();
             Mesh3DDecorated *mesh = new Mesh3DDecorated();
-            OBJLoader objLoader;
 
-            std::ifstream file;
-            file.open(path, std::ios::in);
-            objLoader.loadOBJ(file, *mesh);
-            file.close();
+            if (corecvs::HelperUtils::endsWith(path, ".obj"))
+            {
+                OBJLoader objLoader;
+
+                /** Load Materials **/
+                std::string mtlFile = path.substr(0, path.length() - 4) + ".mtl";
+                std::ifstream materialFile;
+                materialFile.open(mtlFile, std::ios::in);
+                if (materialFile.good())
+                {
+                    objLoader.loadMaterials(materialFile, mesh->materials, corecvs::HelperUtils::getDirectory(mtlFile));
+
+                    cout << "Loaded materials: " << mesh->materials.size() << std::endl;
+                } else {
+                    cout << "Unable to load material" << std::endl;
+                }
+                materialFile.close();
+
+                /** Load actual data **/
+                std::ifstream file;
+                file.open(path, std::ios::in);
+                objLoader.loadOBJ(file, *mesh);
+                file.close();
+            } else {
+                if (!loader.load(mesh, path))
+                {
+                    delete_safe(mesh);
+                    delete_safe(shaded);
+                    continue;
+                }
+            }
 
             shaded->mMesh = mesh;
             shaded->mMesh->recomputeMeanNormals();

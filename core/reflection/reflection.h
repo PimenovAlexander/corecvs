@@ -68,12 +68,12 @@ class ReflectionNaming
 {
 public:
     const char *name;       /**< The name of the object */
-    const char *decription; /**< The description of the object */
+    const char *description; /**< The description of the object */
     const char *comment;    /**< The comment for the describable object */
 
     ReflectionNaming() :
         name(NULL),
-        decription(NULL),
+        description(NULL),
         comment(NULL)
     {}
 
@@ -83,8 +83,8 @@ public:
         const char *_comment = NULL
     ) :
         name(_name),
-        decription(_decription == NULL ? _name      : _decription),
-        comment   (_comment    == NULL ? decription : _comment)
+        description(_decription == NULL ? _name      : _decription),
+        comment   (_comment    == NULL ? description : _comment)
     {}
 
 };
@@ -723,7 +723,7 @@ public:
 
     void print()
     {
-        printf("%20.20s %20.20s (%s)\n", name.name, name.decription, name.comment);
+        printf("%20.20s %20.20s (%s)\n", name.name, name.description, name.comment);
         printf("Size: %d\n", (int)objectSize);
         printf("--------- Fields -----------\n");
         for (size_t fieldId = 0; fieldId < fields.size(); fieldId++)

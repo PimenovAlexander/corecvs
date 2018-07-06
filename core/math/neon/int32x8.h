@@ -15,9 +15,9 @@ namespace corecvs {
 class Int32x8 : public Vector2d<Int32x4>
 {
 public:
-    explicit Int32x8(const Int32x4 &lowAddr, const Int32x4 &highAddr): Vector2d<Int32x4>(lowAddr, highAddr){};
+    explicit Int32x8(const Int32x4 &lowAddr, const Int32x4 &highAddr): Vector2d<Int32x4>(lowAddr, highAddr) {}
 
-    explicit Int32x8(int32_t value): Vector2d<Int32x4>(Int32x4(value)){};
+    explicit Int32x8(int32_t value): Vector2d<Int32x4>(Int32x4(value)) {}
 
     explicit Int32x8(const int32x4_t &_data0, const int32x4_t &_data1)
     {
@@ -40,12 +40,12 @@ public:
 
 };
 
-FORCE_INLINE inline Int32x8 operator >>  (const Int32x8 &left, uint32_t count) {
+FORCE_INLINE Int32x8 operator >>  (const Int32x8 &left, uint32_t count) {
     return Int32x8 ( left[0] >> count, left[1] >> count);
 
 }
 
-FORCE_INLINE inline Int32x8 operator >>=(Int32x8 &left, uint32_t count) {
+FORCE_INLINE Int32x8 operator >>=(Int32x8 &left, uint32_t count) {
     left[0] >>= count;
     left[1] >>= count;
     return left;

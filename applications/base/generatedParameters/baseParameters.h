@@ -6,6 +6,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from base.xml
  */
 
 #include "core/reflection/reflection.h"
@@ -335,6 +336,23 @@ template<class VisitorType>
         mInterpolationType = interpolationType;
     }
 
+    bool operator ==(const BaseParameters &other) const 
+    {
+        if ( !(this->mRotation == other.mRotation)) return false;
+        if ( !(this->mMirror == other.mMirror)) return false;
+        if ( !(this->mSwapCameras == other.mSwapCameras)) return false;
+        if ( !(this->mFilterLock == other.mFilterLock)) return false;
+        if ( !(this->mEnableFilterGraph == other.mEnableFilterGraph)) return false;
+        if ( !(this->mDownsample == other.mDownsample)) return false;
+        if ( !(this->mH == other.mH)) return false;
+        if ( !(this->mW == other.mW)) return false;
+        if ( !(this->mAutoH == other.mAutoH)) return false;
+        if ( !(this->mAutoW == other.mAutoW)) return false;
+        if ( !(this->mX == other.mX)) return false;
+        if ( !(this->mY == other.mY)) return false;
+        if ( !(this->mInterpolationType == other.mInterpolationType)) return false;
+        return true;
+    }
     friend std::ostream& operator << (std::ostream &out, BaseParameters &toSave)
     {
         corecvs::PrinterVisitor printer(out);

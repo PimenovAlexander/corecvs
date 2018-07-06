@@ -131,6 +131,7 @@ public:
         return (idx < SIZE) ? getInt(idx) : 0;
     }
 
+    /* Create mask from the most significant bit of each 8-bit element in a, and store the result in dst. */
     inline uint32_t maskToInt2bit() const
     {
         return _mm256_movemask_epi8(this->data);

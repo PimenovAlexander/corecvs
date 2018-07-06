@@ -7,6 +7,16 @@ namespace corecvs {
 
 /**
  *  This class is caching the transformation of the buffer.
+ *  There is a number of ways to store transformation for the buffer.
+ *
+ *  Typically you use these to search for a cached inverse map
+ *  Your options are
+ *    - DisplacementBuffer - stores small floating points offsets
+ *
+ *    - DirectRemapper -  it stores direct map in integer corrdiats
+ *
+ *    - FixedPointRemapper - this stores fixed point presenation of the mapping for every pixel
+ *
  *
  *
  **/
@@ -30,7 +40,7 @@ public:
 private:
     DirectRemapper *mRemap;
     DisplacementBuffer *mDisplace;
-    FixedPointDisplace *mF8Displace;
+    FixedPointRemapper *mF8Displace;
 };
 
 }

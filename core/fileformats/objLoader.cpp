@@ -1,9 +1,12 @@
 #include <sstream>
 #include <regex>
+#include <fstream>
 
 #include "core/fileformats/objLoader.h"
 #include "core/utils/utils.h"
 #include "core/buffers/bufferFactory.h"
+
+#include "core/fileformats/bmpLoader.h"
 
 using namespace std;
 
@@ -235,7 +238,8 @@ int OBJLoader::loadMaterials(istream &input, vector<OBJMaterial> &materials, con
         cout << "    <" << m.name << ">" << endl;
     }
 
-    return 0;
+
+   return 0;
 }
 
 int OBJLoader::loadOBJSimple(istream &input, Mesh3D &mesh)
@@ -321,6 +325,129 @@ int OBJLoader::saveOBJSimple(ostream &out, Mesh3D &mesh)
     }
 
     return 0;
+}
+
+
+
+int OBJLoader::saveMaterials(const string &fileName, vector<OBJMaterial> &materials, const string &/*path*/)
+{
+    ofstream out;
+    out.open(fileName, ios::out);
+    if (out.fail())
+    {
+        SYNC_PRINT(("MeshLoader::saveMaterials(): Can't open mesh file <%s> for writing\n", fileName.c_str()));
+        return false;
+    }
+
+    for (size_t t = 0; t < materials.size(); t++ )
+    {
+        out << "newmtl " << materials[t].name << endl;
+
+        std::stringstream texname;
+        texname << "tex" << t << ".bmp";
+
+        out << "map_Ka " << texname.str() << endl;
+
+        if (materials[t].tex[OBJMaterial::TEX_AMBIENT] != NULL)
+        {
+            BMPLoader().save(texname.str(), materials[t].tex[OBJMaterial::TEX_AMBIENT]);
+        }
+    }
+
+    out.close();
+    return 0;
+}
+
+int OBJLoader::saveObj(const  string &fileName, Mesh3DDecorated &mesh)
+{
+    vector<Vector3dd>  &vertexes = mesh.vertexes;
+    vector<Vector3d32> &faces    = mesh.faces;
+
+    vector<Vector2dd> &texuv    = mesh.textureCoords;
+    vector<Vector3dd> &normals  = mesh.normalCoords;
+    //vector<Vector2d32> &edges    = mesh.edges;
+
+    int currentMaterial = -1;
+
+    ofstream out;
+    out.open(fileName + ".obj", ios::out);
+    if (out.fail())
+    {
+        SYNC_PRINT(("MeshLoader::save(): Can't open mesh file <%s> for writing\n", fileName.c_str()));
+        return false;
+    }
+
+    out << "mtllib " << fileName << ".mtl" << endl;
+
+
+    for (unsigned i = 0; i < vertexes.size(); i++)
+    {
+        out << "v "
+            << vertexes[i].x() << " "
+            << vertexes[i].y() << " "
+            << vertexes[i].z() << " " << endl;
+
+    }
+
+    if (mesh.hasTexCoords)
+    {
+        for (unsigned i = 0; i < texuv.size(); i++)
+        {
+            out << "vt "
+                << texuv[i].x() << " "
+                << texuv[i].y() << " " << endl;
+
+        }
+    }
+
+    if (mesh.hasNormals)
+    {
+        for (unsigned i = 0; i < normals.size(); i++)
+        {
+            out << "vn "
+                << normals[i].x() << " "
+                << normals[i].y() << " "
+                << normals[i].z() << " " << endl;
+        }
+    }
+
+    for (unsigned i = 0; i < faces.size(); i++)
+    {
+        if (mesh.hasTexCoords) {
+            Vector4d32 &texid = mesh.texId[i];
+            int t = texid[3];
+            if (t != currentMaterial && t < (int)mesh.materials.size()) {
+                out << "usemtl " << mesh.materials[t].name << endl;
+                currentMaterial = t;
+            }
+        }
+
+        out << "f ";
+        out << (faces[i].x() + 1);
+        out << "/";
+        if (mesh.hasTexCoords) { out << mesh.texId[i][0] + 1; }
+        out << "/";
+        if (mesh.hasNormals  ) { out << mesh.normalId[i][0] + 1; }
+        out << " ";
+
+        out << (faces[i].y() + 1);
+        out << "/";
+        if (mesh.hasTexCoords) { out << mesh.texId[i][1] + 1; }
+        out << "/";
+        if (mesh.hasNormals  ) { out << mesh.normalId[i][1] + 1; }
+        out << " ";
+
+        out << (faces[i].z() + 1);
+        out << "/";
+        if (mesh.hasTexCoords) { out << mesh.texId[i][2] + 1; }
+        out << "/";
+        if (mesh.hasNormals  ) { out << mesh.normalId[i][2] + 1; }
+        out << " ";
+        out << std::endl;
+    }
+
+    return 0;
+
 }
 
 }

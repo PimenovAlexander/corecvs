@@ -5,30 +5,56 @@
  * \date 21 Oct 2015
  *
  * Declares the Debayer class.
- * \author Pavel.Vasilev
  */
 #ifndef DEBAYER_H
 #define DEBAYER_H
 
+#include <string>
+#include <map>
+
 #include "core/utils/global.h"
 
-#include "core/xml/generated/debayerMethod.h"
-
+#include "core/math/vector/vector2d.h"
+#include "core/math/vector/vector3d.h"
 #include "core/buffers/g12Buffer.h"
 #include "core/buffers/rgb24/rgbTBuffer.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/fileformats/metamap.h"
+
+#include "core/xml/generated/debayerParameters.h"
 
 namespace corecvs {
 
 class Debayer
 {
 public:
-    enum CompareMethod
+    class Parameters : public DebayerParameters
     {
-        PSNR = 0,
-        RMSD = 1
+    public:
+        Parameters(int bayerPos = -1                            // bayerPos autodetect from pgm
+            , const std::vector<double> &gn = { 1.0, 1.0, 1.0 } // gains R,G,B, where G=1.0 always
+            , const std::vector<double> &gm = { 1.0, 1.0 }      // gammas for dark and white areas
+            , DebayerMethod::DebayerMethod mtd = DebayerMethod::BILINEAR // 0:near, 1:bilinear, 2:AHD
+            , int ob = 12                                       // output gets 12bits also
+        )
+        {
+            setMethod(mtd), setBayerPos(bayerPos), setNumBitsOut(ob);
+            setGains(gn), setGamma(gm);
+        }
+
+        static Parameters& BestDefaultsByExt(const std::string& ext);
+        static std::map<std::string, Parameters> bestDefsMap;
     };
+
+    /**
+     * Common useful method to perform demosaic for the given Bayer with given params
+     *
+     */
+    static corecvs::RGB48Buffer *DemosaicRgb48(corecvs::G12Buffer* bayer, const Debayer::Parameters &params, MetaData &meta);
+    static corecvs::RGB24Buffer *Demosaic(corecvs::G12Buffer* bayer, const Debayer::Parameters &params);
+
+    static void ConvertRgb48toRgb24(const corecvs::RGB48Buffer *in, corecvs::RGB24Buffer *out, int shift = 12 - 8);
+    static void ConvertRgb24toRgb48(const corecvs::RGB24Buffer *in, corecvs::RGB48Buffer *out);
 
     /**
      * Constructor.
@@ -65,6 +91,8 @@ public:
     void        getYChannel(AbstractBuffer<double,int> *output);
 
     uint8_t     colorFromBayerPos(uint i, uint j, bool rggb = true);
+
+    enum CompareMethod { PSNR = 0, RMSD = 1 };
 
 private:
     Vector3dd   mScaleMul   = { 1, 1, 1 };

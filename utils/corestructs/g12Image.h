@@ -49,7 +49,7 @@ QImage *toQImage(RGB24Buffer *buffer);
 class RGB24InterfaceImage : public QImage
 {
 public:
-    RGB24InterfaceImage(RGB24Buffer *buffer);
+    RGB24InterfaceImage(const RGB24Buffer *buffer);
     virtual ~RGB24InterfaceImage();
 };
 

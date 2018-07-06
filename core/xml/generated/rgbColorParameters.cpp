@@ -52,7 +52,8 @@ int RgbColorParameters::staticInit()
           "R",
           true,
          0,
-         255
+         255,
+         1
         );
     fields().push_back(field0);
     /*  */ 
@@ -66,7 +67,8 @@ int RgbColorParameters::staticInit()
           "G",
           true,
          0,
-         255
+         255,
+         1
         );
     fields().push_back(field1);
     /*  */ 
@@ -80,7 +82,8 @@ int RgbColorParameters::staticInit()
           "B",
           true,
          0,
-         255
+         255,
+         1
         );
     fields().push_back(field2);
     /*  */ 

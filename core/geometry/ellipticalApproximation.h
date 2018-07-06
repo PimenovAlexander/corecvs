@@ -7,11 +7,14 @@
  * \author alexander
  */
 #include <math.h>
+#include <set>
 
 #include "core/utils/global.h"
 
 #include "core/math/vector/vector2d.h"
 #include "core/math/matrix/matrix.h"
+
+#include "core/math/affine.h"
 
 namespace corecvs {
 
@@ -105,7 +108,7 @@ public:
     Vector2dd getPerAxisDeviation() const
     {
         Vector2dd perAxisDeviationSquare = getPerAxisDeviationSquare();
-        return  perAxisDeviationSquare.perElementSqrt();
+        return  perAxisDeviationSquare.cwiseSqrt();
     }
 
     double getDeviationSquare() const
@@ -285,22 +288,22 @@ protected:
 
 public:
     EllipticalApproximationUnified() :
-         mInfMatrix(NULL)
+         mCovMatrix(NULL)
        , mSum(ElementType(0))
        , mCount(0)
     {
         int d = getDimention();
-        mInfMatrix = new Matrix(d, d);
+        mCovMatrix = new Matrix(d, d);
     }
 
     EllipticalApproximationUnified(const EllipticalApproximationUnified &other) :
-        mInfMatrix(NULL)
+        mCovMatrix(NULL)
       , mSum(other.mSum)      
       , mAxes(other.mAxes)
       , mValues(other.mValues)
       , mCount(other.mCount)
     {
-        this->mInfMatrix = new Matrix(other.mInfMatrix);
+        this->mCovMatrix = new Matrix(other.mCovMatrix);
        // SYNC_PRINT(("EllipticalApproximationUnified(const EllipticalApproximationUnified &other) called\n"));
     }
 
@@ -308,9 +311,9 @@ public:
     {
         if (&other != this)
         {
-            delete_safe(this->mInfMatrix);
+            delete_safe(this->mCovMatrix);
 
-            this->mInfMatrix = new Matrix(other.mInfMatrix);
+            this->mCovMatrix = new Matrix(other.mCovMatrix);
             this->mSum    = other.mSum;
             this->mCount  = other.mCount;
             this->mAxes   = other.mAxes;
@@ -322,7 +325,7 @@ public:
 
     ~EllipticalApproximationUnified()
     {
-        delete_safe(mInfMatrix);
+        delete_safe(mCovMatrix);
     }
 
 
@@ -334,16 +337,23 @@ public:
     void addPoint (const ElementType &point)
     {
         int row, column;
-        for (column = 0; column < mInfMatrix->w ; column++)
+        for (column = 0; column < mCovMatrix->w ; column++)
         {
-            for (row = 0; row < mInfMatrix->h; row++)
+            for (row = 0; row < mCovMatrix->h; row++)
             {
-                mInfMatrix->a(row, column) = mInfMatrix->a(row, column) + point.at(row) * point.at(column);
+                mCovMatrix->a(row, column) = mCovMatrix->a(row, column) + point.at(row) * point.at(column);
             }
         }
 
         mSum += point;
         mCount++;
+    }
+
+    template <class Container>
+    void addPoints(const Container &pointContainer) {
+        for (auto &p : pointContainer) {
+            addPoint(p);
+        }
     }
 
     int size() const
@@ -358,12 +368,12 @@ public:
             return false;
         }
 
-        if (mInfMatrix == NULL) {
+        if (mCovMatrix == NULL) {
             SYNC_PRINT(("Can't approximate non existant matrix\n"));
             return false;
         }
 
-        if (mInfMatrix->h == 0 || mInfMatrix->w == 0) {
+        if (mCovMatrix->h == 0 || mCovMatrix->w == 0) {
             SYNC_PRINT(("Can't approximate non existant matrix\n"));
             return false;
         }
@@ -373,7 +383,7 @@ public:
          * We will use the fact that
                 sigma(X, Y) = E[(X - E[X])(Y - E[Y])] = E[XY] - E[Y]E[X]
          */
-        Matrix A(*mInfMatrix);
+        Matrix A(*mCovMatrix);
         for (int row = 0; row < A.h; row++)
         {
             for (int column = 0; column < A.w; column++)
@@ -406,15 +416,35 @@ public:
 #else
         DiagonalMatrix D(A.h);
         Matrix V(A.h, A.w);
-        Matrix::jacobi(&A, &D, &V, NULL);
+        int res = Matrix::jacobi(&A, &D, &V, NULL, false);
+        if (res != 0) {
+            Matrix B(*mCovMatrix);
+            for (int row = 0; row < B.h; row++)
+            {
+                for (int column = 0; column < B.w; column++)
+                {
+                    B.a(row,column) = (B.a(row,column) / mCount) - (mSum.at(row) / mCount) * (mSum.at(column) / mCount);
+                }
+            }
+
+            cout << "Problem " << res << " with matrix: " << endl << B << endl;
+
+            for (int row = 0; row < A.h; row++) {
+                D.a(row) = A.a(row, row);
+
+                for (int column = 0; column < A.w; column++)
+                    V.a(row, column) = (row == column) ? 1 : 0;
+            }
+
+        }
 
         mAxes.clear();
         mValues.clear();
 
-        for (int i = 0; i < mInfMatrix->w; i++)
+        for (int i = 0; i < mCovMatrix->w; i++)
         {
             ElementType forPush;
-            for (int k = 0; k < mInfMatrix->h; k ++) {
+            for (int k = 0; k < mCovMatrix->h; k ++) {
                 forPush.element[k] = V.a(k,i);
             }
 
@@ -479,7 +509,7 @@ public:
         double radius = 0.0;
         for (int i = 0; i < getDimention(); i++)
         {
-            radius += mInfMatrix->a(i,i) / mCount - (mean.at(i) * mean.at(i));
+            radius += mCovMatrix->a(i,i) / mCount - (mean.at(i) * mean.at(i));
         }
         return sqrt(radius);
     }
@@ -490,7 +520,7 @@ public:
             return 0.0;
         }
         ElementType mean = getMean();
-        double radius = mInfMatrix->a((int)dim, (int)dim) / mCount - (mean.at(dim) * mean.at(dim));
+        double radius = mCovMatrix->a((int)dim, (int)dim) / mCount - (mean.at(dim) * mean.at(dim));
         return sqrt(radius);
     }
 
@@ -503,7 +533,7 @@ public:
         ElementType mean = getMean();
         for (int i = 0; i < getDimention(); i++)
         {
-            result[i] = sqrt(mInfMatrix->a(i,i) / mCount - (mean.at(i) * mean.at(i)));
+            result[i] = sqrt(mCovMatrix->a(i,i) / mCount - (mean.at(i) * mean.at(i)));
         }
         return result;
     }
@@ -515,16 +545,39 @@ public:
         }
 
         double radius = 0.0;
-        for (int i = 0; i < mInfMatrix->h; i++)
+        for (int i = 0; i < mCovMatrix->h; i++)
         {
-            radius += mInfMatrix->a(i,i) / mCount;
+            radius += mCovMatrix->a(i,i) / mCount;
         }
         return sqrt(radius);
     }
 
+    /**
+     * Returns matrix that moves cluster center to zero and orientates its axis to orts
+     **/
+    Matrix44 getEigenTransform() const
+    {
+        return Matrix44(Matrix33::FromColumns(mAxes[0], mAxes[1], mAxes[2]), -getCenter());
+    }
+
+    Affine3DQ getEigenMove() const
+    {
+        Vector3dd a0 = mAxes[0];
+        Vector3dd a1 = mAxes[1];
+        Vector3dd a2 = mAxes[2];
+        a0.normalise();
+        a1.normalise();
+        a2.normalise();
+
+        if (((a0 ^ a1) & a2) < 0) a2 = -a2;
+
+        Matrix33 m = Matrix33::FromRows(a0, a1, a2);
+        return Affine3DQ(Quaternion::FromMatrix(m)) * Affine3DQ(-getCenter());
+    }
+
 //
 //private:
-    Matrix*                  mInfMatrix;
+    Matrix*                  mCovMatrix;
     ElementType              mSum;
     std::vector<ElementType> mAxes;
     std::vector<double>      mValues;
@@ -542,7 +595,7 @@ inline int EllipticalApproximationUnified<double>::getDimention() const
 template <>
 inline void EllipticalApproximationUnified<double>::addPoint (const double &point)
 {
-    mInfMatrix->a(0, 0) += point * point;
+    mCovMatrix->a(0, 0) += point * point;
     mSum += point;
     mCount++;
 }
@@ -559,7 +612,7 @@ inline double EllipticalApproximationUnified<double>::getRadius () const
     double radius = 0.0;
     for (int i = 0; i < getDimention(); i++)
     {
-        radius += mInfMatrix->a(i,i) / mCount - mean * mean;
+        radius += mCovMatrix->a(i,i) / mCount - mean * mean;
     }
     return sqrt(radius);
 }
@@ -645,6 +698,80 @@ public:
         return sqrt(getSDev());
     }
 };
+
+/* Inheritance needed here */
+class SDevApproximation1dMedian
+{
+public:
+    double mSqSum;
+    double mSum;
+    int    mCount;
+    std::multiset<double> minHeap, maxHeap;
+
+    SDevApproximation1dMedian() :
+        mSqSum(0.0),
+        mSum(0.0),
+        mCount(0),
+        minHeap(),
+        maxHeap()
+    {}
+
+    void addPoint (double point)
+    {
+       mSqSum += point * point;
+       mSum += point;
+       mCount ++;
+       if(maxHeap.size() == 0 || point < *maxHeap.rbegin())
+           maxHeap.insert(point);
+       else
+           minHeap.insert(point);
+       if(maxHeap.size() > minHeap.size() + 1) {
+           double mid = *maxHeap.rbegin();
+           maxHeap.erase(--maxHeap.end());
+           minHeap.insert(mid);
+       }
+       if(minHeap.size() > maxHeap.size() + 1) {
+           double mid = *minHeap.begin();
+           minHeap.erase(minHeap.begin());
+           maxHeap.insert(mid);
+       }
+    }
+
+    double getAverage() const
+    {
+        if (mCount == 0)
+            return 0.0;
+
+        return mSum / mCount;
+    }
+
+    double getMedian() const
+    {
+        if (mCount == 0)
+            return 0.0;
+
+        if (maxHeap.size() > minHeap.size())
+            return *maxHeap.rbegin();
+        if (maxHeap.size() < minHeap.size())
+            return *minHeap.begin();
+        return (*minHeap.begin() + *maxHeap.rbegin()) / 2;
+    }
+
+    double getSDev() const
+    {
+        if (mCount == 0)
+            return 0.0;
+
+        double avg = getAverage();
+        return (mSqSum / mCount) - avg * avg;
+    }
+
+    double getDev() const
+    {
+        return sqrt(getSDev());
+    }
+};
+
 
 
 } //namespace corecvs

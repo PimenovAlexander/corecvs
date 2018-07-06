@@ -105,7 +105,8 @@ int Draw3dParameters::staticInit()
           "Point Size",
           true,
          0,
-         255
+         255,
+         1
         );
     fields().push_back(field3);
     /*  */ 
@@ -153,7 +154,8 @@ int Draw3dParameters::staticInit()
           "Edge Width",
           true,
          0,
-         255
+         255,
+         1
         );
     fields().push_back(field6);
     /*  */ 
@@ -213,7 +215,8 @@ int Draw3dParameters::staticInit()
           "Font Size",
           true,
          0,
-         255
+         255,
+         1
         );
     fields().push_back(field10);
     /*  */ 
@@ -227,7 +230,8 @@ int Draw3dParameters::staticInit()
           "Font Width",
           true,
          0,
-         255
+         255,
+         1
         );
     fields().push_back(field11);
     /*  */ 
@@ -280,7 +284,8 @@ int Draw3dParameters::staticInit()
           "Texture Alpha",
           true,
          0,
-         255
+         255,
+         1
         );
     fields().push_back(field14);
     /*  */ 
@@ -294,7 +299,8 @@ int Draw3dParameters::staticInit()
           "Texture Scale",
           true,
          0,
-         2000
+         2000,
+         1
         );
     field15->widgetHint=BaseField::SPIN_BOX;
     field15->precision=2;
@@ -310,7 +316,8 @@ int Draw3dParameters::staticInit()
           "Decal Matrix Type",
           true,
          0,
-         19
+         19,
+         1
         );
     fields().push_back(field16);
     /*  */ 
@@ -336,7 +343,8 @@ int Draw3dParameters::staticInit()
           "Decal Left Alpha",
           true,
          0,
-         255
+         255,
+         1
         );
     fields().push_back(field18);
     /*  */ 
@@ -362,7 +370,8 @@ int Draw3dParameters::staticInit()
           "Decal Right Alpha",
           true,
          0,
-         255
+         255,
+         1
         );
     fields().push_back(field20);
     /*  */ 

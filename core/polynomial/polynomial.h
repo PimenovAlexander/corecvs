@@ -69,6 +69,22 @@ public:
     {
         visitor.visit((std::vector<double>&)*this, "coeff");
     }
+
+    friend std::ostream& operator << (std::ostream &out, Polynomial &toPrint)
+    {
+        for (int i = (int)toPrint.size() - 1; i >= 0; --i)
+        {
+            if (toPrint[i] != 0.0)
+            {
+                cout << toPrint[i];
+                if (i != 0 )
+                {
+                    cout << "x^" << i << " + ";
+                }
+            }
+        }
+        return out;
+    }
 };
 
 Polynomial operator*(const double &lhs, const Polynomial &rhs);

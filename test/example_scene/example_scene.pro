@@ -4,7 +4,7 @@ exists(../../../../config.pri) {
     #message(Using global config)
     include($$ROOT_DIR/config.pri)
 } else { 
-    message(Using local config)
+    #message(Using local config)
     ROOT_DIR=../..
     include($$ROOT_DIR/cvs-config.pri)
 }
@@ -14,7 +14,8 @@ TEMPLATE = app
 TARGET   = test_example_scene
 QT 	+= xml
 
-include(../../utils/utils.pri)                        # it uses TARGET, ROOT_DIR and detects UTILS_BINDIR, OBJECTS_DIR, DESTDIR, ...!
+include(../../utils/utils.pri)                      # it uses TARGET, ROOT_DIR and detects UTILS_BINDIR, OBJECTS_DIR, DESTDIR, ...!
+
 
 SOURCES += main_example_scene.cpp
 HEADERS += main_example_scene.h

@@ -52,6 +52,7 @@ SOURCES += \
    #fastkernel_double/main_test_fastkernel_double.cpp \   # moved to perf-tests
    #fastkernel_profile/main_test_fastkernel_profile.cpp \ # moved to perf-tests   
     fileformats/main_test_fileformats.cpp \
+    filesystem/main_test_filesystem.cpp \
    #filter_blocks/main_test_filter_blocks.cpp \           # TODO: can't build
 #    gaussianSolution/main_test_gaussianSolution.cpp \     # TODO: check it...
     geometry/main_test_geometry.cpp \
@@ -101,8 +102,12 @@ SOURCES += \
     quadric/main_test_quadric.cpp \
     planefit/main_test_planefit.cpp \
     noise/main_test_noise.cpp \
+    projection/main_test_projection.cpp \
 	vptree/main_test_vptree.cpp \
     meshfilter/main_test_meshfilter.cpp \
     convexhull/main_test_convexhull.cpp \
     wuRasterizer/main_test_wu_rasterizer.cpp \
-
+    bsptree/main_test_bsptree.cpp \
+    halfspace/main_test_halfspace.cpp \
+    orientedbox/main_test_orientedbox.cpp \
+    convexHull2d/main_test_convexHull2d.cpp \

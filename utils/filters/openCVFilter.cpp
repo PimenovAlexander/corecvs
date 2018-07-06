@@ -7,7 +7,7 @@
 # include "opencv2/imgproc/imgproc.hpp"
 # include "opencv2/highgui/highgui.hpp"
 # include "opencv2/core/core_c.h"
-# include "OpenCVTools.h"
+# include "openCVTools.h"
 #endif
 
 OpenCVFilter::OpenCVFilter()

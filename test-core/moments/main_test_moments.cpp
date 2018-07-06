@@ -9,6 +9,7 @@
  */
 
 #include <iostream>
+#include <core/geometry/mesh3d.h>
 #include "gtest/gtest.h"
 
 #include "core/utils/global.h"
@@ -98,5 +99,40 @@ TEST(Moments, testMoments4)
     cout << test2.getMax()  << endl;
 
     cout << "passed" << endl;
+
+}
+
+TEST(Moments, testTransform)
+{
+   Mesh3D mesh;
+   mesh.addCylinder(Vector3dd::Zero(), 1, 10);
+   mesh.transform((Matrix44)Affine3DQ::RotationX(degToRad(45)));
+
+   EllipticalApproximation3d approx;
+   approx.addPoints(mesh.vertexes);
+   approx.getEllipseParameters();
+
+   Matrix44 mat  = approx.getEigenTransform();
+   Affine3DQ aff = approx.getEigenMove();
+
+   aff.prettyPrint1();
+
+   Matrix44 mat2 = (Matrix44)aff;
+   cout << "M1\n" << mat << endl;
+   cout << "M2\n" << mat2 << endl;
+
+   cout << "Transform" << aff << endl;
+
+   CORE_ASSERT_TRUE(aff.shift.notTooFar(Vector3dd::Zero(), 1e-7), "Wrong Shift");
+   Vector3dd axis = aff.rotor.getAxis();
+   double angle   = aff.rotor.getAngle();
+
+   cout << "Axis :" << axis  << endl;
+   cout << "Angle:" << radToDeg(angle) << endl;
+
+//   cout << "diff" << (mat / mat2) << endl;
+
+
+//   CORE_ASSERT_TRUE(mat.notTooFar(mat2, 1e-7), "Wrong move" );
 
 }

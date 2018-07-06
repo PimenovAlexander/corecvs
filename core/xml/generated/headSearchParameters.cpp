@@ -52,7 +52,8 @@ int HeadSearchParameters::staticInit()
           "Threshold Distance in mm",
           true,
          0,
-         99999
+         99999,
+         1
         );
     field0->widgetHint=BaseField::SPIN_BOX;
     field0->precision=2;
@@ -68,7 +69,8 @@ int HeadSearchParameters::staticInit()
           "Cluster depth in mm",
           true,
          0,
-         99999
+         99999,
+         1
         );
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->precision=2;
@@ -84,7 +86,8 @@ int HeadSearchParameters::staticInit()
           "Cluster min size",
           true,
          0,
-         99999
+         99999,
+         1
         );
     fields().push_back(field2);
     /*  */ 
@@ -98,7 +101,8 @@ int HeadSearchParameters::staticInit()
           "Head area in mm",
           true,
          0,
-         99999
+         99999,
+         1
         );
     field3->widgetHint=BaseField::SPIN_BOX;
     field3->precision=2;
@@ -114,7 +118,8 @@ int HeadSearchParameters::staticInit()
           "Expected number of heads",
           true,
          0,
-         100
+         100,
+         1
         );
     fields().push_back(field4);
     /*  */ 

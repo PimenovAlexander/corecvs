@@ -25,11 +25,11 @@ public:
     int y1;
     int y2;
 
-    int x11;
-    int x12;
+    double x11;
+    double x12;
 
-    int x21;
-    int x22;
+    double x21;
+    double x22;
 
     int currentY;
 
@@ -56,6 +56,18 @@ public:
     TrapezoidSpanIterator() {}
 
     TrapezoidSpanIterator(int y1, int y2, int x11, int x12, int x21, int x22) :
+        y1(y1) , y2(y2), x11(x11), x12(x12), x21(x21), x22(x22)
+    {
+        // SYNC_PRINT(("TrapezoidSpanIterator::TrapezoidSpanIterator(%d %d %d %d %d %d): called\n", y1, y2, x11, x12, x21, x22 ));
+        currentY = y1;
+        double dy = y2 - y1;
+        dx1 = (x21 - x11) / dy;
+        dx2 = (x22 - x12) / dy;
+        x1 = x11;
+        x2 = x12;
+    }
+
+    TrapezoidSpanIterator(int y1, int y2, double x11, double x12, double x21, double x22) :
         y1(y1) , y2(y2), x11(x11), x12(x12), x21(x21), x22(x22)
     {
         // SYNC_PRINT(("TrapezoidSpanIterator::TrapezoidSpanIterator(%d %d %d %d %d %d): called\n", y1, y2, x11, x12, x21, x22 ));
@@ -112,6 +124,10 @@ public:
 #endif
     }
 
+    /**
+     * Step to next line in iterator
+     * if hasValue() returned false result of call to this function is undefined
+     **/
     void step()
     {
         currentY++;
@@ -126,6 +142,25 @@ public:
         }
     }
 
+    /**
+     * Step to line Y in iterator
+     * if hasValue() returned false or Y <= currentY result of call to this function is undefined
+     **/
+    void stepTo(int Y)
+    {
+        int stepY = (Y - currentY);
+        currentY = Y;
+        x1 += dx1 * stepY;
+        x2 += dx2 * stepY;
+
+        int attributes = (int)a11.size();
+        for (int i = 0; i < attributes; i++)
+        {
+            a1[i] += da1[i] * stepY;
+            a2[i] += da2[i] * stepY;
+        }
+    }
+
     bool hasValue() {
         return (currentY <= y2);
     }
@@ -137,9 +172,23 @@ public:
         x2 = fround(this->x2);
     }
 
+    void getSpan(int &y, double &x1, double &x2)
+    {
+        y = currentY;
+        x1 = this->x1;
+        x2 = this->x2;
+    }
+
     HLineSpanInt getSpan()
     {
         HLineSpanInt span;
+        getSpan(span.cy, span.x1, span.x2);
+        return span;
+    }
+
+    HLineSpanDouble getDSpan()
+    {
+        HLineSpanDouble span;
         getSpan(span.cy, span.x1, span.x2);
         return span;
     }
@@ -183,6 +232,7 @@ public:
     }
 
 };
+
 
 template<class TriangleType>
 class GenericTriangleSpanIterator
@@ -281,92 +331,7 @@ public:
 typedef GenericTriangle<AttributedPoint> AttributedTriangle;
 
 
-class AttributedTriangleSpanIterator : public GenericTriangleSpanIterator<AttributedTriangle>
-{
-public:
-    typedef GenericTriangleSpanIterator<AttributedTriangle> BaseClass;
 
-    AttributedTriangleSpanIterator(const AttributedTriangle &triangle)
-    {
-        sortedt = triangle;
-        sortedt.sortByY();
-
-        double longslope = (sortedt.p3().x() - sortedt.p1().x()) / (sortedt.p3().y() - sortedt.p1().y());
-        double centerx1 = sortedt.p1().x() + longslope * (sortedt.p2().y() - sortedt.p1().y());
-        double centerx2 = sortedt.p2().x();
-
-        FragmentAttributes att1(sortedt.p1().attributes.size());
-        for(size_t i = 0; i < att1.size(); i++)
-        {
-            double da = (sortedt.p3().attributes[i] - sortedt.p1().attributes[i]) / (sortedt.p3().y() - sortedt.p1().y());
-            att1[i] = sortedt.p1().attributes[i] + da * (sortedt.p2().y() - sortedt.p1().y());
-        }
-
-        FragmentAttributes att2 = sortedt.p2().attributes;
-
-        if (centerx1 > centerx2) {
-            std::swap(centerx1, centerx2);
-            std::swap(    att1,     att2);
-        }
-
-        part = TrapezoidSpanIterator(sortedt.p1().y(), sortedt.p2().y(), sortedt.p1().x(), sortedt.p1().x(), centerx1, centerx2);
-        part.a11 = sortedt.p1().attributes;
-        part.a12 = part.a11;
-        part.a21 = att1;
-        part.a22 = att2;
-
-        part.initAttributes();
-
-    }
-
-    void step()
-    {
-        if (!part.hasValue())
-        {
-            TrapezoidSpanIterator newPart = TrapezoidSpanIterator(sortedt.p2().y(), sortedt.p3().y(), part.x21, part.x22, sortedt.p3().x(), sortedt.p3().x());
-            newPart.a11 = part.a21;
-            newPart.a12 = part.a22;
-            newPart.a21 = sortedt.p3().attributes;
-            newPart.a22 = newPart.a21;
-            part = newPart;
-            part.initAttributes();
-            return;
-        }
-        part.step();
-    }
-
-    bool hasValue() {
-        return (part.currentY <= sortedt.p3().y());
-    }
-
-    void getSpan(int &y, int &x1, int &x2)
-    {
-        part.getSpan(y, x1, x2);
-    }
-
-    HLineSpanInt getSpan()
-    {
-        return part.getSpan();
-    }
-
-    AttributedHLineSpan getAttrSpan()
-    {
-        AttributedHLineSpan span(part.getY(), part.getX1(), part.getX2(), part.a1, part.a2 );
-#if 0
-        SYNC_PRINT(("Span Attributes:\n"));
-        SYNC_PRINT(("Left :"));
-        for (size_t i = 0; i < span.att1.size(); i++) SYNC_PRINT(("%lf ", span.att1[i]));
-        SYNC_PRINT(("\n"));
-        SYNC_PRINT(("Right:"));
-        for (size_t i = 0; i < span.att2.size(); i++) SYNC_PRINT(("%lf ", span.att2[i]));
-        SYNC_PRINT(("\n"));
-#endif
-
-        return span;
-    }
-
-
-};
 
 class TrianglePointIterator {
 public:

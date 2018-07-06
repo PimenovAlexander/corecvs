@@ -185,9 +185,10 @@ public:
 
     static Matrix33 VectorByVector(const Vector3dd &a, const Vector3dd &b);
 
-    static Matrix33    FromRows(const Vector3dd &a, const Vector3dd &b, const Vector3dd &c);
-    static Matrix33 FromColumns(const Vector3dd &a, const Vector3dd &b, const Vector3dd &c);
-
+    static Matrix33    FromRows (const Vector3dd &a, const Vector3dd &b, const Vector3dd &c);
+    static Matrix33 FromColumns (const Vector3dd &a, const Vector3dd &b, const Vector3dd &c);
+    static Matrix33 FromDiagonal(const Vector3dd &d);
+    static Matrix33 FromDiagonal(const double &x, const double &y, const double &z);
 
     void print() const
     {
@@ -358,6 +359,24 @@ inline Matrix33 Matrix33::FromColumns(const Vector3dd &W1, const Vector3dd &W2, 
     );
 }
 
+
+inline Matrix33 Matrix33::FromDiagonal(const Vector3dd &d)
+{
+    return Matrix33(
+            d.x(),  0.0 ,  0.0 ,
+             0.0 , d.y(),  0.0 ,
+             0.0 ,  0.0 , d.z()
+    );
+}
+
+inline Matrix33 Matrix33::FromDiagonal(const double &x, const double &y, const double &z)
+{
+    return Matrix33(
+              x  ,  0.0 ,  0.0 ,
+             0.0 ,   y  ,  0.0 ,
+             0.0 ,  0.0 ,   z
+    );
+}
 
 /**
  *   Matrix construction via diagonal element.

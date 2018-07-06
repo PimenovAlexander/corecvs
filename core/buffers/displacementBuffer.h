@@ -1,3 +1,5 @@
+#ifndef DISPLACEMENT_BUFFER_H_
+#define DISPLACEMENT_BUFFER_H_
 /**
  * \file displacementBuffer.h
  * \brief This file hold the class DisplacementBuffer
@@ -7,8 +9,6 @@
  * \author alexander
  */
 
-#ifndef CDISPLACEMENTBUFFER_H_
-#define CDISPLACEMENTBUFFER_H_
 
 #include <stdint.h>
 
@@ -236,17 +236,21 @@ public:
         BufferToTransform *input;
         DirectRemapper *remapper;
 
+        typedef typename BufferToTransform::InternalElementType ResultElement;
     public:
         void operator()( const BlockedRange<int>& r ) const
         {
             for (int i = r.begin(); i < r.end(); i++)
             {
-                typename BufferToTransform::InternalElementType *offsetResult = &result->element(i, 0);
-                Vector2d32 *offsetMap  = &remapper->mOffsets[i * remapper->mOutputW];
+                ResultElement *offsetResult = &result->element(i, 0);
+                Vector2d32    *offsetMap  = &remapper->mOffsets[i * remapper->mOutputW];
+
                 for (int j = 0; j < remapper->mOutputW; j++)
                 {
-                    Vector2d32 oldCoord = *offsetMap++;
-                    *offsetResult++ = input->element(oldCoord);
+                    *offsetResult = input->element(*offsetMap);
+
+                    offsetMap++;
+                    offsetResult++;
                 }
             }
         }
@@ -344,4 +348,4 @@ public:
 
 } //namespace corecvs
 
-#endif /* CDISPLACEMENTBUFFER_H_ */
+#endif /* DISPLACEMENT_BUFFER_H_ */

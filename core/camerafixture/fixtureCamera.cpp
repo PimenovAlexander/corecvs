@@ -14,7 +14,7 @@ bool FixtureCamera::projectPointFromWorld(const Vector3dd &point, Vector2dd *pro
     }
 
     Vector2dd projection = worldCam.project(point);
-    if (!worldCam.isVisible(projection) || !worldCam.isInFront(point))
+    if (!worldCam.isVisible(point))
     {
         return false;
     }

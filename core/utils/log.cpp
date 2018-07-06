@@ -101,7 +101,7 @@ void Log::addAppLog(int argc, char* argv[], cchar* logFileName, cchar *projectEn
 {
     /** Detect min LogLevel and log filename from params
      */
-    corecvs::CommandLineSetter setter(argc, (const char **)argv);
+    corecvs::CommandLineSetter setter(argc, argv);
     Log::LogLevel minLogLevel = (Log::LogLevel)setter.getInt("logLevel", Log::LEVEL_INFO);
     std::string   logFile = setter.getString("logFile", logFileName ? logFileName : "");
     auto logLevel = corecvs::HelperUtils::getEnvVar("CVSDK_LOG_LEVEL");

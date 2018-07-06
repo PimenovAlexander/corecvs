@@ -1,0 +1,58 @@
+<poco version="5.0">
+  <include name="parameters.xml"/>
+
+  <enum name="Scene Draw Backend Type">
+    <item name="Old"        id="0" comment="Old"/>
+    <item name="New"        id="1" comment="New"/>
+    <item name="Integrated" id="2" comment="Integrated"/>
+  </enum>
+
+
+  <class name="Calibration Draw Helpers Parameters">
+
+    <field type="Scene Draw Backend Type"      name="Backend"     defaultValue="0" >
+        <description>EXPERIMENTAL</description>
+        <comment>EXPERIMENTAL We have three OpenGL backends to draw. Old is without shaders, new is with shaders</comment>
+    </field>
+
+    <field type="double"    name="Scale For Cameras"      defaultValue="1"  min="0.01" max="1000" step="1"/>
+    <field type="int"       name="Grid Step For Cameras"  defaultValue="15" min="2"    max="1000" step="1"/>
+
+    <field type="bool"      name="Use textures for cameras"     defaultValue="true" >
+        <description>EXPERIMENTAL</description>
+        <comment>EXPERIMENTAL</comment>
+    </field>
+
+
+    <field type="bool"      name="printNames"     defaultValue="false" />
+    <field type="bool"      name="billboardNames" defaultValue="true" />
+
+    <field type="bool"      name="Prefer Reprojected" defaultValue="true" />
+    <field type="bool"      name="Force Known"        defaultValue="true" />
+
+    <field type="bool"      name="privateColor"  defaultValue="false" />
+    <field type="bool"      name="largePoints"   defaultValue="false" />
+
+    <field type="bool"      name="drawFixtureCams"   defaultValue="true" />
+    <field type="bool"      name="solidCameras"      defaultValue="false" />
+    <field type="bool"      name="drawObservations"  defaultValue="false" />
+    <field type="bool"      name="drawTrueLines"     defaultValue="false" />
+
+    <field type="double"    name="Projection Ray Length" defaultValue="10"  min="0.01" max="1000" step="1"/>
+
+    <field type="bool"      name="drawRays"          defaultValue="true" />
+  </class>
+
+  <class name="Extrinsics Placer Parameters">
+    <field type="bool"      name="triangulate on sphere"     defaultValue="false" />
+    <field type="double"    name="Skydome size"              defaultValue="30"  min="0.01" max="1000" step="1"/>
+    <field type="int"       name="Iterations"                defaultValue="100" min="2"    max="10000" step="1"/>
+
+    <field type="bool"      name="use simple cost"    defaultValue="false" />
+
+    <field type="bool"      name="lock 1 cam"         defaultValue="false" />
+    <field type="bool"      name="lock orientations"  defaultValue="false" />
+    <field type="bool"      name="lock positions"     defaultValue="false" />
+</class>
+
+</poco>

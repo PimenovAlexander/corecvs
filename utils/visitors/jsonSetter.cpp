@@ -14,19 +14,21 @@ JSONSetter::JSONSetter(const QString &fileName)
 
 JSONSetter::~JSONSetter()
 {
-    qDebug() << "JSONSetter::~JSONSetter(): saving to <" << mFileName << ">" << endl;
+    if(mFileName!=""){
+        qDebug() << "JSONSetter::~JSONSetter(): saving to <" << mFileName << ">" << endl;
 
-    QFile file(mFileName);
-    if (!file.open(QFile::WriteOnly)) {
-        qDebug() << "JSONSetter::~JSONSetter(): Can't open file <" << mFileName << ">" << endl;
-        return;
+        QFile file(mFileName);
+        if (!file.open(QFile::WriteOnly)) {
+            qDebug() << "JSONSetter::~JSONSetter(): Can't open file <" << mFileName << ">" << endl;
+            return;
+        }
+
+        QJsonDocument doc;
+        doc.setObject(mNodePath.back());
+        QByteArray jsonData = doc.toJson();
+        file.write(jsonData);
+        file.close();
     }
-
-    QJsonDocument doc;
-    doc.setObject(mNodePath.back());
-    QByteArray jsonData = doc.toJson();
-    file.write(jsonData);
-    file.close();
 }
 
 
@@ -126,6 +128,18 @@ void JSONSetter::visit<int, EnumField>(int &field, const EnumField *fieldDescrip
 template <>
 void JSONSetter::visit<double, DoubleVectorField>(std::vector<double> &field, const DoubleVectorField *fieldDescriptor)
 {    
+    QJsonArray array;
+    for (size_t i = 0; i < field.size(); i++ )
+    {
+        QJsonValue value = field[i];
+        array.append(value);
+    }
+    mNodePath.back().insert(fieldDescriptor->name.name, array);
+}
+
+template <>
+void JSONSetter::visit<int, IntVectorField>(std::vector<int> &field, const IntVectorField *fieldDescriptor)
+{
     QJsonArray array;
     for (size_t i = 0; i < field.size(); i++ )
     {

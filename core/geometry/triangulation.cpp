@@ -400,9 +400,9 @@ std::vector<Edge> triangulate4(const vector<Point> &points, list<Point> &centers
     return result;
 }
 
-#else
-static void splitPoints(const vector<Point> &points, TriangulationBeginnings &tb, ListOfLists &listOfLists,
-                        const int maxDistance)
+#else // !FAST_SPLIT
+
+static void splitPoints(const vector<Point> &points, TriangulationBeginnings &tb, ListOfLists &listOfLists, cint maxDistance)
 {
     list<Point> lpoints;
     for (vector<Point>::const_iterator i = points.begin(); i != points.end(); i++)
@@ -421,9 +421,9 @@ static void splitPoints(const vector<Point> &points, TriangulationBeginnings &tb
             listOfLists.push_back(currentList);
         }
 
-        for(Lpi i = lpoints.begin(); i != lpoints.end();)
+        for (Lpi i = lpoints.begin(); i != lpoints.end();)
         {
-      if (listOfLists.back().isNear(*i, maxDistance))
+            if (listOfLists.back().isNear(*i, maxDistance))
             {
                 listOfLists.back().push_back(*i);
                 Lpi tmpPoint = i;
@@ -439,40 +439,39 @@ static void splitPoints(const vector<Point> &points, TriangulationBeginnings &tb
     tb.hullEdges.resize(tb.numOfGroups);
 }
 
-std::vector<Edge>    triangulate4(const vector<Point> &points, list<Point> &centers, TriangulationBeginnings &tb,
-                               const int maxDistance)
+std::vector<Edge> triangulate4(const vector<Point> &points, list<Point> &centers, TriangulationBeginnings &tb, cint maxDistance)
 {
     ListOfLists listOfLists;
-  //uint64_t microseconds;
-  //PreciseTimer timer = PreciseTimer::currentTime();
+    //uint64_t microseconds;
+    //PreciseTimer timer = PreciseTimer::currentTime();
 
-  cout << "Using fast split algorithm\n";
+    cout << "Using fast split algorithm\n";
 
-  //cerr << "-----splitPoints started-----\n";
-  splitPoints(points, tb, listOfLists, maxDistance);
-  //cerr << "-----splitPoints finished-----\n";
-  //microseconds = timer.usecsTo(PreciseTimer::currentTime());
-  //cerr << "splitPoints Real time: " << microseconds << " microseconds, " << microseconds/1000000.0 << " secs\n";
-    //return vector<Edge>();
+    //cerr << "-----splitPoints started-----\n";
+    splitPoints(points, tb, listOfLists, maxDistance);
+    //cerr << "-----splitPoints finished-----\n";
+    //microseconds = timer.usecsTo(PreciseTimer::currentTime());
+    //cerr << "splitPoints Real time: " << microseconds << " microseconds, " << microseconds/1000000.0 << " secs\n";
+      //return vector<Edge>();
 
     cout << "(triangulate4) Points: " << points.size() << std::endl;
 
     size_t countOfEdges = 0;
 
-    vector<Edge> *edges = new vector<Edge> [listOfLists.size()];
+    vector<Edge> *edges = new vector<Edge>[listOfLists.size()];
 
     size_t t = 0;
     for (ListOfLists::const_iterator i = listOfLists.begin(); i != listOfLists.end(); i++, t++)
     {
-    //cout << "    size:" << i->mList.size() << endl;
+        //cout << "    size:" << i->mList.size() << endl;
         //all += i->size();
 
-    vector<Point> newpoints(i->mList.size());
+        vector<Point> newpoints(i->mList.size());
         int k = 0;
-    for (Lpci j = i->mList.begin(); j != i->mList.end(); j++)
+        for (Lpci j = i->mList.begin(); j != i->mList.end(); j++)
             newpoints[k++] = *j;
 
-    edges[t] = TRIANGULATE(newpoints);
+        edges[t] = TRIANGULATE(newpoints);
         //edges[t] = vector<Edge>();
 
         if (edges[t].size() != 0)
@@ -488,12 +487,12 @@ std::vector<Edge>    triangulate4(const vector<Point> &points, list<Point> &cent
     vector<Edge> result(countOfEdges);
 
     for (size_t l = 0, currentEdgesArray = 0, currentEdgesIndex = 0;
-             currentEdgesArray < listOfLists.size() && l < countOfEdges;
-             currentEdgesIndex++)
+        currentEdgesArray < listOfLists.size() && l < countOfEdges;
+        currentEdgesIndex++)
     {
         if (currentEdgesIndex >= edges[currentEdgesArray].size())
         {
-      //cout << "!!! currentEdgesIndex:" << currentEdgesIndex << " currentEdgesArray:" << currentEdgesArray << endl;
+            //cout << "!!! currentEdgesIndex:" << currentEdgesIndex << " currentEdgesArray:" << currentEdgesArray << endl;
             currentEdgesIndex = -1;
             currentEdgesArray++;
             continue;
@@ -501,16 +500,17 @@ std::vector<Edge>    triangulate4(const vector<Point> &points, list<Point> &cent
         result[l++] = edges[currentEdgesArray][currentEdgesIndex];
     }
 
-  for (vector<Edge>::const_iterator it = result.begin(); it != result.end(); it += 3)
-    centers.push_back(findTriangleCenter(it->org, it->dest,
-      (it+1)->dest == it->dest ? (it+1)->org : (it+1)->dest));
+    for (vector<Edge>::const_iterator it = result.begin(); it != result.end(); it += 3)
+    {
+        centers.push_back(findTriangleCenter(it->org, it->dest,
+            (it + 1)->dest == it->dest ? (it + 1)->org : (it + 1)->dest));
+    }
 
-    delete [] edges;
-
-
+    delete[] edges;
     return result;
 }
-#endif
+
+#endif // FAST_SPLIT
 
 void printPoints(const vector<Point> &points)
 {

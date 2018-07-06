@@ -7,13 +7,12 @@
  * \date Mar 24, 2010
  * \author alexander
  */
-
 #include <stdint.h>
 
 #include "core/utils/global.h"
 
 #include "core/buffers/g12Buffer.h"
-#include "imageCaptureInterface.h"
+#include "core/framesources/imageCaptureInterface.h"
 
 class Frames
 {
@@ -27,25 +26,25 @@ public:
 
     G12Buffer   *currentFrames   [MAX_INPUTS_NUMBER];
     RGB24Buffer *currentRgbFrames[MAX_INPUTS_NUMBER];
-    int frameCount;
+    int          frameCount;
 
     Frames();
    ~Frames();
 
-    void fetchNewFrames(ImageCaptureInterface *input);
+    void        fetchNewFrames(ImageCaptureInterface *input);
 
     G12Buffer*   getCurrentFrame    (FrameSourceId id) { return currentFrames   [id]; }
     RGB24Buffer* getCurrentRgbFrame (FrameSourceId id) { return currentRgbFrames[id]; }
 
     /// Swaps the frame sources so, for example, left camera becomes right,
     /// and right camera becomes left. Useful when cameras are plugged in wrong order.
-    void swapFrameSources(bool shouldSwap);
+    void        swapFrameSources(bool shouldSwap);
 
-    uint64_t timestamp() const                      { return mTimestamp; }
+    uint64_t    timestamp() const                      { return mTimestamp; }
 
-    int64_t  desyncTime() const                     { return mDesyncTime; }
+    int64_t     desyncTime() const                     { return mDesyncTime; }
 
-    uint64_t startProcessTimestamp() const          { return mStartProcessTimestamp; }
+    uint64_t    startProcessTimestamp() const          { return mStartProcessTimestamp; }
 
     static inline const char *getEnumName(const FrameSourceId &value)
     {
@@ -65,8 +64,7 @@ private:
     uint64_t mStartProcessTimestamp;
 
     /* Not allowed to call*/
-    Frames(const Frames &);
-    Frames& operator=(const Frames&);
+    //Frames(const Frames &);
 };
 
 /* EOF */

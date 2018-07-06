@@ -4,7 +4,7 @@ exists(../../../../config.pri) {
     #message(Using global config)
     include($$ROOT_DIR/config.pri)
 } else { 
-    message(Using local config)
+    #message(Using local config)
     ROOT_DIR=../..
     include($$ROOT_DIR/cvs-config.pri)
 }
@@ -71,3 +71,6 @@ with_opengl {
     SOURCES += scene3DMouse.cpp
 }
 
+OTHER_FILES += ../../tools/generator/xml/rectify.xml
+OTHER_FILES += ../../tools/generator/xml/base.xml
+OTHER_FILES += ../../tools/generator/xml/presentation.xml

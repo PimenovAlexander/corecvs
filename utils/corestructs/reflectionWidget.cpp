@@ -27,8 +27,8 @@ ReflectionWidget::ReflectionWidget(const Reflection *reflection, FieldsType type
     setWindowTitle(reflection->name.name);
 
     gridLayout = new QGridLayout(this);
-    gridLayout->setSpacing(3);
-    gridLayout->setContentsMargins(3, 3, 3, 3);
+    gridLayout->setSpacing(2);
+    gridLayout->setContentsMargins(2, 2, 2, 2);
 
     fieldToPosition.resize(reflection->fields.size(), -1);
 
@@ -59,7 +59,7 @@ ReflectionWidget::ReflectionWidget(const Reflection *reflection, FieldsType type
 
         QLabel *label = new QLabel(this);
         label->setText(QString(field->getSimpleName()));
-        label->setToolTip(mark + QString(field->name.decription));
+        label->setToolTip(mark + QString(field->name.description));
         gridLayout->addWidget(label, i, NAME_COLUMN, 1, 1);
         QWidget *widget = NULL;
 
@@ -103,9 +103,11 @@ ReflectionWidget::ReflectionWidget(const Reflection *reflection, FieldsType type
                         spinBox->setMinimum(dField->min);
                         spinBox->setMaximum(dField->max);
                         spinBox->setSingleStep(dField->step);
-                        // spinBox->setDecimals(); /*Not supported so far*/
                     }
-                    spinBox->setDecimals(dField->precision);
+
+                    if (dField->precision != -1)
+                        spinBox->setDecimals(dField->precision);
+
                     if (dField->suffixHint != NULL)
                         spinBox->setSuffix(dField->suffixHint);
                     if (dField->prefixHint != NULL)
@@ -217,8 +219,12 @@ ReflectionWidget::ReflectionWidget(const Reflection *reflection, FieldsType type
                 {
                     vectorWidget->setMinimum(dField->min);
                     vectorWidget->setMaximum(dField->max);
-                    // vectorWidget->setSingleStep(dField->step);
-                    // spinBox->setDecimals(); /*Not supported so far*/
+                    vectorWidget->setSingleStep(dField->step);
+
+                    if (dField->precision != -1)
+                        vectorWidget->setDecimals(dField->precision);
+
+                    //SYNC_PRINT(("DoubleVectorField %lf %lf %lf %d\n", dField->min, dField->max, dField->step, dField->precision));
                 }
                 vectorWidget->setValue(dField->defaultValue);
                 gridLayout->addWidget(vectorWidget, i, WIDGET_COLUMN, 1, 1);
@@ -431,7 +437,7 @@ bool ReflectionWidget::getParameters(void *param) const
 
                 if (refWidget != NULL) {
                     void *targetObj = obj.getField<void *>(fieldId);
-                    cout << "In composite field:" << targetObj << std::endl;
+                    // cout << "In composite field:" << targetObj << std::endl;
                     refWidget->getParameters(targetObj);
                 } else {
                     qDebug() << "There is no widget for" << cField->getSimpleName();
@@ -523,7 +529,8 @@ bool ReflectionWidget::setParameters(void *param) const
             }*/
             case BaseField::TYPE_DOUBLE | BaseField::TYPE_VECTOR_BIT:
             {
-                //DoubleVectorWidget *vectorWidget = static_cast<DoubleVectorWidget *>(positionToWidget[i]);
+                DoubleVectorWidget *vectorWidget = static_cast<DoubleVectorWidget *>(positionToWidget[i]);
+                vectorWidget->setValue(*obj.getField<vector<double> >(fieldId));
 
                 break;
             }
@@ -595,12 +602,9 @@ void ReflectionWidget::saveCalled()
     {
         DynamicObject obj(reflection);
         getParameters(obj.rawObject);
-        std::ofstream file;
-        file.open(filename.toStdString(), std::ofstream::out);
-        JSONPrinter setter(file);
+        JSONPrinter setter(filename.toStdString());
         setter.visit(obj, "params");
     }
-
 }
 
 void ReflectionWidget::resetCalled()
@@ -609,4 +613,3 @@ void ReflectionWidget::resetCalled()
     DynamicObject obj(reflection);
     setParameters(obj.rawObject);
 }
-

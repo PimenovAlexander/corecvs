@@ -67,7 +67,8 @@ int OpenCVFilterParameters::staticInit()
           "Param1",
           true,
          0,
-         10000
+         10000,
+         1
         );
     fields().push_back(field1);
     /*  */ 
@@ -81,7 +82,8 @@ int OpenCVFilterParameters::staticInit()
           "Param2",
           true,
          0,
-         10000
+         10000,
+         1
         );
     fields().push_back(field2);
     /*  */ 

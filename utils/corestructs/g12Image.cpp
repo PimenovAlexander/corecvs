@@ -167,7 +167,7 @@ RGB24Image::RGB24Image(RGB24Buffer *buffer, bool mirror) : QImage (buffer->w, bu
             int j = 0;
 #ifdef WITH_SSE
             Int32x4 mask(0xFF000000);
-            for (j = 0; j < buffer->w - 4; j+= 4 )
+            for (j = 0; j < buffer->w - 4; j += 4)
             {
                 Int32x4 data(lineIn);
                 data |= mask;
@@ -213,7 +213,7 @@ QImage *toQImage(RGB24Buffer *buffer)
     return new RGB24Image(buffer);
 }
 
-RGB24InterfaceImage::RGB24InterfaceImage(RGB24Buffer *buffer) :
+RGB24InterfaceImage::RGB24InterfaceImage(const RGB24Buffer *buffer) :
     QImage(
         (uchar *)buffer->data,
         buffer->w,

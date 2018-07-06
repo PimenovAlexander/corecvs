@@ -12,6 +12,8 @@
 #include <random>
 #include <fstream>
 
+#include "core/geometry/renderer/attributedTriangleSpanIterator.h"
+
 #include "gtest/gtest.h"
 
 #include "core/utils/global.h"
@@ -28,6 +30,8 @@
 
 using namespace corecvs;
 
+
+typedef AttributedTriangleSpanIterator AttributedTriangleSpanIteratorFix;
 
 TEST(Draw, testHistogram)
 {
@@ -131,7 +135,7 @@ TEST(Draw, testCircleIterator)
 
 TEST(Draw, testLineterator)
 {
-    RGB24Buffer *buffer = new RGB24Buffer(100, 100);
+    RGB24Buffer *buffer  = new RGB24Buffer(100, 100);
     RGB24Buffer *buffer1 = new RGB24Buffer(100, 100);
 
     Segment<Vector2d32> segments[4] =
@@ -215,7 +219,7 @@ TEST(Draw, testRectangles)
 TEST(Draw, testSpanDraw)
 {
     int h = 200;
-    int w = 200;
+    int w = 300;
 
     RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::Black());
 
@@ -237,6 +241,56 @@ TEST(Draw, testSpanDraw)
             buffer->drawHLine(span.x1, span.y(), span.x2, RGBColor::Green());
             it.step();
         }
+    }
+
+    {
+
+
+        Vector2dd p1(210, 10);
+        Vector2dd p2(205, 12);
+        Vector2dd p3(285, 12);
+
+
+        TrapezoidSpanIterator it(p1.y(), p2.y(), p1.x(), p1.x(), p2.x(), p3.x());
+        while (it.hasValue())
+        {
+            HLineSpanInt span = it.getSpan();
+            buffer->drawHLine(span.x1, span.y(), span.x2, RGBColor::Green());
+            it.step();
+        }
+        buffer->drawPixel(p1.x(), p1.y(), RGBColor::Red());
+        buffer->drawPixel(p2.x(), p2.y(), RGBColor::Red());
+        buffer->drawPixel(p3.x(), p3.y(), RGBColor::Red());
+
+    }
+
+    {
+
+
+        Vector2dd p1(216.381, 132.5448);
+        Vector2dd p2(214.665, 109.82056);
+        Vector2dd p3(282.487, 112.7939);
+
+        AttributedTriangle triF = AttributedTriangle(p1, p2, p3);
+        AttributedTriangleSpanIteratorFix itF(triF);
+        while (itF.hasValue()  && itF.part.y1 < 111 )
+        {
+            AttributedHLineSpan span = itF.getAttrSpan();
+            buffer->drawHLine(span.x1, span.y(), span.x2, RGBColor::Blue());
+            itF.step();
+        }
+
+        TrapezoidSpanIterator it(p1.y(), p2.y(), p1.x(), p1.x(), p2.x(), p3.x());
+        while (it.hasValue())
+        {
+            HLineSpanInt span = it.getSpan();
+            buffer->drawHLine(span.x1, span.y(), span.x2, RGBColor::Green());
+            it.step();
+        }
+        buffer->drawPixel(p1.x(), p1.y(), RGBColor::Red());
+        buffer->drawPixel(p2.x(), p2.y(), RGBColor::Red());
+        buffer->drawPixel(p3.x(), p3.y(), RGBColor::Red());
+
     }
 
     {
@@ -317,6 +371,7 @@ TEST(Draw, testSpanDrawTriangle1)
 
     RGB24Buffer *buffer  = new RGB24Buffer(h, w, RGBColor::Black());
     RGB24Buffer *bufferA = new RGB24Buffer(h, w, RGBColor::Black());
+    RGB24Buffer *bufferF = new RGB24Buffer(h, w, RGBColor::Black());
 
 
     vector<Triangle2dd> t;
@@ -336,8 +391,13 @@ TEST(Draw, testSpanDrawTriangle1)
             p.drawFormat(j * sample, i * sample, RGBColor::Blue(), 2, "%d", offset);
             AbstractPainter<RGB24Buffer> pA(bufferA);
             pA.drawFormat(j * sample, i * sample, RGBColor::Blue(), 2, "%d", offset);
-
+            AbstractPainter<RGB24Buffer> pF(bufferF);
+            pF.drawFormat(j * sample, i * sample, RGBColor::Blue(), 2, "%d", offset);
             Triangle2dd &tri = t[offset];
+
+            if (offset == 12)
+                cout << tri << endl;
+
 
             {
                 TriangleSpanIterator it(tri);
@@ -346,7 +406,7 @@ TEST(Draw, testSpanDrawTriangle1)
                     HLineSpanInt span = it.getSpan();
                     buffer->drawHLine(span.x1, span.y(), span.x2, RGBColor::Green());
 
-                    if (offset == 2)
+                    if (offset == 12)
                         cout << span << endl;
 
 
@@ -364,12 +424,25 @@ TEST(Draw, testSpanDrawTriangle1)
                     itA.step();
                 }
             }
+            /**/
+            {
 
+
+                AttributedTriangle triF = AttributedTriangle(tri.p1(), tri.p2(), tri.p3());
+                AttributedTriangleSpanIteratorFix itF(triF);
+                while (itF.hasValue())
+                {
+                    AttributedHLineSpan span = itF.getAttrSpan();
+                    bufferF->drawHLine(span.x1, span.y(), span.x2, RGBColor::Green());
+                    itF.step();
+                }
+            }
 
             /* Mark the corners */
             for (int k = 0; k < tri.SIZE; k++) {
                 buffer ->element(fround(tri.p[k].y()), fround(tri.p[k].x())) =  RGBColor::Red();
                 bufferA->element(fround(tri.p[k].y()), fround(tri.p[k].x())) =  RGBColor::Red();
+                bufferF->element(fround(tri.p[k].y()), fround(tri.p[k].x())) =  RGBColor::Red();
 
             }
 
@@ -383,6 +456,9 @@ TEST(Draw, testSpanDrawTriangle1)
 
     BMPLoader().save("trianglemany.bmp", buffer);
     BMPLoader().save("triangleAmany.bmp", bufferA);
+    BMPLoader().save("triangleFmany.bmp", bufferF);
+
+    delete_safe(bufferF);
     delete_safe(bufferA);
     delete_safe(buffer);
 
@@ -510,6 +586,14 @@ TEST(Draw, testSpanRenderTriangle)
     delete_safe(zBuffer);
 
 }
+
+#if 0
+TEST(Draw, testSpanDrawTriangleSpeed)
+{
+    //AttributedTriangle a[CORE_COUNT_OF(t)];
+    //AttributedTriangleSpanIterator it(a[i]);
+}
+#endif
 
 TEST(Draw, polygonDraw)
 {

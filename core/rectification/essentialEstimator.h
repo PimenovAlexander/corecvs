@@ -30,12 +30,20 @@ public:
         METHOD_GRAD_DESC,
         METHOD_MARQ_LEV,
         METHOD_CLASSIC_KALMAN,
-        METHOD_ITERATIVE_KALMAN,
         METHOD_GRAD_DESC_RM,
+
+        METHOD_5_POINT,
+        METHOD_7_POINT,
+
         METHOD_LAST,
         METHOD_DEFAULT = METHOD_MARQ_LEV
     };
 
+    static constexpr int defaultSamples(int method)
+    {
+        return (method == METHOD_5_POINT) ? 5 :
+               (method == METHOD_7_POINT) ? 7 : 8;
+    }
 
     /**
      * This is a class that describe the translation form state in form of
@@ -161,7 +169,11 @@ public:
 
     /* Main methods for essential matrix extraction */
 
-    EssentialMatrix getEssential             (
+    EssentialMatrix getEssential               (
+            const vector<Correspondence *> &samples,
+            OptimisationMethod method = METHOD_DEFAULT);
+
+    std::vector<EssentialMatrix> getEssentials (
             const vector<Correspondence *> &samples,
             OptimisationMethod method = METHOD_DEFAULT);
 
@@ -172,15 +184,12 @@ public:
     EssentialMatrix getEssentialSimpleKalman (const vector<Correspondence *> &samples);
     std::vector<EssentialMatrix> getEssential7point(const vector<Correspondence*> &samples);
     std::vector<EssentialMatrix> getEssential5point(const vector<Correspondence*> &samples);
-#if 0
-    EssentialMatrix getEssentialKalman       (const vector<Correspondence *> &samples);
-    EssentialMatrix getEssentialMultiKalman  (const vector<Correspondence *> &samples);
-#endif
 
 
     EssentialEstimator();
     virtual ~EssentialEstimator();
 };
+
 
 
 } //namespace corecvs

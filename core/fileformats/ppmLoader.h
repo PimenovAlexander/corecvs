@@ -7,8 +7,8 @@
  * \author  alexander
  * \author  pavel.vasilev
  */
-#ifndef PPMLOADER_H_
-#define PPMLOADER_H_
+#ifndef PPMLOADER_H
+#define PPMLOADER_H
 
 #include <string>
 #include <memory>
@@ -29,42 +29,27 @@ public:
     PPMLoader() {}
     virtual ~PPMLoader() {}
 
-    virtual bool acceptsFile(string name);
-
-    virtual G12Buffer * loadG12(string name);
-    virtual G12Buffer * loadG16(string name);
+    bool acceptsFile(std::string name);
 
     /**
-     * Load method overload.
-     *
-     * \author  pavel.vasilev
-     * \date    Oct 21, 2015
+     * Load methods
      *
      * \param   name            File to load.
-     * \param [out] metadata    If non-null, this will be filled by any metadata encountered in PPM
-     *                          file.
+     * \param [out] metadata    If non-null, it will be filled by data from PPM file
      *
-     * \return  null if it fails, else a G12Buffer*.
+     * \return  null if it fails, else a ptr to the allocated object
      */
-    G12Buffer *  loadMeta                (const string& name, MetaData* metadata = nullptr);
-
-    G12Buffer*   g12BufferCreateFromPGM  (const string& name, MetaData* metadata = nullptr);
-    G12Buffer*   g16BufferCreateFromPPM  (const string& name, MetaData* metadata = nullptr);
-
-    RGB48Buffer* loadRGB                 (const string& name, MetaData* metadata = nullptr);
-    RGB48Buffer* rgb48BufferCreateFromPPM(const string& name, MetaData* metadata = nullptr);
+    G12Buffer*   loadG16  (const string& name);
+    G12Buffer*   loadG12  (const string& name, MetaData* metadata = nullptr, bool loadAs16 = false);
+    RGB48Buffer* loadRgb48(const string& name, MetaData* metadata = nullptr);
 
     /**
-     * Save method overloads.
-     *
-     * \author  pavel.vasilev
-     * \date    Oct 21, 2015
+     * Save methods
      *
      * \param   name                   Output file name.
-     * \param [in]  buffer             Buffer to write to file. Internally writes graymap .pgm for G12 and
-     *                                 RGB .ppm for RGB.
-     * \param [in]  metadata           (Optional) If non-null, writes metadata to file.
-     * \param [in]  forceTo8bitsShift  (Optional) If non-negative, shift given #bits to right to get writtable 8-bits for the output.
+     * \param [in]  buffer             Buffer to write to file (graymap .pgm for G12, RGB .ppm for RGB)
+     * \param [in]  metadata           (Optional) If non-null writes metadata to file
+     * \param [in]  forceTo8bitsShift  (Optional) If non-negative shift given #bits to right to get writtable 8-bits for the output
      *
      * \return  Error code.
      */
@@ -72,14 +57,12 @@ public:
     int save(const string& name, G12Buffer   *buffer, MetaData* metadata = nullptr, int forceTo8bitsShift = -1);
     int save(const string& name, RGB48Buffer *buffer, MetaData* metadata = nullptr, int forceTo8bitsShift = -1);
 
-    // TODO: remove this. 
-    int saveG16(const string& name, G12Buffer *buffer);
-
-private:
+protected:
     static string prefix1, prefix2;
 
-    int  nextLine(FILE *fp, char *buf, int sz, MetaData *metadata);
-    bool readHeader(FILE *fp, unsigned long int *h, unsigned long int *w, uint16_t *maxval, uint8_t *type, MetaData* metadata);
+private:
+    int  nextLine   (FILE *fp, char *buf, int sz, MetaData *metadata);
+    bool readHeader (FILE *fp, unsigned long int *h, unsigned long int *w, uint16_t *maxval, uint8_t *type, MetaData* metadata);
     bool writeHeader(FILE *fp, unsigned long int h, unsigned long int w, uint8_t type, uint16_t maxval, MetaData* metadata);
 };
 
@@ -88,12 +71,12 @@ private:
 class PPMLoaderG12 : public BufferLoader<G12Buffer>, public PPMLoader
 {
 public:
-    virtual bool acceptsFile(string name) override
+    virtual bool acceptsFile(const string &name) override
     {
         return PPMLoader::acceptsFile(name);
     }
 
-    virtual G12Buffer *load(string name) override
+    virtual G12Buffer *load(const string & name) override
     {
         return PPMLoader::loadG12(name);
     }
@@ -104,7 +87,7 @@ public:
 class PPMLoaderG16 : public PPMLoaderG12        // we may use G12Buffer container as it has 2bytes/pixel indeed
 {
 public:
-    virtual G12Buffer *load(string name) override
+    virtual G12Buffer *load(const string & name) override
     {
         return PPMLoader::loadG16(name);
     }
@@ -115,25 +98,16 @@ public:
 class PPMLoaderRGB24 : public BufferLoader<RGB24Buffer>, public PPMLoader
 {
 public:
-    virtual bool acceptsFile(string name) override
+    virtual bool acceptsFile(const string & name) override
     {
        return PPMLoader::acceptsFile(name);
     }
 
-    virtual RGB24Buffer *load(string name) override
-    {
-        G12Buffer *buffer = PPMLoader::loadG12(name);
-        if (buffer == NULL) {
-            return NULL;
-        }
-        RGB24Buffer *result = new RGB24Buffer(buffer);
-        delete_safe(buffer);
-        return result;
-    }
+    virtual RGB24Buffer *load(const string & name) override;
 
     virtual std::string name() override { return "PPMLoaderRGB24"; }
 };
 
 } //namespace corecvs
 
-#endif 
+#endif // PPMLOADER_H
