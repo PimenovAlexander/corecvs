@@ -26,6 +26,68 @@ CopterThread::CopterThread() :
     mIdleTimer = PreciseTimer::currentTime();
 }
 
+class TileSegment : public BaseSegment<TileSegment>
+{
+public:
+    /*TODO: These members should be moved to a sort of payload*/
+    int size;
+
+    TileSegment() :
+          size(0)
+    {}
+
+    void dadify()
+    {
+        BaseSegment<TileSegment>::dadify();
+        if (father != NULL && father != this)
+        {
+            father->size += this->size;
+//            father->pointNum += this->pointNum;
+        }
+    }
+
+    void addPoint(int /*i*/, int /*j*/, uint16_t &value)
+    {
+        this->size++;
+    }
+
+
+    ~TileSegment()
+    {
+    }
+
+    static bool sortPredicate(TileSegment *a1, TileSegment *a2)
+    {
+        return a1->size >  a2->size;
+    }
+
+};
+
+class TileSegmentator : public Segmentator<TileSegmentator, TileSegment>
+{
+public:
+    //uint16_t thres = 200*16;
+
+    typedef Segmentator<TileSegmentator, TileSegment>::SegmentationResult SegmentationResult;
+
+    static int xZoneSize()
+    {
+        return 1;
+    }
+
+    static int yZoneSize()
+    {
+        return 1;
+    }
+
+    static bool canStartSegment(int /*i*/, int /*j*/, const uint16_t &value)
+    {
+        return value > 200*16;
+    }
+
+};
+
+
 AbstractOutputData* CopterThread::processNewData()
 {
     Statistics stats;
@@ -66,6 +128,64 @@ AbstractOutputData* CopterThread::processNewData()
 
         //result[id] = mTransformationCache[id] ? mTransformationCache[id]->doDeformation(mBaseParams->interpolationType(), buf) : buf;
         result[id] = buf;
+
+        if (id == Frames::LEFT_FRAME)
+        {
+            /*
+            for (int i = 0; i < buf->h; i++)
+                for (int j = 0; j < buf->w; j++)
+                {
+                    if (buf->element(i,j) < (200 * 16))
+                    {
+                        buf->element(i,j) = 0;
+                    }
+                }*/
+            TileSegmentator seg;
+
+            TileSegmentator::SegmentationResult *result =
+                    seg.segment(buf);
+
+            for (int i = 0; i < buf->h; i++)
+                for (int j = 0; j < buf->w; j++)
+                {
+                    if (result->markup->element(i,j) != 0)
+                    {
+                        buf->element(i,j) = 0;
+                    }
+                }
+
+            int maxSize = 0;
+            TileSegment *best = NULL;
+            for (TileSegment *segment: *result->segments)
+            {
+                if (segment->size > maxSize)
+                {
+                     maxSize = segment->size;
+                     best = segment;
+                }
+            }
+
+            if (best != NULL)
+            {
+                for (int i = 0; i < buf->h; i++)
+                {
+                    for (int j = 0; j < buf->w; j++)
+                    {
+                        if (result->markup->element(i,j) == best)
+                        {
+                            centerCl += Vector2dd(j,i);
+                        }
+                    }
+                }
+
+                centerCl /= best->size;
+                AbstractPainter<G12Buffer> p(buf);
+                p.drawCircle(centerCl.x(), centerCl.y(), 5, 250 * 16);
+
+            }
+
+        }
+
     }
 
     CopterOutputData* outputData = new CopterOutputData();

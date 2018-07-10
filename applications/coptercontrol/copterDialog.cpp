@@ -119,6 +119,34 @@ void CopterDialog::processResult()
         if (i == eventList.size() - 1) {
             mImage = QSharedPointer<QImage>(new QImage(fod->mMainImage.width(), fod->mMainImage.height(),  QImage::Format_RGB32));
             fod->mMainImage.drawImage(mImage.data());
+
+            Affine3DQ copterPos;
+            copterPos = fod->position;//Affine3DQ::Identity();
+
+            Mesh3DDecorated *mesh = new Mesh3DDecorated;
+            mesh->switchColor();
+            mesh->mulTransform(copterPos);
+
+            mesh->setColor(RGBColor::Green());
+            mesh->addIcoSphere(Vector3dd( 5, 5, 0), 2, 2);
+            mesh->addIcoSphere(Vector3dd(-5, 5, 0), 2, 2);
+
+            mesh->setColor(RGBColor::Red());
+            mesh->addIcoSphere(Vector3dd( 5, -5, 0), 2, 2);
+            mesh->addIcoSphere(Vector3dd(-5, -5, 0), 2, 2);
+            mesh->popTransform();
+
+            Mesh3DScene *scene = new Mesh3DScene;
+            scene->switchColor(true);
+            scene->add(*mesh, true);
+
+            delete mesh;
+
+            //scene->prepareMesh(cloud);
+            //cloud->addSubObject(, QSharedPointer<Scene3D>(shaded));
+
+            cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene));
+
         }
 
         delete fod;
