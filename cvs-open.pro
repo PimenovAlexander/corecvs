@@ -20,6 +20,7 @@ SUBDIRS +=                   \
      generator                \
 #    egomotion                \
 #    applications/laserscan
+     coptercontrol           \
 
 
     
@@ -73,4 +74,6 @@ cloudview.file                = applications/cloudview/cloudview.pro
 imageview.file                = applications/imageview/imageview.pro
 testbed.file                  = applications/testbed/testbed.pro
 generator.file                = tools/generator/generator.pro
+
+coptercontrol.file            = applications/coptercontrol/coptercontrol.pro
 
