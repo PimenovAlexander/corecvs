@@ -1,0 +1,28 @@
+<poco version="5.0">
+  <include name="base.xml"/>
+    
+  <class name="Copter" description="Copter Parameters">
+      <field type="double"    name="frameSize"            defaultValue="1.0"/>
+
+
+      <field type="double"    name="P Pitch"            defaultValue="1.0"/>
+      <field type="double"    name="I Pitch"            defaultValue="1.0"/>
+      <field type="double"    name="D Pitch"            defaultValue="1.0"/>
+
+      <field type="double"    name="P Roll"            defaultValue="1.0"/>
+      <field type="double"    name="I Roll"            defaultValue="1.0"/>
+      <field type="double"    name="D Roll"            defaultValue="1.0"/>
+
+
+      <field type="double"    name="P Yaw"            defaultValue="1.0"/>
+      <field type="double"    name="I Yaw"            defaultValue="1.0"/>
+      <field type="double"    name="D Yaw"            defaultValue="1.0"/>
+  </class> 
+  
+  <parametersMapper name="Copter">
+    <field type="Base Parameters" name="Base Parameters"/>
+    <field type="Copter"        name="Copter"/>
+    <field type="Presentation Parameters"   name="Presentation Parameters"/>
+  </parametersMapper>
+</poco>
+
