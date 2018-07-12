@@ -101,6 +101,19 @@ public:
         MAX_INPUTS_NUMBER
     };
 
+    static inline const char *getFrameSourceName(const FrameSourceId &value)
+    {
+        switch (value)
+        {
+            case LEFT_FRAME  :   return "LEFT_FRAME";
+            case RIGHT_FRAME :   return "RIGHT_FRAME";
+            case THIRD_FRAME :   return "THIRD_FRAME";
+            case FOURTH_FRAME:   return "FOURTH_FRAME";
+            default:            break;
+        }
+        return "Not in range";
+    }
+
     /**
      * Used to pass capture parameters in set/get requests
      *

@@ -19,7 +19,6 @@
 #include "core/framesources/cameraControlParameters.h"
 #include "core/framesources/imageCaptureInterface.h"
 #include "core/utils/preciseTimer.h"
-#include "../../frames.h"
 
 using namespace std;
 
@@ -128,7 +127,7 @@ private:
     QMutex spinRunning;
     volatile bool shouldStopSpinThread;
 
-    V4L2BufferDescriptor currentFrame[Frames::MAX_INPUTS_NUMBER];
+    V4L2BufferDescriptor currentFrame[MAX_INPUTS_NUMBER];
 
     /* Statistics fields */
     PreciseTimer lastFrameTime;
