@@ -14,7 +14,9 @@
 #include <QFileDialog>
 #include <QString>
 #include <QMessageBox>
+#include <mesh3DScene.h>
 #include "parametersMapper/parametersMapperCopter.h"
+#include <core/geometry/mesh3DDecorated.h>
 
 CopterDialog::CopterDialog()
     : BaseHostDialog(),
@@ -39,6 +41,8 @@ void CopterDialog::initParameterWidgets()
     mCopterControlWidget = new CopterControlWidget(this, true, UI_NAME_COPTER);
     dockWidget()->layout()->addWidget(mCopterControlWidget);
     mSaveableWidgets.push_back(mCopterControlWidget);
+
+    cloud = static_cast<CloudViewDialog *>(createAdditionalWindow("3d View", oglWindow, QIcon()));
 }
 
 void CopterDialog::createCalculator()

@@ -69,9 +69,21 @@ int main(int argc, char *argv[])
             printf("Autoplay on\n");
             params.autoPlay = true;
         }
+
+        QRegExp exitPattern(QString("^exit(\\d\\d*)$"));
+        int result = exitPattern.indexIn(val);
+        if (result != -1)
+        {
+            params.autoStop = true;
+            params.frameToStop =  exitPattern.cap(1).toInt();
+            printf("Will autoexit in %d frames\n", params.frameToStop);
+        }
     }
 
-    MainWindow mainWindow(new CopterDialog(), source, params, true);
+    CopterDialog *hostDialog = new CopterDialog();
+    hostDialog->setAutoExit(params.autoStop ? params.frameToStop : -1);
+
+    MainWindow mainWindow(hostDialog, source, params, false);
 
     app.exec();
 

@@ -14,6 +14,8 @@
 
 #include "g12Image.h"
 #include "imageResultLayer.h"
+
+#include <core/segmentation/segmentator.h>
 // TEST
 // #include "viFlowStatisticsDescriptor.h"
 
@@ -63,12 +65,12 @@ public:
 
 };
 
-class TileSegmentator : public Segmentator<TileSegmentator, TileSegment>
+class BrightSegmentator : public Segmentator<BrightSegmentator, TileSegment>
 {
 public:
-    //uint16_t thres = 200*16;
+    uint16_t thres = 200*16;
 
-    typedef Segmentator<TileSegmentator, TileSegment>::SegmentationResult SegmentationResult;
+    typedef Segmentator<BrightSegmentator, TileSegment>::SegmentationResult SegmentationResult;
 
     static int xZoneSize()
     {
@@ -80,9 +82,9 @@ public:
         return 1;
     }
 
-    static bool canStartSegment(int /*i*/, int /*j*/, const uint16_t &value)
+    bool canStartSegment(int /*i*/, int /*j*/, const uint16_t &value)
     {
-        return value > 200*16;
+        return value > thres;
     }
 
 };
@@ -116,6 +118,8 @@ AbstractOutputData* CopterThread::processNewData()
 
     G12Buffer *result[Frames::MAX_INPUTS_NUMBER] = {NULL, NULL};
 
+    Vector2dd centerCl = Vector2dd::Zero();
+
     /*TODO: Logic here should be changed according to the host base change*/
     for (int id = 0; id < mActiveInputsNumber; id++)
     {
@@ -140,9 +144,9 @@ AbstractOutputData* CopterThread::processNewData()
                         buf->element(i,j) = 0;
                     }
                 }*/
-            TileSegmentator seg;
+            BrightSegmentator seg;
 
-            TileSegmentator::SegmentationResult *result =
+            BrightSegmentator::SegmentationResult *result =
                     seg.segment(buf);
 
             for (int i = 0; i < buf->h; i++)
@@ -183,6 +187,8 @@ AbstractOutputData* CopterThread::processNewData()
                 p.drawCircle(centerCl.x(), centerCl.y(), 5, 250 * 16);
 
             }
+
+            delete_safe(result);
 
         }
 

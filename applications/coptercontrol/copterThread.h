@@ -26,6 +26,8 @@
 class CopterOutputData : public BaseOutputData
 {
 public:
+    Affine3DQ position;
+
     Statistics stats;
     unsigned frameCount;
 };

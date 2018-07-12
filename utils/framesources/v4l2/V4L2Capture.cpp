@@ -172,7 +172,10 @@ V4L2CaptureInterface::FramePair V4L2CaptureInterface::getFrame()
     protectFrame.lock();
     G12Buffer **results[Frames::MAX_INPUTS_NUMBER] = {
             &result.buffers[Frames::LEFT_FRAME ].g12Buffer,
-            &result.buffers[Frames::RIGHT_FRAME].g12Buffer
+            &result.buffers[Frames::RIGHT_FRAME].g12Buffer,
+            &result.buffers[Frames::LEFT_FRAME ].g12Buffer,
+            &result.buffers[Frames::RIGHT_FRAME].g12Buffer,
+
     };
 
     result.setRgbBufferRight(NULL);

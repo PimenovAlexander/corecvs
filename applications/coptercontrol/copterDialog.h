@@ -10,6 +10,7 @@
  */
 
 #include <QString>
+#include <cloudViewDialog.h>
 
 #include "core/utils/global.h"
 
@@ -49,6 +50,8 @@ private:
     CopterControlWidget *mCopterControlWidget;
 
     QSharedPointer<Copter> mCopterControlParams;
+
+    CloudViewDialog *cloud = NULL;
 
     /* These slots are for silencing error, created due current to misdesign */
 public slots:
