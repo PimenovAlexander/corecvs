@@ -3,6 +3,7 @@
     
   <class name="Copter" description="Copter Parameters">
       <field type="double"    name="frameSize"            defaultValue="1.0"/>
+      <field type="bool"    name="inverted"            defaultValue="false"/>
 
 
       <field type="double"    name="P Pitch"            defaultValue="1.0"/>

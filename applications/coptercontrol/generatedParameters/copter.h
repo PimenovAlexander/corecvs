@@ -41,6 +41,7 @@ class Copter : public corecvs::BaseReflection<Copter>
 public:
     enum FieldId {
         FRAMESIZE_ID,
+        INVERTED_ID,
         P_PITCH_ID,
         I_PITCH_ID,
         D_PITCH_ID,
@@ -60,6 +61,12 @@ public:
      * frameSize 
      */
     double mFrameSize;
+
+    /** 
+     * \brief inverted 
+     * inverted 
+     */
+    bool mInverted;
 
     /** 
      * \brief P Pitch 
@@ -130,6 +137,11 @@ public:
         return mFrameSize;
     }
 
+    bool inverted() const
+    {
+        return mInverted;
+    }
+
     double pPitch() const
     {
         return mPPitch;
@@ -179,6 +191,11 @@ public:
     void setFrameSize(double frameSize)
     {
         mFrameSize = frameSize;
+    }
+
+    void setInverted(bool inverted)
+    {
+        mInverted = inverted;
     }
 
     void setPPitch(double pPitch)
@@ -232,6 +249,7 @@ template<class VisitorType>
     void accept(VisitorType &visitor)
     {
         visitor.visit(mFrameSize,                 static_cast<const corecvs::DoubleField *>(fields()[FRAMESIZE_ID]));
+        visitor.visit(mInverted,                  static_cast<const corecvs::BoolField *>(fields()[INVERTED_ID]));
         visitor.visit(mPPitch,                    static_cast<const corecvs::DoubleField *>(fields()[P_PITCH_ID]));
         visitor.visit(mIPitch,                    static_cast<const corecvs::DoubleField *>(fields()[I_PITCH_ID]));
         visitor.visit(mDPitch,                    static_cast<const corecvs::DoubleField *>(fields()[D_PITCH_ID]));
@@ -251,6 +269,7 @@ template<class VisitorType>
 
     Copter(
           double frameSize
+        , bool inverted
         , double pPitch
         , double iPitch
         , double dPitch
@@ -263,6 +282,7 @@ template<class VisitorType>
     )
     {
         mFrameSize = frameSize;
+        mInverted = inverted;
         mPPitch = pPitch;
         mIPitch = iPitch;
         mDPitch = dPitch;
@@ -277,6 +297,7 @@ template<class VisitorType>
     bool operator ==(const Copter &other) const 
     {
         if ( !(this->mFrameSize == other.mFrameSize)) return false;
+        if ( !(this->mInverted == other.mInverted)) return false;
         if ( !(this->mPPitch == other.mPPitch)) return false;
         if ( !(this->mIPitch == other.mIPitch)) return false;
         if ( !(this->mDPitch == other.mDPitch)) return false;

@@ -55,7 +55,19 @@ int Copter::staticInit()
     field0->precision=2;
     fields().push_back(field0);
     /*  */ 
-    DoubleField* field1 = new DoubleField
+    BoolField* field1 = new BoolField
+        (
+          Copter::INVERTED_ID,
+          offsetof(Copter, mInverted),
+          false,
+          "inverted",
+          "inverted",
+          "inverted"
+        );
+    field1->widgetHint=BaseField::CHECK_BOX;
+    fields().push_back(field1);
+    /*  */ 
+    DoubleField* field2 = new DoubleField
         (
           Copter::P_PITCH_ID,
           offsetof(Copter, mPPitch),
@@ -64,11 +76,11 @@ int Copter::staticInit()
           "P Pitch",
           "P Pitch"
         );
-    field1->widgetHint=BaseField::SPIN_BOX;
-    field1->precision=2;
-    fields().push_back(field1);
+    field2->widgetHint=BaseField::SPIN_BOX;
+    field2->precision=2;
+    fields().push_back(field2);
     /*  */ 
-    DoubleField* field2 = new DoubleField
+    DoubleField* field3 = new DoubleField
         (
           Copter::I_PITCH_ID,
           offsetof(Copter, mIPitch),
@@ -77,11 +89,11 @@ int Copter::staticInit()
           "I Pitch",
           "I Pitch"
         );
-    field2->widgetHint=BaseField::SPIN_BOX;
-    field2->precision=2;
-    fields().push_back(field2);
+    field3->widgetHint=BaseField::SPIN_BOX;
+    field3->precision=2;
+    fields().push_back(field3);
     /*  */ 
-    DoubleField* field3 = new DoubleField
+    DoubleField* field4 = new DoubleField
         (
           Copter::D_PITCH_ID,
           offsetof(Copter, mDPitch),
@@ -90,11 +102,11 @@ int Copter::staticInit()
           "D Pitch",
           "D Pitch"
         );
-    field3->widgetHint=BaseField::SPIN_BOX;
-    field3->precision=2;
-    fields().push_back(field3);
+    field4->widgetHint=BaseField::SPIN_BOX;
+    field4->precision=2;
+    fields().push_back(field4);
     /*  */ 
-    DoubleField* field4 = new DoubleField
+    DoubleField* field5 = new DoubleField
         (
           Copter::P_ROLL_ID,
           offsetof(Copter, mPRoll),
@@ -103,11 +115,11 @@ int Copter::staticInit()
           "P Roll",
           "P Roll"
         );
-    field4->widgetHint=BaseField::SPIN_BOX;
-    field4->precision=2;
-    fields().push_back(field4);
+    field5->widgetHint=BaseField::SPIN_BOX;
+    field5->precision=2;
+    fields().push_back(field5);
     /*  */ 
-    DoubleField* field5 = new DoubleField
+    DoubleField* field6 = new DoubleField
         (
           Copter::I_ROLL_ID,
           offsetof(Copter, mIRoll),
@@ -116,11 +128,11 @@ int Copter::staticInit()
           "I Roll",
           "I Roll"
         );
-    field5->widgetHint=BaseField::SPIN_BOX;
-    field5->precision=2;
-    fields().push_back(field5);
+    field6->widgetHint=BaseField::SPIN_BOX;
+    field6->precision=2;
+    fields().push_back(field6);
     /*  */ 
-    DoubleField* field6 = new DoubleField
+    DoubleField* field7 = new DoubleField
         (
           Copter::D_ROLL_ID,
           offsetof(Copter, mDRoll),
@@ -129,11 +141,11 @@ int Copter::staticInit()
           "D Roll",
           "D Roll"
         );
-    field6->widgetHint=BaseField::SPIN_BOX;
-    field6->precision=2;
-    fields().push_back(field6);
+    field7->widgetHint=BaseField::SPIN_BOX;
+    field7->precision=2;
+    fields().push_back(field7);
     /*  */ 
-    DoubleField* field7 = new DoubleField
+    DoubleField* field8 = new DoubleField
         (
           Copter::P_YAW_ID,
           offsetof(Copter, mPYaw),
@@ -142,11 +154,11 @@ int Copter::staticInit()
           "P Yaw",
           "P Yaw"
         );
-    field7->widgetHint=BaseField::SPIN_BOX;
-    field7->precision=2;
-    fields().push_back(field7);
+    field8->widgetHint=BaseField::SPIN_BOX;
+    field8->precision=2;
+    fields().push_back(field8);
     /*  */ 
-    DoubleField* field8 = new DoubleField
+    DoubleField* field9 = new DoubleField
         (
           Copter::I_YAW_ID,
           offsetof(Copter, mIYaw),
@@ -155,11 +167,11 @@ int Copter::staticInit()
           "I Yaw",
           "I Yaw"
         );
-    field8->widgetHint=BaseField::SPIN_BOX;
-    field8->precision=2;
-    fields().push_back(field8);
+    field9->widgetHint=BaseField::SPIN_BOX;
+    field9->precision=2;
+    fields().push_back(field9);
     /*  */ 
-    DoubleField* field9 = new DoubleField
+    DoubleField* field10 = new DoubleField
         (
           Copter::D_YAW_ID,
           offsetof(Copter, mDYaw),
@@ -168,9 +180,9 @@ int Copter::staticInit()
           "D Yaw",
           "D Yaw"
         );
-    field9->widgetHint=BaseField::SPIN_BOX;
-    field9->precision=2;
-    fields().push_back(field9);
+    field10->widgetHint=BaseField::SPIN_BOX;
+    field10->precision=2;
+    fields().push_back(field10);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
     directory[std::string("Copter")]= &reflection;

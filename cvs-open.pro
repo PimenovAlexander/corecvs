@@ -15,6 +15,7 @@ SUBDIRS +=                   \
     scanner                  \
     testbed                  \
     cloudview                \
+    physics                  \
     imageview                \
 #    \
      generator                \
@@ -71,6 +72,7 @@ recorder.file                 = applications/recorder/recorder.pro
 scanner.file                 = applications/scanner/scanner.pro
 egomotion.file                = applications/egomotion/egomotion.pro
 cloudview.file                = applications/cloudview/cloudview.pro
+physics.file                  = applications/physics/physics.pro
 imageview.file                = applications/imageview/imageview.pro
 testbed.file                  = applications/testbed/testbed.pro
 generator.file                = tools/generator/generator.pro

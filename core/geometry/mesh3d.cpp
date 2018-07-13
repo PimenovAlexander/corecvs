@@ -425,6 +425,8 @@ void Mesh3D::addIcoSphere(const Vector3dd &center, double radius, int step)
     }
     addVertex(center + Vector3dd(0.0,  0.0, -1.0) * radius);
 
+    Vector3dd transformedCenter = currentTransform * center;
+
     /*Adding faces */
     static int ROUND_1 = 1;
     static int ROUND_2 = 1 + 5;
@@ -475,7 +477,7 @@ void Mesh3D::addIcoSphere(const Vector3dd &center, double radius, int step)
 
                 Vector3dd add = (startvert + endvert) / 2.0;
 
-                add = center + (add - center).normalised() * radius;
+                add = transformedCenter + (add - transformedCenter).normalised() * radius;
 
                 addVertex(add);
              }
@@ -499,11 +501,7 @@ void Mesh3D::addIcoSphere(const Vector3dd &center, double radius, int step)
      if (hasColor) {
          facesColor.erase(facesColor.begin() + primaryIndex, facesColor.begin() + faceIndex);
      }
-
-
-
 #endif
-
 }
 
 void Mesh3D::addCircle(const Circle3d &circle, int step)
