@@ -52,7 +52,7 @@ V4L2CaptureInterface::V4L2CaptureInterface(string _devname, int h, int w, int fp
     mIsRgb = isRgb;
 
     interfaceName = QString("%1:1/%2:yuyv:%3x%4").arg(_devname.c_str()).arg(fps).arg(w).arg(h).toStdString();
-    deviceName[Frames::LEFT_FRAME] =  _devname;
+    deviceName[LEFT_FRAME] =  _devname;
 
     decoder = UNCOMPRESSED;
 
@@ -68,7 +68,7 @@ V4L2CaptureInterface::V4L2CaptureInterface(string _devname, ImageCaptureInterfac
 {
     mIsRgb = isRgb;
     interfaceName = QString("%1:1/%2:yuyv:%3x%4").arg(_devname.c_str()).arg(format.fps).arg(format.width).arg(format.height).toStdString();
-    deviceName[Frames::LEFT_FRAME] =  _devname;
+    deviceName[LEFT_FRAME] =  _devname;
 
     decoder = UNCOMPRESSED;
 
@@ -125,8 +125,8 @@ int V4L2CaptureInterface::setConfigurationString(string _devname)
         mIsRgb ? "on" : "off"
     );
 
-    deviceName[Frames::RIGHT_FRAME] = deviceStringPattern.cap(Device1Group).toLatin1().constData();
-    deviceName[Frames::LEFT_FRAME ] = deviceStringPattern.cap(Device2Group).toLatin1().constData();
+    deviceName[RIGHT_FRAME] = deviceStringPattern.cap(Device1Group).toLatin1().constData();
+    deviceName[LEFT_FRAME ] = deviceStringPattern.cap(Device2Group).toLatin1().constData();
 
     bool isOk;
     cameraMode.fpsnum = deviceStringPattern.cap(FpsNumGroup).toInt(&isOk);
@@ -152,8 +152,8 @@ int V4L2CaptureInterface::setConfigurationString(string _devname)
 
     cameraMode.compressed = (decoder != UNCOMPRESSED);
 
-    printf("Capture Right device: V4L2 %s\n", deviceName[Frames::RIGHT_FRAME].c_str());
-    printf("Capture Left  device: V4L2 %s\n", deviceName[Frames::LEFT_FRAME ].c_str());
+    printf("Capture Right device: V4L2 %s\n", deviceName[RIGHT_FRAME].c_str());
+    printf("Capture Left  device: V4L2 %s\n", deviceName[ LEFT_FRAME].c_str());
     printf("MJPEG compression is: %s\n", CODEC_NAMES[cameraMode.compressed]);
     return isOk ? 0 : 1;
 }
@@ -170,11 +170,11 @@ V4L2CaptureInterface::FramePair V4L2CaptureInterface::getFrame()
     FramePair result;
 
     protectFrame.lock();
-    G12Buffer **results[Frames::MAX_INPUTS_NUMBER] = {
-            &result.buffers[Frames::LEFT_FRAME ].g12Buffer,
-            &result.buffers[Frames::RIGHT_FRAME].g12Buffer,
-            &result.buffers[Frames::LEFT_FRAME ].g12Buffer,
-            &result.buffers[Frames::RIGHT_FRAME].g12Buffer,
+    G12Buffer **results[MAX_INPUTS_NUMBER] = {
+            &result.buffers[LEFT_FRAME ].g12Buffer,
+            &result.buffers[RIGHT_FRAME].g12Buffer,
+            &result.buffers[LEFT_FRAME ].g12Buffer,
+            &result.buffers[RIGHT_FRAME].g12Buffer,
 
     };
 
@@ -185,7 +185,7 @@ V4L2CaptureInterface::FramePair V4L2CaptureInterface::getFrame()
     //           currentFrame[Frames::LEFT_FRAME ].isFilled ? "filled" : "empty" ,
     //           currentFrame[Frames::RIGHT_FRAME].isFilled ? "filled" : "empty"));
 
-    for (int i = 0; i < Frames::MAX_INPUTS_NUMBER; i++)
+    for (int i = 0; i < MAX_INPUTS_NUMBER; i++)
     {
         decodeData(&camera[i],  &currentFrame[i],  results[i]);
 
@@ -194,11 +194,11 @@ V4L2CaptureInterface::FramePair V4L2CaptureInterface::getFrame()
         }
     }
 
-    if (currentFrame[Frames::LEFT_FRAME].isFilled)
-        result.setTimeStampLeft (currentFrame[Frames::LEFT_FRAME].usecsTimeStamp());
+    if (currentFrame[LEFT_FRAME].isFilled)
+        result.setTimeStampLeft (currentFrame[LEFT_FRAME].usecsTimeStamp());
 
-    if (currentFrame[Frames::RIGHT_FRAME].isFilled)
-        result.setTimeStampRight   (currentFrame[Frames::RIGHT_FRAME].usecsTimeStamp());
+    if (currentFrame[RIGHT_FRAME].isFilled)
+        result.setTimeStampRight   (currentFrame[RIGHT_FRAME].usecsTimeStamp());
 
     if (skippedCount == 0)
     {
@@ -212,9 +212,9 @@ V4L2CaptureInterface::FramePair V4L2CaptureInterface::getFrame()
     stats.values[CaptureStatistics::DECODING_TIME] = start.usecsToNow();
     stats.values[CaptureStatistics::INTERFRAME_DELAY] = frameDelay;
 
-    int64_t desync =  currentFrame[Frames::LEFT_FRAME].usecsTimeStamp() - currentFrame[Frames::RIGHT_FRAME].usecsTimeStamp();
+    int64_t desync =  currentFrame[LEFT_FRAME].usecsTimeStamp() - currentFrame[RIGHT_FRAME].usecsTimeStamp();
     stats.values[CaptureStatistics::DESYNC_TIME] = desync > 0 ? desync : -desync;
-    stats.values[CaptureStatistics::DATA_SIZE] = currentFrame[Frames::LEFT_FRAME].bytesused;
+    stats.values[CaptureStatistics::DATA_SIZE] = currentFrame[LEFT_FRAME].bytesused;
 
     if (imageInterfaceReceiver != NULL) {
         imageInterfaceReceiver->newStatisticsReadyCallback(stats);
@@ -233,19 +233,19 @@ V4L2CaptureInterface::FramePair V4L2CaptureInterface::getFrameRGB24()
 
     FramePair result;
 
-    RGB24Buffer **results[Frames::MAX_INPUTS_NUMBER] = {
+    RGB24Buffer **results[MAX_INPUTS_NUMBER] = {
         &result.buffers[LEFT_FRAME  ].rgbBuffer,
         &result.buffers[RIGHT_FRAME ].rgbBuffer,
         &result.buffers[THIRD_FRAME ].rgbBuffer,
         &result.buffers[FOURTH_FRAME].rgbBuffer
     };
 
-    for (int i = 0; i < Frames::MAX_INPUTS_NUMBER; i++)
+    for (int i = 0; i < MAX_INPUTS_NUMBER; i++)
     {
         decodeDataRGB24(&camera[i],  &currentFrame[i],  results[i]);
 
         if ((*results[i]) == NULL) {
-            printf("V4L2CaptureInterface::getFrameRGB24(): Precrash condition at %d (%s)\n", i, Frames::getEnumName((Frames::FrameSourceId)i));
+            printf("V4L2CaptureInterface::getFrameRGB24(): Precrash condition at %d (%s)\n", i, getFrameSourceName((FrameSourceId)i));
         }
     }
 
@@ -256,11 +256,11 @@ V4L2CaptureInterface::FramePair V4L2CaptureInterface::getFrameRGB24()
         result.setBufferRight ( result.rgbBufferRight()->toG12Buffer() );
     }
 
-    if (currentFrame[Frames::LEFT_FRAME].isFilled)
-        result.setTimeStampLeft  (currentFrame[Frames::LEFT_FRAME].usecsTimeStamp());
+    if (currentFrame[LEFT_FRAME].isFilled)
+        result.setTimeStampLeft  (currentFrame[LEFT_FRAME].usecsTimeStamp());
 
-    if (currentFrame[Frames::RIGHT_FRAME].isFilled)
-        result.setTimeStampRight (currentFrame[Frames::RIGHT_FRAME].usecsTimeStamp());
+    if (currentFrame[RIGHT_FRAME].isFilled)
+        result.setTimeStampRight (currentFrame[RIGHT_FRAME].usecsTimeStamp());
 
     if (skippedCount == 0)
     {
@@ -273,11 +273,11 @@ V4L2CaptureInterface::FramePair V4L2CaptureInterface::getFrameRGB24()
     stats.values[CaptureStatistics::DECODING_TIME]    = start.usecsToNow();
     stats.values[CaptureStatistics::INTERFRAME_DELAY] = frameDelay;
 
-    int64_t desync =  currentFrame[Frames::LEFT_FRAME ].usecsTimeStamp() -
-                      currentFrame[Frames::RIGHT_FRAME].usecsTimeStamp();
+    int64_t desync =  currentFrame[LEFT_FRAME ].usecsTimeStamp() -
+                      currentFrame[RIGHT_FRAME].usecsTimeStamp();
 
     stats.values[CaptureStatistics::DESYNC_TIME] = CORE_ABS(desync);
-    stats.values[CaptureStatistics::DATA_SIZE]   = currentFrame[Frames::LEFT_FRAME].bytesused;
+    stats.values[CaptureStatistics::DATA_SIZE]   = currentFrame[LEFT_FRAME].bytesused;
     if (imageInterfaceReceiver != NULL) {
         imageInterfaceReceiver->newStatisticsReadyCallback(stats);
     } else {
@@ -295,11 +295,11 @@ void V4L2CaptureInterface::SpinThread::run()
         V4L2BufferDescriptor newBufferLeft;
         V4L2BufferDescriptor newBufferRight;
 
-        V4L2CameraDescriptor* left  = &(mInterface->camera[Frames::LEFT_FRAME ]);
-        V4L2CameraDescriptor* right = &(mInterface->camera[Frames::RIGHT_FRAME]);
+        V4L2CameraDescriptor* left  = &(mInterface->camera[LEFT_FRAME ]);
+        V4L2CameraDescriptor* right = &(mInterface->camera[RIGHT_FRAME]);
 
-        V4L2BufferDescriptor* currentLeft  = &(mInterface->currentFrame[Frames::LEFT_FRAME ]);
-        V4L2BufferDescriptor* currentRight = &(mInterface->currentFrame[Frames::RIGHT_FRAME]);
+        V4L2BufferDescriptor* currentLeft  = &(mInterface->currentFrame[LEFT_FRAME ]);
+        V4L2BufferDescriptor* currentRight = &(mInterface->currentFrame[RIGHT_FRAME]);
 
         /* First we block till we will get a new frame */
         /*TODO: Wonder if dequeue should be static */
@@ -496,14 +496,14 @@ void V4L2CaptureInterface::decodeDataRGB24(V4L2CameraDescriptor *camera, V4L2Buf
 
 ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::queryCameraParameters(CameraParameters &parameter)
 {
-    camera[Frames::LEFT_FRAME].queryCameraParameters(parameter);
+    camera[LEFT_FRAME].queryCameraParameters(parameter);
     return SUCCESS;
 }
 
 
 ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::setCaptureProperty(int id, int value)
 {
-    for (int i = 0; i < Frames::MAX_INPUTS_NUMBER; i++) {
+    for (int i = 0; i < MAX_INPUTS_NUMBER; i++) {
         camera[i].setCaptureProperty(id, value);
     }
     return SUCCESS;
@@ -511,7 +511,7 @@ ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::setCaptureProperty(int
 
 ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::getCaptureProperty(int id, int *value)
 {
-    camera[Frames::LEFT_FRAME].getCaptureProperty(id, value);
+    camera[LEFT_FRAME].getCaptureProperty(id, value);
     //printf("Getting the values of capture properties is not supported for V4L2 yet.\n");
     return SUCCESS;
 }
@@ -530,9 +530,9 @@ ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::initCapture()
     frameDelay = 0;
     shouldStopSpinThread = false;
 
-    bool initOk[Frames::MAX_INPUTS_NUMBER];
+    bool initOk[MAX_INPUTS_NUMBER];
 
-    for (int i = 0; i < Frames::MAX_INPUTS_NUMBER; i++) {
+    for (int i = 0; i < MAX_INPUTS_NUMBER; i++) {
         initOk[i] = false;
         do {
             if (deviceName[i].empty()) {
@@ -564,40 +564,40 @@ ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::initCapture()
     }
 
     /* If only one camera started, we assume it is the left camera */
-    if ((!initOk[Frames::LEFT_FRAME]) && (initOk[Frames::RIGHT_FRAME]))
+    if ((!initOk[LEFT_FRAME]) && (initOk[RIGHT_FRAME]))
     {
         SYNC_PRINT(("Inited one camera, making it the first one\n"));
         V4L2CameraDescriptor tmp;
-        tmp = camera[Frames::LEFT_FRAME];
-        camera[Frames::LEFT_FRAME]  = camera[Frames::RIGHT_FRAME];
-        camera[Frames::RIGHT_FRAME] = tmp;
+        tmp = camera[LEFT_FRAME];
+        camera[LEFT_FRAME]  = camera[RIGHT_FRAME];
+        camera[RIGHT_FRAME] = tmp;
     }
 
     SYNC_PRINT(("Resumee:\n"));
-    for (int i = 0; i < Frames::MAX_INPUTS_NUMBER; i++) {
+    for (int i = 0; i < MAX_INPUTS_NUMBER; i++) {
         SYNC_PRINT(("  Device %d (%s) init %s\n", i, deviceName[i].c_str(), initOk[i] ? "Ok" : "Fail"));
     }
 
-    if (initOk[Frames::LEFT_FRAME] && initOk[Frames::RIGHT_FRAME])
+    if (initOk[LEFT_FRAME] && initOk[RIGHT_FRAME])
         return SUCCESS;
-    if (initOk[Frames::LEFT_FRAME] || initOk[Frames::RIGHT_FRAME])
+    if (initOk[LEFT_FRAME] || initOk[RIGHT_FRAME])
         return SUCCESS_1CAM;
     return FAILURE;
 }
 
 ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::startCapture()
 {
-    int res[Frames::MAX_INPUTS_NUMBER];
+    int res[MAX_INPUTS_NUMBER];
 
     /*Try to start as synchronous as possible*/
-    for (int i = 0; i < Frames::MAX_INPUTS_NUMBER; i++) {
+    for (int i = 0; i < MAX_INPUTS_NUMBER; i++) {
         res[i] = camera[i].start();
     }
 
     shouldStopSpinThread = false;
     spin.start();
 
-    return (CapErrorCode) ((bool) res[Frames::LEFT_FRAME] + (bool) res[Frames::RIGHT_FRAME]);
+    return (CapErrorCode) ((bool) res[LEFT_FRAME] + (bool) res[RIGHT_FRAME]);
 }
 
 ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::getCaptureName(string &value)
@@ -627,7 +627,7 @@ string V4L2CaptureInterface::getInterfaceName()
 
 ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::getDeviceName(int num, string &name)
 {
-    if (num  < 0 || num >= Frames::MAX_INPUTS_NUMBER)
+    if (num  < 0 || num >= MAX_INPUTS_NUMBER)
     {
         return ImageCaptureInterface::FAILURE;
     }
@@ -637,7 +637,7 @@ ImageCaptureInterface::CapErrorCode V4L2CaptureInterface::getDeviceName(int num,
 
 string V4L2CaptureInterface::getDeviceSerial(int num)
 {
-    if (num  < 0 || num >= Frames::MAX_INPUTS_NUMBER)
+    if (num  < 0 || num >= MAX_INPUTS_NUMBER)
     {
         return "wrong device";
     }
@@ -745,7 +745,7 @@ V4L2CaptureInterface::~V4L2CaptureInterface()
         SYNC_PRINT(("V4L2CaptureInterface::Unable to exit Camera thread\n"));
     }
 
-    for (int i = 0; i < Frames::MAX_INPUTS_NUMBER; i++) {
+    for (int i = 0; i < MAX_INPUTS_NUMBER; i++) {
         SYNC_PRINT(("V4L2CaptureInterface::Stopping cameras\n"));
         camera[i].stop();
     }
