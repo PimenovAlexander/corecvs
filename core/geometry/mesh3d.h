@@ -87,6 +87,8 @@ public:
     void mulTransform(const Matrix33 &transform);
     void mulTransform(const Matrix44 &transform);
     void popTransform();
+    void pushTransform();
+
 
     void pushColor(const RGBColor &color);
     void pushColor();

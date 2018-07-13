@@ -40,6 +40,7 @@ class Copter : public corecvs::BaseReflection<Copter>
 {
 public:
     enum FieldId {
+        PROCESSING_ID,
         FRAMESIZE_ID,
         INVERTED_ID,
         P_PITCH_ID,
@@ -55,6 +56,12 @@ public:
     };
 
     /** Section with variables */
+
+    /** 
+     * \brief processing 
+     * processing 
+     */
+    bool mProcessing;
 
     /** 
      * \brief frameSize 
@@ -132,6 +139,11 @@ public:
     {
         return (const unsigned char *)(this) + fields()[fieldId]->offset;
     }
+    bool processing() const
+    {
+        return mProcessing;
+    }
+
     double frameSize() const
     {
         return mFrameSize;
@@ -188,6 +200,11 @@ public:
     }
 
     /* Section with setters */
+    void setProcessing(bool processing)
+    {
+        mProcessing = processing;
+    }
+
     void setFrameSize(double frameSize)
     {
         mFrameSize = frameSize;
@@ -248,6 +265,7 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
+        visitor.visit(mProcessing,                static_cast<const corecvs::BoolField *>(fields()[PROCESSING_ID]));
         visitor.visit(mFrameSize,                 static_cast<const corecvs::DoubleField *>(fields()[FRAMESIZE_ID]));
         visitor.visit(mInverted,                  static_cast<const corecvs::BoolField *>(fields()[INVERTED_ID]));
         visitor.visit(mPPitch,                    static_cast<const corecvs::DoubleField *>(fields()[P_PITCH_ID]));
@@ -268,7 +286,8 @@ template<class VisitorType>
     }
 
     Copter(
-          double frameSize
+          bool processing
+        , double frameSize
         , bool inverted
         , double pPitch
         , double iPitch
@@ -281,6 +300,7 @@ template<class VisitorType>
         , double dYaw
     )
     {
+        mProcessing = processing;
         mFrameSize = frameSize;
         mInverted = inverted;
         mPPitch = pPitch;
@@ -296,6 +316,7 @@ template<class VisitorType>
 
     bool operator ==(const Copter &other) const 
     {
+        if ( !(this->mProcessing == other.mProcessing)) return false;
         if ( !(this->mFrameSize == other.mFrameSize)) return false;
         if ( !(this->mInverted == other.mInverted)) return false;
         if ( !(this->mPPitch == other.mPPitch)) return false;

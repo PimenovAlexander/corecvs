@@ -122,7 +122,7 @@ void CapSettingsDialog::loadFromQSettings(const QString &fileName, const QString
         L_DDEBUG_P("loading won't happen - interfaceName is empty");
         return;
     }
-    L_DDEBUG_P("ifcName: %s", QSTR_DATA_PTR(interfaceName));
+    // L_DDEBUG_P("ifcName: %s", QSTR_DATA_PTR(interfaceName));
 
     QSettings *settings = new QSettings(fileName, QSettings::IniFormat);
     settings->beginGroup(_root);

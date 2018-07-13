@@ -21,6 +21,7 @@ CopterControlWidget::CopterControlWidget(QWidget *parent, bool _autoInit, QStrin
 {
     mUi->setupUi(this);
 
+    QObject::connect(mUi->processingCheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->frameSizeSpinBox, SIGNAL(valueChanged(double)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->invertedCheckBox, SIGNAL(stateChanged(int)), this, SIGNAL(paramsChanged()));
     QObject::connect(mUi->pPitchSpinBox, SIGNAL(valueChanged(double)), this, SIGNAL(paramsChanged()));
@@ -67,7 +68,8 @@ Copter *CopterControlWidget::createParameters() const
 
 
     return new Copter(
-          mUi->frameSizeSpinBox->value()
+          mUi->processingCheckBox->isChecked()
+        , mUi->frameSizeSpinBox->value()
         , mUi->invertedCheckBox->isChecked()
         , mUi->pPitchSpinBox->value()
         , mUi->iPitchSpinBox->value()
@@ -85,6 +87,7 @@ void CopterControlWidget::setParameters(const Copter &input)
 {
     // Block signals to send them all at once
     bool wasBlocked = blockSignals(true);
+    mUi->processingCheckBox->setChecked(input.processing());
     mUi->frameSizeSpinBox->setValue(input.frameSize());
     mUi->invertedCheckBox->setChecked(input.inverted());
     mUi->pPitchSpinBox->setValue(input.pPitch());

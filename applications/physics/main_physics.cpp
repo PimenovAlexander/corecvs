@@ -1,3 +1,4 @@
+#include "core/utils/utils.h"
 #include "core/geometry/mesh3d.h"
 #include <core/geometry/mesh3DDecorated.h>
 #include <QApplication>
@@ -35,7 +36,9 @@ int main_example1()
 
 int main(int argc, char *argv[])
 {
-    //SET_HANDLERS();
+    main_example1();
+
+    SET_HANDLERS();
 
     Q_INIT_RESOURCE(main);
     //QTRGB24Loader::registerMyself();

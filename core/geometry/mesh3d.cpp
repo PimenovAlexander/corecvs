@@ -69,6 +69,11 @@ void Mesh3D::mulTransform(const Matrix44 &transform)
     currentTransform = currentTransform * transform;
 }
 
+void Mesh3D::pushTransform()
+{
+    transformStack.push_back(currentTransform);
+}
+
 void Mesh3D::popTransform()
 {
     if (transformStack.empty()) {
@@ -358,6 +363,8 @@ void Mesh3D::addIcoSphere(const Vector3dd &center, double radius, int step)
     //double scaler = radius * sqrt(5);
     int vectorIndex = (int)vertexes.size();
     Vector3d32 startId(vectorIndex, vectorIndex, vectorIndex);
+    pushTransform();
+    currentTransform = Matrix44::Identity();
 
 #if 0
     addVertex(center + Vector3dd(0.0,  1.0,  M_PHI));  // 0
@@ -425,7 +432,8 @@ void Mesh3D::addIcoSphere(const Vector3dd &center, double radius, int step)
     }
     addVertex(center + Vector3dd(0.0,  0.0, -1.0) * radius);
 
-    Vector3dd transformedCenter = currentTransform * center;
+    //Vector3dd transformedCenter = currentTransform * center;
+    Matrix44 invT = currentTransform.inverted();
 
     /*Adding faces */
     static int ROUND_1 = 1;
@@ -477,7 +485,7 @@ void Mesh3D::addIcoSphere(const Vector3dd &center, double radius, int step)
 
                 Vector3dd add = (startvert + endvert) / 2.0;
 
-                add = transformedCenter + (add - transformedCenter).normalised() * radius;
+                add = center + (add - center).normalised() * radius;
 
                 addVertex(add);
              }
@@ -495,6 +503,13 @@ void Mesh3D::addIcoSphere(const Vector3dd &center, double radius, int step)
              addFace(Vector3d32(nv1, nv2, nv3));
          }
          faceIndex = lastIndex;
+     }
+
+     /* we have suppressed transformation for all vertises. Time to reapply them. */
+     popTransform();
+     for (size_t i = startId.x(); i < vertexes.size(); i++)
+     {
+         vertexes[i] = currentTransform * vertexes[i];
      }
 
      faces.erase(faces.begin() + primaryIndex, faces.begin() + faceIndex);

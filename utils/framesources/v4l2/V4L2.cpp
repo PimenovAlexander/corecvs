@@ -40,6 +40,8 @@ int V4L2CameraDescriptor::initCamera(string deviceName, const V4L2CameraMode &mo
     return initCamera(deviceName, mode.height, mode.width, mode.fpsnum, mode.fpsdenum, mode.compressed);
 }
 
+
+
 int V4L2CameraDescriptor::initCamera(
         string deviceName,
         int h,
@@ -74,7 +76,12 @@ int V4L2CameraDescriptor::initCamera(
 
     formatH = format.fmt.pix.height;
     formatW = format.fmt.pix.width;
-    SYNC_PRINT(("Set dimensions [%d x %d] for camera %s\n", format.fmt.pix.width, format.fmt.pix.height, deviceName.c_str()));
+    SYNC_PRINT(("Set dimensions [%d x %d] for camera %s (format %c%c%c%c)\n", format.fmt.pix.width, format.fmt.pix.height, deviceName.c_str(),
+                ((uint8_t *)&format.fmt.pix.pixelformat)[0],
+                ((uint8_t *)&format.fmt.pix.pixelformat)[1],
+                ((uint8_t *)&format.fmt.pix.pixelformat)[2],
+                ((uint8_t *)&format.fmt.pix.pixelformat)[3]
+                ));
 
     /* Setting up FPS */
     struct v4l2_streamparm streamparm;

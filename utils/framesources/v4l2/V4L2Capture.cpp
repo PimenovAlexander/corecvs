@@ -450,35 +450,16 @@ void V4L2CaptureInterface::decodeDataRGB24(V4L2CameraDescriptor *camera, V4L2Buf
             *output = new RGB24Buffer(formatH, formatW);
 //            printf("Decoding image...");
             timer = PreciseTimer::currentTime();
-#if 0
-            for (int i = 0; i < formatH; i++)
-            {
-                uint8_t *ptrI = ptrL + formatW * 2 * i;
-                RGBColor *ptrO = &((*output)->element(i,0));
-
-                for (int j = 0; j < formatW; j += 2)
-                {
-                    int y1 = ptrI[0];
-                    int u  = ptrI[1];
-                    int y2 = ptrI[2];
-                    int v  = ptrI[3];
-                    ptrI += 4;
-                    ptrO[j    ] = RGBColor::FromYUV(y1, u, v);
-                    ptrO[j + 1] = RGBColor::FromYUV(y2, u, v);
-                }
-            }
-#endif
             (*output)->fillWithYUYV(ptrL);
 //            printf("Delay: %i\n", timer.usecsToNow());
             break;
         case COMPRESSED_JPEG:
         {
-            /*uint16_t *ptrDecoded = decodeMjpeg(ptrL );
-            *output = new G12Buffer(formatH, formatW, false);
-            (*output)->fillWithYUYV(ptrDecoded);
-            free(ptrDecoded);*/
-            SYNC_PRINT(("V4L2CaptureInterface::decodeDataRGB24(): COMPRESSED_JPEG not supported"));
-
+            uint16_t *ptrDecoded = decodeMjpeg(ptrL );
+            *output = new RGB24Buffer(formatH, formatW, false);
+            (*output)->fillWithYUYV((uint8_t *)ptrDecoded);
+            free(ptrDecoded);
+           // SYNC_PRINT(("V4L2CaptureInterface::decodeDataRGB24(): COMPRESSED_JPEG not supported"));
         }
         break;
         case CODEC_NUMBER:

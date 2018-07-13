@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
     CopterDialog *hostDialog = new CopterDialog();
     hostDialog->setAutoExit(params.autoStop ? params.frameToStop : -1);
 
-    MainWindow mainWindow(hostDialog, source, params, false);
+    MainWindow mainWindow(hostDialog, source, params, true);
 
     app.exec();
 

@@ -116,7 +116,7 @@ AbstractOutputData* CopterThread::processNewData()
 
     recalculateCache();
 
-    G12Buffer *result[Frames::MAX_INPUTS_NUMBER] = {NULL, NULL};
+    RGB24Buffer *result[Frames::MAX_INPUTS_NUMBER] = {NULL, NULL};
 
     Vector2dd centerCl = Vector2dd::Zero();
 
@@ -125,25 +125,17 @@ AbstractOutputData* CopterThread::processNewData()
     {
         G12Buffer   *buf    = mFrames.getCurrentFrame   ((Frames::FrameSourceId)id);
         RGB24Buffer *bufrgb = mFrames.getCurrentRgbFrame((Frames::FrameSourceId)id);
-        if (bufrgb != NULL) {
-            buf = bufrgb->toG12Buffer();
+
+        if (bufrgb == NULL && buf != NULL) {
+            bufrgb = new RGB24Buffer(buf);
         }
 
 
         //result[id] = mTransformationCache[id] ? mTransformationCache[id]->doDeformation(mBaseParams->interpolationType(), buf) : buf;
-        result[id] = buf;
+        result[id] = bufrgb;
 
         if (id == Frames::LEFT_FRAME)
-        {
-            /*
-            for (int i = 0; i < buf->h; i++)
-                for (int j = 0; j < buf->w; j++)
-                {
-                    if (buf->element(i,j) < (200 * 16))
-                    {
-                        buf->element(i,j) = 0;
-                    }
-                }*/
+        {          
             BrightSegmentator seg;
 
             BrightSegmentator::SegmentationResult *result =
@@ -213,7 +205,7 @@ AbstractOutputData* CopterThread::processNewData()
 
     for (int id = 0; id < mActiveInputsNumber; id++)
     {
-        if (result[id] != mFrames.getCurrentFrame((Frames::FrameSourceId)id)) {
+        if (result[id] != mFrames.getCurrentRgbFrame((Frames::FrameSourceId)id)) {
              delete_safe(result[id]);
         }
     }
