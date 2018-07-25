@@ -106,30 +106,35 @@ ImageCaptureInterface::FramePair AviCapture::getFrame()
 
         if (res >= 0)
         {            
-            if (mFrame->format != AV_PIX_FMT_YUV420P && mFrame->format != AV_PIX_FMT_YUVJ420P)
+            if (mFrame->format == AV_PIX_FMT_YUV420P ||
+                mFrame->format != AV_PIX_FMT_YUVJ420P)
             {
+                result.setRgbBufferLeft(new RGB24Buffer(mFrame->height, mFrame->width));
+                result.setBufferLeft   (new G12Buffer  (mFrame->height, mFrame->width));
+                for (int i = 0; i < mFrame->height; i++)
+                {
+                    for (int j = 0; j < mFrame->width; j++)
+                    {
+                        uint8_t y = (mFrame->data[0])[i * mFrame->linesize[0] + j];
+
+                        uint8_t u = (mFrame->data[1])[(i / 2) * mFrame->linesize[1] + (j / 2)];
+                        uint8_t v = (mFrame->data[2])[(i / 2) * mFrame->linesize[2] + (j / 2)];
+
+                        result.rgbBufferLeft()->element(i,j) = RGBColor::FromYUV(y,u,v);
+                        result.bufferLeft()   ->element(i,j) = (int)y << 4;
+                    }
+                }
+
+                result.setRgbBufferRight (new RGB24Buffer(result.rgbBufferLeft()));
+                result.setBufferRight    (new G12Buffer(result.bufferLeft()));
+             } else if (mFrame->format == AV_PIX_FMT_YUV422P ) {
+                SYNC_PRINT(("AviCapture::getFrame(): format AV_PIX_FMT_YUV422P \n"));
+
+                return result;
+             } else {
                 SYNC_PRINT(("AviCapture::getFrame(): Not supported format %d\n", mFrame->format));
                 return result;
-            }
-
-            result.setRgbBufferLeft(new RGB24Buffer(mFrame->height, mFrame->width));
-            result.setBufferLeft   (new G12Buffer  (mFrame->height, mFrame->width));
-            for (int i = 0; i < mFrame->height; i++)
-            {
-                for (int j = 0; j < mFrame->width; j++)
-                {
-                    uint8_t y = (mFrame->data[0])[i * mFrame->linesize[0] + j];
-
-                    uint8_t u = (mFrame->data[1])[(i / 2) * mFrame->linesize[1] + (j / 2)];
-                    uint8_t v = (mFrame->data[2])[(i / 2) * mFrame->linesize[2] + (j / 2)];
-
-                    result.rgbBufferLeft()->element(i,j) = RGBColor::FromYUV(y,u,v);
-                    result.bufferLeft()   ->element(i,j) = (int)y << 4;
-                }
-            }
-
-            result.setRgbBufferRight (new RGB24Buffer(result.rgbBufferLeft()));
-            result.setBufferRight    (new G12Buffer(result.bufferLeft()));
+             }
         } else {
             SYNC_PRINT(("AviCapture::getFrame(): av_read_frame failed with %d", res));
         }

@@ -16,6 +16,8 @@
 #include "imageResultLayer.h"
 
 #include <core/segmentation/segmentator.h>
+
+#include <core/stereointerface/processor6D.h>
 // TEST
 // #include "viFlowStatisticsDescriptor.h"
 
@@ -94,6 +96,13 @@ AbstractOutputData* CopterThread::processNewData()
 {
     Statistics stats;
 
+    static Processor6D *proc = Processor6DFactoryHolder::getInstance()->getProcessor("OpenCVFlowProcessor");
+    if (proc == NULL) {
+        printf("No such processor\n");
+        return NULL;
+    }
+
+
 //    qDebug("CopterThread::processNewData(): called");
 
 #if 0
@@ -119,6 +128,7 @@ AbstractOutputData* CopterThread::processNewData()
     RGB24Buffer *result[Frames::MAX_INPUTS_NUMBER] = {NULL, NULL};
 
     Vector2dd centerCl = Vector2dd::Zero();
+    FlowBuffer *flow = NULL;
 
     /*TODO: Logic here should be changed according to the host base change*/
     for (int id = 0; id < mActiveInputsNumber; id++)
@@ -135,7 +145,28 @@ AbstractOutputData* CopterThread::processNewData()
         result[id] = bufrgb;
 
         if (id == Frames::LEFT_FRAME)
-        {          
+        {
+
+            std::map<std::string, DynamicObject> params = proc->getParameters();
+            cout << "Provider parameters" << endl;
+            for (auto &it: params)
+            {
+                cout << it.first << endl;
+                cout << it.second << endl;
+            }
+
+            proc->requestResultsi(Processor6D::RESULT_FLOW);
+            proc->beginFrame();
+            proc->setFrameRGB24(Processor6D::FRAME_LEFT_ID, bufrgb);
+            proc->endFrame();
+            flow = proc->getFlow();
+
+            if (flow != NULL) {
+                bufrgb->drawFlowBuffer3(flow);
+            }
+
+
+#if 0
             BrightSegmentator seg;
 
             BrightSegmentator::SegmentationResult *result =
@@ -181,8 +212,9 @@ AbstractOutputData* CopterThread::processNewData()
             }
 
             delete_safe(result);
-
+#endif
         }
+
 
     }
 

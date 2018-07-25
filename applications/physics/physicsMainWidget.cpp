@@ -19,7 +19,7 @@ void PhysicsMainWidget::on_pushButton_released()
     SYNC_PRINT(("Hello World\n"));
 }
 
-void PhysicsMainWidget::myHandler()
+void PhysicsMainWidget::myHandler(int y)
 {
 
 }

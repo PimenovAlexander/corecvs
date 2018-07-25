@@ -9,16 +9,16 @@
   int    mKLTSize = 4;
  -->
 
-  <class name="KLT OpenCV Parameters">
+  <class name="OpenCV KLT Parameters">
 
-    <field type="double"      name="mSelectorQuality"    defaultValue="20" />
-    <field type="double"      name="mSelectorDistance"   defaultValue="20" />
-    <field type="int"         name="mSelectorSize"       defaultValue="10" />
-    <field type="int"         name="mUseHarris"          defaultValue="1" />
-    <field type="double"      name="mHarrisK"            defaultValue="0.05" />
-    <field type="int"         name="mKLTSize"            defaultValue="4"  />
+    <field type="double"      name="SelectorQuality"    defaultValue="0.01" />
+    <field type="double"      name="SelectorDistance"   defaultValue="10" />
+    <field type="int"         name="SelectorSize"       defaultValue="7" />
+    <field type="int"         name="UseHarris"          defaultValue="1" />
+    <field type="double"      name="HarrisK"            defaultValue="0.05" />
+    <field type="int"         name="kltSize"            defaultValue="4"  />
 
-   </class>
+  </class>
 
 
 </poco>

@@ -201,6 +201,14 @@ int main(int argc, char *argv[])
         return 3;
     }
 
+    std::map<std::string, DynamicObject> params = proc->getParameters();
+    cout << "Provider parameters" << endl;
+    for (auto &it: params)
+    {
+        cout << it.first << endl;
+        cout << it.second << endl;
+    }
+
     proc->requestResultsi(Processor6D::RESULT_FLOW);
     proc->beginFrame();
     proc->setFrameRGB24(Processor6D::FRAME_LEFT_ID, in1);
@@ -210,10 +218,23 @@ int main(int argc, char *argv[])
     proc->endFrame();
     FlowBuffer *flow = proc->getFlow();
 
-    RGB24Buffer result(flow->h, flow->w);
-    result.drawFlowBuffer(flow);
+    //RGB24Buffer result(flow->h, flow->w);
+    RGB24Buffer result(in1);
+
+    result.drawFlowBuffer3(flow);
 
     BufferFactory::getInstance()->saveRGB24Bitmap(&result, outname);
+
+#if 0
+    for (int i = 0; i < flow->h; i ++) {
+        for (int j = 0; j < flow->w; j ++)
+        {
+            if (!flow->isElementKnown(i,j))
+                continue;
+            cout << j << "," << i << " => " << (j + flow->element(i,j).x()) << ", " << (i + flow->element(i,j).y()) << endl;
+        }
+    }
+#endif
 
 
     delete_safe(proc);

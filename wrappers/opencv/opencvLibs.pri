@@ -294,8 +294,8 @@ with_opencv {
 
            # LIBS += -lopencv_nonfree
 
-            message(Forcing OpenCV 3.x)
-            DEFINES += WITH_OPENCV_3x
+            #message(Forcing OpenCV 3.x)
+            #DEFINES += WITH_OPENCV_3x
         } else {
 
             CONFIG += link_pkgconfig

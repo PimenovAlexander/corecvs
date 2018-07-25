@@ -17,7 +17,7 @@ public:
 
 private slots:
     void on_pushButton_released();
-    void myHandler();
+    void myHandler(int y);
 
 private:
     Ui::PhysicsMainWidget *ui;

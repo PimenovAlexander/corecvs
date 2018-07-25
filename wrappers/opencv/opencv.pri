@@ -78,5 +78,8 @@ contains(DEFINES, WITH_OPENCV) {                    # if it's installed properly
     OTHER_FILES +=  $$OPENCV_WRAPPER_DIR/../../tools/generator/xml/opencv.xml
     OTHER_FILES +=  $$OPENCV_WRAPPER_DIR/../../tools/generator/regen-opencv.sh
 
+    HEADERS   += $$OPENCV_WRAPPER_DIR/generated/*.h
+    SOURCES   += $$OPENCV_WRAPPER_DIR/generated/*.cpp
+
 
 }

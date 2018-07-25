@@ -18,8 +18,8 @@ echo "Making a copy of base classes"
 
 
 echo "Making a copy of recorder classes"
-copy_if_different Generated/KLTOpenCVParameters.cpp                  $opencv/generated
-copy_if_different Generated/KLTOpenCVParameters.h                    $opencv/generated
+copy_if_different Generated/openCVKLTParameters.cpp                  $opencv/generated
+copy_if_different Generated/openCVKLTParameters.h                    $opencv/generated
 
 
 echo "copied"

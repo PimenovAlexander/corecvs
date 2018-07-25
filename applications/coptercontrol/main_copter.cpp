@@ -15,12 +15,17 @@
 
 #include "core/utils/global.h"
 
+#include "core/stereointerface/processor6D.h"
+
 #include "core/utils/utils.h"
 #include "copterDialog.h"
 #include "mainWindow.h"
 #include "configManager.h"
 #include "qtFileLoader.h"
 
+#ifdef WITH_OPENCV
+#include "KLTFlow.h"
+#endif
 
 using namespace std;
 
@@ -35,7 +40,10 @@ int main(int argc, char *argv[])
     QTG12Loader::registerMyself();
     QTRGB24Loader::registerMyself();
 
-
+#ifdef WITH_OPENCV
+    Processor6DFactoryHolder::getInstance()->addFactory(new OpenCVProcessor6DFactory());
+#endif
+    Processor6DFactoryHolder::printCaps();
 
     QString source;
     if (argc < 2)

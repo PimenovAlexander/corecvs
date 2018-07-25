@@ -11,20 +11,18 @@ SUBDIRS +=                   \
 #    \
     base_application         \
 #    base_application_example \
-#    recorder                 \
+    recorder                 \
 #    scanner                  \
-    testbed                  \
+#    testbed                  \
     cloudview                \
-    physics                  \
+#    physics                  \
     imageview                \
 #    \
      generator                \
 #    egomotion                \
 #    applications/laserscan
-#     coptercontrol           \
+     coptercontrol           \
 
-
-    
 
 win32 {
     SUBDIRS += directshow

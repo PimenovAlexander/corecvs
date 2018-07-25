@@ -16,6 +16,7 @@
 #include "core/buffers/flow/flowBuffer.h"
 #include "core/buffers/g12Buffer.h"
 #include "core/buffers/flow/flowVector.h"
+#include "generated/openCVKLTParameters.h"
 
 using corecvs::FloatFlowVector;
 using corecvs::G12Buffer;
@@ -36,6 +37,12 @@ public:
             int useHarris,
             double harrisK,
             int kltSize);
+
+    static vector<FloatFlowVector> *getOpenCVKLT(
+            G12Buffer *first,
+            G12Buffer *second,
+            const OpenCVKLTParameters &params);
+
 };
 
 class OpenCVFlowProcessor : public corecvs::Processor6D
@@ -48,7 +55,7 @@ class OpenCVFlowProcessor : public corecvs::Processor6D
     corecvs::RGB24Buffer *inCurr  = NULL;
 
 
-
+    OpenCVKLTParameters params;
 
     virtual int beginFrame() {return 0;}
 
@@ -83,7 +90,7 @@ class OpenCVFlowProcessor : public corecvs::Processor6D
 
     virtual int setFrameRGB24(FrameNames frameType, corecvs::RGB24Buffer *frame)
     {
-        inCurr = frame;
+        inCurr = new corecvs::RGB24Buffer(frame);
     }
 
     virtual int setDisparityBufferS16(FrameNames frameType, corecvs::FlowBuffer *frame)
@@ -103,7 +110,7 @@ class OpenCVFlowProcessor : public corecvs::Processor6D
     virtual int endFrame();
 
 
-    virtual std::map<std::string, corecvs::DynamicObject> getParameters() { return std::map<std::string, corecvs::DynamicObject>();}
+    virtual std::map<std::string, corecvs::DynamicObject> getParameters();
     virtual bool setParameters(std::string name, const corecvs::DynamicObject &param) {return true;}
 
 

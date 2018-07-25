@@ -1,6 +1,7 @@
 <poco version="5.0">
   <include name="base.xml"/>
-    
+  <include name="opencv.xml"/>
+
   <class name="Copter" description="Copter Parameters">
 
       <field type="bool"    name="processing"            defaultValue="false"/>
@@ -27,6 +28,8 @@
     <field type="Base Parameters" name="Base Parameters"/>
     <field type="Copter"        name="Copter"/>
     <field type="Presentation Parameters"   name="Presentation Parameters"/>
-  </parametersMapper>
+   <!-- <field type="OpenCV KLT Parameters"     name="OpenCV KLT Parameters"/> -->
+
+</parametersMapper>
 </poco>
 

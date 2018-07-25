@@ -150,6 +150,22 @@ std::vector<FloatFlowVector> *KLTFlow::getOpenCVKLT(
     return result;
 }
 
+std::vector<FloatFlowVector> *KLTFlow::getOpenCVKLT(
+        G12Buffer *first,
+        G12Buffer *second,
+        const OpenCVKLTParameters &params)
+{
+    return getOpenCVKLT(first, second,
+
+          params.selectorQuality()
+        , params.selectorDistance()
+        , params.selectorSize()
+        , params.useHarris()
+        , params.harrisK()
+        , params.kltSize());
+}
+
+
 int OpenCVFlowProcessor::endFrame()
 {
 
@@ -157,38 +173,40 @@ int OpenCVFlowProcessor::endFrame()
     {
         delete_safe(opticalFlow);
 
-        double mSelectorQuality = 20;
-        double mSelectorDistance = 20;
-        int    mSelectorSize = 10;
+        /*
+        double mSelectorQuality = 0.01;
+        double mSelectorDistance = 10;
+        int    mSelectorSize = 7;
         int    mUseHarris = 1;
         double mHarrisK = 0.05;
         int    mKLTSize = 4;
-
+        */
         G12Buffer *first  = inPrev->toG12Buffer();
         G12Buffer *second = inCurr->toG12Buffer();
 
 
         std::vector<FloatFlowVector> *opencvCall = KLTFlow::getOpenCVKLT(
-                first
-              , second
-              , mSelectorQuality
-              , mSelectorDistance
-              , mSelectorSize
-              , mUseHarris
-              , mHarrisK
-              , mKLTSize);
+                first, second, params);
 
         opticalFlow = new FlowBuffer(inCurr->h, inCurr->w);
 
         for (FloatFlowVector f : *opencvCall)
         {
             if (opticalFlow->isValidCoord(f.start.y(), f.start.x()))
-                opticalFlow->element(f.start.y(), f.start.x()) = FlowElement(f.end.x(), f.end.y());
+                opticalFlow->element(f.start.y(), f.start.x()) = FlowElement(f.end.x() - f.start.x(), f.end.y() - f.start.y());
         }
 
         delete_safe(first);
         delete_safe(second);
         delete_safe(opencvCall);
     }
+    delete_safe (inPrev);
     inPrev = inCurr;
+}
+
+std::map<std::string, DynamicObject> OpenCVFlowProcessor::getParameters() {
+    std::map<std::string, corecvs::DynamicObject> toReturn;
+    toReturn.emplace("klt", corecvs::DynamicObject(&params));
+
+    return toReturn;
 }
