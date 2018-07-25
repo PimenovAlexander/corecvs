@@ -3,7 +3,7 @@
 #include "core/xml/generated/checkerboardDetectionParameters.h"
 
 /// OpenCV wrapper
-#include "OpenCVTools.h"
+#include "openCVTools.h"
 
 #include <opencv2/imgproc/imgproc.hpp>  // cornerSubPix
 #include <opencv2/highgui/highgui.hpp>  // imwrite

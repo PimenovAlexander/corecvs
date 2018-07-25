@@ -1,5 +1,5 @@
 #include "semiGlobalBlockMatching.h"
-#include "OpenCVTools.h"
+#include "openCVTools.h"
 
 #include <opencv2/core/core_c.h> // cvReleaseImage
 

@@ -12,13 +12,13 @@ contains(DEFINES, WITH_OPENCV) {                    # if it's installed properly
 		$$OPENCV_WRAPPER_DIR/featureDetectorCV.h \
 		$$OPENCV_WRAPPER_DIR/KLTFlow.h \
 		$$OPENCV_WRAPPER_DIR/openCvFileReader.h \
-		$$OPENCV_WRAPPER_DIR/OpenCVTools.h \
+                $$OPENCV_WRAPPER_DIR/openCVTools.h \
 		$$OPENCV_WRAPPER_DIR/semiGlobalBlockMatching.h \
 		$$OPENCV_WRAPPER_DIR/openCvCheckerboardDetector.h \
 
 
     SOURCES += \
-		$$OPENCV_WRAPPER_DIR/OpenCVTools.cpp \
+                $$OPENCV_WRAPPER_DIR/openCVTools.cpp \
 		$$OPENCV_WRAPPER_DIR/openCvFileReader.cpp \
 		$$OPENCV_WRAPPER_DIR/KLTFlow.cpp \
 		$$OPENCV_WRAPPER_DIR/semiGlobalBlockMatching.cpp \
@@ -74,5 +74,9 @@ contains(DEFINES, WITH_OPENCV) {                    # if it's installed properly
 
     HEADERS     += $$OPENCV_WRAPPER_DIR/faceDetect/faceDetect.h
     SOURCES     += $$OPENCV_WRAPPER_DIR/faceDetect/faceDetect.cpp
+
+    OTHER_FILES +=  $$OPENCV_WRAPPER_DIR/../../tools/generator/xml/opencv.xml
+    OTHER_FILES +=  $$OPENCV_WRAPPER_DIR/../../tools/generator/regen-opencv.sh
+
 
 }

@@ -11,7 +11,7 @@
 
 #include <opencv2/core/core_c.h>        // cvCreateImage
 #include <opencv2/imgproc/imgproc_c.h>  // cvGoodFeaturesToTrack
-#ifdef WITH_OPENCV_3X
+#ifdef WITH_OPENCV_3x
     #include <opencv2/video/tracking_c.h>   // cvCalcOpticalFlowPyrLK
 #else
     #include <opencv2/video/tracking.hpp>   // cvCalcOpticalFlowPyrLK
@@ -24,6 +24,7 @@
 #include "openCVTools.h"
 
 using namespace corecvs;
+using namespace cv;
 
 KLTFlow::KLTFlow()
 {
@@ -147,4 +148,47 @@ std::vector<FloatFlowVector> *KLTFlow::getOpenCVKLT(
      delete[] features_found;
 
     return result;
+}
+
+int OpenCVFlowProcessor::endFrame()
+{
+
+    if (inCurr != NULL && inPrev != NULL)
+    {
+        delete_safe(opticalFlow);
+
+        double mSelectorQuality = 20;
+        double mSelectorDistance = 20;
+        int    mSelectorSize = 10;
+        int    mUseHarris = 1;
+        double mHarrisK = 0.05;
+        int    mKLTSize = 4;
+
+        G12Buffer *first  = inPrev->toG12Buffer();
+        G12Buffer *second = inCurr->toG12Buffer();
+
+
+        std::vector<FloatFlowVector> *opencvCall = KLTFlow::getOpenCVKLT(
+                first
+              , second
+              , mSelectorQuality
+              , mSelectorDistance
+              , mSelectorSize
+              , mUseHarris
+              , mHarrisK
+              , mKLTSize);
+
+        opticalFlow = new FlowBuffer(inCurr->h, inCurr->w);
+
+        for (FloatFlowVector f : *opencvCall)
+        {
+            if (opticalFlow->isValidCoord(f.start.y(), f.start.x()))
+                opticalFlow->element(f.start.y(), f.start.x()) = FlowElement(f.end.x(), f.end.y());
+        }
+
+        delete_safe(first);
+        delete_safe(second);
+        delete_safe(opencvCall);
+    }
+    inPrev = inCurr;
 }

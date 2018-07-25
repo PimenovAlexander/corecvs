@@ -11,8 +11,8 @@ SUBDIRS +=                   \
 #    \
     base_application         \
 #    base_application_example \
-    recorder                 \
-    scanner                  \
+#    recorder                 \
+#    scanner                  \
     testbed                  \
     cloudview                \
     physics                  \
@@ -21,7 +21,7 @@ SUBDIRS +=                   \
      generator                \
 #    egomotion                \
 #    applications/laserscan
-     coptercontrol           \
+#     coptercontrol           \
 
 
     

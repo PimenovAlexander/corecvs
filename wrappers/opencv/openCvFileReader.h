@@ -35,8 +35,8 @@ public:
         return 0;
     }
 
-    virtual bool acceptsFile(std::string name) override;
-    virtual corecvs::RGB24Buffer *load(std::string name) override;
+    virtual bool acceptsFile(const std::string &name) override;
+    virtual corecvs::RGB24Buffer *load(const std::string &name) override;
     virtual std::string name() override { return "OpenCVRGB24Loader(multitype)"; }
 };
 
@@ -50,8 +50,8 @@ public:
     }
 
     OpenCVRuntimeTypeBufferLoader();
-    virtual bool acceptsFile(std::string name) override;
-    virtual corecvs::RuntimeTypeBuffer *load(std::string name) override;
+    virtual bool acceptsFile(const std::string &name) override;
+    virtual corecvs::RuntimeTypeBuffer *load(const std::string &name) override;
     virtual std::string name() override { return "OpenCVRuntimeLoader(multitype)"; }
 };
 
@@ -67,8 +67,8 @@ public:
         return 0;
     }
 
-    virtual bool acceptsFile(std::string name) override;
-    virtual bool save(corecvs::RGB24Buffer &buffer, std::string name) override;
+    virtual bool acceptsFile(const std::string &name) override;
+    virtual bool save(const corecvs::RGB24Buffer &buffer, const std::string &name, int quality) override;
     virtual std::string              name()        override { return "OpenCVRGB24Saver"; }
     virtual std::vector<std::string> extentions() override {
         return std::vector<std::string>({".bmp", ".BMP", ".jpg", ".JPG", ".png", ".PNG"});

@@ -290,7 +290,12 @@ with_opencv {
 
             LIBS += -lopencv_calib3d    -lopencv_video   -lopencv_core    -lopencv_highgui   \
                     -lopencv_features2d -lopencv_flann   -lopencv_imgproc -lopencv_objdetect \
-                    -lopencv_nonfree    -lopencv_legacy #-llibopencv_ml
+                    -lopencv_legacy #-llibopencv_ml
+
+           # LIBS += -lopencv_nonfree
+
+            message(Forcing OpenCV 3.x)
+            DEFINES += WITH_OPENCV_3x
         } else {
 
             CONFIG += link_pkgconfig

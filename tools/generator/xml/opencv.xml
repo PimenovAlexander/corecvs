@@ -1,0 +1,24 @@
+<poco version="5.0">
+
+
+  <!--         double mSelectorQuality = 20;
+  double mSelectorDistance = 20;
+  int    mSelectorSize = 10;
+  int    mUseHarris = 1;
+  double mHarrisK = 0.05;
+  int    mKLTSize = 4;
+ -->
+
+  <class name="KLT OpenCV Parameters">
+
+    <field type="double"      name="mSelectorQuality"    defaultValue="20" />
+    <field type="double"      name="mSelectorDistance"   defaultValue="20" />
+    <field type="int"         name="mSelectorSize"       defaultValue="10" />
+    <field type="int"         name="mUseHarris"          defaultValue="1" />
+    <field type="double"      name="mHarrisK"            defaultValue="0.05" />
+    <field type="int"         name="mKLTSize"            defaultValue="4"  />
+
+   </class>
+
+
+</poco>

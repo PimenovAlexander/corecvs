@@ -1,7 +1,7 @@
 #include "core/utils/utils.h"
 #include "openCvFileReader.h"
 #include "openCvKeyPointsWrapper.h"
-#include "OpenCVTools.h"
+#include "openCVTools.h"
 
 #include <exception>
 #include <sstream>
@@ -82,14 +82,14 @@ bool OpenCvBufferReader::write(const RuntimeTypeBuffer &buffer, const std::strin
 OpenCVRGB24Loader::OpenCVRGB24Loader()
 {}
 
-bool OpenCVRGB24Loader::acceptsFile(std::string name)
+bool OpenCVRGB24Loader::acceptsFile(const std::string &name)
 {
     CORE_UNUSED(name);
     return true;
 }
 
 /* I don't see how an inability to load particular format is an exceptional situation */
-RGB24Buffer *OpenCVRGB24Loader::load(std::string name)
+RGB24Buffer *OpenCVRGB24Loader::load(const std::string &name)
 {
     cv::Mat img = cv::imread(corecvs::HelperUtils::toNativeSlashes(name), CV_LOAD_IMAGE_COLOR);
     if (!(img.rows && img.cols && img.data)) {
@@ -102,13 +102,13 @@ RGB24Buffer *OpenCVRGB24Loader::load(std::string name)
 OpenCVRuntimeTypeBufferLoader::OpenCVRuntimeTypeBufferLoader()
 {}
 
-bool OpenCVRuntimeTypeBufferLoader::acceptsFile(std::string name)
+bool OpenCVRuntimeTypeBufferLoader::acceptsFile(const std::string &name)
 {
      CORE_UNUSED(name);
      return true;
 }
 
-RuntimeTypeBuffer *OpenCVRuntimeTypeBufferLoader::load(std::string name)
+RuntimeTypeBuffer *OpenCVRuntimeTypeBufferLoader::load(const std::string &name)
 {
     cv::Mat img = cv::imread(corecvs::HelperUtils::toNativeSlashes(name), CV_LOAD_IMAGE_GRAYSCALE);
     if (!(img.rows && img.cols && img.data)) {
@@ -120,7 +120,7 @@ RuntimeTypeBuffer *OpenCVRuntimeTypeBufferLoader::load(std::string name)
 }
 
 
-bool OpenCVRGB24Saver::acceptsFile(string name)
+bool OpenCVRGB24Saver::acceptsFile(const string &name)
 {
     std::vector<std::string> extList  = extentions();
     for (auto &ext : extList)
@@ -133,7 +133,7 @@ bool OpenCVRGB24Saver::acceptsFile(string name)
     return false;
 }
 
-bool OpenCVRGB24Saver::save(RGB24Buffer &buffer, string name)
+bool OpenCVRGB24Saver::save(const RGB24Buffer &buffer, const string &name, int quality)
 {
     return OpenCvBufferReader().writeRgb(buffer, name);
 }

@@ -111,4 +111,8 @@ SOURCES += \
     halfspace/main_test_halfspace.cpp \
     orientedbox/main_test_orientedbox.cpp \
     convexHull2d/main_test_convexHull2d.cpp \
+<<<<<<< Updated upstream
         processor6d/main_test_processor6d.cpp \
+=======
+	processor6d/main_test_processor6d.cpp \
+>>>>>>> Stashed changes

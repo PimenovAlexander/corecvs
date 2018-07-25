@@ -5,7 +5,7 @@
  * \date Apr 6, 2011
  * \author alexander
  */
-#include "OpenCVTools.h"
+#include "openCVTools.h"
 #include <opencv2/core/core_c.h> // cvCreateImage
 
 using namespace corecvs;
