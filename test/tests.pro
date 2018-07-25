@@ -20,6 +20,8 @@ SUBDIRS +=     \
     widget_harness \
 #    command_harness \
     example_scene \
+    flowtest
+
 
 !win32 {
 #    SUBDIRS += jitplayground
@@ -79,3 +81,5 @@ chessboard_detector                 = chessboard_detector/chessboard_detector.pr
 qtScriptConsole                     = qtScriptConsole/qtScriptConsole.pro
 
 stereo_generator                    = stereo_generator/stereo_generator.pro
+
+flowtest.file                       = flowtest/flowtest.pro

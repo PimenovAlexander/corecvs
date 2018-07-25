@@ -41,6 +41,7 @@ CONFIG +=       \
    \
    with_tbb        \
    with_openblas   \
+   with_fastbuild  \
    with_unorthodox \   # allow use an experimental filesystem
    with_qscript    \   # experimental...
 
@@ -85,7 +86,8 @@ win32 {
 win32 {
 #    CONFIG += with_opencv
 } else {
-#     CONFIG += with_opencv
+     CONFIG += with_opencv
+     CONFIG += with_nopkgconfig
 }
 
 win32 {

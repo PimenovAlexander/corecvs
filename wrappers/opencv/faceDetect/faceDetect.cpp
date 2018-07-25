@@ -7,7 +7,7 @@
 #include "core/utils/global.h"
 
 #include "faceDetect.h"
-#include "OpenCVTools.h"
+#include "openCVTools.h"
 
 
 using namespace cv;
