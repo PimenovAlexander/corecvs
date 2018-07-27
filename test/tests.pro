@@ -20,7 +20,8 @@ SUBDIRS +=     \
     widget_harness \
 #    command_harness \
     example_scene \
-    flowtest
+    flowtest \
+    opencvpostcalib
 
 
 !win32 {
@@ -39,6 +40,7 @@ with_opencv {
 #        matcher_basic \
 #        matcher_full \
         chessboard_detector \
+
 }
 
 grab                                = grab/grab.pro
@@ -77,6 +79,7 @@ matcher_basic                       = matcher_basic/matcher_basic.pro
 matcher_full                        = matcher_full/matcher_full.pro
 
 chessboard_detector                 = chessboard_detector/chessboard_detector.pro
+opencvpostcalib                     = opencvpostcalib/opencvpostcalib.pro
 
 qtScriptConsole                     = qtScriptConsole/qtScriptConsole.pro
 
