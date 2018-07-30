@@ -290,12 +290,18 @@ with_opencv {
 
             LIBS += -lopencv_calib3d    -lopencv_video   -lopencv_core    -lopencv_highgui   \
                     -lopencv_features2d -lopencv_flann   -lopencv_imgproc -lopencv_objdetect \
-                    -lopencv_legacy #-llibopencv_ml
+                    -lopencv_videoio
+                     #-llibopencv_ml
 
            # LIBS += -lopencv_nonfree
+           # LIBS += -lopencv_legacy
 
             #message(Forcing OpenCV 3.x)
-            #DEFINES += WITH_OPENCV_3x
+            #message(Searching for $$OPENCV_PATH/lib/libopencv_core.so.3)
+            exists ($$OPENCV_PATH/lib/libopencv_core.so.3*) {
+                message(Using OpenCV 3.x)
+                DEFINES += WITH_OPENCV_3x
+            }
         } else {
 
             CONFIG += link_pkgconfig

@@ -52,6 +52,7 @@ void trivialRun(int16_t *A, int16_t *B)
 
 }
 
+#ifdef WITH_AVX2
 void optim(int16_t *A, int16_t *B)
 {
     SYNC_PRINT(("TBB run lambda intr\n"));
@@ -95,6 +96,7 @@ void optim(int16_t *A, int16_t *B)
     uint64_t us = timer.usecsToNow();
     SYNC_PRINT(("%.3lf msecs elapsed\n", us / 1000.0));
 }
+#endif
 
 
 TEST(TestFMA, fma)
@@ -141,7 +143,11 @@ TEST(TestFMA, fma)
         uint64_t us = timer.usecsToNow();
         SYNC_PRINT(("%.3lf msecs elapsed\n", us / 1000.0));
     }
+
+#ifdef WITH_AVX2
     optim(A,B);
+#endif
+
 
 }
 

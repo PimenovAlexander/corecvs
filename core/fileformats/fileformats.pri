@@ -1,28 +1,30 @@
 HEADERS += \
-    fileformats/bufferLoader.h \
-    fileformats/bmpLoader.h \
-    fileformats/ppmLoader.h \
-    fileformats/rawLoader.h \
-    fileformats/plyLoader.h \
-    fileformats/stlLoader.h \
-    fileformats/metamap.h \
-    fileformats/meshLoader.h \
-    fileformats/objLoader.h \
-    fileformats/gcodeLoader.h \
+    $$PWD/bufferLoader.h \
+    $$PWD/bmpLoader.h \
+    $$PWD/ppmLoader.h \
+    $$PWD/rawLoader.h \
+    $$PWD/plyLoader.h \
+    $$PWD/stlLoader.h \
+    $$PWD/metamap.h \
+    $$PWD/meshLoader.h \
+    $$PWD/objLoader.h \
+    $$PWD/gcodeLoader.h \
     $$PWD/pltLoader.h \
-    $$PWD/xyzListLoader.h
+    $$PWD/xyzListLoader.h \
+    $$PWD/openCVDataLoader.h
 
 
 SOURCES += \
-    fileformats/bufferLoader.cpp \
-    fileformats/bmpLoader.cpp \
-    fileformats/ppmLoader.cpp \
-    fileformats/rawLoader.cpp \
-    fileformats/plyLoader.cpp \
-    fileformats/stlLoader.cpp \
-    fileformats/meshLoader.cpp \
-    fileformats/objLoader.cpp \
-    fileformats/gcodeLoader.cpp \
+    $$PWD/bufferLoader.cpp \
+    $$PWD/bmpLoader.cpp \
+    $$PWD/ppmLoader.cpp \
+    $$PWD/rawLoader.cpp \
+    $$PWD/plyLoader.cpp \
+    $$PWD/stlLoader.cpp \
+    $$PWD/meshLoader.cpp \
+    $$PWD/objLoader.cpp \
+    $$PWD/gcodeLoader.cpp \
     $$PWD/pltLoader.cpp \
-    $$PWD/xyzListLoader.cpp
+    $$PWD/xyzListLoader.cpp \
+    $$PWD/openCVDataLoader.cpp
 
