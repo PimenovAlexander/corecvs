@@ -8,7 +8,7 @@
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/tinyxml/tinyxml2.h"
 #include "core/math/affine.h"
-#include "core/fileformats/opencvDataLoader.h"
+#include "core/fileformats/openCVDataLoader.h"
 
 #ifdef WITH_LIBJPEG
 #include "libjpegFileReader.h"
