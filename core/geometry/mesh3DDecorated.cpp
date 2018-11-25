@@ -187,7 +187,7 @@ bool Mesh3DDecorated::verify( void )
             }
             if (texId[i][3] < 0 || texId[i][3] >= (int)materials.size())
             {
-                SYNC_PRINT(("Wrong texture name\n"));
+                SYNC_PRINT(("Mesh3DDecorated::verify(): Wrong texture name (%d of %d)\n", texId[i][3], (int)materials.size()));
                 return false;
             }
         }
