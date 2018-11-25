@@ -28,19 +28,19 @@ struct Segment1d {
     double left;
     double right;
 
-    inline bool is_intersect(Segment1d &s) {
+    inline bool is_intersect(const Segment1d &s) const {
         return !(((left < s.left) && right < s.left) || ((s.left < left) && (s.right < left)));
     }
 
-    inline bool inside_of(Segment1d &s) {
+    inline bool inside_of(const Segment1d &s) const {
         return left >= s.left && left <= s.right && right <= s.right;
     }
 
-    inline bool left_intersect_of(Segment1d &s) {
+    inline bool left_intersect_of(const Segment1d &s) const {
         return left < s.left && right > s.left && right < s.right;
     }
 
-    inline bool right_intersect_of(Segment1d &s) {
+    inline bool right_intersect_of(const Segment1d &s) const  {
         return right > s.right && left > s.left && left < s.right;
     }
 };
@@ -69,11 +69,10 @@ struct Curve {
     inline Vector2dd getEvaluatedPoint(double t) const {
         double t1 = t;
         double m1 = 1 - t;
-        double m2 = m1 * m1;
         double t2 = t1 * t1;
-
-        double m3 = m2 * m1;
+        double m2 = m1 * m1;
         double t3 = t2 * t1;
+        double m3 = m2 * m1;
 
         return       m3      * p1
                + 3 * m2 * t1 * p2
@@ -87,12 +86,12 @@ struct Curve {
     inline bool isCurveFlat(double flatnessCriterion) const {
 
         Vector2dd a = 3 * p2 - 2 * p1 -     p4;
-        Vector2dd b = 3 * p2 -     p1 - 2 * p4;
+        Vector2dd b = 3 * p3 -     p1 - 2 * p4;
 
         Vector2dd a2 = a * a; /* per component product */
         Vector2dd b2 = b * b;
 
-        return ((std::max(a2.x(), b2.y()) + std::max(a2.y(), b2.y())) < flatnessCriterion);
+        return ((std::max(a2.x(), b2.x()) + std::max(a2.y(), b2.y())) < flatnessCriterion);
     }
 
 
@@ -277,23 +276,12 @@ public:
         // we have [t1-,t1+], [t2-,t2+] , other segment will be approximated by circle approximation
 
         // if we define x(t) and y(t) as x(t) = a*t^3 + b*t^2 + c*t + d then coefficients would be as follows:
-        //double ax   = -p.p1.x + 3 * p.p2.x - 3 * p.p3.x + p.p4.x;
-        //double ay   = -p.p1.y + 3 * p.p2.y - 3 * p.p3.y + p.p4.y;
-        Vector2dd A =  p.p1   + 3 * p.p2   - 3 * p.p3   + p.p4;
-
-        //double bx   = 3 * p.p1.x - 6 * p.p2.x + 3 * p.p3.x;
-        //double by   = 3 * p.p1.y - 6 * p.p2.y + 3 * p.p3.y;
-        Vector2dd B = 3 * p.p1   - 6 * p.p2   + 3 * p.p3;
-
-        //double cx   = -3 * p.p1.x + 3 * p.p2.x;
-        //double cy   = -3 * p.p1.y + 3 * p.p2.y;
+        Vector2dd A = -p.p1   + 3 * p.p2   - 3 * p.p3   + p.p4;
+        Vector2dd B =  3 * p.p1   - 6 * p.p2   + 3 * p.p3;
         Vector2dd C = -3 * p.p1   + 3 * p.p2;
-
-        //double dx = p.p1.x;
-        //double dy = p.p1.y;
         //Vector2dd D = p.p1;
 
-        // y coordinate of last Vector2dd  in new system
+        // y coordinate of last point  in new system
         double directVectorLen = (p.p2 - p.p1).l2Metric();
         double s4 = cross(p.p4 - p.p1, p.p2 - p.p1) / directVectorLen;
         // at inflection Vector2dd  only derivative of acceleration has component perpendicular  to velocity vector =>
@@ -522,8 +510,8 @@ private:
 
         double t = start;
         Curve curCurve = p;
-        Vector2dd leftVector2dd = initialCurve.getEvaluatedPoint(t);
-        Vector2dd rightVector2dd;
+        Vector2dd leftPoint = initialCurve.getEvaluatedPoint(t);
+        Vector2dd rightPoint;
         Curve unused;
         while (t < end) {
             // we get t that attached to new curve not initial curve
@@ -531,9 +519,9 @@ private:
             t += t_new_coordinate;
             t = std::min(t, end);
 
-            rightVector2dd = initialCurve.getEvaluatedPoint(t);
-            drawLine(leftVector2dd, rightVector2dd);
-            leftVector2dd = rightVector2dd;
+            rightPoint = initialCurve.getEvaluatedPoint(t);
+            drawLine(leftPoint, rightPoint);
+            leftPoint = rightPoint;
 
             std::tie(unused, curCurve) = curCurve.splitByArbitraryT(t);
 

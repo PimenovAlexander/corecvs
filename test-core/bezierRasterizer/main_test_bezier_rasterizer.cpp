@@ -43,7 +43,7 @@ TEST(bezierRasterizer, profileDifferentImplementations) {
     BezierRasterizer< MockBuffer<float>,WuRasterizer> bezier(mock_buffer,rasterizer,2.);
     std::vector<Curve> randCurves;
 
-    const int LIMIT = 10000;
+    const int LIMIT = 100000;
     SYNC_PRINT(("Time for %d curves to be rendered:\n", LIMIT));
 
     for(int i = 0; i < LIMIT; i++) {
@@ -62,21 +62,21 @@ TEST(bezierRasterizer, profileDifferentImplementations) {
     for(int i = 0; i < LIMIT; i++){
         bezier.cubicBezierDummy(randCurves.at(i));
     }
-    SYNC_PRINT(("DUMMY:           %9" PRIu64 "us\n", timer.usecsToNow()));
+    SYNC_PRINT(("DUMMY:           %9" PRIu64 "us  (%lf s)\n", timer.usecsToNow(), timer.usecsToNow() / 1000000.0));
 
 
     timer = PreciseTimer::currentTime();
     for(int i = 0; i < LIMIT; i++){
         bezier.cubicBezierCasteljauArticle(randCurves.at(i));
     }
-    SYNC_PRINT(("ArticleAlgorithm:%9" PRIu64 "us\n", timer.usecsToNow()));
+    SYNC_PRINT(("ArticleAlgorithm:%9" PRIu64 "us  (%lf s)\n", timer.usecsToNow(), timer.usecsToNow() / 1000000.0));
 
 
     timer = PreciseTimer::currentTime();
     for(int i = 0; i < 10000; i++){
         bezier.cubicBezierCasteljauApproximationByFlatness(randCurves.at(i));
     }
-    SYNC_PRINT(("Castlejau:       %9" PRIu64 "us\n", timer.usecsToNow()));
+    SYNC_PRINT(("Castlejau:       %9" PRIu64 "us  (%lf s)\n", timer.usecsToNow(), timer.usecsToNow() / 1000000.0));
 
 }
 
