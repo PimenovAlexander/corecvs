@@ -103,7 +103,7 @@ SOURCES += \
     planefit/main_test_planefit.cpp \
     noise/main_test_noise.cpp \
     projection/main_test_projection.cpp \
-	vptree/main_test_vptree.cpp \
+    vptree/main_test_vptree.cpp \
     meshfilter/main_test_meshfilter.cpp \
     convexhull/main_test_convexhull.cpp \
     wuRasterizer/main_test_wu_rasterizer.cpp \
@@ -112,4 +112,4 @@ SOURCES += \
     orientedbox/main_test_orientedbox.cpp \
     convexHull2d/main_test_convexHull2d.cpp \
     processor6d/main_test_processor6d.cpp \
-    bezierRasterizer/main_test_bezier_rasterizer.cpp\
+    bezierRasterizer/main_test_bezier_rasterizer.cpp \

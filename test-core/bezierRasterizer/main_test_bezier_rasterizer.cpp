@@ -17,8 +17,9 @@
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/buffers/rgb24/abstractPainter.h"
 #include "core/buffers/bufferFactory.h"
-#include "core/buffers/rgb24/bezierrasterizer.h"
+#include "core/buffers/rgb24/bezierRasterizer.h"
 #include <ctime>
+#include <core/utils/preciseTimer.h>
 
 using namespace corecvs;
 
@@ -28,7 +29,7 @@ public:
     typedef T InternalElementType;
 
     T dummy;
-    T & element(int y, int x) {
+    T & element(int /*y*/, int /*x*/) {
         return dummy;
     }
     int getH() {return 800;}
@@ -36,43 +37,46 @@ public:
 
 };
 
-TEST(bezierRasterizer, compareSpeedOfDifferentImplementation) {
+TEST(bezierRasterizer, profileDifferentImplementations) {
     auto mock_buffer =MockBuffer<float>();
     auto rasterizer = WuRasterizer();
     BezierRasterizer< MockBuffer<float>,WuRasterizer> bezier(mock_buffer,rasterizer,2.);
     std::vector<Curve> randCurves;
-    SYNC_PRINT(("Time for 10000 curves to be rendered:\n"));
 
-    for(int i = 0;i < 10000; i++) {
-        Curve randomCurve = {{rand()%700,rand()%800},{rand()%800,rand()%800},{rand()%800,rand()%800},{rand()%800,rand()%800}};
+    const int LIMIT = 10000;
+    SYNC_PRINT(("Time for %d curves to be rendered:\n", LIMIT));
+
+    for(int i = 0; i < LIMIT; i++) {
+        std::mt19937 rng;
+        std::uniform_real_distribution<double> runifX(0, mock_buffer.getW() - 1);
+        std::uniform_real_distribution<double> runifY(0, mock_buffer.getH() - 1);
+
+        Curve randomCurve = {{runifX(rng), runifY(rng)},
+                             {runifX(rng), runifY(rng)},
+                             {runifX(rng), runifY(rng)},
+                             {runifX(rng), runifY(rng)}};
         randCurves.push_back(randomCurve);
     }
 
-    clock_t begin = clock();
-    for(int i = 0;i<10000;i++){
+    PreciseTimer timer = PreciseTimer::currentTime();
+    for(int i = 0; i < LIMIT; i++){
         bezier.cubicBezierDummy(randCurves.at(i));
     }
-    clock_t end = clock();
-    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-    SYNC_PRINT(("DUMMY:%f\n",elapsed_secs));
+    SYNC_PRINT(("DUMMY:           %9" PRIu64 "us\n", timer.usecsToNow()));
 
 
-    begin = clock();
-    for(int i = 0;i<10000;i++){
+    timer = PreciseTimer::currentTime();
+    for(int i = 0; i < LIMIT; i++){
         bezier.cubicBezierCasteljauArticle(randCurves.at(i));
     }
-     end = clock();
-    elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-    SYNC_PRINT(("ArticleAlgorithm:%f\n",elapsed_secs));
+    SYNC_PRINT(("ArticleAlgorithm:%9" PRIu64 "us\n", timer.usecsToNow()));
 
 
-    begin = clock();
-    for(int i = 0;i<10000;i++){
+    timer = PreciseTimer::currentTime();
+    for(int i = 0; i < 10000; i++){
         bezier.cubicBezierCasteljauApproximationByFlatness(randCurves.at(i));
     }
-    end = clock();
-    elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-    SYNC_PRINT(("Castlejau:%f\n",elapsed_secs));
+    SYNC_PRINT(("Castlejau:       %9" PRIu64 "us\n", timer.usecsToNow()));
 
 }
 
@@ -105,99 +109,106 @@ TEST(bezierRasterizer,bezierRasterizerDog ) {
         bezier.cubicBezierDummy(curves.at(i));
 
     }
-    BufferFactory::getInstance()->saveRGB24Bitmap(buffer1, "CubicBezierDummyDog.bmp");
+    BufferFactory::getInstance()->saveRGB24Bitmap(buffer1, "BezierDogDummy.bmp");
 
 
     bezier.buffer = buffer2;
     for(int i = 0;i < 9;i++){
         bezier.cubicBezierCasteljauApproximationByFlatness(curves.at(i));
     }
-    BufferFactory::getInstance()->saveRGB24Bitmap(buffer2, "CubicBezierCasteljauDivideDog.bmp");
+    BufferFactory::getInstance()->saveRGB24Bitmap(buffer2, "BezierDogCasteljauDivide.bmp");
 
 
     bezier.buffer = buffer3;
     for(int i = 0;i < 9;i++){
         bezier.cubicBezierCasteljauArticle(curves.at(i));
     }
-    BufferFactory::getInstance()->saveRGB24Bitmap(buffer3, "CubicBezierMathArticleDog.bmp");
+    BufferFactory::getInstance()->saveRGB24Bitmap(buffer3, "BezierDogMathArticle.bmp");
 }
 
 TEST(bezierRasterizer,bezierRasterizerDifferentCases ) {
     const static int H = 480;
     const static int W = 640;
-    RGB24Buffer buffer = RGB24Buffer(H, W );
+    RGB24Buffer buffer = RGB24Buffer(H, W);
 
+    struct TestCase
+    {
+        Curve curve;
+        std::string name;
+    };
+
+    TestCase cases[] =
+    { { {{126, 88},{515,360},{109,348},{126, 88}}, "Closed" },
+      { {{133,383},{496,300},{221,128},{279,422}}, "Loop"   },
+      { {{ 79,373},{452,120},{310,280},{429,278}}, "Twirl" }
+    };
+
+    std::string prefix = "Bezier";
     auto rasterizer = WuRasterizer();
+
     BezierRasterizer< RGB24Buffer,WuRasterizer> bezier(buffer,rasterizer,RGBColor::Black());
-    //--
-    buffer.checkerBoard(10, RGBColor::White(),  RGBColor::White());
-    bezier.cubicBezierDummy({{126,88},{515,360},{109,348},{126,88}});
-    BufferFactory::getInstance()->saveRGB24Bitmap(buffer, "CubicBezierDummyClosed.bmp");
 
+    for (size_t i = 0; i < CORE_COUNT_OF(cases); i++)
+    {
+        buffer.checkerBoard(10, RGBColor::White(),  RGBColor::White());
+        bezier.cubicBezierDummy(cases[i].curve);
+        BufferFactory::getInstance()->saveRGB24Bitmap(buffer, prefix + cases[i].name + "Dummy"  + ".bmp");
 
-    buffer.checkerBoard(10, RGBColor::White(),  RGBColor::White());
-    bezier.cubicBezierCasteljauArticle({{126,88},{515,360},{109,348},{126,88}});
-    BufferFactory::getInstance()->saveRGB24Bitmap(buffer, "CubicBezierArticleAlgorithmClosed.bmp");
+        buffer.checkerBoard(10, RGBColor::White(),  RGBColor::White());
+        bezier.cubicBezierCasteljauArticle(cases[i].curve);
+        BufferFactory::getInstance()->saveRGB24Bitmap(buffer, prefix + cases[i].name+ "ArticleAlgorithm" + ".bmp");
 
+        buffer.checkerBoard(10, RGBColor::White(),  RGBColor::White());
+        bezier.cubicBezierCasteljauApproximationByFlatness(cases[i].curve);
+        BufferFactory::getInstance()->saveRGB24Bitmap(buffer, prefix + cases[i].name + "CasteljauAlgorithm" + ".bmp");
 
-    buffer.checkerBoard(10, RGBColor::White(),  RGBColor::White());
-    bezier.cubicBezierCasteljauApproximationByFlatness({{126,88},{515,360},{109,348},{126,88}});
-    BufferFactory::getInstance()->saveRGB24Bitmap(buffer, "CubicBezierCasteljauAlgorithmClosed.bmp");
-
-    //--- loop
-    buffer.checkerBoard(10, RGBColor::White(),  RGBColor::White());
-    bezier.cubicBezierDummy({{133,383},{496,300},{221,128},{279,422}});
-    BufferFactory::getInstance()->saveRGB24Bitmap(buffer, "CubicBezierDummyLoop.bmp");
-
-
-    buffer.checkerBoard(10, RGBColor::White(),  RGBColor::White());
-    bezier.cubicBezierCasteljauArticle({{133,383},{496,300},{221,128},{279,422}});
-    BufferFactory::getInstance()->saveRGB24Bitmap(buffer, "CubicBezierArticleAlgorithmLoop.bmp");
-
-
-    buffer.checkerBoard(10, RGBColor::White(),  RGBColor::White());
-    bezier.cubicBezierCasteljauApproximationByFlatness({{133,383},{496,300},{221,128},{279,422}});
-    BufferFactory::getInstance()->saveRGB24Bitmap(buffer, "CubicBezierCasteljauAlgorithmLoop.bmp");
-
-    // --- twirl
-
-    buffer.checkerBoard(10, RGBColor::White(),  RGBColor::White());
-    bezier.cubicBezierDummy({{79,373},{452,120},{310,280},{429,278}});
-    BufferFactory::getInstance()->saveRGB24Bitmap(buffer, "CubicBezierDummyTwirl.bmp");
-
-
-    buffer.checkerBoard(10, RGBColor::White(),  RGBColor::White());
-    bezier.cubicBezierCasteljauArticle({{79,373},{452,120},{310,280},{429,278}});
-    BufferFactory::getInstance()->saveRGB24Bitmap(buffer, "CubicBezierArticleAlgorithmTwirl.bmp");
-
-
-    buffer.checkerBoard(10, RGBColor::White(),  RGBColor::White());
-    bezier.cubicBezierCasteljauApproximationByFlatness({{79,373},{452,120},{310,280},{429,278}});
-    BufferFactory::getInstance()->saveRGB24Bitmap(buffer, "CubicBezierCasteljauAlgorithmTwirl.bmp");
+    }
 }
 
 TEST(bezierRasterizer,bezierRasterizerRandom ) {
-    const static int H = 700;
-    const static int W = 700;
-    RGB24Buffer buffer = RGB24Buffer(H, W );
+    const static int H = 500;
+    const static int W = 500;
+    RGB24Buffer buffer1 = RGB24Buffer(H, W );
+    RGB24Buffer buffer2 = RGB24Buffer(H, W );
+    RGB24Buffer buffer3 = RGB24Buffer(H, W );
+
     auto rasterizer = WuRasterizer();
-    BezierRasterizer< RGB24Buffer,WuRasterizer> bezier(buffer,rasterizer,RGBColor::Black());
+    BezierRasterizer< RGB24Buffer,WuRasterizer> bezier1(buffer1,rasterizer,RGBColor::Black());
+    BezierRasterizer< RGB24Buffer,WuRasterizer> bezier2(buffer2,rasterizer,RGBColor::Black());
+    BezierRasterizer< RGB24Buffer,WuRasterizer> bezier3(buffer3,rasterizer,RGBColor::Black());
+
     //--
-    Curve randomCurve = {{rand()%700,rand()%700},{rand()%700,rand()%700},{rand()%700,rand()%700},{rand()%700,rand()%700}};
+    std::mt19937 rng;
+    std::uniform_real_distribution<double> runifX(0, W - 1);
+    std::uniform_real_distribution<double> runifY(0, H - 1);
 
-    buffer.checkerBoard(10, RGBColor::White(),  RGBColor::White());
-    bezier.cubicBezierDummy(randomCurve); //closed
-    BufferFactory::getInstance()->saveRGB24Bitmap(buffer, "CubicBezierDummyRandom.bmp");
-
-
-    buffer.checkerBoard(10, RGBColor::White(),  RGBColor::White());
-    bezier.cubicBezierCasteljauArticle(randomCurve); //closed
-    BufferFactory::getInstance()->saveRGB24Bitmap(buffer, "CubicBezierArticleAlgorithmRandom.bmp");
+    buffer1.fillWith(RGBColor::White());
+    buffer2.fillWith(RGBColor::White());
+    buffer3.fillWith(RGBColor::White());
 
 
-    buffer.checkerBoard(10, RGBColor::White(),  RGBColor::White());
-    bezier.cubicBezierCasteljauApproximationByFlatness(randomCurve); //closed
-    BufferFactory::getInstance()->saveRGB24Bitmap(buffer, "CubicBezierCasteljauAlgorithmRandom.bmp");
+    for (int i = 0; i < 10; i++)
+    {
+        Curve randomCurve = {{runifX(rng), runifY(rng)},
+                             {runifX(rng), runifY(rng)},
+                             {runifX(rng), runifY(rng)},
+                             {runifX(rng), runifY(rng)}};
 
+        cout << "Draw curve" << randomCurve << endl;
+        bezier1.color = RGBColor::getPalleteColor(i);
+        bezier2.color = RGBColor::getPalleteColor(i);
+        bezier3.color = RGBColor::getPalleteColor(i);
+
+
+        /* */
+        bezier1.cubicBezierDummy(randomCurve);
+        bezier2.cubicBezierCasteljauArticle(randomCurve);
+        bezier3.cubicBezierCasteljauApproximationByFlatness(randomCurve);
+    }
+
+    BufferFactory::getInstance()->saveRGB24Bitmap(buffer1, "BezierRandomDummy.bmp");
+    BufferFactory::getInstance()->saveRGB24Bitmap(buffer2, "BezierRandomArticleAlgorithm.bmp");
+    BufferFactory::getInstance()->saveRGB24Bitmap(buffer3, "BezierRandomCasteljauAlgorithm.bmp");
 }
+
 
