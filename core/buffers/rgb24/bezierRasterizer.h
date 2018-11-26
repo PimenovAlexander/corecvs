@@ -151,9 +151,7 @@ struct Curve {
                 ((dp31.x()) * (dp21.x()) + (dp31.y()) * (dp21.y())),
                 ((dp31.x()) * (dp21.y()) - (dp31.y()) * (dp21.x()))
         ) / directVectorLen;
-        double p3ncLen = p3nc.l2Metric();
-        return std::min(maximum, 2 * sqrt(flatness / (3 * p3ncLen)));
-
+        return std::min(maximum, 2 * sqrt(flatness / (3 * p3nc.y())));
     }
 
     /**
@@ -256,11 +254,7 @@ public:
     void cubicBezierCasteljauArticle(Curve p, double flatnessConstant = 0.0005) {
 
         if ((p.p1 == p.p2 || p.p1 == p.p3)) {
-            //handle bad cases when modulos is zero
-            Curve l, r;
-            std::tie(l, r) = p.splitByArbitraryT(0.5);
-            cubicBezierCasteljauArticle(l);
-            cubicBezierCasteljauArticle(r);
+            circular_approximation(p,0,1,flatnessConstant);
             return;
         }
 
@@ -515,7 +509,7 @@ private:
         Curve unused;
         while (t < end) {
             // we get t that attached to new curve not initial curve
-            double t_new_coordinate = curCurve.splitByFlatness(flatness, end);
+            double t_new_coordinate = curCurve.splitByFlatness(flatness, 1.0);
             t += t_new_coordinate;
             t = std::min(t, end);
 
@@ -523,7 +517,7 @@ private:
             drawLine(leftPoint, rightPoint);
             leftPoint = rightPoint;
 
-            std::tie(unused, curCurve) = curCurve.splitByArbitraryT(t);
+            std::tie(unused, curCurve) = initialCurve.splitByArbitraryT(t);
 
 
         }

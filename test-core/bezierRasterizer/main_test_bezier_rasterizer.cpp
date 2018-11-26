@@ -67,7 +67,7 @@ TEST(bezierRasterizer, profileDifferentImplementations) {
 
     timer = PreciseTimer::currentTime();
     for(int i = 0; i < LIMIT; i++){
-        bezier.cubicBezierCasteljauArticle(randCurves.at(i));
+        bezier.cubicBezierCasteljauArticle(randCurves.at(i),0.5);
     }
     SYNC_PRINT(("ArticleAlgorithm:%9" PRIu64 "us  (%lf s)\n", timer.usecsToNow(), timer.usecsToNow() / 1000000.0));
 
