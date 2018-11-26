@@ -59,7 +59,7 @@ TEST(bezierRasterizer, compareSpeedOfDifferentImplementation) {
 
     begin = clock();
     for(int i = 0;i<10000;i++){
-        bezier.cubicBezierCasteljauArticle(randCurves.at(i));
+        bezier.cubicBezierCasteljauArticle(randCurves.at(i),0.5);
     }
      end = clock();
     elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;

@@ -97,7 +97,7 @@ struct Curve {
      * */
     inline std::tuple<Curve, Curve> splitByArbitraryT(double t) {
         // split on two cubic curves
-        Point p_12 = {(p1.x + (p2.x - p1.x)) * t, p1.y + (p2.y - p1.y) * t};
+        Point p_12 = {p1.x + (p2.x - p1.x) * t, p1.y + (p2.y - p1.y) * t};
         Point p_23 = {p2.x + (p3.x - p2.x) * t, p2.y + (p3.y - p2.y) * t};
         Point p_34 = {p3.x + (p4.x - p3.x) * t, p3.y + (p4.y - p3.y) * t};
         Point p_123 = {p_12.x + (p_23.x - p_12.x) * t, p_12.y + (p_23.y - p_12.y) * t};
@@ -123,12 +123,14 @@ struct Curve {
             // take care of cases when modulos is zero
             return std::min(maximum, safeStep);
         }
+
         Point p3_in_new_coordinate = {
                 ((p3.x - p1.x) * (p2.x - p1.x) + (p3.y - p1.y) * (p2.y - p1.y)) / direct_vector_modulo,
                 ((p3.x - p1.x) * (p2.y - p1.y) - (p3.y - p1.y) * (p2.x - p1.x)) / direct_vector_modulo,
         };
-        double p3_in_new_coordinate_modulo = sqrt(pow(p3_in_new_coordinate.x, 2) + pow(p3_in_new_coordinate.y, 2));
-        return std::min(maximum, 2 * sqrt(flatness / (3 * p3_in_new_coordinate_modulo)));
+        double p3_y_in_new_coordinate = std::abs(p3_in_new_coordinate.y);
+
+        return std::min(maximum, 2 * sqrt(flatness / (3 * p3_y_in_new_coordinate)));
 
     }
 
@@ -224,11 +226,7 @@ public:
     void cubicBezierCasteljauArticle(Curve p, double flatnessConstant = 0.0005) {
 
         if ((p.p1 == p.p2 || p.p1 == p.p3)) {
-            //handle bad cases when modulos is zero
-            Curve l, r;
-            std::tie(l, r) = p.splitByArbitraryT(0.5);
-            cubicBezierCasteljauArticle(l);
-            cubicBezierCasteljauArticle(r);
+            circular_approximation(p,0,1,flatnessConstant);
             return;
         }
 
@@ -480,7 +478,7 @@ private:
         Curve unused;
         while (t < end) {
             // we get t that attached to new curve not initial curve
-            double t_new_coordinate = curCurve.splitByFlatness(flatness, end);
+            double t_new_coordinate = curCurve.splitByFlatness(flatness, 1.0);
             t += t_new_coordinate;
             t = std::min(t, end);
 
@@ -488,7 +486,7 @@ private:
             drawLine(leftPoint.x, leftPoint.y, rightPoint.x, rightPoint.y);
             leftPoint = rightPoint;
 
-            std::tie(unused, curCurve) = curCurve.splitByArbitraryT(t);
+            std::tie(unused, curCurve) = initialCurve.splitByArbitraryT(t);
 
 
         }
