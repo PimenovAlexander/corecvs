@@ -151,7 +151,7 @@ struct Curve {
                 ((dp31.x()) * (dp21.x()) + (dp31.y()) * (dp21.y())),
                 ((dp31.x()) * (dp21.y()) - (dp31.y()) * (dp21.x()))
         ) / directVectorLen;
-        return std::min(maximum, 2 * sqrt(flatness / (3 * p3nc.y())));
+        return std::min(maximum, 2 * sqrt(flatness / (3 * abs(p3nc.y()))));
     }
 
     /**

@@ -49,7 +49,7 @@ class DummyFlowProcessor : public Processor6D
 
 
     /** Implemetation may allow you to reset some internal structures at will **/
-    virtual int clean(int mask) {
+    virtual int clean(int /*mask*/) {
         return 0;
     }
 
@@ -62,17 +62,17 @@ class DummyFlowProcessor : public Processor6D
      *
      * To get consistent result don't modify frame data after the call to setFrame*
      **/
-    virtual int setFrameG12  (FrameNames frameType, G12Buffer   *frame)
+    virtual int setFrameG12  (FrameNames /*frameType*/, G12Buffer   */*frame*/)
     {
         return 1;
     }
 
-    virtual int setFrameRGB24(FrameNames frameType, RGB24Buffer *frame)
+    virtual int setFrameRGB24(FrameNames /*frameType*/, RGB24Buffer *frame)
     {
         inCurr = frame;
     }
 
-    virtual int setDisparityBufferS16(FrameNames frameType, FlowBuffer *frame)
+    virtual int setDisparityBufferS16(FrameNames /*frameType*/, FlowBuffer */*frame*/)
     {
         return 1;
 
@@ -82,6 +82,7 @@ class DummyFlowProcessor : public Processor6D
     virtual int setStats(Statistics *stats)
     {
         this->stats = stats;
+        return 0;
     }
 
 
