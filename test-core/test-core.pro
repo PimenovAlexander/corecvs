@@ -50,7 +50,7 @@ SOURCES += \
    #face_recognition1/main_test_face_recognition1.cpp \   # TODO: absent input data!
     fastkernel/main_test_fastkernel.cpp \
    #fastkernel_double/main_test_fastkernel_double.cpp \   # moved to perf-tests
-   #fastkernel_profile/main_test_fastkernel_profile.cpp \ # moved to perf-tests   
+   #fastkernel_profile/main_test_fastkernel_profile.cpp \ # moved to perf-tests
     fileformats/main_test_fileformats.cpp \
     filesystem/main_test_filesystem.cpp \
    #filter_blocks/main_test_filter_blocks.cpp \           # TODO: can't build
@@ -75,6 +75,7 @@ SOURCES += \
     rectificator/main_test_rectificator.cpp \
     rectificator1/main_test_rectificator1.cpp \
     rgb24buffer/main_test_rgb24buffer.cpp \
+    rotation/main_test_rotation_lanzcos.cpp\
     serializer/main_test_serializer.cpp \
     similarity/main_test_similarity.cpp \
     sphericdist/main_test_sphericdist.cpp \
@@ -103,7 +104,7 @@ SOURCES += \
     planefit/main_test_planefit.cpp \
     noise/main_test_noise.cpp \
     projection/main_test_projection.cpp \
-    vptree/main_test_vptree.cpp \
+        vptree/main_test_vptree.cpp \
     meshfilter/main_test_meshfilter.cpp \
     convexhull/main_test_convexhull.cpp \
     wuRasterizer/main_test_wu_rasterizer.cpp \
@@ -112,4 +113,18 @@ SOURCES += \
     orientedbox/main_test_orientedbox.cpp \
     convexHull2d/main_test_convexHull2d.cpp \
     processor6d/main_test_processor6d.cpp \
-    bezierRasterizer/main_test_bezier_rasterizer.cpp \
+
+
+HEADERS += \
+    cppunit_test/MatcherTest.h \
+    snooker/commonTypes.h \
+    snooker/errors.h \
+    snooker/reflectionSegmentator.h \
+    snooker/snookerSegmentator.h \
+    stateMachineTest/test.h \
+    cppunit_test/MatcherTest.h \
+    snooker/commonTypes.h \
+    snooker/errors.h \
+    snooker/reflectionSegmentator.h \
+    snooker/snookerSegmentator.h \
+    stateMachineTest/test.h
