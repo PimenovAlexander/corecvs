@@ -57,8 +57,26 @@ TEST(RotationTest, testRotate)
     RGB24Buffer *rotated = RotateHelper::rotateWithLancoz(degToRad(15), buffer, 1006, 1187);
     stats.resetInterval("Rotating image");
     BMPLoader().save("rotated_15.bmp", rotated);
+    stats.resetInterval("Saving image");
+
+    RGB24Buffer *rotatef = RotateHelper::rotateWithLancozVF(degToRad(15), buffer, 1006, 1187);
+    stats.resetInterval("Rotating float image");
+    BMPLoader().save("rotatef_15.bmp", rotatef);
     stats.endInterval("Saving image");
 
+    RGB24Buffer *rotatefp = RotateHelper::rotateWithLancozVFP(degToRad(15), buffer, 1006, 1187);
+    stats.resetInterval("Rotating float image (lut)");
+    BMPLoader().save("rotatefp_15.bmp", rotatefp);
+    stats.endInterval("Saving image");
+
+    RGB24Buffer *rotatefpi = RotateHelper::rotateWithLancozVFPI(degToRad(15), buffer, 1006, 1187);
+    stats.resetInterval("Rotating int image (lut)");
+    BMPLoader().save("rotatefpi_15.bmp", rotatefpi);
+    stats.endInterval("Saving image");
+
+    delete_safe(rotatefpi);
+    delete_safe(rotatefp);
+    delete_safe(rotatef);
     delete_safe(rotated);
     delete_safe(buffer);
 
@@ -67,15 +85,16 @@ TEST(RotationTest, testRotate)
 
 TEST(RotationTest, quality)
 {
+    double angle = 15;
 
     Statistics stats;
 
     stats.startInterval();
     RGB24Buffer *buffer = getNoiseImage(768, 1024);
     stats.resetInterval("Generating image");
-    RGB24Buffer *rotated   = RotateHelper::rotateWithLancoz(degToRad(15), buffer, 1006, 1187, 2);
+    RGB24Buffer *rotated     = RotateHelper::rotateWithLancozVFPI(degToRad( angle), buffer, 1006, 1187);
     stats.resetInterval("Rotating image");
-    RGB24Buffer *rotatedback = RotateHelper::rotateWithLancoz(degToRad(-15), rotated, 768, 1024, 2);
+    RGB24Buffer *rotatedback = RotateHelper::rotateWithLancozVFPI(degToRad(-angle), rotated, 768, 1024);
     stats.resetInterval("Rotating back");
 
     int value = 0;
