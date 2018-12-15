@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>725</width>
-    <height>456</height>
+    <width>936</width>
+    <height>460</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,7 +32,7 @@
       <item row="1" column="2">
        <widget class="QPushButton" name="pushButton">
         <property name="text">
-         <string>Right</string>
+         <string>connect to virtual</string>
         </property>
         <property name="icon">
          <iconset resource="../../resources/main.qrc">
@@ -43,7 +43,7 @@
       <item row="1" column="0">
        <widget class="QPushButton" name="pushButton_3">
         <property name="text">
-         <string>Left</string>
+         <string>connect to real device</string>
         </property>
         <property name="icon">
          <iconset resource="../../resources/main.qrc">
@@ -52,9 +52,9 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="JoyButton">
         <property name="text">
-         <string>Up</string>
+         <string>JoyStick mode</string>
         </property>
         <property name="icon">
          <iconset resource="../../resources/main.qrc">
@@ -65,7 +65,7 @@
       <item row="2" column="1">
        <widget class="QPushButton" name="pushButton_2">
         <property name="text">
-         <string>Down</string>
+         <string>STOP</string>
         </property>
         <property name="icon">
          <iconset resource="../../resources/main.qrc">
@@ -78,30 +78,319 @@
    </item>
    <item row="1" column="0">
     <widget class="QFrame" name="frame_2">
+     <property name="minimumSize">
+      <size>
+       <width>200</width>
+       <height>200</height>
+      </size>
+     </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
+     <widget class="QSlider" name="Yaw">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>180</y>
+        <width>160</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>900</number>
+      </property>
+      <property name="maximum">
+       <number>2100</number>
+      </property>
+      <property name="value">
+       <number>1500</number>
+      </property>
+      <property name="sliderPosition">
+       <number>1500</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QSlider" name="Throttle">
+      <property name="geometry">
+       <rect>
+        <x>65</x>
+        <y>20</y>
+        <width>41</width>
+        <height>160</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>900</number>
+      </property>
+      <property name="maximum">
+       <number>2100</number>
+      </property>
+      <property name="value">
+       <number>1100</number>
+      </property>
+      <property name="sliderPosition">
+       <number>1100</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+     <widget class="QSlider" name="Roll">
+      <property name="geometry">
+       <rect>
+        <x>180</x>
+        <y>180</y>
+        <width>160</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>900</number>
+      </property>
+      <property name="maximum">
+       <number>2100</number>
+      </property>
+      <property name="value">
+       <number>1500</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QSlider" name="Pitch">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>20</y>
+        <width>16</width>
+        <height>160</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>900</number>
+      </property>
+      <property name="maximum">
+       <number>2100</number>
+      </property>
+      <property name="value">
+       <number>1500</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+     <widget class="QFrame" name="frame_3">
+      <property name="geometry">
+       <rect>
+        <x>350</x>
+        <y>10</y>
+        <width>561</width>
+        <height>311</height>
+       </rect>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Box</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QLabel" name="label_5">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>60</y>
+         <width>541</width>
+         <height>181</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>14</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <property name="text">
+        <string>Здесь может быть ваше изображение с камеры</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>200</y>
+        <width>67</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Yaw</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>200</y>
+        <width>67</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Roll</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>90</y>
+        <width>67</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Pitch</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>90</y>
+        <width>131</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Throttle</string>
+      </property>
+     </widget>
     </widget>
-   </item>
-   <item row="0" column="1" rowspan="2">
-    <widget class="CloudViewDialog" name="widget" native="true"/>
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>CloudViewDialog</class>
-   <extends>QWidget</extends>
-   <header location="global">cloudViewDialog.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="../../resources/main.qrc"/>
   <include location="../../resources/main.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>Yaw</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>yawChange(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>98</x>
+     <y>306</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>362</x>
+     <y>227</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Roll</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>rollChange(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>268</x>
+     <y>306</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>362</x>
+     <y>227</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Pitch</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>pitchChange(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>276</x>
+     <y>218</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>362</x>
+     <y>227</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Throttle</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>throttleChange(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>106</x>
+     <y>218</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>362</x>
+     <y>227</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_3</sender>
+   <signal>clicked()</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>StartRealMode()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>178</x>
+     <y>60</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>503</x>
+     <y>313</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>JoyButton</sender>
+   <signal>clicked()</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>StartJoyStickMode()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>467</x>
+     <y>31</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>467</x>
+     <y>229</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>myHandler(int)</slot>
+  <slot>rollChange(int)</slot>
+  <slot>yawChange(int)</slot>
+  <slot>throttleChange(int)</slot>
+  <slot>pitchChange(int)</slot>
+  <slot>StartRealMode()</slot>
+  <slot>StartJoyStickMode()</slot>
+ </slots>
 </ui>

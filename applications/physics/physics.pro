@@ -15,14 +15,22 @@ TARGET   = physics
 
 include(../../utils/utils.pri)                      # it uses TARGET, ROOT_DIR and detects UTILS_BINDIR, OBJECTS_DIR, DESTDIR, ...!
 
+QT += serialport
+
 INCLUDEPATH += .
 
 HEADERS += \
-    physicsMainWidget.h
+    physicsMainWidget.h \
+    clientsender.h \
+    comcontroller.h \
+    jsclass.h
 
 SOURCES += \
     main_physics.cpp \
-    physicsMainWidget.cpp
+    physicsMainWidget.cpp \
+    clientsender.cpp \
+    comcontroller.cpp \
+    jsclass.cpp
 
 FORMS += \
     physicsMainWidget.ui
