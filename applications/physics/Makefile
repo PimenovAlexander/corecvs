@@ -51,16 +51,12 @@ OBJECTS_DIR   = ../../.obj/physics/
 SOURCES       = main_physics.cpp \
 		physicsMainWidget.cpp \
 		clientsender.cpp \
-		comcontroller.cpp \
-		jsclass.cpp ../../.obj/physics/moc_physicsMainWidget.cpp \
-		../../.obj/physics/moc_jsclass.cpp
+		comcontroller.cpp ../../.obj/physics/moc_physicsMainWidget.cpp
 OBJECTS       = ../../.obj/physics/main_physics.o \
 		../../.obj/physics/physicsMainWidget.o \
 		../../.obj/physics/clientsender.o \
 		../../.obj/physics/comcontroller.o \
-		../../.obj/physics/jsclass.o \
-		../../.obj/physics/moc_physicsMainWidget.o \
-		../../.obj/physics/moc_jsclass.o
+		../../.obj/physics/moc_physicsMainWidget.o
 DIST          = ../../arduinoscancontrol.ino \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -158,12 +154,10 @@ DIST          = ../../arduinoscancontrol.ino \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
 		physics.pro physicsMainWidget.h \
 		clientsender.h \
-		comcontroller.h \
-		jsclass.h main_physics.cpp \
+		comcontroller.h main_physics.cpp \
 		physicsMainWidget.cpp \
 		clientsender.cpp \
-		comcontroller.cpp \
-		jsclass.cpp
+		comcontroller.cpp
 QMAKE_TARGET  = physics
 DESTDIR       = ../../bin/#avoid trailing-slash linebreak
 TARGET        = ../../bin/physics
@@ -414,8 +408,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents physicsMainWidget.h clientsender.h comcontroller.h jsclass.h $(DISTDIR)/
-	$(COPY_FILE) --parents main_physics.cpp physicsMainWidget.cpp clientsender.cpp comcontroller.cpp jsclass.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents physicsMainWidget.h clientsender.h comcontroller.h $(DISTDIR)/
+	$(COPY_FILE) --parents main_physics.cpp physicsMainWidget.cpp clientsender.cpp comcontroller.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents physicsMainWidget.ui $(DISTDIR)/
 
 
@@ -439,15 +433,12 @@ check: first
 
 compiler_rcc_make_all:
 compiler_rcc_clean:
-compiler_moc_header_make_all: ../../.obj/physics/moc_physicsMainWidget.cpp ../../.obj/physics/moc_jsclass.cpp
+compiler_moc_header_make_all: ../../.obj/physics/moc_physicsMainWidget.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) ../../.obj/physics/moc_physicsMainWidget.cpp ../../.obj/physics/moc_jsclass.cpp
+	-$(DEL_FILE) ../../.obj/physics/moc_physicsMainWidget.cpp
 ../../.obj/physics/moc_physicsMainWidget.cpp: clientsender.h \
 		physicsMainWidget.h
 	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/nikolay/student/applications/physics -I/home/nikolay/student -I/home/nikolay/student/utils -I/home/nikolay/student/utils/3d -I/home/nikolay/student/utils/camcalc -I/home/nikolay/student/utils/corestructs -I/home/nikolay/student/utils/corestructs/coreWidgets -I/home/nikolay/student/utils/corestructs/libWidgets -I/home/nikolay/student/utils/corestructs/parametersMapper -I/home/nikolay/student/utils/corestructs/cameraModel -I/home/nikolay/student/utils/distortioncorrector -I/home/nikolay/student/utils/fileformats -I/home/nikolay/student/utils/filters -I/home/nikolay/student/utils/filters/graph -I/home/nikolay/student/utils/filters/ui -I/home/nikolay/student/utils/framesources -I/home/nikolay/student/utils/framesources/directShow -I/home/nikolay/student/utils/framesources/decoders -I/home/nikolay/student/utils/framesources/syncCam -I/home/nikolay/student/utils/framesources/file -I/home/nikolay/student/utils/framesources/avcodec -I/home/nikolay/student/utils/processor -I/home/nikolay/student/utils/rectifier -I/home/nikolay/student/utils/statistics -I/home/nikolay/student/utils/uis -I/home/nikolay/student/utils/uis/cloudview -I/home/nikolay/student/utils/visitors -I/home/nikolay/student/utils/widgets -I/home/nikolay/student/utils/photostationcalibration -I/home/nikolay/student/utils/tablecontrol -I/home/nikolay/student/utils/capture -I/home/nikolay/student/utils/reconstruction -I/home/nikolay/student/utils/memoryuse -I/home/nikolay/student/utils/framesources/v4l2 -I/home/nikolay/student/.obj/cvs_utils -I/home/nikolay/student/utils/scripting -I/home/nikolay/student/utils/opengl -I/home/nikolay/student/applications/physics -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtXml -I/usr/include/x86_64-linux-gnu/qt5/QtScript -I/usr/include/x86_64-linux-gnu/qt5/QtSerialPort -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include physicsMainWidget.h -o ../../.obj/physics/moc_physicsMainWidget.cpp
-
-../../.obj/physics/moc_jsclass.cpp: jsclass.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/nikolay/student/applications/physics -I/home/nikolay/student -I/home/nikolay/student/utils -I/home/nikolay/student/utils/3d -I/home/nikolay/student/utils/camcalc -I/home/nikolay/student/utils/corestructs -I/home/nikolay/student/utils/corestructs/coreWidgets -I/home/nikolay/student/utils/corestructs/libWidgets -I/home/nikolay/student/utils/corestructs/parametersMapper -I/home/nikolay/student/utils/corestructs/cameraModel -I/home/nikolay/student/utils/distortioncorrector -I/home/nikolay/student/utils/fileformats -I/home/nikolay/student/utils/filters -I/home/nikolay/student/utils/filters/graph -I/home/nikolay/student/utils/filters/ui -I/home/nikolay/student/utils/framesources -I/home/nikolay/student/utils/framesources/directShow -I/home/nikolay/student/utils/framesources/decoders -I/home/nikolay/student/utils/framesources/syncCam -I/home/nikolay/student/utils/framesources/file -I/home/nikolay/student/utils/framesources/avcodec -I/home/nikolay/student/utils/processor -I/home/nikolay/student/utils/rectifier -I/home/nikolay/student/utils/statistics -I/home/nikolay/student/utils/uis -I/home/nikolay/student/utils/uis/cloudview -I/home/nikolay/student/utils/visitors -I/home/nikolay/student/utils/widgets -I/home/nikolay/student/utils/photostationcalibration -I/home/nikolay/student/utils/tablecontrol -I/home/nikolay/student/utils/capture -I/home/nikolay/student/utils/reconstruction -I/home/nikolay/student/utils/memoryuse -I/home/nikolay/student/utils/framesources/v4l2 -I/home/nikolay/student/.obj/cvs_utils -I/home/nikolay/student/utils/scripting -I/home/nikolay/student/utils/opengl -I/home/nikolay/student/applications/physics -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtXml -I/usr/include/x86_64-linux-gnu/qt5/QtScript -I/usr/include/x86_64-linux-gnu/qt5/QtSerialPort -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include jsclass.h -o ../../.obj/physics/moc_jsclass.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -633,14 +624,8 @@ compiler_clean: compiler_moc_header_clean compiler_uic_clean
 ../../.obj/physics/comcontroller.o: comcontroller.cpp comcontroller.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/comcontroller.o comcontroller.cpp
 
-../../.obj/physics/jsclass.o: jsclass.cpp jsclass.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/jsclass.o jsclass.cpp
-
 ../../.obj/physics/moc_physicsMainWidget.o: ../../.obj/physics/moc_physicsMainWidget.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/moc_physicsMainWidget.o ../../.obj/physics/moc_physicsMainWidget.cpp
-
-../../.obj/physics/moc_jsclass.o: ../../.obj/physics/moc_jsclass.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/moc_jsclass.o ../../.obj/physics/moc_jsclass.cpp
 
 ####### Install
 
@@ -649,4 +634,3 @@ install:  FORCE
 uninstall:  FORCE
 
 FORCE:
-
