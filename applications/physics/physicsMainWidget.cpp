@@ -1,4 +1,4 @@
-﻿#include "core/utils/global.h"
+#include "core/utils/global.h"
 #include "physicsMainWidget.h"
 #include "ui_physicsMainWidget.h"
 #include "clientsender.h"
@@ -30,6 +30,9 @@
         throttle_value_from_JS=1500;
         counter=0;
         ui->setupUi(this);
+        ui->comboBox->addItem("Usual mode");
+        ui->comboBox->addItem("Inertia mode");
+        ui->comboBox->addItem("Casual mode");
     }
 
     PhysicsMainWidget::~PhysicsMainWidget()
@@ -160,6 +163,14 @@
         {
             while(true)
             {
+                if (Current_mode==1)
+                {
+                    throttle_value+=sign(throttle_value_from_JS-1500);
+                    if (throttle_value>1800){throttle_value=1799;}
+                    if (throttle_value<900){throttle_value=901;}
+                }
+
+
                 ui->Yaw->setValue(yaw_value);
                 ui->Throttle->setValue(throttle_value);
 
@@ -234,15 +245,11 @@
         if (!bind)                                           //119 ticks per sec
         {
 
-        throttle_value+=sign(throttle_value_from_JS-1500);
-        if (throttle_value>1800){throttle_value=1799;}
-        if (throttle_value<900){throttle_value=901;}
-
 
 
         std::vector<uint8_t>  FlyCommandFromUs = {0x55, 0x0F, 0x19, 0x00,  0x00, 0x04, 0x20, 0x00, 0x00, 0x0F, 0x10, 0x00, 0x02, 0x10, 0x80, 0x00, 0x04, 0x20, 0x00, 0x01, 0x08, 0x40, 0x00, 0x02, 0x10, 0x80};
 
-        int k=throttle_value-858;                    //864- min value (why?!)
+        int k=throttle_value-858;                    //858- min value
         k=k*8/10;
         unsigned short sh1=k;
         bitset<32> bitsroll{sh1};
@@ -254,15 +261,13 @@
         bitset<8> fifthbyte {0};
         bitset<8> sixthbyte {0};
 
-
-
         for (int i=0;i<7;i++)
         {
             firstbyte[i+1]=bitsroll[i];
         }
         secondbyte[0]=bitsroll[7];
         secondbyte[1]=bitsroll[8];
-        secondbyte[2]=bitsroll[9];                //do not ask how I realized that these bits are our roll
+        secondbyte[2]=bitsroll[9];
 
         k=roll_value-858;
         k=k*8/10;
@@ -345,35 +350,6 @@
         {
             bind=false;
             std::vector<uint8_t>  FlyCommandFromUs = {0x55, 0x0F, 0x19, 0x00,  0x00, 0x04, 0x20, 0x00, 0x01, 0x08, 0x40, 0x00, 0x02, 0x10, 0x80, 0x00, 0x04, 0x20, 0x00, 0x01, 0x08, 0x40, 0x00, 0x02, 0x10, 0x80};
-/*
-            0.361698125000000,Async Serial,U (0x55)
-            0.361818125000000,Async Serial,'15' (0x0F)
-            0.361938125000000,Async Serial,'25' (0x19)
-            0.362058125000000,Async Serial,'0' (0x00)
-            0.362178125000000,Async Serial,'0' (0x00)
-            0.362298125000000,Async Serial,'4' (0x04)
-            0.362418062500000,Async Serial,' ' (0x20)
-            0.362538062500000,Async Serial,'0' (0x00)
-            0.362658062500000,Async Serial,'1' (0x01)
-            0.362778062500000,Async Serial,'8' (0x08)
-            0.362898062500000,Async Serial,@ (0x40)
-            0.363018062500000,Async Serial,'0' (0x00)
-            0.363138062500000,Async Serial,'2' (0x02)
-            0.363258062500000,Async Serial,'16' (0x10)
-            0.363378062500000,Async Serial,'128' (0x80)
-            0.363498062500000,Async Serial,'0' (0x00)
-            0.363618062500000,Async Serial,'4' (0x04)
-            0.363738000000000,Async Serial,' ' (0x20)
-            0.363858000000000,Async Serial,'0' (0x00)
-            0.363978000000000,Async Serial,'1' (0x01)
-            0.364098000000000,Async Serial,'8' (0x08)
-            0.364218000000000,Async Serial,@ (0x40)
-            0.364338000000000,Async Serial,'0' (0x00)
-            0.364458000000000,Async Serial,'2' (0x02)
-            0.364578000000000,Async Serial,'16' (0x10)
-            0.364698000000000,Async Serial,'128' (0x80)
-  */
-
 
         }
         QTimer::singleShot(8, this, SLOT(keepAlive()));
@@ -459,9 +435,7 @@
     /**
      * Current state of an axis.
      */
-    struct axis_state {
-        short x, y;
-    };
+    struct axis_state {        short x, y;   };
 
 
     /**
@@ -473,7 +447,8 @@
      *
      * Returns the axis that the event indicated.
      */
-    size_t get_axis_state(struct js_event *event, struct axis_state axes[3])
+
+    size_t get_axis_state(struct js_event *event,  PhysicsMainWidget::axis_state axes[3])
     {
         size_t axis = event->number / 2;
 
@@ -524,11 +499,25 @@
             cout<<"JS mode has started"<<endl;
             while (read_event(js, &eventtt) == 0)
             {
+
                 switch (eventtt.type)
                 {
                 case JS_EVENT_BUTTON:
-                    printf("Button %u %s\n", eventtt.number, eventtt.value ? "pressed" : "released");
-                    if (eventtt.number==seven && eventtt.value)                     //arming
+                    switch (Current_mode)
+                    {
+                        case 0:
+                            usial_buttons(eventtt);
+                            break;
+                        case 1:
+                            inertial_buttons(eventtt);
+                            break;
+                        case 2:
+                            casual_buttons(eventtt);
+                            break;
+                        default: break;
+                    }
+
+                  /*   if (eventtt.number==seven && eventtt.value)                     //arming
                     {
                         printf("##################___ARMING___######################");
                         throttle_value=930;
@@ -563,12 +552,24 @@
                     if (eventtt.number==three && eventtt.value )                     //Throttle to mid
                     {
                          throttle_for_hang=throttle_value;
-                    }
+                    }*/
                     break;
                 case JS_EVENT_AXIS:
-                    axis = get_axis_state(&eventtt, axes);
+                    switch (Current_mode)
+                    {
+                        case 0:
+                            usial_sticks(eventtt);
+                            break;
+                        case 1:
+                            inertial_sticks(eventtt);
+                            break;
+                        case 2:
+                            casual_sticks(eventtt);
+                            break;
+                        default: break;
+                    }
+                    /*axis = get_axis_state(&eventtt, axes);
                     if (axis < 3)
-                    /* printf("Axis %u at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);*/
                     {                                                //minimum axis is not 30000, but near
                         if (axis==0)
                         {
@@ -588,7 +589,7 @@
                             if (pitch_value>2100){pitch_value=2099;}
                             if (pitch_value<900){pitch_value=901;}
                         }
-                    }
+                    }*/
                     break;
                 default:
                     break;
@@ -598,6 +599,220 @@
             });
             thr.detach();
            // close(js);
+    }
+
+    void PhysicsMainWidget::usial_buttons(js_event event)
+    {
+        unsigned char seven=7;
+        unsigned char six=6;
+        unsigned char five=5;
+        unsigned char four=4;
+        unsigned char three=3;
+        if (event.number==seven)                     //arming
+        {
+           Start_arming(event.value);
+        }
+        if (event.number==five  && event.value )                     //turn of copter(if smth goes wery wery wrong)
+        {
+            disconnect_from_copter();
+        }
+    }
+
+    void PhysicsMainWidget::usial_sticks(js_event event)
+    {
+        const int thr_const=1;
+        const int roll_const=10;
+        const int pit_const=10;
+        const int yaw_const=10;
+
+         size_t axis;
+         axis = get_axis_state(&event, axes);
+        if (axis < 3)
+        printf("Axis %u at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);
+        {                                                //minimum axis is not 30000, but near
+            if (axis==0)
+            {
+                yaw_value = 1500+axes[axis].x/50/yaw_const;
+                throttle_value = 1500-axes[axis].y/50/thr_const;
+                if (yaw_value>2100){yaw_value=2099;}
+                if (yaw_value<900){yaw_value=901;}
+                if (throttle_value>2100){throttle_value=2099;}
+                if (throttle_value<900) {throttle_value=901;}
+
+            }
+            if (axis==1)
+            {
+                pitch_value = 1500 - axes[axis].y/50/pit_const;
+                roll_value = 1500 + axes[axis].x/50/roll_const;
+                if (roll_value>2100){roll_value=2099;}
+                if (roll_value<900){roll_value=901;}
+                if (pitch_value>2100){pitch_value=2099;}
+                if (pitch_value<900){pitch_value=901;}
+            }
+        }
+    }
+
+    void PhysicsMainWidget::inertial_buttons(js_event event)
+    {
+        unsigned char seven=7;
+        unsigned char six=6;
+        unsigned char five=5;
+        unsigned char four=4;
+        unsigned char three=3;
+        if (event.number==seven )                     //arming
+        {
+           Start_arming(event.value);
+        }
+        if (event.number==five  && event.value )                     //turn of copter(if smth goes wery wery wrong)
+        {
+            disconnect_from_copter();
+        }
+        if (event.number==six  && event.value )                     //  all sticks to zero (if smth goes wrong)
+        {
+            throttle_value = 1100;
+            roll_value = 1500;
+            pitch_value = 1500;
+            throttle_value_from_JS = 1500;
+            yaw_value = 1500;
+        }
+        if (event.number==four && event.value )                     //Throttle to mid
+        {
+            throttle_value=mid_Throttle;
+            throttle_value_from_JS=1500;
+        }
+        if (event.number==three && event.value )                     //Throttle to mid
+        {
+             mid_Throttle=throttle_value;
+        }
+
+    }
+
+    void PhysicsMainWidget::inertial_sticks(js_event event)
+    {
+        const int thr_const=1;
+        const int roll_const=10;
+        const int pit_const=10;
+        const int yaw_const=10;
+
+        size_t axis;
+        axis = get_axis_state(&event, axes);
+        if (axis < 3)
+        /* printf("Axis %u at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);*/
+        {                                                //minimum axis is not 30000, but near
+            if (axis==0)
+            {
+                yaw_value = 1500+axes[axis].x/50/yaw_const;
+                throttle_value_from_JS = 1500-axes[axis].y/50/thr_const;
+                if (yaw_value>2100){yaw_value=2099;}
+                if (yaw_value<900){yaw_value=901;}
+                if (throttle_value>2100){throttle_value=2099;}
+                if (throttle_value<900) {throttle_value=901;}
+
+            }
+            if (axis==1)
+            {
+                pitch_value = 1500 - axes[axis].y/50/pit_const;
+                roll_value = 1500 + axes[axis].x/50/roll_const;
+                if (roll_value>2100){roll_value=2099;}
+                if (roll_value<900){roll_value=901;}
+                if (pitch_value>2100){pitch_value=2099;}
+                if (pitch_value<900){pitch_value=901;}
+            }
+        }
+    }
+
+    void PhysicsMainWidget::casual_buttons(js_event event)
+    {
+
+        unsigned char seven=7;
+        unsigned char six=6;
+        unsigned char five=5;
+        unsigned char four=4;
+        unsigned char three=3;
+        if (event.number==five )                     //arming
+        {
+           Start_arming(event.value);
+        }
+        if (event.number==four  && event.value )                     //turn of copter(if smth goes wery wery wrong)
+        {
+            disconnect_from_copter();
+        }
+        if (event.number==seven  && event.value && !lt_pressed)
+        {
+            rt_pressed=true;
+            throttle_value=1500;
+        }
+        if (event.number==seven  && !event.value && !lt_pressed)
+        {
+            rt_pressed=false;
+            throttle_value=mid_Throttle;
+        }
+        if (event.number==six  && event.value && !rt_pressed)
+        {
+            lt_pressed=true;
+            throttle_value=1250;
+        }
+        if (event.number==six  && !event.value && !rt_pressed)
+        {
+            lt_pressed=false;
+            throttle_value=mid_Throttle;
+        }
+    }
+
+    void PhysicsMainWidget::casual_sticks(js_event event)
+    {
+        const int thr_const=1;
+        const int roll_const=10;
+        const int pit_const=10;
+        const int yaw_const=10;
+
+        size_t axis;
+
+        axis = get_axis_state(&event, axes);
+        if (axis < 3)
+        /* printf("Axis %u at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);*/
+        {                                                //minimum axis is not 30000, but near
+            if (axis==0)
+            {
+                pitch_value = 1500 - axes[axis].y/50/pit_const;
+                roll_value = 1500 + axes[axis].x/50/roll_const;
+                if (roll_value>2100){roll_value=2099;}
+                if (roll_value<900){roll_value=901;}
+                if (pitch_value>2100){pitch_value=2099;}
+                if (pitch_value<900){pitch_value=901;}
+
+            }
+            if (axis==1)
+            {
+                yaw_value = 1500 + axes[axis].x/50/roll_const;
+                if (yaw_value>2100){yaw_value=2099;}
+                if (yaw_value<900){yaw_value=901;}
+
+            }
+        }
+    }
+
+    void PhysicsMainWidget::Start_arming(bool pressed)
+    {
+        if (pressed)
+        {
+            printf("##################___ARMING___######################");
+            throttle_value=930;
+            throttle_value_from_JS=1500;
+            fifth_CH=1500;
+            Arming=true;
+        }
+        else
+        {
+            printf("##################___ARMING___######################");
+            throttle_value=1100;
+            throttle_value_from_JS=1500;
+        }
+    }
+
+    void PhysicsMainWidget::disconnect_from_copter()
+    {
+        fifth_CH=1500;
     }
 
     void PhysicsMainWidget::Bind()
@@ -617,4 +832,28 @@
         if (val >0){result=1;}
         if (val <0){result=-1;}
         return result;
+    }
+
+    void PhysicsMainWidget::on_comboBox_currentTextChanged(const QString &arg1)
+    {
+        if(arg1=="Usual mode")    //why qstring can not be in case?!
+        {
+            Current_mode=0;   //I dont want errors between qstring and string
+            throttle_value=1500;
+
+        }
+        if(arg1=="Inertia mode")
+        {
+            Current_mode=1;
+            throttle_value=mid_Throttle;
+
+        }
+        if(arg1=="Casual mode")
+        {
+            Current_mode=2;
+            throttle_value=mid_Throttle;
+
+        }
+
+
     }
