@@ -23,14 +23,12 @@ HEADERS += \
     physicsMainWidget.h \
     clientsender.h \
     comcontroller.h \
-    jsclass.h
 
 SOURCES += \
     main_physics.cpp \
     physicsMainWidget.cpp \
     clientsender.cpp \
     comcontroller.cpp \
-    jsclass.cpp
 
 FORMS += \
     physicsMainWidget.ui
