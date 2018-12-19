@@ -23,14 +23,17 @@ HEADERS += \
     physicsMainWidget.h \
     clientsender.h \
     comcontroller.h \
+    controllrecord.h
 
 SOURCES += \
     main_physics.cpp \
     physicsMainWidget.cpp \
     clientsender.cpp \
     comcontroller.cpp \
+    controllrecord.cpp
 
 FORMS += \
     physicsMainWidget.ui
 
 #RESOURCES += ../../resources/main.qrc
+
