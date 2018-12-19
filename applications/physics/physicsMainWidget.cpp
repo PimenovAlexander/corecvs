@@ -14,6 +14,7 @@
 #include <fcntl.h>
 #include <thread>
 #include "time.h"
+#include <fstream>
 
     using namespace std;
 
@@ -244,8 +245,33 @@
         counter++;
         if (!bind)                                           //119 ticks per sec
         {
+            if (recording)
+            {
+                recordData.add_message(throttle_value,roll_value,yaw_value,pitch_value);
+            }
+            if (autopilotMode)
+            {
+                message m=autopilotStack.top();
+                autopilotStack.pop();
+                if (!autopilotStack.empty())
 
+                {
+                throttle_value=m.throttle;
+                roll_value=m.roll;
+                yaw_value=m.yaw;
+                pitch_value=m.pitch;
 
+                if (m.count_of_repeats>0)
+                {
+                    m.count_of_repeats--;
+                    autopilotStack.push(m);
+                }
+                }
+                else
+                {
+                    autopilotMode=false;
+                }
+            }
 
         std::vector<uint8_t>  FlyCommandFromUs = {0x55, 0x0F, 0x19, 0x00,  0x00, 0x04, 0x20, 0x00, 0x00, 0x0F, 0x10, 0x00, 0x02, 0x10, 0x80, 0x00, 0x04, 0x20, 0x00, 0x01, 0x08, 0x40, 0x00, 0x02, 0x10, 0x80};
 
@@ -499,7 +525,7 @@
             cout<<"JS mode has started"<<endl;
             while (read_event(js, &eventtt) == 0)
             {
-
+                autopilotMode=false;
                 switch (eventtt.type)
                 {
                 case JS_EVENT_BUTTON:
@@ -608,6 +634,8 @@
         unsigned char five=5;
         unsigned char four=4;
         unsigned char three=3;
+        unsigned char two=2;
+        unsigned char one=1;
         if (event.number==seven)                     //arming
         {
            Start_arming(event.value);
@@ -615,6 +643,17 @@
         if (event.number==five  && event.value )                     //turn of copter(if smth goes wery wery wrong)
         {
             disconnect_from_copter();
+        }
+        if (event.number==one && event.value)                     //arming
+        {
+            if (!recording)
+            {
+                StartRecord();
+            }
+            else
+            {
+                StopRecord();
+            }
         }
     }
 
@@ -628,7 +667,7 @@
          size_t axis;
          axis = get_axis_state(&event, axes);
         if (axis < 3)
-        printf("Axis %u at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);
+        //printf("Axis %u at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);
         {                                                //minimum axis is not 30000, but near
             if (axis==0)
             {
@@ -659,11 +698,13 @@
         unsigned char five=5;
         unsigned char four=4;
         unsigned char three=3;
+        unsigned char two=2;
+        unsigned char one=1;
         if (event.number==seven )                     //arming
         {
            Start_arming(event.value);
         }
-        if (event.number==five  && event.value )                     //turn of copter(if smth goes wery wery wrong)
+        if (event.number==five  && event.value )                     //turns of copter(if smth goes very very wrong)
         {
             disconnect_from_copter();
         }
@@ -684,7 +725,17 @@
         {
              mid_Throttle=throttle_value;
         }
-
+        if (event.number==one && event.value)                     //arming
+        {
+            if (!recording)
+            {
+                StartRecord();
+            }
+            else
+            {
+                StopRecord();
+            }
+        }
     }
 
     void PhysicsMainWidget::inertial_sticks(js_event event)
@@ -729,6 +780,8 @@
         unsigned char five=5;
         unsigned char four=4;
         unsigned char three=3;
+        unsigned char two=2;
+        unsigned char one=1;
         if (event.number==five )                     //arming
         {
            Start_arming(event.value);
@@ -756,6 +809,17 @@
         {
             lt_pressed=false;
             throttle_value=mid_Throttle;
+        }
+        if (event.number==one && event.value)                     //arming
+        {
+            if (!recording)
+            {
+                StartRecord();
+            }
+            else
+            {
+                StopRecord();
+            }
         }
     }
 
@@ -823,7 +887,37 @@
 
     void PhysicsMainWidget::on_pushButton_2_clicked()
     {
-        STOP();
+        //       cout<<m.pitch<<" "<<m.roll<<" "<<m.throttle<<" "<<m.yaw<<" "<<m.count_of_repeats<<endl;
+        setlocale(LC_ALL, "rus");
+
+        char buff[50];
+        ifstream fin("cppstudio.txt");
+        while (!fin.eof())
+        {
+            message m;
+            fin >> buff;
+            m.pitch=std::stoi( buff);
+            fin >> buff;
+            m.roll=std::stoi( buff);
+            fin >> buff;
+            m.throttle=std::stoi( buff);
+            fin >> buff;
+            m.yaw=std::stoi( buff);
+            fin >> buff;
+            m.count_of_repeats=std::stoi( buff);
+            cout<<m.pitch<<" "<<m.roll<<" "<<m.throttle<<" "<<m.yaw<<" "<<m.count_of_repeats<<endl;
+            messages.push_front(m);
+            }
+        for (message mm :messages)
+        {
+            autopilotStack.push(mm);
+        }
+        message m;
+        m=autopilotStack.top();
+        cout<<"-_-_-"<<m.pitch<<" "<<m.roll<<" "<<m.throttle<<" "<<m.yaw<<" "<<m.count_of_repeats<<"-_-_-"<<endl;
+        autopilotStack.pop();
+
+        autopilotMode=true;
     }
 
     int PhysicsMainWidget::sign(int val)
@@ -852,8 +946,22 @@
         {
             Current_mode=2;
             throttle_value=mid_Throttle;
-
         }
+    }
 
 
+
+    void PhysicsMainWidget::StartRecord()
+    {
+        recording=true;
+        recordData =  ControllRecord();
+
+    }
+
+    void PhysicsMainWidget::StopRecord()
+    {
+        printf("##################___writing___######################");
+
+        recording=false;
+        recordData.Save();
     }
