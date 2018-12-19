@@ -8,6 +8,8 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include <linux/joystick.h>
 #include <fcntl.h>
+#include <controllrecord.h>
+#include <stack>
 
 namespace Ui {
 class PhysicsMainWidget;
@@ -47,6 +49,10 @@ private slots:
     void on_comboBox_currentTextChanged(const QString &arg1);
 
 private:
+    struct message {int throttle; int roll; int yaw; int pitch ; int count_of_repeats;   } ;
+    std::list<message> messages;
+
+
     Ui::PhysicsMainWidget *ui;
     int yaw_value;
     int roll_value;
@@ -72,6 +78,8 @@ private:
     bool rt_pressed=false;
     bool lt_pressed=false;
 
+    bool recording=false;
+
     void SendOurValues(std::vector<uint8_t> OurValues);
     void usial_buttons(js_event event);
     void usial_sticks(js_event event);
@@ -82,11 +90,18 @@ private:
     void casual_buttons(js_event event);
     void casual_sticks(js_event event);
 
+    void StartRecord();
+    void StopRecord();
+
+    ControllRecord recordData;
+
     struct axis_state axes[3] ;
 
     void Start_arming(bool pressed);
     ClientSender VirtualSender;
 
+    bool autopilotMode=false;
+    stack<message> autopilotStack;
     //size_t get_button_count(int fd);
 };
 
