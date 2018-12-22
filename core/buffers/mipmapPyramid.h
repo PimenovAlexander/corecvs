@@ -32,6 +32,36 @@ public:
     int levelNumber;
     vector<BufferType *> levels;
 
+    AbstractMipmapPyramid(BufferType *input , int _levelNumber, bool check) // JUST TESTING!!!! NASTYA NIZHARADZE
+    {
+        if (check){
+            levelNumber = _levelNumber;
+            levels.resize(levelNumber);
+            levels[0] = new BufferType(input);
+            for (int i = 1; i < _levelNumber; i++)
+            {
+                levels[i] = downsample21(levels[i-1]);
+            }
+        }
+    }
+
+    static BufferType *downsample21(BufferType *input) // JUST TESTING!!!! NASTYA NIZHARADZE
+    {
+        BufferType* toReturn = new BufferType(input->h / 2, input->w / 2);
+        printf ("%i, %i\n", toReturn->h, toReturn->w);
+        for (int32_t i = 1; i <= toReturn->h; i++)
+        {
+            for (int32_t j = 1; j <= toReturn->w; j++)
+            {
+
+                toReturn->element(i-1,j-1) = (input->element(i*2-2,j*2-2) /4 + input->element(i*2-2,j*2-1)/4 + input->element(i*2 - 1,j*2-2)/4 + input->element(i*2 - 1,j*2-1)/4);
+
+            }
+        }
+
+        return toReturn;
+    }
+
     AbstractMipmapPyramid(BufferType *input , int _levelNumber)
     {
         levelNumber = _levelNumber;
