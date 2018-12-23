@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>936</width>
-    <height>460</height>
+    <height>680</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -65,7 +65,7 @@
       <item row="2" column="1">
        <widget class="QPushButton" name="pushButton_2">
         <property name="text">
-         <string>STOP</string>
+         <string>AUTOPILOT (press any js key to stop)</string>
         </property>
         <property name="icon">
          <iconset resource="../../resources/main.qrc">
@@ -93,8 +93,8 @@
      <widget class="QSlider" name="Yaw">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>180</y>
+        <x>0</x>
+        <y>270</y>
         <width>160</width>
         <height>16</height>
        </rect>
@@ -118,8 +118,8 @@
      <widget class="QSlider" name="Throttle">
       <property name="geometry">
        <rect>
-        <x>65</x>
-        <y>20</y>
+        <x>60</x>
+        <y>90</y>
         <width>41</width>
         <height>160</height>
        </rect>
@@ -143,8 +143,8 @@
      <widget class="QSlider" name="Roll">
       <property name="geometry">
        <rect>
-        <x>180</x>
-        <y>180</y>
+        <x>170</x>
+        <y>270</y>
         <width>160</width>
         <height>16</height>
        </rect>
@@ -165,8 +165,8 @@
      <widget class="QSlider" name="Pitch">
       <property name="geometry">
        <rect>
-        <x>260</x>
-        <y>20</y>
+        <x>240</x>
+        <y>90</y>
         <width>16</width>
         <height>160</height>
        </rect>
@@ -229,8 +229,8 @@
      <widget class="QLabel" name="label">
       <property name="geometry">
        <rect>
-        <x>80</x>
-        <y>200</y>
+        <x>50</x>
+        <y>300</y>
         <width>67</width>
         <height>17</height>
        </rect>
@@ -242,8 +242,8 @@
      <widget class="QLabel" name="label_2">
       <property name="geometry">
        <rect>
-        <x>240</x>
-        <y>200</y>
+        <x>230</x>
+        <y>300</y>
         <width>67</width>
         <height>17</height>
        </rect>
@@ -255,8 +255,8 @@
      <widget class="QLabel" name="label_3">
       <property name="geometry">
        <rect>
-        <x>280</x>
-        <y>90</y>
+        <x>270</x>
+        <y>150</y>
         <width>67</width>
         <height>17</height>
        </rect>
@@ -269,13 +269,188 @@
       <property name="geometry">
        <rect>
         <x>100</x>
-        <y>90</y>
+        <y>150</y>
         <width>131</width>
         <height>20</height>
        </rect>
       </property>
       <property name="text">
        <string>Throttle</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="comboBox">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>40</y>
+        <width>171</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="currentText">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QListView" name="listView">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>341</y>
+        <width>591</width>
+        <height>181</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QSlider" name="CH5">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>350</y>
+        <width>160</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>900</number>
+      </property>
+      <property name="maximum">
+       <number>2100</number>
+      </property>
+      <property name="value">
+       <number>1500</number>
+      </property>
+      <property name="sliderPosition">
+       <number>1500</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QSlider" name="CH6">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>370</y>
+        <width>160</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>900</number>
+      </property>
+      <property name="maximum">
+       <number>2100</number>
+      </property>
+      <property name="value">
+       <number>1500</number>
+      </property>
+      <property name="sliderPosition">
+       <number>1500</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QSlider" name="CH7">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>390</y>
+        <width>160</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>900</number>
+      </property>
+      <property name="maximum">
+       <number>2100</number>
+      </property>
+      <property name="value">
+       <number>1500</number>
+      </property>
+      <property name="sliderPosition">
+       <number>1500</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QSlider" name="CH8">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>410</y>
+        <width>160</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>900</number>
+      </property>
+      <property name="maximum">
+       <number>2100</number>
+      </property>
+      <property name="value">
+       <number>1500</number>
+      </property>
+      <property name="sliderPosition">
+       <number>1500</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="CH5_label">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>350</y>
+        <width>67</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>CH5-</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="CH7_label">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>390</y>
+        <width>67</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>CH7-</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="CH8_label">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>410</y>
+        <width>67</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>CH8-</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="CH6_label">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>370</y>
+        <width>67</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>CH6-</string>
       </property>
      </widget>
     </widget>
@@ -294,8 +469,8 @@
    <slot>yawChange(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>98</x>
-     <y>306</y>
+     <x>107</x>
+     <y>407</y>
     </hint>
     <hint type="destinationlabel">
      <x>362</x>
@@ -310,8 +485,8 @@
    <slot>rollChange(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>268</x>
-     <y>306</y>
+     <x>277</x>
+     <y>407</y>
     </hint>
     <hint type="destinationlabel">
      <x>362</x>
@@ -326,8 +501,8 @@
    <slot>pitchChange(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>276</x>
-     <y>218</y>
+     <x>264</x>
+     <y>340</y>
     </hint>
     <hint type="destinationlabel">
      <x>362</x>
@@ -383,6 +558,70 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>CH5</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>CH5Change(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>108</x>
+     <y>479</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>467</x>
+     <y>339</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>CH6</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>CH6Change(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>108</x>
+     <y>499</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>467</x>
+     <y>339</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>CH7</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>CH7Change(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>108</x>
+     <y>519</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>467</x>
+     <y>339</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>CH8</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>CH8Change(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>108</x>
+     <y>539</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>467</x>
+     <y>339</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>myHandler(int)</slot>
@@ -392,5 +631,9 @@
   <slot>pitchChange(int)</slot>
   <slot>StartRealMode()</slot>
   <slot>StartJoyStickMode()</slot>
+  <slot>CH5Change(int)</slot>
+  <slot>CH6Change(int)</slot>
+  <slot>CH7Change(int)</slot>
+  <slot>CH8Change(int)</slot>
  </slots>
 </ui>
