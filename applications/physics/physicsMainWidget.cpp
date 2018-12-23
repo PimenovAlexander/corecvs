@@ -28,6 +28,10 @@
         roll_value=1500;
         pitch_value=1500;
         throttle_value=1100;
+        CH5_value=1500;
+        CH6_value=1500;
+        CH7_value=1500;
+        CH8_value=1500;
         throttle_value_from_JS=1500;
         counter=0;
         ui->setupUi(this);
@@ -158,6 +162,42 @@
 
     }
 
+    void PhysicsMainWidget::CH5Change(int i)                              //i - current throttle value
+    {
+        CH5_value=i;
+        if (VirtualModeActive)
+        {
+        SendJoyValues();
+        }
+    }
+
+    void PhysicsMainWidget::CH6Change(int i)                              //i - current throttle value
+    {
+        CH6_value=i;
+        if (VirtualModeActive)
+        {
+        SendJoyValues();
+        }
+    }
+
+    void PhysicsMainWidget::CH7Change(int i)                              //i - current throttle value
+    {
+        CH7_value=i;
+        if (VirtualModeActive)
+        {
+        SendJoyValues();
+        }
+    }
+
+    void PhysicsMainWidget::CH8Change(int i)                              //i - current throttle value
+    {
+        CH8_value=i;
+        if (VirtualModeActive)
+        {
+        SendJoyValues();
+        }
+    }
+
     void PhysicsMainWidget::FrameValuesUpdate()
     {
         std::thread thr([this]()
@@ -183,6 +223,18 @@
 
                 ui->label_2->setText("Roll-"+QString::number(roll_value));
                 ui->label_3->setText("pitch-"+QString::number(pitch_value));
+
+                ui->CH5->setValue(CH5_value);
+                ui->CH6->setValue(CH6_value);
+                ui->CH7->setValue(CH7_value);
+                ui->CH8->setValue(CH8_value);
+
+                ui->CH5_label->setText("CH5-"+QString::number(CH5_value));
+                ui->CH6_label->setText("CH6-"+QString::number(CH6_value));
+                ui->CH7_label->setText("CH7-"+QString::number(CH7_value));
+                ui->CH8_label->setText("CH8-"+QString::number(CH8_value));
+
+
 
                 usleep(30000);
 
@@ -242,6 +294,8 @@
     /// sends values to /dev/ttyUSB0 (i hope it is our module)
     void PhysicsMainWidget::keepAlive()
     {
+        //const int difference = 858;
+        const int difference = 862;
         counter++;
         if (!bind)                                           //119 ticks per sec
         {
@@ -275,7 +329,7 @@
 
         std::vector<uint8_t>  FlyCommandFromUs = {0x55, 0x0F, 0x19, 0x00,  0x00, 0x04, 0x20, 0x00, 0x00, 0x0F, 0x10, 0x00, 0x02, 0x10, 0x80, 0x00, 0x04, 0x20, 0x00, 0x01, 0x08, 0x40, 0x00, 0x02, 0x10, 0x80};
 
-        int k=throttle_value-858;                    //858- min value
+        int k=throttle_value-difference;                    //858- min value
         k=k*8/10;
         unsigned short sh1=k;
         bitset<32> bitsroll{sh1};
@@ -286,6 +340,13 @@
         bitset<8> fourthbyte {0};
         bitset<8> fifthbyte {0};
         bitset<8> sixthbyte {0};
+        bitset<8> seventhbyte {0};
+        bitset<8> eigthbyte {0};
+        bitset<8> ninethbyte{0};
+        bitset<8> tenthbyte{0};
+        bitset<8> eleventhbyte{0};
+        bitset<8> twelfthbyte{0};
+
 
         for (int i=0;i<7;i++)
         {
@@ -295,7 +356,7 @@
         secondbyte[1]=bitsroll[8];
         secondbyte[2]=bitsroll[9];
 
-        k=roll_value-858;
+        k=roll_value-difference;
         k=k*8/10;
         sh1=k;
         bitset<32> bitspitch{sh1};
@@ -309,7 +370,7 @@
         }
 
 
-        k=pitch_value-858;
+        k=pitch_value-difference;
         k=k*8/10;
         sh1=k;
         bitset<32> bitsthrottle{sh1};
@@ -321,7 +382,7 @@
         }
         fifthbyte[0]=bitsthrottle[9];
 
-        k=yaw_value-858;
+        k=yaw_value-difference;
         k=k*8/10;
         sh1=k;
         bitset<32> bitsyaw{sh1};
@@ -334,6 +395,61 @@
         {
            sixthbyte[i]=bitsyaw[i+6];
         }
+
+        k=CH5_value-difference;
+        k=k*8/10;
+        sh1=k;
+        bitset<32> bitsCH5{sh1};
+
+        for (int i=0;i<7;i++)
+        {
+           seventhbyte[i]=bitsCH5[i+3];
+        }
+        for (int i=0;i<3;i++)
+        {
+           sixthbyte[i+5]=bitsCH5[i];
+        }
+
+        k=CH6_value-difference;
+        k=k*8/10;
+        sh1=k;
+        bitset<32> bitsCH6{sh1};
+
+        for (int i=0;i<8;i++)
+        {
+           eigthbyte[i]=bitsCH6[i];
+        }
+        for (int i=0;i<3;i++)
+        {
+           ninethbyte[i]=bitsCH6[i+8];
+        }
+
+        k=CH7_value-difference;
+        k=k*8/10;
+        sh1=k;
+        bitset<32> bitsCH7{sh1};
+
+        for (int i=0;i<6;i++)
+        {
+           ninethbyte[i+3]=bitsCH7[i];
+        }
+        for (int i=0;i<7;i++)
+        {
+           tenthbyte[i]=bitsCH7[i+5];
+        }
+
+        k=CH8_value-difference;
+        k=k*8/10;
+        sh1=k;
+        bitset<32> bitsCH8{sh1};
+
+        for (int i=0;i<8;i++)
+        {
+           eleventhbyte[i]=bitsCH8[i+2];
+        }
+        tenthbyte[7]=bitsCH8[1];
+        tenthbyte[6]=bitsCH8[0];
+        twelfthbyte[0]=bitsCH8[10];
 
         uint8_t fb=firstbyte.to_ulong();
         FlyCommandFromUs[4]=fb;
@@ -353,16 +469,35 @@
         fb=sixthbyte.to_ulong();
         FlyCommandFromUs[9]=fb;
 
-        if (fifth_CH==1917)
-        {
-            FlyCommandFromUs[10]=0x60;
-        }
+        fb=seventhbyte.to_ulong();
+        FlyCommandFromUs[10]=fb;
+
+        fb=eigthbyte.to_ulong();
+        FlyCommandFromUs[11]=fb;
+
+        fb=ninethbyte.to_ulong();
+        FlyCommandFromUs[12]=fb;
+
+        fb=tenthbyte.to_ulong();
+        FlyCommandFromUs[13]=fb;
+
+        cout<<bitsCH8<<endl;
+
+        fb=eleventhbyte.to_ulong();
+        cout<<eleventhbyte<<endl;
+        FlyCommandFromUs[14]=fb;
+
+
+        fb=twelfthbyte.to_ulong();
+        cout<<twelfthbyte<<endl;
+        FlyCommandFromUs[15]=fb;
+
         SendOurValues(FlyCommandFromUs);
         if (Arming)
         {
             throttle_value=930;
             throttle_value_from_JS=1500;
-            fifth_CH=1917;
+            CH5_value=1917;
             Arming=false;
          }
         if (startFly)
@@ -863,7 +998,7 @@
             printf("##################___ARMING___######################");
             throttle_value=930;
             throttle_value_from_JS=1500;
-            fifth_CH=1500;
+            CH5_value=1500;
             Arming=true;
         }
         else
@@ -876,7 +1011,7 @@
 
     void PhysicsMainWidget::disconnect_from_copter()
     {
-        fifth_CH=1500;
+        CH5_value=1500;
     }
 
     void PhysicsMainWidget::Bind()
@@ -965,3 +1100,5 @@
         recording=false;
         recordData.Save();
     }
+
+
