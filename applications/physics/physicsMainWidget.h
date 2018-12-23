@@ -37,6 +37,10 @@ private slots:
     void rollChange(int i);
     void pitchChange(int i);
     void throttleChange(int i);
+    void CH5Change(int i);
+    void CH6Change(int i);
+    void CH7Change(int i);
+    void CH8Change(int i);
     void StartJoyStickMode();
     void Bind();
     void on_pushButton_released();
@@ -47,6 +51,7 @@ private slots:
     void on_pushButton_2_clicked();
 
     void on_comboBox_currentTextChanged(const QString &arg1);
+
 
 private:
     struct message {int throttle; int roll; int yaw; int pitch ; int count_of_repeats;   } ;
@@ -59,10 +64,10 @@ private:
     int pitch_value;
     int throttle_value;
     int throttle_value_from_JS;
-    int fifth_CH;
-    int sixth_CH;
-    int seventh_CH;
-    int eighth_CH;
+    int CH5_value;
+    int CH6_value;
+    int CH7_value;
+    int CH8_value;
     int mid_Throttle=1350;
 
     int counter;
