@@ -1,0 +1,10 @@
+.obj
+bin
+siblings/gtest
+
+*Makefile*
+
+.qmake.stash
+cvs-open.pro.user
+tools/generator/generator
+
