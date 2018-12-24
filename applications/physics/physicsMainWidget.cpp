@@ -801,7 +801,7 @@
 
          size_t axis;
          axis = get_axis_state(&event, axes);
-        if (axis < 3)
+        if (axis < 5)
         //printf("Axis %u at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);
         {                                                //minimum axis is not 30000, but near
             if (axis==0)

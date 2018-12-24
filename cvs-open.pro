@@ -15,7 +15,7 @@ SUBDIRS +=                   \
 #    scanner                  \
 #    testbed                  \
     cloudview                \
-#    physics                  \
+    physics                  \
     imageview                \
 #    \
      generator                \
