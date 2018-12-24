@@ -1,7 +1,9 @@
 #include "core/geometry/renderer/simpleRenderer.h"
 #include "core/geometry/mesh3d.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/fileformats/bmpLoader.h"
 #include "core/geometry/renderer/attributedTriangleSpanIterator.h"
+#include <math.h>
 
 namespace corecvs {
 
@@ -130,9 +132,10 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
     Matrix44 normalTransform = modelviewMatrix.inverted().transposed();
 
     if (drawFaces)
-    {
+    { 
         for(size_t f = 0; f < mesh->faces.size(); f++)
         {
+            // printf("\n\n\n ------!! %i !!------ \n\n\n", f);
             Vector3d32 face = mesh->faces[f];
             Vector3d32 normalId = mesh->normalId[f];
             Vector4d32 textureId = mesh->texId[f];
@@ -161,20 +164,19 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
                 p = positions[i].project();
 
                 double invz = 1.0 / positions[i].z();
-                p.attributes.push_back(invz);
 
-                p.attributes.push_back(normals[i].x());
-                p.attributes.push_back(normals[i].y());
-                p.attributes.push_back(normals[i].z());
+                p.attributes.resize(ATTR_LAST);
+                p.attributes[ATTR_INV_Z] = invz;
 
-                if (!trueTexture) {
-                    p.attributes.push_back(texture[i].x());
-                    p.attributes.push_back(texture[i].y());
-                } else {
-                    p.attributes.push_back(texture[i].x() * invz);
-                    p.attributes.push_back(texture[i].y() * invz);
-                }
-                p.attributes.push_back(texId);
+                p.attributes[ATTR_NORMAL_X] = normals[i].x();
+                p.attributes[ATTR_NORMAL_Y] = normals[i].y();
+                p.attributes[ATTR_NORMAL_Z] = normals[i].z();
+
+
+                p.attributes[ATTR_TEX_U] = texture[i].x() * invz;
+                p.attributes[ATTR_TEX_U] = texture[i].y() * invz;
+
+                p.attributes[ATTR_TEX_ID] = texId;
 
     #if 0
                 cout << "P" << i << " :";
@@ -203,6 +205,12 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
             while (it.hasValue())
             {
                 AttributedHLineSpan span = it.getAttrSpan();
+                // We are adding to current line iterator data from the texture attribute for the previous line
+                span.catt.push_back(it.part.a1[4]);
+                span.catt.push_back(it.part.a1[5]);
+                span.datt.push_back((it.part.a2[4] - it.part.a1[4]) / (span.x2 - span.x1) );
+                span.datt.push_back((it.part.a2[5] - it.part.a1[5]) / (span.x2 - span.x1) );
+                
                 fragmentShader(span);
                 it.step();
             }
@@ -243,6 +251,9 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
 
 void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
 {
+    double lastx = 0.0;
+    double lasty = 0.0; // remove after debug
+
     if (span.hasValue() && span.x() < 0)
         span.stepTo(0);
 
@@ -251,13 +262,21 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
         if (cBuffer->isValidCoord(span.pos()) )
         {
             const FragmentAttributes &att = span.att();
-            double z = 1.0 / att[0];
-            Vector3dd normal = Vector3dd(att[1], att[2], att[3]).normalised();
-            Vector2dd tex = Vector2dd(att[4], att[5]);
-            int texId = att[6];
-            if (trueTexture) {
-                tex *= z;
-            }
+            double z = 1.0 / att[ATTR_INV_Z];
+
+            Vector3dd normal = Vector3dd(att[ATTR_NORMAL_X], att[ATTR_NORMAL_Y], att[ATTR_NORMAL_Z]).normalised();
+            Vector2dd tex = Vector2dd(att[ATTR_TEX_U], att[ATTR_TEX_V]);
+
+            Vector2dd dhatt = Vector2dd(span.datt[ATTR_TEX_U], span.datt[ATTR_TEX_V]); // Delta stores the increment in
+
+            Vector2dd dvatt = Vector2dd(span.catt[4], span.catt[5]);
+ 
+            int texId = att[ATTR_TEX_ID];
+
+            /* Texture should be mapped linear, but not in the image space, but in 3D space. This is a reason for this projective correction */
+            tex *= z;
+            dhatt *= z;
+            dvatt *= z;
 
             tex.y() = 1 - tex.y();
 
@@ -267,23 +286,88 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
                 zBuffer->element(span.pos()) = z;
 
                 RGBColor c = color;
-
-                /* Texture block*/
+                
+                /*
+                printf("\n||tex x %f, tex y %f ||\n",tex.x(), tex.y());
+                printf("\n|| x %f, %f ||\n",dhatt[0], dvatt[0]);
+                printf("\n|| y %f, %f ||\n",dhatt[1], dvatt[1]);
+                printf("\n|| x %f, y %f ||\n",tex.x() -lastx, tex.y() - lasty);
+                */
+                
+                lastx = tex.x();  // <---
+                lasty = tex.y(); // <---
+                
                 if (texId < (int)textures.size() && textures[texId] != NULL)
                 {
-
                     RGB24Buffer *texture = textures[texId];
+                    if(useMipmap){
+                    
+                        texId = (int)midmap.size() - 1;
+                        // printf("\n|| 000 texid %i ||\n",texId);
 
-                    tex = tex * Vector2dd(texture->w, texture->h);
-                    if (texture->isValidCoordBl(tex)) {
-                        c = texture->elementBl(tex);
+                        for (int i = 0; i < (int)midmap.size() - 1; i++){
+                            if ((1.0 / dhatt[0]) > midmap[i+1]->h ){
+                                texId = i;
+                                // printf("\n|| 111 texid %i ||\n",texId);
+                                break;
+                                
+                            }
+                        }
+                        texture = midmap[texId];
+                        double factor = log(abs(1.0 / dhatt[0]))/log(2);
+                        factor = factor - trunc(factor);
+                        // printf("\n|| factor %f ||\n",factor);
+
+                        // printf("\n|| texid %i ||\n",texId);
+                        RGB24Buffer *texturemip = new RGB24Buffer(midmap[texId]->w, midmap[texId]->h);
+
+                        if ((texId != (int)midmap.size() - 1) && ((1 / dhatt[0]) < midmap[0]->h )){    
+                            
+                            for (int32_t i = 1; i <= midmap[texId + 1]->h; i++)
+                            {
+                                for (int32_t j = 1; j <= midmap[texId + 1]->w; j++)
+                                {
+                                    texturemip->element(i*2-2,j*2-2) = midmap[texId]->element(i*2-2,j*2-2) * (factor) + midmap[texId + 1]->element(i-1,j-1) * (1 - factor);
+                                    texturemip->element(i*2-2,j*2-1) = midmap[texId]->element(i*2-2,j*2-1) * (factor) + midmap[texId + 1]->element(i-1,j-1) * (1 - factor);
+                                    texturemip->element(i*2-1,j*2-2) = midmap[texId]->element(i*2-1,j*2-2) * (factor) + midmap[texId + 1]->element(i-1,j-1) * (1 - factor);
+                                    texturemip->element(i*2-1,j*2-1) = midmap[texId]->element(i*2-1,j*2-1) * (factor) + midmap[texId + 1]->element(i-1,j-1) * (1 - factor);
+                                }
+                            }
+                            tex = tex * Vector2dd(texturemip->w, texturemip->h);
+                            if (texturemip->isValidCoordBl(tex)) {
+                                // printf("\ncase1\n");
+                                c = texturemip->elementBl(tex);
+                            } else {
+                                SYNC_PRINT(("Tex miss %lf %lf\n", tex.x(), tex.y()));
+                            }
+                            
+                        } else {
+                            tex = tex * Vector2dd(texture->w, texture->h);
+                            if (texture->isValidCoordBl(tex)) {
+                                // printf("\ncase2\n");
+                                c = texture->elementBl(tex);
+                            } else {
+                                SYNC_PRINT(("Tex miss %lf %lf\n", tex.x(), tex.y()));
+                            }
+                        }
+
+                        delete texturemip;                   
+
                     } else {
-                        SYNC_PRINT(("Tex miss %lf %lf\n", tex.x(), tex.y()));
+
+                        tex = tex * Vector2dd(texture->w, texture->h);
+                        if (texture->isValidCoordBl(tex)) {
+                            // printf("\ncase3\n");
+                            c = texture->elementBl(tex);
+                        } else {
+                            SYNC_PRINT(("Tex miss %lf %lf\n", tex.x(), tex.y()));
+                        }
+
                     }
+
                 } else {
                     SYNC_PRINT(("Tex is NULL or non-existent %d\n", texId));
                 }
-
 
                 /* Normal block*/
 
