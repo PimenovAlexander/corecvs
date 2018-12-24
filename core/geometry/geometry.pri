@@ -39,6 +39,7 @@ HEADERS += \
     $$PWD/orientedBox.h \
     $$PWD/plane.h
     geometry/kdtree.h \
+    geometry/beziercurve.h \
 
 
 SOURCES += \ 
