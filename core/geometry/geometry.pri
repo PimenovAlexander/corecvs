@@ -37,9 +37,9 @@ HEADERS += \
     \
     $$PWD/halfspaceIntersector.h \
     $$PWD/orientedBox.h \
-    $$PWD/plane.h
-    geometry/kdtree.h \
-    geometry/beziercurve.h \
+    $$PWD/plane.h \
+    $$PWD/kdtree.h \
+    $$PWD/beziercurve.h \
 
 
 SOURCES += \ 

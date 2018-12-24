@@ -556,11 +556,6 @@ TEST(Rectification, testRectifiedModel)
     model1.setLocation(location);
 
 
-
-
-
-
-
     /* Mesh3d */
     Mesh3D mesh;
     mesh.switchColor(true);

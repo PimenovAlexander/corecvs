@@ -48,11 +48,28 @@ class ClassicRenderer
 public:
     ClassicRenderer();
 
+    enum {
+        ATTR_INV_Z = 0 ,
+        ATTR_NORMAL_X = 1,
+        ATTR_NORMAL_Y,
+        ATTR_NORMAL_Z,
+        ATTR_TEX_U = 4,
+        ATTR_TEX_V,
+        ATTR_TEX_ID,
+
+        ATTR_TEX_1,
+        ATTR_TEX_2,
+
+        ATTR_LAST
+
+
+    };
+
     bool drawFaces = true;
     bool drawVertexes = false;
     bool useMipmap = false;
 
-    bool trueTexture;
+    //bool trueTexture; // it is now always true;
     Matrix44 modelviewMatrix;
 
 // protected:    

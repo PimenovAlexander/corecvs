@@ -164,20 +164,19 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
                 p = positions[i].project();
 
                 double invz = 1.0 / positions[i].z();
-                p.attributes.push_back(invz);
 
-                p.attributes.push_back(normals[i].x());
-                p.attributes.push_back(normals[i].y());
-                p.attributes.push_back(normals[i].z());
+                p.attributes.resize(ATTR_LAST);
+                p.attributes[ATTR_INV_Z] = invz;
 
-                if (!trueTexture) {
-                    p.attributes.push_back(texture[i].x());
-                    p.attributes.push_back(texture[i].y());
-                } else {
-                    p.attributes.push_back(texture[i].x() * invz);
-                    p.attributes.push_back(texture[i].y() * invz);
-                }
-                p.attributes.push_back(texId);
+                p.attributes[ATTR_NORMAL_X] = normals[i].x();
+                p.attributes[ATTR_NORMAL_Y] = normals[i].y();
+                p.attributes[ATTR_NORMAL_Z] = normals[i].z();
+
+
+                p.attributes[ATTR_TEX_U] = texture[i].x() * invz;
+                p.attributes[ATTR_TEX_U] = texture[i].y() * invz;
+
+                p.attributes[ATTR_TEX_ID] = texId;
 
     #if 0
                 cout << "P" << i << " :";
@@ -206,6 +205,7 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
             while (it.hasValue())
             {
                 AttributedHLineSpan span = it.getAttrSpan();
+                // We are adding to current line iterator data from the texture attribute for the previous line
                 span.catt.push_back(it.part.a1[4]);
                 span.catt.push_back(it.part.a1[5]);
                 span.datt.push_back((it.part.a2[4] - it.part.a1[4]) / (span.x2 - span.x1) );
@@ -251,7 +251,9 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
 
 void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
 {
-    double lastx = 0.0, lasty = 0.0; // убрать после отладки
+    double lastx = 0.0;
+    double lasty = 0.0; // remove after debug
+
     if (span.hasValue() && span.x() < 0)
         span.stepTo(0);
 
@@ -260,22 +262,21 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
         if (cBuffer->isValidCoord(span.pos()) )
         {
             const FragmentAttributes &att = span.att();
-            double z = 1.0 / att[0];
+            double z = 1.0 / att[ATTR_INV_Z];
 
-            Vector3dd normal = Vector3dd(att[1], att[2], att[3]).normalised();
-            Vector2dd tex = Vector2dd(att[4], att[5]);
-            Vector2dd dhatt = Vector2dd(span.datt[4], span.datt[5]);
+            Vector3dd normal = Vector3dd(att[ATTR_NORMAL_X], att[ATTR_NORMAL_Y], att[ATTR_NORMAL_Z]).normalised();
+            Vector2dd tex = Vector2dd(att[ATTR_TEX_U], att[ATTR_TEX_V]);
+
+            Vector2dd dhatt = Vector2dd(span.datt[ATTR_TEX_U], span.datt[ATTR_TEX_V]); // Delta stores the increment in
+
             Vector2dd dvatt = Vector2dd(span.catt[4], span.catt[5]);
  
-            int texId = att[6];
+            int texId = att[ATTR_TEX_ID];
 
-            if (trueTexture) {
-                tex *= z;
-                dhatt*= z;
-                dvatt *= z;
-            }
-
-            
+            /* Texture should be mapped linear, but not in the image space, but in 3D space. This is a reason for this projective correction */
+            tex *= z;
+            dhatt *= z;
+            dvatt *= z;
 
             tex.y() = 1 - tex.y();
 
