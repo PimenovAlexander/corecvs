@@ -11,7 +11,8 @@ HEADERS += \
     $$PWD/gcodeLoader.h \
     $$PWD/pltLoader.h \
     $$PWD/xyzListLoader.h \
-    $$PWD/openCVDataLoader.h
+    $$PWD/openCVDataLoader.h \
+    $$PWD/tgaLoader.h
 
 
 SOURCES += \
@@ -26,5 +27,6 @@ SOURCES += \
     $$PWD/gcodeLoader.cpp \
     $$PWD/pltLoader.cpp \
     $$PWD/xyzListLoader.cpp \
-    $$PWD/openCVDataLoader.cpp
+    $$PWD/openCVDataLoader.cpp \
+    $$PWD/tgaLoader.cpp
 

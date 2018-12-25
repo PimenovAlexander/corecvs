@@ -10,6 +10,7 @@
 #include "core/fileformats/ppmLoader.h"
 #include "core/fileformats/rawLoader.h"
 #include "core/fileformats/bmpLoader.h"
+#include "core/fileformats/tgaLoader.h"
 
 //#if __cplusplus > 199711L
 #if defined(WIN32) && (_MSC_VER < 1900) // we need a threadsafety singleton initialization described in paragraph 6.7.4 of the C++11 standard, msvc2013 doesn't support it fully... Don't care about gcc-versions
@@ -53,6 +54,7 @@ BufferFactory::BufferFactory()
     registerLoader(new PPMLoaderRGB24());
     registerLoader(new BMPLoaderRGB24());
     registerLoader(new RAWLoaderRGB24());
+    registerLoader(new TGALoaderRGB24());
 
     registerSaver(new BMPSaverRGB24());
 }

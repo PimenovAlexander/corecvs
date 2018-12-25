@@ -194,7 +194,7 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
                 p.attributes[ATTR_NORMAL_Z] = normals[i].z();
 
                 p.attributes[ATTR_TEX_U] = texture[i].x() * invz;
-                p.attributes[ATTR_TEX_U] = texture[i].y() * invz;
+                p.attributes[ATTR_TEX_V] = texture[i].y() * invz;
 
                 p.attributes[ATTR_TEX_ID] = texId;
 
@@ -259,7 +259,7 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
              span.catt[ATTR_NORMAL_Z] = 0.0;
 
              span.catt[ATTR_TEX_U] = 0.0;
-             span.catt[ATTR_TEX_U] = 0.0;
+             span.catt[ATTR_TEX_V] = 0.0;
 
              span.catt[ATTR_TEX_ID] = 0.0;
 
