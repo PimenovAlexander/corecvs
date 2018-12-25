@@ -31,9 +31,9 @@
         throttle_value_from_JS=1500;
         counter=0;
         ui->setupUi(this);
-        ui->comboBox->addItem("Usual mode");
+        /*ui->comboBox->addItem("Usual mode");
         ui->comboBox->addItem("Inertia mode");
-        ui->comboBox->addItem("Casual mode");
+        ui->comboBox->addItem("Casual mode");*/
     }
 
     PhysicsMainWidget::~PhysicsMainWidget()

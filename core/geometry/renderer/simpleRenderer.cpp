@@ -111,11 +111,27 @@ SimpleRenderer::~SimpleRenderer()
 
 
 
-ClassicRenderer::ClassicRenderer() :
-   trueTexture(true),
+ClassicRenderer::ClassicRenderer() :  
    zBuffer(NULL)
 {
 
+}
+
+void ClassicRenderer::addTexture(RGB24Buffer *buffer, bool produceMidmap)
+{
+    textures.push_back(buffer);
+    if (produceMidmap)
+    {
+        useMipmap = true;
+        int numLevels = trunc(log(buffer->h) / log(2)) + 1;
+        AbstractMipmapPyramid<RGB24Buffer> *pyramide = new  AbstractMipmapPyramid<RGB24Buffer>(buffer, numLevels, true);
+        for (int i = 0; i < (int)pyramide->levels.size(); i++){
+            midmap.push_back(pyramide->levels[i]);
+            BMPLoader().save(std::string("chess") + std::to_string(i) + ".bmp", pyramide->levels[i]);
+        }
+    } else {
+        midmap.push_back(NULL);
+    }
 }
 
 void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
@@ -129,10 +145,15 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
     zBuffer = new AbstractBuffer<double>(buffer->getSize(), std::numeric_limits<double>::max());
     cBuffer = buffer;
 
+    if (useMipmap) {
+        delete_safe(scaleDebug);
+        scaleDebug = new AbstractBuffer<double>(buffer->h, buffer->w, 0.0);
+    }
+
     Matrix44 normalTransform = modelviewMatrix.inverted().transposed();
 
     if (drawFaces)
-    { 
+    {
         for(size_t f = 0; f < mesh->faces.size(); f++)
         {
             // printf("\n\n\n ------!! %i !!------ \n\n\n", f);
@@ -172,7 +193,6 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
                 p.attributes[ATTR_NORMAL_Y] = normals[i].y();
                 p.attributes[ATTR_NORMAL_Z] = normals[i].z();
 
-
                 p.attributes[ATTR_TEX_U] = texture[i].x() * invz;
                 p.attributes[ATTR_TEX_U] = texture[i].y() * invz;
 
@@ -205,11 +225,13 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
             while (it.hasValue())
             {
                 AttributedHLineSpan span = it.getAttrSpan();
-                // We are adding to current line iterator data from the texture attribute for the previous line
-                span.catt.push_back(it.part.a1[4]);
-                span.catt.push_back(it.part.a1[5]);
-                span.datt.push_back((it.part.a2[4] - it.part.a1[4]) / (span.x2 - span.x1) );
-                span.datt.push_back((it.part.a2[5] - it.part.a1[5]) / (span.x2 - span.x1) );
+                // We are adding to current line iterator data from the texture attribute for the next line
+                // We are interested in the increment of u and v over line
+                span.catt[ATTR_TEX_DU_DY] = it.part.da1[ATTR_TEX_U];
+                span.catt[ATTR_TEX_DV_DY] = it.part.da1[ATTR_TEX_V];
+
+                span.datt[ATTR_TEX_DU_DY] = (it.part.da2[ATTR_TEX_U] - it.part.da1[ATTR_TEX_U]) / (span.x2 - span.x1);
+                span.datt[ATTR_TEX_DV_DY] = (it.part.da2[ATTR_TEX_V] - it.part.da1[ATTR_TEX_V]) / (span.x2 - span.x1);
                 
                 fragmentShader(span);
                 it.step();
@@ -227,21 +249,19 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
              span.x2 = fround(position.x());
              span.cy = fround(position.y());
 
+             span.catt.resize(ATTR_LAST);
+
              double invz = 1.0 / position.z();
-             span.catt.push_back(invz);
+             span.catt[ATTR_INV_Z] = invz;
 
-             span.catt.push_back(0.0);
-             span.catt.push_back(0.0);
-             span.catt.push_back(0.0);
+             span.catt[ATTR_NORMAL_X] = 0.0;
+             span.catt[ATTR_NORMAL_Y] = 0.0;
+             span.catt[ATTR_NORMAL_Z] = 0.0;
 
-             if (!trueTexture) {
-                 span.catt.push_back(0.0);
-                 span.catt.push_back(0.0);
-             } else {
-                 span.catt.push_back(0.0);
-                 span.catt.push_back(0.0);
-             }
-             span.catt.push_back(0);
+             span.catt[ATTR_TEX_U] = 0.0;
+             span.catt[ATTR_TEX_U] = 0.0;
+
+             span.catt[ATTR_TEX_ID] = 0.0;
 
              fragmentShader(span);
 
@@ -267,9 +287,8 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
             Vector3dd normal = Vector3dd(att[ATTR_NORMAL_X], att[ATTR_NORMAL_Y], att[ATTR_NORMAL_Z]).normalised();
             Vector2dd tex = Vector2dd(att[ATTR_TEX_U], att[ATTR_TEX_V]);
 
-            Vector2dd dhatt = Vector2dd(span.datt[ATTR_TEX_U], span.datt[ATTR_TEX_V]); // Delta stores the increment in
-
-            Vector2dd dvatt = Vector2dd(span.catt[4], span.catt[5]);
+            Vector2dd dhatt = Vector2dd(span.datt[ATTR_TEX_U], span.datt[ATTR_TEX_V]); // Delta stores the increment in horisontal direction
+            Vector2dd dvatt = Vector2dd(att[ATTR_TEX_DU_DY], att[ATTR_TEX_DV_DY]);
  
             int texId = att[ATTR_TEX_ID];
 
@@ -287,20 +306,23 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
 
                 RGBColor c = color;
                 
-                /*
-                printf("\n||tex x %f, tex y %f ||\n",tex.x(), tex.y());
-                printf("\n|| x %f, %f ||\n",dhatt[0], dvatt[0]);
-                printf("\n|| y %f, %f ||\n",dhatt[1], dvatt[1]);
-                printf("\n|| x %f, y %f ||\n",tex.x() -lastx, tex.y() - lasty);
-                */
+
+                printf("||tex %lf, %lf ||\n",tex.x(), tex.y());
+                printf("|| dx %lf, %lf ||\n",dhatt[0], dhatt[1]);
+                printf("|| dy %lf, %lf ||\n",dvatt[0], dvatt[1]);
+                //printf("\n|| x %f, y %f ||\n",tex.x() -lastx, tex.y() - lasty);
+
                 
                 lastx = tex.x();  // <---
                 lasty = tex.y(); // <---
                 
                 if (texId < (int)textures.size() && textures[texId] != NULL)
-                {
-                    RGB24Buffer *texture = textures[texId];
-                    if(useMipmap){
+                {                    
+                    if(useMipmap)
+                    {
+                        double scale = sqrt(dhatt.sumAllElementsSq() + dvatt.sumAllElementsSq());
+                        scaleDebug->element(span.pos()) = scale;
+
                     
                         texId = (int)midmap.size() - 1;
                         // printf("\n|| 000 texid %i ||\n",texId);
@@ -313,7 +335,7 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
                                 
                             }
                         }
-                        texture = midmap[texId];
+                        RGB24Buffer *texture = midmap[texId];
                         double factor = log(abs(1.0 / dhatt[0]))/log(2);
                         factor = factor - trunc(factor);
                         // printf("\n|| factor %f ||\n",factor);
@@ -354,6 +376,7 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
                         delete texturemip;                   
 
                     } else {
+                        RGB24Buffer *texture = textures[texId];
 
                         tex = tex * Vector2dd(texture->w, texture->h);
                         if (texture->isValidCoordBl(tex)) {

@@ -299,11 +299,6 @@ RGB24Buffer* RotateHelper::rotateWithLancozVFPI(double angle, const RGB24Buffer 
 
                     int32_t lanc_val = (luti[sx] * luti[sy]);
                     weight += lanc_val;
-
-                   /* if (i == 1005 && j == 982) {
-                        cout << lanc_val << " " << sx << " " << sy << " " << luti[sx] << " " << lut[sx] << " " << luti[sy] << " " << lut[sy] << " " << CORE_COUNT_OF(luti) << endl;
-                    } */
-
                     if (rgb24buffer->isValidCoord(di, dj)) {
                         colorSum += rgb24buffer->element(di, dj).toInt32() * lanc_val;
 

@@ -166,6 +166,10 @@ TEST(MidmapPyramid, testTexure)
     renderer.render(&mesh, bufferpic);
 
     BMPLoader().save("trianglesdraw2.bmp", bufferpic);
+    if (renderer.scaleDebug != NULL) {
+        bufferpic->drawDoubleBuffer(renderer.scaleDebug, RGB24Buffer::STYLE_RAINBOW);
+        BMPLoader().save("meshdraw-scale.bmp", bufferpic);
+    }
 
     cout << buffer.elementBl(15.5, 15.5);
     CameraModel model;

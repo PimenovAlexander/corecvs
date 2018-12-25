@@ -57,8 +57,8 @@ public:
         ATTR_TEX_V,
         ATTR_TEX_ID,
 
-        ATTR_TEX_1,
-        ATTR_TEX_2,
+        ATTR_TEX_DU_DY,
+        ATTR_TEX_DV_DY,
 
         ATTR_LAST
 
@@ -72,32 +72,12 @@ public:
     //bool trueTexture; // it is now always true;
     Matrix44 modelviewMatrix;
 
-// protected:    
+protected:
     vector<RGB24Buffer *> textures;
     vector<RGB24Buffer *> midmap;
-// public:
-    void addTexture (RGB24Buffer *buffer, bool produceMidmap = false)
-    {
-        textures.push_back(buffer);
-        if (produceMidmap)
-        {
-            useMipmap = true;
-            int numLevels = trunc(log(buffer->h) / log(2)) + 1;
-            AbstractMipmapPyramid<RGB24Buffer> *pyramide = new  AbstractMipmapPyramid<RGB24Buffer>(buffer, numLevels, true);
-            for (int i = 0; i < (int)pyramide->levels.size(); i++){
-                midmap.push_back(pyramide->levels[i]);
-            }
-            BMPLoader().save("chess7.bmp", pyramide->levels[7]);
-            BMPLoader().save("chess6.bmp", pyramide->levels[6]);
-            BMPLoader().save("chess5.bmp", pyramide->levels[5]);
-            BMPLoader().save("chess4.bmp", pyramide->levels[4]);
-            BMPLoader().save("chess3.bmp", pyramide->levels[3]);
-            BMPLoader().save("chess2.bmp", pyramide->levels[2]);
-            BMPLoader().save("chess1.bmp", pyramide->levels[1]);
-        } else {
-            midmap.push_back(NULL);
-        }
-    }
+
+public:
+    void addTexture (RGB24Buffer *buffer, bool produceMidmap = false);
 
     AbstractBuffer<double> *zBuffer;
 
@@ -105,6 +85,9 @@ public:
 
     /* These are shader uniform vars*/
     RGB24Buffer *cBuffer;
+
+    /*Debug buffers*/
+    AbstractBuffer<double> *scaleDebug = NULL;
 
     /* */
     RGBColor color;

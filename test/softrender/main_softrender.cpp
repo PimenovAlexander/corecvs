@@ -198,7 +198,7 @@ int main(int argc, char **argv)
 
     for(size_t t = 0; t < mesh->materials.size(); t++)
     {
-        renderer.textures.push_back(mesh->materials[t].tex[OBJMaterial::TEX_DIFFUSE]);
+        renderer.addTexture(mesh->materials[t].tex[OBJMaterial::TEX_DIFFUSE]);
     }
 
 
@@ -222,10 +222,15 @@ int main(int argc, char **argv)
 
     renderer.render(mesh, buffer);
 
+
     BMPLoader().save("meshdraw.bmp", buffer);
     buffer->drawDoubleBuffer(renderer.zBuffer, RGB24Buffer::STYLE_ZBUFFER);
     BMPLoader().save("meshdraw-z.bmp", buffer);
+
+
     delete_safe(buffer);
+
+
 	}
 
 
