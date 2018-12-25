@@ -3,6 +3,8 @@ bin
 siblings/gtest
 
 *Makefile*
+*.bmp
+*.ply
 
 .qmake.stash
 cvs-open.pro.user
