@@ -9,7 +9,7 @@
 #include <math.h>
 #include <vector>
 
-#include <utils/statistics/graphData.h>
+#include "core/stats/graphData.h"
 
 #include "core/utils/global.h"
 #include "core/buffers/rgb24/hardcodeFont.h"
