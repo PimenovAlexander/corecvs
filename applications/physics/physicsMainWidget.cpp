@@ -823,6 +823,16 @@
                 if (pitch_value>2100){pitch_value=2099;}
                 if (pitch_value<900){pitch_value=901;}
             }
+            if (axis==2)
+            {
+                /*pitch_value = 1500 - axes[axis].y/50/pit_const;
+                roll_value = 1500 + axes[axis].x/50/roll_const;
+                if (roll_value>2100){roll_value=2099;}
+                if (roll_value<900){roll_value=901;}
+                if (pitch_value>2100){pitch_value=2099;}
+                if (pitch_value<900){pitch_value=901;}
+                */
+            }
         }
     }
 
