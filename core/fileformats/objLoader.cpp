@@ -17,6 +17,9 @@ static const char *com_vertex          = "v";
 static const char *com_vertex_texture  = "vt";
 static const char *com_vertex_normal   = "vn";
 static const char *com_face            = "f";
+static const char *com_smoothing       = "s";
+static const char *com_grouping        = "g";
+
 
 static const char *com_use_material    = "usemtl";
 static const char *com_material_lib    = "mtllib";
@@ -36,7 +39,7 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
     int texName = 0;
 
     string line;
-    while (!input.eof())
+    while (!input.eof() && !input.bad())
     {
         HelperUtils::getlineSafe (input, line);
 
@@ -49,7 +52,7 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
         string command;
         work >> command;
 
-        // LOCAL_PRINT(("Input line: %s\n", line.c_str()));
+        //LOCAL_PRINT(("Input line: <%s>\n", line.c_str()));
 
         if (command == com_vertex)
         {
@@ -129,7 +132,14 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
         if (command == com_material_lib)
         {
             cout << "Material library command: This is not fully supported" << endl;
-
+        }
+        if (command == com_smoothing)
+        {
+            cout << "smoothing command: This is not fully supported" << endl;
+        }
+        if (command == com_grouping)
+        {
+            cout << "grouping command: This is not fully supported" << endl;
         }
     }
 

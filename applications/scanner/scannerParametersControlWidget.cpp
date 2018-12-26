@@ -8,6 +8,7 @@
 
 #include "scannerParametersControlWidget.h"
 #include "ui_scannerParametersControlWidget.h"
+#include <memory>
 #include "qSettingsGetter.h"
 #include "qSettingsSetter.h"
 
@@ -40,35 +41,21 @@ ScannerParametersControlWidget::~ScannerParametersControlWidget()
 
 void ScannerParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    ScannerParameters *params = createParameters();
+    std::unique_ptr<ScannerParameters> params(createParameters());
     loader.loadParameters(*params, rootPath);
     setParameters(*params);
-    delete params;
 }
 
 void ScannerParametersControlWidget::saveParamWidget(WidgetSaver  &saver)
 {
-    ScannerParameters *params = createParameters();
-    saver.saveParameters(*params, rootPath);
-    delete params;
+    saver.saveParameters(*std::unique_ptr<ScannerParameters>(createParameters()), rootPath);
 }
 
- /* Composite fields are NOT supported so far */
 void ScannerParametersControlWidget::getParameters(ScannerParameters& params) const
 {
-
-    params.setChannel          (static_cast<ImageChannel::ImageChannel>(mUi->channelComboBox->currentIndex()));
-    params.setAlgo             (static_cast<RedRemovalType::RedRemovalType>(mUi->algoComboBox->currentIndex()));
-    params.setRedThreshold     (mUi->redThresholdSpinBox->value());
-    params.setHeight           (mUi->heightSpinBox->value());
-    params.setGraphLine        (mUi->graphLineSpinBox->value());
-    params.setUseSSE           (mUi->useSSECheckBox->isChecked());
-    params.setCalculateConvolution(mUi->calculateConvolutionCheckBox->isChecked());
-    params.setCalibrationMode  (mUi->calibrationModeCheckBox->isChecked());
-    params.setCornerScore      (mUi->cornerScoreSpinBox->value());
-    params.setHarrisApperture  (mUi->harrisAppertureSpinBox->value());
-
+    params = *std::unique_ptr<ScannerParameters>(createParameters());
 }
+
 
 ScannerParameters *ScannerParametersControlWidget::createParameters() const
 {
@@ -78,7 +65,7 @@ ScannerParameters *ScannerParametersControlWidget::createParameters() const
      **/
 
 
-    ScannerParameters *result = new ScannerParameters(
+    return new ScannerParameters(
           static_cast<ImageChannel::ImageChannel>(mUi->channelComboBox->currentIndex())
         , static_cast<RedRemovalType::RedRemovalType>(mUi->algoComboBox->currentIndex())
         , mUi->redThresholdSpinBox->value()
@@ -90,7 +77,6 @@ ScannerParameters *ScannerParametersControlWidget::createParameters() const
         , mUi->cornerScoreSpinBox->value()
         , mUi->harrisAppertureSpinBox->value()
     );
-    return result;
 }
 
 void ScannerParametersControlWidget::setParameters(const ScannerParameters &input)

@@ -46,12 +46,15 @@ AbstractFileCapture::AbstractFileCapture(const std::string &params)
     mPathFmt = matches[filenamePatternGroup];
 
     bool err = false;
-    int fpsnum = std::stoi(matches[fpsNumGroup].str());
-    if (!err || fpsnum < 0)
-        fpsnum = -1;
+    size_t parsed = 0;
 
-    int fpsdenum = std::stoi(matches[fpsDenumGroup].str());
-    if (!err || fpsdenum <= 0)
+    int fpsnum = std::stoi(matches[fpsNumGroup].str(), &parsed);
+    if (!err || fpsnum < 0 || parsed == 0)
+        fpsnum = -1;
+    parsed = 0;
+
+    int fpsdenum = std::stoi(matches[fpsDenumGroup].str(), &parsed);
+    if (!err || fpsdenum <= 0 || parsed == 0)
         fpsdenum = -1;
 
     mDelay = std::stoi(matches[delayGroup].str());

@@ -136,6 +136,10 @@ void ClassicRenderer::addTexture(RGB24Buffer *buffer, bool produceMidmap)
 
 void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
 {
+    SYNC_PRINT(( "ClassicRenderer::render(): drawFaces    - %s\n", drawFaces    ? "yes" : "no" ));
+    SYNC_PRINT(( "ClassicRenderer::render(): drawVertexes - %s\n", drawVertexes ? "yes" : "no" ));
+    SYNC_PRINT(( "ClassicRenderer::render(): useMipmap    - %s\n", useMipmap    ? "yes" : "no" ));
+
     if (mesh == NULL || buffer == NULL)
     {
         return;
@@ -156,6 +160,10 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
     {
         for(size_t f = 0; f < mesh->faces.size(); f++)
         {
+            if (f % 100 == 0) {
+                SYNC_PRINT(("Processed %d (of %d)\n", f, mesh->faces.size()));
+            }
+
             // printf("\n\n\n ------!! %i !!------ \n\n\n", f);
             Vector3d32 face = mesh->faces[f];
             Vector3d32 normalId = mesh->normalId[f];
@@ -225,6 +233,9 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
             while (it.hasValue())
             {
                 AttributedHLineSpan span = it.getAttrSpan();
+                if (span.y() >= cBuffer->h)
+                    break;
+
                 // We are adding to current line iterator data from the texture attribute for the next line
                 // We are interested in the increment of u and v over line
                 span.catt[ATTR_TEX_DU_DY] = it.part.da1[ATTR_TEX_U];
@@ -277,7 +288,7 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
     if (span.hasValue() && span.x() < 0)
         span.stepTo(0);
 
-    while (span.hasValue())
+    while (span.hasValue() && span.x() < cBuffer->w)
     {
         if (cBuffer->isValidCoord(span.pos()) )
         {
@@ -307,12 +318,6 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
                 RGBColor c = color;
                 
 
-                printf("||tex %lf, %lf ||\n",tex.x(), tex.y());
-                printf("|| dx %lf, %lf ||\n",dhatt[0], dhatt[1]);
-                printf("|| dy %lf, %lf ||\n",dvatt[0], dvatt[1]);
-                //printf("\n|| x %f, y %f ||\n",tex.x() -lastx, tex.y() - lasty);
-
-                
                 lastx = tex.x();  // <---
                 lasty = tex.y(); // <---
                 
@@ -320,6 +325,11 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
                 {                    
                     if(useMipmap)
                     {
+                        printf("||tex %lf, %lf ||\n",tex.x(), tex.y());
+                        printf("|| dx %lf, %lf ||\n",dhatt[0], dhatt[1]);
+                        printf("|| dy %lf, %lf ||\n",dvatt[0], dvatt[1]);
+                        //printf("\n|| x %f, y %f ||\n",tex.x() -lastx, tex.y() - lasty);
+
                         double scale = sqrt(dhatt.sumAllElementsSq() + dvatt.sumAllElementsSq());
                         scaleDebug->element(span.pos()) = scale;
 
@@ -365,8 +375,7 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
                             
                         } else {
                             tex = tex * Vector2dd(texture->w, texture->h);
-                            if (texture->isValidCoordBl(tex)) {
-                                // printf("\ncase2\n");
+                            if (texture->isValidCoordBl(tex)) {                                
                                 c = texture->elementBl(tex);
                             } else {
                                 SYNC_PRINT(("Tex miss %lf %lf\n", tex.x(), tex.y()));
@@ -383,7 +392,7 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
                             // printf("\ncase3\n");
                             c = texture->elementBl(tex);
                         } else {
-                            SYNC_PRINT(("Tex miss %lf %lf\n", tex.x(), tex.y()));
+                            // SYNC_PRINT(("Tex miss %lf %lf\n", tex.x(), tex.y()));
                         }
 
                     }

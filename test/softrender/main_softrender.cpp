@@ -170,36 +170,19 @@ int main(int argc, char **argv)
 
 
     /** Load actual data **/
+    SYNC_PRINT(("Starting actual data loading\n"));
     std::ifstream file;
     file.open(objName, std::ios::in);
     objLoader.loadOBJ(file, *mesh);
     file.close();
 
-    //mesh->transform(Matrix44::Shift(0, 0, 100) /** Matrix44::Scale(100)*/);
-
-   // RGB24Buffer *texture; //= BufferFactory::getInstance()->loadRGB24Bitmap(textureName);
-
-/*
-    int square = 64;
-    RGB24Buffer *texture = new RGB24Buffer(512, 1024);
-    for (int i = 0; i < texture->h; i++)
-    {
-        for (int j = 0; j < texture->w; j++)
-        {
-            bool color = ((i / square) % 2) ^ ((j / square) % 2);
-            texture->element(i, j)  = (color ?  RGBColor::White() : RGBColor::Black());
-        }
-    }*/
-    /*if (!texture) {
-        SYNC_PRINT(("Could not load texture"));
-    } else {
-        SYNC_PRINT(("Texture: [%d x %d]\n", texture->w, texture->h));
-    }*/
 
     for(size_t t = 0; t < mesh->materials.size(); t++)
     {
         renderer.addTexture(mesh->materials[t].tex[OBJMaterial::TEX_DIFFUSE]);
     }
+
+    SYNC_PRINT(("Loaded and added textures\n"));
 
 
 	if (argc >= 4) {
@@ -211,6 +194,7 @@ int main(int argc, char **argv)
 		poses >> n >> tag;
 
 		poses >> pose.shift.x() >> pose.shift.y() >> pose.shift.z() >> pose.rotor.x() >> pose.rotor.y() >> pose.rotor.z() >> pose.rotor.t();
+    }
     
     printf("Will render <%s>\n", objName.c_str());
 
@@ -229,13 +213,6 @@ int main(int argc, char **argv)
 
 
     delete_safe(buffer);
-
-
-	}
-
-
-
-
 
     return 0;
 }

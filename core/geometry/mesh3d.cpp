@@ -516,7 +516,11 @@ void Mesh3D::addIcoSphere(const Vector3dd &center, double radius, int step)
      if (hasColor) {
          facesColor.erase(facesColor.begin() + primaryIndex, facesColor.begin() + faceIndex);
      }
+
+
+
 #endif
+
 }
 
 void Mesh3D::addCircle(const Circle3d &circle, int step)
@@ -690,6 +694,11 @@ void Mesh3D::clear()
 void Mesh3D::drawLine(double x1, double y1, double x2, double y2, int /*color*/)
 {
     addLine(Vector3dd(x1, y1, 0.0), Vector3dd(x2, y2, 0.0));
+}
+
+void Mesh3D::drawLine(const Vector2df &p1, const Vector2df &p2, int)
+{
+     addLine(Vector3dd(p1.x(), p1.y(), 0.0), Vector3dd(p2.x(), p2.y(), 0.0));
 }
 
 #if 0

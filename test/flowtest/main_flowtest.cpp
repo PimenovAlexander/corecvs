@@ -165,9 +165,9 @@ int main(int argc, char *argv[])
     BufferFactory::printCaps();
 
 #ifdef WITH_OPENCV
-    Processor6DFactoryHolder::getInstance()->addFactory(new OpenCVProcessor6DFactory());
+    Processor6DFactoryHolder::getInstance()->registerProcessor(new OpenCVProcessor6DFactory());
 #endif
-    Processor6DFactoryHolder::getInstance()->addFactory(new DummyProcessor6DFactory());
+    Processor6DFactoryHolder::getInstance()->registerProcessor(new DummyProcessor6DFactory());
     Processor6DFactoryHolder::printCaps();
 
     if (argc != 5)

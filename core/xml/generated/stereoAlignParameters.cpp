@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from stereoAlign.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<StereoAlignParameters>::reflection = Reflection();
 template<>
 int BaseReflection<StereoAlignParameters>::dummy = StereoAlignParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int StereoAlignParameters::staticInit()
+int StereoAlignParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <StereoAlignParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Stereo Align Parameters",
         "Stereo Align Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(StereoAlignParameters);
+     toFill->objectSize = sizeof(StereoAlignParameters);
      
 
     BoolField* field0 = new BoolField
@@ -52,7 +58,7 @@ int StereoAlignParameters::staticInit()
           "Produce Cameras"
         );
     field0->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     BoolField* field1 = new BoolField
         (
@@ -64,7 +70,7 @@ int StereoAlignParameters::staticInit()
           "Produce Observations"
         );
     field1->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     DoubleField* field2 = new DoubleField
         (
@@ -81,7 +87,7 @@ int StereoAlignParameters::staticInit()
         );
     field2->widgetHint=BaseField::SPIN_BOX;
     field2->precision=2;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     DoubleField* field3 = new DoubleField
         (
@@ -98,7 +104,7 @@ int StereoAlignParameters::staticInit()
         );
     field3->widgetHint=BaseField::SPIN_BOX;
     field3->precision=2;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     DoubleField* field4 = new DoubleField
         (
@@ -115,7 +121,7 @@ int StereoAlignParameters::staticInit()
         );
     field4->widgetHint=BaseField::SPIN_BOX;
     field4->precision=2;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     BoolField* field5 = new BoolField
         (
@@ -127,7 +133,7 @@ int StereoAlignParameters::staticInit()
           "autoZ"
         );
     field5->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     BoolField* field6 = new BoolField
         (
@@ -139,7 +145,7 @@ int StereoAlignParameters::staticInit()
           "autoShift"
         );
     field6->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     IntField* field7 = new IntField
         (
@@ -154,7 +160,7 @@ int StereoAlignParameters::staticInit()
          9999,
          1
         );
-    fields().push_back(field7);
+    toFill->fields.push_back(field7);
     /*  */ 
     IntField* field8 = new IntField
         (
@@ -169,10 +175,10 @@ int StereoAlignParameters::staticInit()
          99999,
          1
         );
-    fields().push_back(field8);
+    toFill->fields.push_back(field8);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Stereo Align Parameters")]= &reflection;
+    directory[std::string("Stereo Align Parameters")]= toFill;
    return 0;
 }
 int StereoAlignParameters::relinkCompositeFields()

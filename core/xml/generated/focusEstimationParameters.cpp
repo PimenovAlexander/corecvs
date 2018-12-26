@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from parameters.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<FocusEstimationParameters>::reflection = Reflection();
 template<>
 int BaseReflection<FocusEstimationParameters>::dummy = FocusEstimationParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int FocusEstimationParameters::staticInit()
+int FocusEstimationParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <FocusEstimationParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Focus Estimation Parameters",
         "Focus Estimation Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(FocusEstimationParameters);
+     toFill->objectSize = sizeof(FocusEstimationParameters);
      
 
     DoubleField* field0 = new DoubleField
@@ -57,7 +63,7 @@ int FocusEstimationParameters::staticInit()
         );
     field0->widgetHint=BaseField::SPIN_BOX;
     field0->precision=2;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     DoubleField* field1 = new DoubleField
         (
@@ -74,7 +80,7 @@ int FocusEstimationParameters::staticInit()
         );
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->precision=2;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     BoolField* field2 = new BoolField
         (
@@ -86,7 +92,7 @@ int FocusEstimationParameters::staticInit()
           "Produce Debug"
         );
     field2->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     BoolField* field3 = new BoolField
         (
@@ -98,7 +104,7 @@ int FocusEstimationParameters::staticInit()
           "Compute Noise"
         );
     field3->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     BoolField* field4 = new BoolField
         (
@@ -110,7 +116,7 @@ int FocusEstimationParameters::staticInit()
           "Compute Old Stats"
         );
     field4->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     IntField* field5 = new IntField
         (
@@ -121,10 +127,10 @@ int FocusEstimationParameters::staticInit()
           "edge Threshold",
           "edge Threshold"
         );
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Focus Estimation Parameters")]= &reflection;
+    directory[std::string("Focus Estimation Parameters")]= toFill;
    return 0;
 }
 int FocusEstimationParameters::relinkCompositeFields()

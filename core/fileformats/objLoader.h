@@ -28,6 +28,7 @@ public:
     OBJLoader();
     virtual ~OBJLoader();
     int loadOBJ(istream &input, Mesh3DDecorated &mesh);
+
     int loadMaterials(istream &input, vector<OBJMaterial> &materials, const std::string &path = "");
     int saveMaterials(const std::string &fileName, vector<OBJMaterial> &materials, const std::string &path = "");
 

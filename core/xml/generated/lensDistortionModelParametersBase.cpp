@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from distortion.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<LensDistortionModelParametersBase>::reflection = Reflection();
 template<>
 int BaseReflection<LensDistortionModelParametersBase>::dummy = LensDistortionModelParametersBase::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int LensDistortionModelParametersBase::staticInit()
+int LensDistortionModelParametersBase::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <LensDistortionModelParametersBase>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Lens Distortion Model Parameters Base",
         "Lens Distortion Model Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(LensDistortionModelParametersBase);
+     toFill->objectSize = sizeof(LensDistortionModelParametersBase);
      
 
     DoubleField* field0 = new DoubleField
@@ -53,7 +59,7 @@ int LensDistortionModelParametersBase::staticInit()
         );
     field0->widgetHint=BaseField::SPIN_BOX;
     field0->precision=2;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     DoubleField* field1 = new DoubleField
         (
@@ -66,7 +72,7 @@ int LensDistortionModelParametersBase::staticInit()
         );
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->precision=2;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     DoubleField* field2 = new DoubleField
         (
@@ -79,7 +85,7 @@ int LensDistortionModelParametersBase::staticInit()
         );
     field2->widgetHint=BaseField::SPIN_BOX;
     field2->precision=2;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     DoubleField* field3 = new DoubleField
         (
@@ -92,7 +98,7 @@ int LensDistortionModelParametersBase::staticInit()
         );
     field3->widgetHint=BaseField::SPIN_BOX;
     field3->precision=2;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     double mKoeff_dv[] = {0,0,0,0,0,0};
     DoubleVectorField* field4 = new DoubleVectorField
@@ -106,7 +112,7 @@ int LensDistortionModelParametersBase::staticInit()
           "Polynom to describe radial correction"
         );
     field4->precision=2;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     DoubleField* field5 = new DoubleField
         (
@@ -119,7 +125,7 @@ int LensDistortionModelParametersBase::staticInit()
         );
     field5->widgetHint=BaseField::SPIN_BOX;
     field5->precision=2;
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     DoubleField* field6 = new DoubleField
         (
@@ -132,7 +138,7 @@ int LensDistortionModelParametersBase::staticInit()
         );
     field6->widgetHint=BaseField::SPIN_BOX;
     field6->precision=2;
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     DoubleField* field7 = new DoubleField
         (
@@ -145,7 +151,7 @@ int LensDistortionModelParametersBase::staticInit()
         );
     field7->widgetHint=BaseField::SPIN_BOX;
     field7->precision=2;
-    fields().push_back(field7);
+    toFill->fields.push_back(field7);
     /*  */ 
     DoubleField* field8 = new DoubleField
         (
@@ -158,7 +164,7 @@ int LensDistortionModelParametersBase::staticInit()
         );
     field8->widgetHint=BaseField::SPIN_BOX;
     field8->precision=2;
-    fields().push_back(field8);
+    toFill->fields.push_back(field8);
     /*  */ 
     DoubleField* field9 = new DoubleField
         (
@@ -171,7 +177,7 @@ int LensDistortionModelParametersBase::staticInit()
         );
     field9->widgetHint=BaseField::SPIN_BOX;
     field9->precision=2;
-    fields().push_back(field9);
+    toFill->fields.push_back(field9);
     /*  */ 
     BoolField* field10 = new BoolField
         (
@@ -183,10 +189,10 @@ int LensDistortionModelParametersBase::staticInit()
           "This one is used to identify map direction, true if undistorted->distorted"
         );
     field10->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field10);
+    toFill->fields.push_back(field10);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Lens Distortion Model Parameters Base")]= &reflection;
+    directory[std::string("Lens Distortion Model Parameters Base")]= toFill;
    return 0;
 }
 int LensDistortionModelParametersBase::relinkCompositeFields()
