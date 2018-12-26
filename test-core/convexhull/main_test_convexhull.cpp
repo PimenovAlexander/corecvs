@@ -15,6 +15,7 @@
 #include "core/utils/global.h"
 #include "core/geometry/convexHull.h"
 #include "core/geometry/convexQuickHull.h"
+#include "core/geometry/projectiveConvexQuickHull.h"
 
 #include "core/geometry/mesh3d.h"
 
@@ -349,4 +350,20 @@ TEST(ConvexHull, testIntersection)
 
     debug.dumpPLY("intersect.ply");
     CORE_ASSERT_TRUE_P((points.size() == 9), ("Wrong number of points %d %d\n", (int)points.size(), 9));
+}
+
+TEST(ConvexHull, testBestConvexHull)
+{
+    vector<ProjectiveCoord4d> input;
+    input.push_back(ProjectiveCoord4d(Vector3dd::Zero(), 1));
+    input.push_back(ProjectiveCoord4d(Vector3dd::OrtX(), 1));
+    input.push_back(ProjectiveCoord4d(Vector3dd::OrtY(), 1));
+    input.push_back(ProjectiveCoord4d(Vector3dd::OrtZ(), 1));
+    input.push_back(ProjectiveCoord4d(Vector3dd::OrtZ() * 2, 1));
+
+    SYNC_PRINT(("Input points\n"));
+    for (size_t t = 0; t < input.size(); t++ )
+        cout << t << " " << input[t] << endl;
+    ProjectiveConvexQuickHull::HullFaces faces = ProjectiveConvexQuickHull::quickHull(input, 1e-9);
+    SYNC_PRINT(("Faces: %d\n", (int)faces.size()));
 }
