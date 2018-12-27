@@ -6,20 +6,48 @@ using namespace std;
 namespace corecvs {
 
 double pointLineDist(const ProjectiveCoord4d &lineP1, const ProjectiveCoord4d &lineP2, const ProjectiveCoord4d &point) {
+    if (lineP1 == point || lineP2 == point)
+        return 0;
     if (lineP1.w() == 0 || lineP2.w() == 0 || point.w() == 0)
         return std::numeric_limits<double>::max();
     ProjectiveCoord4d lineVect = lineP2 - lineP1;
+    lineVect = lineVect + ProjectiveCoord4d(0, 0, 0, 1);
     return (lineVect.toVector() ^ (point.toVector() - lineP1.toVector())).l2Metric() / lineVect.xyz().l2Metric();
 }
 
 double pointPlaneDist(const ProjectiveCoord4d &planeP1, const ProjectiveCoord4d &planeP2,
                       const ProjectiveCoord4d &planeP3, const ProjectiveCoord4d &point) {
+    if (planeP1 == point || planeP2 == point || planeP3 == point)
+        return 0;
     if (planeP1.w() == 0 || planeP2.w() == 0 || planeP3.w() == 0 || point.w() == 0)
         return std::numeric_limits<double>::max();
     auto baseV1 = planeP2.toVector() - planeP1.toVector();
     auto baseV2 = planeP3.toVector() - planeP1.toVector();
     auto prod = baseV1 & (baseV2 ^ (point.toVector() - planeP1.toVector()));
     return prod / ((baseV1 ^ baseV2).l2Metric());
+}
+
+double pointFaceDist(const Triangle4dd &face, const ProjectiveCoord4d &point) {
+    return pointPlaneDist(face.p1(), face.p2(), face.p3(), point);
+}
+
+bool faceIsVisible(const ProjectiveCoord4d &eyePoint, const ProjectiveConvexQuickHull::HullFace &face, double eps) {
+    if (eyePoint == face.plane.p1() || eyePoint == face.plane.p2() || eyePoint == face.plane.p3())
+        return false;
+    auto res = ((eyePoint.toVector() - face.plane.p1().toVector()) & face.plane.getNormal().normalised());
+    return res > eps;
+}
+
+void addPointsToFaces(ProjectiveConvexQuickHull::HullFace *faces, unsigned long faces_count,
+        const ProjectiveConvexQuickHull::Vertices &listVertices, double eps) {
+    for (const ProjectiveCoord4d &vertex : listVertices)
+        for (unsigned long i = 0; i < faces_count; i++) {
+            auto &face = faces[i];
+            if (faceIsVisible(vertex, face, eps)) {
+                faces[i].points.push_back(vertex);
+                break;
+            }
+        }
 }
 
 ProjectiveConvexQuickHull::Vertices createSimplex(const ProjectiveConvexQuickHull::Vertices& listVertices) {
@@ -34,6 +62,9 @@ ProjectiveConvexQuickHull::Vertices createSimplex(const ProjectiveConvexQuickHul
         if (vertex.Z() <= EP[4].Z()) EP[4] = vertex;
         if (vertex.Z() >= EP[5].Z()) EP[5] = vertex;
     }
+    cout << "EP:";
+    for (size_t t = 0; t < 6; t++ )
+        cout << t << " " << EP[t] << endl;
 
     double maxDist = 0;
     ProjectiveCoord4d triangleP1 = EP[0], triangleP2 = EP[0], triangleP3 = EP[0];
@@ -56,6 +87,7 @@ ProjectiveConvexQuickHull::Vertices createSimplex(const ProjectiveConvexQuickHul
             triangleP3 = point;
         }
     }
+    cout << "3 triangles: \n" << triangleP1 << "\n" << triangleP2 << "\n" << triangleP3 << "\n";
 
     maxDist = 0;
     ProjectiveCoord4d apex = EP[0];
@@ -66,21 +98,22 @@ ProjectiveConvexQuickHull::Vertices createSimplex(const ProjectiveConvexQuickHul
             apex = point;
         }
     }
+    cout << "apex\n" << apex << "\n";
     ProjectiveConvexQuickHull::Vertices Res;
-    if (pointPlaneDist(triangleP1, triangleP2, triangleP3, apex) > 0)
+    if (faceIsVisible(apex, ProjectiveConvexQuickHull::HullFace(triangleP1, triangleP2, triangleP3), 0))
         Res = { triangleP1, triangleP3, triangleP2, apex };
     else Res = { triangleP1, triangleP2, triangleP3, apex };
     return Res;
 }
-
-
-
 
 ProjectiveConvexQuickHull::HullFaces ProjectiveConvexQuickHull::quickHull(const ProjectiveConvexQuickHull::Vertices &listVertices, double epsilon) {
     if (listVertices.size() < 4)
         return ProjectiveConvexQuickHull::HullFaces();
 
     Vertices simplex = createSimplex(listVertices);
+    cout << "simplex:";
+    for (size_t t = 0; t < simplex.size(); t++ )
+        cout << t << " " << simplex[t] << endl;
     Vertices uniqueSimplex;
 
     for (ProjectiveCoord4d& elem : simplex)
@@ -101,6 +134,9 @@ ProjectiveConvexQuickHull::HullFaces ProjectiveConvexQuickHull::quickHull(const 
         printf("This is plane\n");
         return {};
     }
+    cout << "unique simplex:";
+    for (size_t t = 0; t < uniqueSimplex.size(); t++ )
+        cout << t << " " << uniqueSimplex[t] << endl;
 
     HullFaces faces = {
             HullFace(simplex[0], simplex[1], simplex[2]),
@@ -110,9 +146,15 @@ ProjectiveConvexQuickHull::HullFaces ProjectiveConvexQuickHull::quickHull(const 
 
     queue<HullFace> queue;
     addPointsToFaces(faces.data(), faces.size(), listVertices, epsilon);
-    for (auto face : faces)
+    for (auto face : faces) {
+        cout << "face: " << face.plane.p1() << " " << face.plane.p2() << " " << face.plane.p3() << "\n";
+        cout << "points: ";
+        for (int i = 0; i < face.points.size(); i++)
+            cout << face.points[i] << " ";
+        cout << "\n\n";
         if (!face.points.empty())
             queue.push(face);
+    }
 
     while (!queue.empty()) {
         HullFace face = queue.front();
@@ -166,28 +208,10 @@ ProjectiveConvexQuickHull::HullFaces ProjectiveConvexQuickHull::quickHull(const 
             }
         }
     }
+    cout << "Right result: \n";
+    for (auto &face: faces)
+        cout << face.plane.p1() << " " << face.plane.p2() << " " << face.plane.p3() << "\n";
     return faces;
-}
-
-double ProjectiveConvexQuickHull::pointFaceDist(const Triangle4dd &face, const ProjectiveCoord4d &point) {
-    return pointPlaneDist(face.p1(), face.p2(), face.p3(), point);
-}
-
-bool ProjectiveConvexQuickHull::faceIsVisible(const ProjectiveCoord4d &eyePoint, const ProjectiveConvexQuickHull::HullFace &face, double eps) {
-    if (eyePoint.w() == 0 || face.plane.p1().w() == 0 || face.plane.p2().w() == 0 || face.plane.p3().w() == 0)
-        return true;
-    return ((eyePoint.toVector() - face.plane.p1().toVector()) & face.plane.getNormal().normalised()) > eps;
-}
-
-void ProjectiveConvexQuickHull::addPointsToFaces(HullFace *faces, unsigned long faces_count, const Vertices &listVertices, double eps) {
-    for (const ProjectiveCoord4d &vertex : listVertices)
-        for (unsigned long i = 0; i < faces_count; i++) {
-            HullFace &face = faces[i];
-            if (faceIsVisible(vertex, face, eps)) {
-                faces[i].points.push_back(vertex);
-                break;
-            }
-        }
 }
 
 } // namespace corecvs

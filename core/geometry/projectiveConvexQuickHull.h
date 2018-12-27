@@ -13,6 +13,10 @@
 
 namespace corecvs {
 
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+
 template<typename ElementType>
 class ProjectiveCoord : public Vector4d<ElementType> {
     typedef Vector4d<ElementType> BaseClass;
@@ -23,7 +27,17 @@ public:
     ProjectiveCoord(): BaseClass() {}
     ProjectiveCoord(const Vector3d<ElementType> &V, const ElementType &x) : BaseClass(V,x) {}
 
+    bool operator==(const ProjectiveCoord &coord) const {
+        if (this->w() == 0 && coord.w() == 0)
+            return (sgn(this->x()) == sgn(coord.x())) && (sgn(this->y()) == sgn(coord.y())) && (sgn(this->z()) == sgn(coord.z()));
+        if (this->w() != 0 && coord.w() != 0)
+            return this->toVector() == coord.toVector();
+        return false;
+    }
+
     ElementType X() const {
+        if (this->x() == 0)
+            return 0;
         if (this->w() != 0)
             return this->x() / this->w();
         if (this->x() < 0)
@@ -32,6 +46,8 @@ public:
     }
 
     ElementType Y() const {
+        if (this->y() == 0)
+            return 0;
         if (this->w() != 0)
             return this->y() / this->w();
         if (this->y() < 0)
@@ -40,6 +56,8 @@ public:
     }
 
     ElementType Z() const {
+        if (this->z() == 0)
+            return 0;
         if (this->w() != 0)
             return this->z() / this->w();
         if (this->z() < 0)
@@ -48,8 +66,9 @@ public:
     }
 
     Vector3d<ElementType> toVector() const {
+        const auto inf = std::numeric_limits<ElementType>::max();
         if (this->w() == 0)
-            return Vector3d<ElementType>(0, 0, 0);
+            return Vector3d<ElementType>(sgn(this->x()) * inf, sgn(this->y()) * inf, sgn(this->z()) * inf);
         return Vector3d<ElementType>(this->x() / this->w(),
                 this->y() / this->w(), this->z() / this->w());
     }
@@ -120,10 +139,6 @@ public:
     };
 
     static HullFaces quickHull(const Vertices& listVertices, double epsilon = 1e-7);
-protected:
-    static double pointFaceDist(const Triangle4dd &face, const ProjectiveCoord4d &point);
-    static bool faceIsVisible(const ProjectiveCoord4d &eyePoint, const HullFace &face, double eps);
-    static void addPointsToFaces(HullFace* faces, unsigned long faces_count, const Vertices &listVertices, double eps);
 };
 
 } // namespace corecvs
