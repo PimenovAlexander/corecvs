@@ -105,6 +105,8 @@ private:
     void Start_arming(bool pressed);
     ClientSender VirtualSender;
 
+    int CountOfSticks=0;
+
     bool autopilotMode=false;
     stack<message> autopilotStack;
     //size_t get_button_count(int fd);

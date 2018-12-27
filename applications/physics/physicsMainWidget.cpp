@@ -28,7 +28,7 @@
         roll_value=1500;
         pitch_value=1500;
         throttle_value=1100;
-        CH5_value=1500;
+        CH5_value=900;
         CH6_value=1500;
         CH7_value=1500;
         CH8_value=1500;
@@ -493,13 +493,14 @@
         FlyCommandFromUs[15]=fb;
 
         SendOurValues(FlyCommandFromUs);
-        if (Arming)
+
+        /*if (Arming)
         {
             throttle_value=930;
             throttle_value_from_JS=1500;
             CH5_value=1917;
             Arming=false;
-         }
+         }*/
         if (startFly)
         {
             throttle_value=1100;
@@ -656,6 +657,7 @@
         }
         else
         {
+            CountOfSticks=get_axis_count(js);
             FrameValuesUpdate();
             cout<<"JS mode has started"<<endl;
             while (read_event(js, &eventtt) == 0)
@@ -678,42 +680,7 @@
                         default: break;
                     }
 
-                  /*   if (eventtt.number==seven && eventtt.value)                     //arming
-                    {
-                        printf("##################___ARMING___######################");
-                        throttle_value=930;
-                        throttle_value_from_JS=1500;
-                        fifth_CH=1500;
-                        Arming=true;
-                    }
 
-                    if (eventtt.number==seven && !eventtt.value)                     //arming , release button
-                    {
-                        printf("##################___ARMING___######################");
-                        throttle_value=1100;
-                        throttle_value_from_JS=1500;
-                     }
-                    if (eventtt.number==five  && eventtt.value )                     //turn of copter(if smth goes wery wery wrong)
-                    {
-                        fifth_CH=1500;
-                    }
-                    if (eventtt.number==six  && eventtt.value )                     //  all sticks to zero (if smth goes wrong)
-                    {
-                        throttle_value = 1100;
-                        roll_value = 1500;
-                        pitch_value = 1500;
-                        throttle_value_from_JS = 1500;
-                        yaw_value = 1500;
-                    }
-                    if (eventtt.number==four && eventtt.value )                     //Throttle to mid
-                    {
-                        throttle_value=throttle_for_hang;
-                        throttle_value_from_JS=1500;
-                    }
-                    if (eventtt.number==three && eventtt.value )                     //Throttle to mid
-                    {
-                         throttle_for_hang=throttle_value;
-                    }*/
                     break;
                 case JS_EVENT_AXIS:
                     switch (Current_mode)
@@ -729,28 +696,7 @@
                             break;
                         default: break;
                     }
-                    /*axis = get_axis_state(&eventtt, axes);
-                    if (axis < 3)
-                    {                                                //minimum axis is not 30000, but near
-                        if (axis==0)
-                        {
-                            yaw_value = 1500+axes[axis].x/50/yaw_const;
-                            throttle_value_from_JS = 1500-axes[axis].y/50/thr_const;
-                            if (yaw_value>2100){yaw_value=2099;}
-                            if (yaw_value<900){yaw_value=901;}
-                            if (throttle_value_from_JS>1800){throttle_value_from_JS=1799;}
-                            if (throttle_value_from_JS<900){throttle_value_from_JS=901;}
-                        }
-                        if (axis==1)
-                        {
-                            pitch_value = 1500 - axes[axis].y/50/pit_const;
-                            roll_value = 1500 + axes[axis].x/50/roll_const;
-                            if (roll_value>2100){roll_value=2099;}
-                            if (roll_value<900){roll_value=901;}
-                            if (pitch_value>2100){pitch_value=2099;}
-                            if (pitch_value<900){pitch_value=901;}
-                        }
-                    }*/
+
                     break;
                 default:
                     break;
@@ -759,8 +705,7 @@
             }
             });
             thr.detach();
-           // close(js);
-    }
+     }
 
     void PhysicsMainWidget::usial_buttons(js_event event)
     {
@@ -771,24 +716,49 @@
         unsigned char three=3;
         unsigned char two=2;
         unsigned char one=1;
-        if (event.number==seven)                     //arming
+        unsigned char zero=0;
+        switch (CountOfSticks)
         {
-           Start_arming(event.value);
-        }
-        if (event.number==five  && event.value )                     //turn of copter(if smth goes wery wery wrong)
-        {
-            disconnect_from_copter();
-        }
-        if (event.number==one && event.value)                     //arming
-        {
-            if (!recording)
+
+        case 6:                            //Dinput
+            if (event.number==seven)                     //arming    //rt
             {
-                StartRecord();
+               Start_arming(event.value);
             }
-            else
+            if (event.number==five  && event.value )      //rb         //turn of copter(if smth goes wery wery wrong)
             {
-                StopRecord();
+                disconnect_from_copter();
             }
+            if (event.number==one && event.value)         //a
+            {
+                if (!recording)
+                {
+                    StartRecord();
+                }
+                else
+                {
+                    StopRecord();
+                }
+            }
+            break;                          //Xinput
+        case 8:
+
+            if (event.number==five  && event.value )      //rb         //turn of copter(if smth goes wery wery wrong)
+            {
+                disconnect_from_copter();
+            }
+            if (event.number==zero && event.value)         //a
+            {
+                if (!recording)
+                {
+                    StartRecord();
+                }
+                else
+                {
+                    StopRecord();
+                }
+            }
+            break;
         }
     }
 
@@ -799,40 +769,74 @@
         const int pit_const=10;
         const int yaw_const=10;
 
-         size_t axis;
-         axis = get_axis_state(&event, axes);
-        if (axis < 5)
-        //printf("Axis %u at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);
-        {                                                //minimum axis is not 30000, but near
-            if (axis==0)
-            {
-                yaw_value = 1500+axes[axis].x/50/yaw_const;
-                throttle_value = 1500-axes[axis].y/50/thr_const;
-                if (yaw_value>2100){yaw_value=2099;}
-                if (yaw_value<900){yaw_value=901;}
-                if (throttle_value>2100){throttle_value=2099;}
-                if (throttle_value<900) {throttle_value=901;}
+        switch (CountOfSticks)
+        {
+        size_t axis;
 
+        case 6:                            //Dinput
+             axis = get_axis_state(&event, axes);
+            if (axis < 3)
+            //printf("Axis %u at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);
+            {                                                //minimum axis is not 30000, but near
+                if (axis==0)
+                {
+                    yaw_value = 1500+axes[axis].x/50/yaw_const;
+                    throttle_value = 1500-axes[axis].y/50/thr_const;
+                    if (yaw_value>2100){yaw_value=2099;}
+                    if (yaw_value<900){yaw_value=901;}
+                    if (throttle_value>2100){throttle_value=2099;}
+                    if (throttle_value<900) {throttle_value=901;}
+                }
+                if (axis==1)
+                {
+                    pitch_value = 1500 - axes[axis].y/50/pit_const;
+                    roll_value = 1500 + axes[axis].x/50/roll_const;
+                    if (roll_value>2100){roll_value=2099;}
+                    if (roll_value<900){roll_value=901;}
+                    if (pitch_value>2100){pitch_value=2099;}
+                    if (pitch_value<900){pitch_value=901;}
+                }
             }
-            if (axis==1)
-            {
-                pitch_value = 1500 - axes[axis].y/50/pit_const;
-                roll_value = 1500 + axes[axis].x/50/roll_const;
-                if (roll_value>2100){roll_value=2099;}
-                if (roll_value<900){roll_value=901;}
-                if (pitch_value>2100){pitch_value=2099;}
-                if (pitch_value<900){pitch_value=901;}
+            break;
+        case 8:                            //Xinput
+             axis = get_axis_state(&event, axes);
+            if (axis < 3)
+            //printf("Axis %u at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);
+            {                                                //minimum axis is not 30000, but near
+                if (axis==0)
+                {
+                    yaw_value = 1500+axes[axis].x/50/yaw_const;
+                    throttle_value = 1500-axes[axis].y/50/thr_const;
+                    if (yaw_value>2100){yaw_value=2099;}
+                    if (yaw_value<900){yaw_value=901;}
+                    if (throttle_value>2100){throttle_value=2099;}
+                    if (throttle_value<900) {throttle_value=901;}
+                }
+                if (axis==1)
+                {
+                    roll_value = 1500 + axes[axis].y/50/roll_const;
+                    if (roll_value>2100){roll_value=2099;}
+                    if (roll_value<900){roll_value=901;}
+                }
+                if (axis==2)
+                {
+
+                    pitch_value = 1500 - axes[axis].x/50/pit_const;
+                    if (pitch_value>2100){pitch_value=2099;}
+                    if (pitch_value<900){pitch_value=901;}
+                    if (axes[axis].y>-20000)
+                    {
+                        Start_arming(true);
+                    }
+                    else
+                    {
+                        Start_arming(false);
+                    }
+                }
             }
-            if (axis==2)
-            {
-                /*pitch_value = 1500 - axes[axis].y/50/pit_const;
-                roll_value = 1500 + axes[axis].x/50/roll_const;
-                if (roll_value>2100){roll_value=2099;}
-                if (roll_value<900){roll_value=901;}
-                if (pitch_value>2100){pitch_value=2099;}
-                if (pitch_value<900){pitch_value=901;}
-                */
-            }
+            break;
+
+
         }
     }
 
@@ -845,41 +849,91 @@
         unsigned char three=3;
         unsigned char two=2;
         unsigned char one=1;
-        if (event.number==seven )                     //arming
+        unsigned char zero=0;
+
+        switch (CountOfSticks)
         {
-           Start_arming(event.value);
-        }
-        if (event.number==five  && event.value )                     //turns of copter(if smth goes very very wrong)
-        {
-            disconnect_from_copter();
-        }
-        if (event.number==six  && event.value )                     //  all sticks to zero (if smth goes wrong)
-        {
-            throttle_value = 1100;
-            roll_value = 1500;
-            pitch_value = 1500;
-            throttle_value_from_JS = 1500;
-            yaw_value = 1500;
-        }
-        if (event.number==four && event.value )                     //Throttle to mid
-        {
-            throttle_value=mid_Throttle;
-            throttle_value_from_JS=1500;
-        }
-        if (event.number==three && event.value )                     //Throttle to mid
-        {
-             mid_Throttle=throttle_value;
-        }
-        if (event.number==one && event.value)                     //arming
-        {
-            if (!recording)
+
+        case 6:                            //Dinput
+
+            if (event.number==seven )                  //rt   //arming
             {
-                StartRecord();
+               Start_arming(event.value);
             }
-            else
+            if (event.number==five  && event.value )    //rb                 //turns of copter(if smth goes very very wrong)
             {
-                StopRecord();
+                disconnect_from_copter();
             }
+            if (event.number==six  && event.value )     //lt            //  all sticks to zero (if smth goes wrong)
+            {
+                throttle_value = 1100;
+                roll_value = 1500;
+                pitch_value = 1500;
+                throttle_value_from_JS = 1500;
+                yaw_value = 1500;
+            }
+            if (event.number==four && event.value )      //lb               //Throttle to mid
+            {
+                throttle_value=mid_Throttle;
+                throttle_value_from_JS=1500;
+            }
+            if (event.number==three && event.value )     //y                //Throttle to mid
+            {
+                 mid_Throttle=throttle_value;
+            }
+            if (event.number==one && event.value)        //a            //arming
+            {
+                if (!recording)
+                {
+                    StartRecord();
+                }
+                else
+                {
+                    StopRecord();
+                }
+            }
+            break;
+        case 8:                            //Xinput
+
+            /*if (event.number==seven )                  //rt   //arming
+            {
+               Start_arming(event.value);
+            }
+            */
+            if (event.number==five  && event.value )    //rb                 //turns of copter(if smth goes very very wrong)
+            {
+                disconnect_from_copter();
+            }
+            /*if (event.number==six  && event.value )     //lt            //  all sticks to zero (if smth goes wrong)
+            {
+                throttle_value = 1100;
+                roll_value = 1500;
+                pitch_value = 1500;
+                throttle_value_from_JS = 1500;
+                yaw_value = 1500;
+            }
+            */
+            if (event.number==four && event.value )      //lb               //Throttle to mid
+            {
+                throttle_value=mid_Throttle;
+                throttle_value_from_JS=1500;
+            }
+            if (event.number==three && event.value )     //y                //Throttle to mid
+            {
+                 mid_Throttle=throttle_value;
+            }
+            if (event.number==zero && event.value)        //a            //arming
+            {
+                if (!recording)
+                {
+                    StartRecord();
+                }
+                else
+                {
+                    StopRecord();
+                }
+            }
+            break;
         }
     }
 
@@ -891,30 +945,86 @@
         const int yaw_const=10;
 
         size_t axis;
-        axis = get_axis_state(&event, axes);
-        if (axis < 3)
-        /* printf("Axis %u at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);*/
-        {                                                //minimum axis is not 30000, but near
-            if (axis==0)
-            {
-                yaw_value = 1500+axes[axis].x/50/yaw_const;
-                throttle_value_from_JS = 1500-axes[axis].y/50/thr_const;
-                if (yaw_value>2100){yaw_value=2099;}
-                if (yaw_value<900){yaw_value=901;}
-                if (throttle_value>2100){throttle_value=2099;}
-                if (throttle_value<900) {throttle_value=901;}
 
+        switch (CountOfSticks)
+        {
+
+        case 6:                            //Dinput
+             axis = get_axis_state(&event, axes);
+
+            if (axis < 3)
+            /* printf("Axis %u at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);*/
+            {                                                //minimum axis is not 30000, but near
+                if (axis==0)
+                {
+                    yaw_value = 1500+axes[axis].x/50/yaw_const;
+                    throttle_value_from_JS = 1500-axes[axis].y/50/thr_const;
+                    if (yaw_value>2100){yaw_value=2099;}
+                    if (yaw_value<900){yaw_value=901;}
+                    if (throttle_value>2100){throttle_value=2099;}
+                    if (throttle_value<900) {throttle_value=901;}
+
+                }
+                if (axis==1)
+                {
+                    pitch_value = 1500 - axes[axis].y/50/pit_const;
+                    roll_value = 1500 + axes[axis].x/50/roll_const;
+                    if (roll_value>2100){roll_value=2099;}
+                    if (roll_value<900){roll_value=901;}
+                    if (pitch_value>2100){pitch_value=2099;}
+                    if (pitch_value<900){pitch_value=901;}
+                }
             }
-            if (axis==1)
-            {
-                pitch_value = 1500 - axes[axis].y/50/pit_const;
-                roll_value = 1500 + axes[axis].x/50/roll_const;
-                if (roll_value>2100){roll_value=2099;}
-                if (roll_value<900){roll_value=901;}
-                if (pitch_value>2100){pitch_value=2099;}
-                if (pitch_value<900){pitch_value=901;}
+            break;
+        case 8:                            //Xinput
+             axis = get_axis_state(&event, axes);
+
+            if (axis < 3)
+            {                                                //minimum value on axis is -32767 (tested with logitech f710)
+                if (axis==0)
+                {
+                    yaw_value = 1500+axes[axis].x/50/yaw_const;
+                    throttle_value_from_JS = 1500-axes[axis].y/50/thr_const;
+                    if (yaw_value>2100){yaw_value=2099;}
+                    if (yaw_value<900){yaw_value=901;}
+                    if (throttle_value>2100){throttle_value=2099;}
+                    if (throttle_value<900) {throttle_value=901;}
+
+                }
+                if (axis==1)
+                {
+                    roll_value = 1500 + axes[axis].y/50/roll_const;
+                    if (roll_value>2100){roll_value=2099;}
+                    if (roll_value<900){roll_value=901;}
+                    if (axes[axis].x>-29000)
+                    {
+                        throttle_value = 1100;
+                        roll_value = 1500;
+                        pitch_value = 1500;
+                        throttle_value_from_JS = 1500;
+                        yaw_value = 1500;
+                    }
+
+                }
+                if (axis==2)
+                {
+
+                    pitch_value = 1500 - axes[axis].x/50/pit_const;
+                    if (pitch_value>2100){pitch_value=2099;}
+                    if (pitch_value<900){pitch_value=901;}
+                    cout<<"axe lt"<<axes[axis].y<<endl;
+                    if (axes[axis].y>1000)
+                    {
+                        Start_arming(true);
+                    }
+                    else
+                    {
+                        Start_arming(false);
+                    }
+                }
             }
-        }
+            break;
+       }
     }
 
     void PhysicsMainWidget::casual_buttons(js_event event)
@@ -927,44 +1037,93 @@
         unsigned char three=3;
         unsigned char two=2;
         unsigned char one=1;
-        if (event.number==five )                     //arming
+        unsigned char zero=0;
+
+        switch (CountOfSticks)
         {
-           Start_arming(event.value);
-        }
-        if (event.number==four  && event.value )                     //turn of copter(if smth goes wery wery wrong)
-        {
-            disconnect_from_copter();
-        }
-        if (event.number==seven  && event.value && !lt_pressed)
-        {
-            rt_pressed=true;
-            throttle_value=1500;
-        }
-        if (event.number==seven  && !event.value && !lt_pressed)
-        {
-            rt_pressed=false;
-            throttle_value=mid_Throttle;
-        }
-        if (event.number==six  && event.value && !rt_pressed)
-        {
-            lt_pressed=true;
-            throttle_value=1250;
-        }
-        if (event.number==six  && !event.value && !rt_pressed)
-        {
-            lt_pressed=false;
-            throttle_value=mid_Throttle;
-        }
-        if (event.number==one && event.value)                     //arming
-        {
-            if (!recording)
+        case 6:
+            if (event.number==five )                    //rb //arming
             {
-                StartRecord();
+               Start_arming(event.value);
             }
-            else
+            if (event.number==four  && event.value )     //lb                //turn of copter(if smth goes wery wery wrong)
             {
-                StopRecord();
+                disconnect_from_copter();
             }
+            if (event.number==seven  && event.value && !lt_pressed)        //rt
+            {
+                rt_pressed=true;
+                throttle_value=1500;
+            }
+            if (event.number==seven  && !event.value && !lt_pressed)         //rt
+            {
+                rt_pressed=false;
+                throttle_value=mid_Throttle;
+            }
+            if (event.number==six  && event.value && !rt_pressed)            //lt
+            {
+                lt_pressed=true;
+                throttle_value=1250;
+            }
+            if (event.number==six  && !event.value && !rt_pressed)           //lt
+            {
+                lt_pressed=false;
+                throttle_value=mid_Throttle;
+            }
+            if (event.number==one && event.value)                   //a  //arming
+            {
+                if (!recording)
+                {
+                    StartRecord();
+                }
+                else
+                {
+                    StopRecord();
+                }
+            }
+            break;
+        case 8:
+            if (event.number==five )                    //rb //arming
+            {
+               Start_arming(event.value);
+            }
+            if (event.number==four  && event.value )     //lb                //turn of copter(if smth goes wery wery wrong)
+            {
+                disconnect_from_copter();
+            }
+            /*if (event.number==seven  && event.value && !lt_pressed)        //rt
+            {
+                rt_pressed=true;
+                throttle_value=1550;
+            }
+            if (event.number==seven  && !event.value && !lt_pressed)         //rt
+            {
+                rt_pressed=false;
+                throttle_value=mid_Throttle;
+            }
+            if (event.number==six  && event.value && !rt_pressed)            //lt
+            {
+                lt_pressed=true;
+                throttle_value=1250;
+            }
+            if (event.number==six  && !event.value && !rt_pressed)           //lt
+            {
+                lt_pressed=false;
+                throttle_value=mid_Throttle;
+            }*/
+            if (event.number==zero && event.value)                   //a  //arming
+            {
+                if (!recording)
+                {
+                    StartRecord();
+                }
+                else
+                {
+                    StopRecord();
+                }
+            }
+            break;
+
         }
     }
 
@@ -976,28 +1135,84 @@
         const int yaw_const=10;
 
         size_t axis;
+        switch (CountOfSticks)
+        {
+        case 6:
+            axis = get_axis_state(&event, axes);
+            if (axis < 3)
+            /* printf("Axis %u at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);*/
+            {                                                //minimum axis is not 30000, but near
+                if (axis==0)
+                {
+                    pitch_value = 1500 - axes[axis].y/50/pit_const;
+                    roll_value = 1500 + axes[axis].x/50/roll_const;
+                    if (roll_value>2100){roll_value=2099;}
+                    if (roll_value<900){roll_value=901;}
+                    if (pitch_value>2100){pitch_value=2099;}
+                    if (pitch_value<900){pitch_value=901;}
 
-        axis = get_axis_state(&event, axes);
-        if (axis < 3)
-        /* printf("Axis %u at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);*/
-        {                                                //minimum axis is not 30000, but near
-            if (axis==0)
-            {
-                pitch_value = 1500 - axes[axis].y/50/pit_const;
-                roll_value = 1500 + axes[axis].x/50/roll_const;
-                if (roll_value>2100){roll_value=2099;}
-                if (roll_value<900){roll_value=901;}
-                if (pitch_value>2100){pitch_value=2099;}
-                if (pitch_value<900){pitch_value=901;}
+                }
+                if (axis==1)
+                {
+                    yaw_value = 1500 + axes[axis].x/50/roll_const;
+                    if (yaw_value>2100){yaw_value=2099;}
+                    if (yaw_value<900){yaw_value=901;}
 
+                }
             }
-            if (axis==1)
-            {
-                yaw_value = 1500 + axes[axis].x/50/roll_const;
-                if (yaw_value>2100){yaw_value=2099;}
-                if (yaw_value<900){yaw_value=901;}
+            break;
+        case 8:
+            axis = get_axis_state(&event, axes);
+            if (axis < 3)
+            /* printf("Axis %u at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);*/
+            {                                                //minimum axis is not 30000, but near
+                if (axis==0)
+                {
 
+                    roll_value = 1500 + axes[axis].x/50/roll_const;
+                    if (roll_value>2100){roll_value=2099;}
+                    if (roll_value<900){roll_value=901;}
+
+
+                }
+                if (axis==1)
+                {
+                    if (axes[axis].x>1000 && !rt_pressed )                          //lt
+                    {
+                        lt_pressed=true;
+                        throttle_value=1250;
+                    }
+                    if (axes[axis].x<1000 && !rt_pressed )                          //lt
+                    {
+                        lt_pressed=false;
+                        throttle_value=mid_Throttle;
+                    }
+                    yaw_value = 1500 + axes[axis].y/50/roll_const;
+                    if (yaw_value>2100){yaw_value=2099;}
+                    if (yaw_value<900){yaw_value=901;}
+
+                }
+                if (axis==2)
+                {
+
+                    pitch_value = 1500 - axes[axis].x/50/pit_const;
+                    if (pitch_value>2100){pitch_value=2099;}
+                    if (pitch_value<900){pitch_value=901;}
+                    if (axes[axis].y>1000  && !lt_pressed)                            //rt
+                    {
+                        rt_pressed=true;
+                        throttle_value=1550;
+                    }
+                    if (axes[axis].y<1000  && !lt_pressed)                            //rt
+                    {
+                        rt_pressed=false;
+                        throttle_value=mid_Throttle;
+                    }
+                }
             }
+            break;
+
+
         }
     }
 
@@ -1008,20 +1223,23 @@
             printf("##################___ARMING___######################");
             throttle_value=930;
             throttle_value_from_JS=1500;
-            CH5_value=1500;
-            Arming=true;
+            CH5_value=1900;
+            Arming =true;
         }
         else
         {
-            printf("##################___ARMING___######################");
+            if (Arming)
+            {
             throttle_value=1100;
             throttle_value_from_JS=1500;
+            Arming=false;
+            }
         }
     }
 
     void PhysicsMainWidget::disconnect_from_copter()
     {
-        CH5_value=1500;
+        CH5_value=900;
     }
 
     void PhysicsMainWidget::Bind()
@@ -1052,7 +1270,7 @@
             m.count_of_repeats=std::stoi( buff);
             cout<<m.pitch<<" "<<m.roll<<" "<<m.throttle<<" "<<m.yaw<<" "<<m.count_of_repeats<<endl;
             messages.push_front(m);
-            }
+        }
         for (message mm :messages)
         {
             autopilotStack.push(mm);
@@ -1068,8 +1286,8 @@
     int PhysicsMainWidget::sign(int val)
     {
         int result=0;
-        if (val >0){result=1;}
-        if (val <0){result=-1;}
+        if (val >100){result=1;}
+        if (val <-100){result=-1;}
         return result;
     }
 
