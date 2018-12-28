@@ -164,7 +164,6 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
                 SYNC_PRINT(("Processed %d (of %d)\n", f, mesh->faces.size()));
             }
 
-            // printf("\n\n\n ------!! %i !!------ \n\n\n", f);
             Vector3d32 face = mesh->faces[f];
             Vector3d32 normalId = mesh->normalId[f];
             Vector4d32 textureId = mesh->texId[f];
@@ -295,9 +294,6 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
 
 void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
 {
-    double lastx = 0.0;
-    double lasty = 0.0; // remove after debug
-
     if (span.hasValue() && span.x() < 0)
         span.stepTo(0);
 
@@ -312,6 +308,7 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
 
             Vector3dd normal = Vector3dd(att[ATTR_NORMAL_X], att[ATTR_NORMAL_Y], att[ATTR_NORMAL_Z]).normalised();
             Vector2dd tex = Vector2dd(att[ATTR_TEX_U], att[ATTR_TEX_V]);
+            Vector2dd texfar = Vector2dd(att[ATTR_TEX_U], att[ATTR_TEX_V]);
 
             Vector2dd dhatt = Vector2dd(span.datt[ATTR_TEX_U], span.datt[ATTR_TEX_V]); // Delta stores the increment in horisontal direction
             Vector2dd dvatt = Vector2dd(att[ATTR_TEX_DU_DY], att[ATTR_TEX_DV_DY]);
@@ -332,9 +329,9 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
 
                 RGBColor c = color;
                 
-
-                lastx = tex.x();  // <---
-                lasty = tex.y(); // <---
+                printf("||tex %lf, %lf ||\n",tex.x(), tex.y());
+                printf("|| dx %lf, %lf ||\n",dhatt[0], dhatt[1]);
+                printf("|| dy %lf, %lf ||\n",dvatt[0], dvatt[1]);
                 
                 if (texId < (int)textures.size() && textures[texId] != NULL)
                 {                    
@@ -347,64 +344,53 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
 
                         double scale = sqrt(dhatt.sumAllElementsSq() + dvatt.sumAllElementsSq());
                         scaleDebug->element(span.pos()) = scale;
-
+                        printf("|| scale %lf ||\n",scale);
                     
-                        texId = (int)midmap.size() - 1;
                         // printf("\n|| 000 texid %i ||\n",texId);
 
                         for (int i = 0; i < (int)midmap.size() - 1; i++){
-                            if ((1.0 / dhatt[0]) > midmap[i+1]->h ){
+                            if (scale >= sqrt((1 / (midmap[i]->h)) + (1 / (midmap[i]->w))) && scale < sqrt((1 / (midmap[i + 1]->h)) + (1 / (midmap[i + 1]->w)))){
                                 texId = i;
                                 // printf("\n|| 111 texid %i ||\n",texId);
-                                break;
-                                
+                                break;    
                             }
                         }
+                        if (scale < sqrt((1 / (midmap[0]->h)) + (1 / (midmap[0]->w)))) texId = 0;
+                        if (scale > sqrt((1 / (midmap[(int)midmap.size() - 1]->h)) + (1 / (midmap[(int)midmap.size() - 1]->w)))) texId = (int)midmap.size() - 1;
+
                         RGB24Buffer *texture = midmap[texId];
-                        double factor = log(abs(1.0 / dhatt[0]))/log(2);
-                        factor = factor - trunc(factor);
-                        // printf("\n|| factor %f ||\n",factor);
+                        double factor = scale * midmap[texId]->h;  // need to be improved
+                        factor =(factor - 2)*(-1) ; //need to be improved
 
-                        // printf("\n|| texid %i ||\n",texId);
-                        RGB24Buffer *texturemip = new RGB24Buffer(midmap[texId]->w, midmap[texId]->h);
-
-                        if ((texId != (int)midmap.size() - 1) && ((1 / dhatt[0]) < midmap[0]->h )){    
-                            
-                            for (int32_t i = 1; i <= midmap[texId + 1]->h; i++)
-                            {
-                                for (int32_t j = 1; j <= midmap[texId + 1]->w; j++)
-                                {
-                                    texturemip->element(i*2-2,j*2-2) = midmap[texId]->element(i*2-2,j*2-2) * (factor) + midmap[texId + 1]->element(i-1,j-1) * (1 - factor);
-                                    texturemip->element(i*2-2,j*2-1) = midmap[texId]->element(i*2-2,j*2-1) * (factor) + midmap[texId + 1]->element(i-1,j-1) * (1 - factor);
-                                    texturemip->element(i*2-1,j*2-2) = midmap[texId]->element(i*2-1,j*2-2) * (factor) + midmap[texId + 1]->element(i-1,j-1) * (1 - factor);
-                                    texturemip->element(i*2-1,j*2-1) = midmap[texId]->element(i*2-1,j*2-1) * (factor) + midmap[texId + 1]->element(i-1,j-1) * (1 - factor);
-                                }
-                            }
-                            tex = tex * Vector2dd(texturemip->w, texturemip->h);
-                            if (texturemip->isValidCoordBl(tex)) {
-                                // printf("\ncase1\n");
-                                c = texturemip->elementBl(tex);
+                        if ((texId != (int)midmap.size() - 1) && (scale * midmap[0]->h > 1) ){    
+                        
+                            // printf("|| texId %i ||\n",texId);
+                            RGB24Buffer *texturefar = midmap[texId + 1];
+                            tex = tex * Vector2dd(texture->w, texture->h);
+                            texfar = texfar * Vector2dd(texturefar->w, texturefar->h);
+                            // printf("\ncase1\n");
+                            if (texture->isValidCoordBl(tex) && texturefar->isValidCoordBl(texfar)) {
+                                c = texture->elementBl(tex) * factor + texturefar->elementBl(texfar) * (1 - factor);
                             } else {
                                 SYNC_PRINT(("Tex miss %lf %lf\n", tex.x(), tex.y()));
                             }
                             
                         } else {
                             tex = tex * Vector2dd(texture->w, texture->h);
-                            if (texture->isValidCoordBl(tex)) {                                
+                            // printf("\ncase2\n");
+                            if (texture->isValidCoordBl(tex)) {
                                 c = texture->elementBl(tex);
                             } else {
                                 SYNC_PRINT(("Tex miss %lf %lf\n", tex.x(), tex.y()));
                             }
-                        }
-
-                        delete texturemip;                   
+                        }                  
 
                     } else {
                         RGB24Buffer *texture = textures[texId];
-
+                        // printf("\ncase3\n");
+                        // printf("texId %i\n", texId);
                         tex = tex * Vector2dd(texture->w, texture->h);
                         if (texture->isValidCoordBl(tex)) {
-                            // printf("\ncase3\n");
                             c = texture->elementBl(tex);
                         } else {
                             // SYNC_PRINT(("Tex miss %lf %lf\n", tex.x(), tex.y()));
