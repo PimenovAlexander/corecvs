@@ -343,25 +343,27 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
                     
 
                         for (int i = 0; i < (int)midmap.size() - 1; i++){
-                            if (scale >= sqrt((1 / (midmap[i]->h)) + (1 / (midmap[i]->w))) && scale < sqrt((1 / (midmap[i + 1]->h)) + (1 / (midmap[i + 1]->w)))){
+                            if (scale >= sqrt(pow(1 / midmap[i]->h,2) + pow(1 / midmap[i]->w,2)) && scale < sqrt(pow(1 / midmap[i + 1]->h,2) + pow(1 / midmap[i + 1]->w,2))){
                                 texId = i;
                                 break;    
                             }
                         }
-                        if (scale < sqrt((1 / (midmap[0]->h)) + (1 / (midmap[0]->w)))) texId = 0;
-                        if (scale > sqrt((1 / (midmap[(int)midmap.size() - 1]->h)) + (1 / (midmap[(int)midmap.size() - 1]->w)))) texId = (int)midmap.size() - 1;
+                        if (scale < sqrt(pow(1 / (midmap[0]->h),2) + pow(1 / (midmap[0]->w),2))) texId = 0;
+                        if (scale > sqrt(pow(1 / (midmap[(int)midmap.size() - 1]->h),2) + pow(1 / (midmap[(int)midmap.size() - 1]->w),2))) texId = (int)midmap.size() - 1;
 
                         RGB24Buffer *texture = midmap[texId];
                         double factor = (scale / sqrt(2)) * midmap[texId]->h; 
                         factor =(factor - 2)*(-1) ; 
+                        printf("|| texId %i ||\n",texId);
+                        printf("|| factor %f ||\n",factor);
 
-                        if ((texId != (int)midmap.size() - 1) && (scale * midmap[0]->h > 1) ){    
+
+                        if ((texId != (int)midmap.size() - 1) && (scale < sqrt((1 / (midmap[0]->h)) + (1 / (midmap[0]->w)))) ){    
                         
-                            // printf("|| texId %i ||\n",texId);
                             RGB24Buffer *texturefar = midmap[texId + 1];
                             tex = tex * Vector2dd(texture->w, texture->h);
                             texfar = texfar * Vector2dd(texturefar->w, texturefar->h);
-                            // printf("\ncase1\n");
+                            printf("\ncase1\n");
                             if (texture->isValidCoordBl(tex) && texturefar->isValidCoordBl(texfar)) {
                                 c = texture->elementBl(tex) * factor + texturefar->elementBl(texfar) * (1 - factor);
                             } else {
@@ -370,7 +372,7 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
                             
                         } else {
                             tex = tex * Vector2dd(texture->w, texture->h);
-                            // printf("\ncase2\n");
+                            printf("\ncase2\n");
                             if (texture->isValidCoordBl(tex)) {
                                 c = texture->elementBl(tex);
                             } else {
@@ -380,8 +382,8 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
 
                     } else {
                         RGB24Buffer *texture = textures[texId];
-                        // printf("\ncase3\n");
-                        // printf("texId %i\n", texId);
+                        printf("\ncase3\n");
+                        printf("texId %i\n", texId);
                         tex = tex * Vector2dd(texture->w, texture->h);
                         if (texture->isValidCoordBl(tex)) {
                             c = texture->elementBl(tex);
