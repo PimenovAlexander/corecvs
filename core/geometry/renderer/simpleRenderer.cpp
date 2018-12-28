@@ -329,10 +329,6 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
 
                 RGBColor c = color;
                 
-                printf("||tex %lf, %lf ||\n",tex.x(), tex.y());
-                printf("|| dx %lf, %lf ||\n",dhatt[0], dhatt[1]);
-                printf("|| dy %lf, %lf ||\n",dvatt[0], dvatt[1]);
-                
                 if (texId < (int)textures.size() && textures[texId] != NULL)
                 {                    
                     if(useMipmap)
@@ -340,18 +336,15 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
                         printf("||tex %lf, %lf ||\n",tex.x(), tex.y());
                         printf("|| dx %lf, %lf ||\n",dhatt[0], dhatt[1]);
                         printf("|| dy %lf, %lf ||\n",dvatt[0], dvatt[1]);
-                        //printf("\n|| x %f, y %f ||\n",tex.x() -lastx, tex.y() - lasty);
 
                         double scale = sqrt(dhatt.sumAllElementsSq() + dvatt.sumAllElementsSq());
                         scaleDebug->element(span.pos()) = scale;
                         printf("|| scale %lf ||\n",scale);
                     
-                        // printf("\n|| 000 texid %i ||\n",texId);
 
                         for (int i = 0; i < (int)midmap.size() - 1; i++){
                             if (scale >= sqrt((1 / (midmap[i]->h)) + (1 / (midmap[i]->w))) && scale < sqrt((1 / (midmap[i + 1]->h)) + (1 / (midmap[i + 1]->w)))){
                                 texId = i;
-                                // printf("\n|| 111 texid %i ||\n",texId);
                                 break;    
                             }
                         }
@@ -359,8 +352,8 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
                         if (scale > sqrt((1 / (midmap[(int)midmap.size() - 1]->h)) + (1 / (midmap[(int)midmap.size() - 1]->w)))) texId = (int)midmap.size() - 1;
 
                         RGB24Buffer *texture = midmap[texId];
-                        double factor = scale * midmap[texId]->h;  // need to be improved
-                        factor =(factor - 2)*(-1) ; //need to be improved
+                        double factor = (scale / sqrt(2)) * midmap[texId]->h; 
+                        factor =(factor - 2)*(-1) ; 
 
                         if ((texId != (int)midmap.size() - 1) && (scale * midmap[0]->h > 1) ){    
                         
@@ -393,7 +386,7 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
                         if (texture->isValidCoordBl(tex)) {
                             c = texture->elementBl(tex);
                         } else {
-                            // SYNC_PRINT(("Tex miss %lf %lf\n", tex.x(), tex.y()));
+                            SYNC_PRINT(("Tex miss %lf %lf\n", tex.x(), tex.y()));
                         }
 
                     }
