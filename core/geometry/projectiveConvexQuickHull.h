@@ -35,14 +35,24 @@ public:
         return false;
     }
 
+    bool is_Inf() const {
+        const double inf = std::numeric_limits<ElementType>::infinity();
+        return X() == inf && Y() == inf && Z() == inf;
+    }
+
+    bool is_Low() const {
+        const double low = std::numeric_limits<ElementType>::lowest();
+        return X() == low && Y() == low && Z() == low;
+    };
+
     ElementType X() const {
         if (this->x() == 0)
             return 0;
         if (this->w() != 0)
             return this->x() / this->w();
         if (this->x() < 0)
-            return std::numeric_limits<ElementType>::min();
-        return std::numeric_limits<ElementType>::max();
+            return std::numeric_limits<ElementType>::lowest();
+        return std::numeric_limits<ElementType>::infinity();
     }
 
     ElementType Y() const {
@@ -51,8 +61,8 @@ public:
         if (this->w() != 0)
             return this->y() / this->w();
         if (this->y() < 0)
-            return std::numeric_limits<ElementType>::min();
-        return std::numeric_limits<ElementType>::max();
+            return std::numeric_limits<ElementType>::lowest();
+        return std::numeric_limits<ElementType>::infinity();
     }
 
     ElementType Z() const {
@@ -61,12 +71,12 @@ public:
         if (this->w() != 0)
             return this->z() / this->w();
         if (this->z() < 0)
-            return std::numeric_limits<ElementType>::min();
-        return std::numeric_limits<ElementType>::max();
+            return std::numeric_limits<ElementType>::lowest();
+        return std::numeric_limits<ElementType>::infinity();
     }
 
     Vector3d<ElementType> toVector() const {
-        const auto inf = std::numeric_limits<ElementType>::max();
+        const auto inf = std::numeric_limits<ElementType>::infinity();
         if (this->w() == 0)
             return Vector3d<ElementType>(sgn(this->x()) * inf, sgn(this->y()) * inf, sgn(this->z()) * inf);
         return Vector3d<ElementType>(this->x() / this->w(),
@@ -76,13 +86,13 @@ public:
     ElementType len() const {
         if (this->w() != 0)
             return this->project().l2Metric();
-        return std::numeric_limits<ElementType>::max();
+        return std::numeric_limits<ElementType>::infinity();
     }
 
-    ElementType dist() const {
-        if (this->w() == 0)
-            return this->xyz().l2Metric();
-        return std::numeric_limits<ElementType>::max();
+    ElementType dist(const ProjectiveCoord &other) const {
+        if (this->w() == 0 || other.w() == 0)
+            return std::numeric_limits<ElementType>::infinity();
+        return (*this - other).xyz().l2Metric();
     }
 };
 
@@ -125,8 +135,16 @@ public:
 
         HullFace(const ProjectiveCoord4d &p1, const ProjectiveCoord4d &p2, const ProjectiveCoord4d &p3) : plane(p1,p2,p3) {}
 
-        bool operator==(const HullFace &b) {
+        bool operator==(const HullFace &b) const {
             return plane == b.plane;
+        }
+
+        bool is_Inf() const {
+            return plane.p1().is_Inf() || plane.p2().is_Inf() || plane.p3().is_Inf();
+        }
+
+        bool is_Low() const {
+            return plane.p1().is_Low() || plane.p2().is_Low() || plane.p3().is_Low();
         }
     };
 

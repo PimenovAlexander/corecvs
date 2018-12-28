@@ -414,6 +414,7 @@ TEST(ConvexHull, testProjective)
         cout << t << " " << input[t] << endl;
     ProjectiveConvexQuickHull::HullFaces faces = ProjectiveConvexQuickHull::quickHull(input, 1e-9);
     SYNC_PRINT(("Faces: %d\n", (int)faces.size()));
+    ASSERT_TRUE((faces.size() == 4));
 }
 
 TEST(ConvexHull, testProjective1)
@@ -430,6 +431,7 @@ TEST(ConvexHull, testProjective1)
         cout << t << " " << input[t] << endl;
     ProjectiveConvexQuickHull::HullFaces faces = ProjectiveConvexQuickHull::quickHull(input, 1e-9);
     SYNC_PRINT(("Faces: %d\n", (int)faces.size()));
+    ASSERT_TRUE((faces.size() == 4));
 }
 
 TEST(ConvexHull, testProjective2)
@@ -448,4 +450,5 @@ TEST(ConvexHull, testProjective2)
         cout << t << " " << input[t] << endl;
     ProjectiveConvexQuickHull::HullFaces faces = ProjectiveConvexQuickHull::quickHull(input, 1e-9);
     SYNC_PRINT(("Faces: %d\n", (int)faces.size()));
+    ASSERT_TRUE((faces.size() == 4));
 }

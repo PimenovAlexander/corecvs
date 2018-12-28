@@ -20,7 +20,7 @@ double pointPlaneDist(const ProjectiveCoord4d &planeP1, const ProjectiveCoord4d 
     if (planeP1 == point || planeP2 == point || planeP3 == point)
         return 0;
     if (planeP1.w() == 0 || planeP2.w() == 0 || planeP3.w() == 0 || point.w() == 0)
-        return std::numeric_limits<double>::max();
+        return std::numeric_limits<double>::infinity();
     auto baseV1 = planeP2.toVector() - planeP1.toVector();
     auto baseV2 = planeP3.toVector() - planeP1.toVector();
     auto prod = baseV1 & (baseV2 ^ (point.toVector() - planeP1.toVector()));
@@ -32,10 +32,75 @@ double pointFaceDist(const Triangle4dd &face, const ProjectiveCoord4d &point) {
 }
 
 bool faceIsVisible(const ProjectiveCoord4d &eyePoint, const ProjectiveConvexQuickHull::HullFace &face, double eps) {
+    cout << "eye: " << eyePoint << "; " << face.plane.p1() << " " << face.plane.p2() << " " << face.plane.p3() << "\n";
+
     if (eyePoint == face.plane.p1() || eyePoint == face.plane.p2() || eyePoint == face.plane.p3())
         return false;
-    auto res = ((eyePoint.toVector() - face.plane.p1().toVector()) & face.plane.getNormal().normalised());
-    return res > eps;
+    // one line
+    if (face.plane.p1() == face.plane.p2() || face.plane.p1() == face.plane.p3() || face.plane.p1() == face.plane.p3())
+        return false;
+
+    // (1, 1, 1, 0)
+    if (face.is_Inf() || face.is_Low()) {
+        cout << "(1,1,1,0)\n";
+        Vector3dd p = (face.plane.p1() - face.plane.p2()).xyz();
+        Vector3dd q = (face.plane.p1() - face.plane.p3()).xyz();
+        auto normal = p ^ q;
+        cout << "cute normal: " << normal << "\n";
+        auto res = -1 * face.plane.p1().xyz() & normal.normalised();
+        return res >= eps;
+    }
+    // ox | oy | oz plane
+    if ((face.plane.p1().x() == 0 && face.plane.p2().x() == 0 && face.plane.p3().x() == 0) ||
+        (face.plane.p1().y() == 0 && face.plane.p2().y() == 0 && face.plane.p3().y() == 0) ||
+        (face.plane.p1().z() == 0 && face.plane.p2().z() == 0 && face.plane.p3().z() == 0)) {
+        Vector3dd p = (face.plane.p1() - face.plane.p2()).xyz();
+        Vector3dd q = (face.plane.p1() - face.plane.p3()).xyz();
+        auto normal = p ^ q;
+        auto res = -1 * face.plane.p1().xyz() & normal.normalised();
+        cout << "cute normal: " << normal << ": " << res << "\n";
+        return res >= eps;
+    }
+    // 2 points on infinity
+    if ((face.plane.p1().w() == 0 && face.plane.p2().w() == 0) ||
+        (face.plane.p1().w() == 0 && face.plane.p3().w() == 0) ||
+        (face.plane.p2().w() == 0 && face.plane.p3().w() == 0)) {
+        cout << "2 points on infinity\n";
+        Vector3dd p = (face.plane.p1() - face.plane.p2()).xyz();
+        Vector3dd q = (face.plane.p1() - face.plane.p3()).xyz();
+        auto normal = p ^ q;
+        auto res = -1 * face.plane.p1().xyz() & normal.normalised();
+        cout << "cute normal: " << normal << ": " << res << "\n";
+        return res >= eps;
+    }
+
+    Vector3dd normal = face.plane.getNormal();
+    Vector3dd point = face.plane.p1().toVector();
+    // (1, 0, 0, 0)
+    if (face.plane.p1().w() == 0) {
+        Vector3dd q = face.plane.p1().xyz();
+        ProjectiveCoord4d p = face.plane.p2() - face.plane.p3();
+        normal = q ^ p.toVector();
+        point = face.plane.p2().toVector();
+    } else if (face.plane.p2().w() == 0) {
+        Vector3dd q = face.plane.p2().xyz();
+        ProjectiveCoord4d p = face.plane.p1() - face.plane.p3();
+        normal = q ^ p.toVector();
+    } else if (face.plane.p3().w() == 0) {
+        Vector3dd q = face.plane.p3().xyz();
+        ProjectiveCoord4d p = face.plane.p1() - face.plane.p2();
+        normal = p.toVector() ^ q;
+    }
+    cout << normal << " " << point << "\n";
+    if (eyePoint.w() == 0) {
+        double t = eyePoint.xyz() & normal;
+        cout << "inf eye: " << t << "\n";
+        return t >= eps;
+    }
+
+    auto res = ((eyePoint.toVector() - point) & normal.normalised());
+    cout << normal << " " << res << "\n\n";
+    return res >= eps;
 }
 
 void addPointsToFaces(ProjectiveConvexQuickHull::HullFace *faces, unsigned long faces_count,
@@ -66,23 +131,22 @@ ProjectiveConvexQuickHull::Vertices createSimplex(const ProjectiveConvexQuickHul
     for (size_t t = 0; t < 6; t++ )
         cout << t << " " << EP[t] << endl;
 
-    double maxDist = 0;
     ProjectiveCoord4d triangleP1 = EP[0], triangleP2 = EP[0], triangleP3 = EP[0];
+    double maxDist = -1;
     for (const ProjectiveCoord4d &point1 : EP)
         for (const ProjectiveCoord4d &point2 : EP) {
-            ProjectiveCoord4d t = point2 - point1;
-            double dist = t.dist();
-            if (dist > maxDist) {
+            double dist = point2.dist(point1);
+            if (dist >= maxDist && point1 != point2) {
                 maxDist = dist;
                 triangleP1 = point1;
                 triangleP2 = point2;
             }
         }
 
-    maxDist = 0;
+    maxDist = pointLineDist(triangleP1, triangleP2, triangleP3);
     for (const auto &point : EP) {
         double dist = pointLineDist(triangleP1, triangleP2, point);
-        if (dist > maxDist) {
+        if (dist >= maxDist && point != triangleP1 && point != triangleP2) {
             maxDist = dist;
             triangleP3 = point;
         }
@@ -92,8 +156,16 @@ ProjectiveConvexQuickHull::Vertices createSimplex(const ProjectiveConvexQuickHul
     maxDist = 0;
     ProjectiveCoord4d apex = EP[0];
     for (const auto &point : listVertices) {
+        cout << point << "\n";
         double dist = abs(pointPlaneDist(triangleP1, triangleP2, triangleP3, point));
-        if (dist > maxDist) {
+        if (dist == 0)
+            continue;
+        bool f = faceIsVisible(triangleP3, ProjectiveConvexQuickHull::HullFace(apex, triangleP1, triangleP2), 0);
+        bool f1 = faceIsVisible(point, ProjectiveConvexQuickHull::HullFace(apex, triangleP1, triangleP2), 0);
+        bool f2 = faceIsVisible(point, ProjectiveConvexQuickHull::HullFace(apex, triangleP2, triangleP1), 0);
+        bool res = f ? f1 : f2;
+        cout << "count face:" << point << ": " << f << ", " << f1 << ", " << f2 << "\n";
+        if (dist >= maxDist && point != triangleP1 && point != triangleP2 && point != triangleP3 && !res) {
             maxDist = dist;
             apex = point;
         }
