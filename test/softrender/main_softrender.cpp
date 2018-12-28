@@ -135,9 +135,9 @@ int main(int argc, char **argv)
         objName     = std::string(argv[1]);
     }
 
-    PinholeCameraIntrinsics cam(Vector2dd(w,h), 50);
+    PinholeCameraIntrinsics cam(Vector2dd(w,h), degToRad(50));
     Affine3DQ pose;
-    if (argc >= 3) {
+    /*if (argc >= 3) {
 		std::cout << "loading cam" << std::endl;
 		std::ifstream cams;
 		cams.open(argv[2]);
@@ -146,7 +146,7 @@ int main(int argc, char **argv)
 		cam.setSize(Vector2dd(w, h));
 		cam.setPrincipal(Vector2dd(cx, cy));
 		cam.setFocal(Vector2dd(fx, fy));
-	}
+    }*/
 
     ClassicRenderer renderer;
 
@@ -198,11 +198,19 @@ int main(int argc, char **argv)
     
     printf("Will render <%s>\n", objName.c_str());
 
+
+    pose = Affine3DQ::RotationX(degToRad(-25))
+         * Affine3DQ::RotationY(degToRad(150))
+         * Affine3DQ::RotationZ(degToRad(180))
+         * Affine3DQ::Shift(0, 0, -2000);
+
+    SYNC_PRINT(("Starting render...\n"));
+    cout << "Camera:" << cam << endl;
+    cout << "Position:" << pose << endl;
+
+
     renderer.modelviewMatrix = cam.getKMatrix() * Matrix44(pose.inverted());
     RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::Black());
-
-    mesh->dumpInfo(cout);
-    SYNC_PRINT(("Starting render...\n"));
 
     renderer.render(mesh, buffer);
 

@@ -171,27 +171,35 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
 
             bool hasNormal = (normalId[0] != -1) && (normalId[1] != -1) && (normalId[2] != -1);
             /**/
-            Vector3dd positions[3];
+            Vector4dd positions[3];
             Vector3dd normals  [3];
             Vector2dd texture  [3];
             double texId = textureId[3];
 
+            bool behindPoint = false;
+
             AttributedTriangle triang;
 
             for (int i = 0; i < 3; i++) {
-                positions[i] = modelviewMatrix * mesh->vertexes[face[i]];
+                Vector4dd worldPos(mesh->vertexes[face[i]], 1.0);
+
+                positions[i] = modelviewMatrix * worldPos;
                 if (hasNormal) {
-                    normals[i] = /*normalTransform **/ mesh->normalCoords[normalId[i]].normalised();
+                    normals[i] = normalTransform * mesh->normalCoords[normalId[i]].normalised();
                 } else {
                     normals[i] = mesh->getFaceAsTrinagle(f).getNormal();
+                }
+
+                if (positions[i].z() <= 0) {
+                    behindPoint = true;
+                    break;
                 }
 
                 texture[i] = mesh->textureCoords[textureId[i]];
 
                 AttributedPoint &p = triang.p[i];
 
-                p = positions[i].project();
-
+                p = positions[i].xy() / positions[i].z();
                 double invz = 1.0 / positions[i].z();
 
                 p.attributes.resize(ATTR_LAST);
@@ -214,6 +222,11 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
                 }
                 cout << endl;
     #endif
+            }
+
+            if (behindPoint) {
+                SYNC_PRINT(("Triangle %d is behind at least of one point\n", f));
+                continue;
             }
 
             color = RGBColor::Blue();
@@ -290,9 +303,11 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
 
     while (span.hasValue() && span.x() < cBuffer->w)
     {
-        if (cBuffer->isValidCoord(span.pos()) )
+        const FragmentAttributes &att = span.att();
+
+        if (cBuffer->isValidCoord(span.pos()) || att[ATTR_INV_Z] <= 0)
         {
-            const FragmentAttributes &att = span.att();
+
             double z = 1.0 / att[ATTR_INV_Z];
 
             Vector3dd normal = Vector3dd(att[ATTR_NORMAL_X], att[ATTR_NORMAL_Y], att[ATTR_NORMAL_Z]).normalised();

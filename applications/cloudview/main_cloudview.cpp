@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
 
             shaded->mMesh = mesh;
             shaded->mMesh->recomputeMeanNormals();
-            shaded->prepareMesh(&mainWindow);
+            //shaded->prepareMesh(&mainWindow);
             mainWindow.addSubObject(QString::fromStdString(path), QSharedPointer<Scene3D>(shaded));
         }
     }

@@ -4,24 +4,24 @@ CONFIG  += ordered
 SUBDIRS +=                   \
     core                     \
     test-core                \
-    test-core-perf           \
+#    test-core-perf           \
     utils                    \
     \
     tests \
 #    \
-    base_application         \
+#    base_application         \
 #    base_application_example \
-    recorder                 \
+#    recorder                 \
 #    scanner                  \
 #    testbed                  \
     cloudview                \
-    physics                  \
-    imageview                \
+#    physics                  \
+#    imageview                \
 #    \
      generator                \
 #    egomotion                \
 #    applications/laserscan
-     coptercontrol           \
+#     coptercontrol           \
 
 
 win32 {

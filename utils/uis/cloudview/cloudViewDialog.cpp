@@ -54,6 +54,12 @@ CloudViewDialog::CloudViewDialog(QWidget *parent, QString name)
     mUi.setupUi(this);
     setWindowIcon(QIcon(":/new/our/our/3D.png"));
 
+    QSurfaceFormat format;
+    format.setMajorVersion( 4 ); //whatever version
+    format.setMinorVersion( 5 ); //
+    format.setProfile(QSurfaceFormat::CoreProfile);
+    mUi.widget->setFormat(format);
+
     qDebug("Creating CloudViewDialog (%s) for working with OpenGL(%d.%d)",
             windowTitle().toLatin1().constData(),
             mUi.widget->format().majorVersion(),
@@ -716,6 +722,7 @@ void CloudViewDialog::keyReleaseEvent ( QKeyEvent * /*event*/ )
 
 void CloudViewDialog::initializeGLSlot()
 {
+    SYNC_PRINT(("CloudViewDialog::initializeGLSlot():called\n"));
     //QGLWidget::initializeGL();
     mUi.widget->makeCurrent();
 
