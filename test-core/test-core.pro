@@ -113,7 +113,6 @@ SOURCES += \
     orientedbox/main_test_orientedbox.cpp \
     convexHull2d/main_test_convexHull2d.cpp \
     processor6d/main_test_processor6d.cpp \
-    BSPRenderer/BSPRenderer.cpp \
     BSPRenderTest/BSPRenderTest.cpp
 
 

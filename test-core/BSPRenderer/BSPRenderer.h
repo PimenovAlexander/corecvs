@@ -154,7 +154,7 @@ public:
     }
 };
 
-std::vector<Ray2d> PolygonToRays(Polygon &poly)
+static std::vector<Ray2d> PolygonToRays(Polygon &poly)
 {
     int i, pSize = poly.size();
     std::vector<Ray2d> rays;
