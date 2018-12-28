@@ -20,10 +20,8 @@ using namespace std;
 JoyStickInput::JoyStickInput(int &_yaw_value, int &_roll_value, int &_pitch_value, int &_throttle_value, int &_CH5_value, int &_CH6_value, int &_CH7_value,  int &_CH8_value )
     : yaw_value(_yaw_value) , roll_value(_roll_value),pitch_value(_pitch_value), throttle_value(_throttle_value),CH5_value(_CH5_value),CH6_value(_CH6_value),CH7_value(_CH7_value),CH8_value(_CH8_value)
 {
-
-
-
-
+    throttle_value=1239;
+     cout<<"AAAaaaAAA"<<endl;
 }
 
 void JoyStickInput::Start()
@@ -115,8 +113,7 @@ void JoyStickInput::StartJoyStickMode()
 {
 std::thread thr([this]()
 {
-
-    const char *device;
+     const char *device;
     int js;
     struct js_event eventtt;
     device = "/dev/input/js0";
@@ -137,9 +134,11 @@ std::thread thr([this]()
             switch (eventtt.type)
             {
             case JS_EVENT_BUTTON:
+                cout<<"button event"<<endl;
+
                 switch (Current_mode)
                 {
-                    case 0:
+                     case 0:
                         usial_buttons(eventtt);
                         break;
                     case 1:
@@ -154,6 +153,8 @@ std::thread thr([this]()
 
                 break;
             case JS_EVENT_AXIS:
+                cout<<"stick event"<<endl;
+
                 switch (Current_mode)
                 {
                     case 0:
@@ -178,7 +179,7 @@ std::thread thr([this]()
         thr.detach();
  }
 
-void JoyStickInput::usial_buttons(js_event event)
+void JoyStickInput::usual_buttons(js_event event)
 {
     unsigned char seven=7;
     unsigned char six=6;
@@ -233,7 +234,7 @@ void JoyStickInput::usial_buttons(js_event event)
     }
 }
 
-void JoyStickInput::usial_sticks(js_event event)
+void JoyStickInput::usual_sticks(js_event event)
 {
     const int thr_const=1;
     const int roll_const=10;
@@ -724,8 +725,8 @@ int JoyStickInput::sign(int val)
 
 void JoyStickInput::StartRecord()
 {
-    recording=true;
-    recordData =  ControllRecord();
+    //recording=true;
+    //recordData =  ControllRecord();
 
 }
 
@@ -733,6 +734,6 @@ void JoyStickInput::StopRecord()
 {
     printf("##################___writing___######################");
 
-    recording=false;
-    recordData.Save();
+   // recording=false;
+    //recordData.Save();
 }

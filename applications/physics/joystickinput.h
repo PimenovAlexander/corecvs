@@ -1,6 +1,6 @@
 #ifndef JOYSTICKINPUT_H
 #define JOYSTICKINPUT_H
-#include "controllrecord.h"
+//#include "controllrecord.h"
 
 #include <linux/joystick.h>
 #include <fcntl.h>
@@ -37,8 +37,8 @@ private:
     struct axis_state axes[3] ;
 
 
-    void usial_buttons(js_event event);
-    void usial_sticks(js_event event);
+    void usual_buttons(js_event event);
+    void usual_sticks(js_event event);
     void inertial_buttons(js_event event);
     void inertial_sticks(js_event event);
     void casual_buttons(js_event event);
@@ -49,7 +49,7 @@ private:
     void StartRecord();
     void StopRecord();
 
-    ControllRecord recordData;
+    //ControllRecord recordData;
 
 };
 
