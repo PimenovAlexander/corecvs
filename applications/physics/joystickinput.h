@@ -22,6 +22,9 @@ public:
     int& CH6_value;
     int& CH7_value;
     int& CH8_value;
+    void SetUsualCurrentMode();
+    void SetInertiaCurrentMode();
+    void SetCasualCurrentMode();
 private:
     int throttle_value_from_JS;
     int mid_Throttle=1350;
@@ -51,6 +54,7 @@ private:
 
     //ControllRecord recordData;
 
+    void TimerForThrottle();
 };
 
 #endif // JOYSTICKINPUT_H

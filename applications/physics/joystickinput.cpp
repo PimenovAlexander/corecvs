@@ -26,6 +26,7 @@ JoyStickInput::JoyStickInput(int &_yaw_value, int &_roll_value, int &_pitch_valu
 
 void JoyStickInput::Start()
 {
+    TimerForThrottle();
     StartJoyStickMode();
 }
 
@@ -139,7 +140,7 @@ std::thread thr([this]()
                 switch (Current_mode)
                 {
                      case 0:
-                        usial_buttons(eventtt);
+                        usual_buttons(eventtt);
                         break;
                     case 1:
                         inertial_buttons(eventtt);
@@ -158,7 +159,7 @@ std::thread thr([this]()
                 switch (Current_mode)
                 {
                     case 0:
-                        usial_sticks(eventtt);
+                        usual_sticks(eventtt);
                         break;
                     case 1:
                         inertial_sticks(eventtt);
@@ -296,7 +297,7 @@ void JoyStickInput::usual_sticks(js_event event)
                 pitch_value = 1500 - axes[axis].x/50/pit_const;
                 if (pitch_value>2100){pitch_value=2099;}
                 if (pitch_value<900){pitch_value=901;}
-                if (axes[axis].y>-20000)
+                if (axes[axis].y>10000)
                 {
                     Start_arming(true);
                 }
@@ -485,7 +486,7 @@ void JoyStickInput::inertial_sticks(js_event event)
                 if (pitch_value>2100){pitch_value=2099;}
                 if (pitch_value<900){pitch_value=901;}
                 cout<<"axe lt"<<axes[axis].y<<endl;
-                if (axes[axis].y>1000)
+                if (axes[axis].y>10000)
                 {
                     Start_arming(true);
                 }
@@ -563,26 +564,7 @@ void JoyStickInput::casual_buttons(js_event event)
         {
             disconnect_from_copter();
         }
-        /*if (event.number==seven  && event.value && !lt_pressed)        //rt
-        {
-            rt_pressed=true;
-            throttle_value=1550;
-        }
-        if (event.number==seven  && !event.value && !lt_pressed)         //rt
-        {
-            rt_pressed=false;
-            throttle_value=mid_Throttle;
-        }
-        if (event.number==six  && event.value && !rt_pressed)            //lt
-        {
-            lt_pressed=true;
-            throttle_value=1250;
-        }
-        if (event.number==six  && !event.value && !rt_pressed)           //lt
-        {
-            lt_pressed=false;
-            throttle_value=mid_Throttle;
-        }*/
+
         if (event.number==zero && event.value)                   //a  //arming
         {
             if (!recording)
@@ -649,12 +631,12 @@ void JoyStickInput::casual_sticks(js_event event)
             }
             if (axis==1)
             {
-                if (axes[axis].x>1000 && !rt_pressed )                          //lt
+                if (axes[axis].x>10000 && !rt_pressed )                          //lt
                 {
                     lt_pressed=true;
                     throttle_value=1250;
                 }
-                if (axes[axis].x<1000 && !rt_pressed )                          //lt
+                if (axes[axis].x<10000 && !rt_pressed )                          //lt
                 {
                     lt_pressed=false;
                     throttle_value=mid_Throttle;
@@ -670,12 +652,12 @@ void JoyStickInput::casual_sticks(js_event event)
                 pitch_value = 1500 - axes[axis].x/50/pit_const;
                 if (pitch_value>2100){pitch_value=2099;}
                 if (pitch_value<900){pitch_value=901;}
-                if (axes[axis].y>1000  && !lt_pressed)                            //rt
+                if (axes[axis].y>10000  && !lt_pressed)                            //rt
                 {
                     rt_pressed=true;
                     throttle_value=1550;
                 }
-                if (axes[axis].y<1000  && !lt_pressed)                            //rt
+                if (axes[axis].y<10000  && !lt_pressed)                            //rt
                 {
                     rt_pressed=false;
                     throttle_value=mid_Throttle;
@@ -736,4 +718,38 @@ void JoyStickInput::StopRecord()
 
    // recording=false;
     //recordData.Save();
+}
+
+void JoyStickInput::SetUsualCurrentMode()
+{
+    Current_mode=0;
+}
+
+
+void JoyStickInput::SetInertiaCurrentMode()
+{
+    Current_mode=1;
+}
+
+void JoyStickInput::SetCasualCurrentMode()
+{
+    Current_mode=2;
+}
+
+void JoyStickInput::TimerForThrottle()
+{
+    std::thread thr([this]()
+    {
+        while(true)
+        {
+            if (Current_mode==1)
+            {
+                throttle_value+=sign(throttle_value_from_JS-1500);
+                if (throttle_value>1800){throttle_value=1799;}
+                if (throttle_value<900){throttle_value=901;}
+            }
+            usleep(30000);
+        }
+    });
+    thr.detach();
 }

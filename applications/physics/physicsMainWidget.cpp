@@ -603,19 +603,19 @@
     {
         if(arg1=="Usual mode")    //why qstring can not be in case?!
         {
-            Current_mode=0;   //I dont want errors between qstring and string
+            joystick1.SetUsualCurrentMode();   //I dont want errors between qstring and string
             throttle_value=1500;
 
         }
         if(arg1=="Inertia mode")
         {
-            Current_mode=1;
+            joystick1.SetInertiaCurrentMode();
             throttle_value=mid_Throttle;
 
         }
         if(arg1=="Casual mode")
         {
-            Current_mode=2;
+            joystick1.SetCasualCurrentMode();
             throttle_value=mid_Throttle;
         }
     }
