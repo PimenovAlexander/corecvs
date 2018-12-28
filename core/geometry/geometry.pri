@@ -25,6 +25,7 @@ HEADERS += \
     $$PWD/raytrace/sdfRenderableObjects.h \
     $$PWD/convexHull.h \
     $$PWD/convexQuickHull.h \
+    $$PWD/projectiveConvexQuickHull.h \
     $$PWD/renderer/attributedTriangleSpanIterator.h \
     $$PWD/pointCloud.h \
     \
@@ -66,6 +67,7 @@ SOURCES += \
     $$PWD/raytrace/sdfRenderableObjects.cpp \
     $$PWD/convexHull.cpp \
     $$PWD/convexQuickHull.cpp \
+    $$PWD/projectiveConvexQuickHull.cpp \
     $$PWD/renderer/attributedTriangleSpanIterator.cpp \
     $$PWD/pointCloud.cpp \
     \
