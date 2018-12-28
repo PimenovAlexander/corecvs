@@ -52,12 +52,14 @@ SOURCES       = main_physics.cpp \
 		physicsMainWidget.cpp \
 		clientsender.cpp \
 		comcontroller.cpp \
-		controllrecord.cpp ../../.obj/physics/moc_physicsMainWidget.cpp
+		controllrecord.cpp \
+		joystickinput.cpp ../../.obj/physics/moc_physicsMainWidget.cpp
 OBJECTS       = ../../.obj/physics/main_physics.o \
 		../../.obj/physics/physicsMainWidget.o \
 		../../.obj/physics/clientsender.o \
 		../../.obj/physics/comcontroller.o \
 		../../.obj/physics/controllrecord.o \
+		../../.obj/physics/joystickinput.o \
 		../../.obj/physics/moc_physicsMainWidget.o
 DIST          = ../../arduinoscancontrol.ino \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
@@ -126,11 +128,13 @@ DIST          = ../../arduinoscancontrol.ino \
 		physics.pro physicsMainWidget.h \
 		clientsender.h \
 		comcontroller.h \
-		controllrecord.h main_physics.cpp \
+		controllrecord.h \
+		joystickinput.h main_physics.cpp \
 		physicsMainWidget.cpp \
 		clientsender.cpp \
 		comcontroller.cpp \
-		controllrecord.cpp
+		controllrecord.cpp \
+		joystickinput.cpp
 QMAKE_TARGET  = physics
 DESTDIR       = ../../bin/#avoid trailing-slash linebreak
 TARGET        = ../../bin/physics
@@ -317,8 +321,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents physicsMainWidget.h clientsender.h comcontroller.h controllrecord.h $(DISTDIR)/
-	$(COPY_FILE) --parents main_physics.cpp physicsMainWidget.cpp clientsender.cpp comcontroller.cpp controllrecord.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents physicsMainWidget.h clientsender.h comcontroller.h controllrecord.h joystickinput.h $(DISTDIR)/
+	$(COPY_FILE) --parents main_physics.cpp physicsMainWidget.cpp clientsender.cpp comcontroller.cpp controllrecord.cpp joystickinput.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents physicsMainWidget.ui $(DISTDIR)/
 
 
@@ -541,6 +545,10 @@ compiler_clean: compiler_moc_header_clean compiler_uic_clean
 
 ../../.obj/physics/controllrecord.o: controllrecord.cpp controllrecord.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/controllrecord.o controllrecord.cpp
+
+../../.obj/physics/joystickinput.o: joystickinput.cpp joystickinput.h \
+		../../../corecvs/core/utils/global.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/joystickinput.o joystickinput.cpp
 
 ../../.obj/physics/moc_physicsMainWidget.o: ../../.obj/physics/moc_physicsMainWidget.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/moc_physicsMainWidget.o ../../.obj/physics/moc_physicsMainWidget.cpp

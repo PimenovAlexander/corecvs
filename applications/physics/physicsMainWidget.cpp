@@ -1,6 +1,7 @@
 #include "core/utils/global.h"
 #include "physicsMainWidget.h"
 #include "ui_physicsMainWidget.h"
+#include "joystickinput.h"
 #include "clientsender.h"
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
@@ -38,6 +39,7 @@
         ui->comboBox->addItem("Usual mode");
         ui->comboBox->addItem("Inertia mode");
         ui->comboBox->addItem("Casual mode");
+        FrameValuesUpdate();
     }
 
     PhysicsMainWidget::~PhysicsMainWidget()
@@ -554,7 +556,7 @@
      *
      * Returns 0 on success. Otherwise -1 is returned.
      */
-    int read_event(int fd, struct js_event *event)
+    /*int read_event(int fd, struct js_event *event)
     {
         ssize_t bytes;
 
@@ -563,13 +565,13 @@
         if (bytes == sizeof(*event))
             return 0;
 
-        /* Error, could not read full event. */
-        return -1;
+         return -1;
     }
-
+*/
     /**
      * Returns the number of axes on the controller or 0 if an error occurs.
      */
+    /*
     size_t get_axis_count(int fd)
     {
         __u8 axes;
@@ -583,7 +585,7 @@
     /**
      * Returns the number of buttons on the controller or 0 if an error occurs.
      */
-
+/*
 
     size_t get_button_count(int fd)
     {
@@ -609,7 +611,7 @@
      *
      * Returns the axis that the event indicated.
      */
-
+/*
     size_t get_axis_state(struct js_event *event,  PhysicsMainWidget::axis_state axes[3])
     {
         size_t axis = event->number / 2;
@@ -625,88 +627,15 @@
         return axis;
     }
 
-
+*/
 
     void PhysicsMainWidget::StartJoyStickMode()
     {
-    std::thread thr([this]()
-    {
-        const int thr_const=1;
-        const int roll_const=10;
-        const int pit_const=10;
-        const int yaw_const=10;
+          JoyStickInput  js(  yaw_value,roll_value,pitch_value,throttle_value,CH5_value,CH6_value,CH7_value,CH8_value);
+          js.Start();
 
-        int throttle_for_hang=1360;          //it changes for diff cargo weight and battery charge , so we can set it by 'a' button
-
-        const char *device;
-        int js;
-        struct js_event eventtt;
-        struct axis_state axes[3] = {0};
-        size_t axis;
-        unsigned char seven=7;
-        unsigned char six=6;
-        unsigned char five=5;
-        unsigned char four=4;
-        unsigned char three=3;
-        device = "/dev/input/js0";
-        js = open(device, O_RDONLY);
-        if (js == -1)
-        {
-            perror("Could not open joystick");
-            cout<<"Could not open joystick"<<endl;
-        }
-        else
-        {
-            CountOfSticks=get_axis_count(js);
-            FrameValuesUpdate();
-            cout<<"JS mode has started"<<endl;
-            while (read_event(js, &eventtt) == 0)
-            {
-                autopilotMode=false;
-                switch (eventtt.type)
-                {
-                case JS_EVENT_BUTTON:
-                    switch (Current_mode)
-                    {
-                        case 0:
-                            usial_buttons(eventtt);
-                            break;
-                        case 1:
-                            inertial_buttons(eventtt);
-                            break;
-                        case 2:
-                            casual_buttons(eventtt);
-                            break;
-                        default: break;
-                    }
-
-
-                    break;
-                case JS_EVENT_AXIS:
-                    switch (Current_mode)
-                    {
-                        case 0:
-                            usial_sticks(eventtt);
-                            break;
-                        case 1:
-                            inertial_sticks(eventtt);
-                            break;
-                        case 2:
-                            casual_sticks(eventtt);
-                            break;
-                        default: break;
-                    }
-
-                    break;
-                default:
-                    break;
-                }
-            }
-            }
-            });
-            thr.detach();
-     }
-
+    }
+/*
     void PhysicsMainWidget::usial_buttons(js_event event)
     {
         unsigned char seven=7;
@@ -895,24 +824,12 @@
             break;
         case 8:                            //Xinput
 
-            /*if (event.number==seven )                  //rt   //arming
-            {
-               Start_arming(event.value);
-            }
-            */
+
             if (event.number==five  && event.value )    //rb                 //turns of copter(if smth goes very very wrong)
             {
                 disconnect_from_copter();
             }
-            /*if (event.number==six  && event.value )     //lt            //  all sticks to zero (if smth goes wrong)
-            {
-                throttle_value = 1100;
-                roll_value = 1500;
-                pitch_value = 1500;
-                throttle_value_from_JS = 1500;
-                yaw_value = 1500;
-            }
-            */
+
             if (event.number==four && event.value )      //lb               //Throttle to mid
             {
                 throttle_value=mid_Throttle;
@@ -953,8 +870,7 @@
              axis = get_axis_state(&event, axes);
 
             if (axis < 3)
-            /* printf("Axis %u at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);*/
-            {                                                //minimum axis is not 30000, but near
+             {                                                //minimum axis is not 30000, but near
                 if (axis==0)
                 {
                     yaw_value = 1500+axes[axis].x/50/yaw_const;
@@ -1091,26 +1007,7 @@
             {
                 disconnect_from_copter();
             }
-            /*if (event.number==seven  && event.value && !lt_pressed)        //rt
-            {
-                rt_pressed=true;
-                throttle_value=1550;
-            }
-            if (event.number==seven  && !event.value && !lt_pressed)         //rt
-            {
-                rt_pressed=false;
-                throttle_value=mid_Throttle;
-            }
-            if (event.number==six  && event.value && !rt_pressed)            //lt
-            {
-                lt_pressed=true;
-                throttle_value=1250;
-            }
-            if (event.number==six  && !event.value && !rt_pressed)           //lt
-            {
-                lt_pressed=false;
-                throttle_value=mid_Throttle;
-            }*/
+
             if (event.number==zero && event.value)                   //a  //arming
             {
                 if (!recording)
@@ -1140,8 +1037,7 @@
         case 6:
             axis = get_axis_state(&event, axes);
             if (axis < 3)
-            /* printf("Axis %u at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);*/
-            {                                                //minimum axis is not 30000, but near
+             {                                                //minimum axis is not 30000, but near
                 if (axis==0)
                 {
                     pitch_value = 1500 - axes[axis].y/50/pit_const;
@@ -1164,8 +1060,7 @@
         case 8:
             axis = get_axis_state(&event, axes);
             if (axis < 3)
-            /* printf("Axis %u at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);*/
-            {                                                //minimum axis is not 30000, but near
+             {                                                //minimum axis is not 30000, but near
                 if (axis==0)
                 {
 
@@ -1247,7 +1142,7 @@
         bind =true;
     }
 
-
+*/
     void PhysicsMainWidget::on_pushButton_2_clicked()
     {
         //       cout<<m.pitch<<" "<<m.roll<<" "<<m.throttle<<" "<<m.yaw<<" "<<m.count_of_repeats<<endl;
@@ -1312,7 +1207,7 @@
         }
     }
 
-
+/*
 
     void PhysicsMainWidget::StartRecord()
     {
@@ -1330,3 +1225,4 @@
     }
 
 
+*/

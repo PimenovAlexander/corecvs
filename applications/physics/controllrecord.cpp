@@ -1,6 +1,8 @@
 #include "controllrecord.h"
 #include <iostream>
 #include <fstream>
+#include <linux/joystick.h>
+
 
 
 

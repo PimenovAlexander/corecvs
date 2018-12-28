@@ -10,6 +10,7 @@
 #include <fcntl.h>
 #include <controllrecord.h>
 #include <stack>
+#include  "joystickinput.h"
 
 namespace Ui {
 class PhysicsMainWidget;
@@ -42,7 +43,7 @@ private slots:
     void CH7Change(int i);
     void CH8Change(int i);
     void StartJoyStickMode();
-    void Bind();
+    //void Bind();
     void on_pushButton_released();
     void SendJoyValues();
     void StartRealMode();
@@ -86,23 +87,23 @@ private:
     bool recording=false;
 
     void SendOurValues(std::vector<uint8_t> OurValues);
-    void usial_buttons(js_event event);
-    void usial_sticks(js_event event);
+    //void usial_buttons(js_event event);
+    //void usial_sticks(js_event event);
 
-    void inertial_buttons(js_event event);
-    void inertial_sticks(js_event event);
+    //void inertial_buttons(js_event event);
+    //void inertial_sticks(js_event event);
 
-    void casual_buttons(js_event event);
-    void casual_sticks(js_event event);
+    //void casual_buttons(js_event event);
+    //void casual_sticks(js_event event);
 
-    void StartRecord();
-    void StopRecord();
+    //void StartRecord();
+    //void StopRecord();
 
     ControllRecord recordData;
 
     struct axis_state axes[3] ;
 
-    void Start_arming(bool pressed);
+    //void Start_arming(bool pressed);
     ClientSender VirtualSender;
 
     int CountOfSticks=0;
