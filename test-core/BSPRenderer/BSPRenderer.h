@@ -10,24 +10,26 @@
 #ifndef BSPRENDERER_H
 #define BSPRENDERER_H
 
+#include <iterator>
+
 #include "core/geometry/polygons.h"
 #include "core/geometry/line.h"
-#include <iterator>
+
+#define COINCIDENT  0
+#define IN_BACK     1
+#define IN_FRONT    2
+#define INTERSECT   3
 
 namespace corecvs {
 
-//template<typename RealType, typename GeometryType, class SeparatorType>
-//class BSPTreeNodeBase {
-
-
-//};
+#if 0
 
 class BSPTree2d {
     Line2d               partition;
     std::vector<Ray2d>   coincidentEdges;
     BSPTree2d            *front,
                          *back;
-    BSPTree2d() {
+    BSPTree2d(std::vector<Ray2d> edges) {
 
     }
 
@@ -59,7 +61,7 @@ class BSPTree2d {
                 case IN_FRONT:
                     frontEdges.push_back(*curEdge);
                     break;
-                case INTERCECT:
+                case INTERSECT:
                     Ray2d *frontPart, *backPart;
                     SplitRay2d(curEdge, tree->partition, frontPart, backPart);
                     backEdges.push_back(*backPart);
@@ -81,6 +83,7 @@ class BSPTree2d {
     }
 };
 
+#endif
 
 } // namespace corecvs
 

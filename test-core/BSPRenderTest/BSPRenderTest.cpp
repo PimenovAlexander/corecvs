@@ -60,6 +60,8 @@ TEST(BSPRender, levelDraw)
     AbstractPainter<RGB24Buffer> painter(buffer);
     painter.drawPolygon(p, RGBColor::White());
 
+    cout << "++==" << p.size() << endl;
+
     BMPLoader().save("levelPolygon.bmp", buffer);
 
 //    Ray2d ray(Vector2dd(100, 719), Vector2dd(200, 0));
