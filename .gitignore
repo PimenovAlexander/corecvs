@@ -5,6 +5,7 @@ siblings/gtest
 *Makefile*
 *.bmp
 *.ply
+*.log
 
 .qmake.stash
 cvs-open.pro.user

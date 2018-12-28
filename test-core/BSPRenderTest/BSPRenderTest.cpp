@@ -11,6 +11,7 @@
 #include <iostream>
 #include <random>
 #include <fstream>
+#include <cstdio>
 
 #include "core/geometry/renderer/attributedTriangleSpanIterator.h"
 
@@ -27,6 +28,8 @@
 
 #include "core/geometry/polygonPointIterator.h"
 #include "core/buffers/bufferFactory.h"
+
+#include "test-core/BSPRenderer/BSPRenderer.h"
 
 using namespace corecvs;
 
@@ -60,7 +63,16 @@ TEST(BSPRender, levelDraw)
     AbstractPainter<RGB24Buffer> painter(buffer);
     painter.drawPolygon(p, RGBColor::White());
 
-    cout << "++==" << p.size() << endl;
+    BSPTree2d tree;
+
+
+    Ray2d ray = p.getRay(12);
+    cout << "++== " << ray.getStart() << ", " << ray.getEnd() << endl;
+    Line2d line = Line2d(ray);
+    printf("> %f, %f, %f\n"
+           "> %i\n", line.a(), line.b(), line.c(), line.side(Vector2dd(300, 300)));
+    printf("> %f, %f, %f\n"
+           "> %i\n", line.a(), line.b(), line.c(), line.side(Vector2dd(0, 300)));
 
     BMPLoader().save("levelPolygon.bmp", buffer);
 

@@ -16,69 +16,125 @@
 #include "core/geometry/line.h"
 
 #define COINCIDENT  0
-#define IN_BACK     1
-#define IN_FRONT    2
+#define RIGHT       1
+#define LEFT        2
 #define INTERSECT   3
+#define ERROR       -1
 
 namespace corecvs {
 
-#if 0
+#if 1
 
 class BSPTree2d {
-    Line2d               partition;
+public:
+    Ray2d                *separatorEdge = nullptr;
     std::vector<Ray2d>   coincidentEdges;
-    BSPTree2d            *front,
-                         *back;
-    BSPTree2d(std::vector<Ray2d> edges) {
+    BSPTree2d            *front = nullptr,
+                         *back = nullptr;
 
-    }
+    BSPTree2d() {}
 
-    void BSPDivide(BSPTree2d *tree, std::vector<Ray2d> edges)
+    void BSPDivide(std::vector<Ray2d> edges)
     {
         std::vector<Ray2d>::iterator edgesIt = edges.begin();
 
-        if (edgesIt == edges.end())
+        if (edgesIt == edges.end()) {
+            cout << "No more edges left!\n";
             return;
-        Ray2d *root = &(*edgesIt);
+        }
 
-        tree->partition = Line2d(*root);
-        tree->coincidentEdges.push_back(*root);
-        std::vector<Ray2d> frontEdges,
-                           backEdges;
+        separatorEdge = &(*edgesIt);
+        coincidentEdges.push_back(*separatorEdge);
+        std::vector<Ray2d> leftEdges,
+                           rightEdges;
 
         ++edgesIt;
         while (edgesIt != edges.end()) {
             Ray2d *curEdge = &(*edgesIt);
-            int result = classifyEdge(tree->partition, curEdge);
+            int result = classifyEdge(separatorEdge, curEdge);
 
             switch (result) {
                 case COINCIDENT:
-                    tree->coincidentEdges.push_back(*curEdge);
+                    coincidentEdges.push_back(*curEdge);
                     break;
-                case IN_BACK:
-                    backEdges.push_back(*curEdge);
+                case RIGHT:
+                    rightEdges.push_back(*curEdge);
                     break;
-                case IN_FRONT:
-                    frontEdges.push_back(*curEdge);
+                case LEFT:
+                    leftEdges.push_back(*curEdge);
                     break;
                 case INTERSECT:
-                    Ray2d *frontPart, *backPart;
-                    SplitRay2d(curEdge, tree->partition, frontPart, backPart);
-                    backEdges.push_back(*backPart);
-                    frontEdges.push_back(*frontPart);
+                {
+                    Ray2d *rightPart = nullptr,
+                          *leftPart  = nullptr;
+                    SplitRay2d(curEdge, separatorEdge, rightPart, leftPart);
+                    rightEdges.push_back(*leftPart);
+                    leftEdges.push_back(*rightPart);
+                    break;
+                }
+                case ERROR:
+                    cout << "\n\nSOMETHING WENT TERRIBLY WRONG HERE!\n\n";
                     break;
             }
             ++edgesIt;
         }
 
-        if (!frontEdges.empty()) {
-            tree->front = new BSPTree2d;
-            BSPDivide(tree->front, frontEdges);
+        if (!leftEdges.empty()) {
+            front = new BSPTree2d();
+            front->BSPDivide(leftEdges);
         }
 
-        if (!backEdges.empty()) {
-            tree->back = new BSPTree2d;
-            BSPDivide (tree->back, backEdges);
+        if (!rightEdges.empty()) {
+            back = new BSPTree2d();
+            back->BSPDivide(rightEdges);
+        }
+    }
+
+    static int classifyEdge(Ray2d *separatorEdge, Ray2d *curEdge)
+    {
+        Line2d separatorLine = Line2d(*separatorEdge);
+        int startPt = separatorLine.side(curEdge->getStart());
+        int endPt = separatorLine.side(curEdge->getEnd());
+
+        if (startPt == endPt) {
+            switch (startPt) {
+                case 1:
+                    return RIGHT;
+                case 0:
+                    return COINCIDENT;
+                case -1:
+                    return LEFT;
+            }
+        } else if (startPt == 0) {
+            if (endPt == 1)
+                return RIGHT;
+            else
+                return LEFT;
+        } else if (endPt == 0) {
+            if (startPt == 1)
+                return RIGHT;
+            else
+                return LEFT;
+        } else
+            return INTERSECT;
+
+        return ERROR;
+    }
+
+    static void SplitRay2d(Ray2d *curEdge, Ray2d *separatorEdge,
+                           Ray2d *rightPart, Ray2d *leftPart)
+    {
+        Line2d separatorLine = Line2d(*separatorEdge);
+        Line2d curLine = Line2d(*curEdge);
+        int startPt = separatorLine.side(curEdge->getStart());
+        Vector2dd interPt = separatorLine.intersectWith(curLine);
+
+        if (startPt == 1) {
+            *rightPart = Ray2d::FromPoints(curEdge->getStart(), interPt);
+            *leftPart  = Ray2d::FromPoints(interPt, curEdge->getEnd());
+        } else {
+            *leftPart  = Ray2d::FromPoints(curEdge->getStart(), interPt);
+            *rightPart = Ray2d::FromPoints(interPt, curEdge->getEnd());
         }
     }
 };

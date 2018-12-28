@@ -2,9 +2,5 @@
 
 namespace corecvs {
 
-BSPRenderer::BSPRenderer() {
-
-}
-
 } // namespace corecvs
 
