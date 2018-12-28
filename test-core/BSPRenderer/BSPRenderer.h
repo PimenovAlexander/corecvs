@@ -15,6 +15,18 @@
 #include "core/geometry/polygons.h"
 #include "core/geometry/line.h"
 
+#include "core/utils/global.h"
+
+#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/buffers/rgb24/abstractPainter.h"
+#include "core/geometry/renderer/simpleRenderer.h"
+#include "core/geometry/mesh3d.h"
+#include "core/cameracalibration/cameraModel.h"
+
+#include "core/geometry/polygonPointIterator.h"
+#include "core/buffers/bufferFactory.h"
+
 #define COINCIDENT  0
 #define RIGHT       1
 #define LEFT        2
@@ -25,16 +37,21 @@ namespace corecvs {
 
 #if 1
 
+namespace BSPRenderer {
+
 class BSPTree2d {
 public:
-    Ray2d                *separatorEdge = nullptr;
-    std::vector<Ray2d>   coincidentEdges;
-    BSPTree2d            *front = nullptr,
-                         *back = nullptr;
+    Ray2d               *separatorEdge = nullptr;
+    std::vector<Ray2d>  coincidentEdges;
+    BSPTree2d           *rightTree = nullptr,
+                        *leftTree = nullptr;
+
+    std::vector<Ray2d>  rightEdges,
+                        leftEdges;
 
     BSPTree2d() {}
 
-    void BSPDivide(std::vector<Ray2d> edges)
+    void BSPDivide(std::vector<Ray2d> &edges)
     {
         std::vector<Ray2d>::iterator edgesIt = edges.begin();
 
@@ -45,13 +62,11 @@ public:
 
         separatorEdge = &(*edgesIt);
         coincidentEdges.push_back(*separatorEdge);
-        std::vector<Ray2d> leftEdges,
-                           rightEdges;
 
         ++edgesIt;
         while (edgesIt != edges.end()) {
             Ray2d *curEdge = &(*edgesIt);
-            int result = classifyEdge(separatorEdge, curEdge);
+            int result = ClassifyEdge(separatorEdge, curEdge);
 
             switch (result) {
                 case COINCIDENT:
@@ -68,8 +83,8 @@ public:
                     Ray2d *rightPart = nullptr,
                           *leftPart  = nullptr;
                     SplitRay2d(curEdge, separatorEdge, rightPart, leftPart);
-                    rightEdges.push_back(*leftPart);
-                    leftEdges.push_back(*rightPart);
+                    rightEdges.push_back(*rightPart);
+                    leftEdges.push_back(*leftPart);
                     break;
                 }
                 case ERROR:
@@ -79,18 +94,18 @@ public:
             ++edgesIt;
         }
 
-        if (!leftEdges.empty()) {
-            front = new BSPTree2d();
-            front->BSPDivide(leftEdges);
+        if (!rightEdges.empty()) {
+            rightTree = new BSPTree2d();
+            rightTree->BSPDivide(rightEdges);
         }
 
-        if (!rightEdges.empty()) {
-            back = new BSPTree2d();
-            back->BSPDivide(rightEdges);
+        if (!leftEdges.empty()) {
+            leftTree = new BSPTree2d();
+            leftTree->BSPDivide(leftEdges);
         }
     }
 
-    static int classifyEdge(Ray2d *separatorEdge, Ray2d *curEdge)
+    static int ClassifyEdge(Ray2d *separatorEdge, Ray2d *curEdge)
     {
         Line2d separatorLine = Line2d(*separatorEdge);
         int startPt = separatorLine.side(curEdge->getStart());
@@ -138,6 +153,54 @@ public:
         }
     }
 };
+
+std::vector<Ray2d> PolygonToRays(Polygon &poly)
+{
+    int i, pSize = poly.size();
+    std::vector<Ray2d> rays;
+
+    for (i = 0; i < pSize; ++i) {
+        Vector2dd start = poly.getPoint(i);
+        Vector2dd end = poly.getNextPoint(i);
+        rays.push_back(Ray2d::FromPoints(start, end));
+    }
+
+    return rays;
+}
+
+static void DrawBSPTree(BSPTree2d &tree, int i) {
+    int h = 720;
+    int w = 720;
+    RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::Black());
+    std::string out("BSPSnap" + std::to_string(i));
+
+    buffer->drawLine(tree.separatorEdge->getStart(),
+                     tree.separatorEdge->getEnd(),
+                     RGBColor::Red());
+    for (auto& it : tree.coincidentEdges) {
+        buffer->drawLine(it.getStart(),
+                         it.getEnd(),
+                         RGBColor::Blue());
+    }
+    for (auto& it : tree.rightEdges) {
+        buffer->drawLine(it.getStart(),
+                         it.getEnd(),
+                         RGBColor::Green());
+    }
+    for (auto& it : tree.leftEdges) {
+        buffer->drawLine(it.getStart(),
+                         it.getEnd(),
+                         RGBColor::Yellow());
+    }
+    BMPLoader().save(out, buffer);
+
+    if(tree.rightTree != nullptr)
+        BSPRenderer::DrawBSPTree(*(tree.rightTree), ++i);
+    if(tree.leftTree != nullptr)
+        BSPRenderer::DrawBSPTree(*(tree.leftTree), ++i);
+}
+
+} // namespace BSPRenderer
 
 #endif
 
