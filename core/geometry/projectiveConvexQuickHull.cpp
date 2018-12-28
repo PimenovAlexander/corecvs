@@ -9,7 +9,7 @@ double pointLineDist(const ProjectiveCoord4d &lineP1, const ProjectiveCoord4d &l
     if (lineP1 == point || lineP2 == point)
         return 0;
     if (lineP1.w() == 0 || lineP2.w() == 0 || point.w() == 0)
-        return std::numeric_limits<double>::max();
+        return std::numeric_limits<double>::infinity();
     ProjectiveCoord4d lineVect = lineP2 - lineP1;
     lineVect = lineVect + ProjectiveCoord4d(0, 0, 0, 1);
     return (lineVect.toVector() ^ (point.toVector() - lineP1.toVector())).l2Metric() / lineVect.xyz().l2Metric();
@@ -38,27 +38,29 @@ bool faceIsVisible(const ProjectiveCoord4d &eyePoint, const ProjectiveConvexQuic
     if (face.plane.p1() == face.plane.p2() || face.plane.p1() == face.plane.p3() || face.plane.p1() == face.plane.p3())
         return false;
 
-    // (1, 1, 1, 0)
-    if (face.is_Inf() || face.is_Low() ||
-        // ox | oy | oz plane
-        (face.plane.p1().x() == 0 && face.plane.p2().x() == 0 && face.plane.p3().x() == 0) ||
-        (face.plane.p1().y() == 0 && face.plane.p2().y() == 0 && face.plane.p3().y() == 0) ||
-        (face.plane.p1().z() == 0 && face.plane.p2().z() == 0 && face.plane.p3().z() == 0) ||
-        // 2 points on infinity
-        (face.plane.p1().w() == 0 && face.plane.p2().w() == 0) ||
-        (face.plane.p1().w() == 0 && face.plane.p3().w() == 0) ||
-        (face.plane.p2().w() == 0 && face.plane.p3().w() == 0)) {
-            Vector3dd p = (face.plane.p1() - face.plane.p2()).xyz();
-            Vector3dd q = (face.plane.p1() - face.plane.p3()).xyz();
-            auto normal = p ^ q;
-            auto res = -1 * face.plane.p1().xyz() & normal.normalised();
-            return res >= eps;
+    // 3 points on infinity
+    if (face.plane.p1().w() == 0 && face.plane.p2().w() == 0 && face.plane.p3().w() == 0) {
+        Vector3dd p = (face.plane.p1() - face.plane.p2()).xyz();
+        Vector3dd q = (face.plane.p1() - face.plane.p3()).xyz();
+        auto normal = p ^ q;
+        auto res = -1 * face.plane.p1().xyz() & normal.normalised();
+        return res >= eps;
     }
-
     Vector3dd normal = face.plane.getNormal();
     Vector3dd point = face.plane.p1().toVector();
-    // (1, 0, 0, 0)
-    if (face.plane.p1().w() == 0) {
+
+    // 2 points on infinity
+    if (face.plane.p1().w() == 0 && face.plane.p2().w() == 0) {
+        normal = face.plane.p1().xyz() ^ face.plane.p2().xyz();
+        point = face.plane.p3().toVector();
+    } else if (face.plane.p1().w() == 0 && face.plane.p3().w() == 0) {
+        normal = face.plane.p3().xyz() ^ face.plane.p1().xyz();
+        point = face.plane.p2().toVector();
+    } else if (face.plane.p2().w() == 0 && face.plane.p3().w() == 0) {
+        normal = face.plane.p2().xyz() ^ face.plane.p3().xyz();
+    }
+    // 1 point on infinity
+    else if (face.plane.p1().w() == 0) {
         Vector3dd q = face.plane.p1().xyz();
         ProjectiveCoord4d p = face.plane.p2() - face.plane.p3();
         normal = q ^ p.toVector();
@@ -72,12 +74,12 @@ bool faceIsVisible(const ProjectiveCoord4d &eyePoint, const ProjectiveConvexQuic
         ProjectiveCoord4d p = face.plane.p1() - face.plane.p2();
         normal = p.toVector() ^ q;
     }
-    if (eyePoint.w() == 0) {
-        double t = eyePoint.xyz() & normal;
-        return t >= eps;
-    }
 
-    auto res = ((eyePoint.toVector() - point) & normal.normalised());
+    double res;
+    if (eyePoint.w() == 0)
+        res = eyePoint.xyz() & normal.normalised();
+    else
+        res = ((eyePoint.toVector() - point) & normal.normalised());
     return res >= eps;
 }
 

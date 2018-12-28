@@ -28,22 +28,23 @@ public:
     ProjectiveCoord(const Vector3d<ElementType> &V, const ElementType &x) : BaseClass(V,x) {}
 
     bool operator==(const ProjectiveCoord &coord) const {
-        if (this->w() == 0 && coord.w() == 0)
-            return (sgn(this->x()) == sgn(coord.x())) && (sgn(this->y()) == sgn(coord.y())) && (sgn(this->z()) == sgn(coord.z()));
+        if (this->w() == 0 && coord.w() == 0) {
+            if (coord.x() != 0) {
+                auto t = this->x() / coord.x();
+                return this->y() == coord.y() * t && this->z() == coord.z() * t;
+            } else if (coord.y() != 0) {
+                auto t = this->y() / coord.y();
+                return this->z() == coord.z() * t && this->x() == coord.x() * t;
+            } else if (coord.z() != 0){
+                auto t = this->z() / coord.z();
+                return this->y() == coord.y() * t && this->x() == coord.x() * t;
+            }
+            return this->x() == 0 && this->y() == 0 && this->z() == 0;
+        }
         if (this->w() != 0 && coord.w() != 0)
             return this->toVector() == coord.toVector();
         return false;
     }
-
-    bool is_Inf() const {
-        const double inf = std::numeric_limits<ElementType>::infinity();
-        return X() == inf && Y() == inf && Z() == inf;
-    }
-
-    bool is_Low() const {
-        const double low = std::numeric_limits<ElementType>::lowest();
-        return X() == low && Y() == low && Z() == low;
-    };
 
     ElementType X() const {
         if (this->x() == 0)
@@ -137,14 +138,6 @@ public:
 
         bool operator==(const HullFace &b) const {
             return plane == b.plane;
-        }
-
-        bool is_Inf() const {
-            return plane.p1().is_Inf() || plane.p2().is_Inf() || plane.p3().is_Inf();
-        }
-
-        bool is_Low() const {
-            return plane.p1().is_Low() || plane.p2().is_Low() || plane.p3().is_Low();
         }
     };
 

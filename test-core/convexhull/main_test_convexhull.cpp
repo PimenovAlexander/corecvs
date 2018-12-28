@@ -469,3 +469,21 @@ TEST(ConvexHull, testProjective3)
     SYNC_PRINT(("Faces: %d\n", (int)faces.size()));
     ASSERT_TRUE((faces.size() == 0));
 }
+
+TEST(ConvexHull, testProjective4)
+{
+    vector<ProjectiveCoord4d> input;
+    input.push_back(ProjectiveCoord4d(1, 2, 0, 0));
+    input.push_back(ProjectiveCoord4d(2, -1, 0, 0));
+    input.push_back(ProjectiveCoord4d(0, 0, 1, 0));
+    input.push_back(ProjectiveCoord4d(0, 0, 0, 1));
+    input.push_back(ProjectiveCoord4d(5, 5, 45, 1));
+    input.push_back(ProjectiveCoord4d(100, 6, 45, 1));
+
+    SYNC_PRINT(("Input points\n"));
+    for (size_t t = 0; t < input.size(); t++ )
+        cout << t << " " << input[t] << endl;
+    ProjectiveConvexQuickHull::HullFaces faces = ProjectiveConvexQuickHull::quickHull(input, 1e-9);
+    SYNC_PRINT(("Faces: %d\n", (int)faces.size()));
+    ASSERT_TRUE((faces.size() == 4));
+}
