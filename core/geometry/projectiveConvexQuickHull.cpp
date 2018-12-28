@@ -32,8 +32,6 @@ double pointFaceDist(const Triangle4dd &face, const ProjectiveCoord4d &point) {
 }
 
 bool faceIsVisible(const ProjectiveCoord4d &eyePoint, const ProjectiveConvexQuickHull::HullFace &face, double eps) {
-    cout << "eye: " << eyePoint << "; " << face.plane.p1() << " " << face.plane.p2() << " " << face.plane.p3() << "\n";
-
     if (eyePoint == face.plane.p1() || eyePoint == face.plane.p2() || eyePoint == face.plane.p3())
         return false;
     // one line
@@ -41,37 +39,20 @@ bool faceIsVisible(const ProjectiveCoord4d &eyePoint, const ProjectiveConvexQuic
         return false;
 
     // (1, 1, 1, 0)
-    if (face.is_Inf() || face.is_Low()) {
-        cout << "(1,1,1,0)\n";
-        Vector3dd p = (face.plane.p1() - face.plane.p2()).xyz();
-        Vector3dd q = (face.plane.p1() - face.plane.p3()).xyz();
-        auto normal = p ^ q;
-        cout << "cute normal: " << normal << "\n";
-        auto res = -1 * face.plane.p1().xyz() & normal.normalised();
-        return res >= eps;
-    }
-    // ox | oy | oz plane
-    if ((face.plane.p1().x() == 0 && face.plane.p2().x() == 0 && face.plane.p3().x() == 0) ||
+    if (face.is_Inf() || face.is_Low() ||
+        // ox | oy | oz plane
+        (face.plane.p1().x() == 0 && face.plane.p2().x() == 0 && face.plane.p3().x() == 0) ||
         (face.plane.p1().y() == 0 && face.plane.p2().y() == 0 && face.plane.p3().y() == 0) ||
-        (face.plane.p1().z() == 0 && face.plane.p2().z() == 0 && face.plane.p3().z() == 0)) {
-        Vector3dd p = (face.plane.p1() - face.plane.p2()).xyz();
-        Vector3dd q = (face.plane.p1() - face.plane.p3()).xyz();
-        auto normal = p ^ q;
-        auto res = -1 * face.plane.p1().xyz() & normal.normalised();
-        cout << "cute normal: " << normal << ": " << res << "\n";
-        return res >= eps;
-    }
-    // 2 points on infinity
-    if ((face.plane.p1().w() == 0 && face.plane.p2().w() == 0) ||
+        (face.plane.p1().z() == 0 && face.plane.p2().z() == 0 && face.plane.p3().z() == 0) ||
+        // 2 points on infinity
+        (face.plane.p1().w() == 0 && face.plane.p2().w() == 0) ||
         (face.plane.p1().w() == 0 && face.plane.p3().w() == 0) ||
         (face.plane.p2().w() == 0 && face.plane.p3().w() == 0)) {
-        cout << "2 points on infinity\n";
-        Vector3dd p = (face.plane.p1() - face.plane.p2()).xyz();
-        Vector3dd q = (face.plane.p1() - face.plane.p3()).xyz();
-        auto normal = p ^ q;
-        auto res = -1 * face.plane.p1().xyz() & normal.normalised();
-        cout << "cute normal: " << normal << ": " << res << "\n";
-        return res >= eps;
+            Vector3dd p = (face.plane.p1() - face.plane.p2()).xyz();
+            Vector3dd q = (face.plane.p1() - face.plane.p3()).xyz();
+            auto normal = p ^ q;
+            auto res = -1 * face.plane.p1().xyz() & normal.normalised();
+            return res >= eps;
     }
 
     Vector3dd normal = face.plane.getNormal();
@@ -91,15 +72,12 @@ bool faceIsVisible(const ProjectiveCoord4d &eyePoint, const ProjectiveConvexQuic
         ProjectiveCoord4d p = face.plane.p1() - face.plane.p2();
         normal = p.toVector() ^ q;
     }
-    cout << normal << " " << point << "\n";
     if (eyePoint.w() == 0) {
         double t = eyePoint.xyz() & normal;
-        cout << "inf eye: " << t << "\n";
         return t >= eps;
     }
 
     auto res = ((eyePoint.toVector() - point) & normal.normalised());
-    cout << normal << " " << res << "\n\n";
     return res >= eps;
 }
 
@@ -127,9 +105,6 @@ ProjectiveConvexQuickHull::Vertices createSimplex(const ProjectiveConvexQuickHul
         if (vertex.Z() <= EP[4].Z()) EP[4] = vertex;
         if (vertex.Z() >= EP[5].Z()) EP[5] = vertex;
     }
-    cout << "EP:";
-    for (size_t t = 0; t < 6; t++ )
-        cout << t << " " << EP[t] << endl;
 
     ProjectiveCoord4d triangleP1 = EP[0], triangleP2 = EP[0], triangleP3 = EP[0];
     double maxDist = -1;
@@ -151,12 +126,10 @@ ProjectiveConvexQuickHull::Vertices createSimplex(const ProjectiveConvexQuickHul
             triangleP3 = point;
         }
     }
-    cout << "3 triangles: \n" << triangleP1 << "\n" << triangleP2 << "\n" << triangleP3 << "\n";
 
     maxDist = 0;
     ProjectiveCoord4d apex = EP[0];
     for (const auto &point : listVertices) {
-        cout << point << "\n";
         double dist = abs(pointPlaneDist(triangleP1, triangleP2, triangleP3, point));
         if (dist == 0)
             continue;
@@ -164,13 +137,11 @@ ProjectiveConvexQuickHull::Vertices createSimplex(const ProjectiveConvexQuickHul
         bool f1 = faceIsVisible(point, ProjectiveConvexQuickHull::HullFace(apex, triangleP1, triangleP2), 0);
         bool f2 = faceIsVisible(point, ProjectiveConvexQuickHull::HullFace(apex, triangleP2, triangleP1), 0);
         bool res = f ? f1 : f2;
-        cout << "count face:" << point << ": " << f << ", " << f1 << ", " << f2 << "\n";
         if (dist >= maxDist && point != triangleP1 && point != triangleP2 && point != triangleP3 && !res) {
             maxDist = dist;
             apex = point;
         }
     }
-    cout << "apex\n" << apex << "\n";
     ProjectiveConvexQuickHull::Vertices Res;
     if (faceIsVisible(apex, ProjectiveConvexQuickHull::HullFace(triangleP1, triangleP2, triangleP3), 0))
         Res = { triangleP1, triangleP3, triangleP2, apex };
@@ -183,9 +154,6 @@ ProjectiveConvexQuickHull::HullFaces ProjectiveConvexQuickHull::quickHull(const 
         return ProjectiveConvexQuickHull::HullFaces();
 
     Vertices simplex = createSimplex(listVertices);
-    cout << "simplex:";
-    for (size_t t = 0; t < simplex.size(); t++ )
-        cout << t << " " << simplex[t] << endl;
     Vertices uniqueSimplex;
 
     for (ProjectiveCoord4d& elem : simplex)
@@ -206,9 +174,6 @@ ProjectiveConvexQuickHull::HullFaces ProjectiveConvexQuickHull::quickHull(const 
         printf("This is plane\n");
         return {};
     }
-    cout << "unique simplex:";
-    for (size_t t = 0; t < uniqueSimplex.size(); t++ )
-        cout << t << " " << uniqueSimplex[t] << endl;
 
     HullFaces faces = {
             HullFace(simplex[0], simplex[1], simplex[2]),
@@ -219,11 +184,6 @@ ProjectiveConvexQuickHull::HullFaces ProjectiveConvexQuickHull::quickHull(const 
     queue<HullFace> queue;
     addPointsToFaces(faces.data(), faces.size(), listVertices, epsilon);
     for (auto face : faces) {
-        cout << "face: " << face.plane.p1() << " " << face.plane.p2() << " " << face.plane.p3() << "\n";
-        cout << "points: ";
-        for (int i = 0; i < face.points.size(); i++)
-            cout << face.points[i] << " ";
-        cout << "\n\n";
         if (!face.points.empty())
             queue.push(face);
     }
@@ -280,7 +240,7 @@ ProjectiveConvexQuickHull::HullFaces ProjectiveConvexQuickHull::quickHull(const 
             }
         }
     }
-    cout << "Right result: \n";
+    cout << "Result: \n";
     for (auto &face: faces)
         cout << face.plane.p1() << " " << face.plane.p2() << " " << face.plane.p3() << "\n";
     return faces;
