@@ -89,6 +89,9 @@ public:
     /*Debug buffers*/
     AbstractBuffer<double> *scaleDebug = NULL;
 
+    AbstractBuffer<double> *vdxDebug = NULL;
+    AbstractBuffer<double> *vdyDebug = NULL;
+
     /* */
     RGBColor color;
 

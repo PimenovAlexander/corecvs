@@ -170,6 +170,14 @@ TEST(MidmapPyramid, testTexure)
         bufferpic->drawDoubleBuffer(renderer.scaleDebug, RGB24Buffer::STYLE_RAINBOW);
         BMPLoader().save("meshdraw-scale.bmp", bufferpic);
     }
+    if (renderer.vdxDebug != NULL) {
+        bufferpic->drawDoubleBuffer(renderer.vdxDebug, RGB24Buffer::STYLE_RAINBOW);
+        BMPLoader().save("meshdraw-vdx.bmp", bufferpic);
+    }
+    if (renderer.vdyDebug != NULL) {
+        bufferpic->drawDoubleBuffer(renderer.vdyDebug, RGB24Buffer::STYLE_RAINBOW);
+        BMPLoader().save("meshdraw-vdy.bmp", bufferpic);
+    }
 
     cout << buffer.elementBl(15.5, 15.5);
     CameraModel model;

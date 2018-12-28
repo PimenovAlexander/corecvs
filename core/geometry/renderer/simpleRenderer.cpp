@@ -152,6 +152,12 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
     if (useMipmap) {
         delete_safe(scaleDebug);
         scaleDebug = new AbstractBuffer<double>(buffer->h, buffer->w, 0.0);
+
+        delete_safe(vdxDebug);
+        vdxDebug = new AbstractBuffer<double>(buffer->h, buffer->w, 0.0);
+
+        delete_safe(vdyDebug);
+        vdyDebug = new AbstractBuffer<double>(buffer->h, buffer->w, 0.0);
     }
 
     Matrix44 normalTransform = modelviewMatrix.inverted().transposed();
@@ -251,12 +257,16 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
 
                 // We are adding to current line iterator data from the texture attribute for the next line
                 // We are interested in the increment of u and v over line
-                span.catt[ATTR_TEX_DU_DY] = it.part.da1[ATTR_TEX_U];
-                span.catt[ATTR_TEX_DV_DY] = it.part.da1[ATTR_TEX_V];
-
+                span.catt[ATTR_TEX_DU_DY] =                            it.part.da1[ATTR_TEX_U];
                 span.datt[ATTR_TEX_DU_DY] = (it.part.da2[ATTR_TEX_U] - it.part.da1[ATTR_TEX_U]) / (span.x2 - span.x1);
+
+                span.catt[ATTR_TEX_DV_DY] =                            it.part.da1[ATTR_TEX_V];
                 span.datt[ATTR_TEX_DV_DY] = (it.part.da2[ATTR_TEX_V] - it.part.da1[ATTR_TEX_V]) / (span.x2 - span.x1);
                 
+                cout << "New Span " << span.x2 << " " << span.x1 << " len "  << (span.x2 - span.x1) << endl;
+                cout << "delta at left  " << it.part.da1[ATTR_TEX_U] << endl;
+                cout << "delta at right " << it.part.da2[ATTR_TEX_U] << endl;
+
                 fragmentShader(span);
                 it.step();
             }
@@ -326,6 +336,7 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
             tex.y() = 1 - tex.y();
 
 
+
             if (zBuffer->element(span.pos()) > z)
             {
                 zBuffer->element(span.pos()) = z;
@@ -340,13 +351,16 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
                 {                    
                     if(useMipmap)
                     {
-                        printf("||tex %lf, %lf ||\n",tex.x(), tex.y());
-                        printf("|| dx %lf, %lf ||\n",dhatt[0], dhatt[1]);
-                        printf("|| dy %lf, %lf ||\n",dvatt[0], dvatt[1]);
+                        //printf("||tex %lf, %lf ||\n",tex.x(), tex.y());
+                        //printf("|| dx %lf, %lf ||\n",dhatt[0], dhatt[1]);
+                        //printf("|| dy %lf, %lf ||\n",dvatt[0], dvatt[1]);
                         //printf("\n|| x %f, y %f ||\n",tex.x() -lastx, tex.y() - lasty);
 
                         double scale = sqrt(dhatt.sumAllElementsSq() + dvatt.sumAllElementsSq());
                         scaleDebug->element(span.pos()) = scale;
+
+                        vdxDebug->element(span.pos()) = dvatt.x();
+                        vdyDebug->element(span.pos()) = dvatt.y();
 
                     
                         texId = (int)midmap.size() - 1;
