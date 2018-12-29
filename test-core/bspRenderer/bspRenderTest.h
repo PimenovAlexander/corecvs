@@ -33,9 +33,4 @@
 
 using namespace corecvs;
 
-TEST(BSPRender, levelDraw)
-{
-
-}
-
 #endif // BSPRENDERTEST_H

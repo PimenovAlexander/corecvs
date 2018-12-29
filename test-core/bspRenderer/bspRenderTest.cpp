@@ -29,7 +29,7 @@
 #include "core/geometry/polygonPointIterator.h"
 #include "core/buffers/bufferFactory.h"
 
-#include "test-core/BSPRenderer/BSPRenderer.h"
+#include "bspRenderer.h"
 
 using namespace corecvs;
 
