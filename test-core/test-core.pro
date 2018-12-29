@@ -113,6 +113,7 @@ SOURCES += \
     orientedbox/main_test_orientedbox.cpp \
     convexHull2d/main_test_convexHull2d.cpp \
     processor6d/main_test_processor6d.cpp \
+    BSPRenderTest/BSPRenderTest.cpp
 
 
 HEADERS += \
@@ -127,4 +128,5 @@ HEADERS += \
     snooker/errors.h \
     snooker/reflectionSegmentator.h \
     snooker/snookerSegmentator.h \
-    stateMachineTest/test.h
+    stateMachineTest/test.h \
+    BSPRenderer/BSPRenderer.h

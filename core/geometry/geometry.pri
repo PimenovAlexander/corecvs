@@ -41,6 +41,7 @@ HEADERS += \
     $$PWD/plane.h \
     $$PWD/kdtree.h \
     $$PWD/beziercurve.h \
+    raytrace/bspTree.h \
 
 
 SOURCES += \ 
