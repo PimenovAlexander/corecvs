@@ -19,6 +19,8 @@ public:
 
 
     virtual std::vector<std::string> debugBuffers() const = 0;
+
+    /* This method returns a copy of the internal debug buffer. You would need to delete it */
     virtual RGB24Buffer *getDebugBuffer(const std::string& name) const = 0;
 
     virtual void dumpAllDebugs(const std::string &prefix = "", const std::string &extenstion = ".bmp");

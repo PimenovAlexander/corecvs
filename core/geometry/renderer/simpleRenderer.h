@@ -6,6 +6,7 @@
  **/
 #include <vector>
 
+
 #include "core/utils/global.h"
 #include "core/geometry/renderer/geometryIterator.h"
 #include "core/buffers/abstractBuffer.h"
@@ -15,6 +16,7 @@
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/geometry/renderer/attributedTriangleSpanIterator.h"
 #include "core/fileformats/bmpLoader.h"
+#include "core/utils/debuggableBlock.h"
 
 
 namespace corecvs {
@@ -43,7 +45,7 @@ public:
 };
 
 
-class ClassicRenderer
+class ClassicRenderer : public DebuggableBlock
 {
 public:
     ClassicRenderer();
@@ -86,17 +88,23 @@ public:
     /* These are shader uniform vars*/
     RGB24Buffer *cBuffer;
 
-    /*Debug buffers*/
-    AbstractBuffer<double> *scaleDebug = NULL;
-
-    AbstractBuffer<double> *vdxDebug = NULL;
-    AbstractBuffer<double> *vdyDebug = NULL;
-
     /* */
     RGBColor color;
 
     virtual void fragmentShader(AttributedHLineSpan & span);
     virtual ~ClassicRenderer();
+
+    /*Debug buffers*/
+    AbstractBuffer<double> *scaleDebug = NULL;
+    AbstractBuffer<double> *factorDebug = NULL;
+
+    AbstractBuffer<double> *vdxDebug = NULL;
+    AbstractBuffer<double> *vdyDebug = NULL;
+
+    virtual std::vector<std::string> debugBuffers() const override;
+    virtual RGB24Buffer *getDebugBuffer(const std::string& name) const override;
+
+
 };
 
 } // namespace corecvs

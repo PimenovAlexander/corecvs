@@ -113,6 +113,14 @@ TEST(MidmapPyramid, testTexure)
     Vector3dd a81(170.0, 0.0, 750.0);
     Vector3dd a82(20.0, 5.0, -25.0);
     Vector3dd a83(20.0, -5.0, -25.0);
+    
+    Vector3dd a91(210.0, 10.0, 1700.0);
+    Vector3dd a92(210.0, 0.0, 1700.0);
+    Vector3dd a93(220.0, 0.0, 1700.0);
+
+    Vector3dd a101(360.0, 10.0, 2700.0);
+    Vector3dd a102(360.0, 0.0, 2700.0);
+    Vector3dd a103(370.0, 0.0, 2700.0);
 
     mesh.mulTransform(Affine3DQ::Shift(0, 0, 100));
     mesh.addTriangle(a01,a02,a03); 
@@ -124,6 +132,8 @@ TEST(MidmapPyramid, testTexure)
     mesh.addTriangle(a61,a62,a63);
     mesh.addTriangle(a71,a72,a73);
     mesh.addTriangle(a81,a82,a83);
+    mesh.addTriangle(a91,a92,a93);
+    mesh.addTriangle(a101,a102,a103);
     mesh.popTransform();
 
     Vector2dd b1(0.0, 1.0);
@@ -133,13 +143,13 @@ TEST(MidmapPyramid, testTexure)
     Vector3dd a1(0.0, 0.0, 100.0);
     Vector3dd a2((-31.0/6.0), 0.0, -1.0);
 
-    mesh.texId.resize(9);
-    mesh.normalId.resize(9);
-    mesh.textureCoords.resize(9);
-    mesh.normalCoords.resize(9);
+    mesh.texId.resize(11);
+    mesh.normalId.resize(11);
+    mesh.textureCoords.resize(11);
+    mesh.normalCoords.resize(11);
 
 
-    for (int i = 0; i < 9; i++){
+    for (int i = 0; i < 11; i++){
         mesh.texId[i][0] = 0;
         mesh.texId[i][1] = 1;
         mesh.texId[i][2] = 2;
@@ -165,19 +175,8 @@ TEST(MidmapPyramid, testTexure)
 
     renderer.render(&mesh, bufferpic);
 
-    BMPLoader().save("trianglesdraw2.bmp", bufferpic);
-    if (renderer.scaleDebug != NULL) {
-        bufferpic->drawDoubleBuffer(renderer.scaleDebug, RGB24Buffer::STYLE_RAINBOW);
-        BMPLoader().save("meshdraw-scale.bmp", bufferpic);
-    }
-    if (renderer.vdxDebug != NULL) {
-        bufferpic->drawDoubleBuffer(renderer.vdxDebug, RGB24Buffer::STYLE_RAINBOW);
-        BMPLoader().save("meshdraw-vdx.bmp", bufferpic);
-    }
-    if (renderer.vdyDebug != NULL) {
-        bufferpic->drawDoubleBuffer(renderer.vdyDebug, RGB24Buffer::STYLE_RAINBOW);
-        BMPLoader().save("meshdraw-vdy.bmp", bufferpic);
-    }
+    BMPLoader().save("trianglesdraw_true2.bmp", bufferpic);
+    renderer.dumpAllDebugs("meshdraw-");
 
     cout << buffer.elementBl(15.5, 15.5);
     CameraModel model;
@@ -188,5 +187,50 @@ TEST(MidmapPyramid, testTexure)
     mesh.dumpPLY("test.ply");
 
     delete_safe(bufferpic);
+}
+
+
+TEST(MidmapPyramid, testTexureDY)
+{
+    RGB24Buffer buffer(128, 128);
+    RGBColor white = RGBColor::White();
+    buffer.checkerBoard(16, white);
+
+    int h = 100;
+    int w = 100;
+    RGB24Buffer *bufferpic = new RGB24Buffer(h, w, RGBColor::Red());
+
+    ClassicRenderer renderer;
+    PinholeCameraIntrinsics cam(Vector2dd(w,h), degToRad(50));
+    renderer.modelviewMatrix = cam.getKMatrix();
+    renderer.drawFaces = true;
+    Mesh3DDecorated mesh;
+    renderer.addTexture(&buffer, true);
+
+    mesh.currentTexture = 0;
+    mesh.switchTextures(true);
+    mesh.switchNormals(true);
+
+    mesh.addTriangleT(Vector3dd(-1, -1, 3), Vector2dd(0, 0),
+                      Vector3dd( 1, -1, 3), Vector2dd(1, 0),
+                      Vector3dd(-1,  1, 3), Vector2dd(0, 1));
+
+
+
+    renderer.render(&mesh, bufferpic);
+    SYNC_PRINT(("Render done\n"));
+    BMPLoader().save("triangle.bmp", bufferpic);
+    renderer.dumpAllDebugs("test");
+
+    cout << buffer.elementBl(15.5, 15.5);
+    CameraModel model;
+    model.intrinsics.reset(cam.clone());
+    model.setLocation(Affine3DQ::Identity());
+    CalibrationDrawHelpers helper;
+    helper.drawCamera(mesh, model, 0.5);
+    mesh.dumpPLY("test2.ply");
+
+    delete_safe(bufferpic);
 
 }
+

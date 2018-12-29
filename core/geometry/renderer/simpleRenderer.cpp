@@ -158,6 +158,9 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
 
         delete_safe(vdyDebug);
         vdyDebug = new AbstractBuffer<double>(buffer->h, buffer->w, 0.0);
+
+        delete_safe(factorDebug);
+        factorDebug = new AbstractBuffer<double>(buffer->h, buffer->w, 0.0);
     }
 
     Matrix44 normalTransform = modelviewMatrix.inverted().transposed();
@@ -257,15 +260,18 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
 
                 // We are adding to current line iterator data from the texture attribute for the next line
                 // We are interested in the increment of u and v over line
-                span.catt[ATTR_TEX_DU_DY] =                            it.part.da1[ATTR_TEX_U];
-                span.datt[ATTR_TEX_DU_DY] = (it.part.da2[ATTR_TEX_U] - it.part.da1[ATTR_TEX_U]) / (span.x2 - span.x1);
+                span.catt[ATTR_TEX_DU_DY] =                                                                              it.part.da1[ATTR_TEX_U];
+                span.datt[ATTR_TEX_DU_DY] = (it.part.a2[ATTR_TEX_U] + it.part.da2[ATTR_TEX_U] - it.part.a1[ATTR_TEX_U] + it.part.da1[ATTR_TEX_U]) / (span.x2 - span.x1);
 
                 span.catt[ATTR_TEX_DV_DY] =                            it.part.da1[ATTR_TEX_V];
                 span.datt[ATTR_TEX_DV_DY] = (it.part.da2[ATTR_TEX_V] - it.part.da1[ATTR_TEX_V]) / (span.x2 - span.x1);
                 
                 cout << "New Span " << span.x2 << " " << span.x1 << " len "  << (span.x2 - span.x1) << endl;
-                cout << "delta at left  " << it.part.da1[ATTR_TEX_U] << endl;
-                cout << "delta at right " << it.part.da2[ATTR_TEX_U] << endl;
+                cout << "delta at left  " << it.part.a1[ATTR_TEX_U] << " " << it.part.da1[ATTR_TEX_U] << endl;
+                cout << "delta at right " << it.part.a2[ATTR_TEX_U] << " " << it.part.da2[ATTR_TEX_U] << endl;
+
+                cout << "delta at left  " << it.part.a1[ATTR_TEX_V] << " " << it.part.da1[ATTR_TEX_V] << endl;
+                cout << "delta at right " << it.part.a2[ATTR_TEX_V] << " " << it.part.da2[ATTR_TEX_V] << endl;
 
                 fragmentShader(span);
                 it.step();
@@ -305,9 +311,6 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
 
 void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
 {
-    double lastx = 0.0;
-    double lasty = 0.0; // remove after debug
-
     if (span.hasValue() && span.x() < 0)
         span.stepTo(0);
 
@@ -322,6 +325,7 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
 
             Vector3dd normal = Vector3dd(att[ATTR_NORMAL_X], att[ATTR_NORMAL_Y], att[ATTR_NORMAL_Z]).normalised();
             Vector2dd tex = Vector2dd(att[ATTR_TEX_U], att[ATTR_TEX_V]);
+            Vector2dd texfar = Vector2dd(att[ATTR_TEX_U], att[ATTR_TEX_V]);
 
             Vector2dd dhatt = Vector2dd(span.datt[ATTR_TEX_U], span.datt[ATTR_TEX_V]); // Delta stores the increment in horisontal direction
             Vector2dd dvatt = Vector2dd(att[ATTR_TEX_DU_DY], att[ATTR_TEX_DV_DY]);
@@ -336,7 +340,6 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
             tex.y() = 1 - tex.y();
 
 
-
             if (zBuffer->element(span.pos()) > z)
             {
                 zBuffer->element(span.pos()) = z;
@@ -344,8 +347,8 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
                 RGBColor c = color;
                 
 
-                lastx = tex.x();  // <---
-                lasty = tex.y(); // <---
+                //lastx = tex.x();  // <---
+                //lasty = tex.y(); // <---
                 
                 if (texId < (int)textures.size() && textures[texId] != NULL)
                 {                    
@@ -362,66 +365,58 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
                         vdxDebug->element(span.pos()) = dvatt.x();
                         vdyDebug->element(span.pos()) = dvatt.y();
 
+                        printf("|| scale %lf ||\n",scale);
                     
-                        texId = (int)midmap.size() - 1;
-                        // printf("\n|| 000 texid %i ||\n",texId);
 
                         for (int i = 0; i < (int)midmap.size() - 1; i++){
-                            if ((1.0 / dhatt[0]) > midmap[i+1]->h ){
+                            if (scale >= sqrt(pow(1 / midmap[i]->h,2) + pow(1 / midmap[i]->w,2)) && scale < sqrt(pow(1 / midmap[i + 1]->h,2) + pow(1 / midmap[i + 1]->w,2))){
                                 texId = i;
-                                // printf("\n|| 111 texid %i ||\n",texId);
-                                break;
-                                
+                                break;    
                             }
                         }
+                        if (scale < sqrt(pow(1 / (midmap[0]->h),2) + pow(1 / (midmap[0]->w),2))) texId = 0;
+                        if (scale > sqrt(pow(1 / (midmap[(int)midmap.size() - 1]->h),2) + pow(1 / (midmap[(int)midmap.size() - 1]->w),2))) texId = (int)midmap.size() - 1;
+
                         RGB24Buffer *texture = midmap[texId];
-                        double factor = log(abs(1.0 / dhatt[0]))/log(2);
-                        factor = factor - trunc(factor);
-                        // printf("\n|| factor %f ||\n",factor);
+                        double factor = (scale / sqrt(2)) * midmap[texId]->h; 
+                        factor =(factor - 2)*(-1) ; 
+                        printf("|| texId %i ||\n",texId);
+                        printf("|| factor %f ||\n",factor);
 
-                        // printf("\n|| texid %i ||\n",texId);
-                        RGB24Buffer *texturemip = new RGB24Buffer(midmap[texId]->w, midmap[texId]->h);
+                        factorDebug->element(span.pos()) = factor;
 
-                        if ((texId != (int)midmap.size() - 1) && ((1 / dhatt[0]) < midmap[0]->h )){    
-                            
-                            for (int32_t i = 1; i <= midmap[texId + 1]->h; i++)
-                            {
-                                for (int32_t j = 1; j <= midmap[texId + 1]->w; j++)
-                                {
-                                    texturemip->element(i*2-2,j*2-2) = midmap[texId]->element(i*2-2,j*2-2) * (factor) + midmap[texId + 1]->element(i-1,j-1) * (1 - factor);
-                                    texturemip->element(i*2-2,j*2-1) = midmap[texId]->element(i*2-2,j*2-1) * (factor) + midmap[texId + 1]->element(i-1,j-1) * (1 - factor);
-                                    texturemip->element(i*2-1,j*2-2) = midmap[texId]->element(i*2-1,j*2-2) * (factor) + midmap[texId + 1]->element(i-1,j-1) * (1 - factor);
-                                    texturemip->element(i*2-1,j*2-1) = midmap[texId]->element(i*2-1,j*2-1) * (factor) + midmap[texId + 1]->element(i-1,j-1) * (1 - factor);
-                                }
-                            }
-                            tex = tex * Vector2dd(texturemip->w, texturemip->h);
-                            if (texturemip->isValidCoordBl(tex)) {
-                                // printf("\ncase1\n");
-                                c = texturemip->elementBl(tex);
+
+                        if ((texId != (int)midmap.size() - 1) && (scale < sqrt((1 / (midmap[0]->h)) + (1 / (midmap[0]->w)))) ){    
+                        
+                            RGB24Buffer *texturefar = midmap[texId + 1];
+                            tex = tex * Vector2dd(texture->w, texture->h);
+                            texfar = texfar * Vector2dd(texturefar->w, texturefar->h);
+                            printf("\ncase1\n");
+                            if (texture->isValidCoordBl(tex) && texturefar->isValidCoordBl(texfar)) {
+                                c = texture->elementBl(tex) * factor + texturefar->elementBl(texfar) * (1 - factor);
                             } else {
                                 SYNC_PRINT(("Tex miss %lf %lf\n", tex.x(), tex.y()));
                             }
                             
                         } else {
                             tex = tex * Vector2dd(texture->w, texture->h);
-                            if (texture->isValidCoordBl(tex)) {                                
+                            printf("\ncase2\n");
+                            if (texture->isValidCoordBl(tex)) {
                                 c = texture->elementBl(tex);
                             } else {
                                 SYNC_PRINT(("Tex miss %lf %lf\n", tex.x(), tex.y()));
                             }
-                        }
-
-                        delete texturemip;                   
+                        }                  
 
                     } else {
                         RGB24Buffer *texture = textures[texId];
-
+                        //printf("\ncase3\n");
+                        //printf("texId %i\n", texId);
                         tex = tex * Vector2dd(texture->w, texture->h);
                         if (texture->isValidCoordBl(tex)) {
-                            // printf("\ncase3\n");
                             c = texture->elementBl(tex);
                         } else {
-                            // SYNC_PRINT(("Tex miss %lf %lf\n", tex.x(), tex.y()));
+                            SYNC_PRINT(("Tex miss %lf %lf\n", tex.x(), tex.y()));
                         }
 
                     }
@@ -453,6 +448,39 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
 ClassicRenderer::~ClassicRenderer()
 {
 
+}
+
+std::vector<std::string> ClassicRenderer::debugBuffers() const
+{
+    std::vector<std::string> toReturn;
+    if (factorDebug != NULL) toReturn.push_back("factor");
+    if (scaleDebug != NULL) toReturn.push_back("scale");
+    if (vdxDebug != NULL)   toReturn.push_back("vdx");
+    if (vdyDebug != NULL)   toReturn.push_back("vdy");
+
+    return toReturn;
+}
+
+RGB24Buffer *ClassicRenderer::getDebugBuffer(const std::string &name) const
+{
+    RGB24Buffer *toReturn = NULL;
+    if (name == "factor") {
+        toReturn = new RGB24Buffer(factorDebug->h, factorDebug->w);
+        toReturn->drawContinuousBuffer<double>(factorDebug, RGB24Buffer::STYLE_RAINBOW, true);
+    }
+    if (name == "scale") {
+        toReturn = new RGB24Buffer(scaleDebug->h, scaleDebug->w);
+        toReturn->drawContinuousBuffer<double>(scaleDebug, RGB24Buffer::STYLE_RAINBOW, true);
+    }
+    if (name == "vdx")   {
+        toReturn = new RGB24Buffer(vdxDebug->h, vdxDebug->w);
+        toReturn->drawContinuousBuffer<double>(vdxDebug, RGB24Buffer::STYLE_RAINBOW, true);
+    }
+    if (name == "vdy")   {
+        toReturn = new RGB24Buffer(vdyDebug->h, vdyDebug->w);
+        toReturn->drawContinuousBuffer<double>(vdyDebug, RGB24Buffer::STYLE_RAINBOW, true);
+    }
+    return toReturn;
 }
 
 

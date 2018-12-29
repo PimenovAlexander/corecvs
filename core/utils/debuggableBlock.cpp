@@ -18,6 +18,7 @@ void DebuggableBlock::dumpAllDebugs(const std::string &prefix, const std::string
     {
         RGB24Buffer *debug = getDebugBuffer(bufferName);
         factory->saveRGB24Bitmap(debug, prefix + bufferName + extenstion);
+        delete_safe(debug);
     }
 }
 

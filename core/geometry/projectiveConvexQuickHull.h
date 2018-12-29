@@ -43,7 +43,7 @@ public:
     bool is_Low() const {
         const double low = std::numeric_limits<ElementType>::lowest();
         return X() == low && Y() == low && Z() == low;
-    };
+    }
 
     ElementType X() const {
         if (this->x() == 0)
