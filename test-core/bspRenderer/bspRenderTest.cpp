@@ -33,6 +33,18 @@
 
 using namespace corecvs;
 
+/*corecvs::Polygon getLevel1()
+{
+    for (int i = 0; i < 10; i++)
+    {
+
+
+
+    }
+
+}*/
+
+
 TEST(BSPRender, levelDraw)
 {
     int h = 720;
