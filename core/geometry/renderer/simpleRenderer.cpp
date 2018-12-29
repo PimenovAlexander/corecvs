@@ -260,16 +260,19 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
 
                 // We are adding to current line iterator data from the texture attribute for the next line
                 // We are interested in the increment of u and v over line
-                span.catt[ATTR_TEX_DU_DY] =                                                                              it.part.da1[ATTR_TEX_U];
-                span.datt[ATTR_TEX_DU_DY] = (it.part.a2[ATTR_TEX_U] + it.part.da2[ATTR_TEX_U] - it.part.a1[ATTR_TEX_U] + it.part.da1[ATTR_TEX_U]) / (span.x2 - span.x1);
-
                 double dx1 = it.part.dx1;
                 double dx2 = it.part.dx2;
                 double ns  = (span.x2 - span.x1) + dx1 + dx2;
 
-                span.catt[ATTR_TEX_DU_DY] = (it.part.da1[ATTR_TEX_U] / ns) * dx1;
-                double target = it.part.da2[ATTR_TEX_U];
+                /* Texture coordinates at the end next span */
+                double tx1 = it.part.a1[ATTR_TEX_U] + it.part.da1[ATTR_TEX_U];
+                double tx2 = it.part.a2[ATTR_TEX_U] + it.part.da2[ATTR_TEX_U];
 
+                /* Texture coordinates at the next span directly lower then current span */
+                double nx1 = (tx2 - tx1) / ns * dx1;
+                double nx2 = (tx2 - tx1) / ns * (ns - dx2);
+                span.catt[ATTR_TEX_DU_DY] = nx1;
+                span.datt[ATTR_TEX_DU_DY] = (nx2 - nx1) / (span.x2 - span.x1);
 
 
                 span.catt[ATTR_TEX_DV_DY] =                            it.part.da1[ATTR_TEX_V];
