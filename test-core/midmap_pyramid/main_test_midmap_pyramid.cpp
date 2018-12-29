@@ -175,8 +175,8 @@ TEST(MidmapPyramid, testTexure)
 
     renderer.render(&mesh, bufferpic);
 
-    BMPLoader().save("trianglesdraw_true2.bmp", bufferpic);
-    renderer.dumpAllDebugs("meshdraw-");
+    BMPLoader().save("trianglesdraw_true3.bmp", bufferpic);
+        renderer.dumpAllDebugs("meshdraw-");
 
     cout << buffer.elementBl(15.5, 15.5);
     CameraModel model;

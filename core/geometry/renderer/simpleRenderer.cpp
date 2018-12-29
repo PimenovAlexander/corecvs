@@ -336,7 +336,7 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
             double z = 1.0 / att[ATTR_INV_Z];
 
             Vector3dd normal = Vector3dd(att[ATTR_NORMAL_X], att[ATTR_NORMAL_Y], att[ATTR_NORMAL_Z]).normalised();
-            Vector2dd tex = Vector2dd(att[ATTR_TEX_U], att[ATTR_TEX_V]);
+            Vector2dd tex    = Vector2dd(att[ATTR_TEX_U], att[ATTR_TEX_V]);
             Vector2dd texfar = Vector2dd(att[ATTR_TEX_U], att[ATTR_TEX_V]);
 
             Vector2dd dhatt = Vector2dd(span.datt[ATTR_TEX_U], span.datt[ATTR_TEX_V]); // Delta stores the increment in horisontal direction
@@ -346,10 +346,12 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
 
             /* Texture should be mapped linear, but not in the image space, but in 3D space. This is a reason for this projective correction */
             tex *= z;
+            texfar *= z;
             dhatt *= z;
             dvatt *= z;
 
             tex.y() = 1 - tex.y();
+            texfar.y() = 1 - texfar.y();
 
 
             if (zBuffer->element(span.pos()) > z)
@@ -358,61 +360,66 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
 
                 RGBColor c = color;
                 
-
-                //lastx = tex.x();  // <---
-                //lasty = tex.y(); // <---
-                
                 if (texId < (int)textures.size() && textures[texId] != NULL)
                 {                    
                     if(useMipmap)
                     {
-                        //printf("||tex %lf, %lf ||\n",tex.x(), tex.y());
-                        //printf("|| dx %lf, %lf ||\n",dhatt[0], dhatt[1]);
-                        //printf("|| dy %lf, %lf ||\n",dvatt[0], dvatt[1]);
+                        printf("||tex %lf, %lf ||\n",tex.x(), tex.y());
+                        printf("|| dx %lf, %lf ||\n",dhatt[0], dhatt[1]);
+                        printf("|| dy %lf, %lf ||\n",dvatt[0], dvatt[1]);
                         //printf("\n|| x %f, y %f ||\n",tex.x() -lastx, tex.y() - lasty);
 
-                        double scale = sqrt(dhatt.sumAllElementsSq() + dvatt.sumAllElementsSq());
+                        double scale = sqrt(dhatt.sumAllElementsSq() + dvatt.sumAllElementsSq() / 2.0);
+                        //double scale = sqrt((dhatt[0]*dhatt[0] + dvatt[1]*dvatt[1])/2.0);
                         scaleDebug->element(span.pos()) = scale;
+                        // printf("|| scale %lf ||\n",scale);
 
-                        vdxDebug->element(span.pos()) = dvatt.x();
-                        vdyDebug->element(span.pos()) = dvatt.y();
+                        double * array = new double [(int)midmap.size()];
+                        for (int i = 0; i < (int)midmap.size(); i++){
+                            array[i] = 1.0 / midmap[i]->h;
+                        }
 
-                        printf("|| scale %lf ||\n",scale);
-                    
-
+                        if (scale >=array[(int)midmap.size() - 1]) {texId = (int)midmap.size() - 1;}
                         for (int i = 0; i < (int)midmap.size() - 1; i++){
-                            if (scale >= sqrt(pow(1 / midmap[i]->h,2) + pow(1 / midmap[i]->w,2)) && scale < sqrt(pow(1 / midmap[i + 1]->h,2) + pow(1 / midmap[i + 1]->w,2))){
+                            if ((scale >= array[i]) && (scale < array[i+1])){
                                 texId = i;
                                 break;    
                             }
                         }
-                        if (scale < sqrt(pow(1 / (midmap[0]->h),2) + pow(1 / (midmap[0]->w),2))) texId = 0;
-                        if (scale > sqrt(pow(1 / (midmap[(int)midmap.size() - 1]->h),2) + pow(1 / (midmap[(int)midmap.size() - 1]->w),2))) texId = (int)midmap.size() - 1;
+                        if (scale < array[0]) {texId = 0;}
+                        
 
                         RGB24Buffer *texture = midmap[texId];
-                        double factor = (scale / sqrt(2)) * midmap[texId]->h; 
-                        factor =(factor - 2)*(-1) ; 
-                        printf("|| texId %i ||\n",texId);
-                        printf("|| factor %f ||\n",factor);
 
-                        factorDebug->element(span.pos()) = factor;
+                        if ((texId != (int)midmap.size() - 1) && scale >= array[0] ){   
 
+                            double factor = 0.0;
+                            if (scale != 0){
+                                factor = ((1.0 / scale) - midmap[texId + 1]->h) / midmap[texId + 1]->h;
+                            }else{
+                                factor = 1;
+                            }
+                            // printf("|| texId %i ||\n",texId);
+                            // printf("|| factor %f ||\n",factor);
+                            // printf("|| 1 - factor %f ||\n",1 - factor);
 
-                        if ((texId != (int)midmap.size() - 1) && (scale < sqrt((1 / (midmap[0]->h)) + (1 / (midmap[0]->w)))) ){    
-                        
                             RGB24Buffer *texturefar = midmap[texId + 1];
+
                             tex = tex * Vector2dd(texture->w, texture->h);
                             texfar = texfar * Vector2dd(texturefar->w, texturefar->h);
-                            printf("\ncase1\n");
+
+                            // printf("\ncase1\n");
                             if (texture->isValidCoordBl(tex) && texturefar->isValidCoordBl(texfar)) {
-                                c = texture->elementBl(tex) * factor + texturefar->elementBl(texfar) * (1 - factor);
+                                RGBColor near = texture->elementBl(tex);
+                                RGBColor far = texturefar->elementBl(texfar);
+                                c = near * factor + far * (1 - factor);
                             } else {
                                 SYNC_PRINT(("Tex miss %lf %lf\n", tex.x(), tex.y()));
                             }
                             
                         } else {
                             tex = tex * Vector2dd(texture->w, texture->h);
-                            printf("\ncase2\n");
+                            // printf("\ncase2\n");
                             if (texture->isValidCoordBl(tex)) {
                                 c = texture->elementBl(tex);
                             } else {
@@ -422,8 +429,7 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
 
                     } else {
                         RGB24Buffer *texture = textures[texId];
-                        //printf("\ncase3\n");
-                        //printf("texId %i\n", texId);
+                        // printf("\ncase3\n");
                         tex = tex * Vector2dd(texture->w, texture->h);
                         if (texture->isValidCoordBl(tex)) {
                             c = texture->elementBl(tex);
