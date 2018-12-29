@@ -80,8 +80,8 @@ public:
                     break;
                 case INTERSECT:
                 {
-                    Ray2d *rightPart = nullptr,
-                          *leftPart  = nullptr;
+                    Ray2d *rightPart = (Ray2d *) malloc(sizeof(Ray2d)),
+                          *leftPart  = (Ray2d *) malloc(sizeof(Ray2d));
                     SplitRay2d(curEdge, separatorEdge, rightPart, leftPart);
                     rightEdges.push_back(*rightPart);
                     leftEdges.push_back(*leftPart);
@@ -168,16 +168,21 @@ static std::vector<Ray2d> PolygonToRays(Polygon &poly)
     return rays;
 }
 
-static void DrawBSPTree(BSPTree2d &tree, int i) {
+static void DrawBSPTree(BSPTree2d &tree, Polygon poly, int& i) {
     int h = 720;
     int w = 720;
     RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::Black());
-    std::string out("BSPSnap" + std::to_string(i));
+    std::string out("BSPSnap" + std::to_string(i) + ".bmp");
+    AbstractPainter<RGB24Buffer> painter(buffer);
+
+    painter.drawPolygon(poly, RGBColor::White());
 
     buffer->drawLine(tree.separatorEdge->getStart(),
                      tree.separatorEdge->getEnd(),
                      RGBColor::Red());
     for (auto& it : tree.coincidentEdges) {
+        if (it.getStart() != tree.separatorEdge->getStart()
+            && it.getEnd() != tree.separatorEdge->getEnd())
         buffer->drawLine(it.getStart(),
                          it.getEnd(),
                          RGBColor::Blue());
@@ -195,9 +200,9 @@ static void DrawBSPTree(BSPTree2d &tree, int i) {
     BMPLoader().save(out, buffer);
 
     if(tree.rightTree != nullptr)
-        BSPRenderer::DrawBSPTree(*(tree.rightTree), ++i);
+        BSPRenderer::DrawBSPTree(*(tree.rightTree), poly,  ++i);
     if(tree.leftTree != nullptr)
-        BSPRenderer::DrawBSPTree(*(tree.leftTree), ++i);
+        BSPRenderer::DrawBSPTree(*(tree.leftTree), poly, ++i);
 }
 
 } // namespace BSPRenderer

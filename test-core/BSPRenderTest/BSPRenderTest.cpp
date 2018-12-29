@@ -63,10 +63,11 @@ TEST(BSPRender, levelDraw)
     AbstractPainter<RGB24Buffer> painter(buffer);
     painter.drawPolygon(p, RGBColor::White());
 
+    int i = 0;
     BSPRenderer::BSPTree2d tree;
     std::vector<Ray2d> edges = BSPRenderer::PolygonToRays(p);
     tree.BSPDivide(edges);
-    BSPRenderer::DrawBSPTree(tree, 0);
+    BSPRenderer::DrawBSPTree(tree, p, i);
 
 //    Ray2d ray = p.getRay(12);
 //    cout << "++== " << ray.getStart() << ", " << ray.getEnd() << endl;
