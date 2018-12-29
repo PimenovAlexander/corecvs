@@ -263,6 +263,15 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
                 span.catt[ATTR_TEX_DU_DY] =                                                                              it.part.da1[ATTR_TEX_U];
                 span.datt[ATTR_TEX_DU_DY] = (it.part.a2[ATTR_TEX_U] + it.part.da2[ATTR_TEX_U] - it.part.a1[ATTR_TEX_U] + it.part.da1[ATTR_TEX_U]) / (span.x2 - span.x1);
 
+                double dx1 = it.part.dx1;
+                double dx2 = it.part.dx2;
+                double ns  = (span.x2 - span.x1) + dx1 + dx2;
+
+                span.catt[ATTR_TEX_DU_DY] = (it.part.da1[ATTR_TEX_U] / ns) * dx1;
+                double target = it.part.da2[ATTR_TEX_U];
+
+
+
                 span.catt[ATTR_TEX_DV_DY] =                            it.part.da1[ATTR_TEX_V];
                 span.datt[ATTR_TEX_DV_DY] = (it.part.da2[ATTR_TEX_V] - it.part.da1[ATTR_TEX_V]) / (span.x2 - span.x1);
                 

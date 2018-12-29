@@ -140,13 +140,14 @@ public:
             return plane == b.plane;
         }
 
+        /*
         bool is_Inf() const {
             return plane.p1().is_Inf() || plane.p2().is_Inf() || plane.p3().is_Inf();
         }
 
         bool is_Low() const {
             return plane.p1().is_Low() || plane.p2().is_Low() || plane.p3().is_Low();
-        }
+        }*/
     };
 
     class HullFaces : public std::vector<HullFace> {
