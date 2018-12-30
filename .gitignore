@@ -1,6 +1,7 @@
 .obj
 bin
 siblings/gtest
+.vscode
 
 *Makefile*
 *.bmp
@@ -10,4 +11,3 @@ siblings/gtest
 .qmake.stash
 cvs-open.pro.user
 tools/generator/generator
-

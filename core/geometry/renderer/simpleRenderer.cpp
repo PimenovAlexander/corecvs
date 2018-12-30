@@ -416,32 +416,42 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
                         //double scale = sqrt((dhatt[0]*dhatt[0] + dvatt[1]*dvatt[1])/2.0);
                         scaleDebug->element(span.pos()) = scale;
                         // printf("|| scale %lf ||\n",scale);
-
-                        double * array = new double [(int)midmap.size()];
-                        for (int i = 0; i < (int)midmap.size(); i++){
-                            array[i] = 1.0 / midmap[i]->h;
+                        double factor = 0.0;
+                        double p1 = sqrt(dhatt[0]*dhatt[0] + dhatt[1]*dhatt[1]);
+                        double p2 = sqrt(dvatt[0]*dvatt[0] + dvatt[1]*dvatt[1]);
+                        double pmax = p1 >= p2 ? p1 : p2;
+                        double pmin = p1 <= p2 ? p1 : p2;
+                        double n = pmax/pmin <= (int)midmap.size() - 1 ? pmax/pmin : (int)midmap.size() - 1;
+                        double lambda = (log(pmax / n) / log(2)) + 7;
+                        if (lambda < 0) {
+                            texId = 0;
+                            factor = 1;
+                        } else if (lambda > (int)midmap.size() - 1){
+                            texId = (int)midmap.size() - 1;
+                            factor = 1;
+                        } else{
+                            texId = trunc(lambda);
+                            factor = 1 - (lambda - texId);
                         }
+                        if (dhatt[0] != dhatt[0]) texId = 0;
 
-                        if (scale >=array[(int)midmap.size() - 1]) {texId = (int)midmap.size() - 1;}
-                        for (int i = 0; i < (int)midmap.size() - 1; i++){
-                            if ((scale >= array[i]) && (scale < array[i+1])){
-                                texId = i;
-                                break;    
-                            }
-                        }
-                        if (scale < array[0]) {texId = 0;}
                         
-
+                        printf("lambda: %f\n"
+                               "factor: %f\n"
+                               "texId: %i\n",
+                               lambda,
+                               factor,
+                               texId);
                         RGB24Buffer *texture = midmap[texId];
 
-                        if ((texId != (int)midmap.size() - 1) && scale >= array[0] ){   
+                        if ((texId != (int)midmap.size() - 1)){   
 
-                            double factor = 0.0;
-                            if (scale != 0){
-                                factor = ((1.0 / scale) - midmap[texId + 1]->h) / midmap[texId + 1]->h;
-                            }else{
-                                factor = 1;
-                            }
+                            // double factor = 0.0;
+                            // if (scale != 0){
+                            //     factor = ((1.0 / scale) - midmap[texId + 1]->h) / midmap[texId + 1]->h;
+                            // }else{
+                            //     factor = 1;
+                            // }
                             // printf("|| texId %i ||\n",texId);
                             // printf("|| factor %f ||\n",factor);
                             // printf("|| 1 - factor %f ||\n",1 - factor);
