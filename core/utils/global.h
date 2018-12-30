@@ -400,21 +400,6 @@ inline void * __CRTDECL operator new(size_t _Size) {
 
 /** Invite support of the file system */
 
-#if defined(__GNUC__)
-# if __cplusplus >= 201703L
-#  include <filesystem>
-   namespace fs = std::filesystem;
-# else
-#  include <experimental/filesystem>
-   namespace fs = std::experimental::filesystem;
-# endif
-#else
-# ifdef _MSC_VER
-#  include <filesystem>
-   namespace fs = std::tr2::sys;
-# endif
-#endif
-
 /** Function for safe deleting objects and arrays */
 #include <stdlib.h>
 

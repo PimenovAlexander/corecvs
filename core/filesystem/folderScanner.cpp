@@ -6,6 +6,7 @@
 
 namespace corecvs {
 
+#if FS_OFF
 bool FolderScanner::isDir(const string &path)
 {
     fs::path p(path);
@@ -63,8 +64,12 @@ bool FolderScanner::scan(const string &path, vector<string> &children, bool find
 
     return true;
 }
+#endif
 
+#define FILESYSTEM_WORKAROUND
 #if defined(FILESYSTEM_WORKAROUND)
+#include <sys/types.h>
+#include <dirent.h>
 
 bool FolderScanner::isDir(const string &path)
 {

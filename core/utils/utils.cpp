@@ -207,41 +207,47 @@ std::string getDirectory(const std::string &absoluteFilePath)
 {
     CORE_ASSERT_TRUE_S(!absoluteFilePath.empty());
 
-    fs::path filePath(absoluteFilePath);
-    return fs::absolute(filePath.parent_path()).string();
+    /*fs::path filePath(absoluteFilePath);
+    return fs::absolute(filePath.parent_path()).string();*/
+    return "";
 }
 
 std::string getFileName(const std::string &fileName)
 {
-    fs::path filePath(fileName);
-    return filePath.filename().string();
+    /*fs::path filePath(fileName);
+    return filePath.filename().string();*/
+    return "";
 }
 
 std::string concatPath(const std::string &path1, const std::string &path2)
 {
-   return (fs::path(path1) / fs::path(path2)).string();
+   /*return (fs::path(path1) / fs::path(path2)).string();*/
+   return "";
 }
 
 bool isAbsolutePath(const std::string &path)
 {
-   return fs::path(path).is_absolute();
+   // return fs::path(path).is_absolute();
+   return false;
 }
 
 bool pathExists(const std::string &path)
 {
-    return fs::exists(path);
+    //return fs::exists(path);
+    return false;
 }
 
 bool pathRemove(const std::string &path)
 {
-    fs::path p(path);
+    /*fs::path p(path);
     if (fs::exists(p))
-        return fs::remove(p);
+        return fs::remove(p);*/
     return false;
 }
 
 std::string getFileNameIfExist(const std::string &fileName, const std::string &relativePath)
 {
+#if 0
     fs::path filePath(fileName);
     if (fs::exists(filePath))
         return fileName;
@@ -251,13 +257,15 @@ std::string getFileNameIfExist(const std::string &fileName, const std::string &r
         return fs::absolute(infoNew).string();
 
     std::cout << "couldn't locate <" << fileName << "> with relativePath:" << relativePath << std::endl;
+#endif
     return "";
 }
 
 bool isDirectory(const std::string &path)
 {
-    fs::path filePath(path);
-    return fs::is_directory(filePath);
+    /*fs::path filePath(path);
+    return fs::is_directory(filePath);*/
+    return false;
 }
 
 } // namespace HelperUtils
