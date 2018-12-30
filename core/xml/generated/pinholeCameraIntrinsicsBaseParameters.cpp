@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from projections.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<PinholeCameraIntrinsicsBaseParameters>::reflection = Reflection();
 template<>
 int BaseReflection<PinholeCameraIntrinsicsBaseParameters>::dummy = PinholeCameraIntrinsicsBaseParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int PinholeCameraIntrinsicsBaseParameters::staticInit()
+int PinholeCameraIntrinsicsBaseParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <PinholeCameraIntrinsicsBaseParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Pinhole Camera Intrinsics Base Parameters",
         "Pinhole Camera Intrinsics Base Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(PinholeCameraIntrinsicsBaseParameters);
+     toFill->objectSize = sizeof(PinholeCameraIntrinsicsBaseParameters);
      
 
     DoubleField* field0 = new DoubleField
@@ -57,7 +63,7 @@ int PinholeCameraIntrinsicsBaseParameters::staticInit()
         );
     field0->widgetHint=BaseField::SPIN_BOX;
     field0->precision=2;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     DoubleField* field1 = new DoubleField
         (
@@ -74,7 +80,7 @@ int PinholeCameraIntrinsicsBaseParameters::staticInit()
         );
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->precision=2;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     DoubleField* field2 = new DoubleField
         (
@@ -92,7 +98,7 @@ int PinholeCameraIntrinsicsBaseParameters::staticInit()
     field2->widgetHint=BaseField::SPIN_BOX;
     field2->suffixHint="px";
     field2->precision=2;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     DoubleField* field3 = new DoubleField
         (
@@ -110,7 +116,7 @@ int PinholeCameraIntrinsicsBaseParameters::staticInit()
     field3->widgetHint=BaseField::SPIN_BOX;
     field3->suffixHint="px";
     field3->precision=2;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     DoubleField* field4 = new DoubleField
         (
@@ -127,7 +133,7 @@ int PinholeCameraIntrinsicsBaseParameters::staticInit()
         );
     field4->widgetHint=BaseField::SPIN_BOX;
     field4->precision=5;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     CompositeField* field5 = new CompositeField
         (
@@ -149,7 +155,7 @@ int PinholeCameraIntrinsicsBaseParameters::staticInit()
              printf("Reflection PinholeCameraIntrinsicsBaseParameters to the subclass Vector 2d Parameters can't be linked\n");
         }
     }
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     CompositeField* field6 = new CompositeField
         (
@@ -171,10 +177,10 @@ int PinholeCameraIntrinsicsBaseParameters::staticInit()
              printf("Reflection PinholeCameraIntrinsicsBaseParameters to the subclass Vector 2d Parameters can't be linked\n");
         }
     }
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Pinhole Camera Intrinsics Base Parameters")]= &reflection;
+    directory[std::string("Pinhole Camera Intrinsics Base Parameters")]= toFill;
    return 0;
 }
 int PinholeCameraIntrinsicsBaseParameters::relinkCompositeFields()

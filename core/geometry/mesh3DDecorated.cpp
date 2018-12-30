@@ -15,7 +15,7 @@ void Mesh3DDecorated::switchTextures(bool on)
     if (hasTexCoords == on)
         return;
     if (on) {
-        texId.resize(faces.size(), Vector4d32(-1,-1,-1, 0));
+        texId.resize(faces.size(), Vector4d32(-1,-1,-1, currentTexture));
     } else {
         texId.clear();
     }

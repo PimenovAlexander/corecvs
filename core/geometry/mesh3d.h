@@ -150,6 +150,7 @@ public:
     /* For abstract painter */
     typedef int InternalElementType;
     void drawLine(double x1, double y1, double x2, double y2, int);
+    void drawLine(const Vector2df &p1, const Vector2df &p2, int);
 
 #if 0
     void addTruncatedCone(double r1, double r2, double length, int steps = 16);

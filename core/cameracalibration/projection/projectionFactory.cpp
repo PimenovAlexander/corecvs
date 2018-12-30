@@ -22,20 +22,20 @@ CameraProjection *ProjectionFactory::projectionById(const ProjectionType::Projec
     return NULL;
 }
 
-Reflection *ProjectionFactory::reflectionById(const ProjectionType::ProjectionType &projection)
+const Reflection *ProjectionFactory::reflectionById(const ProjectionType::ProjectionType &projection)
 {
     switch (projection) {
     case  ProjectionType::PINHOLE:
     default:
-        return &PinholeCameraIntrinsics::reflection;
+        return PinholeCameraIntrinsics::getReflection();
     case  ProjectionType::EQUIDISTANT:
-        return &EquidistantProjection::reflection;
+        return EquidistantProjection::getReflection();
     case  ProjectionType::OMNIDIRECTIONAL:
-        return &OmnidirectionalProjection::reflection;
+        return OmnidirectionalProjection::getReflection();
     case  ProjectionType::STEREOGRAPHIC:
-        return &StereographicProjection::reflection;
+        return StereographicProjection::getReflection();
     case  ProjectionType::EQUISOLID:
-        return &EquisolidAngleProjection::reflection;
+        return EquisolidAngleProjection::getReflection();
     }
     return NULL;
 }

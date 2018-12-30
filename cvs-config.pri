@@ -43,7 +43,7 @@ CONFIG +=       \
    with_openblas   \
    with_fastbuild  \
    with_unorthodox \   # allow use an experimental filesystem
-   with_qscript    \   # experimental...
+#  with_qscript     \   # experimental...
 
 include(config-cpu-features.pri)
 
@@ -87,7 +87,7 @@ win32 {
 #    CONFIG += with_opencv
 } else {
 #     CONFIG += with_opencv
-     CONFIG += with_nopkgconfig
+      CONFIG += with_nopkgconfig
 }
 
 win32 {

@@ -229,7 +229,7 @@ public:
     template<typename Type>
     bool copyTo(Type *target) const
     {
-        Reflection *targetRef = BaseReflection<Type>::getReflection();
+        const Reflection *targetRef = BaseReflection<Type>::getReflection();
         if (targetRef->name.name != reflection->name.name)
         {
             SYNC_PRINT(("Seem to copyTo object of the wrong type"));

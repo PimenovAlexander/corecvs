@@ -17,6 +17,9 @@ static const char *com_vertex          = "v";
 static const char *com_vertex_texture  = "vt";
 static const char *com_vertex_normal   = "vn";
 static const char *com_face            = "f";
+static const char *com_smoothing       = "s";
+static const char *com_grouping        = "g";
+
 
 static const char *com_use_material    = "usemtl";
 static const char *com_material_lib    = "mtllib";
@@ -36,7 +39,7 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
     int texName = 0;
 
     string line;
-    while (!input.eof())
+    while (!input.eof() && !input.bad())
     {
         HelperUtils::getlineSafe (input, line);
 
@@ -49,7 +52,7 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
         string command;
         work >> command;
 
-        // LOCAL_PRINT(("Input line: %s\n", line.c_str()));
+        //LOCAL_PRINT(("Input line: <%s>\n", line.c_str()));
 
         if (command == com_vertex)
         {
@@ -74,15 +77,22 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
         }
         if (command == com_face)
         {
-            string strs[3];
-            work >> strs[0] >> strs[1] >> strs[2];
-            Vector3d32 face;
-            Vector3d32 normId(-1);
-            Vector4d32 texId(-1, -1, -1, texName);
 
             //LOCAL_PRINT(("Face line: %s\n", work.str().c_str()));
+            vector<string> strs;
+            while (!work.eof()) {
+                string part;
+                work >> part;
+                strs.push_back(part);
+            }
 
-            for (int i = 0; i < 3; i++)
+            //LOCAL_PRINT(("Face parts: %d\n", strs.size()));
+
+            vector<int32_t> face;
+            vector<int32_t> normId;
+            vector<int32_t> texId;
+
+            for (size_t i = 0; i < strs.size(); i++)
             {
                 // LOCAL_PRINT(("Attribute: %s\n", strs[i].c_str()));
                 std::stringstream splitter(strs[i]);
@@ -92,23 +102,29 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
                 {
                     if (j == 0) {
                         int id = std::stoi(part);
-                        face[i] = id - 1;
+                        face.push_back(id - 1);
                     }
 
                     if (j == 1) {
                         int id = std::stoi(part);
-                        texId[i] = id - 1;
+                        texId.push_back(id - 1);
                     }
 
                     if (j == 2) {
                         int id = std::stoi(part);
-                        normId[i] = id - 1;
+                        normId.push_back(id - 1);
                     }
                 }
             }
-            mesh.addFace(face);
-            mesh.texId.push_back(texId);
-            mesh.normalId.push_back(normId);
+
+            for (size_t i = 2; i < face.size(); i++) {
+                Vector3d32 tface(face[0], face[i-1], face[i]);
+                mesh.addFace(tface);
+                Vector4d32 ttexId(texId[0], texId[i-1], texId[i], texName);
+                mesh.texId.push_back(ttexId);
+                Vector3d32 tnormId(normId[0], normId[i-1], normId[i]);
+                mesh.normalId.push_back(tnormId);
+            }
         }
         if (command == com_use_material)
         {
@@ -129,7 +145,14 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
         if (command == com_material_lib)
         {
             cout << "Material library command: This is not fully supported" << endl;
-
+        }
+        if (command == com_smoothing)
+        {
+            cout << "smoothing command: This is not fully supported" << endl;
+        }
+        if (command == com_grouping)
+        {
+            cout << "grouping command: This is not fully supported" << endl;
         }
     }
 
@@ -275,23 +298,39 @@ int OBJLoader::loadOBJSimple(istream &input, Mesh3D &mesh)
         }
         if (command == com_face)
         {
-            string strs[3];
-            work >> strs[0] >> strs[1] >> strs[2];
-            Vector3d32 face;
+            //LOCAL_PRINT(("Face line: %s\n", work.str().c_str()));
+            vector<string> strs;
+            while (!work.eof()) {
+                string part;
+                work >> part;
+                strs.push_back(part);
+            }
 
-            for (int i = 0; i < 3; i++)
+            //LOCAL_PRINT(("Face parts: %d\n", strs.size()));
+
+            vector<int32_t> face;
+
+            for (int i = 0; i < strs.size(); i++)
             {
                 // LOCAL_PRINT(("Attribute: %s\n", strs[i].c_str()));
                 std::stringstream splitter(strs[i]);
                 std::string part;
 
-                for (int j = 0; j < 1 && std::getline(splitter, part, '/'); j++)
+                for (int j = 0; j < 3 && std::getline(splitter, part, '/'); j++)
                 {
-                    int id = std::stoi(part);
-                    face[i] = id - 1;
+                    if (j == 0) {
+                        int id = std::stoi(part);
+                        face.push_back(id - 1);
+                    }
                 }
             }
-            mesh.addFace(face);
+
+            for (size_t i = 2; i < face.size(); i++) {
+                Vector3d32 tface(face[0], face[i-1], face[i]);
+                mesh.addFace(tface);
+                //cout << "+";
+            }
+            //cout << endl;
         }
 
 

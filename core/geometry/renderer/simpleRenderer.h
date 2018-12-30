@@ -4,11 +4,19 @@
 /**
  *  \file  simpleRenderer.h
  **/
+#include <vector>
 
+
+#include "core/utils/global.h"
 #include "core/geometry/renderer/geometryIterator.h"
 #include "core/buffers/abstractBuffer.h"
 #include "core/buffers/rgb24/abstractPainter.h"
 #include "core/geometry/mesh3DDecorated.h"
+#include "core/buffers/mipmapPyramid.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/geometry/renderer/attributedTriangleSpanIterator.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/utils/debuggableBlock.h"
 
 
 namespace corecvs {
@@ -37,17 +45,41 @@ public:
 };
 
 
-class ClassicRenderer
+class ClassicRenderer : public DebuggableBlock
 {
 public:
     ClassicRenderer();
 
+    enum {
+        ATTR_INV_Z = 0 ,
+        ATTR_NORMAL_X = 1,
+        ATTR_NORMAL_Y,
+        ATTR_NORMAL_Z,
+        ATTR_TEX_U = 4,
+        ATTR_TEX_V,
+        ATTR_TEX_ID,
+
+        ATTR_TEX_DU_DY,
+        ATTR_TEX_DV_DY,
+
+        ATTR_LAST
+
+
+    };
+
     bool drawFaces = true;
     bool drawVertexes = false;
+    bool useMipmap = false;
 
-    bool trueTexture;
+    //bool trueTexture; // it is now always true;
     Matrix44 modelviewMatrix;
+
+protected:
     vector<RGB24Buffer *> textures;
+    vector<RGB24Buffer *> midmap;
+
+public:
+    void addTexture (RGB24Buffer *buffer, bool produceMidmap = false);
 
     AbstractBuffer<double> *zBuffer;
 
@@ -61,6 +93,22 @@ public:
 
     virtual void fragmentShader(AttributedHLineSpan & span);
     virtual ~ClassicRenderer();
+
+    /*Debug buffers*/
+    AbstractBuffer<double> *scaleDebug  = NULL;
+    AbstractBuffer<double> *factorDebug = NULL;
+    AbstractBuffer<double> *levelDebug  = NULL;
+
+    AbstractBuffer<double> *hdxDebug = NULL;
+    AbstractBuffer<double> *hdyDebug = NULL;
+
+    AbstractBuffer<double> *vdxDebug = NULL;
+    AbstractBuffer<double> *vdyDebug = NULL;
+
+    virtual std::vector<std::string> debugBuffers() const override;
+    virtual RGB24Buffer *getDebugBuffer(const std::string& name) const override;
+
+
 };
 
 } // namespace corecvs

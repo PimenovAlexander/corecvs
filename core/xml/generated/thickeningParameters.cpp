@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from bufferFilters.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<ThickeningParameters>::reflection = Reflection();
 template<>
 int BaseReflection<ThickeningParameters>::dummy = ThickeningParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int ThickeningParameters::staticInit()
+int ThickeningParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <ThickeningParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Thickening Parameters",
         "Thickening Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(ThickeningParameters);
+     toFill->objectSize = sizeof(ThickeningParameters);
      
 
     IntField* field0 = new IntField
@@ -55,10 +61,10 @@ int ThickeningParameters::staticInit()
          9999,
          1
         );
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Thickening Parameters")]= &reflection;
+    directory[std::string("Thickening Parameters")]= toFill;
    return 0;
 }
 int ThickeningParameters::relinkCompositeFields()

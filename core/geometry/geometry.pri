@@ -25,6 +25,7 @@ HEADERS += \
     $$PWD/raytrace/sdfRenderableObjects.h \
     $$PWD/convexHull.h \
     $$PWD/convexQuickHull.h \
+    $$PWD/projectiveConvexQuickHull.h \
     $$PWD/renderer/attributedTriangleSpanIterator.h \
     $$PWD/pointCloud.h \
     \
@@ -37,8 +38,10 @@ HEADERS += \
     \
     $$PWD/halfspaceIntersector.h \
     $$PWD/orientedBox.h \
-    $$PWD/plane.h
-    geometry/kdtree.h \
+    $$PWD/plane.h \
+    $$PWD/kdtree.h \
+    $$PWD/beziercurve.h \
+    raytrace/bspTree.h \
 
 
 SOURCES += \ 
@@ -65,6 +68,7 @@ SOURCES += \
     $$PWD/raytrace/sdfRenderableObjects.cpp \
     $$PWD/convexHull.cpp \
     $$PWD/convexQuickHull.cpp \
+    $$PWD/projectiveConvexQuickHull.cpp \
     $$PWD/renderer/attributedTriangleSpanIterator.cpp \
     $$PWD/pointCloud.cpp \
     \

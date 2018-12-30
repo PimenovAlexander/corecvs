@@ -130,14 +130,14 @@ int main(int argc, char **argv)
 
     std::string objName;
 
-	double fx, fy, cx, cy, w = 4000, h = 4000;
+    double fx, fy, cx, cy, w = 1000, h = 1000;
     if (argc >= 2) {
         objName     = std::string(argv[1]);
     }
 
-    PinholeCameraIntrinsics cam(Vector2dd(w,h), 50);
+    PinholeCameraIntrinsics cam(Vector2dd(w,h), degToRad(50));
     Affine3DQ pose;
-    if (argc >= 3) {
+    /*if (argc >= 3) {
 		std::cout << "loading cam" << std::endl;
 		std::ifstream cams;
 		cams.open(argv[2]);
@@ -146,7 +146,7 @@ int main(int argc, char **argv)
 		cam.setSize(Vector2dd(w, h));
 		cam.setPrincipal(Vector2dd(cx, cy));
 		cam.setFocal(Vector2dd(fx, fy));
-	}
+    }*/
 
     ClassicRenderer renderer;
 
@@ -170,36 +170,19 @@ int main(int argc, char **argv)
 
 
     /** Load actual data **/
+    SYNC_PRINT(("Starting actual data loading\n"));
     std::ifstream file;
     file.open(objName, std::ios::in);
     objLoader.loadOBJ(file, *mesh);
     file.close();
 
-    //mesh->transform(Matrix44::Shift(0, 0, 100) /** Matrix44::Scale(100)*/);
-
-   // RGB24Buffer *texture; //= BufferFactory::getInstance()->loadRGB24Bitmap(textureName);
-
-/*
-    int square = 64;
-    RGB24Buffer *texture = new RGB24Buffer(512, 1024);
-    for (int i = 0; i < texture->h; i++)
-    {
-        for (int j = 0; j < texture->w; j++)
-        {
-            bool color = ((i / square) % 2) ^ ((j / square) % 2);
-            texture->element(i, j)  = (color ?  RGBColor::White() : RGBColor::Black());
-        }
-    }*/
-    /*if (!texture) {
-        SYNC_PRINT(("Could not load texture"));
-    } else {
-        SYNC_PRINT(("Texture: [%d x %d]\n", texture->w, texture->h));
-    }*/
 
     for(size_t t = 0; t < mesh->materials.size(); t++)
     {
-        renderer.textures.push_back(mesh->materials[t].tex[OBJMaterial::TEX_DIFFUSE]);
+        renderer.addTexture(mesh->materials[t].tex[OBJMaterial::TEX_DIFFUSE], true);
     }
+
+    SYNC_PRINT(("Loaded and added textures\n"));
 
 
 	if (argc >= 4) {
@@ -211,26 +194,34 @@ int main(int argc, char **argv)
 		poses >> n >> tag;
 
 		poses >> pose.shift.x() >> pose.shift.y() >> pose.shift.z() >> pose.rotor.x() >> pose.rotor.y() >> pose.rotor.z() >> pose.rotor.t();
+    }
     
     printf("Will render <%s>\n", objName.c_str());
+
+
+    pose = Affine3DQ::RotationX(degToRad(-25))
+         * Affine3DQ::RotationY(degToRad(150))
+         * Affine3DQ::RotationZ(degToRad(180))
+         * Affine3DQ::Shift(0, 0, -2000);
+
+    SYNC_PRINT(("Starting render...\n"));
+    cout << "Camera:" << cam << endl;
+    cout << "Position:" << pose << endl;
+
 
     renderer.modelviewMatrix = cam.getKMatrix() * Matrix44(pose.inverted());
     RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::Black());
 
-    mesh->dumpInfo(cout);
-    SYNC_PRINT(("Starting render...\n"));
-
     renderer.render(mesh, buffer);
+
 
     BMPLoader().save("meshdraw.bmp", buffer);
     buffer->drawDoubleBuffer(renderer.zBuffer, RGB24Buffer::STYLE_ZBUFFER);
     BMPLoader().save("meshdraw-z.bmp", buffer);
+    renderer.dumpAllDebugs("meshdraw-");
+
+
     delete_safe(buffer);
-	}
-
-
-
-
 
     return 0;
 }

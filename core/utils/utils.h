@@ -25,7 +25,8 @@ namespace corecvs {
 
 //@{
 /**
- * This is a helper meta-programming template to represent binary constants.
+ * This is a helper
+ * meta-programming template to represent binary constants.
  *
  * For example:
  *         9 == binary<1001>::value
