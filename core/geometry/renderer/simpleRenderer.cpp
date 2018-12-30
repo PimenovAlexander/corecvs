@@ -120,18 +120,20 @@ ClassicRenderer::ClassicRenderer() :
 void ClassicRenderer::addTexture(RGB24Buffer *buffer, bool produceMidmap)
 {
     textures.push_back(buffer);
+    midmap.resize(num_of_textures + 1);
     if (produceMidmap)
     {
         useMipmap = true;
         int numLevels = trunc(log(buffer->h) / log(2)) + 1;
         AbstractMipmapPyramid<RGB24Buffer> *pyramide = new  AbstractMipmapPyramid<RGB24Buffer>(buffer, numLevels, true);
         for (int i = 0; i < (int)pyramide->levels.size(); i++){
-            midmap.push_back(pyramide->levels[i]);
+            midmap[num_of_textures].push_back(pyramide->levels[i]);
             // BMPLoader().save(std::string("chess") + std::to_string(i) + ".bmp", pyramide->levels[i]);
         }
     } else {
-        midmap.push_back(NULL);
+        midmap[num_of_textures].push_back(NULL);
     }
+    num_of_textures++;
 }
 
 void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
@@ -379,6 +381,7 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
  
 
             int texId = att[ATTR_TEX_ID];
+            int texMipMapId = 0;
 
             /* Texture should be mapped linear, but not in the image space, but in 3D space. This is a reason for this projective correction */
             tex *= z;
@@ -401,10 +404,6 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
                 {                    
                     if(useMipmap)
                     {
-                        //printf("||tex %lf, %lf ||\n",tex.x(), tex.y());
-                        //printf("|| dx %lf, %lf ||\n",dhatt[0], dhatt[1]);
-                        //printf("|| dy %lf, %lf ||\n",dvatt[0], dvatt[1]);
-                        //printf("\n|| x %f, y %f ||\n",tex.x() -lastx, tex.y() - lasty);
 
                         vdxDebug->element(span.pos()) = dvatt.x();
                         vdyDebug->element(span.pos()) = dvatt.y();
@@ -413,78 +412,57 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
                         hdyDebug->element(span.pos()) = dhatt.y();
 
                         double scale = sqrt(dhatt.sumAllElementsSq() + dvatt.sumAllElementsSq());
-                        //double scale = sqrt((dhatt[0]*dhatt[0] + dvatt[1]*dvatt[1])/2.0);
                         scaleDebug->element(span.pos()) = scale;
-                        // printf("|| scale %lf ||\n",scale);
+
                         double factor = 0.0;
                         double p1 = sqrt(dhatt[0]*dhatt[0] + dhatt[1]*dhatt[1]);
                         double p2 = sqrt(dvatt[0]*dvatt[0] + dvatt[1]*dvatt[1]);
                         double pmax = p1 >= p2 ? p1 : p2;
                         double pmin = p1 <= p2 ? p1 : p2;
-                        double n = pmax/pmin <= (int)midmap.size() - 1 ? pmax/pmin : (int)midmap.size() - 1;
+                        double n = pmax/pmin <= (int)midmap[texId].size() - 1 ? pmax/pmin : (int)midmap[texId].size() - 1;
                         double lambda = (log(pmax / n) / log(2)) + 7;
+                        
                         if (lambda < 0) {
-                            texId = 0;
+                            texMipMapId = 0;
                             factor = 1;
-                        } else if (lambda > (int)midmap.size() - 1){
-                            texId = (int)midmap.size() - 1;
+                        } else if (lambda > (int)midmap[texId].size() - 1){
+                            texMipMapId = (int)midmap[texId].size() - 1;
                             factor = 1;
                         } else{
-                            texId = trunc(lambda);
-                            factor = 1 - (lambda - texId);
+                            texMipMapId = trunc(lambda);
+                            factor = 1 - (lambda - texMipMapId);
                         }
-                        if (dhatt[0] != dhatt[0]) texId = 0;
+                        if (lambda != lambda) texMipMapId = 0;       
 
-                        
-                        printf("lambda: %f\n"
-                               "factor: %f\n"
-                               "texId: %i\n",
-                               lambda,
-                               factor,
-                               texId);
-                        RGB24Buffer *texture = midmap[texId];
+                        RGB24Buffer *texture = midmap[texId][texMipMapId];
 
-                        if ((texId != (int)midmap.size() - 1)){   
+                        if ((texMipMapId != (int)midmap[texId].size() - 1)){   
 
-                            // double factor = 0.0;
-                            // if (scale != 0){
-                            //     factor = ((1.0 / scale) - midmap[texId + 1]->h) / midmap[texId + 1]->h;
-                            // }else{
-                            //     factor = 1;
-                            // }
-                            // printf("|| texId %i ||\n",texId);
-                            // printf("|| factor %f ||\n",factor);
-                            // printf("|| 1 - factor %f ||\n",1 - factor);
                             factorDebug->element(span.pos()) = factor;
-                            levelDebug ->element(span.pos()) = texId;
+                            levelDebug ->element(span.pos()) = texMipMapId;
 
-                            RGB24Buffer *texturefar = midmap[texId + 1];
+                            RGB24Buffer *texturefar = midmap[texId][texMipMapId + 1];
 
                             tex    = tex    * Vector2dd(texture->w - 1, texture->h - 1);
                             texfar = texfar * Vector2dd(texturefar->w - 1, texturefar->h - 1);
 
-                            // printf("\ncase1\n");
                             if (texture->isValidCoordBl(tex) && texturefar->isValidCoordBl(texfar)) {
                                 RGBColor near = texture->elementBl(tex);
                                 RGBColor far = texturefar->elementBl(texfar);
                                 c = near * factor + far * (1 - factor);
                             } else {
                                 SYNC_PRINT(("Tex miss %lf %lf\n", tex.x(), tex.y()));
-                            }
-                            
+                            }  
                         } else {
                             tex = tex * Vector2dd(texture->w, texture->h);
-                            // printf("\ncase2\n");
                             if (texture->isValidCoordBl(tex)) {
                                 c = texture->elementBl(tex);
                             } else {
                                 SYNC_PRINT(("Tex miss %lf %lf\n", tex.x(), tex.y()));
                             }
                         }                  
-
                     } else {
                         RGB24Buffer *texture = textures[texId];
-                        // printf("\ncase3\n");
                         tex = tex * Vector2dd(texture->w, texture->h);
                         if (texture->isValidCoordBl(tex)) {
                             c = texture->elementBl(tex);

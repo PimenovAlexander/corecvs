@@ -32,10 +32,6 @@ public:
     int levelNumber;
     vector<BufferType *> levels;
 
-    /**
-     * \\attention JUST TESTING
-     * \\author NASTYA NIZHARADZE
-     **/
     AbstractMipmapPyramid(BufferType *input , int _levelNumber, bool check)
     {
         if (check){
@@ -49,11 +45,6 @@ public:
         }
     }
 
-    /**
-     * \\brief downsample21
-     * \\attention JUST TESTING
-     * \\author NASTYA NIZHARADZE
-     */
     static BufferType *downsample21(BufferType *input)
     {
         BufferType* toReturn = new BufferType(input->h / 2, input->w / 2);

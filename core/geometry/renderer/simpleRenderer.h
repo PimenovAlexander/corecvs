@@ -76,8 +76,8 @@ public:
 
 protected:
     vector<RGB24Buffer *> textures;
-    vector<RGB24Buffer *> midmap;
-
+    vector<vector<RGB24Buffer *>> midmap;
+    int num_of_textures = 0;
 public:
     void addTexture (RGB24Buffer *buffer, bool produceMidmap = false);
 
