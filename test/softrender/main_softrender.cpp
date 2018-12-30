@@ -179,7 +179,7 @@ int main(int argc, char **argv)
 
     for(size_t t = 0; t < mesh->materials.size(); t++)
     {
-        renderer.addTexture(mesh->materials[t].tex[OBJMaterial::TEX_DIFFUSE], true);
+        renderer.addTexture(mesh->materials[t].tex[OBJMaterial::TEX_DIFFUSE], false);
     }
 
     SYNC_PRINT(("Loaded and added textures\n"));
