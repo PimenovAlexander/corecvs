@@ -17,6 +17,7 @@
 #include "core/buffers/rgb24/wuRasterizer.h"
 #include "core/buffers/rgb24/abstractPainter.h"
 #include "core/buffers/rgb24/bezierRasterizer.h"
+#include "bufferLoader.h"
 
 namespace corecvs {
 
@@ -73,7 +74,7 @@ public:
     double w, h;
     // double rx, ry;
 
-    virtual void draw(RGB24Buffer *buffer)
+    virtual void draw(RGB24Buffer *buffer) override
     {
         Rectangled rect(x, y, w, h);
         buffer->drawRectangle(rect, getColor(), 0); // with stroke-width = 1
@@ -87,7 +88,7 @@ public:
     double cy;
     double r;
 
-    virtual void draw(RGB24Buffer *buffer)
+    virtual void draw(RGB24Buffer *buffer) override
     {
         Circle2d circle(cx, cy, r);
         buffer->drawArc(circle, getColor());
@@ -100,7 +101,7 @@ public:
     double cx, cy;
     double rx, ry;
 
-    virtual void draw(RGB24Buffer *buffer)
+    virtual void draw(RGB24Buffer *buffer) override
     {
         AbstractPainter<RGB24Buffer> painter(buffer);
         painter.drawEllipse(cx, cy, rx, ry, 0, getColor());
@@ -113,7 +114,7 @@ public:
     double x1, y1;
     double x2, y2;
 
-    virtual void draw(RGB24Buffer *buffer)
+    virtual void draw(RGB24Buffer *buffer) override
     {
         buffer->drawLine(x1, y1, x2, y2, getColor());
     }
@@ -124,7 +125,7 @@ class SvgPolyLine: public SvgShape
 public:
     PointPath points;
 
-    virtual void draw(RGB24Buffer *buffer)
+    virtual void draw(RGB24Buffer *buffer) override
     {
         AbstractPainter<RGB24Buffer> painter(buffer);
         painter.drawPath(points, getColor());
@@ -136,7 +137,7 @@ class SvgPolygon: public SvgShape
 public:
     Polygon polygon;
 
-    virtual void draw(RGB24Buffer *buffer)
+    virtual void draw(RGB24Buffer *buffer) override
     {
         AbstractPainter<RGB24Buffer> painter(buffer);
         painter.drawPolygon(polygon, getColor());
@@ -154,7 +155,7 @@ class SvgPath: public SvgShape
 public:
     vector<Command> commands;
 
-    virtual void draw(RGB24Buffer *buffer)
+    virtual void draw(RGB24Buffer *buffer) override
     {
         if (commands.size() == 0)
         {
@@ -277,6 +278,13 @@ private:
     Vector2dd control_q;
 };
 
+class SvgGroup : public SvgShape
+{
+public:
+    vector<SvgShape*> shapes;
+    virtual void draw(RGB24Buffer *buffer) override;
+};
+
 class SvgFile
 {
 public:
@@ -314,6 +322,23 @@ private:
     SvgShape* getPolyLine(XMLElement *element);
     SvgShape* getPolygon(XMLElement *element);
     SvgShape* getPath(XMLElement *element);
+    SvgShape* getGroup(XMLElement *element);
 };
+
+class SVGToRGB24BufferLoader : public BufferLoader<RGB24Buffer>
+{
+public:
+    static string extension;
+
+    SVGToRGB24BufferLoader() {}
+
+    virtual bool acceptsFile(const std::string &name) override;
+    virtual RGB24Buffer *load(const std::string &name) override;
+
+    virtual std::string              name()       override { return "SVGToRGB24BufferLoader"; }
+    virtual std::vector<std::string> extentions() override { return {extension}; }
+    virtual ~SVGToRGB24BufferLoader() {}
+};
+
 
 } // namespace corecvs

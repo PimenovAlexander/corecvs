@@ -7,6 +7,8 @@
  * \author sergey skaredov
  */
 
+#include <fstream>
+
 #include "core/utils/utils.h"
 #include "core/tinyxml/tinyxml2.h"
 #include "core/fileformats/svgLoader.h"
@@ -50,6 +52,9 @@ SvgLoader::SvgLoader()
     shape_m.emplace("polyline", &SvgLoader::getPolyLine);
     shape_m.emplace("polygon", &SvgLoader::getPolygon);
     shape_m.emplace("path", &SvgLoader::getPath);
+
+    shape_m.emplace("g", &SvgLoader::getGroup);
+
 }
 
 SvgLoader::~SvgLoader()
@@ -104,6 +109,10 @@ int SvgLoader::parseXML(XMLDocument &xml, SvgFile &svg)
     while(current)
     {
         const char *name = current->Name();
+        if (trace) {
+            cout << "Processing <" << name << ">" << endl;
+        }
+
         auto iter = shape_m.find(name);
         if (iter != shape_m.end())
         {
@@ -324,6 +333,34 @@ SvgShape* SvgLoader::getPath(XMLElement *element)
     return path;
 }
 
+SvgShape *SvgLoader::getGroup(XMLElement *element)
+{
+    SYNC_PRINT(("SvgLoader::getGroup(): called\n"));
+    SvgGroup *group = new SvgGroup;
+    initShape(element, group);
+
+    XMLElement *current = element->FirstChildElement();
+
+    while(current)
+    {
+        const char *name = current->Name();
+        if (trace) {
+            cout << "Processing <" << name << ">" << endl;
+        }
+
+        auto iter = shape_m.find(name);
+        if (iter != shape_m.end())
+        {
+            f_type getShape = iter->second;
+            SvgShape *shape = (this->*getShape)(current);
+            group->shapes.push_back(shape);
+        }
+
+        current = current->NextSiblingElement();
+    }
+    return group;
+}
+
 RGB24Buffer* SvgFile::draw()
 {
     RGB24Buffer *buffer = new RGB24Buffer(fround(height), fround(width), RGBColor::White());
@@ -333,5 +370,45 @@ RGB24Buffer* SvgFile::draw()
     }
     return buffer;
 }
+
+string  SVGToRGB24BufferLoader::extension(".svg");
+
+bool SVGToRGB24BufferLoader::acceptsFile(const std::string &name)
+{
+    std::string lowercase = name;
+    std::transform(lowercase.begin(), lowercase.end(), lowercase.begin(), ::tolower);
+
+    return HelperUtils::endsWith(lowercase, extension);
+}
+
+RGB24Buffer *SVGToRGB24BufferLoader::load(const string &name)
+{
+    SvgFile svg;
+    SvgLoader loader;
+    std::ifstream stream(name);
+    if (!stream) {
+        SYNC_PRINT(("can't open file\n"));
+        return NULL;
+    }
+
+    loader.loadSvg(stream, svg);
+
+   if (svg.shapes.size() == 8) {
+       SYNC_PRINT(("Parsing problem\n"));
+       return NULL;
+   }
+
+   return svg.draw();
+}
+
+void SvgGroup::draw(RGB24Buffer *buffer)
+{
+    for (SvgShape *shape: shapes)
+    {
+         shape->draw(buffer);
+    }
+}
+
+
 
 }
