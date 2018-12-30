@@ -192,12 +192,12 @@ TEST(MidmapPyramid, testTexure)
 
 TEST(MidmapPyramid, testTexureDY)
 {
-    RGB24Buffer buffer(128, 128);
+    RGB24Buffer buffer(1024, 1024);
     RGBColor white = RGBColor::White();
     buffer.checkerBoard(16, white);
 
-    int h = 100;
-    int w = 100;
+    int h = 512;
+    int w = 512;
     RGB24Buffer *bufferpic = new RGB24Buffer(h, w, RGBColor::Red());
 
     ClassicRenderer renderer;
@@ -211,10 +211,19 @@ TEST(MidmapPyramid, testTexureDY)
     mesh.switchTextures(true);
     mesh.switchNormals(true);
 
-    mesh.addTriangleT(Vector3dd(-1, -1, 3), Vector2dd(0, 0),
-                      Vector3dd( 1, -1, 3), Vector2dd(1, 0),
-                      Vector3dd(-1,  1, 3), Vector2dd(0, 1));
+    /*mesh.addTriangleT(Vector3dd(-1, -1, 3), Vector2dd(0, 0),
+                      Vector3dd( 1,  0, 3), Vector2dd(1, 0.5),
+                      Vector3dd(-1,  1, 3), Vector2dd(0, 1));*/
 
+
+
+    mesh.addTriangleT(Vector3dd(-1, 0.0, 5), Vector2dd(0, 0),
+                      Vector3dd( 1, 0.0, 5), Vector2dd(1, 0),
+                      Vector3dd(-1, 0.5, 2), Vector2dd(0, 1));
+
+    mesh.addTriangleT(Vector3dd( 1, 0.0, 5), Vector2dd(1, 0),
+                      Vector3dd(-1, 0.5, 2), Vector2dd(0, 1),
+                      Vector3dd( 1, 0.5, 2), Vector2dd(1, 1));
 
 
     renderer.render(&mesh, bufferpic);

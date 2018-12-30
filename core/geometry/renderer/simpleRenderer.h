@@ -95,8 +95,12 @@ public:
     virtual ~ClassicRenderer();
 
     /*Debug buffers*/
-    AbstractBuffer<double> *scaleDebug = NULL;
+    AbstractBuffer<double> *scaleDebug  = NULL;
     AbstractBuffer<double> *factorDebug = NULL;
+    AbstractBuffer<double> *levelDebug  = NULL;
+
+    AbstractBuffer<double> *hdxDebug = NULL;
+    AbstractBuffer<double> *hdyDebug = NULL;
 
     AbstractBuffer<double> *vdxDebug = NULL;
     AbstractBuffer<double> *vdyDebug = NULL;

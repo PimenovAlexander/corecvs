@@ -130,7 +130,7 @@ int main(int argc, char **argv)
 
     std::string objName;
 
-	double fx, fy, cx, cy, w = 4000, h = 4000;
+    double fx, fy, cx, cy, w = 1000, h = 1000;
     if (argc >= 2) {
         objName     = std::string(argv[1]);
     }
@@ -179,7 +179,7 @@ int main(int argc, char **argv)
 
     for(size_t t = 0; t < mesh->materials.size(); t++)
     {
-        renderer.addTexture(mesh->materials[t].tex[OBJMaterial::TEX_DIFFUSE]);
+        renderer.addTexture(mesh->materials[t].tex[OBJMaterial::TEX_DIFFUSE], true);
     }
 
     SYNC_PRINT(("Loaded and added textures\n"));
@@ -218,6 +218,7 @@ int main(int argc, char **argv)
     BMPLoader().save("meshdraw.bmp", buffer);
     buffer->drawDoubleBuffer(renderer.zBuffer, RGB24Buffer::STYLE_ZBUFFER);
     BMPLoader().save("meshdraw-z.bmp", buffer);
+    renderer.dumpAllDebugs("meshdraw-");
 
 
     delete_safe(buffer);

@@ -127,7 +127,7 @@ void ClassicRenderer::addTexture(RGB24Buffer *buffer, bool produceMidmap)
         AbstractMipmapPyramid<RGB24Buffer> *pyramide = new  AbstractMipmapPyramid<RGB24Buffer>(buffer, numLevels, true);
         for (int i = 0; i < (int)pyramide->levels.size(); i++){
             midmap.push_back(pyramide->levels[i]);
-            BMPLoader().save(std::string("chess") + std::to_string(i) + ".bmp", pyramide->levels[i]);
+            // BMPLoader().save(std::string("chess") + std::to_string(i) + ".bmp", pyramide->levels[i]);
         }
     } else {
         midmap.push_back(NULL);
@@ -159,8 +159,17 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
         delete_safe(vdyDebug);
         vdyDebug = new AbstractBuffer<double>(buffer->h, buffer->w, 0.0);
 
+        delete_safe(hdxDebug);
+        hdxDebug = new AbstractBuffer<double>(buffer->h, buffer->w, 0.0);
+
+        delete_safe(hdyDebug);
+        hdyDebug = new AbstractBuffer<double>(buffer->h, buffer->w, 0.0);
+
         delete_safe(factorDebug);
         factorDebug = new AbstractBuffer<double>(buffer->h, buffer->w, 0.0);
+
+        delete_safe(levelDebug);
+        levelDebug = new AbstractBuffer<double>(buffer->h, buffer->w, 0.0);
     }
 
     Matrix44 normalTransform = modelviewMatrix.inverted().transposed();
@@ -262,44 +271,54 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
                 // We are interested in the increment of u and v over line
                 double dx1 = it.part.dx1;
                 double dx2 = it.part.dx2;
-                double ns  = (span.x2 - span.x1) + dx1 + dx2;                
+                double ns  = ((it.part.x2 + dx2) - (it.part.x1 + dx1));
+
                 cout << "dx1  " << dx1 << endl;
                 cout << "dx2  " << dx2 << endl;
-                cout << " s   " << (span.x2 - span.x1) << endl;
+                cout << " s   " << (it.part.x2 - it.part.x1) << endl;
                 cout << "ns   " << ns << endl;
 
 
-                /* Texture coordinates at the end next span */
+                /* Texture coordinates at the ends next span */
                 double tx1 = it.part.a1[ATTR_TEX_U] + it.part.da1[ATTR_TEX_U];
                 double tx2 = it.part.a2[ATTR_TEX_U] + it.part.da2[ATTR_TEX_U];
+
                 cout << "tx1c " << it.part.a1[ATTR_TEX_U] << endl;
                 cout << "tx2c " << it.part.a2[ATTR_TEX_U] << endl;
                 cout << "tx1  " << tx1 << endl;
                 cout << "tx2  " << tx2 << endl;
 
+
                 /* Texture coordinates at the next span directly lower then current span */
-                double nx1 = (tx2 - tx1) / ns * dx1        + tx1;
+                double nx1 = (tx2 - tx1) / ns * -dx1       + tx1;
                 double nx2 = (tx2 - tx1) / ns * (ns - dx2) + tx1;
+
 
                 cout << "nx1  " << nx1 << endl;
                 cout << "nx2  " << nx2 << endl;
 
-                nx1 = nx1 - tx1;
-                nx2 = nx2 - tx2;
 
-                span.catt[ATTR_TEX_DU_DY] = nx1;
+                nx1 = nx1 - it.part.a1[ATTR_TEX_U];
+                nx2 = nx2 - it.part.a2[ATTR_TEX_U];
+
+
+                cout << "fnx1 " << nx1 << endl;
+                cout << "fnx2 " << nx2 << endl;
+
+
+                span.catt[ATTR_TEX_DU_DY] =        nx1;
                 span.datt[ATTR_TEX_DU_DY] = (nx2 - nx1) / (span.x2 - span.x1);
 
 
                 span.catt[ATTR_TEX_DV_DY] =                            it.part.da1[ATTR_TEX_V];
                 span.datt[ATTR_TEX_DV_DY] = (it.part.da2[ATTR_TEX_V] - it.part.da1[ATTR_TEX_V]) / (span.x2 - span.x1);
                 
-                cout << "New Span " << span.x2 << " " << span.x1 << " len "  << (span.x2 - span.x1) << endl;
-                cout << "delta at left  " << it.part.a1[ATTR_TEX_U] << " " << it.part.da1[ATTR_TEX_U] << endl;
-                cout << "delta at right " << it.part.a2[ATTR_TEX_U] << " " << it.part.da2[ATTR_TEX_U] << endl;
+//                cout << "New Span " << span.x2 << " " << span.x1 << " len "  << (span.x2 - span.x1) << endl;
+//                cout << "delta at left  " << it.part.a1[ATTR_TEX_U] << " " << it.part.da1[ATTR_TEX_U] << endl;
+//                cout << "delta at right " << it.part.a2[ATTR_TEX_U] << " " << it.part.da2[ATTR_TEX_U] << endl;
 
-                cout << "delta at left  " << it.part.a1[ATTR_TEX_V] << " " << it.part.da1[ATTR_TEX_V] << endl;
-                cout << "delta at right " << it.part.a2[ATTR_TEX_V] << " " << it.part.da2[ATTR_TEX_V] << endl;
+//                cout << "delta at left  " << it.part.a1[ATTR_TEX_V] << " " << it.part.da1[ATTR_TEX_V] << endl;
+//                cout << "delta at right " << it.part.a2[ATTR_TEX_V] << " " << it.part.da2[ATTR_TEX_V] << endl;
 
                 fragmentShader(span);
                 it.step();
@@ -358,6 +377,7 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
             Vector2dd dhatt = Vector2dd(span.datt[ATTR_TEX_U], span.datt[ATTR_TEX_V]); // Delta stores the increment in horisontal direction
             Vector2dd dvatt = Vector2dd(att[ATTR_TEX_DU_DY], att[ATTR_TEX_DV_DY]);
  
+
             int texId = att[ATTR_TEX_ID];
 
             /* Texture should be mapped linear, but not in the image space, but in 3D space. This is a reason for this projective correction */
@@ -374,18 +394,25 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
             {
                 zBuffer->element(span.pos()) = z;
 
+
                 RGBColor c = color;
                 
                 if (texId < (int)textures.size() && textures[texId] != NULL)
                 {                    
                     if(useMipmap)
                     {
-                        printf("||tex %lf, %lf ||\n",tex.x(), tex.y());
-                        printf("|| dx %lf, %lf ||\n",dhatt[0], dhatt[1]);
-                        printf("|| dy %lf, %lf ||\n",dvatt[0], dvatt[1]);
+                        //printf("||tex %lf, %lf ||\n",tex.x(), tex.y());
+                        //printf("|| dx %lf, %lf ||\n",dhatt[0], dhatt[1]);
+                        //printf("|| dy %lf, %lf ||\n",dvatt[0], dvatt[1]);
                         //printf("\n|| x %f, y %f ||\n",tex.x() -lastx, tex.y() - lasty);
 
-                        double scale = sqrt(dhatt.sumAllElementsSq() + dvatt.sumAllElementsSq() / 2.0);
+                        vdxDebug->element(span.pos()) = dvatt.x();
+                        vdyDebug->element(span.pos()) = dvatt.y();
+
+                        hdxDebug->element(span.pos()) = dhatt.x();
+                        hdyDebug->element(span.pos()) = dhatt.y();
+
+                        double scale = sqrt(dhatt.sumAllElementsSq() + dvatt.sumAllElementsSq());
                         //double scale = sqrt((dhatt[0]*dhatt[0] + dvatt[1]*dvatt[1])/2.0);
                         scaleDebug->element(span.pos()) = scale;
                         // printf("|| scale %lf ||\n",scale);
@@ -418,11 +445,13 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
                             // printf("|| texId %i ||\n",texId);
                             // printf("|| factor %f ||\n",factor);
                             // printf("|| 1 - factor %f ||\n",1 - factor);
+                            factorDebug->element(span.pos()) = factor;
+                            levelDebug ->element(span.pos()) = texId;
 
                             RGB24Buffer *texturefar = midmap[texId + 1];
 
-                            tex = tex * Vector2dd(texture->w, texture->h);
-                            texfar = texfar * Vector2dd(texturefar->w, texturefar->h);
+                            tex    = tex    * Vector2dd(texture->w - 1, texture->h - 1);
+                            texfar = texfar * Vector2dd(texturefar->w - 1, texturefar->h - 1);
 
                             // printf("\ncase1\n");
                             if (texture->isValidCoordBl(tex) && texturefar->isValidCoordBl(texfar)) {
@@ -488,9 +517,14 @@ std::vector<std::string> ClassicRenderer::debugBuffers() const
 {
     std::vector<std::string> toReturn;
     if (factorDebug != NULL) toReturn.push_back("factor");
+    if (levelDebug  != NULL) toReturn.push_back("level");
+
     if (scaleDebug != NULL) toReturn.push_back("scale");
     if (vdxDebug != NULL)   toReturn.push_back("vdx");
     if (vdyDebug != NULL)   toReturn.push_back("vdy");
+
+    if (hdxDebug != NULL)   toReturn.push_back("hdx");
+    if (hdyDebug != NULL)   toReturn.push_back("hdy");
 
     return toReturn;
 }
@@ -501,6 +535,10 @@ RGB24Buffer *ClassicRenderer::getDebugBuffer(const std::string &name) const
     if (name == "factor") {
         toReturn = new RGB24Buffer(factorDebug->h, factorDebug->w);
         toReturn->drawContinuousBuffer<double>(factorDebug, RGB24Buffer::STYLE_RAINBOW, true);
+    }
+    if (name == "level") {
+        toReturn = new RGB24Buffer(levelDebug->h, levelDebug->w);
+        toReturn->drawContinuousBuffer<double>(levelDebug, RGB24Buffer::STYLE_RAINBOW, true);
     }
     if (name == "scale") {
         toReturn = new RGB24Buffer(scaleDebug->h, scaleDebug->w);
@@ -513,6 +551,14 @@ RGB24Buffer *ClassicRenderer::getDebugBuffer(const std::string &name) const
     if (name == "vdy")   {
         toReturn = new RGB24Buffer(vdyDebug->h, vdyDebug->w);
         toReturn->drawContinuousBuffer<double>(vdyDebug, RGB24Buffer::STYLE_RAINBOW, true);
+    }
+    if (name == "hdx")   {
+        toReturn = new RGB24Buffer(hdxDebug->h, hdxDebug->w);
+        toReturn->drawContinuousBuffer<double>(hdxDebug, RGB24Buffer::STYLE_RAINBOW, true);
+    }
+    if (name == "hdy")   {
+        toReturn = new RGB24Buffer(hdyDebug->h, hdyDebug->w);
+        toReturn->drawContinuousBuffer<double>(hdyDebug, RGB24Buffer::STYLE_RAINBOW, true);
     }
     return toReturn;
 }
