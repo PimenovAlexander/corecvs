@@ -17,6 +17,7 @@
 #include "core/buffers/rgb24/rgbColor.h"
 #include "core/geometry/polygons.h"
 #include "core/geometry/conic.h"
+#include "core/geometry/ellipse.h"
 
 namespace corecvs {
 
@@ -198,6 +199,34 @@ public:
         drawCircle(center.x(), center.y(), radius, color);
     }
 
+    void drawEllipse(double x, double y, double rx, double ry, double ang, RGBColor color)
+    {
+        Ellipse ellipse;
+
+        ellipse.center = Vector2dd(x, y);
+        ellipse.axis   = Vector2dd(rx, ry);
+        ellipse.angle  = degToRad(ang);
+
+        drawEllipse(ellipse, color);
+    }
+
+    void drawEllipse(const Ellipse &ellipse, RGBColor color)
+    {
+        EllipseSpanIterator outer(ellipse);
+        while (outer.hasValue())
+        {
+            HLineSpanInt span = outer.getSpan();
+            for (int s1 = span.x1; s1 < span.x2; s1++ )
+            {
+                if (mTarget->isValidCoord(span.y(), s1))
+                {
+                    mTarget->element(span.y(), s1) = color;
+                }
+            }
+            outer.step();
+        }
+    }
+
     class EqualPredicate
     {
     private:
@@ -330,6 +359,20 @@ public:
 
     }
 
+    void drawPath(const PointPath &pp, ElementType color)
+    {
+        if (pp.empty())
+            return;
+
+        if (pp.size() == 1)
+        {
+            mTarget->drawLine(pp[0].x(), pp[0].y(), pp[0].x(), pp[0].y(), color);
+        }
+        for (unsigned i = 0; i < pp.size() - 1; i++)
+        {
+            mTarget->drawLine(pp[i].x(), pp[i].y(), pp[i + 1].x(), pp[i + 1].y(), color);
+        }
+    }
 
     void drawPolygon(const Polygon &p, ElementType color)
     {
