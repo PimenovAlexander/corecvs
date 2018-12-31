@@ -151,4 +151,5 @@ HEADERS += \
     snooker/reflectionSegmentator.h \
     snooker/snookerSegmentator.h \
     stateMachineTest/test.h \
-    bspRenderer/bspRenderTest.h
+    bspRenderer/bspRenderTest.h \
+    bspRenderer/bspRenderer.h

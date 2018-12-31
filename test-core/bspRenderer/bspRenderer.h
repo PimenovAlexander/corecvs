@@ -34,11 +34,32 @@
 #define INTERSECT   3
 #define ERROR       -1
 
+#if 1
+
 namespace corecvs {
 
 namespace BSPRenderer {
 
-class BSPTree2d {
+struct SSector {
+    vector<Segment2d> segs;
+    Polygon poly;
+};
+
+struct Linedef {
+    Segment2d line;
+    int sidedef;
+};
+
+struct Sector {
+    vector<Linedef> linedefs;
+    Polygon sector;
+};
+
+struct Level {
+    vector<Sector> sectors;
+};
+
+class BSPNode2d {
 public:
     /* Every node of tree contains:
      * Edge to separate space
@@ -46,35 +67,32 @@ public:
      * Pointers to right and left subtrees
      * Vectors of right and left edges relative to the separator
      **/
-    Ray2d               *separatorEdge = nullptr;
-    std::vector<Ray2d>  coincidentEdges;
-    BSPTree2d           *rightTree = nullptr,
-                        *leftTree = nullptr;
+    Ray2d       *separator = nullptr;
+    Polygon     leftBoundingBox,
+                rightBoundingBox;
+    BSPNode2d   *rightTree = nullptr,
+                *leftTree = nullptr;
+    SSector     *left = nullptr,
+                *right = nullptr;
 
-    std::vector<Ray2d>  rightEdges,
-                        leftEdges;
-
-    BSPTree2d() {}
+    BSPNode2d() {}
 
     /* Main method of constructing BSP-tree
      * Needs vector of rays as input */
-    void BSPDivide(std::vector<Ray2d> &edges)
+    void BSPNodeBuilder(Level& level)
     {
-        /* Take first edge as separator
-         * Worth considering on more efficient separator choice
-         **/
-        std::vector<Ray2d>::iterator edgesIt = edges.begin();
+        vector<Ray2d> possibleSeps;
 
-        if (edgesIt == edges.end())
-            return;
+        for (Sector& curSector : level.sectors) {
+            for (Linedef& curLinedef : curSector.linedefs) {
+                possibleSeps.push_back(Ray2d(curLinedef.line));
+            }
+        }
 
-        separatorEdge = &(*edgesIt);
-        coincidentEdges.push_back(*separatorEdge);
 
-        ++edgesIt;
         while (edgesIt != edges.end()) {
             Ray2d *curEdge = &(*edgesIt);
-            int result = ClassifyEdge(separatorEdge, curEdge);
+            int result = ClassifyEdge(separator, curEdge);
 
             /* Actions depending on position of curEdge to the separator:
              * Push to corresponding vector if coincident, right or left
@@ -93,7 +111,7 @@ public:
                 case INTERSECT: {
                     Ray2d *rightPart = (Ray2d *) malloc(sizeof(Ray2d)),
                           *leftPart  = (Ray2d *) malloc(sizeof(Ray2d));
-                    SplitRay2d(curEdge, separatorEdge, rightPart, leftPart);
+                    SplitRay2d(curEdge, separator, rightPart, leftPart);
                     rightEdges.push_back(*rightPart);
                     leftEdges.push_back(*leftPart);
                     break;
@@ -106,13 +124,13 @@ public:
         }
 
         if (!rightEdges.empty()) {
-            rightTree = new BSPTree2d();
-            rightTree->BSPDivide(rightEdges);
+            rightTree = new BSPNode2d();
+            rightTree->BSPNodeBuilder(rightEdges);
         }
 
         if (!leftEdges.empty()) {
-            leftTree = new BSPTree2d();
-            leftTree->BSPDivide(leftEdges);
+            leftTree = new BSPNode2d();
+            leftTree->BSPNodeBuilder(leftEdges);
         }
     }
 
@@ -196,7 +214,7 @@ static std::vector<Ray2d> PolygonToRays(Polygon &poly)
  * Green - edges to the right of separator
  * Yellow - edges to the left of separator
  * White - edges not processed in current node (they're already somwhere in tree)*/
-static void DrawBSPTree(BSPTree2d &tree, Polygon poly, int& i) {
+static void DrawBSPTree(BSPNode2d &tree, Polygon poly, int& i) {
     int h = 720;
     int w = 720;
     RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::Black());
@@ -205,12 +223,12 @@ static void DrawBSPTree(BSPTree2d &tree, Polygon poly, int& i) {
 
     painter.drawPolygon(poly, RGBColor::White());
 
-    buffer->drawLine(tree.separatorEdge->getStart(),
-                     tree.separatorEdge->getEnd(),
+    buffer->drawLine(tree.separator->getStart(),
+                     tree.separator->getEnd(),
                      RGBColor::Red());
     for (auto& it : tree.coincidentEdges) {
-        if (it.getStart() != tree.separatorEdge->getStart()
-            && it.getEnd() != tree.separatorEdge->getEnd())
+        if (it.getStart() != tree.separator->getStart()
+            && it.getEnd() != tree.separator->getEnd())
         buffer->drawLine(it.getStart(),
                          it.getEnd(),
                          RGBColor::Blue());
@@ -236,5 +254,7 @@ static void DrawBSPTree(BSPTree2d &tree, Polygon poly, int& i) {
 } // namespace BSPRenderer
 
 } // namespace corecvs
+
+#endif
 
 #endif // BSPRENDERER_H
