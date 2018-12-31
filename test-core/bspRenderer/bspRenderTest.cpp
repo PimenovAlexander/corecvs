@@ -147,3 +147,17 @@ TEST(BSPRender, levelDraw)
 
     delete_safe(buffer);
 }
+
+TEST(BSPRender, test)
+{
+    int h = 720;
+    int w = 720;
+    RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::White());
+
+    Segment2d seg(Vector2dd(500, 360), Vector2dd(300, 360));
+
+    Line2d line(seg);
+
+    cout << "> " << line.side(Vector2dd(400, 359)) << " "
+                 << line.side(Vector2dd(400, 361)) << endl;
+}

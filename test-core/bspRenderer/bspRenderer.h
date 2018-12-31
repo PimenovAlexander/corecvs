@@ -41,7 +41,7 @@ namespace corecvs {
 namespace BSPRenderer {
 
 struct Linedef {
-    Segment2d line;
+    int polygonIdx;
     int sidedef;
 };
 
@@ -86,7 +86,7 @@ public:
         for (Sector& curSector : level.sectors) {
             allPolygons.push_back(curSector.space);
             for (Linedef& curLinedef : curSector.linedefs) {
-                allRays.push_back(Ray2d(curLinedef.line));
+                allRays.push_back(curSector.space.getRay(curLinedef.polygonIdx));
             }
         }
 
@@ -120,17 +120,23 @@ public:
                 Vector2dd p2 = separator.getPoint(t2);
                 int enterIdx = -1,
                     exitIdx  = -2;
+                Segment2d *enterSeg = nullptr,
+                          *exitSeg  = nullptr;
 
                 /* Check if tangent */
                 for (int i = 0; i < poly.size(); ++i) {
                     Line2d polyLine = poly.getLine(i);
 
                     if (polyLine.side(p1) == 0) enterIdx = i;
-                    if (polyLine.side(p2) == 0) exitIdx = i;
+                    if (polyLine.side(p2) == 0) exitIdx  = i;
                     if (enterIdx == exitIdx) continue;
                 }
+                /* 1 -- to the right, -1 -- to the left */
+                Polygon leftPolygon,
+                        rightPolygon;
+                for (int i = enterIdx; i < exitIdx; i = poly.getNextIndex(i)) {
 
-
+                }
                 ++clips;
             }
         }
