@@ -19,17 +19,22 @@ TEST(BSPRender, levelDraw)
     RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::White());
     Polygon p;
 
-    p.push_back(Vector2dd(59, 59));
-    p.push_back(Vector2dd(59, 659));
+    p.push_back(Vector2dd(350, 350));
+    p.push_back(Vector2dd(370, 650));
+    p.push_back(Vector2dd(400, 670));
+    p.push_back(Vector2dd(510, 350));
+
+//    p.push_back(Vector2dd(59, 59));
+//    p.push_back(Vector2dd(59, 659));
 
 //    p.push_back(Vector2dd(299, 599));
 //    p.push_back(Vector2dd(299, 419));
 //    p.push_back(Vector2dd(479, 479));
 //    p.push_back(Vector2dd(479, 659));
 
-    p.push_back(Vector2dd(539, 659));
-    p.push_back(Vector2dd(659, 479));
-    p.push_back(Vector2dd(659, 59));
+//    p.push_back(Vector2dd(539, 659));
+//    p.push_back(Vector2dd(659, 479));
+//    p.push_back(Vector2dd(659, 59));
 
 //    p.push_back(Vector2dd(479, 59));
 //    p.push_back(Vector2dd(479, 299));
@@ -54,35 +59,53 @@ TEST(BSPRender, levelDraw)
         buffer->drawLine(center, decal, RGBColor::Black());
     }
 
-    for (int i = 1; i < 10; i++)
-    {
-        Ray2d ray( Vector2dd::FromPolar( M_PI / 20.0 * i + 0.02, 100), Vector2dd(140,180));
+    Ray2d ray(Vector2dd(100, 0), Vector2dd(50, 350));
+    Vector2dd p1 = ray.getPoint(0.0);
+    Vector2dd p2 = ray.getPoint(8.0);
+    buffer->drawLine(p1, p2, RGBColor::Yellow());
+    double t1, t2;
+    ray.clip<Polygon>(p, t1, t2);
 
-        Vector2dd p1 = ray.getPoint(0.0);
-        Vector2dd p2 = ray.getPoint(8.0);
-        buffer->drawLine(p1, p2, RGBColor::Yellow());
+    p1 = ray.getPoint(t1);
+    p2 = ray.getPoint(t2);
 
-        for (int j = 0; j < 8; j++)
-        {
-            Vector2dd p = ray.getPoint(j);
-            buffer->drawCrosshare1(p.x(), p.y(), RGBColor::Cyan());
-        }
+    cout << "t1 = " << t1 << endl;
+    cout << "t2 = " << t2 << endl;
+    cout << "p1 = " << p1 << endl;
+    cout << "p2 = " << p2 << endl;
 
-        double t1, t2;
-        ray.clip<Polygon>(p, t1, t2);
+    buffer->drawLine(p1, p2,
+                     t1 > t2 ? RGBColor::Red() : RGBColor::Green());
 
-        p1 = ray.getPoint(t1);
-        p2 = ray.getPoint(t2);
+//    for (int i = 1; i < 10; i++)
+//    {
+//        Ray2d ray( Vector2dd::FromPolar( M_PI / 20.0 * i + 0.02, 100), Vector2dd(140,180));
 
-        cout << "t1 = " << t1 << endl;
-        cout << "t2 = " << t2 << endl;
-        cout << "p1 = " << p1 << endl;
-        cout << "p2 = " << p2 << endl;
+//        Vector2dd p1 = ray.getPoint(0.0);
+//        Vector2dd p2 = ray.getPoint(8.0);
+//        buffer->drawLine(p1, p2, RGBColor::Yellow());
 
-        buffer->drawLine(p1, p2,
-                       t1 > t2 ? RGBColor::Red() : RGBColor::Green());
+//        for (int j = 0; j < 8; j++)
+//        {
+//            Vector2dd p = ray.getPoint(j);
+//            buffer->drawCrosshare1(p.x(), p.y(), RGBColor::Cyan());
+//        }
 
-    }
+//        double t1, t2;
+//        ray.clip<Polygon>(p, t1, t2);
+
+//        p1 = ray.getPoint(t1);
+//        p2 = ray.getPoint(t2);
+
+//        cout << "t1 = " << t1 << endl;
+//        cout << "t2 = " << t2 << endl;
+//        cout << "p1 = " << p1 << endl;
+//        cout << "p2 = " << p2 << endl;
+
+//        buffer->drawLine(p1, p2,
+//                       t1 > t2 ? RGBColor::Red() : RGBColor::Green());
+
+//    }
 
     BMPLoader().save("levelPolygon.bmp", buffer);
 

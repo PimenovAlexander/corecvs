@@ -40,11 +40,6 @@ namespace corecvs {
 
 namespace BSPRenderer {
 
-struct SSector {
-    vector<Segment2d> segs;
-    Polygon poly;
-};
-
 struct Linedef {
     Segment2d line;
     int sidedef;
@@ -52,7 +47,7 @@ struct Linedef {
 
 struct Sector {
     vector<Linedef> linedefs;
-    Polygon sector;
+    Polygon space;
 };
 
 struct Level {
@@ -72,7 +67,7 @@ public:
                 rightBoundingBox;
     BSPNode2d   *rightTree = nullptr,
                 *leftTree = nullptr;
-    SSector     *left = nullptr,
+    Sector      *left = nullptr,
                 *right = nullptr;
 
     BSPNode2d() {}
@@ -81,57 +76,66 @@ public:
      * Needs vector of rays as input */
     void BSPNodeBuilder(Level& level)
     {
-        vector<Ray2d> possibleSeps;
+        vector<Polygon> allPolygons;
+        vector<Ray2d> allRays;
+        Ray2d *bestSeparator;
+        int bestCost = INT_MAX;
+        Level leftPart,
+              rightPart;
 
         for (Sector& curSector : level.sectors) {
+            allPolygons.push_back(curSector.space);
             for (Linedef& curLinedef : curSector.linedefs) {
-                possibleSeps.push_back(Ray2d(curLinedef.line));
+                allRays.push_back(Ray2d(curLinedef.line));
             }
         }
 
+        for (Ray2d& curRay : allRays) {
+            Level curLeftPart,
+                  curRightPart;
+            int cost,
+                clipsAmount,
+                sectorDiff;
 
-        while (edgesIt != edges.end()) {
-            Ray2d *curEdge = &(*edgesIt);
-            int result = ClassifyEdge(separator, curEdge);
+            clipsAmount = LevelPartition(level, curRay,
+                                         curLeftPart, curRightPart);
 
-            /* Actions depending on position of curEdge to the separator:
-             * Push to corresponding vector if coincident, right or left
-             * If intersect split and then push to left and right
-             **/
-            switch (result) {
-                case COINCIDENT:
-                    coincidentEdges.push_back(*curEdge);
-                    break;
-                case RIGHT:
-                    rightEdges.push_back(*curEdge);
-                    break;
-                case LEFT:
-                    leftEdges.push_back(*curEdge);
-                    break;
-                case INTERSECT: {
-                    Ray2d *rightPart = (Ray2d *) malloc(sizeof(Ray2d)),
-                          *leftPart  = (Ray2d *) malloc(sizeof(Ray2d));
-                    SplitRay2d(curEdge, separator, rightPart, leftPart);
-                    rightEdges.push_back(*rightPart);
-                    leftEdges.push_back(*leftPart);
-                    break;
+
+        }
+
+    }
+
+    static int LevelPartition(Level& level, Ray2d& separator,
+                              Level& leftPart, Level& rightPart)
+    {
+        int clips = 0;
+
+        for (Sector& curSector : level.sectors) {
+            Polygon poly = curSector.space;
+            double t1, t2;
+
+            separator.clip(poly, t1, t2);
+            if (t2 > t1) {
+                Vector2dd p1 = separator.getPoint(t1);
+                Vector2dd p2 = separator.getPoint(t2);
+                int enterIdx = -1,
+                    exitIdx  = -2;
+
+                /* Check if tangent */
+                for (int i = 0; i < poly.size(); ++i) {
+                    Line2d polyLine = poly.getLine(i);
+
+                    if (polyLine.side(p1) == 0) enterIdx = i;
+                    if (polyLine.side(p2) == 0) exitIdx = i;
+                    if (enterIdx == exitIdx) continue;
                 }
-                case ERROR:
-                    cout << "\n\nSOMETHING WENT TERRIBLY WRONG HERE!\n\n";
-                    break;
+
+
+                ++clips;
             }
-            ++edgesIt;
         }
 
-        if (!rightEdges.empty()) {
-            rightTree = new BSPNode2d();
-            rightTree->BSPNodeBuilder(rightEdges);
-        }
-
-        if (!leftEdges.empty()) {
-            leftTree = new BSPNode2d();
-            leftTree->BSPNodeBuilder(leftEdges);
-        }
+        return clips;
     }
 
     static int ClassifyEdge(Ray2d *separatorEdge, Ray2d *curEdge)
