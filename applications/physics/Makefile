@@ -53,14 +53,18 @@ SOURCES       = main_physics.cpp \
 		clientsender.cpp \
 		comcontroller.cpp \
 		controllrecord.cpp \
-		joystickinput.cpp ../../.obj/physics/moc_physicsMainWidget.cpp
+		joystickinput.cpp \
+		qcomcontroller.cpp ../../.obj/physics/moc_physicsMainWidget.cpp \
+		../../.obj/physics/moc_qcomcontroller.cpp
 OBJECTS       = ../../.obj/physics/main_physics.o \
 		../../.obj/physics/physicsMainWidget.o \
 		../../.obj/physics/clientsender.o \
 		../../.obj/physics/comcontroller.o \
 		../../.obj/physics/controllrecord.o \
 		../../.obj/physics/joystickinput.o \
-		../../.obj/physics/moc_physicsMainWidget.o
+		../../.obj/physics/qcomcontroller.o \
+		../../.obj/physics/moc_physicsMainWidget.o \
+		../../.obj/physics/moc_qcomcontroller.o
 DIST          = ../../arduinoscancontrol.ino \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -129,12 +133,14 @@ DIST          = ../../arduinoscancontrol.ino \
 		clientsender.h \
 		comcontroller.h \
 		controllrecord.h \
-		joystickinput.h main_physics.cpp \
+		joystickinput.h \
+		qcomcontroller.h main_physics.cpp \
 		physicsMainWidget.cpp \
 		clientsender.cpp \
 		comcontroller.cpp \
 		controllrecord.cpp \
-		joystickinput.cpp
+		joystickinput.cpp \
+		qcomcontroller.cpp
 QMAKE_TARGET  = physics
 DESTDIR       = ../../bin/#avoid trailing-slash linebreak
 TARGET        = ../../bin/physics
@@ -321,8 +327,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents physicsMainWidget.h clientsender.h comcontroller.h controllrecord.h joystickinput.h $(DISTDIR)/
-	$(COPY_FILE) --parents main_physics.cpp physicsMainWidget.cpp clientsender.cpp comcontroller.cpp controllrecord.cpp joystickinput.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents physicsMainWidget.h clientsender.h comcontroller.h controllrecord.h joystickinput.h qcomcontroller.h $(DISTDIR)/
+	$(COPY_FILE) --parents main_physics.cpp physicsMainWidget.cpp clientsender.cpp comcontroller.cpp controllrecord.cpp joystickinput.cpp qcomcontroller.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents physicsMainWidget.ui $(DISTDIR)/
 
 
@@ -346,13 +352,18 @@ check: first
 
 compiler_rcc_make_all:
 compiler_rcc_clean:
-compiler_moc_header_make_all: ../../.obj/physics/moc_physicsMainWidget.cpp
+compiler_moc_header_make_all: ../../.obj/physics/moc_physicsMainWidget.cpp ../../.obj/physics/moc_qcomcontroller.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) ../../.obj/physics/moc_physicsMainWidget.cpp
+	-$(DEL_FILE) ../../.obj/physics/moc_physicsMainWidget.cpp ../../.obj/physics/moc_qcomcontroller.cpp
 ../../.obj/physics/moc_physicsMainWidget.cpp: clientsender.h \
 		controllrecord.h \
+		joystickinput.h \
 		physicsMainWidget.h
 	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/nicolay/QuadroLib/corecvs/applications/physics -I/home/nicolay/QuadroLib/corecvs -I/home/nicolay/QuadroLib/corecvs/utils -I/home/nicolay/QuadroLib/corecvs/utils/3d -I/home/nicolay/QuadroLib/corecvs/utils/camcalc -I/home/nicolay/QuadroLib/corecvs/utils/corestructs -I/home/nicolay/QuadroLib/corecvs/utils/corestructs/coreWidgets -I/home/nicolay/QuadroLib/corecvs/utils/corestructs/libWidgets -I/home/nicolay/QuadroLib/corecvs/utils/corestructs/parametersMapper -I/home/nicolay/QuadroLib/corecvs/utils/corestructs/cameraModel -I/home/nicolay/QuadroLib/corecvs/utils/distortioncorrector -I/home/nicolay/QuadroLib/corecvs/utils/fileformats -I/home/nicolay/QuadroLib/corecvs/utils/filters -I/home/nicolay/QuadroLib/corecvs/utils/filters/graph -I/home/nicolay/QuadroLib/corecvs/utils/filters/ui -I/home/nicolay/QuadroLib/corecvs/utils/framesources -I/home/nicolay/QuadroLib/corecvs/utils/framesources/directShow -I/home/nicolay/QuadroLib/corecvs/utils/framesources/decoders -I/home/nicolay/QuadroLib/corecvs/utils/framesources/syncCam -I/home/nicolay/QuadroLib/corecvs/utils/framesources/file -I/home/nicolay/QuadroLib/corecvs/utils/framesources/avcodec -I/home/nicolay/QuadroLib/corecvs/utils/processor -I/home/nicolay/QuadroLib/corecvs/utils/rectifier -I/home/nicolay/QuadroLib/corecvs/utils/statistics -I/home/nicolay/QuadroLib/corecvs/utils/uis -I/home/nicolay/QuadroLib/corecvs/utils/uis/cloudview -I/home/nicolay/QuadroLib/corecvs/utils/visitors -I/home/nicolay/QuadroLib/corecvs/utils/widgets -I/home/nicolay/QuadroLib/corecvs/utils/photostationcalibration -I/home/nicolay/QuadroLib/corecvs/utils/tablecontrol -I/home/nicolay/QuadroLib/corecvs/utils/capture -I/home/nicolay/QuadroLib/corecvs/utils/reconstruction -I/home/nicolay/QuadroLib/corecvs/utils/memoryuse -I/home/nicolay/QuadroLib/corecvs/utils/framesources/v4l2 -I/home/nicolay/QuadroLib/corecvs/.obj/cvs_utils -I/home/nicolay/QuadroLib/corecvs/utils/opengl -I/home/nicolay/QuadroLib/corecvs/applications/physics -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtXml -I/usr/include/x86_64-linux-gnu/qt5/QtSerialPort -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include physicsMainWidget.h -o ../../.obj/physics/moc_physicsMainWidget.cpp
+
+../../.obj/physics/moc_qcomcontroller.cpp: controllrecord.h \
+		qcomcontroller.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/nicolay/QuadroLib/corecvs/applications/physics -I/home/nicolay/QuadroLib/corecvs -I/home/nicolay/QuadroLib/corecvs/utils -I/home/nicolay/QuadroLib/corecvs/utils/3d -I/home/nicolay/QuadroLib/corecvs/utils/camcalc -I/home/nicolay/QuadroLib/corecvs/utils/corestructs -I/home/nicolay/QuadroLib/corecvs/utils/corestructs/coreWidgets -I/home/nicolay/QuadroLib/corecvs/utils/corestructs/libWidgets -I/home/nicolay/QuadroLib/corecvs/utils/corestructs/parametersMapper -I/home/nicolay/QuadroLib/corecvs/utils/corestructs/cameraModel -I/home/nicolay/QuadroLib/corecvs/utils/distortioncorrector -I/home/nicolay/QuadroLib/corecvs/utils/fileformats -I/home/nicolay/QuadroLib/corecvs/utils/filters -I/home/nicolay/QuadroLib/corecvs/utils/filters/graph -I/home/nicolay/QuadroLib/corecvs/utils/filters/ui -I/home/nicolay/QuadroLib/corecvs/utils/framesources -I/home/nicolay/QuadroLib/corecvs/utils/framesources/directShow -I/home/nicolay/QuadroLib/corecvs/utils/framesources/decoders -I/home/nicolay/QuadroLib/corecvs/utils/framesources/syncCam -I/home/nicolay/QuadroLib/corecvs/utils/framesources/file -I/home/nicolay/QuadroLib/corecvs/utils/framesources/avcodec -I/home/nicolay/QuadroLib/corecvs/utils/processor -I/home/nicolay/QuadroLib/corecvs/utils/rectifier -I/home/nicolay/QuadroLib/corecvs/utils/statistics -I/home/nicolay/QuadroLib/corecvs/utils/uis -I/home/nicolay/QuadroLib/corecvs/utils/uis/cloudview -I/home/nicolay/QuadroLib/corecvs/utils/visitors -I/home/nicolay/QuadroLib/corecvs/utils/widgets -I/home/nicolay/QuadroLib/corecvs/utils/photostationcalibration -I/home/nicolay/QuadroLib/corecvs/utils/tablecontrol -I/home/nicolay/QuadroLib/corecvs/utils/capture -I/home/nicolay/QuadroLib/corecvs/utils/reconstruction -I/home/nicolay/QuadroLib/corecvs/utils/memoryuse -I/home/nicolay/QuadroLib/corecvs/utils/framesources/v4l2 -I/home/nicolay/QuadroLib/corecvs/.obj/cvs_utils -I/home/nicolay/QuadroLib/corecvs/utils/opengl -I/home/nicolay/QuadroLib/corecvs/applications/physics -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtXml -I/usr/include/x86_64-linux-gnu/qt5/QtSerialPort -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include qcomcontroller.h -o ../../.obj/physics/moc_qcomcontroller.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -527,20 +538,28 @@ compiler_clean: compiler_moc_header_clean compiler_uic_clean
 		../../../corecvs/core/geometry/mesh3DDecorated.h \
 		physicsMainWidget.h \
 		clientsender.h \
-		controllrecord.h
+		controllrecord.h \
+		joystickinput.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/main_physics.o main_physics.cpp
 
 ../../.obj/physics/physicsMainWidget.o: physicsMainWidget.cpp ../../../corecvs/core/utils/global.h \
 		physicsMainWidget.h \
 		clientsender.h \
 		controllrecord.h \
+		joystickinput.h \
 		../../.obj/physics/ui_physicsMainWidget.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/physicsMainWidget.o physicsMainWidget.cpp
 
 ../../.obj/physics/clientsender.o: clientsender.cpp clientsender.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/clientsender.o clientsender.cpp
 
-../../.obj/physics/comcontroller.o: comcontroller.cpp comcontroller.h
+../../.obj/physics/comcontroller.o: comcontroller.cpp comcontroller.h \
+		controllrecord.h \
+		../../../corecvs/core/utils/global.h \
+		physicsMainWidget.h \
+		clientsender.h \
+		joystickinput.h \
+		../../.obj/physics/ui_physicsMainWidget.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/comcontroller.o comcontroller.cpp
 
 ../../.obj/physics/controllrecord.o: controllrecord.cpp controllrecord.h
@@ -550,8 +569,16 @@ compiler_clean: compiler_moc_header_clean compiler_uic_clean
 		../../../corecvs/core/utils/global.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/joystickinput.o joystickinput.cpp
 
+../../.obj/physics/qcomcontroller.o: qcomcontroller.cpp qcomcontroller.h \
+		controllrecord.h \
+		../../../corecvs/core/utils/global.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/qcomcontroller.o qcomcontroller.cpp
+
 ../../.obj/physics/moc_physicsMainWidget.o: ../../.obj/physics/moc_physicsMainWidget.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/moc_physicsMainWidget.o ../../.obj/physics/moc_physicsMainWidget.cpp
+
+../../.obj/physics/moc_qcomcontroller.o: ../../.obj/physics/moc_qcomcontroller.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/moc_qcomcontroller.o ../../.obj/physics/moc_qcomcontroller.cpp
 
 ####### Install
 
