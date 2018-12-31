@@ -15,7 +15,9 @@
 #include <fcntl.h>
 #include <thread>
 #include "time.h"
+#include "QWidget"
 #include <fstream>
+#include "ui_cloudViewDialog.h"
 
     using namespace std;
 
@@ -25,6 +27,7 @@
     QWidget(parent),
     ui(new Ui::PhysicsMainWidget)
     {
+
         yaw_value=1500;
         roll_value=1500;
         pitch_value=1500;
@@ -39,7 +42,8 @@
         ui->comboBox->addItem("Usual mode");
         ui->comboBox->addItem("Inertia mode");
         ui->comboBox->addItem("Casual mode");
-        FrameValuesUpdate();
+
+                FrameValuesUpdate();
     }
 
     PhysicsMainWidget::~PhysicsMainWidget()
