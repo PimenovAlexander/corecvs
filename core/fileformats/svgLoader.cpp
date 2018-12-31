@@ -128,12 +128,18 @@ int SvgLoader::parseXML(XMLDocument &xml, SvgFile &svg)
 
 vector<Vector2dd> SvgLoader::parsePoints(string data)
 {
+    locale myLocale("C");
     data = HelperUtils::escapeString(data, escape_m, "");
     vector<string> coords = HelperUtils::stringSplit(data, ' ');
     vector<Vector2dd> points;
     for(int i = 0; i < coords.size(); i += 2) {
-        double x = atof(coords[i].c_str());
-        double y = atof(coords[i + 1].c_str());
+        istringstream xs(coords[i]);
+        istringstream ys(coords[i+1]);
+        xs.imbue(myLocale);
+        ys.imbue(myLocale);
+        double x, y;
+        xs >> x;
+        ys >> y;
         points.push_back(Vector2dd(x, y));
     }
     return points;
@@ -271,6 +277,7 @@ SvgShape* SvgLoader::getPath(XMLElement *element)
     string d(element->Attribute("d"));
     d = HelperUtils::escapeString(d, escape_m, "");
     
+    locale myLocale("C");
     int index = 0;
     while (index < d.size())
     {
@@ -294,9 +301,13 @@ SvgShape* SvgLoader::getPath(XMLElement *element)
                 string params = d.substr(index, new_cmd_pos - index);
                 for (string p: HelperUtils::stringSplit(params, ' '))
                 {
-                    if (p.size() > 0)
+                    if (p.size())
                     {
-                        cmd.params.push_back(atof(p.c_str()));
+                        istringstream s(p);
+                        s.imbue(myLocale);
+                        double x;
+                        s >> x;
+                        cmd.params.push_back(x);
                     }
                 }
                 index = new_cmd_pos;

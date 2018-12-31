@@ -182,6 +182,20 @@ public:
                     cursor[0] = commands[i].params[0] + last_p[0];
                     cursor[1] = commands[i].params[1] + last_p[1];
                     start_point = cursor;
+                    if (commands[i].params.size() > 2)
+                    {
+                        for (int j = 2; j < commands[i].params.size(); j += 2)
+                        {
+                            dest[0] = commands[i].params[j];
+                            dest[1] = commands[i].params[j+1];
+                            if (commands[i].command == 'm')
+                            {
+                                dest += cursor;
+                            }
+                            buffer->drawLine(cursor, dest, color);
+                            cursor = dest;
+                        }
+                    }
                     break;
                 case 'l':
                     last_p[0] = cursor[0];
