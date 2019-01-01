@@ -41,7 +41,7 @@ namespace corecvs {
 namespace BSPRenderer {
 
 struct Linedef {
-    int polygonIdx;
+    unsigned long polygonIdx;
     int sidedef;
 };
 
@@ -72,6 +72,7 @@ public:
 
     BSPNode2d() {}
 
+private:
     /* Main method of constructing BSP-tree
      * Needs vector of rays as input */
     void BSPNodeBuilder(Level& level)
@@ -97,17 +98,18 @@ public:
                 clipsAmount,
                 sectorDiff;
 
-            clipsAmount = LevelPartition(level, curRay,
-                                         curLeftPart, curRightPart);
+            clipsAmount = SplitLevel(level, curRay,
+                                     curLeftPart, curRightPart);
 
 
         }
 
     }
 
-    static int LevelPartition(Level& level, Ray2d& separator,
-                              Level& leftPart, Level& rightPart)
+    static int SplitLevel(Level& level, Ray2d& separator,
+                          Level& leftPart, Level& rightPart)
     {
+        Line2d sepLine(separator);
         int clips = 0;
 
         for (Sector& curSector : level.sectors) {
@@ -116,33 +118,124 @@ public:
 
             separator.clip(poly, t1, t2);
             if (t2 > t1) {
+                Sector leftSector,
+                       rightSector;
                 Vector2dd p1 = separator.getPoint(t1);
                 Vector2dd p2 = separator.getPoint(t2);
-                int enterIdx = -1,
-                    exitIdx  = -2;
-                Segment2d *enterSeg = nullptr,
-                          *exitSeg  = nullptr;
 
-                /* Check if tangent */
-                for (int i = 0; i < poly.size(); ++i) {
-                    Line2d polyLine = poly.getLine(i);
+                if (SplitSector(curSector, sepLine, p1, p2, leftSector, rightSector))
+                    ++clips;
 
-                    if (polyLine.side(p1) == 0) enterIdx = i;
-                    if (polyLine.side(p2) == 0) exitIdx  = i;
-                    if (enterIdx == exitIdx) continue;
+                if (leftSector.space.size() != 0)
+                    leftPart.sectors.push_back(leftSector);
+
+                if (rightSector.space.size() != 0)
+                    rightPart.sectors.push_back(rightSector);
+            } else {
+                unsigned long i = 0;
+                while (sepLine.side(poly.getPoint(i)) == 0)
+                    ++i;
+                if (sepLine.side(poly.getPoint(i)) == 1) {
+                    rightPart.sectors.push_back(curSector);
+                } else {
+                    leftPart.sectors.push_back(curSector);
                 }
-                /* 1 -- to the right, -1 -- to the left */
-                Polygon leftPolygon,
-                        rightPolygon;
-                for (int i = enterIdx; i < exitIdx; i = poly.getNextIndex(i)) {
-
-                }
-                ++clips;
             }
         }
 
         return clips;
     }
+
+    static bool SplitSector(Sector& splitSec, Line2d& sepLine,
+                            Vector2dd& enterPt, Vector2dd& exitPt,
+                            Sector& leftPart, Sector& rightPart)
+    {
+        Polygon poly = splitSec.space;
+        unsigned long enterIdx,
+                      exitIdx;
+        vector<int> origLineInfo(poly.size(), 0);
+        unsigned long i;
+
+        /* Check if tangent */
+        for (i = 0; i < poly.size(); ++i) {
+            Line2d polyLine = poly.getLine(i);
+
+            if (polyLine.side(enterPt) == 0 &&
+                polyLine.side(exitPt)  == 0)
+            {
+                if (polyLine.side(poly.getNextPoint(i + 1)) == 1)
+                    rightPart = splitSec;
+                else
+                    leftPart = splitSec;
+
+                return false;
+            }
+
+            if (polyLine.side(enterPt) == 0 &&
+                enterPt != poly.getNextPoint(i))
+            {
+                 enterIdx = i;
+            }
+
+            if (polyLine.side(exitPt) == 0 &&
+                enterPt != poly.getNextPoint(i))
+            {
+                exitIdx = i;
+            }
+        }
+
+        for (Linedef& curLinedef : splitSec.linedefs) {
+            origLineInfo[curLinedef.polygonIdx] = curLinedef.sidedef;
+        }
+
+        /* 1 -- to the right, -1 -- to the left */
+        if (sepLine.side(poly.getNextPoint(enterIdx)) == 1) {
+                rightPart = SectorFromPoly(poly, origLineInfo,
+                                           enterIdx, exitIdx,
+                                           enterPt, exitPt);
+                leftPart = SectorFromPoly(poly, origLineInfo,
+                                          exitIdx, enterIdx,
+                                          exitPt, enterPt);
+        } else {
+                leftPart = SectorFromPoly(poly, origLineInfo,
+                                          enterIdx, exitIdx,
+                                          enterPt, exitPt);
+                rightPart = SectorFromPoly(poly, origLineInfo,
+                                           exitIdx, enterIdx,
+                                           exitPt, enterPt);
+        }
+
+        return true;
+    }
+
+    static Sector SectorFromPoly(Polygon& poly, vector<int>& origLineInfo,
+                                 unsigned long& startIdx, unsigned long& endIdx,
+                                 Vector2dd& startPt, Vector2dd& endPt)
+    {
+        Sector outSector;
+        Polygon outPoly;
+        unsigned long i = startIdx;
+
+        outPoly.push_back(startPt);
+        while (i != endIdx) {
+            outPoly.push_back(poly.getNextPoint(i));
+            i = poly.getNextIndex(i);
+        }
+        outPoly.push_back(endPt);
+        outSector.space = outPoly;
+
+        for (i = 0; i < outPoly.size() - 1; ++i) {
+            unsigned long j = (i + startIdx) % poly.size();
+            if (origLineInfo[j] != 0) {
+                Linedef curLinedef {j, origLineInfo[i]};
+                outSector.linedefs.push_back(curLinedef);
+            }
+        }
+
+        return outSector;
+    }
+
+
 
     static int ClassifyEdge(Ray2d *separatorEdge, Ray2d *curEdge)
     {

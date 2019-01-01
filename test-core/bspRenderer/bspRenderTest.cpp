@@ -59,7 +59,7 @@ TEST(BSPRender, levelDraw)
         buffer->drawLine(center, decal, RGBColor::Black());
     }
 
-    Ray2d ray(Vector2dd(100, 0), Vector2dd(50, 350));
+    Ray2d ray = Ray2d::FromPoints(Vector2dd(100, 600), Vector2dd(350, 350));
     Vector2dd p1 = ray.getPoint(0.0);
     Vector2dd p2 = ray.getPoint(8.0);
     buffer->drawLine(p1, p2, RGBColor::Yellow());
