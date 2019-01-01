@@ -26,7 +26,8 @@ escape_map SvgLoader::escape_m =
     {'\r', ' '},
     {'\t', ' '},
     {'\v', ' '},
-    {'\0', ' '}
+    {'\0', ' '},
+    { '-', '-'}
 };
 
 color_map SvgShape::color_m =
@@ -129,7 +130,7 @@ int SvgLoader::parseXML(XMLDocument &xml, SvgFile &svg)
 vector<Vector2dd> SvgLoader::parsePoints(string data)
 {
     locale myLocale("C");
-    data = HelperUtils::escapeString(data, escape_m, "");
+    data = HelperUtils::escapeString(data, escape_m, " ");
     vector<string> coords = HelperUtils::stringSplit(data, ' ');
     vector<Vector2dd> points;
     for(int i = 0; i < coords.size(); i += 2) {
@@ -275,7 +276,7 @@ SvgShape* SvgLoader::getPath(XMLElement *element)
     initShape(element, path);
     
     string d(element->Attribute("d"));
-    d = HelperUtils::escapeString(d, escape_m, "");
+    d = HelperUtils::escapeString(d, escape_m, " ");
     
     locale myLocale("C");
     int index = 0;
