@@ -5,16 +5,16 @@ SUBDIRS +=                   \
     core                     \
     test-core                \
 #    test-core-perf           \
-    utils                    \
+#    utils                    \
     \
-    tests \
+#    tests \
 #    \
 #    base_application         \
 #    base_application_example \
 #    recorder                 \
 #    scanner                  \
 #    testbed                  \
-    cloudview                \
+#    cloudview                \
 #    physics                  \
 #    imageview                \
 #    \

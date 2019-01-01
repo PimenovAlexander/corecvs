@@ -113,7 +113,8 @@ SOURCES += \
     orientedbox/main_test_orientedbox.cpp \
     convexHull2d/main_test_convexHull2d.cpp \
     processor6d/main_test_processor6d.cpp \
-    bspRenderer/bspRenderTest.cpp
+    bspRenderer/bspRenderTest.cpp \
+    ultrasound_soundspeed_reconstruction/main_test_ultrasound_soundspeed_reconstruction.cpp 
 
 
 HEADERS += \

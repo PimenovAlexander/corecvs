@@ -46,6 +46,7 @@ CORE_SUBMODULES =       \
     camerafixture       \
     iterative           \
     stereointerface     \
+    ultrasound_soundspeed_reconstruction  \
 
 for (MODULE, CORE_SUBMODULES) {
     CORE_INCLUDEPATH += $${COREDIR}/$${MODULE}
@@ -77,6 +78,7 @@ CORE_INCLUDEPATH += \
     $$COREDIR/xml/generated \
     $$COREDIR/tinyxml \
     $$COREDIR/../wrappers/cblasLapack \		# some of core's math algorithms use it
+    $$COREDIR/ultrasound_soundspeed_reconstruction/eigen \
 
 CORE_INCLUDEPATH_SUPP=$$COREDIR/..
 

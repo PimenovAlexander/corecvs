@@ -28,10 +28,13 @@
 #include "core/geometry/polygonPointIterator.h"
 #include "core/buffers/bufferFactory.h"
 
+
+
 using namespace corecvs;
 
 
 typedef AttributedTriangleSpanIterator AttributedTriangleSpanIteratorFix;
+
 
 TEST(Draw, testHistogram)
 {
