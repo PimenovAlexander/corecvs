@@ -12,6 +12,8 @@
 
 #include <iterator>
 #include <iostream>
+#include <climits>
+#include <cfloat>
 
 #include "core/geometry/polygons.h"
 #include "core/geometry/line.h"
@@ -56,52 +58,72 @@ struct Level {
 
 class BSPNode2d {
 public:
-    /* Every node of tree contains:
-     * Edge to separate space
-     * Edges coincident with separator (at least separator itself)
-     * Pointers to right and left subtrees
-     * Vectors of right and left edges relative to the separator
-     **/
     Ray2d       *separator = nullptr;
     Polygon     leftBoundingBox,
                 rightBoundingBox;
-    BSPNode2d   *rightTree = nullptr,
-                *leftTree = nullptr;
-    Sector      *left = nullptr,
-                *right = nullptr;
+    BSPNode2d   *leftTree = nullptr,
+                *rightTree = nullptr;
+    Sector      *leftSector = nullptr,
+                *rightSector = nullptr;
 
     BSPNode2d() {}
 
+    BSPNode2d(Level& level)
+    {
+        BSPNodeBuilder(level);
+    }
+
 private:
-    /* Main method of constructing BSP-tree
-     * Needs vector of rays as input */
     void BSPNodeBuilder(Level& level)
     {
-        vector<Polygon> allPolygons;
         vector<Ray2d> allRays;
         Ray2d *bestSeparator;
         int bestCost = INT_MAX;
-        Level leftPart,
-              rightPart;
+        Level leftLevel,
+              rightLevel;
 
         for (Sector& curSector : level.sectors) {
-            allPolygons.push_back(curSector.space);
-            for (Linedef& curLinedef : curSector.linedefs) {
-                allRays.push_back(curSector.space.getRay(curLinedef.polygonIdx));
+            Polygon poly = curSector.space;
+            for (unsigned long i = 0; i < poly.size(); ++i) {
+                allRays.push_back(poly.getRay(i));
             }
         }
 
         for (Ray2d& curRay : allRays) {
-            Level curLeftPart,
-                  curRightPart;
+            Level curLeftLevel,
+                  curRightLevel;
             int cost,
-                clipsAmount,
-                sectorDiff;
+                splits,
+                sectorDiff,
+                leftSectors,
+                rightSectors;
 
-            clipsAmount = SplitLevel(level, curRay,
-                                     curLeftPart, curRightPart);
+            splits = SplitLevel(level, curRay,
+                                curLeftLevel, curRightLevel);
 
+            leftSectors  = int(curLeftLevel.sectors.size());
+            rightSectors = int(curRightLevel.sectors.size());
+            sectorDiff = abs(leftSectors - rightSectors);
+            cost = 3 * splits + 2 * sectorDiff;
 
+            if (cost < bestCost &&
+                leftSectors != 0 &&
+                rightSectors != 0)
+            {
+                bestSeparator = &curRay;
+                leftLevel = curLeftLevel;
+                rightLevel = curRightLevel;
+            }
+        }
+
+        leftBoundingBox = GetBoundingBox(leftLevel);
+        rightBoundingBox = GetBoundingBox(rightLevel);
+        separator = new Ray2d(bestSeparator->a, bestSeparator->p);
+        if (leftLevel.sectors.size() > 1) {
+            leftTree = new BSPNode2d(leftLevel);
+        } else {
+            leftSector = new Sector;
+            *leftSector = leftLevel.sectors[0];
         }
 
     }
@@ -110,7 +132,7 @@ private:
                           Level& leftPart, Level& rightPart)
     {
         Line2d sepLine(separator);
-        int clips = 0;
+        int splits = 0;
 
         for (Sector& curSector : level.sectors) {
             Polygon poly = curSector.space;
@@ -123,8 +145,12 @@ private:
                 Vector2dd p1 = separator.getPoint(t1);
                 Vector2dd p2 = separator.getPoint(t2);
 
-                if (SplitSector(curSector, sepLine, p1, p2, leftSector, rightSector))
-                    ++clips;
+                if (SplitSector(curSector, sepLine,
+                                p1, p2,
+                                leftSector, rightSector))
+                {
+                    ++splits;
+                }
 
                 if (leftSector.space.size() != 0)
                     leftPart.sectors.push_back(leftSector);
@@ -133,8 +159,10 @@ private:
                     rightPart.sectors.push_back(rightSector);
             } else {
                 unsigned long i = 0;
+
                 while (sepLine.side(poly.getPoint(i)) == 0)
                     ++i;
+
                 if (sepLine.side(poly.getPoint(i)) == 1) {
                     rightPart.sectors.push_back(curSector);
                 } else {
@@ -143,7 +171,7 @@ private:
             }
         }
 
-        return clips;
+        return splits;
     }
 
     static bool SplitSector(Sector& splitSec, Line2d& sepLine,
@@ -235,124 +263,30 @@ private:
         return outSector;
     }
 
-
-
-    static int ClassifyEdge(Ray2d *separatorEdge, Ray2d *curEdge)
+    static Polygon GetBoundingBox(Level& level)
     {
-        Line2d separatorLine = Line2d(*separatorEdge);
-        /* Positions of start and end of ray relative to the separatorLine */
-        int startPt = separatorLine.side(curEdge->getStart());
-        int endPt = separatorLine.side(curEdge->getEnd());
+        Polygon boundingBox;
+        double xMin = DBL_MAX, xMax = 0.0,
+               yMin = DBL_MAX, yMax = 0.0;
 
-        /* If both points on the same side => ray on that side */
-        if (startPt == endPt) {
-            switch (startPt) {
-                case 1:
-                    return RIGHT;
-                case 0:
-                    return COINCIDENT;
-                case -1:
-                    return LEFT;
+        for (Sector& curSector : level.sectors) {
+            for (Vector2dd& curPoint : curSector.space) {
+                if (curPoint.x() < xMin) xMin = curPoint.x();
+                if (curPoint.x() > xMax) xMax = curPoint.x();
+                if (curPoint.y() < yMin) yMin = curPoint.y();
+                if (curPoint.y() > yMax) yMax = curPoint.y();
             }
         }
-        /* If some point on separator and other's not => consider ray left or right */
-        else if (startPt == 0) {
-            if (endPt == 1)
-                return RIGHT;
-            else
-                return LEFT;
-        } else if (endPt == 0) {
-            if (startPt == 1)
-                return RIGHT;
-            else
-                return LEFT;
-        }
-        /* If points on different sides of separator => ray intersects separator */
-        else
-            return INTERSECT;
 
-        /* In case something goes wrong */
-        return ERROR;
+        boundingBox.push_back(Vector2dd(xMin, yMin));
+        boundingBox.push_back(Vector2dd(xMin, yMax));
+        boundingBox.push_back(Vector2dd(xMax, yMax));
+        boundingBox.push_back(Vector2dd(xMax, yMin));
+
+        return boundingBox;
     }
 
-    static void SplitRay2d(Ray2d *curEdge, Ray2d *separatorEdge,
-                           Ray2d *rightPart, Ray2d *leftPart)
-    {
-        Line2d separatorLine = Line2d(*separatorEdge);
-        Line2d curLine = Line2d(*curEdge);
-        int startPt = separatorLine.side(curEdge->getStart());
-        /* Point of intertsection of lines, based on separatorEdge and curEdge */
-        Vector2dd interPt = separatorLine.intersectWith(curLine);
-
-        /* Split depends on which side startPt is,
-         * because we need to save direction of splitted rays */
-        if (startPt == 1) {
-            *rightPart = Ray2d::FromPoints(curEdge->getStart(), interPt);
-            *leftPart  = Ray2d::FromPoints(interPt, curEdge->getEnd());
-        } else {
-            *leftPart  = Ray2d::FromPoints(curEdge->getStart(), interPt);
-            *rightPart = Ray2d::FromPoints(interPt, curEdge->getEnd());
-        }
-    }
 };
-
-/* Just iteration on edges of polygon to convert into vector of rays */
-static std::vector<Ray2d> PolygonToRays(Polygon &poly)
-{
-    int i, pSize = poly.size();
-    std::vector<Ray2d> rays;
-
-    for (i = 0; i < pSize; ++i) {
-        Vector2dd start = poly.getPoint(i);
-        Vector2dd end = poly.getNextPoint(i);
-        rays.push_back(Ray2d::FromPoints(start, end));
-    }
-
-    return rays;
-}
-
-/* This method returns picture of current node of BSP-tree:
- * Red - separator edge
- * Blue - edges coincident with separator
- * Green - edges to the right of separator
- * Yellow - edges to the left of separator
- * White - edges not processed in current node (they're already somwhere in tree)*/
-static void DrawBSPTree(BSPNode2d &tree, Polygon poly, int& i) {
-    int h = 720;
-    int w = 720;
-    RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::Black());
-    std::string out("BSPSnap" + std::to_string(i) + ".bmp");
-    AbstractPainter<RGB24Buffer> painter(buffer);
-
-    painter.drawPolygon(poly, RGBColor::White());
-
-    buffer->drawLine(tree.separator->getStart(),
-                     tree.separator->getEnd(),
-                     RGBColor::Red());
-    for (auto& it : tree.coincidentEdges) {
-        if (it.getStart() != tree.separator->getStart()
-            && it.getEnd() != tree.separator->getEnd())
-        buffer->drawLine(it.getStart(),
-                         it.getEnd(),
-                         RGBColor::Blue());
-    }
-    for (auto& it : tree.rightEdges) {
-        buffer->drawLine(it.getStart(),
-                         it.getEnd(),
-                         RGBColor::Green());
-    }
-    for (auto& it : tree.leftEdges) {
-        buffer->drawLine(it.getStart(),
-                         it.getEnd(),
-                         RGBColor::Yellow());
-    }
-    BMPLoader().save(out, buffer);
-
-    if(tree.rightTree != nullptr)
-        BSPRenderer::DrawBSPTree(*(tree.rightTree), poly, ++i);
-    if(tree.leftTree != nullptr)
-        BSPRenderer::DrawBSPTree(*(tree.leftTree), poly, ++i);
-}
 
 } // namespace BSPRenderer
 
