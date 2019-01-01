@@ -275,20 +275,20 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
                 double dx2 = it.part.dx2;
                 double ns  = ((it.part.x2 + dx2) - (it.part.x1 + dx1));
 
-                cout << "dx1  " << dx1 << endl;
-                cout << "dx2  " << dx2 << endl;
-                cout << " s   " << (it.part.x2 - it.part.x1) << endl;
-                cout << "ns   " << ns << endl;
+//                cout << "dx1  " << dx1 << endl;
+//                cout << "dx2  " << dx2 << endl;
+//                cout << " s   " << (it.part.x2 - it.part.x1) << endl;
+//                cout << "ns   " << ns << endl;
 
 
                 /* Texture coordinates at the ends next span */
                 double tx1 = it.part.a1[ATTR_TEX_U] + it.part.da1[ATTR_TEX_U];
                 double tx2 = it.part.a2[ATTR_TEX_U] + it.part.da2[ATTR_TEX_U];
 
-                cout << "tx1c " << it.part.a1[ATTR_TEX_U] << endl;
-                cout << "tx2c " << it.part.a2[ATTR_TEX_U] << endl;
-                cout << "tx1  " << tx1 << endl;
-                cout << "tx2  " << tx2 << endl;
+//                cout << "tx1c " << it.part.a1[ATTR_TEX_U] << endl;
+//                cout << "tx2c " << it.part.a2[ATTR_TEX_U] << endl;
+//                cout << "tx1  " << tx1 << endl;
+//                cout << "tx2  " << tx2 << endl;
 
 
                 /* Texture coordinates at the next span directly lower then current span */
@@ -296,16 +296,16 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
                 double nx2 = (tx2 - tx1) / ns * (ns - dx2) + tx1;
 
 
-                cout << "nx1  " << nx1 << endl;
-                cout << "nx2  " << nx2 << endl;
+//                cout << "nx1  " << nx1 << endl;
+//                cout << "nx2  " << nx2 << endl;
 
 
                 nx1 = nx1 - it.part.a1[ATTR_TEX_U];
                 nx2 = nx2 - it.part.a2[ATTR_TEX_U];
 
 
-                cout << "fnx1 " << nx1 << endl;
-                cout << "fnx2 " << nx2 << endl;
+//                cout << "fnx1 " << nx1 << endl;
+//                cout << "fnx2 " << nx2 << endl;
 
 
                 span.catt[ATTR_TEX_DU_DY] =        nx1;

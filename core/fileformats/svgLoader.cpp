@@ -420,6 +420,132 @@ void SvgGroup::draw(RGB24Buffer *buffer)
     }
 }
 
+void SvgPath::draw(RGB24Buffer *buffer)
+{
+    if (commands.size() == 0)
+    {
+        return;
+    }
+
+    cursor = {0, 0};
+    start_point = {0, 0};
+    dest = {0, 0};
+    RGBColor color = getColor();
+    Curve curve;
+    WuRasterizer rast = WuRasterizer();
+    BezierRasterizer<RGB24Buffer, WuRasterizer> bezier(*buffer, rast, color);
+    for (size_t i = 0; i < commands.size(); i++)
+    {
+        const Command &command = commands[i];
+
+        last_p = Vector2dd(0.0);
+        switch(command.command)
+        {
+        case 'm':
+            last_p = cursor;
+        case 'M':
+            cursor = command.getVector() + last_p;
+            start_point = cursor;
+            if (commands[i].params.size() > 2)
+            {
+                for (int j = 2; j < command.params.size(); j += 2)
+                {
+                    dest = command.getVector(j);
+                    if (command.command == 'm')
+                    {
+                        dest += cursor;
+                    }
+                    buffer->drawLine(cursor, dest, color);
+                    cursor = dest;
+                }
+            }
+            break;
+            /*=================================*/
+        case 'l':
+            last_p = cursor;
+        case 'L':
+            dest = command.getVector() + last_p;
+            buffer->drawLine(cursor, dest, color);
+            cursor = dest;
+            break;
+            /*=================================*/
+        case 'h':
+            last_p.x() = cursor.x();
+        case 'H':
+            buffer->drawHLine(fround(cursor[0]), fround(cursor[1]), fround(command.params[0] + last_p[0]), color);
+            cursor[0] = command.params[0] + last_p[0];
+            break;
+            /*=================================*/
+        case 'v':
+            last_p[1] = cursor[1];
+        case 'V':
+            buffer->drawVLine(fround(cursor[0]), fround(cursor[1]), fround(command.params[0] + last_p[1]), color);
+            cursor[1] = command.params[0] + last_p[1];
+            break;
+            /*=================================*/
+        case 'Z': case 'z':
+            buffer->drawLine(cursor, start_point, color);
+            cursor = start_point;
+            break;
+            /*=================================*/
+        case 'c':
+            last_p = cursor;
+        case 'C':
+            control_b = command.getVector(0) + last_p;
+            control_c = command.getVector(2) + last_p;
+            dest      = command.getVector(4) + last_p;
+            curve =
+            {
+                cursor,
+                control_b,
+                control_c,
+                dest
+            };
+            bezier.cubicBezierCasteljauApproximationByFlatness(curve);
+            cursor = dest;
+            break;
+            /*=================================*/
+        case 's':
+            last_p = cursor;
+        case 'S':
+            dest = command.getVector(2) + last_p;
+            if (i > 0)
+            {
+                char prevAction = commands[i-1].command;
+                if ((prevAction != 'C' && prevAction != 'c') &&
+                    (prevAction != 'S' && prevAction != 's'))
+                {
+                    control_b = command.getVector(0) + last_p;
+                }
+                else
+                {
+                    control_b = 2 * cursor - control_c;
+                }
+            }
+            control_c = command.getVector() + last_p;
+            curve =
+            {
+                cursor,
+                control_b,
+                control_c,
+                dest
+            };
+
+            bezier.cubicBezierCasteljauApproximationByFlatness(curve);
+            cursor = dest;
+            break;
+        case 'q':
+        case 'Q':
+        case 't':
+        case 'T':
+            break;
+        case 'a':
+        case 'A':
+            break;
+        }
+    }
+}
+
 
 
 }

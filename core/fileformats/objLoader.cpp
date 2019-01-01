@@ -42,6 +42,12 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
     while (!input.eof() && !input.bad())
     {
         HelperUtils::getlineSafe (input, line);
+        while (line.back() == '\\') {
+               string line2;
+               HelperUtils::getlineSafe (input, line2);
+               line.pop_back();
+               line += line2;
+        }
 
         if (HelperUtils::startsWith(line, "#")) {
             cout << "Skipping comment " << line << endl;
@@ -88,9 +94,9 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
 
             //LOCAL_PRINT(("Face parts: %d\n", strs.size()));
 
-            vector<int32_t> face;
-            vector<int32_t> normId;
-            vector<int32_t> texId;
+            vector<int32_t> face  (strs.size(), -1);
+            vector<int32_t> normId(strs.size(), -1);
+            vector<int32_t> texId (strs.size(), -1);
 
             for (size_t i = 0; i < strs.size(); i++)
             {
@@ -102,17 +108,17 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
                 {
                     if (j == 0) {
                         int id = std::stoi(part);
-                        face.push_back(id - 1);
+                        face[i] = (id - 1);
                     }
 
                     if (j == 1) {
                         int id = std::stoi(part);
-                        texId.push_back(id - 1);
+                        texId[i] = (id - 1);
                     }
 
                     if (j == 2) {
                         int id = std::stoi(part);
-                        normId.push_back(id - 1);
+                        normId[i] = (id - 1);
                     }
                 }
             }

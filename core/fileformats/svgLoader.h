@@ -148,6 +148,10 @@ struct Command
 {
     char command;
     vector<double> params;
+
+    Vector2dd getVector(int id = 0) const {
+        return Vector2dd(params[id], params[id + 1]);
+    }
 };
 
 class SvgPath: public SvgShape
@@ -155,141 +159,14 @@ class SvgPath: public SvgShape
 public:
     vector<Command> commands;
 
-    virtual void draw(RGB24Buffer *buffer) override
-    {
-        if (commands.size() == 0)
-        {
-            return;
-        }
-
-        cursor = {0, 0};
-        start_point = {0, 0};
-        dest = {0, 0};
-        RGBColor color = getColor();
-        Curve curve;
-        WuRasterizer rast = WuRasterizer();
-        BezierRasterizer<RGB24Buffer, WuRasterizer> bezier(*buffer, rast, color);
-        for (int i = 0; i < commands.size(); i++)
-        {
-            last_p[0] = 0;
-            last_p[1] = 0;
-            switch(commands[i].command)
-            {
-                case 'm':
-                    last_p[0] = cursor[0];
-                    last_p[1] = cursor[1];
-                case 'M':
-                    cursor[0] = commands[i].params[0] + last_p[0];
-                    cursor[1] = commands[i].params[1] + last_p[1];
-                    start_point = cursor;
-                    if (commands[i].params.size() > 2)
-                    {
-                        for (int j = 2; j < commands[i].params.size(); j += 2)
-                        {
-                            dest[0] = commands[i].params[j];
-                            dest[1] = commands[i].params[j+1];
-                            if (commands[i].command == 'm')
-                            {
-                                dest += cursor;
-                            }
-                            buffer->drawLine(cursor, dest, color);
-                            cursor = dest;
-                        }
-                    }
-                    break;
-                case 'l':
-                    last_p[0] = cursor[0];
-                    last_p[1] = cursor[1];
-                case 'L':
-                    dest[0] = commands[i].params[0] + last_p[0];
-                    dest[1] = commands[i].params[1] + last_p[1];
-                    buffer->drawLine(cursor, dest, color);
-                    cursor = dest;
-                    break;
-                case 'h':
-                    last_p[0] = cursor[0];
-                case 'H':
-                    buffer->drawHLine(fround(cursor[0]), fround(cursor[1]), fround(commands[i].params[0] + last_p[0]), color);
-                    cursor[0] = commands[i].params[0] + last_p[0];
-                    break;
-                case 'v':
-                    last_p[1] = cursor[1];
-                case 'V':
-                    buffer->drawVLine(fround(cursor[0]), fround(cursor[1]), fround(commands[i].params[0] + last_p[1]), color);
-                    cursor[1] = commands[i].params[0] + last_p[1];
-                    break;
-                case 'Z': case 'z':
-                    buffer->drawLine(cursor, start_point, color);
-                    cursor = start_point;
-                    break;
-                case 'c':
-                    last_p[0] = cursor[0];
-                    last_p[1] = cursor[1];
-                case 'C':
-                    control_c[0] = commands[i].params[2] + last_p[0];
-                    control_c[1] = commands[i].params[3] + last_p[1];
-                    dest[0] = commands[i].params[4] + last_p[0];
-                    dest[1] = commands[i].params[5] + last_p[1];
-                    curve = 
-                    {
-                        cursor,
-                        {commands[i].params[0] + last_p[0], commands[i].params[1] + last_p[1]},
-                        control_c,
-                        dest
-                    };
-                    bezier.cubicBezierCasteljauApproximationByFlatness(curve);
-                    cursor = dest;
-                    break;
-                case 's':
-                    last_p[0] = cursor[0];
-                    last_p[1] = cursor[1];
-                case 'S':
-                    dest[0] = commands[i].params[2] + last_p[0];
-                    dest[1] = commands[i].params[3] + last_p[1];
-                    if (i > 0)
-                    {
-                        if ((commands[i-1].command != 'C' && commands[i-1].command != 'c') &&
-                            (commands[i-1].command != 'S' && commands[i-1].command != 's'))
-                        {
-                            control_c[0] = commands[i].params[0] + last_p[0];
-                            control_c[1] = commands[i].params[1] + last_p[1];
-                        }
-                        else
-                        {
-                            control_c[0] = 2 * cursor[0] - control_c[0];
-                            control_c[1] = 2 * cursor[1] - control_c[1];
-                        }
-                    }
-                    curve =
-                    {
-                        cursor,
-                        control_c,
-                        {commands[i].params[0] + last_p[0], commands[i].params[1] + last_p[1]},
-                        dest
-                    };
-                    control_c[0] = commands[i].params[0] + last_p[0];
-                    control_c[1] = commands[i].params[1] + last_p[1];
-                    bezier.cubicBezierCasteljauApproximationByFlatness(curve);
-                    cursor = dest;
-                    break;
-                case 'q':
-                case 'Q':
-                case 't':
-                case 'T':
-                    break;
-                case 'a':
-                case 'A':
-                    break;
-            }
-        }
-    }
+    virtual void draw(RGB24Buffer *buffer) override;
 private:
     Vector2dd start_point;
     Vector2dd cursor;
     Vector2dd dest;
     Vector2dd last_p;
-    Vector2dd control_c;
-    Vector2dd control_q;
+    Vector2dd control_b; /**< This stores first  control point for Bézier curve */
+    Vector2dd control_c; /**< This stores second control point for Bézier curve */
 };
 
 class SvgGroup : public SvgShape
