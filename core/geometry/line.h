@@ -756,7 +756,7 @@ public:
     int side(const Vector2dd & point)
     {
         double weight = pointWeight(point);
-        if (weight == 0) return 0;
+        if (abs(weight) <= 1.0e-11) return 0;
         return weight > 0 ? 1 : -1;
     }
 
