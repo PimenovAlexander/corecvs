@@ -178,7 +178,7 @@ private:
     Vector2dd start_point;
     Vector2dd cursor;
     Vector2dd dest;
-    Vector2dd last_p;
+    Vector2dd last_p;    /**< This stores last control point for Bézier curve */
     Vector2dd control_b; /**< This stores first  control point for Bézier curve */
     Vector2dd control_c; /**< This stores second control point for Bézier curve */
 };
