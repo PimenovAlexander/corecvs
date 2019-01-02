@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include "core/utils/utils.h"
 #include "core/tinyxml/tinyxml2.h"
 #include "core/geometry/polygons.h"
 #include "core/geometry/ellipse.h"
@@ -57,13 +58,26 @@ protected:
     {
         if (stroke)
         {
+            string s(stroke);
+            if (HelperUtils::startsWith(s, "#"))
+            {
+                string hex = s.substr(1);
+                if (hex.size() == 3)
+                {
+                    hex.insert(0, 1, hex[0]);
+                    hex.insert(2, 1, hex[1]);
+                    hex.insert(4, 1, hex[2]);
+                }
+                uint32_t color = stoul(hex, NULL, 16);
+                return RGBColor(color);
+            }
             auto iter = color_m.find(stroke);
             if (iter != color_m.end())
             {
                 return iter->second;
             }
         }
-        return RGBColor::Black();
+        return RGBColor::White();
     }
 };
 

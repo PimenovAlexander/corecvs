@@ -123,6 +123,7 @@ namespace HelperUtils
     string getFileName(const string& fileName);
     string getFileNameIfExist(const string& fileName, const string& relativePath);
 
+    double parseDouble(const string &s);
 } // namespace HelperUtils
 
 } //namespace corecvs
