@@ -29,7 +29,8 @@ escape_map SvgLoader::escape_m =
     {'\r', ' '},
     {'\t', ' '},
     {'\v', ' '},
-    {'\0', ' '}
+    {'\0', ' '},
+    { '-', '-'}
 };
 
 color_map SvgShape::color_m =
@@ -131,18 +132,12 @@ int SvgLoader::parseXML(XMLDocument &xml, SvgFile &svg)
 
 vector<Vector2dd> SvgLoader::parsePoints(string data)
 {
-    locale myLocale("C");
-    data = HelperUtils::escapeString(data, escape_m, "");
+    data = HelperUtils::escapeString(data, escape_m, " ");
     vector<string> coords = HelperUtils::stringSplit(data, ' ');
     vector<Vector2dd> points;
     for(int i = 0; i < coords.size(); i += 2) {
-        istringstream xs(coords[i]);
-        istringstream ys(coords[i+1]);
-        xs.imbue(myLocale);
-        ys.imbue(myLocale);
-        double x, y;
-        xs >> x;
-        ys >> y;
+        double x = HelperUtils::parseDouble(coords[i]);
+        double y = HelperUtils::parseDouble(coords[i + 1]);
         points.push_back(Vector2dd(x, y));
     }
     return points;
@@ -278,9 +273,8 @@ SvgShape* SvgLoader::getPath(XMLElement *element)
     initShape(element, path);
     
     string d(element->Attribute("d"));
-    d = HelperUtils::escapeString(d, escape_m, "");
+    d = HelperUtils::escapeString(d, escape_m, " ");
     
-    locale myLocale("C");
     int index = 0;
     while (index < d.size())
     {
@@ -306,11 +300,29 @@ SvgShape* SvgLoader::getPath(XMLElement *element)
                 {
                     if (p.size())
                     {
-                        istringstream s(p);
-                        s.imbue(myLocale);
                         double x;
-                        s >> x;
-                        cmd.params.push_back(x);
+                        int dots_num = count(p.begin(), p.end(), '.');
+                        if (dots_num < 2)
+                        {
+                            x = HelperUtils::parseDouble(p);
+                            cmd.params.push_back(x);
+                        }
+                        else
+                        {
+                            int dot = p.find('.');
+                            int sec_dot = p.find('.', dot + 1);
+                            string first_coord = p.substr(0, sec_dot);
+                            x = HelperUtils::parseDouble(first_coord);
+                            cmd.params.push_back(x);
+                            for (string c: HelperUtils::stringSplit(p.substr(sec_dot), '.'))
+                            {
+                                if (c.size())
+                                {
+                                    x = HelperUtils::parseDouble("." + c);
+                                    cmd.params.push_back(x);
+                                }
+                            }
+                        }
                     }
                 }
                 index = new_cmd_pos;
@@ -446,14 +458,15 @@ void SvgPath::draw(RGB24Buffer *buffer)
     {
         const Command &command = commands[i];
 
-        last_p = Vector2dd(0.0);
         switch(command.command)
         {
-        case 'm':
-            last_p = cursor;
-        case 'M':
-            cursor = command.getVector() + last_p;
-            start_point = cursor;
+        case 'M': case 'm':
+            start_point = command.getVector();
+            if (command.command == 'm')
+            {
+                start_point += cursor;
+            }
+            cursor = start_point;
             if (commands[i].params.size() > 2)
             {
                 for (int j = 2; j < command.params.size(); j += 2)
@@ -469,26 +482,43 @@ void SvgPath::draw(RGB24Buffer *buffer)
             }
             break;
             /*=================================*/
-        case 'l':
-            last_p = cursor;
-        case 'L':
-            dest = command.getVector() + last_p;
-            buffer->drawLine(cursor, dest, color);
-            cursor = dest;
+        case 'L': case 'l':
+            for (int j = 0; j < command.params.size(); j += 2)
+            {
+                dest = command.getVector(j);
+                if (command.command == 'l')
+                {
+                    dest += cursor;
+                }
+                buffer->drawLine(cursor, dest, color);
+                cursor = dest;
+            }
             break;
             /*=================================*/
-        case 'h':
-            last_p.x() = cursor.x();
-        case 'H':
-            buffer->drawHLine(fround(cursor[0]), fround(cursor[1]), fround(command.params[0] + last_p[0]), color);
-            cursor[0] = command.params[0] + last_p[0];
+        case 'H': case 'h':
+            for (int j = 0; j < command.params.size(); j++)
+            {
+                double x2 = command.params[j];
+                if (command.command == 'h')
+                {
+                    x2 += cursor.x();
+                }
+                buffer->drawHLine(fround(cursor[0]), fround(cursor[1]), fround(x2), color);
+                cursor[0] = x2;
+            }
             break;
             /*=================================*/
-        case 'v':
-            last_p[1] = cursor[1];
-        case 'V':
-            buffer->drawVLine(fround(cursor[0]), fround(cursor[1]), fround(command.params[0] + last_p[1]), color);
-            cursor[1] = command.params[0] + last_p[1];
+        case 'V': case 'v':
+            for (int j = 0; j < command.params.size(); j++)
+            {
+                double y2 = command.params[j];
+                if (command.command == 'v')
+                {
+                    y2 += cursor.y();
+                }
+                buffer->drawVLine(fround(cursor[0]), fround(cursor[1]), fround(y2), color);
+                cursor[1] = y2;
+            }
             break;
             /*=================================*/
         case 'Z': case 'z':
@@ -496,51 +526,64 @@ void SvgPath::draw(RGB24Buffer *buffer)
             cursor = start_point;
             break;
             /*=================================*/
-        case 'c':
-            last_p = cursor;
-        case 'C':
-            control_b = command.getVector(0) + last_p;
-            control_c = command.getVector(2) + last_p;
-            dest      = command.getVector(4) + last_p;
-            curve =
+        case 'C': case 'c':
+            for (int j = 0; j < command.params.size(); j += 6)
             {
-                cursor,
-                control_b,
-                control_c,
-                dest
-            };
-            bezier.cubicBezierCasteljauApproximationByFlatness(curve);
-            cursor = dest;
+                control_b = command.getVector(j);
+                control_c = command.getVector(j+2);
+                dest      = command.getVector(j+4);
+                if (command.command == 'c')
+                {
+                    control_b += cursor;
+                    control_c += cursor;
+                    dest += cursor;
+                }
+                curve =
+                {
+                    cursor,
+                    control_b,
+                    control_c,
+                    dest
+                };
+                bezier.cubicBezierCasteljauApproximationByFlatness(curve);
+                cursor = dest;
+                last_p = control_c;
+            }
             break;
             /*=================================*/
-        case 's':
-            last_p = cursor;
-        case 'S':
-            dest = command.getVector(2) + last_p;
-            if (i > 0)
+        case 'S': case 's':
+            for (int j = 0; j < command.params.size(); j+= 2)
             {
-                char prevAction = commands[i-1].command;
-                if ((prevAction != 'C' && prevAction != 'c') &&
-                    (prevAction != 'S' && prevAction != 's'))
+                control_b = command.getVector(j);
+                control_c = command.getVector(j);
+                dest = command.getVector(j+2);
+                if (command.command == 's')
                 {
-                    control_b = command.getVector(0) + last_p;
+                    control_b += cursor;
+                    control_c += cursor;
+                    dest += cursor;
                 }
-                else
-                {
-                    control_b = 2 * cursor - control_c;
-                }
-            }
-            control_c = command.getVector() + last_p;
-            curve =
-            {
-                cursor,
-                control_b,
-                control_c,
-                dest
-            };
 
-            bezier.cubicBezierCasteljauApproximationByFlatness(curve);
-            cursor = dest;
+                if (i > 0)
+                {
+                    char prevAction = commands[i-1].command;
+                    if ((prevAction == 'C' || prevAction == 'c') ||
+                        (prevAction == 'S' || prevAction == 's'))
+                    {
+                        control_b = 2 * cursor - last_p;
+                    }
+                }
+                curve =
+                {
+                    cursor,
+                    control_b,
+                    control_c,
+                    dest
+                };
+                bezier.cubicBezierCasteljauApproximationByFlatness(curve);
+                cursor = dest;
+                last_p = control_c;
+            }
             break;
         case 'q':
         case 'Q':

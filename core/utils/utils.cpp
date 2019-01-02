@@ -260,6 +260,16 @@ bool isDirectory(const std::string &path)
     return fs::is_directory(filePath);
 }
 
+double parseDouble(const string &s)
+{
+    std::locale myLocale("C");
+    std::istringstream ss(s);
+    ss.imbue(myLocale);
+    double x;
+    ss >> x;
+    return x;
+}
+
 } // namespace HelperUtils
 
 } //namespace corecvs
