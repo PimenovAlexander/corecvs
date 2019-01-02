@@ -82,6 +82,8 @@ public:
     }
 
     virtual std::string name() override { return "PPMLoaderG12"; }
+    virtual std::vector<std::string> extentions() { return {prefix1, prefix2}; }
+
 };
 
 class PPMLoaderG16 : public PPMLoaderG12        // we may use G12Buffer container as it has 2bytes/pixel indeed
@@ -93,6 +95,8 @@ public:
     }
 
     virtual std::string name() override { return "PPMLoaderG16"; }
+    virtual std::vector<std::string> extentions() { return {prefix1, prefix2}; }
+
 };
 
 class PPMLoaderRGB24 : public BufferLoader<RGB24Buffer>, public PPMLoader
@@ -106,6 +110,8 @@ public:
     virtual RGB24Buffer *load(const string & name) override;
 
     virtual std::string name() override { return "PPMLoaderRGB24"; }
+    virtual std::vector<std::string> extentions() { return {prefix1, prefix2}; }
+
 };
 
 } //namespace corecvs

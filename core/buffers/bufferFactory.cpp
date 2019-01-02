@@ -65,6 +65,18 @@ BufferFactory::BufferFactory()
     registerSaver(new FLOSaver());
 }
 
+template<class FactoryClass> void printCapsHelper(const vector<FactoryClass *> &input)
+{
+    for (auto it : input) {
+        cout << "\t" << it->name() << "(";
+        for (auto ext : it->extentions())
+        {
+            cout << ext << " ";
+        }
+        cout << ")" << endl;
+    }
+}
+
 void BufferFactory::printCaps()
 {
     BufferFactory *factory = BufferFactory::getInstance();
@@ -72,25 +84,26 @@ void BufferFactory::printCaps()
     cout << "BufferFactory knows:" << endl;
 
     cout << "  G12 loader" << endl;
-    for (auto it : factory->mLoadersG12) cout << "\t" << it->name() << endl;
+    printCapsHelper(factory->mLoadersG12);
 
     cout << "  G16 loader" << endl;
-    for (auto it : factory->mLoadersG16) cout << "\t" << it->name() << endl;
+    printCapsHelper(factory->mLoadersG16);
 
     cout << "  RGB24 loader" << endl;
-    for (auto it : factory->mLoadersRGB24) cout << "\t" << it->name() << endl;
+    printCapsHelper(factory->mLoadersRGB24);
 
     cout << "  RuntimeType loader" << endl;
-    for (auto it : factory->mLoadersRuntime) cout << "\t" << it->name() << endl;
+    printCapsHelper(factory->mLoadersRuntime);
+
 
     cout << "  RGB24 saver" << endl;
-    for (auto it : factory->mSaversRGB24) cout << "\t" << it->name() << endl;
+    printCapsHelper(factory->mSaversRGB24);
 
     cout << "  Float Flow loader" << endl;
-    for (auto it : factory->mLoadersFloatFlow) cout << "\t" << it->name() << endl;
+    printCapsHelper(factory->mLoadersFloatFlow);
 
     cout << "  Float Flow saver" << endl;
-    for (auto it : factory->mSaversFloatFlow) cout << "\t" << it->name() << endl;
+    printCapsHelper(factory->mSaversFloatFlow);
 
 }
 

@@ -1,14 +1,18 @@
 #include "core/fileformats/floLoader.h"
 #include "core/utils/utils.h"
 #include "stdint.h"
+#include <fstream>
 
 
 namespace corecvs {
 
 using namespace std;
-std::string FLOLoader::extention1 = "*.flo";
+std::string FLOLoader::extention1 = ".flo";
 float FLOLoader::MAGIC_NUMBER = 202021.25;
 float FLOLoader::FLO_INFINITY = 1e9;
+
+
+std::string ListFlowSaver::extention1 = ".fl";
 
 
 bool FLOLoader::acceptsFile(const string &name)
@@ -148,6 +152,40 @@ bool FLOSaver::save(const FloatFlowBuffer &buffer, const string &name, int quali
     fclose(fp);
 
     return false;
+}
+
+bool ListFlowSaver::acceptsFile(const string &name)
+{
+    std::string lowercase = name;
+    std::transform(lowercase.begin(), lowercase.end(), lowercase.begin(), ::tolower);
+
+    return HelperUtils::endsWith(lowercase, extention1);
+}
+
+bool ListFlowSaver::save(const FloatFlowBuffer &buffer, const string &fileName, int /*quality*/)
+{
+    std::ofstream file;
+    file.open(fileName, ios::out);
+    if (file.fail())
+    {
+        SYNC_PRINT(("ListFlowSaver::save(): Can't open flow file <%s> for writing\n", fileName.c_str()));
+        return false;
+    }
+
+    for (int32_t i = 0; i < buffer.h; i++)
+    {
+        for (int32_t j = 0; j < buffer.w; j++)
+        {
+            if (buffer.isElementKnown(i,j))
+            {
+                file << (float)j << " " << (float)i << " "
+                     << (j + buffer.element(i,j).vector.x()) << " " << (i + buffer.element(i,j).vector.y()) << endl;
+            }
+        }
+    }
+
+    file.close();
+    return true;
 }
 
 

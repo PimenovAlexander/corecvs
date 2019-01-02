@@ -15,10 +15,11 @@
 #include "core/geometry/conic.h"
 #include "core/geometry/orientedBox.h"
 #include "core/buffers/rgb24/rgbColor.h"
-#include "core/cammodel/cameraParameters.h"
 #include "core/xml/generated/axisAlignedBoxParameters.h"
 
 namespace corecvs {
+
+class CameraIntrinsicsLegacy;
 
 /**
  *  This class is overcomplicated. Break it into several ones

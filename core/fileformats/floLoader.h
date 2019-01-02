@@ -45,6 +45,22 @@ class FLOSaver : public BufferSaver<FloatFlowBuffer>
 };
 
 
+class ListFlowSaver : public BufferSaver<FloatFlowBuffer>
+{
+    static string extention1;
+
+    virtual bool acceptsFile(const std::string & name);
+
+    virtual bool save(const FloatFlowBuffer &buffer, const string& name, int quality = 95) override;
+
+    virtual std::string name() override { return "List Flow Saver"; }
+    virtual std::vector<std::string> extentions() override {
+        return std::vector<std::string>({ListFlowSaver::extention1});
+    }
+
+    virtual ~ListFlowSaver() {}
+};
+
 } //namespace
 
 #endif // FLOLOADER_H

@@ -9,6 +9,7 @@
 #include "core/buffers/rgb24/abstractPainter.h"
 #include "core/geometry/mesh3d.h"
 #include "core/fileformats/plyLoader.h"
+#include "core/cammodel/cameraParameters.h"
 
 namespace corecvs {
 
@@ -577,6 +578,7 @@ void Mesh3D::addIcoSphere(const Sphere3d &sphere, int step)
     addIcoSphere(sphere.c, sphere.r, step);
 }
 
+
 void Mesh3D::addCamera(const CameraIntrinsicsLegacy &cam, double len)
 {
     //double aspect = cam.
@@ -613,7 +615,6 @@ void Mesh3D::addCamera(const CameraIntrinsicsLegacy &cam, double len)
     //{
     //    SYNC_PRINT(("Edges %d - [%d - %d]\n", i, edges[i].x(), edges[i].y()));
     //}
-
 }
 
 void Mesh3D::add2AxisEllipse(const EllipticalApproximation3d &approx, int axis1 = 0, int axis2 = 1)

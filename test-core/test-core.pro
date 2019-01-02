@@ -25,6 +25,28 @@ SOURCES += \
 }
 
 SOURCES += \
+    eigen/main_test_eigen_integration.cpp \
+    ultrasound/main_test_ultrasound_reconstruction.cpp \
+    ultrasound/model.cpp \
+    ultrasound/imgreader.cpp
+
+
+
+HEADERS += \
+    generated/testEnum.h       \
+    generated/testSubClass.h   \
+    generated/testClass.h      \
+    generated/testBlock.h      \
+    ultrasound/model.h \
+    ultrasound/imgreader.h
+
+SOURCES += \
+   generated/testSubClass.cpp \
+   generated/testClass.cpp    \
+   generated/testBlock.cpp
+
+
+SOURCES += \
     main.cpp \
     \
     affine/main_test_affine.cpp \
