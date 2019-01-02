@@ -9,6 +9,9 @@
 
 #include <fstream>
 
+#include "core/buffers/rgb24/bresenhamRasterizer.h"
+#include "core/buffers/rgb24/bezierRasterizer.h"
+
 #include "core/utils/utils.h"
 #include "core/tinyxml/tinyxml2.h"
 #include "core/fileformats/svgLoader.h"
@@ -432,8 +435,13 @@ void SvgPath::draw(RGB24Buffer *buffer)
     dest = {0, 0};
     RGBColor color = getColor();
     Curve curve;
+
     WuRasterizer rast = WuRasterizer();
     BezierRasterizer<RGB24Buffer, WuRasterizer> bezier(*buffer, rast, color);
+
+    //BresenhamRasterizer rast = BresenhamRasterizer();
+    //BezierRasterizer<RGB24Buffer, BresenhamRasterizer> bezier(*buffer, rast, color);
+
     for (size_t i = 0; i < commands.size(); i++)
     {
         const Command &command = commands[i];

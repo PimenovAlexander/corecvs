@@ -177,7 +177,7 @@ public:
     Rasterizer &rasterizer;
     typename BufferType::InternalElementType color;
 
-    BezierRasterizer(BufferType &buffer,Rasterizer &rasterizer,const typename BufferType::InternalElementType &color)
+    BezierRasterizer(BufferType &buffer, Rasterizer &rasterizer, const typename BufferType::InternalElementType &color)
             : buffer(buffer),rasterizer(rasterizer), color(color) {}
 
 

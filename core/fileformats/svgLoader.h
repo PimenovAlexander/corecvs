@@ -16,8 +16,7 @@
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/buffers/rgb24/wuRasterizer.h"
 #include "core/buffers/rgb24/abstractPainter.h"
-#include "core/buffers/rgb24/bezierRasterizer.h"
-#include "bufferLoader.h"
+#include "core/fileformats/bufferLoader.h"
 
 namespace corecvs {
 
