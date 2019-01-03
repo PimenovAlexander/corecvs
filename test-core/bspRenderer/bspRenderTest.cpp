@@ -29,7 +29,7 @@ TEST(BSPRender, BSPTest)
     p1.push_back(Vector2dd(240, 60 ));
     l1 = {{1}, {2}, {1}, {1}};
     s1.space = p1;
-    s1.linedefs = l1;
+    s1.linedefs = l1;   
 
     p2.push_back(Vector2dd(240, 120));
     p2.push_back(Vector2dd(60 , 240));
@@ -91,6 +91,10 @@ TEST(BSPRender, BSPTest)
     s8.linedefs = l8;
 
     level.sectors = {s1, s2, s3, s4, s5, s6, s7, s8};
+    for (size_t i = 0; i < level.sectors.size(); i++)
+    {
+        level.sectors[i].floorColor = RGBColor::rainbow(((double)i / level.sectors.size()));
+    }
 //    level.sectors = {s4, s5};
 
     BSPRenderer::DrawLevel(level, buffer, true);

@@ -359,6 +359,11 @@ public:
 
     }
 
+    void drawLineD(double x1, double y1, double x2, double y2, ElementType color)
+    {
+        mTarget->drawLine(fround(x1), fround(y1), fround(x2), fround(y2), color);
+    }
+
     void drawPath(const PointPath &pp, ElementType color)
     {
         if (pp.empty())
@@ -366,11 +371,11 @@ public:
 
         if (pp.size() == 1)
         {
-            mTarget->drawLine(pp[0].x(), pp[0].y(), pp[0].x(), pp[0].y(), color);
+            drawLineD(pp[0].x(), pp[0].y(), pp[0].x(), pp[0].y(), color);
         }
         for (unsigned i = 0; i < pp.size() - 1; i++)
         {
-            mTarget->drawLine(pp[i].x(), pp[i].y(), pp[i + 1].x(), pp[i + 1].y(), color);
+            drawLineD(pp[i].x(), pp[i].y(), pp[i + 1].x(), pp[i + 1].y(), color);
         }
     }
 
@@ -381,13 +386,13 @@ public:
 
         if (p.size() == 1)
         {
-            mTarget->drawLine(p[0].x(), p[0].y(), p[0].x(), p[0].y(), color);
+            drawLineD(p[0].x(), p[0].y(), p[0].x(), p[0].y(), color);
         }
         for (unsigned i = 0; i < p.size() - 1; i++)
         {
-            mTarget->drawLine(p[i].x(), p[i].y(), p[i + 1].x(), p[i + 1].y(), color);
+            drawLineD(p[i].x(), p[i].y(), p[i + 1].x(), p[i + 1].y(), color);
         }
-        mTarget->drawLine(p[p.size() - 1].x(), p[p.size() - 1].y(), p[0].x(), p[0].y(), color);
+        drawLineD(p[p.size() - 1].x(), p[p.size() - 1].y(), p[0].x(), p[0].y(), color);
     }
 
     void drawHLine(int x1, int y1, int x2, const ElementType &color)

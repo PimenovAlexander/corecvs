@@ -15,6 +15,7 @@
 
 namespace corecvs {
 
+/* This should be unifed with AxisAlignedBounding box*/
 template<typename ElementType>
 class Rectangle
 {

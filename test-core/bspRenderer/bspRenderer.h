@@ -39,11 +39,22 @@ struct Linedef {
     int sidedef;
 };
 
+
+/**
+  Sector is a convex room in the level.
+  Room geometry is stored in Polygon and some meta
+ **/
 struct Sector {
     vector<Linedef> linedefs;
     Polygon space;
+    RGBColor floorColor = RGBColor::Gray();
 };
 
+/**
+  This class stores a structure for a level at DOOM like 2.5D game.
+  Due to the attempt to render the level in a front to back order each of the "rooms"
+  in the level is considered to be convex. Such a room is called Sector
+ **/
 struct Level {
     vector<Sector> sectors;
 };
@@ -51,7 +62,7 @@ struct Level {
 class BSPNode2d {
 public:
     Ray2d       *separator = nullptr;
-    Polygon     leftBoundingBox,
+    Rectangled  leftBoundingBox,
                 rightBoundingBox;
     BSPNode2d   *leftTree = nullptr,
                 *rightTree = nullptr;
@@ -72,21 +83,21 @@ public:
 private:
     void BSPNodeBuilder(Level& level);
 
-    int SplitLevel(Level& level, Ray2d& separator,
+    int splitLevel(Level& level, Ray2d& separator,
                    Level& leftPart, Level& rightPart,
                    std::ofstream& log);
 
-    bool SplitSector(Sector& sector, Line2d& sepLine,
+    bool splitSector(Sector& sector, Line2d& sepLine,
                      Vector2dd& enterPt, Vector2dd& exitPt,
                      Sector& leftPart, Sector& rightPart,
                      std::ofstream& log);
 
-    Sector SectorFromPoly(Polygon& poly, vector<Linedef>& origLinedefs,
+    Sector sectorFromPoly(Polygon& poly, vector<Linedef>& origLinedefs,
                           int& startIdx, int& endIdx,
                           Vector2dd& startPt, Vector2dd& endPt,
                           std::ofstream& log);
 
-    Polygon GetBoundingBox(Level& level);
+    Rectangled getBoundingBox(Level& level);
 };
 
 bool OnSegment(Segment2d& segment, const Vector2dd& point);

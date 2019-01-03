@@ -67,7 +67,7 @@ SOURCES += \
     derivative/main_test_derivative.cpp \
     distortion/main_test_distortion.cpp \                 # TODO: need to be fixed soon
     draw/main_test_draw.cpp \
-    eigen/main_test_eigen.cpp \
+#    eigen/main_test_eigen.cpp \
    #face_recognition/main_test_face_recognition.cpp \     # TODO: absent input data!
    #face_recognition1/main_test_face_recognition1.cpp \   # TODO: absent input data!
     fastkernel/main_test_fastkernel.cpp \

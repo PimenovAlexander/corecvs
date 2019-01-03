@@ -1,5 +1,7 @@
 #include "bspRenderer.h"
 
+#include <core/geometry/polygonPointIterator.h>
+
 using namespace corecvs;
 
 using namespace BSPRenderer;
@@ -43,7 +45,7 @@ void BSPNode2d::BSPNodeBuilder(Level& level)
             leftSectors,
             rightSectors;
 
-        splits = SplitLevel(level, curRay,
+        splits = splitLevel(level, curRay,
                             curLeftLevel, curRightLevel,
                             log);
 
@@ -98,8 +100,8 @@ void BSPNode2d::BSPNodeBuilder(Level& level)
         exit(EXIT_FAILURE);
     }
 
-    leftBoundingBox = GetBoundingBox(leftLevel);
-    rightBoundingBox = GetBoundingBox(rightLevel);
+    leftBoundingBox = getBoundingBox(leftLevel);
+    rightBoundingBox = getBoundingBox(rightLevel);
     separator = new Ray2d(bestSeparator->a, bestSeparator->p);
     if (leftLevel.sectors.size() > 1) {
         leftTree = new BSPNode2d(leftLevel, nodeDepth + 1, nodeNumber * 2);
@@ -116,7 +118,7 @@ void BSPNode2d::BSPNodeBuilder(Level& level)
 
 }
 
-int BSPNode2d::SplitLevel(Level& level, Ray2d& separator,
+int BSPNode2d::splitLevel(Level& level, Ray2d& separator,
                           Level& leftPart, Level& rightPart,
                           std::ofstream& log)
 {
@@ -150,7 +152,7 @@ int BSPNode2d::SplitLevel(Level& level, Ray2d& separator,
             Vector2dd p1 = separator.getPoint(t1);
             Vector2dd p2 = separator.getPoint(t2);
 
-            if (SplitSector(curSector, sepLine,
+            if (splitSector(curSector, sepLine,
                             p1, p2,
                             leftSector, rightSector,
                             log))
@@ -180,7 +182,7 @@ int BSPNode2d::SplitLevel(Level& level, Ray2d& separator,
     return splits;
 }
 
-bool BSPNode2d::SplitSector(Sector& sector, Line2d& sepLine,
+bool BSPNode2d::splitSector(Sector& sector, Line2d& sepLine,
                             Vector2dd& enterPt, Vector2dd& exitPt,
                             Sector& leftPart, Sector& rightPart,
                             std::ofstream& log)
@@ -257,20 +259,20 @@ bool BSPNode2d::SplitSector(Sector& sector, Line2d& sepLine,
 
     /* 1 -- to the right, -1 -- to the left */
     if (sepLine.side(poly.getNextPoint(enterIdx)) == 1) {
-            rightPart = SectorFromPoly(poly, origLinedefs,
+            rightPart = sectorFromPoly(poly, origLinedefs,
                                        enterIdx, exitIdx,
                                        enterPt, exitPt,
                                        log);
-            leftPart  = SectorFromPoly(poly, origLinedefs,
+            leftPart  = sectorFromPoly(poly, origLinedefs,
                                        exitIdx, enterIdx,
                                        exitPt, enterPt,
                                        log);
     } else {
-            leftPart  = SectorFromPoly(poly, origLinedefs,
+            leftPart  = sectorFromPoly(poly, origLinedefs,
                                        enterIdx, exitIdx,
                                        enterPt, exitPt,
                                        log);
-            rightPart = SectorFromPoly(poly, origLinedefs,
+            rightPart = sectorFromPoly(poly, origLinedefs,
                                        exitIdx, enterIdx,
                                        exitPt, enterPt,
                                        log);
@@ -279,7 +281,7 @@ bool BSPNode2d::SplitSector(Sector& sector, Line2d& sepLine,
     return true;
 }
 
-Sector BSPNode2d::SectorFromPoly(Polygon& poly, vector<Linedef>& origLinedefs,
+Sector BSPNode2d::sectorFromPoly(Polygon& poly, vector<Linedef>& origLinedefs,
                              int& startIdx, int& endIdx,
                              Vector2dd& startPt, Vector2dd& endPt,
                              std::ofstream& log)
@@ -332,26 +334,15 @@ Sector BSPNode2d::SectorFromPoly(Polygon& poly, vector<Linedef>& origLinedefs,
     return outSector;
 }
 
-Polygon BSPNode2d::GetBoundingBox(Level& level)
+Rectangled BSPNode2d::getBoundingBox(Level& level)
 {
-    Polygon boundingBox;
-    double xMin = DBL_MAX, xMax = 0.0,
-           yMin = DBL_MAX, yMax = 0.0;
+    Rectangled boundingBox = Rectangled::Empty();
 
     for (Sector& curSector : level.sectors) {
         for (Vector2dd& curPoint : curSector.space) {
-            if (curPoint.x() < xMin) xMin = curPoint.x();
-            if (curPoint.x() > xMax) xMax = curPoint.x();
-            if (curPoint.y() < yMin) yMin = curPoint.y();
-            if (curPoint.y() > yMax) yMax = curPoint.y();
+            boundingBox.extendToFit(curPoint);
         }
     }
-
-    boundingBox.push_back(Vector2dd(xMin, yMin));
-    boundingBox.push_back(Vector2dd(xMin, yMax));
-    boundingBox.push_back(Vector2dd(xMax, yMax));
-    boundingBox.push_back(Vector2dd(xMax, yMin));
-
     return boundingBox;
 }
 
@@ -381,11 +372,26 @@ void BSPRenderer::DrawSector(Sector& sector, RGB24Buffer& buffer,
     Polygon p = sector.space;
 
     if (withInfo) {
+        //buffer.drawCrosshare2(p.center(), sector.floorColor);
+        ConvexPolygon cp = Polygon::Reverse(p).toConvexPolygon();
+
+        cp.inset(10);
+        Polygon ip = Polygon::FromConvexPolygon(cp);
+
+        PolygonSpanIterator it(ip);
+        for (HLineSpanInt l: it)
+        {
+            for (Vector2d<int> point : l) {
+                buffer.element(point) = sector.floorColor / 5.0;
+            }
+        }
+
         for (unsigned long i = 0; i < p.size(); i++) {
             Ray2d ray = p.getRay(int(i));
             Vector2dd center = ray.getPoint(0.5);
             Vector2dd decal = p.getNormal(int(i)).normalised();
             Vector2dd number = center + decal * 15;
+
 
             switch (sector.linedefs[i].sidedef) {
                 case 0 :
@@ -446,8 +452,8 @@ void BSPRenderer::DrawBSPNode(BSPNode2d& node, RGB24Buffer& buffer,
 
     buffer.fillWith(RGBColor::Black());
     DrawSector(node, buffer, withInfo);
-    painter.drawPolygon(node.leftBoundingBox, RGBColor::Green());
-    painter.drawPolygon(node.rightBoundingBox, RGBColor::Red());
+    buffer.drawRectangle(node.leftBoundingBox, RGBColor::Green());
+    buffer.drawRectangle(node.rightBoundingBox, RGBColor::Red());
     buffer.drawLine(node.separator->getStart(),
                      node.separator->getEnd(),
                      RGBColor::Yellow());
