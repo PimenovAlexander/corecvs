@@ -21,29 +21,28 @@ class DelaunayTriangulation {
  public:
     explicit DelaunayTriangulation(const std::vector<Vector2dd>& points);
 
-    void GetPoints(std::vector<Vector2dd>* points);
+    void getPoints(std::vector<Vector2dd>* points);
 
-    void GetTriangulation(std::vector<Triangle2dd>* triangles);
+    void getTriangulation(std::vector<Triangle2dd>* triangles);
 
-    static bool PointInsideCircumcircle(const Vector2dd& point, const Triangle2dd& triangle);
+    static bool pointInsideCircumcircle(const Vector2dd& point, const Triangle2dd& triangle);
 
-    void BuildTriangulation();
+    void buildTriangulation();
 
  private:
     const double EPSILON = 1e-5;
     const int OFFSET = 100;
+
     std::vector<Vector2dd> points_;
     std::vector<std::pair<Triangle2dd, bool>> triangles_;
 
-    void RemoveSamePoint();
+    void removeSamePoint();
 
-    void AddPointToTriangulation(const Vector2dd& point);
+    void addPointToTriangulation(const Vector2dd& point);
 
-    static Vector2dd GetCircumcircleCenter(const Triangle2dd& triangle);
+    static Vector2dd getCircumcircleCenter(const Triangle2dd& triangle);
 
-    static double Length(const Vector2dd& point1, const Vector2dd& point2);
-
-    bool AlmostEqualSegments(const std::pair<Vector2dd, Vector2dd>& a,
+    bool almostEqualSegments(const std::pair<Vector2dd, Vector2dd>& a,
                              const std::pair<Vector2dd, Vector2dd>& b);
 
 };

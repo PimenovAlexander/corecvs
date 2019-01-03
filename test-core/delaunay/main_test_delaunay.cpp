@@ -12,34 +12,41 @@
 #include "gtest/gtest.h"
 
 #include "core/delaunay/delaunay.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/buffers/bufferFactory.h"
 
-std::random_device rd;
-std::mt19937 gen(rd());
 
-TEST(delaunay, 3_points) {
-    vector<corecvs::Vector2dd> points;
+using namespace corecvs;
+
+TEST(delaunay, 3_points)
+{
+    vector<Vector2dd> points;
     points.emplace_back(0, 0);
     points.emplace_back(1, 0);
     points.emplace_back(0, 1);
-    auto delaunay = corecvs::DelaunayTriangulation(points);
-    vector<corecvs::Triangle2dd> triangles;
-    delaunay.GetTriangulation(&triangles);
-    EXPECT_EQ(1, triangles.size());
+    DelaunayTriangulation delaunay(points);
+
+    vector<Triangle2dd> triangles;
+    delaunay.getTriangulation(&triangles);
+    CORE_ASSERT_TRUE(triangles.size() == 1, "Unable to triangulate trivial case");
 }
 
-TEST(delaunay, 3_points_with_duplicates) {
+TEST(delaunay, 3_points_with_duplicates)
+{
     vector<corecvs::Vector2dd> points;
     points.emplace_back(0, 0);
     points.emplace_back(0, 0);
     points.emplace_back(1, 0);
     points.emplace_back(1, 0);
     points.emplace_back(0, 1);
-    auto delaunay = corecvs::DelaunayTriangulation(points);
-    vector<corecvs::Triangle2dd> triangles;
-    delaunay.GetTriangulation(&triangles);
+
+    DelaunayTriangulation delaunay(points);
+
+    vector<Triangle2dd> triangles;
+    delaunay.getTriangulation(&triangles);
     EXPECT_EQ(1, triangles.size());
     points.clear();
-    delaunay.GetPoints(&points);
+    delaunay.getPoints(&points);
     EXPECT_EQ(3, points.size());
 }
 
@@ -55,28 +62,40 @@ TEST(delaunay, less_than_3_points) {
     }
 }
 
-TEST(delaunay, check_point_inside_circumcircle) {
+TEST(delaunay, check_point_inside_circumcircle)
+{
     // circumcircle with center in (-2, 3) and radius 10
-    corecvs::Triangle2dd triangle({4, -5}, {8, 3}, {-8, 11});
-    EXPECT_TRUE(corecvs::DelaunayTriangulation::PointInsideCircumcircle({-2, 5}, triangle));
-    EXPECT_TRUE(corecvs::DelaunayTriangulation::PointInsideCircumcircle({4, -5}, triangle));
-    EXPECT_FALSE(corecvs::DelaunayTriangulation::PointInsideCircumcircle({100, 100}, triangle));
+    Triangle2dd triangle({4, -5}, {8, 3}, {-8, 11});
+
+    EXPECT_TRUE (DelaunayTriangulation::pointInsideCircumcircle({-2, 5}, triangle));
+    EXPECT_TRUE (DelaunayTriangulation::pointInsideCircumcircle({4, -5}, triangle));
+    EXPECT_FALSE(DelaunayTriangulation::pointInsideCircumcircle({100, 100}, triangle));
 }
 
-TEST(delaunay, 100_random_point) {
-    std::uniform_int_distribution<> dis(-100, 100);
-    vector<corecvs::Vector2dd> points;
+TEST(delaunay, 100_random_point)
+{
+
+    /* Unit test are kept deterministic, otherwize it would be a pain to debug */
+    //std::random_device rd;
+    std::mt19937 gen;
+
+    RGB24Buffer image(300, 300, RGBColor::White());
+    std::uniform_real_distribution<double> dis(0.0, image.w - 1);
+
+    vector<Vector2dd> points;
     points.reserve(100);
-    for (int i = 0; i < 100; ++i) {
+    for (int i = 0; i < 100; i++) {
         points.emplace_back(dis(gen), dis(gen));
     }
-    auto delaunay = corecvs::DelaunayTriangulation(points);
-    vector<corecvs::Triangle2dd> triangles;
-    delaunay.GetTriangulation(&triangles);
+    DelaunayTriangulation delaunay(points);
+    vector<Triangle2dd> triangles;
+    delaunay.getTriangulation(&triangles);
+
+    cout << "Triangulation finished. Triangulation size:"  << triangles.size() << endl;
 
     bool correct = true;
     for (auto& tri : triangles) {
-        std::vector<corecvs::Vector2dd> vertex = {tri.p1(), tri.p2(), tri.p3()};
+        std::vector<Vector2dd> vertex = {tri.p1(), tri.p2(), tri.p3()};
         for (auto& point : points) {
             bool tri_vertex = false;
             for (auto& v : vertex) {
@@ -85,8 +104,20 @@ TEST(delaunay, 100_random_point) {
             if (tri_vertex) {
                 continue;
             }
-            correct &= !(corecvs::DelaunayTriangulation::PointInsideCircumcircle(point, tri));
+            correct &= !(DelaunayTriangulation::pointInsideCircumcircle(point, tri));
         }
     }
-    EXPECT_TRUE(correct);
+
+    for (Triangle2dd& tri : triangles) {
+        image.drawTriangle(tri, RGBColor::Blue(), 0);
+    }
+
+    for (Vector2dd& point : points) {
+        image.drawCrosshare3(point, RGBColor::Red());
+    }
+
+
+    BufferFactory::getInstance()->saveRGB24Bitmap(&image, "delaunay.bmp");
+
+    CORE_ASSERT_TRUE(correct, "Random point trianglation fails");
 }

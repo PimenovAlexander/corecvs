@@ -20,6 +20,7 @@
 #include "core/buffers/flow/flowBuffer.h"
 #include "core/buffers/histogram/histogram.h"
 #include "core/geometry/rectangle.h"
+#include "core/geometry/polygons.h"
 #include "core/buffers/rgb24/rgbColor.h"
 #include "core/function/function.h"
 #include "core/rectification/correspondenceList.h"
@@ -83,9 +84,13 @@ public:
     /**
      *  Draw a rectangle
      **/
-    void drawRectangle(const Rectangle<int32_t> &rect, RGBColor color, int style = 0);
-    void drawRectangle(int x, int y, int w, int h, RGBColor color, int style = 0);
-    void drawRectangle(const Rectangled &rect, RGBColor color, int style = 0);
+    void drawRectangle(const Rectangle<int32_t> &rect, const RGBColor &color, int style = 0);
+    void drawRectangle(int x, int y, int w, int h, const RGBColor &color, int style = 0);
+    void drawRectangle(const Rectangled &rect, const RGBColor &color, int style = 0);
+    /**
+     * Draw Triangle
+     **/
+    void drawTriangle(const Triangle2dd &tri, const RGBColor &color, int style = 0);
 
     //void drawDisplacementBuffer(DisplacementBuffer *src, double step);
 

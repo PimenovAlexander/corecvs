@@ -39,6 +39,10 @@ public:
         return (a + b) / 2.0;
     }
 
+    typename VectorType::InnerElementType getLength() const {
+        return (a-b).l2Metric();
+    }
+
     friend std::ostream & operator <<(std::ostream &out, const Segment &ray)
     {
         out << "[" << ray.a << " - " << ray.b << "]";

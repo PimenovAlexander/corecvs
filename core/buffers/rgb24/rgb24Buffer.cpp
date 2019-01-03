@@ -319,7 +319,7 @@ void RGB24Buffer::drawCorrespondenceList(CorrespondenceList *src, double colorSc
 }
 
 
-void RGB24Buffer::drawRectangle(int x, int y, int w, int h, RGBColor color, int style)
+void RGB24Buffer::drawRectangle(int x, int y, int w, int h, const RGBColor &color, int style)
 {
     w--;
     h--;
@@ -362,19 +362,39 @@ void RGB24Buffer::drawRectangle(int x, int y, int w, int h, RGBColor color, int 
     }
 }
 
-void RGB24Buffer::drawRectangle(const Rectangle<int32_t> &rect, RGBColor color, int style)
+void RGB24Buffer::drawRectangle(const Rectangle<int32_t> &rect, const RGBColor &color, int style)
 {
     drawRectangle(rect.corner.x(), rect.corner.y(), rect.size.x(), rect.size.y(), color, style);
 }
 
 
-void RGB24Buffer::drawRectangle(const Rectangled &rect, RGBColor color, int style)
+void RGB24Buffer::drawRectangle(const Rectangled &rect, const RGBColor &color, int style)
 {
     drawRectangle(
         fround(rect.corner.x()),
         fround(rect.corner.y()),
         fround(rect.size.x()),
-        fround(rect.size.y()), color, style);
+                fround(rect.size.y()), color, style);
+}
+
+void RGB24Buffer::drawTriangle(const Triangle2dd &tri, const RGBColor &color, int style)
+{
+    if (style == 1)
+    {
+        for (int i = 0; i < 3; i++) {
+           drawCrosshare3(tri.p[i], color);
+        }
+        return;
+    }
+
+    if (style == 0)
+    {
+        drawLineSimple(fround(tri.p1().x()), fround(tri.p1().y()), fround(tri.p2().x()), fround(tri.p2().y()), color);
+        drawLineSimple(fround(tri.p2().x()), fround(tri.p2().y()), fround(tri.p3().x()), fround(tri.p3().y()), color);
+        drawLineSimple(fround(tri.p3().x()), fround(tri.p3().y()), fround(tri.p1().x()), fround(tri.p1().y()), color);
+        return;
+    }
+
 }
 
 
