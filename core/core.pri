@@ -46,6 +46,7 @@ CORE_SUBMODULES =       \
     camerafixture       \
     iterative           \
     stereointerface     \
+    delaunay		\
 
 for (MODULE, CORE_SUBMODULES) {
     CORE_INCLUDEPATH += $${COREDIR}/$${MODULE}
