@@ -91,13 +91,13 @@ void corecvs::DelaunayTriangulation::BuildTriangulation() {
 }
 
 void corecvs::DelaunayTriangulation::AddPointToTriangulation(const corecvs::Vector2dd& point) {
-    std::vector<std::pair<std::pair<Vector2dd, Vector2dd>, bool>> polygon;
+    std::vector<std::pair<Segment2d, bool>> polygon;
     // filter triangles by containing point in circumcircle
     for (auto& tri : triangles_) {
         if (PointInsideCircumcircle(point, tri.first)) {
-            polygon.emplace_back(std::make_pair(tri.first.p1(), tri.first.p2()), true);
-            polygon.emplace_back(std::make_pair(tri.first.p2(), tri.first.p3()), true);
-            polygon.emplace_back(std::make_pair(tri.first.p3(), tri.first.p1()), true);
+            polygon.emplace_back(Segment2d(tri.first.p1(), tri.first.p2()), true);
+            polygon.emplace_back(Segment2d(tri.first.p2(), tri.first.p3()), true);
+            polygon.emplace_back(Segment2d(tri.first.p3(), tri.first.p1()), true);
             tri.second = false;
         } else {
             tri.second = true;
@@ -119,56 +119,44 @@ void corecvs::DelaunayTriangulation::AddPointToTriangulation(const corecvs::Vect
     // create new triangles
     for (auto& seg : polygon) {
         if (seg.second) {
-            triangles_.emplace_back(Triangle2dd(seg.first.first, seg.first.second, point), true);
+            triangles_.emplace_back(Triangle2dd(seg.first.a, seg.first.b, point), true);
         }
     }
 }
 
 bool corecvs::DelaunayTriangulation::PointInsideCircumcircle(const corecvs::Vector2dd& point,
                                                              const corecvs::Triangle2dd& triangle) {
-    // calculate radius of circumcircle
-    // R = (a * b * c) / (4 * S)
-    auto a = Length(triangle.p1(), triangle.p2()),
-            b = Length(triangle.p2(), triangle.p3()),
-            c = Length(triangle.p3(), triangle.p1());
-    auto p = (a + b + c) / 2;
-    auto S = sqrt(p * (p - a) * (p - b) * (p - c));
-    auto R = a * b * c / (4 * S);
-    return Length(point, GetCircumcircleCenter(triangle)) <= R;
-}
-
-double corecvs::DelaunayTriangulation::Length(const corecvs::Vector2dd& point1,
-                                              const corecvs::Vector2dd& point2) {
-    auto dx = point1.x() - point2.x(),
-            dy = point1.y() - point2.y();
-    return sqrt(dx * dx + dy * dy);
+    // check, that distance from center to point less, than distance from center to triangle vertex
+    auto circumcircleCenter = GetCircumcircleCenter(triangle);
+    auto deltaXPoint = circumcircleCenter.x() - point.x(),
+            deltaXOrig = circumcircleCenter.x() - triangle.p1().x();
+    auto deltaYPoint = circumcircleCenter.y() - point.y(),
+            deltaYOrig = circumcircleCenter.y() - triangle.p1().y();
+    return deltaXPoint * deltaXPoint + deltaYPoint * deltaYPoint <= deltaXOrig * deltaXOrig + deltaYOrig * deltaYOrig;
 }
 
 bool corecvs::DelaunayTriangulation::AlmostEqualSegments(
-        const std::pair<corecvs::Vector2dd, corecvs::Vector2dd>& a,
-        const std::pair<corecvs::Vector2dd, corecvs::Vector2dd>& b) {
-    if (a.first.notTooFar(b.first, EPSILON) && a.second.notTooFar(b.second, EPSILON)) {
-        return true;
-    } else if (a.second.notTooFar(b.first, EPSILON) && a.first.notTooFar(b.second, EPSILON)) {
-        return true;
-    } else {
-        return false;
-    }
+        const Segment2d& seg1,
+        const Segment2d& seg2) {
+    return ((seg1.a.notTooFar(seg2.a) && seg1.b.notTooFar(seg2.b)) ||
+            (seg1.a.notTooFar(seg2.b) && seg1.b.notTooFar(seg2.a)));
 }
 
 corecvs::Vector2dd corecvs::DelaunayTriangulation::GetCircumcircleCenter(
         const corecvs::Triangle2dd& triangle) {
-    // solution of  system: (x - a)^2 + (y - b)^2 = r^2
+    // using approach from
+    // https://en.wikipedia.org/wiki/Circumscribed_circle#Cartesian_coordinates
     auto x1 = triangle.p1().x(), y1 = triangle.p1().y();
     auto x2 = triangle.p2().x(), y2 = triangle.p2().y();
     auto x3 = triangle.p3().x(), y3 = triangle.p3().y();
-    Matrix22 A(
-            2 * (x2 - x1), 2 * (y2 - y1),
-            2 * (x3 - x1), 2 * (y3 - y1)
-    );
-    Vector2dd B(
-            y2 * y2 + x2 * x2 - y1 * y1 - x1 * x1,
-            y3 * y3 + x3 * x3 - y1 * y1 - x1 * x1
-    );
-    return Matrix22::solve(A, B);
+    Matrix33 Sx(x1 * x1 + y1 * y1, y1, 1,
+                x2 * x2 + y2 * y2, y2, 1,
+                x3 * x3 + y3 * y3, y3, 1);
+    Matrix33 Sy(x1, x1 * x1 + y1 * y1, 1,
+                x2, x2 * x2 + y2 * y2, 1,
+                x3, x3 * x3 + y3 * y3, 1);
+    Matrix33 a(x1, y1, 1,
+               x2, y2, 1,
+               x3, y3, 1);
+    return {Sx.det() / (2 * a.det()), Sy.det() / (2 * a.det())};
 }

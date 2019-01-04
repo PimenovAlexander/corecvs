@@ -41,10 +41,7 @@ class DelaunayTriangulation {
 
     static Vector2dd GetCircumcircleCenter(const Triangle2dd& triangle);
 
-    static double Length(const Vector2dd& point1, const Vector2dd& point2);
-
-    bool AlmostEqualSegments(const std::pair<Vector2dd, Vector2dd>& a,
-                             const std::pair<Vector2dd, Vector2dd>& b);
+    bool AlmostEqualSegments(const Segment2d& seg1, const Segment2d& seg2);
 
 };
 
