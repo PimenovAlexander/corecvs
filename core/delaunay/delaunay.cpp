@@ -61,8 +61,8 @@ void DelaunayTriangulation::buildTriangulation() {
     triangles_.clear();
 
     // add super-triangle, which cover all points
-    // It is posible to use Rectangled here with Rectangled::extendToFit(), this could save two passes
 
+    // It is posible to use Rectangled here with Rectangled::extendToFit(), this could save two passes
     auto minMaxX = std::minmax_element(points_.begin(), points_.end(),
                                        [](const Vector2dd& a, const Vector2dd& b) {
                                            return a.x() < b.x();
@@ -92,7 +92,8 @@ void DelaunayTriangulation::buildTriangulation() {
     triangles_.erase(std::remove_if(triangles_.begin(), triangles_.end(),
                                     [vertex](const std::pair<Triangle2dd, bool>& a) {
                                         for (auto& point : vertex) {
-                                            if (point == a.first.p1() || point == a.first.p2() ||
+                                            if (point == a.first.p1() ||
+                                                point == a.first.p2() ||
                                                 point == a.first.p3()) {
                                                 return true;
                                             }

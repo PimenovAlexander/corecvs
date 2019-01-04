@@ -129,7 +129,7 @@ TEST(delaunay, 3_points_in_line) {
     points.emplace_back(0, 2);
     auto delaunay = corecvs::DelaunayTriangulation(points);
     vector<corecvs::Triangle2dd> triangles;
-    delaunay.GetTriangulation(&triangles);
+    delaunay.getTriangulation(&triangles);
     EXPECT_EQ(0, triangles.size());
 }
 
@@ -141,7 +141,7 @@ TEST(delaunay, 3_points_in_line_2) {
     points.emplace_back(1, 1);
     auto delaunay = corecvs::DelaunayTriangulation(points);
     vector<corecvs::Triangle2dd> triangles;
-    delaunay.GetTriangulation(&triangles);
+    delaunay.getTriangulation(&triangles);
     EXPECT_EQ(2, triangles.size());
 }
 
