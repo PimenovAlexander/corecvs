@@ -23,14 +23,18 @@ HEADERS += \
     physicsMainWidget.h \
     clientsender.h \
     comcontroller.h \
-    controllrecord.h
+    controllrecord.h \
+    joystickinput.h \
+    qcomcontroller.h
 
 SOURCES += \
     main_physics.cpp \
     physicsMainWidget.cpp \
     clientsender.cpp \
     comcontroller.cpp \
-    controllrecord.cpp
+    controllrecord.cpp \
+    joystickinput.cpp \
+    qcomcontroller.cpp
 
 FORMS += \
     physicsMainWidget.ui

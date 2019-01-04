@@ -36,7 +36,7 @@ int main_example1()
 
 int main(int argc, char *argv[])
 {
-    main_example1();
+   // main_example1();
 
     SET_HANDLERS();
 

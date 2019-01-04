@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "clientsender.h"
+#include "qcomcontroller.h"
 
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
@@ -10,6 +11,7 @@
 #include <fcntl.h>
 #include <controllrecord.h>
 #include <stack>
+#include  "joystickinput.h"
 
 namespace Ui {
 class PhysicsMainWidget;
@@ -31,18 +33,22 @@ class PhysicsMainWidget : public QWidget
 
      void disconnect_from_copter();
 public slots:
-    void keepAlive();
+    //void keepAlive();
 private slots:
     void yawChange(int i);
     void rollChange(int i);
     void pitchChange(int i);
     void throttleChange(int i);
+    void CH5Change(int i);
+    void CH6Change(int i);
+    void CH7Change(int i);
+    void CH8Change(int i);
     void StartJoyStickMode();
-    void Bind();
+
     void on_pushButton_released();
     void SendJoyValues();
     void StartRealMode();
-    void BindToRealDrone();
+   // void BindToRealDrone();
     void STOP();
     void on_pushButton_2_clicked();
 
@@ -53,16 +59,19 @@ private:
     std::list<message> messages;
 
 
+    JoyStickInput joystick1{yaw_value,roll_value,pitch_value,throttle_value,CH5_value,CH6_value,CH7_value,CH8_value};
+    QComController ComController {this,yaw_value,roll_value,pitch_value,throttle_value,CH5_value,CH6_value,CH7_value,CH8_value};
+
     Ui::PhysicsMainWidget *ui;
     int yaw_value;
     int roll_value;
     int pitch_value;
     int throttle_value;
     int throttle_value_from_JS;
-    int fifth_CH;
-    int sixth_CH;
-    int seventh_CH;
-    int eighth_CH;
+    int CH5_value;
+    int CH6_value;
+    int CH7_value;
+    int CH8_value;
     int mid_Throttle=1350;
 
     int counter;
@@ -81,28 +90,18 @@ private:
     bool recording=false;
 
     void SendOurValues(std::vector<uint8_t> OurValues);
-    void usial_buttons(js_event event);
-    void usial_sticks(js_event event);
 
-    void inertial_buttons(js_event event);
-    void inertial_sticks(js_event event);
-
-    void casual_buttons(js_event event);
-    void casual_sticks(js_event event);
-
-    void StartRecord();
-    void StopRecord();
 
     ControllRecord recordData;
 
     struct axis_state axes[3] ;
 
-    void Start_arming(bool pressed);
     ClientSender VirtualSender;
+
+    int CountOfSticks=0;
 
     bool autopilotMode=false;
     stack<message> autopilotStack;
-    //size_t get_button_count(int fd);
 };
 
 #endif // PHYSICSMAINWIDGET_H
