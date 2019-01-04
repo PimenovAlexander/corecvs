@@ -121,3 +121,35 @@ TEST(delaunay, 100_random_point)
 
     CORE_ASSERT_TRUE(correct, "Random point trianglation fails");
 }
+
+TEST(delaunay, 3_points_in_line) {
+    vector<corecvs::Vector2dd> points;
+    points.emplace_back(0, 0);
+    points.emplace_back(0, 1);
+    points.emplace_back(0, 2);
+    auto delaunay = corecvs::DelaunayTriangulation(points);
+    vector<corecvs::Triangle2dd> triangles;
+    delaunay.GetTriangulation(&triangles);
+    EXPECT_EQ(0, triangles.size());
+}
+
+TEST(delaunay, 3_points_in_line_2) {
+    vector<corecvs::Vector2dd> points;
+    points.emplace_back(0, 0);
+    points.emplace_back(0, 1);
+    points.emplace_back(0, 2);
+    points.emplace_back(1, 1);
+    auto delaunay = corecvs::DelaunayTriangulation(points);
+    vector<corecvs::Triangle2dd> triangles;
+    delaunay.GetTriangulation(&triangles);
+    EXPECT_EQ(2, triangles.size());
+}
+
+TEST(delaunay, empty_input) {
+    try {
+        auto delaunay = corecvs::DelaunayTriangulation({});
+    } catch (std::invalid_argument& e) {
+        int correct = strcmp("need at least 3 points for triangulation", e.what());
+        EXPECT_EQ(0, correct);
+    }
+}
