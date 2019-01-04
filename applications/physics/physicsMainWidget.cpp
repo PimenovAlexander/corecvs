@@ -301,13 +301,7 @@
         }
     }
 
-
-    //JOYSTICKs PART
-
     struct axis_state {        short x, y;   };
-
-
-
 
     void PhysicsMainWidget::StartJoyStickMode()
     {

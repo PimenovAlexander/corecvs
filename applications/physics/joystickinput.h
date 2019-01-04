@@ -61,6 +61,7 @@ private:
 
     void TimerForThrottle();
     void usial_experimental_sticks(js_event event);
- };
+    void usial_experimental_buttons(js_event event);
+};
 
 #endif // JOYSTICKINPUT_H

@@ -148,7 +148,7 @@ std::thread thr([this]()
                         casual_buttons(eventtt);
                         break;
                     case 3:
-                       usual_buttons(eventtt);
+                       usial_experimental_buttons(eventtt);
                        break;
                     default: break;
                 }
@@ -702,6 +702,10 @@ void JoyStickInput::usial_experimental_sticks(js_event event)
                 if (roll_value>2100){roll_value=2099;}
                 if (roll_value<900){roll_value=901;}
 
+                pitch_value = 1500 - axes[axis].y/50/pit_const;
+                if (pitch_value>2100){pitch_value=2099;}
+                if (pitch_value<900){pitch_value=901;}
+
 
             }
             if (axis==1)
@@ -715,13 +719,72 @@ void JoyStickInput::usial_experimental_sticks(js_event event)
             if (axis==2)
             {
 
-                pitch_value = 1500 - axes[axis].x/50/pit_const;
-                if (pitch_value>2100){pitch_value=2099;}
-                if (pitch_value<900){pitch_value=901;}
-                lastRT=axes[axis].y;
+                 lastRT=axes[axis].y;
             }
         }
         break;
+    }
+}
+
+
+void JoyStickInput::usial_experimental_buttons(js_event event)
+{
+
+    unsigned char seven=7;
+    unsigned char six=6;
+    unsigned char five=5;
+    unsigned char four=4;
+    unsigned char three=3;
+    unsigned char two=2;
+    unsigned char one=1;
+    unsigned char zero=0;
+
+    switch (CountOfSticks)
+    {
+    case 6:                            //Dinput
+        if (event.number==seven)                     //arming    //rt
+        {
+           Start_arming(event.value);
+        }
+        if (event.number==five  && event.value )      //rb         //turn of copter(if smth goes wery wery wrong)
+        {
+            disconnect_from_copter();
+        }
+        if (event.number==one && event.value)         //a
+        {
+            if (!recording)
+            {
+                StartRecord();
+            }
+            else
+            {
+                StopRecord();
+            }
+        }
+        break;
+    case 8:
+        if (event.number==five )                    //rb //arming
+        {
+           Start_arming(event.value);
+        }
+        if (event.number==four  && event.value )     //lb                //turn of copter(if smth goes wery wery wrong)
+        {
+            disconnect_from_copter();
+        }
+
+        if (event.number==zero && event.value)                   //a  //arming
+        {
+            if (!recording)
+            {
+                StartRecord();
+            }
+            else
+            {
+                StopRecord();
+            }
+        }
+        break;
+
     }
 }
 
@@ -731,6 +794,8 @@ void JoyStickInput::Start_arming(bool pressed)
     {
         printf("##################___ARMING___######################");
         throttle_value=930;
+        lastLT=32767;
+        lastRT=-32767;
         throttle_value_from_JS=1500;
         CH5_value=1900;
         Arming =true;
@@ -741,6 +806,8 @@ void JoyStickInput::Start_arming(bool pressed)
         {
         throttle_value=1100;
         throttle_value_from_JS=1500;
+        lastLT=-32767;
+        lastRT=-32767;
         Arming=false;
         }
     }

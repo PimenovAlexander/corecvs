@@ -45,7 +45,7 @@ void QComController::BindToRealDrone()
 void QComController::keepAlive2()
 {
     //const int difference = 858;
-    const int difference = 862;
+    const int difference = 858;
     //counter++;
 
       /*  if (recording)
