@@ -67,9 +67,14 @@ TEST(delaunay, check_point_inside_circumcircle)
     // circumcircle with center in (-2, 3) and radius 10
     Triangle2dd triangle({4, -5}, {8, 3}, {-8, 11});
 
-    EXPECT_TRUE (DelaunayTriangulation::pointInsideCircumcircle({-2, 5}, triangle));
-    EXPECT_TRUE (DelaunayTriangulation::pointInsideCircumcircle({4, -5}, triangle));
-    EXPECT_FALSE(DelaunayTriangulation::pointInsideCircumcircle({100, 100}, triangle));
+    Circle2d circle = Circle2d::Circumcircle(triangle);
+    cout << circle << endl;
+    CORE_ASSERT_TRUE(circle.r == 10, "Circle radius is wrong");
+    CORE_ASSERT_TRUE(circle.c.notTooFar(Vector2dd(-2, 3)), "Circle center is wrong");
+
+    EXPECT_TRUE (DelaunayTriangulation::pointInsideCircumcircle(Vector2dd( -2,   5), triangle));
+    EXPECT_TRUE (DelaunayTriangulation::pointInsideCircumcircle(Vector2dd(  4,  -5), triangle));
+    EXPECT_FALSE(DelaunayTriangulation::pointInsideCircumcircle(Vector2dd(100, 100), triangle));
 }
 
 TEST(delaunay, 100_random_point)
