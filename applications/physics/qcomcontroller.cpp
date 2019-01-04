@@ -20,7 +20,7 @@ QComController::QComController(QObject *parent,int &_yaw_value, int &_roll_value
 void QComController::BindToRealDrone()
 {
     QSerialPortInfo serialinfo;
-    QString serialPortName = "/dev/ttyUSB1";
+    QString serialPortName = "/dev/ttyUSB0";
     serialPort.setPortName(serialPortName);
     serialPort.setParity(QSerialPort::EvenParity);
     const int serialPortBaudRate = QSerialPort::BaudRate(100000);
@@ -30,7 +30,7 @@ void QComController::BindToRealDrone()
 
     if (!serialPort.open(QIODevice::ReadWrite))
     {
-        cout <<"Failed to open port, please check that /dev/ttyUSB1 exists" << endl;
+        cout <<"Failed to open port, please check that /dev/ttyUSB0 exists" << endl;
     }
     else
     {
@@ -230,7 +230,6 @@ void QComController::keepAlive2()
     fb=tenthbyte.to_ulong();
     FlyCommandFromUs[13]=fb;
 
-    cout<<bitsCH8<<endl;
 
     fb=eleventhbyte.to_ulong();
      FlyCommandFromUs[14]=fb;

@@ -1,3 +1,5 @@
+//Will be removed
+
 #include "comcontroller.h"
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
