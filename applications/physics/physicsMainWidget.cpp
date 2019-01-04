@@ -42,6 +42,7 @@
         ui->comboBox->addItem("Usual mode");
         ui->comboBox->addItem("Inertia mode");
         ui->comboBox->addItem("Casual mode");
+        ui->comboBox->addItem("RT/LT Usial mode");
 
                 FrameValuesUpdate();
     }
@@ -375,6 +376,11 @@
         if(arg1=="Casual mode")
         {
             joystick1.SetCasualCurrentMode();
+            throttle_value=mid_Throttle;
+        }
+        if(arg1=="RT/LT Usial mode")
+        {
+            joystick1.SetRTLTUsialMode();
             throttle_value=mid_Throttle;
         }
     }

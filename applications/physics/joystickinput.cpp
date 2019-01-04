@@ -127,7 +127,6 @@ std::thread thr([this]()
     else
     {
         CountOfSticks=get_axis_count(js);
-        //FrameValuesUpdate();
         cout<<"JS mode has started"<<endl;
         while (read_event(js, &eventtt) == 0)
         {
@@ -148,6 +147,9 @@ std::thread thr([this]()
                     case 2:
                         casual_buttons(eventtt);
                         break;
+                    case 3:
+                       usual_buttons(eventtt);
+                       break;
                     default: break;
                 }
 
@@ -166,6 +168,9 @@ std::thread thr([this]()
                         break;
                     case 2:
                         casual_sticks(eventtt);
+                        break;
+                    case 3:
+                        usial_experimental_sticks(eventtt);
                         break;
                     default: break;
                 }
@@ -249,7 +254,6 @@ void JoyStickInput::usual_sticks(js_event event)
     case 6:                            //Dinput
          axis = get_axis_state(&event, axes);
         if (axis < 3)
-        //printf("Axis %u at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);
         {                                                //minimum axis is not 30000, but near
             if (axis==0)
             {
@@ -274,7 +278,6 @@ void JoyStickInput::usual_sticks(js_event event)
     case 8:                            //Xinput
          axis = get_axis_state(&event, axes);
         if (axis < 3)
-        //printf("Axis %u at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);
         {                                                //minimum axis is not 30000, but near
             if (axis==0)
             {
@@ -368,24 +371,12 @@ void JoyStickInput::inertial_buttons(js_event event)
         break;
     case 8:                            //Xinput
 
-        /*if (event.number==seven )                  //rt   //arming
-        {
-           Start_arming(event.value);
-        }
-        */
+
         if (event.number==five  && event.value )    //rb                 //turns of copter(if smth goes very very wrong)
         {
             disconnect_from_copter();
         }
-        /*if (event.number==six  && event.value )     //lt            //  all sticks to zero (if smth goes wrong)
-        {
-            throttle_value = 1100;
-            roll_value = 1500;
-            pitch_value = 1500;
-            throttle_value_from_JS = 1500;
-            yaw_value = 1500;
-        }
-        */
+
         if (event.number==four && event.value )      //lb               //Throttle to mid
         {
             throttle_value=mid_Throttle;
@@ -426,8 +417,7 @@ void JoyStickInput::inertial_sticks(js_event event)
          axis = get_axis_state(&event, axes);
 
         if (axis < 3)
-        /* printf("Axis %u at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);*/
-        {                                                //minimum axis is not 30000, but near
+        {                                                //minimum axis is -32767
             if (axis==0)
             {
                 yaw_value = 1500+axes[axis].x/50/yaw_const;
@@ -594,8 +584,7 @@ void JoyStickInput::casual_sticks(js_event event)
     case 6:
         axis = get_axis_state(&event, axes);
         if (axis < 3)
-        /* printf("Axis %u at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);*/
-        {                                                //minimum axis is not 30000, but near
+        {                                               //minimum axis is -32767
             if (axis==0)
             {
                 pitch_value = 1500 - axes[axis].y/50/pit_const;
@@ -618,8 +607,7 @@ void JoyStickInput::casual_sticks(js_event event)
     case 8:
         axis = get_axis_state(&event, axes);
         if (axis < 3)
-        /* printf("Axis %u at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);*/
-        {                                                //minimum axis is not 30000, but near
+        {                                                //minimum axis is -32767
             if (axis==0)
             {
 
@@ -667,6 +655,73 @@ void JoyStickInput::casual_sticks(js_event event)
         break;
 
 
+    }
+}
+
+void JoyStickInput::usial_experimental_sticks(js_event event)
+{
+    const int thr_const=1;
+    const int roll_const=10;
+    const int pit_const=10;
+    const int yaw_const=10;
+
+    size_t axis;
+    switch (CountOfSticks)
+    {
+    case 6:
+        axis = get_axis_state(&event, axes);
+        if (axis < 3)
+        {                                                //minimum axis is -32767
+            if (axis==0)
+            {
+                pitch_value = 1500 - axes[axis].y/50/pit_const;
+                roll_value = 1500 + axes[axis].x/50/roll_const;
+                if (roll_value>2100){roll_value=2099;}
+                if (roll_value<900){roll_value=901;}
+                if (pitch_value>2100){pitch_value=2099;}
+                if (pitch_value<900){pitch_value=901;}
+
+            }
+            if (axis==1)
+            {
+                yaw_value = 1500 + axes[axis].x/50/yaw_const;
+                if (yaw_value>2100){yaw_value=2099;}
+                if (yaw_value<900){yaw_value=901;}
+
+            }
+        }
+        break;
+    case 8:
+        axis = get_axis_state(&event, axes);
+        if (axis < 3)
+        {                                                //minimum axis is -32767
+            if (axis==0)
+            {
+
+                roll_value = 1500 + axes[axis].x/50/roll_const;
+                if (roll_value>2100){roll_value=2099;}
+                if (roll_value<900){roll_value=901;}
+
+
+            }
+            if (axis==1)
+            {
+                lastLT=axes[axis].x;
+                yaw_value = 1500 + axes[axis].y/50/roll_const;
+                if (yaw_value>2100){yaw_value=2099;}
+                if (yaw_value<900){yaw_value=901;}
+
+            }
+            if (axis==2)
+            {
+
+                pitch_value = 1500 - axes[axis].x/50/pit_const;
+                if (pitch_value>2100){pitch_value=2099;}
+                if (pitch_value<900){pitch_value=901;}
+                lastRT=axes[axis].y;
+            }
+        }
+        break;
     }
 }
 
@@ -736,6 +791,10 @@ void JoyStickInput::SetCasualCurrentMode()
     Current_mode=2;
 }
 
+void JoyStickInput::SetRTLTUsialMode()
+{
+    Current_mode=3;
+}
 void JoyStickInput::TimerForThrottle()
 {
     std::thread thr([this]()
@@ -745,6 +804,12 @@ void JoyStickInput::TimerForThrottle()
             if (Current_mode==1)
             {
                 throttle_value+=sign(throttle_value_from_JS-1500);
+                if (throttle_value>1800){throttle_value=1799;}
+                if (throttle_value<900){throttle_value=901;}
+            }
+            if (Current_mode==3)
+            {
+                throttle_value=1300+(lastRT-lastLT)/188;
                 if (throttle_value>1800){throttle_value=1799;}
                 if (throttle_value<900){throttle_value=901;}
             }

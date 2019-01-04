@@ -52,7 +52,7 @@ void QComController::keepAlive2()
         {
             recordData.add_message(throttle_value,roll_value,yaw_value,pitch_value);
         }
-        /*if (autopilotMode)
+        if (autopilotMode)
         {
             message m=autopilotStack.top();
             autopilotStack.pop();
