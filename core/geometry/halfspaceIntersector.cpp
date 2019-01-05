@@ -215,4 +215,83 @@ ConvexQuickHull::HullFaces HalfspaceIntersector::FromConvexPolyhedron(const Conv
 
 }
 
+ConvexPolyhedron HalfspaceIntersector::FromConvexPolyhedronCP(const ConvexPolyhedron &polyhedron)
+{
+    vector<ProjectiveCoord4d> dual;
+
+    dual.reserve(polyhedron.faces.size());
+    for (const Plane3d &plane : polyhedron.faces)
+    {
+        dual.push_back(ProjectiveCoord4d(plane.a(), plane.b(), plane.c(), plane.d()));
+    }
+
+    cout<< "start ProjectiveConvexHull"<<endl;
+    ProjectiveConvexQuickHull::HullFaces facesD = ProjectiveConvexQuickHull::quickHull(dual);
+#if 1 //return verticies and faces
+    //get points from conex hull
+    vector<Vector3dd> verticies;
+    cout<<"get vertices"<<endl;
+    for(ProjectiveConvexQuickHull::HullFace &face: facesD)  
+    {
+        Matrix *A = new Matrix(3, 3);
+        Matrix *B = new Matrix(3, 1);
+        int i,j;
+        for(i = 0; i < 3 ; i++)
+        {
+            for(j = 0; j<3; j++)
+            {
+                A->a(i, j) = face.plane.p[i][j];
+            }
+            B->a(i,0) = face.plane.p[i][3];
+        }
+        
+        if(Matrix::matrixSolveGaussian(A,B))
+        {
+            verticies.push_back(Vector3dd(B->a(0,0), B->a(1,0),B->a(2,0)));
+            cout<< "Add point: "<< Vector3dd(B->a(0,0), B->a(1,0),B->a(2,0))<<endl;
+        }
+        delete_safe(A);
+        delete_safe(B);
+    }
+    return ConvexPolyhedron(verticies);
+
+#else //return only faces
+    
+    vector<ProjectiveCoord4d> pointsD;
+    for(ProjectiveConvexQuickHull::HullFace &face: facesD)  
+    {
+        pointsD.push_back(face.plane.p1());
+        pointsD.push_back(face.plane.p2());
+        pointsD.push_back(face.plane.p3());
+    }
+    std::sort(pointsD.begin(), pointsD.end(), [](ProjectiveCoord4d &a, ProjectiveCoord4d &b)
+        {
+            if (a.x() < b.x()) return true;
+            if (a.x() > b.x()) return false;
+
+            if (a.y() < b.y()) return true;
+            if (a.y() > b.y()) return false;
+
+            if (a.z() < b.z()) return true;
+            if (a.z() > b.z()) return false;
+
+            if (a.w() < b.w()) return true;
+            return false;
+        }
+    );
+    pointsD.erase(std::unique(pointsD.begin(), pointsD.end()), pointsD.end());
+
+    ConvexPolyhedron result;
+    result.faces.reserve(pointsD.size());
+    cout<< "Intersection result:"<<endl;
+    for(ProjectiveCoord4d &point:pointsD)
+    {
+        result.faces.push_back(Plane3d(point.x(), point.y(), point.z(), point.w()));
+        cout<<Plane3d(point.x(), point.y(), point.z(), point.w())<<endl;
+    }
+    return result;
+#endif
+}
+
+
 } // namespace corecvs

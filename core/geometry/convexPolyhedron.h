@@ -8,6 +8,7 @@
 
 namespace corecvs {
 
+class Mesh3D;
 using std::vector;
 
 template<typename HalfspaceType, typename VectorType>
@@ -69,11 +70,14 @@ class ConvexPolyhedron : public ConvexPolyhedronGeneric<Plane3d, Vector3dd>
 public:
     ConvexPolyhedron();
     ConvexPolyhedron(const AxisAlignedBox3d &box);
-
+    ConvexPolyhedron(const vector<Vector3dd> &vertices);
+    vector<Vector3dd> vertices;
     bool intersectWith(const Ray3d &ray, double &t1, double &t2)
     {
         return ray.clip<ConvexPolyhedron> (*this, t1, t2);
     }
+    static ConvexPolyhedron intersect (const ConvexPolyhedron &poly1, const ConvexPolyhedron &poly2);
+    void addToMesh(Mesh3D &mesh);
 };
 
 class ConvexPolygon : public ConvexPolyhedronGeneric< Line2d, Vector2dd>

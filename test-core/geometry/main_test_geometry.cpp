@@ -334,6 +334,42 @@ TEST(Geometry, rayBasics)
 
 }
 
+TEST(Geometry, intersectionPolyhedronP)
+{    
+    Mesh3D input;
+    Mesh3D result;
+
+    AxisAlignedBox3d box1(Vector3dd(-100, -100, -100), Vector3dd(10, 10, 10));
+    ConvexPolyhedron poly1(box1.getPoints());
+    input.switchColor();
+    input.currentColor = RGBColor::Green();
+    poly1.addToMesh(input);
+    cout<< "\npoly1" << endl;
+    for(Plane3d &plane: poly1.faces)
+    {
+        cout << plane << endl;
+    }
+
+    AxisAlignedBox3d box2(Vector3dd(-10, -10, -10), Vector3dd(100, 100, 100));
+    ConvexPolyhedron poly2(box2.getPoints());
+    cout<< "\npoly2" << endl;
+    for(Plane3d &plane: poly2.faces)
+    {
+        cout << plane << endl;
+    }
+    input.switchColor();
+    input.currentColor = RGBColor::Blue();
+    poly2.addToMesh(input);
+    input.dumpPLY("input.ply");
+
+    ConvexPolyhedron pRes = ConvexPolyhedron::intersect(poly1,poly2);
+    cout<< "result planes:" << pRes.faces.size()<<" points: "<<pRes.vertices.size()<<endl;
+    result.switchColor();
+    result.currentColor = RGBColor::Red();
+    pRes.addToMesh(result);
+    result.dumpPLY("result.ply");
+}
+
 //int main (int /*argC*/, char ** /*argV*/)
 //{
 //    testIntersection3D();
