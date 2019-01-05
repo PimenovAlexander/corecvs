@@ -40,6 +40,16 @@ TEST(Meshdraw, testMeshDraw)
 
 }
 
+TEST(Meshdraw, testMeshDodecahedron)
+{
+    cout << "Starting test <meshdraw>. This is a manual test" << endl;
+    Mesh3D mesh;
+    mesh.addDodecahedron(Vector3dd(0), 2);
+    MeshLoader loader;
+    mesh.dumpPLY("mesh-dodecahedron.ply");
+
+}
+
 TEST(Meshdraw, testMeshScene)
 {
     cout << "Starting test <meshdraw>. This is a manual test" << endl;

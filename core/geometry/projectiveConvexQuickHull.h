@@ -131,23 +131,14 @@ public:
 
     struct HullFace {
         Triangle4dd plane;
-        bool toDelete = false;
-        Vertices points;
+        bool        toDelete = false;
+        Vertices    points;
 
         HullFace(const ProjectiveCoord4d &p1, const ProjectiveCoord4d &p2, const ProjectiveCoord4d &p3) : plane(p1,p2,p3) {}
 
         bool operator==(const HullFace &b) const {
             return plane == b.plane;
         }
-
-        /*
-        bool is_Inf() const {
-            return plane.p1().is_Inf() || plane.p2().is_Inf() || plane.p3().is_Inf();
-        }
-
-        bool is_Low() const {
-            return plane.p1().is_Low() || plane.p2().is_Low() || plane.p3().is_Low();
-        }*/
     };
 
     class HullFaces : public std::vector<HullFace> {

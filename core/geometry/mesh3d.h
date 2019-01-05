@@ -117,7 +117,8 @@ public:
     void addTriangle(const Triangle3dd &triangle);
     void addFlatPolygon(const FlatPolygon &polygon);
 
-    Triangle3dd getFaceAsTrinagle(size_t number);
+    Triangle3dd getFaceAsTrinagle(size_t number) const;
+    Plane3d     getFaceAsPlane   (size_t number) const;
 
     void addSphere    (Vector3dd center, double radius, int step = 10);
 
@@ -130,7 +131,9 @@ public:
      **/
     void addCylinder (const Vector3dd &center, double radius, double height, int step = 20, double phase = 0.0);
 
-    void addIcoSphere(const Vector3dd &center, double radius, int step = 1);
+    void addIcoSphere   (const Vector3dd &center, double radius, int step = 1);
+    void addDodecahedron(const Vector3dd &center, double radius);
+
 
     void addCircle   (const Circle3d &circle, int step = 20);
     void drawCircle  (Vector3dd center, double radius, int step=20, Vector3dd normal=Vector3dd(0, 0, 1));
@@ -170,7 +173,7 @@ public:
 
 private:
     virtual void addEdge(const Vector2d32 &edge);
-    virtual void addVertex(const Vector3dd &vector);
+    virtual void addVertex(const Vector3dd &vector);    
     virtual void addFace(const Vector3d32 &faceId);
 
     //, Vector2dd &texCoord

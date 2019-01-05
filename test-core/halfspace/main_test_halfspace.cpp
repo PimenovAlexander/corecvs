@@ -83,3 +83,5 @@ TEST(Halfspace, inset2d)
 
     BufferFactory::getInstance()->saveRGB24Bitmap(&image, "inset.bmp");
 }
+
+

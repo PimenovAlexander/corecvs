@@ -334,7 +334,7 @@ TEST(Geometry, rayBasics)
 
 }
 
-TEST(Geometry, intersectionPolyhedronP)
+TEST(Geometry, intersectionPolyhedronP0)
 {    
     Mesh3D input;
     Mesh3D result;
@@ -369,6 +369,64 @@ TEST(Geometry, intersectionPolyhedronP)
     pRes.addToMesh(result);
     result.dumpPLY("result.ply");
 }
+
+
+TEST(Geometry, intersectionPolyhedronP1)
+{
+    Mesh3D inputs[6];
+
+    AxisAlignedBox3d box1(Vector3dd(-20, -20, -20), Vector3dd(10, 10, 10));
+    AxisAlignedBox3d box2(Vector3dd(-10, -10, -10), Vector3dd(20, 20, 20));
+
+    {
+        inputs[0].addAOB(box1, true);
+        inputs[1].addAOB(box2, true);
+        inputs[2].addIcoSphere(Vector3dd::Zero(), 20, 0);
+        inputs[3].addSphere   (Vector3dd::Zero(), 14);
+        inputs[4].addCylinder (Vector3dd::Zero(), 8, 60);
+        inputs[5].addDodecahedron(Vector3dd::Zero(), 14);
+    }
+
+    for (int i = 0; i < CORE_COUNT_OF(inputs); i++)
+    {
+        Mesh3D input;
+        std::ostringstream out;
+        out << "in_" << i << ".ply";
+        input.switchColor();
+        input.currentColor = RGBColor::getPalleteColor(i);
+        input.add(inputs[i]);
+        input.dumpPLY(out.str());
+
+        for (int j = i+1; j < CORE_COUNT_OF(inputs); j++)
+        {
+            Mesh3D debug;
+
+            Mesh3D &in0 = inputs[i];
+            Mesh3D &in1 = inputs[j];
+
+            debug.switchColor();
+            debug.currentColor = RGBColor::Green();
+            //debug.add(in0);
+            debug.currentColor = RGBColor::Yellow();
+            //debug.add(in1);
+
+            ConvexPolyhedron poly0(in0.vertexes);
+            ConvexPolyhedron poly1(in1.vertexes);
+
+
+            ConvexPolyhedron intersection = ConvexPolyhedron::intersect(poly0,poly1);
+
+            debug.currentColor = RGBColor::Blue();
+            intersection.addToMesh(debug);
+
+            std::ostringstream out;
+            out << "int_" << i << "_" << j << ".ply";
+            debug.dumpPLY(out.str());
+        }
+    }
+}
+
+
 
 //int main (int /*argC*/, char ** /*argV*/)
 //{

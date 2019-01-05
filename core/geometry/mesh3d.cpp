@@ -295,10 +295,16 @@ void Mesh3D::addFlatPolygon(const FlatPolygon &polygon)
     }
 }
 
-Triangle3dd Mesh3D::getFaceAsTrinagle(size_t number)
+Triangle3dd Mesh3D::getFaceAsTrinagle(size_t number) const
 {
     Vector3d32 facei = faces[number];
     return Triangle3dd(vertexes[facei[0]], vertexes[facei[1]], vertexes[facei[2]]);
+}
+
+Plane3d Mesh3D::getFaceAsPlane(size_t number) const
+{
+    Vector3d32 facei = faces[number];
+    return Plane3d::FromPoints(vertexes[facei[0]], vertexes[facei[1]], vertexes[facei[2]]);
 }
 
 void Mesh3D::addSphere(Vector3dd center, double radius, int step)
@@ -366,57 +372,6 @@ void Mesh3D::addIcoSphere(const Vector3dd &center, double radius, int step)
     Vector3d32 startId(vectorIndex, vectorIndex, vectorIndex);
     pushTransform();
     currentTransform = Matrix44::Identity();
-
-#if 0
-    addVertex(center + Vector3dd(0.0,  1.0,  M_PHI));  // 0
-    addVertex(center + Vector3dd(0.0, -1.0,  M_PHI));  // 1
-    addVertex(center + Vector3dd(0.0,  1.0, -M_PHI));  // 2
-    addVertex(center + Vector3dd(0.0, -1.0, -M_PHI));  // 3
-
-    addVertex(center + Vector3dd( M_PHI,  0.0,  1.0)); // 4
-    addVertex(center + Vector3dd(-M_PHI,  0.0,  1.0)); // 5
-    addVertex(center + Vector3dd( M_PHI,  0.0, -1.0)); // 6
-    addVertex(center + Vector3dd(-M_PHI,  0.0, -1.0)); // 7
-
-    addVertex(center + Vector3dd( 1.0,  M_PHI,  0.0)); // 8
-    addVertex(center + Vector3dd(-1.0,  M_PHI,  0.0)); // 9
-    addVertex(center + Vector3dd( 1.0, -M_PHI,  0.0)); // 10
-    addVertex(center + Vector3dd(-1.0, -M_PHI,  0.0)); // 11
-    /**/
-
-    /* and diagonal */
-    addFace(startId + Vector3d32(0, 4, 8));
-    addFace(startId + Vector3d32(1, 4, 8));
-    addFace(startId + Vector3d32(0, 4, 8));
-    addFace(startId + Vector3d32(0, 4, 8));
-
-    addFace(startId + Vector3d32(0, 4, 8));
-    addFace(startId + Vector3d32(0, 4, 8));
-    addFace(startId + Vector3d32(0, 4, 8));
-    addFace(startId + Vector3d32(0, 4, 8));
-
-
-    /*addFace(startId + Vector3d32(0, 1, 4));
-    addFace(startId + Vector3d32(0, 1, 5));
-
-    addFace(startId + Vector3d32(2, 3, 6));
-    addFace(startId + Vector3d32(2, 3, 7));
-
-
-    addFace(startId + Vector3d32(4, 6,  8));
-    addFace(startId + Vector3d32(4, 6, 10));
-
-    addFace(startId + Vector3d32(5, 7,  9));
-    addFace(startId + Vector3d32(5, 7, 11));
-
-
-    addFace(startId + Vector3d32(8, 9,  0));
-    addFace(startId + Vector3d32(8, 9,  2));
-
-    addFace(startId + Vector3d32(10, 11, 1));
-    addFace(startId + Vector3d32(10, 11, 3));*/
-#else
-
 
     double level = atan(0.5);
     double da = M_PI * 2 / 5;
@@ -517,10 +472,95 @@ void Mesh3D::addIcoSphere(const Vector3dd &center, double radius, int step)
      if (hasColor) {
          facesColor.erase(facesColor.begin() + primaryIndex, facesColor.begin() + faceIndex);
      }
+}
+
+void Mesh3D::addDodecahedron(const Vector3dd &center, double radius)
+{
+    int vectorIndex = (int)vertexes.size();
+    Vector3d32 startId(vectorIndex, vectorIndex, vectorIndex);
+
+    double h  = (-1.0 + sqrt(5.0)) / 2.0;
+    double h2 = h * h;
+    pushTransform();
+    currentTransform = Matrix44::Shift(center) * Matrix44::Scale(radius);
+
+    addVertex(Vector3dd(-1, -1, -1)); // 0
+    addVertex(Vector3dd(-1, -1,  1)); // 1
+    addVertex(Vector3dd(-1,  1, -1)); // 2
+    addVertex(Vector3dd(-1,  1,  1)); // 3
+
+    addVertex(Vector3dd( 1, -1, -1)); // 4
+    addVertex(Vector3dd( 1, -1,  1)); // 5
+    addVertex(Vector3dd( 1,  1, -1)); // 6
+    addVertex(Vector3dd( 1,  1,  1)); // 7
+
+    /** == **/
+    addVertex(Vector3dd(0, -(1 + h), -(1 - h2))); // 8
+    addVertex(Vector3dd(0, -(1 + h),  (1 - h2))); // 9
+    addVertex(Vector3dd(0,  (1 + h), -(1 - h2))); // 10
+    addVertex(Vector3dd(0,  (1 + h),  (1 - h2))); // 11
 
 
+    addVertex(Vector3dd(-(1 + h), -(1 - h2), 0)); // 12
+    addVertex(Vector3dd(-(1 + h),  (1 - h2), 0)); // 13
+    addVertex(Vector3dd( (1 + h), -(1 - h2), 0)); // 14
+    addVertex(Vector3dd( (1 + h),  (1 - h2), 0)); // 15
 
-#endif
+    addVertex(Vector3dd(-(1 - h2), 0, -(1 + h))); // 16
+    addVertex(Vector3dd(-(1 - h2), 0,  (1 + h))); // 17
+    addVertex(Vector3dd( (1 - h2), 0, -(1 + h))); // 18
+    addVertex(Vector3dd( (1 - h2), 0,  (1 + h))); // 19
+
+    /* Cube Caps left */
+    addFace(Vector3d32(12, 13, 0) + startId);
+    addFace(Vector3d32(13, 12, 1) + startId);
+    addFace(Vector3d32(12,  0, 1) + startId);
+    addFace(Vector3d32(13,  2, 0) + startId);
+    addFace(Vector3d32(13,  3, 2) + startId);
+    addFace(Vector3d32(13,  1, 3) + startId);
+
+    /* Cube Caps right */
+    addFace(Vector3d32(14, 4, 15) + startId);
+    addFace(Vector3d32(15, 5, 14) + startId);
+    addFace(Vector3d32(14, 5,  4) + startId);
+    addFace(Vector3d32(15, 4,  6) + startId);
+    addFace(Vector3d32(15, 6,  7) + startId);
+    addFace(Vector3d32(15, 7,  5) + startId);
+
+
+    /* Cube Caps far */
+    addFace(Vector3d32(17, 1, 19) + startId);
+    addFace(Vector3d32(19, 3, 17) + startId);
+    addFace(Vector3d32(17, 3,  1) + startId);
+    addFace(Vector3d32(19, 1,  5) + startId);
+    addFace(Vector3d32(19, 5,  7) + startId);
+    addFace(Vector3d32(19, 7,  3) + startId);
+
+    /* Cube Caps close */
+    addFace(Vector3d32(16, 18, 0) + startId);
+    addFace(Vector3d32(18, 16, 2) + startId);
+    addFace(Vector3d32(16,  0, 2) + startId);
+    addFace(Vector3d32(18,  4, 0) + startId);
+    addFace(Vector3d32(18,  6, 4) + startId);
+    addFace(Vector3d32(18,  2, 6) + startId);
+
+    /* Cube bottom*/
+    addFace(Vector3d32(8, 0, 4) + startId);
+    addFace(Vector3d32(9, 5, 1) + startId);
+    addFace(Vector3d32(8, 9, 0) + startId);
+    addFace(Vector3d32(9, 8, 4) + startId);
+    addFace(Vector3d32(9, 1, 0) + startId);
+    addFace(Vector3d32(9, 4, 5) + startId);
+
+    /*Cube top*/
+    addFace(Vector3d32(10, 6,  2) + startId);
+    addFace(Vector3d32(11, 3,  7) + startId);
+    addFace(Vector3d32(10, 2, 11) + startId);
+    addFace(Vector3d32(11, 6, 10) + startId);
+    addFace(Vector3d32(11, 2,  3) + startId);
+    addFace(Vector3d32(11, 7,  6) + startId);
+
+    popTransform();
 
 }
 

@@ -71,13 +71,23 @@ public:
     ConvexPolyhedron();
     ConvexPolyhedron(const AxisAlignedBox3d &box);
     ConvexPolyhedron(const vector<Vector3dd> &vertices);
+
+    /** Move this out **/
     vector<Vector3dd> vertices;
+
     bool intersectWith(const Ray3d &ray, double &t1, double &t2)
     {
         return ray.clip<ConvexPolyhedron> (*this, t1, t2);
     }
     static ConvexPolyhedron intersect (const ConvexPolyhedron &poly1, const ConvexPolyhedron &poly2);
+
     void addToMesh(Mesh3D &mesh);
+
+    /**
+     * This would work only for convex mesh input with right order of vertexes in each face
+     **/
+    ConvexPolyhedron FromMesh(const Mesh3D &input);
+
 };
 
 class ConvexPolygon : public ConvexPolyhedronGeneric< Line2d, Vector2dd>

@@ -89,4 +89,14 @@ void ConvexPolyhedron::addToMesh(Mesh3D &mesh)
     faces.addToMesh(mesh);
 }
 
+ConvexPolyhedron ConvexPolyhedron::FromMesh(const Mesh3D &input)
+{
+    ConvexPolyhedron toReturn;
+    for (size_t f = 0; f < input.faces.size(); f++)
+    {
+        toReturn.faces.push_back(input.getFaceAsPlane(f));
+    }
+    return toReturn;
+}
+
 } // namespace corecvs
