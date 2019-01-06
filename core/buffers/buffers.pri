@@ -117,4 +117,6 @@ SOURCES += \
     $$PWD/rgb24/bezierRasterizer.cpp
 
 
+HEADERS += $$PWD/correspondenceList.h
+SOURCES += $$PWD/correspondenceList.cpp
 

@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
             {
                 OBJLoader objLoader;
 
-                /** Load Materials **/                
+                /** Load Materials **/
                 std::string mtlFile = path.substr(0, path.length() - 4) + ".mtl";
                 std::ifstream materialFile;
 
@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
 
             shaded->mMesh = mesh;
             shaded->mMesh->recomputeMeanNormals();
-            //shaded->prepareMesh(&mainWindow);
+            shaded->prepareMesh(&mainWindow);
             mainWindow.addSubObject(QString::fromStdString(path), QSharedPointer<Scene3D>(shaded));
         }
     }

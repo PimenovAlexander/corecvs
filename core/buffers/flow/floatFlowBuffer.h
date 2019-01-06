@@ -52,7 +52,12 @@ class Statistics;
 
 struct  FloatFlowQualityData
 {
-    FloatFlowQualityData () {}
+    FloatFlowQualityData ()
+    {
+        corecvs::DefaultSetter setter;
+        accept(setter);
+    }
+
     double gtDensity;
     double density;
 

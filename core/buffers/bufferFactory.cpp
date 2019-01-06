@@ -59,10 +59,11 @@ BufferFactory::BufferFactory()
     registerLoader(new TGALoaderRGB24());
     registerLoader(new SVGToRGB24BufferLoader());
 
-    registerSaver(new BMPSaverRGB24());
+    registerSaver (new BMPSaverRGB24());
 
     registerLoader(new FLOLoader());
-    registerSaver(new FLOSaver());
+    registerSaver (new FLOSaver());
+    registerSaver (new ListFlowSaver());
 }
 
 template<class FactoryClass> void printCapsHelper(const vector<FactoryClass *> &input)

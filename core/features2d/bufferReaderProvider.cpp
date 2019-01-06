@@ -62,9 +62,9 @@ void BufferReaderProvider::write(const RuntimeTypeBuffer& buffer, const std::str
     delete reader;
 }
 
-void BufferReaderProvider::writeRgb(const corecvs::RGB24Buffer& buffer, const std::string &s)
+void BufferReaderProvider::writeRgb(const corecvs::RGB24Buffer& buffer, const std::string &s, int quality)
 {
     BufferReader* reader = getInstance().getBufferReader(s);
-    reader->writeRgb(buffer, s);
+    reader->writeRgb(buffer, s, quality);
     delete reader;
 }

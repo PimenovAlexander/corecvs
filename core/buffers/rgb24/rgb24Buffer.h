@@ -23,7 +23,7 @@
 #include "core/geometry/polygons.h"
 #include "core/buffers/rgb24/rgbColor.h"
 #include "core/function/function.h"
-#include "core/rectification/correspondenceList.h"
+#include "core/buffers/correspondenceList.h"
 #include "core/xml/generated/imageChannel.h"
 
 #include "core/geometry/conic.h"
