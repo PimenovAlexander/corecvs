@@ -247,8 +247,8 @@ ConvexPolyhedron HalfspaceIntersector::FromConvexPolyhedronCP(const ConvexPolyhe
         
         if(Matrix::matrixSolveGaussian(A,B))
         {
-            verticies.push_back(Vector3dd(B->a(0,0), B->a(1,0),B->a(2,0)));
-            cout<< "Add point: "<< Vector3dd(B->a(0,0), B->a(1,0),B->a(2,0))<<endl;
+            verticies.push_back(Vector3dd(-B->a(0,0), -B->a(1,0),-B->a(2,0)));
+            cout<< "Add point: "<< Vector3dd(-B->a(0,0), -B->a(1,0),-B->a(2,0))<<endl;
         }
         delete_safe(A);
         delete_safe(B);
