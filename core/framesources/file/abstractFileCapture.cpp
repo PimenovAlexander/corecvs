@@ -2,6 +2,7 @@
 #include <regex>
 
 #include "abstractFileCapture.h"
+#include "core/utils/utils.h"
 
 AbstractFileCapture::AbstractFileCapture(const std::string &params)
     : mDelay(0)
@@ -46,18 +47,15 @@ AbstractFileCapture::AbstractFileCapture(const std::string &params)
     mPathFmt = matches[filenamePatternGroup];
 
     bool err = false;
-    size_t parsed = 0;
-
-    int fpsnum = std::stoi(matches[fpsNumGroup].str(), &parsed);
-    if (!err || fpsnum < 0 || parsed == 0)
+    int fpsnum = HelperUtils::parseInt(matches[fpsNumGroup].str(), &err);
+    if (!err || fpsnum < 0)
         fpsnum = -1;
-    parsed = 0;
 
-    int fpsdenum = std::stoi(matches[fpsDenumGroup].str(), &parsed);
-    if (!err || fpsdenum <= 0 || parsed == 0)
+    int fpsdenum = HelperUtils::parseInt(matches[fpsDenumGroup].str(), &err);
+    if (!err || fpsdenum <= 0)
         fpsdenum = -1;
 
-    mDelay = std::stoi(matches[delayGroup].str());
+    mDelay = HelperUtils::parseInt(matches[delayGroup].str(), &err);
     if (!err /*|| mDelay < 0*/)
         mDelay = capDefaultDelay;
 

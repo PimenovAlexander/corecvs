@@ -12,9 +12,10 @@ namespace corecvs {
 class UsagePrinter
 {
 public:
+    static const std::string SEPARATOR;
     UsagePrinter() {}
 
-    static void printUsage(const Reflection *feflection);
+    static void printUsage(const Reflection *reflection, const std::string &addNamespace);
 };
 
 } //namespace corecvs

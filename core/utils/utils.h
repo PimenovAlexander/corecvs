@@ -60,6 +60,8 @@ namespace HelperUtils
     bool            endsWith  (const string &str, const string &postfix);
     istream&        getlineSafe(istream& is, string& str);
 
+    int             parseInt (const std::string &c, bool *ok = NULL, size_t *endPos = NULL);
+
     std::string     removeLeading(const string &str, const string &symbols = " ");
 
     void            stringSplit(const string &s, char delim, vector<string> &elems);

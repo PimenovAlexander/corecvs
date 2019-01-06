@@ -14,7 +14,7 @@
 #include "core/math/affine.h"
 #include "core/math/vector/vector2d.h"
 #include "core/math/matrix/matrix33.h"
-#include "core/rectification/correspondenceList.h"
+#include "core/buffers/correspondenceList.h"
 #include "core/math/matrix/matrix.h"
 #include "core/math/quaternion.h"
 #include "core/function/function.h"

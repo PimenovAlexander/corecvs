@@ -173,7 +173,7 @@ public:
 
 private:
     virtual void addEdge(const Vector2d32 &edge);
-    virtual void addVertex(const Vector3dd &vector);    
+    virtual void addVertex(const Vector3dd &vector);
     virtual void addFace(const Vector3d32 &faceId);
 
     //, Vector2dd &texCoord
