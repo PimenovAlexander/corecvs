@@ -1,3 +1,4 @@
+HEADERS += \
     rectification/essentialMatrix.h \
     rectification/essentialEstimator.h \
     rectification/iterativeEstimator.h \

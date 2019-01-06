@@ -62,7 +62,7 @@ SOURCES += \
     $$PWD/orientedBox.cpp \
     $$PWD/plane.cpp
 
-#CONFIG += with_renderer
+CONFIG += with_renderer
 
 with_renderer {
 

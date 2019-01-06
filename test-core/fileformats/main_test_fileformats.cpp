@@ -10,6 +10,7 @@
 #include <fstream>
 #include <iostream>
 
+#include <core/fileformats/floLoader.h>
 #include <core/fileformats/pltLoader.h>
 #include <core/fileformats/xyzListLoader.h>
 
@@ -352,4 +353,17 @@ TEST(FileFormats, testSvgLoader)
 
     RGB24Buffer *buffer = svg.draw();
     BufferFactory::getInstance()->saveRGB24Bitmap(buffer, "svg.bmp");
+}
+
+
+TEST(FileFormats, testFloLoader)
+{
+    FLOLoader loader;
+    FloatFlowBuffer *buffer = loader.load("flow10.flo");
+    cout << buffer->getSize() << endl;
+}
+
+TEST(FileFormats, testFloLoaderFabric)
+{
+    BufferFactory::getInstance()->printCaps();
 }

@@ -4,32 +4,21 @@ CONFIG  += ordered
 SUBDIRS +=                   \
     core                     \
     test-core                \
-<<<<<<< HEAD
     test-core-perf           \
     utils                    \
-=======
-#    test-core-perf           \
-#    utils                    \
->>>>>>> apimenov_mac
     \
-#    tests \
+    tests \
 #    \
     base_application         \
 #    base_application_example \
     recorder                 \
 #    scanner                  \
 #    testbed                  \
-<<<<<<< HEAD
     cloudview                \
     physics                  \
     imageview                \
-=======
-#    cloudview                \
-#    physics                  \
-#    imageview                \
->>>>>>> apimenov_mac
 #    \
-#     generator                \
+     generator                \
 #    egomotion                \
 #    applications/laserscan
      coptercontrol           \

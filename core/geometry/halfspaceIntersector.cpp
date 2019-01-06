@@ -234,11 +234,11 @@ ConvexPolyhedron HalfspaceIntersector::FromConvexPolyhedronCP(const ConvexPolyhe
     for(ProjectiveConvexQuickHull::HullFace &face: facesD)  
     {
         Matrix33  A = Matrix33::FromRows(
-                    face.plane.p1.xyz(),
-                    face.plane.p2.xyz(),
-                    face.plane.p3.xyz());
+                    face.plane.p1().xyz(),
+                    face.plane.p2().xyz(),
+                    face.plane.p3().xyz());
 
-        Vector3dd b(face.plane.p1.w(), face.plane.p2.w(), face.plane.p3.w());
+        Vector3dd b(face.plane.p1().w(), face.plane.p2().w(), face.plane.p3().w());
 
         if(A.det() != 0)
         {

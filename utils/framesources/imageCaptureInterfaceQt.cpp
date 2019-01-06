@@ -17,6 +17,10 @@
 # include "uEyeCapture.h"
 #endif
 
+#ifdef WITH_FLYCAP
+# include "flyCapCapture.h"
+#endif
+
 #ifdef WITH_SYNCCAM
 #include "syncCamerasCaptureInterface.h"
 #endif
@@ -81,6 +85,15 @@ ImageCaptureInterfaceQt* ImageCaptureInterfaceQtFactory::fabric(string input, bo
     {
         string tmp = input.substr(ueye.size());
         return new ImageCaptureInterfaceWrapper<UEyeCaptureInterface>(tmp);
+    }
+#endif
+
+#ifdef WITH_FLYCAP
+    string flycap("flycap:");
+    if (input.substr(0, flycap.size()).compare(flycap) == 0)
+    {
+        string tmp = input.substr(flycap.size());
+        return new ImageCaptureInterfaceWrapper<FlyCapCaptureInterface>(tmp);
     }
 #endif
 

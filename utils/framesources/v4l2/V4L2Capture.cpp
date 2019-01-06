@@ -52,7 +52,7 @@ V4L2CaptureInterface::V4L2CaptureInterface(string _devname, int h, int w, int fp
     mIsRgb = isRgb;
 
     interfaceName = QString("%1:1/%2:yuyv:%3x%4").arg(_devname.c_str()).arg(fps).arg(w).arg(h).toStdString();
-    deviceName[LEFT_FRAME] =  _devname;
+    deviceName[Frames::LEFT_FRAME] =  _devname;
 
     decoder = UNCOMPRESSED;
 

@@ -1,5 +1,3 @@
-
-#include <core/utils/preciseTimer.h>
 /**
  * \file main_test_convexhull.cpp
  * \brief This is the main file for the test convexhull 
@@ -20,7 +18,7 @@
 #include "core/geometry/projectiveConvexQuickHull.h"
 
 #include "core/geometry/mesh3d.h"
-
+#include "core/utils/preciseTimer.h"
 
 
 using namespace std;
@@ -268,7 +266,7 @@ TEST(ConvexHull, testQuickHullNormals)
     faces.reorientNormals(0);
 }
 
-TEST(ConvexHull, testQuickFazzer)
+TEST(convexhull, testQuickFazzer)
 {
     Mesh3D inputMesh;
     inputMesh.addIcoSphere(Vector3dd::Zero(), 100, 0);

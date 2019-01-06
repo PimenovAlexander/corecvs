@@ -13,7 +13,7 @@
 #include "libpngFileReader.h"
 #endif
 
-#include "core/filters/blocks/newStyleBlock.h"
+#include "core/filters/newstyle/newStyleBlock.h"
 #include "widgetBlockHarness.h"
 
 #include "qtFileLoader.h"
