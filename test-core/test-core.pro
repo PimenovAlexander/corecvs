@@ -155,4 +155,4 @@ HEADERS += \
     snooker/snookerSegmentator.h \
     stateMachineTest/test.h \
     bspRenderer/bspRenderTest.h \
-bspRenderer/bspRenderer.h
+    bspRenderer/bspRenderer.h
