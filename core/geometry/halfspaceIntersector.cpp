@@ -233,25 +233,18 @@ ConvexPolyhedron HalfspaceIntersector::FromConvexPolyhedronCP(const ConvexPolyhe
     cout<<"get vertices"<<endl;
     for(ProjectiveConvexQuickHull::HullFace &face: facesD)  
     {
-        Matrix *A = new Matrix(3, 3);
-        Matrix *B = new Matrix(3, 1);
-        int i,j;
-        for(i = 0; i < 3 ; i++)
+        Matrix33  A = Matrix33::FromRows(
+                    face.plane.p1.xyz(),
+                    face.plane.p2.xyz(),
+                    face.plane.p3.xyz());
+
+        Vector3dd b(face.plane.p1.w(), face.plane.p2.w(), face.plane.p3.w());
+
+        if(A.det() != 0)
         {
-            for(j = 0; j < 3; j++)
-            {
-                A->a(i, j) = face.plane.p[i][j];
-            }
-            B->a(i,0) = face.plane.p[i][3];
+            verticies.push_back(-A.inv() * b);
+            cout<< "Add point: "<< verticies.back() <<endl;
         }
-        
-        if(Matrix::matrixSolveGaussian(A,B))
-        {
-            verticies.push_back(Vector3dd(-B->a(0,0), -B->a(1,0),-B->a(2,0)));
-            cout<< "Add point: "<< Vector3dd(-B->a(0,0), -B->a(1,0),-B->a(2,0))<<endl;
-        }
-        delete_safe(A);
-        delete_safe(B);
     }
     return ConvexPolyhedron(verticies);
 
