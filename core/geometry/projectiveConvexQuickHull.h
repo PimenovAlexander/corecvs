@@ -10,8 +10,11 @@
 #include "core/math/vector/vector3d.h"
 #include "core/math/vector/vector4d.h"
 #include "core/geometry/polygons.h"
+#include "core/geometry/convexPolyhedron.h"
 
 namespace corecvs {
+
+class Mesh3D;
 
 template <typename T> int sgn(T val) {
     return (T(0) < val) - (val < T(0));
@@ -77,7 +80,7 @@ public:
     }
 
     Vector3d<ElementType> toVector() const {
-        const auto inf = std::numeric_limits<ElementType>::infinity();
+        const auto inf = std::numeric_limits<ElementType>::max(); //max() instead infinity() is need for correct mesh inf point drawing
         if (this->w() == 0)
             return Vector3d<ElementType>(sgn(this->x()) * inf, sgn(this->y()) * inf, sgn(this->z()) * inf);
         return Vector3d<ElementType>(this->x() / this->w(),
@@ -147,9 +150,33 @@ public:
 
         HullFaces(std::initializer_list<HullFace> list) :
                 std::vector<HullFace>(list) {}
+        
+        vector<ProjectiveCoord4d> getPoints(bool dedup = true) const;
+        bool isInside(const ProjectiveCoord4d &p) const;
+
+        void addToMesh(Mesh3D &mesh);
     };
 
     static HullFaces quickHull(const Vertices& listVertices, double epsilon = 1e-7);
+
+    static HullFaces intersect(const HullFaces &v1,  const HullFaces &v2);
+    static int intersectSegmentTriangle4d(ProjectiveCoord4d &start, ProjectiveCoord4d &end, const Triangle4dd &triangle, ProjectiveCoord4d &pointIntersection1,ProjectiveCoord4d &pointIntersection2 );
+    static int intersectSegmentSegmentInf(const ProjectiveCoord4d &start1,const ProjectiveCoord4d &end1,const ProjectiveCoord4d &start2,const ProjectiveCoord4d &end2, ProjectiveCoord4d &pointIntersection1,ProjectiveCoord4d &pointIntersection2);
+    static int intersectSegmentTriangleInf(const ProjectiveCoord4d &start,const ProjectiveCoord4d &end, const Triangle4dd &triangle4dd, ProjectiveCoord4d &pointIntersection1,ProjectiveCoord4d &pointIntersection2 );
+    static int intersectSegmentPointInf(const ProjectiveCoord4d &start,const ProjectiveCoord4d &end, const ProjectiveCoord4d &point);
+    static int isInsidePointTriangleInf(const ProjectiveCoord4d &pointCheck,const Triangle4dd &triangle4dd);
+};
+
+
+class ConvexPolyhedronP : public ConvexPolyhedronGeneric<Triangle4dd, ProjectiveCoord4d>
+{
+public:
+    ConvexPolyhedronP();
+    ConvexPolyhedronP(const vector<ProjectiveCoord4d> &newVertices);
+    //ConvexPolyhedronP(const ProjectiveConvexQuickHull::HullFaces &newFaces);
+    vector<ProjectiveCoord4d> vertices;
+    static ProjectiveConvexQuickHull::HullFaces intersectWith(const ConvexPolyhedronP &poly1, const ConvexPolyhedronP &poly2);
+    void addToMesh(Mesh3D &mesh);
 };
 
 } // namespace corecvs

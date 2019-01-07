@@ -500,3 +500,165 @@ TEST(ConvexHull, breakProjCQH)
     ProjectiveConvexQuickHull::HullFaces faces = ProjectiveConvexQuickHull::quickHull(input, 1e-9);
     //cout << faces << endl;
 }
+
+
+TEST(ConvexHull, isInsideProjective1)
+{
+    ProjectiveCoord4d v1 = ProjectiveCoord4d(Vector3dd(100, 0,   0), 1);
+    ProjectiveCoord4d v2 = ProjectiveCoord4d(Vector3dd(0,   100, 0), 1);
+    ProjectiveCoord4d v3 = ProjectiveCoord4d(Vector3dd(0,   0,   100), 1);
+    ProjectiveCoord4d v4 = ProjectiveCoord4d(Vector3dd(-1,-1,-1), 0);
+
+    ProjectiveConvexQuickHull::HullFaces faces;
+    faces.push_back(ProjectiveConvexQuickHull::HullFace(v1,v2,v3));
+    faces.push_back(ProjectiveConvexQuickHull::HullFace(v1,v2,v4));
+    faces.push_back(ProjectiveConvexQuickHull::HullFace(v1,v3,v4));
+    faces.push_back(ProjectiveConvexQuickHull::HullFace(v2,v3,v4));
+    
+    Mesh3D mesh;
+    mesh.switchColor();
+    mesh.currentColor = RGBColor::Red();
+    
+    for(const ProjectiveConvexQuickHull::HullFace &triang: faces)
+    {   
+        Triangle3dd triang3d(triang.plane.p1().toVector(), triang.plane.p2().toVector(),triang.plane.p3().toVector());
+        mesh.addTriangle(triang3d);
+    }
+    mesh.dumpPLY("intersection.ply");
+
+    ProjectiveCoord4d pInside(Vector3dd::Zero(), 1);
+    cout << faces.isInside(pInside);
+    ProjectiveCoord4d pOut(1,1,1, 0);
+    cout << faces.isInside(pOut);
+    ProjectiveCoord4d pOnInf(Vector3dd(-1,-1,-1), 0);
+    cout << faces.isInside(pOnInf);
+    ProjectiveCoord4d pBig(Vector3dd(-1000,-1000,-1000), 1);
+    cout << faces.isInside(pBig);
+}
+
+TEST(ConvexHull, intersection)
+{
+    vector<ProjectiveCoord4d> vertices1;
+    vertices1.push_back(ProjectiveCoord4d(Vector3dd(0,0,0),1));
+    vertices1.push_back(ProjectiveCoord4d(Vector3dd(100,0,0),1));
+    vertices1.push_back(ProjectiveCoord4d(Vector3dd(0,50,0),1));
+    vertices1.push_back(ProjectiveCoord4d(Vector3dd(130,70,20),1));
+    vertices1.push_back(ProjectiveCoord4d(Vector3dd(-20,30,50),1));
+    vertices1.push_back(ProjectiveCoord4d(Vector3dd(120,30,70),1));
+    vertices1.push_back(ProjectiveCoord4d(Vector3dd(100,0,100),1));
+    vertices1.push_back(ProjectiveCoord4d(Vector3dd(200,0,0),1));
+    vertices1.push_back(ProjectiveCoord4d(Vector3dd(50,20,20),1));
+
+    ProjectiveConvexQuickHull::HullFaces faces1 = ProjectiveConvexQuickHull::quickHull(vertices1);
+    
+    Mesh3D mesh;
+    mesh.switchColor();
+    mesh.currentColor = RGBColor::Green();
+    for(const ProjectiveConvexQuickHull::HullFace &triang: faces1)
+    {   
+        Triangle3dd triang3d(triang.plane.p1().toVector(), triang.plane.p2().toVector(),triang.plane.p3().toVector());
+        mesh.addTriangle(triang3d);
+    }
+
+    vector<ProjectiveCoord4d> vertices2;
+    vertices2.push_back(ProjectiveCoord4d(50,30,20,1));
+    vertices2.push_back(ProjectiveCoord4d(-100,-30,-5,1));
+    vertices2.push_back(ProjectiveCoord4d(-50,30,70,1));
+    vertices2.push_back(ProjectiveCoord4d(70,-20,30,1));
+
+    ProjectiveConvexQuickHull::HullFaces faces2 = ProjectiveConvexQuickHull::quickHull(vertices2, 1e-9);
+    SYNC_PRINT(("add f2 to m\n"));
+    mesh.switchColor();
+    mesh.currentColor = RGBColor::Blue();
+    for(const ProjectiveConvexQuickHull::HullFace &triang: faces2)
+    {   
+        Triangle3dd triang3d(triang.plane.p1().toVector(), triang.plane.p2().toVector(),triang.plane.p3().toVector());
+        mesh.addTriangle(triang3d);
+    }
+    mesh.dumpPLY("v1v2.ply");
+
+    ProjectiveConvexQuickHull::HullFaces res = ProjectiveConvexQuickHull::intersect(faces1, faces2);
+    SYNC_PRINT(("\nFaces: \n", (int)res.size()));
+    SYNC_PRINT(("add res to mesh\n"));
+    Mesh3D meshRes;
+    meshRes.switchColor();
+    meshRes.currentColor = RGBColor::Red();
+    for(const ProjectiveConvexQuickHull::HullFace &triang: res)
+    {   
+        Triangle3dd triang3d(triang.plane.p1().toVector(), triang.plane.p2().toVector(),triang.plane.p3().toVector());
+        meshRes.addTriangle(triang3d);
+    }
+    meshRes.dumpPLY("intersection.ply");
+}
+TEST(ConvexHull, polyhedronIntersection)
+{
+    vector<ProjectiveCoord4d> vertices1;
+    //vertices1.push_back(ProjectiveCoord4d(Vector3dd(0,0,0),1));
+    vertices1.push_back(ProjectiveCoord4d(Vector3dd(100,0,0),1));
+    vertices1.push_back(ProjectiveCoord4d(Vector3dd(0,50,0),1));
+    //vertices1.push_back(ProjectiveCoord4d(Vector3dd(130,70,20),1));
+    //vertices1.push_back(ProjectiveCoord4d(Vector3dd(-20,30,50),1));
+    vertices1.push_back(ProjectiveCoord4d(Vector3dd(120,30,70),1));
+    vertices1.push_back(ProjectiveCoord4d(Vector3dd(100,0,100),1));
+    vertices1.push_back(ProjectiveCoord4d(Vector3dd(200,0,0),1));
+    vertices1.push_back(ProjectiveCoord4d(Vector3dd(50,20,20),1));
+    Mesh3D input1;
+    input1.switchColor();
+    input1.currentColor = RGBColor::Red();
+    ProjectiveConvexQuickHull::quickHull(vertices1).addToMesh(input1);
+    input1.dumpPLY("input1.ply");
+
+    vector<ProjectiveCoord4d> vertices2;
+    vertices2.push_back(ProjectiveCoord4d(50,30,20,1));
+    vertices2.push_back(ProjectiveCoord4d(-100,-30,-5,1));
+    vertices2.push_back(ProjectiveCoord4d(-50,30,70,1));
+    vertices2.push_back(ProjectiveCoord4d(70,-20,30,1));
+    Mesh3D input2;
+    input2.switchColor();
+    input2.currentColor = RGBColor::Green();
+    ProjectiveConvexQuickHull::quickHull(vertices2).addToMesh(input2);
+    input2.dumpPLY("input2.ply");
+
+
+    ConvexPolyhedronP a(vertices1);
+    ConvexPolyhedronP b(vertices2);
+    Mesh3D meshRes;
+    meshRes.switchColor();
+    meshRes.currentColor = RGBColor::Blue();
+    ConvexPolyhedronP::intersectWith(a, b).addToMesh(meshRes);
+    meshRes.dumpPLY("res.ply");
+}
+TEST(ConvexHull, polyhedronIntersection1)
+{
+    vector<ProjectiveCoord4d> vertices1;
+    vertices1.push_back(ProjectiveCoord4d(Vector3dd(0,0,0),1));
+    vertices1.push_back(ProjectiveCoord4d(Vector3dd(100,0,0),1));
+    vertices1.push_back(ProjectiveCoord4d(Vector3dd(0,100,0),1));
+    vertices1.push_back(ProjectiveCoord4d(Vector3dd(0,0,100),1));
+
+    Mesh3D input1;
+    input1.switchColor();
+    input1.currentColor = RGBColor::Red();
+    ProjectiveConvexQuickHull::quickHull(vertices1).addToMesh(input1);
+    input1.dumpPLY("input1.ply");
+
+    vector<ProjectiveCoord4d> vertices2;
+    vertices2.push_back(ProjectiveCoord4d(Vector3dd(20,20,-50),1));
+    vertices2.push_back(ProjectiveCoord4d(Vector3dd(120,20,-50),1));
+    vertices2.push_back(ProjectiveCoord4d(Vector3dd(20,120,-50),1));
+    vertices2.push_back(ProjectiveCoord4d(Vector3dd(20,20,50),1));
+    Mesh3D input2;
+    input2.switchColor();
+    input2.currentColor = RGBColor::Green();
+    ProjectiveConvexQuickHull::quickHull(vertices2).addToMesh(input2);
+    input2.dumpPLY("input2.ply");
+
+
+    ConvexPolyhedronP a(vertices1);
+    ConvexPolyhedronP b(vertices2);
+    Mesh3D meshRes;
+    meshRes.switchColor();
+    meshRes.currentColor = RGBColor::Blue();
+    ConvexPolyhedronP::intersectWith(a, b).addToMesh(meshRes);
+    meshRes.dumpPLY("res.ply");
+}
