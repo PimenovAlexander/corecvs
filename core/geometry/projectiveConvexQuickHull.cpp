@@ -62,17 +62,17 @@ bool faceIsVisible(const ProjectiveCoord4d &eyePoint, const ProjectiveConvexQuic
     // 1 point on infinity
     else if (face.plane.p1().w() == 0) {
         Vector3dd q = face.plane.p1().xyz();
-        ProjectiveCoord4d p = face.plane.p2() - face.plane.p3();
-        normal = q ^ p.toVector();
+        Vector3dd p = face.plane.p2().toVector() - face.plane.p3().toVector();
+        normal = q ^ p;
         point = face.plane.p2().toVector();
     } else if (face.plane.p2().w() == 0) {
         Vector3dd q = face.plane.p2().xyz();
-        ProjectiveCoord4d p = face.plane.p1() - face.plane.p3();
-        normal = q ^ p.toVector();
+        Vector3dd p = face.plane.p1().toVector() - face.plane.p3().toVector();
+        normal = p ^ q;
     } else if (face.plane.p3().w() == 0) {
         Vector3dd q = face.plane.p3().xyz();
-        ProjectiveCoord4d p = face.plane.p1() - face.plane.p2();
-        normal = p.toVector() ^ q;
+        Vector3dd p = face.plane.p1().toVector() - face.plane.p2().toVector();
+        normal = q ^ p;
     }
 
     double res;
@@ -185,10 +185,10 @@ ProjectiveConvexQuickHull::HullFaces ProjectiveConvexQuickHull::quickHull(const 
 
     queue<HullFace> queue;
     addPointsToFaces(faces.data(), faces.size(), listVertices, epsilon);
-    for (auto face : faces) {
+    cout << "points:\n";
+    for (auto face : faces)
         if (!face.points.empty())
-            queue.push(face);
-    }
+                queue.push(face);
 
     while (!queue.empty()) {
         HullFace face = queue.front();
