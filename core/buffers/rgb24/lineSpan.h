@@ -68,7 +68,7 @@ public:
     }
 
     Vector2dd posD() {
-        return Vector2d<int>(x(), y());
+        return Vector2dd(x(), y());
     }
 
     /**

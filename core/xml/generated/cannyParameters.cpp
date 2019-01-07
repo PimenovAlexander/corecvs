@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from bufferFilters.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<CannyParameters>::reflection = Reflection();
 template<>
 int BaseReflection<CannyParameters>::dummy = CannyParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int CannyParameters::staticInit()
+int CannyParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <CannyParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Canny Parameters",
         "Canny Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(CannyParameters);
+     toFill->objectSize = sizeof(CannyParameters);
      
 
     BoolField* field0 = new BoolField
@@ -52,7 +58,7 @@ int CannyParameters::staticInit()
           "Should edge detect"
         );
     field0->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     IntField* field1 = new IntField
         (
@@ -67,7 +73,7 @@ int CannyParameters::staticInit()
          10000,
          1
         );
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     IntField* field2 = new IntField
         (
@@ -82,10 +88,10 @@ int CannyParameters::staticInit()
          10000,
          1
         );
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Canny Parameters")]= &reflection;
+    directory[std::string("Canny Parameters")]= toFill;
    return 0;
 }
 int CannyParameters::relinkCompositeFields()

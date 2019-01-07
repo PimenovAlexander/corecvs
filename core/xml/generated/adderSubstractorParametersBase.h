@@ -81,7 +81,7 @@ public:
     double mOutput2;
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
-    static int staticInit();
+    static int staticInit(corecvs::Reflection *toFill);
 
     static int relinkCompositeFields();
 

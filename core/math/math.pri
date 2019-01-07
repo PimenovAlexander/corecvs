@@ -59,7 +59,8 @@ HEADERS += \
     math/matrix/similarityReconstructor.h \
     math/sse/doublexT4.h \
 #    math/extensiveCoding.h \
-    math/wisdom.h
+    math/wisdom.h \
+    math/rotate.h
 
 SOURCES += \
     math/matrix/matrix.cpp \
@@ -80,6 +81,7 @@ SOURCES += \
     math/sse/sseWrapper.cpp \
     math/matrix/similarityReconstructor.cpp \
     math/wisdom.cpp \
+    math/rotate.cpp
 
 contains(DEFINES, "WITH_FFTW") {
     !build_pass: message(Adding core submodule math : fftw wrapper)

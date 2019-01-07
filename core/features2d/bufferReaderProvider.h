@@ -19,7 +19,8 @@ public:
     virtual corecvs::RGB24Buffer       readRgb(const std::string &s) = 0;
 
     virtual bool write   (const corecvs::RuntimeTypeBuffer& buffer, const std::string &s) = 0;
-    virtual bool writeRgb(const corecvs::RGB24Buffer      & buffer, const std::string &s) = 0;
+    virtual bool writeRgb(const corecvs::RGB24Buffer      & buffer, const std::string &s, int quality = 95) = 0;
+
 	virtual ~BufferReader() {}
 };
 
@@ -40,7 +41,7 @@ public:
     static corecvs::RGB24Buffer       readRgb(const std::string &s);
 
     static void write   (const corecvs::RuntimeTypeBuffer &buffer, const std::string &s);
-    static void writeRgb(const corecvs::RGB24Buffer &buffer, const std::string &s);
+    static void writeRgb(const corecvs::RGB24Buffer &buffer, const std::string &s, int quality = 95);
 
 	void add(BufferReaderProviderImpl *provider);
 	BufferReader* getBufferReader(const std::string &filename);

@@ -131,8 +131,8 @@ public:
 
     struct HullFace {
         Triangle4dd plane;
-        bool toDelete = false;
-        Vertices points;
+        bool        toDelete = false;
+        Vertices    points;
 
         HullFace(const ProjectiveCoord4d &p1, const ProjectiveCoord4d &p2, const ProjectiveCoord4d &p3) : plane(p1,p2,p3) {}
 

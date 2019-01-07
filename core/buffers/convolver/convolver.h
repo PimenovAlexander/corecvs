@@ -110,6 +110,13 @@ template<int UNROLL = 5>
     static void unrolledWrapperConvolutor(FpImage &src, FpKernel &kernel, FpImage &dst);
 #endif
 
+    /**
+     * This is used not too init the whole image
+     *
+     * If performance is issue we could try to patch convolver methods
+     **/
+    static void fillPerimeter(FpKernel &kernel, FpImage &dst, float value = 0);
+
 };
 
 } //namespace corecvs

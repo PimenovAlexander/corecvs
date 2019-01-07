@@ -15,7 +15,7 @@ void Mesh3DDecorated::switchTextures(bool on)
     if (hasTexCoords == on)
         return;
     if (on) {
-        texId.resize(faces.size(), Vector4d32(-1,-1,-1, 0));
+        texId.resize(faces.size(), Vector4d32(-1,-1,-1, currentTexture));
     } else {
         texId.clear();
     }
@@ -187,7 +187,7 @@ bool Mesh3DDecorated::verify( void )
             }
             if (texId[i][3] < 0 || texId[i][3] >= (int)materials.size())
             {
-                SYNC_PRINT(("Wrong texture name\n"));
+                SYNC_PRINT(("Mesh3DDecorated::verify(): Wrong texture name (%d of %d)\n", texId[i][3], (int)materials.size()));
                 return false;
             }
         }

@@ -224,17 +224,13 @@ public:
         wx = t() * x2;   wy = t() * y2;   wz = t() * z2;
 
         MatrixType toReturn = MatrixType::createMatrix(3, 3);
-#if _MSC_VER    // msvc2015 issued an internal error otherwise... :(
+        // We used fillWithArgs here, but with non-pod types, this may lead to problems.
+        // A fix could be done with variadic templates.
+
         toReturn.atm(0, 0) = 1.0 - (yy + zz);   toReturn.atm(0, 1) =        xy - wz;    toReturn.atm(0, 2) =        xz + wy;
         toReturn.atm(1, 0) =        xy + wz;    toReturn.atm(1, 1) = 1.0 - (xx + zz);   toReturn.atm(1, 2) =        yz - wx;
         toReturn.atm(2, 0) =        xz - wy;    toReturn.atm(2, 1) =        yz + wx;    toReturn.atm(2, 2) = 1.0 - (xx + yy);
-#else
-        toReturn.fillWithArgs(
-            1.0 - (yy + zz),        xy - wz ,        xz + wy,
-                   xy + wz , 1.0 - (xx + zz),        yz - wx,
-                   xz - wy ,        yz + wx , 1.0 - (xx + yy)
-        );
-#endif
+
         return toReturn;
     }
 

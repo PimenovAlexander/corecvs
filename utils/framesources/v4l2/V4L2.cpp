@@ -40,8 +40,6 @@ int V4L2CameraDescriptor::initCamera(string deviceName, const V4L2CameraMode &mo
     return initCamera(deviceName, mode.height, mode.width, mode.fpsnum, mode.fpsdenum, mode.compressed);
 }
 
-
-
 int V4L2CameraDescriptor::initCamera(
         string deviceName,
         int h,

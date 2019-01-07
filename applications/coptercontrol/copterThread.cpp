@@ -50,7 +50,7 @@ public:
         }
     }
 
-    void addPoint(int /*i*/, int /*j*/, uint16_t &value)
+    void addPoint(int /*i*/, int /*j*/, uint16_t &/*value*/)
     {
         this->size++;
     }

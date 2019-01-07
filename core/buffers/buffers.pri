@@ -65,7 +65,8 @@ HEADERS += \
 #    buffers/focusEstimator1.h \
     buffers/rgb24/bresenhamRasterizer.h \
     $$PWD/fixeddisp/fixedPointRemapper.h \
-    $$PWD/remapBuffer.h
+    $$PWD/remapBuffer.h \
+    $$PWD/rgb24/bezierRasterizer.h
 
 
 SOURCES += \
@@ -112,7 +113,10 @@ SOURCES += \
 #    buffers/focusEstimator1.cpp \
     buffers/rgb24/wuRasterizer.cpp \
     $$PWD/rgb24/bresenhamRasterizer.cpp \
-    $$PWD/remapBuffer.cpp
+    $$PWD/remapBuffer.cpp \
+    $$PWD/rgb24/bezierRasterizer.cpp
 
 
+HEADERS += $$PWD/correspondenceList.h
+SOURCES += $$PWD/correspondenceList.cpp
 

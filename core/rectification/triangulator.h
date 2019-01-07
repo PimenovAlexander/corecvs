@@ -78,8 +78,8 @@ public:
         toReturn.leftTransform  = transform * this->leftTransform;
         toReturn.rightTransform = transform * this->rightTransform;
 
-        cout << "Left  Pretransform: " << this->leftTransform << std::endl;
-        cout << "Right Pretransform: " << this->rightTransform << std::endl;
+        // cout << "Left  Pretransform: " << this->leftTransform << std::endl;
+        // cout << "Right Pretransform: " << this->rightTransform << std::endl;
         return toReturn;
     }
 

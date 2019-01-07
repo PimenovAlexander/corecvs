@@ -26,7 +26,7 @@ public:
 
 
     static CameraProjection     *projectionById(const ProjectionType::ProjectionType &projection);
-    static Reflection           *reflectionById(const ProjectionType::ProjectionType &projection);
+    static const Reflection     *reflectionById(const ProjectionType::ProjectionType &projection);
 
     template<class Visitor>
     void accept(Visitor &visitor)

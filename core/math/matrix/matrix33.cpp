@@ -289,6 +289,14 @@ Matrix33 Matrix33::Identity()
     return Matrix33 (1.0);
 }
 
+Matrix33 Matrix33::FlipXY()
+{
+    return Matrix33(
+         0.0, 1.0, 0.0,
+         1.0, 0.0, 0.0,
+         0.0, 0.0, 1.0);
+}
+
 /**
  *
  * Creates a 3D rotation matrix over the Y axis by the angle alpha.

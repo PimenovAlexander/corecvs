@@ -108,7 +108,12 @@ public:
                     break;
                 }
                 DynamicObjectWrapper obj(tfield->reflection, getField<void *>(count));
-                visitor.visit(obj, tfield->name.name);
+
+                //std::string extended = std::string(reflection->name.name) + "." + tfield->name.name;
+                std::string extended = tfield->name.name;
+                SYNC_PRINT(("accept(VisitorType &visitor):%s\n", extended.c_str()));
+                visitor.visit(obj, extended.c_str());
+
                 break;
             }
 
@@ -229,7 +234,7 @@ public:
     template<typename Type>
     bool copyTo(Type *target) const
     {
-        Reflection *targetRef = BaseReflection<Type>::getReflection();
+        const Reflection *targetRef = BaseReflection<Type>::getReflection();
         if (targetRef->name.name != reflection->name.name)
         {
             SYNC_PRINT(("Seem to copyTo object of the wrong type"));

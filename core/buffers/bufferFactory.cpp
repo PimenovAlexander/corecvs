@@ -10,6 +10,9 @@
 #include "core/fileformats/ppmLoader.h"
 #include "core/fileformats/rawLoader.h"
 #include "core/fileformats/bmpLoader.h"
+#include "core/fileformats/tgaLoader.h"
+#include "core/fileformats/floLoader.h"
+#include "core/fileformats/svgLoader.h"
 
 //#if __cplusplus > 199711L
 #if defined(WIN32) && (_MSC_VER < 1900) // we need a threadsafety singleton initialization described in paragraph 6.7.4 of the C++11 standard, msvc2013 doesn't support it fully... Don't care about gcc-versions
@@ -53,8 +56,26 @@ BufferFactory::BufferFactory()
     registerLoader(new PPMLoaderRGB24());
     registerLoader(new BMPLoaderRGB24());
     registerLoader(new RAWLoaderRGB24());
+    registerLoader(new TGALoaderRGB24());
+    registerLoader(new SVGToRGB24BufferLoader());
 
-    registerSaver(new BMPSaverRGB24());
+    registerSaver (new BMPSaverRGB24());
+
+    registerLoader(new FLOLoader());
+    registerSaver (new FLOSaver());
+    registerSaver (new ListFlowSaver());
+}
+
+template<class FactoryClass> void printCapsHelper(const vector<FactoryClass *> &input)
+{
+    for (auto it : input) {
+        cout << "\t" << it->name() << "(";
+        for (auto ext : it->extentions())
+        {
+            cout << ext << " ";
+        }
+        cout << ")" << endl;
+    }
 }
 
 void BufferFactory::printCaps()
@@ -64,38 +85,52 @@ void BufferFactory::printCaps()
     cout << "BufferFactory knows:" << endl;
 
     cout << "  G12 loader" << endl;
-    for (auto it : factory->mLoadersG12) cout << "\t" << it->name() << endl;
+    printCapsHelper(factory->mLoadersG12);
 
     cout << "  G16 loader" << endl;
-    for (auto it : factory->mLoadersG16) cout << "\t" << it->name() << endl;
+    printCapsHelper(factory->mLoadersG16);
 
     cout << "  RGB24 loader" << endl;
-    for (auto it : factory->mLoadersRGB24) cout << "\t" << it->name() << endl;
+    printCapsHelper(factory->mLoadersRGB24);
 
     cout << "  RuntimeType loader" << endl;
-    for (auto it : factory->mLoadersRuntime) cout << "\t" << it->name() << endl;
+    printCapsHelper(factory->mLoadersRuntime);
+
 
     cout << "  RGB24 saver" << endl;
-    for (auto it : factory->mSaversRGB24) cout << "\t" << it->name() << endl;
+    printCapsHelper(factory->mSaversRGB24);
+
+    cout << "  Float Flow loader" << endl;
+    printCapsHelper(factory->mLoadersFloatFlow);
+
+    cout << "  Float Flow saver" << endl;
+    printCapsHelper(factory->mSaversFloatFlow);
+
 }
 
 template<typename BufferType>
 BufferType *loadBuffer(string name, vector<BufferLoader<BufferType> *> &loaders, const string &loaderHint)
 {
     vector<size_t> idxs;
+
     for (size_t i = 0; i < loaders.size(); ++i)
     {
         if (!(loaders[i]->acceptsFile(name)))
             continue;
-        idxs.push_back(i);
+        if (loaders[i]->name() == loaderHint) {
+            idxs.insert(idxs.begin(), i);
+        } else {
+            idxs.push_back(i);
+        }
     }
-    if (!idxs.size())
+
+    if (idxs.empty())
     {
         SYNC_PRINT(("BufferFactory::load(%s): no loaders for it!\n", name.c_str()));
         return NULL;
     }
 
-    for (auto idx : idxs)
+    for (size_t idx : idxs)
     {
         //SYNC_PRINT(("BufferFactory::load(%s): loader <%s>\n", name.c_str(), loaders[idx]->name().c_str()));
         CORE_ASSERT_TRUE_S((loaders[idx]->acceptsFile(name)));
@@ -172,9 +207,19 @@ G12Buffer *BufferFactory::loadG16Bitmap(string name, const string &loaderHint)
     return loadBuffer(name, mLoadersG16, loaderHint);
 }
 
+FloatFlowBuffer *BufferFactory::loadFloatFlow(std::string name, const std::string &loaderHint)
+{
+    return loadBuffer(name, mLoadersFloatFlow, loaderHint);
+}
+
 bool BufferFactory::saveRGB24Bitmap(RGB24Buffer &buffer, const std::string &name, const std::string &saverHint)
 {
     return saveBuffer(buffer, name, saverHint, mSaversRGB24);
+}
+
+bool BufferFactory::saveFloatFlow(FloatFlowBuffer &buffer, const std::string &name, const std::string &saverHint)
+{
+    return saveBuffer(buffer, name, saverHint, mSaversFloatFlow);
 }
 
 RGB24Buffer *BufferFactory::loadRGB24Bitmap(string name, const string &loaderHint)
@@ -202,6 +247,11 @@ std::vector<std::string> BufferFactory::extentionsRuntimeType()
     return std::vector<std::string>();
 }
 
+std::vector<std::string> BufferFactory::extentionsFloatFlowType()
+{
+    return std::vector<std::string>();
+}
+
 BufferLoader<RGB24Buffer> *BufferFactory::getLoaderRGB24ByName(const std::string &name)
 {
      for (auto it : mLoadersRGB24)
@@ -210,6 +260,7 @@ BufferLoader<RGB24Buffer> *BufferFactory::getLoaderRGB24ByName(const std::string
              return it;
          }
      }
+     return NULL;
 }
 
 BufferFactory::~BufferFactory()

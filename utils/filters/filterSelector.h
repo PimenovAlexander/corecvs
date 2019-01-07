@@ -6,7 +6,7 @@
 
 #include "ui_filterSelector.h"
 #include "core/buffers/g12Buffer.h"
-#include "core/filters/abstractFilter.h"
+#include "core/filters/legacy/abstractFilter.h"
 #include "core/reflection/reflection.h"
 #include "filterParametersControlWidgetBase.h"
 

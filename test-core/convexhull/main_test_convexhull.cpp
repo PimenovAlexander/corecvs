@@ -18,7 +18,7 @@
 #include "core/geometry/projectiveConvexQuickHull.h"
 
 #include "core/geometry/mesh3d.h"
-
+#include "core/utils/preciseTimer.h"
 
 
 using namespace std;
@@ -266,7 +266,7 @@ TEST(ConvexHull, testQuickHullNormals)
     faces.reorientNormals(0);
 }
 
-TEST(ConvexHull, testQuickFazzer)
+TEST(convexhull, testQuickFazzer)
 {
     Mesh3D inputMesh;
     inputMesh.addIcoSphere(Vector3dd::Zero(), 100, 0);
@@ -495,7 +495,7 @@ TEST(ConvexHull, testProjective5)
     input.push_back(ProjectiveCoord4d(0, 100, 0, 1));
     input.push_back(ProjectiveCoord4d(0, 0, 100, 1));
     input.push_back(ProjectiveCoord4d(-1, -1, -1, 0));
-
+  
     SYNC_PRINT(("Input points\n"));
     for (size_t t = 0; t < input.size(); t++ )
         cout << t << " " << input[t] << endl;

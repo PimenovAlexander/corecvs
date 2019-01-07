@@ -66,6 +66,20 @@ public:
         return true;
     }
 
+    bool registerLoader(BufferLoader<FloatFlowBuffer> * loader)
+    {
+        mLoadersFloatFlow.push_back(loader);
+        return true;
+    }
+
+
+    bool registerSaver(BufferSaver<FloatFlowBuffer> * saver)
+    {
+        mSaversFloatFlow.push_back(saver);
+        return true;
+    }
+
+
     /** Main function to get a 12-bits buffer from the file with the given path name
      */
     virtual G12Buffer* loadG12Bitmap(string name, const string &loaderHint = "");
@@ -82,10 +96,17 @@ public:
      */
     virtual G12Buffer* loadG16Bitmap(string name, const string &loaderHint = "");
 
+    /** Main function to get a float flow
+     */
+    virtual FloatFlowBuffer* loadFloatFlow(string name, const string &loaderHint = "");
 
     /** Main function to save a 32-bits buffer to the file with the given path name
      */
     virtual bool saveRGB24Bitmap(RGB24Buffer& buffer, const string &name, const string &saverHint = "");
+
+    /** Main function to save  float flow
+     */
+    virtual bool saveFloatFlow(FloatFlowBuffer& buffer, const string &name, const string &saverHint = "");
 
 
     /** Two useful methods to read/save a 32-bits buffer from/to the file with the given path name
@@ -117,6 +138,7 @@ public:
     virtual std::vector<std::string> extentionsRGB24();
     virtual std::vector<std::string> extentionsG12();
     virtual std::vector<std::string> extentionsRuntimeType();
+    virtual std::vector<std::string> extentionsFloatFlowType();
 
 
     BufferLoader<RGB24Buffer> *getLoaderRGB24ByName(const std::string &name);
@@ -134,9 +156,12 @@ public:
     vector<BufferLoader<G12Buffer>   *> mLoadersG16;
     vector<BufferLoader<RGB24Buffer> *> mLoadersRGB24;
     vector<BufferLoader<RuntimeTypeBuffer> *> mLoadersRuntime;
+    vector<BufferLoader<FloatFlowBuffer> *> mLoadersFloatFlow;
 
     //vector<BufferSaver<RuntimeTypeBuffer> *> mSaversRuntime;
     vector<BufferSaver<RGB24Buffer> *> mSaversRGB24;
+    vector<BufferSaver<FloatFlowBuffer> *> mSaversFloatFlow;
+
 };
 
 } //namespace corecvs

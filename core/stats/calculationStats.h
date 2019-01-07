@@ -141,8 +141,10 @@ public:
 
     void leaveContext()
     {
-        /*if (this == nullptr)
-            return;*/
+        if (mStack.empty()) {
+            SYNC_PRINT(("Statistics::leaveContext(): internal error poping empty stack\n"));
+            return;
+        }
         State state = mStack.back();
         mStack.pop_back();
         mPrefix      = state.mPrefix;

@@ -7,21 +7,26 @@
  * \date Nov 26, 2012
  */
 
-#ifndef WITH_OPENCV_3x
+#ifndef WITH_OPENCV_3X
 
 #include "core/buffers/g12Buffer.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/buffers/flow/flowBuffer.h"
 #include "core/math/vector/vector2d.h"
-#include "core/rectification/correspondenceList.h"
+#include "core/buffers/correspondenceList.h"
 #include "openCVTools.h"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/legacy/legacy.hpp> // BruteForceMatcher
 
+#ifdef WITH_OPENCV_CONTRIB
 #if ((CV_MAJOR_VERSION * 10 + CV_MINOR_VERSION) * 10 + CV_SUBMINOR_VERSION) > 220
 # include <opencv2/nonfree/features2d.hpp>    /* for new openCV */
+#else
+# include <opencv2/features2d/features2d.hpp> /* for old openCV */
+# define CV_OLD
+#endif
 #else
 # include <opencv2/features2d/features2d.hpp> /* for old openCV */
 # define CV_OLD
@@ -108,12 +113,12 @@ public:
         return mCorList;
     }
 
-    vector<KeyPoint> getKeypointsImage()
+    vector<cv::KeyPoint> getKeypointsImage()
     {
         return mKeypointsImage;
     }
 
-    vector<KeyPoint> getKeypointsPattern()
+    vector<cv::KeyPoint> getKeypointsPattern()
     {
         return mKeypointsPattern;
     }
@@ -150,7 +155,7 @@ private:
     CorrespondenceList              mCorList; // output of algorithm
 
     DetectorType                    mDetector;
-    vector<KeyPoint>                mKeypointsImage, mKeypointsPattern;
+    vector<cv::KeyPoint>            mKeypointsImage, mKeypointsPattern;
 
     DetectorType                    mDescriptor;
     Mat                             mDescriptorsImage;

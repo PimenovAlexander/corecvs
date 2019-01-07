@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from basemock.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<Vector3dParameters>::reflection = Reflection();
 template<>
 int BaseReflection<Vector3dParameters>::dummy = Vector3dParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int Vector3dParameters::staticInit()
+int Vector3dParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <Vector3dParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Vector 3d Parameters",
         "Vector 3d Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(Vector3dParameters);
+     toFill->objectSize = sizeof(Vector3dParameters);
      
 
     DoubleField* field0 = new DoubleField
@@ -57,7 +63,7 @@ int Vector3dParameters::staticInit()
         );
     field0->widgetHint=BaseField::SPIN_BOX;
     field0->precision=6;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     DoubleField* field1 = new DoubleField
         (
@@ -74,7 +80,7 @@ int Vector3dParameters::staticInit()
         );
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->precision=6;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     DoubleField* field2 = new DoubleField
         (
@@ -91,10 +97,10 @@ int Vector3dParameters::staticInit()
         );
     field2->widgetHint=BaseField::SPIN_BOX;
     field2->precision=6;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Vector 3d Parameters")]= &reflection;
+    directory[std::string("Vector 3d Parameters")]= toFill;
    return 0;
 }
 int Vector3dParameters::relinkCompositeFields()

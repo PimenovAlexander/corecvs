@@ -16,6 +16,8 @@
 #include "draw3dParametersControlWidget.h"
 #include "draw3dCameraParametersControlWidget.h"
 
+
+
 class Mesh3DScene : public Mesh3D, public Scene3D {
 
 public:

@@ -13,11 +13,14 @@
 
 #include <fenv.h>
 
+
 #include "gtest/gtest.h"
 
 #include "core/utils/global.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/math/matrix/matrix.h"
+#include "core/math/matrix/matrix22.h"
+#include "core/math/matrix/covMatrix22.h"
 
 #include "core/fileformats/bmpLoader.h"
 #include "core/kalman/cholesky.h"
@@ -126,6 +129,93 @@ TEST(Eigen, testJacobiConverge)
     cout << endl;
 
 }
+
+TEST(Eigen, testMatrix22)
+{
+    {
+        GenericMatrix22<float> A(22, 0, 0 ,0);
+        float l1, l2;
+        Vector2df d1, d2;
+        GenericMatrix22<float>::eigen(A, l1, d1, l2, d2);
+        cout << "Matrix :\n" << A;
+        cout << "Eigen 1:" << l1 << " " << d1 << endl;
+        cout << "Eigen 2:" << l2 << " " << d2 << endl;
+
+        GenericMatrix22<float> Arec(0.0);
+
+        Arec += l1 * GenericMatrix22<float>::VectorByVector(d1, d1);
+        Arec += l2 * GenericMatrix22<float>::VectorByVector(d2, d2);
+
+        cout << "Matrix1:\n" << Arec;
+        CORE_ASSERT_TRUE(Arec.notTooFar(A, 1e-7), "failed decomp");
+    }
+    cout << endl;
+
+    {
+        GenericMatrix22<float> A(0, 0, 0, 22);
+        float l1, l2;
+        Vector2df d1, d2;
+        GenericMatrix22<float>::eigen(A, l1, d1, l2, d2);
+        cout << "Matrix :\n" << A;
+        cout << "Eigen 1:" << l1 << " " << d1 << endl;
+        cout << "Eigen 2:" << l2 << " " << d2 << endl;
+
+        GenericMatrix22<float> Arec(0.0);
+
+        Arec += l1 * GenericMatrix22<float>::VectorByVector(d1, d1);
+        Arec += l2 * GenericMatrix22<float>::VectorByVector(d2, d2);
+
+        cout << "Matrix1:\n" << Arec;
+        CORE_ASSERT_TRUE(Arec.notTooFar(A, 1e-7), "failed decomp");
+    }
+}
+
+TEST(Eigen, testCovarianceMatrix22)
+{
+
+    CovMatrix22f A0(0);
+    A0.addVector(2,1);
+
+    CovMatrix22f A1(0);
+    A1.addVector(0,1);
+
+    CovMatrix22f A2(0);
+    A2.addVector(1,0);
+
+    CovMatrix22f A3(0);
+    A3.addVector(1,1);
+    A3.addVector(-1,1);
+
+    CovMatrix22f *m[] = {&A0, &A1, &A2, &A3};
+
+    for (int i = 0; i < 4; i++)
+    {
+        CovMatrix22f& A = *m[i];
+
+        float l1, l2;
+        Vector2df d1, d2;
+        A.eigen(l1, d1, l2, d2);
+
+        cout << "Matrix :\n" << A;
+        cout << "Eigen 1:" << l1 << " " << d1 << endl;
+        cout << "Eigen 2:" << l2 << " " << d2 << endl;
+
+        Matrix22f M = A.toMatrix22();
+        Matrix22f M1 = M - l1 * Matrix22f::Identity();
+        Matrix22f M2 = M - l2 * Matrix22f::Identity();
+
+        cout << "M1:\n" << M1;
+        cout << "M2:\n" << M2;
+
+        cout << (M * d1) << " = " << l1 * d1 << endl;
+        cout << (M * d2) << " = " << l2 * d2 << endl;
+        CORE_ASSERT_TRUE_P((M * d1).notTooFar(l1 * d1), ("Wrong eigen1 at test %d", i));
+        CORE_ASSERT_TRUE_P((M * d2).notTooFar(l2 * d2), ("Wrong eigen2 at test %d", i));
+    }
+
+
+}
+
 
 TEST(Eigen, testEllipse)
 {

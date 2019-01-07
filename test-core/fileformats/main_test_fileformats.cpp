@@ -10,6 +10,7 @@
 #include <fstream>
 #include <iostream>
 
+#include <core/fileformats/floLoader.h>
 #include <core/fileformats/pltLoader.h>
 #include <core/fileformats/xyzListLoader.h>
 
@@ -24,6 +25,8 @@
 #include "core/fileformats/plyLoader.h"
 #include "core/fileformats/objLoader.h"
 #include "core/fileformats/gcodeLoader.h"
+#include "core/fileformats/svgLoader.h"
+#include "core/buffers/bufferFactory.h"
 
 using namespace corecvs;
 
@@ -315,4 +318,52 @@ TEST(FileFormats, testLabelList)
 
     CORE_ASSERT_TRUE(list.size() == 4, "Reading problem" );
     loader.saveLabelList(cout  , list);
+}
+
+TEST(FileFormats, testSvgLoader)
+{
+    const char input[] =
+    "<?xml version=\"1.0\" standalone=\"no\"?>\n"
+    "<svg width=\"400\" height=\"400\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n"
+    "<rect x=\"10\" y=\"10\" width=\"30\" height=\"30\" stroke=\"black\" fill=\"transparent\" stroke-width=\"5\"/>\n"
+    "<circle cx=\"25\" cy=\"75\" r=\"20\" stroke=\"red\" fill=\"transparent\" stroke-width=\"5\"/>\n"
+    "<ellipse cx=\"75\" cy=\"75\" rx=\"20\" ry=\"5\" stroke=\"red\" fill=\"transparent\" stroke-width=\"5\"/>\n"
+    "<line x1=\"10\" x2=\"50\" y1=\"110\" y2=\"150\" stroke=\"orange\" fill=\"transparent\" stroke-width=\"5\"/>\n"
+    "<polyline points=\"60 110 65 120 70 115 75 130 80 125 85 140 90 135 95 150 100 145\""
+    "stroke=\"orange\" fill=\"transparent\" stroke-width=\"5\"/>\n"
+    "<polygon points=\"50 160 55 180 70 180 60 190 65 205 50 195 35 205 40 190 30 180 45 180\""
+    "stroke=\"green\" fill=\"transparent\" stroke-width=\"5\"/>\n"
+    "<path d=\"M10 80 C 40 10, 65 10, 95 80 S 150 150, 180 80 \" stroke=\"black\" fill=\"transparent\"/>\n"
+    "<path fill=\"none\" d=\"M 100,90 c 20,0 15,-80 40,-80 s 20,80 40,80 z\" stroke=\"red\"/>\n"
+    "</svg>\n";
+
+    printf("trying to parse xml:\n");
+    printf("\n---------------------------------\n");
+    printf(input);
+    printf("\n---------------------------------\n");
+
+    SvgFile svg;
+    SvgLoader loader;
+    std::string str(input);
+    std::istringstream stream(str);
+
+    loader.loadSvg(stream, svg);
+
+    CORE_ASSERT_TRUE(svg.shapes.size() == 8, "Parsing problem");
+
+    RGB24Buffer *buffer = svg.draw();
+    BufferFactory::getInstance()->saveRGB24Bitmap(buffer, "svg.bmp");
+}
+
+
+TEST(FileFormats, testFloLoader)
+{
+    FLOLoader loader;
+    FloatFlowBuffer *buffer = loader.load("flow10.flo");
+    cout << buffer->getSize() << endl;
+}
+
+TEST(FileFormats, testFloLoaderFabric)
+{
+    BufferFactory::getInstance()->printCaps();
 }

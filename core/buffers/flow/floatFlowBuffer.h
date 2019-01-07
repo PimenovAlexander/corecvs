@@ -9,6 +9,8 @@
  */
 #include <iostream>
 
+
+
 #include "core/utils/global.h"
 
 #include "core/math/vector/vector2d.h"
@@ -35,6 +37,9 @@ public:
     FloatFlow(const Vector2dd &_vector) : isKnown(true), vector(_vector) {}
     FloatFlow(const double &vx, const double &vy)
                                         : isKnown(true), vector(vx,vy)   {}
+    FloatFlow(const double &vx, const double &vy, bool _isKnown)
+                                        : isKnown(_isKnown), vector(vx,vy)   {}
+
 
 
     FloatFlow& operator=(const FloatFlow &other) { isKnown = other.isKnown; vector = other.vector; return *this; }
@@ -42,6 +47,63 @@ public:
 
 
 typedef AbstractContiniousBuffer<FloatFlow, int32_t> FloatFlowBufferBase;
+
+class Statistics;
+
+struct  FloatFlowQualityData
+{
+    FloatFlowQualityData ()
+    {
+        corecvs::DefaultSetter setter;
+        accept(setter);
+    }
+
+    double gtDensity;
+    double density;
+
+    double percent;
+    double Finliers;
+    double afe;
+
+template<class VisitorType>
+    void accept(VisitorType &visitor)
+    {
+        visitor.visit(gtDensity, 0.0, "gtDensity");
+        visitor.visit(density, 0.0, "density");
+        visitor.visit(percent, 0.0, "precent");
+        visitor.visit(Finliers, 0.0, "Finliers");
+        visitor.visit(afe, 0.0, "AFE");
+    }
+
+    friend ostream& operator << (ostream &out, FloatFlowQualityData &toSave)
+    {
+        PrinterVisitor printer(out);
+        toSave.accept<PrinterVisitor>(printer);
+        return out;
+    }
+
+    void addToStats(Statistics *stats);
+
+    void addOther(const FloatFlowQualityData &other)
+    {
+        gtDensity += other.gtDensity;
+        density   += other.density;
+
+        percent   += other.percent;
+        Finliers  += other.Finliers;
+        afe       += other.afe;
+    }
+
+    void divide(double value)
+    {
+        gtDensity /= value;
+        density   /= value;
+
+        percent   /= value;
+        Finliers  /= value;
+        afe       /= value;
+    }
+};
 
 class FloatFlowBuffer :
     public FloatFlowBufferBase,
@@ -55,11 +117,21 @@ public:
 
     FloatFlowBuffer(FloatFlowBuffer &that) : FloatFlowBufferBase (that) {}
     FloatFlowBuffer(FloatFlowBuffer *that) : FloatFlowBufferBase (that) {}
+
     explicit FloatFlowBuffer(FlowBuffer *that);
+    FlowBuffer *toFlowBuffer();
 
 
     FloatFlowBuffer(const FloatFlowBuffer &src, int32_t x1, int32_t y1, int32_t x2, int32_t y2) :
         FloatFlowBufferBase(src, x1, y1, x2, y2) {}
+
+    /**
+     *  Flow compare against ground truth
+     **/
+
+
+    FloatFlowQualityData compare(FloatFlowBuffer &groundTruth, double percentTreshold = 5, double distanceTreshold = 3);
+
 
     /**
      *  Depricated. Ready for removal

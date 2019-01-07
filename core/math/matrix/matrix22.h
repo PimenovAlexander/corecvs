@@ -75,7 +75,8 @@ public:
     GenericMatrix22(const FixedVector<ElementType, 4> &data) : BaseClass(data)
     { }
 
-    GenericMatrix22(ElementType _a00, ElementType _a01,
+    GenericMatrix22(
+             ElementType _a00, ElementType _a01,
              ElementType _a10, ElementType _a11);
 
     /* Element accessors */
@@ -123,8 +124,8 @@ public:
      * \param EIGTOLERANCE
      **/
     static void eigen(const GenericMatrix22 &A,
-                      ElementType &lambda1, VectorType &e1,
-                      ElementType &lambda2, VectorType &e2, ElementType EIGTOLERANCE = 1e-9);
+                      ElementType &lambda_max, VectorType &e1,
+                      ElementType &lambda_min, VectorType &e2, ElementType EIGTOLERANCE = 1e-9);
 
     friend inline GenericMatrix22 operator * (const GenericMatrix22 &M1, const GenericMatrix22 &M2)
     {
@@ -169,6 +170,21 @@ public:
     Vector2d<ElementType>     aW(int i) const;
     Vector2d<ElementType> column(int i) const;
 
+
+    friend std::ostream & operator <<(std::ostream &out, const GenericMatrix22 &matrix)
+    {
+        for (int i = 0; i < matrix.H; i++)
+        {
+            out << "[";
+            for (int j = 0; j < matrix.W; j++)
+            {
+                out << (j == 0 ? "" : " ");
+                out << matrix.a(i,j);
+            }
+            out << "]\n";
+        }
+        return out;
+    }
 
 
 

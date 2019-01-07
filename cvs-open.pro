@@ -15,7 +15,7 @@ SUBDIRS +=                   \
 #    scanner                  \
 #    testbed                  \
     cloudview                \
-#    physics                  \
+    physics                  \
     imageview                \
 #    \
      generator                \
@@ -77,3 +77,4 @@ generator.file                = tools/generator/generator.pro
 
 coptercontrol.file            = applications/coptercontrol/coptercontrol.pro
 
+OTHER_FILES += cvs-config.pri
