@@ -387,7 +387,7 @@ TEST(Geometry, intersectionPolyhedronP1)
         inputs[5].addDodecahedron(Vector3dd::Zero(), 14);
     }
 
-    for (int i = 0; i < CORE_COUNT_OF(inputs); i++)
+    for (size_t i = 0; i < CORE_COUNT_OF(inputs); i++)
     {
         Mesh3D input;
         std::ostringstream out;
@@ -397,7 +397,7 @@ TEST(Geometry, intersectionPolyhedronP1)
         input.add(inputs[i]);
         input.dumpPLY(out.str());
 
-        for (int j = i+1; j < CORE_COUNT_OF(inputs); j++)
+        for (size_t j = i+1; j < CORE_COUNT_OF(inputs); j++)
         {
             Mesh3D debug;
 

@@ -6,9 +6,6 @@ SOURCES +=   \
     filters/newstyle/*.cpp \
 
 
-OLDFILTERS_HEADERS +=  tinyxml/tinyxml2.h
-OLDFILTERS_SOURCES +=  tinyxml/tinyxml2.cpp
-
 OLDFILTERS_HEADERS +=   \
     filters/legacy/*.h \
     filters/legacy/blocks/*.h \

@@ -13,7 +13,7 @@
 #include "core/buffers/rgb24/bezierRasterizer.h"
 
 #include "core/utils/utils.h"
-#include "core/tinyxml/tinyxml2.h"
+#include "core/tinyxml2/tinyxml2.h"
 #include "core/fileformats/svgLoader.h"
 
 namespace corecvs {
@@ -469,7 +469,7 @@ void SvgPath::draw(RGB24Buffer *buffer)
             cursor = start_point;
             if (commands[i].params.size() > 2)
             {
-                for (int j = 2; j < command.params.size(); j += 2)
+                for (size_t j = 2; j < command.params.size(); j += 2)
                 {
                     dest = command.getVector(j);
                     if (command.command == 'm')
@@ -483,7 +483,7 @@ void SvgPath::draw(RGB24Buffer *buffer)
             break;
             /*=================================*/
         case 'L': case 'l':
-            for (int j = 0; j < command.params.size(); j += 2)
+            for (size_t j = 0; j < command.params.size(); j += 2)
             {
                 dest = command.getVector(j);
                 if (command.command == 'l')
@@ -496,7 +496,7 @@ void SvgPath::draw(RGB24Buffer *buffer)
             break;
             /*=================================*/
         case 'H': case 'h':
-            for (int j = 0; j < command.params.size(); j++)
+            for (size_t j = 0; j < command.params.size(); j++)
             {
                 double x2 = command.params[j];
                 if (command.command == 'h')
@@ -509,7 +509,7 @@ void SvgPath::draw(RGB24Buffer *buffer)
             break;
             /*=================================*/
         case 'V': case 'v':
-            for (int j = 0; j < command.params.size(); j++)
+            for (size_t j = 0; j < command.params.size(); j++)
             {
                 double y2 = command.params[j];
                 if (command.command == 'v')
@@ -527,7 +527,7 @@ void SvgPath::draw(RGB24Buffer *buffer)
             break;
             /*=================================*/
         case 'C': case 'c':
-            for (int j = 0; j < command.params.size(); j += 6)
+            for (size_t j = 0; j < command.params.size(); j += 6)
             {
                 control_b = command.getVector(j);
                 control_c = command.getVector(j+2);
@@ -552,7 +552,7 @@ void SvgPath::draw(RGB24Buffer *buffer)
             break;
             /*=================================*/
         case 'S': case 's':
-            for (int j = 0; j < command.params.size(); j+= 2)
+            for (size_t j = 0; j < command.params.size(); j+= 2)
             {
                 control_b = command.getVector(j);
                 control_c = command.getVector(j);

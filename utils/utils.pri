@@ -42,7 +42,7 @@ UTILS_INCLUDEPATH = \
     $$UTILSDIR/visitors \
     $$UTILSDIR/widgets \
     $$UTILSDIR/photostationcalibration \
-    $$UTILSDIR/tablecontrol \
+#    $$UTILSDIR/tablecontrol \
     $$UTILSDIR/capture     \
     $$UTILSDIR/reconstruction \
     $$UTILSDIR/memoryuse

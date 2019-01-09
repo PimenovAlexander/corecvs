@@ -45,8 +45,24 @@ CORE_SUBMODULES =       \
     polynomial          \
     camerafixture       \
     iterative           \
-    stereointerface     \
+    stereointerface     \   	
+    \
+    tinyxml2            \
+
+ADDITIONAL_MODULES +=   \
+    assignment          \
+    boosting            \
+    meta                \
+    framesources        \
+    filters             \
+    meanshift           \
+    segmentation        \
+    clustering3d        \
+    placer              \
     delaunay		\
+
+
+CORE_SUBMODULES += $$ADDITIONAL_MODULES
 
 for (MODULE, CORE_SUBMODULES) {
     CORE_INCLUDEPATH += $${COREDIR}/$${MODULE}

@@ -2,7 +2,7 @@
 #define FILTERSCOLLECTION_H
 
 #include "core/filters/legacy/blocks/filterBlock.h"
-#include "core/tinyxml/tinyxml2.h"       // for XMLDocument here
+#include "core/tinyxml2/tinyxml2.h"       // for XMLDocument here
 #include <set>
 
 namespace corecvs

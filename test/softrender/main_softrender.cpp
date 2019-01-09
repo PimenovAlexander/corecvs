@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <core/reflection/commandLineSetter.h>
+
 #include <QApplication>
 #include <QtCore>
 #include "qtFileLoader.h"
@@ -123,30 +125,80 @@ int main(int argc, char **argv)
     {
         printf("Usage: \n"
                "  softrender <obj basename> \n"
-               "  softrender <obj basename> <camera.json | camera.txt> \n");
+               "  softrender <obj basename> <camera.json | camera.txt> \n"
+               "  Parameters --fov=50 --w=1000 --h=1000\n"
+
+               );
 
         exit(1);
     }
 
     std::string objName;
 
-    double fx, fy, cx, cy, w = 1000, h = 1000;
     if (argc >= 2) {
         objName     = std::string(argv[1]);
     }
 
+    CommandLineSetter line(argc, argv);
+
+    double fov = degToRad(50);
+    double w = 1000;
+    double h = 1000;
+
+    fov = degToRad(line.getDouble("fov", radToDeg(fov)));
+    w   = line.getDouble("w", 1000);
+    h   = line.getDouble("h", 1000);
+
     PinholeCameraIntrinsics cam(Vector2dd(w,h), degToRad(50));
-    Affine3DQ pose;
-    /*if (argc >= 3) {
-		std::cout << "loading cam" << std::endl;
-		std::ifstream cams;
-		cams.open(argv[2]);
-		std::string tag;
-		cams >> tag >> fx >> fy >> cx >> cy >> w >> h;
-		cam.setSize(Vector2dd(w, h));
-		cam.setPrincipal(Vector2dd(cx, cy));
-		cam.setFocal(Vector2dd(fx, fy));
-    }*/
+
+    Affine3DQ pose = Affine3DQ::Identity();
+
+    if (line.hasOption("lookFrom"))
+    {
+        Vector3dd lookFrom = Vector3dd::Zero();
+        Vector3dd lookAt   = Vector3dd::Zero();
+        line.visit(lookFrom, "lookFrom");
+        line.visit(lookAt  , "lookAt");
+
+        pose.shift = lookFrom;
+
+        Vector3dd zDir = lookAt - lookFrom;
+        zDir.normalise();
+        Vector3dd xDir = Vector3dd(-zDir.y(), zDir.x(), 0.0);
+        xDir.normalise();
+        Vector3dd yDir = xDir ^ zDir;
+        yDir.normalise();
+
+        pose.rotor = Quaternion::FromMatrix(Matrix33::FromRows(xDir, yDir, zDir));
+
+    }
+
+    if (line.hasOption("posefile")) {
+        std::string posefile = line.getString("posefile", "in.txt");
+        std::cout << "loading pose from <" << posefile << ">"<< std::endl;
+        std::ifstream poses;
+        poses.open(posefile);
+        int n;
+        std::string tag;
+        poses >> n >> tag;
+        poses >> pose.shift.x() >> pose.shift.y() >> pose.shift.z() >> pose.rotor.x() >> pose.rotor.y() >> pose.rotor.z() >> pose.rotor.t();
+    }
+
+    if (line.hasOption("preset")) {
+        int preset = line.getInt("preset", 0);
+
+        switch (preset) {
+        case 0: {
+            pose = Affine3DQ::RotationX(degToRad(-25))
+                 * Affine3DQ::RotationY(degToRad(150))
+                 * Affine3DQ::RotationZ(degToRad(180))
+                 * Affine3DQ::Shift(0, 0, -2000);
+            }
+            break;
+        default:
+            break;
+        }
+    }
 
     ClassicRenderer renderer;
 
@@ -185,24 +237,9 @@ int main(int argc, char **argv)
     SYNC_PRINT(("Loaded and added textures\n"));
 
 
-	if (argc >= 4) {
-		std::cout << "loading pose" << std::endl;
-		std::ifstream poses;
-		poses.open(argv[3]);
-		int n;
-		std::string tag;
-		poses >> n >> tag;
-
-		poses >> pose.shift.x() >> pose.shift.y() >> pose.shift.z() >> pose.rotor.x() >> pose.rotor.y() >> pose.rotor.z() >> pose.rotor.t();
-    }
-    
     printf("Will render <%s>\n", objName.c_str());
 
 
-    pose = Affine3DQ::RotationX(degToRad(-25))
-         * Affine3DQ::RotationY(degToRad(150))
-         * Affine3DQ::RotationZ(degToRad(180))
-         * Affine3DQ::Shift(0, 0, -2000);
 
     SYNC_PRINT(("Starting render...\n"));
     cout << "Camera:" << cam << endl;
@@ -211,6 +248,9 @@ int main(int argc, char **argv)
 
     renderer.modelviewMatrix = cam.getKMatrix() * Matrix44(pose.inverted());
     RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::Black());
+
+    mesh->dumpInfo(cout);
+    SYNC_PRINT(("Starting render...\n"));
 
     renderer.render(mesh, buffer);
 

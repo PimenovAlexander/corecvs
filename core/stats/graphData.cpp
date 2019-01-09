@@ -6,7 +6,7 @@
 void GraphData::addGraphPoint(unsigned graphId, double value, bool isValid)
 {
     if (graphId >= mData.size()) {
-        SYNC_PRINT(("GraphPlotDialog::addGraphPoint(): adding new graph"));
+        // SYNC_PRINT(("GraphPlotDialog::addGraphPoint(): adding new graph"));
 
         mData.resize(graphId + 1);
         mData[graphId].isSelected = false;

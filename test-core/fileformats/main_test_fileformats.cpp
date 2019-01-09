@@ -360,7 +360,9 @@ TEST(FileFormats, testFloLoader)
 {
     FLOLoader loader;
     FloatFlowBuffer *buffer = loader.load("flow10.flo");
-    cout << buffer->getSize() << endl;
+    if (buffer != NULL) {
+        cout << buffer->getSize() << endl;
+    }
 }
 
 TEST(FileFormats, testFloLoaderFabric)

@@ -11,7 +11,7 @@
 #include <vector>
 #include <unordered_map>
 #include "core/utils/utils.h"
-#include "core/tinyxml/tinyxml2.h"
+#include "core/tinyxml2/tinyxml2.h"
 #include "core/geometry/polygons.h"
 #include "core/geometry/ellipse.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
@@ -21,7 +21,6 @@
 
 namespace corecvs {
 
-using namespace std;
 using namespace tinyxml2;
 
 class SvgShape;
@@ -36,9 +35,9 @@ struct str_cmp
 };
 
 typedef SvgShape* (SvgLoader::* f_type)(XMLElement*);
-typedef map<const char*, f_type, str_cmp> shape_map;
-typedef unordered_map<char, char> escape_map;
-typedef map<const char*, RGBColor, str_cmp> color_map;
+typedef std::map<const char*, f_type, str_cmp> shape_map;
+typedef std::unordered_map<char, char> escape_map;
+typedef std::map<const char*, RGBColor, str_cmp> color_map;
 
 class SvgShape
 {
@@ -214,7 +213,7 @@ public:
     shape_map shape_m;
     static escape_map escape_m;
 
-    int loadSvg(istream &input, SvgFile &svg);
+    int loadSvg(std::istream &input, SvgFile &svg);
 private:
     int parseXML(XMLDocument &xml, SvgFile &svg);
     vector<Vector2dd> parsePoints(string data);

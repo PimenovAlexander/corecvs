@@ -111,8 +111,7 @@ const std::string CommandLineSetter::getOption(const std::string &option, bool *
 {
     string decorated = mArgPrefix + option + mArgSeparator;
 
-    SYNC_PRINT(("CommandLineSetter::getOption(%s, _): called (%s)\n", option.c_str(), decorated.c_str()));
-
+    //SYNC_PRINT(("CommandLineSetter::getOption(%s, _): called (%s)\n", option.c_str(), decorated.c_str()));
 
     if (found != NULL) *found = false;
     for (unsigned i = 0; i < mArgs.size(); i++)

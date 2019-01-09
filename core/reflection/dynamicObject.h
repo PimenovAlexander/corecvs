@@ -205,7 +205,12 @@ public:
     /**
      * I call separate method clone instead of copy constructor/operator =.
      *
-     * This is done not to create an illusion that it is a fast operation. It is a deep copy and needs allocation on heap.
+     * This is done not to create an illusion that it is a fast operation.
+     * It is a deep copy and needs allocation on heap.
+     *
+     * So far objects with strings inside are unsupported
+     *
+     *
      */
     DynamicObject clone()
     {

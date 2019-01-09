@@ -140,16 +140,24 @@ TEST(CommandLine, testVisitorComplexObject)
 
     cout << " ============================================" << std::endl;
 
-    const char *argv[] = {"--prefix.params.String field=change"};
+    const char *argv[] = {
+        "--prefix.params.String field=change with space",
+        "--prefix.params.Int Field0=5",
+        "--prefix.params.Double field0=6.5",
+        "--prefix.params.Enum Field0=1",
+        "--prefix.params.Subclass Field.Int Field0=4"};
     int argc = CORE_COUNT_OF(argv);
 
     CommandLineSetter setter(argc, argv);
-    DynamicObject obj(&block);
+    DynamicObjectWrapper obj(&block);
     setter.mPreserveValues = true;
     setter.visit(obj, "prefix");
-
-    obj.copyTo(&block);
     cout << block << std::endl;
+    CORE_ASSERT_TRUE(block.params().stringField()  == "change with space", "Wrong string parsing");
+    CORE_ASSERT_TRUE(block.params().intField0()    == 5, "Wrong int parsing");
+    CORE_ASSERT_TRUE(block.params().doubleField0() == 6.5, "Wrong double parsing");
+    CORE_ASSERT_TRUE(block.params().enumField0()   == TestEnum::ITEM2, "Wrong enum parsing");
+    CORE_ASSERT_TRUE(block.params().subclassField().intField0() == 4, "Wrong int in structure parsing");
 }
 
 

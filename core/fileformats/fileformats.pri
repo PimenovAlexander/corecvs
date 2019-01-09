@@ -6,7 +6,6 @@ HEADERS += \
     $$PWD/plyLoader.h \
     $$PWD/stlLoader.h \
     $$PWD/metamap.h \
-    $$PWD/svgLoader.h \
     $$PWD/floLoader.h \
     $$PWD/openCVDataLoader.h \
     $$PWD/tgaLoader.h
@@ -17,15 +16,14 @@ SOURCES += \
     $$PWD/ppmLoader.cpp \
     $$PWD/rawLoader.cpp \
     $$PWD/plyLoader.cpp \
-    $$PWD/stlLoader.cpp \
-    $$PWD/svgLoader.cpp \
+    $$PWD/stlLoader.cpp \    
     $$PWD/floLoader.cpp \
     $$PWD/openCVDataLoader.cpp \
     $$PWD/tgaLoader.cpp
 
-CONFIG += with_formats3d
+CONFIG += with_addformats
 
-with_formats3d {
+with_addformats {
 
 HEADERS += \
     fileformats/meshLoader.h \
@@ -41,5 +39,8 @@ SOURCES += \
     fileformats/gcodeLoader.cpp \
     fileformats/pltLoader.cpp \
     fileformats/xyzListLoader.cpp \
+
+HEADERS += $$PWD/svgLoader.h
+SOURCES += $$PWD/svgLoader.cpp
 
 }
