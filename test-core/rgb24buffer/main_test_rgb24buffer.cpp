@@ -45,8 +45,12 @@ TEST(RGBColorTest, testPallete)
     RGB24Buffer parula(100,100);
     for (int i = 0; i < 9; i++)
     {
-        parula.drawRectangle(i * 10, 0, i*10 + 10, 50, RGBColor::getParulaColor(i), 0);
-
+        parula.drawRectangle(i * 10, 0, 9, 50, RGBColor::getParulaColor(i), 2);
     }
+    for (int i = 0; i < 90; i++)
+    {
+        parula.drawVLine(i, 51, 99, RGBColor::parula(i / 90.0));
+    }
+
     BufferFactory::getInstance()->saveRGB24Bitmap(&parula, "parula.bmp");
 }

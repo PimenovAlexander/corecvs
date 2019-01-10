@@ -186,8 +186,16 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
 
             // printf("\n\n\n ------!! %i !!------ \n\n\n", f);
             Vector3d32 face = mesh->faces[f];
-            Vector3d32 normalId = mesh->normalId[f];
-            Vector4d32 textureId = mesh->texId[f];
+
+            Vector3d32 normalId(-1);
+            if (mesh->hasNormals && (f < mesh->normalId.size())) {
+                    normalId = mesh->normalId[f];
+            }
+
+            Vector4d32 textureId(-1);
+            if (mesh->hasTexCoords && (f < mesh->texId.size())) {
+                    textureId = mesh->texId[f];
+            }
 
             bool hasNormal = (normalId[0] != -1) && (normalId[1] != -1) && (normalId[2] != -1);
             /**/
@@ -215,7 +223,12 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
                     break;
                 }
 
-                texture[i] = mesh->textureCoords[textureId[i]];
+                if (textureId.x() != -1 && textureId.y() != -1 && textureId.z() != -1)
+                {
+                    texture[i] = mesh->textureCoords[textureId[i]];
+                } else {
+                    texture[i] = Vector2dd::Zero();
+                }
 
                 AttributedPoint &p = triang.p[i];
 
@@ -400,7 +413,7 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
 
                 RGBColor c = color;
                 
-                if (texId < (int)textures.size() && textures[texId] != NULL)
+                if (texId >= 0 && texId < (int)textures.size() && textures[texId] != NULL)
                 {                    
                     if(useMipmap)
                     {
@@ -473,7 +486,11 @@ void ClassicRenderer::fragmentShader(AttributedHLineSpan &span)
                     }
 
                 } else {
-                    SYNC_PRINT(("Tex is NULL or non-existent %d\n", texId));
+                    static bool suppress = false;
+                    if (!suppress) {
+                        SYNC_PRINT(("Tex is NULL or non-existent %d\n", texId));
+                        suppress = true;
+                    }
                 }
 
                 /* Normal block*/

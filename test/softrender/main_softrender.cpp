@@ -127,6 +127,8 @@ int main(int argc, char **argv)
                "  softrender <obj basename> \n"
                "  softrender <obj basename> <camera.json | camera.txt> \n"
                "  Parameters --fov=50 --w=1000 --h=1000\n"
+               "  --lookFrom.x=30 --lookFrom.y=30 --lookFrom.z=30\n"
+               "  --lookAt.x=0  --lookAt.y=0  --lookAt.z=0 \n"
 
                );
 
@@ -203,38 +205,46 @@ int main(int argc, char **argv)
     ClassicRenderer renderer;
 
     Mesh3DDecorated *mesh = new Mesh3DDecorated();
-    OBJLoader objLoader;
-
-    /** Load Materials **/
-    std::string mtlFile = objName.substr(0, objName.length() - 4) + ".mtl";
-    std::ifstream materialFile;
-    materialFile.open(mtlFile, std::ios::in);
-    if (materialFile.good())
-    {
-        objLoader.loadMaterials(materialFile, mesh->materials, corecvs::HelperUtils::getDirectory(mtlFile));
-
-        cout << "Loaded materials: " << mesh->materials.size() << std::endl;
-    } else {
-        cout << "Unable to load material from <" << mtlFile << ">" << std::endl;
-    }
-    materialFile.close();
-
-
 
     /** Load actual data **/
-    SYNC_PRINT(("Starting actual data loading\n"));
-    std::ifstream file;
-    file.open(objName, std::ios::in);
-    objLoader.loadOBJ(file, *mesh);
-    file.close();
-
-
-    for(size_t t = 0; t < mesh->materials.size(); t++)
+    if (corecvs::HelperUtils::endsWith(objName, ".obj"))
     {
-        renderer.addTexture(mesh->materials[t].tex[OBJMaterial::TEX_DIFFUSE], false);
-    }
+        OBJLoader objLoader;
 
-    SYNC_PRINT(("Loaded and added textures\n"));
+        /** Load Materials **/
+        std::string mtlFile = objName.substr(0, objName.length() - 4) + ".mtl";
+        std::ifstream materialFile;
+        materialFile.open(mtlFile, std::ios::in);
+        if (materialFile.good())
+        {
+            objLoader.loadMaterials(materialFile, mesh->materials, corecvs::HelperUtils::getDirectory(mtlFile));
+            cout << "Loaded materials: " << mesh->materials.size() << std::endl;
+        } else {
+            cout << "Unable to load material from <" << mtlFile << ">" << std::endl;
+        }
+        materialFile.close();
+
+        SYNC_PRINT(("Starting actual data loading\n"));
+        std::ifstream file;
+        file.open(objName, std::ios::in);
+        objLoader.loadOBJ(file, *mesh);
+        file.close();
+
+        for(size_t t = 0; t < mesh->materials.size(); t++)
+        {
+            renderer.addTexture(mesh->materials[t].tex[OBJMaterial::TEX_DIFFUSE], false);
+        }
+
+        SYNC_PRINT(("Loaded and added textures\n"));
+    } else {
+
+        MeshLoader loader;
+        if (!loader.load(mesh, objName)) {
+            SYNC_PRINT(("Unable to load raw data <%s>\n", objName.c_str()));
+        } else {
+            SYNC_PRINT(("Loaded raw data\n"));
+        }
+    }
 
 
     printf("Will render <%s>\n", objName.c_str());

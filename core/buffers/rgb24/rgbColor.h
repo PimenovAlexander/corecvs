@@ -560,6 +560,8 @@ public:
      **/
     static RGBColor rainbow(double x);
 
+    static RGBColor parula(double x);
+
     /**
      *  Helper method that allows to represent the double value in interval 0..1
      *  With a color coding.

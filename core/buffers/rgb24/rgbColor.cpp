@@ -57,6 +57,16 @@ RGBColor RGBColor::rainbow(double x)
     }
 }
 
+RGBColor RGBColor::parula(double x)
+{
+    x *= 8.0;
+    x = clamp(x, 0.0, 8.0);
+    int base = (int)x;
+    return lerpColor(getParulaColor(base), getParulaColor(base + 1), (x - (double)base));
+
+
+}
+
 RGBColor RGBColor::colorBlindPalette[] =
 {
     RGBColor(0x762a83u),
