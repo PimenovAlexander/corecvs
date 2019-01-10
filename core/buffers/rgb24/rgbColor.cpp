@@ -77,5 +77,19 @@ RGBColor RGBColor::brightPalette[] =
     RGBColor::Yellow(),
 };
 
+RGBColor RGBColor::parulaPalette[] =
+{
+    RGBColor(0x352a87),
+    RGBColor(0x0363e1),
+    RGBColor(0x1485d4),
+    RGBColor(0x06a7c6),
+    RGBColor(0x38b99e),
+    RGBColor(0x92bf73),
+    RGBColor(0xd9ba56),
+    RGBColor(0xfcce2e),
+    RGBColor(0xf9fb0e)
+};
+
+
 
 } //namespace corecvs

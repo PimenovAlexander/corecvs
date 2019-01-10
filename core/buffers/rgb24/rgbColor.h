@@ -716,6 +716,13 @@ template<class VisitorType>
         return brightPalette[id % 6];
     }
 
+    static RGBColor parulaPalette[9];
+
+    static RGBColor getParulaColor(int id)
+    {
+        return parulaPalette[id % 9];
+    }
+
 
 };
 
