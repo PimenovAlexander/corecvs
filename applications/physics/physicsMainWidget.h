@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "clientsender.h"
+#include "qcomcontroller.h"
 
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
@@ -32,7 +33,7 @@ class PhysicsMainWidget : public QWidget
 
      void disconnect_from_copter();
 public slots:
-    void keepAlive();
+    //void keepAlive();
 private slots:
     void yawChange(int i);
     void rollChange(int i);
@@ -47,7 +48,7 @@ private slots:
     void on_pushButton_released();
     void SendJoyValues();
     void StartRealMode();
-    void BindToRealDrone();
+   // void BindToRealDrone();
     void STOP();
     void on_pushButton_2_clicked();
 
@@ -59,7 +60,7 @@ private:
 
 
     JoyStickInput joystick1{yaw_value,roll_value,pitch_value,throttle_value,CH5_value,CH6_value,CH7_value,CH8_value};
-
+    QComController ComController {this,yaw_value,roll_value,pitch_value,throttle_value,CH5_value,CH6_value,CH7_value,CH8_value};
 
     Ui::PhysicsMainWidget *ui;
     int yaw_value;
