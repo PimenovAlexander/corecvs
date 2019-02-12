@@ -25,6 +25,8 @@ public:
     void SetUsualCurrentMode();
     void SetInertiaCurrentMode();
     void SetCasualCurrentMode();
+    void SetRTLTUsialMode();
+
 private:
     int throttle_value_from_JS;
     int mid_Throttle=1350;
@@ -54,7 +56,12 @@ private:
 
     //ControllRecord recordData;
 
+    int lastLT=-32767;
+    int lastRT=-32767;
+
     void TimerForThrottle();
+    void usial_experimental_sticks(js_event event);
+    void usial_experimental_buttons(js_event event);
 };
 
 #endif // JOYSTICKINPUT_H
