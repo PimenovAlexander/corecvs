@@ -27,6 +27,8 @@ public:
     void SetCasualCurrentMode();
     void SetRTLTUsialMode();
 
+    void full_rt_sticks(js_event event);
+    void SetRTLTFullMode();
 private:
     int throttle_value_from_JS;
     int mid_Throttle=1350;
