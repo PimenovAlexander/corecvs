@@ -360,13 +360,11 @@
         {
             joystick1.SetUsualCurrentMode();   //I dont want errors between qstring and string
             throttle_value=1500;
-
         }
         if(arg1=="Inertia mode")
         {
             joystick1.SetInertiaCurrentMode();
             throttle_value=mid_Throttle;
-
         }
         if(arg1=="Casual mode")
         {
