@@ -14,6 +14,7 @@
 #include "time.h"
 #include <fstream>
 
+
 using namespace std;
 
 
@@ -21,7 +22,7 @@ JoyStickInput::JoyStickInput(int &_yaw_value, int &_roll_value, int &_pitch_valu
     : yaw_value(_yaw_value) , roll_value(_roll_value),pitch_value(_pitch_value), throttle_value(_throttle_value),CH5_value(_CH5_value),CH6_value(_CH6_value),CH7_value(_CH7_value),CH8_value(_CH8_value)
 {
     throttle_value=1239;
-     cout<<"AAAaaaAAA"<<endl;
+    // cout<<"AAAaaaAAA"<<endl;
 }
 
 void JoyStickInput::Start()
@@ -150,6 +151,9 @@ std::thread thr([this]()
                     case 3:
                        usial_experimental_buttons(eventtt);
                        break;
+                    case 4:                                 //diff with 3 in timer thread
+                        usial_experimental_buttons(eventtt);
+                        break;
                     default: break;
                 }
 
@@ -172,6 +176,10 @@ std::thread thr([this]()
                     case 3:
                         usial_experimental_sticks(eventtt);
                         break;
+                    case 4:
+                        usial_experimental_sticks(eventtt);
+                        break;
+
                     default: break;
                 }
 
@@ -788,6 +796,83 @@ void JoyStickInput::usial_experimental_buttons(js_event event)
     }
 }
 
+void JoyStickInput::full_rt_sticks(js_event event)
+{
+    const int thr_const=1;
+    const int roll_const=10;
+    const int pit_const=10;
+    const int yaw_const=10;
+
+    size_t axis;
+    switch (CountOfSticks)
+    {
+    case 6:
+        axis = get_axis_state(&event, axes);
+        if (axis < 3)
+        {                                                //minimum axis is -32767
+            if (axis==0)
+            {
+                pitch_value = 1500 - axes[axis].y/50/pit_const;
+                roll_value = 1500 + axes[axis].x/50/roll_const;
+                if (roll_value>2100){roll_value=2099;}
+                if (roll_value<900){roll_value=901;}
+                if (pitch_value>2100){pitch_value=2099;}
+                if (pitch_value<900){pitch_value=901;}
+
+            }
+            if (axis==1)
+            {
+                yaw_value = 1500 + axes[axis].x/50/yaw_const;
+                if (yaw_value>2100){yaw_value=2099;}
+                if (yaw_value<900){yaw_value=901;}
+
+            }
+        }
+        break;
+    case 8:
+        axis = get_axis_state(&event, axes);
+        if (axis < 3)
+        {                                                //minimum axis is -32767
+            if (axis==0)
+            {
+
+                roll_value = 1500 + axes[axis].x/50/roll_const;
+                if (roll_value>2100){roll_value=2099;}
+                if (roll_value<900){roll_value=901;}
+
+                pitch_value = 1500 - axes[axis].y/50/pit_const;
+                if (pitch_value>2100){pitch_value=2099;}
+                if (pitch_value<900){pitch_value=901;}
+
+
+            }
+            if (axis==1)
+            {
+                lastLT=axes[axis].x;
+                yaw_value = 1500 + axes[axis].y/50/roll_const;
+                if (yaw_value>2100){yaw_value=2099;}
+                if (yaw_value<900){yaw_value=901;}
+
+            }
+            if (axis==2)
+            {
+
+                 lastRT=axes[axis].y;
+            }
+        }
+        break;
+    }
+}
+
+
+
+
+
+
+
+
+
+
 void JoyStickInput::Start_arming(bool pressed)
 {
     if (pressed)
@@ -862,6 +947,11 @@ void JoyStickInput::SetRTLTUsialMode()
 {
     Current_mode=3;
 }
+
+void JoyStickInput::SetRTLTFullMode()
+{
+    Current_mode=4;
+}
 void JoyStickInput::TimerForThrottle()
 {
     std::thread thr([this]()
@@ -878,6 +968,12 @@ void JoyStickInput::TimerForThrottle()
             {
                 throttle_value=1300+(lastRT-lastLT)/188;
                 if (throttle_value>1800){throttle_value=1799;}
+                if (throttle_value<900){throttle_value=901;}
+            }
+            if (Current_mode==4)
+            {
+                throttle_value=1300+(lastRT-lastLT)/85;
+                if (throttle_value>2100){throttle_value=2099;}
                 if (throttle_value<900){throttle_value=901;}
             }
             usleep(30000);

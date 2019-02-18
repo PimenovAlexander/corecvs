@@ -3,6 +3,7 @@
 #include <core/geometry/mesh3DDecorated.h>
 #include <QApplication>
 
+
 #include "physicsMainWidget.h"
 
 using namespace corecvs;
