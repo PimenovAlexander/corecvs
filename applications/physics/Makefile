@@ -53,7 +53,8 @@ SOURCES       = main_physics.cpp \
 		clientsender.cpp \
 		controllrecord.cpp \
 		joystickinput.cpp \
-		qcomcontroller.cpp ../../.obj/physics/moc_physicsMainWidget.cpp \
+		qcomcontroller.cpp \
+		simulation.cpp ../../.obj/physics/moc_physicsMainWidget.cpp \
 		../../.obj/physics/moc_qcomcontroller.cpp
 OBJECTS       = ../../.obj/physics/main_physics.o \
 		../../.obj/physics/physicsMainWidget.o \
@@ -61,6 +62,7 @@ OBJECTS       = ../../.obj/physics/main_physics.o \
 		../../.obj/physics/controllrecord.o \
 		../../.obj/physics/joystickinput.o \
 		../../.obj/physics/qcomcontroller.o \
+		../../.obj/physics/simulation.o \
 		../../.obj/physics/moc_physicsMainWidget.o \
 		../../.obj/physics/moc_qcomcontroller.o
 DIST          = ../../arduinoscancontrol.ino \
@@ -131,12 +133,14 @@ DIST          = ../../arduinoscancontrol.ino \
 		clientsender.h \
 		controllrecord.h \
 		joystickinput.h \
-		qcomcontroller.h main_physics.cpp \
+		qcomcontroller.h \
+		simulation.h main_physics.cpp \
 		physicsMainWidget.cpp \
 		clientsender.cpp \
 		controllrecord.cpp \
 		joystickinput.cpp \
-		qcomcontroller.cpp
+		qcomcontroller.cpp \
+		simulation.cpp
 QMAKE_TARGET  = physics
 DESTDIR       = ../../bin/#avoid trailing-slash linebreak
 TARGET        = ../../bin/physics
@@ -323,8 +327,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents physicsMainWidget.h clientsender.h controllrecord.h joystickinput.h qcomcontroller.h $(DISTDIR)/
-	$(COPY_FILE) --parents main_physics.cpp physicsMainWidget.cpp clientsender.cpp controllrecord.cpp joystickinput.cpp qcomcontroller.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents physicsMainWidget.h clientsender.h controllrecord.h joystickinput.h qcomcontroller.h simulation.h $(DISTDIR)/
+	$(COPY_FILE) --parents main_physics.cpp physicsMainWidget.cpp clientsender.cpp controllrecord.cpp joystickinput.cpp qcomcontroller.cpp simulation.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents physicsMainWidget.ui $(DISTDIR)/
 
 
@@ -952,6 +956,9 @@ compiler_clean: compiler_moc_header_clean compiler_uic_clean
 		controllrecord.h \
 		../../../corecvs/core/utils/global.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/qcomcontroller.o qcomcontroller.cpp
+
+../../.obj/physics/simulation.o: simulation.cpp simulation.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/simulation.o simulation.cpp
 
 ../../.obj/physics/moc_physicsMainWidget.o: ../../.obj/physics/moc_physicsMainWidget.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/moc_physicsMainWidget.o ../../.obj/physics/moc_physicsMainWidget.cpp

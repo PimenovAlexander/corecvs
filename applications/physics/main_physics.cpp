@@ -2,6 +2,7 @@
 #include "core/geometry/mesh3d.h"
 #include <core/geometry/mesh3DDecorated.h>
 #include <QApplication>
+#include <bits/stdc++.h>
 
 
 #include "physicsMainWidget.h"
@@ -42,6 +43,7 @@ int main(int argc, char *argv[])
     SET_HANDLERS();
 
     Q_INIT_RESOURCE(main);
+    Vector3d<int> f;
     //QTRGB24Loader::registerMyself();
 
     printf("Starting cloudView...\n");

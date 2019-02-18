@@ -24,7 +24,8 @@ HEADERS += \
     clientsender.h \
     controllrecord.h \
     joystickinput.h \
-    qcomcontroller.h
+    qcomcontroller.h \
+    simulation.h
 
 SOURCES += \
     main_physics.cpp \
@@ -32,7 +33,8 @@ SOURCES += \
     clientsender.cpp \
     controllrecord.cpp \
     joystickinput.cpp \
-    qcomcontroller.cpp
+    qcomcontroller.cpp \
+    simulation.cpp
 
 FORMS += \
     physicsMainWidget.ui

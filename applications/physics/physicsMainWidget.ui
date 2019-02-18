@@ -549,8 +549,8 @@
    <slot>StartJoyStickMode()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>467</x>
-     <y>31</y>
+     <x>1031</x>
+     <y>43</y>
     </hint>
     <hint type="destinationlabel">
      <x>467</x>
@@ -635,5 +635,6 @@
   <slot>CH6Change(int)</slot>
   <slot>CH7Change(int)</slot>
   <slot>CH8Change(int)</slot>
+  <slot>StartVirtualMode()</slot>
  </slots>
 </ui>

@@ -4,7 +4,6 @@
 
 #include <linux/joystick.h>
 #include <fcntl.h>
-
 class JoyStickInput
 {
 public:

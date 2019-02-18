@@ -206,6 +206,12 @@
         }
     }
 
+    void PhysicsMainWidget::StartVirtualMode()
+    {
+
+
+    }
+
     void PhysicsMainWidget::FrameValuesUpdate()
     {
         std::thread thr([this]()

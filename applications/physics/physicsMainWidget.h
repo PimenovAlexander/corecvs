@@ -32,9 +32,12 @@ class PhysicsMainWidget : public QWidget
      struct axis_state {       short x, y;    };
 
      void disconnect_from_copter();
+
 public slots:
-    //void keepAlive();
+
+     //void keepAlive();
 private slots:
+    void StartVirtualMode();
     void yawChange(int i);
     void rollChange(int i);
     void pitchChange(int i);
