@@ -31,3 +31,4 @@ SOURCES += \
 	framesources/decoders/mjpegDecoder.cpp \
 	framesources/decoders/mjpegDecoderLazy.cpp \
 
+OTHER_FILES +=$$PWD/CMakeLists.txt

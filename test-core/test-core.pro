@@ -156,3 +156,6 @@ HEADERS += \
     stateMachineTest/test.h \
     bspRenderer/bspRenderTest.h \
     bspRenderer/bspRenderer.h
+
+OTHER_FILES += \
+    CMakeLists.txt

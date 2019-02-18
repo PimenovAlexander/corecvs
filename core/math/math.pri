@@ -93,3 +93,5 @@ SOURCES += \
     math/fftw/fftwWrapper.cpp \
 
 }
+
+OTHER_FILES += $$PWD/CMakeLists.txt

@@ -28,3 +28,4 @@ SOURCES += \
 #    utils/abstractImageNamer.cpp \
     $$PWD/debuggableBlock.cpp
 
+OTHER_FILES +=$$PWD/CMakeLists.txt

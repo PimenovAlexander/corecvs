@@ -17,3 +17,4 @@ SOURCES += \
         camerafixture/fixtureScenePart.cpp  \
         camerafixture/wildcardablePointerPair.cpp \
 
+OTHER_FILES +=$$PWD/CMakeLists.txt

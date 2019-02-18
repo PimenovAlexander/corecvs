@@ -10,7 +10,7 @@ HEADERS += \
     geometry/convexPolyhedron.h \
     geometry/conic.h \
     geometry/polygonPointIterator.h \
-    geometry/Projection.h \
+#    geometry/projection.h \
     geometry/gentryState.h \    
     geometry/twoViewOptimalTriangulation.h \
     geometry/mesh3DDecorated.h \
@@ -94,3 +94,4 @@ SOURCES += \
 
 
 
+OTHER_FILES +=$$PWD/CMakeLists.txt

@@ -9,8 +9,7 @@
 #include "core/utils/global.h"
 
 #include "core/buffers/flow/floatFlowBuffer.h"
-
-#include <stats/calculationStats.h>
+#include "core/stats/calculationStats.h"
 
 namespace corecvs {
 

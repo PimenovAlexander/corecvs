@@ -74,46 +74,84 @@ RGB24Buffer *LibpngFileReader::load(const string & name)
     png_set_sig_bytes(png_ptr, number);
     png_read_info(png_ptr, info_ptr);
 
-    png_uint_32 width, height;
-    int color_type, bit_depth;
+    png_uint_32 width;
+    png_uint_32 height;
+    int color_type;
+    int bit_depth;
+    int channels  = 3;
 
     png_get_IHDR(png_ptr, info_ptr, &width, &height,
           &bit_depth, &color_type, nullptr,
           nullptr, nullptr);
+
+    if (color_type != PNG_COLOR_TYPE_RGB  && color_type != PNG_COLOR_TYPE_RGB_ALPHA &&
+        color_type != PNG_COLOR_TYPE_GRAY && color_type != PNG_COLOR_TYPE_GRAY_ALPHA )
+    {
+        SYNC_PRINT(("LibpngFileReader::load(): color type not supported (%s)\n", getColorTypeName(color_type)));
+        png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
+        fclose(fp);
+        return NULL;
+    }
+
+    if (color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+    {
+       channels = 1;
+    }
+
+    if (bit_depth != 8) {
+        SYNC_PRINT(("LibpngFileReader::load(): not a 8 bit image (%d)\n", bit_depth));
+        png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
+        fclose(fp);
+        return NULL;
+    }
 
     if (color_type & PNG_COLOR_MASK_ALPHA)
           png_set_strip_alpha(png_ptr);
 
     png_read_update_info(png_ptr, info_ptr);
 
-    if (bit_depth != 8) {
-        png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
-        fclose(fp);
-        return NULL;
-    }
-
     row_pointers = (png_byte **) png_malloc(png_ptr, height * sizeof (png_byte *));
     for (png_uint_32 y = 0; y < height; y++)
-        row_pointers[y] = (png_byte *) png_malloc (png_ptr, sizeof (uint8_t) * width * 3);
+        row_pointers[y] = (png_byte *) png_malloc (png_ptr, sizeof (uint8_t) * width * channels);
 
     png_read_image(png_ptr, row_pointers);
-    png_read_end(png_ptr, nullptr);
-    png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
 
     toReturn = new RGB24Buffer(height, width);
 
-    for (uint32_t y = 0; y < height; y++) {
-        png_byte *row = row_pointers[y];
-        for (uint32_t x = 0; x < width; x++) {
-            RGBColor *dest = &toReturn->element(y,x);
-            uint32_t r = *row++;
-            uint32_t g = *row++;
-            uint32_t b = *row++;
-            *dest = RGBColor(r,g,b);
+    if (channels == 3)
+    {
+        for (uint32_t y = 0; y < height; y++)
+        {
+            png_byte *row = row_pointers[y];
+            for (uint32_t x = 0; x < width; x++)
+            {
+                RGBColor *dest = &toReturn->element(y,x);
+                uint32_t r = *row++;
+                uint32_t g = *row++;
+                uint32_t b = *row++;
+                *dest = RGBColor(r,g,b);
+            }
         }
+    } else {
+        for (uint32_t y = 0; y < height; y++)
+        {
+            png_byte *row = row_pointers[y];
+            for (uint32_t x = 0; x < width; x++)
+            {
+                RGBColor *dest = &toReturn->element(y,x);
+                uint32_t g = *row++;
+                *dest = RGBColor::Gray(g);
+            }
+        }
+    }
+
+    for (uint32_t y = 0; y < height; y++) {
         png_free (png_ptr, row_pointers[y]);
     }
     png_free (png_ptr, row_pointers);
+
+    png_read_end(png_ptr, nullptr);
+    png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
 
     return toReturn;
 }
@@ -171,26 +209,31 @@ RGB48Buffer *LibpngFileReader::loadRGB48(const std::string &name)
         cout << "Color type :" << getColorTypeName(color_type) << endl;
     }
 
+    if (color_type != PNG_COLOR_TYPE_RGB && color_type != PNG_COLOR_TYPE_RGB_ALPHA)
+    {
+        SYNC_PRINT(("LibpngFileReader::loadRGB48(): color type not supported (%s)\n", getColorTypeName(color_type)));
+        png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
+        fclose(fp);
+        return NULL;
+    }
+
+    if (bit_depth != 16) {
+        SYNC_PRINT(("LibpngFileReader::loadRGB48(): not a 16 bit image (%d)\n", bit_depth));
+        png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
+        fclose(fp);
+        return NULL;
+    }
 
     if (color_type & PNG_COLOR_MASK_ALPHA)
           png_set_strip_alpha(png_ptr);
 
     png_read_update_info(png_ptr, info_ptr);
 
-    if (bit_depth != 16) {
-        SYNC_PRINT(("LibpngFileReader::loadRGB48(): not a 16 bit image"));
-        png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
-        fclose(fp);
-        return NULL;
-    }
-
     row_pointers = (png_byte **) png_malloc(png_ptr, height * sizeof (png_byte *));
     for (png_uint_32 y = 0; y < height; y++)
         row_pointers[y] = (png_byte *) png_malloc (png_ptr, sizeof (uint8_t) * width * 3 * (bit_depth / 8));
 
     png_read_image(png_ptr, row_pointers);
-    png_read_end(png_ptr, nullptr);
-    png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
 
     toReturn = new RGB48Buffer(height, width);
 
@@ -208,6 +251,8 @@ RGB48Buffer *LibpngFileReader::loadRGB48(const std::string &name)
     }
     png_free (png_ptr, row_pointers);
 
+    png_read_end(png_ptr, nullptr);
+    png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
     return toReturn;
 }
 

@@ -46,3 +46,4 @@ with_fastbuild:!win32 {
 }
 
 
+OTHER_FILES +=$$PWD/CMakeLists.txt

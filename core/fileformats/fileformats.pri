@@ -44,3 +44,4 @@ HEADERS += $$PWD/svgLoader.h
 SOURCES += $$PWD/svgLoader.cpp
 
 }
+OTHER_FILES +=$$PWD/CMakeLists.txt

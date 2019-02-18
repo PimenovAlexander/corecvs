@@ -1,8 +1,8 @@
-#include <pcl/registration/icp.h>
-
+#include "wrappers/pcl/libpclWrapper.h"
 #include <core/math/matrix/matrix44.h>
 
-#include "libpclWrapper.h"
+#include <pcl/registration/icp.h>
+
 typedef pcl::PointXYZ PointT;
 typedef pcl::PointCloud<PointT> PointCloudT;
 

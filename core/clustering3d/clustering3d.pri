@@ -12,3 +12,4 @@ SOURCES += \
     clustering3d/clustering3d.cpp \
 
 
+OTHER_FILES +=$$PWD/CMakeLists.txt
