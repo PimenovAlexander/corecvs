@@ -255,7 +255,7 @@ void parallelable_reduce(IndexType begin, IndexType end, Function &f, bool shoul
 template <typename IndexType, class Function>
 void parallelable_reduce(IndexType begin, IndexType end, Function &f)
 {
-    parallelable_reduce_notbb(begin, end, f);
+    f(BlockedRange<IndexType>(begin, end));
 }
 #endif
 

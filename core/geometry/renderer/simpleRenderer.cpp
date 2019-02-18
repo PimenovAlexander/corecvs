@@ -181,7 +181,7 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
         for(size_t f = 0; f < mesh->faces.size(); f++)
         {
             if (f % 100 == 0) {
-                SYNC_PRINT(("Processed %d (of %d)\n", f, mesh->faces.size()));
+                SYNC_PRINT(("Processed %d (of %d)\n", f, (int)mesh->faces.size()));
             }
 
             // printf("\n\n\n ------!! %i !!------ \n\n\n", f);
@@ -258,7 +258,7 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
             }
 
             if (behindPoint) {
-                SYNC_PRINT(("Triangle %d is behind at least of one point\n", f));
+                SYNC_PRINT(("Triangle %d is behind at least of one point\n", (int)f));
                 continue;
             }
 

@@ -7,4 +7,6 @@ set (CoreCVS_VERSION_MINOR 0)
 add_subdirectory(core)
 add_subdirectory(test-core)
 
+add_dependencies(test-core corecvs)
+
 #add_executable(Tutorial tutorial.cxx)
