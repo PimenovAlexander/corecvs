@@ -25,7 +25,11 @@ HEADERS += \
     controllrecord.h \
     joystickinput.h \
     qcomcontroller.h \
+<<<<<<< HEAD
     simulation.h
+=======
+    simobject.h
+>>>>>>> 06a4b96fb5813ddafed697eb061ab707c7a8bca8
 
 SOURCES += \
     main_physics.cpp \
@@ -34,7 +38,11 @@ SOURCES += \
     controllrecord.cpp \
     joystickinput.cpp \
     qcomcontroller.cpp \
+<<<<<<< HEAD
     simulation.cpp
+=======
+    simobject.cpp
+>>>>>>> 06a4b96fb5813ddafed697eb061ab707c7a8bca8
 
 FORMS += \
     physicsMainWidget.ui
