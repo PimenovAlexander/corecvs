@@ -1,0 +1,16 @@
+target_sources(corecvs
+    PUBLIC
+    cammodel/energyBuffer.h 
+    cammodel/imagerControl.h 
+    cammodel/cameraParameters.h 
+    cammodel/sphericalCorrectionLUT.h 
+#    cammodel/cameraModel.h 
+    
+
+ 
+    cammodel/energyBuffer.cpp 
+    cammodel/imagerControl.cpp 
+    cammodel/cameraParameters.cpp 
+    cammodel/sphericalCorrectionLUT.cpp 
+#    cammodel/cameraModel.cpp 
+)
