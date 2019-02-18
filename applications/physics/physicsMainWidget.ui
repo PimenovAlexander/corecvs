@@ -16,10 +16,25 @@
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="1" column="0">
     <widget class="QFrame" name="frame_2">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
        <width>200</width>
        <height>200</height>
+      </size>
+     </property>
+     <property name="sizeIncrement">
+      <size>
+       <width>500</width>
+       <height>0</height>
       </size>
      </property>
      <property name="frameShape">
@@ -339,31 +354,15 @@
        <string>CH6-</string>
       </property>
      </widget>
-     <widget class="QFrame" name="frame_4">
+     <widget class="CloudViewDialog" name="widget" native="true">
       <property name="geometry">
        <rect>
-        <x>939</x>
-        <y>9</y>
-        <width>691</width>
-        <height>561</height>
+        <x>570</x>
+        <y>30</y>
+        <width>900</width>
+        <height>531</height>
        </rect>
       </property>
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <widget class="CloudViewDialog" name="widget" native="true">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>10</y>
-         <width>641</width>
-         <height>531</height>
-        </rect>
-       </property>
-      </widget>
      </widget>
     </widget>
    </item>
@@ -376,6 +375,14 @@
       <enum>QFrame::Raised</enum>
      </property>
      <widget class="CloudViewDialog" name="Cloud" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>100</width>
+        <height>30</height>
+       </rect>
+      </property>
      </widget>
     </widget>
    </item>
