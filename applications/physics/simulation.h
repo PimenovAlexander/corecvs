@@ -10,7 +10,7 @@ class Simulation
 {
 public:
     Simulation();
-    std::list<int> Objects;
+    std::list<SimObject> Objects;
 
     void Start();
 };

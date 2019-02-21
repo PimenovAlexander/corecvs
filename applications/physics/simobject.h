@@ -13,11 +13,13 @@ public:
     Vector3d<float> force;
     Vector3d<float> velocity;
     float mass;
+    bool CountPhysics=false;
 
     void AddForce(Vector3d<float> force);
     void AddImpulse(Vector3d<float> force);
     void SetForce(float x, float y, float z);
     void SetForce(Vector3d<float> force);
+    void Tick(double DeltaT);
 };
 
 #endif // SIMOBJECT_H

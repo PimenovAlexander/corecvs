@@ -21,6 +21,10 @@ void SimObject::SetForce(float x,float y, float z)
    force= Vector3d<float>(x,y,z);
 }
 
+void SimObject::Tick(double DeltaT)
+{
+
+}
 
 SimObject::SimObject()
 {

@@ -14,6 +14,7 @@
 #include <linux/joystick.h>
 #include <fcntl.h>
 #include <thread>
+#include <core/geometry/mesh3DDecorated.h>
 #include "time.h"
 #include "QWidget"
 #include <fstream>
@@ -45,7 +46,12 @@
         ui->comboBox->addItem("RT/LT Usial mode");
         ui->comboBox->addItem("RT/LT Full mode");
 
-                FrameValuesUpdate();
+
+
+
+
+
+        FrameValuesUpdate();
     }
 
     PhysicsMainWidget::~PhysicsMainWidget()
@@ -55,11 +61,13 @@
 
     void PhysicsMainWidget::on_pushButton_released()
     {
-        if (!VirtualModeActive & !RealModeActive)
+        /*if (!VirtualModeActive & !RealModeActive)
         {
         VirtualSender.Client_connect();
         VirtualModeActive = true;
         }
+        */
+        StartVirtualMode();
     }
 
     ///
@@ -208,7 +216,24 @@
 
     void PhysicsMainWidget::StartVirtualMode()
     {
+        Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
 
+        Mesh3DDecorated *mesh = new Mesh3DDecorated;
+        mesh->switchColor();
+        mesh->mulTransform(copterPos);
+
+        mesh->setColor(RGBColor::Yellow());
+        mesh->addIcoSphere(Vector3dd( 5, 5, -3), 2, 2);
+        mesh->addIcoSphere(Vector3dd(-5, 5, -3), 2, 2);
+
+        mesh->setColor(RGBColor::Blue());
+        mesh->addIcoSphere(Vector3dd( 5, -5, -3), 2, 2);
+        mesh->addIcoSphere(Vector3dd(-5, -5, -3), 2, 2);
+        mesh->popTransform();
+
+        mesh->dumpPLY("out2.ply");
+
+        ui->Cloud->addMesh("out2",mesh);
 
     }
 
@@ -320,6 +345,7 @@
     void PhysicsMainWidget::on_pushButton_2_clicked()
     {
         //       cout<<m.pitch<<" "<<m.roll<<" "<<m.throttle<<" "<<m.yaw<<" "<<m.count_of_repeats<<endl;
+
         setlocale(LC_ALL, "rus");
 
         char buff[50];
@@ -350,6 +376,9 @@
         autopilotStack.pop();
 
         autopilotMode=true;
+
+
+
     }
 
     int PhysicsMainWidget::sign(int val)
