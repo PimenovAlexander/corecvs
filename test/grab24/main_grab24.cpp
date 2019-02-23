@@ -1,10 +1,12 @@
 #include <stdio.h>
+
+#include <QApplication>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QThread>
 #include <unistd.h>
 
 
-#include "imageCaptureInterface.h"
+#include "core/utils/global.h"
 #include "V4L2Capture.h"
 #include "core/fileformats/bmpLoader.h"
 #include "g12Image.h"
@@ -91,10 +93,10 @@ void FrameProcessor::processFrame(frame_data_t frameData)
 
 //    SYNC_PRINT(("New frame arrived\n"));
     V4L2CaptureInterface::FramePair pair = input->getFrameRGB24();
-    RGB24Buffer * result = pair.rgbBufferLeft;
-    delete_safe(pair.bufferRight);
-    delete_safe(pair.bufferLeft);
-    delete_safe(pair.rgbBufferRight);
+    RGB24Buffer * result = pair.rgbBufferLeft();
+    delete_safe(pair.bufferRight());
+    delete_safe(pair.bufferLeft());
+    delete_safe(pair.rgbBufferRight());
 
 //    BMPLoader().save("cap.bmp", result);
     widget->setImage(QSharedPointer<QImage>(new RGB24Image(result)));

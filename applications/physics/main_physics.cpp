@@ -11,7 +11,7 @@ using namespace corecvs;
 using namespace std;
 
 int main_example1()
-{
+{/*
     Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
 
     Mesh3DDecorated *mesh = new Mesh3DDecorated;
@@ -30,7 +30,7 @@ int main_example1()
     mesh->dumpPLY("out.ply");
     printf("Hello\n");
 
-
+*/
 
     return 0;
 }

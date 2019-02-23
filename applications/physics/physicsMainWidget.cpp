@@ -18,6 +18,8 @@
 #include "time.h"
 #include "QWidget"
 #include <fstream>
+#include <mesh3DScene.h>
+#include "simulation.h"
 #include "ui_cloudViewDialog.h"
 
     using namespace std;
@@ -216,10 +218,15 @@
 
     void PhysicsMainWidget::StartVirtualMode()
     {
-        Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
+        if (!VirtualModeActive)
+        {
+       /* Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
 
-        Mesh3DDecorated *mesh = new Mesh3DDecorated;
+        //Mesh3DDecorated *mesh = new Mesh3DDecorated;
+        Mesh3DScene *mesh = new Mesh3DScene;
+
         mesh->switchColor();
+
         mesh->mulTransform(copterPos);
 
         mesh->setColor(RGBColor::Yellow());
@@ -233,8 +240,13 @@
 
         mesh->dumpPLY("out2.ply");
 
-        ui->Cloud->addMesh("out2",mesh);
 
+        ui->Cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh));*/
+        SimSim = Simulation();
+        SimSim.Start();
+        SimSim.Objects[0].AddForce(Vector3d<float>(0,0,-9.8f));
+        cout<<"done"<<endl;
+        }
     }
 
     void PhysicsMainWidget::FrameValuesUpdate()
@@ -376,8 +388,6 @@
         autopilotStack.pop();
 
         autopilotMode=true;
-
-
 
     }
 

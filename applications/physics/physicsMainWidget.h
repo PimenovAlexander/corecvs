@@ -12,6 +12,7 @@
 #include <controllrecord.h>
 #include <stack>
 #include  "joystickinput.h"
+#include "simulation.h"
 
 namespace Ui {
 class PhysicsMainWidget;
@@ -93,9 +94,11 @@ private:
     bool recording=false;
 
     void SendOurValues(std::vector<uint8_t> OurValues);
-
+    bool VirtuaModeActive=false;
 
     ControllRecord recordData;
+
+    Simulation SimSim;
 
     struct axis_state axes[3] ;
 
