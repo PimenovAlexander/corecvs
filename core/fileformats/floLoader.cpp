@@ -58,7 +58,7 @@ FloatFlowBuffer *FLOLoader::load(const string &name)
     FILE *fp = fopen(name.c_str(), "rb");
     if (fp == nullptr)
     {
-        SYNC_PRINT(("can't open file <%s>", name.c_str()));
+        SYNC_PRINT(("FLOLoader::load(): can't open file <%s>", name.c_str()));
         return nullptr;
     }
 
@@ -68,12 +68,12 @@ FloatFlowBuffer *FLOLoader::load(const string &name)
     size_t result = fread(&magicData, sizeof(float), 1, fp);
 
     if (result != 1) {
-        SYNC_PRINT (("Unable to read header\n"));
+        SYNC_PRINT (("FLOLoader::load(): Unable to read header\n"));
         return NULL;
     }
 
     if (magicData != MAGIC_NUMBER) {
-        SYNC_PRINT (("Unable to read magic number from the header of <%s> epected %lf got %lf\n", name.c_str(), MAGIC_NUMBER, magicData));
+        SYNC_PRINT (("FLOLoader::load(): Unable to read magic number from the header of <%s> epected %lf got %lf\n", name.c_str(), MAGIC_NUMBER, magicData));
         return NULL;
     }
 
@@ -82,11 +82,11 @@ FloatFlowBuffer *FLOLoader::load(const string &name)
     result += fread(&h, sizeof(uint32_t), 1, fp);
 
     if (result != 2) {
-        SYNC_PRINT (("Unable to read flow size from header\n"));
-        return NULL;
+        SYNC_PRINT (("FLOLoader::load(): Unable to read flow size from header\n"));
+        goto close_file;
     }
 
-    SYNC_PRINT(("Flow Buffer size is [%dx%d]", w, h));
+    SYNC_PRINT(("FLOLoader::load(): Flow Buffer size is [%dx%d]", w, h));
     toReturn = new FloatFlowBuffer(h, w);
 
     for (uint32_t i = 0; i < h; i++)
@@ -95,8 +95,14 @@ FloatFlowBuffer *FLOLoader::load(const string &name)
         {
             float u,v;
 
-            fread(&u, sizeof(float), 1, fp);
-            fread(&v, sizeof(float), 1, fp);
+            int loaded = 0;
+            loaded += fread(&u, sizeof(float), 1, fp);
+            loaded += fread(&v, sizeof(float), 1, fp);
+
+            if (loaded != 2) {
+                SYNC_PRINT(("FLOLoader::load(): Unable to read file.\n"));
+                goto close_file;
+            }
 
             if (u > FLOLoader::FLO_INFINITY || u > FLOLoader::FLO_INFINITY) {
                 toReturn->element(i,j) = FloatFlow(false);
@@ -106,15 +112,16 @@ FloatFlowBuffer *FLOLoader::load(const string &name)
         }
     }
 
-
+close_file:
 
     fclose(fp);
-
     return toReturn;
 }
 
 bool FLOSaver::save(const FloatFlowBuffer &buffer, const string &name, int quality)
 {
+    CORE_UNUSED(quality);
+
     FILE *fp = fopen(name.c_str(), "wb");
     if (fp == nullptr)
     {

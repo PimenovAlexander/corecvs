@@ -43,7 +43,6 @@ SOURCES += \
     geometry/convexPolyhedron.cpp \
     geometry/conic.cpp \
     geometry/polygonPointIterator.cpp \
-    geometry/projection.cpp \
     geometry/gentryState.cpp \  
     geometry/mesh3DDecorated.cpp \
     geometry/polyLine.cpp \

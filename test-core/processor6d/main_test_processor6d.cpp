@@ -98,8 +98,8 @@ class DummyFlowProcessor : public Processor6D
 
 
     /** Oldstyle calls **/
-    virtual int setParameteri(int parameterName, int parameterValue) {return 0;}
-    virtual int requestResultsi(int parameterName) {return 0;}
+    virtual int setParameteri  (int /*parameterName*/, int /*parameterValue*/) {return 0;}
+    virtual int requestResultsi(int /*parameterName*/) {return 0;}
 
     /**
      * Methods below return the pointers to the internal data structures that are only valid
@@ -123,7 +123,7 @@ class DummyFlowProcessor : public Processor6D
     }
 
 
-    virtual int getError(std::string *errorString) {return 0;}
+    virtual int getError(std::string * /*errorString*/) {return 0;}
 };
 
 

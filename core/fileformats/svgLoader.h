@@ -50,7 +50,7 @@ public:
     const char *fill;
     int stroke_width;
 
-    virtual void draw(RGB24Buffer *buffer) {}
+    virtual void draw(RGB24Buffer */*buffer*/) {}
 protected:
     RGBColor getColor()
     {

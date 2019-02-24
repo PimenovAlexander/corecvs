@@ -42,14 +42,21 @@ TEST(RGB24BufferTest, testConversionToG12)
 
 TEST(RGBColorTest, testPallete)
 {
-    RGB24Buffer parula(100,100);
+    RGB24Buffer parula(100, 50 + ColorPallete::COLORPALLETE_LAST * 10);
     for (int i = 0; i < 9; i++)
     {
         parula.drawRectangle(i * 10, 0, 9, 50, RGBColor::getParulaColor(i), 2);
     }
-    for (int i = 0; i < 90; i++)
+
+    for (int r = 0; r < ColorPallete::COLORPALLETE_LAST; r++)
     {
-        parula.drawVLine(i, 51, 99, RGBColor::parula(i / 90.0));
+        for (int i = 0; i < 90; i++)
+        {
+            parula.drawVLine(i,
+                50 + r * 10,
+                50 + r * 10 + 9,
+                RGBColor::colorCode(i / 90.0, (ColorPallete::ColorPallete)r));
+        }
     }
 
     BufferFactory::getInstance()->saveRGB24Bitmap(&parula, "parula.bmp");

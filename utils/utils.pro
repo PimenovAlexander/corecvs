@@ -28,7 +28,7 @@ CONFIG += with_widgets
 # In global scope we have non UI classes
 #
 HEADERS += \
-    frames.h \
+#    frames.h \
 #    framesources/imageCaptureInterface.h \
 #    framesources/cameraControlParameters.h \
 #    framesources/decoders/mjpegDecoder.h \
@@ -113,7 +113,7 @@ HEADERS += \
     corestructs/cameraModel/fixtureCameraControlWidget.h
 
 SOURCES += \
-    frames.cpp \
+#    frames.cpp \
 #    framesources/imageCaptureInterface.cpp \        # it uses WITH_DIRECTSHOW, WITH_UEYE, WITH_OPENCV
 #    framesources/cameraControlParameters.cpp \
 #    framesources/decoders/mjpegDecoder.cpp \
@@ -443,23 +443,12 @@ RESOURCES += \
    ../resources/main.qrc
 
 unix:!macx:!win32 {
-    CONFIG += with_framesource_v4l2
+    CONFIG += with_v4l2
 }
 
-with_framesource_v4l2 {
-    message (Switching on V4L2 support)
-
-    HEADERS += \
-        framesources/v4l2/V4L2.h \
-        framesources/v4l2/V4L2Capture.h \
-        framesources/v4l2/V4L2CaptureDecouple.h \
-
-    SOURCES += \
-        framesources/v4l2/V4L2.cpp \
-        framesources/v4l2/V4L2Capture.cpp \
-        framesources/v4l2/V4L2CaptureDecouple.cpp \
-
-    DEFINES += WITH_FRAMESOURCE_V4L2
+with_v4l2 {
+    V4L2_WRAPPER_DIR = $$UTILSDIR/../wrappers/v4l2
+    include($$V4L2_WRAPPER_DIR/v4l2.pri)                # it uses OPENCV_WRAPPER_DIR inside
 }
 
 

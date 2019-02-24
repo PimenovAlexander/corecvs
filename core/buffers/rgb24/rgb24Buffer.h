@@ -198,19 +198,19 @@ public:
      * Draw Double Buffer
      **/
     enum DoubleDrawStyle {
-        STYLE_RAINBOW,
+        STYLE_RAW,
         STYLE_GRAY,
         STYLE_LOG,
         STYLE_ZBUFFER   /**< ignores std::numeric_limits<double>::max() values, not to affect palette */
     };
 
-    inline void drawDoubleBuffer(const AbstractBuffer<double> &in, int style = STYLE_RAINBOW)
+    inline void drawDoubleBuffer(const AbstractBuffer<double> &in, int style = STYLE_RAW)
     {
         drawContinuousBuffer<double>(in, style);
     }
 
     template<typename ContinuousType>
-    void drawContinuousBuffer(const AbstractBuffer<ContinuousType> &in, int style = STYLE_RAINBOW, bool legend = false);
+    void drawContinuousBuffer(const AbstractBuffer<ContinuousType> &in, int style = STYLE_RAW, ColorPallete::ColorPallete pallete = ColorPallete::PARULA, bool legend = false);
     void drawDoubleVecBuffer(const AbstractBuffer<Vector2dd> &in);
 
 

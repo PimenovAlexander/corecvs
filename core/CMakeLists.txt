@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.1)
-project (CoreCVSLib)
+project (corecvs)
 
 set (CORE_SUBMODULES
     alignment
@@ -50,11 +50,29 @@ message(STATUS "Core will use ${CORE_SUBMODULES} and ${ADDITIONAL_MODULES}")
 
 add_library(corecvs STATIC)
 
+if (OpenBLAS_LIB)
+    include_directories (${OpenBLAS_INCLUDE_DIR})
+    add_definitions(-DWITH_BLAS)
+endif()
+
+if (TBB_LIB)
+    include_directories (${TBB_INCLUDE_DIR})
+    add_definitions(-DWITH_TBB)
+endif()
+
+
 target_include_directories(corecvs PUBLIC ..)
 
 foreach(core_module ${CORE_SUBMODULES})
     message(STATUS "including ${core_module}")
     add_subdirectory(${core_module})
 endforeach(core_module)
+
+#install(TARGETS corecvs
+#  EXPORT FooBarTargets
+#  LIBRARY DESTINATION "${INSTALL_LIB_DIR}" COMPONENT shlib
+#  PUBLIC_HEADER DESTINATION "${INSTALL_INCLUDE_DIR}/core"
+#  )
+
 
 

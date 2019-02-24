@@ -25,29 +25,39 @@ using namespace corecvs;
 using std::istream;
 using std::ostream;
 using std::cout;
-
+using std::endl;
 
 TEST(CommandLine, testAdditionalFunction)
 {
-    const char *argv[] = {"--bool", "--int=42", "--double=3.14", "--string=test1", "--value with spaces=999"};
+    const char *argv[] = {"--bool=true", "--bool1=false","--int=42", "--double=3.14", "--string=test1", "--value with spaces=999"};
     int argc = CORE_COUNT_OF(argv);
 
     CommandLineSetter setter(argc, argv);
-    bool   boolVal = setter.getBool("bool");
+    bool   boolVal  = setter.getBool("bool");
+    bool   boolVal1 = setter.getBool("bool1");
+
     int    intVal  = setter.getInt("int");
     double dblVal  = setter.getDouble("double");
     string strVal  = setter.getString("string", "");
     int    intSpVal= setter.getInt("value with spaces");
 
-    //cout << "Bool:"   << b << endl;
-    //cout << "Int:"    << i << endl;
-    //cout << "Double:" << d << endl;
+    cout << "Bool :"   << (boolVal  ? "true" : "false") << endl;
+    cout << "Bool1:"   << (boolVal1 ? "true" : "false") << endl;
 
-    CORE_ASSERT_TRUE(boolVal  == true,    "Bool parsing problem");
+    cout << "Int:"    << intVal << endl;
+    cout << "Double:" << dblVal << endl;
+    cout << "String:" << strVal << endl;
+
+    CORE_ASSERT_TRUE(boolVal   == true ,    "Bool parsing problem");
+    CORE_ASSERT_TRUE(boolVal1  == false,    "Bool false parsing problem");
+
     CORE_ASSERT_TRUE(intVal   == 42,      "Int parsing problem");
     CORE_ASSERT_TRUE(dblVal   == 3.14,    "Double parsing problem");
     CORE_ASSERT_TRUE(strVal   == "test1", "String parsing problem");
     CORE_ASSERT_TRUE(intSpVal == 999,     "Int with spaces parsing problem");
+
+
+
 }
 
 
@@ -168,10 +178,10 @@ TEST(CommandLine, testSubstring)
 
     CommandLineSetter setter(argc, argv);
 
-    cout << setter.getBool("icp") << "  " << setter.getBool("icplist") << std::endl;
+    cout << setter.hasOption("icp") << "  " << setter.hasOption("icplist") << std::endl;
 
-    CORE_ASSERT_TRUE(setter.getBool("icp")     == false, "False positive");
-    CORE_ASSERT_TRUE(setter.getBool("icplist") == true, "False negative");
+    CORE_ASSERT_TRUE(setter.hasOption("icp")     == false, "False positive");
+    CORE_ASSERT_TRUE(setter.hasOption("icplist") == true, "False negative");
 
 }
 

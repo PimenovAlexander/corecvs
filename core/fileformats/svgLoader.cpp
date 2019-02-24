@@ -135,7 +135,7 @@ vector<Vector2dd> SvgLoader::parsePoints(string data)
     data = HelperUtils::escapeString(data, escape_m, " ");
     vector<string> coords = HelperUtils::stringSplit(data, ' ');
     vector<Vector2dd> points;
-    for(int i = 0; i < coords.size(); i += 2) {
+    for(size_t i = 0; i < coords.size(); i += 2) {
         double x = HelperUtils::parseDouble(coords[i]);
         double y = HelperUtils::parseDouble(coords[i + 1]);
         points.push_back(Vector2dd(x, y));
@@ -275,7 +275,7 @@ SvgShape* SvgLoader::getPath(XMLElement *element)
     string d(element->Attribute("d"));
     d = HelperUtils::escapeString(d, escape_m, " ");
     
-    int index = 0;
+    size_t index = 0;
     while (index < d.size())
     {
         Command cmd;
@@ -294,7 +294,7 @@ SvgShape* SvgLoader::getPath(XMLElement *element)
             {
                 cmd.command = c;
                 index++;
-                int new_cmd_pos = d.find_first_not_of("-0123456789. ", index);
+                size_t new_cmd_pos = d.find_first_not_of("-0123456789. ", index);
                 string params = d.substr(index, new_cmd_pos - index);
                 for (string p: HelperUtils::stringSplit(params, ' '))
                 {

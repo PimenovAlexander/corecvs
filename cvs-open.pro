@@ -79,4 +79,4 @@ coptercontrol.file            = applications/coptercontrol/coptercontrol.pro
 
 OTHER_FILES += cvs-config.pri
 OTHER_FILES += CMakeLists.txt
-
+OTHER_FILES += cmake/Modules/*.cmake

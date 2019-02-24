@@ -15,6 +15,7 @@
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/fileformats/bufferLoader.h"
 #include "core/buffers/runtimeTypeBuffer.h"
+#include "core/buffers/float/dpImage.h"
 
 namespace corecvs {
 
@@ -59,6 +60,17 @@ public:
         return true;
     }
 
+    bool registerLoader(BufferLoader<DpImage> * loader)
+    {
+        mLoadersDoubleImage.push_back(loader);
+        return true;
+    }
+
+    bool registerLoader(BufferLoader<FpImage> * loader)
+    {
+        mLoadersFloatImage.push_back(loader);
+        return true;
+    }
 
     bool registerSaver(BufferSaver<RGB24Buffer> * saver)
     {
@@ -76,6 +88,18 @@ public:
     bool registerSaver(BufferSaver<FloatFlowBuffer> * saver)
     {
         mSaversFloatFlow.push_back(saver);
+        return true;
+    }
+
+    bool registerSaver(BufferSaver<DpImage> * saver)
+    {
+        mSaversDoubleImage.push_back(saver);
+        return true;
+    }
+
+    bool registerSaver(BufferSaver<FpImage> * saver)
+    {
+        mSaversFloatImage.push_back(saver);
         return true;
     }
 
@@ -100,6 +124,14 @@ public:
      */
     virtual FloatFlowBuffer* loadFloatFlow(string name, const string &loaderHint = "");
 
+    /** Main function to get double image
+     */
+    virtual DpImage* loadDpImage(string name, const string &loaderHint = "");
+
+    /** Main function to get double image
+     */
+    virtual FpImage *loadFpImage(string name, const string &loaderHint = "");
+
     /** Main function to save a 32-bits buffer to the file with the given path name
      */
     virtual bool saveRGB24Bitmap(RGB24Buffer& buffer, const string &name, const string &saverHint = "");
@@ -107,6 +139,14 @@ public:
     /** Main function to save  float flow
      */
     virtual bool saveFloatFlow(FloatFlowBuffer& buffer, const string &name, const string &saverHint = "");
+
+    /** Main function to save double image
+     */
+    virtual bool saveDpImage(DpImage& buffer, const string &name, const string &saverHint = "");
+
+    /** Main function to save double image
+     */
+    virtual bool saveFpImage(FpImage& buffer, const string &name, const string &saverHint = "");
 
 
     /** Two useful methods to read/save a 32-bits buffer from/to the file with the given path name
@@ -152,15 +192,19 @@ public:
     /**
      * List of loaders - the supported formats
      */
-    vector<BufferLoader<G12Buffer>   *> mLoadersG12;
-    vector<BufferLoader<G12Buffer>   *> mLoadersG16;
-    vector<BufferLoader<RGB24Buffer> *> mLoadersRGB24;
+    vector<BufferLoader<G12Buffer>   *>       mLoadersG12;
+    vector<BufferLoader<G12Buffer>   *>       mLoadersG16;
+    vector<BufferLoader<RGB24Buffer> *>       mLoadersRGB24;
     vector<BufferLoader<RuntimeTypeBuffer> *> mLoadersRuntime;
-    vector<BufferLoader<FloatFlowBuffer> *> mLoadersFloatFlow;
+    vector<BufferLoader<FloatFlowBuffer> *>   mLoadersFloatFlow;
+    vector<BufferLoader<DpImage> *>           mLoadersDoubleImage;
+    vector<BufferLoader<FpImage> *>           mLoadersFloatImage;
 
     //vector<BufferSaver<RuntimeTypeBuffer> *> mSaversRuntime;
-    vector<BufferSaver<RGB24Buffer> *> mSaversRGB24;
+    vector<BufferSaver<RGB24Buffer> *>     mSaversRGB24;
     vector<BufferSaver<FloatFlowBuffer> *> mSaversFloatFlow;
+    vector<BufferSaver<DpImage> *>         mSaversDoubleImage;
+    vector<BufferSaver<FpImage> *>         mSaversFloatImage;
 
 };
 

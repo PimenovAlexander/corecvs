@@ -543,7 +543,7 @@ private:
 
     }
 
-    inline void lineApproximation(Curve curve, double t_min, double t_max, double flatness) {
+    inline void lineApproximation(Curve curve, double t_min, double t_max, double /*flatness*/) {
 
         if (t_min >= t_max || t_min < 0 || t_max > 1) {
             //already draw line

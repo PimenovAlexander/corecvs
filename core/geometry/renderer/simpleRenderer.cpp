@@ -181,7 +181,7 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
         for(size_t f = 0; f < mesh->faces.size(); f++)
         {
             if (f % 100 == 0) {
-                SYNC_PRINT(("Processed %d (of %d)\n", f, (int)mesh->faces.size()));
+                SYNC_PRINT(("Processed %d (of %d)\n", (int)f, (int)mesh->faces.size()));
             }
 
             // printf("\n\n\n ------!! %i !!------ \n\n\n", f);
@@ -539,31 +539,31 @@ RGB24Buffer *ClassicRenderer::getDebugBuffer(const std::string &name) const
     RGB24Buffer *toReturn = NULL;
     if (name == "factor") {
         toReturn = new RGB24Buffer(factorDebug->h, factorDebug->w);
-        toReturn->drawContinuousBuffer<double>(factorDebug, RGB24Buffer::STYLE_RAINBOW, true);
+        toReturn->drawContinuousBuffer<double>(factorDebug, RGB24Buffer::STYLE_RAW, ColorPallete::RAINBOW, true);
     }
     if (name == "level") {
         toReturn = new RGB24Buffer(levelDebug->h, levelDebug->w);
-        toReturn->drawContinuousBuffer<double>(levelDebug, RGB24Buffer::STYLE_RAINBOW, true);
+        toReturn->drawContinuousBuffer<double>(levelDebug, RGB24Buffer::STYLE_RAW, ColorPallete::RAINBOW, true);
     }
     if (name == "scale") {
         toReturn = new RGB24Buffer(scaleDebug->h, scaleDebug->w);
-        toReturn->drawContinuousBuffer<double>(scaleDebug, RGB24Buffer::STYLE_RAINBOW, true);
+        toReturn->drawContinuousBuffer<double>(scaleDebug, RGB24Buffer::STYLE_RAW, ColorPallete::RAINBOW, true);
     }
     if (name == "vdx")   {
         toReturn = new RGB24Buffer(vdxDebug->h, vdxDebug->w);
-        toReturn->drawContinuousBuffer<double>(vdxDebug, RGB24Buffer::STYLE_RAINBOW, true);
+        toReturn->drawContinuousBuffer<double>(vdxDebug, RGB24Buffer::STYLE_RAW, ColorPallete::RAINBOW, true);
     }
     if (name == "vdy")   {
         toReturn = new RGB24Buffer(vdyDebug->h, vdyDebug->w);
-        toReturn->drawContinuousBuffer<double>(vdyDebug, RGB24Buffer::STYLE_RAINBOW, true);
+        toReturn->drawContinuousBuffer<double>(vdyDebug, RGB24Buffer::STYLE_RAW, ColorPallete::RAINBOW, true);
     }
     if (name == "hdx")   {
         toReturn = new RGB24Buffer(hdxDebug->h, hdxDebug->w);
-        toReturn->drawContinuousBuffer<double>(hdxDebug, RGB24Buffer::STYLE_RAINBOW, true);
+        toReturn->drawContinuousBuffer<double>(hdxDebug, RGB24Buffer::STYLE_RAW, ColorPallete::RAINBOW, true);
     }
     if (name == "hdy")   {
         toReturn = new RGB24Buffer(hdyDebug->h, hdyDebug->w);
-        toReturn->drawContinuousBuffer<double>(hdyDebug, RGB24Buffer::STYLE_RAINBOW, true);
+        toReturn->drawContinuousBuffer<double>(hdyDebug, RGB24Buffer::STYLE_RAW, ColorPallete::RAINBOW, true);
     }
     return toReturn;
 }

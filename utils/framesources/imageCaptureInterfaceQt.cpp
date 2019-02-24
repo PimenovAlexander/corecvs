@@ -3,7 +3,7 @@
 #include "core/framesources/file/fileCapture.h"
 #include "core/framesources/file/precCapture.h"
 
-#ifdef WITH_FRAMESOURCE_V4L2
+#ifdef WITH_V4L2
 # include "V4L2Capture.h"
 # include "V4L2CaptureDecouple.h"
 #endif
@@ -63,7 +63,7 @@ ImageCaptureInterfaceQt* ImageCaptureInterfaceQtFactory::fabric(string input, bo
     }
 #endif
 
-#ifdef WITH_FRAMESOURCE_V4L2
+#ifdef WITH_V4L2
     string v4l2("v4l2:");
     if (input.substr(0, v4l2.size()).compare(v4l2) == 0)
     {
@@ -166,7 +166,7 @@ ImageCaptureInterfaceQt* ImageCaptureInterfaceQtFactory::fabric(string input, bo
 
 ImageCaptureInterfaceQt *ImageCaptureInterfaceQtFactory::fabric(string input, int h, int w, int fps, bool isRgb)
 {
-#ifdef WITH_FRAMESOURCE_V4L2
+#ifdef WITH_V4L2
     string v4l2("v4l2:");
     if (input.substr(0, v4l2.size()).compare(v4l2) == 0)
     {

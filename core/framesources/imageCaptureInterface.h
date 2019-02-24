@@ -363,7 +363,7 @@ public:
     std::vector<ImageCaptureInterfaceProducer *> producers;
     void addProducer(ImageCaptureInterfaceProducer *producer);
 
-    ImageCaptureInterface *fabricate(std::string &name, bool isRGB);
+    ImageCaptureInterface *fabricate(const std::string &name, bool isRGB);
 
 };
 

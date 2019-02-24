@@ -31,6 +31,32 @@ public:
 
     bool acceptsFile(std::string name);
 
+    enum PPMType {
+        TYPE_P6,
+        TYPE_P5,
+        TYPE_P3
+    };
+
+    static inline const char *getName(const PPMType &value)
+    {
+        switch (value)
+        {
+         case TYPE_P3 : return "TYPE_P3"; break ;
+         case TYPE_P5 : return "TYPE_P5"; break ;
+         case TYPE_P6 : return "TYPE_P6"; break ;
+         default : return "Not in range"; break ;
+        }
+        return "Not in range";
+    }
+
+    struct PPMHeader {
+        unsigned long int h;
+        unsigned long int w;
+        uint16_t maxval;
+        PPMType type;
+        MetaData* metadata = NULL;
+    };
+
     /**
      * Load methods
      *
@@ -40,7 +66,7 @@ public:
      * \return  null if it fails, else a ptr to the allocated object
      */
     G12Buffer*   loadG16  (const string& name);
-    G12Buffer*   loadG12  (const string& name, MetaData* metadata = nullptr, bool loadAs16 = false);
+    G12Buffer*   loadG12  (const string& name, MetaData* metadata = nullptr, bool load16bit = false, bool bigEndian = true);
     RGB48Buffer* loadRgb48(const string& name, MetaData* metadata = nullptr);
 
     /**
@@ -58,12 +84,19 @@ public:
     int save(const string& name, RGB48Buffer *buffer, MetaData* metadata = nullptr, int forceTo8bitsShift = -1);
 
 protected:
-    static string prefix1, prefix2;
+    static string extention1;
+    static string extention2;
 
 private:
-    int  nextLine   (FILE *fp, char *buf, int sz, MetaData *metadata);
-    bool readHeader (FILE *fp, unsigned long int *h, unsigned long int *w, uint16_t *maxval, uint8_t *type, MetaData* metadata);
-    bool writeHeader(FILE *fp, unsigned long int h, unsigned long int w, uint8_t type, uint16_t maxval, MetaData* metadata);
+    /* Depricated */
+    int  nextLine   (FILE *fp, char *buf, int sz, MetaData *metadata);   
+    void skipComments(std::istream &file);
+
+public:
+    bool trace = false;
+
+    bool readHeader (std::istream &file,       PPMHeader &header);
+    bool writeHeader(std::ostream &file, const PPMHeader &header);
 };
 
 
@@ -82,7 +115,7 @@ public:
     }
 
     virtual std::string name() override { return "PPMLoaderG12"; }
-    virtual std::vector<std::string> extentions() { return {prefix1, prefix2}; }
+    virtual std::vector<std::string> extentions() { return {extention1, extention2}; }
 
 };
 
@@ -95,7 +128,7 @@ public:
     }
 
     virtual std::string name() override { return "PPMLoaderG16"; }
-    virtual std::vector<std::string> extentions() { return {prefix1, prefix2}; }
+    virtual std::vector<std::string> extentions() { return {extention1, extention2}; }
 
 };
 
@@ -110,7 +143,7 @@ public:
     virtual RGB24Buffer *load(const string & name) override;
 
     virtual std::string name() override { return "PPMLoaderRGB24"; }
-    virtual std::vector<std::string> extentions() { return {prefix1, prefix2}; }
+    virtual std::vector<std::string> extentions() { return {extention1, extention2}; }
 
 };
 

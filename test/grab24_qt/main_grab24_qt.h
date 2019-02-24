@@ -1,10 +1,11 @@
 #ifndef MAIN_GRAB24_H_
 #define MAIN_GRAB24_H_
 
+#include "core/framesources/imageCaptureInterface.h"
 #include <QObject>
-#include "imageCaptureInterface.h"
-#include "advancedImageWidget.h"
-#include "v4l2/V4L2Capture.h"
+
+class V4L2CaptureInterface;
+class AdvancedImageWidget;
 
 class FrameProcessor : public QObject
 {

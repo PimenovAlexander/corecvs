@@ -9,7 +9,6 @@
  * \date Mar 24, 2010
  * \author alexander
  */
-
 #include "core/utils/global.h"
 #include "core/math/matrix/matrix.h"
 
@@ -17,14 +16,11 @@
 #include "core/buffers/abstractKernel.h"
 
 #include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/buffers/float/dpImage.h"
 
 namespace corecvs {
 
-
-typedef AbstractBuffer<double> DpImage;
 typedef AbstractKernel<double> DpKernel;
-
-typedef AbstractBuffer<float> FpImage;
 typedef AbstractKernel<float> FpKernel;
 
 

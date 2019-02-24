@@ -23,7 +23,13 @@ void CommandLineSetter::visit<float, FloatField>(float &field, const FloatField 
 template <>
 void CommandLineSetter::visit<bool, BoolField>(bool &field, const BoolField *fieldDescriptor)
 {
-    field = getBool(getChildPath(fieldDescriptor->name.name));
+    if (mPreserveValues) {
+        if (getBool(getChildPath(fieldDescriptor->name.name))) {
+            field = true;
+        }
+    } else {
+        field = getBool(getChildPath(fieldDescriptor->name.name));
+    }
 }
 
 template <>
@@ -173,10 +179,25 @@ int CommandLineSetter::getInt(const std::string &option, int defaultInt) const
     }
 }
 
-bool CommandLineSetter::getBool(const std::string &option) const
+bool CommandLineSetter::getBool(const std::string &option, bool defaultBool) const
 {
     //const string& argument = getOption(option);
-    return hasOption(option);
+    //return hasOption(option);
+    const string& argument = getOption(option);
+
+    if (argument == "on"  ) return true;
+    if (argument == "yes" ) return true;
+    if (argument == "true") return true;
+    if (argument == "1"   ) return true;
+
+    if (argument == "off"  ) return false;
+    if (argument == "no"   ) return false;
+    if (argument == "false") return false;
+    if (argument == "0"    ) return false;
+
+    return defaultBool;
+
+
 }
 
 double CommandLineSetter::getDouble(const std::string &option, double defaultDouble) const

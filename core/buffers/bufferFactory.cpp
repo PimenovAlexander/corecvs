@@ -96,6 +96,11 @@ void BufferFactory::printCaps()
     cout << "  RuntimeType loader" << endl;
     printCapsHelper(factory->mLoadersRuntime);
 
+    cout << "  DpImage loader" << endl;
+    printCapsHelper(factory->mLoadersDoubleImage);
+
+    cout << "  FpImage loader" << endl;
+    printCapsHelper(factory->mLoadersFloatImage);
 
     cout << "  RGB24 saver" << endl;
     printCapsHelper(factory->mSaversRGB24);
@@ -105,6 +110,12 @@ void BufferFactory::printCaps()
 
     cout << "  Float Flow saver" << endl;
     printCapsHelper(factory->mSaversFloatFlow);
+
+    cout << "  DpImage saver" << endl;
+    printCapsHelper(factory->mSaversDoubleImage);
+
+    cout << "  FpImage saver" << endl;
+    printCapsHelper(factory->mSaversFloatImage);
 
 }
 
@@ -212,6 +223,16 @@ FloatFlowBuffer *BufferFactory::loadFloatFlow(std::string name, const std::strin
     return loadBuffer(name, mLoadersFloatFlow, loaderHint);
 }
 
+DpImage *BufferFactory::loadDpImage(std::string name, const std::string &loaderHint)
+{
+    return loadBuffer(name, mLoadersDoubleImage, loaderHint);
+}
+
+FpImage *BufferFactory::loadFpImage(std::string name, const std::string &loaderHint)
+{
+    return loadBuffer(name, mLoadersFloatImage, loaderHint);
+}
+
 bool BufferFactory::saveRGB24Bitmap(RGB24Buffer &buffer, const std::string &name, const std::string &saverHint)
 {
     return saveBuffer(buffer, name, saverHint, mSaversRGB24);
@@ -220,6 +241,16 @@ bool BufferFactory::saveRGB24Bitmap(RGB24Buffer &buffer, const std::string &name
 bool BufferFactory::saveFloatFlow(FloatFlowBuffer &buffer, const std::string &name, const std::string &saverHint)
 {
     return saveBuffer(buffer, name, saverHint, mSaversFloatFlow);
+}
+
+bool BufferFactory::saveDpImage(DpImage &buffer, const std::string &name, const std::string &saverHint)
+{
+    return saveBuffer(buffer, name, saverHint, mSaversDoubleImage);
+}
+
+bool BufferFactory::saveFpImage(FpImage &buffer, const std::string &name, const std::string &saverHint)
+{
+    return saveBuffer(buffer, name, saverHint, mSaversFloatImage);
 }
 
 RGB24Buffer *BufferFactory::loadRGB24Bitmap(string name, const string &loaderHint)

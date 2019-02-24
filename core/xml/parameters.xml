@@ -55,7 +55,14 @@
       <item name="Saturation" id="13" />
       <item name="Value"      id="14" />
   </enum>
-  
+
+  <enum name="ColorPallete">
+      <item name="Rainbow"      id="0" />
+      <item name="Heat"         id="1" />
+      <item name="Parula"       id="2" />
+      <item name="Colorblind"   id="3" />
+      <item name="Bright"       id="4" />
+  </enum>
 
   <enum name="Debayer Method">
       <item name="Nearest"  id = "0" />
@@ -112,14 +119,7 @@
         <field type="double" name="sharpness" defaultValue="0" comment="sharpness per pixel" />
   </class>
 
-
-<!--
-  <class name="Dummy">
-     <field type="Homography Algorithm" name="Method"    defaultValue="0"/>
-  </class>
--->
-
-   <enum name="GCode Coloring Sheme">
+  <enum name="GCode Coloring Sheme">
        <item name="Color From GCode"          id = "0" />
        <item name="Color From Extrusion Rate" id = "1" />
        <item name="Color From Temperature"    id = "2" />
@@ -140,6 +140,9 @@
      <field type="double"  name="minSpeed"   min="0" max="1000"   defaultValue="200" step="1"/>
      <field type="double"  name="maxSpeed"   min="0" max="1000"   defaultValue="950" step="1"/>
   </class>
+
+
+
 
 </poco>
 

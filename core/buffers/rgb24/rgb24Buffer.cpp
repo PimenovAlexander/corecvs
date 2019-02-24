@@ -724,7 +724,7 @@ void RGB24Buffer::drawIsolines(
 }
 
 template<typename ContinuousType>
-void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<ContinuousType> &in, int style, bool legend)
+void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<ContinuousType> &in, int style, ColorPallete::ColorPallete pallete, bool legend)
 {
     int mh = CORE_MIN(h, in.h);
     int mw = CORE_MIN(w, in.w);
@@ -756,24 +756,16 @@ void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<ContinuousType> &in,
 
 //    SYNC_PRINT(("RGB24Buffer::drawDoubleBuffer(): min %lf max %lf\n", min, max));
 
-    if (style == STYLE_RAINBOW)
+    if (style == STYLE_RAW)
     {
         for (int i = 0; i < mh; i++)
         {
             for (int j = 0; j < mw; j++)
             {
-                element(i, j) = RGBColor::rainbow(lerp(0.0, 1.0, in.element(i,j), min, max));
-            }
-        }
-    }
-
-    if (style == STYLE_GRAY || style == STYLE_LOG)
-    {
-        for (int i = 0; i < mh; i++)
-        {
-            for (int j = 0; j < mw; j++)
-            {
-                element(i, j) = RGBColor::gray(lerpLimit(0.0, 255.0, in.element(i,j), min, max));
+                if (std::isnan(in.element(i,j))) {
+                    continue;
+                }
+                element(i, j) = RGBColor::colorCode(lerp(0.0, 1.0, in.element(i,j), min, max), pallete);
             }
         }
     }
@@ -784,8 +776,11 @@ void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<ContinuousType> &in,
         {
             for (int j = 0; j < mw; j++)
             {
+                if (std::isnan(in.element(i,j))) {
+                    continue;
+                }
                 if (in.element(i,j) != std::numeric_limits<ContinuousType>::max()) {
-                    element(i, j) = RGBColor::rainbow(lerp(0.0, 1.0, in.element(i,j), min, max));
+                    element(i, j) = RGBColor::colorCode(lerp(0.0, 1.0, in.element(i,j), min, max), pallete);
                 } else {
                     element(i, j) = RGBColor::Black();
                 }
@@ -798,17 +793,17 @@ void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<ContinuousType> &in,
         painter.drawFormat(10,10, RGBColor::Black(), 1, "Min:%lf", (double)min);
         painter.drawFormat(11,11, RGBColor::White(), 1, "Min:%lf", (double)min);
 
-        painter.drawFormat(20,20, RGBColor::Black(), 1, "Max:%lf", (double)max);
-        painter.drawFormat(21,21, RGBColor::White(), 1, "Max:%lf", (double)max);
-
-
-
+        painter.drawFormat(10,20, RGBColor::Black(), 1, "Max:%lf", (double)max);
+        painter.drawFormat(11,21, RGBColor::White(), 1, "Max:%lf", (double)max);
     }
 
 }
 
-template void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<double> &in, int style, bool legend);
-template void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<float> &in, int style, bool legend);
+template void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<double>   &in, int style, ColorPallete::ColorPallete pallete, bool legend);
+template void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<float>    &in, int style, ColorPallete::ColorPallete pallete, bool legend);
+template void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<int32_t>  &in, int style, ColorPallete::ColorPallete pallete, bool legend);
+template void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<uint32_t> &in, int style, ColorPallete::ColorPallete pallete, bool legend);
+
 
 
 void RGB24Buffer::drawDoubleVecBuffer(const AbstractBuffer<Vector2dd> &in)

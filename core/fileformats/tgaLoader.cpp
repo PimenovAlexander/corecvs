@@ -126,10 +126,12 @@ bool TGALoaderBase::acceptsFile(std::string name)
     return HelperUtils::endsWith(name, prefix1);
 }
 
+#if 0
 G12Buffer *TGALoaderBase::loadG12(std::string name)
 {
 
 }
+#endif
 
 RGB24Buffer *TGALoaderBase::loadRGB(std::string name)
 {

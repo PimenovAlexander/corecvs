@@ -1,5 +1,6 @@
 target_sources(corecvs
   PUBLIC
+        framesources/frames.h
 	framesources/cameraControlParameters.h 
 	framesources/dummyVideoEncoderInterface.h 
 	framesources/imageCaptureInterface.h 
@@ -16,7 +17,7 @@ target_sources(corecvs
 	framesources/decoders/mjpegDecoderLazy.h 
 
 
- 
+        framesources/frames.cpp
 	framesources/cameraControlParameters.cpp 
 	framesources/dummyVideoEncoderInterface.cpp 
 	framesources/imageCaptureInterface.cpp 

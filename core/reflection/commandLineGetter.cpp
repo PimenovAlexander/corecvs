@@ -26,11 +26,8 @@ void CommandLineGetter::visit<float, FloatField>(float &field, const FloatField 
 template <>
 void CommandLineGetter::visit<bool, BoolField>(bool &field, const BoolField *fieldDescriptor)
 {
-    if (field)
-    {
-        std::string value = mArgPrefix + getChildPath(fieldDescriptor->name.name);
-        mArgs.push_back(value);
-    }
+    std::string value = mArgPrefix + getChildPath(fieldDescriptor->name.name) + mArgSeparator + (field ? "true" : "false");
+    mArgs.push_back(value);
 }
 
 /*

@@ -683,6 +683,8 @@ void BaseHostDialog::swapCameras(bool shouldSwap)
         return;
     }
     mFrames->swapFrameSources(shouldSwap);
+    QSettings settings("cvs-camera.conf", QSettings::IniFormat);
+    settings.setValue("swapCameras", shouldSwap);
 }
 
 void BaseHostDialog::setCaptureStats(CaptureStatistics stats)

@@ -19,7 +19,7 @@
 #include "core/framesources/cameraControlParameters.h"
 #include "core/framesources/imageCaptureInterface.h"
 #include "core/utils/preciseTimer.h"
-#include "../../frames.h"
+#include "core/framesources/frames.h"
 
 using namespace std;
 
@@ -137,4 +137,22 @@ private:
     uint64_t skippedCount;
 
     uint64_t maxDesync; /**< Maximum de-synchronization that we will not attempt to correct */
+};
+
+
+class V4L2CaptureInterfaceProducer : public ImageCaptureInterfaceProducer
+{
+public:
+    V4L2CaptureInterfaceProducer()
+    {}
+
+    virtual std::string getPrefix() override
+    {
+        return "v4l2:";
+    }
+
+    virtual ImageCaptureInterface *produce(std::string &name, bool isRGB) override
+    {
+        return new V4L2CaptureInterface(name, isRGB);
+    }
 };

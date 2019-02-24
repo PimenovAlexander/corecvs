@@ -92,7 +92,7 @@ public:
 
     bool acceptsFile(string name);
 
-    virtual G12Buffer   * loadG12(string name);
+//    virtual G12Buffer   * loadG12(string name);
     virtual RGB24Buffer * loadRGB(string name);
 
 private:

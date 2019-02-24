@@ -17,7 +17,7 @@
 #include "core/framesources/imageCaptureInterface.h"
 
 #include "abstractCalculationThread.h"
-#include "frames.h"
+#include "core/framesources/frames.h"
 #include "generatedParameters/baseParameters.h"
 #include "generatedParameters/presentationParameters.h"
 #include "camerasConfigParameters.h"

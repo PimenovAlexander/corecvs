@@ -316,7 +316,7 @@ int OBJLoader::loadOBJSimple(istream &input, Mesh3D &mesh)
 
             vector<int32_t> face;
 
-            for (int i = 0; i < strs.size(); i++)
+            for (size_t i = 0; i < strs.size(); i++)
             {
                 // LOCAL_PRINT(("Attribute: %s\n", strs[i].c_str()));
                 std::stringstream splitter(strs[i]);

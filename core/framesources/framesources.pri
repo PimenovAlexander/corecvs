@@ -1,5 +1,8 @@
 HEADERS += \
-	framesources/cameraControlParameters.h \
+        \
+        framesources/frames.h \
+        \
+        framesources/cameraControlParameters.h \
 	framesources/dummyVideoEncoderInterface.h \
 	framesources/imageCaptureInterface.h \
 	\
@@ -16,6 +19,9 @@ HEADERS += \
 
 
 SOURCES += \
+        \
+        framesources/frames.cpp \
+        \
 	framesources/cameraControlParameters.cpp \
 	framesources/dummyVideoEncoderInterface.cpp \
 	framesources/imageCaptureInterface.cpp \

@@ -10,7 +10,8 @@ exists(../../../config.pri) {
 TEMPLATE = subdirs
 
 SUBDIRS +=     \
-#    grab24     \
+    grab24     \
+    grab24_qt  \
     adoptcolor \
     fileloader \
     softrender  \
@@ -43,7 +44,9 @@ with_opencv {
 
 }
 
-grab                                = grab/grab.pro
+grab24                              = grab/grab24.pro
+grab24_qt                           = grab_qt/grab24_qt.pro
+
 grab_N_captures                     = grab_N_captures/grab_N_captures.pro
 serialize1                          = serialize1/serialize1.pro
 jitplayground                       = jitplayground/jitplayground.pro

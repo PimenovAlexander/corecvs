@@ -1,19 +1,22 @@
-isEmpty(AVCODEC_WRAPPER_DIR) {
-    message(Incorrect usage of avcodec.pri with empty AVCODEC_WRAPPER_DIR. AVCodec is switched off!)
+isEmpty(V4L2_WRAPPER_DIR) {
+    message(Incorrect usage of avcodec.pri with empty V4L2_WRAPPER_DIR. V4L2 is switched off!)
 } else {
-    include(avcodecLibs.pri)
+    include(v4l2Libs.pri)
 }
 
-contains(DEFINES, WITH_AVCODEC) {                    # if it's installed properly with found path for lib
+contains(DEFINES, WITH_V4L2) {                    # if it's installed properly with found path for lib
 
-    INCLUDEPATH += $$AVCODEC_WRAPPER_DIR
+    message (Switching on V4L2 support)
+
+    INCLUDEPATH += $$V4L2_WRAPPER_DIR
 
     HEADERS += \
-        $$AVCODEC_WRAPPER_DIR/aviCapture.h \
-        $$AVCODEC_WRAPPER_DIR/rtspCapture.h \
+        $$V4L2_WRAPPER_DIR/V4L2.h \
+        $$V4L2_WRAPPER_DIR/V4L2Capture.h \
+        $$V4L2_WRAPPER_DIR/V4L2CaptureDecouple.h \
 
     SOURCES += \
-        $$AVCODEC_WRAPPER_DIR/aviCapture.cpp \
-        $$AVCODEC_WRAPPER_DIR/rtspCapture.cpp \
+        $$V4L2_WRAPPER_DIR/V4L2.cpp \
+        $$V4L2_WRAPPER_DIR/V4L2Capture.cpp \
+        $$V4L2_WRAPPER_DIR/V4L2CaptureDecouple.cpp \
 }
-

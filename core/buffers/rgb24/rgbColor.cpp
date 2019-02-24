@@ -59,12 +59,44 @@ RGBColor RGBColor::rainbow(double x)
 
 RGBColor RGBColor::parula(double x)
 {
-    x *= 8.0;
-    x = clamp(x, 0.0, 8.0);
+    x *= CORE_COUNT_OF(parulaPalette);
+    x = clamp(x, 0.0, (double)(CORE_COUNT_OF(parulaPalette) - 1));
     int base = (int)x;
     return lerpColor(getParulaColor(base), getParulaColor(base + 1), (x - (double)base));
+}
 
+RGBColor RGBColor::bright(double x)
+{
+    x *= CORE_COUNT_OF(brightPalette);
+    x = clamp(x, 0.0, (double)(CORE_COUNT_OF(brightPalette) - 1));
+    int base = (int)x;
+    return lerpColor(getPalleteColor(base), getPalleteColor(base + 1), (x - (double)base));
+}
 
+RGBColor RGBColor::colorblind(double x)
+{
+    x *= CORE_COUNT_OF(colorBlindPalette);
+    x = clamp(x, 0.0, (double)(CORE_COUNT_OF(colorBlindPalette) - 1));
+    int base = (int)x;
+    return lerpColor(getPalleteColor1(base), getPalleteColor1(base + 1), (x - (double)base));
+}
+
+RGBColor RGBColor::colorCode(double x, ColorPallete::ColorPallete palette)
+{
+    switch (palette) {
+        case ColorPallete::RAINBOW:
+            return rainbow(x);
+        case ColorPallete::HEAT:
+            return rainbow1(x);
+        default:
+        case ColorPallete::PARULA:
+            return parula(x);
+        case ColorPallete::COLORBLIND:
+            return colorblind(x);
+        case ColorPallete::BRIGHT:
+            return bright(x);
+    }
+    return RGBColor::White();
 }
 
 RGBColor RGBColor::colorBlindPalette[] =

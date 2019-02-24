@@ -6,14 +6,7 @@
  * \author alexander
  */
 
-/*
-#ifndef TRACE
-#define TRACE
-#endif
-*/
-#include <QtCore/QSettings>
-
-#include "frames.h"
+#include "core/framesources/frames.h"
 
 Frames::Frames()
 {
@@ -93,6 +86,6 @@ void Frames::fetchNewFrames(ImageCaptureInterface *input)
 void Frames::swapFrameSources(bool shouldSwap)
 {
     mSwapped = shouldSwap;
-    QSettings settings("cvs-camera.conf", QSettings::IniFormat);
-    settings.setValue("swapCameras", mSwapped);
+//    QSettings settings("cvs-camera.conf", QSettings::IniFormat);
+//    settings.setValue("swapCameras", mSwapped);
 }

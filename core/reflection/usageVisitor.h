@@ -6,6 +6,7 @@
 #include <sstream>
 
 #include "core/reflection/reflection.h"
+#include "core/reflection/dynamicObject.h"
 
 namespace corecvs {
 
@@ -15,7 +16,12 @@ public:
     static const std::string SEPARATOR;
     UsagePrinter() {}
 
+    /**
+     * \attention Discouraged
+     **/
     static void printUsage(const Reflection *reflection, const std::string &addNamespace);
+
+    static void printUsage(DynamicObjectWrapper *wrapper, const std::string &addNamespace);
 };
 
 } //namespace corecvs

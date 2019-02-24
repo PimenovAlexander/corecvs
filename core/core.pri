@@ -14,29 +14,21 @@ COREDIR=$$PWD
 #
 CORE_SUBMODULES =       \
     alignment           \
-    assignment          \
     automotive          \
-    boosting            \
     buffers             \
     cammodel            \
     fileformats         \
     filesystem          \
-    framesources        \
-    filters             \
     function            \
     geometry            \
     kalman              \
     kltflow             \
     math                \
-    meta                \
-    meanshift           \
     rectification       \
     reflection          \
-    segmentation        \
     stats               \
     tbbwrapper          \
     utils               \
-    clustering3d        \
 #    features2d          \
     patterndetection    \
     cameracalibration   \
