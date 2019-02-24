@@ -26,6 +26,7 @@ public:
     void SetForce(float x, float y, float z);
     void SetForce(Vector3d<float> force);
     void Tick(double DeltaT);
+    virtual void SaveMesh(string name);
 };
 
 #endif // SIMOBJECT_H

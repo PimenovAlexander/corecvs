@@ -33,3 +33,8 @@ SimObject::SimObject()
 {
     cout<<"created"<<endl;
 }
+
+void SimObject::SaveMesh(string name)
+{
+  cout<<"not here"<<endl;
+}

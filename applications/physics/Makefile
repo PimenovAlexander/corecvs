@@ -55,7 +55,8 @@ SOURCES       = main_physics.cpp \
 		joystickinput.cpp \
 		qcomcontroller.cpp \
 		simulation.cpp \
-		simobject.cpp ../../.obj/physics/moc_physicsMainWidget.cpp \
+		simobject.cpp \
+		simsphere.cpp ../../.obj/physics/moc_physicsMainWidget.cpp \
 		../../.obj/physics/moc_qcomcontroller.cpp
 OBJECTS       = ../../.obj/physics/main_physics.o \
 		../../.obj/physics/physicsMainWidget.o \
@@ -65,6 +66,7 @@ OBJECTS       = ../../.obj/physics/main_physics.o \
 		../../.obj/physics/qcomcontroller.o \
 		../../.obj/physics/simulation.o \
 		../../.obj/physics/simobject.o \
+		../../.obj/physics/simsphere.o \
 		../../.obj/physics/moc_physicsMainWidget.o \
 		../../.obj/physics/moc_qcomcontroller.o
 DIST          = ../../arduinoscancontrol.ino \
@@ -137,14 +139,16 @@ DIST          = ../../arduinoscancontrol.ino \
 		joystickinput.h \
 		qcomcontroller.h \
 		simulation.h \
-		simobject.h main_physics.cpp \
+		simobject.h \
+		simsphere.h main_physics.cpp \
 		physicsMainWidget.cpp \
 		clientsender.cpp \
 		controllrecord.cpp \
 		joystickinput.cpp \
 		qcomcontroller.cpp \
 		simulation.cpp \
-		simobject.cpp
+		simobject.cpp \
+		simsphere.cpp
 QMAKE_TARGET  = physics
 DESTDIR       = ../../bin/#avoid trailing-slash linebreak
 TARGET        = ../../bin/physics
@@ -331,8 +335,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents physicsMainWidget.h clientsender.h controllrecord.h joystickinput.h qcomcontroller.h simulation.h simobject.h $(DISTDIR)/
-	$(COPY_FILE) --parents main_physics.cpp physicsMainWidget.cpp clientsender.cpp controllrecord.cpp joystickinput.cpp qcomcontroller.cpp simulation.cpp simobject.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents physicsMainWidget.h clientsender.h controllrecord.h joystickinput.h qcomcontroller.h simulation.h simobject.h simsphere.h $(DISTDIR)/
+	$(COPY_FILE) --parents main_physics.cpp physicsMainWidget.cpp clientsender.cpp controllrecord.cpp joystickinput.cpp qcomcontroller.cpp simulation.cpp simobject.cpp simsphere.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents physicsMainWidget.ui $(DISTDIR)/
 
 
@@ -363,6 +367,161 @@ compiler_moc_header_clean:
 		qcomcontroller.h \
 		controllrecord.h \
 		joystickinput.h \
+		simulation.h \
+		simobject.h \
+		../../../corecvs/core/utils/utils.h \
+		../../../corecvs/core/utils/global.h \
+		../../../corecvs/core/geometry/mesh3d.h \
+		../../../corecvs/core/math/vector/vector3d.h \
+		../../../corecvs/core/math/vector/vector2d.h \
+		../../../corecvs/core/reflection/reflection.h \
+		../../../corecvs/core/math/vector/fixedVector.h \
+		../../../corecvs/core/math/vector/vectorOperations.h \
+		../../../corecvs/core/math/vector/vector.h \
+		../../../corecvs/core/math/vector/fixedArray.h \
+		../../../corecvs/core/xml/generated/vector2dParameters.h \
+		../../../corecvs/core/reflection/defaultSetter.h \
+		../../../corecvs/core/reflection/printerVisitor.h \
+		../../../corecvs/core/math/matrix/matrix33.h \
+		../../../corecvs/core/math/matrix/matrix44.h \
+		../../../corecvs/core/math/vector/vector4d.h \
+		../../../corecvs/core/geometry/axisAlignedBox.h \
+		../../../corecvs/core/geometry/line.h \
+		../../../corecvs/core/xml/generated/axisAlignedBoxParameters.h \
+		../../../corecvs/core/geometry/ellipticalApproximation.h \
+		../../../corecvs/core/math/matrix/matrix.h \
+		../../../corecvs/core/buffers/abstractBuffer.h \
+		../../core/buffers/memory/memoryBlock.h \
+		../../../corecvs/core/utils/atomicOps.h \
+		../../core/buffers/memory/alignedMemoryBlock.h \
+		../../../corecvs/core/tbbwrapper/tbbWrapper.h \
+		../../../corecvs/core/math/mathUtils.h \
+		../../../corecvs/core/buffers/abstractBufferParams.h \
+		../../../corecvs/core/math/matrix/diagonalMatrix.h \
+		../../../corecvs/core/math/affine.h \
+		../../../corecvs/core/math/quaternion.h \
+		../../../corecvs/core/math/matrix/matrix22.h \
+		../../../corecvs/core/geometry/polygons.h \
+		../../../corecvs/core/geometry/rectangle.h \
+		../../../corecvs/core/geometry/convexPolyhedron.h \
+		../../../corecvs/core/geometry/plane.h \
+		../../../corecvs/core/geometry/conic.h \
+		../../../corecvs/core/buffers/rgb24/lineSpan.h \
+		../../../corecvs/core/geometry/orientedBox.h \
+		../../../corecvs/core/buffers/rgb24/rgbColor.h \
+		../../../corecvs/core/xml/generated/rgbColorParameters.h \
+		../../../corecvs/core/cammodel/cameraParameters.h \
+		../../../corecvs/core/cameracalibration/cameraModel.h \
+		../../core/cameracalibration/calibrationLocation.h \
+		../../../corecvs/core/math/eulerAngles.h \
+		../../../corecvs/core/buffers/displacementBuffer.h \
+		../../../corecvs/core/buffers/abstractContiniousBuffer.h \
+		../../../corecvs/core/buffers/g12Buffer.h \
+		../../../corecvs/core/buffers/fixeddisp/fixedPointBlMapper.h \
+		../../../corecvs/core/buffers/fixeddisp/fixedPointRemapper.h \
+		../../../corecvs/core/buffers/fixeddisp/bilinearMapPoint.h \
+		../../../corecvs/core/alignment/radialCorrection.h \
+		../../../corecvs/core/alignment/lensDistortionModelParameters.h \
+		../../../corecvs/core/xml/generated/lensDistortionModelParametersBase.h \
+		../../../corecvs/core/math/levenmarq.h \
+		../../../corecvs/core/function/function.h \
+		../../../corecvs/core/math/sparseMatrix.h \
+		../../../corecvs/core/math/wisdom.h \
+		../../../corecvs/wrappers/cblasLapack/cblasLapackeWrapper.h \
+		../../../corecvs/core/iterative/minresQLP.h \
+		../../../corecvs/core/iterative/pcg.h \
+		../../../corecvs/core/utils/statusTracker.h \
+		../../../corecvs/core/utils/preciseTimer.h \
+		../../../corecvs/core/stats/calculationStats.h \
+		../../../corecvs/core/buffers/rgb24/rgb24Buffer.h \
+		../../../corecvs/core/buffers/g8Buffer.h \
+		../../../corecvs/core/buffers/flow/flowBuffer.h \
+		../../../corecvs/core/math/sse/sseWrapper.h \
+		../../../corecvs/core/math/sse/sseInteger.h \
+		../../../corecvs/core/math/sse/int64x2.h \
+		../../../corecvs/core/math/sse/int32x4.h \
+		../../../corecvs/core/math/sse/int32x8v.h \
+		../../../corecvs/core/math/sse/int16x8.h \
+		../../../corecvs/core/math/sse/intBase16x8.h \
+		../../../corecvs/core/math/sse/uInt16x8.h \
+		../../../corecvs/core/math/sse/int8x16.h \
+		../../../corecvs/core/math/sse/intBase8x16.h \
+		../../../corecvs/core/math/sse/uInt8x16.h \
+		../../../corecvs/core/math/sse/float32x4.h \
+		../../../corecvs/core/math/sse/doublex2.h \
+		../../../corecvs/core/math/sse/float32x8.h \
+		../../../corecvs/core/math/avx/int32x8.h \
+		../../../corecvs/core/math/avx/avxInteger.h \
+		../../../corecvs/core/math/avx/int64x4.h \
+		../../../corecvs/core/math/sse/doublex4.h \
+		../../../corecvs/core/math/sse/doublex8.h \
+		../../../corecvs/core/math/sse/doublexT4.h \
+		../../../corecvs/core/math/sse/floatT8.h \
+		../../../corecvs/core/math/avx/float32x8.h \
+		../../../corecvs/core/math/avx/int32x16v.h \
+		../../../corecvs/core/math/avx/int16x16.h \
+		../../../corecvs/core/math/sse/sseMath.h \
+		../../../corecvs/core/math/puzzleBlock.h \
+		../../../corecvs/core/math/neon/neonWrapper.h \
+		../../../corecvs/core/math/neon/int64x2.h \
+		../../../corecvs/core/math/neon/int32x4.h \
+		../../../corecvs/core/math/neon/uInt32x4.h \
+		../../../corecvs/core/math/neon/int32x8v.h \
+		../../../corecvs/core/math/neon/int16x8.h \
+		../../../corecvs/core/math/neon/uInt16x8.h \
+		../../../corecvs/core/math/neon/float32x4.h \
+		../../core/math/neon/neonMath.h \
+		../../../corecvs/core/buffers/flow/punchedBufferOperations.h \
+		../../../corecvs/core/buffers/flow/flowVector.h \
+		../../../corecvs/core/buffers/histogram/histogram.h \
+		../../../corecvs/core/buffers/commonMappers.h \
+		../../../corecvs/core/rectification/correspondenceList.h \
+		../../../corecvs/core/buffers/flow/floatFlowBuffer.h \
+		../../../corecvs/core/kltflow/kltGenerator.h \
+		../../../corecvs/core/buffers/mipmapPyramid.h \
+		../../../corecvs/core/buffers/kernels/gaussian.h \
+		../../../corecvs/core/buffers/abstractKernel.h \
+		../../../corecvs/core/buffers/integralBuffer.h \
+		../../../corecvs/core/buffers/interpolator.h \
+		../../../corecvs/core/buffers/kernels/spatialGradient.h \
+		../../../corecvs/core/buffers/kernels/fastkernel/vectorTraits.h \
+		../../../corecvs/core/buffers/kernels/fastkernel/vectorAlgebra.h \
+		../../../corecvs/core/buffers/kernels/fastkernel/baseAlgebra.h \
+		../../../corecvs/core/buffers/kernels/fastkernel/scalarAlgebra.h \
+		../../../corecvs/core/math/generic/genericMath.h \
+		../../../corecvs/core/xml/generated/preciseInterpolationType.h \
+		../../../corecvs/core/xml/generated/makePreciseParameters.h \
+		../../../corecvs/core/xml/generated/makePreciseAlgorithm.h \
+		../../../corecvs/core/math/projectiveTransform.h \
+		../../../corecvs/core/buffers/deformMap.h \
+		../../../corecvs/core/xml/generated/imageChannel.h \
+		../../../corecvs/core/buffers/kernels/fastkernel/readers.h \
+		../../../corecvs/core/buffers/rgb24/abstractPainter.h \
+		../../../corecvs/utils/statistics/graphData.h \
+		../../../corecvs/core/buffers/rgb24/hardcodeFont.h \
+		../../../corecvs/core/buffers/rgb24/hersheyVectorFont.h \
+		../../../corecvs/core/alignment/distortionCorrectTransform.h \
+		../../core/math/levenmarq.h \
+		../../../corecvs/core/xml/generated/distortionApplicationParameters.h \
+		../../../corecvs/core/xml/generated/distortionResizePolicy.h \
+		../../../corecvs/core/rectification/essentialMatrix.h \
+		../../../corecvs/core/alignment/pointObservation.h \
+		../../../corecvs/core/reflection/dynamicObject.h \
+		../../../corecvs/core/alignment/selectableGeometryFeatures.h \
+		../../../corecvs/core/cameracalibration/projection/projectionFactory.h \
+		../../../corecvs/core/cameracalibration/projection/pinholeCameraIntrinsics.h \
+		../../../corecvs/core/cameracalibration/projection/projectionModels.h \
+		../../../corecvs/core/xml/generated/projectionType.h \
+		../../../corecvs/core/xml/generated/pinholeCameraIntrinsicsBaseParameters.h \
+		../../../corecvs/core/cameracalibration/projection/equidistantProjection.h \
+		../../../corecvs/core/xml/generated/projectionBaseParameters.h \
+		../../../corecvs/core/cameracalibration/projection/equisolidAngleProjection.h \
+		../../../corecvs/core/cameracalibration/projection/omnidirectionalProjection.h \
+		../../../corecvs/core/polynomial/polynomial.h \
+		../../../corecvs/core/polynomial/polynomialSolver.h \
+		../../../corecvs/core/xml/generated/omnidirectionalBaseParameters.h \
+		../../../corecvs/core/cameracalibration/projection/stereographicProjection.h \
+		../../../corecvs/core/geometry/mesh3DDecorated.h \
 		physicsMainWidget.h
 	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/nicolay/QuadroLib/corecvs/applications/physics -I/home/nicolay/QuadroLib/corecvs -I/home/nicolay/QuadroLib/corecvs/utils -I/home/nicolay/QuadroLib/corecvs/utils/3d -I/home/nicolay/QuadroLib/corecvs/utils/camcalc -I/home/nicolay/QuadroLib/corecvs/utils/corestructs -I/home/nicolay/QuadroLib/corecvs/utils/corestructs/coreWidgets -I/home/nicolay/QuadroLib/corecvs/utils/corestructs/libWidgets -I/home/nicolay/QuadroLib/corecvs/utils/corestructs/parametersMapper -I/home/nicolay/QuadroLib/corecvs/utils/corestructs/cameraModel -I/home/nicolay/QuadroLib/corecvs/utils/distortioncorrector -I/home/nicolay/QuadroLib/corecvs/utils/fileformats -I/home/nicolay/QuadroLib/corecvs/utils/filters -I/home/nicolay/QuadroLib/corecvs/utils/filters/graph -I/home/nicolay/QuadroLib/corecvs/utils/filters/ui -I/home/nicolay/QuadroLib/corecvs/utils/framesources -I/home/nicolay/QuadroLib/corecvs/utils/framesources/directShow -I/home/nicolay/QuadroLib/corecvs/utils/framesources/decoders -I/home/nicolay/QuadroLib/corecvs/utils/framesources/syncCam -I/home/nicolay/QuadroLib/corecvs/utils/framesources/file -I/home/nicolay/QuadroLib/corecvs/utils/framesources/avcodec -I/home/nicolay/QuadroLib/corecvs/utils/processor -I/home/nicolay/QuadroLib/corecvs/utils/rectifier -I/home/nicolay/QuadroLib/corecvs/utils/statistics -I/home/nicolay/QuadroLib/corecvs/utils/uis -I/home/nicolay/QuadroLib/corecvs/utils/uis/cloudview -I/home/nicolay/QuadroLib/corecvs/utils/visitors -I/home/nicolay/QuadroLib/corecvs/utils/widgets -I/home/nicolay/QuadroLib/corecvs/utils/photostationcalibration -I/home/nicolay/QuadroLib/corecvs/utils/tablecontrol -I/home/nicolay/QuadroLib/corecvs/utils/capture -I/home/nicolay/QuadroLib/corecvs/utils/reconstruction -I/home/nicolay/QuadroLib/corecvs/utils/memoryuse -I/home/nicolay/QuadroLib/corecvs/utils/framesources/v4l2 -I/home/nicolay/QuadroLib/corecvs/.obj/cvs_utils -I/home/nicolay/QuadroLib/corecvs/utils/opengl -I/home/nicolay/QuadroLib/corecvs/applications/physics -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtXml -I/usr/include/x86_64-linux-gnu/qt5/QtSerialPort -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include physicsMainWidget.h -o ../../.obj/physics/moc_physicsMainWidget.cpp
 
@@ -740,7 +899,9 @@ compiler_clean: compiler_moc_header_clean compiler_uic_clean
 		clientsender.h \
 		qcomcontroller.h \
 		controllrecord.h \
-		joystickinput.h
+		joystickinput.h \
+		simulation.h \
+		simobject.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/main_physics.o main_physics.cpp
 
 ../../.obj/physics/physicsMainWidget.o: physicsMainWidget.cpp ../../../corecvs/core/utils/global.h \
@@ -749,29 +910,170 @@ compiler_clean: compiler_moc_header_clean compiler_uic_clean
 		qcomcontroller.h \
 		controllrecord.h \
 		joystickinput.h \
-		../../.obj/physics/ui_physicsMainWidget.h \
-		../../.obj/cvs_utils/ui_cloudViewDialog.h \
-		../../utils/corestructs/coreWidgets/rgbColorParametersControlWidget.h \
-		../../../corecvs/core/buffers/rgb24/rgbColor.h \
-		../../../corecvs/core/math/vector/fixedVector.h \
-		../../../corecvs/core/math/vector/vectorOperations.h \
-		../../../corecvs/core/reflection/reflection.h \
+		simulation.h \
+		simobject.h \
+		../../../corecvs/core/utils/utils.h \
+		../../../corecvs/core/geometry/mesh3d.h \
 		../../../corecvs/core/math/vector/vector3d.h \
 		../../../corecvs/core/math/vector/vector2d.h \
+		../../../corecvs/core/reflection/reflection.h \
+		../../../corecvs/core/math/vector/fixedVector.h \
+		../../../corecvs/core/math/vector/vectorOperations.h \
 		../../../corecvs/core/math/vector/vector.h \
 		../../../corecvs/core/math/vector/fixedArray.h \
 		../../../corecvs/core/xml/generated/vector2dParameters.h \
 		../../../corecvs/core/reflection/defaultSetter.h \
 		../../../corecvs/core/reflection/printerVisitor.h \
+		../../../corecvs/core/math/matrix/matrix33.h \
+		../../../corecvs/core/math/matrix/matrix44.h \
+		../../../corecvs/core/math/vector/vector4d.h \
+		../../../corecvs/core/geometry/axisAlignedBox.h \
+		../../../corecvs/core/geometry/line.h \
+		../../../corecvs/core/xml/generated/axisAlignedBoxParameters.h \
+		../../../corecvs/core/geometry/ellipticalApproximation.h \
+		../../../corecvs/core/math/matrix/matrix.h \
+		../../../corecvs/core/buffers/abstractBuffer.h \
+		../../core/buffers/memory/memoryBlock.h \
+		../../../corecvs/core/utils/atomicOps.h \
+		../../core/buffers/memory/alignedMemoryBlock.h \
+		../../../corecvs/core/tbbwrapper/tbbWrapper.h \
 		../../../corecvs/core/math/mathUtils.h \
+		../../../corecvs/core/buffers/abstractBufferParams.h \
+		../../../corecvs/core/math/matrix/diagonalMatrix.h \
+		../../../corecvs/core/math/affine.h \
+		../../../corecvs/core/math/quaternion.h \
+		../../../corecvs/core/math/matrix/matrix22.h \
+		../../../corecvs/core/geometry/polygons.h \
+		../../../corecvs/core/geometry/rectangle.h \
+		../../../corecvs/core/geometry/convexPolyhedron.h \
+		../../../corecvs/core/geometry/plane.h \
+		../../../corecvs/core/geometry/conic.h \
+		../../../corecvs/core/buffers/rgb24/lineSpan.h \
+		../../../corecvs/core/geometry/orientedBox.h \
+		../../../corecvs/core/buffers/rgb24/rgbColor.h \
 		../../../corecvs/core/xml/generated/rgbColorParameters.h \
+		../../../corecvs/core/cammodel/cameraParameters.h \
+		../../../corecvs/core/cameracalibration/cameraModel.h \
+		../../core/cameracalibration/calibrationLocation.h \
+		../../../corecvs/core/math/eulerAngles.h \
+		../../../corecvs/core/buffers/displacementBuffer.h \
+		../../../corecvs/core/buffers/abstractContiniousBuffer.h \
+		../../../corecvs/core/buffers/g12Buffer.h \
+		../../../corecvs/core/buffers/fixeddisp/fixedPointBlMapper.h \
+		../../../corecvs/core/buffers/fixeddisp/fixedPointRemapper.h \
+		../../../corecvs/core/buffers/fixeddisp/bilinearMapPoint.h \
+		../../../corecvs/core/alignment/radialCorrection.h \
+		../../../corecvs/core/alignment/lensDistortionModelParameters.h \
+		../../../corecvs/core/xml/generated/lensDistortionModelParametersBase.h \
+		../../../corecvs/core/math/levenmarq.h \
+		../../../corecvs/core/function/function.h \
+		../../../corecvs/core/math/sparseMatrix.h \
+		../../../corecvs/core/math/wisdom.h \
+		../../../corecvs/wrappers/cblasLapack/cblasLapackeWrapper.h \
+		../../../corecvs/core/iterative/minresQLP.h \
+		../../../corecvs/core/iterative/pcg.h \
+		../../../corecvs/core/utils/statusTracker.h \
+		../../../corecvs/core/utils/preciseTimer.h \
+		../../../corecvs/core/stats/calculationStats.h \
+		../../../corecvs/core/buffers/rgb24/rgb24Buffer.h \
+		../../../corecvs/core/buffers/g8Buffer.h \
+		../../../corecvs/core/buffers/flow/flowBuffer.h \
+		../../../corecvs/core/math/sse/sseWrapper.h \
+		../../../corecvs/core/math/sse/sseInteger.h \
+		../../../corecvs/core/math/sse/int64x2.h \
+		../../../corecvs/core/math/sse/int32x4.h \
+		../../../corecvs/core/math/sse/int32x8v.h \
+		../../../corecvs/core/math/sse/int16x8.h \
+		../../../corecvs/core/math/sse/intBase16x8.h \
+		../../../corecvs/core/math/sse/uInt16x8.h \
+		../../../corecvs/core/math/sse/int8x16.h \
+		../../../corecvs/core/math/sse/intBase8x16.h \
+		../../../corecvs/core/math/sse/uInt8x16.h \
+		../../../corecvs/core/math/sse/float32x4.h \
+		../../../corecvs/core/math/sse/doublex2.h \
+		../../../corecvs/core/math/sse/float32x8.h \
+		../../../corecvs/core/math/avx/int32x8.h \
+		../../../corecvs/core/math/avx/avxInteger.h \
+		../../../corecvs/core/math/avx/int64x4.h \
+		../../../corecvs/core/math/sse/doublex4.h \
+		../../../corecvs/core/math/sse/doublex8.h \
+		../../../corecvs/core/math/sse/doublexT4.h \
+		../../../corecvs/core/math/sse/floatT8.h \
+		../../../corecvs/core/math/avx/float32x8.h \
+		../../../corecvs/core/math/avx/int32x16v.h \
+		../../../corecvs/core/math/avx/int16x16.h \
+		../../../corecvs/core/math/sse/sseMath.h \
+		../../../corecvs/core/math/puzzleBlock.h \
+		../../../corecvs/core/math/neon/neonWrapper.h \
+		../../../corecvs/core/math/neon/int64x2.h \
+		../../../corecvs/core/math/neon/int32x4.h \
+		../../../corecvs/core/math/neon/uInt32x4.h \
+		../../../corecvs/core/math/neon/int32x8v.h \
+		../../../corecvs/core/math/neon/int16x8.h \
+		../../../corecvs/core/math/neon/uInt16x8.h \
+		../../../corecvs/core/math/neon/float32x4.h \
+		../../core/math/neon/neonMath.h \
+		../../../corecvs/core/buffers/flow/punchedBufferOperations.h \
+		../../../corecvs/core/buffers/flow/flowVector.h \
+		../../../corecvs/core/buffers/histogram/histogram.h \
+		../../../corecvs/core/buffers/commonMappers.h \
+		../../../corecvs/core/rectification/correspondenceList.h \
+		../../../corecvs/core/buffers/flow/floatFlowBuffer.h \
+		../../../corecvs/core/kltflow/kltGenerator.h \
+		../../../corecvs/core/buffers/mipmapPyramid.h \
+		../../../corecvs/core/buffers/kernels/gaussian.h \
+		../../../corecvs/core/buffers/abstractKernel.h \
+		../../../corecvs/core/buffers/integralBuffer.h \
+		../../../corecvs/core/buffers/interpolator.h \
+		../../../corecvs/core/buffers/kernels/spatialGradient.h \
+		../../../corecvs/core/buffers/kernels/fastkernel/vectorTraits.h \
+		../../../corecvs/core/buffers/kernels/fastkernel/vectorAlgebra.h \
+		../../../corecvs/core/buffers/kernels/fastkernel/baseAlgebra.h \
+		../../../corecvs/core/buffers/kernels/fastkernel/scalarAlgebra.h \
+		../../../corecvs/core/math/generic/genericMath.h \
+		../../../corecvs/core/xml/generated/preciseInterpolationType.h \
+		../../../corecvs/core/xml/generated/makePreciseParameters.h \
+		../../../corecvs/core/xml/generated/makePreciseAlgorithm.h \
+		../../../corecvs/core/math/projectiveTransform.h \
+		../../../corecvs/core/buffers/deformMap.h \
+		../../../corecvs/core/xml/generated/imageChannel.h \
+		../../../corecvs/core/buffers/kernels/fastkernel/readers.h \
+		../../../corecvs/core/buffers/rgb24/abstractPainter.h \
+		../../../corecvs/utils/statistics/graphData.h \
+		../../../corecvs/core/buffers/rgb24/hardcodeFont.h \
+		../../../corecvs/core/buffers/rgb24/hersheyVectorFont.h \
+		../../../corecvs/core/alignment/distortionCorrectTransform.h \
+		../../core/math/levenmarq.h \
+		../../../corecvs/core/xml/generated/distortionApplicationParameters.h \
+		../../../corecvs/core/xml/generated/distortionResizePolicy.h \
+		../../../corecvs/core/rectification/essentialMatrix.h \
+		../../../corecvs/core/alignment/pointObservation.h \
+		../../../corecvs/core/reflection/dynamicObject.h \
+		../../../corecvs/core/alignment/selectableGeometryFeatures.h \
+		../../../corecvs/core/cameracalibration/projection/projectionFactory.h \
+		../../../corecvs/core/cameracalibration/projection/pinholeCameraIntrinsics.h \
+		../../../corecvs/core/cameracalibration/projection/projectionModels.h \
+		../../../corecvs/core/xml/generated/projectionType.h \
+		../../../corecvs/core/xml/generated/pinholeCameraIntrinsicsBaseParameters.h \
+		../../../corecvs/core/cameracalibration/projection/equidistantProjection.h \
+		../../../corecvs/core/xml/generated/projectionBaseParameters.h \
+		../../../corecvs/core/cameracalibration/projection/equisolidAngleProjection.h \
+		../../../corecvs/core/cameracalibration/projection/omnidirectionalProjection.h \
+		../../../corecvs/core/polynomial/polynomial.h \
+		../../../corecvs/core/polynomial/polynomialSolver.h \
+		../../../corecvs/core/xml/generated/omnidirectionalBaseParameters.h \
+		../../../corecvs/core/cameracalibration/projection/stereographicProjection.h \
+		../../../corecvs/core/geometry/mesh3DDecorated.h \
+		../../.obj/physics/ui_physicsMainWidget.h \
+		../../utils/uis/cloudview/cloudViewDialog.h \
+		../../.obj/cvs_utils/ui_cloudViewDialog.h \
+		../../utils/corestructs/coreWidgets/rgbColorParametersControlWidget.h \
 		../../.obj/cvs_utils/ui_rgbColorParametersControlWidget.h \
 		../../utils/viAreaWidget.h \
 		../../.obj/cvs_utils/ui_viAreaWidget.h \
 		../../utils/corestructs/parametersControlWidgetBase.h \
 		../../../corecvs/core/utils/visitors/propertyListVisitor.h \
 		../../../corecvs/core/utils/propertyList.h \
-		../../../corecvs/core/utils/utils.h \
 		../../../corecvs/core/utils/visitors/basePathVisitor.h \
 		../../utils/visitors/qSettingsSetter.h \
 		../../utils/visitors/qSettingsGetter.h \
@@ -782,7 +1084,35 @@ compiler_clean: compiler_moc_header_clean compiler_uic_clean
 		../../utils/visitors/jsonGetter.h \
 		../../utils/uis/cloudview/scene3dTreeView.h \
 		../../utils/viGLAreaWidget.h \
-		../../.obj/cvs_utils/ui_viGLAreaWidget.h
+		../../.obj/cvs_utils/ui_viGLAreaWidget.h \
+		../../../corecvs/core/buffers/bufferFactory.h \
+		../../../corecvs/core/fileformats/bufferLoader.h \
+		../../../corecvs/core/buffers/runtimeTypeBuffer.h \
+		../../../corecvs/core/rectification/triangulator.h \
+		../../../corecvs/core/buffers/flow/sixDBuffer.h \
+		../../../corecvs/core/buffers/flow/element6D.h \
+		../../../corecvs/core/buffers/flow/depthBuffer.h \
+		../../../corecvs/core/clustering3d/cloud.h \
+		../../../corecvs/core/clustering3d/swarmPoint.h \
+		../../utils/widgets/transform3DSelector.h \
+		../../.obj/cvs_utils/ui_transform3DSelector.h \
+		../../utils/3d/scene3D.h \
+		../../utils/3d/generated/draw3dParameters.h \
+		../../utils/3d/generated/draw3dStyle.h \
+		../../utils/3d/generated/draw3dTextureGen.h \
+		../../utils/3d/draw3dParametersControlWidget.h \
+		../../.obj/cvs_utils/ui_draw3dParametersControlWidget.h \
+		../../utils/3d/coordinateFrame.h \
+		../../utils/frames.h \
+		../../../corecvs/core/framesources/imageCaptureInterface.h \
+		../../utils/uis/cloudview/treeSceneController.h \
+		../../utils/uis/textLabelWidget.h \
+		../../.obj/cvs_utils/ui_textLabelWidget.h \
+		../../utils/3d/mesh3DScene.h \
+		../../../corecvs/core/fileformats/plyLoader.h \
+		../../utils/3d/draw3dCameraParametersControlWidget.h \
+		../../utils/3d/generated/draw3dCameraParameters.h \
+		../../.obj/cvs_utils/ui_draw3dCameraParametersControlWidget.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/physicsMainWidget.o physicsMainWidget.cpp
 
 ../../.obj/physics/clientsender.o: clientsender.cpp clientsender.h
@@ -800,7 +1130,162 @@ compiler_clean: compiler_moc_header_clean compiler_uic_clean
 		../../../corecvs/core/utils/global.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/qcomcontroller.o qcomcontroller.cpp
 
-../../.obj/physics/simulation.o: simulation.cpp simulation.h
+../../.obj/physics/simulation.o: simulation.cpp simulation.h \
+		simobject.h \
+		../../../corecvs/core/utils/utils.h \
+		../../../corecvs/core/utils/global.h \
+		../../../corecvs/core/geometry/mesh3d.h \
+		../../../corecvs/core/math/vector/vector3d.h \
+		../../../corecvs/core/math/vector/vector2d.h \
+		../../../corecvs/core/reflection/reflection.h \
+		../../../corecvs/core/math/vector/fixedVector.h \
+		../../../corecvs/core/math/vector/vectorOperations.h \
+		../../../corecvs/core/math/vector/vector.h \
+		../../../corecvs/core/math/vector/fixedArray.h \
+		../../../corecvs/core/xml/generated/vector2dParameters.h \
+		../../../corecvs/core/reflection/defaultSetter.h \
+		../../../corecvs/core/reflection/printerVisitor.h \
+		../../../corecvs/core/math/matrix/matrix33.h \
+		../../../corecvs/core/math/matrix/matrix44.h \
+		../../../corecvs/core/math/vector/vector4d.h \
+		../../../corecvs/core/geometry/axisAlignedBox.h \
+		../../../corecvs/core/geometry/line.h \
+		../../../corecvs/core/xml/generated/axisAlignedBoxParameters.h \
+		../../../corecvs/core/geometry/ellipticalApproximation.h \
+		../../../corecvs/core/math/matrix/matrix.h \
+		../../../corecvs/core/buffers/abstractBuffer.h \
+		../../core/buffers/memory/memoryBlock.h \
+		../../../corecvs/core/utils/atomicOps.h \
+		../../core/buffers/memory/alignedMemoryBlock.h \
+		../../../corecvs/core/tbbwrapper/tbbWrapper.h \
+		../../../corecvs/core/math/mathUtils.h \
+		../../../corecvs/core/buffers/abstractBufferParams.h \
+		../../../corecvs/core/math/matrix/diagonalMatrix.h \
+		../../../corecvs/core/math/affine.h \
+		../../../corecvs/core/math/quaternion.h \
+		../../../corecvs/core/math/matrix/matrix22.h \
+		../../../corecvs/core/geometry/polygons.h \
+		../../../corecvs/core/geometry/rectangle.h \
+		../../../corecvs/core/geometry/convexPolyhedron.h \
+		../../../corecvs/core/geometry/plane.h \
+		../../../corecvs/core/geometry/conic.h \
+		../../../corecvs/core/buffers/rgb24/lineSpan.h \
+		../../../corecvs/core/geometry/orientedBox.h \
+		../../../corecvs/core/buffers/rgb24/rgbColor.h \
+		../../../corecvs/core/xml/generated/rgbColorParameters.h \
+		../../../corecvs/core/cammodel/cameraParameters.h \
+		../../../corecvs/core/cameracalibration/cameraModel.h \
+		../../core/cameracalibration/calibrationLocation.h \
+		../../../corecvs/core/math/eulerAngles.h \
+		../../../corecvs/core/buffers/displacementBuffer.h \
+		../../../corecvs/core/buffers/abstractContiniousBuffer.h \
+		../../../corecvs/core/buffers/g12Buffer.h \
+		../../../corecvs/core/buffers/fixeddisp/fixedPointBlMapper.h \
+		../../../corecvs/core/buffers/fixeddisp/fixedPointRemapper.h \
+		../../../corecvs/core/buffers/fixeddisp/bilinearMapPoint.h \
+		../../../corecvs/core/alignment/radialCorrection.h \
+		../../../corecvs/core/alignment/lensDistortionModelParameters.h \
+		../../../corecvs/core/xml/generated/lensDistortionModelParametersBase.h \
+		../../../corecvs/core/math/levenmarq.h \
+		../../../corecvs/core/function/function.h \
+		../../../corecvs/core/math/sparseMatrix.h \
+		../../../corecvs/core/math/wisdom.h \
+		../../../corecvs/wrappers/cblasLapack/cblasLapackeWrapper.h \
+		../../../corecvs/core/iterative/minresQLP.h \
+		../../../corecvs/core/iterative/pcg.h \
+		../../../corecvs/core/utils/statusTracker.h \
+		../../../corecvs/core/utils/preciseTimer.h \
+		../../../corecvs/core/stats/calculationStats.h \
+		../../../corecvs/core/buffers/rgb24/rgb24Buffer.h \
+		../../../corecvs/core/buffers/g8Buffer.h \
+		../../../corecvs/core/buffers/flow/flowBuffer.h \
+		../../../corecvs/core/math/sse/sseWrapper.h \
+		../../../corecvs/core/math/sse/sseInteger.h \
+		../../../corecvs/core/math/sse/int64x2.h \
+		../../../corecvs/core/math/sse/int32x4.h \
+		../../../corecvs/core/math/sse/int32x8v.h \
+		../../../corecvs/core/math/sse/int16x8.h \
+		../../../corecvs/core/math/sse/intBase16x8.h \
+		../../../corecvs/core/math/sse/uInt16x8.h \
+		../../../corecvs/core/math/sse/int8x16.h \
+		../../../corecvs/core/math/sse/intBase8x16.h \
+		../../../corecvs/core/math/sse/uInt8x16.h \
+		../../../corecvs/core/math/sse/float32x4.h \
+		../../../corecvs/core/math/sse/doublex2.h \
+		../../../corecvs/core/math/sse/float32x8.h \
+		../../../corecvs/core/math/avx/int32x8.h \
+		../../../corecvs/core/math/avx/avxInteger.h \
+		../../../corecvs/core/math/avx/int64x4.h \
+		../../../corecvs/core/math/sse/doublex4.h \
+		../../../corecvs/core/math/sse/doublex8.h \
+		../../../corecvs/core/math/sse/doublexT4.h \
+		../../../corecvs/core/math/sse/floatT8.h \
+		../../../corecvs/core/math/avx/float32x8.h \
+		../../../corecvs/core/math/avx/int32x16v.h \
+		../../../corecvs/core/math/avx/int16x16.h \
+		../../../corecvs/core/math/sse/sseMath.h \
+		../../../corecvs/core/math/puzzleBlock.h \
+		../../../corecvs/core/math/neon/neonWrapper.h \
+		../../../corecvs/core/math/neon/int64x2.h \
+		../../../corecvs/core/math/neon/int32x4.h \
+		../../../corecvs/core/math/neon/uInt32x4.h \
+		../../../corecvs/core/math/neon/int32x8v.h \
+		../../../corecvs/core/math/neon/int16x8.h \
+		../../../corecvs/core/math/neon/uInt16x8.h \
+		../../../corecvs/core/math/neon/float32x4.h \
+		../../core/math/neon/neonMath.h \
+		../../../corecvs/core/buffers/flow/punchedBufferOperations.h \
+		../../../corecvs/core/buffers/flow/flowVector.h \
+		../../../corecvs/core/buffers/histogram/histogram.h \
+		../../../corecvs/core/buffers/commonMappers.h \
+		../../../corecvs/core/rectification/correspondenceList.h \
+		../../../corecvs/core/buffers/flow/floatFlowBuffer.h \
+		../../../corecvs/core/kltflow/kltGenerator.h \
+		../../../corecvs/core/buffers/mipmapPyramid.h \
+		../../../corecvs/core/buffers/kernels/gaussian.h \
+		../../../corecvs/core/buffers/abstractKernel.h \
+		../../../corecvs/core/buffers/integralBuffer.h \
+		../../../corecvs/core/buffers/interpolator.h \
+		../../../corecvs/core/buffers/kernels/spatialGradient.h \
+		../../../corecvs/core/buffers/kernels/fastkernel/vectorTraits.h \
+		../../../corecvs/core/buffers/kernels/fastkernel/vectorAlgebra.h \
+		../../../corecvs/core/buffers/kernels/fastkernel/baseAlgebra.h \
+		../../../corecvs/core/buffers/kernels/fastkernel/scalarAlgebra.h \
+		../../../corecvs/core/math/generic/genericMath.h \
+		../../../corecvs/core/xml/generated/preciseInterpolationType.h \
+		../../../corecvs/core/xml/generated/makePreciseParameters.h \
+		../../../corecvs/core/xml/generated/makePreciseAlgorithm.h \
+		../../../corecvs/core/math/projectiveTransform.h \
+		../../../corecvs/core/buffers/deformMap.h \
+		../../../corecvs/core/xml/generated/imageChannel.h \
+		../../../corecvs/core/buffers/kernels/fastkernel/readers.h \
+		../../../corecvs/core/buffers/rgb24/abstractPainter.h \
+		../../../corecvs/utils/statistics/graphData.h \
+		../../../corecvs/core/buffers/rgb24/hardcodeFont.h \
+		../../../corecvs/core/buffers/rgb24/hersheyVectorFont.h \
+		../../../corecvs/core/alignment/distortionCorrectTransform.h \
+		../../core/math/levenmarq.h \
+		../../../corecvs/core/xml/generated/distortionApplicationParameters.h \
+		../../../corecvs/core/xml/generated/distortionResizePolicy.h \
+		../../../corecvs/core/rectification/essentialMatrix.h \
+		../../../corecvs/core/alignment/pointObservation.h \
+		../../../corecvs/core/reflection/dynamicObject.h \
+		../../../corecvs/core/alignment/selectableGeometryFeatures.h \
+		../../../corecvs/core/cameracalibration/projection/projectionFactory.h \
+		../../../corecvs/core/cameracalibration/projection/pinholeCameraIntrinsics.h \
+		../../../corecvs/core/cameracalibration/projection/projectionModels.h \
+		../../../corecvs/core/xml/generated/projectionType.h \
+		../../../corecvs/core/xml/generated/pinholeCameraIntrinsicsBaseParameters.h \
+		../../../corecvs/core/cameracalibration/projection/equidistantProjection.h \
+		../../../corecvs/core/xml/generated/projectionBaseParameters.h \
+		../../../corecvs/core/cameracalibration/projection/equisolidAngleProjection.h \
+		../../../corecvs/core/cameracalibration/projection/omnidirectionalProjection.h \
+		../../../corecvs/core/polynomial/polynomial.h \
+		../../../corecvs/core/polynomial/polynomialSolver.h \
+		../../../corecvs/core/xml/generated/omnidirectionalBaseParameters.h \
+		../../../corecvs/core/cameracalibration/projection/stereographicProjection.h \
+		../../../corecvs/core/geometry/mesh3DDecorated.h \
+		simsphere.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/simulation.o simulation.cpp
 
 ../../.obj/physics/simobject.o: simobject.cpp simobject.h \
@@ -958,6 +1443,211 @@ compiler_clean: compiler_moc_header_clean compiler_uic_clean
 		../../../corecvs/core/cameracalibration/projection/stereographicProjection.h \
 		../../../corecvs/core/geometry/mesh3DDecorated.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/simobject.o simobject.cpp
+
+../../.obj/physics/simsphere.o: simsphere.cpp simsphere.h \
+		simobject.h \
+		../../../corecvs/core/utils/utils.h \
+		../../../corecvs/core/utils/global.h \
+		../../../corecvs/core/geometry/mesh3d.h \
+		../../../corecvs/core/math/vector/vector3d.h \
+		../../../corecvs/core/math/vector/vector2d.h \
+		../../../corecvs/core/reflection/reflection.h \
+		../../../corecvs/core/math/vector/fixedVector.h \
+		../../../corecvs/core/math/vector/vectorOperations.h \
+		../../../corecvs/core/math/vector/vector.h \
+		../../../corecvs/core/math/vector/fixedArray.h \
+		../../../corecvs/core/xml/generated/vector2dParameters.h \
+		../../../corecvs/core/reflection/defaultSetter.h \
+		../../../corecvs/core/reflection/printerVisitor.h \
+		../../../corecvs/core/math/matrix/matrix33.h \
+		../../../corecvs/core/math/matrix/matrix44.h \
+		../../../corecvs/core/math/vector/vector4d.h \
+		../../../corecvs/core/geometry/axisAlignedBox.h \
+		../../../corecvs/core/geometry/line.h \
+		../../../corecvs/core/xml/generated/axisAlignedBoxParameters.h \
+		../../../corecvs/core/geometry/ellipticalApproximation.h \
+		../../../corecvs/core/math/matrix/matrix.h \
+		../../../corecvs/core/buffers/abstractBuffer.h \
+		../../core/buffers/memory/memoryBlock.h \
+		../../../corecvs/core/utils/atomicOps.h \
+		../../core/buffers/memory/alignedMemoryBlock.h \
+		../../../corecvs/core/tbbwrapper/tbbWrapper.h \
+		../../../corecvs/core/math/mathUtils.h \
+		../../../corecvs/core/buffers/abstractBufferParams.h \
+		../../../corecvs/core/math/matrix/diagonalMatrix.h \
+		../../../corecvs/core/math/affine.h \
+		../../../corecvs/core/math/quaternion.h \
+		../../../corecvs/core/math/matrix/matrix22.h \
+		../../../corecvs/core/geometry/polygons.h \
+		../../../corecvs/core/geometry/rectangle.h \
+		../../../corecvs/core/geometry/convexPolyhedron.h \
+		../../../corecvs/core/geometry/plane.h \
+		../../../corecvs/core/geometry/conic.h \
+		../../../corecvs/core/buffers/rgb24/lineSpan.h \
+		../../../corecvs/core/geometry/orientedBox.h \
+		../../../corecvs/core/buffers/rgb24/rgbColor.h \
+		../../../corecvs/core/xml/generated/rgbColorParameters.h \
+		../../../corecvs/core/cammodel/cameraParameters.h \
+		../../../corecvs/core/cameracalibration/cameraModel.h \
+		../../core/cameracalibration/calibrationLocation.h \
+		../../../corecvs/core/math/eulerAngles.h \
+		../../../corecvs/core/buffers/displacementBuffer.h \
+		../../../corecvs/core/buffers/abstractContiniousBuffer.h \
+		../../../corecvs/core/buffers/g12Buffer.h \
+		../../../corecvs/core/buffers/fixeddisp/fixedPointBlMapper.h \
+		../../../corecvs/core/buffers/fixeddisp/fixedPointRemapper.h \
+		../../../corecvs/core/buffers/fixeddisp/bilinearMapPoint.h \
+		../../../corecvs/core/alignment/radialCorrection.h \
+		../../../corecvs/core/alignment/lensDistortionModelParameters.h \
+		../../../corecvs/core/xml/generated/lensDistortionModelParametersBase.h \
+		../../../corecvs/core/math/levenmarq.h \
+		../../../corecvs/core/function/function.h \
+		../../../corecvs/core/math/sparseMatrix.h \
+		../../../corecvs/core/math/wisdom.h \
+		../../../corecvs/wrappers/cblasLapack/cblasLapackeWrapper.h \
+		../../../corecvs/core/iterative/minresQLP.h \
+		../../../corecvs/core/iterative/pcg.h \
+		../../../corecvs/core/utils/statusTracker.h \
+		../../../corecvs/core/utils/preciseTimer.h \
+		../../../corecvs/core/stats/calculationStats.h \
+		../../../corecvs/core/buffers/rgb24/rgb24Buffer.h \
+		../../../corecvs/core/buffers/g8Buffer.h \
+		../../../corecvs/core/buffers/flow/flowBuffer.h \
+		../../../corecvs/core/math/sse/sseWrapper.h \
+		../../../corecvs/core/math/sse/sseInteger.h \
+		../../../corecvs/core/math/sse/int64x2.h \
+		../../../corecvs/core/math/sse/int32x4.h \
+		../../../corecvs/core/math/sse/int32x8v.h \
+		../../../corecvs/core/math/sse/int16x8.h \
+		../../../corecvs/core/math/sse/intBase16x8.h \
+		../../../corecvs/core/math/sse/uInt16x8.h \
+		../../../corecvs/core/math/sse/int8x16.h \
+		../../../corecvs/core/math/sse/intBase8x16.h \
+		../../../corecvs/core/math/sse/uInt8x16.h \
+		../../../corecvs/core/math/sse/float32x4.h \
+		../../../corecvs/core/math/sse/doublex2.h \
+		../../../corecvs/core/math/sse/float32x8.h \
+		../../../corecvs/core/math/avx/int32x8.h \
+		../../../corecvs/core/math/avx/avxInteger.h \
+		../../../corecvs/core/math/avx/int64x4.h \
+		../../../corecvs/core/math/sse/doublex4.h \
+		../../../corecvs/core/math/sse/doublex8.h \
+		../../../corecvs/core/math/sse/doublexT4.h \
+		../../../corecvs/core/math/sse/floatT8.h \
+		../../../corecvs/core/math/avx/float32x8.h \
+		../../../corecvs/core/math/avx/int32x16v.h \
+		../../../corecvs/core/math/avx/int16x16.h \
+		../../../corecvs/core/math/sse/sseMath.h \
+		../../../corecvs/core/math/puzzleBlock.h \
+		../../../corecvs/core/math/neon/neonWrapper.h \
+		../../../corecvs/core/math/neon/int64x2.h \
+		../../../corecvs/core/math/neon/int32x4.h \
+		../../../corecvs/core/math/neon/uInt32x4.h \
+		../../../corecvs/core/math/neon/int32x8v.h \
+		../../../corecvs/core/math/neon/int16x8.h \
+		../../../corecvs/core/math/neon/uInt16x8.h \
+		../../../corecvs/core/math/neon/float32x4.h \
+		../../core/math/neon/neonMath.h \
+		../../../corecvs/core/buffers/flow/punchedBufferOperations.h \
+		../../../corecvs/core/buffers/flow/flowVector.h \
+		../../../corecvs/core/buffers/histogram/histogram.h \
+		../../../corecvs/core/buffers/commonMappers.h \
+		../../../corecvs/core/rectification/correspondenceList.h \
+		../../../corecvs/core/buffers/flow/floatFlowBuffer.h \
+		../../../corecvs/core/kltflow/kltGenerator.h \
+		../../../corecvs/core/buffers/mipmapPyramid.h \
+		../../../corecvs/core/buffers/kernels/gaussian.h \
+		../../../corecvs/core/buffers/abstractKernel.h \
+		../../../corecvs/core/buffers/integralBuffer.h \
+		../../../corecvs/core/buffers/interpolator.h \
+		../../../corecvs/core/buffers/kernels/spatialGradient.h \
+		../../../corecvs/core/buffers/kernels/fastkernel/vectorTraits.h \
+		../../../corecvs/core/buffers/kernels/fastkernel/vectorAlgebra.h \
+		../../../corecvs/core/buffers/kernels/fastkernel/baseAlgebra.h \
+		../../../corecvs/core/buffers/kernels/fastkernel/scalarAlgebra.h \
+		../../../corecvs/core/math/generic/genericMath.h \
+		../../../corecvs/core/xml/generated/preciseInterpolationType.h \
+		../../../corecvs/core/xml/generated/makePreciseParameters.h \
+		../../../corecvs/core/xml/generated/makePreciseAlgorithm.h \
+		../../../corecvs/core/math/projectiveTransform.h \
+		../../../corecvs/core/buffers/deformMap.h \
+		../../../corecvs/core/xml/generated/imageChannel.h \
+		../../../corecvs/core/buffers/kernels/fastkernel/readers.h \
+		../../../corecvs/core/buffers/rgb24/abstractPainter.h \
+		../../../corecvs/utils/statistics/graphData.h \
+		../../../corecvs/core/buffers/rgb24/hardcodeFont.h \
+		../../../corecvs/core/buffers/rgb24/hersheyVectorFont.h \
+		../../../corecvs/core/alignment/distortionCorrectTransform.h \
+		../../core/math/levenmarq.h \
+		../../../corecvs/core/xml/generated/distortionApplicationParameters.h \
+		../../../corecvs/core/xml/generated/distortionResizePolicy.h \
+		../../../corecvs/core/rectification/essentialMatrix.h \
+		../../../corecvs/core/alignment/pointObservation.h \
+		../../../corecvs/core/reflection/dynamicObject.h \
+		../../../corecvs/core/alignment/selectableGeometryFeatures.h \
+		../../../corecvs/core/cameracalibration/projection/projectionFactory.h \
+		../../../corecvs/core/cameracalibration/projection/pinholeCameraIntrinsics.h \
+		../../../corecvs/core/cameracalibration/projection/projectionModels.h \
+		../../../corecvs/core/xml/generated/projectionType.h \
+		../../../corecvs/core/xml/generated/pinholeCameraIntrinsicsBaseParameters.h \
+		../../../corecvs/core/cameracalibration/projection/equidistantProjection.h \
+		../../../corecvs/core/xml/generated/projectionBaseParameters.h \
+		../../../corecvs/core/cameracalibration/projection/equisolidAngleProjection.h \
+		../../../corecvs/core/cameracalibration/projection/omnidirectionalProjection.h \
+		../../../corecvs/core/polynomial/polynomial.h \
+		../../../corecvs/core/polynomial/polynomialSolver.h \
+		../../../corecvs/core/xml/generated/omnidirectionalBaseParameters.h \
+		../../../corecvs/core/cameracalibration/projection/stereographicProjection.h \
+		../../../corecvs/core/geometry/mesh3DDecorated.h \
+		../../utils/3d/mesh3DScene.h \
+		../../utils/3d/scene3D.h \
+		../../utils/3d/generated/draw3dParameters.h \
+		../../utils/3d/generated/draw3dStyle.h \
+		../../utils/3d/generated/draw3dTextureGen.h \
+		../../utils/corestructs/parametersControlWidgetBase.h \
+		../../../corecvs/core/utils/visitors/propertyListVisitor.h \
+		../../../corecvs/core/utils/propertyList.h \
+		../../../corecvs/core/utils/visitors/basePathVisitor.h \
+		../../utils/visitors/qSettingsSetter.h \
+		../../utils/visitors/qSettingsGetter.h \
+		../../utils/visitors/xmlSetter.h \
+		../../utils/visitors/baseXMLVisitor.h \
+		../../utils/visitors/xmlGetter.h \
+		../../utils/visitors/jsonSetter.h \
+		../../utils/visitors/jsonGetter.h \
+		../../utils/uis/cloudview/cloudViewDialog.h \
+		../../.obj/cvs_utils/ui_cloudViewDialog.h \
+		../../utils/corestructs/coreWidgets/rgbColorParametersControlWidget.h \
+		../../.obj/cvs_utils/ui_rgbColorParametersControlWidget.h \
+		../../utils/viAreaWidget.h \
+		../../.obj/cvs_utils/ui_viAreaWidget.h \
+		../../utils/uis/cloudview/scene3dTreeView.h \
+		../../utils/viGLAreaWidget.h \
+		../../.obj/cvs_utils/ui_viGLAreaWidget.h \
+		../../../corecvs/core/buffers/bufferFactory.h \
+		../../../corecvs/core/fileformats/bufferLoader.h \
+		../../../corecvs/core/buffers/runtimeTypeBuffer.h \
+		../../../corecvs/core/rectification/triangulator.h \
+		../../../corecvs/core/buffers/flow/sixDBuffer.h \
+		../../../corecvs/core/buffers/flow/element6D.h \
+		../../../corecvs/core/buffers/flow/depthBuffer.h \
+		../../../corecvs/core/clustering3d/cloud.h \
+		../../../corecvs/core/clustering3d/swarmPoint.h \
+		../../utils/widgets/transform3DSelector.h \
+		../../.obj/cvs_utils/ui_transform3DSelector.h \
+		../../utils/3d/draw3dParametersControlWidget.h \
+		../../.obj/cvs_utils/ui_draw3dParametersControlWidget.h \
+		../../utils/3d/coordinateFrame.h \
+		../../utils/frames.h \
+		../../../corecvs/core/framesources/imageCaptureInterface.h \
+		../../utils/uis/cloudview/treeSceneController.h \
+		../../utils/uis/textLabelWidget.h \
+		../../.obj/cvs_utils/ui_textLabelWidget.h \
+		../../../corecvs/core/fileformats/plyLoader.h \
+		../../utils/3d/draw3dCameraParametersControlWidget.h \
+		../../utils/3d/generated/draw3dCameraParameters.h \
+		../../.obj/cvs_utils/ui_draw3dCameraParametersControlWidget.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/simsphere.o simsphere.cpp
 
 ../../.obj/physics/moc_physicsMainWidget.o: ../../.obj/physics/moc_physicsMainWidget.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../.obj/physics/moc_physicsMainWidget.o ../../.obj/physics/moc_physicsMainWidget.cpp

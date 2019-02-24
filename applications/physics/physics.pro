@@ -26,7 +26,8 @@ HEADERS += \
     joystickinput.h \
     qcomcontroller.h \
     simulation.h \
-    simobject.h
+    simobject.h \
+    simsphere.h
 
 SOURCES += \
     main_physics.cpp \
@@ -36,7 +37,8 @@ SOURCES += \
     joystickinput.cpp \
     qcomcontroller.cpp \
     simulation.cpp \
-    simobject.cpp
+    simobject.cpp \
+    simsphere.cpp
 
 
 FORMS += \

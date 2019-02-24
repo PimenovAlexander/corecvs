@@ -244,7 +244,7 @@
         ui->Cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh));*/
         SimSim = Simulation();
         SimSim.Start();
-        SimSim.Objects[0].AddForce(Vector3d<float>(0,0,-9.8f));
+        SimSim.Objects[0]->AddForce(Vector3d<float>(0,0,-9.8f));
         cout<<"done"<<endl;
         }
     }
