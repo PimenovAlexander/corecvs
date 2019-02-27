@@ -1,29 +1,29 @@
 #include "simulation.h"
 #include "list"
-#include "simobject.h"
-#include "simsphere.h"
+#include "simObject.h"
+#include "simSphere.h"
 #include <ctime>
 
 #include <chrono>
 
 Simulation::Simulation()
 {
-     //Objects2 =  std::list<SimObject>();
+    //objects2 =  std::list<SimObject>();
     SimSphere kura;
-    kura.CountPhysics=true;
+    kura.countPhysics=true;
     spheres.push_back(kura);
-    Objects.push_back(&spheres[0]);
-    cout<<Objects.size()<<" before thread"<<endl;
+    objects.push_back(&spheres[0]);
+    cout<<objects.size()<<" before thread"<<endl;
 }
-void Simulation::Start()
+void Simulation::start()
 {
     startTime = std::chrono::high_resolution_clock::now();
     oldTime = std::chrono::high_resolution_clock::now();
-    cout<<Objects.size()<<" before thread v2"<<endl;
+    cout<<objects.size()<<" before thread v2"<<endl;
 
     std::thread thr([this]()
     {
-        cout<<Objects.size()<<" after thread"<<endl;
+        cout<<objects.size()<<" after thread"<<endl;
         cout<<"kek"<<endl;
         while (true)
         {
@@ -31,13 +31,13 @@ void Simulation::Start()
             std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-oldTime);
             std::chrono::duration<double> currentTime = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-startTime);
 
-           // cout<<time_span.count()<<endl;
-            for (int i=0;i<Objects.size();i++)
+            // cout<<time_span.count()<<endl;
+            for (int i=0;i<objects.size();i++)
             {
-                Objects[i]->Tick(time_span.count());
-                Objects[i]->SaveMesh( std::to_string(currentTime.count()));
+                objects[i]->tick(time_span.count());
+                objects[i]->saveMesh( std::to_string(currentTime.count()));
             }
-            cout<<Objects[0]->coords<<endl;
+            cout<<objects[0]->coords<<endl;
             frameCounter++;
 
             /*if (frameCounter%1000==0)
@@ -49,7 +49,6 @@ void Simulation::Start()
             oldTime=newTime;
             usleep(3000);
         }
-
     });
     thr.detach();
 }

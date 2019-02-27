@@ -7,62 +7,63 @@
 class JoyStickInput
 {
 public:
-     JoyStickInput(int &_yaw_value, int &_roll_value, int &_pitch_value, int &_throttle_value, int &_CH5_value, int &_CH6_value, int &_CH7_value,  int &_CH8_value );
+    JoyStickInput(int &_yawValue, int &_rollValue, int &_pitchValue, int &_throttleValue,
+                  int &_CH5Value, int &_CH6Value, int &_CH7Value,  int &_CH8Value );
 
-    struct axis_state {       short x, y;    };
+    struct AxisState { short x, y; };
 
-    void Start();
+    void start();
 
-    int& yaw_value;
-    int& roll_value;
-    int& pitch_value;
-    int& throttle_value;
-    int& CH5_value;
-    int& CH6_value;
-    int& CH7_value;
-    int& CH8_value;
-    void SetUsualCurrentMode();
-    void SetInertiaCurrentMode();
-    void SetCasualCurrentMode();
-    void SetRTLTUsialMode();
+    int& yawValue;
+    int& rollValue;
+    int& pitchValue;
+    int& throttleValue;
+    int& CH5Value;
+    int& CH6Value;
+    int& CH7Value;
+    int& CH8Value;
+    void setUsualCurrentMode();
+    void setInertiaCurrentMode();
+    void setCasualCurrentMode();
+    void setRTLTUsialMode();
 
-    void full_rt_sticks(js_event event);
-    void SetRTLTFullMode();
+    void fullRtSticks(js_event event);
+    void setRTLTFullMode();
 private:
-    int throttle_value_from_JS;
-    int mid_Throttle=1350;
-    void StartJoyStickMode();
-    int CountOfSticks=0;
-    int Current_mode=0;
+    int throttleValueFromJS;
+    int midThrottle=1350;
+    void startJoyStickMode();
+    int countOfSticks=0;
+    int currentMode=0;
     bool autopilotMode=false;
-    bool rt_pressed=false;
-    bool lt_pressed=false;
+    bool rtPressed=false;
+    bool ltPressed=false;
     bool recording=false;
-    bool Arming=false;
+    bool arming=false;
 
-    struct axis_state axes[3] ;
+    struct AxisState axes[3] ;
 
 
-    void usual_buttons(js_event event);
-    void usual_sticks(js_event event);
-    void inertial_buttons(js_event event);
-    void inertial_sticks(js_event event);
-    void casual_buttons(js_event event);
-    void casual_sticks(js_event event);
-    void Start_arming(bool pressed);
-    void disconnect_from_copter();
-    int sign(int val);
-    void StartRecord();
-    void StopRecord();
+    void usualButtons(js_event event);
+    void usualSticks(js_event event);
+    void inertialButtons(js_event event);
+    void inertialSticks(js_event event);
+    void casualButtons(js_event event);
+    void casualSticks(js_event event);
+    void startArming(bool pressed);
+    void disconnectFromCopter();
+    int  sign(int val);
+    void startRecord();
+    void stopRecord();
 
     //ControllRecord recordData;
 
     int lastLT=-32767;
     int lastRT=-32767;
 
-    void TimerForThrottle();
-    void usial_experimental_sticks(js_event event);
-    void usial_experimental_buttons(js_event event);
+    void timerForThrottle();
+    void usualExperimentalSticks(js_event event);
+    void usualExperimentalButtons(js_event event);
 };
 
 #endif // JOYSTICKINPUT_H

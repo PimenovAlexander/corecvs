@@ -21,24 +21,24 @@ INCLUDEPATH += .
 
 HEADERS += \
     physicsMainWidget.h \
-    clientsender.h \
-    controllrecord.h \
-    joystickinput.h \
-    qcomcontroller.h \
     simulation.h \
-    simobject.h \
-    simsphere.h
+    clientSender.h \
+    controllRecord.h \
+    joystickInput.h \
+    qComController.h \
+    simObject.h \
+    simSphere.h
 
 SOURCES += \
-    main_physics.cpp \
     physicsMainWidget.cpp \
-    clientsender.cpp \
-    controllrecord.cpp \
-    joystickinput.cpp \
-    qcomcontroller.cpp \
     simulation.cpp \
-    simobject.cpp \
-    simsphere.cpp
+    simSphere.cpp \
+    simObject.cpp \
+    qComController.cpp \
+    joystickInput.cpp \
+    controllRecord.cpp \
+    clientSender.cpp \
+    mainPhysics.cpp
 
 
 FORMS += \

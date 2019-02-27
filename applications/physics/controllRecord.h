@@ -9,12 +9,12 @@ class ControllRecord
 public:
     ControllRecord();
 
-    void Save();
-    void add_message(int throttle, int roll, int yaw, int pitch );
+    void save();
+    void addMessage(int throttle, int roll, int yaw, int pitch );
 private:
-    struct message {int throttle; int roll; int yaw; int pitch ; int count_of_repeats;   } ;
-    std::list<message> messages;
-    message lastMessage;
+    struct Message {int throttle; int roll; int yaw; int pitch; int countOfRepeats; };
+    std::list<Message> messages;
+    Message lastMessage;
     int count=0;
 };
 

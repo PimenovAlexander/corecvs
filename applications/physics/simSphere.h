@@ -1,7 +1,7 @@
 #ifndef SIMSPHERE_H
 #define SIMSPHERE_H
 
-#include "simobject.h"
+#include "simObject.h"
 
 
 
@@ -9,7 +9,7 @@ class SimSphere : public SimObject
 {
 public:
     SimSphere();
-    void SaveMesh(string name);
+    void saveMesh(string name);
     float radius=10;
 };
 

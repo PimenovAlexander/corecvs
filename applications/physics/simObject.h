@@ -19,14 +19,14 @@ public:
 
 
     float mass = 1;                                    //kg
-    bool CountPhysics=false;
+    bool countPhysics=false;
 
-    void AddForce(Vector3d<float> force);
-    void AddImpulse(Vector3d<float> force);
-    void SetForce(float x, float y, float z);
-    void SetForce(Vector3d<float> force);
-    void Tick(double DeltaT);
-    virtual void SaveMesh(string name);
+    void addForce(Vector3d<float> force);
+    void addImpulse(Vector3d<float> force);
+    void setForce(float x, float y, float z);
+    void setForce(Vector3d<float> force);
+    void tick(double DeltaT);
+    virtual void saveMesh(string name);
 };
 
 #endif // SIMOBJECT_H
