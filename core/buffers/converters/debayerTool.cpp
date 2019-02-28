@@ -178,7 +178,7 @@ bool DebayerTool::endsWith(const std::string &src, const std::string &ext) const
 int DebayerTool::proceed(int argc, const char **argv)
 {
     CommandLineSetter s(argc, argv);
-    bool help = s.getBool("help");
+    bool help = s.hasOption("help");
     if (help || argc < 2) {
         usage(argv[0]);
         return 0;
@@ -204,7 +204,7 @@ int DebayerTool::proceed(int argc, const char **argv)
             outfile = argv[2];
     }
 
-    bool compare = s.getBool("compare");
+    bool compare = s.hasOption("compare");
     if (compare) {
         return doCompare(s, filename);
     }
@@ -217,7 +217,7 @@ int DebayerTool::proceed(int argc, const char **argv)
     int bpos  = s.getInt("bpos",  defs.bayerPos());     // -1 - try to extract it from Bayer's meta
     int obits = s.getInt("obits", defs.numBitsOut());   // 12 - don't apply additional scale to all channels
 
-    bool toBayer = s.getBool("toBayer");        // flag to get an artifical Bayer image
+    bool toBayer = s.hasOption("toBayer");        // flag to get an artifical Bayer image
     if (toBayer) {
         return doConvertToBayer(filename, outfile, obits, bpos);
     }

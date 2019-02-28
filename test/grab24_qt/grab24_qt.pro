@@ -19,7 +19,6 @@ TEST_DIR = $$PWD
 UTILSDIR = $$TEST_DIR/../../utils
 include($$UTILSDIR/utils.pri)
 
-
 SOURCES += main_grab24_qt.cpp
 
 HEADERS += main_grab24_qt.h

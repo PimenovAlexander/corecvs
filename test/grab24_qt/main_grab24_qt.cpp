@@ -23,7 +23,14 @@ int main (int argc, char **argv)
     Q_INIT_RESOURCE(main);
     CommandLineSetter s(argc, argv);
 
+    /*if (s.hasOption("caps"))
+    {
+        ImageCaptureInterfaceQtFactory::
+        return 0;
+    }*/
+
     std::string inputString = s.getString("input", "v4l2:/dev/video0:1/10");
+
 
     SYNC_PRINT(("Attempting a grab from \n"));
 /*
@@ -37,7 +44,7 @@ int main (int argc, char **argv)
         SYNC_PRINT(("Unable to fabricate camera grabber\n"));
     }
 
-    ImageCaptureInterfaceWrapper<V4L2CaptureInterface> *input = dynamic_cast<ImageCaptureInterfaceWrapper<V4L2CaptureInterface>*>(rawInput);
+    //ImageCaptureInterfaceWrapper<V4L2CaptureInterface> *input = dynamic_cast<ImageCaptureInterfaceWrapper<V4L2CaptureInterface>*>(rawInput);
 
     SYNC_PRINT(("main: initialising capture...\n"));
     ImageCaptureInterface::CapErrorCode returnCode = rawInput->initCapture();
@@ -50,12 +57,12 @@ int main (int argc, char **argv)
     }
 
     FrameProcessor processor;
-    processor.input = input;
+    processor.input = rawInput;
     QObject::connect(
-        input     , SIGNAL(newFrameReady(frame_data_t)),
-        &processor,   SLOT(processFrame (frame_data_t)));
+        rawInput  , SIGNAL(newFrameReady(frame_data_t)),
+        &processor,   SLOT(processFrame (frame_data_t)), Qt::QueuedConnection);
 
-	input->startCapture();
+    rawInput->startCapture();
 
 #if 0
 	RGB24Buffer *result = NULL;
@@ -78,9 +85,7 @@ int main (int argc, char **argv)
 
     app.exec();
 
-    //BMPLoader().save("snapshot.bmp", result);
-    //delete_safe(result);
-    delete_safe(input);
+    delete_safe(rawInput);
 	return 0;
 }
 

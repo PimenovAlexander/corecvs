@@ -75,7 +75,7 @@ public:
 
     void drawG12Buffer (const G12Buffer *src, int32_t y = 0, int32_t x = 0);
     void drawG8Buffer  (const G8Buffer  *src, int32_t y = 0, int32_t x = 0);
-    void drawFlowBuffer(FlowBuffer *src, int32_t y = 0, int32_t x = 0);
+    void drawFlowBuffer (FlowBuffer *src, int32_t y = 0, int32_t x = 0);
     void drawFlowBuffer1(FlowBuffer *src, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
     void drawFlowBuffer2(FlowBuffer *src, double colorShift = 0.0, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
     void drawFlowBuffer3(FlowBuffer *src, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);

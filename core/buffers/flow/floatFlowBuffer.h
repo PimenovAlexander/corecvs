@@ -118,8 +118,8 @@ public:
     FloatFlowBuffer(FloatFlowBuffer &that) : FloatFlowBufferBase (that) {}
     FloatFlowBuffer(FloatFlowBuffer *that) : FloatFlowBufferBase (that) {}
 
-    explicit FloatFlowBuffer(FlowBuffer *that);
-    FlowBuffer *toFlowBuffer();
+    explicit FloatFlowBuffer(const FlowBuffer *that);
+    FlowBuffer *toFlowBuffer() const;
 
 
     FloatFlowBuffer(const FloatFlowBuffer &src, int32_t x1, int32_t y1, int32_t x2, int32_t y2) :
@@ -288,6 +288,9 @@ public:
         );
         return toReturn;
     }
+
+    double getMaximumMagnitude() const;
+    void kittiBackgroudFill();
 
 };
 

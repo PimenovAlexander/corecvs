@@ -13,7 +13,7 @@
 
 namespace corecvs {
 
-FloatFlowBuffer::FloatFlowBuffer(FlowBuffer *that)
+FloatFlowBuffer::FloatFlowBuffer(const FlowBuffer *that)
     : FloatFlowBufferBase(that->h, that->w, true)
 {
     for (int i = 0; i < that->h; i++)
@@ -29,7 +29,7 @@ FloatFlowBuffer::FloatFlowBuffer(FlowBuffer *that)
     }
 }
 
-FlowBuffer *FloatFlowBuffer::toFlowBuffer()
+FlowBuffer *FloatFlowBuffer::toFlowBuffer() const
 {
     FlowBuffer *toReturn = new FlowBuffer(h, w);
     for (int i = 0; i < this->h; i++)

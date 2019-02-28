@@ -43,8 +43,8 @@ int main (int argc, char **argv)
 
     SYNC_PRINT(("Attempting a grab from \n"));
 
-    ImageCaptureInterface *rawInput = ImageCaptureInterfaceFabric::getInstance()->fabricate("v4l2:/dev/video0:1/10", true);
-    V4L2CaptureInterface *input = dynamic_cast<V4L2CaptureInterface*>(rawInput);
+    ImageCaptureInterface *rawInput = ImageCaptureInterfaceFabric::getInstance()->fabricate(inputString, true);
+    //V4L2CaptureInterface *input = dynamic_cast<V4L2CaptureInterface*>(rawInput);
     if (rawInput == NULL)
     {
         SYNC_PRINT(("Unable to fabricate camera grabber\n"));
@@ -62,10 +62,10 @@ int main (int argc, char **argv)
     }
 
     GrabReceiver reciever;
-    input->imageInterfaceReceiver =  &reciever;
+    rawInput->imageInterfaceReceiver =  &reciever;
     reciever.waitLock.lock();
 
-    input->startCapture();
+    rawInput->startCapture();
 
     while (true)
     {
@@ -74,7 +74,7 @@ int main (int argc, char **argv)
         {
             SYNC_PRINT(("New frame arrived\n"));
 
-            V4L2CaptureInterface::FramePair pair = input->getFrameRGB24();
+            V4L2CaptureInterface::FramePair pair = rawInput->getFrameRGB24();
             RGB24Buffer * result = pair.rgbBufferLeft();
             pair.setRgbBufferLeft(NULL);
             pair.freeBuffers();
@@ -90,7 +90,7 @@ int main (int argc, char **argv)
         break;
 
     }
-    delete_safe(input);
+    delete_safe(rawInput);
 	return 0;
 }
 
