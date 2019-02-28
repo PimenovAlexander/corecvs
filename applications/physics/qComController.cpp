@@ -75,7 +75,7 @@ void QComController::keepAlive2()
         }
         */
 
-    std::vector<uint8_t>  FlyCommandFromUs = {0x55, 0x0F, 0x19, 0x00, 0x00,
+    std::vector<uint8_t>  flyCommandFromUs = {0x55, 0x0F, 0x19, 0x00, 0x00,
                                               0x04, 0x20, 0x00, 0x00, 0x0F,
                                               0x10, 0x00, 0x02, 0x10, 0x80,
                                               0x00, 0x04, 0x20, 0x00, 0x01,
@@ -204,44 +204,44 @@ void QComController::keepAlive2()
     twelfthByte[0]=bitsCH8[10];
 
     uint8_t fb=firstByte.to_ulong();
-    FlyCommandFromUs[4]=fb;
+    flyCommandFromUs[4]=fb;
 
     fb=secondByte.to_ulong();
-    FlyCommandFromUs[5]=fb;
+    flyCommandFromUs[5]=fb;
 
     fb=thirdByte.to_ulong();
-    FlyCommandFromUs[6]=fb;
+    flyCommandFromUs[6]=fb;
 
     fb=fourthByte.to_ulong();
-    FlyCommandFromUs[7]=fb;
+    flyCommandFromUs[7]=fb;
 
     fb=fifthByte.to_ulong();
-    FlyCommandFromUs[8]=fb;
+    flyCommandFromUs[8]=fb;
 
     fb=sixthByte.to_ulong();
-    FlyCommandFromUs[9]=fb;
+    flyCommandFromUs[9]=fb;
 
     fb=seventhByte.to_ulong();
-    FlyCommandFromUs[10]=fb;
+    flyCommandFromUs[10]=fb;
 
     fb=eigthByte.to_ulong();
-    FlyCommandFromUs[11]=fb;
+    flyCommandFromUs[11]=fb;
 
     fb=ninethByte.to_ulong();
-    FlyCommandFromUs[12]=fb;
+    flyCommandFromUs[12]=fb;
 
     fb=tenthByte.to_ulong();
-    FlyCommandFromUs[13]=fb;
+    flyCommandFromUs[13]=fb;
 
 
     fb=eleventhByte.to_ulong();
-    FlyCommandFromUs[14]=fb;
+    flyCommandFromUs[14]=fb;
 
 
     fb=twelfthByte.to_ulong();
-    FlyCommandFromUs[15]=fb;
+    flyCommandFromUs[15]=fb;
 
-    sendOurValues(FlyCommandFromUs);
+    sendOurValues(flyCommandFromUs);
 
 
     QTimer::singleShot(8, this, SLOT(keepAlive2()));

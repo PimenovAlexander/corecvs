@@ -364,7 +364,7 @@ void PhysicsMainWidget::onPushButton2Clicked()
     ifstream fin("cppstudio.txt");
     while (!fin.eof())
     {
-        message m;
+        Message m;
         fin >> buff;
         m.pitch=std::stoi( buff);
         fin >> buff;
@@ -378,11 +378,11 @@ void PhysicsMainWidget::onPushButton2Clicked()
         cout<<m.pitch<<" "<<m.roll<<" "<<m.throttle<<" "<<m.yaw<<" "<<m.countOfRepeats<<endl;
         messages.push_front(m);
     }
-    for (message mm :messages)
+    for (Message mm :messages)
     {
         autopilotStack.push(mm);
     }
-    message m;
+    Message m;
     m=autopilotStack.top();
     cout<<"-_-_-"<<m.pitch<<" "<<m.roll<<" "<<m.throttle<<" "<<m.yaw<<" "<<m.countOfRepeats<<"-_-_-"<<endl;
     autopilotStack.pop();
@@ -416,7 +416,7 @@ void PhysicsMainWidget::onComboBoxCurrentTextChanged(const QString &arg1)
         joystick1.setCasualCurrentMode();
         throttleValue=midThrottle;
     }
-    if(arg1=="RT/LT Usial mode")
+    if(arg1=="RT/LT Usual mode")
     {
         joystick1.setRTLTUsialMode();
         throttleValue=midThrottle;

@@ -83,7 +83,7 @@ size_t getButtonCount(int fd)
 /**
  * Current state of an axis.
  */
-struct AxisState { short x, y; };
+struct AxisState {short x, y;};
 
 
 /**

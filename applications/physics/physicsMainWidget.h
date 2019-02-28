@@ -59,8 +59,8 @@ private slots:
     void onComboBoxCurrentTextChanged(const QString &arg1);
 
 private:
-    struct message {int throttle; int roll; int yaw; int pitch ; int countOfRepeats; };
-    std::list<message> messages;
+    struct Message {int throttle; int roll; int yaw; int pitch ; int countOfRepeats; };
+    std::list<Message> messages;
 
 
     JoyStickInput joystick1{yawValue, rollValue, pitchValue, throttleValue,
@@ -109,7 +109,7 @@ private:
     int countOfSticks=0;
 
     bool autopilotMode=false;
-    stack<message> autopilotStack;
+    stack<Message> autopilotStack;
 };
 
 #endif // PHYSICSMAINWIDGET_H
