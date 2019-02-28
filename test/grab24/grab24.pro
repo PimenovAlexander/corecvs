@@ -28,6 +28,26 @@ with_v4l2 {
     include($$V4L2_WRAPPER_DIR/v4l2.pri)                # it uses OPENCV_WRAPPER_DIR inside
 }
 
+with_avcodec {
+    !build_pass: message(Switching on avcodec support)
+
+    win32 {
+        isEmpty(AVCODEC_PATH): AVCODEC_PATH = "c:/ffmpeg"
+        !build_pass: message(AvCodec $$AVCODEC_PATH)
+
+        DEFINES     += WITH_AVCODEC
+        INCLUDEPATH += $$AVCODEC_PATH/include
+        LIBS        += -L$$AVCODEC_PATH/lib -lavutil -lavformat -lavcodec -lavutil -lm
+    } else {
+        DEFINES += WITH_AVCODEC
+        LIBS    += -lavutil -lavformat -lavcodec -lz -lavutil -lm
+        !build_pass: message(Switching on swscale support)
+
+        DEFINES += WITH_SWSCALE
+        LIBS    += -lswscale
+    }
+}
+
 
 
 SOURCES += main_grab24.cpp

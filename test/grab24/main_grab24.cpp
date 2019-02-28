@@ -8,6 +8,10 @@
 #include "core/fileformats/bmpLoader.h"
 #include "V4L2Capture.h"
 
+#ifdef WITH_AVCODEC
+#include "aviCapture.h"
+#endif
+
 class GrabReceiver : public ImageInterfaceReceiver
 {
 public:
@@ -29,6 +33,9 @@ int main (int argc, char **argv)
 {
     CommandLineSetter s(argc, argv);
     ImageCaptureInterfaceFabric::getInstance()->addProducer(new V4L2CaptureInterfaceProducer());
+#ifdef WITH_AVCODEC
+    ImageCaptureInterfaceFabric::getInstance()->addProducer(new AVICaptureProducer());
+#endif
 
     ImageCaptureInterfaceFabric::printCaps();
 
