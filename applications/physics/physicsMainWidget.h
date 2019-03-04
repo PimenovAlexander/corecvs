@@ -2,16 +2,17 @@
 #define PHYSICSMAINWIDGET_H
 
 #include <QWidget>
-#include "clientsender.h"
-#include "qcomcontroller.h"
+#include "clientSender.h"
+#include "qComController.h"
 
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 #include <linux/joystick.h>
 #include <fcntl.h>
-#include <controllrecord.h>
+#include <controllRecord.h>
 #include <stack>
-#include  "joystickinput.h"
+#include  "joystickInput.h"
+#include "simulation.h"
 
 namespace Ui {
 class PhysicsMainWidget;
@@ -20,21 +21,24 @@ class PhysicsMainWidget;
 class PhysicsMainWidget : public QWidget
 {
     Q_OBJECT
- public:
+public:
     explicit PhysicsMainWidget(QWidget *parent = 0);
     QSerialPort serialPort;
     ~PhysicsMainWidget();
-     QByteArray *FlyCommandWriteData;
-     QByteArray GetDataFromStics();
-     int Current_mode=0;
-     bool RealModeActive = false;
-     bool VirtualModeActive = false;
-     struct axis_state {       short x, y;    };
+    QByteArray *flyCommandWriteData;
+    QByteArray getDataFromStics();
+    int currentMode=0;
+    bool realModeActive = false;
+    bool virtualModeActive = false;
+    struct AxisState { short x, y; };
 
-     void disconnect_from_copter();
+    void disconnectFromCopter();
+
 public slots:
+
     //void keepAlive();
 private slots:
+    void startVirtualMode();
     void yawChange(int i);
     void rollChange(int i);
     void pitchChange(int i);
@@ -43,65 +47,69 @@ private slots:
     void CH6Change(int i);
     void CH7Change(int i);
     void CH8Change(int i);
-    void StartJoyStickMode();
+    void startJoyStickMode();
 
-    void on_pushButton_released();
-    void SendJoyValues();
-    void StartRealMode();
-   // void BindToRealDrone();
-    void STOP();
-    void on_pushButton_2_clicked();
+    void onPushButtonReleased();
+    void sendJoyValues();
+    void startRealMode();
+    // void BindToRealDrone();
+    void stop();
+    void onPushButton2Clicked();
 
-    void on_comboBox_currentTextChanged(const QString &arg1);
+    void onComboBoxCurrentTextChanged(const QString &arg1);
 
 private:
-    struct message {int throttle; int roll; int yaw; int pitch ; int count_of_repeats;   } ;
-    std::list<message> messages;
+    struct Message {int throttle; int roll; int yaw; int pitch ; int countOfRepeats; };
+    std::list<Message> messages;
 
 
-    JoyStickInput joystick1{yaw_value,roll_value,pitch_value,throttle_value,CH5_value,CH6_value,CH7_value,CH8_value};
-    QComController ComController {this,yaw_value,roll_value,pitch_value,throttle_value,CH5_value,CH6_value,CH7_value,CH8_value};
+    JoyStickInput joystick1{yawValue, rollValue, pitchValue, throttleValue,
+                CH5Value, CH6Value, CH7Value, CH8Value};
+    QComController ComController {this, yawValue, rollValue, pitchValue, throttleValue,
+                CH5Value, CH6Value, CH7Value, CH8Value};
 
     Ui::PhysicsMainWidget *ui;
-    int yaw_value;
-    int roll_value;
-    int pitch_value;
-    int throttle_value;
-    int throttle_value_from_JS;
-    int CH5_value;
-    int CH6_value;
-    int CH7_value;
-    int CH8_value;
-    int mid_Throttle=1350;
+    int yawValue;
+    int rollValue;
+    int pitchValue;
+    int throttleValue;
+    int throttleValueFromJS;
+    int CH5Value;
+    int CH6Value;
+    int CH7Value;
+    int CH8Value;
+    int midThrottle=1350;
 
     int counter;
     int sign(int val);
-    clock_t start_time;
-    void ShowValues( );
-    void FrameValuesUpdate();
+    clock_t startTime;
+    void showValues( );
+    void frameValuesUpdate();
     bool created=false;
     bool bind=false;
-    bool Arming=false;
+    bool arming=false;
     bool startFly=false;   //to set mid throttle after arming
 
-    bool rt_pressed=false;
-    bool lt_pressed=false;
+    bool rtPressed=false;
+    bool ltPressed=false;
 
     bool recording=false;
 
-    void SendOurValues(std::vector<uint8_t> OurValues);
-
+    void sendOurValues(std::vector<uint8_t> OurValues);
+    bool virtuaModeActive=false;
 
     ControllRecord recordData;
 
-    struct axis_state axes[3] ;
+    Simulation SimSim;
+
+    struct AxisState axes[3];
 
     ClientSender VirtualSender;
 
-    int CountOfSticks=0;
+    int countOfSticks=0;
 
     bool autopilotMode=false;
-    stack<message> autopilotStack;
+    stack<Message> autopilotStack;
 };
 
 #endif // PHYSICSMAINWIDGET_H

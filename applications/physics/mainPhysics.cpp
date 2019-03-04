@@ -2,14 +2,16 @@
 #include "core/geometry/mesh3d.h"
 #include <core/geometry/mesh3DDecorated.h>
 #include <QApplication>
+#include <bits/stdc++.h>
+
 
 #include "physicsMainWidget.h"
 
 using namespace corecvs;
 using namespace std;
 
-int main_example1()
-{
+int mainExample1()
+{/*
     Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
 
     Mesh3DDecorated *mesh = new Mesh3DDecorated;
@@ -28,7 +30,7 @@ int main_example1()
     mesh->dumpPLY("out.ply");
     printf("Hello\n");
 
-
+*/
 
     return 0;
 }
@@ -36,11 +38,12 @@ int main_example1()
 
 int main(int argc, char *argv[])
 {
-   // main_example1();
+    mainExample1();
 
     SET_HANDLERS();
 
     Q_INIT_RESOURCE(main);
+    Vector3d<int> f;
     //QTRGB24Loader::registerMyself();
 
     printf("Starting cloudView...\n");
