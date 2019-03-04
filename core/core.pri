@@ -50,7 +50,7 @@ ADDITIONAL_MODULES +=   \
     meanshift           \
     segmentation        \
     clustering3d        \
-    placer              \
+#    placer              \
     delaunay		\
 
 
