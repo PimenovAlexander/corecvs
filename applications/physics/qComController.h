@@ -3,28 +3,29 @@
 
 #include <QObject>
 #include <QSerialPort>
-#include "controllrecord.h"
+#include "controllRecord.h"
 static  int v=1500;
-static  int throt_v=1100;
+static  int throtV=1100;
 
 
 class QComController : public QObject
 {
     Q_OBJECT
 public:
-    explicit QComController(QObject *parent = nullptr,int & _yaw_value = v, int &_roll_value= v, int &_pitch_value= v, int &_throttle_value= throt_v, int &_CH5_value= v, int &_CH6_value= v, int &_CH7_value= v,  int &_CH8_value= v );
-         void BindToRealDrone();
-        void SendOurValues(std::vector<uint8_t> OurValues);
-  int ppp;
-        int& yaw_value;
-        int& roll_value;
-        int& pitch_value;
-        int& throttle_value;
-        int& CH5_value;
-        int& CH6_value;
-        int& CH7_value;
-        int& CH8_value;
- signals:
+    explicit QComController(QObject *parent = nullptr, int &_yawValue = v, int &_rollValue= v, int &_pitchValue= v, int &_throttleValue= throtV,
+                            int &_CH5Value= v, int &_CH6Value= v, int &_CH7Value= v, int &_CH8Value= v);
+    void bindToRealDrone();
+    void sendOurValues(std::vector<uint8_t> OurValues);
+    int  ppp;
+    int& yawValue;
+    int& rollValue;
+    int& pitchValue;
+    int& throttleValue;
+    int& CH5Value;
+    int& CH6Value;
+    int& CH7Value;
+    int& CH8Value;
+signals:
 
 public slots:
 

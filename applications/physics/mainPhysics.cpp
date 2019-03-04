@@ -10,7 +10,7 @@
 using namespace corecvs;
 using namespace std;
 
-int main_example1()
+int mainExample1()
 {/*
     Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
 
@@ -38,7 +38,7 @@ int main_example1()
 
 int main(int argc, char *argv[])
 {
-    main_example1();
+    mainExample1();
 
     SET_HANDLERS();
 

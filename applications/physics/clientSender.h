@@ -10,9 +10,9 @@ public:
     ClientSender();
     int port;
     bool connected=false;
-    void Client_connect();
+    void clientConnect();
     int s;
-    void Client_send(std::string);
+    void clientSend(std::string);
 };
 
 #endif // CLIENTSENDER_H
