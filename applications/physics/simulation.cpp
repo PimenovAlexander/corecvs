@@ -17,6 +17,7 @@ Simulation::Simulation()
 }
 void Simulation::start()
 {
+  /*
     startTime = std::chrono::high_resolution_clock::now();
     oldTime = std::chrono::high_resolution_clock::now();
     cout<<objects.size()<<" before thread v2"<<endl;
@@ -32,7 +33,7 @@ void Simulation::start()
             std::chrono::duration<double> currentTime = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-startTime);
 
             // cout<<time_span.count()<<endl;
-            for (int i=0;i<objects.size();i++)
+            for (int i=0; i<objects.size(); i++)
             {
                 objects[i]->tick(time_span.count());
                 objects[i]->saveMesh( std::to_string(currentTime.count()));
@@ -46,9 +47,11 @@ void Simulation::start()
                 cout<<"counter - "<<frameCounter<<endl;
 
             }*/
+    /*
             oldTime=newTime;
             usleep(3000);
         }
     });
     thr.detach();
+*/
 }

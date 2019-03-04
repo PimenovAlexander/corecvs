@@ -7,10 +7,12 @@ void SimObject::addForce(Vector3d<float> _force)
 {
     force+=_force;
 }
+
 void SimObject::addImpulse(Vector3d<float> _force)
 {
 
 }
+
 void SimObject::setForce(Vector3d<float> _force)
 {
     force= Vector3d<float>(_force);

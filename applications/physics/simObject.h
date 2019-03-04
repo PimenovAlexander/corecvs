@@ -15,8 +15,9 @@ public:
 
     int FrameCounter=0;
     Quaternion qPos = Quaternion(0,0,0,0);
-    Quaternion qVel = Quaternion(0,0,0,0);
-
+    Quaternion qVx = Quaternion(1,0,0,0);
+    Quaternion qVy = Quaternion(0,1,0,0);
+    Quaternion qVz = Quaternion(0,0,1,0);
 
     float mass = 1;                                    //kg
     bool countPhysics=false;
