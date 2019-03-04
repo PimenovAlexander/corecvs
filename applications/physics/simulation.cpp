@@ -6,18 +6,24 @@
 
 #include <chrono>
 
+using namespace std;
+
 Simulation::Simulation()
 {
     //objects2 =  std::list<SimObject>();
     SimSphere kura;
-    kura.countPhysics=true;
+    kura.countPhysics = true;
     spheres.push_back(kura);
     objects.push_back(&spheres[0]);
-    cout<<objects.size()<<" before thread"<<endl;
+
+    cout << "Simulation::Simulation():" << objects.size() << " before thread"<<endl;
 }
 void Simulation::start()
 {
+
+    /* Use PreciseTime instead of chrono, it could make code a bit more compact */
   /*
+
     startTime = std::chrono::high_resolution_clock::now();
     oldTime = std::chrono::high_resolution_clock::now();
     cout<<objects.size()<<" before thread v2"<<endl;

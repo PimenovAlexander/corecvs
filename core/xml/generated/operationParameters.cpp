@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from filterBlock.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<OperationParameters>::reflection = Reflection();
 template<>
 int BaseReflection<OperationParameters>::dummy = OperationParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int OperationParameters::staticInit()
+int OperationParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <OperationParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Operation Parameters",
         "Operation Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(OperationParameters);
+     toFill->objectSize = sizeof(OperationParameters);
      
 
     EnumField* field0 = new EnumField
@@ -60,10 +66,10 @@ int OperationParameters::staticInit()
           )
         );
     field0->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Operation Parameters")]= &reflection;
+    directory[std::string("Operation Parameters")]= toFill;
    return 0;
 }
 int OperationParameters::relinkCompositeFields()

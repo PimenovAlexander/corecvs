@@ -15,6 +15,7 @@
 #include "core/math/vector/fixedVector.h"
 #include "core/buffers/rgb24/bresenhamRasterizer.h"
 #include "core/buffers/rgb24/wuRasterizer.h"
+#include "abstractPainter.h"
 
 
 #undef rad2     // it's defined at some Windows headers
@@ -49,7 +50,7 @@ void RGB24Buffer::drawG8Buffer(const G8Buffer *src, int32_t y, int32_t x)
     }
 }
 
-void RGB24Buffer::drawPixel(int x, int y, RGBColor color)
+void RGB24Buffer::drawPixel(int x, int y, const RGBColor &color)
 {
     if (this->isValidCoord(y, x))
     {
@@ -57,12 +58,12 @@ void RGB24Buffer::drawPixel(int x, int y, RGBColor color)
     }
 }
 
-void RGB24Buffer::drawPixel(double x, double y, RGBColor color)
+void RGB24Buffer::drawPixel(double x, double y, const RGBColor &color)
 {
     this->drawPixel(fround(x), fround(y), color);
 }
 
-void RGB24Buffer::drawLine(int x1, int y1, int x2, int y2, RGBColor color)
+void RGB24Buffer::drawLine(int x1, int y1, int x2, int y2, const RGBColor &color)
 {
     Rectangle<int> rect;
     rect.corner = Vector2d<int>(0,0);
@@ -73,28 +74,28 @@ void RGB24Buffer::drawLine(int x1, int y1, int x2, int y2, RGBColor color)
     drawLineSimple(lineStart.x(), lineStart.y(),lineEnd.x(), lineEnd.y(), color);
 }
 
-void RGB24Buffer::drawLine(double x1, double y1, double x2, double y2, RGBColor color)
+void RGB24Buffer::drawLine(double x1, double y1, double x2, double y2, const RGBColor &color)
 {
     drawLine(fround(x1), fround(y1), fround(x2), fround(y2), color);
 }
 
-void RGB24Buffer::drawLine(float x1, float y1, float x2, float y2, RGBColor color)
+void RGB24Buffer::drawLine(float x1, float y1, float x2, float y2, const RGBColor &color)
 {
     drawLine(fround(x1), fround(y1), fround(x2), fround(y2), color);
 }
 
-void RGB24Buffer::drawLine(const Vector2dd &v1, const Vector2dd &v2, RGBColor color)
+void RGB24Buffer::drawLine(const Vector2dd &v1, const Vector2dd &v2, const RGBColor &color)
 {
     drawLine(v1.x(), v1.y(), v2.x(), v2.y(), color);
 }
 
-void RGB24Buffer::drawLine(const Vector2df &v1, const Vector2df &v2, RGBColor color)
+void RGB24Buffer::drawLine(const Vector2df &v1, const Vector2df &v2, const RGBColor &color)
 {
     drawLine(v1.x(), v1.y(), v2.x(), v2.y(), color);
 }
 
 
-void RGB24Buffer::drawHLine(int x1, int y1, int x2, RGBColor color )
+void RGB24Buffer::drawHLine(int x1, int y1, int x2, const RGBColor &color )
 {
     if (x1 > x2)  {int tmp = x1; x1 = x2; x2 = tmp;}
     if (x1 <  0) x1 = 0;
@@ -109,7 +110,7 @@ void RGB24Buffer::drawHLine(int x1, int y1, int x2, RGBColor color )
     }
 }
 
-void RGB24Buffer::drawVLine(int x1, int y1, int y2, RGBColor color)
+void RGB24Buffer::drawVLine(int x1, int y1, int y2, const RGBColor &color)
 {
     if (y1 > y2)  {int tmp = y1; y1 = y2; y2 = tmp;}
     if (y1 <  0) y1 = 0;
@@ -124,7 +125,7 @@ void RGB24Buffer::drawVLine(int x1, int y1, int y2, RGBColor color)
     }
 }
 
-void RGB24Buffer::drawSprite(int x, int y, RGBColor color, int d[][2], int pointNum)
+void RGB24Buffer::drawSprite(int x, int y, const RGBColor &color, int d[][2], int pointNum)
 {
     int i;
     for (i = 0; i < pointNum; i++ )
@@ -146,13 +147,13 @@ void RGB24Buffer::drawSprite(int x, int y, RGBColor color, int d[][2], int point
  *  </pre>
  *
  **/
-void RGB24Buffer::drawCrosshare1 (int x, int y, RGBColor color)
+void RGB24Buffer::drawCrosshare1 (int x, int y, const RGBColor &color)
 {
     int d[8][2] = {{1,1},{2,2},{-1,-1},{-2,-2},{-1,1},{-2,2},{1,-1},{2,-2}};
     this->drawSprite(x, y, color, d, 8);
 }
 
-void RGB24Buffer::drawCrosshare1 (const Vector2dd &point, RGBColor color)
+void RGB24Buffer::drawCrosshare1 (const Vector2dd &point, const RGBColor &color)
 {
     int d[8][2] = {{1,1},{2,2},{-1,-1},{-2,-2},{-1,1},{-2,2},{1,-1},{2,-2}};
     this->drawSprite(fround(point.x()), fround(point.y()), color, d, 8);
@@ -170,7 +171,7 @@ void RGB24Buffer::drawCrosshare1 (const Vector2dd &point, RGBColor color)
  *  </pre>
  */
 
-void RGB24Buffer::drawCrosshare2 (int x, int y, RGBColor color)
+void RGB24Buffer::drawCrosshare2 (int x, int y, const RGBColor &color)
 {
     int d[16][2] = {{1,1},{2,2},{-1,-1},{-2,-2},{-1,1},{-2,2},{1,-1},{2,-2},
             {1,3},{3,1},{-1,-3},{-3,-1},{1,-3},{3,-1},{-1,3},{-3,1}};
@@ -178,7 +179,7 @@ void RGB24Buffer::drawCrosshare2 (int x, int y, RGBColor color)
 }
 
 
-void RGB24Buffer::drawCrosshare2 (const Vector2dd &point, RGBColor color)
+void RGB24Buffer::drawCrosshare2 (const Vector2dd &point, const RGBColor &color)
 {
     int d[16][2] = {{1,1},{2,2},{-1,-1},{-2,-2},{-1,1},{-2,2},{1,-1},{2,-2},
             {1,3},{3,1},{-1,-3},{-3,-1},{1,-3},{3,-1},{-1,3},{-3,1}};
@@ -192,13 +193,13 @@ void RGB24Buffer::drawCrosshare2 (const Vector2dd &point, RGBColor color)
  *   \#\#\#
  *  </pre>
  */
-void RGB24Buffer::drawCrosshare3 (int x, int y, RGBColor color)
+void RGB24Buffer::drawCrosshare3 (int x, int y, const RGBColor &color)
 {
     int d[8][2] = {{1,1},{1,0},{1,-1},{0,-1},{-1,-1},{-1,0},{-1,1},{0,1}};
     this->drawSprite(x, y, color, d, 8);
 }
 
-void RGB24Buffer::drawCrosshare3 (const Vector2dd &point, RGBColor color)
+void RGB24Buffer::drawCrosshare3 (const Vector2dd &point, const RGBColor &color)
 {
     int d[8][2] = {{1,1},{1,0},{1,-1},{0,-1},{-1,-1},{-1,0},{-1,1},{0,1}};
     this->drawSprite(fround(point.x()), fround(point.y()), color, d, 8);
@@ -218,7 +219,7 @@ void RGB24Buffer::drawFlowBuffer(FlowBuffer *src, int32_t y, int32_t x)
             }
             FlowElement vec = src->element(i,j);
 
-#ifdef ASSERTS
+#if 0
             Vector2d32 res(vec.x(), vec.y());
             res += Vector2d32(j, i);
             if (!this->isValidCoord(res))
@@ -318,7 +319,7 @@ void RGB24Buffer::drawCorrespondenceList(CorrespondenceList *src, double colorSc
 }
 
 
-void RGB24Buffer::drawRectangle(int x, int y, int w, int h, RGBColor color, int style)
+void RGB24Buffer::drawRectangle(int x, int y, int w, int h, const RGBColor &color, int style)
 {
     w--;
     h--;
@@ -361,19 +362,39 @@ void RGB24Buffer::drawRectangle(int x, int y, int w, int h, RGBColor color, int 
     }
 }
 
-void RGB24Buffer::drawRectangle(const Rectangle<int32_t> &rect, RGBColor color, int style)
+void RGB24Buffer::drawRectangle(const Rectangle<int32_t> &rect, const RGBColor &color, int style)
 {
     drawRectangle(rect.corner.x(), rect.corner.y(), rect.size.x(), rect.size.y(), color, style);
 }
 
 
-void RGB24Buffer::drawRectangle(const Rectangled &rect, RGBColor color, int style)
+void RGB24Buffer::drawRectangle(const Rectangled &rect, const RGBColor &color, int style)
 {
     drawRectangle(
         fround(rect.corner.x()),
         fround(rect.corner.y()),
         fround(rect.size.x()),
-        fround(rect.size.y()), color, style);
+                fround(rect.size.y()), color, style);
+}
+
+void RGB24Buffer::drawTriangle(const Triangle2dd &tri, const RGBColor &color, int style)
+{
+    if (style == 1)
+    {
+        for (int i = 0; i < 3; i++) {
+           drawCrosshare3(tri.p[i], color);
+        }
+        return;
+    }
+
+    if (style == 0)
+    {
+        drawLineSimple(fround(tri.p1().x()), fround(tri.p1().y()), fround(tri.p2().x()), fround(tri.p2().y()), color);
+        drawLineSimple(fround(tri.p2().x()), fround(tri.p2().y()), fround(tri.p3().x()), fround(tri.p3().y()), color);
+        drawLineSimple(fround(tri.p3().x()), fround(tri.p3().y()), fround(tri.p1().x()), fround(tri.p1().y()), color);
+        return;
+    }
+
 }
 
 
@@ -560,18 +581,18 @@ void RGB24Buffer::drawHistogram1024x512(Histogram *hist, int x, int y, uint16_t 
     }
 }
 
-void RGB24Buffer::drawLineSimple(int x1, int y1, int x2, int y2, RGBColor color)
+void RGB24Buffer::drawLineSimple(int x1, int y1, int x2, int y2, const RGBColor &color)
 {
     BresenhamRasterizer::drawLineSimple<RGB24Buffer>(*this, x1, y1, x2, y2, color);
 }
 
-void RGB24Buffer::drawLineSimpleFancy(int x1, int y1, int x2, int y2, RGBColor color)
+void RGB24Buffer::drawLineSimpleFancy(int x1, int y1, int x2, int y2, const RGBColor &color)
 {
     WuRasterizer::drawLine<RGB24Buffer>(*this, x1, y1, x2, y2, color);
 }
 
 // TODO: make this more pretty
-void RGB24Buffer::drawArc(int x, int y, int rad, RGBColor color)
+void RGB24Buffer::drawArc(int x, int y, int rad, const RGBColor &color)
 {
     int rad2 = rad * rad;
     int olddx = 0;
@@ -591,13 +612,13 @@ void RGB24Buffer::drawArc(int x, int y, int rad, RGBColor color)
     }
 }
 
-void RGB24Buffer::drawArc(const Circle2d &circle, RGBColor color )
+void RGB24Buffer::drawArc(const Circle2d &circle, const RGBColor &color )
 {
     drawArc(circle.c.x(), circle.c.y(), circle.r, color);
 }
 
 
-void RGB24Buffer::drawArc1(int x, int y, int rad, RGBColor color)
+void RGB24Buffer::drawArc1(int x, int y, int rad, const RGBColor &color)
 {
     int rad2 = rad * rad;
     int olddx = 0;
@@ -703,7 +724,7 @@ void RGB24Buffer::drawIsolines(
 }
 
 template<typename ContinuousType>
-void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<ContinuousType> &in, int style)
+void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<ContinuousType> &in, int style, ColorPallete::ColorPallete pallete, bool legend)
 {
     int mh = CORE_MIN(h, in.h);
     int mw = CORE_MIN(w, in.w);
@@ -735,24 +756,16 @@ void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<ContinuousType> &in,
 
 //    SYNC_PRINT(("RGB24Buffer::drawDoubleBuffer(): min %lf max %lf\n", min, max));
 
-    if (style == STYLE_RAINBOW)
+    if (style == STYLE_RAW)
     {
         for (int i = 0; i < mh; i++)
         {
             for (int j = 0; j < mw; j++)
             {
-                element(i, j) = RGBColor::rainbow(lerp(0.0, 1.0, in.element(i,j), min, max));
-            }
-        }
-    }
-
-    if (style == STYLE_GRAY || style == STYLE_LOG)
-    {
-        for (int i = 0; i < mh; i++)
-        {
-            for (int j = 0; j < mw; j++)
-            {
-                element(i, j) = RGBColor::gray(lerpLimit(0.0, 255.0, in.element(i,j), min, max));
+                if (std::isnan(in.element(i,j))) {
+                    continue;
+                }
+                element(i, j) = RGBColor::colorCode(lerp(0.0, 1.0, in.element(i,j), min, max), pallete);
             }
         }
     }
@@ -763,8 +776,11 @@ void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<ContinuousType> &in,
         {
             for (int j = 0; j < mw; j++)
             {
+                if (std::isnan(in.element(i,j))) {
+                    continue;
+                }
                 if (in.element(i,j) != std::numeric_limits<ContinuousType>::max()) {
-                    element(i, j) = RGBColor::rainbow(lerp(0.0, 1.0, in.element(i,j), min, max));
+                    element(i, j) = RGBColor::colorCode(lerp(0.0, 1.0, in.element(i,j), min, max), pallete);
                 } else {
                     element(i, j) = RGBColor::Black();
                 }
@@ -772,10 +788,22 @@ void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<ContinuousType> &in,
         }
     }
 
+    if (legend) {
+        AbstractPainter<RGB24Buffer> painter(this);
+        painter.drawFormat(10,10, RGBColor::Black(), 1, "Min:%lf", (double)min);
+        painter.drawFormat(11,11, RGBColor::White(), 1, "Min:%lf", (double)min);
+
+        painter.drawFormat(10,20, RGBColor::Black(), 1, "Max:%lf", (double)max);
+        painter.drawFormat(11,21, RGBColor::White(), 1, "Max:%lf", (double)max);
+    }
+
 }
 
-template void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<double> &in, int style);
-template void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<float> &in, int style);
+template void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<double>   &in, int style, ColorPallete::ColorPallete pallete, bool legend);
+template void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<float>    &in, int style, ColorPallete::ColorPallete pallete, bool legend);
+template void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<int32_t>  &in, int style, ColorPallete::ColorPallete pallete, bool legend);
+template void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<uint32_t> &in, int style, ColorPallete::ColorPallete pallete, bool legend);
+
 
 
 void RGB24Buffer::drawDoubleVecBuffer(const AbstractBuffer<Vector2dd> &in)

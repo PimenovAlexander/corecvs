@@ -124,7 +124,7 @@ public:
     static void printCaps();
 
 
-    bool addFactory(Processor6DFactory * factory)
+    bool registerProcessor(Processor6DFactory * factory)
     {
         mProviders.push_back(factory);
         return true;

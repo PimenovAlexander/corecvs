@@ -20,9 +20,10 @@
 #include "core/buffers/flow/flowBuffer.h"
 #include "core/buffers/histogram/histogram.h"
 #include "core/geometry/rectangle.h"
+#include "core/geometry/polygons.h"
 #include "core/buffers/rgb24/rgbColor.h"
 #include "core/function/function.h"
-#include "core/rectification/correspondenceList.h"
+#include "core/buffers/correspondenceList.h"
 #include "core/xml/generated/imageChannel.h"
 
 #include "core/geometry/conic.h"
@@ -74,7 +75,7 @@ public:
 
     void drawG12Buffer (const G12Buffer *src, int32_t y = 0, int32_t x = 0);
     void drawG8Buffer  (const G8Buffer  *src, int32_t y = 0, int32_t x = 0);
-    void drawFlowBuffer(FlowBuffer *src, int32_t y = 0, int32_t x = 0);
+    void drawFlowBuffer (FlowBuffer *src, int32_t y = 0, int32_t x = 0);
     void drawFlowBuffer1(FlowBuffer *src, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
     void drawFlowBuffer2(FlowBuffer *src, double colorShift = 0.0, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
     void drawFlowBuffer3(FlowBuffer *src, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
@@ -83,9 +84,13 @@ public:
     /**
      *  Draw a rectangle
      **/
-    void drawRectangle(const Rectangle<int32_t> &rect, RGBColor color, int style = 0);
-    void drawRectangle(int x, int y, int w, int h, RGBColor color, int style = 0);
-    void drawRectangle(const Rectangled &rect, RGBColor color, int style = 0);
+    void drawRectangle(const Rectangle<int32_t> &rect, const RGBColor &color, int style = 0);
+    void drawRectangle(int x, int y, int w, int h, const RGBColor &color, int style = 0);
+    void drawRectangle(const Rectangled &rect, const RGBColor &color, int style = 0);
+    /**
+     * Draw Triangle
+     **/
+    void drawTriangle(const Triangle2dd &tri, const RGBColor &color, int style = 0);
 
     //void drawDisplacementBuffer(DisplacementBuffer *src, double step);
 
@@ -97,8 +102,8 @@ public:
      * \param x
      * \param color
      **/
-    void drawPixel(int    x, int    y, RGBColor color);
-    void drawPixel(double x, double y, RGBColor color);
+    void drawPixel(int    x, int    y, const RGBColor &color);
+    void drawPixel(double x, double y, const RGBColor &color);
 
     /**
      * This function is used to draw a sort of marker over the buffer
@@ -108,8 +113,8 @@ public:
      * \param color
      *
      **/
-    void drawCrosshare1 ( int x, int y, RGBColor color);
-    void drawCrosshare1 (const Vector2dd &point, RGBColor color);
+    void drawCrosshare1 ( int x, int y,          const RGBColor &color);
+    void drawCrosshare1 (const Vector2dd &point, const RGBColor &color);
 
 
     /**
@@ -120,8 +125,8 @@ public:
      * \param color
      *
      **/
-    void drawCrosshare2 ( int x, int y, RGBColor color);
-    void drawCrosshare2 (const Vector2dd &point, RGBColor color);
+    void drawCrosshare2 ( int x, int y,          const RGBColor &color);
+    void drawCrosshare2 (const Vector2dd &point, const RGBColor &color);
 
     /**
      * This function is used to draw a sort of marker over the buffer
@@ -131,8 +136,8 @@ public:
      * \param color
      *
      **/
-    void drawCrosshare3 ( int x, int y, RGBColor color);
-    void drawCrosshare3 (const Vector2dd &point, RGBColor color);
+    void drawCrosshare3 ( int x, int y, const RGBColor &color);
+    void drawCrosshare3 (const Vector2dd &point, const RGBColor &color);
 
 
 
@@ -147,30 +152,30 @@ public:
     void drawHistogram1024x512(Histogram *hist, int x, int y, uint16_t flags = FLAGS_INCLUDE_MARGIN, int hw = 1024, int hh = 512);
 
     /** You must clip yourself for these function. Use carefully **/
-    void drawLineSimple     (int x1, int y1, int x2, int y2, RGBColor color );
-    void drawLineSimpleFancy(int x1, int y1, int x2, int y2, RGBColor color);
+    void drawLineSimple     (int x1, int y1, int x2, int y2, const RGBColor &color );
+    void drawLineSimpleFancy(int x1, int y1, int x2, int y2, const RGBColor &color);
 
 
-    void drawLine           (int x1, int y1, int x2, int y2, RGBColor color );
+    void drawLine           (int x1, int y1, int x2, int y2, const RGBColor &color );
 
-    void drawHLine(int x1, int y1, int x2, RGBColor color );
-    void drawVLine(int x1, int y1, int y2, RGBColor color );
+    void drawHLine(int x1, int y1, int x2, const RGBColor &color );
+    void drawVLine(int x1, int y1, int y2, const RGBColor &color );
 
 
 //    void drawCircle(int x, int y, int rad, RGBColor color );
 //    void drawCircle(const Circle2d &circle, RGBColor color );
 
-    void drawArc   (int x, int y, int rad, RGBColor color );
-    void drawArc1  (int x, int y, int rad, RGBColor color );
+    void drawArc   (int x, int y, int rad, const RGBColor &color );
+    void drawArc1  (int x, int y, int rad, const RGBColor &color );
 
-    void drawArc   (const Circle2d &circle, RGBColor color );
+    void drawArc   (const Circle2d &circle, const RGBColor &color );
 
 
     /* Some alternatives */
-    void drawLine(double x1, double y1, double x2, double y2, RGBColor color );
-    void drawLine(float x1, float y1, float x2, float y2, RGBColor color );
-    void drawLine(const Vector2dd &v1, const Vector2dd &v2, RGBColor color );
-    void drawLine(const Vector2df &v1, const Vector2df &v2, RGBColor color );
+    void drawLine(double x1, double y1, double x2, double y2, const RGBColor &color );
+    void drawLine(float  x1, float  y1, float  x2, float  y2, const RGBColor &color );
+    void drawLine(const Vector2dd &v1, const Vector2dd &v2, const RGBColor &color );
+    void drawLine(const Vector2df &v1, const Vector2df &v2, const RGBColor &color );
 
     //void drawLineSimple (int x1, int y1, int x2, int y2, int color );
     //void drawLineSafe (int x1, int y1, int x2, int y2, int color );
@@ -193,19 +198,19 @@ public:
      * Draw Double Buffer
      **/
     enum DoubleDrawStyle {
-        STYLE_RAINBOW,
+        STYLE_RAW,
         STYLE_GRAY,
         STYLE_LOG,
         STYLE_ZBUFFER   /**< ignores std::numeric_limits<double>::max() values, not to affect palette */
     };
 
-    inline void drawDoubleBuffer(const AbstractBuffer<double> &in, int style = STYLE_RAINBOW)
+    inline void drawDoubleBuffer(const AbstractBuffer<double> &in, int style = STYLE_RAW)
     {
         drawContinuousBuffer<double>(in, style);
     }
 
     template<typename ContinuousType>
-    void drawContinuousBuffer(const AbstractBuffer<ContinuousType> &in, int style = STYLE_RAINBOW);
+    void drawContinuousBuffer(const AbstractBuffer<ContinuousType> &in, int style = STYLE_RAW, ColorPallete::ColorPallete pallete = ColorPallete::PARULA, bool legend = false);
     void drawDoubleVecBuffer(const AbstractBuffer<Vector2dd> &in);
 
 
@@ -429,7 +434,7 @@ public:
 private:
     /* TODO: Special helper class should be used to store sprites after that this function could be made public */
 
-    void drawSprite(int x, int y, RGBColor color, int d[][2], int pointNum);
+    void drawSprite(int x, int y, const RGBColor &color, int d[][2], int pointNum);
 
 
 };

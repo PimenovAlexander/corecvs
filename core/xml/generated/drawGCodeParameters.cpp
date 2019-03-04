@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from parameters.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<DrawGCodeParameters>::reflection = Reflection();
 template<>
 int BaseReflection<DrawGCodeParameters>::dummy = DrawGCodeParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int DrawGCodeParameters::staticInit()
+int DrawGCodeParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <DrawGCodeParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "draw GCode Parameters",
         "draw GCode Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(DrawGCodeParameters);
+     toFill->objectSize = sizeof(DrawGCodeParameters);
      
 
     EnumField* field0 = new EnumField
@@ -58,7 +64,7 @@ int DrawGCodeParameters::staticInit()
           )
         );
     field0->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     DoubleField* field1 = new DoubleField
         (
@@ -75,7 +81,7 @@ int DrawGCodeParameters::staticInit()
         );
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->precision=2;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     DoubleField* field2 = new DoubleField
         (
@@ -92,7 +98,7 @@ int DrawGCodeParameters::staticInit()
         );
     field2->widgetHint=BaseField::SPIN_BOX;
     field2->precision=2;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     DoubleField* field3 = new DoubleField
         (
@@ -109,7 +115,7 @@ int DrawGCodeParameters::staticInit()
         );
     field3->widgetHint=BaseField::SPIN_BOX;
     field3->precision=2;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     DoubleField* field4 = new DoubleField
         (
@@ -126,7 +132,7 @@ int DrawGCodeParameters::staticInit()
         );
     field4->widgetHint=BaseField::SPIN_BOX;
     field4->precision=2;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     DoubleField* field5 = new DoubleField
         (
@@ -143,7 +149,7 @@ int DrawGCodeParameters::staticInit()
         );
     field5->widgetHint=BaseField::SPIN_BOX;
     field5->precision=2;
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     DoubleField* field6 = new DoubleField
         (
@@ -160,10 +166,10 @@ int DrawGCodeParameters::staticInit()
         );
     field6->widgetHint=BaseField::SPIN_BOX;
     field6->precision=2;
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("draw GCode Parameters")]= &reflection;
+    directory[std::string("draw GCode Parameters")]= toFill;
    return 0;
 }
 int DrawGCodeParameters::relinkCompositeFields()

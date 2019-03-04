@@ -32,6 +32,7 @@ DESTDIR = $$ROOT_DIR/bin
 SUPPRESSINCLUDES=true
 include(../core/core.pri)
 include(../wrappers/gtest/gtest.pri)
+include(../wrappers/eigen/eigen.pri)
 
 isEmpty(TARGET_ORIG) {                                      # be careful of multiple including of this file
     TARGET_ORIG = $$TARGET                                  # store original target name for proper detection of the obj.dir

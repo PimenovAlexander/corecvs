@@ -244,7 +244,7 @@ void PhysicsMainWidget::startVirtualMode()
         ui->Cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh));*/
         SimSim = Simulation();
         SimSim.start();
-        SimSim.objects[0]->addForce(Vector3d<float>(0,0,-9.8f));
+        SimSim.objects[0]->addForce(Vector3dd(0, 0, -9.8));
         cout<<"done"<<endl;
     }
 }

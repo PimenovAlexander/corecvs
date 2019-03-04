@@ -4,13 +4,13 @@
 #include "simObject.h"
 
 
-
 class SimSphere : public SimObject
 {
 public:
     SimSphere();
-    void saveMesh(string name);
-    float radius=10;
+    virtual void saveMesh(const std::string &name) override;
+
+    double radius = 10.0;
 };
 
 #endif // SIMSPHERE_H

@@ -42,7 +42,7 @@ public:
 
     virtual ParametersControlWidgetBase *getContolWidget() override
     {
-        ReflectionWidget *result = new ReflectionWidget(&DrawGCodeParameters::reflection);
+        ReflectionWidget *result = new ReflectionWidget(DrawGCodeParameters::getReflection());
         result->setParameters(&mParameters);
         return result;
     }

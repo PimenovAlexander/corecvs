@@ -1,7 +1,7 @@
 #pragma once
 
 #include "core/features2d/imageKeyPoints.h"
-#include "core/features2d/algoBase.h"
+#include "core/filters/newstyle/algoBase.h"
 
 
 class DescriptorExtractor : public virtual AlgoBase

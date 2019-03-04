@@ -65,6 +65,7 @@ private:
 
     JoyStickInput joystick1{yawValue, rollValue, pitchValue, throttleValue,
                 CH5Value, CH6Value, CH7Value, CH8Value};
+
     QComController ComController {this, yawValue, rollValue, pitchValue, throttleValue,
                 CH5Value, CH6Value, CH7Value, CH8Value};
 

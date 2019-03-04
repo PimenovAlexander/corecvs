@@ -6,7 +6,7 @@ SimSphere::SimSphere()
 {
 }
 
-void SimSphere::saveMesh(string name)
+void SimSphere::saveMesh(const std::string &name)
 {
     cout<<"here"<<endl;
     Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
@@ -19,9 +19,11 @@ void SimSphere::saveMesh(string name)
     mesh->mulTransform(copterPos);
 
     mesh->setColor(RGBColor::Red());
-    mesh->addIcoSphere(Vector3dd( coords.at(0), coords.at(1),coords.at(2)), 2, 2);
+    mesh->addIcoSphere(coords, 2, 2);
 
     mesh->popTransform();
 
     mesh->dumpPLY(name+".ply");
+
+    delete_safe(mesh);
 }

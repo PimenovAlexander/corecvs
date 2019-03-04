@@ -1,7 +1,7 @@
 #ifndef SCENE_STEREO_ALIGNER_BLOCK_H
 #define SCENE_STEREO_ALIGNER_BLOCK_H
 
-#include "core/filters/blocks/newStyleBlock.h"
+#include "core/filters/newstyle/newStyleBlock.h"
 #include "core/xml/generated/sceneStereoAlignerBlockBase.h"
 
 #include "core/camerafixture/fixtureCamera.h"

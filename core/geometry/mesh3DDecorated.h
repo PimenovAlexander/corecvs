@@ -72,13 +72,23 @@ public:
     bool hasTexCoords;
     bool hasNormals;
 
-    /* Texture Coords Channel */
+    /**
+     * Texture coordinates array. Texture coordinates are referenced by number in this array.
+     * This is done to reuse repeating coordinates
+     **/
     vector<Vector2dd>   textureCoords;
 
+
+    /** NormalCoords stores normals directions. They referenced by number in this array */
     vector<Vector3dd>   normalCoords;
 
     /* Per face ids*/
-    vector<Vector4d32>  texId;
+    /**
+     * texId is an array of <Vector4d32>, the size of this array is equal to the size of the array of fases,
+     * first three numbers are indexes in textureCoords array, and the fourth number is usually used as texture nunber
+     **/
+    vector<Vector4d32>  texId;  
+
     vector<Vector3d32>  normalId;
 
     /* We are not sure what we expect from material.

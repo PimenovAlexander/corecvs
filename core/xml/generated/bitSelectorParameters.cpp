@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from bufferFilters.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<BitSelectorParameters>::reflection = Reflection();
 template<>
 int BaseReflection<BitSelectorParameters>::dummy = BitSelectorParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int BitSelectorParameters::staticInit()
+int BitSelectorParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <BitSelectorParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Bit Selector Parameters",
         "Bit Selector Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(BitSelectorParameters);
+     toFill->objectSize = sizeof(BitSelectorParameters);
      
 
     IntField* field0 = new IntField
@@ -55,7 +61,7 @@ int BitSelectorParameters::staticInit()
          16,
          1
         );
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     BoolField* field1 = new BoolField
         (
@@ -67,7 +73,7 @@ int BitSelectorParameters::staticInit()
           "bit 0"
         );
     field1->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     BoolField* field2 = new BoolField
         (
@@ -79,7 +85,7 @@ int BitSelectorParameters::staticInit()
           "bit 1"
         );
     field2->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     BoolField* field3 = new BoolField
         (
@@ -91,7 +97,7 @@ int BitSelectorParameters::staticInit()
           "bit 2"
         );
     field3->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     BoolField* field4 = new BoolField
         (
@@ -103,7 +109,7 @@ int BitSelectorParameters::staticInit()
           "bit 3"
         );
     field4->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     BoolField* field5 = new BoolField
         (
@@ -115,7 +121,7 @@ int BitSelectorParameters::staticInit()
           "bit 4"
         );
     field5->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     BoolField* field6 = new BoolField
         (
@@ -127,7 +133,7 @@ int BitSelectorParameters::staticInit()
           "bit 5"
         );
     field6->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     BoolField* field7 = new BoolField
         (
@@ -139,7 +145,7 @@ int BitSelectorParameters::staticInit()
           "bit 6"
         );
     field7->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field7);
+    toFill->fields.push_back(field7);
     /*  */ 
     BoolField* field8 = new BoolField
         (
@@ -151,7 +157,7 @@ int BitSelectorParameters::staticInit()
           "bit 7"
         );
     field8->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field8);
+    toFill->fields.push_back(field8);
     /*  */ 
     BoolField* field9 = new BoolField
         (
@@ -163,7 +169,7 @@ int BitSelectorParameters::staticInit()
           "bit 8"
         );
     field9->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field9);
+    toFill->fields.push_back(field9);
     /*  */ 
     BoolField* field10 = new BoolField
         (
@@ -175,7 +181,7 @@ int BitSelectorParameters::staticInit()
           "bit 9"
         );
     field10->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field10);
+    toFill->fields.push_back(field10);
     /*  */ 
     BoolField* field11 = new BoolField
         (
@@ -187,7 +193,7 @@ int BitSelectorParameters::staticInit()
           "bit 10"
         );
     field11->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field11);
+    toFill->fields.push_back(field11);
     /*  */ 
     BoolField* field12 = new BoolField
         (
@@ -199,7 +205,7 @@ int BitSelectorParameters::staticInit()
           "bit 11"
         );
     field12->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field12);
+    toFill->fields.push_back(field12);
     /*  */ 
     BoolField* field13 = new BoolField
         (
@@ -211,7 +217,7 @@ int BitSelectorParameters::staticInit()
           "bit 12"
         );
     field13->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field13);
+    toFill->fields.push_back(field13);
     /*  */ 
     BoolField* field14 = new BoolField
         (
@@ -223,7 +229,7 @@ int BitSelectorParameters::staticInit()
           "bit 13"
         );
     field14->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field14);
+    toFill->fields.push_back(field14);
     /*  */ 
     BoolField* field15 = new BoolField
         (
@@ -235,7 +241,7 @@ int BitSelectorParameters::staticInit()
           "bit 14"
         );
     field15->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field15);
+    toFill->fields.push_back(field15);
     /*  */ 
     BoolField* field16 = new BoolField
         (
@@ -247,10 +253,10 @@ int BitSelectorParameters::staticInit()
           "bit 15"
         );
     field16->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field16);
+    toFill->fields.push_back(field16);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Bit Selector Parameters")]= &reflection;
+    directory[std::string("Bit Selector Parameters")]= toFill;
    return 0;
 }
 int BitSelectorParameters::relinkCompositeFields()

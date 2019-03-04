@@ -38,7 +38,7 @@ public:
 
     virtual void newFrameReadyCallback(frame_data_t frameData) override
     {
-       // SYNC_PRINT(("ImageCaptureInterfaceQt::newFrameReadyCallback(frame_data_t frameData)\n"));
+        // SYNC_PRINT(("ImageCaptureInterfaceQt::newFrameReadyCallback(frame_data_t frameData)\n"));
         emit newFrameReady(frameData);
     }
 

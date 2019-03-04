@@ -1,42 +1,46 @@
 #include "simObject.h"
+
 #include <bits/stdc++.h>
+
 #include "core/utils/utils.h"
 #include "core/geometry/mesh3d.h"
 #include "core/geometry/mesh3DDecorated.h"
-void SimObject::addForce(Vector3d<float> _force)
+
+using namespace std;
+
+void SimObject::addForce(const corecvs::Vector3dd &_force)
 {
-    force+=_force;
+    force += _force;
 }
 
-void SimObject::addImpulse(Vector3d<float> _force)
+void SimObject::addImpulse(const Vector3dd &_force)
 {
 
 }
 
-void SimObject::setForce(Vector3d<float> _force)
+void SimObject::setForce(const Vector3dd &_force)
 {
-    force= Vector3d<float>(_force);
+    force = Vector3dd(_force);
 }
 
-void SimObject::setForce(float x,float y, float z)
+void SimObject::setForce(double x,double y, double z)
 {
-    force= Vector3d<float>(x,y,z);
+    force = Vector3dd(x, y, z);
 }
 
-void SimObject::tick(double DeltaT)
-{
-    float dT=(float)DeltaT;
-    coords+=dT*(velocity+dT*(force+oldForce)/mass/4);
-    velocity+=force/mass;
-    oldForce=force;
+void SimObject::tick(double deltaT)
+{    
+    coords += deltaT * (velocity + deltaT * (force + oldForce) / mass / 4.0 );
+    velocity += force / mass;
+    oldForce = force;
 }
 
 SimObject::SimObject()
 {
-    cout<<"created"<<endl;
+    cout << "SimObject():created" << endl;
 }
 
-void SimObject::saveMesh(string name)
+void SimObject::saveMesh(const std::string &/*name*/)
 {
-    cout<<"not here"<<endl;
+    cout << "SimObject::saveMesh(): not here" << endl;
 }

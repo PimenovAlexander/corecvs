@@ -3,3 +3,4 @@ SOURCES += \
 
 HEADERS += \
     function/function.h
+OTHER_FILES +=$$PWD/CMakeLists.txt

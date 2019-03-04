@@ -3,6 +3,10 @@
 
 namespace corecvs {
 
+using std::istream;
+using std::ostream;
+
+
 static const int STL_BINARY_HEADER_SIZE = 80;
 
 STLLoader::STLLoader()

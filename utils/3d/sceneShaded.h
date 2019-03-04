@@ -2,8 +2,6 @@
 #define SCENESHADED_H
 
 #include <QtOpenGL/QtOpenGL>
-//#include <QOpenGLFunctions>
-#include <QOpenGLFunctions_4_4_Core>
 
 #include "draw3dCameraParametersControlWidget.h"
 #include "scene3D.h"
@@ -14,7 +12,7 @@ class QOpenGLShaderProgram;
 
 
 
-class SceneShaded : public Scene3D, public /*QOpenGLFunctions*/ QOpenGLFunctions_4_4_Core
+class SceneShaded : public Scene3D
 {
 public:
     ShadedSceneControlParameters mParameters;

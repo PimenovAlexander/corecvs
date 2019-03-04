@@ -1,33 +1,47 @@
 #ifndef SIMOBJECT_H
 #define SIMOBJECT_H
+
 #include <bits/stdc++.h>
+
 #include "core/utils/utils.h"
 #include "core/geometry/mesh3d.h"
 #include "core/geometry/mesh3DDecorated.h"
+
+/** Temporary usages while we are preparing to move this to the proper place **/
+using corecvs::Vector3dd;
+using corecvs::Quaternion;
+
+
+
 class SimObject
 {
 public:
     SimObject();
-    Vector3d<float> coords = Vector3d<float>(1,1,1);
-    Vector3d<float> velocity = Vector3d<float>(0,0,0);
-    Vector3d<float> force = Vector3d<float>(0,0,0);
-    Vector3d<float> oldForce = Vector3d<float>(0,0,0);
+    Vector3dd coords   = Vector3dd(1,1,1);
+    Vector3dd velocity = Vector3dd::Zero();
+    Vector3dd force    = Vector3dd::Zero();
+    Vector3dd oldForce = Vector3dd::Zero();
 
-    int FrameCounter=0;
-    Quaternion qPos = Quaternion(0,0,0,0);
-    Quaternion qVx = Quaternion(1,0,0,0);
-    Quaternion qVy = Quaternion(0,1,0,0);
-    Quaternion qVz = Quaternion(0,0,1,0);
+    int frameCounter = 0;
 
-    float mass = 1;                                    //kg
+    Quaternion qPos = Quaternion(0.0, 0.0, 0.0, 0.0);
+
+    Quaternion qVx  = Quaternion(1,0,0,0);
+    Quaternion qVy  = Quaternion(0,1,0,0);
+    Quaternion qVz  = Quaternion(0,0,1,0);
+
+    /** Mass in kilograms **/
+    double mass = 1;
     bool countPhysics=false;
 
-    void addForce(Vector3d<float> force);
-    void addImpulse(Vector3d<float> force);
-    void setForce(float x, float y, float z);
-    void setForce(Vector3d<float> force);
-    void tick(double DeltaT);
-    virtual void saveMesh(string name);
+    void addForce  (const Vector3dd &force);
+    void addImpulse(const Vector3dd &force);
+
+    void setForce(double x, double y, double z);
+    void setForce(const Vector3dd &force);
+    void tick(double deltaT);
+
+    virtual void saveMesh(const std::string &name);
 };
 
 #endif // SIMOBJECT_H
