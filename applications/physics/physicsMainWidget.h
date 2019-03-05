@@ -1,21 +1,24 @@
 #ifndef PHYSICSMAINWIDGET_H
 #define PHYSICSMAINWIDGET_H
 
+#include <stack>
+#include <linux/joystick.h>
+#include <fcntl.h>
+
 #include <QWidget>
+#include <QtSerialPort/QSerialPort>
+#include <QtSerialPort/QSerialPortInfo>
+
 #include "clientSender.h"
 #include "qComController.h"
 
-#include <QtSerialPort/QSerialPort>
-#include <QtSerialPort/QSerialPortInfo>
-#include <linux/joystick.h>
-#include <fcntl.h>
-#include <controllRecord.h>
-#include <stack>
-#include  "joystickInput.h"
+
+#include "controlRecord.h"
+#include "joystickInput.h"
 #include "simulation.h"
 
 namespace Ui {
-class PhysicsMainWidget;
+    class PhysicsMainWidget;
 }
 
 class PhysicsMainWidget : public QWidget
@@ -24,15 +27,22 @@ class PhysicsMainWidget : public QWidget
 public:
     explicit PhysicsMainWidget(QWidget *parent = 0);
     QSerialPort serialPort;
-    ~PhysicsMainWidget();
-    QByteArray *flyCommandWriteData;
-    QByteArray getDataFromStics();
+
+    QByteArray *flyCommandWriteData = NULL;
+    QByteArray getDataFromSticks();
+
     int currentMode=0;
     bool realModeActive = false;
     bool virtualModeActive = false;
-    struct AxisState { short x, y; };
+
+    struct AxisState {
+        short x;
+        short y;
+    };
 
     void disconnectFromCopter();
+
+    virtual ~PhysicsMainWidget();
 
 public slots:
 
@@ -49,7 +59,7 @@ private slots:
     void CH8Change(int i);
     void startJoyStickMode();
 
-    void onPushButtonReleased();
+    void onStartVirtualModeReleased();
     void sendJoyValues();
     void startRealMode();
     // void BindToRealDrone();
@@ -59,11 +69,22 @@ private slots:
     void onComboBoxCurrentTextChanged(const QString &arg1);
 
 private:
-    struct Message {int throttle; int roll; int yaw; int pitch ; int countOfRepeats; };
+    struct Message {
+        int throttle;
+        int roll;
+        int yaw;
+        int pitch ;
+        int countOfRepeats;
+    };
+
     std::list<Message> messages;
 
 
-    JoyStickInput joystick1{yawValue, rollValue, pitchValue, throttleValue,
+    JoyStickInput joystick1 {
+        yawValue,
+        rollValue,
+        pitchValue,
+        throttleValue,
                 CH5Value, CH6Value, CH7Value, CH8Value};
 
     QComController ComController {this, yawValue, rollValue, pitchValue, throttleValue,
@@ -79,7 +100,7 @@ private:
     int CH6Value;
     int CH7Value;
     int CH8Value;
-    int midThrottle=1350;
+    int midThrottle = 1350;
 
     int counter;
     int sign(int val);
@@ -99,9 +120,9 @@ private:
     void sendOurValues(std::vector<uint8_t> OurValues);
     bool virtuaModeActive=false;
 
-    ControllRecord recordData;
+    ControlRecord recordData;
 
-    Simulation SimSim;
+    Simulation simSim;
 
     struct AxisState axes[3];
 

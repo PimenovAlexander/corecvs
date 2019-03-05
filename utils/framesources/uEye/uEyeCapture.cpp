@@ -231,18 +231,18 @@ UEyeCaptureInterface::FramePair UEyeCaptureInterface::getFrame()
 //    printf("Called getFrame\n");
 
     protectFrame.lock();
-        decodeData(&leftCamera , currentLeft,  &(result.bufferLeft));
-        decodeData(&rightCamera, currentRight, &(result.bufferRight));
+        decodeData(&leftCamera , currentLeft,  &result.buffers[LEFT_FRAME ].g12Buffer);
+        decodeData(&rightCamera, currentRight, &result.buffers[RIGHT_FRAME].g12Buffer);
 
         int64_t internalDesync = 0;
 
         if (rightCamera.inited) {
-            result.timeStampLeft  = currentRight->usecsTimeStamp();
-            result.timeStampRight = currentRight->usecsTimeStamp();
+            result.setTimeStampLeft (currentRight->usecsTimeStamp());
+            result.setTimeStampRight(currentRight->usecsTimeStamp());
             internalDesync = currentLeft->internalTimestamp - currentRight->internalTimestamp;
         } else {
-            result.timeStampLeft  = currentLeft->usecsTimeStamp();
-            result.timeStampRight = currentLeft->usecsTimeStamp();
+            result.setTimeStampLeft (currentLeft->usecsTimeStamp());
+            result.setTimeStampRight(currentLeft->usecsTimeStamp());
         }
 
         stats.framesSkipped = skippedCount > 0 ? skippedCount - 1 : 0;
@@ -287,25 +287,25 @@ UEyeCaptureInterface::FramePair UEyeCaptureInterface::getFrameRGB24()
 //    printf("Called getFrame\n");
 
     protectFrame.lock();
-        decodeData24(&leftCamera , currentLeft,  &(result.rgbBufferLeft));
-        decodeData24(&rightCamera, currentRight, &(result.rgbBufferRight));
+        decodeData24(&leftCamera , currentLeft,  &result.buffers[LEFT_FRAME ].rgbBuffer);
+        decodeData24(&rightCamera, currentRight, &result.buffers[RIGHT_FRAME].rgbBuffer);
 
-        if (result.rgbBufferLeft != NULL) {
-            result.bufferLeft  = result.rgbBufferLeft ->toG12Buffer(); // FIXME
+        if (result.rgbBufferLeft() != NULL) {
+            result.setBufferLeft (result.rgbBufferLeft() ->toG12Buffer());
         }
-        if (result.rgbBufferRight != NULL) {
-            result.bufferRight = result.rgbBufferRight->toG12Buffer();
+        if (result.rgbBufferRight() != NULL) {
+            result.setBufferRight(result.rgbBufferRight()->toG12Buffer());
         }
 
         int64_t internalDesync = 0;
 
         if (rightCamera.inited) {
-            result.timeStampLeft  = currentRight->usecsTimeStamp();
-            result.timeStampRight = currentRight->usecsTimeStamp();
+            result.setTimeStampLeft (currentRight->usecsTimeStamp());
+            result.setTimeStampRight(currentRight->usecsTimeStamp());
             internalDesync = currentLeft->internalTimestamp - currentRight->internalTimestamp;
         } else {
-            result.timeStampLeft  = currentLeft->usecsTimeStamp();
-            result.timeStampRight = currentLeft->usecsTimeStamp();
+            result.setTimeStampLeft( currentLeft->usecsTimeStamp());
+            result.setTimeStampLeft( currentLeft->usecsTimeStamp());
         }
 
         stats.framesSkipped = skippedCount > 0 ? skippedCount - 1 : 0;
@@ -598,9 +598,9 @@ void UEyeCaptureInterface::getAllCameras(vector<string> &cameras)
 
 }
 
-QString UEyeCaptureInterface::getInterfaceName()
+std::string UEyeCaptureInterface::getInterfaceName()
 {
-    return QString("ueye:") + QString(interfaceName.c_str());
+    return std::string("ueye:") + interfaceName;
 }
 
 
@@ -893,8 +893,8 @@ ImageCaptureInterface::CapErrorCode UEyeCaptureInterface::queryCameraParameters(
     param->setMaximum(1);
     param->setStep(1);
     param->setIsMenu(true);
-    param->pushMenuItem(QString("False"), 0);
-    param->pushMenuItem(QString("True") , 1);
+    param->pushMenuItem(std::string("False"), 0);
+    param->pushMenuItem(std::string("True") , 1);
 
 
     /* Gain */
@@ -916,8 +916,8 @@ ImageCaptureInterface::CapErrorCode UEyeCaptureInterface::queryCameraParameters(
     param->setMaximum(1);
     param->setStep(1);
     param->setIsMenu(true);
-    param->pushMenuItem(QString("False"), 0);
-    param->pushMenuItem(QString("True") , 1);
+    param->pushMenuItem(std::string("False"), 0);
+    param->pushMenuItem(std::string("True") , 1);
 
 
     /* Sensor clock */

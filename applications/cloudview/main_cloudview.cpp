@@ -124,6 +124,28 @@ int main(int argc, char *argv[])
         }
     }
 
+    {
+        Mesh3DScene *mesh = new Mesh3DScene;
+
+        mesh->switchColor();
+
+       // mesh->mulTransform(Vector3dd::Zero());
+
+        mesh->setColor(RGBColor::Yellow());
+        mesh->addIcoSphere(Vector3dd( 5, 5, -3), 2, 2);
+        mesh->addIcoSphere(Vector3dd(-5, 5, -3), 2, 2);
+
+        mesh->setColor(RGBColor::Blue());
+        mesh->addIcoSphere(Vector3dd( 5, -5, -3), 2, 2);
+        mesh->addIcoSphere(Vector3dd(-5, -5, -3), 2, 2);
+        mesh->popTransform();
+
+        //mesh->dumpPLY("out2.ply");
+
+        mainWindow.setNewScenePointer(QSharedPointer<Scene3D>(mesh));
+
+    }
+
     app.exec();
 
     cout << "Exiting Cloudview application  \n";

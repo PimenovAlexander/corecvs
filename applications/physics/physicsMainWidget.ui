@@ -56,24 +56,38 @@
          <string>Contols</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
-         <item row="6" column="0">
-          <widget class="QLabel" name="CH7_label">
-           <property name="text">
-            <string>CH7-</string>
+         <item row="1" column="0">
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
-          </widget>
-         </item>
-         <item row="1" column="5">
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>Pitch</string>
+           <property name="sizeType">
+            <enum>QSizePolicy::Preferred</enum>
            </property>
-          </widget>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
-         <item row="3" column="4" colspan="2">
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Roll</string>
+         <item row="6" column="1" colspan="5">
+          <widget class="QSlider" name="CH7">
+           <property name="minimum">
+            <number>900</number>
+           </property>
+           <property name="maximum">
+            <number>2100</number>
+           </property>
+           <property name="value">
+            <number>1500</number>
+           </property>
+           <property name="sliderPosition">
+            <number>1500</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
@@ -96,150 +110,6 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
-          <spacer name="horizontalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Preferred</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="1" column="3">
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Preferred</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="CH6_label">
-           <property name="text">
-            <string>CH6-</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="2">
-          <widget class="QLabel" name="label_4">
-           <property name="text">
-            <string>Throttle</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QSlider" name="Throttle">
-           <property name="minimum">
-            <number>900</number>
-           </property>
-           <property name="maximum">
-            <number>2100</number>
-           </property>
-           <property name="value">
-            <number>1100</number>
-           </property>
-           <property name="sliderPosition">
-            <number>1100</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="4">
-          <widget class="QSlider" name="Pitch">
-           <property name="minimum">
-            <number>900</number>
-           </property>
-           <property name="maximum">
-            <number>2100</number>
-           </property>
-           <property name="value">
-            <number>1500</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1" colspan="5">
-          <widget class="QSlider" name="CH5">
-           <property name="minimum">
-            <number>900</number>
-           </property>
-           <property name="maximum">
-            <number>2100</number>
-           </property>
-           <property name="value">
-            <number>1500</number>
-           </property>
-           <property name="sliderPosition">
-            <number>1500</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0" colspan="6">
-          <widget class="QComboBox" name="comboBox">
-           <property name="currentText">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="CH5_label">
-           <property name="text">
-            <string>CH5-</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1" colspan="2">
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Yaw</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="3" colspan="3">
-          <widget class="QSlider" name="Roll">
-           <property name="minimum">
-            <number>900</number>
-           </property>
-           <property name="maximum">
-            <number>2100</number>
-           </property>
-           <property name="value">
-            <number>1500</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="0">
-          <widget class="QLabel" name="CH8_label">
-           <property name="text">
-            <string>CH8-</string>
-           </property>
-          </widget>
-         </item>
          <item row="5" column="1" colspan="5">
           <widget class="QSlider" name="CH6">
            <property name="minimum">
@@ -259,22 +129,10 @@
            </property>
           </widget>
          </item>
-         <item row="6" column="1" colspan="5">
-          <widget class="QSlider" name="CH7">
-           <property name="minimum">
-            <number>900</number>
-           </property>
-           <property name="maximum">
-            <number>2100</number>
-           </property>
-           <property name="value">
-            <number>1500</number>
-           </property>
-           <property name="sliderPosition">
-            <number>1500</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+         <item row="7" column="0">
+          <widget class="QLabel" name="CH8_label">
+           <property name="text">
+            <string>CH8-</string>
            </property>
           </widget>
          </item>
@@ -297,33 +155,168 @@
            </property>
           </widget>
          </item>
+         <item row="1" column="1">
+          <widget class="QSlider" name="Throttle">
+           <property name="minimum">
+            <number>900</number>
+           </property>
+           <property name="maximum">
+            <number>2100</number>
+           </property>
+           <property name="value">
+            <number>1100</number>
+           </property>
+           <property name="sliderPosition">
+            <number>1100</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="3">
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Preferred</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="1" column="5">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Pitch</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="CH5_label">
+           <property name="text">
+            <string>CH5-</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="CH6_label">
+           <property name="text">
+            <string>CH6-</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1" colspan="2">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Yaw</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="6">
+          <widget class="QComboBox" name="comboBox">
+           <property name="currentText">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1" colspan="5">
+          <widget class="QSlider" name="CH5">
+           <property name="minimum">
+            <number>900</number>
+           </property>
+           <property name="maximum">
+            <number>2100</number>
+           </property>
+           <property name="value">
+            <number>1500</number>
+           </property>
+           <property name="sliderPosition">
+            <number>1500</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="3" colspan="3">
+          <widget class="QSlider" name="Roll">
+           <property name="minimum">
+            <number>900</number>
+           </property>
+           <property name="maximum">
+            <number>2100</number>
+           </property>
+           <property name="value">
+            <number>1500</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="4" colspan="2">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Roll</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="4">
+          <widget class="QSlider" name="Pitch">
+           <property name="minimum">
+            <number>900</number>
+           </property>
+           <property name="maximum">
+            <number>2100</number>
+           </property>
+           <property name="value">
+            <number>1500</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Throttle</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="CH7_label">
+           <property name="text">
+            <string>CH7-</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0" colspan="6">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
         </layout>
        </widget>
       </item>
       <item>
-       <widget class="CloudViewDialog" name="widget" native="true"/>
+       <widget class="CloudViewDialog" name="cloud" native="true"/>
       </item>
      </layout>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QFrame" name="frame_3">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <widget class="CloudViewDialog" name="Cloud" native="true">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>100</width>
-        <height>30</height>
-       </rect>
-      </property>
-     </widget>
     </widget>
    </item>
    <item row="0" column="0" colspan="2">
@@ -342,7 +335,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="1" column="2">
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="connetToVirtualButton">
         <property name="text">
          <string>connect to virtual</string>
         </property>
@@ -562,6 +555,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>connetToVirtualButton</sender>
+   <signal>released()</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>startVirtualMode()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1382</x>
+     <y>70</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>833</x>
+     <y>357</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>myHandler(int)</slot>
@@ -575,6 +584,6 @@
   <slot>CH6Change(int)</slot>
   <slot>CH7Change(int)</slot>
   <slot>CH8Change(int)</slot>
-  <slot>StartVirtualMode()</slot>
+  <slot>startVirtualMode()</slot>
  </slots>
 </ui>

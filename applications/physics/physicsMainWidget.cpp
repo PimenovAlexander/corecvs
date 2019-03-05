@@ -1,30 +1,32 @@
 #include "core/utils/global.h"
-#include "physicsMainWidget.h"
-#include "ui_physicsMainWidget.h"
-#include "joystickInput.h"
-#include "clientSender.h"
-#include <QtSerialPort/QSerialPort>
-#include <QtSerialPort/QSerialPortInfo>
-#include <QFile>
-#include <QTextStream>
-#include <QTimer>
+
+#include <fstream>
+
 #include <unistd.h>
-#include <QBitArray>
 #include <bitset>
 #include <linux/joystick.h>
 #include <fcntl.h>
 #include <thread>
-#include <core/geometry/mesh3DDecorated.h>
-#include "time.h"
-#include "QWidget"
-#include <fstream>
-#include <mesh3DScene.h>
+#include <time.h>
+
+#include <QtSerialPort/QSerialPort>
+#include <QtSerialPort/QSerialPortInfo>
+#include <QWidget>
+#include <QFile>
+#include <QTextStream>
+#include <QTimer>
+#include <QBitArray>
+
+#include "core/geometry/mesh3DDecorated.h"
+#include "mesh3DScene.h"
+
+#include "physicsMainWidget.h"
+#include "ui_physicsMainWidget.h"
+#include "joystickInput.h"
+#include "clientSender.h"
 #include "simulation.h"
-#include "ui_cloudViewDialog.h"
 
 using namespace std;
-
-
 
 PhysicsMainWidget::PhysicsMainWidget(QWidget *parent) :
     QWidget(parent),
@@ -61,8 +63,10 @@ PhysicsMainWidget::~PhysicsMainWidget()
     delete ui;
 }
 
-void PhysicsMainWidget::onPushButtonReleased()
+void PhysicsMainWidget::onStartVirtualModeReleased()
 {
+    SYNC_PRINT(("PhysicsMainWidget::onPushButtonReleased(): called\n"));
+
     /*if (!virtualModeActive & !RealModeActive)
         {
         VirtualSender.Client_connect();
@@ -119,26 +123,18 @@ void PhysicsMainWidget::sendJoyValues()
 
 void PhysicsMainWidget::showValues()                                   //shows axis values to console
 {
+    /* Why so many convertions? */
     std::string s = std::to_string(yawValue);
-    SYNC_PRINT(("yaw __"));
-    SYNC_PRINT((s.c_str()));
-    SYNC_PRINT(("  "));
-
+    SYNC_PRINT(("yaw __%s   ", s.c_str()));
 
     s = std::to_string(rollValue);
-    SYNC_PRINT(("roll __"));
-    SYNC_PRINT((s.c_str()));
-    SYNC_PRINT(("  "));
+    SYNC_PRINT(("roll __%s   ", s.c_str()));
 
     s = std::to_string(pitchValue);
-    SYNC_PRINT(("pitch __"));
-    SYNC_PRINT((s.c_str()));
-    SYNC_PRINT(("  "));
+    SYNC_PRINT(("pitch __%s   ", s.c_str()));
 
     s = std::to_string(throttleValue);
-    SYNC_PRINT(("throttle __"));
-    SYNC_PRINT((s.c_str()));
-    SYNC_PRINT(("  "));
+    SYNC_PRINT(("throttle __%s   ", s.c_str()));
 }
 
 
@@ -220,7 +216,9 @@ void PhysicsMainWidget::startVirtualMode()
 {
     if (!virtualModeActive)
     {
-        /* Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
+
+        SYNC_PRINT(("PhysicsMainWidget::startVirtualMode(): Adding new object to scene\n"));
+        Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
 
         //Mesh3DDecorated *mesh = new Mesh3DDecorated;
         Mesh3DScene *mesh = new Mesh3DScene;
@@ -238,13 +236,14 @@ void PhysicsMainWidget::startVirtualMode()
         mesh->addIcoSphere(Vector3dd(-5, -5, -3), 2, 2);
         mesh->popTransform();
 
-        mesh->dumpPLY("out2.ply");
+        //mesh->dumpPLY("out2.ply");
 
+        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh));
+        ui->cloud->update();
 
-        ui->Cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh));*/
-        SimSim = Simulation();
-        SimSim.start();
-        SimSim.objects[0]->addForce(Vector3dd(0, 0, -9.8));
+        simSim = Simulation();
+        simSim.start();
+        simSim.objects[0]->addForce(Vector3dd(0, 0, -9.8));
         cout<<"done"<<endl;
     }
 }
@@ -324,28 +323,25 @@ void PhysicsMainWidget::stop()
 /// Sends our values to module (yes, it wants its own package for every byte)
 void PhysicsMainWidget::sendOurValues(std::vector<uint8_t> OurValues)
 {
-    std::vector<uint8_t>  FlyCommandOutput = OurValues;
-    for (int i=0;i<FlyCommandOutput.size();i++)
+    std::vector<uint8_t>  flyCommandOutput = OurValues;
+    for (size_t i = 0; i < flyCommandOutput.size(); i++)
     {
-        std::vector<uint8_t>  FlyCom={FlyCommandOutput[i]};
+        std::vector<uint8_t>  flyCom = { flyCommandOutput[i] };
 
-        int k=rollValue+36;
-        k=k*8/10;
-        uint8_t firstbyte=0x00;
-        for (int i=0;i<7;i++)
+        int k = rollValue + 36;
+        k = k * 8 / 10;
+
+        uint8_t firstbyte = 0x00;
+        for (int i = 0; i < 7; i++)
         {
-            int b=k<<i;
-            firstbyte&1<<i+1;
+            int b = (k << i);
+            firstbyte&1<< (i+1);
         }
 
-        QByteArray *qbytes =  new QByteArray(reinterpret_cast<const char*>(FlyCom.data()),FlyCom.size());
-
-        serialPort.write(*qbytes);
+        serialPort.write((const char *)flyCom.data(), flyCom.size());
         serialPort.flush();
     }
 }
-
-struct axis_state {        short x, y;   };
 
 void PhysicsMainWidget::startJoyStickMode()
 {
@@ -394,8 +390,8 @@ void PhysicsMainWidget::onPushButton2Clicked()
 int PhysicsMainWidget::sign(int val)
 {
     int result=0;
-    if (val >100){result=1;}
-    if (val <-100){result=-1;}
+    if (val > 100) {result=1;}
+    if (val < -100){result=-1;}
     return result;
 }
 

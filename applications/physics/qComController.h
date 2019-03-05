@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QSerialPort>
-#include "controllRecord.h"
+#include "controlRecord.h"
 static  int v=1500;
 static  int throtV=1100;
 
@@ -33,7 +33,7 @@ public slots:
 private:
     QSerialPort serialPort;
     bool recording;
-    ControllRecord recordData;
+    ControlRecord recordData;
 };
 
 #endif // QCOMCONTROLLER_H
