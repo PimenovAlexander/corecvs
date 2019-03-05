@@ -1,8 +1,9 @@
 target_sources(corecvs
-  PUBLIC
-    filesystem/folderScanner.h 
-    filesystem/tempFolder.h 
+    PUBLIC
+        filesystem/folderScanner.h
+        filesystem/tempFolder.h
  
-    filesystem/folderScanner.cpp 
-    filesystem/tempFolder.cpp 
+    PRIVATE
+        filesystem/folderScanner.cpp
+        filesystem/tempFolder.cpp
 )

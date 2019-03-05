@@ -15,7 +15,7 @@ target_sources(corecvs
         cameracalibration/projection/omnidirectionalProjection.h
 
 
- 
+    PRIVATE
         cameracalibration/calibrationLocation.cpp      
         cameracalibration/flatPatternCalibrator.cpp    
         cameracalibration/cameraConstraints.cpp        

@@ -1,1 +1,6 @@
-target_sources(corecvs delaunay/*.h delaunay/*.cpp )
+target_sources(corecvs
+    PUBLIC
+        delaunay/delaunay.h
+    PRIVATE
+        delaunay/delaunay.cpp
+)

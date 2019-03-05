@@ -1,5 +1,7 @@
 target_sources(corecvs
-  PUBLIC
-    function/function.cpp
-    function/function.h
+    PUBLIC
+        function/function.h
+    PRIVATE
+        function/function.cpp
+
 )

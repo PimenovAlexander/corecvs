@@ -9,7 +9,7 @@ target_sources(corecvs
         camerafixture/wildcardablePointerPair.h 
 
 
- 
+    PRIVATE
         camerafixture/fixtureCamera.cpp     
         camerafixture/fixtureScene.cpp      
         camerafixture/sceneFeaturePoint.cpp 

@@ -1,5 +1,5 @@
 target_sources(corecvs
-  PUBLIC
+    PUBLIC
         framesources/frames.h
 	framesources/cameraControlParameters.h 
 	framesources/dummyVideoEncoderInterface.h 
@@ -16,7 +16,7 @@ target_sources(corecvs
 	framesources/decoders/mjpegDecoder.h 
 	framesources/decoders/mjpegDecoderLazy.h 
 
-
+    PRIVATE
         framesources/frames.cpp
 	framesources/cameraControlParameters.cpp 
 	framesources/dummyVideoEncoderInterface.cpp 
