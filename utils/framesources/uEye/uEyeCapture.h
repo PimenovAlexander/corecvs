@@ -13,17 +13,13 @@
 #include <string>
 #include <errno.h>
 #include <uEye.h>
-#include <QImage>
-#include <QDebug>
 
 #include "core/utils/global.h"
 
 #include "uEyeCameraDescriptor.h"
-#include "cameraControlParameters.h"
-#include "imageCaptureInterface.h"
+#include "core/framesources/cameraControlParameters.h"
+#include "core/framesources/imageCaptureInterface.h"
 #include "core/utils/preciseTimer.h"
-
-using namespace std;
 
 
 class UEyeCaptureInterface : public virtual ImageCaptureInterface
@@ -54,7 +50,7 @@ public:
 
     static void getAllCameras(vector<std::string> &cameras);
     virtual std::string  getDeviceSerial(int num = LEFT_FRAME) override;
-    virtual QString getInterfaceName()  override;
+    virtual std::string getInterfaceName()  override;
 
     static int ueyeTrace(int res, const char *prefix = NULL);
 

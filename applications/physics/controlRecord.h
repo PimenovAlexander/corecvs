@@ -1,18 +1,26 @@
 #ifndef CONTROLLRECORD_H
 #define CONTROLLRECORD_H
-#include<list>
+
+#include <list>
 
 using namespace std;
 
-class ControllRecord
+class ControlRecord
 {
 public:
-    ControllRecord();
+    ControlRecord();
 
     void save();
     void addMessage(int throttle, int roll, int yaw, int pitch );
 private:
-    struct Message {int throttle; int roll; int yaw; int pitch; int countOfRepeats; };
+    struct Message {
+        int throttle;
+        int roll;
+        int yaw;
+        int pitch;
+        int countOfRepeats;
+    };
+
     std::list<Message> messages;
     Message lastMessage;
     int count=0;

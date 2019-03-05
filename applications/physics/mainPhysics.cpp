@@ -1,9 +1,18 @@
+#include <QApplication>
+#include "qtFileLoader.h"
+
 #include "core/utils/utils.h"
 #include "core/geometry/mesh3d.h"
-#include <core/geometry/mesh3DDecorated.h>
-#include <QApplication>
-#include <bits/stdc++.h>
+#include "core/geometry/mesh3DDecorated.h"
+#include "core/reflection/commandLineSetter.h"
+#include "core/buffers/bufferFactory.h"
 
+#ifdef WITH_LIBJPEG
+#include "libjpegFileReader.h"
+#endif
+#ifdef WITH_LIBPNG
+#include "libpngFileReader.h"
+#endif
 
 #include "physicsMainWidget.h"
 
@@ -38,18 +47,37 @@ int mainExample1()
 
 int main(int argc, char *argv[])
 {
-    mainExample1();
-
     SET_HANDLERS();
-
     Q_INIT_RESOURCE(main);
-    Vector3d<int> f;
-    //QTRGB24Loader::registerMyself();
 
-    printf("Starting cloudView...\n");
+#ifdef WITH_LIBJPEG
+    LibjpegFileReader::registerMyself();
+    SYNC_PRINT(("Libjpeg support on\n"));
+#endif
+#ifdef WITH_LIBPNG
+    LibpngFileReader::registerMyself();
+//    LibpngLoader<RuntimeTypeBuffer, true>::registerMyself(); //allow loading RGB24 as grayscale
+    LibpngRuntimeTypeBufferLoader::registerMyself();
+    LibpngFileSaver::registerMyself();
+    SYNC_PRINT(("Libpng support on\n"));
+#endif
+    QTRGB24Loader::registerMyself();
+
+    CommandLineSetter s(argc, argv);
+    if (s.hasOption("caps"))
+    {
+        BufferFactory::printCaps();
+        return 0;
+    }
+
+
+    SYNC_PRINT(("Starting Physics...\n"));
     QApplication app(argc, argv);
 
     PhysicsMainWidget mainWindow;
     mainWindow.show();
     app.exec();
+
+    SYNC_PRINT(("Exiting\n"));
+    return 0;
 }

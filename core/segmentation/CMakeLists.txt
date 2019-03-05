@@ -1,9 +1,10 @@
 target_sources(corecvs
-  PUBLIC
-    segmentation/segmentator.h 
-    segmentation/tileGrid.h 
+    PUBLIC
+        segmentation/segmentator.h
+        segmentation/tileGrid.h
 
-    segmentation/segmentator.cpp 
-    segmentation/tileGrid.cpp 
-    )
+    PRIVATE
+        segmentation/segmentator.cpp
+        segmentation/tileGrid.cpp
+)
 

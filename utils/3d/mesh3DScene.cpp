@@ -21,8 +21,7 @@ using corecvs::lerp;
 
 void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
 {
-    //qDebug("Mesh3DScene::drawMyself() : called" );
-    //qDebug("V: %d E: %d F: %d ", );
+    //SYNC_PRINT(("Mesh3DScene::drawMyself() : called\n" ));
 
     bool withTexture = false;
     withTexture |= (mParameters.style() == Draw3dStyle::TEXTURED) && (dialog->mFancyTexture != GLuint(-1));

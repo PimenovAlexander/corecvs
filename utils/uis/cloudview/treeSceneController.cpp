@@ -89,6 +89,7 @@ TreeSceneController::TreeSceneController(
 
 void TreeSceneController::generateWidget()
 {
+    SYNC_PRINT(("TreeSceneController::generateWidget():called\n"));
     if (mObject.isNull())
         return;
 
@@ -106,8 +107,12 @@ void TreeSceneController::generateWidget()
 
 void TreeSceneController::replaceScene(QSharedPointer<Scene3D> newObject)
 {
-    if (newObject.isNull())
+    SYNC_PRINT(("TreeSceneController::replaceScene():called\n"));
+
+    if (newObject.isNull()) {
+        SYNC_PRINT(("TreeSceneController::replaceScene():newObject is null\n"));
         return;
+    }
 
     /* Rearrange mesh hierarchy according to the controller */
     if (mParentController != NULL && !mParentController->mObject.isNull())
@@ -136,6 +141,8 @@ void TreeSceneController::replaceScene(QSharedPointer<Scene3D> newObject)
             return;
         }
     }
+
+    SYNC_PRINT(("TreeSceneController::replaceScene(): name=%s, visible=%s\n", mName.toLatin1().constData(), mObject->visible ? "visible" : "hidden"));
 
     newObject->visible = mObject->visible;
     mObject = newObject;
@@ -171,8 +178,17 @@ QString TreeSceneController::print(const QString &prefix)
 TreeSceneController * TreeSceneController::addChildObject(
     QString name, QSharedPointer<Scene3D> object, TreeSceneModel *treeModel, bool visible)
 {
+    SYNC_PRINT(("TreeSceneController::addChildObject(%s, %s, %s, %s): called\n",
+                name.toLatin1().constData(),
+                object.isNull() ? "NULL" : "nonnull",
+                treeModel == NULL ? "NULL" : "nonnull",
+                visible ? "visible" : "invisible"));
+
     if (!mObject->isComplexObject())
+    {
+        SYNC_PRINT(("Not a complex object"));
         return NULL;
+    }
 
     TreeSceneController *newController = new  TreeSceneController(name, object, treeModel, visible);
     mChildren.push_back(newController);
@@ -198,9 +214,17 @@ TreeSceneController * TreeSceneController::addChildObject(
 TreeSceneController * TreeSceneController::addChildObjectRecursive(
     QString name, QSharedPointer<Scene3D> object, TreeSceneModel *treeModel, bool visible )
 {
+    SYNC_PRINT(("TreeSceneModel::addChildObjectRecursive(%s, %s, %s, %s): called\n",
+                name.toLatin1().constData(),
+                object.isNull() ? "NULL" : "nonnull",
+                treeModel == NULL ? "NULL" : "nonnull",
+                visible ? "visible" : "invisible"));
+
     TreeSceneController *newController = addChildObject (name, object, treeModel, visible);
-    if (newController == NULL)
+    if (newController == NULL) {
+        SYNC_PRINT(("Returning null controller\n"));
         return NULL;
+    }
 
     if (object->isComplexObject())
     {
@@ -212,6 +236,8 @@ TreeSceneController * TreeSceneController::addChildObjectRecursive(
             newController->addChildObjectRecursive(frame->mChildren[i]->name, frame->mChildren[i], treeModel, visible);
         }
     }
+
+    cout << print(QString("  ")).toStdString() << std::endl;
 
     return newController;
 }
@@ -275,12 +301,23 @@ TreeSceneController * TreeSceneModel::addObject(
     QSharedPointer<Scene3D> object,
     bool visible)
 {
+    SYNC_PRINT(("TreeSceneModel::addObject(%s, %s, %s): called\n",
+                name.toLatin1().constData(),
+                object.isNull() ? "NULL" : "nonnull",
+                visible ? "visible" : "invisible"));
+
     if (mTopItem == NULL)
         return NULL;
 
-    beginInsertRows(QModelIndex(), (int)mTopItem->mChildren.size(), (int)mTopItem->mChildren.size());
+    int toInsertId = (int)mTopItem->mChildren.size();
+    SYNC_PRINT(("TreeSceneModel::addObject(): Will insert at %d\n", toInsertId));
+
+    SYNC_PRINT(("Rowcount before: %d\n", this->rowCount(QModelIndex())));
+    beginInsertRows(QModelIndex(), toInsertId, toInsertId);
     //TreeSceneController *result = mTopItem->addChildObject(name, object, visible);
     TreeSceneController *result = mTopItem->addChildObjectRecursive(name, object, this, visible);
+
+    SYNC_PRINT(("Rowcount end: %d\n", this->rowCount(QModelIndex())));
     endInsertRows();
 
     return result;

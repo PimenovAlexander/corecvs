@@ -1,6 +1,7 @@
 target_sources(corecvs
     PUBLIC
-    assignment/assignmentOptimal.h 
-    assignment/assignmentOptimal.cpp 
+        assignment/assignmentOptimal.h
+    PRIVATE
+        assignment/assignmentOptimal.cpp
 )
 

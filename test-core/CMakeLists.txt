@@ -1,5 +1,7 @@
-cmake_minimum_required (VERSION 3.1)
 project (CoreCVSTests)
+
+set(MODULE_NAME corecvs)
+
 
 MESSAGE( STATUS "Including GTest on Tests build" )
 find_package( GTest REQUIRED)
@@ -123,6 +125,5 @@ set (CORE_TEST_SOURCES
     bspRenderer/bspRenderer.h
 )
 
-add_executable(test-core main.cpp ${CORE_TEST_SOURCES})
-target_link_libraries(test-core corecvs)
-
+add_executable(${MODULE_NAME}_tests ${CORE_TEST_SOURCES})
+target_link_libraries(${MODULE_NAME}_tests gtest_main ${MODULE_NAME})

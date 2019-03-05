@@ -54,12 +54,13 @@ CloudViewDialog::CloudViewDialog(QWidget *parent, QString name)
     mUi.setupUi(this);
     setWindowIcon(QIcon(":/new/our/our/3D.png"));
 
+/*
     QSurfaceFormat format;
     format.setMajorVersion( 4 ); //whatever version
     format.setMinorVersion( 5 ); //
     format.setProfile(QSurfaceFormat::CoreProfile);
     mUi.widget->setFormat(format);
-
+*/
     qDebug("Creating CloudViewDialog (%s) for working with OpenGL(%d.%d)",
             windowTitle().toLatin1().constData(),
             mUi.widget->format().majorVersion(),
@@ -222,6 +223,10 @@ TreeSceneController * CloudViewDialog::addSubObject (QString name, QSharedPointe
     qDebug("CloudViewDialog(%s)::addSubObject(%s, _, %s): called", windowTitle().toLatin1().constData(), name.toLatin1().constData(), visible ? "true" : "false" );
 
     TreeSceneController * result = mTreeModel.addObject(name, scene, visible);
+    if (result == NULL) {
+        SYNC_PRINT(("TreeSceneModel::addObject(): returned NULL controller\n"));
+    }
+
     mUi.widget->update();
     return result;
 }
@@ -778,6 +783,7 @@ void CloudViewDialog::initializeGLSlot()
 
 void CloudViewDialog::repaintGLSlot()
 {
+    //SYNC_PRINT(("CloudViewDialog::repaintGLSlot()\n"));
     mUi.widget->makeCurrent();
 
     /**
@@ -809,13 +815,13 @@ void CloudViewDialog::repaintGLSlot()
     //cout << OpenGLTools::glGetProjectionMatrix() << std::endl;
 
 
-//    qDebug("=== Starting draw === ");
-    if (mTreeModel.mTopItem != NULL &&
+    //qDebug("=== Starting draw === ");
+    if ( mTreeModel.mTopItem != NULL &&
         !mTreeModel.mTopItem->mObject.isNull())
     {
         mTreeModel.mTopItem->mObject->draw(this);
     }
-//    qDebug("=== Ending draw === ");
+    //qDebug("=== Ending draw === ");
 
     //OpenGLTools::drawOrts(10.0, 1.0);
 

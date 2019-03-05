@@ -1,4 +1,5 @@
-#include "controllRecord.h"
+#include "controlRecord.h"
+
 #include <iostream>
 #include <fstream>
 #include <linux/joystick.h>
@@ -6,7 +7,7 @@
 
 
 
-ControllRecord::ControllRecord()
+ControlRecord::ControlRecord()
 {
     lastMessage.pitch=-1;
     lastMessage.roll=-1;
@@ -16,7 +17,7 @@ ControllRecord::ControllRecord()
 
 }
 
-void ControllRecord::save()
+void ControlRecord::save()
 {
     messages.push_back(lastMessage);
     count++;
@@ -31,7 +32,7 @@ void ControllRecord::save()
     cout<<count<<"-count "<<messages.size()<<"-size"<<endl;
 }
 
-void ControllRecord::addMessage(int throttle, int roll, int yaw, int pitch )
+void ControlRecord::addMessage(int throttle, int roll, int yaw, int pitch )
 {
     if ( lastMessage.pitch==pitch && lastMessage.yaw==yaw && lastMessage.roll==roll && lastMessage.throttle == throttle  )
     {

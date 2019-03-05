@@ -538,12 +538,14 @@ with_opengl {
 with_ueye {
     contains(DEFINES, WITH_UEYE) {
         HEADERS += \
-            framesources/uEyeCapture.h \
-            framesources/uEyeCameraDescriptor.h \
+            framesources/uEye/uEyeCapture.h \
+            framesources/uEye/uEyeCameraDescriptor.h \
 
         SOURCES += \
-            framesources/uEyeCapture.cpp \
-            framesources/uEyeCameraDescriptor.cpp \
+            framesources/uEye/uEyeCapture.cpp \
+            framesources/uEye/uEyeCameraDescriptor.cpp \
+
+        INCLUDEPATH += framesources/uEye
     }
 }
 

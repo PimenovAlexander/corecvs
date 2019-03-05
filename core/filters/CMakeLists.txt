@@ -1,8 +1,9 @@
 target_sources(corecvs
-  PUBLIC
-    filters/newstyle/newStyleBlock.h
-    filters/newstyle/newStyleBlock.cpp
-    filters/newstyle/algoBase.h
+    PUBLIC
+        filters/newstyle/newStyleBlock.h
+        filters/newstyle/algoBase.h
+    PRIVATE
+        filters/newstyle/newStyleBlock.cpp
 )
 
 

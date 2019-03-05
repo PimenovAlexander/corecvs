@@ -1,29 +1,28 @@
 target_sources(corecvs
-  PUBLIC
-    rectification/essentialMatrix.h 
-    rectification/essentialEstimator.h 
-    rectification/iterativeEstimator.h 
-    rectification/ransacEstimator.h 
-    rectification/stereoAligner.h  
-    rectification/triangulator.h 
-    rectification/ransac.h 
-#    rectification/multicameraEstimator.h 
-    rectification/multicameraTriangulator.h 
-    rectification/sceneStereoAlignerBlock.h
- 
-    rectification/essentialMatrix.cpp 
-    rectification/essentialEstimator.cpp 
-    rectification/iterativeEstimator.cpp 
-    rectification/ransacEstimator.cpp 
-    rectification/stereoAligner.cpp 
-    rectification/triangulator.cpp 
-#    rectification/multicameraEstimator.cpp 
-    rectification/multicameraTriangulator.cpp 
-    rectification/sceneStereoAlignerBlock.cpp
+    PUBLIC
+        rectification/essentialMatrix.h
+        rectification/essentialEstimator.h
+        rectification/iterativeEstimator.h
+        rectification/ransacEstimator.h
+        rectification/stereoAligner.h
+        rectification/triangulator.h
+        rectification/ransac.h
+    #    rectification/multicameraEstimator.h
+        rectification/multicameraTriangulator.h
+        rectification/sceneStereoAlignerBlock.h
+     PRIVATE
+        rectification/essentialMatrix.cpp
+        rectification/essentialEstimator.cpp
+        rectification/iterativeEstimator.cpp
+        rectification/ransacEstimator.cpp
+        rectification/stereoAligner.cpp
+        rectification/triangulator.cpp
+    #    rectification/multicameraEstimator.cpp
+        rectification/multicameraTriangulator.cpp
+        rectification/sceneStereoAlignerBlock.cpp
 
-     
-    xml/generated/essentialDerivative1.cpp 
-    xml/generated/essentialDerivative2.cpp 
+        xml/generated/essentialDerivative1.cpp
+        xml/generated/essentialDerivative2.cpp
  )
 
 
