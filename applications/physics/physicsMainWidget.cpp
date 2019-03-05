@@ -61,7 +61,7 @@ PhysicsMainWidget::~PhysicsMainWidget()
     delete ui;
 }
 
-void PhysicsMainWidget::onPushButtonReleased()
+void PhysicsMainWidget::on_pushButton_released()
 {
     /*if (!virtualModeActive & !RealModeActive)
         {

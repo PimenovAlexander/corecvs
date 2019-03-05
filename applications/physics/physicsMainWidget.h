@@ -49,7 +49,7 @@ private slots:
     void CH8Change(int i);
     void startJoyStickMode();
 
-    void onPushButtonReleased();
+    void on_pushButton_released();
     void sendJoyValues();
     void startRealMode();
     // void BindToRealDrone();
