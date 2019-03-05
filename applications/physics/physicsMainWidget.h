@@ -59,14 +59,19 @@ private slots:
     void CH8Change(int i);
     void startJoyStickMode();
 
+
     void onStartVirtualModeReleased();
+
+    //void on_pushButton_released();
+
     void sendJoyValues();
     void startRealMode();
     // void BindToRealDrone();
     void stop();
     void onPushButton2Clicked();
 
-    void onComboBoxCurrentTextChanged(const QString &arg1);
+
+    void on_comboBox_currentTextChanged(const QString &arg1);
 
 private:
     struct Message {

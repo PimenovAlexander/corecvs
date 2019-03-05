@@ -463,7 +463,7 @@
    <sender>pushButton_3</sender>
    <signal>clicked()</signal>
    <receiver>PhysicsMainWidget</receiver>
-   <slot>StartRealMode()</slot>
+   <slot>startRealMode()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>178</x>
@@ -479,7 +479,7 @@
    <sender>JoyButton</sender>
    <signal>clicked()</signal>
    <receiver>PhysicsMainWidget</receiver>
-   <slot>StartJoyStickMode()</slot>
+   <slot>startJoyStickMode()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>1031</x>
@@ -578,8 +578,8 @@
   <slot>yawChange(int)</slot>
   <slot>throttleChange(int)</slot>
   <slot>pitchChange(int)</slot>
-  <slot>StartRealMode()</slot>
-  <slot>StartJoyStickMode()</slot>
+  <slot>startRealMode()</slot>
+  <slot>startJoyStickMode()</slot>
   <slot>CH5Change(int)</slot>
   <slot>CH6Change(int)</slot>
   <slot>CH7Change(int)</slot>

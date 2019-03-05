@@ -137,7 +137,7 @@ void JoyStickInput::startJoyStickMode()
                 switch (eventtt.type)
                 {
                 case JS_EVENT_BUTTON:
-                    cout<<"button event"<<endl;
+                    //cout<<"button event"<<endl;
 
                     switch (currentMode)
                     {
@@ -162,7 +162,7 @@ void JoyStickInput::startJoyStickMode()
 
                     break;
                 case JS_EVENT_AXIS:
-                    cout<<"stick event"<<endl;
+                    //cout<<"stick event"<<endl;
 
                     switch (currentMode)
                     {
@@ -923,7 +923,7 @@ void JoyStickInput::startRecord()
 
 void JoyStickInput::stopRecord()
 {
-    printf("##################___writing___######################");
+    //printf("##################___writing___######################");
 
     // recording=false;
     //recordData.Save();

@@ -47,7 +47,7 @@ PhysicsMainWidget::PhysicsMainWidget(QWidget *parent) :
     ui->comboBox->addItem("Usual mode");
     ui->comboBox->addItem("Inertia mode");
     ui->comboBox->addItem("Casual mode");
-    ui->comboBox->addItem("RT/LT Usial mode");
+    ui->comboBox->addItem("RT/LT Usual mode");
     ui->comboBox->addItem("RT/LT Full mode");
 
 
@@ -63,7 +63,11 @@ PhysicsMainWidget::~PhysicsMainWidget()
     delete ui;
 }
 
+
 void PhysicsMainWidget::onStartVirtualModeReleased()
+
+//void PhysicsMainWidget::on_pushButton_released()
+
 {
     SYNC_PRINT(("PhysicsMainWidget::onPushButtonReleased(): called\n"));
 
@@ -395,8 +399,9 @@ int PhysicsMainWidget::sign(int val)
     return result;
 }
 
-void PhysicsMainWidget::onComboBoxCurrentTextChanged(const QString &arg1)
+void PhysicsMainWidget::on_comboBox_currentTextChanged(const QString &arg1)                 //DO NOT TOUCH IT PLEASE
 {
+
     if(arg1=="Usual mode")    //why qstring can not be in case?!
     {
         joystick1.setUsualCurrentMode();   //I dont want errors between qstring and string

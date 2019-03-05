@@ -33,6 +33,7 @@ void QComController::bindToRealDrone()
     }
     else
     {
+        cout<<"Single shot starteed"<<endl;
         QTimer::singleShot(8, this, SLOT(keepAlive2()));
 
     }
