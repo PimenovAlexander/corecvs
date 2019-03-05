@@ -56,7 +56,8 @@ private slots:
     void stop();
     void onPushButton2Clicked();
 
-    void onComboBoxCurrentTextChanged(const QString &arg1);
+
+    void on_comboBox_currentTextChanged(const QString &arg1);
 
 private:
     struct Message {int throttle; int roll; int yaw; int pitch ; int countOfRepeats; };
