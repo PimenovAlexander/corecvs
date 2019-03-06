@@ -18,6 +18,8 @@ include(../../utils/utils.pri)                      # it uses TARGET, ROOT_DIR a
 QT += serialport
 
 INCLUDEPATH += .
+INCLUDEPATH += joystick
+
 
 HEADERS += \
     physicsMainWidget.h \
@@ -27,7 +29,9 @@ HEADERS += \
     qComController.h \
     simObject.h \
     simSphere.h \
-    controlRecord.h
+    controlRecord.h \
+    joystick/joystickInterface.h \
+    joystick/JoystickOptionsWidget.h
 
 SOURCES += \
     physicsMainWidget.cpp \
@@ -38,11 +42,14 @@ SOURCES += \
     joystickInput.cpp \
     clientSender.cpp \
     mainPhysics.cpp \
-    controlRecord.cpp
+    controlRecord.cpp \  
+    joystick/joystickInterface.cpp \
+    joystick/JoystickOptionsWidget.cpp
 
 
 FORMS += \
-    physicsMainWidget.ui
+    physicsMainWidget.ui \
+    joystick/JoystickOptionsWidget.ui
 
 #RESOURCES += ../../resources/main.qrc
 

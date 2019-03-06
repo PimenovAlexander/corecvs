@@ -63,6 +63,18 @@ PhysicsMainWidget::~PhysicsMainWidget()
     delete ui;
 }
 
+void PhysicsMainWidget::settingsWidget()
+{
+    mJoystickSettings.show();
+    mJoystickSettings.raise();
+}
+
+void PhysicsMainWidget::aboutWidget()
+{
+    mAboutWidget.show();
+    mAboutWidget.raise();
+}
+
 
 void PhysicsMainWidget::onStartVirtualModeReleased()
 

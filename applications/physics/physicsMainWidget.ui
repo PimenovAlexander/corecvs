@@ -334,17 +334,6 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="2">
-       <widget class="QPushButton" name="connetToVirtualButton">
-        <property name="text">
-         <string>connect to virtual</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../../resources/main.qrc">
-          <normaloff>:/new/prefix1/forward_alt.png</normaloff>:/new/prefix1/forward_alt.png</iconset>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
        <widget class="QPushButton" name="pushButton_3">
         <property name="text">
@@ -353,6 +342,28 @@
         <property name="icon">
          <iconset resource="../../resources/main.qrc">
           <normaloff>:/new/prefix1/back_alt.png</normaloff>:/new/prefix1/back_alt.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QPushButton" name="pushButton_2">
+        <property name="text">
+         <string>AUTOPILOT (press any js key to stop)</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/main.qrc">
+          <normaloff>:/new/prefix1/down_alt.png</normaloff>:/new/prefix1/down_alt.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QPushButton" name="connetToVirtualButton">
+        <property name="text">
+         <string>connect to virtual</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/main.qrc">
+          <normaloff>:/new/prefix1/forward_alt.png</normaloff>:/new/prefix1/forward_alt.png</iconset>
         </property>
        </widget>
       </item>
@@ -367,14 +378,49 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
-       <widget class="QPushButton" name="pushButton_2">
+      <item row="2" column="3">
+       <widget class="QPushButton" name="pushButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Settings</string>
+        </property>
         <property name="text">
-         <string>AUTOPILOT (press any js key to stop)</string>
+         <string/>
         </property>
         <property name="icon">
          <iconset resource="../../resources/main.qrc">
-          <normaloff>:/new/prefix1/down_alt.png</normaloff>:/new/prefix1/down_alt.png</iconset>
+          <normaloff>:/new/prefix1/advanced.png</normaloff>:/new/prefix1/advanced.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QPushButton" name="aboutButton">
+        <property name="toolTip">
+         <string>About</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/main.qrc">
+          <normaloff>:/new/prefix1/info_rhombus.png</normaloff>:/new/prefix1/info_rhombus.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
         </property>
        </widget>
       </item>
@@ -402,8 +448,8 @@
    <slot>yawChange(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>107</x>
-     <y>407</y>
+     <x>129</x>
+     <y>406</y>
     </hint>
     <hint type="destinationlabel">
      <x>362</x>
@@ -418,8 +464,8 @@
    <slot>rollChange(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>277</x>
-     <y>407</y>
+     <x>455</x>
+     <y>406</y>
     </hint>
     <hint type="destinationlabel">
      <x>362</x>
@@ -434,8 +480,8 @@
    <slot>pitchChange(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>264</x>
-     <y>340</y>
+     <x>358</x>
+     <y>380</y>
     </hint>
     <hint type="destinationlabel">
      <x>362</x>
@@ -450,8 +496,8 @@
    <slot>throttleChange(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>106</x>
-     <y>218</y>
+     <x>138</x>
+     <y>380</y>
     </hint>
     <hint type="destinationlabel">
      <x>362</x>
@@ -498,8 +544,8 @@
    <slot>CH5Change(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>108</x>
-     <y>479</y>
+     <x>227</x>
+     <y>456</y>
     </hint>
     <hint type="destinationlabel">
      <x>467</x>
@@ -514,8 +560,8 @@
    <slot>CH6Change(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>108</x>
-     <y>499</y>
+     <x>227</x>
+     <y>482</y>
     </hint>
     <hint type="destinationlabel">
      <x>467</x>
@@ -530,8 +576,8 @@
    <slot>CH7Change(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>108</x>
-     <y>519</y>
+     <x>227</x>
+     <y>508</y>
     </hint>
     <hint type="destinationlabel">
      <x>467</x>
@@ -546,8 +592,8 @@
    <slot>CH8Change(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>108</x>
-     <y>539</y>
+     <x>227</x>
+     <y>534</y>
     </hint>
     <hint type="destinationlabel">
      <x>467</x>
@@ -571,6 +617,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>released()</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>settingsWidget()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1637</x>
+     <y>119</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1662</x>
+     <y>151</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>aboutButton</sender>
+   <signal>released()</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>aboutWidget()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1639</x>
+     <y>59</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1661</x>
+     <y>196</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>myHandler(int)</slot>
@@ -585,5 +663,7 @@
   <slot>CH7Change(int)</slot>
   <slot>CH8Change(int)</slot>
   <slot>startVirtualMode()</slot>
+  <slot>settingsWidget()</slot>
+  <slot>aboutWidget()</slot>
  </slots>
 </ui>
