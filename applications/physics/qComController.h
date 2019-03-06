@@ -16,7 +16,8 @@ public:
                             int &_CH5Value= v, int &_CH6Value= v, int &_CH7Value= v, int &_CH8Value= v);
     void bindToRealDrone();
     void sendOurValues(std::vector<uint8_t> OurValues);
-    int  ppp;
+
+
     int& yawValue;
     int& rollValue;
     int& pitchValue;
@@ -35,5 +36,19 @@ private:
     bool recording;
     ControlRecord recordData;
 };
+
+
+
+class QComController1 {
+
+    static const int CHANNEL_NUMBER = 8;
+    int channels[CHANNEL_NUMBER ] = {};
+
+
+    void pack(void);
+
+
+};
+
 
 #endif // QCOMCONTROLLER_H

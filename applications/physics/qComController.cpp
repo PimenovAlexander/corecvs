@@ -249,7 +249,7 @@ void QComController::keepAlive2()
 }
 
 ///
-/// \brief ComController::SendOurValues
+/// \brief ComController::sendOurValues
 /// \param OurValues
 /// Sends our values to module (yes, it wants its own package for every Byte)
 void QComController::sendOurValues(std::vector<uint8_t> OurValues)
@@ -259,18 +259,61 @@ void QComController::sendOurValues(std::vector<uint8_t> OurValues)
     {
         std::vector<uint8_t>  FlyCom={FlyCommandOutput[i]};
 
-        int k=rollValue+36;
-        k=k*8/10;
-        uint8_t firstByte=0x00;
-        for (int i=0;i<7;i++)
-        {
-            int b=k<<i;
-            firstByte&1<<i+1;
-        }
 
         QByteArray *qBytes =  new QByteArray(reinterpret_cast<const char*>(FlyCom.data()),FlyCom.size());
 
         serialPort.write(*qBytes);
         serialPort.flush();
     }
+}
+
+/**
+
+    Ti - are CH0 (throttle) bits
+    Ri
+    Pi
+    Yi
+
+    A, B, C, D - are CH4, CH5, CH6, CH7
+
+       HEADER:
+       | 31         [0x00]        24 | 23       [0x19]         16  |  15        [0x0F]        8  | 7         [0x55]        0  |
+       |  0  0  0  0     0  0  0  0  |  0  0  0  1     1  0  0  1  |  0  0  0  0     1  1  1  1  | 0  1  0  1     0  1  0  1  |
+
+
+       DATA:
+       | 63                       56 | 55                       48 |  47                      40 | 39                      32 |
+       |  P8 P7 P6 P5    P4 P3 P2 P1 |  P0 0  R9 R8    R7 R6 R5 R4 |  R3 R2 R1 R0    0  T9 T8 T7 | T6 T5 T4 T3    T2 T1 T0 0  |
+
+       | 95                       88 | 87                       80 |  79                      72 | 71                      64 |
+       |  B7 B6 B5  B4   B3 B2 B1 B0 |  0  A9 A8 A7    A6 A5 A4 A3 |  A2 A1 A0 00    Y9 Y8 Y7 Y6 | Y5 Y4 Y3 Y2    Y1 Y0 0  P9 |
+
+       | 127        [0x00]       120 | 119                     112 |  111                    104 | 103                     96 |
+       |  0  0  0  0     0  0  0  0  | D9 D8  D7 D6    D5 D4 D3 D2 |  D1 D0 0  C9    C8 C7 C6 C5 | C4 C3 C2 C1    C0  0 B9 B8 |
+
+       FOOTER:
+       | 159        [0x01]       152 | 151       [0x00]        144 |  143       [0x20]       136 | 135      [0x04]        128 |
+       |  0  0  0  0     0  0  0  1  | 0  0  0   0     0  0  0  0  |  0  0  1  0     0  0  0  0  | 0  0  0  0     0  1  0  0  |
+
+       | 95         [0x02]        88 | 87        [0x00]         80 |  79        [0x40]        72 | 71       [0x08]         64 |
+       |  Y1 Y0 0  P7    P6 P5 P4 P3 | 0  0  0   0     0  0  0  0  |  0  1  0  0     0  0  0  0  | 0  0  0  0     1  0  0  0  |
+
+                                                                   | 95         [0x80]        88 | 87       [0x10]         80 |
+                                                                   |  1  0  0  0     0  0  0  0  | 0  0  0  1     0  0  0  0  |
+
+
+        0x55| 0x0F| 0x19| 0x00|
+        0x00| 0x04| 0x20| 0x00|
+        0x00| 0x0F| 0x10| 0x00|
+        0x02| 0x10| 0x80| 0x00|
+        0x04| 0x20| 0x00| 0x01|
+        0x08| 0x40| 0x00| 0x02|
+        0x10| 0x80
+
+
+ **/
+
+void QComController1::pack( void )
+{
+
 }
