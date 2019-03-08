@@ -70,7 +70,6 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-
     SYNC_PRINT(("Starting Physics...\n"));
     QApplication app(argc, argv);
 

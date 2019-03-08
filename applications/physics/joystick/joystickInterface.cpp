@@ -3,6 +3,7 @@
 #include <linux/joystick.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <poll.h>
 
 #include <iostream>
 #include <thread>
@@ -97,35 +98,50 @@ JoystickConfiguration JoystickInterface::getConfiguration()
 
 void JoystickInterface::start()
 {
-    SYNC_PRINT(("JoystickInterface::start(): called"));
+    SYNC_PRINT(("JoystickInterface::start(): called\n"));
 
     if (mSpinThread != NULL) {
         SYNC_PRINT(("Already running\n"));
+        return;
     }
     mJoystickDevice = open(mDeviceName.c_str(), O_RDONLY);
     exitLock.lock();
 
     mSpinThread = new std::thread(&JoystickInterface::run, this);
-    mSpinThread->detach();
+    //mSpinThread->detach();
 }
 
 void JoystickInterface::stop()
 {
-    SYNC_PRINT(("JoystickInterface::stop(): called"));
+    SYNC_PRINT(("JoystickInterface::stop(): called\n"));
     if (mSpinThread == NULL)
     {
          SYNC_PRINT(("Not running\n"));
+         return;
     }
     /* Ok... give thread some time to exit */
-    exitLock.unlock();
-    mSpinThread->join();
 
+    SYNC_PRINT(("JoystickInterface::stop(): requesting the exit\n"));
+    exitLock.unlock();
+    SYNC_PRINT(("JoystickInterface::stop(): waiting thread to exit\n"));
+    mSpinThread->join();
+    delete_safe(mSpinThread);
+
+    close(mJoystickDevice);
+
+    SYNC_PRINT(("JoystickInterface::stop(): exiting\n"));
 }
 
 void JoystickInterface::run()
 {
 
-    struct js_event event;
+    struct pollfd fds[1];
+    fds[0].fd = mJoystickDevice;
+    fds[0].events = POLLIN;
+
+    //struct js_event event;
+    uint8_t data[sizeof(js_event)];
+    int count = 0;
 
     /* Do we need this? */
     JoystickConfiguration conf = getConfiguration();
@@ -137,25 +153,47 @@ void JoystickInterface::run()
 
     while (!exitLock.try_lock())
     {
-        bool changed = false;
+        /**
+         * We should not block, beacuse we should check for exitLock.
+         * it is also possible to use pipe awailability as a exit condition and only use one poll for the task
+         **/
+#if 0
         size_t bytes = read(mJoystickDevice, (void *)&event, sizeof(event));
-        if (bytes != sizeof(event))
-        {
-            SYNC_PRINT(("JoystickInterface::run(): Corrupted data\n"));
+#else
+        int ret = poll( fds, 1, 1);
+
+        if (ret == 0) { /* Timeout. No new data */
+            continue;
+        }
+        if (ret == -1) {
+            SYNC_PRINT(("poll() encountered an error %d\n", errno));
             continue;
         }
 
-        if (event.type == JS_EVENT_BUTTON)
+        size_t bytes = read(mJoystickDevice, (void *)&data[count], sizeof(js_event) - count);
+        count += bytes;
+#endif
+        if (count != sizeof(js_event))
         {
-            state.button[event.number] = event.value;
-            newButtonEvent(event.number, event.value, event.time);
+            //SYNC_PRINT(("JoystickInterface::run(): Corrupted data\n"));
+            continue;
+        }
+        count = 0;
+        js_event *event = (js_event *)data;
+
+
+        bool changed = false;
+        if (event->type == JS_EVENT_BUTTON)
+        {
+            state.button[event->number] = event->value;
+            newButtonEvent(event->number, event->value, event->time);
             changed = true;
         }
 
-        if (event.type == JS_EVENT_AXIS)
+        if (event->type == JS_EVENT_AXIS)
         {
-            state.axis[event.number] = event.value;
-            newAxisEvent(event.number, event.value, event.time);
+            state.axis[event->number] = event->value;
+            newAxisEvent(event->number, event->value, event->time);
             changed = true;
         }
 

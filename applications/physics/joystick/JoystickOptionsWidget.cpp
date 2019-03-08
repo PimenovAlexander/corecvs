@@ -52,9 +52,23 @@ void JoystickOptionsWidget::openJoystick()
     JoystickConfiguration conf = JoystickListener::getConfiguration(mInterface->mDeviceName.c_str());
     conf.print();
     reconfigure(conf);
-
-
     mInterface->start();
+    ui-> openPushButton->setEnabled(false);
+    ui->closePushButton->setEnabled(true);
+}
+
+void JoystickOptionsWidget::closeJoystick()
+{
+    if (mInterface == NULL)
+    {
+        return;
+    }
+
+    mInterface->stop();
+    delete_safe(mInterface);
+
+    ui-> openPushButton->setEnabled(true);
+    ui->closePushButton->setEnabled(false);
 }
 
 void JoystickOptionsWidget::clearDialog()
@@ -91,19 +105,19 @@ void JoystickOptionsWidget::reconfigure(JoystickConfiguration &conf)
 
 void JoystickOptionsWidget::newData(JoystickState state)
 {
-    SYNC_PRINT(("JoystickOptionsWidget::newData(JoystickState &state):called"));
+    //SYNC_PRINT(("JoystickOptionsWidget::newData(JoystickState &state):called"));
 
     clearDialog();
 
     QLayout *layout = ui->mappingBox->layout();
 
-    for (int i = 0; i < state.axis.size(); i++)
+    for (size_t i = 0; i < state.axis.size(); i++)
     {
         QLabel *label = new QLabel(QString("Axis %1").arg(state.axis[i]));
         layout->addWidget(label);
     }
 
-    for (int i = 0; i < state.button.size(); i++)
+    for (size_t i = 0; i < state.button.size(); i++)
     {
         QLabel *label = new QLabel(QString("Button %1").arg(state.button[i]));
         layout->addWidget(label);

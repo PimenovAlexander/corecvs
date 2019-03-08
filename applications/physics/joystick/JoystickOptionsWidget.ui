@@ -50,19 +50,6 @@
        </widget>
       </item>
       <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
        <widget class="QPushButton" name="openPushButton">
         <property name="text">
          <string>Open</string>
@@ -78,6 +65,39 @@
          </size>
         </property>
        </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="closePushButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Close</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../../resources/main.qrc">
+          <normaloff>:/new/prefix1/stop_2.png</normaloff>:/new/prefix1/stop_2.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
       </item>
      </layout>
     </widget>
@@ -234,8 +254,8 @@
      <y>79</y>
     </hint>
     <hint type="destinationlabel">
-     <x>91</x>
-     <y>119</y>
+     <x>76</x>
+     <y>112</y>
     </hint>
    </hints>
   </connection>
@@ -246,12 +266,28 @@
    <slot>openJoystick()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>435</x>
+     <x>149</x>
      <y>82</y>
     </hint>
     <hint type="destinationlabel">
-     <x>435</x>
-     <y>139</y>
+     <x>163</x>
+     <y>111</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>closePushButton</sender>
+   <signal>released()</signal>
+   <receiver>JoystickOptionsWidget</receiver>
+   <slot>closeJoystick()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>225</x>
+     <y>76</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>258</x>
+     <y>112</y>
     </hint>
    </hints>
   </connection>
@@ -260,5 +296,6 @@
   <slot>rereadDevices()</slot>
   <slot>getProps()</slot>
   <slot>openJoystick()</slot>
+  <slot>closeJoystick()</slot>
  </slots>
 </ui>

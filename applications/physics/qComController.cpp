@@ -270,9 +270,9 @@ void QComController::sendOurValues(std::vector<uint8_t> OurValues)
 /**
 
     Ti - are CH0 (throttle) bits
-    Ri
-    Pi
-    Yi
+    Ri - are CH1 (Roll)     bits
+    Pi - are CH2 (Pitch)    bits
+    Yi - are CH3 (Yaw)      bits
 
     A, B, C, D - are CH4, CH5, CH6, CH7
 
@@ -295,10 +295,10 @@ void QComController::sendOurValues(std::vector<uint8_t> OurValues)
        | 159        [0x01]       152 | 151       [0x00]        144 |  143       [0x20]       136 | 135      [0x04]        128 |
        |  0  0  0  0     0  0  0  1  | 0  0  0   0     0  0  0  0  |  0  0  1  0     0  0  0  0  | 0  0  0  0     0  1  0  0  |
 
-       | 95         [0x02]        88 | 87        [0x00]         80 |  79        [0x40]        72 | 71       [0x08]         64 |
-       |  Y1 Y0 0  P7    P6 P5 P4 P3 | 0  0  0   0     0  0  0  0  |  0  1  0  0     0  0  0  0  | 0  0  0  0     1  0  0  0  |
+       | 191        [0x02]       184 | 183       [0x00]        176 |  175        [0x40]      168 | 167      [0x08]        160 |
+       |  0  0  0  0     0  0  1  0  | 0  0  0   0     0  0  0  0  |  0  1  0  0     0  0  0  0  | 0  0  0  0     1  0  0  0  |
 
-                                                                   | 95         [0x80]        88 | 87       [0x10]         80 |
+                                                                   |  207       [0x80]       200 | 199      [0x10]        192 |
                                                                    |  1  0  0  0     0  0  0  0  | 0  0  0  1     0  0  0  0  |
 
 
@@ -311,9 +311,29 @@ void QComController::sendOurValues(std::vector<uint8_t> OurValues)
         0x10| 0x80
 
 
+        More reference code for this message format can be found in OpenTX -
+        https://github.com/opentx/opentx/blob/17b4aa24668bc4b223dd0613a48d2cc050e39358/radio/src/pulses/multi_arm.cpp
+
  **/
 
 void QComController1::pack( void )
 {
+    uint32_t message[7] = {};
+    message[0] = 0x00190F55U;
+    message[1] = ((channels[0] & MASK) <<  1) |
+                 ((channels[1] & MASK) << 12) |
+                 ((channels[2] & MASK) << 23) ;
 
+    message[2] = ((channels[2] & MASK) >>  9) |
+                 ((channels[3] & MASK) <<  2) |
+                 ((channels[4] & MASK) << 13) |
+                 ((channels[5] & MASK) << 24) ;
+
+    message[3] = ((channels[5] & MASK) >>  8) |
+                 ((channels[6] & MASK) <<  3) |
+                 ((channels[7] & MASK) << 14);
+
+    message[4] = 0x01002004U;
+    message[5] = 0x02004008U;
+    message[6] = 0x00008010U;
 }

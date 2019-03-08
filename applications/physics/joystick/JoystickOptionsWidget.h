@@ -28,7 +28,11 @@ public:
 
     // JoystickInterface interface
 public:
-    void newJoystickState(JoystickState state);
+    virtual void newButtonEvent    (int /*button*/, int /*value*/, int /*timestamp*/) override {}
+    virtual void newAxisEvent      (int /*axis  */, int /*value*/, int /*timestamp*/) override {}
+    virtual void newJoystickState  (JoystickState state) override;
+
+    virtual ~JoystickListener(){}
 };
 
 class JoystickOptionsWidget : public QWidget
@@ -39,10 +43,13 @@ public:
     explicit JoystickOptionsWidget(QWidget *parent = 0);
     ~JoystickOptionsWidget();
 
+
 public slots:
     void rereadDevices();
     void getProps();
+
     void openJoystick();
+    void closeJoystick();
 
     void clearDialog();
     void reconfigure(JoystickConfiguration &conf);

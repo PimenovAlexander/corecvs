@@ -38,11 +38,31 @@ private:
 };
 
 
-
 class QComController1 {
 
-    static const int CHANNEL_NUMBER = 8;
-    int channels[CHANNEL_NUMBER ] = {};
+    enum ChannelID {
+        CHANNEL_0,
+        CHANNEL_THROTTLE = CHANNEL_0,
+        CHANNEL_1,
+        CHANNEL_ROLL     = CHANNEL_1,
+        CHANNEL_2,
+        CHANNEL_PITCH    = CHANNEL_2,
+        CHANNEL_3,
+        CHANNEL_YAW      = CHANNEL_3,
+
+
+        CHANNEL_4,
+        CHANNEL_5,
+        CHANNEL_6,
+        CHANNEL_7,
+
+        CHANNEL_LAST
+    };
+
+    /** Each channel is 10 bit in FrSky **/
+    const int MASK = 0x3FF;
+
+    int16_t channels[CHANNEL_LAST] = {};
 
 
     void pack(void);
