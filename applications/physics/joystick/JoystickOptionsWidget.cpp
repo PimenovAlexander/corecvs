@@ -37,7 +37,7 @@ void JoystickOptionsWidget::getProps()
     conf.print();
 
     ui->nameLabel   ->setText(QString::fromStdString(conf.name));
-    ui->axisLabel   ->setText(QString::number(conf.stickNumber));
+    ui->axisLabel   ->setText(QString::number(conf.axisNumber));
     ui->buttonsLabel->setText(QString::number(conf.buttonNumber));
     ui->versionLabel->setText(QString::number(conf.version));
 }
@@ -73,6 +73,8 @@ void JoystickOptionsWidget::closeJoystick()
 
 void JoystickOptionsWidget::clearDialog()
 {
+    mAxisWidgets.clear();
+    mButtonWidgets.clear();
     QLayout *layout = ui->mappingBox->layout();
     QLayoutItem *item;
     while ((item = layout->takeAt(0)) != nullptr)
@@ -80,6 +82,7 @@ void JoystickOptionsWidget::clearDialog()
         delete item->widget();
         delete item;
     }
+
 }
 
 void JoystickOptionsWidget::reconfigure(JoystickConfiguration &conf)
@@ -88,16 +91,22 @@ void JoystickOptionsWidget::reconfigure(JoystickConfiguration &conf)
 
     QLayout *layout = ui->mappingBox->layout();
 
-    for (int i = 0; i < conf.stickNumber; i++)
+    for (int i = 0; i < conf.axisNumber; i++)
     {
-        QLabel *label = new QLabel("Axis");
-        layout->addWidget(label);
+        QSlider *slider = new QSlider();
+        slider->setMinimum(-32767);
+        slider->setMaximum( 32767);
+        mAxisWidgets.push_back(slider);
+        layout->addWidget(slider);
     }
 
     for (int i = 0; i < conf.buttonNumber; i++)
     {
-        QLabel *label = new QLabel("Button");
-        layout->addWidget(label);
+        //QLabel *label = new QLabel("Button");
+        QPushButton *button = new QPushButton(QString("Button"));
+        button->setCheckable(false);
+        mButtonWidgets.push_back(button);
+        layout->addWidget(button);
     }
 
 
@@ -107,20 +116,14 @@ void JoystickOptionsWidget::newData(JoystickState state)
 {
     //SYNC_PRINT(("JoystickOptionsWidget::newData(JoystickState &state):called"));
 
-    clearDialog();
-
-    QLayout *layout = ui->mappingBox->layout();
-
-    for (size_t i = 0; i < state.axis.size(); i++)
+    for (size_t i = 0; i < std::min(state.axis.size(), mAxisWidgets.size()); i++)
     {
-        QLabel *label = new QLabel(QString("Axis %1").arg(state.axis[i]));
-        layout->addWidget(label);
+        mAxisWidgets[i]->setValue(state.axis[i]);
     }
 
-    for (size_t i = 0; i < state.button.size(); i++)
+    for (size_t i = 0; i < std::min(state.button.size(), mButtonWidgets.size()); i++)
     {
-        QLabel *label = new QLabel(QString("Button %1").arg(state.button[i]));
-        layout->addWidget(label);
+        mButtonWidgets[i]->setChecked(state.button[i]);
     }
 
 }

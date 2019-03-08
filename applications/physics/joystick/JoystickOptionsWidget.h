@@ -35,6 +35,10 @@ public:
     virtual ~JoystickListener(){}
 };
 
+class QPushButton;
+class QSlider;
+
+
 class JoystickOptionsWidget : public QWidget
 {
     Q_OBJECT
@@ -60,6 +64,10 @@ private:
     Ui::JoystickOptionsWidget *ui;
 
     JoystickListener *mInterface = NULL;
+
+    std::vector<QPushButton *> mButtonWidgets;
+    std::vector<QSlider     *> mAxisWidgets;
+
 };
 
 #endif // JOYSTICKOPTIONSWIDGET_H

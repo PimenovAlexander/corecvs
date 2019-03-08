@@ -10,7 +10,7 @@ class JoystickConfiguration
 public:
     std::string name;
 
-    int stickNumber = 0;
+    int axisNumber = 0;
     int buttonNumber = 0;
 
     int version;

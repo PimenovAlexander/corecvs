@@ -33,7 +33,7 @@ TEST(Affine, testRotations)
     Affine3DM  aym = Affine3DM::RotationY(degToRad(135.0));
     Affine3DQ  ayq = Affine3DQ::RotationY(degToRad(135.0));
     Quaternion byq = Quaternion::RotationY(degToRad(135.0));
-    Quaternion cyq = Quaternion(Vector3dd(0.0,1.0,0.0), degToRad(135.0));
+    Quaternion cyq = Quaternion::Rotation(Vector3dd(0.0,1.0,0.0), degToRad(135.0));
 
 
     Vector3dd t1m = aym * vx;
@@ -180,4 +180,26 @@ TEST(Affine, testEulerAngles)
     std::cout << "A:("  << anglesCam1.pitch() << ", "
                         << anglesCam1.yaw()   << ", "
                         << anglesCam1.roll() << ")" << std::endl;
+}
+
+
+TEST(Affine, testQuaternionPower)
+{
+    Quaternion base = Quaternion::Rotation(Vector3dd(1,2,3), degToRad(45));
+
+    cout << "Base     " << base << endl;
+
+    Quaternion baseH = Quaternion::pow(base, 0.5);
+    cout << "Base^0.5:" << baseH << endl;
+    cout << "Result  :"   << (baseH ^ baseH) << endl;
+    cout << endl;
+
+    CORE_ASSERT_TRUE_P((baseH ^ baseH).notTooFar(base, 1e-10), ("Failed with 0.5 power"));
+
+    Quaternion base3 = Quaternion::pow(base, 3);
+    cout << "Base^3  : " << (base ^ base ^ base) << endl;
+    cout << "Expected: " << base3 << endl;
+    cout << endl;
+
+    CORE_ASSERT_TRUE_P((base ^ base ^ base).notTooFar(base3, 1e-10), ("Failed with power 3"));
 }

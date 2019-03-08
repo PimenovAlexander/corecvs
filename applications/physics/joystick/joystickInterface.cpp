@@ -43,7 +43,7 @@ JoystickConfiguration    JoystickInterface::getConfiguration(int joystickDevice)
     char axes = 0;
     if (ioctl(joystickDevice, JSIOCGAXES, &axes) != -1)
     {
-        toReturn.stickNumber = axes;
+        toReturn.axisNumber = axes;
     }
 
     char buttons = 0;
@@ -147,7 +147,7 @@ void JoystickInterface::run()
     JoystickConfiguration conf = getConfiguration();
 
     JoystickState state;
-    state.axis  .resize(conf.stickNumber , 0);
+    state.axis  .resize(conf.axisNumber , 0);
     state.button.resize(conf.buttonNumber, 0);
 
 
@@ -225,6 +225,6 @@ void JoystickConfiguration::print() {
     cout << "Joystick: " << name << endl;
     cout << "Version: " << version << endl;
 
-    cout << "Axis    :" << stickNumber << endl;
+    cout << "Axis    :" << axisNumber << endl;
     cout << "Buttons :" << buttonNumber << endl;
 }
