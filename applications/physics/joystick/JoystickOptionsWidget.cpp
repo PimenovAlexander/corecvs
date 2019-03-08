@@ -96,6 +96,12 @@ void JoystickOptionsWidget::reconfigure(JoystickConfiguration &conf)
         QSlider *slider = new QSlider();
         slider->setMinimum(-32767);
         slider->setMaximum( 32767);
+        slider->setValue(0);
+        slider->setOrientation(Qt::Horizontal);
+        slider->setTickPosition(QSlider::TicksBelow);
+        slider->setTickInterval(2048);
+        slider->setEnabled(false);
+
         mAxisWidgets.push_back(slider);
         layout->addWidget(slider);
     }
@@ -119,6 +125,7 @@ void JoystickOptionsWidget::newData(JoystickState state)
     for (size_t i = 0; i < std::min(state.axis.size(), mAxisWidgets.size()); i++)
     {
         mAxisWidgets[i]->setValue(state.axis[i]);
+        SYNC_PRINT(("Setting axis to %d\n", state.axis[i]));
     }
 
     for (size_t i = 0; i < std::min(state.button.size(), mButtonWidgets.size()); i++)
