@@ -1,4 +1,4 @@
-#include "mainobject.h"
+#include "mainObject.h"
 
 MainObject::MainObject()
 {

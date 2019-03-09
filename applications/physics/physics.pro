@@ -27,8 +27,7 @@ HEADERS += \
     qComController.h \
     simObject.h \
     simSphere.h \
-    controlRecord.h \
-    mainObject.h
+    controlRecord.h
 
 SOURCES += \
     physicsMainWidget.cpp \
@@ -39,8 +38,7 @@ SOURCES += \
     joystickInput.cpp \
     clientSender.cpp \
     mainPhysics.cpp \
-    controlRecord.cpp \
-    mainObject.cpp
+    controlRecord.cpp
 
 
 FORMS += \
