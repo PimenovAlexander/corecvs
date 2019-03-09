@@ -5,7 +5,9 @@
 #include <linux/joystick.h>
 #include <fcntl.h>
 
+#include <JoystickOptionsWidget.h>
 #include <QWidget>
+#include <aboutDialog.h>
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
@@ -44,10 +46,22 @@ public:
 
     virtual ~PhysicsMainWidget();
 
+
+/** **/
+public:
+    JoystickOptionsWidget mJoystickSettings;
+
+    /** We have to use it to satisfy the icons license **/
+    AboutDialog mAboutWidget;
 public slots:
+    void settingsWidget();
+    void aboutWidget();
 
     //void keepAlive();
 private slots:
+
+
+
     void startVirtualMode();
     void yawChange(int i);
     void rollChange(int i);

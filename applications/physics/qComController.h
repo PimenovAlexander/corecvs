@@ -16,7 +16,8 @@ public:
                             int &_CH5Value= v, int &_CH6Value= v, int &_CH7Value= v, int &_CH8Value= v);
     void bindToRealDrone();
     void sendOurValues(std::vector<uint8_t> OurValues);
-    int  ppp;
+
+
     int& yawValue;
     int& rollValue;
     int& pitchValue;
@@ -35,5 +36,39 @@ private:
     bool recording;
     ControlRecord recordData;
 };
+
+
+class QComController1 {
+
+    enum ChannelID {
+        CHANNEL_0,
+        CHANNEL_THROTTLE = CHANNEL_0,
+        CHANNEL_1,
+        CHANNEL_ROLL     = CHANNEL_1,
+        CHANNEL_2,
+        CHANNEL_PITCH    = CHANNEL_2,
+        CHANNEL_3,
+        CHANNEL_YAW      = CHANNEL_3,
+
+
+        CHANNEL_4,
+        CHANNEL_5,
+        CHANNEL_6,
+        CHANNEL_7,
+
+        CHANNEL_LAST
+    };
+
+    /** Each channel is 10 bit in FrSky **/
+    const int MASK = 0x3FF;
+
+    int16_t channels[CHANNEL_LAST] = {};
+
+
+    void pack(void);
+
+
+};
+
 
 #endif // QCOMCONTROLLER_H

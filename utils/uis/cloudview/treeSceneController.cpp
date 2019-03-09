@@ -178,11 +178,13 @@ QString TreeSceneController::print(const QString &prefix)
 TreeSceneController * TreeSceneController::addChildObject(
     QString name, QSharedPointer<Scene3D> object, TreeSceneModel *treeModel, bool visible)
 {
+#if 0
     SYNC_PRINT(("TreeSceneController::addChildObject(%s, %s, %s, %s): called\n",
                 name.toLatin1().constData(),
                 object.isNull() ? "NULL" : "nonnull",
                 treeModel == NULL ? "NULL" : "nonnull",
                 visible ? "visible" : "invisible"));
+#endif
 
     if (!mObject->isComplexObject())
     {
@@ -214,11 +216,13 @@ TreeSceneController * TreeSceneController::addChildObject(
 TreeSceneController * TreeSceneController::addChildObjectRecursive(
     QString name, QSharedPointer<Scene3D> object, TreeSceneModel *treeModel, bool visible )
 {
+#if 0
     SYNC_PRINT(("TreeSceneModel::addChildObjectRecursive(%s, %s, %s, %s): called\n",
                 name.toLatin1().constData(),
                 object.isNull() ? "NULL" : "nonnull",
                 treeModel == NULL ? "NULL" : "nonnull",
                 visible ? "visible" : "invisible"));
+#endif
 
     TreeSceneController *newController = addChildObject (name, object, treeModel, visible);
     if (newController == NULL) {
@@ -237,7 +241,7 @@ TreeSceneController * TreeSceneController::addChildObjectRecursive(
         }
     }
 
-    cout << print(QString("  ")).toStdString() << std::endl;
+    //cout << print(QString("  ")).toStdString() << std::endl;
 
     return newController;
 }
@@ -301,23 +305,25 @@ TreeSceneController * TreeSceneModel::addObject(
     QSharedPointer<Scene3D> object,
     bool visible)
 {
+#if 0
     SYNC_PRINT(("TreeSceneModel::addObject(%s, %s, %s): called\n",
                 name.toLatin1().constData(),
                 object.isNull() ? "NULL" : "nonnull",
                 visible ? "visible" : "invisible"));
+#endif
 
     if (mTopItem == NULL)
         return NULL;
 
     int toInsertId = (int)mTopItem->mChildren.size();
-    SYNC_PRINT(("TreeSceneModel::addObject(): Will insert at %d\n", toInsertId));
+    //SYNC_PRINT(("TreeSceneModel::addObject(): Will insert at %d\n", toInsertId));
 
-    SYNC_PRINT(("Rowcount before: %d\n", this->rowCount(QModelIndex())));
+    //SYNC_PRINT(("Rowcount before: %d\n", this->rowCount(QModelIndex())));
     beginInsertRows(QModelIndex(), toInsertId, toInsertId);
     //TreeSceneController *result = mTopItem->addChildObject(name, object, visible);
     TreeSceneController *result = mTopItem->addChildObjectRecursive(name, object, this, visible);
 
-    SYNC_PRINT(("Rowcount end: %d\n", this->rowCount(QModelIndex())));
+    //SYNC_PRINT(("Rowcount end: %d\n", this->rowCount(QModelIndex())));
     endInsertRows();
 
     return result;

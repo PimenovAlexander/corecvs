@@ -194,6 +194,7 @@ public:
      *   * Interpolation
      *
      * */
+#if DEPRICATED
     GenericQuaternion(const VectorType &axis, const ElementType &alpha)
     {
         Vector3dd naxis = axis.normalised();
@@ -204,6 +205,14 @@ public:
         y() = naxis.y() * sina2;
         z() = naxis.z() * sina2;
         t() = cosa2;
+    }
+#endif
+    GenericQuaternion(const ElementType &_t, const VectorType &_v)
+    {
+        (*this)[0] = _v.x();
+        (*this)[1] = _v.y();
+        (*this)[2] = _v.z();
+        (*this)[3] = _t;
     }
 
     /**
@@ -437,7 +446,17 @@ public:
 
     static GenericQuaternion Rotation(const VectorType &axis, const ElementType &alpha)
     {
-        return GenericQuaternion(axis, alpha);
+        Vector3dd naxis = axis.normalised();
+
+        double sina2 = sin(alpha * 0.5);
+        double cosa2 = cos(alpha * 0.5);
+
+        double x = naxis.x() * sina2;
+        double y = naxis.y() * sina2;
+        double z = naxis.z() * sina2;
+        double t = cosa2;
+
+        return GenericQuaternion(x, y, z, t);
     }
 
     static GenericQuaternion RotationIdentity()
@@ -522,6 +541,28 @@ public:
         result.normalise();
         return result;
     }
+
+#if 1
+    static GenericQuaternion exp(const GenericQuaternion &Q)
+    {
+        double vlen = Q.v().l2Metric();
+        return std::exp(Q.t()) * GenericQuaternion(cos(vlen), Q.v().normalised() * sin(vlen));
+    }
+
+    static GenericQuaternion ln(const GenericQuaternion &Q)
+    {
+        double len = Q.l2Metric();
+        double cosine = Q.t() / len;
+        return GenericQuaternion(std::log(len), Q.v().normalised() * acos(cosine));
+    }
+
+    static GenericQuaternion pow(const GenericQuaternion &Q, const ElementType &power)
+    {
+        return exp(power * ln(Q));
+    }
+#endif
+
+
 
 template<class VisitorType>
     void accept(VisitorType &visitor)
