@@ -258,7 +258,7 @@ void ClassicRenderer::render(Mesh3DDecorated *mesh, RGB24Buffer *buffer)
             }
 
             if (behindPoint) {
-                SYNC_PRINT(("Triangle %d is behind at least of one point\n", (int)f));
+                SYNC_PRINT(("At least one point of Triangle %d is behind camera\n", (int)f));
                 continue;
             }
 

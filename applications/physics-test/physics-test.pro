@@ -14,7 +14,7 @@ DESTDIR = $$ROOT_DIR/bin
 OBJECTS_DIR = $$ROOT_DIR/.obj/$$TARGET_ORIG$$BUILD_CFG_NAME
 
 TEMPLATE = app
-TARGET   = test_avencode
+TARGET   = test_physics
 
 include($$PWD/../../core/core.pri)
 
@@ -26,4 +26,4 @@ with_avcodec {
     include($$AVCODEC_WRAPPER_DIR/avcodec.pri)
 }
 
-SOURCES += main_avencode.cpp
+SOURCES += main_physics_test.cpp

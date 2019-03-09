@@ -22,6 +22,7 @@ SUBDIRS +=     \
 #    command_harness \
     example_scene \
     flowtest \
+    avencode \
     opencvpostcalib
 
 
