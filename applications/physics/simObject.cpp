@@ -7,6 +7,7 @@
 #include "core/geometry/mesh3DDecorated.h"
 
 using namespace std;
+using namespace corecvs;
 
 void SimObject::addForce(const corecvs::Vector3dd &_force)
 {
@@ -15,7 +16,6 @@ void SimObject::addForce(const corecvs::Vector3dd &_force)
 
 void SimObject::addImpulse(const Vector3dd &_force)
 {
-
 }
 
 void SimObject::setForce(const Vector3dd &_force)
@@ -30,9 +30,17 @@ void SimObject::setForce(double x,double y, double z)
 
 void SimObject::tick(double deltaT)
 {    
-    coords += deltaT * (velocity + deltaT * (force + oldForce) / mass / 4.0 );
-    velocity += force / mass;
-    oldForce = force;
+
+}
+
+void SimObject::addToMesh(Mesh3D &mesh)
+{
+    SYNC_PRINT(("Don't know how to do this"));
+}
+
+void SimObject::setCoords(Vector3dd c)
+{
+    this->coords = c;
 }
 
 SimObject::SimObject()

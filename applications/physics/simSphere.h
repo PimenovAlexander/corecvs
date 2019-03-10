@@ -8,9 +8,15 @@ class SimSphere : public SimObject
 {
 public:
     SimSphere();
+
+    virtual void addToMesh (corecvs::Mesh3D &mesh) override;
     virtual void saveMesh(const std::string &name) override;
 
     double radius = 10.0;
+
+
+    void drawMesh(corecvs::Vector3dd coords, double radius);
+    SimSphere(Vector3dd c, double r);
 };
 
 #endif // SIMSPHERE_H

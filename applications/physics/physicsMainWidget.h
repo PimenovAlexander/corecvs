@@ -18,6 +18,8 @@
 #include "controlRecord.h"
 #include "joystickInput.h"
 #include "simulation.h"
+#include "core/geometry/mesh3DDecorated.h"
+#include "mesh3DScene.h"
 
 namespace Ui {
     class PhysicsMainWidget;
@@ -50,14 +52,14 @@ public:
 /** **/
 public:
     JoystickOptionsWidget mJoystickSettings;
-
+    Mesh3DScene *mesh;
     /** We have to use it to satisfy the icons license **/
     AboutDialog mAboutWidget;
+
 public slots:
     void settingsWidget();
     void aboutWidget();
-
-    //void keepAlive();
+    void keepAlive();
 private slots:
 
 

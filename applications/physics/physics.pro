@@ -33,7 +33,8 @@ HEADERS += \
     controlRecord.h \
     joystick/joystickInterface.h \
     joystick/JoystickOptionsWidget.h \
-    radio/frSkyMultimodule.h
+    radio/frSkyMultimodule.h \
+    mainObject.h
 
 SOURCES += \
     physicsMainWidget.cpp \
@@ -47,8 +48,8 @@ SOURCES += \
     controlRecord.cpp \  
     joystick/joystickInterface.cpp \
     joystick/JoystickOptionsWidget.cpp \
-    radio/frSkyMultimodule.cpp
-
+    radio/frSkyMultimodule.cpp \
+    mainObject.cpp
 
 FORMS += \
     physicsMainWidget.ui \

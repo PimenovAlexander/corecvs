@@ -10,27 +10,29 @@ using namespace std;
 
 Simulation::Simulation()
 {
-    //objects2 =  std::list<SimObject>();
-    SimSphere kura;
-    kura.countPhysics = true;
-    spheres.push_back(kura);
-    objects.push_back(&spheres[0]);
+    /* Adds new MainObject to the vector */
+    mainObjects.emplace_back();
+    MainObject *mainObject = &mainObjects.back();
+    mainObject->countPhysics = true;
+    mainObject->addSphere(Vector3dd(-1, -1, -1), 2);
 
-    cout << "Simulation::Simulation():" << objects.size() << " before thread"<<endl;
+
+    cout << "Simulation::Simulation():" << mainObjects[0].objects.size() << " before thread" <<endl;
 }
+
 void Simulation::start()
 {
 
     /* Use PreciseTime instead of chrono, it could make code a bit more compact */
-  /*
+
 
     startTime = std::chrono::high_resolution_clock::now();
     oldTime = std::chrono::high_resolution_clock::now();
-    cout<<objects.size()<<" before thread v2"<<endl;
+    cout<<mainObjects.size()<<" AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"<<endl;
 
     std::thread thr([this]()
     {
-        cout<<objects.size()<<" after thread"<<endl;
+        cout<<mainObjects.size()<<" after thread"<<endl;
         cout<<"kek"<<endl;
         while (true)
         {
@@ -39,12 +41,12 @@ void Simulation::start()
             std::chrono::duration<double> currentTime = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-startTime);
 
             // cout<<time_span.count()<<endl;
-            for (int i=0; i<objects.size(); i++)
+            for (int i=0; i<mainObjects.size(); i++)
             {
-                objects[i]->tick(time_span.count());
-                objects[i]->saveMesh( std::to_string(currentTime.count()));
+                mainObjects[i].tick(time_span.count());
+                //mainObjects[i].spheres(std::to_string(currentTime.count()));
             }
-            cout<<objects[0]->coords<<endl;
+            // cout<<mainObjects[0].spheres[0].coords<< " coords of sph in thrd" <<endl;
             frameCounter++;
 
             /*if (frameCounter%1000==0)
@@ -53,11 +55,10 @@ void Simulation::start()
                 cout<<"counter - "<<frameCounter<<endl;
 
             }*/
-    /*
+
             oldTime=newTime;
             usleep(3000);
         }
     });
     thr.detach();
-*/
 }

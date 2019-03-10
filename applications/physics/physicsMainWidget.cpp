@@ -232,16 +232,29 @@ void PhysicsMainWidget::startVirtualMode()
 {
     if (!virtualModeActive)
     {
+        simSim = Simulation();
 
+        virtualModeActive=true;
         SYNC_PRINT(("PhysicsMainWidget::startVirtualMode(): Adding new object to scene\n"));
         Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
 
         //Mesh3DDecorated *mesh = new Mesh3DDecorated;
-        Mesh3DScene *mesh = new Mesh3DScene;
+        mesh = new Mesh3DScene;
 
         mesh->switchColor();
 
         mesh->mulTransform(copterPos);
+
+        mesh->setColor(RGBColor::Red());
+        for (size_t i = 0; i < simSim.mainObjects.size(); ++i)
+        {
+            MainObject &mainObj = simSim.mainObjects[i];
+            for (size_t j = 0; j < mainObj.objects.size(); ++j)
+            {
+                mainObj.objects[j]->addToMesh(*mesh);
+            }
+        }
+
 
         mesh->setColor(RGBColor::Yellow());
         mesh->addIcoSphere(Vector3dd( 5, 5, -3), 2, 2);
@@ -257,11 +270,38 @@ void PhysicsMainWidget::startVirtualMode()
         ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh));
         ui->cloud->update();
 
-        simSim = Simulation();
         simSim.start();
-        simSim.objects[0]->addForce(Vector3dd(0, 0, -9.8));
+        //simSim.mainObjects[0]->addForce(Vector3dd(0, 0, -9.8));
         cout<<"done"<<endl;
+
+        //QTimer::singleShot(8, this, SLOT(keepAlive()));           UI thread crash why????????????
     }
+}
+
+void PhysicsMainWidget::keepAlive(){
+    Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
+
+    //Mesh3DDecorated *mesh = new Mesh3DDecorated;
+    mesh = new Mesh3DScene;
+
+    mesh->switchColor();
+    mesh->mulTransform(copterPos);
+    mesh->setColor(RGBColor::Red());
+
+    /* Merge code with :startVirtualMode()*/
+    for (size_t i = 0; i < simSim.mainObjects.size(); i++)
+    {
+        MainObject &mainObj = simSim.mainObjects[i];
+        for (size_t j = 0; j < mainObj.objects.size(); j++)
+        {
+            mainObj.objects[j]->addToMesh(*mesh);
+        }
+    }
+
+    mesh->popTransform();
+
+    ui->cloud->update();
+    ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh));
 }
 
 void PhysicsMainWidget::frameValuesUpdate()
