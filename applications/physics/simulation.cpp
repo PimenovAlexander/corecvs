@@ -3,7 +3,7 @@
 #include "simObject.h"
 #include "simSphere.h"
 #include <ctime>
-
+#include "core/utils/log.h"
 #include <chrono>
 
 using namespace std;
@@ -15,8 +15,7 @@ Simulation::Simulation()
     MainObject *mainObject = &mainObjects.back();
     mainObject->countPhysics = true;
     mainObject->addSphere(Vector3dd(-1, -1, -1), 2);
-
-
+    mainObject->addForce(Vector3dd(0,-9.8,0));
     cout << "Simulation::Simulation():" << mainObjects[0].objects.size() << " before thread" <<endl;
 }
 
@@ -46,7 +45,7 @@ void Simulation::start()
                 mainObjects[i].tick(time_span.count());
                 //mainObjects[i].spheres(std::to_string(currentTime.count()));
             }
-            // cout<<mainObjects[0].spheres[0].coords<< " coords of sph in thrd" <<endl;
+            L_INFO<<mainObjects[0].force<< " coords of sph in thrd";
             frameCounter++;
 
             /*if (frameCounter%1000==0)

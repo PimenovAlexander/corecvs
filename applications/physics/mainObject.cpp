@@ -4,6 +4,11 @@ MainObject::MainObject()
 {
 }
 
+void MainObject::addForce(const corecvs::Vector3dd &_force)
+{
+    force += _force;
+}
+
 void MainObject::tick(double deltaT)
 {
     Vector3dd deltaPos = posCenter;
@@ -15,7 +20,7 @@ void MainObject::tick(double deltaT)
     //velocity += ((force + oldForce) * deltaT) / (2 * systemMass);
     //oldForce = force;
 
-    velocity = Vector3dd(0.1, 0.1, 0.1);
+    velocity = Vector3dd(1, 1, 1);
     posCenter += velocity * deltaT;
     deltaPos = posCenter - deltaPos;
 
@@ -24,9 +29,9 @@ void MainObject::tick(double deltaT)
     {
         //objects[i]->coords += deltaPos;             //If uncomment ui thread will crash after pressing start virtual mode ????????????????
 
-        //objects[i]->setCoords(objects[i]->coords+deltaPos);  //Also ui thread crash
+        objects[i]->setCoords(objects[i]->coords+deltaPos);  //Also ui thread crash
 
-        objects[i]->setCoords(posCenter);             //Normalno
+        //objects[i]->setCoords(posCenter);             //Normalno
     }
 
     /* This seems to be not needed
@@ -39,7 +44,7 @@ void MainObject::tick(double deltaT)
 
 void MainObject::setCenterOfMass()
 {
-    for (int i = 0; i < objects.size(); ++i)
+    for (size_t i = 0; i < objects.size(); ++i)
     {
         massCenter += objects[i]->mass * objects[i]->coords;
         systemMass += objects[i]->mass;
@@ -60,7 +65,8 @@ void MainObject::addSphere(Vector3dd coords, double radius)
     setCenterOfMass();
 }
 
-MainObject::~MainObject() {
+MainObject::~MainObject()
+{
     for (SimObject *obj : objects)
     {
         delete_safe(obj);
