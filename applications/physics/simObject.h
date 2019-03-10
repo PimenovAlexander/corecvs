@@ -24,11 +24,10 @@ public:
 
     int frameCounter = 0;
 
-    Quaternion qPos = Quaternion(0.0, 0.0, 0.0, 0.0);
+    Quaternion orientation = Quaternion(0.0, 0.0, 0.0, 0.0);
 
-    Quaternion qVx  = Quaternion(1,0,0,0);
-    Quaternion qVy  = Quaternion(0,1,0,0);
-    Quaternion qVz  = Quaternion(0,0,1,0);
+    Quaternion angleVelocity  = Quaternion(0.0 ,0.0 ,0.0 ,0.0);
+
 
     /** Mass in kilograms **/
     double mass = 1;
@@ -42,6 +41,7 @@ public:
     void tick(double deltaT);
 
     virtual void saveMesh(const std::string &name);
+    void setCoords(Vector3dd c);
 };
 
 #endif // SIMOBJECT_H
