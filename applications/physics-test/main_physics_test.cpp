@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 
+#include "core/utils/utils.h"
 #include "core/buffers/rgb24/abstractPainter.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/geometry/renderer/simpleRenderer.h"
@@ -17,6 +18,8 @@
 #include "frSkyMultimodule.h"
 
 #include <bitset>
+
+#include <core/fileformats/meshLoader.h>
 
 
 using namespace corecvs;
@@ -90,6 +93,24 @@ TEST(Physics, dummyVideo)
     Vector3dd pos  = Vector3dd(0, -20, 0);
     Quaternion rot = Quaternion::Identity();
 
+    Mesh3D baseModel;
+    std::string modelFile = "model.stl";
+    if (!HelperUtils::pathExists(modelFile))
+    {
+        baseModel.switchColor(true);
+
+        size_t faceColorStart = baseModel.facesColor.size();
+        baseModel.addIcoSphere(Vector3dd::Zero(), 25, 1);
+        size_t faceColorEnd   =  baseModel.facesColor.size();
+
+        for (size_t c = faceColorStart; c < faceColorEnd; c++)
+        {
+            baseModel.facesColor[c] = RGBColor::rainbow(lerpLimit(0.0, 1.0, c, faceColorStart, faceColorEnd));
+        }
+    } else {
+        MeshLoader().load(&baseModel, modelFile);
+    }
+
     for (int i = 0; i < 50; i++)
     {
         buffer.checkerBoard(10, RGBColor::Gray(70));
@@ -97,15 +118,7 @@ TEST(Physics, dummyVideo)
         Mesh3DDecorated mesh;
         mesh.switchColor(true);
         mesh.currentTransform = Matrix44(rot.toMatrix(), pos);
-
-        size_t faceColorStart = mesh.facesColor.size();
-        mesh.addIcoSphere(Vector3dd::Zero(), 25, 1);
-        size_t faceColorEnd   =  mesh.facesColor.size();
-        for (size_t c = faceColorStart; c < faceColorEnd; c++)
-        {
-            mesh.facesColor[c] = RGBColor::rainbow(lerpLimit(0.0, 1.0, c, faceColorStart, faceColorEnd));
-        }
-
+        mesh.add(baseModel, true);
         renderer.render(&mesh, &buffer);
         encoder.addFrame(&buffer);
 

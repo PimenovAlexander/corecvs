@@ -4,19 +4,19 @@
 #include <QWidget>
 
 namespace Ui {
-class MixerChannelOperation;
+class MixerChannelOperationWidget;
 }
 
-class MixerChannelOperation : public QWidget
+class MixerChannelOperationWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit MixerChannelOperation(QWidget *parent = 0);
-    ~MixerChannelOperation();
+    explicit MixerChannelOperationWidget(QWidget *parent = 0);
+    ~MixerChannelOperationWidget();
 
 private:
-    Ui::MixerChannelOperation *ui;
+    Ui::MixerChannelOperationWidget *ui;
 };
 
 #endif // MIXERCHANNELOPERATION_H

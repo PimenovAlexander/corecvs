@@ -1,14 +1,14 @@
-#include "mixerChannelOperation.h"
-#include "ui_mixerChannelOperation.h"
+#include "mixerChannelOperationWidget.h"
+#include "ui_mixerChannelOperationWidget.h"
 
-MixerChannelOperation::MixerChannelOperation(QWidget *parent) :
+MixerChannelOperationWidget::MixerChannelOperationWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::MixerChannelOperation)
+    ui(new Ui::MixerChannelOperationWidget)
 {
     ui->setupUi(this);
 }
 
-MixerChannelOperation::~MixerChannelOperation()
+MixerChannelOperationWidget::~MixerChannelOperationWidget()
 {
     delete ui;
 }

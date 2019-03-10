@@ -8,6 +8,8 @@
 #include <JoystickOptionsWidget.h>
 #include <QWidget>
 #include <aboutDialog.h>
+#include <cameraModelParametersControlWidget.h>
+#include <capSettingsDialog.h>
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
@@ -115,10 +117,15 @@ public slots:
 /** Camera **/
 public:
     FrameProcessor *processor = NULL;
+    CapSettingsDialog mCameraParametersWidget;
+    CameraModelParametersControlWidget mModelParametersWidget;
+    CameraModel mCameraModel;
 
 public slots:
     /* Add paused and stop ASAP */
     void startCamera();
+    void showCameraParametersWidget();
+    void showCameraModelWidget();
 
 /** UI show block **/
 public:

@@ -84,9 +84,12 @@ PhysicsMainWidget::PhysicsMainWidget(QWidget *parent) :
     ui->comboBox->addItem("RT/LT Full mode");
 
 
-
     frameValuesUpdate();
 
+    PinholeCameraIntrinsics *intr = new PinholeCameraIntrinsics(640, 480, degToRad(60));
+    mCameraModel.intrinsics.reset(intr);
+    mCameraModel.nameId = "Copter Main Camera";
+    mModelParametersWidget.setParameters(mCameraModel);
 }
 
 PhysicsMainWidget::~PhysicsMainWidget()
@@ -334,8 +337,8 @@ void PhysicsMainWidget::keepAlive(){
 void PhysicsMainWidget::startCamera()
 {
     /* We should prepare calculator in some other place */
-    processor = new FrameProcessor();
-    processor->target = this;
+    processor = new FrameProcessor();    
+    processor->target = this;    
 
     std::string inputString = "v4l2:/dev/video0";
 
@@ -356,6 +359,7 @@ void PhysicsMainWidget::startCamera()
         return;
     }
 
+    mCameraParametersWidget.setCaptureInterface(rawInput);
 
     processor->input = rawInput;
     QObject::connect(
@@ -367,6 +371,18 @@ void PhysicsMainWidget::startCamera()
     processor->start();
     rawInput->startCapture();    
 
+}
+
+void PhysicsMainWidget::showCameraParametersWidget()
+{
+    mCameraParametersWidget.show();
+    mCameraParametersWidget.raise();
+}
+
+void PhysicsMainWidget::showCameraModelWidget()
+{
+    mModelParametersWidget.show();
+    mModelParametersWidget.raise();
 }
 
 void PhysicsMainWidget::frameValuesUpdate()

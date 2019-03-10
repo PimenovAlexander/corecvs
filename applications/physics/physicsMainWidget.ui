@@ -29,15 +29,31 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="1">
-       <widget class="QPushButton" name="pushButton_2">
+      <item row="0" column="0">
+       <widget class="QPushButton" name="pushButton_3">
         <property name="text">
-         <string>AUTOPILOT
-(press any js key to stop)</string>
+         <string>connect to real device</string>
         </property>
         <property name="icon">
          <iconset resource="../../resources/main.qrc">
-          <normaloff>:/new/prefix1/robot.png</normaloff>:/new/prefix1/robot.png</iconset>
+          <normaloff>:/new/prefix1/connect.png</normaloff>:/new/prefix1/connect.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="connetToVirtualButton">
+        <property name="text">
+         <string>connect to virtual</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/main.qrc">
+          <normaloff>:/new/prefix1/server_connect.png</normaloff>:/new/prefix1/server_connect.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -67,8 +83,25 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="5">
+       <widget class="QPushButton" name="cameraParametersButton">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/main.qrc">
+          <normaloff>:/new/prefix1/cctv_camera.png</normaloff>:/new/prefix1/cctv_camera.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="4">
-       <widget class="QPushButton" name="pushButton_4">
+       <widget class="QPushButton" name="startCameraButton">
         <property name="toolTip">
          <string>Camera</string>
         </property>
@@ -87,14 +120,15 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QPushButton" name="connetToVirtualButton">
+      <item row="1" column="1">
+       <widget class="QPushButton" name="pushButton_2">
         <property name="text">
-         <string>connect to virtual</string>
+         <string>AUTOPILOT
+(press any js key to stop)</string>
         </property>
         <property name="icon">
          <iconset resource="../../resources/main.qrc">
-          <normaloff>:/new/prefix1/server_connect.png</normaloff>:/new/prefix1/server_connect.png</iconset>
+          <normaloff>:/new/prefix1/robot.png</normaloff>:/new/prefix1/robot.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -117,23 +151,6 @@
         </property>
        </spacer>
       </item>
-      <item row="0" column="0">
-       <widget class="QPushButton" name="pushButton_3">
-        <property name="text">
-         <string>connect to real device</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../../resources/main.qrc">
-          <normaloff>:/new/prefix1/connect.png</normaloff>:/new/prefix1/connect.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>32</width>
-          <height>32</height>
-         </size>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="1">
        <widget class="QPushButton" name="JoyButton">
         <property name="text">
@@ -151,7 +168,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="5">
+      <item row="1" column="5">
        <widget class="QPushButton" name="pushButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -168,6 +185,23 @@
         <property name="icon">
          <iconset resource="../../resources/main.qrc">
           <normaloff>:/new/prefix1/joystick_add.png</normaloff>:/new/prefix1/joystick_add.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="6">
+       <widget class="QPushButton" name="cameraModelButton">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/main.qrc">
+          <normaloff>:/new/prefix1/advanced.png</normaloff>:/new/prefix1/advanced.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -314,8 +348,8 @@
    <slot>startRealMode()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>182</x>
-     <y>96</y>
+     <x>196</x>
+     <y>61</y>
     </hint>
     <hint type="destinationlabel">
      <x>503</x>
@@ -346,8 +380,8 @@
    <slot>startVirtualMode()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>522</x>
-     <y>96</y>
+     <x>198</x>
+     <y>117</y>
     </hint>
     <hint type="destinationlabel">
      <x>833</x>
@@ -362,8 +396,8 @@
    <slot>settingsWidget()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1637</x>
-     <y>119</y>
+     <x>1608</x>
+     <y>113</y>
     </hint>
     <hint type="destinationlabel">
      <x>1662</x>
@@ -378,8 +412,8 @@
    <slot>aboutWidget()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1653</x>
-     <y>99</y>
+     <x>1563</x>
+     <y>113</y>
     </hint>
     <hint type="destinationlabel">
      <x>1661</x>
@@ -388,18 +422,50 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButton_4</sender>
+   <sender>startCameraButton</sender>
    <signal>released()</signal>
    <receiver>PhysicsMainWidget</receiver>
    <slot>startCamera()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1631</x>
-     <y>41</y>
+     <x>1563</x>
+     <y>57</y>
     </hint>
     <hint type="destinationlabel">
      <x>1586</x>
      <y>167</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cameraParametersButton</sender>
+   <signal>released()</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>showCameraParametersWidget()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1581</x>
+     <y>34</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1666</x>
+     <y>115</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cameraModelButton</sender>
+   <signal>released()</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>showCameraModelWidget()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1642</x>
+     <y>41</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1530</x>
+     <y>129</y>
     </hint>
    </hints>
   </connection>
@@ -420,5 +486,7 @@
   <slot>settingsWidget()</slot>
   <slot>aboutWidget()</slot>
   <slot>startCamera()</slot>
+  <slot>showCameraParametersWidget()</slot>
+  <slot>showCameraModelWidget()</slot>
  </slots>
 </ui>
