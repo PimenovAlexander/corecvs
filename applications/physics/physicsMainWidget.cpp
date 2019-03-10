@@ -1,6 +1,7 @@
 #include "core/utils/global.h"
 
 #include <fstream>
+#include <g12Image.h>
 
 #include <unistd.h>
 #include <bitset>
@@ -26,24 +27,56 @@
 #include "clientSender.h"
 #include "simulation.h"
 
+#include "imageCaptureInterfaceQt.h"
+
 using namespace std;
+
+
+void FrameProcessor::processFrame(frame_data_t frameData)
+{
+    static int count=0;
+    count++;
+
+    static bool skipping = false;
+    if (skipping)
+    {
+        return;
+    }
+    skipping = true;
+    QApplication::processEvents();
+    skipping = false;
+
+
+
+//    SYNC_PRINT(("New frame arrived\n"));
+    ImageCaptureInterface::FramePair pair = input->getFrameRGB24();
+    RGB24Buffer * result = pair.rgbBufferLeft();
+    pair.setRgbBufferLeft(NULL);
+    pair.freeBuffers();
+
+    target->uiMutex.lock();
+    target->uiQueue.emplace_back(new DrawRequestData);
+    target->uiQueue.back()->mImage = result;
+    target->uiMutex.unlock();
+
+    target->updateUi();
+
+}
+
+
 
 PhysicsMainWidget::PhysicsMainWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::PhysicsMainWidget)
 {
 
-    yawValue=1500;
-    rollValue=1500;
-    pitchValue=1500;
-    throttleValue=1100;
-    CH5Value=900;
-    CH6Value=1500;
-    CH7Value=1500;
-    CH8Value=1500;
     throttleValueFromJS=1500;
     counter=0;
+
     ui->setupUi(this);
+    Log::mLogDrains.add(ui->logWidget);
+
+
     ui->comboBox->addItem("Usual mode");
     ui->comboBox->addItem("Inertia mode");
     ui->comboBox->addItem("Casual mode");
@@ -52,14 +85,13 @@ PhysicsMainWidget::PhysicsMainWidget(QWidget *parent) :
 
 
 
-
-
-
     frameValuesUpdate();
+
 }
 
 PhysicsMainWidget::~PhysicsMainWidget()
 {
+    Log::mLogDrains.detach(ui->logWidget);
     delete ui;
 }
 
@@ -97,6 +129,7 @@ void PhysicsMainWidget::onStartVirtualModeReleased()
 ///Sends to joystick emulator values of sticks with tcp
 void PhysicsMainWidget::sendJoyValues()
 {
+#if 0
     if (virtualModeActive)
     {
         if (yawValue==0)
@@ -133,27 +166,20 @@ void PhysicsMainWidget::sendJoyValues()
     {
         cout<<"Please connect to the py file"<<endl;
     }
+#endif
 }
 
 
 
 void PhysicsMainWidget::showValues()                                   //shows axis values to console
 {
-    /* Why so many convertions? */
-    std::string s = std::to_string(yawValue);
-    SYNC_PRINT(("yaw __%s   ", s.c_str()));
-
-    s = std::to_string(rollValue);
-    SYNC_PRINT(("roll __%s   ", s.c_str()));
-
-    s = std::to_string(pitchValue);
-    SYNC_PRINT(("pitch __%s   ", s.c_str()));
-
-    s = std::to_string(throttleValue);
-    SYNC_PRINT(("throttle __%s   ", s.c_str()));
+    for (int i = 0; i < CopterInputs::CHANNEL_CONTROL_LAST; i++)
+    {
+        SYNC_PRINT(("%s__%d   ", CopterInputs::getName((CopterInputs::ChannelID)i), copterInputs.axis[i]));
+    }
 }
 
-
+#if 0
 void PhysicsMainWidget::yawChange(int i)                                //i - current yaw value
 {
     yawValue=i;
@@ -227,6 +253,7 @@ void PhysicsMainWidget::CH8Change(int i)                              //i - curr
         sendJoyValues();
     }
 }
+#endif
 
 void PhysicsMainWidget::startVirtualMode()
 {
@@ -304,6 +331,44 @@ void PhysicsMainWidget::keepAlive(){
     ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh));
 }
 
+void PhysicsMainWidget::startCamera()
+{
+    /* We should prepare calculator in some other place */
+    processor = new FrameProcessor();
+    processor->target = this;
+
+    std::string inputString = "v4l2:/dev/video0";
+
+    ImageCaptureInterfaceQt *rawInput = ImageCaptureInterfaceQtFactory::fabric(inputString, true);
+    if (rawInput == NULL)
+    {
+        L_ERROR_P("Unable to fabricate camera grabber %s\n", inputString.c_str());
+        return;
+    }
+
+    SYNC_PRINT(("main: initialising capture...\n"));
+    ImageCaptureInterface::CapErrorCode returnCode = rawInput->initCapture();
+    SYNC_PRINT(("main: initialising capture returing %d\n", returnCode));
+
+    if (returnCode == ImageCaptureInterface::FAILURE)
+    {
+        SYNC_PRINT(("Can't open\n"));
+        return;
+    }
+
+
+    processor->input = rawInput;
+    QObject::connect(
+        rawInput  , SIGNAL(newFrameReady(frame_data_t)),
+        processor,   SLOT(processFrame (frame_data_t)), Qt::QueuedConnection);
+
+
+    /* All ready. Let's rock */
+    processor->start();
+    rawInput->startCapture();    
+
+}
+
 void PhysicsMainWidget::frameValuesUpdate()
 {
     std::thread thr([this]()
@@ -312,12 +377,14 @@ void PhysicsMainWidget::frameValuesUpdate()
         {
             if (currentMode==1)
             {
+#if 0
                 throttleValue+=sign(throttleValueFromJS-1500);
                 if (throttleValue>1800){throttleValue=1799;}
                 if (throttleValue<900){throttleValue=901;}
+#endif
             }
 
-
+#if 0
             ui->Yaw->setValue(yawValue);
             ui->Throttle->setValue(throttleValue);
 
@@ -339,7 +406,7 @@ void PhysicsMainWidget::frameValuesUpdate()
             ui->CH6_label->setText("CH6-"+QString::number(CH6Value));
             ui->CH7_label->setText("CH7-"+QString::number(CH7Value));
             ui->CH8_label->setText("CH8-"+QString::number(CH8Value));
-
+#endif
 
 
             usleep(30000);
@@ -382,18 +449,7 @@ void PhysicsMainWidget::sendOurValues(std::vector<uint8_t> OurValues)
     std::vector<uint8_t>  flyCommandOutput = OurValues;
     for (size_t i = 0; i < flyCommandOutput.size(); i++)
     {
-        std::vector<uint8_t>  flyCom = { flyCommandOutput[i] };
-
-        int k = rollValue + 36;
-        k = k * 8 / 10;
-
-        uint8_t firstbyte = 0x00;
-        for (int i = 0; i < 7; i++)
-        {
-            int b = (k << i);
-            firstbyte&1<< (i+1);
-        }
-
+        std::vector<uint8_t>  flyCom = { flyCommandOutput[i] };      
         serialPort.write((const char *)flyCom.data(), flyCom.size());
         serialPort.flush();
     }
@@ -453,7 +509,7 @@ int PhysicsMainWidget::sign(int val)
 
 void PhysicsMainWidget::on_comboBox_currentTextChanged(const QString &arg1)                 //DO NOT TOUCH IT PLEASE
 {
-
+#if 0
     if(arg1=="Usual mode")    //why qstring can not be in case?!
     {
         joystick1.setUsualCurrentMode();   //I dont want errors between qstring and string
@@ -479,5 +535,41 @@ void PhysicsMainWidget::on_comboBox_currentTextChanged(const QString &arg1)     
         joystick1.setRTLTFullMode();
         throttleValue=midThrottle;
     }
+#endif
+}
+
+void PhysicsMainWidget::updateUi()
+{
+    uiMutex.lock();
+    /* We now could quickly scan for data and stats*/
+
+    /* But we would only draw last data */
+    DrawRequestData *work = uiQueue.back();
+    uiQueue.pop_back();
+
+    /* Scan again cleaning the queue */
+    for (DrawRequestData *data : uiQueue)
+    {
+        delete_safe(data);
+    }
+    uiQueue.clear();
+    uiMutex.unlock();
+
+    /**/
+    if (work->mMesh != NULL) {
+        Mesh3DScene* mesh = new Mesh3DScene;
+        mesh->switchColor();
+        mesh->add(*work->mMesh, true);
+        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh), CloudViewDialog::ADDITIONAL_SCENE);
+    }
+
+    if (work->mImage)
+    {
+        QSharedPointer<QImage> image(new RGB24Image(work->mImage));
+        ui->imageView->setImage(image);
+    }
+
+    /* We made copies. Originals could be deleted */
+    delete_safe(work);
 }
 

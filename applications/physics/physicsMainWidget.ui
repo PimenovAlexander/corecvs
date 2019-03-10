@@ -14,6 +14,172 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0" colspan="2">
+    <widget class="QFrame" name="frame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="1" column="1">
+       <widget class="QPushButton" name="pushButton_2">
+        <property name="text">
+         <string>AUTOPILOT
+(press any js key to stop)</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/main.qrc">
+          <normaloff>:/new/prefix1/robot.png</normaloff>:/new/prefix1/robot.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="4">
+       <widget class="QPushButton" name="aboutButton">
+        <property name="toolTip">
+         <string>About</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/main.qrc">
+          <normaloff>:/new/prefix1/info_rhombus.png</normaloff>:/new/prefix1/info_rhombus.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <widget class="QPushButton" name="pushButton_4">
+        <property name="toolTip">
+         <string>Camera</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/main.qrc">
+          <normaloff>:/new/prefix1/webcam.png</normaloff>:/new/prefix1/webcam.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="connetToVirtualButton">
+        <property name="text">
+         <string>connect to virtual</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/main.qrc">
+          <normaloff>:/new/prefix1/server_connect.png</normaloff>:/new/prefix1/server_connect.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="0">
+       <widget class="QPushButton" name="pushButton_3">
+        <property name="text">
+         <string>connect to real device</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/main.qrc">
+          <normaloff>:/new/prefix1/connect.png</normaloff>:/new/prefix1/connect.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="JoyButton">
+        <property name="text">
+         <string>JoyStick mode</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/main.qrc">
+          <normaloff>:/new/prefix1/controller.png</normaloff>:/new/prefix1/controller.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="5">
+       <widget class="QPushButton" name="pushButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Settings</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/main.qrc">
+          <normaloff>:/new/prefix1/joystick_add.png</normaloff>:/new/prefix1/joystick_add.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="1" column="0">
     <widget class="QFrame" name="frame_2">
      <property name="enabled">
@@ -48,7 +214,7 @@
        <widget class="QGroupBox" name="groupBox">
         <property name="maximumSize">
          <size>
-          <width>450</width>
+          <width>350</width>
           <height>16777215</height>
          </size>
         </property>
@@ -56,375 +222,57 @@
          <string>Contols</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
-         <item row="1" column="0">
-          <spacer name="horizontalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Preferred</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="6" column="1" colspan="5">
-          <widget class="QSlider" name="CH7">
-           <property name="minimum">
-            <number>900</number>
-           </property>
-           <property name="maximum">
-            <number>2100</number>
-           </property>
-           <property name="value">
-            <number>1500</number>
-           </property>
-           <property name="sliderPosition">
-            <number>1500</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0" colspan="3">
-          <widget class="QSlider" name="Yaw">
-           <property name="minimum">
-            <number>900</number>
-           </property>
-           <property name="maximum">
-            <number>2100</number>
-           </property>
-           <property name="value">
-            <number>1500</number>
-           </property>
-           <property name="sliderPosition">
-            <number>1500</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1" colspan="5">
-          <widget class="QSlider" name="CH6">
-           <property name="minimum">
-            <number>900</number>
-           </property>
-           <property name="maximum">
-            <number>2100</number>
-           </property>
-           <property name="value">
-            <number>1500</number>
-           </property>
-           <property name="sliderPosition">
-            <number>1500</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="0">
-          <widget class="QLabel" name="CH8_label">
-           <property name="text">
-            <string>CH8-</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="1" colspan="5">
-          <widget class="QSlider" name="CH8">
-           <property name="minimum">
-            <number>900</number>
-           </property>
-           <property name="maximum">
-            <number>2100</number>
-           </property>
-           <property name="value">
-            <number>1500</number>
-           </property>
-           <property name="sliderPosition">
-            <number>1500</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QSlider" name="Throttle">
-           <property name="minimum">
-            <number>900</number>
-           </property>
-           <property name="maximum">
-            <number>2100</number>
-           </property>
-           <property name="value">
-            <number>1100</number>
-           </property>
-           <property name="sliderPosition">
-            <number>1100</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="3">
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Preferred</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="1" column="5">
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>Pitch</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="CH5_label">
-           <property name="text">
-            <string>CH5-</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="CH6_label">
-           <property name="text">
-            <string>CH6-</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1" colspan="2">
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Yaw</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0" colspan="6">
+         <item row="0" column="0">
           <widget class="QComboBox" name="comboBox">
            <property name="currentText">
             <string/>
            </property>
           </widget>
          </item>
-         <item row="4" column="1" colspan="5">
-          <widget class="QSlider" name="CH5">
-           <property name="minimum">
-            <number>900</number>
-           </property>
-           <property name="maximum">
-            <number>2100</number>
-           </property>
-           <property name="value">
-            <number>1500</number>
-           </property>
-           <property name="sliderPosition">
-            <number>1500</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="3" colspan="3">
-          <widget class="QSlider" name="Roll">
-           <property name="minimum">
-            <number>900</number>
-           </property>
-           <property name="maximum">
-            <number>2100</number>
-           </property>
-           <property name="value">
-            <number>1500</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="4" colspan="2">
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Roll</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="4">
-          <widget class="QSlider" name="Pitch">
-           <property name="minimum">
-            <number>900</number>
-           </property>
-           <property name="maximum">
-            <number>2100</number>
-           </property>
-           <property name="value">
-            <number>1500</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="2">
-          <widget class="QLabel" name="label_4">
-           <property name="text">
-            <string>Throttle</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0">
-          <widget class="QLabel" name="CH7_label">
-           <property name="text">
-            <string>CH7-</string>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="0" colspan="6">
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
+         <item row="1" column="0">
+          <widget class="CopterInputsWidget" name="inputsWidget" native="true"/>
          </item>
         </layout>
        </widget>
       </item>
       <item>
-       <widget class="CloudViewDialog" name="cloud" native="true"/>
+       <widget class="QTabWidget" name="tabWidget">
+        <property name="currentIndex">
+         <number>1</number>
+        </property>
+        <widget class="QWidget" name="tab">
+         <attribute name="title">
+          <string>3D View</string>
+         </attribute>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
+           <widget class="CloudViewDialog" name="cloud" native="true"/>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="tab_2">
+         <attribute name="title">
+          <string>Camera</string>
+         </attribute>
+         <layout class="QGridLayout" name="gridLayout_5">
+          <item row="0" column="0">
+           <widget class="AdvancedImageWidget" name="imageView" native="true"/>
+          </item>
+         </layout>
+        </widget>
+       </widget>
       </item>
      </layout>
     </widget>
    </item>
-   <item row="0" column="0" colspan="2">
-    <widget class="QFrame" name="frame">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+   <item row="2" column="0">
+    <widget class="LoggerWidget" name="logWidget" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>100</height>
+      </size>
      </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="0">
-       <widget class="QPushButton" name="pushButton_3">
-        <property name="text">
-         <string>connect to real device</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../../resources/main.qrc">
-          <normaloff>:/new/prefix1/back_alt.png</normaloff>:/new/prefix1/back_alt.png</iconset>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QPushButton" name="pushButton_2">
-        <property name="text">
-         <string>AUTOPILOT (press any js key to stop)</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../../resources/main.qrc">
-          <normaloff>:/new/prefix1/down_alt.png</normaloff>:/new/prefix1/down_alt.png</iconset>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <widget class="QPushButton" name="connetToVirtualButton">
-        <property name="text">
-         <string>connect to virtual</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../../resources/main.qrc">
-          <normaloff>:/new/prefix1/forward_alt.png</normaloff>:/new/prefix1/forward_alt.png</iconset>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QPushButton" name="JoyButton">
-        <property name="text">
-         <string>JoyStick mode</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../../resources/main.qrc">
-          <normaloff>:/new/prefix1/up_alt.png</normaloff>:/new/prefix1/up_alt.png</iconset>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="3">
-       <widget class="QPushButton" name="pushButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="toolTip">
-         <string>Settings</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../../resources/main.qrc">
-          <normaloff>:/new/prefix1/advanced.png</normaloff>:/new/prefix1/advanced.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="3">
-       <widget class="QPushButton" name="aboutButton">
-        <property name="toolTip">
-         <string>About</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../../resources/main.qrc">
-          <normaloff>:/new/prefix1/info_rhombus.png</normaloff>:/new/prefix1/info_rhombus.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </widget>
    </item>
   </layout>
@@ -436,75 +284,29 @@
    <header location="global">cloudViewDialog.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>AdvancedImageWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">advancedImageWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CopterInputsWidget</class>
+   <extends>QWidget</extends>
+   <header>copterInputsWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LoggerWidget</class>
+   <extends>QWidget</extends>
+   <header>loggerWidget.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources>
   <include location="../../resources/main.qrc"/>
  </resources>
  <connections>
-  <connection>
-   <sender>Yaw</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>PhysicsMainWidget</receiver>
-   <slot>yawChange(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>129</x>
-     <y>406</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>362</x>
-     <y>227</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>Roll</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>PhysicsMainWidget</receiver>
-   <slot>rollChange(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>455</x>
-     <y>406</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>362</x>
-     <y>227</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>Pitch</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>PhysicsMainWidget</receiver>
-   <slot>pitchChange(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>358</x>
-     <y>380</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>362</x>
-     <y>227</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>Throttle</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>PhysicsMainWidget</receiver>
-   <slot>throttleChange(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>138</x>
-     <y>380</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>362</x>
-     <y>227</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>pushButton_3</sender>
    <signal>clicked()</signal>
@@ -512,8 +314,8 @@
    <slot>startRealMode()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>178</x>
-     <y>60</y>
+     <x>182</x>
+     <y>96</y>
     </hint>
     <hint type="destinationlabel">
      <x>503</x>
@@ -528,76 +330,12 @@
    <slot>startJoyStickMode()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1031</x>
-     <y>43</y>
+     <x>373</x>
+     <y>50</y>
     </hint>
     <hint type="destinationlabel">
      <x>467</x>
      <y>229</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>CH5</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>PhysicsMainWidget</receiver>
-   <slot>CH5Change(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>227</x>
-     <y>456</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>467</x>
-     <y>339</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>CH6</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>PhysicsMainWidget</receiver>
-   <slot>CH6Change(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>227</x>
-     <y>482</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>467</x>
-     <y>339</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>CH7</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>PhysicsMainWidget</receiver>
-   <slot>CH7Change(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>227</x>
-     <y>508</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>467</x>
-     <y>339</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>CH8</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>PhysicsMainWidget</receiver>
-   <slot>CH8Change(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>227</x>
-     <y>534</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>467</x>
-     <y>339</y>
     </hint>
    </hints>
   </connection>
@@ -608,8 +346,8 @@
    <slot>startVirtualMode()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1382</x>
-     <y>70</y>
+     <x>522</x>
+     <y>96</y>
     </hint>
     <hint type="destinationlabel">
      <x>833</x>
@@ -640,12 +378,28 @@
    <slot>aboutWidget()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1639</x>
-     <y>59</y>
+     <x>1653</x>
+     <y>99</y>
     </hint>
     <hint type="destinationlabel">
      <x>1661</x>
      <y>196</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_4</sender>
+   <signal>released()</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>startCamera()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1631</x>
+     <y>41</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1586</x>
+     <y>167</y>
     </hint>
    </hints>
   </connection>
@@ -665,5 +419,6 @@
   <slot>startVirtualMode()</slot>
   <slot>settingsWidget()</slot>
   <slot>aboutWidget()</slot>
+  <slot>startCamera()</slot>
  </slots>
 </ui>

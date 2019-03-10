@@ -34,7 +34,8 @@ HEADERS += \
     joystick/joystickInterface.h \
     joystick/JoystickOptionsWidget.h \
     radio/frSkyMultimodule.h \
-    mainObject.h
+    mainObject.h \
+    copterInputsWidget.h
 
 SOURCES += \
     physicsMainWidget.cpp \
@@ -49,11 +50,13 @@ SOURCES += \
     joystick/joystickInterface.cpp \
     joystick/JoystickOptionsWidget.cpp \
     radio/frSkyMultimodule.cpp \
-    mainObject.cpp
+    mainObject.cpp \
+    copterInputsWidget.cpp
 
 FORMS += \
     physicsMainWidget.ui \
-    joystick/JoystickOptionsWidget.ui
+    joystick/JoystickOptionsWidget.ui \
+    copterInputsWidget.ui
 
 #RESOURCES += ../../resources/main.qrc
 
