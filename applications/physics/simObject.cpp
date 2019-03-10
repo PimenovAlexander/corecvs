@@ -15,7 +15,6 @@ void SimObject::addForce(const corecvs::Vector3dd &_force)
 
 void SimObject::addImpulse(const Vector3dd &_force)
 {
-
 }
 
 void SimObject::setForce(const Vector3dd &_force)
@@ -30,9 +29,12 @@ void SimObject::setForce(double x,double y, double z)
 
 void SimObject::tick(double deltaT)
 {    
-    coords += deltaT * (velocity + deltaT * (force + oldForce) / mass / 4.0 );
-    velocity += force / mass;
-    oldForce = force;
+
+}
+
+void SimObject::setCoords(Vector3dd c)
+{
+    this->coords = c;
 }
 
 SimObject::SimObject()

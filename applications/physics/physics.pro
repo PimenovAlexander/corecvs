@@ -31,7 +31,8 @@ HEADERS += \
     simSphere.h \
     controlRecord.h \
     joystick/joystickInterface.h \
-    joystick/JoystickOptionsWidget.h
+    joystick/JoystickOptionsWidget.h \
+    mainObject.h
 
 SOURCES += \
     physicsMainWidget.cpp \
@@ -44,8 +45,8 @@ SOURCES += \
     mainPhysics.cpp \
     controlRecord.cpp \  
     joystick/joystickInterface.cpp \
-    joystick/JoystickOptionsWidget.cpp
-
+    joystick/JoystickOptionsWidget.cpp \
+    mainObject.cpp
 
 FORMS += \
     physicsMainWidget.ui \
