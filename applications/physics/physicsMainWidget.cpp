@@ -301,7 +301,7 @@ void PhysicsMainWidget::startVirtualMode()
         //simSim.mainObjects[0]->addForce(Vector3dd(0, 0, -9.8));
         cout<<"done"<<endl;
 
-        //QTimer::singleShot(8, this, SLOT(keepAlive()));           UI thread crash why????????????
+        QTimer::singleShot(8, this, SLOT(keepAlive()));           //UI thread crash why????????????
     }
 }
 
@@ -329,6 +329,7 @@ void PhysicsMainWidget::keepAlive(){
 
     ui->cloud->update();
     ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh));
+    QTimer::singleShot(8, this, SLOT(keepAlive()));
 }
 
 void PhysicsMainWidget::startCamera()
