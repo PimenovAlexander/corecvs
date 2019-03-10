@@ -244,8 +244,8 @@ void QComController::keepAlive2()
 
     sendOurValues(flyCommandFromUs);
 
-
     QTimer::singleShot(8, this, SLOT(keepAlive2()));
+
 }
 
 ///
