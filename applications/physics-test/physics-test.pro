@@ -16,6 +16,7 @@ OBJECTS_DIR = $$ROOT_DIR/.obj/$$TARGET_ORIG$$BUILD_CFG_NAME
 TEMPLATE = app
 TARGET   = test_physics
 
+include($$PWD/../../wrappers/gtest/gtest.pri)
 include($$PWD/../../core/core.pri)
 
 with_avcodec {
@@ -27,3 +28,12 @@ with_avcodec {
 }
 
 SOURCES += main_physics_test.cpp
+
+##
+INCLUDEPATH += ../physics
+INCLUDEPATH += ../physics/radio
+
+HEADERS += ../physics/radio/frSkyMultimodule.h
+SOURCES += ../physics/radio/frSkyMultimodule.cpp
+
+
