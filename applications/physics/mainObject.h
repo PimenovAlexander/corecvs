@@ -12,8 +12,10 @@ class MainObject
 {
 public:
     MainObject();
+
+    /** Owned and manitained by MainObject**/
     vector<SimObject*> objects;
-    vector<SimSphere> spheres;
+
     Vector3dd velocity = Vector3dd::Zero();
     Vector3dd force    = Vector3dd::Zero();
     Vector3dd oldForce = Vector3dd::Zero();
@@ -21,13 +23,13 @@ public:
     Vector3dd posCenter = Vector3dd::Zero();
     int frameCounter = 0;
 
-    Quaternion orientation = Quaternion(0.0, 0.0, 0.0, 0.0);
+    Quaternion orientation = Quaternion::Identity();
 
-    Quaternion angleVelocity  = Quaternion(0.0 ,0.0 ,0.0 ,0.0);
+    Quaternion angleVelocity  = Quaternion::Identity();
 
     /** Mass in kilograms **/
     double systemMass;
-    bool countPhysics=false;
+    bool countPhysics = false;
 
 
     void addForce  (const Vector3dd &force);
@@ -36,8 +38,17 @@ public:
     void setForce(double x, double y, double z);
     void setForce(const Vector3dd &force);
     void tick(double deltaT);
-    void addObject(SimObject object);
+
     void addSphere(Vector3dd coords, double radius);
+
+    /**
+     * Adds subobject to MainObject and transfers ownership
+     **/
+    void addObject(SimObject *object);
+
+    virtual ~MainObject();
 };
+
+
 
 #endif // MAINOBJECT_H

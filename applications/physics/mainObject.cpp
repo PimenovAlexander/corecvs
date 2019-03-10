@@ -7,7 +7,7 @@ MainObject::MainObject()
 void MainObject::tick(double deltaT)
 {
     Vector3dd deltaPos = posCenter;
-    for (int i = 0; i < objects.size(); ++i)
+    for (size_t i = 0; i < objects.size(); ++i)
     {
         systemMass += objects[i]->mass;
     }
@@ -15,12 +15,12 @@ void MainObject::tick(double deltaT)
     //velocity += ((force + oldForce) * deltaT) / (2 * systemMass);
     //oldForce = force;
 
-    velocity=Vector3dd(0.1, 0.1, 0.1);
+    velocity = Vector3dd(0.1, 0.1, 0.1);
     posCenter += velocity * deltaT;
     deltaPos = posCenter - deltaPos;
 
 
-    for (int i = 0; i < objects.size(); ++i)
+    for (size_t i = 0; i < objects.size(); ++i)
     {
         //objects[i]->coords += deltaPos;             //If uncomment ui thread will crash after pressing start virtual mode ????????????????
 
@@ -29,10 +29,12 @@ void MainObject::tick(double deltaT)
         objects[i]->setCoords(posCenter);             //Normalno
     }
 
+    /* This seems to be not needed
     for (int i = 0; i < spheres.size(); ++i)
     {
         spheres[i].coords=objects[i]->coords;
     }
+    */
 }
 
 void MainObject::setCenterOfMass()
@@ -45,17 +47,23 @@ void MainObject::setCenterOfMass()
     massCenter = massCenter / systemMass;
 }
 
-void MainObject::addObject(SimObject object)
+void MainObject::addObject(SimObject *object)
 {
-    objects.push_back(&object);
+    objects.push_back(object);
     setCenterOfMass();
 }
 
 
 void MainObject::addSphere(Vector3dd coords, double radius)
 {
-    int num = spheres.size();
-    spheres.push_back(SimSphere(coords,radius));
-    objects.push_back(&spheres[num]);
+    objects.push_back(new SimSphere(coords,radius));
     setCenterOfMass();
+}
+
+MainObject::~MainObject() {
+    for (SimObject *obj : objects)
+    {
+        delete_safe(obj);
+    }
+    objects.clear();
 }

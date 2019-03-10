@@ -10,17 +10,14 @@ using namespace std;
 
 Simulation::Simulation()
 {
-    //mainObjects2 =  std::list<SimObject>();
-    SimSphere sphere;
-    MainObject kura;
-    kura.countPhysics = true;
-    sphere.radius = 2;
-    sphere.coords = Vector3dd(-1, -1, -1);
-    kura.addSphere(sphere.coords,sphere.radius);
-    mainObjects.push_back(kura);
+    /* Adds new MainObject to the vector */
+    mainObjects.emplace_back();
+    MainObject *mainObject = &mainObjects.back();
+    mainObject->countPhysics = true;
+    mainObject->addSphere(Vector3dd(-1, -1, -1), 2);
+
 
     cout << "Simulation::Simulation():" << mainObjects[0].objects.size() << " before thread" <<endl;
-    cout<<mainObjects[0].spheres.size()<<endl;
 }
 
 void Simulation::start()
@@ -49,7 +46,7 @@ void Simulation::start()
                 mainObjects[i].tick(time_span.count());
                 //mainObjects[i].spheres(std::to_string(currentTime.count()));
             }
-            cout<<mainObjects[0].spheres[0].coords<< " coords of sph in thrd" <<endl;
+            // cout<<mainObjects[0].spheres[0].coords<< " coords of sph in thrd" <<endl;
             frameCounter++;
 
             /*if (frameCounter%1000==0)

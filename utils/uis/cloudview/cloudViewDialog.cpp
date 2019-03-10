@@ -727,7 +727,7 @@ void CloudViewDialog::keyReleaseEvent ( QKeyEvent * /*event*/ )
 
 void CloudViewDialog::initializeGLSlot()
 {
-    SYNC_PRINT(("CloudViewDialog::initializeGLSlot():called\n"));
+    //SYNC_PRINT(("CloudViewDialog::initializeGLSlot():called\n"));
     //QGLWidget::initializeGL();
     mUi.widget->makeCurrent();
 

@@ -3,6 +3,8 @@
 
 #include <bits/stdc++.h>
 
+#include <core/geometry/mesh3d.h>
+
 #include "core/utils/utils.h"
 #include "core/geometry/mesh3d.h"
 #include "core/geometry/mesh3DDecorated.h"
@@ -17,6 +19,11 @@ class SimObject
 {
 public:
     SimObject();
+
+    SimObject(const Vector3dd &coords) :
+        coords(coords)
+    {}
+
     Vector3dd coords   = Vector3dd(1,1,1);
     Vector3dd velocity = Vector3dd::Zero();
     Vector3dd force    = Vector3dd::Zero();
@@ -40,7 +47,11 @@ public:
     void setForce(const Vector3dd &force);
     void tick(double deltaT);
 
-    virtual void saveMesh(const std::string &name);
+    /* You may want to bring this to separate interface. */
+    virtual void addToMesh (corecvs::Mesh3D &mesh);
+
+    virtual void saveMesh  (const std::string &name);
+
     void setCoords(Vector3dd c);
 };
 

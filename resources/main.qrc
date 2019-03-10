@@ -117,6 +117,14 @@
         <file>setting_tools.png</file>
         <file>page_copy.png</file>
         <file>car.png</file>
+        <file>joystick.png</file>
+        <file>controller.png</file>
+        <file>controller_error.png</file>
+        <file>controller_add.png</file>
+        <file>joystick_add.png</file>
+        <file>joystick_error.png</file>
+        <file>robot.png</file>
+        <file>server_connect.png</file>
     </qresource>
     <qresource prefix="/new/colors">
         <file>colors/color_blue.png</file>

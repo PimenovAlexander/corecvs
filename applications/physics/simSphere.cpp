@@ -6,10 +6,11 @@ SimSphere::SimSphere()
 {
 }
 
-SimSphere::SimSphere(Vector3dd c, double r)
+
+SimSphere::SimSphere(Vector3dd c, double r) :
+    SimObject(c),
+    radius(r)
 {
-    coords=c;
-    radius=r;
 }
 
 
@@ -56,4 +57,9 @@ void SimSphere::drawMesh(Vector3dd coords, double radius)
     //mesh->dumpPLY(name+".ply");
 
     delete_safe(mesh);
+}
+
+void SimSphere::addToMesh(Mesh3D &mesh)
+{
+    mesh.addIcoSphere(coords, radius, 3);
 }

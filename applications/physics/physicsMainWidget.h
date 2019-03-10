@@ -12,6 +12,7 @@
 #include <QtSerialPort/QSerialPortInfo>
 
 #include "clientSender.h"
+#include "copterInputsWidget.h"
 #include "qComController.h"
 
 
@@ -24,6 +25,56 @@
 namespace Ui {
     class PhysicsMainWidget;
 }
+
+
+
+class ImageCaptureInterfaceQt;
+class PhysicsMainWidget;
+
+
+/**
+ * Ok this a draft. In general most probably we should not depend on QThread.
+ **/
+class FrameProcessor : public QThread
+{
+    Q_OBJECT
+public:
+
+    PhysicsMainWidget *target = NULL;
+    ImageCaptureInterfaceQt *input = NULL;
+    FrameProcessor(QObject *parent = 0) : QThread(parent)
+    {}
+
+public slots:
+    /** NB: This is a place to process video **/
+    void processFrame(frame_data_t frameData);
+
+
+    virtual void run()
+    {
+        exec();
+    }
+};
+
+
+
+
+
+/** This is a draft **/
+class DrawRequestData
+{
+public:
+    Mesh3DDecorated *mMesh  = NULL;
+    RGB24Buffer     *mImage = NULL;
+
+    ~DrawRequestData()
+    {
+        delete_safe(mMesh);
+        delete_safe(mImage);
+    }
+
+};
+
 
 class PhysicsMainWidget : public QWidget
 {
@@ -49,7 +100,7 @@ public:
     virtual ~PhysicsMainWidget();
 
 
-/** **/
+/** Joystick **/
 public:
     JoystickOptionsWidget mJoystickSettings;
     Mesh3DScene *mesh;
@@ -60,11 +111,32 @@ public slots:
     void settingsWidget();
     void aboutWidget();
     void keepAlive();
+
+/** Camera **/
+public:
+    FrameProcessor *processor = NULL;
+
+public slots:
+    /* Add paused and stop ASAP */
+    void startCamera();
+
+/** UI show block **/
+public:
+    std::mutex uiMutex;
+    std::vector<DrawRequestData *> uiQueue;
+
+public slots:
+    void updateUi();
+
+
+
 private slots:
 
 
 
     void startVirtualMode();
+
+#if 0 /*Use one slot for all channels */
     void yawChange(int i);
     void rollChange(int i);
     void pitchChange(int i);
@@ -73,6 +145,7 @@ private slots:
     void CH6Change(int i);
     void CH7Change(int i);
     void CH8Change(int i);
+#endif
     void startJoyStickMode();
 
 
@@ -100,27 +173,36 @@ private:
 
     std::list<Message> messages;
 
+    CopterInputs copterInputs;
 
+    /** Replace this with mixer **/
     JoyStickInput joystick1 {
-        yawValue,
-        rollValue,
-        pitchValue,
-        throttleValue,
-                CH5Value, CH6Value, CH7Value, CH8Value};
+        copterInputs.axis[CopterInputs::CHANNEL_YAW],
+        copterInputs.axis[CopterInputs::CHANNEL_ROLL],
+        copterInputs.axis[CopterInputs::CHANNEL_PITCH],
+        copterInputs.axis[CopterInputs::CHANNEL_THROTTLE],
 
-    QComController ComController {this, yawValue, rollValue, pitchValue, throttleValue,
-                CH5Value, CH6Value, CH7Value, CH8Value};
+        copterInputs.axis[CopterInputs::CHANNEL_4],
+        copterInputs.axis[CopterInputs::CHANNEL_5],
+        copterInputs.axis[CopterInputs::CHANNEL_6],
+        copterInputs.axis[CopterInputs::CHANNEL_7]
+    };
+
+    QComController ComController {this,
+        copterInputs.axis[CopterInputs::CHANNEL_YAW],
+        copterInputs.axis[CopterInputs::CHANNEL_ROLL],
+        copterInputs.axis[CopterInputs::CHANNEL_PITCH],
+        copterInputs.axis[CopterInputs::CHANNEL_THROTTLE],
+
+        copterInputs.axis[CopterInputs::CHANNEL_4],
+        copterInputs.axis[CopterInputs::CHANNEL_5],
+        copterInputs.axis[CopterInputs::CHANNEL_6],
+        copterInputs.axis[CopterInputs::CHANNEL_7]
+    };
 
     Ui::PhysicsMainWidget *ui;
-    int yawValue;
-    int rollValue;
-    int pitchValue;
-    int throttleValue;
-    int throttleValueFromJS;
-    int CH5Value;
-    int CH6Value;
-    int CH7Value;
-    int CH8Value;
+
+    int throttleValueFromJS = 1500;
     int midThrottle = 1350;
 
     int counter;
@@ -144,10 +226,7 @@ private:
     ControlRecord recordData;
 
     Simulation simSim;
-
-    struct AxisState axes[3];
-
-    ClientSender VirtualSender;
+    ClientSender virtualSender;
 
     int countOfSticks=0;
 

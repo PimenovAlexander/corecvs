@@ -13,9 +13,11 @@ class Simulation
 public:
     Simulation();
     vector<MainObject> mainObjects;
+
     std::chrono::high_resolution_clock::time_point oldTime;
     std::chrono::high_resolution_clock::time_point newTime;
     std::chrono::high_resolution_clock::time_point startTime;
+
     int frameCounter=0;
     void start();
 };

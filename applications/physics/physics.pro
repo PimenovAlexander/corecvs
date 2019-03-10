@@ -19,6 +19,7 @@ QT += serialport
 
 INCLUDEPATH += .
 INCLUDEPATH += joystick
+INCLUDEPATH += radio
 
 
 HEADERS += \
@@ -32,7 +33,9 @@ HEADERS += \
     controlRecord.h \
     joystick/joystickInterface.h \
     joystick/JoystickOptionsWidget.h \
-    mainObject.h
+    radio/frSkyMultimodule.h \
+    mainObject.h \
+    copterInputsWidget.h
 
 SOURCES += \
     physicsMainWidget.cpp \
@@ -46,11 +49,14 @@ SOURCES += \
     controlRecord.cpp \  
     joystick/joystickInterface.cpp \
     joystick/JoystickOptionsWidget.cpp \
-    mainObject.cpp
+    radio/frSkyMultimodule.cpp \
+    mainObject.cpp \
+    copterInputsWidget.cpp
 
 FORMS += \
     physicsMainWidget.ui \
-    joystick/JoystickOptionsWidget.ui
+    joystick/JoystickOptionsWidget.ui \
+    copterInputsWidget.ui
 
 #RESOURCES += ../../resources/main.qrc
 

@@ -1,7 +1,10 @@
+#include "gtest/gtest.h"
 
 #include "core/buffers/rgb24/abstractPainter.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/geometry/renderer/simpleRenderer.h"
+
+
 
 #ifdef WITH_AVCODEC
 #include "avEncoder.h"
@@ -11,12 +14,62 @@
 #include <core/buffers/bufferFactory.h>
 #endif
 
+#include "frSkyMultimodule.h"
+
+#include <bitset>
+
 
 using namespace corecvs;
 
 
+TEST(Physics, checkFrSky)
+{
+    int16_t channels1[FrSkyMultimodule::CHANNEL_LAST] = {-200, -100, -50, 0, 50, 100, 200, 300};
+    int16_t channels2[FrSkyMultimodule::CHANNEL_LAST] = {-200, -100, -50, 0, 50, 100, 200, 300};
 
-int main(int argc, char **argv)
+    uint8_t message1[FrSkyMultimodule::MESSAGE_SIZE];
+    uint8_t message2[FrSkyMultimodule::MESSAGE_SIZE];
+
+    FrSkyMultimodule::pack (channels1, message1);
+
+    for (int i = 0; i < FrSkyMultimodule::CHANNEL_LAST; i++) {
+        channels2[i] = (channels1[i] - FrSkyMultimodule::MAGIC_DIFFERENCE) * 8 / 10;
+    }
+
+    FrSkyMultimodule::pack1(channels2, message2);
+
+    for (int i = 0; i < FrSkyMultimodule::MESSAGE_SIZE; i++) {
+        printf("%02d ", i);
+    }
+    printf("\n");
+    printf("Reference:\n");
+    for (int i = 0; i < FrSkyMultimodule::MESSAGE_SIZE; i++) {
+        printf("%02x ", message1[i]);
+    }
+    printf("\n");
+    printf("New version:\n");
+    for (int i = 0; i < FrSkyMultimodule::MESSAGE_SIZE; i++) {
+        printf("%02x ", message2[i]);
+    }
+    printf("\n");
+
+    printf("\n");
+    for (int i = 0; i < 8; i++) {
+        std::bitset<8> x(message1[i]);
+        cout << x << " ";
+    }
+    printf("\n");
+    for (int i = 0; i < 8; i++) {
+        std::bitset<8> x(message2[i]);
+        cout << x << " ";
+    }
+    printf("\n");
+
+
+}
+
+
+TEST(Physics, dummyVideo)
 {
 #ifdef WITH_AVCODEC
     AVEncoder encoder;
@@ -66,4 +119,13 @@ int main(int argc, char **argv)
 
     SYNC_PRINT(("Done."));
 }
+
+
+
+int main(int argc, char **argv)
+{
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
+
 
