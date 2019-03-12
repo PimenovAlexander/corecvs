@@ -168,8 +168,10 @@ int main(int argc, char *argv[])
     BufferFactory::printCaps();
 
 #ifdef WITH_OPENCV
-    Processor6DFactoryHolder::getInstance()->registerProcessor(new OpenCVProcessor6DFactory());
+    Processor6DFactoryHolder  ::getInstance()->registerProcessor(new AlgoFactory<OpenCVFlowProcessor, Processor6D  >("OpenCVProcessor"));
+    ProcessorFlowFactoryHolder::getInstance()->registerProcessor(new AlgoFactory<OpenCVFlowProcessor, ProcessorFlow>("OpenCVProcessor"));
 #endif
+
     Processor6DFactoryHolder::getInstance()->registerProcessor(new DummyFlowImplFactory());
     Processor6DFactoryHolder::printCaps();
 

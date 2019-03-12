@@ -99,12 +99,8 @@ HEADERS += \
     corestructs/cameraModel/featurePointControlWidget.h \
     uis/aboutPropsTableWidget.h \
     uis/histogramDepthDialog.h \
-    3d/sceneShaded.h \
     corestructs/reflectionWidget.h \
-    3d/shadedSceneControlWidget.h \
     scripting/coreToScript.h \
-    3d/billboardCaption3DScene.h \
-    3d/gCodeScene.h \
     corestructs/cameraModel/fixtureGeometryControlWidget.h \
     corestructs/pointerFieldWidget.h \
     corestructs/widgetBlockHarness.h \

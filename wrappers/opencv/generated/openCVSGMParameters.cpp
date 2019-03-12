@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from opencvsgm.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<OpenCVSGMParameters>::reflection = Reflection();
 template<>
 int BaseReflection<OpenCVSGMParameters>::dummy = OpenCVSGMParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int OpenCVSGMParameters::staticInit()
+int OpenCVSGMParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <OpenCVSGMParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "OpenCV SGM Parameters",
         "OpenCV SGM Parameters Class",
         ""
     );
 
-     getReflection()->objectSize = sizeof(OpenCVSGMParameters);
+     toFill->objectSize = sizeof(OpenCVSGMParameters);
      
 
     IntField* field0 = new IntField
@@ -52,9 +58,10 @@ int OpenCVSGMParameters::staticInit()
           "Pre Filter Cap",
           true,
          1,
-         99
+         99,
+         1
         );
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     IntField* field1 = new IntField
         (
@@ -66,9 +73,10 @@ int OpenCVSGMParameters::staticInit()
           "SAD Window Size",
           true,
          1,
-         99
+         99,
+         1
         );
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     IntField* field2 = new IntField
         (
@@ -80,9 +88,10 @@ int OpenCVSGMParameters::staticInit()
           "P1 multiplier",
           true,
          1,
-         99
+         99,
+         1
         );
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     IntField* field3 = new IntField
         (
@@ -94,9 +103,10 @@ int OpenCVSGMParameters::staticInit()
           "P2 multiplier",
           true,
          1,
-         99
+         99,
+         1
         );
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     IntField* field4 = new IntField
         (
@@ -108,9 +118,10 @@ int OpenCVSGMParameters::staticInit()
           "Min Disparity",
           true,
          -9999,
-         99999
+         99999,
+         1
         );
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     IntField* field5 = new IntField
         (
@@ -122,9 +133,10 @@ int OpenCVSGMParameters::staticInit()
           "Uniqueness Ratio",
           true,
          0,
-         99
+         99,
+         1
         );
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     IntField* field6 = new IntField
         (
@@ -136,9 +148,10 @@ int OpenCVSGMParameters::staticInit()
           "Speckle Window Size",
           true,
          1,
-         99
+         99,
+         1
         );
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     IntField* field7 = new IntField
         (
@@ -150,9 +163,10 @@ int OpenCVSGMParameters::staticInit()
           "Speckle Range",
           true,
          1,
-         99
+         99,
+         1
         );
-    fields().push_back(field7);
+    toFill->fields.push_back(field7);
     /*  */ 
     IntField* field8 = new IntField
         (
@@ -164,9 +178,10 @@ int OpenCVSGMParameters::staticInit()
           "Disp 12 Max Diff",
           true,
          -9999,
-         99999
+         99999,
+         1
         );
-    fields().push_back(field8);
+    toFill->fields.push_back(field8);
     /*  */ 
     BoolField* field9 = new BoolField
         (
@@ -178,10 +193,10 @@ int OpenCVSGMParameters::staticInit()
           "Full DP"
         );
     field9->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field9);
+    toFill->fields.push_back(field9);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("OpenCV SGM Parameters")]= &reflection;
+    directory[std::string("OpenCV SGM Parameters")]= toFill;
    return 0;
 }
 int OpenCVSGMParameters::relinkCompositeFields()

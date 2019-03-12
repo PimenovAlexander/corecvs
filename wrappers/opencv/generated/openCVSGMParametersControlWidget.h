@@ -1,6 +1,6 @@
 #pragma once
 #include <QWidget>
-#include "core/xml/generated/openCVSGMParameters.h"
+#include "generated/openCVSGMParameters.h"
 #include "ui_openCVSGMParametersControlWidget.h"
 #include "parametersControlWidgetBase.h"
 

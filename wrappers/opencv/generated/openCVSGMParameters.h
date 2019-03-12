@@ -6,6 +6,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from opencvsgm.xml
  */
 
 #include "core/reflection/reflection.h"
@@ -115,7 +116,7 @@ public:
     bool mFullDP;
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
-    static int staticInit();
+    static int staticInit(corecvs::Reflection *toFill);
 
     static int relinkCompositeFields();
 

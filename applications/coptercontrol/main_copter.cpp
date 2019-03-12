@@ -41,7 +41,8 @@ int main(int argc, char *argv[])
     QTRGB24Loader::registerMyself();
 
 #ifdef WITH_OPENCV
-    Processor6DFactoryHolder::getInstance()->addFactory(new OpenCVProcessor6DFactory());
+    Processor6DFactoryHolder  ::getInstance()->registerProcessor(new AlgoFactory<OpenCVFlowProcessor, Processor6D  >("OpenCVProcessor"));
+    ProcessorFlowFactoryHolder::getInstance()->registerProcessor(new AlgoFactory<OpenCVFlowProcessor, ProcessorFlow>("OpenCVProcessor"));
 #endif
     Processor6DFactoryHolder::printCaps();
 

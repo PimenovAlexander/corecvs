@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from opencvsgm.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<OpenCVBMParameters>::reflection = Reflection();
 template<>
 int BaseReflection<OpenCVBMParameters>::dummy = OpenCVBMParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int OpenCVBMParameters::staticInit()
+int OpenCVBMParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <OpenCVBMParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "OpenCV BM Parameters",
         "OpenCV BM Parameters Class",
         ""
     );
 
-     getReflection()->objectSize = sizeof(OpenCVBMParameters);
+     toFill->objectSize = sizeof(OpenCVBMParameters);
      
 
     IntField* field0 = new IntField
@@ -52,9 +58,10 @@ int OpenCVBMParameters::staticInit()
           "Block Size",
           true,
          5,
-         255
+         255,
+         2
         );
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     IntField* field1 = new IntField
         (
@@ -66,9 +73,10 @@ int OpenCVBMParameters::staticInit()
           "Disparity search",
           true,
          0,
-         1600
+         1600,
+         16
         );
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     IntField* field2 = new IntField
         (
@@ -80,9 +88,10 @@ int OpenCVBMParameters::staticInit()
           "preFilterCap",
           true,
          1,
-         1000
+         1000,
+         1
         );
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     IntField* field3 = new IntField
         (
@@ -94,9 +103,10 @@ int OpenCVBMParameters::staticInit()
           "minDisparity",
           true,
          1,
-         1000
+         1000,
+         1
         );
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     IntField* field4 = new IntField
         (
@@ -108,9 +118,10 @@ int OpenCVBMParameters::staticInit()
           "textureThreshold",
           true,
          0,
-         1000
+         1000,
+         1
         );
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     IntField* field5 = new IntField
         (
@@ -122,9 +133,10 @@ int OpenCVBMParameters::staticInit()
           "uniquenessRatio",
           true,
          0,
-         1000
+         1000,
+         1
         );
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     IntField* field6 = new IntField
         (
@@ -136,9 +148,10 @@ int OpenCVBMParameters::staticInit()
           "speckleWindowSize",
           true,
          0,
-         1000
+         1000,
+         1
         );
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     IntField* field7 = new IntField
         (
@@ -150,9 +163,10 @@ int OpenCVBMParameters::staticInit()
           "speckleRange",
           true,
          0,
-         1000
+         1000,
+         1
         );
-    fields().push_back(field7);
+    toFill->fields.push_back(field7);
     /*  */ 
     IntField* field8 = new IntField
         (
@@ -164,12 +178,13 @@ int OpenCVBMParameters::staticInit()
           "disp12MaxDiff",
           true,
          -1,
-         1000
+         1000,
+         1
         );
-    fields().push_back(field8);
+    toFill->fields.push_back(field8);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("OpenCV BM Parameters")]= &reflection;
+    directory[std::string("OpenCV BM Parameters")]= toFill;
    return 0;
 }
 int OpenCVBMParameters::relinkCompositeFields()
