@@ -29,6 +29,7 @@ JoyStickInput::JoyStickInput(int &_yawValue, int &_rollValue, int &_pitchValue, 
 
 void JoyStickInput::start()
 {
+    active=true;
     timerForThrottle();
     startJoyStickMode();
 }
@@ -153,7 +154,7 @@ void JoyStickInput::startJoyStickMode()
                     case 3:
                         usualExperimentalButtons(eventtt);
                         break;
-                    case 4:                                 //diff with 3 in timer thread
+                    case 4:                                 //diff with 3 is in the timer thread
                         usualExperimentalButtons(eventtt);
                         break;
                     default: break;
@@ -838,11 +839,11 @@ void JoyStickInput::fullRtSticks(js_event event)
             if (axis==0)
             {
 
-                rollValue = 1500 + axes[axis].x/50/roll_const;
+                rollValue = 1500 + axes[axis].x/25/roll_const;
                 if (rollValue>2100){rollValue=2099;}
                 if (rollValue<900){rollValue=901;}
 
-                pitchValue = 1500 - axes[axis].y/50/pit_const;
+                pitchValue = 1500 - axes[axis].y/25/pit_const;
                 if (pitchValue>2100){pitchValue=2099;}
                 if (pitchValue<900){pitchValue=901;}
 
@@ -851,7 +852,7 @@ void JoyStickInput::fullRtSticks(js_event event)
             if (axis==1)
             {
                 lastLT=axes[axis].x;
-                yawValue = 1500 + axes[axis].y/50/roll_const;
+                yawValue = 1500 + axes[axis].y/25/roll_const;
                 if (yawValue>2100){yawValue=2099;}
                 if (yawValue<900){yawValue=901;}
 

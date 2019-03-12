@@ -35,7 +35,8 @@ HEADERS += \
     joystick/JoystickOptionsWidget.h \
     radio/frSkyMultimodule.h \
     mainObject.h \
-    copterInputsWidget.h
+    copterInputsWidget.h \
+    protoautopilot.h
 
 SOURCES += \
     physicsMainWidget.cpp \
@@ -51,7 +52,8 @@ SOURCES += \
     joystick/JoystickOptionsWidget.cpp \
     radio/frSkyMultimodule.cpp \
     mainObject.cpp \
-    copterInputsWidget.cpp
+    copterInputsWidget.cpp \
+    protoautopilot.cpp
 
 FORMS += \
     physicsMainWidget.ui \

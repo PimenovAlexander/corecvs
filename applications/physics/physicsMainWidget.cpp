@@ -329,6 +329,8 @@ void PhysicsMainWidget::keepAlive(){
 
     ui->cloud->update();
     ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh));
+
+
     QTimer::singleShot(8, this, SLOT(keepAlive()));
 }
 
@@ -459,8 +461,28 @@ void PhysicsMainWidget::sendOurValues(std::vector<uint8_t> OurValues)
 void PhysicsMainWidget::startJoyStickMode()
 {
     joystick1.start();
-    //js.Start();
+    QTimer::singleShot(33, this, SLOT(keepAliveJoyStick()));
 
+}
+
+void PhysicsMainWidget::keepAliveJoyStick()
+{
+    if (joystick1.active)
+    {
+    CopterInputs copInputs;
+    copInputs.axis[0]=joystick1.throttleValue;
+    copInputs.axis[1]=joystick1.rollValue;
+    copInputs.axis[2]=joystick1.pitchValue;
+    copInputs.axis[3]=joystick1.yawValue;
+    copInputs.axis[4]=joystick1.CH5Value;
+    copInputs.axis[5]=joystick1.CH6Value;
+    copInputs.axis[6]=joystick1.CH7Value;
+    copInputs.axis[7]=joystick1.CH8Value;
+
+    ui->inputsWidget->updateState(copInputs);
+    QTimer::singleShot(33, this, SLOT(keepAliveJoyStick()));
+
+    }
 }
 
 void PhysicsMainWidget::onPushButton2Clicked()
@@ -510,34 +532,32 @@ int PhysicsMainWidget::sign(int val)
 
 void PhysicsMainWidget::on_comboBox_currentTextChanged(const QString &arg1)                 //DO NOT TOUCH IT PLEASE
 {
-#if 0
-    if(arg1=="Usual mode")    //why qstring can not be in case?!
+     if(arg1=="Usual mode")    //why qstring can not be in case?!
     {
         joystick1.setUsualCurrentMode();   //I dont want errors between qstring and string
-        throttleValue=1500;
+        joystick1.throttleValue=1500;
     }
     if(arg1=="Inertia mode")
     {
         joystick1.setInertiaCurrentMode();
-        throttleValue=midThrottle;
+        joystick1.throttleValue=midThrottle;
     }
     if(arg1=="Casual mode")
     {
         joystick1.setCasualCurrentMode();
-        throttleValue=midThrottle;
+        joystick1.throttleValue=midThrottle;
     }
     if(arg1=="RT/LT Usual mode")
     {
         joystick1.setRTLTUsialMode();
-        throttleValue=midThrottle;
+        joystick1.throttleValue=midThrottle;
     }
     if(arg1=="RT/LT Full mode")
     {
         joystick1.setRTLTFullMode();
-        throttleValue=midThrottle;
+        joystick1.throttleValue=midThrottle;
     }
-#endif
-}
+ }
 
 void PhysicsMainWidget::updateUi()
 {
@@ -567,8 +587,11 @@ void PhysicsMainWidget::updateUi()
     if (work->mImage)
     {
         QSharedPointer<QImage> image(new RGB24Image(work->mImage));
+
         ui->imageView->setImage(image);
     }
+
+
 
     /* We made copies. Originals could be deleted */
     delete_safe(work);

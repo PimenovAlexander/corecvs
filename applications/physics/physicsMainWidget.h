@@ -13,6 +13,7 @@
 
 #include "clientSender.h"
 #include "copterInputsWidget.h"
+#include "protoautopilot.h"
 #include "qComController.h"
 
 
@@ -82,7 +83,7 @@ class PhysicsMainWidget : public QWidget
 public:
     explicit PhysicsMainWidget(QWidget *parent = 0);
     QSerialPort serialPort;
-
+    ProtoAutoPilot II;
     QByteArray *flyCommandWriteData = NULL;
     QByteArray getDataFromSticks();
 
@@ -130,6 +131,7 @@ public slots:
 
 
 
+    void keepAliveJoyStick();
 private slots:
 
 
