@@ -39,7 +39,8 @@ HEADERS += \
     copterInputsWidget.h \
     mixer/controlsMixer.h \
     copterInputs.h \
-    joystick/mixerChannelOperationWidget.h
+    joystick/mixerChannelOperationWidget.h \
+    frameProcessor.h
 
 SOURCES += \
     physicsMainWidget.cpp \
@@ -58,7 +59,8 @@ SOURCES += \
     copterInputsWidget.cpp \
     mixer/controlsMixer.cpp \
     copterInputs.cpp \
-    joystick/mixerChannelOperationWidget.cpp
+    joystick/mixerChannelOperationWidget.cpp \
+    frameProcessor.cpp
 
 FORMS += \
     physicsMainWidget.ui \

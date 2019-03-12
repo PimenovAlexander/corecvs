@@ -32,39 +32,6 @@
 using namespace std;
 
 
-void FrameProcessor::processFrame(frame_data_t frameData)
-{
-    static int count=0;
-    count++;
-
-    static bool skipping = false;
-    if (skipping)
-    {
-        return;
-    }
-    skipping = true;
-    QApplication::processEvents();
-    skipping = false;
-
-
-
-//    SYNC_PRINT(("New frame arrived\n"));
-    ImageCaptureInterface::FramePair pair = input->getFrameRGB24();
-    RGB24Buffer * result = pair.rgbBufferLeft();
-    pair.setRgbBufferLeft(NULL);
-    pair.freeBuffers();
-
-    target->uiMutex.lock();
-    target->uiQueue.emplace_back(new DrawRequestData);
-    target->uiQueue.back()->mImage = result;
-    target->uiMutex.unlock();
-
-    target->updateUi();
-
-}
-
-
-
 PhysicsMainWidget::PhysicsMainWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::PhysicsMainWidget)
@@ -338,8 +305,8 @@ void PhysicsMainWidget::keepAlive(){
 void PhysicsMainWidget::startCamera()
 {
     /* We should prepare calculator in some other place */
-    processor = new FrameProcessor();    
-    processor->target = this;    
+    mProcessor = new FrameProcessor();
+    mProcessor->target = this;
 
     std::string inputString = "v4l2:/dev/video0";
 
@@ -362,14 +329,14 @@ void PhysicsMainWidget::startCamera()
 
     mCameraParametersWidget.setCaptureInterface(rawInput);
 
-    processor->input = rawInput;
+    mProcessor->input = rawInput;
     QObject::connect(
-        rawInput  , SIGNAL(newFrameReady(frame_data_t)),
-        processor,   SLOT(processFrame (frame_data_t)), Qt::QueuedConnection);
+        rawInput  , SIGNAL(newFrameReady(ImageCaptureInterface::FrameMetadata)),
+        mProcessor,   SLOT(processFrame (ImageCaptureInterface::FrameMetadata)), Qt::QueuedConnection);
 
 
     /* All ready. Let's rock */
-    processor->start();
+    mProcessor->start();
     rawInput->startCapture();    
 
 }
@@ -384,6 +351,12 @@ void PhysicsMainWidget::showCameraModelWidget()
 {
     mModelParametersWidget.show();
     mModelParametersWidget.raise();
+}
+
+void PhysicsMainWidget::showProcessingParametersWidget()
+{
+    mFlowFabricControlWidget.show();
+    mFlowFabricControlWidget.raise();
 }
 
 void PhysicsMainWidget::frameValuesUpdate()

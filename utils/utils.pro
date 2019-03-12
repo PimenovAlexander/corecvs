@@ -110,7 +110,8 @@ HEADERS += \
     corestructs/widgetBlockHarness.h \
     corestructs/cameraModel/fixtureGlobalParametersWidget.h \
     framesources/imageCaptureInterfaceQt.h \
-    corestructs/cameraModel/fixtureCameraControlWidget.h
+    corestructs/cameraModel/fixtureCameraControlWidget.h \
+    corestructs/flowFabricControlWidget.h
 
 SOURCES += \
 #    frames.cpp \
@@ -188,6 +189,7 @@ SOURCES += \
     corestructs/cameraModel/fixtureGlobalParametersWidget.cpp \
     framesources/imageCaptureInterfaceQt.cpp \
     corestructs/cameraModel/fixtureCameraControlWidget.cpp \
+    corestructs/flowFabricControlWidget.cpp
 
 
 FORMS += \
@@ -203,7 +205,8 @@ FORMS += \
     corestructs/cameraModel/fixtureGeometryControlWidget.ui \
     corestructs/pointerFieldWidget.ui \
     corestructs/cameraModel/fixtureGlobalParametersWidget.ui \
-    corestructs/cameraModel/fixtureCameraControlWidget.ui
+    corestructs/cameraModel/fixtureCameraControlWidget.ui \
+    corestructs/flowFabricControlWidget.ui
 
 # =============================================================
 

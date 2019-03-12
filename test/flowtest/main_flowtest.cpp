@@ -4,6 +4,7 @@
 #include <core/buffers/bufferFactory.h>
 
 #include "core/stereointerface/processor6D.h"
+#include "core/stereointerface/dummyFlowProcessor.h"
 
 #include "core/utils/global.h"
 
@@ -24,6 +25,8 @@
 using namespace std;
 using namespace corecvs;
 
+
+#if 0
 class DummyFlowProcessor : public Processor6D
 {
     Statistics *stats = NULL;
@@ -146,7 +149,7 @@ public:
    virtual std::string getName() {return "DummyFlowProcessor"; }
    virtual ~DummyProcessor6DFactory() {}
 };
-
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -167,7 +170,7 @@ int main(int argc, char *argv[])
 #ifdef WITH_OPENCV
     Processor6DFactoryHolder::getInstance()->registerProcessor(new OpenCVProcessor6DFactory());
 #endif
-    Processor6DFactoryHolder::getInstance()->registerProcessor(new DummyProcessor6DFactory());
+    Processor6DFactoryHolder::getInstance()->registerProcessor(new DummyFlowImplFactory());
     Processor6DFactoryHolder::printCaps();
 
     if (argc != 5)

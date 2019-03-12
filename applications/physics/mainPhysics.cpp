@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <core/stereointerface/dummyFlowProcessor.h>
 #include "qtFileLoader.h"
 
 #include "core/utils/utils.h"
@@ -62,6 +63,12 @@ int main(int argc, char *argv[])
     SYNC_PRINT(("Libpng support on\n"));
 #endif
     QTRGB24Loader::registerMyself();
+
+    Processor6DFactoryHolder  ::getInstance()->registerProcessor(new AlgoFactory<DummyFlowProcessor, Processor6D>("Dummy"));
+    ProcessorFlowFactoryHolder::getInstance()->registerProcessor(new AlgoFactory<DummyFlowProcessor, ProcessorFlow>("Dummy"));
+
+
+
 
     CommandLineSetter s(argc, argv);
     if (s.hasOption("caps"))

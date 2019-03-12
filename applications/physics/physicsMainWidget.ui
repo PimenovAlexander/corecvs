@@ -29,56 +29,20 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QPushButton" name="pushButton_3">
+      <item row="1" column="1">
+       <widget class="QPushButton" name="pushButton_2">
         <property name="text">
-         <string>connect to real device</string>
+         <string>AUTOPILOT
+(press any js key to stop)</string>
         </property>
         <property name="icon">
          <iconset resource="../../resources/main.qrc">
-          <normaloff>:/new/prefix1/connect.png</normaloff>:/new/prefix1/connect.png</iconset>
+          <normaloff>:/new/prefix1/robot.png</normaloff>:/new/prefix1/robot.png</iconset>
         </property>
         <property name="iconSize">
          <size>
           <width>32</width>
           <height>32</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QPushButton" name="connetToVirtualButton">
-        <property name="text">
-         <string>connect to virtual</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../../resources/main.qrc">
-          <normaloff>:/new/prefix1/server_connect.png</normaloff>:/new/prefix1/server_connect.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>32</width>
-          <height>32</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="4">
-       <widget class="QPushButton" name="aboutButton">
-        <property name="toolTip">
-         <string>About</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../../resources/main.qrc">
-          <normaloff>:/new/prefix1/info_rhombus.png</normaloff>:/new/prefix1/info_rhombus.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
          </size>
         </property>
        </widget>
@@ -96,6 +60,23 @@
          <size>
           <width>24</width>
           <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="connetToVirtualButton">
+        <property name="text">
+         <string>connect to virtual</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/main.qrc">
+          <normaloff>:/new/prefix1/server_connect.png</normaloff>:/new/prefix1/server_connect.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
        </widget>
@@ -120,15 +101,31 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QPushButton" name="pushButton_2">
+      <item row="0" column="0">
+       <widget class="QPushButton" name="pushButton_3">
         <property name="text">
-         <string>AUTOPILOT
-(press any js key to stop)</string>
+         <string>connect to real device</string>
         </property>
         <property name="icon">
          <iconset resource="../../resources/main.qrc">
-          <normaloff>:/new/prefix1/robot.png</normaloff>:/new/prefix1/robot.png</iconset>
+          <normaloff>:/new/prefix1/connect.png</normaloff>:/new/prefix1/connect.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="JoyButton">
+        <property name="text">
+         <string>JoyStick mode</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/main.qrc">
+          <normaloff>:/new/prefix1/controller.png</normaloff>:/new/prefix1/controller.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -151,19 +148,36 @@
         </property>
        </spacer>
       </item>
-      <item row="0" column="1">
-       <widget class="QPushButton" name="JoyButton">
+      <item row="2" column="4">
+       <widget class="QPushButton" name="processingParametersButton">
         <property name="text">
-         <string>JoyStick mode</string>
+         <string/>
         </property>
         <property name="icon">
          <iconset resource="../../resources/main.qrc">
-          <normaloff>:/new/prefix1/controller.png</normaloff>:/new/prefix1/controller.png</iconset>
+          <normaloff>:/new/prefix1/advanced.png</normaloff>:/new/prefix1/advanced.png</iconset>
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="6">
+       <widget class="QPushButton" name="cameraModelButton">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../resources/main.qrc">
+          <normaloff>:/new/prefix1/advanced.png</normaloff>:/new/prefix1/advanced.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
        </widget>
@@ -194,14 +208,17 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="6">
-       <widget class="QPushButton" name="cameraModelButton">
+      <item row="0" column="7">
+       <widget class="QPushButton" name="aboutButton">
+        <property name="toolTip">
+         <string>About</string>
+        </property>
         <property name="text">
          <string/>
         </property>
         <property name="icon">
          <iconset resource="../../resources/main.qrc">
-          <normaloff>:/new/prefix1/advanced.png</normaloff>:/new/prefix1/advanced.png</iconset>
+          <normaloff>:/new/prefix1/info_rhombus.png</normaloff>:/new/prefix1/info_rhombus.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -396,7 +413,7 @@
    <slot>settingsWidget()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1608</x>
+     <x>1563</x>
      <y>113</y>
     </hint>
     <hint type="destinationlabel">
@@ -412,8 +429,8 @@
    <slot>aboutWidget()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1563</x>
-     <y>113</y>
+     <x>1653</x>
+     <y>57</y>
     </hint>
     <hint type="destinationlabel">
      <x>1661</x>
@@ -428,7 +445,7 @@
    <slot>startCamera()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1563</x>
+     <x>1518</x>
      <y>57</y>
     </hint>
     <hint type="destinationlabel">
@@ -444,8 +461,8 @@
    <slot>showCameraParametersWidget()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1581</x>
-     <y>34</y>
+     <x>1563</x>
+     <y>52</y>
     </hint>
     <hint type="destinationlabel">
      <x>1666</x>
@@ -460,12 +477,28 @@
    <slot>showCameraModelWidget()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1642</x>
-     <y>41</y>
+     <x>1608</x>
+     <y>57</y>
     </hint>
     <hint type="destinationlabel">
      <x>1530</x>
      <y>129</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>processingParametersButton</sender>
+   <signal>released()</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>showProcessingParametersWidget()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1500</x>
+     <y>156</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1505</x>
+     <y>177</y>
     </hint>
    </hints>
   </connection>
@@ -488,5 +521,6 @@
   <slot>startCamera()</slot>
   <slot>showCameraParametersWidget()</slot>
   <slot>showCameraModelWidget()</slot>
+  <slot>showProcessingParametersWidget()</slot>
  </slots>
 </ui>

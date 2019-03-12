@@ -17,7 +17,7 @@ class GrabReceiver : public ImageInterfaceReceiver
 public:
     std::timed_mutex waitLock;
 
-    virtual void newFrameReadyCallback(frame_data_t frameData) override
+    virtual void newFrameReadyCallback(ImageCaptureInterface::FrameMetadata frameData) override
     {
        waitLock.unlock();
     }

@@ -161,7 +161,7 @@ ImageCaptureInterface::FramePair AviCapture::getFrame()
     {
         //SYNC_PRINT(("AviCapture::getFrame(): New notification sending\n"));
         count++;
-        frame_data_t frameData;
+        ImageCaptureInterface::FrameMetadata frameData;
         frameData.timestamp = (count * 10);
         notifyAboutNewFrame(frameData);
     } else {
@@ -177,7 +177,7 @@ ImageCaptureInterface::CapErrorCode AviCapture::startCapture()
 {
 //  return ImageCaptureInterface::CapSuccess1Cam;
     SYNC_PRINT(("AviCapture::startCapture(): called\n"));
-    frame_data_t frameData;
+    ImageCaptureInterface::FrameMetadata frameData;
 
     //mIsPaused = false;
 
@@ -206,7 +206,7 @@ ImageCaptureInterface::CapErrorCode AviCapture::pauseCapture()
 ImageCaptureInterface::CapErrorCode AviCapture::nextFrame()
 {
     count++;
-    frame_data_t frameData;
+    ImageCaptureInterface::FrameMetadata frameData;
     frameData.timestamp = (count * 10);
     SYNC_PRINT(("AviCapture::nextFrame(): sending notification\n"));
     notifyAboutNewFrame(frameData);
