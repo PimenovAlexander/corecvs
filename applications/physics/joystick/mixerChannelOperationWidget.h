@@ -15,6 +15,11 @@ public:
     explicit MixerChannelOperationWidget(QWidget *parent = 0);
     ~MixerChannelOperationWidget();
 
+public slots:
+    void setInput (int input );
+    void setOutput(int output);
+
+
 private:
     Ui::MixerChannelOperationWidget *ui;
 };

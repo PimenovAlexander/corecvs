@@ -2,6 +2,7 @@
 #define JOYSTICKOPTIONSWIDGET_H
 
 #include "joystickInterface.h"
+#include "mixerChannelOperationWidget.h"
 
 #include <QWidget>
 
@@ -65,8 +66,8 @@ private:
 
     JoystickListener *mInterface = NULL;
 
-    std::vector<QPushButton *> mButtonWidgets;
-    std::vector<QSlider     *> mAxisWidgets;
+    std::vector<QPushButton                 *> mButtonWidgets;
+    std::vector<MixerChannelOperationWidget *> mAxisWidgets;
 
 };
 
