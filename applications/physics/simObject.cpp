@@ -30,10 +30,12 @@ void SimObject::addMoment(const Vector3dd &moment)
 void SimObject::tick(double deltaT)
 {    
     position += velocity * deltaT;
-    velocity += F * mass * deltaT;
+    velocity += (F / mass) * deltaT;
 
-    /* We should use inertiaTensor here */
-    Quaternion angularAcceleration = Quaternion::Rotation(M, M.l2Metric());
+    /* We should carefully use inertiaTensor here. It seems like it changes with the frame of reference */
+
+    Vector3dd W = inertiaTensor.inv() * M;
+    Quaternion angularAcceleration = Quaternion::Rotation(W, W.l2Metric());
 
     orientation     = Quaternion::pow(angularVelocity    , deltaT) ^ orientation;
     angularVelocity = Quaternion::pow(angularAcceleration, deltaT) ^ angularVelocity;
