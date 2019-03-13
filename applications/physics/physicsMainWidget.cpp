@@ -377,6 +377,11 @@ void PhysicsMainWidget::showGraphDialog()
     mGraphDialog.raise();
 }
 
+void PhysicsMainWidget::startSimuation()
+{
+    mJoystickSettings.openJoystick();
+}
+
 void PhysicsMainWidget::frameValuesUpdate()
 {
     std::thread thr([this]()

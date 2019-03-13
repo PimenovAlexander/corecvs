@@ -75,7 +75,8 @@ public:
     /** Main body properties **/
     /** Mass in kilograms **/
     double mass = 1;
-    corecvs::Matrix33 inertiaTensor;
+    /** Assuming spheroid **/
+    corecvs::Matrix33 inertiaTensor = corecvs::Matrix33::Identity();
 
 
     /** Main magick **/

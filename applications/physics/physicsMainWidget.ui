@@ -277,7 +277,7 @@
          </widget>
         </item>
         <item row="1" column="2">
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="joystickParametersButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -403,7 +403,7 @@
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QPushButton" name="pushButton_4">
+         <widget class="QPushButton" name="graphButton">
           <property name="toolTip">
            <string>Graphs</string>
           </property>
@@ -413,6 +413,26 @@
           <property name="icon">
            <iconset resource="../../resources/main.qrc">
             <normaloff>:/new/prefix1/Line Chart.png</normaloff>:/new/prefix1/Line Chart.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QPushButton" name="startButton">
+          <property name="toolTip">
+           <string>Start</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/main.qrc">
+            <normaloff>:/new/prefix1/play.png</normaloff>:/new/prefix1/play.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -508,7 +528,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButton</sender>
+   <sender>joystickParametersButton</sender>
    <signal>released()</signal>
    <receiver>PhysicsMainWidget</receiver>
    <slot>settingsWidget()</slot>
@@ -620,7 +640,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButton_4</sender>
+   <sender>graphButton</sender>
    <signal>released()</signal>
    <receiver>PhysicsMainWidget</receiver>
    <slot>showGraphDialog()</slot>
@@ -632,6 +652,22 @@
     <hint type="destinationlabel">
      <x>1667</x>
      <y>233</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>startButton</sender>
+   <signal>released()</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>startSimuation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1492</x>
+     <y>74</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1666</x>
+     <y>266</y>
     </hint>
    </hints>
   </connection>
@@ -656,5 +692,6 @@
   <slot>showCameraModelWidget()</slot>
   <slot>showProcessingParametersWidget()</slot>
   <slot>showGraphDialog()</slot>
+  <slot>startSimuation()</slot>
  </slots>
 </ui>

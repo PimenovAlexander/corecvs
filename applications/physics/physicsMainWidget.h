@@ -78,7 +78,7 @@ public:
 /** Joystick **/
 public:
     JoystickOptionsWidget mJoystickSettings;
-    Mesh3DScene *mesh;
+    Mesh3DScene *mesh = NULL;
 
 /** About: We have to use it to satisfy the icons license **/
     AboutDialog mAboutWidget;    
@@ -119,6 +119,7 @@ public:
 
 public slots:
     /* Let it be here so far */
+    void startSimuation();
 
     void mainAction();
     void joystickUpdated(JoystickState state);
