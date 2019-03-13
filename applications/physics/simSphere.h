@@ -15,7 +15,7 @@ public:
     double radius = 10.0;
 
 
-    void drawMesh(corecvs::Vector3dd coords, double radius);
+    void drawMesh(corecvs::Vector3dd position, double radius);
     SimSphere(Vector3dd c, double r);
 };
 

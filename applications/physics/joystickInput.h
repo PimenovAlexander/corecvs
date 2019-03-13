@@ -14,7 +14,7 @@ public:
     struct AxisState { short x, y; };
 
     void start();
-
+    bool active=false;
     int& yawValue;
     int& rollValue;
     int& pitchValue;
@@ -35,7 +35,7 @@ private:
     int midThrottle=1350;
     void startJoyStickMode();
     int countOfSticks=0;
-    int currentMode=0;
+    int currentMode=4;
     bool autopilotMode=false;
     bool rtPressed=false;
     bool ltPressed=false;

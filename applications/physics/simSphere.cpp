@@ -27,7 +27,7 @@ void SimSphere::saveMesh(const std::string &name)
     mesh->mulTransform(copterPos);
 
     mesh->setColor(RGBColor::Red());
-    mesh->addIcoSphere(coords, 2, 2);
+    mesh->addIcoSphere(position, 2, 2);
 
     mesh->popTransform();
 
@@ -61,5 +61,5 @@ void SimSphere::drawMesh(Vector3dd coords, double radius)
 
 void SimSphere::addToMesh(Mesh3D &mesh)
 {
-    mesh.addIcoSphere(coords, radius, 3);
+    mesh.addIcoSphere(position, radius, 3);
 }

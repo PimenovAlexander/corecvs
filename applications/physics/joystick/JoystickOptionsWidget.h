@@ -14,8 +14,9 @@ class JoystickOptionsWidget;
 
 Q_DECLARE_METATYPE(JoystickState);
 
-class JoystickListener : public JoystickInterface
+class JoystickListener : public QObject, public JoystickInterface
 {
+    Q_OBJECT
 public:
     JoystickOptionsWidget *mTarget = NULL;
 
@@ -33,6 +34,10 @@ public:
     virtual void newAxisEvent      (int /*axis  */, int /*value*/, int /*timestamp*/) override {}
     virtual void newJoystickState  (JoystickState state) override;
 
+signals:
+    void joystickUpdated(JoystickState state);
+
+public:
     virtual ~JoystickListener(){}
 };
 
@@ -60,6 +65,9 @@ public slots:
     void reconfigure(JoystickConfiguration &conf);
 
     void newData(JoystickState state);
+
+signals:
+    void joystickUpdated(JoystickState state);
 
 private:
     Ui::JoystickOptionsWidget *ui;

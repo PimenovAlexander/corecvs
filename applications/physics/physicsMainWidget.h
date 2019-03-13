@@ -13,10 +13,12 @@
 #include <flowFabricControlWidget.h>
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
+#include <copter/quad.h>
 
 #include "clientSender.h"
 #include "copterInputsWidget.h"
 #include "frameProcessor.h"
+#include "protoautopilot.h"
 #include "qComController.h"
 
 
@@ -54,7 +56,7 @@ class PhysicsMainWidget : public QWidget
 public:
     explicit PhysicsMainWidget(QWidget *parent = 0);
     QSerialPort serialPort;
-
+    ProtoAutoPilot II;
     QByteArray *flyCommandWriteData = NULL;
     QByteArray getDataFromSticks();
 
@@ -76,7 +78,8 @@ public:
 public:
     JoystickOptionsWidget mJoystickSettings;
     Mesh3DScene *mesh;
-    /** We have to use it to satisfy the icons license **/
+
+/** About: We have to use it to satisfy the icons license **/
     AboutDialog mAboutWidget;
 
 public slots:
@@ -104,6 +107,19 @@ public:
 public slots:
     void showProcessingParametersWidget();
 
+/** Quad **/
+public:
+    JoystickState joystickState;
+    CopterInputs inputs;
+    QTimer copterTimer;
+    Quad copter;
+
+public slots:
+    /* Let it be here so far */
+
+    void mainAction();
+    void joystickUpdated(JoystickState state);
+
 /** UI show block **/
 public:
     std::mutex uiMutex;
@@ -111,6 +127,8 @@ public:
 
 public slots:
     void updateUi();
+    void keepAliveJoyStick();
+
 
 
 

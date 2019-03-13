@@ -19,11 +19,21 @@
 
 #include <bitset>
 
-#include <core/fileformats/meshLoader.h>
+#include "core/fileformats/meshLoader.h"
+#include "copter/quad.h"
 
 
 using namespace corecvs;
 
+
+TEST(Quad, drawQuad)
+{
+    Quad quad;
+    Mesh3D mesh;
+    mesh.switchColor();
+    quad.drawMyself(mesh);
+    mesh.dumpPLY("copter.ply");
+}
 
 TEST(Physics, checkFrSky)
 {

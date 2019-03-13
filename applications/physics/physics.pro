@@ -40,7 +40,9 @@ HEADERS += \
     mixer/controlsMixer.h \
     copterInputs.h \
     joystick/mixerChannelOperationWidget.h \
-    frameProcessor.h
+    frameProcessor.h \
+    protoautopilot.h \
+    copter/quad.h
 
 SOURCES += \
     physicsMainWidget.cpp \
@@ -60,7 +62,9 @@ SOURCES += \
     mixer/controlsMixer.cpp \
     copterInputs.cpp \
     joystick/mixerChannelOperationWidget.cpp \
-    frameProcessor.cpp
+    frameProcessor.cpp \
+    protoautopilot.cpp \
+    copter/quad.cpp
 
 FORMS += \
     physicsMainWidget.ui \

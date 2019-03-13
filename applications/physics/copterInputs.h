@@ -30,6 +30,8 @@ public:
     CopterInputs();
 
     static const char *getName(ChannelID value);
+    void print();
+
 };
 
 

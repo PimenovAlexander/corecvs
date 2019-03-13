@@ -52,6 +52,9 @@ void JoystickOptionsWidget::openJoystick()
     JoystickConfiguration conf = JoystickListener::getConfiguration(mInterface->mDeviceName.c_str());
     conf.print();
     reconfigure(conf);
+    QObject::connect(mInterface, SIGNAL(joystickUpdated(JoystickState)), this, SLOT(newData(JoystickState)), Qt::QueuedConnection);
+    QObject::connect(mInterface, SIGNAL(joystickUpdated(JoystickState)), this, SIGNAL(joystickUpdated(JoystickState)), Qt::QueuedConnection);
+
     mInterface->start();
     ui-> openPushButton->setEnabled(false);
     ui->closePushButton->setEnabled(true);
@@ -133,14 +136,17 @@ void JoystickOptionsWidget::newData(JoystickState state)
     for (size_t i = 0; i < std::min(state.button.size(), mButtonWidgets.size()); i++)
     {
         mButtonWidgets[i]->setChecked(state.button[i]);
-        SYNC_PRINT(("Setting button to %d\n", state.button[i]));
+        // SYNC_PRINT(("Setting button to %d\n", state.button[i]));
     }
 
 }
 
 void JoystickListener::newJoystickState(JoystickState state)
 {
+    emit joystickUpdated(state);
+#if 0
     QMetaObject::invokeMethod( mTarget, "newData", Qt::QueuedConnection,
                                Q_ARG( JoystickState, state ) );
+#endif
 
 }

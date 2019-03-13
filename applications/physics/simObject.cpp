@@ -9,27 +9,22 @@
 using namespace std;
 using namespace corecvs;
 
-void SimObject::addForce(const corecvs::Vector3dd &_force)
+
+void SimObject::startTick()
 {
-    force += _force;
+    F = Vector3dd::Zero();
+    M = Vector3dd::Zero();
 }
 
-void SimObject::addImpulse(const Vector3dd &_force)
+void SimObject::addForce(const Force &force)
 {
-}
-
-void SimObject::setForce(const Vector3dd &_force)
-{
-    force = Vector3dd(_force);
-}
-
-void SimObject::setForce(double x,double y, double z)
-{
-    force = Vector3dd(x, y, z);
+    F += force.netForce();
+    M += force.getM();
 }
 
 void SimObject::tick(double deltaT)
 {    
+
 
 }
 
@@ -38,15 +33,17 @@ void SimObject::addToMesh(Mesh3D &mesh)
     SYNC_PRINT(("Don't know how to do this"));
 }
 
-void SimObject::setCoords(Vector3dd c)
+void SimObject::setCoords(const Vector3dd &c)
 {
-    this->coords = c;
+    this->position = c;
 }
 
 SimObject::SimObject()
 {
     cout << "SimObject():created" << endl;
 }
+
+
 
 void SimObject::saveMesh(const std::string &/*name*/)
 {

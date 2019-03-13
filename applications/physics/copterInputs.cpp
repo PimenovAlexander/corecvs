@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "copterInputs.h"
 
 
@@ -17,6 +18,14 @@ const char *CopterInputs::getName(CopterInputs::ChannelID value)
 
     }
     return "Not in range";
+}
+
+void CopterInputs::print()
+{
+    for (int i = 0; i < CHANNEL_CONTROL_LAST; i++)
+    {
+        printf("%s %d\n", getName((ChannelID)i), axis[i]);
+    }
 }
 
 CopterInputs::CopterInputs()
