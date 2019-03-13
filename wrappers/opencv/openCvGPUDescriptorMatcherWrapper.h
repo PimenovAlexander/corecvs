@@ -2,7 +2,7 @@
 
 #include "core/features2d/descriptorMatcherProvider.h"
 
-#ifndef WITH_OPENCV_3x
+#ifndef WITH_OPENCV_3
 
 namespace cv {
     namespace gpu {

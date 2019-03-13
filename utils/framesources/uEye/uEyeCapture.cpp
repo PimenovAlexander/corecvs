@@ -745,7 +745,7 @@ void UEyeCaptureInterface::SpinThread::run()
 
 
 
-        frame_data_t frameData;
+        ImageCaptureInterface::FrameMetadata frameData;
         if (capInterface->rightCamera.inited) {
             frameData.timestamp = (capInterface->currentLeft->usecsTimeStamp() / 2) + (capInterface->currentRight->usecsTimeStamp() / 2);
         } else {

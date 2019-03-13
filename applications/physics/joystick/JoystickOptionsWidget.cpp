@@ -52,6 +52,9 @@ void JoystickOptionsWidget::openJoystick()
     JoystickConfiguration conf = JoystickListener::getConfiguration(mInterface->mDeviceName.c_str());
     conf.print();
     reconfigure(conf);
+    QObject::connect(mInterface, SIGNAL(joystickUpdated(JoystickState)), this, SLOT(newData(JoystickState)), Qt::QueuedConnection);
+    QObject::connect(mInterface, SIGNAL(joystickUpdated(JoystickState)), this, SIGNAL(joystickUpdated(JoystickState)), Qt::QueuedConnection);
+
     mInterface->start();
     ui-> openPushButton->setEnabled(false);
     ui->closePushButton->setEnabled(true);
@@ -93,24 +96,26 @@ void JoystickOptionsWidget::reconfigure(JoystickConfiguration &conf)
 
     for (int i = 0; i < conf.axisNumber; i++)
     {
-        QSlider *slider = new QSlider();
+        /*QSlider *slider = new QSlider();
         slider->setMinimum(-32767);
         slider->setMaximum( 32767);
         slider->setValue(0);
         slider->setOrientation(Qt::Horizontal);
         slider->setTickPosition(QSlider::TicksBelow);
         slider->setTickInterval(2048);
-        slider->setEnabled(false);
+        slider->setEnabled(false);*/
 
-        mAxisWidgets.push_back(slider);
-        layout->addWidget(slider);
+        MixerChannelOperationWidget *widget = new MixerChannelOperationWidget();
+        mAxisWidgets.push_back(widget);
+        layout->addWidget(widget);
     }
 
     for (int i = 0; i < conf.buttonNumber; i++)
     {
         //QLabel *label = new QLabel("Button");
         QPushButton *button = new QPushButton(QString("Button"));
-        button->setCheckable(false);
+        button->setEnabled(false);
+        button->setCheckable(true);
         mButtonWidgets.push_back(button);
         layout->addWidget(button);
     }
@@ -124,20 +129,24 @@ void JoystickOptionsWidget::newData(JoystickState state)
 
     for (size_t i = 0; i < std::min(state.axis.size(), mAxisWidgets.size()); i++)
     {
-        mAxisWidgets[i]->setValue(state.axis[i]);
-        SYNC_PRINT(("Setting axis to %d\n", state.axis[i]));
+        mAxisWidgets[i]->setInput(state.axis[i]);
+        //SYNC_PRINT(("Setting axis to %d\n", state.axis[i]));
     }
 
     for (size_t i = 0; i < std::min(state.button.size(), mButtonWidgets.size()); i++)
     {
         mButtonWidgets[i]->setChecked(state.button[i]);
+        // SYNC_PRINT(("Setting button to %d\n", state.button[i]));
     }
 
 }
 
 void JoystickListener::newJoystickState(JoystickState state)
 {
+    emit joystickUpdated(state);
+#if 0
     QMetaObject::invokeMethod( mTarget, "newData", Qt::QueuedConnection,
                                Q_ARG( JoystickState, state ) );
+#endif
 
 }

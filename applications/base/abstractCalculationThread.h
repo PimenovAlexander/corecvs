@@ -72,7 +72,7 @@ class AbstractCalculationThread : public QThread
          *
          */
 
-        virtual void newFrameReady(frame_data_t frameData);
+        virtual void newFrameReady(ImageCaptureInterface::FrameMetadata frameData);
 
         /** Pauses calculation. Should only be called as a asynchronous slot function */
         virtual void pauseCalculation();

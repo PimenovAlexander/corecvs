@@ -14,7 +14,138 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <item row="0" column="0" colspan="2">
+   <property name="leftMargin">
+    <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>2</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
+    <number>2</number>
+   </property>
+   <property name="spacing">
+    <number>2</number>
+   </property>
+   <item row="1" column="0">
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="handleWidth">
+      <number>3</number>
+     </property>
+     <widget class="QFrame" name="frame_2">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>1</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>200</width>
+        <height>200</height>
+       </size>
+      </property>
+      <property name="sizeIncrement">
+       <size>
+        <width>500</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_7">
+       <item row="1" column="0">
+        <widget class="QGroupBox" name="groupBox">
+         <property name="maximumSize">
+          <size>
+           <width>350</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="title">
+          <string>Contols</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <property name="spacing">
+           <number>2</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QComboBox" name="comboBox">
+            <property name="currentText">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="CopterInputsWidget" name="inputsWidget" native="true"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QTabWidget" name="tabWidget">
+         <property name="currentIndex">
+          <number>1</number>
+         </property>
+         <widget class="QWidget" name="tab">
+          <attribute name="title">
+           <string>3D View</string>
+          </attribute>
+          <layout class="QGridLayout" name="gridLayout_4">
+           <item row="0" column="0">
+            <widget class="CloudViewDialog" name="cloud" native="true"/>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="tab_2">
+          <attribute name="title">
+           <string>Camera</string>
+          </attribute>
+          <layout class="QGridLayout" name="gridLayout_5">
+           <item row="0" column="0">
+            <widget class="AdvancedImageWidget" name="imageView" native="true"/>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="LoggerWidget" name="logWidget" native="true">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>100</height>
+       </size>
+      </property>
+     </widget>
+    </widget>
+   </item>
+   <item row="0" column="0">
     <widget class="QFrame" name="frame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
@@ -29,6 +160,21 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <property name="spacing">
+       <number>2</number>
+      </property>
       <item row="1" column="1">
        <widget class="QPushButton" name="pushButton_2">
         <property name="text">
@@ -47,42 +193,19 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="4">
-       <widget class="QPushButton" name="aboutButton">
-        <property name="toolTip">
-         <string>About</string>
-        </property>
+      <item row="0" column="0">
+       <widget class="QPushButton" name="pushButton_3">
         <property name="text">
-         <string/>
+         <string>connect to real device</string>
         </property>
         <property name="icon">
          <iconset resource="../../resources/main.qrc">
-          <normaloff>:/new/prefix1/info_rhombus.png</normaloff>:/new/prefix1/info_rhombus.png</iconset>
+          <normaloff>:/new/prefix1/connect.png</normaloff>:/new/prefix1/connect.png</iconset>
         </property>
         <property name="iconSize">
          <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="4">
-       <widget class="QPushButton" name="pushButton_4">
-        <property name="toolTip">
-         <string>Camera</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../../resources/main.qrc">
-          <normaloff>:/new/prefix1/webcam.png</normaloff>:/new/prefix1/webcam.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
        </widget>
@@ -95,36 +218,6 @@
         <property name="icon">
          <iconset resource="../../resources/main.qrc">
           <normaloff>:/new/prefix1/server_connect.png</normaloff>:/new/prefix1/server_connect.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>32</width>
-          <height>32</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <spacer name="horizontalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="0">
-       <widget class="QPushButton" name="pushButton_3">
-        <property name="text">
-         <string>connect to real device</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../../resources/main.qrc">
-          <normaloff>:/new/prefix1/connect.png</normaloff>:/new/prefix1/connect.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -151,128 +244,187 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="5">
-       <widget class="QPushButton" name="pushButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+      <item row="1" column="2">
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
-        <property name="toolTip">
-         <string>Settings</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../../resources/main.qrc">
-          <normaloff>:/new/prefix1/joystick_add.png</normaloff>:/new/prefix1/joystick_add.png</iconset>
-        </property>
-        <property name="iconSize">
+        <property name="sizeHint" stdset="0">
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>40</width>
+          <height>20</height>
          </size>
         </property>
-       </widget>
+       </spacer>
+      </item>
+      <item row="0" column="4" rowspan="2" colspan="2">
+       <layout class="QGridLayout" name="gridLayout_6">
+        <item row="2" column="1">
+         <widget class="QPushButton" name="processingParametersButton">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/main.qrc">
+            <normaloff>:/new/prefix1/advanced.png</normaloff>:/new/prefix1/advanced.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QPushButton" name="pushButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Settings</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/main.qrc">
+            <normaloff>:/new/prefix1/joystick_add.png</normaloff>:/new/prefix1/joystick_add.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="4">
+         <widget class="QPushButton" name="aboutButton">
+          <property name="toolTip">
+           <string>About</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/main.qrc">
+            <normaloff>:/new/prefix1/info_rhombus.png</normaloff>:/new/prefix1/info_rhombus.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QPushButton" name="cameraParametersButton">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/main.qrc">
+            <normaloff>:/new/prefix1/cctv_camera.png</normaloff>:/new/prefix1/cctv_camera.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="QPushButton" name="cameraModelButton">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/main.qrc">
+            <normaloff>:/new/prefix1/advanced.png</normaloff>:/new/prefix1/advanced.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="startCameraButton">
+          <property name="toolTip">
+           <string>Camera</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/main.qrc">
+            <normaloff>:/new/prefix1/webcam.png</normaloff>:/new/prefix1/webcam.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="4">
+         <widget class="QPushButton" name="logShowButton">
+          <property name="toolTip">
+           <string>ShowLog</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/main.qrc">
+            <normaloff>:/new/prefix1/application_view_list.png</normaloff>:/new/prefix1/application_view_list.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QPushButton" name="pushButton_4">
+          <property name="toolTip">
+           <string>Graphs</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/main.qrc">
+            <normaloff>:/new/prefix1/Line Chart.png</normaloff>:/new/prefix1/Line Chart.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QFrame" name="frame_2">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>200</width>
-       <height>200</height>
-      </size>
-     </property>
-     <property name="sizeIncrement">
-      <size>
-       <width>500</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QGroupBox" name="groupBox">
-        <property name="maximumSize">
-         <size>
-          <width>350</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="title">
-         <string>Contols</string>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_3">
-         <item row="0" column="0">
-          <widget class="QComboBox" name="comboBox">
-           <property name="currentText">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="CopterInputsWidget" name="inputsWidget" native="true"/>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QTabWidget" name="tabWidget">
-        <property name="currentIndex">
-         <number>1</number>
-        </property>
-        <widget class="QWidget" name="tab">
-         <attribute name="title">
-          <string>3D View</string>
-         </attribute>
-         <layout class="QGridLayout" name="gridLayout_4">
-          <item row="0" column="0">
-           <widget class="CloudViewDialog" name="cloud" native="true"/>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="tab_2">
-         <attribute name="title">
-          <string>Camera</string>
-         </attribute>
-         <layout class="QGridLayout" name="gridLayout_5">
-          <item row="0" column="0">
-           <widget class="AdvancedImageWidget" name="imageView" native="true"/>
-          </item>
-         </layout>
-        </widget>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="LoggerWidget" name="logWidget" native="true">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>100</height>
-      </size>
-     </property>
     </widget>
    </item>
   </layout>
@@ -314,8 +466,8 @@
    <slot>startRealMode()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>182</x>
-     <y>96</y>
+     <x>190</x>
+     <y>63</y>
     </hint>
     <hint type="destinationlabel">
      <x>503</x>
@@ -346,8 +498,8 @@
    <slot>startVirtualMode()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>522</x>
-     <y>96</y>
+     <x>190</x>
+     <y>131</y>
     </hint>
     <hint type="destinationlabel">
      <x>833</x>
@@ -362,8 +514,8 @@
    <slot>settingsWidget()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1637</x>
-     <y>119</y>
+     <x>1570</x>
+     <y>92</y>
     </hint>
     <hint type="destinationlabel">
      <x>1662</x>
@@ -378,8 +530,8 @@
    <slot>aboutWidget()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1653</x>
-     <y>99</y>
+     <x>1660</x>
+     <y>46</y>
     </hint>
     <hint type="destinationlabel">
      <x>1661</x>
@@ -388,18 +540,98 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButton_4</sender>
+   <sender>startCameraButton</sender>
    <signal>released()</signal>
    <receiver>PhysicsMainWidget</receiver>
    <slot>startCamera()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1631</x>
-     <y>41</y>
+     <x>1525</x>
+     <y>46</y>
     </hint>
     <hint type="destinationlabel">
      <x>1586</x>
      <y>167</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cameraParametersButton</sender>
+   <signal>released()</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>showCameraParametersWidget()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1570</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1666</x>
+     <y>115</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cameraModelButton</sender>
+   <signal>released()</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>showCameraModelWidget()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1615</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1530</x>
+     <y>129</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>processingParametersButton</sender>
+   <signal>released()</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>showProcessingParametersWidget()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1525</x>
+     <y>138</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1505</x>
+     <y>177</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>logShowButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>logWidget</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1642</x>
+     <y>110</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1563</x>
+     <y>631</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_4</sender>
+   <signal>released()</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>showGraphDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1457</x>
+     <y>76</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1667</x>
+     <y>233</y>
     </hint>
    </hints>
   </connection>
@@ -420,5 +652,9 @@
   <slot>settingsWidget()</slot>
   <slot>aboutWidget()</slot>
   <slot>startCamera()</slot>
+  <slot>showCameraParametersWidget()</slot>
+  <slot>showCameraModelWidget()</slot>
+  <slot>showProcessingParametersWidget()</slot>
+  <slot>showGraphDialog()</slot>
  </slots>
 </ui>

@@ -2,6 +2,7 @@
 #define JOYSTICKOPTIONSWIDGET_H
 
 #include "joystickInterface.h"
+#include "mixerChannelOperationWidget.h"
 
 #include <QWidget>
 
@@ -13,8 +14,9 @@ class JoystickOptionsWidget;
 
 Q_DECLARE_METATYPE(JoystickState);
 
-class JoystickListener : public JoystickInterface
+class JoystickListener : public QObject, public JoystickInterface
 {
+    Q_OBJECT
 public:
     JoystickOptionsWidget *mTarget = NULL;
 
@@ -32,6 +34,10 @@ public:
     virtual void newAxisEvent      (int /*axis  */, int /*value*/, int /*timestamp*/) override {}
     virtual void newJoystickState  (JoystickState state) override;
 
+signals:
+    void joystickUpdated(JoystickState state);
+
+public:
     virtual ~JoystickListener(){}
 };
 
@@ -60,13 +66,16 @@ public slots:
 
     void newData(JoystickState state);
 
+signals:
+    void joystickUpdated(JoystickState state);
+
 private:
     Ui::JoystickOptionsWidget *ui;
 
     JoystickListener *mInterface = NULL;
 
-    std::vector<QPushButton *> mButtonWidgets;
-    std::vector<QSlider     *> mAxisWidgets;
+    std::vector<QPushButton                 *> mButtonWidgets;
+    std::vector<MixerChannelOperationWidget *> mAxisWidgets;
 
 };
 

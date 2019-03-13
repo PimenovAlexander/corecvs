@@ -20,6 +20,7 @@ QT += serialport
 INCLUDEPATH += .
 INCLUDEPATH += joystick
 INCLUDEPATH += radio
+INCLUDEPATH += mixer
 
 
 HEADERS += \
@@ -36,7 +37,12 @@ HEADERS += \
     radio/frSkyMultimodule.h \
     mainObject.h \
     copterInputsWidget.h \
-    protoautopilot.h
+    mixer/controlsMixer.h \
+    copterInputs.h \
+    joystick/mixerChannelOperationWidget.h \
+    frameProcessor.h \
+    protoautopilot.h \
+    copter/quad.h
 
 SOURCES += \
     physicsMainWidget.cpp \
@@ -53,12 +59,25 @@ SOURCES += \
     radio/frSkyMultimodule.cpp \
     mainObject.cpp \
     copterInputsWidget.cpp \
-    protoautopilot.cpp
+    mixer/controlsMixer.cpp \
+    copterInputs.cpp \
+    joystick/mixerChannelOperationWidget.cpp \
+    frameProcessor.cpp \
+    protoautopilot.cpp \
+    copter/quad.cpp
 
 FORMS += \
     physicsMainWidget.ui \
     joystick/JoystickOptionsWidget.ui \
-    copterInputsWidget.ui
+    copterInputsWidget.ui \
+    joystick/mixerChannelOperationWidget.ui
 
 #RESOURCES += ../../resources/main.qrc
+
+#HEADERS += xml/generated/*.h
+#SOURCES += xml/generated/*.cpp
+
+OTHER_FILES += xml/physics.xml
+OTHER_FILES += ../../tools/generator/regen-physics.sh
+
 

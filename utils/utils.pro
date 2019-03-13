@@ -99,18 +99,15 @@ HEADERS += \
     corestructs/cameraModel/featurePointControlWidget.h \
     uis/aboutPropsTableWidget.h \
     uis/histogramDepthDialog.h \
-    3d/sceneShaded.h \
     corestructs/reflectionWidget.h \
-    3d/shadedSceneControlWidget.h \
     scripting/coreToScript.h \
-    3d/billboardCaption3DScene.h \
-    3d/gCodeScene.h \
     corestructs/cameraModel/fixtureGeometryControlWidget.h \
     corestructs/pointerFieldWidget.h \
     corestructs/widgetBlockHarness.h \
     corestructs/cameraModel/fixtureGlobalParametersWidget.h \
     framesources/imageCaptureInterfaceQt.h \
-    corestructs/cameraModel/fixtureCameraControlWidget.h
+    corestructs/cameraModel/fixtureCameraControlWidget.h \
+    corestructs/flowFabricControlWidget.h
 
 SOURCES += \
 #    frames.cpp \
@@ -188,6 +185,7 @@ SOURCES += \
     corestructs/cameraModel/fixtureGlobalParametersWidget.cpp \
     framesources/imageCaptureInterfaceQt.cpp \
     corestructs/cameraModel/fixtureCameraControlWidget.cpp \
+    corestructs/flowFabricControlWidget.cpp
 
 
 FORMS += \
@@ -203,7 +201,8 @@ FORMS += \
     corestructs/cameraModel/fixtureGeometryControlWidget.ui \
     corestructs/pointerFieldWidget.ui \
     corestructs/cameraModel/fixtureGlobalParametersWidget.ui \
-    corestructs/cameraModel/fixtureCameraControlWidget.ui
+    corestructs/cameraModel/fixtureCameraControlWidget.ui \
+    corestructs/flowFabricControlWidget.ui
 
 # =============================================================
 

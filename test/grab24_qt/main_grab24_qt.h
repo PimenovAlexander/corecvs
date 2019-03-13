@@ -17,7 +17,7 @@ public:
     FrameProcessor(QObject *parent = 0);
 
 public slots:
-    void processFrame(frame_data_t frameData);
+    void processFrame(ImageCaptureInterface::FrameMetadata frameData);
 
 };
 

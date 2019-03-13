@@ -1,6 +1,10 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "openCvImageRemapper.h"
 
+#ifdef WITH_OPENCV_GPU
+#include <opencv2/core/cuda.hpp>
+#endif
+
 namespace corecvs
 {
 
@@ -93,8 +97,7 @@ void convertT( const corecvs::DisplacementBuffer &transform, T &map0, T &map1 )
 	map1 = T(_map1);
 }
 
-#   ifdef WITH_OPENCV_GPU
-#       ifdef WITH_OPENCV_3x
+#ifdef WITH_OPENCV_GPU
 // cuda version
 void convert( const corecvs::DisplacementBuffer &transform, cv::cuda::GpuMat &map0, cv::cuda::GpuMat &map1 )
 {
@@ -106,21 +109,6 @@ void convert( const corecvs::DisplacementBuffer &transform, cv::UMat &map0, cv::
 {
     convertT( transform, map0, map1 );
 }
+#endif
 
-#       else
-// cuda version
-void convert( const corecvs::DisplacementBuffer &transform, cv::gpu::GpuMat &map0, cv::gpu::GpuMat &map1 )
-{
-    convertT( transform, map0, map1 );
 }
-
-// openCL version
-void convert( const corecvs::DisplacementBuffer &transform, cv::ocl::oclMat &map0, cv::ocl::oclMat &map1 )
-{
-    convertT( transform, map0, map1 );
-}
-
-#       endif
-#   endif
-
-};

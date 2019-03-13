@@ -27,11 +27,7 @@ void MainObject::tick(double deltaT)
 
     for (size_t i = 0; i < objects.size(); ++i)
     {
-        //objects[i]->coords += deltaPos;             //If uncomment ui thread will crash after pressing start virtual mode ????????????????
-
-        objects[i]->setCoords(objects[i]->coords+deltaPos);  //Also ui thread crash
-
-        //objects[i]->setCoords(posCenter);             //Normalno
+      //  objects[i]->setCoords(objects[i]->coords+deltaPos);
     }
 
     /* This seems to be not needed
@@ -46,7 +42,7 @@ void MainObject::setCenterOfMass()
 {
     for (size_t i = 0; i < objects.size(); ++i)
     {
-        massCenter += objects[i]->mass * objects[i]->coords;
+        massCenter += objects[i]->mass * objects[i]->position;
         systemMass += objects[i]->mass;
     }
     massCenter = massCenter / systemMass;

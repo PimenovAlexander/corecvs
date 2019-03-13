@@ -8,11 +8,17 @@
 #include <JoystickOptionsWidget.h>
 #include <QWidget>
 #include <aboutDialog.h>
+#include <cameraModelParametersControlWidget.h>
+#include <capSettingsDialog.h>
+#include <flowFabricControlWidget.h>
+#include <graphPlotDialog.h>
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
+#include <copter/quad.h>
 
 #include "clientSender.h"
 #include "copterInputsWidget.h"
+#include "frameProcessor.h"
 #include "protoautopilot.h"
 #include "qComController.h"
 
@@ -26,38 +32,6 @@
 namespace Ui {
     class PhysicsMainWidget;
 }
-
-
-
-class ImageCaptureInterfaceQt;
-class PhysicsMainWidget;
-
-
-/**
- * Ok this a draft. In general most probably we should not depend on QThread.
- **/
-class FrameProcessor : public QThread
-{
-    Q_OBJECT
-public:
-
-    PhysicsMainWidget *target = NULL;
-    ImageCaptureInterfaceQt *input = NULL;
-    FrameProcessor(QObject *parent = 0) : QThread(parent)
-    {}
-
-public slots:
-    /** NB: This is a place to process video **/
-    void processFrame(frame_data_t frameData);
-
-
-    virtual void run()
-    {
-        exec();
-    }
-};
-
-
 
 
 
@@ -105,8 +79,9 @@ public:
 public:
     JoystickOptionsWidget mJoystickSettings;
     Mesh3DScene *mesh;
-    /** We have to use it to satisfy the icons license **/
-    AboutDialog mAboutWidget;
+
+/** About: We have to use it to satisfy the icons license **/
+    AboutDialog mAboutWidget;    
 
 public slots:
     void settingsWidget();
@@ -115,11 +90,38 @@ public slots:
 
 /** Camera **/
 public:
-    FrameProcessor *processor = NULL;
+    FrameProcessor *mProcessor = NULL;
+    CapSettingsDialog mCameraParametersWidget;
+    CameraModelParametersControlWidget mModelParametersWidget;
+    CameraModel mCameraModel;
 
 public slots:
     /* Add paused and stop ASAP */
     void startCamera();
+    void showCameraParametersWidget();
+    void showCameraModelWidget();
+
+/** Processing **/
+public:
+    FlowFabricControlWidget mFlowFabricControlWidget;
+    GraphPlotDialog mGraphDialog;
+
+public slots:
+    void showProcessingParametersWidget();
+    void showGraphDialog();
+
+/** Quad **/
+public:
+    JoystickState joystickState;
+    CopterInputs inputs;
+    QTimer copterTimer;
+    Quad copter;
+
+public slots:
+    /* Let it be here so far */
+
+    void mainAction();
+    void joystickUpdated(JoystickState state);
 
 /** UI show block **/
 public:
@@ -128,10 +130,9 @@ public:
 
 public slots:
     void updateUi();
-
-
-
     void keepAliveJoyStick();
+
+
 private slots:
 
 

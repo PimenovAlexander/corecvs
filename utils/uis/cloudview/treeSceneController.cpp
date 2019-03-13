@@ -89,7 +89,7 @@ TreeSceneController::TreeSceneController(
 
 void TreeSceneController::generateWidget()
 {
-    SYNC_PRINT(("TreeSceneController::generateWidget():called\n"));
+    // SYNC_PRINT(("TreeSceneController::generateWidget():called\n"));
     if (mObject.isNull())
         return;
 
@@ -107,7 +107,7 @@ void TreeSceneController::generateWidget()
 
 void TreeSceneController::replaceScene(QSharedPointer<Scene3D> newObject)
 {
-    SYNC_PRINT(("TreeSceneController::replaceScene():called\n"));
+    //SYNC_PRINT(("TreeSceneController::replaceScene():called\n"));
 
     if (newObject.isNull()) {
         SYNC_PRINT(("TreeSceneController::replaceScene():newObject is null\n"));
@@ -142,7 +142,7 @@ void TreeSceneController::replaceScene(QSharedPointer<Scene3D> newObject)
         }
     }
 
-    SYNC_PRINT(("TreeSceneController::replaceScene(): name=%s, visible=%s\n", mName.toLatin1().constData(), mObject->visible ? "visible" : "hidden"));
+    // SYNC_PRINT(("TreeSceneController::replaceScene(): name=%s, visible=%s\n", mName.toLatin1().constData(), mObject->visible ? "visible" : "hidden"));
 
     newObject->visible = mObject->visible;
     mObject = newObject;

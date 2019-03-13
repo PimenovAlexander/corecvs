@@ -32,39 +32,6 @@
 using namespace std;
 
 
-void FrameProcessor::processFrame(frame_data_t frameData)
-{
-    static int count=0;
-    count++;
-
-    static bool skipping = false;
-    if (skipping)
-    {
-        return;
-    }
-    skipping = true;
-    QApplication::processEvents();
-    skipping = false;
-
-
-
-//    SYNC_PRINT(("New frame arrived\n"));
-    ImageCaptureInterface::FramePair pair = input->getFrameRGB24();
-    RGB24Buffer * result = pair.rgbBufferLeft();
-    pair.setRgbBufferLeft(NULL);
-    pair.freeBuffers();
-
-    target->uiMutex.lock();
-    target->uiQueue.emplace_back(new DrawRequestData);
-    target->uiQueue.back()->mImage = result;
-    target->uiMutex.unlock();
-
-    target->updateUi();
-
-}
-
-
-
 PhysicsMainWidget::PhysicsMainWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::PhysicsMainWidget)
@@ -84,9 +51,22 @@ PhysicsMainWidget::PhysicsMainWidget(QWidget *parent) :
     ui->comboBox->addItem("RT/LT Full mode");
 
 
-
     frameValuesUpdate();
 
+    PinholeCameraIntrinsics *intr = new PinholeCameraIntrinsics(640, 480, degToRad(60));
+    mCameraModel.intrinsics.reset(intr);
+    mCameraModel.nameId = "Copter Main Camera";
+    mModelParametersWidget.setParameters(mCameraModel);
+
+    /* Move this to other thread completly */
+    copterTimer.setInterval(30);
+    copterTimer.setSingleShot(false);
+    connect(&copterTimer, SIGNAL(timeout()), this, SLOT(mainAction()));
+    copterTimer.start();
+
+    connect(&mJoystickSettings, SIGNAL(joystickUpdated(JoystickState)), this, SLOT(joystickUpdated(JoystickState)));
+
+    ui->logShowButton->setChecked(false);
 }
 
 PhysicsMainWidget::~PhysicsMainWidget()
@@ -337,8 +317,8 @@ void PhysicsMainWidget::keepAlive(){
 void PhysicsMainWidget::startCamera()
 {
     /* We should prepare calculator in some other place */
-    processor = new FrameProcessor();
-    processor->target = this;
+    mProcessor = new FrameProcessor();
+    mProcessor->target = this;
 
     std::string inputString = "v4l2:/dev/video0";
 
@@ -359,17 +339,42 @@ void PhysicsMainWidget::startCamera()
         return;
     }
 
+    mCameraParametersWidget.setCaptureInterface(rawInput);
 
-    processor->input = rawInput;
+    mProcessor->input = rawInput;
     QObject::connect(
-        rawInput  , SIGNAL(newFrameReady(frame_data_t)),
-        processor,   SLOT(processFrame (frame_data_t)), Qt::QueuedConnection);
+        rawInput  , SIGNAL(newFrameReady(ImageCaptureInterface::FrameMetadata)),
+        mProcessor,   SLOT(processFrame (ImageCaptureInterface::FrameMetadata)), Qt::QueuedConnection);
 
 
     /* All ready. Let's rock */
-    processor->start();
+    mProcessor->start();
     rawInput->startCapture();    
 
+}
+
+void PhysicsMainWidget::showCameraParametersWidget()
+{
+    mCameraParametersWidget.show();
+    mCameraParametersWidget.raise();
+}
+
+void PhysicsMainWidget::showCameraModelWidget()
+{
+    mModelParametersWidget.show();
+    mModelParametersWidget.raise();
+}
+
+void PhysicsMainWidget::showProcessingParametersWidget()
+{
+    mFlowFabricControlWidget.show();
+    mFlowFabricControlWidget.raise();
+}
+
+void PhysicsMainWidget::showGraphDialog()
+{
+    mGraphDialog.show();
+    mGraphDialog.raise();
 }
 
 void PhysicsMainWidget::frameValuesUpdate()
@@ -484,6 +489,50 @@ void PhysicsMainWidget::keepAliveJoyStick()
 
     }
 }
+
+void PhysicsMainWidget::joystickUpdated(JoystickState state)
+{
+    joystickState = state;
+}
+
+void PhysicsMainWidget::mainAction()
+{
+    //SYNC_PRINT(("Tick\n"));
+
+    if (joystickState.axis.size() < 4) {
+        return;
+    }
+
+    /* This need to be brought to mixer */
+    double d = (2 * 32767.0);
+
+    CopterInputs inputs;
+    inputs.axis[CopterInputs::CHANNEL_THROTTLE] = -(joystickState.axis[1] / d * 100.0);
+    inputs.axis[CopterInputs::CHANNEL_ROLL    ] =   joystickState.axis[3] / d * 100.0;
+    inputs.axis[CopterInputs::CHANNEL_PITCH   ] =   joystickState.axis[4] / d * 100.0;
+    inputs.axis[CopterInputs::CHANNEL_YAW     ] =   joystickState.axis[0] / d * 100.0;
+
+
+    mesh = new Mesh3DScene;
+    mesh->switchColor();
+
+    //inputs.print();
+    copter.flightControllerTick(inputs);
+    copter.physicsTick();
+    copter.visualTick();
+    copter.drawMyself(*mesh);
+
+    mGraphDialog.addGraphPoint("X", copter.position.x());
+    mGraphDialog.addGraphPoint("Y", copter.position.y());
+    mGraphDialog.addGraphPoint("Z", copter.position.z());
+
+    mGraphDialog.update();
+
+    ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh), CloudViewDialog::CONTROL_ZONE);
+    ui->cloud->update();
+}
+
+
 
 void PhysicsMainWidget::onPushButton2Clicked()
 {

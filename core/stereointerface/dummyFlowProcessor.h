@@ -1,26 +1,12 @@
-/**
- * \file main_test_processor6d.cpp
- * \brief This is the main file for the test processor6d 
- *
- * \date июл 18, 2018
- * \author dina
- *
- * \ingroup autotest  
- */
+#ifndef DUMMY_FLOW_PROCESSOR_H
+#define DUMMY_FLOW_PROCESSOR_H
 
-#include <iostream>
-#include "gtest/gtest.h"
-
+#include "core/stats/calculationStats.h"
+#include "core/reflection/dynamicObject.h"
 #include "core/stereointerface/processor6D.h"
-#include "core/stereointerface/dummyFlowProcessor.h"
 
-#include "core/utils/global.h"
+namespace corecvs {
 
-
-using namespace std;
-using namespace corecvs;
-
-#if 0
 class DummyFlowProcessor : public Processor6D
 {
     Statistics *stats = NULL;
@@ -31,9 +17,9 @@ class DummyFlowProcessor : public Processor6D
     RGB24Buffer *inCurr  = NULL;
 
 
-    virtual int beginFrame() {
-        return 0;
-    }
+
+
+    virtual int beginFrame() {return 0;}
 
     /** Completly reset internal data structures. parameters are left intact **/
     virtual int reset()
@@ -46,7 +32,7 @@ class DummyFlowProcessor : public Processor6D
 
 
     /** Implemetation may allow you to reset some internal structures at will **/
-    virtual int clean(int /*mask*/) override {
+    virtual int clean(int /*mask*/) {
         return 0;
     }
 
@@ -70,13 +56,13 @@ class DummyFlowProcessor : public Processor6D
         return 0;
     }
 
-    virtual int setDisparityBufferS16( int /*frameType*/, FlowBuffer */*frame*/)
+    virtual int setDisparityBufferS16(FlowBuffer */*frame*/, int /*frameType*/)
     {
         return 1;
     }
 
     /** sets statistics data. Implementation should support stats == NULL **/
-    virtual int setStats(Statistics *stats) override
+    virtual int setStats(Statistics *stats)
     {
         this->stats = stats;
         return 0;
@@ -84,7 +70,7 @@ class DummyFlowProcessor : public Processor6D
 
 
 
-    virtual int endFrame() override
+    virtual int endFrame()
     {
 
         if (inCurr != NULL && inPrev != NULL)
@@ -93,15 +79,16 @@ class DummyFlowProcessor : public Processor6D
             opticalFlow = new FlowBuffer(inCurr->h, inCurr->w);
         }
         inPrev = inCurr;
+        return 0;
     }
 
 
-    virtual std::map<std::string, DynamicObject> getParameters() { return std::map<std::string, DynamicObject>();}
-    virtual bool setParameters(std::string name, const DynamicObject &param) {return true;}
+    virtual std::map<std::string, DynamicObject> getParameters();
+    virtual bool setParameters(std::string name, const DynamicObject &param);
 
 
     /** Oldstyle calls **/
-    virtual int setParameteri  (int /*parameterName*/, int /*parameterValue*/) {return 0;}
+    virtual int setParameteri(int /*parameterName*/, int /*parameterValue*/) {return 0;}
     virtual int requestResultsi(int /*parameterName*/) {return 0;}
 
     /**
@@ -110,43 +97,41 @@ class DummyFlowProcessor : public Processor6D
      **/
 
     /* This method computes flow form current frame to previous */
-    virtual FlowBuffer *getFlow(){
+    virtual FlowBuffer *getFlow() override
+    {
        return opticalFlow;
     }
 
+    virtual FloatFlowBuffer *getFloatFlow() override
+    {
+       return new FloatFlowBuffer(opticalFlow); /* leaks? */
+    }
 
-    virtual FlowBuffer *getStereo()
+    virtual FlowBuffer *getStereo()  override
     {
         return NULL;
     }
 
-    virtual CorrespondenceList *getFlowList()
+    virtual CorrespondenceList *getFlowList() override
     {
         return NULL;
     }
 
 
-    virtual int getError(std::string * /*errorString*/) {return 0;}
+    virtual int getError(std::string */*errorString*/) {return 0;}
 };
-#endif
+
+class DummyFlowImplFactory : public corecvs::Processor6DFactory {
+public:
+
+    DummyFlowImplFactory();
+
+    virtual corecvs::Processor6D *getProcessor() override;
+    virtual std::string getName() override { return "DummyFlow";}
+
+};
 
 
-TEST(processor6d, testprocessor6d)
-{
-    RGB24Buffer in1(100,100);
-    RGB24Buffer in2(100,100);
+} // namespace corecvs
 
-    Processor6D *proc = new DummyFlowProcessor;
-    proc->requestResultsi(Processor6D::RESULT_FLOW);
-    proc->beginFrame();
-    proc->setFrameRGB24(Processor6D::FRAME_LEFT_ID, &in1);
-    proc->endFrame();
-    proc->beginFrame();
-    proc->setFrameRGB24(Processor6D::FRAME_LEFT_ID, &in2);
-    proc->endFrame();
-    FlowBuffer *flow = proc->getFlow();
-
-    delete_safe(proc);
-
-
-}
+#endif // DUMMY_FLOW_PROCESSOR_H
