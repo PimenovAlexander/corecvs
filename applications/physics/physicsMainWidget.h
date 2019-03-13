@@ -11,6 +11,7 @@
 #include <cameraModelParametersControlWidget.h>
 #include <capSettingsDialog.h>
 #include <flowFabricControlWidget.h>
+#include <graphPlotDialog.h>
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 #include <copter/quad.h>
@@ -80,7 +81,7 @@ public:
     Mesh3DScene *mesh;
 
 /** About: We have to use it to satisfy the icons license **/
-    AboutDialog mAboutWidget;
+    AboutDialog mAboutWidget;    
 
 public slots:
     void settingsWidget();
@@ -103,9 +104,11 @@ public slots:
 /** Processing **/
 public:
     FlowFabricControlWidget mFlowFabricControlWidget;
+    GraphPlotDialog mGraphDialog;
 
 public slots:
     void showProcessingParametersWidget();
+    void showGraphDialog();
 
 /** Quad **/
 public:
@@ -128,8 +131,6 @@ public:
 public slots:
     void updateUi();
     void keepAliveJoyStick();
-
-
 
 
 private slots:

@@ -19,14 +19,14 @@ public:
     corecvs::Vector3dd force;
     corecvs::Vector3dd position;
 
-    Force(Vector3dd force, Vector3dd pos) :
+    Force(Vector3dd force, Vector3dd pos = Vector3dd::Zero()) :
         force(force), position(pos)
     {
     }
 
     void transform(const corecvs::Affine3DQ &T)
     {
-        force    = T * force;
+        force    = T.rotor * force;
         position = T * position;
     }
 
@@ -69,7 +69,7 @@ public:
 
 
     Quaternion orientation = Quaternion::Identity();
-    Quaternion angleVelocity  = Quaternion::Identity();
+    Quaternion angularVelocity  = Quaternion::Identity();
 
 
     /** Main body properties **/
@@ -80,7 +80,8 @@ public:
 
     /** Main magick **/
     void startTick();
-    void addForce  (const Force &force);
+    void addForce   (const Force &force);
+    void addMoment  (const Vector3dd &moment);
     void tick(double deltaT);
 
     /** state inside tick **/

@@ -66,6 +66,7 @@ PhysicsMainWidget::PhysicsMainWidget(QWidget *parent) :
 
     connect(&mJoystickSettings, SIGNAL(joystickUpdated(JoystickState)), this, SLOT(joystickUpdated(JoystickState)));
 
+    ui->logShowButton->setChecked(false);
 }
 
 PhysicsMainWidget::~PhysicsMainWidget()
@@ -370,6 +371,12 @@ void PhysicsMainWidget::showProcessingParametersWidget()
     mFlowFabricControlWidget.raise();
 }
 
+void PhysicsMainWidget::showGraphDialog()
+{
+    mGraphDialog.show();
+    mGraphDialog.raise();
+}
+
 void PhysicsMainWidget::frameValuesUpdate()
 {
     std::thread thr([this]()
@@ -509,11 +516,17 @@ void PhysicsMainWidget::mainAction()
     mesh = new Mesh3DScene;
     mesh->switchColor();
 
-    inputs.print();
+    //inputs.print();
     copter.flightControllerTick(inputs);
+    copter.physicsTick();
     copter.visualTick();
     copter.drawMyself(*mesh);
 
+    mGraphDialog.addGraphPoint("X", copter.position.x());
+    mGraphDialog.addGraphPoint("Y", copter.position.y());
+    mGraphDialog.addGraphPoint("Z", copter.position.z());
+
+    mGraphDialog.update();
 
     ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh), CloudViewDialog::CONTROL_ZONE);
     ui->cloud->update();

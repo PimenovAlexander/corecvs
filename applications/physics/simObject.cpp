@@ -22,8 +22,21 @@ void SimObject::addForce(const Force &force)
     M += force.getM();
 }
 
+void SimObject::addMoment(const Vector3dd &moment)
+{
+    M += moment;
+}
+
 void SimObject::tick(double deltaT)
 {    
+    position += velocity * deltaT;
+    velocity += F * mass * deltaT;
+
+    /* We should use inertiaTensor here */
+    Quaternion angularAcceleration = Quaternion::Rotation(M, M.l2Metric());
+
+    orientation     = Quaternion::pow(angularVelocity    , deltaT) ^ orientation;
+    angularVelocity = Quaternion::pow(angularAcceleration, deltaT) ^ angularVelocity;
 
 
 }
