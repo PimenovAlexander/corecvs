@@ -39,6 +39,16 @@ void QComController::bindToRealDrone()
     }
 }
 
+void QComController::updateOutput()
+{
+    if (!mutexActive)
+    {
+        mutexActive=true;
+        output=input;
+        mutexActive=false;
+    }
+}
+
 ///
 /// \brief ComController::keepAlive
 /// sends values to /dev/ttyUSB0 (i hope it is our module)
@@ -82,7 +92,7 @@ void QComController::keepAlive2()
                                               0x00, 0x04, 0x20, 0x00, 0x01,
                                               0x08, 0x40, 0x00, 0x02, 0x10, 0x80};
 
-    int k = throttleValue - difference;                    //858- min value
+    int k = output.axis[0] - difference;                    //858- min value
     k = k * 8 / 10;
     unsigned short sh1 = k;
     bitset<32> bitsRoll {sh1};
@@ -109,7 +119,7 @@ void QComController::keepAlive2()
     secondByte[1]=bitsRoll[8];
     secondByte[2]=bitsRoll[9];
 
-    k=rollValue-difference;
+    k=output.axis[1]-difference;
     k=k*8/10;
     sh1=k;
     bitset<32> bitspitch{sh1};
@@ -123,7 +133,7 @@ void QComController::keepAlive2()
     }
 
 
-    k=pitchValue-difference;
+    k=output.axis[2]-difference;
     k=k*8/10;
     sh1=k;
     bitset<32> bitsthrottle{sh1};
@@ -135,7 +145,7 @@ void QComController::keepAlive2()
     }
     fifthByte[0]=bitsthrottle[9];
 
-    k=yawValue-difference;
+    k=output.axis[3]-difference;
     k=k*8/10;
     sh1=k;
     bitset<32> bitsyaw{sh1};
@@ -149,7 +159,7 @@ void QComController::keepAlive2()
         sixthByte[i]=bitsyaw[i+6];
     }
 
-    k=CH5Value-difference;
+    k=output.axis[4]-difference;
     k=k*8/10;
     sh1=k;
     bitset<32> bitsCH5{sh1};
@@ -163,7 +173,7 @@ void QComController::keepAlive2()
         sixthByte[i+5]=bitsCH5[i];
     }
 
-    k=CH6Value-difference;
+    k=output.axis[5]-difference;
     k=k*8/10;
     sh1=k;
     bitset<32> bitsCH6{sh1};
@@ -177,7 +187,7 @@ void QComController::keepAlive2()
         ninethByte[i]=bitsCH6[i+8];
     }
 
-    k=CH7Value-difference;
+    k=output.axis[6]-difference;
     k=k*8/10;
     sh1=k;
     bitset<32> bitsCH7{sh1};
@@ -191,7 +201,7 @@ void QComController::keepAlive2()
         tenthByte[i]=bitsCH7[i+5];
     }
 
-    k=CH8Value-difference;
+    k=output.axis[7]-difference;
     k=k*8/10;
     sh1=k;
     bitset<32> bitsCH8{sh1};

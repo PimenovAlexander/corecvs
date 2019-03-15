@@ -57,7 +57,7 @@ class PhysicsMainWidget : public QWidget
 public:
     explicit PhysicsMainWidget(QWidget *parent = 0);
     QSerialPort serialPort;
-    ProtoAutoPilot II;
+    ProtoAutoPilot iiAutoPilot;
     QByteArray *flyCommandWriteData = NULL;
     QByteArray getDataFromSticks();
 
@@ -178,19 +178,10 @@ private:
     std::list<Message> messages;
 
     CopterInputs copterInputs;
-
+    int currentSendMode=-1;                                                //tumbler beetwen joystick and autopilot (0- js, 1-autoP)
+    int frameCounter=0;                                                    //we need it in the timer
     /** Replace this with mixer **/
-    JoyStickInput joystick1 {
-        copterInputs.axis[CopterInputs::CHANNEL_YAW],
-        copterInputs.axis[CopterInputs::CHANNEL_ROLL],
-        copterInputs.axis[CopterInputs::CHANNEL_PITCH],
-        copterInputs.axis[CopterInputs::CHANNEL_THROTTLE],
-
-        copterInputs.axis[CopterInputs::CHANNEL_4],
-        copterInputs.axis[CopterInputs::CHANNEL_5],
-        copterInputs.axis[CopterInputs::CHANNEL_6],
-        copterInputs.axis[CopterInputs::CHANNEL_7]
-    };
+    JoyStickInput joystick1 ;
 
     QComController ComController {this,
         copterInputs.axis[CopterInputs::CHANNEL_YAW],
@@ -203,6 +194,8 @@ private:
         copterInputs.axis[CopterInputs::CHANNEL_6],
         copterInputs.axis[CopterInputs::CHANNEL_7]
     };
+    CopterInputs joyStickOutput;                                  //for joystickValues
+    CopterInputs iiOutput;                                        //for autopilot values
 
     Ui::PhysicsMainWidget *ui;
 

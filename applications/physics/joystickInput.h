@@ -4,25 +4,28 @@
 
 #include <linux/joystick.h>
 #include <fcntl.h>
+#include "copterInputs.h"
 
 class JoyStickInput
 {
 public:
-    JoyStickInput(int &_yawValue, int &_rollValue, int &_pitchValue, int &_throttleValue,
-                  int &_CH5Value, int &_CH6Value, int &_CH7Value,  int &_CH8Value );
+    JoyStickInput( );
 
     struct AxisState { short x, y; };
 
+    CopterInputs output;                   //input , output, who cares?
+
     void start();
     bool active=false;
-    int& yawValue;
-    int& rollValue;
-    int& pitchValue;
-    int& throttleValue;
-    int& CH5Value;
-    int& CH6Value;
-    int& CH7Value;
-    int& CH8Value;
+    bool mutexActive=false;
+    int yawValue=1500;
+    int rollValue=1500;
+    int pitchValue=1500;
+    int throttleValue=1500;
+    int CH5Value=1500;
+    int CH6Value=1500;
+    int CH7Value=1500;
+    int CH8Value=1500;
     void setUsualCurrentMode();
     void setInertiaCurrentMode();
     void setCasualCurrentMode();
@@ -30,6 +33,7 @@ public:
 
     void fullRtSticks(js_event event);
     void setRTLTFullMode();
+    void updateOutput();
 private:
     int throttleValueFromJS;
     int midThrottle=1350;

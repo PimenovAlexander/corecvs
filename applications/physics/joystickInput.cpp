@@ -18,10 +18,7 @@
 using namespace std;
 
 
-JoyStickInput::JoyStickInput(int &_yawValue, int &_rollValue, int &_pitchValue, int &_throttleValue,
-                             int &_CH5Value, int &_CH6Value, int &_CH7Value,  int &_CH8Value )
-    : yawValue(_yawValue) , rollValue(_rollValue), pitchValue(_pitchValue), throttleValue(_throttleValue),
-      CH5Value(_CH5Value), CH6Value(_CH6Value), CH7Value(_CH7Value), CH8Value(_CH8Value)
+JoyStickInput::JoyStickInput()
 {
     throttleValue=1239;
     // cout<<"AAAaaaAAA"<<endl;
@@ -180,7 +177,7 @@ void JoyStickInput::startJoyStickMode()
                         usualExperimentalSticks(eventtt);
                         break;
                     case 4:
-                        usualExperimentalSticks(eventtt);
+                        fullRtSticks(eventtt);
                         break;
 
                     default: break;
@@ -190,10 +187,28 @@ void JoyStickInput::startJoyStickMode()
                 default:
                     break;
                 }
+                updateOutput();
             }
         }
     });
     thr.detach();
+}
+
+void JoyStickInput::updateOutput()
+{
+    if (!mutexActive)
+    {
+        mutexActive=true;
+        output.axis[0]=throttleValue;
+        output.axis[1]=rollValue;
+        output.axis[2]=pitchValue;
+        output.axis[3]=yawValue;
+        output.axis[4]=CH5Value;
+        output.axis[5]=CH6Value;
+        output.axis[6]=CH7Value;
+        output.axis[7]=CH8Value;
+        mutexActive=false;
+    }
 }
 
 void JoyStickInput::usualButtons(js_event event)
@@ -839,11 +854,11 @@ void JoyStickInput::fullRtSticks(js_event event)
             if (axis==0)
             {
 
-                rollValue = 1500 + axes[axis].x/25/roll_const;
+                rollValue = 1500 + axes[axis].x/6/roll_const;
                 if (rollValue>2100){rollValue=2099;}
                 if (rollValue<900){rollValue=901;}
 
-                pitchValue = 1500 - axes[axis].y/25/pit_const;
+                pitchValue = 1500 - axes[axis].y/6/pit_const;
                 if (pitchValue>2100){pitchValue=2099;}
                 if (pitchValue<900){pitchValue=901;}
 
@@ -852,7 +867,7 @@ void JoyStickInput::fullRtSticks(js_event event)
             if (axis==1)
             {
                 lastLT=axes[axis].x;
-                yawValue = 1500 + axes[axis].y/25/roll_const;
+                yawValue = 1500 + axes[axis].y/6/roll_const;
                 if (yawValue>2100){yawValue=2099;}
                 if (yawValue<900){yawValue=901;}
 

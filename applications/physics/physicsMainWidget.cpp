@@ -51,7 +51,7 @@ PhysicsMainWidget::PhysicsMainWidget(QWidget *parent) :
     ui->comboBox->addItem("RT/LT Full mode");
 
 
-    frameValuesUpdate();
+    //frameValuesUpdate();
 
     PinholeCameraIntrinsics *intr = new PinholeCameraIntrinsics(640, 480, degToRad(60));
     mCameraModel.intrinsics.reset(intr);
@@ -379,12 +379,17 @@ void PhysicsMainWidget::showGraphDialog()
 
 void PhysicsMainWidget::startSimuation()
 {
-    mJoystickSettings.openJoystick();
+    //mJoystickSettings.openJoystick();    //counterrevolution (when i will understand how it works, i will swich joystickInput to it
+    joystick1.start();
+    if (joystick1.active)
+    {
+        currentSendMode=0;
+    }
 }
 
 void PhysicsMainWidget::frameValuesUpdate()
 {
-    std::thread thr([this]()
+  /*  std::thread thr([this]()
     {
         while(true)
         {
@@ -428,7 +433,7 @@ void PhysicsMainWidget::frameValuesUpdate()
 
     });
     thr.detach();
-
+*/
 }
 
 void PhysicsMainWidget::startRealMode()                                    //starts controlling the copter
@@ -471,26 +476,60 @@ void PhysicsMainWidget::sendOurValues(std::vector<uint8_t> OurValues)
 void PhysicsMainWidget::startJoyStickMode()
 {
     joystick1.start();
-    QTimer::singleShot(33, this, SLOT(keepAliveJoyStick()));
+    currentSendMode=0;
+    QTimer::singleShot(8, this, SLOT(keepAliveJoyStick()));
 
 }
 
 void PhysicsMainWidget::keepAliveJoyStick()
 {
-    if (joystick1.active)
+    if (joystick1.active)                             //Yes, indeed. We can not turn on autopiot without joyStick.
     {
-    CopterInputs copInputs;
-    copInputs.axis[0]=joystick1.throttleValue;
-    copInputs.axis[1]=joystick1.rollValue;
-    copInputs.axis[2]=joystick1.pitchValue;
-    copInputs.axis[3]=joystick1.yawValue;
-    copInputs.axis[4]=joystick1.CH5Value;
-    copInputs.axis[5]=joystick1.CH6Value;
-    copInputs.axis[6]=joystick1.CH7Value;
-    copInputs.axis[7]=joystick1.CH8Value;
 
-    ui->inputsWidget->updateState(copInputs);
-    QTimer::singleShot(33, this, SLOT(keepAliveJoyStick()));
+        if (!joystick1.mutexActive)
+        {
+            joystick1.mutexActive=true;
+            joyStickOutput=joystick1.output;
+            joystick1.mutexActive=false;
+        }
+        if (iiAutoPilot.active)
+        {
+            iiOutput=iiAutoPilot.output;
+        }
+        if (currentSendMode==0)
+        {
+            if (!ComController.mutexActive)
+            {
+                ComController.mutexActive=true;
+                ComController.input=joyStickOutput;
+                ComController.mutexActive=false;
+            }
+        }
+        if (currentSendMode==1)
+        {
+            if (!ComController.mutexActive)
+            {
+                ComController.mutexActive=true;
+                ComController.input=iiOutput;
+                ComController.mutexActive=false;
+            }
+        }
+    if (frameCounter%4==0)
+    {
+        frameCounter=0;
+        if (currentSendMode==0)
+        {
+            ui->inputsWidget->updateState(joyStickOutput);
+            cout<<frameCounter<<endl;
+        }
+        if (currentSendMode==1)
+        {
+            ui->inputsWidget->updateState(iiOutput);
+        }
+    }
+    frameCounter++;
+    //ui->inputsWidget->updateState(joystick1.output);
+    QTimer::singleShot(8, this, SLOT(keepAliveJoyStick()));                                     // I put together 2 timers 8msec send timer and 33msec joystickWidget timer 8*4=36
 
     }
 }
@@ -539,7 +578,7 @@ void PhysicsMainWidget::mainAction()
 
 
 
-void PhysicsMainWidget::onPushButton2Clicked()
+void PhysicsMainWidget::onPushButton2Clicked()                      // it was proto^2 autipilot (only repeat)
 {
     //       cout<<m.pitch<<" "<<m.roll<<" "<<m.throttle<<" "<<m.yaw<<" "<<m.count_of_repeats<<endl;
 

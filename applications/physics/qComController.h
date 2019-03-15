@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QSerialPort>
 #include "controlRecord.h"
+#include "copterInputs.h"
 static  int v=1500;
 static  int throtV=1100;
 
@@ -17,7 +18,8 @@ public:
     void bindToRealDrone();
     void sendOurValues(std::vector<uint8_t> OurValues);
 
-
+    bool mutexActive=false;
+    CopterInputs input;
     int& yawValue;
     int& rollValue;
     int& pitchValue;
@@ -32,9 +34,11 @@ public slots:
 
     void keepAlive2();
 private:
+    CopterInputs output;                     //in case of mutex we will send old value per 1 time
     QSerialPort serialPort;
     bool recording;
     ControlRecord recordData;
+    void updateOutput();
 };
 
 

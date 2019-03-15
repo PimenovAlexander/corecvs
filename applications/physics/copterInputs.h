@@ -25,7 +25,7 @@ public:
         CHANNEL_LAST
     };
 
-    int axis[CHANNEL_LAST];
+    int axis[CHANNEL_LAST];           //here we put CH walue, btw it must not be equal sticks order
 
     CopterInputs();
 
