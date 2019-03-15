@@ -49,6 +49,8 @@ PhysicsMainWidget::PhysicsMainWidget(QWidget *parent) :
     ui->comboBox->addItem("Casual mode");
     ui->comboBox->addItem("RT/LT Usual mode");
     ui->comboBox->addItem("RT/LT Full mode");
+    ui->comboBox->addItem("RT/LT Extream mode");
+
 
     on_updateCameraButton_clicked();
     //frameValuesUpdate();
@@ -653,6 +655,11 @@ void PhysicsMainWidget::on_comboBox_currentTextChanged(const QString &arg1)     
     if(arg1=="RT/LT Full mode")
     {
         joystick1.setRTLTFullMode();
+        joystick1.throttleValue=midThrottle;
+    }
+    if(arg1=="RT/LT Extream mode")
+    {
+        joystick1.setRTLTExtreamMode();
         joystick1.throttleValue=midThrottle;
     }
  }

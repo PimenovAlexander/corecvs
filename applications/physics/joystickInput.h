@@ -34,6 +34,8 @@ public:
     void fullRtSticks(js_event event);
     void setRTLTFullMode();
     void updateOutput();
+    void extreamRtSticks(js_event event);
+    void setRTLTExtreamMode();
 private:
     int throttleValueFromJS;
     int midThrottle=1350;
