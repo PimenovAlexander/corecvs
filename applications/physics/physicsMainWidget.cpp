@@ -50,7 +50,7 @@ PhysicsMainWidget::PhysicsMainWidget(QWidget *parent) :
     ui->comboBox->addItem("RT/LT Usual mode");
     ui->comboBox->addItem("RT/LT Full mode");
 
-
+    on_updateCameraButton_clicked();
     //frameValuesUpdate();
 
     PinholeCameraIntrinsics *intr = new PinholeCameraIntrinsics(640, 480, degToRad(60));
@@ -314,13 +314,18 @@ void PhysicsMainWidget::keepAlive(){
     QTimer::singleShot(8, this, SLOT(keepAlive()));
 }
 
-void PhysicsMainWidget::startCamera()
+void PhysicsMainWidget::startCamera()                                                 //how can I stop it??
 {
+    if (cameraActive)
+    {
+        mProcessor->exit();
+    }
+    cameraActive=true;
     /* We should prepare calculator in some other place */
     mProcessor = new FrameProcessor();
     mProcessor->target = this;
 
-    std::string inputString = "v4l2:/dev/video0";
+    std::string inputString = inputCameraPath;
 
     ImageCaptureInterfaceQt *rawInput = ImageCaptureInterfaceQtFactory::fabric(inputString, true);
     if (rawInput == NULL)
@@ -350,6 +355,7 @@ void PhysicsMainWidget::startCamera()
     /* All ready. Let's rock */
     mProcessor->start();
     rawInput->startCapture();    
+
 
 }
 
@@ -520,7 +526,6 @@ void PhysicsMainWidget::keepAliveJoyStick()
         if (currentSendMode==0)
         {
             ui->inputsWidget->updateState(joyStickOutput);
-            cout<<frameCounter<<endl;
         }
         if (currentSendMode==1)
         {
@@ -690,3 +695,16 @@ void PhysicsMainWidget::updateUi()
     delete_safe(work);
 }
 
+
+void PhysicsMainWidget::on_updateCameraButton_clicked()
+{
+
+    QDir DevDir=*new QDir("/dev","video*",QDir::Name,QDir::System);
+    ui->comboBox_2->addItems(DevDir.entryList());
+
+}
+
+void PhysicsMainWidget::on_comboBox_2_currentTextChanged(const QString &arg1)
+{
+    inputCameraPath="v4l2:/dev/"+arg1.toStdString();
+}

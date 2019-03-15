@@ -54,6 +54,8 @@ void QComController::updateOutput()
 /// sends values to /dev/ttyUSB0 (i hope it is our module)
 void QComController::keepAlive2()
 {
+
+    updateOutput();
     //const int difference = 858;
     const int difference = 858;
     //counter++;

@@ -93,6 +93,9 @@
           <property name="spacing">
            <number>2</number>
           </property>
+          <item row="3" column="0">
+           <widget class="CopterInputsWidget" name="inputsWidget" native="true"/>
+          </item>
           <item row="0" column="0">
            <widget class="QComboBox" name="comboBox">
             <property name="currentText">
@@ -100,8 +103,19 @@
             </property>
            </widget>
           </item>
+          <item row="2" column="0">
+           <widget class="QComboBox" name="comboBox_2">
+            <property name="currentText">
+             <string/>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="0">
-           <widget class="CopterInputsWidget" name="inputsWidget" native="true"/>
+           <widget class="QPushButton" name="updateCameraButton">
+            <property name="text">
+             <string>Update cameras</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>

@@ -166,6 +166,10 @@ private slots:
 
     void on_comboBox_currentTextChanged(const QString &arg1);
 
+    void on_updateCameraButton_clicked();
+
+    void on_comboBox_2_currentTextChanged(const QString &arg1);
+
 private:
     struct Message {
         int throttle;
@@ -211,7 +215,7 @@ private:
     bool bind=false;
     bool arming=false;
     bool startFly=false;   //to set mid throttle after arming
-
+    bool cameraActive=false;
     bool rtPressed=false;
     bool ltPressed=false;
 
@@ -219,7 +223,7 @@ private:
 
     void sendOurValues(std::vector<uint8_t> OurValues);
     bool virtuaModeActive=false;
-
+    std::string inputCameraPath="v4l2:/dev/video0";
     ControlRecord recordData;
 
     Simulation simSim;
