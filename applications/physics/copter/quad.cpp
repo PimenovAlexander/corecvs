@@ -8,17 +8,17 @@ Quad::Quad(double frameSize)
     mass = 0.2; /* 200g copter */
 
     motors.resize(4);
-    motors[0].name = "1"; motors[0].color = RGBColor::Red();    /*Front right*/
-    motors[1].name = "2"; motors[1].color = RGBColor::Green();  /*Back  left*/
-    motors[2].name = "3"; motors[2].color = RGBColor::Red();    /*Front left*/
-    motors[3].name = "4"; motors[3].color = RGBColor::Green();  /*Back  right*/
+    motors[BETAFLIGHT_MOTOR_2].name = "FR"; motors[BETAFLIGHT_MOTOR_2].color = RGBColor::Red();    /*Front right*/
+    motors[BETAFLIGHT_MOTOR_3].name = "BL"; motors[BETAFLIGHT_MOTOR_3].color = RGBColor::Green();  /*Back  left*/
+    motors[BETAFLIGHT_MOTOR_4].name = "FL"; motors[BETAFLIGHT_MOTOR_4].color = RGBColor::Red();    /*Front left*/
+    motors[BETAFLIGHT_MOTOR_1].name = "BR"; motors[BETAFLIGHT_MOTOR_1].color = RGBColor::Green();  /*Back  right*/
 
     double arm = frameSize / 2;
 
-    motors[0].position.shift = Vector3dd( 1,  1, 0).normalised() * arm; motors[0].cw = true;
-    motors[1].position.shift = Vector3dd(-1, -1, 0).normalised() * arm; motors[1].cw = true;
-    motors[2].position.shift = Vector3dd( 1, -1, 0).normalised() * arm; motors[2].cw = false;
-    motors[3].position.shift = Vector3dd(-1,  1, 0).normalised() * arm; motors[3].cw = false;
+    motors[BETAFLIGHT_MOTOR_2].position.shift = Vector3dd( 1,  1, 0).normalised() * arm; motors[BETAFLIGHT_MOTOR_2].cw = true;
+    motors[BETAFLIGHT_MOTOR_3].position.shift = Vector3dd(-1, -1, 0).normalised() * arm; motors[BETAFLIGHT_MOTOR_3].cw = true;
+    motors[BETAFLIGHT_MOTOR_4].position.shift = Vector3dd( 1, -1, 0).normalised() * arm; motors[BETAFLIGHT_MOTOR_4].cw = false;
+    motors[BETAFLIGHT_MOTOR_1].position.shift = Vector3dd(-1,  1, 0).normalised() * arm; motors[BETAFLIGHT_MOTOR_1].cw = false;
 
 
     Affine3DQ camPos = Affine3DQ::RotationY(degToRad(90)) * Affine3DQ::RotationZ(degToRad(-90));
@@ -31,6 +31,11 @@ Quad::Quad(double frameSize)
     sensors.resize(1);
     sensors[0].position = Affine3DQ::Shift(0, 0, 0.0);
     sensors[0].box = AxisAlignedBox3d(Vector3dd(-0.01, -0.01, -0.005), Vector3dd(0.01, 0.01, 0.005) );
+
+
+
+    /* Load ui*/
+    //Mesh3D *body = Mes
 }
 
 Affine3DQ Quad::getMotorTransfrom(int num)
@@ -92,10 +97,10 @@ void Quad::flightControllerTick(const CopterInputs &input)
     double yaw      = input.axis[CopterInputs::CHANNEL_YAW];
     double roll     = input.axis[CopterInputs::CHANNEL_ROLL];
 
-    motors[0].pwm = - pitch +  roll + yaw + throttle;
-    motors[1].pwm =   pitch + -roll + yaw + throttle;
-    motors[2].pwm = - pitch + -roll - yaw + throttle;
-    motors[3].pwm =   pitch +  roll - yaw + throttle;
+    motors[BETAFLIGHT_MOTOR_2].pwm = - pitch +  roll + yaw + throttle;
+    motors[BETAFLIGHT_MOTOR_3].pwm =   pitch + -roll + yaw + throttle;
+    motors[BETAFLIGHT_MOTOR_4].pwm = - pitch + -roll - yaw + throttle;
+    motors[BETAFLIGHT_MOTOR_1].pwm =   pitch +  roll - yaw + throttle;
 
     for (size_t i = 0; i < motors.size(); i++)
     {

@@ -67,6 +67,11 @@ public:
         return Vector3dd(0.0, 0.0, pwm * cw);
     }
 
+    /* UI */
+    Mesh3D *motor = NULL;
+    Mesh3D *prop  = NULL;
+
+
 };
 
 class Sensor
@@ -84,6 +89,19 @@ public:
     std::vector<CameraModel> cameras;
     std::vector<Sensor> sensors;
 
+    enum BetaflightMotors {
+        BETAFLIGHT_MOTOR_1 = 0,
+        BETAFLIGHT_MOTOR_2 = 1,
+        BETAFLIGHT_MOTOR_3 = 2,
+        BETAFLIGHT_MOTOR_4 = 3,
+
+        MOTOR_BR = BETAFLIGHT_MOTOR_1,
+        MOTOR_FR = BETAFLIGHT_MOTOR_2,
+        MOTOR_BL = BETAFLIGHT_MOTOR_3,
+        MOTOR_FL = BETAFLIGHT_MOTOR_4,
+
+    };
+
 
     Quad(double frameSize = 0.088);
 
@@ -98,6 +116,10 @@ public:
     void flightControllerTick(const CopterInputs &input);
 
     void physicsTick();
+
+    /* UI */
+    Mesh3D *body = NULL;
+
 
 };
 
