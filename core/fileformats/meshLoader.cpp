@@ -59,7 +59,7 @@ bool MeshLoader::load(Mesh3D *mesh, const string &fileName)
 #else
         if (loader.loadAsciiSTL(file, *mesh) != 0)
         {
-           SYNC_PRINT(("MeshLoader::load(): Unable to load mesh"));
+           SYNC_PRINT(("MeshLoader::load(): Unable to load mesh\n"));
            file.close();
            return false;
         }
@@ -72,7 +72,7 @@ bool MeshLoader::load(Mesh3D *mesh, const string &fileName)
         OBJLoader loader;
         if (loader.loadOBJSimple(file, *mesh) != 0)
         {
-           SYNC_PRINT(("MeshLoader::load(): Unable to load mesh"));
+           SYNC_PRINT(("MeshLoader::load(): Unable to load mesh\n"));
            file.close();
            return false;
         }
@@ -84,7 +84,7 @@ bool MeshLoader::load(Mesh3D *mesh, const string &fileName)
         XYZListLoader loader;
         if (loader.loadXYZ(file, *mesh) != 0)
         {
-           SYNC_PRINT(("MeshLoader::load(): Unable to load mesh"));
+           SYNC_PRINT(("MeshLoader::load(): Unable to load mesh\n"));
            file.close();
            return false;
         }
@@ -96,7 +96,7 @@ bool MeshLoader::load(Mesh3D *mesh, const string &fileName)
         GcodeLoader loader;
         if (loader.loadGcode(file, *mesh) != 0)
         {
-           SYNC_PRINT(("MeshLoader::load(): Unable to load mesh"));
+           SYNC_PRINT(("MeshLoader::load(): Unable to load mesh\n"));
            file.close();
            return false;
         }
@@ -148,7 +148,7 @@ bool MeshLoader::save(Mesh3D *mesh, const string &fileName)
         STLLoader loader;
         if (loader.saveBinarySTL(file, *mesh) != 0)
         {
-           SYNC_PRINT(("MeshLoader::save(): Unable to load mesh"));
+           SYNC_PRINT(("MeshLoader::save(): Unable to load mesh\n"));
            file.close();
            return false;
         }

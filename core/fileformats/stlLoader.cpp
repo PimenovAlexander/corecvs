@@ -23,12 +23,11 @@ int STLLoader::loadAsciiSTL(istream &input, Mesh3D &mesh)
     string line;
     HelperUtils::getlineSafe(input, line);
 
-    SYNC_PRINT(("Magic String is %s", line.c_str()));
+    SYNC_PRINT(("Magic String is <%s>\n", line.c_str()));
     if (!HelperUtils::startsWith(line, "solid"))
     {
         input.seekg (0, input.beg);
-        loadBinarySTL(input, mesh);
-        return 1;
+        return loadBinarySTL(input, mesh);
     }
 
     vector<Vector3dd> points;
