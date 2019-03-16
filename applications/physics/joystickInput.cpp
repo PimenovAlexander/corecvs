@@ -1065,7 +1065,7 @@ void JoyStickInput::timerForThrottle()
                 if (throttleValue>1800){throttleValue=1799;}
                 if (throttleValue<900){throttleValue=901;}
             }
-            if (currentMode==4)
+            if (currentMode==4 || currentMode==5)
             {
                 throttleValue=1300+(lastRT-lastLT)/85;
                 if (throttleValue>2100){throttleValue=2099;}
