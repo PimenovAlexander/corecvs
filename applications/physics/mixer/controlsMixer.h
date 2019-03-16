@@ -11,15 +11,15 @@ class ControlsMixer
 public:
     class ChannelOperation
     {
-
-
         int defaultValue = 0;
         int min;
         int max;
+        int outputNumber;
     };
 
 
-    virtual void mix(JoystickState &state, CopterInputs &inputs);
+    std::string name =  "Default";
+    virtual bool mix(JoystickState &state, CopterInputs &outputs);
 
 
     ControlsMixer();

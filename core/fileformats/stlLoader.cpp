@@ -31,12 +31,46 @@ int STLLoader::loadAsciiSTL(istream &input, Mesh3D &mesh)
         return 1;
     }
 
-    HelperUtils::getlineSafe(input, line);
-    while (!HelperUtils::startsWith(line, "endsolid"))
+    vector<Vector3dd> points;
+
+    while (true)
     {
+        if (!input) {
+            break;
+        }
 
+        HelperUtils::getlineSafe(input, line);
+        line = HelperUtils::removeLeading(line, " ");
 
+        if (HelperUtils::startsWith(line, "facet"))
+        {
+            points.clear();
+        }
 
+        if (HelperUtils::startsWith(line, "outer"))
+        {
+            points.clear();
+        }
+
+        if (HelperUtils::startsWith(line, "vertex"))
+        {
+            std::istringstream work(line.substr(strlen("vertex")));
+            Vector3dd vertex;
+            work >> vertex.x() >> vertex.y() >> vertex.z();
+            points.push_back(vertex);
+        }
+
+        if (HelperUtils::startsWith(line, "endfacet"))
+        {
+            if (points.size() == 3) {
+                mesh.addTriangle(points[0], points[1], points[2]);
+            }
+        }
+
+        if (HelperUtils::startsWith(line, "endsolid"))
+        {
+            break;
+        }
     }
     return 0;
 }

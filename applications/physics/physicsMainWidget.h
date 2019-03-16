@@ -10,6 +10,7 @@
 #include <aboutDialog.h>
 #include <cameraModelParametersControlWidget.h>
 #include <capSettingsDialog.h>
+#include <controlsMixer.h>
 #include <flowFabricControlWidget.h>
 #include <graphPlotDialog.h>
 #include <QtSerialPort/QSerialPort>
@@ -113,6 +114,7 @@ public slots:
 /** Quad **/
 public:
     JoystickState joystickState;
+    ControlsMixer mixer;
     CopterInputs inputs;
     QTimer copterTimer;
     Quad copter;

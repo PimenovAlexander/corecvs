@@ -48,10 +48,20 @@ public:
         if(mesh.hasColor) {
             mesh.setColor(color);
         }
-        mesh.addCylinder(Vector3dd::Zero(), motorWidth / 2, motorHeight, 10, 0);
+
+        if (motorMesh != NULL) {
+            mesh.add(*motorMesh);
+        } else {
+            mesh.addCylinder(Vector3dd::Zero(), motorWidth / 2, motorHeight, 10, 0);
+        }
         mesh.mulTransform(Affine3DQ::RotationZ(phi));
-        mesh.addAOB(Vector3dd(-propRadius, -0.002 , motorHeight        ),
-                    Vector3dd(+propRadius,  0.002 , motorHeight + 0.002));
+
+        if (propMesh != NULL) {
+            mesh.add(*propMesh);
+        } else {
+            mesh.addAOB(Vector3dd(-propRadius, -0.002 , motorHeight        ),
+                        Vector3dd(+propRadius,  0.002 , motorHeight + 0.002));
+        }
         mesh.popTransform();
 
     }
@@ -67,9 +77,9 @@ public:
         return Vector3dd(0.0, 0.0, pwm * cw);
     }
 
-    /* UI */
-    Mesh3D *motor = NULL;
-    Mesh3D *prop  = NULL;
+    /* UI not owned. Need to be reworked. Could be reused for hardcoded solution */
+    Mesh3D *motorMesh = NULL;
+    Mesh3D *propMesh  = NULL;
 
 
 };
@@ -118,9 +128,9 @@ public:
     void physicsTick();
 
     /* UI */
-    Mesh3D *body = NULL;
+    Mesh3D *bodyMesh = NULL;
 
-
+    ~Quad();
 };
 
 

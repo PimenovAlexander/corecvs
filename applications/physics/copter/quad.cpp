@@ -1,5 +1,7 @@
 #include "quad.h"
 
+#include <core/fileformats/meshLoader.h>
+
 using namespace corecvs;
 
 Quad::Quad(double frameSize)
@@ -35,8 +37,18 @@ Quad::Quad(double frameSize)
 
 
     /* Load ui*/
-    //Mesh3D *body = Mes
+    MeshLoader loader;
+    {
+        Mesh3D mesh;
+        if (loader.load(&mesh, "models/75mm_whoop_frame_v1.stl"))
+        {
+            bodyMesh = new Mesh3D;
+            bodyMesh->add(mesh);
+        }
+    }
 }
+
+
 
 Affine3DQ Quad::getMotorTransfrom(int num)
 {
@@ -51,6 +63,11 @@ Affine3DQ Quad::getTransform()
 void Quad::drawMyself(Mesh3D &mesh)
 {
     mesh.mulTransform(getTransform());
+
+    if (bodyMesh != NULL)
+    {
+        mesh.add(*bodyMesh);
+    }
 
     for (size_t i = 0; i < motors.size(); i++)
     {
@@ -136,6 +153,17 @@ void Quad::physicsTick()
 
     //cout << "Quad::physicsTick(): " << position << endl;
 
+}
+
+Quad::~Quad()
+{
+    delete_safe(bodyMesh);
+    for (size_t i = 0; i < motors.size(); i++)
+    {
+        delete_safe(motors[i].motorMesh);
+        delete_safe(motors[i].propMesh);
+
+    }
 }
 
 

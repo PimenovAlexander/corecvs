@@ -69,6 +69,8 @@ PhysicsMainWidget::PhysicsMainWidget(QWidget *parent) :
     connect(&mJoystickSettings, SIGNAL(joystickUpdated(JoystickState)), this, SLOT(joystickUpdated(JoystickState)));
 
     ui->logShowButton->setChecked(false);
+
+
 }
 
 PhysicsMainWidget::~PhysicsMainWidget()
@@ -546,29 +548,20 @@ void PhysicsMainWidget::joystickUpdated(JoystickState state)
     joystickState = state;
 }
 
+
+
 void PhysicsMainWidget::mainAction()
 {
     //SYNC_PRINT(("Tick\n"));
-
-    if (joystickState.axis.size() < 4) {
-        return;
-    }
-
-    /* This need to be brought to mixer */
-    double d = (2 * 32767.0);
-
-    CopterInputs inputs;
-    inputs.axis[CopterInputs::CHANNEL_THROTTLE] = -(joystickState.axis[1] / d * 100.0);
-    inputs.axis[CopterInputs::CHANNEL_ROLL    ] =   joystickState.axis[3] / d * 100.0;
-    inputs.axis[CopterInputs::CHANNEL_PITCH   ] =   joystickState.axis[4] / d * 100.0;
-    inputs.axis[CopterInputs::CHANNEL_YAW     ] =   joystickState.axis[0] / d * 100.0;
-
-
     mesh = new Mesh3DScene;
     mesh->switchColor();
 
     //inputs.print();
-    copter.flightControllerTick(inputs);
+
+    if (mixer.mix(joystickState, inputs)) {
+        copter.flightControllerTick(inputs);
+    }
+
     copter.physicsTick();
     copter.visualTick();
     copter.drawMyself(*mesh);
