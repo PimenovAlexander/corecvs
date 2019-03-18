@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <g12Image.h>
+#include <sceneShaded.h>
 
 #include <unistd.h>
 #include <bitset>
@@ -318,13 +319,20 @@ void PhysicsMainWidget::keepAlive(){
     QTimer::singleShot(8, this, SLOT(keepAlive()));
 }
 
+void PhysicsMainWidget::showCameraInput()
+{
+    SYNC_PRINT(("PhysicsMainWidget::showCameraInput(): called\n"));
+    mInputSelector.show();
+    mInputSelector.raise();
+}
+
 void PhysicsMainWidget::startCamera()                                                 //how can I stop it??
 {
     if (cameraActive)
     {
         mProcessor->exit();
     }
-    cameraActive=true;
+    cameraActive = true;
     /* We should prepare calculator in some other place */
     mProcessor = new FrameProcessor();
     mProcessor->target = this;
@@ -360,6 +368,16 @@ void PhysicsMainWidget::startCamera()                                           
     mProcessor->start();
     rawInput->startCapture();    
 
+
+}
+
+void PhysicsMainWidget::pauseCamera()
+{
+
+}
+
+void PhysicsMainWidget::stopCamera()
+{
 
 }
 
@@ -553,18 +571,37 @@ void PhysicsMainWidget::joystickUpdated(JoystickState state)
 void PhysicsMainWidget::mainAction()
 {
     //SYNC_PRINT(("Tick\n"));
-    mesh = new Mesh3DScene;
-    mesh->switchColor();
+
+    bool oldbackend = !ui->backendSwitchButton->isChecked();
+
+    Mesh3DScene *mesh  = NULL;
+
+    SceneShaded *mesh1 = NULL;
+    if (oldbackend)
+    {
+        mesh = new Mesh3DScene;
+        mesh->switchColor();
+    } else {
+        mesh1 = new SceneShaded;
+        mesh1->mMesh  = new Mesh3DDecorated();
+        mesh1->mMesh->switchColor();
+    }
 
     //inputs.print();
 
     if (mixer.mix(joystickState, inputs)) {
         copter.flightControllerTick(inputs);
-    }
 
-    copter.physicsTick();
+
+        copter.physicsTick();
+    }
     copter.visualTick();
-    copter.drawMyself(*mesh);
+
+    if (oldbackend) {
+        copter.drawMyself(*mesh);
+    } else {
+        copter.drawMyself(*mesh1->mMesh);
+    }
 
     mGraphDialog.addGraphPoint("X", copter.position.x());
     mGraphDialog.addGraphPoint("Y", copter.position.y());
@@ -572,7 +609,11 @@ void PhysicsMainWidget::mainAction()
 
     mGraphDialog.update();
 
-    ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh), CloudViewDialog::CONTROL_ZONE);
+    if (oldbackend) {
+        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh), CloudViewDialog::CONTROL_ZONE);
+    } else {
+        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh1), CloudViewDialog::CONTROL_ZONE);
+    }
     ui->cloud->update();
 }
 

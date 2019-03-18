@@ -39,11 +39,45 @@ Quad::Quad(double frameSize)
     /* Load ui*/
     MeshLoader loader;
     {
-        Mesh3D mesh;
+        Mesh3D mesh;       
         if (loader.load(&mesh, "models/75mm_whoop_frame_v1.stl"))
         {
+            mesh.transform(Matrix44::Scale(88.0/75.0) *
+                           Matrix44::RotationX(degToRad(-90)) *
+                           Matrix44::Scale(1/1000.0) *
+                           Matrix44::Shift(-23, 0, -23));
             bodyMesh = new Mesh3D;
             bodyMesh->add(mesh);
+        }
+    }
+
+    {
+        Mesh3D mesh;
+        if (loader.load(&mesh, "models/CW_Tri_Prop.stl"))
+        {
+            /* mm -> m and shift to right position */
+            mesh.transform(Matrix44::Scale(2.0/5.0) * Matrix44::Scale(1/1000.0) * Matrix44::Shift(-236, -207, 0));
+
+            motors[BETAFLIGHT_MOTOR_2].propMesh = new Mesh3D;
+            motors[BETAFLIGHT_MOTOR_2].propMesh->add(mesh);
+
+            motors[BETAFLIGHT_MOTOR_3].propMesh = new Mesh3D;
+            motors[BETAFLIGHT_MOTOR_3].propMesh->add(mesh);
+        }
+    }
+
+    {
+        Mesh3D mesh;
+        if (loader.load(&mesh, "models/CCW_Tri_Prop.stl"))
+        {
+            /* mm -> m and shift to right position */
+            mesh.transform(Matrix44::Scale(2.0/5.0) * Matrix44::Scale(1/1000.0) * Matrix44::Shift(-372, -208, 0));
+
+            motors[BETAFLIGHT_MOTOR_1].propMesh = new Mesh3D;
+            motors[BETAFLIGHT_MOTOR_1].propMesh->add(mesh);
+
+            motors[BETAFLIGHT_MOTOR_4].propMesh = new Mesh3D;
+            motors[BETAFLIGHT_MOTOR_4].propMesh->add(mesh);
         }
     }
 }
@@ -63,9 +97,11 @@ Affine3DQ Quad::getTransform()
 void Quad::drawMyself(Mesh3D &mesh)
 {
     mesh.mulTransform(getTransform());
+    mesh.switchColor();
 
     if (bodyMesh != NULL)
     {
+        mesh.setColor(RGBColor::White());
         mesh.add(*bodyMesh);
     }
 
@@ -141,7 +177,7 @@ void Quad::physicsTick()
         addMoment(motors[i].getM());
     }
     /* TODO: Add air friction*/
-    addForce(Force(Vector3dd(0, 0, -9.8)));
+    addForce(Force(Vector3dd(0.0, 0.0, -9.8 * mass)));
     tick(0.1);
 
     /*TODO: Add real collistion comutation */

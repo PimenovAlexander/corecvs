@@ -455,7 +455,7 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
     mProgram->bind();*/
 
     float arr[16];
-    glGetFloatv(GL_MODELVIEW_MATRIX, arr);
+    glFuncs.glGetFloatv(GL_MODELVIEW_MATRIX, arr);
     QMatrix4x4 modelview(
             arr[0], arr[4], arr[ 8], arr[12],
             arr[1], arr[5], arr[ 9], arr[13],
@@ -463,7 +463,7 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
             arr[3], arr[7], arr[11], arr[15]
     );
 
-    glGetFloatv(GL_PROJECTION_MATRIX, arr);
+    glFuncs.glGetFloatv(GL_PROJECTION_MATRIX, arr);
     QMatrix4x4 projection(
             arr[0], arr[4], arr[ 8], arr[12],
             arr[1], arr[5], arr[ 9], arr[13],

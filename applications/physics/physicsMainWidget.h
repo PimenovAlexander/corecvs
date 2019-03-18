@@ -13,6 +13,7 @@
 #include <controlsMixer.h>
 #include <flowFabricControlWidget.h>
 #include <graphPlotDialog.h>
+#include <inputSelectorWidget.h>
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 #include <copter/quad.h>
@@ -95,10 +96,16 @@ public:
     CapSettingsDialog mCameraParametersWidget;
     CameraModelParametersControlWidget mModelParametersWidget;
     CameraModel mCameraModel;
+    InputSelectorWidget mInputSelector;
 
 public slots:
+    void showCameraInput();
+
     /* Add paused and stop ASAP */
     void startCamera();
+    void pauseCamera();
+    void stopCamera();
+
     void showCameraParametersWidget();
     void showCameraModelWidget();
 

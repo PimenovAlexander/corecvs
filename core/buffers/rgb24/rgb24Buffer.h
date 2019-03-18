@@ -105,6 +105,8 @@ public:
     void drawPixel(int    x, int    y, const RGBColor &color);
     void drawPixel(double x, double y, const RGBColor &color);
 
+    void drawPixel(const Vector2dd &point, const RGBColor &color);
+
     /**
      * This function is used to draw a sort of marker over the buffer
      *

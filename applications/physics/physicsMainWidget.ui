@@ -273,8 +273,62 @@
       </item>
       <item row="0" column="4" rowspan="2" colspan="2">
        <layout class="QGridLayout" name="gridLayout_6">
-        <item row="2" column="1">
-         <widget class="QPushButton" name="processingParametersButton">
+        <item row="0" column="2">
+         <widget class="QPushButton" name="videoStartPushButton">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/main.qrc">
+            <normaloff>:/new/prefix1/play.png</normaloff>:/new/prefix1/play.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="6">
+         <widget class="QPushButton" name="startButton">
+          <property name="toolTip">
+           <string>Start</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/main.qrc">
+            <normaloff>:/new/prefix1/play.png</normaloff>:/new/prefix1/play.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="7">
+         <widget class="QPushButton" name="cameraParametersButton">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/main.qrc">
+            <normaloff>:/new/prefix1/cctv_camera.png</normaloff>:/new/prefix1/cctv_camera.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="8">
+         <widget class="QPushButton" name="cameraModelButton">
           <property name="text">
            <string/>
           </property>
@@ -290,7 +344,27 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="2">
+        <item row="0" column="9">
+         <widget class="QPushButton" name="aboutButton">
+          <property name="toolTip">
+           <string>About</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/main.qrc">
+            <normaloff>:/new/prefix1/info_rhombus.png</normaloff>:/new/prefix1/info_rhombus.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="7">
          <widget class="QPushButton" name="joystickParametersButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -316,17 +390,17 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="4">
-         <widget class="QPushButton" name="aboutButton">
+        <item row="1" column="5">
+         <widget class="QPushButton" name="graphButton">
           <property name="toolTip">
-           <string>About</string>
+           <string>Graphs</string>
           </property>
           <property name="text">
            <string/>
           </property>
           <property name="icon">
            <iconset resource="../../resources/main.qrc">
-            <normaloff>:/new/prefix1/info_rhombus.png</normaloff>:/new/prefix1/info_rhombus.png</iconset>
+            <normaloff>:/new/prefix1/Line Chart.png</normaloff>:/new/prefix1/Line Chart.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -336,25 +410,8 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="2">
-         <widget class="QPushButton" name="cameraParametersButton">
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../../resources/main.qrc">
-            <normaloff>:/new/prefix1/cctv_camera.png</normaloff>:/new/prefix1/cctv_camera.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="3">
-         <widget class="QPushButton" name="cameraModelButton">
+        <item row="2" column="6">
+         <widget class="QPushButton" name="processingParametersButton">
           <property name="text">
            <string/>
           </property>
@@ -370,27 +427,7 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QPushButton" name="startCameraButton">
-          <property name="toolTip">
-           <string>Camera</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../../resources/main.qrc">
-            <normaloff>:/new/prefix1/webcam.png</normaloff>:/new/prefix1/webcam.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="4">
+        <item row="2" column="9">
          <widget class="QPushButton" name="logShowButton">
           <property name="toolTip">
            <string>ShowLog</string>
@@ -416,17 +453,44 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QPushButton" name="graphButton">
+        <item row="1" column="2">
+         <widget class="QPushButton" name="backendSwitchButton">
           <property name="toolTip">
-           <string>Graphs</string>
+           <string>Switch Mesh Backend</string>
           </property>
           <property name="text">
            <string/>
           </property>
           <property name="icon">
            <iconset resource="../../resources/main.qrc">
-            <normaloff>:/new/prefix1/Line Chart.png</normaloff>:/new/prefix1/Line Chart.png</iconset>
+            <normaloff>:/new/prefix1/flag_start.png</normaloff>:/new/prefix1/flag_start.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Camera</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="4">
+         <widget class="QPushButton" name="videoStopPushButton">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/main.qrc">
+            <normaloff>:/new/prefix1/stop_2.png</normaloff>:/new/prefix1/stop_2.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -436,17 +500,34 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QPushButton" name="startButton">
+        <item row="0" column="3">
+         <widget class="QPushButton" name="videoPausePushButton">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../../resources/main.qrc">
+            <normaloff>:/new/prefix1/pause.png</normaloff>:/new/prefix1/pause.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="showCameraInputButton">
           <property name="toolTip">
-           <string>Start</string>
+           <string>Camera</string>
           </property>
           <property name="text">
            <string/>
           </property>
           <property name="icon">
            <iconset resource="../../resources/main.qrc">
-            <normaloff>:/new/prefix1/play.png</normaloff>:/new/prefix1/play.png</iconset>
+            <normaloff>:/new/prefix1/webcam.png</normaloff>:/new/prefix1/webcam.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -500,8 +581,8 @@
    <slot>startRealMode()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>190</x>
-     <y>63</y>
+     <x>196</x>
+     <y>61</y>
     </hint>
     <hint type="destinationlabel">
      <x>503</x>
@@ -532,8 +613,8 @@
    <slot>startVirtualMode()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>190</x>
-     <y>131</y>
+     <x>196</x>
+     <y>129</y>
     </hint>
     <hint type="destinationlabel">
      <x>833</x>
@@ -574,13 +655,13 @@
    </hints>
   </connection>
   <connection>
-   <sender>startCameraButton</sender>
+   <sender>showCameraInputButton</sender>
    <signal>released()</signal>
    <receiver>PhysicsMainWidget</receiver>
-   <slot>startCamera()</slot>
+   <slot>showCameraInput()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1525</x>
+     <x>1300</x>
      <y>46</y>
     </hint>
     <hint type="destinationlabel">
@@ -685,6 +766,54 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>videoStartPushButton</sender>
+   <signal>released()</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>startCamera()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1330</x>
+     <y>32</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1328</x>
+     <y>145</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>videoPausePushButton</sender>
+   <signal>released()</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>pauseCamera()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1372</x>
+     <y>32</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1361</x>
+     <y>145</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>videoStopPushButton</sender>
+   <signal>released()</signal>
+   <receiver>PhysicsMainWidget</receiver>
+   <slot>stopCamera()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1405</x>
+     <y>25</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1391</x>
+     <y>144</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>myHandler(int)</slot>
@@ -707,5 +836,8 @@
   <slot>showProcessingParametersWidget()</slot>
   <slot>showGraphDialog()</slot>
   <slot>startSimuation()</slot>
+  <slot>pauseCamera()</slot>
+  <slot>stopCamera()</slot>
+  <slot>showCameraInput()</slot>
  </slots>
 </ui>
