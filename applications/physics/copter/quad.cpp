@@ -80,6 +80,16 @@ Quad::Quad(double frameSize)
             motors[BETAFLIGHT_MOTOR_4].propMesh->add(mesh);
         }
     }
+
+    {
+        Mesh3DDecorated mesh;
+        if (loader.load(&mesh, "models/OBJ.obj"))
+        {
+            /* mm -> m and shift to right position */
+            worldMesh = new Mesh3DDecorated;
+            worldMesh->add(mesh, true);
+        }
+    }
 }
 
 
@@ -140,6 +150,17 @@ void Quad::drawMyself(Mesh3D &mesh)
         mesh.addLine(f.position, f.position + f.force * 1.0);
     }
 
+
+}
+
+void Quad::drawMyself(Mesh3DDecorated &mesh)
+{
+    Quad::drawMyself((Mesh3D &)mesh);
+    /* Scene should be drawed */
+    if (worldMesh != NULL)
+    {
+        mesh.add(*worldMesh);
+    }
 }
 
 void Quad::flightControllerTick(const CopterInputs &input)
@@ -180,7 +201,7 @@ void Quad::physicsTick()
     addForce(Force(Vector3dd(0.0, 0.0, -9.8 * mass)));
     tick(0.1);
 
-    /*TODO: Add real collistion comutation */
+    /*TODO: Add real collistion comрutation */
     if (position.z() < -1.0)
     {
         velocity = Vector3dd::Zero();

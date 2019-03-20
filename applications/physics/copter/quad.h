@@ -119,16 +119,19 @@ public:
 
     corecvs::Affine3DQ  getTransform();
 
-    void drawMyself(corecvs::Mesh3D &mesh);
+    void drawMyself(Mesh3D &mesh);
+    void drawMyself(Mesh3DDecorated &mesh);
 
     void visualTick();
 
     void flightControllerTick(const CopterInputs &input);
-
     void physicsTick();
 
     /* UI */
     Mesh3D *bodyMesh = NULL;
+
+    /* This definitely need to be in the other place */
+    Mesh3DDecorated *worldMesh = NULL;
 
     ~Quad();
 };

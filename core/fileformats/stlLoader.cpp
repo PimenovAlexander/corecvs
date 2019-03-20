@@ -23,7 +23,7 @@ int STLLoader::loadAsciiSTL(istream &input, Mesh3D &mesh)
     string line;
     HelperUtils::getlineSafe(input, line);
 
-    SYNC_PRINT(("Magic String is <%s>\n", line.c_str()));
+    // SYNC_PRINT(("Magic String is <%s>\n", line.c_str()));
     if (!HelperUtils::startsWith(line, "solid"))
     {
         input.seekg (0, input.beg);

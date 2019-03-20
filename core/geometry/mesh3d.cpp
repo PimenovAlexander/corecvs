@@ -823,7 +823,7 @@ AxisAlignedBox3d Mesh3D::getBoundingBox()
 
 void Mesh3D::add(const Mesh3D &other, bool preserveColor)
 {
-    int newZero = (int)vertexes.size();
+    size_t newZero = vertexes.size();
     vertexes.reserve(vertexes.size() + other.vertexes.size());
     faces.reserve(faces.size() + other.faces.size());
     edges.reserve(edges.size() + other.edges.size());
@@ -831,7 +831,7 @@ void Mesh3D::add(const Mesh3D &other, bool preserveColor)
     RGBColor backup = currentColor;
     preserveColor = preserveColor & other.hasColor;
 
-    for (unsigned i = 0; i < other.vertexes.size(); i++)
+    for (size_t i = 0; i < other.vertexes.size(); i++)
     {
         if (preserveColor)
             currentColor = other.vertexesColor[i];
@@ -839,7 +839,7 @@ void Mesh3D::add(const Mesh3D &other, bool preserveColor)
         addVertex(other.vertexes[i]);
     }
 
-    for (unsigned i = 0; i < other.faces.size(); i++)
+    for (size_t i = 0; i < other.faces.size(); i++)
     {
         if (preserveColor)
             currentColor = other.facesColor[i];
@@ -847,7 +847,7 @@ void Mesh3D::add(const Mesh3D &other, bool preserveColor)
         addFace(other.faces[i] + Vector3d32(newZero, newZero, newZero));
     }
 
-    for (unsigned i = 0; i < other.edges.size(); i++)
+    for (size_t i = 0; i < other.edges.size(); i++)
     {
         if (preserveColor)
             currentColor = other.edgesColor[i];

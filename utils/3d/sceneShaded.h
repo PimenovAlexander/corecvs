@@ -14,7 +14,7 @@ class QOpenGLShaderProgram;
 
 
 
-class SceneShaded : public Scene3D, public /*QOpenGLFunctions*/ QOpenGLFunctions_4_4_Core
+class SceneShaded : public Scene3D/*, public QOpenGLFunctions QOpenGLFunctions_4_4_Core*/
 {
 public:
     ShadedSceneControlParameters mParameters;

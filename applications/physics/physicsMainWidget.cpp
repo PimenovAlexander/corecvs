@@ -250,8 +250,7 @@ void PhysicsMainWidget::startVirtualMode()
         SYNC_PRINT(("PhysicsMainWidget::startVirtualMode(): Adding new object to scene\n"));
         Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
 
-        //Mesh3DDecorated *mesh = new Mesh3DDecorated;
-        mesh = new Mesh3DScene;
+        Mesh3DDecorated *mesh = new Mesh3DDecorated;
 
         mesh->switchColor();
 
@@ -278,13 +277,15 @@ void PhysicsMainWidget::startVirtualMode()
         mesh->popTransform();
 
         //mesh->dumpPLY("out2.ply");
+        Mesh3DScene *scene = new Mesh3DScene;
+        scene->setMesh(mesh);
 
-        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh));
+        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene));
         ui->cloud->update();
 
         simSim.start();
         //simSim.mainObjects[0]->addForce(Vector3dd(0, 0, -9.8));
-        cout<<"done"<<endl;
+        cout << "done" << endl;
 
         QTimer::singleShot(8, this, SLOT(keepAlive()));           //UI thread crash why????????????
     }
@@ -293,8 +294,9 @@ void PhysicsMainWidget::startVirtualMode()
 void PhysicsMainWidget::keepAlive(){
     Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
 
-    //Mesh3DDecorated *mesh = new Mesh3DDecorated;
-    mesh = new Mesh3DScene;
+    Mesh3D *mesh = new Mesh3D;
+    Mesh3DScene *scene = new Mesh3DScene;
+    scene->setMesh(mesh);
 
     mesh->switchColor();
     mesh->mulTransform(copterPos);
@@ -312,9 +314,8 @@ void PhysicsMainWidget::keepAlive(){
 
     mesh->popTransform();
 
+    ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene));
     ui->cloud->update();
-    ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh));
-
 
     QTimer::singleShot(8, this, SLOT(keepAlive()));
 }
@@ -574,17 +575,19 @@ void PhysicsMainWidget::mainAction()
 
     bool oldbackend = !ui->backendSwitchButton->isChecked();
 
-    Mesh3DScene *mesh  = NULL;
+    Mesh3DScene *scene  = NULL;
+    SceneShaded *scene1 = NULL;
 
-    SceneShaded *mesh1 = NULL;
     if (oldbackend)
     {
-        mesh = new Mesh3DScene;
+        scene = new Mesh3DScene;
+        Mesh3D *mesh = new Mesh3D();
         mesh->switchColor();
+        scene->setMesh(mesh);
     } else {
-        mesh1 = new SceneShaded;
-        mesh1->mMesh  = new Mesh3DDecorated();
-        mesh1->mMesh->switchColor();
+        scene1 = new SceneShaded;
+        scene1->mMesh  = new Mesh3DDecorated();
+        scene1->mMesh->switchColor();
     }
 
     //inputs.print();
@@ -598,9 +601,9 @@ void PhysicsMainWidget::mainAction()
     copter.visualTick();
 
     if (oldbackend) {
-        copter.drawMyself(*mesh);
+        copter.drawMyself(*scene->owned);
     } else {
-        copter.drawMyself(*mesh1->mMesh);
+        copter.drawMyself(*scene1->mMesh);
     }
 
     mGraphDialog.addGraphPoint("X", copter.position.x());
@@ -610,9 +613,10 @@ void PhysicsMainWidget::mainAction()
     mGraphDialog.update();
 
     if (oldbackend) {
-        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh), CloudViewDialog::CONTROL_ZONE);
+        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene), CloudViewDialog::CONTROL_ZONE);
     } else {
-        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh1), CloudViewDialog::CONTROL_ZONE);
+        scene1->prepareMesh(ui->cloud);
+        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene1), CloudViewDialog::DISP_CONTROL_ZONE);
     }
     ui->cloud->update();
 }
@@ -717,10 +721,13 @@ void PhysicsMainWidget::updateUi()
 
     /**/
     if (work->mMesh != NULL) {
-        Mesh3DScene* mesh = new Mesh3DScene;
+        Mesh3DScene* scene = new Mesh3DScene;
+        Mesh3D *mesh = new Mesh3D();
+        scene->setMesh(mesh);
+
         mesh->switchColor();
         mesh->add(*work->mMesh, true);
-        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh), CloudViewDialog::ADDITIONAL_SCENE);
+        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene), CloudViewDialog::ADDITIONAL_SCENE);
     }
 
     if (work->mImage)

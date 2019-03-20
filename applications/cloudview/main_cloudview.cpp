@@ -63,14 +63,16 @@ int main(int argc, char *argv[])
 
         if (oldStyle)
         {
-            Mesh3DScene *mesh = new Mesh3DScene();
+            Mesh3DScene *scene = new Mesh3DScene();
+            Mesh3D *mesh = new Mesh3D();
+            scene->setMesh(mesh);
 
-            if (!loader.load(mesh, path))
+            if (!loader.load(scene->owned, path))
             {
-                delete_safe(mesh);
+                delete_safe(scene);
                 continue;
-            }
-            mainWindow.addSubObject(QString::fromStdString(path), QSharedPointer<Scene3D>((Scene3D*)mesh));
+            }            
+            mainWindow.addSubObject(QString::fromStdString(path), QSharedPointer<Scene3D>((Scene3D*)scene));
         } else {            
             SceneShaded *shaded = new SceneShaded();
             Mesh3DDecorated *mesh = new Mesh3DDecorated();

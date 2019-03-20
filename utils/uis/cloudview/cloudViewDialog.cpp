@@ -205,15 +205,19 @@ void CloudViewDialog::addMesh(QString name, Mesh3D *mesh)
 {
     std::stringstream ss;
     mesh->dumpPLY(ss);
+
     Mesh3DScene *scene = new Mesh3DScene();
+    Mesh3D *meshnew = new Mesh3D();
+
     PLYLoader loader;
-    loader.loadPLY(ss, *scene);
+    loader.loadPLY(ss, *meshnew);
+    scene->setMesh(meshnew);
 
     cout << "Loaded mesh:" << endl;
-    cout << " Edges   :" << scene->edges.size() << endl;
-    cout << " Vertexes:" << scene->vertexes.size() << endl;
-    cout << " Faces   :" << scene->faces.size() << endl;
-    cout << " Bounding box " << scene->getBoundingBox() << endl;
+    cout << " Edges   :" << scene->owned->edges.size() << endl;
+    cout << " Vertexes:" << scene->owned->vertexes.size() << endl;
+    cout << " Faces   :" << scene->owned->faces.size() << endl;
+    cout << " Bounding box " << scene->owned->getBoundingBox() << endl;
 
     addSubObject(name, QSharedPointer<Scene3D>((Scene3D*)scene));
 }
@@ -1037,14 +1041,16 @@ void CloudViewDialog::loadMesh()
         shaded->prepareMesh(this);
         addSubObject(fileInfo.baseName(), QSharedPointer<Scene3D>(shaded));
     } else {
-        Mesh3DScene *mesh = new Mesh3DScene();
+        Mesh3DScene *scene = new Mesh3DScene();
+        Mesh3D *mesh = new Mesh3D();
+        scene->setMesh(mesh);
 
-        if (!loader.load(mesh, fileName.toStdString()))
+        if (!loader.load(scene->owned, fileName.toStdString()))
         {
-            delete_safe(mesh);
+            delete_safe(scene);
                return;
         }
-        addSubObject(fileInfo.baseName(), QSharedPointer<Scene3D>((Scene3D*)mesh));
+        addSubObject(fileInfo.baseName(), QSharedPointer<Scene3D>((Scene3D*)scene));
     }
 }
 
