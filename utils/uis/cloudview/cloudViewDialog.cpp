@@ -779,8 +779,9 @@ void CloudViewDialog::initializeGLSlot()
     glDisable(GL_TEXTURE_2D);
 
     if (mTreeModel.mTopItem != NULL &&
-        !mTreeModel.mTopItem->mObject.isNull())
+       !mTreeModel.mTopItem->mObject.isNull())
     {
+        SYNC_PRINT(("CloudViewDialog::initializeGLSlot(): calls mObject->prepareMesh()\n"));
         mTreeModel.mTopItem->mObject->prepareMesh(this);
     }
 }
@@ -1035,9 +1036,8 @@ void CloudViewDialog::loadMesh()
         objLoader.loadMaterials(materialFile, mesh->materials, fileInfo.path().toStdString());
         materialFile.close();
 
-
-        shaded->mMesh = mesh;
-        shaded->mMesh->recomputeMeanNormals();
+        mesh->recomputeMeanNormals();
+        shaded->setMesh(mesh);
         shaded->prepareMesh(this);
         addSubObject(fileInfo.baseName(), QSharedPointer<Scene3D>(shaded));
     } else {

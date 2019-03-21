@@ -42,7 +42,9 @@ HEADERS += \
     joystick/mixerChannelOperationWidget.h \
     frameProcessor.h \
     protoautopilot.h \
-    copter/quad.h
+    copter/quad.h \
+    physicsMainWindow.h \
+    physicsAboutWidget.h
 
 SOURCES += \
     physicsMainWidget.cpp \
@@ -64,13 +66,17 @@ SOURCES += \
     joystick/mixerChannelOperationWidget.cpp \
     frameProcessor.cpp \
     protoautopilot.cpp \
-    copter/quad.cpp
+    copter/quad.cpp \
+    physicsMainWindow.cpp \
+    physicsAboutWidget.cpp
 
 FORMS += \
     physicsMainWidget.ui \
     joystick/JoystickOptionsWidget.ui \
     copterInputsWidget.ui \
-    joystick/mixerChannelOperationWidget.ui
+    joystick/mixerChannelOperationWidget.ui \
+    physicsMainWindow.ui \
+    physicsAboutWidget.ui
 
 #RESOURCES += ../../resources/main.qrc
 

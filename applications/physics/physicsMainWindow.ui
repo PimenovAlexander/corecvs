@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PhysicsMainWindow</class>
+ <widget class="QMainWindow" name="PhysicsMainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>34</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu12">
+    <property name="title">
+     <string>Fi&amp;le</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuCamera">
+    <property name="title">
+     <string>Ca&amp;mera</string>
+    </property>
+    <addaction name="actionCamera_Input"/>
+    <addaction name="actionCameraStart"/>
+    <addaction name="actionCameraPause"/>
+    <addaction name="actionCameraStop"/>
+    <addaction name="actionJoystickParameters"/>
+   </widget>
+   <widget class="QMenu" name="menuJoystick">
+    <property name="title">
+     <string>&amp;Joystick</string>
+    </property>
+    <addaction name="actionParameters_2"/>
+   </widget>
+   <widget class="QMenu" name="menuAbout">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+    <addaction name="separator"/>
+    <addaction name="actionCaps"/>
+   </widget>
+   <widget class="QMenu" name="menuProcessing">
+    <property name="title">
+     <string>Processi&amp;ng</string>
+    </property>
+    <addaction name="actionCameraModel"/>
+   </widget>
+   <addaction name="menu12"/>
+   <addaction name="menuCamera"/>
+   <addaction name="menuJoystick"/>
+   <addaction name="menuProcessing"/>
+   <addaction name="menuAbout"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QDockWidget" name="dockWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetMovable|QDockWidget::DockWidgetVerticalTitleBar</set>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>4</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QToolButton" name="toolButton_3">
+       <property name="text">
+        <string>connect to real device</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../resources/main.qrc">
+         <normaloff>:/new/prefix1/connect.png</normaloff>:/new/prefix1/connect.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextUnderIcon</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="connetToVirtualButton">
+       <property name="text">
+        <string>connect to virtual</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../resources/main.qrc">
+         <normaloff>:/new/prefix1/server_connect.png</normaloff>:/new/prefix1/server_connect.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextUnderIcon</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="toolButton_2">
+       <property name="text">
+        <string>AUTOPILOT
+(press any js key to stop)</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../resources/main.qrc">
+         <normaloff>:/new/prefix1/robot.png</normaloff>:/new/prefix1/robot.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextUnderIcon</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="JoyButton">
+       <property name="text">
+        <string>JoyStick mode</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../resources/main.qrc">
+         <normaloff>:/new/prefix1/controller.png</normaloff>:/new/prefix1/controller.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextUnderIcon</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionCaps">
+   <property name="text">
+    <string>Caps</string>
+   </property>
+  </action>
+  <action name="actionCamera_Input">
+   <property name="text">
+    <string>Camera Input</string>
+   </property>
+  </action>
+  <action name="actionCameraStart">
+   <property name="icon">
+    <iconset resource="../../resources/main.qrc">
+     <normaloff>:/new/prefix1/play.png</normaloff>:/new/prefix1/play.png</iconset>
+   </property>
+   <property name="text">
+    <string>Start</string>
+   </property>
+  </action>
+  <action name="actionCameraPause">
+   <property name="icon">
+    <iconset resource="../../resources/main.qrc">
+     <normaloff>:/new/prefix1/pause.png</normaloff>:/new/prefix1/pause.png</iconset>
+   </property>
+   <property name="text">
+    <string>Pause</string>
+   </property>
+  </action>
+  <action name="actionCameraStop">
+   <property name="icon">
+    <iconset resource="../../resources/main.qrc">
+     <normaloff>:/new/prefix1/stop_2.png</normaloff>:/new/prefix1/stop_2.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stop</string>
+   </property>
+  </action>
+  <action name="actionJoystickParameters">
+   <property name="icon">
+    <iconset resource="../../resources/main.qrc">
+     <normaloff>:/new/prefix1/joystick_error.png</normaloff>:/new/prefix1/joystick_error.png</iconset>
+   </property>
+   <property name="text">
+    <string>Parameters</string>
+   </property>
+  </action>
+  <action name="actionParameters_2">
+   <property name="text">
+    <string>Parameters</string>
+   </property>
+  </action>
+  <action name="actionCameraModel">
+   <property name="text">
+    <string>Camera Model</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../../resources/main.qrc"/>
+ </resources>
+ <connections/>
+</ui>

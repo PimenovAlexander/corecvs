@@ -586,8 +586,9 @@ void PhysicsMainWidget::mainAction()
         scene->setMesh(mesh);
     } else {
         scene1 = new SceneShaded;
-        scene1->mMesh  = new Mesh3DDecorated();
-        scene1->mMesh->switchColor();
+        Mesh3DDecorated *mesh  = new Mesh3DDecorated();
+        mesh->switchColor();
+        scene1->setMesh(mesh);
     }
 
     //inputs.print();
@@ -603,7 +604,9 @@ void PhysicsMainWidget::mainAction()
     if (oldbackend) {
         copter.drawMyself(*scene->owned);
     } else {
-        copter.drawMyself(*scene1->mMesh);
+        Mesh3DDecorated *mesh = new Mesh3DDecorated();
+        copter.drawMyself(*mesh);
+        scene1->setMesh(mesh);
     }
 
     mGraphDialog.addGraphPoint("X", copter.position.x());

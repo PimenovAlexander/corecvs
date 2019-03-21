@@ -7,7 +7,6 @@
 
 #include <JoystickOptionsWidget.h>
 #include <QWidget>
-#include <aboutDialog.h>
 #include <cameraModelParametersControlWidget.h>
 #include <capSettingsDialog.h>
 #include <controlsMixer.h>
@@ -21,6 +20,7 @@
 #include "clientSender.h"
 #include "copterInputsWidget.h"
 #include "frameProcessor.h"
+#include "physicsAboutWidget.h"
 #include "protoautopilot.h"
 #include "qComController.h"
 
@@ -82,7 +82,7 @@ public:
     JoystickOptionsWidget mJoystickSettings;
 
 /** About: We have to use it to satisfy the icons license **/
-    AboutDialog mAboutWidget;    
+    PhysicsAboutWidget mAboutWidget;
 
 public slots:
     void settingsWidget();
