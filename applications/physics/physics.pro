@@ -24,7 +24,6 @@ INCLUDEPATH += mixer
 
 
 HEADERS += \
-    physicsMainWidget.h \
     simulation.h \
     clientSender.h \
     joystickInput.h \
@@ -47,7 +46,6 @@ HEADERS += \
     physicsAboutWidget.h
 
 SOURCES += \
-    physicsMainWidget.cpp \
     simulation.cpp \
     simSphere.cpp \
     simObject.cpp \
@@ -71,7 +69,6 @@ SOURCES += \
     physicsAboutWidget.cpp
 
 FORMS += \
-    physicsMainWidget.ui \
     joystick/JoystickOptionsWidget.ui \
     copterInputsWidget.ui \
     joystick/mixerChannelOperationWidget.ui \

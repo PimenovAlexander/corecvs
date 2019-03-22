@@ -5,7 +5,7 @@
 
 
 class ImageCaptureInterfaceQt;
-class PhysicsMainWidget;
+class PhysicsMainWindow;
 
 
 /**
@@ -16,7 +16,7 @@ class FrameProcessor : public QThread
     Q_OBJECT
 public:
 
-    PhysicsMainWidget *target = NULL;
+    PhysicsMainWindow *target = NULL;
     ImageCaptureInterfaceQt *input = NULL;
     FrameProcessor(QObject *parent = 0) : QThread(parent)
     {}
