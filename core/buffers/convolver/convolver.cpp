@@ -655,5 +655,39 @@ void Convolver::unrolledWrapperConvolutor(FpImage &src, FpKernel &kernel, FpImag
 
 #endif
 
+
+
+void Convolver::fillPerimeter(FpKernel &kernel, FpImage &dst, float value )
+{
+
+    for (int j = 0; j < dst.w; j++)
+    {
+        for (int i = 0; i < kernel.y; i++)
+        {
+                dst.element(i,j) = value;
+        }
+
+        for (int i = 0; i < kernel.h - kernel.y - 1; i++)
+        {
+                dst.element(dst.h - 1 - i ,j) = value;
+        }
+    }
+
+    for (int i = 0; i < dst.h; i++)
+    {
+        for (int j = 0; j < kernel.x; j++)
+        {
+                dst.element(i,j) = value;
+        }
+
+        for (int j = 0; j < kernel.w - kernel.x - 1; j++)
+        {
+                dst.element(i, dst.w - j - 1) = value;
+        }
+    }
+}
+
+
+
 } //namespace corecvs
 

@@ -16,6 +16,14 @@ OBJECTS_DIR = $$ROOT_DIR/.obj/$$TARGET_ORIG$$BUILD_CFG_NAME
 TEMPLATE = app
 TARGET   = test_avencode
 
-include(../../utils/utils.pri)                      # it uses TARGET, ROOT_DIR and detects UTILS_BINDIR, OBJECTS_DIR, DESTDIR, ...!
+include($$PWD/../../core/core.pri)
+
+with_avcodec {
+    !build_pass: message(Switching on avcodec support)
+    !build_pass: message(Switching on swscale support)
+
+    AVCODEC_WRAPPER_DIR = ../../wrappers/avcodec
+    include($$AVCODEC_WRAPPER_DIR/avcodec.pri)
+}
 
 SOURCES += main_avencode.cpp

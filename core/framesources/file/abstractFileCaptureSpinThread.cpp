@@ -32,7 +32,7 @@ void AbstractFileCaptureSpinThread::run()
         return;
     }
 
-    frame_data_t frameData;
+    ImageCaptureInterface::FrameMetadata frameData;
     frameData.timestamp = mInterface->mTimeStamp;
     mInterface->notifyAboutNewFrame(frameData);
 
@@ -52,7 +52,7 @@ void AbstractFileCaptureSpinThread::run()
                     printf("No more frames.\n");
                 }
                 else {
-                    frame_data_t frameData;
+                    ImageCaptureInterface::FrameMetadata frameData;
                     frameData.timestamp = mInterface->mTimeStamp;
                     mInterface->notifyAboutNewFrame(frameData);
                 }

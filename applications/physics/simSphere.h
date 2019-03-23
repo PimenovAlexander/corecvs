@@ -1,0 +1,22 @@
+#ifndef SIMSPHERE_H
+#define SIMSPHERE_H
+
+#include "simObject.h"
+
+
+class SimSphere : public SimObject
+{
+public:
+    SimSphere();
+
+    virtual void addToMesh (corecvs::Mesh3D &mesh) override;
+    virtual void saveMesh(const std::string &name) override;
+
+    double radius = 10.0;
+
+
+    void drawMesh(corecvs::Vector3dd position, double radius);
+    SimSphere(Vector3dd c, double r);
+};
+
+#endif // SIMSPHERE_H

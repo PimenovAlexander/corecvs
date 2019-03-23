@@ -21,8 +21,10 @@ using corecvs::lerp;
 
 void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
 {
-    //qDebug("Mesh3DScene::drawMyself() : called" );
-    //qDebug("V: %d E: %d F: %d ", );
+    //SYNC_PRINT(("Mesh3DScene::drawMyself() : called\n" ));
+    if (owned == NULL) {
+        return;
+    }
 
     bool withTexture = false;
     withTexture |= (mParameters.style() == Draw3dStyle::TEXTURED) && (dialog->mFancyTexture != GLuint(-1));
@@ -32,34 +34,23 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
     /*Caption drawing*/
     if (mParameters.showCaption())
     {
-        if (hasHook)
+        if (owned->hasHook)
         {
             OpenGLTools::GLWrapper wrapper;
             GLPainter painter(&wrapper);
 
             QString text = QString("[%1, %2, %3]")
-                    .arg(hookPoint.x(), 0, 'f', 2).arg(hookPoint.y(), 0, 'f', 2).arg(hookPoint.z(), 0, 'f', 2);
-
-            /*glPushMatrix();
-               glTranslated(centralPoint.x(),centralPoint.y(), centralPoint.z());
-               glScaled(0.5,0.5,0.5);
-               painter.drawFormatVector(0, 0, RGBColor(255,20,20), 1, text.toLatin1().constData());
-            glPopMatrix();*/
-
-            //Vector3dd projected =
+                    .arg(owned->hookPoint.x(), 0, 'f', 2)
+                    .arg(owned->hookPoint.y(), 0, 'f', 2)
+                    .arg(owned->hookPoint.z(), 0, 'f', 2);
 
             Matrix44 modelview  = OpenGLTools::glGetModelViewMatrix();
             Matrix44 projection = OpenGLTools::glGetProjectionMatrix();
             Matrix44 glMatrix = projection * modelview;
 
             /* Setting new matrices */
-
             int width  = dialog->mUi.widget->width();
             int height = dialog->mUi.widget->height();
-            /*double aspect = (double)width / (double)height;
-            */
-            /*int width  = 200;
-            int height = 200;*/
 
             /* SetMatrices to draw on 2D canvas */
             glMatrixMode(GL_PROJECTION);
@@ -71,21 +62,8 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
             glPushMatrix();
             glLoadIdentity();
 
-/*          glBegin(GL_LINE_LOOP);
-              glVertex3i(0,0,0);
-              glVertex3i(100,0,0);
-              glVertex3i(100,100,0);
-              glVertex3i(0,100,0);
-            glEnd();*/
-
-            /* Draw */
-/*            FixedVector<double, 4> cent4((const FixedVector<double, 3> &)centralPoint, 1.0);
-            FixedVector<double, 4> labelPos = glMatrix * cent4;
-            glTranslated(labelPos[0] / labelPos[3] * width / 2, labelPos[1] / labelPos[3] * height / 2, 0.0);
-*/
-            Vector3dd labelPos = glMatrix * hookPoint;
+            Vector3dd labelPos = glMatrix * owned->hookPoint;
             glTranslated(labelPos[0] * width / 2.0, labelPos[1] * height / 2.0, 0.0);
-
 
             double size = mParameters.fontSize() / 25.0;
             glScaled(size, -size, size);
@@ -145,14 +123,14 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
-    if (mParameters.style() == Draw3dStyle::COLOR_2 && faces.size() > 0)
+    if (mParameters.style() == Draw3dStyle::COLOR_2 && owned->faces.size() > 0)
     {
         glPolygonOffset(-1.0, -2.0);
         glEnable       (GL_POLYGON_OFFSET_LINE);
         glPolygonMode  (GL_FRONT_AND_BACK, GL_LINE);
         glColor3ub     (mParameters.edgeColor().r(), mParameters.edgeColor().g(), mParameters.edgeColor().b());
-        glVertexPointer(3, GL_DOUBLE, sizeof(Vector3dd), &(vertexes[0]));
-        glDrawElements (GL_TRIANGLES, GLsizei(faces.size() * 3), GL_UNSIGNED_INT, &(faces[0]));
+        glVertexPointer(3, GL_DOUBLE, sizeof(Vector3dd), &(owned->vertexes[0]));
+        glDrawElements (GL_TRIANGLES, GLsizei(owned->faces.size() * 3), GL_UNSIGNED_INT, &(owned->faces[0]));
 
 //        glDrawElements(GL_LINES    , GLsizei(edges.size() * 2), GL_UNSIGNED_INT, &(edges[0]));
         glDisable      (GL_POLYGON_OFFSET_LINE);
@@ -161,9 +139,9 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
     glPolygonMode(GL_FRONT_AND_BACK, mode);
 
    // glColor3ub(mParameters.color().r(), mParameters.color().g(), mParameters.color().b());
-    if (vertexes.size() > 0)
+    if (owned->vertexes.size() > 0)
     {
-        glVertexPointer(3, GL_DOUBLE, sizeof(Vector3dd), &(vertexes[0]));
+        glVertexPointer(3, GL_DOUBLE, sizeof(Vector3dd), &(owned->vertexes[0]));
     }
 
 /*
@@ -174,18 +152,18 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
 */
 
     /* FACES */
-    if (faces.size() > 0)
+    if (owned->faces.size() > 0)
     {
-        if (mParameters.faceColorOverride() || !hasColor) {
+        if (mParameters.faceColorOverride() || !owned->hasColor) {
             OpenGLTools::glColorRGB(mParameters.faceColor());
-            glDrawElements(GL_TRIANGLES, GLsizei(faces.size() * 3), GL_UNSIGNED_INT, &(faces[0]));
+            glDrawElements(GL_TRIANGLES, GLsizei(owned->faces.size() * 3), GL_UNSIGNED_INT, &(owned->faces[0]));
         }
         else {
             /* We need to speed this up */
-            for (size_t fi = 0; fi < faces.size(); fi++)
+            for (size_t fi = 0; fi < owned->faces.size(); fi++)
             {
-                OpenGLTools::glColorRGB(facesColor[fi]);
-                glDrawElements(GL_TRIANGLES, GLsizei(3), GL_UNSIGNED_INT, &(faces[fi]));
+                OpenGLTools::glColorRGB(owned->facesColor[fi]);
+                glDrawElements(GL_TRIANGLES, GLsizei(3), GL_UNSIGNED_INT, &(owned->faces[fi]));
             }
         }
     }
@@ -195,15 +173,15 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
     glGetIntegerv(GL_LINE_WIDTH, &oldLineWidth);
     glLineWidth(mParameters.edgeWidth());
 
-    if (mParameters.edgeColorOverride() || !hasColor ) {
+    if (mParameters.edgeColorOverride() || !owned->hasColor ) {
         OpenGLTools::glColorRGB(mParameters.edgeColor());
-        glDrawElements(GL_LINES, GLsizei(edges.size() * 2), GL_UNSIGNED_INT, &(edges[0]));
+        glDrawElements(GL_LINES, GLsizei(owned->edges.size() * 2), GL_UNSIGNED_INT, &(owned->edges[0]));
     }
     else {
-        for (size_t ei = 0; ei < edges.size(); ei++)
+        for (size_t ei = 0; ei < owned->edges.size(); ei++)
         {
-            OpenGLTools::glColorRGB(edgesColor[ei]);
-            glDrawElements(GL_LINES, GLsizei(2), GL_UNSIGNED_INT, &(edges[ei]));
+            OpenGLTools::glColorRGB(owned->edgesColor[ei]);
+            glDrawElements(GL_LINES, GLsizei(2), GL_UNSIGNED_INT, &(owned->edges[ei]));
         }
     }
     glPointSize(oldLineWidth);
@@ -214,10 +192,10 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
     glGetIntegerv(GL_POINT_SIZE, &oldPointSize);
     glPointSize(mParameters.pointSize());
 
-    if (mParameters.pointColorOverride() || !hasColor ) {
+    if (mParameters.pointColorOverride() || !owned->hasColor ) {
         glColor3ub(mParameters.pointColor().r(), mParameters.pointColor().g(), mParameters.pointColor().b());
 
-        glDrawArrays(GL_POINTS, 0, (int)vertexes.size());
+        glDrawArrays(GL_POINTS, 0, (int)owned->vertexes.size());
     }
     else {
         glColor3ub(mParameters.pointColor().r(), mParameters.pointColor().g(), mParameters.pointColor().b());
@@ -228,10 +206,10 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
         glDisableClientState(GL_COLOR_ARRAY);*/
 
         glBegin(GL_POINTS); /* This is slow and retarded*/
-        for (size_t vi = 0; vi < vertexes.size(); vi++)
+        for (size_t vi = 0; vi < owned->vertexes.size(); vi++)
         {
-            OpenGLTools::glColorRGB(vertexesColor[vi]);
-            glVertex3dv((double *)&(vertexes[vi]));
+            OpenGLTools::glColorRGB(owned->vertexesColor[vi]);
+            glVertex3dv((double *)&(owned->vertexes[vi]));
         }
         glEnd();
     }
@@ -252,20 +230,14 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
 
 bool Mesh3DScene::dump(const QString &targetFile)
 {
-   /*if (owned != NULL)
+   if (owned != NULL)
    {
        qDebug("Mesh3DScene::dump(): saving owned scene\n");
        return MeshLoader().save(owned, targetFile.toLatin1().constData());
    } else {
        qDebug("Mesh3DScene::dump(): there is no owned scene\n");
        return false;
-   }*/
-
-    return MeshLoader().save(this, targetFile.toLatin1().constData());
-}
-
-Mesh3DScene::~Mesh3DScene() {
-    // TODO Auto-generated destructor stub
+   }
 }
 
 

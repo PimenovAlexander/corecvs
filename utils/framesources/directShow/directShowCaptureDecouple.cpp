@@ -155,7 +155,7 @@ ALIGN_STACK_SSE void DirectShowCaptureDecoupleInterface::memberCallback(DSCapDev
     }
     lastFrameTime = PreciseTimer::currentTime();
 
-    frame_data_t frameData;
+    ImageCaptureInterface::FrameMetadata frameData;
     frameData.timestamp = cameras[0].timestamp;
 
     if (imageInterfaceReceiver != NULL)

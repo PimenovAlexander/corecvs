@@ -11,6 +11,10 @@
 #include <iostream>
 #include <core/geometry/halfspaceIntersector.h>
 #include <core/geometry/mesh3d.h>
+#include <core/geometry/polygonPointIterator.h>
+#include <core/buffers/rgb24/abstractPainter.h>
+#include <core/buffers/rgb24/rgb24Buffer.h>
+#include <core/buffers/bufferFactory.h>
 #include "gtest/gtest.h"
 
 #include "core/utils/global.h"
@@ -48,9 +52,36 @@ TEST(Halfspace, Space3d)
 
     mesh.addIcoSphere(Vector3dd::Zero(), 10, 4);
     ConvexPolyhedron CP;
-    for (int faceId = 0; faceId < mesh.faces.size(); faceId++)
+    for (size_t faceId = 0; faceId < mesh.faces.size(); faceId++)
     {
         CP.faces.push_back(mesh.getFaceAsTrinagle(faceId).getPlane());
     }
     ConvexQuickHull::HullFaces  R = HalfspaceIntersector::FromConvexPolyhedron(CP);
 }
+
+TEST(Halfspace, inset2d)
+{
+    Polygon p = Polygon::RegularPolygon(5, Vector2dd(100,100), 80, degToRad(23));
+    //p = Polygon::Reverse(p);
+    RGB24Buffer image(210, 210);
+
+    AbstractPainter<RGB24Buffer> painter(&image);
+    painter.drawPolygon(p, RGBColor::Red());
+
+    ConvexPolygon cp = p.toConvexPolygon();
+    cp.inset(12);
+    Polygon ip = Polygon::FromConvexPolygon(cp);
+
+    PolygonSpanIterator it(ip);
+    for (HLineSpanInt l: it)
+    {
+        for (Vector2d<int> point : l) {
+            image.element(point) = RGBColor::Yellow();
+        }
+    }
+    painter.drawPolygon(ip, RGBColor::Green());
+
+    BufferFactory::getInstance()->saveRGB24Bitmap(&image, "inset.bmp");
+}
+
+

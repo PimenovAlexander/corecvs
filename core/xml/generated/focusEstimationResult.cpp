@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from parameters.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<FocusEstimationResult>::reflection = Reflection();
 template<>
 int BaseReflection<FocusEstimationResult>::dummy = FocusEstimationResult::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int FocusEstimationResult::staticInit()
+int FocusEstimationResult::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <FocusEstimationResult>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Focus Estimation Result",
         "Focus Estimation Result",
         ""
     );
 
-     getReflection()->objectSize = sizeof(FocusEstimationResult);
+     toFill->objectSize = sizeof(FocusEstimationResult);
      
 
     IntField* field0 = new IntField
@@ -51,7 +57,7 @@ int FocusEstimationResult::staticInit()
           "score",
           "result for the whole image"
         );
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     IntField* field1 = new IntField
         (
@@ -62,7 +68,7 @@ int FocusEstimationResult::staticInit()
           "scoreROI",
           "result for the chosen rectangular ROI"
         );
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     IntField* field2 = new IntField
         (
@@ -73,7 +79,7 @@ int FocusEstimationResult::staticInit()
           "fullScore",
           "result for the full image"
         );
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     BoolField* field3 = new BoolField
         (
@@ -85,7 +91,7 @@ int FocusEstimationResult::staticInit()
           "boardProcessed"
         );
     field3->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     DoubleField* field4 = new DoubleField
         (
@@ -98,7 +104,7 @@ int FocusEstimationResult::staticInit()
         );
     field4->widgetHint=BaseField::SPIN_BOX;
     field4->precision=2;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     DoubleField* field5 = new DoubleField
         (
@@ -111,7 +117,7 @@ int FocusEstimationResult::staticInit()
         );
     field5->widgetHint=BaseField::SPIN_BOX;
     field5->precision=2;
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     DoubleField* field6 = new DoubleField
         (
@@ -124,10 +130,10 @@ int FocusEstimationResult::staticInit()
         );
     field6->widgetHint=BaseField::SPIN_BOX;
     field6->precision=2;
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Focus Estimation Result")]= &reflection;
+    directory[std::string("Focus Estimation Result")]= toFill;
    return 0;
 }
 int FocusEstimationResult::relinkCompositeFields()

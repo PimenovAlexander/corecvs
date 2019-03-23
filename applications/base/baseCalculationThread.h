@@ -17,13 +17,13 @@
 #include "core/framesources/imageCaptureInterface.h"
 
 #include "abstractCalculationThread.h"
-#include "frames.h"
+#include "core/framesources/frames.h"
 #include "generatedParameters/baseParameters.h"
 #include "generatedParameters/presentationParameters.h"
 #include "camerasConfigParameters.h"
 #include "filters/filterSelector.h"
 #include "filters/filterExecuter.h"
-#include "core/filters/blocks/filterGraph.h"
+#include "core/filters/legacy/filterGraph.h"
 #include "baseOutputData.h"
 #include "core/buffers/transformationCache.h"
 

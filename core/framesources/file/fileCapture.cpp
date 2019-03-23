@@ -85,7 +85,7 @@ ImageCaptureInterface::CapErrorCode FileCaptureInterface::startCapture()
 
 ImageCaptureInterface::CapErrorCode FileCaptureInterface::nextFrame()
 {
-    frame_data_t frameData;
+    ImageCaptureInterface::FrameMetadata frameData;
     frameData.timestamp = mCount * 10;
     notifyAboutNewFrame(frameData);
     return ImageCaptureInterface::SUCCESS;

@@ -15,7 +15,7 @@ void Mesh3DDecorated::switchTextures(bool on)
     if (hasTexCoords == on)
         return;
     if (on) {
-        texId.resize(faces.size(), Vector4d32(-1,-1,-1, 0));
+        texId.resize(faces.size(), Vector4d32(-1,-1,-1, currentTexture));
     } else {
         texId.clear();
     }
@@ -32,6 +32,16 @@ void Mesh3DDecorated::switchNormals(bool on)
         normalId.clear();
     }
     hasNormals = on;
+}
+
+void Mesh3DDecorated::addAOB(const AxisAlignedBoxParameters &box, bool addFaces)
+{
+    Mesh3D::addAOB(box, addFaces);
+}
+
+void Mesh3DDecorated::addAOB(const AxisAlignedBox3d &box, bool addFaces)
+{
+    Mesh3D::addAOB(box, addFaces);
 }
 
 void Mesh3DDecorated::addAOB(const Vector3dd &c1, const Vector3dd &c2, bool addFaces)
@@ -67,6 +77,46 @@ void Mesh3DDecorated::addTriangleT(const Vector3dd &p1, const Vector2dd &t1, con
         int normals = (int)normalCoords.size() - 1;
         normalId.push_back(Vector3d32(normals, normals, normals));
     }
+}
+
+void Mesh3DDecorated::add(const Mesh3DDecorated &other, bool preserveColor)
+{
+    Mesh3D::add(other, preserveColor);
+
+    size_t newTexZero    = textureCoords.size();
+    size_t newNormalZero = normalCoords.size();
+
+    Vector4d32 startTexId    = Vector4d32(newTexZero, newTexZero, newTexZero, 0);
+    Vector3d32 startNormalId = Vector3d32(newNormalZero, newNormalZero, newNormalZero);
+
+    textureCoords.reserve(textureCoords.size() + other.textureCoords.size());
+    normalCoords.reserve(normalCoords.size() + other.normalCoords.size());
+    texId.reserve(texId.size() + other.texId.size());
+    normalId.reserve(normalId.size() + other.normalId.size());
+
+    /* Clound copy all together */
+    for (size_t i = 0; i < other.textureCoords.size(); i++)
+    {
+        textureCoords.push_back(other.textureCoords[i]);
+    }
+
+    for (size_t i = 0; i < other.normalCoords.size(); i++)
+    {
+        normalCoords.push_back(other.normalCoords[i]);
+    }
+
+    /**/
+    for (size_t i = 0; i < other.texId.size(); i++)
+    {
+        texId.push_back(other.texId[i] +  startTexId);
+    }
+
+    for (size_t i = 0; i < other.normalId.size(); i++)
+    {
+        normalId.push_back(other.normalId[i] + startNormalId);
+    }
+
+
 }
 
 void Mesh3DDecorated::transform(const Matrix44 &matrix)

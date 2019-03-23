@@ -177,7 +177,7 @@ public:
     Rasterizer &rasterizer;
     typename BufferType::InternalElementType color;
 
-    BezierRasterizer(BufferType &buffer,Rasterizer &rasterizer,const typename BufferType::InternalElementType &color)
+    BezierRasterizer(BufferType &buffer, Rasterizer &rasterizer, const typename BufferType::InternalElementType &color)
             : buffer(buffer),rasterizer(rasterizer), color(color) {}
 
 
@@ -543,7 +543,7 @@ private:
 
     }
 
-    inline void lineApproximation(Curve curve, double t_min, double t_max, double flatness) {
+    inline void lineApproximation(Curve curve, double t_min, double t_max, double /*flatness*/) {
 
         if (t_min >= t_max || t_min < 0 || t_max > 1) {
             //already draw line

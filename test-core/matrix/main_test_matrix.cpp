@@ -1863,7 +1863,7 @@ TEST(Matrix, invPosdefSqrt)
             ASSERT_NEAR(W.a(i, j), i == j ? 1.0 : 0.0, 6e-16);
 }
 
-TEST(Matrix, hugeMatrix)
+TEST(Matrix, DISABLED_hugeMatrix)
 {
     int sx = 65536, sy = 32768;
 

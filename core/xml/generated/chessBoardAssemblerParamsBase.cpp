@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from patternDetector.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<ChessBoardAssemblerParamsBase>::reflection = Reflection();
 template<>
 int BaseReflection<ChessBoardAssemblerParamsBase>::dummy = ChessBoardAssemblerParamsBase::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int ChessBoardAssemblerParamsBase::staticInit()
+int ChessBoardAssemblerParamsBase::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <ChessBoardAssemblerParamsBase>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Chess Board Assembler Params Base",
         "Chess Board Assembler Params Base",
         ""
     );
 
-     getReflection()->objectSize = sizeof(ChessBoardAssemblerParamsBase);
+     toFill->objectSize = sizeof(ChessBoardAssemblerParamsBase);
      
 
     DoubleField* field0 = new DoubleField
@@ -53,7 +59,7 @@ int ChessBoardAssemblerParamsBase::staticInit()
         );
     field0->widgetHint=BaseField::SPIN_BOX;
     field0->precision=2;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     DoubleField* field1 = new DoubleField
         (
@@ -66,7 +72,7 @@ int ChessBoardAssemblerParamsBase::staticInit()
         );
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->precision=2;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     DoubleField* field2 = new DoubleField
         (
@@ -79,7 +85,7 @@ int ChessBoardAssemblerParamsBase::staticInit()
         );
     field2->widgetHint=BaseField::SPIN_BOX;
     field2->precision=2;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     DoubleField* field3 = new DoubleField
         (
@@ -96,7 +102,7 @@ int ChessBoardAssemblerParamsBase::staticInit()
         );
     field3->widgetHint=BaseField::SPIN_BOX;
     field3->precision=2;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     DoubleField* field4 = new DoubleField
         (
@@ -109,7 +115,7 @@ int ChessBoardAssemblerParamsBase::staticInit()
         );
     field4->widgetHint=BaseField::SPIN_BOX;
     field4->precision=2;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     IntField* field5 = new IntField
         (
@@ -120,7 +126,7 @@ int ChessBoardAssemblerParamsBase::staticInit()
           "hypothesisDimensions",
           "Hypothesis type: consider only hypothesis that fits specified number of dims"
         );
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     BoolField* field6 = new BoolField
         (
@@ -132,7 +138,7 @@ int ChessBoardAssemblerParamsBase::staticInit()
           "Use k-d tree for greedy expansion"
         );
     field6->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     IntField* field7 = new IntField
         (
@@ -143,7 +149,7 @@ int ChessBoardAssemblerParamsBase::staticInit()
           "hypothesisDimFirst",
           "hypothesisDimFirst"
         );
-    fields().push_back(field7);
+    toFill->fields.push_back(field7);
     /*  */ 
     IntField* field8 = new IntField
         (
@@ -154,10 +160,10 @@ int ChessBoardAssemblerParamsBase::staticInit()
           "hypothesisDimSecond",
           "hypothesisDimSecond"
         );
-    fields().push_back(field8);
+    toFill->fields.push_back(field8);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Chess Board Assembler Params Base")]= &reflection;
+    directory[std::string("Chess Board Assembler Params Base")]= toFill;
    return 0;
 }
 int ChessBoardAssemblerParamsBase::relinkCompositeFields()

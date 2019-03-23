@@ -346,7 +346,7 @@ ALIGN_STACK_SSE void DirectShowCaptureInterface::memberCallback(DSCapDeviceId de
         }
         lastFrameTime = PreciseTimer::currentTime();
 
-        frame_data_t frameData;
+        ImageCaptureInterface::FrameMetadata frameData;
         frameData.timestamp = mCameras[0].timestamp / 2 + mCameras[1].timestamp / 2;
 
         if (imageInterfaceReceiver != NULL)
@@ -356,7 +356,7 @@ ALIGN_STACK_SSE void DirectShowCaptureInterface::memberCallback(DSCapDeviceId de
         }
     }
     else {
-        frame_data_t frameData;
+        ImageCaptureInterface::FrameMetadata frameData;
         frameData.timestamp = mCameras[0].timestamp;
 
         if (imageInterfaceReceiver != NULL)

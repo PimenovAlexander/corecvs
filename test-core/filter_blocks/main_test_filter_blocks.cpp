@@ -17,7 +17,7 @@
 #include "core/filters/sobelFilter.h"
 #include "core/filters/txtFilter.h"
 #include "core/fileformats/bmpLoader.h"
-#include "core/filters/blocks/filterGraph.h"
+#include "core/filters/legacy/blocks/filterGraph.h"
 
 using namespace std;
 using corecvs::FilterGraph;

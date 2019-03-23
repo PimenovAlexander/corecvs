@@ -24,8 +24,13 @@
 #include <QPushButton>
 #include <QFileDialog>
 #include <QMessageBox>
+
+#include "core/geometry/mesh3DDecorated.h"
+
+#ifdef WITH_OPENGL
 #include <sceneShaded.h>
 #include <mesh3DScene.h>
+#endif
 
 using namespace corecvs;
 using namespace std;
@@ -228,6 +233,7 @@ void PointerFieldWidget::showMesh3d()
     SYNC_PRINT(("PointerFieldWidget::showMesh3d():called"));
     if (std::string(fieldReflection->targetClass) != "corecvs::Mesh3D" || rawPointer == NULL )
         return;
+#ifdef WITH_OPENGL
     if (cloud == NULL)
         cloud = new CloudViewDialog;
 
@@ -242,6 +248,7 @@ void PointerFieldWidget::showMesh3d()
     cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene));
     cloud->show();
     cloud->raise();
+#endif
 }
 
 void PointerFieldWidget::saveMesh3d()
