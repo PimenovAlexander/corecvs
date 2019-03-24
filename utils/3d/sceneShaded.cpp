@@ -223,22 +223,15 @@ void SceneShaded::applyParameters()
     mParamsApplied = true;
 }
 
-
-void SceneShaded::prepareMesh(CloudViewDialog * dialog)
+void SceneShaded::prepareTextures(CloudViewDialog * dialog)
 {
-
-    SYNC_PRINT(("void SceneShaded::prepareMesh():called\n"));
+    SYNC_PRINT(("void SceneShaded::prepareTextures():called\n"));
+    if (mTexturesUpdated) {
+        return;
+    }
 
     dialog->mUi.widget->makeCurrent();
     QOpenGLFunctions_4_5_Core &glFuncs = *(dialog->mUi.widget->context()->versionFunctions<QOpenGLFunctions_4_5_Core>());
-
-    /*
-    QOpenGLFunctions_4_5_Core glFuncs;
-    glFuncs.initializeOpenGLFunctions();
-    */
-
-
-    setParameters(&mParameters);
 
     /*Prepare Texture*/
     RGB24Buffer *texBuf = mMesh->materials.size() > 0 ? mMesh->materials.front().tex[OBJMaterial::TEX_DIFFUSE] : NULL;
@@ -292,6 +285,23 @@ void SceneShaded::prepareMesh(CloudViewDialog * dialog)
         glFuncs.glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     }
+
+    mTexturesUpdated = true;
+}
+
+
+void SceneShaded::prepareMesh(CloudViewDialog * dialog)
+{
+    SYNC_PRINT(("void SceneShaded::prepareMesh():called\n"));
+    if (mMeshPrepared)
+    {
+        return;
+    }
+
+    dialog->mUi.widget->makeCurrent();
+    QOpenGLFunctions_4_5_Core &glFuncs = *(dialog->mUi.widget->context()->versionFunctions<QOpenGLFunctions_4_5_Core>());
+
+    setParameters(&mParameters);
 
     /* Prepare caches in OpenGL formats */
 
@@ -444,6 +454,7 @@ void SceneShaded::prepareMesh(CloudViewDialog * dialog)
             faceIds[outCount + 2] = (uint32_t)(outCount + 2);
         }
     }
+    mMeshPrepared = true;
 }
 
 void SceneShaded::drawMyself(CloudViewDialog * dialog)
