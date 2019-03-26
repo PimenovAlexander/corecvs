@@ -88,6 +88,9 @@ Quad::Quad(double frameSize)
             /* mm -> m and shift to right position */
             worldMesh = new Mesh3DDecorated;
             worldMesh->add(mesh, true);
+            worldMesh->recomputeMeanNormals();
+
+            worldMesh->dumpInfo();
         }
     }
 }
@@ -157,10 +160,17 @@ void Quad::drawMyself(Mesh3DDecorated &mesh)
 {
     Quad::drawMyself((Mesh3D &)mesh);
     /* Scene should be drawed */
+
+    SYNC_PRINT(("Quad::drawMyself(Mesh3DDecorated &mesh): before\n"));
+    mesh.dumpInfo();
     if (worldMesh != NULL)
     {
         mesh.add(*worldMesh);
     }
+    SYNC_PRINT(("Quad::drawMyself(Mesh3DDecorated &mesh): after\n"));
+    mesh.dumpInfo();
+
+
 }
 
 void Quad::flightControllerTick(const CopterInputs &input)

@@ -55,6 +55,8 @@ public:
 };
 
 
+class SceneShaded;
+
 class PhysicsMainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -135,6 +137,7 @@ public slots:
 public:
     std::mutex uiMutex;
     std::vector<DrawRequestData *> uiQueue;
+    SceneShaded *mShadedScene = NULL;
 
 public slots:
     void updateUi();
@@ -216,19 +219,22 @@ private:
     clock_t startTime;
     void showValues( );
     void frameValuesUpdate();
+
+#if 0
     bool created=false;
     bool bind=false;
     bool arming=false;
     bool startFly=false;   //to set mid throttle after arming
-    bool cameraActive=false;
     bool rtPressed=false;
     bool ltPressed=false;
+#endif
+    bool cameraActive=false;
 
     bool recording=false;
 
     void sendOurValues(std::vector<uint8_t> OurValues);
     bool virtuaModeActive=false;
-    std::string inputCameraPath="v4l2:/dev/video0";
+    std::string inputCameraPath="v4l2:/dev/video1";
     ControlRecord recordData;
 
     Simulation simSim;

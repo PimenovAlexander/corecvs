@@ -504,7 +504,7 @@
    <sender>actionAbout</sender>
    <signal>triggered()</signal>
    <receiver>PhysicsMainWindow</receiver>
-   <slot>aboutWidget()</slot>
+   <slot>showAboutWidget()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -520,7 +520,7 @@
    <sender>actionJoystickParameters</sender>
    <signal>triggered()</signal>
    <receiver>PhysicsMainWindow</receiver>
-   <slot>settingsWidget()</slot>
+   <slot>showJoystickSettingsWidget()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -541,7 +541,7 @@
   <slot>showCameraParametersWidget()</slot>
   <slot>showCameraModelWidget()</slot>
   <slot>showGraphDialog()</slot>
-  <slot>aboutWidget()</slot>
-  <slot>settingsWidget()</slot>
+  <slot>showAboutWidget()</slot>
+  <slot>showJoystickSettingsWidget()</slot>
  </slots>
 </ui>

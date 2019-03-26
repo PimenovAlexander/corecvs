@@ -823,13 +823,25 @@ AxisAlignedBox3d Mesh3D::getBoundingBox()
 
 void Mesh3D::add(const Mesh3D &other, bool preserveColor)
 {
+    // SYNC_PRINT(("Mesh3D::add(const Mesh3D): called\n"));
+
     size_t newZero = vertexes.size();
     vertexes.reserve(vertexes.size() + other.vertexes.size());
-    faces.reserve(faces.size() + other.faces.size());
-    edges.reserve(edges.size() + other.edges.size());
+    faces   .reserve(faces.size() + other.faces.size());
+    edges   .reserve(edges.size() + other.edges.size());
 
     RGBColor backup = currentColor;
     preserveColor = preserveColor & other.hasColor;
+
+    if (hasColor) {
+        vertexesColor.reserve(vertexes.size() + other.vertexes.size());
+        facesColor   .reserve(faces.size() + other.faces.size());
+        edgesColor   .reserve(edges.size() + other.edges.size());
+    }
+
+    if (hasAttributes) {
+        attributes.reserve(vertexes.size() + other.vertexes.size());
+    }
 
     for (size_t i = 0; i < other.vertexes.size(); i++)
     {

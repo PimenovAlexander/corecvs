@@ -194,7 +194,7 @@ void SceneShaded::applyParameters()
             fShader = fragmentShaderSource1;
         }
 
-        SYNC_PRINT(("SceneShaded::setParameters(): Creating %d program\n", target));
+        SYNC_PRINT(("SceneShaded::applyParameters(): Creating %d program\n", target));
         mProgram[target] = new QOpenGLShaderProgram();
         mProgram[target]->addShaderFromSourceCode(QOpenGLShader::Vertex,   vShader);
         mProgram[target]->addShaderFromSourceCode(QOpenGLShader::Fragment, fShader);
@@ -224,11 +224,12 @@ void SceneShaded::applyParameters()
 }
 
 void SceneShaded::prepareTextures(CloudViewDialog * dialog)
-{
-    SYNC_PRINT(("void SceneShaded::prepareTextures():called\n"));
+{   
     if (mTexturesUpdated) {
         return;
     }
+
+    SYNC_PRINT(("void SceneShaded::prepareTextures():called\n"));
 
     dialog->mUi.widget->makeCurrent();
     QOpenGLFunctions_4_5_Core &glFuncs = *(dialog->mUi.widget->context()->versionFunctions<QOpenGLFunctions_4_5_Core>());
@@ -292,19 +293,13 @@ void SceneShaded::prepareTextures(CloudViewDialog * dialog)
 
 void SceneShaded::prepareMesh(CloudViewDialog * dialog)
 {
-    SYNC_PRINT(("void SceneShaded::prepareMesh():called\n"));
     if (mMeshPrepared)
     {
         return;
     }
-
-    dialog->mUi.widget->makeCurrent();
-    QOpenGLFunctions_4_5_Core &glFuncs = *(dialog->mUi.widget->context()->versionFunctions<QOpenGLFunctions_4_5_Core>());
-
-    setParameters(&mParameters);
+    //SYNC_PRINT(("void SceneShaded::prepareMesh():called\n"));
 
     /* Prepare caches in OpenGL formats */
-
 
     /* Vertexes */
     {
@@ -459,11 +454,14 @@ void SceneShaded::prepareMesh(CloudViewDialog * dialog)
 
 void SceneShaded::drawMyself(CloudViewDialog * dialog)
 {
+    prepareMesh(dialog);
+    prepareTextures(dialog);
+    applyParameters();
+
     dialog->mUi.widget->makeCurrent();
 
-    /*QOpenGLFunctions_4_5_Core glFuncs;
-    glFuncs.initializeOpenGLFunctions();*/
-    QOpenGLFunctions &glFuncs = *(dialog->mUi.widget->context()->functions());
+    //QOpenGLFunctions &glFuncs = *(dialog->mUi.widget->context()->functions());
+    QOpenGLFunctions_4_5_Core &glFuncs = *(dialog->mUi.widget->context()->versionFunctions<QOpenGLFunctions_4_5_Core>());
 
     applyParameters();
 /*    if (mProgram[] == NULL)
@@ -620,8 +618,7 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
                 glFuncs.glVertexAttribPointer(mTexAttr, 2, GL_FLOAT, GL_FALSE, 0, faceTexCoords.data());
                 glFuncs.glEnableVertexAttribArray(mTexAttr);
 
-              //  glFuncs.glVertexAttribPointer(mTexIdAttr, 1, GL_UNSIGNED_INT, 0, faceTexNums.data());
-
+                glFuncs.glVertexAttribIPointer(mTexIdAttr, 1, GL_UNSIGNED_INT, 0, faceTexNums.data());
 
                 glFuncs.glEnableVertexAttribArray(mTexIdAttr);
 

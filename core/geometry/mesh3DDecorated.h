@@ -103,6 +103,8 @@ public:
     void switchTextures(bool on = true);
     void switchNormals(bool on = true);
 
+    void addFace(const Vector3d32 &faceId);
+
     virtual void addAOB(const AxisAlignedBoxParameters &box, bool addFaces = true) override;
     virtual void addAOB(const AxisAlignedBox3d &box, bool addFaces = true) override;
     virtual void addAOB(const Vector3dd &corner1, const Vector3dd &corner2, bool addFaces = true) override;
@@ -111,7 +113,8 @@ public:
                       const Vector3dd &p2, const Vector2dd &t2,
                       const Vector3dd &p3, const Vector2dd &t3);
 
-    using Mesh3D::add;
+    // using Mesh3D::add;
+    virtual void add(const Mesh3D &other, bool preserveColor = false) override;
     virtual void add(const Mesh3DDecorated &other, bool preserveColor = false);
 
     virtual void transform(const Matrix44 &matrix) override;

@@ -547,7 +547,6 @@ void PhysicsMainWindow::mainAction()
     bool oldbackend = !(ui->actionNewBackend->isChecked());
 
     Mesh3DScene *scene  = NULL;
-    SceneShaded *scene1 = NULL;
 
     if (oldbackend)
     {
@@ -556,10 +555,10 @@ void PhysicsMainWindow::mainAction()
         mesh->switchColor();
         scene->setMesh(mesh);
     } else {
-        scene1 = new SceneShaded;
-        Mesh3DDecorated *mesh  = new Mesh3DDecorated();
-        mesh->switchColor();
-        scene1->setMesh(mesh);
+        if (mShadedScene == NULL) {
+            mShadedScene = new SceneShaded;
+            ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mShadedScene), CloudViewDialog::DISP_CONTROL_ZONE);
+        }
     }
 
     //inputs.print();
@@ -576,8 +575,10 @@ void PhysicsMainWindow::mainAction()
         copter.drawMyself(*scene->owned);
     } else {
         Mesh3DDecorated *mesh = new Mesh3DDecorated();
+        mesh->switchNormals();
         copter.drawMyself(*mesh);
-        scene1->setMesh(mesh);
+        //mesh->dumpInfo();
+        mShadedScene->setMesh(mesh);
     }
 
     mGraphDialog.addGraphPoint("X", copter.position.x());
@@ -588,9 +589,6 @@ void PhysicsMainWindow::mainAction()
 
     if (oldbackend) {
         ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene), CloudViewDialog::CONTROL_ZONE);
-    } else {
-        scene1->prepareMesh(ui->cloud);
-        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene1), CloudViewDialog::DISP_CONTROL_ZONE);
     }
     ui->cloud->update();
 }
