@@ -6,6 +6,8 @@
 
 #include <QtCore/QDebug>
 
+#include <QOpenGLFunctions_3_3_Core>
+
 #include "core/utils/global.h"
 
 #include "core/math/mathUtils.h"
@@ -245,9 +247,13 @@ const int Grid3DScene::GRID_SIZE = 5;
 const int Grid3DScene::GRID_STEP = 250;
 
 
-void Grid3DScene::prepareMesh(CloudViewDialog* /*dialog*/)
+void Grid3DScene::prepareMesh(CloudViewDialog* dialog)
 {
     //qDebug() << "Calling Grid3DScene::prepareMesh() for" << name;
+
+    //dialog->mUi.widget->makeCurrent();
+    //QOpenGLFunctions_3_3_Core &glFuncs = *(dialog->mUi.widget->context()->versionFunctions<QOpenGLFunctions_3_3_Core>());
+
 
     mGridId = glGenLists(1);
     if (mGridId == 0) {

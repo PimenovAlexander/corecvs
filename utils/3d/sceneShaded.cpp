@@ -2,7 +2,7 @@
 #include <QOpenGLShader>
 #include <QOpenGLShaderProgram>
 #include <QtGui/QMatrix4x4>
-#include <QOpenGLFunctions_4_5_Core>
+#include <QOpenGLFunctions_3_3_Core>
 
 //#include <GL/gl.h>
 
@@ -232,7 +232,7 @@ void SceneShaded::prepareTextures(CloudViewDialog * dialog)
     SYNC_PRINT(("void SceneShaded::prepareTextures():called\n"));
 
     dialog->mUi.widget->makeCurrent();
-    QOpenGLFunctions_4_5_Core &glFuncs = *(dialog->mUi.widget->context()->versionFunctions<QOpenGLFunctions_4_5_Core>());
+    QOpenGLFunctions_3_3_Core &glFuncs = *(dialog->mUi.widget->context()->versionFunctions<QOpenGLFunctions_3_3_Core>());
 
     /*Prepare Texture*/
     RGB24Buffer *texBuf = mMesh->materials.size() > 0 ? mMesh->materials.front().tex[OBJMaterial::TEX_DIFFUSE] : NULL;
@@ -263,27 +263,29 @@ void SceneShaded::prepareTextures(CloudViewDialog * dialog)
     if (!mMesh->materials.empty())
     {
         RGB24Buffer *texBuf = mMesh->materials.front().tex[OBJMaterial::TEX_DIFFUSE];
-
-        glFuncs.glGenTextures(1,&mTexArray);
-        glFuncs.glBindTexture(GL_TEXTURE_2D_ARRAY,mTexArray);
-
-        GLint oldStride;
-        glFuncs.glGetIntegerv(GL_UNPACK_ROW_LENGTH, &oldStride);
-        glFuncs.glPixelStorei(GL_UNPACK_ROW_LENGTH, texBuf->stride);
-        glFuncs.glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, texBuf->w, texBuf->h, mMesh->materials.size());
-
-        for (size_t i = 0; i < mMesh->materials.size(); i++)
+        if (texBuf != NULL)
         {
-            glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, texBuf->w, texBuf->h, 1, GL_RGBA, GL_UNSIGNED_BYTE, &mMesh->materials[i].tex[OBJMaterial::TEX_DIFFUSE]->element(0,0));
+            glFuncs.glGenTextures(1,&mTexArray);
+            glFuncs.glBindTexture(GL_TEXTURE_2D_ARRAY,mTexArray);
+
+            GLint oldStride;
+            glFuncs.glGetIntegerv(GL_UNPACK_ROW_LENGTH, &oldStride);
+            glFuncs.glPixelStorei(GL_UNPACK_ROW_LENGTH, texBuf->stride);
+            glFuncs.glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, texBuf->w, texBuf->h, mMesh->materials.size());
+
+            for (size_t i = 0; i < mMesh->materials.size(); i++)
+            {
+                glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, texBuf->w, texBuf->h, 1, GL_RGBA, GL_UNSIGNED_BYTE, &mMesh->materials[i].tex[OBJMaterial::TEX_DIFFUSE]->element(0,0));
+            }
+
+            glFuncs.glPixelStorei(GL_UNPACK_ROW_LENGTH, oldStride);
+
+
+            glFuncs.glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glFuncs.glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glFuncs.glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glFuncs.glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         }
-
-        glFuncs.glPixelStorei(GL_UNPACK_ROW_LENGTH, oldStride);
-
-
-        glFuncs.glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glFuncs.glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glFuncs.glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glFuncs.glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     }
 
@@ -461,7 +463,7 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
     dialog->mUi.widget->makeCurrent();
 
     //QOpenGLFunctions &glFuncs = *(dialog->mUi.widget->context()->functions());
-    QOpenGLFunctions_4_5_Core &glFuncs = *(dialog->mUi.widget->context()->versionFunctions<QOpenGLFunctions_4_5_Core>());
+    QOpenGLFunctions_3_3_Core &glFuncs = *(dialog->mUi.widget->context()->versionFunctions<QOpenGLFunctions_3_3_Core>());
 
     applyParameters();
 /*    if (mProgram[] == NULL)

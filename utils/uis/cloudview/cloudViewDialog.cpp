@@ -54,13 +54,14 @@ CloudViewDialog::CloudViewDialog(QWidget *parent, QString name)
     mUi.setupUi(this);
     setWindowIcon(QIcon(":/new/our/our/3D.png"));
 
-/*
+#if 1
     QSurfaceFormat format;
-    format.setMajorVersion( 4 ); //whatever version
-    format.setMinorVersion( 5 ); //
+    format.setMajorVersion( 3 ); //whatever version
+    format.setMinorVersion( 3 ); //
     format.setProfile(QSurfaceFormat::CoreProfile);
     mUi.widget->setFormat(format);
-*/
+#endif
+
     qDebug("Creating CloudViewDialog (%s) for working with OpenGL(%d.%d)",
             windowTitle().toLatin1().constData(),
             mUi.widget->format().majorVersion(),

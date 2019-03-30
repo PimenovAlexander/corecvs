@@ -208,9 +208,9 @@ void Mesh3DDecorated::recomputeMeanNormals()
     normalId.clear();
 
     /* We don't need this, just normalise */
-    vector<int> counts;
+    //vector<int> counts;
     normalCoords.resize(vertexes.size(), Vector3dd::Zero());
-    counts.resize(vertexes.size(), 0 );
+    //counts.resize(vertexes.size(), 0 );
 
     for (size_t f = 0; f < faces.size(); f++)
     {
@@ -219,14 +219,14 @@ void Mesh3DDecorated::recomputeMeanNormals()
         for (int c = 0; c < 3; c++) {
             int vertexId = faces[f][c];
             normalCoords[vertexId] += normal;
-            counts[vertexId] ++;
+            //counts[vertexId] ++;
         }
         normalId.push_back(faces[f]);
     }
 
     for (size_t n = 0; n < normalCoords.size(); n++)
     {
-        normalCoords[n] /= counts[n];
+        //normalCoords[n] /= counts[n];
         normalCoords[n].normalise();
     }
 }
@@ -251,8 +251,14 @@ bool Mesh3DDecorated::verify( void )
 
     for (size_t i = 0; i < faces.size(); i++) {
         for (int j = 0; j < 3; j++) {
-            if (faces[i][j] > (int)vertexes.size() ) {
-                SYNC_PRINT(("Wrong face index\n"));
+            if (faces[i][j] < 0)
+            {
+                SYNC_PRINT(("Wrong face index (negative) for face %d point %d vertex %d\n", i, j, faces[i][j]));
+                return false;
+            }
+
+            if (faces[i][j] >= (int)vertexes.size() ) {
+                SYNC_PRINT(("Wrong face index for face %d point %d vertex %d (of %d)\n", i, j, faces[i][j], vertexes.size()));
                 return false;
             }
         }
