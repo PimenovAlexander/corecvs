@@ -558,6 +558,7 @@ void PhysicsMainWindow::mainAction()
         if (mShadedScene == NULL) {
             mShadedScene = new SceneShaded;
             ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mShadedScene), CloudViewDialog::DISP_CONTROL_ZONE);
+            //ui->cloud->setP
         }
     }
 

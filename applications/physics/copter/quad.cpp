@@ -87,6 +87,11 @@ Quad::Quad(double frameSize)
         {
             /* mm -> m and shift to right position */
             worldMesh = new Mesh3DDecorated;
+            mesh.transform(Matrix44::RotationZ(degToRad(90)) *
+                           Matrix44::Shift(0, -20, -4) *
+                           Matrix44::Scale(1/200.0) *
+                           Matrix44::RotationX(degToRad(90)));
+
             worldMesh->add(mesh, true);
             worldMesh->recomputeMeanNormals();
 
@@ -162,13 +167,13 @@ void Quad::drawMyself(Mesh3DDecorated &mesh)
     /* Scene should be drawed */
 
     //SYNC_PRINT(("Quad::drawMyself(Mesh3DDecorated &mesh): before\n"));
-    mesh.dumpInfo();
+    //mesh.dumpInfo();
     if (worldMesh != NULL)
     {
         mesh.add(*worldMesh);
     }
     //SYNC_PRINT(("Quad::drawMyself(Mesh3DDecorated &mesh): after\n"));
-    mesh.dumpInfo();
+    //mesh.dumpInfo();
 
 
 }
