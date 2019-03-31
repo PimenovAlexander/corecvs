@@ -2,7 +2,7 @@
 #include <QOpenGLShader>
 #include <QOpenGLShaderProgram>
 #include <QtGui/QMatrix4x4>
-#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLFunctions_4_5_Core>
 
 //#include <GL/gl.h>
 
@@ -232,7 +232,7 @@ void SceneShaded::prepareTextures(CloudViewDialog * dialog)
     SYNC_PRINT(("void SceneShaded::prepareTextures():called\n"));
 
     dialog->mUi.widget->makeCurrent();
-    QOpenGLFunctions_3_3_Core &glFuncs = *(dialog->mUi.widget->context()->versionFunctions<QOpenGLFunctions_3_3_Core>());
+    QOpenGLFunctions_4_5_Core &glFuncs = *(dialog->mUi.widget->context()->versionFunctions<QOpenGLFunctions_4_5_Core>());
 
     /*Prepare Texture*/
     RGB24Buffer *texBuf = mMesh->materials.size() > 0 ? mMesh->materials.front().tex[OBJMaterial::TEX_DIFFUSE] : NULL;
@@ -463,7 +463,7 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
     dialog->mUi.widget->makeCurrent();
 
     //QOpenGLFunctions &glFuncs = *(dialog->mUi.widget->context()->functions());
-    QOpenGLFunctions_3_3_Core &glFuncs = *(dialog->mUi.widget->context()->versionFunctions<QOpenGLFunctions_3_3_Core>());
+    QOpenGLFunctions_4_5_Core &glFuncs = *(dialog->mUi.widget->context()->versionFunctions<QOpenGLFunctions_4_5_Core>());
 
     applyParameters();
 /*    if (mProgram[] == NULL)

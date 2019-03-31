@@ -1,5 +1,6 @@
 #include <fstream>
 #include <gCodeScene.h>
+#include <helper3DScenes.h>
 #include <sstream>
 #include <QtCore/QDebug>
 
@@ -54,10 +55,10 @@ CloudViewDialog::CloudViewDialog(QWidget *parent, QString name)
     mUi.setupUi(this);
     setWindowIcon(QIcon(":/new/our/our/3D.png"));
 
-#if 1
+#if 0
     QSurfaceFormat format;
-    format.setMajorVersion( 3 ); //whatever version
-    format.setMinorVersion( 3 ); //
+    format.setMajorVersion( 4 ); //whatever version
+    format.setMinorVersion( 5 ); //
     format.setProfile(QSurfaceFormat::CoreProfile);
     mUi.widget->setFormat(format);
 #endif
