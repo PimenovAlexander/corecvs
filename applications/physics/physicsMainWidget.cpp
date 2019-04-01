@@ -502,7 +502,7 @@ void PhysicsMainWidget::keepAliveJoyStick()
         }
         if (iiAutoPilot.active)
         {
-            iiOutput=iiAutoPilot.output;
+            iiOutput=iiAutoPilot.output();
         }
         if (currentSendMode==0)
         {
@@ -713,5 +713,5 @@ void PhysicsMainWidget::on_updateCameraButton_clicked()
 
 void PhysicsMainWidget::on_comboBox_2_currentTextChanged(const QString &arg1)
 {
-    inputCameraPath="v4l2:/dev/"+arg1.toStdString();
+    inputCameraPath="v4l2:/dev/"+arg1.toStdString()+":mjpeg";
 }
