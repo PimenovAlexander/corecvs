@@ -20,7 +20,9 @@ void SimSphere::saveMesh(const std::string &name)
     Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
 
     //Mesh3DDecorated *mesh = new Mesh3DDecorated;
-    Mesh3DScene *mesh = new Mesh3DScene;
+    Mesh3DScene *scene = new Mesh3DScene;
+    Mesh3D *mesh = new Mesh3D();
+    scene->setMesh(mesh);
 
     mesh->switchColor();
 
@@ -39,11 +41,10 @@ void SimSphere::saveMesh(const std::string &name)
 
 void SimSphere::drawMesh(Vector3dd coords, double radius)
 {
-    cout<<"here"<<endl;
     Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
 
     //Mesh3DDecorated *mesh = new Mesh3DDecorated;
-    Mesh3DScene *mesh = new Mesh3DScene;
+    Mesh3D *mesh = new Mesh3D;
 
     mesh->switchColor();
 
@@ -55,7 +56,6 @@ void SimSphere::drawMesh(Vector3dd coords, double radius)
     mesh->popTransform();
 
     //mesh->dumpPLY(name+".ply");
-
     delete_safe(mesh);
 }
 

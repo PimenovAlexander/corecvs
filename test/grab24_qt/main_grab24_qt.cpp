@@ -95,7 +95,7 @@ FrameProcessor::FrameProcessor(QObject *parent) :
 
 }
 
-void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata frameData)
+void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata /*frameData*/)
 {
     static int count=0;
     count++;

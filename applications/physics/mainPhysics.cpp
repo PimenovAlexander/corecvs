@@ -18,7 +18,7 @@
 #include <KLTFlow.h>
 #endif
 
-#include "physicsMainWidget.h"
+#include "physicsMainWindow.h"
 
 using namespace corecvs;
 using namespace std;
@@ -86,8 +86,12 @@ int main(int argc, char *argv[])
     SYNC_PRINT(("Starting Physics...\n"));
     QApplication app(argc, argv);
 
-    PhysicsMainWidget mainWindow;
+    //PhysicsMainWidget mainWindowOld;
+    //mainWindowOld.show();
+
+    PhysicsMainWindow mainWindow;
     mainWindow.show();
+
     app.exec();
 
     SYNC_PRINT(("Exiting\n"));

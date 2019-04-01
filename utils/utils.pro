@@ -107,7 +107,7 @@ HEADERS += \
     corestructs/cameraModel/fixtureGlobalParametersWidget.h \
     framesources/imageCaptureInterfaceQt.h \
     corestructs/cameraModel/fixtureCameraControlWidget.h \
-    corestructs/flowFabricControlWidget.h
+    corestructs/flowFabricControlWidget.h \
 
 SOURCES += \
 #    frames.cpp \
@@ -185,7 +185,7 @@ SOURCES += \
     corestructs/cameraModel/fixtureGlobalParametersWidget.cpp \
     framesources/imageCaptureInterfaceQt.cpp \
     corestructs/cameraModel/fixtureCameraControlWidget.cpp \
-    corestructs/flowFabricControlWidget.cpp
+    corestructs/flowFabricControlWidget.cpp \
 
 
 FORMS += \
@@ -479,6 +479,7 @@ with_opengl {
          3d/generated/draw3dViMouseParameters.h \
          3d/mesh3DScene.h \
          3d/coordinateFrame.h \
+         3d/helper3DScenes.h \
          \
 
 
@@ -496,6 +497,7 @@ with_opengl {
         \
         3d/mesh3DScene.cpp \
         3d/coordinateFrame.cpp \
+        3d/helper3DScenes.cpp
 
     FORMS       += \
         uis/cloudview/cloudViewDialog.ui \

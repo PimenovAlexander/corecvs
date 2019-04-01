@@ -1,5 +1,6 @@
 #include <fstream>
 #include <gCodeScene.h>
+#include <helper3DScenes.h>
 #include <sstream>
 #include <QtCore/QDebug>
 
@@ -54,13 +55,14 @@ CloudViewDialog::CloudViewDialog(QWidget *parent, QString name)
     mUi.setupUi(this);
     setWindowIcon(QIcon(":/new/our/our/3D.png"));
 
-/*
+#if 0
     QSurfaceFormat format;
     format.setMajorVersion( 4 ); //whatever version
     format.setMinorVersion( 5 ); //
     format.setProfile(QSurfaceFormat::CoreProfile);
     mUi.widget->setFormat(format);
-*/
+#endif
+
     qDebug("Creating CloudViewDialog (%s) for working with OpenGL(%d.%d)",
             windowTitle().toLatin1().constData(),
             mUi.widget->format().majorVersion(),
@@ -205,15 +207,19 @@ void CloudViewDialog::addMesh(QString name, Mesh3D *mesh)
 {
     std::stringstream ss;
     mesh->dumpPLY(ss);
+
     Mesh3DScene *scene = new Mesh3DScene();
+    Mesh3D *meshnew = new Mesh3D();
+
     PLYLoader loader;
-    loader.loadPLY(ss, *scene);
+    loader.loadPLY(ss, *meshnew);
+    scene->setMesh(meshnew);
 
     cout << "Loaded mesh:" << endl;
-    cout << " Edges   :" << scene->edges.size() << endl;
-    cout << " Vertexes:" << scene->vertexes.size() << endl;
-    cout << " Faces   :" << scene->faces.size() << endl;
-    cout << " Bounding box " << scene->getBoundingBox() << endl;
+    cout << " Edges   :" << scene->owned->edges.size() << endl;
+    cout << " Vertexes:" << scene->owned->vertexes.size() << endl;
+    cout << " Faces   :" << scene->owned->faces.size() << endl;
+    cout << " Bounding box " << scene->owned->getBoundingBox() << endl;
 
     addSubObject(name, QSharedPointer<Scene3D>((Scene3D*)scene));
 }
@@ -775,8 +781,9 @@ void CloudViewDialog::initializeGLSlot()
     glDisable(GL_TEXTURE_2D);
 
     if (mTreeModel.mTopItem != NULL &&
-        !mTreeModel.mTopItem->mObject.isNull())
+       !mTreeModel.mTopItem->mObject.isNull())
     {
+        SYNC_PRINT(("CloudViewDialog::initializeGLSlot(): calls mObject->prepareMesh()\n"));
         mTreeModel.mTopItem->mObject->prepareMesh(this);
     }
 }
@@ -1031,20 +1038,21 @@ void CloudViewDialog::loadMesh()
         objLoader.loadMaterials(materialFile, mesh->materials, fileInfo.path().toStdString());
         materialFile.close();
 
-
-        shaded->mMesh = mesh;
-        shaded->mMesh->recomputeMeanNormals();
+        mesh->recomputeMeanNormals();
+        shaded->setMesh(mesh);
         shaded->prepareMesh(this);
         addSubObject(fileInfo.baseName(), QSharedPointer<Scene3D>(shaded));
     } else {
-        Mesh3DScene *mesh = new Mesh3DScene();
+        Mesh3DScene *scene = new Mesh3DScene();
+        Mesh3D *mesh = new Mesh3D();
+        scene->setMesh(mesh);
 
-        if (!loader.load(mesh, fileName.toStdString()))
+        if (!loader.load(scene->owned, fileName.toStdString()))
         {
-            delete_safe(mesh);
+            delete_safe(scene);
                return;
         }
-        addSubObject(fileInfo.baseName(), QSharedPointer<Scene3D>((Scene3D*)mesh));
+        addSubObject(fileInfo.baseName(), QSharedPointer<Scene3D>((Scene3D*)scene));
     }
 }
 

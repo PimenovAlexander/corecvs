@@ -6,6 +6,8 @@
 
 #include <QtCore/QDebug>
 
+#include <QOpenGLFunctions_4_5_Core>
+
 #include "core/utils/global.h"
 
 #include "core/math/mathUtils.h"
@@ -22,6 +24,9 @@ using corecvs::lerp;
 void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
 {
     //SYNC_PRINT(("Mesh3DScene::drawMyself() : called\n" ));
+    if (owned == NULL) {
+        return;
+    }
 
     bool withTexture = false;
     withTexture |= (mParameters.style() == Draw3dStyle::TEXTURED) && (dialog->mFancyTexture != GLuint(-1));
@@ -31,34 +36,23 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
     /*Caption drawing*/
     if (mParameters.showCaption())
     {
-        if (hasHook)
+        if (owned->hasHook)
         {
             OpenGLTools::GLWrapper wrapper;
             GLPainter painter(&wrapper);
 
             QString text = QString("[%1, %2, %3]")
-                    .arg(hookPoint.x(), 0, 'f', 2).arg(hookPoint.y(), 0, 'f', 2).arg(hookPoint.z(), 0, 'f', 2);
-
-            /*glPushMatrix();
-               glTranslated(centralPoint.x(),centralPoint.y(), centralPoint.z());
-               glScaled(0.5,0.5,0.5);
-               painter.drawFormatVector(0, 0, RGBColor(255,20,20), 1, text.toLatin1().constData());
-            glPopMatrix();*/
-
-            //Vector3dd projected =
+                    .arg(owned->hookPoint.x(), 0, 'f', 2)
+                    .arg(owned->hookPoint.y(), 0, 'f', 2)
+                    .arg(owned->hookPoint.z(), 0, 'f', 2);
 
             Matrix44 modelview  = OpenGLTools::glGetModelViewMatrix();
             Matrix44 projection = OpenGLTools::glGetProjectionMatrix();
             Matrix44 glMatrix = projection * modelview;
 
             /* Setting new matrices */
-
             int width  = dialog->mUi.widget->width();
             int height = dialog->mUi.widget->height();
-            /*double aspect = (double)width / (double)height;
-            */
-            /*int width  = 200;
-            int height = 200;*/
 
             /* SetMatrices to draw on 2D canvas */
             glMatrixMode(GL_PROJECTION);
@@ -70,21 +64,8 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
             glPushMatrix();
             glLoadIdentity();
 
-/*          glBegin(GL_LINE_LOOP);
-              glVertex3i(0,0,0);
-              glVertex3i(100,0,0);
-              glVertex3i(100,100,0);
-              glVertex3i(0,100,0);
-            glEnd();*/
-
-            /* Draw */
-/*            FixedVector<double, 4> cent4((const FixedVector<double, 3> &)centralPoint, 1.0);
-            FixedVector<double, 4> labelPos = glMatrix * cent4;
-            glTranslated(labelPos[0] / labelPos[3] * width / 2, labelPos[1] / labelPos[3] * height / 2, 0.0);
-*/
-            Vector3dd labelPos = glMatrix * hookPoint;
+            Vector3dd labelPos = glMatrix * owned->hookPoint;
             glTranslated(labelPos[0] * width / 2.0, labelPos[1] * height / 2.0, 0.0);
-
 
             double size = mParameters.fontSize() / 25.0;
             glScaled(size, -size, size);
@@ -144,14 +125,14 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
-    if (mParameters.style() == Draw3dStyle::COLOR_2 && faces.size() > 0)
+    if (mParameters.style() == Draw3dStyle::COLOR_2 && owned->faces.size() > 0)
     {
         glPolygonOffset(-1.0, -2.0);
         glEnable       (GL_POLYGON_OFFSET_LINE);
         glPolygonMode  (GL_FRONT_AND_BACK, GL_LINE);
         glColor3ub     (mParameters.edgeColor().r(), mParameters.edgeColor().g(), mParameters.edgeColor().b());
-        glVertexPointer(3, GL_DOUBLE, sizeof(Vector3dd), &(vertexes[0]));
-        glDrawElements (GL_TRIANGLES, GLsizei(faces.size() * 3), GL_UNSIGNED_INT, &(faces[0]));
+        glVertexPointer(3, GL_DOUBLE, sizeof(Vector3dd), &(owned->vertexes[0]));
+        glDrawElements (GL_TRIANGLES, GLsizei(owned->faces.size() * 3), GL_UNSIGNED_INT, &(owned->faces[0]));
 
 //        glDrawElements(GL_LINES    , GLsizei(edges.size() * 2), GL_UNSIGNED_INT, &(edges[0]));
         glDisable      (GL_POLYGON_OFFSET_LINE);
@@ -160,9 +141,9 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
     glPolygonMode(GL_FRONT_AND_BACK, mode);
 
    // glColor3ub(mParameters.color().r(), mParameters.color().g(), mParameters.color().b());
-    if (vertexes.size() > 0)
+    if (owned->vertexes.size() > 0)
     {
-        glVertexPointer(3, GL_DOUBLE, sizeof(Vector3dd), &(vertexes[0]));
+        glVertexPointer(3, GL_DOUBLE, sizeof(Vector3dd), &(owned->vertexes[0]));
     }
 
 /*
@@ -173,18 +154,18 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
 */
 
     /* FACES */
-    if (faces.size() > 0)
+    if (owned->faces.size() > 0)
     {
-        if (mParameters.faceColorOverride() || !hasColor) {
+        if (mParameters.faceColorOverride() || !owned->hasColor) {
             OpenGLTools::glColorRGB(mParameters.faceColor());
-            glDrawElements(GL_TRIANGLES, GLsizei(faces.size() * 3), GL_UNSIGNED_INT, &(faces[0]));
+            glDrawElements(GL_TRIANGLES, GLsizei(owned->faces.size() * 3), GL_UNSIGNED_INT, &(owned->faces[0]));
         }
         else {
             /* We need to speed this up */
-            for (size_t fi = 0; fi < faces.size(); fi++)
+            for (size_t fi = 0; fi < owned->faces.size(); fi++)
             {
-                OpenGLTools::glColorRGB(facesColor[fi]);
-                glDrawElements(GL_TRIANGLES, GLsizei(3), GL_UNSIGNED_INT, &(faces[fi]));
+                OpenGLTools::glColorRGB(owned->facesColor[fi]);
+                glDrawElements(GL_TRIANGLES, GLsizei(3), GL_UNSIGNED_INT, &(owned->faces[fi]));
             }
         }
     }
@@ -194,15 +175,15 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
     glGetIntegerv(GL_LINE_WIDTH, &oldLineWidth);
     glLineWidth(mParameters.edgeWidth());
 
-    if (mParameters.edgeColorOverride() || !hasColor ) {
+    if (mParameters.edgeColorOverride() || !owned->hasColor ) {
         OpenGLTools::glColorRGB(mParameters.edgeColor());
-        glDrawElements(GL_LINES, GLsizei(edges.size() * 2), GL_UNSIGNED_INT, &(edges[0]));
+        glDrawElements(GL_LINES, GLsizei(owned->edges.size() * 2), GL_UNSIGNED_INT, &(owned->edges[0]));
     }
     else {
-        for (size_t ei = 0; ei < edges.size(); ei++)
+        for (size_t ei = 0; ei < owned->edges.size(); ei++)
         {
-            OpenGLTools::glColorRGB(edgesColor[ei]);
-            glDrawElements(GL_LINES, GLsizei(2), GL_UNSIGNED_INT, &(edges[ei]));
+            OpenGLTools::glColorRGB(owned->edgesColor[ei]);
+            glDrawElements(GL_LINES, GLsizei(2), GL_UNSIGNED_INT, &(owned->edges[ei]));
         }
     }
     glPointSize(oldLineWidth);
@@ -213,10 +194,10 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
     glGetIntegerv(GL_POINT_SIZE, &oldPointSize);
     glPointSize(mParameters.pointSize());
 
-    if (mParameters.pointColorOverride() || !hasColor ) {
+    if (mParameters.pointColorOverride() || !owned->hasColor ) {
         glColor3ub(mParameters.pointColor().r(), mParameters.pointColor().g(), mParameters.pointColor().b());
 
-        glDrawArrays(GL_POINTS, 0, (int)vertexes.size());
+        glDrawArrays(GL_POINTS, 0, (int)owned->vertexes.size());
     }
     else {
         glColor3ub(mParameters.pointColor().r(), mParameters.pointColor().g(), mParameters.pointColor().b());
@@ -227,10 +208,10 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
         glDisableClientState(GL_COLOR_ARRAY);*/
 
         glBegin(GL_POINTS); /* This is slow and retarded*/
-        for (size_t vi = 0; vi < vertexes.size(); vi++)
+        for (size_t vi = 0; vi < owned->vertexes.size(); vi++)
         {
-            OpenGLTools::glColorRGB(vertexesColor[vi]);
-            glVertex3dv((double *)&(vertexes[vi]));
+            OpenGLTools::glColorRGB(owned->vertexesColor[vi]);
+            glVertex3dv((double *)&(owned->vertexes[vi]));
         }
         glEnd();
     }
@@ -251,232 +232,17 @@ void Mesh3DScene::drawMyself(CloudViewDialog *dialog)
 
 bool Mesh3DScene::dump(const QString &targetFile)
 {
-   /*if (owned != NULL)
+   if (owned != NULL)
    {
        qDebug("Mesh3DScene::dump(): saving owned scene\n");
        return MeshLoader().save(owned, targetFile.toLatin1().constData());
    } else {
        qDebug("Mesh3DScene::dump(): there is no owned scene\n");
        return false;
-   }*/
-
-    return MeshLoader().save(this, targetFile.toLatin1().constData());
-}
-
-Mesh3DScene::~Mesh3DScene() {
-    // TODO Auto-generated destructor stub
+   }
 }
 
 
-const int Grid3DScene::GRID_SIZE = 5;
-const int Grid3DScene::GRID_STEP = 250;
-
-
-void Grid3DScene::prepareMesh(CloudViewDialog* /*dialog*/)
-{
-    //qDebug() << "Calling Grid3DScene::prepareMesh() for" << name;
-
-    mGridId = glGenLists(1);
-    if (mGridId == 0) {
-        qDebug("Grid3DScene failed to create display list");
-        return;
-    }
-
-    glNewList(mGridId, GL_COMPILE);
-
-    glPointSize(2);
-    glBegin(GL_POINTS);
-
-    for (int i = -GRID_SIZE; i <= GRID_SIZE; i++)
-        for (int j = -GRID_SIZE; j <= GRID_SIZE; j++)
-            for (int k = -GRID_SIZE; k <= GRID_SIZE; k++)
-            {
-                glColor4f(
-                    (GLfloat)(i + GRID_SIZE) / (2 * GRID_SIZE + 1),
-                    (GLfloat)(j + GRID_SIZE) / (2 * GRID_SIZE + 1),
-                    (GLfloat)(k + GRID_SIZE) / (2 * GRID_SIZE + 1), 1.0f);
-                glVertex3d(i * GRID_STEP,j * GRID_STEP,k * GRID_STEP);
-            }
-
-    glEnd();
-    glEndList();
-}
-
-void Grid3DScene::drawMyself(CloudViewDialog* /*dialog*/ /*, const Draw3dParameters * parameters*/)
-{
-    //qDebug() << "Calling Grid3DScene::drawMyself() for" << name;
-
-    if (mGridId == 0)
-    {
-        qDebug("Grid3DScene was not initialized");
-    }
-    GLboolean textureState = glIsEnabled(GL_TEXTURE_2D);
-    glDisable(GL_TEXTURE_2D);
-    glShadeModel(GL_FLAT);
-    glCallList(mGridId);
-    if (textureState) {
-        glEnable(GL_TEXTURE_2D);
-    }
-}
-
-
-void Plane3DScene::prepareMesh(CloudViewDialog* /*dialog*/)
-{
-    //qDebug() << "Calling Plane3DScene::prepareMesh() for" << name;
-
-    mPlaneListId = glGenLists(1);
-    if (mPlaneListId == 0) {
-        qDebug("Plane3DScene failed to create display list");
-        return;
-    }
-
-    glNewList(mPlaneListId,GL_COMPILE);
-
-
-    glBegin(GL_LINES);
-    glColor3ub(0,255,255);
-
-    const double STEP = 10;
-    const int    PLANE_SIZE = 50;
-
-    for (int i = 0; i <= 2 * PLANE_SIZE; i++)
-    {
-        double x =  PLANE_SIZE * STEP;
-        double z =  i * STEP;
-        if        (i % 10 == 0) {
-            glColor3ub( 128,128,0);
-        } else if (i % 2 == 0) {
-            glColor3ub( 0,128,128);
-        } else {
-            glColor3ub( 0, 64, 64);
-        }
-
-        glVertex3d(-x, 0, z);
-        glVertex3d( x, 0, z);
-    }
-
-    for (int j = -PLANE_SIZE; j <= PLANE_SIZE; j++)
-    {
-        double x = j * STEP;
-        double z = 2 * PLANE_SIZE * STEP;
-
-        if        (j % 10 == 0) {
-            glColor3ub( 128,128,0);
-        } else if (j % 2 == 0) {
-            glColor3ub( 0,128,128);
-        } else {
-            glColor3ub( 0, 64, 64);
-        }
-
-        glVertex3d(x, 0, 0);
-        glVertex3d(x, 0, z);
-    }
-
-    glEnd();
-    glDisable(GL_LINE_STIPPLE);
-    glEndList();
-}
-
-void Plane3DScene::drawMyself(CloudViewDialog* /*dialog*/)
-{
-    //qDebug() << "Calling Plane3DScene::drawMyself() for" << name;
-
-    if (mPlaneListId == 0)
-    {
-        qDebug("Plane3DScene was not initialized");
-    }
-    GLboolean textureState = glIsEnabled(GL_TEXTURE_2D);
-    glDisable(GL_TEXTURE_2D);
-
-    glCallList(mPlaneListId);
-
-    if (textureState) {
-        glEnable(GL_TEXTURE_2D);
-    }
-}
-
-void Plane3DGeodesicScene::prepareMesh(CloudViewDialog* /*dialog*/)
-{
-    //qDebug() << "Calling Plane3DGeodesicScene::prepareMesh() for" << name;
-
-    mPlaneListId = glGenLists(1);
-    if (mPlaneListId == 0) {
-        qDebug("Plane3DGeodesicScene failed to create display list");
-        return;
-    }
-
-    glNewList(mPlaneListId,GL_COMPILE);
-
-
-    glBegin(GL_LINES);
-    glColor3ub(0,255,255);
-
-    const double STEP = 10;
-    const int    PLANE_SIZE = 50;
-
-    // South to North lines
-    for (int i = -PLANE_SIZE; i <= PLANE_SIZE; i++)
-    {
-        double x =  PLANE_SIZE * STEP;
-        double y =  i * STEP;
-        if        (i % 10 == 0) {
-            glColor3ub( 128,128,0);
-        } else if (i % 2 == 0) {
-            glColor3ub( 0,128,128);
-        } else {
-            glColor3ub( 0, 64, 64);
-        }
-        glVertex3d(-x, y, 0);
-        glVertex3d( x, y, 0);
-    }
-    // West to East lines
-    for (int i = -PLANE_SIZE; i <= PLANE_SIZE; i++)
-    {
-        double x =  i * STEP;
-        double y =  PLANE_SIZE * STEP;
-        if        (i % 10 == 0) {
-            glColor3ub( 128,128,0);
-        } else if (i % 2 == 0) {
-            glColor3ub( 0,128,128);
-        } else {
-            glColor3ub( 0, 64, 64);
-        }
-        glVertex3d( x, -y, 0);
-        glVertex3d( x,  y, 0);
-    }
-    glEnd();
-    glDisable(GL_LINE_STIPPLE);
-
-    glPushMatrix();
-    OpenGLTools::glMultMatrixMatrix33(Matrix33::MirrorXY());
-    OpenGLTools::GLWrapper wrapper;
-    GLPainter painter(&wrapper);
-    painter.drawGlyph(0,  PLANE_SIZE * STEP - 20, 'N', RGBColor::Blue(), 5);
-    painter.drawGlyph(0, -PLANE_SIZE * STEP, 'S', RGBColor::Red(), 5);
-    painter.drawGlyph(PLANE_SIZE * STEP,  0, 'E', RGBColor::Yellow(), 5);
-    painter.drawGlyph(-PLANE_SIZE * STEP - 20,  0, 'W', RGBColor::Cyan(), 5);
-    glPopMatrix();
-
-    glEndList();
-}
-
-void Plane3DGeodesicScene::drawMyself(CloudViewDialog* /*dialog*/)
-{
-    //qDebug() << "Calling Plane3DScene::drawMyself() for" << name;
-
-    if (mPlaneListId == 0)
-    {
-        qDebug("Plane3DGeodesicScene was not initialized");
-    }
-    GLboolean textureState = glIsEnabled(GL_TEXTURE_2D);
-    glDisable(GL_TEXTURE_2D);
-
-    glCallList(mPlaneListId);
-
-    if (textureState) {
-        glEnable(GL_TEXTURE_2D);
-    }
-}
 
 
 void CameraScene::prepareMesh(CloudViewDialog * /*dialog*/)
