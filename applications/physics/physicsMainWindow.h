@@ -1,5 +1,7 @@
-#ifndef PHYSICSMAINWIDGET_H
-#define PHYSICSMAINWIDGET_H
+#ifndef PHYSICSMAINWINDOW_H
+#define PHYSICSMAINWINDOW_H
+
+#include <QMainWindow>
 
 #include <stack>
 #include <linux/joystick.h>
@@ -7,18 +9,22 @@
 
 #include <JoystickOptionsWidget.h>
 #include <QWidget>
-#include <aboutDialog.h>
-#include <cameraModelParametersControlWidget.h>
-#include <capSettingsDialog.h>
-#include <flowFabricControlWidget.h>
-#include <graphPlotDialog.h>
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
+
+#include <cameraModelParametersControlWidget.h>
+#include <capSettingsDialog.h>
+#include <controlsMixer.h>
+#include <flowFabricControlWidget.h>
+#include <graphPlotDialog.h>
+#include <inputSelectorWidget.h>
+
 #include <copter/quad.h>
 
 #include "clientSender.h"
 #include "copterInputsWidget.h"
 #include "frameProcessor.h"
+#include "physicsAboutWidget.h"
 #include "protoautopilot.h"
 #include "qComController.h"
 
@@ -30,10 +36,8 @@
 #include "mesh3DScene.h"
 
 namespace Ui {
-    class PhysicsMainWidget;
+class PhysicsMainWindow;
 }
-
-
 
 /** This is a draft **/
 class DrawRequestData
@@ -51,11 +55,19 @@ public:
 };
 
 
-class PhysicsMainWidget : public QWidget
+class SceneShaded;
+
+class PhysicsMainWindow : public QMainWindow
 {
     Q_OBJECT
+
 public:
-    explicit PhysicsMainWidget(QWidget *parent = 0);
+    explicit PhysicsMainWindow(QWidget *parent = 0);
+    ~PhysicsMainWindow();
+
+private:
+    Ui::PhysicsMainWindow *ui;
+
     QSerialPort serialPort;
     ProtoAutoPilot iiAutoPilot;
     QByteArray *flyCommandWriteData = NULL;
@@ -64,28 +76,18 @@ public:
     int currentMode=0;
     bool realModeActive = false;
     bool virtualModeActive = false;
-
-    struct AxisState {
-        short x;
-        short y;
-    };
-
     void disconnectFromCopter();
-
-    virtual ~PhysicsMainWidget();
-
 
 /** Joystick **/
 public:
     JoystickOptionsWidget mJoystickSettings;
-    Mesh3DScene *mesh = NULL;
 
 /** About: We have to use it to satisfy the icons license **/
-    AboutDialog mAboutWidget;    
+    PhysicsAboutWidget mAboutWidget;
 
 public slots:
-    void settingsWidget();
-    void aboutWidget();
+    void showJoystickSettingsWidget();
+    void showAboutWidget();
     void keepAlive();
 
 /** Camera **/
@@ -94,10 +96,16 @@ public:
     CapSettingsDialog mCameraParametersWidget;
     CameraModelParametersControlWidget mModelParametersWidget;
     CameraModel mCameraModel;
+    InputSelectorWidget mInputSelector;
 
 public slots:
+    void showCameraInput();
+
     /* Add paused and stop ASAP */
     void startCamera();
+    void pauseCamera();
+    void stopCamera();
+
     void showCameraParametersWidget();
     void showCameraModelWidget();
 
@@ -113,6 +121,7 @@ public slots:
 /** Quad **/
 public:
     JoystickState joystickState;
+    ControlsMixer mixer;
     CopterInputs inputs;
     QTimer copterTimer;
     Quad copter;
@@ -128,6 +137,7 @@ public slots:
 public:
     std::mutex uiMutex;
     std::vector<DrawRequestData *> uiQueue;
+    SceneShaded *mShadedScene = NULL;
 
 public slots:
     void updateUi();
@@ -201,8 +211,6 @@ private:
     CopterInputs joyStickOutput;                                  //for joystickValues
     CopterInputs iiOutput;                                        //for autopilot values
 
-    Ui::PhysicsMainWidget *ui;
-
     int throttleValueFromJS = 1500;
     int midThrottle = 1350;
 
@@ -211,19 +219,22 @@ private:
     clock_t startTime;
     void showValues( );
     void frameValuesUpdate();
+
+#if 0
     bool created=false;
     bool bind=false;
     bool arming=false;
     bool startFly=false;   //to set mid throttle after arming
-    bool cameraActive=false;
     bool rtPressed=false;
     bool ltPressed=false;
+#endif
+    bool cameraActive=false;
 
     bool recording=false;
 
     void sendOurValues(std::vector<uint8_t> OurValues);
     bool virtuaModeActive=false;
-    std::string inputCameraPath="v4l2:/dev/video0";
+    std::string inputCameraPath="v4l2:/dev/video1";
     ControlRecord recordData;
 
     Simulation simSim;
@@ -233,6 +244,7 @@ private:
 
     bool autopilotMode=false;
     stack<Message> autopilotStack;
+
 };
 
-#endif // PHYSICSMAINWIDGET_H
+#endif // PHYSICSMAINWINDOW_H

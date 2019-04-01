@@ -60,6 +60,4 @@ TEST(Meshdraw, testMeshScene)
     Mesh3DDecorated mesh1;
     mesh1.fillTestScene();
     mesh1.dumpPLY("mesh-example1.ply");
-
-
 }

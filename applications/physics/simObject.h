@@ -16,8 +16,15 @@ using corecvs::Quaternion;
 
 class Force {
 public:
-    corecvs::Vector3dd force;
-    corecvs::Vector3dd position;
+    corecvs::Vector3dd force    = corecvs::Vector3dd::Zero();
+    corecvs::Vector3dd position = corecvs::Vector3dd::Zero();
+
+    Force() {}
+
+    Force(double fx, double fy, double fz) :
+        force(fx, fy, fz), position(Vector3dd::Zero())
+    {
+    }
 
     Force(Vector3dd force, Vector3dd pos = Vector3dd::Zero()) :
         force(force), position(pos)

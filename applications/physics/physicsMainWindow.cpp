@@ -1,40 +1,14 @@
-#include "core/utils/global.h"
+#include "physicsMainWindow.h"
+#include "ui_physicsMainWindow.h"
 
-#include <fstream>
 #include <g12Image.h>
-
-#include <unistd.h>
-#include <bitset>
-#include <linux/joystick.h>
-#include <fcntl.h>
-#include <thread>
-#include <time.h>
-
-#include <QtSerialPort/QSerialPort>
-#include <QtSerialPort/QSerialPortInfo>
-#include <QWidget>
-#include <QFile>
-#include <QTextStream>
-#include <QTimer>
-#include <QBitArray>
-
-#include "core/geometry/mesh3DDecorated.h"
-#include "mesh3DScene.h"
-
-#include "physicsMainWidget.h"
-#include "ui_physicsMainWidget.h"
-#include "joystickInput.h"
-#include "clientSender.h"
-#include "simulation.h"
-
-#include "imageCaptureInterfaceQt.h"
-
-using namespace std;
+#include <imageCaptureInterfaceQt.h>
+#include <sceneShaded.h>
 
 
-PhysicsMainWidget::PhysicsMainWidget(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::PhysicsMainWidget)
+PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::PhysicsMainWindow)
 {
 
     throttleValueFromJS=1500;
@@ -68,34 +42,34 @@ PhysicsMainWidget::PhysicsMainWidget(QWidget *parent) :
 
     connect(&mJoystickSettings, SIGNAL(joystickUpdated(JoystickState)), this, SLOT(joystickUpdated(JoystickState)));
 
-    ui->logShowButton->setChecked(false);
+    ui->actionShowLog->toggled(false);
 }
 
-PhysicsMainWidget::~PhysicsMainWidget()
+PhysicsMainWindow::~PhysicsMainWindow()
 {
     Log::mLogDrains.detach(ui->logWidget);
     delete ui;
 }
 
-void PhysicsMainWidget::settingsWidget()
+void PhysicsMainWindow::showJoystickSettingsWidget()
 {
     mJoystickSettings.show();
     mJoystickSettings.raise();
 }
 
-void PhysicsMainWidget::aboutWidget()
+void PhysicsMainWindow::showAboutWidget()
 {
     mAboutWidget.show();
     mAboutWidget.raise();
 }
 
 
-void PhysicsMainWidget::onStartVirtualModeReleased()
+void PhysicsMainWindow::onStartVirtualModeReleased()
 
-//void PhysicsMainWidget::on_pushButton_released()
+//void PhysicsMainWindow::on_pushButton_released()
 
 {
-    SYNC_PRINT(("PhysicsMainWidget::onPushButtonReleased(): called\n"));
+    SYNC_PRINT(("PhysicsMainWindow::onPushButtonReleased(): called\n"));
 
     /*if (!virtualModeActive & !RealModeActive)
         {
@@ -107,9 +81,9 @@ void PhysicsMainWidget::onStartVirtualModeReleased()
 }
 
 ///
-/// \brief PhysicsMainWidget::sendJoyValues
+/// \brief PhysicsMainWindow::sendJoyValues
 ///Sends to joystick emulator values of sticks with tcp
-void PhysicsMainWidget::sendJoyValues()
+void PhysicsMainWindow::sendJoyValues()
 {
 #if 0
     if (virtualModeActive)
@@ -153,7 +127,7 @@ void PhysicsMainWidget::sendJoyValues()
 
 
 
-void PhysicsMainWidget::showValues()                                   //shows axis values to console
+void PhysicsMainWindow::showValues()                                   //shows axis values to console
 {
     for (int i = 0; i < CopterInputs::CHANNEL_CONTROL_LAST; i++)
     {
@@ -162,7 +136,7 @@ void PhysicsMainWidget::showValues()                                   //shows a
 }
 
 #if 0
-void PhysicsMainWidget::yawChange(int i)                                //i - current yaw value
+void PhysicsMainWindow::yawChange(int i)                                //i - current yaw value
 {
     yawValue=i;
     if (virtualModeActive)
@@ -172,7 +146,7 @@ void PhysicsMainWidget::yawChange(int i)                                //i - cu
 }
 
 
-void PhysicsMainWidget::rollChange(int i)                                //i - current roll value
+void PhysicsMainWindow::rollChange(int i)                                //i - current roll value
 {
     rollValue=i;
     if (virtualModeActive)
@@ -181,7 +155,7 @@ void PhysicsMainWidget::rollChange(int i)                                //i - c
     }
 }
 
-void PhysicsMainWidget::pitchChange(int i)                                //i - current pitch value
+void PhysicsMainWindow::pitchChange(int i)                                //i - current pitch value
 {
     pitchValue=i;
     if (virtualModeActive)
@@ -190,7 +164,7 @@ void PhysicsMainWidget::pitchChange(int i)                                //i - 
     }
 }
 
-void PhysicsMainWidget::throttleChange(int i)                              //i - current throttle value
+void PhysicsMainWindow::throttleChange(int i)                              //i - current throttle value
 {
     throttleValue=i;
     if (virtualModeActive)
@@ -200,7 +174,7 @@ void PhysicsMainWidget::throttleChange(int i)                              //i -
 
 }
 
-void PhysicsMainWidget::CH5Change(int i)                              //i - current throttle value
+void PhysicsMainWindow::CH5Change(int i)                              //i - current throttle value
 {
     CH5Value=i;
     if (virtualModeActive)
@@ -209,7 +183,7 @@ void PhysicsMainWidget::CH5Change(int i)                              //i - curr
     }
 }
 
-void PhysicsMainWidget::CH6Change(int i)                              //i - current throttle value
+void PhysicsMainWindow::CH6Change(int i)                              //i - current throttle value
 {
     CH6Value=i;
     if (virtualModeActive)
@@ -218,7 +192,7 @@ void PhysicsMainWidget::CH6Change(int i)                              //i - curr
     }
 }
 
-void PhysicsMainWidget::CH7Change(int i)                              //i - current throttle value
+void PhysicsMainWindow::CH7Change(int i)                              //i - current throttle value
 {
     CH7Value=i;
     if (virtualModeActive)
@@ -227,7 +201,7 @@ void PhysicsMainWidget::CH7Change(int i)                              //i - curr
     }
 }
 
-void PhysicsMainWidget::CH8Change(int i)                              //i - current throttle value
+void PhysicsMainWindow::CH8Change(int i)                              //i - current throttle value
 {
     CH8Value=i;
     if (virtualModeActive)
@@ -237,18 +211,17 @@ void PhysicsMainWidget::CH8Change(int i)                              //i - curr
 }
 #endif
 
-void PhysicsMainWidget::startVirtualMode()
+void PhysicsMainWindow::startVirtualMode()
 {
     if (!virtualModeActive)
     {
         simSim = Simulation();
 
         virtualModeActive=true;
-        SYNC_PRINT(("PhysicsMainWidget::startVirtualMode(): Adding new object to scene\n"));
+        SYNC_PRINT(("PhysicsMainWindow::startVirtualMode(): Adding new object to scene\n"));
         Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
 
-        //Mesh3DDecorated *mesh = new Mesh3DDecorated;
-        mesh = new Mesh3DScene;
+        Mesh3DDecorated *mesh = new Mesh3DDecorated;
 
         mesh->switchColor();
 
@@ -275,23 +248,26 @@ void PhysicsMainWidget::startVirtualMode()
         mesh->popTransform();
 
         //mesh->dumpPLY("out2.ply");
+        Mesh3DScene *scene = new Mesh3DScene;
+        scene->setMesh(mesh);
 
-        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh));
+        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene));
         ui->cloud->update();
 
         simSim.start();
         //simSim.mainObjects[0]->addForce(Vector3dd(0, 0, -9.8));
-        cout<<"done"<<endl;
+        cout << "done" << endl;
 
         QTimer::singleShot(8, this, SLOT(keepAlive()));           //UI thread crash why????????????
     }
 }
 
-void PhysicsMainWidget::keepAlive(){
+void PhysicsMainWindow::keepAlive(){
     Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
 
-    //Mesh3DDecorated *mesh = new Mesh3DDecorated;
-    mesh = new Mesh3DScene;
+    Mesh3D *mesh = new Mesh3D;
+    Mesh3DScene *scene = new Mesh3DScene;
+    scene->setMesh(mesh);
 
     mesh->switchColor();
     mesh->mulTransform(copterPos);
@@ -309,20 +285,26 @@ void PhysicsMainWidget::keepAlive(){
 
     mesh->popTransform();
 
+    ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene));
     ui->cloud->update();
-    ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh));
-
 
     QTimer::singleShot(8, this, SLOT(keepAlive()));
 }
 
-void PhysicsMainWidget::startCamera()                                                 //how can I stop it??
+void PhysicsMainWindow::showCameraInput()
+{
+    SYNC_PRINT(("PhysicsMainWindow::showCameraInput(): called\n"));
+    mInputSelector.show();
+    mInputSelector.raise();
+}
+
+void PhysicsMainWindow::startCamera()                                                 //how can I stop it??
 {
     if (cameraActive)
     {
         mProcessor->exit();
     }
-    cameraActive=true;
+    cameraActive = true;
     /* We should prepare calculator in some other place */
     mProcessor = new FrameProcessor();
     mProcessor->target = this;
@@ -356,36 +338,46 @@ void PhysicsMainWidget::startCamera()                                           
 
     /* All ready. Let's rock */
     mProcessor->start();
-    rawInput->startCapture();    
+    rawInput->startCapture();
 
 
 }
 
-void PhysicsMainWidget::showCameraParametersWidget()
+void PhysicsMainWindow::pauseCamera()
+{
+
+}
+
+void PhysicsMainWindow::stopCamera()
+{
+
+}
+
+void PhysicsMainWindow::showCameraParametersWidget()
 {
     mCameraParametersWidget.show();
     mCameraParametersWidget.raise();
 }
 
-void PhysicsMainWidget::showCameraModelWidget()
+void PhysicsMainWindow::showCameraModelWidget()
 {
     mModelParametersWidget.show();
     mModelParametersWidget.raise();
 }
 
-void PhysicsMainWidget::showProcessingParametersWidget()
+void PhysicsMainWindow::showProcessingParametersWidget()
 {
     mFlowFabricControlWidget.show();
     mFlowFabricControlWidget.raise();
 }
 
-void PhysicsMainWidget::showGraphDialog()
+void PhysicsMainWindow::showGraphDialog()
 {
     mGraphDialog.show();
     mGraphDialog.raise();
 }
 
-void PhysicsMainWidget::startSimuation()
+void PhysicsMainWindow::startSimuation()
 {
     //mJoystickSettings.openJoystick();    //counterrevolution (when i will understand how it works, i will swich joystickInput to it
     joystick1.start();
@@ -395,7 +387,7 @@ void PhysicsMainWidget::startSimuation()
     }
 }
 
-void PhysicsMainWidget::frameValuesUpdate()
+void PhysicsMainWindow::frameValuesUpdate()
 {
   /*  std::thread thr([this]()
     {
@@ -444,7 +436,7 @@ void PhysicsMainWidget::frameValuesUpdate()
 */
 }
 
-void PhysicsMainWidget::startRealMode()                                    //starts controlling the copter
+void PhysicsMainWindow::startRealMode()                                    //starts controlling the copter
 {
     if (!virtualModeActive & !realModeActive)
     {
@@ -452,7 +444,7 @@ void PhysicsMainWidget::startRealMode()                                    //sta
     }
 }
 
-void PhysicsMainWidget::stop()
+void PhysicsMainWindow::stop()
 {
     time_t Stop_time;
     time(&Stop_time);
@@ -467,21 +459,21 @@ void PhysicsMainWidget::stop()
 
 
 ///
-/// \brief PhysicsMainWidget::SendOurValues
+/// \brief PhysicsMainWindow::SendOurValues
 /// \param OurValues
 /// Sends our values to module (yes, it wants its own package for every byte)
-void PhysicsMainWidget::sendOurValues(std::vector<uint8_t> OurValues)
+void PhysicsMainWindow::sendOurValues(std::vector<uint8_t> OurValues)
 {
     std::vector<uint8_t>  flyCommandOutput = OurValues;
     for (size_t i = 0; i < flyCommandOutput.size(); i++)
     {
-        std::vector<uint8_t>  flyCom = { flyCommandOutput[i] };      
+        std::vector<uint8_t>  flyCom = { flyCommandOutput[i] };
         serialPort.write((const char *)flyCom.data(), flyCom.size());
         serialPort.flush();
     }
 }
 
-void PhysicsMainWidget::startJoyStickMode()
+void PhysicsMainWindow::startJoyStickMode()
 {
     joystick1.start();
     currentSendMode=0;
@@ -489,7 +481,7 @@ void PhysicsMainWidget::startJoyStickMode()
 
 }
 
-void PhysicsMainWidget::keepAliveJoyStick()
+void PhysicsMainWindow::keepAliveJoyStick()
 {
     if (joystick1.active)                             //Yes, indeed. We can not turn on autopiot without joyStick.
     {
@@ -541,37 +533,54 @@ void PhysicsMainWidget::keepAliveJoyStick()
     }
 }
 
-void PhysicsMainWidget::joystickUpdated(JoystickState state)
+void PhysicsMainWindow::joystickUpdated(JoystickState state)
 {
     joystickState = state;
 }
 
-void PhysicsMainWidget::mainAction()
+
+
+void PhysicsMainWindow::mainAction()
 {
     //SYNC_PRINT(("Tick\n"));
 
-    if (joystickState.axis.size() < 4) {
-        return;
+    bool oldbackend = !(ui->actionNewBackend->isChecked());
+
+    Mesh3DScene *scene  = NULL;
+
+    if (oldbackend)
+    {
+        scene = new Mesh3DScene;
+        Mesh3D *mesh = new Mesh3D();
+        mesh->switchColor();
+        scene->setMesh(mesh);
+    } else {
+        if (mShadedScene == NULL) {
+            mShadedScene = new SceneShaded;
+            ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mShadedScene), CloudViewDialog::DISP_CONTROL_ZONE);
+            //ui->cloud->setP
+        }
     }
 
-    /* This need to be brought to mixer */
-    double d = (2 * 32767.0);
-
-    CopterInputs inputs;
-    inputs.axis[CopterInputs::CHANNEL_THROTTLE] = -(joystickState.axis[1] / d * 100.0);
-    inputs.axis[CopterInputs::CHANNEL_ROLL    ] =   joystickState.axis[3] / d * 100.0;
-    inputs.axis[CopterInputs::CHANNEL_PITCH   ] =   joystickState.axis[4] / d * 100.0;
-    inputs.axis[CopterInputs::CHANNEL_YAW     ] =   joystickState.axis[0] / d * 100.0;
-
-
-    mesh = new Mesh3DScene;
-    mesh->switchColor();
-
     //inputs.print();
-    copter.flightControllerTick(inputs);
-    copter.physicsTick();
+
+    if (mixer.mix(joystickState, inputs)) {
+        copter.flightControllerTick(inputs);
+
+
+        copter.physicsTick();
+    }
     copter.visualTick();
-    copter.drawMyself(*mesh);
+
+    if (oldbackend) {
+        copter.drawMyself(*scene->owned);
+    } else {
+        Mesh3DDecorated *mesh = new Mesh3DDecorated();
+        mesh->switchNormals();
+        copter.drawMyself(*mesh);
+        //mesh->dumpInfo();
+        mShadedScene->setMesh(mesh);
+    }
 
     mGraphDialog.addGraphPoint("X", copter.position.x());
     mGraphDialog.addGraphPoint("Y", copter.position.y());
@@ -579,13 +588,15 @@ void PhysicsMainWidget::mainAction()
 
     mGraphDialog.update();
 
-    ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh), CloudViewDialog::CONTROL_ZONE);
+    if (oldbackend) {
+        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene), CloudViewDialog::CONTROL_ZONE);
+    }
     ui->cloud->update();
 }
 
 
 
-void PhysicsMainWidget::onPushButton2Clicked()                      // it was proto^2 autipilot (only repeat)
+void PhysicsMainWindow::onPushButton2Clicked()                      // it was proto^2 autipilot (only repeat)
 {
     //       cout<<m.pitch<<" "<<m.roll<<" "<<m.throttle<<" "<<m.yaw<<" "<<m.count_of_repeats<<endl;
 
@@ -622,7 +633,7 @@ void PhysicsMainWidget::onPushButton2Clicked()                      // it was pr
 
 }
 
-int PhysicsMainWidget::sign(int val)
+int PhysicsMainWindow::sign(int val)
 {
     int result=0;
     if (val > 100) {result=1;}
@@ -630,7 +641,7 @@ int PhysicsMainWidget::sign(int val)
     return result;
 }
 
-void PhysicsMainWidget::on_comboBox_currentTextChanged(const QString &arg1)                 //DO NOT TOUCH IT PLEASE
+void PhysicsMainWindow::on_comboBox_currentTextChanged(const QString &arg1)                 //DO NOT TOUCH IT PLEASE
 {
      if(arg1=="Usual mode")    //why qstring can not be in case?!
     {
@@ -664,7 +675,7 @@ void PhysicsMainWidget::on_comboBox_currentTextChanged(const QString &arg1)     
     }
  }
 
-void PhysicsMainWidget::updateUi()
+void PhysicsMainWindow::updateUi()
 {
     uiMutex.lock();
     /* We now could quickly scan for data and stats*/
@@ -683,10 +694,13 @@ void PhysicsMainWidget::updateUi()
 
     /**/
     if (work->mMesh != NULL) {
-        Mesh3DScene* mesh = new Mesh3DScene;
+        Mesh3DScene* scene = new Mesh3DScene;
+        Mesh3D *mesh = new Mesh3D();
+        scene->setMesh(mesh);
+
         mesh->switchColor();
         mesh->add(*work->mMesh, true);
-        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mesh), CloudViewDialog::ADDITIONAL_SCENE);
+        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene), CloudViewDialog::ADDITIONAL_SCENE);
     }
 
     if (work->mImage)
@@ -703,7 +717,7 @@ void PhysicsMainWidget::updateUi()
 }
 
 
-void PhysicsMainWidget::on_updateCameraButton_clicked()
+void PhysicsMainWindow::on_updateCameraButton_clicked()
 {
 
     QDir DevDir=*new QDir("/dev","video*",QDir::Name,QDir::System);
@@ -711,7 +725,7 @@ void PhysicsMainWidget::on_updateCameraButton_clicked()
 
 }
 
-void PhysicsMainWidget::on_comboBox_2_currentTextChanged(const QString &arg1)
+void PhysicsMainWindow::on_comboBox_2_currentTextChanged(const QString &arg1)
 {
     inputCameraPath="v4l2:/dev/"+arg1.toStdString()+":mjpeg";
 }

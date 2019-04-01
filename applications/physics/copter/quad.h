@@ -48,10 +48,20 @@ public:
         if(mesh.hasColor) {
             mesh.setColor(color);
         }
-        mesh.addCylinder(Vector3dd::Zero(), motorWidth / 2, motorHeight, 10, 0);
+
+        if (motorMesh != NULL) {
+            mesh.add(*motorMesh);
+        } else {
+            mesh.addCylinder(Vector3dd::Zero(), motorWidth / 2, motorHeight, 10, 0);
+        }
         mesh.mulTransform(Affine3DQ::RotationZ(phi));
-        mesh.addAOB(Vector3dd(-propRadius, -0.002 , motorHeight        ),
-                    Vector3dd(+propRadius,  0.002 , motorHeight + 0.002));
+
+        if (propMesh != NULL) {
+            mesh.add(*propMesh);
+        } else {
+            mesh.addAOB(Vector3dd(-propRadius, -0.002 , motorHeight        ),
+                        Vector3dd(+propRadius,  0.002 , motorHeight + 0.002));
+        }
         mesh.popTransform();
 
     }
@@ -66,6 +76,11 @@ public:
     {
         return Vector3dd(0.0, 0.0, pwm * cw);
     }
+
+    /* UI not owned. Need to be reworked. Could be reused for hardcoded solution */
+    Mesh3D *motorMesh = NULL;
+    Mesh3D *propMesh  = NULL;
+
 
 };
 
@@ -84,6 +99,19 @@ public:
     std::vector<CameraModel> cameras;
     std::vector<Sensor> sensors;
 
+    enum BetaflightMotors {
+        BETAFLIGHT_MOTOR_1 = 0,
+        BETAFLIGHT_MOTOR_2 = 1,
+        BETAFLIGHT_MOTOR_3 = 2,
+        BETAFLIGHT_MOTOR_4 = 3,
+
+        MOTOR_BR = BETAFLIGHT_MOTOR_1,
+        MOTOR_FR = BETAFLIGHT_MOTOR_2,
+        MOTOR_BL = BETAFLIGHT_MOTOR_3,
+        MOTOR_FL = BETAFLIGHT_MOTOR_4,
+
+    };
+
 
     Quad(double frameSize = 0.088);
 
@@ -91,14 +119,21 @@ public:
 
     corecvs::Affine3DQ  getTransform();
 
-    void drawMyself(corecvs::Mesh3D &mesh);
+    void drawMyself(Mesh3D &mesh);
+    void drawMyself(Mesh3DDecorated &mesh);
 
     void visualTick();
 
     void flightControllerTick(const CopterInputs &input);
-
     void physicsTick();
 
+    /* UI */
+    Mesh3D *bodyMesh = NULL;
+
+    /* This definitely need to be in the other place */
+    Mesh3DDecorated *worldMesh = NULL;
+
+    ~Quad();
 };
 
 

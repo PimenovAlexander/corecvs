@@ -177,5 +177,7 @@
         <file>shaders/_trivial.vsh</file>
         <file>shaders/default_fast.fsh</file>
         <file>shaders/default_fast.vsh</file>
+        <file>shaders/green.fsh</file>
+        <file>shaders/green.vsh</file>
     </qresource>
 </RCC>

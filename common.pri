@@ -628,4 +628,4 @@ with_fftw {
 #OPEN_ROOT_DIRECTORY = $$PWD
 
 DISTFILES += \
-    $$PWD/arduinoscancontrol.ino
+    $$PWD/arduinoscancontrol.ino \

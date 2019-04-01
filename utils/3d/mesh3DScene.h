@@ -18,13 +18,13 @@
 
 
 
-class Mesh3DScene : public Mesh3D, public Scene3D {
+class Mesh3DScene : /*public Mesh3D,*/ public Scene3D {
 
 public:
     Draw3dParameters mParameters;
 
     /* This mesh is not used so far.*/
-    Mesh3D *owned;
+    Mesh3D *owned = NULL;
 
     Mesh3DScene() :
         owned(NULL)
@@ -56,52 +56,14 @@ public:
         owned = newMesh;
     }
 
-    virtual ~Mesh3DScene();
+    virtual ~Mesh3DScene() {
+        delete_safe(owned);
+    }
+
 };
 
 
 /* Some basic primitive objects */
-
-class Grid3DScene : public Scene3D {
-private:
-    GLuint mGridId;
-public:
-    const static int GRID_SIZE;
-    const static int GRID_STEP;
-
-    Grid3DScene() :
-        mGridId(0)
-    {}
-
-    virtual void prepareMesh(CloudViewDialog *dialog);
-    virtual void drawMyself(CloudViewDialog *dialog);
-};
-
-
-class Plane3DScene : public Scene3D {
-    GLuint mPlaneListId;
-
-public:
-    Plane3DScene() :
-        mPlaneListId(0)
-    {}
-
-    virtual void prepareMesh(CloudViewDialog *dialog);
-    virtual void drawMyself(CloudViewDialog *dialog);
-};
-
-
-class Plane3DGeodesicScene : public Scene3D {
-    GLuint mPlaneListId;
-
-public:
-    Plane3DGeodesicScene() :
-        mPlaneListId(0)
-    {}
-
-    virtual void prepareMesh(CloudViewDialog *dialog);
-    virtual void drawMyself(CloudViewDialog *dialog);
-};
 
 
 class CameraScene : public Mesh3DScene {

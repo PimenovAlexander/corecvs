@@ -3,7 +3,7 @@
 #include <QApplication>
 #include <imageCaptureInterfaceQt.h>
 
-#include "physicsMainWidget.h"
+#include "physicsMainWindow.h"
 
 void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata frameData)
 {
