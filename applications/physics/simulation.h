@@ -20,6 +20,11 @@ public:
 
     int frameCounter=0;
     void start();
+    Simulation(std::string arg);
+
+private:
+    void defaultStart();
+    void droneStart();
 };
 
 #endif // SIMULATION_H

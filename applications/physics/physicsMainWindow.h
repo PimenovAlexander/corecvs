@@ -180,6 +180,8 @@ private slots:
 
     void on_comboBox_2_currentTextChanged(const QString &arg1);
 
+    void on_connetToVirtualButton_released();
+
 private:
     struct Message {
         int throttle;
