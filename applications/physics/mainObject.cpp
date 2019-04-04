@@ -61,6 +61,12 @@ void MainObject::addSphere(Vector3dd coords, double radius)
     setCenterOfMass();
 }
 
+void MainObject::addSphere(Vector3dd coords, double radius,corecvs::RGBColor color)
+{
+    objects.push_back(new SimSphere(coords,radius,color));
+    setCenterOfMass();
+}
+
 MainObject::~MainObject()
 {
     for (SimObject *obj : objects)

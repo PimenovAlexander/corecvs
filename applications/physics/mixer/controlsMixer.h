@@ -20,9 +20,11 @@ public:
 
     std::string name =  "Default";
     virtual bool mix(JoystickState &state, CopterInputs &outputs);
-
+    int currentMode=0;  // switch stick-channel mapping
 
     ControlsMixer();
+private:
+     void usialMode(JoystickState &state, CopterInputs &outputs, bool xInputOn);
 };
 
 #endif // CONTROLSMIXER_H
