@@ -198,7 +198,6 @@ void Quad::flightControllerTick(const CopterInputs &input)
         if (motors[i].pwm < 0.0) motors[i].pwm = 0.0;
         if (motors[i].pwm > 1.0) motors[i].pwm = 1.0;
     }
-
 }
 
 void Quad::physicsTick()

@@ -236,8 +236,7 @@ void PhysicsMainWindow::startVirtualMode()
                 mainObj.objects[j]->addToMesh(*mesh);
             }
         }
-
-
+        /*
         mesh->setColor(RGBColor::Yellow());
         mesh->addIcoSphere(Vector3dd( 5, 5, -3), 2, 2);
         mesh->addIcoSphere(Vector3dd(-5, 5, -3), 2, 2);
@@ -246,7 +245,7 @@ void PhysicsMainWindow::startVirtualMode()
         mesh->addIcoSphere(Vector3dd( 5, -5, -3), 2, 2);
         mesh->addIcoSphere(Vector3dd(-5, -5, -3), 2, 2);
         mesh->popTransform();
-
+        */
         //mesh->dumpPLY("out2.ply");
         Mesh3DScene *scene = new Mesh3DScene;
         scene->setMesh(mesh);
@@ -494,7 +493,7 @@ void PhysicsMainWindow::keepAliveJoyStick()
         }
         if (iiAutoPilot.active)
         {
-            iiOutput=iiAutoPilot.output;
+            iiOutput=iiAutoPilot.output();
         }
         if (currentSendMode==0)
         {
@@ -563,13 +562,18 @@ void PhysicsMainWindow::mainAction()
     }
 
     //inputs.print();
-
+    /*                                     i changed my joestickInput, so it is easier to use it
     if (mixer.mix(joystickState, inputs)) {
         copter.flightControllerTick(inputs);
 
-
         copter.physicsTick();
     }
+    */
+
+    startJoyStickMode();
+    copter.flightControllerTick(joystick1.output);
+    copter.physicsTick();
+
     copter.visualTick();
 
     if (oldbackend) {
@@ -721,11 +725,26 @@ void PhysicsMainWindow::on_updateCameraButton_clicked()
 {
 
     QDir DevDir=*new QDir("/dev","video*",QDir::Name,QDir::System);
+    ui->comboBox_2->clear();
     ui->comboBox_2->addItems(DevDir.entryList());
 
 }
 
 void PhysicsMainWindow::on_comboBox_2_currentTextChanged(const QString &arg1)
 {
-    inputCameraPath="v4l2:/dev/"+arg1.toStdString();
+    inputCameraPath="v4l2:/dev/"+arg1.toStdString()+":mjpeg";
 }
+
+void PhysicsMainWindow::on_connetToVirtualButton_released()
+{
+    SYNC_PRINT(("PhysicsMainWindow::onPushButtonReleased(): called\n"));
+
+    /*if (!virtualModeActive & !RealModeActive)
+        {
+        VirtualSender.Client_connect();
+        virtualModeActive = true;
+        }
+        */
+    startVirtualMode();
+}
+

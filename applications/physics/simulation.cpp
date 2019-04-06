@@ -10,6 +10,39 @@ using namespace std;
 
 Simulation::Simulation()
 {
+    defaultStart();
+}
+
+Simulation::Simulation(string arg)
+{
+    if (arg=="drone")
+    {
+
+    }
+    else
+    {
+        defaultStart();
+    }
+}
+
+
+void Simulation::droneStart()
+{
+    mainObjects.emplace_back();
+    MainObject *mainObject = &mainObjects.back();
+    mainObject->countPhysics = true;
+    mainObject->addSphere(Vector3dd(-1, -1, -1), 2);
+    mainObject->addSphere(Vector3dd(1, -1, -1), 2);
+    mainObject->addSphere(Vector3dd(-1, 1, -1), 2);
+    mainObject->addSphere(Vector3dd(1, 1, -1), 2);
+    mainObject->addForce(Vector3dd(0,-9.8,0));
+
+
+    cout << "Simulation::Simulation():" << mainObjects[0].objects.size() << " before thread" <<endl;
+}
+
+void Simulation::defaultStart()
+{
     /* Adds new MainObject to the vector */
     mainObjects.emplace_back();
     MainObject *mainObject = &mainObjects.back();
