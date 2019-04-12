@@ -334,11 +334,9 @@ void PhysicsMainWindow::startCamera()                                           
         rawInput  , SIGNAL(newFrameReady(ImageCaptureInterface::FrameMetadata)),
         mProcessor,   SLOT(processFrame (ImageCaptureInterface::FrameMetadata)), Qt::QueuedConnection);
 
-
     /* All ready. Let's rock */
     mProcessor->start();
     rawInput->startCapture();
-
 
 }
 
@@ -379,7 +377,7 @@ void PhysicsMainWindow::showGraphDialog()
 void PhysicsMainWindow::startSimuation()
 {
     //mJoystickSettings.openJoystick();    //counterrevolution (when i will understand how it works, i will swich joystickInput to it
-    joystick1.start();
+    //joystick1.start();
     if (joystick1.active)
     {
         currentSendMode=0;
@@ -570,7 +568,7 @@ void PhysicsMainWindow::mainAction()
     }
     */
 
-    startJoyStickMode();
+    //startJoyStickMode();
     copter.flightControllerTick(joystick1.output);
     copter.physicsTick();
 
@@ -748,3 +746,13 @@ void PhysicsMainWindow::on_connetToVirtualButton_released()
     startVirtualMode();
 }
 
+
+void PhysicsMainWindow::on_JoyButton_released()
+{
+    startJoyStickMode();
+}
+
+void PhysicsMainWindow::on_toolButton_3_released()
+{
+    startRealMode();
+}
