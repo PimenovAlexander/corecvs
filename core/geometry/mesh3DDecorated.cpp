@@ -15,7 +15,7 @@ void Mesh3DDecorated::switchTextures(bool on)
     if (hasTexCoords == on)
         return;
     if (on) {
-        texId.resize(faces.size(), Vector4d32(-1,-1,-1, 0));
+        texId.resize(faces.size(), Vector4d32(-1,-1,-1, currentTexture));
     } else {
         texId.clear();
     }
@@ -32,6 +32,27 @@ void Mesh3DDecorated::switchNormals(bool on)
         normalId.clear();
     }
     hasNormals = on;
+}
+
+void Mesh3DDecorated::addFace(const Vector3d32 &faceId)
+{
+    Mesh3D::addFace(faceId);
+    if (hasTexCoords) {
+        texId.push_back(Vector4d32::Zero());
+    }
+    if (hasNormals) {
+        normalId.push_back(Vector3d32::Zero());
+    }
+}
+
+void Mesh3DDecorated::addAOB(const AxisAlignedBoxParameters &box, bool addFaces)
+{
+    Mesh3D::addAOB(box, addFaces);
+}
+
+void Mesh3DDecorated::addAOB(const AxisAlignedBox3d &box, bool addFaces)
+{
+    Mesh3D::addAOB(box, addFaces);
 }
 
 void Mesh3DDecorated::addAOB(const Vector3dd &c1, const Vector3dd &c2, bool addFaces)
@@ -69,6 +90,61 @@ void Mesh3DDecorated::addTriangleT(const Vector3dd &p1, const Vector2dd &t1, con
     }
 }
 
+void Mesh3DDecorated::add(const Mesh3D &other, bool preserveColor)
+{
+    //SYNC_PRINT(("Mesh3DDecorated::add(const Mesh3D): called\n"));
+    Mesh3D::add(other, preserveColor);
+}
+
+void Mesh3DDecorated::add(const Mesh3DDecorated &other, bool preserveColor)
+{
+    // SYNC_PRINT(("Mesh3DDecorated::add(const Mesh3DDecorated): called\n"));
+
+    size_t newTexIdZero    = texId.size();
+    size_t newNormalIdZero = normalId.size();
+
+
+    size_t newTexZero    = textureCoords.size();
+    size_t newNormalZero = normalCoords.size();
+
+    Vector4d32 startTexId    = Vector4d32(newTexZero, newTexZero, newTexZero, 0);
+    Vector3d32 startNormalId = Vector3d32(newNormalZero, newNormalZero, newNormalZero);
+
+    texId   .reserve(texId   .size() + other.texId.size());
+    normalId.reserve(normalId.size() + other.normalId.size());
+    /** This would allocate and fill texId and normalId with default values **/
+    Mesh3D::add((const Mesh3D &)other, preserveColor);
+
+    if (hasTexCoords) {
+        if (other.hasTexCoords) {
+            textureCoords.reserve(textureCoords.size() + other.textureCoords.size());
+            /* Could copy all together */
+            for (size_t i = 0; i < other.textureCoords.size(); i++) {
+                textureCoords.push_back(other.textureCoords[i]);
+            }
+            for (size_t i = 0; i < other.texId.size(); i++) {
+                texId[newTexIdZero + i] = other.texId[i] +  startTexId;
+            }
+        }
+    }
+
+    if (hasNormals) {
+        if (other.hasNormals) {
+            normalCoords.reserve(normalCoords.size() + other.normalCoords.size());
+
+            for (size_t i = 0; i < other.normalCoords.size(); i++)
+            {
+                normalCoords.push_back(other.normalCoords[i]);
+            }
+
+            for (size_t i = 0; i < other.normalId.size(); i++)
+            {
+                normalId[i + newNormalIdZero] = other.normalId[i] + startNormalId;
+            }
+        }
+    }
+}
+
 void Mesh3DDecorated::transform(const Matrix44 &matrix)
 {
     Mesh3D::transform(matrix);
@@ -96,13 +172,13 @@ void Mesh3DDecorated::clear()
 void Mesh3DDecorated::dumpInfo(ostream &out)
 {
     Mesh3D::dumpInfo(out);
-    out << " Normals On:"  << (hasNormals ? "on" : "off") << endl;
+    out << " Normals  On:"  << (hasNormals ? "on" : "off") << endl;
     out << " Textures On:"  << (hasTexCoords ? "on" : "off") << endl;
 
-    out << "  Normals   :" << normalCoords.size() << endl;
-    out << "  Textures  :" << textureCoords.size() << endl;
-    out << "  Norm Idxes:" << normalId.size() << endl;
-    out << "  Tex  Idxes:" << texId.size() << endl;
+    out << " - Normals   :" << normalCoords.size() << endl;
+    out << " - Textures  :" << textureCoords.size() << endl;
+    out << " - Norm Idxes:" << normalId.size() << endl;
+    out << " - Tex  Idxes:" << texId.size() << endl;
 }
 
 void Mesh3DDecorated::fillTestScene()
@@ -132,9 +208,9 @@ void Mesh3DDecorated::recomputeMeanNormals()
     normalId.clear();
 
     /* We don't need this, just normalise */
-    vector<int> counts;
+    //vector<int> counts;
     normalCoords.resize(vertexes.size(), Vector3dd::Zero());
-    counts.resize(vertexes.size(), 0 );
+    //counts.resize(vertexes.size(), 0 );
 
     for (size_t f = 0; f < faces.size(); f++)
     {
@@ -143,37 +219,46 @@ void Mesh3DDecorated::recomputeMeanNormals()
         for (int c = 0; c < 3; c++) {
             int vertexId = faces[f][c];
             normalCoords[vertexId] += normal;
-            counts[vertexId] ++;
+            //counts[vertexId] ++;
         }
         normalId.push_back(faces[f]);
     }
 
     for (size_t n = 0; n < normalCoords.size(); n++)
     {
-        normalCoords[n] /= counts[n];
+        //normalCoords[n] /= counts[n];
         normalCoords[n].normalise();
     }
 }
 
 bool Mesh3DDecorated::verify( void )
 {
-    if (faces.size() != texId.size())
-    {
-        SYNC_PRINT(("Wrong face/texId index (%d != %d)\n", (int)faces.size(), (int)texId.size()));
-        return false;
-
+    if (hasTexCoords) {
+        if (faces.size() != texId.size())
+        {
+            SYNC_PRINT(("Wrong texId index number (%d != %d)\n", (int)faces.size(), (int)texId.size()));
+            return false;
+        }
     }
 
-    if (faces.size() != normalId.size())
-    {
-        SYNC_PRINT(("Wrong face/normalId index (%d != %d)\n", (int)faces.size(), (int)normalId.size()));
-        return false;
+    if (hasNormals) {
+        if (faces.size() != normalId.size())
+        {
+            SYNC_PRINT(("Wrong normalId index number (%d != %d)\n", (int)faces.size(), (int)normalId.size()));
+            return false;
+        }
     }
 
     for (size_t i = 0; i < faces.size(); i++) {
         for (int j = 0; j < 3; j++) {
-            if (faces[i][j] > (int)vertexes.size() ) {
-                SYNC_PRINT(("Wrong face index\n"));
+            if (faces[i][j] < 0)
+            {
+                SYNC_PRINT(("Wrong face index (negative) for face %d point %d vertex %d\n", i, j, faces[i][j]));
+                return false;
+            }
+
+            if (faces[i][j] >= (int)vertexes.size() ) {
+                SYNC_PRINT(("Wrong face index for face %d point %d vertex %d (of %d)\n", i, j, faces[i][j], vertexes.size()));
                 return false;
             }
         }

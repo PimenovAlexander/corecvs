@@ -8,3 +8,4 @@ SOURCES += \
     meanshift/meanShiftCalculator.cpp \
     meanshift/meanShiftWindow.cpp \
 
+OTHER_FILES +=$$PWD/CMakeLists.txt

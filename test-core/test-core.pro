@@ -24,9 +24,53 @@ SOURCES += \
   LIBS += -ldl
 }
 
+
+OTHER_FILES += \
+    CMakeLists.txt
+
+
+SOURCES += \
+    eigen/main_test_eigen_integration.cpp \
+    ultrasound/main_test_ultrasound_reconstruction.cpp \
+    ultrasound/model.cpp \
+    ultrasound/imgreader.cpp
+
+
+
+HEADERS += \
+    generated/testEnum.h       \
+    generated/testSubClass.h   \
+    generated/testClass.h      \
+    generated/testBlock.h      \
+    ultrasound/model.h \
+    ultrasound/imgreader.h
+
+SOURCES += \
+   generated/testSubClass.cpp \
+   generated/testClass.cpp    \
+   generated/testBlock.cpp
+
+
+HEADERS += \
+    cppunit_test/MatcherTest.h \
+    snooker/commonTypes.h \
+    snooker/errors.h \
+    snooker/reflectionSegmentator.h \
+    snooker/snookerSegmentator.h \
+    stateMachineTest/test.h \
+    cppunit_test/MatcherTest.h \
+    snooker/commonTypes.h \
+    snooker/errors.h \
+    snooker/reflectionSegmentator.h \
+    snooker/snookerSegmentator.h \
+    stateMachineTest/test.h \
+    bspRenderer/bspRenderTest.h \
+    bspRenderer/bspRenderer.h
+
 SOURCES += \
     main.cpp \
     \
+#    eigen/main_test_eigen.cpp \
     affine/main_test_affine.cpp \
 #    aLowCodec/main_test_aLowCodec.cpp \
     arithmetics/main_test_arithmetics.cpp \
@@ -45,7 +89,6 @@ SOURCES += \
     derivative/main_test_derivative.cpp \
     distortion/main_test_distortion.cpp \                 # TODO: need to be fixed soon
     draw/main_test_draw.cpp \
-    eigen/main_test_eigen.cpp \
    #face_recognition/main_test_face_recognition.cpp \     # TODO: absent input data!
    #face_recognition1/main_test_face_recognition1.cpp \   # TODO: absent input data!
     fastkernel/main_test_fastkernel.cpp \
@@ -75,6 +118,7 @@ SOURCES += \
     rectificator/main_test_rectificator.cpp \
     rectificator1/main_test_rectificator1.cpp \
     rgb24buffer/main_test_rgb24buffer.cpp \
+    rotation/main_test_rotation_lanzcos.cpp\
     serializer/main_test_serializer.cpp \
     similarity/main_test_similarity.cpp \
     sphericdist/main_test_sphericdist.cpp \
@@ -113,3 +157,8 @@ SOURCES += \
     convexHull2d/main_test_convexHull2d.cpp \
     processor6d/main_test_processor6d.cpp \
     bezierRasterizer/main_test_bezier_rasterizer.cpp \
+    delaunay/main_test_delaunay.cpp \
+    bspRenderer/bspRenderTest.cpp \
+    bspRenderer/bspRenderer.cpp \
+    mesh/main_test_mesh.cpp \
+

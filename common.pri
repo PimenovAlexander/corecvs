@@ -151,7 +151,7 @@ gcc_env_toolchain {
 }
 
 clang_toolchain {
-  CLANG_POSTFIX="-3.6"
+  CLANG_POSTFIX="-7"
 
   CONFIG -= warn_on
 
@@ -628,4 +628,4 @@ with_fftw {
 #OPEN_ROOT_DIRECTORY = $$PWD
 
 DISTFILES += \
-    $$PWD/arduinoscancontrol.ino
+    $$PWD/arduinoscancontrol.ino \

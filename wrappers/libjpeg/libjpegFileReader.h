@@ -23,6 +23,7 @@ public:
     virtual bool acceptsFile(const std::string & name) override;
     virtual corecvs::RGB24Buffer *load(const std::string &name) override;
     virtual std::string name() override { return "LibJpeg"; }
+    virtual std::vector<std::string> extentions() { return {".jpg", ".jpeg"}; }
 
     bool saveJPEG(const std::string& name, const corecvs::RGB24Buffer *buffer, int quality = 95, bool alpha=false);
 
@@ -58,6 +59,7 @@ public:
     virtual bool acceptsFile(const std::string & name) override;
     virtual corecvs::RuntimeTypeBuffer *load(const std::string &name) override;
     virtual std::string name() override {return "LibJpeg";}
+    virtual std::vector<std::string> extentions() override { return LibjpegFileReader().extentions(); }
 
     LibjpegRuntimeTypeBufferLoader();
     virtual ~LibjpegRuntimeTypeBufferLoader();

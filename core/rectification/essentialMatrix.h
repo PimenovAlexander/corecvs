@@ -11,7 +11,7 @@
 #include "core/math/matrix/matrix.h"
 #include "core/math/quaternion.h"
 #include "core/geometry/line.h"
-#include "core/rectification/correspondenceList.h"
+#include "core/buffers/correspondenceList.h"
 #include "core/math/affine.h"
 
 namespace corecvs {

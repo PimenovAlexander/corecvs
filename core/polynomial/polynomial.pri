@@ -5,3 +5,4 @@ HEADERS += \
 SOURCES += \
     polynomial/polynomialSolver.cpp \
     polynomial/polynomial.cpp
+OTHER_FILES +=$$PWD/CMakeLists.txt

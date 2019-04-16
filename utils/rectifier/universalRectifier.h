@@ -14,7 +14,7 @@
 #include "rectifyParameters.h"
 #include "core/math/matrix/matrix33.h"
 #include "rectifyParameters.h"
-#include "core/rectification/correspondenceList.h"
+#include "core/buffers/correspondenceList.h"
 #include "core/cammodel/cameraParameters.h"
 #include "core/rectification/essentialMatrix.h"
 #include "core/rectification/triangulator.h"

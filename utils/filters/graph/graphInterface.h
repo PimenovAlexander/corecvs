@@ -2,7 +2,7 @@
 #define GRAPHINTERFACE_H
 
 #include <vector>
-#include "core/filters/blocks/filterBlock.h"
+#include "core/filters/legacy/blocks/filterBlock.h"
 
 using namespace corecvs;
 

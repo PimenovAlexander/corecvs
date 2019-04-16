@@ -9,7 +9,6 @@
  * \date Mar 24, 2010
  * \author alexander
  */
-
 #include "core/utils/global.h"
 #include "core/math/matrix/matrix.h"
 
@@ -17,14 +16,11 @@
 #include "core/buffers/abstractKernel.h"
 
 #include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/buffers/float/dpImage.h"
 
 namespace corecvs {
 
-
-typedef AbstractBuffer<double> DpImage;
 typedef AbstractKernel<double> DpKernel;
-
-typedef AbstractBuffer<float> FpImage;
 typedef AbstractKernel<float> FpKernel;
 
 
@@ -109,6 +105,13 @@ template<int UNROLL = 5>
 template<int UNROLL = 5>
     static void unrolledWrapperConvolutor(FpImage &src, FpKernel &kernel, FpImage &dst);
 #endif
+
+    /**
+     * This is used not too init the whole image
+     *
+     * If performance is issue we could try to patch convolver methods
+     **/
+    static void fillPerimeter(FpKernel &kernel, FpImage &dst, float value = 0);
 
 };
 

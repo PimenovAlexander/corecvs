@@ -39,6 +39,10 @@ public:
         return (a + b) / 2.0;
     }
 
+    typename VectorType::InnerElementType getLength() const {
+        return (a-b).l2Metric();
+    }
+
     friend std::ostream & operator <<(std::ostream &out, const Segment &ray)
     {
         out << "[" << ray.a << " - " << ray.b << "]";
@@ -756,7 +760,7 @@ public:
     int side(const Vector2dd & point)
     {
         double weight = pointWeight(point);
-        if (weight == 0) return 0;
+        if (abs(weight) <= 1.0e-11) return 0;
         return weight > 0 ? 1 : -1;
     }
 

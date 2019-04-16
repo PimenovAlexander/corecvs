@@ -25,7 +25,8 @@ namespace corecvs {
 
 //@{
 /**
- * This is a helper meta-programming template to represent binary constants.
+ * This is a helper
+ * meta-programming template to represent binary constants.
  *
  * For example:
  *         9 == binary<1001>::value
@@ -58,6 +59,8 @@ namespace HelperUtils
     bool            startsWith(const string &str, const string &prefix);
     bool            endsWith  (const string &str, const string &postfix);
     istream&        getlineSafe(istream& is, string& str);
+
+    int             parseInt (const std::string &c, bool *ok = NULL, size_t *endPos = NULL);
 
     std::string     removeLeading(const string &str, const string &symbols = " ");
 
@@ -122,6 +125,7 @@ namespace HelperUtils
     string getFileName(const string& fileName);
     string getFileNameIfExist(const string& fileName, const string& relativePath);
 
+    double parseDouble(const string &s);
 } // namespace HelperUtils
 
 } //namespace corecvs

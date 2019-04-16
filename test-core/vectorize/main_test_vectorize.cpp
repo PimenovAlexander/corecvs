@@ -334,8 +334,8 @@ TEST(VectorWrappers, unpackLoHigh32)
 
    for (unsigned i = 0; i < 2; i++)
    {
-       CORE_ASSERT_TRUE_P(data0[i] == expected0[i], ("Unpack lower error:%i [%d != %d]", i, data0[i], expected0[i]));
-       CORE_ASSERT_TRUE_P(data1[i] == expected1[i], ("Unpack upper error:%i [%d != %d]", i, data1[i], expected1[i]));
+       CORE_ASSERT_TRUE_P(data0[i] == expected0[i], ("Unpack lower error:%i [%" PRIu64 " != %" PRIu64 "]", i, data0[i], expected0[i]));
+       CORE_ASSERT_TRUE_P(data1[i] == expected1[i], ("Unpack upper error:%i [%" PRIu64 " != %" PRIu64 "]", i, data1[i], expected1[i]));
    }
 }
 

@@ -76,10 +76,13 @@ contains(DEFINES, WITH_OPENCV) {                    # if it's installed properly
     SOURCES     += $$OPENCV_WRAPPER_DIR/faceDetect/faceDetect.cpp
 
     OTHER_FILES +=  $$OPENCV_WRAPPER_DIR/../../tools/generator/xml/opencv.xml
+    OTHER_FILES +=  $$OPENCV_WRAPPER_DIR/../../tools/generator/xml/opencvsgm.xml
+
     OTHER_FILES +=  $$OPENCV_WRAPPER_DIR/../../tools/generator/regen-opencv.sh
 
     HEADERS   += $$OPENCV_WRAPPER_DIR/generated/*.h
     SOURCES   += $$OPENCV_WRAPPER_DIR/generated/*.cpp
+    FORMS     += $$OPENCV_WRAPPER_DIR/generated/*.ui
 
 
 }

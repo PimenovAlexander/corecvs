@@ -5,3 +5,5 @@ HEADERS += \
 SOURCES += \
     filesystem/folderScanner.cpp \
     filesystem/tempFolder.cpp \
+
+OTHER_FILES +=$$PWD/CMakeLists.txt

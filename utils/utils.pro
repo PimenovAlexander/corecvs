@@ -28,7 +28,7 @@ CONFIG += with_widgets
 # In global scope we have non UI classes
 #
 HEADERS += \
-    frames.h \
+#    frames.h \
 #    framesources/imageCaptureInterface.h \
 #    framesources/cameraControlParameters.h \
 #    framesources/decoders/mjpegDecoder.h \
@@ -83,7 +83,6 @@ HEADERS += \
     corestructs/lockableObject.h \
     corestructs/g12Image.h \
     \
-    statistics/graphData.h \
     visitors/jsonGetter.h \
     visitors/jsonSetter.h \
     widgets/vectorWidget.h \
@@ -100,21 +99,18 @@ HEADERS += \
     corestructs/cameraModel/featurePointControlWidget.h \
     uis/aboutPropsTableWidget.h \
     uis/histogramDepthDialog.h \
-    3d/sceneShaded.h \
     corestructs/reflectionWidget.h \
-    3d/shadedSceneControlWidget.h \
     scripting/coreToScript.h \
-    3d/billboardCaption3DScene.h \
-    3d/gCodeScene.h \
     corestructs/cameraModel/fixtureGeometryControlWidget.h \
     corestructs/pointerFieldWidget.h \
     corestructs/widgetBlockHarness.h \
     corestructs/cameraModel/fixtureGlobalParametersWidget.h \
     framesources/imageCaptureInterfaceQt.h \
-    corestructs/cameraModel/fixtureCameraControlWidget.h
+    corestructs/cameraModel/fixtureCameraControlWidget.h \
+    corestructs/flowFabricControlWidget.h \
 
 SOURCES += \
-    frames.cpp \
+#    frames.cpp \
 #    framesources/imageCaptureInterface.cpp \        # it uses WITH_DIRECTSHOW, WITH_UEYE, WITH_OPENCV
 #    framesources/cameraControlParameters.cpp \
 #    framesources/decoders/mjpegDecoder.cpp \
@@ -167,7 +163,6 @@ SOURCES += \
     corestructs/lockableObject.cpp \
     corestructs/g12Image.cpp \
     \
-    statistics/graphData.cpp \
     visitors/jsonGetter.cpp \
     visitors/jsonSetter.cpp \
     widgets/vectorWidget.cpp \
@@ -175,9 +170,6 @@ SOURCES += \
     distortioncorrector/lensDistortionModelParametersControlWidget.cpp \
     distortioncorrector/calibrationFeaturesWidget.cpp \
     uis/cloudview/scene3dTreeView.cpp \
-#    tablecontrol/rotaryTableControlWidget.cpp \
-#    tablecontrol/rotaryTableMeshModel.cpp \
-#    tablecontrol/rotationPlanGenerator.cpp \
     corestructs/cameraModel/affine3dControlWidget.cpp \
     corestructs/cameraModel/fixtureControlWidget.cpp \
     widgets/observationListModel.cpp \
@@ -186,17 +178,14 @@ SOURCES += \
     uis/aboutPropsTableWidget.cpp \
     scannercontrol.cpp \
     uis/histogramDepthDialog.cpp \
-    3d/sceneShaded.cpp \
     corestructs/reflectionWidget.cpp \
-    3d/shadedSceneControlWidget.cpp \
-    3d/billboardCaption3DScene.cpp \
-    3d/gCodeScene.cpp \
     corestructs/cameraModel/fixtureGeometryControlWidget.cpp \
     corestructs/pointerFieldWidget.cpp \
     corestructs/widgetBlockHarness.cpp \
     corestructs/cameraModel/fixtureGlobalParametersWidget.cpp \
     framesources/imageCaptureInterfaceQt.cpp \
-    corestructs/cameraModel/fixtureCameraControlWidget.cpp
+    corestructs/cameraModel/fixtureCameraControlWidget.cpp \
+    corestructs/flowFabricControlWidget.cpp \
 
 
 FORMS += \
@@ -209,11 +198,11 @@ FORMS += \
     corestructs/cameraModel/affine3dControlWidget.ui \
     corestructs/cameraModel/fixtureControlWidget.ui \
     corestructs/cameraModel/featurePointControlWidget.ui \
-    3d/shadedSceneControlWidget.ui \
     corestructs/cameraModel/fixtureGeometryControlWidget.ui \
     corestructs/pointerFieldWidget.ui \
     corestructs/cameraModel/fixtureGlobalParametersWidget.ui \
-    corestructs/cameraModel/fixtureCameraControlWidget.ui
+    corestructs/cameraModel/fixtureCameraControlWidget.ui \
+    corestructs/flowFabricControlWidget.ui
 
 # =============================================================
 
@@ -317,21 +306,10 @@ HEADERS += \
     corestructs/histogramwidget.h \
     corestructs/saveFlowSettings.h \
     \
-    viAreaWidget.h \
-    viGLAreaWidget.h \
+    viAreaWidget.h \  
     matrixwidget.h \
     distortioncorrector/distortionWidget.h \
     \
-#    filters/filterSelector.h \
-#    filters/filterExecuter.h \
-#    filters/filterParametersControlWidgetBase.h \
-#    filters/openCVFilter.h \
-    \
-#    filters/graph/filterBlockPresentation.h \
-#    filters/graph/diagramitem.h \
-#    filters/graph/diagramscene.h \
-#    filters/graph/arrow.h \
-#    filters/graph/diagramtextitem.h \
     \
 #    corestructs/libWidgets/openCVBMParameters.h \
 #    corestructs/libWidgets/openCVSGMParameters.h \
@@ -375,7 +353,6 @@ SOURCES += \
     corestructs/saveFlowSettings.cpp \
     \
     viAreaWidget.cpp \
-    viGLAreaWidget.cpp \
     matrixwidget.cpp \
     distortioncorrector/distortionWidget.cpp \
     \
@@ -425,7 +402,6 @@ FORMS += \
     corestructs/saveFlowSettings.ui \
     \
     viAreaWidget.ui \
-    viGLAreaWidget.ui \
     matrixwidget.ui \
     \
     widgets/foldableWidget.ui \
@@ -466,23 +442,12 @@ RESOURCES += \
    ../resources/main.qrc
 
 unix:!macx:!win32 {
-    CONFIG += with_framesource_v4l2
+    CONFIG += with_v4l2
 }
 
-with_framesource_v4l2 {
-    message (Switching on V4L2 support)
-
-    HEADERS += \
-        framesources/v4l2/V4L2.h \
-        framesources/v4l2/V4L2Capture.h \
-        framesources/v4l2/V4L2CaptureDecouple.h \
-
-    SOURCES += \
-        framesources/v4l2/V4L2.cpp \
-        framesources/v4l2/V4L2Capture.cpp \
-        framesources/v4l2/V4L2CaptureDecouple.cpp \
-
-    DEFINES += WITH_FRAMESOURCE_V4L2
+with_v4l2 {
+    V4L2_WRAPPER_DIR = $$UTILSDIR/../wrappers/v4l2
+    include($$V4L2_WRAPPER_DIR/v4l2.pri)                # it uses OPENCV_WRAPPER_DIR inside
 }
 
 
@@ -514,6 +479,7 @@ with_opengl {
          3d/generated/draw3dViMouseParameters.h \
          3d/mesh3DScene.h \
          3d/coordinateFrame.h \
+         3d/helper3DScenes.h \
          \
 
 
@@ -531,6 +497,7 @@ with_opengl {
         \
         3d/mesh3DScene.cpp \
         3d/coordinateFrame.cpp \
+        3d/helper3DScenes.cpp
 
     FORMS       += \
         uis/cloudview/cloudViewDialog.ui \
@@ -540,19 +507,61 @@ with_opengl {
         3d/generated/draw3dCameraParametersControlWidget.ui \
         3d/generated/draw3dViMouseParametersControlWidget.ui \
 
+#some dependancies
+
+
+    HEADERS     +=  viGLAreaWidget.h
+    SOURCES     +=  viGLAreaWidget.cpp
+    FORMS       +=  viGLAreaWidget.ui
+
+
+#    HEADERS     +=  tablecontrol/rotaryTableControlWidget.h
+#    SOURCES     +=  tablecontrol/rotaryTableControlWidget.cpp
+#    FORMS       +=  tablecontrol/rotaryTableControlWidget.ui
+
+
+    SOURCES     +=  3d/sceneShaded.cpp \
+                    3d/billboardCaption3DScene.cpp \
+                    3d/gCodeScene.cpp \
+                    3d/shadedSceneControlWidget.cpp \
+
+    HEADERS     +=  3d/sceneShaded.h \
+                    3d/billboardCaption3DScene.h \
+                    3d/gCodeScene.h \
+                    3d/shadedSceneControlWidget.h \
+
+    FORMS       +=  3d/shadedSceneControlWidget.ui \
+
+
+
 }
 
 with_ueye {
     contains(DEFINES, WITH_UEYE) {
         HEADERS += \
-            framesources/uEyeCapture.h \
-            framesources/uEyeCameraDescriptor.h \
+            framesources/uEye/uEyeCapture.h \
+            framesources/uEye/uEyeCameraDescriptor.h \
 
         SOURCES += \
-            framesources/uEyeCapture.cpp \
-            framesources/uEyeCameraDescriptor.cpp \
+            framesources/uEye/uEyeCapture.cpp \
+            framesources/uEye/uEyeCameraDescriptor.cpp \
+
+        INCLUDEPATH += framesources/uEye
     }
 }
+
+with_flycap {
+    contains(DEFINES, WITH_FLYCAP) {
+
+        INCLUDEPATH += $$[QT_SYSROOT]/usr/include/flycapture
+        INCLUDEPATH += framesources/flycap
+
+        HEADERS += framesources/flycap/flyCapCapture.h
+        SOURCES += framesources/flycap/flyCapCapture.cpp
+    }
+
+}
+
 
 with_opencv {
     OPENCV_WRAPPER_DIR = $$UTILSDIR/../wrappers/opencv

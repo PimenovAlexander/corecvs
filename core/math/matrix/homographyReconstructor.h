@@ -15,12 +15,12 @@
 #include "core/math/vector/vector2d.h"
 #include "core/math/matrix/matrix33.h"
 #include "core/geometry/polygons.h"
-#include "core/rectification/correspondenceList.h"
+#include "core/buffers/correspondenceList.h"
 #include "core/math/matrix/matrix.h"
 #include "core/function/function.h"
 #include "core/geometry/line.h"
 #include "core/math/matrix/matrixOperations.h"
-#include "core/filters/blocks/newStyleBlock.h"
+#include "core/filters/newstyle/newStyleBlock.h"
 
 namespace corecvs {
 
