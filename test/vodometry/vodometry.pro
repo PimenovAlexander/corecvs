@@ -22,8 +22,9 @@ include(../../utils/utils.pri)                      # it uses TARGET, ROOT_DIR a
 
 
 SOURCES += main.cpp \
-    convertors.cpp
+    convertors.cpp \
+    ertfinder.cpp
 
 HEADERS += \
     convertors.h \
-    findessentialmatrix.h
+    ertfinder.h

@@ -11,8 +11,6 @@
 
 #include "libpngFileReader.h"
 
-#include "findessentialmatrix.h"
-
 #include <opencv2/opencv.hpp>
 #include "opencv2/imgcodecs.hpp"
 
@@ -26,6 +24,8 @@
 #include <opencv2/core/core.hpp>        // Mat
 #include <opencv2/highgui/highgui.hpp>  // imread
 
+#include "ertfinder.h"
+
 using namespace std;
 using namespace corecvs;
 using namespace cv;
@@ -33,6 +33,7 @@ using namespace cv;
 int main()
 {
     Processor6D *proc = new OpenCVFlowProcessor;
+    ertFinder finder(700, 600, 150);
 
     LibpngFileReader::registerMyself();
     LibpngFileSaver::registerMyself();
@@ -66,11 +67,11 @@ int main()
         Matrix33 E, R;
         Vector3dd t;
 
-        findEssentialMatrix(&E, flow);
-        findRt(&R, &t, E, flow);
+        finder.findEssentialMatrix(&E, flow);
+        finder.findRt(&R, &t, E, flow);
 
-        R_f = R * R_f;
-        t_f += 3 * (R_f * t);
+        R_f *= R;
+        t_f += 2 * (R_f * t);
 
 //        cout << "\nFrame " << i << "has read\n" << "E matrix: \n" << E << "\nR matrix: \n" << R << "\nt vector: \n" << t;
 
@@ -79,8 +80,8 @@ int main()
         i++;
         sprintf(filename,  "votest/%d.png", i);
 
-        int x = int(t_f.x()) + 600;
-        int y = int(t_f.y()) + 600;
+        int x = int(t_f.x()) + 500;
+        int y = int(t_f.y()) + 350;
         traj.drawPixel(x, y, RGBColor::Red());
 
     }
