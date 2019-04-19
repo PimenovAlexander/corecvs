@@ -66,6 +66,8 @@ namespace HelperUtils
 
     void            stringSplit(const string &s, char delim, vector<string> &elems);
     vector<string>  stringSplit(const string &s, char delim);
+    vector<string>  stringSplit(const string &s, const std::string &delim);
+
 
     string          escapeString  (const string &s, const std::unordered_map<char, char> &symbols, const std::string &escape);
     string          unescapeString(const string &s, const std::unordered_map<char, char> &symbols, char guard);

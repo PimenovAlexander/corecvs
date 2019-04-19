@@ -117,6 +117,25 @@ std::vector<string> stringSplit(const string &s, char delim)
     return elems;
 }
 
+std::vector<string> stringSplit(const string &s, const std::string &delim)
+{
+    std::vector<string> elems;
+    size_t pos = 0;
+    while(pos < s.size()) {
+        size_t pos1 = s.find_first_of(delim, pos);
+
+        if (pos1 == s.npos) {
+            pos1 = s.length();
+        }
+        if (pos != pos1) {
+            elems.push_back(s.substr(pos, pos1-pos));
+        }
+        pos = pos1 + 1;
+    }
+    return elems;
+}
+
+
 std::string stringCombine(std::vector<std::string> parts, char delim)
 {
     std::string toReturn;
