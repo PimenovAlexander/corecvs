@@ -298,6 +298,12 @@ void Mesh3D::addFlatPolygon(const FlatPolygon &polygon)
 Triangle3dd Mesh3D::getFaceAsTrinagle(size_t number) const
 {
     Vector3d32 facei = faces[number];
+    if (facei[0] >= vertexes.size() ||
+        facei[1] >= vertexes.size() ||
+        facei[2] >= vertexes.size() ) {
+        printf("Mesh3D::getFaceAsTrinagle(%d (of %d)):Internal Error : refers to vertexes [%d %d %d] (of %d)\n",
+               number, faces.size(), facei[0], facei[1], facei[2], vertexes.size() );
+    }
     return Triangle3dd(vertexes[facei[0]], vertexes[facei[1]], vertexes[facei[2]]);
 }
 
@@ -823,13 +829,25 @@ AxisAlignedBox3d Mesh3D::getBoundingBox()
 
 void Mesh3D::add(const Mesh3D &other, bool preserveColor)
 {
+    // SYNC_PRINT(("Mesh3D::add(const Mesh3D): called\n"));
+
     size_t newZero = vertexes.size();
     vertexes.reserve(vertexes.size() + other.vertexes.size());
-    faces.reserve(faces.size() + other.faces.size());
-    edges.reserve(edges.size() + other.edges.size());
+    faces   .reserve(faces.size() + other.faces.size());
+    edges   .reserve(edges.size() + other.edges.size());
 
     RGBColor backup = currentColor;
     preserveColor = preserveColor & other.hasColor;
+
+    if (hasColor) {
+        vertexesColor.reserve(vertexes.size() + other.vertexes.size());
+        facesColor   .reserve(faces.size() + other.faces.size());
+        edgesColor   .reserve(edges.size() + other.edges.size());
+    }
+
+    if (hasAttributes) {
+        attributes.reserve(vertexes.size() + other.vertexes.size());
+    }
 
     for (size_t i = 0; i < other.vertexes.size(); i++)
     {

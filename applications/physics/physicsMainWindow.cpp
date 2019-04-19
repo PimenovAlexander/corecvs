@@ -236,8 +236,7 @@ void PhysicsMainWindow::startVirtualMode()
                 mainObj.objects[j]->addToMesh(*mesh);
             }
         }
-
-
+        /*
         mesh->setColor(RGBColor::Yellow());
         mesh->addIcoSphere(Vector3dd( 5, 5, -3), 2, 2);
         mesh->addIcoSphere(Vector3dd(-5, 5, -3), 2, 2);
@@ -246,7 +245,7 @@ void PhysicsMainWindow::startVirtualMode()
         mesh->addIcoSphere(Vector3dd( 5, -5, -3), 2, 2);
         mesh->addIcoSphere(Vector3dd(-5, -5, -3), 2, 2);
         mesh->popTransform();
-
+        */
         //mesh->dumpPLY("out2.ply");
         Mesh3DScene *scene = new Mesh3DScene;
         scene->setMesh(mesh);
@@ -335,11 +334,9 @@ void PhysicsMainWindow::startCamera()                                           
         rawInput  , SIGNAL(newFrameReady(ImageCaptureInterface::FrameMetadata)),
         mProcessor,   SLOT(processFrame (ImageCaptureInterface::FrameMetadata)), Qt::QueuedConnection);
 
-
     /* All ready. Let's rock */
     mProcessor->start();
     rawInput->startCapture();
-
 
 }
 
@@ -380,7 +377,7 @@ void PhysicsMainWindow::showGraphDialog()
 void PhysicsMainWindow::startSimuation()
 {
     //mJoystickSettings.openJoystick();    //counterrevolution (when i will understand how it works, i will swich joystickInput to it
-    joystick1.start();
+    //joystick1.start();
     if (joystick1.active)
     {
         currentSendMode=0;
@@ -440,7 +437,7 @@ void PhysicsMainWindow::startRealMode()                                    //sta
 {
     if (!virtualModeActive & !realModeActive)
     {
-        ComController.bindToRealDrone();
+        multimoduleController.connectToModule("/dev/ttyUSB0");
     }
 }
 
@@ -494,25 +491,15 @@ void PhysicsMainWindow::keepAliveJoyStick()
         }
         if (iiAutoPilot.active)
         {
-            iiOutput=iiAutoPilot.output;
+            iiOutput=iiAutoPilot.output();
         }
         if (currentSendMode==0)
         {
-            if (!ComController.mutexActive)
-            {
-                ComController.mutexActive=true;
-                ComController.input=joyStickOutput;
-                ComController.mutexActive=false;
-            }
+            multimoduleController.newData(joyStickOutput);
         }
         if (currentSendMode==1)
         {
-            if (!ComController.mutexActive)
-            {
-                ComController.mutexActive=true;
-                ComController.input=iiOutput;
-                ComController.mutexActive=false;
-            }
+            multimoduleController.newData(iiOutput);
         }
     if (frameCounter%4==0)
     {
@@ -538,6 +525,12 @@ void PhysicsMainWindow::joystickUpdated(JoystickState state)
     joystickState = state;
 }
 
+void PhysicsMainWindow::showRadioControlWidget()
+{
+    radioWidget.show();
+    radioWidget.raise();
+}
+
 
 
 void PhysicsMainWindow::mainAction()
@@ -547,7 +540,6 @@ void PhysicsMainWindow::mainAction()
     bool oldbackend = !(ui->actionNewBackend->isChecked());
 
     Mesh3DScene *scene  = NULL;
-    SceneShaded *scene1 = NULL;
 
     if (oldbackend)
     {
@@ -556,28 +548,36 @@ void PhysicsMainWindow::mainAction()
         mesh->switchColor();
         scene->setMesh(mesh);
     } else {
-        scene1 = new SceneShaded;
-        Mesh3DDecorated *mesh  = new Mesh3DDecorated();
-        mesh->switchColor();
-        scene1->setMesh(mesh);
+        if (mShadedScene == NULL) {
+            mShadedScene = new SceneShaded;
+            ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mShadedScene), CloudViewDialog::DISP_CONTROL_ZONE);
+            //ui->cloud->setP
+        }
     }
 
+    /* Please make a switch */
     //inputs.print();
 
     if (mixer.mix(joystickState, inputs)) {
         copter.flightControllerTick(inputs);
-
-
         copter.physicsTick();
     }
+
+
+    //startJoyStickMode();
+    //copter.flightControllerTick(joystick1.output);
+    //copter.physicsTick();
+
     copter.visualTick();
 
     if (oldbackend) {
         copter.drawMyself(*scene->owned);
     } else {
         Mesh3DDecorated *mesh = new Mesh3DDecorated();
+        mesh->switchNormals();
         copter.drawMyself(*mesh);
-        scene1->setMesh(mesh);
+        //mesh->dumpInfo();
+        mShadedScene->setMesh(mesh);
     }
 
     mGraphDialog.addGraphPoint("X", copter.position.x());
@@ -588,9 +588,6 @@ void PhysicsMainWindow::mainAction()
 
     if (oldbackend) {
         ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene), CloudViewDialog::CONTROL_ZONE);
-    } else {
-        scene1->prepareMesh(ui->cloud);
-        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene1), CloudViewDialog::DISP_CONTROL_ZONE);
     }
     ui->cloud->update();
 }
@@ -722,11 +719,36 @@ void PhysicsMainWindow::on_updateCameraButton_clicked()
 {
 
     QDir DevDir=*new QDir("/dev","video*",QDir::Name,QDir::System);
+    ui->comboBox_2->clear();
     ui->comboBox_2->addItems(DevDir.entryList());
 
 }
 
 void PhysicsMainWindow::on_comboBox_2_currentTextChanged(const QString &arg1)
 {
-    inputCameraPath="v4l2:/dev/"+arg1.toStdString();
+    inputCameraPath="v4l2:/dev/"+arg1.toStdString()+":mjpeg";
+}
+
+void PhysicsMainWindow::on_connetToVirtualButton_released()
+{
+    SYNC_PRINT(("PhysicsMainWindow::onPushButtonReleased(): called\n"));
+
+    /*if (!virtualModeActive & !RealModeActive)
+        {
+        VirtualSender.Client_connect();
+        virtualModeActive = true;
+        }
+        */
+    startVirtualMode();
+}
+
+
+void PhysicsMainWindow::on_JoyButton_released()
+{
+    startJoyStickMode();
+}
+
+void PhysicsMainWindow::on_toolButton_3_released()
+{
+    startRealMode();
 }

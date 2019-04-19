@@ -194,7 +194,7 @@ void SceneShaded::applyParameters()
             fShader = fragmentShaderSource1;
         }
 
-        SYNC_PRINT(("SceneShaded::setParameters(): Creating %d program\n", target));
+        SYNC_PRINT(("SceneShaded::applyParameters(): Creating %d program\n", target));
         mProgram[target] = new QOpenGLShaderProgram();
         mProgram[target]->addShaderFromSourceCode(QOpenGLShader::Vertex,   vShader);
         mProgram[target]->addShaderFromSourceCode(QOpenGLShader::Fragment, fShader);
@@ -223,22 +223,16 @@ void SceneShaded::applyParameters()
     mParamsApplied = true;
 }
 
+void SceneShaded::prepareTextures(CloudViewDialog * dialog)
+{   
+    if (mTexturesUpdated) {
+        return;
+    }
 
-void SceneShaded::prepareMesh(CloudViewDialog * dialog)
-{
-
-    SYNC_PRINT(("void SceneShaded::prepareMesh():called\n"));
+    SYNC_PRINT(("void SceneShaded::prepareTextures():called\n"));
 
     dialog->mUi.widget->makeCurrent();
     QOpenGLFunctions_4_5_Core &glFuncs = *(dialog->mUi.widget->context()->versionFunctions<QOpenGLFunctions_4_5_Core>());
-
-    /*
-    QOpenGLFunctions_4_5_Core glFuncs;
-    glFuncs.initializeOpenGLFunctions();
-    */
-
-
-    setParameters(&mParameters);
 
     /*Prepare Texture*/
     RGB24Buffer *texBuf = mMesh->materials.size() > 0 ? mMesh->materials.front().tex[OBJMaterial::TEX_DIFFUSE] : NULL;
@@ -269,32 +263,45 @@ void SceneShaded::prepareMesh(CloudViewDialog * dialog)
     if (!mMesh->materials.empty())
     {
         RGB24Buffer *texBuf = mMesh->materials.front().tex[OBJMaterial::TEX_DIFFUSE];
-
-        glFuncs.glGenTextures(1,&mTexArray);
-        glFuncs.glBindTexture(GL_TEXTURE_2D_ARRAY,mTexArray);
-
-        GLint oldStride;
-        glFuncs.glGetIntegerv(GL_UNPACK_ROW_LENGTH, &oldStride);
-        glFuncs.glPixelStorei(GL_UNPACK_ROW_LENGTH, texBuf->stride);
-        glFuncs.glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, texBuf->w, texBuf->h, mMesh->materials.size());
-
-        for (size_t i = 0; i < mMesh->materials.size(); i++)
+        if (texBuf != NULL)
         {
-            glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, texBuf->w, texBuf->h, 1, GL_RGBA, GL_UNSIGNED_BYTE, &mMesh->materials[i].tex[OBJMaterial::TEX_DIFFUSE]->element(0,0));
+            glFuncs.glGenTextures(1,&mTexArray);
+            glFuncs.glBindTexture(GL_TEXTURE_2D_ARRAY,mTexArray);
+
+            GLint oldStride;
+            glFuncs.glGetIntegerv(GL_UNPACK_ROW_LENGTH, &oldStride);
+            glFuncs.glPixelStorei(GL_UNPACK_ROW_LENGTH, texBuf->stride);
+            glFuncs.glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, texBuf->w, texBuf->h, mMesh->materials.size());
+
+            for (size_t i = 0; i < mMesh->materials.size(); i++)
+            {
+                glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, texBuf->w, texBuf->h, 1, GL_RGBA, GL_UNSIGNED_BYTE, &mMesh->materials[i].tex[OBJMaterial::TEX_DIFFUSE]->element(0,0));
+            }
+
+            glFuncs.glPixelStorei(GL_UNPACK_ROW_LENGTH, oldStride);
+
+
+            glFuncs.glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glFuncs.glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glFuncs.glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glFuncs.glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         }
-
-        glFuncs.glPixelStorei(GL_UNPACK_ROW_LENGTH, oldStride);
-
-
-        glFuncs.glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glFuncs.glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glFuncs.glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glFuncs.glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     }
 
-    /* Prepare caches in OpenGL formats */
+    mTexturesUpdated = true;
+}
 
+
+void SceneShaded::prepareMesh(CloudViewDialog * dialog)
+{
+    if (mMeshPrepared || mMesh == NULL)
+    {
+        return;
+    }
+    //SYNC_PRINT(("void SceneShaded::prepareMesh():called\n"));
+
+    /* Prepare caches in OpenGL formats */
 
     /* Vertexes */
     {
@@ -444,15 +451,19 @@ void SceneShaded::prepareMesh(CloudViewDialog * dialog)
             faceIds[outCount + 2] = (uint32_t)(outCount + 2);
         }
     }
+    mMeshPrepared = true;
 }
 
 void SceneShaded::drawMyself(CloudViewDialog * dialog)
 {
+    prepareMesh(dialog);
+    prepareTextures(dialog);
+    applyParameters();
+
     dialog->mUi.widget->makeCurrent();
 
-    /*QOpenGLFunctions_4_5_Core glFuncs;
-    glFuncs.initializeOpenGLFunctions();*/
-    QOpenGLFunctions &glFuncs = *(dialog->mUi.widget->context()->functions());
+    //QOpenGLFunctions &glFuncs = *(dialog->mUi.widget->context()->functions());
+    QOpenGLFunctions_4_5_Core &glFuncs = *(dialog->mUi.widget->context()->versionFunctions<QOpenGLFunctions_4_5_Core>());
 
     applyParameters();
 /*    if (mProgram[] == NULL)
@@ -609,8 +620,7 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
                 glFuncs.glVertexAttribPointer(mTexAttr, 2, GL_FLOAT, GL_FALSE, 0, faceTexCoords.data());
                 glFuncs.glEnableVertexAttribArray(mTexAttr);
 
-              //  glFuncs.glVertexAttribPointer(mTexIdAttr, 1, GL_UNSIGNED_INT, 0, faceTexNums.data());
-
+                glFuncs.glVertexAttribIPointer(mTexIdAttr, 1, GL_UNSIGNED_INT, 0, faceTexNums.data());
 
                 glFuncs.glEnableVertexAttribArray(mTexIdAttr);
 

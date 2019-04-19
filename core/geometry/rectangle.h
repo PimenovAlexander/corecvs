@@ -53,10 +53,14 @@ public:
             size.y() = 0;
             corner = point;
         } else {
-            if (point.x() < corner.x())
+            if (point.x() < corner.x()) {
+                size.x() += (corner.x() - point.x());
                 corner.x() = point.x();
-            if (point.y() < corner.y())
+            }
+            if (point.y() < corner.y()) {
+                size.y() += (corner.y() - point.y());
                 corner.y() = point.y();
+            }
 
 
             if (point.x() > right())

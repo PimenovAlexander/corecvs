@@ -18,6 +18,7 @@
 #include <flowFabricControlWidget.h>
 #include <graphPlotDialog.h>
 #include <inputSelectorWidget.h>
+#include <radioControlWidget.h>
 
 #include <copter/quad.h>
 
@@ -26,7 +27,7 @@
 #include "frameProcessor.h"
 #include "physicsAboutWidget.h"
 #include "protoautopilot.h"
-#include "qComController.h"
+#include "multimoduleController.h"
 
 
 #include "controlRecord.h"
@@ -54,6 +55,8 @@ public:
 
 };
 
+
+class SceneShaded;
 
 class PhysicsMainWindow : public QMainWindow
 {
@@ -131,10 +134,17 @@ public slots:
     void mainAction();
     void joystickUpdated(JoystickState state);
 
+/** Radio */
+public:
+    RadioControlWidget radioWidget;
+public slots:
+    void showRadioControlWidget();
+
 /** UI show block **/
 public:
     std::mutex uiMutex;
     std::vector<DrawRequestData *> uiQueue;
+    SceneShaded *mShadedScene = NULL;
 
 public slots:
     void updateUi();
@@ -177,6 +187,12 @@ private slots:
 
     void on_comboBox_2_currentTextChanged(const QString &arg1);
 
+    void on_connetToVirtualButton_released();
+
+    void on_JoyButton_released();
+
+    void on_toolButton_3_released();
+
 private:
     struct Message {
         int throttle;
@@ -194,17 +210,7 @@ private:
     /** Replace this with mixer **/
     JoyStickInput joystick1 ;
 
-    QComController ComController {this,
-        copterInputs.axis[CopterInputs::CHANNEL_YAW],
-        copterInputs.axis[CopterInputs::CHANNEL_ROLL],
-        copterInputs.axis[CopterInputs::CHANNEL_PITCH],
-        copterInputs.axis[CopterInputs::CHANNEL_THROTTLE],
-
-        copterInputs.axis[CopterInputs::CHANNEL_4],
-        copterInputs.axis[CopterInputs::CHANNEL_5],
-        copterInputs.axis[CopterInputs::CHANNEL_6],
-        copterInputs.axis[CopterInputs::CHANNEL_7]
-    };
+    MultimoduleController multimoduleController;
     CopterInputs joyStickOutput;                                  //for joystickValues
     CopterInputs iiOutput;                                        //for autopilot values
 
@@ -216,19 +222,22 @@ private:
     clock_t startTime;
     void showValues( );
     void frameValuesUpdate();
+
+#if 0
     bool created=false;
     bool bind=false;
     bool arming=false;
     bool startFly=false;   //to set mid throttle after arming
-    bool cameraActive=false;
     bool rtPressed=false;
     bool ltPressed=false;
+#endif
+    bool cameraActive=false;
 
     bool recording=false;
 
     void sendOurValues(std::vector<uint8_t> OurValues);
     bool virtuaModeActive=false;
-    std::string inputCameraPath="v4l2:/dev/video0";
+    std::string inputCameraPath="v4l2:/dev/video1";
     ControlRecord recordData;
 
     Simulation simSim;

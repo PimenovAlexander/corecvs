@@ -14,6 +14,17 @@
 
 #include "simObject.h"
 
+class PID
+{
+public:
+    double P,I,D;
+    double prevError = 0.0;
+    double sumOfError = 0.0;
+
+    PID(double p, double i , double d);
+
+};
+
 class Motor
 {
 public:
@@ -25,6 +36,7 @@ public:
      *
      **/
     corecvs::Affine3DQ position;
+
 
 
     /* Configuration */
@@ -84,6 +96,8 @@ public:
 
 };
 
+
+
 class Sensor
 {
 public:
@@ -98,6 +112,10 @@ public:
     std::vector<Motor> motors;
     std::vector<CameraModel> cameras;
     std::vector<Sensor> sensors;
+    PID pitchPID{0.7, 0.35, 0.35};
+    PID rollPID{0.7, 0.35, 0.35};
+    PID yawPID{0.7, 0.35, 0.35};
+
 
     enum BetaflightMotors {
         BETAFLIGHT_MOTOR_1 = 0,
@@ -112,6 +130,7 @@ public:
 
     };
 
+    Vector3dd FromQuaternion(Quaternion &Q);
 
     Quad(double frameSize = 0.088);
 

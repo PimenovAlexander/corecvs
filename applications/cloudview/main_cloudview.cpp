@@ -119,9 +119,14 @@ int main(int argc, char *argv[])
                 }
             }
 
+            if (!mesh->verify())
+            {
+                SYNC_PRINT(("Internal error loading mesh"));
+                return 1;
+            }
             mesh->recomputeMeanNormals();
             shaded->setMesh(mesh);
-            shaded->prepareMesh(&mainWindow);
+            //shaded->prepareMesh(&mainWindow);
             mainWindow.addSubObject(QString::fromStdString(path), QSharedPointer<Scene3D>(shaded));
         }
     }

@@ -65,3 +65,32 @@ TEST(utils, splitString)
     std::vector<string> metaVector = HelperUtils::stringSplit(name, ',');
     cout << metaVector.size() << std::endl;
 }
+
+TEST(utils, splitStringMulti)
+{
+    {
+        std::string points = "220,10 300,210 170,250 123,234";
+        std::vector<string> pointsVector = HelperUtils::stringSplit(points, " ,");
+
+        SYNC_PRINT(("%s\n", points.c_str()));
+        for(size_t i = 0; i < pointsVector.size(); i++)
+           SYNC_PRINT(("<%s>  ", pointsVector[i].c_str()));
+        SYNC_PRINT(("\n"));
+        cout << pointsVector.size() << std::endl;
+        CORE_ASSERT_TRUE(pointsVector.size() == 8, "splitString failed");
+    }
+
+    {
+        std::string points = "220,10 300.8,210    170.3,250.2 123,234";
+        std::vector<string> pointsVector = HelperUtils::stringSplit(points, " ,");
+
+        SYNC_PRINT(("%s\n", points.c_str()));
+        for(size_t i = 0; i < pointsVector.size(); i++)
+           SYNC_PRINT(("<%s>  ", pointsVector[i].c_str()));
+        SYNC_PRINT(("\n"));
+        cout << pointsVector.size() << std::endl;
+        CORE_ASSERT_TRUE(pointsVector.size() == 8, "splitString failed");
+    }
+
+
+}

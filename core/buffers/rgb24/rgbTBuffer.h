@@ -1,5 +1,5 @@
 /**
-* \file    buffers\rgb24\rgb24Buffer.h
+* \file    core/buffers/rgb24/rgbTBuffer.h
 *
 * Declares the RGB buffer template class.
 *
@@ -41,6 +41,8 @@ class RGBTBuffer : public AbstractContiniousBuffer<RGBTColor<T>, int32_t>
 {
     typedef AbstractContiniousBuffer<RGBTColor<T>, int32_t> RGBTBufferBase;
 public:
+    static const int CHANNELS         = 3;
+
     typedef RGBTColor<T> InternalElementType;
     typedef int32_t      InternalIndexType;
 

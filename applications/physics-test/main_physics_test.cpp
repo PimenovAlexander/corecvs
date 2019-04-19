@@ -18,6 +18,7 @@
 #include "frSkyMultimodule.h"
 
 #include <bitset>
+#include <multimoduleController.h>
 
 #include "core/fileformats/meshLoader.h"
 #include "copter/quad.h"
@@ -190,21 +191,22 @@ TEST(Quad, drawQuad)
     mesh.dumpPLY("copter.ply");
 }
 
+#if 0
 TEST(Physics, checkFrSky)
 {
-    int16_t channels1[FrSkyMultimodule::CHANNEL_LAST] = {-200, -100, -50, 0, 50, 100, 200, 300};
-    int16_t channels2[FrSkyMultimodule::CHANNEL_LAST] = {-200, -100, -50, 0, 50, 100, 200, 300};
+    CopterInputs channels1 = {-200, -100, -50, 0, 50, 100, 200, 300};
+    CopterInputs channels2 = {-200, -100, -50, 0, 50, 100, 200, 300};
 
     uint8_t message1[FrSkyMultimodule::MESSAGE_SIZE];
     uint8_t message2[FrSkyMultimodule::MESSAGE_SIZE];
 
-    FrSkyMultimodule::pack (channels1, message1);
+    FrSkyMultimodule().pack (channels1, message1);
 
-    for (int i = 0; i < FrSkyMultimodule::CHANNEL_LAST; i++) {
-        channels2[i] = (channels1[i] - FrSkyMultimodule::MAGIC_DIFFERENCE) * 8 / 10;
+    for (int i = 0; i < CopterInputs::CHANNEL_LAST; i++) {
+        channels2.axis[i] = (channels1.axis[i] - FrSkyMultimodule::MAGIC_DIFFERENCE) * 8 / 10;
     }
 
-    FrSkyMultimodule::pack1(channels2, message2);
+    FrSkyMultimodule().pack1(channels2, message2);
 
     for (int i = 0; i < FrSkyMultimodule::MESSAGE_SIZE; i++) {
         printf("%02d ", i);
@@ -232,8 +234,17 @@ TEST(Physics, checkFrSky)
         cout << x << " ";
     }
     printf("\n");
+}
+#endif
 
-
+TEST(Physics, testMultimodule)
+{
+    MultimoduleController controller;
+    controller.connectToModule("/dev/ttyUSB0");
+    SYNC_PRINT(("Waiting a bit for data sending\n"));
+    sleep(4);
+    SYNC_PRINT(("Stoping communication\n"));
+    controller.disconnect();
 }
 
 

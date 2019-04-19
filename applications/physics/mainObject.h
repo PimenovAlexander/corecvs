@@ -40,6 +40,7 @@ public:
     void tick(double deltaT);
 
     void addSphere(Vector3dd coords, double radius);
+    void addSphere(Vector3dd coords, double radius, corecvs::RGBColor);
 
     /**
      * Adds subobject to MainObject and transfers ownership
@@ -47,7 +48,7 @@ public:
     void addObject(SimObject *object);
 
     virtual ~MainObject();
-};
+ };
 
 
 

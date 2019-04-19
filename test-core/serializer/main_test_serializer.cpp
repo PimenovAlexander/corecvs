@@ -261,7 +261,7 @@ TEST(Serializer, advancedBinarySerializer)
     RGBColor    resultc;
     std::string resultstr   = "Example";
     CheckerboardDetectionParameters resultcb;
-    memset(&resultcb, 0xA5, sizeof(resultcb));
+    memset((void *)&resultcb, 0xA5, sizeof(resultcb));
 
     {
         AdvancedBinaryReader reader("out.txt");

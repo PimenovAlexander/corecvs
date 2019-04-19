@@ -13,6 +13,13 @@ SimSphere::SimSphere(Vector3dd c, double r) :
 {
 }
 
+SimSphere::SimSphere(Vector3dd c, double r, corecvs::RGBColor col) :
+    SimObject(c),
+    radius(r)
+{
+    mainColour=col;
+}
+
 
 void SimSphere::saveMesh(const std::string &name)
 {
@@ -39,7 +46,7 @@ void SimSphere::saveMesh(const std::string &name)
 }
 
 
-void SimSphere::drawMesh(Vector3dd coords, double radius)
+void SimSphere::drawMesh(Vector3dd coords, double radius, corecvs::RGBColor color)
 {
     Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
 
@@ -50,7 +57,7 @@ void SimSphere::drawMesh(Vector3dd coords, double radius)
 
     mesh->mulTransform(copterPos);
 
-    mesh->setColor(RGBColor::Red());
+    mesh->setColor(color);
     mesh->addIcoSphere(coords, 2, 2);
 
     mesh->popTransform();
