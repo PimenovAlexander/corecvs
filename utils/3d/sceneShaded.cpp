@@ -295,7 +295,7 @@ void SceneShaded::prepareTextures(CloudViewDialog * dialog)
 
 void SceneShaded::prepareMesh(CloudViewDialog * dialog)
 {
-    if (mMeshPrepared)
+    if (mMeshPrepared || mMesh == NULL)
     {
         return;
     }

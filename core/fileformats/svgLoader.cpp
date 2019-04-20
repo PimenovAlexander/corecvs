@@ -132,8 +132,28 @@ int SvgLoader::parseXML(XMLDocument &xml, SvgFile &svg)
 
 vector<Vector2dd> SvgLoader::parsePoints(string data)
 {
+    if (trace) {
+        SYNC_PRINT(("SvgLoader::parsePoints(%s): called", data.c_str()));
+    }
     data = HelperUtils::escapeString(data, escape_m, " ");
     vector<string> coords = HelperUtils::stringSplit(data, ' ');
+    vector<Vector2dd> points;
+    for(size_t i = 0; i < coords.size(); i += 2) {
+        double x = HelperUtils::parseDouble(coords[i]);
+        double y = HelperUtils::parseDouble(coords[i + 1]);
+        points.push_back(Vector2dd(x, y));
+    }
+    return points;
+}
+
+vector<Vector2dd> SvgLoader::parsePointsPairs(string data)
+{
+    if (trace) {
+        SYNC_PRINT(("SvgLoader::parsePointsPairs(%s): called\n", data.c_str()));
+    }
+    data = HelperUtils::escapeString(data, escape_m, " ");
+    vector<string> coords = HelperUtils::stringSplit(data, " ,");
+
     vector<Vector2dd> points;
     for(size_t i = 0; i < coords.size(); i += 2) {
         double x = HelperUtils::parseDouble(coords[i]);
@@ -231,7 +251,7 @@ SvgShape* SvgLoader::getPolyLine(XMLElement *element)
     initShape(element, polyline);
 
     string attr(element->Attribute("points"));
-    vector<Vector2dd> points = parsePoints(attr);
+    vector<Vector2dd> points = parsePointsPairs(attr);
     polyline->points.insert(polyline->points.end(), points.begin(), points.end());
 
     if (trace)
@@ -252,7 +272,7 @@ SvgShape* SvgLoader::getPolygon(XMLElement *element)
     initShape(element, polygon);
     
     string attr(element->Attribute("points"));
-    vector<Vector2dd> points = parsePoints(attr);
+    vector<Vector2dd> points = parsePointsPairs(attr);
     polygon->polygon.insert(polygon->polygon.end(), points.begin(), points.end());
 
     if (trace)

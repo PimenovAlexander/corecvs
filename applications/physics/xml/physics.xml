@@ -5,5 +5,27 @@
    <field type="double" name="max" defaultValue="100" comment="" />
 </class>
 
+<class name="PID Parameters">
+    <field type="double" name="P" defaultValue="0" min="0" max="100"  comment="" />
+    <field type="double" name="I" defaultValue="0" min="0" max="100"  comment="" />
+    <field type="double" name="D" defaultValue="0" min="0" max="100"  comment="" />
+</class>
+
+<class name="Rate Parameters">
+    <field type="double" name="rc rate"    defaultValue="0" min="0" max="100"  comment="" />
+    <field type="double" name="super rate" defaultValue="0" min="0" max="100"  comment="" />
+    <field type="double" name="rc expo"    defaultValue="0" min="0" max="100"  comment="" />
+</class>
+
+
+<class name="Betaflight PID Parameters">
+   <field type="PID Parameters" name="Roll PID"/>
+   <field type="PID Parameters" name="Pitch PID"/>
+   <field type="PID Parameters" name="Yaw PID"/>
+
+    <field type="Rate Parameters" name="Roll Rate"/>
+    <field type="Rate Parameters" name="Pitch Rate"/>
+    <field type="Rate Parameters" name="Yaw Rate"/>
+</class>
 
 </poco>

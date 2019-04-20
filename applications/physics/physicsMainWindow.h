@@ -18,6 +18,7 @@
 #include <flowFabricControlWidget.h>
 #include <graphPlotDialog.h>
 #include <inputSelectorWidget.h>
+#include <radioControlWidget.h>
 
 #include <copter/quad.h>
 
@@ -26,7 +27,7 @@
 #include "frameProcessor.h"
 #include "physicsAboutWidget.h"
 #include "protoautopilot.h"
-#include "qComController.h"
+#include "multimoduleController.h"
 
 
 #include "controlRecord.h"
@@ -133,6 +134,12 @@ public slots:
     void mainAction();
     void joystickUpdated(JoystickState state);
 
+/** Radio */
+public:
+    RadioControlWidget radioWidget;
+public slots:
+    void showRadioControlWidget();
+
 /** UI show block **/
 public:
     std::mutex uiMutex;
@@ -182,6 +189,10 @@ private slots:
 
     void on_connetToVirtualButton_released();
 
+    void on_JoyButton_released();
+
+    void on_toolButton_3_released();
+
 private:
     struct Message {
         int throttle;
@@ -199,17 +210,7 @@ private:
     /** Replace this with mixer **/
     JoyStickInput joystick1 ;
 
-    QComController ComController {this,
-        copterInputs.axis[CopterInputs::CHANNEL_YAW],
-        copterInputs.axis[CopterInputs::CHANNEL_ROLL],
-        copterInputs.axis[CopterInputs::CHANNEL_PITCH],
-        copterInputs.axis[CopterInputs::CHANNEL_THROTTLE],
-
-        copterInputs.axis[CopterInputs::CHANNEL_4],
-        copterInputs.axis[CopterInputs::CHANNEL_5],
-        copterInputs.axis[CopterInputs::CHANNEL_6],
-        copterInputs.axis[CopterInputs::CHANNEL_7]
-    };
+    MultimoduleController multimoduleController;
     CopterInputs joyStickOutput;                                  //for joystickValues
     CopterInputs iiOutput;                                        //for autopilot values
 

@@ -6,190 +6,6 @@
 
 using namespace std;
 
-void FrSkyMultimodule::pack(int16_t channels[], uint8_t message[])
-{
-    int yawValue       = channels[CHANNEL_YAW];
-    int rollValue      = channels[CHANNEL_ROLL];
-    int pitchValue     = channels[CHANNEL_PITCH];
-    int throttleValue  = channels[CHANNEL_THROTTLE];
-    int CH5Value       = channels[CHANNEL_4];
-    int CH6Value       = channels[CHANNEL_5];
-    int CH7Value       = channels[CHANNEL_6];
-    int CH8Value       = channels[CHANNEL_7];
-
-    const int difference = MAGIC_DIFFERENCE;
-
-    std::vector<uint8_t>  flyCommandFromUs = {0x55, 0x0F, 0x19, 0x00, 0x00,
-                                              0x04, 0x20, 0x00, 0x00, 0x0F,
-                                              0x10, 0x00, 0x02, 0x10, 0x80,
-                                              0x00, 0x04, 0x20, 0x00, 0x01,
-                                              0x08, 0x40, 0x00, 0x02, 0x10, 0x80};
-
-    int k = throttleValue - difference;                    //858- min value
-    k = k * 8 / 10;
-    unsigned short sh1 = k;
-    bitset<32> bitsRoll {sh1};
-
-    bitset<8> firstByte {0};
-    bitset<8> secondByte {0};
-    bitset<8> thirdByte {0};
-    bitset<8> fourthByte {0};
-    bitset<8> fifthByte {0};
-    bitset<8> sixthByte {0};
-    bitset<8> seventhByte {0};
-    bitset<8> eigthByte {0};
-    bitset<8> ninethByte{0};
-    bitset<8> tenthByte{0};
-    bitset<8> eleventhByte{0};
-    bitset<8> twelfthByte{0};
-
-
-    for (int i=0;i<7;i++)
-    {
-        firstByte[i+1]=bitsRoll[i];
-    }
-    secondByte[0]=bitsRoll[7];
-    secondByte[1]=bitsRoll[8];
-    secondByte[2]=bitsRoll[9];
-
-    k=rollValue-difference;
-    k=k*8/10;
-    sh1=k;
-    bitset<32> bitspitch{sh1};
-    for (int i=0;i<4;i++)
-    {
-        secondByte[i+4]=bitspitch[i];
-    }
-    for (int i=0;i<7;i++)
-    {
-        thirdByte[i]=bitspitch[i+4];
-    }
-
-
-    k=pitchValue-difference;
-    k=k*8/10;
-    sh1=k;
-    bitset<32> bitsthrottle{sh1};
-
-    thirdByte[7]=bitsthrottle[0];
-    for (int i=0;i<8;i++)
-    {
-        fourthByte[i]=bitsthrottle[i+1];
-    }
-    fifthByte[0]=bitsthrottle[9];
-
-    k=yawValue-difference;
-    k=k*8/10;
-    sh1=k;
-    bitset<32> bitsyaw{sh1};
-
-    for (int i=0;i<6;i++)
-    {
-        fifthByte[i+2]=bitsyaw[i];
-    }
-    for (int i=0;i<5;i++)
-    {
-        sixthByte[i]=bitsyaw[i+6];
-    }
-
-    k=CH5Value-difference;
-    k=k*8/10;
-    sh1=k;
-    bitset<32> bitsCH5{sh1};
-
-    for (int i=0;i<7;i++)
-    {
-        seventhByte[i]=bitsCH5[i+3];
-    }
-    for (int i=0;i<3;i++)
-    {
-        sixthByte[i+5]=bitsCH5[i];
-    }
-
-    k=CH6Value-difference;
-    k=k*8/10;
-    sh1=k;
-    bitset<32> bitsCH6{sh1};
-
-    for (int i=0;i<8;i++)
-    {
-        eigthByte[i]=bitsCH6[i];
-    }
-    for (int i=0;i<3;i++)
-    {
-        ninethByte[i]=bitsCH6[i+8];
-    }
-
-    k=CH7Value-difference;
-    k=k*8/10;
-    sh1=k;
-    bitset<32> bitsCH7{sh1};
-
-    for (int i=0;i<6;i++)
-    {
-        ninethByte[i+3]=bitsCH7[i];
-    }
-    for (int i=0;i<7;i++)
-    {
-        tenthByte[i]=bitsCH7[i+5];
-    }
-
-    k=CH8Value-difference;
-    k=k*8/10;
-    sh1=k;
-    bitset<32> bitsCH8{sh1};
-
-    for (int i=0;i<8;i++)
-    {
-        eleventhByte[i]=bitsCH8[i+2];
-    }
-    tenthByte[7]=bitsCH8[1];
-    tenthByte[6]=bitsCH8[0];
-    twelfthByte[0]=bitsCH8[10];
-
-    uint8_t fb=firstByte.to_ulong();
-    flyCommandFromUs[4]=fb;
-
-    fb=secondByte.to_ulong();
-    flyCommandFromUs[5]=fb;
-
-    fb=thirdByte.to_ulong();
-    flyCommandFromUs[6]=fb;
-
-    fb=fourthByte.to_ulong();
-    flyCommandFromUs[7]=fb;
-
-    fb=fifthByte.to_ulong();
-    flyCommandFromUs[8]=fb;
-
-    fb=sixthByte.to_ulong();
-    flyCommandFromUs[9]=fb;
-
-    fb=seventhByte.to_ulong();
-    flyCommandFromUs[10]=fb;
-
-    fb=eigthByte.to_ulong();
-    flyCommandFromUs[11]=fb;
-
-    fb=ninethByte.to_ulong();
-    flyCommandFromUs[12]=fb;
-
-    fb=tenthByte.to_ulong();
-    flyCommandFromUs[13]=fb;
-
-
-    fb=eleventhByte.to_ulong();
-    flyCommandFromUs[14]=fb;
-
-
-    fb=twelfthByte.to_ulong();
-    flyCommandFromUs[15]=fb;
-
-    memcpy(message, flyCommandFromUs.data(), sizeof(uint8_t) * MESSAGE_SIZE);
-
-
-}
-
 /**
 
     Ti - are CH0 (throttle) bits
@@ -198,6 +14,8 @@ void FrSkyMultimodule::pack(int16_t channels[], uint8_t message[])
     Yi - are CH3 (Yaw)      bits
 
     A, B, C, D - are CH4, CH5, CH6, CH7
+
+    In 32 bit values
 
        HEADER:
        | 31         [0x00]        24 | 23       [0x19]         16  |  15        [0x0F]        8  | 7         [0x55]        0  |
@@ -239,25 +57,37 @@ void FrSkyMultimodule::pack(int16_t channels[], uint8_t message[])
 
  **/
 
-void FrSkyMultimodule::pack1(int16_t channels[], uint8_t message[])
+void FrSkyMultimodule::pack(const CopterInputs &channels, uint8_t message[])
 {
     memset(message, 0, MESSAGE_SIZE * sizeof(uint8_t));
 
     uint32_t *mptr32 = (uint32_t *)&message[0];
+    int axis[8];
+    for (int i = 0; i < 8; i++)
+    {
+        axis[i] = (channels.axis[i] - MAGIC_DIFFERENCE)  * 8 / 10;
+        axis[i] += 5;
+    }
+    mptr32[0] = 0x00000F55U;
 
-    mptr32[0] = 0x00190F55U;
-    mptr32[1] = ((channels[0] & MASK) <<  1) |
-                ((channels[1] & MASK) << 12) |
-                ((channels[2] & MASK) << 23) ;
+    // byte 2
+    mptr32[0] |= (modelId & 0x0F) << 16;
+    mptr32[0] |= (subtype & 0x07) << 20;
+    mptr32[0] |= lowPower ? (0x1 << 23) : 0x0;
 
-    mptr32[2] = ((channels[2] & MASK) >>  9) |
-                ((channels[3] & MASK) <<  2) |
-                ((channels[4] & MASK) << 13) |
-                ((channels[5] & MASK) << 24) ;
 
-    mptr32[3] = ((channels[5] & MASK) >>  8) |
-                ((channels[6] & MASK) <<  3) |
-                ((channels[7] & MASK) << 14);
+    mptr32[1] = ((axis[0] & MASK) <<  1) |
+                ((axis[1] & MASK) << 12) |
+                ((axis[2] & MASK) << 23) ;
+
+    mptr32[2] = ((axis[2] & MASK) >>  9) |
+                ((axis[3] & MASK) <<  2) |
+                ((axis[4] & MASK) << 13) |
+                ((axis[5] & MASK) << 24) ;
+
+    mptr32[3] = ((axis[5] & MASK) >>  8) |
+                ((axis[6] & MASK) <<  3) |
+                ((axis[7] & MASK) << 14);
 
     mptr32[4] = 0x01002004U;
     mptr32[5] = 0x02004008U;

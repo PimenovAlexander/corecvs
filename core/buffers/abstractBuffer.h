@@ -659,12 +659,12 @@ template<typename ResultType>
         {
             if (other.stride == this->stride && other.w == this->w)
             {
-                memcpy(this->data, other.data, sizeof(ElementType) * copyH * this->stride);
+                memcpy((void *)this->data, (void *)other.data, sizeof(ElementType) * copyH * this->stride);
                 return;
             }
             for (IndexType i = 0; i < copyH; i++)
             {
-                memcpy(&this->element(i, 0), &other.element(i, 0), sizeof(ElementType) * copyW);
+                memcpy((void *)&this->element(i, 0), (void *)&other.element(i, 0), sizeof(ElementType) * copyW);
             }
             return;
         }
@@ -775,7 +775,7 @@ template<typename ResultType>
         {
             for (IndexType i = 0; i < this->h; i++)
             {
-                memcpy(&element(i, 0), &(src.element(y1 + i, x1)), sizeof(ElementType) * this->w);
+                memcpy((void *)&element(i, 0), (void *)&(src.element(y1 + i, x1)), sizeof(ElementType) * this->w);
             }
         }
         else
@@ -1286,7 +1286,7 @@ private:
          */
         if (TRIVIALLY_COPY_CONSTRUCTIBLE)
         {
-            memcpy(dst, src, cnt * sizeof(ElementType));
+            memcpy((void *)dst, (void *)src, cnt * sizeof(ElementType));
         }
         else
         {
@@ -1335,7 +1335,7 @@ private:
         }
         else
         {
-            memset(ptr, 0, sizeof(ElementType) * stride * h);
+            memset((void *)ptr, 0, sizeof(ElementType) * stride * h);
         }
     }
 

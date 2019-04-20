@@ -35,6 +35,8 @@ INCLUDEPATH += ../physics/radio
 
 HEADERS += ../physics/radio/frSkyMultimodule.h
 SOURCES += ../physics/radio/frSkyMultimodule.cpp
+HEADERS += ../physics/radio/multimoduleController.h
+SOURCES += ../physics/radio/multimoduleController.cpp
 
 HEADERS += ../physics/copter/quad.h
 SOURCES += ../physics/copter/quad.cpp
@@ -42,5 +44,8 @@ SOURCES += ../physics/copter/quad.cpp
 
 HEADERS += ../physics/simObject.h
 SOURCES += ../physics/simObject.cpp
+
+HEADERS += ../physics/copterInputs.h
+SOURCES += ../physics/copterInputs.cpp
 
 

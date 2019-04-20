@@ -40,6 +40,8 @@ class RGB24Buffer : public RGB24BufferBase,
 
 {
 public:
+    static const int CHANNELS = 3;
+
 //    RGB24Buffer(int32_t h, int32_t w) : CRGB24BufferBase(h, w) {}
     RGB24Buffer(const RGB24Buffer &that) : RGB24BufferBase (that) {}
     RGB24Buffer(RGB24Buffer *that) : RGB24BufferBase (that) {}

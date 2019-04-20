@@ -49,6 +49,8 @@ class RGB24Buffer;
 class RuntimeTypeBuffer
 {
 public:
+    static const int CHANNELS         = 1;
+
     RuntimeTypeBuffer() : data(0), rows(0), cols(0), sz(0), type(BufferType::U8) {}
     RuntimeTypeBuffer(const size_t &rows, const size_t &cols, const int &type =BufferType::U8) : rows(rows), cols(cols), sz(getTypeSize(type)), type(type)
     {
@@ -173,6 +175,18 @@ public:
     {
         return cols;
     }
+
+    inline size_t getH() const
+    {
+        return rows;
+    }
+
+    inline size_t getW() const
+    {
+        return cols;
+    }
+
+
     int getType() const
     {
         return type;
