@@ -24,9 +24,6 @@ SUBDIRS +=     \
     flowtest \
     avencode \
     opencvpostcalib \
-    vodometry \
-    stabilization
-
 
 !win32 {
     SUBDIRS += jitplayground
@@ -44,6 +41,8 @@ with_opencv {
 #        matcher_basic \
 #        matcher_full \
         chessboard_detector \
+        vodometry \
+        stabilization \
 
 }
 

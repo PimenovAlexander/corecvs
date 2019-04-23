@@ -43,6 +43,11 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
     connect(&mJoystickSettings, SIGNAL(joystickUpdated(JoystickState)), this, SLOT(joystickUpdated(JoystickState)));
 
     ui->actionShowLog->toggled(false);
+
+    /* Setting put paramteres */
+
+    flightControllerParametersWidget = new ReflectionWidget(FlightControllerParameters::getReflection());
+    connect(flightControllerParametersWidget, SIGNAL(paramsChanged()), this, SLOT(flightControllerParametersChanged()));
 }
 
 PhysicsMainWindow::~PhysicsMainWindow()
@@ -61,6 +66,23 @@ void PhysicsMainWindow::showAboutWidget()
 {
     mAboutWidget.show();
     mAboutWidget.raise();
+}
+
+void PhysicsMainWindow::showFlightControllerParameters()
+{
+    SYNC_PRINT(("PhysicsMainWindow::showFlightControllerParameters():called\n"));
+    if (flightControllerParametersWidget == NULL) {
+        return;
+    }
+    flightControllerParametersWidget->show();
+    flightControllerParametersWidget->raise();
+}
+
+void PhysicsMainWindow::flightControllerParametersChanged()
+{
+    SYNC_PRINT(("PhysicsMainWindow::flightControllerParametersChanged():called\n"));
+    flightControllerParametersWidget->getParameters(&currentFlightControllerParameters);
+
 }
 
 
