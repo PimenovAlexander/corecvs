@@ -76,8 +76,9 @@ FORMS += \
 
 #RESOURCES += ../../resources/main.qrc
 
-#HEADERS += xml/generated/*.h
-#SOURCES += xml/generated/*.cpp
+INCLUDEPATH += xml/generated
+HEADERS += xml/generated/*.h
+SOURCES += xml/generated/*.cpp
 
 OTHER_FILES += xml/physics.xml
 OTHER_FILES += ../../tools/generator/regen-physics.sh

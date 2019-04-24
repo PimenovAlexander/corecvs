@@ -128,6 +128,7 @@
      <string>&amp;Joystick</string>
     </property>
     <addaction name="actionJoystickParameters"/>
+    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="title">
@@ -141,6 +142,8 @@
      <string>Processi&amp;ng</string>
     </property>
     <addaction name="actionCameraModel"/>
+    <addaction name="separator"/>
+    <addaction name="actionFlightController"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -381,8 +384,21 @@
    </property>
   </action>
   <action name="actionRadioParameters">
+   <property name="icon">
+    <iconset resource="../../resources/main.qrc">
+     <normaloff>:/new/prefix1/radio_modern.png</normaloff>:/new/prefix1/radio_modern.png</iconset>
+   </property>
    <property name="text">
-    <string>Radio Parameters</string>
+    <string>&amp;Radio Parameters</string>
+   </property>
+  </action>
+  <action name="actionFlightController">
+   <property name="icon">
+    <iconset resource="../../resources/main.qrc">
+     <normaloff>:/new/prefix1/calculator.png</normaloff>:/new/prefix1/calculator.png</iconset>
+   </property>
+   <property name="text">
+    <string>Flight Controller</string>
    </property>
   </action>
  </widget>
@@ -560,6 +576,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionFlightController</sender>
+   <signal>triggered()</signal>
+   <receiver>PhysicsMainWindow</receiver>
+   <slot>showFlightControllerParameters()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>537</x>
+     <y>348</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showCameraInput()</slot>
@@ -572,5 +604,6 @@
   <slot>showAboutWidget()</slot>
   <slot>showJoystickSettingsWidget()</slot>
   <slot>showRadioControlWidget()</slot>
+  <slot>showFlightControllerParameters()</slot>
  </slots>
 </ui>
