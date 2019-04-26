@@ -82,6 +82,7 @@ void PhysicsMainWindow::flightControllerParametersChanged()
 {
     SYNC_PRINT(("PhysicsMainWindow::flightControllerParametersChanged():called\n"));
     flightControllerParametersWidget->getParameters(&currentFlightControllerParameters);
+    *static_cast<FlightControllerParameters *>(&copter) = currentFlightControllerParameters;
 
 }
 

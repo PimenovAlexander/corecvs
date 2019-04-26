@@ -42,10 +42,16 @@ HEADERS += ../physics/copter/quad.h
 SOURCES += ../physics/copter/quad.cpp
 
 
+HEADERS += ../physics/copter/quadAngles.h
+SOURCES += ../physics/copter/quadAngles.cpp
+
 HEADERS += ../physics/simObject.h
 SOURCES += ../physics/simObject.cpp
 
 HEADERS += ../physics/copterInputs.h
 SOURCES += ../physics/copterInputs.cpp
 
+INCLUDEPATH += ../physics/xml/generated
+HEADERS += ../physics/xml/generated/*.h
+SOURCES += ../physics/xml/generated/*.cpp
 

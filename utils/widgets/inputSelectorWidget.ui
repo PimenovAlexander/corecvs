@@ -268,10 +268,62 @@
         </widget>
        </item>
        <item row="5" column="1">
-        <widget class="QComboBox" name="v4l2NumComboBox"/>
+        <widget class="QComboBox" name="v4l2NumComboBox">
+         <item>
+          <property name="text">
+           <string>1</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>2</string>
+          </property>
+         </item>
+        </widget>
        </item>
        <item row="5" column="2">
-        <widget class="QComboBox" name="v4l2DenumComboBox"/>
+        <widget class="QComboBox" name="v4l2DenumComboBox">
+         <item>
+          <property name="text">
+           <string>5</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>10</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>15</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>20</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>25</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>30</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>60</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>50</string>
+          </property>
+         </item>
+        </widget>
        </item>
       </layout>
      </widget>
