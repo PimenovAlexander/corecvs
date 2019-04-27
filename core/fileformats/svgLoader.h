@@ -229,7 +229,13 @@ class SvgPath: public SvgShape
 public:
     vector<Command> commands;
 
+    SvgPath() : SvgShape(SvgShape::PATH_SHAPE)
+    {}
+
     virtual void draw(RGB24Buffer *buffer) override;
+
+    bool toPolygon(Polygon &p);
+
 private:
     Vector2dd start_point;
     Vector2dd cursor;

@@ -29,6 +29,18 @@ void addSubPolygons (SvgShape *shape, vector<Polygon> &inputPolygons)
         SYNC_PRINT(("adding polygon of %d sides\n", polygon->polygon.size()));
         inputPolygons.push_back(polygon->polygon);
     }
+    if (shape->type == SvgShape::PATH_SHAPE)
+    {
+        SYNC_PRINT(("Try to add Path\n"));
+        SvgPath *path = static_cast<SvgPath*>(shape);
+        Polygon p;
+        if (path->toPolygon(p) == false)
+            SYNC_PRINT(("Not a polygon"));
+        else
+            SYNC_PRINT(("adding polygon of %d sides\n", p.size()));
+        inputPolygons.push_back(p);
+    }
+
     if (shape->type == SvgShape::GROUP_SHAPE)
     {
         SvgGroup *group = static_cast<SvgGroup*>(shape);

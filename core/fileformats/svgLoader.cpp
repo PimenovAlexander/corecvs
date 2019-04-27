@@ -617,6 +617,113 @@ void SvgPath::draw(RGB24Buffer *buffer)
     }
 }
 
+bool SvgPath::toPolygon(Polygon &p)
+{
+    if (commands.size() == 0)
+    {
+        return false;
+    }
+
+    cursor = {0, 0};
+    start_point = {0, 0};
+    dest = {0, 0};
+
+    p.clear();
+
+    for (size_t i = 0; i < commands.size(); i++)
+    {
+        const Command &command = commands[i];
+
+        switch(command.command)
+        {
+        case 'M': case 'm':
+            start_point = command.getVector();
+            if (command.command == 'm')
+            {
+                start_point += cursor;
+            }
+            cursor = start_point;
+            p.push_back(cursor);
+            if (commands[i].params.size() > 2)
+            {
+                for (size_t j = 2; j < command.params.size(); j += 2)
+                {
+                    dest = command.getVector(j);
+                    if (command.command == 'm')
+                    {
+                        dest += cursor;
+                    }
+                    cursor = dest;
+                    p.push_back(cursor);
+                }
+            }
+            break;
+            /*=================================*/
+        case 'L': case 'l':
+            for (size_t j = 0; j < command.params.size(); j += 2)
+            {
+                dest = command.getVector(j);
+                if (command.command == 'l')
+                {
+                    dest += cursor;
+                }
+                cursor = dest;
+                p.push_back(cursor);
+            }
+            break;
+            /*=================================*/
+        case 'H': case 'h':
+            for (size_t j = 0; j < command.params.size(); j++)
+            {
+                double x2 = command.params[j];
+                if (command.command == 'h')
+                {
+                    x2 += cursor.x();
+                }
+                cursor.x() = x2;
+                p.push_back(cursor);
+            }
+            break;
+            /*=================================*/
+        case 'V': case 'v':
+            for (size_t j = 0; j < command.params.size(); j++)
+            {
+                double y2 = command.params[j];
+                if (command.command == 'v')
+                {
+                    y2 += cursor.y();
+                }
+                cursor.y() = y2;
+                p.push_back(cursor);
+            }
+            break;
+            /*=================================*/
+        case 'Z': case 'z':
+            cursor = start_point;
+            p.push_back(cursor);
+            break;
+            /*=================================*/
+        case 'C': case 'c':
+            return false;
+            break;
+            /*=================================*/
+        case 'S': case 's':
+            return false;
+            break;
+        case 'q':
+        case 'Q':
+        case 't':
+        case 'T':
+            return false;
+            break;
+        case 'a':
+        case 'A':
+            return false;
+            break;
+        }
+    }
+}
+
 
 
 }
