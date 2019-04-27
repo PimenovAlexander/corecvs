@@ -224,8 +224,7 @@
      <item>
       <widget class="QToolButton" name="toolButton_2">
        <property name="text">
-        <string>AUTOPILOT
-(press any js key to stop)</string>
+        <string>AUTOPILOT</string>
        </property>
        <property name="icon">
         <iconset resource="../../resources/main.qrc">
@@ -398,7 +397,7 @@
      <normaloff>:/new/prefix1/calculator.png</normaloff>:/new/prefix1/calculator.png</iconset>
    </property>
    <property name="text">
-    <string>Flight Controller</string>
+    <string>&amp;Flight Controller</string>
    </property>
   </action>
  </widget>
