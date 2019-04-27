@@ -15,11 +15,13 @@ using namespace corecvs;
 using namespace std;
 
 
-
+int l = 1;
 
 
 void addSubPolygons (SvgShape *shape, vector<Polygon> &inputPolygons)
 {
+    cout << shape->type;
+
     SYNC_PRINT(("addSubPolygons(%s):called\n", SvgShape::getName(shape->type)));
     if (shape->type == SvgShape::POLYGON_SHAPE)
     {
