@@ -298,12 +298,14 @@ void Mesh3D::addFlatPolygon(const FlatPolygon &polygon)
 Triangle3dd Mesh3D::getFaceAsTrinagle(size_t number) const
 {
     Vector3d32 facei = faces[number];
-    if (facei[0] >= vertexes.size() ||
-        facei[1] >= vertexes.size() ||
-        facei[2] >= vertexes.size() ) {
+#if 0
+    if ((size_t)facei[0] >= vertexes.size() ||
+        (size_t)facei[1] >= vertexes.size() ||
+        (size_t)facei[2] >= vertexes.size() ) {
         printf("Mesh3D::getFaceAsTrinagle(%d (of %d)):Internal Error : refers to vertexes [%d %d %d] (of %d)\n",
                number, faces.size(), facei[0], facei[1], facei[2], vertexes.size() );
     }
+#endif
     return Triangle3dd(vertexes[facei[0]], vertexes[facei[1]], vertexes[facei[2]]);
 }
 

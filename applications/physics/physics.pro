@@ -43,6 +43,7 @@ HEADERS += \
     protoautopilot.h \   
     physicsMainWindow.h \
     physicsAboutWidget.h \
+    copter/quadAngles.h
 
 SOURCES += \
     joystick/joystickInterface.cpp \
@@ -65,6 +66,7 @@ SOURCES += \
     protoautopilot.cpp \    
     physicsMainWindow.cpp \
     physicsAboutWidget.cpp \
+    copter/quadAngles.cpp
 
 FORMS += \
     joystick/JoystickOptionsWidget.ui \
@@ -76,8 +78,9 @@ FORMS += \
 
 #RESOURCES += ../../resources/main.qrc
 
-#HEADERS += xml/generated/*.h
-#SOURCES += xml/generated/*.cpp
+INCLUDEPATH += xml/generated
+HEADERS += xml/generated/*.h
+SOURCES += xml/generated/*.cpp
 
 OTHER_FILES += xml/physics.xml
 OTHER_FILES += ../../tools/generator/regen-physics.sh

@@ -2,6 +2,7 @@
 #define rectifyWidget_H
 
 #include <QDialog>
+#include <core/cameracalibration/calibrationLocation.h>
 #include "ui_rectifyParametersControlWidget.h"
 #include "core/math/eulerAngles.h"
 #include "core/math/vector/vector3d.h"
@@ -35,7 +36,7 @@ public:
         return mUi->bPointsMatching;
     }
 
-    void setManualTab(CameraAnglesLegacy &angle, Vector3dd &dir)
+    void setManualTab(CameraLocationAngles &angle, Vector3dd &dir)
     {
         double pitchDelta = mUi->manualPitchSpinBox->value() - angle.pitch();
         double yawDelta   = mUi->manualYawSpinBox->value()   - angle.yaw();

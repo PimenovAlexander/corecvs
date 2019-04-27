@@ -29,6 +29,18 @@ void addSubPolygons (SvgShape *shape, vector<Polygon> &inputPolygons)
         SYNC_PRINT(("adding polygon of %d sides\n", polygon->polygon.size()));
         inputPolygons.push_back(polygon->polygon);
     }
+    if (shape->type == SvgShape::PATH_SHAPE)
+    {
+        SYNC_PRINT(("Try to add Path\n"));
+        SvgPath *path = static_cast<SvgPath*>(shape);
+        Polygon p;
+        if (path->toPolygon(p) == false)
+            SYNC_PRINT(("Not a polygon"));
+        else
+            SYNC_PRINT(("adding polygon of %d sides\n", p.size()));
+        inputPolygons.push_back(p);
+    }
+
     if (shape->type == SvgShape::GROUP_SHAPE)
     {
         SvgGroup *group = static_cast<SvgGroup*>(shape);
@@ -50,29 +62,15 @@ ELLIPSE_SHAPE,
 GROUP_SHAPE
 */
 
-double Dist1(Vector2dd &A, Vector2dd &B)
-{
-    return (abs(A.x() - B.x()) + abs(A.y() - B.y()));
-
-}
-
-double Dist2(Vector2dd &A, Vector2dd &B)
-{
-    return sqrt((A.x() - B.x()) * (A.x() - B.x()) + (A.y() - B.y()) * (A.y() - B.y()));
-}
-
-
 Polygon PolygonMakeList(list<Vector2dd> &L)
 {
-    Vector2dd* P = new Vector2dd[L.size()];
-    auto j = 0;
+    Polygon p;
+    p.reserve(L.size());
     for (auto i = L.begin(); i != L.end(); ++i)
     {
-        P[j] = *i;
-        ++j;
+        p.push_back(*i);
     }
-    return Polygon(P, L.size());
-
+    return p;
 }
 
 Polygon PolygonMakeList2(list<Vector2dd> &L1, list<Vector2dd> &L2)

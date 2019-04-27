@@ -15,6 +15,7 @@
 #include <cameraModelParametersControlWidget.h>
 #include <capSettingsDialog.h>
 #include <controlsMixer.h>
+#include <flightControllerParameters.h>
 #include <flowFabricControlWidget.h>
 #include <graphPlotDialog.h>
 #include <inputSelectorWidget.h>
@@ -127,12 +128,19 @@ public:
     QTimer copterTimer;
     Quad copter;
 
+    FlightControllerParameters currentFlightControllerParameters; /* Not sure we need it here */
+    ReflectionWidget *flightControllerParametersWidget = NULL;
+
+
 public slots:
     /* Let it be here so far */
     void startSimuation();
 
     void mainAction();
     void joystickUpdated(JoystickState state);
+
+    void showFlightControllerParameters();
+    void flightControllerParametersChanged();
 
 /** Radio */
 public:

@@ -5,12 +5,13 @@
 #include <copterInputs.h>
 #include <vector>
 
-#include <core/cameracalibration/cameraModel.h>
-
+#include "core/cameracalibration/cameraModel.h"
 #include "core/cameracalibration/calibrationDrawHelpers.h"
 #include "core/geometry/mesh3d.h"
 #include "core/math/affine.h"
 #include "core/math/vector/vector3d.h"
+
+#include "xml/generated/flightControllerParameters.h"
 
 #include "simObject.h"
 
@@ -21,8 +22,9 @@ public:
     double prevError = 0.0;
     double sumOfError = 0.0;
 
-    PID(double p, double i , double d);
-
+    PID(double p, double i , double d) :
+        P(p), I(i), D(d)
+    {}
 };
 
 class Motor
@@ -106,15 +108,28 @@ public:
      std::string name;
 };
 
-class Quad : public SimObject
+class Gyro : public Sensor
+{
+public:
+
+};
+
+class Accelerometer : public Sensor
+{
+public:
+};
+
+
+class Quad : public SimObject, public FlightControllerParameters
 {
 public:
     std::vector<Motor> motors;
     std::vector<CameraModel> cameras;
     std::vector<Sensor> sensors;
+
     PID pitchPID{0.7, 0.35, 0.35};
-    PID rollPID{0.7, 0.35, 0.35};
-    PID yawPID{0.7, 0.35, 0.35};
+    PID rollPID {0.7, 0.35, 0.35};
+    PID yawPID  {0.7, 0.35, 0.35};
 
 
     enum BetaflightMotors {
