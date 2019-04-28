@@ -374,9 +374,9 @@ void DoClockOrP(Polygon &A)
 Polygon nfp(Polygon &A, Polygon &B)
 {
     list<Vector2dd> Edges;
-    for(auto i = 0; i < A.size(); ++i)
+    for(size_t i = 0; i < A.size(); ++i)
         Edges.push_back( - A.getNextPoint(i) + A.getPoint(i));
-    for(auto i = 0; i < B.size(); ++i)
+    for(size_t i = 0; i < B.size(); ++i)
         Edges.push_back(B.getNextPoint(i) - B.getPoint(i));
 
     Edges.sort(antiClock);
@@ -397,7 +397,7 @@ double AreaOfCP(Polygon &A)
 {
     auto C = A.getPoint(0);
     auto Result = 0;
-    for (auto i =1 ; i <A.size() - 1 ; ++i)
+    for (size_t i = 1 ; i < A.size() - 1 ; ++i)
     {
         Result += OrientAreaTwice(C, A.getPoint(i), A.getNextPoint(i));
     }
@@ -407,7 +407,7 @@ double AreaOfCP(Polygon &A)
 
 bool PointLiesPol(Vector2dd V, Polygon &A)
 {
-    for (auto i = 0; i < A.size(); ++i)
+    for (size_t i = 0; i < A.size(); ++i)
     {
         if (PointOnSegment(V, A.getPoint(i), A.getNextPoint(i)))
             return true;
@@ -415,7 +415,7 @@ bool PointLiesPol(Vector2dd V, Polygon &A)
 
     Vector2dd M(2000, 2005);
     int b = 0;
-    for (auto i = 0; i < A.size(); ++i)
+    for (size_t i = 0; i < A.size(); ++i)
     {
         if (SegIntersect(V, M, A.getPoint(i), A.getNextPoint(i)))
         {
@@ -456,7 +456,7 @@ bool PointLiesPol(Vector2dd V, Polygon &A)
 
 bool PointLiesIntPol(Vector2dd V, Polygon &A)
 {
-    for (auto i = 0; i < A.size(); ++i)
+    for (size_t i = 0; i < A.size(); ++i)
     {
         if (PointOnSegment(V, A.getPoint(i), A.getNextPoint(i)))
             return false;
@@ -464,7 +464,7 @@ bool PointLiesIntPol(Vector2dd V, Polygon &A)
 
     Vector2dd M(2000, 2005);
     int b = 0;
-    for (auto i = 0; i < A.size(); ++i)
+    for (size_t i = 0; i < A.size(); ++i)
     {
         if (SegIntersect(V, M, A.getPoint(i), A.getNextPoint(i)))
         {
@@ -496,9 +496,11 @@ bool PointLiesIntPol(Vector2dd V, Polygon &A)
         }
 
     }
-    if (b >= 1)
+    if (b >= 1) {
         return true;
-    else return false;
+    } else {
+        return false;
+    }
 
 }
 
@@ -507,15 +509,16 @@ bool BiggaArea(Polygon &A, Polygon &B)
 {
     return (AreaOfCP(A) >= AreaOfCP(B));
 }
+
 void LazySort(vector <Polygon> &A)
 {
     list<Polygon> B;
-    for(int i = 0; i < A.size(); ++i)
+    for(size_t i = 0; i < A.size(); i++)
     {
         B.push_back(A[i]);
     }
     B.sort(BiggaArea);
-    for(int i = 0; i < A.size(); ++i)
+    for(size_t i = 0; i < A.size(); i++)
     {
         A[i] = B.front();
         B.pop_front();
@@ -531,9 +534,9 @@ Vector2dd BestOne(list <Vector2dd> &L)
     BotLeft.push_front(L.front());
     for (auto v : L)
     {
-        if(v.y() == BotLeft.front().y())
+        if(v.y() == BotLeft.front().y()) {
             BotLeft.push_back(v);
-        else if(v.y() < BotLeft.front().y())
+        } else if(v.y() < BotLeft.front().y())
         {
             BotLeft.clear();
             BotLeft.push_front(v);
@@ -560,7 +563,7 @@ void BLPlacement(Rectangled A, vector <Polygon> &input)
     input[0].translate(firstnfp.getPoint(0) - GetTopRightPoint(input[0]));
     Placed.push_front(0);
 
-    for(int i = 1; i < input.size(); ++i)
+    for(size_t i = 1; i < input.size(); ++i)
     {
         firstnfp = innernfpR(A, input[i]); //same
         list <Polygon> nfps;
