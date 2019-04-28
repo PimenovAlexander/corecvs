@@ -14,8 +14,9 @@ DESTDIR = $$ROOT_DIR/bin
 OBJECTS_DIR = $$ROOT_DIR/.obj/$$TARGET_ORIG$$BUILD_CFG_NAME
 
 TEMPLATE = app
-TARGET   = nester
+TARGET   = test_nester
 
+include($$PWD/../../wrappers/gtest/gtest.pri)
 include($$PWD/../../core/core.pri)
 
 with_libjpeg {
@@ -27,9 +28,9 @@ with_libpng {
     LIBPNG_WRAPPER_DIR = ../../wrappers/libpng
     include($$LIBPNG_WRAPPER_DIR/libpng.pri)
 }
-SOURCES += main_nester.cpp \
-    nester.cpp
 
-HEADERS += \
-    nester.h
+SOURCES += ../nester/nester.cpp
+HEADERS += ../nester/nester.h
+
+SOURCES += main_nester_test.cpp
 

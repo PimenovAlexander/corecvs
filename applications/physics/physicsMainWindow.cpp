@@ -48,6 +48,9 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
 
     flightControllerParametersWidget = new ReflectionWidget(FlightControllerParameters::getReflection());
     connect(flightControllerParametersWidget, SIGNAL(paramsChanged()), this, SLOT(flightControllerParametersChanged()));
+
+    /* Moving the camera closer */
+    //ui->cloud->setCamera();
 }
 
 PhysicsMainWindow::~PhysicsMainWindow()
