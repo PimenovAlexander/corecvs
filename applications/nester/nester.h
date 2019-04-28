@@ -11,7 +11,7 @@
 /* Helpers */
 
 void drawPolygons   (std::vector<corecvs::Polygon> inputPolygons, int h, int w, std::string bmpname);
-void drawSvgPolygons(std::vector<corecvs::Polygon> inputPolygons, std::string svgName);
+void drawSvgPolygons(std::vector<corecvs::Polygon> inputPolygons, int h, int w, std::string svgName);
 
 void addSubPolygons (corecvs::SvgShape *shape, std::vector<corecvs::Polygon> &inputPolygons);
 

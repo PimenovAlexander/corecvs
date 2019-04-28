@@ -54,13 +54,13 @@ void drawPolygons(vector<Polygon> inputPolygons, int h, int w, string bmpname)
     BufferFactory::getInstance()->saveRGB24Bitmap(buffer, bmpname);
 }
 
-void drawSvgPolygons(vector<Polygon> inputPolygons, string svgName)
+void drawSvgPolygons(vector<Polygon> inputPolygons, int h, int w, string svgName)
 {
     std::ofstream file;
     file.open(svgName, ios::out);
     file.imbue(std::locale("C"));
 
-    file << "<svg height=\"210\" width=\"500\">" << endl;
+    file << "<svg height=\""<< h <<"\" width=\""<< w <<"\">" << endl;
     for (size_t i = 0; i < inputPolygons.size(); i++)
     {
           Polygon &p = inputPolygons[i];

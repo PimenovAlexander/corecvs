@@ -21,14 +21,14 @@ using namespace std;
 
 TEST(Nester, twoRectanges)
 {
-    Rectangled Bin (0, 0, 80, 40);
+    Rectangled area (0, 0, 80, 40);
 
     vector<Polygon> inp = {
-        Polygon::RegularPolygon(6, Vector2dd::Zero(), 40, 0),
-        Polygon::RegularPolygon(7, Vector2dd::Zero(), 40, 0)
+        Polygon::RegularPolygon(6, Vector2dd::Zero(), 20, 0),
+        Polygon::RegularPolygon(7, Vector2dd::Zero(), 20, 0)
     };
 
-    drawSvgPolygons(inp, "in.svg");
+    drawSvgPolygons(inp, area.height(), area.width(), "in.svg");
 
     LazySort(inp);
 
@@ -37,10 +37,35 @@ TEST(Nester, twoRectanges)
         DoClockOrP(p);
     }
 
-    BLPlacement(Bin, inp); //всякие защиты от пустых множеств отсутствуют
+    BLPlacement(area, inp); //всякие защиты от пустых множеств отсутствуют
 
 
-    drawSvgPolygons(inp, "out.svg");
+    drawSvgPolygons(inp, area.height(), area.width(), "out.svg");
+}
+
+TEST(Nester, manyRectanges)
+{
+    Rectangled area (0, 0, 1000, 1000);
+
+    vector<Polygon> inp;
+    for ( int i = 0; i < 200; i++)
+    {
+        inp.push_back(Polygon::RegularPolygon(4, Vector2dd::Zero(), 20, degToRad(i)));
+    }
+
+    drawSvgPolygons(inp, area.height(), area.width(), "in1.svg");
+
+    LazySort(inp);
+
+    for(auto &p : inp)
+    {
+        DoClockOrP(p);
+    }
+
+    BLPlacement(area, inp);
+
+
+    drawSvgPolygons(inp, area.height(), area.width(), "out1.svg");
 }
 
 TEST(Nester, nfp)

@@ -113,7 +113,7 @@ int main(int argc, char **argv)
     int w = s.getInt("w", 1000);
 
     drawPolygons(inputPolygons, h, w, "debug.bmp");
-    drawSvgPolygons(inputPolygons, "debug.svg");
+    drawSvgPolygons(inputPolygons, Bin.height(), Bin.width(), "debug.svg");
     return 0;
 
 }
