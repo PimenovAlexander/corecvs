@@ -27,5 +27,9 @@ with_libpng {
     LIBPNG_WRAPPER_DIR = ../../wrappers/libpng
     include($$LIBPNG_WRAPPER_DIR/libpng.pri)
 }
-SOURCES += main_nester.cpp
+SOURCES += main_nester.cpp \
+    nester.cpp
+
+HEADERS += \
+    nester.h
 

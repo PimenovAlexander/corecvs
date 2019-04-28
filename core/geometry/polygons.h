@@ -527,6 +527,21 @@ public:
         return toReturn;
     }
 
+    /* Additional helper for shift only */
+    void translate(const Vector2dd &translation)
+    {
+        for (Vector2dd &p: *this ) {
+            p += translation;
+        }
+    }
+
+    Polygon translated(const Vector2dd &translation) const
+    {
+        Polygon p(*this);
+        p.translate(translation);
+        return p;
+    }
+
     /* non const versions */
     double &x(int idx) {
         return operator [](idx).x();
