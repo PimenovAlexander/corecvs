@@ -61,14 +61,25 @@ void drawSvgPolygons(vector<Polygon> inputPolygons, string svgName)
     file.imbue(std::locale("C"));
 
     file << "<svg height=\"210\" width=\"500\">" << endl;
-    for (Polygon &p : inputPolygons)
+    for (size_t i = 0; i < inputPolygons.size(); i++)
     {
+          Polygon &p = inputPolygons[i];
+
+          RGBColor color = RGBColor::parula((double)i / inputPolygons.size());
+          char colorStr[7];
+          snprintf2buf(colorStr, "%02X%02X%02X", color.r(), color.g(), color.b());
+
+          std::string style="style=\"stroke:#";
+          style += colorStr;
+          style += ";fill:none;stroke-width:1\"";
+
+
          file << "<polygon points=\"";
          for (Vector2dd &point : p)
          {
              file << point.x() << "," << point.y() << " ";
          }
-         file << "\"/>" << endl;
+         file << "\" " << style << "/>" << endl;
     }
     file << "</svg>" << endl;
 
@@ -154,16 +165,16 @@ void showP(Polygon &A) //5
 
 int PyDi(int m, int n) //5_
 {
-    auto c = m %n;
+    auto c = m % n;
     if (m >= 0)
         return c;
     else if (n <0)
     {
-        return (-n +c)%n;
+        return (-n + c) % n;
     }
     else
     {
-        return (n + c)%n;
+        return (n + c) % n;
     }
 }
 
@@ -242,10 +253,10 @@ double AngleOX(Vector2dd &V)
     Vector2dd O(0,0);
     Vector2dd OX(0,1);
     if(OrientAreaTwice(O, V, OX) <= 0)
-        return (V.x() * OX.x() + V.y() * OX.y()) / sqrt (V.x() * V.x() + V.y() * V.y());
+        return (V.x() * OX.x() + V.y() * OX.y()) / V.l2Metric();
     else
     {
-        return -2 - (V.x() * OX.x() + V.y() * OX.y()) / sqrt (V.x() * V.x() + V.y() * V.y());
+        return -2 - (V.x() * OX.x() + V.y() * OX.y()) / V.l2Metric();
     }
 }
 

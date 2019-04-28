@@ -24,5 +24,7 @@ void DoClockOrP(corecvs::Polygon &A);
 void BLPlacement(corecvs::Rectangled A, std::vector <corecvs::Polygon> &input);
 void showP(corecvs::Polygon &A);
 
+/* Helpful submethods */
+corecvs::Polygon nfp(corecvs::Polygon &A, corecvs::Polygon &B);
 
 #endif // NESTER_H
