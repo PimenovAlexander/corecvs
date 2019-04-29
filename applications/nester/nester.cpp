@@ -15,7 +15,6 @@ using namespace corecvs;
 using namespace std;
 
 
-int l = 1;
 
 
 /** =========================================== **/
@@ -99,6 +98,8 @@ void addSubPolygons (SvgShape *shape, vector<Polygon> &inputPolygons)
         SYNC_PRINT(("adding polygon of %d sides\n", (int)polygon->polygon.size()));
         inputPolygons.push_back(polygon->polygon);
     }
+    /*
+
     if (shape->type == SvgShape::PATH_SHAPE)
     {
         SYNC_PRINT(("Try to add Path\n"));
@@ -110,6 +111,7 @@ void addSubPolygons (SvgShape *shape, vector<Polygon> &inputPolygons)
             SYNC_PRINT(("adding polygon of %d sides\n", (int)p.size()));
         inputPolygons.push_back(p);
     }
+    */
 
     if (shape->type == SvgShape::GROUP_SHAPE)
     {
@@ -177,7 +179,11 @@ int PyDi(int m, int n) //5_
         return (n + c) % n;
     }
 }
+double Dist1(Vector2dd &A, Vector2dd &B)
+{
+    return abs(A.x() - B.x()) + abs(A.y() - B.y());
 
+}
 
 Vector2dd GP(Polygon &A, int i)
 {
@@ -505,6 +511,97 @@ bool PointLiesIntPol(Vector2dd V, Polygon &A)
 }
 
 
+Vector2dd SegIntescetionSpecial(Vector2dd &a1, Vector2dd &a2, Vector2dd &b1, Vector2dd &b2) //seg a1, a2 || OX or || OY   seg b1, b2 neither
+{
+    Vector2dd Result;
+    if(a1.y() == a2.y())
+    {
+        Result.y() =  a1.y();
+        if(b1.x() != b2.x())
+        {
+            double k2 = (b1.y() - b2.y()) / (b1.x() - b2.x());
+            double c2 = b1.y() - b1.x() * k2;
+            Result.x() =   (a1.y() - c2) / k2;
+        }
+        else
+        {
+            Result.x() = b1.x();
+        }
+    }
+    else
+    {
+        Result.x() =  a1.x();
+        if(b1.x() != b2.x())
+        {
+
+            double k2 = (b1.y() - b2.y()) / (b1.x() - b2.x());
+            double c2 = b1.y() - b1.x() * k2;
+            Result.y() = k2* a1.x() + c2;
+        }
+        else
+        {
+            Result.y() = b1.y();
+
+        }
+    }
+    return Result;
+
+}
+
+
+
+Vector2dd TargetOfSort;
+
+bool CloserToTarget(Vector2dd V1,Vector2dd V2)
+{
+    return (Dist1(V1, TargetOfSort) <= Dist1(V2, TargetOfSort));
+
+}
+
+Polygon AddInterPoints2(Polygon A, Polygon RectangledAtually)
+{
+
+    list <Vector2dd> L;
+    for (auto i = 0; i <A.size(); ++i)
+    {
+        L.push_back(A.getPoint(i));
+
+        list<Vector2dd> TempL;
+        for (auto j = 0; j < 4; ++j)
+        {
+            if (!PointOnSegment(A.getPoint(i), RectangledAtually.getPoint(j),RectangledAtually.getNextPoint(j)))
+            {
+                if(SegIntersect( RectangledAtually.getPoint(j), RectangledAtually.getNextPoint(j), A.getPoint(i), A.getNextPoint(i)))
+                {
+                    TempL.push_back(SegIntescetionSpecial(RectangledAtually.getPoint(j), RectangledAtually.getNextPoint(j), A.getPoint(i), A.getNextPoint(i)));
+                }
+
+            }
+        }
+
+        TargetOfSort = A.getPoint(i);
+        if(!TempL.empty())
+        {
+
+            TempL.sort(CloserToTarget);
+
+            while(!TempL.empty())
+            {
+                L.push_back(TempL.front());
+                TempL.pop_front();
+            }
+        }
+    }
+
+
+    return PolygonMakeList(L);
+
+}
+
+
+
+
+
 bool BiggaArea(Polygon &A, Polygon &B)
 {
     return (AreaOfCP(A) >= AreaOfCP(B));
@@ -553,6 +650,11 @@ Vector2dd BestOne(list <Vector2dd> &L)
 
 }
 
+void ActMovePolVec(Polygon &A,  Vector2dd V)
+{
+    for (Vector2dd &v : A)
+        v = v + V;
+}
 
 void BLPlacement(Rectangled A, vector <Polygon> &input)
 {
@@ -560,17 +662,19 @@ void BLPlacement(Rectangled A, vector <Polygon> &input)
     auto firstnfp = innernfpR(A, input[0]);//actually must check if first polygon suits
 
     list<int> Placed;
-    input[0].translate(firstnfp.getPoint(0) - GetTopRightPoint(input[0]));
+    ActMovePolVec(input[0], firstnfp.getPoint(0) - GetTopRightPoint(input[0]));
     Placed.push_front(0);
 
-    for(size_t i = 1; i < input.size(); ++i)
+    for(int i = 1; i < input.size(); ++i)
     {
         firstnfp = innernfpR(A, input[i]); //same
         list <Polygon> nfps;
         Polygon d;
         for (auto it = Placed.begin(); it != Placed.end(); ++it)
         {
-            nfps.push_back(nfp(input[*it], input[i]));
+            nfps.push_back(AddInterPoints2(nfp(input[*it], input[i]),firstnfp));
+            // nfps.push_back( nfp(input[*it], input[i]));
+
         }
         list<Vector2dd> BestCandidates;
         for (auto it1 = nfps.begin(); it1 != nfps.end(); ++it1)
@@ -619,7 +723,7 @@ void BLPlacement(Rectangled A, vector <Polygon> &input)
         }
         if(!BestCandidates.empty())
         {
-            input[i].translate(BestOne(BestCandidates) - GetTopRightPoint(input[i]));
+            ActMovePolVec(input[i], BestOne(BestCandidates) - GetTopRightPoint(input[i]));
             Placed.push_back(i);
         }
         else
@@ -628,4 +732,105 @@ void BLPlacement(Rectangled A, vector <Polygon> &input)
 
         }
     }
+}
+
+
+
+Polygon RecToPol(Rectangled A)
+{
+    Vector2dd C1 = A.llCorner();
+    Vector2dd C2 = A.ulCorner();
+    Vector2dd C3 = A.urCorner();
+    Vector2dd C4 = A.lrCorner();
+    Polygon Result = {C1, C2, C3, C4};
+    return Result;
+
+}
+void Rotate(Polygon &A, double Phi)
+{
+    for (auto &v : A)
+    {
+        auto d = v.x() * cos(Phi) - v.y() * sin(Phi);
+        v.y() = v.x() * sin(Phi) + v.y() * cos(Phi);
+        v.x() = d;
+    }
+
+}
+
+
+void Rotate90(Polygon &A)
+{
+    for (auto &v : A)
+    {
+        auto d = v.x();
+        v.x() = -v.y();
+        v.y() = d;
+    }
+}
+
+
+
+
+
+
+Vector2dd MassCenter(Polygon & A)
+{
+    Vector2dd Result (0,0);
+    for (auto &v : A)
+    {
+        Result += v;
+    }
+    return Result/A.size();
+}
+
+
+
+void LowerMassCenter(Polygon& A)
+{
+
+    ActMovePolVec(A,-GetBotLeftPoint(A));
+    double Phi = 6.28 / 200;
+    list <pair<int, double>> L;
+    L.push_back(make_pair(0, MassCenter(A).y()));
+    ActMovePolVec(A,-MassCenter(A));
+
+    auto B = A;
+
+
+    for(int i = 1; i < 201; ++i)
+    {
+        Rotate(A, Phi);
+        ActMovePolVec(A,-GetBotLeftPoint(A));
+        L.push_back(make_pair(i, MassCenter(A).y()));
+        ActMovePolVec(A,-MassCenter(A));
+    }
+
+    A = B;
+
+    for(int i = 1; i < 3; ++i)
+    {
+        Rotate90(A);
+        ActMovePolVec(A,-GetBotLeftPoint(A));
+        L.push_back(make_pair(-i, MassCenter(A).y()));
+        ActMovePolVec(A,-MassCenter(A));
+    }
+
+    L.sort([]( const pair<int,double> &a, const pair<int,double> &b ) { return a.second <= b.second;});
+    if(L.front().first > 0)
+    {
+        A = B;
+        Rotate(A, L.front().first * Phi);
+    }
+    else if(L.front().first == 0)
+    {
+        A = B;
+
+    }
+    else
+    {
+        A = B;
+        for(int i = L.front().first; i <0; ++i)
+        Rotate90(A);
+    }
+
 }

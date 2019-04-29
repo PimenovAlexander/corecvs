@@ -18,8 +18,8 @@ void addSubPolygons (corecvs::SvgShape *shape, std::vector<corecvs::Polygon> &in
 /* Actual work */
 
 void LazySort(std::vector<corecvs::Polygon> &A);
-
-
+void LowerMassCenter(corecvs::Polygon &A);
+double AreaOfCP(corecvs :: Polygon &A);
 void DoClockOrP(corecvs::Polygon &A);
 void BLPlacement(corecvs::Rectangled A, std::vector <corecvs::Polygon> &input);
 void showP(corecvs::Polygon &A);

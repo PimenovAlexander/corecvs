@@ -35,6 +35,7 @@ TEST(Nester, twoRectanges)
     for(auto &p : inp)
     {
         DoClockOrP(p);
+        LowerMassCenter(p);
     }
 
     BLPlacement(area, inp); //всякие защиты от пустых множеств отсутствуют
@@ -60,6 +61,7 @@ TEST(Nester, manyRectanges)
     for(auto &p : inp)
     {
         DoClockOrP(p);
+        LowerMassCenter(p);
     }
 
     BLPlacement(area, inp);
@@ -74,7 +76,6 @@ TEST(Nester, nfp)
     Polygon B = Polygon::FromRectagle(Rectangled());
 
     Polygon C = nfp(A, B);
-
     cout << C << endl;
     vector<Polygon> p = { C };
     drawPolygons(p, 100, 100, "nfp1.bmp");
