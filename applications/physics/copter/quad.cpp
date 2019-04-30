@@ -254,14 +254,14 @@ void Quad::flightControllerTick(const CopterInputs &input)
     motors[BETAFLIGHT_MOTOR_4].pwm = - forceP - forceR - forceY + throttle;
     motors[BETAFLIGHT_MOTOR_1].pwm =   forceP + forceR - forceY + throttle;
 
-    L_INFO<<"PitchPID P: "<<pitchPID.P<<"; I: "<<pitchPID.I<<"; D: "<<pitchPID.D
-         <<"; Current Error: "<<currentError.x()<<"; Prev Error: "<<pitchPID.prevError<<"; Sum Error: "<<pitchPID.sumOfError;
-    L_INFO<<"Forces : "<<forceP<<" ; "<<forceR<<" ; "<<forceY<<" ; "<<throttle;
-    L_INFO<<"Angle Vel: "<<angularVelocity;
-    L_INFO<<"Wanted PRY: "<<wantedPitch<<" ; "<<wantedRoll<<" ; "<<wantedYaw;
-    L_INFO<<"Current PRY: "<<currentPRY;
-    L_INFO<<"Current Error: "<<currentError;
-    L_INFO<<"Motor Values: "<<motors[0].pwm<<" ; "<<motors[1].pwm<<" ; "<<motors[2].pwm<<" ; "<<motors[3].pwm;
+    //L_INFO<<"PitchPID P: "<<pitchPID.P<<"; I: "<<pitchPID.I<<"; D: "<<pitchPID.D
+    //     <<"; Current Error: "<<currentError.x()<<"; Prev Error: "<<pitchPID.prevError<<"; Sum Error: "<<pitchPID.sumOfError;
+    //L_INFO<<"Forces : "<<forceP<<" ; "<<forceR<<" ; "<<forceY<<" ; "<<throttle;
+    //L_INFO<<"Angle Vel: "<<angularVelocity;
+    //L_INFO<<"Wanted PRY: "<<wantedPitch<<" ; "<<wantedRoll<<" ; "<<wantedYaw;
+    //L_INFO<<"Current PRY: "<<currentPRY;
+    //L_INFO<<"Current Error: "<<currentError;
+    //L_INFO<<"Motor Values: "<<motors[0].pwm<<" ; "<<motors[1].pwm<<" ; "<<motors[2].pwm<<" ; "<<motors[3].pwm;
 
     for (size_t i = 0; i < motors.size(); i++)
     {
@@ -270,7 +270,7 @@ void Quad::flightControllerTick(const CopterInputs &input)
         if (motors[i].pwm < 0.0) motors[i].pwm = 0.0;
         if (motors[i].pwm > 1.0) motors[i].pwm = 1.0;
     }
-    L_INFO<<"Motor True Values: "<<motors[0].pwm<<" ; "<<motors[1].pwm<<" ; "<<motors[2].pwm<<" ; "<<motors[3].pwm;
+    //L_INFO<<"Motor True Values: "<<motors[0].pwm<<" ; "<<motors[1].pwm<<" ; "<<motors[2].pwm<<" ; "<<motors[3].pwm;
 }
 
 void Quad::physicsTick()
