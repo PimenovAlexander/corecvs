@@ -21,25 +21,7 @@
 using namespace std;
 using namespace corecvs;
 
-static void drawPolygon(RGB24Buffer *target, const Polygon &p, RGBColor color1, RGBColor color2)
-{
-    if (p.empty())
-        return;
-
-    if (p.size() == 1)
-    {
-        target->drawLine(p[0].x(), p[0].y(), p[0].x(), p[0].y(), color1);
-    }
-    for (unsigned i = 0; i < p.size(); i++)
-    {
-        Vector2dd p1 = p.getPoint    (i);
-        Vector2dd p2 = p.getNextPoint(i);
-        Vector2dd p =  (p1 + p2) / 2.0;
-
-        target->drawLine(p1, p , color1);
-        target->drawLine(p , p2, color2);
-    }
-}
+void drawPolygon2Color(RGB24Buffer *target, const Polygon &p, RGBColor color1, RGBColor color2);
 
 
 TEST(ConvexHull, testConvexHull1)
@@ -176,7 +158,7 @@ TEST(ConvexHull, testConvexHull3)
     ASSERT_TRUE(p1.isConvex());
 
     RGB24Buffer buffer(1000,1000);
-    drawPolygon(&buffer, p1, RGBColor::Blue(), RGBColor::Red());
+    drawPolygon2Color(&buffer, p1, RGBColor::Blue(), RGBColor::Red());
     for (size_t id = 0; id < points.size(); id++)
     {
         buffer.drawCrosshare1(points[id].x(), points[id].y(), RGBColor:: White());
@@ -209,7 +191,7 @@ TEST(ConvexHull, nonEigen)
 
         cout << pp3 << endl;
         ProjectivePolygon td = pp3.transformed(Matrix33::ShiftProj(750, 250));
-        drawPolygon(&buffer, td.getApproximation(1000000), RGBColor::Green(), RGBColor::Red());
+        drawPolygon2Color(&buffer, td.getApproximation(1000000), RGBColor::Green(), RGBColor::Red());
     }
 
     {
@@ -220,7 +202,7 @@ TEST(ConvexHull, nonEigen)
 
         cout << pp3 << endl;
         ProjectivePolygon td = pp3.transformed(Matrix33::ShiftProj(250, 250));
-        drawPolygon(&buffer, td.getApproximation(1000000), RGBColor::Green(), RGBColor::Red());
+        drawPolygon2Color(&buffer, td.getApproximation(1000000), RGBColor::Green(), RGBColor::Red());
     }
 
     {
@@ -231,7 +213,7 @@ TEST(ConvexHull, nonEigen)
 
         cout << pp3 << endl;
         ProjectivePolygon td = pp3.transformed(Matrix33::ShiftProj(750, 750));
-        drawPolygon(&buffer, td.getApproximation(1000000), RGBColor::Green(), RGBColor::Red());
+        drawPolygon2Color(&buffer, td.getApproximation(1000000), RGBColor::Green(), RGBColor::Red());
     }
 
     {
@@ -242,7 +224,7 @@ TEST(ConvexHull, nonEigen)
 
         cout << pp3 << endl;
         ProjectivePolygon td = pp3.transformed(Matrix33::ShiftProj(250, 750));
-        drawPolygon(&buffer, td.getApproximation(1000000), RGBColor::Green(), RGBColor::Red());
+        drawPolygon2Color(&buffer, td.getApproximation(1000000), RGBColor::Green(), RGBColor::Red());
     }
 
     {
@@ -256,7 +238,7 @@ TEST(ConvexHull, nonEigen)
 
         cout << pp3 << endl;
         ProjectivePolygon td = pp3.transformed(Matrix33::ShiftProj(1250, 250));
-        drawPolygon(&buffer, td.getApproximation(1000000), RGBColor::Green(), RGBColor::Red());
+        drawPolygon2Color(&buffer, td.getApproximation(1000000), RGBColor::Green(), RGBColor::Red());
     }
 
 
@@ -266,67 +248,6 @@ TEST(ConvexHull, nonEigen)
 //    ASSERT_TRUE(pp3.size() == N);
 //    Polygon p3 = pp3.getApproximation(1.0);
 //    ASSERT_TRUE(p3.isConvex());
-
-}
-
-
-/**
-
-  *----        ####*
-  |    ----####    #
-  |    ####----    #
-  *####        ----*
-  |    ####----    #
-  |    ----####    #
-  *----        ####*
-
- **/
-TEST(ConvexHull, nonEigen1)
-{
-    RGB24Buffer buffer(110, 110);
-
-    Polygon p1;
-    p1.push_back(Vector2dd( 10,  10));
-    p1.push_back(Vector2dd( 10, 100));
-    p1.push_back(Vector2dd( 99,  60));
-
-    Polygon p2;
-    p2.push_back(Vector2dd(100, 100));
-    p2.push_back(Vector2dd(100,  10));
-    p2.push_back(Vector2dd( 11,  60));
-
-    ConvexPolygon cp1 = p1.toConvexPolygon();
-    ConvexPolygon cp2 = p2.toConvexPolygon();
-
-    ConvexPolygon cp3 = intersect(cp1, cp2);
-
-    Polygon p3;
-    p3.reserve(cp3.faces.size());
-    for (size_t i = 0; i < cp3.faces.size(); i++)
-    {
-        Line2d &l1 = cp3.faces[i];
-        Line2d &l2 = cp3.faces[(i + 1) % cp3.faces.size()];
-        p3.push_back(l1.intersectWith(l2));
-    }
-
-    cout << "p1" << p1 << endl;
-    cout << "p2" << p2 << endl;
-
-    cout << "result" << p3 << endl;
-
-    drawPolygon(&buffer, p1, RGBColor::Green(), RGBColor::Yellow());
-    drawPolygon(&buffer, p2, RGBColor::Green(), RGBColor::Yellow());
-
-    drawPolygon(&buffer, p3, RGBColor::White(), RGBColor::Cyan());
-
-    CORE_ASSERT_TRUE(p3.size() == 4, "Wrong intersect size");
-
-    CORE_ASSERT_TRUE(p3.getPoint(0).notTooFar(Vector2dd(99, 60    ), 0.1), "Wrong intersect point 0");
-    CORE_ASSERT_TRUE(p3.getPoint(1).notTooFar(Vector2dd(55, 79.775), 0.1), "Wrong intersect point 1");
-    CORE_ASSERT_TRUE(p3.getPoint(2).notTooFar(Vector2dd(11, 60    ), 0.1), "Wrong intersect point 2");
-    CORE_ASSERT_TRUE(p3.getPoint(3).notTooFar(Vector2dd(55, 35.280), 0.1), "Wrong intersect point 3");
-
-    BufferFactory::getInstance()->saveRGB24Bitmap(buffer, "non_eigen1.bmp");
 
 }
 

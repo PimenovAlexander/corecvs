@@ -97,9 +97,7 @@ public:
     void append(const ConvexPolygon &other);
     void simplify();
 
-    void intersectWith(const ConvexPolygon &other);
-    friend ConvexPolygon intersect (const ConvexPolygon &a1, const ConvexPolygon &a2);
-//    friend       Polygon intersectP(const ConvexPolygon &a1, const ConvexPolygon &a2);
+    static ConvexPolygon intersect (const ConvexPolygon &a1, const ConvexPolygon &a2);
 };
 
 

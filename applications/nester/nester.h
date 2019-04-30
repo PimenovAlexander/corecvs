@@ -10,8 +10,8 @@
 
 /* Helpers */
 
-void drawPolygons   (std::vector<corecvs::Polygon> inputPolygons, int h, int w, std::string bmpname);
-void drawSvgPolygons(std::vector<corecvs::Polygon> inputPolygons, int h, int w, std::string svgName);
+void drawPolygons   (std::vector<corecvs::Polygon> &inputPolygons, int h, int w, std::string bmpname);
+void drawSvgPolygons(std::vector<corecvs::Polygon> &inputPolygons, int h, int w, std::string svgName);
 
 void addSubPolygons (corecvs::SvgShape *shape, std::vector<corecvs::Polygon> &inputPolygons);
 
@@ -26,5 +26,7 @@ void showP(corecvs::Polygon &A);
 
 /* Helpful submethods */
 corecvs::Polygon nfp(corecvs::Polygon &A, corecvs::Polygon &B);
+
+
 
 #endif // NESTER_H

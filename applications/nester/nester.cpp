@@ -19,7 +19,7 @@ int l = 1;
 
 
 /** =========================================== **/
-void drawPolygons(vector<Polygon> inputPolygons, int h, int w, string bmpname)
+void drawPolygons(vector<Polygon> &inputPolygons, int h, int w, string bmpname)
 {
     Rectangled area = Rectangled::Empty();
     for (Polygon& p: inputPolygons )
@@ -54,7 +54,7 @@ void drawPolygons(vector<Polygon> inputPolygons, int h, int w, string bmpname)
     BufferFactory::getInstance()->saveRGB24Bitmap(buffer, bmpname);
 }
 
-void drawSvgPolygons(vector<Polygon> inputPolygons, int h, int w, string svgName)
+void drawSvgPolygons(vector<Polygon> &inputPolygons, int h, int w, string svgName)
 {
     std::ofstream file;
     file.open(svgName, ios::out);
@@ -236,8 +236,8 @@ bool SegIntersect(Vector2dd &a1, Vector2dd &a2, Vector2dd &b1, Vector2dd &b2)
 
 bool PolsIntersect(Polygon &A, Polygon &B)
 {
-    for (int i = 0; i < A.size(); ++i)
-        for (int j = 0; j < B.size(); ++j)
+    for (size_t i = 0; i < A.size(); ++i)
+        for (size_t j = 0; j < B.size(); ++j)
         {
             if(SegIntersect(A.getPoint(i), A.getNextPoint(i), B.getPoint(j), B.getNextPoint(j)))
                 return true;
@@ -250,13 +250,13 @@ bool PolsIntersect(Polygon &A, Polygon &B)
 
 double AngleOX(Vector2dd &V)
 {
-    Vector2dd O(0,0);
-    Vector2dd OX(0,1);
+    Vector2dd O (0.0, 0.0);
+    Vector2dd OX(0.0, 1.0);
     if(OrientAreaTwice(O, V, OX) <= 0)
-        return (V.x() * OX.x() + V.y() * OX.y()) / V.l2Metric();
+        return (V & OX) / V.l2Metric();
     else
     {
-        return -2 - (V.x() * OX.x() + V.y() * OX.y()) / V.l2Metric();
+        return -2 - (V & OX) / V.l2Metric();
     }
 }
 
@@ -365,8 +365,10 @@ void DoClockOrP(Polygon &A)
     if(!ClockOrP(A))
     {
         list<Vector2dd> L;
-        for(auto i = 0; i < A.size(); ++i)
+        for(size_t i = 0; i < A.size(); ++i)
+        {
             L.push_front(A.getPoint(i));
+        }
         A = PolygonMakeList(L);
     }
 }
@@ -578,7 +580,8 @@ void BLPlacement(Rectangled A, vector <Polygon> &input)
             list<Vector2dd> Candidates;
             for(Vector2dd v : *it1)
             {
-                if(v.x() >= firstnfp.getPoint(0).x() && v.x() <= firstnfp.getPoint(2).x()  && v.y() <= firstnfp.getPoint(2).y() && v.y() >= firstnfp.getPoint(0).y())
+                if(v.x() >= firstnfp.getPoint(0).x() && v.x() <= firstnfp.getPoint(2).x()  &&
+                   v.y() >= firstnfp.getPoint(0).y() && v.y() <= firstnfp.getPoint(2).y() )
                 {
                     bool b = 0;
                     auto i = it1;
@@ -629,3 +632,4 @@ void BLPlacement(Rectangled A, vector <Polygon> &input)
         }
     }
 }
+

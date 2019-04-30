@@ -19,6 +19,32 @@
 using namespace corecvs;
 using namespace std;
 
+bool testDisjoint(std::vector<Polygon> &inputPolygons)
+{
+    std::vector<ConvexPolygon> cpl;
+    cpl.reserve(inputPolygons.size());
+    for (Polygon &p : inputPolygons)
+    {
+        ConvexPolygon cp = p.toConvexPolygon();
+        cp.inset(0.1);
+        cpl.push_back(cp);
+    }
+
+    for (size_t i = 0; i < cpl.size(); i++)
+    {
+        for (size_t j = i + 1; j < cpl.size(); j++)
+        {
+            ConvexPolygon &cp1 = cpl[i];
+            ConvexPolygon &cp2 = cpl[j];
+
+            ConvexPolygon cp3 = ConvexPolygon::intersect(cp1, cp2);
+        }
+    }
+
+}
+
+
+
 TEST(Nester, twoRectanges)
 {
     Rectangled area (0, 0, 80, 40);

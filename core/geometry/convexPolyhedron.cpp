@@ -53,12 +53,14 @@ void ConvexPolygon::simplify()
     this->faces = HalfspaceIntersector::FromConvexPolygonCP(*this).faces;
 }
 
+/*
 void ConvexPolygon::intersectWith(const ConvexPolygon &other)
 {
 
 }
+*/
 
-ConvexPolygon intersect(const ConvexPolygon &a1, const ConvexPolygon &a2)
+ConvexPolygon ConvexPolygon::intersect(const ConvexPolygon &a1, const ConvexPolygon &a2)
 {
     ConvexPolygon toReturn;
     toReturn = a1;
@@ -72,13 +74,11 @@ ConvexPolyhedron ConvexPolyhedron::intersect(const ConvexPolyhedron &poly1, cons
     ConvexPolyhedron toReturn;
     for (const Plane3d &face : poly1.faces)
     {
-        toReturn.faces.push_back(face);
-        //cout<<face<<endl;
+        toReturn.faces.push_back(face);       
     }
     for (const Plane3d &face : poly2.faces)
     {
         toReturn.faces.push_back(face);
-        //cout<<face<<endl;
     }
     return HalfspaceIntersector::FromConvexPolyhedronCP(toReturn);
 }
