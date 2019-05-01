@@ -722,6 +722,8 @@ bool SvgPath::toPolygon(Polygon &p)
             break;
         }
     }
+
+    return true;
 }
 
 

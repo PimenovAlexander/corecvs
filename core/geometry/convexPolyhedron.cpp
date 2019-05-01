@@ -60,6 +60,15 @@ void ConvexPolygon::intersectWith(const ConvexPolygon &other)
 }
 */
 
+ConvexPolygon ConvexPolygon::merge(const ConvexPolygon &a1, const ConvexPolygon &a2)
+{
+    ConvexPolygon toReturn;
+    toReturn = a1;
+    toReturn.append(a2);
+    return toReturn;
+}
+
+
 ConvexPolygon ConvexPolygon::intersect(const ConvexPolygon &a1, const ConvexPolygon &a2)
 {
     ConvexPolygon toReturn;
@@ -68,6 +77,7 @@ ConvexPolygon ConvexPolygon::intersect(const ConvexPolygon &a1, const ConvexPoly
     toReturn.simplify();
     return toReturn;
 }
+
 
 ConvexPolyhedron ConvexPolyhedron::intersect(const ConvexPolyhedron &poly1, const ConvexPolyhedron &poly2)
 {

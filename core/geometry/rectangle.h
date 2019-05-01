@@ -12,6 +12,7 @@
 #include <iostream>
 
 #include "core/math/vector/vector2d.h"
+#include "core/geometry/convexPolyhedron.h"
 
 namespace corecvs {
 
@@ -229,7 +230,16 @@ public:
         return result;
     }
 
+    ConvexPolygon toConvexPolygon() const
+    {
+        ConvexPolygon toReturn;
+        toReturn.faces.push_back(Line2d::FormNormalAndPoint( Vector2dd::OrtY(), ulCorner() ));
+        toReturn.faces.push_back(Line2d::FormNormalAndPoint(-Vector2dd::OrtY(), lrCorner() ));
 
+        toReturn.faces.push_back(Line2d::FormNormalAndPoint( Vector2dd::OrtX(), ulCorner() ));
+        toReturn.faces.push_back(Line2d::FormNormalAndPoint(-Vector2dd::OrtX(), lrCorner() ));
+        return toReturn;
+    }
 
     friend std::ostream & operator <<(std::ostream &out, const Rectangle &rect)
     {

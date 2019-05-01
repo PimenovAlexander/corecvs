@@ -34,12 +34,12 @@ public:
 		return (unsigned)faces.size();
     }
 
-    Vector3dd getPoint(int i) const
+    VectorType getPoint(int i) const
     {
         return faces[i].projectZeroTo();
     }
 
-    Vector3dd getNormal(int i) const
+    VectorType getNormal(int i) const
     {
         return faces[i].normal();
     }
@@ -98,6 +98,8 @@ public:
     void simplify();
 
     static ConvexPolygon intersect (const ConvexPolygon &a1, const ConvexPolygon &a2);
+    /*Same as intersect but without simplification */
+    static ConvexPolygon merge     (const ConvexPolygon &a1, const ConvexPolygon &a2);
 };
 
 
