@@ -424,6 +424,11 @@ public:
     int  isInside(const Vector2dd &point) const;
 
 
+    /**
+     *   direction - true for clockwize orientation in CG axis.
+     *    X - to the right
+     *    Y - down
+     **/
     bool isConvex(bool *direction = NULL) const;
     bool hasSelfIntersection() const;
 
@@ -507,7 +512,7 @@ public:
 
     static Polygon RegularPolygon(int sides, const Vector2dd &center, double radius, double startAngleRad = 0.0);
 
-    static Polygon Reverse(const Polygon &p);
+    static Polygon Reversed(const Polygon &p);
 
     static Polygon FromConvexPolygon(const ConvexPolygon& polygon);
     static Polygon FromHalfplanes   (const std::vector<Line2d> &halfplanes);
@@ -575,6 +580,7 @@ public:
     }
 
     //bool clipRay(const Ray2d &ray, double &t1, double &t2);
+    void reverse();
 };
 
 class ProjectivePolygon : public vector<Vector3dd>

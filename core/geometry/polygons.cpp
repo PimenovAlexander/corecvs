@@ -115,7 +115,7 @@ bool Polygon::isConvex(bool *direction) const
     }
 
     if (direction != NULL) {
-        *direction =  (oldsign > 0);
+        *direction =  (oldsign < 0);
     }
     return true;
 }
@@ -156,7 +156,12 @@ Polygon Polygon::RegularPolygon(int sides, const Vector2dd &center, double radiu
     return toReturn;
 }
 
-Polygon Polygon::Reverse(const Polygon &p)
+void Polygon::reverse()
+{
+    std::reverse(begin(), end());
+}
+
+Polygon Polygon::Reversed(const Polygon &p)
 {
     Polygon toReturn;
     toReturn.reserve(p.size());
@@ -170,6 +175,8 @@ Polygon Polygon::Reverse(const Polygon &p)
 
 Polygon Polygon::FromConvexPolygon(const ConvexPolygon &polygon)
 {
+    cout << "Polygon::FromConvexPolygon(): called\n" << endl;
+
     vector<Vector2dd> points;
     for (size_t i = 0; i < polygon.faces.size(); i++)
     {
@@ -183,6 +190,7 @@ Polygon Polygon::FromConvexPolygon(const ConvexPolygon &polygon)
             if (!hasIntersection) {
                 continue;
             }
+            cout << "Processing interscetion:" << intersect << endl;
 
             bool inside = true;
             for (size_t k = 0; k < polygon.faces.size(); k++)
@@ -222,6 +230,10 @@ Polygon Polygon::FromImageSize(const Vector2d<int> &size)
     return toReturn;
 }
 
+/**
+ *  Constucts convex polygon form Polygon.
+ *  Caller need to make sure that Polygon orientation is true
+ **/
 ConvexPolygon Polygon::toConvexPolygon() const
 {
     ConvexPolygon result;
@@ -264,7 +276,7 @@ void PolygonCombiner::prepare()
 
     for (int p = 0; p < 2; p++)
     {
-        if (pol[p].signedArea() > 0) pol[p] = Polygon::Reverse(pol[p]);
+        if (pol[p].signedArea() > 0) pol[p] = Polygon::Reversed(pol[p]);
     }
 
     for (int p = 0; p < 2; p++)

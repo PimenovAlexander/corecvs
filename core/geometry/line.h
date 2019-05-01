@@ -617,6 +617,11 @@ public:
        (*this) = FromSegment(segment);
     }
 
+    Line2d(const Vector2dd &point1, const Vector2dd &point2)
+    {
+       (*this) = FromSegment(Segment2d(point1, point2));
+    }
+
     /**
      *  Construct the Line form 2 points
      **/

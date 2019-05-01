@@ -6,19 +6,17 @@ using namespace std;
 // https://cw.fel.cvut.cz/wiki/_media/misc/projects/oppa_oi_english/courses/ae4m39vg/lectures/05-convexhull-3d.pdf
 
 
-MyVector::MyVector(const Vector3dd &V, const Vector3dd &U) : Vector3dd(U - V) {}
+MyVector::MyVector(const Vector3dd &V, const Vector3dd &U) : Vector3dd(U - V)
+{}
 
-MyVector::MyVector(const double x, const double y, const double z) : Vector3dd(x, y , z) {}
+MyVector::MyVector(const double x, const double y, const double z) : Vector3dd(x, y , z)
+{}
 
 MyVector::MyVector(const Vector3dd &U) : Vector3dd(U)
 {}
 
-MyVector::MyVector()
-{
-    (*this)[0] = .0;
-    (*this)[1] = .0;
-    (*this)[2] = .0;
-}
+MyVector::MyVector() : Vector3dd(0.0)
+{}
 
 MyVector& MyVector::operator=(const MyVector &U) {
     (*this)[0] = U.x();

@@ -20,13 +20,16 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
+    Polygon QQQ = Polygon::FromRectagle(Rectangled());
 
-    Rectangled Bin (0, 0, 80, 40);
-/*
+
+
+    Rectangled Bin (0, 0, 20, 20);
+
     Vector2dd A1(0,0);
-    Vector2dd A2(0,2);
-    Vector2dd A3(2,2);
-    Vector2dd A4(2,0);
+    Vector2dd A2(1,1);
+    Vector2dd A3(2,0);
+    Vector2dd A4(1,-1);
 
     Polygon A = {A1, A2, A3, A4};
 
@@ -46,10 +49,14 @@ int main(int argc, char **argv)
     Vector2dd A15(0,1);
     Vector2dd A16(1,0);
     Polygon Badone = {A14, A15, A16};
-    auto M = nfp(Badone,Badone);
-     showP(M);
-     cout << "AX";
-     */
+
+    Vector2dd A17(0,0);
+    Vector2dd A18(0,4);
+    Vector2dd A19(4,4);
+    Vector2dd A20(4,0);
+    Polygon TRIANGLE{A17, A18, A19, A20};
+
+
 
     CommandLineSetter s(argc, argv);
     vector<std::string> params = s.nonPrefix();
@@ -87,18 +94,37 @@ int main(int argc, char **argv)
     /****
      *  Put your code here
      ****/
-/*
-    inputPolygons.push_back(A);
+
     inputPolygons.push_back(B);
-    inputPolygons.push_back(C);
-    inputPolygons.push_back(D);
-    inputPolygons.push_back(Badone);
-*/
+    inputPolygons.push_back(B);
+    inputPolygons.push_back(B);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+
+
+
+
     LazySort(inputPolygons);
 
     for(auto &p : inputPolygons)
     {
         DoClockOrP(p);
+        LowerMassCenter(p);
+
     }
 
     BLPlacement(Bin, inputPolygons); //всякие защиты от пустых множеств отсутствуют
