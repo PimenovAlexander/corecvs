@@ -13,6 +13,7 @@
 
 #include "core/utils/global.h"
 #include "core/geometry/polygons.h"
+#include "core/geometry/convexHull.h"
 #include "core/buffers/rgb24/rgbColor.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/buffers/bufferFactory.h"
