@@ -14,6 +14,7 @@
 #include <vector>
 #include <stdint.h>
 #include <iostream>
+#include <core/cameracalibration/calibrationLocation.h>
 #include "gtest/gtest.h"
 
 #include "core/utils/global.h"
@@ -164,10 +165,12 @@ TEST(Affine, testMatrixToQuaternion)
 
 TEST(Affine, testEulerAngles)
 {
-    CameraAnglesLegacy anglesCam(0.7, 0.4, 0.1);
+    CameraLocationAngles anglesCam(0.4, 0.7, 0.1);
+
     Matrix33 matrixCam = anglesCam.toMatrix();
     Quaternion quatCam = Quaternion::FromMatrix(matrixCam);
-    CameraAnglesLegacy anglesCam1 = CameraAnglesLegacy::FromQuaternion(quatCam);
+
+    CameraLocationAngles anglesCam1 = CameraLocationAngles::FromQuaternion(quatCam);
 
 
     std::cout << "A:("  << anglesCam.pitch() << ", "

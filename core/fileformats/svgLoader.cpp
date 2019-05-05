@@ -132,8 +132,28 @@ int SvgLoader::parseXML(XMLDocument &xml, SvgFile &svg)
 
 vector<Vector2dd> SvgLoader::parsePoints(string data)
 {
+    if (trace) {
+        SYNC_PRINT(("SvgLoader::parsePoints(%s): called", data.c_str()));
+    }
     data = HelperUtils::escapeString(data, escape_m, " ");
     vector<string> coords = HelperUtils::stringSplit(data, ' ');
+    vector<Vector2dd> points;
+    for(size_t i = 0; i < coords.size(); i += 2) {
+        double x = HelperUtils::parseDouble(coords[i]);
+        double y = HelperUtils::parseDouble(coords[i + 1]);
+        points.push_back(Vector2dd(x, y));
+    }
+    return points;
+}
+
+vector<Vector2dd> SvgLoader::parsePointsPairs(string data)
+{
+    if (trace) {
+        SYNC_PRINT(("SvgLoader::parsePointsPairs(%s): called\n", data.c_str()));
+    }
+    data = HelperUtils::escapeString(data, escape_m, " ");
+    vector<string> coords = HelperUtils::stringSplit(data, " ,");
+
     vector<Vector2dd> points;
     for(size_t i = 0; i < coords.size(); i += 2) {
         double x = HelperUtils::parseDouble(coords[i]);
@@ -231,7 +251,7 @@ SvgShape* SvgLoader::getPolyLine(XMLElement *element)
     initShape(element, polyline);
 
     string attr(element->Attribute("points"));
-    vector<Vector2dd> points = parsePoints(attr);
+    vector<Vector2dd> points = parsePointsPairs(attr);
     polyline->points.insert(polyline->points.end(), points.begin(), points.end());
 
     if (trace)
@@ -252,7 +272,7 @@ SvgShape* SvgLoader::getPolygon(XMLElement *element)
     initShape(element, polygon);
     
     string attr(element->Attribute("points"));
-    vector<Vector2dd> points = parsePoints(attr);
+    vector<Vector2dd> points = parsePointsPairs(attr);
     polygon->polygon.insert(polygon->polygon.end(), points.begin(), points.end());
 
     if (trace)
@@ -595,6 +615,115 @@ void SvgPath::draw(RGB24Buffer *buffer)
             break;
         }
     }
+}
+
+bool SvgPath::toPolygon(Polygon &p)
+{
+    if (commands.size() == 0)
+    {
+        return false;
+    }
+
+    cursor = {0, 0};
+    start_point = {0, 0};
+    dest = {0, 0};
+
+    p.clear();
+
+    for (size_t i = 0; i < commands.size(); i++)
+    {
+        const Command &command = commands[i];
+
+        switch(command.command)
+        {
+        case 'M': case 'm':
+            start_point = command.getVector();
+            if (command.command == 'm')
+            {
+                start_point += cursor;
+            }
+            cursor = start_point;
+            p.push_back(cursor);
+            if (commands[i].params.size() > 2)
+            {
+                for (size_t j = 2; j < command.params.size(); j += 2)
+                {
+                    dest = command.getVector(j);
+                    if (command.command == 'm')
+                    {
+                        dest += cursor;
+                    }
+                    cursor = dest;
+                    p.push_back(cursor);
+                }
+            }
+            break;
+            /*=================================*/
+        case 'L': case 'l':
+            for (size_t j = 0; j < command.params.size(); j += 2)
+            {
+                dest = command.getVector(j);
+                if (command.command == 'l')
+                {
+                    dest += cursor;
+                }
+                cursor = dest;
+                p.push_back(cursor);
+            }
+            break;
+            /*=================================*/
+        case 'H': case 'h':
+            for (size_t j = 0; j < command.params.size(); j++)
+            {
+                double x2 = command.params[j];
+                if (command.command == 'h')
+                {
+                    x2 += cursor.x();
+                }
+                cursor.x() = x2;
+                p.push_back(cursor);
+            }
+            break;
+            /*=================================*/
+        case 'V': case 'v':
+            for (size_t j = 0; j < command.params.size(); j++)
+            {
+                double y2 = command.params[j];
+                if (command.command == 'v')
+                {
+                    y2 += cursor.y();
+                }
+                cursor.y() = y2;
+                p.push_back(cursor);
+            }
+            break;
+            /*=================================*/
+        case 'Z': case 'z':
+            cursor = start_point;
+            p.push_back(cursor);
+            break;
+            /*=================================*/
+        case 'C': case 'c':
+            return false;
+            break;
+            /*=================================*/
+        case 'S': case 's':
+            return false;
+            break;
+        case 'q':
+        case 'Q':
+        case 't':
+        case 'T':
+            return false;
+            break;
+        case 'a':
+        case 'A':
+            return false;
+            break;
+        }
+    }
+
+    return true;
 }
 
 

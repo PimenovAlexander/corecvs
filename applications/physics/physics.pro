@@ -24,61 +24,63 @@ INCLUDEPATH += mixer
 
 
 HEADERS += \
+    joystick/joystickInterface.h \
+    joystick/JoystickOptionsWidget.h \
+    joystick/mixerChannelOperationWidget.h \
+    mixer/controlsMixer.h \
+    radio/*.h \
+    copter/quad.h \
     simulation.h \
     clientSender.h \
     joystickInput.h \
-    qComController.h \
     simObject.h \
     simSphere.h \
     controlRecord.h \
-    joystick/joystickInterface.h \
-    joystick/JoystickOptionsWidget.h \
-    radio/frSkyMultimodule.h \
     mainObject.h \
     copterInputsWidget.h \
-    mixer/controlsMixer.h \
     copterInputs.h \
-    joystick/mixerChannelOperationWidget.h \
     frameProcessor.h \
-    protoautopilot.h \
-    copter/quad.h \
+    protoautopilot.h \   
     physicsMainWindow.h \
-    physicsAboutWidget.h
+    physicsAboutWidget.h \
+    copter/quadAngles.h
 
 SOURCES += \
+    joystick/joystickInterface.cpp \
+    joystick/JoystickOptionsWidget.cpp \
+    joystick/mixerChannelOperationWidget.cpp \
+    mixer/controlsMixer.cpp \
+    copter/quad.cpp \
+    radio/*.cpp \
     simulation.cpp \
     simSphere.cpp \
     simObject.cpp \
-    qComController.cpp \
     joystickInput.cpp \
     clientSender.cpp \
     mainPhysics.cpp \
-    controlRecord.cpp \  
-    joystick/joystickInterface.cpp \
-    joystick/JoystickOptionsWidget.cpp \
-    radio/frSkyMultimodule.cpp \
+    controlRecord.cpp \     
     mainObject.cpp \
     copterInputsWidget.cpp \
-    mixer/controlsMixer.cpp \
     copterInputs.cpp \
-    joystick/mixerChannelOperationWidget.cpp \
     frameProcessor.cpp \
-    protoautopilot.cpp \
-    copter/quad.cpp \
+    protoautopilot.cpp \    
     physicsMainWindow.cpp \
-    physicsAboutWidget.cpp
+    physicsAboutWidget.cpp \
+    copter/quadAngles.cpp
 
 FORMS += \
     joystick/JoystickOptionsWidget.ui \
     copterInputsWidget.ui \
     joystick/mixerChannelOperationWidget.ui \
     physicsMainWindow.ui \
-    physicsAboutWidget.ui
+    physicsAboutWidget.ui \
+    radio/radioControlWidget.ui
 
 #RESOURCES += ../../resources/main.qrc
 
-#HEADERS += xml/generated/*.h
-#SOURCES += xml/generated/*.cpp
+INCLUDEPATH += xml/generated
+HEADERS += xml/generated/*.h
+SOURCES += xml/generated/*.cpp
 
 OTHER_FILES += xml/physics.xml
 OTHER_FILES += ../../tools/generator/regen-physics.sh

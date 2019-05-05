@@ -23,8 +23,7 @@ SUBDIRS +=     \
     example_scene \
     flowtest \
     avencode \
-    opencvpostcalib
-
+    opencvpostcalib \
 
 !win32 {
     SUBDIRS += jitplayground
@@ -42,11 +41,16 @@ with_opencv {
 #        matcher_basic \
 #        matcher_full \
         chessboard_detector \
+        vodometry \
+        stabilization \
 
 }
 
 grab24                              = grab/grab24.pro
 grab24_qt                           = grab_qt/grab24_qt.pro
+
+stabilization                       = stabilization/stabilization.pro
+vodometry                           = vodometry/vodometry.pro
 
 grab_N_captures                     = grab_N_captures/grab_N_captures.pro
 serialize1                          = serialize1/serialize1.pro

@@ -17,6 +17,7 @@
 #include "core/buffers/rgb24/rgbColor.h"
 #include "core/geometry/polygons.h"
 #include "core/geometry/conic.h"
+#include "core/geometry/line.h"
 #include "core/geometry/ellipse.h"
 
 namespace corecvs {
@@ -408,6 +409,24 @@ public:
         {
             mTarget->element(tspan.y(), j) = color;
         }
+    }
+
+    void drawLine2d(const Line2d& line, const ElementType &color, double drawNormal = 0.0)
+    {
+        Rectangled area(0.0, 0.0, mTarget->getW() - 1, mTarget->getH() - 1);
+        Ray2d ray = line.toRay();
+        double t1 = 0.0;
+        double t2 = 0.0;
+        bool result = ray.clip(area.toConvexPolygon(), t1, t2);
+        if (!result) {
+            return;
+        }
+        mTarget->drawLine(ray.getPoint(t1), ray.getPoint(t2), color);
+        if (drawNormal != 0.0) {
+            Vector2dd middle = ray.getPoint((t1+t2) / 2.0);
+            mTarget->drawLine(middle, middle + line.normal().normalised() * drawNormal, color);
+        }
+
     }
 
     void drawGraph(const GraphData &data) {

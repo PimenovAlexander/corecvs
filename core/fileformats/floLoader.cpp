@@ -7,9 +7,9 @@
 namespace corecvs {
 
 using namespace std;
-std::string FLOLoader::extention1 = ".flo";
-float FLOLoader::MAGIC_NUMBER = 202021.25;
-float FLOLoader::FLO_INFINITY = 1e9;
+const std::string FLOLoader::extention1 = ".flo";
+const float FLOLoader::MAGIC_NUMBER = 202021.25;
+const float FLOLoader::FLO_INFINITY = 1e9;
 
 
 std::string ListFlowSaver::extention1 = ".fl";
@@ -86,7 +86,7 @@ FloatFlowBuffer *FLOLoader::load(const string &name)
         goto close_file;
     }
 
-    SYNC_PRINT(("FLOLoader::load(): Flow Buffer size is [%dx%d]", w, h));
+    SYNC_PRINT(("FLOLoader::load(): Flow Buffer size is [%dx%d]\n", w, h));
     toReturn = new FloatFlowBuffer(h, w);
 
     for (uint32_t i = 0; i < h; i++)
@@ -118,10 +118,8 @@ close_file:
     return toReturn;
 }
 
-bool FLOSaver::save(const FloatFlowBuffer &buffer, const string &name, int quality)
+bool FLOSaver::save(const FloatFlowBuffer &buffer, const string &name, int /*quality*/)
 {
-    CORE_UNUSED(quality);
-
     FILE *fp = fopen(name.c_str(), "wb");
     if (fp == nullptr)
     {
@@ -173,11 +171,15 @@ bool ListFlowSaver::save(const FloatFlowBuffer &buffer, const string &fileName, 
 {
     std::ofstream file;
     file.open(fileName, ios::out);
+    file.imbue(std::locale("C"));
+
     if (file.fail())
     {
         SYNC_PRINT(("ListFlowSaver::save(): Can't open flow file <%s> for writing\n", fileName.c_str()));
         return false;
     }
+
+    file << buffer.w << " " << buffer.h << endl;
 
     for (int32_t i = 0; i < buffer.h; i++)
     {
@@ -193,6 +195,52 @@ bool ListFlowSaver::save(const FloatFlowBuffer &buffer, const string &fileName, 
 
     file.close();
     return true;
+}
+
+bool ListFlowLoader::acceptsFile(const string &name)
+{
+    return ListFlowSaver().acceptsFile(name);
+}
+
+FloatFlowBuffer *ListFlowLoader::load(const string &fileName)
+{
+    std::ifstream file;
+    file.open(fileName, std::ifstream::in);
+    if (file.fail())
+    {
+        SYNC_PRINT(("ListFlowSaver::load(): Can't open flow file <%s> for writing\n", fileName.c_str()));
+        return NULL;
+    }
+    file.imbue(std::locale("C"));
+
+    int h = 0;
+    int w = 0;
+
+    file >> w;
+    file >> h;
+
+    FloatFlowBuffer *toReturn = new FloatFlowBuffer(h,w);
+    while (!file.eof())
+    {
+        string line;
+        HelperUtils::getlineSafe (file, line);
+
+        if (line.empty())
+            continue;
+
+        istringstream work(line);
+        float  u_prev, v_prev, u_curr, v_curr;
+        work >> u_prev;
+        work >> v_prev;
+        work >> u_curr;
+        work >> v_curr;
+
+        if (toReturn->isValidCoord(fround(u_prev), fround(v_prev)))
+        {
+            toReturn->element(fround(v_prev), fround(u_prev)) = FloatFlow(u_curr - u_prev, v_curr - v_prev);
+        }
+    }
+    return toReturn;
 }
 
 

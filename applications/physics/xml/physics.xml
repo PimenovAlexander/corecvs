@@ -1,9 +1,55 @@
 <poco version="5.0">
 
-<class name="Mixer Channel Operation Parameters">
+<enum name="Scene Draw Backend Type" incpath="" >
+  <item name="Old"        id="0" comment="Old"/>
+  <item name="New"        id="1" comment="New"/>
+  <item name="Integrated" id="2" comment="Integrated"/>
+</enum>
+
+<class name="Mixer Channel Operation Parameters"  incpath="" >
    <field type="double" name="min" defaultValue="0"   comment="" />
    <field type="double" name="max" defaultValue="100" comment="" />
 </class>
 
+<class name="PID Parameters"  incpath="">
+    <field type="double" name="P" defaultValue="40" min="0" max="100"  comment="" />
+    <field type="double" name="I" defaultValue="30" min="0" max="100"  comment="" />
+    <field type="double" name="D" defaultValue="23" min="0" max="100"  comment="" />
+</class>
+
+<class name="Rate Parameters"  incpath="">
+    <field type="double" name="rc rate"    defaultValue="0.5" min="0" max="100"  comment="" />
+    <field type="double" name="super rate" defaultValue="0.7" min="0" max="100"  comment="" />
+    <field type="double" name="rc expo"    defaultValue="0.33" min="0" max="100"  comment="" />
+</class>
+
+
+<class name="Betaflight PID Parameters"  incpath="">
+   <field type="PID Parameters" name="Roll PID"/>
+   <field type="PID Parameters" name="Pitch PID"/>
+   <field type="PID Parameters" name="Yaw PID"/>
+
+   <field type="Rate Parameters" name="Roll Rate"/>
+   <field type="Rate Parameters" name="Pitch Rate"/>
+   <field type="Rate Parameters" name="Yaw Rate"/>
+</class>
+
+
+<enum name="Flight Mode" incpath="" >
+  <item name="Raw"     id="0" />
+  <item name="Stab"    id="1" />
+  <item name="Acro"    id="2" />
+  <item name="Althold" id="3" />
+  <item name="Loiter"  id="4" />
+
+</enum>
+
+<class name="Flight Controller Parameters"  incpath="">
+   <field type="Flight Mode" name="flight mode"/>
+   <field type="Betaflight PID Parameters" name="pids"/>
+
+   <field type="Rate Parameters" name="Yaw Rate"/>
+   <field type="Rate Parameters" name="Pitch Roll Rate"/>
+</class>
 
 </poco>

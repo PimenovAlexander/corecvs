@@ -111,27 +111,26 @@ with_opencv {
         DEPENDPATH  += $$OPENCV_PATH/include
         DEFINES     += WITH_OPENCV
     } else {
+
         isEmpty(OPENCV_PATH) {
             !build_pass:message(Compiling with system OpenCV)
+            OPENCV_LIB_PATH="/usr/lib/x86_64-linux-gnu/"
         } else {
             !build_pass:message(Compiling with OpenCV from $$OPENCV_PATH)
             DEPENDPATH  += $$OPENCV_PATH/include
             INCLUDEPATH += $$OPENCV_PATH/include
             LIBS        += -L$$OPENCV_PATH/lib/
+            OPENCV_LIB_PATH="$$OPENCV_PATH/lib/"
         }
 
         with_nopkgconfig {
-            exists ($$OPENCV_PATH/lib/libopencv_core.so.3*) {
+
+
+            exists ($$OPENCV_LIB_PATH/libopencv_core.so.3*) {
                 LIBS += -lopencv_calib3d    -lopencv_video   -lopencv_core    -lopencv_highgui   \
                         -lopencv_features2d -lopencv_flann   -lopencv_imgproc -lopencv_objdetect \
                         -lopencv_videoio
                          #-llibopencv_ml
-
-               # LIBS += -lopencv_nonfree
-               # LIBS += -lopencv_legacy
-
-                #message(Forcing OpenCV 3.x)
-                #message(Searching for $$OPENCV_PATH/lib/libopencv_core.so.3)
 
                 message(Using OpenCV 3.x)
                 DEFINES += WITH_OPENCV_3

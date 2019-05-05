@@ -617,6 +617,11 @@ public:
        (*this) = FromSegment(segment);
     }
 
+    Line2d(const Vector2dd &point1, const Vector2dd &point2)
+    {
+       (*this) = FromSegment(Segment2d(point1, point2));
+    }
+
     /**
      *  Construct the Line form 2 points
      **/
@@ -654,14 +659,6 @@ public:
     inline const double &c() const
     {
         return (*this)[2];
-    }
-
-    static Line2d FromRay(const Ray2d &ray)
-    {
-       Vector2dd a = ray.a;
-       Vector2dd p = ray.p;
-       Vector2dd n = a.leftNormal();
-       return Line2d(n, -(p & n));
     }
 
     static Line2d FromSegment(const Segment2d &segment)
@@ -783,6 +780,29 @@ public:
         d *= d;
         double lsq = normal().sumAllElementsSq();
         return (d / lsq);
+    }
+
+    static Line2d FromRay(const Ray2d &ray)
+    {
+       Vector2dd a = ray.a;
+       Vector2dd p = ray.p;
+       Vector2dd n = a.leftNormal();
+       return Line2d(n, -(p & n));
+    }
+
+    /**
+     *   projecting zero to the current line
+     **/
+    Vector2dd projectZeroTo() const
+    {
+        double l2 = normal().sumAllElementsSq();
+        double t = (last() / l2);
+        return - t * normal();
+    }
+
+    Ray2d toRay() const
+    {
+        return Ray2d::FromOriginAndDirection(projectZeroTo(), normal().leftNormal());
     }
 
     bool isVertical() const

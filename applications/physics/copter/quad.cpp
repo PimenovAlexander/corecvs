@@ -1,4 +1,5 @@
 #include "quad.h"
+#include "quadAngles.h"
 #include "core/utils/log.h"
 
 #include <core/fileformats/meshLoader.h>
@@ -179,68 +180,78 @@ void Quad::drawMyself(Mesh3DDecorated &mesh)
 
 }
 
-Vector3dd Quad::FromQuaternion(Quaternion &Q)
-{
-    double yaw   = asin  (2.0 * (Q.t() * Q.y() - Q.z() * Q.x()));
-    double pitch = atan2 (2.0 * (Q.t() * Q.x() + Q.y() * Q.z()),1.0 - 2.0 * (Q.x() * Q.x() + Q.y() * Q.y()));
-    double roll  = atan2 (2.0 * (Q.t() * Q.z() + Q.x() * Q.y()),1.0 - 2.0 * (Q.y() * Q.y() + Q.z() * Q.z()));
-    return Vector3dd(pitch, roll, yaw);
-}
-
-PID::PID(double p, double i, double d)
-{
-    P=p;
-    I=i;
-    D=d;
-}
 
 void Quad::flightControllerTick(const CopterInputs &input)
 {
     /* Mixer */
-    double throttle = (input.axis[CopterInputs::CHANNEL_THROTTLE] - 1500) / 12;
-    double wantedPitch    = (input.axis[CopterInputs::CHANNEL_PITCH] - 1500) / 12;
-    double wantedYaw      = (input.axis[CopterInputs::CHANNEL_YAW] - 1500) / 12;
-    double wantedRoll     = (input.axis[CopterInputs::CHANNEL_ROLL] - 1500) / 12;
 
-    /** Get current Pitch, Roll, Yaw of drone at this moment **/
-    Quaternion q = angularVelocity;
-    Vector3dd currentPRY = FromQuaternion(angularVelocity);
+    /* TODO: apply rates here */
+    double throttle    = (input.axis[CopterInputs::CHANNEL_THROTTLE] - 1500) / 12;
+    double inputPitch = (input.axis[CopterInputs::CHANNEL_PITCH]    - 1500) / 12;
+    double inputYaw   = (input.axis[CopterInputs::CHANNEL_YAW]      - 1500) / 12;
+    double inputRoll  = (input.axis[CopterInputs::CHANNEL_ROLL]     - 1500) / 12;
 
-    for (int i = 0; i < 3; i++)
-    {
-        if(currentPRY[i]<0.001)
+
+    double forceP = 0.0;
+    double forceR = 0.0;
+    double forceY = 0.0;
+    double forceT = 0.0;
+
+    switch (flightMode()) {
+    case FlightMode::RAW:
         {
-            currentPRY[i]=0;
+            forceP = inputPitch;
+            forceR = inputRoll;
+            forceY = inputYaw;
+            forceT = throttle;
         }
+        break;
+    case FlightMode::STAB:
+        {
+
+        }
+        break;
+    case FlightMode::ACRO:
+        {
+            /** Get current Pitch, Roll, Yaw of drone at this moment **/
+            QuadAngles currentPRY = QuadAngles::FromQuaternion(angularVelocity);
+
+            /** Get current between PRY now and wanted **/
+            Vector3dd currentError(inputPitch - currentPRY.pitch(),
+                                   inputYaw   - currentPRY.yaw(),
+                                   inputRoll  - currentPRY.roll());
+
+            pitchPID.sumOfError+=currentError.x();
+            rollPID.sumOfError+=currentError.y();
+            yawPID.sumOfError+=currentError.z();
+
+
+            double deltaT=0.1;
+
+            forceP = pitchPID.P * currentError.x() +
+                     pitchPID.I * deltaT * pitchPID.sumOfError +
+                     pitchPID.D * (currentError.x() - pitchPID.prevError) / deltaT;
+
+            forceR = rollPID.P * currentError.y() +
+                     rollPID.I * deltaT * rollPID.sumOfError +
+                     rollPID.D * (currentError.y() - rollPID.prevError) / deltaT;
+
+            forceY = yawPID.P * currentError.z() +
+                     yawPID.I * deltaT * yawPID.sumOfError +
+                     yawPID.D * (currentError.z() - yawPID.prevError) / deltaT;
+
+            pitchPID.prevError = currentError.x();
+            rollPID.prevError = currentError.y();
+            yawPID.prevError = currentError.z();
+
+
+        }
+        break;
+
+
+    default:
+        break;
     }
-
-    /** Get current between PRY now and wanted **/
-    Vector3dd currentError(wantedPitch - currentPRY.x(),
-                           wantedRoll  - currentPRY.y(),
-                           wantedRoll  - currentPRY.z());
-
-    pitchPID.sumOfError+=currentError.x();
-    rollPID.sumOfError+=currentError.y();
-    yawPID.sumOfError+=currentError.z();
-
-    double forceP, forceR, forceY;
-    double deltaT=0.1;
-
-    forceP = pitchPID.P * currentError.x() +
-             pitchPID.I * deltaT * pitchPID.sumOfError +
-             pitchPID.D * (currentError.x() - pitchPID.prevError) / deltaT;
-
-    forceR = rollPID.P * currentError.y() +
-             rollPID.I * deltaT * rollPID.sumOfError +
-             rollPID.D * (currentError.y() - rollPID.prevError) / deltaT;
-
-    forceY = yawPID.P * currentError.z() +
-             yawPID.I * deltaT * yawPID.sumOfError +
-             yawPID.D * (currentError.z() - yawPID.prevError) / deltaT;
-
-    pitchPID.prevError = currentError.x();
-    rollPID.prevError = currentError.y();
-    yawPID.prevError = currentError.z();
 
     /*
     motors[BETAFLIGHT_MOTOR_2].pwm = - pitch +  roll + yaw + throttle;
@@ -254,15 +265,16 @@ void Quad::flightControllerTick(const CopterInputs &input)
     motors[BETAFLIGHT_MOTOR_4].pwm = - forceP - forceR - forceY + throttle;
     motors[BETAFLIGHT_MOTOR_1].pwm =   forceP + forceR - forceY + throttle;
 
-    //L_INFO<<"PitchPID P: "<<pitchPID.P<<"; I: "<<pitchPID.I<<"; D: "<<pitchPID.D
-    //     <<"; Current Error: "<<currentError.x()<<"; Prev Error: "<<pitchPID.prevError<<"; Sum Error: "<<pitchPID.sumOfError;
-    //L_INFO<<"Forces : "<<forceP<<" ; "<<forceR<<" ; "<<forceY<<" ; "<<throttle;
-    //L_INFO<<"Angle Vel: "<<angularVelocity;
-    //L_INFO<<"Wanted PRY: "<<wantedPitch<<" ; "<<wantedRoll<<" ; "<<wantedYaw;
-    //L_INFO<<"Current PRY: "<<currentPRY;
-    //L_INFO<<"Current Error: "<<currentError;
-    //L_INFO<<"Motor Values: "<<motors[0].pwm<<" ; "<<motors[1].pwm<<" ; "<<motors[2].pwm<<" ; "<<motors[3].pwm;
-
+#if 0
+    L_INFO<<"PitchPID P: "<<pitchPID.P<<"; I: "<<pitchPID.I<<"; D: "<<pitchPID.D
+         <<"; Current Error: "<<currentError.x()<<"; Prev Error: "<<pitchPID.prevError<<"; Sum Error: "<<pitchPID.sumOfError;
+    L_INFO<<"Forces : "<<forceP<<" ; "<<forceR<<" ; "<<forceY<<" ; "<<throttle;
+    L_INFO<<"Angle Vel: "<<angularVelocity;
+    L_INFO<<"Wanted PRY: "<<wantedPitch<<" ; "<<wantedRoll<<" ; "<<wantedYaw;
+    L_INFO<<"Current PRY: "<<currentPRY;
+    L_INFO<<"Current Error: "<<currentError;
+    L_INFO<<"Motor Values: "<<motors[0].pwm<<" ; "<<motors[1].pwm<<" ; "<<motors[2].pwm<<" ; "<<motors[3].pwm;
+#endif
     for (size_t i = 0; i < motors.size(); i++)
     {
         motors[i].pwm = motors[i].pwm / 100.0;
@@ -270,7 +282,9 @@ void Quad::flightControllerTick(const CopterInputs &input)
         if (motors[i].pwm < 0.0) motors[i].pwm = 0.0;
         if (motors[i].pwm > 1.0) motors[i].pwm = 1.0;
     }
-    //L_INFO<<"Motor True Values: "<<motors[0].pwm<<" ; "<<motors[1].pwm<<" ; "<<motors[2].pwm<<" ; "<<motors[3].pwm;
+#if 0
+    L_INFO<<"Motor True Values: "<<motors[0].pwm<<" ; "<<motors[1].pwm<<" ; "<<motors[2].pwm<<" ; "<<motors[3].pwm;
+#endif
 }
 
 void Quad::physicsTick()

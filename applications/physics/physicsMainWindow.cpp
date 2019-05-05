@@ -43,6 +43,14 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
     connect(&mJoystickSettings, SIGNAL(joystickUpdated(JoystickState)), this, SLOT(joystickUpdated(JoystickState)));
 
     ui->actionShowLog->toggled(false);
+
+    /* Setting put paramteres */
+
+    flightControllerParametersWidget = new ReflectionWidget(FlightControllerParameters::getReflection());
+    connect(flightControllerParametersWidget, SIGNAL(paramsChanged()), this, SLOT(flightControllerParametersChanged()));
+
+    /* Moving the camera closer */
+    //ui->cloud->setCamera();
 }
 
 PhysicsMainWindow::~PhysicsMainWindow()
@@ -61,6 +69,24 @@ void PhysicsMainWindow::showAboutWidget()
 {
     mAboutWidget.show();
     mAboutWidget.raise();
+}
+
+void PhysicsMainWindow::showFlightControllerParameters()
+{
+    SYNC_PRINT(("PhysicsMainWindow::showFlightControllerParameters():called\n"));
+    if (flightControllerParametersWidget == NULL) {
+        return;
+    }
+    flightControllerParametersWidget->show();
+    flightControllerParametersWidget->raise();
+}
+
+void PhysicsMainWindow::flightControllerParametersChanged()
+{
+    SYNC_PRINT(("PhysicsMainWindow::flightControllerParametersChanged():called\n"));
+    flightControllerParametersWidget->getParameters(&currentFlightControllerParameters);
+    *static_cast<FlightControllerParameters *>(&copter) = currentFlightControllerParameters;
+
 }
 
 
@@ -437,7 +463,7 @@ void PhysicsMainWindow::startRealMode()                                    //sta
 {
     if (!virtualModeActive & !realModeActive)
     {
-        ComController.bindToRealDrone();
+        multimoduleController.connectToModule("/dev/ttyUSB0");
     }
 }
 
@@ -495,21 +521,11 @@ void PhysicsMainWindow::keepAliveJoyStick()
         }
         if (currentSendMode==0)
         {
-            if (!ComController.mutexActive)
-            {
-                ComController.mutexActive=true;
-                ComController.input=joyStickOutput;
-                ComController.mutexActive=false;
-            }
+            multimoduleController.newData(joyStickOutput);
         }
         if (currentSendMode==1)
         {
-            if (!ComController.mutexActive)
-            {
-                ComController.mutexActive=true;
-                ComController.input=iiOutput;
-                ComController.mutexActive=false;
-            }
+            multimoduleController.newData(iiOutput);
         }
     if (frameCounter%4==0)
     {
@@ -533,6 +549,12 @@ void PhysicsMainWindow::keepAliveJoyStick()
 void PhysicsMainWindow::joystickUpdated(JoystickState state)
 {
     joystickState = state;
+}
+
+void PhysicsMainWindow::showRadioControlWidget()
+{
+    radioWidget.show();
+    radioWidget.raise();
 }
 
 
@@ -559,18 +581,18 @@ void PhysicsMainWindow::mainAction()
         }
     }
 
+    /* Please make a switch */
     //inputs.print();
-    /*                                     i changed my joestickInput, so it is easier to use it
+
     if (mixer.mix(joystickState, inputs)) {
         copter.flightControllerTick(inputs);
-
         copter.physicsTick();
     }
-    */
+
 
     //startJoyStickMode();
-    copter.flightControllerTick(joystick1.output);
-    copter.physicsTick();
+    //copter.flightControllerTick(joystick1.output);
+    //copter.physicsTick();
 
     copter.visualTick();
 

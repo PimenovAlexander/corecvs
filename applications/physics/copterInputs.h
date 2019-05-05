@@ -1,6 +1,9 @@
 #ifndef COPTERINPUTS_H
 #define COPTERINPUTS_H
 
+#include <initializer_list>
+
+
 
 class CopterInputs
 {
@@ -28,6 +31,17 @@ public:
     int axis[CHANNEL_LAST];           //here we put CH walue, btw it must not be equal sticks order
 
     CopterInputs();
+
+    CopterInputs(std::initializer_list<int> list)
+    {
+        int i = 0;
+        auto it = list.begin();
+        for (; (it != list.end()) && (i < CHANNEL_LAST); i++, it++)
+        {
+            axis[i] = *it;
+        }
+
+    }
 
     static const char *getName(ChannelID value);
     void print();

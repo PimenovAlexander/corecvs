@@ -3,7 +3,7 @@
 
 #include "core/geometry/line.h"
 #include "core/geometry/plane.h"
-#include "core/geometry/polygons.h"
+#include "core/geometry/triangle.h"
 #include "core/buffers/rgb24/lineSpan.h"
 
 namespace corecvs {

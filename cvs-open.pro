@@ -18,6 +18,8 @@ SUBDIRS +=                   \
     physics                  \
     physics-test             \
     imageview                \
+    nester                   \
+    nester-test              \
 #    \
      generator                \
 #    egomotion                \
@@ -75,6 +77,8 @@ physics.file                  = applications/physics/physics.pro
 physics-test.file             = applications/physics-test/physics-test.pro
 imageview.file                = applications/imageview/imageview.pro
 testbed.file                  = applications/testbed/testbed.pro
+nester.file                   = applications/nester/nester.pro
+nester-test.file              = applications/nester-test/nester-test.pro
 generator.file                = tools/generator/generator.pro
 
 coptercontrol.file            = applications/coptercontrol/coptercontrol.pro

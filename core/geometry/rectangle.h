@@ -12,6 +12,7 @@
 #include <iostream>
 
 #include "core/math/vector/vector2d.h"
+#include "core/geometry/convexPolyhedron.h"
 
 namespace corecvs {
 
@@ -53,10 +54,14 @@ public:
             size.y() = 0;
             corner = point;
         } else {
-            if (point.x() < corner.x())
+            if (point.x() < corner.x()) {
+                size.x() += (corner.x() - point.x());
                 corner.x() = point.x();
-            if (point.y() < corner.y())
+            }
+            if (point.y() < corner.y()) {
+                size.y() += (corner.y() - point.y());
                 corner.y() = point.y();
+            }
 
 
             if (point.x() > right())
@@ -225,7 +230,16 @@ public:
         return result;
     }
 
+    ConvexPolygon toConvexPolygon() const
+    {
+        ConvexPolygon toReturn;
+        toReturn.faces.push_back(Line2d::FormNormalAndPoint( Vector2dd::OrtY(), ulCorner() ));
+        toReturn.faces.push_back(Line2d::FormNormalAndPoint(-Vector2dd::OrtY(), lrCorner() ));
 
+        toReturn.faces.push_back(Line2d::FormNormalAndPoint( Vector2dd::OrtX(), ulCorner() ));
+        toReturn.faces.push_back(Line2d::FormNormalAndPoint(-Vector2dd::OrtX(), lrCorner() ));
+        return toReturn;
+    }
 
     friend std::ostream & operator <<(std::ostream &out, const Rectangle &rect)
     {

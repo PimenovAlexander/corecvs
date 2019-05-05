@@ -161,4 +161,4 @@ SOURCES += \
     bspRenderer/bspRenderTest.cpp \
     bspRenderer/bspRenderer.cpp \
     mesh/main_test_mesh.cpp \
-
+    convexpolygon/main_test_convexpolygon.cpp \
