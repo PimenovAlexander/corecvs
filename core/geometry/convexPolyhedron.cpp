@@ -19,6 +19,7 @@ ConvexPolyhedron::ConvexPolyhedron(const AxisAlignedBox3d &box)
     faces.push_back(Plane3d::FromNormalAndPoint(Vector3dd(-1,  0,  0), box.high()));
 
 }
+
 ConvexPolyhedron::ConvexPolyhedron(const vector<Vector3dd> &vertices)
 {
     for(const Vector3dd &vertex: vertices)
@@ -60,6 +61,17 @@ void ConvexPolygon::intersectWith(const ConvexPolygon &other)
 }
 */
 
+std::vector<Vector3dd> ConvexPolygon::toDualPoints()
+{
+    std::vector<Vector3dd> dual;
+    dual.reserve(faces.size());
+    for (const Line2d &line : faces)
+    {
+        dual.push_back(line.toDualP());
+    }
+    return dual;
+}
+
 ConvexPolygon ConvexPolygon::merge(const ConvexPolygon &a1, const ConvexPolygon &a2)
 {
     ConvexPolygon toReturn;
@@ -68,12 +80,9 @@ ConvexPolygon ConvexPolygon::merge(const ConvexPolygon &a1, const ConvexPolygon 
     return toReturn;
 }
 
-
 ConvexPolygon ConvexPolygon::intersect(const ConvexPolygon &a1, const ConvexPolygon &a2)
 {
-    ConvexPolygon toReturn;
-    toReturn = a1;
-    toReturn.append(a2);
+    ConvexPolygon toReturn = merge(a1, a2);
     toReturn.simplify();
     return toReturn;
 }

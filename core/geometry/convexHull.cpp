@@ -6,14 +6,12 @@ using namespace std;
 
 Polygon ConvexHull::GiftWrap(const std::vector<Vector2dd> &list)
 {
-
     Polygon toReturn;
     if (list.empty())
     {
         // SYNC_PRINT(("ConvexHull::GiftWrap(): Input list in empty"));
         return toReturn;
     }
-
     if (list.size() == 1)
     {
         // SYNC_PRINT(("ConvexHull::GiftWrap(): Input list has only one point"));
@@ -71,82 +69,9 @@ Polygon ConvexHull::GiftWrap(const std::vector<Vector2dd> &list)
         current = next;
         direction = nextDir;
 
-    } while (/*toReturn.size() < 10*/true);
-
-
+    } while (true);
     return toReturn;
 }
-
-double ccw(const Vector2dd& p1, const Vector2dd& p2, const Vector2dd& p3)
-{
-    //return (p2.x() - p1.x())*(p3.y() - p1.y()) - (p2.y() - p1.y())*(p3.x() - p1.x());
-    return (p2 - p1) & (p3 - p1).leftNormal();
-}
-
-
-double ccwProjective(const Vector3dd& p1, const Vector3dd& p2, const Vector3dd& p3)
-{
-    return -(p1 ^ p2) & p3;
-}
-
-template<typename PointType>
-Polygon ConvexHull::GrahamScan(std::vector<PointType> points)
-{
-    if (points.size() < 3)
-        return Polygon();
-
-    //find value with lowest y-coordinate
-    size_t idx = 0;
-    double yMin = std::numeric_limits<double>::max();
-    for (size_t i = 1; i < points.size(); i++)
-    {
-        bool less = points[i].y() < yMin;
-        less |= (points[i].y() == yMin) && (points[i].x() < points[idx].x());
-        if (less)
-        {
-            yMin = points[i].y();
-            idx = i;
-        }
-    }
-
-    //sort ascending polar angle around lowest y-coordinate value
-    std::swap(points[0], points[idx]);
-    std::sort(points.begin() + 1, points.end(), [=](const Vector2dd& a, const Vector2dd& b) -> bool
-        {
-            Vector2dd ab = b - a;
-            double polar = ccw(points[0], a, b);
-
-            if (polar != 0.0)
-                return (polar > 0);
-            else
-                return (ab.y() > 0);
-        }
-    );
-
-    /* Dedup */
-    auto last = std::unique(points.begin(), points.end());
-    points.erase(last, points.end());
-
-    //pass of Graham scan
-    Polygon hull;
-    hull.push_back(points[0]);
-    hull.push_back(points[1]);
-    for (size_t i = 2; i < points.size(); i++)
-    {
-        int M = (int)hull.size();
-        while (ccw(hull[M - 2], hull[M - 1], points[i]) < 0)
-        {
-            hull.pop_back();
-            M = (int)hull.size();
-            if (hull.size() < 2)
-                break;
-        }
-        hull.push_back(points[i]);
-    }
-
-    return hull;
-}
-
 
 Polygon ConvexHull::GrahamScan(std::vector<Vector2dd> points)
 {
@@ -203,6 +128,72 @@ Polygon ConvexHull::GrahamScan(std::vector<Vector2dd> points)
     }
 
     return hull;
+}
+
+ProjectivePolygon ConvexHull::GiftWrap(std::vector<Vector3dd> points)
+{
+    ProjectivePolygon toReturn;
+    if (points.empty()) {
+        return toReturn;
+    }
+    if (points.size() == 1) {
+        toReturn.push_back(points[0]);
+        return toReturn;
+    }
+
+    /* Find one point in hull */
+    size_t iMin = 0;
+    double yMin = std::numeric_limits<double>::max();
+
+    for (size_t i = 0; i < points.size(); i++)
+    {
+        double ycost = points[i].normalised() & Vector3dd::OrtZ();
+        if (ycost < yMin) {
+            yMin = ycost;
+            iMin = i;
+        }
+    }
+
+#if 0
+    // SYNC_PRINT(("ConvexHull::GiftWrap(): starting with point %i (%lf %lf)\n", minYId, list[minYId].x(), list[minYId].y() ));
+    toReturn.push_back(points[iMin]);
+
+    Vector3dd prev = Vector3dd::OrtX();
+    Vector3dd current = points[iMin];
+
+    /* Wrap */
+    do {
+        Vector3dd next;
+        Vector3dd nextDir(0.0);
+        double vmin = std::numeric_limits<double>::max();
+
+        for (const Vector3dd &point : points)
+        {
+            if (point == current) {
+                continue;
+            }
+
+            //Vector2dd dir1 = (point - current).normalised();
+            //double v = direction & dir1;
+            double v = ccwProjective(direction, current, point);
+            if (v < vmin) {
+                vmin = v;
+                next = point;
+                nextDir = point.;
+            }
+        }
+
+        if (next == toReturn.front())
+        {
+            break;
+        }
+        toReturn.push_back(next);
+        current = next;
+        direction = nextDir;
+
+    } while (true);
+    return toReturn;
+#endif
 }
 
 ProjectivePolygon ConvexHull::GrahamScan(std::vector<Vector3dd> points)
@@ -278,4 +269,67 @@ Polygon ConvexHull::ConvexHullCompute(std::vector<Vector2dd> points, ConvexHull:
     }
 }
 
+
+/** Template methods **/
+/**
+ *  Still under development
+ **/
+
+template<typename PointType>
+Polygon ConvexHull::GrahamScan(std::vector<PointType> points)
+{
+    if (points.size() < 3)
+        return Polygon();
+
+    //find value with lowest y-coordinate
+    size_t idx = 0;
+    double yMin = std::numeric_limits<double>::max();
+    for (size_t i = 1; i < points.size(); i++)
+    {
+        bool less = points[i].y() < yMin;
+        less |= (points[i].y() == yMin) && (points[i].x() < points[idx].x());
+        if (less)
+        {
+            yMin = points[i].y();
+            idx = i;
+        }
+    }
+
+    //sort ascending polar angle around lowest y-coordinate value
+    std::swap(points[0], points[idx]);
+    std::sort(points.begin() + 1, points.end(), [=](const Vector2dd& a, const Vector2dd& b) -> bool
+        {
+            Vector2dd ab = b - a;
+            double polar = ccw(points[0], a, b);
+
+            if (polar != 0.0)
+                return (polar > 0);
+            else
+                return (ab.y() > 0);
+        }
+    );
+
+    /* Dedup */
+    auto last = std::unique(points.begin(), points.end());
+    points.erase(last, points.end());
+
+    //pass of Graham scan
+    Polygon hull;
+    hull.push_back(points[0]);
+    hull.push_back(points[1]);
+    for (size_t i = 2; i < points.size(); i++)
+    {
+        int M = (int)hull.size();
+        while (ccw(hull[M - 2], hull[M - 1], points[i]) < 0)
+        {
+            hull.pop_back();
+            M = (int)hull.size();
+            if (hull.size() < 2)
+                break;
+        }
+        hull.push_back(points[i]);
+    }
+
+    return hull;
+}
 
