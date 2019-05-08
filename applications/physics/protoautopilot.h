@@ -11,11 +11,14 @@
 #include <bits/stl_queue.h>
 #include <queue>
 
+#include <opencv2/features2d/features2d.hpp>
+
 class ProtoAutoPilot
 {
 public:
     ProtoAutoPilot();
     void makeStrategy(QSharedPointer<QImage> im);
+    QSharedPointer<QImage> outputImage;
     CopterInputs output()
     {
         CopterInputs result=outputs.front();
@@ -25,6 +28,11 @@ public:
     bool active=false;
     void stabilise();
     Vector3dd getCurreentPos(QSharedPointer<QImage> inputImage);
+
+    cv::Mat qImageToMat(const QImage &inputImage);
+    QSharedPointer<QImage> matToQImage(cv::Mat input);
+    void changeImage(QSharedPointer<QImage> inputImage);
+    void start();
 private:
     vector<MainObject> mainObjects;
     CopterInputs failSafe;

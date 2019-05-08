@@ -480,7 +480,7 @@ void PhysicsMainWindow::startJoyStickMode()
 
 void PhysicsMainWindow::keepAliveJoyStick()
 {
-    if (joystick1.active)                             //Yes, indeed. We can not turn on autopiot without joyStick.
+    if (joystick1.active)                             //Yes, indeed. We can not turn on autopiot without a joyStick.
     {
 
         if (!joystick1.mutexActive)
@@ -521,11 +521,12 @@ void PhysicsMainWindow::keepAliveJoyStick()
         if (currentSendMode==1)
         {
             ui->inputsWidget->updateState(iiOutput);
+
         }
     }
     frameCounter++;
     //ui->inputsWidget->updateState(joystick1.output);
-    QTimer::singleShot(8, this, SLOT(keepAliveJoyStick()));                                     // I put together 2 timers 8msec send timer and 33msec joystickWidget timer 8*4=36
+    QTimer::singleShot(8, this, SLOT(keepAliveJoyStick()));
 
     }
 }
@@ -559,14 +560,6 @@ void PhysicsMainWindow::mainAction()
         }
     }
 
-    //inputs.print();
-    /*                                     i changed my joestickInput, so it is easier to use it
-    if (mixer.mix(joystickState, inputs)) {
-        copter.flightControllerTick(inputs);
-
-        copter.physicsTick();
-    }
-    */
 
     //startJoyStickMode();
     copter.flightControllerTick(joystick1.output);
@@ -708,7 +701,16 @@ void PhysicsMainWindow::updateUi()
     if (work->mImage)
     {
         QSharedPointer<QImage> image(new RGB24Image(work->mImage));
-
+        /*if (iiAutoPilot.active)
+        {
+            iiAutoPilot.makeStrategy(image);
+            cout<<"image changed"<<endl;
+            image = iiAutoPilot.outputImage;
+        }
+        else
+        {
+            cout<<"AutoPilot turned off"<<endl;
+        }*/
         ui->imageView->setImage(image);
     }
 
@@ -747,6 +749,7 @@ void PhysicsMainWindow::on_connetToVirtualButton_released()
 }
 
 
+
 void PhysicsMainWindow::on_JoyButton_released()
 {
     startJoyStickMode();
@@ -755,4 +758,14 @@ void PhysicsMainWindow::on_JoyButton_released()
 void PhysicsMainWindow::on_toolButton_3_released()
 {
     startRealMode();
+}
+
+void PhysicsMainWindow::on_toolButton_2_released()
+{
+
+    if (!iiAutoPilot.active)
+    {
+        iiAutoPilot = ProtoAutoPilot();
+        iiAutoPilot.start();
+    }
 }
