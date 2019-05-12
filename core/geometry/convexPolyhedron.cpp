@@ -51,7 +51,7 @@ void ConvexPolygon::append(const ConvexPolygon &other)
 
 void ConvexPolygon::simplify()
 {
-    this->faces = HalfspaceIntersector::FromConvexPolygonCP(*this).faces;
+    this->faces = HalfspaceIntersector::Simplify(*this).faces;
 }
 
 /*
@@ -60,17 +60,6 @@ void ConvexPolygon::intersectWith(const ConvexPolygon &other)
 
 }
 */
-
-std::vector<Vector3dd> ConvexPolygon::toDualPoints()
-{
-    std::vector<Vector3dd> dual;
-    dual.reserve(faces.size());
-    for (const Line2d &line : faces)
-    {
-        dual.push_back(line.toDualP());
-    }
-    return dual;
-}
 
 ConvexPolygon ConvexPolygon::merge(const ConvexPolygon &a1, const ConvexPolygon &a2)
 {

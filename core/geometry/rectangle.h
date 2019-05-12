@@ -71,6 +71,14 @@ public:
         };
     }
 
+    void extendToFit(const std::vector<Vector2d<ElementType>> &points)
+    {
+        for (auto &p : points)
+        {
+            extendToFit(p);
+        }
+    }
+
     bool contains(const Vector2d<ElementType> &point) const
     {
         return point.isInHypercube(corner, corner + size);
@@ -165,6 +173,12 @@ public:
     {
        return corner + size;
     }
+
+    Vector2d<ElementType> center() const
+    {
+       return corner + (size / 2);
+    }
+
 
     static Rectangle SquareFromCenter(const Vector2d<ElementType> &center, ElementType radius)
     {

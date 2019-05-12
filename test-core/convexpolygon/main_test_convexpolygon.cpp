@@ -25,6 +25,169 @@
 using namespace std;
 using namespace corecvs;
 
+/* Temporary function */
+bool GiftWrap(ProjectivePolygon &points, ProjectivePolygon &output, Mesh3D *debug)
+{
+    output.clear();
+
+    if (points.empty()) {
+        return false;
+    }
+    if (points.size() == 1) {
+        output.push_back(points[0]);
+        return true;
+    }
+
+    /* Find one point in hull */
+    size_t iMin = 0;
+    double yMin = std::numeric_limits<double>::max();
+
+    for (size_t i = 0; i < points.size(); i++)
+    {
+        double ycost = points[i].normalised() & Vector3dd::OrtZ();
+        if (ycost < yMin) {
+            yMin = ycost;
+            iMin = i;
+        }
+    }
+    output.push_back(points[iMin]);
+    Vector3dd prev = points[iMin];
+
+    SYNC_PRINT(("ConvexHull::GiftWrap(): starting with point (%d of %d) (%lf %lf %lf)\n",
+                (int)iMin, (int)points.size(),
+                prev.x(), prev.y(), prev.z()));
+    if (debug != NULL) debug->setColor(RGBColor::Amber());
+    if (debug != NULL) debug->addIcoSphere(points[iMin].normalised(), 0.001);
+
+
+    /* Find second point in hull. A known interior point could save time here */
+    int sId = -1;
+    for (size_t i = 0; i < points.size(); i++)
+    {
+        if (i == iMin) {
+            continue;
+        }
+        Vector3dd normal = prev ^ points[i];
+        cout << " " << i << " p:" << points[i] << " - " << normal << endl;
+
+        size_t j = 0;
+        for (; j < points.size(); j++)
+        {
+            cout << "   " << j;
+            if (j == i || j == iMin) {
+                cout << " skip" << endl;
+                continue;
+            }
+            double v = (normal & points[j]);
+            cout << "  " << v << endl;
+            if (v < 0) {
+                break;
+            }
+        }
+        if (j == points.size()) {
+            sId = i;
+            break;
+        }
+    }
+    if (sId == -1) {
+        return false;
+    }
+
+    Vector3dd current = points[sId];
+    output.push_back(points[sId]);
+    SYNC_PRINT(("ConvexHull::GiftWrap(): second point (%d of %d) (%lf %lf %lf)\n",
+                (int)iMin, (int)points.size(),
+                current.x(), current.y(), current.z()));
+
+
+    //Vector3dd direction = prev;
+
+    /* Wrap */
+    int limit = 10;
+    int iteration = 0;
+    int mark = 0;
+    do {
+        iteration++;
+        cout << "Iteration " << iteration << endl;
+        //if (debug != NULL) debug->addLine(Vector3dd::Zero(), prev.normalised());
+
+        Vector3dd next = Vector3dd::Zero();
+        double vmin = std::numeric_limits<double>::max();
+        double vmax = std::numeric_limits<double>::lowest();
+
+        /* Search for best point */
+        for (const Vector3dd &point : points)
+        {
+            if ((point.normalised() - current.normalised()).l2Metric() < 1e-7) {
+                continue;
+            }
+
+            Vector3dd splane = current ^ prev;
+            if (iteration > mark) {
+                //if (debug != NULL) debug->setColor(RGBColor::rainbow(lerp(0.0, 1.0, iteration, mark, limit)));
+                if (debug != NULL) debug->setColor(RGBColor::Green() / 2);
+                if (debug != NULL) debug->addLineDash(Vector3dd::Zero(), prev.normalised(), 0.03, 0.03);
+
+                if (debug != NULL) debug->setColor(RGBColor::Green());
+                if (debug != NULL) debug->addLineDash(Vector3dd::Zero(), current.normalised());
+
+
+                if (debug != NULL) debug->setColor(RGBColor::Yellow());
+                if (debug != NULL) debug->addLineDash(Vector3dd::Zero(), splane.normalised());
+
+//                if (debug != NULL) debug->setColor(RGBColor::Pink());
+//                if (debug != NULL) debug->addLineDash(Vector3dd::Zero(), back.normalised());
+            }
+
+
+            Vector3dd p = point.normalised();
+            Vector3dd nplane = p ^ current;
+
+            double v = splane.normalised() & nplane.normalised();
+
+            /*if (v < 0) {
+                return false;
+            }*/
+            /*
+            bool forward = (p & back) < 0;
+            bool part    = (p & current) > 0;
+            */
+
+            SYNC_PRINT(("(%lf %lf %lf) - %lf\n", point.x(), point.y(), point.z(), v));
+
+            if (v > vmax /*&& forward*/ /*&& part*/)
+            {
+                vmin = v;
+                vmax = v;
+                next = point;
+            }
+        }
+
+        if (next == output.front())
+        {
+            break;
+        }
+        SYNC_PRINT(("ConvexHull::GiftWrap(): %s next point (%lf %lf %lf)\n",
+                    iteration > mark ? "*" : "",
+                    next.x(), next.y(), next.z()));
+
+        prev = current;
+        current = next;
+        output.push_back(next);
+        //back = Vector3dd::OrtZ() ^ current;
+
+        if (iteration > mark) {
+            if (debug != NULL) debug->setColor(RGBColor::Navy());
+            if (debug != NULL) debug->addLine(Vector3dd::Zero(), next.normalised());
+        }
+
+        //if (debug != NULL) debug->setColor(RGBColor::Magenta());
+
+
+    } while (iteration < limit);
+    return true;
+}
+
 
 void drawPolygon2Color(RGB24Buffer *target, const Polygon &p, RGBColor color1, RGBColor color2)
 {
@@ -68,6 +231,33 @@ void storeDualAsMesh(const ConvexPolygon &cp, )
 }
 */
 
+TEST(convexPolygon, testCSubdiv)
+{
+
+    RGB24Buffer buffer(630, 630);
+
+    Polygon p1;
+    p1.push_back(Vector2dd( 220,  220));
+    p1.push_back(Vector2dd( 220,  400));
+    p1.push_back(Vector2dd( 398,  320));
+
+    p1.reverse();
+    ConvexPolygon cp1 = p1.toConvexPolygonSubdivide(5);
+
+    for ( int i = 0; i < buffer.h; i++)
+    {
+        for ( int j = 0; j < buffer.w; j++)
+        {
+            buffer.element(i,j) = cp1.isInside(Vector2dd(j,i)) ?
+                        RGBColor::Gray() : RGBColor::Navy();
+        }
+    }
+
+    drawConvexPolygon(&buffer, cp1, RGBColor::Red());
+
+    BufferFactory::getInstance()->saveRGB24Bitmap(buffer, "convex-subdiv.bmp");
+
+}
 
 /**
 
@@ -91,29 +281,42 @@ TEST(convexPolygon, testIntersection)
         Vector2dd( 100,  100)
     };
 
+    Polygon p1;
+    p1.push_back(Vector2dd( 10,  10));
+    p1.push_back(Vector2dd( 10, 100));
+    p1.push_back(Vector2dd( 99,  60));
+
+    Polygon p2;
+    p2.push_back(Vector2dd(100, 100));
+    p2.push_back(Vector2dd(100,  10));
+    p2.push_back(Vector2dd( 11,  60));
+
     Vector2dd drawShift = Vector2dd( 100,  100);
 
     for (size_t i = 0; i < CORE_COUNT_OF(shifts); i++)
     {
-
-        Polygon p1;
-        p1.push_back(Vector2dd( 10,  10));
-        p1.push_back(Vector2dd( 10, 100));
-        p1.push_back(Vector2dd( 99,  60));
-
-        Polygon p2;
-        p2.push_back(Vector2dd(100, 100));
-        p2.push_back(Vector2dd(100,  10));
-        p2.push_back(Vector2dd( 11,  60));
-
         /* Move poligons to interesting positions  */
-        Polygon pt1 = p1.translated(shifts[i]);
-        Polygon pt2 = p2.translated(shifts[i]);
+        Polygon pt1 = Polygon::Reversed(p1.translated(shifts[i]));
+        Polygon pt2 = Polygon::Reversed(p2.translated(shifts[i]));
 
         ConvexPolygon cp1 = pt1.toConvexPolygon();
         ConvexPolygon cp2 = pt2.toConvexPolygon();
 
+        Vector2dd check(50, 50);
+        CORE_ASSERT_TRUE(cp1.isInside(check + shifts[i]), "Wrong orientation");
+        CORE_ASSERT_TRUE(cp2.isInside(check + shifts[i]), "Wrong orientation");
+
+      //ConvexPolygon cp3 = ConvexPolygon::merge(cp1, cp2);
+#if 1
+        ConvexPolygon cp3 = ConvexPolygon::merge(cp1, cp2);
+        ProjectivePolygon pp = ProjectivePolygon::FromConvexPolygon(cp3);
+        ProjectivePolygon pps;
+        bool result = GiftWrap(pp, pps, NULL);
+        cp3 = pps.toConvexPolygon();
+#else
         ConvexPolygon cp3 = ConvexPolygon::intersect(cp1, cp2);
+#endif
+
 
         Polygon p3;
         p3.reserve(cp3.faces.size());
@@ -124,8 +327,9 @@ TEST(convexPolygon, testIntersection)
             p3.push_back(l1.intersectWith(l2));
         }
 
-        cout << "cp1" << p1 << endl;
-        cout << "cp2" << p2 << endl;
+        cout << "Shift:" << i << endl;
+        cout << "pt1" << pt1 << endl;
+        cout << "pt2" << pt2 << endl;
 
         cout << "result" << p3 << endl;
 
@@ -134,16 +338,142 @@ TEST(convexPolygon, testIntersection)
         drawPolygon2Color(&buffer, p3 .translated(drawShift), RGBColor::White(), RGBColor::Cyan());
 
         Polygon bp3 = p3.translated(-shifts[i]);
+#if 0
         CORE_ASSERT_TRUE(bp3.size() == 4, "Wrong intersect size");
 
         CORE_ASSERT_TRUE(bp3.getPoint(0).notTooFar(Vector2dd(99, 60    ), 0.1), "Wrong intersect point 0");
         CORE_ASSERT_TRUE(bp3.getPoint(1).notTooFar(Vector2dd(55, 79.775), 0.1), "Wrong intersect point 1");
         CORE_ASSERT_TRUE(bp3.getPoint(2).notTooFar(Vector2dd(11, 60    ), 0.1), "Wrong intersect point 2");
         CORE_ASSERT_TRUE(bp3.getPoint(3).notTooFar(Vector2dd(55, 35.280), 0.1), "Wrong intersect point 3");
+#endif
     }
 
     BufferFactory::getInstance()->saveRGB24Bitmap(buffer, "non_eigen1.bmp");
 
+}
+
+TEST(convexPolygon, testInterDraw)
+{
+    Mesh3D mesh;
+    mesh.switchColor(true);
+    mesh.setColor(RGBColor::Red());
+    RGB24Buffer buffer(330, 330);
+
+    Polygon p1;
+    p1.push_back(Vector2dd( 10,  10));
+    p1.push_back(Vector2dd( 10, 100));
+    p1.push_back(Vector2dd( 99,  60));
+
+    Polygon p2;
+    p2.push_back(Vector2dd(100, 100));
+    p2.push_back(Vector2dd(100,  10));
+    p2.push_back(Vector2dd( 11,  60));
+
+    p1.transform(Matrix33::ShiftProj(-100, -100) * Matrix33::ScaleProj(1/1.0));
+    p2.transform(Matrix33::ShiftProj(-100, -100) * Matrix33::ScaleProj(1/1.0));
+
+    Rectangled holder;
+    holder.extendToFit(p1);
+    holder.extendToFit(p2);
+
+    /* Move poligons to interesting positions  */
+    Polygon pt1 = p1; pt1.reverse();
+    Polygon pt2 = p2; pt2.reverse();
+
+    mesh.setColor(RGBColor::Red());
+    for (size_t i = 0; i < pt1.size(); i++)
+    {
+        mesh.addLine(Vector3dd(pt1.getPoint(i), 0.9), Vector3dd(pt1.getNextPoint(i), 0.9));
+    }
+
+    mesh.setColor(RGBColor::Blue());
+    for (size_t i = 0; i < pt2.size(); i++)
+    {
+        mesh.addLine(Vector3dd(pt2.getPoint(i), 0.9), Vector3dd(pt2.getNextPoint(i), 0.9));
+    }
+
+
+    ConvexPolygon cp1 = pt1.toConvexPolygon(); //Subdivide(200);
+    ConvexPolygon cp2 = pt2.toConvexPolygon(); //Subdivide(200);
+    //ConvexPolygon cp1 = pt1.toConvexPolygonSubdivide(40);
+    //ConvexPolygon cp2 = pt2.toConvexPolygonSubdivide(40);
+
+    cout << "Check" << endl;
+    Vector2dd check(5.0, 5.0);
+    cout << cp1.isInside(check) << endl;
+    cout << cp2.isInside(check) << endl;
+
+    ConvexPolygon cp3 = ConvexPolygon::merge(cp1, cp2);
+
+    for (Line2d &line : cp3.faces)
+    {
+    //    mesh.addPoint(Vector3dd(line.toDualS(), 0.5));
+        mesh.addPoint(line.toDualP().normalised());
+    }
+
+    //cp3.simplify();
+    ProjectivePolygon points = ProjectivePolygon::FromConvexPolygon(cp3);
+    ProjectivePolygon simplified;
+    bool result = GiftWrap(points, simplified, &mesh);
+    //bool result = ConvexHull::GiftWrap(points, simplified, &mesh);
+
+
+    cout << "Result: " << (result ? "true" : "false") << endl;
+
+#if 1
+    ConvexPolygon cp4 = simplified.toConvexPolygon();
+    mesh.setColor(RGBColor::Green());
+    for (Line2d &line : cp4.faces)
+    {
+        // mesh.addPoint(Vector3dd(line.toDualS(), 0.6));
+        mesh.addLineDash(Vector3dd::Zero(), line.toDualP().normalised(), 0.05, 0.1);
+
+        double t1 = 0.0;
+        double t2 = 0.0;
+        Ray2d r = line.toRay();
+        r.normalise();
+        Circle2d circle2d(holder.center(), holder.size.l2Metric());
+        if (circle2d.intersectWith(r, t1, t2))
+        {
+            mesh.addLine(
+                Vector3dd(r.getPoint(t1), 1.0),
+                Vector3dd(r.getPoint(t2), 1.0));
+
+            for (double t = t1; t < t2; t+=1)
+            {
+
+                mesh.addLine(
+                    Vector3dd(r.getPoint(t), 1.0),
+                    Vector3dd(r.getPoint(t) + line.normal().normalised() * 0.3, 1.0));
+            }
+        }
+    }
+#endif
+
+
+
+
+#if 0
+    Polygon p3;
+    p3.reserve(cp3.faces.size());
+    for (size_t i = 0; i < cp3.faces.size(); i++)
+    {
+        Line2d &l1 = cp3.faces[i];
+        Line2d &l2 = cp3.faces[(i + 1) % cp3.faces.size()];
+        Vector2dd point = l1.intersectWith(l2);
+
+        if (!p3.empty() && p3.back().notTooFar(point, 1e-5))
+            continue;
+        p3.push_back(point);
+    }
+
+    for (size_t i = 0; i < p3.size(); i++)
+    {
+        mesh.addLine(Vector3dd(p3.getPoint(i), 1.0), Vector3dd(p3.getNextPoint(i), 1.01));
+    }
+#endif
+
+    mesh.dumpPLY("intersect.ply");
 }
 
 TEST(convexPolygon, testConvexToPolygon)
@@ -398,73 +728,32 @@ TEST(convexPolygon, drawConvex)
 }
 
 
-/* Temporary function */
-ProjectivePolygon GiftWrap(std::vector<Vector3dd> points)
+
+
+
+Vector3dd st1(Line2d &input)
 {
-    ProjectivePolygon toReturn;
-    if (points.empty()) {
-        return toReturn;
-    }
-    if (points.size() == 1) {
-        toReturn.push_back(points[0]);
-        return toReturn;
-    }
-
-    /* Find one point in hull */
-    size_t iMin = 0;
-    double yMin = std::numeric_limits<double>::max();
-
-    for (size_t i = 0; i < points.size(); i++)
-    {
-        double ycost = points[i].normalised() & Vector3dd::OrtZ();
-        if (ycost < yMin) {
-            yMin = ycost;
-            iMin = i;
-        }
-    }
-
-#if 0
-    // SYNC_PRINT(("ConvexHull::GiftWrap(): starting with point %i (%lf %lf)\n", minYId, list[minYId].x(), list[minYId].y() ));
-    toReturn.push_back(points[iMin]);
-
-    Vector3dd prev = Vector3dd::OrtX();
-    Vector3dd current = points[iMin];
-
-    /* Wrap */
-    do {
-        Vector3dd next;
-        Vector3dd nextDir(0.0);
-        double vmin = std::numeric_limits<double>::max();
-
-        for (const Vector3dd &point : points)
-        {
-            if (point == current) {
-                continue;
-            }
-
-            //Vector2dd dir1 = (point - current).normalised();
-            //double v = direction & dir1;
-            double v = ccwProjective(direction, current, point);
-            if (v < vmin) {
-                vmin = v;
-                next = point;
-                nextDir = point.;
-            }
-        }
-
-        if (next == toReturn.front())
-        {
-            break;
-        }
-        toReturn.push_back(next);
-        current = next;
-        direction = nextDir;
-
-    } while (true);
-    return toReturn;
-#endif
+    return Vector3dd(input.toDualP().project(), 0.1);
 }
 
+Vector3dd st(Line2d &input)
+{
+    return input.toDualP().normalised();
+}
+
+
+Vector3dd st3(Line2d &input)
+{
+    Vector3dd t = input.toDualP().normalised();
+    Vector3dd sg = t + Vector3dd::OrtZ();
+
+    return sg / sg.z();
+}
+
+Vector3dd st4(Line2d &input)
+{
+    return Vector3dd(input.toDualS(), 0.5);
+}
 
 TEST(convexPolygon, convexStudies)
 {
@@ -472,8 +761,8 @@ TEST(convexPolygon, convexStudies)
     mesh.switchColor(true);
     mesh.addOrts(10.0);
 
-    Vector2dd center1( 10, 10);
-    Vector2dd center2(-10,-10);
+    Vector2dd center1( 4, 4);
+    Vector2dd center2(-4,-4);
 
     ConvexPolygon cp;
     for (int i = 0; i < 360; i++)
@@ -484,41 +773,62 @@ TEST(convexPolygon, convexStudies)
 
         Vector2dd point1 = center1 + d1;
         Line2d l1 = Line2d::FromRay(Ray2d::FromOriginAndDirection(point1, d1.leftNormal()));
-        Vector3dd dual1 = l1.toDualP();
-        mesh.setColor(RGBColor::Red());
+        mesh.setColor(l1.z() > 0 ? RGBColor::Red() : (RGBColor::Red() / 2) );
         mesh.addPoint(Vector3dd(point1, 1.0));
-        mesh.addPoint(dual1.normalised());
+        mesh.addPoint(st(l1));
+        mesh.addPoint(st3(l1));
+//        mesh.addPoint(st4(l1));
         cp.faces.push_back(l1);
 
         Vector2dd point2 = center1 + d2;
         Line2d l2 = Line2d::FromRay(Ray2d::FromOriginAndDirection(point2, d2.leftNormal()));
-        Vector3dd dual2 = l2.toDualP();
-        mesh.setColor(RGBColor::Green());
+        mesh.setColor(l2.z() > 0 ? RGBColor::Green() : (RGBColor::Green() / 2) );
         mesh.addPoint(Vector3dd(point2, 1.0));
-        mesh.addPoint(dual2.normalised());
+        mesh.addPoint(st(l2));
+        mesh.addPoint(st3(l2));
+//        mesh.addPoint(st4(l2));
         cp.faces.push_back(l2);
 
+#if 0
         Vector2dd point3 = center2 + d1;
         Line2d l3 = Line2d::FromRay(Ray2d::FromOriginAndDirection(point3, d1.leftNormal()));
-        Vector3dd dual3 = l3.toDualP();
-        mesh.setColor(RGBColor::Blue());
+        mesh.setColor(l3.z() > 0 ? RGBColor::Blue() : (RGBColor::Blue() / 2) );
         mesh.addPoint(Vector3dd(point3, 1.0));
-        mesh.addPoint(dual3.normalised());
-        //cp.faces.push_back(l3);
+        mesh.addPoint(st(l3));
+        mesh.addPoint(st3(l3));
+//        mesh.addPoint(st4(l3));
+       cp.faces.push_back(l3);
+#endif
     }
 
-    vector<Vector3dd> points = cp.toDualPoints();
+#if 1
+    ProjectivePolygon points = ProjectivePolygon::FromConvexPolygon(cp);
 //    cp.simplify();
 
-    ProjectivePolygon pol = GiftWrap(points);
+    ProjectivePolygon simplified;
+    bool result = GiftWrap(points, simplified, &mesh);
 
+#if 0
     for (size_t i = 0; i < pol.size(); i++)
     {
         mesh.setColor(RGBColor::Magenta());
-        mesh.addPoint(pol[i].normalised() + Vector3dd(0.1));
+        mesh.addIcoSphere(pol[i].normalised(), 0.001);
+        //mesh.addIcoSphere(Vector3dd(pol[i].project(), 1.0), 0.005);
+        if (i != pol.size() - 1) {
+            mesh.addLine(pol[i].normalised(), pol[i + 1].normalised());
+        }
     }
+#endif
+#endif
+
 
 #if 0
+    cp.simplify();
+    for (Line2d &l : cp.faces) {
+        mesh.setColor(RGBColor::Yellow());
+        mesh.addPoint(st4(l) + Vector3dd(0, 0, 0.75));
+    }
+
     Polygon p = Polygon::FromConvexPolygon(cp);
     for (int i = 0; i < p.size(); i++)
     {

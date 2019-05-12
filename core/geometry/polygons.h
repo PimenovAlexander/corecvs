@@ -164,6 +164,12 @@ public:
        return operator []((idx + 1) % size());
     }
 
+    const Vector2dd &getPrevPoint(int idx) const
+    {
+       return operator []((idx - 1 + size()) % size());
+    }
+
+
     int getNextDifferentIndex(int idx) const
     {
         int idx1 = getNextIndex(idx);
@@ -229,6 +235,9 @@ public:
     static Polygon FromImageSize    (const Vector2d<int> &size);
 
     ConvexPolygon toConvexPolygon() const;
+
+    /** This thing is mostly for debug */
+    ConvexPolygon toConvexPolygonSubdivide(int subdivision = 20) const;
 
 
     Polygon transformed(const Matrix33 &transform) const
@@ -345,6 +354,8 @@ public:
         return out;
     }
 
+    static ProjectivePolygon FromConvexPolygon(const ConvexPolygon &cp);
+    ConvexPolygon toConvexPolygon () const;
 
 
 };

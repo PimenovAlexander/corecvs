@@ -1,5 +1,7 @@
 #include "core/geometry/convexHull.h"
 
+#include "mesh3d.h"
+
 using namespace corecvs;
 using namespace std;
 
@@ -73,6 +75,80 @@ Polygon ConvexHull::GiftWrap(const std::vector<Vector2dd> &list)
     return toReturn;
 }
 
+vector<uint> ConvexHull::GiftWrapId(const std::vector<Vector2dd> &list)
+{
+    vector<uint> toReturn;
+
+    if (list.empty())
+    {
+        // SYNC_PRINT(("ConvexHull::GiftWrap(): Input list in empty"));
+        return toReturn;
+    }
+    if (list.size() == 1)
+    {
+        // SYNC_PRINT(("ConvexHull::GiftWrap(): Input list has only one point"));
+        toReturn.push_back(0);
+        return toReturn;
+    }
+
+    /* Find one point in hull */
+    size_t minYId = 0;
+    double minY = list[0].y();
+    for (size_t i = 1; i < list.size(); i++)
+    {
+        if (list[i].y() < minY)
+        {
+            minY = list[i].y();
+            minYId = i;
+        }
+    }
+
+    // SYNC_PRINT(("ConvexHull::GiftWrap(): starting with point %i (%lf %lf)\n", minYId, list[minYId].x(), list[minYId].y() ));
+    toReturn.push_back(minYId);
+    Vector2dd direction = Vector2dd::OrtX();
+    Vector2dd current = list[minYId];
+
+    /* Wrap */
+    do {
+        size_t nextId = 0;
+        Vector2dd next;
+        Vector2dd nextDir(0.0);
+        double vmax = -std::numeric_limits<double>::max();
+
+        for (size_t i = 0; i < list.size(); i++)
+        {
+            const Vector2dd &point = list[i];
+
+            if (point == current)
+                continue;
+
+            Vector2dd dir1 = (point - current).normalised();
+            double v = direction & dir1;
+            // SYNC_PRINT(("Checking asimuth %lf\n", v));
+            if (v > vmax) {
+                vmax = v;
+                nextId =  i;
+                next = point;
+                nextDir = dir1;
+            }
+        }
+
+        /* That is exact same point. double equality is safe */
+        if (nextId == toReturn.front())
+        {
+            break;
+        }
+        // SYNC_PRINT(("ConvexHull::GiftWrap(): next point (%lf %lf) with azimuth %lf\n", next.x(), next.y(), vmax));
+
+        toReturn.push_back(nextId);
+        current = next;
+        direction = nextDir;
+
+    } while (true);
+    return toReturn;
+}
+
+
 Polygon ConvexHull::GrahamScan(std::vector<Vector2dd> points)
 {
     if (points.size() < 3)
@@ -130,15 +206,17 @@ Polygon ConvexHull::GrahamScan(std::vector<Vector2dd> points)
     return hull;
 }
 
-ProjectivePolygon ConvexHull::GiftWrap(std::vector<Vector3dd> points)
+/* Temporary function */
+bool ConvexHull::GiftWrap(ProjectivePolygon &points, ProjectivePolygon &output, Mesh3D *debug)
 {
-    ProjectivePolygon toReturn;
+    output.clear();
+
     if (points.empty()) {
-        return toReturn;
+        return false;
     }
     if (points.size() == 1) {
-        toReturn.push_back(points[0]);
-        return toReturn;
+        output.push_back(points[0]);
+        return true;
     }
 
     /* Find one point in hull */
@@ -153,47 +231,59 @@ ProjectivePolygon ConvexHull::GiftWrap(std::vector<Vector3dd> points)
             iMin = i;
         }
     }
+    SYNC_PRINT(("ConvexHull::GiftWrap(): starting with point (%d of %d) (%lf %lf %lf)\n",
+                (int)iMin, (int)points.size(),
+                points[iMin].x(), points[iMin].y(), points[iMin].z()));
 
-#if 0
-    // SYNC_PRINT(("ConvexHull::GiftWrap(): starting with point %i (%lf %lf)\n", minYId, list[minYId].x(), list[minYId].y() ));
-    toReturn.push_back(points[iMin]);
+    output.push_back(points[iMin]);
+    if (debug != NULL) debug->setColor(RGBColor::Amber());
+    if (debug != NULL) debug->addIcoSphere(points[iMin].normalised(), 0.001);
 
-    Vector3dd prev = Vector3dd::OrtX();
+    Vector3dd prev = Vector3dd::OrtZ() /*^ points[iMin]*/;
+
     Vector3dd current = points[iMin];
+    Vector3dd back = prev;
 
     /* Wrap */
     do {
-        Vector3dd next;
-        Vector3dd nextDir(0.0);
-        double vmin = std::numeric_limits<double>::max();
+        Vector3dd next = Vector3dd::Zero();
+        double vmax = std::numeric_limits<double>::lowest();
 
+        /* Search for best point */
         for (const Vector3dd &point : points)
         {
-            if (point == current) {
+            if ((point.normalised() - current.normalised()).l2Metric() < 1e-7) {
                 continue;
             }
 
-            //Vector2dd dir1 = (point - current).normalised();
-            //double v = direction & dir1;
-            double v = ccwProjective(direction, current, point);
-            if (v < vmin) {
-                vmin = v;
+            Vector3dd splane = current ^ prev;
+            Vector3dd p = point.normalised();
+            Vector3dd nplane = p ^ current;
+
+            double v = splane.normalised() & nplane.normalised();
+
+            SYNC_PRINT(("(%lf %lf %lf) - %lf\n", point.x(), point.y(), point.z(), v));
+            bool forward = (p & back) < 0;
+
+            if (v > vmax && forward)
+            {
+                vmax = v;
                 next = point;
-                nextDir = point.;
             }
         }
 
-        if (next == toReturn.front())
-        {
+        if ((next.normalised() - output.front().normalised()).l2Metric() < 1e-7) {
             break;
         }
-        toReturn.push_back(next);
-        current = next;
-        direction = nextDir;
+        SYNC_PRINT(("ConvexHull::GiftWrap(): next point (%lf %lf %lf)\n",
+                    next.x(), next.y(), next.z()));
 
-    } while (true);
-    return toReturn;
-#endif
+        prev = current;
+        current = next;
+        output.push_back(next);
+        back = Vector3dd::OrtZ() ^ current;
+    } while (output.size() < 6);
+    return true;
 }
 
 ProjectivePolygon ConvexHull::GrahamScan(std::vector<Vector3dd> points)

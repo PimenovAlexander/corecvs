@@ -72,24 +72,13 @@ Polygon corecvs::HalfspaceIntersector::FromConvexPolygon(const ConvexPolygon &po
 }
 #endif
 
-ConvexPolygon HalfspaceIntersector::FromConvexPolygonCP(const ConvexPolygon &polygon)
+ConvexPolygon HalfspaceIntersector::Simplify(const ConvexPolygon &polygon)
 {
-    ConvexPolygon  toReturn;
-    vector<Vector3dd> dual;
-
-    dual.reserve(polygon.faces.size());
-    for (const Line2d &line : polygon.faces)
-    {
-        dual.push_back(line.toDualP());
-    }
-
-    ProjectivePolygon pol = ConvexHull::GrahamScan(dual);
-    toReturn.faces.reserve(pol.size());
-    for (const Vector3dd &p: pol)
-    {
-        toReturn.faces.push_back(p);
-    }
-    return toReturn;
+    ProjectivePolygon pp = ProjectivePolygon::FromConvexPolygon(polygon);
+    ProjectivePolygon pps;
+    if (!ConvexHull::GiftWrap(pp, pps))
+        return ConvexPolygon();
+    return pps.toConvexPolygon();
 }
 
 

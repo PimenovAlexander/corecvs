@@ -248,6 +248,29 @@ ConvexPolygon Polygon::toConvexPolygon() const
     return result;
 }
 
+ConvexPolygon Polygon::toConvexPolygonSubdivide(int subdivision) const
+{
+    ConvexPolygon result;
+    result.faces.reserve(size());
+
+    for (size_t i = 0; i < size(); i++)
+    {
+        result.faces.emplace_back(Line2d(Segment2d(getSegment((int)i))));
+
+        Vector2dd point = getPoint(i);
+        Vector2dd n2 = (getNextPoint(i) - point).leftNormal();
+        Vector2dd n1 = (point - getPrevPoint(i)).leftNormal();
+
+        for (int j = 0; j < subdivision; j++)
+        {
+            Vector2dd n = lerp(n1.normalised(), n2.normalised(), (double)j / subdivision).normalised();
+            result.faces.push_back(Line2d::FormNormalAndPoint(n, point));
+        }
+    }
+
+    return result;
+}
+
 double Polygon::signedArea()
 {
     Vector2dd c = center();
@@ -749,6 +772,29 @@ Polygon ProjectivePolygon::getApproximation(double farDist)
         }
     }
     return toReturn;
+}
+
+
+ProjectivePolygon ProjectivePolygon::FromConvexPolygon(const ConvexPolygon &cp)
+{
+    ProjectivePolygon toReturn;
+    toReturn.reserve(cp.faces.size());
+    for (const Line2d &line : cp.faces)
+    {
+        toReturn.push_back(line.toDualP());
+    }
+    return toReturn;
+}
+
+ConvexPolygon ProjectivePolygon::toConvexPolygon() const
+{
+   ConvexPolygon toReturn;
+   toReturn.faces.reserve(size());
+   for (const Vector3dd &point : *this)
+   {
+       toReturn.faces.push_back(Line2d::FromDualP(point));
+   }
+   return toReturn;
 }
 
 

@@ -33,7 +33,9 @@ public:
     static Polygon GiftWrap  (const std::vector<Vector2dd> &list);
     static Polygon GrahamScan(std::vector<Vector2dd> points);
 
-    static ProjectivePolygon GiftWrap  (std::vector<Vector3dd> points);
+    static vector<uint> GiftWrapId(const std::vector<Vector2dd> &list);
+
+    static bool GiftWrap(ProjectivePolygon &points, ProjectivePolygon &output, Mesh3D *debug = NULL);
     static ProjectivePolygon GrahamScan(std::vector<Vector3dd> points);
 
 

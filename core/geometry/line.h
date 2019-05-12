@@ -832,6 +832,13 @@ public:
         return Vector2dd(m, -b);
     }
 
+    Vector2dd toDualS() const {
+        double l = z() + l2Metric();
+        double x1 = x() / l;
+        double y2 = y() / l;
+        return Vector2dd(x1, y2);
+    }
+
     Vector3dd toDualP() const {
         return Vector3dd(a(), b(), c());
     }
@@ -845,9 +852,7 @@ public:
         return Line2d(p.x(), p.y(), p.z());
     }
 
-
 private:
-
     void _init(const Vector2dd &_n, const double &_c = 1.0)
     {
         (*this)[0] = _n.x();
