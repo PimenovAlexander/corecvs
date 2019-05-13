@@ -28,11 +28,12 @@ public:
     bool active=false;
     void stabilise();
     Vector3dd getCurreentPos(QSharedPointer<QImage> inputImage);
-
+    int debuggerSucks=0;
     cv::Mat qImageToMat(const QImage &inputImage);
-    QSharedPointer<QImage> matToQImage(cv::Mat input);
     void changeImage(QSharedPointer<QImage> inputImage);
     void start();
+    QSharedPointer<QImage> matToQImage(const cv::Mat &src);
+     cv::Mat QImageToMat2(const QImage &src);
 private:
     vector<MainObject> mainObjects;
     CopterInputs failSafe;

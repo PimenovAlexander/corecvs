@@ -5,10 +5,13 @@
 #include <QtGui/qimage.h>
 
 #include <QSharedPointer>
-#include <opencv2/features2d/features2d.hpp>
+#include <opencv2/features2d.hpp>
 #include <opencv2/imgproc.hpp>
+#include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/core/core.hpp>
+#include <opencv2/opencv.hpp>
+#include <opencv2/core/utility.hpp>
 
 using namespace std;
 ProtoAutoPilot::ProtoAutoPilot()
@@ -62,10 +65,13 @@ void ProtoAutoPilot::changeImage(QSharedPointer<QImage> inputImage)  // here we 
 {
     //cv::Mat img = cv::imread("/home/test.jpg");
     //cv::circle(img,cv::Point(30,30),20,cv::Scalar(0,0,0));
-    cv::Mat canvas = qImageToMat(*inputImage);
+    //cv::Mat canvas = qImageToMat(*inputImage);
     //cv::imshow("Display window",canvas);
     //cv::circle(canvas,cv::Point(30,30),20,cv::Scalar(0,0,0));
-    outputImage = matToQImage(canvas);
+    //cv::cvtColor(canvas,canvas,CV_BGR2GRAY);
+   // cv::imwrite("test.jpg",canvas);
+    cv::Mat mat1= QImageToMat2(*inputImage);
+    outputImage = matToQImage(mat1);
 }
 
 cv::Mat ProtoAutoPilot::qImageToMat(const QImage &inputIm)
@@ -79,10 +85,46 @@ cv::Mat ProtoAutoPilot::qImageToMat(const QImage &inputIm)
     return result;
 }
 
-QSharedPointer<QImage> ProtoAutoPilot::matToQImage(cv::Mat input)
+QImage Mat2QImage(cv::Mat const& src)
 {
-    QImage img = QImage((uchar*) input.data,input.cols,input.step, QImage::Format_RGB888);
-    QSharedPointer<QImage> result (new QImage(img));
+
+     cv::Mat temp(src.cols,src.rows,src.type()); // make the same cv::Mat
+     cvtColor(src, temp,CV_BGR2RGB); // cvtColor Makes a copt, that what i need
+     //cv::imwrite("111",src);
+     //cv::imshow("name",temp);
+     QImage dest(temp.data, temp.cols, temp.rows, temp.step, QImage::Format_RGB888);
+     dest.bits();
+     return dest.copy();
+}
+
+cv::Mat ProtoAutoPilot::QImageToMat2(QImage const &srcc)
+{
+    debuggerSucks++;
+    std::string s = "before-_"+std::to_string(debuggerSucks)+"_.jpg";
+    char * tab2 = new char [s.length()+1];
+    strcpy (tab2, s.c_str());
+    srcc.save(tab2);
+
+    QImage src = srcc.convertToFormat(QImage::Format_RGB888);
+    cv::Mat temp( src.width(),src.height(),CV_8UC3,const_cast<uchar*>(src.bits()),src.bytesPerLine());
+    cv::Mat result;
+    //cv::cvtColor(temp,result,CV_BGR2RGB);
+    return temp.clone();
+
+}
+
+
+QSharedPointer<QImage> ProtoAutoPilot::matToQImage(cv::Mat const& src)
+{
+
+    cv::Mat input(src.cols,src.rows,src.type()); // make the same cv::Mat
+    QImage img= QImage((uchar*) input.data, input.cols, input.rows, input.step, QImage::Format_RGB888).copy();
+    QImage res = img.convertToFormat(QImage::Format_RGB32);
+    QSharedPointer<QImage> result ( new  QImage(res));
+    std::string s = "after-_"+std::to_string(debuggerSucks)+"_.jpg";
+    char * tab2 = new char [s.length()+1];
+    strcpy (tab2, s.c_str());
+    result->save(tab2);
     return result;
 }
 
