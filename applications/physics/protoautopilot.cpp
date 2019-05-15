@@ -99,8 +99,8 @@ QImage Mat2QImage(cv::Mat const& src)
 
 cv::Mat ProtoAutoPilot::QImageToMat2(QImage const &srcc)
 {
-    debuggerSucks++;
-    std::string s = "before-_"+std::to_string(debuggerSucks)+"_.jpg";
+    debugCounter++;
+    std::string s = "before-_"+std::to_string(debugCounter)+"_.jpg";
     char * tab2 = new char [s.length()+1];
     strcpy (tab2, s.c_str());
     srcc.save(tab2);
@@ -121,7 +121,7 @@ QSharedPointer<QImage> ProtoAutoPilot::matToQImage(cv::Mat const& src)
     QImage img= QImage((uchar*) input.data, input.cols, input.rows, input.step, QImage::Format_RGB888).copy();
     QImage res = img.convertToFormat(QImage::Format_RGB32);
     QSharedPointer<QImage> result ( new  QImage(res));
-    std::string s = "after-_"+std::to_string(debuggerSucks)+"_.jpg";
+    std::string s = "after-_"+std::to_string(debugCounter)+"_.jpg";
     char * tab2 = new char [s.length()+1];
     strcpy (tab2, s.c_str());
     result->save(tab2);

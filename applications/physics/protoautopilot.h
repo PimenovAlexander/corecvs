@@ -28,7 +28,7 @@ public:
     bool active=false;
     void stabilise();
     Vector3dd getCurreentPos(QSharedPointer<QImage> inputImage);
-    int debuggerSucks=0;
+    int debugCounter=0;
     cv::Mat qImageToMat(const QImage &inputImage);
     void changeImage(QSharedPointer<QImage> inputImage);
     void start();
