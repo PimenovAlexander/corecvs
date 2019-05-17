@@ -207,6 +207,83 @@ Polygon ConvexHull::GrahamScan(std::vector<Vector2dd> points)
 }
 
 /* Temporary function */
+int ConvexHull::initalPoint(ProjectivePolygon &points)
+{
+    size_t iMin = 0;
+    double zMin = std::numeric_limits<double>::max();
+
+    for (size_t i = 0; i < points.size(); i++)
+    {
+        double zcost = points[i].normalised() & Vector3dd::OrtZ();
+        if (zcost < zMin) {
+            zMin = zcost;
+            iMin = i;
+        }
+    }
+    //if (debug != NULL) debug->setColor(RGBColor::Red());
+    //if (debug != NULL) debug->addIcoSphere(points[iMin].normalised(), 0.001);
+
+
+    /* We have now selected direction let's check if we have lines futher away from  */
+    Vector3dd orth  = Vector3dd::OrtZ() ^ points[iMin];
+    Vector3dd plane = points[iMin] ^ orth; /* in euclidean coordinates this is a point */
+
+    double cMin = std::numeric_limits<double>::max();
+    for (size_t i = 0; i < points.size(); i++)
+    {
+        double dot = plane & points[i].normalised();
+        if (dot < cMin)
+        {
+            cMin = dot;
+            iMin = i;
+        }
+    }
+    //if (debug != NULL) debug->setColor(RGBColor::Yellow());
+    //if (debug != NULL) debug->addIcoSphere(points[iMin].normalised(), 0.001);
+
+    // SYNC_PRINT(("ConvexHull::GiftWrap(): starting with point (%d of %d) (%lf %lf %lf)\n",
+    //            (int)iMin, (int)points.size(),
+    //            points[iMin].x(), points[iMin].y(), points[iMin].z()));
+
+    return iMin;
+}
+
+
+int ConvexHull::secondPoint(ProjectivePolygon &points, int initalPoint)
+{
+    int sId = -1;
+
+    Vector3dd prev = points[initalPoint];
+    for (size_t i = 0; i < points.size(); i++)
+    {
+        if (i == initalPoint) {
+            continue;
+        }
+        Vector3dd normal = prev ^ points[i];
+        // cout << " " << i << " p:" << points[i] << " - " << normal << endl;
+
+        size_t j = 0;
+        for (; j < points.size(); j++)
+        {
+            // cout << "   " << j;
+            if (j == i || j == initalPoint) {
+                // cout << " skip" << endl;
+                continue;
+            }
+            double v = (normal & points[j]);
+            // cout << "  " << v << endl;
+            if (v < 0) {
+                break;
+            }
+        }
+        if (j == points.size()) {
+            sId = i;
+            break;
+        }
+    }
+    return sId;
+}
+
 bool ConvexHull::GiftWrap(ProjectivePolygon &points, ProjectivePolygon &output, Mesh3D *debug)
 {
     output.clear();
@@ -220,29 +297,26 @@ bool ConvexHull::GiftWrap(ProjectivePolygon &points, ProjectivePolygon &output, 
     }
 
     /* Find one point in hull */
-    size_t iMin = 0;
-    double yMin = std::numeric_limits<double>::max();
-
-    for (size_t i = 0; i < points.size(); i++)
-    {
-        double ycost = points[i].normalised() & Vector3dd::OrtZ();
-        if (ycost < yMin) {
-            yMin = ycost;
-            iMin = i;
-        }
-    }
-    SYNC_PRINT(("ConvexHull::GiftWrap(): starting with point (%d of %d) (%lf %lf %lf)\n",
-                (int)iMin, (int)points.size(),
-                points[iMin].x(), points[iMin].y(), points[iMin].z()));
-
+    size_t iMin = initalPoint(points);
     output.push_back(points[iMin]);
+    Vector3dd prev = points[iMin];
+
     if (debug != NULL) debug->setColor(RGBColor::Amber());
-    if (debug != NULL) debug->addIcoSphere(points[iMin].normalised(), 0.001);
+    if (debug != NULL) debug->addIcoSphere(prev.normalised(), 0.001);
 
-    Vector3dd prev = Vector3dd::OrtZ() /*^ points[iMin]*/;
+    /* Find second point in hull. A known interior point could save time here */
+    int i2Min = secondPoint(points, iMin);
+    if (i2Min == -1) {
+        return false;
+    }
 
-    Vector3dd current = points[iMin];
-    Vector3dd back = prev;
+    Vector3dd current = points[i2Min];
+    output.push_back(points[i2Min]);
+    if (debug) {
+        SYNC_PRINT(("ConvexHull::GiftWrap(): second point (%d of %d) (%lf %lf %lf)\n",
+                (int)iMin, (int)points.size(),
+                current.x(), current.y(), current.z()));
+    }
 
     /* Wrap */
     do {
@@ -262,10 +336,9 @@ bool ConvexHull::GiftWrap(ProjectivePolygon &points, ProjectivePolygon &output, 
 
             double v = splane.normalised() & nplane.normalised();
 
-            SYNC_PRINT(("(%lf %lf %lf) - %lf\n", point.x(), point.y(), point.z(), v));
-            bool forward = (p & back) < 0;
+            // SYNC_PRINT(("(%lf %lf %lf) - %lf\n", point.x(), point.y(), point.z(), v));
 
-            if (v > vmax && forward)
+            if (v > vmax)
             {
                 vmax = v;
                 next = point;
@@ -275,13 +348,11 @@ bool ConvexHull::GiftWrap(ProjectivePolygon &points, ProjectivePolygon &output, 
         if ((next.normalised() - output.front().normalised()).l2Metric() < 1e-7) {
             break;
         }
-        SYNC_PRINT(("ConvexHull::GiftWrap(): next point (%lf %lf %lf)\n",
-                    next.x(), next.y(), next.z()));
+        // SYNC_PRINT(("ConvexHull::GiftWrap(): next point (%lf %lf %lf)\n", next.x(), next.y(), next.z()));
 
         prev = current;
         current = next;
-        output.push_back(next);
-        back = Vector3dd::OrtZ() ^ current;
+        output.push_back(next);     
     } while (output.size() < 6);
     return true;
 }

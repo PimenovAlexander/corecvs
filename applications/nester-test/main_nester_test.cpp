@@ -67,7 +67,7 @@ TEST(Nester, twoRectanges)
     BLPlacement(area, inp); //всякие защиты от пустых множеств отсутствуют
 
 
-    drawSvgPolygons(inp, area.height(), area.width(), "out.svg");
+    drawSvgPolygons(inp, area.height(), area.width(), "nester_out.svg");
 }
 
 TEST(Nester, manyRectanges)
@@ -80,7 +80,7 @@ TEST(Nester, manyRectanges)
         inp.push_back(Polygon::RegularPolygon(4, Vector2dd::Zero(), 20, degToRad(i)));
     }
 
-    drawSvgPolygons(inp, area.height(), area.width(), "in1.svg");
+    drawSvgPolygons(inp, area.height(), area.width(), "nester_in1.svg");
 
     LazySort(inp);
 
@@ -93,7 +93,7 @@ TEST(Nester, manyRectanges)
     BLPlacement(area, inp);
 
 
-    drawSvgPolygons(inp, area.height(), area.width(), "out1.svg");
+    drawSvgPolygons(inp, area.height(), area.width(), "nester_out1.svg");
 }
 
 TEST(Nester, nfp)
@@ -104,7 +104,7 @@ TEST(Nester, nfp)
     Polygon C = nfp(A, B);
     cout << C << endl;
     vector<Polygon> p = { C };
-    drawPolygons(p, 100, 100, "nfp1.bmp");
+    drawPolygons(p, 100, 100, "nester_nfp1.bmp");
 }
 
 

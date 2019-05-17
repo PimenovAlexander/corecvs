@@ -169,6 +169,7 @@ public:
        return operator []((idx - 1 + size()) % size());
     }
 
+    bool hasPoint(const Vector2dd &in, double epsilon = 1e-7) const;
 
     int getNextDifferentIndex(int idx) const
     {

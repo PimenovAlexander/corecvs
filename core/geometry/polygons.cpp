@@ -143,6 +143,16 @@ bool Polygon::hasSelfIntersection() const
     return false;
 }
 
+bool Polygon::hasPoint(const Vector2dd &in, double epsilon) const
+{
+    for (size_t i = 0; i < size(); i++)
+    {
+        if (in.notTooFar(getPoint(i), epsilon))
+            return true;
+    }
+    return false;
+}
+
 Polygon Polygon::RegularPolygon(int sides, const Vector2dd &center, double radius, double startAngleRad)
 {
     Polygon toReturn;

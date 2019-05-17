@@ -38,18 +38,42 @@ bool GiftWrap(ProjectivePolygon &points, ProjectivePolygon &output, Mesh3D *debu
         return true;
     }
 
+#if 1
     /* Find one point in hull */
     size_t iMin = 0;
-    double yMin = std::numeric_limits<double>::max();
+    double zMin = std::numeric_limits<double>::max();
 
     for (size_t i = 0; i < points.size(); i++)
     {
-        double ycost = points[i].normalised() & Vector3dd::OrtZ();
-        if (ycost < yMin) {
-            yMin = ycost;
+        double zcost = points[i].normalised() & Vector3dd::OrtZ();
+        if (zcost < zMin) {
+            zMin = zcost;
             iMin = i;
         }
     }
+    if (debug != NULL) debug->setColor(RGBColor::Red());
+    if (debug != NULL) debug->addIcoSphere(points[iMin].normalised(), 0.001);
+
+
+    /* We have now selected direction let's check if we have lines futher away from  */
+    Vector3dd orth  = Vector3dd::OrtZ() ^ points[iMin];
+    Vector3dd plane = points[iMin] ^ orth; /* in euclidean coordinates this is a point */
+
+    double cMin = std::numeric_limits<double>::max();
+    for (size_t i = 0; i < points.size(); i++)
+    {
+        double dot = plane & points[i].normalised();
+        if (dot < cMin)
+        {
+            cMin = dot;
+            iMin = i;
+        }
+    }
+    if (debug != NULL) debug->setColor(RGBColor::Yellow());
+    if (debug != NULL) debug->addIcoSphere(points[iMin].normalised(), 0.001);
+
+    /* We now have a direction to work from */
+
     output.push_back(points[iMin]);
     Vector3dd prev = points[iMin];
 
@@ -98,9 +122,61 @@ bool GiftWrap(ProjectivePolygon &points, ProjectivePolygon &output, Mesh3D *debu
     SYNC_PRINT(("ConvexHull::GiftWrap(): second point (%d of %d) (%lf %lf %lf)\n",
                 (int)iMin, (int)points.size(),
                 current.x(), current.y(), current.z()));
+#endif
+
+#if 0
+    int mini = 0;
+    int minj = 1;
+    double zMin = std::numeric_limits<double>::max   ();
+    double zMax = std::numeric_limits<double>::lowest();
+
+    for (int i = 0; i < points.size(); i++)
+    {
+        for (int j = 0; j < points.size(); j++)
+        {
+            if (i == j) continue;
+            Vector3dd p1 = points[i].normalised();
+            Vector3dd p2 = points[j].normalised();
+
+            if (p1.z() < 0 && p2.z() > 0) continue;
+            if (p1.z() > 0 && p2.z() < 0) continue;
+
+            Vector3dd plane = (p1 ^ p2);
+            double z = plane.z();
+            cout << " " << i << " " << j << " " << plane << endl;
+            if (z <= 0) {
+                continue;
+            }
+
+            if (z < zMin) {
+                zMin = z;
+                mini = i;
+                minj = j;
+            }
+        }
+    }
+    cout << "-> " << mini << " - " << minj << endl;
+
+    Vector3dd prev    = points[mini];
+    Vector3dd current = points[minj];
 
 
-    //Vector3dd direction = prev;
+    if (debug) {
+        debug->setColor(RGBColor::Yellow());
+        debug->addLineDash(Vector3dd::Zero(), (prev ^ current) * 10.0);
+    }
+
+    output.push_back(prev);
+    output.push_back(current);
+
+    if (debug != NULL) {
+        debug->setColor(RGBColor::Red());
+        debug->addIcoSphere(prev.normalised(), 0.1);
+
+        debug->setColor(RGBColor::Green());
+        debug->addIcoSphere(current.normalised(), 0.1);
+    }
+#endif
 
     /* Wrap */
     int limit = 10;
@@ -112,7 +188,6 @@ bool GiftWrap(ProjectivePolygon &points, ProjectivePolygon &output, Mesh3D *debu
         //if (debug != NULL) debug->addLine(Vector3dd::Zero(), prev.normalised());
 
         Vector3dd next = Vector3dd::Zero();
-        double vmin = std::numeric_limits<double>::max();
         double vmax = std::numeric_limits<double>::lowest();
 
         /* Search for best point */
@@ -157,7 +232,6 @@ bool GiftWrap(ProjectivePolygon &points, ProjectivePolygon &output, Mesh3D *debu
 
             if (v > vmax /*&& forward*/ /*&& part*/)
             {
-                vmin = v;
                 vmax = v;
                 next = point;
             }
@@ -185,6 +259,7 @@ bool GiftWrap(ProjectivePolygon &points, ProjectivePolygon &output, Mesh3D *debu
 
 
     } while (iteration < limit);
+    cout << "Remaining polygons:" << output.size() << endl;
     return true;
 }
 
@@ -209,7 +284,7 @@ void drawPolygon2Color(RGB24Buffer *target, const Polygon &p, RGBColor color1, R
     }
 }
 
-void drawConvexPolygon(RGB24Buffer *target, const ConvexPolygon &cp, RGBColor color)
+void drawConvexPolygon(RGB24Buffer *target, const ConvexPolygon &cp, RGBColor /*color*/)
 {
     AbstractPainter<RGB24Buffer> painter(target);
     for (size_t i = 0; i < cp.faces.size(); i++)
@@ -275,21 +350,26 @@ TEST(convexPolygon, testIntersection)
 {
     RGB24Buffer buffer(330, 330);
 
-    Vector2dd shifts[3] = {
-        Vector2dd(-100, -100),
-        Vector2dd(   0,    0),
-        Vector2dd( 100,  100)
+    Vector2dd shifts[] = {
+        Vector2dd(-100, -100), // 0
+        Vector2dd(-100,  100), // 1
+        Vector2dd(   0,    0), // 2
+        Vector2dd( 100,  100), // 3
+        Vector2dd( 100, -100)  // 4
+
     };
 
-    Polygon p1;
-    p1.push_back(Vector2dd( 10,  10));
-    p1.push_back(Vector2dd( 10, 100));
-    p1.push_back(Vector2dd( 99,  60));
+    Polygon p1 = {
+        { 10,  10 },
+        { 10, 100 },
+        { 99,  60 }
+    };
 
-    Polygon p2;
-    p2.push_back(Vector2dd(100, 100));
-    p2.push_back(Vector2dd(100,  10));
-    p2.push_back(Vector2dd( 11,  60));
+    Polygon p2 = {
+        {100, 100},
+        {100,  10},
+        { 11,  60}
+    };
 
     Vector2dd drawShift = Vector2dd( 100,  100);
 
@@ -307,7 +387,7 @@ TEST(convexPolygon, testIntersection)
         CORE_ASSERT_TRUE(cp2.isInside(check + shifts[i]), "Wrong orientation");
 
       //ConvexPolygon cp3 = ConvexPolygon::merge(cp1, cp2);
-#if 1
+#if 0
         ConvexPolygon cp3 = ConvexPolygon::merge(cp1, cp2);
         ProjectivePolygon pp = ProjectivePolygon::FromConvexPolygon(cp3);
         ProjectivePolygon pps;
@@ -327,24 +407,25 @@ TEST(convexPolygon, testIntersection)
             p3.push_back(l1.intersectWith(l2));
         }
 
-        cout << "Shift:" << i << endl;
-        cout << "pt1" << pt1 << endl;
-        cout << "pt2" << pt2 << endl;
+        cout << "Shift:" << i << "  " << shifts[i] << endl;
+        // cout << "pt1" << pt1 << endl;
+        // cout << "pt2" << pt2 << endl;
 
-        cout << "result" << p3 << endl;
+        //cout << "result" << p3 << endl;
 
         drawPolygon2Color(&buffer, pt1.translated(drawShift), RGBColor::Green(), RGBColor::Yellow());
         drawPolygon2Color(&buffer, pt2.translated(drawShift), RGBColor::Green(), RGBColor::Yellow());
         drawPolygon2Color(&buffer, p3 .translated(drawShift), RGBColor::White(), RGBColor::Cyan());
 
         Polygon bp3 = p3.translated(-shifts[i]);
-#if 0
+        cout << "result" << bp3 << endl;
+#if 1
         CORE_ASSERT_TRUE(bp3.size() == 4, "Wrong intersect size");
 
-        CORE_ASSERT_TRUE(bp3.getPoint(0).notTooFar(Vector2dd(99, 60    ), 0.1), "Wrong intersect point 0");
-        CORE_ASSERT_TRUE(bp3.getPoint(1).notTooFar(Vector2dd(55, 79.775), 0.1), "Wrong intersect point 1");
-        CORE_ASSERT_TRUE(bp3.getPoint(2).notTooFar(Vector2dd(11, 60    ), 0.1), "Wrong intersect point 2");
-        CORE_ASSERT_TRUE(bp3.getPoint(3).notTooFar(Vector2dd(55, 35.280), 0.1), "Wrong intersect point 3");
+        CORE_ASSERT_TRUE(bp3.hasPoint(Vector2dd(99, 60    ), 0.1), "Wrong intersect point 0");
+        CORE_ASSERT_TRUE(bp3.hasPoint(Vector2dd(55, 79.775), 0.1), "Wrong intersect point 1");
+        CORE_ASSERT_TRUE(bp3.hasPoint(Vector2dd(11, 60    ), 0.1), "Wrong intersect point 2");
+        CORE_ASSERT_TRUE(bp3.hasPoint(Vector2dd(55, 35.280), 0.1), "Wrong intersect point 3");
 #endif
     }
 
@@ -359,20 +440,22 @@ TEST(convexPolygon, testInterDraw)
     mesh.setColor(RGBColor::Red());
     RGB24Buffer buffer(330, 330);
 
-    Polygon p1;
-    p1.push_back(Vector2dd( 10,  10));
-    p1.push_back(Vector2dd( 10, 100));
-    p1.push_back(Vector2dd( 99,  60));
+    Polygon p1 = {
+        { 10,  10 },
+        { 10, 100 },
+        { 99,  60 }
+    };
 
-    Polygon p2;
-    p2.push_back(Vector2dd(100, 100));
-    p2.push_back(Vector2dd(100,  10));
-    p2.push_back(Vector2dd( 11,  60));
+    Polygon p2 = {
+        {100, 100},
+        {100,  10},
+        { 11,  60}
+    };
 
-    p1.transform(Matrix33::ShiftProj(-100, -100) * Matrix33::ScaleProj(1/1.0));
-    p2.transform(Matrix33::ShiftProj(-100, -100) * Matrix33::ScaleProj(1/1.0));
+    p1.transform(Matrix33::ShiftProj(10, -10) * Matrix33::ScaleProj(1/10.0));
+    p2.transform(Matrix33::ShiftProj(10, -10) * Matrix33::ScaleProj(1/10.0));
 
-    Rectangled holder;
+    Rectangled holder = Rectangled::Empty();
     holder.extendToFit(p1);
     holder.extendToFit(p2);
 
@@ -674,6 +757,7 @@ TEST(convexPolygon, testEmpty)
     cout << "Simplifed\n" <<  s << endl;
     drawConvexPolygon(&space2, s, RGBColor::Green());
 
+    ASSERT_TRUE((s.faces.empty(), "Failed to intersect disjoint polygons"));
 
     BufferFactory::getInstance()->saveRGB24Bitmap(space1, "empty1_poly.bmp");
     BufferFactory::getInstance()->saveRGB24Bitmap(space2, "empty2_poly.bmp");
