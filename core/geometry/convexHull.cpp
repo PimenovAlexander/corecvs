@@ -206,7 +206,6 @@ Polygon ConvexHull::GrahamScan(std::vector<Vector2dd> points)
     return hull;
 }
 
-/* Temporary function */
 int ConvexHull::initalPoint(ProjectivePolygon &points)
 {
     size_t iMin = 0;
@@ -220,9 +219,6 @@ int ConvexHull::initalPoint(ProjectivePolygon &points)
             iMin = i;
         }
     }
-    //if (debug != NULL) debug->setColor(RGBColor::Red());
-    //if (debug != NULL) debug->addIcoSphere(points[iMin].normalised(), 0.001);
-
 
     /* We have now selected direction let's check if we have lines futher away from  */
     Vector3dd orth  = Vector3dd::OrtZ() ^ points[iMin];
@@ -238,13 +234,6 @@ int ConvexHull::initalPoint(ProjectivePolygon &points)
             iMin = i;
         }
     }
-    //if (debug != NULL) debug->setColor(RGBColor::Yellow());
-    //if (debug != NULL) debug->addIcoSphere(points[iMin].normalised(), 0.001);
-
-    // SYNC_PRINT(("ConvexHull::GiftWrap(): starting with point (%d of %d) (%lf %lf %lf)\n",
-    //            (int)iMin, (int)points.size(),
-    //            points[iMin].x(), points[iMin].y(), points[iMin].z()));
-
     return iMin;
 }
 
