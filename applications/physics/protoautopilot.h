@@ -10,6 +10,7 @@
 #include <bits/stl_list.h>
 #include <bits/stl_queue.h>
 #include <queue>
+#include <QtGui/qimage.h>
 
 #include <opencv2/features2d/features2d.hpp>
 
@@ -29,12 +30,17 @@ public:
     void stabilise();
     Vector3dd getCurreentPos(QSharedPointer<QImage> inputImage);
     int debugCounter=0;
-    cv::Mat qImageToMat(const QImage &inputImage);
-    void changeImage(QSharedPointer<QImage> inputImage);
+     void changeImage(QSharedPointer<QImage> inputImage);
     void start();
     QSharedPointer<QImage> matToQImage(const cv::Mat &src);
-     cv::Mat QImageToMat2(const QImage &src);
+    cv::Mat QImageToMat2(const QImage &src);
+    void testImageVoid();
 private:
+     //for memory
+     cv::Mat temp;
+     QImage outputQImage;
+
+
     vector<MainObject> mainObjects;
     CopterInputs failSafe;
     std::queue<CopterInputs> outputs ;

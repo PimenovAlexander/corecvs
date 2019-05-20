@@ -24,6 +24,7 @@ ProtoAutoPilot::ProtoAutoPilot()
 
 void ProtoAutoPilot::start()
 {
+    testImageVoid();
     active=true;
 }
 
@@ -69,33 +70,14 @@ void ProtoAutoPilot::changeImage(QSharedPointer<QImage> inputImage)  // here we 
     //cv::imshow("Display window",canvas);
     //cv::circle(canvas,cv::Point(30,30),20,cv::Scalar(0,0,0));
     //cv::cvtColor(canvas,canvas,CV_BGR2GRAY);
-   // cv::imwrite("test.jpg",canvas);
-    cv::Mat mat1= QImageToMat2(*inputImage);
-    outputImage = matToQImage(mat1);
+    //cv::imwrite("test.jpg",canvas);
+    //cv::Mat mat1 = QImageToMat2(*inputImage);
+    // QImage *image = new QImage(*inputImage);
+    cv::Mat mat1 = QImageToMat2(*inputImage);
+    //cv::circle(mat1,cv::Point(200,200),50,cv::Scalar(255,255,255),CV_FILLED);
+    QSharedPointer<QImage> r = matToQImage(temp);
 }
 
-cv::Mat ProtoAutoPilot::qImageToMat(const QImage &inputIm)
-{
-    cv::Mat result(inputIm.height(),inputIm.width(),CV_8UC3);
-    for (int i=0;i<inputIm.height();i++)
-    {
-        memcpy(result.ptr(i),inputIm.scanLine(i),inputIm.bytesPerLine());   //memory allocated by cv::mat may not have the same bytesPerine as the QImage, but maybe it will work
-    }
-    cout<<"for dot"<<endl;
-    return result;
-}
-
-QImage Mat2QImage(cv::Mat const& src)
-{
-
-     cv::Mat temp(src.cols,src.rows,src.type()); // make the same cv::Mat
-     cvtColor(src, temp,CV_BGR2RGB); // cvtColor Makes a copt, that what i need
-     //cv::imwrite("111",src);
-     //cv::imshow("name",temp);
-     QImage dest(temp.data, temp.cols, temp.rows, temp.step, QImage::Format_RGB888);
-     dest.bits();
-     return dest.copy();
-}
 
 cv::Mat ProtoAutoPilot::QImageToMat2(QImage const &srcc)
 {
@@ -103,32 +85,47 @@ cv::Mat ProtoAutoPilot::QImageToMat2(QImage const &srcc)
     std::string s = "before-_"+std::to_string(debugCounter)+"_.jpg";
     char * tab2 = new char [s.length()+1];
     strcpy (tab2, s.c_str());
-    srcc.save(tab2);
-
+    //srcc.save(tab2);
     QImage src = srcc.convertToFormat(QImage::Format_RGB888);
-    cv::Mat temp( src.width(),src.height(),CV_8UC3,const_cast<uchar*>(src.bits()),src.bytesPerLine());
-    cv::Mat result;
+    temp = cv::Mat( src.width(),src.height(),CV_8UC3,const_cast<uchar*>(src.bits()),src.bytesPerLine());
+    /*cv::FileStorage storage("Mat.yml",cv::FileStorage::WRITE);
+    storage<<"img"<<temp;
+    storage.release();*/
     //cv::cvtColor(temp,result,CV_BGR2RGB);
-    return temp.clone();
+    return temp;
 
 }
 
 
-QSharedPointer<QImage> ProtoAutoPilot::matToQImage(cv::Mat const& src)
+
+
+QSharedPointer<QImage> ProtoAutoPilot::matToQImage(cv::Mat const &src)
 {
 
     cv::Mat input(src.cols,src.rows,src.type()); // make the same cv::Mat
-    QImage img= QImage((uchar*) input.data, input.cols, input.rows, input.step, QImage::Format_RGB888).copy();
-    QImage res = img.convertToFormat(QImage::Format_RGB32);
-    QSharedPointer<QImage> result ( new  QImage(res));
+    QImage img = QImage((uchar*) input.data, input.cols, input.rows, input.step, QImage::Format_RGB888).copy();
+    //QImage res = img.convertToFormat(QImage::Format_RGB32);
+    outputQImage = img.convertToFormat(QImage::Format_RGB32);;
+    QSharedPointer<QImage> result ( new  QImage(outputQImage));
+    outputImage = QSharedPointer<QImage>(new QImage(outputQImage));
     std::string s = "after-_"+std::to_string(debugCounter)+"_.jpg";
     char * tab2 = new char [s.length()+1];
     strcpy (tab2, s.c_str());
-    result->save(tab2);
+    //res.save(tab2);
+
+    s = "LastAfter-_"+std::to_string(debugCounter)+"_.jpg";
+    tab2 = new char [s.length()+1];
+    strcpy (tab2, s.c_str());
+
+    //img.save(tab2);
     return result;
 }
 
 
-
+void ProtoAutoPilot::testImageVoid()
+{
+    QImage im ("test.jpg");
+    matToQImage(QImageToMat2(im))->save("resultOfTest.jpg");
+}
 
 
