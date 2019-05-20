@@ -24,7 +24,7 @@ ProtoAutoPilot::ProtoAutoPilot()
 
 void ProtoAutoPilot::start()
 {
-    testImageVoid();
+    //testImageVoid();
     active=true;
 }
 
