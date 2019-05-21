@@ -21,6 +21,7 @@ INCLUDEPATH += .
 INCLUDEPATH += joystick
 INCLUDEPATH += radio
 INCLUDEPATH += mixer
+INCLUDEPATH += autopilot
 
 
 HEADERS += \
@@ -40,10 +41,13 @@ HEADERS += \
     copterInputs.h \
     joystick/mixerChannelOperationWidget.h \
     frameProcessor.h \
-    protoautopilot.h \
     copter/quad.h \
     physicsMainWindow.h \
-    physicsAboutWidget.h
+    physicsAboutWidget.h \
+    autopilot/protoautopilot.h \
+    comcontroller.h \
+
+
 
 SOURCES += \
     simulation.cpp \
@@ -63,10 +67,12 @@ SOURCES += \
     copterInputs.cpp \
     joystick/mixerChannelOperationWidget.cpp \
     frameProcessor.cpp \
-    protoautopilot.cpp \
     copter/quad.cpp \
     physicsMainWindow.cpp \
-    physicsAboutWidget.cpp
+    physicsAboutWidget.cpp \
+    autopilot/protoautopilot.cpp \
+    comcontroller.cpp \
+
 
 FORMS += \
     joystick/JoystickOptionsWidget.ui \

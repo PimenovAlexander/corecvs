@@ -1,7 +1,7 @@
 #ifndef COMCONTROLLER_H
 #define COMCONTROLLER_H
 
-#include "controllrecord.h"
+//#include "controllrecord.h"
 
 #include <QSerialPort>
 

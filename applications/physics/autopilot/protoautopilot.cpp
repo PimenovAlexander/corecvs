@@ -98,7 +98,6 @@ cv::Mat ProtoAutoPilot::QImageToMat2(QImage const &srcc)
 
 
 
-
 QSharedPointer<QImage> ProtoAutoPilot::matToQImage(cv::Mat const &src)
 {
 
@@ -118,6 +117,7 @@ QSharedPointer<QImage> ProtoAutoPilot::matToQImage(cv::Mat const &src)
     strcpy (tab2, s.c_str());
 
     //img.save(tab2);
+    result->save(tab2);
     return result;
 }
 
