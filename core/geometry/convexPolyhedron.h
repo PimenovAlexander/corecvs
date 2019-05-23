@@ -100,6 +100,8 @@ public:
     static ConvexPolygon intersect (const ConvexPolygon &a1, const ConvexPolygon &a2);
     /*Same as intersect but without simplification */
     static ConvexPolygon merge     (const ConvexPolygon &a1, const ConvexPolygon &a2);
+
+    ConvexPolygon permutate(int seed);
 };
 
 

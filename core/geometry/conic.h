@@ -71,7 +71,7 @@ public:
      *
      **/
     template<class RayType>
-    bool intersectRayHelper(const RayType &ray, double &t1, double &t2 )
+    bool intersectRayHelper(const RayType &ray, double &t1, double &t2 ) const
     {
 
         VectorType toCenter  = c  - ray.p;
@@ -116,7 +116,7 @@ public:
     static Circle2d Circumcircle(const Triangle2dd& triangle);
 
     bool intersectWith(const Circle2d &other, Vector2dd &point1, Vector2dd &point2);
-    bool intersectWith(const Ray2d &ray, double &t1, double &t2);
+    bool intersectWith(const Ray2d &ray, double &t1, double &t2) const;
 
 };
 

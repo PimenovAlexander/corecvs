@@ -38,8 +38,10 @@ public:
 
 
     /* */
-    static int initalPoint(ProjectivePolygon &points);
+    static Vector3dd project(const Vector3dd &line, const Vector3dd &point);
+    static int initalPoint(ProjectivePolygon &planes);
     static int secondPoint(ProjectivePolygon &points, int initalPoint);
+
     static bool GiftWrap(ProjectivePolygon &points, ProjectivePolygon &output, Mesh3D *debug = NULL);
 
 

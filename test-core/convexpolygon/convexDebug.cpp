@@ -1,10 +1,107 @@
 #include "convexDebug.h"
+#include "core/geometry/convexHull.h"
+
+using namespace corecvs;
 
 ConvexDebug::ConvexDebug()
 {
 
 }
 
+int ConvexDebug::InitailPoint(ProjectivePolygon &planes, Mesh3D *debug)
+{
+    int initId = 0;
+    Vector3dd currentPlane = planes[0];
+    Vector3dd initailPoint = ConvexHull::project(currentPlane, Vector3dd::OrtZ());
+    if (initailPoint.z() < 0) initailPoint = -initailPoint;
+
+    cout << "Starting with Plane" << currentPlane << endl;
+    cout << "Starting with Point" << initailPoint << endl;
+
+
+    for (size_t i = 1; i < planes.size(); i++)
+    {
+        Vector3dd newPlane = planes[i];
+        double v = initailPoint & newPlane;
+
+        cout << "Checking Plane" << newPlane << endl;
+
+        /*Check if this plane doesn't additionally constrain the point*/
+        if (v > 0) {
+            cout << "  Trivial" << endl;
+            continue;
+        }
+        initId = i;
+
+        /* Project points to new plane */
+        Vector3dd projected = ConvexHull::project(newPlane, initailPoint);
+        if (projected.z() < 0) projected = -projected;
+
+        cout << "  Projected point" << projected << endl ;
+        int log = 0;
+
+        if (i == log && debug != NULL) {
+            debug->setColor(RGBColor::Red());
+            //debug->addLine(Vector3dd::Zero(), initailPoint * 20.0);
+            debug->addIcoSphere(Vector3dd(initailPoint.project(), 1.0), 0.1);
+            drawProjectiveLines(*debug, currentPlane, Circle2d(Vector2dd::Zero(), 40.0));
+
+            debug->setColor(RGBColor::Green());
+            debug->addLine(Vector3dd::Zero(), projected * 20.0);
+            debug->addIcoSphere(Vector3dd(projected.project(), 1.0), 0.1);
+            drawProjectiveLines(*debug, newPlane, Circle2d(Vector2dd::Zero(), 40.0));
+
+
+        }
+
+
+        if ((projected & currentPlane) > 0) {
+            cout << "    Projected used" << endl;
+            initailPoint = projected;
+            currentPlane = newPlane;
+        } else {
+            cout << "    Intersection used" << endl;
+            initailPoint = currentPlane ^ newPlane;
+            currentPlane = newPlane;
+            if (initailPoint.z() < 0) initailPoint = -initailPoint;
+
+            if (i == log && debug != NULL) {
+                debug->setColor(RGBColor::Navy());
+                debug->addIcoSphere(Vector3dd(initailPoint.project(), 1.0), 0.1);
+            }
+
+        }
+    }
+
+
+    return initId;
+}
+
+void ConvexDebug::drawProjectiveLines(Mesh3D &mesh, const Vector3dd &lined, const Circle2d &circle2d)
+{
+   Line2d line = Line2d::FromDualP(lined);
+    // mesh.addPoint(Vector3dd(line.toDualS(), 0.6));
+    mesh.addLineDash(Vector3dd::Zero(), line.normalised(), 0.05, 0.1);
+
+    double t1 = 0.0;
+    double t2 = 0.0;
+    Ray2d r = line.toRay();
+    r.normalise();
+    if (circle2d.intersectWith(r, t1, t2))
+    {
+        mesh.addLine(
+            Vector3dd(r.getPoint(t1), 1.0),
+            Vector3dd(r.getPoint(t2), 1.0));
+
+        for (double t = t1; t < t2; t+=1)
+        {
+
+            mesh.addLine(
+                Vector3dd(r.getPoint(t), 1.0),
+                Vector3dd(r.getPoint(t) + line.normal().normalised() * 0.3, 1.0));
+        }
+    }
+}
 
 /* Temporary function */
 bool ConvexDebug::GiftWrap(ProjectivePolygon &points, ProjectivePolygon &output, Mesh3D *debug)
@@ -20,6 +117,7 @@ bool ConvexDebug::GiftWrap(ProjectivePolygon &points, ProjectivePolygon &output,
     }
 
 #if 1
+#if 0
     /* Find one point in hull */
     size_t iMin = 0;
     double zMin = std::numeric_limits<double>::max();
@@ -33,17 +131,25 @@ bool ConvexDebug::GiftWrap(ProjectivePolygon &points, ProjectivePolygon &output,
         }
     }
     if (debug != NULL) debug->setColor(RGBColor::Red());
-    if (debug != NULL) debug->addIcoSphere(points[iMin].normalised(), 0.001);
+    if (debug != NULL) debug->addIcoSphere(points[iMin].normalised(), 0.01);
 
 
     /* We have now selected direction let's check if we have lines futher away from  */
     Vector3dd orth  = Vector3dd::OrtZ() ^ points[iMin];
     Vector3dd plane = points[iMin] ^ orth; /* in euclidean coordinates this is a point */
 
+    plane = -Vector3dd::OrtY();
+
+    if (debug != NULL) debug->setColor(RGBColor::Pink());
+    if (debug != NULL) debug->addIcoSphere(plane.normalised(), 0.01);
+    if (debug != NULL) debug->addLineDash(Vector3dd::Zero(), plane.normalised(), 0.01);
+
+
+
     double cMin = std::numeric_limits<double>::max();
     for (size_t i = 0; i < points.size(); i++)
     {
-        double dot = plane & points[i].normalised();
+        double dot = (plane & points[i].normalised());
         if (dot < cMin)
         {
             cMin = dot;
@@ -51,9 +157,11 @@ bool ConvexDebug::GiftWrap(ProjectivePolygon &points, ProjectivePolygon &output,
         }
     }
     if (debug != NULL) debug->setColor(RGBColor::Yellow());
-    if (debug != NULL) debug->addIcoSphere(points[iMin].normalised(), 0.001);
+    if (debug != NULL) debug->addIcoSphere(points[iMin].normalised(), 0.01);
 
     /* We now have a direction to work from */
+#endif
+    size_t iMin = InitailPoint(points, debug);
 
     output.push_back(points[iMin]);
     Vector3dd prev = points[iMin];

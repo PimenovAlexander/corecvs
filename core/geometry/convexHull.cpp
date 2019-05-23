@@ -206,35 +206,47 @@ Polygon ConvexHull::GrahamScan(std::vector<Vector2dd> points)
     return hull;
 }
 
-int ConvexHull::initalPoint(ProjectivePolygon &points)
+Vector3dd ConvexHull::project(const Vector3dd &line, const Vector3dd &point)
 {
-    size_t iMin = 0;
-    double zMin = std::numeric_limits<double>::max();
+    //cout << "ConvexDebug::project(" << line << ", " << point << ");" << endl;
+    Vector3dd normal = Vector3dd((line.z() > 0) ? line.xy() : -line.xy(), 0.0);
+    Vector3dd result = (normal ^ point) ^ line;
+    //cout << "Result:" << result << endl;
+    return result;
+}
 
-    for (size_t i = 0; i < points.size(); i++)
+int ConvexHull::initalPoint(ProjectivePolygon &planes)
+{
+    int initId = 0;
+    Vector3dd currentPlane = planes[0];
+    Vector3dd initailPoint = project(currentPlane, Vector3dd::OrtZ());
+    if (initailPoint.z() < 0) initailPoint = -initailPoint;
+
+    for (size_t i = 1; i < planes.size(); i++)
     {
-        double zcost = points[i].normalised() & Vector3dd::OrtZ();
-        if (zcost < zMin) {
-            zMin = zcost;
-            iMin = i;
+        Vector3dd newPlane = planes[i];
+        double v = initailPoint & newPlane;
+
+        /*Check if this plane doesn't additionally constrain the point*/
+        if (v > 0) {
+            continue;
+        }
+        initId = i;
+
+        /* Project points to new plane */
+        Vector3dd projected = project(newPlane, initailPoint);
+        if (projected.z() < 0) projected = -projected;
+
+        if ((projected & currentPlane) > 0) {
+            initailPoint = projected;
+            currentPlane = newPlane;
+        } else {
+            initailPoint = currentPlane ^ newPlane;
+            currentPlane = newPlane;
+            if (initailPoint.z() < 0) initailPoint = -initailPoint;
         }
     }
-
-    /* We have now selected direction let's check if we have lines futher away from  */
-    Vector3dd orth  = Vector3dd::OrtZ() ^ points[iMin];
-    Vector3dd plane = points[iMin] ^ orth; /* in euclidean coordinates this is a point */
-
-    double cMin = std::numeric_limits<double>::max();
-    for (size_t i = 0; i < points.size(); i++)
-    {
-        double dot = plane & points[i].normalised();
-        if (dot < cMin)
-        {
-            cMin = dot;
-            iMin = i;
-        }
-    }
-    return iMin;
+    return initId;
 }
 
 

@@ -790,6 +790,14 @@ public:
        return Line2d(n, -(p & n));
     }
 
+    Vector2dd projectPointTo(const Vector2dd &point) const
+    {
+        double d = pointWeight(point);
+        double l2 = normal().sumAllElementsSq();
+        double t = (d / l2);
+        return point - t * normal();
+    }
+
     /**
      *   projecting zero to the current line
      **/

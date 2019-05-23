@@ -2,6 +2,8 @@
 #include "core/geometry/halfspaceIntersector.h"
 #include "mesh3d.h"
 
+#include <random>
+
 namespace corecvs {
 
 ConvexPolyhedron::ConvexPolyhedron()
@@ -67,6 +69,26 @@ ConvexPolygon ConvexPolygon::merge(const ConvexPolygon &a1, const ConvexPolygon 
     toReturn = a1;
     toReturn.append(a2);
     return toReturn;
+}
+
+ConvexPolygon ConvexPolygon::permutate(int seed)
+{
+    ConvexPolygon result;
+    std::mt19937 mt(seed);
+    std::uniform_int_distribution<int> dis(0, this->size() - 1);
+
+    result.faces.resize(faces.size(), Vector3dd::NaN());
+    for (size_t i = 0; i < faces.size(); i++)
+    {
+        while (true) {
+            int val = dis(mt);
+            if (result.faces[val].hasNans()) {
+                result.faces[val] = faces[i];
+                break;
+            }
+        }
+    }
+    return result;
 }
 
 ConvexPolygon ConvexPolygon::intersect(const ConvexPolygon &a1, const ConvexPolygon &a2)
