@@ -705,7 +705,7 @@ void PhysicsMainWindow::updateUi()
         {
             image->save("before.jpg");
             iiAutoPilot.makeStrategy(image);
-            cout<<"image changed"<<endl;
+            //cout<<"image changed"<<endl;
             image = iiAutoPilot.outputImage;
             image->save("after.jpg");
         }

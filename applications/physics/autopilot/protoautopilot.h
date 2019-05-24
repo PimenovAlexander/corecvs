@@ -1,12 +1,13 @@
 #ifndef PROTOAUTOPILOT_H
 #define PROTOAUTOPILOT_H
 
+#include "vertexsquare.h"
 #include <QSharedPointer>
 #include "bits/stdc++.h"
 #include "copterInputs.h"
 #include "list"
 #include "iostream"
-#include "mainObject.h"                               //Vector3dd here
+#include "mainObject.h"                               //Vector3dd here, and i dont understand where exactly
 #include <bits/stl_list.h>
 #include <bits/stl_queue.h>
 #include <queue>
@@ -35,6 +36,9 @@ public:
     QSharedPointer<QImage> matToQImage(const cv::Mat &src);
     cv::Mat QImageToMat2(const QImage &src);
     void testImageVoid();
+    VertexSquare getVertexSquareFromMat(cv::Mat input);
+    void odinOdometryTest();
+    QSharedPointer<QImage> matToQImage(const cv::Mat &src, char nameToSave[]);
 private:
      //for memory
      cv::Mat temp;

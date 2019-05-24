@@ -3,6 +3,7 @@
 #include "iostream"
 #include "bits/stdc++.h"
 #include <QtGui/qimage.h>
+#include "vertexsquare.h"
 
 #include <QSharedPointer>
 #include <opencv2/features2d.hpp>
@@ -25,6 +26,7 @@ ProtoAutoPilot::ProtoAutoPilot()
 void ProtoAutoPilot::start()
 {
     //testImageVoid();
+    odinOdometryTest();
     active=true;
 }
 
@@ -49,7 +51,53 @@ Vector3dd  ProtoAutoPilot::getCurreentPos(QSharedPointer<QImage> inputImage)
     return result;
 }
 
+void ProtoAutoPilot::odinOdometryTest()
+{
+    getVertexSquareFromMat(QImageToMat2(QImage("test1.jpg")));
+}
 
+VertexSquare ProtoAutoPilot::getVertexSquareFromMat(cv::Mat input)
+{
+    QSharedPointer<QImage> q;
+
+    cv::Mat grayInput;
+    cv::cvtColor(input,grayInput,CV_RGB2GRAY);
+
+    cv::Mat res1;
+    cv::cvtColor(grayInput,res1,CV_GRAY2RGB);
+    q = matToQImage(res1);
+    q->save("result1.jpg");
+
+    cv::Mat sqr = QImageToMat2(QImage("sqr.png"));
+    cv::Mat graySQR;
+    cv::cvtColor(sqr,graySQR,CV_RGB2GRAY);
+
+    vector<cv::KeyPoint> keypointsOfInput;
+    vector<cv::KeyPoint> keypointsOfSQR;
+    int treshold = 9;
+
+    cv::FAST(input,keypointsOfInput,treshold);
+    cv::FAST(sqr,keypointsOfSQR,treshold);
+
+    for  (int i=0;i<keypointsOfInput.size();i++)
+    {
+        //cv::circle(grayInput,keypointsOfInput.at(i).pt,5,cv::Scalar(0),2,8,0);
+    }
+    QString name = "result2";
+    cv::Mat output;
+    cv::cvtColor(grayInput,output,CV_GRAY2RGB);
+
+    q = matToQImage(output);
+    q->save("result.jpg");
+    std::cout<<"result1"<<std::endl;
+    //cv::namedWindow("test");
+    //cv::imshow("test",grayInput);
+
+
+
+
+    return VertexSquare();
+}
 
 std::queue<CopterInputs> ProtoAutoPilot::getOutputs(Vector3dd diff)
 {
@@ -98,9 +146,32 @@ cv::Mat ProtoAutoPilot::QImageToMat2(QImage const &srcc)
 
 
 
+QSharedPointer<QImage> ProtoAutoPilot::matToQImage(cv::Mat const &src, char* nameToSave)
+{
+    cv::Mat input(src.cols,src.rows,src.type()); // make the same cv::Mat
+    QImage img = QImage((uchar*) input.data, input.cols, input.rows, input.step, QImage::Format_RGB888).copy();
+    //QImage res = img.convertToFormat(QImage::Format_RGB32);
+    outputQImage = img.convertToFormat(QImage::Format_RGB32);;
+    QSharedPointer<QImage> result ( new  QImage(outputQImage));
+    outputImage = QSharedPointer<QImage>(new QImage(outputQImage));
+    std::string s = "after-_"+std::to_string(debugCounter)+"_.jpg";
+    char * tab2 = new char [s.length()+1];
+    strcpy (tab2, s.c_str());
+    //res.save(tab2);
+
+    s = "LastAfter-_"+std::to_string(debugCounter)+"_.jpg";
+    tab2 = new char [s.length()+1];
+    strcpy (tab2, s.c_str());
+
+    result->save(nameToSave);
+    //img.save(tab2);
+    //result->save(tab2);
+    return result;
+}
+
+
 QSharedPointer<QImage> ProtoAutoPilot::matToQImage(cv::Mat const &src)
 {
-
     cv::Mat input(src.cols,src.rows,src.type()); // make the same cv::Mat
     QImage img = QImage((uchar*) input.data, input.cols, input.rows, input.step, QImage::Format_RGB888).copy();
     //QImage res = img.convertToFormat(QImage::Format_RGB32);
@@ -117,7 +188,7 @@ QSharedPointer<QImage> ProtoAutoPilot::matToQImage(cv::Mat const &src)
     strcpy (tab2, s.c_str());
 
     //img.save(tab2);
-    result->save(tab2);
+    //result->save(tab2);
     return result;
 }
 

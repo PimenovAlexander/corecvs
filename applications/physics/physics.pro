@@ -46,6 +46,7 @@ HEADERS += \
     physicsAboutWidget.h \
     autopilot/protoautopilot.h \
     comcontroller.h \
+    autopilot/vertexsquare.h
 
 
 
@@ -72,6 +73,7 @@ SOURCES += \
     physicsAboutWidget.cpp \
     autopilot/protoautopilot.cpp \
     comcontroller.cpp \
+    autopilot/vertexsquare.cpp
 
 
 FORMS += \
