@@ -31,14 +31,17 @@ public:
     void stabilise();
     Vector3dd getCurreentPos(QSharedPointer<QImage> inputImage);
     int debugCounter=0;
-     void changeImage(QSharedPointer<QImage> inputImage);
+    void changeImage(QSharedPointer<QImage> inputImage);
     void start();
-    QSharedPointer<QImage> matToQImage(const cv::Mat &src);
-    cv::Mat QImageToMat2(const QImage &src);
+    //QSharedPointer<QImage> matToQImage(const cv::Mat &src);
+    //cv::Mat QImageToMat2(const QImage &src);
     void testImageVoid();
-    VertexSquare getVertexSquareFromMat(cv::Mat input);
     void odinOdometryTest();
-    QSharedPointer<QImage> matToQImage(const cv::Mat &src, char nameToSave[]);
+    //QSharedPointer<QImage> matToQImage(const cv::Mat &src, char nameToSave[]);
+
+    QSharedPointer<QImage> mat2QImage(const cv::Mat &src);
+    cv::Mat QImage2Mat(const QImage &srcc);
+    VertexSquare getVertexSquareFromMat(const cv::Mat input);
 private:
      //for memory
      cv::Mat temp;

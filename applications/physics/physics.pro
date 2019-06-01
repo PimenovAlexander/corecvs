@@ -83,6 +83,17 @@ FORMS += \
     physicsMainWindow.ui \
     physicsAboutWidget.ui
 
+
+LIBS+=  -lopencv_core\
+        -lopencv_imgproc\
+        -lopencv_imgcodecs\
+        -lopencv_highgui\
+        -lopencv_flann\
+        -lopencv_calib3d\
+        -lopencv_features2d\
+        -lopencv_xfeatures2d
+        #-lopencv_xfeatures2d
+
 #RESOURCES += ../../resources/main.qrc
 
 #HEADERS += xml/generated/*.h

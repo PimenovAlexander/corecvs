@@ -771,3 +771,8 @@ void PhysicsMainWindow::on_toolButton_2_released()
         iiAutoPilot.start();
     }
 }
+
+void PhysicsMainWindow::on_pushButton_released()
+{
+    iiAutoPilot.testImageVoid();
+}
