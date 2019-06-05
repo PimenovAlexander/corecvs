@@ -711,7 +711,7 @@ void PhysicsMainWindow::updateUi()
         }
         else
         {
-            cout<<"AutoPilot turned off"<<endl;
+            //cout<<"AutoPilot turned off"<<endl;
         }
         ui->imageView->setImage(image);
     }

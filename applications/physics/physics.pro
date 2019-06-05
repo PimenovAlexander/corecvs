@@ -92,7 +92,6 @@ LIBS+=  -lopencv_core\
         -lopencv_calib3d\
         -lopencv_features2d\
         -lopencv_xfeatures2d
-        #-lopencv_xfeatures2d
 
 #RESOURCES += ../../resources/main.qrc
 
