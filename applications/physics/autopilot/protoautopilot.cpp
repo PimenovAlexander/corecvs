@@ -60,11 +60,10 @@ void ProtoAutoPilot::odinOdometryTest()
     //getVertexSquareFromMat(QImageToMat2(QImage("test1.jpg")));
 }
 
-VertexSquare ProtoAutoPilot::getVertexSquareFromMat(cv::Mat const input)
+VertexSquare ProtoAutoPilot::getVertexSquareFromMat(cv::Mat const inputtt)
 {
-    cv::imshow("input",input);
-    cv::Mat sqr = QImage2Mat(QImage("sqr.png"));
-    cv::imshow("sqr",sqr);
+    cv::Mat sqr = QImage2Mat(QImage("test1.jpg"));
+    cv::Mat input = QImage2Mat(QImage("sqr2.jpg"));
 
     #ifdef OPENCV_ENABLE_NONFREE
     vector<cv::KeyPoint> keypointsOfInput;
@@ -77,31 +76,30 @@ VertexSquare ProtoAutoPilot::getVertexSquareFromMat(cv::Mat const input)
 
     detector->setHessianThreshold(400);
     cv::Mat descriptors1, descriptors2;
-    if (debugCounter>2)                // why does it works only after 2 click???????????????
-    {
-        detector->detectAndCompute( input, cv::noArray(), keypointsOfInput, descriptors1 );
-        detector->detectAndCompute( sqr, cv::noArray(), keypointsOfSQR, descriptors2 );
+    cv::imshow("input",input);
+    cv::imshow("sqr",sqr);
 
-        std::vector<std::vector<cv::DMatch>> matches;
-        cv::Ptr<cv::DescriptorMatcher> matcher = cv::DescriptorMatcher::create(cv::DescriptorMatcher::FLANNBASED);
-        matcher->knnMatch(descriptors1,descriptors2,matches,2);
-        const float ratio_thresh = 0.7f;
+    detector->detectAndCompute( input, cv::noArray(), keypointsOfInput, descriptors1 );
+    detector->detectAndCompute( sqr, cv::noArray(), keypointsOfSQR, descriptors2 );
 
-        std::vector<cv::DMatch> goodMatches;
-        for (size_t i = 0; i < matches.size(); i++)
-            {
-                if (matches[i][0].distance < ratio_thresh * matches[i][1].distance)
-                {
-                    goodMatches.push_back(matches[i][0]);
-                }
-            }
+    std::vector<std::vector<cv::DMatch>> matches;
+    cv::Ptr<cv::DescriptorMatcher> matcher = cv::DescriptorMatcher::create(cv::DescriptorMatcher::FLANNBASED);
+    matcher->knnMatch(descriptors1,descriptors2,matches,2);
+    const float ratio_thresh = 0.7f;
 
-        cv::Mat imgMatches;
+    std::vector<cv::DMatch> goodMatches;
+    for (size_t i = 0; i < matches.size(); i++)
+        {
+            //if (matches[i][0].distance < ratio_thresh * matches[i][1].distance)
+            //{
+                goodMatches.push_back(matches[i][0]);
+            //}
+        }
+    cv::Mat imgMatches;
+    cv::drawMatches(input,keypointsOfInput,sqr,keypointsOfSQR,goodMatches,imgMatches,cv::Scalar::all(-1),cv::Scalar::all(-1)
+                   ,std::vector<char>(),cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+    cv::imshow("matches",imgMatches);
 
-        cv::drawMatches(input,keypointsOfInput,sqr,keypointsOfSQR,goodMatches,imgMatches,cv::Scalar::all(-1),cv::Scalar::all(-1)
-                       ,std::vector<char>(),cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
-        cv::imshow("matches",imgMatches);
-    }
     //cv::namedWindow("test");
     #else
     std::cout<<"you need OPENCV_ENABLE_NONFREE"<<std::endl;
@@ -149,27 +147,25 @@ cv::Mat ProtoAutoPilot::QImage2Mat(QImage const &srcc)
 {
     QImage src = srcc.convertToFormat(QImage::Format_RGB888);
     cv::Mat matOutput = cv::Mat( src.height(),src.width(),CV_8UC3,const_cast<uchar*>(src.bits()),src.bytesPerLine());
-    return matOutput;
+    cv::Mat result;
+    matOutput.copyTo(result);
+    return result;
 }
 
 void ProtoAutoPilot::testImageVoid()
 {
-    QImage imm ("test1.jpg");
-    QImage2Mat(imm);
-    QImage2Mat(imm);
+
     QImage im ("test1.jpg");
     cv::Mat mat = QImage2Mat(im);
     //cv::imshow("Before FAST",mat);
     //cv::circle(mat,cv::Point(30,30),20,cv::Scalar(0,0,0));
-    if (debugCounter>0)                          // after 1 click we have trash in the image ?!
-    {
-        VertexSquare vertex = getVertexSquareFromMat(mat);
-    }
-    //cv::imshow("result Mat",mat);
+    //if (debugCounter>0)                          // before 2 click we have trash in the image ?!
+    //{
+    VertexSquare vertex = getVertexSquareFromMat(mat);
+    //}
     QString name="result1.jpg";
     QSharedPointer<QImage> result = mat2QImage(mat);
     result->save(name);
-
     debugCounter++;
  }
 
