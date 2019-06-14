@@ -42,6 +42,7 @@ public:
     QSharedPointer<QImage> mat2QImage(const cv::Mat &src);
     cv::Mat QImage2Mat(const QImage &srcc);
     VertexSquare getVertexSquareFromMat(const cv::Mat input);
+
 private:
      //for memory
      cv::Mat temp;
@@ -55,6 +56,10 @@ private:
     std::queue<Vector3dd> posFlyTo;
 
     std::queue<CopterInputs> getOutputs(Vector3dd diff);
+
+    double angle(cv::Point pt1, cv::Point pt2, cv::Point pt0);
+    cv::Mat drawSquares(std::vector<std::vector<cv::Point> > squares, cv::Mat image);
+    void findSquares(const cv::Mat &image, vector<vector<cv::Point> > &squares);
 };
 
 #endif // PROTOAUTOPILOT_H
