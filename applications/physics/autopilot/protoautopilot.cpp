@@ -31,7 +31,7 @@ void ProtoAutoPilot::start()   //first QImage2Mat will be broken?!, other - good
     debugCounter=0;
     //testImageVoid();
     //odinOdometryTest();
-    //active=true;
+    active=true;
 }
 
 void ProtoAutoPilot::makeStrategy(QSharedPointer<QImage> inputImage)
@@ -129,18 +129,39 @@ void ProtoAutoPilot::changeImage(QSharedPointer<QImage> inputImage)  // here we 
     //cv::imwrite("test.jpg",canvas);
     //cv::Mat mat1 = QImageToMat2(*inputImage);
     // QImage *image = new QImage(*inputImage);
-    cv::Mat mat1 = QImage2Mat(*inputImage);
-    //cv::circle(mat1,cv::Point(200,200),50,cv::Scalar(255,255,255),CV_FILLED);
-    QSharedPointer<QImage> r = mat2QImage(temp);
-}
+
+
+    inputQImage = inputImage->copy();
+    inputQImage.save("input222.jpg");
+    cv::Mat mat = QImage2Mat(inputQImage);
+    std::vector<std::vector<cv::Point>> squares;
+    std::cout<<"here1"<<std::endl;
+    std::cout<<"here2"<<std::endl;
+    findSquares(mat,squares);
+    drawSquares(squares,mat);
+    cv::circle(mat,cv::Point(300,300),40,cv::Scalar(255,255,255));
+    cv::imshow("mat",mat);
+    outputQImage = mat2RealQImage(mat);
+    outputQImage.save("output1.jpg");
+    outputImage = QSharedPointer<QImage> (new QImage(outputQImage));
+    outputImage->save("output2.jpg");
+ }
 
 QSharedPointer<QImage> ProtoAutoPilot::mat2QImage(cv::Mat const &src)     // B<->R
 {
     cv::Mat input(src.rows,src.cols,src.type()); // make the same cv::Mat
-    QImage img = QImage((uchar*) input.data, input.cols, input.rows, input.step, QImage::Format_RGB888).copy();
+    QImage img = QImage((uchar*) input.data, input.cols, input.rows, input.step, QImage::Format_RGB888);
     QImage res = img.convertToFormat(QImage::Format_RGB32);
     QSharedPointer<QImage> result ( new  QImage(outputQImage));
     return result;
+}
+
+QImage ProtoAutoPilot::mat2RealQImage(cv::Mat const &src)     // B<->R
+{
+    cv::Mat input(src.rows,src.cols,src.type()); // make the same cv::Mat
+    QImage img = QImage((uchar*) input.data, input.cols, input.rows, input.step, QImage::Format_RGB888);
+    QImage res = img.convertToFormat(QImage::Format_RGB32);
+    return res;
 }
 
 void ProtoAutoPilot::findSquares(const cv::Mat& image, vector<vector<cv::Point>>& squares)

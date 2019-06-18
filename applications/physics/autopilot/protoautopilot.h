@@ -47,7 +47,7 @@ private:
      //for memory
      cv::Mat temp;
      QImage outputQImage;
-
+     QImage inputQImage;
 
     vector<MainObject> mainObjects;
     CopterInputs failSafe;
@@ -60,6 +60,7 @@ private:
     double angle(cv::Point pt1, cv::Point pt2, cv::Point pt0);
     cv::Mat drawSquares(std::vector<std::vector<cv::Point> > squares, cv::Mat image);
     void findSquares(const cv::Mat &image, vector<vector<cv::Point> > &squares);
+    QImage mat2RealQImage(const cv::Mat &src);
 };
 
 #endif // PROTOAUTOPILOT_H

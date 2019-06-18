@@ -701,18 +701,17 @@ void PhysicsMainWindow::updateUi()
     if (work->mImage)
     {
         QSharedPointer<QImage> image(new RGB24Image(work->mImage));
-        /*if (iiAutoPilot.active)
+        if (iiAutoPilot.active)
         {
-            image->save("before.jpg");
+
             iiAutoPilot.makeStrategy(image);
             //cout<<"image changed"<<endl;
             image = iiAutoPilot.outputImage;
-            image->save("after.jpg");
         }
         else
         {
-            //cout<<"AutoPilot turned off"<<endl;
-        }*/
+            cout<<"AutoPilot turned off"<<endl;
+        }
         ui->imageView->setImage(image);
     }
 
