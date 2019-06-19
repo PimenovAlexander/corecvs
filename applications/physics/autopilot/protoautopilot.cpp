@@ -132,19 +132,15 @@ void ProtoAutoPilot::changeImage(QSharedPointer<QImage> inputImage)  // here we 
 
 
     inputQImage = inputImage->copy();
-    inputQImage.save("input222.jpg");
     cv::Mat mat = QImage2Mat(inputQImage);
     cv::Mat mat1;
     cv::resize(mat,mat1,mat.size()*2);
     std::vector<std::vector<cv::Point>> squares;
-    std::cout<<"here1"<<std::endl;
-    std::cout<<"here2"<<std::endl;
     findSquares(mat1,squares);
     drawSquares(squares,mat1);
     cv::circle(mat1,cv::Point(300,300),40,cv::Scalar(255,255,255));
     //cv::imshow("mat",mat);
     outputQImage = mat2RealQImage(mat1);
-    outputQImage.save("output1.jpg");
     outputImage = QSharedPointer<QImage> (new QImage(outputQImage));
     outputImage->save("output2.jpg");
  }
