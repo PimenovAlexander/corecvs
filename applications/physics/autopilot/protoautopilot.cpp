@@ -237,7 +237,9 @@ void ProtoAutoPilot::findSquares(const cv::Mat& image, vector<vector<cv::Point>>
                    // contour orientation
                    if( approx.size() == 4 &&
                        fabs(contourArea(cv::Mat(approx))) > 1000 &&
-                       isContourConvex(cv::Mat(approx)) )
+                       isContourConvex(cv::Mat(approx))
+
+                           )
                    {
                        double maxCosine = 0;
 
@@ -261,23 +263,41 @@ void ProtoAutoPilot::findSquares(const cv::Mat& image, vector<vector<cv::Point>>
 
 cv::Mat ProtoAutoPilot::drawSquares( std::vector<std::vector<cv::Point> > squares, cv::Mat image )
 {
+    std::cout<<"new frame"<<std::endl;
     for ( int i = 0; i< squares.size(); i++ ) {
-        // draw contour
-        cv::drawContours(image, squares, i, cv::Scalar(255,0,0), 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
 
-        // draw bounding rect
-        cv::Rect rect = boundingRect(cv::Mat(squares[i]));
-        cv::rectangle(image, rect.tl(), rect.br(), cv::Scalar(0,255,0), 2, 8, 0);
+        cv::Vec3b centralPixel = image.at<cv::Vec3b>((squares[i].at(0).x+squares[i].at(3).x)/2,(squares[i].at(0).y+squares[i].at(3).y)/2);
+        int sumOfColors = centralPixel[0]+centralPixel[1]+centralPixel[2];
+        if (sumOfColors>500)
+        {
 
-        // draw rotated rect
-        cv::RotatedRect minRect = minAreaRect(cv::Mat(squares[i]));
-        cv::Point2f rect_points[4];
-        minRect.points( rect_points );
-        for ( int j = 0; j < 4; j++ ) {
-            cv::line( image, rect_points[j], rect_points[(j+1)%4], cv::Scalar(0,0,255), 1, 8 ); // blue
+            // draw contour
+            cv::drawContours(image, squares, i, cv::Scalar(255,0,0), 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
+
+            /*
+            // draw bounding rect
+            cv::Rect rect = boundingRect(cv::Mat(squares[i]));
+            cv::rectangle(image, rect.tl(), rect.br(), cv::Scalar(0,255,0), 2, 8, 0);
+
+            // draw rotated rect
+            cv::RotatedRect minRect = minAreaRect(cv::Mat(squares[i]));
+            cv::Point2f rect_points[4];
+            minRect.points( rect_points );
+            std::cout<<"square "<<i;
+            for ( int j = 0; j < 4; j++ )
+            {
+                std::cout<<rect_points[j].x<<" "<<rect_points[j].y<<"-_-";
+            }
+            //std::cout<<"central pixel"<<image.at<cv::Vec3b>((rect_points[0].x+rect_points[3].x)/2,(rect_points[0].y+rect_points[3].y)/2);
+
+            std::cout<<""<<std::endl;
+            for ( int j = 0; j < 4; j++ ) {
+                cv::line( image, rect_points[j], rect_points[(j+1)%4], cv::Scalar(0,0,255), 1, 8 ); // blue
+            }
+            */
         }
     }
-
+    std::cout<<"end frame"<<std::endl;
     return image;
 }
 
