@@ -71,7 +71,7 @@ public:
     void visit(std::vector<inputType> &fields, const ReflectionType * /*fieldDescriptor*/)
     {
         indentation += dIndent;
-        for (int i = 0; i < fields.size(); i++)
+        for (size_t i = 0; i < fields.size(); i++)
         {
             fields[i].accept(*this);
         }

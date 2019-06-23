@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from bufferFilters.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<AdderSubstractorParametersBase>::reflection = Reflection();
 template<>
 int BaseReflection<AdderSubstractorParametersBase>::dummy = AdderSubstractorParametersBase::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int AdderSubstractorParametersBase::staticInit()
+int AdderSubstractorParametersBase::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <AdderSubstractorParametersBase>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Adder Substractor Parameters Base",
         "Adder Substractor Parameters Base",
         ""
     );
 
-     getReflection()->objectSize = sizeof(AdderSubstractorParametersBase);
+     toFill->objectSize = sizeof(AdderSubstractorParametersBase);
      
 
     DoubleField* field0 = new DoubleField
@@ -53,7 +59,7 @@ int AdderSubstractorParametersBase::staticInit()
         );
     field0->widgetHint=BaseField::SPIN_BOX;
     field0->precision=2;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     DoubleField* field1 = new DoubleField
         (
@@ -66,7 +72,7 @@ int AdderSubstractorParametersBase::staticInit()
         );
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->precision=2;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     BoolField* field2 = new BoolField
         (
@@ -78,7 +84,7 @@ int AdderSubstractorParametersBase::staticInit()
           "parameter"
         );
     field2->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     DoubleField* field3 = new DoubleField
         (
@@ -91,7 +97,7 @@ int AdderSubstractorParametersBase::staticInit()
         );
     field3->widgetHint=BaseField::SPIN_BOX;
     field3->precision=2;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     DoubleField* field4 = new DoubleField
         (
@@ -104,10 +110,10 @@ int AdderSubstractorParametersBase::staticInit()
         );
     field4->widgetHint=BaseField::SPIN_BOX;
     field4->precision=2;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Adder Substractor Parameters Base")]= &reflection;
+    directory[std::string("Adder Substractor Parameters Base")]= toFill;
    return 0;
 }
 int AdderSubstractorParametersBase::relinkCompositeFields()

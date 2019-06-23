@@ -1,29 +1,70 @@
 #include "simulation.h"
 #include "list"
-#include "simobject.h"
-#include "simsphere.h"
+#include "simObject.h"
+#include "simSphere.h"
 #include <ctime>
-
+#include "core/utils/log.h"
 #include <chrono>
+
+using namespace std;
 
 Simulation::Simulation()
 {
-     //Objects2 =  std::list<SimObject>();
-    SimSphere kura;
-    kura.CountPhysics=true;
-    spheres.push_back(kura);
-    Objects.push_back(&spheres[0]);
-    cout<<Objects.size()<<" before thread"<<endl;
+    defaultStart();
 }
-void Simulation::Start()
+
+Simulation::Simulation(string arg)
 {
+    if (arg=="drone")
+    {
+
+    }
+    else
+    {
+        defaultStart();
+    }
+}
+
+
+void Simulation::droneStart()
+{
+    mainObjects.emplace_back();
+    MainObject *mainObject = &mainObjects.back();
+    mainObject->countPhysics = true;
+    mainObject->addSphere(Vector3dd(-1, -1, -1), 2);
+    mainObject->addSphere(Vector3dd(1, -1, -1), 2);
+    mainObject->addSphere(Vector3dd(-1, 1, -1), 2);
+    mainObject->addSphere(Vector3dd(1, 1, -1), 2);
+    mainObject->addForce(Vector3dd(0,-9.8,0));
+
+
+    cout << "Simulation::Simulation():" << mainObjects[0].objects.size() << " before thread" <<endl;
+}
+
+void Simulation::defaultStart()
+{
+    /* Adds new MainObject to the vector */
+    mainObjects.emplace_back();
+    MainObject *mainObject = &mainObjects.back();
+    mainObject->countPhysics = true;
+    mainObject->addSphere(Vector3dd(-1, -1, -1), 2);
+    mainObject->addForce(Vector3dd(0,-9.8,0));
+    cout << "Simulation::Simulation():" << mainObjects[0].objects.size() << " before thread" <<endl;
+}
+
+void Simulation::start()
+{
+
+    /* Use PreciseTime instead of chrono, it could make code a bit more compact */
+
+
     startTime = std::chrono::high_resolution_clock::now();
     oldTime = std::chrono::high_resolution_clock::now();
-    cout<<Objects.size()<<" before thread v2"<<endl;
+    cout<<mainObjects.size()<<" AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"<<endl;
 
     std::thread thr([this]()
     {
-        cout<<Objects.size()<<" after thread"<<endl;
+        cout<<mainObjects.size()<<" after thread"<<endl;
         cout<<"kek"<<endl;
         while (true)
         {
@@ -31,13 +72,13 @@ void Simulation::Start()
             std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-oldTime);
             std::chrono::duration<double> currentTime = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-startTime);
 
-           // cout<<time_span.count()<<endl;
-            for (int i=0;i<Objects.size();i++)
+            // cout<<time_span.count()<<endl;
+            for (int i=0; i<mainObjects.size(); i++)
             {
-                Objects[i]->Tick(time_span.count());
-                Objects[i]->SaveMesh( std::to_string(currentTime.count()));
+                mainObjects[i].tick(time_span.count());
+                //mainObjects[i].spheres(std::to_string(currentTime.count()));
             }
-            cout<<Objects[0]->coords<<endl;
+            L_INFO<<mainObjects[0].force<< " coords of sph in thrd";
             frameCounter++;
 
             /*if (frameCounter%1000==0)
@@ -46,10 +87,10 @@ void Simulation::Start()
                 cout<<"counter - "<<frameCounter<<endl;
 
             }*/
+
             oldTime=newTime;
             usleep(3000);
         }
-
     });
     thr.detach();
 }

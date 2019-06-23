@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-#include "core/filters/blocks/newStyleBlock.h"
+#include "core/filters/newstyle/newStyleBlock.h"
 #include "core/reflection/reflection.h"
 #include "reflectionWidget.h"
 #include "core/reflection/dynamicObject.h"

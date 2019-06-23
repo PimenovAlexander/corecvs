@@ -12,7 +12,7 @@
 
 #include "resultImage.h"
 #include "outputStyle.h"
-#include "frames.h"
+#include "core/framesources/frames.h"
 #include "g12Image.h"
 #include "painterHelpers.h"
 

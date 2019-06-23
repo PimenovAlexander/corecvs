@@ -15,9 +15,10 @@
 #include "core/utils/global.h"
 #include "core/geometry/convexHull.h"
 #include "core/geometry/convexQuickHull.h"
+#include "core/geometry/projectiveConvexQuickHull.h"
 
 #include "core/geometry/mesh3d.h"
-
+#include "core/utils/preciseTimer.h"
 
 
 using namespace std;
@@ -349,4 +350,156 @@ TEST(ConvexHull, testIntersection)
 
     debug.dumpPLY("intersect.ply");
     CORE_ASSERT_TRUE_P((points.size() == 9), ("Wrong number of points %d %d\n", (int)points.size(), 9));
+}
+
+TEST(ConvexHull, testBestConvexHull)
+{
+    vector<ProjectiveCoord4d> input;
+    input.push_back(ProjectiveCoord4d(Vector3dd::Zero(), 1));
+    input.push_back(ProjectiveCoord4d(Vector3dd::OrtX(), 1));
+    input.push_back(ProjectiveCoord4d(Vector3dd::OrtY(), 1));
+    input.push_back(ProjectiveCoord4d(Vector3dd::OrtZ(), 1));
+    input.push_back(ProjectiveCoord4d(Vector3dd::OrtZ() * 2, 1));
+
+    SYNC_PRINT(("Input points\n"));
+    for (size_t t = 0; t < input.size(); t++ )
+        cout << t << " " << input[t] << endl;
+    ProjectiveConvexQuickHull::HullFaces faces = ProjectiveConvexQuickHull::quickHull(input, 1e-9);
+    SYNC_PRINT(("Faces: %d\n", (int)faces.size()));
+}
+
+TEST(ConvexHull, testQuickFazzer1)
+{
+    Mesh3D inputMesh;
+    inputMesh.addIcoSphere(Vector3dd::Zero(), 100, 0);
+
+    mt19937 mt;
+    vector<Vector3dd> input = inputMesh.vertexes;
+    vector<ProjectiveCoord4d> input1;
+    for (const auto &i : input)
+        input1.push_back(ProjectiveCoord4d(i, 1));
+    for (int i=0; i < 1000; i++)
+    {
+        /* Add some point */
+        std::uniform_int_distribution<int> d(0, (int)input.size() - 1);
+        ProjectiveCoord4d a = input1[d(mt)];
+        ProjectiveCoord4d b = input1[d(mt)];
+        ProjectiveCoord4d c = input1[d(mt)];
+
+        input1.push_back((a+b+c) / 3.0);
+
+        ProjectiveCoord4d add = input1[d(mt)];
+        input1.insert(input1.begin() + d(mt), add);
+
+        SYNC_PRINT(("Testing size: %d\n", (int)input1.size()));
+        ProjectiveConvexQuickHull::HullFaces faces = ProjectiveConvexQuickHull::quickHull(input1, 1e-9);
+        SYNC_PRINT(("Faces: %d\n", (int)faces.size()));
+
+        ASSERT_TRUE((faces.size() == 20));
+
+    }
+}
+
+TEST(ConvexHull, testProjective)
+{
+    vector<ProjectiveCoord4d> input;
+    input.push_back(ProjectiveCoord4d(Vector3dd::Zero(), 1));
+    input.push_back(ProjectiveCoord4d(Vector3dd::OrtX(), 0));
+    input.push_back(ProjectiveCoord4d(Vector3dd::OrtY(), 1));
+    input.push_back(ProjectiveCoord4d(Vector3dd::OrtZ(), 1));
+    input.push_back(ProjectiveCoord4d(Vector3dd::OrtZ() * 2, 1));
+
+    SYNC_PRINT(("Input points\n"));
+    for (size_t t = 0; t < input.size(); t++ )
+        cout << t << " " << input[t] << endl;
+    ProjectiveConvexQuickHull::HullFaces faces = ProjectiveConvexQuickHull::quickHull(input, 1e-9);
+    SYNC_PRINT(("Faces: %d\n", (int)faces.size()));
+    ASSERT_TRUE((faces.size() == 4));
+}
+
+TEST(ConvexHull, testProjective1)
+{
+    vector<ProjectiveCoord4d> input;
+    input.push_back(ProjectiveCoord4d(Vector3dd::Zero(), 1));
+    input.push_back(ProjectiveCoord4d(Vector3dd::OrtX() * 10, 1));
+    input.push_back(ProjectiveCoord4d(Vector3dd::OrtY(), 1));
+    input.push_back(ProjectiveCoord4d(Vector3dd::OrtZ(), 1));
+    input.push_back(ProjectiveCoord4d(Vector3dd::OrtZ() * 2, 1));
+
+    SYNC_PRINT(("Input points\n"));
+    for (size_t t = 0; t < input.size(); t++ )
+        cout << t << " " << input[t] << endl;
+    ProjectiveConvexQuickHull::HullFaces faces = ProjectiveConvexQuickHull::quickHull(input, 1e-9);
+    SYNC_PRINT(("Faces: %d\n", (int)faces.size()));
+    ASSERT_TRUE((faces.size() == 4));
+}
+
+TEST(ConvexHull, testProjective2)
+{
+    vector<ProjectiveCoord4d> input;
+    input.push_back(ProjectiveCoord4d(Vector3dd::Zero(), 1));
+    input.push_back(ProjectiveCoord4d(Vector3dd::OrtX(), 0));
+    input.push_back(ProjectiveCoord4d(Vector3dd::OrtY(), 0));
+    input.push_back(ProjectiveCoord4d(Vector3dd::OrtZ(), 0));
+    input.push_back(ProjectiveCoord4d(1, 1, 1, 1));
+    input.push_back(ProjectiveCoord4d(1, 2, 3, 1));
+    input.push_back(ProjectiveCoord4d(100, 6, 45, 1));
+
+    SYNC_PRINT(("Input points\n"));
+    for (size_t t = 0; t < input.size(); t++ )
+        cout << t << " " << input[t] << endl;
+    ProjectiveConvexQuickHull::HullFaces faces = ProjectiveConvexQuickHull::quickHull(input, 1e-9);
+    SYNC_PRINT(("Faces: %d\n", (int)faces.size()));
+    ASSERT_TRUE((faces.size() == 4));
+}
+
+TEST(ConvexHull, testProjective3)
+{
+    vector<ProjectiveCoord4d> input;
+    input.push_back(ProjectiveCoord4d(Vector3dd::Zero(), 1));
+    input.push_back(ProjectiveCoord4d(1, 1, 1, 0));
+    input.push_back(ProjectiveCoord4d(1, 1, 1, 1));
+    input.push_back(ProjectiveCoord4d(1, 2, 3, 1));
+    input.push_back(ProjectiveCoord4d(100, 6, 45, 1));
+
+    SYNC_PRINT(("Input points\n"));
+    for (size_t t = 0; t < input.size(); t++ )
+        cout << t << " " << input[t] << endl;
+    ProjectiveConvexQuickHull::HullFaces faces = ProjectiveConvexQuickHull::quickHull(input, 1e-9);
+    SYNC_PRINT(("Faces: %d\n", (int)faces.size()));
+    ASSERT_TRUE((faces.size() == 0));
+}
+
+TEST(ConvexHull, testProjective4)
+{
+    vector<ProjectiveCoord4d> input;
+    input.push_back(ProjectiveCoord4d(1, 2, 0, 0));
+    input.push_back(ProjectiveCoord4d(2, -1, 0, 0));
+    input.push_back(ProjectiveCoord4d(0, 0, 1, 0));
+    input.push_back(ProjectiveCoord4d(0, 0, 0, 1));
+    input.push_back(ProjectiveCoord4d(5, 5, 45, 1));
+    input.push_back(ProjectiveCoord4d(100, 6, 45, 1));
+
+    SYNC_PRINT(("Input points\n"));
+    for (size_t t = 0; t < input.size(); t++ )
+        cout << t << " " << input[t] << endl;
+    ProjectiveConvexQuickHull::HullFaces faces = ProjectiveConvexQuickHull::quickHull(input, 1e-9);
+    SYNC_PRINT(("Faces: %d\n", (int)faces.size()));
+    ASSERT_TRUE((faces.size() == 4));
+}
+
+TEST(ConvexHull, testProjective5)
+{
+    vector<ProjectiveCoord4d> input;
+    input.push_back(ProjectiveCoord4d(100, 0, 0, 1));
+    input.push_back(ProjectiveCoord4d(0, 100, 0, 1));
+    input.push_back(ProjectiveCoord4d(0, 0, 100, 1));
+    input.push_back(ProjectiveCoord4d(-1, -1, -1, 0));
+  
+    SYNC_PRINT(("Input points\n"));
+    for (size_t t = 0; t < input.size(); t++ )
+        cout << t << " " << input[t] << endl;
+    ProjectiveConvexQuickHull::HullFaces faces = ProjectiveConvexQuickHull::quickHull(input, 1e-9);
+    SYNC_PRINT(("Faces: %d\n", (int)faces.size()));
+    ASSERT_TRUE((faces.size() == 4));
 }

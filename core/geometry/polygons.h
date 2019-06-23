@@ -230,6 +230,10 @@ public:
     Ray3d r2() const {return Ray3d::FromPoints(p[1], p[2]);}
     Ray3d r3() const {return Ray3d::FromPoints(p[2], p[0]);}
 
+    Segment<PointType> side1() const {return Segment<PointType>(p2(), p1()); }
+    Segment<PointType> side2() const {return Segment<PointType>(p3(), p2()); }
+    Segment<PointType> side3() const {return Segment<PointType>(p1(), p3()); }
+
 
     GenericTriangle() {}
 

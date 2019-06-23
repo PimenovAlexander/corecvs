@@ -5,23 +5,28 @@
 #include <vector>
 #include <string>
 
+
 #include "core/utils/global.h"
 
+#include "core/utils/visitors/basePathVisitor.h"
 #include "core/reflection/reflection.h"
+#include "core/reflection/dynamicObject.h"
 
 namespace corecvs {
 
 using std::vector;
 using std::string;
 
-class CommandLineSetter
+class CommandLineSetter : public BasePathVisitor
 {
 public:
     string mArgPrefix;
     string mArgSeparator;
     vector<string> mArgs;
 
-    CommandLineSetter() : mArgPrefix("--"), mArgSeparator("=")
+    bool mPreserveValues;
+
+    CommandLineSetter() : mArgPrefix("--"), mArgSeparator("="), mPreserveValues(false)
     {}
 
     CommandLineSetter(const vector<string> &args) : CommandLineSetter()
@@ -47,15 +52,23 @@ public:
     /* Returns first parameter */
     std::string getNonPrefixParam(int id = 1) const;
 
-    int         getInt   (const std::string & option, int defaultInf = 0) const;
-    bool        getBool  (const std::string & option) const;
-    double      getDouble(const std::string & option, double defaultDouble = 0.0) const;
-    std::string getString(const std::string & option, const std::string & defaultString = "") const;
+    int          getInt    (const std::string & option, int defaultInf = 0) const;
+    bool         getBool   (const std::string & option, bool defaultBool = false) const;
+    double       getDouble (const std::string & option, double defaultDouble = 0.0) const;
+    std::string  getString (const std::string & option, const std::string & defaultString = "") const;
+    std::wstring getWString(const std::string & option, const std::wstring & defaultString = L"") const;
 
     /* Oldstyle */
     template <class Type>
         void visit(Type &field, Type defaultValue, const char *fieldName);
 
+    template <class Type>
+        void visit(Type &field, const char *fieldName)
+    {
+        pushChild(fieldName);
+        field.accept(*this);
+        popChild();
+    }
 
     template <typename inputType, typename reflectionType>
         void visit(std::vector<inputType> &/*field*/, const reflectionType * /*fieldDescriptor*/)
@@ -63,10 +76,14 @@ public:
     }
 
     template <typename inputType, typename reflectionType>
-        void visit(inputType &field, const reflectionType * /*fieldDescriptor*/)
+        void visit(inputType &field, const reflectionType * fieldDescriptor)
     {
+        pushChild(fieldDescriptor->name.name);
         field.accept(*this);
+        popChild();
     }
+
+
 };
 
 template <>
@@ -104,6 +121,13 @@ void CommandLineSetter::visit<std::string, StringField>(
         std::string &field,
         const StringField *fieldDescriptor);
 
+
+template <>
+void CommandLineSetter::visit<std::wstring, WStringField>(
+        std::wstring &field,
+        const WStringField *fieldDescriptor);
+
+
 /* Oldstyle setter */
 template <>
 void CommandLineSetter::visit<int>(int &intField, int defaultValue, const char * /*fieldName*/);
@@ -116,6 +140,9 @@ void CommandLineSetter::visit<bool>(bool &boolField, bool defaultValue, const ch
 
 template <>
 void CommandLineSetter::visit<std::string>(std::string &stringField, std::string defaultValue, const char * /*fieldName*/);
+
+template <>
+void CommandLineSetter::visit<DynamicObject>(DynamicObject &dynamicObject, DynamicObject defaultValue, const char *fieldName);
 
 
 } //namespace corecvs

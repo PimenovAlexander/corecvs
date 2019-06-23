@@ -6,6 +6,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from scanner.xml
  */
 
 #include "core/reflection/reflection.h"
@@ -19,25 +20,25 @@
  *  Additional includes for Composite Types.
  */
 
-using namespace corecvs;
+// using namespace corecvs;
 
 /*
  *  Additional includes for Pointer Types.
  */
 
-namespace corecvs {
-}
+// namespace corecvs {
+// }
 /*
  *  Additional includes for enum section.
  */
 #include "core/xml/generated/imageChannel.h"
-#include "redRemovalType.h"
+#include "core/xml/generated/redRemovalType.h"
 
 /**
  * \brief Scanner parameters 
  * Scanner parameters 
  **/
-class ScannerParameters : public BaseReflection<ScannerParameters>
+class ScannerParameters : public corecvs::BaseReflection<ScannerParameters>
 {
 public:
     enum FieldId {
@@ -117,7 +118,9 @@ public:
     int mHarrisApperture;
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
-    static int staticInit();
+    static int staticInit(corecvs::Reflection *toFill);
+
+    static int relinkCompositeFields();
 
     /** Section with getters */
     const void *getPtrById(int fieldId) const
@@ -230,21 +233,21 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit((int &)mChannel,            static_cast<const EnumField *>    (fields()[CHANNEL_ID]));
-        visitor.visit((int &)mAlgo,               static_cast<const EnumField *>    (fields()[ALGO_ID]));
-        visitor.visit(mRedThreshold,              static_cast<const IntField *>     (fields()[RED_THRESHOLD_ID]));
-        visitor.visit(mHeight,                    static_cast<const DoubleField *>  (fields()[HEIGHT_ID]));
-        visitor.visit(mGraphLine,                 static_cast<const IntField *>     (fields()[GRAPH_LINE_ID]));
-        visitor.visit(mUseSSE,                    static_cast<const BoolField *>    (fields()[USE_SSE_ID]));
-        visitor.visit(mCalculateConvolution,      static_cast<const BoolField *>    (fields()[CALCULATE_CONVOLUTION_ID]));
-        visitor.visit(mCalibrationMode,           static_cast<const BoolField *>    (fields()[CALIBRATIONMODE_ID]));
-        visitor.visit(mCornerScore,               static_cast<const DoubleField *>  (fields()[CORNER_SCORE_ID]));
-        visitor.visit(mHarrisApperture,           static_cast<const IntField *>     (fields()[HARRIS_APPERTURE_ID]));
+        visitor.visit((int &)mChannel,            static_cast<const corecvs::EnumField *>(fields()[CHANNEL_ID]));
+        visitor.visit((int &)mAlgo,               static_cast<const corecvs::EnumField *>(fields()[ALGO_ID]));
+        visitor.visit(mRedThreshold,              static_cast<const corecvs::IntField *>(fields()[RED_THRESHOLD_ID]));
+        visitor.visit(mHeight,                    static_cast<const corecvs::DoubleField *>(fields()[HEIGHT_ID]));
+        visitor.visit(mGraphLine,                 static_cast<const corecvs::IntField *>(fields()[GRAPH_LINE_ID]));
+        visitor.visit(mUseSSE,                    static_cast<const corecvs::BoolField *>(fields()[USE_SSE_ID]));
+        visitor.visit(mCalculateConvolution,      static_cast<const corecvs::BoolField *>(fields()[CALCULATE_CONVOLUTION_ID]));
+        visitor.visit(mCalibrationMode,           static_cast<const corecvs::BoolField *>(fields()[CALIBRATIONMODE_ID]));
+        visitor.visit(mCornerScore,               static_cast<const corecvs::DoubleField *>(fields()[CORNER_SCORE_ID]));
+        visitor.visit(mHarrisApperture,           static_cast<const corecvs::IntField *>(fields()[HARRIS_APPERTURE_ID]));
     }
 
     ScannerParameters()
     {
-        DefaultSetter setter;
+        corecvs::DefaultSetter setter;
         accept(setter);
     }
 
@@ -273,16 +276,30 @@ template<class VisitorType>
         mHarrisApperture = harrisApperture;
     }
 
-    friend ostream& operator << (ostream &out, ScannerParameters &toSave)
+    bool operator ==(const ScannerParameters &other) const 
     {
-        PrinterVisitor printer(out);
-        toSave.accept<PrinterVisitor>(printer);
+        if ( !(this->mChannel == other.mChannel)) return false;
+        if ( !(this->mAlgo == other.mAlgo)) return false;
+        if ( !(this->mRedThreshold == other.mRedThreshold)) return false;
+        if ( !(this->mHeight == other.mHeight)) return false;
+        if ( !(this->mGraphLine == other.mGraphLine)) return false;
+        if ( !(this->mUseSSE == other.mUseSSE)) return false;
+        if ( !(this->mCalculateConvolution == other.mCalculateConvolution)) return false;
+        if ( !(this->mCalibrationMode == other.mCalibrationMode)) return false;
+        if ( !(this->mCornerScore == other.mCornerScore)) return false;
+        if ( !(this->mHarrisApperture == other.mHarrisApperture)) return false;
+        return true;
+    }
+    friend std::ostream& operator << (std::ostream &out, ScannerParameters &toSave)
+    {
+        corecvs::PrinterVisitor printer(out);
+        toSave.accept<corecvs::PrinterVisitor>(printer);
         return out;
     }
 
     void print ()
     {
-        cout << *this;
+        std::cout << *this;
     }
 };
 #endif  //SCANNER_PARAMETERS_H_

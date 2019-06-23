@@ -41,12 +41,25 @@ public:
         return (Type *)&(((uint8_t*)rawObject)[reflection->fields[fieldId]->offset]);
     }
 
+    template<typename Type>
+    const Type *getField(int fieldId) const
+    {
+        return (Type *)&(((uint8_t*)rawObject)[reflection->fields[fieldId]->offset]);
+    }
+
     const BaseField* getFieldReflection(int fieldId)
     {
         return reflection->fields[fieldId];
     }
 
     bool simulateConstructor();
+
+    /**
+     *  Helper functions that compares two objects
+     *      returns true if objects are equal
+     *
+     **/
+    static bool compare(DynamicObjectWrapper &d1, DynamicObjectWrapper &d2);
 
     template<typename VisitorType>
     void accept(VisitorType &visitor)
@@ -108,7 +121,12 @@ public:
                     break;
                 }
                 DynamicObjectWrapper obj(tfield->reflection, getField<void *>(count));
-                visitor.visit(obj, tfield->name.name);
+
+                //std::string extended = std::string(reflection->name.name) + "." + tfield->name.name;
+                std::string extended = tfield->name.name;
+                // SYNC_PRINT(("accept(VisitorType &visitor):%s\n", extended.c_str()));
+                visitor.visit(obj, extended.c_str());
+
                 break;
             }
 
@@ -145,17 +163,6 @@ public:
 
          printf("\n");
     }
-
-
-
-#if 0
-    ~DynamicObject()
-    {
-        if (ownsObject) {
-            delete(rawObject);
-        }
-    }
-#endif
 
 };
 
@@ -200,14 +207,13 @@ public:
     /**
      * I call separate method clone instead of copy constructor/operator =.
      *
-     * This is done not to create an illusion that it is a fast operation. It is a deep copy and needs allocation on heap.
+     * This is done not to create an illusion that it is a fast operation. It is a heavy copy and needs allocation on heap.
+     *
+     * NB!!!! There is a pitfall  cloning objects with std::strings and std::wstrings. Either support deep copy of strings or
+     * be very careful in destruction and reallocation
+     *
      */
-    DynamicObject clone()
-    {
-        DynamicObject toReturn(reflection, false);
-        memcpy(toReturn.rawObject, rawObject, reflection->objectSize);
-        return  toReturn;
-    }
+    DynamicObject clone();
 
 
     /**
@@ -225,11 +231,12 @@ public:
     }
 
     bool simulateConstructor();
+    static bool compare(DynamicObject &d1, DynamicObject &d2);
 
     template<typename Type>
     bool copyTo(Type *target) const
     {
-        Reflection *targetRef = BaseReflection<Type>::getReflection();
+        const Reflection *targetRef = BaseReflection<Type>::getReflection();
         if (targetRef->name.name != reflection->name.name)
         {
             SYNC_PRINT(("Seem to copyTo object of the wrong type"));
@@ -245,10 +252,7 @@ public:
          DynamicObjectWrapper(reflection, rawObject).accept<VisitorType>(visitor);
     }
 
-    void printRawObject()
-    {
-         DynamicObjectWrapper(reflection, rawObject).printRawObject();
-    }
+    void printRawObject();
 
     friend std::ostream & operator << (std::ostream &out, const DynamicObject &object)
     {

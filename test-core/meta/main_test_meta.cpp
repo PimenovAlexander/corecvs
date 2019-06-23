@@ -471,7 +471,7 @@ TEST(meta, genEssentialCostFunction)
 
 
     file <<
-    "#include \"core/rectification/correspondenceList.h\"\n"
+    "#include \"core/buffers/correspondenceList.h\"\n"
     "#include \"core/rectification/essentialEstimator.h\"\n"
     "\n"
     "namespace corecvs {\n"

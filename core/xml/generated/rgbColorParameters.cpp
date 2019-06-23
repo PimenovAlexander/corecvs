@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from parameters.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<RgbColorParameters>::reflection = Reflection();
 template<>
 int BaseReflection<RgbColorParameters>::dummy = RgbColorParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int RgbColorParameters::staticInit()
+int RgbColorParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <RgbColorParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "rgb Color Parameters",
         "rgb Color Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(RgbColorParameters);
+     toFill->objectSize = sizeof(RgbColorParameters);
      
 
     IntField* field0 = new IntField
@@ -55,7 +61,7 @@ int RgbColorParameters::staticInit()
          255,
          1
         );
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     IntField* field1 = new IntField
         (
@@ -70,7 +76,7 @@ int RgbColorParameters::staticInit()
          255,
          1
         );
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     IntField* field2 = new IntField
         (
@@ -85,10 +91,10 @@ int RgbColorParameters::staticInit()
          255,
          1
         );
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("rgb Color Parameters")]= &reflection;
+    directory[std::string("rgb Color Parameters")]= toFill;
    return 0;
 }
 int RgbColorParameters::relinkCompositeFields()

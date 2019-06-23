@@ -630,7 +630,7 @@ public:
     vector<const BaseField *>       fields;
     /* Seems like used only in generator */
     vector<const EmbedSubclass *>   embeds;
-    int                             objectSize;
+    int                             objectSize = 0; /**< This is used also as a flag 0 - meens uninitialised */
 
     Reflection() {}
 
@@ -1030,22 +1030,35 @@ class BaseReflectionStatic
 template<typename RealThis>
 class BaseReflection : public BaseReflectionStatic
 {
-public:
-    static Reflection reflection;
-    static int        dummy;
+private:
+    //static Reflection reflection;
+    //static int        dummy;
+
+    //static getReflectionContainer()
+
 
 public:
-    static Reflection *getReflection()
+
+    /**
+     * There is a discussion on wether it would be better to directly put reflections in data segments.
+     * But so far it is like this
+     **/
+    static const Reflection *getReflection()
     {
-        return &(RealThis::reflection);
+        static Reflection *reflection = NULL;
+        if (reflection == NULL) {
+            reflection = new Reflection;
+            RealThis::staticInit(reflection);
+        }
+        return reflection;
     }
 
-    static vector<const BaseField *>& fields()
+    static const vector<const BaseField *>& fields()
     {
         return getReflection()->fields;
     }
 
-    static ReflectionNaming & naming()
+    static const ReflectionNaming & naming()
     {
         return getReflection()->name;
     }

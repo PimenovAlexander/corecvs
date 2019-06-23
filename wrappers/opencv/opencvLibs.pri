@@ -52,29 +52,6 @@ with_opencv {
                     $$OPENCV_CONTRIB_SRC_MODULES/xfeatures2d/include \  # 3.x nonfree features
             }
 
-            OPENCV_249_LIBS_R  = -lopencv_calib3d249      -lopencv_video249     -lopencv_core249      -lopencv_highgui249   \
-                                 -lopencv_features2d249   -lopencv_flann249     -lopencv_imgproc249   -lopencv_objdetect249 \
-                                 -lopencv_nonfree249      -lopencv_legacy249   #-lopencv_ml249
-
-            OPENCV_249_LIBS_D  = -lopencv_calib3d249d     -lopencv_video249d    -lopencv_core249d     -lopencv_highgui249d   \
-                                 -lopencv_features2d249d  -lopencv_flann249d    -lopencv_imgproc249d  -lopencv_objdetect249d \
-                                 -lopencv_nonfree249d     -lopencv_legacy249d  #-lopencv_ml249d
-
-            OPENCV_2411_LIBS_R = -lopencv_calib3d2411     -lopencv_video2411     -lopencv_core2411     -lopencv_highgui2411   \
-                                 -lopencv_features2d2411  -lopencv_flann2411     -lopencv_imgproc2411  -lopencv_objdetect2411 \
-                                 -lopencv_nonfree2411     -lopencv_legacy2411   #-lopencv_ml2411
-
-            OPENCV_2411_LIBS_D = -lopencv_calib3d2411d    -lopencv_video2411d    -lopencv_core2411d    -lopencv_highgui2411d   \
-                                 -lopencv_features2d2411d -lopencv_flann2411d    -lopencv_imgproc2411d -lopencv_objdetect2411d \
-                                 -lopencv_nonfree2411d    -lopencv_legacy2411d  #-lopencv_ml2411d
-
-            OPENCV_2413_LIBS_R = -lopencv_calib3d2413     -lopencv_video2413     -lopencv_core2413     -lopencv_highgui2413   \
-                                 -lopencv_features2d2413  -lopencv_flann2413     -lopencv_imgproc2413  -lopencv_objdetect2413 \
-                                 -lopencv_nonfree2413     -lopencv_legacy2413   #-lopencv_ml2413
-
-            OPENCV_2413_LIBS_D = -lopencv_calib3d2413d    -lopencv_video2413d    -lopencv_core2413d    -lopencv_highgui2413d   \
-                                 -lopencv_features2d2413d -lopencv_flann2413d    -lopencv_imgproc2413d -lopencv_objdetect2413d \
-                                 -lopencv_nonfree2413d    -lopencv_legacy2413d  #-lopencv_ml2413d
 
             OPENCV_310_LIBS_R  = -lopencv_calib3d310      -lopencv_video310      -lopencv_core310      -lopencv_highgui310   \
                                  -lopencv_features2d310   -lopencv_flann310      -lopencv_imgproc310   -lopencv_objdetect310 \
@@ -83,47 +60,6 @@ with_opencv {
             OPENCV_310_LIBS_D  = -lopencv_calib3d310d     -lopencv_video310d     -lopencv_core310d      -lopencv_highgui310d   \
                                  -lopencv_features2d310d  -lopencv_flann310d     -lopencv_imgproc310d   -lopencv_objdetect310d \
                                  -lopencv_imgcodecs310d   -lopencv_videoio310d  #-lopencv_ml310d
-
-
-            exists($$OPENCV_PATH/build/bin/Release/opencv_gpu249.dll) { # add 2.4.9 cuda opencv libraries
-                OPENCV_249_LIBS_R += -lopencv_gpu249
-            }
-            exists($$OPENCV_PATH/build/bin/Debug/opencv_gpu249d.dll) { # add 2.4.9 cuda opencv debug libraries
-                OPENCV_249_LIBS_D += -lopencv_gpu249d
-            }
-            exists($$OPENCV_PATH/build/bin/Release/opencv_ocl249.dll) { # add 2.4.9 ocl opencv libraries
-                OPENCV_249_LIBS_R += -lopencv_ocl249
-            }
-            exists($$OPENCV_PATH/build/bin/Debug/opencv_ocl249d.dll) { # add 2.4.9 ocl opencv debug libraries
-                OPENCV_249_LIBS_D += -lopencv_ocl249d
-            }
-
-            exists($$OPENCV_PATH/build/bin/Release/opencv_gpu2411.dll) { # add 2.4.11 cuda opencv libraries
-                OPENCV_2411_LIBS_R += -lopencv_gpu2411
-            }
-            exists($$OPENCV_PATH/build/bin/Debug/opencv_gpu2411d.dll) { # add 2.4.11 cuda opencv debug libraries
-                OPENCV_2411_LIBS_D += -lopencv_gpu2411d
-            }
-            exists($$OPENCV_PATH/build/bin/Release/opencv_ocl2411.dll) { # add 2.4.11 ocl opencv libraries
-                OPENCV_2411_LIBS_R += -lopencv_ocl2411
-            }
-            exists($$OPENCV_PATH/build/bin/Debug/opencv_ocl2411d.dll) { # add 2.4.11 ocl opencv debug libraries
-                OPENCV_2411_LIBS_D += -lopencv_ocl2411d
-            }
-
-            exists($$OPENCV_PATH/build/bin/Release/opencv_gpu2413.dll) { # add 2.4.13 cuda opencv libraries
-                OPENCV_2413_LIBS_R += -lopencv_gpu2413
-            }
-            exists($$OPENCV_PATH/build/bin/Debug/opencv_gpu2413d.dll) { # add 2.4.13 cuda opencv debug libraries
-                OPENCV_2413_LIBS_D += -lopencv_gpu2413d
-            }
-            exists($$OPENCV_PATH/build/bin/Release/opencv_ocl2413.dll) { # add 2.4.13 ocl opencv libraries
-                OPENCV_2413_LIBS_R += -lopencv_ocl2413
-            }
-            exists($$OPENCV_PATH/build/bin/Debug/opencv_ocl2413d.dll) { # add 2.4.13 ocl opencv debug libraries
-                OPENCV_2413_LIBS_D += -lopencv_ocl2413d
-            }
-
 
             exists($$OPENCV_PATH/build/bin/Release/opencv_cudafeatures2d310.dll) { # add 3.x cuda opencv libraries
                 OPENCV_310_LIBS_R += -lopencv_cudafeatures2d310 -lopencv_cudafilters310   
@@ -139,125 +75,23 @@ with_opencv {
 
 
             CONFIG(debug, debug|release) {
-                OPENCV_249_LIBS                = $$OPENCV_249_LIBS_D
-                OPENCV_249_LIBS_ADD_OWN_BUILT  = -L$$OPENCV_PATH/build/lib/Debug/   $$OPENCV_249_LIBS
-
-                OPENCV_2411_LIBS               = $$OPENCV_2411_LIBS_D
-                OPENCV_2411_LIBS_ADD_OWN_BUILT = -L$$OPENCV_PATH/build/lib/Debug/   $$OPENCV_2411_LIBS
-
-                OPENCV_2413_LIBS               = $$OPENCV_2413_LIBS_D
-                OPENCV_2413_LIBS_ADD_OWN_BUILT = -L$$OPENCV_PATH/build/lib/Debug/   $$OPENCV_2413_LIBS
-
                 OPENCV_310_LIBS                = $$OPENCV_310_LIBS_D
                 OPENCV_310_LIBS_ADD_OWN_BUILT  = -L$$OPENCV_PATH/build/lib/Debug/   $$OPENCV_310_LIBS
             }
             CONFIG(release, debug|release) {
-                OPENCV_249_LIBS                = $$OPENCV_249_LIBS_R
-                OPENCV_249_LIBS_ADD_OWN_BUILT  = -L$$OPENCV_PATH/build/lib/Release/ $$OPENCV_249_LIBS
-
-                OPENCV_2411_LIBS               = $$OPENCV_2411_LIBS_R
-                OPENCV_2411_LIBS_ADD_OWN_BUILT = -L$$OPENCV_PATH/build/lib/Release/ $$OPENCV_2411_LIBS
-
-                OPENCV_2413_LIBS               = $$OPENCV_2413_LIBS_R
-                OPENCV_2413_LIBS_ADD_OWN_BUILT = -L$$OPENCV_PATH/build/lib/Release/ $$OPENCV_2413_LIBS
-
                 OPENCV_310_LIBS                = $$OPENCV_310_LIBS_R
                 OPENCV_310_LIBS_ADD_OWN_BUILT  = -L$$OPENCV_PATH/build/lib/Release/ $$OPENCV_310_LIBS
             }
 
 
-            exists($$OPENCV_PATH/build/bin/Release/opencv_core249.dll): win32-msvc* {               # git's OpenCV tag=2.4.9 built by any own MSVC
-                !build_pass:message(Using <$$OPENCV_PATH/build/bin/Release|Debug>)
-                INCLUDEPATH += $$OPENCV_INC_NOTINSTALLED
-                LIBS        += $$OPENCV_249_LIBS_ADD_OWN_BUILT
-                DEFINES     += WITH_OPENCV
-                exists($$OPENCV_PATH/build/bin/Release/opencv_gpu249.dll) {
-                    DEFINES     += WITH_OPENCV_GPU
-                }
-            } else:exists($$OPENCV_PATH/build/bin/Release/opencv_core2413.dll): win32-msvc* {    # git's OpenCV tag=2.4.13 built by any own MSVC
-                !build_pass:message(Using <$$OPENCV_PATH/build/bin/Release|Debug>)
-                INCLUDEPATH += $$OPENCV_INC_NOTINSTALLED
-                LIBS        += $$OPENCV_2413_LIBS_ADD_OWN_BUILT
-                DEFINES     += WITH_OPENCV
-                exists($$OPENCV_PATH/build/bin/Release/opencv_gpu2413.dll) {
-                    DEFINES     += WITH_OPENCV_GPU
-                }
-            } else:exists($$OPENCV_PATH/build/bin/Release/opencv_core310.dll): win32-msvc* {    # git's OpenCV tag=3.1.0 built by any own MSVC
+            exists($$OPENCV_PATH/build/bin/Release/opencv_core310.dll): win32-msvc* {    # git's OpenCV tag=3.1.0 built by any own MSVC
                 !build_pass:message(Using <$$OPENCV_PATH/build/bin/Release|Debug>)
                 INCLUDEPATH += $$OPENCV_INC_NOTINSTALLED
                 LIBS        += $$OPENCV_310_LIBS_ADD_OWN_BUILT
-                DEFINES     += WITH_OPENCV WITH_OPENCV_3x
+                DEFINES     += WITH_OPENCV WITH_OPENCV_3
                 exists($$OPENCV_PATH/build/bin/Release/opencv_cudafeatures2d310.dll) {
                     DEFINES     += WITH_OPENCV_GPU
                 }
-            } else:exists($$OPENCV_PATH/build/x86/vc10/bin/opencv_core249.dll):equals(QMAKE_TARGET.arch, "x86"): win32-msvc2010 {    # built OpenCV v.2.4.9 with msvc10 without GPU
-                !build_pass:message(Using <$$OPENCV_PATH/build/x86/vc10/bin>)
-                INCLUDEPATH += $$OPENCV_INC_NOTINSTALLED
-                LIBS        += -L$$OPENCV_PATH/build/x86/vc10/lib/ $$OPENCV_249_LIBS
-                DEFINES     += WITH_OPENCV
-            } else:exists($$OPENCV_PATH/build/x64/vc10/bin/opencv_core249.dll): win32-msvc2010 {    # built OpenCV v.2.4.9 with msvc10 without GPU
-                !build_pass:message(Using <$$OPENCV_PATH/build/x64/vc10/bin>)
-                INCLUDEPATH += $$OPENCV_INC_NOTINSTALLED
-                LIBS        += -L$$OPENCV_PATH/build/x64/vc10/lib/ $$OPENCV_249_LIBS
-                DEFINES     += WITH_OPENCV
-            } else:exists($$OPENCV_PATH/build/x86/vc12/bin/opencv_core249.dll):equals(QMAKE_TARGET.arch, "x86"): win32-msvc2013 {    # built OpenCV v.2.4.9 with vc12 without GPU
-                !build_pass:message(Using <$$OPENCV_PATH/build/x86/vc12/bin>)
-                INCLUDEPATH += $$OPENCV_INC_NOTINSTALLED
-                LIBS        += -L$$OPENCV_PATH/build/x86/vc12/lib/ $$OPENCV_249_LIBS
-                DEFINES     += WITH_OPENCV
-            } else:exists($$OPENCV_PATH/build/x64/vc12/bin/opencv_core249.dll): win32-msvc2013 {    # built OpenCV v.2.4.9 with vc12 without GPU
-                !build_pass:message(Using <$$OPENCV_PATH/build/x64/vc12/bin>)
-                INCLUDEPATH += $$OPENCV_INC_NOTINSTALLED
-                LIBS        += -L$$OPENCV_PATH/build/x64/vc12/lib/ $$OPENCV_249_LIBS
-                DEFINES     += WITH_OPENCV
-            } else:exists($$OPENCV_PATH/build/x86/vc12/bin/opencv_core249.dll):equals(QMAKE_TARGET.arch, "x86"): win32-msvc2015 {    # built OpenCV v.2.4.9 with vc12 without GPU
-                !build_pass:message(Using <$$OPENCV_PATH/build/x86/vc12/bin>)
-                INCLUDEPATH += $$OPENCV_INC_NOTINSTALLED
-                LIBS        += -L$$OPENCV_PATH/build/x86/vc12/lib/ $$OPENCV_249_LIBS
-                DEFINES     += WITH_OPENCV
-            } else:exists($$OPENCV_PATH/build/x64/vc12/bin/opencv_core249.dll): win32-msvc2015 {    # built OpenCV v.2.4.9 with vc12 without GPU
-                !build_pass:message(Using <$$OPENCV_PATH/build/x64/vc12/bin>)
-                INCLUDEPATH += $$OPENCV_INC_NOTINSTALLED
-                LIBS        += -L$$OPENCV_PATH/build/x64/vc12/lib/ $$OPENCV_249_LIBS
-                DEFINES     += WITH_OPENCV
-            } else:exists($$OPENCV_PATH/x86/vc12/bin/opencv_core249.dll):equals(QMAKE_TARGET.arch, "x86"): win32-msvc* {             # installed OpenCV v.2.4.9 with msvc* without GPU (our integration server)
-                !build_pass:message(Using <$$OPENCV_PATH/x86/vc12/bin>)
-                INCLUDEPATH += $$OPENCV_INC_NOTINSTALLED
-                LIBS        += -L$$OPENCV_PATH/x86/vc12/lib/ $$OPENCV_249_LIBS
-                DEFINES     += WITH_OPENCV
-            } else:exists($$OPENCV_PATH/x64/vc12/bin/opencv_core249.dll): win32-msvc* {             # installed OpenCV v.2.4.9 with msvc* without GPU (our integration server)
-                !build_pass:message(Using <$$OPENCV_PATH/x64/vc12/bin>)
-                INCLUDEPATH += $$OPENCV_INC_NOTINSTALLED
-                LIBS        += -L$$OPENCV_PATH/x64/vc12/lib/ $$OPENCV_249_LIBS
-                DEFINES     += WITH_OPENCV
-            } else:exists($$OPENCV_PATH/build.mg/bin/libopencv_core249.dll): !win32-msvc* {         # git's OpenCV tag=2.4.9 built by MINGW without GPU
-                !build_pass:message(Using <$$OPENCV_PATH/build.mg/bin>)
-                INCLUDEPATH += $$OPENCV_INC_NOTINSTALLED
-                LIBS += -L$$OPENCV_PATH/build.mg/bin/ \
-                        -llibopencv_calib3d249    -llibopencv_video249   -llibopencv_core249     -llibopencv_highgui249   \
-                        -llibopencv_features2d249 -llibopencv_flann249   -llibopencv_imgproc249  -llibopencv_objdetect249 \
-                        -llibopencv_nonfree249    -llibopencv_legacy249 #-llibopencv_ml249
-                DEFINES += WITH_OPENCV
-            } else:exists($$OPENCV_PATH/build/x86/vc12/bin/opencv_core2411.dll):equals(QMAKE_TARGET.arch, "x86"): win32-msvc2013 {   # OpenCV tag=2.4.11 built by vc12 without GPU
-                !build_pass:message(Using <$$OPENCV_PATH/build/x86/vc12/bin>)
-                INCLUDEPATH += $$OPENCV_INC_NOTINSTALLED
-                LIBS += -L$$OPENCV_PATH/build/x86/vc12/lib/ $$OPENCV_2411_LIBS
-                DEFINES += WITH_OPENCV
-            } else:exists($$OPENCV_PATH/build/x64/vc12/bin/opencv_core2411.dll): win32-msvc2013 {   # OpenCV tag=2.4.11 built by vc12 without GPU
-                !build_pass:message(Using <$$OPENCV_PATH/build/x64/vc12/bin>)
-                INCLUDEPATH += $$OPENCV_INC_NOTINSTALLED
-                LIBS += -L$$OPENCV_PATH/build/x64/vc12/lib/ $$OPENCV_2411_LIBS
-                DEFINES += WITH_OPENCV
-            } else:exists($$OPENCV_PATH/build/x86/vc14/bin/opencv_core2411.dll):equals(QMAKE_TARGET.arch, "x86"): win32-msvc2015 {   # OpenCV tag=2.4.11 built by vc14 without GPU
-                !build_pass:message(Using <$$OPENCV_PATH/build/x86/vc14/bin>)
-                INCLUDEPATH += $$OPENCV_INC_NOTINSTALLED
-                LIBS += -L$$OPENCV_PATH/build/x86/vc14/lib/ $$OPENCV_2411_LIBS
-                DEFINES += WITH_OPENCV
-            } else:exists($$OPENCV_PATH/build/x64/vc14/bin/opencv_core2411.dll): win32-msvc2015 {   # OpenCV tag=2.4.11 built by vc14 without GPU
-                !build_pass:message(Using <$$OPENCV_PATH/build/x64/vc14/bin>)
-                INCLUDEPATH += $$OPENCV_INC_NOTINSTALLED
-                LIBS += -L$$OPENCV_PATH/build/x64/vc14/lib/ $$OPENCV_2411_LIBS
-                DEFINES += WITH_OPENCV
             } else {
                 message(Using <$$OPENCV_PATH>)
                 message(Unsupported OpenCV version - please adapt the opencvLibs.pri for other versions)
@@ -287,20 +121,20 @@ with_opencv {
         }
 
         with_nopkgconfig {
-
-            LIBS += -lopencv_calib3d    -lopencv_video   -lopencv_core    -lopencv_highgui   \
-                    -lopencv_features2d -lopencv_flann   -lopencv_imgproc -lopencv_objdetect \
-                    -lopencv_videoio
-                     #-llibopencv_ml
-
-           # LIBS += -lopencv_nonfree
-           # LIBS += -lopencv_legacy
-
-            #message(Forcing OpenCV 3.x)
-            #message(Searching for $$OPENCV_PATH/lib/libopencv_core.so.3)
             exists ($$OPENCV_PATH/lib/libopencv_core.so.3*) {
+                LIBS += -lopencv_calib3d    -lopencv_video   -lopencv_core    -lopencv_highgui   \
+                        -lopencv_features2d -lopencv_flann   -lopencv_imgproc -lopencv_objdetect \
+                        -lopencv_videoio
+                         #-llibopencv_ml
+
+               # LIBS += -lopencv_nonfree
+               # LIBS += -lopencv_legacy
+
+                #message(Forcing OpenCV 3.x)
+                #message(Searching for $$OPENCV_PATH/lib/libopencv_core.so.3)
+
                 message(Using OpenCV 3.x)
-                DEFINES += WITH_OPENCV_3x
+                DEFINES += WITH_OPENCV_3
             }
         } else {
 
@@ -309,7 +143,7 @@ with_opencv {
             OPENCV_LIBS = $$system(pkg-config --libs opencv)
             system(pkg-config --atleast-version=3.0 opencv) {
                 message(Detected OpenCV 3.x)
-                DEFINES += WITH_OPENCV_3x
+                DEFINES += WITH_OPENCV_3
                 OPENCV_CONTRIB_LIBS = $$find(OPENCV_LIBS, opencv_xfeatures2d)
                 OPENCV_GPU_LIBS     = $$find(OPENCV_LIBS, opencv_cuda)
                 !isEmpty(OPENCV_CONTRIB_LIBS) {

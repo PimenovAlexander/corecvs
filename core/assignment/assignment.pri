@@ -4,3 +4,4 @@ HEADERS += \
 SOURCES += \
     assignment/assignmentOptimal.cpp 
 
+OTHER_FILES +=$$PWD/CMakeLists.txt

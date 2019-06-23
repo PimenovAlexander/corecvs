@@ -17,7 +17,7 @@
 #include "3d/scene3D.h"
 #include "3d/draw3dParametersControlWidget.h"
 #include "3d/coordinateFrame.h"
-#include "frames.h"
+#include "core/framesources/frames.h"
 #include "coordinateFrame.h"
 #include "treeSceneController.h"
 #include "core/cameracalibration/cameraModel.h"

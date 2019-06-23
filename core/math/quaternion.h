@@ -114,7 +114,6 @@ public:
         x = Q1.t() * Q2.x() + Q1.x() * Q2.t() + Q1.y() * Q2.z() - Q1.z() * Q2.y();
         y = Q1.t() * Q2.y() - Q1.x() * Q2.z() + Q1.y() * Q2.t() + Q1.z() * Q2.x();
         z = Q1.t() * Q2.z() + Q1.x() * Q2.y() - Q1.y() * Q2.x() + Q1.z() * Q2.t();
-
         return GenericQuaternion(x, y, z, t);
     }
 
@@ -194,6 +193,7 @@ public:
      *   * Interpolation
      *
      * */
+#if DEPRICATED
     GenericQuaternion(const VectorType &axis, const ElementType &alpha)
     {
         Vector3dd naxis = axis.normalised();
@@ -204,6 +204,14 @@ public:
         y() = naxis.y() * sina2;
         z() = naxis.z() * sina2;
         t() = cosa2;
+    }
+#endif
+    GenericQuaternion(const ElementType &_t, const VectorType &_v)
+    {
+        (*this)[0] = _v.x();
+        (*this)[1] = _v.y();
+        (*this)[2] = _v.z();
+        (*this)[3] = _t;
     }
 
     /**
@@ -224,17 +232,13 @@ public:
         wx = t() * x2;   wy = t() * y2;   wz = t() * z2;
 
         MatrixType toReturn = MatrixType::createMatrix(3, 3);
-#if _MSC_VER    // msvc2015 issued an internal error otherwise... :(
+        // We used fillWithArgs here, but with non-pod types, this may lead to problems.
+        // A fix could be done with variadic templates.
+
         toReturn.atm(0, 0) = 1.0 - (yy + zz);   toReturn.atm(0, 1) =        xy - wz;    toReturn.atm(0, 2) =        xz + wy;
         toReturn.atm(1, 0) =        xy + wz;    toReturn.atm(1, 1) = 1.0 - (xx + zz);   toReturn.atm(1, 2) =        yz - wx;
         toReturn.atm(2, 0) =        xz - wy;    toReturn.atm(2, 1) =        yz + wx;    toReturn.atm(2, 2) = 1.0 - (xx + yy);
-#else
-        toReturn.fillWithArgs(
-            1.0 - (yy + zz),        xy - wz ,        xz + wy,
-                   xy + wz , 1.0 - (xx + zz),        yz - wx,
-                   xz - wy ,        yz + wx , 1.0 - (xx + yy)
-        );
-#endif
+
         return toReturn;
     }
 
@@ -441,7 +445,17 @@ public:
 
     static GenericQuaternion Rotation(const VectorType &axis, const ElementType &alpha)
     {
-        return GenericQuaternion(axis, alpha);
+        Vector3dd naxis = axis.normalised();
+
+        double sina2 = sin(alpha * 0.5);
+        double cosa2 = cos(alpha * 0.5);
+
+        double x = naxis.x() * sina2;
+        double y = naxis.y() * sina2;
+        double z = naxis.z() * sina2;
+        double t = cosa2;
+
+        return GenericQuaternion(x, y, z, t);
     }
 
     static GenericQuaternion RotationIdentity()
@@ -526,6 +540,28 @@ public:
         result.normalise();
         return result;
     }
+
+#if 1
+    static GenericQuaternion exp(const GenericQuaternion &Q)
+    {
+        double vlen = Q.v().l2Metric();
+        return std::exp(Q.t()) * GenericQuaternion(cos(vlen), Q.v().normalised() * sin(vlen));
+    }
+
+    static GenericQuaternion ln(const GenericQuaternion &Q)
+    {
+        double len = Q.l2Metric();
+        double cosine = Q.t() / len;
+        return GenericQuaternion(std::log(len), Q.v().normalised() * acos(cosine));
+    }
+
+    static GenericQuaternion pow(const GenericQuaternion &Q, const ElementType &power)
+    {
+        return exp(power * ln(Q));
+    }
+#endif
+
+
 
 template<class VisitorType>
     void accept(VisitorType &visitor)
