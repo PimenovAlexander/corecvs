@@ -24,6 +24,7 @@ INCLUDEPATH += mixer
 
 
 HEADERS += \
+    physMainObject.h \
     simulation.h \
     clientSender.h \
     joystickInput.h \
@@ -41,11 +42,16 @@ HEADERS += \
     joystick/mixerChannelOperationWidget.h \
     frameProcessor.h \
     protoautopilot.h \
-    copter/quad.h \
+    #copter/quad.h \
     physicsMainWindow.h \
-    physicsAboutWidget.h
+    physicsAboutWidget.h \
+    physObject.h \
+    physSphere.h \
+    copter/droneObject.h \
+    copter/motor.h
 
 SOURCES += \
+    physMainObject.cpp \
     simulation.cpp \
     simSphere.cpp \
     simObject.cpp \
@@ -64,9 +70,13 @@ SOURCES += \
     joystick/mixerChannelOperationWidget.cpp \
     frameProcessor.cpp \
     protoautopilot.cpp \
-    copter/quad.cpp \
+    #copter/quad.cpp \
     physicsMainWindow.cpp \
-    physicsAboutWidget.cpp
+    physicsAboutWidget.cpp \
+    physObject.cpp \
+    physSphere.cpp \
+    copter/droneObject.cpp \
+    copter/motor.cpp
 
 FORMS += \
     joystick/JoystickOptionsWidget.ui \

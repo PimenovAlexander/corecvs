@@ -1,12 +1,10 @@
 #ifndef QUAD_H
 #define QUAD_H
 
-
 #include <copterInputs.h>
 #include <vector>
 
 #include <core/cameracalibration/cameraModel.h>
-
 #include "core/cameracalibration/calibrationDrawHelpers.h"
 #include "core/geometry/mesh3d.h"
 #include "core/math/affine.h"
@@ -37,8 +35,6 @@ public:
      **/
     corecvs::Affine3DQ position;
 
-
-
     /* Configuration */
     bool cw = false;
     double maxForce = 9.8 / 3; /* Each motor is capable of just lifing itself */
@@ -53,7 +49,6 @@ public:
     /* State */
     double pwm = 0.0; /**< 0..1 **/
     double phi = degToRad(32);
-
 
     void drawMyself(corecvs::Mesh3D &mesh)
     {
@@ -86,17 +81,17 @@ public:
 
     Vector3dd getM()
     {
-        return Vector3dd(0.0, 0.0, pwm * cw);
+        double k = 2 * pow(10, -6), b = 1 * pow(10, -7);
+        double momentum = pwm / k * b * (cw ? 1: -1);
+        //if(momentum!=0)
+        //L_INFO<<"Momentum of "<<i<<" motor: "<<momentum;
+        return Vector3dd(0.0, 0.0, momentum);
     }
 
     /* UI not owned. Need to be reworked. Could be reused for hardcoded solution */
     Mesh3D *motorMesh = NULL;
     Mesh3D *propMesh  = NULL;
-
-
 };
-
-
 
 class Sensor
 {
@@ -115,7 +110,6 @@ public:
     PID pitchPID{0.7, 0.35, 0.35};
     PID rollPID{0.7, 0.35, 0.35};
     PID yawPID{0.7, 0.35, 0.35};
-
 
     enum BetaflightMotors {
         BETAFLIGHT_MOTOR_1 = 0,

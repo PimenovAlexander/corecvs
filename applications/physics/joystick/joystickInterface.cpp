@@ -36,7 +36,7 @@ vector<string> JoystickInterface::getDevices(const string &prefix)
 
 }
 
-JoystickConfiguration    JoystickInterface::getConfiguration(int joystickDevice)
+JoystickConfiguration JoystickInterface::getConfiguration(int joystickDevice)
 {
     JoystickConfiguration toReturn;
 

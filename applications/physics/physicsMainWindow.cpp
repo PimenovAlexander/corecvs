@@ -569,6 +569,7 @@ void PhysicsMainWindow::mainAction()
     */
 
     //startJoyStickMode();
+    /**
     copter.flightControllerTick(joystick1.output);
     copter.physicsTick();
 
@@ -587,6 +588,27 @@ void PhysicsMainWindow::mainAction()
     mGraphDialog.addGraphPoint("X", copter.position.x());
     mGraphDialog.addGraphPoint("Y", copter.position.y());
     mGraphDialog.addGraphPoint("Z", copter.position.z());
+
+    mGraphDialog.update();
+    **/
+    drone.flightControllerTick(joystick1.output);
+    drone.physicsTick();
+
+    drone.visualTick();
+
+    if (oldbackend) {
+        drone.drawMyself(*scene->owned);
+    } else {
+        Mesh3DDecorated *mesh = new Mesh3DDecorated();
+        mesh->switchNormals();
+        drone.drawMyself(*mesh);
+        //mesh->dumpInfo();
+        mShadedScene->setMesh(mesh);
+    }
+
+    mGraphDialog.addGraphPoint("X", drone.getPosCenter().x());
+    mGraphDialog.addGraphPoint("Y", drone.getPosCenter().y());
+    mGraphDialog.addGraphPoint("Z", drone.getPosCenter().z());
 
     mGraphDialog.update();
 
