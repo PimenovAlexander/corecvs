@@ -29,8 +29,13 @@ void PhysObject::addMoment(const Vector3dd &moment)
 
 void PhysObject::calcMoment()
 {
-    M = force * getPosVector();
-    SYNC_PRINT(("PhysObject::calcMoment() was called"));
+    M = F * getPosVector();
+    SYNC_PRINT(("PhysObject::calcMoment() was called\n"));
+}
+
+void PhysObject::calcForce()
+{
+    SYNC_PRINT(("PhysObject.calcForce() called and did nothing\n"));
 }
 
 void PhysObject::tick(double deltaT)
@@ -60,12 +65,12 @@ Vector3dd PhysObject::getMoment() const
 
 void PhysObject::addToMesh(Mesh3D &mesh)
 {
-    SYNC_PRINT(("Don't know how to do this"));
+    SYNC_PRINT(("Don't know how to do this\n"));
 }
 
 void PhysObject::drawMesh(Mesh3D &mesh)
 {
-    SYNC_PRINT(("PhysObject can't draw mesh"));
+    SYNC_PRINT(("PhysObject can't draw mesh\n"));
 }
 
 void PhysObject::setPosition(const Affine3DQ &pos)
@@ -89,10 +94,10 @@ PhysObject::PhysObject()
     L_INFO << "default PhysObject():created";
 }
 
-PhysObject::PhysObject(const Affine3DQ *coords, const double *m)
+PhysObject::PhysObject(const Affine3DQ &coords, const double &m)
 {
-    position = Affine3DQ(*coords);
-    mass = *m;
+    position = Affine3DQ(coords);
+    mass = m;
 
     F = Vector3dd::Zero();
     M = Vector3dd::Zero();

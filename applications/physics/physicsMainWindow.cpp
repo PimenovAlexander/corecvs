@@ -569,7 +569,7 @@ void PhysicsMainWindow::mainAction()
     */
 
     //startJoyStickMode();
-    /**
+/**
     copter.flightControllerTick(joystick1.output);
     copter.physicsTick();
 
@@ -590,7 +590,8 @@ void PhysicsMainWindow::mainAction()
     mGraphDialog.addGraphPoint("Z", copter.position.z());
 
     mGraphDialog.update();
-    **/
+**/
+
     drone.flightControllerTick(joystick1.output);
     drone.physicsTick();
 

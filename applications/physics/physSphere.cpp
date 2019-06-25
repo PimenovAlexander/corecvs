@@ -6,6 +6,7 @@ PhysSphere::PhysSphere()
 {
     PhysObject();
     radius = 1.0;
+    L_INFO << "Created default PhysSphere";
 }
 
 void PhysSphere::setPos(const Vector3dd &pos)
@@ -13,10 +14,10 @@ void PhysSphere::setPos(const Vector3dd &pos)
     this->setPosition(Affine3DQ(pos));
 }
 
-PhysSphere::PhysSphere(Affine3DQ *pos, double *r, double *m)
+PhysSphere::PhysSphere(Affine3DQ *pos, double *r, double *m) : PhysObject(*pos, *m)
 {
-    PhysObject(pos, m);
     radius = *r;
+    L_INFO << "Created PhysSphere with pos: " << *pos << " , radius: " << *r << " , mass: " << *m;
 }
 
 void PhysSphere::saveMesh(const std::string &name)

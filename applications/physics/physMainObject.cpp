@@ -3,7 +3,7 @@
 
 PhysMainObject::PhysMainObject()
 {
-    posCenter = Vector3dd(1,1,1);
+    posCenter = Vector3dd(0.1, 0.1, 0.1);
     systemMass = 0;
     force = Vector3dd::Zero();
     //moment = Vector3dd::Zero();
@@ -13,10 +13,13 @@ PhysMainObject::PhysMainObject()
 
 void PhysMainObject::addForce(const corecvs::Vector3dd &_force)
 {
-    for (size_t i = 0; i < objects.size(); ++i) {
+    /* objects dont need to know about whole system forces
+    for (size_t i = 0; i < objects.size(); ++i)
+    {
         objects[i]->addForce(_force);
     }
-    calcForce();
+    */
+    force += _force;
 }
 
 void PhysMainObject::tick(double deltaT)
@@ -78,7 +81,7 @@ void PhysMainObject::calcForce()
     {
         f += objects[i]->getForce();
     }
-    setForce(f);
+    addForce(f);
 }
 
 void PhysMainObject::calcMoment()
@@ -100,6 +103,17 @@ void PhysMainObject::setPosCenter(const Vector3dd &_pos)
 const Vector3dd PhysMainObject::getPosCenter()
 {
     return posCenter;
+}
+
+void PhysMainObject::startTick()
+{
+    force = Vector3dd::Zero();
+    momentum = Vector3dd::Zero();
+    for (size_t i = 0; i < objects.size(); i++)
+    {
+        objects[i]->startTick();
+        //objects[i]->calcForce();
+    }
 }
 
 void PhysMainObject::addObject(PhysObject *object)

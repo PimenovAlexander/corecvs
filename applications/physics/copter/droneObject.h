@@ -60,7 +60,7 @@ public:
 
     virtual void tick(double deltaT) override;
 
-    Vector3dd FromQuaternion(Quaternion &Q);
+    Vector3dd fromQuaternion(Quaternion &Q);
     corecvs::Affine3DQ  getTransform();
     void drawMyself(Mesh3D &mesh);
     void drawMyself(Mesh3DDecorated &mesh);
