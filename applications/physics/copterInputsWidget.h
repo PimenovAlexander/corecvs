@@ -4,6 +4,7 @@
 #include "copterInputs.h"
 
 #include <QWidget>
+#include <qlabel.h>
 
 namespace Ui {
 class CopterInputsWidget;
@@ -19,7 +20,7 @@ public:
     explicit CopterInputsWidget(QWidget *parent = 0);
     ~CopterInputsWidget();
     QSlider *sliders[CopterInputs::CHANNEL_LAST];
-
+    QLabel *labels[CopterInputs::CHANNEL_LAST];
 
 public slots:
     void updateState(CopterInputs inputs);
@@ -30,6 +31,7 @@ signals:
     void uiUpdated(CopterInputs inputs);
 
 private:
+    QString channelsNames[8];
     Ui::CopterInputsWidget *ui;
 };
 
