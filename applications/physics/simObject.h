@@ -74,7 +74,6 @@ public:
     {
         return force;
     }
-
 };
 
 class SimObject

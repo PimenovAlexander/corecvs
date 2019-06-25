@@ -78,9 +78,8 @@ class PhysObject
 {
 public:
     PhysObject();
-    PhysObject(const corecvs::Affine3DQ *coords, const double *m);
+    PhysObject(const corecvs::Affine3DQ &coords, const double &m);
 
-    Vector3dd force    = corecvs::Vector3dd::Zero();
     Vector3dd velocity = Vector3dd::Zero();
 
     int frameCounter = 0;
@@ -110,7 +109,7 @@ public:
     virtual void saveMesh  (const std::string &name);
     virtual void drawMesh (corecvs::Mesh3D &mesh);
     virtual void calcMoment();
-
+    virtual void calcForce();
     /* Get & Set */
     void setPosition(const corecvs::Affine3DQ &pos);
     void setPosition(const corecvs::Vector3dd &pos);
@@ -126,8 +125,5 @@ private:
     //void setForce(const Vector3dd &force);
 
 };
-
-
-
 
 #endif // PHYSOBJECT_H

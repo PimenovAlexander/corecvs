@@ -19,7 +19,7 @@
 #include <graphPlotDialog.h>
 #include <inputSelectorWidget.h>
 
-//#include <copter/quad.h>
+#include <copter/quad.h>
 #include <copter/droneObject.h>
 
 #include "clientSender.h"
@@ -125,7 +125,7 @@ public:
     ControlsMixer mixer;
     CopterInputs inputs;
     QTimer copterTimer;
-    //Quad copter;
+    Quad copter;
     DroneObject drone;
 
 public slots:

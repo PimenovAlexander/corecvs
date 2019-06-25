@@ -12,18 +12,18 @@
 
 #include "simObject.h"
 
-class PID
+class PIDClass
 {
 public:
     double P,I,D;
     double prevError = 0.0;
     double sumOfError = 0.0;
 
-    PID(double p, double i , double d);
+    PIDClass(double p, double i , double d);
 
 };
 
-class Motor
+class MotorClass
 {
 public:
     /**
@@ -93,7 +93,7 @@ public:
     Mesh3D *propMesh  = NULL;
 };
 
-class Sensor
+class SensorClass
 {
 public:
      corecvs::Affine3DQ position;
@@ -104,12 +104,12 @@ public:
 class Quad : public SimObject
 {
 public:
-    std::vector<Motor> motors;
+    std::vector<MotorClass> motors;
     std::vector<CameraModel> cameras;
-    std::vector<Sensor> sensors;
-    PID pitchPID{0.7, 0.35, 0.35};
-    PID rollPID{0.7, 0.35, 0.35};
-    PID yawPID{0.7, 0.35, 0.35};
+    std::vector<SensorClass> sensors;
+    PIDClass pitchPID{0.7, 0.35, 0.35};
+    PIDClass rollPID{0.7, 0.35, 0.35};
+    PIDClass yawPID{0.7, 0.35, 0.35};
 
     enum BetaflightMotors {
         BETAFLIGHT_MOTOR_1 = 0,

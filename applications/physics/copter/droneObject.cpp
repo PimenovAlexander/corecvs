@@ -5,12 +5,14 @@
 
 using namespace corecvs;
 
-DroneObject::DroneObject(double frameSize, double mass)
+DroneObject::DroneObject(double frameSize, double mass) : PhysMainObject()
 {
-    PhysMainObject();
     setSystemMass(mass);
+    double propellerRadius = 0.020; /**< propeller radius in m **/
+    double motorMass = 0.01; /**< in kg **/
+    Affine3DQ defaultPos = Affine3DQ(Vector3dd::Zero());
 
-    motors.resize(4, Motor());
+    motors.resize(4, Motor(&defaultPos, &propellerRadius, &motorMass));
     motors[MOTOR_FR].name = "FR"; motors[MOTOR_FR].color = RGBColor::Red();    /*Front right*/
     motors[MOTOR_BL].name = "BL"; motors[MOTOR_BL].color = RGBColor::Green();  /*Back  left*/
     motors[MOTOR_FL].name = "FL"; motors[MOTOR_FL].color = RGBColor::Red();    /*Front left*/
@@ -97,12 +99,14 @@ DroneObject::DroneObject(double frameSize, double mass)
         }
     }
 
-    double massOfCentralSphere = mass - 4 * motors[0].mass;
+    double massOfCentralSphere = 0.239; //mass - 4 * motors[0].mass;
     Affine3DQ posOfCentralSphere = Affine3DQ(Vector3dd(0,0,0).normalised());
     double radiusOfCentralSphere = arm / 2;
     centralSphere = PhysSphere(&posOfCentralSphere, &radiusOfCentralSphere, &massOfCentralSphere);
     //motors.insert(motors.end(), motors.begin(), motors.end());
 
+    L_INFO<< "centralSphere pos: " << centralSphere.getPosVector()
+          << " , mass: " << centralSphere.mass << " , radius: " << centralSphere.radius;
     objects.push_back(&centralSphere);
     //objects.push_back(&motors[0]);
 
@@ -112,38 +116,6 @@ DroneObject::DroneObject(double frameSize, double mass)
     }
 }
 
-void DroneObject::tick(double deltaT)
-{
-    double radius = centralSphere.radius;
-    double motorMass = objects[1]->mass;
-    double centerMass = objects[0]->mass;
-    double arm = objects[2]->getPosVector().l2Metric();
-    double inertialMomentX = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * motorMass * pow(arm, 2);
-    double inertialMomentY = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * motorMass * pow(arm, 2);
-    double inertialMomentZ = 2.0 / 5.0 * centerMass * pow(radius, 2) + 4 * motorMass * pow(arm, 2);
-
-    inertiaTensor = Matrix33(inertialMomentX, 0, 0,
-                             0, inertialMomentY, 0,
-                             0, 0, inertialMomentZ);
-
-
-    calcForce();
-    calcMoment();
-    setPosCenter(getPosCenter() + velocity * deltaT);
-    velocity += (getForce() / getSystemMass()) * deltaT;
-
-    /* We should carefully use inertiaTensor here. It seems like it changes with the frame of reference */
-    Vector3dd W = inertiaTensor.inv() * getMomentum();
-    Quaternion angularAcceleration = Quaternion::Rotation(W, W.l2Metric());
-
-    Quaternion q = orientation;
-    orientation = Quaternion::pow(angularVelocity, deltaT) ^ orientation;
-
-    //orientation.printAxisAndAngle();
-    angularVelocity = Quaternion::pow(angularAcceleration, deltaT) ^ angularVelocity;
-    L_INFO<<"Delta orient: "<<abs(orientation.getAngle()-q.getAngle());
-
-}
 
 void DroneObject::drawMyself(Mesh3D &mesh)
 {
@@ -164,6 +136,7 @@ void DroneObject::drawBody(Mesh3D &mesh)
     {
         mesh.setColor(RGBColor::White());
         mesh.add(*bodyMesh);
+        mesh.popTransform();
     }
 }
 
@@ -212,8 +185,14 @@ void DroneObject::drawForces(Mesh3D &mesh)
     for (size_t i = 0; i < motors.size(); i++)
     {
         Affine3DQ motorToWorld = getTransform() * motors[i].getPosAffine();
-        Vector3dd f = motorToWorld * motors[i].getForce();
-        mesh.addLine(motors[i].getPosVector(), motors[i].getPosVector() + f * 1.0);
+        Vector3dd force = motorToWorld.rotor * motors[i].getForce();
+        Vector3dd motorPosition = motorToWorld.shift;
+        Vector3dd startDot = motorPosition;
+        Vector3dd endDot = motorPosition + force * 1.0;
+        mesh.addLine(startDot, endDot);
+
+        //L_INFO << "force: " << force << ", position " << motorPosition;
+        //L_INFO << "Drew force line from: " << startDot << " , to: " << endDot << " ; Force value: " << force;
     }
 }
 
@@ -241,7 +220,7 @@ void DroneObject::drawMyself(Mesh3DDecorated &mesh)
 
 }
 
-Vector3dd DroneObject::FromQuaternion(Quaternion &Q)
+Vector3dd DroneObject::fromQuaternion(Quaternion &Q)
 {
     double yaw   = asin  (2.0 * (Q.t() * Q.y() - Q.z() * Q.x()));
     double pitch = atan2 (2.0 * (Q.t() * Q.x() + Q.y() * Q.z()),1.0 - 2.0 * (Q.x() * Q.x() + Q.y() * Q.y()));
@@ -266,7 +245,7 @@ void DroneObject::flightControllerTick(const CopterInputs &input)
 
     /** Get current Pitch, Roll, Yaw of drone at this moment **/
     Quaternion q = angularVelocity;
-    Vector3dd currentPRY = FromQuaternion(angularVelocity);
+    Vector3dd currentPRY = fromQuaternion(angularVelocity);
 
     for (int i = 0; i < 3; i++)
     {
@@ -334,20 +313,14 @@ void DroneObject::flightControllerTick(const CopterInputs &input)
         if (motors[i].pwm < 0.0) motors[i].pwm = 0.0;
         if (motors[i].pwm > 1.0) motors[i].pwm = 1.0;
     }
-
     //L_INFO<<"Motor True Values: "<<motors[0].pwm<<" ; "<<motors[1].pwm<<" ; "<<motors[2].pwm<<" ; "<<motors[3].pwm;
 }
 
 void DroneObject::physicsTick()
 {
-    for (size_t i = 0; i < motors.size(); i++)
-    {
-        motors[i].startTick();
-        Affine3DQ motorToWorld = getTransform() * motors[i].getPosAffine();
-        //addForce(motors[i].getForceTransformed(motorToWorld, position));
+    startTick();
+    for (size_t i = 0; i < motors.size(); ++i) {
         motors[i].calcForce();
-        /* TODO: Transform moment */
-        //motors[i].calcMoment();
     }
     calcForce();
     calcMoment();
@@ -357,14 +330,46 @@ void DroneObject::physicsTick()
     tick(0.1);
 
     /*TODO: Add real collistion comрutation */
-    if (getPosCenter().z() < -1.0)
+    if (getPosCenter().z() < -1)
     {
         velocity = Vector3dd::Zero();
         Vector3dd pos = getPosCenter();
-        setPosCenter(Vector3dd(pos.x(), pos.y(), -1.0));
+        setPosCenter(Vector3dd(pos.x(), pos.y(), -1));
     }
-
     //cout << "Quad::physicsTick(): " << position << endl;
+}
+
+
+void DroneObject::tick(double deltaT)
+{
+    double radius = centralSphere.radius;
+    double motorMass = objects[1]->mass;
+    double centerMass = objects[0]->mass;
+    double arm = objects[2]->getPosVector().l2Metric();
+    double inertialMomentX = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * motorMass * pow(arm, 2);
+    double inertialMomentY = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * motorMass * pow(arm, 2);
+    double inertialMomentZ = 2.0 / 5.0 * centerMass * pow(radius, 2) + 4 * motorMass * pow(arm, 2);
+
+    inertiaTensor = Matrix33(inertialMomentX, 0, 0,
+                             0, inertialMomentY, 0,
+                             0, 0, inertialMomentZ);
+
+
+    calcForce();
+    calcMoment();
+    setPosCenter(getPosCenter() + velocity * deltaT);
+    velocity += (getForce() / getSystemMass()) * deltaT;
+
+    /* We should carefully use inertiaTensor here. It seems like it changes with the frame of reference */
+    Vector3dd W = inertiaTensor.inv() * getMomentum();
+    Quaternion angularAcceleration = Quaternion::Rotation(W, W.l2Metric());
+
+    Quaternion q = orientation;
+    orientation = Quaternion::pow(angularVelocity, deltaT) ^ orientation;
+
+    //orientation.printAxisAndAngle();
+    angularVelocity = Quaternion::pow(angularAcceleration, deltaT) ^ angularVelocity;
+    L_INFO<<"Delta orient: "<<abs(orientation.getAngle()-q.getAngle());
 
 }
 

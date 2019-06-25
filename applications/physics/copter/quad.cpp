@@ -126,7 +126,7 @@ void Quad::drawMyself(Mesh3D &mesh)
 
     for (size_t i = 0; i < motors.size(); i++)
     {
-        Motor &motor = motors[i];
+        MotorClass &motor = motors[i];
         mesh.mulTransform(corecvs::Matrix44(getMotorTransfrom(i)));
         motor.drawMyself(mesh);
         mesh.popTransform();
@@ -187,7 +187,7 @@ Vector3dd Quad::FromQuaternion(Quaternion &Q)
     return Vector3dd(pitch, roll, yaw);
 }
 
-PID::PID(double p, double i, double d)
+PIDClass::PIDClass(double p, double i, double d)
 {
     P=p;
     I=i;

@@ -55,6 +55,7 @@ public:
     void setPosCenter(const Vector3dd &_pos);
     const Vector3dd getPosCenter();
 
+    void startTick();
 
     virtual void tick(double deltaT);
 
