@@ -384,23 +384,52 @@ TEST(Buffer, testFont)
     painter.drawFormat(5, 25, RGBColor(0xFF00FF), 1, "abcdefghijklmnopqrstuvwxyz");
     painter.drawFormat(5, 45, RGBColor(0xFFFF00), 1, "0123456789%?$:\'\"");
 
+    std::string cyr = u8"абвгдежзийклмнопрстуфхцчшщьыъэюя";
+    /*for (int c = 0; c < cyr.length(); c++)
+    {
+        printf("%02X\n",(uint16_t)cyr[c]);
+    }
+    cout << "--------------" << endl;
+    for (int c = 0; c < cyr.length(); c++)
+    {
+        printf("%d\n",(cyr.c_str())[c]);
+    }
+    cout << "--------------" << endl;*/
+
+#if 0
+    uint16_t value = 0x0430;
+    printf("%04x %04x %04x %04x\n",
+           value,
+           ((value & 0x3F) | 0x80),
+           ((value >> 6) | 0xD0),
+           ((value & 0x3F) | 0x80) | (((value >> 6) | 0xD0) << 8)
+           );
+#endif
+
+
+    for (unsigned i = 0; i < cyr.length(); i+=2)
+    {
+        uint16_t v = ((uint8_t)cyr[i] << 8) | (uint8_t)(cyr[i + 1]);
+        painter.drawChar16(5 + 12 * (i/2), 65, v, RGBColor(0x00FFFF));
+    }
+
     const char *string = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRTUVWXYZ";
     for (unsigned i = 0; i < strlen(string); i++)
     {
-        printf("[%c]\n", string[i]);
-        painter.drawGlyph(i * 20, 55, string[i], RGBColor(0xFFFF00), 1);
+        //printf("[%c]\n", string[i]);
+        painter.drawGlyph(i * 20, 105, string[i], RGBColor(0xFFFF00), 1);
     }
 
     const char *string1 = "!@#$%^&*(){}[]_+-\"<>\\:;.,`";
     for (unsigned i = 0; i < strlen(string1); i++)
     {
-        printf("[%c]\n", string1[i]);
-        painter.drawGlyph(i * 20, 85, string1[i], RGBColor(0xFFFF00), 1);
+        //printf("[%c]\n", string1[i]);
+        painter.drawGlyph(i * 20, 125, string1[i], RGBColor(0xFFFF00), 1);
     }
 
-    painter.drawFormatVector( 5, 110, RGBColor(0xFFFFFF), 1, string);
-    painter.drawFormatVector( 5, 145, RGBColor(0xFF00FF), 1, string1);
-    painter.drawFormatVector( 5, 200, RGBColor(0xFFFFFF), 2, string1);
+    painter.drawFormatVector( 5, 150, RGBColor(0xFFFFFF), 1, string);
+    painter.drawFormatVector( 5, 185, RGBColor(0xFF00FF), 1, string1);
+    painter.drawFormatVector( 5, 250, RGBColor(0xFFFFFF), 2, string1);
 
     (BMPLoader()).save("font.bmp", buffer);
     delete_safe(buffer);

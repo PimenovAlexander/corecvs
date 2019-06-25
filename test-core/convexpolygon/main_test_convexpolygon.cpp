@@ -111,17 +111,8 @@ TEST(convexPolygon, testIntersection)
 
     };
 
-    Polygon p1 = {
-        { 10,  10 },
-        { 10, 100 },
-        { 99,  60 }
-    };
-
-    Polygon p2 = {
-        {100, 100},
-        {100,  10},
-        { 11,  60}
-    };
+    Polygon p1 = { { 99,  60}, { 10, 100}, {  10,  10}};
+    Polygon p2 = { { 11,  60}, {100,  10}, { 100, 100}};
 
     Vector2dd check(50, 50);
 
@@ -129,33 +120,33 @@ TEST(convexPolygon, testIntersection)
 
     Vector2dd drawShift = Vector2dd( 100,  100);
 
-    for (int rotation = 1; rotation < 360; rotation++)
+    for (int rotation = 29; rotation < 30/*360*/; rotation++)
     {
-        for (size_t i = 1; i < CORE_COUNT_OF(shifts); i++)
+        for (size_t i = 4; i < 5 /*CORE_COUNT_OF(shifts)*/; i++)
         {
             cout << "#";
             Matrix33 transform = Matrix33::ShiftProj(shifts[i]) * Matrix33::RotationZ(degToRad(rotation));
             /* Move poligons to interesting positions  */
-            Polygon pt1 = Polygon::Reversed(p1.transformed(transform));
-            Polygon pt2 = Polygon::Reversed(p2.transformed(transform));
+            Polygon pt1 = p1.transformed(transform);
+            Polygon pt2 = p2.transformed(transform);
 
             ConvexPolygon cp1 = pt1.toConvexPolygon();
             ConvexPolygon cp2 = pt2.toConvexPolygon();
 
-
             CORE_ASSERT_TRUE(cp1.isInside(transform * check), "Wrong orientation");
             CORE_ASSERT_TRUE(cp2.isInside(transform * check), "Wrong orientation");
 
-#if 0
+#if 1
+            int permutation = rotation + i * 360;
             Mesh3D mesh;
             mesh.switchColor();
-            ConvexPolygon cp3 = ConvexPolygon::merge(cp1, cp2);
-            ConvexPolygon pcp3 = cp3.permutate(rotation + i * 360);
+            ConvexPolygon cp3m = ConvexPolygon::merge(cp1, cp2);
+            ConvexPolygon pcp3 = cp3m.permutate(permutation);
             ProjectivePolygon pp = ProjectivePolygon::FromConvexPolygon(pcp3);
             ProjectivePolygon pps;
             bool result = ConvexDebug::GiftWrap(pp, pps, &mesh);
             cout << "Intersect Result:" << result << endl;
-            cp3 = pps.toConvexPolygon();
+            ConvexPolygon cp3 = pps.toConvexPolygon();
             mesh.dumpPLY("intersect1.ply");
 #else
          ConvexPolygon cp3 = ConvexPolygon::intersect(cp1, cp2);
@@ -179,13 +170,22 @@ TEST(convexPolygon, testIntersection)
 
 #if 1
             if (bp3.size() != 4 || trace) {
-                cout << "Rotation:" << rotation << endl;
-                cout << "Shift:" << i << "  " << shifts[i] << endl;
+                cout << "Rotation: " << rotation << endl;
+                cout << "Shift: " << i << "  " << shifts[i] << endl;
+                cout << "Permutation: " << permutation << endl;
                 cout << "Matrix:\n" << transform << endl;
 
+                cout << "First" << cp1 << endl;
+                cout << "Second" << cp2 << endl;
+
+                cout << "Initial" << cp3m << endl;
+                cout << "Permutated" << pcp3 << endl;
+
+                cout << "pp"  << pp << endl;
                 cout << "pt1" << pt1 << endl;
                 cout << "pt2" << pt2 << endl;
                 cout << "result" << bp3 << endl;
+                return;
             }
 
 #else
@@ -252,15 +252,21 @@ TEST(convexPolygon, testInitialPoint)
     mesh.switchColor(true);
     mesh.setColor(RGBColor::Red());
 
-    Polygon p1 = {{ 10, 100}, { 10,  10}, { 99,  60}};
-    Polygon p2 = {{100,  10}, {100, 100}, { 11,  60}};
+    Polygon p1 = { { 99,  60}, { 10, 100}, {  10,  10}};
+    Polygon p2 = { { 11,  60}, {100,  10}, { 100, 100}};
 
-    int rotation = 21;
-    Vector2dd shift(-100, 100);
+    int rotation = 29;
+    Vector2dd shift(100, -100);
+    int permutation = 1469;
 
     Matrix33 transform = Matrix33::ScaleProj(1 / 20.0) * Matrix33::ShiftProj(shift) * Matrix33::RotationZ(degToRad(rotation));
     p1.transform(transform);
     p2.transform(transform);
+
+    cout << "Rotation: " << rotation << endl;
+    cout << "Shift: " << shift << endl;
+    cout << "Permutation: " << permutation << endl;
+    cout << "Matrix:\n" << transform << endl;
 
     mesh.setColor(RGBColor::Red());
     for (size_t i = 0; i < p1.size(); i++) {
@@ -275,17 +281,26 @@ TEST(convexPolygon, testInitialPoint)
     holder.extendToFit(p1);
     holder.extendToFit(p2);
 
-    ConvexPolygon cp3 = ConvexPolygon::merge(p1.toConvexPolygon(), p2.toConvexPolygon());
+    ConvexPolygon cp1 = p1.toConvexPolygon();
+    ConvexPolygon cp2 = p2.toConvexPolygon();
 
+    ConvexPolygon cp3 = ConvexPolygon::merge(cp1, cp2);
+    //ConvexPolygon pcp3 = cp3.permutate(rotation + 4 * 360);
     //23
-    for (int i = 0; i < 1000; i++) {
-        ConvexPolygon pcp3 = cp3.permutate(i);
+    for (int i = 0; i < 1; i++)
+    {
+        cout << "First" << cp1 << endl;
+        cout << "Second" << cp2 << endl;
+
+        cout << "Initail" << cp3 << endl;
+        ConvexPolygon pcp3 = cp3.permutate(permutation);
+        cout << "Permutated" << pcp3 << endl;
         ProjectivePolygon points = ProjectivePolygon::FromConvexPolygon(pcp3);
         cout << "Fail Mode:\n" << points << endl;
         int id = ConvexDebug::InitailPoint(points, &mesh);
 
-        mesh.setColor(RGBColor::Amber());
-        ConvexDebug::drawProjectiveLines(mesh, points[id], Circle2d(holder.center(), holder.size.l2Metric()));
+        //mesh.setColor(RGBColor::Amber());
+        //ConvexDebug::drawProjectiveLines(mesh, points[id], Circle2d(holder.center(), holder.size.l2Metric()));
     }
 
     mesh.dumpPLY("initial.ply");
@@ -299,22 +314,13 @@ TEST(convexPolygon, testInterDraw)
     mesh.setColor(RGBColor::Red());
     RGB24Buffer buffer(330, 330);
 
-    Polygon p1 = {
-        { 10,  10 },
-        { 10, 100 },
-        { 99,  60 }
-    };
+    Polygon p1 = {{ 10,  10}, { 10, 100}, { 99,  60} };
+    Polygon p2 = {{100, 100}, {100,  10}, { 11,  60} };
 
-    Polygon p2 = {
-        {100, 100},
-        {100,  10},
-        { 11,  60}
-    };
+    int rotation = 29;
+    Vector2dd shift(100, -100);
 
-    int rotation = 21;
-    Vector2dd shift(-100, 100);
-
-    Matrix33 transform = Matrix33::ScaleProj(1/10.0) * Matrix33::ShiftProj(shift) * Matrix33::RotationZ(degToRad(rotation));
+    Matrix33 transform = Matrix33::ScaleProj(1/1.0) * Matrix33::ShiftProj(shift) * Matrix33::RotationZ(degToRad(rotation));
 
     p1.transform(transform);
     p2.transform(transform);
@@ -342,8 +348,6 @@ TEST(convexPolygon, testInterDraw)
 
     ConvexPolygon cp1 = pt1.toConvexPolygon(); //Subdivide(200);
     ConvexPolygon cp2 = pt2.toConvexPolygon(); //Subdivide(200);
-    //ConvexPolygon cp1 = pt1.toConvexPolygonSubdivide(40);
-    //ConvexPolygon cp2 = pt2.toConvexPolygonSubdivide(40);
 
     cout << "Check" << endl;
     Vector2dd check(5.0, 5.0);

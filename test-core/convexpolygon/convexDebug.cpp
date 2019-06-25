@@ -38,7 +38,7 @@ int ConvexDebug::InitailPoint(ProjectivePolygon &planes, Mesh3D *debug)
         if (projected.z() < 0) projected = -projected;
 
         cout << "  Projected point" << projected << endl ;
-        int log = 0;
+        int log = 4;
 
         if (i == log && debug != NULL) {
             debug->setColor(RGBColor::Red());
@@ -76,6 +76,27 @@ int ConvexDebug::InitailPoint(ProjectivePolygon &planes, Mesh3D *debug)
 
     return initId;
 }
+
+
+int ConvexDebug::InitailPoint1(ProjectivePolygon &planes, Mesh3D *debug)
+{
+    vector<Vector2dd> upper;
+    vector<Vector2dd> lower;
+
+    size_t iMin = 0;
+    double zMin = std::numeric_limits<double>::max();
+
+    for (Vector3dd &plane : planes)
+    {
+        Line2d line = Line2d::FromDualP(plane);
+        //if (line.isVertical()) vertical.push_back(line);
+        if (line.y() > 0) upper.push_back(line.toDual());
+        if (line.y() < 0) lower.push_back(line.toDual());
+    }
+
+
+}
+
 
 void ConvexDebug::drawProjectiveLines(Mesh3D &mesh, const Vector3dd &lined, const Circle2d &circle2d)
 {
@@ -308,6 +329,7 @@ bool ConvexDebug::GiftWrap(ProjectivePolygon &points, ProjectivePolygon &output,
             Vector3dd nplane = p ^ current;
 
             double v = splane.normalised() & nplane.normalised();
+            cout << (v ? "+" : "-");
 
             /*if (v < 0) {
                 return false;

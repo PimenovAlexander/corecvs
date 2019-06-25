@@ -324,6 +324,7 @@ bool ConvexHull::GiftWrap(ProjectivePolygon &points, ProjectivePolygon &output, 
         Vector3dd next = Vector3dd::Zero();
         double vmax = std::numeric_limits<double>::lowest();
 
+        Vector3dd splane = current ^ prev;
         /* Search for best point */
         for (const Vector3dd &point : points)
         {
@@ -331,11 +332,15 @@ bool ConvexHull::GiftWrap(ProjectivePolygon &points, ProjectivePolygon &output, 
                 continue;
             }
 
-            Vector3dd splane = current ^ prev;
+
             Vector3dd p = point.normalised();
             Vector3dd nplane = p ^ current;
 
-            double v = splane.normalised() & nplane.normalised();
+            double v = splane & nplane.normalised();            
+            cout << (v > 0 ? "+" : "-");
+            /*if (v < 0) {
+                return false;
+            }*/
 
             // SYNC_PRINT(("(%lf %lf %lf) - %lf\n", point.x(), point.y(), point.z(), v));
 
@@ -354,7 +359,7 @@ bool ConvexHull::GiftWrap(ProjectivePolygon &points, ProjectivePolygon &output, 
         prev = current;
         current = next;
         output.push_back(next);     
-    } while (output.size() < 6);
+    } while (output.size());
     return true;
 }
 

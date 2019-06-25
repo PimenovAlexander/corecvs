@@ -661,6 +661,14 @@ public:
         return (*this)[2];
     }
 
+    static Line2d FromRay(const Ray2d &ray)
+    {
+       Vector2dd a = ray.a;
+       Vector2dd p = ray.p;
+       Vector2dd n = a.leftNormal();
+       return Line2d(n, -(p & n));
+    }
+
     static Line2d FromSegment(const Segment2d &segment)
     {
         return FromRay(Ray2d(segment));
@@ -782,14 +790,6 @@ public:
         return (d / lsq);
     }
 
-    static Line2d FromRay(const Ray2d &ray)
-    {
-       Vector2dd a = ray.a;
-       Vector2dd p = ray.p;
-       Vector2dd n = a.leftNormal();
-       return Line2d(n, -(p & n));
-    }
-
     Vector2dd projectPointTo(const Vector2dd &point) const
     {
         double d = pointWeight(point);
@@ -860,7 +860,9 @@ public:
         return Line2d(p.x(), p.y(), p.z());
     }
 
+
 private:
+
     void _init(const Vector2dd &_n, const double &_c = 1.0)
     {
         (*this)[0] = _n.x();

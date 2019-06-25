@@ -164,3 +164,4 @@ SOURCES += \
     bspRenderer/bspRenderer.cpp \
     mesh/main_test_mesh.cpp \
     convexpolygon/main_test_convexpolygon.cpp \
+    convexduality/main_test_convexduality.cpp \

@@ -727,5 +727,76 @@ bool SvgPath::toPolygon(Polygon &p)
 }
 
 
+/** ************************************************
+ *
+ *   Saver
+ *
+ ************************************************ **/
+SvgSaver::SvgSaver()
+{
+
+}
+
+SvgSaver::~SvgSaver()
+{
+
+}
+
+int SvgSaver::saveSvg(ostream &output, SvgFile &svg)
+{
+     XMLDocument xml;
+     XMLPrinter printer;
+     xml.Print(&printer);
+     output << printer.CStr();
+     return true;
+}
+
+int SvgSaver::dumpSVG(XMLDocument &xml, SvgFile &svg)
+{
+//    xml.NewElement( svg.
+    return 0;
+}
+
+XMLElement *SvgSaver::dumpRect(SvgRect *element)
+{
+    return NULL;
+}
+
+XMLElement *SvgSaver::dumpCircle(SvgCircle *element)
+{
+    return NULL;
+}
+
+XMLElement *SvgSaver::dumpEllipse(SvgEllipse *element)
+{
+    return NULL;
+}
+
+XMLElement *SvgSaver::dumpLine(SvgLine *element)
+{
+    return NULL;
+}
+
+XMLElement *SvgSaver::dumpPolyLine(SvgPolyLine *element)
+{
+    return NULL;
+}
+
+XMLElement *SvgSaver::dumpPolygon(SvgPolygon *element)
+{
+    return NULL;
+}
+
+XMLElement *SvgSaver::dumpPath(SvgPath *element)
+{
+    return NULL;
+}
+
+XMLElement *SvgSaver::dumpGroup(SvgGroup *element)
+{
+    return NULL;
+}
+
+
 
 }

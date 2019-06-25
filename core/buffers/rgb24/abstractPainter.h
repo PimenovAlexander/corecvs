@@ -86,9 +86,56 @@ public:
         if (theChar == ']')
             char_ptr = HardcodeFont::symbols_glyphs + HardcodeFont::GLYPH_HEIGHT * 16;
 
+        if (theChar == '/')
+            char_ptr = HardcodeFont::symbols_glyphs + HardcodeFont::GLYPH_HEIGHT * 17;
+
 
         if (char_ptr == NULL)
             char_ptr = HardcodeFont::symbols_glyphs + HardcodeFont::GLYPH_HEIGHT * 10;
+
+        for (int i = 0; i < HardcodeFont::GLYPH_HEIGHT; i++)
+        {
+            for (int j = 0; j < HardcodeFont::GLYPH_WIDTH; j++)
+            {
+                if (char_ptr[i] & (1 << (HardcodeFont::GLYPH_WIDTH - j - 1)))
+                {
+                    int rx = x + scale * j;
+                    int ry = y + scale * i;
+
+                    for (int dy = 0; dy < scale; dy++)
+                    {
+                        for (int dx = 0; dx < scale; dx++)
+                        {
+                            mTarget->setElement(ry + dy, rx + dx, color);
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    void drawChar16 (uint16_t x, uint16_t y, uint16_t theChar, ElementType color, int scale = 2)
+    {
+        uint8_t *char_ptr = NULL;
+        if ((theChar & 0xF0) == 0) {
+            drawChar(x, y, theChar & 0xFF, color, scale);
+        }
+
+        uint16_t codepoint = ((theChar & 0x1F00) >> 2) | (theChar & 0x003F);
+
+        if (codepoint >=u'а' && codepoint <= u'я')
+            char_ptr = HardcodeFont::cyrilic_glyphs + HardcodeFont::GLYPH_HEIGHT * (codepoint - u'а');
+        if (codepoint >=u'А' && codepoint <= u'Я')
+            char_ptr = HardcodeFont::cyrilic_glyphs + HardcodeFont::GLYPH_HEIGHT * (codepoint - u'а');
+
+        if (char_ptr == NULL) {
+            printf("No symbol for %04X %04X %04X | %04X %04X\n",
+                   theChar,
+                   (theChar & 0x1F3F),
+                  ((theChar & 0x1F00) >> 2) | (theChar & 0x003F), u'а', u'я');
+            return;
+        }
 
         for (int i = 0; i < HardcodeFont::GLYPH_HEIGHT; i++)
         {
@@ -126,6 +173,30 @@ public:
         {
             drawChar(x + i * 6 * scale, y, str[i], color, scale);
             i++;
+        }
+        va_end(marker);
+    }
+
+    void drawFormatU8(uint16_t x, uint16_t y, ElementType color, int scale, const char *format, ...)
+    {
+        char str[1024];
+        va_list marker;
+        va_start(marker, format);
+        vsnprintf(str, CORE_COUNT_OF(str), format, marker);
+
+        int pos = 0;
+        int i = 0;
+        while (str[i] != 0)
+        {
+            if ((str[i] & 0x80) != 0x80)
+            {
+                drawChar  (x + pos * 6 * scale, y, str[i], color, scale);
+                i++; pos++;
+            } else {
+                uint16_t v = ((uint8_t)str[i] << 8) | (uint8_t)(str[i + 1]);
+                drawChar16(5 + pos * 6 * scale, y, v, color, scale);
+                i+=2; pos++;
+            }
         }
         va_end(marker);
     }
