@@ -230,7 +230,7 @@ void PhysicsMainWindow::startVirtualMode()
         mesh->setColor(RGBColor::Red());
         for (size_t i = 0; i < simSim.mainObjects.size(); ++i)
         {
-            MainObject &mainObj = simSim.mainObjects[i];
+            PhysMainObject &mainObj = simSim.mainObjects[i];
             for (size_t j = 0; j < mainObj.objects.size(); ++j)
             {
                 mainObj.objects[j]->addToMesh(*mesh);
@@ -275,7 +275,7 @@ void PhysicsMainWindow::keepAlive(){
     /* Merge code with :startVirtualMode()*/
     for (size_t i = 0; i < simSim.mainObjects.size(); i++)
     {
-        MainObject &mainObj = simSim.mainObjects[i];
+        PhysMainObject &mainObj = simSim.mainObjects[i];
         for (size_t j = 0; j < mainObj.objects.size(); j++)
         {
             mainObj.objects[j]->addToMesh(*mesh);
@@ -778,4 +778,9 @@ void PhysicsMainWindow::on_JoyButton_released()
 void PhysicsMainWindow::on_toolButton_3_released()
 {
     startRealMode();
+}
+
+void PhysicsMainWindow::on_connetToVirtualButton_pressed()
+{
+
 }

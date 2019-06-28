@@ -99,7 +99,7 @@ DroneObject::DroneObject(double frameSize, double mass) : PhysMainObject()
         }
     }
 
-    double massOfCentralSphere = 0.239; //mass - 4 * motors[0].mass;
+    double massOfCentralSphere = mass - 4 * motors[0].mass;
     Affine3DQ posOfCentralSphere = Affine3DQ(Vector3dd(0,0,0).normalised());
     double radiusOfCentralSphere = arm / 2;
     centralSphere = PhysSphere(&posOfCentralSphere, &radiusOfCentralSphere, &massOfCentralSphere);
@@ -278,7 +278,7 @@ void DroneObject::flightControllerTick(const CopterInputs &input)
     forceY = yawPID.P * currentError.z() +
              yawPID.I * deltaT * yawPID.sumOfError +
              yawPID.D * (currentError.z() - yawPID.prevError) / deltaT;
-
+    L_INFO << "pitch previous error: " << pitchPID.prevError;
     pitchPID.prevError = currentError.x();
     rollPID.prevError  = currentError.y();
     yawPID.prevError   = currentError.z();
@@ -354,13 +354,11 @@ void DroneObject::tick(double deltaT)
                              0, inertialMomentY, 0,
                              0, 0, inertialMomentZ);
 
-
-    calcForce();
-    calcMoment();
     setPosCenter(getPosCenter() + velocity * deltaT);
     velocity += (getForce() / getSystemMass()) * deltaT;
 
     /* We should carefully use inertiaTensor here. It seems like it changes with the frame of reference */
+    L_INFO << "Momentum: " << getMomentum();
     Vector3dd W = inertiaTensor.inv() * getMomentum();
     Quaternion angularAcceleration = Quaternion::Rotation(W, W.l2Metric());
 
@@ -369,7 +367,7 @@ void DroneObject::tick(double deltaT)
 
     //orientation.printAxisAndAngle();
     angularVelocity = Quaternion::pow(angularAcceleration, deltaT) ^ angularVelocity;
-    L_INFO<<"Delta orient: "<<abs(orientation.getAngle()-q.getAngle());
+    //L_INFO<<"Delta orient: "<<abs(orientation.getAngle()-q.getAngle());
 
 }
 

@@ -29,12 +29,22 @@ Simulation::Simulation(string arg)
 void Simulation::droneStart()
 {
     mainObjects.emplace_back();
-    MainObject *mainObject = &mainObjects.back();
+    PhysMainObject *mainObject = &mainObjects.back();
     mainObject->countPhysics = true;
-    mainObject->addSphere(Vector3dd(-1, -1, -1), 2);
-    mainObject->addSphere(Vector3dd(1, -1, -1), 2);
-    mainObject->addSphere(Vector3dd(-1, 1, -1), 2);
-    mainObject->addSphere(Vector3dd(1, 1, -1), 2);
+    double radius = 2.0;
+    double mass = 1.0;
+    Affine3DQ pos1 = Affine3DQ(Vector3dd(-1, -1, -1));
+    Affine3DQ pos2 = Affine3DQ(Vector3dd(1, -1, -1));
+    Affine3DQ pos3 = Affine3DQ(Vector3dd(-1, 1, -1));
+    Affine3DQ pos4 = Affine3DQ(Vector3dd(1, 1, -1));
+    PhysSphere sphere1 = PhysSphere(&pos1, &radius, &mass);
+    PhysSphere sphere2 = PhysSphere(&pos2, &radius, &mass);
+    PhysSphere sphere3 = PhysSphere(&pos3, &radius, &mass);
+    PhysSphere sphere4 = PhysSphere(&pos4, &radius, &mass);
+    mainObject->addObject(&sphere1);
+    mainObject->addObject(&sphere2);
+    mainObject->addObject(&sphere3);
+    mainObject->addObject(&sphere4);
     mainObject->addForce(Vector3dd(0,-9.8,0));
 
 
@@ -45,9 +55,13 @@ void Simulation::defaultStart()
 {
     /* Adds new MainObject to the vector */
     mainObjects.emplace_back();
-    MainObject *mainObject = &mainObjects.back();
+    PhysMainObject *mainObject = &mainObjects.back();
     mainObject->countPhysics = true;
-    mainObject->addSphere(Vector3dd(-1, -1, -1), 2);
+    double radius = 2.0;
+    double mass = 1.0;
+    Affine3DQ pos1 = Affine3DQ(Vector3dd(-1, -1, -1));
+    PhysSphere sphere1 = PhysSphere(&pos1, &radius, &mass);
+    mainObject->addObject(&sphere1);
     mainObject->addForce(Vector3dd(0,-9.8,0));
     cout << "Simulation::Simulation():" << mainObjects[0].objects.size() << " before thread" <<endl;
 }
@@ -60,7 +74,6 @@ void Simulation::start()
 
     startTime = std::chrono::high_resolution_clock::now();
     oldTime = std::chrono::high_resolution_clock::now();
-    cout<<mainObjects.size()<<" AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"<<endl;
 
     std::thread thr([this]()
     {
@@ -78,7 +91,7 @@ void Simulation::start()
                 mainObjects[i].tick(time_span.count());
                 //mainObjects[i].spheres(std::to_string(currentTime.count()));
             }
-            L_INFO<<mainObjects[0].force<< " coords of sph in thrd";
+            //L_INFO<<mainObjects[0].force<< " coords of sph in thrd";
             frameCounter++;
 
             /*if (frameCounter%1000==0)

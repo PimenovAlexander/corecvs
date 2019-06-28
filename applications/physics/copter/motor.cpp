@@ -18,8 +18,12 @@ Motor::Motor(Affine3DQ *pos, double *propellerRadius, double *mass)
 
 void Motor::calcMoment()
 {
-    addMoment(getForce() * getPosVector());
+    Vector3dd m = getForce() ^ getPosVector();
+    addMoment(m);
+    L_INFO << "Added moment: " << m << "; force : " << getForce() << "; pos: " << getPosVector();
+
     Vector3dd v = calcMotorMoment();
+    addMoment(v);
     L_INFO << "Motor.calcMoment() was called. Moment of current motor is: " << v;
 }
 
@@ -65,6 +69,6 @@ Vector3dd Motor::calcMotorMoment()
     double momentum = pwm / k * b * (cw ? 1: -1);
     //if(momentum!=0)
     //L_INFO<<"Momentum of "<<i<<" motor: "<<momentum;
-    addMoment(Vector3dd(0.0, 0.0, momentum));
+
     return Vector3dd(0.0, 0.0, momentum);
 }

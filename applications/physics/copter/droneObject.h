@@ -74,7 +74,7 @@ public:
     /* This definitely need to be in the other place */
     Mesh3DDecorated *worldMesh = NULL;
 
-    ~DroneObject();
+    ~DroneObject() override;
 private:
     void drawForces(Mesh3D &mesh);
     void drawSensors(Mesh3D &mesh);

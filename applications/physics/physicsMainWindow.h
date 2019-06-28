@@ -188,6 +188,8 @@ private slots:
 
     void on_toolButton_3_released();
 
+    void on_connetToVirtualButton_pressed();
+
 private:
     struct Message {
         int throttle;

@@ -22,7 +22,7 @@ public:
 
     /* Configuration */
     bool cw;
-    double maxForce = 9.8 / 3; /* Each motor is capable of just lifing itself */
+    double maxForce = 9.8 / 12; /* Each motor is capable of just lifing itself */
 
     double motorWidth  = 0.011; /**< in m **/
     double motorHeight = 0.004; /**< in m **/

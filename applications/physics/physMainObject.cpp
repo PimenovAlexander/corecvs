@@ -27,6 +27,8 @@ void PhysMainObject::tick(double deltaT)
     SYNC_PRINT(("PhysMainObject::tick should not be called"));
 }
 
+
+
 void PhysMainObject::calcCenterOfMass()
 {
     for (size_t i = 0; i < objects.size(); ++i)
@@ -77,10 +79,19 @@ double PhysMainObject::getSystemMass() const
 void PhysMainObject::calcForce()
 {
     Vector3dd f = Vector3dd::Zero();
+    Affine3DQ transform;
+    L_INFO << "transform: " << transform;
+    Vector3dd forceToTransform;
+    Vector3dd forceAfterTransform;
     for(size_t i = 0; i < objects.size(); ++i)
     {
-        f += objects[i]->getForce();
+        transform = Affine3DQ(orientation, getPosCenter());// * objects[i]->getPosAffine();
+        forceToTransform = objects[i]->getForce();
+        forceAfterTransform = transform.rotor * objects[i]->getForce();
+        f += forceAfterTransform;
+        L_INFO << "added force: " << forceAfterTransform << "; forceToTransform: " << forceToTransform;
     }
+    L_INFO << "final force to add to PhysMainObject: " << f;
     addForce(f);
 }
 

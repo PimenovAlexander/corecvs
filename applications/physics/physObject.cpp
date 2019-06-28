@@ -29,7 +29,7 @@ void PhysObject::addMoment(const Vector3dd &moment)
 
 void PhysObject::calcMoment()
 {
-    M = F * getPosVector();
+    M = F ^ getPosVector();
     SYNC_PRINT(("PhysObject::calcMoment() was called\n"));
 }
 
