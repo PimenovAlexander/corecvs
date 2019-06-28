@@ -24,7 +24,7 @@
 #include "core/geometry/rectangle.h"
 #include "core/buffers/rgb24/rgbTColor.h"
 #include "core/function/function.h"
-#include "core/rectification/correspondenceList.h"
+#include "core/buffers/correspondenceList.h"
 #include "core/xml/generated/imageChannel.h"
 
 #include "core/buffers/rgb24/rgb24Buffer.h"

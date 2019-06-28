@@ -1,4 +1,4 @@
-
+#include <QAction>
 #include <QFileDialog>
 #include <QInputDialog>
 

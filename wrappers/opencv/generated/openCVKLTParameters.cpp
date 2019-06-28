@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from opencv.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<OpenCVKLTParameters>::reflection = Reflection();
 template<>
 int BaseReflection<OpenCVKLTParameters>::dummy = OpenCVKLTParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int OpenCVKLTParameters::staticInit()
+int OpenCVKLTParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <OpenCVKLTParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "OpenCV KLT Parameters",
         "OpenCV KLT Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(OpenCVKLTParameters);
+     toFill->objectSize = sizeof(OpenCVKLTParameters);
      
 
     DoubleField* field0 = new DoubleField
@@ -53,7 +59,7 @@ int OpenCVKLTParameters::staticInit()
         );
     field0->widgetHint=BaseField::SPIN_BOX;
     field0->precision=2;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     DoubleField* field1 = new DoubleField
         (
@@ -66,7 +72,7 @@ int OpenCVKLTParameters::staticInit()
         );
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->precision=2;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     IntField* field2 = new IntField
         (
@@ -77,7 +83,7 @@ int OpenCVKLTParameters::staticInit()
           "SelectorSize",
           "SelectorSize"
         );
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     IntField* field3 = new IntField
         (
@@ -88,7 +94,7 @@ int OpenCVKLTParameters::staticInit()
           "UseHarris",
           "UseHarris"
         );
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     DoubleField* field4 = new DoubleField
         (
@@ -101,7 +107,7 @@ int OpenCVKLTParameters::staticInit()
         );
     field4->widgetHint=BaseField::SPIN_BOX;
     field4->precision=2;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     IntField* field5 = new IntField
         (
@@ -112,10 +118,10 @@ int OpenCVKLTParameters::staticInit()
           "kltSize",
           "kltSize"
         );
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("OpenCV KLT Parameters")]= &reflection;
+    directory[std::string("OpenCV KLT Parameters")]= toFill;
    return 0;
 }
 int OpenCVKLTParameters::relinkCompositeFields()

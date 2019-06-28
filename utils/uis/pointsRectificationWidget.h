@@ -4,8 +4,8 @@
 #include <QStandardItemModel>
 
 #include "paintImageWidget.h"
-#include "frames.h"
-#include "core/rectification/correspondenceList.h"
+#include "core/framesources/frames.h"
+#include "core/buffers/correspondenceList.h"
 
 namespace Ui {
 class PointsRectificationWidget;

@@ -107,6 +107,8 @@ inline void SwapXY(Type& a, Type& b) { Type t = a; a = b; b = t; }
  * On intel architecture there could be no gain in xor because
  * often compiler can swap register aliases without any code generation
  * This has been tested and proved 3.22 times slower than SwapXY on Intel machine.
+ *
+ * \depricated
  **/
 template <typename Type>
 inline void SwapIntsSlow(Type& a, Type& b) { a ^= b; b ^= a; a ^= b; }
@@ -196,7 +198,8 @@ inline TypeName lerpLimit(const TypeName &outStart, const TypeName &outEnd, doub
  *  \f]
  *
  **/
-inline double normalPDF(double x, double sigma)
+template<typename FpType>
+inline FpType normalPDF(FpType x, FpType sigma)
 {
     return exp(-x * x / (2.0 * sigma * sigma)) / (sigma * sqrt(2.0 * M_PI));
 }

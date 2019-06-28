@@ -122,8 +122,9 @@ bool FilePreciseCapture::FileSpinThread::grabFramePair()
         }
         else
         {
-            if (pInterface->mVerbose)
-                printf("prec: Files for cout not found, resetting to first image in the sequence\n");
+            if (pInterface->mVerbose) {
+                printf("prec: Files for count %d not found, resetting to first image in the sequence\n", pInterface->mCount);
+            }
 
             // Protection from the stack overflow, when there're no files at the given path
             //

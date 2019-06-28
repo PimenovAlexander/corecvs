@@ -3,7 +3,7 @@
 
 #include "core/geometry/polygons.h"
 #include "core/geometry/convexQuickHull.h"
-
+#include "core/geometry/projectiveConvexQuickHull.h"
 
 namespace corecvs {
 
@@ -22,7 +22,7 @@ public:
 
 
     static ConvexQuickHull::HullFaces FromConvexPolyhedron(const ConvexPolyhedron &polygon);
-
+    static ConvexPolyhedron FromConvexPolyhedronCP(const ConvexPolyhedron &polyhedron);
 };
 
 } // namespace corecvs

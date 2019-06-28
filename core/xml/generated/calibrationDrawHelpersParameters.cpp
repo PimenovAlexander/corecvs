@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from calibration.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<CalibrationDrawHelpersParameters>::reflection = Reflection();
 template<>
 int BaseReflection<CalibrationDrawHelpersParameters>::dummy = CalibrationDrawHelpersParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int CalibrationDrawHelpersParameters::staticInit()
+int CalibrationDrawHelpersParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <CalibrationDrawHelpersParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Calibration Draw Helpers Parameters",
         "EXPERIMENTAL",
         ""
     );
 
-     getReflection()->objectSize = sizeof(CalibrationDrawHelpersParameters);
+     toFill->objectSize = sizeof(CalibrationDrawHelpersParameters);
      
 
     EnumField* field0 = new EnumField
@@ -57,7 +63,7 @@ int CalibrationDrawHelpersParameters::staticInit()
           )
         );
     field0->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     DoubleField* field1 = new DoubleField
         (
@@ -74,7 +80,7 @@ int CalibrationDrawHelpersParameters::staticInit()
         );
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->precision=2;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     IntField* field2 = new IntField
         (
@@ -89,7 +95,7 @@ int CalibrationDrawHelpersParameters::staticInit()
          1000,
          1
         );
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     BoolField* field3 = new BoolField
         (
@@ -101,7 +107,7 @@ int CalibrationDrawHelpersParameters::staticInit()
           "EXPERIMENTAL"
         );
     field3->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     BoolField* field4 = new BoolField
         (
@@ -113,7 +119,7 @@ int CalibrationDrawHelpersParameters::staticInit()
           "printNames"
         );
     field4->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     BoolField* field5 = new BoolField
         (
@@ -125,7 +131,7 @@ int CalibrationDrawHelpersParameters::staticInit()
           "billboardNames"
         );
     field5->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     BoolField* field6 = new BoolField
         (
@@ -137,7 +143,7 @@ int CalibrationDrawHelpersParameters::staticInit()
           "Prefer Reprojected"
         );
     field6->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     BoolField* field7 = new BoolField
         (
@@ -149,7 +155,7 @@ int CalibrationDrawHelpersParameters::staticInit()
           "Force Known"
         );
     field7->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field7);
+    toFill->fields.push_back(field7);
     /*  */ 
     BoolField* field8 = new BoolField
         (
@@ -161,7 +167,7 @@ int CalibrationDrawHelpersParameters::staticInit()
           "privateColor"
         );
     field8->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field8);
+    toFill->fields.push_back(field8);
     /*  */ 
     BoolField* field9 = new BoolField
         (
@@ -173,7 +179,7 @@ int CalibrationDrawHelpersParameters::staticInit()
           "largePoints"
         );
     field9->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field9);
+    toFill->fields.push_back(field9);
     /*  */ 
     BoolField* field10 = new BoolField
         (
@@ -185,7 +191,7 @@ int CalibrationDrawHelpersParameters::staticInit()
           "drawFixtureCams"
         );
     field10->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field10);
+    toFill->fields.push_back(field10);
     /*  */ 
     BoolField* field11 = new BoolField
         (
@@ -197,7 +203,7 @@ int CalibrationDrawHelpersParameters::staticInit()
           "solidCameras"
         );
     field11->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field11);
+    toFill->fields.push_back(field11);
     /*  */ 
     BoolField* field12 = new BoolField
         (
@@ -209,7 +215,7 @@ int CalibrationDrawHelpersParameters::staticInit()
           "drawObservations"
         );
     field12->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field12);
+    toFill->fields.push_back(field12);
     /*  */ 
     BoolField* field13 = new BoolField
         (
@@ -221,7 +227,7 @@ int CalibrationDrawHelpersParameters::staticInit()
           "drawTrueLines"
         );
     field13->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field13);
+    toFill->fields.push_back(field13);
     /*  */ 
     DoubleField* field14 = new DoubleField
         (
@@ -238,7 +244,7 @@ int CalibrationDrawHelpersParameters::staticInit()
         );
     field14->widgetHint=BaseField::SPIN_BOX;
     field14->precision=2;
-    fields().push_back(field14);
+    toFill->fields.push_back(field14);
     /*  */ 
     BoolField* field15 = new BoolField
         (
@@ -250,10 +256,10 @@ int CalibrationDrawHelpersParameters::staticInit()
           "drawRays"
         );
     field15->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field15);
+    toFill->fields.push_back(field15);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Calibration Draw Helpers Parameters")]= &reflection;
+    directory[std::string("Calibration Draw Helpers Parameters")]= toFill;
    return 0;
 }
 int CalibrationDrawHelpersParameters::relinkCompositeFields()

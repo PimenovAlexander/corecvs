@@ -1,0 +1,9 @@
+<poco version="5.0">
+
+<class name="Mixer Channel Operation Parameters">
+   <field type="double" name="min" defaultValue="0"   comment="" />
+   <field type="double" name="max" defaultValue="100" comment="" />
+</class>
+
+
+</poco>

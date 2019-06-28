@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from draw3d.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<Draw3dViMouseParameters>::reflection = Reflection();
 template<>
 int BaseReflection<Draw3dViMouseParameters>::dummy = Draw3dViMouseParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int Draw3dViMouseParameters::staticInit()
+int Draw3dViMouseParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <Draw3dViMouseParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "draw 3d ViMouse Parameters",
         "draw 3d ViMouse Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(Draw3dViMouseParameters);
+     toFill->objectSize = sizeof(Draw3dViMouseParameters);
      
 
     DoubleField* field0 = new DoubleField
@@ -57,7 +63,7 @@ int Draw3dViMouseParameters::staticInit()
         );
     field0->widgetHint=BaseField::SPIN_BOX;
     field0->precision=2;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     DoubleField* field1 = new DoubleField
         (
@@ -74,7 +80,7 @@ int Draw3dViMouseParameters::staticInit()
         );
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->precision=2;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     DoubleField* field2 = new DoubleField
         (
@@ -91,7 +97,7 @@ int Draw3dViMouseParameters::staticInit()
         );
     field2->widgetHint=BaseField::SPIN_BOX;
     field2->precision=2;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     EnumField* field3 = new EnumField
         (
@@ -112,7 +118,7 @@ int Draw3dViMouseParameters::staticInit()
           )
         );
     field3->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     EnumField* field4 = new EnumField
         (
@@ -130,10 +136,10 @@ int Draw3dViMouseParameters::staticInit()
           )
         );
     field4->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("draw 3d ViMouse Parameters")]= &reflection;
+    directory[std::string("draw 3d ViMouse Parameters")]= toFill;
    return 0;
 }
 int Draw3dViMouseParameters::relinkCompositeFields()

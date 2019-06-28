@@ -18,20 +18,20 @@
 
 namespace corecvs {
 
-string PPMLoader::prefix1(".pgm");
-string PPMLoader::prefix2(".ppm");
+string PPMLoader::extention1(".pgm");
+string PPMLoader::extention2(".ppm");
 
 bool PPMLoader::acceptsFile(string name)
 {
     std::transform(name.begin(), name.end(), name.begin(), ::tolower);
 
-    return HelperUtils::endsWith(name, prefix1) ||
-           HelperUtils::endsWith(name, prefix2);
+    return HelperUtils::endsWith(name, extention1) ||
+           HelperUtils::endsWith(name, extention2);
 }
 
 G12Buffer* PPMLoader::loadG16(const string& name)
 {
-    if (HelperUtils::endsWith(name, prefix1))   // == pgm
+    if (HelperUtils::endsWith(name, extention1))   // == pgm
     {
         return loadG12(name, nullptr, true/*loadAs16*/);
     }
@@ -68,35 +68,46 @@ G12Buffer* PPMLoader::loadG16(const string& name)
     return result;
 }
 
-G12Buffer* PPMLoader::loadG12(const string& name, MetaData *meta, bool loadAs16)
+G12Buffer* PPMLoader::loadG12(const string& name, MetaData *meta, bool load16bit, bool bigEndian)
 {
-    L_DEBUG_P("name:%s meta:%s as16:%d", name.c_str(), (meta ? "fill" : "ignore"), loadAs16);
-
-    FILE *fp = fopen(name.c_str(), "rb");
-    if (fp == nullptr) {
-        L_ERROR_P("couldn't open file: %s", name.c_str());
-        return nullptr;
-    }
-
-    // PPM headers variable declaration
-    unsigned long h, w;
-    uint8_t type;
-    uint16_t maxval;
-    if (!readHeader(fp, &h, &w, &maxval, &type, meta) || (type != 5 && type != 6))
-    {
-        L_ERROR_P("invalid header at file: %s", name.c_str());
-        fclose(fp);
-        return nullptr;
-    }
-    if (type == 6)      // file has 3 channels instead of 1
-    {
-        L_ERROR_P("invalid type (%d) of the PPM file: %s", type, name.c_str());
-        fclose(fp);
-        return nullptr;
-    }
+    G12Buffer *result = NULL;
+    uint64_t size = 0;
+    uint8_t *charImage = NULL;
 
     bool calcWhite = false;
     int white = 0;
+
+    SYNC_PRINT(("PPMLoader::loadG12(%s meta:%s as16:%s)\n", name.c_str(), (meta ? "fill" : "ignore"), load16bit ? "true" : "false"));
+
+    std::ifstream file;
+    file.open(name, std::ios::in | std::ios::binary);
+    if (file.fail())
+    {
+        SYNC_PRINT(("PPMLoader::loadG12(): can't open file <%s>\n", name.c_str()));
+        return result;
+    }
+
+    PPMHeader header;
+    readHeader(file, header);
+    if (file.bad())
+    {
+        SYNC_PRINT(("invalid header at file: %s\n", name.c_str()));
+        goto close_file;
+    }
+
+    if (header.type != TYPE_P5 && header.type != TYPE_P6)
+    {
+        SYNC_PRINT(("We only support P6 and P5 files: %s\n", name.c_str()));
+        goto close_file;
+
+    }
+
+    if (header.type == TYPE_P6)      // file has 3 channels instead of 1
+    {
+        SYNC_PRINT(("invalid type (%s) of the PPM file: %s\n", getName(header.type), name.c_str()));
+        goto close_file;
+    }
+
     // if no metadata is present, create some
     // if metadata is null, don't
     if (meta != nullptr)
@@ -108,7 +119,7 @@ G12Buffer* PPMLoader::loadG12(const string& name, MetaData *meta, bool loadAs16)
         {
             metadata["bits"].push_back(1);
         }
-        while (maxval >> int(metadata["bits"][0]))
+        while (header.maxval >> int(metadata["bits"][0]))
         {
             metadata["bits"][0]++;
         }
@@ -116,15 +127,14 @@ G12Buffer* PPMLoader::loadG12(const string& name, MetaData *meta, bool loadAs16)
             calcWhite = true;
     }
 
-    G12Buffer *result = new G12Buffer(h, w, false);
+    result = new G12Buffer(header.h, header.w, false);
 
-    // image size in bytes
-    uint64_t size = (maxval < 0x100 ? 1 : 2) * w * h;
+    size = (header.maxval < 0x100 ? 1 : 2) * header.w * header.h;
 
     // for reading we don't need to account for possible system byte orders, so just use a 8-bits buffer
-    uint8_t *charImage = new uint8_t[size];
-
-    if (fread(charImage, 1, size, fp) != size)
+    charImage = new uint8_t[size];
+    file.read((char *)charImage, size);
+    if (!file)
     {
         L_ERROR_P("couldn't read %u bytes from file: %s", (unsigned)size, name.c_str());
         delete_safe(charImage);
@@ -132,11 +142,11 @@ G12Buffer* PPMLoader::loadG12(const string& name, MetaData *meta, bool loadAs16)
         goto done;
     }
 
-    if (maxval < 0x100)             // 1-byte case
+    if (header.maxval < 0x100)             // 1-byte case
     {
-        cint shift = loadAs16 ? 8 : 0;
-        for (unsigned k = 0, i = 0; i < h; ++i)
-            for (unsigned j = 0; j < w; ++j)
+        cint shift = load16bit ? 8 : 0;
+        for (int32_t k = 0, i = 0; i < result->h; i++)
+            for (int32_t j = 0; j < result->w; j++)
             {
                 uint8_t pix = result->element(i, j) = charImage[k++] << shift;
                 if (calcWhite && pix > white)
@@ -145,19 +155,32 @@ G12Buffer* PPMLoader::loadG12(const string& name, MetaData *meta, bool loadAs16)
     }
     else                            // 2-bytes case
     {
-        cint MaxValue = loadAs16 ? (1 << 16) - 1 : (G12Buffer::BUFFER_MAX_VALUE);
+        cint realMax = load16bit ? (1 << 16) - 1 : (G12Buffer::BUFFER_MAX_VALUE);
         // here we need to calculate shift to compress data into a 12-bits buffer
         int shiftCount;
-        for (shiftCount = 0; (maxval >> shiftCount) > MaxValue; shiftCount++);
+        for (shiftCount = 0; (header.maxval >> shiftCount) > realMax; shiftCount++);
 
-        for (unsigned k = 0, i = 0; i < h; ++i)
-        {
-            for (unsigned j = 0; j < w; ++j, ++k)
+        int k = 0;
+        for (int i = 0; i < result->h; i++)
+        {            
+            for (int j = 0; j < result->w; j++, k+=2)
             {
-                uint16_t pix = result->element(i, j) =
-                    ((charImage[2 * k + 0]) << 8 | (charImage[2 * k + 1])) >> shiftCount;
+                uint8_t p0 = charImage[k + 0];
+                uint8_t p1 = charImage[k + 1];
 
-                CORE_ASSERT_FALSE((pix > MaxValue), "Internal error in image loader\n");
+                uint16_t pix = 0;
+                if (bigEndian) {
+                    pix = (p0 << 8) | p1;
+                } else {
+                    pix = (p1 << 8) | p0;
+                }
+
+                pix >>= shiftCount;
+                result->element(i, j) = pix;
+
+                if (pix > realMax) {
+                    SYNC_PRINT(("Internal error in image loader %d > %d at (y=%d x=%d)\n", pix, realMax, i, j));
+                }
                 if (calcWhite && pix > white)
                     white = pix;
             }
@@ -169,34 +192,42 @@ G12Buffer* PPMLoader::loadG12(const string& name, MetaData *meta, bool loadAs16)
     }
 
 done:
-    fclose(fp);
     deletearr_safe(charImage);
+close_file:
+    file.close();
     return result;
 }
 
 RGB48Buffer* PPMLoader::loadRgb48(const string& name, MetaData *meta)
 {
     // PPM headers variable declaration
-    unsigned long int h, w;
+    unsigned long int h = 0;
+    unsigned long int w = 0;
+    RGB48Buffer *result = NULL;
     uint8_t type;
     unsigned short int maxval;
-
-    FILE *fp = fopen(name.c_str(), "rb");
-    if (fp == nullptr)
-    {
-        L_ERROR_P("can't open file <%s>", name.c_str());
-        return nullptr;
-    }
-
-    if (!readHeader(fp, &h, &w, &maxval, &type, meta) || (type != 6))
-    {
-        L_ERROR_P("invalid header at <%s>", name.c_str());
-        fclose(fp);
-        return nullptr;
-    }
-
     bool calcWhite = false;
     int white = 0;
+
+    std::ifstream file;
+    file.open(name, std::ios::in | std::ios::binary);
+    if (file.fail())
+    {
+        SYNC_PRINT(("PPMLoader::loadRgb48(): can't open file <%s>\n", name.c_str()));
+        return result;
+    }
+
+
+    PPMHeader header;
+
+    if (!readHeader(file, header) || (type != 6))
+    {
+        L_ERROR_P("invalid header at <%s>", name.c_str());
+        file.close();
+        return result;
+    }
+
+
     // if no metadata is present, create some
     // if metadata is null, don't
     if (meta != nullptr)
@@ -216,7 +247,7 @@ RGB48Buffer* PPMLoader::loadRgb48(const string& name, MetaData *meta)
             metadata["white"].push_back(maxval);
     }
 
-    RGB48Buffer *result = new RGB48Buffer(h, w, false);
+    result = new RGB48Buffer(h, w, false);
 
     // image size in bytes
     uint64_t size = (maxval < 0x100 ? 1 : 2) * w * h * 3;
@@ -229,7 +260,8 @@ RGB48Buffer* PPMLoader::loadRgb48(const string& name, MetaData *meta)
         goto done;
     }
 
-    if (fread(charImage, 1, size, fp) != size)
+    file.read((char *)charImage, size);
+    if (!file)
     {
         L_ERROR_P("couldn't read file: %s", name.c_str());
         delete_safe(charImage);
@@ -275,7 +307,7 @@ RGB48Buffer* PPMLoader::loadRgb48(const string& name, MetaData *meta)
     }
 
 done:
-    fclose(fp);
+    file.close();
     deletearr_safe(charImage);
     return result;
 }
@@ -333,26 +365,94 @@ int PPMLoader::nextLine(FILE *fp, char *buf, int sz, MetaData *metadata)
     return 1;
 }
 
-bool PPMLoader::readHeader(FILE *fp, unsigned long int *h, unsigned long int *w, uint16_t *maxval, uint8_t *type, MetaData* metadata)
+void PPMLoader::skipComments (std::istream &file)
 {
-    char header[255];
-
-    // check PPM type (currently only supports 5 or 6)
-    if (fgets(header, sizeof(header), fp) == nullptr || (header[0] != 'P') || (header[1] < '5') || (header[1] > '6'))
+    while (true)
     {
-        L_ERROR_P("invalid header at PPM file");
+        int c = file.peek();
+        // cout << "Peeked:" << c << "(" << ((char)c) << ")" << endl;
+        if (std::isspace(c)) {
+            c = file.get();
+            // cout << "Extraced:" << c << "(" << ((char)c) << ")" << endl;
+            continue;
+        }
+        if (c == '#') {
+            std::string comment;
+            HelperUtils::getlineSafe(file, comment);
+            if (trace) {
+                cout << "Comment :" << comment << endl;
+            }
+            continue;
+        }
+        return;
+    }
+    return;
+}
+
+/**
+ *  PPM header is quite flexible, without strict standard.
+ *  For examples on how it could look consult
+ *    https://en.wikipedia.org/wiki/Netpbm_format
+ *    http://paulbourke.net/dataformats/ppm/
+ *
+ *
+ **/
+bool PPMLoader::readHeader(std::istream &file, PPMHeader &header)
+{
+    char magic1 = ' ';
+    char magic2 = ' ';
+
+    file >> magic1;
+    file >> magic2;
+
+    if (file.bad()) {
         return false;
     }
 
-    // type contains a TYPE uint8_t, in our case 5 or 6
-    *type = header[1] - '0';
+    if (magic1 != 'P') {
+        SYNC_PRINT(("PPM should start with symbol 'P'"));
+        return false;
+    }
 
+    do {
+        if (magic2 == '3') {
+            header.type = TYPE_P3;
+            break;
+        }
+        if (magic2 == '5') {
+            header.type = TYPE_P5;
+            break;
+        }
+        if (magic2 == '6') {
+            header.type = TYPE_P6;
+            break;
+        }
+        SYNC_PRINT(("We only support PPM with P5 or P6\n"));
+        return false;
+    } while (false);
+
+    skipComments(file);
+    file >> header.w;
+    skipComments(file);
+    file >> header.h;
+    skipComments(file);
+    file >> header.maxval;
+
+    while(file.peek() != '\n' && file) {
+        file.get();
+    }
+    file.get(); /*Extracting actual new line*/
+
+    SYNC_PRINT(("Image is P%d PPM [%lu %lu] max=%u\n", header.type == TYPE_P5 ? 5 : 6, header.w, header.h, header.maxval));
+
+#if 0
     // get dimensions
     if (nextLine(fp, header, sizeof(header), metadata) != 0)
         return false;
 
     // parse dimensions
-    if (sscanf(header, "%lu%lu", w, h) != 2)
+    SYNC_PRINT(("Header line: %s\n", header));
+    if (sscanf(header, "%lu %lu", w, header) != 2)
     {
         // try to parse dimensions in Photoshop-like format (when a newline is used instead of whitespace or tabulation)
         if (sscanf(header, "%lu", w) != 1)
@@ -363,7 +463,7 @@ bool PPMLoader::readHeader(FILE *fp, unsigned long int *h, unsigned long int *w,
 
         // first dimension has been read, try to read the second
         int error = nextLine(fp, header, sizeof header, metadata);
-        if (error || sscanf(&header[0], "%lu", h) != 1) // duplicate code can be gotten rid of with a goto (not sure it's worth doing)
+        if (error || sscanf(&header[0], "%lu", header) != 1) // duplicate code can be gotten rid of with a goto (not sure it's worth doing)
         {
             L_ERROR_P("Image dimensions could not be read from line: %s", header);
             return false;
@@ -382,33 +482,35 @@ bool PPMLoader::readHeader(FILE *fp, unsigned long int *h, unsigned long int *w,
 
     // we assume that no comments exist after the color depth header line to avoid misinterpretation of '#' first data value
 
-    L_INFO_P("Image is P%d PPM [%lu %lu] max=%u", *type, *w, *h, *maxval);
+    L_INFO_P("Image is P%d PPM [%lu %lu] max=%u", header.type, header.w, header.h, header.maxval);
+
+#endif
     return true;
 }
 
-bool PPMLoader::writeHeader(FILE *fp, unsigned long int h, unsigned long int w, uint8_t type, uint16_t maxval, MetaData* meta)
-{
-    if (!fp || !h || !w || type < 5 || type > 6)
-        return false;
+bool PPMLoader::writeHeader(std::ostream &file, const PPMHeader &header)
+{   
+    if ( header.w == 0 ) return false;
+    if ( header.type != TYPE_P5 && header.type != TYPE_P6) return false;
 
-    MetaData &metadata = *meta;
+    file << "P" << (header.type == TYPE_P5 ? "5" : "6") << endl;
 
-    fprintf(fp, "P%u\n", type);
-
-    // TODO: test this!
-    if (meta != NULL)
+    if (header.metadata != NULL)
     {
-        for (MetaData::iterator i = metadata.begin(); i != metadata.end(); i++)
+        const MetaData &metadata = *header.metadata;
+
+        for (const auto &it : metadata)
         {
-            fprintf(fp, "# @meta %s\t@values %" PRISIZE_T "\t", i->first.c_str(), i->second.size());
-            for (uint j = 0; j < i->second.size(); j++)
-                fprintf(fp, "%f ", i->second[j]);
-            fprintf(fp, "\n");
+            file << "# @meta "<< it.second.size() << "\t@values " << it.second.size() << "\t";
+            for (size_t j = 0; j < it.second.size(); j++)
+                file << it.second[j] << " ";
+            file << endl;
         }
     }
 
-    fprintf(fp, "%lu %lu\n", w, h);
-    fprintf(fp, "%hu\n", maxval);
+    file << header.w      << " " << header.h << endl;
+    file << header.maxval << endl;
+
     return true;
 }
 
@@ -417,36 +519,42 @@ int PPMLoader::save(const string& name, RGB24Buffer *buffer, MetaData* metadata)
     if (buffer == NULL)
         return -1;
 
-    FILE *fp = fopen(name.c_str(), "wb");
-    if (fp == NULL)
+    std::ofstream file;
+    file.open(name, std::ios::out | std::ios::binary);
+    if (file.fail())
     {
-        L_ERROR_P("couldn't open file for writting <%s>", name.c_str());
-        return -1;
+        SYNC_PRINT(("PPMLoader::save(): couldn't open file for writeing <%s>\n", name.c_str()));
+        return -2;
     }
 
-    int h = buffer->h;
-    int w = buffer->w;
+    PPMHeader header;
 
-    writeHeader(fp, h, w, 6, 0xff, metadata);
+    header.h = buffer->h;
+    header.w = buffer->w;
+    header.type = TYPE_P6;
+    header.maxval = 0xff;
+    header.metadata = metadata;
 
-    uint8_t *charImage = new uint8_t[3 * w * h];
+    writeHeader(file, header);
 
-    for (int i = 0; i < h; i++)
-        for (int j = 0; j < w; j++)
+    uint8_t *charImage = new uint8_t[3 * header.w * header.h];
+
+    for (int i = 0; i < buffer->h; i++)
+        for (int j = 0; j < buffer->w; j++)
         {
             uint8_t elemval[3] = {
                 buffer->element(i, j).r(),
                 buffer->element(i, j).g(),
                 buffer->element(i, j).b()
             };
-            for (int offset = i * w + j, k = 0; k < 3; k++)
+            for (int offset = i * header.w + j, k = 0; k < 3; k++)
                 charImage[offset * 3 + k] = elemval[k];
         }
 
-    fwrite(charImage, 3, h * w, fp);
+    file.write((char *)charImage, 2 * header.w * header.h);
 
     deletearr_safe(charImage);
-    fclose(fp);
+    file.close();
     return 0;
 }
 
@@ -455,15 +563,19 @@ int PPMLoader::save(const string& name, G12Buffer *buffer, MetaData* metadata, i
     if (buffer == NULL)
         return -1;
 
-    FILE *fp = fopen(name.c_str(), "wb");
-    if (fp == NULL)
+    std::ofstream file;
+    file.open(name, std::ios::out | std::ios::binary);
+    if (file.fail())
     {
-        L_ERROR_P("couldn't open file for writting <%s>", name.c_str());
-        return -1;
+        SYNC_PRINT(("PPMLoader::save(): couldn't open file for writeing <%s>\n", name.c_str()));
+        return -2;
     }
 
-    int h = buffer->h;
-    int w = buffer->w;
+    PPMHeader header;
+    header.h = buffer->h;
+    header.w = buffer->w;
+
+
     int bytes = 2;
     int bits = 12;
     if (metadata != nullptr)
@@ -479,18 +591,23 @@ int PPMLoader::save(const string& name, G12Buffer *buffer, MetaData* metadata, i
     }
 
     int  maxVal =  forceTo8bitsShift >= 0 ? 0xff : (1 << bits) - 1;
-    size_t size = (forceTo8bitsShift >= 0 ?    1 : bytes) * w * h;
+    size_t size = (forceTo8bitsShift >= 0 ?    1 : bytes) * buffer->w * buffer->h;
 
-    writeHeader(fp, h, w, 5, maxVal, metadata);
+
+    header.maxval = maxVal;
+    header.metadata = metadata;
+    header.type = TYPE_P5;
+
+    writeHeader(file, header);
 
     uint8_t *charImage = new uint8_t[size];
     if (bytes == 2)
     {
-        for (int i = 0; i < h; i++)
+        for (int i = 0; i < buffer->h; i++)
         {
-            for (int j = 0; j < w; j++)
+            for (int j = 0; j < buffer->w; j++)
             {
-                int offset = i * w + j;
+                int offset = i * header.w + j;
                 uint16_t pixel = buffer->element(i, j);
                 if (forceTo8bitsShift >= 0) {
                     uint16_t pix = pixel >> forceTo8bitsShift;
@@ -505,17 +622,17 @@ int PPMLoader::save(const string& name, G12Buffer *buffer, MetaData* metadata, i
     }
     else
     {
-        for (int i = 0; i < h; i++)
+        for (int i = 0; i < buffer->h; i++)
         {
-            for (int j = 0; j < w; j++)
+            for (int j = 0; j < buffer->w; j++)
             {
-                charImage[i * w + j] = buffer->element(i, j) & 0xFF;
+                charImage[i * header.w + j] = buffer->element(i, j) & 0xFF;
             }
         }
     }
 
-    fwrite(charImage, 1, size, fp);
-    fclose(fp);
+    file.write((char *)charImage, size);
+    file.close();
     deletearr_safe(charImage);
     return 0;
 }
@@ -525,19 +642,21 @@ int PPMLoader::save(const string& name, RGB48Buffer *buffer, MetaData* metadata,
     if (buffer == NULL)
         return -1;
 
-    FILE *fp = fopen(name.c_str(), "wb");
-    if (fp == NULL)
+    std::ofstream file;
+    file.open(name, std::ios::out | std::ios::binary);
+    if (file.fail())
     {
-        L_ERROR_P("couldn't open file for writting <%s>", name.c_str());
-        return -1;
+        SYNC_PRINT(("PPMLoader::save(): couldn't open file for writeing <%s>\n", name.c_str()));
+        return -2;
     }
 
-    int h = buffer->h;
-    int w = buffer->w;
+    PPMHeader header;
+    header.h = buffer->h;
+    header.w = buffer->w;
 
     int maxval = 0;
-    for (int i = 0; i < h; i++)
-        for (int j = 0; j < w; j++)
+    for (ulong i = 0; i < header.h; i++)
+        for (ulong j = 0; j < header.w; j++)
         {
             auto &pixel = buffer->element(i, j);
             if (pixel.r() > maxval) maxval = pixel.r();
@@ -552,20 +671,24 @@ int PPMLoader::save(const string& name, RGB48Buffer *buffer, MetaData* metadata,
     int bytes = (bits + 7) / 8;
     uint16_t maxVal = (1 << bits) - 1;
 
-    writeHeader(fp, h, w, 6, forceTo8bitsShift >= 0 ? 255 : maxVal, metadata);
+    header.maxval = forceTo8bitsShift >= 0 ? 255 : maxVal;
+    header.metadata = metadata;
+    header.type = TYPE_P6;
 
-    size_t size = 3 * (forceTo8bitsShift >= 0 ? 1 : bytes) * w * h;
+    writeHeader(file, header);
+
+    size_t size = 3 * (forceTo8bitsShift >= 0 ? 1 : bytes) * header.w * header.h;
     uint8_t *charImage = new uint8_t[size];
 
-    for (int i = 0; i < h; i++)
-        for (int j = 0; j < w; j++)
+    for (int i = 0; i < buffer->h; i++)
+        for (int j = 0; j < buffer->w; j++)
         {
             uint16_t elemval[3] = {
                 buffer->element(i, j).r(),
                 buffer->element(i, j).g(),
                 buffer->element(i, j).b()
             };
-            int offset = 3 * (i * w + j);
+            int offset = 3 * (i * header.w + j);
 
             if (bytes == 2) {
                 for (int k = 0; k < 3; k++)
@@ -587,8 +710,8 @@ int PPMLoader::save(const string& name, RGB48Buffer *buffer, MetaData* metadata,
             }
         }
 
-    fwrite(charImage, 1, size, fp);
-    fclose(fp);
+    file.write((char *)charImage, size);
+    file.close();
     deletearr_safe(charImage);
     return 0;
 }
@@ -607,7 +730,7 @@ RGB24Buffer *PPMLoaderRGB24::load(const string &name)
         {
             L_INFO_P("name:<%s> detected Bayer %dx%dx12", name.c_str(), buffer->w, buffer->h);
 
-            auto params = Debayer::Parameters::BestDefaultsByExt(prefix1);
+            auto params = Debayer::Parameters::BestDefaultsByExt(extention1);
             params.setNumBitsOut(meta["bits"][0]);
             return Debayer::Demosaic(buffer.get(), params);
         }

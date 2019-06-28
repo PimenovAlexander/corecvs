@@ -215,4 +215,76 @@ ConvexQuickHull::HullFaces HalfspaceIntersector::FromConvexPolyhedron(const Conv
 
 }
 
+ConvexPolyhedron HalfspaceIntersector::FromConvexPolyhedronCP(const ConvexPolyhedron &polyhedron)
+{
+    vector<ProjectiveCoord4d> dual;
+
+    dual.reserve(polyhedron.faces.size());
+    for (const Plane3d &plane : polyhedron.faces)
+    {
+        dual.push_back(ProjectiveCoord4d(plane.a(), plane.b(), plane.c(), plane.d()));
+    }
+
+    cout<< "start ProjectiveConvexHull"<<endl;
+    ProjectiveConvexQuickHull::HullFaces facesD = ProjectiveConvexQuickHull::quickHull(dual);
+#if 1 //return verticies and faces
+    //get points from conex hull
+    vector<Vector3dd> verticies;
+    cout<<"get vertices"<<endl;
+    for(ProjectiveConvexQuickHull::HullFace &face: facesD)  
+    {
+        Matrix33  A = Matrix33::FromRows(
+                    face.plane.p1().xyz(),
+                    face.plane.p2().xyz(),
+                    face.plane.p3().xyz());
+
+        Vector3dd b(face.plane.p1().w(), face.plane.p2().w(), face.plane.p3().w());
+
+        if(A.det() != 0)
+        {
+            verticies.push_back(-A.inv() * b);
+            cout<< "Add point: "<< verticies.back() <<endl;
+        }
+    }
+    return ConvexPolyhedron(verticies);
+
+#else //return only faces
+    
+    vector<ProjectiveCoord4d> pointsD;
+    for(ProjectiveConvexQuickHull::HullFace &face: facesD)  
+    {
+        pointsD.push_back(face.plane.p1());
+        pointsD.push_back(face.plane.p2());
+        pointsD.push_back(face.plane.p3());
+    }
+    std::sort(pointsD.begin(), pointsD.end(), [](ProjectiveCoord4d &a, ProjectiveCoord4d &b)
+        {
+            if (a.x() < b.x()) return true;
+            if (a.x() > b.x()) return false;
+
+            if (a.y() < b.y()) return true;
+            if (a.y() > b.y()) return false;
+
+            if (a.z() < b.z()) return true;
+            if (a.z() > b.z()) return false;
+
+            if (a.w() < b.w()) return true;
+            return false;
+        }
+    );
+    pointsD.erase(std::unique(pointsD.begin(), pointsD.end()), pointsD.end());
+
+    ConvexPolyhedron result;
+    result.faces.reserve(pointsD.size());
+    cout<< "Intersection result:"<<endl;
+    for(ProjectiveCoord4d &point:pointsD)
+    {
+        result.faces.push_back(Plane3d(point.x(), point.y(), point.z(), point.w()));
+        cout<<Plane3d(point.x(), point.y(), point.z(), point.w())<<endl;
+    }
+    return result;
+#endif
+}
+
+
 } // namespace corecvs

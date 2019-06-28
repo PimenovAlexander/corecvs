@@ -368,7 +368,7 @@ void GraphPlotDialog::addGraphPoint(unsigned graphId, double value, bool isValid
         return;
 
     if (graphId >= mData.size()) {
-        qDebug("GraphPlotDialog::addGraphPoint(): adding new graph");
+        // qDebug("GraphPlotDialog::addGraphPoint(): adding new graph");
 
         mData.resize(graphId + 1);
         mData[graphId].isSelected = false;

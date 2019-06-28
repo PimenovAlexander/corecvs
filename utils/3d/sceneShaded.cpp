@@ -2,7 +2,7 @@
 #include <QOpenGLShader>
 #include <QOpenGLShaderProgram>
 #include <QtGui/QMatrix4x4>
-#include <QOpenGLFunctions_4_4_Core>
+#include <QOpenGLFunctions_4_5_Core>
 
 //#include <GL/gl.h>
 
@@ -158,7 +158,7 @@ void SceneShaded::addTexture(GLuint texId, RGB24Buffer *input)
 
 void SceneShaded::setParameters(void *params)
 {
-    SYNC_PRINT(("SceneShaded::setParameters()\n"));
+    //SYNC_PRINT(("SceneShaded::setParameters()\n"));
     mParameters = *static_cast<ShadedSceneControlParameters *>(params);
     mParamsApplied = false;
 }
@@ -194,7 +194,7 @@ void SceneShaded::applyParameters()
             fShader = fragmentShaderSource1;
         }
 
-        SYNC_PRINT(("SceneShaded::setParameters(): Creating %d program\n", target));
+        SYNC_PRINT(("SceneShaded::applyParameters(): Creating %d program\n", target));
         mProgram[target] = new QOpenGLShaderProgram();
         mProgram[target]->addShaderFromSourceCode(QOpenGLShader::Vertex,   vShader);
         mProgram[target]->addShaderFromSourceCode(QOpenGLShader::Fragment, fShader);
@@ -223,69 +223,85 @@ void SceneShaded::applyParameters()
     mParamsApplied = true;
 }
 
+void SceneShaded::prepareTextures(CloudViewDialog * dialog)
+{   
+    if (mTexturesUpdated) {
+        return;
+    }
 
-void SceneShaded::prepareMesh(CloudViewDialog * /*dialog*/)
-{
-    SYNC_PRINT(("void SceneShaded::prepareMesh():called\n"));
-    initializeOpenGLFunctions();
+    SYNC_PRINT(("void SceneShaded::prepareTextures():called\n"));
 
-    setParameters(&mParameters);
+    dialog->mUi.widget->makeCurrent();
+    QOpenGLFunctions_4_5_Core &glFuncs = *(dialog->mUi.widget->context()->versionFunctions<QOpenGLFunctions_4_5_Core>());
 
     /*Prepare Texture*/
     RGB24Buffer *texBuf = mMesh->materials.size() > 0 ? mMesh->materials.front().tex[OBJMaterial::TEX_DIFFUSE] : NULL;
     if (texBuf != NULL) {
-        glEnable(GL_TEXTURE_2D);
+        glFuncs.glEnable(GL_TEXTURE_2D);
         qDebug() << "Dumping prior error";
         dumpGLErrors();
-        glGenTextures(1, &mTexture);
+        glFuncs.glGenTextures(1, &mTexture);
         qDebug() << "Created a handle for the texture:" << mTexture;
         dumpGLErrors();
         addTexture(mTexture, texBuf);
-        glDisable(GL_TEXTURE_2D);
+        glFuncs.glDisable(GL_TEXTURE_2D);
     }
 
     /*Prepare Bumpmap*/
     RGB24Buffer *bumpBuf = mMesh->materials.size() > 0 ? mMesh->materials.front().tex[OBJMaterial::TEX_BUMP] : NULL;
     if (bumpBuf != NULL) {
-        glEnable(GL_TEXTURE_2D);
+        glFuncs.glEnable(GL_TEXTURE_2D);
         qDebug() << "Dumping prior error";
         dumpGLErrors();
-        glGenTextures(1, &mBumpmap);
+        glFuncs.glGenTextures(1, &mBumpmap);
         qDebug() << "Created a handle for the bumpmap:" << mBumpmap;
         dumpGLErrors();
         addTexture(mBumpmap, bumpBuf);
-        glDisable(GL_TEXTURE_2D);
+        glFuncs.glDisable(GL_TEXTURE_2D);
     }
 
     if (!mMesh->materials.empty())
     {
         RGB24Buffer *texBuf = mMesh->materials.front().tex[OBJMaterial::TEX_DIFFUSE];
-
-        glGenTextures(1,&mTexArray);
-        glBindTexture(GL_TEXTURE_2D_ARRAY,mTexArray);
-
-        GLint oldStride;
-        glGetIntegerv(GL_UNPACK_ROW_LENGTH, &oldStride);
-        glPixelStorei(GL_UNPACK_ROW_LENGTH, texBuf->stride);
-        glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, texBuf->w, texBuf->h, mMesh->materials.size());
-
-        for (size_t i = 0; i < mMesh->materials.size(); i++)
+        if (texBuf != NULL)
         {
-            glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, texBuf->w, texBuf->h, 1, GL_RGBA, GL_UNSIGNED_BYTE, &mMesh->materials[i].tex[OBJMaterial::TEX_DIFFUSE]->element(0,0));
+            glFuncs.glGenTextures(1,&mTexArray);
+            glFuncs.glBindTexture(GL_TEXTURE_2D_ARRAY,mTexArray);
+
+            GLint oldStride;
+            glFuncs.glGetIntegerv(GL_UNPACK_ROW_LENGTH, &oldStride);
+            glFuncs.glPixelStorei(GL_UNPACK_ROW_LENGTH, texBuf->stride);
+            glFuncs.glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, texBuf->w, texBuf->h, mMesh->materials.size());
+
+            for (size_t i = 0; i < mMesh->materials.size(); i++)
+            {
+                glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, texBuf->w, texBuf->h, 1, GL_RGBA, GL_UNSIGNED_BYTE, &mMesh->materials[i].tex[OBJMaterial::TEX_DIFFUSE]->element(0,0));
+            }
+
+            glFuncs.glPixelStorei(GL_UNPACK_ROW_LENGTH, oldStride);
+
+
+            glFuncs.glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glFuncs.glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glFuncs.glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glFuncs.glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         }
-
-        glPixelStorei(GL_UNPACK_ROW_LENGTH, oldStride);
-
-
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     }
 
-    /* Prepare caches in OpenGL formats */
+    mTexturesUpdated = true;
+}
 
+
+void SceneShaded::prepareMesh(CloudViewDialog * dialog)
+{
+    if (mMeshPrepared)
+    {
+        return;
+    }
+    //SYNC_PRINT(("void SceneShaded::prepareMesh():called\n"));
+
+    /* Prepare caches in OpenGL formats */
 
     /* Vertexes */
     {
@@ -435,11 +451,20 @@ void SceneShaded::prepareMesh(CloudViewDialog * /*dialog*/)
             faceIds[outCount + 2] = (uint32_t)(outCount + 2);
         }
     }
+    mMeshPrepared = true;
 }
 
-void SceneShaded::drawMyself(CloudViewDialog * /*dialog*/)
+void SceneShaded::drawMyself(CloudViewDialog * dialog)
 {
-    initializeOpenGLFunctions();
+    prepareMesh(dialog);
+    prepareTextures(dialog);
+    applyParameters();
+
+    dialog->mUi.widget->makeCurrent();
+
+    //QOpenGLFunctions &glFuncs = *(dialog->mUi.widget->context()->functions());
+    QOpenGLFunctions_4_5_Core &glFuncs = *(dialog->mUi.widget->context()->versionFunctions<QOpenGLFunctions_4_5_Core>());
+
     applyParameters();
 /*    if (mProgram[] == NULL)
     {
@@ -449,7 +474,7 @@ void SceneShaded::drawMyself(CloudViewDialog * /*dialog*/)
     mProgram->bind();*/
 
     float arr[16];
-    glGetFloatv(GL_MODELVIEW_MATRIX, arr);
+    glFuncs.glGetFloatv(GL_MODELVIEW_MATRIX, arr);
     QMatrix4x4 modelview(
             arr[0], arr[4], arr[ 8], arr[12],
             arr[1], arr[5], arr[ 9], arr[13],
@@ -457,7 +482,7 @@ void SceneShaded::drawMyself(CloudViewDialog * /*dialog*/)
             arr[3], arr[7], arr[11], arr[15]
     );
 
-    glGetFloatv(GL_PROJECTION_MATRIX, arr);
+    glFuncs.glGetFloatv(GL_PROJECTION_MATRIX, arr);
     QMatrix4x4 projection(
             arr[0], arr[4], arr[ 8], arr[12],
             arr[1], arr[5], arr[ 9], arr[13],
@@ -480,8 +505,8 @@ void SceneShaded::drawMyself(CloudViewDialog * /*dialog*/)
         mProgram[target]->release();
     }
 
-    bool depthTest =  glIsEnabled(GL_DEPTH_TEST);
-    glEnable(GL_DEPTH_TEST);
+    bool depthTest =  glFuncs.glIsEnabled(GL_DEPTH_TEST);
+    glFuncs.glEnable(GL_DEPTH_TEST);
 
 #if 0
 
@@ -519,26 +544,28 @@ void SceneShaded::drawMyself(CloudViewDialog * /*dialog*/)
         {
             mProgram[POINT]->bind();
             int oldPointSize = 1;
-            glGetIntegerv(GL_POINT_SIZE, &oldPointSize);
+
+            glFuncs.glGetIntegerv(GL_POINT_SIZE, &oldPointSize);
             glPointSize(mParameters.pointSize());
 
             // cout << "Executing point draw" << endl;
-            glVertexAttribPointer(mPosAttr, 3, GL_FLOAT, GL_FALSE, 0, positions.data());
-            glEnableVertexAttribArray(mPosAttr);
+            glFuncs.glVertexAttribPointer(mPosAttr, 3, GL_FLOAT, GL_FALSE, 0, positions.data());
+            glFuncs.glEnableVertexAttribArray(mPosAttr);
 
             if (mMesh->hasColor && !mParameters.pointColorOverride())
             {
-                glVertexAttribPointer(mColAttr, GL_BGRA, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(RGBColor), mMesh->vertexesColor.data());
-                glEnableVertexAttribArray(mColAttr);
+                glFuncs.glVertexAttribPointer(mColAttr, GL_BGRA, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(RGBColor), mMesh->vertexesColor.data());
+                glFuncs.glEnableVertexAttribArray(mColAttr);
             } else {
                 Vector3df pointColor = RGBColor(mParameters.pointColor()).toFloat();
-                glVertexAttrib3f(mColAttr, pointColor.x(), pointColor.y(), pointColor.z());
+                glFuncs.glVertexAttrib3f(mColAttr, pointColor.x(), pointColor.y(), pointColor.z());
             }
 
-            glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(mMesh->vertexes.size()));
+            //SYNC_PRINT(("Calling glDrawArrays(%d %d %d)\n", GL_POINTS, 0, static_cast<GLsizei>(mMesh->vertexes.size()));
+            glFuncs.glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(mMesh->vertexes.size()));
 
-            glDisableVertexAttribArray(mPosAttr);
-            glDisableVertexAttribArray(mColAttr);
+            glFuncs.glDisableVertexAttribArray(mPosAttr);
+            glFuncs.glDisableVertexAttribArray(mColAttr);
 
             glPointSize(oldPointSize);
             mProgram[POINT]->release();
@@ -548,24 +575,24 @@ void SceneShaded::drawMyself(CloudViewDialog * /*dialog*/)
         {
             mProgram[EDGE]->bind();
             int oldLineWidth = 1;
-            glGetIntegerv(GL_LINE_WIDTH, &oldLineWidth);
-            glLineWidth(mParameters.edgeWidth());
+            glFuncs.glGetIntegerv(GL_LINE_WIDTH, &oldLineWidth);
+            glFuncs.glLineWidth(mParameters.edgeWidth());
 
-            glVertexAttribPointer(mPosAttr, 3, GL_FLOAT, GL_FALSE, 0, edgePositions.data());
-            glEnableVertexAttribArray(mPosAttr);
+            glFuncs.glVertexAttribPointer(mPosAttr, 3, GL_FLOAT, GL_FALSE, 0, edgePositions.data());
+            glFuncs.glEnableVertexAttribArray(mPosAttr);
 
             if (!edgeColors.empty())
             {
-                glVertexAttribPointer(mColAttr, GL_BGRA, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(RGBColor), edgeColors.data());
-                glEnableVertexAttribArray(mColAttr);
+                glFuncs.glVertexAttribPointer(mColAttr, GL_BGRA, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(RGBColor), edgeColors.data());
+                glFuncs.glEnableVertexAttribArray(mColAttr);
             }
 
-            glDrawElements(GL_LINES, GLsizei(edgeIds.size()), GL_UNSIGNED_INT, edgeIds.data());
+            glFuncs.glDrawElements(GL_LINES, GLsizei(edgeIds.size()), GL_UNSIGNED_INT, edgeIds.data());
 
-            glDisableVertexAttribArray(mPosAttr);
-            glDisableVertexAttribArray(mColAttr);
+            glFuncs.glDisableVertexAttribArray(mPosAttr);
+            glFuncs.glDisableVertexAttribArray(mColAttr);
 
-            glLineWidth(oldLineWidth);
+            glFuncs.glLineWidth(oldLineWidth);
             mProgram[EDGE]->release();
         }
 
@@ -576,34 +603,33 @@ void SceneShaded::drawMyself(CloudViewDialog * /*dialog*/)
 
             mProgram[FACE]->bind();
 
-            glVertexAttribPointer(mPosAttr, 3, GL_FLOAT, GL_FALSE, 0, facePositions.data());
-            glEnableVertexAttribArray(mPosAttr);
+            glFuncs.glVertexAttribPointer(mPosAttr, 3, GL_FLOAT, GL_FALSE, 0, facePositions.data());
+            glFuncs.glEnableVertexAttribArray(mPosAttr);
 
             if (!faceColors.empty() && !faceVertexColors.empty())
             {
-                glVertexAttribPointer(mColAttr, GL_BGRA, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(RGBColor), faceColors.data());
-                glEnableVertexAttribArray(mColAttr);
+                glFuncs.glVertexAttribPointer(mColAttr, GL_BGRA, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(RGBColor), faceColors.data());
+                glFuncs.glEnableVertexAttribArray(mColAttr);
 
-                glVertexAttribPointer(mFaceColAttr, GL_BGRA, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(RGBColor), faceVertexColors.data());
-                glEnableVertexAttribArray(mFaceColAttr);
+                glFuncs.glVertexAttribPointer(mFaceColAttr, GL_BGRA, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(RGBColor), faceVertexColors.data());
+                glFuncs.glEnableVertexAttribArray(mFaceColAttr);
 
             }
             if (mMesh->hasTexCoords && !faceTexCoords.empty())
             {
-                glVertexAttribPointer(mTexAttr, 2, GL_FLOAT, GL_FALSE, 0, faceTexCoords.data());
-                glEnableVertexAttribArray(mTexAttr);
+                glFuncs.glVertexAttribPointer(mTexAttr, 2, GL_FLOAT, GL_FALSE, 0, faceTexCoords.data());
+                glFuncs.glEnableVertexAttribArray(mTexAttr);
 
-                glVertexAttribIPointer(mTexIdAttr, 1, GL_UNSIGNED_INT, 0, faceTexNums.data());
+                glFuncs.glVertexAttribIPointer(mTexIdAttr, 1, GL_UNSIGNED_INT, 0, faceTexNums.data());
 
-
-                glEnableVertexAttribArray(mTexIdAttr);
+                glFuncs.glEnableVertexAttribArray(mTexIdAttr);
 
             }
 
             if (mMesh->hasNormals && !faceNormals.empty())
             {
-                glVertexAttribPointer(mNormalAttr, 3, GL_FLOAT, GL_FALSE, 0, faceNormals.data());
-                glEnableVertexAttribArray(mNormalAttr);
+                glFuncs.glVertexAttribPointer(mNormalAttr, 3, GL_FLOAT, GL_FALSE, 0, faceNormals.data());
+                glFuncs.glEnableVertexAttribArray(mNormalAttr);
             }
 
             GLboolean oldTexEnable = glIsEnabled(GL_TEXTURE_2D);
@@ -646,12 +672,12 @@ void SceneShaded::drawMyself(CloudViewDialog * /*dialog*/)
                 glDisable(GL_TEXTURE_2D);
             }
 
-            glDisableVertexAttribArray(mPosAttr);
-            glDisableVertexAttribArray(mColAttr);
-            glDisableVertexAttribArray(mFaceColAttr);
-            glDisableVertexAttribArray(mTexAttr);
-            glDisableVertexAttribArray(mTexIdAttr);
-            glDisableVertexAttribArray(mNormalAttr);
+            glFuncs.glDisableVertexAttribArray(mPosAttr);
+            glFuncs.glDisableVertexAttribArray(mColAttr);
+            glFuncs.glDisableVertexAttribArray(mFaceColAttr);
+            glFuncs.glDisableVertexAttribArray(mTexAttr);
+            glFuncs.glDisableVertexAttribArray(mTexIdAttr);
+            glFuncs.glDisableVertexAttribArray(mNormalAttr);
 
             mProgram[FACE]->release();
         }

@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from recorder.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<Recorder>::reflection = Reflection();
 template<>
 int BaseReflection<Recorder>::dummy = Recorder::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int Recorder::staticInit()
+int Recorder::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <Recorder>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Recorder",
         "Recorder parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(Recorder);
+     toFill->objectSize = sizeof(Recorder);
      
 
     StringField* field0 = new StringField
@@ -51,7 +57,7 @@ int Recorder::staticInit()
           "path",
           "path"
         );
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     StringField* field1 = new StringField
         (
@@ -62,10 +68,10 @@ int Recorder::staticInit()
           "fileTemplate",
           "fileTemplate"
         );
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Recorder")]= &reflection;
+    directory[std::string("Recorder")]= toFill;
    return 0;
 }
 int Recorder::relinkCompositeFields()

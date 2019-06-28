@@ -42,7 +42,7 @@ UTILS_INCLUDEPATH = \
     $$UTILSDIR/visitors \
     $$UTILSDIR/widgets \
     $$UTILSDIR/photostationcalibration \
-    $$UTILSDIR/tablecontrol \
+#    $$UTILSDIR/tablecontrol \
     $$UTILSDIR/capture     \
     $$UTILSDIR/reconstruction \
     $$UTILSDIR/memoryuse
@@ -122,6 +122,21 @@ with_opengl {
     with_openglext {
         DEFINES += WITH_OPENGLEXT
     }
+}
+
+
+unix:!macx:!win32 {
+    CONFIG += with_v4l2
+}
+
+with_v4l2 {
+    V4L2_WRAPPER_DIR = $$UTILSDIR/../wrappers/v4l2
+    include($$V4L2_WRAPPER_DIR/v4l2Libs.pri)                # it uses OPENCV_WRAPPER_DIR inside
+
+    contains(DEFINES, WITH_V4L2) {
+        INCLUDEPATH += $$V4L2_WRAPPER_DIR
+    }
+
 }
 
 with_ueye {
