@@ -36,7 +36,7 @@ vector<string> JoystickInterface::getDevices(const string &prefix)
 
 }
 
-JoystickConfiguration    JoystickInterface::getConfiguration(int joystickDevice)
+JoystickConfiguration JoystickInterface::getConfiguration(int joystickDevice)
 {
     JoystickConfiguration toReturn;
 
@@ -51,7 +51,6 @@ JoystickConfiguration    JoystickInterface::getConfiguration(int joystickDevice)
     {
         toReturn.buttonNumber = buttons;
     }
-
 
     int version = 0;
     if (ioctl(joystickDevice, JSIOCGVERSION, &version) != -1)

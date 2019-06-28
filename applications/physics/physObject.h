@@ -1,5 +1,5 @@
-#ifndef SIMOBJECT_H
-#define SIMOBJECT_H
+#ifndef PHYSOBJECT_H
+#define PHYSOBJECT_H
 
 #include <vector>
 #include <bits/stdc++.h>
@@ -10,26 +10,28 @@
 #include "core/geometry/mesh3d.h"
 #include "core/math/matrix/matrix33.h"
 #include "core/geometry/mesh3DDecorated.h"
+#include "core/math/affine.h"
 
 /** Temporary usages while we are preparing to move this to the proper place **/
 using corecvs::Vector3dd;
 using corecvs::Quaternion;
 
+/*
 class Force {
 public:
     corecvs::Vector3dd force    = corecvs::Vector3dd::Zero();
-    corecvs::Vector3dd position = corecvs::Vector3dd::Zero();
-    corecvs::Vector3dd centerPos = corecvs::Vector3dd::Zero();
+    //corecvs::Vector3dd position = corecvs::Vector3dd::Zero();
+    //corecvs::Vector3dd centerPos = corecvs::Vector3dd::Zero();
 
     Force() {}
 
     Force(double fx, double fy, double fz) :
-        force(fx, fy, fz), position(Vector3dd::Zero())
+        force(fx, fy, fz)
     {
     }
 
-    Force(Vector3dd force, Vector3dd pos = Vector3dd::Zero()) :
-        force(force), position(pos)
+    Force(Vector3dd force) :
+        force(force)
     {
     }
 
@@ -56,78 +58,72 @@ public:
         toReturn.transform(T);
         return toReturn;
     }
-
+*/
     /** Torque in H*m **/
-    /* BUG: not working properly, deltaR should be not from beginning of coordinats */
+/*
     Vector3dd getM() const
     {
         return (position - centerPos) ^ force;
     }
 
-/*
-    Vector3dd getM(const Vector3dd &objectPos) const
-    {
-        return (objectPos-position) ^ force;
-    }
-*/
     Vector3dd getForce() const
     {
         return force;
     }
-};
 
-class SimObject
+};
+*/
+
+class PhysObject
 {
 public:
-    SimObject();
+    PhysObject();
+    PhysObject(const corecvs::Affine3DQ &coords, const double &m);
 
-    SimObject(const Vector3dd &coords) :
-        position(coords)
-    {}
-
-    Vector3dd position   = Vector3dd(1,1,1);
     Vector3dd velocity = Vector3dd::Zero();
-    Vector3dd vec_W;
-    //Vector3dd force    = Vector3dd::Zero();
-    //Vector3dd oldForce = Vector3dd::Zero();
 
     int frameCounter = 0;
-
-
     Quaternion orientation = Quaternion::Identity();
     Quaternion angularVelocity  = Quaternion::Identity();
     Quaternion angularAcc = Quaternion::Identity();
 
     /** Main body properties **/
     /** Mass in kilograms **/
-    double mass = 1;
+    double mass;
+
     /** Assuming spheroid **/
     corecvs::Matrix33 inertiaTensor = corecvs::Matrix33::Identity();
 
-
     /** Main magick **/
     void startTick();
-    void addForce   (const Force &force);
+    void addForce   (const Vector3dd &force);
     void addMoment  (const Vector3dd &moment);
+
     void tick(double deltaT);
 
     /** state inside tick **/
-private:
-    Vector3dd F;
-    Vector3dd M;
-
-
-    //void addImpulse(const Vector3dd &force);
-    //void setForce(double x, double y, double z);
-    //void setForce(const Vector3dd &force);
-public:
-
+    Vector3dd getForce() const;
+    Vector3dd getMoment() const;
     /* You may want to bring this to separate interface. */
     virtual void addToMesh (corecvs::Mesh3D &mesh);
     virtual void saveMesh  (const std::string &name);
+    virtual void drawMesh (corecvs::Mesh3D &mesh);
+    virtual void calcMoment();
+    virtual void calcForce();
+    /* Get & Set */
+    void setPosition(const corecvs::Affine3DQ &pos);
+    void setPosition(const corecvs::Vector3dd &pos);
+    const corecvs::Affine3DQ getPosAffine() const;
+    const corecvs::Vector3dd getPosVector() const;
 
-    /* Setters */
-    void setCoords(const Vector3dd &c);
+private:
+    corecvs::Affine3DQ position;
+    Vector3dd F;
+    Vector3dd M;
+    //void addImpulse(const Vector3dd &force);
+    //void setForce(double x, double y, double z);
+    //void setForce(const Vector3dd &force);
+
 };
 
-#endif // SIMOBJECT_H
+#endif // PHYSOBJECT_H

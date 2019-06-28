@@ -114,7 +114,6 @@ public:
         x = Q1.t() * Q2.x() + Q1.x() * Q2.t() + Q1.y() * Q2.z() - Q1.z() * Q2.y();
         y = Q1.t() * Q2.y() - Q1.x() * Q2.z() + Q1.y() * Q2.t() + Q1.z() * Q2.x();
         z = Q1.t() * Q2.z() + Q1.x() * Q2.y() - Q1.y() * Q2.x() + Q1.z() * Q2.t();
-
         return GenericQuaternion(x, y, z, t);
     }
 

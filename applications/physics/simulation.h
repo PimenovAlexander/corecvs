@@ -3,17 +3,17 @@
 #include "bits/stdc++.h"
 #include "list"
 #include "iostream"
-#include "simObject.h"
-#include "simSphere.h"
-#include "mainObject.h"
+#include "physObject.h"
+#include "physSphere.h"
+#include "physMainObject.h"
 #include <bits/stl_list.h>
-
+#include "copter/droneObject.h"
 class Simulation
 {
 public:
     Simulation();
-    vector<MainObject> mainObjects;
-
+    vector<PhysMainObject> mainObjects;
+    DroneObject drone;
     std::chrono::high_resolution_clock::time_point oldTime;
     std::chrono::high_resolution_clock::time_point newTime;
     std::chrono::high_resolution_clock::time_point startTime;

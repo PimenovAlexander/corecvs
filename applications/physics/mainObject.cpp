@@ -47,7 +47,16 @@ void MainObject::setCenterOfMass()
     }
     massCenter = massCenter / systemMass;
 }
-
+/*
+void MainObject::calcForce()
+{
+    Vector3dd f = Vector3dd::Zero();
+    for (size_t i = 0; i < objects.size(); ++i)
+    {
+        f += objects[i]->
+    }
+}
+*/
 void MainObject::addObject(SimObject *object)
 {
     objects.push_back(object);

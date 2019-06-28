@@ -20,6 +20,7 @@
 #include <inputSelectorWidget.h>
 
 #include <copter/quad.h>
+#include <copter/droneObject.h>
 
 #include "clientSender.h"
 #include "copterInputsWidget.h"
@@ -125,6 +126,7 @@ public:
     CopterInputs inputs;
     QTimer copterTimer;
     Quad copter;
+    DroneObject drone;
 
 public slots:
     /* Let it be here so far */
@@ -186,9 +188,12 @@ private slots:
 
     void on_toolButton_3_released();
 
+
     void on_toolButton_2_released();
 
     void on_pushButton_released();
+
+    void on_connetToVirtualButton_pressed();
 
 private:
     struct Message {

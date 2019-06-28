@@ -22,9 +22,11 @@ INCLUDEPATH += joystick
 INCLUDEPATH += radio
 INCLUDEPATH += mixer
 INCLUDEPATH += autopilot
+INCLUDEPATH += copter
 
 
 HEADERS += \
+    physMainObject.h \
     simulation.h \
     clientSender.h \
     joystickInput.h \
@@ -46,11 +48,15 @@ HEADERS += \
     physicsAboutWidget.h \
     autopilot/protoautopilot.h \
     comcontroller.h \
-    autopilot/vertexsquare.h
-
+    autopilot/vertexsquare.h\
+    physObject.h \
+    physSphere.h \
+    copter/droneObject.h \
+    copter/motor.h
 
 
 SOURCES += \
+    physMainObject.cpp \
     simulation.cpp \
     simSphere.cpp \
     simObject.cpp \
@@ -73,7 +79,11 @@ SOURCES += \
     physicsAboutWidget.cpp \
     autopilot/protoautopilot.cpp \
     comcontroller.cpp \
-    autopilot/vertexsquare.cpp
+    autopilot/vertexsquare.cpp\
+    physObject.cpp \
+    physSphere.cpp \
+    copter/droneObject.cpp \
+    copter/motor.cpp
 
 
 FORMS += \
