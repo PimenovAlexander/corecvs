@@ -74,14 +74,14 @@ public:
 
     bool trace;
 
-    friend istream &operator >> (istream &in, Prop &toLoad);
+    friend std::istream &operator >> (std::istream &in, Prop &toLoad);
 
     PLYLoader() :
         trace (true)
     {}
 
-    int loadPLY(istream &input, Mesh3D &mesh);
-    int savePLY(ostream &out, Mesh3D &mesh);
+    int loadPLY(std::istream &input, Mesh3D &mesh);
+    int savePLY(std::ostream &out, Mesh3D &mesh);
 
     virtual ~PLYLoader();
 };

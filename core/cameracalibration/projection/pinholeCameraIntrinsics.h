@@ -26,13 +26,7 @@ struct PinholeCameraIntrinsics : public PinholeCameraIntrinsicsBaseParameters,  
     const static int DEFAULT_SIZE_X = 2592;
     const static int DEFAULT_SIZE_Y = 1944;
 
-#if 0
-    Vector2dd focal;            /**< Focal length (in px) in two directions */
-    Vector2dd principal;        /**< Principal point of optical axis on image plane (in pixel). Usually center of imager */
-    double    skew;             /**< Skew parameter to compensate for optical axis tilt */
-    Vector2dd size;             /**< Model image resolution (in pixel) */
-    Vector2dd distortedSize;    /**< Source image resolution (FIXME: probably should move it somewhere) */
-#endif
+    Vector2dd offset; /**< this added for indoors project. I'm not sure it should be in core */
 
     PinholeCameraIntrinsics(
             double fx = 1.0,
@@ -89,6 +83,16 @@ struct PinholeCameraIntrinsics : public PinholeCameraIntrinsicsBaseParameters,  
         }
         return true;
     }
+
+    /** Needed for indoors **/
+    template<class VisitorType>
+        void accept(VisitorType &visitor)
+        {
+            PinholeCameraIntrinsicsBaseParameters::accept<VisitorType>(visitor);
+            visitor.visit(offset.x(), 0.0, "offsetX");
+            visitor.visit(offset.y(), 0.0, "offsetY");
+
+        }
 
     /**
      * Returns target image size
@@ -234,7 +238,7 @@ struct PinholeCameraIntrinsics : public PinholeCameraIntrinsicsBaseParameters,  
 
     virtual DynamicObjectWrapper getDynamicWrapper() override
     {
-        return DynamicObjectWrapper(&reflection, static_cast<PinholeCameraIntrinsicsBaseParameters *>(this));
+        return DynamicObjectWrapper(getReflection(), static_cast<PinholeCameraIntrinsicsBaseParameters *>(this));
     }
 
 

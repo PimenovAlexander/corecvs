@@ -79,7 +79,7 @@ public:
 
     virtual DynamicObjectWrapper getDynamicWrapper() override
     {
-        return DynamicObjectWrapper(&reflection, static_cast<ProjectionBaseParameters *>(this));
+        return DynamicObjectWrapper(getReflection(), static_cast<ProjectionBaseParameters *>(this));
     }
 
     virtual ~EquisolidAngleProjection() {}

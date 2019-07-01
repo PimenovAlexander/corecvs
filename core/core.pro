@@ -57,13 +57,14 @@ OTHER_FILES +=              \
     xml/stereoAlign.xml     \
     xml/projections.xml     \
 #    xml/opencvsgm.xml       \
+    xml/basemock.xml 
 
 
 OTHER_FILES +=            \
     ../tools/generator/helper-regen.sh \
     ../tools/generator/regen-core.sh \
+    ../tools/generator/regen-test-core.sh \
     ../tools/generator/h_stub.sh \
-    ../cvs-mainpage.h
+    ../cvs-mainpage.h \
+    ./CMakeLists.txt
 
-DISTFILES += \
-    xml/basemock.xml

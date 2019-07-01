@@ -6,11 +6,8 @@
 #include <QtGui>
 #include <QtXml/QDomDocument>
 
-#include "graphData.h"
+#include "core/stats/graphData.h"
 #include "ui_graphPlotDialog.h"
-
-using std::vector;
-using std::deque;
 
 class GraphPlotDialog : public ViAreaWidget, public SaveableWidget
 {

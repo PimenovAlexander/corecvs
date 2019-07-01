@@ -125,7 +125,7 @@ void OpenCVCaptureInterface::SpinThread::run()
             }
         mInterface->protectFrame.unlock();
 
-        frame_data_t frameData;
+        ImageCaptureInterface::FrameMetadata frameData;
         frameData.timestamp = pair->timeStamp();
 
         //SYNC_PRINT(("OpenCVCaptureInterface::SpinThread::run(): notifyAboutNewFrame()\n"));

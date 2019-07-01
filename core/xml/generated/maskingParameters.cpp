@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from bufferFilters.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<MaskingParameters>::reflection = Reflection();
 template<>
 int BaseReflection<MaskingParameters>::dummy = MaskingParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int MaskingParameters::staticInit()
+int MaskingParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <MaskingParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Masking Parameters",
         "Masking Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(MaskingParameters);
+     toFill->objectSize = sizeof(MaskingParameters);
      
 
     BoolField* field0 = new BoolField
@@ -52,10 +58,10 @@ int MaskingParameters::staticInit()
           "Invert"
         );
     field0->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Masking Parameters")]= &reflection;
+    directory[std::string("Masking Parameters")]= toFill;
    return 0;
 }
 int MaskingParameters::relinkCompositeFields()

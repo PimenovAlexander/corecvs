@@ -1,0 +1,12 @@
+target_sources(corecvs
+    PUBLIC
+        boosting/adaBoost.h
+        boosting/cascadeClassifier.h
+        boosting/vjPattern.h
+        boosting/detectedObject.h
+    PRIVATE
+        boosting/adaBoost.cpp
+        boosting/cascadeClassifier.cpp
+        boosting/vjPattern.cpp
+        boosting/detectedObject.cpp
+)

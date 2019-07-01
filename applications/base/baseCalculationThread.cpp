@@ -16,8 +16,8 @@
 #include "rotationPresets.h"
 #include "baseCalculationThread.h"
 #include "layers/imageResultLayer.h"
-#include "core/filters/inputFilter.h"
-#include "core/filters/outputFilter.h"
+#include "core/filters/legacy/inputFilter.h"
+#include "core/filters/legacy/outputFilter.h"
 
 #ifdef WITH_HARDWARE
 #include "../../hardware/platform/xparameters.h"
@@ -342,13 +342,10 @@ void BaseCalculationThread::camerasParametersChanged(QSharedPointer<CamerasConfi
  **/
 void BaseCalculationThread::recalculateCache()
 {
+    // SYNC_PRINT(("void BaseCalculationThread::recalculateCache():called\n"));
     G12Buffer *firstInput = mFrames.getCurrentFrame(Frames::LEFT_FRAME);
     if (!mCacheUpdateNeeded || firstInput == NULL)
         return;
-
-    SYNC_PRINT(("void BaseCalculationThread::recalculateCache(): cache should be updated\n"));
-    cout << "mRectificationData.F : " << mRectificationData.F << std::endl;
-
 
     if (mBaseParams->downsample() == 0)
         mBaseParams->setDownsample(1);
@@ -388,7 +385,7 @@ void BaseCalculationThread::recalculateCache()
     mInputPretransform    = Matrix33::Scale2(1.0 / mDownsample) * Matrix33::ShiftProj(-x, -y) * centerBackShift * centerAction * centerShift;
     mInputPretransformInv = mInputPretransform.inv();
 
-    cout << "mInputPretransformInv:" << mInputPretransformInv << endl;
+    // cout << "mInputPretransformInv:" << mInputPretransformInv << endl;
     mPretransformedRectificationData = mRectificationData.addPretransform(mInputPretransform);
 
     mFrameTransformsInv[Frames::RIGHT_FRAME] = mPretransformedRectificationData.rightTransform.inv();
@@ -405,7 +402,7 @@ void BaseCalculationThread::recalculateCache()
         Q_ASSERT(currentBuffer->hasSameSize(firstInput));
 
         delete_safe(mTransformationCache[i]);
-        mTransformationCache[i] = new TransformationCache(mFrameTransformsInv[i], w, h, currentBuffer->getSize());
+        mTransformationCache[i] = new TransformationCache(mInputPretransformInv, w, h, currentBuffer->getSize());
 #ifdef WITH_HARDWARE
         //Matrix33 mat = Matrix33::Scale2(1.08) * Matrix33::ShiftProj(-39.5, -39.5) * Matrix33::RotateProj(6.0 / 128.0);
         try {

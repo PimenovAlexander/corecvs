@@ -15,6 +15,14 @@ public:
     QString getInputString();
     void setInputString(const QString &str);
 
+public slots:
+    void updateInputString();
+
+
+    void browseAvi();
+    void browseFile();
+
+    void v4l2Refresh();
 signals:
     void newInputString();
 

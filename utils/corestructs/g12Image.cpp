@@ -195,6 +195,25 @@ RGB24Image::RGB24Image(RGB24Buffer *buffer, bool mirror) : QImage (buffer->w, bu
     }
 }
 
+RGB24Image::RGB24Image(AbstractBuffer<float> *fpImage) : QImage (fpImage->w, fpImage->h, QImage::Format_RGB32)
+{
+    int bpl = bytesPerLine();
+    uint8_t *data = bits();
+    uint8_t *line = data;
+    for (int i = 0; i < fpImage->h; i++, line += bpl)
+    {
+        for (int j = 0; j < fpImage->w; j++)
+        {
+            int v = fpImage->element(i,j) * 255.0;
+            v = std::min(v, 255);
+            v = std::max(v,   0);
+            unsigned char c = v;
+            ((uint32_t *)line)[j] =  c | (c << 8) | (c << 16) | (0xFF << 24);
+        }
+    }
+}
+
+
 RGB24Image::~RGB24Image()
 {}
 

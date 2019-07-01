@@ -4,7 +4,7 @@
 
 #include "core/utils/global.h"
 
-#ifndef WITH_OPENCV_3x
+#ifndef WITH_OPENCV_3
 
 #include <opencv2/features2d/features2d.hpp>    // cv::FeatureExtractor
 #include <opencv2/nonfree/gpu.hpp>       // cv::gpu::SURF

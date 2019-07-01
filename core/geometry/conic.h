@@ -3,6 +3,7 @@
 
 #include "core/geometry/line.h"
 #include "core/geometry/plane.h"
+#include "core/geometry/polygons.h"
 #include "core/buffers/rgb24/lineSpan.h"
 
 namespace corecvs {
@@ -29,6 +30,11 @@ public:
     bool hasPoint(const VectorType &p, double epsilon = 1e-7)
     {
         return (fabs((p - c).l2Metric() - r) < epsilon);
+    }
+
+    bool hasPointInside(const VectorType &p, double epsilon = 1e-7)
+    {
+        return ((p - c).sumAllElementsSq() <= ((r * r) + epsilon));
     }
 
     /**
@@ -106,6 +112,8 @@ public:
     Circle2d(double _x, double _y , double _r) :
         UnifiedSphere(Vector2dd(_x, _y), _r)
     {}
+
+    static Circle2d Circumcircle(const Triangle2dd& triangle);
 
     bool intersectWith(const Circle2d &other, Vector2dd &point1, Vector2dd &point2);
     bool intersectWith(const Ray2d &ray, double &t1, double &t2);

@@ -16,10 +16,6 @@ using namespace corecvs;
 
 class CameraParameters;
 
-typedef struct {
-    uint64_t timestamp;
-} frame_data_t;
-
 class CaptureStatistics
 {
 public:
@@ -63,21 +59,7 @@ public:
 };
 
 //---------------------------------------------------------------------------
-
-/**
- *  Callback style without Qt slots and signals
- *
- *  The target here is to prepare separation from Qt. So far we have to use virtual multiple inheritance.
- **/
-class ImageInterfaceReceiver
-{
-public:
-    virtual void newFrameReadyCallback(frame_data_t frameData) = 0;
-    virtual void newImageReadyCallback() = 0;
-    virtual void newStatisticsReadyCallback(CaptureStatistics stats) = 0;
-    virtual void streamPausedCallback() = 0;
-    virtual void newCameraParamValueCallBack(int idParam) = 0;
-};
+class ImageInterfaceReceiver;
 
 class ImageCaptureInterface
 {
@@ -125,6 +107,11 @@ public:
         ACCESS_WRITE        = 0x10,
         ACCESS_READWRITE    = 0x11
     };
+
+    struct FrameMetadata {
+        uint64_t timestamp;
+    };
+
 
     /**
      *  This will hold the pair of frames
@@ -318,10 +305,25 @@ protected:
     /**
      *  Internal function to trigger frame notify signal
      **/
-    virtual void notifyAboutNewFrame(frame_data_t frameData);
+    virtual void notifyAboutNewFrame(ImageCaptureInterface::FrameMetadata frameData);
 
     virtual void notifyAboutNewCameraParamValue(int idParam);
 };
+
+/**
+ *  Callback style without Qt slots and signals
+ *  So far we have to use virtual multiple inheritance.
+ **/
+class ImageInterfaceReceiver
+{
+public:
+    virtual void newFrameReadyCallback(ImageCaptureInterface::FrameMetadata frameData) = 0;
+    virtual void newImageReadyCallback() = 0;
+    virtual void newStatisticsReadyCallback(CaptureStatistics stats) = 0;
+    virtual void streamPausedCallback() = 0;
+    virtual void newCameraParamValueCallBack(int idParam) = 0;
+};
+
 
 
 class ImageCaptureInterfaceProducer
@@ -363,7 +365,7 @@ public:
     std::vector<ImageCaptureInterfaceProducer *> producers;
     void addProducer(ImageCaptureInterfaceProducer *producer);
 
-    ImageCaptureInterface *fabricate(std::string &name, bool isRGB);
+    ImageCaptureInterface *fabricate(const std::string &name, bool isRGB);
 
 };
 

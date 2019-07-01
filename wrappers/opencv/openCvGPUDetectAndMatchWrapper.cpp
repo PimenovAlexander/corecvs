@@ -6,7 +6,7 @@
 
 #ifdef WITH_OPENCV_GPU
 
-#ifndef WITH_OPENCV_3x
+#ifndef WITH_OPENCV_3
 
 #include <opencv2/nonfree/gpu.hpp>       // cv::gpu::SURF
 #include <opencv2/nonfree/ocl.hpp>       // cv::ocl::SURF
@@ -290,7 +290,7 @@ bool OpenCvGPUDetectExtractAndMatchProvider::provides(const DetectorType &detect
 	return false;
 }
 
-#else // !WITH_OPENCV_3x
+#else // !WITH_OPENCV_3
 
 bool  init_opencv_gpu_detect_extract_and_match_provider(bool& cudaApi)
 {
@@ -298,6 +298,6 @@ bool  init_opencv_gpu_detect_extract_and_match_provider(bool& cudaApi)
 	return false;
 }
 
-#endif // WITH_OPENCV_3x
+#endif // WITH_OPENCV_3
 
 #endif // WITH_OPENCV_GPU

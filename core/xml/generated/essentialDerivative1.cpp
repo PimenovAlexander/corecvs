@@ -1,5 +1,5 @@
 #include <vector>
-#include "core/rectification/correspondenceList.h"
+#include "core/buffers/correspondenceList.h"
 #include "core/rectification/essentialEstimator.h"
 
 using namespace std;

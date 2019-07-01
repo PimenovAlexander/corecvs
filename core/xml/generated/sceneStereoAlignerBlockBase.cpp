@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from bufferFilters.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<SceneStereoAlignerBlockBase>::reflection = Reflection();
 template<>
 int BaseReflection<SceneStereoAlignerBlockBase>::dummy = SceneStereoAlignerBlockBase::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int SceneStereoAlignerBlockBase::staticInit()
+int SceneStereoAlignerBlockBase::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <SceneStereoAlignerBlockBase>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "SceneStereoAlignerBlockBase",
         "SceneStereoAlignerBlockBase",
         ""
     );
 
-     getReflection()->objectSize = sizeof(SceneStereoAlignerBlockBase);
+     toFill->objectSize = sizeof(SceneStereoAlignerBlockBase);
      
 
     PointerField* field0 = new PointerField
@@ -52,7 +58,7 @@ int SceneStereoAlignerBlockBase::staticInit()
           "inScene",
           "corecvs::FixtureScene"
         );
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     IntField* field1 = new IntField
         (
@@ -63,7 +69,7 @@ int SceneStereoAlignerBlockBase::staticInit()
           "inFixture1",
           "fixture1"
         );
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     IntField* field2 = new IntField
         (
@@ -74,7 +80,7 @@ int SceneStereoAlignerBlockBase::staticInit()
           "inCamera1",
           "camera1"
         );
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     IntField* field3 = new IntField
         (
@@ -85,7 +91,7 @@ int SceneStereoAlignerBlockBase::staticInit()
           "inFixture2",
           "fixture2"
         );
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     IntField* field4 = new IntField
         (
@@ -96,7 +102,7 @@ int SceneStereoAlignerBlockBase::staticInit()
           "inCamera2",
           "camera2"
         );
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     CompositeField* field5 = new CompositeField
         (
@@ -118,7 +124,7 @@ int SceneStereoAlignerBlockBase::staticInit()
              printf("Reflection SceneStereoAlignerBlockBase to the subclass Stereo Align Parameters can't be linked\n");
         }
     }
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     PointerField* field6 = new PointerField
         (
@@ -130,7 +136,7 @@ int SceneStereoAlignerBlockBase::staticInit()
           "inImage1",
           "corecvs::RGB24Buffer"
         );
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     PointerField* field7 = new PointerField
         (
@@ -142,7 +148,7 @@ int SceneStereoAlignerBlockBase::staticInit()
           "inImage2",
           "corecvs::RGB24Buffer"
         );
-    fields().push_back(field7);
+    toFill->fields.push_back(field7);
     /*  */ 
     PointerField* field8 = new PointerField
         (
@@ -154,7 +160,7 @@ int SceneStereoAlignerBlockBase::staticInit()
           "outImage1",
           "corecvs::RGB24Buffer"
         );
-    fields().push_back(field8);
+    toFill->fields.push_back(field8);
     /*  */ 
     PointerField* field9 = new PointerField
         (
@@ -166,7 +172,7 @@ int SceneStereoAlignerBlockBase::staticInit()
           "outImage2",
           "corecvs::RGB24Buffer"
         );
-    fields().push_back(field9);
+    toFill->fields.push_back(field9);
     /*  */ 
     PointerField* field10 = new PointerField
         (
@@ -178,7 +184,7 @@ int SceneStereoAlignerBlockBase::staticInit()
           "outCamera1",
           "corecvs::FixtureCamera"
         );
-    fields().push_back(field10);
+    toFill->fields.push_back(field10);
     /*  */ 
     PointerField* field11 = new PointerField
         (
@@ -190,10 +196,10 @@ int SceneStereoAlignerBlockBase::staticInit()
           "outCamera2",
           "corecvs::FixtureCamera"
         );
-    fields().push_back(field11);
+    toFill->fields.push_back(field11);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("SceneStereoAlignerBlockBase")]= &reflection;
+    directory[std::string("SceneStereoAlignerBlockBase")]= toFill;
    return 0;
 }
 int SceneStereoAlignerBlockBase::relinkCompositeFields()

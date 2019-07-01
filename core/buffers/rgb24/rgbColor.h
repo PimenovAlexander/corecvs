@@ -16,15 +16,44 @@
 #include "core/reflection/reflection.h"
 
 #include "core/xml/generated/rgbColorParameters.h"
+#include "core/xml/generated/colorPallete.h"
 
 namespace corecvs {
+
 /**
- * \file rgbColor.h
- * \brief a header for rgbColor.c
+ * HSV
  *
- * \date Apr 19, 2011
- * \author alexander
- */
+ *  \param h - hue in angle form in degrees [0..360)
+ *  \param s - saturation [0..255]
+ *  \param v - value [0..255]
+ **/
+class HSVColor {
+public:
+    uint16_t h;
+    uint8_t  s;
+    uint8_t  v;
+
+    HSVColor(uint16_t _h, uint8_t _s, uint8_t _v) :
+        h(_h), s(_s), v(_v)
+    {
+    }
+
+    friend ostream & operator <<(ostream &out, const HSVColor &color)
+    {
+        out << "HSV[";
+            out << (int)color.h << ", " << (int)color.s << ", " << (int)color.v;
+        out << "]";
+        return out;
+    }
+
+    static HSVColor Black()
+    {
+        return HSVColor(0, 0, 0);
+    }
+
+};
+
+
 /**
  *   I use inheritance because no new data members will be added
  **/
@@ -562,6 +591,15 @@ public:
 
     /**
      *  Helper method that allows to represent the double value in interval 0..1
+     *  With a color coding using parula pallete.
+     **/
+    static RGBColor parula(double x);
+
+    static RGBColor bright(double x);
+    static RGBColor colorblind(double x);
+
+    /**
+     *  Helper method that allows to represent the double value in interval 0..1
      *  With a color coding.
      *  <ul>
      *    <li>0.0  blue
@@ -582,6 +620,8 @@ public:
         x -= 1.0;
         return RGBColor(fround(x * 255), fround((1.0 - x) * 255), 0);
     }
+
+    static RGBColor colorCode(double x, ColorPallete::ColorPallete palette = ColorPallete::PARULA);
 
     static Reflection reflect;
     static int        dummy;
@@ -627,6 +667,16 @@ template<class VisitorType>
         return Vector3df(r(), g(), b());
     }
 
+    Vector3d32 toInt32() const
+    {
+       return Vector3d32(r(), g(), b());
+    }
+
+    Vector3du32 toIntu32() const
+    {
+       return Vector3du32(r(), g(), b());
+    }
+
     RgbColorParameters toRGBParameters() const
     {
         return RgbColorParameters(r(), g(), b());
@@ -659,6 +709,13 @@ template<class VisitorType>
         return RGBColor((uint8_t)input1.x(), (uint8_t)input1.y(), (uint8_t)input1.z());
     }
 
+    /**
+     * HSV to RGB convertion
+     *
+     *  \param h - hue in angle form in degrees [0..360)
+     *  \param s - saturation [0..255]
+     *  \param v - value [0..255]
+     **/
     static RGBColor FromHSV(uint16_t h, uint8_t s, uint8_t v)
     {
         int c = ((int)(s * v)) / 255;
@@ -691,19 +748,32 @@ template<class VisitorType>
         return RGBColor(r + m, g + m, b + m);
     }
 
+    static RGBColor FromHSV(const HSVColor &color)
+    {
+        return FromHSV(color.h, color.s, color.v);
+    }    
+
+
 
     static RGBColor colorBlindPalette[6];
 
     static RGBColor getPalleteColor(int id)
     {
-        return colorBlindPalette[id % 6];
+        return colorBlindPalette[id % CORE_COUNT_OF(colorBlindPalette)];
     }
 
     static RGBColor brightPalette[6];
 
     static RGBColor getPalleteColor1(int id)
     {
-        return brightPalette[id % 6];
+        return brightPalette[id % CORE_COUNT_OF(brightPalette)];
+    }
+
+    static RGBColor parulaPalette[9];
+
+    static RGBColor getParulaColor(int id)
+    {
+        return parulaPalette[id % CORE_COUNT_OF(parulaPalette)];
     }
 
 

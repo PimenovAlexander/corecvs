@@ -1,6 +1,5 @@
 #include "core/utils/utils.h"
 #include "openCvFileReader.h"
-#include "openCvKeyPointsWrapper.h"
 #include "openCVTools.h"
 
 #include <exception>
@@ -58,21 +57,31 @@ RuntimeTypeBuffer OpenCvBufferReader::read(const std::string &s)
     if (!(img.rows && img.cols && img.data)) {
         throwInvalidArg(s);
     }
-    return convert(img);
+    return OpenCVTools::convert(img);
 }
 
-bool OpenCvBufferReader::writeRgb(const corecvs::RGB24Buffer &buffer, const std::string &s)
+bool OpenCvBufferReader::writeRgb(const corecvs::RGB24Buffer &buffer, const std::string &s, int quality)
 {
     auto* b = OpenCVTools::getCVImageFromRGB24Buffer(&const_cast<corecvs::RGB24Buffer&>(buffer));
     CVMAT_FROM_IPLIMAGE(mat, b, false);
-    bool success = cv::imwrite(corecvs::HelperUtils::toNativeSlashes(s), mat);
+
+    vector<int> params;
+    if (quality != 95)      // for non default value we deliver wished values of compression level
+    {
+        params.push_back(CV_IMWRITE_JPEG_QUALITY);
+        params.push_back(quality);                      // 0..100, 100 min compression
+
+        params.push_back(CV_IMWRITE_PNG_COMPRESSION);
+        params.push_back(_roundDivUp(quality * 9, 100));    // 0..9, 9 max compression:  100->9, 95->3, 0->0
+    }
+    bool success = cv::imwrite(corecvs::HelperUtils::toNativeSlashes(s), mat, params);
     cvReleaseImage(&b);
     return success;
 }
 
 bool OpenCvBufferReader::write(const RuntimeTypeBuffer &buffer, const std::string &s)
 {
-    cv::Mat img = convert(buffer);
+    cv::Mat img = OpenCVTools::convert(buffer);
     bool success = cv::imwrite(corecvs::HelperUtils::toNativeSlashes(s), img);
     return success;
 }
@@ -89,7 +98,7 @@ bool OpenCVRGB24Loader::acceptsFile(const std::string &name)
 }
 
 /* I don't see how an inability to load particular format is an exceptional situation */
-RGB24Buffer *OpenCVRGB24Loader::load(const std::string &name)
+RGB24Buffer *OpenCVRGB24Loader::load(const std::string & name)
 {
     cv::Mat img = cv::imread(corecvs::HelperUtils::toNativeSlashes(name), CV_LOAD_IMAGE_COLOR);
     if (!(img.rows && img.cols && img.data)) {
@@ -108,24 +117,27 @@ bool OpenCVRuntimeTypeBufferLoader::acceptsFile(const std::string &name)
      return true;
 }
 
-RuntimeTypeBuffer *OpenCVRuntimeTypeBufferLoader::load(const std::string &name)
+RuntimeTypeBuffer *OpenCVRuntimeTypeBufferLoader::load(const std::string & name)
 {
     cv::Mat img = cv::imread(corecvs::HelperUtils::toNativeSlashes(name), CV_LOAD_IMAGE_GRAYSCALE);
     if (!(img.rows && img.cols && img.data)) {
         throwInvalidArg(name);
     }
     RuntimeTypeBuffer *header = new RuntimeTypeBuffer;
-    *header = convert(img);
+    *header = OpenCVTools::convert(img);
     return header;
 }
 
 
-bool OpenCVRGB24Saver::acceptsFile(const string &name)
+bool OpenCVRGB24Saver::acceptsFile(const std::string &name)
 {
-    std::vector<std::string> extList  = extentions();
+    std::string lower = name;
+    std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
+
+    std::vector<std::string> extList = extentions();
     for (auto &ext : extList)
     {
-        if (HelperUtils::endsWith(name, ext))
+        if (HelperUtils::endsWith(lower, ext))
         {
             return true;
         }
@@ -133,7 +145,7 @@ bool OpenCVRGB24Saver::acceptsFile(const string &name)
     return false;
 }
 
-bool OpenCVRGB24Saver::save(const RGB24Buffer &buffer, const string &name, int quality)
+bool OpenCVRGB24Saver::save(const corecvs::RGB24Buffer &buffer, const std::string& name, int quality)
 {
-    return OpenCvBufferReader().writeRgb(buffer, name);
+    return OpenCvBufferReader().writeRgb(buffer, name, quality);
 }

@@ -63,14 +63,16 @@ int main(int argc, char *argv[])
 
         if (oldStyle)
         {
-            Mesh3DScene *mesh = new Mesh3DScene();
+            Mesh3DScene *scene = new Mesh3DScene();
+            Mesh3D *mesh = new Mesh3D();
+            scene->setMesh(mesh);
 
-            if (!loader.load(mesh, path))
+            if (!loader.load(scene->owned, path))
             {
-                delete_safe(mesh);
+                delete_safe(scene);
                 continue;
-            }
-            mainWindow.addSubObject(QString::fromStdString(path), QSharedPointer<Scene3D>((Scene3D*)mesh));
+            }            
+            mainWindow.addSubObject(QString::fromStdString(path), QSharedPointer<Scene3D>((Scene3D*)scene));
         } else {            
             SceneShaded *shaded = new SceneShaded();
             Mesh3DDecorated *mesh = new Mesh3DDecorated();
@@ -82,6 +84,8 @@ int main(int argc, char *argv[])
                 /** Load Materials **/
                 std::string mtlFile = path.substr(0, path.length() - 4) + ".mtl";
                 std::ifstream materialFile;
+
+                cout << "Loading material from <"  << mtlFile << ">" << endl;
                 materialFile.open(mtlFile, std::ios::in);
                 if (materialFile.good())
                 {
@@ -94,8 +98,16 @@ int main(int argc, char *argv[])
                 materialFile.close();
 
                 /** Load actual data **/
+                cout << "Loading geometry from <"  << path <<  ">" << endl;
+
                 std::ifstream file;
                 file.open(path, std::ios::in);
+                if (file.fail())
+                {
+                    SYNC_PRINT(("main(): Can't open mesh file <%s> for reading\n", path.c_str()));
+                    return false;
+                }
+
                 objLoader.loadOBJ(file, *mesh);
                 file.close();
             } else {
@@ -107,9 +119,14 @@ int main(int argc, char *argv[])
                 }
             }
 
-            shaded->mMesh = mesh;
-            shaded->mMesh->recomputeMeanNormals();
-            shaded->prepareMesh(&mainWindow);
+            if (!mesh->verify())
+            {
+                SYNC_PRINT(("Internal error loading mesh"));
+                return 1;
+            }
+            mesh->recomputeMeanNormals();
+            shaded->setMesh(mesh);
+            //shaded->prepareMesh(&mainWindow);
             mainWindow.addSubObject(QString::fromStdString(path), QSharedPointer<Scene3D>(shaded));
         }
     }

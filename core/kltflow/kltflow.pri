@@ -3,3 +3,5 @@ HEADERS += \
 
 SOURCES += \
         kltflow/kltGenerator.cpp \
+
+OTHER_FILES +=$$PWD/CMakeLists.txt
