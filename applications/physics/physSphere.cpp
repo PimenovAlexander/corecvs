@@ -2,11 +2,10 @@
 
 #include <mesh3DScene.h>
 
-PhysSphere::PhysSphere()
+PhysSphere::PhysSphere():PhysObject ()
 {
-    PhysObject();
     radius = 1.0;
-    L_INFO << "Created default PhysSphere";
+    ////L_INFO << "Created default PhysSphere";
 }
 
 void PhysSphere::setPos(const Vector3dd &pos)
@@ -17,7 +16,7 @@ void PhysSphere::setPos(const Vector3dd &pos)
 PhysSphere::PhysSphere(Affine3DQ *pos, double *r, double *m) : PhysObject(*pos, *m)
 {
     radius = *r;
-    L_INFO << "Created PhysSphere with pos: " << *pos << " , radius: " << *r << " , mass: " << *m;
+    ////L_INFO << "Created PhysSphere with pos: " << *pos << " , radius: " << *r << " , mass: " << *m;
 }
 
 void PhysSphere::saveMesh(const std::string &name)
@@ -40,7 +39,7 @@ void PhysSphere::saveMesh(const std::string &name)
     delete_safe(mesh);
 }
 
-void PhysSphere::drawMesh()
+void PhysSphere::drawMesh(corecvs::Mesh3D &mesh)
 {
     //mesh is not using because I'm a little bit genius (really don't know how to make best architecture by now)
     Mesh3D *sphereMesh = new Mesh3D;
@@ -56,7 +55,17 @@ void PhysSphere::drawMesh()
 
     //mesh->dumpPLY(name+".ply");
     delete_safe(sphereMesh);
-    SYNC_PRINT(("Successfully drew sphere mesh"));
+    ////L_INFO << "Successfully drew sphere mesh";
+}
+
+void PhysSphere::calcMoment()
+{
+    ////L_INFO << "Sphere has no calcMoment implementation";
+}
+
+void PhysSphere::calcForce()
+{
+    ////L_INFO << "Sphere has no calcForce() implementation";
 }
 
 void PhysSphere::addToMesh(Mesh3D &mesh)

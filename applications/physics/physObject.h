@@ -99,17 +99,17 @@ public:
     void addForce   (const Vector3dd &force);
     void addMoment  (const Vector3dd &moment);
 
-    void tick(double deltaT);
+    //void tick(double deltaT);
 
     /** state inside tick **/
     Vector3dd getForce() const;
     Vector3dd getMoment() const;
     /* You may want to bring this to separate interface. */
-    virtual void addToMesh (corecvs::Mesh3D &mesh);
-    virtual void saveMesh  (const std::string &name);
-    virtual void drawMesh (corecvs::Mesh3D &mesh);
-    virtual void calcMoment();
-    virtual void calcForce();
+    virtual void addToMesh (corecvs::Mesh3D &mesh) = 0;
+    virtual void saveMesh  (const std::string &name) = 0;
+    virtual void drawMesh (corecvs::Mesh3D &mesh) = 0;
+    virtual void calcMoment() = 0;
+    virtual void calcForce() = 0;
     /* Get & Set */
     void setPosition(const corecvs::Affine3DQ &pos);
     void setPosition(const corecvs::Vector3dd &pos);

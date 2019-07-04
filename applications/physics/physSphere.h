@@ -12,9 +12,12 @@ public:
     /*Get & Set*/
     void setPos(const Vector3dd &pos);
 
-    virtual void addToMesh (corecvs::Mesh3D &mesh) override;
-    virtual void saveMesh(const std::string &name) override;
-    void drawMesh();
+    void addToMesh (corecvs::Mesh3D &mesh) override;
+    void saveMesh(const std::string &name) override;
+    void drawMesh(corecvs::Mesh3D &mesh) override;
+    void calcMoment() override;
+    void calcForce() override;
+
 
     double radius;
 };

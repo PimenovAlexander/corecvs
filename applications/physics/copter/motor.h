@@ -22,7 +22,7 @@ public:
 
     /* Configuration */
     bool cw;
-    double maxForce = 9.8 / 12; /* Each motor is capable of just lifing itself */
+    double maxForce = 9.8 / 3 * mass; /* Each motor is capable of just lifing itself */
 
     double motorWidth  = 0.011; /**< in m **/
     double motorHeight = 0.004; /**< in m **/
@@ -34,9 +34,9 @@ public:
     /* State */
     double pwm = 0.0; /**< 0..1 **/
     double phi = degToRad(32);
-    virtual void calcMoment() override;
-    virtual void drawMesh(corecvs::Mesh3D &mesh) override;
-    virtual void calcForce() override;
+    void calcMoment() override;
+    void drawMesh(corecvs::Mesh3D &mesh) override;
+    void calcForce() override;
     Vector3dd getForceTransformed(const Affine3DQ &T);
     Vector3dd calcMotorMoment();
 

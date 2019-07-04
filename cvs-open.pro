@@ -16,7 +16,7 @@ SUBDIRS +=                   \
 #    testbed                  \
     cloudview                \
     physics                  \
-    physics-test             \
+      physics-test             \
     imageview                \
 #    \
      generator                \

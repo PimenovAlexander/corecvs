@@ -27,22 +27,6 @@ void PhysObject::addMoment(const Vector3dd &moment)
     M += moment;
 }
 
-void PhysObject::calcMoment()
-{
-    M = F ^ getPosVector();
-    SYNC_PRINT(("PhysObject::calcMoment() was called\n"));
-}
-
-void PhysObject::calcForce()
-{
-    SYNC_PRINT(("PhysObject.calcForce() called and did nothing\n"));
-}
-
-void PhysObject::tick(double deltaT)
-{
-
-}
-
 const corecvs::Affine3DQ PhysObject::getPosAffine() const
 {
     return position;
@@ -63,15 +47,6 @@ Vector3dd PhysObject::getMoment() const
     return M;
 }
 
-void PhysObject::addToMesh(Mesh3D &mesh)
-{
-    SYNC_PRINT(("Don't know how to do this\n"));
-}
-
-void PhysObject::drawMesh(Mesh3D &mesh)
-{
-    SYNC_PRINT(("PhysObject can't draw mesh\n"));
-}
 
 void PhysObject::setPosition(const Affine3DQ &pos)
 {
@@ -91,7 +66,7 @@ PhysObject::PhysObject()
     F = Vector3dd::Zero();
     M = Vector3dd::Zero();
 
-    L_INFO << "default PhysObject():created";
+    //L_INFO << "default PhysObject():created";
 }
 
 PhysObject::PhysObject(const Affine3DQ &coords, const double &m)
@@ -102,10 +77,5 @@ PhysObject::PhysObject(const Affine3DQ &coords, const double &m)
     F = Vector3dd::Zero();
     M = Vector3dd::Zero();
 
-    L_INFO << "PhysObject():created with " << mass << " kg mass and at " << position << " position";
-}
-
-void PhysObject::saveMesh(const std::string &/*name*/)
-{
-    cout << "PhysObject::saveMesh(): not here" << endl;
+    //L_INFO << "PhysObject():created with " << mass << " kg mass and at " << position << " position";
 }

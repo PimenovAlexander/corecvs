@@ -3,7 +3,7 @@
 Motor::Motor() : PhysSphere()
 {
     cw = false;
-    L_INFO << "Created default Motor";
+    //L_INFO << "Created default Motor";
 }
 
 
@@ -11,8 +11,8 @@ Motor::Motor(Affine3DQ *pos, double *propellerRadius, double *mass)
     : PhysSphere (pos, propellerRadius, mass)
 {
     cw = false;
-    L_INFO << "Created Motor with pos: " << pos << " , propeller radius: "
-           << propellerRadius << " , motor mass: " << mass;
+    //L_INFO << "Created Motor with pos: " << pos << " , propeller radius: "
+    //       << propellerRadius << " , motor mass: " << mass;
 }
 
 
@@ -20,11 +20,11 @@ void Motor::calcMoment()
 {
     Vector3dd m = getForce() ^ getPosVector();
     addMoment(m);
-    L_INFO << "Added moment: " << m << "; force : " << getForce() << "; pos: " << getPosVector();
+    //L_INFO << "Added moment: " << m << "; force : " << getForce() << "; pos: " << getPosVector();
 
-    Vector3dd v = calcMotorMoment();
-    addMoment(v);
-    L_INFO << "Motor.calcMoment() was called. Moment of current motor is: " << v;
+    Vector3dd motorMoment = calcMotorMoment();
+    addMoment(motorMoment);
+    //L_INFO << "Motor.calcMoment() was called. Moment of current motor is: " << motorMoment;
 }
 
 void Motor::drawMesh(corecvs::Mesh3D &mesh)
@@ -48,14 +48,14 @@ void Motor::drawMesh(corecvs::Mesh3D &mesh)
     }
     mesh.popTransform();
 
-    SYNC_PRINT(("Successfully drew motor mesh"));
+    //L_INFO << "Successfully drew motor mesh";
 }
 
 void Motor::calcForce()
 {
     Vector3dd _force = Vector3dd(0, 0, maxForce * pwm);
     addForce(_force);
-    L_INFO << "Motor.calcForce() called. Added force: " << _force;
+    //L_INFO << "Motor.calcForce() called. Added force: " << _force;
 }
 
 Vector3dd Motor::getForceTransformed(const Affine3DQ &T)
