@@ -105,8 +105,8 @@ DroneObject::DroneObject(double frameSize, double mass) : PhysMainObject()
     centralSphere = PhysSphere(&posOfCentralSphere, &radiusOfCentralSphere, &massOfCentralSphere);
     //motors.insert(motors.end(), motors.begin(), motors.end());
 
-    L_INFO<< "centralSphere pos: " << centralSphere.getPosVector()
-          << " , mass: " << centralSphere.mass << " , radius: " << centralSphere.radius;
+    //L_INFO<< "centralSphere pos: " << centralSphere.getPosVector()
+    //      << " , mass: " << centralSphere.mass << " , radius: " << centralSphere.radius;
     objects.push_back(&centralSphere);
     //objects.push_back(&motors[0]);
 
@@ -147,7 +147,7 @@ void DroneObject::drawMotors(Mesh3D &mesh)
         Motor motor = motors[i];
         mesh.mulTransform(corecvs::Matrix44(motors[i].getPosAffine()));
         motor.drawMesh(mesh);
-        SYNC_PRINT(("motor->drawMesh(mesh) passed"));
+        //L_INFO << "motor->drawMesh(mesh) passed";
         /** Very bad kludge, can be used only as a last resort **/
         /*
         if (Motor* motor = dynamic_cast<Motor*>(this))
@@ -208,13 +208,13 @@ void DroneObject::drawMyself(Mesh3DDecorated &mesh)
     DroneObject::drawMyself((Mesh3D &)mesh);
     /* Scene should be drawed */
 
-    //SYNC_PRINT(("Quad::drawMyself(Mesh3DDecorated &mesh): before\n"));
+    //L_INFO << "Quad::drawMyself(Mesh3DDecorated &mesh): before\n";
     //mesh.dumpInfo();
     if (worldMesh != NULL)
     {
         mesh.add(*worldMesh);
     }
-    //SYNC_PRINT(("Quad::drawMyself(Mesh3DDecorated &mesh): after\n"));
+    //L_INFO << "Quad::drawMyself(Mesh3DDecorated &mesh): after\n";
     //mesh.dumpInfo();
 
 
@@ -278,7 +278,7 @@ void DroneObject::flightControllerTick(const CopterInputs &input)
     forceY = yawPID.P * currentError.z() +
              yawPID.I * deltaT * yawPID.sumOfError +
              yawPID.D * (currentError.z() - yawPID.prevError) / deltaT;
-    L_INFO << "pitch previous error: " << pitchPID.prevError;
+    //L_INFO << "pitch previous error: " << pitchPID.prevError;
     pitchPID.prevError = currentError.x();
     rollPID.prevError  = currentError.y();
     yawPID.prevError   = currentError.z();
@@ -358,7 +358,7 @@ void DroneObject::tick(double deltaT)
     velocity += (getForce() / getSystemMass()) * deltaT;
 
     /* We should carefully use inertiaTensor here. It seems like it changes with the frame of reference */
-    L_INFO << "Momentum: " << getMomentum();
+    //L_INFO << "Momentum: " << getMomentum();
     Vector3dd W = inertiaTensor.inv() * getMomentum();
     Quaternion angularAcceleration = Quaternion::Rotation(W, W.l2Metric());
 

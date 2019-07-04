@@ -24,7 +24,7 @@ void PhysMainObject::addForce(const corecvs::Vector3dd &_force)
 
 void PhysMainObject::tick(double deltaT)
 {
-    SYNC_PRINT(("PhysMainObject::tick should not be called"));
+    //L_INFO <<"PhysMainObject::tick should not be called";
 }
 
 
@@ -80,28 +80,32 @@ void PhysMainObject::calcForce()
 {
     Vector3dd f = Vector3dd::Zero();
     Affine3DQ transform;
-    L_INFO << "transform: " << transform;
+    //L_INFO << "transform: " << transform;
     Vector3dd forceToTransform;
     Vector3dd forceAfterTransform;
     for(size_t i = 0; i < objects.size(); ++i)
     {
+        objects[i]->calcForce();
         transform = Affine3DQ(orientation, getPosCenter());// * objects[i]->getPosAffine();
         forceToTransform = objects[i]->getForce();
-        forceAfterTransform = transform.rotor * objects[i]->getForce();
+        forceAfterTransform = transform.rotor * forceToTransform;
         f += forceAfterTransform;
-        L_INFO << "added force: " << forceAfterTransform << "; forceToTransform: " << forceToTransform;
+        //L_INFO << "added force: " << forceAfterTransform << "; forceToTransform: " << forceToTransform;
     }
-    L_INFO << "final force to add to PhysMainObject: " << f;
+    //L_INFO << "final force to add to PhysMainObject: " << f;
     addForce(f);
 }
 
 void PhysMainObject::calcMoment()
 {
+    Affine3DQ transform;
     Vector3dd m = Vector3dd::Zero();
+    transform = Affine3DQ(orientation, getPosCenter());
     for(size_t i = 0; i < objects.size(); ++i)
     {
         objects[i]->calcMoment();
-        m += objects[i]->getMoment();
+
+        m += transform.rotor * objects[i]->getMoment();
     }
     setMomentum(m);
 }
