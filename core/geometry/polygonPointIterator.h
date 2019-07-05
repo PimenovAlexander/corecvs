@@ -6,6 +6,8 @@
 
 namespace corecvs {
 
+#define P_IT_TRACE
+
 /**
  * So far we only support convex polygon
  **/
@@ -55,15 +57,16 @@ public:
         /** So far only convex polygons are supported **/
         bool orientation = true;
         bool isConvex = polygon.isConvex(&orientation);
+        cout << "convex = " << isConvex << endl;
         if (!isConvex) {
            part.currentY =  polygon.y(sortedIndex.back()) + 1;
            return;
         }
 
         if (orientation)
-            indexDelta = 1;
-        else
             indexDelta = -1;
+        else
+            indexDelta = 1;
 
         /**/
 
@@ -76,7 +79,7 @@ public:
         deep    = cand1;
         shallow = cand2;
 
-#if 0
+#ifdef P_IT_TRACE
         cout << "Polygon size:"  << polygon.size() << endl;
         cout << "Top Point:"    << origin <<  endl;
         cout << "Bottom Point:" << polygon[sortedIndex.back()] << endl;
@@ -125,7 +128,7 @@ public:
             shallow = cand2n;
             Vector2dd deepBegin    = leftBegin;
             Vector2dd shallowBegin = rightBegin;
-#if 0
+#ifdef P_IT_TRACE
             cout << "We need to advance: " << endl;
             cout << "Left  Begin: " << leftBegin << endl;
             cout << "Right Begin: " << rightBegin << endl;
@@ -138,7 +141,7 @@ public:
                 std::swap(deepBegin, shallowBegin);
             }
 
-#if 0
+#ifdef P_IT_TRACE
             if (polygon.y(deep) - deepBegin.y()) {
                 SYNC_PRINT(("We are in prefail...\n"));
             }

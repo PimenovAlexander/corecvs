@@ -81,12 +81,14 @@ void Mesh3DDecorated::addTriangleT(const Vector3dd &p1, const Vector2dd &t1, con
         textureCoords.push_back(t2);
         textureCoords.push_back(t3);
 
-        texId.push_back(Vector4d32(texStart, texStart + 1, texStart + 2, (int)currentTexture));
+        /* addTriangle already preallocated texId*/
+        texId.back() = Vector4d32(texStart, texStart + 1, texStart + 2, (int)currentTexture);
     }
     if (hasNormals)
     {
         int normals = (int)normalCoords.size() - 1;
-        normalId.push_back(Vector3d32(normals, normals, normals));
+        /* addTriangle already preallocated normalId*/
+        normalId.back() = Vector3d32(normals, normals, normals);
     }
 }
 
@@ -236,7 +238,7 @@ bool Mesh3DDecorated::verify( void )
     if (hasTexCoords) {
         if (faces.size() != texId.size())
         {
-            SYNC_PRINT(("Wrong texId index number (%d != %d)\n", (int)faces.size(), (int)texId.size()));
+            SYNC_PRINT(("Wrong texId number (faces.size() %d != texId.size() %d)\n", (int)faces.size(), (int)texId.size()));
             return false;
         }
     }
