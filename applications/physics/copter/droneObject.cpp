@@ -350,9 +350,13 @@ void DroneObject::tick(double deltaT)
     double inertialMomentY = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * motorMass * pow(arm, 2);
     double inertialMomentZ = 2.0 / 5.0 * centerMass * pow(radius, 2) + 4 * motorMass * pow(arm, 2);
 
-    inertiaTensor = Matrix33(inertialMomentX, 0, 0,
+    Matrix33 diagonalizedInertiaTensor = Matrix33(inertialMomentX, 0, 0,
                              0, inertialMomentY, 0,
                              0, 0, inertialMomentZ);
+
+    Matrix33 transposedOrient = orientation.toMatrix();
+    transposedOrient.transpose();
+    inertiaTensor = orientation.toMatrix() * diagonalizedInertiaTensor * transposedOrient;// orientation.toMatrix().transpose();
 
     setPosCenter(getPosCenter() + velocity * deltaT);
     velocity += (getForce() / getSystemMass()) * deltaT;
