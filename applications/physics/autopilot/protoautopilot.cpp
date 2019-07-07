@@ -118,6 +118,16 @@ void  ProtoAutoPilot::stabilise()
 {
 }
 
+void ProtoAutoPilot::setCalibration(Calibration c)
+{
+    calib = c;
+}
+
+ProtoAutoPilot::Calibration ProtoAutoPilot::getCalibration()
+{
+    return calib;
+}
+
 void ProtoAutoPilot::changeImage(QSharedPointer<QImage> inputImage)  // here we will add some data to image
 {
     //cv::Mat img = cv::imread("/home/test.jpg");
@@ -134,13 +144,18 @@ void ProtoAutoPilot::changeImage(QSharedPointer<QImage> inputImage)  // here we 
     inputQImage = inputImage->copy();
     cv::Mat mat = QImage2Mat(inputQImage);
     cv::Mat mat1;
-    cv::resize(mat,mat1,mat.size()*2);
+
+    if (calib == BABYHAWK_01){
+    //undistort(mat, mat1, intrinsic, distCoeffs);
+    }
+    cv::Mat mat2;
+    cv::resize(mat1,mat2,mat.size()*2);
     std::vector<std::vector<cv::Point>> squares;
-    findSquares(mat1,squares);
+    findSquares(mat2,squares);
     drawSquares(squares,mat1);
-    cv::circle(mat1,cv::Point(300,300),40,cv::Scalar(255,255,255));
+    cv::circle(mat2,cv::Point(300,300),40,cv::Scalar(255,255,255));
     //cv::imshow("mat",mat);
-    outputQImage = mat2RealQImage(mat1);
+    outputQImage = mat2RealQImage(mat2);
     outputImage = QSharedPointer<QImage> (new QImage(outputQImage));
     outputImage->save("output2.jpg");
  }

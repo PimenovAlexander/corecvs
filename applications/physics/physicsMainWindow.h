@@ -18,6 +18,7 @@
 #include <flowFabricControlWidget.h>
 #include <graphPlotDialog.h>
 #include <inputSelectorWidget.h>
+#include <joystickreader.h>
 
 #include <copter/quad.h>
 #include <copter/droneObject.h>
@@ -149,7 +150,7 @@ public slots:
 private slots:
 
 
-
+    void checkForJoystick();
     void startVirtualMode();
 
 #if 0 /*Use one slot for all channels */
@@ -163,7 +164,6 @@ private slots:
     void CH8Change(int i);
 #endif
     void startJoyStickMode();
-
 
     void onStartVirtualModeReleased();
 
@@ -211,7 +211,7 @@ private:
     int frameCounter=0;                                                    //we need it in the timer
     /** Replace this with mixer **/
     JoyStickInput joystick1 ;
-
+    JoystickReader *jReader;
     QComController ComController {this,
         copterInputs.axis[CopterInputs::CHANNEL_YAW],
         copterInputs.axis[CopterInputs::CHANNEL_ROLL],
@@ -249,15 +249,15 @@ private:
 
     void sendOurValues(std::vector<uint8_t> OurValues);
     bool virtuaModeActive=false;
-    std::string inputCameraPath="v4l2:/dev/video1";
+    std::string inputCameraPath = "v4l2:/dev/video1";
     ControlRecord recordData;
 
     Simulation simSim;
     ClientSender virtualSender;
 
-    int countOfSticks=0;
+    int countOfSticks = 0;
 
-    bool autopilotMode=false;
+    bool autopilotMode = false;
     stack<Message> autopilotStack;
 
 };

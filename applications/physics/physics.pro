@@ -26,6 +26,7 @@ INCLUDEPATH += copter
 
 
 HEADERS += \
+    joystick/joystickreader.h \
     physMainObject.h \
     simulation.h \
     clientSender.h \
@@ -56,6 +57,7 @@ HEADERS += \
 
 
 SOURCES += \
+    joystick/joystickreader.cpp \
     physMainObject.cpp \
     simulation.cpp \
     simSphere.cpp \

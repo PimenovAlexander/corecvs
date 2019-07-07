@@ -257,7 +257,7 @@ void PhysicsMainWindow::startVirtualMode()
         //simSim.mainObjects[0]->addForce(Vector3dd(0, 0, -9.8));
         cout << "done" << endl;
 
-        QTimer::singleShot(8, this, SLOT(keepAlive()));           //UI thread crash why????????????
+        QTimer::singleShot(8, this, SLOT(keepAlive()));
     }
 }
 
@@ -664,32 +664,26 @@ void PhysicsMainWindow::on_comboBox_currentTextChanged(const QString &arg1)     
      if(arg1=="Usual mode")    //why qstring can not be in case?!
     {
         joystick1.setUsualCurrentMode();   //I dont want errors between qstring and string
-        joystick1.throttleValue=1500;
     }
     if(arg1=="Inertia mode")
     {
         joystick1.setInertiaCurrentMode();
-        joystick1.throttleValue=midThrottle;
     }
     if(arg1=="Casual mode")
     {
         joystick1.setCasualCurrentMode();
-        joystick1.throttleValue=midThrottle;
     }
     if(arg1=="RT/LT Usual mode")
     {
         joystick1.setRTLTUsialMode();
-        joystick1.throttleValue=midThrottle;
     }
     if(arg1=="RT/LT Full mode")
     {
         joystick1.setRTLTFullMode();
-        joystick1.throttleValue=midThrottle;
     }
     if(arg1=="RT/LT Extream mode")
     {
         joystick1.setRTLTExtreamMode();
-        joystick1.throttleValue=midThrottle;
     }
  }
 
@@ -803,4 +797,9 @@ void PhysicsMainWindow::on_connetToVirtualButton_pressed()
 {
 
 
+}
+
+void PhysicsMainWindow::checkForJoystick()               //auto connect
+{
+//   jReader->start();
 }

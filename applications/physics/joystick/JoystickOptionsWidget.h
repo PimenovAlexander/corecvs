@@ -27,7 +27,6 @@ public:
         qRegisterMetaType<JoystickState>("JoystickState");
     }
 
-
     // JoystickInterface interface
 public:
     virtual void newButtonEvent    (int /*button*/, int /*value*/, int /*timestamp*/) override {}

@@ -29,25 +29,26 @@ public:
     }
     bool active=false;
     void stabilise();
+    enum Calibration {NO_CALIBRATION, BABYHAWK_01};
     Vector3dd getCurreentPos(QSharedPointer<QImage> inputImage);
     int debugCounter=0;
     void changeImage(QSharedPointer<QImage> inputImage);
     void start();
-    //QSharedPointer<QImage> matToQImage(const cv::Mat &src);
-    //cv::Mat QImageToMat2(const QImage &src);
     void testImageVoid();
     void odinOdometryTest();
-    //QSharedPointer<QImage> matToQImage(const cv::Mat &src, char nameToSave[]);
 
     QSharedPointer<QImage> mat2QImage(const cv::Mat &src);
     cv::Mat QImage2Mat(const QImage &srcc);
     VertexSquare getVertexSquareFromMat(const cv::Mat input);
 
+    void setCalibration(Calibration c);
+    ProtoAutoPilot::Calibration getCalibration();
 private:
      //for memory
-     cv::Mat temp;
-     QImage outputQImage;
-     QImage inputQImage;
+    cv::Mat temp;
+    QImage outputQImage;
+    QImage inputQImage;
+    Calibration calib = NO_CALIBRATION;
 
     vector<MainObject> mainObjects;
     CopterInputs failSafe;
