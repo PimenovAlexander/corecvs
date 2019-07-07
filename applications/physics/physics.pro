@@ -21,6 +21,8 @@ INCLUDEPATH += .
 INCLUDEPATH += joystick
 INCLUDEPATH += radio
 INCLUDEPATH += mixer
+INCLUDEPATH += autopilot
+INCLUDEPATH += copter
 
 
 HEADERS += \
@@ -41,14 +43,17 @@ HEADERS += \
     copterInputs.h \
     joystick/mixerChannelOperationWidget.h \
     frameProcessor.h \
-    protoautopilot.h \
     copter/quad.h \
     physicsMainWindow.h \
     physicsAboutWidget.h \
+    autopilot/protoautopilot.h \
+    comcontroller.h \
+    autopilot/vertexsquare.h\
     physObject.h \
     physSphere.h \
     copter/droneObject.h \
     copter/motor.h
+
 
 SOURCES += \
     physMainObject.cpp \
@@ -69,14 +74,17 @@ SOURCES += \
     copterInputs.cpp \
     joystick/mixerChannelOperationWidget.cpp \
     frameProcessor.cpp \
-    protoautopilot.cpp \
     copter/quad.cpp \
     physicsMainWindow.cpp \
     physicsAboutWidget.cpp \
+    autopilot/protoautopilot.cpp \
+    comcontroller.cpp \
+    autopilot/vertexsquare.cpp\
     physObject.cpp \
     physSphere.cpp \
     copter/droneObject.cpp \
     copter/motor.cpp
+
 
 FORMS += \
     joystick/JoystickOptionsWidget.ui \
@@ -84,6 +92,16 @@ FORMS += \
     joystick/mixerChannelOperationWidget.ui \
     physicsMainWindow.ui \
     physicsAboutWidget.ui
+
+
+LIBS+=  -lopencv_core\
+        -lopencv_imgproc\
+        -lopencv_imgcodecs\
+        -lopencv_highgui\
+        -lopencv_flann\
+        -lopencv_calib3d\
+        -lopencv_features2d\
+        -lopencv_xfeatures2d
 
 #RESOURCES += ../../resources/main.qrc
 

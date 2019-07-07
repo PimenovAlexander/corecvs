@@ -233,6 +233,17 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>imTest</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../resources/main.qrc">
+         <normaloff>:/new/colors/colors/color_blue.png</normaloff>:/new/colors/colors/color_blue.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QToolButton" name="JoyButton">
        <property name="text">
         <string>JoyStick mode</string>

@@ -15,7 +15,6 @@
 #include <opencv2/video/tracking_c.h>   // cvCalcOpticalFlowPyrLK
 
 
-
 #include "core/math/vector/vector2d.h"
 #include "KLTFlow.h"
 #include "core/math/mathUtils.h"
