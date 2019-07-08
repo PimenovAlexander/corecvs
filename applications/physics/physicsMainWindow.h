@@ -23,6 +23,7 @@
 #include <copter/quad.h>
 #include <copter/droneObject.h>
 
+#include "calibrationWidget.h"
 #include "clientSender.h"
 #include "copterInputsWidget.h"
 #include "frameProcessor.h"
@@ -99,6 +100,8 @@ public:
     CameraModelParametersControlWidget mModelParametersWidget;
     CameraModel mCameraModel;
     InputSelectorWidget mInputSelector;
+    CalibrationWidget calibrationWidget;
+
 
 public slots:
     void showCameraInput();
@@ -195,6 +198,7 @@ private slots:
 
     void on_connetToVirtualButton_pressed();
 
+    void CalibrateCamera();
 private:
     struct Message {
         int throttle;

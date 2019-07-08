@@ -1,3 +1,4 @@
+#include "calibrationWidget.h"
 #include "physicsMainWindow.h"
 #include "ui_physicsMainWindow.h"
 
@@ -797,6 +798,12 @@ void PhysicsMainWindow::on_connetToVirtualButton_pressed()
 {
 
 
+}
+
+void PhysicsMainWindow::CalibrateCamera()
+{
+    calibrationWidget.show();
+    calibrationWidget.raise();
 }
 
 void PhysicsMainWindow::checkForJoystick()               //auto connect

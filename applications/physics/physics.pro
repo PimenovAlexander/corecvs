@@ -23,9 +23,12 @@ INCLUDEPATH += radio
 INCLUDEPATH += mixer
 INCLUDEPATH += autopilot
 INCLUDEPATH += copter
+INCLUDEPATH += calibration
 
 
 HEADERS += \
+    calibration/calibrationWidget.h \
+    joystick/imageForCalibrationWidget.h \
     joystick/joystickreader.h \
     physMainObject.h \
     simulation.h \
@@ -57,6 +60,8 @@ HEADERS += \
 
 
 SOURCES += \
+    calibration/calibrationWidget.cpp \
+    joystick/imageForCalibrationWidget.cpp \
     joystick/joystickreader.cpp \
     physMainObject.cpp \
     simulation.cpp \
@@ -89,8 +94,10 @@ SOURCES += \
 
 
 FORMS += \
+    calibration/calibrationWidget.ui \
     joystick/JoystickOptionsWidget.ui \
     copterInputsWidget.ui \
+    joystick/imageForCalibrationWidget.ui \
     joystick/mixerChannelOperationWidget.ui \
     physicsMainWindow.ui \
     physicsAboutWidget.ui
