@@ -6,6 +6,7 @@ CalibrationWidget::CalibrationWidget(QWidget *parent) :
     ui(new Ui::CalibrationWidget)
 {
     ui->setupUi(this);
+
 }
 
 CalibrationWidget::~CalibrationWidget()

@@ -130,16 +130,6 @@ ProtoAutoPilot::Calibration ProtoAutoPilot::getCalibration()
 
 void ProtoAutoPilot::changeImage(QSharedPointer<QImage> inputImage)  // here we will add some data to image
 {
-    //cv::Mat img = cv::imread("/home/test.jpg");
-    //cv::circle(img,cv::Point(30,30),20,cv::Scalar(0,0,0));
-    //cv::Mat canvas = qImageToMat(*inputImage);
-    //cv::imshow("Display window",canvas);
-    //cv::circle(canvas,cv::Point(30,30),20,cv::Scalar(0,0,0));
-    //cv::cvtColor(canvas,canvas,CV_BGR2GRAY);
-    //cv::imwrite("test.jpg",canvas);
-    //cv::Mat mat1 = QImageToMat2(*inputImage);
-    // QImage *image = new QImage(*inputImage);
-
 
     inputQImage = inputImage->copy();
     cv::Mat mat = QImage2Mat(inputQImage);

@@ -24,6 +24,7 @@ INCLUDEPATH += mixer
 INCLUDEPATH += autopilot
 INCLUDEPATH += copter
 INCLUDEPATH += calibration
+INCLUDEPATH += copencvUtils
 
 
 HEADERS += \
@@ -56,7 +57,8 @@ HEADERS += \
     physObject.h \
     physSphere.h \
     copter/droneObject.h \
-    copter/motor.h
+    copter/motor.h \
+    opencvUtils/opencvTransformations.h
 
 
 SOURCES += \
@@ -90,7 +92,8 @@ SOURCES += \
     physObject.cpp \
     physSphere.cpp \
     copter/droneObject.cpp \
-    copter/motor.cpp
+    copter/motor.cpp \
+    opencvUtils/opencvTransformations.cpp
 
 
 FORMS += \
