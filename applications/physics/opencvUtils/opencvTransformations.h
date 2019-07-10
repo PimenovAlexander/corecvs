@@ -7,9 +7,9 @@
 class opencvTransformations
 {
 public:
-    opencvTransformations();
-    QImage mat2RealQImage(const cv::Mat &src);
-    cv::Mat QImage2Mat(const QImage &srcc);
+   opencvTransformations();
+   static QImage mat2RealQImage(const cv::Mat &src);
+   static cv::Mat QImage2Mat(const QImage &srcc);
 };
 
 #endif // OPENCVTRANSFORMATIONS_H

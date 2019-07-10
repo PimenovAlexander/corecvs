@@ -2,6 +2,7 @@
 #define IMAGEFORCALIBRATIONWIDGET_H
 
 #include <QWidget>
+#include <opencv2/core.hpp>
 
 namespace Ui {
 class ImageForCalibrationWidget;
@@ -15,6 +16,7 @@ public:
     explicit ImageForCalibrationWidget(QWidget *parent = nullptr);
     ~ImageForCalibrationWidget();
 
+    void setImage(cv::Mat *);
 private:
     Ui::ImageForCalibrationWidget *ui;
 };
