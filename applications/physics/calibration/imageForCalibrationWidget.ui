@@ -7,39 +7,92 @@
     <x>0</x>
     <y>0</y>
     <width>406</width>
-    <height>98</height>
+    <height>123</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>406</width>
+    <height>105</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QLabel" name="imageLabel">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>67</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>textetexttexttext</string>
-   </property>
-  </widget>
   <widget class="QPushButton" name="addButon">
    <property name="geometry">
     <rect>
-     <x>270</x>
-     <y>0</y>
-     <width>121</width>
-     <height>91</height>
+     <x>320</x>
+     <y>10</y>
+     <width>71</width>
+     <height>111</height>
     </rect>
    </property>
    <property name="text">
     <string>Add</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="showButon">
+   <property name="geometry">
+    <rect>
+     <x>240</x>
+     <y>10</y>
+     <width>71</width>
+     <height>111</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Show</string>
+   </property>
+  </widget>
+  <widget class="QGraphicsView" name="graphicsView">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>211</width>
+     <height>111</height>
+    </rect>
+   </property>
+  </widget>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>showButon</sender>
+   <signal>released()</signal>
+   <receiver>ImageForCalibrationWidget</receiver>
+   <slot>showImage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>275</x>
+     <y>55</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>202</x>
+     <y>52</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>addButon</sender>
+   <signal>released()</signal>
+   <receiver>ImageForCalibrationWidget</receiver>
+   <slot>closeWid()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>355</x>
+     <y>55</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>202</x>
+     <y>52</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>showImage()</slot>
+  <slot>closeWid()</slot>
+ </slots>
 </ui>

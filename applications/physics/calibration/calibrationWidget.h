@@ -21,9 +21,13 @@ private slots:
     void addImage(cv::Mat);
 
     void addImage();
+    void updateStartButton();
+    void updateStartButtonAndRemoveWidget(int k);
 private:
     Ui::CalibrationWidget *ui;
-     std::vector<ImageForCalibrationWidget *> widgets;
+    std::vector<ImageForCalibrationWidget *> widgets;
+    int widgetCounter=0;
 };
+
 
 #endif // CALIBRATIONWIDGET_H
