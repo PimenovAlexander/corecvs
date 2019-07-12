@@ -16,64 +16,6 @@
 using corecvs::Vector3dd;
 using corecvs::Quaternion;
 
-/*
-class Force {
-public:
-    corecvs::Vector3dd force    = corecvs::Vector3dd::Zero();
-    //corecvs::Vector3dd position = corecvs::Vector3dd::Zero();
-    //corecvs::Vector3dd centerPos = corecvs::Vector3dd::Zero();
-
-    Force() {}
-
-    Force(double fx, double fy, double fz) :
-        force(fx, fy, fz)
-    {
-    }
-
-    Force(Vector3dd force) :
-        force(force)
-    {
-    }
-
-    void transform(const corecvs::Affine3DQ &T)
-    {
-        force    = T.rotor * force;
-        position = T * position;
-
-        //L_INFO<<"Force Pos: "<< position;
-        //L_INFO<<"Center Pos: "<<centerPos;
-    }
-
-    Force transformed(corecvs::Affine3DQ &T) const
-    {
-        Force toReturn = *this;
-        toReturn.transform(T);
-        return toReturn;
-    }
-
-    Force transformed(const corecvs::Affine3DQ &T, corecvs::Vector3dd &cPos)
-    {
-        centerPos = cPos;
-        Force toReturn = *this;
-        toReturn.transform(T);
-        return toReturn;
-    }
-*/
-    /** Torque in H*m **/
-/*
-    Vector3dd getM() const
-    {
-        return (position - centerPos) ^ force;
-    }
-
-    Vector3dd getForce() const
-    {
-        return force;
-    }
-
-};
-*/
-
 class PhysObject
 {
 public:

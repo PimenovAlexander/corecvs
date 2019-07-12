@@ -149,7 +149,7 @@ public slots:
 private slots:
 
 
-
+    void stopVirtualMode();
     void startVirtualMode();
 
 #if 0 /*Use one slot for all channels */
@@ -205,7 +205,7 @@ private:
     int currentSendMode=-1;                                                //tumbler beetwen joystick and autopilot (0- js, 1-autoP)
     int frameCounter=0;                                                    //we need it in the timer
     /** Replace this with mixer **/
-    JoyStickInput joystick1 ;
+    JoyStickInput joystick1;
 
     QComController ComController {this,
         copterInputs.axis[CopterInputs::CHANNEL_YAW],
@@ -243,7 +243,6 @@ private:
     bool recording=false;
 
     void sendOurValues(std::vector<uint8_t> OurValues);
-    bool virtuaModeActive=false;
     std::string inputCameraPath="v4l2:/dev/video1";
     ControlRecord recordData;
 

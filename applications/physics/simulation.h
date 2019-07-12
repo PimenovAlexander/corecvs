@@ -8,6 +8,8 @@
 #include "physMainObject.h"
 #include <bits/stl_list.h>
 #include "copter/droneObject.h"
+#include "sceneShaded.h"
+#include "joystickInput.h"
 class Simulation
 {
 public:
@@ -18,13 +20,24 @@ public:
     std::chrono::high_resolution_clock::time_point newTime;
     std::chrono::high_resolution_clock::time_point startTime;
 
+    SceneShaded *mShadedScene = NULL;
     int frameCounter=0;
     void start();
     Simulation(std::string arg);
 
+    CopterInputs droneJoystick;
+
+    void startRealTimeSimulation();
+    void execTestSimulation();
+
+    bool getIsAlive();
+    void setIsAlive(const bool flag);
+
 private:
     void defaultStart();
     void droneStart();
+    std::mutex simMutex;
+    bool isAlive = false;
 };
 
 #endif // SIMULATION_H
