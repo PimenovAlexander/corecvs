@@ -29,6 +29,7 @@ private:
     int id = -1;
     QGraphicsScene *sc;
     void setDefaultImage();
+    void unlockButtons();
 private slots:
     void showImage();
     void closeWid();

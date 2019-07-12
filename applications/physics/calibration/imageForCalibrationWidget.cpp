@@ -22,12 +22,13 @@ ImageForCalibrationWidget::~ImageForCalibrationWidget()
 void ImageForCalibrationWidget::setImage(cv::Mat *inputMat)
 {
     inputMat->copyTo(image);
-    qimage = opencvTransformations::mat2RealQImage(*inputMat).copy();
+    qimage = opencvTransformations::mat2RealQImage(image).copy();
     imageSet = true;
     sc = new QGraphicsScene(this);
     sc->addPixmap(QPixmap::fromImage(qimage));
     ui->graphicsView->setScene(sc);
-    ui->graphicsView->fitInView( QRect(11,11,211,111),Qt::KeepAspectRatio);
+    ui->graphicsView->fitInView( QRect(11,11,431,221),Qt::KeepAspectRatio);
+    unlockButtons();
 }
 
 void ImageForCalibrationWidget::setDefaultImage()
@@ -59,6 +60,12 @@ void ImageForCalibrationWidget::lockButtons()
 {
     ui->addButon->setEnabled(false);
     ui->showButon->setEnabled(false);
+}
+
+void ImageForCalibrationWidget::unlockButtons()
+{
+    ui->addButon->setEnabled(true);
+    ui->showButon->setEnabled(true);
 }
 
 void ImageForCalibrationWidget::closeWid()
