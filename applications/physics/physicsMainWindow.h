@@ -154,6 +154,7 @@ private slots:
 
 
     void checkForJoystick();
+    void stopVirtualMode();
     void startVirtualMode();
 
 #if 0 /*Use one slot for all channels */
@@ -216,6 +217,7 @@ private:
     /** Replace this with mixer **/
     JoyStickInput joystick1 ;
     JoystickReader *jReader;
+
     QComController ComController {this,
         copterInputs.axis[CopterInputs::CHANNEL_YAW],
         copterInputs.axis[CopterInputs::CHANNEL_ROLL],
@@ -252,8 +254,10 @@ private:
     bool recording=false;
 
     void sendOurValues(std::vector<uint8_t> OurValues);
-    bool virtuaModeActive=false;
+
+    bool virtuaModeActive = false;
     std::string inputCameraPath = "v4l2:/dev/video1";
+
     ControlRecord recordData;
 
     Simulation simSim;

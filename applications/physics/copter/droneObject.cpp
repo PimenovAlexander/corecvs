@@ -119,6 +119,7 @@ DroneObject::DroneObject(double frameSize, double mass) : PhysMainObject()
 
 void DroneObject::drawMyself(Mesh3D &mesh)
 {
+    visualTick();
     mesh.mulTransform(getTransform());
     mesh.switchColor();
 
@@ -330,12 +331,7 @@ void DroneObject::physicsTick()
     tick(0.1);
 
     /*TODO: Add real collistion comрutation */
-    if (getPosCenter().z() < -1)
-    {
-        velocity = Vector3dd::Zero();
-        Vector3dd pos = getPosCenter();
-        setPosCenter(Vector3dd(pos.x(), pos.y(), -1));
-    }
+
     //cout << "Quad::physicsTick(): " << position << endl;
 }
 
@@ -350,11 +346,23 @@ void DroneObject::tick(double deltaT)
     double inertialMomentY = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * motorMass * pow(arm, 2);
     double inertialMomentZ = 2.0 / 5.0 * centerMass * pow(radius, 2) + 4 * motorMass * pow(arm, 2);
 
-    inertiaTensor = Matrix33(inertialMomentX, 0, 0,
+    Matrix33 diagonalizedInertiaTensor = Matrix33(inertialMomentX, 0, 0,
                              0, inertialMomentY, 0,
                              0, 0, inertialMomentZ);
 
-    setPosCenter(getPosCenter() + velocity * deltaT);
+    Matrix33 transposedOrient = orientation.toMatrix();
+    transposedOrient.transpose();
+    inertiaTensor = orientation.toMatrix() * diagonalizedInertiaTensor * transposedOrient;// orientation.toMatrix().transpose();
+
+    Vector3dd newPos = getPosCenter() + velocity * deltaT;
+    if (newPos.z() < -0.1)
+    {
+        velocity = Vector3dd::Zero();
+        setPosCenter(Vector3dd(newPos.x(), newPos.y(), -0.1));
+    }
+    else {
+        setPosCenter(newPos);
+    }
     velocity += (getForce() / getSystemMass()) * deltaT;
 
     /* We should carefully use inertiaTensor here. It seems like it changes with the frame of reference */
