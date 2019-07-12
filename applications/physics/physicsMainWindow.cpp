@@ -692,11 +692,9 @@ void PhysicsMainWindow::updateUi()
 {
     uiMutex.lock();
     /* We now could quickly scan for data and stats*/
-
     /* But we would only draw last data */
     DrawRequestData *work = uiQueue.back();
     uiQueue.pop_back();
-
     /* Scan again cleaning the queue */
     for (DrawRequestData *data : uiQueue)
     {
@@ -704,7 +702,6 @@ void PhysicsMainWindow::updateUi()
     }
     uiQueue.clear();
     uiMutex.unlock();
-
     /**/
     if (work->mMesh != NULL) {
         Mesh3DScene* scene = new Mesh3DScene;
@@ -715,13 +712,11 @@ void PhysicsMainWindow::updateUi()
         mesh->add(*work->mMesh, true);
         ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene), CloudViewDialog::ADDITIONAL_SCENE);
     }
-
     if (work->mImage)
     {
         QSharedPointer<QImage> image(new RGB24Image(work->mImage));
         if (iiAutoPilot.active)
         {
-
             iiAutoPilot.makeStrategy(image);
             //cout<<"image changed"<<endl;
             image = iiAutoPilot.outputImage;
@@ -732,9 +727,6 @@ void PhysicsMainWindow::updateUi()
         }
         ui->imageView->setImage(image);
     }
-
-
-
     /* We made copies. Originals could be deleted */
     delete_safe(work);
 }
@@ -767,8 +759,6 @@ void PhysicsMainWindow::on_connetToVirtualButton_released()
     startVirtualMode();
 }
 
-
-
 void PhysicsMainWindow::on_JoyButton_released()
 {
     startJoyStickMode();
@@ -778,7 +768,6 @@ void PhysicsMainWindow::on_toolButton_3_released()
 {
     startRealMode();
 }
-
 
 void PhysicsMainWindow::on_toolButton_2_released()
 {
@@ -796,7 +785,6 @@ void PhysicsMainWindow::on_pushButton_released()
 }
 void PhysicsMainWindow::on_connetToVirtualButton_pressed()
 {
-
 
 }
 

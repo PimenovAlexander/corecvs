@@ -20,6 +20,7 @@ public:
     void setId(int i);
     void setImage(cv::Mat *);
     void lockButtons();
+    void updateMicroImage();
 private:
     Ui::ImageForCalibrationWidget *ui;
     bool imageSet = false;

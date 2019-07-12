@@ -24,21 +24,32 @@ void ImageForCalibrationWidget::setImage(cv::Mat *inputMat)
     inputMat->copyTo(image);
     qimage = opencvTransformations::mat2RealQImage(image).copy();
     imageSet = true;
+    //sc = new QGraphicsScene(this);
+    //sc->addPixmap(QPixmap::fromImage(qimage));
+    //ui->graphicsView->setScene(sc);
+    //ui->graphicsView->fitInView( QRect(11,11,431,221),Qt::KeepAspectRatio);
+    //updateMicroImage();
+    unlockButtons();
+}
+
+void ImageForCalibrationWidget::updateMicroImage()
+{
     sc = new QGraphicsScene(this);
     sc->addPixmap(QPixmap::fromImage(qimage));
     ui->graphicsView->setScene(sc);
     ui->graphicsView->fitInView( QRect(11,11,431,221),Qt::KeepAspectRatio);
-    unlockButtons();
 }
 
 void ImageForCalibrationWidget::setDefaultImage()
 {
     cv::Mat inputMat = cv::imread("test1.jpg");
-    qimage = opencvTransformations::mat2RealQImage(inputMat).copy();
-    sc = new QGraphicsScene(this);
-    sc->addPixmap(QPixmap::fromImage(qimage));
-    ui->graphicsView->setScene(sc);
-    ui->graphicsView->fitInView( QRect(11,11,211,111),Qt::KeepAspectRatio);
+    inputMat.copyTo(image);
+    qimage = opencvTransformations::mat2RealQImage(image).copy();
+    //sc = new QGraphicsScene(this);
+    //sc->addPixmap(QPixmap::fromImage(qimage));
+    //ui->graphicsView->setScene(sc);
+    //ui->graphicsView->fitInView( QRect(11,11,211,111),Qt::KeepAspectRatio);
+    updateMicroImage();
 }
 
 void ImageForCalibrationWidget::showImage()

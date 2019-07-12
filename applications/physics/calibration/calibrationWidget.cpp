@@ -16,6 +16,7 @@
 #include <opencv2/calib3d.hpp>
 #include <thread>
 #include <mutex>
+#include <QTimer>
 
 CalibrationWidget::CalibrationWidget(QWidget *parent) :
     QWidget(parent),
@@ -26,11 +27,21 @@ CalibrationWidget::CalibrationWidget(QWidget *parent) :
 
     updateVideo();
     addImage();
+    QTimer::singleShot(38,this,SLOT(updateImage()));
 }
 
 CalibrationWidget::~CalibrationWidget()
 {
     delete ui;
+}
+
+void CalibrationWidget::updateImage()
+{
+    for (int i=0;i<widgets.size();i++)
+    {
+        widgets[i]->updateMicroImage();
+    }
+    QTimer::singleShot(38,this,SLOT(updateImage()));
 }
 
 void CalibrationWidget::addImage()

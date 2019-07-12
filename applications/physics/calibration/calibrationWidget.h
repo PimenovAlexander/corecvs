@@ -29,6 +29,7 @@ private slots:
     void updateVideo();
     void on_videoBox_currentIndexChanged(int index);
 
+    void updateImage();
 private:
     int cameraNumber=-1;
     Ui::CalibrationWidget *ui;
