@@ -19,6 +19,7 @@ public:
     int getId();
     void setId(int i);
     void setImage(cv::Mat *);
+    void lockButtons();
 private:
     Ui::ImageForCalibrationWidget *ui;
     bool imageSet = false;
@@ -27,7 +28,8 @@ private:
     QImage qimage;
     int id = -1;
     QGraphicsScene *sc;
- private slots:
+    void setDefaultImage();
+private slots:
     void showImage();
     void closeWid();
     void approve();

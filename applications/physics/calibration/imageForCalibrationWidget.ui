@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>406</width>
+    <width>607</width>
     <height>123</height>
    </rect>
   </property>
@@ -20,11 +20,14 @@
    <string>Form</string>
   </property>
   <widget class="QPushButton" name="addButon">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
-     <x>320</x>
+     <x>430</x>
      <y>10</y>
-     <width>71</width>
+     <width>151</width>
      <height>111</height>
     </rect>
    </property>
@@ -33,11 +36,14 @@
    </property>
   </widget>
   <widget class="QPushButton" name="showButon">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
-     <x>240</x>
+     <x>250</x>
      <y>10</y>
-     <width>71</width>
+     <width>151</width>
      <height>111</height>
     </rect>
    </property>

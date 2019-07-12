@@ -11,6 +11,7 @@ ImageForCalibrationWidget::ImageForCalibrationWidget(QWidget *parent) :
     ui(new Ui::ImageForCalibrationWidget)
 {
     ui->setupUi(this);
+    setDefaultImage();
 }
 
 ImageForCalibrationWidget::~ImageForCalibrationWidget()
@@ -25,10 +26,18 @@ void ImageForCalibrationWidget::setImage(cv::Mat *inputMat)
     imageSet = true;
     sc = new QGraphicsScene(this);
     sc->addPixmap(QPixmap::fromImage(qimage));
-    //sc->setSceneRect()
     ui->graphicsView->setScene(sc);
-    ui->graphicsView->fitInView( QRect(11,11,531,271),Qt::KeepAspectRatio);
-    //ui->imageLabel->setPixmap(QPixmap::fromImage(qimage));
+    ui->graphicsView->fitInView( QRect(11,11,211,111),Qt::KeepAspectRatio);
+}
+
+void ImageForCalibrationWidget::setDefaultImage()
+{
+    cv::Mat inputMat = cv::imread("test1.jpg");
+    qimage = opencvTransformations::mat2RealQImage(inputMat).copy();
+    sc = new QGraphicsScene(this);
+    sc->addPixmap(QPixmap::fromImage(qimage));
+    ui->graphicsView->setScene(sc);
+    ui->graphicsView->fitInView( QRect(11,11,211,111),Qt::KeepAspectRatio);
 }
 
 void ImageForCalibrationWidget::showImage()
@@ -44,6 +53,12 @@ void ImageForCalibrationWidget::approve()
     imageApproved = true;
     ui->addButon->setText("remove");
     emit (approved());
+}
+
+void ImageForCalibrationWidget::lockButtons()
+{
+    ui->addButon->setEnabled(false);
+    ui->showButon->setEnabled(false);
 }
 
 void ImageForCalibrationWidget::closeWid()
