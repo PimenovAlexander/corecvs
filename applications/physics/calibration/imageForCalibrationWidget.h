@@ -21,6 +21,7 @@ public:
     void setImage(cv::Mat *);
     void lockButtons();
     void updateMicroImage();
+    cv::Mat getImage();
 private:
     Ui::ImageForCalibrationWidget *ui;
     bool imageSet = false;

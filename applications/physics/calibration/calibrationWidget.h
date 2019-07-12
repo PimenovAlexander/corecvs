@@ -30,6 +30,8 @@ private slots:
     void on_videoBox_currentIndexChanged(int index);
 
     void updateImage();
+    void stopShowing();
+    void saveMatrix();
 private:
     int cameraNumber=-1;
     Ui::CalibrationWidget *ui;
@@ -42,6 +44,16 @@ private:
     bool getCapute();
     std::mutex vectorMutex;
 
+    cv::Mat globalIntrinsic;
+    cv::Mat globalDistCoeffs;
+
+    bool getShowingBool();
+    bool showingBool = false;
+    void setShowingBool(bool b);
+    std::mutex showingMutex;
+
+    void stopRecording();
+    void calibrate();
 };
 
 

@@ -32,12 +32,17 @@ void ImageForCalibrationWidget::setImage(cv::Mat *inputMat)
     unlockButtons();
 }
 
+cv::Mat ImageForCalibrationWidget::getImage()
+{
+    return image;
+}
+
 void ImageForCalibrationWidget::updateMicroImage()
 {
     sc = new QGraphicsScene(this);
     sc->addPixmap(QPixmap::fromImage(qimage));
     ui->graphicsView->setScene(sc);
-    ui->graphicsView->fitInView( QRect(11,11,431,221),Qt::KeepAspectRatio);
+    ui->graphicsView->fitInView( QRect(0,0,640,480),Qt::KeepAspectRatio);
 }
 
 void ImageForCalibrationWidget::setDefaultImage()

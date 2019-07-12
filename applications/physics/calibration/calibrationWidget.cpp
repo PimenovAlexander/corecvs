@@ -17,6 +17,9 @@
 #include <thread>
 #include <mutex>
 #include <QTimer>
+#include <QFileDialog>
+#include "core/utils/global.h"
+#include "core/utils/utils.h"
 
 CalibrationWidget::CalibrationWidget(QWidget *parent) :
     QWidget(parent),
@@ -32,6 +35,9 @@ CalibrationWidget::CalibrationWidget(QWidget *parent) :
 
 CalibrationWidget::~CalibrationWidget()
 {
+    std::cout<<"destructor"<<std::endl;
+    setCapute(false);
+    threadRunning = false;
     delete ui;
 }
 
@@ -42,6 +48,11 @@ void CalibrationWidget::updateImage()
         widgets[i]->updateMicroImage();
     }
     QTimer::singleShot(38,this,SLOT(updateImage()));
+}
+
+void CalibrationWidget::stopRecording()
+{
+
 }
 
 void CalibrationWidget::addImage()
@@ -58,6 +69,7 @@ void CalibrationWidget::addImage()
     widgets.push_back(widget);
     vectorMutex.unlock();
     layout->addWidget(widget);
+
 }
 
 void CalibrationWidget::updateStartButton()
@@ -106,6 +118,98 @@ void CalibrationWidget::addImage(cv::Mat)
 
 }
 
+void CalibrationWidget::calibrate()
+{
+    int numBoards = widgets.size();
+    int numCornersHor = 9;
+    int numCornersVer = 7;
+
+    int numSquares = numCornersHor * numCornersVer;
+    cv::Size board_sz = cv::Size(numCornersHor, numCornersVer);
+
+    std::vector<std::vector<cv::Point3f>> object_points;
+    std::vector<std::vector<cv::Point2f>> image_points;
+
+    std::vector<cv::Point2f> corners;
+    int successes=0;
+
+    cv::Mat image;
+    cv::Mat gray_image;
+
+    std::vector<cv::Point3f> obj;
+    for(int j=0;j<numSquares;j++)
+        obj.push_back(cv::Point3d(j/numCornersHor, j%numCornersHor, 0.0f));
+    std::cout<<widgets.size()-1<<std::endl;
+    for (int i=0;i<widgets.size()-1;i++)
+    {
+        image = widgets[i]->getImage();
+        cvtColor(image, gray_image, CV_RGB2GRAY);
+        findChessboardCorners(image, board_sz, corners, CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS);
+        cornerSubPix( gray_image, corners, cv::Size(11,11),
+                                cv::Size(-1,-1), cv::TermCriteria( cv::TermCriteria::EPS+cv::TermCriteria::COUNT, 30, 0.1 ));
+        image_points.push_back(corners);
+        object_points.push_back(obj);
+    }
+
+    cv::Mat intrinsic = cv::Mat(3, 3, CV_32FC1);
+    cv::Mat distCoeffs;
+    std::vector<cv::Mat> rvecs;
+    std::vector<cv::Mat> tvecs;
+
+    intrinsic.ptr<float>(0)[0] = 1;
+    intrinsic.ptr<float>(1)[1] = 1;
+
+    calibrateCamera(object_points, image_points, image.size(), intrinsic, distCoeffs, rvecs, tvecs);
+
+    cv::Mat imageUndistorted;
+    intrinsic.copyTo(globalIntrinsic);
+    distCoeffs.copyTo(globalDistCoeffs);
+    setShowingBool(true);
+    ui->stopShowing->setEnabled(true);
+    ui->saveCalib->setEnabled(true);
+    std::thread thr([this]()
+    {
+        cv::Mat image;
+        cv::Mat imageUndistorted;
+        cv::VideoCapture capture = cv::VideoCapture(cameraNumber);
+        std::cout<<globalIntrinsic<<std::endl;
+        std::cout<<globalDistCoeffs<<std::endl;
+        while(getShowingBool())
+        {
+            capture >> image;
+            undistort(image, imageUndistorted, globalIntrinsic, globalDistCoeffs);
+
+            imshow("win1", image);
+            imshow("win2", imageUndistorted);
+            cv::waitKey(1);
+        }
+        std::cout<<"Show thread is over"<<std::endl;
+    });
+    thr.detach();
+    std::cout<<"here 4"<<std::endl;
+}
+
+bool CalibrationWidget::getShowingBool()
+{
+    showingMutex.lock();
+    bool b = showingBool;
+    showingMutex.unlock();
+    return b;
+}
+
+void CalibrationWidget::stopShowing()
+{
+    setShowingBool(false);
+    ui->stopShowing->setEnabled(false);
+    ui->saveCalib->setEnabled(false);
+}
+void CalibrationWidget::setShowingBool(bool b)
+{
+    showingMutex.lock();
+    showingBool = b;
+    showingMutex.unlock();
+}
+
 void CalibrationWidget::startCalibration()
 {
     setCapute(false);
@@ -115,6 +219,8 @@ void CalibrationWidget::startCalibration()
     {
         widgets[i]->lockButtons();
     }
+
+    calibrate();
     vectorMutex.unlock();
 }
 
@@ -122,6 +228,7 @@ void CalibrationWidget::startRecording()
 {
     if (!threadRunning)
     {
+        ui->startRecordingButton->setText("Stop Recording");
         std::thread thr([this]()
         {
         int numCornersHor = 0;
@@ -160,14 +267,21 @@ void CalibrationWidget::startRecording()
                 }
                 if (!found)
                 {
-                    std::cout<<"FALSE"<<std::endl;
+                    //std::cout<<"FALSE"<<std::endl;
                 }
                 imshow("gray", gray_image);
             }
         }
+        std::cout<<"Recording thread is over"<<std::endl;
         });
         thr.detach();
         threadRunning = true;
+    }
+    else
+    {
+        setCapute(false);
+        threadRunning = false;
+        ui->startRecordingButton->setText("Start Recording");
     }
 }
 
@@ -199,4 +313,16 @@ bool CalibrationWidget::getCapute()
     b = caputing;
     caputingMutex.unlock();
     return b;
+}
+
+void CalibrationWidget::saveMatrix()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Calibration Parametrs"),"",tr("Calibration Parametrs (*.clb);; All Files (*)"));
+    if (!fileName.isEmpty())
+    {
+        fileName += ".yml";
+        cv::FileStorage fs(fileName.toStdString(),cv::FileStorage::WRITE);
+        fs <<"intrinsic"<<globalIntrinsic;
+        fs <<"distCoeffs"<<globalDistCoeffs;
+    }
 }
