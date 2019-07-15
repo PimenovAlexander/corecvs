@@ -192,7 +192,6 @@ private slots:
 
     void on_toolButton_3_released();
 
-
     void on_toolButton_2_released();
 
     void on_pushButton_released();

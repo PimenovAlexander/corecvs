@@ -25,19 +25,19 @@ INCLUDEPATH += autopilot
 INCLUDEPATH += copter
 INCLUDEPATH += calibration
 INCLUDEPATH += opencvUtils
-
+INCLUDEPATH += simFolder
 
 HEADERS += \
     calibration/calibrationWidget.h \
     calibration/imageForCalibrationWidget.h \
     joystick/joystickreader.h \
     physMainObject.h \
-    simulation.h \
+    simFolder/simulation.h \
+    simFolder/simSphere.h \
+    simFolder/simObject.h \
     clientSender.h \
     joystickInput.h \
     qComController.h \
-    simObject.h \
-    simSphere.h \
     controlRecord.h \
     joystick/joystickInterface.h \
     joystick/JoystickOptionsWidget.h \
@@ -66,9 +66,9 @@ SOURCES += \
     calibration/imageForCalibrationWidget.cpp \
     joystick/joystickreader.cpp \
     physMainObject.cpp \
-    simulation.cpp \
-    simSphere.cpp \
-    simObject.cpp \
+    simFolder/simulation.cpp \
+    simFolder/simSphere.cpp \
+    simFolder/simObject.cpp \
     qComController.cpp \
     joystickInput.cpp \
     clientSender.cpp \
