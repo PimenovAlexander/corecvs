@@ -32,6 +32,7 @@ SOURCES += main_physics_test.cpp
 ##
 INCLUDEPATH += ../physics
 INCLUDEPATH += ../physics/radio
+INCLUDEPATH += ../physics/simulation
 
 HEADERS += ../physics/radio/frSkyMultimodule.h
 SOURCES += ../physics/radio/frSkyMultimodule.cpp
@@ -40,7 +41,7 @@ HEADERS += ../physics/copter/quad.h
 SOURCES += ../physics/copter/quad.cpp
 
 
-HEADERS += ../physics/simObject.h
-SOURCES += ../physics/simObject.cpp
+HEADERS += ../physics/simulation/simObject.h
+SOURCES += ../physics/simulation/simObject.cpp
 
 
