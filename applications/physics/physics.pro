@@ -31,7 +31,7 @@ HEADERS += \
     calibration/calibrationWidget.h \
     calibration/imageForCalibrationWidget.h \
     joystick/joystickreader.h \
-    physMainObject.h \
+    simulation/physMainObject.h \
     simulation/simulation.h \
     simulation/simSphere.h \
     simulation/simObject.h \
@@ -42,7 +42,7 @@ HEADERS += \
     joystick/joystickInterface.h \
     joystick/JoystickOptionsWidget.h \
     radio/frSkyMultimodule.h \
-    mainObject.h \
+    simulation/mainObject.h \
     copterInputsWidget.h \
     mixer/controlsMixer.h \
     copterInputs.h \
@@ -54,8 +54,8 @@ HEADERS += \
     autopilot/protoautopilot.h \
     comcontroller.h \
     autopilot/vertexsquare.h\
-    physObject.h \
-    physSphere.h \
+    simulation/physObject.h \
+    simulation/physSphere.h \
     copter/droneObject.h \
     copter/motor.h \
     opencvUtils/opencvTransformations.h
@@ -65,7 +65,7 @@ SOURCES += \
     calibration/calibrationWidget.cpp \
     calibration/imageForCalibrationWidget.cpp \
     joystick/joystickreader.cpp \
-    physMainObject.cpp \
+    simulation/physMainObject.cpp \
     simulation/simulation.cpp \
     simulation/simSphere.cpp \
     simulation/simObject.cpp \
@@ -77,7 +77,7 @@ SOURCES += \
     joystick/joystickInterface.cpp \
     joystick/JoystickOptionsWidget.cpp \
     radio/frSkyMultimodule.cpp \
-    mainObject.cpp \
+    simulation/mainObject.cpp \
     copterInputsWidget.cpp \
     mixer/controlsMixer.cpp \
     copterInputs.cpp \
@@ -89,8 +89,8 @@ SOURCES += \
     autopilot/protoautopilot.cpp \
     comcontroller.cpp \
     autopilot/vertexsquare.cpp\
-    physObject.cpp \
-    physSphere.cpp \
+    simulation/physObject.cpp \
+    simulation/physSphere.cpp \
     copter/droneObject.cpp \
     copter/motor.cpp \
     opencvUtils/opencvTransformations.cpp
