@@ -393,6 +393,7 @@ void DroneObject::visualTick()
 {
     for (size_t i = 0; i < motors.size(); i++)
     {
+        L_INFO<<"motor: "<< i <<"; pwm: " << motors[i].pwm;
         motors[i].phi += (motors[i].cw ? motors[i].pwm : -motors[i].pwm) / 50.0;
     }
 }
