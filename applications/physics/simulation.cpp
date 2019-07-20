@@ -31,10 +31,14 @@ void Simulation::startRealTimeSimulation()
 {
     std::thread thr([this]()
     {
+        oldTime = std::chrono::high_resolution_clock::now();
         while (isAlive)
         {
            drone.flightControllerTick(droneJoystick);
-           drone.physicsTick();
+           newTime = std::chrono::high_resolution_clock::now();
+           time_span = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-oldTime);
+           drone.physicsTick(time_span.count());
+           oldTime=newTime;
         }
     });
     thr.detach();
@@ -43,7 +47,8 @@ void Simulation::startRealTimeSimulation()
 void Simulation::execTestSimulation()
 {
     drone.flightControllerTick(droneJoystick);
-    drone.physicsTick();
+    //deltaT here is wrong
+    drone.physicsTick(0.1);
 }
 
 bool Simulation::getIsAlive()
@@ -83,7 +88,7 @@ void Simulation::droneStart()
     mainObject->addForce(Vector3dd(0,-9.8,0));
 
 
-    cout << "Simulation::Simulation():" << mainObjects[0].objects.size() << " before thread" <<endl;
+    cout << "Simulation::Simulation():" << mainObjects[0].objects.size() << " before thread" << endl;
 }
 
 void Simulation::defaultStart()

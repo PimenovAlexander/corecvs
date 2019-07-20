@@ -615,7 +615,7 @@ void PhysicsMainWindow::mainAction()
 **/
 
     drone.flightControllerTick(joystick1.output);
-    drone.physicsTick();
+    drone.physicsTick(0.1);
 
     if (oldbackend) {
         drone.drawMyself(*scene->owned);

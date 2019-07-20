@@ -250,7 +250,7 @@ void DroneObject::flightControllerTick(const CopterInputs &input)
 
     for (int i = 0; i < 3; i++)
     {
-        if(currentPRY[i]<0.001)
+        if (currentPRY[i]<0.001)
         {
             currentPRY[i]=0;
         }
@@ -317,7 +317,7 @@ void DroneObject::flightControllerTick(const CopterInputs &input)
     //L_INFO<<"Motor True Values: "<<motors[0].pwm<<" ; "<<motors[1].pwm<<" ; "<<motors[2].pwm<<" ; "<<motors[3].pwm;
 }
 
-void DroneObject::physicsTick()
+void DroneObject::physicsTick(double deltaT)
 {
     startTick();
     for (size_t i = 0; i < motors.size(); ++i) {
@@ -328,7 +328,7 @@ void DroneObject::physicsTick()
 
     /* TODO: Add air friction*/
     addForce(Vector3dd(0.0, 0.0, -9.8 * getSystemMass()));
-    tick(0.1);
+    tick(deltaT);
 
     /*TODO: Add real collistion comрutation */
 
@@ -393,7 +393,7 @@ void DroneObject::visualTick()
 {
     for (size_t i = 0; i < motors.size(); i++)
     {
-        L_INFO<<"motor: "<< i <<"; pwm: " << motors[i].pwm;
+        //L_INFO<<"motor: "<< i <<"; pwm: " << motors[i].pwm;
         motors[i].phi += (motors[i].cw ? motors[i].pwm : -motors[i].pwm) / 50.0;
     }
 }
