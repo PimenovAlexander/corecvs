@@ -838,3 +838,18 @@ void PhysicsMainWindow::checkForJoystick()               //auto connect
 {
 //   jReader->start();
 }
+
+void PhysicsMainWindow::LoadCalibrationSettings()
+{
+    QString dir = QFileDialog::getOpenFileName(this, tr("Open Calibration File"),"",tr("Calibration Parametrs (*.yml);; All Files (*)"));
+    if (dir!=NULL)
+    {
+        std::cout<<dir.toStdString()<<std::endl;
+        cv::FileStorage fs(dir.toStdString(),cv::FileStorage::READ);
+        cv::Mat intrinsic, distCoeffs;
+        fs["intrinsic"]>>intrinsic;
+        fs["distCoeffs"]>>distCoeffs;
+        calib.setIntrinsicMat(intrinsic);
+        calib.setDistCoeffsMat(distCoeffs);
+    }
+}

@@ -28,6 +28,7 @@ INCLUDEPATH += opencvUtils
 INCLUDEPATH += simulation
 
 HEADERS += \
+    calibration/calibration.h \
     calibration/calibrationWidget.h \
     calibration/imageForCalibrationWidget.h \
     joystick/joystickreader.h \
@@ -62,6 +63,7 @@ HEADERS += \
 
 
 SOURCES += \
+    calibration/calibration.cpp \
     calibration/calibrationWidget.cpp \
     calibration/imageForCalibrationWidget.cpp \
     joystick/joystickreader.cpp \

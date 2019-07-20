@@ -123,6 +123,7 @@
     <addaction name="actionCameraStop"/>
     <addaction name="actionCameraCaptureParamteres"/>
     <addaction name="actionCalibrate"/>
+    <addaction name="actionLoad_Calibration"/>
    </widget>
    <widget class="QMenu" name="menuJoystick">
     <property name="title">
@@ -390,6 +391,11 @@
     <string>Calibrate</string>
    </property>
   </action>
+  <action name="actionLoad_Calibration">
+   <property name="text">
+    <string>Load Calibration</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -565,6 +571,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionLoad_Calibration</sender>
+   <signal>triggered()</signal>
+   <receiver>PhysicsMainWindow</receiver>
+   <slot>LoadCalibrationSettings()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>537</x>
+     <y>348</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showCameraInput()</slot>
@@ -577,5 +599,6 @@
   <slot>showAboutWidget()</slot>
   <slot>showJoystickSettingsWidget()</slot>
   <slot>CalibrateCamera()</slot>
+  <slot>LoadCalibrationSettings()</slot>
  </slots>
 </ui>

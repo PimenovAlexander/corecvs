@@ -12,6 +12,7 @@
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
+#include <calibration.h>
 #include <cameraModelParametersControlWidget.h>
 #include <capSettingsDialog.h>
 #include <controlsMixer.h>
@@ -80,7 +81,7 @@ private:
     bool realModeActive = false;
     bool virtualModeActive = false;
     void disconnectFromCopter();
-
+    Calibration calib;
 /** Joystick **/
 public:
     JoystickOptionsWidget mJoystickSettings;
@@ -198,7 +199,9 @@ private slots:
 
     void on_connetToVirtualButton_pressed();
 
+
     void CalibrateCamera();
+    void LoadCalibrationSettings();
 private:
     struct Message {
         int throttle;
