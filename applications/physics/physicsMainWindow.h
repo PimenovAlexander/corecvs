@@ -154,7 +154,9 @@ public slots:
 private slots:
 
 
+
     void checkForJoystick();
+
     void stopVirtualMode();
     void startVirtualMode();
 
@@ -217,8 +219,8 @@ private:
     int currentSendMode=-1;                                                //tumbler beetwen joystick and autopilot (0- js, 1-autoP)
     int frameCounter=0;                                                    //we need it in the timer
     /** Replace this with mixer **/
+
     JoyStickInput joystick1 ;
-    JoystickReader *jReader;
 
     QComController ComController {this,
         copterInputs.axis[CopterInputs::CHANNEL_YAW],

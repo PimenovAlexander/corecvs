@@ -20,6 +20,8 @@ public:
     std::chrono::high_resolution_clock::time_point newTime;
     std::chrono::high_resolution_clock::time_point startTime;
 
+    std::chrono::high_resolution_clock::time_point endTime;
+    std::chrono::duration<double> time_span;
     SceneShaded *mShadedScene = NULL;
     int frameCounter=0;
     void start();
@@ -38,6 +40,6 @@ private:
     void droneStart();
     std::mutex simMutex;
     bool isAlive = false;
-};
 
+};
 #endif // SIMULATION_H
