@@ -66,7 +66,7 @@ public:
     void drawMyself(Mesh3DDecorated &mesh);
     void flightControllerTick(const CopterInputs &input);
     void visualTick();
-    void physicsTick();
+    void physicsTick(double deltaT);
 
     /* UI */
     Mesh3D *bodyMesh = NULL;

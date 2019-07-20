@@ -244,7 +244,6 @@ void PhysicsMainWindow::startVirtualMode()
         simSim.start();
         */
 
-
     simSim.startRealTimeSimulation();
 
 
@@ -291,6 +290,7 @@ void PhysicsMainWindow::keepAlive()
                 mShadedScene = new SceneShaded;
                 ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mShadedScene), CloudViewDialog::DISP_CONTROL_ZONE);
             }
+
         }
 
         if (oldbackend) {
@@ -588,8 +588,10 @@ void PhysicsMainWindow::mainAction()
     }
 
 
+
     //startJoyStickMode();
     /*
+
     if (mixer.mix(joystickState, inputs)) {
         copter.flightControllerTick(inputs);
 
@@ -620,7 +622,9 @@ void PhysicsMainWindow::mainAction()
 **/
 
     drone.flightControllerTick(joystick1.output);
-    drone.physicsTick();
+
+    drone.physicsTick(0.1);
+
 
     if (oldbackend) {
         drone.drawMyself(*scene->owned);
