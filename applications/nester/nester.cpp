@@ -18,7 +18,7 @@ using namespace std;
 
 
 /** =========================================== **/
-void drawPolygons(vector<Polygon> inputPolygons, int h, int w, string bmpname)
+void drawPolygons(vector<Polygon> &inputPolygons, int h, int w, string bmpname)
 {
     Rectangled area = Rectangled::Empty();
     for (Polygon& p: inputPolygons )
@@ -53,7 +53,7 @@ void drawPolygons(vector<Polygon> inputPolygons, int h, int w, string bmpname)
     BufferFactory::getInstance()->saveRGB24Bitmap(buffer, bmpname);
 }
 
-void drawSvgPolygons(vector<Polygon> inputPolygons, int h, int w, string svgName)
+void drawSvgPolygons(vector<Polygon> &inputPolygons, int h, int w, string svgName)
 {
     std::ofstream file;
     file.open(svgName, ios::out);
@@ -98,8 +98,6 @@ void addSubPolygons (SvgShape *shape, vector<Polygon> &inputPolygons)
         SYNC_PRINT(("adding polygon of %d sides\n", (int)polygon->polygon.size()));
         inputPolygons.push_back(polygon->polygon);
     }
-    /*
-
     if (shape->type == SvgShape::PATH_SHAPE)
     {
         SYNC_PRINT(("Try to add Path\n"));
@@ -111,7 +109,6 @@ void addSubPolygons (SvgShape *shape, vector<Polygon> &inputPolygons)
             SYNC_PRINT(("adding polygon of %d sides\n", (int)p.size()));
         inputPolygons.push_back(p);
     }
-    */
 
     if (shape->type == SvgShape::GROUP_SHAPE)
     {
@@ -179,11 +176,7 @@ int PyDi(int m, int n) //5_
         return (n + c) % n;
     }
 }
-double Dist1(Vector2dd &A, Vector2dd &B)
-{
-    return abs(A.x() - B.x()) + abs(A.y() - B.y());
 
-}
 
 Vector2dd GP(Polygon &A, int i)
 {
@@ -203,11 +196,15 @@ bool PointOnSegment(Vector2dd &a, Vector2dd &b, Vector2dd &c)
 {
     if(abs(OrientAreaTwice(a, b, c)) <= EPSIL)
     {
-        if(abs(a.x() - b.x()) + abs(a.x() - c.x()) <= abs(b.x() - c.x()) + EPSIL && abs(a.y() - b.y()) + abs(a.y() - c.y()) <= abs(b.y() - c.y()) + EPSIL )
+        if(abs(a.x() - b.x()) + abs(a.x() - c.x()) <= abs(b.x() - c.x()) + EPSIL &&
+           abs(a.y() - b.y()) + abs(a.y() - c.y()) <= abs(b.y() - c.y()) + EPSIL ) {
             return true;
-        else return false;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
     }
-    else return false;
 }
 
 
@@ -242,8 +239,8 @@ bool SegIntersect(Vector2dd &a1, Vector2dd &a2, Vector2dd &b1, Vector2dd &b2)
 
 bool PolsIntersect(Polygon &A, Polygon &B)
 {
-    for (int i = 0; i < A.size(); ++i)
-        for (int j = 0; j < B.size(); ++j)
+    for (size_t i = 0; i < A.size(); ++i)
+        for (size_t j = 0; j < B.size(); ++j)
         {
             if(SegIntersect(A.getPoint(i), A.getNextPoint(i), B.getPoint(j), B.getNextPoint(j)))
                 return true;
@@ -256,13 +253,13 @@ bool PolsIntersect(Polygon &A, Polygon &B)
 
 double AngleOX(Vector2dd &V)
 {
-    Vector2dd O(0,0);
-    Vector2dd OX(0,1);
+    Vector2dd O (0.0, 0.0);
+    Vector2dd OX(0.0, 1.0);
     if(OrientAreaTwice(O, V, OX) <= 0)
-        return (V.x() * OX.x() + V.y() * OX.y()) / V.l2Metric();
+        return (V & OX) / V.l2Metric();
     else
     {
-        return -2 - (V.x() * OX.x() + V.y() * OX.y()) / V.l2Metric();
+        return -2 - (V & OX) / V.l2Metric();
     }
 }
 
@@ -370,10 +367,17 @@ void DoClockOrP(Polygon &A)
 {
     if(!ClockOrP(A))
     {
+        /* Why use list again? Vector size is even unchanged. Revese could be done in place */
+        /*
         list<Vector2dd> L;
-        for(auto i = 0; i < A.size(); ++i)
+        for(size_t i = 0; i < A.size(); ++i)
+        {
             L.push_front(A.getPoint(i));
+        }
         A = PolygonMakeList(L);
+        */
+
+        A.reverse();
     }
 }
 
@@ -399,6 +403,10 @@ Polygon nfp(Polygon &A, Polygon &B)
     return P.translated(BotA - BotP);
 }
 
+
+/**
+ *   A.area()  ???
+ **/
 double AreaOfCP(Polygon &A)
 {
     auto C = A.getPoint(0);
@@ -409,6 +417,7 @@ double AreaOfCP(Polygon &A)
     }
     Result /= 2;
     return Result;
+
 }
 
 bool PointLiesPol(Vector2dd V, Polygon &A)
@@ -554,7 +563,7 @@ Vector2dd TargetOfSort;
 
 bool CloserToTarget(Vector2dd V1,Vector2dd V2)
 {
-    return (Dist1(V1, TargetOfSort) <= Dist1(V2, TargetOfSort));
+    return ((V1 - TargetOfSort).l1Metric() <= (V2 - TargetOfSort).l1Metric());
 
 }
 
@@ -562,7 +571,7 @@ Polygon AddInterPoints2(Polygon A, Polygon RectangledAtually)
 {
 
     list <Vector2dd> L;
-    for (auto i = 0; i <A.size(); ++i)
+    for (size_t i = 0; i < A.size(); ++i)
     {
         L.push_back(A.getPoint(i));
 
@@ -607,6 +616,11 @@ bool BiggaArea(Polygon &A, Polygon &B)
     return (AreaOfCP(A) >= AreaOfCP(B));
 }
 
+/**
+ * Why use list? I assume actual Polygon data won't be moved in heap anyways
+ * sort(A.begin(), A.end(), BiggaArea())
+ *
+ **/
 void LazySort(vector <Polygon> &A)
 {
     list<Polygon> B;
@@ -665,7 +679,7 @@ void BLPlacement(Rectangled A, vector <Polygon> &input)
     ActMovePolVec(input[0], firstnfp.getPoint(0) - GetTopRightPoint(input[0]));
     Placed.push_front(0);
 
-    for(int i = 1; i < input.size(); ++i)
+    for(size_t i = 1; i < input.size(); ++i)
     {
         firstnfp = innernfpR(A, input[i]); //same
         list <Polygon> nfps;
@@ -682,7 +696,8 @@ void BLPlacement(Rectangled A, vector <Polygon> &input)
             list<Vector2dd> Candidates;
             for(Vector2dd v : *it1)
             {
-                if(v.x() >= firstnfp.getPoint(0).x() && v.x() <= firstnfp.getPoint(2).x()  && v.y() <= firstnfp.getPoint(2).y() && v.y() >= firstnfp.getPoint(0).y())
+                if(v.x() >= firstnfp.getPoint(0).x() && v.x() <= firstnfp.getPoint(2).x()  &&
+                   v.y() >= firstnfp.getPoint(0).y() && v.y() <= firstnfp.getPoint(2).y() )
                 {
                     bool b = 0;
                     auto i = it1;
@@ -736,51 +751,37 @@ void BLPlacement(Rectangled A, vector <Polygon> &input)
 
 
 
-Polygon RecToPol(Rectangled A)
+Polygon RecToPol(const Rectangled &A)
 {
-    Vector2dd C1 = A.llCorner();
-    Vector2dd C2 = A.ulCorner();
-    Vector2dd C3 = A.urCorner();
-    Vector2dd C4 = A.lrCorner();
-    Polygon Result = {C1, C2, C3, C4};
+    Polygon Result;
+    Result.reserve(4);
+    Result.push_back(A.llCorner());
+    Result.push_back(A.ulCorner());
+    Result.push_back(A.urCorner());
+    Result.push_back(A.lrCorner());
     return Result;
-
 }
+
 void Rotate(Polygon &A, double Phi)
 {
-    for (auto &v : A)
-    {
-        auto d = v.x() * cos(Phi) - v.y() * sin(Phi);
-        v.y() = v.x() * sin(Phi) + v.y() * cos(Phi);
-        v.x() = d;
-    }
-
+    A.transform(Matrix33::RotationZ(Phi));
 }
 
 
 void Rotate90(Polygon &A)
 {
-    for (auto &v : A)
-    {
-        auto d = v.x();
-        v.x() = -v.y();
-        v.y() = d;
+    for (auto &v : A) {
+        v = v.leftNormal();
     }
 }
 
-
-
-
-
-
+/**
+  Not even close to center of mass of the uniform polygon
+  It only work for point mass at the corners (and triangles)
+**/
 Vector2dd MassCenter(Polygon & A)
 {
-    Vector2dd Result (0,0);
-    for (auto &v : A)
-    {
-        Result += v;
-    }
-    return Result/A.size();
+    return A.center();
 }
 
 
@@ -789,7 +790,7 @@ void LowerMassCenter(Polygon& A)
 {
 
     ActMovePolVec(A,-GetBotLeftPoint(A));
-    double Phi = 6.28 / 200;
+    double Phi = (M_PI * 2) / 200;
     list <pair<int, double>> L;
     L.push_back(make_pair(0, MassCenter(A).y()));
     ActMovePolVec(A,-MassCenter(A));
@@ -824,7 +825,6 @@ void LowerMassCenter(Polygon& A)
     else if(L.front().first == 0)
     {
         A = B;
-
     }
     else
     {

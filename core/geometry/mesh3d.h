@@ -113,6 +113,8 @@ public:
     int addPoint(const Vector3dd &point);
 
     void addLine(const Vector3dd &point1, const Vector3dd &point2);
+    void addLineDash(const Vector3dd &point1, const Vector3dd &point2, double act = 0.1, double deact=0.1);
+
     void addTriangle(Vector3dd point1, Vector3dd point2, Vector3dd point3);
     void addTriangle(const Triangle3dd &triangle);
     void addFlatPolygon(const FlatPolygon &polygon);

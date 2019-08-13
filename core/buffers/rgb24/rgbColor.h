@@ -716,10 +716,10 @@ template<class VisitorType>
      *  \param s - saturation [0..255]
      *  \param v - value [0..255]
      **/
-    static RGBColor FromHSV(uint16_t h, uint8_t s, uint8_t v)
+    static RGBColor FromHSV(uint16_t h, uint8_t s, uint8_t v, bool kitti = false)
     {
         int c = ((int)(s * v)) / 255;
-        int m = v - c;
+        int m = kitti ? 0 : v - c;
         int r,g,b;
 
         int swh = h / 60;
@@ -748,11 +748,36 @@ template<class VisitorType>
         return RGBColor(r + m, g + m, b + m);
     }
 
-    static RGBColor FromHSV(const HSVColor &color)
+    static RGBColor FromHSVKitti(uint16_t h, uint8_t s, uint8_t v)
     {
-        return FromHSV(color.h, color.s, color.v);
-    }    
+        uint8_t r,g,b;
 
+        int c = ((int)s * v) / 255;
+        int h2 = h / 60.0;
+        int  x = c * (60 - std::abs((h % 120) - 60)) / 60;
+
+        if      (0 <= h2 && h2 < 1) { r = c; g = x; b = 0; }
+        else if (1 <= h2 && h2 < 2) { r = x; g = c; b = 0; }
+        else if (2 <= h2 && h2 < 3) { r = 0; g = c; b = x; }
+        else if (3 <= h2 && h2 < 4) { r = 0; g = x; b = c; }
+        else if (4 <= h2 && h2 < 5) { r = x; g = 0; b = c; }
+        else if (5 <= h2 && h2 <=6) { r = c; g = 0; b = x; }
+
+        else if (h2 > 6) { r = 255; g =   0; b = 0; }
+        else if (h2 < 0) { r =   0; g = 255; b = 0; }
+
+        return RGBColor(r,g,b);
+    }
+
+    static RGBColor FromHSV(const HSVColor &color, bool kitti = false)
+    {
+        return FromHSV(color.h, color.s, color.v, kitti);
+    }
+
+    static RGBColor FromHSVKitti(const HSVColor &color)
+    {
+        return FromHSVKitti(color.h, color.s, color.v);
+    }
 
 
     static RGBColor colorBlindPalette[6];

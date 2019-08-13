@@ -9,7 +9,7 @@
 
 #include "core/math/vector/vector3d.h"
 #include "core/math/vector/vector4d.h"
-#include "core/geometry/polygons.h"
+#include "core/geometry/triangle.h"
 
 namespace corecvs {
 

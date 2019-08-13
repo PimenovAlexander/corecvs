@@ -3,7 +3,7 @@
 
 #include "core/math/mathUtils.h"
 #include "core/math/matrix/matrix44.h"
-#include "core/geometry/polygons.h"
+#include "core/geometry/triangle.h"
 #include "core/buffers/rgb24/lineSpan.h"
 
 namespace corecvs {

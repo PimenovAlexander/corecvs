@@ -13,7 +13,7 @@
 #include "gtest/gtest.h"
 
 #include "core/utils/global.h"
-#include "core/geometry/convexHull.h"
+#include "core/geometry/convexHull3d.h"
 #include "core/geometry/convexQuickHull.h"
 #include "core/geometry/projectiveConvexQuickHull.h"
 
@@ -31,7 +31,7 @@ using namespace corecvs;
 
 */
 
-TEST(ConvexHull, testConvexHull)
+TEST(ConvexHull, testConvexHull3D)
 {
     vector<Vector3dd> vectors;
 

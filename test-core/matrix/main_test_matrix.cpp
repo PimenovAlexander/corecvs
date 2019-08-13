@@ -1328,7 +1328,7 @@ TEST(SparseMatrix, TT)
     std::cout << sm << std::endl << sm.t() << std::endl;
 }
 
-TEST(SparseMatrix, MulTimer)
+TEST(SparseMatrix, DISABLED_MulTimer)
 {
     auto sl= randomSparse(4000,4000, 0.001);
     auto dl= (corecvs::Matrix)sl;
@@ -1412,7 +1412,7 @@ SparseMatrix generateTri(int n = 1000, double fill = 1.0)
     return SparseMatrix(m);
 }
 
-TEST(SparseMatrix, LinSolve)
+TEST(SparseMatrix, DISABLED_LinSolve)
 {
     auto sm = generateTri(10000, 0.1);
     corecvs::Vector v(10000);

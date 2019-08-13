@@ -21,7 +21,5 @@ public:
     virtual bool straightHook(int type, const MachineState &before, const MachineState &after) override;
     virtual bool arkHook(const MachineState &before, const MachineState &after, const corecvs::PlaneFrame &frame, double maxArg) override;
 
-
-
 };
 #endif // VINYLCUTTERINTERPRETER_H
