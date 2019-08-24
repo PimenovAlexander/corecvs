@@ -5,31 +5,29 @@
 #include <linux/joystick.h>
 #include <fcntl.h>
 #include "copterInputs.h"
+#include <mutex>
+#include <QObject>
 
-class JoyStickInput
+class JoyStickInput  : public QObject
 {
+Q_OBJECT
 public:
-    JoyStickInput( );
+    JoyStickInput();
+    virtual ~JoyStickInput() {};
 
     struct AxisState { short x, y; };
 
-    CopterInputs output;                   //input , output, who cares?
+    CopterInputs output;
 
     void start();
     bool active=false;
     bool mutexActive=false;
-    int yawValue=1500;
-    int rollValue=1500;
-    int pitchValue=1500;
-    int throttleValue=1500;
-    int CH5Value=1500;
-    int CH6Value=1500;
-    int CH7Value=1500;
-    int CH8Value=1500;
     void setUsualCurrentMode();
     void setInertiaCurrentMode();
     void setCasualCurrentMode();
     void setRTLTUsialMode();
+
+    void  setThrottle(int *throttle);
 
     void fullRtSticks(js_event event);
     void setRTLTFullMode();
@@ -37,6 +35,7 @@ public:
     void extreamRtSticks(js_event event);
     void setRTLTExtreamMode();
 private:
+    std::mutex setThrottleMutex;
     int throttleValueFromJS;
     int midThrottle=1350;
     void startJoyStickMode();
@@ -47,6 +46,14 @@ private:
     bool ltPressed=false;
     bool recording=false;
     bool arming=false;
+    int yawValue=1500;
+    int rollValue=1500;
+    int pitchValue=1500;
+    int throttleValue=1500;
+    int CH5Value=1500;
+    int CH6Value=1500;
+    int CH7Value=1500;
+    int CH8Value=1500;
 
     struct AxisState axes[3] ;
 
@@ -68,9 +75,15 @@ private:
     int lastLT=-32767;
     int lastRT=-32767;
 
-    void timerForThrottle();
+
     void usualExperimentalSticks(js_event event);
     void usualExperimentalButtons(js_event event);
+    void setLtRtValues(JoyStickInput::AxisState *axes);
+
+    void showAllSticks(AxisState axes[]);
+    void countThrottle(int divider);
+private slots:
+    void timerForThrottle();
 };
 
 #endif // JOYSTICKINPUT_H

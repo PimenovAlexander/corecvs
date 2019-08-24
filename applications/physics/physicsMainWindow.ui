@@ -122,6 +122,8 @@
     <addaction name="actionCameraPause"/>
     <addaction name="actionCameraStop"/>
     <addaction name="actionCameraCaptureParamteres"/>
+    <addaction name="actionCalibrate"/>
+    <addaction name="actionLoad_Calibration"/>
    </widget>
    <widget class="QMenu" name="menuJoystick">
     <property name="title">
@@ -229,6 +231,17 @@
        </property>
        <property name="toolButtonStyle">
         <enum>Qt::ToolButtonTextUnderIcon</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>imTest</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../resources/main.qrc">
+         <normaloff>:/new/colors/colors/color_blue.png</normaloff>:/new/colors/colors/color_blue.png</iconset>
        </property>
       </widget>
      </item>
@@ -371,6 +384,16 @@
    </property>
    <property name="text">
     <string>Camera Capture Paramteres</string>
+   </property>
+  </action>
+  <action name="actionCalibrate">
+   <property name="text">
+    <string>Calibrate</string>
+   </property>
+  </action>
+  <action name="actionLoad_Calibration">
+   <property name="text">
+    <string>Load Calibration</string>
    </property>
   </action>
  </widget>
@@ -532,6 +555,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionCalibrate</sender>
+   <signal>triggered()</signal>
+   <receiver>PhysicsMainWindow</receiver>
+   <slot>CalibrateCamera()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>537</x>
+     <y>348</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLoad_Calibration</sender>
+   <signal>triggered()</signal>
+   <receiver>PhysicsMainWindow</receiver>
+   <slot>LoadCalibrationSettings()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>537</x>
+     <y>348</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showCameraInput()</slot>
@@ -543,5 +598,7 @@
   <slot>showGraphDialog()</slot>
   <slot>showAboutWidget()</slot>
   <slot>showJoystickSettingsWidget()</slot>
+  <slot>CalibrateCamera()</slot>
+  <slot>LoadCalibrationSettings()</slot>
  </slots>
 </ui>

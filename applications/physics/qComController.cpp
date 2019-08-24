@@ -23,6 +23,8 @@ void QComController::bindToRealDrone()
     serialPort.setPortName(serialPortName);
     serialPort.setParity(QSerialPort::EvenParity);
     const int serialPortBaudRate = QSerialPort::BaudRate(100000);
+    serialPort.setFlowControl(QSerialPort::NoFlowControl);
+
 
     serialPort.setBaudRate(serialPortBaudRate);
     serialPort.setStopBits(QSerialPort::StopBits(2));

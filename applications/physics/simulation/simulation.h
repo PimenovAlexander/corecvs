@@ -19,6 +19,7 @@ public:
     std::chrono::high_resolution_clock::time_point oldTime;
     std::chrono::high_resolution_clock::time_point newTime;
     std::chrono::high_resolution_clock::time_point startTime;
+
     std::chrono::high_resolution_clock::time_point endTime;
     std::chrono::duration<double> time_span;
     SceneShaded *mShadedScene = NULL;
@@ -41,5 +42,4 @@ private:
     bool isAlive = false;
 
 };
-
 #endif // SIMULATION_H

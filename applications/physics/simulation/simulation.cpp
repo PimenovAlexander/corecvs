@@ -31,6 +31,7 @@ void Simulation::startRealTimeSimulation()
 {
     std::thread thr([this]()
     {
+
         oldTime = std::chrono::high_resolution_clock::now();
         while (isAlive)
         {
@@ -47,8 +48,10 @@ void Simulation::startRealTimeSimulation()
 void Simulation::execTestSimulation()
 {
     drone.flightControllerTick(droneJoystick);
+
     //deltaT here is wrong
     drone.physicsTick(0.1);
+
 }
 
 bool Simulation::getIsAlive()

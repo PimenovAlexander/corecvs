@@ -1,3 +1,4 @@
+#include "calibrationWidget.h"
 #include "physicsMainWindow.h"
 #include "ui_physicsMainWindow.h"
 
@@ -289,6 +290,7 @@ void PhysicsMainWindow::keepAlive()
                 mShadedScene = new SceneShaded;
                 ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mShadedScene), CloudViewDialog::DISP_CONTROL_ZONE);
             }
+
         }
 
         if (oldbackend) {
@@ -506,7 +508,7 @@ void PhysicsMainWindow::startJoyStickMode()
 
 void PhysicsMainWindow::keepAliveJoyStick()
 {
-    if (joystick1.active)                             //Yes, indeed. We can not turn on autopiot without joyStick.
+    if (joystick1.active)                             //Yes, indeed. We can not turn on autopiot without a joyStick.
     {
         if (!joystick1.mutexActive)
         {
@@ -547,11 +549,12 @@ void PhysicsMainWindow::keepAliveJoyStick()
         if (currentSendMode==1)
         {
             ui->inputsWidget->updateState(iiOutput);
+
         }
     }
     frameCounter++;
     //ui->inputsWidget->updateState(joystick1.output);
-    QTimer::singleShot(8, this, SLOT(keepAliveJoyStick()));                                     // I put together 2 timers 8msec send timer and 33msec joystickWidget timer 8*4=36
+    QTimer::singleShot(8, this, SLOT(keepAliveJoyStick()));
 
     }
 }
@@ -584,7 +587,11 @@ void PhysicsMainWindow::mainAction()
         }
     }
 
-    /*                                     i changed my joestickInput, so it is easier to use it
+
+
+    //startJoyStickMode();
+    /*
+
     if (mixer.mix(joystickState, inputs)) {
         copter.flightControllerTick(inputs);
 
@@ -615,7 +622,9 @@ void PhysicsMainWindow::mainAction()
 **/
 
     drone.flightControllerTick(joystick1.output);
+
     drone.physicsTick(0.1);
+
 
     if (oldbackend) {
         drone.drawMyself(*scene->owned);
@@ -691,32 +700,26 @@ void PhysicsMainWindow::on_comboBox_currentTextChanged(const QString &arg1)     
      if(arg1=="Usual mode")    //why qstring can not be in case?!
     {
         joystick1.setUsualCurrentMode();   //I dont want errors between qstring and string
-        joystick1.throttleValue=1500;
     }
     if(arg1=="Inertia mode")
     {
         joystick1.setInertiaCurrentMode();
-        joystick1.throttleValue=midThrottle;
     }
     if(arg1=="Casual mode")
     {
         joystick1.setCasualCurrentMode();
-        joystick1.throttleValue=midThrottle;
     }
     if(arg1=="RT/LT Usual mode")
     {
         joystick1.setRTLTUsialMode();
-        joystick1.throttleValue=midThrottle;
     }
     if(arg1=="RT/LT Full mode")
     {
         joystick1.setRTLTFullMode();
-        joystick1.throttleValue=midThrottle;
     }
     if(arg1=="RT/LT Extream mode")
     {
         joystick1.setRTLTExtreamMode();
-        joystick1.throttleValue=midThrottle;
     }
  }
 
@@ -724,11 +727,9 @@ void PhysicsMainWindow::updateUi()
 {
     uiMutex.lock();
     /* We now could quickly scan for data and stats*/
-
     /* But we would only draw last data */
     DrawRequestData *work = uiQueue.back();
     uiQueue.pop_back();
-
     /* Scan again cleaning the queue */
     for (DrawRequestData *data : uiQueue)
     {
@@ -736,7 +737,6 @@ void PhysicsMainWindow::updateUi()
     }
     uiQueue.clear();
     uiMutex.unlock();
-
     /**/
     if (work->mMesh != NULL) {
         Mesh3DScene* scene = new Mesh3DScene;
@@ -747,16 +747,21 @@ void PhysicsMainWindow::updateUi()
         mesh->add(*work->mMesh, true);
         ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene), CloudViewDialog::ADDITIONAL_SCENE);
     }
-
     if (work->mImage)
     {
         QSharedPointer<QImage> image(new RGB24Image(work->mImage));
-
+        if (iiAutoPilot.active)
+        {
+            iiAutoPilot.makeStrategy(image);
+            //cout<<"image changed"<<endl;
+            image = iiAutoPilot.outputImage;
+        }
+        else
+        {
+            //cout<<"AutoPilot turned off"<<endl;
+        }
         ui->imageView->setImage(image);
     }
-
-
-
     /* We made copies. Originals could be deleted */
     delete_safe(work);
 }
@@ -808,7 +813,47 @@ void PhysicsMainWindow::on_toolButton_3_released()
     startRealMode();
 }
 
+void PhysicsMainWindow::on_toolButton_2_released()
+{
+
+    if (!iiAutoPilot.active)
+    {
+        iiAutoPilot = ProtoAutoPilot();
+        iiAutoPilot.start();
+    }
+}
+
+void PhysicsMainWindow::on_pushButton_released()
+{
+    iiAutoPilot.testImageVoid();
+}
 void PhysicsMainWindow::on_connetToVirtualButton_pressed()
 {
 
+}
+
+void PhysicsMainWindow::CalibrateCamera()
+{
+    calibrationWidget.show();
+    calibrationWidget.raise();
+}
+
+void PhysicsMainWindow::checkForJoystick()               //auto connect
+{
+//   jReader->start();
+}
+
+void PhysicsMainWindow::LoadCalibrationSettings()
+{
+    QString dir = QFileDialog::getOpenFileName(this, tr("Open Calibration File"),"",tr("Calibration Parametrs (*.yml);; All Files (*)"));
+    if (dir!=NULL)
+    {
+        std::cout<<dir.toStdString()<<std::endl;
+        cv::FileStorage fs(dir.toStdString(),cv::FileStorage::READ);
+        cv::Mat intrinsic, distCoeffs;
+        fs["intrinsic"]>>intrinsic;
+        fs["distCoeffs"]>>distCoeffs;
+        calib.setIntrinsicMat(intrinsic);
+        calib.setDistCoeffsMat(distCoeffs);
+    }
 }

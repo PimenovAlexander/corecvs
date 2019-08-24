@@ -12,16 +12,19 @@
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
+#include <calibration.h>
 #include <cameraModelParametersControlWidget.h>
 #include <capSettingsDialog.h>
 #include <controlsMixer.h>
 #include <flowFabricControlWidget.h>
 #include <graphPlotDialog.h>
 #include <inputSelectorWidget.h>
+#include <joystickreader.h>
 
 #include <copter/quad.h>
 #include <copter/droneObject.h>
 
+#include "calibrationWidget.h"
 #include "clientSender.h"
 #include "copterInputsWidget.h"
 #include "frameProcessor.h"
@@ -78,7 +81,7 @@ private:
     bool realModeActive = false;
     bool virtualModeActive = false;
     void disconnectFromCopter();
-
+    Calibration calib;
 /** Joystick **/
 public:
     JoystickOptionsWidget mJoystickSettings;
@@ -98,6 +101,8 @@ public:
     CameraModelParametersControlWidget mModelParametersWidget;
     CameraModel mCameraModel;
     InputSelectorWidget mInputSelector;
+    CalibrationWidget calibrationWidget;
+
 
 public slots:
     void showCameraInput();
@@ -149,6 +154,9 @@ public slots:
 private slots:
 
 
+
+    void checkForJoystick();
+
     void stopVirtualMode();
     void startVirtualMode();
 
@@ -163,7 +171,6 @@ private slots:
     void CH8Change(int i);
 #endif
     void startJoyStickMode();
-
 
     void onStartVirtualModeReleased();
 
@@ -188,8 +195,15 @@ private slots:
 
     void on_toolButton_3_released();
 
+    void on_toolButton_2_released();
+
+    void on_pushButton_released();
+
     void on_connetToVirtualButton_pressed();
 
+
+    void CalibrateCamera();
+    void LoadCalibrationSettings();
 private:
     struct Message {
         int throttle;
@@ -205,7 +219,8 @@ private:
     int currentSendMode=-1;                                                //tumbler beetwen joystick and autopilot (0- js, 1-autoP)
     int frameCounter=0;                                                    //we need it in the timer
     /** Replace this with mixer **/
-    JoyStickInput joystick1;
+
+    JoyStickInput joystick1 ;
 
     QComController ComController {this,
         copterInputs.axis[CopterInputs::CHANNEL_YAW],
@@ -243,15 +258,18 @@ private:
     bool recording=false;
 
     void sendOurValues(std::vector<uint8_t> OurValues);
-    std::string inputCameraPath="v4l2:/dev/video1";
+
+    bool virtuaModeActive = false;
+    std::string inputCameraPath = "v4l2:/dev/video1";
+
     ControlRecord recordData;
 
     Simulation simSim;
     ClientSender virtualSender;
 
-    int countOfSticks=0;
+    int countOfSticks = 0;
 
-    bool autopilotMode=false;
+    bool autopilotMode = false;
     stack<Message> autopilotStack;
 
 };

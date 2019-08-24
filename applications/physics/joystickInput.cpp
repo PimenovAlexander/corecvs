@@ -12,22 +12,32 @@
 #include <thread>
 #include "joystickInput.h"
 #include "time.h"
+#include <QTimer>
 #include <fstream>
+#include <mutex>
 
 
-using namespace std;
 
 
-JoyStickInput::JoyStickInput()
+
+JoyStickInput::JoyStickInput() : QObject()
 {
     throttleValue=1239;
     // cout<<"AAAaaaAAA"<<endl;
 }
 
+void JoyStickInput::setThrottle(int *throttle)
+{
+    setThrottleMutex.lock();
+    throttleValue = *throttle;
+    setThrottleMutex.unlock();
+}
 void JoyStickInput::start()
 {
     active=true;
-    timerForThrottle();
+    QTimer::singleShot(8,this, SLOT(timerForThrottle()));
+
+
     startJoyStickMode();
 }
 
@@ -123,12 +133,12 @@ void JoyStickInput::startJoyStickMode()
         if (js == -1)
         {
             perror("Could not open joystick");
-            cout<<"Could not open joystick"<<endl;
+            std::cout<<"Could not open joystick"<<std::endl;
         }
         else
         {
             countOfSticks=getAxisCount(js);
-            cout<<"JS mode has started"<<endl;
+            std::cout<<"JS mode has started"<<std::endl;
             while (readEvent(js, &eventtt) == 0)
             {
                 autopilotMode=false;
@@ -507,7 +517,7 @@ void JoyStickInput::inertialSticks(js_event event)
                 pitchValue = 1500 - axes[axis].x/50/pit_const;
                 if (pitchValue>2100){pitchValue=2099;}
                 if (pitchValue<900){pitchValue=901;}
-                cout<<"axe lt"<<axes[axis].y<<endl;
+                std::cout<<"axe lt"<<axes[axis].y<<std::endl;
                 if (axes[axis].y>10000)
                 {
                     startArming(true);
@@ -753,6 +763,8 @@ void JoyStickInput::usualExperimentalSticks(js_event event)
 
                 lastRT=axes[axis].y;
             }
+            countThrottle(188);
+            showAllSticks(axes);
         }
         break;
     }
@@ -859,7 +871,6 @@ void JoyStickInput::fullRtSticks(js_event event)
         {                                                //minimum axis is -32767
             if (axis==0)
             {
-
                 rollValue = 1500 + axes[axis].x/12/roll_const;
                 if (rollValue>2100){rollValue=2099;}
                 if (rollValue<900){rollValue=901;}
@@ -872,7 +883,7 @@ void JoyStickInput::fullRtSticks(js_event event)
             }
             if (axis==1)
             {
-                lastLT=axes[axis].x;
+                lastLT = axes[axis].x;
                 yawValue = 1500 + axes[axis].y/12/roll_const;
                 if (yawValue>2100){yawValue=2099;}
                 if (yawValue<900){yawValue=901;}
@@ -881,8 +892,10 @@ void JoyStickInput::fullRtSticks(js_event event)
             if (axis==2)
             {
 
-                lastRT=axes[axis].y;
+                lastRT = axes[axis].y;
             }
+            countThrottle(85);
+            showAllSticks(axes);
         }
         break;
     }
@@ -928,7 +941,6 @@ void JoyStickInput::extreamRtSticks(js_event event)
         {                                                //minimum axis is -32767
             if (axis==0)
             {
-
                 rollValue = 1500 + axes[axis].x/6/roll_const;
                 if (rollValue>2100){rollValue=2099;}
                 if (rollValue<900){rollValue=901;}
@@ -936,32 +948,32 @@ void JoyStickInput::extreamRtSticks(js_event event)
                 pitchValue = 1500 - axes[axis].y/6/pit_const;
                 if (pitchValue>2100){pitchValue=2099;}
                 if (pitchValue<900){pitchValue=901;}
-
-
             }
             if (axis==1)
             {
-                lastLT=axes[axis].x;
+                lastLT = axes[1].x;
+                lastRT = axes[2].y;
                 yawValue = 1500 + axes[axis].y/6/roll_const;
                 if (yawValue>2100){yawValue=2099;}
                 if (yawValue<900){yawValue=901;}
-
             }
             if (axis==2)
             {
-
-                lastRT=axes[axis].y;
+                lastLT = axes[1].x;
+                lastRT = axes[2].y;
             }
+            countThrottle(85);
+            showAllSticks(axes);
         }
         break;
     }
 }
 
-
-
-
-
-
+void JoyStickInput::setLtRtValues(JoyStickInput::AxisState *axes)
+{
+    lastLT = axes[1].x;
+    lastRT = axes[2].y;
+}
 
 void JoyStickInput::startArming(bool pressed)
 {
@@ -1020,59 +1032,84 @@ void JoyStickInput::stopRecord()
 void JoyStickInput::setUsualCurrentMode()
 {
     currentMode=0;
+    throttleValue = 1500;
 }
 
 
 void JoyStickInput::setInertiaCurrentMode()
 {
     currentMode=1;
+    throttleValue = midThrottle;
+    //QTimer::singleShot(8, this, SLOT(timerForThrottle()));
+
 }
 
 void JoyStickInput::setCasualCurrentMode()
 {
     currentMode=2;
+    throttleValue = midThrottle;
 }
 
 void JoyStickInput::setRTLTUsialMode()
 {
     currentMode=3;
+    throttleValue = midThrottle;
 }
 
 void JoyStickInput::setRTLTFullMode()
 {
     currentMode=4;
+    throttleValue = midThrottle;
 }
 
 void JoyStickInput::setRTLTExtreamMode()
 {
     currentMode=5;
+    throttleValue = midThrottle;
 }
+
+void JoyStickInput::showAllSticks(AxisState axes[3])
+{
+    for (int i=0;i<3;i++){
+        std::cout<<"---"<<i<<"---"<<std::endl;
+        std::cout<<axes[i].x<<std::endl;
+        std::cout<<axes[i].y<<std::endl;
+     }
+    std::cout<<"---"<<"LT - RT"<<"---"<<std::endl;
+    std::cout<<lastLT<<std::endl;
+    std::cout<<lastRT<<std::endl;
+}
+
+void JoyStickInput::countThrottle(int divider)
+{
+    double d = 1300 + (lastRT - lastLT) / divider;
+    throttleValue = (int)d;
+    if (throttleValue > 1800) {throttleValue = 1799;}
+    if (throttleValue < 900) {throttleValue = 901;}
+}
+
 void JoyStickInput::timerForThrottle()
 {
-    std::thread thr([this]()
+    if (currentMode==1)
     {
-        while(true)
-        {
-            if (currentMode==1)
-            {
-                throttleValue+=sign(throttleValueFromJS-1500);
-                if (throttleValue>1800){throttleValue=1799;}
-                if (throttleValue<900){throttleValue=901;}
-            }
-            if (currentMode==3)
-            {
-                throttleValue=1300+(lastRT-lastLT)/188;
-                if (throttleValue>1800){throttleValue=1799;}
-                if (throttleValue<900){throttleValue=901;}
-            }
-            if (currentMode==4 || currentMode==5)
-            {
-                throttleValue=1300+(lastRT-lastLT)/85;
-                if (throttleValue>2100){throttleValue=2099;}
-                if (throttleValue<900){throttleValue=901;}
-            }
-            usleep(30000);
-        }
-    });
-    thr.detach();
+        throttleValue += sign(throttleValueFromJS - 1500);
+        if (throttleValue > 1800){throttleValue = 1799;}
+        if (throttleValue < 900){throttleValue = 901;}
+    }
+    if (currentMode==3)
+    {
+        throttleValue = 1300 + (lastRT - lastLT) / 188;
+        if (throttleValue > 1800) {throttleValue = 1799;}
+        if (throttleValue < 900) {throttleValue = 901;}
+    }
+    /*if (currentMode==4 || currentMode==5)
+    {
+        throttleValue = 1300 + (lastRT - lastLT) /85;
+        if (throttleValue > 2100) {throttleValue = 2099;}
+        if (throttleValue < 900) {throttleValue = 901;}
+    }*/
+    QTimer::singleShot(8,this, SLOT(timerForThrottle()));
+
 }
+
+
