@@ -27,8 +27,12 @@ public:
 
 
     VertexSquare(int a0, int a1, int b0, int b1, int c0, int c1, int d0, int d1);
+
+    void testVertex(int a0, int a1, int b0, int b1, int c0, int c1, int d0, int d1);
 private:
     void setVertex(int a0, int a1, int b0, int b1, int c0, int c1, int d0, int d);
+    void sortVertex(vector<vector<int> > *vertex);
+    void swapVectors(vector<int> *a, vector<int> *b);
 };
 
 #endif // VERTEXSQUARE_H

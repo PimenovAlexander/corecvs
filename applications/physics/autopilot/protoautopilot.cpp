@@ -23,7 +23,8 @@ ProtoAutoPilot::ProtoAutoPilot()
     std::cout<<"death to leather bastards"<<std::endl;
     failSafe = CopterInputs();
     failSafe.axis[CopterInputs::CHANNEL_THROTTLE]=1300;
-
+    VertexSquare v;
+    v.testVertex(230,230,45,45,230,45,45,230);
 }
 
 
