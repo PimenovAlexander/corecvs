@@ -10,6 +10,7 @@
 #include "copter/droneObject.h"
 #include "sceneShaded.h"
 #include "joystickInput.h"
+#include <time.h>
 class Simulation
 {
 public:
@@ -34,6 +35,11 @@ public:
 
     bool getIsAlive();
     void setIsAlive(const bool flag);
+
+    //Test
+    std::vector<Vector3dd> testForces;
+    std::vector<size_t> time_of_forces;
+    std::vector<size_t> time_between_forces;
 
 private:
     void defaultStart();

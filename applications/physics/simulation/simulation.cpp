@@ -27,8 +27,15 @@ Simulation::Simulation(string arg)
     }
 }
 
+double fRand(double fMin, double fMax)
+{
+    double f = (double)rand() / RAND_MAX;
+    return fMin + f * (fMax - fMin);
+}
+
 void Simulation::startRealTimeSimulation()
 {
+
     std::thread thr([this]()
     {
 
@@ -47,11 +54,53 @@ void Simulation::startRealTimeSimulation()
 
 void Simulation::execTestSimulation()
 {
+    srand(time(NULL));
+    for (int i = 0; i < 4; i++)
+    {
+        Vector3dd f = Vector3dd(fRand(1, 10), fRand(1, 10), fRand(1, 10));
+        double t = fRand(1, 2) * 1000;
+        testForces.push_back(f);
+        time_of_forces.push_back((size_t)std::trunc(t));
+    }
+
+    for (int i = 0; i < 7; i++)
+    {
+        double t_between = fRand(3, 5) * 1000;
+        time_between_forces.push_back((size_t)std::trunc(t_between));
+    }
+
+    for (int i = 0;i<7;i++) {
+        if(i<4)
+            L_INFO <<"Force: "<< testForces[i]<<" Time of Force: " << time_of_forces[i]<< " Time Between: " << time_between_forces[i];
+        else
+            L_INFO <<" Time Between: " << time_between_forces[i];
+    }
+
+    std::thread thr([this]()
+    {
+        startTime = std::chrono::high_resolution_clock::now();
+        drone.testMode = true;
+        oldTime = std::chrono::high_resolution_clock::now();
+        while (isAlive)
+        {
+           drone.motors[1].addForce(Vector3dd(0,0,0.5));
+           drone.motors[0].addForce(Vector3dd(0,0,0.5));
+           //drone.flightControllerTick(droneJoystick);
+           newTime = std::chrono::high_resolution_clock::now();
+           time_span = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-oldTime);
+           drone.physicsTick(time_span.count());
+           oldTime=newTime;
+
+           drone.startTick();
+        }
+    });
+    thr.detach();
+/*
     drone.flightControllerTick(droneJoystick);
 
     //deltaT here is wrong
     drone.physicsTick(0.1);
-
+*/
 }
 
 bool Simulation::getIsAlive()
