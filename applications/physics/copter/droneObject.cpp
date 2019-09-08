@@ -319,9 +319,12 @@ void DroneObject::flightControllerTick(const CopterInputs &input)
 
 void DroneObject::physicsTick(double deltaT)
 {
-    startTick();
-    for (size_t i = 0; i < motors.size(); ++i) {
-        motors[i].calcForce();
+    if(!testMode)
+    {
+        startTick();
+        for (size_t i = 0; i < motors.size(); ++i) {
+            motors[i].calcForce();
+        }
     }
     calcForce();
     calcMoment();
@@ -334,6 +337,8 @@ void DroneObject::physicsTick(double deltaT)
 
     //cout << "Quad::physicsTick(): " << position << endl;
 }
+
+
 
 
 void DroneObject::tick(double deltaT)
@@ -370,11 +375,34 @@ void DroneObject::tick(double deltaT)
     Vector3dd W = inertiaTensor.inv() * getMomentum();
     Quaternion angularAcceleration = Quaternion::Rotation(W, W.l2Metric());
 
+
+
     Quaternion q = orientation;
     orientation = Quaternion::pow(angularVelocity, deltaT) ^ orientation;
 
+    using namespace std::chrono;
+    time_t ms = duration_cast< milliseconds >(
+    system_clock::now().time_since_epoch()
+    ).count();
+    if(ms % 50 == 0)
+    {
+        orientation.printAxisAndAngle();
+    }
+
     //orientation.printAxisAndAngle();
+    Quaternion temp = Quaternion::pow(angularAcceleration,deltaT);
+
+    using namespace std::chrono;
+    time_t ms1 = duration_cast< milliseconds >(
+    system_clock::now().time_since_epoch()
+    ).count();
+    if(ms % 50 == 0)
+    {
+        //temp.printAxisAndAngle();
+    }
+
     angularVelocity = Quaternion::pow(angularAcceleration, deltaT) ^ angularVelocity;
+
     //L_INFO<<"Delta orient: "<<abs(orientation.getAngle()-q.getAngle());
 
 }

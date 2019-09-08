@@ -39,6 +39,7 @@ public:
     std::vector<Sensor> sensors;
     std::vector<Motor> motors;
     PhysSphere centralSphere;
+    bool testMode = false;
 
     PID pitchPID{0.7, 0.35, 0.35};
     PID rollPID{0.7, 0.35, 0.35};
@@ -67,7 +68,6 @@ public:
     void flightControllerTick(const CopterInputs &input);
     void visualTick();
     void physicsTick(double deltaT);
-
     /* UI */
     Mesh3D *bodyMesh = NULL;
 
