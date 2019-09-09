@@ -372,21 +372,25 @@ void DroneObject::tick(double deltaT)
 
     /* We should carefully use inertiaTensor here. It seems like it changes with the frame of reference */
     //L_INFO << "Momentum: " << getMomentum();
+    /**This works as wanted**/
     Vector3dd W = inertiaTensor.inv() * getMomentum();
     Quaternion angularAcceleration = Quaternion::Rotation(W, W.l2Metric());
 
 
 
     Quaternion q = orientation;
+    //Probably bug here
+    //angularVelocity = Quaternion(0.621634, 0, 0, -0.783308);
     orientation = Quaternion::pow(angularVelocity, deltaT) ^ orientation;
 
+    //Just async output
     using namespace std::chrono;
     time_t ms = duration_cast< milliseconds >(
     system_clock::now().time_since_epoch()
     ).count();
-    if(ms % 50 == 0)
+    if(ms % 200 == 0)
     {
-        orientation.printAxisAndAngle();
+        //L_INFO<<"Delta orient: "<<orientation.getAngle()-q.getAngle();
     }
 
     //orientation.printAxisAndAngle();
@@ -396,11 +400,12 @@ void DroneObject::tick(double deltaT)
     time_t ms1 = duration_cast< milliseconds >(
     system_clock::now().time_since_epoch()
     ).count();
-    if(ms % 50 == 0)
+    if(ms % 200 == 0)
     {
-        //temp.printAxisAndAngle();
+        L_INFO << angularVelocity;
     }
 
+    //Probably bug here
     angularVelocity = Quaternion::pow(angularAcceleration, deltaT) ^ angularVelocity;
 
     //L_INFO<<"Delta orient: "<<abs(orientation.getAngle()-q.getAngle());
