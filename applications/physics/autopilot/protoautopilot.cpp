@@ -20,11 +20,17 @@
 ProtoAutoPilot::ProtoAutoPilot()
 {
 
-    std::cout<<"death to leather bastards"<<std::endl;
-    failSafe = CopterInputs();
-    failSafe.axis[CopterInputs::CHANNEL_THROTTLE]=1300;
-    VertexSquare v;
-    v.testVertex(230,230,45,45,230,45,45,230);
+    if (!testMode)
+    {
+        std::cout<<"death to leather bastards"<<std::endl;
+        failSafe = CopterInputs();
+        failSafe.axis[CopterInputs::CHANNEL_THROTTLE]=1300;
+        //v.testVertex(230,230,45,45,230,45,45,230);
+    }
+    else
+    {
+        QImage testImage = QImage("test1");
+    }
 }
 
 
@@ -130,10 +136,14 @@ ProtoAutoPilot::Calibration ProtoAutoPilot::getCalibration()
     return calib;
 }
 
-void ProtoAutoPilot::changeImage(QSharedPointer<QImage> inputImage)  // here we will add some data to image
+void ProtoAutoPilot::changeImage(QSharedPointer<QImage> inputImage)
 {
 
     inputQImage = inputImage->copy();
+    debugCounter++;
+    QString n = "inputImage___"+ QString::number(debugCounter);
+    inputImage->save("inputImage___1");
+
     cv::Mat mat = QImage2Mat(inputQImage);
     //cv::Mat mat1;
 
@@ -145,12 +155,15 @@ void ProtoAutoPilot::changeImage(QSharedPointer<QImage> inputImage)  // here we 
     std::vector<std::vector<cv::Point>> squares;
     findSquares(mat2,squares);
     drawSquares(squares,mat2);
+
     //cv::circle(mat2,cv::Point(300,300),40,cv::Scalar(255,255,255));
-    //cv::imshow("mat",mat);
+    cv::imshow("mat",mat);
     outputQImage = mat2RealQImage(mat2);
     outputImage = QSharedPointer<QImage> (new QImage(outputQImage));
-    outputImage->save("output2.jpg");
- }
+    outputImage->save("output___1.jpg");
+}
+
+
 
 QSharedPointer<QImage> ProtoAutoPilot::mat2QImage(cv::Mat const &src)     // B<->R
 {
@@ -276,7 +289,8 @@ cv::Mat ProtoAutoPilot::drawSquares( std::vector<std::vector<cv::Point> > square
 
             // draw contour
             cv::drawContours(image, squares, i, cv::Scalar(255,0,0), 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
-            std::cout<<"draw 1"<<std::endl;
+            VertexSquare vertexSquare(squares.at(0).at(0).x,squares.at(0).at(0).y,squares.at(0).at(1).x,squares.at(0).at(1).y,squares.at(0).at(2).x
+                                      ,squares.at(0).at(2).y,squares.at(0).at(3).x,squares.at(0).at(3).y);
             /*
             // draw bounding rect
             cv::Rect rect = boundingRect(cv::Mat(squares[i]));

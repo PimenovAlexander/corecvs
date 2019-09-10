@@ -44,7 +44,9 @@ public:
     void setCalibration(Calibration c);
     ProtoAutoPilot::Calibration getCalibration();
 private:
-     //for memory
+    bool testMode = true;
+    //for memory
+
     cv::Mat temp;
     QImage outputQImage;
     QImage inputQImage;

@@ -400,11 +400,13 @@ void DroneObject::tick(double deltaT)
     time_t ms1 = duration_cast< milliseconds >(
     system_clock::now().time_since_epoch()
     ).count();
+
     if(ms % 200 == 0)
     {
-        L_INFO << angularVelocity;
+        L_INFO <<"angularVelocity  "<< angularVelocity;
+        L_INFO <<"angularAcceleration"<< angularAcceleration;
+        L_INFO <<"deltaT "<< deltaT;
     }
-
     //Probably bug here
     angularVelocity = Quaternion::pow(angularAcceleration, deltaT) ^ angularVelocity;
 
@@ -412,6 +414,16 @@ void DroneObject::tick(double deltaT)
 
 }
 
+/*void DroneObject::quaternionTestVoid()
+{
+    Quaternion angularAcceleration = Quaternion::Identity();
+    double deltaT;
+    Quaternion aangularVelocity  = Quaternion::Identity();
+            
+    aangularVelocity = Quaternion::pow(angularAcceleration, deltaT) ^ angularVelocity;
+
+}
+*/
 DroneObject::~DroneObject()
 {
     delete_safe(bodyMesh);
