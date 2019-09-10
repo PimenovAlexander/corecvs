@@ -374,14 +374,12 @@ void DroneObject::tick(double deltaT)
     //L_INFO << "Momentum: " << getMomentum();
     /**This works as wanted**/
     Vector3dd W = inertiaTensor.inv() * getMomentum();
-    Quaternion angularAcceleration = Quaternion::Rotation(W, W.l2Metric());
-
-
+    Quaternion angularAcceleration = Quaternion::pow(Quaternion::Rotation(W, W.l2Metric()), 0.000001);
 
     Quaternion q = orientation;
     //Probably bug here
     //angularVelocity = Quaternion(0.621634, 0, 0, -0.783308);
-    orientation = Quaternion::pow(angularVelocity, deltaT) ^ orientation;
+    orientation = Quaternion::pow(angularVelocity, deltaT * 1000) ^ orientation;
 
     //Just async output
     using namespace std::chrono;
@@ -402,11 +400,11 @@ void DroneObject::tick(double deltaT)
     ).count();
     if(ms % 200 == 0)
     {
-        L_INFO << angularVelocity;
+        //L_INFO << angularVelocity;
     }
 
     //Probably bug here
-    angularVelocity = Quaternion::pow(angularAcceleration, deltaT) ^ angularVelocity;
+    angularVelocity = Quaternion::pow(angularAcceleration, deltaT * 1000) ^ angularVelocity;
 
     //L_INFO<<"Delta orient: "<<abs(orientation.getAngle()-q.getAngle());
 
