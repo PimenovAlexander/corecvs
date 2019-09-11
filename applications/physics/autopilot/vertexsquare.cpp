@@ -1,4 +1,5 @@
 #include "vertexsquare.h"
+#include "math.h"
 
 //  B   C
 //  +---+
@@ -55,12 +56,15 @@ void VertexSquare::sortVertex()
 
 void VertexSquare::setEdges()
 {
-    edges[0] = squareVertex.at(1).at(1) - squareVertex.at(0).at(1);
-    edges[2] = squareVertex.at(2).at(1) - squareVertex.at(3).at(1);
+    edges[0] = sqrt((squareVertex.at(1).at(1) - squareVertex.at(0).at(1))*(squareVertex.at(1).at(1) - squareVertex.at(0).at(1))
+                    +(squareVertex.at(1).at(0) - squareVertex.at(0).at(0))*(squareVertex.at(1).at(0) - squareVertex.at(0).at(0)));
+    edges[2] = sqrt((squareVertex.at(2).at(1) - squareVertex.at(3).at(1))*(squareVertex.at(2).at(1) - squareVertex.at(3).at(1))
+                    +(squareVertex.at(2).at(0) - squareVertex.at(3).at(0))*(squareVertex.at(2).at(0) - squareVertex.at(3).at(0)));
 
-
-    edges[1] = squareVertex.at(2).at(0) - squareVertex.at(1).at(0);
-    edges[3] = squareVertex.at(3).at(0) - squareVertex.at(0).at(0);
+    edges[1] = sqrt((squareVertex.at(2).at(1) - squareVertex.at(1).at(1))*(squareVertex.at(2).at(1) - squareVertex.at(1).at(1))
+                    +(squareVertex.at(2).at(0) - squareVertex.at(1).at(0))*(squareVertex.at(2).at(0) - squareVertex.at(1).at(0)));
+    edges[3] = sqrt((squareVertex.at(3).at(1) - squareVertex.at(0).at(1))*(squareVertex.at(3).at(1) - squareVertex.at(0).at(1))
+                    +(squareVertex.at(3).at(0) - squareVertex.at(0).at(0))*(squareVertex.at(3).at(0) - squareVertex.at(0).at(0)));
 }
 
 void VertexSquare::sortVertex(vector<vector<int>> *vertex)

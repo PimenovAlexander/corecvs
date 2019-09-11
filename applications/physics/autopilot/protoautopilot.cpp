@@ -5,6 +5,7 @@
 #include <QtGui/qimage.h>
 #include "vertexsquare.h"
 
+#include <QFileInfo>
 #include <QSharedPointer>
 #include <opencv2/opencv.hpp>
 #include <opencv2/core.hpp>
@@ -29,7 +30,16 @@ ProtoAutoPilot::ProtoAutoPilot()
     }
     else
     {
-        QImage testImage = QImage("test1");
+        if(QFileInfo::exists("test1.jpg"))
+        {
+            QImage testImage = QImage("test1.jpg");
+            QSharedPointer<QImage> testPointer = QSharedPointer<QImage> (new QImage(testImage));
+            changeImage(testPointer);
+        }
+        else
+        {
+            std::cout<<"test images not found"<<std::endl;
+        }
     }
 }
 
@@ -151,13 +161,37 @@ void ProtoAutoPilot::changeImage(QSharedPointer<QImage> inputImage)
     //undistort(mat, mat1, intrinsic, distCoeffs);
     }
     cv::Mat mat2;
-    cv::resize(mat,mat2,mat.size()*2);
+    if (testMode)
+    {
+        cv::resize(mat,mat2,mat.size());
+    }
+    else
+    {
+        cv::resize(mat,mat2,mat.size()*2);
+    }
     std::vector<std::vector<cv::Point>> squares;
     findSquares(mat2,squares);
-    drawSquares(squares,mat2);
+    VertexSquare vertexSquare;
+    if (drawSquares(squares,mat2,&vertexSquare))
+    {
+        int rollDelta = vertexSquare.edges[0] - vertexSquare.edges[2];
+        int pitchDelta ;
+        int throttleDelta = vertexSquare.edges[1] - vertexSquare.edges[3];
+        int yawDelta;                                                         //here comes the PID
+
+
+    }
+    else
+    {
+        output = failSafe;
+    }
 
     //cv::circle(mat2,cv::Point(300,300),40,cv::Scalar(255,255,255));
     cv::imshow("mat",mat);
+    if (testMode)
+    {
+        cv::imshow("test",mat2);
+    }
     outputQImage = mat2RealQImage(mat2);
     outputImage = QSharedPointer<QImage> (new QImage(outputQImage));
     outputImage->save("output___1.jpg");
@@ -187,8 +221,9 @@ QImage ProtoAutoPilot::mat2RealQImage(cv::Mat const &src)     // B<->R
     return res.copy();
 }
 
-void ProtoAutoPilot::findSquares(const cv::Mat& image, vector<vector<cv::Point>>& squares)
+bool ProtoAutoPilot::findSquares(const cv::Mat& image, vector<vector<cv::Point>>& squares)
 {
+    bool result = false;
     squares.clear();
 
    //s    Mat pyr, timg, gray0(image.size(), CV_8U), gray;
@@ -275,10 +310,12 @@ void ProtoAutoPilot::findSquares(const cv::Mat& image, vector<vector<cv::Point>>
                }
            }
        }
+       return result;
    }
 
-cv::Mat ProtoAutoPilot::drawSquares( std::vector<std::vector<cv::Point> > squares, cv::Mat image )
+bool ProtoAutoPilot::drawSquares( std::vector<std::vector<cv::Point> > squares, cv::Mat image, VertexSquare  *vertexSquare)
 {
+    bool result = false;
     std::cout<<"new frame"<<std::endl;
     for ( int i = 0; i< squares.size(); i++ ) {
 
@@ -286,10 +323,10 @@ cv::Mat ProtoAutoPilot::drawSquares( std::vector<std::vector<cv::Point> > square
         int sumOfColors = centralPixel[0]+centralPixel[1]+centralPixel[2];
         if (sumOfColors>500)
         {
-
+            result = true;
             // draw contour
             cv::drawContours(image, squares, i, cv::Scalar(255,0,0), 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
-            VertexSquare vertexSquare(squares.at(0).at(0).x,squares.at(0).at(0).y,squares.at(0).at(1).x,squares.at(0).at(1).y,squares.at(0).at(2).x
+            *vertexSquare = VertexSquare(squares.at(0).at(0).x,squares.at(0).at(0).y,squares.at(0).at(1).x,squares.at(0).at(1).y,squares.at(0).at(2).x
                                       ,squares.at(0).at(2).y,squares.at(0).at(3).x,squares.at(0).at(3).y);
             /*
             // draw bounding rect
@@ -315,7 +352,7 @@ cv::Mat ProtoAutoPilot::drawSquares( std::vector<std::vector<cv::Point> > square
         }
     }
     std::cout<<"end frame"<<std::endl;
-    return image;
+    return result;
 }
 
 double ProtoAutoPilot::angle( cv::Point pt1, cv::Point pt2, cv::Point pt0 ) {

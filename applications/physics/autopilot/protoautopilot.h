@@ -21,12 +21,13 @@ public:
     ProtoAutoPilot();
     void makeStrategy(QSharedPointer<QImage> im);
     QSharedPointer<QImage> outputImage;
-    CopterInputs output()
+    CopterInputs output;
+    /*CopterInputs output()
     {
         CopterInputs result=outputs.front();
         outputs.pop();
         return result;
-    }
+    }*/
     bool active=false;
     void stabilise();
     enum Calibration {NO_CALIBRATION, BABYHAWK_01};
@@ -46,14 +47,13 @@ public:
 private:
     bool testMode = true;
     //for memory
-
+    CopterInputs failSafe;
     cv::Mat temp;
     QImage outputQImage;
     QImage inputQImage;
     Calibration calib = NO_CALIBRATION;
 
     vector<MainObject> mainObjects;
-    CopterInputs failSafe;
     std::queue<CopterInputs> outputs ;
     Vector3dd currentPos=Vector3dd(0.0,0.0,0.0);
     std::queue<Vector3dd> posFlyTo;
@@ -61,8 +61,8 @@ private:
     std::queue<CopterInputs> getOutputs(Vector3dd diff);
 
     double angle(cv::Point pt1, cv::Point pt2, cv::Point pt0);
-    cv::Mat drawSquares(std::vector<std::vector<cv::Point> > squares, cv::Mat image);
-    void findSquares(const cv::Mat &image, vector<vector<cv::Point> > &squares);
+    bool drawSquares(std::vector<std::vector<cv::Point> > squares, cv::Mat image, VertexSquare *vertexSquare);
+    bool findSquares(const cv::Mat &image, vector<vector<cv::Point> > &squares);
     QImage mat2RealQImage(const cv::Mat &src);
 };
 
