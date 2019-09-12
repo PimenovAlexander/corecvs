@@ -176,6 +176,13 @@ public:
     double x1, y1;
     double x2, y2;
 
+    SvgLine() {}
+
+    SvgLine(Vector2dd &p1, Vector2dd &p2) :
+        x1(p1.x()), y1(p1.y()),
+        x2(p2.x()), y2(p2.y())
+    {}
+
     virtual void draw(RGB24Buffer *buffer) override
     {
         buffer->drawLine(x1, y1, x2, y2, getColor());
@@ -289,14 +296,39 @@ private:
     vector<Vector2dd> parsePointsPairs(std::string data);
 
     void initShape(XMLElement *element, SvgShape *shape);
-    SvgShape* getRect(XMLElement *element);
-    SvgShape* getCircle(XMLElement *element);
-    SvgShape* getEllipse(XMLElement *element);
-    SvgShape* getLine(XMLElement *element);
+    SvgShape* getRect    (XMLElement *element);
+    SvgShape* getCircle  (XMLElement *element);
+    SvgShape* getEllipse (XMLElement *element);
+    SvgShape* getLine    (XMLElement *element);
     SvgShape* getPolyLine(XMLElement *element);
-    SvgShape* getPolygon(XMLElement *element);
-    SvgShape* getPath(XMLElement *element);
-    SvgShape* getGroup(XMLElement *element);
+    SvgShape* getPolygon (XMLElement *element);
+    SvgShape* getPath    (XMLElement *element);
+    SvgShape* getGroup   (XMLElement *element);
+};
+
+class SvgSaver
+{
+public:
+    SvgSaver();
+    virtual ~SvgSaver();
+
+    int saveSvg(std::ostream &output, SvgFile &svg);
+private:
+    int dumpSVG(XMLDocument &xml, SvgFile &svg);
+
+    /*vector<Vector2dd> parsePoints(std::string data);
+    vector<Vector2dd> parsePointsPairs(std::string data);*/
+
+    /*void initShape(XMLElement *element, SvgShape *shape);*/
+
+    XMLElement* dumpRect    (SvgRect     *element);
+    XMLElement* dumpCircle  (SvgCircle   *element);
+    XMLElement* dumpEllipse (SvgEllipse  *element);
+    XMLElement* dumpLine    (SvgLine     *element);
+    XMLElement* dumpPolyLine(SvgPolyLine *element);
+    XMLElement* dumpPolygon (SvgPolygon  *element);
+    XMLElement* dumpPath    (SvgPath     *element);
+    XMLElement* dumpGroup   (SvgGroup    *element);
 };
 
 class SVGToRGB24BufferLoader : public BufferLoader<RGB24Buffer>

@@ -33,7 +33,8 @@ SOURCES += \
     eigen/main_test_eigen_integration.cpp \
     ultrasound/main_test_ultrasound_reconstruction.cpp \
     ultrasound/model.cpp \
-    ultrasound/imgreader.cpp
+    ultrasound/imgreader.cpp \
+    convexpolygon/convexDebug.cpp
 
 
 
@@ -43,7 +44,8 @@ HEADERS += \
     generated/testClass.h      \
     generated/testBlock.h      \
     ultrasound/model.h \
-    ultrasound/imgreader.h
+    ultrasound/imgreader.h \
+    convexpolygon/convexDebug.h
 
 SOURCES += \
    generated/testSubClass.cpp \
@@ -161,4 +163,5 @@ SOURCES += \
     bspRenderer/bspRenderTest.cpp \
     bspRenderer/bspRenderer.cpp \
     mesh/main_test_mesh.cpp \
-
+    convexpolygon/main_test_convexpolygon.cpp \
+    convexduality/main_test_convexduality.cpp \

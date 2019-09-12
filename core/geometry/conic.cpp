@@ -51,7 +51,7 @@ bool Circle2d::intersectWith(const Circle2d &other, Vector2dd &point1, Vector2dd
     return true;
 }
 
-bool Circle2d::intersectWith(const Ray2d &ray, double &t1, double &t2)
+bool Circle2d::intersectWith(const Ray2d &ray, double &t1, double &t2) const
 {
     return intersectRayHelper(ray, t1, t2);
 }

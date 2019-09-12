@@ -24,6 +24,7 @@ public:
     static uint8_t num_glyphs[];
     static uint8_t symbols_glyphs[];
     static uint8_t alpha_glyphs[];
+    static uint8_t cyrilic_glyphs[];
 
     HardcodeFont();
     virtual ~HardcodeFont();

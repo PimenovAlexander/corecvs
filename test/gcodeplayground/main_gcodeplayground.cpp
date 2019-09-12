@@ -1,14 +1,18 @@
 #include <fstream>
 
+#include <core/buffers/bufferFactory.h>
+
 #include "core/fileformats/gcodeLoader.h"
 #include "core/fileformats/pltLoader.h"
 
+#include "labelGcodeInterpreter.h"
+
+#ifdef WITH_LIBPNG
+#include "libpngFileReader.h"
+#endif
 
 using namespace std;
 using namespace corecvs;
-
-
-
 
 int vynilCutter (double offset)
 {
@@ -109,7 +113,7 @@ int main1 (int argc, char **argv)
 }
 
 
-int main (int argc, char **argv)
+int main2 (int argc, char **argv)
 {
     HPGLLoader loader;
     HPGLProgram program;
@@ -210,3 +214,72 @@ int main (int argc, char **argv)
     ofile.close();
     return 0;
 }
+
+int main (int argc, char **argv)
+{
+#ifdef WITH_LIBPNG
+    LibpngFileReader::registerMyself();
+    LibpngFileSaver::registerMyself();
+    SYNC_PRINT(("Libpng support on\n"));
+#endif
+
+    std::string input = "";
+    std::string output = "out.png";
+
+
+    if (argc == 2)
+    {
+        input = argv[1];
+    } else if (argc == 3)
+    {
+        input  = argv[1];
+        output = argv[2];
+    } else {
+        SYNC_PRINT(("Usage labeler <input.gcode> [<output.png>]\n"));
+        SYNC_PRINT((" default output is a.gcode \n"));
+        return 1;
+    }
+
+    GCodeProgram program;
+    GcodeLoader loader;
+
+    ifstream file;
+    file.open(input, ios::in);
+    if (file.fail())
+    {
+        SYNC_PRINT(("g code playground::load(): Can't open mesh file <%s>\n", input.c_str()));
+        return false;
+    }
+
+    loader.loadGcode(file, program);
+
+    std::string basename = HelperUtils::getFileName(input);
+    double scale= 0.25;
+    int header = 40;
+    RGB24Buffer *canvas = new RGB24Buffer(1500 * scale + header, 6000 * scale, RGBColor::White());
+    canvas->drawRectangle(0, header, canvas->w - 1, canvas->w - 1 - header, RGBColor::Gray());
+    AbstractPainter<RGB24Buffer> p(canvas);
+    p.drawFormatU8(4, 4, RGBColor::Black(), 4, "Layout: %s", basename.c_str());
+
+    for (int c = 0; c < basename.length(); c++)
+    {
+        printf("%02X\n",(int)basename[c]);
+    }
+
+    SvgFile svgFile;
+
+    LabelGcodeInterpreter interperter;
+    interperter.canvas = canvas;
+    interperter.scale  = scale;
+
+    interperter.executeProgram(program);
+
+    BufferFactory::getInstance()->saveRGB24Bitmap(canvas, output);
+
+    ofstream outfile;
+    outfile.open("02.re.gcode", std::ostream::out);
+    loader.saveGcode(outfile, program);
+    outfile.close();
+    return 0;
+}
+

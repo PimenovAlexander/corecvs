@@ -15,7 +15,7 @@ using std::istream;
 GcodeLoader::GcodeLoader()
 {}
 
-vector<pair<char, double>> GcodeLoader::parseLine(const string& gline)
+vector<pair<char, double>> GcodeLoader::parseLine1(const string& gline)
 {    
     vector<pair<char, double>> result;
     vector<string> split = HelperUtils::stringSplit(gline, ' ');
@@ -47,6 +47,35 @@ vector<pair<char, double>> GcodeLoader::parseLine(const string& gline)
     return result;
 }
 
+vector<pair<char, double>> GcodeLoader::parseLine(const string& gline)
+{
+    // cout << "parseLine("<< gline << "):called" << endl;
+
+    vector<pair<char, double>> result;
+    size_t pos = 0;
+    while (true)
+    {
+        pair<char, double> p;
+
+        pos = gline.find_first_of("gxyzesfijm", pos);
+        // cout << "pos:" << pos << endl;
+
+        if (pos == string::npos)
+            break;
+
+        p.first = gline[pos];
+
+        /*G CODE is locale independant so we need to parse double in C locale*/
+        std::locale mylocale("C");
+        istringstream ss(gline.substr(pos+1));
+        ss.imbue(mylocale);
+        ss >> p.second;
+        result.push_back(p);
+        pos += 1;
+    }
+
+    return result;
+}
 
 int GcodeLoader::loadGcode(istream &input, Mesh3D &mesh)
 {
@@ -272,6 +301,10 @@ void GCodeInterpreter::executeProgram(const GCodeProgram &program)
             continue;
         }
 
+        if (!c.comment.empty()) {
+            SYNC_PRINT(("calling commentHook (%s)\n", c.comment.c_str()));
+            commentHook(c.comment);
+        }
 
         if (c.area == ' ') {
             if (traceComment) {
@@ -407,6 +440,12 @@ void GCodeInterpreter::executeProgram(const GCodeProgram &program)
 bool GCodeInterpreter::gcodeHook    ( const GCodeProgram::Code &/*code*/ )
 {
     return false;
+}
+
+bool GCodeInterpreter::commentHook(const std::string &text)
+{
+    SYNC_PRINT(("LabelGcodeInterpreter::commentHook (%s)\n", text.c_str()));
+    return true;
 }
 
 bool GCodeInterpreter::straightHook (int /*type*/, const MachineState &/*before*/, const MachineState &/*after*/)

@@ -13,7 +13,7 @@
 #include <vector>
 
 #include "core/math/vector/vector2d.h"
-#include "core/geometry/polygons.h"
+#include "core/geometry/triangle.h"
 
 namespace corecvs {
 

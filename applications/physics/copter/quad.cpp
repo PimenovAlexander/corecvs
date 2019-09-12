@@ -186,10 +186,11 @@ void Quad::flightControllerTick(const CopterInputs &input)
     /* Mixer */
 
     /* TODO: apply rates here */
-    double throttle    = (input.axis[CopterInputs::CHANNEL_THROTTLE] - 1500) / 12;
+    double throttle   = (input.axis[CopterInputs::CHANNEL_THROTTLE] - 1500) / 12;
     double inputPitch = (input.axis[CopterInputs::CHANNEL_PITCH]    - 1500) / 12;
     double inputYaw   = (input.axis[CopterInputs::CHANNEL_YAW]      - 1500) / 12;
     double inputRoll  = (input.axis[CopterInputs::CHANNEL_ROLL]     - 1500) / 12;
+
 
 
     double forceP = 0.0;

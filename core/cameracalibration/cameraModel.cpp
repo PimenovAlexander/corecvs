@@ -1,5 +1,7 @@
 #include <fstream>
-#include "cameraModel.h"
+
+#include "core/cameracalibration/cameraModel.h"
+#include "core/geometry/convexHull.h"
 
 namespace corecvs {
 

@@ -103,7 +103,42 @@ Matrix44 Matrix44::RotationZ (double alpha)
      return Matrix44(Matrix33::RotationZ(alpha));
 }
 
+/*****************************************************************************/
+/*   Mirror Matrix Creation                                                   */
+/*                                                                           */
+/*                                                                           */
+/*****************************************************************************/
 
+Matrix44 Matrix44::MirrorXY()
+{
+    return Matrix44 (
+        1,  0,  0,  0,
+        0,  1,  0,  0,
+        0,  0, -1,  0,
+        0,  0,  0,  1
+    );
+}
+
+Matrix44 Matrix44::MirrorYZ()
+{
+    return Matrix44 (
+       -1,  0,  0,  0,
+        0,  1,  0,  0,
+        0,  0,  1,  0,
+        0,  0,  0,  1
+
+    );
+}
+
+Matrix44 Matrix44::MirrorXZ()
+{
+    return Matrix44 (
+        1,  0,  0,  0,
+        0, -1,  0,  0,
+        0,  0,  1,  0,
+        0,  0,  0,  1
+   );
+}
 
 Matrix44 Matrix44::Frustum(double fovY, double aspect, double zNear, double zFar)
 {

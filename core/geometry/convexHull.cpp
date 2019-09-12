@@ -1,263 +1,502 @@
 #include "core/geometry/convexHull.h"
 
+#include "mesh3d.h"
+
 using namespace corecvs;
 using namespace std;
 
-// https://cw.fel.cvut.cz/wiki/_media/misc/projects/oppa_oi_english/courses/ae4m39vg/lectures/05-convexhull-3d.pdf
 
-
-MyVector::MyVector(const Vector3dd &V, const Vector3dd &U) : Vector3dd(U - V) {}
-
-MyVector::MyVector(const double x, const double y, const double z) : Vector3dd(x, y , z) {}
-
-MyVector::MyVector(const Vector3dd &U) : Vector3dd(U)
-{}
-
-MyVector::MyVector()
+Polygon ConvexHull::GiftWrap(const std::vector<Vector2dd> &list)
 {
-    (*this)[0] = .0;
-    (*this)[1] = .0;
-    (*this)[2] = .0;
-}
-
-MyVector& MyVector::operator=(const MyVector &U) {
-    (*this)[0] = U.x();
-    (*this)[1] = U.y();
-    (*this)[2] = U.z();
-    return (*this);
-}
-
-
-bool MyVector::operator ==(const MyVector &V) const{
-    return (this->x() == V.x()) && (this->y() == V.y()) && (this->z() == V.z());
-}
-
-
-bool MyVector::operator <(const MyVector &V) const{
-    if (this->x() < V.x()) {
-        return true;
+    Polygon toReturn;
+    if (list.empty())
+    {
+        // SYNC_PRINT(("ConvexHull::GiftWrap(): Input list in empty"));
+        return toReturn;
     }
-    if ((this->x() == V.x()) && (this->y() < V.y())) {
-        return true;
+    if (list.size() == 1)
+    {
+        // SYNC_PRINT(("ConvexHull::GiftWrap(): Input list has only one point"));
+        toReturn.push_back(list[0]);
+        return toReturn;
     }
-    if ((this->x() == V.x()) && (this->y() == V.y()) && (this->z() < V.z())) {
-        return true;
+
+    /* Find one point in hull */
+    size_t minYId = 0;
+    double minY = list[0].y();
+    for (size_t i = 1; i < list.size(); i++)
+    {
+        if (list[i].y() < minY)
+        {
+            minY = list[i].y();
+            minYId = i;
+        }
     }
-    return false;
-}
 
-Face::Face(const MyVector &A, const MyVector &B, const MyVector &C) :
-    Triangle3dd(A, B, C)
-{
-}
+    // SYNC_PRINT(("ConvexHull::GiftWrap(): starting with point %i (%lf %lf)\n", minYId, list[minYId].x(), list[minYId].y() ));
+    toReturn.push_back(list[minYId]);
+    Vector2dd direction = Vector2dd::OrtX();
+    Vector2dd current = list[minYId];
 
-bool Face::operator <(const Face &right) const{
-    vector<MyVector> left_a  = {this->p1(), this->p2(), this->p3()};
-    vector<MyVector> right_a = {right.p1(), right.p2(), right.p3()};
+    /* Wrap */
+    do {
+        Vector2dd next;
+        Vector2dd nextDir(0.0);
+        double vmax = -std::numeric_limits<double>::max();
 
-    sort(left_a.begin(), left_a.end());
-    sort(right_a.begin(), right_a.end());
+        for (const Vector2dd &point : list)
+        {
+            if (point == current)
+                continue;
 
-    if (left_a[0] < right_a[0]) {
-        return true;
-    }
-    if ((left_a[0] == right_a[0]) && (left_a[1] < right_a[1])) {
-        return true;
-    }
-    if ((left_a[0] == right_a[0]) && (left_a[1] == right_a[1]) && (left_a[2] < right_a[2])) {
-        return true;
-    }
-    return false;
-}
+            Vector2dd dir1 = (point - current).normalised();
+            double v = direction & dir1;
+            // SYNC_PRINT(("Checking asimuth %lf\n", v));
+            if (v > vmax) {
+                vmax = v;
+                next = point;
+                nextDir = dir1;
+            }
+        }
 
-bool Face::operator ==(const Face &right) const{
-    return (this->p1() == right.p1()) && (this->p2() == right.p2()) && (this->p3() == right.p3());
-}
-
-bool Face::isUnder(const Vector3dd &U, const Vector3dd &center) {
-    MyVector pivot1(p[0], p[1]);
-    MyVector pivot2(p[0], p[2]);
-    MyVector pivot3(p[0], U);
-    MyVector pivot4(p[0], center);
-    if ((pivot3 & (pivot2 ^ pivot1)) * (pivot4 & (pivot2 ^ pivot1)) < 0) { //right
-        return true;
-    }
-    return false;
-}
-void Face::print() {
-    for (auto point : p) {
-        cout << point.x() << " " << point.y() << " " << point.z() << endl;
-    }
-}
-
-/*
-ConvexHull3D. Used incremetal algorithm
-*/
-
-ConvexHull3D::ConvexHull3D(vector<Vector3dd> &points, double eps) {
-    MyVector pivot1(points[0], points[1]);
-    MyVector pivot2;
-    MyVector pivot3;
-    vector<MyVector> simplex;
-    simplex.push_back(points[0]);
-    simplex.push_back(points[1]);
-    size_t idx = 2;
-    while (idx < points.size()) {
-        MyVector temp(points[0], points[idx]);
-        idx++;
-        double product = pivot1 & temp;
-        product *= product;
-        if (abs(product - pivot1.l2Metric() * temp.l2Metric()) > eps) {
-            pivot2 = temp;
-            simplex.push_back(points[idx - 1]);
-            swap(points[2], points[idx - 1]);
+        /* That is exact same point. double equality is safe */
+        if (next == toReturn.front())
+        {
             break;
         }
+
+        // SYNC_PRINT(("ConvexHull::GiftWrap(): next point (%lf %lf) with azimuth %lf\n", next.x(), next.y(), vmax));
+
+        toReturn.push_back(next);
+        current = next;
+        direction = nextDir;
+
+    } while (true);
+    return toReturn;
+}
+
+vector<uint> ConvexHull::GiftWrapId(const std::vector<Vector2dd> &list)
+{
+    vector<uint> toReturn;
+
+    if (list.empty())
+    {
+        // SYNC_PRINT(("ConvexHull::GiftWrap(): Input list in empty"));
+        return toReturn;
     }
-    while (idx < points.size()) {
-        MyVector temp(points[0], points[idx]);
-        idx++;
-        if (abs(pivot1 & (temp ^ pivot2)) > eps) {
-            pivot3 = temp;
-            simplex.push_back(points[idx - 1]);
-            swap(points[3], points[idx - 1]);
+    if (list.size() == 1)
+    {
+        // SYNC_PRINT(("ConvexHull::GiftWrap(): Input list has only one point"));
+        toReturn.push_back(0);
+        return toReturn;
+    }
+
+    /* Find one point in hull */
+    size_t minYId = 0;
+    double minY = list[0].y();
+    for (size_t i = 1; i < list.size(); i++)
+    {
+        if (list[i].y() < minY)
+        {
+            minY = list[i].y();
+            minYId = i;
+        }
+    }
+
+    // SYNC_PRINT(("ConvexHull::GiftWrap(): starting with point %i (%lf %lf)\n", minYId, list[minYId].x(), list[minYId].y() ));
+    toReturn.push_back(minYId);
+    Vector2dd direction = Vector2dd::OrtX();
+    Vector2dd current = list[minYId];
+
+    /* Wrap */
+    do {
+        size_t nextId = 0;
+        Vector2dd next;
+        Vector2dd nextDir(0.0);
+        double vmax = -std::numeric_limits<double>::max();
+
+        for (size_t i = 0; i < list.size(); i++)
+        {
+            const Vector2dd &point = list[i];
+
+            if (point == current)
+                continue;
+
+            Vector2dd dir1 = (point - current).normalised();
+            double v = direction & dir1;
+            // SYNC_PRINT(("Checking asimuth %lf\n", v));
+            if (v > vmax) {
+                vmax = v;
+                nextId =  i;
+                next = point;
+                nextDir = dir1;
+            }
+        }
+
+        /* That is exact same point. double equality is safe */
+        if (nextId == toReturn.front())
+        {
             break;
         }
-    }
-    double cX = .0;
-    double cY = .0;
-    double cZ = .0;
-    for (size_t i = 0; i < simplex.size(); ++i) {
-        cX += simplex[i].x();
-        cY += simplex[i].y();
-        cZ += simplex[i].z();
-    }
-    center = MyVector(cX / 4., cY / 4., cZ / 4.);
-    faces.insert(Face(simplex[0], simplex[1], simplex[2]));
-    faces.insert(Face(simplex[0], simplex[1], simplex[3]));
-    faces.insert(Face(simplex[0], simplex[2], simplex[3]));
-    faces.insert(Face(simplex[1], simplex[2], simplex[3]));
-    for (size_t i = 4; i < points.size(); ++i) {
-        set <pair<MyVector, MyVector>> visible;
-        set <pair<MyVector, MyVector>> inVisible;
-        vector<Face> toDel;
-        for (auto face : faces) {
-            if (face.isUnder(points[i], center)) {
-                visible.insert({face.p1(), face.p2()});
-                visible.insert({face.p1(), face.p3()});
-                visible.insert({face.p3(), face.p2()});
-                toDel.push_back(face);
-            } else {
-                inVisible.insert({face.p1(), face.p2()});
-                inVisible.insert({face.p1(), face.p3()});
-                inVisible.insert({face.p3(), face.p2()});
-            }
+        // SYNC_PRINT(("ConvexHull::GiftWrap(): next point (%lf %lf) with azimuth %lf\n", next.x(), next.y(), vmax));
+
+        toReturn.push_back(nextId);
+        current = next;
+        direction = nextDir;
+
+    } while (true);
+    return toReturn;
+}
+
+
+Polygon ConvexHull::GrahamScan(std::vector<Vector2dd> points)
+{
+    if (points.size() < 3)
+        return Polygon();
+
+    //find value with lowest y-coordinate
+    size_t idx = 0;
+    double yMin = std::numeric_limits<double>::max();
+    for (size_t i = 0; i < points.size(); i++)
+    {
+        bool less = points[i].y() < yMin;
+        less |= (points[i].y() == yMin) && (points[i].x() < points[idx].x());
+        if (less)
+        {
+            yMin = points[i].y();
+            idx = i;
         }
-        for (size_t i = 0; i < toDel.size(); ++i) {
-            faces.erase(toDel[i]);
+    }
+
+    //sort ascending polar angle around lowest y-coordinate value
+    std::swap(points[0], points[idx]);
+    std::sort(points.begin() + 1, points.end(), [=](const Vector2dd& a, const Vector2dd& b) -> bool
+        {
+            Vector2dd ab = b - a;
+            double polar = ccw(points[0], a, b);
+
+            if (polar != 0.0)
+                return (polar > 0);
+            else
+                return (ab.y() > 0);
         }
-        for (auto edge : inVisible) {
-            if (visible.find(edge) != visible.end()) {
-                faces.insert(Face(points[i], edge.first, edge.second));
+    );
+
+    /* Dedup */
+    auto last = std::unique(points.begin(), points.end());
+    points.erase(last, points.end());
+
+    //pass of Graham scan
+    Polygon hull;
+    hull.push_back(points[0]);
+    hull.push_back(points[1]);
+    for (size_t i = 2; i < points.size(); i++)
+    {
+        int M = (int)hull.size();
+        while (ccw(hull[M - 2], hull[M - 1], points[i]) < 0)
+        {
+            hull.pop_back();
+            M = (int)hull.size();
+            if (hull.size() < 2)
+                break;
+        }
+        hull.push_back(points[i]);
+    }
+
+    return hull;
+}
+
+Vector3dd ConvexHull::project(const Vector3dd &line, const Vector3dd &point)
+{
+    //cout << "ConvexDebug::project(" << line << ", " << point << ");" << endl;
+    Vector3dd normal = Vector3dd((line.z() > 0) ? line.xy() : -line.xy(), 0.0);
+    Vector3dd result = (normal ^ point) ^ line;
+    //cout << "Result:" << result << endl;
+    return result;
+}
+
+int ConvexHull::initalPoint(ProjectivePolygon &planes)
+{
+    int initId = 0;
+    Vector3dd currentPlane = planes[0];
+    Vector3dd initailPoint = project(currentPlane, Vector3dd::OrtZ());
+    if (initailPoint.z() < 0) initailPoint = -initailPoint;
+
+    for (size_t i = 1; i < planes.size(); i++)
+    {
+        Vector3dd newPlane = planes[i];
+        double v = initailPoint & newPlane;
+
+        /*Check if this plane doesn't additionally constrain the point*/
+        if (v > 0) {
+            continue;
+        }
+        initId = i;
+
+        /* Project points to new plane */
+        Vector3dd projected = project(newPlane, initailPoint);
+        if (projected.z() < 0) projected = -projected;
+
+        if ((projected & currentPlane) > 0) {
+            initailPoint = projected;
+            currentPlane = newPlane;
+        } else {
+            initailPoint = currentPlane ^ newPlane;
+            currentPlane = newPlane;
+            if (initailPoint.z() < 0) initailPoint = -initailPoint;
+        }
+    }
+    return initId;
+}
+
+
+int ConvexHull::secondPoint(ProjectivePolygon &points, int initalPoint)
+{
+    int sId = -1;
+
+    Vector3dd prev = points[initalPoint];
+    for (size_t i = 0; i < points.size(); i++)
+    {
+        if (i == initalPoint) {
+            continue;
+        }
+        Vector3dd normal = prev ^ points[i];
+        // cout << " " << i << " p:" << points[i] << " - " << normal << endl;
+
+        size_t j = 0;
+        for (; j < points.size(); j++)
+        {
+            // cout << "   " << j;
+            if (j == i || j == initalPoint) {
+                // cout << " skip" << endl;
                 continue;
             }
-            if (visible.find({edge.second, edge.first}) != visible.end()) {
-                faces.insert(Face(points[i], edge.first, edge.second));
-                continue;
-            }
-        }
-    }
-}
-
-void ConvexHull3D::print() {
-    for(auto face : faces) {
-        face.print();
-        cout << endl;
-    }
-}
-
-bool ConvexHullCalc::equals(const Vector3dd &U, Vector3dd &V) {
-    return (abs(V.x() - U.x()) < eps) && (abs(V.y() - U.y()) < eps) && (abs(V.z() - U.z()) < eps);
-}
-
-void ConvexHullCalc::deleteDuplicates() {
-    int size = (int)points.size();
-    for (int i = 0; i < size; ++i) {
-        for (int j = i + 1; j < size; ++j) {
-            if (equals(points[i], points[j])) {
-                points.erase(points.begin() + i);
-                size--;
-                i--;
+            double v = (normal & points[j]);
+            // cout << "  " << v << endl;
+            if (v < 0) {
                 break;
             }
         }
-    }
-}
-
-bool ConvexHullCalc::isTheSameLine() {
-    MyVector pivot(points[0], points[1]);
-    for (size_t i = 2; i < points.size(); ++i) {
-        MyVector temp(points[0], points[i]);
-        double product = pivot & temp;
-        product *= product;
-        if (abs(product - pivot.l2Metric() * temp.l2Metric()) > eps) {
-            return false;
-        }
-    }
-    return true;
-}
-
-bool ConvexHullCalc::isTheSamePlane() {
-    MyVector pivot1(points[0], points[1]);
-    MyVector pivot2(.0, .0, .0);
-    size_t idx = 2;
-    while (idx < points.size()) {
-        MyVector temp(points[0], points[idx]);
-        idx++;
-        double product = pivot1 & temp;
-        product *= product;
-        if (abs(product - pivot1.l2Metric() * temp.l2Metric()) > eps) {
-            pivot2 = temp;
+        if (j == points.size()) {
+            sId = i;
             break;
         }
     }
-    for (; idx < points.size(); ++idx) {
-        MyVector temp(points[0], points[idx]);
-        if (abs(pivot1 & (temp ^ pivot2)) > eps) {
-            return false;
-        }
+    return sId;
+}
+
+bool ConvexHull::GiftWrap(ProjectivePolygon &points, ProjectivePolygon &output, Mesh3D *debug)
+{
+    output.clear();
+
+    if (points.empty()) {
+        return false;
     }
+    if (points.size() == 1) {
+        output.push_back(points[0]);
+        return true;
+    }
+
+    /* Find one point in hull */
+    size_t iMin = initalPoint(points);
+    output.push_back(points[iMin]);
+    Vector3dd prev = points[iMin];
+
+    if (debug != NULL) debug->setColor(RGBColor::Amber());
+    if (debug != NULL) debug->addIcoSphere(prev.normalised(), 0.001);
+
+    /* Find second point in hull. A known interior point could save time here */
+    int i2Min = secondPoint(points, iMin);
+    if (i2Min == -1) {
+        return false;
+    }
+
+    Vector3dd current = points[i2Min];
+    output.push_back(points[i2Min]);
+    if (debug) {
+        SYNC_PRINT(("ConvexHull::GiftWrap(): second point (%d of %d) (%lf %lf %lf)\n",
+                (int)iMin, (int)points.size(),
+                current.x(), current.y(), current.z()));
+    }
+
+    /* Wrap */
+    do {
+        Vector3dd next = Vector3dd::Zero();
+        double vmax = std::numeric_limits<double>::lowest();
+
+        Vector3dd splane = current ^ prev;
+        /* Search for best point */
+        for (const Vector3dd &point : points)
+        {
+            if ((point.normalised() - current.normalised()).l2Metric() < 1e-7) {
+                continue;
+            }
+
+
+            Vector3dd p = point.normalised();
+            Vector3dd nplane = p ^ current;
+
+            double v = splane & nplane.normalised();            
+            cout << (v > 0 ? "+" : "-");
+            /*if (v < 0) {
+                return false;
+            }*/
+
+            // SYNC_PRINT(("(%lf %lf %lf) - %lf\n", point.x(), point.y(), point.z(), v));
+
+            if (v > vmax)
+            {
+                vmax = v;
+                next = point;
+            }
+        }
+
+        if ((next.normalised() - output.front().normalised()).l2Metric() < 1e-7) {
+            break;
+        }
+        // SYNC_PRINT(("ConvexHull::GiftWrap(): next point (%lf %lf %lf)\n", next.x(), next.y(), next.z()));
+
+        prev = current;
+        current = next;
+        output.push_back(next);     
+    } while (output.size());
     return true;
 }
 
-ConvexHullCalc::ConvexHullCalc(const vector<Vector3dd> &pointsIn, double epsIn) :
-    points(pointsIn),
-    eps(epsIn),
-    convexHull(NULL)
-{}
+ProjectivePolygon ConvexHull::GrahamScan(std::vector<Vector3dd> points)
+{
+    /* Need to be corrected*/
+    if (points.size() < 3)
+        return ProjectivePolygon();
 
-void ConvexHullCalc::calc() {
-    deleteDuplicates();
-    if (points.size() < 3) {
-        cout << "no points";
-        return; // it is point or segment
+    //find value with lowest y-coordinate
+    size_t iMin = 0;
+    double yMin = std::numeric_limits<double>::max();
+
+    for (size_t i = 0; i < points.size(); i++)
+    {
+        double ycost = points[i].normalised() & Vector3dd::OrtY();
+        if (ycost < yMin)
+        {
+            yMin = ycost;
+            iMin = i;
+        }
     }
 
-    if (isTheSameLine()) {
-        cout << "line";
-        return; // ll point on the same line
+    //cout << "Chosen point " << points[iMin] << endl;
+
+    //sort ascending polar angle around lowest y-coordinate value
+    std::swap(points[0], points[iMin]);
+    std::sort(points.begin() + 1, points.end(), [=](const Vector3dd& a, const Vector3dd& b) -> bool
+        {
+            Vector3dd ab = b - a;
+            double polar = ccwProjective(points[0], a, b);
+
+            if (polar != 0.0)
+                return (polar > 0);
+            else
+                return (ab.y() > 0);
+        }
+    );
+
+    /* Dedup */
+    auto last = std::unique(points.begin(), points.end());
+    points.erase(last, points.end());
+
+    //pass of Graham scan
+    ProjectivePolygon hull;
+    hull.push_back(points[0]);
+    hull.push_back(points[1]);
+    for (size_t i = 2; i < points.size(); i++)
+    {
+        int M = (int)hull.size();
+        while (ccwProjective(hull[M - 2], hull[M - 1], points[i]) < 0)
+        {
+            hull.pop_back();
+            M = (int)hull.size();
+            if (hull.size() < 2)
+                break;
+        }
+        hull.push_back(points[i]);
     }
 
-    if (isTheSamePlane()) {
-        cout << "2d" << endl;
-        convexHull = new ConvexHull2D(points);
-        return;
-    }
-    cout << "3d" << endl;
-    convexHull = new ConvexHull3D(points, eps);
+    return hull;
 }
 
-ConvexHullResult* ConvexHullCalc::getHull() {
-    return convexHull;
+
+Polygon ConvexHull::ConvexHullCompute(std::vector<Vector2dd> points, ConvexHull::ConvexHullMethod &method)
+{
+    switch (method) {
+    case ConvexHullMethod::GIFT_WARP:
+        return ConvexHull::GiftWrap(points);
+        break;
+    default:
+        return ConvexHull::GrahamScan(points);
+        break;
+    }
+}
+
+
+/** Template methods **/
+/**
+ *  Still under development
+ **/
+
+template<typename PointType>
+Polygon ConvexHull::GrahamScan(std::vector<PointType> points)
+{
+    if (points.size() < 3)
+        return Polygon();
+
+    //find value with lowest y-coordinate
+    size_t idx = 0;
+    double yMin = std::numeric_limits<double>::max();
+    for (size_t i = 1; i < points.size(); i++)
+    {
+        bool less = points[i].y() < yMin;
+        less |= (points[i].y() == yMin) && (points[i].x() < points[idx].x());
+        if (less)
+        {
+            yMin = points[i].y();
+            idx = i;
+        }
+    }
+
+    //sort ascending polar angle around lowest y-coordinate value
+    std::swap(points[0], points[idx]);
+    std::sort(points.begin() + 1, points.end(), [=](const Vector2dd& a, const Vector2dd& b) -> bool
+        {
+            Vector2dd ab = b - a;
+            double polar = ccw(points[0], a, b);
+
+            if (polar != 0.0)
+                return (polar > 0);
+            else
+                return (ab.y() > 0);
+        }
+    );
+
+    /* Dedup */
+    auto last = std::unique(points.begin(), points.end());
+    points.erase(last, points.end());
+
+    //pass of Graham scan
+    Polygon hull;
+    hull.push_back(points[0]);
+    hull.push_back(points[1]);
+    for (size_t i = 2; i < points.size(); i++)
+    {
+        int M = (int)hull.size();
+        while (ccw(hull[M - 2], hull[M - 1], points[i]) < 0)
+        {
+            hull.pop_back();
+            M = (int)hull.size();
+            if (hull.size() < 2)
+                break;
+        }
+        hull.push_back(points[i]);
+    }
+
+    return hull;
 }
 

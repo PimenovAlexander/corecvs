@@ -31,6 +31,9 @@ HEADERS += \
     $$PWD/kdtree.h \
     $$PWD/beziercurve.h \
     $$PWD/raytrace/bspTree.h \
+    $$PWD/convexHull3d.h \
+    $$PWD/triangle.h \
+    $$PWD/planeFrame.h
 
 
 SOURCES += \ 
@@ -59,7 +62,10 @@ SOURCES += \
     \
     $$PWD/halfspaceIntersector.cpp \
     $$PWD/orientedBox.cpp \
-    $$PWD/plane.cpp
+    $$PWD/plane.cpp \
+    $$PWD/convexHull3d.cpp \
+    $$PWD/triangle.cpp \
+    $$PWD/planeFrame.cpp
 
 CONFIG += with_renderer
 

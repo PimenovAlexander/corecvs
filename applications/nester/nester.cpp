@@ -689,5 +689,3 @@ void showPolygon(const Polygon &A)
         cout << A.getPoint(i).x() <<" " << A.getPoint(i).y() << endl;
     }
 }
-
-

@@ -19,12 +19,38 @@
 using namespace corecvs;
 using namespace std;
 
+
 //for some reason header do not see list
 
 void bottomLeftPlacement(list <corecvs :: Polygon> &inp, corecvs :: Rectangled &Bin);
 void bottomLeftPlacementProtected(list <corecvs :: Polygon> &inp, corecvs :: Rectangled &Bin, int i = 1);
 void drawPolygons(list <Polygon> inputPolygons, int h, int w, string bmpname);
 void drawSvgPolygons(list <Polygon> inputPolygons, int h, int w, string svgName);
+int getTopRightIndex(const Polygon &A);
+//bool testDisjoint(std::vector<Polygon> &inputPolygons)
+//{
+//    std::vector<ConvexPolygon> cpl;
+//    cpl.reserve(inputPolygons.size());
+//    for (Polygon &p : inputPolygons)
+//    {
+//        ConvexPolygon cp = p.toConvexPolygon();
+//        cp.inset(0.1);
+//        cpl.push_back(cp);
+//    }
+
+//    for (size_t i = 0; i < cpl.size(); i++)
+//    {
+//        for (size_t j = i + 1; j < cpl.size(); j++)
+//        {
+//            ConvexPolygon &cp1 = cpl[i];
+//            ConvexPolygon &cp2 = cpl[j];
+
+//            ConvexPolygon cp3 = ConvexPolygon::intersect(cp1, cp2);
+//        }
+//    }
+
+//}
+
 
 
 
@@ -41,7 +67,11 @@ TEST(Nester, twoRectanges)
 
     bottomLeftPlacementProtected(inpList, area, 3);
 
+
     drawSvgPolygons(inpList, area.height(), area.width(), "out.svg");
+
+
+
 }
 
 TEST(Nester, manyRectanges)
@@ -54,7 +84,9 @@ TEST(Nester, manyRectanges)
     Vector2dd B(2, 10);
     Vector2dd C(20, 0);
 
+
     Polygon someTriangle = {A,B,C};
+
 
 
 
@@ -71,16 +103,19 @@ TEST(Nester, manyRectanges)
 
 
 
+
     drawSvgPolygons(inpList, area.height(), area.width(), "in1.svg");
 
     bottomLeftPlacementProtected(inpList, area, 4);
 
     drawSvgPolygons(inpList, area.height(), area.width(), "out1.svg");
 
+
 }
 
 TEST(Nester, nfp) //both figures must be right-oriented, or use doClockOrientation(Polygon)
 {
+
 
 
 
@@ -101,6 +136,8 @@ TEST(Nester, nfp) //both figures must be right-oriented, or use doClockOrientati
 
     list <Polygon> p = {nfpTestResult1, nfpTestA, nfpTestB, d};
     drawPolygons(p, 100, 100, "nfp1.bmp"); //does not draw last edge of nfp,  so d show that its all ok
+
+
 
 }
 
