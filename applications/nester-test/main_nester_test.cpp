@@ -19,66 +19,89 @@
 using namespace corecvs;
 using namespace std;
 
+//for some reason header do not see list
+
+void bottomLeftPlacement(list <corecvs :: Polygon> &inp, corecvs :: Rectangled &Bin);
+void bottomLeftPlacementProtected(list <corecvs :: Polygon> &inp, corecvs :: Rectangled &Bin, int i = 1);
+void drawPolygons(list <Polygon> inputPolygons, int h, int w, string bmpname);
+void drawSvgPolygons(list <Polygon> inputPolygons, int h, int w, string svgName);
+
+
+
 TEST(Nester, twoRectanges)
 {
-    Rectangled area (0, 0, 80, 40);
+    Rectangled area (0, 0, 200, 100);
 
-    vector<Polygon> inp = {
+    list <Polygon> inpList = {
         Polygon::RegularPolygon(6, Vector2dd::Zero(), 20, 0),
         Polygon::RegularPolygon(7, Vector2dd::Zero(), 20, 0)
     };
 
-    drawSvgPolygons(inp, area.height(), area.width(), "in.svg");
+    drawSvgPolygons(inpList, area.height(), area.width(), "in.svg");
 
-    LazySort(inp);
+    bottomLeftPlacementProtected(inpList, area, 3);
 
-    for(auto &p : inp)
-    {
-        DoClockOrP(p);
-        LowerMassCenter(p);
-    }
-
-    BLPlacement(area, inp); //всякие защиты от пустых множеств отсутствуют
-
-
-    drawSvgPolygons(inp, area.height(), area.width(), "out.svg");
+    drawSvgPolygons(inpList, area.height(), area.width(), "out.svg");
 }
 
 TEST(Nester, manyRectanges)
 {
-    Rectangled area (0, 0, 1000, 1000);
+    Rectangled area (0, 0, 200, 200); //1000, 1000 46
 
-    vector<Polygon> inp;
-    for ( int i = 0; i < 200; i++)
+    list<Polygon> inpList;
+
+    Vector2dd A(0,0);
+    Vector2dd B(2, 10);
+    Vector2dd C(20, 0);
+
+    Polygon someTriangle = {A,B,C};
+
+
+
+    for ( int i = 0; i < 30; i++) //46 is bad
     {
-        inp.push_back(Polygon::RegularPolygon(4, Vector2dd::Zero(), 20, degToRad(i)));
+        auto Pol = Polygon::RegularPolygon(4, Vector2dd::Zero(), 20, degToRad(i));
+        inpList.push_back(Pol);
     }
 
-    drawSvgPolygons(inp, area.height(), area.width(), "in1.svg");
-
-    LazySort(inp);
-
-    for(auto &p : inp)
+    for(int i = 0; i < 20; ++i)
     {
-        DoClockOrP(p);
-        LowerMassCenter(p);
+        inpList.push_back(someTriangle);
     }
 
-    BLPlacement(area, inp);
 
 
-    drawSvgPolygons(inp, area.height(), area.width(), "out1.svg");
+    drawSvgPolygons(inpList, area.height(), area.width(), "in1.svg");
+
+    bottomLeftPlacementProtected(inpList, area, 4);
+
+    drawSvgPolygons(inpList, area.height(), area.width(), "out1.svg");
+
 }
 
-TEST(Nester, nfp)
+TEST(Nester, nfp) //both figures must be right-oriented, or use doClockOrientation(Polygon)
 {
-    Polygon A = Polygon::RegularPolygon(3, Vector2dd(50, 50), 10, 0);
-    Polygon B = Polygon::FromRectagle(Rectangled());
 
-    Polygon C = nfp(A, B);
-    cout << C << endl;
-    vector<Polygon> p = { C };
-    drawPolygons(p, 100, 100, "nfp1.bmp");
+
+
+
+    Polygon nfpTestB = {{4,2}, {2,2}, {1,3}, {1,5}, {5, 3.5}};//ClockOrintated
+    Polygon nfpTestA = {{4, 0}, {3, -0.5}, {2, -1}, {2, 1}}; //ClockOrintated
+
+
+
+    Polygon nfpTestResult1 = convexNFP(nfpTestA, nfpTestB);
+
+    int indWhere = getTopRightIndex(nfpTestResult1);
+    int indFrom = getTopRightIndex(nfpTestA);
+    nfpTestA.translate(nfpTestResult1.getPoint(indWhere) - nfpTestA.getPoint(indFrom));
+
+    auto d = nfpTestResult1;
+    d.translate({-5, -5});
+
+    list <Polygon> p = {nfpTestResult1, nfpTestA, nfpTestB, d};
+    drawPolygons(p, 100, 100, "nfp1.bmp"); //does not draw last edge of nfp,  so d show that its all ok
+
 }
 
 
@@ -87,7 +110,6 @@ int main(int argc, char **argv)
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
-
 
 
 
