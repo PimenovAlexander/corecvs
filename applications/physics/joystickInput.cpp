@@ -141,6 +141,7 @@ void JoyStickInput::startJoyStickMode()
             std::cout<<"JS mode has started"<<std::endl;
             while (readEvent(js, &eventtt) == 0)
             {
+                setStopEventStatus(true);
                 autopilotMode=false;
                 switch (eventtt.type)
                 {
@@ -212,19 +213,24 @@ void JoyStickInput::startJoyStickMode()
 
 void JoyStickInput::updateOutput()
 {
-    if (!mutexActive)
-    {
-        mutexActive=true;
-        output.axis[0]=throttleValue;
-        output.axis[1]=rollValue;
-        output.axis[2]=pitchValue;
-        output.axis[3]=yawValue;
-        output.axis[4]=CH5Value;
-        output.axis[5]=CH6Value;
-        output.axis[6]=CH7Value;
-        output.axis[7]=CH8Value;
-        mutexActive=false;
-    }
+    outputMutex.lock();
+    output.axis[0]=throttleValue;
+    output.axis[1]=rollValue;
+    output.axis[2]=pitchValue;
+    output.axis[3]=yawValue;
+    output.axis[4]=CH5Value;
+    output.axis[5]=CH6Value;
+    output.axis[6]=CH7Value;
+    output.axis[7]=CH8Value;
+    outputMutex.unlock();
+}
+
+CopterInputs JoyStickInput::getOutput()
+{
+    outputMutex.lock();
+    CopterInputs result = output;
+    outputMutex.unlock();
+    return result;
 }
 
 void JoyStickInput::usualButtons(js_event event)
@@ -356,6 +362,21 @@ void JoyStickInput::usualSticks(js_event event)
 
 
     }
+}
+
+bool JoyStickInput::getStopEventStatus()
+{
+    stopEventMutex.lock();
+    bool result = stopEvent;
+    stopEventMutex.unlock();
+    return result;
+}
+
+void JoyStickInput::setStopEventStatus(bool b)
+{
+    stopEventMutex.lock();
+    stopEvent = b;
+    stopEventMutex.unlock();
 }
 
 void JoyStickInput::inertialButtons(js_event event)

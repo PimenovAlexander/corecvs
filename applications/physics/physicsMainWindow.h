@@ -204,6 +204,9 @@ private slots:
 
     void CalibrateCamera();
     void LoadCalibrationSettings();
+
+    void on_iiOutputSlider_valueChanged(int value);
+
 private:
     struct Message {
         int throttle;
@@ -235,6 +238,8 @@ private:
     };
     CopterInputs joyStickOutput;                                  //for joystickValues
     CopterInputs iiOutput;                                        //for autopilot values
+    CopterInputs mainOutput;
+    CopterInputs failSafeOutput;
 
     int throttleValueFromJS = 1500;
     int midThrottle = 1350;
@@ -268,10 +273,11 @@ private:
     ClientSender virtualSender;
 
     int countOfSticks = 0;
-
+    int outputType = 0;
     bool autopilotMode = false;
     stack<Message> autopilotStack;
 
+    bool setOutputType(int i);
 };
 
 #endif // PHYSICSMAINWINDOW_H

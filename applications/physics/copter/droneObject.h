@@ -12,17 +12,7 @@
 #include "core/math/vector/vector3d.h"
 
 #include "physMainObject.h"
-
-
-class PID
-{
-public:
-    double P,I,D;
-    double prevError = 0.0;
-    double sumOfError = 0.0;
-    PID(double p, double i, double d);
-};
-
+#include "pid.h"
 
 class Sensor
 {

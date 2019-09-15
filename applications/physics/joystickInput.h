@@ -16,12 +16,11 @@ public:
     virtual ~JoyStickInput() {};
 
     struct AxisState { short x, y; };
-
-    CopterInputs output;
+    CopterInputs getOutput();
 
     void start();
     bool active=false;
-    bool mutexActive=false;
+
     void setUsualCurrentMode();
     void setInertiaCurrentMode();
     void setCasualCurrentMode();
@@ -34,7 +33,15 @@ public:
     void updateOutput();
     void extreamRtSticks(js_event event);
     void setRTLTExtreamMode();
+
+    std::mutex stopEventMutex;
+    bool getStopEventStatus();
+    void setStopEventStatus(bool b);
 private:
+    bool stopEvent = false;   //any key press will return control to the JS
+
+    CopterInputs output;
+    std::mutex outputMutex;
     std::mutex setThrottleMutex;
     int throttleValueFromJS;
     int midThrottle=1350;

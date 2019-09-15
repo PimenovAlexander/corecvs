@@ -35,6 +35,12 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
     mCameraModel.nameId = "Copter Main Camera";
     mModelParametersWidget.setParameters(mCameraModel);
 
+    for (int i=0;i<8;i++)
+    {
+        failSafeOutput.axis[i] = 1500;
+    }
+    failSafeOutput.axis[failSafeOutput.CHANNEL_THROTTLE] = 1300;
+
     /* Move this to other thread completly */
     /**
     copterTimer.setInterval(30);
@@ -244,8 +250,8 @@ void PhysicsMainWindow::startVirtualMode()
         simSim.start();
         */
 
-    //simSim.startRealTimeSimulation();
-    simSim.execTestSimulation();
+    simSim.startRealTimeSimulation();
+    //simSim.execTestSimulation();
 
     QTimer::singleShot(8, this, SLOT(keepAlive()));
 }
@@ -467,6 +473,10 @@ void PhysicsMainWindow::startRealMode()                                    //sta
     {
         ComController.bindToRealDrone();
     }
+    else
+    {
+        std::cout<<"can not open RealMode"<<std::endl;
+    }
 }
 
 void PhysicsMainWindow::stop()
@@ -503,12 +513,51 @@ void PhysicsMainWindow::startJoyStickMode()
     joystick1.start();
     currentSendMode=0;
     QTimer::singleShot(8, this, SLOT(keepAliveJoyStick()));
-
 }
+
+
 
 void PhysicsMainWindow::keepAliveJoyStick()
 {
-    if (joystick1.active)                             //Yes, indeed. We can not turn on autopiot without a joyStick.
+    if (joystick1.getStopEventStatus() && outputType == 1)
+    {
+        setOutputType(-1);
+    }
+    if (joystick1.active)
+    {
+        joyStickOutput = joystick1.getOutput();
+    }
+    if (iiAutoPilot.active)
+    {
+        iiOutput = iiAutoPilot.getOutput();
+    }
+    switch (outputType) {
+        case -1:
+            mainOutput = joyStickOutput;
+            //std::cout<<"joyStickMode = -1"<<std::endl;
+            break;
+        case 0:
+            mainOutput = failSafeOutput; //may be should put some stop/default value to CopterInputs
+            //std::cout<<"joyStickMode = 0"<<std::endl;
+            break;
+        case 1:
+            mainOutput = iiOutput;
+            //std::cout<<"joyStickMode = 1"<<std::endl;
+            break;
+    }
+
+    ComController.input = mainOutput;
+    simSim.droneJoystick = mainOutput;
+
+    if (frameCounter%4==0)
+    {
+        ui->inputsWidget->updateState(mainOutput);
+        frameCounter=0;
+    }
+    frameCounter++;
+    //ui->inputsWidget->updateState(joystick1.output);
+    QTimer::singleShot(8, this, SLOT(keepAliveJoyStick()));
+    /*if (joystick1.active)                             //Yes, indeed. We can not turn on autopiot without a joyStick.
     {
         if (!joystick1.mutexActive)
         {
@@ -556,7 +605,7 @@ void PhysicsMainWindow::keepAliveJoyStick()
     //ui->inputsWidget->updateState(joystick1.output);
     QTimer::singleShot(8, this, SLOT(keepAliveJoyStick()));
 
-    }
+    }*/
 }
 
 void PhysicsMainWindow::joystickUpdated(JoystickState state)
@@ -621,8 +670,8 @@ void PhysicsMainWindow::mainAction()
     mGraphDialog.update();
 **/
 
-    drone.flightControllerTick(joystick1.output);
-
+    //drone.flightControllerTick(joystick1.getOutput());
+    drone.flightControllerTick(mainOutput);
     drone.physicsTick(0.1);
 
 
@@ -818,7 +867,7 @@ void PhysicsMainWindow::on_toolButton_2_released()
 
     if (!iiAutoPilot.active)
     {
-        iiAutoPilot = ProtoAutoPilot();
+        //iiAutoPilot = ProtoAutoPilot();              //mutex is not copyable
         iiAutoPilot.start();
     }
 }
@@ -855,5 +904,51 @@ void PhysicsMainWindow::LoadCalibrationSettings()
         fs["distCoeffs"]>>distCoeffs;
         calib.setIntrinsicMat(intrinsic);
         calib.setDistCoeffsMat(distCoeffs);
+    }
+}
+
+
+
+bool PhysicsMainWindow::setOutputType(int i)
+{
+    bool result = false;
+    switch (i) {
+        case -1:
+            if (joystick1.active)
+            {
+                outputType = i;
+                result = !result;
+            }
+            break;
+        case 0:
+            outputType = 0;
+            result = !result;
+            break;
+        case 1:
+            if (iiAutoPilot.active)
+            {
+                joystick1.setStopEventStatus(false);
+                outputType = i;
+                result = !result;
+            }
+            break;
+    }
+    std::cout<<"switch ___"<<i<<std::endl;
+    if (result)
+    {
+        ui->iiOutputSlider->setValue(i);
+    }
+    return result;
+}
+
+void PhysicsMainWindow::on_iiOutputSlider_valueChanged(int value)
+{
+    if (value != outputType)
+    {
+        std::cout<<"switch ___"<<std::endl;
+        if (!setOutputType(value))
+        {
+            ui->iiOutputSlider->setValue(0);
+        }
     }
 }

@@ -12,6 +12,7 @@
 #include <bits/stl_queue.h>
 #include <queue>
 #include <QtGui/qimage.h>
+#include <mutex>
 
 #include <opencv2/features2d/features2d.hpp>
 
@@ -23,7 +24,7 @@ public:
     ProtoAutoPilot();
     void makeStrategy(QSharedPointer<QImage> im);
     QSharedPointer<QImage> outputImage;
-    CopterInputs output;
+
     /*CopterInputs output()
     {
         CopterInputs result=outputs.front();
@@ -39,7 +40,7 @@ public:
     void start();
     void testImageVoid();
     void odinOdometryTest();
-
+    CopterInputs getOutput();
     QSharedPointer<QImage> mat2QImage(const cv::Mat &src);
     cv::Mat QImage2Mat(const QImage &srcc);
     VertexSquare getVertexSquareFromMat(const cv::Mat input);
@@ -47,12 +48,24 @@ public:
     void setCalibration(Calibration c);
     ProtoAutoPilot::Calibration getCalibration();
 private:
-    PID throttlePID{0.7, 0.35, 0.35};
-    PID pitchPID{0.7, 0.35, 0.35};
-    PID rollPID{0.7, 0.35, 0.35};
-    PID yawPID{0.7, 0.35, 0.35};
+    CopterInputs output;
+    std::mutex outputMutex;
+    void setOutput(CopterInputs copterinputs);
+    std::chrono::high_resolution_clock::time_point lastTime;
 
-    bool testMode = false;                              //put false to use drone
+    double minPidValue = 900;
+    double maxPidValue = 1750;
+
+    Vector3dd targetPoint{0,0,0};
+
+    PID throttlePID { minPidValue , maxPidValue,0.7, 0.45, 0.3};
+    PID pitchPID    { minPidValue , maxPidValue,0.7, 0.35, 0.35};
+    PID rollPID     { minPidValue , maxPidValue ,0.7, 0.35, 0.35};
+    PID yawPID      { minPidValue , maxPidValue ,0.7, 0.35, 0.35};
+                                                               //// testModes (i do not want crash the copter)
+    bool testMode = false;
+    bool outputTestMode = true;
+    //put false to use drone
     int frameHeight=480;
     int frameWidth=640;
     int squarePerimeter = 120*4;  //perimetr that seen from (0,0)
@@ -74,6 +87,7 @@ private:
     bool drawSquares(std::vector<std::vector<cv::Point> > squares, cv::Mat image, VertexSquare *vertexSquare);
     bool findSquares(const cv::Mat &image, vector<vector<cv::Point> > &squares);
     QImage mat2RealQImage(const cv::Mat &src);
+    void calculateOutput(double throttle, double pitch, double roll, double yaw);
 };
 
 #endif // PROTOAUTOPILOT_H

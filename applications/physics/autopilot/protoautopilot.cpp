@@ -4,6 +4,8 @@
 #include "bits/stdc++.h"
 #include <QtGui/qimage.h>
 #include "vertexsquare.h"
+#include <mutex>
+#include <chrono>
 
 #include <QFileInfo>
 #include <QSharedPointer>
@@ -180,12 +182,23 @@ void ProtoAutoPilot::changeImage(QSharedPointer<QImage> inputImage)
         int throttleDelta = vertexSquare.edges[1] - vertexSquare.edges[3];
         int yawDelta = frameHeight - vertexSquare.centre[1];           //image was resized, 2 decreased                                              //here comes the PID
 
+        std::chrono::high_resolution_clock::time_point newTime = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> timeSpan = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-lastTime);
+        lastTime = newTime;
+        double throttleCommand = throttlePID.calculate(timeSpan.count(),throttleDelta,targetPoint.z());
+        double pitchCommand = throttlePID.calculate(timeSpan.count(),pitchDelta,targetPoint.x());
+        double rollCommand = throttlePID.calculate(timeSpan.count(),rollDelta,targetPoint.y());
+        double yawCommand = throttlePID.calculate(timeSpan.count(),yawDelta,0);         //we want the square to be centered
 
-
+        if (throttleCommand > 1700){throttleCommand = 1700;}
+        if (pitchCommand > 1700){pitchCommand = 1700;}
+        if (rollCommand > 1700){pitchCommand = 1700;}
+        if (yawCommand > 1700){pitchCommand = 1700;}
+        calculateOutput(throttleCommand,pitchCommand,rollCommand,yawCommand);
     }
     else
     {
-        output = failSafe;
+       //setOutput(failSafe);
     }
 
     //cv::circle(mat2,cv::Point(300,300),40,cv::Scalar(255,255,255));
@@ -199,7 +212,40 @@ void ProtoAutoPilot::changeImage(QSharedPointer<QImage> inputImage)
     outputImage->save("output___1.jpg");
 }
 
+void ProtoAutoPilot::calculateOutput(double throttle, double pitch,double roll,double yaw )
+{
+    CopterInputs copterInputs;
+    if (!outputTestMode)
+    {
+        copterInputs.axis[0] = throttle;
+        copterInputs.axis[1] = roll;
+        copterInputs.axis[2] = pitch;
+        copterInputs.axis[3] = yaw;
+    }
+    else
+    {
+        copterInputs.axis[0] = 1350;
+        copterInputs.axis[1] = 1500;
+        copterInputs.axis[2] = 1500;
+        copterInputs.axis[3] = 1700;
+    }
+    setOutput(copterInputs);
+}
 
+void ProtoAutoPilot::setOutput(CopterInputs copterinputs)
+{
+    outputMutex.lock();
+    output = copterinputs;
+    outputMutex.unlock();
+}
+
+CopterInputs ProtoAutoPilot::getOutput()
+{
+    outputMutex.lock();
+    CopterInputs result = output;
+    outputMutex.unlock();
+    return result;
+}
 
 QSharedPointer<QImage> ProtoAutoPilot::mat2QImage(cv::Mat const &src)     // B<->R
 {

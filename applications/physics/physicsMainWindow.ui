@@ -179,7 +179,7 @@
         <string>connect to real device</string>
        </property>
        <property name="icon">
-        <iconset resource="../../resources/main.qrc">
+        <iconset>
          <normaloff>:/new/prefix1/connect.png</normaloff>:/new/prefix1/connect.png</iconset>
        </property>
        <property name="iconSize">
@@ -199,7 +199,7 @@
         <string>connect to virtual</string>
        </property>
        <property name="icon">
-        <iconset resource="../../resources/main.qrc">
+        <iconset>
          <normaloff>:/new/prefix1/server_connect.png</normaloff>:/new/prefix1/server_connect.png</iconset>
        </property>
        <property name="iconSize">
@@ -220,7 +220,7 @@
 (press any js key to stop)</string>
        </property>
        <property name="icon">
-        <iconset resource="../../resources/main.qrc">
+        <iconset>
          <normaloff>:/new/prefix1/robot.png</normaloff>:/new/prefix1/robot.png</iconset>
        </property>
        <property name="iconSize">
@@ -240,7 +240,7 @@
         <string>imTest</string>
        </property>
        <property name="icon">
-        <iconset resource="../../resources/main.qrc">
+        <iconset>
          <normaloff>:/new/colors/colors/color_blue.png</normaloff>:/new/colors/colors/color_blue.png</iconset>
        </property>
       </widget>
@@ -251,7 +251,7 @@
         <string>JoyStick mode</string>
        </property>
        <property name="icon">
-        <iconset resource="../../resources/main.qrc">
+        <iconset>
          <normaloff>:/new/prefix1/controller.png</normaloff>:/new/prefix1/controller.png</iconset>
        </property>
        <property name="iconSize">
@@ -262,6 +262,33 @@
        </property>
        <property name="toolButtonStyle">
         <enum>Qt::ToolButtonTextUnderIcon</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Output from JS</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSlider" name="iiOutputSlider">
+       <property name="minimum">
+        <number>-1</number>
+       </property>
+       <property name="maximum">
+        <number>1</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Output from II</string>
        </property>
       </widget>
      </item>
@@ -289,7 +316,7 @@
   </widget>
   <action name="actionAbout">
    <property name="icon">
-    <iconset resource="../../resources/main.qrc">
+    <iconset>
      <normaloff>:/new/prefix1/info_rhombus.png</normaloff>:/new/prefix1/info_rhombus.png</iconset>
    </property>
    <property name="text">
@@ -298,7 +325,7 @@
   </action>
   <action name="actionCameraInput">
    <property name="icon">
-    <iconset resource="../../resources/main.qrc">
+    <iconset>
      <normaloff>:/new/prefix1/webcam_add.png</normaloff>:/new/prefix1/webcam_add.png</iconset>
    </property>
    <property name="text">
@@ -307,7 +334,7 @@
   </action>
   <action name="actionCameraStart">
    <property name="icon">
-    <iconset resource="../../resources/main.qrc">
+    <iconset>
      <normaloff>:/new/prefix1/play.png</normaloff>:/new/prefix1/play.png</iconset>
    </property>
    <property name="text">
@@ -316,7 +343,7 @@
   </action>
   <action name="actionCameraPause">
    <property name="icon">
-    <iconset resource="../../resources/main.qrc">
+    <iconset>
      <normaloff>:/new/prefix1/pause.png</normaloff>:/new/prefix1/pause.png</iconset>
    </property>
    <property name="text">
@@ -325,7 +352,7 @@
   </action>
   <action name="actionCameraStop">
    <property name="icon">
-    <iconset resource="../../resources/main.qrc">
+    <iconset>
      <normaloff>:/new/prefix1/stop_2.png</normaloff>:/new/prefix1/stop_2.png</iconset>
    </property>
    <property name="text">
@@ -334,7 +361,7 @@
   </action>
   <action name="actionJoystickParameters">
    <property name="icon">
-    <iconset resource="../../resources/main.qrc">
+    <iconset>
      <normaloff>:/new/prefix1/joystick_error.png</normaloff>:/new/prefix1/joystick_error.png</iconset>
    </property>
    <property name="text">
@@ -343,7 +370,7 @@
   </action>
   <action name="actionCameraModel">
    <property name="icon">
-    <iconset resource="../../resources/main.qrc">
+    <iconset>
      <normaloff>:/new/prefix1/webcam_add.png</normaloff>:/new/prefix1/webcam_add.png</iconset>
    </property>
    <property name="text">
@@ -355,7 +382,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../resources/main.qrc">
+    <iconset>
      <normaloff>:/new/prefix1/flag_start.png</normaloff>:/new/prefix1/flag_start.png</iconset>
    </property>
    <property name="text">
@@ -370,7 +397,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../resources/main.qrc">
+    <iconset>
      <normaloff>:/new/prefix1/application_view_list.png</normaloff>:/new/prefix1/application_view_list.png</iconset>
    </property>
    <property name="text">
@@ -379,7 +406,7 @@
   </action>
   <action name="actionCameraCaptureParamteres">
    <property name="icon">
-    <iconset resource="../../resources/main.qrc">
+    <iconset>
      <normaloff>:/new/prefix1/cctv_camera.png</normaloff>:/new/prefix1/cctv_camera.png</iconset>
    </property>
    <property name="text">
@@ -423,9 +450,7 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../../resources/main.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>actionShowLog</sender>
