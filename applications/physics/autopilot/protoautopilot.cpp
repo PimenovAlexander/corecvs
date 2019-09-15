@@ -7,6 +7,7 @@
 
 #include <QFileInfo>
 #include <QSharedPointer>
+#include <droneObject.h>
 #include <opencv2/opencv.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
@@ -44,7 +45,7 @@ ProtoAutoPilot::ProtoAutoPilot()
 }
 
 
-void ProtoAutoPilot::start()   //first QImage2Mat will be broken?!, other - good
+void ProtoAutoPilot::start()   //
 {
     debugCounter=0;
     //testImageVoid();
@@ -175,9 +176,10 @@ void ProtoAutoPilot::changeImage(QSharedPointer<QImage> inputImage)
     if (drawSquares(squares,mat2,&vertexSquare))
     {
         int rollDelta = vertexSquare.edges[0] - vertexSquare.edges[2];
-        int pitchDelta ;
+        int pitchDelta = squarePerimeter - vertexSquare.perimetr;
         int throttleDelta = vertexSquare.edges[1] - vertexSquare.edges[3];
-        int yawDelta;                                                         //here comes the PID
+        int yawDelta = frameHeight - vertexSquare.centre[1];           //image was resized, 2 decreased                                              //here comes the PID
+
 
 
     }
@@ -381,7 +383,7 @@ void ProtoAutoPilot::testImageVoid()
     cv::Mat mat1;
     cv::resize(mat,mat1,mat.size()*2);
     findSquares(mat1,squares);
-    drawSquares(squares,mat1);
+    //drawSquares(squares,mat1);
     cv::imshow("result",mat1);
  }
 

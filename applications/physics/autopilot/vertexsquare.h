@@ -25,7 +25,8 @@ public:
     //      +---+
     //  (0,0) 3 (1,0)
     int edges [4];
-
+    int perimetr;
+    int centre[2];
     vector<vector<int>> squareVertex;
     VertexSquare(int a0, int a1, int b0, int b1, int c0, int c1, int d0, int d1);
     void sortVertex();

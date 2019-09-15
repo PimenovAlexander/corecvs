@@ -15,6 +15,8 @@
 
 #include <opencv2/features2d/features2d.hpp>
 
+#include <droneObject.h>
+
 class ProtoAutoPilot
 {
 public:
@@ -45,7 +47,15 @@ public:
     void setCalibration(Calibration c);
     ProtoAutoPilot::Calibration getCalibration();
 private:
-    bool testMode = true;
+    PID throttlePID{0.7, 0.35, 0.35};
+    PID pitchPID{0.7, 0.35, 0.35};
+    PID rollPID{0.7, 0.35, 0.35};
+    PID yawPID{0.7, 0.35, 0.35};
+
+    bool testMode = false;                              //put false to use drone
+    int frameHeight=480;
+    int frameWidth=640;
+    int squarePerimeter = 120*4;  //perimetr that seen from (0,0)
     //for memory
     CopterInputs failSafe;
     cv::Mat temp;

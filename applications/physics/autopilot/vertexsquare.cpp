@@ -65,6 +65,18 @@ void VertexSquare::setEdges()
                     +(squareVertex.at(2).at(0) - squareVertex.at(1).at(0))*(squareVertex.at(2).at(0) - squareVertex.at(1).at(0)));
     edges[3] = sqrt((squareVertex.at(3).at(1) - squareVertex.at(0).at(1))*(squareVertex.at(3).at(1) - squareVertex.at(0).at(1))
                     +(squareVertex.at(3).at(0) - squareVertex.at(0).at(0))*(squareVertex.at(3).at(0) - squareVertex.at(0).at(0)));
+    perimetr = 0;
+    centre[0] = 0;
+    centre[1] = 0;
+    for (int i=0;i<4;i++)
+    {
+        perimetr += edges[i];
+        centre[0] += squareVertex.at(i).at(0);
+        centre[1] += squareVertex.at(i).at(1);
+    }
+    centre[0] = round(centre[0]/4);
+    centre[1] = round(centre[1]/4);
+
 }
 
 void VertexSquare::sortVertex(vector<vector<int>> *vertex)

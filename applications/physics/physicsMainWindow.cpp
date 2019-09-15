@@ -518,7 +518,7 @@ void PhysicsMainWindow::keepAliveJoyStick()
         }
         if (iiAutoPilot.active)
         {
-            iiOutput=iiAutoPilot.output();
+            iiOutput=iiAutoPilot.output;
         }
         if (currentSendMode==0)
         {
