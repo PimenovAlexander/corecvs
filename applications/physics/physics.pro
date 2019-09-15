@@ -31,6 +31,7 @@ HEADERS += \
     calibration/calibration.h \
     calibration/calibrationWidget.h \
     calibration/imageForCalibrationWidget.h \
+    copter/pid.h \
     joystick/joystickreader.h \
     simulation/physMainObject.h \
     simulation/simulation.h \
@@ -66,6 +67,7 @@ SOURCES += \
     calibration/calibration.cpp \
     calibration/calibrationWidget.cpp \
     calibration/imageForCalibrationWidget.cpp \
+    copter/pid.cpp \
     joystick/joystickreader.cpp \
     simulation/physMainObject.cpp \
     simulation/simulation.cpp \

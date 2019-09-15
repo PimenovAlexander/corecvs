@@ -228,14 +228,14 @@ Vector3dd DroneObject::fromQuaternion(Quaternion &Q)
     double roll  = atan2 (2.0 * (Q.t() * Q.z() + Q.x() * Q.y()),1.0 - 2.0 * (Q.y() * Q.y() + Q.z() * Q.z()));
     return Vector3dd(pitch, roll, yaw);
 }
-
+/*
 PID::PID(double p, double i, double d)
 {
     P=p;
     I=i;
     D=d;
 }
-
+*/
 void DroneObject::flightControllerTick(const CopterInputs &input)
 {
     /* Mixer */
@@ -256,17 +256,18 @@ void DroneObject::flightControllerTick(const CopterInputs &input)
         }
     }
 
+    double forceP, forceR, forceY;
+    //--------------------------------------NEED FIX TIME!!!!!
+    double deltaT=0.1;
     /** Get current between PRY now and wanted **/
-    Vector3dd currentError(wantedPitch - currentPRY.x(),
+/*
+ * Vector3dd currentError(wantedPitch - currentPRY.x(),
                            wantedRoll  - currentPRY.y(),
                            wantedRoll  - currentPRY.z());
 
     pitchPID.sumOfError+=currentError.x();
     rollPID.sumOfError+=currentError.y();
     yawPID.sumOfError+=currentError.z();
-
-    double forceP, forceR, forceY;
-    double deltaT=0.1;
 
     forceP = pitchPID.P * currentError.x() +
              pitchPID.I * deltaT * pitchPID.sumOfError +
@@ -283,19 +284,23 @@ void DroneObject::flightControllerTick(const CopterInputs &input)
     pitchPID.prevError = currentError.x();
     rollPID.prevError  = currentError.y();
     yawPID.prevError   = currentError.z();
+*/
 
-
+    forceP = pitchPID.calculate(deltaT, wantedPitch, currentPRY.x());
+    forceR = rollPID.calculate(deltaT , wantedRoll , currentPRY.y());
+    forceY = yawPID.calculate(deltaT  , wantedYaw  , currentPRY.z());
+/*
     motors[MOTOR_FR].pwm = - wantedPitch +  wantedRoll + wantedYaw + throttle;
     motors[MOTOR_BL].pwm =   wantedPitch + -wantedRoll + wantedYaw + throttle;
     motors[MOTOR_FL].pwm = - wantedPitch + -wantedRoll - wantedYaw + throttle;
     motors[MOTOR_BR].pwm =   wantedPitch +  wantedRoll - wantedYaw + throttle;
+*/
 
-/*
     motors[MOTOR_FR].pwm = - forceP + forceR + forceY + throttle;
     motors[MOTOR_BL].pwm =   forceP - forceR + forceY + throttle;
     motors[MOTOR_FL].pwm = - forceP - forceR - forceY + throttle;
     motors[MOTOR_BR].pwm =   forceP + forceR - forceY + throttle;
-*/
+
     //L_INFO<<"PitchPID P: "<<pitchPID.P<<"; I: "<<pitchPID.I<<"; D: "<<pitchPID.D
     //     <<"; Current Error: "<<currentError.x()<<"; Prev Error: "<<pitchPID.prevError<<"; Sum Error: "<<pitchPID.sumOfError;
     //L_INFO<<"Forces : "<<forceP<<" ; "<<forceR<<" ; "<<forceY<<" ; "<<throttle;
