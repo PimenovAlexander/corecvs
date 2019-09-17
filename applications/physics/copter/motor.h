@@ -29,7 +29,6 @@ public:
 
 
     std::string name = "-";
-    corecvs::RGBColor color = corecvs::RGBColor::Red();
 
     /* State */
     double pwm = 0.0; /**< 0..1 **/

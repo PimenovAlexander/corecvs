@@ -33,6 +33,7 @@ HEADERS += \
     calibration/imageForCalibrationWidget.h \
     copter/pid.h \
     joystick/joystickreader.h \
+    simulation/janibekovsBolt.h \
     simulation/physMainObject.h \
     simulation/simulation.h \
     simulation/simSphere.h \
@@ -69,6 +70,7 @@ SOURCES += \
     calibration/imageForCalibrationWidget.cpp \
     copter/pid.cpp \
     joystick/joystickreader.cpp \
+    simulation/janibekovsBolt.cpp \
     simulation/physMainObject.cpp \
     simulation/simulation.cpp \
     simulation/simSphere.cpp \

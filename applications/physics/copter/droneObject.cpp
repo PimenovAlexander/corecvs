@@ -353,12 +353,12 @@ void DroneObject::tick(double deltaT)
     double centerMass = objects[0]->mass;
     double arm = objects[2]->getPosVector().l2Metric();
     double inertialMomentX = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * motorMass * pow(arm, 2);
-    double inertialMomentY = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * motorMass * pow(arm, 2);
+    double inertialMomentY = inertialMomentX;
     double inertialMomentZ = 2.0 / 5.0 * centerMass * pow(radius, 2) + 4 * motorMass * pow(arm, 2);
 
     Matrix33 diagonalizedInertiaTensor = Matrix33(inertialMomentX, 0, 0,
-                             0, inertialMomentY, 0,
-                             0, 0, inertialMomentZ);
+                                                  0, inertialMomentY, 0,
+                                                  0, 0, inertialMomentZ);
 
     Matrix33 transposedOrient = orientation.toMatrix();
     transposedOrient.transpose();
