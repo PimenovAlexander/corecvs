@@ -34,12 +34,19 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
     mCameraModel.nameId = "Copter Main Camera";
     mModelParametersWidget.setParameters(mCameraModel);
 
+    for (int i=0;i<8;i++)
+    {
+        failSafeOutput.axis[i] = 1500;
+    }
+    failSafeOutput.axis[failSafeOutput.CHANNEL_THROTTLE] = 1300;
+
     /* Move this to other thread completly */
+    /**
     copterTimer.setInterval(30);
     copterTimer.setSingleShot(false);
     connect(&copterTimer, SIGNAL(timeout()), this, SLOT(mainAction()));
     copterTimer.start();
-
+    **/
     connect(&mJoystickSettings, SIGNAL(joystickUpdated(JoystickState)), this, SLOT(joystickUpdated(JoystickState)));
 
     ui->actionShowLog->toggled(false);
@@ -239,11 +246,7 @@ void PhysicsMainWindow::CH8Change(int i)                              //i - curr
 
 void PhysicsMainWindow::startVirtualMode()
 {
-    if (!virtualModeActive)
-    {
-        simSim = Simulation();
-
-        virtualModeActive=true;
+    /*
         SYNC_PRINT(("PhysicsMainWindow::startVirtualMode(): Adding new object to scene\n"));
         Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
 
@@ -256,12 +259,13 @@ void PhysicsMainWindow::startVirtualMode()
         mesh->setColor(RGBColor::Red());
         for (size_t i = 0; i < simSim.mainObjects.size(); ++i)
         {
-            MainObject &mainObj = simSim.mainObjects[i];
+            PhysMainObject &mainObj = simSim.mainObjects[i];
             for (size_t j = 0; j < mainObj.objects.size(); ++j)
             {
                 mainObj.objects[j]->addToMesh(*mesh);
             }
         }
+        */
         /*
         mesh->setColor(RGBColor::Yellow());
         mesh->addIcoSphere(Vector3dd( 5, 5, -3), 2, 2);
@@ -272,6 +276,7 @@ void PhysicsMainWindow::startVirtualMode()
         mesh->addIcoSphere(Vector3dd(-5, -5, -3), 2, 2);
         mesh->popTransform();
         */
+        /*
         //mesh->dumpPLY("out2.ply");
         Mesh3DScene *scene = new Mesh3DScene;
         scene->setMesh(mesh);
@@ -280,40 +285,80 @@ void PhysicsMainWindow::startVirtualMode()
         ui->cloud->update();
 
         simSim.start();
-        //simSim.mainObjects[0]->addForce(Vector3dd(0, 0, -9.8));
-        cout << "done" << endl;
+        */
 
-        QTimer::singleShot(8, this, SLOT(keepAlive()));           //UI thread crash why????????????
-    }
-}
-
-void PhysicsMainWindow::keepAlive(){
-    Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
-
-    Mesh3D *mesh = new Mesh3D;
-    Mesh3DScene *scene = new Mesh3DScene;
-    scene->setMesh(mesh);
-
-    mesh->switchColor();
-    mesh->mulTransform(copterPos);
-    mesh->setColor(RGBColor::Red());
-
-    /* Merge code with :startVirtualMode()*/
-    for (size_t i = 0; i < simSim.mainObjects.size(); i++)
-    {
-        MainObject &mainObj = simSim.mainObjects[i];
-        for (size_t j = 0; j < mainObj.objects.size(); j++)
-        {
-            mainObj.objects[j]->addToMesh(*mesh);
-        }
-    }
-
-    mesh->popTransform();
-
-    ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene));
-    ui->cloud->update();
+    simSim.startRealTimeSimulation();
+    //simSim.execTestSimulation();
 
     QTimer::singleShot(8, this, SLOT(keepAlive()));
+}
+
+void PhysicsMainWindow::stopVirtualMode()
+{
+    bool oldbackend = !(ui->actionNewBackend->isChecked());
+
+    Mesh3DScene *scene  = NULL;
+
+    if (oldbackend)
+    {
+        scene = new Mesh3DScene;
+        Mesh3D *mesh = new Mesh3D();
+        mesh->switchColor();
+        scene->setMesh(mesh);
+    } else {
+        if (mShadedScene == NULL) {
+            mShadedScene = new SceneShaded;
+            ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mShadedScene), CloudViewDialog::DISP_CONTROL_ZONE);
+        }
+    }
+    ui->cloud->update();
+}
+
+void PhysicsMainWindow::keepAlive()
+{
+    if (virtualModeActive)
+    {
+        bool oldbackend = !(ui->actionNewBackend->isChecked());
+
+        Mesh3DScene *scene  = NULL;
+
+        if (oldbackend)
+        {
+            scene = new Mesh3DScene;
+            Mesh3D *mesh = new Mesh3D();
+            mesh->switchColor();
+            scene->setMesh(mesh);
+        } else {
+            if (mShadedScene == NULL) {
+                mShadedScene = new SceneShaded;
+                ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mShadedScene), CloudViewDialog::DISP_CONTROL_ZONE);
+            }
+
+        }
+
+        if (oldbackend) {
+            simSim.drone.drawMyself(*scene->owned);
+        } else {
+            Mesh3DDecorated *mesh = new Mesh3DDecorated();
+            mesh->switchNormals();
+            simSim.drone.drawMyself(*mesh);
+            //mesh->dumpInfo();
+            mShadedScene->setMesh(mesh);
+        }
+
+        mGraphDialog.addGraphPoint("X", simSim.drone.getPosCenter().x());
+        mGraphDialog.addGraphPoint("Y", simSim.drone.getPosCenter().y());
+        mGraphDialog.addGraphPoint("Z", simSim.drone.getPosCenter().z());
+
+        mGraphDialog.update();
+
+        if (oldbackend) {
+            ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene), CloudViewDialog::CONTROL_ZONE);
+        }
+        ui->cloud->update();
+
+        QTimer::singleShot(8, this, SLOT(keepAlive()));
+    }
 }
 
 void PhysicsMainWindow::showCameraInput()
@@ -463,7 +508,11 @@ void PhysicsMainWindow::startRealMode()                                    //sta
 {
     if (!virtualModeActive & !realModeActive)
     {
-        multimoduleController.connectToModule("/dev/ttyUSB0");
+        //ComController.bindToRealDrone();
+    }
+    else
+    {
+        std::cout<<"can not open RealMode"<<std::endl;
     }
 }
 
@@ -501,14 +550,50 @@ void PhysicsMainWindow::startJoyStickMode()
     joystick1.start();
     currentSendMode=0;
     QTimer::singleShot(8, this, SLOT(keepAliveJoyStick()));
-
 }
 
 void PhysicsMainWindow::keepAliveJoyStick()
 {
-    if (joystick1.active)                             //Yes, indeed. We can not turn on autopiot without joyStick.
+    if (joystick1.getStopEventStatus() && outputType == 1)
     {
+        setOutputType(-1);
+    }
+    if (joystick1.active)
+    {
+        joyStickOutput = joystick1.getOutput();
+    }
+    if (iiAutoPilot.active)
+    {
+        iiOutput = iiAutoPilot.getOutput();
+    }
+    switch (outputType) {
+        case -1:
+            mainOutput = joyStickOutput;
+            //std::cout<<"joyStickMode = -1"<<std::endl;
+            break;
+        case 0:
+            mainOutput = failSafeOutput; //may be should put some stop/default value to CopterInputs
+            //std::cout<<"joyStickMode = 0"<<std::endl;
+            break;
+        case 1:
+            mainOutput = iiOutput;
+            //std::cout<<"joyStickMode = 1"<<std::endl;
+            break;
+    }
 
+    //ComController.input = mainOutput;
+    simSim.droneJoystick = mainOutput;
+
+    if (frameCounter%4==0)
+    {
+        ui->inputsWidget->updateState(mainOutput);
+        frameCounter=0;
+    }
+    frameCounter++;
+    //ui->inputsWidget->updateState(joystick1.output);
+    QTimer::singleShot(8, this, SLOT(keepAliveJoyStick()));
+    /*if (joystick1.active)                             //Yes, indeed. We can not turn on autopiot without a joyStick.
+    {
         if (!joystick1.mutexActive)
         {
             joystick1.mutexActive=true;
@@ -517,15 +602,26 @@ void PhysicsMainWindow::keepAliveJoyStick()
         }
         if (iiAutoPilot.active)
         {
-            iiOutput=iiAutoPilot.output();
+            iiOutput=iiAutoPilot.output;
         }
         if (currentSendMode==0)
         {
-            multimoduleController.newData(joyStickOutput);
+            if (!ComController.mutexActive)
+            {
+                ComController.mutexActive=true;
+                ComController.input = joyStickOutput;
+                simSim.droneJoystick = joyStickOutput;
+                ComController.mutexActive=false;
+            }
         }
         if (currentSendMode==1)
         {
-            multimoduleController.newData(iiOutput);
+            if (!ComController.mutexActive)
+            {
+                ComController.mutexActive=true;
+                ComController.input=iiOutput;
+                ComController.mutexActive=false;
+            }
         }
     if (frameCounter%4==0)
     {
@@ -537,13 +633,14 @@ void PhysicsMainWindow::keepAliveJoyStick()
         if (currentSendMode==1)
         {
             ui->inputsWidget->updateState(iiOutput);
+
         }
     }
     frameCounter++;
     //ui->inputsWidget->updateState(joystick1.output);
-    QTimer::singleShot(8, this, SLOT(keepAliveJoyStick()));                                     // I put together 2 timers 8msec send timer and 33msec joystickWidget timer 8*4=36
+    QTimer::singleShot(8, this, SLOT(keepAliveJoyStick()));
 
-    }
+    }*/
 }
 
 void PhysicsMainWindow::joystickUpdated(JoystickState state)
@@ -581,18 +678,21 @@ void PhysicsMainWindow::mainAction()
         }
     }
 
-    /* Please make a switch */
-    //inputs.print();
-
-    if (mixer.mix(joystickState, inputs)) {
-        copter.flightControllerTick(inputs);
-        copter.physicsTick();
-    }
 
 
     //startJoyStickMode();
+    /*
+
+    if (mixer.mix(joystickState, inputs)) {
+        copter.flightControllerTick(inputs);
+
+        copter.physicsTick();
+    }
+    */
+
+    //startJoyStickMode();
     //copter.flightControllerTick(joystick1.output);
-    //copter.physicsTick();
+    copter.physicsTick();
 
     copter.visualTick();
 
@@ -609,6 +709,27 @@ void PhysicsMainWindow::mainAction()
     mGraphDialog.addGraphPoint("X", copter.position.x());
     mGraphDialog.addGraphPoint("Y", copter.position.y());
     mGraphDialog.addGraphPoint("Z", copter.position.z());
+
+    mGraphDialog.update();
+
+    //drone.flightControllerTick(joystick1.getOutput());
+    drone.flightControllerTick(mainOutput);
+    drone.physicsTick(0.1);
+
+
+    if (oldbackend) {
+        drone.drawMyself(*scene->owned);
+    } else {
+        Mesh3DDecorated *mesh = new Mesh3DDecorated();
+        mesh->switchNormals();
+        drone.drawMyself(*mesh);
+        //mesh->dumpInfo();
+        mShadedScene->setMesh(mesh);
+    }
+
+    mGraphDialog.addGraphPoint("X", drone.getPosCenter().x());
+    mGraphDialog.addGraphPoint("Y", drone.getPosCenter().y());
+    mGraphDialog.addGraphPoint("Z", drone.getPosCenter().z());
 
     mGraphDialog.update();
 
@@ -670,32 +791,26 @@ void PhysicsMainWindow::on_comboBox_currentTextChanged(const QString &arg1)     
      if(arg1=="Usual mode")    //why qstring can not be in case?!
     {
         joystick1.setUsualCurrentMode();   //I dont want errors between qstring and string
-        joystick1.throttleValue=1500;
     }
     if(arg1=="Inertia mode")
     {
         joystick1.setInertiaCurrentMode();
-        joystick1.throttleValue=midThrottle;
     }
     if(arg1=="Casual mode")
     {
         joystick1.setCasualCurrentMode();
-        joystick1.throttleValue=midThrottle;
     }
     if(arg1=="RT/LT Usual mode")
     {
         joystick1.setRTLTUsialMode();
-        joystick1.throttleValue=midThrottle;
     }
     if(arg1=="RT/LT Full mode")
     {
         joystick1.setRTLTFullMode();
-        joystick1.throttleValue=midThrottle;
     }
     if(arg1=="RT/LT Extream mode")
     {
         joystick1.setRTLTExtreamMode();
-        joystick1.throttleValue=midThrottle;
     }
  }
 
@@ -703,11 +818,9 @@ void PhysicsMainWindow::updateUi()
 {
     uiMutex.lock();
     /* We now could quickly scan for data and stats*/
-
     /* But we would only draw last data */
     DrawRequestData *work = uiQueue.back();
     uiQueue.pop_back();
-
     /* Scan again cleaning the queue */
     for (DrawRequestData *data : uiQueue)
     {
@@ -715,7 +828,6 @@ void PhysicsMainWindow::updateUi()
     }
     uiQueue.clear();
     uiMutex.unlock();
-
     /**/
     if (work->mMesh != NULL) {
         Mesh3DScene* scene = new Mesh3DScene;
@@ -726,16 +838,21 @@ void PhysicsMainWindow::updateUi()
         mesh->add(*work->mMesh, true);
         ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene), CloudViewDialog::ADDITIONAL_SCENE);
     }
-
     if (work->mImage)
     {
         QSharedPointer<QImage> image(new RGB24Image(work->mImage));
-
+        if (iiAutoPilot.active)
+        {
+            iiAutoPilot.makeStrategy(image);
+            //cout<<"image changed"<<endl;
+            image = iiAutoPilot.outputImage;
+        }
+        else
+        {
+            //cout<<"AutoPilot turned off"<<endl;
+        }
         ui->imageView->setImage(image);
     }
-
-
-
     /* We made copies. Originals could be deleted */
     delete_safe(work);
 }
@@ -757,17 +874,25 @@ void PhysicsMainWindow::on_comboBox_2_currentTextChanged(const QString &arg1)
 
 void PhysicsMainWindow::on_connetToVirtualButton_released()
 {
-    SYNC_PRINT(("PhysicsMainWindow::onPushButtonReleased(): called\n"));
-
+    L_INFO << "PhysicsMainWindow::onPushButtonReleased(): called;";
     /*if (!virtualModeActive & !RealModeActive)
         {
         VirtualSender.Client_connect();
         virtualModeActive = true;
         }
         */
-    startVirtualMode();
+    virtualModeActive = !virtualModeActive;
+    L_INFO << virtualModeActive;
+    simSim.setIsAlive(virtualModeActive);
+    if (virtualModeActive)
+    {
+        startVirtualMode();
+    }
+    else
+    {
+        stopVirtualMode();
+    }
 }
-
 
 void PhysicsMainWindow::on_JoyButton_released()
 {
@@ -777,4 +902,95 @@ void PhysicsMainWindow::on_JoyButton_released()
 void PhysicsMainWindow::on_toolButton_3_released()
 {
     startRealMode();
+}
+
+void PhysicsMainWindow::on_toolButton_2_released()
+{
+
+    if (!iiAutoPilot.active)
+    {
+        //iiAutoPilot = ProtoAutoPilot();              //mutex is not copyable
+        iiAutoPilot.start();
+    }
+}
+
+void PhysicsMainWindow::on_pushButton_released()
+{
+    iiAutoPilot.testImageVoid();
+}
+void PhysicsMainWindow::on_connetToVirtualButton_pressed()
+{
+
+}
+
+void PhysicsMainWindow::CalibrateCamera()
+{
+    calibrationWidget.show();
+    calibrationWidget.raise();
+}
+
+void PhysicsMainWindow::checkForJoystick()               //auto connect
+{
+//   jReader->start();
+}
+
+void PhysicsMainWindow::LoadCalibrationSettings()
+{
+    QString dir = QFileDialog::getOpenFileName(this, tr("Open Calibration File"),"",tr("Calibration Parametrs (*.yml);; All Files (*)"));
+    if (dir!=NULL)
+    {
+        std::cout<<dir.toStdString()<<std::endl;
+        cv::FileStorage fs(dir.toStdString(),cv::FileStorage::READ);
+        cv::Mat intrinsic, distCoeffs;
+        fs["intrinsic"]>>intrinsic;
+        fs["distCoeffs"]>>distCoeffs;
+        calib.setIntrinsicMat(intrinsic);
+        calib.setDistCoeffsMat(distCoeffs);
+    }
+}
+
+
+
+bool PhysicsMainWindow::setOutputType(int i)
+{
+    bool result = false;
+    switch (i) {
+        case -1:
+            if (joystick1.active)
+            {
+                outputType = i;
+                result = !result;
+            }
+            break;
+        case 0:
+            outputType = 0;
+            result = !result;
+            break;
+        case 1:
+            if (iiAutoPilot.active)
+            {
+                joystick1.setStopEventStatus(false);
+                outputType = i;
+                result = !result;
+            }
+            break;
+    }
+    std::cout<<"switch ___"<<i<<std::endl;
+    if (result)
+    {
+        ui->iiOutputSlider->setValue(i);
+    }
+    return result;
+}
+
+void PhysicsMainWindow::on_iiOutputSlider_valueChanged(int value)
+{
+    if (value != outputType)
+    {
+        std::cout<<"switch ___"<<std::endl;
+        if (!setOutputType(value))
+        {
+            ui->iiOutputSlider->setValue(0);
+        }
+    }
 }

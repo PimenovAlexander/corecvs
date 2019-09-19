@@ -753,7 +753,6 @@ int SvgSaver::saveSvg(ostream &output, SvgFile &svg)
 
 int SvgSaver::dumpSVG(XMLDocument &xml, SvgFile &svg)
 {
-//    xml.NewElement( svg.
     return 0;
 }
 

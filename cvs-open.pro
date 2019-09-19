@@ -8,23 +8,34 @@ SUBDIRS +=                   \
     utils                    \
     \
     tests \
-#    \
-    base_application         \
-#    base_application_example \
-    recorder                 \
-#    scanner                  \
-#    testbed                  \
+    \
+#    base_application         \
+#    recorder                 \
     cloudview                \
-    physics                  \
-    physics-test             \
     imageview                \
-    nester                   \
-    nester-test              \
-#    \
-     generator                \
-#    egomotion                \
-#    applications/laserscan
-     coptercontrol           \
+    \
+#    generator                \
+
+
+CONFIG += quadcopter
+quadcopter {
+    SUBDIRS += physics
+#    SUBDIRS += physics-test
+#    SUBDIRS += coptercontrol
+}
+
+nester {
+    SUBDIRS += nester
+    SUBDIRS += nester-test
+}
+
+legacy {
+     SUBDIRS += applications/laserscan
+     SUBDIRS += scanner
+     SUBDIRS += egomotion
+     SUBDIRS += base_application_example
+     SUBDIRS += testbed
+}
 
 
 win32 {

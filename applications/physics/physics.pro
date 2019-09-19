@@ -21,64 +21,128 @@ INCLUDEPATH += .
 INCLUDEPATH += joystick
 INCLUDEPATH += radio
 INCLUDEPATH += mixer
-
+INCLUDEPATH += autopilot
+INCLUDEPATH += copter
+INCLUDEPATH += calibration
+INCLUDEPATH += opencvUtils
+INCLUDEPATH += simulation
 
 HEADERS += \
+    calibration/calibration.h \
+    calibration/calibrationWidget.h \
+    calibration/imageForCalibrationWidget.h \
+    \
+    copter/pid.h \
+    copter/droneObject.h \
+    copter/motor.h \
+    copter/quad.h \
+    \
+    joystick/joystickreader.h \
     joystick/joystickInterface.h \
     joystick/JoystickOptionsWidget.h \
     joystick/mixerChannelOperationWidget.h \
+    \
+    simulation/physMainObject.h \
+    simulation/simulation.h \
+    simulation/simSphere.h \
+    simulation/simObject.h \
+    simulation/mainObject.h \
+    simulation/physObject.h \
+    simulation/physSphere.h \
+    \
     mixer/controlsMixer.h \
-    radio/*.h \
-    copter/quad.h \
-    simulation.h \
+    \
+    radio/frSkyMultimodule.h \
+    radio/multimoduleController.h \
+    radio/r9Module.h \
+    radio/radioControlWidget.h \
+    \
+    autopilot/protoautopilot.h \
+    autopilot/vertexsquare.h \
+    opencvUtils/opencvTransformations.h \
+    \
     clientSender.h \
     joystickInput.h \
-    simObject.h \
-    simSphere.h \
     controlRecord.h \
-    mainObject.h \
+    comcontroller.h \
+    frameProcessor.h \
     copterInputsWidget.h \
     copterInputs.h \
-    frameProcessor.h \
-    protoautopilot.h \   
+    \
     physicsMainWindow.h \
     physicsAboutWidget.h \
-    copter/quadAngles.h
+
 
 SOURCES += \
+    calibration/calibration.cpp \
+    calibration/calibrationWidget.cpp \
+    calibration/imageForCalibrationWidget.cpp \
+    \
+    copter/pid.cpp \
+    copter/quad.cpp \
+    copter/droneObject.cpp \
+    copter/motor.cpp \
+    \
+    joystick/joystickreader.cpp \
     joystick/joystickInterface.cpp \
     joystick/JoystickOptionsWidget.cpp \
     joystick/mixerChannelOperationWidget.cpp \
+    \
+    simulation/physMainObject.cpp \
+    simulation/simulation.cpp \
+    simulation/simSphere.cpp \
+    simulation/simObject.cpp \
+    simulation/mainObject.cpp \
+    simulation/physObject.cpp \
+    simulation/physSphere.cpp \
+    \
     mixer/controlsMixer.cpp \
-    copter/quad.cpp \
-    radio/*.cpp \
-    simulation.cpp \
-    simSphere.cpp \
-    simObject.cpp \
+    \
+    radio/frSkyMultimodule.cpp \
+    radio/multimoduleController.cpp \
+    radio/r9Module.cpp \
+    radio/radioControlWidget.cpp \
+    \
+    autopilot/protoautopilot.cpp \
+    autopilot/vertexsquare.cpp\
+    opencvUtils/opencvTransformations.cpp \
+    \
     joystickInput.cpp \
     clientSender.cpp \
     mainPhysics.cpp \
-    controlRecord.cpp \     
-    mainObject.cpp \
-    copterInputsWidget.cpp \
-    copterInputs.cpp \
-    frameProcessor.cpp \
-    protoautopilot.cpp \    
+    controlRecord.cpp \
+    copterInputsWidget.cpp \   
+    copterInputs.cpp \   
+    frameProcessor.cpp \   
     physicsMainWindow.cpp \
-    physicsAboutWidget.cpp \
-    copter/quadAngles.cpp
+    physicsAboutWidget.cpp \   
+    comcontroller.cpp \
+
+
+
 
 FORMS += \
+    calibration/calibrationWidget.ui \
+    calibration/imageForCalibrationWidget.ui \
     joystick/JoystickOptionsWidget.ui \
-    copterInputsWidget.ui \
     joystick/mixerChannelOperationWidget.ui \
+    radio/radioControlWidget.ui \
+    copterInputsWidget.ui \
     physicsMainWindow.ui \
-    physicsAboutWidget.ui \
-    radio/radioControlWidget.ui
+    physicsAboutWidget.ui
+
+
+LIBS+=  -lopencv_core \
+        -lopencv_imgproc \
+        -lopencv_imgcodecs \
+        -lopencv_highgui \
+        -lopencv_flann \
+        -lopencv_calib3d \
+        -lopencv_features2d \
+        -lopencv_xfeatures2d
 
 #RESOURCES += ../../resources/main.qrc
 
-INCLUDEPATH += xml/generated
 HEADERS += xml/generated/*.h
 SOURCES += xml/generated/*.cpp
 

@@ -4,7 +4,7 @@
 #include "core/buffers/rgb24/abstractPainter.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/geometry/renderer/simpleRenderer.h"
-
+#include "core/buffers/bufferFactory.h"
 
 
 #ifdef WITH_AVCODEC
@@ -108,9 +108,7 @@ TEST(Physics, pendulum1)
         object.addForce(elastic);
         object.tick(dt);
         t += dt;
- /*       if (object.position.z() <= 0.0) {
-            break;
-        }*/
+
         SYNC_PRINT(("pos (%lf %lf %lf)\n", object.position.x(), object.position.y(), object.position.z()));
 
         double x =  object.position.x() + 200;

@@ -1,10 +1,11 @@
 #ifndef SIMOBJECT_H
 #define SIMOBJECT_H
 
+#include <vector>
 #include <bits/stdc++.h>
-
+#include "core/utils/log.h"
 #include <core/geometry/mesh3d.h>
-
+#include <cmath>
 #include "core/utils/utils.h"
 #include "core/geometry/mesh3d.h"
 #include "core/math/matrix/matrix33.h"
@@ -18,6 +19,7 @@ class Force {
 public:
     corecvs::Vector3dd force    = corecvs::Vector3dd::Zero();
     corecvs::Vector3dd position = corecvs::Vector3dd::Zero();
+    corecvs::Vector3dd centerPos = corecvs::Vector3dd::Zero();
 
     Force() {}
 
@@ -35,6 +37,9 @@ public:
     {
         force    = T.rotor * force;
         position = T * position;
+
+        //L_INFO<<"Force Pos: "<< position;
+        //L_INFO<<"Center Pos: "<<centerPos;
     }
 
     Force transformed(corecvs::Affine3DQ &T) const
@@ -44,17 +49,31 @@ public:
         return toReturn;
     }
 
-    /** Torque in H*m **/
-    Vector3dd getM() const
+    Force transformed(const corecvs::Affine3DQ &T, corecvs::Vector3dd &cPos)
     {
-        return position ^ force;
+        centerPos = cPos;
+        Force toReturn = *this;
+        toReturn.transform(T);
+        return toReturn;
     }
 
-    Vector3dd netForce() const
+    /** Torque in H*m **/
+    /* BUG: not working properly, deltaR should be not from beginning of coordinats */
+    Vector3dd getM() const
+    {
+        return (position - centerPos) ^ force;
+    }
+
+/*
+    Vector3dd getM(const Vector3dd &objectPos) const
+    {
+        return (objectPos-position) ^ force;
+    }
+*/
+    Vector3dd getForce() const
     {
         return force;
     }
-
 };
 
 class SimObject
@@ -68,7 +87,7 @@ public:
 
     Vector3dd position   = Vector3dd(1,1,1);
     Vector3dd velocity = Vector3dd::Zero();
-
+    Vector3dd vec_W;
     //Vector3dd force    = Vector3dd::Zero();
     //Vector3dd oldForce = Vector3dd::Zero();
 
@@ -77,7 +96,7 @@ public:
 
     Quaternion orientation = Quaternion::Identity();
     Quaternion angularVelocity  = Quaternion::Identity();
-
+    Quaternion angularAcc = Quaternion::Identity();
 
     /** Main body properties **/
     /** Mass in kilograms **/

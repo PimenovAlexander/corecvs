@@ -1,33 +1,32 @@
 #ifndef QUAD_H
 #define QUAD_H
 
-
-#include <copterInputs.h>
 #include <vector>
 
-#include "core/cameracalibration/cameraModel.h"
+#include <core/cameracalibration/cameraModel.h>
 #include "core/cameracalibration/calibrationDrawHelpers.h"
 #include "core/geometry/mesh3d.h"
 #include "core/math/affine.h"
 #include "core/math/vector/vector3d.h"
 
+#include "simObject.h"
+#include "copterInputs.h"
 #include "xml/generated/flightControllerParameters.h"
 
-#include "simObject.h"
 
-class PID
+
+class PIDClass
 {
 public:
     double P,I,D;
     double prevError = 0.0;
     double sumOfError = 0.0;
 
-    PID(double p, double i , double d) :
-        P(p), I(i), D(d)
-    {}
+    PIDClass(double p, double i , double d);
+
 };
 
-class Motor
+class MotorClass
 {
 public:
     /**
@@ -88,7 +87,11 @@ public:
 
     Vector3dd getM()
     {
-        return Vector3dd(0.0, 0.0, pwm * cw);
+        double k = 2 * pow(10, -6), b = 1 * pow(10, -7);
+        double momentum = pwm / k * b * (cw ? 1: -1);
+        //if(momentum!=0)
+        //L_INFO<<"Momentum of "<<i<<" motor: "<<momentum;
+        return Vector3dd(0.0, 0.0, momentum);
     }
 
     /* UI not owned. Need to be reworked. Could be reused for hardcoded solution */
@@ -98,9 +101,7 @@ public:
 
 };
 
-
-
-class Sensor
+class SensorClass
 {
 public:
      corecvs::Affine3DQ position;
@@ -108,13 +109,13 @@ public:
      std::string name;
 };
 
-class Gyro : public Sensor
+class Gyro : public SensorClass
 {
 public:
 
 };
 
-class Accelerometer : public Sensor
+class Accelerometer : public SensorClass
 {
 public:
 };
@@ -123,14 +124,12 @@ public:
 class Quad : public SimObject, public FlightControllerParameters
 {
 public:
-    std::vector<Motor> motors;
+    std::vector<MotorClass> motors;
     std::vector<CameraModel> cameras;
-    std::vector<Sensor> sensors;
-
-    PID pitchPID{0.7, 0.35, 0.35};
-    PID rollPID {0.7, 0.35, 0.35};
-    PID yawPID  {0.7, 0.35, 0.35};
-
+    std::vector<SensorClass> sensors;
+    PIDClass pitchPID{0.7, 0.35, 0.35};
+    PIDClass rollPID{0.7, 0.35, 0.35};
+    PIDClass yawPID{0.7, 0.35, 0.35};
 
     enum BetaflightMotors {
         BETAFLIGHT_MOTOR_1 = 0,

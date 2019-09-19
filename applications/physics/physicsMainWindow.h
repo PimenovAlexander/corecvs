@@ -12,17 +12,20 @@
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
+#include <calibration.h>
 #include <cameraModelParametersControlWidget.h>
 #include <capSettingsDialog.h>
 #include <controlsMixer.h>
-#include <flightControllerParameters.h>
 #include <flowFabricControlWidget.h>
 #include <graphPlotDialog.h>
 #include <inputSelectorWidget.h>
 #include <radioControlWidget.h>
+#include <joystickreader.h>
 
 #include <copter/quad.h>
+#include <copter/droneObject.h>
 
+#include "calibrationWidget.h"
 #include "clientSender.h"
 #include "copterInputsWidget.h"
 #include "frameProcessor.h"
@@ -79,7 +82,7 @@ private:
     bool realModeActive = false;
     bool virtualModeActive = false;
     void disconnectFromCopter();
-
+    Calibration calib;
 /** Joystick **/
 public:
     JoystickOptionsWidget mJoystickSettings;
@@ -99,6 +102,8 @@ public:
     CameraModelParametersControlWidget mModelParametersWidget;
     CameraModel mCameraModel;
     InputSelectorWidget mInputSelector;
+    CalibrationWidget calibrationWidget;
+
 
 public slots:
     void showCameraInput();
@@ -127,11 +132,10 @@ public:
     CopterInputs inputs;
     QTimer copterTimer;
     Quad copter;
+    DroneObject drone;
 
     FlightControllerParameters currentFlightControllerParameters; /* Not sure we need it here */
     ReflectionWidget *flightControllerParametersWidget = NULL;
-
-
 public slots:
     /* Let it be here so far */
     void startSimuation();
@@ -163,18 +167,11 @@ private slots:
 
 
 
+    void checkForJoystick();
+
+    void stopVirtualMode();
     void startVirtualMode();
 
-#if 0 /*Use one slot for all channels */
-    void yawChange(int i);
-    void rollChange(int i);
-    void pitchChange(int i);
-    void throttleChange(int i);
-    void CH5Change(int i);
-    void CH6Change(int i);
-    void CH7Change(int i);
-    void CH8Change(int i);
-#endif
     void startJoyStickMode();
 
 
@@ -201,6 +198,18 @@ private slots:
 
     void on_toolButton_3_released();
 
+    void on_toolButton_2_released();
+
+    void on_pushButton_released();
+
+    void on_connetToVirtualButton_pressed();
+
+
+    void CalibrateCamera();
+    void LoadCalibrationSettings();
+
+    void on_iiOutputSlider_valueChanged(int value);
+
 private:
     struct Message {
         int throttle;
@@ -221,6 +230,8 @@ private:
     MultimoduleController multimoduleController;
     CopterInputs joyStickOutput;                                  //for joystickValues
     CopterInputs iiOutput;                                        //for autopilot values
+    CopterInputs mainOutput;
+    CopterInputs failSafeOutput;
 
     int throttleValueFromJS = 1500;
     int midThrottle = 1350;
@@ -244,18 +255,21 @@ private:
     bool recording=false;
 
     void sendOurValues(std::vector<uint8_t> OurValues);
-    bool virtuaModeActive=false;
-    std::string inputCameraPath="v4l2:/dev/video1";
+
+    bool virtuaModeActive = false;
+    std::string inputCameraPath = "v4l2:/dev/video1";
+
     ControlRecord recordData;
 
     Simulation simSim;
     ClientSender virtualSender;
 
-    int countOfSticks=0;
-
-    bool autopilotMode=false;
+    int countOfSticks = 0;
+    int outputType = 0;
+    bool autopilotMode = false;
     stack<Message> autopilotStack;
 
+    bool setOutputType(int i);
 };
 
 #endif // PHYSICSMAINWINDOW_H
