@@ -52,6 +52,60 @@ void Simulation::startRealTimeSimulation()
     thr.detach();
 }
 
+void Simulation::execJanibekovTest()
+{ 
+    std::thread thr([this]()
+    {
+        srand(NULL);
+        startTime = std::chrono::high_resolution_clock::now();
+        oldTime = startTime;
+        noiseTime = startTime;
+        noiseReverseTime = startTime;
+        while (isAlive)
+        {
+
+            newTime = std::chrono::high_resolution_clock::now();
+
+            if(std::chrono::duration_cast<std::chrono::duration<double>>(newTime-startTime).count() < 10)
+            {
+                testBolt.partsOfSystem[0].addForce(Vector3dd(0.0, 0.0, 20));
+            }
+
+            double timePassed = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-startTime).count();
+            if(timePassed < 17 && timePassed > 15)
+            {
+                //testBolt.partsOfSystem[2].addForce(Vector3dd(0.0, 0.0, 20));
+            }
+
+            if(noiseFlag)
+            {
+                noiseTime = std::chrono::high_resolution_clock::now();
+                testBolt.partsOfSystem[2].addForce(Vector3dd(0.0, 0.0, fRand(5,10)));
+                if(std::chrono::duration_cast<std::chrono::duration<double>>(noiseTime - noiseReverseTime).count() > 0.5)
+                {
+                    noiseFlag = !noiseFlag;
+                }
+            }
+            else
+            {
+                noiseReverseTime = std::chrono::high_resolution_clock::now();
+                testBolt.partsOfSystem[2].addForce(Vector3dd(0.0, 0.0, -fRand(5,10)));
+                if(std::chrono::duration_cast<std::chrono::duration<double>>(noiseReverseTime - noiseTime).count() > 0.5)
+                {
+                    noiseFlag = !noiseFlag;
+                }
+            }
+
+            time_span = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-oldTime);
+            testBolt.physicsTick(time_span.count());
+            oldTime=newTime;
+
+            testBolt.startTick();
+        }
+    });
+    thr.detach();
+}
+
 void Simulation::execTestSimulation()
 {
     srand(time(NULL));
