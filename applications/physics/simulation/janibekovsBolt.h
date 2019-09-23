@@ -16,7 +16,7 @@ class JanibekovsBolt : public PhysMainObject
 {
 
 public:
-    JanibekovsBolt(double arm = 0.01, double mass = 0.21);
+    JanibekovsBolt(double arm = 0.01, double mass = 6);
     PhysSphere centralSphere;
     std::vector<PhysSphere> partsOfSystem;
     void drawMyself(Mesh3D &mesh);
@@ -26,6 +26,7 @@ public:
     void drawMyself(Mesh3DDecorated &mesh);
 
     Mesh3DDecorated *worldMesh = NULL;
+    void drawForces(Mesh3D &mesh);
 };
 
 #endif // JANIBEKOVSBOLT_H

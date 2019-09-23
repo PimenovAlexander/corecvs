@@ -66,21 +66,33 @@ void Simulation::execJanibekovTest()
 
             newTime = std::chrono::high_resolution_clock::now();
 
-            if(std::chrono::duration_cast<std::chrono::duration<double>>(newTime-startTime).count() < 10)
+            double timePassed = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-startTime).count();
+
+            Affine3DQ motorToWorld = testBolt.getTransform() * testBolt.partsOfSystem[1].getPosAffine();
+            Matrix33 transposedOrient = motorToWorld.rotor.toMatrix();
+            transposedOrient.transpose();
+            Vector3dd force = transposedOrient * Vector3dd(0.0, 0.0, 0.1);
+
+            if(timePassed > 5 && timePassed < 6)
             {
-                testBolt.partsOfSystem[0].addForce(Vector3dd(0.0, 0.0, 20));
+                testBolt.partsOfSystem[1].addForce(force);
+                testBolt.partsOfSystem[0].addForce(-force);
             }
 
-            double timePassed = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-startTime).count();
-            if(timePassed < 17 && timePassed > 15)
+            if(timePassed < 1)
             {
-                //testBolt.partsOfSystem[2].addForce(Vector3dd(0.0, 0.0, 20));
+                testBolt.partsOfSystem[2].addForce(Vector3dd(0.0, 0.0, 0.1));
+            }
+
+            if(timePassed > 1 && timePassed < 2)
+            {
+                testBolt.partsOfSystem[2].addForce(Vector3dd(0.0, 0.0, -0.1));
             }
 
             if(noiseFlag)
             {
                 noiseTime = std::chrono::high_resolution_clock::now();
-                testBolt.partsOfSystem[2].addForce(Vector3dd(0.0, 0.0, fRand(5,10)));
+                //testBolt.partsOfSystem[2].addForce(Vector3dd(0.0, 0.0, fRand(5,10)));
                 if(std::chrono::duration_cast<std::chrono::duration<double>>(noiseTime - noiseReverseTime).count() > 0.5)
                 {
                     noiseFlag = !noiseFlag;
@@ -89,7 +101,7 @@ void Simulation::execJanibekovTest()
             else
             {
                 noiseReverseTime = std::chrono::high_resolution_clock::now();
-                testBolt.partsOfSystem[2].addForce(Vector3dd(0.0, 0.0, -fRand(5,10)));
+                //testBolt.partsOfSystem[2].addForce(Vector3dd(0.0, 0.0, -fRand(5,10)));
                 if(std::chrono::duration_cast<std::chrono::duration<double>>(noiseReverseTime - noiseTime).count() > 0.5)
                 {
                     noiseFlag = !noiseFlag;

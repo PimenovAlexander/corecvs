@@ -68,7 +68,29 @@ void JanibekovsBolt::drawMyself(Mesh3D &mesh)
         for (size_t i = 0; i < objects.size(); i++) {
             objects[i]->drawMesh(mesh);
         }
+        Circle3d circle;
+        circle.c = Vector3dd(0,0,0);
+        circle.r = 0.03;
+        circle.normal = Vector3dd(1,0,0);
+        mesh.addCircle(circle);
         mesh.popTransform();
+        drawForces(mesh);
+}
+
+void JanibekovsBolt::drawForces(Mesh3D &mesh)
+{
+    for (size_t i = 0; i < partsOfSystem.size(); i++)
+    {
+        Affine3DQ motorToWorld = getTransform() * partsOfSystem[i].getPosAffine();
+        Vector3dd force = motorToWorld.rotor * partsOfSystem[i].getForce();
+        Vector3dd motorPosition = motorToWorld.shift;
+        Vector3dd startDot = motorPosition;
+        Vector3dd endDot = motorPosition + force.normalised() * 1.0;
+        mesh.addLine(startDot, endDot);
+
+        //L_INFO << "force: " << force << ", position " << motorPosition;
+        //L_INFO << "Drew force line from: " << startDot << " , to: " << endDot << " ; Force value: " << force;
+    }
 }
 
 Affine3DQ JanibekovsBolt::getTransform()
@@ -149,18 +171,21 @@ void JanibekovsBolt::tick(double deltaT)
                                                   0, inertialMomentY, 0,
                                                   0, 0, inertialMomentZ);
 
+
+    Matrix33 transposedOrient = orientation.toMatrix();
+    transposedOrient.transpose();
+    inertiaTensor = orientation.toMatrix() * diagonalizedInertiaTensor * transposedOrient;// orientation.toMatrix().transpose();
+
+
     using namespace std::chrono;
     time_t ms0 = duration_cast< milliseconds >(
     system_clock::now().time_since_epoch()
     ).count();
     if(ms0 % 200 == 0)
     {
-        L_INFO<< "Diagonalized Tensor: " << diagonalizedInertiaTensor / inertialMomentX;
+        //L_INFO<< "Diagonalized Tensor: " << diagonalizedInertiaTensor / inertialMomentX;
+        L_INFO << "Inertia tensor: " << inertiaTensor/inertialMomentX;
     }
-
-    Matrix33 transposedOrient = orientation.toMatrix();
-    transposedOrient.transpose();
-    inertiaTensor = orientation.toMatrix() * diagonalizedInertiaTensor * transposedOrient;// orientation.toMatrix().transpose();
 
     velocity = Vector3dd(0.0, 0.0, 0.0);
 
