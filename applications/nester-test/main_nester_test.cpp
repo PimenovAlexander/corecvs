@@ -27,6 +27,7 @@ void bottomLeftPlacementProtected(list <corecvs :: Polygon> &inp, corecvs :: Rec
 void drawPolygons(list <Polygon> inputPolygons, int h, int w, string bmpname);
 void drawSvgPolygons(list <Polygon> inputPolygons, int h, int w, string svgName);
 int getTopRightIndex(const Polygon &A);
+
 //bool testDisjoint(std::vector<Polygon> &inputPolygons)
 //{
 //    std::vector<ConvexPolygon> cpl;
@@ -76,7 +77,7 @@ TEST(Nester, twoRectanges)
 
 TEST(Nester, manyRectanges)
 {
-    Rectangled area (0, 0, 200, 200); //1000, 1000 46
+    Rectangled area (0, 0, 500, 500); //1000, 1000 46
 
     list<Polygon> inpList;
 
@@ -90,11 +91,24 @@ TEST(Nester, manyRectanges)
 
 
 
-    for ( int i = 0; i < 30; i++) //46 is bad
+    for ( int i = 0; i < 30; i++)
     {
         auto Pol = Polygon::RegularPolygon(4, Vector2dd::Zero(), 20, degToRad(i));
         inpList.push_back(Pol);
     }
+
+    for ( int i = 0; i < 30; i++)
+    {
+        auto Pol = Polygon::RegularPolygon(7, Vector2dd::Zero(), 20, degToRad(i));
+        inpList.push_back(Pol);
+    }
+
+    for ( int i = 0; i < 30; i++)
+    {
+        auto Pol = Polygon::RegularPolygon(8, Vector2dd::Zero(), 20, degToRad(i));
+        inpList.push_back(Pol);
+    }
+
 
     for(int i = 0; i < 20; ++i)
     {
