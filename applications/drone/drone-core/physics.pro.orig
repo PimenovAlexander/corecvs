@@ -31,6 +31,7 @@ HEADERS += \
     calibration/calibration.h \
     calibration/calibrationWidget.h \
     calibration/imageForCalibrationWidget.h \
+<<<<<<< HEAD
     \
     copter/pid.h \
     copter/droneObject.h \
@@ -42,6 +43,11 @@ HEADERS += \
     joystick/JoystickOptionsWidget.h \
     joystick/mixerChannelOperationWidget.h \
     \
+=======
+    copter/pid.h \
+    joystick/joystickreader.h \
+    simulation/janibekovsBolt.h \
+>>>>>>> Gvalhca/TestBranch
     simulation/physMainObject.h \
     simulation/simulation.h \
     simulation/simSphere.h \
@@ -77,6 +83,7 @@ SOURCES += \
     calibration/calibration.cpp \
     calibration/calibrationWidget.cpp \
     calibration/imageForCalibrationWidget.cpp \
+<<<<<<< HEAD
     \
     copter/pid.cpp \
     copter/quad.cpp \
@@ -88,6 +95,11 @@ SOURCES += \
     joystick/JoystickOptionsWidget.cpp \
     joystick/mixerChannelOperationWidget.cpp \
     \
+=======
+    copter/pid.cpp \
+    joystick/joystickreader.cpp \
+    simulation/janibekovsBolt.cpp \
+>>>>>>> Gvalhca/TestBranch
     simulation/physMainObject.cpp \
     simulation/simulation.cpp \
     simulation/simSphere.cpp \

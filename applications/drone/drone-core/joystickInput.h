@@ -13,9 +13,13 @@ class JoyStickInput  : public QObject
 Q_OBJECT
 public:
     JoyStickInput();
-    virtual ~JoyStickInput() {};
+    virtual ~JoyStickInput() {}
 
-    struct AxisState { short x, y; };
+    struct AxisState
+    {
+        short x;
+        short y;
+    };
     CopterInputs getOutput();
 
     void start();

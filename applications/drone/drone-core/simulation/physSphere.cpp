@@ -41,6 +41,14 @@ void PhysSphere::saveMesh(const std::string &name)
 
 void PhysSphere::drawMesh(corecvs::Mesh3D &mesh)
 {
+    if(mesh.hasColor) {
+        mesh.setColor(color);
+    }
+
+    mesh.addIcoSphere(getPosVector(), radius, 1);
+
+
+    /*
     //mesh is not using because I'm a little bit genius (really don't know how to make best architecture by now)
     Mesh3D *sphereMesh = new Mesh3D;
     corecvs::RGBColor color = corecvs::RGBColor(255, 255, 0);
@@ -56,10 +64,13 @@ void PhysSphere::drawMesh(corecvs::Mesh3D &mesh)
     //mesh->dumpPLY(name+".ply");
     delete_safe(sphereMesh);
     ////L_INFO << "Successfully drew sphere mesh";
+    */
 }
 
 void PhysSphere::calcMoment()
 {
+    Vector3dd m = getForce() ^ getPosVector();
+    addMoment(m);
     ////L_INFO << "Sphere has no calcMoment implementation";
 }
 

@@ -17,12 +17,7 @@ SUBDIRS +=                   \
 #    generator                \
 
 
-CONFIG += quadcopter
-quadcopter {
-    SUBDIRS += physics
-#    SUBDIRS += physics-test
-#    SUBDIRS += coptercontrol
-}
+SUBDIRS += drone
 
 nester {
     SUBDIRS += nester
@@ -84,15 +79,14 @@ recorder.file                 = applications/recorder/recorder.pro
 scanner.file                  = applications/scanner/scanner.pro
 egomotion.file                = applications/egomotion/egomotion.pro
 cloudview.file                = applications/cloudview/cloudview.pro
-physics.file                  = applications/physics/physics.pro
-physics-test.file             = applications/physics-test/physics-test.pro
+
 imageview.file                = applications/imageview/imageview.pro
 testbed.file                  = applications/testbed/testbed.pro
 nester.file                   = applications/nester/nester.pro
 nester-test.file              = applications/nester-test/nester-test.pro
 generator.file                = tools/generator/generator.pro
 
-coptercontrol.file            = applications/coptercontrol/coptercontrol.pro
+drone.file                    = applications/drone/drone.pro
 
 OTHER_FILES += cvs-config.pri
 OTHER_FILES += CMakeLists.txt

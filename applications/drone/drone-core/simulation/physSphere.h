@@ -18,7 +18,7 @@ public:
     void calcMoment() override;
     void calcForce() override;
 
-
+    corecvs::RGBColor color = corecvs::RGBColor::Red();
     double radius;
 };
 

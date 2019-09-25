@@ -13,7 +13,7 @@ ROOT_DIR=$$PWD/$$ROOT_DIR
 TEMPLATE = app
 TARGET   = copter_control
 
-HOSTBASE_DIR=../base
+HOSTBASE_DIR=../../base
 include ($$HOSTBASE_DIR/baseApplication.pri)            # it uses HOSTBASE_DIR, detects HOSTBASE_BINDIR, OBJECTS_DIR, ...
 
 INCLUDEPATH += .

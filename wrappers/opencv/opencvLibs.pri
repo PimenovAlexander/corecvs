@@ -129,7 +129,7 @@ with_opencv {
             exists ($$OPENCV_LIB_PATH/libopencv_core.so.3*) {
                 LIBS += -lopencv_calib3d    -lopencv_video   -lopencv_core    -lopencv_highgui   \
                         -lopencv_features2d -lopencv_flann   -lopencv_imgproc -lopencv_objdetect \
-                        -lopencv_videoio
+                        -lopencv_videoio    -lopencv_imgcodecs -lopencv_xfeatures2d
                          #-llibopencv_ml
 
                 message(Using OpenCV 3.x)

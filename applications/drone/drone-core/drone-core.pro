@@ -1,0 +1,133 @@
+# try use global config 
+exists(../../../../../config.pri) {
+    ROOT_DIR=../../../../..
+    #message(Using global config)
+    include($$ROOT_DIR/config.pri)
+} else { 
+    #message(Using local config)
+    ROOT_DIR=../../..
+    include($$ROOT_DIR/cvs-config.pri)
+}
+ROOT_DIR=$$PWD/$$ROOT_DIR
+
+TEMPLATE = lib
+TARGET   = drone-core
+CONFIG  += staticlib
+
+include(../../../utils/utils.pri)                      # it uses TARGET, ROOT_DIR and detects UTILS_BINDIR, OBJECTS_DIR, DESTDIR, ...!
+include(drone-core.pri)
+
+QT += serialport
+
+HEADERS += \
+    calibration/calibration.h \
+    calibration/calibrationWidget.h \
+    calibration/imageForCalibrationWidget.h \
+    \
+    copter/pid.h \
+    copter/droneObject.h \
+    copter/motor.h \
+    copter/quad.h \
+    \
+    joystick/joystickreader.h \
+    joystick/joystickInterface.h \
+    joystick/JoystickOptionsWidget.h \
+    joystick/mixerChannelOperationWidget.h \
+    \
+    simulation/janibekovsBolt.h \
+    simulation/physMainObject.h \
+    simulation/simulation.h \
+    simulation/simSphere.h \
+    simulation/simObject.h \
+    simulation/mainObject.h \
+    simulation/physObject.h \
+    simulation/physSphere.h \
+    \
+    mixer/controlsMixer.h \
+    \
+    radio/frSkyMultimodule.h \
+    radio/multimoduleController.h \
+    radio/r9Module.h \
+    radio/radioControlWidget.h \
+    \
+    autopilot/protoautopilot.h \
+    autopilot/vertexsquare.h \
+    opencvUtils/opencvTransformations.h \
+    \
+    clientSender.h \
+    joystickInput.h \
+    controlRecord.h \
+    comcontroller.h \
+    frameProcessor.h \
+    copterInputsWidget.h \
+    copterInputs.h \
+    \
+    physicsMainWindow.h \
+    physicsAboutWidget.h \
+
+
+SOURCES += \
+    calibration/calibration.cpp \
+    calibration/calibrationWidget.cpp \
+    calibration/imageForCalibrationWidget.cpp \
+    \
+    copter/pid.cpp \
+    copter/quad.cpp \
+    copter/droneObject.cpp \
+    copter/motor.cpp \
+    \
+    joystick/joystickreader.cpp \
+    joystick/joystickInterface.cpp \
+    joystick/JoystickOptionsWidget.cpp \
+    joystick/mixerChannelOperationWidget.cpp \
+    \
+    simulation/physMainObject.cpp \
+    simulation/simulation.cpp \
+    simulation/simSphere.cpp \
+    simulation/simObject.cpp \
+    simulation/mainObject.cpp \
+    simulation/physObject.cpp \
+    simulation/physSphere.cpp \
+    \
+    mixer/controlsMixer.cpp \
+    \
+    radio/frSkyMultimodule.cpp \
+    radio/multimoduleController.cpp \
+    radio/r9Module.cpp \
+    radio/radioControlWidget.cpp \
+    \
+    autopilot/protoautopilot.cpp \
+    autopilot/vertexsquare.cpp\
+    opencvUtils/opencvTransformations.cpp \
+    \
+    joystickInput.cpp \
+    clientSender.cpp \   
+    controlRecord.cpp \
+    copterInputsWidget.cpp \   
+    copterInputs.cpp \   
+    frameProcessor.cpp \   
+    physicsMainWindow.cpp \
+    physicsAboutWidget.cpp \   
+    comcontroller.cpp \
+    simulation/dzhanibekovBolt.cpp
+
+
+FORMS += \
+    calibration/calibrationWidget.ui \
+    calibration/imageForCalibrationWidget.ui \
+    joystick/JoystickOptionsWidget.ui \
+    joystick/mixerChannelOperationWidget.ui \
+    radio/radioControlWidget.ui \
+    copterInputsWidget.ui \
+    physicsMainWindow.ui \
+    physicsAboutWidget.ui
+
+#RESOURCES += ../../resources/main.qrc
+
+HEADERS += xml/generated/*.h
+SOURCES += xml/generated/*.cpp
+
+OTHER_FILES += xml/physics.xml
+OTHER_FILES += ../../tools/generator/regen-physics.sh
+
+

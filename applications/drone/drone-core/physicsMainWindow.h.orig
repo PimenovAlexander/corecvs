@@ -16,11 +16,15 @@
 #include <cameraModelParametersControlWidget.h>
 #include <capSettingsDialog.h>
 #include <controlsMixer.h>
+#include <flightControllerParameters.h>
 #include <flowFabricControlWidget.h>
 #include <graphPlotDialog.h>
 #include <inputSelectorWidget.h>
+<<<<<<< HEAD
 #include <radioControlWidget.h>
+=======
 #include <joystickreader.h>
+>>>>>>> kola1197/ResultTest
 
 #include <copter/quad.h>
 #include <copter/droneObject.h>
@@ -136,6 +140,8 @@ public:
 
     FlightControllerParameters currentFlightControllerParameters; /* Not sure we need it here */
     ReflectionWidget *flightControllerParametersWidget = NULL;
+
+
 public slots:
     /* Let it be here so far */
     void startSimuation();
@@ -172,8 +178,17 @@ private slots:
     void stopVirtualMode();
     void startVirtualMode();
 
+#if 0 /*Use one slot for all channels */
+    void yawChange(int i);
+    void rollChange(int i);
+    void pitchChange(int i);
+    void throttleChange(int i);
+    void CH5Change(int i);
+    void CH6Change(int i);
+    void CH7Change(int i);
+    void CH8Change(int i);
+#endif
     void startJoyStickMode();
-
 
     void onStartVirtualModeReleased();
 
@@ -225,6 +240,7 @@ private:
     int currentSendMode=-1;                                                //tumbler beetwen joystick and autopilot (0- js, 1-autoP)
     int frameCounter=0;                                                    //we need it in the timer
     /** Replace this with mixer **/
+
     JoyStickInput joystick1 ;
 
     MultimoduleController multimoduleController;

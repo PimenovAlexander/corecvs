@@ -10,7 +10,6 @@
 #include <iostream>
 
 #include <QtGui/QtGui>
-#include <QApplication>
 #include <QtCore/qobjectdefs.h>
 
 #include "core/utils/global.h"

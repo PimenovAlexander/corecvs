@@ -3,7 +3,7 @@
 
 PhysMainObject::PhysMainObject()
 {
-    posCenter = Vector3dd(0.1, 0.1, 0.1);
+    posCenter = Vector3dd(0.0, 0.0, 0.0);
     systemMass = 0;
     force = Vector3dd::Zero();
     //moment = Vector3dd::Zero();
