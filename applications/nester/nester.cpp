@@ -277,9 +277,9 @@ bool hasBiggerLOArg(const Vector2dd &v1, const Vector2dd &v2) // antiClockwise t
     double minusRadian1 = v1.x()/ v1.l2Metric();
     double minusRadian2 = v2.x()/ v2.l2Metric();
 
-    if(v1.y() <= 0) //like the most complex moment in all thing
+    if(v1.y() <= 0) // inmportant moment
         minusRadian1 = 2 - minusRadian1;
-    if(v2.y() <= 0) //same
+    if(v2.y() <= 0)
         minusRadian2 = 2 - minusRadian2;
 
     return (minusRadian1 > minusRadian2);
@@ -308,9 +308,8 @@ Vector2dd getPointByGenInd(const Polygon &A, int i)
 
 int getTopRightIndex(const Polygon &A)
 {
-    int i = 0;
     int result = 0;
-    while(i < A.size())
+    for (size_t i = 0; i < A.size(); ++i)
     {
         if(A.getPoint(i).y() > A.getPoint(result).y())
         {
@@ -322,7 +321,6 @@ int getTopRightIndex(const Polygon &A)
                 result = i;
 
         }
-        ++i;
     }
     return result;
 
@@ -330,9 +328,8 @@ int getTopRightIndex(const Polygon &A)
 
 int getBotLeftIndex(const Polygon &A)
 {
-    int i = 0;
     int result = 0;
-    while(i < A.size())
+    for (size_t i = 0; i < A.size(); ++i)
     {
         if(A.getPoint(i).y() < A.getPoint(result).y())
         {
@@ -344,7 +341,6 @@ int getBotLeftIndex(const Polygon &A)
                 result = i;
 
         }
-        ++i;
     }
     return result;
 
@@ -385,27 +381,21 @@ Polygon convexNFP(const Polygon &A, const Polygon &B)
 
     }
 
-    while(i < length1)
+    for(; i < length1; ++i, ++place)
     {
         Vector2dd candidateFromA = -getPointByGenInd(A, i + 1) + getPointByGenInd(A,i);
-        conNFP.push_back(conNFP[place] + candidateFromA);
-        ++place;
-        ++i;
+        conNFP.push_back(conNFP[place] + candidateFromA);        
     }
 
-    while(j < length2)
+    for(; j < length2; ++j, ++place)
     {
         Vector2dd candidateFromB = getPointByGenInd(B, j + 1) - getPointByGenInd(B, j);
         conNFP.push_back(conNFP[place] + candidateFromB);
-        ++place;
-        ++j;
     }
     conNFP.pop_back(); // not to dublicate first vertex
     return conNFP;
 
 }
-
-
 
 
 Rectangled innerFitPolygon(const Polygon &A, const Rectangled &R) // all RO
@@ -486,7 +476,7 @@ void bottomLeftPlacement(list <corecvs :: Polygon> &inp, corecvs :: Rectangled &
     ++inpNumber;
 
 
-    while(it != inp.end())
+    for(;it != inp.end();++it, ++inpNumber)
     {
         innerFP = innerFitPolygon(*it, Bin);
         list <Polygon> currNFPs;
@@ -497,9 +487,7 @@ void bottomLeftPlacement(list <corecvs :: Polygon> &inp, corecvs :: Rectangled &
 
         for (auto it2 = currNFPs.begin(); it2 != currNFPs.end(); ++it2)
         {
-
-            size_t i  = 0;
-            while(i < it2->size())
+            for (size_t i = 0; i < it2->size(); ++i)
             {
                 auto Candidate = it2->getPoint(i);
                 bool b = 0;
@@ -517,7 +505,6 @@ void bottomLeftPlacement(list <corecvs :: Polygon> &inp, corecvs :: Rectangled &
                         Candidates.push_back(Candidate);
                     }
                 }
-                ++i;
             }
         }
         Polygon ifpClone = polFromRect(innerFP);
@@ -525,13 +512,12 @@ void bottomLeftPlacement(list <corecvs :: Polygon> &inp, corecvs :: Rectangled &
         for (Vector2dd &p : ifpClone)
         {
             bool b = 0;
-            auto it3 = currNFPs.begin();
-            while(it3 != currNFPs.end() && b == 0)
+
+            for (auto it3 = currNFPs.begin(); it3 != currNFPs.end() && b == 0; ++it3)
             {
                 if(isInteriorConvexPol(p, *it3)){
                     b = 1;
                 }
-                ++it3;
             }
             if (b == 0){
                 Candidates.push_back(p);
@@ -549,8 +535,6 @@ void bottomLeftPlacement(list <corecvs :: Polygon> &inp, corecvs :: Rectangled &
             cout <<endl << inpNumber << " polygon can't be placed";
 
         }
-        ++it;
-        ++inpNumber;
     }
 
 }
@@ -570,12 +554,12 @@ bool isClockOrP(const Polygon &A)
 
 }
 
-void doClockOrP(Polygon &A) // do not look at realisation pls, to be redone
+void doClockOrP(Polygon &A)
 {
     if(!isClockOrP(A))
     {
         Polygon B;
-        for(int i = A.size() - 1; i >= 0; --i){
+        for(int i = (int)A.size() - 1; i >= 0; --i){
             B.push_back(A.getPoint(i));
         }
         A = B;
@@ -583,7 +567,7 @@ void doClockOrP(Polygon &A) // do not look at realisation pls, to be redone
 
 }
 
-void rotatePolAngle(Polygon &A, double Phi) // to be redone, saw smthing useful for rotating in lib
+void rotatePolAngle(Polygon &A, double Phi)
 {
     for (auto &v : A)
     {
@@ -597,8 +581,7 @@ void rotatePolAngle(Polygon &A, double Phi) // to be redone, saw smthing useful 
 Vector2dd massCenter(const Polygon &A)
 {
     Vector2dd Result (0,0);
-    for (auto &v : A)
-    {
+    for (auto &v : A){
         Result += v;
     }
     return Result/A.size();
@@ -633,7 +616,6 @@ void lowerMassCenter(Polygon& A)
 
     if (best != 0)
         rotatePolAngle(A, best * phi);
-
 }
 
 
@@ -684,8 +666,7 @@ void bottomLeftPlacementProtected(list <corecvs :: Polygon> &inp, corecvs :: Rec
 void showPolygon(const Polygon &A)
 {
     cout << endl;
-    for(size_t i = 0; i < A.size(); ++i)
-    {
+    for(size_t i = 0; i < A.size(); ++i){
         cout << A.getPoint(i).x() <<" " << A.getPoint(i).y() << endl;
     }
 }
