@@ -22,11 +22,7 @@ using namespace std;
 
 //for some reason header do not see list
 
-void bottomLeftPlacement(list <corecvs :: Polygon> &inp, corecvs :: Rectangled &Bin);
-void bottomLeftPlacementProtected(list <corecvs :: Polygon> &inp, corecvs :: Rectangled &Bin, int i = 1);
-void drawPolygons(list <Polygon> inputPolygons, int h, int w, string bmpname);
-void drawSvgPolygons(list <Polygon> inputPolygons, int h, int w, string svgName);
-int getTopRightIndex(const Polygon &A);
+
 
 //bool testDisjoint(std::vector<Polygon> &inputPolygons)
 //{

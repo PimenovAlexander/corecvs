@@ -9,19 +9,14 @@
 
 
 /* Helpers  */
-//declaration of same methods, working with list are in main_nester_test, cause for some reason header do not see list
+
 void drawPolygons   (std::vector<corecvs::Polygon> inputPolygons, int h, int w, std::string bmpname);
 void drawSvgPolygons(std::vector<corecvs::Polygon> inputPolygons, int h, int w, std::string svgName);
 
-
-/* Helpers */
-
-void drawPolygons   (std::vector<corecvs::Polygon> &inputPolygons, int h, int w, std::string bmpname);
-void drawSvgPolygons(std::vector<corecvs::Polygon> &inputPolygons, int h, int w, std::string svgName);
-
+void drawPolygons(std :: list <corecvs :: Polygon> inputPolygons, int h, int w, std :: string bmpname);
+void drawSvgPolygons(std :: list <corecvs :: Polygon> inputPolygons, int h, int w, std :: string svgName);
 
 void addSubPolygons (corecvs::SvgShape *shape, std::vector<corecvs::Polygon> &inputPolygons);
-
 
 /* new era*/
 bool isInteriorROConvexPolBinSearch(const corecvs ::Vector2dd &Point, const corecvs :: Polygon &A);
@@ -33,6 +28,12 @@ bool hasBiggerLOArg(const corecvs ::Vector2dd &v1, const corecvs :: Vector2dd &v
 corecvs::Polygon convexNFP(const corecvs::Polygon &A, const corecvs::Polygon &B);
 
 corecvs::Rectangled innerFitPolygon(const corecvs::Polygon &A, const corecvs::Rectangled &R);
+
+void bottomLeftPlacement(std :: list <corecvs :: Polygon> &inp, corecvs :: Rectangled &Bin);
+
+void bottomLeftPlacementProtected(std :: list <corecvs :: Polygon> &inp, corecvs :: Rectangled &Bin, int i = 1);
+
+int getTopRightIndex(const corecvs :: Polygon &A);
 
 //same about bottomLeftPlacement, using list
 /* helpful methods */
