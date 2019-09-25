@@ -10,16 +10,12 @@ exists(../../../../../config.pri) {
 }
 ROOT_DIR=$$PWD/$$ROOT_DIR
 
-TEMPLATE = app
-TARGET   = physics
-
 include(../../../utils/utils.pri)                      # it uses TARGET, ROOT_DIR and detects UTILS_BINDIR, OBJECTS_DIR, DESTDIR, ...!
-include(../drone-core/drone-core.pri)
 
 QT += serialport
 
-
-SOURCES += mainDrone.cpp
-
-LIBS +=  -ldrone-core -lcvs_utils -lcvs_core $$LIBS
+INCLUDEPATH += $$PWD/.
+INCLUDEPATH += $$PWD/joystick
+INCLUDEPATH += $$PWD/radio
+INCLUDEPATH += $$PWD/calibration
 

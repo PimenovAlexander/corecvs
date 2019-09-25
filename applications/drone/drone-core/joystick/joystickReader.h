@@ -1,7 +1,7 @@
 #ifndef JOYSTICKREADER_H
 #define JOYSTICKREADER_H
 
-#include "JoystickOptionsWidget.h"
+#include "joystickInterface.h"
 
 #include <QObject>
 

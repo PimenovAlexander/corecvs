@@ -14,25 +14,20 @@ TEMPLATE = lib
 TARGET   = drone-core
 CONFIG  += staticlib
 
-include(../../../utils/utils.pri)                      # it uses TARGET, ROOT_DIR and detects UTILS_BINDIR, OBJECTS_DIR, DESTDIR, ...!
+include(../../../core/core.pri)                      # it uses TARGET, ROOT_DIR and detects UTILS_BINDIR, OBJECTS_DIR, DESTDIR, ...!
 include(drone-core.pri)
 
 QT += serialport
 
 HEADERS += \
     calibration/calibration.h \
-    calibration/calibrationWidget.h \
-    calibration/imageForCalibrationWidget.h \
     \
     copter/pid.h \
     copter/droneObject.h \
     copter/motor.h \
     copter/quad.h \
     \
-    joystick/joystickreader.h \
     joystick/joystickInterface.h \
-    joystick/JoystickOptionsWidget.h \
-    joystick/mixerChannelOperationWidget.h \
     \
     simulation/janibekovsBolt.h \
     simulation/physMainObject.h \
@@ -48,7 +43,6 @@ HEADERS += \
     radio/frSkyMultimodule.h \
     radio/multimoduleController.h \
     radio/r9Module.h \
-    radio/radioControlWidget.h \
     \
     autopilot/protoautopilot.h \
     autopilot/vertexsquare.h \
@@ -57,29 +51,20 @@ HEADERS += \
     clientSender.h \
     joystickInput.h \
     controlRecord.h \
-    comcontroller.h \
-    frameProcessor.h \
-    copterInputsWidget.h \
+    comcontroller.h \  
     copterInputs.h \
-    \
-    physicsMainWindow.h \
-    physicsAboutWidget.h \
+    joystick/joystickReader.h
 
 
 SOURCES += \
     calibration/calibration.cpp \
-    calibration/calibrationWidget.cpp \
-    calibration/imageForCalibrationWidget.cpp \
     \
     copter/pid.cpp \
     copter/quad.cpp \
     copter/droneObject.cpp \
     copter/motor.cpp \
     \
-    joystick/joystickreader.cpp \
     joystick/joystickInterface.cpp \
-    joystick/JoystickOptionsWidget.cpp \
-    joystick/mixerChannelOperationWidget.cpp \
     \
     simulation/physMainObject.cpp \
     simulation/simulation.cpp \
@@ -88,39 +73,25 @@ SOURCES += \
     simulation/mainObject.cpp \
     simulation/physObject.cpp \
     simulation/physSphere.cpp \
+    simulation/dzhanibekovBolt.cpp \
     \
     mixer/controlsMixer.cpp \
     \
     radio/frSkyMultimodule.cpp \
     radio/multimoduleController.cpp \
     radio/r9Module.cpp \
-    radio/radioControlWidget.cpp \
     \
     autopilot/protoautopilot.cpp \
-    autopilot/vertexsquare.cpp\
+    autopilot/vertexsquare.cpp \
     opencvUtils/opencvTransformations.cpp \
     \
     joystickInput.cpp \
     clientSender.cpp \   
     controlRecord.cpp \
-    copterInputsWidget.cpp \   
     copterInputs.cpp \   
-    frameProcessor.cpp \   
-    physicsMainWindow.cpp \
-    physicsAboutWidget.cpp \   
     comcontroller.cpp \
-    simulation/dzhanibekovBolt.cpp
+    joystick/joystickReader.cpp
 
-
-FORMS += \
-    calibration/calibrationWidget.ui \
-    calibration/imageForCalibrationWidget.ui \
-    joystick/JoystickOptionsWidget.ui \
-    joystick/mixerChannelOperationWidget.ui \
-    radio/radioControlWidget.ui \
-    copterInputsWidget.ui \
-    physicsMainWindow.ui \
-    physicsAboutWidget.ui
 
 #RESOURCES += ../../resources/main.qrc
 

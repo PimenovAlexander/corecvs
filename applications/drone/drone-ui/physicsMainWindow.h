@@ -12,18 +12,18 @@
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
-#include <calibration.h>
-#include <cameraModelParametersControlWidget.h>
-#include <capSettingsDialog.h>
-#include <controlsMixer.h>
-#include <flowFabricControlWidget.h>
-#include <graphPlotDialog.h>
-#include <inputSelectorWidget.h>
-#include <radioControlWidget.h>
-#include <joystickreader.h>
+#include "calibration.h"
+#include "cameraModelParametersControlWidget.h"
+#include "capSettingsDialog.h"
+#include "controlsMixer.h"
+#include "flowFabricControlWidget.h"
+#include "graphPlotDialog.h"
+#include "inputSelectorWidget.h"
+#include "radioControlWidget.h"
+#include "joystickReader.h"
 
-#include <copter/quad.h>
-#include <copter/droneObject.h>
+#include "copter/quad.h"
+#include "copter/droneObject.h"
 
 #include "calibrationWidget.h"
 #include "clientSender.h"

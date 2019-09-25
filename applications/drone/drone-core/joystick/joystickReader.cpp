@@ -1,4 +1,4 @@
-#include "joystickreader.h"
+#include "joystickReader.h"
 #include "iostream"
 
 JoystickReader::JoystickReader(const std::string &deviceName) : JoystickInterface (deviceName)

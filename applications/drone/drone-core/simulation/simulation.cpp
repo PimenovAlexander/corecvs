@@ -6,7 +6,7 @@
 #include "core/utils/log.h"
 #include <chrono>
 #include "mesh3DScene.h"
-#include "physicsMainWindow.h"
+//#include "physicsMainWindow.h"
 using namespace std;
 using namespace corecvs;
 
@@ -246,7 +246,7 @@ void Simulation::start()
             std::chrono::duration<double> currentTime = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-startTime);
 
             // cout<<time_span.count()<<endl;
-            for (int i=0; i<mainObjects.size(); i++)
+            for (int i = 0; i < mainObjects.size(); i++)
             {
                 mainObjects[i].tick(time_span.count());
              }
