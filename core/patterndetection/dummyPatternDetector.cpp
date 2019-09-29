@@ -9,15 +9,21 @@ DummyPatternDetector::DummyPatternDetector() :
 
 DummyPatternDetector::~DummyPatternDetector()
 {
+    delete_safe(debug);
 }
+
 
 std::vector<std::string> DummyPatternDetector::debugBuffers() const
 {
-    return std::vector<std::string>();
+    return std::vector<std::string>({"marks"});
 }
 
 RGB24Buffer *DummyPatternDetector::getDebugBuffer(const std::string &name) const
 {
+    if (name == "marks")
+    {
+        return new RGB24Buffer(debug);
+    }
     return NULL;
 }
 
@@ -67,7 +73,14 @@ void DummyPatternDetector::getOutput(vector<Vector2dd> &patterns)
             }
         }
         patterns.push_back(result);
-    }
+        delete_safe(debug);
+        debug = new RGB24Buffer(input);
+        for (size_t i = 0; i < patterns.size(); i++)
+        {
+            debug->drawCrosshare3(patterns[i], RGBColor::Red());
+        }
+    }    
+
     Statistics::endInterval(stats, "Getting output");
 }
 

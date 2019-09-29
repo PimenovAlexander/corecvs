@@ -19,6 +19,9 @@
 #ifdef WITH_LIBPNG
 #include "libpngFileReader.h"
 #endif
+#ifdef WITH_OPENCV
+#include "patternDetect/openCVSquareDetector.h"
+#endif
 
 using namespace std;
 using namespace corecvs;
@@ -130,6 +133,8 @@ int detect(CommandLineSetter &s)
     }
 
     Statistics::startInterval(&stats);
+    producer->dumpAllDebugs("detector-", ".png");
+
     delete_safe(input);
     delete_safe(producer);
     Statistics::endInterval(&stats, "Cleanup");
@@ -155,11 +160,17 @@ void usage()
   SYNC_PRINT(("./bin/pattern_detector --detect --producer=Dummy --dumpConfig --config=out.json\n"));
   SYNC_PRINT(("          - dump current config to out.json\n"));
   SYNC_PRINT(("          \n"));
+  SYNC_PRINT(("          \n"));
   SYNC_PRINT(("Dummy pattern provider:\n"));
   SYNC_PRINT(("./bin/pattern_detector --detect --producer=Dummy --point.x=10 --point.y=10 --input=circles.bmp\n"));
   SYNC_PRINT(("          - example that returns back pattern at given point\n"));
   SYNC_PRINT(("./bin/pattern_detector --detect --producer=Dummy --color.r=100 --color.g=100 --color.b=100 --input=circles.bmp\n"));
   SYNC_PRINT(("          - example that returns back pattern at point with closest color to given\n"));
+  SYNC_PRINT(("          \n"));
+  SYNC_PRINT(("          \n"));
+  SYNC_PRINT(("Opencv Square pattern provider:\n"));
+  SYNC_PRINT(("./bin/pattern_detector --detect --producer=OpenCVSquare --params.debug=on --input=photo_2019-09-29_23-11-36.jpg\n"));
+  SYNC_PRINT(("          - example that returns detected squares\n"));
 
 }
 
@@ -167,13 +178,18 @@ int main(int argc, char *argv[])
 {
 #ifdef WITH_LIBJPEG
     LibjpegFileReader::registerMyself();
+    LibjpegFileSaver::registerMyself();
     SYNC_PRINT(("Libjpeg support on\n"));
 #endif
 #ifdef WITH_LIBPNG
     LibpngFileReader::registerMyself();
+    LibpngFileSaver::registerMyself();
     SYNC_PRINT(("Libpng support on\n"));
-#endif
+#endif    
     PatternDetectorFabric::getInstance()->add(new PatternDetectorProducer<DummyPatternDetector>("Dummy"));
+#ifdef WITH_OPENCV
+    PatternDetectorFabric::getInstance()->add(new PatternDetectorProducer<OpenCVSquareDetector>("OpenCVSquare"));
+#endif
 
     CommandLineSetter s(argc, argv);
     if (s.hasOption("caps")) {

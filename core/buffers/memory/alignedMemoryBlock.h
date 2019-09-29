@@ -2,6 +2,7 @@
 #define ALIGNEDMEMORYBLOCK_H
 
 #include <memory>
+#include <stdlib.h>
 
 #if defined(WIN32)
 # define aligned_alloc(a, sz)   _aligned_malloc(sz, a)

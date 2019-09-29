@@ -39,4 +39,8 @@ copy_if_different Generated/openCVSGMParameters.cpp                 $opencv/gene
 copy_if_different Generated/openCVSGMParametersControlWidget.cpp    $opencv/generated
 copy_if_different Generated/openCVSGMParametersControlWidget.ui     $opencv/generated
 
+copy_if_different Generated/openCVSquareDetectorParameters.h        $opencv/generated
+copy_if_different Generated/openCVSquareDetectorParameters.cpp      $opencv/generated
+
+
 echo "copied"

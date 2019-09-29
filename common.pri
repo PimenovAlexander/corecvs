@@ -151,7 +151,7 @@ gcc_env_toolchain {
 }
 
 clang_toolchain {
-  CLANG_POSTFIX="-7"
+  CLANG_POSTFIX="-9"
 
   CONFIG -= warn_on
 

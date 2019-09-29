@@ -11,9 +11,11 @@ public:
     Statistics *stats = NULL;
     RGB24Buffer *input = NULL;
 
+    RGB24Buffer *debug = NULL;
+
+
     Vector2dd point;
     RgbColorParameters color;
-    bool debug;
 
     DummyPatternDetector();
     virtual ~DummyPatternDetector();
@@ -32,7 +34,7 @@ public:
         return 0;
     }
 
-    // PatternDetector interface
+    /** PatternDetector interface */
 public:
     std::map<std::string, DynamicObject> getParameters();
     bool setParameters(std::string name, const DynamicObject &param);

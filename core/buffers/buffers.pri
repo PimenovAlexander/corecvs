@@ -60,13 +60,15 @@ HEADERS += \
     buffers/convolver/convolver.h \
     buffers/rgb24/lineSpan.h \
     buffers/nonMaximalSuperssor.h \
-    buffers/rgb24/wuRasterizer.h \
     buffers/abstractBufferParams.h \
 #    buffers/focusEstimator1.h \
     buffers/rgb24/bresenhamRasterizer.h \
     buffers/fixeddisp/fixedPointRemapper.h \
     buffers/remapBuffer.h \
-    buffers/rgb24/bezierRasterizer.h
+    buffers/rgb24/wuRasterizer.h \
+    buffers/rgb24/bezierRasterizer.h \
+    buffers/flow/dpImage.h \
+
 
 
 SOURCES += \
@@ -110,10 +112,10 @@ SOURCES += \
     buffers/convolver/convolver.cpp \
     buffers/rgb24/lineSpan.cpp \
     buffers/nonMaximalSuperssor.cpp \
-#    buffers/focusEstimator1.cpp \
-    buffers/rgb24/wuRasterizer.cpp \
+#    buffers/focusEstimator1.cpp \   
     buffers/rgb24/bresenhamRasterizer.cpp \
     buffers/remapBuffer.cpp \
+    buffers/rgb24/wuRasterizer.cpp \
     buffers/rgb24/bezierRasterizer.cpp
 
 

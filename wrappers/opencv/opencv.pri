@@ -15,6 +15,7 @@ contains(DEFINES, WITH_OPENCV) {                    # if it's installed properly
                 $$OPENCV_WRAPPER_DIR/openCVTools.h \
 		$$OPENCV_WRAPPER_DIR/semiGlobalBlockMatching.h \
 		$$OPENCV_WRAPPER_DIR/openCvCheckerboardDetector.h \
+                $$OPENCV_WRAPPER_DIR/patternDetect/openCVSquareDetector.h \
 
 
     SOURCES += \
@@ -24,6 +25,7 @@ contains(DEFINES, WITH_OPENCV) {                    # if it's installed properly
 		$$OPENCV_WRAPPER_DIR/semiGlobalBlockMatching.cpp \
 		$$OPENCV_WRAPPER_DIR/openCvCheckerboardDetector.cpp \
                 $$OPENCV_WRAPPER_DIR/openCvImageRemapper.cpp \
+                $$OPENCV_WRAPPER_DIR/patternDetect/openCVSquareDetector.cpp
 
     #
     # Features
@@ -71,6 +73,8 @@ contains(DEFINES, WITH_OPENCV) {                    # if it's installed properly
     # Face Detection
     #
     INCLUDEPATH += $$OPENCV_WRAPPER_DIR/faceDetect
+    INCLUDEPATH += $$OPENCV_WRAPPER_DIR/patternDetect
+
 
     HEADERS     += $$OPENCV_WRAPPER_DIR/faceDetect/faceDetect.h
     SOURCES     += $$OPENCV_WRAPPER_DIR/faceDetect/faceDetect.cpp
@@ -93,5 +97,11 @@ contains(DEFINES, WITH_OPENCV) {                    # if it's installed properly
     HEADERS   += $$OPENCV_WRAPPER_DIR/generated/openCVSGMParameters.h
     SOURCES   += $$OPENCV_WRAPPER_DIR/generated/openCVSGMParameters.cpp
 
+    HEADERS   += $$OPENCV_WRAPPER_DIR/generated/openCVSquareDetectorParameters.h
+    SOURCES   += $$OPENCV_WRAPPER_DIR/generated/openCVSquareDetectorParameters.cpp
+
+
+
 
 }
+
