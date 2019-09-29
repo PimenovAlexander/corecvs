@@ -121,6 +121,7 @@ message(STATUS "TEST_SOURCE_DIR " ${PROJECT_SOURCE_DIR})
 
 
 add_executable(${MODULE_NAME_TEST} ${CORE_TEST_SOURCES})
+
 set_property(TARGET ${MODULE_NAME_TEST} PROPERTY CXX_STANDARD 17)
 set_property(TARGET ${MODULE_NAME_TEST} PROPERTY CXX_STANDARD_REQUIRED ON)
 
@@ -128,7 +129,7 @@ set_property(TARGET ${MODULE_NAME_TEST} PROPERTY CXX_STANDARD_REQUIRED ON)
 target_link_libraries(${MODULE_NAME_TEST} gtest gtest_main stdc++fs corecvs)
 target_include_directories(${MODULE_NAME_TEST} PUBLIC ${corecvs_SOURCE_DIR} .)
 
-
+# For ctest support. Not necessary to use but nice move for automates testing.
 add_test(
         NAME
             core-test

@@ -1,10 +1,6 @@
 cmake_minimum_required (VERSION 3.10)
 project (CoreCVS)
 
-# set (CMAKE_CXX_STANDARD 11)
-# set_property(TARGET CoreCVS PROPERTY CXX_STANDARD 17)
-# set_property(TARGET CoreCVS PROPERTY CXX_STANDARD_REQUIRED ON)
-
 set (CoreCVS_VERSION_MAJOR 1)
 set (CoreCVS_VERSION_MINOR 0)
 
