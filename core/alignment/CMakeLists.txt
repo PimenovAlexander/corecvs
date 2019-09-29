@@ -1,29 +1,33 @@
 target_sources(corecvs
     PUBLIC
-        alignment/radialCorrection.h
-        alignment/distortionCorrectTransform.h
-        alignment/camerasCalibration/camerasCalibrationFunc.h
-        alignment/radialFunc.h
-        alignment/curvatureFunc.h
-        alignment/angleFunction.h
-        alignment/anglePointsFunction.h
-        alignment/distPointsFunction.h
-        alignment/selectableGeometryFeatures.h
-        alignment/lmDistortionSolver.h
-        alignment/lensDistortionModelParameters.h
-        alignment/pointObservation.h
+        ${CMAKE_CURRENT_LIST_DIR}/radialCorrection.h
+        ${CMAKE_CURRENT_LIST_DIR}/distortionCorrectTransform.h
+        ${CMAKE_CURRENT_LIST_DIR}/camerasCalibration/camerasCalibrationFunc.h
+        ${CMAKE_CURRENT_LIST_DIR}/radialFunc.h
+        ${CMAKE_CURRENT_LIST_DIR}/curvatureFunc.h
+        ${CMAKE_CURRENT_LIST_DIR}/angleFunction.h
+        ${CMAKE_CURRENT_LIST_DIR}/anglePointsFunction.h
+        ${CMAKE_CURRENT_LIST_DIR}/distPointsFunction.h
+        ${CMAKE_CURRENT_LIST_DIR}/selectableGeometryFeatures.h
+        ${CMAKE_CURRENT_LIST_DIR}/lmDistortionSolver.h
+        ${CMAKE_CURRENT_LIST_DIR}/lensDistortionModelParameters.h
+        ${CMAKE_CURRENT_LIST_DIR}/pointObservation.h
     PRIVATE
-        alignment/radialCorrection.cpp
-        alignment/camerasCalibration/camerasCalibrationFunc.cpp
-        alignment/radialFunc.cpp
-        alignment/curvatureFunc.cpp
-        alignment/angleFunction.cpp
-        alignment/anglePointsFunction.cpp
-        alignment/distPointsFunction.cpp
-        alignment/selectableGeometryFeatures.cpp
-        alignment/lmDistortionSolver.cpp
-        alignment/lensDistortionModelParameters.cpp
-        alignment/pointObservation.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/radialCorrection.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/camerasCalibration/camerasCalibrationFunc.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/radialFunc.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/curvatureFunc.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/angleFunction.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/anglePointsFunction.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/distPointsFunction.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/selectableGeometryFeatures.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/lmDistortionSolver.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/lensDistortionModelParameters.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/pointObservation.cpp
+)
+target_include_directories(corecvs
+    PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}
 )
 
 

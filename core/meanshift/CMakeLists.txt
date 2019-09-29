@@ -1,11 +1,11 @@
 target_sources(corecvs
     PUBLIC
-        meanshift/meanShiftCalculator.h
-        meanshift/meanShiftWindow.h
-        meanshift/abstractMeanShiftKernel.h
+        ${CMAKE_CURRENT_LIST_DIR}/meanShiftCalculator.h
+        ${CMAKE_CURRENT_LIST_DIR}/meanShiftWindow.h
+        ${CMAKE_CURRENT_LIST_DIR}/abstractMeanShiftKernel.h
 
      PRIVATE
-        meanshift/meanShiftCalculator.cpp
-        meanshift/meanShiftWindow.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/meanShiftCalculator.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/meanShiftWindow.cpp
  )
 

@@ -1,15 +1,15 @@
 target_sources(corecvs
     PUBLIC
-        clustering3d/cloud.h
-        clustering3d/swarmPoint.h
-        clustering3d/cloudCluster.h
-        clustering3d/clustering3d.h
+        ${CMAKE_CURRENT_LIST_DIR}/cloud.h
+        ${CMAKE_CURRENT_LIST_DIR}/swarmPoint.h
+        ${CMAKE_CURRENT_LIST_DIR}/cloudCluster.h
+        ${CMAKE_CURRENT_LIST_DIR}/clustering3d.h
 
     PRIVATE
-        clustering3d/cloud.cpp
-        clustering3d/swarmPoint.cpp
-        clustering3d/cloudCluster.cpp
-        clustering3d/clustering3d.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/cloud.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/swarmPoint.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/cloudCluster.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/clustering3d.cpp
     )
 
 

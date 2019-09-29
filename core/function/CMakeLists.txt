@@ -1,7 +1,7 @@
 target_sources(corecvs
     PUBLIC
-        function/function.h
+        ${CMAKE_CURRENT_LIST_DIR}/function.h
     PRIVATE
-        function/function.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/function.cpp
 
 )

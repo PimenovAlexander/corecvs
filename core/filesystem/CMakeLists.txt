@@ -1,9 +1,9 @@
 target_sources(corecvs
     PUBLIC
-        filesystem/folderScanner.h
-        filesystem/tempFolder.h
+        ${CMAKE_CURRENT_LIST_DIR}/folderScanner.h
+        ${CMAKE_CURRENT_LIST_DIR}/tempFolder.h
  
     PRIVATE
-        filesystem/folderScanner.cpp
-        filesystem/tempFolder.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/folderScanner.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/tempFolder.cpp
 )

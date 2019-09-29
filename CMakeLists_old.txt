@@ -1,10 +1,6 @@
 cmake_minimum_required (VERSION 3.10)
 project (CoreCVS)
 
-# set (CMAKE_CXX_STANDARD 11)
-# set_property(TARGET CoreCVS PROPERTY CXX_STANDARD 17)
-# set_property(TARGET CoreCVS PROPERTY CXX_STANDARD_REQUIRED ON)
-
 set (CoreCVS_VERSION_MAJOR 1)
 set (CoreCVS_VERSION_MINOR 0)
 
@@ -25,14 +21,10 @@ IF ( USE_OPENBLAS )
     find_package( OpenBlas )
 ENDIF ()
 
-include(cmake/googletest.cmake)
-fetch_googletest(
-    ${PROJECT_SOURCE_DIR}/cmake
-    ${PROJECT_BINARY_DIR}/googletest
-    )
 
 add_subdirectory(core)
-
-enable_testing()
 add_subdirectory(test-core)
 
+add_dependencies(test-core corecvs)
+
+#add_executable(Tutorial tutorial.cxx)

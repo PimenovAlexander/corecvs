@@ -1,6 +1,8 @@
 .obj
 bin
+build
 siblings/gtest
+siblings/googletest
 .vscode
 
 *Makefile*
@@ -11,3 +13,9 @@ siblings/gtest
 .qmake.stash
 cvs-open.pro.user
 tools/generator/generator
+
+cmake-build-debug/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+
