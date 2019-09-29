@@ -102,7 +102,7 @@ void InputSelectorWidget::browseAvi()
         this,
         "Choose an file name",
         ".",
-        "Avi (*.avi, *.mp4, *.mkv)"
+        "Avi (*.avi *.mp4 *.mkv)"
         );
 
     ui.aviLineEdit->setText(filename);
@@ -116,7 +116,7 @@ void InputSelectorWidget::browseFile()
         this,
         "Choose an file name",
         ".",
-        "Images (*.png, *.jpeg, *.bmp)"
+        "Images (*.png *.jpeg *.bmp)"
         );
     ui.fileLineEdit->setText(filename);
 

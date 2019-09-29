@@ -26,7 +26,6 @@ nester {
 
 legacy {
      SUBDIRS += applications/laserscan
-     SUBDIRS += scanner
      SUBDIRS += egomotion
      SUBDIRS += base_application_example
      SUBDIRS += testbed

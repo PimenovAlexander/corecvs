@@ -81,6 +81,16 @@ public:
     void drawFlowBuffer1(FlowBuffer *src, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
     void drawFlowBuffer2(FlowBuffer *src, double colorShift = 0.0, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
     void drawFlowBuffer3(FlowBuffer *src, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
+
+    /**
+     *   -1 scaler means autoscale.
+     *   Same scale is selected for both axis
+     **/
+    void drawFlowBuffer         (FloatFlowBuffer *src, double scaler = -1, int32_t y = 0, int32_t x = 0);
+    void drawFlowBufferHue      (FloatFlowBuffer *src, double scaler = -1, double magLimit = 100000, int32_t y = 0, int32_t x = 0, bool unknownBlack = false, int step = 1, bool kitti = false);
+    void drawFlowBufferSparseHue(FloatFlowBuffer *src, double scaler, double magLimit, int32_t y, int32_t x, bool unknownBlack, int pointSize, bool kitti = false);
+
+
     void drawCorrespondenceList(CorrespondenceList *src, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
 
     /**
@@ -230,6 +240,7 @@ public:
     G12Buffer *toG12Buffer();
 
     G8Buffer* getChannel(ImageChannel::ImageChannel channel);
+    bool isGrayscale() const;
 
     template<class SelectorPrediate>
     Vector3dd getMeanValue(int x1, int y1, int x2, int y2, const SelectorPrediate &predicate)

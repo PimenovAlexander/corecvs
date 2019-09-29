@@ -208,6 +208,8 @@ with_directshow {
 
 with_avcodec {
     !build_pass: message(Switching on avcodec support)
+    AVCODEC_WRAPPER_DIR = $$UTILSDIR/../wrappers/avcodec
+    include($$AVCODEC_WRAPPER_DIR/avcodecLibs.pri)
 
     win32 {
         isEmpty(AVCODEC_PATH): AVCODEC_PATH = "c:/ffmpeg"

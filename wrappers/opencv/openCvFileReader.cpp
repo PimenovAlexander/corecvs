@@ -25,7 +25,7 @@ BufferReader* OpenCvBufferReaderProvider::getBufferReader(const std::string &fil
 
 void init_opencv_reader_provider()
 {
-    BufferReaderProvider::getInstance().add(new OpenCvBufferReaderProvider);
+//    BufferReaderProvider::getInstance().add(new OpenCvBufferReaderProvider);
 
     BufferFactory::getInstance()->registerLoader(new OpenCVRGB24Loader());
     BufferFactory::getInstance()->registerLoader(new OpenCVRuntimeTypeBufferLoader());

@@ -76,6 +76,7 @@ CONFIG +=                   \
         with_avcodec        \
         with_libjpeg        \
         with_libpng         \
+        with_jsonmodern     \
 
 
 win32 {

@@ -114,6 +114,26 @@ TEST(Affine, QuaternionFromMatix)
         Quaternion q = Quaternion::FromMatrix(m);
         q.printAxisAndAngle();
     }
+
+    {
+        Matrix33 m(
+                0.747771,    -0.663955,  -0.00157435,
+               -0.663956,    -0.747765,  -0.00307281,
+               -0.000862956, -0.00334306, 0.999994);
+
+        cout << "d:" << m.det() << std::endl;
+        cout << "l0:" << (m.row(0).l2Metric()) << std::endl;
+        cout << "l1:" << (m.row(0).l2Metric()) << std::endl;
+        cout << "l2:" << (m.row(0).l2Metric()) << std::endl;
+
+        cout << "xy:" << (m.row(0) & m.row(1)) << std::endl;
+        cout << "xz:" << (m.row(0) & m.row(2)) << std::endl;
+        cout << "yz:" << (m.row(1) & m.row(2)) << std::endl;
+
+        Quaternion q = Quaternion::FromMatrix(m);
+        q.printAxisAndAngle();
+
+    }
 }
 
 

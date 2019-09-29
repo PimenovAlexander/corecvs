@@ -13,6 +13,7 @@
 #include <math.h>
 #include <cmath>
 #include <stdint.h>
+#include <stddef.h>
 
 #include "core/utils/global.h"
 
@@ -223,9 +224,11 @@ public:
 //#ifdef REFLECTION_IN_CORE
     static Reflection reflection;
     static int        dummy;
+    static const char* className;
 
     typedef typename ReflectionHelper<ElementType>::Type ReflectionType;
 
+#if 0
     static int staticInit(const char *name = "")
     {
         reflection.name = name;
@@ -237,11 +240,29 @@ public:
         // cout << "Adding:" << name << " to directory" << std::endl;
         return 0;
     }
+#endif
+
+#if 1
+    static int staticInit(corecvs::Reflection *toFill)
+    {
+        if (toFill == NULL || toFill->objectSize != 0) {
+            SYNC_PRINT(("staticInit(): Contract Violation in <Vector2d<ElementType>>\n"));
+             return -1;
+        }
+        toFill->name = ReflectionNaming(className, className, "" );
+        toFill->fields.push_back(new ReflectionType(FIELD_X, offsetof(Vector2d, element[0]), ElementType(0), "x"));
+        toFill->fields.push_back(new ReflectionType(FIELD_Y, offsetof(Vector2d, element[1]), ElementType(0), "y"));
+        toFill->objectSize = sizeof(Vector2d<ElementType>);
+        return 0;
+    }
+#endif
+
+
 //#endif
 
 template<class VisitorType>
     void accept(VisitorType &visitor)
-    {
+    {      
         CORE_ASSERT_TRUE_S(reflection.fields.size() == 2);
         visitor.visit(x(), static_cast<const ReflectionType *>(reflection.fields[FIELD_X]));
         visitor.visit(y(), static_cast<const ReflectionType *>(reflection.fields[FIELD_Y]));

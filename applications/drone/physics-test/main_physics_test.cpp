@@ -416,6 +416,8 @@ TEST(Physics, dzhanibekovVideo)
         q.printAxisAndAngle();
         cout << " x: " << pos << endl;
 
+        cout << "Kinetic Energy:" << ((I * w) & w) << endl;
+
         encoder.addFrame(&output);
 #endif
 

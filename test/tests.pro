@@ -24,6 +24,7 @@ SUBDIRS +=     \
     flowtest \
     avencode \
     opencvpostcalib \
+    pattern_detector \
 
 !win32 {
     SUBDIRS += jitplayground
@@ -94,3 +95,6 @@ qtScriptConsole                     = qtScriptConsole/qtScriptConsole.pro
 stereo_generator                    = stereo_generator/stereo_generator.pro
 
 flowtest.file                       = flowtest/flowtest.pro
+
+focusstacking.file                   = focusstacking/focusstacking.pro
+pattern_detector.file                = pattern_detector/pattern_detector.pro

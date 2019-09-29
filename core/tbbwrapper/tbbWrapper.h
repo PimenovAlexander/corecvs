@@ -91,11 +91,11 @@ public:
 #ifdef WITH_TBB
     static const bool is_splittable_in_proportion = true;
 
-    BlockedRange(BlockedRange& r, tbb::split) :
+    BlockedRange(BlockedRange& r, tbb::split s) :
         myGrainsize(r.myGrainsize)
     {
         myEnd = r.myEnd;
-        myBegin = do_split(r);
+        myBegin = do_split(r, s);
     }
 
     BlockedRange(BlockedRange &r, tbb::proportional_split &proportion)
@@ -114,7 +114,7 @@ public:
     }
 #endif
 
-    static IndexType do_split( BlockedRange& r ) {
+    static IndexType do_split( BlockedRange& r, tbb::split ) {
         CORE_ASSERT_TRUE(r.is_divisible(), "TBB Wrapper internal error\n");
         IndexType middle = r.myBegin + (r.myEnd - r.myBegin) / 2u;
         r.myEnd = middle;
@@ -124,6 +124,8 @@ public:
     template<typename R, typename C>
     friend class BlockedRange2d;
 private:
+    IndexType& begin() { return myBegin; }
+    size_type grainsize() { return myGrainsize; }
     IndexType myBegin;
     IndexType myEnd;
     size_type myGrainsize;
@@ -136,6 +138,29 @@ class BlockedRange2d
 public:
     typedef BlockedRange<R> row_range_type;
     typedef BlockedRange<C> col_range_type;
+
+    BlockedRange2d(R rbegin, R rend, C cbegin, C cend,
+                   typename row_range_type::size_type rgrainsize = 1,
+                   typename col_range_type::size_type cgrainsize = 1)
+        : rows(rbegin, rend, rgrainsize)
+        , cols(cbegin, cend, cgrainsize)
+    { }
+
+    BlockedRange2d(const row_range_type &_rows, const col_range_type &_cols)
+        : rows(_rows)
+        , cols(_cols)
+    { }
+
+    BlockedRange2d(BlockedRange2d& r, tbb::split s)
+        : BlockedRange2d(r.rows, r.cols)
+    {
+        do_split(r, s);
+    }
+
+    row_range_type &getRows() { return rows; }
+    const row_range_type &getRows() const { return rows; }
+    col_range_type &getCols() { return cols; }
+    const col_range_type &getCols() const { return cols; }
 
     bool empty() const
     {
@@ -151,12 +176,12 @@ public:
 private:
 
     template <typename Split>
-    void do_split (BlockedRange2d &r, Split &split)
+    void do_split (BlockedRange2d &r, Split split)
     {
         if (rows.size() * double(cols.grainsize()) < cols.size() * double(rows.grainsize()))
-            cols.begin = col_range_type::do_split(r.cols, split);
+            cols.begin() = col_range_type::do_split(r.cols, split);
         else
-            rows.begin = row_range_type::do_split(r.cols, split);
+            rows.begin() = row_range_type::do_split(r.rows, split);
     }
     row_range_type rows;
     col_range_type cols;
@@ -172,6 +197,11 @@ void parallelable_for_notbb(IndexType begin, IndexType end, const Function &f)
     f(BlockedRange<IndexType>(begin, end));
 }
 
+template <typename R, typename C, class Function>
+void parallelable_for_notbb2d(R rbegin, R rend, C cbegin, C cend, const Function &f)
+{
+    f(BlockedRange2d<R, C>(rbegin, rend, cbegin, cend));
+}
 
 /**
  *   This template provides the parallelable call of the function over
@@ -188,6 +218,22 @@ void parallelable_for(IndexType begin, IndexType end, const Function &f, bool sh
         parallelable_for_notbb(begin, end, f);
 }
 
+template <typename R, typename C, class Function>
+void parallelable_for2d(R rbegin, R rend, C cbegin, C cend, std::size_t rgrainsize,
+                        std::size_t cgrainsize, const Function &f, bool shouldParallel = true)
+{
+    if (shouldParallel)
+        parallel_for(BlockedRange2d<R, C>(rbegin, rend, cbegin, cend, rgrainsize, cgrainsize), f);
+    else
+        parallelable_for_notbb2d(rbegin, rend, cbegin, cend, f);
+}
+
+template <typename R, typename C, class Function>
+void parallelable_for2d(R rbegin, R rend, C cbegin, C cend, const Function &f, bool shouldParallel = true)
+{
+    parallelable_for2d(rbegin, rend, cbegin, cend, 1, 1, f, shouldParallel);
+}
+
 template <typename IndexType, class Function>
 void parallelable_for(IndexType begin, IndexType end, std::size_t grainsize, const Function &f, bool shouldParallel = true)
 {
@@ -201,6 +247,12 @@ template <typename IndexType, class Function>
 void parallelable_for(IndexType begin, IndexType end, const Function &f, bool /*shouldParallel*/ = true)
 {
     parallelable_for_notbb(begin, end, f);
+}
+
+template <typename R, typename C, class Function>
+void parallelable_for2d(R rbegin, R rend, C cbegin, C cend, const Function &f, bool /*shouldParallel*/ = true)
+{
+    parallelable_for_notbb2d(rbegin, rend, cbegin, cend, f);
 }
 
 template <typename IndexType, class Function>

@@ -127,6 +127,12 @@ namespace HelperUtils
     string getFileName(const string& fileName);
     string getFileNameIfExist(const string& fileName, const string& relativePath);
 
+    /**
+     *  Many data interchange formats need to load double or float values in С locale,
+     *  not in the local locale.
+     *
+     *  This method parses double with '.' separtor
+     **/
     double parseDouble(const string &s);
 } // namespace HelperUtils
 

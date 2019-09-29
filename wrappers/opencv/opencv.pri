@@ -80,9 +80,18 @@ contains(DEFINES, WITH_OPENCV) {                    # if it's installed properly
 
     OTHER_FILES +=  $$OPENCV_WRAPPER_DIR/../../tools/generator/regen-opencv.sh
 
-    HEADERS   += $$OPENCV_WRAPPER_DIR/generated/*.h
-    SOURCES   += $$OPENCV_WRAPPER_DIR/generated/*.cpp
-    FORMS     += $$OPENCV_WRAPPER_DIR/generated/*.ui
+#    HEADERS   += $$OPENCV_WRAPPER_DIR/generated/*.h
+#    SOURCES   += $$OPENCV_WRAPPER_DIR/generated/*.cpp
+#    FORMS     += $$OPENCV_WRAPPER_DIR/generated/*.ui
+
+    HEADERS   += $$OPENCV_WRAPPER_DIR/generated/openCVKLTParameters.h
+    SOURCES   += $$OPENCV_WRAPPER_DIR/generated/openCVKLTParameters.cpp
+
+    HEADERS   += $$OPENCV_WRAPPER_DIR/generated/openCVBMParameters.h
+    SOURCES   += $$OPENCV_WRAPPER_DIR/generated/openCVBMParameters.cpp
+
+    HEADERS   += $$OPENCV_WRAPPER_DIR/generated/openCVSGMParameters.h
+    SOURCES   += $$OPENCV_WRAPPER_DIR/generated/openCVSGMParameters.cpp
 
 
 }

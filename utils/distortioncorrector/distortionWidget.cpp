@@ -185,7 +185,7 @@ void DistortionWidget::detectCheckerboard()
         //cdp.h = params.mVertCrossesCount;
         //ChessboardDetector detector(cdp);
 
-        PatternDetector& patternDetector = detector;
+        PatternGeometryDetector& patternDetector = detector;
         // FIXME: Not sure if we should ever allow user to tune what channel to use, let us just pass full buffer
         // TODO:  Check if drawing points over buffer is detector's part of work
         bool found = patternDetector.detectPattern(*mBufferInput);

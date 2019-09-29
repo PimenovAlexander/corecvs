@@ -1,5 +1,7 @@
 #!/bin/bash
 
+mkdir -p Generated
+
 source ./helper-regen.sh
 
 opencv="../../wrappers/opencv/"

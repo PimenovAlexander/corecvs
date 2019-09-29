@@ -165,8 +165,8 @@ Matrix44 PinholeCameraIntrinsics::getFrustumMatrix(double zNear, double zFar) co
 PinholeCameraIntrinsics::PinholeCameraIntrinsics(const Vector2dd &resolution, double hfov) :
     CameraProjection(ProjectionType::PINHOLE)
 {
-    mCx = resolution.x() / 2.0;
-    mCy = resolution.y() / 2.0;
+    mCx = (resolution.x() - 1) / 2.0;
+    mCy = (resolution.y() - 1) / 2.0;
 
     mSkew = 0.0;
 
@@ -217,6 +217,18 @@ Matrix33 PinholeCameraIntrinsics::getKMatrix33() const
     );
 }
 
+PinholeCameraIntrinsics PinholeCameraIntrinsics::FromKMatix(double w, double h, const Matrix44 &K)
+{
+    PinholeCameraIntrinsics toReturn(Vector2dd(w,h), degToRad(60));
+
+    toReturn.setCx  (K.a(0,2));
+    toReturn.setCy  (K.a(1,2));
+    toReturn.setFx  (K.a(0,0));
+    toReturn.setFy  (K.a(1,1));
+    toReturn.setSkew(K.a(0,1));
+    return toReturn;
+}
+
 /**
  *
  * \f[ K^{-1} = \pmatrix{
@@ -233,10 +245,11 @@ Matrix33 PinholeCameraIntrinsics::getInvKMatrix33() const
 
     return Matrix33 (
        invF.x() , - skew() * invF.x() * invF.y() ,   ( cy() * skew() * invF.y() - cx()) * invF.x(),
-          0.0   ,           invF.y()            ,                               - cy()  * invF.y(),
-          0.0   ,             0.0               ,                      1.0
-    );
+          0.0   ,           invF.y()             ,                              - cy()  * invF.y(),
+          0.0   ,             0.0                ,                     1.0
+                );
 }
+
 
 double PinholeCameraIntrinsics::getVFov() const
 {

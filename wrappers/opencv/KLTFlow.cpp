@@ -11,13 +11,12 @@
 
 #include <opencv2/core/core_c.h>        // cvCreateImage
 #include <opencv2/imgproc/imgproc_c.h>  // cvGoodFeaturesToTrack
-
 #include <opencv2/video/tracking_c.h>   // cvCalcOpticalFlowPyrLK
 
-
 #include "core/math/vector/vector2d.h"
-#include "KLTFlow.h"
 #include "core/math/mathUtils.h"
+
+#include "KLTFlow.h"
 #include "openCVTools.h"
 
 using namespace corecvs;

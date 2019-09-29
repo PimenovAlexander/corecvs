@@ -8,7 +8,6 @@ set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/Modules
 
 # Overall dependances
 set (USE_TBB 1)
-
 IF ( USE_TBB )
     MESSAGE( STATUS "Including TBB on CORECVS build" )
     find_package( TBB )
@@ -23,8 +22,8 @@ ENDIF ()
 
 
 add_subdirectory(core)
-add_subdirectory(test-core)
+#add_subdirectory(test-core)
 
-add_dependencies(test-core corecvs)
+#add_dependencies(test-core corecvs)
 
 #add_executable(Tutorial tutorial.cxx)

@@ -1,15 +1,16 @@
 #include "core/patterndetection/patternDetector.h"
 
-using namespace corecvs;
+namespace corecvs {
 
-bool PatternDetector::detectPattern(RGB24Buffer &rgbBuffer)
+
+bool PatternGeometryDetector::detectPattern(RGB24Buffer &rgbBuffer)
 {
     G8Buffer grayscale(rgbBuffer.h, rgbBuffer.w);
     grayscale.binaryOperationInPlace(rgbBuffer, [](const unsigned char & /*a*/, const RGBColor &b) { return b.y(); });
     return detectPattern(grayscale);
 }
 
-void PatternDetector::getPointData(SelectableGeometryFeatures &features)
+void PatternGeometryDetector::getPointData(SelectableGeometryFeatures &features)
 {
     corecvs::ObservationList list;
     getPointData(list);
@@ -17,8 +18,16 @@ void PatternDetector::getPointData(SelectableGeometryFeatures &features)
 }
 
 
-size_t PatternDetector::detectPatterns(RGB24Buffer &/*buffer*/, std::vector<ObservationList> &patterns)
+size_t PatternGeometryDetector::detectPatterns(RGB24Buffer &/*buffer*/, std::vector<ObservationList> &patterns)
 {
     patterns.clear();
     return 0;
 }
+
+PatternDetectorFabric *PatternDetectorFabric::getInstance()
+{
+    static PatternDetectorFabric instance;
+    return &instance;
+}
+
+} // namespace corecvs
