@@ -57,7 +57,7 @@ include(config-cpu-features.pri)
     #   gcc_checker       \
     #   gcc47_toolchain   \
     #   gcc45_toolchain   \
-        clang_toolchain   \
+    #   clang_toolchain   \
     #   clang_analyser    \
     #   ccache_toolchain  \
     #   icc_toolchain     \
