@@ -16,7 +16,7 @@ class JanibekovsBolt : public PhysMainObject
 {
 
 public:
-    JanibekovsBolt(double arm = 0.01, double mass = 6);
+    JanibekovsBolt(double arm = 0.1, double mass = 13);
     PhysSphere centralSphere;
     std::vector<PhysSphere> partsOfSystem;
     void drawMyself(Mesh3D &mesh);
@@ -24,7 +24,7 @@ public:
     void physicsTick(double deltaT);
     virtual void tick(double deltaT) override;
     void drawMyself(Mesh3DDecorated &mesh);
-
+    bool testMode = false;
     Mesh3DDecorated *worldMesh = NULL;
     void drawForces(Mesh3D &mesh);
 };

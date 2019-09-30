@@ -3,10 +3,10 @@
 JanibekovsBolt::JanibekovsBolt(double arm, double mass)
 {
     setSystemMass(mass);
-    double massOfRotatingObjects = 1;
-    double massOfTestingObject = 4;
+    double massOfRotatingObjects = 6;
+    double massOfTestingObject = 1;
     double massOfZeroObject = 0.0;
-    double partsRadius = 0.001;
+    double partsRadius = 0.01;
     Affine3DQ defaultPos = Affine3DQ(Vector3dd::Zero());
 
     partsOfSystem.push_back(PhysSphere(&defaultPos, &partsRadius, &massOfRotatingObjects));
@@ -68,12 +68,17 @@ void JanibekovsBolt::drawMyself(Mesh3D &mesh)
         for (size_t i = 0; i < objects.size(); i++) {
             objects[i]->drawMesh(mesh);
         }
+
         Circle3d circle;
         circle.c = Vector3dd(0,0,0);
-        circle.r = 0.03;
+        circle.r = 0.3;
         circle.normal = Vector3dd(1,0,0);
         mesh.addCircle(circle);
+        mesh.currentColor = RGBColor::Violet();
+        mesh.addLine(objects[3]->getPosVector(), objects[4]->getPosVector());
+        mesh.addLine(objects[1]->getPosVector(), objects[2]->getPosVector());
         mesh.popTransform();
+        mesh.currentColor = RGBColor::Cyan();
         drawForces(mesh);
 }
 
@@ -85,7 +90,7 @@ void JanibekovsBolt::drawForces(Mesh3D &mesh)
         Vector3dd force = motorToWorld.rotor * partsOfSystem[i].getForce();
         Vector3dd motorPosition = motorToWorld.shift;
         Vector3dd startDot = motorPosition;
-        Vector3dd endDot = motorPosition + force.normalised() * 1.0;
+        Vector3dd endDot = motorPosition - force * 20.0;
         mesh.addLine(startDot, endDot);
 
         //L_INFO << "force: " << force << ", position " << motorPosition;
@@ -162,11 +167,11 @@ void JanibekovsBolt::tick(double deltaT)
     double inertialMomentZ = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * massOfRotatingObjects * pow(armOfRotatingObjects, 2)
                                                                      + massOfTestingObject * pow(armOfTestingObject, 2);
 
-/*
-    inertialMomentX = 1;
-    inertialMomentY = 0.20;
-    inertialMomentZ = 5;
-*/
+
+    inertialMomentX = 0.001;
+    inertialMomentY = 0.002;
+    inertialMomentZ = 0.0001;
+
     Matrix33 diagonalizedInertiaTensor = Matrix33(inertialMomentX, 0, 0,
                                                   0, inertialMomentY, 0,
                                                   0, 0, inertialMomentZ);
@@ -174,17 +179,30 @@ void JanibekovsBolt::tick(double deltaT)
 
     Matrix33 transposedOrient = orientation.toMatrix();
     transposedOrient.transpose();
+
     inertiaTensor = orientation.toMatrix() * diagonalizedInertiaTensor * transposedOrient;// orientation.toMatrix().transpose();
 
-
+    /*
+    if(testMode)
+    {
+        inertiaTensor = orientation.toMatrix() * diagonalizedInertiaTensor * transposedOrient;// orientation.toMatrix().transpose();
+    }
+    else
+    {
+        inertiaTensor = diagonalizedInertiaTensor;
+    }
+*/
     using namespace std::chrono;
     time_t ms0 = duration_cast< milliseconds >(
     system_clock::now().time_since_epoch()
     ).count();
     if(ms0 % 200 == 0)
     {
+        Matrix33 invAngVel = angularVelocity.toMatrix();
+        //L_INFO << invAngVel;
+        L_INFO << orientation;
         //L_INFO<< "Diagonalized Tensor: " << diagonalizedInertiaTensor / inertialMomentX;
-        L_INFO << "Inertia tensor: " << inertiaTensor/inertialMomentX;
+        //L_INFO << "Inertia tensor: " << inertiaTensor/inertialMomentX;
     }
 
     velocity = Vector3dd(0.0, 0.0, 0.0);
@@ -204,7 +222,7 @@ void JanibekovsBolt::tick(double deltaT)
     //L_INFO << "Momentum: " << getMomentum();
     /**This works as wanted**/
     Vector3dd W = inertiaTensor.inv() * getMomentum();
-    Quaternion angularAcceleration = Quaternion::pow(Quaternion::Rotation(W, W.l2Metric()), 0.000001);
+    angularAcceleration = Quaternion::pow(Quaternion::Rotation(W, W.l2Metric()), 0.000001);
 
     Quaternion q = orientation;
     //Probably bug here
@@ -219,6 +237,7 @@ void JanibekovsBolt::tick(double deltaT)
     if(ms % 200 == 0)
     {
         //L_INFO<<"Delta orient: "<<orientation.getAngle()-q.getAngle();
+        //L_INFO << angularAcceleration;
     }
 
     //orientation.printAxisAndAngle();
@@ -233,8 +252,8 @@ void JanibekovsBolt::tick(double deltaT)
         //L_INFO << angularVelocity;
     }
 
-    //Probably bug here
     angularVelocity = Quaternion::pow(angularAcceleration, deltaT * 1000) ^ angularVelocity;
+
 
     //L_INFO<<"Delta orient: "<<abs(orientation.getAngle()-q.getAngle());
 
