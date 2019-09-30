@@ -114,7 +114,7 @@ void PhysMainObject::calcMoment()
     Vector3dd angAccVector = Vector3dd(angAccMatrix.a(0,2), -angAccMatrix.a(1,2), -angAccMatrix.a(0,1));
     Vector3dd angVelVector = Vector3dd(angVelMatrix.a(0,2), -angVelMatrix.a(1,2), -angVelMatrix.a(0,1));
 
-    m += inertiaTensor * angAccVector + angVelVector ^ (inertiaTensor * angVelVector);
+    //m += inertiaTensor * angAccVector + angVelVector ^ (inertiaTensor * angVelVector);
     setMomentum(m);
 }
 

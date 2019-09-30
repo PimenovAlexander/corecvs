@@ -61,6 +61,14 @@ void Simulation::execJanibekovTest()
         oldTime = startTime;
         noiseTime = startTime;
         noiseReverseTime = startTime;
+
+        Quaternion testAngVel = Quaternion(-0.00144962, -2.8152e-11, 9.80112e-15, 0.999999);
+
+        Quaternion testOrientation = Quaternion(0, 0.012489, 0, 0.999922);
+
+        testBolt.orientation = testOrientation;
+        //testBolt.angularVelocity = testAngVel;
+
         while (isAlive)
         {
 
@@ -71,21 +79,19 @@ void Simulation::execJanibekovTest()
             Affine3DQ motorToWorld = testBolt.getTransform() * testBolt.partsOfSystem[1].getPosAffine();
             Matrix33 transposedOrient = motorToWorld.rotor.toMatrix();
             transposedOrient.transpose();
-            Vector3dd force = transposedOrient * Vector3dd(0.0, 0.0, 0.01);
-            Vector3dd force2 = Vector3dd(0.0, 0.0, 0.01);
+            Vector3dd force = transposedOrient * Vector3dd(0.0, 0.0, 0.05);
+            Vector3dd force2 = Vector3dd(0.0, 0.0, 0.03);
             Quaternion q = Quaternion(-0.00744148, -8.46662e-11, 0.000934261, 0.999972);
-            Quaternion testAngVel = Quaternion(-0.00144962, -2.8152e-11, 9.80112e-15, 0.999999);
-            Quaternion testOrientation = Quaternion(0, 0.012489, 0, 0.999922);
+
             //q = transposedOrient * q.toMatrix();
 
-            testBolt.angularVelocity = testAngVel;
-            testBolt.orientation = testOrientation;
 
 
-            if(timePassed > 5 && timePassed < 6)
+
+            if(timePassed > 5 && timePassed < 10)
             {
-                //testBolt.partsOfSystem[0].addForce(force2);
-                //testBolt.partsOfSystem[1].addForce(-force2);
+                testBolt.partsOfSystem[0].addForce(force);
+                testBolt.partsOfSystem[1].addForce(-force);
                 //testBolt.angularVelocity = testQ;
             }
 

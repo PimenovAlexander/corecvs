@@ -180,8 +180,8 @@ void JanibekovsBolt::tick(double deltaT)
     Matrix33 transposedOrient = orientation.toMatrix();
     transposedOrient.transpose();
 
-    inertiaTensor = orientation.toMatrix() * diagonalizedInertiaTensor * transposedOrient;// orientation.toMatrix().transpose();
-
+    //inertiaTensor = orientation.toMatrix() * diagonalizedInertiaTensor * transposedOrient;// orientation.toMatrix().transpose();
+inertiaTensor = diagonalizedInertiaTensor;
     /*
     if(testMode)
     {
@@ -199,8 +199,8 @@ void JanibekovsBolt::tick(double deltaT)
     if(ms0 % 200 == 0)
     {
         Matrix33 invAngVel = angularVelocity.toMatrix();
-        //L_INFO << invAngVel;
-        L_INFO << orientation;
+        L_INFO << invAngVel;
+        //L_INFO << orientation;
         //L_INFO<< "Diagonalized Tensor: " << diagonalizedInertiaTensor / inertialMomentX;
         //L_INFO << "Inertia tensor: " << inertiaTensor/inertialMomentX;
     }
@@ -219,14 +219,12 @@ void JanibekovsBolt::tick(double deltaT)
     velocity += (getForce() / getSystemMass()) * deltaT;
 
     /* We should carefully use inertiaTensor here. It seems like it changes with the frame of reference */
-    //L_INFO << "Momentum: " << getMomentum();
     /**This works as wanted**/
     Vector3dd W = inertiaTensor.inv() * getMomentum();
     angularAcceleration = Quaternion::pow(Quaternion::Rotation(W, W.l2Metric()), 0.000001);
 
     Quaternion q = orientation;
-    //Probably bug here
-    //angularVelocity = Quaternion(0.621634, 0, 0, -0.783308);
+
     orientation = Quaternion::pow(angularVelocity, deltaT * 1000) ^ orientation;
 
     //Just async output
@@ -252,8 +250,9 @@ void JanibekovsBolt::tick(double deltaT)
         //L_INFO << angularVelocity;
     }
 
-    angularVelocity = Quaternion::pow(angularAcceleration, deltaT * 1000) ^ angularVelocity;
 
+
+    angularVelocity = Quaternion::pow(angularAcceleration, deltaT * 1000) ^ angularVelocity;
 
     //L_INFO<<"Delta orient: "<<abs(orientation.getAngle()-q.getAngle());
 
