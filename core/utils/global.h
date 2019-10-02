@@ -416,7 +416,7 @@ inline void * __CRTDECL operator new(size_t _Size) {
 // #endif
 
 /** Alligned memory allocation for APPLE platform */
-#ifdef __APPLE__
+#ifdef Q_OS_MAC
 inline void* aligned_alloc(size_t alignment, size_t size) 
 {
     void* mem = nullptr;

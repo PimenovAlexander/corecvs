@@ -24,7 +24,7 @@ QString textGlError(GLenum err)
     
     // Note:
     // GL_CONTEXT_LOST - enum from OpenGL 4.5 version, which is not  
-    // supported by Apple
+    // supported by Apple. Currently supported version is 4.1
     // case GL_CONTEXT_LOST:      return "GL_CONTEXT_LOST"; break;
     
     case GL_TABLE_TOO_LARGE:   return "GL_TABLE_TOO_LARGE"; break;

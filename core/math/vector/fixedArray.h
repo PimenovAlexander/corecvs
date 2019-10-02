@@ -64,10 +64,6 @@ public:
             length = that.length;
 #ifndef WIN32
             data = std::unique_ptr<ElementType[], decltype(&free)>((ElementType*)aligned_alloc(32, sizeof(ElementType) * length), free);
-#elif defined(__APPLE__)
-            ElementType* _aligned_mem;
-            posix_memalign(&_aligned_mem, 32, sizeof(ElementType) * length);
-            data = std::unique_ptr<ElementType[], decltype(&free)>(_aligned_mem, free);
 #else // VS2013 does not support c++11 aligned_alloc
             data = std::unique_ptr<ElementType[], decltype(&_aligned_free)>((ElementType*)aligned_alloc(32, sizeof(ElementType) * length), _aligned_free);
 #endif
