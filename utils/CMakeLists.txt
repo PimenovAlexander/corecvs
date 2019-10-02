@@ -1,4 +1,5 @@
-project(corecvs)
+project(corecvs_utils)
+set(MODULE_NAME cvs_utils)
 
 set (UTILS_SUBMODULES
     3d
@@ -27,9 +28,16 @@ set(CMAKE_AUTOUIC "YES")
 file(GLOB SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
 file(GLOB HDR_FILES ${CMAKE_CURRENT_LIST_DIR}/*.h)
 
-target_sources(corecvs
+add_library(${MODULE_NAME} STATIC)
+
+
+foreach(utils_module ${UTILS_SUBMODULES})
+    message(STATUS "including ${utils_module}")
+    add_subdirectory(${utils_module})
+endforeach(utils_module)
+
+target_sources(${MODULE_NAME}
     PUBLIC
         ${SRC_FILES}
-
     PRIVATE
         ${HDR_FILES}
