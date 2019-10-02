@@ -42,7 +42,7 @@ CONFIG +=       \
    with_tbb        \
    with_openblas   \
    with_fastbuild  \
-   with_unorthodox \   # allow use an experimental filesystem
+#  with_unorthodox \   # allow use an experimental filesystem
    with_qscript    \   # experimental...
 
 include(config-cpu-features.pri)
@@ -51,7 +51,7 @@ include(config-cpu-features.pri)
     CONFIG +=             \
                           \
     #   pedantic_build    \
-    #   gcc_env_toolchain \
+    #    gcc_env_toolchain \
     #   gcc48_toolchain   \
     #   gcc_lto           \
     #   gcc_checker       \
@@ -70,10 +70,14 @@ include(config-cpu-features.pri)
 
 }
 
+macx {
+    CONFIG += clang_toolchain
+}
+
 CONFIG +=                   \
 #        with_ueye           \
 #        with_httpserver     \
-        with_avcodec        \
+#        with_avcodec        \
         with_libjpeg        \
         with_libpng         \
 

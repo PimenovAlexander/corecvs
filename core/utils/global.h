@@ -400,19 +400,29 @@ inline void * __CRTDECL operator new(size_t _Size) {
 
 /** Invite support of the file system */
 
-#if defined(__GNUC__)
-# if __cplusplus >= 201703L
-#  include <filesystem>
-   namespace fs = std::filesystem;
-# else
-#  include <experimental/filesystem>
-   namespace fs = std::experimental::filesystem;
-# endif
-#else
-# ifdef _MSC_VER
-#  include <filesystem>
-   namespace fs = std::tr2::sys;
-# endif
+// #if defined(__GNUC__)
+// # if __cplusplus >= 201703L
+// #  include <filesystem>
+//    namespace fs = std::filesystem;
+// # else
+// #  include <experimental/filesystem>
+//    namespace fs = std::experimental::filesystem;
+// # endif
+// #else
+// # ifdef _MSC_VER
+// #  include <filesystem>
+//    namespace fs = std::tr2::sys;
+// # endif
+// #endif
+
+/** Alligned memory allocation for APPLE platform */
+#ifdef __APPLE__
+inline void* aligned_alloc(size_t alignment, size_t size) 
+{
+    void* mem = nullptr;
+    posix_memalign(&mem, alignment, size);
+    return mem;
+}
 #endif
 
 /** Function for safe deleting objects and arrays */

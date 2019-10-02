@@ -139,19 +139,33 @@ macx {
 }
 
 gcc_env_toolchain {
-  GCC_POSTFIX = $$(GCC_POSTFIX)
-  message(Compiling with gcc-$$GCC_POSTFIX)
+  !mac {
+      GCC_POSTFIX = $$(GCC_POSTFIX)
+      message(Compiling with gcc-$$GCC_POSTFIX)
 
-  QMAKE_CC = gcc-$$GCC_POSTFIX
-  QMAKE_CXX = g++-$$GCC_POSTFIX
-  QMAKE_LINK =  g++-$$GCC_POSTFIX
-  QMAKE_LINK_SHLIB =  g++-$$GCC_POSTFIX
-  QMAKE_LINK_C = gcc-$$GCC_POSTFIX
-  QMAKE_LINK_C_SHLIB = gcc-$$GCC_POSTFIX
+      QMAKE_CC = gcc-$$GCC_POSTFIX
+      QMAKE_CXX = g++-$$GCC_POSTFIX
+      QMAKE_LINK =  g++-$$GCC_POSTFIX
+      QMAKE_LINK_SHLIB =  g++-$$GCC_POSTFIX
+      QMAKE_LINK_C = gcc-$$GCC_POSTFIX
+      QMAKE_LINK_C_SHLIB = gcc-$$GCC_POSTFIX
+  } else {
+      message(Compiling with gcc)
+
+      QMAKE_CC = gcc
+      QMAKE_CXX = g++
+      QMAKE_CXXFLAGS += -I/usr/local/include/c++/9.2.0 
+      QMAKE_CXXFLAGS += -I/usr/local/Cellar/gcc/9.2.0/include/c++/9.2.0/x86_64-apple-darwin17
+      QMAKE_LINK =  g++
+      QMAKE_LINK_SHLIB =  g++
+      QMAKE_LINK_C = gcc
+      QMAKE_LINK_C_SHLIB = gcc
+  }
 }
 
 clang_toolchain {
-  CLANG_POSTFIX="-3.6"
+  #CLANG_POSTFIX="-3.6"
+  CLANG_POSTFIX=""
 
   CONFIG -= warn_on
 
@@ -170,6 +184,7 @@ clang_toolchain {
    QMAKE_CFLAGS += -Wall -Wno-overloaded-virtual
    QMAKE_CXXFLAGS += -Wall -Wno-inconsistent-missing-override
    QMAKE_CXXFLAGS += -Wall -Wno-overloaded-virtual
+   QMAKE_CXXFLAGS += -Wno-error=non-pod-varargs
 
 #   QMAKE_CFLAGS_WARN_OFF   -=  -Wall
 #   QMAKE_CXXFLAGS_WARN_OFF -=  -Wall
@@ -457,6 +472,7 @@ with_tbb:!contains(DEFINES, WITH_TBB) {
         }
     } else:macx {
         #message (Using TBB at "$$TBB_PATH")
+        TBB_PATH += /usr/local
         DEFINES     += WITH_TBB
         INCLUDEPATH += "$$TBB_PATH"/include
         LIBS        += -L"$$TBB_PATH"/lib -ltbb

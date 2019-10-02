@@ -555,7 +555,7 @@ template <class StreamType>
         osId = "!w.png!";
 #endif
 #ifdef Q_OS_MAC
-        osId = "!a.png!"
+        osId = "!a.png!";
 #endif
 
         const char *is64bit = "!3.png!";

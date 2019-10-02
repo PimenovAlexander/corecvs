@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cfloat>
 #include <iostream>
+#include <cmath>
 
 #include "core/math/mathUtils.h"
 
@@ -102,7 +103,7 @@ public:
         float dx = x1 - x0;
         float dy = y1 - y0;
         float gradient = 0.;
-        if (std::abs(dx) < FLT_EPSILON) {
+        if (std::fabs(dx) < FLT_EPSILON) {
             gradient = 1.0;
         }
         else {

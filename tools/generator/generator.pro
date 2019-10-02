@@ -34,7 +34,7 @@ INCLUDEPATH += \
 SOURCES += $$COREDIR/utils/util.c
 SOURCES += $$COREDIR/utils/utils.cpp
 
-!win32  {
+!win32:!macx  {
     LIBS += -lstdc++fs
 }
 

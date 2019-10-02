@@ -21,7 +21,12 @@ QString textGlError(GLenum err)
     case GL_STACK_UNDERFLOW:   return "GL_STACK_UNDERFLOW"; break;
     case GL_OUT_OF_MEMORY:     return "GL_OUT_OF_MEMORY"; break;
     case GL_INVALID_FRAMEBUFFER_OPERATION: return "GL_INVALID_FRAMEBUFFER_OPERATION"; break;
-    case GL_CONTEXT_LOST:      return "GL_CONTEXT_LOST"; break;
+    
+    // Note:
+    // GL_CONTEXT_LOST - enum from OpenGL 4.5 version, which is not  
+    // supported by Apple
+    // case GL_CONTEXT_LOST:      return "GL_CONTEXT_LOST"; break;
+    
     case GL_TABLE_TOO_LARGE:   return "GL_TABLE_TOO_LARGE"; break;
     default:
         break;

@@ -244,7 +244,7 @@ int DebayerTool::proceed(int argc, const char **argv)
 
     if (!rgb24 && !rgb48)
     {
-        L_ERROR_P("couldn't load input file <%s>", filename);
+        //L_ERROR_P("couldn't load input file <%s>", filename);
         return -1;
     }
     if (rgb24 && rgb48)
@@ -269,7 +269,7 @@ int DebayerTool::proceed(int argc, const char **argv)
         }
         if (!BMPLoader().save(outfile, rgb24.get()))
         {
-            L_ERROR_P("couldn't write to <%s>", outfile);
+            //L_ERROR_P("couldn't write to <%s>", outfile);
             return -1;
         }
     }
@@ -301,7 +301,7 @@ int DebayerTool::proceed(int argc, const char **argv)
 
         if (!saveRgb24(outfile, *rgb24))
         {
-            L_ERROR_P("couldn't recognize output file format <%s>", outfile);
+            //L_ERROR_P("couldn't recognize output file format <%s>", outfile);
             return -1;
         }
     }

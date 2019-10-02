@@ -139,7 +139,7 @@ with_unorthodox {
 }
 
 
-!win32  {
+!win32:!mac  {
     LIBS += -lstdc++fs
 }
 
