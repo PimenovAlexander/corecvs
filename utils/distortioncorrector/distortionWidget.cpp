@@ -170,7 +170,7 @@ void DistortionWidget::detectCheckerboard()
     case CheckerboardDetectionAlgorithm::CheckerboardDetectionAlgorithm::OPENCV_DETECTOR:
         {
 #ifdef WITH_OPENCV
-        G8Buffer *workChannel = mBufferInput->getChannel(params.channel());
+        G8Buffer *workChannel = mBufferInput->getChannelG8(params.channel());
         PaintImageWidget *canvas = mUi->widget;
 
         if (params.cleanExisting()) {

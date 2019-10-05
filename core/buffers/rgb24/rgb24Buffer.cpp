@@ -910,6 +910,39 @@ void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<ContinuousType> &in,
         }
     }
 
+    if (style == STYLE_GRAY1)
+    {
+        for (int i = 0; i < mh; i++)
+        {
+            for (int j = 0; j < mw; j++)
+            {
+                ContinuousType v = in.element(i,j);
+                if (std::isnan(v)) {
+                    continue;
+                }
+                v = clamp<ContinuousType>(v, 0, 1) * 255;
+                element(i, j) = RGBColor(v,v,v);
+            }
+        }
+    }
+
+    if (style == STYLE_GRAY255)
+    {
+        for (int i = 0; i < mh; i++)
+        {
+            for (int j = 0; j < mw; j++)
+            {
+                ContinuousType v = in.element(i,j);
+                if (std::isnan(v)) {
+                    continue;
+                }
+                v = clamp<ContinuousType>(v, 0, 255);
+                element(i, j) = RGBColor(v,v,v);
+            }
+        }
+    }
+
+
     if (legend) {
         AbstractPainter<RGB24Buffer> painter(this);
         painter.drawFormat(10,10, RGBColor::Black(), 1, "Min:%lf", (double)min);
@@ -1160,9 +1193,10 @@ G12Buffer *RGB24Buffer::toG12Buffer()
 
 
 /* We need to optimize this */
-G8Buffer* RGB24Buffer::getChannel(ImageChannel::ImageChannel channel)
+template<class ReturnType>
+ReturnType* RGB24Buffer::getChannel(ImageChannel::ImageChannel channel)
 {
-    G8Buffer *result = new G8Buffer(getSize(), false);
+    ReturnType *result = new ReturnType(getSize(), false);
 
     for (int i = 0; i < result->h; i++)
     {
@@ -1220,6 +1254,30 @@ G8Buffer* RGB24Buffer::getChannel(ImageChannel::ImageChannel channel)
 
     return result;
 }
+
+G8Buffer * RGB24Buffer::getChannelG8 (ImageChannel::ImageChannel channel) {
+    return getChannel<G8Buffer>(channel);
+}
+
+G12Buffer* RGB24Buffer::getChannelG12(ImageChannel::ImageChannel channel) {
+    return getChannel<G12Buffer>(channel);
+}
+
+G16Buffer* RGB24Buffer::getChannelG16(ImageChannel::ImageChannel channel){
+    return getChannel<G16Buffer>(channel);
+}
+
+DpImage  * RGB24Buffer::getChannelDp(ImageChannel::ImageChannel channel){
+    return getChannel<DpImage>(channel);
+}
+
+FpImage  * RGB24Buffer::getChannelFp(ImageChannel::ImageChannel channel){
+    return getChannel<FpImage>(channel);
+}
+
+
+
+
 
 bool RGB24Buffer::isGrayscale() const
 {

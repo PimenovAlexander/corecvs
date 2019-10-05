@@ -213,7 +213,8 @@ public:
      **/
     enum DoubleDrawStyle {
         STYLE_RAW,
-        STYLE_GRAY,
+        STYLE_GRAY1,
+        STYLE_GRAY255,
         STYLE_LOG,
         STYLE_ZBUFFER   /**< ignores std::numeric_limits<double>::max() values, not to affect palette */
     };
@@ -239,7 +240,18 @@ public:
 
     G12Buffer *toG12Buffer();
 
-    G8Buffer* getChannel(ImageChannel::ImageChannel channel);
+private:
+    template<class ReturnType>
+    ReturnType* getChannel(ImageChannel::ImageChannel channel);
+
+public:
+    G8Buffer * getChannelG8 (ImageChannel::ImageChannel channel);
+    G12Buffer* getChannelG12(ImageChannel::ImageChannel channel);
+    G16Buffer* getChannelG16(ImageChannel::ImageChannel channel);
+    DpImage  * getChannelDp (ImageChannel::ImageChannel channel);
+    FpImage  * getChannelFp (ImageChannel::ImageChannel channel);
+
+
     bool isGrayscale() const;
 
     template<class SelectorPrediate>

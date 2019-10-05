@@ -1,3 +1,6 @@
+#ifndef GAUSSIAN_3X3_H
+#define GAUSSIAN_3X3_H
+
 /**
  * \file gaussian.h
  * \brief Add Comment Here
@@ -8,22 +11,42 @@
  * \author alexander
  */
 
-#ifndef GAUSSIAN3X3_H_
-#define GAUSSIAN3X3_H_
 
 #include "core/utils/global.h"
 
 #include "core/buffers/abstractKernel.h"
+
 namespace corecvs {
 
-class Gaussian3x3 : public AbstractKernel<double, int32_t>
+template<class BaseType>
+class Gaussian3x3 : public BaseType
 {
 public:
-    static double data[9];
-    static Gaussian3x3 *instance;
+    typedef typename BaseType::InternalElementType ElementType;
+    static ElementType data[9];
 
-    Gaussian3x3() : AbstractKernel<double, int32_t> (3, 3, data, 16, 0, 1, 1) {}
+    Gaussian3x3(bool prescaled = false)
+        : DpKernel (3, 3)
+    {
+        double scale  = ElementType(16);
+        for (int i = 0; i < this->h; i++)
+        {
+            for (int j = 0; j < this->w; j++)
+            {
+                 this->element(i,j) = data[i * this->w + j] / (prescaled ? scale : ElementType(1));
+            }
+        }
+        this->invFactor = (prescaled ? ElementType(1) : scale);
+    }
     virtual ~Gaussian3x3(){}
+};
+
+
+template<class BaseType>
+typename Gaussian3x3<BaseType>::ElementType Gaussian3x3<BaseType>::data[9] = {
+        1 , 2 , 1,
+        2 , 4 , 2,
+        1 , 2 , 1
 };
 
 
@@ -36,6 +59,54 @@ public:
     Gaussian3x3int() : AbstractKernel<uint32_t, int32_t> (3, 3, data, 16, 0, 1, 1) {}
     virtual ~Gaussian3x3int(){}
 };
+
+/**
+ *   Most probably you don't need this.
+ *   1. If your kernel is small - hardcore it.
+ *   2. If your kernel is large - note that Gaussian is a separable kernel - use 2 gaussian blurs instead
+ **/
+class GaussianKernel : public DpKernel
+{
+public:
+    GaussianKernel(int height, int width, int x, int y, double sigma);
+    //GaussianKernel(int height, int width, double sigma);
+
+    virtual ~GaussianKernel(){}
+};
+
+template<class BaseType>
+class Gaussian5x5 : public BaseType
+{
+public:
+    typedef typename BaseType::InternalElementType ElementType;
+    static ElementType data[25];
+    //static Gaussian5x5 instance = NULL;
+
+    Gaussian5x5(bool prescaled = false):
+        BaseType(5,5)
+    {
+        double scale  = ElementType(273);
+        for (int i = 0; i < this->h; i++)
+        {
+            for (int j = 0; j < this->w; j++)
+            {
+                 this->element(i,j) = data[i * this->w + j] / (prescaled ? scale : ElementType(1));
+            }
+        }        
+        this->invFactor = (prescaled ? ElementType(1) : scale);
+    }
+    virtual ~Gaussian5x5(){}
+};
+
+template<class BaseType>
+typename Gaussian5x5<BaseType>::ElementType Gaussian5x5<BaseType>::data[25] = {
+    1,  4,  7,  4, 1,
+    4, 16, 26, 16, 4,
+    7, 26, 41, 26, 7,
+    4, 16, 26, 16, 4,
+    1,  4,  7,  4, 1
+};
+
 
 
 template <typename Algebra>
@@ -156,6 +227,8 @@ template <typename OtherAlgebra>
         algebra.putOutput(0,0,result);
     }
 };
+
+
 
 
 } //namespace corecvs

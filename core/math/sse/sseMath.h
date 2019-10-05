@@ -272,6 +272,11 @@ inline UInt16x8 SSEMath::mul<2>(const UInt16x8 &val) {
     return val << 1;
 }
 
+template<>
+inline UInt16x8 SSEMath::mul<4>(const UInt16x8 &val) {
+    return val << 2;
+}
+
 /* For double types */
 template<>
 inline Doublex2 SSEMath::mul<2>(const Doublex2 &val) {

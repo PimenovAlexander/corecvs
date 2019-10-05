@@ -21,6 +21,7 @@
 #include "core/utils/preciseTimer.h"
 
 #include "core/buffers/kernels/gaussian.h"
+#include "core/buffers/kernels/laplace.h"
 #include "core/buffers/kernels/sobel.h"
 #include "core/buffers/kernels/copyKernel.h"
 #include "core/buffers/kernels/arithmetic.h"
@@ -52,6 +53,7 @@ using corecvs::CopyKernel;
 using corecvs::EdgeMagnitude;
 using corecvs::SobelVerticalKernel;
 using corecvs::Gaussian3x3Kernel;
+using corecvs::Laplacian3x3Kernel;
 using corecvs::SubtractBuffers;
 using corecvs::MixBuffers;
 using corecvs::DifferenceBuffers;
@@ -512,7 +514,8 @@ TEST(FastKernelProfile, main)
     _profileManualSobelHSimple();
 
     _profileVectorKernel<SobelVerticalKernel>("Sob V");
-    _profileVectorKernel<Gaussian3x3Kernel>("Ga3x3");
+    _profileVectorKernel<Gaussian3x3Kernel>  ("Ga3x3");
+    _profileVectorKernel<Laplacian3x3Kernel> ("La3x3");
 
     _profileVectorKernel<SumBuffers>("Add");
     _profileVectorKernel<SubtractBuffers>("Sub");

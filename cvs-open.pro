@@ -9,8 +9,8 @@ SUBDIRS +=                   \
     \
     tests \
     \
-#    base_application         \
-#    recorder                 \
+    base_application         \
+    recorder                 \
     cloudview                \
     imageview                \
     \
@@ -89,4 +89,5 @@ drone.file                    = applications/drone/drone.pro
 
 OTHER_FILES += cvs-config.pri
 OTHER_FILES += CMakeLists.txt
+OTHER_FILES += Doxyfile
 OTHER_FILES += cmake/Modules/*.cmake

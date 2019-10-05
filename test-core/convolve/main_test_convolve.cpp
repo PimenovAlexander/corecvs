@@ -8,6 +8,9 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include <core/buffers/kernels/laplace.h>
+#include <core/buffers/kernels/fastkernel/fastKernel.h>
+#include <core/buffers/convolver/convolver.h>
 #include "gtest/gtest.h"
 
 #include "core/utils/global.h"
@@ -23,6 +26,165 @@
 #include "core/buffers/bufferFactory.h"
 
 using namespace corecvs;
+
+TEST(Convolve, GaussDraw)
+{
+    double pixSpan = 500;
+    RGB24Buffer output(2 * pixSpan, 2 * pixSpan);
+    double levels[3] = {0.3, 1.0, 2.0};
+
+    for (int s = 0; s < 3; s++)
+    {
+        double sigma = levels[s];
+        for (int j = -pixSpan; j < pixSpan; j++)
+        {
+            double x = (j / pixSpan) * 5.0;
+            double i = output.h - (output.h * normalPDF(x, sigma));            
+            output.setElement(i, j + pixSpan, RGBColor::parula(s / 3.0));
+        }
+    }
+
+    BufferFactory::getInstance()->saveRGB24Bitmap(&output, "gauss.bmp");
+}
+
+TEST(Convolve, LoGDraw)
+{
+    double pixSpan = 500;
+    RGB24Buffer output(2 * pixSpan, 2 * pixSpan);
+    double levels[3] = {0.3, 1.0, 2.0};
+
+    for (int s = 0; s < 3; s++)
+    {
+        double sigma = levels[s];
+        for (int j = -pixSpan; j < pixSpan; j++)
+        {
+            double x = (j / pixSpan) * 5.0;
+            double i = output.h / 2 - (output.h * laplacianOfGaussian(x, sigma));
+            output.setElement(i, j + pixSpan, RGBColor::parula(s / 3.0));
+        }
+    }
+
+    BufferFactory::getInstance()->saveRGB24Bitmap(&output, "log.bmp");
+}
+
+TEST(Convolve, GaussDraw2d)
+{
+    double pixSpan = 500;
+    RGB24Buffer output(2 * pixSpan, 2 * pixSpan);
+    GaussianKernel kernel(output.h, output.w, output.w / 2, output.h / 2, output.h / 5.0);
+    output.drawDoubleBuffer(kernel);
+    BufferFactory::getInstance()->saveRGB24Bitmap(&output, "gauss2d.bmp");
+}
+
+TEST(Convolve, LoGDraw2d)
+{
+    double pixSpan = 500;
+    RGB24Buffer output(2 * pixSpan, 2 * pixSpan);
+    LaplacianKernel kernel(output.h, output.w, output.w / 2, output.h / 2, output.h * 60.0);
+    output.drawDoubleBuffer(kernel);
+    BufferFactory::getInstance()->saveRGB24Bitmap(&output, "log2d.bmp");
+}
+
+TEST(Convolve, LaplaceAndGauss)
+{
+    RGB24Buffer *input24 = BufferFactory::getInstance()->loadRGB24Bitmap("lenna.bmp");
+    if(input24 == NULL)
+    {
+        SYNC_PRINT(("To load real image you can run:\n"));
+        SYNC_PRINT(("   wget http://www.hlevkin.com/TestImages/lenna.bmp\n"));
+        input24 = new RGB24Buffer(512,512);
+        input24->checkerBoard(16, RGBColor::White(), RGBColor::Black());
+    }
+    BufferFactory::getInstance()->saveRGB24Bitmap(input24, "conv_input.bmp");
+
+    G8Buffer  *input8  = input24->getChannelG8(ImageChannel::GRAY);
+    /*This is a variant of grayscale buffer that leaves you with 4 upper bits for operation */
+    G12Buffer *input12 = input24->toG12Buffer();
+    DpImage   *inputD  = input24->getChannelDp(ImageChannel::GRAY);
+    FpImage   *inputF  = input24->getChannelFp(ImageChannel::GRAY);
+
+
+    /** Just to check */
+    Gaussian3x3<DpKernel> gaussian3x3(true);
+    Gaussian5x5<DpKernel> gaussian5x5(true);
+     Laplace3x3<DpKernel> laplace3x3(128.0);
+
+    cout << "Gaussian33:\n" << gaussian3x3 << endl;
+    cout << "Gaussian55:\n" << gaussian5x5 << endl;
+
+    /** Variant one. Double version */
+    {
+
+        DpImage *g33OutputD = new DpImage(inputD->getSize());
+        Convolver().convolve(*inputD, (DpKernel &)gaussian3x3, *g33OutputD);
+        BufferFactory::getInstance()->saveRGB24Bitmap(g33OutputD, "conv_gauss33_double.bmp", RGB24Buffer::STYLE_GRAY255);
+
+        DpImage *g55OutputD = new DpImage(inputD->getSize());
+        Convolver().convolve(*inputD, (DpKernel &)gaussian5x5, *g55OutputD);
+        BufferFactory::getInstance()->saveRGB24Bitmap(g55OutputD, "conv_gauss55_double.bmp", RGB24Buffer::STYLE_GRAY255);
+
+        DpImage *lOutputD = new DpImage(inputD->getSize());
+        Convolver().convolveIB(*inputD, (DpKernel &)laplace3x3, *lOutputD);
+        BufferFactory::getInstance()->saveRGB24Bitmap(lOutputD, "conv_log_double.bmp", RGB24Buffer::STYLE_GRAY255);
+    }
+    /** Variant two. Fastkernel version **/
+    {
+        BufferProcessor<G12Buffer, G12Buffer, Gaussian3x3Kernel, G12BufferAlgebra> procVectorGauss33;
+        G12Buffer *gOutput12 = new G12Buffer(input12->getSize());
+        Gaussian3x3Kernel<DummyAlgebra> kernelG33;
+        procVectorGauss33.processSaveAligned(&input12, &gOutput12, kernelG33);
+        BufferFactory::getInstance()->saveRGB24Bitmap(gOutput12, "conv_gauss33_g12.bmp");
+
+        BufferProcessor<G12Buffer, G12Buffer, Laplacian3x3Kernel, G12BufferAlgebra> procVectorLog;
+        G12Buffer *lOutput12 = new G12Buffer(input12->getSize());
+        Laplacian3x3Kernel<DummyAlgebra> kernelLog(127<<4);
+        procVectorLog.processSaveAligned(&input12, &lOutput12, kernelLog);
+        BufferFactory::getInstance()->saveRGB24Bitmap(lOutput12, "conv_log_g12.bmp");
+    }
+    /** Retarded version **/
+
+
+
+
+
+    delete_safe(input24);
+    delete_safe(input8);
+    delete_safe(input12);
+    delete_safe(inputD);
+    delete_safe(inputF);
+}
+
+
+TEST(Convolve, ConvolveEdges)
+{
+    Gaussian5x5<DpKernel> gaussian5x5(true);
+    DpImage *input = new DpImage(8, 16);
+
+    input->touchOperationElementwize([](int i, int  j, double &target){ target  = i + j;} );
+    cout << "Input" << endl;
+    cout << *input  << endl;
+
+    DpImage *out[Convolver::ALGORITHM_LAST] = {0};
+
+    for (int i = 0; i < Convolver::ALGORITHM_LAST; i++ )
+    {
+        Convolver::ConvolverImplementation c = (Convolver::ConvolverImplementation)i;
+        //Convolver::ConvolverImplementation c = Convolver::ALGORITHM_SSE_UNROLL_1;
+        out[i] = new DpImage(input->h, input->w, -1.0);
+        Convolver(true, false).convolve(*input, gaussian5x5, *out[i], c);
+        //cout << "Output: " << Convolver::getName(c) << endl;
+        cout << *out[i] << endl;
+    }
+
+
+    for (int i = 0; i < Convolver::ALGORITHM_LAST; i++ )
+    {
+        delete_safe(out[i]);
+    }
+
+}
+
+
 
 //int main ( int /*argV*/, char * /*argC*/[])
 TEST(Convolve, DISABLED_main)

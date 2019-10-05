@@ -20,10 +20,6 @@
 
 namespace corecvs {
 
-typedef AbstractKernel<double> DpKernel;
-typedef AbstractKernel<float> FpKernel;
-
-
 class Convolver
 {
 public:
@@ -34,7 +30,7 @@ public:
         /**/
         ALGORITHM_SSE_UNROLL_TEMPLATE,
 
-        ALGORITHM_SSE_UNROLL_1,
+        ALGORITHM_SSE_UNROLL_1 = ALGORITHM_SSE_UNROLL_TEMPLATE,
         ALGORITHM_SSE_UNROLL_2,
         ALGORITHM_SSE_UNROLL_3,
         ALGORITHM_SSE_UNROLL_4,
@@ -68,42 +64,65 @@ public:
         ALGORITHM_LAST
     };
 
-    Convolver();
+    static const char *getName(const ConvolverImplementation &value);
 
-    static void convolve(DpImage &src, DpKernel &kernel, DpImage &dst, ConvolverImplementation impl = ALGORITHM_SSE_DMITRY);
-    static void convolve(FpImage &src, FpKernel &kernel, FpImage &dst, ConvolverImplementation impl = ALGORITHM_SSE_UNROLL_8);
+    bool trace = true;
+    bool parallel = true;
+
+    Convolver(bool trace = false, bool parallel = true) :
+        trace(trace), parallel(parallel)
+    {
+    }
+
+    void convolve(DpImage &src, DpKernel &kernel, DpImage &dst, ConvolverImplementation impl = ALGORITHM_SSE_DMITRY);
+    void convolve(FpImage &src, FpKernel &kernel, FpImage &dst, ConvolverImplementation impl = ALGORITHM_SSE_UNROLL_8);
+
+    void convolveIB(DpImage &src, DpKernel &kernel, DpImage &dst, ConvolverImplementation impl = ALGORITHM_SSE_DMITRY);
+    void convolveIB(FpImage &src, FpKernel &kernel, FpImage &dst, ConvolverImplementation impl = ALGORITHM_SSE_UNROLL_8);
 
 
     /* Double Implementations */
-    static void naiveConvolutor       (DpImage &src, DpKernel &kernel, DpImage &dst);
-    static void unrolledConvolutor    (DpImage &src, DpKernel &kernel, DpImage &dst);
+    /**
+     * This uses AbstractBuffer::doConvolve()
+     **/
+    void naiveConvolutor       (DpImage &src, DpKernel &kernel, DpImage &dst);
+
+    /**
+     *  So far best implementation
+     *
+     *  This convolutor does parallel call between lines using multithearing of your platfrom.
+     *  Within each line 20 values are processed with 5 AVX registers.
+     *
+     *  This code effective with AVX only
+     **/
+    void unrolledConvolutor    (DpImage &src, DpKernel &kernel, DpImage &dst);
 
 template<int UNROLL = 5>
-    static void unrolledAutoConvolutor(DpImage &src, DpKernel &kernel, DpImage &dst);
+    void unrolledAutoConvolutor(DpImage &src, DpKernel &kernel, DpImage &dst);
 
-    static void fastkernelConvolutor  (DpImage &src, DpKernel &kernel, DpImage &dst);
+    void fastkernelConvolutor  (DpImage &src, DpKernel &kernel, DpImage &dst);
 
 #ifdef WITH_AVX
-    static void fastkernelConvolutorExp(DpImage &src, DpKernel &kernel, DpImage &dst);
-    static void fastkernelConvolutorExp5(DpImage &src, DpKernel &kernel, DpImage &dst);
+    void fastkernelConvolutorExp(DpImage &src, DpKernel &kernel, DpImage &dst);
+    void fastkernelConvolutorExp5(DpImage &src, DpKernel &kernel, DpImage &dst);
 #endif
 
 #if WITH_AVX
-    static void wrapperConvolutor(DpImage &src, DpKernel &kernel, DpImage &dst);
+    void wrapperConvolutor(DpImage &src, DpKernel &kernel, DpImage &dst);
 
 template<int UNROLL = 5>
-    static void unrolledWrapperConvolutor(DpImage &src, DpKernel &kernel, DpImage &dst);
+    void unrolledWrapperConvolutor(DpImage &src, DpKernel &kernel, DpImage &dst);
 template<int UNROLL = 5>
-    static void unrolledWrapperExConvolutor(DpImage &src, DpKernel &kernel, DpImage &dst);
+    void unrolledWrapperExConvolutor(DpImage &src, DpKernel &kernel, DpImage &dst);
 #endif
 
 
     /* Float implementations */
-    static void naiveConvolutor          (FpImage &src, FpKernel &kernel, FpImage &dst);
+    void naiveConvolutor          (FpImage &src, FpKernel &kernel, FpImage &dst);
 #ifdef WITH_AVX
-    static void fastkernelConvolutorExp5 (FpImage &src, FpKernel &kernel, FpImage &dst);
+    void fastkernelConvolutorExp5 (FpImage &src, FpKernel &kernel, FpImage &dst);
 template<int UNROLL = 5>
-    static void unrolledWrapperConvolutor(FpImage &src, FpKernel &kernel, FpImage &dst);
+    void unrolledWrapperConvolutor(FpImage &src, FpKernel &kernel, FpImage &dst);
 #endif
 
     /**

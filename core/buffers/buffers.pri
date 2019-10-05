@@ -68,6 +68,7 @@ HEADERS += \
     buffers/rgb24/wuRasterizer.h \
     buffers/rgb24/bezierRasterizer.h \
     buffers/flow/dpImage.h \
+    $$PWD/kernels/laplace.h
 
 
 
@@ -116,7 +117,8 @@ SOURCES += \
     buffers/rgb24/bresenhamRasterizer.cpp \
     buffers/remapBuffer.cpp \
     buffers/rgb24/wuRasterizer.cpp \
-    buffers/rgb24/bezierRasterizer.cpp
+    buffers/rgb24/bezierRasterizer.cpp \
+    $$PWD/kernels/laplace.cpp
 
 
 HEADERS += $$PWD/correspondenceList.h
