@@ -186,6 +186,12 @@ public:
         return saveRGB24Bitmap(image24, name);  //TODO: change factory ifc to support 8-bits saving
     }
 
+    bool saveRGB24Bitmap(G16Buffer* buffer16, const string &name)
+    {
+        RGB24Buffer image24(buffer16);
+        return saveRGB24Bitmap(image24, name);  //TODO: change factory ifc to support 8-bits saving
+    }
+
     /**
      **/
     virtual std::vector<std::string> extentionsRGB24();

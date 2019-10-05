@@ -69,12 +69,18 @@ public:
         drawG8Buffer(buffer);
     }
 
+    RGB24Buffer(const G16Buffer *buffer) : RGB24BufferBase (buffer->h, buffer->w, false)
+    {
+        drawG16Buffer(buffer);
+    }
+
     /**
      * This function is used as a hack to interface the C-style g12Buffer
      *
      **/
     RGB24Buffer() {}
 
+    void drawG16Buffer (const G16Buffer *src, int32_t y = 0, int32_t x = 0);
     void drawG12Buffer (const G12Buffer *src, int32_t y = 0, int32_t x = 0);
     void drawG8Buffer  (const G8Buffer  *src, int32_t y = 0, int32_t x = 0);
     void drawFlowBuffer (FlowBuffer *src, int32_t y = 0, int32_t x = 0);

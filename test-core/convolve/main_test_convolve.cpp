@@ -92,16 +92,17 @@ TEST(Convolve, LaplaceAndGauss)
     {
         SYNC_PRINT(("To load real image you can run:\n"));
         SYNC_PRINT(("   wget http://www.hlevkin.com/TestImages/lenna.bmp\n"));
-        input24 = new RGB24Buffer(512,512);
-        input24->checkerBoard(16, RGBColor::White(), RGBColor::Black());
+        input24 = new RGB24Buffer(10,10);
+        input24->checkerBoard(4, RGBColor::White(), RGBColor::Black());
     }
     BufferFactory::getInstance()->saveRGB24Bitmap(input24, "conv_input.bmp");
 
     G8Buffer  *input8  = input24->getChannelG8(ImageChannel::GRAY);
-    /*This is a variant of grayscale buffer that leaves you with 4 upper bits for operation */
-    G12Buffer *input12 = input24->toG12Buffer();
-    DpImage   *inputD  = input24->getChannelDp(ImageChannel::GRAY);
-    FpImage   *inputF  = input24->getChannelFp(ImageChannel::GRAY);
+    //G12Buffer *input12 = input24->toG12Buffer();                  /*< this uses luma  and 12 bits that leaves you with 4 upper bits for operation */
+
+    G16Buffer *input16 = input24->getChannelG16(ImageChannel::GRAY); /*< this uses brightness and uses low 8 bits */
+    DpImage   *inputD  = input24->getChannelDp (ImageChannel::GRAY);
+    FpImage   *inputF  = input24->getChannelFp (ImageChannel::GRAY);
 
 
     /** Just to check */
@@ -113,8 +114,6 @@ TEST(Convolve, LaplaceAndGauss)
     cout << "Gaussian55:\n" << gaussian5x5 << endl;
 
     /** Variant one. Double version */
-    {
-
         DpImage *g33OutputD = new DpImage(inputD->getSize());
         Convolver().convolve(*inputD, (DpKernel &)gaussian3x3, *g33OutputD);
         BufferFactory::getInstance()->saveRGB24Bitmap(g33OutputD, "conv_gauss33_double.bmp", RGB24Buffer::STYLE_GRAY255);
@@ -126,30 +125,38 @@ TEST(Convolve, LaplaceAndGauss)
         DpImage *lOutputD = new DpImage(inputD->getSize());
         Convolver().convolveIB(*inputD, (DpKernel &)laplace3x3, *lOutputD);
         BufferFactory::getInstance()->saveRGB24Bitmap(lOutputD, "conv_log_double.bmp", RGB24Buffer::STYLE_GRAY255);
-    }
+
     /** Variant two. Fastkernel version **/
-    {
-        BufferProcessor<G12Buffer, G12Buffer, Gaussian3x3Kernel, G12BufferAlgebra> procVectorGauss33;
-        G12Buffer *gOutput12 = new G12Buffer(input12->getSize());
+
+        BufferProcessor<G16Buffer, G16Buffer, Gaussian3x3Kernel, G12BufferAlgebra> procVectorGauss33;
+        G16Buffer *g33Output16 = new G16Buffer(input16->getSize());
         Gaussian3x3Kernel<DummyAlgebra> kernelG33;
-        procVectorGauss33.processSaveAligned(&input12, &gOutput12, kernelG33);
-        BufferFactory::getInstance()->saveRGB24Bitmap(gOutput12, "conv_gauss33_g12.bmp");
+        procVectorGauss33.processSaveAligned(&input16, &g33Output16, kernelG33);
+        BufferFactory::getInstance()->saveRGB24Bitmap(g33Output16, "conv_gauss33_g16.bmp");
 
-        BufferProcessor<G12Buffer, G12Buffer, Laplacian3x3Kernel, G12BufferAlgebra> procVectorLog;
-        G12Buffer *lOutput12 = new G12Buffer(input12->getSize());
-        Laplacian3x3Kernel<DummyAlgebra> kernelLog(127<<4);
-        procVectorLog.processSaveAligned(&input12, &lOutput12, kernelLog);
-        BufferFactory::getInstance()->saveRGB24Bitmap(lOutput12, "conv_log_g12.bmp");
+        BufferProcessor<G16Buffer, G16Buffer, Laplacian3x3Kernel, G12BufferAlgebra> procVectorLog;
+        G16Buffer *lOutput16 = new G16Buffer(input16->getSize());
+        Laplacian3x3Kernel<DummyAlgebra> kernelLog(127);
+        procVectorLog.processSaveAligned(&input16, &lOutput16, kernelLog);
+        BufferFactory::getInstance()->saveRGB24Bitmap(lOutput16, "conv_log_g16.bmp");
+
+    if (g33OutputD->h < 20 && g33OutputD->w < 20)
+    {
+        cout << "g33OutputD" << endl << *g33OutputD << endl;
     }
-    /** Retarded version **/
 
+    if (g33Output16->h < 20 && g33Output16->w < 20)
+    {
+        //input16->touchOperationElementwize([](int, int, uint16_t &value){value = (value >> 4);});
+        cout << "input16" << endl << *input16 << endl;
 
+        //g33Output16->touchOperationElementwize([](int, int, uint16_t &value){value = (value >> 4);});
+        cout << "g33Output16" << endl << *g33Output16 << endl;
+    }
 
-
-
-    delete_safe(input24);
     delete_safe(input8);
-    delete_safe(input12);
+    delete_safe(input16);
+    delete_safe(input24);
     delete_safe(inputD);
     delete_safe(inputF);
 }
@@ -173,9 +180,14 @@ TEST(Convolve, ConvolveEdges)
         out[i] = new DpImage(input->h, input->w, -1.0);
         Convolver(true, false).convolve(*input, gaussian5x5, *out[i], c);
         //cout << "Output: " << Convolver::getName(c) << endl;
-        cout << *out[i] << endl;
+        //cout << *out[i] << endl;
     }
 
+    for (int i = 1; i < Convolver::ALGORITHM_LAST; i++ )
+    {
+
+
+    }
 
     for (int i = 0; i < Convolver::ALGORITHM_LAST; i++ )
     {

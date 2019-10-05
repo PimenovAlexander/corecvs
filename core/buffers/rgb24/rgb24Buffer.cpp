@@ -50,6 +50,20 @@ void RGB24Buffer::drawG8Buffer(const G8Buffer *src, int32_t y, int32_t x)
     }
 }
 
+void RGB24Buffer::drawG16Buffer(const G16Buffer *src, int32_t y, int32_t x)
+{
+    CORE_ASSERT_TRUE((this->h == src->h && this->w == src->w), "Wrong sizes");
+    int i,j;
+    for (i = 0; i < src->h; i++)
+    {
+        for (j = 0; j < src->w; j++)
+        {
+            uint32_t grey = src->element(i,j);
+            this->element(i + y, j + x) = RGBColor(grey, grey, grey);
+        }
+    }
+}
+
 void RGB24Buffer::drawPixel(int x, int y, const RGBColor &color)
 {
     if (this->isValidCoord(y, x))

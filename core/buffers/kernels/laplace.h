@@ -85,7 +85,7 @@ template<typename OtherAlgebra>
         Type a21 = algebra.getInput(2,1);
 
         Type cross  = (a01 + a10 + a12 + a21);
-        Type result = Algebra::template mul<4>(a11) - cross + Type(bias);
+        Type result = Algebra::template mul<4>(a11) + Type(bias) - cross ;
         algebra.putOutput(0,0,result);
     }
 };
