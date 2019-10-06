@@ -174,6 +174,13 @@ public:
         return saveRGB24Bitmap(image24, name);
     }
 
+    bool saveRGB24Bitmap(FpImage* buffer, const string &name, const RGB24Buffer::DoubleDrawStyle &style)
+    {
+        RGB24Buffer image24(buffer->getSize(), false);
+        image24.drawFloatBuffer(*buffer, style);
+        return saveRGB24Bitmap(image24, name);
+    }
+
     bool saveRGB24Bitmap(G8Buffer* buffer8, const string &name)
     {
         RGB24Buffer image24(buffer8);

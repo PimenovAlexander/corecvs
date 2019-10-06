@@ -501,25 +501,25 @@ void Convolver::fastkernelConvolutorExp(DpImage &src, DpKernel &kernel, DpImage 
     proScalar.process(&in, &out, convKernel);
 }
 
-void Convolver::fastkernelConvolutorExp5(DpImage &src, DpKernel &kernel, DpImage &dst)
+void Convolver::fastkernelConvolutorExp3(DpImage &src, DpKernel &kernel, DpImage &dst)
 {
     ConvolveKernel<DummyAlgebra> convKernel(&kernel, kernel.y, kernel.x);
 
     DpImage *in  = &src;
     DpImage *out = &dst;
 
-    BufferProcessor<DpImage, DpImage, ConvolveKernel, VectorAlgebraDoubleEx5> proScalar;
+    BufferProcessor<DpImage, DpImage, ConvolveKernel, VectorAlgebraDoubleEx3> proScalar;
     proScalar.process(&in, &out, convKernel);
 }
 
-void Convolver::fastkernelConvolutorExp5(FpImage &src, FpKernel &kernel, FpImage &dst)
+void Convolver::fastkernelConvolutorExp3(FpImage &src, FpKernel &kernel, FpImage &dst)
 {
     FloatConvolveKernel<DummyAlgebra> convKernel(&kernel, kernel.y, kernel.x);
 
     FpImage *in  = &src;
     FpImage *out = &dst;
 
-    BufferProcessor<FpImage, FpImage, FloatConvolveKernel, VectorAlgebraFloatEx5> proScalar;
+    BufferProcessor<FpImage, FpImage, FloatConvolveKernel, VectorAlgebraFloatEx3> proScalar;
     proScalar.process(&in, &out, convKernel);
 }
 
@@ -610,8 +610,8 @@ void Convolver::convolve(DpImage &src, DpKernel &kernel, DpImage &dst, Convolver
 #ifdef WITH_AVX
         case ALGORITHM_SSE_FASTKERNEL_EXP:
                 fastkernelConvolutorExp(src, kernel, dst);  return;
-        case ALGORITHM_SSE_FASTKERNEL_EXP5:
-                fastkernelConvolutorExp5(src, kernel, dst);  return;
+        case ALGORITHM_SSE_FASTKERNEL_EXP3:
+                fastkernelConvolutorExp3(src, kernel, dst);  return;
 #endif
 
     }
@@ -634,7 +634,7 @@ void Convolver::convolveIB(FpImage &src, FpKernel &kernel, FpImage &dst, Convolv
 {
     convolve(src, kernel, dst, impl);
     MulAddConstKernel<DummyAlgebra> mulAddKernel(kernel.bias, 1.0 / kernel.invFactor);
-    BufferProcessor<FpImage, FpImage, MulAddConstKernel, AlgebraDouble> proScalar;
+    BufferProcessor<FpImage, FpImage, MulAddConstKernel, AlgebraFloat> proScalar;
     FpImage *inOut[] = {&dst};
     proScalar.process(inOut, inOut, mulAddKernel);
 
@@ -787,7 +787,7 @@ const char *Convolver::getName(const Convolver::ConvolverImplementation &value)
 
     case ALGORITHM_SSE_FASTKERNEL:       return "ALGORITHM_SSE_FASTKERNEL"; break ;
     case ALGORITHM_SSE_FASTKERNEL_EXP:   return "ALGORITHM_SSE_FASTKERNEL_EXP"; break ;
-    case ALGORITHM_SSE_FASTKERNEL_EXP5:  return "ALGORITHM_SSE_FASTKERNEL_EXP5"; break ;
+    case ALGORITHM_SSE_FASTKERNEL_EXP3:  return "ALGORITHM_SSE_FASTKERNEL_EXP3"; break ;
 
     case ALGORITHM_SSE_WRAPPERS:             return "ALGORITHM_SSE_WRAPPERS"; break ;
     case ALGORITHM_SSE_WRAPPERS_UNROLL_1:    return "ALGORITHM_SSE_WRAPPERS_UNROLL_1"; break ;
@@ -847,9 +847,9 @@ void Convolver::convolve(FpImage &src, FpKernel &kernel, FpImage &dst, Convolver
         case ALGORITHM_SSE_WRAPPERS_UNROLL_10:
                 unrolledWrapperConvolutor<10>(src, kernel, dst);  return;
 
-        case ALGORITHM_SSE_FASTKERNEL_EXP5:
+        case ALGORITHM_SSE_FASTKERNEL_EXP3:
         case ALGORITHM_SSE_DMITRY:
-                fastkernelConvolutorExp5(src, kernel, dst);  return;
+                fastkernelConvolutorExp3(src, kernel, dst);  return;
 #endif
     }
 }

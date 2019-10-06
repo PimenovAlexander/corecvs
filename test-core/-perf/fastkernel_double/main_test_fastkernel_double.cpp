@@ -401,7 +401,7 @@ TEST(FastKernelDouble, testConvolver)
 
         , { Convolver::ALGORITHM_SSE_FASTKERNEL             ,  60, 5, "Fastkernel",     true,  NULL, NULL, 0 }
         , { Convolver::ALGORITHM_SSE_FASTKERNEL_EXP         ,  60, 5, "FastkernelE",    true,  NULL, NULL, 0 }
-        , { Convolver::ALGORITHM_SSE_FASTKERNEL_EXP5        ,  60, 5, "FastkernelE5",   true,  NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_FASTKERNEL_EXP3        ,  60, 5, "FastkernelE3",   true,  NULL, NULL, 0 }
 
         , { Convolver::ALGORITHM_SSE_WRAPPERS               ,  60, 5, "Wrappers",       true,  NULL, NULL, 0 }
 

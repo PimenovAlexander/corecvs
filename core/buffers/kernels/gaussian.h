@@ -26,7 +26,7 @@ public:
     static ElementType data[9];
 
     Gaussian3x3(bool prescaled = false)
-        : DpKernel (3, 3)
+        : BaseType (3, 3)
     {
         double scale  = ElementType(16);
         for (int i = 0; i < this->h; i++)

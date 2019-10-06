@@ -51,7 +51,7 @@ public:
 
         ALGORITHM_SSE_FASTKERNEL = ALGORITHM_SSE_UNROLL_LAST,
         ALGORITHM_SSE_FASTKERNEL_EXP,
-        ALGORITHM_SSE_FASTKERNEL_EXP5,
+        ALGORITHM_SSE_FASTKERNEL_EXP3,
 
         ALGORITHM_SSE_WRAPPERS,
         ALGORITHM_SSE_WRAPPERS_UNROLL_1,
@@ -104,7 +104,7 @@ template<int UNROLL = 5>
 
 #ifdef WITH_AVX
     void fastkernelConvolutorExp(DpImage &src, DpKernel &kernel, DpImage &dst);
-    void fastkernelConvolutorExp5(DpImage &src, DpKernel &kernel, DpImage &dst);
+    void fastkernelConvolutorExp3(DpImage &src, DpKernel &kernel, DpImage &dst);
 #endif
 
 #if WITH_AVX
@@ -120,7 +120,7 @@ template<int UNROLL = 5>
     /* Float implementations */
     void naiveConvolutor          (FpImage &src, FpKernel &kernel, FpImage &dst);
 #ifdef WITH_AVX
-    void fastkernelConvolutorExp5 (FpImage &src, FpKernel &kernel, FpImage &dst);
+    void fastkernelConvolutorExp3 (FpImage &src, FpKernel &kernel, FpImage &dst);
 template<int UNROLL = 5>
     void unrolledWrapperConvolutor(FpImage &src, FpKernel &kernel, FpImage &dst);
 #endif

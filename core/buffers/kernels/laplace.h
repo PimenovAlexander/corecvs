@@ -90,6 +90,45 @@ template<typename OtherAlgebra>
     }
 };
 
+template <typename Algebra>
+class Laplacian3x3KernelS
+{
+public:
+    static const int inputNumber = 1;
+    static const int outputNumber = 1;
+    int bias;
+
+    inline static int getCenterX(){ return 1; }
+    inline static int getCenterY(){ return 1; }
+    inline static int getSizeX  (){ return 3; }
+    inline static int getSizeY  (){ return 3; }
+
+    typedef typename Algebra::SignedType SignedType;
+
+template<typename OtherAlgebra>
+    Laplacian3x3KernelS(const Laplacian3x3KernelS<OtherAlgebra> &other) :
+        bias(other.bias)
+    {}
+
+    Laplacian3x3KernelS(int bias = 0) :
+        bias(bias)
+    {}
+
+    void process(Algebra &algebra) const
+    {
+        SignedType a01 = algebra.getInput(0,1);
+        SignedType a10 = algebra.getInput(1,0);
+        SignedType a11 = algebra.getInput(1,1);
+        SignedType a12 = algebra.getInput(1,2);
+        SignedType a21 = algebra.getInput(2,1);
+
+        SignedType cross  = (a01 + a10 + a12 + a21);
+        SignedType result = Algebra::template mul<4>(a11) + SignedType(bias) - cross ;
+        algebra.putOutput(0,0,result);
+    }
+};
+
+
 
 } // namespace corecvs
 

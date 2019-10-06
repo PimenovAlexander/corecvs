@@ -230,6 +230,11 @@ public:
         drawContinuousBuffer<double>(in, style);
     }
 
+    inline void drawFloatBuffer(const AbstractBuffer<float> &in, int style = STYLE_RAW)
+    {
+        drawContinuousBuffer<float>(in, style);
+    }
+
     template<typename ContinuousType>
     void drawContinuousBuffer(const AbstractBuffer<ContinuousType> &in, int style = STYLE_RAW, ColorPallete::ColorPallete pallete = ColorPallete::PARULA, bool legend = false);
     void drawDoubleVecBuffer(const AbstractBuffer<Vector2dd> &in);

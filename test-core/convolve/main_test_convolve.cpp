@@ -108,26 +108,42 @@ TEST(Convolve, LaplaceAndGauss)
     /** Just to check */
     Gaussian3x3<DpKernel> gaussian3x3(true);
     Gaussian5x5<DpKernel> gaussian5x5(true);
-     Laplace3x3<DpKernel> laplace3x3(128.0);
+    Laplace3x3 <DpKernel> laplace3x3(128.0);
 
     cout << "Gaussian33:\n" << gaussian3x3 << endl;
     cout << "Gaussian55:\n" << gaussian5x5 << endl;
 
+    Gaussian3x3<FpKernel> gaussian3x3f(true);
+    Gaussian5x5<FpKernel> gaussian5x5f(true);
+    Laplace3x3 <FpKernel> laplace3x3f(128.0f);
+
     /** Variant one. Double version */
         DpImage *g33OutputD = new DpImage(inputD->getSize());
-        Convolver().convolve(*inputD, (DpKernel &)gaussian3x3, *g33OutputD);
+        Convolver().convolve(*inputD, gaussian3x3, *g33OutputD);
         BufferFactory::getInstance()->saveRGB24Bitmap(g33OutputD, "conv_gauss33_double.bmp", RGB24Buffer::STYLE_GRAY255);
 
         DpImage *g55OutputD = new DpImage(inputD->getSize());
-        Convolver().convolve(*inputD, (DpKernel &)gaussian5x5, *g55OutputD);
+        Convolver().convolve(*inputD, gaussian5x5, *g55OutputD);
         BufferFactory::getInstance()->saveRGB24Bitmap(g55OutputD, "conv_gauss55_double.bmp", RGB24Buffer::STYLE_GRAY255);
 
         DpImage *lOutputD = new DpImage(inputD->getSize());
-        Convolver().convolveIB(*inputD, (DpKernel &)laplace3x3, *lOutputD);
+        Convolver().convolveIB(*inputD, laplace3x3, *lOutputD);
         BufferFactory::getInstance()->saveRGB24Bitmap(lOutputD, "conv_log_double.bmp", RGB24Buffer::STYLE_GRAY255);
 
-    /** Variant two. Fastkernel version **/
+    /** Variant two. Float version */
+        FpImage *g33OutputF = new FpImage(inputD->getSize());
+        Convolver().convolve(*inputF, gaussian3x3f, *g33OutputF);
+        BufferFactory::getInstance()->saveRGB24Bitmap(g33OutputF, "conv_gauss33_float.bmp", RGB24Buffer::STYLE_GRAY255);
 
+        FpImage *g55OutputF = new FpImage(inputD->getSize());
+        Convolver().convolve(*inputF, gaussian5x5f, *g55OutputF);
+        BufferFactory::getInstance()->saveRGB24Bitmap(g55OutputF, "conv_gauss55_float.bmp", RGB24Buffer::STYLE_GRAY255);
+
+        FpImage *lOutputF = new FpImage(inputD->getSize());
+        Convolver().convolve(*inputF, laplace3x3f, *lOutputF);
+        BufferFactory::getInstance()->saveRGB24Bitmap(lOutputD, "conv_log_float.bmp", RGB24Buffer::STYLE_GRAY255);
+
+    /** Variant three. Fastkernel 16 bit unsigned version **/
         BufferProcessor<G16Buffer, G16Buffer, Gaussian3x3Kernel, G12BufferAlgebra> procVectorGauss33;
         G16Buffer *g33Output16 = new G16Buffer(input16->getSize());
         Gaussian3x3Kernel<DummyAlgebra> kernelG33;
@@ -140,9 +156,31 @@ TEST(Convolve, LaplaceAndGauss)
         procVectorLog.processSaveAligned(&input16, &lOutput16, kernelLog);
         BufferFactory::getInstance()->saveRGB24Bitmap(lOutput16, "conv_log_g16.bmp");
 
+    /** Signed version */
+#if 0
+        BufferProcessor<G16Buffer, G16Buffer, Laplacian3x3KernelS, G12BufferAlgebra> procVectorSLog;
+        G16Buffer *lOutput16s = new G16Buffer(input16->getSize());
+        Laplacian3x3KernelS<DummyAlgebra> kernelSLog(127);
+        procVectorSLog.processSaveAligned(&input16, &lOutput16s, kernelSLog);
+        BufferFactory::getInstance()->saveRGB24Bitmap(lOutput16, "conv_log_s_g16.bmp");
+#endif
+
+    /** Variant four. Fastkernel 8 bit unsigned version **/
+
+
+
+    /** Variant five. 3-channel double buffer **/
+
+
+
     if (g33OutputD->h < 20 && g33OutputD->w < 20)
     {
         cout << "g33OutputD" << endl << *g33OutputD << endl;
+    }
+
+    if (g33OutputF->h < 20 && g33OutputF->w < 20)
+    {
+        cout << "g33OutputF" << endl << *g33OutputF << endl;
     }
 
     if (g33Output16->h < 20 && g33Output16->w < 20)
