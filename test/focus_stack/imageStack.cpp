@@ -8,6 +8,11 @@ ImageStack::ImageStack(pair<int, int> dimensions)
     mergedImage = new RGB24Buffer(height, width);
 }
 
+ImageStack::ImageStack(ImageStack * imageStack) {
+    ImageStack({imageStack->height, imageStack->width});
+    loadStack(imageStack->imageStack);
+}
+
 bool ImageStack::addImageToStack(RGB24Buffer & image)
 {
     if (checkDimensions(image))
@@ -95,6 +100,10 @@ void ImageStack::saveStack(string pathToDir)
         imageNum << i;
         BMPLoader().save(pathToDir + "/" + imageNum.str() + ".bmp", imageStack[i]);
     }
+}
+
+void ImageStack::saveMegredImage(string pathToDir) {
+    BMPLoader().save(pathToDir + "/" + "merged.bmp", mergedImage);
 }
 
 void ImageStack::focus_stack(FSAlgorithm algo)

@@ -10,9 +10,6 @@ exists(../../../config.pri) {
 TEMPLATE = subdirs
 
 SUBDIRS +=     \
-    grab24     \
-    grab24_qt  \
-    adoptcolor \
     fileloader \
     focus_stack \
     softrender  \

@@ -2,6 +2,7 @@
 #include "core/buffers/bufferFactory.h"
 #include "core/fileformats/bmpLoader.h"
 #include "imageStack.h"
+#include "laplacianStacking.h"
 
 
 using namespace std;
@@ -19,6 +20,7 @@ int main(int argc, char *argv[])
     {
         SYNC_PRINT(("Can't load images!\n"));
     }
-    imageStack->saveStack("/home/adminlinux/Desktop/test2");
+    imageStack->focus_stack(LaplacianStacking());
+    imageStack->saveMegredImage("/home/adminlinux/Desktop");
 }
 

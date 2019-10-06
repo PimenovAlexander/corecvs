@@ -10,9 +10,11 @@ using namespace std;
 class ImageStack
 {
 public:
+    ImageStack(ImageStack * imageStack);
     bool addImageToStack(RGB24Buffer & image);
     bool removeImageFromStack(int index);
     void saveStack(string pathToDir);
+    void saveMegredImage(string pathToDir);
     static pair<int, int> getDimensions(RGB24Buffer & image);
     static ImageStack * loadStack(vector<RGB24Buffer*> images);
     static ImageStack * loadStack(string pathToFolder, int amountOfImages);
