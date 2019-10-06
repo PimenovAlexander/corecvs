@@ -12,21 +12,15 @@ TEMPLATE = subdirs
 SUBDIRS +=     \
     fileloader \
     focus_stack \
-    softrender  \
-    raytracerender   \
 #    stereo_generator \
-    widgets_test \
-    widget_harness \
 #    command_harness \
-    example_scene \
-    flowtest \
-    avencode \
-    opencvpostcalib \
-    pattern_detector \
+#    avencode \
+ #   opencvpostcalib \
+ #   pattern_detector \
 
 !win32 {
-    SUBDIRS += jitplayground
-    SUBDIRS += gcodeplayground
+ #   SUBDIRS += jitplayground
+  #  SUBDIRS += gcodeplayground
 }
 
 with_qscript {
@@ -40,8 +34,6 @@ with_opencv {
 #        matcher_basic \
 #        matcher_full \
         chessboard_detector \
-        vodometry \
-        stabilization \
 
 }
 

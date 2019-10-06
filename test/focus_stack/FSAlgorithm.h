@@ -7,10 +7,7 @@ using namespace corecvs;
 
 class FSAlgorithm {
 public:
-    virtual void doStacking(std::vector<RGB24Buffer*> & imageStack, RGB24Buffer * result)
-    {
-        SYNC_PRINT(("No focus stacking realisation found!\n"));
-    }
+    virtual void doStacking(std::vector<RGB24Buffer*> & imageStack, RGB24Buffer * result) = 0;
     virtual ~FSAlgorithm(){}
 };
 

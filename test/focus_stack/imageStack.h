@@ -18,7 +18,7 @@ public:
     static pair<int, int> getDimensions(RGB24Buffer & image);
     static ImageStack * loadStack(vector<RGB24Buffer*> images);
     static ImageStack * loadStack(string pathToFolder, int amountOfImages);
-    void focus_stack(FSAlgorithm algo);
+    void focus_stack(FSAlgorithm & algo);
 private:
     ImageStack(pair<int, int> dimensions);
     bool checkDimensions(RGB24Buffer & image);

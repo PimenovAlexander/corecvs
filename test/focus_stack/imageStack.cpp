@@ -106,7 +106,7 @@ void ImageStack::saveMegredImage(string pathToDir) {
     BMPLoader().save(pathToDir + "/" + "merged.bmp", mergedImage);
 }
 
-void ImageStack::focus_stack(FSAlgorithm algo)
+void ImageStack::focus_stack(FSAlgorithm & algo)
 {
     algo.doStacking(imageStack, mergedImage);
 }

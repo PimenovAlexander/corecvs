@@ -15,12 +15,13 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    ImageStack * imageStack = ImageStack::loadStack("/home/adminlinux/Desktop/testStack", 10);
+    ImageStack * imageStack = ImageStack::loadStack("/home/adminlinux/Desktop/testStack", 4);
     if (imageStack == nullptr)
     {
         SYNC_PRINT(("Can't load images!\n"));
     }
-    imageStack->focus_stack(LaplacianStacking());
+    LaplacianStacking lapl;
+    imageStack->focus_stack(lapl);
     imageStack->saveMegredImage("/home/adminlinux/Desktop");
 }
 
