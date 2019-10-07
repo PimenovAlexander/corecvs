@@ -26,7 +26,7 @@ void raytrace_scene_speedup(void)
     if (!loader.load(&mesh, "bunny.ply"))
     {
         SYNC_PRINT(("Can't load model. Exiting. To get model run: "));
-        SYNC_PRINT(("wget http://graphics.stanford.edu/pub/3Dscanrep/bunny.tar.gz"));
+        SYNC_PRINT(("wget http://www-static.cc.gatech.edu/data_files/large_models/bunny.ply.gz -O - | gunzip >bunny.ply"));
         return;
     }
     //loader.load(&mesh, "body-v2.obj");
