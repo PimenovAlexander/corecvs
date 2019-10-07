@@ -22,7 +22,7 @@ CONFIG  -= qt
 
 include($$PWD/../../core/core.pri)
 
-SOURCES += main_pattern_detector.cpp
+SOURCES += main_flow_detector.cpp
 
 with_libjpeg {
     LIBJPEG_WRAPPER_DIR = ../../wrappers/libjpeg

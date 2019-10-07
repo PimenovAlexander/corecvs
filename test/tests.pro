@@ -25,6 +25,7 @@ SUBDIRS +=     \
     avencode \
     opencvpostcalib \
     pattern_detector \
+    flow_detector \
 
 !win32 {
     SUBDIRS += jitplayground
@@ -96,5 +97,5 @@ stereo_generator                    = stereo_generator/stereo_generator.pro
 
 flowtest.file                       = flowtest/flowtest.pro
 
-focusstacking.file                   = focusstacking/focusstacking.pro
-pattern_detector.file                = pattern_detector/pattern_detector.pro
+pattern_detector.file               = pattern_detector/pattern_detector.pro
+flow_detector.file                  = flow_detector/flow_detector.pro
