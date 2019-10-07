@@ -25,7 +25,8 @@ void raytrace_scene_speedup(void)
     MeshLoader loader;
     if (!loader.load(&mesh, "bunny.ply"))
     {
-        SYNC_PRINT(("Can't load model. Exiting"));
+        SYNC_PRINT(("Can't load model. Exiting. To get model run: "));
+        SYNC_PRINT(("wget http://graphics.stanford.edu/pub/3Dscanrep/bunny.tar.gz"));
         return;
     }
     //loader.load(&mesh, "body-v2.obj");
@@ -33,7 +34,18 @@ void raytrace_scene_speedup(void)
     //Matrix44::Shift(0, 0 , 3500)
     //Matrix44::Shift(0, 50, 180)
 
-    mesh.transform(Matrix44::Shift(0, 50, 180) * Matrix44::Scale(1.5) * Matrix44::RotationZ(degToRad(-90)) * Matrix44::RotationY(degToRad(-90)) * Matrix44::RotationX(degToRad(180)));
+    /*mesh.transform(Matrix44::Shift(0, 50, 180) *
+                   Matrix44::Scale(1.5) *
+                   Matrix44::RotationZ(degToRad(-90)) *
+                   Matrix44::RotationY(degToRad(-90)) *
+                   Matrix44::RotationX(degToRad(180)));*/
+
+    mesh.transform(
+        Matrix44::Shift(50, 50, 180) *
+        Matrix44::Scale(700) *
+        Matrix44::RotationY(degToRad(180)) *
+        Matrix44::RotationZ(degToRad(180)));
+
     mesh.dumpInfo();
     mesh.recomputeMeanNormals();
 
@@ -86,7 +98,7 @@ void raytrace_scene_speedup(void)
     scene1.elements.push_back(&roMesh);
 
     for (double d = 60; d < 280; d+=30) {
-        RaytraceableSphere* sphere1 = new RaytraceableSphere(Sphere3d(Vector3dd(-60 + d / 10.0 , 0, d), 15.00));
+        RaytraceableSphere* sphere1 = new RaytraceableSphere(Sphere3d(Vector3dd(-80 + d / 10.0 , 0, d), 20.00));
         sphere1->name = "Sphere1";
         sphere1->color = RGBColor::Red().toDouble();
         sphere1->material = MaterialExamples::bumpy();
@@ -95,13 +107,20 @@ void raytrace_scene_speedup(void)
 
     renderer.object = &scene1;
     renderer.supersample = false;
-    renderer.sampleNum = 70;
+    renderer.sampleNum = 260;
 
     timer = PreciseTimer::currentTime();
     //renderer.trace(bufferF);
-    renderer.traceFOV(bufferF, 8, 140);
-    SYNC_PRINT(("Fast render time %lf ms\n", timer.usecsToNow() / 1000.0));
-    BMPLoader().save("trace-fast.bmp", bufferF);
+
+    for (double focus = 120; focus < 260; focus += 20)
+    {
+        char buffer[256];
+        renderer.traceFOV(bufferF, 8, focus);
+        SYNC_PRINT(("Fast render time %lf ms\n", timer.usecsToNow() / 1000.0));
+
+        snprintf2buf(buffer, "trace-focus%d.bmp", (int)focus);
+        BMPLoader().save(buffer, bufferF);
+    }
 
     /*if (!bufferF->isEqualTrace(*bufferS))
     {
