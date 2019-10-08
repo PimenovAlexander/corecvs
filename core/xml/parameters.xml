@@ -1,4 +1,6 @@
 <poco version="5.0">
+  <include name="basemock.xml"/>
+
   <enum name="InterpolationType">
     <item name="Nearest"         id="0" comment="Nearest"/>
     <item name="Bilinear"        id="1" comment="Bilinear"/>
@@ -141,8 +143,14 @@
      <field type="double"  name="maxSpeed"   min="0" max="1000"   defaultValue="950" step="1"/>
   </class>
 
+  <class name="pattern Detector Result Base">
+     <field type="Vector 2d Parameters"  name="position"   comment="Resulting pattern position"  />
+     <field type="Vector 2d Parameters"  name="ortX"       comment="One of resulting pattern directions in image corrdinate" />
+     <field type="Vector 2d Parameters"  name="ortY"       comment="Second resulting pattern direction in image corrdinate " />
+     <field type="Vector 2d Parameters"  name="unityPoint" comment="Point that corresponds to (1,1 point on the pattern)" />
 
-
+     <field type="int" name="id"     defaultValue="0" comment="pattern id " />
+  </class>
 
 </poco>
 

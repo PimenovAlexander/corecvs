@@ -55,7 +55,7 @@ int producerCaps(CommandLineSetter &s)
 }
 
 
-int detect(CommandLineSetter &s)
+int flow(CommandLineSetter &s)
 {
     Statistics stats;
     Statistics::startInterval(&stats);
@@ -113,17 +113,31 @@ int detect(CommandLineSetter &s)
     Statistics::endInterval(&stats, "Creating producer");
 
     Statistics::startInterval(&stats);
-    std::string inputName = s.getString("input");
-    RGB24Buffer *input = BufferFactory::getInstance()->loadRGB24Bitmap(inputName);
-    if (input == NULL)
+    std::string input1Name = s.getString("input1");
+    RGB24Buffer *input1 = BufferFactory::getInstance()->loadRGB24Bitmap(input1Name);
+    if (input1 == NULL)
     {
-        SYNC_PRINT(("Unable to load image <%s>\n", inputName.c_str()));
+        SYNC_PRINT(("Unable to load image <%s>\n", input1Name.c_str()));
+    }
+
+    std::string input2Name = s.getString("input2");
+    RGB24Buffer *input2 = BufferFactory::getInstance()->loadRGB24Bitmap(input2Name);
+    if (input2 == NULL)
+    {
+        SYNC_PRINT(("Unable to load image <%s>\n", input2Name.c_str()));
     }
     Statistics::endInterval(&stats, "Loading input data");
 
     Statistics::enterContext(&stats, "Processing ->");
-    //producer->setInputImage(input);
-    //producer->setStatistics(&stats);
+    producer->setStats(&stats);
+    producer->beginFrame();
+    producer->setFrameRGB24(input1);
+    producer->endFrame();
+
+    producer->beginFrame();
+    producer->setFrameRGB24(input2);
+    producer->endFrame();
+
     //producer->operator ()();
     vector<Vector2dd> result;
     //producer->getOutput(result);
@@ -136,7 +150,9 @@ int detect(CommandLineSetter &s)
     Statistics::startInterval(&stats);
    // producer->dumpAllDebugs("detector-", ".png");
 
-    delete_safe(input);
+    delete_safe(input1);
+    delete_safe(input2);
+
     delete_safe(producer);
     Statistics::endInterval(&stats, "Cleanup");
 
@@ -152,25 +168,25 @@ void usage()
 {
   SYNC_PRINT(("Call example:\n\n"));
 
-  SYNC_PRINT(("./bin/pattern_detector --caps\n"));
+  SYNC_PRINT(("./bin/flow_detector --caps\n"));
   SYNC_PRINT(("          - show options with which app was compiled\n"));
-  SYNC_PRINT(("./bin/pattern_detector --producercaps --producer=Dummy\n"));
+  SYNC_PRINT(("./bin/flow_detector --producercaps --producer=Dummy\n"));
   SYNC_PRINT(("          - show specific provider options\n"));
-  SYNC_PRINT(("./bin/pattern_detector --detect --producer=Dummy --dumpConfig\n"));
+  SYNC_PRINT(("./bin/flow_detector --detect --producer=Dummy --dumpConfig\n"));
   SYNC_PRINT(("          - dump current config to stdout\n"));
-  SYNC_PRINT(("./bin/pattern_detector --detect --producer=Dummy --dumpConfig --config=out.json\n"));
+  SYNC_PRINT(("./bin/flow_detector --detect --producer=Dummy --dumpConfig --config=out.json\n"));
   SYNC_PRINT(("          - dump current config to out.json\n"));
   SYNC_PRINT(("          \n"));
   SYNC_PRINT(("          \n"));
   SYNC_PRINT(("Dummy pattern provider:\n"));
-  SYNC_PRINT(("./bin/pattern_detector --detect --producer=Dummy --point.x=10 --point.y=10 --input=circles.bmp\n"));
+  SYNC_PRINT(("./bin/flow_detector --detect --producer=Dummy --point.x=10 --point.y=10 --input=circles.bmp\n"));
   SYNC_PRINT(("          - example that returns back pattern at given point\n"));
-  SYNC_PRINT(("./bin/pattern_detector --detect --producer=Dummy --color.r=100 --color.g=100 --color.b=100 --input=circles.bmp\n"));
+  SYNC_PRINT(("./bin/flow_detector --detect --producer=Dummy --color.r=100 --color.g=100 --color.b=100 --input=circles.bmp\n"));
   SYNC_PRINT(("          - example that returns back pattern at point with closest color to given\n"));
   SYNC_PRINT(("          \n"));
   SYNC_PRINT(("          \n"));
   SYNC_PRINT(("Opencv Square pattern provider:\n"));
-  SYNC_PRINT(("./bin/pattern_detector --detect --producer=OpenCVSquare --params.debug=on --input=photo_2019-09-29_23-11-36.jpg\n"));
+  SYNC_PRINT(("./bin/flow_detector --detect --producer=OpenCVSquare --params.debug=on --input=photo_2019-09-29_23-11-36.jpg\n"));
   SYNC_PRINT(("          - example that returns detected squares\n"));
 
 }
@@ -204,9 +220,9 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    if (s.hasOption("detect"))
+    if (s.hasOption("flow"))
     {
-        detect(s);
+        flow(s);
         return 0;
     }
 

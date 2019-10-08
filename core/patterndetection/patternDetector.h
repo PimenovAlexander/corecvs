@@ -13,6 +13,8 @@
 #include "core/utils/debuggableBlock.h"
 #include "core/reflection/dynamicObject.h"
 
+#include "core/xml/generated/patternDetectorResultBase.h"
+
 
 namespace corecvs {
 
@@ -45,6 +47,19 @@ public:
     virtual size_t detectPatterns(corecvs::RGB24Buffer &buffer, std::vector<corecvs::ObservationList> &patterns);
 };
 
+class PatternDetectorResult : public PatternDetectorResultBase
+{
+public:
+    PatternDetectorResult() :
+        PatternDetectorResultBase(
+            Vector2dParameters(Vector2dd(0, 0)),
+            Vector2dParameters(Vector2dd(1, 0)),
+            Vector2dParameters(Vector2dd(0, 1)),
+            Vector2dParameters(Vector2dd(1, 1)),
+            0
+        )
+    {}
+};
 
 class PatternDetector : public NewStyleBlock, public DebuggableBlock
 {
@@ -56,7 +71,7 @@ public:
     virtual void setInputImage(RGB24Buffer *input) {}
     virtual int operator()() override { return 0; }
 
-    virtual void getOutput(vector<Vector2dd> &patterns){}
+    virtual void getOutput(vector<PatternDetectorResult> &patterns){}
 
     virtual ~PatternDetector() {}
     virtual void setStatistics(corecvs::Statistics * /*stats*/ = NULL) {}

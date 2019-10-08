@@ -124,7 +124,7 @@ int detect(CommandLineSetter &s)
     producer->setInputImage(input);
     producer->setStatistics(&stats);
     producer->operator ()();
-    vector<Vector2dd> result;
+    vector<PatternDetectorResult> result;
     producer->getOutput(result);
     Statistics::leaveContext(&stats);
 
@@ -162,7 +162,7 @@ void usage()
   SYNC_PRINT(("          \n"));
   SYNC_PRINT(("          \n"));
   SYNC_PRINT(("Dummy pattern provider:\n"));
-  SYNC_PRINT(("./bin/pattern_detector --detect --producer=Dummy --point.x=10 --point.y=10 --input=circles.bmp\n"));
+  SYNC_PRINT(("./bin/pattern_detector --detect --producer=Dummy --point.position.x=10 --point.position.y=10 --input=circles.bmp\n"));
   SYNC_PRINT(("          - example that returns back pattern at given point\n"));
   SYNC_PRINT(("./bin/pattern_detector --detect --producer=Dummy --color.r=100 --color.g=100 --color.b=100 --input=circles.bmp\n"));
   SYNC_PRINT(("          - example that returns back pattern at point with closest color to given\n"));

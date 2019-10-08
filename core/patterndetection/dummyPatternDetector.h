@@ -14,7 +14,7 @@ public:
     RGB24Buffer *debug = NULL;
 
 
-    Vector2dd point;
+    PatternDetectorResult dummyResult;
     RgbColorParameters color;
 
     DummyPatternDetector();
@@ -22,12 +22,12 @@ public:
 
     /** DebuggableBlock interface */
 public:
-    std::vector<std::string> debugBuffers() const;
-    RGB24Buffer *getDebugBuffer(const std::string &name) const;
+    std::vector<std::string> debugBuffers() const override;
+    RGB24Buffer *getDebugBuffer(const std::string &name) const override;
 
     /** NewStyleBlock interface */
 public:
-    int operator () (){
+    int operator () () override {
         Statistics::startInterval(stats);
         SYNC_PRINT(("DummyPatternDetector::operator(): called\n"));
         Statistics::endInterval(stats, "operator()");
@@ -36,18 +36,18 @@ public:
 
     /** PatternDetector interface */
 public:
-    std::map<std::string, DynamicObject> getParameters();
-    bool setParameters(std::string name, const DynamicObject &param);
+    std::map<std::string, DynamicObject> getParameters() override;
+    bool setParameters(std::string name, const DynamicObject &param) override;
 
-    void setInputImage(RGB24Buffer *input) {
+    void setInputImage(RGB24Buffer *input) override{
         Statistics::startInterval(stats);
         this->input = input;
         Statistics::endInterval(stats, "Setting input");
     }
 
-    void getOutput(vector<Vector2dd> &patterns);
+    void getOutput(vector<PatternDetectorResult> &patterns) override;
 
-    void setStatistics(Statistics *stats) {
+    void setStatistics(Statistics *stats) override {
         this->stats = stats;
     }
 };

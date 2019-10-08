@@ -2,9 +2,9 @@
 
 namespace corecvs {
 
-DummyPatternDetector::DummyPatternDetector() :
-    point(-1, -1)
+DummyPatternDetector::DummyPatternDetector()
 {
+    dummyResult.setPosition(Vector2dParameters(-1, -1));
 }
 
 DummyPatternDetector::~DummyPatternDetector()
@@ -15,6 +15,9 @@ DummyPatternDetector::~DummyPatternDetector()
 
 std::vector<std::string> DummyPatternDetector::debugBuffers() const
 {
+    if (debug == NULL)
+        return std::vector<std::string>();
+
     return std::vector<std::string>({"marks"});
 }
 
@@ -22,7 +25,11 @@ RGB24Buffer *DummyPatternDetector::getDebugBuffer(const std::string &name) const
 {
     if (name == "marks")
     {
-        return new RGB24Buffer(debug);
+        if (debug != NULL) {
+            return new RGB24Buffer(debug);
+        } else {
+            SYNC_PRINT(("Requested marks debug buffer, but it is NULL\n"));
+        }
     }
     return NULL;
 }
@@ -30,7 +37,7 @@ RGB24Buffer *DummyPatternDetector::getDebugBuffer(const std::string &name) const
 std::map<std::string, DynamicObject> DummyPatternDetector::getParameters()
 {
     std::map<std::string, DynamicObject> params;
-    params.emplace("point", DynamicObject(&point));
+    params.emplace("point", DynamicObject(&dummyResult));
     params.emplace("color", DynamicObject(&color));
     return params;
 }
@@ -38,7 +45,7 @@ std::map<std::string, DynamicObject> DummyPatternDetector::getParameters()
 bool DummyPatternDetector::setParameters(std::string name, const DynamicObject &param)
 {
     if (name == "point") {
-        param.copyTo(&point);
+        param.copyTo(&dummyResult);
         return true;
     }
     if (name == "color") {
@@ -48,17 +55,19 @@ bool DummyPatternDetector::setParameters(std::string name, const DynamicObject &
     return false;
 }
 
-void DummyPatternDetector::getOutput(vector<Vector2dd> &patterns)
+void DummyPatternDetector::getOutput(vector<PatternDetectorResult> &patterns)
 {
     Statistics::startInterval(stats);
     if (input != NULL) {
-        if (input->isValidCoordBl(point))
+        if (input->isValidCoordBl(Vector2dd(dummyResult.position())))
         {
-            patterns.push_back(point);
+            patterns.push_back(dummyResult);
             return;
         }
 
-        Vector2dd result = Vector2dd::Zero();
+        PatternDetectorResult result;
+        result.setPosition(Vector2dParameters(0, 0));
+
         double minDist = numeric_limits<int>::max();
         for (int i = 0; i < input->h; i++)
         {
@@ -68,16 +77,17 @@ void DummyPatternDetector::getOutput(vector<Vector2dd> &patterns)
                 if (dist < minDist)
                 {
                     minDist = dist;
-                    result = Vector2dd(j, i);
+                    result.setPosition(Vector2dParameters(j, i));
                 }
             }
         }
+
         patterns.push_back(result);
         delete_safe(debug);
         debug = new RGB24Buffer(input);
         for (size_t i = 0; i < patterns.size(); i++)
         {
-            debug->drawCrosshare3(patterns[i], RGBColor::Red());
+            debug->drawCrosshare3(Vector2dd(patterns[i].position()), RGBColor::Red());
         }
     }    
 

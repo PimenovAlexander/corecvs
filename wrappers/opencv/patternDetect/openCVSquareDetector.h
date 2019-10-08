@@ -28,23 +28,23 @@ public:
     /** DebuggableBlock interface */
 public:
     corecvs::RGB24Buffer *debugBuffer = NULL;
-    std::vector<std::string> debugBuffers() const;
-    corecvs::RGB24Buffer *getDebugBuffer(const std::string &name) const;
+    std::vector<std::string> debugBuffers() const override;
+    corecvs::RGB24Buffer *getDebugBuffer(const std::string &name) const override;
 
     /** NewStyleBlock interface */
 public:
-    int operator () ();
+    int operator () () override;
 
     /** PatternDetector interface */
 public:
-    std::map<std::string, corecvs::DynamicObject> getParameters();
-    bool setParameters(std::string name, const corecvs::DynamicObject &param);
+    std::map<std::string, corecvs::DynamicObject> getParameters() override;
+    bool setParameters(std::string name, const corecvs::DynamicObject &param) override;
 
-    void setInputImage(corecvs::RGB24Buffer *input);
+    void setInputImage(corecvs::RGB24Buffer *input) override;
 
-    void getOutput(vector<corecvs::Vector2dd> &patterns);
+    void getOutput(vector<corecvs::PatternDetectorResult> &patterns) override;
 
-    void setStatistics(corecvs::Statistics *stats) {
+    void setStatistics(corecvs::Statistics *stats) override {
         this->stats = stats;
     }
 };

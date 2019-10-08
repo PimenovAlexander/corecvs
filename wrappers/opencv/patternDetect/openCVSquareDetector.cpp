@@ -175,23 +175,25 @@ bool OpenCVSquareDetector::setParameters(std::string name, const DynamicObject &
     return false;
 }
 
-void OpenCVSquareDetector::getOutput(vector<Vector2dd> &patterns)
+void OpenCVSquareDetector::getOutput(vector<PatternDetectorResult> &patterns)
 {
     Statistics::startInterval(stats);
-    for (int i = 0; i < squares.size(); i++)
+    for (size_t i = 0; i < squares.size(); i++)
     {
-        for (int j = 0; j < squares[i].size(); j++)
-        {
-            cv::Point p = squares[i][j];
-            patterns.push_back(Vector2dd(p.x, p.y));
-        }
+        PatternDetectorResult result;
+        result.mPosition = Vector2dParameters(squares[i][0].x, squares[i][0].y);
+        result.mOrtX     = Vector2dParameters(squares[i][1].x, squares[i][1].y);
+        result.mOrtY     = Vector2dParameters(squares[i][3].x, squares[i][3].y);
+        result.mPosition = Vector2dParameters(squares[i][2].x, squares[i][2].y);
+        result.mId = i;
+        patterns.push_back(result);
     }
 
     if (params.debug())
     {
         delete_safe(debugBuffer);
         debugBuffer = OpenCVTools::getRGB24BufferFromCVMat(input);
-        for (int i = 0; i < squares.size(); i++)
+        for (size_t i = 0; i < squares.size(); i++)
         {
             Vector2dd a(squares[i][0].x, squares[i][0].y);
             Vector2dd b(squares[i][1].x, squares[i][1].y);
@@ -203,6 +205,10 @@ void OpenCVSquareDetector::getOutput(vector<Vector2dd> &patterns)
             debugBuffer->drawLine(b, c, color);
             debugBuffer->drawLine(c, d, color);
             debugBuffer->drawLine(d, a, color);
+
+            AbstractPainter<RGB24Buffer> p(debugBuffer);
+            p.drawFormat((squares[i][0].x + squares[i][2].x) / 2, (squares[i][0].y + squares[i][2].y) / 2, color, 2, "%d", i);
+
         }
     }
 

@@ -255,6 +255,7 @@ classes+=" calibrationDrawHelpersParameters"
 classes+=" focusEstimationParameters"
 classes+=" focusEstimationResult"
 classes+=" drawGCodeParameters"
+classes+=" patternDetectorResultBase"
 classes+=" stereoAlignParameters"
 
 classes+=" extrinsicsPlacerParameters"
