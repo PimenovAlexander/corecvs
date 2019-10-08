@@ -1,5 +1,4 @@
 #include <iostream>
-#include "core/buffers/bufferFactory.h"
 #include "core/fileformats/bmpLoader.h"
 #include "imageStack.h"
 #include "laplacianStacking.h"
@@ -21,9 +20,14 @@ int main(int argc, char *argv[])
     if (imageStack == nullptr)
     {
         SYNC_PRINT(("Can't load images!\n"));
+        return 0;
     }
     LaplacianStacking lapl;
     imageStack->focus_stack(lapl);
     imageStack->saveMegredImage(argv[3]);
+
+    delete_safe(imageStack);
+
+    return 0;
 }
 

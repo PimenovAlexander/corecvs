@@ -11,6 +11,7 @@ class ImageStack
 {
 public:
     ImageStack(ImageStack * imageStack);
+    ~ImageStack();
     bool addImageToStack(RGB24Buffer & image);
     bool removeImageFromStack(int index);
     void saveStack(string pathToDir);
