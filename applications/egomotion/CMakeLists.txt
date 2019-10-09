@@ -1,0 +1,15 @@
+target_sources(corecvs
+    PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}/egomotionDialog.h
+        ${CMAKE_CURRENT_LIST_DIR}/egomotionThread.h
+        ${CMAKE_CURRENT_LIST_DIR}/parametersMapper/parametersMapperEgomotion.h
+        ${CMAKE_CURRENT_LIST_DIR}/generated/egomotionParameters.h
+        ${CMAKE_CURRENT_LIST_DIR}/generated/ui/egomotionParametersControlWidget.h
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/egomotionDialog.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/main_egomotion.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/egomotionThread.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/parametersMapper/parametersMapperEgomotion.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/generated/egomotionParameters.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/generated/ui/egomotionParametersControlWidget.cpp
+)
