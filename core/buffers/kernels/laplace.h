@@ -37,6 +37,39 @@ double Laplace3x3<BaseType>::data[9] = {
     0, -1,  0
 };
 
+template<class BaseType>
+class Laplace5x5 : public BaseType
+{
+public:
+    static double data[25];
+
+    static Laplace5x5 *instance;
+
+    Laplace5x5(typename BaseType::InternalElementType bias = 0) :
+        BaseType(5,5)
+    {
+        this->bias = bias;
+
+        for (int i = 0; i < this->h; i++)
+        {
+            for (int j = 0; j < this->w; j++)
+            {
+                 this->element(i,j) = data[i * this->w + j];
+            }
+        }
+    }
+    virtual ~Laplace5x5(){}
+};
+
+template<class BaseType>
+double Laplace5x5<BaseType>::data[25] = {
+    1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1,
+    1, 1, -24, 1, 1,
+    1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1
+};
+
 
 
 /**

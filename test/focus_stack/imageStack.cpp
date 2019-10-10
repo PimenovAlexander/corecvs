@@ -1,4 +1,5 @@
 #include "imageStack.h"
+#include "core/buffers/bufferFactory.h"
 #include "core/fileformats/bmpLoader.h"
 
 ImageStack::ImageStack(pair<int, int> dimensions)
@@ -11,6 +12,13 @@ ImageStack::ImageStack(pair<int, int> dimensions)
 ImageStack::ImageStack(ImageStack * imageStack) {
     ImageStack({imageStack->height, imageStack->width});
     loadStack(imageStack->imageStack);
+}
+
+ImageStack::~ImageStack() {
+    for (int i = 0; i < imageStack.size(); i++) {
+        delete_safe(imageStack[i]);
+    }
+    delete_safe(mergedImage);
 }
 
 bool ImageStack::addImageToStack(RGB24Buffer & image)
@@ -26,7 +34,7 @@ bool ImageStack::addImageToStack(RGB24Buffer & image)
 bool ImageStack::removeImageFromStack(int index)
 {
     if (index < imageStack.size()) {
-        delete imageStack[index];
+        delete_safe(imageStack[index]);
         imageStack.erase(imageStack.begin() + index);
         return true;
     }
@@ -65,22 +73,25 @@ ImageStack * ImageStack::loadStack(string pathToFolder, int amountOfImages)
     if (amountOfImages <= 0) {
         return nullptr;
     }
-    RGB24Buffer * image = BMPLoader().loadRGB(pathToFolder + "/1.bmp");
+    RGB24Buffer * image = BufferFactory::getInstance()->loadRGB24Bitmap(pathToFolder + "/1.bmp");
+    if (image == nullptr) {
+        return nullptr;
+    }
     pair<int, int> dimensions = getDimensions(*image);
 
     ImageStack * imageStack = new ImageStack(dimensions);
-    imageStack->imageStack.push_back(new RGB24Buffer(image));
+    imageStack->imageStack.push_back(image);
 
     for (int i = 1; i < amountOfImages; i++)
     {
         std::ostringstream imageNum;
         imageNum << i;
-        RGB24Buffer * image = BMPLoader().loadRGB(pathToFolder + "/" + imageNum.str() + ".bmp");
-        if (image == NULL || !imageStack->checkDimensions(*image)) {
-            delete imageStack;
-            if (image != NULL)
+        RGB24Buffer * image = BufferFactory::getInstance()->loadRGB24Bitmap(pathToFolder + "/" + imageNum.str() + ".bmp");
+        if (image == nullptr || !imageStack->checkDimensions(*image)) {
+            delete_safe(imageStack);
+            if (image != nullptr)
             {
-                delete image;
+                delete_safe(image);
             }
             return nullptr;
         }
@@ -98,12 +109,12 @@ void ImageStack::saveStack(string pathToDir)
     {
         std::ostringstream imageNum;
         imageNum << i;
-        BMPLoader().save(pathToDir + "/" + imageNum.str() + ".bmp", imageStack[i]);
+        BufferFactory::getInstance()->saveRGB24Bitmap(imageStack[i], pathToDir + "/" + imageNum.str() + ".bmp");
     }
 }
 
 void ImageStack::saveMegredImage(string pathToDir) {
-    BMPLoader().save(pathToDir + "/" + "merged.bmp", mergedImage);
+    BufferFactory::getInstance()->saveRGB24Bitmap(mergedImage, pathToDir + "/" + "merged.bmp");
 }
 
 void ImageStack::focus_stack(FSAlgorithm & algo)

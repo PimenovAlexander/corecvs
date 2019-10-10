@@ -12,26 +12,21 @@ LaplacianStacking::~LaplacianStacking(){}
 void LaplacianStacking::doStacking(vector<RGB24Buffer*> & imageStack, RGB24Buffer * result)
 {
     Gaussian5x5<DpKernel> gaussian5x5(true);
-    Laplace3x3 <DpKernel> laplace3x3(128.0);
+    Laplace5x5 <DpKernel> laplace5x5(128.0);
     Vector2d<int> imageSize = imageStack[0]->getSize();
-    double ** maxValue = new double*[imageSize.y()];
-    int ** depthMap = new int*[imageSize.y()];
-    for (int i = 0; i < imageSize.y(); i++) {
-        maxValue[i] = new double[imageSize.x()]{-DBL_MAX};
-        depthMap[i] = new int[imageSize.x()]{0};
-    }
+    AbstractBuffer<double> maxValue(imageSize);
+    AbstractBuffer<int> depthMap(imageSize);
     for (int i = 0; i < imageStack.size(); i++) {
         DpImage * outputG = new DpImage(imageSize);
         DpImage * outputL = new DpImage(imageSize);
         DpImage * input = imageStack[i]->getChannelDp(ImageChannel::GRAY);
         Convolver().convolve(*input, gaussian5x5, *outputG);
-        Convolver().convolve(*outputG, laplace3x3, *outputL);
-        //std::cout << outputG->getH() << " " << outputG->getW() << endl;
+        Convolver().convolve(*outputG, laplace5x5, *outputL);
         for (int w = 0; w < imageSize.x() - 1; w++) {
             for (int h = 0; h < imageSize.y() - 1; h++) {
-                if (maxValue[h][w] < outputG->elementBl(h, w)) {
-                    maxValue[h][w] = outputG->elementBl(h, w);
-                    depthMap[h][w] = i;
+                if (maxValue.element(h, w) < outputG->element(h, w)) {
+                    maxValue.element(h, w) = outputG->element(h, w);
+                    depthMap.element(h, w) = i;
                 }
             }
         }
@@ -42,7 +37,7 @@ void LaplacianStacking::doStacking(vector<RGB24Buffer*> & imageStack, RGB24Buffe
 
     for (int w = 0; w < imageSize.x(); w++) {
         for (int h = 0; h < imageSize.y(); h++) {
-            result->drawPixel(w, h, imageStack[depthMap[h][w]]->elementBl(h, w));
+            result->element(h, w) = imageStack[depthMap.element(h, w)]->element(h, w);
         }
     }
 }
