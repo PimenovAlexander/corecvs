@@ -16,6 +16,15 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+#ifdef WITH_LIBJPEG
+    LibjpegFileReader::registerMyself();
+    SYNC_PRINT(("Libjpeg support on\n"));
+#endif
+#ifdef WITH_LIBPNG
+    LibpngFileReader::registerMyself();
+    SYNC_PRINT(("Libpng support on\n"));
+#endif
+
     ImageStack * imageStack = ImageStack::loadStack(argv[1], std::stoi(argv[2]));
     if (imageStack == nullptr)
     {
