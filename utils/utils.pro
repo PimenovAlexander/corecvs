@@ -586,8 +586,8 @@ with_rapidjson {
     include($$RAPIDJSON_WRAPPER_DIR/rapidjson.pri)
 
     contains(DEFINES, WITH_RAPIDJSON) {
-        HEADERS +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONReader.h
-        SOURCES +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONReader.cpp
+       #HEADERS +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONReader.h
+       #SOURCES +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONReader.cpp
        #HEADERS +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONWriter.h
        #SOURCES +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONWriter.cpp
     }
@@ -598,8 +598,8 @@ with_jsonmodern {
     include($$JSONMODERN_WRAPPER_DIR/jsonmodern.pri)
 
     contains(DEFINES, WITH_JSONMODERN) {
-         HEADERS += $$JSONMODERN_WRAPPER_DIR/jsonModernReader.h
-         SOURCES += $$JSONMODERN_WRAPPER_DIR/jsonModernReader.cpp
+        # HEADERS += $$JSONMODERN_WRAPPER_DIR/jsonModernReader.h
+        # SOURCES += $$JSONMODERN_WRAPPER_DIR/jsonModernReader.cpp
     }
 }
 

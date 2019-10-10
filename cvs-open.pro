@@ -14,7 +14,7 @@ SUBDIRS +=                   \
     cloudview                \
     imageview                \
     \
-#    generator                \
+    generator                \
 
 
 #SUBDIRS += drone

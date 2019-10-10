@@ -82,6 +82,7 @@ int flow(CommandLineSetter &s)
             for(auto &it : paramsMap)
                 printer.visit(it.second, it.first.c_str());
         }
+        return 0;
     } else if (!configFile.empty()) {
         JSONModernReader reader(configFile);
         if (!reader.hasError()) {
@@ -117,18 +118,23 @@ int flow(CommandLineSetter &s)
     RGB24Buffer *input1 = BufferFactory::getInstance()->loadRGB24Bitmap(input1Name);
     if (input1 == NULL)
     {
-        SYNC_PRINT(("Unable to load image <%s>\n", input1Name.c_str()));
+        SYNC_PRINT(("Unable to load image1 <%s>. Add --input1=<filename> parameter.\n", input1Name.c_str()));
+        return 1;
     }
 
     std::string input2Name = s.getString("input2");
     RGB24Buffer *input2 = BufferFactory::getInstance()->loadRGB24Bitmap(input2Name);
     if (input2 == NULL)
     {
-        SYNC_PRINT(("Unable to load image <%s>\n", input2Name.c_str()));
+        SYNC_PRINT(("Unable to load image2 <%s>. Add --input2=<filename> parameter.\n", input2Name.c_str()));
+        return 1;
     }
+
+    SYNC_PRINT(("Images : 1 [%d x %d]  2 [%d x %d]\n", input1->w, input1->h, input2->w, input2->h));
     Statistics::endInterval(&stats, "Loading input data");
 
     Statistics::enterContext(&stats, "Processing ->");
+    producer->requestResultsi(ProcessorFlow::RESULT_FLOW);
     producer->setStats(&stats);
     producer->beginFrame();
     producer->setFrameRGB24(input1);
@@ -139,13 +145,9 @@ int flow(CommandLineSetter &s)
     producer->endFrame();
 
     //producer->operator ()();
-    vector<Vector2dd> result;
-    //producer->getOutput(result);
+    FlowBuffer *flow = producer->getFlow();
     Statistics::leaveContext(&stats);
-
-    for(int i = 0; i < result.size(); i++) {
-        cout << result[i] << endl;
-    }
+    cout << "Density:" << flow->density() << endl;
 
     Statistics::startInterval(&stats);
    // producer->dumpAllDebugs("detector-", ".png");
@@ -172,21 +174,20 @@ void usage()
   SYNC_PRINT(("          - show options with which app was compiled\n"));
   SYNC_PRINT(("./bin/flow_detector --producercaps --producer=Dummy\n"));
   SYNC_PRINT(("          - show specific provider options\n"));
-  SYNC_PRINT(("./bin/flow_detector --detect --producer=Dummy --dumpConfig\n"));
+  SYNC_PRINT(("./bin/flow_detector --flow --producer=Dummy --dumpConfig\n"));
+  SYNC_PRINT(("./bin/flow_detector --flow --producer=OpenCVProcessor --dumpConfig\n"));
   SYNC_PRINT(("          - dump current config to stdout\n"));
-  SYNC_PRINT(("./bin/flow_detector --detect --producer=Dummy --dumpConfig --config=out.json\n"));
+  SYNC_PRINT(("./bin/flow_detector --flow --producer=Dummy --dumpConfig --config=out.json\n"));
   SYNC_PRINT(("          - dump current config to out.json\n"));
   SYNC_PRINT(("          \n"));
   SYNC_PRINT(("          \n"));
   SYNC_PRINT(("Dummy pattern provider:\n"));
-  SYNC_PRINT(("./bin/flow_detector --detect --producer=Dummy --point.x=10 --point.y=10 --input=circles.bmp\n"));
-  SYNC_PRINT(("          - example that returns back pattern at given point\n"));
-  SYNC_PRINT(("./bin/flow_detector --detect --producer=Dummy --color.r=100 --color.g=100 --color.b=100 --input=circles.bmp\n"));
-  SYNC_PRINT(("          - example that returns back pattern at point with closest color to given\n"));
+  SYNC_PRINT(("./bin/flow_detector --flow --producer=Dummy --input1=000_001800.png --input2=000_001801.png\n"));
+  SYNC_PRINT(("          - example that returns dummy data\n"));
   SYNC_PRINT(("          \n"));
   SYNC_PRINT(("          \n"));
-  SYNC_PRINT(("Opencv Square pattern provider:\n"));
-  SYNC_PRINT(("./bin/flow_detector --detect --producer=OpenCVSquare --params.debug=on --input=photo_2019-09-29_23-11-36.jpg\n"));
+  SYNC_PRINT(("KLT flow provider:\n"));
+  SYNC_PRINT(("./bin/flow_detector --detect --producer=OpenCVProcessor --params.debug=on --input=photo_2019-09-29_23-11-36.jpg\n"));
   SYNC_PRINT(("          - example that returns detected squares\n"));
 
 }
