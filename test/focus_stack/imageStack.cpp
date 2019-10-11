@@ -1,6 +1,9 @@
 #include "imageStack.h"
 #include "core/buffers/bufferFactory.h"
 #include "core/fileformats/bmpLoader.h"
+#include <QDir>
+#include <QString>
+
 
 ImageStack::ImageStack(pair<int, int> dimensions)
 {
@@ -68,12 +71,16 @@ ImageStack * ImageStack::loadStack(vector<RGB24Buffer*> images)
     return imageStack;
 }
 
-ImageStack * ImageStack::loadStack(string pathToFolder, int amountOfImages)
+ImageStack * ImageStack::loadStack(string pathToFolder)
 {
-    if (amountOfImages <= 0) {
+    QDir directory(QString::fromStdString(pathToFolder));
+    QStringList images = directory.entryList(QStringList() << "*.jpg" << "*.bmp" << "*.png", QDir::Files);
+
+    if (images.size() == 0) {
         return nullptr;
     }
-    RGB24Buffer * image = BufferFactory::getInstance()->loadRGB24Bitmap(pathToFolder + "/1.bmp");
+
+    RGB24Buffer * image = BufferFactory::getInstance()->loadRGB24Bitmap(pathToFolder + "/" + images[0].toStdString());
     if (image == nullptr) {
         return nullptr;
     }
@@ -82,11 +89,9 @@ ImageStack * ImageStack::loadStack(string pathToFolder, int amountOfImages)
     ImageStack * imageStack = new ImageStack(dimensions);
     imageStack->imageStack.push_back(image);
 
-    for (int i = 1; i < amountOfImages; i++)
+    for(int i = 1; i < images.size(); i++)
     {
-        std::ostringstream imageNum;
-        imageNum << i;
-        RGB24Buffer * image = BufferFactory::getInstance()->loadRGB24Bitmap(pathToFolder + "/" + imageNum.str() + ".bmp");
+        RGB24Buffer * image = BufferFactory::getInstance()->loadRGB24Bitmap(pathToFolder + "/" + images[i].toStdString());
         if (image == nullptr || !imageStack->checkDimensions(*image)) {
             delete_safe(imageStack);
             if (image != nullptr)
@@ -100,6 +105,7 @@ ImageStack * ImageStack::loadStack(string pathToFolder, int amountOfImages)
             imageStack->imageStack.push_back(image);
         }
     }
+
     return imageStack;
 }
 

@@ -18,7 +18,7 @@ public:
     void saveMegredImage(string pathToDir);
     static pair<int, int> getDimensions(RGB24Buffer & image);
     static ImageStack * loadStack(vector<RGB24Buffer*> images);
-    static ImageStack * loadStack(string pathToFolder, int amountOfImages);
+    static ImageStack * loadStack(string pathToFolder);
     void focus_stack(FSAlgorithm & algo);
 private:
     ImageStack(pair<int, int> dimensions);

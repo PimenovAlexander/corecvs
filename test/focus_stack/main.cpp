@@ -2,16 +2,24 @@
 #include "core/fileformats/bmpLoader.h"
 #include "imageStack.h"
 #include "laplacianStacking.h"
+#ifdef WITH_LIBJPEG
+#include "libjpegFileReader.h"
+#endif
+
+#ifdef WITH_LIBPNG
+#include "core/buffers/rgb24/abstractPainter.h"
+#include "libpngFileReader.h"
+#endif
 
 
 using namespace std;
 using namespace corecvs;
 
-//Usage: ./focus_stack <path to stack> <amount of images in stack> <path to output dir>
+//Usage: ./focus_stack <path to stack> <path to output dir>
 
 int main(int argc, char *argv[])
 {
-    if (argc != 4) {
+    if (argc != 3) {
         SYNC_PRINT(("Wrong amount of arguments!\n"));
         return 1;
     }
@@ -25,7 +33,7 @@ int main(int argc, char *argv[])
     SYNC_PRINT(("Libpng support on\n"));
 #endif
 
-    ImageStack * imageStack = ImageStack::loadStack(argv[1], std::stoi(argv[2]));
+    ImageStack * imageStack = ImageStack::loadStack(argv[1]);
     if (imageStack == nullptr)
     {
         SYNC_PRINT(("Can't load images!\n"));
@@ -33,7 +41,7 @@ int main(int argc, char *argv[])
     }
     LaplacianStacking lapl;
     imageStack->focus_stack(lapl);
-    imageStack->saveMegredImage(argv[3]);
+    imageStack->saveMegredImage(argv[2]);
 
     delete_safe(imageStack);
 
