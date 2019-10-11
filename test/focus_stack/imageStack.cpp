@@ -1,9 +1,8 @@
 #include "imageStack.h"
 #include "core/buffers/bufferFactory.h"
 #include "core/fileformats/bmpLoader.h"
-#include <QDir>
-#include <QString>
 
+#include <core/filesystem/folderScanner.h>
 
 ImageStack::ImageStack(pair<int, int> dimensions)
 {
@@ -71,16 +70,27 @@ ImageStack * ImageStack::loadStack(vector<RGB24Buffer*> images)
     return imageStack;
 }
 
-ImageStack * ImageStack::loadStack(string pathToFolder)
+ImageStack * ImageStack::loadStack(const string &pathToFolder)
 {
-    QDir directory(QString::fromStdString(pathToFolder));
-    QStringList images = directory.entryList(QStringList() << "*.jpg" << "*.bmp" << "*.png", QDir::Files);
+    std::vector<std::string> extentions = BufferFactory::getInstance()->extentionsRGB24();
+    for (std::string str : extentions)
+    {
+        cout << str << endl;
+    }
 
-    if (images.size() == 0) {
+    std::vector<std::string> childern;
+    bool res = FolderScanner::scan(pathToFolder, childern);
+
+    for (std::string str : childern)
+    {
+        cout << str << endl;
+    }
+
+    if (childern.empty()) {
         return nullptr;
     }
 
-    RGB24Buffer * image = BufferFactory::getInstance()->loadRGB24Bitmap(pathToFolder + "/" + images[0].toStdString());
+    RGB24Buffer * image = BufferFactory::getInstance()->loadRGB24Bitmap(childern[0]);
     if (image == nullptr) {
         return nullptr;
     }
@@ -89,9 +99,10 @@ ImageStack * ImageStack::loadStack(string pathToFolder)
     ImageStack * imageStack = new ImageStack(dimensions);
     imageStack->imageStack.push_back(image);
 
-    for(int i = 1; i < images.size(); i++)
+    for(size_t i = 1; i < childern.size(); i++)
     {
-        RGB24Buffer * image = BufferFactory::getInstance()->loadRGB24Bitmap(pathToFolder + "/" + images[i].toStdString());
+        std::string name = childern[i];
+        RGB24Buffer * image = BufferFactory::getInstance()->loadRGB24Bitmap(name);
         if (image == nullptr || !imageStack->checkDimensions(*image)) {
             delete_safe(imageStack);
             if (image != nullptr)

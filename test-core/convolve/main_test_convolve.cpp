@@ -140,8 +140,8 @@ TEST(Convolve, LaplaceAndGauss)
         BufferFactory::getInstance()->saveRGB24Bitmap(g55OutputF, "conv_gauss55_float.bmp", RGB24Buffer::STYLE_GRAY255);
 
         FpImage *lOutputF = new FpImage(inputD->getSize());
-        Convolver().convolve(*inputF, laplace3x3f, *lOutputF);
-        BufferFactory::getInstance()->saveRGB24Bitmap(lOutputD, "conv_log_float.bmp", RGB24Buffer::STYLE_GRAY255);
+        Convolver().convolveIB(*inputF, laplace3x3f, *lOutputF);
+        BufferFactory::getInstance()->saveRGB24Bitmap(lOutputF, "conv_log_float.bmp", RGB24Buffer::STYLE_GRAY255);
 
     /** Variant three. Fastkernel 16 bit unsigned version **/
         BufferProcessor<G16Buffer, G16Buffer, Gaussian3x3Kernel, G12BufferAlgebra> procVectorGauss33;

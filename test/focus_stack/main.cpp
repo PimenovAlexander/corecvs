@@ -15,12 +15,16 @@
 using namespace std;
 using namespace corecvs;
 
-//Usage: ./focus_stack <path to stack> <path to output dir>
+
+void printUsage()
+{
+    SYNC_PRINT(("./bin/focus_stack <path to stack> <path to output dir>\n"));
+}
 
 int main(int argc, char *argv[])
 {
     if (argc != 3) {
-        SYNC_PRINT(("Wrong amount of arguments!\n"));
+        printUsage();
         return 1;
     }
 
