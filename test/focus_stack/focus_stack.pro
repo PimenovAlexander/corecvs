@@ -18,7 +18,6 @@ RCC_DIR  = $$OBJECTS_DIR
 TEMPLATE = app
 CONFIG  += console c++11
 CONFIG  -= app_bundle
-CONFIG  -= qt
 
 include($$PWD/../../core/core.pri)
 
@@ -34,6 +33,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+
+with_libjpeg {
+    LIBJPEG_WRAPPER_DIR = ../../wrappers/libjpeg
+    include($$LIBJPEG_WRAPPER_DIR/libjpeg.pri)
+}
+
+with_libpng {
+    LIBPNG_WRAPPER_DIR = ../../wrappers/libpng
+    include($$LIBPNG_WRAPPER_DIR/libpng.pri)
+}
 
 SOURCES += \
         imageStack.cpp \
