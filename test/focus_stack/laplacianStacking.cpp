@@ -22,10 +22,10 @@ void LaplacianStacking::doStacking(vector<RGB24Buffer*> & imageStack, RGB24Buffe
         DpImage * input = imageStack[i]->getChannelDp(ImageChannel::GRAY);
         Convolver().convolve(*input, gaussian5x5, *outputG);
         Convolver().convolve(*outputG, laplace5x5, *outputL);
-        for (int w = 0; w < imageSize.x() - 1; w++) {
-            for (int h = 0; h < imageSize.y() - 1; h++) {
-                if (maxValue.element(h, w) < outputG->element(h, w)) {
-                    maxValue.element(h, w) = outputG->element(h, w);
+        for (int w = 0; w < imageSize.x(); w++) {
+            for (int h = 0; h < imageSize.y(); h++) {
+                if (maxValue.element(h, w) < outputL->element(h, w)) {
+                    maxValue.element(h, w) = outputL->element(h, w);
                     depthMap.element(h, w) = i;
                 }
             }

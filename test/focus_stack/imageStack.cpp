@@ -18,7 +18,7 @@ ImageStack::ImageStack(ImageStack * imageStack) {
 }
 
 ImageStack::~ImageStack() {
-    for (int i = 0; i < imageStack.size(); i++) {
+    for (size_t i = 0; i < imageStack.size(); i++) {
         delete_safe(imageStack[i]);
     }
     delete_safe(mergedImage);
@@ -36,7 +36,7 @@ bool ImageStack::addImageToStack(RGB24Buffer & image)
 
 bool ImageStack::removeImageFromStack(int index)
 {
-    if (index < imageStack.size()) {
+    if (index < imageStack.size() && index >= 0) {
         delete_safe(imageStack[index]);
         imageStack.erase(imageStack.begin() + index);
         return true;
@@ -57,7 +57,7 @@ ImageStack * ImageStack::loadStack(vector<RGB24Buffer*> images)
 
     pair<int, int> dimensions = getDimensions(*images[0]);
 
-    for (int i = 0; i < images.size(); i++) {
+    for (size_t i = 0; i < images.size(); i++) {
         if (!checkDimensions(*images[i], dimensions)) {
             return nullptr;
         }
@@ -65,7 +65,7 @@ ImageStack * ImageStack::loadStack(vector<RGB24Buffer*> images)
 
     ImageStack * imageStack = new ImageStack(dimensions);
 
-    for (int i = 0; i < images.size(); i++) {
+    for (size_t i = 0; i < images.size(); i++) {
         imageStack->imageStack.push_back(new RGB24Buffer(images[i]));
     }
     return imageStack;
@@ -111,7 +111,7 @@ ImageStack * ImageStack::loadStack(string pathToFolder)
 
 void ImageStack::saveStack(string pathToDir)
 {
-    for (int i = 0; i < imageStack.size(); i++)
+    for (size_t i = 0; i < imageStack.size(); i++)
     {
         std::ostringstream imageNum;
         imageNum << i;
