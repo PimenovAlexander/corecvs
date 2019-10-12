@@ -24,8 +24,8 @@ void LaplacianStacking::doStacking(vector<RGB24Buffer*> & imageStack, RGB24Buffe
         Convolver().convolve(*outputG, laplace5x5, *outputL);
         for (int w = 0; w < imageSize.x(); w++) {
             for (int h = 0; h < imageSize.y(); h++) {
-                if (maxValue.element(h, w) < outputL->element(h, w)) {
-                    maxValue.element(h, w) = outputL->element(h, w);
+                if (maxValue.element(h, w) < abs(outputL->element(h, w))) {
+                    maxValue.element(h, w) = abs(outputL->element(h, w));
                     depthMap.element(h, w) = i;
                 }
             }
