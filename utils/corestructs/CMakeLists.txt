@@ -4,10 +4,16 @@ set(CMAKE_AUTOUIC "YES")
 
 file(GLOB SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
 file(GLOB HDR_FILES ${CMAKE_CURRENT_LIST_DIR}/*.h)
+file(GLOB SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/cameraModel/*.cpp)
+file(GLOB HDR_FILES ${CMAKE_CURRENT_LIST_DIR}/cameraModel/*.h)
+file(GLOB SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/coreWidgets/*.cpp)
+file(GLOB HDR_FILES ${CMAKE_CURRENT_LIST_DIR}/coreWidgets/*.h)
+file(GLOB SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/libWidgets/*.cpp)
+file(GLOB HDR_FILES ${CMAKE_CURRENT_LIST_DIR}/libWidgets/*.h)
 
-target_sources(corecvs
+target_sources(cvs_utils
     PUBLIC
-        ${SRC_FILES}
-
-    PRIVATE
         ${HDR_FILES}
+    PRIVATE
+        ${SRC_FILES}
+)

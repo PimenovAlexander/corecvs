@@ -38,6 +38,6 @@ endforeach(utils_module)
 
 target_sources(${MODULE_NAME}
     PUBLIC
-        ${SRC_FILES}
-    PRIVATE
         ${HDR_FILES}
+    PRIVATE
+        ${SRC_FILES}
