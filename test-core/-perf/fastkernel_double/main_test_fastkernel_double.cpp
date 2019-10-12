@@ -515,7 +515,7 @@ TEST(FastKernelDouble, testConvolver)
 
 TEST(FastKernelFloat, testConvolver)
 {
-    FpImage * input[POLLUTING_INPUTS];
+    FpImage * input[POLLUTING_INPUTS] = { NULL };
     PreciseTimer start;
 
     SYNC_PRINT(("We will profile buffers [%dx%d]. We will have %d polluting inputs\n\n", TEST_H_SIZE, TEST_W_SIZE, POLLUTING_INPUTS));
@@ -534,7 +534,7 @@ TEST(FastKernelFloat, testConvolver)
     const int kernelSize = 11;
 
     TestDescr tests[] = {
- //       {Convolver::ALGORITHM_SSE_DMITRY     , 150, 5, "Dmitry"  , true, NULL, 0},
+        {Convolver::ALGORITHM_SSE_DMITRY     , 150, 5, "Dmitry"  , true, NULL, 0},
 
         {Convolver::ALGORITHM_NAIVE          ,  20, 5, "Naive"   , true, NULL, NULL, 0},
 
@@ -573,12 +573,9 @@ TEST(FastKernelFloat, testConvolver)
 
     };
 
-
-
     /* Results are stored to compare */
     for (size_t i = 0; i < CORE_COUNT_OF(tests); i++) {
-     //   tests[i].result = new DpImage(TEST_H_SIZE, TEST_W_SIZE);
-        tests[i].runs *= 2;
+       // tests[i].runs = 1;
     }
 
     /* Cache polluting outputs */
@@ -600,7 +597,7 @@ TEST(FastKernelFloat, testConvolver)
         kernel->touchOperationElementwize(vis);
         for (unsigned i = 0; i < POLLUTING_INPUTS; i++)
         {
-            output[i]->fillWith(0.0);
+            output[i]->fillWith(0.0f);
         }
 
         SYNC_PRINT(("Profiling %15s Approach [%dx%d] (%3d runs)", test.name, kernel->w, kernel->h, test.runs));
@@ -629,8 +626,15 @@ TEST(FastKernelFloat, testConvolver)
 
     /*Check the results */
     SYNC_PRINT(("Checking equality... \n"));
+    if (TEST_H_SIZE < 60 && TEST_W_SIZE < 60)
+    {
+        for (size_t i = 0; i < CORE_COUNT_OF(tests); i++)
+        {
+            cout << *tests[i].result1 << endl;
+        }
+    }
 
-    int stepoff = 40;
+    int stepoff = 5;
     for (size_t t = 1; t < CORE_COUNT_OF(tests); t++)
     {
         FpImage *b1 = tests[0].result1;
@@ -658,8 +662,8 @@ TEST(FastKernelFloat, testConvolver)
 
 
     /*Cleanup*/
-    for (size_t i = 0; i < CORE_COUNT_OF(tests); i++) {
-        delete_safe(tests[i].result);
+    for (size_t i = 0; i < CORE_COUNT_OF(tests); i++) {       
+        delete_safe(tests[i].result1);
     }
 
     for (unsigned i = 0; i < POLLUTING_INPUTS; i++)

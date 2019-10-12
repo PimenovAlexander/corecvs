@@ -200,7 +200,7 @@ TEST(Convolve, LaplaceAndGauss)
 }
 
 
-TEST(Convolve, ConvolveEdges)
+TEST(Convolve, ConvolveEdgesDouble)
 {
     Gaussian5x5<DpKernel> gaussian5x5(true);
     DpImage *input = new DpImage(8, 16);
@@ -217,8 +217,41 @@ TEST(Convolve, ConvolveEdges)
         //Convolver::ConvolverImplementation c = Convolver::ALGORITHM_SSE_UNROLL_1;
         out[i] = new DpImage(input->h, input->w, -1.0);
         Convolver(true, false).convolve(*input, gaussian5x5, *out[i], c);
-        //cout << "Output: " << Convolver::getName(c) << endl;
-        //cout << *out[i] << endl;
+        cout << "Output: " << Convolver::getName(c) << endl;
+        cout << *out[i] << endl;
+    }
+
+    for (int i = 1; i < Convolver::ALGORITHM_LAST; i++ )
+    {
+
+
+    }
+
+    for (int i = 0; i < Convolver::ALGORITHM_LAST; i++ )
+    {
+        delete_safe(out[i]);
+    }
+}
+
+TEST(Convolve, ConvolveEdgesFloat)
+{
+    Gaussian5x5<FpKernel> gaussian5x5(true);
+    FpImage *input = new FpImage(50, 50);
+
+    input->touchOperationElementwize([](int i, int  j, float &target){ target  = (i + j) % 10;} );
+    cout << "Input" << endl;
+    cout << *input  << endl;
+
+    FpImage *out[Convolver::ALGORITHM_LAST] = {0};
+
+    for (int i = 0; i < /*Convolver::ALGORITHM_LAST*/ 2; i++ )
+    {
+        Convolver::ConvolverImplementation c = (Convolver::ConvolverImplementation)i;
+        //Convolver::ConvolverImplementation c = Convolver::ALGORITHM_SSE_UNROLL_1;
+        out[i] = new FpImage(input->h, input->w, -1.0f);
+        Convolver(true, false).convolve(*input, gaussian5x5, *out[i], c);
+        cout << "Output: " << Convolver::getName(c) << endl;
+        cout << *out[i] << endl;
     }
 
     for (int i = 1; i < Convolver::ALGORITHM_LAST; i++ )

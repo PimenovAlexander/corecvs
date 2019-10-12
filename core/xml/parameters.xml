@@ -152,5 +152,10 @@
      <field type="int" name="id"     defaultValue="0" comment="pattern id " />
   </class>
 
+  <class name="harris Detection Parameters">
+     <field type="double" name="scaler"     defaultValue="1000" />
+     <field type="int"    name="apperture"  defaultValue="5"    />
+  </class>
+
 </poco>
 

@@ -5,6 +5,7 @@
 #include "core/buffers/convolver/convolver.h"
 #include <float.h>
 #include <core/utils/preciseTimer.h>
+#include <core/stats/calculationStats.h>
 
 LaplacianStacking::LaplacianStacking(){}
 
@@ -12,26 +13,31 @@ LaplacianStacking::~LaplacianStacking(){}
 
 void LaplacianStacking::doStacking(vector<RGB24Buffer*> & imageStack, RGB24Buffer * result)
 {
-    Gaussian5x5<DpKernel> gaussian5x5(true);
-    Laplace5x5 <DpKernel> laplace5x5;
+    Gaussian5x5<FpKernel> gaussian5x5(true);
+    Laplace5x5 <FpKernel> laplace5x5;
     Vector2d<int> imageSize = imageStack[0]->getSize();
-    AbstractBuffer<double> maxValue(imageSize);
+    AbstractBuffer<float> maxValue(imageSize);
     AbstractBuffer<int> depthMap(imageSize);
 
-    DpImage outputG(imageSize);
-    DpImage outputL(imageSize);
+    FpImage outputG(imageSize);
+    FpImage outputL(imageSize);
 
-    PreciseTimer timer = PreciseTimer::currentTime();
+    //PreciseTimer timer = PreciseTimer::currentTime();
+    Statistics stats;
+    stats.startInterval();
 
     for (size_t i = 0; i < imageStack.size(); i++) {
-
-        DpImage * input = imageStack[i]->getChannelDp(ImageChannel::GRAY);
+        stats.enterContext(std::string("Level") + to_string(i) + " ->");
+        stats.startInterval();
+        FpImage * input = imageStack[i]->getChannelFp(ImageChannel::GRAY);
+        stats.resetInterval("Conversion");
         Convolver().convolve(*input, gaussian5x5, outputG);
         Convolver().convolve(outputG, laplace5x5, outputL);
+        stats.resetInterval("Convoluion");
 
         for (int h = 0; h < imageSize.y(); h++) {
             for (int w = 0; w < imageSize.x(); w++) {
-                double value = fabs(outputL.element(h, w));
+                float value = fabs(outputL.element(h, w));
 
                 if (maxValue.element(h, w) < value) {
                     maxValue.element(h, w) = value;
@@ -40,13 +46,18 @@ void LaplacianStacking::doStacking(vector<RGB24Buffer*> & imageStack, RGB24Buffe
             }
         }
         delete_safe(input);
+        stats.resetInterval("Comparing");
+        stats.leaveContext();
     }
 
+    stats.resetInterval("Computing choice");
     for (int h = 0; h < imageSize.y(); h++) {
         for (int w = 0; w < imageSize.x(); w++) {
             result->element(h, w) = imageStack[depthMap.element(h, w)]->element(h, w);
         }
     }
+    stats.endInterval("Merging");
 
-    cout << "Elapsed ms:" << (timer.usecsToNow() / 1000.0) << endl;
+    //cout << "Elapsed ms:" << (timer.usecsToNow() / 1000.0) << endl;
+    BaseTimeStatisticsCollector(stats).printAdvanced();
 }

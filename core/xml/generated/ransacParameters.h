@@ -103,7 +103,7 @@ public:
         return mInlierThreshold;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setIterationsNumber(int iterationsNumber)
     {
         mIterationsNumber = iterationsNumber;
@@ -124,7 +124,7 @@ public:
         mInlierThreshold = inlierThreshold;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -154,6 +154,7 @@ template<class VisitorType>
         mInlierThreshold = inlierThreshold;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const RansacParameters &other) const 
     {
         if ( !(this->mIterationsNumber == other.mIterationsNumber)) return false;

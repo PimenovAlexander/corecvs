@@ -129,7 +129,7 @@ public:
     typedef TraitGeneric<float> FallbackTraits;
 
     typedef TraitGeneric<float>::Type InternalType;
-    static const int step = FloatT8<5>::SIZE;
+    static const int step = FloatT8<3>::SIZE;
 
     typedef FloatT8<3> Type;
     typedef FloatT8<3> SignedType;

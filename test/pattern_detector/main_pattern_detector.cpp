@@ -6,6 +6,8 @@
 
 #include <wrappers/jsonmodern/jsonModernReader.h>
 
+#include <core/patterndetection/harrisPatternDetector.h>
+
 #include "core/patterndetection/dummyPatternDetector.h"
 #include "core/patterndetection/patternDetector.h"
 
@@ -187,6 +189,8 @@ int main(int argc, char *argv[])
     SYNC_PRINT(("Libpng support on\n"));
 #endif    
     PatternDetectorFabric::getInstance()->add(new PatternDetectorProducer<DummyPatternDetector>("Dummy"));
+    PatternDetectorFabric::getInstance()->add(new PatternDetectorProducer<HarrisPatternDetector>("Harris"));
+
 #ifdef WITH_OPENCV
     PatternDetectorFabric::getInstance()->add(new PatternDetectorProducer<OpenCVSquareDetector>("OpenCVSquare"));
 #endif

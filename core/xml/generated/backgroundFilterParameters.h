@@ -67,13 +67,13 @@ public:
         return mThreshold;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setThreshold(int threshold)
     {
         mThreshold = threshold;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -94,6 +94,7 @@ template<class VisitorType>
         mThreshold = threshold;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const BackgroundFilterParameters &other) const 
     {
         if ( !(this->mThreshold == other.mThreshold)) return false;

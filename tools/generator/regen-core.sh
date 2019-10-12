@@ -256,6 +256,7 @@ classes+=" focusEstimationParameters"
 classes+=" focusEstimationResult"
 classes+=" drawGCodeParameters"
 classes+=" patternDetectorResultBase"
+classes+=" harrisDetectionParameters"
 classes+=" stereoAlignParameters"
 
 classes+=" extrinsicsPlacerParameters"

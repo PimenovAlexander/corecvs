@@ -139,7 +139,7 @@ public:
         return mDistortedSizeY;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setPrincipalX(double principalX)
     {
         mPrincipalX = principalX;
@@ -175,7 +175,7 @@ public:
         mDistortedSizeY = distortedSizeY;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -214,6 +214,7 @@ template<class VisitorType>
         mDistortedSizeY = distortedSizeY;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const ProjectionBaseParameters &other) const 
     {
         if ( !(this->mPrincipalX == other.mPrincipalX)) return false;

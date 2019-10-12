@@ -460,6 +460,9 @@ void Convolver::wrapperConvolutor(DpImage &src, DpKernel &kernel, DpImage &dst)
 template<int UNROLL>
 void Convolver::unrolledWrapperConvolutor(DpImage &src, DpKernel &kernel, DpImage &dst)
 {
+    if (trace) SYNC_PRINT(("Convolver::unrolledWrapperConvolutor<%d>(DpImage): called %s parallel\n",
+                           UNROLL, parallel ? "with" : "without"));
+
     ConvolutorImplWrappersUnroll<UNROLL> impl(&src, &dst, &kernel);
     corecvs::parallelable_for(impl.t, impl.d, impl);
 }
@@ -514,6 +517,7 @@ void Convolver::fastkernelConvolutorExp3(DpImage &src, DpKernel &kernel, DpImage
 
 void Convolver::fastkernelConvolutorExp3(FpImage &src, FpKernel &kernel, FpImage &dst)
 {
+    if (trace) SYNC_PRINT(("Convolver::fastkernelConvolutorExp3(FpImage): called %s parallel\n", parallel ? "with" : "without"));
     FloatConvolveKernel<DummyAlgebra> convKernel(&kernel, kernel.y, kernel.x);
 
     FpImage *in  = &src;
@@ -620,6 +624,8 @@ void Convolver::convolve(DpImage &src, DpKernel &kernel, DpImage &dst, Convolver
 
 void Convolver::convolveIB(DpImage &src, DpKernel &kernel, DpImage &dst, Convolver::ConvolverImplementation impl)
 {
+    if (trace) SYNC_PRINT(("Convolver::convolveIB(DpImage)\n"));
+
     convolve(src, kernel, dst, impl);
 
     MulAddConstKernel<DummyAlgebra> mulAddKernel(kernel.bias, 1.0 / kernel.invFactor);
@@ -632,6 +638,8 @@ void Convolver::convolveIB(DpImage &src, DpKernel &kernel, DpImage &dst, Convolv
 
 void Convolver::convolveIB(FpImage &src, FpKernel &kernel, FpImage &dst, Convolver::ConvolverImplementation impl)
 {
+    if (trace) SYNC_PRINT(("Convolver::convolveIB(FpImage)\n"));
+
     convolve(src, kernel, dst, impl);
     MulAddConstKernel<DummyAlgebra> mulAddKernel(kernel.bias, 1.0 / kernel.invFactor);
     BufferProcessor<FpImage, FpImage, MulAddConstKernel, AlgebraFloat> proScalar;
@@ -650,17 +658,17 @@ struct ConvolutorImplWrappersUnrollFloat
 
     void operator() (const corecvs::BlockedRange<int> &rr) const
     {
-        for (int i = rr.begin(); i < rr.end(); ++i)
+        for (int i = rr.begin(); i < rr.end(); i++)
         {
             int j = l;
-            for (int j = l; j + SPRINT - 1 < r; j += SPRINT)
+            for (; j + SPRINT - 1 < r; j += SPRINT)
             {
                 Float32x8 sum[UNROLL];
                 for (int r = 0; r < UNROLL; r++) {
                     sum[r] = Float32x8::Zero();
                 }
 
-                for (int ii = 0; ii < kh; ++ii)
+                for (int ii = 0; ii < kh; ii++)
                 {
                     float *kp = &kernel->element(ii, 0);
                     float *ip[UNROLL];
@@ -668,7 +676,7 @@ struct ConvolutorImplWrappersUnrollFloat
                     for (int r = 0; r < UNROLL - 1; r++) {
                         ip[r + 1] = ip[r] +  Float32x8::SIZE;
                     }
-                    for (int jj = 0; jj < kw; ++jj)
+                    for (int jj = 0; jj < kw; jj++)
                     {
                         Float32x8 mul1 = Float32x8::Broadcast(kp++);
 
@@ -699,15 +707,21 @@ struct ConvolutorImplWrappersUnrollFloat
         }
     }
 
-    ConvolutorImplWrappersUnrollFloat(FpImage *src, FpImage *dst, FpKernel *kernel) : src(src), dst(dst), kernel(kernel)
-    {
-        h = src->h; w = src->w; kw = kernel->w; kh = kernel->h; kx = kernel->x; ky = kernel->y;
+    ConvolutorImplWrappersUnrollFloat(FpImage *src, FpImage *dst, FpKernel *kernel) :
+        src(src), dst(dst), kernel(kernel)
+    {        
+        h = src->h;
+        w = src->w;
+        kw = kernel->w;
+        kh = kernel->h;
+        kx = kernel->x;
+        ky = kernel->y;
         t = 0; l = 0; r = w; d = h;
 
         t = std::max(t, ky);
         l = std::max(l, kx);
-        d = std::min(d, h - kh + ky);
-        r = std::min(r, w - kw + kx);
+        d = std::min(d, h - kh + ky + 1);
+        r = std::min(r, w - kw + kx + 1);
     }
     FpImage *src, *dst;
     FpKernel *kernel;
@@ -722,6 +736,9 @@ struct ConvolutorImplWrappersUnrollFloat
 template<int UNROLL>
 void Convolver::unrolledWrapperConvolutor(FpImage &src, FpKernel &kernel, FpImage &dst)
 {
+    if (trace) SYNC_PRINT(("Convolver::unrolledWrapperConvolutor<%d>(FpImage): called %s parallel\n",
+                           UNROLL, parallel ? "with" : "without"));
+
     ConvolutorImplWrappersUnrollFloat<UNROLL> impl(&src, &dst, &kernel);
     corecvs::parallelable_for(impl.t, impl.d, impl);
 }

@@ -1274,7 +1274,9 @@ G8Buffer * RGB24Buffer::getChannelG8 (ImageChannel::ImageChannel channel) {
 }
 
 G12Buffer* RGB24Buffer::getChannelG12(ImageChannel::ImageChannel channel) {
-    return getChannel<G12Buffer>(channel);
+    G12Buffer* toReturn = getChannel<G12Buffer>(channel);
+    toReturn->touchOperationElementwize([](int, int, uint16_t &a){ a = a << 4;});
+    return toReturn;
 }
 
 G16Buffer* RGB24Buffer::getChannelG16(ImageChannel::ImageChannel channel){

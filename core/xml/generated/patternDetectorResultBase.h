@@ -116,7 +116,7 @@ public:
         return mId;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setPosition(Vector2dParameters const &position)
     {
         mPosition = position;
@@ -142,7 +142,7 @@ public:
         mId = id;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -175,6 +175,7 @@ template<class VisitorType>
         mId = id;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const PatternDetectorResultBase &other) const 
     {
         if ( !(this->mPosition == other.mPosition)) return false;
