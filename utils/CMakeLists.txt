@@ -30,6 +30,8 @@ file(GLOB HDR_FILES ${CMAKE_CURRENT_LIST_DIR}/*.h)
 
 add_library(${MODULE_NAME} STATIC)
 
+target_link_libraries(${MODULE_NAME} corecvs)
+
 
 foreach(utils_module ${UTILS_SUBMODULES})
     message(STATUS "including ${utils_module}")
@@ -41,3 +43,4 @@ target_sources(${MODULE_NAME}
         ${HDR_FILES}
     PRIVATE
         ${SRC_FILES}
+)

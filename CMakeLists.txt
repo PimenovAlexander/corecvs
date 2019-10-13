@@ -28,6 +28,7 @@ fetch_googletest(
     )
 
 add_subdirectory(core)
+add_subdirectory(utils)
 
 enable_testing()
 add_subdirectory(test-core)
