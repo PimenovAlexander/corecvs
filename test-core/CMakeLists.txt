@@ -5,7 +5,6 @@ set(MODULE_NAME_TEST corecvs_core_tests)
 
 
 MESSAGE( STATUS "Including GTest on Tests build" )
-# find_package( GTest REQUIRED)
 include_directories (${GTest_INCLUDE_DIR}/..)
 
 set (CORE_TEST_SOURCES
@@ -129,7 +128,7 @@ set_property(TARGET ${MODULE_NAME_TEST} PROPERTY CXX_STANDARD_REQUIRED ON)
 target_link_libraries(${MODULE_NAME_TEST} gtest gtest_main stdc++fs corecvs)
 target_include_directories(${MODULE_NAME_TEST} PUBLIC ${corecvs_SOURCE_DIR} .)
 
-# For ctest support. Not necessary to use but nice move for automates testing.
+# For ctest support. Not necessary to use but nice move for automated testing.
 add_test(
         NAME
             core-test
