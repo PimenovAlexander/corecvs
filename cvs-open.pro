@@ -17,7 +17,7 @@ SUBDIRS +=                   \
     generator                \
 
 
-#SUBDIRS += drone
+SUBDIRS += drone
 
 nester {
     SUBDIRS += nester

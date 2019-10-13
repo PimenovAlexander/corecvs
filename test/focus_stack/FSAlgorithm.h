@@ -5,8 +5,17 @@
 
 using namespace corecvs;
 
+/**
+*    This class is a base for Focus Stacking algorithms.
+**/
+
 class FSAlgorithm {
 public:
+    /**
+     *   Method which implements focus stacking.
+     *   @param imageStack Stack with input images.
+     *   @param result Pointer to image where the result of stacking should be saved.
+     **/
     virtual void doStacking(std::vector<RGB24Buffer*> & imageStack, RGB24Buffer * result) = 0;
     virtual ~FSAlgorithm(){}
 };

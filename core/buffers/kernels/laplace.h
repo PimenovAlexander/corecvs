@@ -5,7 +5,17 @@
 
 namespace corecvs {
 
-
+/**
+ *  Class that holds 3x3 laplace kernel approximation
+ *
+ *  \f$
+ *      \pmatrix{
+ *         0 & -1 &  0\cr
+ *        -1 &  4 & -1\cr
+ *         0 & -1 &  0\cr
+ *      }
+ * \f$
+ **/
 template<class BaseType>
 class Laplace3x3 : public BaseType
 {
@@ -37,6 +47,20 @@ double Laplace3x3<BaseType>::data[9] = {
     0, -1,  0
 };
 
+
+/**
+ *  Class that holds 5x5 laplace kernel approximation
+ *
+ *  \f$
+ *      \pmatrix{
+ *        1 & 1 &   1 & 1 & 1\cr
+ *        1 & 1 &   1 & 1 & 1\cr
+ *        1 & 1 & -24 & 1 & 1\cr
+ *        1 & 1 &   1 & 1 & 1\cr
+ *        1 & 1 &   1 & 1 & 1
+ *      }
+ * \f$
+ **/
 template<class BaseType>
 class Laplace5x5 : public BaseType
 {
@@ -63,11 +87,11 @@ public:
 
 template<class BaseType>
 double Laplace5x5<BaseType>::data[25] = {
-    1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1,
+    1, 1,   1, 1, 1,
+    1, 1,   1, 1, 1,
     1, 1, -24, 1, 1,
-    1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1
+    1, 1,   1, 1, 1,
+    1, 1,   1, 1, 1
 };
 
 

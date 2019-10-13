@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
     }
     LaplacianStacking lapl;
     imageStack->focus_stack(lapl);
-    imageStack->saveMegredImage(argv[2]);
+    imageStack->saveMergedImage(argv[2]);
 
     delete_safe(imageStack);
 

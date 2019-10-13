@@ -4,7 +4,7 @@ exists(../../../config.pri) {
     include(../../../config.pri)
 } else { 
     message(Using local config)
-    include(../config.pri)
+    include(../cvs-config.pri)
 }
  
 TEMPLATE = subdirs
@@ -37,16 +37,16 @@ with_qscript {
    SUBDIRS += qtScriptConsole
 }
 
-
 with_opencv {
-    SUBDIRS +=       \
-#        distortion_corrector \
-#        matcher_basic \
-#        matcher_full \
-        chessboard_detector \
-        vodometry \
-        stabilization \
 
+    SUBDIRS +=       \
+#   distortion_corrector \
+#   matcher_basic \
+#   matcher_full \
+#   chessboard_detector \
+    vodometry \
+    stabilization \
+    opencv_profile
 }
 
 grab24                              = grab/grab24.pro
@@ -54,6 +54,7 @@ grab24_qt                           = grab_qt/grab24_qt.pro
 
 stabilization                       = stabilization/stabilization.pro
 vodometry                           = vodometry/vodometry.pro
+opencv_profile                      = opencv_profile/opencv_profile.pro
 
 grab_N_captures                     = grab_N_captures/grab_N_captures.pro
 serialize1                          = serialize1/serialize1.pro

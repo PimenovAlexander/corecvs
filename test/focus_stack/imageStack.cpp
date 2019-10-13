@@ -130,7 +130,7 @@ void ImageStack::saveStack(string pathToDir)
     }
 }
 
-void ImageStack::saveMegredImage(string pathToDir) {
+void ImageStack::saveMergedImage(string pathToDir) {
     BufferFactory::getInstance()->saveRGB24Bitmap(mergedImage, pathToDir + "/" + "merged.bmp");
 }
 
