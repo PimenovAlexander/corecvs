@@ -5,10 +5,6 @@
 #include "core/buffers/convolver/convolver.h"
 #include <float.h>
 
-LaplacianStacking::LaplacianStacking(){}
-
-LaplacianStacking::~LaplacianStacking(){}
-
 void LaplacianStacking::doStacking(vector<RGB24Buffer*> & imageStack, RGB24Buffer * result)
 {
     Gaussian5x5<DpKernel> gaussian5x5(true);
@@ -22,8 +18,8 @@ void LaplacianStacking::doStacking(vector<RGB24Buffer*> & imageStack, RGB24Buffe
         DpImage * input = imageStack[i]->getChannelDp(ImageChannel::GRAY);
         Convolver().convolve(*input, gaussian5x5, *outputG);
         Convolver().convolve(*outputG, laplace5x5, *outputL);
-        for (int w = 0; w < imageSize.x(); w++) {
-            for (int h = 0; h < imageSize.y(); h++) {
+        for (int h = 0; h < imageSize.y(); h++) {
+            for (int w = 0; w < imageSize.x(); w++) {
                 if (maxValue.element(h, w) < abs(outputL->element(h, w))) {
                     maxValue.element(h, w) = abs(outputL->element(h, w));
                     depthMap.element(h, w) = i;
@@ -35,8 +31,8 @@ void LaplacianStacking::doStacking(vector<RGB24Buffer*> & imageStack, RGB24Buffe
         delete_safe(input);
     }
 
-    for (int w = 0; w < imageSize.x(); w++) {
-        for (int h = 0; h < imageSize.y(); h++) {
+    for (int h = 0; h < imageSize.y(); h++) {
+        for (int w = 0; w < imageSize.x(); w++) {
             result->element(h, w) = imageStack[depthMap.element(h, w)]->element(h, w);
         }
     }
