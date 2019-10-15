@@ -94,7 +94,7 @@ set (CORE_TEST_SOURCES
     vptree/main_test_vptree.cpp
     meshfilter/main_test_meshfilter.cpp
 
-    convexhull/convexDebug.cpp
+    convexpolygon/convexDebug.cpp
     convexhull/main_test_convexhull.cpp
 
     wuRasterizer/main_test_wu_rasterizer.cpp
@@ -113,7 +113,7 @@ set (CORE_TEST_SOURCES
     snooker/errors.h
     snooker/reflectionSegmentator.h
     snooker/snookerSegmentator.h
-    convexhull/convexDebug.h
+    convexpolygon/convexDebug.h
     stateMachineTest/test.h
     stateMachineTest/test.h
 )
