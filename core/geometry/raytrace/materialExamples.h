@@ -111,24 +111,19 @@ public:
 
 };
 
-#if 0
+
 class RaytraceableCubemap6Images : public RaytraceableMaterial {
 public:
-    RGB24Buffer *cubeFront  = NULL;
-    RGB24Buffer *cubeTop    = NULL;
-    RGB24Buffer *cubeBottom = NULL;
-    RGB24Buffer *cubeLeft   = NULL;
-    RGB24Buffer *cubeRight  = NULL;
-    RGB24Buffer *cubeBack   = NULL;
+    RGB24Buffer *cube[RaytraceableCubemap::NUMBER_OF_PARTS]  = {NULL};
 
-    RaytraceableCubemap6Images(RGB24Buffer *cubemap = NULL) :
-        cubemap(cubemap)
-    {}
+    RaytraceableCubemap6Images(){}
+
+    RaytraceableCubemap6Images(RGB24Buffer* cubemap[]);
 
     virtual void getColor(RayIntersection &ray, RaytraceRenderer &renderer) override;
 
 };
-#endif
+
 
 class MaterialExamples
 {

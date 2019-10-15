@@ -8,7 +8,14 @@ exists(../../../../../config.pri) {
     ROOT_DIR=../../..
     include($$ROOT_DIR/cvs-config.pri)
 }
+
 ROOT_DIR=$$PWD/$$ROOT_DIR
+
+DESTDIR = $$ROOT_DIR/bin
+OBJECTS_DIR = $$ROOT_DIR/.obj/$$TARGET$$BUILD_CFG_NAME
+MOC_DIR  = $$OBJECTS_DIR
+UI_DIR   = $$OBJECTS_DIR
+RCC_DIR  = $$OBJECTS_DIR
 
 TEMPLATE = app
 TARGET   = physics

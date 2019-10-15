@@ -27,6 +27,7 @@ SUBDIRS +=     \
     focus_stack \
     pattern_detector \
     flow_detector \
+    reprojector \
 
 !win32 {
     SUBDIRS += jitplayground
@@ -101,3 +102,4 @@ flowtest.file                       = flowtest/flowtest.pro
 
 focusstacking.file                   = focusstacking/focusstacking.pro
 pattern_detector.file                = pattern_detector/pattern_detector.pro
+reprojector                          = reprojector/reprojector.pro

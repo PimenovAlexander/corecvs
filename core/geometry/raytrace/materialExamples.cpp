@@ -216,8 +216,8 @@ void RaytraceableCubemap::getColor(RayIntersection &ray, RaytraceRenderer &/*ren
     cubeMap(ray.ray.a, p, uv);
     ray.ownColor = RGBColor::Magenta().toDouble();
 
-    if (cubemap == NULL || p < 0 || p >= 6) {
-        ray.ownColor = RGBColor::rainbow1( p / 6.0).toDouble();
+    if (cubemap == NULL || p < 0 || p >= RaytraceableCubemap::NUMBER_OF_PARTS) {
+        ray.ownColor = RGBColor::rainbow1( (double)p / RaytraceableCubemap::NUMBER_OF_PARTS).toDouble();
     } else {
         Vector2dd map[6] = {
             Vector2dd( 1 / 4.0, 0 / 3.0),
@@ -236,9 +236,29 @@ void RaytraceableCubemap::getColor(RayIntersection &ray, RaytraceRenderer &/*ren
 
 }
 
-#if 0
-void RaytraceableCubemap6Images::getColor(RayIntersection &ray, RaytraceRenderer &renderer)
+RaytraceableCubemap6Images::RaytraceableCubemap6Images(RGB24Buffer *cubemap[])
 {
-
+    for (int i = 0; i < RaytraceableCubemap::NUMBER_OF_PARTS; i++)
+    {
+        this->cube[i] = cubemap[i];
+    }
 }
-#endif
+
+void RaytraceableCubemap6Images::getColor(RayIntersection &ray, RaytraceRenderer &/*renderer*/)
+{
+    RaytraceableCubemap::CubemapPart p = RaytraceableCubemap::FRONT;
+    Vector2dd uv = Vector2dd::Zero();
+    RaytraceableCubemap::cubeMap(ray.ray.a, p, uv);
+
+    ray.ownColor = RGBColor::Magenta().toDouble();
+
+    if (p < 0 || p >= RaytraceableCubemap::NUMBER_OF_PARTS || cube[p] == NULL) {
+        ray.ownColor = RGBColor::rainbow1( (double)p / RaytraceableCubemap::NUMBER_OF_PARTS).toDouble();
+        return;
+    }
+
+    Vector2dd coor = uv * Vector2dd(cube[p]->w - 1, cube[p]->h - 1);
+    if (cube[p]->isValidCoordBl(coor)) {
+        ray.ownColor = cube[p]->elementBl(coor).toDouble();
+    }
+}
