@@ -1,35 +1,35 @@
 target_sources(corecvs
     PUBLIC
-        framesources/frames.h
-	framesources/cameraControlParameters.h 
-	framesources/dummyVideoEncoderInterface.h 
-	framesources/imageCaptureInterface.h 
+        ${CMAKE_CURRENT_LIST_DIR}/frames.h
+	${CMAKE_CURRENT_LIST_DIR}/cameraControlParameters.h 
+	${CMAKE_CURRENT_LIST_DIR}/dummyVideoEncoderInterface.h 
+	${CMAKE_CURRENT_LIST_DIR}/imageCaptureInterface.h 
 	
-	framesources/file/abstractFileCapture.h 
-	framesources/file/abstractFileCaptureSpinThread.h 
-	framesources/file/fileCapture.h 
-	framesources/file/imageFileCaptureInterface.h 
-	framesources/file/precCapture.h 
+	${CMAKE_CURRENT_LIST_DIR}/file/abstractFileCapture.h 
+	${CMAKE_CURRENT_LIST_DIR}/file/abstractFileCaptureSpinThread.h 
+	${CMAKE_CURRENT_LIST_DIR}/file/fileCapture.h 
+	${CMAKE_CURRENT_LIST_DIR}/file/imageFileCaptureInterface.h 
+	${CMAKE_CURRENT_LIST_DIR}/file/precCapture.h 
 	
-	framesources/decoders/aLowCodec.h 
-	framesources/decoders/decoupleYUYV.h 
-	framesources/decoders/mjpegDecoder.h 
-	framesources/decoders/mjpegDecoderLazy.h 
+	${CMAKE_CURRENT_LIST_DIR}/decoders/aLowCodec.h 
+	${CMAKE_CURRENT_LIST_DIR}/decoders/decoupleYUYV.h 
+	${CMAKE_CURRENT_LIST_DIR}/decoders/mjpegDecoder.h 
+	${CMAKE_CURRENT_LIST_DIR}/decoders/mjpegDecoderLazy.h 
 
     PRIVATE
-        framesources/frames.cpp
-	framesources/cameraControlParameters.cpp 
-	framesources/dummyVideoEncoderInterface.cpp 
-	framesources/imageCaptureInterface.cpp 
+        ${CMAKE_CURRENT_LIST_DIR}/frames.cpp
+	${CMAKE_CURRENT_LIST_DIR}/cameraControlParameters.cpp 
+	${CMAKE_CURRENT_LIST_DIR}/dummyVideoEncoderInterface.cpp 
+	${CMAKE_CURRENT_LIST_DIR}/imageCaptureInterface.cpp 
 	
-	framesources/file/abstractFileCapture.cpp 
-	framesources/file/abstractFileCaptureSpinThread.cpp 
-	framesources/file/fileCapture.cpp 
-	framesources/file/imageFileCaptureInterface.cpp 
-	framesources/file/precCapture.cpp 
+	${CMAKE_CURRENT_LIST_DIR}/file/abstractFileCapture.cpp 
+	${CMAKE_CURRENT_LIST_DIR}/file/abstractFileCaptureSpinThread.cpp 
+	${CMAKE_CURRENT_LIST_DIR}/file/fileCapture.cpp 
+	${CMAKE_CURRENT_LIST_DIR}/file/imageFileCaptureInterface.cpp 
+	${CMAKE_CURRENT_LIST_DIR}/file/precCapture.cpp 
 	
-	framesources/decoders/aLowCodec.cpp 
-	framesources/decoders/decoupleYUYV.cpp 
-	framesources/decoders/mjpegDecoder.cpp 
-	framesources/decoders/mjpegDecoderLazy.cpp 
+	${CMAKE_CURRENT_LIST_DIR}/decoders/aLowCodec.cpp 
+	${CMAKE_CURRENT_LIST_DIR}/decoders/decoupleYUYV.cpp 
+	${CMAKE_CURRENT_LIST_DIR}/decoders/mjpegDecoder.cpp 
+	${CMAKE_CURRENT_LIST_DIR}/decoders/mjpegDecoderLazy.cpp 
 )

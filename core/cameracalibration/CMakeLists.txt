@@ -1,33 +1,33 @@
 target_sources(corecvs
     PUBLIC
-        cameracalibration/flatPatternCalibrator.h    
-        cameracalibration/calibrationLocation.h             
-        cameracalibration/cameraConstraints.h        
-        cameracalibration/calibrationDrawHelpers.h          
-        cameracalibration/cameraModel.h              
-        cameracalibration/projection/projectionModels.h         
-        cameracalibration/projection/pinholeCameraIntrinsics.h  
-        cameracalibration/projection/equidistantProjection.h    
-        cameracalibration/projection/equisolidAngleProjection.h 
-        cameracalibration/projection/stereographicProjection.h
-        cameracalibration/projection/projectionFactory.h
-        cameracalibration/ilFormat.h
-        cameracalibration/projection/omnidirectionalProjection.h
+        ${CMAKE_CURRENT_LIST_DIR}/flatPatternCalibrator.h    
+        ${CMAKE_CURRENT_LIST_DIR}/calibrationLocation.h             
+        ${CMAKE_CURRENT_LIST_DIR}/cameraConstraints.h        
+        ${CMAKE_CURRENT_LIST_DIR}/calibrationDrawHelpers.h          
+        ${CMAKE_CURRENT_LIST_DIR}/cameraModel.h              
+        ${CMAKE_CURRENT_LIST_DIR}/projection/projectionModels.h         
+        ${CMAKE_CURRENT_LIST_DIR}/projection/pinholeCameraIntrinsics.h  
+        ${CMAKE_CURRENT_LIST_DIR}/projection/equidistantProjection.h    
+        ${CMAKE_CURRENT_LIST_DIR}/projection/equisolidAngleProjection.h 
+        ${CMAKE_CURRENT_LIST_DIR}/projection/stereographicProjection.h
+        ${CMAKE_CURRENT_LIST_DIR}/projection/projectionFactory.h
+        ${CMAKE_CURRENT_LIST_DIR}/ilFormat.h
+        ${CMAKE_CURRENT_LIST_DIR}/projection/omnidirectionalProjection.h
 
 
     PRIVATE
-        cameracalibration/calibrationLocation.cpp      
-        cameracalibration/flatPatternCalibrator.cpp    
-        cameracalibration/cameraConstraints.cpp        
-        cameracalibration/calibrationDrawHelpers.cpp   
-        cameracalibration/cameraModel.cpp              
-        cameracalibration/projection/projectionModels.cpp         
-        cameracalibration/projection/pinholeCameraIntrinsics.cpp  
-        cameracalibration/projection/equidistantProjection.cpp    
-        cameracalibration/projection/equisolidAngleProjection.cpp 
-        cameracalibration/projection/stereographicProjection.cpp
-        cameracalibration/projection/projectionFactory.cpp
-        cameracalibration/ilFormat.cpp
-        cameracalibration/projection/omnidirectionalProjection.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/calibrationLocation.cpp      
+        ${CMAKE_CURRENT_LIST_DIR}/flatPatternCalibrator.cpp    
+        ${CMAKE_CURRENT_LIST_DIR}/cameraConstraints.cpp        
+        ${CMAKE_CURRENT_LIST_DIR}/calibrationDrawHelpers.cpp   
+        ${CMAKE_CURRENT_LIST_DIR}/cameraModel.cpp              
+        ${CMAKE_CURRENT_LIST_DIR}/projection/projectionModels.cpp         
+        ${CMAKE_CURRENT_LIST_DIR}/projection/pinholeCameraIntrinsics.cpp  
+        ${CMAKE_CURRENT_LIST_DIR}/projection/equidistantProjection.cpp    
+        ${CMAKE_CURRENT_LIST_DIR}/projection/equisolidAngleProjection.cpp 
+        ${CMAKE_CURRENT_LIST_DIR}/projection/stereographicProjection.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/projection/projectionFactory.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ilFormat.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/projection/omnidirectionalProjection.cpp
 
     )

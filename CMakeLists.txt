@@ -8,6 +8,7 @@ set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/Modules
 
 # Overall dependances
 set (USE_TBB 1)
+
 IF ( USE_TBB )
     MESSAGE( STATUS "Including TBB on CORECVS build" )
     find_package( TBB )
@@ -20,10 +21,20 @@ IF ( USE_OPENBLAS )
     find_package( OpenBlas )
 ENDIF ()
 
+include(cmake/googletest.cmake)
+fetch_googletest(
+    ${PROJECT_SOURCE_DIR}/cmake
+    ${PROJECT_BINARY_DIR}/googletest
+    )
 
 add_subdirectory(core)
-#add_subdirectory(test-core)
+add_subdirectory(utils)
+#add_subdirectory(applications)
+add_subdirectory(test/focus_stack)
+add_subdirectory(test/fileloader)
+#add_subdirectory(test)
 
-#add_dependencies(test-core corecvs)
+enable_testing()
+add_subdirectory(test-core)
+add_subdirectory(test-core/-perf)
 
-#add_executable(Tutorial tutorial.cxx)

@@ -267,6 +267,15 @@ public:
     typedef ScalarAlgebraMulti<TraitDouble, TraitDouble, inputNumber, outputNumber> Type;
 
 };
+
+template<int inputNumber = 1, int outputNumber = 1>
+class AlgebraFloat
+{
+public:
+    typedef TraitGeneric<float> TraitFloat;
+    typedef ScalarAlgebraMulti<TraitFloat, TraitFloat, inputNumber, outputNumber> Type;
+
+};
 #endif
 
 template<int inputNumber, int outputNumber>

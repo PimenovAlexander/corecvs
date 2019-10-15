@@ -1,8 +1,8 @@
 target_sources(corecvs
     PUBLIC
-        polynomial/polynomialSolver.h
-        polynomial/polynomial.h
+        ${CMAKE_CURRENT_LIST_DIR}/polynomialSolver.h
+        ${CMAKE_CURRENT_LIST_DIR}/polynomial.h
     PRIVATE
-        polynomial/polynomialSolver.cpp
-        polynomial/polynomial.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/polynomialSolver.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/polynomial.cpp
 )

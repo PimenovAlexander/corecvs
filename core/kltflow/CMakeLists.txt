@@ -1,6 +1,6 @@
 target_sources(corecvs
     PUBLIC
-        kltflow/kltGenerator.h 
+        ${CMAKE_CURRENT_LIST_DIR}/kltGenerator.h 
     PRIVATE
-        kltflow/kltGenerator.cpp 
+        ${CMAKE_CURRENT_LIST_DIR}/kltGenerator.cpp 
 )
