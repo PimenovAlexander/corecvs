@@ -20,6 +20,7 @@ target_sources(corecvs
         ${CMAKE_CURRENT_LIST_DIR}/plane3dFit.h
         ${CMAKE_CURRENT_LIST_DIR}/meshClicker.h
         ${CMAKE_CURRENT_LIST_DIR}/convexHull.h
+        ${CMAKE_CURRENT_LIST_DIR}/convexHull3d.h
         ${CMAKE_CURRENT_LIST_DIR}/convexQuickHull.h
         ${CMAKE_CURRENT_LIST_DIR}/projectiveConvexQuickHull.h
         ${CMAKE_CURRENT_LIST_DIR}/pointCloud.h
@@ -49,6 +50,7 @@ target_sources(corecvs
         ${CMAKE_CURRENT_LIST_DIR}/plane3dFit.cpp
         ${CMAKE_CURRENT_LIST_DIR}/meshClicker.cpp
         ${CMAKE_CURRENT_LIST_DIR}/convexHull.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/convexHull3d.cpp
         ${CMAKE_CURRENT_LIST_DIR}/convexQuickHull.cpp
         ${CMAKE_CURRENT_LIST_DIR}/projectiveConvexQuickHull.cpp
         ${CMAKE_CURRENT_LIST_DIR}/pointCloud.cpp
