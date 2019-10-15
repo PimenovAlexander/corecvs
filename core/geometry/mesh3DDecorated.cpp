@@ -260,7 +260,7 @@ bool Mesh3DDecorated::verify( void )
             }
 
             if (faces[i][j] >= (int)vertexes.size() ) {
-                SYNC_PRINT(("Wrong face index for face %d point %d vertex %d (of %d)\n", (int)i, j, faces[i][j], vertexes.size()));
+                SYNC_PRINT(("Wrong face index for face %d point %d vertex %d (of %d)\n", (int)i, j, faces[i][j], (int)vertexes.size()));
                 return false;
             }
         }
