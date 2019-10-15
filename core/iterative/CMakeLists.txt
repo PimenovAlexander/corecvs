@@ -1,8 +1,8 @@
 target_sources(corecvs
     PUBLIC
-	iterative/minresQLP.h 
-	iterative/pcg.h
+		${CMAKE_CURRENT_LIST_DIR}/minresQLP.h 
+		${CMAKE_CURRENT_LIST_DIR}/pcg.h
     PRIVATE
-	iterative/minresQLP.cpp 
-	iterative/pcg.cpp
+		${CMAKE_CURRENT_LIST_DIR}/minresQLP.cpp 
+		${CMAKE_CURRENT_LIST_DIR}/pcg.cpp
 )

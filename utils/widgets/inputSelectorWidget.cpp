@@ -2,12 +2,13 @@
 
 #include <QFileDialog>
 
-
-#include <core/buffers/bufferFactory.h>
+#include "core/buffers/bufferFactory.h"
 
 #ifdef WITH_V4L2
-#include <V4L2Capture.h>
+#include "V4L2Capture.h"
 #endif
+
+using namespace corecvs;
 
 InputSelectorWidget::InputSelectorWidget(QWidget *parent)
     : QWidget(parent)

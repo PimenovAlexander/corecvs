@@ -1,7 +1,7 @@
 target_sources(corecvs
     PUBLIC
-        assignment/assignmentOptimal.h
+        ${CMAKE_CURRENT_LIST_DIR}/assignmentOptimal.h
     PRIVATE
-        assignment/assignmentOptimal.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/assignmentOptimal.cpp
 )
 

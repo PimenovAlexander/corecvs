@@ -112,7 +112,6 @@ public:
         r.myEnd = middle;
         return middle;
     }
-#endif
 
     static IndexType do_split( BlockedRange& r, tbb::split ) {
         CORE_ASSERT_TRUE(r.is_divisible(), "TBB Wrapper internal error\n");
@@ -120,6 +119,7 @@ public:
         r.myEnd = middle;
         return middle;
     }
+#endif
 
     template<typename R, typename C>
     friend class BlockedRange2d;
@@ -151,11 +151,13 @@ public:
         , cols(_cols)
     { }
 
+#ifdef WITH_TBB
     BlockedRange2d(BlockedRange2d& r, tbb::split s)
         : BlockedRange2d(r.rows, r.cols)
     {
         do_split(r, s);
     }
+#endif
 
     row_range_type &getRows() { return rows; }
     const row_range_type &getRows() const { return rows; }

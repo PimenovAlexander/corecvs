@@ -31,7 +31,9 @@ set (CORE_SUBMODULES
     camerafixture
     iterative
     stereointerface
-    tinyxml2 )
+    tinyxml2
+    xml/generated 
+)
 
 set ( ADDITIONAL_MODULES
     assignment
@@ -47,7 +49,6 @@ set ( ADDITIONAL_MODULES
 
 message(STATUS "Core will use ${CORE_SUBMODULES} and ${ADDITIONAL_MODULES}")
 
-add_library(corecvs STATIC)
 
 if (OpenBLAS_LIB)
     include_directories (${OpenBLAS_INCLUDE_DIR})
@@ -59,8 +60,20 @@ if (TBB_LIB)
     add_definitions(-DWITH_TBB)
 endif()
 
+# include_directories(corecvs PUBLIC ..)
+
+add_library(corecvs STATIC )
+
+
+
+
+set_property(TARGET corecvs PROPERTY CXX_STANDARD 17)
+set_property(TARGET corecvs PROPERTY CXX_STANDARD_REQUIRED ON)
 
 target_include_directories(corecvs PUBLIC ..)
+
+target_link_libraries(corecvs stdc++fs)
+
 
 foreach(core_module ${CORE_SUBMODULES})
     message(STATUS "including ${core_module}")

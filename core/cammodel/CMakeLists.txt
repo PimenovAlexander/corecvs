@@ -1,16 +1,16 @@
 target_sources(corecvs
     PUBLIC
-        cammodel/energyBuffer.h
-        cammodel/imagerControl.h
-        cammodel/cameraParameters.h
-        cammodel/sphericalCorrectionLUT.h
-    #    cammodel/cameraModel.h
+        ${CMAKE_CURRENT_LIST_DIR}/energyBuffer.h
+        ${CMAKE_CURRENT_LIST_DIR}/imagerControl.h
+        ${CMAKE_CURRENT_LIST_DIR}/cameraParameters.h
+        ${CMAKE_CURRENT_LIST_DIR}/sphericalCorrectionLUT.h
+    #    ${CMAKE_CURRENT_LIST_DIR}/cameraModel.h
 
 
     PRIVATE
-        cammodel/energyBuffer.cpp
-        cammodel/imagerControl.cpp
-        cammodel/cameraParameters.cpp
-        cammodel/sphericalCorrectionLUT.cpp
-    #    cammodel/cameraModel.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/energyBuffer.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/imagerControl.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/cameraParameters.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/sphericalCorrectionLUT.cpp
+    #    ${CMAKE_CURRENT_LIST_DIR}/cameraModel.cpp
 )

@@ -1,6 +1,6 @@
 target_sources(corecvs
     PUBLIC
-        tbbwrapper/tbbWrapper.h
+        ${CMAKE_CURRENT_LIST_DIR}/tbbWrapper.h
 )
 
  
