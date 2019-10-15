@@ -729,6 +729,34 @@ TEST(Raytrace, testTransform)
     mesh.dumpPLY("transform-int.ply");
 }
 
+TEST(Raytrace, Cubemap)
+{
+    Mesh3D ico;
+    ico.addIcoSphere(Vector3dd(0, 0, 0), 10, 1);
+
+    for (size_t i = 0; i < ico.vertexes.size(); i++)
+    {
+        Vector3dd v = ico.vertexes[i];
+        //cout << "V:" << v << endl;
+        Vector3dd d = v.normalised();
+        cout << "D0:" << d << endl;
+
+        RaytraceableCubemap::CubemapPart id;
+        Vector2dd uv = Vector2dd::Zero();
+        RaytraceableCubemap::cubeMap(d, id, uv);
+
+        //cout << "Id:" << id << " " << RaytraceableCubemap::getName(id) << endl;
+        //cout << "uv:" << uv << endl;
+
+        Vector3dd d1 = Vector3dd::Zero();
+        RaytraceableCubemap::cubeUnmap(id, uv, d1);
+        d1.normalise();
+        cout << "D1:" << d1 << endl;
+
+        ASSERT_TRUE(d.notTooFar(d1, 1e-7));
+    }
+}
+
 
 class SDFCube : public SDFRenderable
 {

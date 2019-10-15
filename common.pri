@@ -571,7 +571,7 @@ with_openblas {
                 !build_pass: message(requested openBLAS via BLAS_PATH is not found and is deactivated)
             }
         } else {
-            exists(/usr/include/cblas.h) {
+            exists(/usr/include/cblas.h) | exists(/usr/include/x86_64-linux-gnu/cblas.h) {
                 !build_pass: message (Using System BLAS)
                 LIBS        += -lopenblas -llapacke
                 DEFINES     += WITH_OPENBLAS

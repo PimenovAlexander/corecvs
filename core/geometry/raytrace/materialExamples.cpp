@@ -133,57 +133,88 @@ void RaytraceableSky2::getColor(RayIntersection &ray, RaytraceRenderer &renderer
 
 
 
-void RaytraceableCubemap::getColor(RayIntersection &ray, RaytraceRenderer &/*renderer*/)
+void RaytraceableCubemap::cubeMap(const Vector3dd &dir, RaytraceableCubemap::CubemapPart &id, Vector2dd &uv)
 {
-    int p = 0;
-    Vector2dd uv = Vector2dd::Zero();
-    Vector3dd d = ray.ray.a.normalised();
+    Vector3dd d = dir.normalised();
     Vector3dd a = Vector3dd(fabs(d.x()), fabs(d.y()), fabs(d.z()));
-
-    ray.ownColor = RGBColor::Magenta().toDouble();
 
     /* X */
     if (d.x() > 0 && a.x() > a.y() && a.x() > a.z())
     {
-        p = 3;
+        id = RIGHT;
         uv = Vector2dd(-d.z(), d.y()) / a.x() ;
     }
 
     if (d.x() < 0 && a.x() > a.y() && a.x() > a.z())
     {
-        p = 1;
+        id = LEFT;
         uv = Vector2dd(d.z(), d.y()) / a.x();
     }
 
     /* Y */
     if (d.y() > 0 && a.y() > a.x() && a.y() > a.z())
     {
-        p = 5;
+        id = BOTTOM;
         uv = Vector2dd(d.x(), -d.z()) / a.y();
     }
 
     if (d.y() < 0 && a.y() > a.x() && a.y() > a.z())
     {
-        p = 0;
+        id = TOP;
         uv = Vector2dd(d.x(), d.z()) / a.y();
     }
 
     /* Z */
     if (d.z() > 0 && a.z() > a.y() && a.z() > a.x())
     {
-        p = 2;
+        id = FRONT;
         uv = d.xy() / a.z();
     }
 
     if (d.z() < 0 && a.z() > a.y() && a.z() > a.x())
     {
-        p = 4;
+        id = BACK;
         uv = Vector2dd(-d.x(), d.y()) / a.z();
     }
 
     uv += Vector2dd(1.0, 1.0);
     uv /= 2.0;
+}
 
+void RaytraceableCubemap::cubeUnmap(const CubemapPart &id, const Vector2dd &local, Vector3dd &dir)
+{
+    Vector2dd uv = (local * 2.0) - Vector2dd(1.0, 1.0);
+    switch (id) {
+    case TOP:
+        dir = Vector3dd(uv.x(), -1.0, uv.y());
+        break;
+    case LEFT:
+        dir = Vector3dd(-1.0, uv.y(), uv.x());
+        break;
+    case FRONT:
+        dir = Vector3dd( uv.x(), uv.y(), 1.0);
+        break;
+    case RIGHT:
+        dir = Vector3dd( 1.0, uv.y(), -uv.x());
+        break;
+    case BACK:
+        dir = Vector3dd(-uv.x(), uv.y(), -1.0);
+        break;
+    case BOTTOM:
+        dir = Vector3dd(uv.x(), 1.0, -uv.y());
+        break;
+    case NUMBER_OF_PARTS:
+    default:
+        break;
+    }
+}
+
+void RaytraceableCubemap::getColor(RayIntersection &ray, RaytraceRenderer &/*renderer*/)
+{
+    CubemapPart p = FRONT;
+    Vector2dd uv = Vector2dd::Zero();
+    cubeMap(ray.ray.a, p, uv);
+    ray.ownColor = RGBColor::Magenta().toDouble();
 
     if (cubemap == NULL || p < 0 || p >= 6) {
         ray.ownColor = RGBColor::rainbow1( p / 6.0).toDouble();
@@ -205,3 +236,9 @@ void RaytraceableCubemap::getColor(RayIntersection &ray, RaytraceRenderer &/*ren
 
 }
 
+#if 0
+void RaytraceableCubemap6Images::getColor(RayIntersection &ray, RaytraceRenderer &renderer)
+{
+
+}
+#endif
