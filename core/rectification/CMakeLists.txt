@@ -21,8 +21,8 @@ target_sources(corecvs
         ${CMAKE_CURRENT_LIST_DIR}/multicameraTriangulator.cpp
         ${CMAKE_CURRENT_LIST_DIR}/sceneStereoAlignerBlock.cpp
 
-        xml/generated/essentialDerivative1.cpp
-        xml/generated/essentialDerivative2.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/../xml/generated/essentialDerivative1.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/../xml/generated/essentialDerivative2.cpp
  )
 
 
