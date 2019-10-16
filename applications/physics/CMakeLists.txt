@@ -1,4 +1,4 @@
-target_sources(corecvs
+target_sources(physics
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/physicsMainWidget.h
         ${CMAKE_CURRENT_LIST_DIR}/simulation.h

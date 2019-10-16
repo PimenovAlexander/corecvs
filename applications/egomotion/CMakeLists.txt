@@ -1,4 +1,4 @@
-target_sources(corecvs
+target_sources(egomotion
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/egomotionDialog.h
         ${CMAKE_CURRENT_LIST_DIR}/egomotionThread.h

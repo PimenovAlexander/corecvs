@@ -1,4 +1,4 @@
-target_sources(corecvs
+target_sources(robodetect
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/robodetectMainWindow.h
         ${CMAKE_CURRENT_LIST_DIR}/pointScene.h

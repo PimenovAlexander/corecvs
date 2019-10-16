@@ -1,4 +1,4 @@
-target_sources(corecvs
+target_sources(testbed
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/testbedMainWindow.h
         ${CMAKE_CURRENT_LIST_DIR}/pointScene.h

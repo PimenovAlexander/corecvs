@@ -1,4 +1,4 @@
-target_sources(corecvs
+target_sources(scanner
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/scannerDialog.h
         ${CMAKE_CURRENT_LIST_DIR}/scannerThread.h

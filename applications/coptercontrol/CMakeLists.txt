@@ -1,4 +1,4 @@
-target_sources(corecvs
+target_sources(coptercontrol
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/copterDialog.h
         ${CMAKE_CURRENT_LIST_DIR}/copterThread.h

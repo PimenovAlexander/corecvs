@@ -1,4 +1,4 @@
-target_sources(corecvs
+target_sources(recorder
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/recorderDialog.h
         ${CMAKE_CURRENT_LIST_DIR}/recorderThread.h
