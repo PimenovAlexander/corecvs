@@ -1092,7 +1092,7 @@ G12Buffer *ImageRelatedData::getG12BufferPtr()
 G8Buffer *ImageRelatedData::getG8BufferPtr()
 {
     CORE_ASSERT_TRUE_P(getImage(false).get(), ("Invalid image"));
-    return getImage(false).get()->getChannel(ImageChannel::LUMA);
+    return getImage(false).get()->getChannelG8(ImageChannel::LUMA);
 }
 
 void ImageRelatedData::cleanCache()

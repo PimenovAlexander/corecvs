@@ -6,9 +6,11 @@
  * \author alexander
  */
 #include "openCVTools.h"
-#include <opencv2/core/core_c.h> // cvCreateImage
+
+#include <opencv2/core/core.hpp> // cvCreateImage
 
 using namespace corecvs;
+using namespace cv;
 
 IplImage *OpenCVTools::getCVImageFromRGB24Buffer(RGB24Buffer *input)
 {

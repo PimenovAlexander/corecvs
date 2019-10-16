@@ -8,20 +8,28 @@ SUBDIRS +=                   \
     utils                    \
     \
     tests \
-#    \
+    \
     base_application         \
-#    base_application_example \
     recorder                 \
-#    scanner                  \
-#    testbed                  \
     cloudview                \
-    physics                  \
     imageview                \
-#    \
-     generator                \
-#    egomotion                \
-#    applications/laserscan
-     coptercontrol           \
+    \
+    generator                \
+
+
+SUBDIRS += drone
+
+nester {
+    SUBDIRS += nester
+    SUBDIRS += nester-test
+}
+
+legacy {
+     SUBDIRS += applications/laserscan
+     SUBDIRS += egomotion
+     SUBDIRS += base_application_example
+     SUBDIRS += testbed
+}
 
 
 win32 {
@@ -70,13 +78,16 @@ recorder.file                 = applications/recorder/recorder.pro
 scanner.file                  = applications/scanner/scanner.pro
 egomotion.file                = applications/egomotion/egomotion.pro
 cloudview.file                = applications/cloudview/cloudview.pro
-physics.file                  = applications/physics/physics.pro
+
 imageview.file                = applications/imageview/imageview.pro
 testbed.file                  = applications/testbed/testbed.pro
+nester.file                   = applications/nester/nester.pro
+nester-test.file              = applications/nester-test/nester-test.pro
 generator.file                = tools/generator/generator.pro
 
-coptercontrol.file            = applications/coptercontrol/coptercontrol.pro
+drone.file                    = applications/drone/drone.pro
 
 OTHER_FILES += cvs-config.pri
 OTHER_FILES += CMakeLists.txt
+OTHER_FILES += Doxyfile
 OTHER_FILES += cmake/Modules/*.cmake

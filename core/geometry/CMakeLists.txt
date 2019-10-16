@@ -15,13 +15,12 @@ target_sources(corecvs
         ${CMAKE_CURRENT_LIST_DIR}/gentryState.h
         ${CMAKE_CURRENT_LIST_DIR}/twoViewOptimalTriangulation.h
         ${CMAKE_CURRENT_LIST_DIR}/mesh3DDecorated.h
-        ${CMAKE_CURRENT_LIST_DIR}/polyLine.h
-        ${CMAKE_CURRENT_LIST_DIR}/polylinemesh.h
         ${CMAKE_CURRENT_LIST_DIR}/ellipse.h
         ${CMAKE_CURRENT_LIST_DIR}/ellipseFit.h
         ${CMAKE_CURRENT_LIST_DIR}/plane3dFit.h
         ${CMAKE_CURRENT_LIST_DIR}/meshClicker.h
         ${CMAKE_CURRENT_LIST_DIR}/convexHull.h
+        ${CMAKE_CURRENT_LIST_DIR}/convexHull3d.h
         ${CMAKE_CURRENT_LIST_DIR}/convexQuickHull.h
         ${CMAKE_CURRENT_LIST_DIR}/projectiveConvexQuickHull.h
         ${CMAKE_CURRENT_LIST_DIR}/pointCloud.h
@@ -45,14 +44,13 @@ target_sources(corecvs
         # ${CMAKE_CURRENT_LIST_DIR}/projection.cpp
         ${CMAKE_CURRENT_LIST_DIR}/gentryState.cpp
         ${CMAKE_CURRENT_LIST_DIR}/mesh3DDecorated.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/polyLine.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/polylinemesh.cpp
         ${CMAKE_CURRENT_LIST_DIR}/twoViewOptimalTriangulation.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ellipse.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ellipseFit.cpp
         ${CMAKE_CURRENT_LIST_DIR}/plane3dFit.cpp
         ${CMAKE_CURRENT_LIST_DIR}/meshClicker.cpp
         ${CMAKE_CURRENT_LIST_DIR}/convexHull.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/convexHull3d.cpp
         ${CMAKE_CURRENT_LIST_DIR}/convexQuickHull.cpp
         ${CMAKE_CURRENT_LIST_DIR}/projectiveConvexQuickHull.cpp
         ${CMAKE_CURRENT_LIST_DIR}/pointCloud.cpp

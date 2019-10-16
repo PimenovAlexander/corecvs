@@ -93,6 +93,7 @@ public:
     /* These hooks could either return true - then implemenation update the machine state */
     virtual bool gcodeHook    ( const GCodeProgram::Code &code );
 
+    virtual bool commentHook  (const std::string &text);
     virtual bool straightHook (int type, const MachineState &before, const MachineState &after) ;
     virtual bool arkHook      (const MachineState &before, const MachineState &after,
                                const PlaneFrame &frame, double maxArg);
@@ -155,6 +156,7 @@ public:
 
 public:
     static vector<std::pair<char, double> > parseLine(const string &gline);
+    static vector<std::pair<char, double> > parseLine1(const string &gline);
 };
 
 } // namespace corecvs

@@ -20,6 +20,8 @@ namespace corecvs {
 
 typedef AbstractContiniousBuffer<uint16_t, int32_t> G12BufferBase;
 
+typedef AbstractContiniousBuffer<uint16_t, int32_t> G16Buffer;
+
 /**
  * TODO: Add consts where it should go
  *
@@ -28,6 +30,7 @@ typedef AbstractContiniousBuffer<uint16_t, int32_t> G12BufferBase;
 class G12Buffer : public G12BufferBase, public FixedPointBlMapper<G12Buffer, G12Buffer, int32_t, uint16_t>
 {
 public:
+    static const int CHANNELS         = 1;
     static const int BUFFER_BITS      = 12;
     static const int BUFFER_MAX_VALUE = (1 << BUFFER_BITS) - 1;  // = 0x0FFF = 4095
 

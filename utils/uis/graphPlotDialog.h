@@ -9,9 +9,6 @@
 #include "core/stats/graphData.h"
 #include "ui_graphPlotDialog.h"
 
-using std::vector;
-using std::deque;
-
 class GraphPlotDialog : public ViAreaWidget, public SaveableWidget
 {
     Q_OBJECT

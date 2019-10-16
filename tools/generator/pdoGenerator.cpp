@@ -417,7 +417,7 @@ void PDOGenerator::generatePDOH()
 
     }
     result+=
-    "    /* Section with setters */\n";
+    "    /** Section with setters */\n";
     for (int i = 0; i < fieldNumber; i++ )
     {
         enterFieldContext(i);
@@ -434,7 +434,7 @@ void PDOGenerator::generatePDOH()
     }
 
     result+=
-    "    /* Section with embedded classes */\n";
+    "    /** Section with embedded classes */\n";
     for (int i = 0; i < embeddedNumber; i++ )
     {
         const EmbedSubclass *embed = clazz->embeds.at(i);
@@ -486,7 +486,6 @@ void PDOGenerator::generatePDOH()
     "\n";
 
     }
-
 
     result+=
     "    /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */\n"
@@ -540,8 +539,9 @@ void PDOGenerator::generatePDOH()
 
     result+=
     "    }\n\n";
-    /** Comparator **/
+
     result+=
+    "    /** Exact match comparator **/ \n"
     "    bool operator ==(const "+className+" &other) const \n"
     "    {\n";
     for (int i = 0; i < fieldNumber; i++ )

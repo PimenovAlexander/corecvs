@@ -42,7 +42,7 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
     while (!input.eof() && !input.bad())
     {
         HelperUtils::getlineSafe (input, line);
-        while (line.back() == '\\') {
+        while (!line.empty() && line.back() == '\\') {
                string line2;
                HelperUtils::getlineSafe (input, line2);
                line.pop_back();
@@ -89,7 +89,9 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
             while (!work.eof()) {
                 string part;
                 work >> part;
-                strs.push_back(part);
+                if (!part.empty()) {
+                    strs.push_back(part);
+                }
             }
 
             //LOCAL_PRINT(("Face parts: %d\n", strs.size()));
@@ -100,7 +102,7 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
 
             for (size_t i = 0; i < strs.size(); i++)
             {
-                // LOCAL_PRINT(("Attribute: %s\n", strs[i].c_str()));
+                //LOCAL_PRINT(("Attribute: %s\n", strs[i].c_str()));
                 std::stringstream splitter(strs[i]);
                 std::string part;
 

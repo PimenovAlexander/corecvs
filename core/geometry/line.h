@@ -617,6 +617,11 @@ public:
        (*this) = FromSegment(segment);
     }
 
+    Line2d(const Vector2dd &point1, const Vector2dd &point2)
+    {
+       (*this) = FromSegment(Segment2d(point1, point2));
+    }
+
     /**
      *  Construct the Line form 2 points
      **/
@@ -785,6 +790,29 @@ public:
         return (d / lsq);
     }
 
+    Vector2dd projectPointTo(const Vector2dd &point) const
+    {
+        double d = pointWeight(point);
+        double l2 = normal().sumAllElementsSq();
+        double t = (d / l2);
+        return point - t * normal();
+    }
+
+    /**
+     *   projecting zero to the current line
+     **/
+    Vector2dd projectZeroTo() const
+    {
+        double l2 = normal().sumAllElementsSq();
+        double t = (last() / l2);
+        return - t * normal();
+    }
+
+    Ray2d toRay() const
+    {
+        return Ray2d::FromOriginAndDirection(projectZeroTo(), normal().leftNormal());
+    }
+
     bool isVertical() const
     {
         return (y() == 0.0);
@@ -810,6 +838,13 @@ public:
         double b = -z() / y();
 
         return Vector2dd(m, -b);
+    }
+
+    Vector2dd toDualS() const {
+        double l = z() + l2Metric();
+        double x1 = x() / l;
+        double y2 = y() / l;
+        return Vector2dd(x1, y2);
     }
 
     Vector3dd toDualP() const {

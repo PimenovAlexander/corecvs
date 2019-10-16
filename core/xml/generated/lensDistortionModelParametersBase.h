@@ -215,7 +215,7 @@ public:
         return mMapForward;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setPrincipalX(double principalX)
     {
         mPrincipalX = principalX;
@@ -271,7 +271,7 @@ public:
         mMapForward = mapForward;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -322,6 +322,7 @@ template<class VisitorType>
         mMapForward = mapForward;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const LensDistortionModelParametersBase &other) const 
     {
         if ( !(this->mPrincipalX == other.mPrincipalX)) return false;

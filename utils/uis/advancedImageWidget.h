@@ -20,7 +20,6 @@
 
 #include "ui_advancedImageWidget.h"
 
-using std::vector;
 
 class AdvancedImageWidget : public ViAreaWidget, public SaveableWidget
 {

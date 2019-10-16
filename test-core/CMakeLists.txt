@@ -1,4 +1,4 @@
-project (CoreCVSTests)
+project (CoreCVSCoreTests)
 
 set(MODULE_NAME corecvs)
 set(MODULE_NAME_TEST corecvs_core_tests)
@@ -84,7 +84,6 @@ set (CORE_TEST_SOURCES
     deform/test_deform.cpp
     camerafixture/main_test_camerafixture.cpp
     renderer/main_test_renderer.cpp
-    meshdraw/test_polymeshdraw.cpp
     raytrace/main_test_raytrace.cpp
     json/main_test_json.cpp
     utils/main_test_utils.cpp
@@ -94,12 +93,16 @@ set (CORE_TEST_SOURCES
     projection/main_test_projection.cpp
     vptree/main_test_vptree.cpp
     meshfilter/main_test_meshfilter.cpp
+
+    convexpolygon/convexDebug.cpp
+    convexpolygon/main_test_convexpolygon.cpp
     convexhull/main_test_convexhull.cpp
+    convexHull2d/main_test_convexHull2d.cpp
+
     wuRasterizer/main_test_wu_rasterizer.cpp
     bsptree/main_test_bsptree.cpp
     halfspace/main_test_halfspace.cpp
-    orientedbox/main_test_orientedbox.cpp
-    convexHull2d/main_test_convexHull2d.cpp
+    orientedbox/main_test_orientedbox.cpp   
     processor6d/main_test_processor6d.cpp
     bezierRasterizer/main_test_bezier_rasterizer.cpp
 #     delaunay/main_test_delaunay.cpp
@@ -111,6 +114,7 @@ set (CORE_TEST_SOURCES
     snooker/errors.h
     snooker/reflectionSegmentator.h
     snooker/snookerSegmentator.h
+    convexpolygon/convexDebug.h
     stateMachineTest/test.h
     stateMachineTest/test.h
 )

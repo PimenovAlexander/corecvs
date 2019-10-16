@@ -193,6 +193,46 @@ template <typename Algebra>
 
 
 
+template <typename Algebra>
+    class MulAddConstKernel
+    {
+    public:
+        static const int inputNumber = 1;
+        static const int outputNumber = 1;
+
+        inline static int getCenterX(){ return 0; }
+        inline static int getCenterY(){ return 0; }
+        inline static int getSizeX(){ return 1; }
+        inline static int getSizeY(){ return 1; }
+
+        typedef typename Algebra::InputType Type;
+
+        double add;
+        double mul;
+
+    template<typename OtherAlgebra>
+        MulAddConstKernel(const MulAddConstKernel<OtherAlgebra> &other) :
+            add(other.add),
+            mul(other.mul)
+        {}
+
+        MulAddConstKernel(double add = 0.0, double mul = 1.0) :
+            add(add),
+            mul(mul)
+        {}
+
+        void process(Algebra &algebra) const
+        {
+            Type a00 = algebra.getInput(0,0);
+            Type result = a00 * Type(mul) + Type(add);
+            algebra.putOutput(0,0,result);
+        }
+    };
+
+
+
+
+
 } //namespace corecvs
 #endif  //ARITHMETIC_H_
 

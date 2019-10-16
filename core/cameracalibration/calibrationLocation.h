@@ -25,6 +25,24 @@ namespace corecvs {
  *    Yaw/Athimuth [0..2pi]
  *    Pitch
  *    Roll
+ *
+ *   <pre>
+ *          ^ Z
+ *         /
+ *        /
+ *       /
+ *      /
+ *     O----------------->  X
+ *     |
+ *     |
+ *     |
+ *     |
+ *     |
+ *     v  Y
+ *
+ *   </pre>
+ *
+ *
  **/
 class CameraLocationAngles : public EulerAngles
 {

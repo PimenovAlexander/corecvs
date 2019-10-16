@@ -99,18 +99,15 @@ HEADERS += \
     corestructs/cameraModel/featurePointControlWidget.h \
     uis/aboutPropsTableWidget.h \
     uis/histogramDepthDialog.h \
-    3d/sceneShaded.h \
     corestructs/reflectionWidget.h \
-    3d/shadedSceneControlWidget.h \
     scripting/coreToScript.h \
-    3d/billboardCaption3DScene.h \
-    3d/gCodeScene.h \
     corestructs/cameraModel/fixtureGeometryControlWidget.h \
     corestructs/pointerFieldWidget.h \
     corestructs/widgetBlockHarness.h \
     corestructs/cameraModel/fixtureGlobalParametersWidget.h \
     framesources/imageCaptureInterfaceQt.h \
-    corestructs/cameraModel/fixtureCameraControlWidget.h
+    corestructs/cameraModel/fixtureCameraControlWidget.h \
+    corestructs/flowFabricControlWidget.h \
 
 SOURCES += \
 #    frames.cpp \
@@ -188,6 +185,7 @@ SOURCES += \
     corestructs/cameraModel/fixtureGlobalParametersWidget.cpp \
     framesources/imageCaptureInterfaceQt.cpp \
     corestructs/cameraModel/fixtureCameraControlWidget.cpp \
+    corestructs/flowFabricControlWidget.cpp \
 
 
 FORMS += \
@@ -203,7 +201,8 @@ FORMS += \
     corestructs/cameraModel/fixtureGeometryControlWidget.ui \
     corestructs/pointerFieldWidget.ui \
     corestructs/cameraModel/fixtureGlobalParametersWidget.ui \
-    corestructs/cameraModel/fixtureCameraControlWidget.ui
+    corestructs/cameraModel/fixtureCameraControlWidget.ui \
+    corestructs/flowFabricControlWidget.ui
 
 # =============================================================
 
@@ -343,7 +342,7 @@ HEADERS += \
     uis/pointsRectificationWidget.h \
 
 SOURCES += \
-    widgets/generated/graphPlotParametersControlWidget.cpp \
+    widgets/graphPlotParametersControlWidget.cpp \
     camcalc/cameraCalculatorWidget.cpp \
     \
     corestructs/histogramwidget.cpp \
@@ -480,31 +479,33 @@ with_opengl {
          3d/generated/draw3dViMouseParameters.h \
          3d/mesh3DScene.h \
          3d/coordinateFrame.h \
+         3d/helper3DScenes.h \
          \
 
 
-    SOURCES     += \
+    SOURCES += \
         3d/scene3D.cpp \
         \
         uis/cloudview/cloudViewDialog.cpp \
         uis/cloudview/treeSceneController.cpp \
         3d/generated/draw3dParameters.cpp \
-        3d/generated/draw3dParametersControlWidget.cpp \
-        3d/generated/draw3dCameraParametersControlWidget.cpp \
+        3d/draw3dParametersControlWidget.cpp \
+        3d/draw3dCameraParametersControlWidget.cpp \
         3d/generated/draw3dCameraParameters.cpp \
-        3d/generated/draw3dViMouseParametersControlWidget.cpp \
+        3d/draw3dViMouseParametersControlWidget.cpp \
         3d/generated/draw3dViMouseParameters.cpp \
         \
         3d/mesh3DScene.cpp \
         3d/coordinateFrame.cpp \
+        3d/helper3DScenes.cpp
 
     FORMS       += \
         uis/cloudview/cloudViewDialog.ui \
         #   Generated    \
         \
-        3d/generated/draw3dParametersControlWidget.ui \
-        3d/generated/draw3dCameraParametersControlWidget.ui \
-        3d/generated/draw3dViMouseParametersControlWidget.ui \
+        3d/draw3dParametersControlWidget.ui \
+        3d/draw3dCameraParametersControlWidget.ui \
+        3d/draw3dViMouseParametersControlWidget.ui \
 
 #some dependancies
 
@@ -538,12 +539,14 @@ with_opengl {
 with_ueye {
     contains(DEFINES, WITH_UEYE) {
         HEADERS += \
-            framesources/uEyeCapture.h \
-            framesources/uEyeCameraDescriptor.h \
+            framesources/uEye/uEyeCapture.h \
+            framesources/uEye/uEyeCameraDescriptor.h \
 
         SOURCES += \
-            framesources/uEyeCapture.cpp \
-            framesources/uEyeCameraDescriptor.cpp \
+            framesources/uEye/uEyeCapture.cpp \
+            framesources/uEye/uEyeCameraDescriptor.cpp \
+
+        INCLUDEPATH += framesources/uEye
     }
 }
 
@@ -583,8 +586,8 @@ with_rapidjson {
     include($$RAPIDJSON_WRAPPER_DIR/rapidjson.pri)
 
     contains(DEFINES, WITH_RAPIDJSON) {
-        HEADERS +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONReader.h
-        SOURCES +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONReader.cpp
+       #HEADERS +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONReader.h
+       #SOURCES +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONReader.cpp
        #HEADERS +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONWriter.h
        #SOURCES +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONWriter.cpp
     }
@@ -595,8 +598,8 @@ with_jsonmodern {
     include($$JSONMODERN_WRAPPER_DIR/jsonmodern.pri)
 
     contains(DEFINES, WITH_JSONMODERN) {
-         HEADERS += $$JSONMODERN_WRAPPER_DIR/jsonModernReader.h
-         SOURCES += $$JSONMODERN_WRAPPER_DIR/jsonModernReader.cpp
+        # HEADERS += $$JSONMODERN_WRAPPER_DIR/jsonModernReader.h
+        # SOURCES += $$JSONMODERN_WRAPPER_DIR/jsonModernReader.cpp
     }
 }
 

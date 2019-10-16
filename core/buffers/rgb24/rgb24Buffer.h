@@ -40,6 +40,8 @@ class RGB24Buffer : public RGB24BufferBase,
 
 {
 public:
+    static const int CHANNELS = 3;
+
 //    RGB24Buffer(int32_t h, int32_t w) : CRGB24BufferBase(h, w) {}
     RGB24Buffer(const RGB24Buffer &that) : RGB24BufferBase (that) {}
     RGB24Buffer(RGB24Buffer *that) : RGB24BufferBase (that) {}
@@ -67,18 +69,34 @@ public:
         drawG8Buffer(buffer);
     }
 
+    RGB24Buffer(const G16Buffer *buffer) : RGB24BufferBase (buffer->h, buffer->w, false)
+    {
+        drawG16Buffer(buffer);
+    }
+
     /**
      * This function is used as a hack to interface the C-style g12Buffer
      *
      **/
     RGB24Buffer() {}
 
+    void drawG16Buffer (const G16Buffer *src, int32_t y = 0, int32_t x = 0);
     void drawG12Buffer (const G12Buffer *src, int32_t y = 0, int32_t x = 0);
     void drawG8Buffer  (const G8Buffer  *src, int32_t y = 0, int32_t x = 0);
     void drawFlowBuffer (FlowBuffer *src, int32_t y = 0, int32_t x = 0);
     void drawFlowBuffer1(FlowBuffer *src, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
     void drawFlowBuffer2(FlowBuffer *src, double colorShift = 0.0, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
     void drawFlowBuffer3(FlowBuffer *src, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
+
+    /**
+     *   -1 scaler means autoscale.
+     *   Same scale is selected for both axis
+     **/
+    void drawFlowBuffer         (FloatFlowBuffer *src, double scaler = -1, int32_t y = 0, int32_t x = 0);
+    void drawFlowBufferHue      (FloatFlowBuffer *src, double scaler = -1, double magLimit = 100000, int32_t y = 0, int32_t x = 0, bool unknownBlack = false, int step = 1, bool kitti = false);
+    void drawFlowBufferSparseHue(FloatFlowBuffer *src, double scaler, double magLimit, int32_t y, int32_t x, bool unknownBlack, int pointSize, bool kitti = false);
+
+
     void drawCorrespondenceList(CorrespondenceList *src, double colorScaler = 20.0, int32_t y = 0, int32_t x = 0);
 
     /**
@@ -104,6 +122,8 @@ public:
      **/
     void drawPixel(int    x, int    y, const RGBColor &color);
     void drawPixel(double x, double y, const RGBColor &color);
+
+    void drawPixel(const Vector2dd &point, const RGBColor &color);
 
     /**
      * This function is used to draw a sort of marker over the buffer
@@ -199,7 +219,8 @@ public:
      **/
     enum DoubleDrawStyle {
         STYLE_RAW,
-        STYLE_GRAY,
+        STYLE_GRAY1,
+        STYLE_GRAY255,
         STYLE_LOG,
         STYLE_ZBUFFER   /**< ignores std::numeric_limits<double>::max() values, not to affect palette */
     };
@@ -207,6 +228,11 @@ public:
     inline void drawDoubleBuffer(const AbstractBuffer<double> &in, int style = STYLE_RAW)
     {
         drawContinuousBuffer<double>(in, style);
+    }
+
+    inline void drawFloatBuffer(const AbstractBuffer<float> &in, int style = STYLE_RAW)
+    {
+        drawContinuousBuffer<float>(in, style);
     }
 
     template<typename ContinuousType>
@@ -225,7 +251,19 @@ public:
 
     G12Buffer *toG12Buffer();
 
-    G8Buffer* getChannel(ImageChannel::ImageChannel channel);
+private:
+    template<class ReturnType>
+    ReturnType* getChannel(ImageChannel::ImageChannel channel);
+
+public:
+    G8Buffer * getChannelG8 (ImageChannel::ImageChannel channel);
+    G12Buffer* getChannelG12(ImageChannel::ImageChannel channel);
+    G16Buffer* getChannelG16(ImageChannel::ImageChannel channel);
+    DpImage  * getChannelDp (ImageChannel::ImageChannel channel);
+    FpImage  * getChannelFp (ImageChannel::ImageChannel channel);
+
+
+    bool isGrayscale() const;
 
     template<class SelectorPrediate>
     Vector3dd getMeanValue(int x1, int y1, int x2, int y2, const SelectorPrediate &predicate)

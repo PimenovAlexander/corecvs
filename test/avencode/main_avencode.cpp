@@ -37,7 +37,7 @@ int main(int argc, char **argv)
     RGB24Buffer *in = new RGB24Buffer(100,100);
     in = BufferFactory::getInstance()->loadRGB24Bitmap("data/scene1.row3.col2.BMP");
     //in->checkerBoard(10, RGBColor::Green(), RGBColor::Red());
-    G8Buffer *inG = in->getChannel(ImageChannel::GRAY);
+    G8Buffer *inG = in->getChannelG8(ImageChannel::GRAY);
 
     SWScaler scaler;
     RGB24Buffer *out  = scaler.scale(in , 0.5);

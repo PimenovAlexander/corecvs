@@ -366,7 +366,7 @@ void V4L2CaptureInterface::SpinThread::run()
         mInterface->lastFrameTime = PreciseTimer::currentTime();
 
 //        cout << "Frame notification" << endl;
-        frame_data_t frameData;
+        ImageCaptureInterface::FrameMetadata frameData;
         frameData.timestamp = (currentLeft->usecsTimeStamp() / 2) + (currentRight->usecsTimeStamp() / 2);
 
         mInterface->notifyAboutNewFrame(frameData);

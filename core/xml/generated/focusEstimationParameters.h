@@ -127,7 +127,7 @@ public:
         return mEdgeThreshold;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setJunctionCoef(double junctionCoef)
     {
         mJunctionCoef = junctionCoef;
@@ -158,7 +158,7 @@ public:
         mEdgeThreshold = edgeThreshold;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -194,6 +194,7 @@ template<class VisitorType>
         mEdgeThreshold = edgeThreshold;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const FocusEstimationParameters &other) const 
     {
         if ( !(this->mJunctionCoef == other.mJunctionCoef)) return false;

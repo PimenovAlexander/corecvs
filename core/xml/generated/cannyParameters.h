@@ -91,7 +91,7 @@ public:
         return mMaximumThreshold;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setShouldEdgeDetect(bool shouldEdgeDetect)
     {
         mShouldEdgeDetect = shouldEdgeDetect;
@@ -107,7 +107,7 @@ public:
         mMaximumThreshold = maximumThreshold;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -134,6 +134,7 @@ template<class VisitorType>
         mMaximumThreshold = maximumThreshold;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const CannyParameters &other) const 
     {
         if ( !(this->mShouldEdgeDetect == other.mShouldEdgeDetect)) return false;

@@ -4,7 +4,7 @@ exists(../../../config.pri) {
     include(../../../config.pri)
 } else { 
     message(Using local config)
-    include(../config.pri)
+    include(../cvs-config.pri)
 }
  
 TEMPLATE = subdirs
@@ -17,35 +17,45 @@ SUBDIRS +=     \
     softrender  \
     raytracerender   \
 #    stereo_generator \
-#    widgets_test \
+    widgets_test \
     widget_harness \
 #    command_harness \
     example_scene \
     flowtest \
-    opencvpostcalib
-
+    avencode \
+    opencvpostcalib \
+    focus_stack \
+    pattern_detector \
+    flow_detector \
+    reprojector \
 
 !win32 {
-#    SUBDIRS += jitplayground
-#    SUBDIRS += gcodeplayground
+    SUBDIRS += jitplayground
+    SUBDIRS += gcodeplayground
 }
 
 with_qscript {
    SUBDIRS += qtScriptConsole
 }
 
-
 with_opencv {
-    SUBDIRS +=       \
-#        distortion_corrector \
-#        matcher_basic \
-#        matcher_full \
-        chessboard_detector \
 
+    SUBDIRS +=       \
+#   distortion_corrector \
+#   matcher_basic \
+#   matcher_full \
+#   chessboard_detector \
+    vodometry \
+    stabilization \
+    opencv_profile
 }
 
 grab24                              = grab/grab24.pro
 grab24_qt                           = grab_qt/grab24_qt.pro
+
+stabilization                       = stabilization/stabilization.pro
+vodometry                           = vodometry/vodometry.pro
+opencv_profile                      = opencv_profile/opencv_profile.pro
 
 grab_N_captures                     = grab_N_captures/grab_N_captures.pro
 serialize1                          = serialize1/serialize1.pro
@@ -89,3 +99,7 @@ qtScriptConsole                     = qtScriptConsole/qtScriptConsole.pro
 stereo_generator                    = stereo_generator/stereo_generator.pro
 
 flowtest.file                       = flowtest/flowtest.pro
+
+focusstacking.file                   = focusstacking/focusstacking.pro
+pattern_detector.file                = pattern_detector/pattern_detector.pro
+reprojector                          = reprojector/reprojector.pro

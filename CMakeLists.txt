@@ -29,7 +29,12 @@ fetch_googletest(
 
 add_subdirectory(core)
 add_subdirectory(utils)
+#add_subdirectory(applications)
+add_subdirectory(test/focus_stack)
+add_subdirectory(test/fileloader)
+#add_subdirectory(test)
 
 enable_testing()
 add_subdirectory(test-core)
+add_subdirectory(test-core/-perf)
 

@@ -140,7 +140,7 @@ public:
         return mEstimateCenter;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setCostAlgorithm(LineDistortionEstimatorCost::LineDistortionEstimatorCost costAlgorithm)
     {
         mCostAlgorithm = costAlgorithm;
@@ -176,7 +176,7 @@ public:
         mEstimateCenter = estimateCenter;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -215,6 +215,7 @@ template<class VisitorType>
         mEstimateCenter = estimateCenter;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const LineDistortionEstimatorParameters &other) const 
     {
         if ( !(this->mCostAlgorithm == other.mCostAlgorithm)) return false;

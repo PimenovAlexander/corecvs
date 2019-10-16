@@ -14,33 +14,33 @@
 namespace corecvs
 {
 
-typedef AbstractContiniousBuffer<double, int32_t> DepthBufferBase;
+//typedef AbstractContiniousBuffer<double, int32_t> DepthBufferBase;
 
 class DepthBuffer :
-    public DepthBufferBase,
-    public PunchedBufferOperations<DepthBuffer, DepthBufferBase::InternalElementType>
+    public DpImage,
+    public PunchedBufferOperations<DepthBuffer, DpImage::InternalElementType>
 {
 public:
     static const double DEPTH_UNKNOWN /*= -1.0*/;   // msvc requires moved this to cpp
 
     DepthBuffer(int32_t h, int32_t w) :
-        DepthBufferBase ( h, w, DEPTH_UNKNOWN)
+        DpImage ( h, w, DEPTH_UNKNOWN)
     {}
 
     DepthBuffer(Vector2d<int32_t> size) :
-        DepthBufferBase ( size, DEPTH_UNKNOWN)
+        DpImage ( size, DEPTH_UNKNOWN)
     {}
 
 
-    DepthBuffer(DepthBuffer &that) : DepthBufferBase (that) {}
-    DepthBuffer(DepthBuffer *that) : DepthBufferBase (that) {}
+    DepthBuffer(DepthBuffer &that) : DpImage (that) {}
+    DepthBuffer(DepthBuffer *that) : DpImage (that) {}
 
     DepthBuffer(DepthBuffer *src, int32_t x1, int32_t y1, int32_t x2, int32_t y2) :
-        DepthBufferBase(src, x1, y1, x2, y2) {}
+        DpImage(src, x1, y1, x2, y2) {}
 
-    DepthBuffer(uint32_t h, uint32_t w, bool shouldClear) : DepthBufferBase(h, w, shouldClear) {}
+    DepthBuffer(uint32_t h, uint32_t w, bool shouldClear) : DpImage(h, w, shouldClear) {}
 
-    DepthBuffer(uint32_t h, uint32_t w, double *data) : DepthBufferBase(h, w, data) {}
+    DepthBuffer(uint32_t h, uint32_t w, double *data) : DpImage(h, w, data) {}
 
 
     DepthBuffer();

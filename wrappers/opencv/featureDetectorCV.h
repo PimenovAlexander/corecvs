@@ -7,7 +7,7 @@
  * \date Nov 26, 2012
  */
 
-#ifndef WITH_OPENCV_3X
+#ifndef WITH_OPENCV_3
 
 #include "core/buffers/g12Buffer.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"

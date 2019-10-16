@@ -83,6 +83,32 @@ private:
 
 public:
 
+    static RealType Rotation3D(int axis, ElementType angle)
+    {
+        ReturnType result = RealType::createMatrix();
+        for (int i = 0; i < result._height(); i++)
+        {
+            for (int j = 0; j < result._width(); j++)
+            {
+                result._atm(i, j) = (i == j) ? ElementType(1) : ElementType(0);
+            }
+        }
+
+        if        (axis == 0) {
+            result._atm(0,0) =  cos(angle); result._atm(0,1) =  sin(angle);
+            result._atm(1,0) = -sin(angle); result._atm(1,1) =  cos(angle);
+        } else if (axis == 1) {
+            result._atm(0,0) =  cos(angle); result._atm(0,2) = -sin(angle);
+            result._atm(2,0) =  sin(angle); result._atm(2,2) =  cos(angle);
+        } else if (axis == 2) {
+            result._atm(1,1) =  cos(angle); result._atm(1,2) =  sin(angle);
+            result._atm(2,1) = -sin(angle); result._atm(2,2) =  cos(angle);
+        }
+
+        return result;
+
+    }
+
     friend std::ostream & operator <<(std::ostream &out, const RealType &matrix)
     {
         //streamsize wasPrecision = out.precision(6);
@@ -222,20 +248,20 @@ public:
         return result;
     }
 
-
-    ReturnType mul(const RealType& V)
+template<typename OtherType>
+    ReturnType mul(const OtherType& V)
     {
         CORE_ASSERT_TRUE(this->_width() == V._height(), "Matrices have wrong sizes");
-        ReturnType result = _createMatrix(_height(), V._width());
+        ReturnType result = _createMatrix(this->_height(), V._width());
 
         int row, column, runner;
         for (row = 0; row < result._height(); row++)
             for (column = 0; column < result._width(); column++)
             {
                 ElementType sum = ElementType(0);
-                for (runner = 0; runner < _width(); runner++)
+                for (runner = 0; runner < this->_width(); runner++)
                 {
-                    sum += _atm(row, runner) * V._atm(runner, column);
+                    sum += this->_atm(row, runner) * V._atm(runner, column);
                 }
                 result.atm(row, column) = sum;
             }
@@ -322,7 +348,7 @@ public:
         return this->w;
     }
 
-    static AbsMatrixFixed createMatrix(int /*h*/, int /*w*/) {return AbsMatrixFixed(); }
+    static AbsMatrixFixed createMatrix(int /*h*/ = H, int /*w*/ = W) {return AbsMatrixFixed(); }
 
     /* Additional helper function */
 };

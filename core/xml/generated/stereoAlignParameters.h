@@ -163,7 +163,7 @@ public:
         return mGuessShiftThreshold;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setProduceCameras(bool produceCameras)
     {
         mProduceCameras = produceCameras;
@@ -209,7 +209,7 @@ public:
         mGuessShiftThreshold = guessShiftThreshold;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -254,6 +254,7 @@ template<class VisitorType>
         mGuessShiftThreshold = guessShiftThreshold;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const StereoAlignParameters &other) const 
     {
         if ( !(this->mProduceCameras == other.mProduceCameras)) return false;

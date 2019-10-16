@@ -205,7 +205,7 @@ RGB48Buffer* PPMLoader::loadRgb48(const string& name, MetaData *meta)
     unsigned long int w = 0;
     RGB48Buffer *result = NULL;
     uint8_t type;
-    unsigned short int maxval;
+    unsigned short int maxval = 0;
     bool calcWhite = false;
     int white = 0;
 

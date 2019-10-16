@@ -16,13 +16,13 @@ namespace corecvs {
 class FLOLoader : public BufferLoader<FloatFlowBuffer>
 {
 public:
-    static string extention1;
-    static float MAGIC_NUMBER;
-    static float FLO_INFINITY;
+    static const std::string extention1;
+    static const float MAGIC_NUMBER;
+    static const float FLO_INFINITY;
 
-    virtual bool acceptsFile(const string & name) override;
+    virtual bool acceptsFile(const std::string & name) override;
 
-    virtual FloatFlowBuffer *load(const string & name) override;
+    virtual FloatFlowBuffer *load(const std::string & name) override;
 
     virtual std::string name() override { return "FLO Loader"; }
     virtual std::vector<std::string> extentions() override {
@@ -32,7 +32,7 @@ public:
 
 class FLOSaver : public BufferSaver<FloatFlowBuffer>
 {
-    virtual bool acceptsFile(const std::string & name);
+    virtual bool acceptsFile(const std::string & name) override;
 
     virtual bool save(const FloatFlowBuffer &buffer, const string& name, int quality = 95) override;
 
@@ -47,9 +47,10 @@ class FLOSaver : public BufferSaver<FloatFlowBuffer>
 
 class ListFlowSaver : public BufferSaver<FloatFlowBuffer>
 {
+public:
     static string extention1;
 
-    virtual bool acceptsFile(const std::string & name);
+    virtual bool acceptsFile(const std::string & name) override;
 
     virtual bool save(const FloatFlowBuffer &buffer, const string& name, int quality = 95) override;
 
@@ -59,6 +60,21 @@ class ListFlowSaver : public BufferSaver<FloatFlowBuffer>
     }
 
     virtual ~ListFlowSaver() {}
+};
+
+class ListFlowLoader : public BufferLoader<FloatFlowBuffer>
+{
+public:
+    virtual bool acceptsFile(const std::string & name);
+
+    virtual FloatFlowBuffer *load(const std::string &name) override;
+
+    virtual std::string name() override { return "List Flow Loader"; }
+    virtual std::vector<std::string> extentions() override {
+        return std::vector<std::string>({ListFlowSaver::extention1});
+    }
+
+    virtual ~ListFlowLoader() {}
 };
 
 } //namespace
