@@ -14,8 +14,12 @@ siblings/googletest
 cvs-open.pro.user
 tools/generator/generator
 
+# CMake-specific generated files
 cmake-build-debug/
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
 Testing
+
+# IntelliJ-specific generated files
+.idea/

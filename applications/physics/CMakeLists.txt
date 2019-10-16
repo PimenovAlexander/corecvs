@@ -1,0 +1,21 @@
+target_sources(physics
+    PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}/physicsMainWidget.h
+        ${CMAKE_CURRENT_LIST_DIR}/simulation.h
+        ${CMAKE_CURRENT_LIST_DIR}/clientSender.h
+        ${CMAKE_CURRENT_LIST_DIR}/controllRecord.h
+        ${CMAKE_CURRENT_LIST_DIR}/joystickInput.h
+        ${CMAKE_CURRENT_LIST_DIR}/qComController.h
+        ${CMAKE_CURRENT_LIST_DIR}/simObject.h
+        ${CMAKE_CURRENT_LIST_DIR}/simSphere.h
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/physicsMainWidget.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/simulation.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/simSphere.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/simObject.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/qComController.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/joystickInput.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/controllRecord.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/clientSender.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/mainPhysics.cpp
+)

@@ -1,0 +1,50 @@
+target_sources(base
+    PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}/generatedParameters/baseParameters.h
+        ${CMAKE_CURRENT_LIST_DIR}/generatedParameters/presentationParameters.h
+        ${CMAKE_CURRENT_LIST_DIR}/generatedParameters/rotationPresets.h
+        ${CMAKE_CURRENT_LIST_DIR}/generatedParameters/flowStyle.h
+        ${CMAKE_CURRENT_LIST_DIR}/generatedParameters/stereoStyle.h
+        ${CMAKE_CURRENT_LIST_DIR}/generatedParameters/outputStyle.h
+        ${CMAKE_CURRENT_LIST_DIR}/layers/resultImage.h
+        ${CMAKE_CURRENT_LIST_DIR}/layers/imageResultLayer.h
+        ${CMAKE_CURRENT_LIST_DIR}/layers/geometryResultLayer.h
+        ${CMAKE_CURRENT_LIST_DIR}/parametersMapper/parametersMapperBase.h
+        ${CMAKE_CURRENT_LIST_DIR}/statistics/statisticsDialog.h
+        ${CMAKE_CURRENT_LIST_DIR}/statistics/qtStatisticsCollector.h
+        ${CMAKE_CURRENT_LIST_DIR}/abstractCalculationThread.h
+        ${CMAKE_CURRENT_LIST_DIR}/baseCalculationThread.h
+        ${CMAKE_CURRENT_LIST_DIR}/baseOutputData.h
+        ${CMAKE_CURRENT_LIST_DIR}/baseHostDialog.h
+        ${CMAKE_CURRENT_LIST_DIR}/mainWindow.h
+        ${CMAKE_CURRENT_LIST_DIR}/baseParametersControlWidget.h
+        ${CMAKE_CURRENT_LIST_DIR}/presentationParametersControlWidget.h
+        ${CMAKE_CURRENT_LIST_DIR}/camerasConfigParameters.h
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/generatedParameters/baseParameters.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/generatedParameters/presentationParameters.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/layers/resultImage.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/layers/imageResultLayer.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/layers/geometryResultLayer.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/parametersMapper/parametersMapperBase.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/statistics/statisticsDialog.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/abstractCalculationThread.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/baseCalculationThread.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/baseOutputData.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/baseHostDialog.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/mainWindow.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/baseParametersControlWidget.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/presentationParametersControlWidget.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/camerasConfigParameters.cpp
+)
+
+option(with_opengl "Should use OpenGL" YES)
+
+if (with_opengl)
+    target_sources(corecvs
+        PUBLIC
+            scene3DMouse.h
+        PRIVATE
+            scene3DMouse.cpp
+    )
+endif()
