@@ -49,11 +49,11 @@ SOURCES+= $${UTILSDIR}/corestructs/coreWidgets/bitcodeBoardParamsBaseControlWidg
 HEADERS+= $${UTILSDIR}/corestructs/coreWidgets/bitcodeBoardParamsBaseControlWidget.h
 FORMS += $${UTILSDIR}/corestructs/coreWidgets/bitcodeBoardParamsBaseControlWidget.ui
 
-SOURCES+= $${UTILSDIR}/corestructs/coreWidgets/openCVBMParametersControlWidget.cpp
-HEADERS+= $${UTILSDIR}/corestructs/coreWidgets/openCVBMParametersControlWidget.h
-FORMS += $${UTILSDIR}/corestructs/coreWidgets/openCVBMParametersControlWidget.ui
+#SOURCES+= $${UTILSDIR}/corestructs/coreWidgets/openCVBMParametersControlWidget.cpp
+#HEADERS+= $${UTILSDIR}/corestructs/coreWidgets/openCVBMParametersControlWidget.h
+#FORMS += $${UTILSDIR}/corestructs/coreWidgets/openCVBMParametersControlWidget.ui
 
-SOURCES+= $${UTILSDIR}/corestructs/coreWidgets/openCVSGMParametersControlWidget.cpp
-HEADERS+= $${UTILSDIR}/corestructs/coreWidgets/openCVSGMParametersControlWidget.h
-FORMS += $${UTILSDIR}/corestructs/coreWidgets/openCVSGMParametersControlWidget.ui
+#SOURCES+= $${UTILSDIR}/corestructs/coreWidgets/openCVSGMParametersControlWidget.cpp
+#HEADERS+= $${UTILSDIR}/corestructs/coreWidgets/openCVSGMParametersControlWidget.h
+#FORMS += $${UTILSDIR}/corestructs/coreWidgets/openCVSGMParametersControlWidget.ui
 

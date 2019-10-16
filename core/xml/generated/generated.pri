@@ -169,11 +169,11 @@ HEADERS+= xml/generated/chessBoardAssemblerParamsBase.h
 SOURCES+= xml/generated/bitcodeBoardParamsBase.cpp
 HEADERS+= xml/generated/bitcodeBoardParamsBase.h
 
-SOURCES+= xml/generated/openCVBMParameters.cpp
-HEADERS+= xml/generated/openCVBMParameters.h
+#SOURCES+= xml/generated/openCVBMParameters.cpp
+#HEADERS+= xml/generated/openCVBMParameters.h
 
-SOURCES+= xml/generated/openCVSGMParameters.cpp
-HEADERS+= xml/generated/openCVSGMParameters.h
+#SOURCES+= xml/generated/openCVSGMParameters.cpp
+#HEADERS+= xml/generated/openCVSGMParameters.h
 
 #####################################################
 # Enum Section
