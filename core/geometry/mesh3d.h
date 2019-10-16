@@ -106,13 +106,15 @@ public:
 
 
     virtual void addAOB(const Vector3dd &corner1, const Vector3dd &corner2, bool addFaces = true);
-    void addAOB(const AxisAlignedBoxParameters &box , bool addFaces = true);
-    void addAOB(const AxisAlignedBox3d &box         , bool addFaces = true);
+    virtual void addAOB(const AxisAlignedBoxParameters &box , bool addFaces = true);
+    virtual void addAOB(const AxisAlignedBox3d &box         , bool addFaces = true);
     void addOOB(const OrientedBox      &box         , bool addFaces = true);
 
     int addPoint(const Vector3dd &point);
 
     void addLine(const Vector3dd &point1, const Vector3dd &point2);
+    void addLineDash(const Vector3dd &point1, const Vector3dd &point2, double act = 0.1, double deact=0.1);
+
     void addTriangle(Vector3dd point1, Vector3dd point2, Vector3dd point3);
     void addTriangle(const Triangle3dd &triangle);
     void addFlatPolygon(const FlatPolygon &polygon);
@@ -169,9 +171,9 @@ public:
 
     AxisAlignedBox3d getBoundingBox();
 
-    void add(const Mesh3D &other, bool preserveColor = false);
+    virtual void add(const Mesh3D &other, bool preserveColor = false);
 
-private:
+protected:
     virtual void addEdge(const Vector2d32 &edge);
     virtual void addVertex(const Vector3dd &vector);
     virtual void addFace(const Vector3d32 &faceId);

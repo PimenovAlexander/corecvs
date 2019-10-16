@@ -174,33 +174,3 @@ bool FolderScanner::isAccessible(const string &path)
 
 } // namespace corecvs
 
-
-/*
-int main(int argc, char** argv)
-{
-    if (argc != 2)
-    {
-        std::cout << "Second arg is path" << std::endl;
-        exit(-1);
-    }
-    fs::path p(argv[1]);
-    if (!fs::exists(p))
-    {
-        std::cout << p << " does not exist" << std::endl;
-        exit(-2);
-    }
-    if (!fs::is_directory(p))
-    {
-        std::cout << p << " is not a directory" << std::endl;
-        exit(-3);
-    }
-    fs::directory_iterator d(p);
-
-    for (fs::directory_iterator d = fs::directory_iterator(p); d != fs::directory_iterator(); ++d)
-    {
-        fs::path p_child(*d);
-        std::cout << p << " contains " << p_child << " as a " << (fs::is_directory(p_child) ? "dir" : "file") << std::endl;
-    }
-    return 0;
-}
-*/

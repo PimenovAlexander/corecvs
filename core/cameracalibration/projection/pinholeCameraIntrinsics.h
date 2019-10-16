@@ -159,6 +159,10 @@ struct PinholeCameraIntrinsics : public PinholeCameraIntrinsicsBaseParameters,  
     Matrix33 getInvKMatrix33() const;
 
     /**
+     **/
+    static PinholeCameraIntrinsics FromKMatix(double w, double h, const Matrix44 &K);
+
+    /**
      * This matrix variant also has non-trivial Z output in the style used in OpenGL
      * This method also returns the matrix that is projecting to -1..1 interval, instead of this->size()
      **/

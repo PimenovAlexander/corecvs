@@ -14,6 +14,7 @@
 #include <vector>
 #include <stdint.h>
 #include <iostream>
+#include <core/cameracalibration/calibrationLocation.h>
 #include "gtest/gtest.h"
 
 #include "core/utils/global.h"
@@ -33,7 +34,7 @@ TEST(Affine, testRotations)
     Affine3DM  aym = Affine3DM::RotationY(degToRad(135.0));
     Affine3DQ  ayq = Affine3DQ::RotationY(degToRad(135.0));
     Quaternion byq = Quaternion::RotationY(degToRad(135.0));
-    Quaternion cyq = Quaternion(Vector3dd(0.0,1.0,0.0), degToRad(135.0));
+    Quaternion cyq = Quaternion::Rotation(Vector3dd(0.0,1.0,0.0), degToRad(135.0));
 
 
     Vector3dd t1m = aym * vx;
@@ -113,6 +114,26 @@ TEST(Affine, QuaternionFromMatix)
         Quaternion q = Quaternion::FromMatrix(m);
         q.printAxisAndAngle();
     }
+
+    {
+        Matrix33 m(
+                0.747771,    -0.663955,  -0.00157435,
+               -0.663956,    -0.747765,  -0.00307281,
+               -0.000862956, -0.00334306, 0.999994);
+
+        cout << "d:" << m.det() << std::endl;
+        cout << "l0:" << (m.row(0).l2Metric()) << std::endl;
+        cout << "l1:" << (m.row(0).l2Metric()) << std::endl;
+        cout << "l2:" << (m.row(0).l2Metric()) << std::endl;
+
+        cout << "xy:" << (m.row(0) & m.row(1)) << std::endl;
+        cout << "xz:" << (m.row(0) & m.row(2)) << std::endl;
+        cout << "yz:" << (m.row(1) & m.row(2)) << std::endl;
+
+        Quaternion q = Quaternion::FromMatrix(m);
+        q.printAxisAndAngle();
+
+    }
 }
 
 
@@ -164,10 +185,12 @@ TEST(Affine, testMatrixToQuaternion)
 
 TEST(Affine, testEulerAngles)
 {
-    CameraAnglesLegacy anglesCam(0.7, 0.4, 0.1);
+    CameraLocationAngles anglesCam(0.4, 0.7, 0.1);
+
     Matrix33 matrixCam = anglesCam.toMatrix();
     Quaternion quatCam = Quaternion::FromMatrix(matrixCam);
-    CameraAnglesLegacy anglesCam1 = CameraAnglesLegacy::FromQuaternion(quatCam);
+
+    CameraLocationAngles anglesCam1 = CameraLocationAngles::FromQuaternion(quatCam);
 
 
     std::cout << "A:("  << anglesCam.pitch() << ", "
@@ -180,4 +203,26 @@ TEST(Affine, testEulerAngles)
     std::cout << "A:("  << anglesCam1.pitch() << ", "
                         << anglesCam1.yaw()   << ", "
                         << anglesCam1.roll() << ")" << std::endl;
+}
+
+
+TEST(Affine, testQuaternionPower)
+{
+    Quaternion base = Quaternion::Rotation(Vector3dd(1,2,3), degToRad(45));
+
+    cout << "Base     " << base << endl;
+
+    Quaternion baseH = Quaternion::pow(base, 0.5);
+    cout << "Base^0.5:" << baseH << endl;
+    cout << "Result  :"   << (baseH ^ baseH) << endl;
+    cout << endl;
+
+    CORE_ASSERT_TRUE_P((baseH ^ baseH).notTooFar(base, 1e-10), ("Failed with 0.5 power"));
+
+    Quaternion base3 = Quaternion::pow(base, 3);
+    cout << "Base^3  : " << (base ^ base ^ base) << endl;
+    cout << "Expected: " << base3 << endl;
+    cout << endl;
+
+    CORE_ASSERT_TRUE_P((base ^ base ^ base).notTooFar(base3, 1e-10), ("Failed with power 3"));
 }

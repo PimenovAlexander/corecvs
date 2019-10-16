@@ -67,13 +67,13 @@ public:
         return mInvert;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setInvert(bool invert)
     {
         mInvert = invert;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -94,6 +94,7 @@ template<class VisitorType>
         mInvert = invert;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const MaskingParameters &other) const 
     {
         if ( !(this->mInvert == other.mInvert)) return false;

@@ -30,9 +30,9 @@ CONFIG +=       \
 #   trace       \
    asserts     \
                 \
-      with_sse     \    # all present CPUs support SSE* instructions
-      with_sse3    \
-      with_sse4_1  \    # all the CPUs Core2 and above support the set of instructions above
+   with_sse     \    # all present CPUs support SSE* instructions
+   with_sse3    \
+   with_sse4_1  \    # all the CPUs Core2 and above support the set of instructions above
 #      with_sse4_2 \    # implemented in the Nehalem-based Intel Core i7 product line CPUs; "popcnt" instruction beginning with Nehalem
 #      with_avx    \
 #      with_avx2   \
@@ -43,6 +43,7 @@ CONFIG +=       \
    with_openblas   \
    with_fastbuild  \
    with_unorthodox \   # allow use an experimental filesystem
+
 #  with_qscript    \   # experimental...
 
 include(config-cpu-features.pri)
@@ -76,6 +77,7 @@ CONFIG +=                   \
         with_avcodec        \
         with_libjpeg        \
         with_libpng         \
+        with_jsonmodern     \
 
 
 win32 {
@@ -84,9 +86,9 @@ win32 {
 }
 
 win32 {
-#    CONFIG += with_opencv
+    CONFIG += with_opencv
 } else {
-#     CONFIG += with_opencv
+     CONFIG += with_opencv
      CONFIG += with_nopkgconfig
 }
 

@@ -8,6 +8,7 @@
  * \ingroup autotest  
  */
 #include <iostream>
+#include <core/buffers/bufferFactory.h>
 #include "gtest/gtest.h"
 
 #include "core/utils/global.h"
@@ -65,4 +66,37 @@ TEST(Color, testHSVCoversion)
         cout << "  HSV: " << h << "," << s  << "," << v << std::endl;
         cout << "  Res: " << rebuild << std::endl;
     }
+}
+
+TEST(Color, testHSVColorCircle)
+{
+    static const int SIZE = 201;
+
+    std::unique_ptr<RGB24Buffer> buffer(new RGB24Buffer(2 * SIZE, SIZE * 3));
+
+    for (uint i = 0; i < SIZE; i++)
+    {
+        for (uint j = 0; j < SIZE; j++)
+        {
+            Vector2dd d = Vector2dd(i, j) - Vector2dd(SIZE / 2.0, SIZE / 2.0);
+            uint16_t h = ((int)radToDeg(d.argument()) + 360) % 360;
+            uint16_t l = d.l2Metric() / (SIZE / 2) * 255.0;
+            if (l > 255) {
+                continue;
+            }
+
+            buffer->element(i, j          ) = RGBColor::FromHSV(h,      l, 128);
+            buffer->element(i, j +    SIZE) = RGBColor::FromHSV(h,    128,   l);
+            buffer->element(i, j + 2 *SIZE) = RGBColor::FromHSV(h, l / 2 ,   l / 2);
+
+            buffer->element(i + SIZE, j          ) = RGBColor::FromHSVKitti(h,      l, 128);
+            buffer->element(i + SIZE, j +    SIZE) = RGBColor::FromHSVKitti(h,    128,   l);
+            buffer->element(i + SIZE, j + 2 *SIZE) = RGBColor::FromHSVKitti(h, l / 2 ,   l / 2);
+
+
+        }
+    }
+
+    BufferFactory::getInstance()->saveRGB24Bitmap(*buffer, "hsv.bmp");
+
 }

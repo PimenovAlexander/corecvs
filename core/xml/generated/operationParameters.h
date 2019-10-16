@@ -68,13 +68,13 @@ public:
         return static_cast<Operation::Operation>(mOperation);
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setOperation(Operation::Operation operation)
     {
         mOperation = operation;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -95,6 +95,7 @@ template<class VisitorType>
         mOperation = operation;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const OperationParameters &other) const 
     {
         if ( !(this->mOperation == other.mOperation)) return false;

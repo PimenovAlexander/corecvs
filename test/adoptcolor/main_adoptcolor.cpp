@@ -89,7 +89,7 @@ int main (int argc, char **argv)
     RGB24Buffer *mask    = QTFileLoader::RGB24BufferFromQImage(&imageMask);
     RGB24Buffer *face    = QTFileLoader::RGB24BufferFromQImage(&imageFace);
 
-    G8Buffer *alpha = alpha24->getChannel(ImageChannel::GRAY);
+    G8Buffer *alpha = alpha24->getChannelG8(ImageChannel::GRAY);
 
     Vector3dd meanMask(0.0);
     Vector3dd meanFace(0.0);

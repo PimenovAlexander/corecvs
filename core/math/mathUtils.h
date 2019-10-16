@@ -204,5 +204,14 @@ inline FpType normalPDF(FpType x, FpType sigma)
     return exp(-x * x / (2.0 * sigma * sigma)) / (sigma * sqrt(2.0 * M_PI));
 }
 
+/**
+ *  \f[  LoG(x) = {1 \over {\pi \sigma^4}} \left(  1 -  {{x^2} \over {2 \sigma^2}} \right)  {e^{{x^2} \over {2 \sigma^2}}} \f]
+ **/
+template<typename FpType>
+inline FpType laplacianOfGaussian(FpType x, FpType sigma)
+{
+    FpType v = (x * x) / (2.0 * (sigma * sigma));
+    return -(1.0 / (M_PI * pow(sigma, 4))) * (1.0 - v) * exp(-v);
+}
 
 } //namespace corecvs

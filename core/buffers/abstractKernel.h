@@ -1,3 +1,6 @@
+#ifndef ABSTRACTKERNEL_H_
+#define ABSTRACTKERNEL_H_
+
 /**
  * \file abstractKernel.h
  * \brief This class holds a convolution kernel
@@ -8,11 +11,8 @@
  * \author alexander
  */
 
-#ifndef ABSTRACTKERNEL_H_
-#define ABSTRACTKERNEL_H_
 
 #include "core/utils/global.h"
-
 #include "core/buffers/abstractBuffer.h"
 
 namespace corecvs {
@@ -24,24 +24,36 @@ namespace corecvs {
 template<typename ElementType, typename IndexType = int32_t>
 class AbstractKernel : public AbstractBuffer<ElementType, IndexType>
 {
-public:
+public:    
     ElementType invFactor;
     ElementType bias;
     IndexType x;
     IndexType y;
 
     AbstractKernel(IndexType h, IndexType w, ElementType *data,
-            ElementType _invFactor,
-            ElementType _bias,
-            IndexType _x,
-            IndexType _y
-    ) : AbstractBuffer<ElementType, IndexType>(h, w, data)
-    {
-        invFactor = _invFactor;
-        bias = _bias;
-        x = _x;
-        y = _y;
-    }
+            ElementType invFactor,
+            ElementType bias,
+            IndexType x,
+            IndexType y
+    ) :
+      AbstractBuffer<ElementType, IndexType>(h, w, data),
+      invFactor(invFactor),
+      bias(bias),
+      x(x),y(y)
+    {}
+
+    AbstractKernel(
+        IndexType h,
+        IndexType w,
+        IndexType x,
+        IndexType y
+    ) :
+      AbstractBuffer<ElementType, IndexType>(h, w),
+      invFactor(1.0),
+      bias(0.0),
+      x(x),y(y)
+    {}
+
     AbstractKernel(IndexType h = 0, IndexType w = 0, ElementType *data = nullptr)
         : AbstractBuffer<ElementType, IndexType>(h, w, data),
           invFactor(1.0), bias(0.0), x(w / 2), y(h / 2)
@@ -87,6 +99,9 @@ public:
     }
 
 };
+
+typedef AbstractKernel<double> DpKernel;
+typedef AbstractKernel<float> FpKernel;
 
 
 } //namespace corecvs

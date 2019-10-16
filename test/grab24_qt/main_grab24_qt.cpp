@@ -59,8 +59,8 @@ int main (int argc, char **argv)
     FrameProcessor processor;
     processor.input = rawInput;
     QObject::connect(
-        rawInput  , SIGNAL(newFrameReady(frame_data_t)),
-        &processor,   SLOT(processFrame (frame_data_t)), Qt::QueuedConnection);
+        rawInput  , SIGNAL(newFrameReady(ImageCaptureInterface::FrameMetadata)),
+        &processor,   SLOT(processFrame (ImageCaptureInterface::FrameMetadata)), Qt::QueuedConnection);
 
     rawInput->startCapture();
 
@@ -95,7 +95,7 @@ FrameProcessor::FrameProcessor(QObject *parent) :
 
 }
 
-void FrameProcessor::processFrame(frame_data_t frameData)
+void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata /*frameData*/)
 {
     static int count=0;
     count++;

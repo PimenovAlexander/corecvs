@@ -34,7 +34,7 @@ STATIC_ASSERT(CORE_COUNT_OF(CaptureStatistics::names) == CaptureStatistics::MAX_
 
 
 
-void ImageCaptureInterface::notifyAboutNewFrame(frame_data_t frameData)
+void ImageCaptureInterface::notifyAboutNewFrame(ImageCaptureInterface::FrameMetadata frameData)
 {
     // SYNC_PRINT(("ImageCaptureInterface::notifyAboutNewFrame()\n"));
     if (imageInterfaceReceiver != NULL)

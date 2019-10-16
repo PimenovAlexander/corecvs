@@ -97,6 +97,7 @@ void JSONModernReader::visit<std::string>(std::string &stringField, std::string 
     }
 }
 
+
 /* And new style visitor method */
 
 template <>
@@ -143,6 +144,14 @@ void JSONModernReader::visit<std::string, StringField>(std::string &stringField,
     visit<std::string>(stringField, fieldDescriptor->defaultValue, fieldDescriptor->name.name);
 }
 
+template<>
+void JSONModernReader::visit<std::wstring, WStringField>(std::wstring &/*wstringField*/, const WStringField *fieldDescriptor)
+{
+    SYNC_PRINT(("JSONModernReader::visit<std::wstring, WStringField>(_, %s): Unsupported!\n", fieldDescriptor->name.name));
+    //visit<std::wstring>(wstringField, fieldDescriptor->defaultValue, fieldDescriptor->name.name);
+}
+
+
 template <>
 void JSONModernReader::visit<void *, PointerField>(void * &/*field*/, const PointerField * /*fieldDescriptor*/)
 {
@@ -183,3 +192,5 @@ void JSONModernReader::visit<double, DoubleVectorField>(std::vector<double> &fie
         }
     }
 }
+
+

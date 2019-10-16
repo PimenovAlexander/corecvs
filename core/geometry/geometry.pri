@@ -14,8 +14,6 @@ HEADERS += \
     geometry/gentryState.h \    
     geometry/twoViewOptimalTriangulation.h \
     geometry/mesh3DDecorated.h \
-    geometry/polyLine.h \
-    geometry/polylinemesh.h \
     geometry/ellipse.h \
     geometry/ellipseFit.h \
     geometry/plane3dFit.h \
@@ -31,6 +29,9 @@ HEADERS += \
     $$PWD/kdtree.h \
     $$PWD/beziercurve.h \
     $$PWD/raytrace/bspTree.h \
+    $$PWD/convexHull3d.h \
+    $$PWD/triangle.h \
+    $$PWD/planeFrame.h
 
 
 SOURCES += \ 
@@ -45,8 +46,6 @@ SOURCES += \
     geometry/polygonPointIterator.cpp \
     geometry/gentryState.cpp \  
     geometry/mesh3DDecorated.cpp \
-    geometry/polyLine.cpp \
-    geometry/polylinemesh.cpp \
     geometry/twoViewOptimalTriangulation.cpp \
     geometry/ellipse.cpp \
     geometry/ellipseFit.cpp \
@@ -59,7 +58,10 @@ SOURCES += \
     \
     $$PWD/halfspaceIntersector.cpp \
     $$PWD/orientedBox.cpp \
-    $$PWD/plane.cpp
+    $$PWD/plane.cpp \
+    $$PWD/convexHull3d.cpp \
+    $$PWD/triangle.cpp \
+    $$PWD/planeFrame.cpp
 
 CONFIG += with_renderer
 

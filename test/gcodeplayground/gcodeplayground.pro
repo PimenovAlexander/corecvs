@@ -16,8 +16,16 @@ QT 	+= xml
 
 include(../../utils/utils.pri)                      # it uses TARGET, ROOT_DIR and detects UTILS_BINDIR, OBJECTS_DIR, DESTDIR, ...!
 
+with_libpng {
+    LIBPNG_WRAPPER_DIR = ../../wrappers/libpng
+    include($$LIBPNG_WRAPPER_DIR/libpng.pri)
+}
+
+
 SOURCES += main_gcodeplayground.cpp \
-    vinylCutterInterpreter.cpp
+    vinylCutterInterpreter.cpp \
+    labelGcodeInterpreter.cpp
 
 HEADERS += \
-    vinylCutterInterpreter.h
+    vinylCutterInterpreter.h \
+    labelGcodeInterpreter.h

@@ -16,8 +16,8 @@
 
 #define     CORE_COUNT_OF(arr)          (sizeof(arr) / sizeof((arr)[0]))
 
-#define     CORE_CLEAR_MEMORY(pm, sz)   memset(pm, 0x00, sz)
-#define     CORE_FILL_MEMORY( pm, sz)   memset(pm, 0xFF, sz)
+#define     CORE_CLEAR_MEMORY(pm, sz)   memset((void *)pm, 0x00, sz)
+#define     CORE_FILL_MEMORY( pm, sz)   memset((void *)pm, 0xFF, sz)
 #define     CORE_CLEAR_STRUCT(obj)      CORE_CLEAR_MEMORY(&(obj), sizeof(obj))
 
 /* TODO: try to use std offsetof() while it's present. */

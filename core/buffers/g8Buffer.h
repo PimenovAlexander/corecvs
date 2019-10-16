@@ -22,6 +22,7 @@ typedef AbstractContiniousBuffer<uint8_t, int32_t> G8BufferBase;
 class G8Buffer : public G8BufferBase
 {
 public:
+    static const int CHANNELS         = 1;
     static const int BUFFER_BITS      = 8;
     static const int BUFFER_MAX_VALUE = (1 << BUFFER_BITS) - 1;  // = 0x00FF = 255
 

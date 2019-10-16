@@ -17,7 +17,7 @@ public:
 #endif
 
     // Use this
-    static ConvexPolygon FromConvexPolygonCP(const ConvexPolygon &polygon);
+    static ConvexPolygon Simplify(const ConvexPolygon &polygon);
     static ProjectivePolygon FromConvexPolygonP (const ConvexPolygon &polygon);
 
 

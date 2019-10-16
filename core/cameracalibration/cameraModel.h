@@ -174,10 +174,8 @@ public:
     void estimateUndistortedSize(const DistortionApplicationParameters &applicationParams);
 
     Ray3d               rayFromPixel(const Vector2dd &point) const;
-    Vector3dd           dirFromPixel(const Vector2dd &point) const
-    {
-        return (extrinsics.orientation.conjugated() * intrinsics->reverse(point)).normalised();
-    }
+    Vector3dd           dirFromPixel(const Vector2dd &point) const;
+    Vector2dd           pixelFromDir(const Vector3dd &dir  ) const;
     Ray3d               rayFromCenter();
 
     Vector3dd           forwardDirection() const;

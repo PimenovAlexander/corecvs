@@ -304,8 +304,8 @@ Matrix33 Matrix33::FlipXY()
  *
  * \f[ P=\pmatrix{
  *       1 &             0 &           0\cr
- *       0 &  cos(\alpha)  & sin(\alpha)\cr
- *       0 & -sin(\alpha)  & cos(\alpha)}
+ *       0 &  cos(\alpha)  & -sin(\alpha)\cr
+ *       0 &  sin(\alpha)  &  cos(\alpha)}
  * \f]
  *
  * \param alpha angle to rotate by

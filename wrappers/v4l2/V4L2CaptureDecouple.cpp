@@ -202,7 +202,7 @@ void V4L2CaptureDecoupleInterface::SpinThread::run()
         }
         mInterface->lastFrameTime = PreciseTimer::currentTime();
 
-        frame_data_t frameData;
+        ImageCaptureInterface::FrameMetadata frameData;
         frameData.timestamp = current->usecsTimeStamp();
         mInterface->notifyAboutNewFrame(frameData);
 

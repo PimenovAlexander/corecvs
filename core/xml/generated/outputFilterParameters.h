@@ -68,13 +68,13 @@ public:
         return static_cast<OutputType::OutputType>(mOutputType);
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setOutputType(OutputType::OutputType outputType)
     {
         mOutputType = outputType;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -95,6 +95,7 @@ template<class VisitorType>
         mOutputType = outputType;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const OutputFilterParameters &other) const 
     {
         if ( !(this->mOutputType == other.mOutputType)) return false;

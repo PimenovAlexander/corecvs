@@ -605,12 +605,15 @@ TEST(Draw, polygonDraw)
 
     AbstractPainter<RGB24Buffer> painter(buffer);
 
+    const int SIZE = 4;
+    const double PHASE = (M_PI / 6);
     corecvs::Polygon p;
-    for (int i = 0; i < 7; i++) {
-        p.push_back(Vector2dd::FromPolar((2 * M_PI / 7.0) * i, 100.0) + center);
+    for (int i = 0; i < SIZE; i++) {
+        p.push_back(Vector2dd::FromPolar(-(2 * M_PI / SIZE) * i + PHASE, 100.0) + center);
     }
 
-    cout << p << std::endl;
+    cout << "Poligon" << std::endl << p << std::endl;
+    cout << "Area1" << p.signedArea() << endl;
 
     painter.drawPolygon(p, RGBColor::Blue());
 
@@ -647,6 +650,7 @@ TEST(Draw, polygonDraw1)
                 p.push_back(Vector2dd::FromPolar((2 * M_PI / count) * i, radius) + center * Vector2dd(pi * 2 + 1, pj * 2 + 1));
             }
 
+            cout << "Area1" << p.signedArea() << endl;
            // cout << p << std::endl;
 
             painter.drawPolygon(p, RGBColor::Blue());
@@ -673,6 +677,7 @@ TEST(Draw, polygonDraw1)
                 p.push_back(Vector2dd::FromPolar(-(2 * M_PI / count) * i, radius) + center * Vector2dd(pi * 2 + 1, pj * 2 + 1) + Vector2dd(0.0, buffer->h / 2));
             }
 
+            cout << "Area1" << p.signedArea() << endl;
            // cout << p << std::endl;
 
             painter.drawPolygon(p, RGBColor::Green());
@@ -700,7 +705,8 @@ TEST(Draw, polygonDraw1)
                 p.push_back(Vector2dd::FromPolar(-(2 * M_PI / count) * i, radius) + center * Vector2dd(pi * 2 + 1, pj * 2 + 1) + Vector2dd(buffer->w / 2, 0.0));
             }
 
-            //cout << p << std::endl;
+            cout << "Area1" << p.signedArea() << endl;
+           //cout << p << std::endl;
 
             painter.drawPolygon(p, RGBColor::Green());
 

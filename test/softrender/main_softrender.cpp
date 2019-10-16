@@ -188,6 +188,7 @@ int main(int argc, char **argv)
 
     if (line.hasOption("preset")) {
         int preset = line.getInt("preset", 0);
+        cout << "Would use preset position" << preset << endl;
 
         switch (preset) {
         case 0: {

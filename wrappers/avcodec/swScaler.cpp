@@ -23,8 +23,8 @@ BufferType *SWScaler::scale(BufferType *input, double scaler)
     uint8_t *outData[1] = { (uint8_t *)toReturn->data };
 
 
-    int inStride [1] = { input->stride    * sizeof(typename BufferType::InternalElementType) };
-    int outStride[1] = { toReturn->stride * sizeof(typename BufferType::InternalElementType) };
+    int inStride [1] = { (int)(input->stride    * sizeof(typename BufferType::InternalElementType)) };
+    int outStride[1] = { (int)(toReturn->stride * sizeof(typename BufferType::InternalElementType)) };
 
     SwsContext *scaleContext = sws_getContext(
                 input->w,

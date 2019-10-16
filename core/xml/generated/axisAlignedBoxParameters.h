@@ -127,7 +127,7 @@ public:
         return mDepth;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setX(double x)
     {
         mX = x;
@@ -158,7 +158,7 @@ public:
         mDepth = depth;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -194,6 +194,7 @@ template<class VisitorType>
         mDepth = depth;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const AxisAlignedBoxParameters &other) const 
     {
         if ( !(this->mX == other.mX)) return false;

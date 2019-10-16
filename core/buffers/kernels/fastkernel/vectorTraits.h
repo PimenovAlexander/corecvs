@@ -56,7 +56,7 @@ public:
     static const int step = 8;
 
     typedef UInt16x8 Type;
-    typedef Int16x8 SignedType;
+    typedef Int16x8  SignedType;
     typedef Int32x8v ExtendedType;
 };
 
@@ -88,6 +88,18 @@ public:
     typedef Doublex4 ExtendedType;
 };
 
+class TraitFloatBufferVector {
+public:
+    typedef TraitGeneric<float> FallbackTraits;
+
+    typedef TraitGeneric<float>::Type InternalType;
+    static const int step = Float32x8::SIZE;
+
+    typedef Float32x8 Type;
+    typedef Float32x8 SignedType;
+    typedef Float32x8 ExtendedType;
+};
+
 class TraitDoubleBufferVector8 {
 public:
     typedef TraitGeneric<double> FallbackTraits;
@@ -100,7 +112,7 @@ public:
     typedef Doublex8 ExtendedType;
 };
 
-class TraitDoubleBufferVector4x5 {
+class TraitDoubleBufferVector4x3 {
 public:
     typedef TraitGeneric<double> FallbackTraits;
 
@@ -112,12 +124,12 @@ public:
     typedef DoublexT4<3> ExtendedType;
 };
 
-class TraitFloatBufferVector8x5 {
+class TraitFloatBufferVector8x3 {
 public:
     typedef TraitGeneric<float> FallbackTraits;
 
     typedef TraitGeneric<float>::Type InternalType;
-    static const int step = FloatT8<5>::SIZE;
+    static const int step = FloatT8<3>::SIZE;
 
     typedef FloatT8<3> Type;
     typedef FloatT8<3> SignedType;
@@ -210,6 +222,13 @@ public:
 };
 
 template<int inputNumber = 1, int outputNumber = 1>
+class AlgebraFloat
+{
+public:
+    typedef VectorAlgebraMulti<TraitFloatBufferVector, inputNumber, outputNumber> Type;
+};
+
+template<int inputNumber = 1, int outputNumber = 1>
 class VectorAlgebraDouble
 {
 public:
@@ -225,17 +244,17 @@ public:
 };
 
 template<int inputNumber = 1, int outputNumber = 1>
-class VectorAlgebraDoubleEx5
+class VectorAlgebraDoubleEx3
 {
 public:
-    typedef VectorAlgebraMulti<TraitDoubleBufferVector4x5, inputNumber, outputNumber> Type;
+    typedef VectorAlgebraMulti<TraitDoubleBufferVector4x3, inputNumber, outputNumber> Type;
 };
 
 template<int inputNumber = 1, int outputNumber = 1>
-class VectorAlgebraFloatEx5
+class VectorAlgebraFloatEx3
 {
 public:
-    typedef VectorAlgebraMulti<TraitFloatBufferVector8x5, inputNumber, outputNumber> Type;
+    typedef VectorAlgebraMulti<TraitFloatBufferVector8x3, inputNumber, outputNumber> Type;
 };
 #endif
 
@@ -246,6 +265,15 @@ class AlgebraDouble
 public:
     typedef TraitGeneric<double> TraitDouble;
     typedef ScalarAlgebraMulti<TraitDouble, TraitDouble, inputNumber, outputNumber> Type;
+
+};
+
+template<int inputNumber = 1, int outputNumber = 1>
+class AlgebraFloat
+{
+public:
+    typedef TraitGeneric<float> TraitFloat;
+    typedef ScalarAlgebraMulti<TraitFloat, TraitFloat, inputNumber, outputNumber> Type;
 
 };
 #endif

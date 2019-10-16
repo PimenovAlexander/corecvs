@@ -22,6 +22,7 @@ target_sources(corecvs
         ${CMAKE_CURRENT_LIST_DIR}/flow/depthBuffer.h
         ${CMAKE_CURRENT_LIST_DIR}/histogram/histogram.h
         ${CMAKE_CURRENT_LIST_DIR}/kernels/gaussian.h
+        ${CMAKE_CURRENT_LIST_DIR}/kernels/laplace.h
         ${CMAKE_CURRENT_LIST_DIR}/kernels/sobel.h
         ${CMAKE_CURRENT_LIST_DIR}/kernels/threshold.h
         ${CMAKE_CURRENT_LIST_DIR}/kernels/arithmetic.h
@@ -89,6 +90,7 @@ target_sources(corecvs
         ${CMAKE_CURRENT_LIST_DIR}/histogram/histogram.cpp
         ${CMAKE_CURRENT_LIST_DIR}/kernels/gaussian.cpp
         ${CMAKE_CURRENT_LIST_DIR}/kernels/sobel.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/kernels/laplace.cpp
         ${CMAKE_CURRENT_LIST_DIR}/kernels/threshold.cpp
         ${CMAKE_CURRENT_LIST_DIR}/kernels/blurProcessor.cpp
         ${CMAKE_CURRENT_LIST_DIR}/kernels/spatialGradient.cpp

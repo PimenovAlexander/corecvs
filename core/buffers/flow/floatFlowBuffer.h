@@ -18,6 +18,7 @@
 #include "core/buffers/g12Buffer.h"
 #include "core/buffers/abstractContiniousBuffer.h"
 #include "core/kltflow/kltGenerator.h"
+#include "core/buffers/rgb24/rgbColor.h"
 
 #include "core/xml/generated/preciseInterpolationType.h"
 #include "core/xml/generated/makePreciseParameters.h"
@@ -43,6 +44,30 @@ public:
 
 
     FloatFlow& operator=(const FloatFlow &other) { isKnown = other.isKnown; vector = other.vector; return *this; }
+
+    bool operator!=(const FloatFlow &other) const
+    {
+        return (!isKnown && !other.isKnown) ||
+                (isKnown && other.isKnown && vector != other.vector);
+    }
+
+    FloatFlow operator-(const FloatFlow &other) { return isKnown && other.isKnown ? FloatFlow(vector - other.vector) : FloatFlow(false); }
+
+    friend ostream& operator << (ostream &out, const FloatFlow &toSave)
+    {
+        if (toSave.isKnown) {
+            cout << "[" << toSave.vector.x() << " " <<  toSave.vector.y() << "]";
+        } else {
+            cout << "[ ? ]";
+        }
+
+        return out;
+    }
+
+    HSVColor getHueColor  (double maxMag, double scaler, double multiplier);
+    RGBColor getColor     (double maxMag, double scaler, double multiplier, bool kitti = false);
+    RGBColor getKittiColor(double maxMag, double scaler, double multiplier);
+
 };
 
 

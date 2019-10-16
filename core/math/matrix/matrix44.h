@@ -103,6 +103,11 @@ public:
         return result;
     }
 
+    /* Mirror matrix */
+    static Matrix44 MirrorXY();
+    static Matrix44 MirrorYZ();
+    static Matrix44 MirrorXZ();
+
     Matrix33 topLeft33() const;
     Vector3dd translationPart() const;
 	Vector4dd row(int i) const

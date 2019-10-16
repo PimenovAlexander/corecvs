@@ -1,5 +1,7 @@
 #include <fstream>
-#include "cameraModel.h"
+
+#include "core/cameracalibration/cameraModel.h"
+#include "core/geometry/convexHull.h"
 
 namespace corecvs {
 
@@ -214,6 +216,16 @@ Ray3d CameraModel::rayFromPixel(const Vector2dd &point) const
     Vector3dd direction = intrinsics->reverse(point);
     Ray3d ray(extrinsics.orientation.conjugated() * direction, extrinsics.position);
     return ray;
+}
+
+Vector3dd CameraModel::dirFromPixel(const Vector2dd &point) const
+{
+    return (extrinsics.orientation.conjugated() * intrinsics->reverse(point)).normalised();
+}
+
+Vector2dd CameraModel::pixelFromDir(const Vector3dd &dir) const
+{
+    return intrinsics->project(extrinsics.orientation * dir.normalised());
 }
 
 Ray3d CameraModel::rayFromCenter()

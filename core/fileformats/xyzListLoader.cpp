@@ -1,4 +1,5 @@
 #include <sstream>
+#include <iomanip>
 
 #include "core/fileformats/xyzListLoader.h"
 #include "core/utils/utils.h"
@@ -47,6 +48,9 @@ int XYZListLoader::loadXYZ(istream &input, Mesh3D &mesh)
 
 int XYZListLoader::saveXYZ(ostream &out, Mesh3D &mesh)
 {
+    out.imbue(std::locale("C"));
+    out << std::setprecision(15);
+
     for (size_t i = 0; i < mesh.vertexes.size(); i++)
     {
         Vector3dd &vertex = mesh.vertexes[i];

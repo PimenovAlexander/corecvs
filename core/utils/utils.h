@@ -66,6 +66,8 @@ namespace HelperUtils
 
     void            stringSplit(const string &s, char delim, vector<string> &elems);
     vector<string>  stringSplit(const string &s, char delim);
+    vector<string>  stringSplit(const string &s, const std::string &delim);
+
 
     string          escapeString  (const string &s, const std::unordered_map<char, char> &symbols, const std::string &escape);
     string          unescapeString(const string &s, const std::unordered_map<char, char> &symbols, char guard);
@@ -125,6 +127,12 @@ namespace HelperUtils
     string getFileName(const string& fileName);
     string getFileNameIfExist(const string& fileName, const string& relativePath);
 
+    /**
+     *  Many data interchange formats need to load double or float values in С locale,
+     *  not in the local locale.
+     *
+     *  This method parses double with '.' separtor
+     **/
     double parseDouble(const string &s);
 } // namespace HelperUtils
 

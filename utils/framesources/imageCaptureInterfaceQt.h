@@ -19,7 +19,7 @@ class ImageCaptureQtNotifier : public QObject
     Q_OBJECT
 public:
 signals:
-    void    newFrameReady(frame_data_t frameData);
+    void    newFrameReady(ImageCaptureInterface::FrameMetadata frameData);
     void    newImageReady();
     void    newStatisticsReady(CaptureStatistics stats);
     void    streamPaused();
@@ -31,14 +31,14 @@ class ImageCaptureInterfaceQt: public ImageInterfaceReceiver, public ImageCaptur
 public:
     ImageCaptureInterfaceQt()
     {
-        qRegisterMetaType<frame_data_t>("frame_data_t");
+        qRegisterMetaType<ImageCaptureInterface::FrameMetadata>("ImageCaptureInterface::FrameMetadata");
         imageInterfaceReceiver = this;
         SYNC_PRINT(("Constructing ImageCaptureInterfaceQt::ImageCaptureInterfaceQt()\n"));
     }
 
-    virtual void newFrameReadyCallback(frame_data_t frameData) override
+    virtual void newFrameReadyCallback(ImageCaptureInterface::FrameMetadata frameData) override
     {
-        // SYNC_PRINT(("ImageCaptureInterfaceQt::newFrameReadyCallback(frame_data_t frameData)\n"));
+        // SYNC_PRINT(("ImageCaptureInterfaceQt::newFrameReadyCallback(ImageCaptureInterface::FrameMetadata frameData)\n"));
         emit newFrameReady(frameData);
     }
 

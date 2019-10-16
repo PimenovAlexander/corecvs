@@ -91,7 +91,7 @@ public:
         return mB;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setR(int r)
     {
         mR = r;
@@ -107,7 +107,7 @@ public:
         mB = b;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -134,6 +134,7 @@ template<class VisitorType>
         mB = b;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const RgbColorParameters &other) const 
     {
         if ( !(this->mR == other.mR)) return false;

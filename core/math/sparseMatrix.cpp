@@ -30,11 +30,15 @@ void SparseMatrix::checkCorrectness() const
         }
 }
 
+#define SILENT
+
 struct Registrant
 {
     Registrant()
     {
+#ifndef SILENT
         std::cout << "Registering in spmvwisdom" << std::endl;
+#endif
         corecvs::SPMVWisdom::Register(corecvs::AcceleratorTypes::CPU, corecvs::SparseImplementations::HOMEBREW, [](int, const SparseMatrix &m, const Vector &v, bool trans) { return m.spmv_homebrew(v, trans); });
 #ifdef WITH_CUSPARSE
         corecvs::SPMVWisdom::Register(corecvs::AcceleratorTypes::CUDA, corecvs::SparseImplementations::CUSPARSE, [](int id, const SparseMatrix &m, const Vector &v, bool trans) { return m.spmv_cusparse(v, trans, id); });
@@ -42,7 +46,10 @@ struct Registrant
 #ifdef WITH_MKL
         corecvs::SPMVWisdom::Register(corecvs::AcceleratorTypes::CPU, corecvs::SparseImplementations::MKL,      [](int, const SparseMatrix &m, const Vector &v, bool trans) { return m.spmv_mkl(v, trans); });
 #endif
+
+#ifndef SILENT
         std::cout << "Registering in trsvwisdom" << std::endl;
+#endif
         corecvs::TRSVWisdom::Register(corecvs::AcceleratorTypes::CPU, corecvs::SparseImplementations::HOMEBREW, [](int, const SparseMatrix &m, const Vector &v, const char* trans, bool up, int N) { return m.trsv_homebrew(v, trans, up, N); });
 #if 1
 #ifdef WITH_CUSPARSE
@@ -52,7 +59,11 @@ struct Registrant
         corecvs::TRSVWisdom::Register(corecvs::AcceleratorTypes::CPU, corecvs::SparseImplementations::MKL, [](int, const SparseMatrix &m, const Vector &v, const char* trans, bool up, int N) { return m.trsv_mkl(v, trans, up, N); });
 #endif
 #endif
+
+#ifndef SILENT
         std::cout << "Registering in spmmwisdom" << std::endl;
+#endif
+
         corecvs::SPMMWisdom::Register(corecvs::AcceleratorTypes::CPU, corecvs::SparseImplementations::HOMEBREW, [](int, const corecvs::SPMMC::inner_type& t) { return std::get<0>(t).spmm_homebrew(std::get<1>(t), std::get<2>(t), std::get<3>(t)); });
 #if 1
 #ifdef WITH_CUSPARSE

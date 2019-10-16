@@ -373,7 +373,7 @@ void BSPRenderer::DrawSector(Sector& sector, RGB24Buffer& buffer,
 
     if (withInfo) {
         //buffer.drawCrosshare2(p.center(), sector.floorColor);
-        ConvexPolygon cp = Polygon::Reverse(p).toConvexPolygon();
+        ConvexPolygon cp = Polygon::Reversed(p).toConvexPolygon();
 
         cp.inset(10);
         Polygon ip = Polygon::FromConvexPolygon(cp);

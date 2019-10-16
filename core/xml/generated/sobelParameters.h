@@ -92,7 +92,7 @@ public:
         return mVertical;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setMixingType(SobelMixingType::SobelMixingType mixingType)
     {
         mMixingType = mixingType;
@@ -108,7 +108,7 @@ public:
         mVertical = vertical;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -135,6 +135,7 @@ template<class VisitorType>
         mVertical = vertical;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const SobelParameters &other) const 
     {
         if ( !(this->mMixingType == other.mMixingType)) return false;
