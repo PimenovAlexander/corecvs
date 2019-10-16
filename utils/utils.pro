@@ -342,7 +342,7 @@ HEADERS += \
     uis/pointsRectificationWidget.h \
 
 SOURCES += \
-    widgets/generated/graphPlotParametersControlWidget.cpp \
+    widgets/graphPlotParametersControlWidget.cpp \
     camcalc/cameraCalculatorWidget.cpp \
     \
     corestructs/histogramwidget.cpp \
@@ -483,16 +483,16 @@ with_opengl {
          \
 
 
-    SOURCES     += \
+    SOURCES += \
         3d/scene3D.cpp \
         \
         uis/cloudview/cloudViewDialog.cpp \
         uis/cloudview/treeSceneController.cpp \
         3d/generated/draw3dParameters.cpp \
-        3d/generated/draw3dParametersControlWidget.cpp \
-        3d/generated/draw3dCameraParametersControlWidget.cpp \
+        3d/draw3dParametersControlWidget.cpp \
+        3d/draw3dCameraParametersControlWidget.cpp \
         3d/generated/draw3dCameraParameters.cpp \
-        3d/generated/draw3dViMouseParametersControlWidget.cpp \
+        3d/draw3dViMouseParametersControlWidget.cpp \
         3d/generated/draw3dViMouseParameters.cpp \
         \
         3d/mesh3DScene.cpp \
@@ -503,9 +503,9 @@ with_opengl {
         uis/cloudview/cloudViewDialog.ui \
         #   Generated    \
         \
-        3d/generated/draw3dParametersControlWidget.ui \
-        3d/generated/draw3dCameraParametersControlWidget.ui \
-        3d/generated/draw3dViMouseParametersControlWidget.ui \
+        3d/draw3dParametersControlWidget.ui \
+        3d/draw3dCameraParametersControlWidget.ui \
+        3d/draw3dViMouseParametersControlWidget.ui \
 
 #some dependancies
 
