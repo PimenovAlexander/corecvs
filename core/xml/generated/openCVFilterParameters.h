@@ -92,7 +92,7 @@ public:
         return mParam2;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setOpenCVFilter(OpenCVBinaryFilterType::OpenCVBinaryFilterType openCVFilter)
     {
         mOpenCVFilter = openCVFilter;
@@ -108,7 +108,7 @@ public:
         mParam2 = param2;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -135,6 +135,7 @@ template<class VisitorType>
         mParam2 = param2;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const OpenCVFilterParameters &other) const 
     {
         if ( !(this->mOpenCVFilter == other.mOpenCVFilter)) return false;

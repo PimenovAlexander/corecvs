@@ -21,4 +21,17 @@
   </class>
 
 
+  <class name="OpenCV Square Detector Parameters">
+    <field type="bool"        name="debug"              defaultValue="false"/>
+
+    <field type="int"         name="treshholdLevel"     defaultValue="4"  />
+    <field type="int"         name="cannyThreshold1"    defaultValue="5"  />
+    <field type="int"         name="cannyThreshold2"    defaultValue="50"  />
+    <field type="int"         name="cannyApperture"     defaultValue="5"  />
+    <field type="double"      name="maxCosineThreshold" defaultValue="0.3"/>
+
+  </class>
+
+
+
 </poco>

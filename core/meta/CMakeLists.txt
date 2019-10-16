@@ -1,13 +1,13 @@
 target_sources(corecvs
     PUBLIC
-        meta/astNode.h
-        meta/packedDerivative.h
-        meta/floatJIT.h
-        meta/astOptimize.h
+        ${CMAKE_CURRENT_LIST_DIR}/astNode.h
+        ${CMAKE_CURRENT_LIST_DIR}/packedDerivative.h
+        ${CMAKE_CURRENT_LIST_DIR}/floatJIT.h
+        ${CMAKE_CURRENT_LIST_DIR}/astOptimize.h
     PRIVATE
-        meta/astNode.cpp
-        meta/packedDerivative.cpp
-        meta/floatJIT.cpp
-        meta/astOptimize.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/astNode.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/packedDerivative.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/floatJIT.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/astOptimize.cpp
 )
 

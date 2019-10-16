@@ -20,7 +20,7 @@ public:
         A(A), B(B)
     {}
 
-    void operator()(BlockedRange<int> range) const
+    void operator()(const BlockedRange<int> range) const
     {
         for (int i = range.begin(); i < range.end(); i++)
         {
@@ -62,7 +62,7 @@ void optim(int16_t *A, int16_t *B)
     for (int rep = 0; rep < REPEAT; rep++)
     {
         parallelable_for(0, LIMIT,
-        [&](BlockedRange<int> range){
+        [&](const BlockedRange<int> range){
              for (int i = range.begin(); i < range.end(); i+= 16)
              {
                  int c = 5;
@@ -131,7 +131,7 @@ TEST(TestFMA, fma)
         for (int rep = 0; rep < REPEAT; rep++)
         {
             parallelable_for(0, LIMIT,
-            [&](BlockedRange<int> range){
+            [&](const BlockedRange<int> range){
                  for (int i = range.begin(); i < range.end(); i++)
                  {
                      int c = 5;

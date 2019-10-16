@@ -24,7 +24,7 @@ namespace corecvs {
  *
  *   War is Peace
  *   Freedom is Slavery
- *   Ignorance is Power
+ *   Ignorance is Strength
  *           1984
  * </pre>
  *
@@ -37,6 +37,10 @@ class DummyAlgebra
 public:
     typedef uint8_t InputType;
     typedef int8_t InputSignedType;
+
+    typedef uint8_t Type;
+    typedef int8_t  SignedType;
+
 };
 
 

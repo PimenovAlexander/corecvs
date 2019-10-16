@@ -3,7 +3,6 @@
 
 #ifdef WITH_OPENCV
 #include <opencv2/core/version.hpp>
-
 #endif
 
 #ifdef WITH_TBB

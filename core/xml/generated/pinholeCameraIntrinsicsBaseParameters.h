@@ -140,7 +140,7 @@ public:
         return mDistortedSize;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setFx(double fx)
     {
         mFx = fx;
@@ -176,7 +176,7 @@ public:
         mDistortedSize = distortedSize;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -215,6 +215,7 @@ template<class VisitorType>
         mDistortedSize = distortedSize;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const PinholeCameraIntrinsicsBaseParameters &other) const 
     {
         if ( !(this->mFx == other.mFx)) return false;

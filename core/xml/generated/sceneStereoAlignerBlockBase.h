@@ -209,7 +209,7 @@ public:
         return mOutCamera2;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setInScene(corecvs::FixtureScene * inScene)
     {
         mInScene = inScene;
@@ -270,7 +270,7 @@ public:
         mOutCamera2 = outCamera2;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -324,6 +324,7 @@ template<class VisitorType>
         mOutCamera2 = outCamera2;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const SceneStereoAlignerBlockBase &other) const 
     {
         if ( !(this->mInFixture1 == other.mInFixture1)) return false;

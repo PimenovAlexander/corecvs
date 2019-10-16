@@ -1,65 +1,63 @@
 target_sources(corecvs
     PUBLIC
-        geometry/ellipticalApproximation.h
-        geometry/axisAlignedBox.h
-        geometry/rectangle.h
-        geometry/line.h
-        geometry/triangulation.h
-        geometry/polygons.h
-        geometry/mesh3d.h
-        geometry/vptree.h
-        geometry/convexPolyhedron.h
-        geometry/conic.h
-        geometry/polygonPointIterator.h
-    #    geometry/projection.h
-        geometry/gentryState.h
-        geometry/twoViewOptimalTriangulation.h
-        geometry/mesh3DDecorated.h
-        geometry/polyLine.h
-        geometry/polylinemesh.h
-        geometry/ellipse.h
-        geometry/ellipseFit.h
-        geometry/plane3dFit.h
-        geometry/meshClicker.h
-        geometry/convexHull.h
-        geometry/convexQuickHull.h
-        geometry/projectiveConvexQuickHull.h
-        geometry/pointCloud.h
-        geometry/halfspaceIntersector.h
-        geometry/orientedBox.h
-        geometry/plane.h
-        geometry/kdtree.h
-        geometry/beziercurve.h
-        geometry/raytrace/bspTree.h
+        ${CMAKE_CURRENT_LIST_DIR}/ellipticalApproximation.h
+        ${CMAKE_CURRENT_LIST_DIR}/axisAlignedBox.h
+        ${CMAKE_CURRENT_LIST_DIR}/rectangle.h
+        ${CMAKE_CURRENT_LIST_DIR}/line.h
+        ${CMAKE_CURRENT_LIST_DIR}/triangulation.h
+        ${CMAKE_CURRENT_LIST_DIR}/polygons.h
+        ${CMAKE_CURRENT_LIST_DIR}/mesh3d.h
+        ${CMAKE_CURRENT_LIST_DIR}/vptree.h
+        ${CMAKE_CURRENT_LIST_DIR}/convexPolyhedron.h
+        ${CMAKE_CURRENT_LIST_DIR}/conic.h
+        ${CMAKE_CURRENT_LIST_DIR}/polygonPointIterator.h
+    #    ${CMAKE_CURRENT_LIST_DIR}/projection.h
+        ${CMAKE_CURRENT_LIST_DIR}/gentryState.h
+        ${CMAKE_CURRENT_LIST_DIR}/twoViewOptimalTriangulation.h
+        ${CMAKE_CURRENT_LIST_DIR}/mesh3DDecorated.h
+        ${CMAKE_CURRENT_LIST_DIR}/ellipse.h
+        ${CMAKE_CURRENT_LIST_DIR}/ellipseFit.h
+        ${CMAKE_CURRENT_LIST_DIR}/plane3dFit.h
+        ${CMAKE_CURRENT_LIST_DIR}/meshClicker.h
+        ${CMAKE_CURRENT_LIST_DIR}/convexHull.h
+        ${CMAKE_CURRENT_LIST_DIR}/convexHull3d.h
+        ${CMAKE_CURRENT_LIST_DIR}/convexQuickHull.h
+        ${CMAKE_CURRENT_LIST_DIR}/projectiveConvexQuickHull.h
+        ${CMAKE_CURRENT_LIST_DIR}/pointCloud.h
+        ${CMAKE_CURRENT_LIST_DIR}/halfspaceIntersector.h
+        ${CMAKE_CURRENT_LIST_DIR}/orientedBox.h
+        ${CMAKE_CURRENT_LIST_DIR}/plane.h
+        ${CMAKE_CURRENT_LIST_DIR}/kdtree.h
+        ${CMAKE_CURRENT_LIST_DIR}/beziercurve.h
+        ${CMAKE_CURRENT_LIST_DIR}/raytrace/bspTree.h
 
     PRIVATE
-        geometry/ellipticalApproximation.cpp
-        geometry/axisAlignedBox.cpp
-        geometry/rectangle.cpp
-        geometry/triangulation.cpp
-        geometry/polygons.cpp
-        geometry/mesh3d.cpp
-        geometry/convexPolyhedron.cpp
-        geometry/conic.cpp
-        geometry/polygonPointIterator.cpp
-        geometry/projection.cpp
-        geometry/gentryState.cpp
-        geometry/mesh3DDecorated.cpp
-        geometry/polyLine.cpp
-        geometry/polylinemesh.cpp
-        geometry/twoViewOptimalTriangulation.cpp
-        geometry/ellipse.cpp
-        geometry/ellipseFit.cpp
-        geometry/plane3dFit.cpp
-        geometry/meshClicker.cpp
-        geometry/convexHull.cpp
-        geometry/convexQuickHull.cpp
-        geometry/projectiveConvexQuickHull.cpp
-        geometry/pointCloud.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ellipticalApproximation.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/axisAlignedBox.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/rectangle.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/triangulation.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/polygons.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/mesh3d.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/convexPolyhedron.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/conic.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/polygonPointIterator.cpp
+        # ${CMAKE_CURRENT_LIST_DIR}/projection.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/gentryState.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/mesh3DDecorated.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/twoViewOptimalTriangulation.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ellipse.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ellipseFit.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/plane3dFit.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/meshClicker.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/convexHull.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/convexHull3d.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/convexQuickHull.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/projectiveConvexQuickHull.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/pointCloud.cpp
 
-        geometry/halfspaceIntersector.cpp
-        geometry/orientedBox.cpp
-        geometry/plane.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/halfspaceIntersector.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/orientedBox.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/plane.cpp
 
 )
 
@@ -68,27 +66,27 @@ option(with_renderer "Should compile renderer" YES)
 if(with_renderer)
     target_sources(corecvs
       PUBLIC
-        geometry/raytrace/raytraceableNodeWrapper.h
-        geometry/raytrace/raytraceRenderer.h
-        geometry/raytrace/raytraceObjects.h
-        geometry/raytrace/perlinNoise.h
-        geometry/raytrace/sdfRenderable.h
-        geometry/raytrace/materialExamples.h
-        geometry/raytrace/sdfRenderableObjects.h
-        geometry/renderer/attributedTriangleSpanIterator.h
-        geometry/renderer/simpleRenderer.h
-        geometry/renderer/geometryIterator.h
+        ${CMAKE_CURRENT_LIST_DIR}/raytrace/raytraceableNodeWrapper.h
+        ${CMAKE_CURRENT_LIST_DIR}/raytrace/raytraceRenderer.h
+        ${CMAKE_CURRENT_LIST_DIR}/raytrace/raytraceObjects.h
+        ${CMAKE_CURRENT_LIST_DIR}/raytrace/perlinNoise.h
+        ${CMAKE_CURRENT_LIST_DIR}/raytrace/sdfRenderable.h
+        ${CMAKE_CURRENT_LIST_DIR}/raytrace/materialExamples.h
+        ${CMAKE_CURRENT_LIST_DIR}/raytrace/sdfRenderableObjects.h
+        ${CMAKE_CURRENT_LIST_DIR}/renderer/attributedTriangleSpanIterator.h
+        ${CMAKE_CURRENT_LIST_DIR}/renderer/simpleRenderer.h
+        ${CMAKE_CURRENT_LIST_DIR}/renderer/geometryIterator.h
 
       PRIVATE
-        geometry/raytrace/raytraceRenderer.cpp
-        geometry/raytrace/raytraceObjects.cpp
-        geometry/raytrace/perlinNoise.cpp
-        geometry/raytrace/sdfRenderable.cpp
-        geometry/raytrace/materialExamples.cpp
-        geometry/raytrace/raytraceableNodeWrapper.cpp
-        geometry/renderer/simpleRenderer.cpp
-        geometry/renderer/attributedTriangleSpanIterator.cpp
-        geometry/raytrace/sdfRenderableObjects.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/raytrace/raytraceRenderer.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/raytrace/raytraceObjects.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/raytrace/perlinNoise.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/raytrace/sdfRenderable.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/raytrace/materialExamples.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/raytrace/raytraceableNodeWrapper.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/renderer/simpleRenderer.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/renderer/attributedTriangleSpanIterator.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/raytrace/sdfRenderableObjects.cpp
 
     )
 

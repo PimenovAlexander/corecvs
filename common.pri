@@ -151,7 +151,7 @@ gcc_env_toolchain {
 }
 
 clang_toolchain {
-  CLANG_POSTFIX="-7"
+  CLANG_POSTFIX="-9"
 
   CONFIG -= warn_on
 
@@ -571,7 +571,7 @@ with_openblas {
                 !build_pass: message(requested openBLAS via BLAS_PATH is not found and is deactivated)
             }
         } else {
-            exists(/usr/include/cblas.h) {
+            exists(/usr/include/cblas.h) | exists(/usr/include/x86_64-linux-gnu/cblas.h) {
                 !build_pass: message (Using System BLAS)
                 LIBS        += -lopenblas -llapacke
                 DEFINES     += WITH_OPENBLAS

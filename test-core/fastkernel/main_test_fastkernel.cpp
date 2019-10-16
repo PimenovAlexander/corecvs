@@ -112,6 +112,26 @@ TEST(FastKernel, _testVector3dd)
 
 #ifdef WITH_SSE
 
+
+TEST(FastKernel, MulAddKernel)
+{
+    DpImage image(5,5);
+
+    VisiterSemiRandom<double> vis;
+    image.touchOperationElementwize(vis);
+    cout << "Before:" << endl;
+    cout << image;
+
+    MulAddConstKernel<DummyAlgebra> kernel(1000.0, 0.1);
+    BufferProcessor<DpImage, DpImage, MulAddConstKernel, ScalarAlgebraDouble> proc;
+    DpImage *inout [1] = {&image};
+    proc.process(inout, inout, kernel);
+    cout << "After2:" << endl;
+    cout << image;
+
+}
+
+
 TEST(FastKernel, _testSSE)
 {
     printf("Testing the fast kernel infrastructure with SSE\n");

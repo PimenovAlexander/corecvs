@@ -283,7 +283,7 @@ public:
         return mCornerScores;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setProduceDebug(bool produceDebug)
     {
         mProduceDebug = produceDebug;
@@ -379,7 +379,7 @@ public:
         mCornerScores = cornerScores;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -454,6 +454,7 @@ template<class VisitorType>
         mCornerScores = cornerScores;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const ChessBoardCornerDetectorParamsBase &other) const 
     {
         if ( !(this->mProduceDebug == other.mProduceDebug)) return false;

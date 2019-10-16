@@ -141,7 +141,7 @@ public:
         return mKLTThreshold;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setShouldMakePrecise(bool shouldMakePrecise)
     {
         mShouldMakePrecise = shouldMakePrecise;
@@ -177,7 +177,7 @@ public:
         mKLTThreshold = kLTThreshold;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -216,6 +216,7 @@ template<class VisitorType>
         mKLTThreshold = kLTThreshold;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const MakePreciseParameters &other) const 
     {
         if ( !(this->mShouldMakePrecise == other.mShouldMakePrecise)) return false;

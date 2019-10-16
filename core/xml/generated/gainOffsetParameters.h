@@ -79,7 +79,7 @@ public:
         return mOffset;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setGain(double gain)
     {
         mGain = gain;
@@ -90,7 +90,7 @@ public:
         mOffset = offset;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -114,6 +114,7 @@ template<class VisitorType>
         mOffset = offset;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const GainOffsetParameters &other) const 
     {
         if ( !(this->mGain == other.mGain)) return false;

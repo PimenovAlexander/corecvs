@@ -20,6 +20,8 @@ namespace corecvs {
 
 typedef AbstractContiniousBuffer<uint16_t, int32_t> G12BufferBase;
 
+typedef AbstractContiniousBuffer<uint16_t, int32_t> G16Buffer;
+
 /**
  * TODO: Add consts where it should go
  *

@@ -2,12 +2,13 @@
 
 #include <QFileDialog>
 
-
-#include <core/buffers/bufferFactory.h>
+#include "core/buffers/bufferFactory.h"
 
 #ifdef WITH_V4L2
-#include <V4L2Capture.h>
+#include "V4L2Capture.h"
 #endif
+
+using namespace corecvs;
 
 InputSelectorWidget::InputSelectorWidget(QWidget *parent)
     : QWidget(parent)
@@ -102,7 +103,7 @@ void InputSelectorWidget::browseAvi()
         this,
         "Choose an file name",
         ".",
-        "Avi (*.avi, *.mp4, *.mkv)"
+        "Avi (*.avi *.mp4 *.mkv)"
         );
 
     ui.aviLineEdit->setText(filename);
@@ -116,7 +117,7 @@ void InputSelectorWidget::browseFile()
         this,
         "Choose an file name",
         ".",
-        "Images (*.png, *.jpeg, *.bmp)"
+        "Images (*.png *.jpeg *.bmp)"
         );
     ui.fileLineEdit->setText(filename);
 

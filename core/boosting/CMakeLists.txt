@@ -1,12 +1,12 @@
 target_sources(corecvs
     PUBLIC
-        boosting/adaBoost.h
-        boosting/cascadeClassifier.h
-        boosting/vjPattern.h
-        boosting/detectedObject.h
+        ${CMAKE_CURRENT_LIST_DIR}/adaBoost.h
+        ${CMAKE_CURRENT_LIST_DIR}/cascadeClassifier.h
+        ${CMAKE_CURRENT_LIST_DIR}/vjPattern.h
+        ${CMAKE_CURRENT_LIST_DIR}/detectedObject.h
     PRIVATE
-        boosting/adaBoost.cpp
-        boosting/cascadeClassifier.cpp
-        boosting/vjPattern.cpp
-        boosting/detectedObject.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/adaBoost.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/cascadeClassifier.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/vjPattern.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/detectedObject.cpp
 )

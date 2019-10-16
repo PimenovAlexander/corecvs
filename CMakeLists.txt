@@ -21,10 +21,20 @@ IF ( USE_OPENBLAS )
     find_package( OpenBlas )
 ENDIF ()
 
+include(cmake/googletest.cmake)
+fetch_googletest(
+    ${PROJECT_SOURCE_DIR}/cmake
+    ${PROJECT_BINARY_DIR}/googletest
+    )
 
 add_subdirectory(core)
+add_subdirectory(utils)
+#add_subdirectory(applications)
+add_subdirectory(test/focus_stack)
+add_subdirectory(test/fileloader)
+#add_subdirectory(test)
+
+enable_testing()
 add_subdirectory(test-core)
+add_subdirectory(test-core/-perf)
 
-add_dependencies(test-core corecvs)
-
-#add_executable(Tutorial tutorial.cxx)

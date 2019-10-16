@@ -224,7 +224,7 @@ public:
         return mCenterToZeroY;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setVertical(bool vertical)
     {
         mVertical = vertical;
@@ -295,7 +295,7 @@ public:
         mCenterToZeroY = centerToZeroY;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -355,6 +355,7 @@ template<class VisitorType>
         mCenterToZeroY = centerToZeroY;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const BitcodeBoardParamsBase &other) const 
     {
         if ( !(this->mVertical == other.mVertical)) return false;

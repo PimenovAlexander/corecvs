@@ -225,7 +225,7 @@ public:
         return mSkipUndistortedWithNoDistortedBoard;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setEstimateUndistortedFromDistorted(bool estimateUndistortedFromDistorted)
     {
         mEstimateUndistortedFromDistorted = estimateUndistortedFromDistorted;
@@ -296,7 +296,7 @@ public:
         mSkipUndistortedWithNoDistortedBoard = skipUndistortedWithNoDistortedBoard;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -356,6 +356,7 @@ template<class VisitorType>
         mSkipUndistortedWithNoDistortedBoard = skipUndistortedWithNoDistortedBoard;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const CheckerboardDetectionParameters &other) const 
     {
         if ( !(this->mEstimateUndistortedFromDistorted == other.mEstimateUndistortedFromDistorted)) return false;

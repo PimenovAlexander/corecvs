@@ -10,6 +10,7 @@
 
 #include "core/math/vector/vector3d.h"
 #include "core/math/quaternion.h"
+#include "core/math/eulerAngles.h"
 #include "core/math/matrix/matrix33.h"
 #include "core/math/matrix/matrix22.h"
 #include "core/geometry/line.h"
@@ -112,6 +113,13 @@ public:
         return Affine3D(LinearType::Identity(), Vector3dd(x, y, z));
     }
 
+    /**
+     *   This is an utility method. If would work correctly if top 3x3 matrix is unitary
+     **/
+    static Affine3D FromMatrix44(const Matrix44 &m) {
+        return Affine3D(Quaternion::FromMatrix(m.topLeft33()), m.translationPart());
+    }
+
     Affine3D inverted() const;
 
     explicit operator corecvs::Matrix44() const;
@@ -172,8 +180,10 @@ inline Vector3dd Affine3D<Quaternion>::applyInv(const Vector3dd &x) const
     return rotor.conjugated() * (x - shift);
 }
 
-typedef Affine3D<Quaternion> Affine3DQ;
-typedef Affine3D<Matrix33>   Affine3DM;
+typedef Affine3D<Quaternion>  Affine3DQ;
+typedef Affine3D<Matrix33>    Affine3DM;
+typedef Affine3D<EulerAngles> Affine3DE;
+
 
 
 /**

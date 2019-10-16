@@ -1,9 +1,9 @@
 target_sources(corecvs
     PUBLIC
-        stats/calculationStats.h
-        stats/graphData.h
+        ${CMAKE_CURRENT_LIST_DIR}/calculationStats.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphData.h
     PRIVATE
-        stats/calculationStats.cpp
-        stats/graphData.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/calculationStats.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphData.cpp
  )
 

@@ -139,7 +139,7 @@ public:
         return mLockPositions;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setTriangulateOnSphere(bool triangulateOnSphere)
     {
         mTriangulateOnSphere = triangulateOnSphere;
@@ -175,7 +175,7 @@ public:
         mLockPositions = lockPositions;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -214,6 +214,7 @@ template<class VisitorType>
         mLockPositions = lockPositions;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const ExtrinsicsPlacerParameters &other) const 
     {
         if ( !(this->mTriangulateOnSphere == other.mTriangulateOnSphere)) return false;

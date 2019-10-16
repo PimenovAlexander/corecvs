@@ -13,7 +13,7 @@ HEADERS += \
     utils/statusTracker.h \
 #    utils/abstractImageNamer.h \
     utils/statusTrackerCatcher.h \
-    $$PWD/debuggableBlock.h
+    $$PWD/debuggableBlock.h \
 
 SOURCES += \
     utils/memhooks.c \
@@ -26,6 +26,6 @@ SOURCES += \
     utils/log.cpp \
     utils/statusTracker.cpp \
 #    utils/abstractImageNamer.cpp \
-    $$PWD/debuggableBlock.cpp
-
+    $$PWD/debuggableBlock.cpp \
+ 
 OTHER_FILES +=$$PWD/CMakeLists.txt

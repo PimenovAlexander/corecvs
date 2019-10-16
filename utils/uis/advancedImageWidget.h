@@ -20,6 +20,7 @@
 
 #include "ui_advancedImageWidget.h"
 
+
 class AdvancedImageWidget : public ViAreaWidget, public SaveableWidget
 {
     Q_OBJECT

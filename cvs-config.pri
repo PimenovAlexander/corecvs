@@ -43,6 +43,7 @@ CONFIG +=       \
    with_openblas   \
    with_fastbuild  \
    with_unorthodox \   # allow use an experimental filesystem
+
 #  with_qscript    \   # experimental...
 
 include(config-cpu-features.pri)
@@ -76,6 +77,7 @@ CONFIG +=                   \
         with_avcodec        \
         with_libjpeg        \
         with_libpng         \
+        with_jsonmodern     \
 
 
 win32 {

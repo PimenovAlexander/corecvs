@@ -115,7 +115,7 @@ public:
         return mOutput2;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setInput1(double input1)
     {
         mInput1 = input1;
@@ -141,7 +141,7 @@ public:
         mOutput2 = output2;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -174,6 +174,7 @@ template<class VisitorType>
         mOutput2 = output2;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const AdderSubstractorParametersBase &other) const 
     {
         if ( !(this->mInput1 == other.mInput1)) return false;

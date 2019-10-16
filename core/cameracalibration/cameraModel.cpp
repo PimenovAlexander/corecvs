@@ -218,6 +218,16 @@ Ray3d CameraModel::rayFromPixel(const Vector2dd &point) const
     return ray;
 }
 
+Vector3dd CameraModel::dirFromPixel(const Vector2dd &point) const
+{
+    return (extrinsics.orientation.conjugated() * intrinsics->reverse(point)).normalised();
+}
+
+Vector2dd CameraModel::pixelFromDir(const Vector3dd &dir) const
+{
+    return intrinsics->project(extrinsics.orientation * dir.normalised());
+}
+
 Ray3d CameraModel::rayFromCenter()
 {
     return rayFromPixel(intrinsics->principal());

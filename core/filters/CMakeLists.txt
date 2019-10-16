@@ -1,17 +1,17 @@
 target_sources(corecvs
     PUBLIC
-        filters/newstyle/newStyleBlock.h
-        filters/newstyle/algoBase.h
+        ${CMAKE_CURRENT_LIST_DIR}/newstyle/newStyleBlock.h
+        ${CMAKE_CURRENT_LIST_DIR}/newstyle/algoBase.h
     PRIVATE
-        filters/newstyle/newStyleBlock.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/newstyle/newStyleBlock.cpp
 )
 
 
 set (OLDFILTERS_
-    filters/legacy/*.h 
-    filters/legacy/blocks/*.h 
-    filters/legacy/*.cpp 
-    filters/legacy/blocks/*.cpp 
+    ${CMAKE_CURRENT_LIST_DIR}/legacy/*.h 
+    ${CMAKE_CURRENT_LIST_DIR}/legacy/blocks/*.h 
+    ${CMAKE_CURRENT_LIST_DIR}/legacy/*.cpp 
+    ${CMAKE_CURRENT_LIST_DIR}/legacy/blocks/*.cpp 
     )
 
 

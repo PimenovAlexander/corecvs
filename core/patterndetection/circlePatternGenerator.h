@@ -9,7 +9,7 @@
 #include "core/buffers/abstractBuffer.h"
 #include "core/math/vector/vector2d.h"
 #include "core/math/matrix/matrix33.h"
-#include "core/buffers/convolver/convolver.h"    // corecvs::DpImage
+#include "core/buffers/float/dpImage.h"
 
 #ifdef WITH_TBB
 #include <tbb/reader_writer_lock.h>
