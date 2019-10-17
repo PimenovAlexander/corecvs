@@ -100,11 +100,6 @@ fetch_googletest(
 add_subdirectory(core)
 add_subdirectory(utils)
 
-#add_subdirectory(wrappers/libjpeg)
-#add_subdirectory(wrappers/libpng)
-#add_subdirectory(wrappers/jsonmodern)
-
-
 #TODO: Bring this to subproject
 #add_subdirectory(test)
 #add_subdirectory(test/adoptcolor)    # depends on utils
@@ -118,7 +113,9 @@ add_subdirectory(test/gcodeplayground) #??
 #add_subdirectory(test/grab24) # ??
 #add_subdirectory(test/grab24_qt)      # depends on utils
 #add_subdirectory(test/jitplayground) 
-
+add_subdirectory(test/raytracerender) 
+add_subdirectory(test/pattern_detector) 
+add_subdirectory(test/softrender)
 
 
 #add_subdirectory(applications)
