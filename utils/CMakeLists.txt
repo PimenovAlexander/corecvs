@@ -1,6 +1,12 @@
 project(corecvs_utils)
 set(MODULE_NAME cvs_utils)
 
+include(../wrappers/jsonmodern/CMakeLists.txt)
+include(../wrappers/libpng/CMakeLists.txt)
+include(../wrappers/libjpeg/CMakeLists.txt)
+include(../wrappers/v4l2/CMakeLists.txt)
+
+
 set (UTILS_SUBDIRECTORIES
     camcalc
     corestructs

@@ -21,6 +21,13 @@ IF ( USE_OPENBLAS )
     find_package( OpenBlas )
 ENDIF ()
 
+###
+#
+# Debug/Release switch 
+
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -g")
+
+
 ###############################################################
 #
 # Options area 
@@ -116,6 +123,7 @@ add_subdirectory(test/gcodeplayground) #??
 add_subdirectory(test/raytracerender) 
 add_subdirectory(test/pattern_detector) 
 add_subdirectory(test/softrender)
+#add_subdirectory(test/grab24)
 
 
 #add_subdirectory(applications)
