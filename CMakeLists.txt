@@ -100,9 +100,9 @@ fetch_googletest(
 add_subdirectory(core)
 add_subdirectory(utils)
 
-add_subdirectory(wrappers/libjpeg)
-add_subdirectory(wrappers/libpng)
-add_subdirectory(wrappers/jsonmodern)
+#add_subdirectory(wrappers/libjpeg)
+#add_subdirectory(wrappers/libpng)
+#add_subdirectory(wrappers/jsonmodern)
 
 
 #TODO: Bring this to subproject
@@ -111,10 +111,10 @@ add_subdirectory(wrappers/jsonmodern)
 #add_subdirectory(test/avencode)      # includes files from on avencode
 #add_subdirectory(test/example_scene) # includes files from on avencode
 add_subdirectory(test/fileloader)
-#add_subdirectory(test/flowdetector)  # includes json
+add_subdirectory(test/flow_detector)  # includes json
 add_subdirectory(test/flowtest)       
 add_subdirectory(test/focus_stack)
-add_subdirectory(test/gcodeplayground) # ??
+add_subdirectory(test/gcodeplayground) #??
 #add_subdirectory(test/grab24) # ??
 #add_subdirectory(test/grab24_qt)      # depends on utils
 #add_subdirectory(test/jitplayground) 
