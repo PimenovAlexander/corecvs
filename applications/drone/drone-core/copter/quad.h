@@ -22,11 +22,13 @@ public:
     double prevError = 0.0;
     double sumOfError = 0.0;
 
-    PIDClass(double p, double i , double d);
+    PIDClass(double p, double i , double d) :
+        P(p), I(i), D(d)
+    {}
 
 };
 
-class MotorClass
+class QuadMotor
 {
 public:
     /**
@@ -101,7 +103,7 @@ public:
 
 };
 
-class SensorClass
+class QuadSensorClass
 {
 public:
      corecvs::Affine3DQ position;
@@ -109,13 +111,13 @@ public:
      std::string name;
 };
 
-class Gyro : public SensorClass
+class QuadGyro : public QuadSensorClass
 {
 public:
 
 };
 
-class Accelerometer : public SensorClass
+class QuadAccelerometer : public QuadSensorClass
 {
 public:
 };
@@ -124,9 +126,11 @@ public:
 class Quad : public SimObject, public FlightControllerParameters
 {
 public:
-    std::vector<MotorClass> motors;
+    std::vector<QuadMotor> motors;
     std::vector<CameraModel> cameras;
-    std::vector<SensorClass> sensors;
+    std::vector<QuadSensorClass> sensors;
+
+
     PIDClass pitchPID{0.7, 0.35, 0.35};
     PIDClass rollPID{0.7, 0.35, 0.35};
     PIDClass yawPID{0.7, 0.35, 0.35};

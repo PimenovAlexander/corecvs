@@ -1,9 +1,10 @@
 #ifndef JOYSTICKINTERFACE_H
 #define JOYSTICKINTERFACE_H
 
-#include <mutex>
-#include <string>
 #include <vector>
+#include <string>
+
+namespace corecvs {
 
 class JoystickConfiguration
 {
@@ -16,8 +17,6 @@ public:
     int version;
 
     void print();
-
-
 };
 
 class JoystickState
@@ -30,15 +29,7 @@ public:
 
 };
 
-class JoystickStateReciever
-{
-
-};
-
-namespace std {
-    class thread;
-}
-
+#if 0
 class JoystickInterface
 {
 public:
@@ -71,11 +62,10 @@ protected:
     int mJoystickDevice = -1;
 
     static JoystickConfiguration getConfiguration(int joystickDevice);
-
-
-    std::thread *mSpinThread = NULL;
-    std::timed_mutex  exitLock;
-
 };
+#endif
+
+
+} // namespace corecvs
 
 #endif // JOYSTICKINTERFACE_H

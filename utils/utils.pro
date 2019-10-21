@@ -584,23 +584,11 @@ with_opencv {
 with_rapidjson {
     RAPIDJSON_WRAPPER_DIR = $$UTILSDIR/../wrappers/rapidjson
     include($$RAPIDJSON_WRAPPER_DIR/rapidjson.pri)
-
-    contains(DEFINES, WITH_RAPIDJSON) {
-       #HEADERS +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONReader.h
-       #SOURCES +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONReader.cpp
-       #HEADERS +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONWriter.h
-       #SOURCES +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONWriter.cpp
-    }
 }
 
 with_jsonmodern {
     JSONMODERN_WRAPPER_DIR = $$UTILSDIR/../wrappers/jsonmodern
     include($$JSONMODERN_WRAPPER_DIR/jsonmodern.pri)
-
-    contains(DEFINES, WITH_JSONMODERN) {
-        # HEADERS += $$JSONMODERN_WRAPPER_DIR/jsonModernReader.h
-        # SOURCES += $$JSONMODERN_WRAPPER_DIR/jsonModernReader.cpp
-    }
 }
 
 with_siftgpu {
@@ -608,7 +596,6 @@ with_siftgpu {
         SIFTGPU_WRAPPER_DIR = $$UTILSDIR/../wrappers/siftgpu
         include($$SIFTGPU_WRAPPER_DIR/siftgpu.pri)
 }
-
 
 with_directshow {
     HEADERS += \

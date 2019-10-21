@@ -1,7 +1,7 @@
 #ifndef JOYSTICKOPTIONSWIDGET_H
 #define JOYSTICKOPTIONSWIDGET_H
 
-#include "joystickInterface.h"
+#include "linuxJoystickInterface.h"
 #include "mixerChannelOperationWidget.h"
 
 #include <QWidget>
@@ -12,29 +12,29 @@ class JoystickOptionsWidget;
 
 class JoystickOptionsWidget;
 
-Q_DECLARE_METATYPE(JoystickState);
+Q_DECLARE_METATYPE(corecvs::JoystickState);
 
-class JoystickListener : public QObject, public JoystickInterface
+class JoystickListener : public QObject, public LinuxJoystickInterface
 {
     Q_OBJECT
 public:
     JoystickOptionsWidget *mTarget = NULL;
 
     JoystickListener(const std::string &deviceName, JoystickOptionsWidget *target) :
-        JoystickInterface(deviceName),
+        LinuxJoystickInterface(deviceName),
         mTarget(target)
     {
-        qRegisterMetaType<JoystickState>("JoystickState");
+        qRegisterMetaType<corecvs::JoystickState>("JoystickState");
     }
 
     // JoystickInterface interface
 public:
     virtual void newButtonEvent    (int /*button*/, int /*value*/, int /*timestamp*/) override {}
     virtual void newAxisEvent      (int /*axis  */, int /*value*/, int /*timestamp*/) override {}
-    virtual void newJoystickState  (JoystickState state) override;
+    virtual void newJoystickState  (corecvs::JoystickState state) override;
 
 signals:
-    void joystickUpdated(JoystickState state);
+    void joystickUpdated(corecvs::JoystickState state);
 
 public:
     virtual ~JoystickListener(){}
@@ -61,12 +61,12 @@ public slots:
     void closeJoystick();
 
     void clearDialog();
-    void reconfigure(JoystickConfiguration &conf);
+    void reconfigure(corecvs::JoystickConfiguration &conf);
 
-    void newData(JoystickState state);
+    void newData(corecvs::JoystickState state);
 
 signals:
-    void joystickUpdated(JoystickState state);
+    void joystickUpdated(corecvs::JoystickState state);
 
 private:
     Ui::JoystickOptionsWidget *ui;
