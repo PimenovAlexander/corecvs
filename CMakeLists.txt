@@ -285,7 +285,7 @@ else ()
         message(STATUS "AVX not found")
     endif ()
     if (AVX2_FOUND)
-        message(STATUS "AVX2 not found")
+        message(STATUS "AVX2 found")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2")
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mavx2")
         add_definitions(-DWITH_AVX2)
@@ -318,22 +318,8 @@ add_subdirectory(core)
 add_subdirectory(utils)
 
 #TODO: Bring this to subproject
-#add_subdirectory(test)
-#add_subdirectory(test/adoptcolor)    # depends on utils
-#add_subdirectory(test/avencode)      # includes files from on avencode
-#add_subdirectory(test/example_scene) # includes files from on avencode
-add_subdirectory(test/fileloader)
-add_subdirectory(test/flow_detector)  # includes json
-add_subdirectory(test/flowtest)
-add_subdirectory(test/focus_stack)
-add_subdirectory(test/gcodeplayground) #??
-#add_subdirectory(test/grab24) # ??
-#add_subdirectory(test/grab24_qt)      # depends on utils
-#add_subdirectory(test/jitplayground) 
-add_subdirectory(test/raytracerender)
-add_subdirectory(test/pattern_detector)
-add_subdirectory(test/softrender)
-#add_subdirectory(test/grab24)
+add_subdirectory(test)
+
 
 
 #add_subdirectory(applications)

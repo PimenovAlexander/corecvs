@@ -57,11 +57,11 @@ endforeach(utils_subdirectory)
 
 
 
-# message("${HDR_FILES}")
-
 target_sources(${MODULE_NAME}
     PUBLIC
         ${HDR_FILES}
     PRIVATE
         ${SRC_FILES}
 )
+
+message("Debug:" "${cvs_utils_SOURCE_DIR}")
