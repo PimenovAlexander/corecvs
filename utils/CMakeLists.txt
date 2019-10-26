@@ -64,4 +64,3 @@ target_sources(${MODULE_NAME}
         ${SRC_FILES}
 )
 
-message("Debug:" "${cvs_utils_SOURCE_DIR}")

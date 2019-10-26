@@ -11,13 +11,11 @@ namespace std {
     class thread;
 }
 
-class LinuxJoystickInterface
+class LinuxJoystickInterface : public corecvs::JoystickInterface
 {
 public:
-    std::string mDeviceName;
-
     LinuxJoystickInterface(const std::string &deviceName):
-        mDeviceName(deviceName)
+        corecvs::JoystickInterface(deviceName)
     {}
 
     static std::vector<std::string>         getDevices      (const std::string &prefix = "/dev/input/js");
@@ -25,21 +23,26 @@ public:
 
 
     corecvs::JoystickConfiguration getConfiguration();
-    void start();
-    void stop();
-    void run();
+    virtual bool start() override;
+    virtual void stop()  override;
 
+    void run(void);
     /**
      * Callbacks are here.
      * They are called from some thread, user may not expect anything from this thread
      * and must try to exit ASAP.
      **/
-    virtual void newButtonEvent    (int button, int value, int timestamp);
-    virtual void newAxisEvent      (int axis  , int value, int timestamp);
-    virtual void newJoystickState(corecvs::JoystickState state);
+    virtual void newButtonEvent    (int button, int value, int timestamp)  override;
+    virtual void newAxisEvent      (int axis  , int value, int timestamp)  override;
+    virtual void newJoystickState  (corecvs::JoystickState state)          override;
 
 
 protected:
+    /**
+     * @brief initialTimestamp timestamp of capture start in microseconds (us)
+     **/
+    uint64_t initialTimestamp;
+
     int mJoystickDevice = -1;
 
     static corecvs::JoystickConfiguration getConfiguration(int joystickDevice);
@@ -49,6 +52,7 @@ protected:
     std::timed_mutex  exitLock;
 
 };
+
 
 
 #endif // LINUX_JOYSTICKINTERFACE_H

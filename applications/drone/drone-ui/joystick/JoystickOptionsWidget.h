@@ -6,6 +6,8 @@
 
 #include <QWidget>
 
+#include <core/joystick/playbackJoystickInterface.h>
+
 namespace Ui {
 class JoystickOptionsWidget;
 }
@@ -60,6 +62,8 @@ public slots:
     void openJoystick();
     void closeJoystick();
 
+    void recordJoystick();
+
     void clearDialog();
     void reconfigure(corecvs::JoystickConfiguration &conf);
 
@@ -75,6 +79,10 @@ private:
 
     std::vector<QPushButton                 *> mButtonWidgets;
     std::vector<MixerChannelOperationWidget *> mAxisWidgets;
+
+    corecvs::JoystickConfiguration currentConfiguation;
+    bool recording = false;
+    corecvs::JoystickFileFormat record;
 
 };
 

@@ -23,13 +23,12 @@ class JoystickState
 {
 public:
     /* We could also log timestamps etc*/
+    uint64_t timestamp;
 
     std::vector<int> axis;
     std::vector<int> button;
-
 };
 
-#if 0
 class JoystickInterface
 {
 public:
@@ -39,31 +38,23 @@ public:
         mDeviceName(deviceName)
     {}
 
-    static std::vector<std::string> getDevices      (const std::string &prefix = "/dev/input/js");
-    static JoystickConfiguration    getConfiguration(const std::string &deviceName);
+    //static std::vector<std::string> getDevices      (const std::string &prefix = "/dev/input/js");
+    //static JoystickConfiguration    getConfiguration(const std::string &deviceName);
 
 
-    JoystickConfiguration getConfiguration();
-    void start();
-    void stop();
-    void run();
+    virtual JoystickConfiguration getConfiguration() = 0;
+    virtual bool start() = 0;
+    virtual void stop() = 0;
 
     /**
      * Callbacks are here.
      * They are called from some thread, user may not expect anything from this thread
      * and must try to exit ASAP.
      **/
-    virtual void newButtonEvent    (int button, int value, int timestamp);
-    virtual void newAxisEvent      (int axis  , int value, int timestamp);
-    virtual void newJoystickState(JoystickState state);
-
-
-protected:
-    int mJoystickDevice = -1;
-
-    static JoystickConfiguration getConfiguration(int joystickDevice);
+    virtual void newButtonEvent    (int /*button*/, int /*value*/, int /*timestamp*/) {}
+    virtual void newAxisEvent      (int /*axis*/  , int /*value*/, int /*timestamp*/) {}
+    virtual void newJoystickState  (JoystickState /*state*/)                          {}
 };
-#endif
 
 
 } // namespace corecvs

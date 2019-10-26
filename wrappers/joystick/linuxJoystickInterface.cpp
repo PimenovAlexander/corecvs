@@ -7,6 +7,7 @@
 #include <poll.h>
 #include <thread>
 #include <sstream>
+#include <core/utils/preciseTimer.h>
 
 using namespace std;
 using namespace corecvs;
@@ -91,19 +92,24 @@ JoystickConfiguration LinuxJoystickInterface::getConfiguration()
    return getConfiguration(mJoystickDevice);
 }
 
-void LinuxJoystickInterface::start()
+bool LinuxJoystickInterface::start()
 {
     SYNC_PRINT(("JoystickInterface::start(): called\n"));
 
     if (mSpinThread != NULL) {
         SYNC_PRINT(("Already running\n"));
-        return;
+        return false;
     }
     mJoystickDevice = open(mDeviceName.c_str(), O_RDONLY);
+    if (mJoystickDevice == -1)
+    {
+        SYNC_PRINT(("Failed opening device <%s>\n", mDeviceName.c_str()));
+        return false;
+    }
     exitLock.lock();
 
     mSpinThread = new std::thread(&LinuxJoystickInterface::run, this);
-    //mSpinThread->detach();
+    return true;
 }
 
 void LinuxJoystickInterface::stop()
@@ -145,6 +151,8 @@ void LinuxJoystickInterface::run()
     state.axis  .resize(conf.axisNumber , 0);
     state.button.resize(conf.buttonNumber, 0);
 
+    initialTimestamp = PreciseTimer::currentTime().usec();
+    SYNC_PRINT(("LinuxJoystickInterface::run(): starting time %" PRIu64 "\n", initialTimestamp));
 
     while (!exitLock.try_lock())
     {
@@ -152,22 +160,20 @@ void LinuxJoystickInterface::run()
          * We should not block, beacuse we should check for exitLock.
          * it is also possible to use pipe awailability as a exit condition and only use one poll for the task
          **/
-#if 0
-        size_t bytes = read(mJoystickDevice, (void *)&event, sizeof(event));
-#else
         int ret = poll( fds, 1, 1);
 
         if (ret == 0) { /* Timeout. No new data */
             continue;
         }
         if (ret == -1) {
-            SYNC_PRINT(("poll() encountered an error %d\n", errno));
+            SYNC_PRINT(("LinuxJoystickInterface::run(): poll() encountered an error %d\n", errno));
             continue;
         }
 
         size_t bytes = read(mJoystickDevice, (void *)&data[count], sizeof(js_event) - count);
         count += bytes;
-#endif
+        state.timestamp = PreciseTimer::currentTime().usec() - initialTimestamp;
+
         if (count != sizeof(js_event))
         {
             //SYNC_PRINT(("JoystickInterface::run(): Corrupted data\n"));
@@ -198,7 +204,7 @@ void LinuxJoystickInterface::run()
             newJoystickState(state);
         }
     }
-    SYNC_PRINT(("Exiting spinthread....\n"));
+    SYNC_PRINT(("LinuxJoystickInterface::run(): Exiting spinthread....\n"));
 
 }
 
@@ -216,4 +222,5 @@ void LinuxJoystickInterface::newJoystickState(JoystickState state)
 {
     SYNC_PRINT(("JoystickInterface::newJoystickState(): called\n"));
 }
+
 
