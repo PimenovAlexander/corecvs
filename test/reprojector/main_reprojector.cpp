@@ -120,19 +120,21 @@ int main(int argc, char **argv)
 
     RGB24Buffer *output = new RGB24Buffer(camera->h(), camera->w());
 
-    for (int i = 0; i < output->h; i++)
-    {
-        for (int j = 0; j < output->w; j++)
+    parallelable_for(0, (int)output->h, [&](const corecvs::BlockedRange<int> &r) {
+        for (int i = r.begin(); i != r.end(); i++)
         {
-            Vector2dd pixel(j, i);
-            RaytraceRenderer rr;
-            Vector3dd d = camera->reverse(pixel);
-            RayIntersection ray;
-            ray.ray.a = d;
-            cubemap.getColor(ray, rr);
-            output->element(i, j) = RGBColor::FromDouble(ray.ownColor);
+            for (int j = 0; j < output->w; j++)
+            {
+                Vector2dd pixel(j, i);
+                RaytraceRenderer rr;
+                Vector3dd d = camera->reverse(pixel);
+                RayIntersection ray;
+                ray.ray.a = d;
+                cubemap.getColor(ray, rr);
+                output->element(i, j) = RGBColor::FromDouble(ray.ownColor);
+            }
         }
-    }
+    });
 
     std::string outputName = line.getString("output", "reproj.bmp");
     BufferFactory::getInstance()->saveRGB24Bitmap(output, outputName);

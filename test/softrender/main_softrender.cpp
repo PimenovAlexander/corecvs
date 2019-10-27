@@ -3,10 +3,6 @@
 
 #include <core/reflection/commandLineSetter.h>
 
-#include <QApplication>
-#include <QtCore>
-#include "qtFileLoader.h"
-
 #ifdef WITH_LIBJPEG
 #include "libjpegFileReader.h"
 #endif
@@ -106,8 +102,6 @@ void prepareMesh(Mesh3DDecorated &mesh, RGB24Buffer * /*texture*/)
 
 int main(int argc, char **argv)
 {
-    QApplication a(argc, argv);
-
 #ifdef WITH_LIBJPEG
     LibjpegFileReader::registerMyself();
     SYNC_PRINT(("Libjpeg support on\n"));
@@ -116,8 +110,6 @@ int main(int argc, char **argv)
     LibpngFileReader::registerMyself();
     SYNC_PRINT(("Libpng support on\n"));
 #endif
-    QTRGB24Loader::registerMyself();
-
     BufferFactory::getInstance()->printCaps();
 
 

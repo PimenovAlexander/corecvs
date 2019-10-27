@@ -1,11 +1,12 @@
 #ifndef JOYSTICKREADER_H
 #define JOYSTICKREADER_H
 
-#include "joystickInterface.h"
-
 #include <QObject>
 
-class JoystickReader : public JoystickInterface
+#include "linuxJoystickInterface.h"
+
+
+class JoystickReader : public LinuxJoystickInterface
 {
 
 private:

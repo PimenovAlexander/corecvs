@@ -127,7 +127,7 @@ void Quad::drawMyself(Mesh3D &mesh)
 
     for (size_t i = 0; i < motors.size(); i++)
     {
-        MotorClass &motor = motors[i];
+        QuadMotor &motor = motors[i];
         mesh.mulTransform(corecvs::Matrix44(getMotorTransfrom(i)));
         motor.drawMyself(mesh);
         mesh.popTransform();
@@ -186,13 +186,6 @@ Vector3dd Quad::FromQuaternion(Quaternion &Q)
     double pitch = atan2 (2.0 * (Q.t() * Q.x() + Q.y() * Q.z()),1.0 - 2.0 * (Q.x() * Q.x() + Q.y() * Q.y()));
     double roll  = atan2 (2.0 * (Q.t() * Q.z() + Q.x() * Q.y()),1.0 - 2.0 * (Q.y() * Q.y() + Q.z() * Q.z()));
     return Vector3dd(pitch, roll, yaw);
-}
-
-PIDClass::PIDClass(double p, double i, double d)
-{
-    P=p;
-    I=i;
-    D=d;
 }
 
 void Quad::flightControllerTick(const CopterInputs &input)

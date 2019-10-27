@@ -56,6 +56,7 @@ with_jsonmodern {
     }
 }
 
-OTHER_FILES += \
-    reproject.sh
+OTHER_FILES +=     \
+    reproject.sh   \
+    CMakeLists.txt
 

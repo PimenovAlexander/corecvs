@@ -68,10 +68,10 @@ public:
     virtual std::map<std::string, DynamicObject> getParameters() = 0;
     virtual bool setParameters(std::string name, const DynamicObject &param) = 0;
 
-    virtual void setInputImage(RGB24Buffer *input) {}
+    virtual void setInputImage(RGB24Buffer * /*input*/) {}
     virtual int operator()() override { return 0; }
 
-    virtual void getOutput(vector<PatternDetectorResult> &patterns){}
+    virtual void getOutput(vector<PatternDetectorResult> &/*patterns*/){}
 
     virtual ~PatternDetector() {}
     virtual void setStatistics(corecvs::Statistics * /*stats*/ = NULL) {}

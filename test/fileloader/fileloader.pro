@@ -22,7 +22,8 @@ CONFIG  -= qt
 
 include($$PWD/../../core/core.pri)
 
-SOURCES += main.cpp
+SOURCES += \
+    main_fileloader.cpp
 
 with_libjpeg {
     LIBJPEG_WRAPPER_DIR = ../../wrappers/libjpeg
@@ -34,6 +35,6 @@ with_libpng {
     include($$LIBPNG_WRAPPER_DIR/libpng.pri)
 }
 
-OTHER_FILES +=
+OTHER_FILES += CMakeLists.txt
 
 HEADERS +=
