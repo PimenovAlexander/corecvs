@@ -32,12 +32,14 @@ if (1)
         ${CMAKE_CURRENT_LIST_DIR}/gcodeLoader.h
         ${CMAKE_CURRENT_LIST_DIR}/pltLoader.h
         ${CMAKE_CURRENT_LIST_DIR}/xyzListLoader.h
+        ${CMAKE_CURRENT_LIST_DIR}/svgLoader.h
+        
+      PRIVATE  
         ${CMAKE_CURRENT_LIST_DIR}/meshLoader.cpp
         ${CMAKE_CURRENT_LIST_DIR}/objLoader.cpp
         ${CMAKE_CURRENT_LIST_DIR}/gcodeLoader.cpp
         ${CMAKE_CURRENT_LIST_DIR}/pltLoader.cpp
         ${CMAKE_CURRENT_LIST_DIR}/xyzListLoader.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/svgLoader.h
         ${CMAKE_CURRENT_LIST_DIR}/svgLoader.cpp
     )
 endif()

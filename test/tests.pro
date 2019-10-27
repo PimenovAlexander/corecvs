@@ -103,3 +103,6 @@ flowtest.file                       = flowtest/flowtest.pro
 focusstacking.file                   = focusstacking/focusstacking.pro
 pattern_detector.file                = pattern_detector/pattern_detector.pro
 reprojector                          = reprojector/reprojector.pro
+
+
+OTHER_FILES += CMakeLists.txt

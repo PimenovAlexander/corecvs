@@ -27,6 +27,9 @@ void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata frameData
     pair.setRgbBufferLeft(NULL);
     pair.freeBuffers();
 
+
+
+
     target->uiMutex.lock();
     target->uiQueue.emplace_back(new DrawRequestData);
     target->uiQueue.back()->mImage = result;

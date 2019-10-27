@@ -33,7 +33,6 @@ HEADERS += \
     copter/motor.h \
     copter/quad.h \
     \
-    joystick/joystickInterface.h \
     \
     simulation/janibekovsBolt.h \
     simulation/physMainObject.h \
@@ -70,7 +69,6 @@ SOURCES += \
     copter/droneObject.cpp \
     copter/motor.cpp \
     \
-    joystick/joystickInterface.cpp \
     \
     simulation/physMainObject.cpp \
     simulation/simulation.cpp \
@@ -97,6 +95,15 @@ SOURCES += \
     copterInputs.cpp \   
     comcontroller.cpp \
     joystick/joystickReader.cpp
+
+
+unix {
+        DEFINES += WITH_LINUXJOYSTICK
+        LINUX_JOYSTICK_WRAPPER_DIR=$$PWD/../../../wrappers/joystick
+        INCLUDEPATH += $$LINUX_JOYSTICK_WRAPPER_DIR
+        HEADERS += $$LINUX_JOYSTICK_WRAPPER_DIR/linuxJoystickInterface.h
+        SOURCES += $$LINUX_JOYSTICK_WRAPPER_DIR/linuxJoystickInterface.cpp
+}
 
 
 #RESOURCES += ../../resources/main.qrc

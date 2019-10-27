@@ -24,3 +24,8 @@ INCLUDEPATH += $$PWD/calibration
 INCLUDEPATH += $$PWD/opencvUtils
 INCLUDEPATH += $$PWD/simulation
 
+unix {
+        DEFINES += WITH_LINUXJOYSTICK
+        LINUX_JOYSTICK_WRAPPER_DIR=$$PWD/../../../wrappers/joystick
+        INCLUDEPATH += $$LINUX_JOYSTICK_WRAPPER_DIR
+}

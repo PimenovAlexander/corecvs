@@ -1,22 +1,20 @@
 #ifndef PROTOAUTOPILOT_H
 #define PROTOAUTOPILOT_H
 
-#include "vertexsquare.h"
-#include <QSharedPointer>
-#include "bits/stdc++.h"
-#include "copterInputs.h"
-#include "list"
-#include "iostream"
-#include "mainObject.h"                               //Vector3dd here, and i dont understand where exactly
-#include <bits/stl_list.h>
-#include <bits/stl_queue.h>
+#include <list>
+#include <iostream>
 #include <queue>
-#include <QtGui/qimage.h>
 #include <mutex>
+
+#include <QSharedPointer>
+#include <QtGui/QImage>
 
 #include <opencv2/features2d/features2d.hpp>
 
-#include <droneObject.h>
+#include "vertexsquare.h"
+#include "copterInputs.h"
+#include "mainObject.h"                               //Vector3dd here, and i dont understand where exactly
+#include "droneObject.h"
 
 class ProtoAutoPilot
 {
@@ -32,8 +30,13 @@ public:
         return result;
     }*/
     bool active=false;
+
     void stabilise();
-    enum Calibration {NO_CALIBRATION, BABYHAWK_01};
+    enum Calibration {
+        NO_CALIBRATION,
+        BABYHAWK_01
+    };
+
     Vector3dd getCurreentPos(QSharedPointer<QImage> inputImage);
     int debugCounter=0;
     void changeImage(QSharedPointer<QImage> inputImage);
@@ -47,6 +50,7 @@ public:
 
     void setCalibration(Calibration c);
     ProtoAutoPilot::Calibration getCalibration();
+
 private:
     CopterInputs output;
     std::mutex outputMutex;
