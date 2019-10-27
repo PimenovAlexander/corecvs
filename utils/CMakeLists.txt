@@ -1,10 +1,10 @@
 project(corecvs_utils)
 set(MODULE_NAME cvs_utils)
 
-include(../wrappers/jsonmodern/CMakeLists.txt)
-include(../wrappers/libpng/CMakeLists.txt)
-include(../wrappers/libjpeg/CMakeLists.txt)
-include(../wrappers/v4l2/CMakeLists.txt)
+# include(../wrappers/jsonmodern/CMakeLists.txt)
+# include(../wrappers/libpng/CMakeLists.txt)
+# include(../wrappers/libjpeg/CMakeLists.txt)
+# include(../wrappers/v4l2/CMakeLists.txt)
 
 
 set (UTILS_SUBDIRECTORIES
@@ -24,6 +24,10 @@ set (UTILS_SUBDIRECTORIES
     uis
     visitors
     widgets
+    ../wrappers/jsonmodern
+    ../wrappers/libpng
+    ../wrappers/libjpeg
+    ../wrappers/v4l2
 )
 
 if(opengl)
@@ -51,11 +55,12 @@ list(REMOVE_ITEM SRC_FILES "${CMAKE_CURRENT_LIST_DIR}/trackPainter.cpp")
 
 foreach(utils_subdirectory ${UTILS_SUBDIRECTORIES})
     message(STATUS "including utils/${utils_subdirectory}")
+    target_include_directories(${MODULE_NAME} PUBLIC ${utils_subdirectory})
     include(${utils_subdirectory}/sourcelist.cmake)
-    include_directories(${utils_subdirectory})
 endforeach(utils_subdirectory)
 
 
+# message("UTILS HDR FILES ${HDR_FILES}")
 
 target_sources(${MODULE_NAME}
     PUBLIC

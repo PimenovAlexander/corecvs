@@ -23,7 +23,7 @@ target_sources(corecvs
         ${CMAKE_CURRENT_LIST_DIR}/tgaLoader.cpp
 )
 
-if (YES)
+if (1)
  
     target_sources(corecvs
       PUBLIC

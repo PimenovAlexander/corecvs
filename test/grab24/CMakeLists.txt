@@ -9,6 +9,6 @@ set (SOURCES
 
 add_executable(${NAME} ${SOURCES} ${HEADERS})
 
-target_link_libraries(${NAME} utils corecvs pthread ${LIBS})
+target_link_libraries(${NAME} cvs_utils corecvs pthread ${LIBS})
 target_include_directories(${NAME} PUBLIC ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} .)
 

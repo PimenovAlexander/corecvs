@@ -1,3 +1,5 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
+
 project (corecvs)
 
 set (CORE_SUBMODULES
@@ -60,8 +62,6 @@ if (TBB_LIB)
     add_definitions(-DWITH_TBB)
 endif()
 
-# include_directories(corecvs PUBLIC ..)
-
 add_library(corecvs STATIC )
 
 
@@ -79,12 +79,3 @@ foreach(core_module ${CORE_SUBMODULES})
     message(STATUS "including ${core_module}")
     add_subdirectory(${core_module})
 endforeach(core_module)
-
-#install(TARGETS corecvs
-#  EXPORT FooBarTargets
-#  LIBRARY DESTINATION "${INSTALL_LIB_DIR}" COMPONENT shlib
-#  PUBLIC_HEADER DESTINATION "${INSTALL_INCLUDE_DIR}/core"
-#  )
-
-
-
