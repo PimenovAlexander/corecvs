@@ -39,3 +39,5 @@ with_avcodec {
 SOURCES += main_grab24.cpp
 
 HEADERS +=
+
+OTHER_FILES += CMakeLists.txt

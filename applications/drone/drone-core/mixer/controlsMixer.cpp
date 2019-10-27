@@ -1,5 +1,7 @@
 #include "controlsMixer.h"
 
+using namespace corecvs;
+
 bool ControlsMixer::mix(JoystickState &state, CopterInputs &outputs)
 {
     if (state.axis.size() < 4) {

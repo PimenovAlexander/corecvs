@@ -1,20 +1,18 @@
-#include "joystickInterface.h"
+#include "linuxJoystickInterface.h"
+#include "core/utils/utils.h"
 
 #include <linux/joystick.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <poll.h>
-
-#include <iostream>
 #include <thread>
-
-#include "core/utils/global.h"
-#include "core/utils/utils.h"
+#include <sstream>
+#include <core/utils/preciseTimer.h>
 
 using namespace std;
+using namespace corecvs;
 
-
-vector<string> JoystickInterface::getDevices(const string &prefix)
+vector<string> LinuxJoystickInterface::getDevices(const string &prefix)
 {
     vector<string> toReturn;
 
@@ -35,7 +33,7 @@ vector<string> JoystickInterface::getDevices(const string &prefix)
     return toReturn;
 }
 
-JoystickConfiguration JoystickInterface::getConfiguration(int joystickDevice)
+JoystickConfiguration LinuxJoystickInterface::getConfiguration(int joystickDevice)
 {
     JoystickConfiguration toReturn;
 
@@ -67,7 +65,7 @@ JoystickConfiguration JoystickInterface::getConfiguration(int joystickDevice)
 }
 
 
-JoystickConfiguration JoystickInterface::getConfiguration(const std::string &deviceName)
+JoystickConfiguration LinuxJoystickInterface::getConfiguration(const std::string &deviceName)
 {
     JoystickConfiguration toReturn;
 
@@ -84,7 +82,7 @@ JoystickConfiguration JoystickInterface::getConfiguration(const std::string &dev
     return toReturn;
 }
 
-JoystickConfiguration JoystickInterface::getConfiguration()
+JoystickConfiguration LinuxJoystickInterface::getConfiguration()
 {
     if (mJoystickDevice == -1) {
         SYNC_PRINT(("Device not open\n"));
@@ -94,22 +92,27 @@ JoystickConfiguration JoystickInterface::getConfiguration()
    return getConfiguration(mJoystickDevice);
 }
 
-void JoystickInterface::start()
+bool LinuxJoystickInterface::start()
 {
     SYNC_PRINT(("JoystickInterface::start(): called\n"));
 
     if (mSpinThread != NULL) {
         SYNC_PRINT(("Already running\n"));
-        return;
+        return false;
     }
     mJoystickDevice = open(mDeviceName.c_str(), O_RDONLY);
+    if (mJoystickDevice == -1)
+    {
+        SYNC_PRINT(("Failed opening device <%s>\n", mDeviceName.c_str()));
+        return false;
+    }
     exitLock.lock();
 
-    mSpinThread = new std::thread(&JoystickInterface::run, this);
-    //mSpinThread->detach();
+    mSpinThread = new std::thread(&LinuxJoystickInterface::run, this);
+    return true;
 }
 
-void JoystickInterface::stop()
+void LinuxJoystickInterface::stop()
 {
     SYNC_PRINT(("JoystickInterface::stop(): called\n"));
     if (mSpinThread == NULL)
@@ -130,7 +133,7 @@ void JoystickInterface::stop()
     SYNC_PRINT(("JoystickInterface::stop(): exiting\n"));
 }
 
-void JoystickInterface::run()
+void LinuxJoystickInterface::run()
 {
 
     struct pollfd fds[1];
@@ -148,6 +151,8 @@ void JoystickInterface::run()
     state.axis  .resize(conf.axisNumber , 0);
     state.button.resize(conf.buttonNumber, 0);
 
+    initialTimestamp = PreciseTimer::currentTime().usec();
+    SYNC_PRINT(("LinuxJoystickInterface::run(): starting time %" PRIu64 "\n", initialTimestamp));
 
     while (!exitLock.try_lock())
     {
@@ -155,22 +160,20 @@ void JoystickInterface::run()
          * We should not block, beacuse we should check for exitLock.
          * it is also possible to use pipe awailability as a exit condition and only use one poll for the task
          **/
-#if 0
-        size_t bytes = read(mJoystickDevice, (void *)&event, sizeof(event));
-#else
         int ret = poll( fds, 1, 1);
 
         if (ret == 0) { /* Timeout. No new data */
             continue;
         }
         if (ret == -1) {
-            SYNC_PRINT(("poll() encountered an error %d\n", errno));
+            SYNC_PRINT(("LinuxJoystickInterface::run(): poll() encountered an error %d\n", errno));
             continue;
         }
 
         size_t bytes = read(mJoystickDevice, (void *)&data[count], sizeof(js_event) - count);
         count += bytes;
-#endif
+        state.timestamp = PreciseTimer::currentTime().usec() - initialTimestamp;
+
         if (count != sizeof(js_event))
         {
             //SYNC_PRINT(("JoystickInterface::run(): Corrupted data\n"));
@@ -201,29 +204,23 @@ void JoystickInterface::run()
             newJoystickState(state);
         }
     }
-    SYNC_PRINT(("Exiting spinthread....\n"));
+    SYNC_PRINT(("LinuxJoystickInterface::run(): Exiting spinthread....\n"));
 
 }
 
-void JoystickInterface::newButtonEvent(int button, int value, int timestamp)
+void LinuxJoystickInterface::newButtonEvent(int button, int value, int timestamp)
 {
     SYNC_PRINT(("JoystickInterface::newButtonEvent(%d %d %d): called\n", button, value, timestamp));
 }
 
-void JoystickInterface::newAxisEvent(int axis, int value, int timestamp)
+void LinuxJoystickInterface::newAxisEvent(int axis, int value, int timestamp)
 {
     SYNC_PRINT(("JoystickInterface::newAxisEvent(%d %d %d): called\n", axis, value, timestamp));
 }
 
-void JoystickInterface::newJoystickState(JoystickState state)
+void LinuxJoystickInterface::newJoystickState(JoystickState state)
 {
     SYNC_PRINT(("JoystickInterface::newJoystickState(): called\n"));
 }
 
-void JoystickConfiguration::print() {
-    cout << "Joystick: " << name << endl;
-    cout << "Version: " << version << endl;
 
-    cout << "Axis    :" << axisNumber << endl;
-    cout << "Buttons :" << buttonNumber << endl;
-}

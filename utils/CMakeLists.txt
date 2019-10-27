@@ -1,6 +1,12 @@
 project(corecvs_utils)
 set(MODULE_NAME cvs_utils)
 
+include(../wrappers/jsonmodern/CMakeLists.txt)
+include(../wrappers/libpng/CMakeLists.txt)
+include(../wrappers/libjpeg/CMakeLists.txt)
+include(../wrappers/v4l2/CMakeLists.txt)
+
+
 set (UTILS_SUBDIRECTORIES
     camcalc
     corestructs
@@ -51,11 +57,10 @@ endforeach(utils_subdirectory)
 
 
 
-# message("${HDR_FILES}")
-
 target_sources(${MODULE_NAME}
     PUBLIC
         ${HDR_FILES}
     PRIVATE
         ${SRC_FILES}
 )
+

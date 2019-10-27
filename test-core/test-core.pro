@@ -98,6 +98,7 @@ SOURCES += \
    #fastkernel_profile/main_test_fastkernel_profile.cpp \ # moved to perf-tests   
     fileformats/main_test_fileformats.cpp \
     filesystem/main_test_filesystem.cpp \
+    joystick/main_test_joystick.cpp \
    #filter_blocks/main_test_filter_blocks.cpp \           # TODO: can't build
 #    gaussianSolution/main_test_gaussianSolution.cpp \     # TODO: check it...
     geometry/main_test_geometry.cpp \

@@ -37,3 +37,4 @@ SOURCES += \
     scene_test1.cpp \
     scene_large.cpp \
 
+OTHER_FILES += CMakeLists.txt

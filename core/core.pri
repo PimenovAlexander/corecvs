@@ -52,6 +52,7 @@ ADDITIONAL_MODULES +=   \
     clustering3d        \
 #    placer              \
     delaunay		\
+    joystick            \
 
 
 CORE_SUBMODULES += $$ADDITIONAL_MODULES

@@ -175,7 +175,7 @@ with_opencv {                                       # all this stuff was extract
 
 with_rapidjson {
     RAPIDJSON_WRAPPER_DIR = $$UTILSDIR/../wrappers/rapidjson
-    include($$RAPIDJSON_WRAPPER_DIR/rapidjson.pri)
+    include($$RAPIDJSON_WRAPPER_DIR/rapidjsonLibs.pri)
 
     contains(DEFINES, WITH_RAPIDJSON) {
        INCLUDEPATH += $$RAPIDJSON_WRAPPER_DIR
@@ -185,7 +185,7 @@ with_rapidjson {
 
 with_jsonmodern {
     JSONMODERN_WRAPPER_DIR = $$UTILSDIR/../wrappers/jsonmodern
-    include($$JSONMODERN_WRAPPER_DIR/jsonmodern.pri)
+    include($$JSONMODERN_WRAPPER_DIR/jsonmodernLibs.pri)
 
     contains(DEFINES, WITH_JSONMODERN) {
        INCLUDEPATH += $$JSONMODERN_WRAPPER_DIR

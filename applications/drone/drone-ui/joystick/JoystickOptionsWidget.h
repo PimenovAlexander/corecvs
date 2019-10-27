@@ -1,10 +1,12 @@
 #ifndef JOYSTICKOPTIONSWIDGET_H
 #define JOYSTICKOPTIONSWIDGET_H
 
-#include "joystickInterface.h"
+#include "linuxJoystickInterface.h"
 #include "mixerChannelOperationWidget.h"
 
 #include <QWidget>
+
+#include <core/joystick/playbackJoystickInterface.h>
 
 namespace Ui {
 class JoystickOptionsWidget;
@@ -12,29 +14,29 @@ class JoystickOptionsWidget;
 
 class JoystickOptionsWidget;
 
-Q_DECLARE_METATYPE(JoystickState);
+Q_DECLARE_METATYPE(corecvs::JoystickState);
 
-class JoystickListener : public QObject, public JoystickInterface
+class JoystickListener : public QObject, public LinuxJoystickInterface
 {
     Q_OBJECT
 public:
     JoystickOptionsWidget *mTarget = NULL;
 
     JoystickListener(const std::string &deviceName, JoystickOptionsWidget *target) :
-        JoystickInterface(deviceName),
+        LinuxJoystickInterface(deviceName),
         mTarget(target)
     {
-        qRegisterMetaType<JoystickState>("JoystickState");
+        qRegisterMetaType<corecvs::JoystickState>("JoystickState");
     }
 
     // JoystickInterface interface
 public:
     virtual void newButtonEvent    (int /*button*/, int /*value*/, int /*timestamp*/) override {}
     virtual void newAxisEvent      (int /*axis  */, int /*value*/, int /*timestamp*/) override {}
-    virtual void newJoystickState  (JoystickState state) override;
+    virtual void newJoystickState  (corecvs::JoystickState state) override;
 
 signals:
-    void joystickUpdated(JoystickState state);
+    void joystickUpdated(corecvs::JoystickState state);
 
 public:
     virtual ~JoystickListener(){}
@@ -60,13 +62,15 @@ public slots:
     void openJoystick();
     void closeJoystick();
 
-    void clearDialog();
-    void reconfigure(JoystickConfiguration &conf);
+    void recordJoystick();
 
-    void newData(JoystickState state);
+    void clearDialog();
+    void reconfigure(corecvs::JoystickConfiguration &conf);
+
+    void newData(corecvs::JoystickState state);
 
 signals:
-    void joystickUpdated(JoystickState state);
+    void joystickUpdated(corecvs::JoystickState state);
 
 private:
     Ui::JoystickOptionsWidget *ui;
@@ -75,6 +79,10 @@ private:
 
     std::vector<QPushButton                 *> mButtonWidgets;
     std::vector<MixerChannelOperationWidget *> mAxisWidgets;
+
+    corecvs::JoystickConfiguration currentConfiguation;
+    bool recording = false;
+    corecvs::JoystickFileFormat record;
 
 };
 

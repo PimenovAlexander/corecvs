@@ -55,6 +55,6 @@ with_opencv {                                       # all this stuff was extract
 }
 
 
-OTHER_FILES +=
+OTHER_FILES += CMakeLists.txt
 
 HEADERS +=
