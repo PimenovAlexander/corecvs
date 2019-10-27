@@ -56,12 +56,11 @@ list(REMOVE_ITEM SRC_FILES "${CMAKE_CURRENT_LIST_DIR}/trackPainter.cpp")
 foreach(utils_subdirectory ${UTILS_SUBDIRECTORIES})
     message(STATUS "including utils/${utils_subdirectory}")
     target_include_directories(${MODULE_NAME} PUBLIC ${utils_subdirectory})
-    # include_directories(${utils_subdirectory})
     include(${utils_subdirectory}/sourcelist.cmake)
 endforeach(utils_subdirectory)
 
 
-message("UTILS HDR FILES ${HDR_FILES}")
+# message("UTILS HDR FILES ${HDR_FILES}")
 
 target_sources(${MODULE_NAME}
     PUBLIC
