@@ -14,6 +14,10 @@ JoystickOptionsWidget::JoystickOptionsWidget(QWidget *parent) :
 {
     ui->setupUi(this);
     rereadDevices();
+
+    GraphPlotParameters graphParams = ui->graphWidget->getParameters();
+    graphParams.setYScale(35000);
+    ui->graphWidget->setParameters(graphParams);
 }
 
 JoystickOptionsWidget::~JoystickOptionsWidget()
@@ -30,6 +34,13 @@ void JoystickOptionsWidget::rereadDevices()
     {
         ui->comboBox->addItem(QString::fromStdString(devices[i]));
     }
+
+    devices = PlaybackJoystickInterface::getDevices();
+    for (size_t i = 0; i < devices.size(); i ++)
+    {
+        ui->comboBox->addItem(QString::fromStdString(devices[i]));
+    }
+
 }
 
 void JoystickOptionsWidget::getProps()
@@ -48,9 +59,15 @@ void JoystickOptionsWidget::openJoystick()
     if (mInterface != NULL) {
         return;
     }
-    mInterface = new JoystickListener(ui->deviceLineEdit->text().toStdString(), this);
 
-    JoystickConfiguration conf = JoystickListener::getConfiguration(mInterface->mDeviceName.c_str());
+    std::string name  = ui->deviceLineEdit->text().toStdString();
+    if (HelperUtils::endsWith(name, ".dump")) {
+        mInterface = new JoystickListener<PlaybackJoystickInterface>(name, this);
+    } else {
+        mInterface = new JoystickListener<LinuxJoystickInterface>(name, this);
+    }
+
+    JoystickConfiguration conf = mInterface->getConfiguration();
     conf.print();
     reconfigure(conf);
     QObject::connect(mInterface, SIGNAL(joystickUpdated(JoystickState)), this, SLOT(newData(JoystickState)), Qt::QueuedConnection);
@@ -176,12 +193,4 @@ void JoystickOptionsWidget::newData(JoystickState state)
     ui->graphWidget->update();
 }
 
-void JoystickListener::newJoystickState(JoystickState state)
-{
-    emit joystickUpdated(state);
-#if 0
-    QMetaObject::invokeMethod( mTarget, "newData", Qt::QueuedConnection,
-                               Q_ARG( JoystickState, state ) );
-#endif
 
-}

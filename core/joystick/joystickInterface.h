@@ -34,6 +34,8 @@ class JoystickInterface
 public:
     std::string mDeviceName;
 
+    JoystickInterface() {}
+
     JoystickInterface(const std::string &deviceName):
         mDeviceName(deviceName)
     {}
@@ -54,6 +56,8 @@ public:
     virtual void newButtonEvent    (int /*button*/, int /*value*/, int /*timestamp*/) {}
     virtual void newAxisEvent      (int /*axis*/  , int /*value*/, int /*timestamp*/) {}
     virtual void newJoystickState  (JoystickState /*state*/)                          {}
+
+    virtual ~JoystickInterface() {}
 };
 
 

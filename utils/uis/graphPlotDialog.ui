@@ -88,7 +88,7 @@
          <string comment="Reset settings" extracomment="Reset settings"/>
         </property>
         <property name="icon">
-         <iconset resource="../../../restricted/cvs/resources/resresource.qrc">
+         <iconset resource="../../resources/main.qrc">
           <normaloff>:/new/prefix1/refresh.png</normaloff>:/new/prefix1/refresh.png</iconset>
         </property>
        </widget>
@@ -108,7 +108,7 @@
          <string comment="Save settings" extracomment="Save settings"/>
         </property>
         <property name="icon">
-         <iconset resource="../../../restricted/cvs/resources/resresource.qrc">
+         <iconset resource="../../resources/main.qrc">
           <normaloff>:/new/prefix1/install.png</normaloff>:/new/prefix1/install.png</iconset>
         </property>
        </widget>
@@ -128,7 +128,7 @@
          <string comment="Load settings" extracomment="Load settings"/>
         </property>
         <property name="icon">
-         <iconset resource="../../../restricted/cvs/resources/resresource.qrc">
+         <iconset resource="../../resources/main.qrc">
           <normaloff>:/new/prefix1/remove.png</normaloff>:/new/prefix1/remove.png</iconset>
         </property>
        </widget>
@@ -148,7 +148,7 @@
          <string>to CSV</string>
         </property>
         <property name="icon">
-         <iconset resource="../../../restricted/cvs/resources/resresource.qrc">
+         <iconset resource="../../resources/main.qrc">
           <normaloff>:/new/prefix1/install.png</normaloff>:/new/prefix1/install.png</iconset>
         </property>
         <property name="iconSize">
@@ -174,7 +174,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../../restricted/cvs/resources/resresource.qrc">
+         <iconset resource="../../resources/main.qrc">
           <normaloff>:/new/prefix1/pause.png</normaloff>
           <normalon>:/new/prefix1/play.png</normalon>:/new/prefix1/pause.png</iconset>
         </property>
@@ -282,7 +282,7 @@
           <number>2</number>
          </property>
          <attribute name="horizontalHeaderVisible">
-          <bool>true</bool>
+          <bool>false</bool>
          </attribute>
          <attribute name="horizontalHeaderCascadingSectionResizes">
           <bool>false</bool>
@@ -320,7 +320,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="../../../restricted/cvs/resources/resresource.qrc">
+          <iconset resource="../../resources/main.qrc">
            <normaloff>:/new/prefix1/up_alt.png</normaloff>:/new/prefix1/up_alt.png</iconset>
          </property>
         </widget>
@@ -331,7 +331,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="../../../restricted/cvs/resources/resresource.qrc">
+          <iconset resource="../../resources/main.qrc">
            <normaloff>:/new/prefix1/down_alt.png</normaloff>:/new/prefix1/down_alt.png</iconset>
          </property>
         </widget>
@@ -420,7 +420,7 @@
          <property name="minimumSize">
           <size>
            <width>140</width>
-           <height>0</height>
+           <height>40</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -456,7 +456,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../restricted/cvs/resources/resresource.qrc"/>
+  <include location="../../resources/main.qrc"/>
+  <include location="../../resources/main.qrc"/>
  </resources>
  <connections/>
  <slots>
