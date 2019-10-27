@@ -11,7 +11,7 @@ set (USE_TBB 1)
 
 IF ( USE_TBB )
     MESSAGE( STATUS "Including TBB on CORECVS build" )
-    find_package( TBB )
+    find_package(TBB REQUIRED)
 ENDIF ()
 
 
