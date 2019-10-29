@@ -2,18 +2,24 @@ project (SoftRender)
 
 set (NAME softrender )
 
-set (SOURCES
+set (SRC_FILES
     main_softrender.cpp      
 )
 
 
-include(../../wrappers/jsonmodern/CMakeLists.txt)
-include(../../wrappers/libpng/CMakeLists.txt)
-include(../../wrappers/libjpeg/CMakeLists.txt)
+include(../../wrappers/jsonmodern/sourcelist.cmake)
 
-message(STATUS SoftRender:${INCLUDEPATHS} )
+if (PNG_LIB)
+    include(../../wrappers/libpng/sourcelist.cmake)    
+endif()
+    
+if (JPEG_LIB)
+    include(../../wrappers/libjpeg/sourcelist.cmake)
+endif()
 
-add_executable(${NAME} ${SOURCES} ${HEADERS})
+#message(STATUS SoftRender:${INCLUDEPATHS} )
+
+add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
 
 target_link_libraries(${NAME} corecvs pthread ${LIBS})
 

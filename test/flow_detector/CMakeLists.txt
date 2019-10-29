@@ -3,7 +3,7 @@ project (FlowDetector)
 
 set (NAME flow_detector )
 
-set (SOURCES
+set (SRC_FILES
     main_flow_detector.cpp
 )
 
@@ -13,13 +13,24 @@ set (SOURCES
 #include_directories(${JSON_MODERN_INCLUDES})
 #message(STATUS FlowDetector:${JSON_MODERN_INCLUDES} )
 
-include(../../wrappers/jsonmodern/CMakeLists.txt)
-include(../../wrappers/libpng/CMakeLists.txt)
-include(../../wrappers/libjpeg/CMakeLists.txt)
 
-message(STATUS FlowDetector:${INCLUDEPATHS} )
+if (PNG_LIB)
+    include(../../wrappers/libpng/sourcelist.cmake)    
+endif()
+    
+if (JPEG_LIB)
+    include(../../wrappers/libjpeg/sourcelist.cmake)
+endif()
 
-add_executable(${NAME} ${SOURCES} ${HEADERS})
+include(../../wrappers/jsonmodern/sourcelist.cmake)
+
+if (OpenCV_LIBS)
+include(../../wrappers/opencv/sourcelist.cmake)
+endif()
+
+#message(STATUS FlowDetector:${INCLUDEPATHS} )
+
+add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
 
 target_link_libraries(${NAME} corecvs pthread ${LIBS})
 

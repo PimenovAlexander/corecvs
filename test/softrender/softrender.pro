@@ -41,4 +41,5 @@ with_libpng {
 
 }
 
+OTHER_FILES += CMakeLists.txt
 OTHER_FILES += render.sh

@@ -7,18 +7,44 @@ set (CoreCVS_VERSION_MINOR 0)
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/Modules/")
 
 # Overall dependances
-set (USE_TBB 1)
-
+option(USE_TBB "Should compile with TBB" YES)
 IF ( USE_TBB )
     MESSAGE( STATUS "Including TBB on CORECVS build" )
     find_package(TBB REQUIRED)
+    if (TBB_LIBRARY)
+        add_definitions(-DWITH_TBB)
+    endif()
 ENDIF ()
 
-
-set (USE_OPENBLAS 1)
+option(USE_OPENBLAS "Should compile with OpenBlas" YES)
 IF ( USE_OPENBLAS )
-    MESSAGE( STATUS "Including OpenBlas on CORECVS build" )
+    MESSAGE( STATUS "Including OpenBlas and Lapacke on CORECVS build" )
     find_package( OpenBlas )
+    find_package( Lapacke )
+    if (OpenBLAS_LIB AND Lapacke_LIB)
+        add_definitions(-DWITH_BLAS)
+    endif()
+ENDIF ()
+
+option(USE_OPENCV "Should compile with OpenCV" YES)
+IF ( USE_OPENCV )
+    MESSAGE( STATUS "Including OpenCV on CORECVS build" )
+    find_package( OpenCV )
+    if (OpenCV_LIBS)
+        add_definitions(-DWITH_OPENCV)
+    endif()
+ENDIF ()
+
+option(USE_LIBPNG "Should compile with LibPNG" YES)
+IF ( USE_LIBPNG )
+    MESSAGE( STATUS "Including LibPNG wherever possible" )
+    find_package( Png )
+ENDIF ()
+
+option(USE_LIBJPEG "Should compile with LibJPEG" YES)
+IF ( USE_LIBJPEG )
+    MESSAGE( STATUS "Including LibJpeg wherever possible" )
+    find_package( Jpeg )
 ENDIF ()
 
 ###
@@ -319,10 +345,7 @@ add_subdirectory(utils)
 
 #TODO: Bring this to subproject
 add_subdirectory(test)
-
-
-
-#add_subdirectory(applications)
+add_subdirectory(applications)
 
 
 enable_testing()

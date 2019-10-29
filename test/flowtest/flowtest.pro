@@ -35,3 +35,5 @@ with_libpng {
 
 
 SOURCES += main_flowtest.cpp
+
+OTHER_FILES += CMakeLists.txt

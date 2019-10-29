@@ -3,15 +3,18 @@ project (Gcodeplayground)
 
 set (GCODE_PLAYGROUND_NAME gcodeplayground )
 
-set (GCODE_PLAYGROUND_SOURCES
+set (SRC_FILES
     labelGcodeInterpreter.cpp  
-    labelGcodeInterpreter.h  
     main_gcodeplayground.cpp  
     vinylCutterInterpreter.cpp  
+)
+
+set (HDR_FILES
+    labelGcodeInterpreter.h  
     vinylCutterInterpreter.h
 )
 
-add_executable(${GCODE_PLAYGROUND_NAME} ${GCODE_PLAYGROUND_SOURCES})
+add_executable(${GCODE_PLAYGROUND_NAME} ${SRC_FILES} ${HDR_FILES})
 
 target_link_libraries(${GCODE_PLAYGROUND_NAME} corecvs pthread)
 

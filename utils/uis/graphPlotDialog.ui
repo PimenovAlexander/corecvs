@@ -88,7 +88,7 @@
          <string comment="Reset settings" extracomment="Reset settings"/>
         </property>
         <property name="icon">
-         <iconset resource="../../resources/main.qrc">
+         <iconset>
           <normaloff>:/new/prefix1/refresh.png</normaloff>:/new/prefix1/refresh.png</iconset>
         </property>
        </widget>
@@ -108,7 +108,7 @@
          <string comment="Save settings" extracomment="Save settings"/>
         </property>
         <property name="icon">
-         <iconset resource="../../resources/main.qrc">
+         <iconset>
           <normaloff>:/new/prefix1/install.png</normaloff>:/new/prefix1/install.png</iconset>
         </property>
        </widget>
@@ -128,7 +128,7 @@
          <string comment="Load settings" extracomment="Load settings"/>
         </property>
         <property name="icon">
-         <iconset resource="../../resources/main.qrc">
+         <iconset>
           <normaloff>:/new/prefix1/remove.png</normaloff>:/new/prefix1/remove.png</iconset>
         </property>
        </widget>
@@ -148,7 +148,7 @@
          <string>to CSV</string>
         </property>
         <property name="icon">
-         <iconset resource="../../resources/main.qrc">
+         <iconset>
           <normaloff>:/new/prefix1/install.png</normaloff>:/new/prefix1/install.png</iconset>
         </property>
         <property name="iconSize">
@@ -174,7 +174,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../resources/main.qrc">
+         <iconset>
           <normaloff>:/new/prefix1/pause.png</normaloff>
           <normalon>:/new/prefix1/play.png</normalon>:/new/prefix1/pause.png</iconset>
         </property>
@@ -320,7 +320,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="../../resources/main.qrc">
+          <iconset>
            <normaloff>:/new/prefix1/up_alt.png</normaloff>:/new/prefix1/up_alt.png</iconset>
          </property>
         </widget>
@@ -331,7 +331,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="../../resources/main.qrc">
+          <iconset>
            <normaloff>:/new/prefix1/down_alt.png</normaloff>:/new/prefix1/down_alt.png</iconset>
          </property>
         </widget>
@@ -455,10 +455,7 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../../resources/main.qrc"/>
-  <include location="../../resources/main.qrc"/>
- </resources>
+ <resources/>
  <connections/>
  <slots>
   <slot>exportToCSV()</slot>

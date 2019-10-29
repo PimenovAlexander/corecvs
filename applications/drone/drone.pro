@@ -22,3 +22,5 @@ drone-app.depends         += drone-ui
 physics-test.file          = physics-test/physics-test.pro
 physics-test.depends      += drone-core
 
+OTHER_FILES += CMakeLists.txt
+

@@ -19,9 +19,9 @@ set (SOURCES
 #include_directories(${JSON_MODERN_INCLUDES})
 #message(STATUS FlowDetector:${JSON_MODERN_INCLUDES} )
 
-include(../../wrappers/jsonmodern/CMakeLists.txt)
-include(../../wrappers/libpng/CMakeLists.txt)
-include(../../wrappers/libjpeg/CMakeLists.txt)
+include(../../wrappers/jsonmodern/sourcelist.cmake)
+include(../../wrappers/libpng/sourcelist.cmake)
+include(../../wrappers/libjpeg/sourcelist.cmake)
 
 message(STATUS RaytraceRenderer:${INCLUDEPATHS} )
 

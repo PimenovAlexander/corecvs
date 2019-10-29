@@ -1,6 +1,6 @@
 
 set(TEST_SUBDIRECTORIES
-    # adoptcolor    # depends on utils
+    adoptcolor    # depends on utils
     # avencode      # includes files from on avencode
     # example_scene # includes files from on avencode
     fileloader

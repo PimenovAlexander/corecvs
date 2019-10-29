@@ -30,11 +30,21 @@ set (UTILS_SUBDIRECTORIES
     ../wrappers/v4l2
 )
 
-if(opengl)
+if (OpenCV_LIBS)
+    set(UTILS_SUBDIRECTORIES
+        ${UTILS_SUBDIRECTORIES}
+        ../wrappers/opencv
+    )
+endif()
+
+
+option(WITH_OPENGL "Should use OpenGL from Qt" YES)
+if(WITH_OPENGL)
     set(UTILS_SUBDIRECTORIES
         ${UTILS_SUBDIRECTORIES}
         3d
-
+        opengl
+        uis/cloudview
     )
 endif()
 
@@ -49,6 +59,12 @@ add_library(${MODULE_NAME} STATIC)
 
 target_link_libraries(${MODULE_NAME} corecvs Qt5::Widgets Qt5::Core Qt5::Gui Qt5::Script)
 
+if(WITH_OPENGL)
+    find_package(Qt5 COMPONENTS REQUIRED OpenGL)
+    target_link_libraries(${MODULE_NAME} corecvs Qt5::OpenGL)
+endif()
+
+
 file(GLOB SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
 file(GLOB HDR_FILES ${CMAKE_CURRENT_LIST_DIR}/*.h)
 list(REMOVE_ITEM SRC_FILES "${CMAKE_CURRENT_LIST_DIR}/trackPainter.cpp")
@@ -59,6 +75,13 @@ foreach(utils_subdirectory ${UTILS_SUBDIRECTORIES})
     include(${utils_subdirectory}/sourcelist.cmake)
 endforeach(utils_subdirectory)
 
+# Temporary fixes 
+
+#if (OpenCV_LIBS)
+#    message("Utils: Would use OpenCV")
+#    target_include_directories(${MODULE_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})
+#    target_link_libraries(${MODULE_NAME} ${OpenCV_LIBS})
+#endif()
 
 # message("UTILS HDR FILES ${HDR_FILES}")
 
