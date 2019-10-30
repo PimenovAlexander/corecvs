@@ -47,6 +47,16 @@ IF ( USE_LIBJPEG )
     find_package( Jpeg )
 ENDIF ()
 
+
+option(USE_AVCODEC "Should compile with AVCODEC" NO)
+IF ( USE_AVCODEC )
+    MESSAGE( STATUS "Including AVCODEC wherever possible" )
+    find_package( avutil )    
+    find_package( avformat )    
+    find_package( avcodec )    
+ENDIF ()
+
+
 ###
 #
 # Debug/Release switch 

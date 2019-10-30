@@ -4,8 +4,20 @@ project (drone-core)
 
 add_library(drone-core STATIC )
 
+
+file(GLOB CURR_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/xml/generated/*.cpp)
+file(GLOB CURR_HDR_FILES ${CMAKE_CURRENT_LIST_DIR}/xml/generated/*.h)
+
+set(SRC_FILES ${SRC_FILES} ${CURR_SRC_FILES})
+set(HDR_FILES ${HDR_FILES} ${CURR_HDR_FILES})
+
+set (INC_PATHS ${CMAKE_CURRENT_LIST_DIR}/xml/generated)
+
+include(../../../wrappers/joystick/sourcelist.cmake)
+
 target_sources(drone-core
     PUBLIC
+        ${HDR_FILES}
 
         ${CMAKE_CURRENT_LIST_DIR}/calibration/calibration.h
 
@@ -41,6 +53,7 @@ target_sources(drone-core
         ${CMAKE_CURRENT_LIST_DIR}/joystick/joystickReader.h
 
     PRIVATE
+        ${SRC_FILES}
 
         ${CMAKE_CURRENT_LIST_DIR}/calibration/calibration.cpp
 
@@ -74,11 +87,15 @@ target_sources(drone-core
         ${CMAKE_CURRENT_LIST_DIR}/controlRecord.cpp
         ${CMAKE_CURRENT_LIST_DIR}/copterInputs.cpp
         ${CMAKE_CURRENT_LIST_DIR}/comcontroller.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/ joystick/joystickReader.cpp
-
+        ${CMAKE_CURRENT_LIST_DIR}/joystick/joystickReader.cpp
 )
 
-include_directories(
+
+
+
+target_include_directories(drone-core PUBLIC
+        ${INC_PATHS}
+
         ${CMAKE_CURRENT_LIST_DIR}
         ${CMAKE_CURRENT_LIST_DIR}/joystick
         ${CMAKE_CURRENT_LIST_DIR}/radio
@@ -90,8 +107,19 @@ include_directories(
         ${CMAKE_CURRENT_LIST_DIR}/simulation
 )
 
+target_include_directories(drone-core PUBLIC ../../../wrappers/joystick)
+
+find_package(Qt5 COMPONENTS REQUIRED SerialPort)
+target_link_libraries(drone-core corecvs Qt5::SerialPort)
+
+
 target_include_directories(drone-core PUBLIC ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} .)
 
+
+
 target_link_libraries(drone-core cvs_utils corecvs)
-target_link_libraries(drone-core ${OpenCV_LIBS})
+
+if (OpenCV_LIBS)
+    target_link_libraries(drone-core ${OpenCV_LIBS})
+endif()
 

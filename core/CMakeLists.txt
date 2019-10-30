@@ -38,16 +38,9 @@ set (CORE_SUBMODULES
 )
 
 set ( ADDITIONAL_MODULES
-    assignment
-    boosting
-    meta
-    framesources
-    filters
-    meanshift
-    segmentation
-    clustering3d
-    placer
-    delaunay)
+#    placer
+    delaunay
+    joystick)
 
 message(STATUS "Core will use ${CORE_SUBMODULES} and ${ADDITIONAL_MODULES}")
 
@@ -78,3 +71,8 @@ foreach(core_module ${CORE_SUBMODULES})
     message(STATUS "including ${core_module}")
     add_subdirectory(${core_module})
 endforeach(core_module)
+
+foreach(add_core_module ${ADDITIONAL_MODULES})
+    message(STATUS "including ${add_core_module}")
+    add_subdirectory(${add_core_module})
+endforeach(add_core_module)

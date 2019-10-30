@@ -12,9 +12,9 @@ set (UTILS_SUBDIRECTORIES
     corestructs
     distortioncorrector
     fileformats
-    filters
+#    filters
     flowcolorers
-    # framesources
+    framesources
     # memoryuse
     # opengl
     rectifier
@@ -23,7 +23,7 @@ set (UTILS_SUBDIRECTORIES
     statistics
     uis
     visitors
-    widgets
+    widgets   
     ../wrappers/jsonmodern
     ../wrappers/libpng
     ../wrappers/libjpeg
@@ -52,16 +52,18 @@ endif()
 set(CMAKE_INCLUDE_CURRENT_DIR "YES")
 set(CMAKE_AUTOMOC "YES")
 set(CMAKE_AUTOUIC "YES")
+set(CMAKE_AUTORCC "YES")
 
-find_package(Qt5 COMPONENTS REQUIRED Core Gui Widgets Script)
+
+find_package(Qt5 COMPONENTS REQUIRED Core Gui Widgets Script Xml)
 
 add_library(${MODULE_NAME} STATIC)
 
-target_link_libraries(${MODULE_NAME} corecvs Qt5::Widgets Qt5::Core Qt5::Gui Qt5::Script)
+target_link_libraries(${MODULE_NAME} corecvs Qt5::Widgets Qt5::Core Qt5::Gui Qt5::Script Qt5::Xml)
 
 if(WITH_OPENGL)
     find_package(Qt5 COMPONENTS REQUIRED OpenGL)
-    target_link_libraries(${MODULE_NAME} corecvs Qt5::OpenGL)
+    target_link_libraries(${MODULE_NAME} Qt5::OpenGL GLU GL)
 endif()
 
 
@@ -75,20 +77,23 @@ foreach(utils_subdirectory ${UTILS_SUBDIRECTORIES})
     include(${utils_subdirectory}/sourcelist.cmake)
 endforeach(utils_subdirectory)
 
+
+
+message("Additional include path <${INC_PATHS}>")
+target_include_directories(${MODULE_NAME} PUBLIC ${INC_PATHS})
+target_include_directories(${MODULE_NAME} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+
 # Temporary fixes 
+SET(AUTOGEN_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/${MODULE_NAME}_autogen/include")
+target_include_directories(${MODULE_NAME} PUBLIC ${AUTOGEN_BUILD_DIR} )
+message("AUTOGEN_BUILD_DIR bin directory <${AUTOGEN_BUILD_DIR}>")
 
-#if (OpenCV_LIBS)
-#    message("Utils: Would use OpenCV")
-#    target_include_directories(${MODULE_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})
-#    target_link_libraries(${MODULE_NAME} ${OpenCV_LIBS})
-#endif()
-
-# message("UTILS HDR FILES ${HDR_FILES}")
 
 target_sources(${MODULE_NAME}
     PUBLIC
         ${HDR_FILES}
     PRIVATE
         ${SRC_FILES}
+        ../resources/main.qrc
 )
 
