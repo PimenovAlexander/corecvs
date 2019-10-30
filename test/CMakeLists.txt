@@ -1,7 +1,7 @@
 
 set(TEST_SUBDIRECTORIES
     adoptcolor    # depends on utils
-    # avencode      # includes files from on avencode
+    avencode      
     # example_scene # includes files from on avencode
     fileloader
     flow_detector

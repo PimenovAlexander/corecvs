@@ -97,4 +97,6 @@ OTHER_FILES += cmake/Modules/FindLapacke.cmake
 OTHER_FILES += cmake/Modules/FindTBB.cmake
 OTHER_FILES += cmake/Modules/FindPng.cmake
 OTHER_FILES += cmake/Modules/FindJpeg.cmake
+OTHER_FILES += cmake/Modules/FindAVCodec.cmake
+
 

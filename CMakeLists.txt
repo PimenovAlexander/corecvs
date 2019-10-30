@@ -32,6 +32,8 @@ IF ( USE_OPENCV )
     find_package( OpenCV )
     if (OpenCV_LIBS)
         add_definitions(-DWITH_OPENCV)
+    else()
+        message("You requested OPENCV in the build, but none was found.")
     endif()
 ENDIF ()
 
@@ -48,12 +50,12 @@ IF ( USE_LIBJPEG )
 ENDIF ()
 
 
-option(USE_AVCODEC "Should compile with AVCODEC" NO)
+option(USE_AVCODEC "Should compile with AVCODEC" YES)
 IF ( USE_AVCODEC )
     MESSAGE( STATUS "Including AVCODEC wherever possible" )
-    find_package( avutil )    
-    find_package( avformat )    
-    find_package( avcodec )    
+    find_package( AVCodec )    
+ELSE()
+    MESSAGE( STATUS "Including AVCODEC requested, but libaray not found" )
 ENDIF ()
 
 
