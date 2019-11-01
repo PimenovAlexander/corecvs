@@ -34,13 +34,14 @@ class JoystickFileFormat
 };
 
 
-class PlaybackJoystickInterface : public JoystickInterface
+class PlaybackJoystickInterface : public virtual JoystickInterface
 {
 public:
-    PlaybackJoystickInterface(const std::string &deviceName):
-        corecvs::JoystickInterface(deviceName)
-    {}
+    JoystickFileFormat data;
 
+    PlaybackJoystickInterface(const std::string &deviceName);
+
+    static std::vector<std::string>        getDevices      (const std::string &prefix = "./");
     static corecvs::JoystickConfiguration  getConfiguration(const std::string &deviceName);
 
     corecvs::JoystickConfiguration getConfiguration();
@@ -57,6 +58,7 @@ public:
     virtual void newAxisEvent      (int axis  , int value, int timestamp)  override;
     virtual void newJoystickState  (corecvs::JoystickState state)          override;
 
+    ~PlaybackJoystickInterface() {}
 
 protected:
     std::thread *mSpinThread = NULL;

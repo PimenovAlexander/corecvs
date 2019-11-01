@@ -1,11 +1,43 @@
 #include <fstream>
+#include <unistd.h>
 
 #include "core/utils/global.h"
 #include "core/utils/utils.h"
+
 #include "core/joystick/playbackJoystickInterface.h"
+
+#include "core/utils/preciseTimer.h"
+#include "core/filesystem/folderScanner.h"
 
 using namespace corecvs;
 using namespace std;
+
+PlaybackJoystickInterface::PlaybackJoystickInterface(const string &deviceName):
+    corecvs::JoystickInterface(deviceName)
+{
+    data.load(deviceName);
+    SYNC_PRINT(("PlaybackJoystickInterface::PlaybackJoystickInterface(): Loaded %d joystick moves\n", data.states.size()));
+}
+
+std::vector<string> PlaybackJoystickInterface::getDevices(const string &prefix)
+{
+    vector<string> toReturn;
+    vector<string> files;
+    FolderScanner::scan(prefix, files);
+
+    for(std::string str : files)
+    {
+        if (HelperUtils::endsWith(str, ".dump")) {
+            toReturn.push_back(str);
+        }
+    }
+    return toReturn;
+}
+
+JoystickConfiguration PlaybackJoystickInterface::getConfiguration()
+{
+    return data.configuration;
+}
 
 bool PlaybackJoystickInterface::start()
 {
@@ -43,12 +75,45 @@ void PlaybackJoystickInterface::stop()
 
 void PlaybackJoystickInterface::run()
 {
+    uint64_t initialTimestamp = PreciseTimer::currentTime().usec();
+    SYNC_PRINT(("LinuxJoystickInterface::run(): starting time %" PRIu64 "\n", initialTimestamp));
+    int count = 0;
+
     while (!exitLock.try_lock())
     {
+        /* Wait till next event */
+        uint64_t delay = 50000;
 
+        if (count < data.states.size())
+        {
+            delay = std::min(delay, data.states[count].timestamp - initialTimestamp);
+        }
 
+        usleep(delay);
 
+        uint64_t time = PreciseTimer::currentTime().usec() - initialTimestamp;
+
+        while (count < data.states.size() && time > data.states[count].timestamp )
+        {
+            newJoystickState(data.states[count]);
+            count++;
+        }
     }
+
+}
+
+void PlaybackJoystickInterface::newButtonEvent(int button, int value, int timestamp)
+{
+
+}
+
+void PlaybackJoystickInterface::newAxisEvent(int axis, int value, int timestamp)
+{
+
+}
+
+void PlaybackJoystickInterface::newJoystickState(JoystickState state)
+{
 
 }
 

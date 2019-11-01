@@ -1,0 +1,18 @@
+target_sources(corecvs
+    PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}/reflectionGenerator.h
+        ${CMAKE_CURRENT_LIST_DIR}/pdoGenerator.h
+        ${CMAKE_CURRENT_LIST_DIR}/widgetUIGenerator.h
+        ${CMAKE_CURRENT_LIST_DIR}/documentationGenerator.h
+        ${CMAKE_CURRENT_LIST_DIR}/baseGenerator.h
+        ${CMAKE_CURRENT_LIST_DIR}/parametersMapperGenerator.h
+        ${CMAKE_CURRENT_LIST_DIR}/configLoader.h
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/main.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/pdoGenerator.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/widgetUIGenerator.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/documentationGenerator.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/baseGenerator.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/parametersMapperGenerator.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/configLoader.cpp
+)

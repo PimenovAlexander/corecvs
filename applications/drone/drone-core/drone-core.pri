@@ -29,3 +29,5 @@ unix {
         LINUX_JOYSTICK_WRAPPER_DIR=$$PWD/../../../wrappers/joystick
         INCLUDEPATH += $$LINUX_JOYSTICK_WRAPPER_DIR
 }
+
+OTHER_FILES += CMakeLists.txt

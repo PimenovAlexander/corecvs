@@ -40,11 +40,6 @@ inline float LanczosFilter(float x, float lanczos_size) {
     return 0.0;
 }
 
-inline float LanczosFilterD(int value)
-{
-
-}
-
 inline double maxOf4(double d1, double d2, double d3, double d4){
     return std::max(d1, std::max(d2, std::max(d3, d4)));
 }

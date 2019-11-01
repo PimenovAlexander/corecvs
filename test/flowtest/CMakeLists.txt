@@ -3,11 +3,18 @@ project (Flowtest)
 
 set (FLOWTEST_NAME flowtest )
 
-set (FLOWTEST_SOURCES
+set (SRC_FILES
     main_flowtest.cpp
 )
 
-add_executable(${FLOWTEST_NAME} ${FLOWTEST_SOURCES})
+if (OpenCV_LIBS)
+include(../../wrappers/opencv/sourcelist.cmake)
+endif()
+
+add_executable(${FLOWTEST_NAME} ${SRC_FILES} ${HDR_FILES})
 
 target_link_libraries(${FLOWTEST_NAME} stdc++fs corecvs)
+
+
+
 

@@ -343,10 +343,10 @@ TEST(Physics, dzhanibekovVideo)
         obj.facesColor[c] = RGBColor::rainbow(lerpLimit(0.0, 1.0, c, 0, obj.faces.size()));
     }
 
+    RGB24Buffer buffer(500, 500);
     /** AVI Preparation **/
 #ifdef WITH_AVCODEC
     AVEncoder encoder;
-    RGB24Buffer buffer(500, 500);
     AVEncoder::printCaps();
     PinholeCameraIntrinsics cam(Vector2dd(buffer.w, buffer.h), degToRad(50));
     Affine3DQ camPosition = Affine3DQ::Shift(0, 0, -100);

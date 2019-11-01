@@ -89,5 +89,14 @@ drone.file                    = applications/drone/drone.pro
 
 OTHER_FILES += cvs-config.pri
 OTHER_FILES += CMakeLists.txt
+OTHER_FILES += applications/CMakeLists.txt
 OTHER_FILES += Doxyfile
-OTHER_FILES += cmake/Modules/*.cmake
+
+OTHER_FILES += cmake/Modules/FindOpenBlas.cmake
+OTHER_FILES += cmake/Modules/FindLapacke.cmake
+OTHER_FILES += cmake/Modules/FindTBB.cmake
+OTHER_FILES += cmake/Modules/FindPng.cmake
+OTHER_FILES += cmake/Modules/FindJpeg.cmake
+OTHER_FILES += cmake/Modules/FindAVCodec.cmake
+
+

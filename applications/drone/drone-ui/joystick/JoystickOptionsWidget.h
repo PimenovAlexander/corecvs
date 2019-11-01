@@ -16,14 +16,28 @@ class JoystickOptionsWidget;
 
 Q_DECLARE_METATYPE(corecvs::JoystickState);
 
-class JoystickListener : public QObject, public LinuxJoystickInterface
+class JoystickInterfaceQt : public QObject, public virtual corecvs::JoystickInterface
 {
     Q_OBJECT
+
+
+
+
+signals:
+    void joystickUpdated(corecvs::JoystickState state);
+
+public:
+    virtual ~JoystickInterfaceQt(){}
+};
+
+template<class BaseObject>
+class JoystickListener : public JoystickInterfaceQt, public BaseObject
+{
 public:
     JoystickOptionsWidget *mTarget = NULL;
 
     JoystickListener(const std::string &deviceName, JoystickOptionsWidget *target) :
-        LinuxJoystickInterface(deviceName),
+        BaseObject(deviceName),
         mTarget(target)
     {
         qRegisterMetaType<corecvs::JoystickState>("JoystickState");
@@ -33,10 +47,15 @@ public:
 public:
     virtual void newButtonEvent    (int /*button*/, int /*value*/, int /*timestamp*/) override {}
     virtual void newAxisEvent      (int /*axis  */, int /*value*/, int /*timestamp*/) override {}
-    virtual void newJoystickState  (corecvs::JoystickState state) override;
+    virtual void newJoystickState  (corecvs::JoystickState state) override
+    {
+        emit joystickUpdated(state);
+    #if 0
+        QMetaObject::invokeMethod( mTarget, "newData", Qt::QueuedConnection,
+                                   Q_ARG( JoystickState, state ) );
+    #endif
 
-signals:
-    void joystickUpdated(corecvs::JoystickState state);
+    }
 
 public:
     virtual ~JoystickListener(){}
@@ -75,7 +94,7 @@ signals:
 private:
     Ui::JoystickOptionsWidget *ui;
 
-    JoystickListener *mInterface = NULL;
+    JoystickInterfaceQt *mInterface = NULL;
 
     std::vector<QPushButton                 *> mButtonWidgets;
     std::vector<MixerChannelOperationWidget *> mAxisWidgets;

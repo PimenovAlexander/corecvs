@@ -13,5 +13,4 @@ void JoystickConfiguration::print() {
     cout << "Buttons :" << buttonNumber << endl;
 }
 
-
 } // namespace corecvs

@@ -1,0 +1,14 @@
+target_sources(testbed
+    PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}/testbedMainWindow.h
+        ${CMAKE_CURRENT_LIST_DIR}/pointScene.h
+        ${CMAKE_CURRENT_LIST_DIR}/localHistogram.h
+        ${CMAKE_CURRENT_LIST_DIR}/widgets/testbedImageWidget.h
+        ${CMAKE_CURRENT_LIST_DIR}/gapFiller.h
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/testbedMainWindow.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/main_testbed.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/pointScene.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/localHistogram.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/widgets/testbedImageWidget.cpp
+)

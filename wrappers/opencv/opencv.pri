@@ -100,8 +100,7 @@ contains(DEFINES, WITH_OPENCV) {                    # if it's installed properly
     HEADERS   += $$OPENCV_WRAPPER_DIR/generated/openCVSquareDetectorParameters.h
     SOURCES   += $$OPENCV_WRAPPER_DIR/generated/openCVSquareDetectorParameters.cpp
 
-
-
-
 }
+
+OTHER_FILES += $$OPENCV_WRAPPER_DIR/sourcelist.cmake
 

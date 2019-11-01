@@ -29,8 +29,8 @@ list(REMOVE_ITEM CUR_SRC_FILES "${CMAKE_CURRENT_LIST_DIR}/coreWidgets/ransacPara
 set(SRC_FILES ${SRC_FILES} ${CUR_SRC_FILES})
 set(HDR_FILES ${HDR_FILES} ${CUR_HDR_FILES})
 
-include_directories(${CMAKE_CURRENT_LIST_DIR}/cameraModel)
-include_directories(${CMAKE_CURRENT_LIST_DIR}/coreWidgets)
+set(INC_PATHS ${INC_PATHS} ${CMAKE_CURRENT_LIST_DIR}/cameraModel)
+set(INC_PATHS ${INC_PATHS} ${CMAKE_CURRENT_LIST_DIR}/coreWidgets)
 
 # file(GLOB CUR_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/libWidgets/*.cpp)
 # file(GLOB CUR_HDR_FILES ${CMAKE_CURRENT_LIST_DIR}/libWidgets/*.h)

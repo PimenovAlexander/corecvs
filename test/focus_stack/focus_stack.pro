@@ -54,3 +54,5 @@ HEADERS += \
     FSAlgorithm.h \
     imageStack.h \
     laplacianStacking.h
+
+OTHER_FILES += CMakeLists.txt

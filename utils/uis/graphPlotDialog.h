@@ -30,6 +30,9 @@ public:
 
     void update(void);
 
+    GraphPlotParameters getParameters() const;
+    void setParameters(const GraphPlotParameters &params);
+
     /* Automatic saving and loading */
     virtual void loadFromQSettings(const QString &fileName, const QString &_root);
     virtual void saveToQSettings  (const QString &fileName, const QString &_root);

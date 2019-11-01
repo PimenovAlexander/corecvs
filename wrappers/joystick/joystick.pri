@@ -4,4 +4,4 @@ HEADERS += \
 SOURCES += \
         joystick/joystickInterface.cpp \
 
-OTHER_FILES +=$$PWD/CMakeLists.txt
+OTHER_FILES +=$$PWD/sourcelist.cmake

@@ -10,9 +10,9 @@
 #include "core/delaunay/delaunay.h"
 
 #include "core/math/mathUtils.h"
-#include "delaunay.h"
+#include "core/delaunay/delaunay.h"
 
-#include <geometry/conic.h>
+#include "core/geometry/conic.h"
 
 namespace corecvs {
 

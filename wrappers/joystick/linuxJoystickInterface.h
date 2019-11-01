@@ -11,7 +11,7 @@ namespace std {
     class thread;
 }
 
-class LinuxJoystickInterface : public corecvs::JoystickInterface
+class LinuxJoystickInterface : public virtual corecvs::JoystickInterface
 {
 public:
     LinuxJoystickInterface(const std::string &deviceName):
@@ -36,6 +36,7 @@ public:
     virtual void newAxisEvent      (int axis  , int value, int timestamp)  override;
     virtual void newJoystickState  (corecvs::JoystickState state)          override;
 
+    ~LinuxJoystickInterface() {}
 
 protected:
     /**

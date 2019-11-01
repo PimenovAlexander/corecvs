@@ -14,3 +14,6 @@ contains(DEFINES, WITH_JSONMODERN) {                    # if it's installed prop
    HEADERS +=  $$JSONMODERN_WRAPPER_DIR/jsonModernReader.h
    SOURCES +=  $$JSONMODERN_WRAPPER_DIR/jsonModernReader.cpp
 }
+
+OTHER_FILES += $$JSONMODERN_WRAPPER_DIR/CMakeLists.txt
+OTHER_FILES += $$JSONMODERN_WRAPPER_DIR/sourcelist.cmake
