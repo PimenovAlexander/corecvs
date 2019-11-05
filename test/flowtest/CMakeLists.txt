@@ -13,7 +13,7 @@ endif()
 
 add_executable(${FLOWTEST_NAME} ${SRC_FILES} ${HDR_FILES})
 
-target_link_libraries(${FLOWTEST_NAME} stdc++fs corecvs)
+target_link_libraries(${FLOWTEST_NAME} stdc++fs -pthread corecvs)
 
 
 

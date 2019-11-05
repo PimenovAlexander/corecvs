@@ -23,7 +23,7 @@ set (UTILS_SUBDIRECTORIES
     statistics
     uis
     visitors
-    widgets   
+    widgets
     ../wrappers/jsonmodern
     ../wrappers/libpng
     ../wrappers/libjpeg
@@ -35,6 +35,13 @@ if (OpenCV_LIBS)
         ${UTILS_SUBDIRECTORIES}
         ../wrappers/opencv
     )
+endif()
+
+if (apriltag_LIBS)
+    set(UTILS_SUBDIRECTORIES
+        ${UTILS_SUBDIRECTORIES}
+        ../wrappers/apriltag
+            )
 endif()
 
 
