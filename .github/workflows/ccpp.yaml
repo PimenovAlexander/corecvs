@@ -29,5 +29,7 @@ jobs:
            cd build
            cmake ..
     - name: Make 
-      run: make
+      run: |
+           cd build
+           make -j
 
