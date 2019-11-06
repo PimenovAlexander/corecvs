@@ -28,6 +28,7 @@ set (UTILS_SUBDIRECTORIES
     ../wrappers/libpng
     ../wrappers/libjpeg
     ../wrappers/v4l2
+    ../wrappers/avcodec
 )
 
 if (OpenCV_LIBS)

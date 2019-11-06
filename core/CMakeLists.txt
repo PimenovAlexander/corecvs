@@ -66,7 +66,6 @@ if (TBB_LIBRARY)
     target_link_libraries(corecvs ${TBB_LIBRARY})
 endif()
 
-
 foreach(core_module ${CORE_SUBMODULES})
     message(STATUS "including ${core_module}")
     add_subdirectory(${core_module})
