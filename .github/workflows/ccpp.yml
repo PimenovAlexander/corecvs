@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: CMake Build for Ubuntu
 
 on: 
   push:
@@ -13,7 +13,9 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Prepare build folder
-      run: mkdir build; cd build                 
+      run: |
+           mkdir build
+           cd build              
     - name: Cmake
       run: cmake ..
     - name: Make 
