@@ -12,6 +12,9 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
+    - name: Install prerequisites
+      run: |
+           sudo apt install libtbb-dev libavcodec-dev libavutil-dev libavformat-dev libswscale-dev libjpeg-dev libpng-dev libopenblas-dev liblapacke-dev
     - name: Prepare build folder
       run: |
            ls
