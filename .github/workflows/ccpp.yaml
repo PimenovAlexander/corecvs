@@ -14,10 +14,14 @@ jobs:
     - uses: actions/checkout@v1
     - name: Prepare build folder
       run: |
+           ls
+           pwd
            mkdir build
            cd build              
-    - name: Cmake
-      run: cmake ..
+    - name: Cmake    
+      run: |
+           cd build
+           cmake ..
     - name: Make 
       run: make
 
