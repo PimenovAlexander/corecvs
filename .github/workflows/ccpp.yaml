@@ -16,7 +16,8 @@ jobs:
       run: |
            sudo apt install -y libtbb-dev libavcodec-dev libavutil-dev libavformat-dev libswscale-dev libjpeg-dev libpng-dev libopenblas-dev liblapacke-dev
     - name: Install Qt
-      uses: jurplel/install-qt-action@v1.0.0 
+      run: |
+            sudo apt install -y qt5-default qtscript-tools qtscript5-dev 
     - name: Prepare build folder
       run: |
            ls
