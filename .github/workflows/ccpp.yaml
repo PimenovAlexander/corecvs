@@ -1,0 +1,23 @@
+name: CMake Build for Ubuntu. V2
+
+on: 
+  push:
+    branches: 
+      - master_cmake
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Prepare build folder
+      run: |
+           mkdir build
+           cd build              
+    - name: Cmake
+      run: cmake ..
+    - name: Make 
+      run: make
+
