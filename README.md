@@ -1,7 +1,7 @@
 # corecvs
 Computer Vision primitives library
 
-Please refer to wiki for more information
+Please refer to wiki for more information - [Wiki](https://github.com/PimenovAlexander/corecvs/wiki)
 
 
 # Build Status
