@@ -19,4 +19,4 @@ jobs:
     - name: Cmake
       run: cmake ..
     - name: Make 
-      run: make 
+      run: make VERBOSE=1
