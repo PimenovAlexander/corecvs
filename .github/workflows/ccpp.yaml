@@ -12,6 +12,9 @@ jobs:
     
     steps:      
     - uses: actions/checkout@v1
+    - name: Print Machine Status
+      run: |
+            cat /proc/cpuinfo
     - name: Install generic prerequisites
       run: |
            sudo apt install -y libtbb-dev libavcodec-dev libavutil-dev libavformat-dev libswscale-dev libjpeg-dev libpng-dev libopenblas-dev liblapacke-dev
@@ -31,5 +34,5 @@ jobs:
     - name: Make 
       run: |
            cd build
-           make -j
+           make VERBOSE=1
 
