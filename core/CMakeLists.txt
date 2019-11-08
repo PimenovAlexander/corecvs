@@ -51,7 +51,7 @@ set_property(TARGET corecvs PROPERTY CXX_STANDARD_REQUIRED ON)
 
 target_include_directories(corecvs PUBLIC ..)
 
-target_link_libraries(corecvs stdc++fs)
+target_link_libraries(corecvs pthread)
 
 if (OpenBLAS_LIB)
     message("Core: Would use OpenBLAS adding <${OpenBLAS_LIB}> to dependancies")
