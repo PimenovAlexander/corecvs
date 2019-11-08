@@ -9,7 +9,7 @@ set(TEST_SUBDIRECTORIES
     focus_stack
     gcodeplayground
     grab24        # depends on utils
-    grab24_qt
+    #grab24_qt
     # jitplayground
     pattern_detector
     reprojector

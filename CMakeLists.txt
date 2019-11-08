@@ -16,6 +16,16 @@ IF ( USE_TBB )
     endif()
 ENDIF ()
 
+
+#option(USE_TBB "Should compile with FILESYSTEM" YES)
+#IF ( USE_TBB )
+#    MESSAGE( STATUS "Including FILESYSTEM on CORECVS build" )
+#    find_package(Filesystem)
+#    if (FILESYSTEM_LIBRARY)
+#        add_definitions(-DWITH_FILESYSTEM)
+#    endif()
+#ENDIF ()
+
 option(USE_OPENBLAS "Should compile with OpenBlas" YES)
 IF ( USE_OPENBLAS )
     MESSAGE( STATUS "Including OpenBlas and Lapacke on CORECVS build" )

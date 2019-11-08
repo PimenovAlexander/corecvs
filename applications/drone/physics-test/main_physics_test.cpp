@@ -5,6 +5,7 @@
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/geometry/renderer/simpleRenderer.h"
 #include "core/buffers/bufferFactory.h"
+#include "core/filesystem/folderScanner.h"
 
 
 #ifdef WITH_AVCODEC
@@ -269,7 +270,7 @@ TEST(Physics, dummyVideo)
 
     Mesh3D baseModel;
     std::string modelFile = "model.stl";
-    if (!HelperUtils::pathExists(modelFile))
+    if (!FolderScanner::pathExists(modelFile))
     {
         baseModel.switchColor(true);
 
