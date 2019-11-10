@@ -21,6 +21,14 @@ jobs:
     - name: Install Qt
       run: |
             sudo apt install -y qt5-default qtscript-tools qtscript5-dev libqt5serialport5-dev
+    - name: Install OpenCV prerequisites
+      run: |
+            sudo apt install -y libvtk6.3 libgoogle-glog0v5 
+    - name: Install OpenCV
+      run: |
+            wget http://calvrack.ru:3080/exposed-drone/opencv/OpenCV-3.4.6-x86_64-libs.deb
+            wget http://calvrack.ru:3080/exposed-drone/opencv/OpenCV-3.4.6-x86_64-dev.deb
+            sudo dpkg -i OpenCV-3.4.6-x86_64-libs.deb OpenCV-3.4.6-x86_64-dev.deb            
     - name: Prepare build folder
       run: |
            ls
