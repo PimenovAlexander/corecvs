@@ -19,6 +19,10 @@ jobs:
       run: |
            sudo apt-get update 
            sudo apt install -y libtbb-dev libavcodec-dev libavutil-dev libavformat-dev libswscale-dev libjpeg-dev libpng-dev libopenblas-dev liblapacke-dev
+    - name: Install OpenCV prerequisites
+      run: |
+           sudo apt-get update 
+           sudo apt install -y libhdf5-100 
     - name: Install Qt
       run: |
             sudo apt install -y qt5-default qtscript-tools qtscript5-dev libqt5serialport5-dev
