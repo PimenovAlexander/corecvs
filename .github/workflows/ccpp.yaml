@@ -17,13 +17,15 @@ jobs:
             cat /proc/cpuinfo
     - name: Install generic prerequisites
       run: |
+           sudo apt-get update 
            sudo apt install -y libtbb-dev libavcodec-dev libavutil-dev libavformat-dev libswscale-dev libjpeg-dev libpng-dev libopenblas-dev liblapacke-dev
+    - name: Install OpenCV prerequisites
+      run: |
+            sudo apt install -y libvtk6-dev           
     - name: Install Qt
       run: |
             sudo apt install -y qt5-default qtscript-tools qtscript5-dev libqt5serialport5-dev
-    - name: Install OpenCV prerequisites
-      run: |
-            sudo apt install -y libvtk6-dev
+    
     - name: Install OpenCV
       run: |
             wget http://calvrack.ru:3080/exposed-drone/opencv/OpenCV-3.4.6-x86_64-libs.deb
