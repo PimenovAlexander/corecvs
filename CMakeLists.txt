@@ -93,9 +93,9 @@ fetch_googletest(
 add_subdirectory(core)
 add_subdirectory(utils)
 
-#TODO: Bring this to subproject
 add_subdirectory(test)
 add_subdirectory(applications)
+add_subdirectory(tools)
 
 
 enable_testing()
