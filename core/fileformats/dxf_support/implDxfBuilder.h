@@ -6,6 +6,8 @@
 #define DXF_SUPPORT_IMPLDXFBUILDER_H
 
 #include "core/fileformats/dxf_support/iDxfBuilder.h"
+#include "core/fileformats/dxf_support/dxfCodes.h"
+#include "core/math/vector/vector3d.h"
 #include <string>
 #include <list>
 
@@ -32,6 +34,11 @@ public:
     RGB24Buffer* draw() override;
 
 private:
+    DxfDrawingUnits units;
+    int width;
+    int height;
+    Vector3dd leftTopCorner;
+    Vector3dd rightBottomCorner;
     std::list<DxfEntity*> entities = {};
 };
 

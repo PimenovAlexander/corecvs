@@ -9,9 +9,10 @@
 
 namespace corecvs {
 
-// HEADER Section Processing Methods
+// Variables
 void ImplDxfBuilder::setIntVariable(int code, std::string const &name, int value) {
     std::cout << "Int Variable: " << name << " (code: " << code << ", value: " << value << ") is set" << std::endl;
+    if (name == "$INSUNITS") units = DxfCodes::getDrawingUnits(value);
 }
 
 void ImplDxfBuilder::setDoubleVariable(int code, std::string const &name, double value) {
@@ -28,6 +29,8 @@ void ImplDxfBuilder::set2DVectorVariable(int code, std::string const &name, doub
 
 void ImplDxfBuilder::set3DVectorVariable(int code, std::string const &name, double x, double y, double z) {
     std::cout << "3D Vector Variable: " << name << " (code: " << code << ", value: " << x << "," << y << "," << z << ") is set" << std::endl;
+    if (name == "$EXTMIN") leftTopCorner = Vector3dd(x,y,z);
+    else if (name == "$EXTMAX") rightBottomCorner = Vector3dd(x,y,z);
 }
 
 // Objects
@@ -41,16 +44,27 @@ void ImplDxfBuilder::addLineType(corecvs::DxfLineTypeObject *object) {
 
 // Entities
 void ImplDxfBuilder::addLine(DxfLineEntity *entity) {
-    entity->print();
     entities.push_back(entity);
 }
 
+// Drawing
 RGB24Buffer* ImplDxfBuilder::draw() {
-    RGB24Buffer* buffer = new RGB24Buffer(1000, 1000, RGBColor::White());
+    auto x1 = DxfCodes::getDrawingValue(leftTopCorner.x(), units);
+    auto y1 = DxfCodes::getDrawingValue(leftTopCorner.y(), units);
+    auto x2 = DxfCodes::getDrawingValue(rightBottomCorner.x(), units);
+    auto y2 = DxfCodes::getDrawingValue(rightBottomCorner.y(), units);
+    width = y2 - y1;
+    height = x2 - x1;
+
+    RGB24Buffer* buffer = new RGB24Buffer(width, height, RGBColor::White());
     for (DxfEntity* entity : entities) {
-        entity->draw(buffer);
+        entity->draw(buffer, units);
         entity->print();
     }
+
+    std::cout << "Left-top corner: " << leftTopCorner << std::endl;
+    std::cout << "Right-bottom corner: " << rightBottomCorner << std::endl;
+
     return buffer;
 }
 

@@ -7,6 +7,7 @@
 
 #include <string>
 #include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/fileformats/dxf_support/dxfCodes.h"
 #include "core/fileformats/dxf_support/entities/dxfEntityData.h"
 
 namespace corecvs {
@@ -17,7 +18,7 @@ public:
     explicit DxfEntity(DxfEntityData *data)
     : data(data) {}
 
-    virtual void draw(RGB24Buffer *buffer) {}
+    virtual void draw(RGB24Buffer *buffer, DxfDrawingUnits units) {}
     virtual void print() const;
 
 private:
@@ -31,7 +32,7 @@ public:
     : DxfEntity(data),
     data(data) {}
 
-    void draw(RGB24Buffer *buffer) override;
+    void draw(RGB24Buffer *buffer, DxfDrawingUnits units) override;
     void print() const override;
 
     DxfLineData *data;

@@ -16,6 +16,11 @@ enum class DxfElementType {
     DXF_LAYER, DXF_LINE_TYPE, DXF_LINE, DXF_UNKNOWN_TYPE
 };
 
+enum class DxfDrawingUnits {
+    UNITLESS, INCHES, FEET, MILES, MILLIMETERS, CENTIMETERS, METERS, KILOMETERS, MICROINCHES, MILS, YARDS,
+    ANGSTROMS, NANOMETERS, MICRONS, DECIMETERS, DECAMETERS, HECTOMETERS, GIGAMETERS, ASTRONOMICAL, LIGHT_YEARS, PARSECS
+};
+
 class DxfCodes {
 public:
     static const int DXF_INT16 = 0;
@@ -33,6 +38,9 @@ public:
     static const int DXF_VARIABLE_CODE = 9;
     static const int DXF_COLOR_NUMBER_CODE = 62;
     static const int DXF_FLAGS_CODE = 70;
+
+    static const std::string DXF_LINE_TYPE_NAME_DEFAULT;
+    static const int DXF_COLOR_NUMBER_DEFAULT = 256;
 
     static std::vector<int> getVariableCodes(std::string const &name) {
         if (VARIABLE_CODES.count(name) == 1) {
@@ -57,9 +65,51 @@ public:
         return DxfElementType::DXF_UNKNOWN_TYPE;
     }
 
+    static std::vector<uint8_t> getRGB(int number) {
+        if (AUTOCAD_COLORS.count(number) == 1) {
+            return AUTOCAD_COLORS[number];
+        }
+        return {};
+    }
+
+    static DxfDrawingUnits getDrawingUnits(int value) {
+        if (DRAWING_UNITS.count(value) == 1) {
+            return DRAWING_UNITS[value];
+        }
+        return DxfDrawingUnits::UNITLESS;
+    }
+
+    static double getDrawingValue(double value, DxfDrawingUnits units) {
+        switch(units) {
+            case DxfDrawingUnits::UNITLESS:     return(value * 1.0);
+            case DxfDrawingUnits::INCHES:       return(value * 25.4);
+            case DxfDrawingUnits::FEET:         return(value * 25.4 * 12);
+            case DxfDrawingUnits::MILES:        return(value *  1609344.0);
+            case DxfDrawingUnits::MILLIMETERS:  return(value * 1.0);
+            case DxfDrawingUnits::CENTIMETERS:  return(value * 10.0);
+            case DxfDrawingUnits::METERS:       return(value * 1000.0);
+            case DxfDrawingUnits::KILOMETERS:   return(value * 1000000.0);
+            case DxfDrawingUnits::MICROINCHES:  return(value * 25.4 / 1000.0);
+            case DxfDrawingUnits::MILS:         return(value * 25.4 / 1000.0);
+            case DxfDrawingUnits::YARDS:        return(value * 3 * 12 * 25.4);
+            case DxfDrawingUnits::ANGSTROMS:    return(value * 0.0000001);
+            case DxfDrawingUnits::NANOMETERS:   return(value * 0.000001);
+            case DxfDrawingUnits::MICRONS:      return(value * 0.001);
+            case DxfDrawingUnits::DECIMETERS:   return(value * 100.0);
+            case DxfDrawingUnits::DECAMETERS:   return(value * 10000.0);
+            case DxfDrawingUnits::HECTOMETERS:  return(value * 100000.0);
+            case DxfDrawingUnits::GIGAMETERS:   return(value * 1000000000000.0);
+            case DxfDrawingUnits::ASTRONOMICAL: return(value * 149597870690000.0);
+            case DxfDrawingUnits::LIGHT_YEARS:  return(value * 9454254955500000000.0);
+            case DxfDrawingUnits::PARSECS:      return(value * 30856774879000000000.0);
+        }
+    }
+
 private:
     static std::map<std::string, std::vector<int>> VARIABLE_CODES;
     static std::map<std::string, DxfElementType> ELEMENT_TYPES;
+    static std::map<int, std::vector<uint8_t>> AUTOCAD_COLORS;
+    static std::map<int, DxfDrawingUnits> DRAWING_UNITS;
     static int CODE_RANGES[27][3];
 };
 

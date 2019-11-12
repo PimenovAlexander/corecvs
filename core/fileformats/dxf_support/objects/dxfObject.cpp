@@ -19,7 +19,7 @@ void DxfLayerObject::print() const {
     std::cout << "Color number: " << data->colorNumber << std::endl;
     std::cout << "Plotting flag: " << data->plottingFlag << std::endl;
     std::cout << "Line type name: " << data->lineTypeName << std::endl;
-    std::cout << "# # # Layer Object # # #" << std::endl;
+    std::cout << std::endl;
 }
 
 void DxfLineTypeObject::print() const {
@@ -27,7 +27,7 @@ void DxfLineTypeObject::print() const {
     DxfObject::print();
     std::cout << "Element amount: " << data->elementAmount << std::endl;
     std::cout << "Pattern length: " << data->patternLength << std::endl;
-    std::cout << "# # # Line Type Object # # #" << std::endl;
+    std::cout << std::endl;
 }
 
 } // namespace corecvs

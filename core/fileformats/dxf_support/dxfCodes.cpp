@@ -6,6 +6,8 @@
 
 namespace corecvs {
 
+const std::string DxfCodes::DXF_LINE_TYPE_NAME_DEFAULT = "BYLAYER";
+
 std::map<std::string, std::vector<int>> DxfCodes::VARIABLE_CODES = {
         {"$ACADMAINTVER",{70}},{"$ACADVER",{1}},{"$ANGBASE",{50}},{"$ANGDIR",{70}},{"$ATTMODE",{70}},
         {"$AUNITS",{70}},{"$AUPREC",{70}},{"$CECOLOR",{62}},{"$CELTSCALE",{40}},{"$CELTYPE",{6}},
@@ -54,6 +56,19 @@ std::map<std::string, std::vector<int>> DxfCodes::VARIABLE_CODES = {
 
 std::map<std::string, DxfElementType> DxfCodes::ELEMENT_TYPES = {
         {"LAYER",DxfElementType::DXF_LAYER},{"LTYPE",DxfElementType::DXF_LINE_TYPE},{"LINE",DxfElementType::DXF_LINE}
+};
+
+std::map<int, std::vector<uint8_t>> DxfCodes::AUTOCAD_COLORS = {
+        {0,{0,0,0}},{1,{255,0,0}},{2,{255,255,0}},{3,{0,255,0}},{255,{255,255,255}}
+};
+
+std::map<int, DxfDrawingUnits> DxfCodes::DRAWING_UNITS = {
+        {0,DxfDrawingUnits::UNITLESS},{1,DxfDrawingUnits::INCHES},{2,DxfDrawingUnits::FEET},{3,DxfDrawingUnits::MILES},
+        {4,DxfDrawingUnits::MILLIMETERS},{5,DxfDrawingUnits::CENTIMETERS},{6,DxfDrawingUnits::METERS},{7,DxfDrawingUnits::KILOMETERS},
+        {8,DxfDrawingUnits::MICROINCHES},{9,DxfDrawingUnits::MILS},{10,DxfDrawingUnits::YARDS},{11,DxfDrawingUnits::ANGSTROMS},
+        {12,DxfDrawingUnits::NANOMETERS},{13,DxfDrawingUnits::MICRONS},{14,DxfDrawingUnits::DECIMETERS},{15,DxfDrawingUnits::DECAMETERS},
+        {16,DxfDrawingUnits::HECTOMETERS},{17,DxfDrawingUnits::GIGAMETERS},{18,DxfDrawingUnits::ASTRONOMICAL},{19,DxfDrawingUnits::LIGHT_YEARS},
+        {20,DxfDrawingUnits::PARSECS}
 };
 
 int DxfCodes::CODE_RANGES[][3] = {

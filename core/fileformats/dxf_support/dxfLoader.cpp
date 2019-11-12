@@ -112,10 +112,13 @@ bool DxfLoader::getTruncatedLine(std::string &s, std::istream &stream) {
 }
 
 DxfEntityData* DxfLoader::getEntityData() {
-    auto handle = getIntValue(DxfCodes::DXF_HANDLE_CODE, 0);
-    auto flags = getIntValue(DxfCodes::DXF_FLAGS_CODE, 0);
-    auto layerName = getStringValue(DxfCodes::DXF_LAYER_NAME_CODE, "");
-    auto data = new DxfEntityData(handle, flags, layerName);
+    auto data = new DxfEntityData();
+    data->handle = getIntValue(DxfCodes::DXF_HANDLE_CODE, 0);
+    data->flags = getIntValue(DxfCodes::DXF_FLAGS_CODE, 0);
+    data->layerName = getStringValue(DxfCodes::DXF_LAYER_NAME_CODE, "");
+    data->lineTypeName = getStringValue(DxfCodes::DXF_LINE_TYPE_NAME_CODE, DxfCodes::DXF_LINE_TYPE_NAME_DEFAULT);
+    auto rgb = DxfCodes::getRGB(getIntValue(DxfCodes::DXF_COLOR_NUMBER_CODE, DxfCodes::DXF_COLOR_NUMBER_DEFAULT));
+    if (!rgb.empty()) data->rgbColor = RGBColor(rgb[0], rgb[1], rgb[2]);
     return data;
 }
 
