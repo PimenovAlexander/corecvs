@@ -1,0 +1,84 @@
+//
+// Created by Myasnikov Vladislav on 10/17/19.
+//
+
+#ifndef DXF_SUPPORT_DXFLOADER_H
+#define DXF_SUPPORT_DXFLOADER_H
+
+#include "core/fileformats/dxf_support/dxfCodes.h"
+#include "core/fileformats/dxf_support/iDxfBuilder.h"
+#include "core/buffers/rgb24/wuRasterizer.h"
+#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/buffers/rgb24/abstractPainter.h"
+#include "core/fileformats/bufferLoader.h"
+#include <map>
+
+namespace corecvs {
+
+class DxfLoader {
+public:
+    DxfLoader() {
+        currentElementType = DxfElementType::DXF_UNKNOWN_TYPE;
+    }
+    ~DxfLoader() = default;
+    int load(std::string const &fileName, IDxfBuilder *dxfBuilder);
+
+private:
+    DxfElementType currentElementType;
+    std::string variableName;
+    std::map<int, std::string> rawValues;
+
+    int processDxfPair(IDxfBuilder *dxfBuilder, int code, std::string const &value);
+    void addVariable(IDxfBuilder *dxfBuilder);
+    void addLayer(IDxfBuilder *dxfBuilder);
+    void addLineType(IDxfBuilder *dxfBuilder);
+    void addLine(IDxfBuilder *dxfBuilder);
+    DxfEntityData* getEntityData();
+    DxfObjectData* getObjectData();
+    static bool getTruncatedLine(std::string &s, std::istream &stream);
+
+    bool hasRawValue(int code) {
+        return rawValues.count(code) == 1;
+    }
+
+    int getIntValue(int code, int defValue) {
+        if (!hasRawValue(code)) {
+            return defValue;
+        }
+        char* p;
+        return (int) std::strtol(rawValues[code].c_str(), &p, 10);
+    }
+
+    double getDoubleValue(int code, double defValue) {
+        if (!hasRawValue(code)) {
+            return defValue;
+        }
+        char* p;
+        return std::strtod(rawValues[code].c_str(), &p);
+    }
+
+    std::string getStringValue(int code, std::string const &defValue) {
+        if (!hasRawValue(code)) {
+            return defValue;
+        }
+        char* p;
+        return rawValues[code];
+    }
+};
+
+class DXFToRGB24BufferLoader : public BufferLoader<RGB24Buffer> {
+public:
+    DXFToRGB24BufferLoader() = default;
+    ~DXFToRGB24BufferLoader() override = default;
+
+    bool acceptsFile(std::string const &name) override;
+    RGB24Buffer* load(std::string const &name) override;
+
+    std::string name() override { return "DXFToRGB24BufferLoader"; }
+    std::vector<std::string> extentions() override { return {extension}; }
+    static string extension;
+};
+
+} // namespace corecvs
+
+#endif //DXF_SUPPORT_DXFLOADER_H

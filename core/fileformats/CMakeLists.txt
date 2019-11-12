@@ -10,6 +10,14 @@ target_sources(corecvs
         ${CMAKE_CURRENT_LIST_DIR}/floLoader.h
         ${CMAKE_CURRENT_LIST_DIR}/openCVDataLoader.h
         ${CMAKE_CURRENT_LIST_DIR}/tgaLoader.h
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/entities/dxfEntity.h
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/entities/dxfEntityData.h
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/objects/dxfObject.h
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/objects/dxfObjectData.h
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfCodes.h
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfLoader.h
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/iDxfBuilder.h
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/implDxfBuilder.h
 
      PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/bufferLoader.cpp
@@ -21,6 +29,11 @@ target_sources(corecvs
         ${CMAKE_CURRENT_LIST_DIR}/floLoader.cpp
         ${CMAKE_CURRENT_LIST_DIR}/openCVDataLoader.cpp
         ${CMAKE_CURRENT_LIST_DIR}/tgaLoader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/entities/dxfEntity.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/objects/dxfObject.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfCodes.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfLoader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/implDxfBuilder.cpp
 )
 
 if (1)
@@ -33,6 +46,7 @@ if (1)
         ${CMAKE_CURRENT_LIST_DIR}/pltLoader.h
         ${CMAKE_CURRENT_LIST_DIR}/xyzListLoader.h
         ${CMAKE_CURRENT_LIST_DIR}/svgLoader.h
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfLoader.h
         
       PRIVATE  
         ${CMAKE_CURRENT_LIST_DIR}/meshLoader.cpp
@@ -41,5 +55,6 @@ if (1)
         ${CMAKE_CURRENT_LIST_DIR}/pltLoader.cpp
         ${CMAKE_CURRENT_LIST_DIR}/xyzListLoader.cpp
         ${CMAKE_CURRENT_LIST_DIR}/svgLoader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfLoader.cpp
     )
 endif()

@@ -225,7 +225,8 @@ template<int inputNumber = 1, int outputNumber = 1>
 class AlgebraFloat
 {
 public:
-    typedef VectorAlgebraMulti<TraitFloatBufferVector, inputNumber, outputNumber> Type;
+//TraitFloatBufferVector -> TraitDoubleBufferVector
+    typedef VectorAlgebraMulti<TraitDoubleBufferVector, inputNumber, outputNumber> Type;
 };
 
 template<int inputNumber = 1, int outputNumber = 1>
