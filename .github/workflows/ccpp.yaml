@@ -29,8 +29,8 @@ jobs:
     
     - name: Install OpenCV
       run: |
-            wget http://calvrack.ru:3080/exposed-drone/opencv/OpenCV-3.4.6-x86_64-libs.deb
-            wget http://calvrack.ru:3080/exposed-drone/opencv/OpenCV-3.4.6-x86_64-dev.deb
+            wget https://github.com/PimenovAlexander/action-artifacts/raw/master/opencv/OpenCV-3.4.6-x86_64-dev.deb
+            wget https://github.com/PimenovAlexander/action-artifacts/raw/master/opencv/OpenCV-3.4.6-x86_64-libs.deb
             sudo dpkg -i OpenCV-3.4.6-x86_64-libs.deb OpenCV-3.4.6-x86_64-dev.deb            
     - name: Prepare build folder
       run: |
