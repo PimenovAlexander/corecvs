@@ -1,5 +1,6 @@
 
 set(TEST_SUBDIRECTORIES
+   apriltag_test
    #base
    #cloudview
    drone

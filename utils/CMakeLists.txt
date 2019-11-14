@@ -1,12 +1,6 @@
 project(corecvs_utils)
 set(MODULE_NAME cvs_utils)
 
-# include(../wrappers/jsonmodern/CMakeLists.txt)
-# include(../wrappers/libpng/CMakeLists.txt)
-# include(../wrappers/libjpeg/CMakeLists.txt)
-# include(../wrappers/v4l2/CMakeLists.txt)
-
-
 set (UTILS_SUBDIRECTORIES
     camcalc
     corestructs
@@ -29,6 +23,7 @@ set (UTILS_SUBDIRECTORIES
     ../wrappers/libjpeg
     ../wrappers/v4l2
     ../wrappers/avcodec
+    ../wrappers/apriltag_wrapper
 )
 
 if (OpenCV_LIBS)
@@ -37,6 +32,17 @@ if (OpenCV_LIBS)
         ../wrappers/opencv
     )
 endif()
+
+find_package(apriltag  REQUIRED)
+find_package(Threads REQUIRED)
+
+
+#if (Apriltag_LIBS)
+#    set(UTILS_SUBDIRECTORIES
+#        ${UTILS_SUBDIRECTORIES}
+#        ../wrappers/apriltag
+#            )
+#endif()
 
 
 option(WITH_OPENGL "Should use OpenGL from Qt" YES)
@@ -61,6 +67,7 @@ find_package(Qt5 COMPONENTS REQUIRED Core Gui Widgets Script Xml SerialPort)
 add_library(${MODULE_NAME} STATIC)
 
 target_link_libraries(${MODULE_NAME} corecvs Qt5::Widgets Qt5::Core Qt5::Gui Qt5::Script Qt5::Xml Qt5::SerialPort)
+target_link_libraries(${MODULE_NAME} apriltag Threads::Threads)
 
 if(WITH_OPENGL)
     find_package(Qt5 COMPONENTS REQUIRED OpenGL)
