@@ -1,10 +1,10 @@
-SET(Apriltag_INCLUDE_SEARCH_PATHS
+SET(APRILTAG_INCLUDE_SEARCH_PATHS
         /usr/include/
         /usr/local/include/
         /usr/local/include/apriltag/
         /usr/local/include/apriltag/common/)
 
-SET(Apriltag_LIB_SEARCH_PATHS
+SET(APRILTAG_LIB_SEARCH_PATHS
         /lib/
         /lib64/
         /usr/lib/
@@ -13,7 +13,7 @@ SET(Apriltag_LIB_SEARCH_PATHS
         /usr/local/lib64/
         )
 
-FIND_PATH(Apriltag_INCLUDE_DIR NAMES
+FIND_PATH(APRILTAG_INCLUDE_DIR NAMES
         apriltag.h
         apriltag_math.h
         apriltag_pose.h
@@ -56,7 +56,7 @@ FIND_PATH(Apriltag_INCLUDE_DIR NAMES
         PATHS ${Apriltag_INCLUDE_SEARCH_PATHS}
         )
 
-FIND_LIBRARY(Apriltag_LIB NAMES Apriltag PATHS ${Apriltag_LIB_SEARCH_PATHS})
+FIND_LIBRARY(APRILTAG NAMES apriltag PATHS ${APRILTAG_LIB_SEARCH_PATHS})
 
 message("---------------------------Apriltag has found!")
 

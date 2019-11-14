@@ -32,7 +32,8 @@ if (OpenCV_LIBS)
     )
 endif()
 
-find_package(Apriltag)
+find_package(apriltag  REQUIRED)
+find_package(Threads REQUIRED)
 
 
 #if (Apriltag_LIBS)
@@ -64,7 +65,9 @@ find_package(Qt5 COMPONENTS REQUIRED Core Gui Widgets Script Xml)
 
 add_library(${MODULE_NAME} STATIC)
 
-target_link_libraries(${MODULE_NAME} corecvs Qt5::Widgets Qt5::Core Qt5::Gui Qt5::Script Qt5::Xml Apriltag)
+
+target_link_libraries(${MODULE_NAME} corecvs Qt5::Widgets Qt5::Core Qt5::Gui Qt5::Script Qt5::Xml apriltag Threads::Threads)
+#target_link_libraries(${MODULE_NAME} corecvs Qt5::Widgets Qt5::Core Qt5::Gui Qt5::Script Qt5::Xml )
 
 if(WITH_OPENGL)
     find_package(Qt5 COMPONENTS REQUIRED OpenGL)
