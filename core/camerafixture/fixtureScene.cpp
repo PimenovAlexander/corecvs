@@ -4,6 +4,7 @@
 #include "core/utils/utils.h"
 #include "core/camerafixture/cameraFixture.h"
 #include "core/utils/log.h"
+#include "core/filesystem/folderScanner.h"
 
 namespace corecvs {
 
@@ -1044,11 +1045,11 @@ void FixtureSceneFactory::print()
 
 std::string ImageRelatedData::getImageScenePath() const
 {
-    if (ownerScene == NULL || HelperUtils::isAbsolutePath(mImagePath))
+    if (ownerScene == NULL || FolderScanner::isAbsolutePath(mImagePath))
     {
         return mImagePath;
     }
-    return HelperUtils::concatPath(ownerScene->getImageSearchPath(), mImagePath);
+    return FolderScanner::concatPath(ownerScene->getImageSearchPath(), mImagePath);
 }
 
 RGB24Buffer *ImageRelatedData::getRGB24BufferPtr()

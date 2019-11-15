@@ -11,6 +11,7 @@
 
 #include "core/utils/global.h"
 #include "core/utils/utils.h"
+#include "core/filesystem/folderScanner.h"
 
 #include "precCapture.h"
 #include "core/buffers/bufferFactory.h"
@@ -104,7 +105,7 @@ bool FilePreciseCapture::FileSpinThread::grabFramePair()
         for (int i = 0; i < ImageCaptureInterface::MAX_INPUTS_NUMBER; i++)
         {
             names[i] = pInterface->getImageFileName(pInterface->mCount, i);
-            if (HelperUtils::pathExists(names[i].c_str()))
+            if (FolderScanner::pathExists(names[i].c_str()))
             {
                 hasFrame = true;
             }

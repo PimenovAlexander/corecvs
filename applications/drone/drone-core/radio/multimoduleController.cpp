@@ -7,11 +7,13 @@
 
 #include <bitset>
 #include <iostream>
+#include <sstream>
 #include <thread>
 #include <memory.h>
 
 #include "core/utils/global.h"
 #include "core/utils/utils.h"
+#include "core/filesystem/folderScanner.h"
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -234,7 +236,7 @@ std::vector<string> MultimoduleController::getDevices(const string &prefix)
         ss << i;
         std::string dev = prefix + ss.str();
 
-        if (corecvs::HelperUtils::pathExists(dev))
+        if (FolderScanner::pathExists(dev))
         {
            toReturn.push_back(dev);
         }

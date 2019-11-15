@@ -13,7 +13,7 @@
  */
 
 #include <QString>
-#include "reflection.h"
+#include "core/reflection/reflection.h"
 
 using corecvs::BaseField;
 using corecvs::SimpleScalarField;

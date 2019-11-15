@@ -1,5 +1,6 @@
 #include <fstream>
 #include <unistd.h>
+#include <sstream>
 
 #include "core/utils/global.h"
 #include "core/utils/utils.h"
