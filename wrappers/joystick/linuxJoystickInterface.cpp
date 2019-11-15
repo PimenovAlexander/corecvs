@@ -1,5 +1,6 @@
 #include "linuxJoystickInterface.h"
 #include "core/utils/utils.h"
+#include "core/filesystem/folderScanner.h"
 
 #include <linux/joystick.h>
 #include <fcntl.h>
@@ -25,7 +26,7 @@ vector<string> LinuxJoystickInterface::getDevices(const string &prefix)
         ss << i;
         std::string dev = prefix + ss.str();
 
-        if (corecvs::HelperUtils::pathExists(dev))
+        if (FolderScanner::pathExists(dev))
         {
            toReturn.push_back(dev);
         }

@@ -17,6 +17,7 @@
 #include "gtest/gtest.h"
 
 #include "core/utils/global.h"
+#include "core/filesystem/folderScanner.h"
 
 #include "core/fileformats/rawLoader.h"
 #include "core/buffers/g12Buffer.h"
@@ -143,7 +144,7 @@ TEST(FileFormats, testPPMLoader)
     {
         SYNC_PRINT(("Testing set file\n"));
         std::string name = "data/pair/image0001_c0.pgm";
-        if (HelperUtils::pathExists(name))
+        if (FolderScanner::pathExists(name))
         {
             G12Buffer *ppm = PPMLoader().loadG12(name);
             CORE_ASSERT_TRUE(ppm != NULL, "test PPM with type:6 image has been loaded but shouldn't!");
@@ -162,7 +163,7 @@ TEST(FileFormats, testPPMLoader)
     {
         SYNC_PRINT(("Testing test file\n"));
         std::string name = "data/testdata/test_ppm.ppm";
-        if (HelperUtils::pathExists(name))
+        if (FolderScanner::pathExists(name))
         {
             G12Buffer *ppm = PPMLoader().loadG12(name);
             CORE_ASSERT_TRUE(ppm == NULL, "test PPM with type:6 image has been loaded but shouldn't!");            
@@ -176,7 +177,7 @@ TEST(FileFormats, testPPMLoader)
     {
         SYNC_PRINT(("Testing test file 2\n"));
         std::string name = "data/testdata/test_pgm_metadata.pgm";
-        if (HelperUtils::pathExists(name))
+        if (FolderScanner::pathExists(name))
         {
             PPMLoader loader;
             loader.trace = true;

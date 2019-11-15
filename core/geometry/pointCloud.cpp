@@ -1,5 +1,6 @@
 #include "core/utils/utils.h"
 #include "pointCloud.h"
+#include "core/filesystem/folderScanner.h"
 
 namespace corecvs {
 
@@ -47,7 +48,7 @@ void PointCloud::load(const std::string &name)
         return;
     }
 
-    if (HelperUtils::isDirectory(name))
+    if (FolderScanner::isDirectory(name))
     {
         return;
     }

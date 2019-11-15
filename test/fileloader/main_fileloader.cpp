@@ -128,6 +128,23 @@ int main(int argc, char *argv[])
             return 0;
         }
     }
+
+    {
+        FloatFlowBuffer *out = BufferFactory::getInstance()->loadFloatFlow(inputName);
+        if (out != NULL)
+        {
+            SYNC_PRINT(("Flow loaded [%d x %d]\n", out->w, out->h));
+            RGB24Buffer *buffer = new RGB24Buffer(out->h, out->w);
+            buffer->drawFlowBufferHue(out);
+            BMPLoader().save("buffer.bmp", buffer);
+            delete_safe(out);
+            delete_safe(buffer);
+            return 0;
+        } else {
+             SYNC_PRINT(("Unable to load image like flow.\n"));
+        }
+    }
+
     SYNC_PRINT(("Unable to load RGB image. Loading Grayscale\n"));
     {
         G12Buffer *out = BufferFactory::getInstance()->loadG12Bitmap(inputName);
