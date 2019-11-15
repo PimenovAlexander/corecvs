@@ -49,7 +49,7 @@ add_library(corecvs STATIC )
 set_property(TARGET corecvs PROPERTY CXX_STANDARD 17)
 set_property(TARGET corecvs PROPERTY CXX_STANDARD_REQUIRED ON)
 
-target_include_directories(corecvs PUBLIC ..)
+target_include_directories(corecvs PUBLIC ..) #TODO check this ".." path!
 
 target_link_libraries(corecvs pthread)
 
