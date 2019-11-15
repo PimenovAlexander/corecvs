@@ -18,6 +18,8 @@
 #include "core/utils/global.h"
 
 #include "core/math/mathUtils.h"
+#include "core/math/matrix/matrix22.h"
+
 #include "core/math/matrix/matrix33.h"
 #include "core/math/matrix/matrix.h"
 #include "core/math/sparseMatrix.h"
@@ -499,6 +501,19 @@ TEST(VectorTest, testVector)
 
     Vector dc(10);
     std::cout << dc << std::endl;
+}
+
+TEST(MatrixTest, testMatrix22)
+{
+    Matrix22 a(
+            1.0,2.0,
+            4.0,5.0);
+
+    cout << a << endl;
+    cout << a.inverted();
+
+    cout << a * a.inverted() << endl;
+
 }
 
 TEST(MatrixTest, testMatrix33)
