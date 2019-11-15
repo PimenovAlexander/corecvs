@@ -145,11 +145,13 @@
 
   <class name="pattern Detector Result Base">
      <field type="Vector 2d Parameters"  name="position"   comment="Resulting pattern position"  />
-     <field type="Vector 2d Parameters"  name="ortX"       comment="One of resulting pattern directions in image corrdinate" />
-     <field type="Vector 2d Parameters"  name="ortY"       comment="Second resulting pattern direction in image corrdinate " />
+     <field type="Vector 2d Parameters"  name="ortX"       comment="One of resulting pattern directions in image coordinate" />
+     <field type="Vector 2d Parameters"  name="ortY"       comment="Second resulting pattern direction in image coordinate " />
      <field type="Vector 2d Parameters"  name="unityPoint" comment="Point that corresponds to (1,1 point on the pattern)" />
 
      <field type="int" name="id"     defaultValue="0" comment="pattern id " />
+
+     <field type="std::string" name="tag_family" defaultValue="" comment="family of detected tag" />
   </class>
 
   <class name="harris Detection Parameters">

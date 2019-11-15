@@ -4,6 +4,7 @@
 #include "core/reflection/commandLineSetter.h"
 #include "core/fileformats/ppmLoader.h"
 #include "core/fileformats/bmpLoader.h"
+#include "core/filesystem/folderScanner.h"
 #include "core/utils/utils.h"
 #include "core/utils/log.h"
 
@@ -189,7 +190,7 @@ int DebayerTool::proceed(int argc, const char **argv)
 
     if (filename.empty())                   // options were not used
     {
-        if (!corecvs::HelperUtils::pathExists(argv[1]))
+        if (!corecvs::FolderScanner::pathExists(argv[1]))
         {
             L_ERROR << "No valid input filename to process!";
             return -1;
