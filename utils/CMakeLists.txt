@@ -24,7 +24,7 @@ set (UTILS_SUBDIRECTORIES
     ../wrappers/v4l2
     ../wrappers/avcodec
     ../wrappers/apriltag_wrapper
-)
+        )
 
 if (OpenCV_LIBS)
     set(UTILS_SUBDIRECTORIES
@@ -32,17 +32,6 @@ if (OpenCV_LIBS)
         ../wrappers/opencv
     )
 endif()
-
-find_package(apriltag  REQUIRED)
-find_package(Threads REQUIRED)
-
-
-#if (Apriltag_LIBS)
-#    set(UTILS_SUBDIRECTORIES
-#        ${UTILS_SUBDIRECTORIES}
-#        ../wrappers/apriltag
-#            )
-#endif()
 
 
 option(WITH_OPENGL "Should use OpenGL from Qt" YES)
@@ -67,7 +56,11 @@ find_package(Qt5 COMPONENTS REQUIRED Core Gui Widgets Script Xml SerialPort)
 add_library(${MODULE_NAME} STATIC)
 
 target_link_libraries(${MODULE_NAME} corecvs Qt5::Widgets Qt5::Core Qt5::Gui Qt5::Script Qt5::Xml Qt5::SerialPort)
-target_link_libraries(${MODULE_NAME} apriltag Threads::Threads)
+
+if(WITH_APRILTAG)
+    find_package(apriltag Threads REQUIRED)
+    target_link_libraries(${MODULE_NAME} apriltag Threads::Threads)
+endif()
 
 if(WITH_OPENGL)
     find_package(Qt5 COMPONENTS REQUIRED OpenGL)

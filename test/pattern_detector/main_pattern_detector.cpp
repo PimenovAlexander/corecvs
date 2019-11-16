@@ -25,6 +25,11 @@
 #include "patternDetect/openCVSquareDetector.h"
 #endif
 
+#define WITH_APRILTAG
+#ifdef WITH_APRILTAG
+#include "wrappers/apriltag_wrapper/apriltagDetector.h"
+#endif
+
 using namespace std;
 using namespace corecvs;
 
@@ -193,6 +198,10 @@ int main(int argc, char *argv[])
 
 #ifdef WITH_OPENCV
     PatternDetectorFabric::getInstance()->add(new PatternDetectorProducer<OpenCVSquareDetector>("OpenCVSquare"));
+#endif
+
+#ifdef WITH_APRILTAG
+    PatternDetectorFabric::getInstance()->add(new PatternDetectorProducer<ApriltagDetector>("Apriltag"));
 #endif
 
     CommandLineSetter s(argc, argv);
