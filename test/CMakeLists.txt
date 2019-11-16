@@ -2,6 +2,8 @@
 set(TEST_SUBDIRECTORIES
     adoptcolor    # depends on utils
     avencode      
+    #ceres_playground
+    #command_harness
     # example_scene # includes files from on avencode
     fileloader
     flow_detector
@@ -12,7 +14,9 @@ set(TEST_SUBDIRECTORIES
     #grab24_qt
     # jitplayground
     pattern_detector
+    raytracerender
     reprojector
+    #serialize1
     softrender
 )
 
