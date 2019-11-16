@@ -9,7 +9,6 @@
  **/
 
 #include <iostream>
-#include <generated/testBlock.h>
 #include <core/reflection/dynamicObject.h>
 #include <core/reflection/usageVisitor.h>
 #include "gtest/gtest.h"
@@ -19,6 +18,8 @@
 #include "core/reflection/commandLineSetter.h"
 #include "core/reflection/commandLineGetter.h"
 #include "core/math/vector/vector3d.h"
+
+#include "../generated/testBlock.h"
 
 using namespace corecvs;
 

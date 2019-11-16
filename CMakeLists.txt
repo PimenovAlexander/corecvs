@@ -91,14 +91,14 @@ fetch_googletest(
     )
 
 add_subdirectory(core)
-#add_subdirectory(utils)
+add_subdirectory(utils)
 
 add_subdirectory(test)
-#add_subdirectory(applications)
-#add_subdirectory(tools)
+add_subdirectory(applications)
+add_subdirectory(tools)
 
 
 enable_testing()
 add_subdirectory(test-core)
-#add_subdirectory(test-core/-perf)
+add_subdirectory(test-core/-perf)
 
