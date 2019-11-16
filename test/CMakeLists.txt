@@ -10,7 +10,7 @@ set(TEST_SUBDIRECTORIES
     flowtest
     focus_stack
     gcodeplayground
-    grab24        # depends on utils
+    #grab24        # depends on utils
     #grab24_qt
     # jitplayground
     pattern_detector
@@ -18,6 +18,8 @@ set(TEST_SUBDIRECTORIES
     reprojector
     #serialize1
     softrender
+    face_distortion
+
 )
 
 foreach(test_subdirectory ${TEST_SUBDIRECTORIES})
