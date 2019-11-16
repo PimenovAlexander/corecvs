@@ -22,8 +22,7 @@ set (UTILS_SUBDIRECTORIES
     ../wrappers/libpng
     ../wrappers/libjpeg
     ../wrappers/v4l2
-    ../wrappers/avcodec
-    ../wrappers/apriltag_wrapper
+    ../wrappers/avcodec   
         )
 
 if (OpenCV_LIBS)
@@ -33,6 +32,12 @@ if (OpenCV_LIBS)
     )
 endif()
 
+if (apriltag_LIBS)
+    set(UTILS_SUBDIRECTORIES
+        ${UTILS_SUBDIRECTORIES}
+        ../wrappers/apriltag_wrapper
+    )
+endif()
 
 option(WITH_OPENGL "Should use OpenGL from Qt" YES)
 if(WITH_OPENGL)

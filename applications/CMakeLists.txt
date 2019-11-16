@@ -1,6 +1,5 @@
 
 set(TEST_SUBDIRECTORIES
-   apriltag_test
    #base
    #cloudview
    drone
@@ -15,6 +14,14 @@ set(TEST_SUBDIRECTORIES
    #scanner
    #testbed
 )
+
+if (apriltag_LIBS)
+    set(TEST_SUBDIRECTORIES
+        ${TEST_SUBDIRECTORIES}
+        apriltag_test
+    )
+endif()
+
 
 foreach(test_subdirectory ${TEST_SUBDIRECTORIES})
     message(STATUS "adding subdirectory test/${test_subdirectory}")

@@ -25,7 +25,7 @@
 #include "patternDetect/openCVSquareDetector.h"
 #endif
 
-#define WITH_APRILTAG
+//#define WITH_APRILTAG
 #ifdef WITH_APRILTAG
 #include "wrappers/apriltag_wrapper/apriltagDetector.h"
 #endif

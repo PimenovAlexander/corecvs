@@ -29,6 +29,6 @@ message(STATUS PatternDetector:${INCLUDEPATHS} )
 
 add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
 
-target_link_libraries(${NAME} corecvs pthread corecvs_utils ${LIBS})
+target_link_libraries(${NAME} corecvs pthread ${LIBS})
 
  

@@ -506,13 +506,16 @@ TEST(VectorTest, testVector)
 TEST(MatrixTest, testMatrix22)
 {
     Matrix22 a(
-            1.0,2.0,
-            4.0,5.0);
+            1.0, 2.0,
+            4.0, 5.0);
 
     cout << a << endl;
     cout << a.inverted();
 
-    cout << a * a.inverted() << endl;
+    Matrix22 E = a * a.inverted();
+    cout << E << endl;
+
+    CORE_ASSERT_TRUE(E.notTooFar(Matrix22::Identity(), 1e-7), "Wrong matrix inversion");
 
 }
 

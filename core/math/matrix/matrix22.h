@@ -292,8 +292,8 @@ template<typename ElementType>
 inline GenericMatrix22<ElementType> GenericMatrix22<ElementType>::inverted() const {
     ElementType d = this->det();
     return GenericMatrix22<ElementType>(
-       a11() / d, -a10() / d,
-      -a01() / d,  a00() / d
+       a11() / d, -a01() / d,
+      -a10() / d,  a00() / d
     );
 }
 
