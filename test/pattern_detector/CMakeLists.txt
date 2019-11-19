@@ -23,12 +23,13 @@ if (OpenCV_LIBS)
 include(../../wrappers/opencv/sourcelist.cmake)
 endif()
 
-#if (apriltag_LIBS)
-#    include(../../wrappers/apriltag_wrapper/sourcelist.cmake)
-    find_package(Threads)
+if (WITH_APRILTAG)
+    MESSAGE(STATUS "Including Apriltag on pattern_detector build")
+    find_package(apriltag REQUIRED)
+    find_package(Threads REQUIRED)
+    add_definitions(-DWITH_APRILTAG)
     target_link_libraries(${NAME} apriltag Threads::Threads)
-#    target_include_directories(${NAME} PUBLIC APRILTAG_INCLUDE_DIR)
-#endif()
+endif()
 
 message(STATUS PatternDetector:${INCLUDEPATHS} )
 

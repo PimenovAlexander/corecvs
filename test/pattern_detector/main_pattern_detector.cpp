@@ -25,7 +25,6 @@
 #include "patternDetect/openCVSquareDetector.h"
 #endif
 
-#define WITH_APRILTAG
 #ifdef WITH_APRILTAG
 #include "wrappers/apriltag_wrapper/apriltagDetector.h"
 #endif
@@ -181,7 +180,7 @@ void usage()
   SYNC_PRINT(("          \n"));
   SYNC_PRINT(("          \n"));
   SYNC_PRINT(("Apriltag pattern provider:\n"));
-  SYNC_PRINT(("./bin/pattern_detector --detect --producer=Apriltag --params.debug=on --input="".jpg\n"));
+  SYNC_PRINT(("./bin/pattern_detector --detect --producer=Apriltag --params.debug=on --input="".jpg\n")); //TODO add more params
   SYNC_PRINT(("          - example that returns detected squares\n"));
 }
 
