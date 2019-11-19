@@ -178,7 +178,11 @@ void usage()
   SYNC_PRINT(("Opencv Square pattern provider:\n"));
   SYNC_PRINT(("./bin/pattern_detector --detect --producer=OpenCVSquare --params.debug=on --input=photo_2019-09-29_23-11-36.jpg\n"));
   SYNC_PRINT(("          - example that returns detected squares\n"));
-
+  SYNC_PRINT(("          \n"));
+  SYNC_PRINT(("          \n"));
+  SYNC_PRINT(("Apriltag pattern provider:\n"));
+  SYNC_PRINT(("./bin/pattern_detector --detect --producer=Apriltag --params.debug=on --input="".jpg\n"));
+  SYNC_PRINT(("          - example that returns detected squares\n"));
 }
 
 int main(int argc, char *argv[])

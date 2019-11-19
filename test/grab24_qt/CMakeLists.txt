@@ -20,5 +20,5 @@ set(CMAKE_AUTOUIC "YES")
 set(CMAKE_AUTORCC "YES")
 
 target_link_libraries(${NAME} cvs_utils corecvs pthread ${LIBS})
-target_include_directories(${NAME} PUBLIC ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} .)
+target_include_directories(${NAME} PUBLIC ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR})
 
