@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 #endif
     QTRGB24Loader::registerMyself();
 
-    Processor6DFactoryHolder  ::getInstance()->registerProcessor(new AlgoFactory<DummyFlowProcessor, Processor6D>("Dummy"));
+    Processor6DFactoryHolder  ::getInstance()->registerProcessor(new AlgoFactory<DummyFlowProcessor, Processor6D>  ("Dummy"));
     ProcessorFlowFactoryHolder::getInstance()->registerProcessor(new AlgoFactory<DummyFlowProcessor, ProcessorFlow>("Dummy"));
 
 #ifdef WITH_OPENCV

@@ -75,3 +75,11 @@ foreach(add_core_module ${ADDITIONAL_MODULES})
     message(STATUS "including ${add_core_module}")
     add_subdirectory(${add_core_module})
 endforeach(add_core_module)
+
+
+# Additional stuff mostly for IDE only
+
+file(GLOB ADD_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/xml/*.xml)
+target_sources(corecvs PRIVATE ${ADD_SRC_FILES})
+set_source_files_properties(${ADD_SRC_FILES} PROPERTIES EXTERNAL_OBJECT true)
+
