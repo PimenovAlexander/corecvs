@@ -77,6 +77,7 @@ bool ApriltagDetector::setParameters(std::string name, const corecvs::DynamicObj
 void ApriltagDetector::setInputImage(corecvs::RGB24Buffer *input) {
     corecvs::Statistics::startInterval(stats);
     delete_safe(gray);
+    this->input = input;
     gray = input->getChannelG8(ImageChannel::GRAY);
 
     corecvs::Statistics::endInterval(stats, "Setting input");
@@ -101,10 +102,10 @@ void ApriltagDetector::getOutput(vector<corecvs::PatternDetectorResult> &pattern
         delete_safe(debugBuffer);
         debugBuffer = new RGB24Buffer(input);
         for (const auto &result : patterns) {
-            Vector2dd a (result.mPosition.mX, result.mPosition.mY);
-            Vector2dd b (result.mOrtX.mX, result.mOrtX.mY);
-            Vector2dd c (result.mOrtY.mX, result.mOrtY.mY);
-            Vector2dd d (result.mUnityPoint.mX, result.mUnityPoint.mY);
+            Vector2dd d (result.mPosition.mX, result.mPosition.mY);
+            Vector2dd c (result.mOrtX.mX, result.mOrtX.mY);
+            Vector2dd a (result.mOrtY.mX, result.mOrtY.mY);
+            Vector2dd b (result.mUnityPoint.mX, result.mUnityPoint.mY);
 
             RGBColor color = RGBColor::parula((double)result.mId/patterns.size());
             debugBuffer->drawLine(a, b, color);
@@ -113,7 +114,7 @@ void ApriltagDetector::getOutput(vector<corecvs::PatternDetectorResult> &pattern
             debugBuffer->drawLine(d, a, color);
 
             AbstractPainter<RGB24Buffer> p(debugBuffer);
-            p.drawFormat((result.mOrtX.mX + result.mOrtY.mX)/2, (result.mOrtX.mY + result.mOrtY.mX)/2, color, 2, "%d", result.mId);
+            p.drawFormat((a.x() + c.x())/2, (a.y() + c.y())/2, color, 2, "%d", result.mId);
         }
 
     }

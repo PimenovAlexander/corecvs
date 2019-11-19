@@ -63,8 +63,11 @@ add_library(${MODULE_NAME} STATIC)
 target_link_libraries(${MODULE_NAME} corecvs Qt5::Widgets Qt5::Core Qt5::Gui Qt5::Script Qt5::Xml Qt5::SerialPort)
 
 if(WITH_APRILTAG)
-    find_package(apriltag Threads REQUIRED)
+    MESSAGE(STATUS "Including Apriltag on CVS_UTILS build")
+    find_package(apriltag REQUIRED)
+    find_package(Threads REQUIRED)
     target_link_libraries(${MODULE_NAME} apriltag Threads::Threads)
+    add_definitions(-DWITH_APRILTAG)
 endif()
 
 if(WITH_OPENGL)

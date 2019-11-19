@@ -116,7 +116,6 @@ target_link_libraries(drone-core corecvs Qt5::SerialPort)
 target_include_directories(drone-core PUBLIC ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} .)
 
 
-
 target_link_libraries(drone-core cvs_utils corecvs)
 
 if (OpenCV_LIBS)

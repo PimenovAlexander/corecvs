@@ -7,6 +7,8 @@ set (SRC_FILES
 )
 
 
+add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
+
 if (PNG_LIB)
     include(../../wrappers/libpng/sourcelist.cmake)    
 endif()
@@ -21,14 +23,17 @@ if (OpenCV_LIBS)
 include(../../wrappers/opencv/sourcelist.cmake)
 endif()
 
-if (apriltag_LIBS)
-    include(../../wrappers/apriltag_wrapper/sourcelist.cmake)
+if (WITH_APRILTAG)
+    MESSAGE(STATUS "Including Apriltag on pattern_detector build")
+    find_package(apriltag REQUIRED)
+    find_package(Threads REQUIRED)
+    add_definitions(-DWITH_APRILTAG)
+    target_link_libraries(${NAME} apriltag Threads::Threads)
 endif()
 
 message(STATUS PatternDetector:${INCLUDEPATHS} )
 
-add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
 
-target_link_libraries(${NAME} corecvs pthread ${LIBS})
+target_link_libraries(${NAME} corecvs pthread cvs_utils ${LIBS})
 
  
