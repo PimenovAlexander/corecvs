@@ -62,8 +62,13 @@ set (UI_FILES
 
 QT5_WRAP_UI( UI_HEADERS ${UI_FILES} )
 
+message(FILES:   ${UI_FILES})
+message(HEADERS: ${UI_HEADERS})
+
+
+
 target_sources(drone-ui
-    PUBLIC
+    PRIVATE
     ${UI_HEADERS}
     )
 
