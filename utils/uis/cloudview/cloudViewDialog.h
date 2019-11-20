@@ -44,7 +44,7 @@ public:
     const static double START_Z;
 
 
-    CloudViewDialog(QWidget *parent = 0, QString name = QString());
+    CloudViewDialog(QWidget *parent = NULL, QString name = QString());
     ~CloudViewDialog();
 
 public slots:
