@@ -4,6 +4,7 @@ on:
   push:
     branches: 
       - master_cmake
+      - apimenov_quad
 
 jobs:
   build:
