@@ -91,7 +91,7 @@ fetch_googletest(
     )
 
 add_subdirectory(core)
-add_subdirectory(utils)
+#add_subdirectory(utils)
 
 add_subdirectory(test)
 add_subdirectory(applications)
@@ -102,3 +102,9 @@ enable_testing()
 add_subdirectory(test-core)
 add_subdirectory(test-core/-perf)
 
+find_package(Qt5Gui)
+find_package(Qt5Core)
+find_package(Qt5Widgets)
+find_package(Qt5Test)
+find_package(Qt5Concurrent)
+find_package(Qt5OpenGL)
