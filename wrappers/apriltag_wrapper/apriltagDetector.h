@@ -1,26 +1,40 @@
+#ifndef CORECVS_APRILTAGDETECTOR_H
+#define CORECVS_APRILTAGDETECTOR_H
+
 //
 // Created by jakhremchik
 //
 
-#ifndef CORECVS_APRILTAGDETECTOR_H
-#define CORECVS_APRILTAGDETECTOR_H
+#include <opencv2/opencv.hpp>
 
-#include <core/patterndetection/patternDetector.h>
-#include "opencv2/opencv.hpp"
-#include <core/stats/calculationStats.h>
+#include "core/patterndetection/patternDetector.h"
+#include "core/stats/calculationStats.h"
 #include "generated/apriltagParameters.h"
 
 extern "C" {
-#include "apriltag/apriltag.h"
-#include "apriltag/tag36h11.h"
-#include "apriltag/tag16h5.h"
-#include "apriltag/tag25h9.h"
-#include "apriltag/tagCircle21h7.h"
-#include "apriltag/tagCircle49h12.h"
-#include "apriltag/tagStandard41h12.h"
-#include "apriltag/tagStandard52h13.h"
-#include "apriltag/tagCustom48h12.h"
-#include "apriltag/common/getopt.h"
+#if 0
+#include <apriltag/apriltag.h>
+#include <apriltag/tag36h11.h>
+#include <apriltag/tag16h5.h>
+#include <apriltag/tag25h9.h>
+#include <apriltag/tagCircle21h7.h>
+#include <apriltag/tagCircle49h12.h>
+#include <apriltag/tagStandard41h12.h>
+#include <apriltag/tagStandard52h13.h>
+#include <apriltag/tagCustom48h12.h>
+#include <apriltag/common/getopt.h>
+#endif
+#include <apriltag.h>
+#include <tag36h11.h>
+#include <tag16h5.h>
+#include <tag25h9.h>
+#include <tagCircle21h7.h>
+#include <tagCircle49h12.h>
+#include <tagStandard41h12.h>
+#include <tagStandard52h13.h>
+#include <tagCustom48h12.h>
+#include <common/getopt.h>
+
 }
 
 class ApriltagDetector : public corecvs::PatternDetector

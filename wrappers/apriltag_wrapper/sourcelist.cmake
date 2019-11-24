@@ -11,8 +11,11 @@ set (SRC_FILES
         )
 
 
-include_directories(${CMAKE_CURRENT_LIST_DIR})
-
+set (INC_PATHS
+    ${INC_PATHS}
+    ${CMAKE_CURRENT_LIST_DIR}
+    ${APRILTAG_INCLUDE_DIR}
+    )
 
 # Additional stuff mostly for IDE only
 file(GLOB CURR_ADD_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/xml/*.xml)

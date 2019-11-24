@@ -18,6 +18,7 @@ if (JPEG_LIB)
 endif()
 
 add_executable(${FILELOADER_NAME} ${SRC_FILES} ${HDR_FILES})
+include_directories(${INC_PATHS})
 
 
 target_link_libraries(${FILELOADER_NAME} ${LIBS} stdc++fs corecvs)

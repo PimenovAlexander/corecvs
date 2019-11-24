@@ -6,9 +6,6 @@ set (SRC_FILES
     main_pattern_detector.cpp      
 )
 
-
-add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
-
 if (PNG_LIB)
     include(../../wrappers/libpng/sourcelist.cmake)    
 endif()
@@ -22,6 +19,10 @@ include(../../wrappers/jsonmodern/sourcelist.cmake)
 if (OpenCV_LIBS)
 include(../../wrappers/opencv/sourcelist.cmake)
 endif()
+
+add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
+include_directories(${INC_PATHS})
+
 
 if (APRILTAG_FOUND)
     target_link_libraries(${NAME} ${APRILTAG_LIB} Threads::Threads)

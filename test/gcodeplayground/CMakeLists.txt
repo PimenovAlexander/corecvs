@@ -15,6 +15,7 @@ set (HDR_FILES
 )
 
 add_executable(${GCODE_PLAYGROUND_NAME} ${SRC_FILES} ${HDR_FILES})
+include_directories(${INC_PATHS})
 
 target_link_libraries(${GCODE_PLAYGROUND_NAME} corecvs pthread)
 
