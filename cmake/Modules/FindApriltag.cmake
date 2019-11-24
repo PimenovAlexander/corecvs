@@ -1,10 +1,12 @@
 SET(APRILTAG_INCLUDE_SEARCH_PATHS
+        ${CMAKE_CURRENT_LIST_DIR}/../../siblings/apriltag
         /usr/include/
         /usr/local/include/
         /usr/local/include/apriltag/
         /usr/local/include/apriltag/common/)
 
 SET(APRILTAG_LIB_SEARCH_PATHS
+       ${CMAKE_CURRENT_LIST_DIR}/../../siblings/apriltag
         /lib/
         /lib64/
         /usr/lib/

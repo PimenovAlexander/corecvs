@@ -32,7 +32,7 @@ if (OpenCV_LIBS)
     )
 endif()
 
-if (USE_APRILTAG)
+if (APRILTAG_FOUND)
     set(UTILS_SUBDIRECTORIES
         ${UTILS_SUBDIRECTORIES}
         ../wrappers/apriltag_wrapper

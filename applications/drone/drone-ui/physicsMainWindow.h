@@ -214,8 +214,8 @@ private slots:
     void on_connetToVirtualButton_pressed();
     void on_iiOutputSlider_valueChanged(int value);
 
-    void CalibrateCamera();
-    void LoadCalibrationSettings();
+    void calibrateCamera();
+    void loadCalibrationSettings();
 
 
 

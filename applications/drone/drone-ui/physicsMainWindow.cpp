@@ -868,7 +868,7 @@ void PhysicsMainWindow::on_connetToVirtualButton_pressed()
 
 }
 
-void PhysicsMainWindow::CalibrateCamera()
+void PhysicsMainWindow::calibrateCamera()
 {
     calibrationWidget.show();
     calibrationWidget.raise();
@@ -879,7 +879,7 @@ void PhysicsMainWindow::checkForJoystick()               //auto connect
 //   jReader->start();
 }
 
-void PhysicsMainWindow::LoadCalibrationSettings()
+void PhysicsMainWindow::loadCalibrationSettings()
 {
     QString dir = QFileDialog::getOpenFileName(this, tr("Open Calibration File"),"",tr("Calibration Parametrs (*.yml);; All Files (*)"));
     if (dir!=NULL)
