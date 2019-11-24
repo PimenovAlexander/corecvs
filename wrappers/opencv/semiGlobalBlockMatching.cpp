@@ -5,6 +5,7 @@
 
 using namespace cv;
 
+/*
 FlowBuffer* BMOpenCV::getStereoBM(G12Buffer* InputBufferLeft, G12Buffer* InputBufferRight, const OpenCVBMParameters &params)
 {
     int32_t h = InputBufferLeft->getH();
@@ -66,7 +67,9 @@ FlowBuffer* SGBMOpenCV::getStereoSGBM(G12Buffer* InputBufferLeft, G12Buffer* Inp
     const int sADWindowSize = params.sADWindowSize();
 
     sgbm = StereoSGBM::create( params.minDisparity(),
-        /* num disparities */ ( ( w / 5 ) + 15 ) & -16,
+        */
+/* num disparities *//*
+ ( ( w / 5 ) + 15 ) & -16,
         sADWindowSize,
         params.p1Multiplier() * sADWindowSize * sADWindowSize,
         params.p2Multiplier() * sADWindowSize * sADWindowSize,
@@ -125,3 +128,4 @@ FlowBuffer* SGBMOpenCV::getStereoSGBM(G12Buffer* InputBufferLeft, G12Buffer* Inp
 #endif
     return stereo;
 }
+*/

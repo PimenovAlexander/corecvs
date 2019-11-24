@@ -8,6 +8,7 @@
 #include "openCVTools.h"
 
 #include <opencv2/core/core.hpp> // cvCreateImage
+#include <ml.h>
 
 using namespace corecvs;
 using namespace cv;

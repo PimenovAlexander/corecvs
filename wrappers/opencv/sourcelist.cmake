@@ -11,7 +11,6 @@ set (HDR_FILES
     ${CMAKE_CURRENT_LIST_DIR}/semiGlobalBlockMatching.h
     ${CMAKE_CURRENT_LIST_DIR}/openCvCheckerboardDetector.h
     ${CMAKE_CURRENT_LIST_DIR}/patternDetect/openCVSquareDetector.h
-    ${CMAKE_CURRENT_LIST_DIR}/DISFlow.h
 )
 
 set (SRC_FILES
@@ -23,7 +22,6 @@ set (SRC_FILES
     ${CMAKE_CURRENT_LIST_DIR}/openCvCheckerboardDetector.cpp
     ${CMAKE_CURRENT_LIST_DIR}/openCvImageRemapper.cpp
     ${CMAKE_CURRENT_LIST_DIR}/patternDetect/openCVSquareDetector.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/DISFlow.cpp
 )
 
 
@@ -56,3 +54,5 @@ include_directories(${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_LIST_DIR}/patternD
 
     include_directories(PUBLIC ${OpenCV_INCLUDE_DIRS})
     link_libraries(${MODULE_NAME} ${OpenCV_LIBS})
+
+include(../../wrappers/opencv/DISFlow/CMakeLists.txt)

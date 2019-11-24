@@ -72,6 +72,56 @@ void DISFlow::saveFlowBuffer(cv::Mat &img) {
 
 }
 
+void DISFlow::ConstructImgPyramide(const cv::Mat & img_ao_fmat, cv::Mat * img_ao_fmat_pyr, cv::Mat * img_ao_dx_fmat_pyr, cv::Mat * img_ao_dy_fmat_pyr, const float ** img_ao_pyr, const float ** img_ao_dx_pyr, const float ** img_ao_dy_pyr, const int lv_f, const int lv_l, const int rpyrtype, const bool getgrad, const int imgpadding, const int padw, const int padh)
+{
+    for (int i=0; i<=lv_f; ++i)  // Construct image and gradient pyramides
+    {
+        if (i==0) // At finest scale: copy directly, for all other: downscale previous scale by .5
+        {
+if (SELECTCHANNEL == 1 | SELECTCHANNEL == 3)  // use RGB or intensity image directly
+            img_ao_fmat_pyr[i] = img_ao_fmat.clone();
+else if (SELECTCHANNEL == 2) { // use gradient magnitude image as input
+    cv::Mat dx, dy, dx2, dy2, dmag;
+    cv::Sobel(img_ao_fmat, dx, CV_32F, 1, 0, 3, 1 / 8.0, 0, cv::BORDER_DEFAULT);
+    cv::Sobel(img_ao_fmat, dy, CV_32F, 0, 1, 3, 1 / 8.0, 0, cv::BORDER_DEFAULT);
+    dx2 = dx.mul(dx);
+    dy2 = dy.mul(dy);
+    dmag = dx2 + dy2;
+    cv::sqrt(dmag, dmag);
+    img_ao_fmat_pyr[i] = dmag.clone();
+}
+        }
+        else
+            cv::resize(img_ao_fmat_pyr[i-1], img_ao_fmat_pyr[i], cv::Size(), .5, .5, cv::INTER_LINEAR);
+
+        img_ao_fmat_pyr[i].convertTo(img_ao_fmat_pyr[i], rpyrtype);
+
+        if ( getgrad )
+        {
+            cv::Sobel( img_ao_fmat_pyr[i], img_ao_dx_fmat_pyr[i], CV_32F, 1, 0, 3, 1/8.0, 0, cv::BORDER_DEFAULT );
+            cv::Sobel( img_ao_fmat_pyr[i], img_ao_dy_fmat_pyr[i], CV_32F, 0, 1, 3, 1/8.0, 0, cv::BORDER_DEFAULT );
+            img_ao_dx_fmat_pyr[i].convertTo(img_ao_dx_fmat_pyr[i], CV_32F);
+            img_ao_dy_fmat_pyr[i].convertTo(img_ao_dy_fmat_pyr[i], CV_32F);
+        }
+    }
+
+    // pad images
+    for (int i=0; i<=lv_f; ++i)  // Construct image and gradient pyramides
+    {
+        copyMakeBorder(img_ao_fmat_pyr[i],img_ao_fmat_pyr[i],imgpadding,imgpadding,imgpadding,imgpadding,cv::BORDER_REPLICATE);  // Replicate border for image padding
+        img_ao_pyr[i] = (float*)img_ao_fmat_pyr[i].data;
+
+        if ( getgrad )
+        {
+            copyMakeBorder(img_ao_dx_fmat_pyr[i],img_ao_dx_fmat_pyr[i],imgpadding,imgpadding,imgpadding,imgpadding,cv::BORDER_CONSTANT , 0); // Zero padding for gradients
+            copyMakeBorder(img_ao_dy_fmat_pyr[i],img_ao_dy_fmat_pyr[i],imgpadding,imgpadding,imgpadding,imgpadding,cv::BORDER_CONSTANT , 0);
+
+            img_ao_dx_pyr[i] = (float*)img_ao_dx_fmat_pyr[i].data;
+            img_ao_dy_pyr[i] = (float*)img_ao_dy_fmat_pyr[i].data;
+        }
+    }
+}
+
 cv::Mat DISFlow::execute(cv::Mat img_ao_mat, cv::Mat img_bo_mat) {
 
     struct timeval tv_start_all, tv_end_all;

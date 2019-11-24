@@ -11,7 +11,7 @@
 
 #include <opencv2/core/core_c.h>        // cvCreateImage
 #include <opencv2/imgproc/imgproc_c.h>  // cvGoodFeaturesToTrack
-#include <opencv2/video/tracking_c.h>   // cvCalcOpticalFlowPyrLK
+//#include <opencv2/video/tracking_c.h>   // cvCalcOpticalFlowPyrLK
 
 #include "core/math/vector/vector2d.h"
 #include "core/math/mathUtils.h"
@@ -102,7 +102,7 @@ std::vector<FloatFlowVector> *KLTFlow::getOpenCVKLT(
                 cvSize( -1, -1 ),
                 cvTermCriteria( CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 20, 0.03 ) );
 
-    // Call Lucas Kanade algorithm
+   /* // Call Lucas Kanade algorithm
     cvCalcOpticalFlowPyrLK(
                 algo_image_A_p,
                 algo_image_B_p,
@@ -115,7 +115,7 @@ std::vector<FloatFlowVector> *KLTFlow::getOpenCVKLT(
                 3,
                 features_found,
                 feature_errors,
-                cvTermCriteria( CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 20, 0.3 ), 0 );
+                cvTermCriteria( CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 20, 0.3 ), 0 );*/
 
     for (int i = 0; i < corner_count; i++)
     {

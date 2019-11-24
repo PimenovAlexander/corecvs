@@ -75,6 +75,11 @@ private:
     void saveFlowBuffer(cv::Mat &img);
 
     cv::Mat execute(cv::Mat img_ao_fmat, cv::Mat img_bo_fmat);
+
+    void ConstructImgPyramide(const cv::Mat &img_ao_fmat, cv::Mat *img_ao_fmat_pyr, cv::Mat *img_ao_dx_fmat_pyr,
+                              cv::Mat *img_ao_dy_fmat_pyr, const float **img_ao_pyr, const float **img_ao_dx_pyr,
+                              const float **img_ao_dy_pyr, const int lv_f, const int lv_l, const int rpyrtype,
+                              const bool getgrad, const int imgpadding, const int padw, const int padh);
 };
 
 

@@ -5,7 +5,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-#include "siblings/OF_DIS/run_dense.cpp"
+#include <sys/time.h>
 
 #include <string>
 #include <core/buffers/rgb24/rgb24Buffer.h>
@@ -114,6 +114,11 @@ private:
                 SELECTCHANNEL = 3;
                 break;
         }
+    }
+
+    int AutoFirstScaleSelect(int imgwidth, int fratio, int patchsize)
+    {
+        return std::max(0,(int)std::floor(log2((2.0f*(float)imgwidth) / ((float)fratio * (float)patchsize))));
     }
 
     void defaultParams(bool isNeedDefineAll) {
