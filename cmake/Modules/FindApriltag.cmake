@@ -3,10 +3,13 @@ SET(APRILTAG_INCLUDE_SEARCH_PATHS
         /usr/include/
         /usr/local/include/
         /usr/local/include/apriltag/
-        /usr/local/include/apriltag/common/)
+        /usr/local/include/apriltag/common/
+       )
 
 SET(APRILTAG_LIB_SEARCH_PATHS
        ${CMAKE_CURRENT_LIST_DIR}/../../siblings/apriltag
+       ${CMAKE_CURRENT_LIST_DIR}/../../siblings/apriltag/build
+       ${CMAKE_CURRENT_LIST_DIR}/../../siblings/apriltag/build/lib
         /lib/
         /lib64/
         /usr/lib/
@@ -14,6 +17,8 @@ SET(APRILTAG_LIB_SEARCH_PATHS
         /usr/local/lib/
         /usr/local/lib64/
         )
+
+message(APRILTAG_LIB_SEARCH_PATHS: ${APRILTAG_LIB_SEARCH_PATHS})
 
 FIND_PATH(APRILTAG_INCLUDE_DIR NAMES
         apriltag.h
@@ -55,13 +60,16 @@ FIND_PATH(APRILTAG_INCLUDE_DIR NAMES
         zarray.h
         zhash.h
         zmaxheap.h
-        PATHS ${Apriltag_INCLUDE_SEARCH_PATHS}
+        PATHS ${APRILTAG_INCLUDE_SEARCH_PATHS}
         )
 
-FIND_LIBRARY(APRILTAG_LIB NAMES apriltag PATHS ${APRILTAG_LIB_SEARCH_PATHS})
+FIND_LIBRARY(APRILTAG_LIB NAMES apriltag PATHS ${APRILTAG_LIB_SEARCH_PATHS} )
 
 if (APRILTAG_LIB)
-  message("Apriltag has been found!")
+  message("Apriltag has been found.")
+  MESSAGE(STATUS "Found Apriltag libraries: ${APRILTAG_LIB}")
+  MESSAGE(STATUS "Found Apriltag include: ${APRILTAG_INCLUDE_DIR}")
+
   SET(APRILTAG_FOUND ON)
 else()
   SET(APRILTAG_FOUND OFF)
