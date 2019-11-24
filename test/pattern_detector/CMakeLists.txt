@@ -23,7 +23,7 @@ if (OpenCV_LIBS)
 include(../../wrappers/opencv/sourcelist.cmake)
 endif()
 
-if (USE_APRILTAG)
+if (APRILTAG_FOUND)
     target_link_libraries(${NAME} ${APRILTAG_LIB} Threads::Threads)
 endif()
 

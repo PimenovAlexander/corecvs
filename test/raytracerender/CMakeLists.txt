@@ -21,7 +21,7 @@ if (JPEG_LIB)
     include(../../wrappers/libjpeg/sourcelist.cmake)
 endif()
 
-message(SRC_FILES RaytraceRenderer:${INCLUDEPATHS} )
+#message(SRC_FILES RaytraceRenderer:${INCLUDEPATHS} )
 
 add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
 

@@ -103,7 +103,7 @@ if (OpenCV_LIBS)
     target_link_libraries(${MODULE_NAME} ${OpenCV_LIBS})
 endif()
 
-if (USE_APRILTAG)
+if (APRILTAG_FOUND)
     target_link_libraries(${MODULE_NAME} ${APRILTAG_LIB} Threads::Threads)
 endif()
 
