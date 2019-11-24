@@ -12,3 +12,10 @@ set (SRC_FILES
 
 
 include_directories(${CMAKE_CURRENT_LIST_DIR})
+
+
+# Additional stuff mostly for IDE only
+file(GLOB CURR_ADD_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/xml/*.xml)
+set(ADD_SRC_FILES ${ADD_SRC_FILES} ${CURR_ADD_SRC_FILES}  )
+file(GLOB CURR_ADD_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/../../tools/generator/regen-apriltag.sh)
+set(ADD_SRC_FILES ${ADD_SRC_FILES} ${CURR_ADD_SRC_FILES}  )

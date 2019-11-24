@@ -59,6 +59,9 @@ public:
             0
         )
     {}
+
+
+
 };
 
 class PatternDetector : public NewStyleBlock, public DebuggableBlock

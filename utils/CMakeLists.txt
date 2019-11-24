@@ -32,7 +32,7 @@ if (OpenCV_LIBS)
     )
 endif()
 
-if (apriltag_LIBS)
+if (USE_APRILTAG)
     set(UTILS_SUBDIRECTORIES
         ${UTILS_SUBDIRECTORIES}
         ../wrappers/apriltag_wrapper
@@ -62,19 +62,10 @@ add_library(${MODULE_NAME} STATIC)
 
 target_link_libraries(${MODULE_NAME} corecvs Qt5::Widgets Qt5::Core Qt5::Gui Qt5::Script Qt5::Xml Qt5::SerialPort)
 
-if(WITH_APRILTAG)
-    MESSAGE(STATUS "Including Apriltag on CVS_UTILS build")
-    find_package(apriltag REQUIRED)
-    find_package(Threads REQUIRED)
-    target_link_libraries(${MODULE_NAME} apriltag Threads::Threads)
-    add_definitions(-DWITH_APRILTAG)
-endif()
-
 if(WITH_OPENGL)
     find_package(Qt5 COMPONENTS REQUIRED OpenGL)
     target_link_libraries(${MODULE_NAME} Qt5::OpenGL GLU GL)
 endif()
-
 
 file(GLOB SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
 file(GLOB HDR_FILES ${CMAKE_CURRENT_LIST_DIR}/*.h)
@@ -112,6 +103,12 @@ if (OpenCV_LIBS)
     target_link_libraries(${MODULE_NAME} ${OpenCV_LIBS})
 endif()
 
+if (USE_APRILTAG)
+    target_link_libraries(${MODULE_NAME} ${APRILTAG_LIB} Threads::Threads)
+endif()
+
+
+
 
 target_sources(${MODULE_NAME}
     PUBLIC
@@ -121,4 +118,7 @@ target_sources(${MODULE_NAME}
         ${SRC_FILES}
         ../resources/main.qrc
 )
+
+target_sources(${MODULE_NAME} PRIVATE ${ADD_SRC_FILES})
+set_source_files_properties(${ADD_SRC_FILES} PROPERTIES EXTERNAL_OBJECT true)
 

@@ -62,8 +62,8 @@ set (UI_FILES
 
 QT5_WRAP_UI( UI_HEADERS ${UI_FILES} )
 
-message(FILES:   ${UI_FILES})
-message(HEADERS: ${UI_HEADERS})
+#message(DRONE-UI: FILES:   ${UI_FILES})
+#message(DRONE-UI: HEADERS: ${UI_HEADERS})
 
 
 

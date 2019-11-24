@@ -30,6 +30,9 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
     on_updateCameraButton_clicked();
     //frameValuesUpdate();
 
+    /*Camera*/
+    mInputSelector.setInputString("v4l2:/dev/video0:1/30:mjpeg:800x600");
+
     PinholeCameraIntrinsics *intr = new PinholeCameraIntrinsics(640, 480, degToRad(60));
     mCameraModel.intrinsics.reset(intr);
     mCameraModel.nameId = "Copter Main Camera";
@@ -56,6 +59,10 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
 
     flightControllerParametersWidget = new ReflectionWidget(FlightControllerParameters::getReflection());
     connect(flightControllerParametersWidget, SIGNAL(paramsChanged()), this, SLOT(flightControllerParametersChanged()));
+
+    patternDetectorParametersWidget = new PatternDetectorParametersWidget();
+    connect(patternDetectorParametersWidget, SIGNAL(paramsChanged()), this, SLOT(patternDetectionParametersChanged()));
+
 
     /* Moving the camera closer */
     //ui->cloud->setCamera();
@@ -95,6 +102,26 @@ void PhysicsMainWindow::flightControllerParametersChanged()
     flightControllerParametersWidget->getParameters(&currentFlightControllerParameters);
     *static_cast<FlightControllerParameters *>(&copter) = currentFlightControllerParameters;
 
+}
+
+void PhysicsMainWindow::showPatternDetectionParameters()
+{
+    SYNC_PRINT(("PhysicsMainWindow::showPatternDetectionParameters():called\n"));
+    if (patternDetectorParametersWidget == NULL) {
+        return;
+    }
+    patternDetectorParametersWidget->show();
+    patternDetectorParametersWidget->raise();
+}
+
+void PhysicsMainWindow::patternDetectionParametersChanged()
+{
+    SYNC_PRINT(("PhysicsMainWindow::patternDetectionParametersChanged():called\n"));
+
+    GeneralPatternDetectorParameters params = patternDetectorParametersWidget->getParameters();
+    SYNC_PRINT(("New Params"));
+    cout << params << endl;
+    emit newPatternDetectionParameters(params);
 }
 
 void PhysicsMainWindow::showRadioControlWidget()
@@ -175,81 +202,6 @@ void PhysicsMainWindow::showValues()                                   //shows a
     }
 }
 
-#if 0
-void PhysicsMainWindow::yawChange(int i)                                //i - current yaw value
-{
-    yawValue=i;
-    if (virtualModeActive)
-    {
-        sendJoyValues();
-    }
-}
-
-
-void PhysicsMainWindow::rollChange(int i)                                //i - current roll value
-{
-    rollValue=i;
-    if (virtualModeActive)
-    {
-        sendJoyValues();
-    }
-}
-
-void PhysicsMainWindow::pitchChange(int i)                                //i - current pitch value
-{
-    pitchValue=i;
-    if (virtualModeActive)
-    {
-        sendJoyValues();
-    }
-}
-
-void PhysicsMainWindow::throttleChange(int i)                              //i - current throttle value
-{
-    throttleValue=i;
-    if (virtualModeActive)
-    {
-        sendJoyValues();
-    }
-
-}
-
-void PhysicsMainWindow::CH5Change(int i)                              //i - current throttle value
-{
-    CH5Value=i;
-    if (virtualModeActive)
-    {
-        sendJoyValues();
-    }
-}
-
-void PhysicsMainWindow::CH6Change(int i)                              //i - current throttle value
-{
-    CH6Value=i;
-    if (virtualModeActive)
-    {
-        sendJoyValues();
-    }
-}
-
-void PhysicsMainWindow::CH7Change(int i)                              //i - current throttle value
-{
-    CH7Value=i;
-    if (virtualModeActive)
-    {
-        sendJoyValues();
-    }
-}
-
-void PhysicsMainWindow::CH8Change(int i)                              //i - current throttle value
-{
-    CH8Value=i;
-    if (virtualModeActive)
-    {
-        sendJoyValues();
-    }
-}
-#endif
 
 void PhysicsMainWindow::startVirtualMode()
 {
@@ -386,7 +338,15 @@ void PhysicsMainWindow::startCamera()                                           
     mProcessor = new FrameProcessor();
     mProcessor->target = this;
 
-    std::string inputString = inputCameraPath;
+    SYNC_PRINT(("PhysicsMainWindow::startCamera(): connecting parameters\n"));
+    qRegisterMetaType<GeneralPatternDetectorParameters>("GeneralPatternDetectorParameters");
+    connect(this      , SIGNAL(newPatternDetectionParameters(GeneralPatternDetectorParameters)),
+            mProcessor, SLOT  (setPatternDetectorParameters(GeneralPatternDetectorParameters)));
+
+
+
+    //std::string inputString = inputCameraPath;
+    std::string inputString = mInputSelector.getInputString().toStdString();
 
     ImageCaptureInterfaceQt *rawInput = ImageCaptureInterfaceQtFactory::fabric(inputString, true);
     if (rawInput == NULL)
@@ -408,9 +368,14 @@ void PhysicsMainWindow::startCamera()                                           
     mCameraParametersWidget.setCaptureInterface(rawInput);
 
     mProcessor->input = rawInput;
+    qRegisterMetaType<CaptureStatistics>("CaptureStatistics");
+    QObject::connect(
+        rawInput    , SIGNAL(newStatisticsReady(CaptureStatistics)),
+       &mStatsDialog,   SLOT(addCaptureStats(CaptureStatistics)), Qt::QueuedConnection);
+
     QObject::connect(
         rawInput  , SIGNAL(newFrameReady(ImageCaptureInterface::FrameMetadata)),
-        mProcessor,   SLOT(processFrame (ImageCaptureInterface::FrameMetadata)), Qt::QueuedConnection);
+        mProcessor,   SLOT(processFrame(ImageCaptureInterface::FrameMetadata)), Qt::QueuedConnection);
 
     /* All ready. Let's rock */
     mProcessor->start();
@@ -450,6 +415,12 @@ void PhysicsMainWindow::showGraphDialog()
 {
     mGraphDialog.show();
     mGraphDialog.raise();
+}
+
+void PhysicsMainWindow::showStatistics()
+{
+    mStatsDialog.show();
+    mStatsDialog.raise();
 }
 
 void PhysicsMainWindow::startSimuation()
@@ -779,6 +750,11 @@ void PhysicsMainWindow::updateUi()
 {
     uiMutex.lock();
     /* We now could quickly scan for data and stats*/
+    for (DrawRequestData *data : uiQueue)
+    {
+        mStatsDialog.addStats(data->stats);
+    }
+
     /* But we would only draw last data */
     DrawRequestData *work = uiQueue.back();
     uiQueue.pop_back();

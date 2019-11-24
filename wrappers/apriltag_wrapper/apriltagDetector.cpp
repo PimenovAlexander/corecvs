@@ -6,44 +6,49 @@
 
 
 ApriltagDetector::ApriltagDetector(){
-    apriltag_family_t *tf = nullptr;
     at_detections = nullptr;
 
-     if ("tag36h11" == params.tag_family()) {
+    /* Add case here*/
+     if       (AprilTagType::TAG36H11 == params.tag_family()) {
         tf = tag36h11_create();
-    } else if ("tag25h9" == params.tag_family()) {
+    } else if (AprilTagType::TAG25H9 == params.tag_family()) {
         tf = tag25h9_create();
-    } else if ("tag16h5" == params.tag_family()) {
+    } else if (AprilTagType::TAG16H5 == params.tag_family()) {
         tf = tag16h5_create();
         // circles probably won't return correct output for PatternDetection.
-    } else if ("tagCircle21h7" == params.tag_family()) {
+    } else if (AprilTagType::TAGCIRCLE21H7 == params.tag_family()) {
         tf = tagCircle21h7_create();
-    } else if ("tagCircle49h12" == params.tag_family()) {
+    } else if (AprilTagType::TAGCIRCLE49H12 == params.tag_family()) {
         tf = tagCircle49h12_create();
-    } else if ("tagStandard41h12" == params.tag_family()) {
+    } else if (AprilTagType::TAGSTANDARD41H12 == params.tag_family()) {
         tf = tagStandard41h12_create();
-    } else if ("tagStandard52h13" == params.tag_family()) {
+    } else if (AprilTagType::TAGSTANDARD52H13 == params.tag_family()) {
         tf = tagStandard52h13_create();
-    } else if ( "tagCustom48h12" == params.tag_family()) {
+    } else if (AprilTagType::TAGCUSTOM48H12 == params.tag_family()) {
         tf = tagCustom48h12_create();
     } else {
         printf("Unrecognized tag family name. Use e.g. \"tag36h11\".\n");
         exit(-1);
     }
 
-    this->td = apriltag_detector_create();
+    td = apriltag_detector_create();
     apriltag_detector_add_family(td, tf);
 
-    this->td->debug = params.at_debug();
-    this->td->quad_decimate = params.at_decimate();
-    this->td->quad_sigma = params.blur();
-    this->td->refine_edges = params.at_refine_edges();
-    this->td->nthreads = params.at_threads();
+    td->debug         = params.at_debug();
+    td->quad_decimate = params.at_decimate();
+    td->quad_sigma    = params.blur();
+    td->refine_edges  = params.at_refine_edges();
+    td->nthreads      = params.at_threads();
 }
 
 ApriltagDetector::~ApriltagDetector() {
+    apriltag_detector_destroy(td);
+    tag25h9_destroy(tf);
+
     delete_safe(debugBuffer);
     delete_safe(gray);
+
+
 }
 
 int ApriltagDetector::operator()() {
@@ -62,6 +67,7 @@ int ApriltagDetector::operator()() {
     at_detections = apriltag_detector_detect(this->td, &inputGray);
 
     Statistics::endInterval(stats, "Finalize");
+    return 0;
 }
 
 

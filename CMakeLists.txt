@@ -69,12 +69,29 @@ ELSE()
 ENDIF ()
 
 
+option(USE_APRILTAG "Should compile with APRILTAG" YES)
+IF ( USE_APRILTAG )
+    MESSAGE(STATUS "Including Apriltag wherever possible")
+    find_package(Apriltag)
+    find_package(Threads)
+    if (APRILTAG_FOUND)
+        add_definitions(-DWITH_APRILTAG)
+    else()
+        message("You requested WITH_APRILTAG in the build, but none was found.")
+    endif()
+else()
+    MESSAGE(STATUS "Apriltag switched off")
+endif()
+
 ###
 #
 # Debug/Release switch 
 
 #set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -g")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -g")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -fPIC")
+
 
 include(cmake/CMakeCpuOptions.cmake)
 

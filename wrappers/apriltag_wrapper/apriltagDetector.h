@@ -36,7 +36,7 @@ public:
     corecvs::RGB24Buffer *debugBuffer = nullptr;
     corecvs::RGB24Buffer *input = nullptr;
 
-    ApriltagDetector() ;
+    ApriltagDetector();
     virtual  ~ApriltagDetector();
 
     /** DebuggableBlock interface */
@@ -60,8 +60,9 @@ public:
     }
 
 private:
-    apriltag_detector_t *td;
-    zarray *at_detections;
+    apriltag_family_t *tf   = nullptr;
+    apriltag_detector_t *td = nullptr;
+    zarray   *at_detections = nullptr;
 };
 
 #endif //CORECVS_APRILTAGDETECTOR_H

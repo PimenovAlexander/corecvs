@@ -12,18 +12,21 @@ DroneObject::DroneObject(double frameSize, double mass) : PhysMainObject()
     double motorMass = 0.01; /**< in kg **/
     Affine3DQ defaultPos = Affine3DQ(Vector3dd::Zero());
 
-    motors.resize(4, Motor(&defaultPos, &propellerRadius, &motorMass));
-    motors[MOTOR_FR].name = "FR"; motors[MOTOR_FR].color = RGBColor::Red();    /*Front right*/
-    motors[MOTOR_BL].name = "BL"; motors[MOTOR_BL].color = RGBColor::Green();  /*Back  left*/
-    motors[MOTOR_FL].name = "FL"; motors[MOTOR_FL].color = RGBColor::Red();    /*Front left*/
-    motors[MOTOR_BR].name = "BR"; motors[MOTOR_BR].color = RGBColor::Green();  /*Back  right*/
+    for (int var = 0; var < 4; var++) {
+        motors.push_back(new Motor(&defaultPos, &propellerRadius, &motorMass));
+    }
+
+    motors[MOTOR_FR]->name = "FR"; motors[MOTOR_FR]->color = RGBColor::Red();    /*Front right*/
+    motors[MOTOR_BL]->name = "BL"; motors[MOTOR_BL]->color = RGBColor::Green();  /*Back  left*/
+    motors[MOTOR_FL]->name = "FL"; motors[MOTOR_FL]->color = RGBColor::Red();    /*Front left*/
+    motors[MOTOR_BR]->name = "BR"; motors[MOTOR_BR]->color = RGBColor::Green();  /*Back  right*/
 
     double arm = frameSize / 2;
 
-    motors[MOTOR_FR].setPos(Vector3dd( 1,  1, 0).normalised() * arm); motors[MOTOR_FR].cw = true;
-    motors[MOTOR_BL].setPos(Vector3dd(-1, -1, 0).normalised() * arm); motors[MOTOR_BL].cw = true;
-    motors[MOTOR_FL].setPos(Vector3dd( 1, -1, 0).normalised() * arm); motors[MOTOR_FL].cw = false;
-    motors[MOTOR_BR].setPos(Vector3dd(-1,  1, 0).normalised() * arm); motors[MOTOR_BR].cw = false;
+    motors[MOTOR_FR]->setPos(Vector3dd( 1,  1, 0).normalised() * arm); motors[MOTOR_FR]->cw = true;
+    motors[MOTOR_BL]->setPos(Vector3dd(-1, -1, 0).normalised() * arm); motors[MOTOR_BL]->cw = true;
+    motors[MOTOR_FL]->setPos(Vector3dd( 1, -1, 0).normalised() * arm); motors[MOTOR_FL]->cw = false;
+    motors[MOTOR_BR]->setPos(Vector3dd(-1,  1, 0).normalised() * arm); motors[MOTOR_BR]->cw = false;
 
     Affine3DQ camPos = Affine3DQ::RotationY(degToRad(90)) * Affine3DQ::RotationZ(degToRad(-90));
     cameras.resize(1);
@@ -58,11 +61,11 @@ DroneObject::DroneObject(double frameSize, double mass) : PhysMainObject()
             /* mm -> m and shift to right position */
             mesh.transform(Matrix44::Scale(2.0/5.0) * Matrix44::Scale(1/1000.0) * Matrix44::Shift(-236, -207, 0));
 
-            motors[MOTOR_FR].propMesh = new Mesh3D;
-            motors[MOTOR_FR].propMesh->add(mesh);
+            motors[MOTOR_FR]->propMesh = new Mesh3D;
+            motors[MOTOR_FR]->propMesh->add(mesh);
 
-            motors[MOTOR_BL].propMesh = new Mesh3D;
-            motors[MOTOR_BL].propMesh->add(mesh);
+            motors[MOTOR_BL]->propMesh = new Mesh3D;
+            motors[MOTOR_BL]->propMesh->add(mesh);
         }
     }
 
@@ -73,11 +76,11 @@ DroneObject::DroneObject(double frameSize, double mass) : PhysMainObject()
             /* mm -> m and shift to right position */
             mesh.transform(Matrix44::Scale(2.0/5.0) * Matrix44::Scale(1/1000.0) * Matrix44::Shift(-372, -208, 0));
 
-            motors[MOTOR_BR].propMesh = new Mesh3D;
-            motors[MOTOR_BR].propMesh->add(mesh);
+            motors[MOTOR_BR]->propMesh = new Mesh3D;
+            motors[MOTOR_BR]->propMesh->add(mesh);
 
-            motors[MOTOR_FL].propMesh = new Mesh3D;
-            motors[MOTOR_FL].propMesh->add(mesh);
+            motors[MOTOR_FL]->propMesh = new Mesh3D;
+            motors[MOTOR_FL]->propMesh->add(mesh);
         }
     }
 
@@ -99,20 +102,20 @@ DroneObject::DroneObject(double frameSize, double mass) : PhysMainObject()
         }
     }
 
-    double massOfCentralSphere = mass - 4 * motors[0].mass;
+    double massOfCentralSphere = mass - 4 * motors[0]->mass;
     Affine3DQ posOfCentralSphere = Affine3DQ(Vector3dd(0,0,0).normalised());
     double radiusOfCentralSphere = arm / 2;
-    centralSphere = PhysSphere(&posOfCentralSphere, &radiusOfCentralSphere, &massOfCentralSphere);
+    centralSphere = new PhysSphere(&posOfCentralSphere, &radiusOfCentralSphere, &massOfCentralSphere);
     //motors.insert(motors.end(), motors.begin(), motors.end());
 
     //L_INFO<< "centralSphere pos: " << centralSphere.getPosVector()
     //      << " , mass: " << centralSphere.mass << " , radius: " << centralSphere.radius;
-    objects.push_back(&centralSphere);
+    objects.push_back(centralSphere);
     //objects.push_back(&motors[0]);
 
     for (size_t i = 0; i < motors.size(); ++i)
     {
-        objects.push_back(&motors[i]);
+        objects.push_back(motors[i]);
     }
 }
 
@@ -145,9 +148,9 @@ void DroneObject::drawMotors(Mesh3D &mesh)
 {
     for (size_t i = 0; i < motors.size(); i++)
     {
-        Motor motor = motors[i];
-        mesh.mulTransform(corecvs::Matrix44(motors[i].getPosAffine()));
-        motor.drawMesh(mesh);
+        Motor *motor = motors[i];
+        mesh.mulTransform(corecvs::Matrix44(motors[i]->getPosAffine()));
+        motor->drawMesh(mesh);
         //L_INFO << "motor->drawMesh(mesh) passed";
         /** Very bad kludge, can be used only as a last resort **/
         /*
@@ -185,8 +188,8 @@ void DroneObject::drawForces(Mesh3D &mesh)
 {
     for (size_t i = 0; i < motors.size(); i++)
     {
-        Affine3DQ motorToWorld = getTransform() * motors[i].getPosAffine();
-        Vector3dd force = motorToWorld.rotor * motors[i].getForce();
+        Affine3DQ motorToWorld = getTransform() * motors[i]->getPosAffine();
+        Vector3dd force = motorToWorld.rotor * motors[i]->getForce();
         Vector3dd motorPosition = motorToWorld.shift;
         Vector3dd startDot = motorPosition;
         Vector3dd endDot = motorPosition + force * 1.0;
@@ -298,10 +301,10 @@ void DroneObject::flightControllerTick(const CopterInputs &input)
     motors[MOTOR_BR].pwm =   wantedPitch +  wantedRoll - wantedYaw + throttle;
 */
 
-    motors[MOTOR_FR].pwm = - forceP + forceR + forceY + throttle;
-    motors[MOTOR_BL].pwm =   forceP - forceR + forceY + throttle;
-    motors[MOTOR_FL].pwm = - forceP - forceR - forceY + throttle;
-    motors[MOTOR_BR].pwm =   forceP + forceR - forceY + throttle;
+    motors[MOTOR_FR]->pwm = - forceP + forceR + forceY + throttle;
+    motors[MOTOR_BL]->pwm =   forceP - forceR + forceY + throttle;
+    motors[MOTOR_FL]->pwm = - forceP - forceR - forceY + throttle;
+    motors[MOTOR_BR]->pwm =   forceP + forceR - forceY + throttle;
 
     //L_INFO<<"PitchPID P: "<<pitchPID.P<<"; I: "<<pitchPID.I<<"; D: "<<pitchPID.D
     //     <<"; Current Error: "<<currentError.x()<<"; Prev Error: "<<pitchPID.prevError<<"; Sum Error: "<<pitchPID.sumOfError;
@@ -317,9 +320,9 @@ void DroneObject::flightControllerTick(const CopterInputs &input)
 
     for (size_t i = 0; i < motors.size(); i++)
     {
-        motors[i].pwm = motors[i].pwm / 100.0;
-        if (motors[i].pwm < 0.0) motors[i].pwm = 0.0;
-        if (motors[i].pwm > 1.0) motors[i].pwm = 1.0;
+        motors[i]->pwm = motors[i]->pwm / 100.0;
+        if (motors[i]->pwm < 0.0) motors[i]->pwm = 0.0;
+        if (motors[i]->pwm > 1.0) motors[i]->pwm = 1.0;
     }
     //L_INFO<<"Motor True Values: "<<motors[0].pwm<<" ; "<<motors[1].pwm<<" ; "<<motors[2].pwm<<" ; "<<motors[3].pwm;
 }
@@ -330,7 +333,7 @@ void DroneObject::physicsTick(double deltaT)
     {
         startTick();
         for (size_t i = 0; i < motors.size(); ++i) {
-            motors[i].calcForce();
+            motors[i]->calcForce();
         }
     }
     calcForce();
@@ -350,7 +353,7 @@ void DroneObject::physicsTick(double deltaT)
 
 void DroneObject::tick(double deltaT)
 {
-    double radius = centralSphere.radius;
+    double radius = centralSphere->radius;
     double motorMass = objects[1]->mass;
     double centerMass = objects[0]->mass;
     double arm = objects[2]->getPosVector().l2Metric();
@@ -422,8 +425,8 @@ DroneObject::~DroneObject()
     delete_safe(bodyMesh);
     for (size_t i = 0; i < motors.size(); i++)
     {
-        delete_safe(motors[i].motorMesh);
-        delete_safe(motors[i].propMesh);
+        delete_safe(motors[i]->motorMesh);
+        delete_safe(motors[i]->propMesh);
     }
 }
 
@@ -432,7 +435,7 @@ void DroneObject::visualTick()
     for (size_t i = 0; i < motors.size(); i++)
     {
         //L_INFO<<"motor: "<< i <<"; pwm: " << motors[i].pwm;
-        motors[i].phi += (motors[i].cw ? motors[i].pwm : -motors[i].pwm) / 50.0;
+        motors[i]->phi += (motors[i]->cw ? motors[i]->pwm : -motors[i]->pwm) / 50.0;
     }
 }
 

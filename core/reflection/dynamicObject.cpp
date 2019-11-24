@@ -206,7 +206,18 @@ void DynamicObject::printRawObject()
     DynamicObjectWrapper(reflection, rawObject).printRawObject();
 }
 
-DynamicObject::~DynamicObject()
+DynamicObject::DynamicObject(const DynamicObject &other)
+{
+    this->cloneFrom(DynamicObjectWrapper(other.reflection, other.rawObject));
+}
+
+DynamicObject &DynamicObject::operator=(const DynamicObject &other)
+{
+    this->cloneFrom(DynamicObjectWrapper(other.reflection, other.rawObject));
+    return *this;
+}
+
+void DynamicObject::purgeObject()
 {
     if (reflection != NULL && rawObject != NULL)
     {
@@ -238,53 +249,69 @@ DynamicObject::~DynamicObject()
 
         }
     }
-
-
     free(rawObject);
+    rawObject = NULL;
+}
+
+DynamicObject::~DynamicObject()
+{
+    purgeObject();
 }
 
 DynamicObject DynamicObject::clone()
+{   
+    DynamicObjectWrapper wrapper(reflection, rawObject);
+    return DynamicObject::clone(wrapper);
+}
+
+void DynamicObject::cloneFrom(const DynamicObjectWrapper &wrapper)
 {
-    DynamicObject toReturn(reflection, false);
+    purgeObject();
+    rawObject = malloc(wrapper.reflection->objectSize);
+    reflection = wrapper.reflection;
+
     /** We copy the whole object, even the fields that are not reflected **/
-    memcpy(toReturn.rawObject, rawObject, reflection->objectSize);
+    memcpy(rawObject, wrapper.rawObject, wrapper.reflection->objectSize);
 
     /** We would need to pass over some fields and fix them for a deep copy **/
-    if (reflection != NULL && rawObject != NULL)
+    if (wrapper.reflection != NULL && wrapper.rawObject != NULL)
     {
-        for (int count = 0; count < reflection->fieldNumber(); count++)
+        for (int count = 0; count < wrapper.reflection->fieldNumber(); count++)
         {
-            const BaseField *field = reflection->fields[count];
+            const BaseField *field = wrapper.reflection->fields[count];
             switch (field->type) {
                 case BaseField::TYPE_STRING:
                 {
-                    std::string *source = this->   getField<std::string>(count);
-                    std::string *target = toReturn.getField<std::string>(count);
+                    const std::string *source = wrapper.getField<std::string>(count);
+                    std::string *target = getField<std::string>(count);
                     target = new (target) std::string(*source);
                     break;
                 }
                 case BaseField::TYPE_WSTRING:
                 {
-                    std::wstring *source = this->   getField<std::wstring>(count);
-                    std::wstring *target = toReturn.getField<std::wstring>(count);
+                    const std::wstring *source = wrapper.getField<std::wstring>(count);
+                    std::wstring *target = getField<std::wstring>(count);
                     target = new (target) std::wstring(*source);
                     break;
                 }
                 case BaseField::TYPE_DOUBLE_VECTOR:
                 {
-                    vector<double> *source = this->   getField<vector<double>>(count);
-                    vector<double> *target = toReturn.getField<vector<double>>(count);
+                    const vector<double> *source = wrapper.getField<vector<double>>(count);
+                    vector<double> *target = getField<vector<double>>(count);
                     target = new (target) vector<double>(*source);
                     break;
                 }
                 default:
                     break;
             }
-
         }
     }
+}
 
-
+DynamicObject DynamicObject::clone(const DynamicObjectWrapper &wrapper)
+{
+    DynamicObject toReturn;
+    toReturn.cloneFrom(wrapper);
     return  toReturn;
 }
 

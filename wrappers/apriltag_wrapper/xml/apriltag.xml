@@ -1,11 +1,23 @@
-<poco version="5.0">  
+<poco version="5.0">
+  <enum name="AprilTagType" incpath="">
+      <item name="tag16h5"          id="0" comment=""/>
+      <item name="tag25h9"          id="1" comment=""/>
+      <item name="tag36h11"         id="2" comment=""/>
+      <item name="tagCircle21h7"    id="3" comment=""/>
+      <item name="tagCircle49h12"   id="4" comment=""/>
+      <item name="tagCustom48h12"   id="5" comment=""/>
+      <item name="tagStandard41h12" id="6" comment=""/>
+      <item name="tagStandard52h13" id="7" comment=""/>
+  <enum >
+
   <class name="Apriltag Parameters">
-    <field type="string" name="tag_family"      defaultValue="tag36h11">
-    <field type="int"    name="at_threads"      defaultValue="1">
-    <field type="bool"   name="at_debug"        defaultValue="true">
-    <field type="bool"   name="at_quiet"        defaultValue="false">
-    <field type="bool"   name="at_refine_edges" defaultValue="true">
-    <field type="double" name="at_decimate"   defaultValue="2.0">
-    <field type="double" name="blur"          defaultValue="0.0">
+    <!-- <field type="string" name="tag_family"      defaultValue="tag36h11"> -->
+    <field type="AprilTagType" name="tag_family"      defaultValue="2">
+    <field type="int"          name="at_threads"      defaultValue="1">
+    <field type="bool"         name="at_debug"        defaultValue="true">
+    <field type="bool"         name="at_quiet"        defaultValue="false">
+    <field type="bool"         name="at_refine_edges" defaultValue="true">
+    <field type="double"       name="at_decimate"     defaultValue="2.0">
+    <field type="double"       name="blur"            defaultValue="0.0">
   </class>
 </poco>

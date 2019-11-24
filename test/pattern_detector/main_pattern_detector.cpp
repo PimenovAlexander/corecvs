@@ -134,7 +134,7 @@ int detect(CommandLineSetter &s)
     producer->getOutput(result);
     Statistics::leaveContext(&stats);
 
-    for(int i = 0; i < result.size(); i++) {
+    for(size_t i = 0; i < result.size(); i++) {
         cout << result[i] << endl;
     }
 

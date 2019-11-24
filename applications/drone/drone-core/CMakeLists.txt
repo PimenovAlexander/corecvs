@@ -26,7 +26,7 @@ target_sources(drone-core
         ${CMAKE_CURRENT_LIST_DIR}/copter/motor.h
         ${CMAKE_CURRENT_LIST_DIR}/copter/quad.h
 
-        ${CMAKE_CURRENT_LIST_DIR}/simulation/janibekovsBolt.h
+        ${CMAKE_CURRENT_LIST_DIR}/simulation/dzhanibekovBolt.h
         ${CMAKE_CURRENT_LIST_DIR}/simulation/physMainObject.h
         ${CMAKE_CURRENT_LIST_DIR}/simulation/simulation.h
         ${CMAKE_CURRENT_LIST_DIR}/simulation/simSphere.h

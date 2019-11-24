@@ -7,8 +7,8 @@
 namespace corecvs {
 
 /**
- * \brief Dynamic Object is an object accessed by pointer, whose type is cleared form C++ point of view,
- * the object is compleatly managed be the reflection
+ * \brief DynamicObjectWrapper is an object accessed by pointer, whose type is cleared form C++ point of view,
+ * the object is compleatly managed be the reflection. This clas
  *
  **/
 class DynamicObjectWrapper
@@ -166,10 +166,15 @@ public:
 
 };
 
+/**
+ * \brief Dynamic Object is an object accessed by pointer, whose type is cleared form C++ point of view,
+ * the object is compleatly managed be the reflection. This class has ownership over the block of data it manages
+ *
+ **/
 class DynamicObject {
 public:
     const Reflection *reflection = NULL;
-    void       *rawObject = NULL;
+    void              *rawObject = NULL;
 
     DynamicObject(
         const Reflection *reflection = NULL,
@@ -186,7 +191,9 @@ public:
         }
     }
 
+    void purgeObject();
     ~DynamicObject();
+
 
     template<typename Object>
     DynamicObject(Object *object):
@@ -194,6 +201,9 @@ public:
     {
         rawObject = malloc(std::max((size_t)reflection->objectSize, sizeof(Object)));
         *static_cast<Object *>(rawObject) = *object;
+
+
+
     }
 
     DynamicObject(DynamicObject&& other)
@@ -214,6 +224,10 @@ public:
      *
      */
     DynamicObject clone();
+    void                 cloneFrom  (const DynamicObjectWrapper &wrapper);
+    static DynamicObject clone      (const DynamicObjectWrapper &wrapper);
+
+
 
 
     /**
@@ -262,9 +276,8 @@ public:
         return out;
     }
 
-private:
-    DynamicObject(const DynamicObject& other) = delete;
-    DynamicObject& operator=(const DynamicObject& other) = delete;
+    DynamicObject(const DynamicObject& other);
+    DynamicObject& operator=(const DynamicObject& other);
 
 };
 

@@ -56,8 +56,11 @@ FIND_PATH(APRILTAG_INCLUDE_DIR NAMES
         PATHS ${Apriltag_INCLUDE_SEARCH_PATHS}
         )
 
-FIND_LIBRARY(APRILTAG NAMES apriltag PATHS ${APRILTAG_LIB_SEARCH_PATHS})
+FIND_LIBRARY(APRILTAG_LIB NAMES apriltag PATHS ${APRILTAG_LIB_SEARCH_PATHS})
 
-message("---------------------------Apriltag has found!")
-
-SET(Apriltag_FOUND_ON)
+if (APRILTAG_LIB)
+  message("Apriltag has been found!")
+  SET(APRILTAG_FOUND ON)
+else()
+  SET(APRILTAG_FOUND OFF)
+endif()
