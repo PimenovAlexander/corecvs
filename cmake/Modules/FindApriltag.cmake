@@ -1,7 +1,7 @@
 SET(APRILTAG_INCLUDE_SEARCH_PATHS
         ${CMAKE_CURRENT_LIST_DIR}/../../siblings/apriltag
-        /usr/include/
-        /usr/local/include/
+#        /usr/include/
+#        /usr/local/include/
         /usr/local/include/apriltag/
         /usr/local/include/apriltag/common/
        )
@@ -60,7 +60,7 @@ FIND_PATH(APRILTAG_INCLUDE_DIR NAMES
         zarray.h
         zhash.h
         zmaxheap.h
-        PATHS ${APRILTAG_INCLUDE_SEARCH_PATHS}
+        PATHS ${APRILTAG_INCLUDE_SEARCH_PATHS} NO_DEFAULT_PATH
         )
 
 FIND_LIBRARY(APRILTAG_LIB NAMES apriltag PATHS ${APRILTAG_LIB_SEARCH_PATHS} )
