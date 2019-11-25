@@ -86,13 +86,13 @@ double distanceBetweenSegments(const Segment2d& AB, const Segment2d& CD) {
     return std::min(std::min(AtoCD, BtoCD), std::min(CtoAB, DtoAB));
 }
 
-bool intersect(const PointPath& p, const Segment2d& seg) {
+bool intersect(const PointPath& p, const Segment2d& seg, const double tolerance = TOLERANCE) {
     auto it = p.begin();
     for (int i = 0; i < p.size() - 1; ++i, ++it) {
         Vector2dd p1 = *it;
         Vector2dd p2 = *(std::next(it));
         Segment2d pSeg(p1, p2);
-        if (distanceBetweenSegments(seg, pSeg) <= TOLERANCE) {
+        if (distanceBetweenSegments(seg, pSeg) < (tolerance * tolerance) * 0.95) {
             return true;
         }
     }
@@ -245,14 +245,14 @@ std::vector<Segment2d> clipping(const PointPath& original, const PointPath& untr
     auto itSeg = segments.begin();
     while (itSeg != segments.end()) {
         Segment2d seg = *itSeg;
-        if (intersect(original, seg)) {
+        // intersect is checking both case 2 and step 2
+        if (intersect(original, seg, abs(offset))) {
             segments.erase(itSeg);
         } else {
             ++itSeg;
         }
     }
 
-    // todo step 2
     return segments;
 }
 
