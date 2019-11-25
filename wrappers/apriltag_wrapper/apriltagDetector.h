@@ -63,7 +63,10 @@ public:
 
 public:
     std::map<std::string, corecvs::DynamicObject> getParameters() override;
+
     bool setParameters(std::string name, const corecvs::DynamicObject &param) override;
+
+
 
     void setInputImage(corecvs::RGB24Buffer *input) override;
 
@@ -74,6 +77,9 @@ public:
     }
 
 private:
+    bool apriltag_create();
+    bool apriltag_destroy();
+
     apriltag_family_t *tf   = nullptr;
     apriltag_detector_t *td = nullptr;
     zarray   *at_detections = nullptr;

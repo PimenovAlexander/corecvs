@@ -7,48 +7,11 @@
 
 ApriltagDetector::ApriltagDetector(){
     at_detections = nullptr;
-
-    /* Add case here*/
-     if       (AprilTagType::TAG36H11 == params.tag_family()) {
-        tf = tag36h11_create();
-    } else if (AprilTagType::TAG25H9 == params.tag_family()) {
-        tf = tag25h9_create();
-    } else if (AprilTagType::TAG16H5 == params.tag_family()) {
-        tf = tag16h5_create();
-        // circles probably won't return correct output for PatternDetection.
-    } else if (AprilTagType::TAGCIRCLE21H7 == params.tag_family()) {
-        tf = tagCircle21h7_create();
-    } else if (AprilTagType::TAGCIRCLE49H12 == params.tag_family()) {
-        tf = tagCircle49h12_create();
-    } else if (AprilTagType::TAGSTANDARD41H12 == params.tag_family()) {
-        tf = tagStandard41h12_create();
-    } else if (AprilTagType::TAGSTANDARD52H13 == params.tag_family()) {
-        tf = tagStandard52h13_create();
-    } else if (AprilTagType::TAGCUSTOM48H12 == params.tag_family()) {
-        tf = tagCustom48h12_create();
-    } else {
-        printf("Unrecognized tag family name. Use e.g. \"tag36h11\".\n");
-        exit(-1);
-    }
-
-    td = apriltag_detector_create();
-    apriltag_detector_add_family(td, tf);
-
-    td->debug         = params.at_debug();
-    td->quad_decimate = params.at_decimate();
-    td->quad_sigma    = params.blur();
-    td->refine_edges  = params.at_refine_edges();
-    td->nthreads      = params.at_threads();
+    apriltag_create();
 }
 
 ApriltagDetector::~ApriltagDetector() {
-    apriltag_detector_destroy(td);
-    tag25h9_destroy(tf);
-
-    delete_safe(debugBuffer);
-    delete_safe(gray);
-
-
+    apriltag_destroy();
 }
 
 int ApriltagDetector::operator()() {
@@ -70,10 +33,11 @@ int ApriltagDetector::operator()() {
     return 0;
 }
 
-
 bool ApriltagDetector::setParameters(std::string name, const corecvs::DynamicObject &param) {
     if ("params" == name) {
+        apriltag_destroy();
         param.copyTo(&params);
+        apriltag_create();
         return  true;
     }
     return false;
@@ -146,6 +110,70 @@ std::map<std::string, corecvs::DynamicObject> ApriltagDetector::getParameters() 
     std::map<std::string, corecvs::DynamicObject> dparams;
     dparams.emplace("params", corecvs::DynamicObject(&params));
     return dparams;
+}
+
+bool ApriltagDetector::apriltag_destroy() {
+   apriltag_detector_destroy(td);
+
+   if       (AprilTagType::TAG36H11 == params.tag_family()) {
+        tag36h11_destroy(tf);
+    } else if (AprilTagType::TAG25H9 == params.tag_family()) {
+        tag25h9_destroy(tf);
+    } else if (AprilTagType::TAG16H5 == params.tag_family()) {
+        tag16h5_destroy(tf);
+    } else if (AprilTagType::TAGCIRCLE21H7 == params.tag_family()) {
+        tagCircle21h7_destroy(tf);
+    } else if (AprilTagType::TAGCIRCLE49H12 == params.tag_family()) {
+        tagCircle49h12_destroy(tf);
+    } else if (AprilTagType::TAGSTANDARD41H12 == params.tag_family()) {
+        tagStandard41h12_destroy(tf);
+    } else if (AprilTagType::TAGSTANDARD52H13 == params.tag_family()) {
+        tagStandard52h13_destroy(tf);
+    } else if (AprilTagType::TAGCUSTOM48H12 == params.tag_family()) {
+        tagCustom48h12_destroy(tf);
+    } else {
+       return false;
+    }
+
+    delete_safe(debugBuffer);
+    delete_safe(gray);
+    return true;
+}
+
+bool ApriltagDetector::apriltag_create() {
+      /* Add case here*/
+     if       (AprilTagType::TAG36H11 == params.tag_family()) {
+        tf = tag36h11_create();
+    } else if (AprilTagType::TAG25H9 == params.tag_family()) {
+        tf = tag25h9_create();
+    } else if (AprilTagType::TAG16H5 == params.tag_family()) {
+        tf = tag16h5_create();
+        // circles probably won't return correct output for PatternDetection.
+    } else if (AprilTagType::TAGCIRCLE21H7 == params.tag_family()) {
+        tf = tagCircle21h7_create();
+    } else if (AprilTagType::TAGCIRCLE49H12 == params.tag_family()) {
+        tf = tagCircle49h12_create();
+    } else if (AprilTagType::TAGSTANDARD41H12 == params.tag_family()) {
+        tf = tagStandard41h12_create();
+    } else if (AprilTagType::TAGSTANDARD52H13 == params.tag_family()) {
+        tf = tagStandard52h13_create();
+    } else if (AprilTagType::TAGCUSTOM48H12 == params.tag_family()) {
+        tf = tagCustom48h12_create();
+    } else {
+        printf("Unrecognized tag family name. Use e.g. \"tag36h11\".\n");
+        exit(-1);
+    }
+
+    td = apriltag_detector_create();
+    apriltag_detector_add_family(td, tf);
+
+    td->debug         = params.at_debug();
+    td->quad_decimate = params.at_decimate();
+    td->quad_sigma    = params.blur();
+    td->refine_edges  = params.at_refine_edges();
+    td->nthreads      = params.at_threads();
+
+    return true;
 }
 
 
