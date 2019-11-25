@@ -17,8 +17,12 @@ class DzhanibekovBolt : public PhysMainObject
 
 public:
     DzhanibekovBolt(double arm = 0.01, double mass = 6);
-    PhysSphere centralSphere;
-    std::vector<PhysSphere> partsOfSystem;
+
+    /* Not owned */
+    PhysSphere *centralSphere;
+    /* Not owned */
+    std::vector<PhysSphere *> partsOfSystem;
+
     void drawMyself(Mesh3D &mesh);
     Affine3DQ getTransform();
     void physicsTick(double deltaT);
@@ -27,6 +31,8 @@ public:
 
     Mesh3DDecorated *worldMesh = NULL;
     void drawForces(Mesh3D &mesh);
+
+    virtual ~DzhanibekovBolt() override {}
 };
 
 #endif // JANIBEKOVSBOLT_H

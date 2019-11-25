@@ -9,6 +9,7 @@
 
 #include <JoystickOptionsWidget.h>
 #include <QWidget>
+#include <statisticsDialog.h>
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
@@ -39,6 +40,8 @@
 #include "simulation.h"
 #include "core/geometry/mesh3DDecorated.h"
 #include "mesh3DScene.h"
+#include "patternDetectorParametersWidget.h"
+
 
 namespace Ui {
 class PhysicsMainWindow;
@@ -50,6 +53,8 @@ class DrawRequestData
 public:
     Mesh3DDecorated *mMesh  = NULL;
     RGB24Buffer     *mImage = NULL;
+
+    Statistics      stats;
 
     ~DrawRequestData()
     {
@@ -120,10 +125,16 @@ public slots:
 public:
     FlowFabricControlWidget mFlowFabricControlWidget;
     GraphPlotDialog mGraphDialog;
+    StatisticsDialog mStatsDialog;
+    PatternDetectorParametersWidget *patternDetectorParametersWidget = NULL;
 
 public slots:
     void showProcessingParametersWidget();
     void showGraphDialog();
+    void showStatistics();
+
+signals:
+    void newPatternDetectionParameters(GeneralPatternDetectorParameters params);
 
 /** Quad **/
 public:
@@ -136,6 +147,7 @@ public:
 
     FlightControllerParameters currentFlightControllerParameters; /* Not sure we need it here */
     ReflectionWidget *flightControllerParametersWidget = NULL;
+
 public slots:
     /* Let it be here so far */
     void startSimuation();
@@ -145,6 +157,10 @@ public slots:
 
     void showFlightControllerParameters();
     void flightControllerParametersChanged();
+
+    void showPatternDetectionParameters();
+    void patternDetectionParametersChanged();
+
 
 /** Radio */
 public:
@@ -198,8 +214,8 @@ private slots:
     void on_connetToVirtualButton_pressed();
     void on_iiOutputSlider_valueChanged(int value);
 
-    void CalibrateCamera();
-    void LoadCalibrationSettings();
+    void calibrateCamera();
+    void loadCalibrationSettings();
 
 
 

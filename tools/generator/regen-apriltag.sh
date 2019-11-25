@@ -20,5 +20,6 @@ echo "Making a copy of recorder classes"
 copy_if_different Generated/apriltagParameters.cpp $output
 copy_if_different Generated/apriltagParameters.h   $output
 
+copy_if_different Generated/aprilTagType.h   $output
 
 echo "copied"

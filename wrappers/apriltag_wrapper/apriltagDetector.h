@@ -1,55 +1,57 @@
+#ifndef CORECVS_APRILTAGDETECTOR_H
+#define CORECVS_APRILTAGDETECTOR_H
+
 //
 // Created by jakhremchik
 //
 
-#ifndef CORECVS_APRILTAGDETECTOR_H
-#define CORECVS_APRILTAGDETECTOR_H
+#include <opencv2/opencv.hpp>
 
-#include <core/patterndetection/patternDetector.h>
-#include "opencv2/opencv.hpp"
-#include <core/stats/calculationStats.h>
+#include "core/patterndetection/patternDetector.h"
+#include "core/stats/calculationStats.h"
+#include "generated/apriltagParameters.h"
 
 extern "C" {
-#include "apriltag/apriltag.h"
-#include "apriltag/tag36h11.h"
-#include "apriltag/tag16h5.h"
-#include "apriltag/tag25h9.h"
-#include "apriltag/tagCircle21h7.h"
-#include "apriltag/tagCircle49h12.h"
-#include "apriltag/tagStandard41h12.h"
-#include "apriltag/tagStandard52h13.h"
-#include "apriltag/tagCustom48h12.h"
-#include "apriltag/common/getopt.h"
+#if 0
+#include <apriltag/apriltag.h>
+#include <apriltag/tag36h11.h>
+#include <apriltag/tag16h5.h>
+#include <apriltag/tag25h9.h>
+#include <apriltag/tagCircle21h7.h>
+#include <apriltag/tagCircle49h12.h>
+#include <apriltag/tagStandard41h12.h>
+#include <apriltag/tagStandard52h13.h>
+#include <apriltag/tagCustom48h12.h>
+#include <apriltag/common/getopt.h>
+#endif
+#include <apriltag.h>
+#include <tag36h11.h>
+#include <tag16h5.h>
+#include <tag25h9.h>
+#include <tagCircle21h7.h>
+#include <tagCircle49h12.h>
+#include <tagStandard41h12.h>
+#include <tagStandard52h13.h>
+#include <tagCustom48h12.h>
+#include <common/getopt.h>
+
 }
 
-class apriltagDetector : public corecvs::PatternDetector
+class ApriltagDetector : public corecvs::PatternDetector
 {
 public:
-    //TODO It's temporary. Change it with reflection.
-    struct apriltagParametrs {
-        std::string tag_family;
-        int at_threads;
-        bool at_debug;
-        bool at_quiet;
-        bool at_refine_edges;
-        double at_decimate;
-        double blur;
-    };
 
-    apriltagParametrs params;
+    ApriltagParameters params;
 
-    corecvs::Statistics *stats = NULL;
+    corecvs::Statistics *stats = nullptr;
 
-    cv::Mat gray; //probably replace with native input later
+    corecvs::G8Buffer *gray = nullptr;
 
-//    corecvs::G8Buffer *gray = NULL;
+    corecvs::RGB24Buffer *debugBuffer = nullptr;
+    corecvs::RGB24Buffer *input = nullptr;
 
-    corecvs::RGB24Buffer *debug = NULL;
-
-    std::vector<corecvs::PatternDetectorResult> apriltagResult;
-
-    apriltagDetector() ;
-    virtual  ~apriltagDetector();
+    ApriltagDetector();
+    virtual  ~ApriltagDetector();
 
     /** DebuggableBlock interface */
 public:
@@ -65,8 +67,6 @@ public:
 
     void setInputImage(corecvs::RGB24Buffer *input) override;
 
-    void setInputImageCV(const cv::Mat& input);
-
     void getOutput(vector<corecvs::PatternDetectorResult> &patterns) override;
 
     void setStatistics(corecvs::Statistics *stats) override {
@@ -74,8 +74,9 @@ public:
     }
 
 private:
-    apriltag_detector_t *td;
-    zarray *at_detections;
+    apriltag_family_t *tf   = nullptr;
+    apriltag_detector_t *td = nullptr;
+    zarray   *at_detections = nullptr;
 };
 
 #endif //CORECVS_APRILTAGDETECTOR_H

@@ -31,6 +31,7 @@
 /*
  *  Additional includes for enum section.
  */
+#include "aprilTagType.h"
 
 /**
  * \brief Apriltag Parameters 
@@ -56,7 +57,7 @@ public:
      * \brief tag_family 
      * tag_family 
      */
-    std::string mTag_family;
+    int mTag_family;
 
     /** 
      * \brief at_threads 
@@ -104,9 +105,9 @@ public:
     {
         return (const unsigned char *)(this) + fields()[fieldId]->offset;
     }
-    std::string tag_family() const
+    AprilTagType::AprilTagType tag_family() const
     {
-        return mTag_family;
+        return static_cast<AprilTagType::AprilTagType>(mTag_family);
     }
 
     int at_threads() const
@@ -140,7 +141,7 @@ public:
     }
 
     /** Section with setters */
-    void setTag_family(std::string tag_family)
+    void setTag_family(AprilTagType::AprilTagType tag_family)
     {
         mTag_family = tag_family;
     }
@@ -180,7 +181,7 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
-        visitor.visit(mTag_family,                static_cast<const corecvs::StringField *>(fields()[TAG_FAMILY_ID]));
+        visitor.visit((int &)mTag_family,         static_cast<const corecvs::EnumField *>(fields()[TAG_FAMILY_ID]));
         visitor.visit(mAt_threads,                static_cast<const corecvs::IntField *>(fields()[AT_THREADS_ID]));
         visitor.visit(mAt_debug,                  static_cast<const corecvs::BoolField *>(fields()[AT_DEBUG_ID]));
         visitor.visit(mAt_quiet,                  static_cast<const corecvs::BoolField *>(fields()[AT_QUIET_ID]));
@@ -196,7 +197,7 @@ template<class VisitorType>
     }
 
     ApriltagParameters(
-          std::string tag_family
+          AprilTagType::AprilTagType tag_family
         , int at_threads
         , bool at_debug
         , bool at_quiet

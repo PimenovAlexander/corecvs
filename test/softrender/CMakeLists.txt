@@ -20,6 +20,7 @@ endif()
 #message(STATUS SoftRender:${INCLUDEPATHS} )
 
 add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
+include_directories(${INC_PATHS})
 
 target_link_libraries(${NAME} corecvs pthread ${LIBS})
 

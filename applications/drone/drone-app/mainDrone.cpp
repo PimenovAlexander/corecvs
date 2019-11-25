@@ -1,4 +1,6 @@
 #include <QApplication>
+#include <patterndetection/dummyPatternDetector.h>
+#include <patterndetection/harrisPatternDetector.h>
 #include "qtFileLoader.h"
 
 #include "core/utils/utils.h"
@@ -15,8 +17,13 @@
 #include "libpngFileReader.h"
 #endif
 #ifdef WITH_OPENCV
-#include <KLTFlow.h>
+#include "KLTFlow.h"
+#include "patternDetect/openCVSquareDetector.h"
 #endif
+#ifdef WITH_APRILTAG
+#include "wrappers/apriltag_wrapper/apriltagDetector.h"
+#endif
+
 
 #include "physicsMainWindow.h"
 
@@ -67,13 +74,25 @@ int main(int argc, char *argv[])
 #endif
     QTRGB24Loader::registerMyself();
 
-    Processor6DFactoryHolder  ::getInstance()->registerProcessor(new AlgoFactory<DummyFlowProcessor, Processor6D>("Dummy"));
+    Processor6DFactoryHolder  ::getInstance()->registerProcessor(new AlgoFactory<DummyFlowProcessor, Processor6D>  ("Dummy"));
     ProcessorFlowFactoryHolder::getInstance()->registerProcessor(new AlgoFactory<DummyFlowProcessor, ProcessorFlow>("Dummy"));
 
 #ifdef WITH_OPENCV
     Processor6DFactoryHolder  ::getInstance()->registerProcessor(new AlgoFactory<OpenCVFlowProcessor, Processor6D  >("OpenCVProcessor"));
     ProcessorFlowFactoryHolder::getInstance()->registerProcessor(new AlgoFactory<OpenCVFlowProcessor, ProcessorFlow>("OpenCVProcessor"));
 #endif
+
+    PatternDetectorFabric::getInstance()->add(new PatternDetectorProducer<DummyPatternDetector>("Dummy"));
+    PatternDetectorFabric::getInstance()->add(new PatternDetectorProducer<HarrisPatternDetector>("Harris"));
+
+#ifdef WITH_OPENCV
+    PatternDetectorFabric::getInstance()->add(new PatternDetectorProducer<OpenCVSquareDetector>("OpenCVSquare"));
+#endif
+
+#ifdef WITH_APRILTAG
+    PatternDetectorFabric::getInstance()->add(new PatternDetectorProducer<ApriltagDetector>("Apriltag"));
+#endif
+
 
 
     CommandLineSetter s(argc, argv);
@@ -86,12 +105,13 @@ int main(int argc, char *argv[])
     SYNC_PRINT(("Starting Physics...\n"));
     QApplication app(argc, argv);
 
-    //PhysicsMainWidget mainWindowOld;
-    //mainWindowOld.show();
 
     PhysicsMainWindow mainWindow;
     mainWindow.show();
+    mainWindow.setAttribute(Qt::WA_QuitOnClose, true);
 
+    app.setQuitOnLastWindowClosed(true);
+    QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
     app.exec();
 
     SYNC_PRINT(("Exiting\n"));

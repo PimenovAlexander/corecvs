@@ -68,25 +68,25 @@ void Simulation::execJanibekovTest()
 
             double timePassed = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-startTime).count();
 
-            Affine3DQ motorToWorld = testBolt.getTransform() * testBolt.partsOfSystem[1].getPosAffine();
+            Affine3DQ motorToWorld = testBolt.getTransform() * testBolt.partsOfSystem[1]->getPosAffine();
             Matrix33 transposedOrient = motorToWorld.rotor.toMatrix();
             transposedOrient.transpose();
             Vector3dd force = transposedOrient * Vector3dd(0.0, 0.0, 0.1);
 
             if(timePassed > 5 && timePassed < 6)
             {
-                testBolt.partsOfSystem[1].addForce(force);
-                testBolt.partsOfSystem[0].addForce(-force);
+                testBolt.partsOfSystem[1]->addForce(force);
+                testBolt.partsOfSystem[0]->addForce(-force);
             }
 
             if(timePassed < 1)
             {
-                testBolt.partsOfSystem[2].addForce(Vector3dd(0.0, 0.0, 0.1));
+                testBolt.partsOfSystem[2]->addForce(Vector3dd(0.0, 0.0, 0.1));
             }
 
             if(timePassed > 1 && timePassed < 2)
             {
-                testBolt.partsOfSystem[2].addForce(Vector3dd(0.0, 0.0, -0.1));
+                testBolt.partsOfSystem[2]->addForce(Vector3dd(0.0, 0.0, -0.1));
             }
 
             if(noiseFlag)
@@ -149,8 +149,8 @@ void Simulation::execTestSimulation()
         oldTime = std::chrono::high_resolution_clock::now();
         while (isAlive)
         {
-           drone.motors[1].addForce(Vector3dd(0,0,0.01));
-           drone.motors[0].addForce(Vector3dd(0,0,0.01));
+           drone.motors[1]->addForce(Vector3dd(0,0,0.01));
+           drone.motors[0]->addForce(Vector3dd(0,0,0.01));
            //drone.flightControllerTick(droneJoystick);
            newTime = std::chrono::high_resolution_clock::now();
            time_span = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-oldTime);
@@ -195,14 +195,14 @@ void Simulation::droneStart()
     Affine3DQ pos2 = Affine3DQ(Vector3dd(1, -1, -1));
     Affine3DQ pos3 = Affine3DQ(Vector3dd(-1, 1, -1));
     Affine3DQ pos4 = Affine3DQ(Vector3dd(1, 1, -1));
-    PhysSphere sphere1 = PhysSphere(&pos1, &radius, &mass);
-    PhysSphere sphere2 = PhysSphere(&pos2, &radius, &mass);
-    PhysSphere sphere3 = PhysSphere(&pos3, &radius, &mass);
-    PhysSphere sphere4 = PhysSphere(&pos4, &radius, &mass);
-    mainObject->addObject(&sphere1);
-    mainObject->addObject(&sphere2);
-    mainObject->addObject(&sphere3);
-    mainObject->addObject(&sphere4);
+    PhysSphere *sphere1 = new PhysSphere(&pos1, &radius, &mass);
+    PhysSphere *sphere2 = new PhysSphere(&pos2, &radius, &mass);
+    PhysSphere *sphere3 = new PhysSphere(&pos3, &radius, &mass);
+    PhysSphere *sphere4 = new PhysSphere(&pos4, &radius, &mass);
+    mainObject->addObject(sphere1);
+    mainObject->addObject(sphere2);
+    mainObject->addObject(sphere3);
+    mainObject->addObject(sphere4);
     mainObject->addForce(Vector3dd(0,-9.8,0));
 
 

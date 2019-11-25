@@ -26,7 +26,7 @@ target_sources(drone-core
         ${CMAKE_CURRENT_LIST_DIR}/copter/motor.h
         ${CMAKE_CURRENT_LIST_DIR}/copter/quad.h
 
-        ${CMAKE_CURRENT_LIST_DIR}/simulation/janibekovsBolt.h
+        ${CMAKE_CURRENT_LIST_DIR}/simulation/dzhanibekovBolt.h
         ${CMAKE_CURRENT_LIST_DIR}/simulation/physMainObject.h
         ${CMAKE_CURRENT_LIST_DIR}/simulation/simulation.h
         ${CMAKE_CURRENT_LIST_DIR}/simulation/simSphere.h
@@ -114,7 +114,6 @@ target_link_libraries(drone-core corecvs Qt5::SerialPort)
 
 
 target_include_directories(drone-core PUBLIC ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} .)
-
 
 
 target_link_libraries(drone-core cvs_utils corecvs)

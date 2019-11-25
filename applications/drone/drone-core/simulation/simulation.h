@@ -1,17 +1,20 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
-#include "bits/stdc++.h"
-#include "list"
-#include "iostream"
+
+#include <bits/stdc++.h>
+#include <bits/stl_list.h>
+#include <list>
+#include <iostream>
+#include <time.h>
+
+#include "copter/droneObject.h"
 #include "physObject.h"
 #include "physSphere.h"
 #include "physMainObject.h"
-#include <bits/stl_list.h>
-#include "copter/droneObject.h"
 #include "sceneShaded.h"
 #include "joystickInput.h"
-#include <time.h>
-#include <janibekovsBolt.h>
+#include "dzhanibekovBolt.h"
+
 class Simulation
 {
 public:

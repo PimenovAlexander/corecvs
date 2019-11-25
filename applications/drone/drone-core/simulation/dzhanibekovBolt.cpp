@@ -1,5 +1,6 @@
-#include "janibekovsBolt.h"
+#include "dzhanibekovBolt.h"
 #include <core/fileformats/meshLoader.h>
+
 DzhanibekovBolt::DzhanibekovBolt(double arm, double mass)
 {
     setSystemMass(mass);
@@ -9,20 +10,20 @@ DzhanibekovBolt::DzhanibekovBolt(double arm, double mass)
     double partsRadius = 0.001;
     Affine3DQ defaultPos = Affine3DQ(Vector3dd::Zero());
 
-    partsOfSystem.push_back(PhysSphere(&defaultPos, &partsRadius, &massOfRotatingObjects));
-    partsOfSystem.push_back(PhysSphere(&defaultPos, &partsRadius, &massOfRotatingObjects));
-    partsOfSystem.push_back(PhysSphere(&defaultPos, &partsRadius, &massOfTestingObject));
-    partsOfSystem.push_back(PhysSphere(&defaultPos, &partsRadius, &massOfZeroObject));
+    partsOfSystem.push_back(new PhysSphere(&defaultPos, &partsRadius, &massOfRotatingObjects));
+    partsOfSystem.push_back(new PhysSphere(&defaultPos, &partsRadius, &massOfRotatingObjects));
+    partsOfSystem.push_back(new PhysSphere(&defaultPos, &partsRadius, &massOfTestingObject));
+    partsOfSystem.push_back(new PhysSphere(&defaultPos, &partsRadius, &massOfZeroObject));
 
-    partsOfSystem[0].color = RGBColor::Red();    /*Front right*/
-    partsOfSystem[1].color = RGBColor::Red();  /*Back  left*/
-    partsOfSystem[2].color = RGBColor::Green();    /*Front left*/
-    partsOfSystem[3].color = RGBColor::Yellow();  /*Back  right*/
+    partsOfSystem[0]->color = RGBColor::Red();    /*Front right*/
+    partsOfSystem[1]->color = RGBColor::Red();    /*Back  left*/
+    partsOfSystem[2]->color = RGBColor::Green();  /*Front left*/
+    partsOfSystem[3]->color = RGBColor::Yellow(); /*Back  right*/
 
-    partsOfSystem[0].setPos(Vector3dd( 0,  1, 0).normalised() * 3 * arm);
-    partsOfSystem[1].setPos(Vector3dd( 0, -1, 0).normalised() * 3 * arm);
-    partsOfSystem[2].setPos(Vector3dd( 1,  0, 0).normalised() * arm);
-    partsOfSystem[3].setPos(Vector3dd(-1,  0, 0).normalised() * arm);
+    partsOfSystem[0]->setPos(Vector3dd( 0,  1, 0).normalised() * 3 * arm);
+    partsOfSystem[1]->setPos(Vector3dd( 0, -1, 0).normalised() * 3 * arm);
+    partsOfSystem[2]->setPos(Vector3dd( 1,  0, 0).normalised() * arm);
+    partsOfSystem[3]->setPos(Vector3dd(-1,  0, 0).normalised() * arm);
 
     MeshLoader loader;
     Mesh3DDecorated mesh;
@@ -45,12 +46,13 @@ DzhanibekovBolt::DzhanibekovBolt(double arm, double mass)
     double massOfCentralSphere = mass - 2 * massOfRotatingObjects - massOfTestingObject;
     Affine3DQ posOfCentralSphere = Affine3DQ(Vector3dd(0,0,0).normalised());
     double radiusOfCentralSphere = arm / 100;
-    centralSphere = PhysSphere(&posOfCentralSphere, &radiusOfCentralSphere, &massOfCentralSphere);
+    PhysSphere *centralSphere = new PhysSphere(&posOfCentralSphere, &radiusOfCentralSphere, &massOfCentralSphere);
 
-    objects.push_back(&centralSphere);
+    objects.push_back(centralSphere);
     for (size_t i = 0; i < partsOfSystem.size(); ++i)
     {
-        objects.push_back(&partsOfSystem[i]);
+        /* Transfer ownership */
+        objects.push_back(partsOfSystem[i]);
     }
 }
 
@@ -81,8 +83,8 @@ void DzhanibekovBolt::drawForces(Mesh3D &mesh)
 {
     for (size_t i = 0; i < partsOfSystem.size(); i++)
     {
-        Affine3DQ motorToWorld = getTransform() * partsOfSystem[i].getPosAffine();
-        Vector3dd force = motorToWorld.rotor * partsOfSystem[i].getForce();
+        Affine3DQ motorToWorld = getTransform() * partsOfSystem[i]->getPosAffine();
+        Vector3dd force = motorToWorld.rotor * partsOfSystem[i]->getForce();
         Vector3dd motorPosition = motorToWorld.shift;
         Vector3dd startDot = motorPosition;
         Vector3dd endDot = motorPosition + force.normalised() * 1.0;
@@ -148,14 +150,14 @@ void DzhanibekovBolt::physicsTick(double deltaT)
 
 void DzhanibekovBolt::tick(double deltaT)
 {
-    double radius = centralSphere.radius;
-    double centerMass = centralSphere.mass;
+    double radius = centralSphere->radius;
+    double centerMass = centralSphere->mass;
 
-    double massOfRotatingObjects = partsOfSystem[0].mass;
-    double massOfTestingObject = partsOfSystem[2].mass;
+    double massOfRotatingObjects = partsOfSystem[0]->mass;
+    double massOfTestingObject   = partsOfSystem[2]->mass;
 
-    double armOfRotatingObjects = partsOfSystem[0].getPosVector().l2Metric();
-    double armOfTestingObject = partsOfSystem[2].getPosVector().l2Metric();
+    double armOfRotatingObjects = partsOfSystem[0]->getPosVector().l2Metric();
+    double armOfTestingObject = partsOfSystem[2]->getPosVector().l2Metric();
 
     double inertialMomentX = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * massOfRotatingObjects * pow(armOfRotatingObjects, 2);
     double inertialMomentY = 2.0 / 5.0 * centerMass * pow(radius, 2) + massOfTestingObject * pow(armOfTestingObject, 2);

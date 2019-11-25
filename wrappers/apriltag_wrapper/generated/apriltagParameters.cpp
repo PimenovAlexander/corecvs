@@ -48,15 +48,26 @@ int ApriltagParameters::staticInit(corecvs::Reflection *toFill)
      toFill->objectSize = sizeof(ApriltagParameters);
      
 
-    StringField* field0 = new StringField
+    EnumField* field0 = new EnumField
         (
           ApriltagParameters::TAG_FAMILY_ID,
           offsetof(ApriltagParameters, mTag_family),
-          "tag36h11",
+          2,
           "tag_family",
           "tag_family",
-          "tag_family"
+          "tag_family",
+          new EnumReflection(8
+          , new EnumOption(0,"tag16h5")
+          , new EnumOption(1,"tag25h9")
+          , new EnumOption(2,"tag36h11")
+          , new EnumOption(3,"tagCircle21h7")
+          , new EnumOption(4,"tagCircle49h12")
+          , new EnumOption(5,"tagCustom48h12")
+          , new EnumOption(6,"tagStandard41h12")
+          , new EnumOption(7,"tagStandard52h13")
+          )
         );
+    field0->widgetHint=BaseField::COMBO_BOX;
     toFill->fields.push_back(field0);
     /*  */ 
     IntField* field1 = new IntField
