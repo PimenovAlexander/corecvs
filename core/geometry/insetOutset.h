@@ -68,8 +68,9 @@ double distanceBetweenSegmentAndPoint(const Segment2d& seg, const Vector2dd& poi
     Vector2dd u = seg.b - seg.a;
     Vector2dd v = point - seg.a;
     double dotProduct = (u & v) / (u.sumAllElementsSq());
-    if (dotProduct >= 0 || dotProduct <= 1) {
-        return line.distanceTo(point);
+    Vector2dd projection = line.projectPointTo(point);
+    if (dotProduct >= 0 && dotProduct <= 1) {
+        return (projection - point).sumAllElementsSq();
     } else if (dotProduct < 0) {
         return (seg.a - point).sumAllElementsSq();
     } else {
@@ -85,9 +86,12 @@ double distanceBetweenSegments(const Segment2d& AB, const Segment2d& CD) {
     return std::min(std::min(AtoCD, BtoCD), std::min(CtoAB, DtoAB));
 }
 
-bool intersect(const Polygon& p, const Segment2d& seg) {
-    for (int i = 0; i < p.size(); ++i) {
-        Segment2d pSeg = p.getSegment(i);
+bool intersect(const PointPath& p, const Segment2d& seg) {
+    auto it = p.begin();
+    for (int i = 0; i < p.size() - 1; ++i, ++it) {
+        Vector2dd p1 = *it;
+        Vector2dd p2 = *(std::next(it));
+        Segment2d pSeg(p1, p2);
         if (distanceBetweenSegments(seg, pSeg) <= TOLERANCE) {
             return true;
         }
@@ -95,10 +99,13 @@ bool intersect(const Polygon& p, const Segment2d& seg) {
     return false;
 }
 
-std::vector<Vector2dd> getIntersectionPoints(const Polygon& p, const Segment2d& seg) {
+std::vector<Vector2dd> getIntersectionPoints(const PointPath& p, const Segment2d& seg) {
     std::vector<Vector2dd> result;
-    for (int i = 0; i < p.size(); ++i) {
-        Segment2d pSeg = p.getSegment(i);
+    auto it = p.begin();
+    for (int i = 0; i < p.size() - 1; ++i, ++it) {
+        Vector2dd p1 = *it;
+        Vector2dd p2 = *(std::next(it));
+        Segment2d pSeg(p1, p2);
         if (seg.a != pSeg.a && seg.b != pSeg.b) {
             Vector2dd intersection;
             if (segmentsIntersect(seg, pSeg, &intersection)) {
@@ -109,11 +116,14 @@ std::vector<Vector2dd> getIntersectionPoints(const Polygon& p, const Segment2d& 
     return result;
 }
 
-std::map<double, Vector2dd> getIntersectionPoints(const Polygon& p1, const Polygon& p2) {
+std::map<double, Vector2dd> getIntersectionPoints(const PointPath& p1, const PointPath& p2) {
     std::map<double, Vector2dd> intersectionPoints;
     double distance = 0.0;
-    for (int i = 0; i < p1.size(); ++i) {
-        Segment2d seg = p1.getSegment(i);
+    auto itP1 = p1.begin();
+    for (int i = 0; i < p1.size() - 1; ++i, ++itP1) {
+        Vector2dd point1 = *itP1;
+        Vector2dd point2 = *(std::next(itP1));
+        Segment2d seg(point1, point2);
         std::vector<Vector2dd> intersections = getIntersectionPoints(p2, seg);
         auto it = intersections.begin();
         while (it != intersections.end()) {
@@ -126,12 +136,13 @@ std::map<double, Vector2dd> getIntersectionPoints(const Polygon& p1, const Polyg
     return intersectionPoints;
 }
 
-Polygon doOffset(const Polygon& p, int offset) {
-    Polygon shifted;
-    for (int i = 0; i < p.size(); ++i) {
-        Vector2dd p1 = p.getPoint(i);
-        Vector2dd p2 = p.getNextPoint(i);
-        Vector2dd normal = p.getNormal(i).normalised();
+PointPath doOffset(const PointPath& p, int offset) {
+    PointPath shifted;
+    auto it = p.begin();
+    for (int i = 0; i < p.size() - 1; ++i, ++it) {
+        Vector2dd p1 = *it;
+        Vector2dd p2 = *(std::next(it));
+        Vector2dd normal = (p2 - p1).rightNormal().normalised();
 
         shifted.push_back(p1 + normal * offset);
         shifted.push_back(p2 + normal * offset);
@@ -142,19 +153,28 @@ Polygon doOffset(const Polygon& p, int offset) {
 /**
  * https://hal.inria.fr/inria-00518005/document
  */
-Polygon alg1(const Polygon& p) {
-    Polygon result;
+PointPath alg1(const PointPath& p, bool isClosed) {
+    PointPath result;
 
-    for (int i = 0; i < p.size(); i += 2) {
-        Line2d firstLine = p.getLine(i);
-        Line2d secondLine = p.getLine((i + 2) % p.size());
-        Segment2d firstSeg = p.getSegment(i);
-        Segment2d secondSeg = p.getSegment((i + 2) % p.size());
+    //todo if p.size <= 1
+
+    auto it = p.begin();
+    int size = isClosed ? p.size() : p.size() - 2;
+    if (!isClosed) result.push_back(*it);
+    for (int i = 0; i < size; i += 2, it += 2) {
+        Vector2dd p1 = *it; //i
+        Vector2dd p2 = *(it+1); //i+1
+        Vector2dd p3 = (i + 2) % p.size() != 0 ? *(it+2) : *p.begin(); //i+2
+        Vector2dd p4 = (i + 2) % p.size() != 0 ? *(it+3) : *(p.begin() + 1); //i+3
+        Segment2d firstSeg = Segment2d(p1, p2);
+        Segment2d secondSeg = Segment2d(p3, p4);
+        Line2d firstLine(firstSeg);
+        Line2d secondLine(secondSeg);
 
         if (linesOverlap(firstLine, secondLine)) {
             // case 1: lines overlapping
             cout << "case 1 \n";
-            result.push_back(p.getPoint(i + 2));
+            result.push_back(p3);
         } else {
             //case 2: line have one intersection point
             Vector2dd intersectionPoint;
@@ -175,8 +195,8 @@ Polygon alg1(const Polygon& p) {
                     // case 2b
                     cout << "case 2b 2 \n";
                     // intersection point doesn't lay on first ray, i.e. is NFIP
-                    result.push_back(p.getPoint(i + 1));
-                    result.push_back(p.getPoint(i + 2));
+                    result.push_back(p2);
+                    result.push_back(p3);
                 } else {
                     intersectionPoint = firstLine.intersectWith(secondLine);
                     if ((pointLiesOnSeg(firstSeg, intersectionPoint) && !pointLiesOnSeg(secondSeg, intersectionPoint)) ||
@@ -185,21 +205,23 @@ Polygon alg1(const Polygon& p) {
                         cout << "case 2c \n";
                         // if intersection point is TIP for first segment and FIP for second
                         // or if intersection point is TIP for second segment and FIP for first
-                        result.push_back(p.getPoint(i + 1));
-                        result.push_back(p.getPoint(i + 2));
+                        result.push_back(p2);
+                        result.push_back(p3);
                     }
                 }
             }
         }
     }
-    // case 3 is not considered because polygon is closed polyline
+    // case 3 is not considered
+    if (!isClosed) result.push_back(p.back());
+    else result.push_back(result.front());
     return result;
 }
 
-std::vector<Segment2d> clipping(const Polygon& original, const Polygon& untrimmed, int offset) {
+std::vector<Segment2d> clipping(const PointPath& original, const PointPath& untrimmed, int offset, bool isClosed) {
     std::vector<Segment2d> segments;
     // step 1
-    Polygon dual = alg1(doOffset(original, -offset));
+    PointPath dual = alg1(doOffset(original, -offset), isClosed);
     std::map<double, Vector2dd> intersectionPoints;
     std::map<double, Vector2dd> intersectionPointsWithOriginal = getIntersectionPoints(untrimmed, original);
     std::map<double, Vector2dd> intersectionPointsWithDual = getIntersectionPoints(untrimmed, dual);
@@ -208,7 +230,10 @@ std::vector<Segment2d> clipping(const Polygon& original, const Polygon& untrimme
     intersectionPoints.insert(intersectionPointsWithOriginal.begin(), intersectionPointsWithOriginal.end());
     intersectionPoints.insert(intersectionPointsWithDual.begin(), intersectionPointsWithDual.end());
     intersectionPoints.insert(selfIntersectionPoints.begin(), selfIntersectionPoints.end());
+    intersectionPoints.insert(std::make_pair(0, untrimmed.front()));
+    if (!isClosed) intersectionPoints.insert(std::make_pair(std::numeric_limits<double>::max(), untrimmed.back()));
 
+    // case 1 is impossible because i consider connecting points as intersecting
     // case 2
     auto it = intersectionPoints.begin();
     for (int i = 0; i < intersectionPoints.size() - 1; ++i, ++it) {
@@ -227,6 +252,7 @@ std::vector<Segment2d> clipping(const Polygon& original, const Polygon& untrimme
         }
     }
 
+    // todo step 2
     return segments;
 }
 
@@ -235,11 +261,17 @@ std::vector<Segment2d> clipping(const Polygon& original, const Polygon& untrimme
  * @param p
  * @param offset positive if outset, negative if inset
  */
-std::vector<Segment2d> shiftPolygon(const Polygon& p, int offset) {
-    Polygon shifted = doOffset(p, offset);
-    Polygon untrimmed = alg1(shifted);
+std::vector<Segment2d> shiftPointPath(const PointPath& p, int offset, bool isClosed) {
+    PointPath shifted = doOffset(p, offset);
+    PointPath untrimmed = alg1(shifted, isClosed);
 
-    return clipping(p, untrimmed, offset);
+    return clipping(p, untrimmed, offset, isClosed);
+}
+
+std::vector<Segment2d> shiftPolygon(const Polygon& p, int offset) {
+    PointPath closed(p);
+    closed.push_back(p.getPoint(0));
+    return shiftPointPath(closed, offset, true);
 }
 
 #endif //CORECVS_INSETOUTSET_H
