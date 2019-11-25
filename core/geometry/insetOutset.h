@@ -6,6 +6,8 @@
 #define CORECVS_INSETOUTSET_H
 
 #include <iostream>
+#include <map>
+#include <vector>
 #include "core/geometry/polygons.h"
 
 using namespace corecvs;
@@ -58,6 +60,72 @@ bool pointLiesOnSeg(const Segment2d& seg, const Vector2dd& point) {
     return true;
 }
 
+/**
+ * https://math.stackexchange.com/questions/322831/determing-the-distance-from-a-line-segment-to-a-point-in-3-space
+ */
+double distanceBetweenSegmentAndPoint(const Segment2d& seg, const Vector2dd& point) {
+    Line2d line(seg);
+    Vector2dd u = seg.b - seg.a;
+    Vector2dd v = point - seg.a;
+    double dotProduct = (u & v) / (u.sumAllElementsSq());
+    if (dotProduct >= 0 || dotProduct <= 1) {
+        return line.distanceTo(point);
+    } else if (dotProduct < 0) {
+        return (seg.a - point).sumAllElementsSq();
+    } else {
+        return (seg.b - point).sumAllElementsSq();
+    }
+}
+
+double distanceBetweenSegments(const Segment2d& AB, const Segment2d& CD) {
+    double AtoCD = distanceBetweenSegmentAndPoint(CD, AB.a);
+    double BtoCD = distanceBetweenSegmentAndPoint(CD, AB.b);
+    double CtoAB = distanceBetweenSegmentAndPoint(AB, CD.a);
+    double DtoAB = distanceBetweenSegmentAndPoint(AB, CD.b);
+    return std::min(std::min(AtoCD, BtoCD), std::min(CtoAB, DtoAB));
+}
+
+bool intersect(const Polygon& p, const Segment2d& seg) {
+    for (int i = 0; i < p.size(); ++i) {
+        Segment2d pSeg = p.getSegment(i);
+        if (distanceBetweenSegments(seg, pSeg) <= TOLERANCE) {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::vector<Vector2dd> getIntersectionPoints(const Polygon& p, const Segment2d& seg) {
+    std::vector<Vector2dd> result;
+    for (int i = 0; i < p.size(); ++i) {
+        Segment2d pSeg = p.getSegment(i);
+        if (seg.a != pSeg.a && seg.b != pSeg.b) {
+            Vector2dd intersection;
+            if (segmentsIntersect(seg, pSeg, &intersection)) {
+                result.push_back(intersection);
+            }
+        }
+    }
+    return result;
+}
+
+std::map<double, Vector2dd> getIntersectionPoints(const Polygon& p1, const Polygon& p2) {
+    std::map<double, Vector2dd> intersectionPoints;
+    double distance = 0.0;
+    for (int i = 0; i < p1.size(); ++i) {
+        Segment2d seg = p1.getSegment(i);
+        std::vector<Vector2dd> intersections = getIntersectionPoints(p2, seg);
+        auto it = intersections.begin();
+        while (it != intersections.end()) {
+            Segment2d temp(seg.a, *it);
+            intersectionPoints.insert(std::make_pair(distance + temp.getLength(), *it));
+            ++it;
+        }
+        distance += seg.getLength();
+    }
+    return intersectionPoints;
+}
+
 Polygon doOffset(const Polygon& p, int offset) {
     Polygon shifted;
     for (int i = 0; i < p.size(); ++i) {
@@ -76,7 +144,6 @@ Polygon doOffset(const Polygon& p, int offset) {
  */
 Polygon alg1(const Polygon& p) {
     Polygon result;
-    result.push_back(p.getPoint(0));
 
     for (int i = 0; i < p.size(); i += 2) {
         Line2d firstLine = p.getLine(i);
@@ -125,7 +192,42 @@ Polygon alg1(const Polygon& p) {
             }
         }
     }
+    // case 3 is not considered because polygon is closed polyline
     return result;
+}
+
+std::vector<Segment2d> clipping(const Polygon& original, const Polygon& untrimmed, int offset) {
+    std::vector<Segment2d> segments;
+    // step 1
+    Polygon dual = alg1(doOffset(original, -offset));
+    std::map<double, Vector2dd> intersectionPoints;
+    std::map<double, Vector2dd> intersectionPointsWithOriginal = getIntersectionPoints(untrimmed, original);
+    std::map<double, Vector2dd> intersectionPointsWithDual = getIntersectionPoints(untrimmed, dual);
+    std::map<double, Vector2dd> selfIntersectionPoints = getIntersectionPoints(untrimmed, untrimmed);
+
+    intersectionPoints.insert(intersectionPointsWithOriginal.begin(), intersectionPointsWithOriginal.end());
+    intersectionPoints.insert(intersectionPointsWithDual.begin(), intersectionPointsWithDual.end());
+    intersectionPoints.insert(selfIntersectionPoints.begin(), selfIntersectionPoints.end());
+
+    // case 2
+    auto it = intersectionPoints.begin();
+    for (int i = 0; i < intersectionPoints.size() - 1; ++i, ++it) {
+        Vector2dd first = it->second;
+        Vector2dd second = std::next(it, 1)->second;
+        segments.emplace_back(first, second);
+    }
+
+    auto itSeg = segments.begin();
+    while (itSeg != segments.end()) {
+        Segment2d seg = *itSeg;
+        if (intersect(original, seg)) {
+            segments.erase(itSeg);
+        } else {
+            ++itSeg;
+        }
+    }
+
+    return segments;
 }
 
 /**
@@ -133,10 +235,11 @@ Polygon alg1(const Polygon& p) {
  * @param p
  * @param offset positive if outset, negative if inset
  */
-Polygon shiftPolygon(const Polygon& p, int offset) {
+std::vector<Segment2d> shiftPolygon(const Polygon& p, int offset) {
     Polygon shifted = doOffset(p, offset);
+    Polygon untrimmed = alg1(shifted);
 
-    return alg1(shifted);
+    return clipping(p, untrimmed, offset);
 }
 
 #endif //CORECVS_INSETOUTSET_H
