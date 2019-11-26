@@ -287,9 +287,9 @@ void CalibrationWidget::startRecording()
 
 void CalibrationWidget::updateVideo()
 {
-    QDir DevDir=*new QDir("/dev","video*",QDir::Name,QDir::System);
+    QDir devDir("/dev","video*",QDir::Name,QDir::System);
     ui->videoBox->clear();
-    ui->videoBox->addItems(DevDir.entryList());
+    ui->videoBox->addItems(devDir.entryList());
 }
 
 

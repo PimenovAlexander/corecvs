@@ -798,7 +798,7 @@ void PhysicsMainWindow::updateUi()
 void PhysicsMainWindow::on_updateCameraButton_clicked()
 {
 
-    QDir DevDir=*new QDir("/dev","video*",QDir::Name,QDir::System);
+    QDir DevDir("/dev","video*",QDir::Name,QDir::System);
     ui->comboBox_2->clear();
     ui->comboBox_2->addItems(DevDir.entryList());
 
