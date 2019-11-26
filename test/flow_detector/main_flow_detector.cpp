@@ -6,6 +6,9 @@
 
 #include <wrappers/jsonmodern/jsonModernReader.h>
 
+#include <wrappers/opencv/DISFlow/DISFlow.h>
+#include "generated/openCVDISParameters.h"
+
 #include <core/stereointerface/dummyFlowProcessor.h>
 
 #include "core/stereointerface/processor6D.h"
@@ -217,7 +220,20 @@ void usage()
 
 int main(int argc, char *argv[])
 {
-#ifdef WITH_LIBJPEG
+    char *input1Name = argv[1];
+    char *imgfile_bo = argv[2];
+
+    RGB24Buffer *input1 = BufferFactory::getInstance()->loadRGB24Bitmap(input1Name);
+    RGB24Buffer *input2 = BufferFactory::getInstance()->loadRGB24Bitmap(imgfile_bo);
+    DIS_Args disArgs = DIS_Args(OF_RGB, input1);
+    DIS_Args *res = &disArgs;
+    DISFlow flow(res);
+
+    flow.beginFrame();
+    flow.setFrameRGB24(input2);
+    flow.endFrame();
+
+/*#ifdef WITH_LIBJPEG
     LibjpegFileReader::registerMyself();
     LibjpegFileSaver::registerMyself();
     SYNC_PRINT(("Libjpeg support on\n"));
@@ -250,6 +266,6 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    usage();
+    usage();*/
     return 0;
 }

@@ -50,9 +50,11 @@ if(with_renderer)
 
 endif()
 
-include_directories(${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_LIST_DIR}/patternDetect) 
+if (NOT TARGET OF_RGB)
+    include(../../wrappers/opencv/DISFlow/CMakeLists.txt)
+endif()
+
+include_directories(${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_LIST_DIR}/patternDetect)
 
     include_directories(PUBLIC ${OpenCV_INCLUDE_DIRS})
     link_libraries(${MODULE_NAME} ${OpenCV_LIBS})
-
-include(../../wrappers/opencv/DISFlow/CMakeLists.txt)

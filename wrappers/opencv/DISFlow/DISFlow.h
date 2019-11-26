@@ -6,14 +6,16 @@
 #define CORECVS_DISFLOW_H
 
 #include "generated/openCVDISParameters.h"
+#include "siblings/OF_DIS/oflow.h"
 #include <core/stereointerface/processor6D.h>
 
 class DISFlow : corecvs::ProcessorFlow {
+public:
     corecvs::Statistics *stats = NULL;
 
     corecvs::FlowBuffer *opticalFlow = NULL;
 
-    cv::Mat *previousFlow = nullptr;
+    cv::Mat *previousFlow;
 
     corecvs::RGB24Buffer *inPrev  = NULL;
     corecvs::RGB24Buffer *inCurr  = NULL;
@@ -27,11 +29,16 @@ class DISFlow : corecvs::ProcessorFlow {
         params = par;
         SELECTCHANNEL = par->getSelChannel();
         SELECTMODE = par->getSelMode();
+        inPrev = par->getBuffer();
+    }
+
+    virtual ~DISFlow() {
+
     }
 
     virtual int beginFrame() {return 0;}
 
-    virtual int setFrameRGB24(corecvs::RGB24Buffer *frame, int /*frameType*/) override
+    virtual int setFrameRGB24(corecvs::RGB24Buffer *frame, int frameType = FRAME_DEFAULT) override
     {
         inCurr = new corecvs::RGB24Buffer(frame);
         return 0;
@@ -68,6 +75,27 @@ class DISFlow : corecvs::ProcessorFlow {
     }
 
     virtual int getError(std::string * /*errorString*/) override {return 0;}
+
+    virtual int setFrameG12  (corecvs::G12Buffer   */*frame*/, int /*frameType*/) override
+    {
+        return 1;
+    }
+
+    virtual bool setParameters(std::string /*name*/, const corecvs::DynamicObject & /*param*/)  override {return true;}
+
+    virtual int setStats(corecvs::Statistics *stats) override
+    {
+        this->stats = stats;
+        return 0;
+    }
+
+    virtual std::map<std::string, corecvs::DynamicObject> getParameters() override {
+        //TODO: implement this method !!!!
+        std::map<std::string, corecvs::DynamicObject> toReturn;
+        //toReturn.emplace("klt", corecvs::DynamicObject(&params));
+
+        return toReturn;
+    }
 
 private:
     cv::Mat convertToCVMat(corecvs::RGB24Buffer *buffer);

@@ -9,8 +9,7 @@ int DISFlow::endFrame() {
     if (inCurr != NULL && inPrev != NULL)
     {
         delete_safe(opticalFlow);
-        // TODO: img will be the result of algorithm
-        cv::Mat img;
+        cv::Mat img = execute(convertToCVMat(inPrev), convertToCVMat(inCurr));
         saveFlowBuffer(img);
     }
     delete_safe (inPrev);

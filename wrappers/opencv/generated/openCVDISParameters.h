@@ -97,8 +97,8 @@ public:
         return *params;
     }
 
-    corecvs::RGB24Buffer getBuffer() const {
-        return *buffer1;
+    corecvs::RGB24Buffer *getBuffer() const {
+        return buffer1;
     }
 
 private:

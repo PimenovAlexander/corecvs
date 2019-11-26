@@ -32,5 +32,5 @@ endif()
 
 add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
 
-target_link_libraries(${NAME} corecvs pthread ${LIBS})
+target_link_libraries(${NAME} corecvs pthread OF_RGB ${LIBS})
 
