@@ -50,6 +50,7 @@ set (CORE_TEST_SOURCES
     histogram/main_test_histogram.cpp
     homography/main_test_homography.cpp
     integral/main_test_integral.cpp
+    inset_outset/main_test_inset_outset.cpp
     kalman/main_test_kalman.cpp
     klt_cycle/main_test_klt_cycle.cpp
     levenberg/main_test_levenberg.cpp
