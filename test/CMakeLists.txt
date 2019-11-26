@@ -19,7 +19,7 @@ set(TEST_SUBDIRECTORIES
     #serialize1
     softrender
     face_distortion
-
+    autonavRW
 )
 
 foreach(test_subdirectory ${TEST_SUBDIRECTORIES})
