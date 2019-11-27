@@ -6,7 +6,7 @@ set (UTILS_SUBDIRECTORIES
     corestructs
     distortioncorrector
     fileformats
-#    filters
+    filters
     flowcolorers
     framesources
     # memoryuse

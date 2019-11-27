@@ -15,7 +15,7 @@ RTSPCapture::RTSPCapture(const std::string &params):
     SYNC_PRINT(("RTSPCapture::RTSPCapture(%s): called\n", params.c_str()));
     SYNC_PRINT(("Registering the codecs...\n"));
 
-    av_register_all();
+    // av_register_all(); Depricated and considered unnessesary
     avformat_network_init();
 
     SYNC_PRINT(("RTSPCapture::RTSPCapture(): exited\n"));

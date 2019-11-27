@@ -59,6 +59,17 @@ IF ( USE_LIBJPEG )
     find_package( Jpeg )
 ENDIF ()
 
+option(USE_EIGEN "Should compile with Eigen solver" YES)
+IF ( USE_EIGEN )
+    MESSAGE( STATUS "Including Eigen solver wherever possible" )
+    find_package( Eigen )
+ENDIF ()
+
+option(USE_CERES "Should compile with Ceres solver" YES)
+IF ( USE_CERES )
+    MESSAGE( STATUS "Including Ceres solver wherever possible" )
+    find_package( Ceres )
+ENDIF ()
 
 option(USE_AVCODEC "Should compile with AVCODEC" YES)
 IF ( USE_AVCODEC )

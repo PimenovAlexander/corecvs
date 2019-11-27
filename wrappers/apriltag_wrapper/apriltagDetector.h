@@ -1,11 +1,14 @@
 #ifndef CORECVS_APRILTAGDETECTOR_H
 #define CORECVS_APRILTAGDETECTOR_H
 
-//
-// Created by jakhremchik
-//
+/**
+ * \file apriltagDetector.h
+ * \brief a header for apriltagDetector.cpp
+ *
+ * \date Nov 27, 2019
+ * \author jakhremchik
+ **/
 
-#include <opencv2/opencv.hpp>
 
 #include "core/patterndetection/patternDetector.h"
 #include "core/stats/calculationStats.h"

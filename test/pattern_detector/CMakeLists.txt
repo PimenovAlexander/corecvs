@@ -28,7 +28,7 @@ if (APRILTAG_FOUND)
     target_link_libraries(${NAME} ${APRILTAG_LIB} Threads::Threads)
 endif()
 
-message(STATUS PatternDetector:${INCLUDEPATHS} )
+#message(STATUS PatternDetector:${INCLUDEPATHS} )
 
 
 target_link_libraries(${NAME} corecvs pthread cvs_utils ${LIBS})

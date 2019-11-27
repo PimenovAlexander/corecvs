@@ -1,6 +1,10 @@
-//
-// Created by jakhremchik
-//
+/**
+ * \file apriltagDetector.cpp
+ *
+ * \date Nov 27, 2019
+ * \author jakhremchik
+ **/
+
 
 #include "apriltagDetector.h"
 

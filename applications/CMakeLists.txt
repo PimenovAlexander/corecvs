@@ -3,7 +3,7 @@ set(TEST_SUBDIRECTORIES
    cloudview
    drone
    #egomotion
-   #imageview  # This should be fixed
+   imageview  # This should be fixed
    #laserscan
    #nester
    #nester-test

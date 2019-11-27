@@ -94,13 +94,13 @@ ImageCaptureInterface::FramePair AviCapture::getFrame()
             {
                 int frame_finished;
                 avcodec_decode_video2(mCodecContext, mFrame, &frame_finished, &mPacket);
-                av_free_packet(&mPacket);
+                av_packet_unref(&mPacket);
                 if (frame_finished) {
 //                    SYNC_PRINT(("AviCapture::getFrame(): Frame ready\n"));
                     break;
                 }
             } else {
-                av_free_packet(&mPacket);
+                av_packet_unref(&mPacket);
             }
         }
 

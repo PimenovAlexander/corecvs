@@ -4,7 +4,8 @@ set(TEST_SUBDIRECTORIES
     avencode      
     #ceres_playground
     #command_harness
-    # example_scene # includes files from on avencode
+    widget_harness
+    example_scene
     fileloader
     flow_detector
     flowtest
