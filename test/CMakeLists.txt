@@ -2,7 +2,6 @@
 set(TEST_SUBDIRECTORIES
     adoptcolor    # depends on utils
     avencode      
-    #ceres_playground
     #command_harness
     widget_harness
     example_scene
@@ -22,6 +21,10 @@ set(TEST_SUBDIRECTORIES
     face_distortion
     autonavRW
 )
+
+if (EIGEN_FOUND AND CERES_FOUND)
+    set(TEST_SUBDIRECTORIES ${TEST_SUBDIRECTORIES} ceres_playground)
+endif()
 
 foreach(test_subdirectory ${TEST_SUBDIRECTORIES})
     message(STATUS "adding subdirectory test/${test_subdirectory}")

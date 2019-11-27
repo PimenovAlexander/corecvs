@@ -1,6 +1,6 @@
 SET(CERES_INCLUDE_SEARCH_PATHS
     /usr/include
-    /usr/include/png
+    /usr/include/ceres
     /usr/local/include
     /usr/local/include/png-base
     /opt/libjpeg/include

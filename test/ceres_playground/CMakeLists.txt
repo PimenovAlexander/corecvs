@@ -15,8 +15,10 @@ if (JPEG_LIB)
     include(../../wrappers/libjpeg/sourcelist.cmake)
 endif()
 
-add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
-include_directories(${INC_PATHS})
 
-target_link_libraries(${NAME} ${LIBS} stdc++fs corecvs)
+
+add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
+include_directories(${INC_PATHS} ${EIGEN_INCLUDE_DIR} ${CERES_INCLUDE_DIR})
+
+target_link_libraries(${NAME} ${LIBS} ceres stdc++fs corecvs)
 

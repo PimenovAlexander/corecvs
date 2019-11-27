@@ -1,10 +1,18 @@
 #include "calibrationWidget.h"
 #include "ui_calibrationWidget.h"
-#include "opencv2/core.hpp"
 #include "imageForCalibrationWidget.h"
-#include "iostream"
-#include <opencv2/opencv.hpp>
+#include <iostream>
+#include <thread>
+#include <mutex>
+
+
 #include <QDir>
+#include <QTimer>
+#include <QFileDialog>
+
+
+#include <opencv2/core.hpp>
+#include <opencv2/opencv.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/calib3d.hpp>
 #include <opencv2/xfeatures2d.hpp>
@@ -14,10 +22,7 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/calib3d.hpp>
-#include <thread>
-#include <mutex>
-#include <QTimer>
-#include <QFileDialog>
+
 #include "core/utils/global.h"
 #include "core/utils/utils.h"
 

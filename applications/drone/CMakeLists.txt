@@ -1,4 +1,4 @@
-if (USE_OPENCV)
+if (OpenCV_LIBS)
     set(DRONE_SUBDIRECTORIES
         drone-core
         drone-ui
