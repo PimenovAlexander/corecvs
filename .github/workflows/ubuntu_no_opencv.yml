@@ -1,4 +1,4 @@
-name: CMake_Ubuntu
+name: CMake_Ubuntu_No_OpenCV
 
 on:
   push:
