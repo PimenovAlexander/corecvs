@@ -31,6 +31,12 @@ CalibrationWidget::CalibrationWidget(QWidget *parent) :
     ui(new Ui::CalibrationWidget)
 {
     ui->setupUi(this);
+    /* Cameras */
+
+    connect(ui->inputSettingsButton  , SIGNAL(released()), this, SLOT(showInputSettings()));
+    connect(ui->camerasSettingsButton, SIGNAL(released()), this, SLOT(showCameraSettings()));
+
+
     ui->scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
     updateVideo();
@@ -46,6 +52,84 @@ CalibrationWidget::~CalibrationWidget()
     delete ui;
 }
 
+/* Camera controls */
+void CalibrationWidget::stopRecording()
+{
+
+}
+
+void CalibrationWidget::startRecording()
+{
+    if (!threadRunning)
+    {
+        ui->startRecordingButton->setText("Stop Recording");
+
+        std::thread thr([this]()
+        {
+        int numCornersHor = ui->widthSpinBox->value();
+        int numCornersVer = ui->heightSpinBox->value();
+
+        if (numCornersHor * numCornersVer != 0 && cameraNumber!=-1)
+        {
+            int numSquares = numCornersHor * numCornersVer;
+            cv::Size board_sz = cv::Size(numCornersHor, numCornersVer);
+            cv::VideoCapture capture = cv::VideoCapture(cameraNumber);
+
+            cv::Mat image;
+            cv::Mat gray_image;
+            //capture >> image;
+
+            std::vector<cv::Point2f> corners;
+            setCapute(true);
+            //addImage();
+            while (getCapute())
+            {
+                capture >> image;
+                cvtColor(image, gray_image, CV_RGB2GRAY);
+                bool found = findChessboardCorners(image, board_sz, corners, CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS);
+                if(found)
+                {
+                    //std::cout<<"TRUE----------------------------------------------------------------------------------------------------"<<std::endl;
+                    //std::cout<<corners<<std::endl;
+                    cornerSubPix( gray_image, corners, cv::Size(11,11),
+                                                cv::Size(-1,-1), cv::TermCriteria( cv::TermCriteria::EPS+cv::TermCriteria::COUNT, 30, 0.1 ));
+                    //std::cout<<"TRUE2222"<<std::endl;
+                    cv::drawChessboardCorners(gray_image, board_sz, corners, found);
+                    vectorMutex.lock();
+                    widgets[widgets.size()-1]->setImage(&image);
+                    vectorMutex.unlock();
+                }
+                if (!found)
+                {
+                    //std::cout<<"FALSE"<<std::endl;
+                }
+                imshow("gray", gray_image);
+            }
+        }
+        std::cout<<"Recording thread is over"<<std::endl;
+        });
+        thr.detach();
+        threadRunning = true;
+    }
+    else
+    {
+        setCapute(false);
+        threadRunning = false;
+        ui->startRecordingButton->setText("Start Recording");
+    }
+}
+
+void CalibrationWidget::pauseRecording()
+{
+
+}
+
+void CalibrationWidget::newFrameRequset()
+{
+
+}
+
+
 void CalibrationWidget::updateImage()
 {
     for (int i=0;i<widgets.size();i++)
@@ -53,11 +137,6 @@ void CalibrationWidget::updateImage()
         widgets[i]->updateMicroImage();
     }
     QTimer::singleShot(38,this,SLOT(updateImage()));
-}
-
-void CalibrationWidget::stopRecording()
-{
-
 }
 
 void CalibrationWidget::addImage()
@@ -229,66 +308,7 @@ void CalibrationWidget::startCalibration()
     vectorMutex.unlock();
 }
 
-void CalibrationWidget::startRecording()
-{
-    if (!threadRunning)
-    {
-        ui->startRecordingButton->setText("Stop Recording");
 
-        std::thread thr([this]()
-        {
-        int numCornersHor = ui->widthSpinBox->value();
-        int numCornersVer = ui->heightSpinBox->value();
-
-        if (numCornersHor * numCornersVer != 0 && cameraNumber!=-1)
-        {
-            int numSquares = numCornersHor * numCornersVer;
-            cv::Size board_sz = cv::Size(numCornersHor, numCornersVer);
-            cv::VideoCapture capture = cv::VideoCapture(cameraNumber);
-
-            cv::Mat image;
-            cv::Mat gray_image;
-            //capture >> image;
-
-            std::vector<cv::Point2f> corners;
-            setCapute(true);
-            //addImage();
-            while (getCapute())
-            {
-                capture >> image;
-                cvtColor(image, gray_image, CV_RGB2GRAY);
-                bool found = findChessboardCorners(image, board_sz, corners, CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS);
-                if(found)
-                {
-                    //std::cout<<"TRUE----------------------------------------------------------------------------------------------------"<<std::endl;
-                    //std::cout<<corners<<std::endl;
-                    cornerSubPix( gray_image, corners, cv::Size(11,11),
-                                                cv::Size(-1,-1), cv::TermCriteria( cv::TermCriteria::EPS+cv::TermCriteria::COUNT, 30, 0.1 ));
-                    //std::cout<<"TRUE2222"<<std::endl;
-                    cv::drawChessboardCorners(gray_image, board_sz, corners, found);
-                    vectorMutex.lock();
-                    widgets[widgets.size()-1]->setImage(&image);
-                    vectorMutex.unlock();
-                }
-                if (!found)
-                {
-                    //std::cout<<"FALSE"<<std::endl;
-                }
-                imshow("gray", gray_image);
-            }
-        }
-        std::cout<<"Recording thread is over"<<std::endl;
-        });
-        thr.detach();
-        threadRunning = true;
-    }
-    else
-    {
-        setCapute(false);
-        threadRunning = false;
-        ui->startRecordingButton->setText("Start Recording");
-    }
-}
 
 void CalibrationWidget::updateVideo()
 {
@@ -330,4 +350,16 @@ void CalibrationWidget::saveMatrix()
         fs <<"intrinsic"<<globalIntrinsic;
         fs <<"distCoeffs"<<globalDistCoeffs;
     }
+}
+
+void CalibrationWidget::showInputSettings()
+{
+    mInputSelector.show();
+    mInputSelector.raise();
+}
+
+void CalibrationWidget::showCameraSettings()
+{
+    mCameraParametersWidget.show();
+    mCameraParametersWidget.raise();
 }

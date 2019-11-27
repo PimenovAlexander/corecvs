@@ -10,8 +10,8 @@ set(TEST_SUBDIRECTORIES
     flowtest
     focus_stack
     gcodeplayground
-    #grab24        # depends on utils
-    #grab24_qt
+    grab24
+    grab24_qt
     # jitplayground
     pattern_detector
     raytracerender

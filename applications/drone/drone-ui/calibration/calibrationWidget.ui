@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>884</width>
-    <height>434</height>
+    <width>1294</width>
+    <height>844</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -20,7 +20,7 @@
    <string>Calibration</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="8">
+   <item row="1" column="7">
     <widget class="QPushButton" name="startButton">
      <property name="enabled">
       <bool>false</bool>
@@ -44,17 +44,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="7">
-    <widget class="QPushButton" name="startRecordingButton">
-     <property name="text">
-      <string>Start Recording</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QComboBox" name="videoBox"/>
-   </item>
-   <item row="1" column="9">
+   <item row="1" column="8">
     <widget class="QPushButton" name="stopShowing">
      <property name="enabled">
       <bool>false</bool>
@@ -64,17 +54,16 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="5">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>height</string>
-     </property>
-    </widget>
+   <item row="1" column="1">
+    <widget class="QComboBox" name="videoBox"/>
    </item>
-   <item row="1" column="4">
-    <widget class="QSpinBox" name="widthSpinBox">
-     <property name="value">
-      <number>9</number>
+   <item row="1" column="9">
+    <widget class="QPushButton" name="saveCalib">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="text">
+      <string>Save Calibration</string>
      </property>
     </widget>
    </item>
@@ -85,7 +74,127 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0" colspan="12">
+   <item row="1" column="4">
+    <widget class="QSpinBox" name="widthSpinBox">
+     <property name="value">
+      <number>9</number>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="5">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>height</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QFrame" name="frame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QPushButton" name="inputSettingsButton">
+        <property name="text">
+         <string>Input</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../../../resources/main.qrc">
+          <normaloff>:/new/prefix1/webcam.png</normaloff>:/new/prefix1/webcam.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="camerasSettingsButton">
+        <property name="text">
+         <string>Settings</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../../../resources/main.qrc">
+          <normaloff>:/new/prefix1/2cam-blend-b.png</normaloff>:/new/prefix1/2cam-blend-b.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="startRecordingButton">
+        <property name="toolTip">
+         <string>Start Recording</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../../../resources/main.qrc">
+          <normaloff>:/new/prefix1/play.png</normaloff>:/new/prefix1/play.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="stopRecordingButton">
+        <property name="toolTip">
+         <string>Stop Recording</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../../../resources/main.qrc">
+          <normaloff>:/new/prefix1/stop_2.png</normaloff>:/new/prefix1/stop_2.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pauseRecodingButton">
+        <property name="toolTip">
+         <string>Pause Recording</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../../../resources/main.qrc">
+          <normaloff>:/new/prefix1/pause.png</normaloff>:/new/prefix1/pause.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="11">
     <widget class="QScrollArea" name="scrollArea">
      <property name="widgetResizable">
       <bool>true</bool>
@@ -95,8 +204,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>862</width>
-        <height>380</height>
+        <width>1218</width>
+        <height>766</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
@@ -131,19 +240,14 @@
      </widget>
     </widget>
    </item>
-   <item row="1" column="10">
-    <widget class="QPushButton" name="saveCalib">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="text">
-      <string>Save Calibration</string>
-     </property>
-    </widget>
+   <item row="6" column="11">
+    <widget class="QWidget" name="widget" native="true"/>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../../../resources/main.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>startRecordingButton</sender>
