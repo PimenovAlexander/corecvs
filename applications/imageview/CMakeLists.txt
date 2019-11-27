@@ -29,6 +29,6 @@ target_include_directories(${NAME} PUBLIC ${AUTOGEN_BUILD_DIR} ${CMAKE_CURRENT_B
 message("AUTOGEN_BUILD_DIR bin directory <${AUTOGEN_BUILD_DIR}>")
 
 
-target_include_directories(${NAME} PUBLIC ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} ${drone-core_SOURCE_DIR} .)
-target_link_libraries(${NAME} drone-core cvs_utils corecvs)
+target_include_directories(${NAME} PUBLIC ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} .)
+target_link_libraries(${NAME} cvs_utils corecvs)
 

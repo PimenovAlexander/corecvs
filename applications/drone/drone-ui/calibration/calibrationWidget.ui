@@ -172,7 +172,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pauseRecodingButton">
+       <widget class="QPushButton" name="pauseRecordingButton">
         <property name="toolTip">
          <string>Pause Recording</string>
         </property>

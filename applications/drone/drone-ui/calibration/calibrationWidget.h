@@ -5,6 +5,7 @@
 #include "opencv2/core.hpp"
 #include "imageForCalibrationWidget.h"
 #include <capSettingsDialog.h>
+#include <imageCaptureInterfaceQt.h>
 #include <inputSelectorWidget.h>
 #include <mutex>
 
@@ -39,6 +40,8 @@ private slots:
 public:
     InputSelectorWidget mInputSelector;
     CapSettingsDialog mCameraParametersWidget;
+
+    ImageCaptureInterfaceQt *mInterface = NULL;
 public slots:
     void showInputSettings();
     void showCameraSettings();

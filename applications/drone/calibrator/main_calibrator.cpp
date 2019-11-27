@@ -43,6 +43,7 @@ int main(int argc, char *argv[])
     }
 
     SYNC_PRINT(("Starting Calibrator...\n"));
+    ImageCaptureInterfaceFabric::printCaps();
     QApplication app(argc, argv);
 
 

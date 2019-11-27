@@ -9,6 +9,7 @@
 #include <QDir>
 #include <QTimer>
 #include <QFileDialog>
+#include <imageCaptureInterfaceQt.h>
 
 
 #include <opencv2/core.hpp>
@@ -60,63 +61,29 @@ void CalibrationWidget::stopRecording()
 
 void CalibrationWidget::startRecording()
 {
-    if (!threadRunning)
+    std::string str = mInputSelector.getInputString().toStdString();
+    mInterface = ImageCaptureInterfaceQtFactory::fabric(str, true);
+    if (mInterface == NULL)
+        return;
+
+    SYNC_PRINT(("main: initialising capture...\n"));
+    ImageCaptureInterface::CapErrorCode returnCode = mInterface->initCapture();
+    SYNC_PRINT(("main: initialising capture returing %d\n", returnCode));
+
+    if (returnCode == ImageCaptureInterface::FAILURE)
     {
-        ui->startRecordingButton->setText("Stop Recording");
-
-        std::thread thr([this]()
-        {
-        int numCornersHor = ui->widthSpinBox->value();
-        int numCornersVer = ui->heightSpinBox->value();
-
-        if (numCornersHor * numCornersVer != 0 && cameraNumber!=-1)
-        {
-            int numSquares = numCornersHor * numCornersVer;
-            cv::Size board_sz = cv::Size(numCornersHor, numCornersVer);
-            cv::VideoCapture capture = cv::VideoCapture(cameraNumber);
-
-            cv::Mat image;
-            cv::Mat gray_image;
-            //capture >> image;
-
-            std::vector<cv::Point2f> corners;
-            setCapute(true);
-            //addImage();
-            while (getCapute())
-            {
-                capture >> image;
-                cvtColor(image, gray_image, CV_RGB2GRAY);
-                bool found = findChessboardCorners(image, board_sz, corners, CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS);
-                if(found)
-                {
-                    //std::cout<<"TRUE----------------------------------------------------------------------------------------------------"<<std::endl;
-                    //std::cout<<corners<<std::endl;
-                    cornerSubPix( gray_image, corners, cv::Size(11,11),
-                                                cv::Size(-1,-1), cv::TermCriteria( cv::TermCriteria::EPS+cv::TermCriteria::COUNT, 30, 0.1 ));
-                    //std::cout<<"TRUE2222"<<std::endl;
-                    cv::drawChessboardCorners(gray_image, board_sz, corners, found);
-                    vectorMutex.lock();
-                    widgets[widgets.size()-1]->setImage(&image);
-                    vectorMutex.unlock();
-                }
-                if (!found)
-                {
-                    //std::cout<<"FALSE"<<std::endl;
-                }
-                imshow("gray", gray_image);
-            }
-        }
-        std::cout<<"Recording thread is over"<<std::endl;
-        });
-        thr.detach();
-        threadRunning = true;
+        SYNC_PRINT(("Can't open\n"));
+        return;
     }
-    else
-    {
-        setCapute(false);
-        threadRunning = false;
-        ui->startRecordingButton->setText("Start Recording");
-    }
+
+    /*Ok we seem to have started recording */
+    ui->startRecordingButton->setEnabled(false);
+    ui->stopRecordingButton->setEnabled(true);
+    ui->pauseRecordingButton->setEnabled(true);
+
+    mCameraParametersWidget.setCaptureInterface(mInterface);
+    QTimer::singleShot(50, this, SLOT(newFrameRequset()));
+
 }
 
 void CalibrationWidget::pauseRecording()
@@ -126,6 +93,32 @@ void CalibrationWidget::pauseRecording()
 
 void CalibrationWidget::newFrameRequset()
 {
+    ImageCaptureInterface::FramePair pair = mInterface->getFrameRGB24();
+    RGB24Buffer * result = pair.rgbBufferLeft();
+    pair.setRgbBufferLeft(NULL);
+    pair.freeBuffers();
+
+    int numCornersHor = ui->widthSpinBox->value();
+    int numCornersVer = ui->heightSpinBox->value();
+
+    int numSquares = numCornersHor * numCornersVer;
+
+    cv::Size board_sz = cv::Size(numCornersHor, numCornersVer);
+
+    cv::Mat image;
+    cv::Mat gray_image;
+
+    std::vector<cv::Point2f> corners;
+
+    bool found = findChessboardCorners(image, board_sz, corners, CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS);
+
+    if(found)
+    {
+        cornerSubPix( gray_image, corners, cv::Size(11,11),
+                                    cv::Size(-1,-1), cv::TermCriteria( cv::TermCriteria::EPS+cv::TermCriteria::COUNT, 30, 0.1 ));
+        cv::drawChessboardCorners(gray_image, board_sz, corners, found);
+        widgets[widgets.size()-1]->setImage(&image);
+    }
 
 }
 
