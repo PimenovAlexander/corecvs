@@ -229,12 +229,12 @@ void CalibrationWidget::startRecording()
     if (!threadRunning)
     {
         ui->startRecordingButton->setText("Stop Recording");
+
         std::thread thr([this]()
         {
-        int numCornersHor = 0;
-        numCornersHor = ui->widthLine->text().toInt();
-        int numCornersVer = 0;
-        numCornersVer = ui->heightLine->text().toInt();
+        int numCornersHor = ui->widthSpinBox->value();
+        int numCornersVer = ui->heightSpinBox->value();
+
         if (numCornersHor * numCornersVer != 0 && cameraNumber!=-1)
         {
             int numSquares = numCornersHor * numCornersVer;

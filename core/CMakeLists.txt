@@ -81,5 +81,9 @@ endforeach(add_core_module)
 
 file(GLOB ADD_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/xml/*.xml)
 target_sources(corecvs PRIVATE ${ADD_SRC_FILES})
-set_source_files_properties(${ADD_SRC_FILES} PROPERTIES EXTERNAL_OBJECT true)
+set_source_files_properties(${ADD_SRC_FILES} PROPERTIES EXTERNAL_OBJECT true HEADER_FILE_ONLY TRUE)
 
+file(GLOB ADD_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/../.github/workflows/*.*)
+message(STATUS "including ${ADD_SRC_FILES}")
+target_sources(corecvs PRIVATE ${ADD_SRC_FILES})
+set_source_files_properties(${ADD_SRC_FILES} PROPERTIES EXTERNAL_OBJECT true HEADER_FILE_ONLY TRUE)

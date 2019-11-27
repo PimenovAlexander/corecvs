@@ -4,6 +4,7 @@ if (USE_OPENCV)
         drone-ui
         physics-test
         drone-app
+        calibrator
     )
 
     foreach(test_subdirectory ${DRONE_SUBDIRECTORIES})

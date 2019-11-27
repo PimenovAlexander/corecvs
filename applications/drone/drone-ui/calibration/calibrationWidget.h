@@ -35,6 +35,7 @@ private slots:
 private:
     int cameraNumber=-1;
     Ui::CalibrationWidget *ui;
+
     std::vector<ImageForCalibrationWidget *> widgets;
     int widgetCounter=0;
     bool caputing = false;

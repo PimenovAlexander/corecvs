@@ -1,0 +1,54 @@
+name: CMake_Ubuntu
+
+on:
+  push:
+    branches:
+      - master_cmake
+      - apimenov_quad
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Print Machine Status
+      run: |
+            cat /proc/cpuinfo
+    - name: Install generic prerequisites
+      run: |
+           sudo apt-get update
+           sudo apt install -y libtbb-dev libavcodec-dev libavutil-dev libavformat-dev libswscale-dev libjpeg-dev libpng-dev libopenblas-dev liblapacke-dev
+    - name: Install Qt
+      run: |
+           sudo apt install -y qt5-default qtscript-tools qtscript5-dev libqt5serialport5-dev
+
+    - name: Dont Install OpenCV prerequisites
+      run: |
+           echo "We won't install OpenCV prerequisites"
+    - name: Dont Install OpenCV
+      run: |
+           echo "We won't install OpenCV"
+    - name: Install AprilTag
+      run: |
+           git clone https://github.com/AprilRobotics/apriltag.git siblings/apriltag
+           mkdir siblings/apriltag/build
+           cd siblings/apriltag/build
+           cmake ..
+           make -j 2
+    - name: Prepare build folder
+      run: |
+           ls
+           pwd
+           mkdir build
+           cd build
+    - name: Cmake
+      run: |
+           cd build
+           cmake ..
+    - name: Make
+      run: |
+           cd build
+           make -j 2 VERBOSE=1
+
