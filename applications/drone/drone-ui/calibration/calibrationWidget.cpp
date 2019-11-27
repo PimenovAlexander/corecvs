@@ -10,6 +10,7 @@
 #include <QTimer>
 #include <QFileDialog>
 #include <imageCaptureInterfaceQt.h>
+#include <g12Image.h>
 
 
 #include <opencv2/core.hpp>
@@ -33,16 +34,20 @@ CalibrationWidget::CalibrationWidget(QWidget *parent) :
 {
     ui->setupUi(this);
     /* Cameras */
+    mInputSelector.setInputString("v4l2:/dev/video0:1/5");
 
     connect(ui->inputSettingsButton  , SIGNAL(released()), this, SLOT(showInputSettings()));
     connect(ui->camerasSettingsButton, SIGNAL(released()), this, SLOT(showCameraSettings()));
 
+    connect(ui->startRecordingButton, SIGNAL(released()), this, SLOT(startRecording()));
+    connect(ui->stopRecordingButton , SIGNAL(released()), this, SLOT(stopRecording()) );
+    connect(ui->pauseRecordingButton, SIGNAL(released()), this, SLOT(pauseRecording()));
+
 
     ui->scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
-    updateVideo();
-    addImage();
-    QTimer::singleShot(38,this,SLOT(updateImage()));
+    //addImage();
+    //QTimer::singleShot(38,this,SLOT(updateImage()));
 }
 
 CalibrationWidget::~CalibrationWidget()
@@ -66,9 +71,9 @@ void CalibrationWidget::startRecording()
     if (mInterface == NULL)
         return;
 
-    SYNC_PRINT(("main: initialising capture...\n"));
+    SYNC_PRINT(("CalibrationWidget::startRecording(): initialising capture...\n"));
     ImageCaptureInterface::CapErrorCode returnCode = mInterface->initCapture();
-    SYNC_PRINT(("main: initialising capture returing %d\n", returnCode));
+    SYNC_PRINT(("CalibrationWidget::startRecording(): initialising capture returing %d\n", returnCode));
 
     if (returnCode == ImageCaptureInterface::FAILURE)
     {
@@ -82,6 +87,8 @@ void CalibrationWidget::startRecording()
     ui->pauseRecordingButton->setEnabled(true);
 
     mCameraParametersWidget.setCaptureInterface(mInterface);
+
+    mInterface->startCapture();
     QTimer::singleShot(50, this, SLOT(newFrameRequset()));
 
 }
@@ -93,6 +100,7 @@ void CalibrationWidget::pauseRecording()
 
 void CalibrationWidget::newFrameRequset()
 {
+    SYNC_PRINT(("CalibrationWidget::newFrameRequset(): requesting frame\n"));
     ImageCaptureInterface::FramePair pair = mInterface->getFrameRGB24();
     RGB24Buffer * result = pair.rgbBufferLeft();
     pair.setRgbBufferLeft(NULL);
@@ -114,12 +122,16 @@ void CalibrationWidget::newFrameRequset()
 
     if(found)
     {
+        cvtColor(image, gray_image, CV_RGB2GRAY);
         cornerSubPix( gray_image, corners, cv::Size(11,11),
                                     cv::Size(-1,-1), cv::TermCriteria( cv::TermCriteria::EPS+cv::TermCriteria::COUNT, 30, 0.1 ));
-        cv::drawChessboardCorners(gray_image, board_sz, corners, found);
-        widgets[widgets.size()-1]->setImage(&image);
+        cv::drawChessboardCorners(gray_image, board_sz, corners, found);       
     }
 
+    if (result != NULL)
+    ui->imageWidget->setImage(QSharedPointer<QImage>(new RGB24Image(result)));
+
+    QTimer::singleShot(50, this, SLOT(newFrameRequset()));
 }
 
 
@@ -301,21 +313,6 @@ void CalibrationWidget::startCalibration()
     vectorMutex.unlock();
 }
 
-
-
-void CalibrationWidget::updateVideo()
-{
-    QDir devDir("/dev","video*",QDir::Name,QDir::System);
-    ui->videoBox->clear();
-    ui->videoBox->addItems(devDir.entryList());
-}
-
-
-
-void CalibrationWidget::on_videoBox_currentIndexChanged(int index)         //if linux will drop some numbers it will not work
-{
-    cameraNumber = index;
-}
 
 void CalibrationWidget::setCapute(bool b)
 {

@@ -20,73 +20,73 @@
    <string>Calibration</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="7">
-    <widget class="QPushButton" name="startButton">
-     <property name="enabled">
-      <bool>false</bool>
+   <item row="2" column="0" colspan="4">
+    <layout class="QGridLayout" name="gridLayout_3" rowminimumheight="0">
+     <property name="leftMargin">
+      <number>4</number>
      </property>
-     <property name="text">
-      <string>Start Calibration</string>
+     <property name="topMargin">
+      <number>4</number>
      </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QPushButton" name="updateButton">
-     <property name="text">
-      <string>Update</string>
+     <property name="rightMargin">
+      <number>4</number>
      </property>
-    </widget>
-   </item>
-   <item row="1" column="3">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Width</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="8">
-    <widget class="QPushButton" name="stopShowing">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="text">
-      <string>Stop Showing</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QComboBox" name="videoBox"/>
-   </item>
-   <item row="1" column="9">
-    <widget class="QPushButton" name="saveCalib">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="text">
-      <string>Save Calibration</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="6">
-    <widget class="QSpinBox" name="heightSpinBox">
-     <property name="value">
-      <number>7</number>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="4">
-    <widget class="QSpinBox" name="widthSpinBox">
-     <property name="value">
-      <number>9</number>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="5">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>height</string>
-     </property>
-    </widget>
+     <item row="0" column="1">
+      <widget class="AdvancedImageWidget" name="imageWidget" native="true"/>
+     </item>
+     <item row="0" column="0">
+      <widget class="QScrollArea" name="scrollArea">
+       <property name="maximumSize">
+        <size>
+         <width>300</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="widgetResizable">
+        <bool>true</bool>
+       </property>
+       <widget class="QWidget" name="scrollAreaWidgetContents">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>298</width>
+          <height>759</height>
+         </rect>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="1" column="0">
+          <widget class="QGroupBox" name="imageBox">
+           <property name="acceptDrops">
+            <bool>false</bool>
+           </property>
+           <property name="title">
+            <string>Images</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <property name="spacing">
+             <number>4</number>
+            </property>
+            <property name="leftMargin">
+             <number>8</number>
+            </property>
+            <property name="topMargin">
+             <number>8</number>
+            </property>
+            <property name="rightMargin">
+             <number>8</number>
+            </property>
+            <property name="bottomMargin">
+             <number>8</number>
+            </property>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item row="1" column="0">
     <widget class="QFrame" name="frame">
@@ -103,7 +103,7 @@
          <string>Input</string>
         </property>
         <property name="icon">
-         <iconset resource="../../../../resources/main.qrc">
+         <iconset>
           <normaloff>:/new/prefix1/webcam.png</normaloff>:/new/prefix1/webcam.png</iconset>
         </property>
         <property name="iconSize">
@@ -120,7 +120,7 @@
          <string>Settings</string>
         </property>
         <property name="icon">
-         <iconset resource="../../../../resources/main.qrc">
+         <iconset>
           <normaloff>:/new/prefix1/2cam-blend-b.png</normaloff>:/new/prefix1/2cam-blend-b.png</iconset>
         </property>
         <property name="iconSize">
@@ -140,7 +140,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../../../resources/main.qrc">
+         <iconset>
           <normaloff>:/new/prefix1/play.png</normaloff>:/new/prefix1/play.png</iconset>
         </property>
         <property name="iconSize">
@@ -160,7 +160,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../../../resources/main.qrc">
+         <iconset>
           <normaloff>:/new/prefix1/stop_2.png</normaloff>:/new/prefix1/stop_2.png</iconset>
         </property>
         <property name="iconSize">
@@ -180,7 +180,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../../../resources/main.qrc">
+         <iconset>
           <normaloff>:/new/prefix1/pause.png</normaloff>:/new/prefix1/pause.png</iconset>
         </property>
         <property name="iconSize">
@@ -194,142 +194,100 @@
      </layout>
     </widget>
    </item>
-   <item row="6" column="0" colspan="11">
-    <widget class="QScrollArea" name="scrollArea">
-     <property name="widgetResizable">
-      <bool>true</bool>
+   <item row="1" column="1">
+    <widget class="QFrame" name="frame_2">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
-     <widget class="QWidget" name="scrollAreaWidgetContents">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>1218</width>
-        <height>766</height>
-       </rect>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_2">
-       <item row="1" column="0">
-        <widget class="QGroupBox" name="imageBox">
-         <property name="acceptDrops">
-          <bool>false</bool>
-         </property>
-         <property name="title">
-          <string>Images</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <property name="spacing">
-           <number>4</number>
-          </property>
-          <property name="leftMargin">
-           <number>8</number>
-          </property>
-          <property name="topMargin">
-           <number>8</number>
-          </property>
-          <property name="rightMargin">
-           <number>8</number>
-          </property>
-          <property name="bottomMargin">
-           <number>8</number>
-          </property>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Width</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="widthSpinBox">
+        <property name="value">
+         <number>9</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Height</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="heightSpinBox">
+        <property name="value">
+         <number>7</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item row="6" column="11">
-    <widget class="QWidget" name="widget" native="true"/>
+   <item row="1" column="2">
+    <widget class="QFrame" name="frame_3">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QPushButton" name="startButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Start Calibration</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="stopShowing">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Stop Showing</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="saveCalib">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Save Calibration</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../../../../resources/main.qrc"/>
- </resources>
- <connections>
-  <connection>
-   <sender>startRecordingButton</sender>
-   <signal>released()</signal>
-   <receiver>CalibrationWidget</receiver>
-   <slot>startRecording()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>497</x>
-     <y>21</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>347</x>
-     <y>216</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>updateButton</sender>
-   <signal>released()</signal>
-   <receiver>CalibrationWidget</receiver>
-   <slot>updateVideo()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>146</x>
-     <y>21</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>347</x>
-     <y>216</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>startButton</sender>
-   <signal>released()</signal>
-   <receiver>CalibrationWidget</receiver>
-   <slot>startCalibration()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>620</x>
-     <y>21</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>347</x>
-     <y>216</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>stopShowing</sender>
-   <signal>released()</signal>
-   <receiver>CalibrationWidget</receiver>
-   <slot>stopShowing()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>731</x>
-     <y>21</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>395</x>
-     <y>216</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>saveCalib</sender>
-   <signal>released()</signal>
-   <receiver>CalibrationWidget</receiver>
-   <slot>saveMatrix()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>811</x>
-     <y>21</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>441</x>
-     <y>216</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <customwidgets>
+  <customwidget>
+   <class>AdvancedImageWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">advancedImageWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
  <slots>
   <slot>addImage()</slot>
   <slot>startCalibration()</slot>

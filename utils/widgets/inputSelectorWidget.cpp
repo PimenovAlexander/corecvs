@@ -1,5 +1,6 @@
 #include "inputSelectorWidget.h"
 
+#include <regex>
 #include <QFileDialog>
 
 #include "core/buffers/bufferFactory.h"
@@ -10,8 +11,10 @@
 
 using namespace corecvs;
 
-InputSelectorWidget::InputSelectorWidget(QWidget *parent)
-    : QWidget(parent)
+InputSelectorWidget::InputSelectorWidget(QWidget *parent, bool autoInit, QString rootPath)
+    : QWidget(parent),
+      autoInit(autoInit),
+      rootPath(rootPath)
 {
     ui.setupUi(this);
 
@@ -150,6 +153,77 @@ QString InputSelectorWidget::getInputString()
 void InputSelectorWidget::setInputString(const QString &str)
 {
     ui.inputLineEdit->setText(str);
+
+    if (str.startsWith("v4l2:"))
+    {
+        std::string devname = str.mid(strlen("v4l2:")).toStdString();
+
+        std::regex deviceStringPattern("^([^,:]*)(,([^:]*))?(:(\\d*)/(\\d*))?((:mjpeg)|(:yuyv)|(:fjpeg))?(:(\\d*)x(\\d*))?$");
+
+        static const int Device1Group     = 1;
+        static const int Device2Group     = 3;
+        static const int FpsNumGroup      = 5;
+        static const int FpsDenumGroup    = 6;
+        static const int CompressionGroup = 7;
+        static const int WidthGroup       = 12;
+        static const int HeightGroup      = 13;
+
+        std::smatch matches;
+        printf ("Input string %s\n", devname.c_str());
+        int result = std::regex_match(devname, matches, deviceStringPattern);
+        if (result == -1)
+        {
+            printf("Error in device string format:%s\n", devname.c_str());
+        }
+
+        if (!matches[Device1Group].str().empty())
+        {
+            ui.v4l2Device1LineEdit->setText(QString::fromStdString(matches[Device1Group].str()));
+        }
+
+        if (!matches[Device2Group].str().empty())
+        {
+            ui.v4l2Device2LineEdit->setText(QString::fromStdString(matches[Device2Group].str()));
+            ui.v4l2StereoCheckBox->setChecked(true);
+        }
+
+        if (!matches[FpsNumGroup].str().empty() && !matches[FpsDenumGroup].str().empty())
+        {
+            bool isOk = false;
+            int fpsnum = HelperUtils::parseInt(matches[FpsNumGroup].str(), &isOk);
+            if (!isOk || fpsnum < 0) fpsnum = 1;
+
+            int fpsdenum = HelperUtils::parseInt(matches[FpsDenumGroup].str(), &isOk);
+            if (!isOk || fpsdenum < 0) fpsdenum = 10;
+            ui.v4l2FpsCheckBox->setChecked(true);
+            //ui.v4l2DenumComboBox->add
+        }
+
+        if (!matches[WidthGroup].str().empty() && !matches[HeightGroup].str().empty())
+        {
+            bool isOk = false;
+            int width = HelperUtils::parseInt(matches[WidthGroup].str(), &isOk);
+            if (!isOk || width <= 0) width = 800;
+
+            int height = HelperUtils::parseInt(matches[HeightGroup].str(), &isOk);
+            if (!isOk || height <= 0) height = 600;
+
+            ui.v4l2hwCheckBox->setChecked(true);
+        };
+    }
+
+
+}
+
+void InputSelectorWidget::loadParamWidget(WidgetLoader &loader)
+{
+
+
+}
+
+void InputSelectorWidget::saveParamWidget(WidgetSaver &saver)
+{
+
 }
 
 

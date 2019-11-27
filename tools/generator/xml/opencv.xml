@@ -31,6 +31,16 @@
     <field type="double"      name="maxCosineThreshold" defaultValue="0.3"/>
 
   </class>
+  
+    <class name="OpenCV Checker Board Detector Parameters">
+    <field type="bool"        name="debug"              defaultValue="false"/>
+
+    <field type="int"         name="height"     defaultValue="4"  />
+    <field type="int"         name="width"    defaultValue="5"  />
+   
+
+  </class>
+
 
 
 

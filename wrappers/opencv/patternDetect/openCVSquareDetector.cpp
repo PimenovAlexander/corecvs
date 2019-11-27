@@ -181,10 +181,10 @@ void OpenCVSquareDetector::getOutput(vector<PatternDetectorResult> &patterns)
     for (size_t i = 0; i < squares.size(); i++)
     {
         PatternDetectorResult result;
-        result.mPosition = Vector2dParameters(squares[i][0].x, squares[i][0].y);
-        result.mOrtX     = Vector2dParameters(squares[i][1].x, squares[i][1].y);
-        result.mOrtY     = Vector2dParameters(squares[i][3].x, squares[i][3].y);
-        result.mPosition = Vector2dParameters(squares[i][2].x, squares[i][2].y);
+        result.mPosition   = Vector2dParameters(squares[i][0].x, squares[i][0].y);
+        result.mOrtX       = Vector2dParameters(squares[i][1].x, squares[i][1].y);
+        result.mOrtY       = Vector2dParameters(squares[i][3].x, squares[i][3].y);
+        result.mUnityPoint = Vector2dParameters(squares[i][2].x, squares[i][2].y);
         result.mId = i;
         patterns.push_back(result);
     }

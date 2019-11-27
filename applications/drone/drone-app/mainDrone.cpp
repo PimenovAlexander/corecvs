@@ -19,6 +19,7 @@
 #ifdef WITH_OPENCV
 #include "KLTFlow.h"
 #include "patternDetect/openCVSquareDetector.h"
+#include "patternDetect/openCVCheckerBoardDetector.h"
 #endif
 #ifdef WITH_APRILTAG
 #include "wrappers/apriltag_wrapper/apriltagDetector.h"
@@ -87,6 +88,7 @@ int main(int argc, char *argv[])
 
 #ifdef WITH_OPENCV
     PatternDetectorFabric::getInstance()->add(new PatternDetectorProducer<OpenCVSquareDetector>("OpenCVSquare"));
+    PatternDetectorFabric::getInstance()->add(new PatternDetectorProducer<OpenCVCheckerBoardDetector>("OpenCVCheckerBoard"));
 #endif
 
 #ifdef WITH_APRILTAG

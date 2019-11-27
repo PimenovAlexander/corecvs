@@ -29,9 +29,6 @@ private slots:
     void updateStartButtonAndRemoveWidget(int k);
     void startCalibration();
 
-    void updateVideo();
-    void on_videoBox_currentIndexChanged(int index);
-
     void updateImage();
     void stopShowing();
     void saveMatrix();
@@ -52,6 +49,10 @@ public slots:
     void stopRecording();
 
     void newFrameRequset();
+
+public:
+    /* */
+    vector<SaveableWidget *> mSaveableWidgets;
 
 private:
     int cameraNumber=-1;

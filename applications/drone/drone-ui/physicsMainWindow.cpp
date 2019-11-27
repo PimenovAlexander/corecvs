@@ -348,6 +348,7 @@ void PhysicsMainWindow::startCamera()                                           
     //std::string inputString = inputCameraPath;
     std::string inputString = mInputSelector.getInputString().toStdString();
 
+
     ImageCaptureInterfaceQt *rawInput = ImageCaptureInterfaceQtFactory::fabric(inputString, true);
     if (rawInput == NULL)
     {

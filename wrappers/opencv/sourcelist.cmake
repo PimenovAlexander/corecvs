@@ -11,6 +11,8 @@ set (HDR_FILES
     ${CMAKE_CURRENT_LIST_DIR}/semiGlobalBlockMatching.h
     ${CMAKE_CURRENT_LIST_DIR}/openCvCheckerboardDetector.h
     ${CMAKE_CURRENT_LIST_DIR}/patternDetect/openCVSquareDetector.h
+    ${CMAKE_CURRENT_LIST_DIR}/patternDetect/openCVCheckerBoardDetector.h
+
 )
 
 set (SRC_FILES
@@ -22,6 +24,8 @@ set (SRC_FILES
     ${CMAKE_CURRENT_LIST_DIR}/openCvCheckerboardDetector.cpp
     ${CMAKE_CURRENT_LIST_DIR}/openCvImageRemapper.cpp
     ${CMAKE_CURRENT_LIST_DIR}/patternDetect/openCVSquareDetector.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/patternDetect/openCVCheckerBoardDetector.cpp
+
 )
 
 
@@ -33,6 +37,8 @@ set (HDR_FILES
     ${CMAKE_CURRENT_LIST_DIR}/generated/openCVBMParameters.h
     ${CMAKE_CURRENT_LIST_DIR}/generated/openCVSGMParameters.h
     ${CMAKE_CURRENT_LIST_DIR}/generated/openCVSquareDetectorParameters.h
+    ${CMAKE_CURRENT_LIST_DIR}/generated/openCVCheckerBoardDetectorParameters.h
+
 )
 
 set (SRC_FILES
@@ -41,6 +47,8 @@ set (SRC_FILES
     ${CMAKE_CURRENT_LIST_DIR}/generated/openCVBMParameters.cpp
     ${CMAKE_CURRENT_LIST_DIR}/generated/openCVSGMParameters.cpp
     ${CMAKE_CURRENT_LIST_DIR}/generated/openCVSquareDetectorParameters.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/generated/openCVCheckerBoardDetectorParameters.cpp
+
 )
 
 # Features Block

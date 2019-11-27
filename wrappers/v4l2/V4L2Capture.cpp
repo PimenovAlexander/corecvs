@@ -18,11 +18,12 @@
 #include <linux/videodev2.h>
 #include <sstream>
 
-#include <QtCore/QRegExp>
-#include <QtCore/QString>
-#include <QtCore/QtCore>
+
+#include <cstdlib>
+#include <regex>
 
 #include "core/utils/global.h"
+#include "core/utils/utils.h"
 #include "core/framesources/decoders/mjpegDecoder.h"
 #include "core/framesources/decoders/mjpegDecoderLazy.h"
 
@@ -89,8 +90,9 @@ int V4L2CaptureInterface::setConfigurationString(string _devname)
 {
     this->interfaceName = _devname;
 
-    //     Group Number                   1       2 3        4 5      6       7 8       9       10     11   12     13
-    QRegExp deviceStringPattern(QString("^([^,:]*)(,([^:]*))?(:(\\d*)/(\\d*))?((:mjpeg)|(:yuyv)|(:fjpeg))?(:(\\d*)x(\\d*))?$"));
+    //        Group Number           1       2 3        4 5      6       7 8       9       10     11   12     13
+    std::regex deviceStringPattern("^([^,:]*)(,([^:]*))?(:(\\d*)/(\\d*))?((:mjpeg)|(:yuyv)|(:fjpeg))?(:(\\d*)x(\\d*))?$");
+
     static const int Device1Group     = 1;
     static const int Device2Group     = 3;
     static const int FpsNumGroup      = 5;
@@ -99,9 +101,9 @@ int V4L2CaptureInterface::setConfigurationString(string _devname)
     static const int WidthGroup       = 12;
     static const int HeightGroup      = 13;
 
+    std::smatch matches;
     printf ("Input string %s\n", _devname.c_str());
-    QString qdevname(_devname.c_str());
-    int result = deviceStringPattern.indexIn(qdevname);
+    int result = std::regex_match(_devname, matches, deviceStringPattern);
     if (result == -1)
     {
         printf("Error in device string format:%s\n", _devname.c_str());
@@ -115,38 +117,38 @@ int V4L2CaptureInterface::setConfigurationString(string _devname)
         "  | - Size [%sx%s]\n"
         "  \\ - Compressing: %s\n"
         "RGB decoding is %s\n",
-        deviceStringPattern.cap(Device1Group) .toLatin1().constData(),
-        deviceStringPattern.cap(Device2Group) .toLatin1().constData(),
-        deviceStringPattern.cap(FpsNumGroup)  .toLatin1().constData(),
-        deviceStringPattern.cap(FpsDenumGroup).toLatin1().constData(),
-        deviceStringPattern.cap(WidthGroup)   .toLatin1().constData(),
-        deviceStringPattern.cap(HeightGroup)  .toLatin1().constData(),
-        deviceStringPattern.cap(CompressionGroup).toLatin1().constData(),
+        matches[Device1Group].str().c_str(),
+        matches[Device2Group].str().c_str(),
+        matches[FpsNumGroup].str().c_str(),
+        matches[FpsDenumGroup].str().c_str(),
+        matches[WidthGroup].str().c_str(),
+        matches[HeightGroup].str().c_str(),
+        matches[CompressionGroup].str().c_str(),
         mIsRgb ? "on" : "off"
     );
 
-    deviceName[RIGHT_FRAME] = deviceStringPattern.cap(Device1Group).toLatin1().constData();
-    deviceName[LEFT_FRAME ] = deviceStringPattern.cap(Device2Group).toLatin1().constData();
+    deviceName[RIGHT_FRAME] = matches[Device1Group].str();
+    deviceName[LEFT_FRAME ] = matches[Device2Group].str();
 
-    bool isOk;
-    cameraMode.fpsnum = deviceStringPattern.cap(FpsNumGroup).toInt(&isOk);
-    if (!isOk) cameraMode.fpsnum = 1;
+    bool isOk = false;
+    cameraMode.fpsnum = HelperUtils::parseInt(matches[FpsNumGroup].str(), &isOk);
+    if (!isOk || cameraMode.fpsnum < 0) cameraMode.fpsnum = 1;
 
-    cameraMode.fpsdenum = deviceStringPattern.cap(FpsDenumGroup).toInt(&isOk);
-    if (!isOk) cameraMode.fpsdenum = 10;
+    cameraMode.fpsdenum = HelperUtils::parseInt(matches[FpsDenumGroup].str(), &isOk);
+    if (!isOk || cameraMode.fpsdenum < 0) cameraMode.fpsdenum = 10;
 
-    cameraMode.width = deviceStringPattern.cap(WidthGroup).toInt(&isOk);
+    cameraMode.width = HelperUtils::parseInt(matches[WidthGroup].str(), &isOk);
     if (!isOk || cameraMode.width <= 0) cameraMode.width = 800;
 
-    cameraMode.height = deviceStringPattern.cap(HeightGroup).toInt(&isOk);
+    cameraMode.height = HelperUtils::parseInt(matches[HeightGroup].str(), &isOk);
     if (!isOk || cameraMode.height <= 0) cameraMode.height = 600;
 
     decoder = UNCOMPRESSED;
-    if (!deviceStringPattern.cap(CompressionGroup).isEmpty())
+    if (!matches[CompressionGroup].str().empty())
     {
-        if (!deviceStringPattern.cap(CompressionGroup).compare(QString(":mjpeg")))
+        if (matches[CompressionGroup].str() == std::string(":mjpeg"))
             decoder = COMPRESSED_JPEG;
-        if (!deviceStringPattern.cap(CompressionGroup).compare(QString(":fjpeg")))
+        if (matches[CompressionGroup].str() == std::string(":fjpeg"))
             decoder = COMPRESSED_FAST_JPEG;
     }
 
@@ -154,6 +156,8 @@ int V4L2CaptureInterface::setConfigurationString(string _devname)
 
     printf("Capture Right device: V4L2 %s\n", deviceName[RIGHT_FRAME].c_str());
     printf("Capture Left  device: V4L2 %s\n", deviceName[ LEFT_FRAME].c_str());
+    printf("Fps [%d / %d]\n"           , cameraMode.fpsnum, cameraMode.fpsdenum );
+    printf("Measurments [%d x %d]\n"   , cameraMode.width, cameraMode.height );
     printf("MJPEG compression is: %s\n", CODEC_NAMES[cameraMode.compressed]);
     return isOk ? 0 : 1;
 }
