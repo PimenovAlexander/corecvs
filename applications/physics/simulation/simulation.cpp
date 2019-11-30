@@ -67,7 +67,7 @@ void Simulation::execJanibekovTest()
         Quaternion testOrientation = Quaternion(0, 0.012489, 0, 0.999922);
 
         testBolt.orientation = testOrientation;
-        //testBolt.angularVelocity = testAngVel;
+        testBolt.angularVelocity = testAngVel;
 
         while (isAlive)
         {
@@ -90,8 +90,8 @@ void Simulation::execJanibekovTest()
 
             if(timePassed > 5 && timePassed < 10)
             {
-                testBolt.partsOfSystem[0].addForce(force);
-                testBolt.partsOfSystem[1].addForce(-force);
+                //testBolt.partsOfSystem[0].addForce(force);
+                //testBolt.partsOfSystem[1].addForce(-force);
                 //testBolt.angularVelocity = testQ;
             }
 

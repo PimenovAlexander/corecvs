@@ -180,8 +180,10 @@ void JanibekovsBolt::tick(double deltaT)
     Matrix33 transposedOrient = orientation.toMatrix();
     transposedOrient.transpose();
 
-    //inertiaTensor = orientation.toMatrix() * diagonalizedInertiaTensor * transposedOrient;// orientation.toMatrix().transpose();
-inertiaTensor = diagonalizedInertiaTensor;
+    inertiaTensor = orientation.toMatrix() * diagonalizedInertiaTensor * transposedOrient;// orientation.toMatrix().transpose();
+
+    //inertiaTensor = diagonalizedInertiaTensor;
+
     /*
     if(testMode)
     {
@@ -191,7 +193,7 @@ inertiaTensor = diagonalizedInertiaTensor;
     {
         inertiaTensor = diagonalizedInertiaTensor;
     }
-*/
+    */
     using namespace std::chrono;
     time_t ms0 = duration_cast< milliseconds >(
     system_clock::now().time_since_epoch()
