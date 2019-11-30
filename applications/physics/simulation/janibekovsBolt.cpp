@@ -1,5 +1,6 @@
 #include "janibekovsBolt.h"
 #include <core/fileformats/meshLoader.h>
+using namespace std::chrono;
 JanibekovsBolt::JanibekovsBolt(double arm, double mass)
 {
     setSystemMass(mass);
@@ -14,10 +15,10 @@ JanibekovsBolt::JanibekovsBolt(double arm, double mass)
     partsOfSystem.push_back(PhysSphere(&defaultPos, &partsRadius, &massOfTestingObject));
     partsOfSystem.push_back(PhysSphere(&defaultPos, &partsRadius, &massOfZeroObject));
 
-    partsOfSystem[0].color = RGBColor::Red();    /*Front right*/
-    partsOfSystem[1].color = RGBColor::Red();  /*Back  left*/
-    partsOfSystem[2].color = RGBColor::Green();    /*Front left*/
-    partsOfSystem[3].color = RGBColor::Yellow();  /*Back  right*/
+    partsOfSystem[0].color = RGBColor::Red();    /*Rotating Sphere*/
+    partsOfSystem[1].color = RGBColor::Red();  /*Rotating Sphere*/
+    partsOfSystem[2].color = RGBColor::Green();    /*Sphere with mass*/
+    partsOfSystem[3].color = RGBColor::Yellow();  /*Sphere without mass*/
 
     partsOfSystem[0].setPos(Vector3dd( 0,  1, 0).normalised() * 3 * arm);
     partsOfSystem[1].setPos(Vector3dd( 0, -1, 0).normalised() * 3 * arm);
@@ -192,13 +193,13 @@ void JanibekovsBolt::tick(double deltaT)
         inertiaTensor = diagonalizedInertiaTensor;
     }
 */
-    using namespace std::chrono;
+
     time_t ms0 = duration_cast< milliseconds >(
     system_clock::now().time_since_epoch()
     ).count();
     if(ms0 % 200 == 0)
     {
-        Matrix33 invAngVel = angularVelocity.toMatrix();
+        //Matrix33 invAngVel = angularVelocity.toMatrix();
         //L_INFO << invAngVel;
         L_INFO << orientation;
         //L_INFO<< "Diagonalized Tensor: " << diagonalizedInertiaTensor / inertialMomentX;
@@ -230,11 +231,8 @@ void JanibekovsBolt::tick(double deltaT)
     orientation = Quaternion::pow(angularVelocity, deltaT * 1000) ^ orientation;
 
     //Just async output
-    using namespace std::chrono;
-    time_t ms = duration_cast< milliseconds >(
-    system_clock::now().time_since_epoch()
-    ).count();
-    if(ms % 200 == 0)
+
+    if(ms0 % 200 == 0)
     {
         //L_INFO<<"Delta orient: "<<orientation.getAngle()-q.getAngle();
         //L_INFO << angularAcceleration;
@@ -243,11 +241,8 @@ void JanibekovsBolt::tick(double deltaT)
     //orientation.printAxisAndAngle();
     Quaternion temp = Quaternion::pow(angularAcceleration,deltaT);
 
-    using namespace std::chrono;
-    time_t ms1 = duration_cast< milliseconds >(
-    system_clock::now().time_since_epoch()
-    ).count();
-    if(ms % 200 == 0)
+
+    if(ms0 % 200 == 0)
     {
         //L_INFO << angularVelocity;
     }

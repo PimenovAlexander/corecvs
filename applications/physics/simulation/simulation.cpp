@@ -78,7 +78,7 @@ void Simulation::execJanibekovTest()
             Quaternion testOrientation = Quaternion(0, 0.012489, 0, 0.999922);
             //q = transposedOrient * q.toMatrix();
 
-            testBolt.angularVelocity = testAngVel;
+            //testBolt.angularVelocity = testAngVel;
             testBolt.orientation = testOrientation;
 
 
