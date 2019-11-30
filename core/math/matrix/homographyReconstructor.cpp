@@ -602,53 +602,6 @@ Matrix33 HomographyReconstructor::CostFunctionWize::matrixFromState(const double
     return S * P * T * R;
 }
 
-
-#ifdef DEPRECATED
-/**
- *  This block is devoted to Kalman reconstruction
- **/
-
-Matrix33 HomographyReconstructor::getBestHomographyClassicKalman()
-{
-    CostFunction F(this);
-    IdentityFunction H(1);
-
-    // We know almost nothing about the homography matrix
-    Matrix P(8,8, 1000.0);
-    // Our model evolution is precise
-    Matrix Q(8,8, 0.0);
-
-    // Our measurement is precise up to 2px.
-    Matrix R(1,1, 2.0 * 8.0);
-
-    Matrix33 ident(1.0);
-    Vector x(8, ident.element);
-
-    ClassicKalman kalmanFilter(
-        &F,
-        &H,
-        Q,
-        R,
-        P,
-        x);
-
-    for (int step = 0; step < 250; step++)
-    {
-        double measurement = 0.0;
-        kalmanFilter.predict();
-        kalmanFilter.z[0] = measurement;
-        kalmanFilter.update();
-    }
-
-    return Matrix33(
-            kalmanFilter.x[0], kalmanFilter.x[1], kalmanFilter.x[2],
-            kalmanFilter.x[3], kalmanFilter.x[4], kalmanFilter.x[5],
-            kalmanFilter.x[6], kalmanFilter.x[7], 1.0
-    );
-
-}
-#endif
-
 /**
  *  This block is devoted to LM reconstruction
  **/

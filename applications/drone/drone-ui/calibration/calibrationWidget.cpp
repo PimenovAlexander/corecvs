@@ -106,30 +106,9 @@ void CalibrationWidget::newFrameRequset()
     pair.setRgbBufferLeft(NULL);
     pair.freeBuffers();
 
-    int numCornersHor = ui->widthSpinBox->value();
-    int numCornersVer = ui->heightSpinBox->value();
-
-    int numSquares = numCornersHor * numCornersVer;
-
-    cv::Size board_sz = cv::Size(numCornersHor, numCornersVer);
-
-    cv::Mat image;
-    cv::Mat gray_image;
-
-    std::vector<cv::Point2f> corners;
-
-    bool found = findChessboardCorners(image, board_sz, corners, CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS);
-
-    if(found)
-    {
-        cvtColor(image, gray_image, CV_RGB2GRAY);
-        cornerSubPix( gray_image, corners, cv::Size(11,11),
-                                    cv::Size(-1,-1), cv::TermCriteria( cv::TermCriteria::EPS+cv::TermCriteria::COUNT, 30, 0.1 ));
-        cv::drawChessboardCorners(gray_image, board_sz, corners, found);       
-    }
 
     if (result != NULL)
-    ui->imageWidget->setImage(QSharedPointer<QImage>(new RGB24Image(result)));
+      ui->imageWidget->setImage(QSharedPointer<QImage>(new RGB24Image(result)));
 
     QTimer::singleShot(50, this, SLOT(newFrameRequset()));
 }
@@ -186,7 +165,7 @@ void CalibrationWidget::updateStartButtonAndRemoveWidget(int k)
             size--;
         }
     }
-    if (widgets.size()>4)
+    if (widgets.size() > 4)
     {
         ui->startButton->setEnabled(true);
     }

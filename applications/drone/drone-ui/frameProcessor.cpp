@@ -5,6 +5,8 @@
 
 #include "physicsMainWindow.h"
 
+#include <math/matrix/homographyReconstructor.h>
+
 FrameProcessor::FrameProcessor(QObject *parent) : QThread(parent)
 {
     SYNC_PRINT(("FrameProcessor::processFrame():called\n"));
@@ -67,8 +69,25 @@ void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata frameData
             AbstractPainter<RGB24Buffer> p(result);
             Vector2dd center = (a + c) / 2;
             p.drawFormat(center.x(), center.y(), color, 2, "%d", pattern.mId);
-
         }
+
+        /* Try to locate myself */
+       if (!patterns.empty())
+       {
+           PatternDetectorResult &pattern = patterns[0];
+           HomographyReconstructor reconstructor;
+           reconstructor.addPoint2PointConstraint(Vector2dd::Zero() , Vector2dd(pattern.mPosition));
+           reconstructor.addPoint2PointConstraint(Vector2dd::OrtX() , Vector2dd(pattern.mOrtX));
+           reconstructor.addPoint2PointConstraint(Vector2dd::OrtY() , Vector2dd(pattern.mOrtY));
+           reconstructor.addPoint2PointConstraint(Vector2dd(1.0,1.0), Vector2dd(pattern.mUnityPoint));
+
+           Matrix33 homography = reconstructor.getBestHomography();
+
+
+       }
+
+
+
     } else {
         SYNC_PRINT(("FrameProcessor::processFrame(): detector is NULL\n"));
     }
