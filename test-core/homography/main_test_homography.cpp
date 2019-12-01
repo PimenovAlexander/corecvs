@@ -489,38 +489,56 @@ TEST(Homography, testPoseReconstrution)
         )
     );
 
-    Affine3DQ cameraModel = Affine3DQ::Shift(0, 0, -10);
 
-    model.setLocation(cameraModel);
+    Affine3DQ inputPoses[] =
+        {
+           Affine3DQ::Shift(0, 0, -10) * Affine3DQ::RotationX(degToRad(1)),
+           Affine3DQ::Shift(1, 0, -10) * Affine3DQ::RotationX(degToRad(2)) * Affine3DQ::RotationY(degToRad(22)),
+           Affine3DQ::Shift(0, 2, -10) * Affine3DQ::RotationX(degToRad(1)) * Affine3DQ::RotationZ(degToRad(-5)),
+           Affine3DQ::Shift(1, 1, -10) * Affine3DQ::RotationY(degToRad(1)) * Affine3DQ::RotationZ(degToRad(-5))
+        };
 
-    /*Plane points*/
-    Vector3dd p[4] = {
-        Vector3dd(0,0,0),
-        Vector3dd(1,0,0),
-        Vector3dd(1,1,0),
-        Vector3dd(0,1,0)
-    };
-
-    Vector2dd q[4];
-
-    HomographyReconstructor reconstrutuctor;
-
-    for (int i = 0; i < CORE_COUNT_OF(p); i++)
+    for (int i = 0; i < CORE_COUNT_OF(inputPoses); i++)
     {
-        q[i] = model.project(p[i]);
-        cout << "P " << p[i] << "  -  " << q[i] << endl;
+        Affine3DQ cameraPose = inputPoses[i];
 
-        reconstrutuctor.addPoint2PointConstraint(p[i].xy(), q[i]);
+        cout << "Pose Matrix\n" << endl;
+        cout << (Matrix44)cameraPose << endl;
+        model.setLocation(cameraPose);
+        //cout << model.extrinsics
+
+        /*Plane points*/
+        Vector3dd p[4] = {
+            Vector3dd(0,0,0),
+            Vector3dd(1,0,0),
+            Vector3dd(1,1,0),
+            Vector3dd(0,1,0)
+        };
+
+        Vector2dd q[4];
+
+        HomographyReconstructor reconstrutuctor;
+
+        for (int i = 0; i < CORE_COUNT_OF(p); i++)
+        {
+            q[i] = model.project(p[i]);
+            cout << "P " << p[i] << "  -  " << q[i] << endl;
+
+            reconstrutuctor.addPoint2PointConstraint(p[i].xy(), q[i]);
+        }
+
+        Matrix33 H = reconstrutuctor.getBestHomography();
+        cout << "Homography\n" << H << endl;
+
+        PinholeCameraIntrinsics *pinhole = model.getPinhole();
+        Matrix33 K = pinhole->getKMatrix33();
+
+        /** Try to reconstruct **/
+        Affine3DQ pose = HomographyReconstructor::getAffineFromHomography(K, H);
+        cout << "Pose:" << endl;
+        cout << (Matrix44)pose << endl;
+        cout << pose << endl;
+
+        CORE_ASSERT_TRUE(cameraPose.notToFar(pose, 1e-7), "Failed pose reconstruction");
     }
-
-    Matrix33 H = reconstrutuctor.getBestHomography();
-    cout << "Homography\n" << H << endl;
-
-    PinholeCameraIntrinsics *pinhole = model.getPinhole();
-    Matrix33 K = pinhole->getKMatrix33();
-
-    /** Try to reconstruct **/
-    Matrix33 Hc = K.inv() * H;
-
-
 }

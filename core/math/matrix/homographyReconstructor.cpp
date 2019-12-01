@@ -236,6 +236,29 @@ void HomographyReconstructor::addPoint2PointConstraintLSEUnif(
    A.fillLineWithArgs(num + 1, 0.0, 0.0, 0.0,  fx,  fy, 1.0, -fx * ty, -fy * ty, -ty);
 }
 
+CameraLocationData HomographyReconstructor::getCameraFromHomography(const Matrix33 &K, const Matrix33 &H)
+{
+    Matrix33 Hc = K.inv() * H;
+    cout << "Homography\n" << Hc << endl;
+    Vector3dd v1 = Hc.column(0);
+    Vector3dd v2 = Hc.column(1);
+    Vector3dd v3 = v1 ^ v2;
+
+    double scaler = (v1.l2Metric() + v2.l2Metric()) / 2.0;
+
+    Matrix33 R = Matrix33::FromColumns(v1.normalised(), v2.normalised(), v3.normalised());
+    Quaternion Q = Quaternion::FromMatrix(R);
+    Q.printAxisAndAngle();
+
+    Vector3dd t = Hc.column(2) / scaler;
+    return CameraLocationData(-(Q.conjugated() * t), Q);
+}
+
+Affine3DQ HomographyReconstructor::getAffineFromHomography(const Matrix33 &K, const Matrix33 &H)
+{
+    return getCameraFromHomography(K, H).toAffine3D();
+}
+
 
 /**
  *  Matrix is searched in form

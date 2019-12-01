@@ -120,6 +120,10 @@ public slots:
 
     void showCameraParametersWidget();
     void showCameraModelWidget();
+    void cameraModelWidgetChanged();
+
+signals:
+    void newCameraModel(CameraModel model);
 
 /** Processing **/
 public:

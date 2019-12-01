@@ -10,17 +10,18 @@
 #include <iostream>
 #include <vector>
 
-#include "core/xml/generated/homographyAlgorithm.h"
-#include "core/xml/generated/homorgaphyReconstructorBlockBase.h"
 #include "core/math/vector/vector2d.h"
 #include "core/math/matrix/matrix33.h"
-#include "core/geometry/polygons.h"
-#include "core/buffers/correspondenceList.h"
 #include "core/math/matrix/matrix.h"
+#include "core/math/matrix/matrixOperations.h"
 #include "core/function/function.h"
 #include "core/geometry/line.h"
-#include "core/math/matrix/matrixOperations.h"
+#include "core/geometry/polygons.h"
+#include "core/buffers/correspondenceList.h"
 #include "core/filters/newstyle/newStyleBlock.h"
+#include "core/cameracalibration/calibrationLocation.h"
+#include "core/xml/generated/homographyAlgorithm.h"
+#include "core/xml/generated/homorgaphyReconstructorBlockBase.h"
 
 namespace corecvs {
 
@@ -172,18 +173,11 @@ private:
     };
 
 
+public:
+    static CameraLocationData getCameraFromHomography(const Matrix33 &K, const Matrix33 &H);
+    static Affine3DQ          getAffineFromHomography(const Matrix33 &K, const Matrix33 &H);
 
 
-#if 0
-    /**
-     * \deprecated
-     **/
-    Matrix33 getBestHomographyClassicKalman(void);
-    /**
-     * \deprecated
-     **/
-    Matrix33 getBestHomographyFastKalman(void);
-#endif
 
 public:
     /**
@@ -234,6 +228,8 @@ public:
     }
 
 };
+
+
 
 /* This part is an attempt to support an interface for a new block structure*/
 class HomographyReconstructorBlock : public HomorgaphyReconstructorBlockBase, public NewStyleBlock

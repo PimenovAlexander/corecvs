@@ -37,6 +37,7 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
     mCameraModel.intrinsics.reset(intr);
     mCameraModel.nameId = "Copter Main Camera";
     mModelParametersWidget.setParameters(mCameraModel);
+    connect(&mModelParametersWidget, SIGNAL(paramsChanged()), this, SLOT(cameraModelWidgetChanged()));
 
     for (int i=0;i<8;i++)
     {
@@ -343,6 +344,11 @@ void PhysicsMainWindow::startCamera()                                           
     connect(this      , SIGNAL(newPatternDetectionParameters(GeneralPatternDetectorParameters)),
             mProcessor, SLOT  (setPatternDetectorParameters(GeneralPatternDetectorParameters)));
 
+    SYNC_PRINT(("PhysicsMainWindow::startCamera(): connecting camera model\n"));
+    qRegisterMetaType<CameraModel>("CameraModel");
+    connect(this      , SIGNAL(newCameraModel(CameraModel)),
+            mProcessor, SLOT  (setCameraModel(CameraModel)));
+
 
 
     //std::string inputString = inputCameraPath;
@@ -405,6 +411,14 @@ void PhysicsMainWindow::showCameraModelWidget()
     mModelParametersWidget.show();
     mModelParametersWidget.raise();
 }
+
+void PhysicsMainWindow::cameraModelWidgetChanged()
+{
+    SYNC_PRINT(("PhysicsMainWindow::cameraModelWidgetChanged()\n"));
+    mModelParametersWidget.getParameters(mCameraModel);
+    emit newCameraModel(mCameraModel);
+}
+
 
 void PhysicsMainWindow::showProcessingParametersWidget()
 {

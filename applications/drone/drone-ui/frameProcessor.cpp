@@ -7,6 +7,8 @@
 
 #include <math/matrix/homographyReconstructor.h>
 
+#include <geometry/renderer/simpleRenderer.h>
+
 FrameProcessor::FrameProcessor(QObject *parent) : QThread(parent)
 {
     SYNC_PRINT(("FrameProcessor::processFrame():called\n"));
@@ -81,13 +83,21 @@ void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata frameData
            reconstructor.addPoint2PointConstraint(Vector2dd::OrtY() , Vector2dd(pattern.mOrtY));
            reconstructor.addPoint2PointConstraint(Vector2dd(1.0,1.0), Vector2dd(pattern.mUnityPoint));
 
-           Matrix33 homography = reconstructor.getBestHomography();
+           Matrix33  homography = reconstructor.getBestHomography();
+           PinholeCameraIntrinsics *pinhole = mCameraModel.getPinhole();
+           Matrix33 K = pinhole->getKMatrix33();
 
+           Affine3DQ affine = HomographyReconstructor::getAffineFromHomography(K, homography);
+           cout << affine << endl;
 
+           CameraModel simulated(pinhole->clone());
+           simulated.setLocation(affine);
+           SimpleRenderer renderer;
+           renderer.modelviewMatrix = simulated.getCameraMatrix();
+           Mesh3D mesh;
+           mesh.addAOB(Vector3dd(0,0,0), Vector3dd(1,1,1));
+           renderer.render(&mesh, result);
        }
-
-
-
     } else {
         SYNC_PRINT(("FrameProcessor::processFrame(): detector is NULL\n"));
     }
@@ -122,4 +132,10 @@ void FrameProcessor::setPatternDetectorParameters(GeneralPatternDetectorParamete
         detector->setParameters(it.first, it.second);
     }
     SYNC_PRINT(("FrameProcessor::setPatternDetectorParameters(): New detector <%s> created\n", params.provider.c_str()));
+}
+
+void FrameProcessor::setCameraModel(CameraModel params)
+{
+    SYNC_PRINT(("FrameProcessor::setCameraModel(): called\n"));
+    mCameraModel = params;
 }

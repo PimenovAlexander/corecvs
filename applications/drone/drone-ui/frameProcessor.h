@@ -3,6 +3,7 @@
 #include <QThread>
 #include <patternDetectorParametersWidget.h>
 #include <core/framesources/imageCaptureInterface.h>
+#include <core/cameracalibration/cameraModel.h>
 #include <patterndetection/patternDetector.h>
 
 
@@ -24,6 +25,7 @@ public:
 
    /* Main setup */
     PatternDetector *detector = NULL;
+    CameraModel mCameraModel;
 
 
 public slots:
@@ -32,6 +34,7 @@ public slots:
 
 
     void setPatternDetectorParameters(GeneralPatternDetectorParameters params);
+    void setCameraModel              (CameraModel params);
 
     virtual void run()
     {
