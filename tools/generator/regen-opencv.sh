@@ -45,5 +45,11 @@ copy_if_different Generated/openCVSquareDetectorParameters.cpp      $opencv/gene
 copy_if_different Generated/openCVCheckerBoardDetectorParameters.h        $opencv/generated
 copy_if_different Generated/openCVCheckerBoardDetectorParameters.cpp      $opencv/generated
 
+# DISFlow
+
+copy_if_different Generated/disFlowParameters.h        $opencv/generated
+copy_if_different Generated/disFlowParameters.cpp      $opencv/generated
+
+
 
 echo "copied"
