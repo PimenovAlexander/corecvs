@@ -35,10 +35,8 @@ double fRand(double fMin, double fMax)
 
 void Simulation::startRealTimeSimulation()
 {
-
     std::thread thr([this]()
     {
-
         oldTime = std::chrono::high_resolution_clock::now();
         while (isAlive)
         {
@@ -105,78 +103,14 @@ void Simulation::startDroneSimulation()
         noiseTime = startTime;
         noiseReverseTime = startTime;
 
-        //Quaternion testAngVel = Quaternion(-0.00144962, -2.8152e-11, 9.80112e-15, 0.999999);
-        Vector3dd testAngVel = Vector3dd(2, 0.01, 0) * 0.000001;
-        //Quaternion testOrientation = Quaternion(0, 0.012489, 0, 0.999922);
-        Quaternion testOrientation = Quaternion::Identity();
-
-        testBolt.orientation = testOrientation;
-        testBolt.angularVelocity = testAngVel;
-
-        testBolt.mw = testAngVel.l2Metric();
-
         while (isAlive)
         {
-
             newTime = std::chrono::high_resolution_clock::now();
-
             double timePassed = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-startTime).count();
 
             Affine3DQ motorToWorld = testBolt.getTransform() * testBolt.partsOfSystem[1].getPosAffine();
             Matrix33 transposedOrient = motorToWorld.rotor.toMatrix();
             transposedOrient.transpose();
-            Vector3dd force = transposedOrient * Vector3dd(0.0, 0.0, 0.05);
-            Vector3dd force2 = Vector3dd(0.0, 0.0, 0.03);
-            Quaternion q = Quaternion(-0.00744148, -8.46662e-11, 0.000934261, 0.999972);
-
-            //q = transposedOrient * q.toMatrix();
-
-            //testBolt.angularVelocity = testAngVel;
-            //testBolt.orientation = testOrientation;
-
-
-
-            if(timePassed > 5 && timePassed < 10)
-            {
-                //testBolt.partsOfSystem[0].addForce(force);
-                //testBolt.partsOfSystem[1].addForce(-force);
-                //testBolt.angularVelocity = testAngVel;
-            }
-
-            if(timePassed > 10)
-            {
-                //testBolt.testMode = true;
-            }
-
-            if(timePassed < 0.1)
-            {
-                //testBolt.angularVelocity = testAngVel;
-                //testBolt.partsOfSystem[2].addForce(force2);
-            }
-
-            if(timePassed > 0.5 && timePassed < 0.6)
-            {
-                //testBolt.partsOfSystem[2].addForce(-force2);
-            }
-
-            if(noiseFlag)
-            {
-                noiseTime = std::chrono::high_resolution_clock::now();
-                //testBolt.partsOfSystem[2].addForce(Vector3dd(0.0, 0.0, fRand(5,10)));
-                if(std::chrono::duration_cast<std::chrono::duration<double>>(noiseTime - noiseReverseTime).count() > 0.5)
-                {
-                    noiseFlag = !noiseFlag;
-                }
-            }
-            else
-            {
-                noiseReverseTime = std::chrono::high_resolution_clock::now();
-                //testBolt.partsOfSystem[2].addForce(Vector3dd(0.0, 0.0, -fRand(5,10)));
-                if(std::chrono::duration_cast<std::chrono::duration<double>>(noiseReverseTime - noiseTime).count() > 0.5)
-                {
-                    noiseFlag = !noiseFlag;
-                }
-            }
 
             time_span = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-oldTime);
             testBolt.physicsTick(time_span.count());

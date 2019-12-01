@@ -244,9 +244,9 @@ void PhysicsMainWindow::startVirtualMode()
         simSim.start();
         */
 
-    //simSim.startRealTimeSimulation();
+    simSim.startRealTimeSimulation();
     //simSim.execTestSimulation();
-    simSim.execJanibekovTest();
+    //simSim.execJanibekovTest();
     QTimer::singleShot(8, this, SLOT(keepAlive()));
 }
 
@@ -294,25 +294,25 @@ void PhysicsMainWindow::keepAlive()
         }
 
         if (oldbackend) {
-            //simSim.drone.drawMyself(*scene->owned);
-            simSim.testBolt.drawMyself(*scene->owned);
+            simSim.drone.drawMyself(*scene->owned);
+            //simSim.testBolt.drawMyself(*scene->owned);
         } else {
             Mesh3DDecorated *mesh = new Mesh3DDecorated();
             mesh->switchNormals();
-            //simSim.drone.drawMyself(*mesh);
-            simSim.testBolt.drawMyself(*mesh);
+            simSim.drone.drawMyself(*mesh);
+            //simSim.testBolt.drawMyself(*mesh);
             //mesh->dumpInfo();
             mShadedScene->setMesh(mesh);
         }
-/*
+
         mGraphDialog.addGraphPoint("X", simSim.drone.getPosCenter().x());
         mGraphDialog.addGraphPoint("Y", simSim.drone.getPosCenter().y());
         mGraphDialog.addGraphPoint("Z", simSim.drone.getPosCenter().z());
-*/
+/*
         mGraphDialog.addGraphPoint("X", simSim.testBolt.getPosCenter().x());
         mGraphDialog.addGraphPoint("Y", simSim.testBolt.getPosCenter().y());
         mGraphDialog.addGraphPoint("Z", simSim.testBolt.getPosCenter().z());
-
+*/
         mGraphDialog.update();
 
         if (oldbackend) {
