@@ -62,12 +62,15 @@ void Simulation::execJanibekovTest()
         noiseTime = startTime;
         noiseReverseTime = startTime;
 
-        Quaternion testAngVel = Quaternion(-0.00144962, -2.8152e-11, 9.80112e-15, 0.999999);
-
-        Quaternion testOrientation = Quaternion(0, 0.012489, 0, 0.999922);
+        //Quaternion testAngVel = Quaternion(-0.00144962, -2.8152e-11, 9.80112e-15, 0.999999);
+        Vector3dd testAngVel = Vector3dd(2, 0.01, 0) * 0.000001;
+        //Quaternion testOrientation = Quaternion(0, 0.012489, 0, 0.999922);
+        Quaternion testOrientation = Quaternion::Identity();
 
         testBolt.orientation = testOrientation;
         testBolt.angularVelocity = testAngVel;
+
+        testBolt.mw = testAngVel.l2Metric();
 
         while (isAlive)
         {
@@ -85,6 +88,8 @@ void Simulation::execJanibekovTest()
 
             //q = transposedOrient * q.toMatrix();
 
+            //testBolt.angularVelocity = testAngVel;
+            //testBolt.orientation = testOrientation;
 
 
 
@@ -92,7 +97,7 @@ void Simulation::execJanibekovTest()
             {
                 //testBolt.partsOfSystem[0].addForce(force);
                 //testBolt.partsOfSystem[1].addForce(-force);
-                //testBolt.angularVelocity = testQ;
+                //testBolt.angularVelocity = testAngVel;
             }
 
             if(timePassed > 10)

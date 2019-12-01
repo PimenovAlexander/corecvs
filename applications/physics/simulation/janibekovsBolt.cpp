@@ -1,5 +1,6 @@
 #include "janibekovsBolt.h"
 #include <core/fileformats/meshLoader.h>
+using namespace std::chrono;
 JanibekovsBolt::JanibekovsBolt(double arm, double mass)
 {
     setSystemMass(mass);
@@ -14,10 +15,10 @@ JanibekovsBolt::JanibekovsBolt(double arm, double mass)
     partsOfSystem.push_back(PhysSphere(&defaultPos, &partsRadius, &massOfTestingObject));
     partsOfSystem.push_back(PhysSphere(&defaultPos, &partsRadius, &massOfZeroObject));
 
-    partsOfSystem[0].color = RGBColor::Red();    /*Front right*/
-    partsOfSystem[1].color = RGBColor::Red();  /*Back  left*/
-    partsOfSystem[2].color = RGBColor::Green();    /*Front left*/
-    partsOfSystem[3].color = RGBColor::Yellow();  /*Back  right*/
+    partsOfSystem[0].color = RGBColor::Red();    /*Rotating Sphere*/
+    partsOfSystem[1].color = RGBColor::Red();  /*Rotating Sphere*/
+    partsOfSystem[2].color = RGBColor::Green();    /*Sphere with mass*/
+    partsOfSystem[3].color = RGBColor::Yellow();  /*Sphere without mass*/
 
     partsOfSystem[0].setPos(Vector3dd( 0,  1, 0).normalised() * 3 * arm);
     partsOfSystem[1].setPos(Vector3dd( 0, -1, 0).normalised() * 3 * arm);
@@ -153,6 +154,13 @@ void JanibekovsBolt::physicsTick(double deltaT)
 
 void JanibekovsBolt::tick(double deltaT)
 {
+    /** Sources:
+     * https://habr.com/ru/post/264381/
+     * https://www.euclideanspace.com/physics/kinematics/angularvelocity/
+     * https://fgiesen.wordpress.com/2012/08/24/quaternion-differentiation/
+     * Physically Based Modeling Rigid Body Simulation. David Baraff
+    **/
+
     double radius = centralSphere.radius;
     double centerMass = centralSphere.mass;
 
@@ -162,27 +170,19 @@ void JanibekovsBolt::tick(double deltaT)
     double armOfRotatingObjects = partsOfSystem[0].getPosVector().l2Metric();
     double armOfTestingObject = partsOfSystem[2].getPosVector().l2Metric();
 
-    double inertialMomentX = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * massOfRotatingObjects * pow(armOfRotatingObjects, 2);
-    double inertialMomentY = 2.0 / 5.0 * centerMass * pow(radius, 2) + massOfTestingObject * pow(armOfTestingObject, 2);
-    double inertialMomentZ = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * massOfRotatingObjects * pow(armOfRotatingObjects, 2)
+    double inertiaMomentX = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * massOfRotatingObjects * pow(armOfRotatingObjects, 2);
+    double inertiaMomentY = 2.0 / 5.0 * centerMass * pow(radius, 2) + massOfTestingObject * pow(armOfTestingObject, 2);
+    double inertiaMomentZ = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * massOfRotatingObjects * pow(armOfRotatingObjects, 2)
                                                                      + massOfTestingObject * pow(armOfTestingObject, 2);
 
-
-    inertialMomentX = 0.001;
-    inertialMomentY = 0.002;
-    inertialMomentZ = 0.0001;
-
-    Matrix33 diagonalizedInertiaTensor = Matrix33(inertialMomentX, 0, 0,
-                                                  0, inertialMomentY, 0,
-                                                  0, 0, inertialMomentZ);
+    Matrix33 diagonalizedInertiaTensor = Matrix33::FromDiagonal(1.0, 1.5, 0.75);
+    //Matrix33 diagonalizedInertiaTensor = Matrix33::FromDiagonal(0.001, 0.002, 0.0001);
+    //Matrix33 diagonalizedInertiaTensor = Matrix33::FromDiagonal(inertiaMomentX, inertiaMomentY, inertiaMomentZ);
 
 
-    Matrix33 transposedOrient = orientation.toMatrix();
-    transposedOrient.transpose();
-
-    inertiaTensor = orientation.toMatrix() * diagonalizedInertiaTensor * transposedOrient;// orientation.toMatrix().transpose();
-
-    //inertiaTensor = diagonalizedInertiaTensor;
+    Matrix33 transposedOrient = orientation.toMatrix().transposed();
+    //inertiaTensor = orientation.toMatrix() * diagonalizedInertiaTensor * transposedOrient;
+    inertiaTensor = diagonalizedInertiaTensor;
 
     /*
     if(testMode)
@@ -194,22 +194,24 @@ void JanibekovsBolt::tick(double deltaT)
         inertiaTensor = diagonalizedInertiaTensor;
     }
     */
-    using namespace std::chrono;
+
     time_t ms0 = duration_cast< milliseconds >(
     system_clock::now().time_since_epoch()
     ).count();
     if(ms0 % 200 == 0)
     {
-        Matrix33 invAngVel = angularVelocity.toMatrix();
-        L_INFO << invAngVel;
+        //Matrix33 invAngVel = angularVelocity.toMatrix();
+        //L_INFO << invAngVel;
         //L_INFO << orientation;
         //L_INFO<< "Diagonalized Tensor: " << diagonalizedInertiaTensor / inertialMomentX;
         //L_INFO << "Inertia tensor: " << inertiaTensor/inertialMomentX;
     }
 
+    /** Kinematics **/
     velocity = Vector3dd(0.0, 0.0, 0.0);
 
     Vector3dd newPos = getPosCenter() + velocity * deltaT;
+    /** Floor simulation **/
     if (newPos.z() < -0.1)
     {
         velocity = Vector3dd::Zero();
@@ -221,41 +223,33 @@ void JanibekovsBolt::tick(double deltaT)
     velocity += (getForce() / getSystemMass()) * deltaT;
 
     /* We should carefully use inertiaTensor here. It seems like it changes with the frame of reference */
-    /**This works as wanted**/
-    Vector3dd W = inertiaTensor.inv() * getMomentum();
-    angularAcceleration = Quaternion::pow(Quaternion::Rotation(W, W.l2Metric()), 0.000001);
+    /** Dynamics **/
+    Quaternion dq = Quaternion::Rotation(angularVelocity, angularVelocity.l2Metric());
+    orientation = orientation ^ dq;
 
-    Quaternion q = orientation;
+    Matrix33 omega = Matrix33::CrossProductLeft(angularVelocity);
+    //Vector3dd dw = -inertiaTensor.inv() * (getMomentum() - (omega * inertiaTensor * angularVelocity));
+    Vector3dd dw = inertiaTensor.inv() * (getMomentum() - (omega * inertiaTensor * angularVelocity));
+    angularVelocity += dw;
 
-    orientation = Quaternion::pow(angularVelocity, deltaT * 1000) ^ orientation;
+    /** Need more info about why this is needed **/
+    orientation.normalise();
 
-    //Just async output
-    using namespace std::chrono;
-    time_t ms = duration_cast< milliseconds >(
-    system_clock::now().time_since_epoch()
-    ).count();
-    if(ms % 200 == 0)
+    /** Understood what this should do, but have no clue how to apply this to object
+     * without initial angular veclocity (like DzhanibekovVideo test) **/
+    //double mw = w.l2Metric();
+    angularVelocity *= mw / angularVelocity.l2Metric();
+
+    /** Old physics equations, could be useful **/
+    //Vector3dd W = inertiaTensor.inv() * getMomentum();
+    //angularAcceleration = Quaternion::pow(Quaternion::Rotation(W, W.l2Metric()), 0.000001);
+    //orientation = Quaternion::pow(angularVelocity, deltaT * 1000) ^ orientation;
+    //angularVelocity = Quaternion::pow(angularAcceleration, deltaT * 1000) ^ angularVelocity;
+
+    /** Just output **/
+    if(ms0 % 200 == 0)
     {
         //L_INFO<<"Delta orient: "<<orientation.getAngle()-q.getAngle();
         //L_INFO << angularAcceleration;
     }
-
-    //orientation.printAxisAndAngle();
-    Quaternion temp = Quaternion::pow(angularAcceleration,deltaT);
-
-    using namespace std::chrono;
-    time_t ms1 = duration_cast< milliseconds >(
-    system_clock::now().time_since_epoch()
-    ).count();
-    if(ms % 200 == 0)
-    {
-        //L_INFO << angularVelocity;
-    }
-
-
-
-    angularVelocity = Quaternion::pow(angularAcceleration, deltaT * 1000) ^ angularVelocity;
-
-    //L_INFO<<"Delta orient: "<<abs(orientation.getAngle()-q.getAngle());
-
 }

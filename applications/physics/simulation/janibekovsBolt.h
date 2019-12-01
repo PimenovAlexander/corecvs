@@ -27,6 +27,7 @@ public:
     bool testMode = false;
     Mesh3DDecorated *worldMesh = NULL;
     void drawForces(Mesh3D &mesh);
+    double mw;
 };
 
 #endif // JANIBEKOVSBOLT_H
