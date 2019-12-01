@@ -35,13 +35,16 @@ bool DISFlow::setParameters(std::string name, const corecvs::DynamicObject &newP
 }
 
 std::map<std::string, corecvs::DynamicObject> DISFlow::getParameters() {
-    std::map<std::string, corecvs::DynamicObject> toReturn;
 
-    if (params->params == NULL)
+    cout << "DISFlow::getParameters(): called\n" << endl;
+    std::map<std::string, corecvs::DynamicObject> toReturn;
+    if (params == NULL || params->params == NULL)
     {
+        cout << "DISFlow::getParameters(): returning default parameters\n" << endl;
         DisFlowParameters dummy;
         toReturn.emplace("params", corecvs::DynamicObject(&dummy));
     } else {
+        cout << "DISFlow::getParameters(): returning real parameters\n" << endl;
         toReturn.emplace("params", corecvs::DynamicObject(params->params));
     }
     return toReturn;

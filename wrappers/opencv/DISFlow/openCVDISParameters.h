@@ -24,10 +24,10 @@ class DIS_Args {
 private:
     algorithm name;
 
-public: /* Well, why is it private, how should I access it? Why is it a pointer at all? */
-    DisFlowParameters *params;
+public: /* Well, why is it private? how should I access it? Why is it a pointer at all? */
+    DisFlowParameters *params = nullptr;
 private:
-    corecvs::RGB24Buffer *buffer1;
+    corecvs::RGB24Buffer *buffer1 = nullptr;
     int SELECTMODE;
     int SELECTCHANNEL;
 

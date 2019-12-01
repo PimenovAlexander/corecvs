@@ -21,7 +21,7 @@ public:
     corecvs::RGB24Buffer *inPrev  = NULL;
     corecvs::RGB24Buffer *inCurr  = NULL;
 
-    DIS_Args *params;
+    DIS_Args *params = nullptr;
 
     int SELECTCHANNEL;
     int SELECTMODE;
