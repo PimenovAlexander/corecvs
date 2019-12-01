@@ -48,6 +48,7 @@ public:
     std::vector<size_t> time_between_forces;
 
     void execJanibekovTest();
+    void startDroneSimulation();
 private:
     void defaultStart();
     void droneStart();

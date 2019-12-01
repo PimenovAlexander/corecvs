@@ -159,6 +159,7 @@ void JanibekovsBolt::tick(double deltaT)
      * https://www.euclideanspace.com/physics/kinematics/angularvelocity/
      * https://fgiesen.wordpress.com/2012/08/24/quaternion-differentiation/
      * Physically Based Modeling Rigid Body Simulation. David Baraff
+     * https://ocw.mit.edu/courses/aeronautics-and-astronautics/16-07-dynamics-fall-2009/lecture-notes/MIT16_07F09_Lec26.pdf
     **/
 
     double radius = centralSphere.radius;
@@ -178,7 +179,6 @@ void JanibekovsBolt::tick(double deltaT)
     Matrix33 diagonalizedInertiaTensor = Matrix33::FromDiagonal(1.0, 1.5, 0.75);
     //Matrix33 diagonalizedInertiaTensor = Matrix33::FromDiagonal(0.001, 0.002, 0.0001);
     //Matrix33 diagonalizedInertiaTensor = Matrix33::FromDiagonal(inertiaMomentX, inertiaMomentY, inertiaMomentZ);
-
 
     Matrix33 transposedOrient = orientation.toMatrix().transposed();
     //inertiaTensor = orientation.toMatrix() * diagonalizedInertiaTensor * transposedOrient;
@@ -238,7 +238,7 @@ void JanibekovsBolt::tick(double deltaT)
     /** Understood what this should do, but have no clue how to apply this to object
      * without initial angular veclocity (like DzhanibekovVideo test) **/
     //double mw = w.l2Metric();
-    angularVelocity *= mw / angularVelocity.l2Metric();
+    //angularVelocity *= mw / angularVelocity.l2Metric();
 
     /** Old physics equations, could be useful **/
     //Vector3dd W = inertiaTensor.inv() * getMomentum();

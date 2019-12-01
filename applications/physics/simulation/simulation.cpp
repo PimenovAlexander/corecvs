@@ -74,6 +74,49 @@ void Simulation::execJanibekovTest()
 
         while (isAlive)
         {
+            newTime = std::chrono::high_resolution_clock::now();
+            //double timePassed = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-startTime).count();
+
+            Affine3DQ motorToWorld = testBolt.getTransform() * testBolt.partsOfSystem[1].getPosAffine();
+            Matrix33 transposedOrient = motorToWorld.rotor.toMatrix();
+            transposedOrient.transpose();
+
+            //Vector3dd force = transposedOrient * Vector3dd(0.0, 0.0, 0.05);
+            //Vector3dd force2 = Vector3dd(0.0, 0.0, 0.03);
+            //Quaternion q = Quaternion(-0.00744148, -8.46662e-11, 0.000934261, 0.999972);
+
+            time_span = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-oldTime);
+            testBolt.physicsTick(time_span.count());
+            oldTime=newTime;
+
+            testBolt.startTick();
+        }
+    });
+    thr.detach();
+}
+
+void Simulation::startDroneSimulation()
+{
+    std::thread thr([this]()
+    {
+        srand(NULL);
+        startTime = std::chrono::high_resolution_clock::now();
+        oldTime = startTime;
+        noiseTime = startTime;
+        noiseReverseTime = startTime;
+
+        //Quaternion testAngVel = Quaternion(-0.00144962, -2.8152e-11, 9.80112e-15, 0.999999);
+        Vector3dd testAngVel = Vector3dd(2, 0.01, 0) * 0.000001;
+        //Quaternion testOrientation = Quaternion(0, 0.012489, 0, 0.999922);
+        Quaternion testOrientation = Quaternion::Identity();
+
+        testBolt.orientation = testOrientation;
+        testBolt.angularVelocity = testAngVel;
+
+        testBolt.mw = testAngVel.l2Metric();
+
+        while (isAlive)
+        {
 
             newTime = std::chrono::high_resolution_clock::now();
 
@@ -144,6 +187,8 @@ void Simulation::execJanibekovTest()
     });
     thr.detach();
 }
+
+
 
 void Simulation::execTestSimulation()
 {

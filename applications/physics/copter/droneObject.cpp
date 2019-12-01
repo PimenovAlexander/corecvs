@@ -4,7 +4,7 @@
 #include <core/fileformats/meshLoader.h>
 
 using namespace corecvs;
-
+using namespace std::chrono;
 DroneObject::DroneObject(double frameSize, double mass) : PhysMainObject()
 {
     setSystemMass(mass);
@@ -343,26 +343,31 @@ void DroneObject::physicsTick(double deltaT)
     //cout << "Quad::physicsTick(): " << position << endl;
 }
 
-
-
-
 void DroneObject::tick(double deltaT)
 {
+    /** Sources:
+     * https://habr.com/ru/post/264381/
+     * https://www.euclideanspace.com/physics/kinematics/angularvelocity/
+     * https://fgiesen.wordpress.com/2012/08/24/quaternion-differentiation/
+     * Physically Based Modeling Rigid Body Simulation. David Baraff
+     * https://ocw.mit.edu/courses/aeronautics-and-astronautics/16-07-dynamics-fall-2009/lecture-notes/MIT16_07F09_Lec26.pdf
+    **/
+
     double radius = centralSphere.radius;
     double motorMass = objects[1]->mass;
     double centerMass = objects[0]->mass;
+
     double arm = objects[2]->getPosVector().l2Metric();
+
     double inertialMomentX = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * motorMass * pow(arm, 2);
     double inertialMomentY = inertialMomentX;
     double inertialMomentZ = 2.0 / 5.0 * centerMass * pow(radius, 2) + 4 * motorMass * pow(arm, 2);
 
-    Matrix33 diagonalizedInertiaTensor = Matrix33(inertialMomentX, 0, 0,
-                                                  0, inertialMomentY, 0,
-                                                  0, 0, inertialMomentZ);
+    Matrix33 diagonalizedInertiaTensor = Matrix33::FromDiagonal(inertialMomentX, inertialMomentY, inertialMomentZ);
 
-    Matrix33 transposedOrient = orientation.toMatrix();
-    transposedOrient.transpose();
-    inertiaTensor = orientation.toMatrix() * diagonalizedInertiaTensor * transposedOrient;// orientation.toMatrix().transpose();
+    Matrix33 transposedOrient = orientation.toMatrix().transposed();
+    //inertiaTensor = orientation.toMatrix() * diagonalizedInertiaTensor * transposedOrient;
+    inertiaTensor = diagonalizedInertiaTensor;
 
     Vector3dd newPos = getPosCenter() + velocity * deltaT;
     if (newPos.z() < -0.1)
@@ -378,41 +383,40 @@ void DroneObject::tick(double deltaT)
     /* We should carefully use inertiaTensor here. It seems like it changes with the frame of reference */
     //L_INFO << "Momentum: " << getMomentum();
     /**This works as wanted**/
-    Vector3dd W = inertiaTensor.inv() * getMomentum();
-    Quaternion angularAcceleration = Quaternion::pow(Quaternion::Rotation(W, W.l2Metric()), 0.000001);
+    /** Dynamics **/
+    Quaternion dq = Quaternion::Rotation(angularVelocity, angularVelocity.l2Metric());
+    orientation = orientation ^ dq;
 
-    Quaternion q = orientation;
-    //Probably bug here
-    //angularVelocity = Quaternion(0.621634, 0, 0, -0.783308);
-    //////////////////orientation = Quaternion::pow(angularVelocity, deltaT * 1000) ^ orientation;
+    Matrix33 omega = Matrix33::CrossProductLeft(angularVelocity);
+    //Vector3dd dw = -inertiaTensor.inv() * (getMomentum() - (omega * inertiaTensor * angularVelocity));
+    Vector3dd dw = inertiaTensor.inv() * (getMomentum() - (omega * inertiaTensor * angularVelocity));
+    angularVelocity += dw;
 
-    //Just async output
-    using namespace std::chrono;
+    /** Need more info about why this is needed **/
+    orientation.normalise();
+
+    /** Understood what this should do, but have no clue how to apply this to object
+     * without initial angular veclocity (like DzhanibekovVideo test) **/
+    //double mw = w.l2Metric();
+    //angularVelocity *= mw / angularVelocity.l2Metric();
+
+    /** Just output **/
     time_t ms = duration_cast< milliseconds >(
     system_clock::now().time_since_epoch()
     ).count();
     if(ms % 200 == 0)
     {
         //L_INFO<<"Delta orient: "<<orientation.getAngle()-q.getAngle();
+        //L_INFO << angularAcceleration;
     }
 
-    //orientation.printAxisAndAngle();
-    Quaternion temp = Quaternion::pow(angularAcceleration,deltaT);
-
-    using namespace std::chrono;
-    time_t ms1 = duration_cast< milliseconds >(
-    system_clock::now().time_since_epoch()
-    ).count();
-    if(ms % 200 == 0)
-    {
-        //L_INFO << angularVelocity;
-    }
-
-    //Probably bug here
-    ////////////////////////angularVelocity = Quaternion::pow(angularAcceleration, deltaT * 1000) ^ angularVelocity;
-
-    //L_INFO<<"Delta orient: "<<abs(orientation.getAngle()-q.getAngle());
-
+    /** Old physics equations, could be useful **/
+    //Vector3dd W = inertiaTensor.inv() * getMomentum();
+    //angularAcceleration = Quaternion::pow(Quaternion::Rotation(W, W.l2Metric()), 0.000001);
+    //orientation = Quaternion::pow(angularVelocity, deltaT * 1000) ^ orientation;
+    //angularVelocity = Quaternion::pow(angularAcceleration, deltaT * 1000) ^ angularVelocity;
+    //////////////////orientation = Quaternion::pow(angularVelocity, deltaT * 1000) ^ orientation;
+    //////////////////angularVelocity = Quaternion::pow(angularAcceleration, deltaT * 1000) ^ angularVelocity;
 }
 
 DroneObject::~DroneObject()
