@@ -175,9 +175,9 @@ void JanibekovsBolt::tick(double deltaT)
     double inertiaMomentZ = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * massOfRotatingObjects * pow(armOfRotatingObjects, 2)
                                                                      + massOfTestingObject * pow(armOfTestingObject, 2);
 
-    Matrix33 diagonalizedInertiaTensor = Matrix33::FromDiagonal(1.0, 1.5, 0.75);
+    //Matrix33 diagonalizedInertiaTensor = Matrix33::FromDiagonal(1.0, 1.5, 0.75);
     //Matrix33 diagonalizedInertiaTensor = Matrix33::FromDiagonal(0.001, 0.002, 0.0001);
-    //Matrix33 diagonalizedInertiaTensor = Matrix33::FromDiagonal(inertiaMomentX, inertiaMomentY, inertiaMomentZ);
+    Matrix33 diagonalizedInertiaTensor = Matrix33::FromDiagonal(inertiaMomentX, inertiaMomentY, inertiaMomentZ);
 
 
     Matrix33 transposedOrient = orientation.toMatrix().transposed();
