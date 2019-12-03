@@ -55,11 +55,11 @@ std::map<std::string, std::vector<int>> DxfCodes::VARIABLE_CODES = {
 };
 
 std::map<std::string, DxfElementType> DxfCodes::ELEMENT_TYPES = {
-        {"LAYER",DxfElementType::DXF_LAYER},{"LTYPE",DxfElementType::DXF_LINE_TYPE},{"LINE",DxfElementType::DXF_LINE}
+        {"LAYER",DxfElementType::DXF_LAYER},{"LTYPE",DxfElementType::DXF_LINE_TYPE},{"LINE",DxfElementType::DXF_LINE},{"LWPOLYLINE",DxfElementType::DXF_LW_POLYLINE}
 };
 
 std::map<int, std::vector<uint8_t>> DxfCodes::AUTOCAD_COLORS = {
-        {0,{0,0,0}},{1,{255,0,0}},{2,{255,255,0}},{3,{0,255,0}},{255,{255,255,255}}
+        {0,{0,0,0}},{1,{255,0,0}},{2,{255,255,0}},{3,{0,255,0}},{7,{1,1,1}},{255,{255,255,255}}
 };
 
 std::map<int, DxfDrawingUnits> DxfCodes::DRAWING_UNITS = {

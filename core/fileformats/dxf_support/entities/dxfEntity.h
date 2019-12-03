@@ -15,12 +15,10 @@ namespace corecvs {
 // Abstract Entity
 class DxfEntity {
 public:
-    explicit DxfEntity(DxfEntityData *data)
-    : data(data) {}
-
-    virtual void draw(RGB24Buffer *buffer, DxfDrawingUnits units) {}
+    explicit DxfEntity(DxfEntityData *data) : data(data) {}
+    virtual void draw(RGB24Buffer *buffer, DxfDrawingUnits units, int height, int marginLeft, int marginTop) {}
     virtual void print() const;
-
+    virtual DxfEntityData* getData() { return data; };
 private:
     DxfEntityData *data;
 };
@@ -28,14 +26,23 @@ private:
 // LINE Entity
 class DxfLineEntity : public DxfEntity {
 public:
-    explicit DxfLineEntity(DxfLineData *data)
-    : DxfEntity(data),
-    data(data) {}
-
-    void draw(RGB24Buffer *buffer, DxfDrawingUnits units) override;
+    explicit DxfLineEntity(DxfLineData *data) : DxfEntity(data), data(data) {}
+    void draw(RGB24Buffer *buffer, DxfDrawingUnits units, int height, int marginLeft, int marginTop) override;
     void print() const override;
-
+    DxfLineData* getData() override { return data; };
+private:
     DxfLineData *data;
+};
+
+// LWPOLYLINE Entity
+class DxfLwPolylineEntity : public DxfEntity {
+public:
+    explicit DxfLwPolylineEntity(DxfLwPolylineData *data) : DxfEntity(data), data(data) {}
+    void draw(RGB24Buffer *buffer, DxfDrawingUnits units, int height, int marginLeft, int marginTop) override;
+    void print() const override;
+    DxfLwPolylineData* getData() override { return data; };
+private:
+    DxfLwPolylineData *data;
 };
 
 } // namespace corecvs

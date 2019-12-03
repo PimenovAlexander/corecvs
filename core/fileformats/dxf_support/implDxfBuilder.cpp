@@ -35,11 +35,12 @@ void ImplDxfBuilder::set3DVectorVariable(int code, std::string const &name, doub
 
 // Objects
 void ImplDxfBuilder::addLayer(DxfLayerObject *object) {
-    object->print();
+    layers.insert(std::make_pair(object->getData()->name, object));
+    objects.push_back(object);
 }
 
 void ImplDxfBuilder::addLineType(corecvs::DxfLineTypeObject *object) {
-    object->print();
+    objects.push_back(object);
 }
 
 // Entities
@@ -47,24 +48,42 @@ void ImplDxfBuilder::addLine(DxfLineEntity *entity) {
     entities.push_back(entity);
 }
 
+void ImplDxfBuilder::addLwPolyline(DxfLwPolylineEntity *entity) {
+    entities.push_back(entity);
+}
+
 // Drawing
-RGB24Buffer* ImplDxfBuilder::draw() {
+void ImplDxfBuilder::prepareToDraw() {
     auto x1 = DxfCodes::getDrawingValue(leftTopCorner.x(), units);
     auto y1 = DxfCodes::getDrawingValue(leftTopCorner.y(), units);
     auto x2 = DxfCodes::getDrawingValue(rightBottomCorner.x(), units);
     auto y2 = DxfCodes::getDrawingValue(rightBottomCorner.y(), units);
     width = y2 - y1;
     height = x2 - x1;
+    width += marginLeft + marginRight;
+    height += marginTop + marginBottom;
 
-    RGB24Buffer* buffer = new RGB24Buffer(width, height, RGBColor::White());
+    for (DxfObject* object : objects) {
+        object->print();
+    }
+
     for (DxfEntity* entity : entities) {
-        entity->draw(buffer, units);
+        auto data = entity->getData();
+        if (data->colorNumber == 256) data->colorNumber = layers[data->layerName]->getData()->colorNumber;
+
+        auto rgb = DxfCodes::getRGB(data->colorNumber);
+        if (!rgb.empty()) data->rgbColor = RGBColor(rgb[0], rgb[1], rgb[2]);
         entity->print();
     }
 
     std::cout << "Left-top corner: " << leftTopCorner << std::endl;
     std::cout << "Right-bottom corner: " << rightBottomCorner << std::endl;
+}
 
+RGB24Buffer* ImplDxfBuilder::draw() {
+    prepareToDraw();
+    RGB24Buffer* buffer = new RGB24Buffer(width, height, RGBColor::White());
+    for (DxfEntity* entity : entities) entity->draw(buffer, units, height, marginLeft, marginRight);
     return buffer;
 }
 

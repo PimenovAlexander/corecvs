@@ -11,6 +11,7 @@
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/buffers/rgb24/abstractPainter.h"
 #include "core/fileformats/bufferLoader.h"
+#include "core/math/vector/vector2d.h"
 #include <map>
 
 namespace corecvs {
@@ -27,12 +28,15 @@ private:
     DxfElementType currentElementType;
     std::string variableName;
     std::map<int, std::string> rawValues;
+    std::vector<Vector2d<double>> currentVertices = {};     // vertices of LwPolylineEntity
 
     int processDxfPair(IDxfBuilder *dxfBuilder, int code, std::string const &value);
     void addVariable(IDxfBuilder *dxfBuilder);
     void addLayer(IDxfBuilder *dxfBuilder);
     void addLineType(IDxfBuilder *dxfBuilder);
     void addLine(IDxfBuilder *dxfBuilder);
+    void addLwPolyline(IDxfBuilder *dxfBuilder);
+    void handleLwPolyline(int groupCode);
     DxfEntityData* getEntityData();
     DxfObjectData* getObjectData();
     static bool getTruncatedLine(std::string &s, std::istream &stream);

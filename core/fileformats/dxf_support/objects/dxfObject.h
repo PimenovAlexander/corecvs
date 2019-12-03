@@ -17,6 +17,7 @@ public:
     : data(data) {}
 
     virtual void print() const;
+    virtual DxfObjectData* getData() { return data; };
 
 private:
     DxfObjectData *data;
@@ -30,7 +31,9 @@ public:
     data(data) {}
 
     void print() const override;
+    DxfLayerData* getData() override { return data; };
 
+private:
     DxfLayerData *data;
 };
 
@@ -42,7 +45,9 @@ public:
     data(data) {}
 
     void print() const override;
+    DxfLineTypeData* getData() override { return data; };
 
+private:
     DxfLineTypeData *data;
 };
 

@@ -10,6 +10,7 @@
 #include "core/math/vector/vector3d.h"
 #include <string>
 #include <list>
+#include <map>
 
 namespace corecvs {
 
@@ -30,6 +31,7 @@ public:
 
     // Entities
     void addLine(DxfLineEntity *entity) override;
+    void addLwPolyline(DxfLwPolylineEntity *entity) override;
 
     RGB24Buffer* draw() override;
 
@@ -37,9 +39,17 @@ private:
     DxfDrawingUnits units;
     int width;
     int height;
+    int marginLeft = 10;
+    int marginRight = 10;
+    int marginTop = 10;
+    int marginBottom = 10;
     Vector3dd leftTopCorner;
     Vector3dd rightBottomCorner;
     std::list<DxfEntity*> entities = {};
+    std::list<DxfObject*> objects = {};
+    std::map<std::string,DxfLayerObject*> layers = {};
+
+    void prepareToDraw();
 };
 
 } // namespace corecvs

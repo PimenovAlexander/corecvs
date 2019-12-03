@@ -9,11 +9,12 @@
 #include <vector>
 #include <string>
 #include <list>
+#include <iostream>
 
 namespace corecvs {
 
 enum class DxfElementType {
-    DXF_LAYER, DXF_LINE_TYPE, DXF_LINE, DXF_UNKNOWN_TYPE
+    DXF_LAYER, DXF_LINE_TYPE, DXF_LINE, DXF_LW_POLYLINE, DXF_UNKNOWN_TYPE
 };
 
 enum class DxfDrawingUnits {
@@ -38,6 +39,7 @@ public:
     static const int DXF_VARIABLE_CODE = 9;
     static const int DXF_COLOR_NUMBER_CODE = 62;
     static const int DXF_FLAGS_CODE = 70;
+    static const int DXF_VERTEX_AMOUNT_CODE = 90;
 
     static const std::string DXF_LINE_TYPE_NAME_DEFAULT;
     static const int DXF_COLOR_NUMBER_DEFAULT = 256;
@@ -69,7 +71,7 @@ public:
         if (AUTOCAD_COLORS.count(number) == 1) {
             return AUTOCAD_COLORS[number];
         }
-        return {};
+        return {0,0,0};
     }
 
     static DxfDrawingUnits getDrawingUnits(int value) {
@@ -103,6 +105,14 @@ public:
             case DxfDrawingUnits::LIGHT_YEARS:  return(value * 9454254955500000000.0);
             case DxfDrawingUnits::PARSECS:      return(value * 30856774879000000000.0);
         }
+    }
+
+    static std::vector<double>* getDrawingValues(std::vector<double> &values, DxfDrawingUnits units) {
+        auto *result = new std::vector<double>;
+        for (double value : values) {
+            result->emplace_back(getDrawingValue(value, units));
+        }
+        return result;
     }
 
 private:

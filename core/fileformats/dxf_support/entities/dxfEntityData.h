@@ -7,6 +7,7 @@
 
 #include <string>
 #include "core/buffers/rgb24/rgb24Buffer.h"
+#include "core/math/vector/vector2d.h"
 
 namespace corecvs {
 
@@ -16,13 +17,14 @@ public:
     DxfEntityData() = default;
 
     explicit DxfEntityData(DxfEntityData *data)
-    : handle(data->handle), flags(data->flags), layerName(data->layerName), lineTypeName(data->lineTypeName), rgbColor(data->rgbColor) {}
+    : handle(data->handle), flags(data->flags), layerName(data->layerName), lineTypeName(data->lineTypeName), rgbColor(data->rgbColor), colorNumber(data->colorNumber) {}
 
     int handle;
     int flags;
     std::string layerName;
     std::string lineTypeName;
     RGBColor rgbColor;
+    int colorNumber;
 };
 
 // LINE Data
@@ -33,6 +35,16 @@ public:
 
     double x1, y1, z1;
     double x2, y2, z2;
+};
+
+// LWPOLYLINE Data
+class DxfLwPolylineData : public DxfEntityData {
+public:
+    DxfLwPolylineData(DxfEntityData *data, int vertexNumber, std::vector<Vector2d<double>> &vertices)
+    : DxfEntityData(data), vertexNumber(vertexNumber), vertices(vertices) {}
+
+    int vertexNumber;
+    std::vector<Vector2d<double>> vertices;
 };
 
 } // namespace corecvs

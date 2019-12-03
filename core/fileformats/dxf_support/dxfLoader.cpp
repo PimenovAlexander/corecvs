@@ -19,7 +19,6 @@ int DxfLoader::load(const std::string &fileName, corecvs::IDxfBuilder *dxfBuilde
     if (!stream) {
         return -1;
     }
-
     int linePosition = 1;
     std::string codeString;
     std::string valueString;
@@ -58,6 +57,9 @@ int DxfLoader::processDxfPair(corecvs::IDxfBuilder *dxfBuilder, int code, const 
                     case DxfElementType::DXF_LINE:
                         addLine(dxfBuilder);
                         break;
+                    case DxfElementType::DXF_LW_POLYLINE:
+                        addLwPolyline(dxfBuilder);
+                        break;
                     case DxfElementType::DXF_UNKNOWN_TYPE:
                         break;
                 }
@@ -81,8 +83,13 @@ int DxfLoader::processDxfPair(corecvs::IDxfBuilder *dxfBuilder, int code, const 
             break;
         default:
             rawValues[code] = value;
-            if (variableName.empty())
-            std::cout << "Error. Unknown group code! : " << code << " : " << value << std::endl;
+            switch (currentElementType) {
+                case DxfElementType::DXF_LW_POLYLINE:
+                    handleLwPolyline(code);
+                    break;
+                default:
+                    if (variableName.empty()) std::cout << "Error. Unknown group code! : " << code << " : " << value << std::endl;
+            }
     }
     return 0;
 }
@@ -117,8 +124,7 @@ DxfEntityData* DxfLoader::getEntityData() {
     data->flags = getIntValue(DxfCodes::DXF_FLAGS_CODE, 0);
     data->layerName = getStringValue(DxfCodes::DXF_LAYER_NAME_CODE, "");
     data->lineTypeName = getStringValue(DxfCodes::DXF_LINE_TYPE_NAME_CODE, DxfCodes::DXF_LINE_TYPE_NAME_DEFAULT);
-    auto rgb = DxfCodes::getRGB(getIntValue(DxfCodes::DXF_COLOR_NUMBER_CODE, DxfCodes::DXF_COLOR_NUMBER_DEFAULT));
-    if (!rgb.empty()) data->rgbColor = RGBColor(rgb[0], rgb[1], rgb[2]);
+    data->colorNumber = getIntValue(DxfCodes::DXF_COLOR_NUMBER_CODE, DxfCodes::DXF_COLOR_NUMBER_DEFAULT);
     return data;
 }
 
@@ -192,6 +198,20 @@ void DxfLoader::addLine(corecvs::IDxfBuilder *dxfBuilder) {
     delete baseData;
 }
 
+void DxfLoader::addLwPolyline(corecvs::IDxfBuilder *dxfBuilder) {
+    auto baseData = getEntityData();
+    auto allData = new DxfLwPolylineData(baseData, getIntValue(DxfCodes::DXF_VERTEX_AMOUNT_CODE, 0), currentVertices);
+    dxfBuilder->addLwPolyline(new DxfLwPolylineEntity(allData));
+    currentVertices.clear();
+    delete baseData;
+}
+
+void DxfLoader::handleLwPolyline(int groupCode) {
+    if (groupCode == 20 && currentVertices.size() < getIntValue(DxfCodes::DXF_VERTEX_AMOUNT_CODE, 0)) {
+        currentVertices.emplace_back(Vector2d<double>(getDoubleValue(10, 0), getDoubleValue(20, 0)));
+    }
+}
+
 // DXFToRGB24BufferLoader implementation
 string DXFToRGB24BufferLoader::extension = ".dxf";
 
@@ -207,10 +227,10 @@ RGB24Buffer* DXFToRGB24BufferLoader::load(const string &name) {
     int resultCode = loader.load(name, &builder);
     if (resultCode == -1) {
         std::cout << "Error. Can't open file: " << name << std::endl;
-        return NULL;
+        return nullptr;
     } else {
-         std::cout << "DXF dile is loaded: " << name << " result code: " << resultCode << std::endl;
-         return builder.draw();
+        std::cout << "DXF dile is loaded: " << name << " result code: " << resultCode << std::endl;
+        return builder.draw();
     }
 }
 
