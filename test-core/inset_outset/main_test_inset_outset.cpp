@@ -29,7 +29,7 @@ void drawPolygon(const Polygon &p, int offset, const std::string &fileName) {
     std::vector<Segment2d> outset = shiftPolygon(p, offset);
 
     RGB24Buffer buffer(1000, 1000);
-    AbstractPainter painter(&buffer);
+    AbstractPainter<RGB24Buffer> painter(&buffer);
     painter.drawPolygon(p, RGBColor::Blue());
     drawSegments(&painter, inset, RGBColor::Green());
     drawSegments(&painter, outset, RGBColor::Red());
@@ -41,7 +41,7 @@ void drawPointPath(const PointPath &p, int offset, const std::string &fileName) 
     std::vector<Segment2d> outset = shiftPointPath(p, offset, false);
 
     RGB24Buffer buffer(1000, 1000);
-    AbstractPainter painter(&buffer);
+    AbstractPainter<RGB24Buffer> painter(&buffer);
     painter.drawPath(p, RGBColor::Blue());
     drawSegments(&painter, inset, RGBColor::Green());
     drawSegments(&painter, outset, RGBColor::Red());

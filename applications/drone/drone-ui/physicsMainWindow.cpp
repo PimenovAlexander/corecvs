@@ -56,13 +56,31 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
 
     ui->actionShowLog->toggled(false);
 
+    /* Creating main processing chain */
+    mProcessor = new FrameProcessor();
+    mProcessor->target = this;
+
+    SYNC_PRINT(("PhysicsMainWindow::startCamera(): connecting parameters\n"));
+    qRegisterMetaType<GeneralPatternDetectorParameters>("GeneralPatternDetectorParameters");
+    connect(this      , SIGNAL(newPatternDetectionParameters(GeneralPatternDetectorParameters)),
+            mProcessor, SLOT  (setPatternDetectorParameters(GeneralPatternDetectorParameters)));
+
+    SYNC_PRINT(("PhysicsMainWindow::startCamera(): connecting camera model\n"));
+    qRegisterMetaType<CameraModel>("CameraModel");
+    connect(this      , SIGNAL(newCameraModel(CameraModel)),
+            mProcessor, SLOT  (setCameraModel(CameraModel)));
+
     /* Setting put paramteres */
 
     flightControllerParametersWidget = new ReflectionWidget(FlightControllerParameters::getReflection());
     connect(flightControllerParametersWidget, SIGNAL(paramsChanged()), this, SLOT(flightControllerParametersChanged()));
 
-    patternDetectorParametersWidget = new PatternDetectorParametersWidget();
-    connect(patternDetectorParametersWidget, SIGNAL(paramsChanged()), this, SLOT(patternDetectionParametersChanged()));
+    connect(&patternDetectorParametersWidget, SIGNAL(paramsChanged()), this, SLOT(patternDetectionParametersChanged()));
+
+    toSave.push_back(flightControllerParametersWidget);
+    toSave.push_back(&patternDetectorParametersWidget);
+    toSave.push_back(&mInputSelector);
+    toSave.push_back(&mModelParametersWidget);
 
 
     /* Moving the camera closer */
@@ -71,6 +89,10 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
 
 PhysicsMainWindow::~PhysicsMainWindow()
 {
+    for (SaveableWidget *ts: toSave) {
+        ts->saveToQSettings("drone.ini", "");
+    }
+
     Log::mLogDrains.detach(ui->logWidget);
     delete ui;
 }
@@ -107,20 +129,17 @@ void PhysicsMainWindow::flightControllerParametersChanged()
 
 void PhysicsMainWindow::showPatternDetectionParameters()
 {
-    SYNC_PRINT(("PhysicsMainWindow::showPatternDetectionParameters():called\n"));
-    if (patternDetectorParametersWidget == NULL) {
-        return;
-    }
-    patternDetectorParametersWidget->show();
-    patternDetectorParametersWidget->raise();
+    SYNC_PRINT(("PhysicsMainWindow::showPatternDetectionParameters():called\n"));   
+    patternDetectorParametersWidget.show();
+    patternDetectorParametersWidget.raise();
 }
 
 void PhysicsMainWindow::patternDetectionParametersChanged()
 {
     SYNC_PRINT(("PhysicsMainWindow::patternDetectionParametersChanged():called\n"));
 
-    GeneralPatternDetectorParameters params = patternDetectorParametersWidget->getParameters();
-    SYNC_PRINT(("New Params"));
+    GeneralPatternDetectorParameters params = patternDetectorParametersWidget.getParameters();
+    SYNC_PRINT(("PhysicsMainWindow::patternDetectionParametersChanged():\n"));
     cout << params << endl;
     emit newPatternDetectionParameters(params);
 }
@@ -336,20 +355,6 @@ void PhysicsMainWindow::startCamera()                                           
     }
     cameraActive = true;
     /* We should prepare calculator in some other place */
-    mProcessor = new FrameProcessor();
-    mProcessor->target = this;
-
-    SYNC_PRINT(("PhysicsMainWindow::startCamera(): connecting parameters\n"));
-    qRegisterMetaType<GeneralPatternDetectorParameters>("GeneralPatternDetectorParameters");
-    connect(this      , SIGNAL(newPatternDetectionParameters(GeneralPatternDetectorParameters)),
-            mProcessor, SLOT  (setPatternDetectorParameters(GeneralPatternDetectorParameters)));
-
-    SYNC_PRINT(("PhysicsMainWindow::startCamera(): connecting camera model\n"));
-    qRegisterMetaType<CameraModel>("CameraModel");
-    connect(this      , SIGNAL(newCameraModel(CameraModel)),
-            mProcessor, SLOT  (setCameraModel(CameraModel)));
-
-
 
     //std::string inputString = inputCameraPath;
     std::string inputString = mInputSelector.getInputString().toStdString();

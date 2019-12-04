@@ -94,6 +94,16 @@ GeneralPatternDetectorParameters PatternDetectorParametersWidget::getParameters(
     return toReturn;
 }
 
+void PatternDetectorParametersWidget::loadParamWidget(WidgetLoader &loader)
+{
+    SYNC_PRINT(("PatternDetectorParametersWidget::loadParamWidget(): called"));
+}
+
+void PatternDetectorParametersWidget::saveParamWidget(WidgetSaver &saver)
+{
+    SYNC_PRINT(("PatternDetectorParametersWidget::saveParamWidget(): called"));
+}
+
 void PatternDetectorParametersWidget::setCurrentToDefaults()
 {
 
