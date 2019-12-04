@@ -1,6 +1,7 @@
 #include "inputSelectorWidget.h"
 
 #include <regex>
+#include <set>
 #include <QFileDialog>
 
 #include "core/buffers/bufferFactory.h"
@@ -38,12 +39,17 @@ InputSelectorWidget::InputSelectorWidget(QWidget *parent, bool autoInit, QString
     connect(ui.v4l2CodecComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateInputString()));
 
     connect(ui.v4l2FpsCheckBox, SIGNAL(toggled(bool)), this, SLOT(updateInputString()));
-    connect(ui.v4l2DenumComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateInputString()));
-    connect(ui.v4l2NumComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateInputString()));
+
+    connect(ui.v4l2FpsComboBox    , SIGNAL(currentIndexChanged(int)), this, SLOT(fpsIndexChanged(int)));
+    connect(ui.v4l2FpsNumSpinBox  , SIGNAL(valueChanged(int)), this, SLOT(updateInputString()));
+    connect(ui.v4l2FpsDenumSpinBox, SIGNAL(valueChanged(int)), this, SLOT(updateInputString()));
+
 
     connect(ui.v4l2hwCheckBox, SIGNAL(toggled(bool)), this, SLOT(updateInputString()));
-    connect(ui.v4l2HightComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateInputString()));
-    connect(ui.v4l2WidthComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateInputString()));
+
+    connect(ui.v4l2SizeComboBox , SIGNAL(currentIndexChanged(int)), this, SLOT(sizeIndexChanged(int)));
+    connect(ui.v4l2HeightSpinBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateInputString()));
+    connect(ui.v4l2WidthSpinBox , SIGNAL(currentIndexChanged(int)), this, SLOT(updateInputString()));
 
 
 }
@@ -61,9 +67,9 @@ void InputSelectorWidget::updateInputString()
             }
             if (ui.v4l2FpsCheckBox->isChecked()) {
                 str += ":";
-                str += ui.v4l2NumComboBox->currentText();
+                str += QString::number(ui.v4l2FpsNumSpinBox->value());
                 str += "/";
-                str += ui.v4l2DenumComboBox->currentText();
+                str += QString::number(ui.v4l2FpsDenumSpinBox->value());
             }
 
             switch (ui.v4l2CodecComboBox->currentIndex()) {
@@ -77,9 +83,9 @@ void InputSelectorWidget::updateInputString()
 
             if (ui.v4l2hwCheckBox->isChecked()) {
                 str += ":";
-                str += ui.v4l2HightComboBox->currentText();
+                str += QString::number(ui.v4l2HeightSpinBox->value());
                 str += "x";
-                str += ui.v4l2WidthComboBox->currentText();
+                str += QString::number(ui.v4l2WidthSpinBox->value());
             }
 
 
@@ -132,15 +138,46 @@ void InputSelectorWidget::v4l2Refresh()
 #ifdef WITH_V4L2
     ui.v4l2Device1ComboBox->clear();
     ui.v4l2Device2ComboBox->clear();
+    ui.v4l2SizeComboBox->clear();
+    ui.v4l2FpsComboBox ->clear();
 
     vector<std::string> cameras;
     V4L2CaptureInterface::getAllCameras(cameras);
+
+    std::set<std::string> sizes;
+    std::set<std::string> fpss;
+
 
     for (const std::string &name : cameras)
     {
         ui.v4l2Device1ComboBox->addItem(QString::fromStdString(name));
         ui.v4l2Device2ComboBox->addItem(QString::fromStdString(name));
+
+        V4L2CameraDescriptor cameraDescriptor;
+        if (cameraDescriptor.initCamera(name.c_str(), 480, 640, 1, 30, false) == 0) {
+            int num;
+            ImageCaptureInterface::CameraFormat *formats;
+            cameraDescriptor.getCaptureFormats(&num, formats);
+            for (int i = 0; i < num; i++)
+            {
+                sizes.insert(std::to_string(formats[i].width) + "x" + std::to_string(formats[i].height));
+                fpss .insert("1/" + std::to_string(formats[i].fps));
+            }
+            deletearr_safe(formats);
+        }
+
     }
+
+    for (const std::string &size : sizes)
+    {
+        ui.v4l2SizeComboBox->addItem(QString::fromStdString(size));
+    }
+
+    for (const std::string &fps : fpss)
+    {
+        ui.v4l2FpsComboBox->addItem(QString::fromStdString(fps));
+    }
+
 #endif
 }
 
@@ -196,7 +233,8 @@ void InputSelectorWidget::setInputString(const QString &str)
             int fpsdenum = HelperUtils::parseInt(matches[FpsDenumGroup].str(), &isOk);
             if (!isOk || fpsdenum < 0) fpsdenum = 10;
             ui.v4l2FpsCheckBox->setChecked(true);
-            //ui.v4l2DenumComboBox->add
+            ui.v4l2FpsNumSpinBox  ->setValue(fpsnum  );
+            ui.v4l2FpsDenumSpinBox->setValue(fpsdenum);
         }
 
         if (!matches[WidthGroup].str().empty() && !matches[HeightGroup].str().empty())
@@ -209,6 +247,8 @@ void InputSelectorWidget::setInputString(const QString &str)
             if (!isOk || height <= 0) height = 600;
 
             ui.v4l2hwCheckBox->setChecked(true);
+            ui.v4l2WidthSpinBox ->setValue(width);
+            ui.v4l2HeightSpinBox->setValue(height);
         };
     }
 
@@ -217,13 +257,33 @@ void InputSelectorWidget::setInputString(const QString &str)
 
 void InputSelectorWidget::loadParamWidget(WidgetLoader &loader)
 {
-
-
 }
 
 void InputSelectorWidget::saveParamWidget(WidgetSaver &saver)
 {
+    //std::string inputString = getInputString().toStdString();
+    //saver.saveParameters(inputString, "input");
 
+}
+
+void InputSelectorWidget::fpsIndexChanged(int i)
+{
+    QString value = ui.v4l2FpsComboBox->itemText(i);
+    QStringList list = value.split("/");
+    if (list.size() == 2) {
+        ui.v4l2FpsNumSpinBox  ->setValue(list[0].toInt());
+        ui.v4l2FpsDenumSpinBox->setValue(list[1].toInt());
+    }
+}
+
+void InputSelectorWidget::sizeIndexChanged(int i)
+{
+    QString value = ui.v4l2SizeComboBox->itemText(i);
+    QStringList list = value.split("x");
+    if (list.size() == 2) {
+        ui.v4l2WidthSpinBox ->setValue(list[0].toInt());
+        ui.v4l2HeightSpinBox->setValue(list[1].toInt());
+    }
 }
 
 

@@ -8,6 +8,7 @@ project (drone-ui)
 set(CMAKE_INCLUDE_CURRENT_DIR "YES")
 set(CMAKE_AUTOMOC "YES")
 #set(CMAKE_AUTOUIC "YES")
+set(CMAKE_AUTORCC "YES")
 
 find_package(Qt5 COMPONENTS REQUIRED Core Gui Widgets Script)
 
@@ -70,6 +71,7 @@ QT5_WRAP_UI( UI_HEADERS ${UI_FILES} )
 target_sources(drone-ui
     PRIVATE
     ${UI_HEADERS}
+    ${CMAKE_CURRENT_LIST_DIR}/drone.qrc
     )
 
 target_include_directories(drone-ui PUBLIC

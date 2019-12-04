@@ -23,6 +23,8 @@ public:
     virtual void saveParamWidget(WidgetSaver  &saver);
 
 public slots:
+    void fpsIndexChanged (int i);
+    void sizeIndexChanged(int i);
     void updateInputString();
 
 
