@@ -17,6 +17,8 @@ FrameProcessor::FrameProcessor(QObject *parent) : QThread(parent)
 
 void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata frameData)
 {
+    static std::deque<Affine3DQ> path;
+
     Statistics stats;
     static int count=0;
     count++;
@@ -30,6 +32,9 @@ void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata frameData
     QApplication::processEvents();
     skipping = false;
 
+    while (path.size() > 100) {
+        path.pop_back();
+    }
 
 
 //    SYNC_PRINT(("New frame arrived\n"));
@@ -52,6 +57,7 @@ void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata frameData
 
         stats.leaveContext();
 
+        stats.startInterval();
         /* Debug draw should be inproved */
         for (size_t i = 0; i < patterns.size(); i++)
         {
@@ -73,6 +79,8 @@ void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata frameData
             p.drawFormat(center.x(), center.y(), color, 2, "%d", pattern.mId);
         }
 
+        stats.resetInterval("Basic Draw");
+
         /* Try to locate myself */
        if (!patterns.empty())
        {
@@ -90,6 +98,8 @@ void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata frameData
            Affine3DQ affine = HomographyReconstructor::getAffineFromHomography(K, homography);
            cout << affine << endl;
 
+           path.push_front(affine);
+
            CameraModel simulated(pinhole->clone());
            simulated.setLocation(affine);
            SimpleRenderer renderer;
@@ -98,15 +108,29 @@ void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata frameData
            mesh.addAOB(Vector3dd(0,0,0), Vector3dd(1,1,1));
            renderer.render(&mesh, result);
        }
+       stats.resetInterval("3d Draw");
+
     } else {
         SYNC_PRINT(("FrameProcessor::processFrame(): detector is NULL\n"));
+    }
+
+    Mesh3DDecorated *mesh = new Mesh3DDecorated();
+    mesh->switchColor();
+    {
+        for (Affine3DQ &a : path)
+        {
+            mesh->currentTransform = (Matrix44)a;
+            mesh->addOrts();
+            mesh->currentTransform = Matrix44::Identity();
+        }
     }
 
 
     target->uiMutex.lock();
     target->uiQueue.emplace_back(new DrawRequestData);
     target->uiQueue.back()->mImage = result;
-    target->uiQueue.back()->stats = stats;
+    target->uiQueue.back()->stats = stats;    
+    target->uiQueue.back()->mMesh = mesh;
     target->uiMutex.unlock();
 
     target->updateUi();

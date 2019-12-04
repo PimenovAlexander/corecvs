@@ -33,7 +33,7 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
     /*Camera*/
     mInputSelector.setInputString("v4l2:/dev/video0:1/30:mjpeg:800x600");
 
-    PinholeCameraIntrinsics *intr = new PinholeCameraIntrinsics(640, 480, degToRad(60));
+    PinholeCameraIntrinsics *intr = new PinholeCameraIntrinsics(Vector2dd(640, 480), degToRad(60));
     mCameraModel.intrinsics.reset(intr);
     mCameraModel.nameId = "Copter Main Camera";
     mModelParametersWidget.setParameters(mCameraModel);
