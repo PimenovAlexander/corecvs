@@ -17,19 +17,17 @@ int DISFlow::endFrame() {
     return 0;
 }
 
-
-/* Ok this is what we do */
 bool DISFlow::setParameters(std::string name, const corecvs::DynamicObject &newParams)
 {
-    if (params->params == NULL)
-    {
-        return false; /* How and who should actually allocate parameters? */
-    }
-
-    DisFlowParameters *oldParams = params->params;
     if (name == "params")
     {
-        newParams.copyTo(oldParams);
+        newParams.copyTo(&params);
+        if (params.sc_f() != 0) {
+            defaultParams(false);
+        }
+        isSelectedParams = true;
+    } else {
+        return false;
     }
     return true;
 }
@@ -38,15 +36,13 @@ std::map<std::string, corecvs::DynamicObject> DISFlow::getParameters() {
 
     cout << "DISFlow::getParameters(): called\n" << endl;
     std::map<std::string, corecvs::DynamicObject> toReturn;
-    if (params == NULL || params->params == NULL)
+    if (!isSelectedParams)
     {
         cout << "DISFlow::getParameters(): returning default parameters\n" << endl;
-        DisFlowParameters dummy;
-        toReturn.emplace("params", corecvs::DynamicObject(&dummy));
     } else {
         cout << "DISFlow::getParameters(): returning real parameters\n" << endl;
-        toReturn.emplace("params", corecvs::DynamicObject(params->params));
     }
+    toReturn.emplace("params", corecvs::DynamicObject(&params));
     return toReturn;
 }
 
@@ -71,7 +67,8 @@ cv::Mat DISFlow::convertToCVMat(corecvs::RGB24Buffer *buffer) {
 }
 
 void DISFlow::saveFlowBuffer(cv::Mat &img) {
-    previousFlow = &img;
+    // FIXME:
+    //previousFlow = opticalFlow;
 
     cv::Size szt = img.size();
     int width = szt.width, height = szt.height;
@@ -84,19 +81,16 @@ void DISFlow::saveFlowBuffer(cv::Mat &img) {
     {
         for (int x = 0; x < width; x++)
         {
-            // FIXME:: Is need to implement?
             if (nc==1) // depth
                 tmp[0] = img.at<float>(y,x);
             else if (nc==2) // Optical Flow
             {
                 tmp[0] = img.at<cv::Vec2f>(y,x)[0];
                 tmp[1] = img.at<cv::Vec2f>(y,x)[1];
-                // TODO: here create new flow buffer
                 opticalFlow->element(tmp[0], tmp[1]);
             }
             else if (nc==4) // Scene Flow
             {
-                // FIXME:: Is need to implement?
                 tmp[0] = img.at<cv::Vec4f>(y,x)[0];
                 tmp[1] = img.at<cv::Vec4f>(y,x)[1];
                 tmp[2] = img.at<cv::Vec4f>(y,x)[2];
@@ -181,7 +175,7 @@ cv::Mat DISFlow::execute(cv::Mat img_ao_mat, cv::Mat img_bo_mat) {
 
     // *** Pad image such that width and height are restless divisible on all scales (except last)
     int padw=0, padh=0;
-    int scfct = pow(2,params->getParams().sc_f()); // enforce restless division by this number on coarsest scale
+    int scfct = pow(2,params.sc_f()); // enforce restless division by this number on coarsest scale
     //if (hasinfile) scfct = pow(2,lv_f+1); // if initialization file is given, make sure that size is restless divisible by 2^(lv_f+1) !
     int div = sz.width % scfct;
     if (div>0) padw = scfct - div;
@@ -195,7 +189,7 @@ cv::Mat DISFlow::execute(cv::Mat img_ao_mat, cv::Mat img_bo_mat) {
     sz = img_ao_mat.size();  // padded image size, ensures divisibility by 2 on all scales (except last)
 
     // Timing, image loading
-    if (params->getParams().verbosity() > 1)
+    if (params.verbosity() > 1)
     {
         gettimeofday(&tv_end_all, NULL);
         double tt = (tv_end_all.tv_sec-tv_start_all.tv_sec)*1000.0f + (tv_end_all.tv_usec-tv_start_all.tv_usec)/1000.0f;
@@ -208,25 +202,25 @@ cv::Mat DISFlow::execute(cv::Mat img_ao_mat, cv::Mat img_bo_mat) {
     img_ao_mat.convertTo(img_ao_fmat, CV_32F); // convert to float
     img_bo_mat.convertTo(img_bo_fmat, CV_32F);
 
-    const float* img_ao_pyr   [params->getParams().sc_f() + 1];
-    const float* img_bo_pyr   [params->getParams().sc_f() + 1];
-    const float* img_ao_dx_pyr[params->getParams().sc_f() + 1];
-    const float* img_ao_dy_pyr[params->getParams().sc_f() + 1];
-    const float* img_bo_dx_pyr[params->getParams().sc_f() + 1];
-    const float* img_bo_dy_pyr[params->getParams().sc_f() + 1];
+    const float* img_ao_pyr   [params.sc_f() + 1];
+    const float* img_bo_pyr   [params.sc_f() + 1];
+    const float* img_ao_dx_pyr[params.sc_f() + 1];
+    const float* img_ao_dy_pyr[params.sc_f() + 1];
+    const float* img_bo_dx_pyr[params.sc_f() + 1];
+    const float* img_bo_dy_pyr[params.sc_f() + 1];
 
-    cv::Mat img_ao_fmat_pyr   [params->getParams().sc_f() + 1];
-    cv::Mat img_bo_fmat_pyr   [params->getParams().sc_f() + 1];
-    cv::Mat img_ao_dx_fmat_pyr[params->getParams().sc_f() + 1];
-    cv::Mat img_ao_dy_fmat_pyr[params->getParams().sc_f() + 1];
-    cv::Mat img_bo_dx_fmat_pyr[params->getParams().sc_f() + 1];
-    cv::Mat img_bo_dy_fmat_pyr[params->getParams().sc_f() + 1];
+    cv::Mat img_ao_fmat_pyr   [params.sc_f() + 1];
+    cv::Mat img_bo_fmat_pyr   [params.sc_f() + 1];
+    cv::Mat img_ao_dx_fmat_pyr[params.sc_f() + 1];
+    cv::Mat img_ao_dy_fmat_pyr[params.sc_f() + 1];
+    cv::Mat img_bo_dx_fmat_pyr[params.sc_f() + 1];
+    cv::Mat img_bo_dy_fmat_pyr[params.sc_f() + 1];
 
-    ConstructImgPyramide(img_ao_fmat, img_ao_fmat_pyr, img_ao_dx_fmat_pyr, img_ao_dy_fmat_pyr, img_ao_pyr, img_ao_dx_pyr, img_ao_dy_pyr, params->getParams().sc_f(), params->getParams().sc_l(), rpyrtype, 1, params->getParams().patchsz(), padw, padh);
-    ConstructImgPyramide(img_bo_fmat, img_bo_fmat_pyr, img_bo_dx_fmat_pyr, img_bo_dy_fmat_pyr, img_bo_pyr, img_bo_dx_pyr, img_bo_dy_pyr, params->getParams().sc_f(), params->getParams().sc_l(), rpyrtype, 1, params->getParams().patchsz(), padw, padh);
+    ConstructImgPyramide(img_ao_fmat, img_ao_fmat_pyr, img_ao_dx_fmat_pyr, img_ao_dy_fmat_pyr, img_ao_pyr, img_ao_dx_pyr, img_ao_dy_pyr, params.sc_f(), params.sc_l(), rpyrtype, 1, params.patchsz(), padw, padh);
+    ConstructImgPyramide(img_bo_fmat, img_bo_fmat_pyr, img_bo_dx_fmat_pyr, img_bo_dy_fmat_pyr, img_bo_pyr, img_bo_dx_pyr, img_bo_dy_pyr, params.sc_f(), params.sc_l(), rpyrtype, 1, params.patchsz(), padw, padh);
 
     // Timing, image gradients and pyramid
-    if (params->getParams().verbosity() > 1)
+    if (params.verbosity() > 1)
     {
         gettimeofday(&tv_end_all, NULL);
         double tt = (tv_end_all.tv_sec-tv_start_all.tv_sec)*1000.0f + (tv_end_all.tv_usec-tv_start_all.tv_usec)/1000.0f;
@@ -244,7 +238,7 @@ cv::Mat DISFlow::execute(cv::Mat img_ao_mat, cv::Mat img_bo_mat) {
      }
 
     //  *** Run main optical flow / depth algorithm
-    float sc_fct = pow(2,params->getParams().sc_l());
+    float sc_fct = pow(2,params.sc_l());
     cv::Mat flowout;
 
     if (SELECTMODE==1)
@@ -254,27 +248,27 @@ cv::Mat DISFlow::execute(cv::Mat img_ao_mat, cv::Mat img_bo_mat) {
 
     OFC::OFClass ofc(img_ao_pyr, img_ao_dx_pyr, img_ao_dy_pyr,
                      img_bo_pyr, img_bo_dx_pyr, img_bo_dy_pyr,
-                     params->getParams().patchsz(),  // extra image padding to avoid border violation check
+                     params.patchsz(),  // extra image padding to avoid border violation check
                      (float*)flowout.data,   // pointer to n-band output float array
                      initptr,  // pointer to n-band input float array of size of first (coarsest) scale, pass as nullptr to disable
                      sz.width, sz.height,
-                     params->getParams().sc_f(), params->getParams().sc_l(),
-                     params->getParams().maxiter(), params->getParams().miniter(), params->getParams().mindprate(),
-                     params->getParams().mindrrate(), params->getParams().minimgerr(),
-                     params->getParams().patchsz() , params->getParams().poverl(),
-                     params->getParams().usefbcon(), params->getParams().costfct(), nochannels, params->getParams().patnorm(),
-                     params->getParams().usetvref(), params->getParams().tv_alpha(),
-                     params->getParams().tv_gamma(), params->getParams().tv_delta(),
-                     params->getParams().tv_innerit(), params->getParams().tv_solverit(), params->getParams().tv_sor(),
-                     params->getParams().verbosity());
+                     params.sc_f(), params.sc_l(),
+                     params.maxiter(), params.miniter(), params.mindprate(),
+                     params.mindrrate(), params.minimgerr(),
+                     params.patchsz() , params.poverl(),
+                     params.usefbcon(), params.costfct(), nochannels, params.patnorm(),
+                     params.usetvref(), params.tv_alpha(),
+                     params.tv_gamma(), params.tv_delta(),
+                     params.tv_innerit(), params.tv_solverit(), params.tv_sor(),
+                     params.verbosity());
 
-    if (params->getParams().verbosity() > 1)
+    if (params.verbosity() > 1)
         gettimeofday(&tv_start_all, NULL);
 
 
 
     // *** Resize to original scale, if not run to finest level
-    if (params->getParams().sc_l() != 0)
+    if (params.sc_l() != 0)
     {
         flowout *= sc_fct;
         cv::resize(flowout, flowout, cv::Size(), sc_fct, sc_fct , cv::INTER_LINEAR);
@@ -284,4 +278,84 @@ cv::Mat DISFlow::execute(cv::Mat img_ao_mat, cv::Mat img_bo_mat) {
     flowout = flowout(cv::Rect((int)floor((float)padw/2.0f),(int)floor((float)padh/2.0f),width_org,height_org));
 
     return flowout;
+}
+
+
+int AutoFirstScaleSelect(int imgwidth, int fratio, int patchsize)
+{
+    return std::max(0,(int)std::floor(log2((2.0f*(float)imgwidth) / ((float)fratio * (float)patchsize))));
+}
+
+void DISFlow::defaultParams(bool isNeedDefineAll) {
+    int lv_f, lv_l, maxiter, miniter, patchsz, patnorm, costfct, tv_innerit, tv_solverit, verbosity;
+    float mindprate, mindrrate, minimgerr, poverl, tv_alpha, tv_gamma, tv_delta, tv_sor;
+    bool usefbcon, usetvref;
+
+    mindprate = 0.05; mindrrate = 0.95; minimgerr = 0.0;
+    usefbcon = 0; patnorm = 1; costfct = 0;
+    tv_alpha = 10.0; tv_gamma = 10.0; tv_delta = 5.0;
+    tv_innerit = 1; tv_solverit = 3; tv_sor = 1.6;
+    verbosity = 2; // Default: Plot detailed timings
+
+    int fratio = 5; // For automatic selection of coarsest scale: 1/fratio * width = maximum expected motion magnitude in image. Set lower to restrict search space.
+
+    int sel_oppoint = 2; // Default operating point
+    if (!isNeedDefineAll)         // Use provided operating point
+        sel_oppoint = params.sc_f();
+
+
+    int width_org = inPrev->w;   // unpadded original image size
+    int height_org = inPrev->h;  // unpadded original image size
+
+    switch (sel_oppoint)
+    {
+        case 1:
+            patchsz = 8; poverl = 0.3;
+            lv_f = AutoFirstScaleSelect(width_org, fratio, patchsz);
+            lv_l = std::max(lv_f-2,0); maxiter = 16; miniter = 16;
+            usetvref = 0;
+            break;
+        case 3:
+            patchsz = 12; poverl = 0.75;
+            lv_f = AutoFirstScaleSelect(width_org, fratio, patchsz);
+            lv_l = std::max(lv_f-4,0); maxiter = 16; miniter = 16;
+            usetvref = 1;
+            break;
+        case 4:
+            patchsz = 12; poverl = 0.75;
+            lv_f = AutoFirstScaleSelect(width_org, fratio, patchsz);
+            lv_l = std::max(lv_f-5,0); maxiter = 128; miniter = 128;
+            usetvref = 1;
+            break;
+        case 2:
+        default:
+            patchsz = 8; poverl = 0.4;
+            lv_f = AutoFirstScaleSelect(width_org, fratio, patchsz);
+            lv_l = std::max(lv_f-2,0); maxiter = 12; miniter = 12;
+            usetvref = 1;
+            break;
+
+    }
+
+    params.setSc_f(lv_f);
+    params.setSc_l(lv_l);
+    params.setMaxiter(maxiter);
+    params.setMiniter(miniter);
+    params.setMindprate(mindprate);
+    params.setMindrrate(mindrrate);
+    params.setMinimgerr(minimgerr);
+    params.setPatchsz(patchsz);
+    params.setPoverl(poverl);
+    params.setUsefbcon(usefbcon);
+    params.setPatnorm(patnorm);
+    params.setCostfct(costfct);
+    params.setUsetvref(usetvref);
+    params.setTv_alpha(tv_alpha);
+    params.setTv_gamma(tv_gamma);
+    params.setTv_delta(tv_delta);
+    params.setTv_innerit(tv_innerit);
+    params.setTv_solverit(tv_solverit);
+    params.setTv_sor(tv_sor);
+    params.setVerbosity(verbosity);
+
 }
