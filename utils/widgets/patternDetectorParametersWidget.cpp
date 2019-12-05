@@ -104,6 +104,35 @@ void PatternDetectorParametersWidget::saveParamWidget(WidgetSaver &saver)
     SYNC_PRINT(("PatternDetectorParametersWidget::saveParamWidget(): called"));
 }
 
+void PatternDetectorParametersWidget::loadFromQSettings(const QString &fileName, const QString &_root)
+{
+    SettingsGetter visitor(fileName, _root);
+    std::string name;
+#if 0
+    visitor.visit(name, "provider");
+    for (size_t id = 0; id < providerMetadata.size(); id++ )
+    {
+        if (providerMetadata[id]->providerName == name)
+        {
+            ui->providerComboBox->setCurrentIndex(id);
+        }
+    }
+#endif
+
+}
+
+void PatternDetectorParametersWidget::saveToQSettings (const QString &fileName, const QString &_root)
+{
+    SettingsSetter visitor(fileName, _root);
+    size_t id = (size_t)ui->providerComboBox->currentIndex();
+    std::string name = providerMetadata[id]->providerName;
+#if 0
+    visitor.visit(name, "provider");
+#endif
+
+}
+
+
 void PatternDetectorParametersWidget::setCurrentToDefaults()
 {
 

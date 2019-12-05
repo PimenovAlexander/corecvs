@@ -39,6 +39,12 @@ void SettingsGetter::visit<int>(int &intField, int defaultValue, const char *fie
     intField = mSettings->value(fieldName, defaultValue).toInt();
 }
 
+template <>
+void SettingsGetter::visit<std::string>(std::string &stringField, std::string defaultValue, const char *fieldName)
+{
+    stringField = mSettings->value(fieldName, QString::fromStdString(defaultValue)).toString().toStdString();
+}
+
 /* New style visitor*/
 
 template <>

@@ -233,7 +233,7 @@ cv::Mat DISFlow::execute(cv::Mat img_ao_mat, cv::Mat img_bo_mat) {
      cv::Mat flowinit;
      if (previousFlow)
      {
-         flowinit = *previousFlow;
+//         flowinit = *previousFlow;
          initptr = (float*)flowinit.data;
      }
 

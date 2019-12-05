@@ -95,6 +95,10 @@ void SettingsSetter::visit<float>(float &floatField, float defaultValue, const c
 template <>
 void SettingsSetter::visit<bool>(bool &boolField, bool defaultValue, const char *fieldName);
 
+template <>
+void SettingsSetter::visit<std::string>(std::string &stringField, std::string defaultValue, const char *fieldName);
+
+
 /* And new style visitor method */
 template <>
 void SettingsSetter::visit<int, IntField>(int &field, const IntField *fieldDescriptor);

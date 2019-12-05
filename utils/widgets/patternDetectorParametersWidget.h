@@ -69,6 +69,9 @@ public:
     virtual void loadParamWidget(WidgetLoader &loader);
     virtual void saveParamWidget(WidgetSaver  &saver );
 
+    virtual void loadFromQSettings(const QString &fileName, const QString &_root);
+    virtual void saveToQSettings  (const QString &fileName, const QString &_root);
+
 
 public slots:
     void setCurrentToDefaults();

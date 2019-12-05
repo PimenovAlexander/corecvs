@@ -67,7 +67,6 @@ if (DISFLOW_FOUND)
     set (HDR_FILES
         ${HDR_FILES}
         ${CMAKE_CURRENT_LIST_DIR}/DISFlow/DISFlow.h
-        ${CMAKE_CURRENT_LIST_DIR}/DISFlow/openCVDISParameters.h
         ${CMAKE_CURRENT_LIST_DIR}/generated/disFlowParameters.h
     )
 

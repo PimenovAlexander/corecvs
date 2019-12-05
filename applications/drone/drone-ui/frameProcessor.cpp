@@ -105,7 +105,12 @@ void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata frameData
            SimpleRenderer renderer;
            renderer.modelviewMatrix = simulated.getCameraMatrix();
            Mesh3D mesh;
+           mesh.switchColor();
            mesh.addAOB(Vector3dd(0,0,0), Vector3dd(1,1,1));
+           for (int i = 0; i < mesh.facesColor.size(); i++) {
+               mesh.vertexesColor[i] = RGBColor::rainbow((double)i/ mesh.facesColor.size());
+           }
+
            renderer.render(&mesh, result);
        }
        stats.resetInterval("3d Draw");

@@ -14,6 +14,16 @@ set (HDR_FILES
     laplacianStacking.h
 )
 
-add_executable(${FOCUS_STACK_NAME} ${SRC_FILES} ${HDR_FILES})
+if (PNG_LIB)
+    include(../../wrappers/libpng/sourcelist.cmake)
+endif()
 
-target_link_libraries(${FOCUS_STACK_NAME} stdc++fs corecvs)
+if (JPEG_LIB)
+    include(../../wrappers/libjpeg/sourcelist.cmake)
+endif()
+
+
+add_executable(${FOCUS_STACK_NAME} ${SRC_FILES} ${HDR_FILES})
+include_directories(${INC_PATHS})
+
+target_link_libraries(${FOCUS_STACK_NAME} ${LIBS} stdc++fs corecvs)
