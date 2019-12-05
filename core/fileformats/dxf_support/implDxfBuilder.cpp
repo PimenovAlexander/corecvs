@@ -12,7 +12,7 @@ namespace corecvs {
 // Variables
 void ImplDxfBuilder::setIntVariable(int code, std::string const &name, int value) {
     std::cout << "Int Variable: " << name << " (code: " << code << ", value: " << value << ") is set" << std::endl;
-    if (name == "$INSUNITS") units = DxfCodes::getDrawingUnits(value);
+    if (name == "$INSUNITS") attrs.setUnits(DxfCodes::getDrawingUnits(value));
 }
 
 void ImplDxfBuilder::setDoubleVariable(int code, std::string const &name, double value) {
@@ -54,14 +54,8 @@ void ImplDxfBuilder::addLwPolyline(DxfLwPolylineEntity *entity) {
 
 // Drawing
 void ImplDxfBuilder::prepareToDraw() {
-    auto x1 = DxfCodes::getDrawingValue(leftTopCorner.x(), units);
-    auto y1 = DxfCodes::getDrawingValue(leftTopCorner.y(), units);
-    auto x2 = DxfCodes::getDrawingValue(rightBottomCorner.x(), units);
-    auto y2 = DxfCodes::getDrawingValue(rightBottomCorner.y(), units);
-    width = y2 - y1;
-    height = x2 - x1;
-    width += marginLeft + marginRight;
-    height += marginTop + marginBottom;
+    attrs.setDimensions((int) (rightBottomCorner.x() - leftTopCorner.x()), (int) (rightBottomCorner.y() - leftTopCorner.y()));
+    attrs.setMargins(20, 20, 10, 10);
 
     for (DxfObject* object : objects) {
         object->print();
@@ -82,8 +76,9 @@ void ImplDxfBuilder::prepareToDraw() {
 
 RGB24Buffer* ImplDxfBuilder::draw() {
     prepareToDraw();
-    RGB24Buffer* buffer = new RGB24Buffer(width, height, RGBColor::White());
-    for (DxfEntity* entity : entities) entity->draw(buffer, units, height, marginLeft, marginRight);
+    auto dimensions = attrs.getFullDimensions();
+    auto buffer = new RGB24Buffer(dimensions.y(), dimensions.x(), RGBColor::White());
+    for (DxfEntity* entity : entities) entity->draw(buffer, &attrs);
     return buffer;
 }
 

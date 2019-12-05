@@ -6,6 +6,7 @@
 #define DXF_SUPPORT_DXFENTITY_H
 
 #include <string>
+#include <core/fileformats/dxf_support/dxfDrawingAttrs.h>
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/fileformats/dxf_support/dxfCodes.h"
 #include "core/fileformats/dxf_support/entities/dxfEntityData.h"
@@ -16,7 +17,7 @@ namespace corecvs {
 class DxfEntity {
 public:
     explicit DxfEntity(DxfEntityData *data) : data(data) {}
-    virtual void draw(RGB24Buffer *buffer, DxfDrawingUnits units, int height, int marginLeft, int marginTop) {}
+    virtual void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {}
     virtual void print() const;
     virtual DxfEntityData* getData() { return data; };
 private:
@@ -27,7 +28,7 @@ private:
 class DxfLineEntity : public DxfEntity {
 public:
     explicit DxfLineEntity(DxfLineData *data) : DxfEntity(data), data(data) {}
-    void draw(RGB24Buffer *buffer, DxfDrawingUnits units, int height, int marginLeft, int marginTop) override;
+    void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() const override;
     DxfLineData* getData() override { return data; };
 private:
@@ -38,7 +39,7 @@ private:
 class DxfLwPolylineEntity : public DxfEntity {
 public:
     explicit DxfLwPolylineEntity(DxfLwPolylineData *data) : DxfEntity(data), data(data) {}
-    void draw(RGB24Buffer *buffer, DxfDrawingUnits units, int height, int marginLeft, int marginTop) override;
+    void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() const override;
     DxfLwPolylineData* getData() override { return data; };
 private:

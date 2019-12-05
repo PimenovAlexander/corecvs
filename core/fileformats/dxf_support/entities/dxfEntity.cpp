@@ -37,34 +37,24 @@ void DxfLwPolylineEntity::print() const {
 }
 
 // Drawing
-void DxfLineEntity::draw(RGB24Buffer *buffer, DxfDrawingUnits units, int height, int marginLeft, int marginTop) {
-    auto x1 = DxfCodes::getDrawingValue(data->x1, units);
-    auto y1 = DxfCodes::getDrawingValue(data->y1, units);
-    auto x2 = DxfCodes::getDrawingValue(data->x2, units);
-    auto y2 = DxfCodes::getDrawingValue(data->y2, units);
-    buffer->drawLine(x1 + marginLeft, y1 + marginTop, x2 + marginLeft, y2 + marginTop, data->rgbColor);
+void DxfLineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
+    auto startVertex = attrs->getDrawingValues(data->x1, data->y1);
+    auto endVertex = attrs->getDrawingValues(data->x2, data->y2);
+    buffer->drawLine(startVertex.x(), startVertex.y(), endVertex.x(), endVertex.y(), data->rgbColor);
 }
 
-void DxfLwPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawingUnits units, int height, int marginLeft, int marginTop) {
+void DxfLwPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
     if (data->vertexNumber > 1) {
         for (unsigned long i = 0; i < data->vertices.size() - 1; i++) {
-            std::vector<double> curVertex = {data->vertices[i].x(),data->vertices[i].y()};
-            std::vector<double> nextVertex = {data->vertices[i+1].x(),data->vertices[i+1].y()};
-            auto curPosition = DxfCodes::getDrawingValues(curVertex, units);
-            auto nextPosition = DxfCodes::getDrawingValues(nextVertex, units);
-            buffer->drawLine(curPosition->at(0) + marginLeft, curPosition->at(1) + marginTop, nextPosition->at(0) + marginLeft, nextPosition->at(1) + marginTop, data->rgbColor);
-            delete curPosition;
-            delete nextPosition;
+            auto startVertex = attrs->getDrawingValues(data->vertices[i].x(), data->vertices[i].y());
+            auto endVertex = attrs->getDrawingValues(data->vertices[i+1].x(), data->vertices[i+1].y());
+            buffer->drawLine(startVertex.x(), startVertex.y(), endVertex.x(), endVertex.y(), data->rgbColor);
         }
         // closed polyline
         if (data->flags == 1) {
-            std::vector<double> curVertex = {data->vertices[0].x(),data->vertices[0].y()};
-            std::vector<double> nextVertex = {data->vertices[data->vertexNumber-1].x(),data->vertices[data->vertexNumber-1].y()};
-            auto curPosition = DxfCodes::getDrawingValues(curVertex, units);
-            auto nextPosition = DxfCodes::getDrawingValues(nextVertex, units);
-            buffer->drawLine(curPosition->at(0) + marginLeft, curPosition->at(1) + marginTop, nextPosition->at(0) + marginLeft, nextPosition->at(1) + marginTop, data->rgbColor);
-            delete curPosition;
-            delete nextPosition;
+            auto startVertex = attrs->getDrawingValues(data->vertices[0].x(), data->vertices[0].y());
+            auto endVertex = attrs->getDrawingValues(data->vertices[data->vertexNumber-1].x(), data->vertices[data->vertexNumber-1].y());
+            buffer->drawLine(startVertex.x(), startVertex.y(), endVertex.x(), endVertex.y(), data->rgbColor);
         }
     }
 }

@@ -44,7 +44,7 @@ set ( ADDITIONAL_MODULES
 
 message(STATUS "Core will use ${CORE_SUBMODULES} and ${ADDITIONAL_MODULES}")
 
-add_library(corecvs STATIC )
+add_library(corecvs STATIC)
 
 set_property(TARGET corecvs PROPERTY CXX_STANDARD 17)
 set_property(TARGET corecvs PROPERTY CXX_STANDARD_REQUIRED ON)

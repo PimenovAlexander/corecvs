@@ -14,6 +14,7 @@ target_sources(corecvs
         ${CMAKE_CURRENT_LIST_DIR}/dxf_support/entities/dxfEntityData.h
         ${CMAKE_CURRENT_LIST_DIR}/dxf_support/objects/dxfObject.h
         ${CMAKE_CURRENT_LIST_DIR}/dxf_support/objects/dxfObjectData.h
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfDrawingAttrs.h
         ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfCodes.h
         ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfLoader.h
         ${CMAKE_CURRENT_LIST_DIR}/dxf_support/iDxfBuilder.h

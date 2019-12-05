@@ -36,13 +36,7 @@ public:
     RGB24Buffer* draw() override;
 
 private:
-    DxfDrawingUnits units;
-    int width;
-    int height;
-    int marginLeft = 10;
-    int marginRight = 10;
-    int marginTop = 10;
-    int marginBottom = 10;
+    DxfDrawingAttrs attrs;
     Vector3dd leftTopCorner;
     Vector3dd rightBottomCorner;
     std::list<DxfEntity*> entities = {};

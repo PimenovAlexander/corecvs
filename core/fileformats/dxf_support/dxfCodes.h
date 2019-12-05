@@ -81,40 +81,6 @@ public:
         return DxfDrawingUnits::UNITLESS;
     }
 
-    static double getDrawingValue(double value, DxfDrawingUnits units) {
-        switch(units) {
-            case DxfDrawingUnits::UNITLESS:     return(value * 1.0);
-            case DxfDrawingUnits::INCHES:       return(value * 25.4);
-            case DxfDrawingUnits::FEET:         return(value * 25.4 * 12);
-            case DxfDrawingUnits::MILES:        return(value *  1609344.0);
-            case DxfDrawingUnits::MILLIMETERS:  return(value * 1.0);
-            case DxfDrawingUnits::CENTIMETERS:  return(value * 10.0);
-            case DxfDrawingUnits::METERS:       return(value * 1000.0);
-            case DxfDrawingUnits::KILOMETERS:   return(value * 1000000.0);
-            case DxfDrawingUnits::MICROINCHES:  return(value * 25.4 / 1000.0);
-            case DxfDrawingUnits::MILS:         return(value * 25.4 / 1000.0);
-            case DxfDrawingUnits::YARDS:        return(value * 3 * 12 * 25.4);
-            case DxfDrawingUnits::ANGSTROMS:    return(value * 0.0000001);
-            case DxfDrawingUnits::NANOMETERS:   return(value * 0.000001);
-            case DxfDrawingUnits::MICRONS:      return(value * 0.001);
-            case DxfDrawingUnits::DECIMETERS:   return(value * 100.0);
-            case DxfDrawingUnits::DECAMETERS:   return(value * 10000.0);
-            case DxfDrawingUnits::HECTOMETERS:  return(value * 100000.0);
-            case DxfDrawingUnits::GIGAMETERS:   return(value * 1000000000000.0);
-            case DxfDrawingUnits::ASTRONOMICAL: return(value * 149597870690000.0);
-            case DxfDrawingUnits::LIGHT_YEARS:  return(value * 9454254955500000000.0);
-            case DxfDrawingUnits::PARSECS:      return(value * 30856774879000000000.0);
-        }
-    }
-
-    static std::vector<double>* getDrawingValues(std::vector<double> &values, DxfDrawingUnits units) {
-        auto *result = new std::vector<double>;
-        for (double value : values) {
-            result->emplace_back(getDrawingValue(value, units));
-        }
-        return result;
-    }
-
 private:
     static std::map<std::string, std::vector<int>> VARIABLE_CODES;
     static std::map<std::string, DxfElementType> ELEMENT_TYPES;
