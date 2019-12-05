@@ -28,6 +28,7 @@ public:
     // Entities
     virtual void addLine(DxfLineEntity *entity) {}
     virtual void addLwPolyline(DxfLwPolylineEntity *entity) {}
+    virtual void addEntity(DxfEntity *entity) {}
 
     virtual RGB24Buffer* draw() {}
 };

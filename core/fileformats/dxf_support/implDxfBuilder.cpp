@@ -45,10 +45,14 @@ void ImplDxfBuilder::addLineType(corecvs::DxfLineTypeObject *object) {
 
 // Entities
 void ImplDxfBuilder::addLine(DxfLineEntity *entity) {
-    entities.push_back(entity);
+    addEntity(entity);
 }
 
 void ImplDxfBuilder::addLwPolyline(DxfLwPolylineEntity *entity) {
+    addEntity(entity);
+}
+
+void ImplDxfBuilder::addEntity(DxfEntity *entity) {
     entities.push_back(entity);
 }
 
@@ -58,7 +62,7 @@ void ImplDxfBuilder::prepareToDraw() {
     attrs.setMargins(20, 20, 10, 10);
 
     for (DxfObject* object : objects) {
-        object->print();
+//        object->print();
     }
 
     for (DxfEntity* entity : entities) {

@@ -36,6 +36,17 @@ void DxfLwPolylineEntity::print() const {
     std::cout << std::endl;
 }
 
+void DxfPolylineEntity::print() const {
+    std::cout << "* * * Polyline Entity * * *" << std::endl;
+    DxfEntity::print();
+    std::cout << "Vertex amount: " << data->vertices.size() << std::endl;
+    int i = 1;
+    for (Vector3d vertex : data->vertices) {
+        std::cout << "Vertex " << i++ << ": " << vertex.x() << " " << vertex.y() << " " << vertex.z() << std::endl;
+    }
+    std::cout << std::endl;
+}
+
 // Drawing
 void DxfLineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
     auto startVertex = attrs->getDrawingValues(data->x1, data->y1);
@@ -54,6 +65,23 @@ void DxfLwPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
         if (data->flags == 1) {
             auto startVertex = attrs->getDrawingValues(data->vertices[0].x(), data->vertices[0].y());
             auto endVertex = attrs->getDrawingValues(data->vertices[data->vertexNumber-1].x(), data->vertices[data->vertexNumber-1].y());
+            buffer->drawLine(startVertex.x(), startVertex.y(), endVertex.x(), endVertex.y(), data->rgbColor);
+        }
+    }
+}
+
+void DxfPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
+    int vertexNumber = data->vertices.size();
+    if (vertexNumber > 1) {
+        for (unsigned long i = 0; i < vertexNumber - 1; i++) {
+            auto startVertex = attrs->getDrawingValues(data->vertices[i].x(), data->vertices[i].y());
+            auto endVertex = attrs->getDrawingValues(data->vertices[i+1].x(), data->vertices[i+1].y());
+            buffer->drawLine(startVertex.x(), startVertex.y(), endVertex.x(), endVertex.y(), data->rgbColor);
+        }
+        // closed polyline
+        if (data->flags == 1) {
+            auto startVertex = attrs->getDrawingValues(data->vertices[0].x(), data->vertices[0].y());
+            auto endVertex = attrs->getDrawingValues(data->vertices[vertexNumber-1].x(), data->vertices[vertexNumber-1].y());
             buffer->drawLine(startVertex.x(), startVertex.y(), endVertex.x(), endVertex.y(), data->rgbColor);
         }
     }

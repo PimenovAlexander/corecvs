@@ -8,6 +8,7 @@
 #include <string>
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/math/vector/vector2d.h"
+#include "core/math/vector/vector3d.h"
 
 namespace corecvs {
 
@@ -45,6 +46,15 @@ public:
 
     int vertexNumber;
     std::vector<Vector2d<double>> vertices;
+};
+
+// POLYLINE Data
+class DxfPolylineData : public DxfEntityData {
+public:
+    DxfPolylineData(DxfEntityData *data, std::vector<Vector3d<double>> &vertices)
+    : DxfEntityData(data), vertices(vertices) {}
+
+    std::vector<Vector3d<double>> vertices;
 };
 
 } // namespace corecvs

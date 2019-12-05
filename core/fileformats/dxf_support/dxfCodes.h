@@ -14,7 +14,7 @@
 namespace corecvs {
 
 enum class DxfElementType {
-    DXF_LAYER, DXF_LINE_TYPE, DXF_LINE, DXF_LW_POLYLINE, DXF_UNKNOWN_TYPE
+    DXF_LAYER, DXF_LINE_TYPE, DXF_LINE, DXF_LW_POLYLINE, DXF_POLYLINE, DXF_VERTEX, DXF_UNKNOWN_TYPE, DXF_SEQ_END
 };
 
 enum class DxfDrawingUnits {

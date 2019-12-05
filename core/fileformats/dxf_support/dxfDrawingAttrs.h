@@ -46,7 +46,7 @@ private:
     int marginRight = 0;
     int marginTop = 0;
     int marginBottom = 0;
-    DxfDrawingUnits units = DxfDrawingUnits::UNITLESS;
+    DxfDrawingUnits units = DxfDrawingUnits::CENTIMETERS;
 
     double getDrawingValue(double value) {
         switch(units) {

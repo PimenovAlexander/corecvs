@@ -30,6 +30,7 @@ public:
     void addLineType(DxfLineTypeObject *object) override;
 
     // Entities
+    void addEntity(DxfEntity *entity) override;
     void addLine(DxfLineEntity *entity) override;
     void addLwPolyline(DxfLwPolylineEntity *entity) override;
 

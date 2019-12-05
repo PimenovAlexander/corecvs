@@ -46,6 +46,17 @@ private:
     DxfLwPolylineData *data;
 };
 
+// POLYLINE Entity
+class DxfPolylineEntity : public DxfEntity {
+public:
+    explicit DxfPolylineEntity(DxfPolylineData *data) : DxfEntity(data), data(data) {}
+    void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
+    void print() const override;
+    DxfPolylineData* getData() override { return data; };
+private:
+    DxfPolylineData *data;
+};
+
 } // namespace corecvs
 
 #endif //DXF_SUPPORT_DXFENTITY_H

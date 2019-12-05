@@ -60,16 +60,22 @@ int DxfLoader::processDxfPair(corecvs::IDxfBuilder *dxfBuilder, int code, const 
                     case DxfElementType::DXF_LW_POLYLINE:
                         addLwPolyline(dxfBuilder);
                         break;
+                    case DxfElementType::DXF_POLYLINE:
+                        handlePolyline();
+                        break;
+                    case DxfElementType::DXF_VERTEX:
+                        handleVertex();
+                        break;
+                    case DxfElementType::DXF_SEQ_END:
+                        handleVertexSequence(dxfBuilder);
+                        break;
                     case DxfElementType::DXF_UNKNOWN_TYPE:
                         break;
                 }
-
-                rawValues.clear();
-
-                currentElementType = DxfCodes::getElementType(value);
-            } else {
-                currentElementType = DxfCodes::getElementType(value);
             }
+            currentElementType = DxfCodes::getElementType(value);
+            rawValues.clear();
+
             if (!variableName.empty()) {
                 addVariable(dxfBuilder);
                 variableName.clear();
@@ -87,8 +93,8 @@ int DxfLoader::processDxfPair(corecvs::IDxfBuilder *dxfBuilder, int code, const 
                 case DxfElementType::DXF_LW_POLYLINE:
                     handleLwPolyline(code);
                     break;
-                default:
-                    if (variableName.empty()) std::cout << "Error. Unknown group code! : " << code << " : " << value << std::endl;
+//                default:
+//                    if (variableName.empty()) std::cout << "Error. Unknown group code! : " << code << " : " << value << std::endl;
             }
     }
     return 0;
@@ -200,16 +206,44 @@ void DxfLoader::addLine(corecvs::IDxfBuilder *dxfBuilder) {
 
 void DxfLoader::addLwPolyline(corecvs::IDxfBuilder *dxfBuilder) {
     auto baseData = getEntityData();
-    auto allData = new DxfLwPolylineData(baseData, getIntValue(DxfCodes::DXF_VERTEX_AMOUNT_CODE, 0), currentVertices);
+    auto allData = new DxfLwPolylineData(baseData, getIntValue(DxfCodes::DXF_VERTEX_AMOUNT_CODE, 0), current2dVertices);
     dxfBuilder->addLwPolyline(new DxfLwPolylineEntity(allData));
-    currentVertices.clear();
+    current2dVertices.clear();
+    delete baseData;
+}
+
+void DxfLoader::addPolyline(corecvs::IDxfBuilder *dxfBuilder) {
+    auto baseData = getEntityData();
+    auto allData = new DxfPolylineData(baseData, current3dVertices);
+    dxfBuilder->addEntity(new DxfPolylineEntity(allData));
     delete baseData;
 }
 
 void DxfLoader::handleLwPolyline(int groupCode) {
-    if (groupCode == 20 && currentVertices.size() < getIntValue(DxfCodes::DXF_VERTEX_AMOUNT_CODE, 0)) {
-        currentVertices.emplace_back(Vector2d<double>(getDoubleValue(10, 0), getDoubleValue(20, 0)));
+    if (groupCode == 20 && current2dVertices.size() < getIntValue(DxfCodes::DXF_VERTEX_AMOUNT_CODE, 0)) {
+        current2dVertices.emplace_back(Vector2d<double>(getDoubleValue(10, 0), getDoubleValue(20, 0)));
     }
+}
+
+void DxfLoader::handlePolyline() {
+    currentEntityType = DxfElementType::DXF_POLYLINE;
+    //TODO: save polyline data
+}
+
+void DxfLoader::handleVertex() {
+    current3dVertices.emplace_back(Vector3d<double>(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)));
+}
+
+void DxfLoader::handleVertexSequence(IDxfBuilder *dxfBuilder) {
+    switch (currentEntityType) {
+        case DxfElementType::DXF_POLYLINE:
+            addPolyline(dxfBuilder);
+            break;
+        default:
+            break;
+    }
+    currentEntityType = DxfElementType::DXF_UNKNOWN_TYPE;
+    current3dVertices.clear();
 }
 
 // DXFToRGB24BufferLoader implementation
@@ -229,7 +263,7 @@ RGB24Buffer* DXFToRGB24BufferLoader::load(const string &name) {
         std::cout << "Error. Can't open file: " << name << std::endl;
         return nullptr;
     } else {
-        std::cout << "DXF dile is loaded: " << name << " result code: " << resultCode << std::endl;
+        std::cout << "DXF file is loaded: " << name << " result code: " << resultCode << std::endl;
         return builder.draw();
     }
 }

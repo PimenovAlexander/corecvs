@@ -12,6 +12,7 @@
 #include "core/buffers/rgb24/abstractPainter.h"
 #include "core/fileformats/bufferLoader.h"
 #include "core/math/vector/vector2d.h"
+#include "core/math/vector/vector3d.h"
 #include <map>
 
 namespace corecvs {
@@ -25,10 +26,12 @@ public:
     int load(std::string const &fileName, IDxfBuilder *dxfBuilder);
 
 private:
+    DxfElementType currentEntityType;
     DxfElementType currentElementType;
     std::string variableName;
     std::map<int, std::string> rawValues;
-    std::vector<Vector2d<double>> currentVertices = {};     // vertices of LwPolylineEntity
+    std::vector<Vector2d<double>> current2dVertices = {};     // vertices of LwPolylineEntity
+    std::vector<Vector3d<double>> current3dVertices = {};     // vertices of PolylineEntity
 
     int processDxfPair(IDxfBuilder *dxfBuilder, int code, std::string const &value);
     void addVariable(IDxfBuilder *dxfBuilder);
@@ -36,7 +39,11 @@ private:
     void addLineType(IDxfBuilder *dxfBuilder);
     void addLine(IDxfBuilder *dxfBuilder);
     void addLwPolyline(IDxfBuilder *dxfBuilder);
+    void addPolyline(IDxfBuilder *dxfBuilder);
     void handleLwPolyline(int groupCode);
+    void handlePolyline();
+    void handleVertex();
+    void handleVertexSequence(IDxfBuilder *dxfBuilder);
     DxfEntityData* getEntityData();
     DxfObjectData* getObjectData();
     static bool getTruncatedLine(std::string &s, std::istream &stream);
