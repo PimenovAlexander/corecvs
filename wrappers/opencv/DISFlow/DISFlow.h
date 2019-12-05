@@ -24,7 +24,7 @@ public:
 
     corecvs::FlowTracks *tracks;
 
-    corecvs::FlowBuffer *previousFlow;
+    cv::Mat *previousFlow;
 
     corecvs::RGB24Buffer *inPrev  = NULL;
     corecvs::RGB24Buffer *inCurr  = NULL;
