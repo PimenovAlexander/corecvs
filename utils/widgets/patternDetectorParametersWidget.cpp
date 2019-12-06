@@ -108,16 +108,33 @@ void PatternDetectorParametersWidget::loadFromQSettings(const QString &fileName,
 {
     SettingsGetter visitor(fileName, _root);
     std::string name;
-#if 0
-    visitor.visit(name, "provider");
+    visitor.visit(name, name, "provider");
     for (size_t id = 0; id < providerMetadata.size(); id++ )
     {
         if (providerMetadata[id]->providerName == name)
         {
             ui->providerComboBox->setCurrentIndex(id);
+            ui->tabWidget->setCurrentIndex(id);
+            break;
         }
     }
-#endif
+    for (size_t id = 0; id < providerMetadata.size(); id++ )
+    {
+        std::string provider = providerMetadata[id]->providerName;
+        std::map<std::string, ReflectionWidget*> &wmap = providerMetadata[id]->reflectionWidgets;
+        for (auto &it : wmap)
+        {
+            std::string name = it.first;
+            ReflectionWidget *widget = it.second;
+
+            DynamicObject block(widget->reflection);
+            visitor.visit(block, (provider + "." + name).c_str());
+            cout << block << endl;
+            widget->setParameters(block.rawObject);
+        }
+    }
+
+
 
 }
 
@@ -126,10 +143,22 @@ void PatternDetectorParametersWidget::saveToQSettings (const QString &fileName, 
     SettingsSetter visitor(fileName, _root);
     size_t id = (size_t)ui->providerComboBox->currentIndex();
     std::string name = providerMetadata[id]->providerName;
-#if 0
-    visitor.visit(name, "provider");
-#endif
+    visitor.visit(name, name, "provider");
 
+    for (size_t id = 0; id < providerMetadata.size(); id++ )
+    {
+        std::string provider = providerMetadata[id]->providerName;
+        std::map<std::string, ReflectionWidget*> &wmap = providerMetadata[id]->reflectionWidgets;
+        for (auto &it : wmap)
+        {
+            std::string name = it.first;
+            ReflectionWidget *widget = it.second;
+
+            DynamicObject block(widget->reflection);
+            widget->getParameters(block.rawObject);
+            visitor.visit(block, (provider + "." + name).c_str());
+        }
+    }
 }
 
 

@@ -266,6 +266,23 @@ void InputSelectorWidget::saveParamWidget(WidgetSaver &saver)
 
 }
 
+void InputSelectorWidget::loadFromQSettings(const QString &fileName, const QString &_root)
+{
+    SettingsGetter visitor(fileName, _root);
+    std::string name = getInputString().toStdString();
+    visitor.visit(name, name, "capture");
+    setInputString(QString::fromStdString(name));
+}
+
+void InputSelectorWidget::saveToQSettings(const QString &fileName, const QString &_root)
+{
+    SettingsSetter visitor(fileName, _root);
+    std::string name = getInputString().toStdString();
+    visitor.visit(name, name, "capture");
+}
+
+
+
 void InputSelectorWidget::fpsIndexChanged(int i)
 {
     QString value = ui.v4l2FpsComboBox->itemText(i);

@@ -108,7 +108,7 @@ void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata frameData
            mesh.switchColor();
            mesh.addAOB(Vector3dd(0,0,0), Vector3dd(1,1,1));
            for (int i = 0; i < mesh.facesColor.size(); i++) {
-               mesh.vertexesColor[i] = RGBColor::rainbow((double)i/ mesh.facesColor.size());
+               mesh.facesColor[i] = RGBColor::rainbow((double)i/ mesh.facesColor.size());
            }
 
            renderer.render(&mesh, result);

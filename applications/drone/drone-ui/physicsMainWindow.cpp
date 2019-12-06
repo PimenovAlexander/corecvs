@@ -36,6 +36,7 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
     PinholeCameraIntrinsics *intr = new PinholeCameraIntrinsics(Vector2dd(800, 600), degToRad(70.42));
     mCameraModel.intrinsics.reset(intr);
     mCameraModel.nameId = "Copter Main Camera";
+    mCameraModel.setLocation(Affine3DQ::Identity());
     mModelParametersWidget.setParameters(mCameraModel);
     connect(&mModelParametersWidget, SIGNAL(paramsChanged()), this, SLOT(cameraModelWidgetChanged()));
 
@@ -82,6 +83,9 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
     toSave.push_back(&mInputSelector);
     toSave.push_back(&mModelParametersWidget);
 
+    mInputSelector.loadFromQSettings("drone.ini", "");
+    patternDetectorParametersWidget.loadFromQSettings("drone.ini", "");
+
 
     /* Moving the camera closer */
     //ui->cloud->setCamera();
@@ -89,6 +93,7 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
 
 PhysicsMainWindow::~PhysicsMainWindow()
 {
+    SYNC_PRINT(("PhysicsMainWindow::~PhysicsMainWindow(): called"));
     for (SaveableWidget *ts: toSave) {
         ts->saveToQSettings("drone.ini", "");
     }
