@@ -6,6 +6,7 @@
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/buffers/rgb24/abstractPainter.h"
 
+
 #ifdef WITH_LIBJPEG
 #include "libjpegFileReader.h"
 #endif
@@ -19,8 +20,8 @@ using namespace corecvs;
 
 //https://people.csail.mit.edu/yichangshih/wide_angle_portrait/webpage/additional-results/97_TPE_2018_0322_IMG_20180322_120256_P000.jpg
 
-static const int GRID_STEP = 100;
-
+static const int GRID_STEP = 50;
+static const double f = 250;
 
 class Grid : public AbstractBuffer<Vector2dd>
 {
@@ -45,6 +46,7 @@ public:
             {
                 buffer->drawLine(element(i,j), element(i,j + 1), RGBColor::Blue() );
                 buffer->drawLine(element(i,j), element(i + 1,j), RGBColor::Red()  );
+                //buffer->drawLine(element(i, j+1), element(i+1, j), RGBColor::Yellow());
             }
             buffer->drawLine(element(i, w - 1), element(i + 1, w - 1), RGBColor::Red() );
         }
@@ -74,7 +76,31 @@ public:
         {
             for (int j = 0; j < w; j++)
             {
-                toReturn.element(i, j) = Vector2dd(j * step , i * step ) + 0.9 * step  * Vector2dd( sin(i / 24.0 * M_PI), cos(j / 24.0 * M_PI));
+                toReturn.element(i, j) = Vector2dd(j * step , i * step ) + 1.2 * step  * Vector2dd( sin(i / 24.0 * M_PI), cos(j / 24.0 * M_PI));
+
+
+                /* STEREOGRAPHIC PROJECTION - work in progress!
+                 * (y, x) = (j * step, i * step)
+                double x = i*step;
+                double y = j*step;
+
+                // reverse stereographic projection
+                // with principal point (w/2, h/2) - center of image
+                Vector2dd shift = Vector2dd(x, y) - Vector2dd(w/2.0, h/2.0);
+                double r = shift.l2Metric();
+                shift /= r;
+                double tau = 2 * atan2(r / 2, f);
+                Vector3dd onSphere = Vector3dd(shift * tau, 1.0).normalised();
+
+                // we got point (x,y,z) on sphere and
+                // we want to get stereographic projection
+                double theta = atan2(onSphere.xy().l2Metric(), onSphere.z());
+                Vector2dd dir = onSphere.xy().normalised();
+                dir *= 2 * f * tan(theta/2);
+
+                toReturn.element(i,j) =  Vector2dd(dir.y(), dir.x());*/
+
+
             }
         }
         return toReturn;
@@ -116,8 +142,6 @@ int main(int argc, char *argv[])
     Grid grid = Grid::TestGrid(gridH , gridW);
     grid.drawGrid(gridDebug);
 
-
-
     RGB24Buffer *out = new RGB24Buffer(in->getSize());
     RGB24Buffer *grid1Debug = new RGB24Buffer(in->getSize());
 
@@ -129,6 +153,7 @@ int main(int argc, char *argv[])
             for (int j = 0; j < out->w; j++)
             {
                 Vector2dd point(j,i);
+
                 for (int k = 0; k < grid.h - 1; k++)
                 {
                     for (int l = 0; l < grid.w - 1; l++)
@@ -136,20 +161,46 @@ int main(int argc, char *argv[])
                         Polygon p = grid.getPolygon(k,l);
                         if (!p.isInside(point))
                         {
-                            grid1Debug->element(i,j) = RGBColor::getParulaColor(123*k + 6343*l);
+                            grid1Debug->element(i,j) = RGBColor::getParulaColor(13*k + 1235*l);
                             continue;
-                        }                        
+                        }
+
                         Vector2dd a =  grid.element(k    , l    );
-                        Vector2dd e1 = grid.element(k    , l + 1) - a;
                         Vector2dd e2 = grid.element(k + 1, l    ) - a;
+                        Vector2dd e1 = grid.element(k     , l + 1) - a;
+
                         Matrix22 m(e1.x(), e2.x(),
                                    e1.y(), e2.y());
 
-                        Vector2dd inv = m.inverted() * (point - a);
-                        inv *= GRID_STEP;
-                        inv += Vector2dd(l * GRID_STEP , k * GRID_STEP );
+                         Vector2dd inv = m.inverted() * (point - a);
 
-                        if (in->isValidCoordBl(inv)) {
+                         inv *= GRID_STEP;
+                         inv += Vector2dd(l * GRID_STEP , k * GRID_STEP );
+
+                        // consider the sign of |e3 x A| to understand where is the point
+                        Vector2dd e3 = grid.element(k+1, l) - grid.element(k, l+1);
+                        Vector2dd A = point - grid.element(k, l+1);
+
+                        // if point lies in lower triangle
+                        if (e3.x()*A.y() - e3.y()*A.x() < 0)
+                        {
+                            // rearrange our basis to match this triangle
+                            a  = grid.element(k+1, l+1);
+                            e2 = grid.element(k, l+1) - a;
+                            e1 = grid.element(k+1, l) - a;
+
+                            m = Matrix22(e1.x(), e2.x(),
+                                         e1.y(), e2.y());
+
+                            inv = m.inverted() * (point - a);
+                            // we actually have to reverse the picture
+                            inv *= -GRID_STEP;
+                            inv += Vector2dd((l+1) * GRID_STEP , (k+1) * GRID_STEP );
+
+
+                        }
+                        if (in->isValidCoordBl(inv))
+                        {
                             out->element(i, j) = in->elementBl(inv);
                         }
 
