@@ -72,7 +72,7 @@ void Simulation::execJanibekovTest()
 
         while (isAlive)
         {
-            newTime = std::chrono::high_resolution_clock::now();
+
             //double timePassed = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-startTime).count();
 
             Affine3DQ motorToWorld = testBolt.getTransform() * testBolt.partsOfSystem[1].getPosAffine();
@@ -83,10 +83,12 @@ void Simulation::execJanibekovTest()
             //Vector3dd force2 = Vector3dd(0.0, 0.0, 0.03);
             //Quaternion q = Quaternion(-0.00744148, -8.46662e-11, 0.000934261, 0.999972);
 
+            newTime = std::chrono::high_resolution_clock::now();
             time_span = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-oldTime);
-            testBolt.physicsTick(time_span.count());
-            oldTime=newTime;
 
+            testBolt.physicsTick(time_span.count());
+
+            oldTime=newTime;
             testBolt.startTick();
         }
     });

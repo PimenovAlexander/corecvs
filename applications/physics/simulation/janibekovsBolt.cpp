@@ -225,12 +225,12 @@ void JanibekovsBolt::tick(double deltaT)
     /* We should carefully use inertiaTensor here. It seems like it changes with the frame of reference */
     /** Dynamics **/
     Quaternion dq = Quaternion::Rotation(angularVelocity, angularVelocity.l2Metric());
-    orientation = orientation ^ dq;
+    orientation = orientation ^ dq * deltaT;
 
     Matrix33 omega = Matrix33::CrossProductLeft(angularVelocity);
     //Vector3dd dw = -inertiaTensor.inv() * (getMomentum() - (omega * inertiaTensor * angularVelocity));
     Vector3dd dw = inertiaTensor.inv() * (getMomentum() - (omega * inertiaTensor * angularVelocity));
-    angularVelocity += dw;
+    angularVelocity += dw * deltaT;
 
     /** Need more info about why this is needed **/
     orientation.normalise();
