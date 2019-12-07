@@ -244,8 +244,8 @@ void PhysicsMainWindow::startVirtualMode()
         simSim.start();
         */
 
-    simSim.startRealTimeSimulation();
-    //simSim.execTestSimulation();
+    //simSim.startRealTimeSimulation();
+    simSim.execTestSimulation();
     //simSim.execJanibekovTest();
     QTimer::singleShot(8, this, SLOT(keepAlive()));
 }

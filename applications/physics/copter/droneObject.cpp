@@ -384,13 +384,13 @@ void DroneObject::tick(double deltaT)
     //L_INFO << "Momentum: " << getMomentum();
     /**This works as wanted**/
     /** Dynamics **/
-    Quaternion dq = Quaternion::Rotation(angularVelocity, angularVelocity.l2Metric());
+    Quaternion dq = Quaternion::Rotation(angularVelocity, angularVelocity.l2Metric()) * deltaT;
     orientation = orientation ^ dq;
 
     Matrix33 omega = Matrix33::CrossProductLeft(angularVelocity);
     //Vector3dd dw = -inertiaTensor.inv() * (getMomentum() - (omega * inertiaTensor * angularVelocity));
     Vector3dd dw = inertiaTensor.inv() * (getMomentum() - (omega * inertiaTensor * angularVelocity));
-    angularVelocity += dw;
+    angularVelocity += dw * deltaT;
 
     /** Need more info about why this is needed **/
     orientation.normalise();
@@ -406,6 +406,7 @@ void DroneObject::tick(double deltaT)
     ).count();
     if(ms % 200 == 0)
     {
+        //L_INFO << deltaT;
         //L_INFO<<"Delta orient: "<<orientation.getAngle()-q.getAngle();
         //L_INFO << angularAcceleration;
     }

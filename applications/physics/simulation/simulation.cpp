@@ -155,14 +155,13 @@ void Simulation::execTestSimulation()
         oldTime = std::chrono::high_resolution_clock::now();
         while (isAlive)
         {
-           drone.motors[1].addForce(Vector3dd(0,0,0.01));
-           drone.motors[0].addForce(Vector3dd(0,0,0.01));
+           drone.motors[1].addForce(Vector3dd(0, 0, 1)*0.000000001);
+           drone.motors[0].addForce(Vector3dd(0, 0, 1)*0.000000001);
            //drone.flightControllerTick(droneJoystick);
            newTime = std::chrono::high_resolution_clock::now();
            time_span = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-oldTime);
            drone.physicsTick(time_span.count());
            oldTime=newTime;
-
            drone.startTick();
         }
     });
