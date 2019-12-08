@@ -246,7 +246,8 @@ void PhysicsMainWindow::startVirtualMode()
 
     //simSim.startRealTimeSimulation();
     //simSim.execTestSimulation();
-    simSim.execJanibekovTest();
+    //simSim.execJanibekovTest();
+    simSim.execTestPhysObject();
     QTimer::singleShot(8, this, SLOT(keepAlive()));
 }
 
@@ -275,54 +276,151 @@ void PhysicsMainWindow::keepAlive()
 {
     if (virtualModeActive)
     {
-        bool oldbackend = !(ui->actionNewBackend->isChecked());
-
-        Mesh3DScene *scene  = NULL;
-
-        if (oldbackend)
-        {
-            scene = new Mesh3DScene;
-            Mesh3D *mesh = new Mesh3D();
-            mesh->switchColor();
-            scene->setMesh(mesh);
-        } else {
-            if (mShadedScene == NULL) {
-                mShadedScene = new SceneShaded;
-                ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mShadedScene), CloudViewDialog::DISP_CONTROL_ZONE);
-            }
-
-        }
-
-        if (oldbackend) {
-            //simSim.drone.drawMyself(*scene->owned);
-            simSim.testBolt.drawMyself(*scene->owned);
-        } else {
-            Mesh3DDecorated *mesh = new Mesh3DDecorated();
-            mesh->switchNormals();
-            //simSim.drone.drawMyself(*mesh);
-            simSim.testBolt.drawMyself(*mesh);
-            //mesh->dumpInfo();
-            mShadedScene->setMesh(mesh);
-        }
-/*
-        mGraphDialog.addGraphPoint("X", simSim.drone.getPosCenter().x());
-        mGraphDialog.addGraphPoint("Y", simSim.drone.getPosCenter().y());
-        mGraphDialog.addGraphPoint("Z", simSim.drone.getPosCenter().z());
-*/
-        mGraphDialog.addGraphPoint("X", simSim.testBolt.getPosCenter().x());
-        mGraphDialog.addGraphPoint("Y", simSim.testBolt.getPosCenter().y());
-        mGraphDialog.addGraphPoint("Z", simSim.testBolt.getPosCenter().z());
-
-        mGraphDialog.update();
-
-        if (oldbackend) {
-            ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene), CloudViewDialog::CONTROL_ZONE);
-        }
-        ui->cloud->update();
-
+//        drawDrone();
+        drawTestObject();
+//        drawDzhanibekov();
         QTimer::singleShot(8, this, SLOT(keepAlive()));
     }
 }
+
+void PhysicsMainWindow::drawDzhanibekov()
+{
+    bool oldbackend = !(ui->actionNewBackend->isChecked());
+    Mesh3DScene *scene  = NULL;
+
+    if (oldbackend)
+    {
+        scene = new Mesh3DScene;
+        Mesh3D *mesh = new Mesh3D();
+        mesh->switchColor();
+        scene->setMesh(mesh);
+    }
+    else
+    {
+        if (mShadedScene == NULL)
+        {
+            mShadedScene = new SceneShaded;
+            ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mShadedScene), CloudViewDialog::DISP_CONTROL_ZONE);
+        }
+    }
+
+    if (oldbackend)
+    {
+        simSim.testBolt.drawMyself(*scene->owned);
+    }
+    else
+    {
+        Mesh3DDecorated *mesh = new Mesh3DDecorated();
+        mesh->switchNormals();
+        simSim.testBolt.drawMyself(*mesh);
+        //mesh->dumpInfo();
+        mShadedScene->setMesh(mesh);
+    }
+
+    mGraphDialog.addGraphPoint("X", simSim.testBolt.getPosCenter().x());
+    mGraphDialog.addGraphPoint("Y", simSim.testBolt.getPosCenter().y());
+    mGraphDialog.addGraphPoint("Z", simSim.testBolt.getPosCenter().z());
+
+    mGraphDialog.update();
+
+    if (oldbackend) {
+        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene), CloudViewDialog::CONTROL_ZONE);
+    }
+    ui->cloud->update();
+}
+
+void PhysicsMainWindow::drawDrone()
+{
+    bool oldbackend = !(ui->actionNewBackend->isChecked());
+    Mesh3DScene *scene  = NULL;
+
+    if (oldbackend)
+    {
+        scene = new Mesh3DScene;
+        Mesh3D *mesh = new Mesh3D();
+        mesh->switchColor();
+        scene->setMesh(mesh);
+    }
+    else
+    {
+        if (mShadedScene == NULL)
+        {
+            mShadedScene = new SceneShaded;
+            ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mShadedScene), CloudViewDialog::DISP_CONTROL_ZONE);
+        }
+    }
+
+    if (oldbackend)
+    {
+        simSim.drone.drawMyself(*scene->owned);
+    }
+    else
+    {
+        Mesh3DDecorated *mesh = new Mesh3DDecorated();
+        mesh->switchNormals();
+        simSim.drone.drawMyself(*mesh);
+        //mesh->dumpInfo();
+        mShadedScene->setMesh(mesh);
+    }
+
+    mGraphDialog.addGraphPoint("X", simSim.drone.getPosCenter().x());
+    mGraphDialog.addGraphPoint("Y", simSim.drone.getPosCenter().y());
+    mGraphDialog.addGraphPoint("Z", simSim.drone.getPosCenter().z());
+
+    mGraphDialog.update();
+
+    if (oldbackend) {
+        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene), CloudViewDialog::CONTROL_ZONE);
+    }
+    ui->cloud->update();
+}
+
+void PhysicsMainWindow::drawTestObject()
+{
+    bool oldbackend = !(ui->actionNewBackend->isChecked());
+    Mesh3DScene *scene  = NULL;
+
+    if (oldbackend)
+    {
+        scene = new Mesh3DScene;
+        Mesh3D *mesh = new Mesh3D();
+        mesh->switchColor();
+        scene->setMesh(mesh);
+    }
+    else
+    {
+        if (mShadedScene == NULL)
+        {
+            mShadedScene = new SceneShaded;
+            ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mShadedScene), CloudViewDialog::DISP_CONTROL_ZONE);
+        }
+    }
+
+    if (oldbackend)
+    {
+        simSim.testObject.drawMyself(*scene->owned);
+    }
+    else
+    {
+        Mesh3DDecorated *mesh = new Mesh3DDecorated();
+        mesh->switchNormals();
+        simSim.testObject.drawMyself(*mesh);
+        //mesh->dumpInfo();
+        mShadedScene->setMesh(mesh);
+    }
+
+    mGraphDialog.addGraphPoint("X", simSim.testObject.getPosCenter().x());
+    mGraphDialog.addGraphPoint("Y", simSim.testObject.getPosCenter().y());
+    mGraphDialog.addGraphPoint("Z", simSim.testObject.getPosCenter().z());
+
+    mGraphDialog.update();
+
+    if (oldbackend) {
+        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene), CloudViewDialog::CONTROL_ZONE);
+    }
+    ui->cloud->update();
+}
+
 
 void PhysicsMainWindow::showCameraInput()
 {

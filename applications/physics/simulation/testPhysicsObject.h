@@ -16,7 +16,7 @@ class TestPhysicsObject : public PhysMainObject
 {
 
 public:
-    TestPhysicsObject(double arm = 0.1, double mass = 13);
+    TestPhysicsObject(double arm = 0.1, double mass = 4);
     PhysSphere centralSphere;
     std::vector<PhysSphere> partsOfSystem;
     void drawMyself(Mesh3D &mesh);

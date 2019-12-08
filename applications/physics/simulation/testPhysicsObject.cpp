@@ -4,14 +4,14 @@ using namespace std::chrono;
 TestPhysicsObject::TestPhysicsObject(double arm, double mass)
 {
     setSystemMass(mass);
-    double massOfRotatingObjects = 1.0;
+    double massOfRotatingObject = 1.0;
     double massOfTestingObject = 1.0;
     double massOfZeroObject = 1.0;
-    double partsRadius = 0.01;
+    double partsRadius = 0.015;
     Affine3DQ defaultPos = Affine3DQ(Vector3dd::Zero());
 
-    partsOfSystem.push_back(PhysSphere(&defaultPos, &partsRadius, &massOfRotatingObjects));
-    partsOfSystem.push_back(PhysSphere(&defaultPos, &partsRadius, &massOfRotatingObjects));
+    partsOfSystem.push_back(PhysSphere(&defaultPos, &partsRadius, &massOfRotatingObject));
+    partsOfSystem.push_back(PhysSphere(&defaultPos, &partsRadius, &massOfRotatingObject));
     partsOfSystem.push_back(PhysSphere(&defaultPos, &partsRadius, &massOfTestingObject));
     partsOfSystem.push_back(PhysSphere(&defaultPos, &partsRadius, &massOfZeroObject));
 
@@ -20,8 +20,8 @@ TestPhysicsObject::TestPhysicsObject(double arm, double mass)
     partsOfSystem[2].color = RGBColor::Green();    /*Sphere with mass*/
     partsOfSystem[3].color = RGBColor::Yellow();  /*Sphere without mass*/
 
-    partsOfSystem[0].setPos(Vector3dd( 0,  1, 0).normalised() * 3 * arm);
-    partsOfSystem[1].setPos(Vector3dd( 0, -1, 0).normalised() * 3 * arm);
+    partsOfSystem[0].setPos(Vector3dd( 0,  1, 0).normalised() * 1 * arm);
+    partsOfSystem[1].setPos(Vector3dd( 0, -1, 0).normalised() * 1 * arm);
     partsOfSystem[2].setPos(Vector3dd( 1,  0, 0).normalised() * arm);
     partsOfSystem[3].setPos(Vector3dd(-1,  0, 0).normalised() * arm);
 
@@ -42,8 +42,7 @@ TestPhysicsObject::TestPhysicsObject(double arm, double mass)
         worldMesh->dumpInfo();
     }
 
-
-    double massOfCentralSphere = mass - 2 * massOfRotatingObjects - massOfTestingObject;
+    double massOfCentralSphere = mass - 2 * massOfRotatingObject - massOfTestingObject;
     Affine3DQ posOfCentralSphere = Affine3DQ(Vector3dd(0,0,0).normalised());
     double radiusOfCentralSphere = arm / 100;
     centralSphere = PhysSphere(&posOfCentralSphere, &radiusOfCentralSphere, &massOfCentralSphere);
@@ -72,7 +71,7 @@ void TestPhysicsObject::drawMyself(Mesh3D &mesh)
 
         Circle3d circle;
         circle.c = Vector3dd(0,0,0);
-        circle.r = 0.3;
+        circle.r = 0.1;
         circle.normal = Vector3dd(1,0,0);
         mesh.addCircle(circle);
         mesh.currentColor = RGBColor::Violet();
@@ -160,52 +159,36 @@ void TestPhysicsObject::tick(double deltaT)
      * https://fgiesen.wordpress.com/2012/08/24/quaternion-differentiation/
      * Physically Based Modeling Rigid Body Simulation. David Baraff
      * https://ocw.mit.edu/courses/aeronautics-and-astronautics/16-07-dynamics-fall-2009/lecture-notes/MIT16_07F09_Lec26.pdf
+     * http://engsi.ru/file/out/723336 //Best to begin with
     **/
 
     double radius = centralSphere.radius;
     double centerMass = centralSphere.mass;
 
-    double massOfRotatingObjects = partsOfSystem[0].mass;
-    double massOfTestingObject = partsOfSystem[2].mass;
+    double massOfRotatingObject = partsOfSystem[0].mass;
+    double massOfTestingObject  = partsOfSystem[2].mass;
+    double massOfZeroObject     = partsOfSystem[3].mass;
 
     double armOfRotatingObjects = partsOfSystem[0].getPosVector().l2Metric();
-    double armOfTestingObject = partsOfSystem[2].getPosVector().l2Metric();
+    double armOfTestingObject   = partsOfSystem[2].getPosVector().l2Metric();
+    double armOfZeroObject      = partsOfSystem[3].getPosVector().l2Metric();
 
-    double inertiaMomentX = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * massOfRotatingObjects * pow(armOfRotatingObjects, 2);
-    double inertiaMomentY = 2.0 / 5.0 * centerMass * pow(radius, 2) + massOfTestingObject * pow(armOfTestingObject, 2);
-    double inertiaMomentZ = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * massOfRotatingObjects * pow(armOfRotatingObjects, 2)
-                                                                     + massOfTestingObject * pow(armOfTestingObject, 2);
+    double inertiaOfCentralSphere  = 2.0 / 5.0 * centerMass * pow(radius, 2);
+    double inertiaOfRotatingObject = massOfRotatingObject   * pow(armOfRotatingObjects, 2);
+    double inertiaOfTestingObject  = massOfTestingObject    * pow(armOfTestingObject, 2);
+    double inertiaOfZeroObject     = massOfZeroObject       * pow(armOfZeroObject, 2);
+
+    double tensorComponentX = inertiaOfCentralSphere + 2 * inertiaOfRotatingObject;
+    double tensorComponentY = inertiaOfCentralSphere + inertiaOfTestingObject + inertiaOfZeroObject;
+    double tensorComponentZ = inertiaOfCentralSphere + 2 * inertiaOfRotatingObject + inertiaOfTestingObject + inertiaOfZeroObject;
 
     //Matrix33 diagonalizedInertiaTensor = Matrix33::FromDiagonal(1.0, 1.5, 0.75);
     //Matrix33 diagonalizedInertiaTensor = Matrix33::FromDiagonal(0.001, 0.002, 0.0001);
-    Matrix33 diagonalizedInertiaTensor = Matrix33::FromDiagonal(inertiaMomentX, inertiaMomentY, inertiaMomentZ);
+    Matrix33 diagonalizedInertiaTensor = Matrix33::FromDiagonal(tensorComponentX, tensorComponentY, tensorComponentZ);
 
-    Matrix33 transposedOrient = orientation.toMatrix().transposed();
+    //Matrix33 transposedOrient = orientation.toMatrix().transposed();
     //inertiaTensor = orientation.toMatrix() * diagonalizedInertiaTensor * transposedOrient;
     inertiaTensor = diagonalizedInertiaTensor;
-
-    /*
-    if(testMode)
-    {
-        inertiaTensor = orientation.toMatrix() * diagonalizedInertiaTensor * transposedOrient;// orientation.toMatrix().transpose();
-    }
-    else
-    {
-        inertiaTensor = diagonalizedInertiaTensor;
-    }
-    */
-
-    time_t ms0 = duration_cast< milliseconds >(
-    system_clock::now().time_since_epoch()
-    ).count();
-    if(ms0 % 200 == 0)
-    {
-        //Matrix33 invAngVel = angularVelocity.toMatrix();
-        //L_INFO << invAngVel;
-        //L_INFO << orientation;
-        //L_INFO<< "Diagonalized Tensor: " << diagonalizedInertiaTensor / inertialMomentX;
-        //L_INFO << "Inertia tensor: " << inertiaTensor/inertialMomentX;
-    }
 
     /** Kinematics **/
     velocity = Vector3dd(0.0, 0.0, 0.0);
@@ -231,7 +214,7 @@ void TestPhysicsObject::tick(double deltaT)
     Matrix33 omega = Matrix33::CrossProductLeft(angularVelocity);
     //Vector3dd dw = -inertiaTensor.inv() * (getMomentum() - (omega * inertiaTensor * angularVelocity));
     Vector3dd dw = inertiaTensor.inv() * (getMomentum() - (omega * inertiaTensor * w_modified));
-    angularVelocity += dw;// * deltaT;
+    angularVelocity += dw * deltaT;
 
     /** Need more info about why this is needed **/
     orientation.normalise();
@@ -247,9 +230,17 @@ void TestPhysicsObject::tick(double deltaT)
     //orientation = Quaternion::pow(angularVelocity, deltaT * 1000) ^ orientation;
     //angularVelocity = Quaternion::pow(angularAcceleration, deltaT * 1000) ^ angularVelocity;
 
-    /** Just output **/
+    /** Just output to console **/
+    time_t ms0 = duration_cast< milliseconds >(
+    system_clock::now().time_since_epoch()
+    ).count();
     if(ms0 % 200 == 0)
     {
+        //Matrix33 invAngVel = angularVelocity.toMatrix();
+        //L_INFO << invAngVel;
+        //L_INFO << orientation;
+        //L_INFO<< "Diagonalized Tensor: " << diagonalizedInertiaTensor / inertialMomentX;
+        //L_INFO << "Inertia tensor: " << inertiaTensor/inertialMomentX;
         //L_INFO<<"Delta orient: "<<orientation.getAngle()-q.getAngle();
         //L_INFO << angularAcceleration;
         //L_INFO << orientation;

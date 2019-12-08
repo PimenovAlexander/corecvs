@@ -150,7 +150,17 @@ void Simulation::execTestPhysObject()
         Vector3dd testAngVel = Vector3dd(1, 0.01, 0); //* 0.000001;
         //Quaternion testOrientation = Quaternion(0, 0.012489, 0, 0.999922);
         Quaternion testOrientation = Quaternion::Identity();
-        L_INFO << "INTIAL ORIENTATION: " << testOrientation;
+
+        L_INFO << "Starting rigid body simulation of 4 objects...\n"
+               << "----------------------------------------------\n";
+
+        usleep(3000000);
+        L_INFO << "INITIAL Angular Velocity W = " << testAngVel << "\n"
+               << "INTIAL ORIENTATION: " << testOrientation << "\n"
+               << "----------------------------------------------\n"
+               << "ACTION: STOP AFTER 2Pi SECONDS\n"
+               << "TARGET: AFTER STOP ORIENTATION SHOULD BE SAME AS INITIAL\n"
+               << "Running test...";
         testObject.orientation = testOrientation;
         testObject.angularVelocity = testAngVel;
 
@@ -176,7 +186,7 @@ void Simulation::execTestPhysObject()
             time_span = std::chrono::duration_cast<std::chrono::duration<double>>(newTime - oldTime);
             time_since_start = std::chrono::duration_cast<std::chrono::duration<double>>(newTime - startTime);
 
-            if(time_since_start.count() < pi_x_2)
+            if(time_since_start.count() <= pi_x_2)
             {
                 testObject.physicsTick(time_span.count());
                 oldTime=newTime;
@@ -186,7 +196,10 @@ void Simulation::execTestPhysObject()
             {
                 if(outputFlag)
                 {
-                    L_INFO << "FINAL ORIENTATION: " << testObject.orientation;
+                    L_INFO << "TEST COMPLETED\n"
+                           << "----------------------------------------------\n"
+                           << "FINAL ORIENTATION: " << testObject.orientation << "\n"
+                           << "==============================================";
                     outputFlag = false;
                 }
             }
