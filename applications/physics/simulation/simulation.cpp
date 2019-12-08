@@ -147,7 +147,7 @@ void Simulation::execTestPhysObject()
         //noiseReverseTime = startTime;
 
         //Quaternion testAngVel = Quaternion(-0.00144962, -2.8152e-11, 9.80112e-15, 0.999999);
-        Vector3dd testAngVel = Vector3dd(1, 0.01, 0); //* 0.000001;
+        Vector3dd testAngVel = Vector3dd(1.0, 0.0, 0.0); //* 0.000001;
         //Quaternion testOrientation = Quaternion(0, 0.012489, 0, 0.999922);
         Quaternion testOrientation = Quaternion::Identity();
 
@@ -171,7 +171,6 @@ void Simulation::execTestPhysObject()
 
         while (isAlive)
         {
-
             //double timePassed = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-startTime).count();
 
             Affine3DQ motorToWorld = testObject.getTransform() * testObject.partsOfSystem[1].getPosAffine();
