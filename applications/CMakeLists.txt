@@ -1,18 +1,18 @@
 
 set(TEST_SUBDIRECTORIES
-   #base
+   #base          # Cannot be included because it depends on deprecated filters
    #cloudview
    drone
-   #egomotion
-   #imageview
-   #laserscan
-   #nester
-   #nester-test
-   #physics
-   #recorder
-   #robodetect
-   #scanner
-   #testbed
+   #egomotion     # Cannot be included because it depends on base application
+   #imageview     # Cannot be included because it depends on deprecated filters
+   #laserscan     # Cannot be included because it uses some deprecated/unknown API: calibrationHelpers.h
+   nester
+   #nester-test   # TODO: include this
+   #physics       # ?? what is that? This directory does not even exist
+   #recorder      # Cannot be added because it depends on base application
+   #robodetect    # Cannot be included because it depends on deprecated filters
+   #scanner       # Cannot be included because it depends on base application
+   #testbed       # Cannot be included becuase it depends on deprecated filters
 )
 
 foreach(test_subdirectory ${TEST_SUBDIRECTORIES})
