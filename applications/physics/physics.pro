@@ -80,7 +80,7 @@ SOURCES += \
     joystickInput.cpp \
     clientSender.cpp \
     mainPhysics.cpp \
-    controlRecord.cpp \   \
+    controlRecord.cpp \
     simulation/testPhysicsObject.cpp \
     joystick/joystickInterface.cpp \
     joystick/JoystickOptionsWidget.cpp \
@@ -96,7 +96,7 @@ SOURCES += \
     physicsAboutWidget.cpp \
     autopilot/protoautopilot.cpp \
     comcontroller.cpp \
-    autopilot/vertexsquare.cpp\
+    autopilot/vertexsquare.cpp \
     simulation/physObject.cpp \
     simulation/physSphere.cpp \
     copter/droneObject.cpp \
