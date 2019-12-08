@@ -61,7 +61,8 @@ HEADERS += \
     simulation/physSphere.h \
     copter/droneObject.h \
     copter/motor.h \
-    opencvUtils/opencvTransformations.h
+    opencvUtils/opencvTransformations.h \
+    simulation/testPhysicsObject.h
 
 
 SOURCES += \
@@ -79,7 +80,8 @@ SOURCES += \
     joystickInput.cpp \
     clientSender.cpp \
     mainPhysics.cpp \
-    controlRecord.cpp \  
+    controlRecord.cpp \   \
+    simulation/testPhysicsObject.cpp \
     joystick/joystickInterface.cpp \
     joystick/JoystickOptionsWidget.cpp \
     radio/frSkyMultimodule.cpp \

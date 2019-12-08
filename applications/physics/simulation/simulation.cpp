@@ -50,25 +50,28 @@ void Simulation::startRealTimeSimulation()
     thr.detach();
 }
 
+
+
 void Simulation::execJanibekovTest()
-{ 
+{
     std::thread thr([this]()
     {
         srand(NULL);
-        startTime = std::chrono::high_resolution_clock::now();
-        oldTime = startTime;
-        noiseTime = startTime;
-        noiseReverseTime = startTime;
+        //noiseTime = startTime;
+        //noiseReverseTime = startTime;
 
         //Quaternion testAngVel = Quaternion(-0.00144962, -2.8152e-11, 9.80112e-15, 0.999999);
-        Vector3dd testAngVel = Vector3dd(2, 0.01, 0) * 0.000001;
+        Vector3dd testAngVel = Vector3dd(1, 0.01, 0); //* 0.000001;
         //Quaternion testOrientation = Quaternion(0, 0.012489, 0, 0.999922);
         Quaternion testOrientation = Quaternion::Identity();
-
+        L_INFO << "INTIAL ORIENTATION: " << testOrientation;
         testBolt.orientation = testOrientation;
         testBolt.angularVelocity = testAngVel;
 
         testBolt.mw = testAngVel.l2Metric();
+
+        startTime = std::chrono::high_resolution_clock::now();
+        oldTime = startTime;
 
         while (isAlive)
         {
@@ -84,12 +87,23 @@ void Simulation::execJanibekovTest()
             //Quaternion q = Quaternion(-0.00744148, -8.46662e-11, 0.000934261, 0.999972);
 
             newTime = std::chrono::high_resolution_clock::now();
-            time_span = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-oldTime);
+            time_span = std::chrono::duration_cast<std::chrono::duration<double>>(newTime - oldTime);
+            time_since_start = std::chrono::duration_cast<std::chrono::duration<double>>(newTime - startTime);
 
-            testBolt.physicsTick(time_span.count());
-
-            oldTime=newTime;
-            testBolt.startTick();
+            if(time_since_start.count() < pi_x_2)
+            {
+                testBolt.physicsTick(time_span.count());
+                oldTime=newTime;
+                testBolt.startTick();
+            }
+            else
+            {
+                if(outputFlag)
+                {
+                    L_INFO << "FINAL ORIENTATION: " << testBolt.orientation;
+                    outputFlag = false;
+                }
+            }
         }
     });
     thr.detach();
@@ -119,6 +133,63 @@ void Simulation::startDroneSimulation()
             oldTime=newTime;
 
             testBolt.startTick();
+        }
+    });
+    thr.detach();
+}
+
+void Simulation::execTestPhysObject()
+{
+    std::thread thr([this]()
+    {
+        srand(NULL);
+        //noiseTime = startTime;
+        //noiseReverseTime = startTime;
+
+        //Quaternion testAngVel = Quaternion(-0.00144962, -2.8152e-11, 9.80112e-15, 0.999999);
+        Vector3dd testAngVel = Vector3dd(1, 0.01, 0); //* 0.000001;
+        //Quaternion testOrientation = Quaternion(0, 0.012489, 0, 0.999922);
+        Quaternion testOrientation = Quaternion::Identity();
+        L_INFO << "INTIAL ORIENTATION: " << testOrientation;
+        testObject.orientation = testOrientation;
+        testObject.angularVelocity = testAngVel;
+
+        testObject.mw = testAngVel.l2Metric();
+
+        startTime = std::chrono::high_resolution_clock::now();
+        oldTime = startTime;
+
+        while (isAlive)
+        {
+
+            //double timePassed = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-startTime).count();
+
+            Affine3DQ motorToWorld = testObject.getTransform() * testObject.partsOfSystem[1].getPosAffine();
+            Matrix33 transposedOrient = motorToWorld.rotor.toMatrix();
+            transposedOrient.transpose();
+
+            //Vector3dd force = transposedOrient * Vector3dd(0.0, 0.0, 0.05);
+            //Vector3dd force2 = Vector3dd(0.0, 0.0, 0.03);
+            //Quaternion q = Quaternion(-0.00744148, -8.46662e-11, 0.000934261, 0.999972);
+
+            newTime = std::chrono::high_resolution_clock::now();
+            time_span = std::chrono::duration_cast<std::chrono::duration<double>>(newTime - oldTime);
+            time_since_start = std::chrono::duration_cast<std::chrono::duration<double>>(newTime - startTime);
+
+            if(time_since_start.count() < pi_x_2)
+            {
+                testObject.physicsTick(time_span.count());
+                oldTime=newTime;
+                testObject.startTick();
+            }
+            else
+            {
+                if(outputFlag)
+                {
+                    L_INFO << "FINAL ORIENTATION: " << testObject.orientation;
+                    outputFlag = false;
+                }
+            }
         }
     });
     thr.detach();

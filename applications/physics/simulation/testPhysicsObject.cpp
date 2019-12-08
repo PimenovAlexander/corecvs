@@ -1,12 +1,12 @@
-#include "janibekovsBolt.h"
+#include "testPhysicsObject.h"
 #include <core/fileformats/meshLoader.h>
 using namespace std::chrono;
-JanibekovsBolt::JanibekovsBolt(double arm, double mass)
+TestPhysicsObject::TestPhysicsObject(double arm, double mass)
 {
     setSystemMass(mass);
-    double massOfRotatingObjects = 6;
-    double massOfTestingObject = 1;
-    double massOfZeroObject = 0.0;
+    double massOfRotatingObjects = 1.0;
+    double massOfTestingObject = 1.0;
+    double massOfZeroObject = 1.0;
     double partsRadius = 0.01;
     Affine3DQ defaultPos = Affine3DQ(Vector3dd::Zero());
 
@@ -56,7 +56,7 @@ JanibekovsBolt::JanibekovsBolt(double arm, double mass)
 }
 
 
-void JanibekovsBolt::drawMyself(Mesh3D &mesh)
+void TestPhysicsObject::drawMyself(Mesh3D &mesh)
 {
         mesh.mulTransform(getTransform());
         mesh.switchColor();
@@ -83,7 +83,7 @@ void JanibekovsBolt::drawMyself(Mesh3D &mesh)
         drawForces(mesh);
 }
 
-void JanibekovsBolt::drawForces(Mesh3D &mesh)
+void TestPhysicsObject::drawForces(Mesh3D &mesh)
 {
     for (size_t i = 0; i < partsOfSystem.size(); i++)
     {
@@ -99,14 +99,14 @@ void JanibekovsBolt::drawForces(Mesh3D &mesh)
     }
 }
 
-Affine3DQ JanibekovsBolt::getTransform()
+Affine3DQ TestPhysicsObject::getTransform()
 {
     return Affine3DQ(this->orientation, this->getPosCenter());
 }
 
-void JanibekovsBolt::drawMyself(Mesh3DDecorated &mesh)
+void TestPhysicsObject::drawMyself(Mesh3DDecorated &mesh)
 {
-    JanibekovsBolt::drawMyself((Mesh3D &)mesh);
+    TestPhysicsObject::drawMyself((Mesh3D &)mesh);
 
     /* Scene should be drawed */
 
@@ -126,7 +126,7 @@ void JanibekovsBolt::drawMyself(Mesh3DDecorated &mesh)
 
 }
 
-void JanibekovsBolt::physicsTick(double deltaT)
+void TestPhysicsObject::physicsTick(double deltaT)
 {
     /*
     if(!testMode)
@@ -152,7 +152,7 @@ void JanibekovsBolt::physicsTick(double deltaT)
 
 
 
-void JanibekovsBolt::tick(double deltaT)
+void TestPhysicsObject::tick(double deltaT)
 {
     /** Sources:
      * https://habr.com/ru/post/264381/
