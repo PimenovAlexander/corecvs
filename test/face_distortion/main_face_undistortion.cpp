@@ -20,8 +20,8 @@ using namespace corecvs;
 
 //https://people.csail.mit.edu/yichangshih/wide_angle_portrait/webpage/additional-results/97_TPE_2018_0322_IMG_20180322_120256_P000.jpg
 
-static const int GRID_STEP = 50;
-static const double f = 250;
+static const int GRID_STEP = 25;
+static const double f = 500;
 
 class Grid : public AbstractBuffer<Vector2dd>
 {
@@ -76,17 +76,16 @@ public:
         {
             for (int j = 0; j < w; j++)
             {
-                toReturn.element(i, j) = Vector2dd(j * step , i * step ) + 1.2 * step  * Vector2dd( sin(i / 24.0 * M_PI), cos(j / 24.0 * M_PI));
+                //toReturn.element(i, j) = Vector2dd(j * step , i * step ) + 1.2 * step  * Vector2dd( sin(i / 24.0 * M_PI), cos(j / 24.0 * M_PI));
 
-
-                /* STEREOGRAPHIC PROJECTION - work in progress!
-                 * (y, x) = (j * step, i * step)
-                double x = i*step;
-                double y = j*step;
+                // STEREOGRAPHIC PROJECTION
+                // (y, x) = (j * step, i * step)
+                double x = j*step;
+                double y = i*step;
 
                 // reverse stereographic projection
-                // with principal point (w/2, h/2) - center of image
-                Vector2dd shift = Vector2dd(x, y) - Vector2dd(w/2.0, h/2.0);
+                // with principal point (w*step/2, h*step/2) - center of image
+                Vector2dd shift = Vector2dd(x, y) - Vector2dd(w*step/2.0, h*step/2.0);
                 double r = shift.l2Metric();
                 shift /= r;
                 double tau = 2 * atan2(r / 2, f);
@@ -97,10 +96,11 @@ public:
                 double theta = atan2(onSphere.xy().l2Metric(), onSphere.z());
                 Vector2dd dir = onSphere.xy().normalised();
                 dir *= 2 * f * tan(theta/2);
+                dir += Vector2dd(w*step/2.0, h*step/2.0);
 
-                toReturn.element(i,j) =  Vector2dd(dir.y(), dir.x());*/
 
 
+                toReturn.element(i,j) =  Vector2dd(dir.x(), dir.y());
             }
         }
         return toReturn;
@@ -132,6 +132,9 @@ int main(int argc, char *argv[])
 
     int gridH = in->h / GRID_STEP + 1;
     int gridW = in->w / GRID_STEP + 1;
+
+    cout << gridH << endl;
+    cout << gridW << endl;
 
     SYNC_PRINT(("Grid size %d x %d\n", gridH, gridW));
 
@@ -203,6 +206,7 @@ int main(int argc, char *argv[])
                         {
                             out->element(i, j) = in->elementBl(inv);
                         }
+
 
                     }
                 }
