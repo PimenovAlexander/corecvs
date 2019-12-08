@@ -146,6 +146,9 @@ public:
     std::vector<DrawRequestData *> uiQueue;
     SceneShaded *mShadedScene = NULL;
 
+    void drawDzhanibekov();
+    void drawDrone();
+    void drawTestObject();
 public slots:
     void updateUi();
     void keepAliveJoyStick();
