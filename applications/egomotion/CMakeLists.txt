@@ -1,3 +1,11 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
+
+project(egomotion)
+
+add_executable(egomotion main_egomotion.cpp)
+
+find_package(Qt5 COMPONENTS REQUIRED Core Gui Widgets Script)
+
 target_sources(egomotion
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/egomotionDialog.h

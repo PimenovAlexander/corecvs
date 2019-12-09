@@ -1,16 +1,17 @@
+
 set(TEST_SUBDIRECTORIES
    #base
    cloudview
    drone
-   #egomotion
-   imageview  # This should be fixed
-   #laserscan
-   #nester
-   #nester-test
-   #recorder
-   #robodetect
-   #scanner
-   #testbed
+   #egomotion     # Cannot be included because it depends on base application
+   imageview     
+   #laserscan     # Cannot be included because it uses some deprecated/unknown API: calibrationHelpers.h
+   nester
+   #nester-test   # TODO: include this
+   #recorder      # Cannot be added because it depends on base application
+   #robodetect    # Cannot be included because it depends on deprecated filters
+   #scanner       # Cannot be included because it depends on base application
+   #testbed       # Cannot be included becuase it depends on deprecated filters
 )
 
 if (apriltag_LIBS)
