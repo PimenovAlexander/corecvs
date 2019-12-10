@@ -117,7 +117,7 @@ public:
         return static_cast<ViMouse3dFlowStyle::ViMouse3dFlowStyle>(mFlowColorType);
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setRedDist(double redDist)
     {
         mRedDist = redDist;
@@ -143,7 +143,7 @@ public:
         mFlowColorType = flowColorType;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -176,6 +176,7 @@ template<class VisitorType>
         mFlowColorType = flowColorType;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const Draw3dViMouseParameters &other) const 
     {
         if ( !(this->mRedDist == other.mRedDist)) return false;

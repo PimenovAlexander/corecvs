@@ -143,6 +143,18 @@ int ApriltagParameters::staticInit(corecvs::Reflection *toFill)
     field6->precision=2;
     toFill->fields.push_back(field6);
     /*  */ 
+    BoolField* field7 = new BoolField
+        (
+          ApriltagParameters::TRACE_ID,
+          offsetof(ApriltagParameters, mTrace),
+          false,
+          "trace",
+          "trace",
+          "trace"
+        );
+    field7->widgetHint=BaseField::CHECK_BOX;
+    toFill->fields.push_back(field7);
+    /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
     directory[std::string("Apriltag Parameters")]= toFill;
    return 0;

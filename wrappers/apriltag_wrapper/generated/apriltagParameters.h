@@ -48,6 +48,7 @@ public:
         AT_REFINE_EDGES_ID,
         AT_DECIMATE_ID,
         BLUR_ID,
+        TRACE_ID,
         APRILTAG_PARAMETERS_FIELD_ID_NUM
     };
 
@@ -95,6 +96,12 @@ public:
      */
     double mBlur;
 
+    /** 
+     * \brief trace 
+     * trace 
+     */
+    bool mTrace;
+
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit(corecvs::Reflection *toFill);
 
@@ -140,6 +147,11 @@ public:
         return mBlur;
     }
 
+    bool trace() const
+    {
+        return mTrace;
+    }
+
     /** Section with setters */
     void setTag_family(AprilTagType::AprilTagType tag_family)
     {
@@ -176,6 +188,11 @@ public:
         mBlur = blur;
     }
 
+    void setTrace(bool trace)
+    {
+        mTrace = trace;
+    }
+
     /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
@@ -188,6 +205,7 @@ template<class VisitorType>
         visitor.visit(mAt_refine_edges,           static_cast<const corecvs::BoolField *>(fields()[AT_REFINE_EDGES_ID]));
         visitor.visit(mAt_decimate,               static_cast<const corecvs::DoubleField *>(fields()[AT_DECIMATE_ID]));
         visitor.visit(mBlur,                      static_cast<const corecvs::DoubleField *>(fields()[BLUR_ID]));
+        visitor.visit(mTrace,                     static_cast<const corecvs::BoolField *>(fields()[TRACE_ID]));
     }
 
     ApriltagParameters()
@@ -204,6 +222,7 @@ template<class VisitorType>
         , bool at_refine_edges
         , double at_decimate
         , double blur
+        , bool trace
     )
     {
         mTag_family = tag_family;
@@ -213,6 +232,7 @@ template<class VisitorType>
         mAt_refine_edges = at_refine_edges;
         mAt_decimate = at_decimate;
         mBlur = blur;
+        mTrace = trace;
     }
 
     /** Exact match comparator **/ 
@@ -225,6 +245,7 @@ template<class VisitorType>
         if ( !(this->mAt_refine_edges == other.mAt_refine_edges)) return false;
         if ( !(this->mAt_decimate == other.mAt_decimate)) return false;
         if ( !(this->mBlur == other.mBlur)) return false;
+        if ( !(this->mTrace == other.mTrace)) return false;
         return true;
     }
     friend std::ostream& operator << (std::ostream &out, ApriltagParameters &toSave)

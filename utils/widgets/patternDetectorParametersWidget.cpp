@@ -33,6 +33,7 @@ PatternDetectorParametersWidget::PatternDetectorParametersWidget(QWidget *parent
         metadata->tabWidget->setLayout(layout);
 
         std::map<std::string, corecvs::DynamicObject> defaultParameters = detector->getParameters();
+        delete_safe(detector);
 
         if (defaultParameters.empty()) {
             SYNC_PRINT(("There are no parameters\n"));
@@ -44,23 +45,29 @@ PatternDetectorParametersWidget::PatternDetectorParametersWidget(QWidget *parent
         for (auto &it : defaultParameters)
         {            
             ReflectionWidget *refWidget = new ReflectionWidget(it.second.reflection);
-            layout->addWidget(new QLabel(QString::fromStdString(it.first)), layout->rowCount(), 0 );
-            layout->addWidget(refWidget,                                    layout->rowCount(), 1);
+            int row = layout->rowCount();
+            layout->addWidget(new QLabel(QString::fromStdString(it.first)), row, 0 );
+            layout->addWidget(refWidget,                                    row, 1);
 
             metadata->reflectionWidgets[it.first] = refWidget;
             connect(refWidget, SIGNAL(paramsChanged()), metadata, SLOT(uiParamsChanged()));
+            layout->addItem(new QSpacerItem(10,10, QSizePolicy::Expanding, QSizePolicy::Expanding), layout->rowCount(), 0);
         }
 
+
         ui->tabWidget->addTab(metadata->tabWidget, QString::fromStdString(hint));
-        connect(metadata, SIGNAL(paramsChanged(int)), this, SLOT(tabParamsChanged(int)));
+        connect(metadata, SIGNAL(paramsChanged(int)), this, SLOT(tabParamsChanged(int)));        
 
 
-        delete_safe(detector);
         //knownParameters.emplace_back(str);
         SYNC_PRINT(("PatternDetectorParametersWidget(): %s provider added\n", str.toStdString().c_str()));
     }
     connect(ui->providerComboBox, SIGNAL(activated(int)), ui->tabWidget, SLOT(setCurrentIndex(int)));
     connect(ui->providerComboBox, SIGNAL(activated(int)), this, SLOT(uiParamsChanged()));
+
+    mPoseParameters = new ReflectionWidget(PatternFromPoseParameters::getReflection());
+    mPoseParameters->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    ui->gridLayout->addWidget(mPoseParameters);
 
     /**/
 }
@@ -79,8 +86,9 @@ GeneralPatternDetectorParameters PatternDetectorParametersWidget::getParameters(
 {
     GeneralPatternDetectorParameters toReturn;
     size_t id = (size_t)ui->providerComboBox->currentIndex();
-    toReturn.provider = providerMetadata[id]->providerName;
+    toReturn.provider       = providerMetadata[id]->providerName;
 
+    mPoseParameters->getParameters(&toReturn.poseParameters);
 
     for (auto &it : providerMetadata[id]->reflectionWidgets)
     {
@@ -107,6 +115,11 @@ void PatternDetectorParametersWidget::saveParamWidget(WidgetSaver &saver)
 void PatternDetectorParametersWidget::loadFromQSettings(const QString &fileName, const QString &_root)
 {
     SettingsGetter visitor(fileName, _root);
+
+    PatternFromPoseParameters pose;
+    mPoseParameters->getParameters(&pose);
+    visitor.visit(pose, pose, "pose");
+
     std::string name;
     visitor.visit(name, name, "provider");
     for (size_t id = 0; id < providerMetadata.size(); id++ )
@@ -141,6 +154,11 @@ void PatternDetectorParametersWidget::loadFromQSettings(const QString &fileName,
 void PatternDetectorParametersWidget::saveToQSettings (const QString &fileName, const QString &_root)
 {
     SettingsSetter visitor(fileName, _root);
+
+    PatternFromPoseParameters pose;
+    visitor.visit(pose, pose, "pose");
+    mPoseParameters->setParameters(&pose);
+
     size_t id = (size_t)ui->providerComboBox->currentIndex();
     std::string name = providerMetadata[id]->providerName;
     visitor.visit(name, name, "provider");

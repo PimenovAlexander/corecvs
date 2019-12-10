@@ -8,6 +8,7 @@
 #include <reflectionWidget.h>
 
 #include "core/reflection/dynamicObject.h"
+#include "generated/patternFromPoseParameters.h"
 
 namespace Ui {
 class PatternDetectorParametersWidget;
@@ -16,12 +17,17 @@ class PatternDetectorParametersWidget;
 
 class GeneralPatternDetectorParameters {
 public:
+    PatternFromPoseParameters poseParameters;
+
     std::string provider;
     std::map<std::string, corecvs::DynamicObject> providerParameters;
 
     friend std::ostream& operator << (std::ostream &out, GeneralPatternDetectorParameters &params)
     {
-        out << "Provider:" << params.provider << endl;
+        out << "Pose Params:" << endl << params.poseParameters << endl;
+
+        out << "Provider Params:" << params.provider << endl;
+
         out << "Params:"   << endl;
         for (auto it : params.providerParameters)
         {
@@ -72,6 +78,8 @@ public:
     virtual void loadFromQSettings(const QString &fileName, const QString &_root);
     virtual void saveToQSettings  (const QString &fileName, const QString &_root);
 
+
+    ReflectionWidget *mPoseParameters = NULL;
 
 public slots:
     void setCurrentToDefaults();

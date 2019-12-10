@@ -26,7 +26,7 @@ public:
    /* Main setup */
     PatternDetector *detector = NULL;
     CameraModel mCameraModel;
-
+    GeneralPatternDetectorParameters mPatternToPose;
 
 public slots:
     /** NB: This is a place to process video **/

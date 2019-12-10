@@ -14,10 +14,12 @@
     <!-- <field type="string" name="tag_family"      defaultValue="tag36h11"> -->
     <field type="AprilTagType" name="tag_family"      defaultValue="2">
     <field type="int"          name="at_threads"      defaultValue="1">
-    <field type="bool"         name="at_debug"        defaultValue="true">
+    <field type="bool"         name="at_debug"        defaultValue="true">    
     <field type="bool"         name="at_quiet"        defaultValue="false">
     <field type="bool"         name="at_refine_edges" defaultValue="true">
     <field type="double"       name="at_decimate"     defaultValue="2.0">
     <field type="double"       name="blur"            defaultValue="0.0">
+    <field type="bool"         name="trace"           defaultValue="false">
+
   </class>
 </poco>

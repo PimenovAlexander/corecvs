@@ -84,34 +84,48 @@ void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata frameData
         /* Try to locate myself */
        if (!patterns.empty())
        {
+           double scale = mPatternToPose.poseParameters.patternScale();
            PatternDetectorResult &pattern = patterns[0];
            HomographyReconstructor reconstructor;
-           reconstructor.addPoint2PointConstraint(Vector2dd::Zero() , Vector2dd(pattern.mPosition));
-           reconstructor.addPoint2PointConstraint(Vector2dd::OrtX() , Vector2dd(pattern.mOrtX));
-           reconstructor.addPoint2PointConstraint(Vector2dd::OrtY() , Vector2dd(pattern.mOrtY));
-           reconstructor.addPoint2PointConstraint(Vector2dd(1.0,1.0), Vector2dd(pattern.mUnityPoint));
+           reconstructor.addPoint2PointConstraint(scale * Vector2dd::Zero() , Vector2dd(pattern.mPosition));
+           reconstructor.addPoint2PointConstraint(scale * Vector2dd::OrtX() , Vector2dd(pattern.mOrtX));
+           reconstructor.addPoint2PointConstraint(scale * Vector2dd::OrtY() , Vector2dd(pattern.mOrtY));
+           reconstructor.addPoint2PointConstraint(scale * Vector2dd(1.0,1.0), Vector2dd(pattern.mUnityPoint));
 
            Matrix33  homography = reconstructor.getBestHomography();
+
+           if (mPatternToPose.poseParameters.drawHomography())
+           {
+               for (int i = 0; i < 9; i++)
+                   for (int j = 0; j < 9; j++)
+                   {
+                       Vector2dd in = Vector2dd (i / 8.0, j / 8.0) * scale;
+                       Vector2dd out = homography * in;
+                       result->drawCrosshare3(out, RGBColor::Red());
+                   }
+           }
+
            PinholeCameraIntrinsics *pinhole = mCameraModel.getPinhole();
            Matrix33 K = pinhole->getKMatrix33();
-
            Affine3DQ affine = HomographyReconstructor::getAffineFromHomography(K, homography);
-           cout << affine << endl;
+           // cout << affine << endl;
 
            path.push_front(affine);
 
-           CameraModel simulated(pinhole->clone());
-           simulated.setLocation(affine);
-           SimpleRenderer renderer;
-           renderer.modelviewMatrix = simulated.getCameraMatrix();
-           Mesh3D mesh;
-           mesh.switchColor();
-           mesh.addAOB(Vector3dd(0,0,0), Vector3dd(1,1,1));
-           for (int i = 0; i < mesh.facesColor.size(); i++) {
-               mesh.facesColor[i] = RGBColor::rainbow((double)i/ mesh.facesColor.size());
+           if (mPatternToPose.poseParameters.drawCube())
+           {
+               CameraModel simulated(pinhole->clone());
+               simulated.setLocation(affine);
+               SimpleRenderer renderer;
+               renderer.modelviewMatrix = simulated.getCameraMatrix();
+               Mesh3D mesh;
+               mesh.switchColor();
+               mesh.addAOB(Vector3dd(0,0,0), Vector3dd(1,1,1));
+               for (int i = 0; i < mesh.facesColor.size(); i++) {
+                   mesh.facesColor[i] = RGBColor::rainbow((double)i/ mesh.facesColor.size());
+               }
+               renderer.render(&mesh, result);
            }
-
-           renderer.render(&mesh, result);
        }
        stats.resetInterval("3d Draw");
 
@@ -129,7 +143,6 @@ void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata frameData
             mesh->currentTransform = Matrix44::Identity();
         }
     }
-
 
     target->uiMutex.lock();
     target->uiQueue.emplace_back(new DrawRequestData);
@@ -154,6 +167,7 @@ void FrameProcessor::setPatternDetectorParameters(GeneralPatternDetectorParamete
         SYNC_PRINT(("FrameProcessor::setPatternDetectorParameters(): were not able to create detector <%s>\n", params.provider.c_str()));
         return;
     }
+    mPatternToPose = params;
 
     //  std::map<std::string, corecvs::DynamicObject> providerParameters;
     for (auto &it: params.providerParameters)

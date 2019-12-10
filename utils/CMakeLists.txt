@@ -121,3 +121,16 @@ target_sources(${MODULE_NAME}
 target_sources(${MODULE_NAME} PRIVATE ${ADD_SRC_FILES})
 set_source_files_properties(${ADD_SRC_FILES} PROPERTIES EXTERNAL_OBJECT true)
 
+
+# Additional stuff mostly for IDE only
+
+set(ADD_SRC_FILES ${ADD_SRC_FILES}
+    ${CMAKE_CURRENT_LIST_DIR}/../tools/generator/xml/utils.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../tools/generator/xml/draw3d.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../tools/generator/xml/graphPlot.xml
+    )
+
+target_sources(corecvs PRIVATE ${ADD_SRC_FILES})
+set_source_files_properties(${ADD_SRC_FILES} PROPERTIES EXTERNAL_OBJECT true HEADER_FILE_ONLY TRUE)
+
+

@@ -34,6 +34,8 @@ extern "C" {
 #endif
 }
 
+using namespace corecvs;
+
 ApriltagDetector::ApriltagDetector(){
     at_detections = nullptr;
     apriltag_create();
@@ -44,8 +46,9 @@ ApriltagDetector::~ApriltagDetector() {
 }
 
 int ApriltagDetector::operator()() {
-    using namespace corecvs;
-    SYNC_PRINT(("apriltagDetector::operator(): called\n"));
+    if (params.trace()) {
+        SYNC_PRINT(("apriltagDetector::operator(): called\n"));
+    }
 
     image_u8_t inputGray = {
             .width  = gray->w,

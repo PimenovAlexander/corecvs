@@ -37,8 +37,10 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
     mCameraModel.intrinsics.reset(intr);
     mCameraModel.nameId = "Copter Main Camera";
     mCameraModel.setLocation(Affine3DQ::Identity());
-    mModelParametersWidget.setParameters(mCameraModel);
+    /* Connect parameters and send first version */
     connect(&mModelParametersWidget, SIGNAL(paramsChanged()), this, SLOT(cameraModelWidgetChanged()));
+    mModelParametersWidget.setParameters(mCameraModel);
+
 
     for (int i=0;i<8;i++)
     {
@@ -85,6 +87,7 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
 
     mInputSelector.loadFromQSettings("drone.ini", "");
     patternDetectorParametersWidget.loadFromQSettings("drone.ini", "");
+    mModelParametersWidget.loadFromQSettings("drone.ini", "");
 
 
     /* Moving the camera closer */
