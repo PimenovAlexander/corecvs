@@ -44,26 +44,18 @@ void ImplDxfBuilder::addLineType(corecvs::DxfLineTypeObject *object) {
 }
 
 // Entities
-void ImplDxfBuilder::addLine(DxfLineEntity *entity) {
-    addEntity(entity);
-}
-
-void ImplDxfBuilder::addLwPolyline(DxfLwPolylineEntity *entity) {
-    addEntity(entity);
-}
-
 void ImplDxfBuilder::addEntity(DxfEntity *entity) {
     entities.push_back(entity);
 }
 
 // Drawing
 void ImplDxfBuilder::prepareToDraw() {
-    attrs.setDimensions((int) (rightBottomCorner.x() - leftTopCorner.x()), (int) (rightBottomCorner.y() - leftTopCorner.y()));
-    attrs.setMargins(20, 20, 10, 10);
+    attrs.setCorners(leftTopCorner, rightBottomCorner);
+    attrs.setMargins(20, 20, 20, 20);
 
-    for (DxfObject* object : objects) {
+//    for (DxfObject* object : objects) {
 //        object->print();
-    }
+//    }
 
     for (DxfEntity* entity : entities) {
         auto data = entity->getData();

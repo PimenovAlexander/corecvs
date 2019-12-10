@@ -14,7 +14,7 @@
 
 namespace corecvs {
 
-int DxfLoader::load(const std::string &fileName, corecvs::IDxfBuilder *dxfBuilder) {
+int DxfLoader::load(const std::string &fileName) {
     std::ifstream stream(fileName);
     if (!stream) {
         return -1;
@@ -36,29 +36,35 @@ int DxfLoader::load(const std::string &fileName, corecvs::IDxfBuilder *dxfBuilde
             }
 
             linePosition += 2;
-            processDxfPair(dxfBuilder, currentCode, valueString);
+            processDxfPair(currentCode, valueString);
         }
     }
     return 0;
 }
 
-int DxfLoader::processDxfPair(corecvs::IDxfBuilder *dxfBuilder, int code, const std::string &value) {
+int DxfLoader::processDxfPair(int code, const std::string &value) {
     switch (code) {
         case DxfCodes::DXF_ENTITY_SEPARATOR_CODE:
             std::cout << "Separator code : " << value << std::endl;
             if (currentElementType != DxfElementType::DXF_UNKNOWN_TYPE) {
                 switch (currentElementType) {
                     case DxfElementType::DXF_LAYER:
-                        addLayer(dxfBuilder);
+                        addLayer();
                         break;
                     case DxfElementType::DXF_LINE_TYPE:
-                        addLineType(dxfBuilder);
+                        addLineType();
                         break;
                     case DxfElementType::DXF_LINE:
-                        addLine(dxfBuilder);
+                        addLine();
                         break;
                     case DxfElementType::DXF_LW_POLYLINE:
-                        addLwPolyline(dxfBuilder);
+                        addLwPolyline();
+                        break;
+                    case DxfElementType::DXF_CIRCLE:
+                        addCircle();
+                        break;
+                    case DxfElementType::DXF_ARC:
+                        addArc();
                         break;
                     case DxfElementType::DXF_POLYLINE:
                         handlePolyline();
@@ -67,7 +73,7 @@ int DxfLoader::processDxfPair(corecvs::IDxfBuilder *dxfBuilder, int code, const 
                         handleVertex();
                         break;
                     case DxfElementType::DXF_SEQ_END:
-                        handleVertexSequence(dxfBuilder);
+                        handleVertexSequence();
                         break;
                     case DxfElementType::DXF_UNKNOWN_TYPE:
                         break;
@@ -77,13 +83,13 @@ int DxfLoader::processDxfPair(corecvs::IDxfBuilder *dxfBuilder, int code, const 
             rawValues.clear();
 
             if (!variableName.empty()) {
-                addVariable(dxfBuilder);
+                addVariable();
                 variableName.clear();
                 rawValues.clear();
             }
             break;
         case DxfCodes::DXF_VARIABLE_CODE:
-            if (!variableName.empty()) addVariable(dxfBuilder);
+            if (!variableName.empty()) addVariable();
             variableName = value;
             rawValues.clear();
             break;
@@ -142,7 +148,7 @@ DxfObjectData* DxfLoader::getObjectData() {
     return data;
 }
 
-void DxfLoader::addVariable(corecvs::IDxfBuilder *dxfBuilder) {
+void DxfLoader::addVariable() {
     auto codes = DxfCodes::getVariableCodes(variableName);
     if (codes.empty()) {
         std::cout << "Error. Unknown variable: " << variableName << std::endl;
@@ -182,40 +188,57 @@ void DxfLoader::addVariable(corecvs::IDxfBuilder *dxfBuilder) {
     }
 }
 
-void DxfLoader::addLayer(corecvs::IDxfBuilder *dxfBuilder) {
+void DxfLoader::addLayer() {
     auto baseData = getObjectData();
     auto allData = new DxfLayerData(baseData, getIntValue(DxfCodes::DXF_COLOR_NUMBER_CODE, 0), (bool) getIntValue(290, 0), getStringValue(DxfCodes::DXF_LINE_TYPE_NAME_CODE, ""));
     dxfBuilder->addLayer(new DxfLayerObject(allData));
     delete baseData;
 }
 
-void DxfLoader::addLineType(corecvs::IDxfBuilder *dxfBuilder) {
+void DxfLoader::addLineType() {
     auto baseData = getObjectData();
     auto allData = new DxfLineTypeData(baseData, getIntValue(73, 0), getDoubleValue(40, 0));
     dxfBuilder->addLineType(new DxfLineTypeObject(allData));
     delete baseData;
 }
 
-void DxfLoader::addLine(corecvs::IDxfBuilder *dxfBuilder) {
+void DxfLoader::addLine() {
     auto baseData = getEntityData();
     auto allData = new DxfLineData(baseData, getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0),
                                getDoubleValue(11, 0), getDoubleValue(21, 0),getDoubleValue (31, 0));
-    dxfBuilder->addLine(new DxfLineEntity(allData));
+    dxfBuilder->addEntity(new DxfLineEntity(allData));
     delete baseData;
 }
 
-void DxfLoader::addLwPolyline(corecvs::IDxfBuilder *dxfBuilder) {
+void DxfLoader::addLwPolyline() {
     auto baseData = getEntityData();
     auto allData = new DxfLwPolylineData(baseData, getIntValue(DxfCodes::DXF_VERTEX_AMOUNT_CODE, 0), current2dVertices);
-    dxfBuilder->addLwPolyline(new DxfLwPolylineEntity(allData));
+    dxfBuilder->addEntity(new DxfLwPolylineEntity(allData));
     current2dVertices.clear();
     delete baseData;
 }
 
-void DxfLoader::addPolyline(corecvs::IDxfBuilder *dxfBuilder) {
+void DxfLoader::addPolyline() {
     auto baseData = getEntityData();
     auto allData = new DxfPolylineData(baseData, current3dVertices);
     dxfBuilder->addEntity(new DxfPolylineEntity(allData));
+    delete baseData;
+}
+
+void DxfLoader::addCircle() {
+    auto baseData = getEntityData();
+    auto allData = new DxfCircleData(baseData, Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
+                                   getDoubleValue(DxfCodes::DXF_RADIUS_CODE, 0), getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0));
+    dxfBuilder->addEntity(new DxfCircleEntity(allData));
+    delete baseData;
+}
+
+void DxfLoader::addArc() {
+    auto baseData = getEntityData();
+    auto allData = new DxfArcData(baseData, Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
+                                     getDoubleValue(DxfCodes::DXF_RADIUS_CODE, 0), getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0),
+                                     getDoubleValue(DxfCodes::DXF_START_ANGLE_CODE, 0), getDoubleValue(DxfCodes::DXF_END_ANGLE_CODE, 0));
+    dxfBuilder->addEntity(new DxfArcEntity(allData));
     delete baseData;
 }
 
@@ -234,10 +257,10 @@ void DxfLoader::handleVertex() {
     current3dVertices.emplace_back(Vector3d<double>(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)));
 }
 
-void DxfLoader::handleVertexSequence(IDxfBuilder *dxfBuilder) {
+void DxfLoader::handleVertexSequence() {
     switch (currentEntityType) {
         case DxfElementType::DXF_POLYLINE:
-            addPolyline(dxfBuilder);
+            addPolyline();
             break;
         default:
             break;
@@ -256,9 +279,9 @@ bool DXFToRGB24BufferLoader::acceptsFile(std::string const &name) {
 }
 
 RGB24Buffer* DXFToRGB24BufferLoader::load(const string &name) {
-    DxfLoader loader;
     ImplDxfBuilder builder;
-    int resultCode = loader.load(name, &builder);
+    DxfLoader loader(&builder);
+    int resultCode = loader.load(name);
     if (resultCode == -1) {
         std::cout << "Error. Can't open file: " << name << std::endl;
         return nullptr;

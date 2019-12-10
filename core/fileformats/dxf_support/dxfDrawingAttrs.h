@@ -7,6 +7,7 @@
 
 #include "core/fileformats/dxf_support/dxfCodes.h"
 #include "core/math/vector/vector2d.h"
+#include "core/math/vector/vector3d.h"
 
 namespace corecvs {
 
@@ -16,9 +17,11 @@ public:
         units = _units;
     }
 
-    void setDimensions(int _width, int _height) {
-        width = (int) getDrawingValue(_width);
-        height = (int) getDrawingValue(_height);
+    void setCorners(Vector3dd leftTop, Vector3dd rightBottom) {
+        leftTopCorner = leftTop;
+        rightBottomCorner = rightBottom;
+        width = (int) getDrawingValue(rightBottomCorner.x() - leftTopCorner.x());
+        height = (int) getDrawingValue(rightBottomCorner.y() - leftTopCorner.y());
     }
 
     void setMargins(int left, int right, int top, int bottom) {
@@ -34,19 +37,10 @@ public:
 
     Vector2d<double> getDrawingValues(double x, double y) {
         Vector2d<double> result;
-        result.x() = getDrawingValue(x) + marginLeft;
-        result.y() = (double) height - getDrawingValue(y) + marginTop;
+        result.x() = getDrawingValue(x - leftTopCorner.x()) + marginLeft;
+        result.y() = (double) height - getDrawingValue(y - leftTopCorner.y()) + marginTop;
         return result;
     }
-
-private:
-    int width = 0;
-    int height = 0;
-    int marginLeft = 0;
-    int marginRight = 0;
-    int marginTop = 0;
-    int marginBottom = 0;
-    DxfDrawingUnits units = DxfDrawingUnits::CENTIMETERS;
 
     double getDrawingValue(double value) {
         switch(units) {
@@ -73,6 +67,19 @@ private:
             case DxfDrawingUnits::PARSECS:      return(value * 30856774879000000000.0);
         }
     }
+
+private:
+    DxfDrawingUnits units = DxfDrawingUnits::CENTIMETERS;
+    // in pixels:
+    int width = 0;
+    int height = 0;
+    int marginLeft = 0;
+    int marginRight = 0;
+    int marginTop = 0;
+    int marginBottom = 0;
+    // in drawing coordinates:
+    Vector3dd leftTopCorner;
+    Vector3dd rightBottomCorner;
 };
 
 } // namespace corecvs

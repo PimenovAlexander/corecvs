@@ -3,6 +3,7 @@
 //
 
 #include "core/fileformats/dxf_support/entities/dxfEntity.h"
+#include "core/geometry/conic.h"
 #include <iostream>
 
 namespace corecvs {
@@ -47,6 +48,25 @@ void DxfPolylineEntity::print() const {
     std::cout << std::endl;
 }
 
+void DxfCircleEntity::print() const {
+    std::cout << "* * * Circle Entity * * *" << std::endl;
+    DxfEntity::print();
+    std::cout << "Center point: " << data->center << std::endl;
+    std::cout << "Radius: " << data->radius << std::endl;
+    std::cout << "Thickness: " << data->thickness << std::endl;
+    std::cout << std::endl;
+}
+
+void DxfArcEntity::print() const {
+    std::cout << "* * * Arc Entity * * *" << std::endl;
+    DxfEntity::print();
+    std::cout << "Center point: " << data->center << std::endl;
+    std::cout << "Radius: " << data->radius << std::endl;
+    std::cout << "Thickness: " << data->thickness << std::endl;
+    std::cout << "Angle range: " << data->startAngle << ".." << data->endAngle << std::endl;
+    std::cout << std::endl;
+}
+
 // Drawing
 void DxfLineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
     auto startVertex = attrs->getDrawingValues(data->x1, data->y1);
@@ -85,6 +105,16 @@ void DxfPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
             buffer->drawLine(startVertex.x(), startVertex.y(), endVertex.x(), endVertex.y(), data->rgbColor);
         }
     }
+}
+
+void DxfCircleEntity::draw(class corecvs::RGB24Buffer * buffer, class corecvs::DxfDrawingAttrs * attrs) {
+    auto vertex = attrs->getDrawingValues(data->center.x(), data->center.y());
+    Circle2d circle(vertex, attrs->getDrawingValue(data->radius));
+    buffer->drawArc(circle, data->rgbColor);
+}
+
+void DxfArcEntity::draw(class corecvs::RGB24Buffer * buffer, class corecvs::DxfDrawingAttrs * attrs) {
+    //TODO: draw arc
 }
 
 } // namespace corecvs

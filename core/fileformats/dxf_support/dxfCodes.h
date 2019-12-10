@@ -14,7 +14,8 @@
 namespace corecvs {
 
 enum class DxfElementType {
-    DXF_LAYER, DXF_LINE_TYPE, DXF_LINE, DXF_LW_POLYLINE, DXF_POLYLINE, DXF_VERTEX, DXF_UNKNOWN_TYPE, DXF_SEQ_END
+    DXF_LAYER, DXF_LINE_TYPE, DXF_LINE, DXF_LW_POLYLINE, DXF_POLYLINE, DXF_VERTEX, DXF_UNKNOWN_TYPE, DXF_SEQ_END, DXF_CIRCLE,
+    DXF_ARC
 };
 
 enum class DxfDrawingUnits {
@@ -37,6 +38,10 @@ public:
     static const int DXF_LINE_TYPE_NAME_CODE = 6;
     static const int DXF_LAYER_NAME_CODE = 8;
     static const int DXF_VARIABLE_CODE = 9;
+    static const int DXF_THICKNESS_CODE = 39;
+    static const int DXF_RADIUS_CODE = 40;
+    static const int DXF_START_ANGLE_CODE = 50;
+    static const int DXF_END_ANGLE_CODE = 51;
     static const int DXF_COLOR_NUMBER_CODE = 62;
     static const int DXF_FLAGS_CODE = 70;
     static const int DXF_VERTEX_AMOUNT_CODE = 90;

@@ -57,6 +57,28 @@ public:
     std::vector<Vector3d<double>> vertices;
 };
 
+// CIRCLE Data
+class DxfCircleData : public DxfEntityData {
+public:
+    DxfCircleData(DxfEntityData *data, Vector3dd center, double radius, double thickness)
+    : DxfEntityData(data), center(center), radius(radius), thickness(thickness) {}
+    Vector3dd center;
+    double radius;
+    double thickness;
+};
+
+// ARC Data
+class DxfArcData : public DxfEntityData {
+public:
+    DxfArcData(DxfEntityData *data, Vector3dd center, double radius, double thickness, double startAngle, double endAngle)
+    : DxfEntityData(data), center(center), radius(radius), thickness(thickness), startAngle(startAngle), endAngle(endAngle) {}
+    Vector3dd center;
+    double radius;
+    double thickness;
+    double startAngle;
+    double endAngle;
+};
+
 } // namespace corecvs
 
 #endif //DXF_SUPPORT_DXFENTITYDATA_H

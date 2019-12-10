@@ -19,31 +19,32 @@ namespace corecvs {
 
 class DxfLoader {
 public:
-    DxfLoader() {
-        currentElementType = DxfElementType::DXF_UNKNOWN_TYPE;
-    }
+    explicit DxfLoader(IDxfBuilder *dxfBuilder) : dxfBuilder(dxfBuilder) {}
     ~DxfLoader() = default;
-    int load(std::string const &fileName, IDxfBuilder *dxfBuilder);
+    int load(std::string const &fileName);
 
 private:
+    IDxfBuilder *dxfBuilder;
     DxfElementType currentEntityType;
-    DxfElementType currentElementType;
+    DxfElementType currentElementType = DxfElementType::DXF_UNKNOWN_TYPE;
     std::string variableName;
     std::map<int, std::string> rawValues;
     std::vector<Vector2d<double>> current2dVertices = {};     // vertices of LwPolylineEntity
     std::vector<Vector3d<double>> current3dVertices = {};     // vertices of PolylineEntity
 
-    int processDxfPair(IDxfBuilder *dxfBuilder, int code, std::string const &value);
-    void addVariable(IDxfBuilder *dxfBuilder);
-    void addLayer(IDxfBuilder *dxfBuilder);
-    void addLineType(IDxfBuilder *dxfBuilder);
-    void addLine(IDxfBuilder *dxfBuilder);
-    void addLwPolyline(IDxfBuilder *dxfBuilder);
-    void addPolyline(IDxfBuilder *dxfBuilder);
+    int processDxfPair(int code, std::string const &value);
+    void addVariable();
+    void addLayer();
+    void addLineType();
+    void addLine();
+    void addLwPolyline();
+    void addPolyline();
+    void addCircle();
+    void addArc();
     void handleLwPolyline(int groupCode);
     void handlePolyline();
     void handleVertex();
-    void handleVertexSequence(IDxfBuilder *dxfBuilder);
+    void handleVertexSequence();
     DxfEntityData* getEntityData();
     DxfObjectData* getObjectData();
     static bool getTruncatedLine(std::string &s, std::istream &stream);

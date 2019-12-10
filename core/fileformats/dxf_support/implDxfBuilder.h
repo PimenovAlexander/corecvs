@@ -31,8 +31,6 @@ public:
 
     // Entities
     void addEntity(DxfEntity *entity) override;
-    void addLine(DxfLineEntity *entity) override;
-    void addLwPolyline(DxfLwPolylineEntity *entity) override;
 
     RGB24Buffer* draw() override;
 

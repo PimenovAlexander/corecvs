@@ -57,6 +57,28 @@ private:
     DxfPolylineData *data;
 };
 
+// CIRCLE Entity
+class DxfCircleEntity : public DxfEntity {
+public:
+    explicit DxfCircleEntity(DxfCircleData *data) : DxfEntity(data), data(data) {}
+    void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
+    void print() const override;
+    DxfCircleData* getData() override { return data; };
+private:
+    DxfCircleData *data;
+};
+
+// ARC Entity
+class DxfArcEntity : public DxfEntity {
+public:
+    explicit DxfArcEntity(DxfArcData *data) : DxfEntity(data), data(data) {}
+    void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
+    void print() const override;
+    DxfArcData* getData() override { return data; };
+private:
+    DxfArcData *data;
+};
+
 } // namespace corecvs
 
 #endif //DXF_SUPPORT_DXFENTITY_H
