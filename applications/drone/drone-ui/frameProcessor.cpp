@@ -9,6 +9,8 @@
 
 #include <geometry/renderer/simpleRenderer.h>
 
+#include <geometry/convexHull.h>
+
 FrameProcessor::FrameProcessor(QObject *parent) : QThread(parent)
 {
     SYNC_PRINT(("FrameProcessor::processFrame():called\n"));
@@ -58,26 +60,29 @@ void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata frameData
         stats.leaveContext();
 
         stats.startInterval();
-        /* Debug draw should be inproved */
+        /* Debug draw should be improved */
         for (size_t i = 0; i < patterns.size(); i++)
         {
             PatternDetectorResult &pattern = patterns[i];
-            if (pattern.size() < 4)
+            if (pattern.empty())
                 continue;
 
-            Vector2dd a(pattern[0].projection);
-            Vector2dd b(pattern[1].projection);
-            Vector2dd c(pattern[3].projection);
-            Vector2dd d(pattern[2].projection);
+            vector<Vector2dd> points;
+            Vector2dd center = Vector2dd::Zero();
+            for (auto po: pattern) {
+                points.push_back(po.projection);
+                center += po.projection;
+            }
 
+            Polygon perefery = ConvexHull::ConvexHullCompute(points);
             RGBColor color = RGBColor::parula((double)i / (patterns.size()));
-            result->drawLine(a, b, color);
-            result->drawLine(b, c, color);
-            result->drawLine(c, d, color);
-            result->drawLine(d, a, color);
 
-            AbstractPainter<RGB24Buffer> p(result);
-            Vector2dd center = (a + c) / 2;
+            for (int k = 0; k < perefery.size(); k++) {
+                 result->drawLine(perefery.getPoint(k), perefery.getNextPoint(k), color);
+            }
+
+            center /= pattern.size();
+            AbstractPainter<RGB24Buffer> p(result);            
             p.drawFormat(center.x(), center.y(), color, 2, "%d", pattern.mId);
         }
 

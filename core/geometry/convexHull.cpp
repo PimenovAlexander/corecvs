@@ -424,7 +424,7 @@ ProjectivePolygon ConvexHull::GrahamScan(std::vector<Vector3dd> points)
 }
 
 
-Polygon ConvexHull::ConvexHullCompute(std::vector<Vector2dd> points, ConvexHull::ConvexHullMethod &method)
+Polygon ConvexHull::ConvexHullCompute(std::vector<Vector2dd> points, const ConvexHull::ConvexHullMethod &method)
 {
     switch (method) {
     case ConvexHullMethod::GIFT_WARP:

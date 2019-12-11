@@ -93,15 +93,15 @@ void OpenCVCheckerBoardDetector::getOutput(vector<PatternDetectorResult> &patter
     if (corners.size() >= expected )
     {
         PatternDetectorResult result;
-        for (int i = 0; i < params.width(); i++)
+        for (int i = 0; i < params.height(); i++)
         {
-            for (int j = 0; j < params.height(); j++)
+            for (int j = 0; j < params.width(); j++)
             {
                 cv::Point2f p = corners[i * params.width() + j];
                 result.add(
                     Vector3dd(
-                        (double)i / params.width(),
-                        (double)j / params.width(),
+                        (double)i / (params.width() - 1),
+                        (double)j / (params.width() - 1),
                         0
                     ),
                     Vector2dd(p.x, p.y));

@@ -1,7 +1,7 @@
 <poco version="5.0">  
 
   <class name="Pattern From Pose Parameters" incpath="">
-    <field type="double" name="pattern scale"   defaultValue="1.0" comment="Scale of pattern unit in real world units"/>
+    <field type="double" name="pattern scale"   defaultValue="16.0" comment="Scale of pattern unit in real world units"/>
     <field type="bool"   name="draw homography" defaultValue="false"/>
     <field type="bool"   name="draw cube"       defaultValue="true"/>
     <field type="bool"   name="draw pose mesh"  defaultValue="true"/>

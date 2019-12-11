@@ -116,7 +116,32 @@ public:
         toSave.accept<corecvs::PrinterVisitor>(printer);
         return out;
     }
+
+#if 0
+    int getProjectionCornerId(int corner)
+    {
+        if (corner > 4) return 0;
+        Vector2dd directions[4] = {
+            Vector2dd(-1, -1),
+            Vector2dd(-1,  1),
+            Vector2dd( 1,  1),
+            Vector2dd( 1, -1)
+        };
+        double v = -numeric_limits<double>::max();
+        int best = 0;
+        for (size_t i = 0; i < size(); i++)
+        {
+            double dp = operator[](i).projection & directions[corner];
+            if (dp > v) {
+                v = dp;
+                best = i;
+            }
+        }
+        return  best;
+    }
+#endif
 };
+
 
 class PatternDetector : public NewStyleBlock, public DebuggableBlock
 {
