@@ -126,8 +126,6 @@ PointPath doOffset(const PointPath& p, int offset) {
 PointPath alg1(const PointPath& p, bool isClosed) {
     PointPath result;
 
-    //todo if p.size <= 1
-
     auto it = p.begin();
     int size = isClosed ? p.size() : p.size() - 2;
     if (!isClosed) result.push_back(*it);
@@ -245,6 +243,8 @@ std::vector<Segment2d> shift(const PointPath& p, int offset, bool isClosed) {
  * @return shifted vector of segments
  */
 std::vector<Segment2d> shiftPointPath(const PointPath& p, int offset) {
+    if (p.size() <= 1)
+        return vector<Segment2d>();
     return shift(p, offset, false);
 }
 
@@ -256,6 +256,8 @@ std::vector<Segment2d> shiftPointPath(const PointPath& p, int offset) {
  * @return shifted vector of segments
  */
 std::vector<Segment2d> shiftPolygon(const Polygon& p, int offset) {
+    if (p.size() <= 1)
+        return vector<Segment2d>();
     PointPath closed(p);
     closed.push_back(p.getPoint(0));
     return shift(closed, offset, true);
