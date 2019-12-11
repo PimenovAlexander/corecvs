@@ -108,12 +108,14 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
 
-    PhysicsMainWindow mainWindow;
-    mainWindow.show();
-    mainWindow.setAttribute(Qt::WA_QuitOnClose, true);
+    PhysicsMainWindow *mainWindow = new PhysicsMainWindow;
+    mainWindow->show();
+    mainWindow->setAttribute(Qt::WA_QuitOnClose, true);
+    mainWindow->setAttribute(Qt::WA_DeleteOnClose, true);
 
     app.setQuitOnLastWindowClosed(true);
     QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
+    QObject::connect(mainWindow, SIGNAL(destroyed(QObject*)), &app, SLOT(quit()));
     app.exec();
 
     SYNC_PRINT(("Exiting\n"));

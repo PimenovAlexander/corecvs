@@ -96,7 +96,7 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
 
 PhysicsMainWindow::~PhysicsMainWindow()
 {
-    SYNC_PRINT(("PhysicsMainWindow::~PhysicsMainWindow(): called"));
+    SYNC_PRINT(("PhysicsMainWindow::~PhysicsMainWindow(): called\n"));
     for (SaveableWidget *ts: toSave) {
         ts->saveToQSettings("drone.ini", "");
     }
