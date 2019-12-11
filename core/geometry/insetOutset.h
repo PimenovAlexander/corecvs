@@ -14,10 +14,6 @@ using namespace corecvs;
 
 const double TOLERANCE = 1.0e-11;
 
-bool linesOverlap(const Line2d& first, const Line2d& second) {
-    return first.normal().normalised() == second.normal().normalised();
-}
-
 bool segmentsIntersect(const Segment2d& first, const Segment2d& second, Vector2dd* intersection) {
     bool intersect;
     *intersection = Segment2d::intersect(first, second, intersect);
@@ -32,32 +28,6 @@ bool raysIntersect(const Ray2d& first, const Ray2d& second, Vector2dd* intersect
 
 Ray2d* inverseRay(Ray2d ray) {
     return new Ray2d (ray.a * (-1), ray.p);
-}
-
-double cross(const Vector2dd &a, const Vector2dd &b)
-{
-    return a.x() * b.y() - a.y() * b.x();
-}
-
-/**
- * https://www.lucidar.me/en/mathematics/check-if-a-point-belongs-on-a-line-segment/
- */
-bool pointLiesOnSeg(const Segment2d& seg, const Vector2dd& point) {
-    Vector2dd ab = seg.b - seg.a;
-    Vector2dd ac = point - seg.a;
-    if (abs(cross(ab, ac)) >= TOLERANCE) {
-        return false;
-    }
-
-    double KAC = ab & ac;
-    if (KAC < 0) return false;
-    if (KAC <= TOLERANCE) return true;
-
-    double KAB = ab.l2Metric() * ab.l2Metric();
-    if (KAC > KAB) return false;
-    if (abs(KAC - KAB) < TOLERANCE) return true;
-
-    return true;
 }
 
 /**
@@ -171,38 +141,33 @@ PointPath alg1(const PointPath& p, bool isClosed) {
         Line2d firstLine(firstSeg);
         Line2d secondLine(secondSeg);
 
-        if (linesOverlap(firstLine, secondLine)) {
-            // case 1: lines overlapping
-            cout << "case 1 \n";
+        if (firstLine.overlapWith(secondLine)) {
+            // case 1: lines overlap
             result.push_back(p3);
         } else {
             //case 2: line have one intersection point
             Vector2dd intersectionPoint;
             if (segmentsIntersect(firstSeg, secondSeg, &intersectionPoint)) {
                 // case 2a: intersection point is TIP for both segments
-                cout << "case 2a \n";
                 result.push_back(intersectionPoint);
             } else {
                 if (raysIntersect(firstLine.toRay(), secondLine.toRay(), &intersectionPoint) &&
-                        !pointLiesOnSeg(firstSeg, intersectionPoint) && !pointLiesOnSeg(secondSeg, intersectionPoint)) {
+                        !firstSeg.containsPoint(intersectionPoint) && !secondSeg.containsPoint(intersectionPoint)) {
                     // case 2b
-                    cout << "case 2b 1 \n";
                     // for both lines point is on ray, i.e. is FIP
                     // and intersection point lies on first ray, i.e. is PFIP
                     result.push_back(intersectionPoint);
                 } else if (raysIntersect(*inverseRay(firstLine.toRay()), secondLine.toRay(), &intersectionPoint) &&
-                        !pointLiesOnSeg(firstSeg, intersectionPoint) && !pointLiesOnSeg(secondSeg, intersectionPoint)) {
+                        !firstSeg.containsPoint(intersectionPoint) && !secondSeg.containsPoint(intersectionPoint)) {
                     // case 2b
-                    cout << "case 2b 2 \n";
                     // intersection point doesn't lay on first ray, i.e. is NFIP
                     result.push_back(p2);
                     result.push_back(p3);
                 } else {
                     intersectionPoint = firstLine.intersectWith(secondLine);
-                    if ((pointLiesOnSeg(firstSeg, intersectionPoint) && !pointLiesOnSeg(secondSeg, intersectionPoint)) ||
-                        (pointLiesOnSeg(secondSeg, intersectionPoint) && !pointLiesOnSeg(firstSeg, intersectionPoint))) {
+                    if ((firstSeg.containsPoint(intersectionPoint) && !secondSeg.containsPoint(intersectionPoint)) ||
+                        (secondSeg.containsPoint(intersectionPoint) && !firstSeg.containsPoint(intersectionPoint))) {
                         // case 2c
-                        cout << "case 2c \n";
                         // if intersection point is TIP for first segment and FIP for second
                         // or if intersection point is TIP for second segment and FIP for first
                         result.push_back(p2);
@@ -257,21 +222,43 @@ std::vector<Segment2d> clipping(const PointPath& original, const PointPath& untr
 }
 
 /**
+ * Produces a shift for a given offset
  *
- * @param p
- * @param offset positive if outset, negative if inset
+ * @param p - point path to shift
+ * @param offset - offset size: positive if outset, negative if inset
+ * @param isClosed - true if p is polygon, false if p is point path
+ * @return shifted vector of segments
  */
-std::vector<Segment2d> shiftPointPath(const PointPath& p, int offset, bool isClosed) {
+/* private */
+std::vector<Segment2d> shift(const PointPath& p, int offset, bool isClosed) {
     PointPath shifted = doOffset(p, offset);
     PointPath untrimmed = alg1(shifted, isClosed);
 
     return clipping(p, untrimmed, offset, isClosed);
 }
 
+/**
+ * Produces a point path shift for a given offset
+ *
+ * @param p - point path to shift
+ * @param offset - offset size: positive if outset, negative if inset
+ * @return shifted vector of segments
+ */
+std::vector<Segment2d> shiftPointPath(const PointPath& p, int offset) {
+    return shift(p, offset, false);
+}
+
+/**
+ * Produces a polygon shift for a given offset
+ *
+ * @param p - polygon to shift
+ * @param offset - offset size: positive if outset, negative if inset
+ * @return shifted vector of segments
+ */
 std::vector<Segment2d> shiftPolygon(const Polygon& p, int offset) {
     PointPath closed(p);
     closed.push_back(p.getPoint(0));
-    return shiftPointPath(closed, offset, true);
+    return shift(closed, offset, true);
 }
 
 #endif //CORECVS_INSETOUTSET_H
