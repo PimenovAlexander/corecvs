@@ -34,6 +34,9 @@ int main(int argc, char *argv[])
     Q_INIT_RESOURCE(main);
 
     QTRGB24Loader::registerMyself();
+    QTRGB24Saver::registerMyself();
+
+    BufferFactory::printCaps();
 
     CommandLineSetter s(argc, argv);
     if (s.hasOption("caps"))

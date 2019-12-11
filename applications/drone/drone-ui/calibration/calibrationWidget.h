@@ -5,6 +5,7 @@
 #include "opencv2/core.hpp"
 #include "imageForCalibrationWidget.h"
 #include <capSettingsDialog.h>
+#include <g12Image.h>
 #include <imageCaptureInterfaceQt.h>
 #include <inputSelectorWidget.h>
 #include <mutex>
@@ -22,11 +23,8 @@ public:
     ~CalibrationWidget();
 
 private slots:
-    void addImage(cv::Mat);
-
-    void addImage();
+    void addImage(corecvs::RGB24Buffer *image);
     void updateStartButton();
-    void updateStartButtonAndRemoveWidget(int k);
     void startCalibration();
 
     void updateImage();
@@ -39,6 +37,7 @@ public:
     CapSettingsDialog mCameraParametersWidget;
 
     ImageCaptureInterfaceQt *mInterface = NULL;
+    RGB24Buffer *currentImage = NULL;
 public slots:
     void showInputSettings();
     void showCameraSettings();
@@ -54,18 +53,19 @@ public:
     /* */
     vector<SaveableWidget *> mSaveableWidgets;
 
+    /** Maintain the list of images **/
+public slots:
+    void captureImage();
+
+    /** Load and Save **/
+public slots:
+    void load(void);
+    void save(void);
+
 private:
     int cameraNumber=-1;
-    Ui::CalibrationWidget *ui;
 
     std::vector<ImageForCalibrationWidget *> widgets;
-    int widgetCounter=0;
-    bool caputing = false;
-    bool threadRunning = false;
-    std::mutex caputingMutex;
-    void setCapute(bool b);
-    bool getCapute();
-    std::mutex vectorMutex;
 
     cv::Mat globalIntrinsic;
     cv::Mat globalDistCoeffs;
@@ -76,6 +76,7 @@ private:
     std::mutex showingMutex;
 
     void calibrate();
+    Ui::CalibrationWidget *ui;
 };
 
 

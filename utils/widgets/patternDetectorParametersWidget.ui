@@ -23,7 +23,7 @@
       <string>Default</string>
      </property>
      <property name="icon">
-      <iconset resource="../../resources/main.qrc">
+      <iconset>
        <normaloff>:/new/prefix1/bullet_blue.png</normaloff>:/new/prefix1/bullet_blue.png</iconset>
      </property>
      <property name="iconSize">
@@ -46,8 +46,6 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../../resources/main.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
