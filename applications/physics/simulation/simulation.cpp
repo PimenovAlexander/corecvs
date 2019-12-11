@@ -147,7 +147,7 @@ void Simulation::execTestPhysObject()
         //noiseReverseTime = startTime;
 
         //Quaternion testAngVel = Quaternion(-0.00144962, -2.8152e-11, 9.80112e-15, 0.999999);
-        Vector3dd testAngVel = Vector3dd(1.0, 0.0, 0.0); //* 0.000001;
+        Vector3dd testAngVel = Vector3dd(1.0, 1.0, 0.0); //* 0.000001;
         //Quaternion testOrientation = Quaternion(0, 0.012489, 0, 0.999922);
         Quaternion testOrientation = Quaternion::Identity();
 
@@ -240,8 +240,8 @@ void Simulation::execTestSimulation()
         oldTime = std::chrono::high_resolution_clock::now();
         while (isAlive)
         {
-           drone.motors[1].addForce(Vector3dd(0, 0, 1)*0.000000001);
-           drone.motors[0].addForce(Vector3dd(0, 0, 1)*0.000000001);
+           drone.motors[1].addForce(Vector3dd(0, 0, 1) * 0.1);
+           drone.motors[0].addForce(Vector3dd(0, 0, 1) * 0.1);
            //drone.flightControllerTick(droneJoystick);
            newTime = std::chrono::high_resolution_clock::now();
            time_span = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-oldTime);

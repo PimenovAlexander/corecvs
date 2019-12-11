@@ -192,9 +192,9 @@ void TestPhysicsObject::tick(double deltaT)
 
     /** Kinematics **/
     velocity = Vector3dd(0.0, 0.0, 0.0);
-
     Vector3dd newPos = getPosCenter() + velocity * deltaT;
-    /** Floor simulation **/
+
+    // Floor simulation
     if (newPos.z() < -0.1)
     {
         velocity = Vector3dd::Zero();
@@ -214,7 +214,31 @@ void TestPhysicsObject::tick(double deltaT)
     Matrix33 omega = Matrix33::CrossProductLeft(angularVelocity);
     //Vector3dd dw = -inertiaTensor.inv() * (getMomentum() - (omega * inertiaTensor * angularVelocity));
     Vector3dd dw = inertiaTensor.inv() * (getMomentum() - (omega * inertiaTensor * w_modified));
-    angularVelocity += dw * deltaT;
+
+    /** Just output to console **/
+    time_t ms0 = duration_cast< milliseconds >(
+    system_clock::now().time_since_epoch()
+    ).count();
+    if(ms0 % 200 == 0)
+    {
+        //Matrix33 invAngVel = angularVelocity.toMatrix();
+
+        L_INFO << "Angular Velocity: " << angularVelocity << "\n"
+               << "Angular Velocity derivative: " << dw << "\n"
+               << "Angular Velocity derivative * deltaT :" << dw * deltaT;
+
+        L_INFO << "W_modified: \n" << w_modified << "\n"
+               << "Omega * inertia tensor * w_modified: \n" << omega * inertiaTensor * w_modified<< "\n"
+               << "Omega * inertia tensor: \n" << omega * inertiaTensor;
+
+        //L_INFO<< "Diagonalized Tensor: " << diagonalizedInertiaTensor / inertialMomentX;
+        //L_INFO << "Inertia tensor: " << inertiaTensor/inertialMomentX;
+        //L_INFO<<"Delta orient: "<<orientation.getAngle()-q.getAngle();
+        //L_INFO << angularAcceleration;
+        //L_INFO << orientation;
+    }
+
+    angularVelocity += dw;// * deltaT;
 
     /** Need more info about why this is needed **/
     orientation.normalise();
@@ -230,19 +254,5 @@ void TestPhysicsObject::tick(double deltaT)
     //orientation = Quaternion::pow(angularVelocity, deltaT * 1000) ^ orientation;
     //angularVelocity = Quaternion::pow(angularAcceleration, deltaT * 1000) ^ angularVelocity;
 
-    /** Just output to console **/
-    time_t ms0 = duration_cast< milliseconds >(
-    system_clock::now().time_since_epoch()
-    ).count();
-    if(ms0 % 200 == 0)
-    {
-        //Matrix33 invAngVel = angularVelocity.toMatrix();
-        //L_INFO << invAngVel;
-        //L_INFO << orientation;
-        //L_INFO<< "Diagonalized Tensor: " << diagonalizedInertiaTensor / inertialMomentX;
-        //L_INFO << "Inertia tensor: " << inertiaTensor/inertialMomentX;
-        //L_INFO<<"Delta orient: "<<orientation.getAngle()-q.getAngle();
-        //L_INFO << angularAcceleration;
-        //L_INFO << orientation;
-    }
+
 }

@@ -351,6 +351,7 @@ void DroneObject::tick(double deltaT)
      * https://fgiesen.wordpress.com/2012/08/24/quaternion-differentiation/
      * Physically Based Modeling Rigid Body Simulation. David Baraff
      * https://ocw.mit.edu/courses/aeronautics-and-astronautics/16-07-dynamics-fall-2009/lecture-notes/MIT16_07F09_Lec26.pdf
+     * http://engsi.ru/file/out/723336 //Best to begin with
     **/
 
     double radius = centralSphere.radius;
@@ -359,17 +360,23 @@ void DroneObject::tick(double deltaT)
 
     double arm = objects[2]->getPosVector().l2Metric();
 
-    double inertialMomentX = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * motorMass * pow(arm, 2);
-    double inertialMomentY = inertialMomentX;
-    double inertialMomentZ = 2.0 / 5.0 * centerMass * pow(radius, 2) + 4 * motorMass * pow(arm, 2);
+    double inertiaOfCentralSphere = 2.0 / 5.0 * centerMass * pow(radius, 2);
+    double inertiaOfMotor = motorMass * pow(arm, 2);
 
-    Matrix33 diagonalizedInertiaTensor = Matrix33::FromDiagonal(inertialMomentX, inertialMomentY, inertialMomentZ);
+    double tensorComponentX = inertiaOfCentralSphere + 2 * inertiaOfMotor;
+    double tensorComponentY = tensorComponentX;
+    double tensorComponentZ = inertiaOfCentralSphere + 4 * inertiaOfMotor;
 
-    Matrix33 transposedOrient = orientation.toMatrix().transposed();
+    Matrix33 diagonalizedInertiaTensor = Matrix33::FromDiagonal(tensorComponentX, tensorComponentY, tensorComponentZ);
+
+    //Matrix33 transposedOrient = orientation.toMatrix().transposed();
     //inertiaTensor = orientation.toMatrix() * diagonalizedInertiaTensor * transposedOrient;
     inertiaTensor = diagonalizedInertiaTensor;
 
+    /** Kinematics **/
     Vector3dd newPos = getPosCenter() + velocity * deltaT;
+
+    //Floor simulation
     if (newPos.z() < -0.1)
     {
         velocity = Vector3dd::Zero();
@@ -384,7 +391,8 @@ void DroneObject::tick(double deltaT)
     //L_INFO << "Momentum: " << getMomentum();
     /**This works as wanted**/
     /** Dynamics **/
-    Quaternion dq = Quaternion::Rotation(angularVelocity, angularVelocity.l2Metric()) * deltaT;
+    Vector3dd w_modified = angularVelocity * deltaT;
+    Quaternion dq = Quaternion::Rotation(w_modified, w_modified.l2Metric());
     orientation = orientation ^ dq;
 
     Matrix33 omega = Matrix33::CrossProductLeft(angularVelocity);
@@ -400,7 +408,7 @@ void DroneObject::tick(double deltaT)
     //double mw = w.l2Metric();
     //angularVelocity *= mw / angularVelocity.l2Metric();
 
-    /** Just output **/
+    /** Just output to console **/
     time_t ms = duration_cast< milliseconds >(
     system_clock::now().time_since_epoch()
     ).count();
