@@ -89,20 +89,24 @@ bool OpenCVCheckerBoardDetector::setParameters(std::string name, const DynamicOb
 void OpenCVCheckerBoardDetector::getOutput(vector<PatternDetectorResult> &patterns)
 {
     Statistics::startInterval(stats);
-    if (corners.size() >= params.width() * (params.height() - 1) + params.width() - 1)
+    size_t expected = params.width() * params.height() - 1;
+    if (corners.size() >= expected )
     {
         PatternDetectorResult result;
-        cv::Point2f p1 = corners[0];
-        cv::Point2f p2 = corners[params.width() - 1];
-        cv::Point2f p3 = corners[params.width() * (params.height() - 1) + params.width() - 1];
-        cv::Point2f p4 = corners[params.width() * (params.height() - 1)];
-
-
-        result.mPosition   = Vector2dParameters(p1.x, p1.y);
-        result.mOrtX       = Vector2dParameters(p2.x, p2.y);
-        result.mOrtY       = Vector2dParameters(p3.x, p3.y);
-        result.mUnityPoint = Vector2dParameters(p4.x, p4.y);
-        result.mId = 0;
+        for (int i = 0; i < params.width(); i++)
+        {
+            for (int j = 0; j < params.height(); j++)
+            {
+                cv::Point2f p = corners[i * params.width() + j];
+                result.add(
+                    Vector3dd(
+                        (double)i / params.width(),
+                        (double)j / params.width(),
+                        0
+                    ),
+                    Vector2dd(p.x, p.y));
+            }
+        }
         patterns.push_back(result);
     } else {
         cout << "corner size is" << corners.size() << endl;

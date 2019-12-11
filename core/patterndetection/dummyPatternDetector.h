@@ -14,7 +14,7 @@ public:
     RGB24Buffer *debug = NULL;
 
 
-    PatternDetectorResult dummyResult;
+    PatternDetectorResultBase dummyResult;
     RgbColorParameters color;
 
     DummyPatternDetector();

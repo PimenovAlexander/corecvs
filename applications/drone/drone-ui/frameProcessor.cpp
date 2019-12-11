@@ -62,11 +62,13 @@ void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata frameData
         for (size_t i = 0; i < patterns.size(); i++)
         {
             PatternDetectorResult &pattern = patterns[i];
+            if (pattern.size() < 4)
+                continue;
 
-            Vector2dd a(pattern.mPosition);
-            Vector2dd b(pattern.mOrtX);
-            Vector2dd c(pattern.mUnityPoint);
-            Vector2dd d(pattern.mOrtY);
+            Vector2dd a(pattern[0].projection);
+            Vector2dd b(pattern[1].projection);
+            Vector2dd c(pattern[3].projection);
+            Vector2dd d(pattern[2].projection);
 
             RGBColor color = RGBColor::parula((double)i / (patterns.size()));
             result->drawLine(a, b, color);
@@ -87,10 +89,11 @@ void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata frameData
            double scale = mPatternToPose.poseParameters.patternScale();
            PatternDetectorResult &pattern = patterns[0];
            HomographyReconstructor reconstructor;
-           reconstructor.addPoint2PointConstraint(scale * Vector2dd::Zero() , Vector2dd(pattern.mPosition));
-           reconstructor.addPoint2PointConstraint(scale * Vector2dd::OrtX() , Vector2dd(pattern.mOrtX));
-           reconstructor.addPoint2PointConstraint(scale * Vector2dd::OrtY() , Vector2dd(pattern.mOrtY));
-           reconstructor.addPoint2PointConstraint(scale * Vector2dd(1.0,1.0), Vector2dd(pattern.mUnityPoint));
+
+           for (PointObservation &po: pattern)
+           {
+               reconstructor.addPoint2PointConstraint(scale * po.point.xy(), po.projection);
+           }
 
            Matrix33  homography = reconstructor.getBestHomography();
 

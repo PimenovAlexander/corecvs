@@ -47,21 +47,75 @@ public:
     virtual size_t detectPatterns(corecvs::RGB24Buffer &buffer, std::vector<corecvs::ObservationList> &patterns);
 };
 
-class PatternDetectorResult : public PatternDetectorResultBase
+class PatternDetectorResult : public ObservationList
 {
 public:
-    PatternDetectorResult() :
-        PatternDetectorResultBase(
-            Vector2dParameters(Vector2dd(0, 0)),
-            Vector2dParameters(Vector2dd(1, 0)),
-            Vector2dParameters(Vector2dd(0, 1)),
-            Vector2dParameters(Vector2dd(1, 1)),
-            0
-        )
-    {}
+    /**
+     * \brief id
+     * pattern id
+     */
+    int mId;
 
+#if 0
 
+    Vector2dd position() const
+    {
+        return mPosition;
+    }
 
+    Vector2dd ortX() const
+    {
+        return mOrtX;
+    }
+
+    Vector2dd ortY() const
+    {
+        return mOrtY;
+    }
+
+    Vector2dd unityPoint() const
+    {
+        return mUnityPoint;
+    }
+#endif
+
+    int id() const
+    {
+        return mId;
+    }
+
+    /** Section with setters */
+    void setPosition(const Vector2dd& position)
+    {
+        add(Vector3dd(0,0,0) , position);
+    }
+
+    void setOrtX(const Vector2dd &ortX)
+    {
+        add(Vector3dd(1,0,0) , ortX);
+    }
+
+    void setOrtY(const Vector2dd &ortY)
+    {
+        add(Vector3dd(0,1,0) , ortY);
+    }
+
+    void setUnityPoint(const Vector2dd &unityPoint)
+    {
+        add(Vector3dd(1,1,0) , unityPoint);
+    }
+
+    void setId(int id)
+    {
+        mId = id;
+    }
+
+    friend std::ostream& operator << (std::ostream &out, PatternDetectorResult &toSave)
+    {
+        corecvs::PrinterVisitor printer(out);
+        toSave.accept<corecvs::PrinterVisitor>(printer);
+        return out;
+    }
 };
 
 class PatternDetector : public NewStyleBlock, public DebuggableBlock

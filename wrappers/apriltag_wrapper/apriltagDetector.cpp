@@ -93,10 +93,12 @@ void ApriltagDetector::getOutput(vector<corecvs::PatternDetectorResult> &pattern
         PatternDetectorResult result;
         apriltag_detection *det;
         zarray_get(at_detections, i, &det);
-        result.mPosition = Vector2dParameters(det->p[0][0], det->p[0][1]);
-        result.mOrtX = Vector2dParameters(det->p[1][0], det->p[1][1]);
-        result.mOrtY = Vector2dParameters(det->p[3][0], det->p[3][1]);
-        result.mUnityPoint = Vector2dParameters(det->p[2][0], det->p[2][1]);
+
+
+        result.setPosition  (Vector2dd(det->p[0][0], det->p[0][1]));
+        result.setOrtX      (Vector2dd(det->p[1][0], det->p[1][1]));
+        result.setOrtY      (Vector2dd(det->p[3][0], det->p[3][1]));
+        result.setUnityPoint(Vector2dd(det->p[2][0], det->p[2][1]));
         result.mId = det->id;
         patterns.emplace_back(result);
     }
@@ -104,10 +106,10 @@ void ApriltagDetector::getOutput(vector<corecvs::PatternDetectorResult> &pattern
         delete_safe(debugBuffer);
         debugBuffer = new RGB24Buffer(input);
         for (const auto &result : patterns) {
-            Vector2dd d (result.mPosition.mX, result.mPosition.mY);
-            Vector2dd c (result.mOrtX.mX, result.mOrtX.mY);
-            Vector2dd a (result.mOrtY.mX, result.mOrtY.mY);
-            Vector2dd b (result.mUnityPoint.mX, result.mUnityPoint.mY);
+            Vector2dd d = result[0].projection;
+            Vector2dd c = result[1].projection;
+            Vector2dd a = result[2].projection;
+            Vector2dd b = result[3].projection;;
 
             RGBColor color = RGBColor::parula((double)result.mId/patterns.size());
             debugBuffer->drawLine(a, b, color);

@@ -69,6 +69,7 @@ PatternDetectorParametersWidget::PatternDetectorParametersWidget(QWidget *parent
     mPoseParameters->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     ui->gridLayout->addWidget(mPoseParameters);
 
+    connect(mPoseParameters, SIGNAL(paramsChanged()), this, SLOT(uiParamsChanged()));
     /**/
 }
 
