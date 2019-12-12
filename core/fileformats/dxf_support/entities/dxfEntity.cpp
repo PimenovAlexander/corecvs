@@ -4,7 +4,9 @@
 
 #include "core/fileformats/dxf_support/entities/dxfEntity.h"
 #include "core/geometry/conic.h"
+#include "core/buffers/rgb24/bezierRasterizer.h"
 #include <iostream>
+#include <core/buffers/rgb24/wuRasterizer.h>
 
 namespace corecvs {
 
@@ -107,14 +109,45 @@ void DxfPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
     }
 }
 
-void DxfCircleEntity::draw(class corecvs::RGB24Buffer * buffer, class corecvs::DxfDrawingAttrs * attrs) {
+void DxfCircleEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::DxfDrawingAttrs *attrs) {
     auto vertex = attrs->getDrawingValues(data->center.x(), data->center.y());
     Circle2d circle(vertex, attrs->getDrawingValue(data->radius));
     buffer->drawArc(circle, data->rgbColor);
 }
 
-void DxfArcEntity::draw(class corecvs::RGB24Buffer * buffer, class corecvs::DxfDrawingAttrs * attrs) {
-    //TODO: draw arc
+void DxfArcEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::DxfDrawingAttrs *attrs) {
+    WuRasterizer rast = WuRasterizer();
+
+    auto startAngle = std::min(data->startAngle, data->endAngle) * M_PI / 180; // in radians
+    auto endAngle = std::max(data->startAngle, data->endAngle) * M_PI / 180;   // in radians
+
+    auto point1 = Vector2dd(data->center.x() + data->radius * std::cos(startAngle), data->center.y() + data->radius * std::sin(startAngle));
+    auto point4 = Vector2dd(data->center.x() + data->radius * std::cos(endAngle), data->center.y() + data->radius * std::sin(endAngle));
+
+    auto ax = point1.x() - data->center.x();
+    auto ay = point1.y() - data->center.y();
+    auto bx = point4.x() - data->center.x();
+    auto by = point4.y() - data->center.y();
+    auto r = std::sqrt(ax * ax + ay * ay);
+    auto d = std::sqrt((ax + bx) * (ax + bx) + (ay + by) * (ay + by));
+    double k;
+    if (std::abs(by - ay) > M_E) {
+        k = (ax+bx)*(r/d-0.5)*8.0/3.0/(by-ay);
+    } else {
+        k = (ay+by)*(r/d-0.5)*8.0/3.0/(ax-bx);
+    }
+
+    auto point2 = Vector2dd(point1.x() - k * ay, point1.y() + k * ax);
+    auto point3 = Vector2dd(point4.x() + k * by, point4.y() - k * bx);
+
+    point1 = attrs->getDrawingValues(point1);
+    point2 = attrs->getDrawingValues(point2);
+    point3 = attrs->getDrawingValues(point3);
+    point4 = attrs->getDrawingValues(point4);
+
+    auto curve = Curve({point1, point2, point3, point4});
+    BezierRasterizer<RGB24Buffer, WuRasterizer> bezier(*buffer, rast, data->rgbColor);
+    bezier.cubicBezierCasteljauApproximationByFlatness(curve);
 }
 
 } // namespace corecvs

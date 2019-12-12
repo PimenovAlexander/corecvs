@@ -42,6 +42,10 @@ public:
         return result;
     }
 
+    Vector2d<double> getDrawingValues(Vector2dd point) {
+        return getDrawingValues(point.x(), point.y());
+    }
+
     double getDrawingValue(double value) {
         switch(units) {
             case DxfDrawingUnits::UNITLESS:     return(value * 1.0);
