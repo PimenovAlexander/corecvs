@@ -25,6 +25,8 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/calib3d.hpp>
 #include <buffers/bufferFactory.h>
+#include <cameracalibration/cameraModel.h>
+#include <reflection/jsonPrinter.h>
 
 #include "wrappers/opencv/openCVTools.h"
 
@@ -277,6 +279,39 @@ void CalibrationWidget::calibrate()
 
     cout << "Intrinsics:" << globalIntrinsic  << endl;
     cout << "Distorion :" << globalDistCoeffs << endl;
+
+    /*we will try to convert it to CameraModel */
+
+    CameraModel model;
+    model.setLocation(Affine3DQ::Identity());
+    PinholeCameraIntrinsics *p = model.getPinhole();
+
+    p->setFocal    (Vector2dd(globalIntrinsic.at<double>(0,0), globalIntrinsic.at<double>(1,1)));
+    p->setPrincipal(Vector2dd(globalIntrinsic.at<double>(0,2), globalIntrinsic.at<double>(1,2)));
+    p->setSize     (Vector2dd(imageSize.width, imageSize.height));
+    p->setDistortedSize(p->size());
+    p->setSkew(0.0);
+    p->offset = Vector2dd::Zero();
+
+    model.distortion.setPrincipalPoint(p->principal());
+    model.distortion.setTangentialX(globalDistCoeffs.at<double>(2));
+    model.distortion.setTangentialY(globalDistCoeffs.at<double>(3));
+
+    double k1 = globalDistCoeffs.at<double>(0);
+    double k2 = globalDistCoeffs.at<double>(1);
+    double k3 = globalDistCoeffs.at<double>(4);
+
+    model.distortion.setKoeff(
+      { 0, k1, 0, k2, 0, k3});
+
+    model.distortion.setNormalizingFocal(p->size().y() / 2);
+
+    JSONPrinter printer;
+    printer.visit(model, "camera");
+
+    JSONPrinter printer1("camera.json");
+    printer1.visit(model, "camera");
+
 
     //setShowingBool(true);
     //ui->stopShowing->setEnabled(true);

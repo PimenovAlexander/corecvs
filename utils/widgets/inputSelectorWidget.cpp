@@ -83,9 +83,9 @@ void InputSelectorWidget::updateInputString()
 
             if (ui.v4l2hwCheckBox->isChecked()) {
                 str += ":";
-                str += QString::number(ui.v4l2HeightSpinBox->value());
-                str += "x";
                 str += QString::number(ui.v4l2WidthSpinBox->value());
+                str += "x";
+                str += QString::number(ui.v4l2HeightSpinBox->value());
             }
 
 
@@ -250,6 +250,23 @@ void InputSelectorWidget::setInputString(const QString &str)
             ui.v4l2WidthSpinBox ->setValue(width);
             ui.v4l2HeightSpinBox->setValue(height);
         };
+
+        if (!matches[CompressionGroup].str().empty())
+        {
+            if (matches[CompressionGroup].str() == ":mjpeg") {
+                ui.v4l2CodecComboBox->setCurrentIndex(1);
+            }
+
+            if (matches[CompressionGroup].str() == ":fjpeg") {
+                ui.v4l2CodecComboBox->setCurrentIndex(2);
+            }
+            if (matches[CompressionGroup].str() == ":yuyv") {
+                ui.v4l2CodecComboBox->setCurrentIndex(3);
+            }
+        }
+
+
+
     }
 
 
@@ -291,6 +308,7 @@ void InputSelectorWidget::fpsIndexChanged(int i)
         ui.v4l2FpsNumSpinBox  ->setValue(list[0].toInt());
         ui.v4l2FpsDenumSpinBox->setValue(list[1].toInt());
     }
+    updateInputString();
 }
 
 void InputSelectorWidget::sizeIndexChanged(int i)
@@ -301,6 +319,7 @@ void InputSelectorWidget::sizeIndexChanged(int i)
         ui.v4l2WidthSpinBox ->setValue(list[0].toInt());
         ui.v4l2HeightSpinBox->setValue(list[1].toInt());
     }
+    updateInputString();
 }
 
 
