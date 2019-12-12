@@ -1,3 +1,5 @@
+#include "wrappers/jsonmodern/jsonModernReader.h"
+
 #include "calibrationWidget.h"
 #include "physicsMainWindow.h"
 #include "ui_physicsMainWindow.h"
@@ -5,6 +7,8 @@
 #include <g12Image.h>
 #include <imageCaptureInterfaceQt.h>
 #include <sceneShaded.h>
+
+#include <reflection/jsonPrinter.h>
 
 
 PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
@@ -38,6 +42,7 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
     mCameraModel.nameId = "Copter Main Camera";
     mCameraModel.setLocation(Affine3DQ::Identity());
     /* Connect parameters and send first version */
+    connect(&mModelParametersWidget, SIGNAL(loadRequest(QString)), this, SLOT(loadCameraModel(QString)));
     connect(&mModelParametersWidget, SIGNAL(paramsChanged()), this, SLOT(cameraModelWidgetChanged()));
     mModelParametersWidget.setParameters(mCameraModel);
 
@@ -423,6 +428,32 @@ void PhysicsMainWindow::showCameraModelWidget()
 {
     mModelParametersWidget.show();
     mModelParametersWidget.raise();
+}
+
+void PhysicsMainWindow::loadCameraModel(QString filename)
+{
+    const char *name = filename.toLatin1().constData();
+    SYNC_PRINT(("PhysicsMainWindow::loadCameraModel(<%s>):called\n", name));
+    JSONModernReader reader(name);
+    if (!reader.hasError())
+    {
+        CameraModel model;
+        reader.visit(model, "camera");
+        mModelParametersWidget.setParameters(model);
+        cout << "Model:" << model << endl;
+    } else {
+        SYNC_PRINT(("Can't load <%s>\n", name));
+    }
+}
+
+void PhysicsMainWindow::saveCameraModel(QString filename)
+{
+    const char *name = filename.toLatin1().constData();
+    SYNC_PRINT(("PhysicsMainWindow::saveCameraModel(<%s>):called\n", name));
+    JSONPrinter reader(name);
+    CameraModel model;
+    mModelParametersWidget.getParameters(model);
+    reader.visit(model, "camera");
 }
 
 void PhysicsMainWindow::cameraModelWidgetChanged()

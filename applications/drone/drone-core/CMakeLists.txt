@@ -14,6 +14,7 @@ set(HDR_FILES ${HDR_FILES} ${CURR_HDR_FILES})
 set (INC_PATHS ${CMAKE_CURRENT_LIST_DIR}/xml/generated)
 
 include(../../../wrappers/joystick/sourcelist.cmake)
+include(../../../wrappers/jsonmodern/sourcelist.cmake)
 
 target_sources(drone-core
     PUBLIC

@@ -104,9 +104,10 @@ void SettingsGetter::visit<int, EnumField>(int &field, const EnumField *fieldDes
 template <>
 void SettingsGetter::visit<double, DoubleVectorField>(std::vector<double> &field, const DoubleVectorField *fieldDescriptor)
 {
-
+    field.clear();
     mSettings->beginGroup(fieldDescriptor->name.name);
     int size = mSettings->value("size", 0).toInt();
+    field.reserve(size);
     for (int i = 0; i < size; i++ )
     {
         QVariant def(fieldDescriptor->getDefaultElement(i));

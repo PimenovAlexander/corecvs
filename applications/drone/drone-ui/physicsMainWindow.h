@@ -120,6 +120,8 @@ public slots:
 
     void showCameraParametersWidget();
     void showCameraModelWidget();
+    void loadCameraModel(QString filename);
+    void saveCameraModel(QString filename);
     void cameraModelWidgetChanged();
 
 signals:
