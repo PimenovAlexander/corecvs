@@ -465,7 +465,7 @@
              <string>Recalculate</string>
             </property>
             <property name="icon">
-             <iconset resource="../../../restricted/cvs/resources/resresource.qrc">
+             <iconset resource="../../resources/main.qrc">
               <normaloff>:/new/prefix1/calculator.png</normaloff>:/new/prefix1/calculator.png</iconset>
             </property>
             <property name="iconSize">
@@ -482,7 +482,7 @@
              <string>Reset</string>
             </property>
             <property name="icon">
-             <iconset resource="../../../restricted/cvs/resources/resresource.qrc">
+             <iconset resource="../../resources/main.qrc">
               <normaloff>:/new/prefix1/refresh.png</normaloff>:/new/prefix1/refresh.png</iconset>
             </property>
             <property name="iconSize">
@@ -671,7 +671,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../restricted/cvs/resources/resresource.qrc"/>
+  <include location="../../resources/main.qrc"/>
  </resources>
  <connections>
   <connection>

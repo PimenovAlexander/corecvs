@@ -48,20 +48,32 @@ int PatternFromPoseParameters::staticInit(corecvs::Reflection *toFill)
      toFill->objectSize = sizeof(PatternFromPoseParameters);
      
 
-    DoubleField* field0 = new DoubleField
+    BoolField* field0 = new BoolField
+        (
+          PatternFromPoseParameters::UNDISTORT_ID,
+          offsetof(PatternFromPoseParameters, mUndistort),
+          true,
+          "undistort",
+          "undistort",
+          "undistort"
+        );
+    field0->widgetHint=BaseField::CHECK_BOX;
+    toFill->fields.push_back(field0);
+    /*  */ 
+    DoubleField* field1 = new DoubleField
         (
           PatternFromPoseParameters::PATTERN_SCALE_ID,
           offsetof(PatternFromPoseParameters, mPatternScale),
-          1,
+          16,
           "pattern scale",
           "pattern scale",
           "Scale of pattern unit in real world units"
         );
-    field0->widgetHint=BaseField::SPIN_BOX;
-    field0->precision=2;
-    toFill->fields.push_back(field0);
+    field1->widgetHint=BaseField::SPIN_BOX;
+    field1->precision=2;
+    toFill->fields.push_back(field1);
     /*  */ 
-    BoolField* field1 = new BoolField
+    BoolField* field2 = new BoolField
         (
           PatternFromPoseParameters::DRAW_HOMOGRAPHY_ID,
           offsetof(PatternFromPoseParameters, mDrawHomography),
@@ -70,10 +82,10 @@ int PatternFromPoseParameters::staticInit(corecvs::Reflection *toFill)
           "draw homography",
           "draw homography"
         );
-    field1->widgetHint=BaseField::CHECK_BOX;
-    toFill->fields.push_back(field1);
+    field2->widgetHint=BaseField::CHECK_BOX;
+    toFill->fields.push_back(field2);
     /*  */ 
-    BoolField* field2 = new BoolField
+    BoolField* field3 = new BoolField
         (
           PatternFromPoseParameters::DRAW_CUBE_ID,
           offsetof(PatternFromPoseParameters, mDrawCube),
@@ -82,10 +94,10 @@ int PatternFromPoseParameters::staticInit(corecvs::Reflection *toFill)
           "draw cube",
           "draw cube"
         );
-    field2->widgetHint=BaseField::CHECK_BOX;
-    toFill->fields.push_back(field2);
+    field3->widgetHint=BaseField::CHECK_BOX;
+    toFill->fields.push_back(field3);
     /*  */ 
-    BoolField* field3 = new BoolField
+    BoolField* field4 = new BoolField
         (
           PatternFromPoseParameters::DRAW_POSE_MESH_ID,
           offsetof(PatternFromPoseParameters, mDrawPoseMesh),
@@ -94,8 +106,8 @@ int PatternFromPoseParameters::staticInit(corecvs::Reflection *toFill)
           "draw pose mesh",
           "draw pose mesh"
         );
-    field3->widgetHint=BaseField::CHECK_BOX;
-    toFill->fields.push_back(field3);
+    field4->widgetHint=BaseField::CHECK_BOX;
+    toFill->fields.push_back(field4);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
     directory[std::string("Pattern From Pose Parameters")]= toFill;

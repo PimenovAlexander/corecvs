@@ -45,6 +45,16 @@ void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata frameData
     pair.setRgbBufferLeft(NULL);
     pair.freeBuffers();
 
+    if (mPatternToPose.poseParameters.undistort())
+    {
+        stats.startInterval();
+        RadialCorrection radialCorrection(mCameraModel.distortion);
+        RGB24Buffer *undistorted = result->doReverseDeformation<RGB24Buffer, RadialCorrection  >(radialCorrection);
+        stats.endInterval("Undistort");
+        delete_safe(result);
+        result = undistorted;
+    }
+
     if (detector != NULL)
     {
         vector<PatternDetectorResult> patterns;
@@ -77,7 +87,7 @@ void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata frameData
             Polygon perefery = ConvexHull::ConvexHullCompute(points);
             RGBColor color = RGBColor::parula((double)i / (patterns.size()));
 
-            for (int k = 0; k < perefery.size(); k++) {
+            for (size_t k = 0; k < perefery.size(); k++) {
                  result->drawLine(perefery.getPoint(k), perefery.getNextPoint(k), color);
             }
 
@@ -129,7 +139,7 @@ void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata frameData
                Mesh3D mesh;
                mesh.switchColor();
                mesh.addAOB(Vector3dd(0,0,0), Vector3dd(1,1,1));
-               for (int i = 0; i < mesh.facesColor.size(); i++) {
+               for (size_t i = 0; i < mesh.facesColor.size(); i++) {
                    mesh.facesColor[i] = RGBColor::rainbow((double)i/ mesh.facesColor.size());
                }
                renderer.render(&mesh, result);

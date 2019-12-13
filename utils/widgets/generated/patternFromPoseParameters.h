@@ -40,6 +40,7 @@ class PatternFromPoseParameters : public corecvs::BaseReflection<PatternFromPose
 {
 public:
     enum FieldId {
+        UNDISTORT_ID,
         PATTERN_SCALE_ID,
         DRAW_HOMOGRAPHY_ID,
         DRAW_CUBE_ID,
@@ -48,6 +49,12 @@ public:
     };
 
     /** Section with variables */
+
+    /** 
+     * \brief undistort 
+     * undistort 
+     */
+    bool mUndistort;
 
     /** 
      * \brief pattern scale 
@@ -83,6 +90,11 @@ public:
     {
         return (const unsigned char *)(this) + fields()[fieldId]->offset;
     }
+    bool undistort() const
+    {
+        return mUndistort;
+    }
+
     double patternScale() const
     {
         return mPatternScale;
@@ -104,6 +116,11 @@ public:
     }
 
     /** Section with setters */
+    void setUndistort(bool undistort)
+    {
+        mUndistort = undistort;
+    }
+
     void setPatternScale(double patternScale)
     {
         mPatternScale = patternScale;
@@ -129,6 +146,7 @@ public:
 template<class VisitorType>
     void accept(VisitorType &visitor)
     {
+        visitor.visit(mUndistort,                 static_cast<const corecvs::BoolField *>(fields()[UNDISTORT_ID]));
         visitor.visit(mPatternScale,              static_cast<const corecvs::DoubleField *>(fields()[PATTERN_SCALE_ID]));
         visitor.visit(mDrawHomography,            static_cast<const corecvs::BoolField *>(fields()[DRAW_HOMOGRAPHY_ID]));
         visitor.visit(mDrawCube,                  static_cast<const corecvs::BoolField *>(fields()[DRAW_CUBE_ID]));
@@ -142,12 +160,14 @@ template<class VisitorType>
     }
 
     PatternFromPoseParameters(
-          double patternScale
+          bool undistort
+        , double patternScale
         , bool drawHomography
         , bool drawCube
         , bool drawPoseMesh
     )
     {
+        mUndistort = undistort;
         mPatternScale = patternScale;
         mDrawHomography = drawHomography;
         mDrawCube = drawCube;
@@ -157,6 +177,7 @@ template<class VisitorType>
     /** Exact match comparator **/ 
     bool operator ==(const PatternFromPoseParameters &other) const 
     {
+        if ( !(this->mUndistort == other.mUndistort)) return false;
         if ( !(this->mPatternScale == other.mPatternScale)) return false;
         if ( !(this->mDrawHomography == other.mDrawHomography)) return false;
         if ( !(this->mDrawCube == other.mDrawCube)) return false;
