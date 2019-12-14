@@ -69,14 +69,25 @@ private:
 };
 
 // ARC Entity
-class DxfArcEntity : public DxfEntity {
+class DxfCircularArcEntity : public DxfEntity {
 public:
-    explicit DxfArcEntity(DxfArcData *data) : DxfEntity(data), data(data) {}
+    explicit DxfCircularArcEntity(DxfCircularArcData *data) : DxfEntity(data), data(data) {}
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() const override;
-    DxfArcData* getData() override { return data; };
+    DxfCircularArcData* getData() override { return data; };
 private:
-    DxfArcData *data;
+    DxfCircularArcData *data;
+};
+
+// ELLIPSE Entity
+class DxfEllipticalArcEntity : public DxfEntity {
+public:
+    explicit DxfEllipticalArcEntity(DxfEllipticalArcData *data) : DxfEntity(data), data(data) {}
+    void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
+    void print() const override;
+    DxfEllipticalArcData* getData() override { return data; };
+private:
+    DxfEllipticalArcData *data;
 };
 
 } // namespace corecvs

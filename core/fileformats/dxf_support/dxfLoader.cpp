@@ -64,7 +64,10 @@ int DxfLoader::processDxfPair(int code, const std::string &value) {
                         addCircle();
                         break;
                     case DxfElementType::DXF_ARC:
-                        addArc();
+                        addCircularArc();
+                        break;
+                    case DxfElementType::DXF_ELLIPSE:
+                        addEllipticalArc();
                         break;
                     case DxfElementType::DXF_POLYLINE:
                         handlePolyline();
@@ -233,12 +236,21 @@ void DxfLoader::addCircle() {
     delete baseData;
 }
 
-void DxfLoader::addArc() {
+void DxfLoader::addCircularArc() {
     auto baseData = getEntityData();
-    auto allData = new DxfArcData(baseData, Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
-                                     getDoubleValue(DxfCodes::DXF_RADIUS_CODE, 0), getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0),
-                                     getDoubleValue(DxfCodes::DXF_START_ANGLE_CODE, 0), getDoubleValue(DxfCodes::DXF_END_ANGLE_CODE, 0));
-    dxfBuilder->addEntity(new DxfArcEntity(allData));
+    auto allData = new DxfCircularArcData(baseData, Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
+                                          getDoubleValue(DxfCodes::DXF_RADIUS_CODE, 0), getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0),
+                                          getDoubleValue(DxfCodes::DXF_START_ANGLE_CODE, 0), getDoubleValue(DxfCodes::DXF_END_ANGLE_CODE, 0));
+    dxfBuilder->addEntity(new DxfCircularArcEntity(allData));
+    delete baseData;
+}
+
+void DxfLoader::addEllipticalArc() {
+    auto baseData = getEntityData();
+    auto allData = new DxfEllipticalArcData(baseData, Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
+                                            Vector3dd(getDoubleValue(11, 0), getDoubleValue(21, 0), getDoubleValue(31, 0)),
+                                            getDoubleValue(40, 0), getDoubleValue(41, 0), getDoubleValue(42, 0));
+    dxfBuilder->addEntity(new DxfEllipticalArcEntity(allData));
     delete baseData;
 }
 

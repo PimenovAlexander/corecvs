@@ -68,13 +68,25 @@ public:
 };
 
 // ARC Data
-class DxfArcData : public DxfEntityData {
+class DxfCircularArcData : public DxfEntityData {
 public:
-    DxfArcData(DxfEntityData *data, Vector3dd center, double radius, double thickness, double startAngle, double endAngle)
+    DxfCircularArcData(DxfEntityData *data, Vector3dd center, double radius, double thickness, double startAngle, double endAngle)
     : DxfEntityData(data), center(center), radius(radius), thickness(thickness), startAngle(startAngle), endAngle(endAngle) {}
     Vector3dd center;
     double radius;
     double thickness;
+    double startAngle;
+    double endAngle;
+};
+
+// ELLIPSE Data
+class DxfEllipticalArcData : public DxfEntityData {
+public:
+    DxfEllipticalArcData(DxfEntityData *data, Vector3dd center, Vector3dd majorAxisEndPoint, double ratio, double startAngle, double endAngle)
+            : DxfEntityData(data), center(center), majorAxisEndPoint(majorAxisEndPoint), ratio(ratio), startAngle(startAngle), endAngle(endAngle) {}
+    Vector3dd center;
+    Vector3dd majorAxisEndPoint;
+    double ratio;
     double startAngle;
     double endAngle;
 };

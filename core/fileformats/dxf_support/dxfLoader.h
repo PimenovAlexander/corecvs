@@ -40,7 +40,8 @@ private:
     void addLwPolyline();
     void addPolyline();
     void addCircle();
-    void addArc();
+    void addCircularArc();
+    void addEllipticalArc();
     void handleLwPolyline(int groupCode);
     void handlePolyline();
     void handleVertex();

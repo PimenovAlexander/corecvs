@@ -51,7 +51,7 @@ void ImplDxfBuilder::addEntity(DxfEntity *entity) {
 // Drawing
 void ImplDxfBuilder::prepareToDraw() {
     attrs.setCorners(leftTopCorner, rightBottomCorner);
-    attrs.setMargins(20, 20, 20, 20);
+    attrs.setMargins(100, 100, 100, 100);
 
 //    for (DxfObject* object : objects) {
 //        object->print();

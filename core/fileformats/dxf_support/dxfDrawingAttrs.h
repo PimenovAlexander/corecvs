@@ -73,7 +73,7 @@ public:
     }
 
 private:
-    DxfDrawingUnits units = DxfDrawingUnits::CENTIMETERS;
+    DxfDrawingUnits units = DxfDrawingUnits::UNITLESS;
     // in pixels:
     int width = 0;
     int height = 0;
