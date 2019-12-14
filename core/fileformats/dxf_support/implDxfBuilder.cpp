@@ -53,19 +53,16 @@ void ImplDxfBuilder::prepareToDraw() {
     attrs.setCorners(leftTopCorner, rightBottomCorner);
     attrs.setMargins(100, 100, 100, 100);
 
-//    for (DxfObject* object : objects) {
-//        object->print();
-//    }
-
     for (DxfEntity* entity : entities) {
         auto data = entity->getData();
         if (data->colorNumber == 256) data->colorNumber = layers[data->layerName]->getData()->colorNumber;
-
         auto rgb = DxfCodes::getRGB(data->colorNumber);
         if (!rgb.empty()) data->rgbColor = RGBColor(rgb[0], rgb[1], rgb[2]);
-        entity->print();
     }
 
+/* Uncomment for additional info printing */
+//    for (DxfObject* object : objects) object->print();
+//    for (DxfEntity* entity : entities) entity->print();
     std::cout << "Left-top corner: " << leftTopCorner << std::endl;
     std::cout << "Right-bottom corner: " << rightBottomCorner << std::endl;
 }

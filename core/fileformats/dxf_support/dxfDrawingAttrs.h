@@ -35,14 +35,14 @@ public:
         return Vector2d(width + marginLeft + marginRight, height + marginTop + marginBottom);
     }
 
-    Vector2d<double> getDrawingValues(double x, double y) {
+    Vector2dd getDrawingValues(double x, double y) {
         Vector2d<double> result;
         result.x() = getDrawingValue(x - leftTopCorner.x()) + marginLeft;
         result.y() = (double) height - getDrawingValue(y - leftTopCorner.y()) + marginTop;
         return result;
     }
 
-    Vector2d<double> getDrawingValues(Vector2dd point) {
+    Vector2dd getDrawingValues(Vector2dd point) {
         return getDrawingValues(point.x(), point.y());
     }
 

@@ -207,8 +207,8 @@ void DxfLoader::addLineType() {
 
 void DxfLoader::addLine() {
     auto baseData = getEntityData();
-    auto allData = new DxfLineData(baseData, getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0),
-                               getDoubleValue(11, 0), getDoubleValue(21, 0),getDoubleValue (31, 0));
+    auto allData = new DxfLineData(baseData, Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
+            Vector3dd(getDoubleValue(11, 0), getDoubleValue(21, 0),getDoubleValue (31, 0)));
     dxfBuilder->addEntity(new DxfLineEntity(allData));
     delete baseData;
 }
@@ -231,7 +231,7 @@ void DxfLoader::addPolyline() {
 void DxfLoader::addCircle() {
     auto baseData = getEntityData();
     auto allData = new DxfCircleData(baseData, Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
-                                   getDoubleValue(DxfCodes::DXF_RADIUS_CODE, 0), getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0));
+            getDoubleValue(DxfCodes::DXF_RADIUS_CODE, 0), getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0));
     dxfBuilder->addEntity(new DxfCircleEntity(allData));
     delete baseData;
 }
@@ -239,8 +239,8 @@ void DxfLoader::addCircle() {
 void DxfLoader::addCircularArc() {
     auto baseData = getEntityData();
     auto allData = new DxfCircularArcData(baseData, Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
-                                          getDoubleValue(DxfCodes::DXF_RADIUS_CODE, 0), getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0),
-                                          getDoubleValue(DxfCodes::DXF_START_ANGLE_CODE, 0), getDoubleValue(DxfCodes::DXF_END_ANGLE_CODE, 0));
+            getDoubleValue(DxfCodes::DXF_RADIUS_CODE, 0), getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0),
+            getDoubleValue(DxfCodes::DXF_START_ANGLE_CODE, 0), getDoubleValue(DxfCodes::DXF_END_ANGLE_CODE, 0));
     dxfBuilder->addEntity(new DxfCircularArcEntity(allData));
     delete baseData;
 }
@@ -248,8 +248,8 @@ void DxfLoader::addCircularArc() {
 void DxfLoader::addEllipticalArc() {
     auto baseData = getEntityData();
     auto allData = new DxfEllipticalArcData(baseData, Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
-                                            Vector3dd(getDoubleValue(11, 0), getDoubleValue(21, 0), getDoubleValue(31, 0)),
-                                            getDoubleValue(40, 0), getDoubleValue(41, 0), getDoubleValue(42, 0));
+            Vector3dd(getDoubleValue(11, 0), getDoubleValue(21, 0), getDoubleValue(31, 0)),
+            getDoubleValue(40, 0), getDoubleValue(41, 0), getDoubleValue(42, 0));
     dxfBuilder->addEntity(new DxfEllipticalArcEntity(allData));
     delete baseData;
 }
