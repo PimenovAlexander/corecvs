@@ -12,18 +12,9 @@
 #include <imageCaptureInterfaceQt.h>
 #include <g12Image.h>
 
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/calib3d/calib3d.hpp>
 
-#include <opencv2/core.hpp>
-#include <opencv2/opencv.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/calib3d.hpp>
-#include <opencv2/xfeatures2d.hpp>
-#include <opencv2/xfeatures2d/nonfree.hpp>
-#include <opencv2/features2d.hpp>
-#include <opencv2/videoio.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/calib3d.hpp>
 #include <buffers/bufferFactory.h>
 #include <cameracalibration/cameraModel.h>
 #include <reflection/jsonPrinter.h>
@@ -59,6 +50,8 @@ CalibrationWidget::CalibrationWidget(QWidget *parent) :
 
 
     connect(ui->startCalibrationButton, SIGNAL(released()), this, SLOT(startCalibration()));
+    connect(ui->undistortPushButton   , SIGNAL(released()), this, SLOT(undistort()));
+
     //addImage();
     //QTimer::singleShot(38,this,SLOT(updateImage()));
 }
@@ -273,50 +266,87 @@ void CalibrationWidget::calibrate()
     calibrateCamera(object_points, image_points, imageSize, intrinsic, distCoeffs, rvecs, tvecs);
     SYNC_PRINT(("Actual calibration finished\n"));
 
-    cv::Mat imageUndistorted;
-    intrinsic.copyTo(globalIntrinsic);
-    distCoeffs.copyTo(globalDistCoeffs);
+    intrinsic.copyTo(mIntrinsic);
+    distCoeffs.copyTo(mDistCoeffs);
 
-    cout << "Intrinsics:" << globalIntrinsic  << endl;
-    cout << "Distorion :" << globalDistCoeffs << endl;
+    cout << "Intrinsics:" << mIntrinsic  << endl;
+    cout << "Distorion :" << mDistCoeffs << endl;
 
     /*we will try to convert it to CameraModel */
 
-    CameraModel model;
-    model.setLocation(Affine3DQ::Identity());
-    PinholeCameraIntrinsics *p = model.getPinhole();
+    mCameraModel = CameraModel();
+    mCameraModel.setLocation(Affine3DQ::Identity());
+    PinholeCameraIntrinsics *p = mCameraModel.getPinhole();
 
-    p->setFocal    (Vector2dd(globalIntrinsic.at<double>(0,0), globalIntrinsic.at<double>(1,1)));
-    p->setPrincipal(Vector2dd(globalIntrinsic.at<double>(0,2), globalIntrinsic.at<double>(1,2)));
+    p->setFocal    (Vector2dd(mIntrinsic.at<double>(0,0), mIntrinsic.at<double>(1,1)));
+    p->setPrincipal(Vector2dd(mIntrinsic.at<double>(0,2), mIntrinsic.at<double>(1,2)));
     p->setSize     (Vector2dd(imageSize.width, imageSize.height));
     p->setDistortedSize(p->size());
     p->setSkew(0.0);
     p->offset = Vector2dd::Zero();
 
-    model.distortion.setPrincipalPoint(p->principal());
-    model.distortion.setTangentialX(globalDistCoeffs.at<double>(2));
-    model.distortion.setTangentialY(globalDistCoeffs.at<double>(3));
+    mCameraModel.distortion.setPrincipalPoint(p->principal());
+    mCameraModel.distortion.setTangentialX(mDistCoeffs.at<double>(2));
+    mCameraModel.distortion.setTangentialY(mDistCoeffs.at<double>(3));
 
-    double k1 = globalDistCoeffs.at<double>(0);
-    double k2 = globalDistCoeffs.at<double>(1);
-    double k3 = globalDistCoeffs.at<double>(4);
+    double k1 = mDistCoeffs.at<double>(0);
+    double k2 = mDistCoeffs.at<double>(1);
+    double k3 = mDistCoeffs.at<double>(4);
 
-    model.distortion.setKoeff(
+    mCameraModel.distortion.setKoeff(
       { 0, k1, 0, k2, 0, k3});
 
-    model.distortion.setNormalizingFocal(p->size().y() / 2);
+    //mCameraModel.distortion.setNormalizingFocal(p->size().y() / 2);
+    //mCameraModel.distortion.setNormalizingFocal(1.0);
+    mCameraModel.distortion.setNormalizingFocal(mIntrinsic.at<double>(0,0));
 
     JSONPrinter printer;
-    printer.visit(model, "camera");
+    printer.visit(mCameraModel, "camera");
 
     JSONPrinter printer1("camera.json");
-    printer1.visit(model, "camera");
+    printer1.visit(mCameraModel, "camera");
 
 
     //setShowingBool(true);
     //ui->stopShowing->setEnabled(true);
     //ui->saveCalib->setEnabled(true);
     std::cout<<"here 4"<<std::endl;
+}
+
+
+void CalibrationWidget::undistort()
+{
+    for (size_t i = 0; i < widgets.size() - 1; i++)
+    {
+
+        RGB24Buffer *rgb24image = widgets[i]->rgb24Image;
+
+        /* OpenCV run */
+        {
+            cv::Mat image = OpenCVTools::getCVMatFromRGB24Buffer(rgb24image);
+
+            cv::Mat imageUndistorted;
+            cv::undistort(image, imageUndistorted, mIntrinsic, mDistCoeffs);
+
+            RGB24Buffer *rgbUndist = OpenCVTools::getRGB24BufferFromCVMat(imageUndistorted);
+
+            std::ostringstream oss;
+            oss << "undist-" << i << ".png";
+            BufferFactory::getInstance()->saveRGB24Bitmap(rgbUndist, oss.str());
+            delete_safe(rgbUndist);
+        }
+
+        /* CoreCVS run */
+        {
+            RadialCorrection radialCorrection(mCameraModel.distortion);
+            RGB24Buffer *rgbUndist = rgb24image->doReverseDeformation<RGB24Buffer, RadialCorrection  >(radialCorrection);
+            std::ostringstream oss;
+            oss << "undist-" << i << "core.png";
+            BufferFactory::getInstance()->saveRGB24Bitmap(rgbUndist, oss.str());
+            delete_safe(rgbUndist);
+        }
+    }
+
 }
 
 bool CalibrationWidget::getShowingBool()
@@ -353,8 +383,8 @@ void CalibrationWidget::saveMatrix()
     {
         fileName += ".yml";
         cv::FileStorage fs(fileName.toStdString(),cv::FileStorage::WRITE);
-        fs <<"intrinsic"<<globalIntrinsic;
-        fs <<"distCoeffs"<<globalDistCoeffs;
+        fs <<"intrinsic"<<mIntrinsic;
+        fs <<"distCoeffs"<<mDistCoeffs;
     }
 }
 

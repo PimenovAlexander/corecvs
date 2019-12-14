@@ -9,6 +9,7 @@
 #include <imageCaptureInterfaceQt.h>
 #include <inputSelectorWidget.h>
 #include <mutex>
+#include <cameracalibration/cameraModel.h>
 
 namespace Ui {
 class CalibrationWidget;
@@ -26,6 +27,8 @@ private slots:
     void addImage(corecvs::RGB24Buffer *image);
     void updateStartButton();
     void startCalibration();
+    void undistort();
+
 
     void updateImage();
     void stopShowing();
@@ -67,8 +70,9 @@ private:
 
     std::vector<ImageForCalibrationWidget *> widgets;
 
-    cv::Mat globalIntrinsic;
-    cv::Mat globalDistCoeffs;
+    cv::Mat mIntrinsic;
+    cv::Mat mDistCoeffs;
+    corecvs::CameraModel mCameraModel;
 
     bool getShowingBool();
     bool showingBool = false;

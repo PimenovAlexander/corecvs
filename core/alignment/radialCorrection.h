@@ -1,3 +1,6 @@
+#ifndef RADIALCORRECTION_H_
+#define RADIALCORRECTION_H_
+
 /**
  * \file radialCorrection.h
  * \brief Header file for the radial lens distortion correction primitives
@@ -7,9 +10,6 @@
  * \date Jun 22, 2010
  * \author alexander
  */
-
-#ifndef RADIALCORRECTION_H_
-#define RADIALCORRECTION_H_
 
 #include "core/geometry/ellipticalApproximation.h"
 #include "core/alignment/lensDistortionModelParameters.h"
