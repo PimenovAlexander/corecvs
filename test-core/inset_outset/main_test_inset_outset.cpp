@@ -37,8 +37,8 @@ void drawPolygon(const Polygon &p, int offset, const std::string &fileName) {
 }
 
 void drawPointPath(const PointPath &p, int offset, const std::string &fileName) {
-    std::vector<Segment2d> inset = shiftPointPath(p, -offset, false);
-    std::vector<Segment2d> outset = shiftPointPath(p, offset, false);
+    std::vector<Segment2d> inset = shiftPointPath(p, -offset);
+    std::vector<Segment2d> outset = shiftPointPath(p, offset);
 
     RGB24Buffer buffer(1000, 1000);
     AbstractPainter<RGB24Buffer> painter(&buffer);
@@ -107,6 +107,17 @@ TEST(inset_outset, simplePath) {
     drawPointPath(p, 10, "simplePath");
 }
 
+TEST(inset_outset, overlapLines) {
+    PointPath p{
+            Vector2dd(50, 100),
+            Vector2dd(100, 100),
+            Vector2dd(100, 150),
+            Vector2dd(100, 200)
+    };
+
+    drawPointPath(p, 10, "overlapLines");
+}
+
 TEST(inset_outset, moreComplicatedPath) {
     PointPath p{
             Vector2dd(50, 300),
@@ -128,4 +139,18 @@ TEST(inset_outset, star) {
     };
 
     drawPolygon(p, 10, "star");
+}
+
+TEST(inset_outset, singlePoint) {
+    Polygon p{
+            Vector2dd(100, 100)
+    };
+
+    drawPolygon(p, 10, "singlePoint");
+}
+
+TEST(inset_outset, zeroPoint) {
+    Polygon p{};
+
+    drawPolygon(p, 10, "zeroPoint");
 }
