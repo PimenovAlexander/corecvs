@@ -12,7 +12,7 @@
 namespace corecvs {
 
 // Data printing
-void DxfEntity::print() const {
+void DxfEntity::print() {
     std::cout << "Handle: " << data->handle << std::endl;
     std::cout << "Flags: " << data->flags << std::endl;
     std::cout << "Layer name: " << data->layerName << std::endl;
@@ -21,7 +21,7 @@ void DxfEntity::print() const {
     std::cout << "Color number: " << data->colorNumber << std::endl;
 }
 
-void DxfLineEntity::print() const {
+void DxfLineEntity::print() {
     std::cout << "* * * Line Entity * * *" << std::endl;
     DxfEntity::print();
     std::cout << "Start point: " << data->startPoint << std::endl;
@@ -29,7 +29,7 @@ void DxfLineEntity::print() const {
     std::cout << std::endl;
 }
 
-void DxfLwPolylineEntity::print() const {
+void DxfLwPolylineEntity::print() {
     std::cout << "* * * LwPolyline Entity * * *" << std::endl;
     DxfEntity::print();
     std::cout << "Vertex amount: " << data->vertexNumber << std::endl;
@@ -40,7 +40,7 @@ void DxfLwPolylineEntity::print() const {
     std::cout << std::endl;
 }
 
-void DxfPolylineEntity::print() const {
+void DxfPolylineEntity::print() {
     std::cout << "* * * Polyline Entity * * *" << std::endl;
     DxfEntity::print();
     std::cout << "Vertex amount: " << data->vertices.size() << std::endl;
@@ -51,7 +51,7 @@ void DxfPolylineEntity::print() const {
     std::cout << std::endl;
 }
 
-void DxfCircleEntity::print() const {
+void DxfCircleEntity::print() {
     std::cout << "* * * Circle Entity * * *" << std::endl;
     DxfEntity::print();
     std::cout << "Center point: " << data->center << std::endl;
@@ -60,7 +60,7 @@ void DxfCircleEntity::print() const {
     std::cout << std::endl;
 }
 
-void DxfCircularArcEntity::print() const {
+void DxfCircularArcEntity::print() {
     std::cout << "* * * Circular Arc Entity * * *" << std::endl;
     DxfEntity::print();
     std::cout << "Center point: " << data->center << std::endl;
@@ -70,7 +70,7 @@ void DxfCircularArcEntity::print() const {
     std::cout << std::endl;
 }
 
-void DxfEllipticalArcEntity::print() const {
+void DxfEllipticalArcEntity::print() {
     std::cout << "* * * Elliptical Arc Entity * * *" << std::endl;
     DxfEntity::print();
     std::cout << "Center point: " << data->center << std::endl;

@@ -16,77 +16,96 @@ namespace corecvs {
 // Abstract Entity
 class DxfEntity {
 public:
-    explicit DxfEntity(DxfEntityData *data) : data(data) {}
+    explicit DxfEntity(DxfEntityData *data)
+    : data(data) {}
+
     virtual void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {}
-    virtual void print() const;
-    virtual DxfEntityData* getData() { return data; };
-private:
+    virtual void print();
+
     DxfEntityData *data;
 };
 
 // LINE Entity
 class DxfLineEntity : public DxfEntity {
 public:
-    explicit DxfLineEntity(DxfLineData *data) : DxfEntity(data), data(data) {}
+    explicit DxfLineEntity(DxfLineData *data)
+    : DxfEntity(data), data(data) {}
+
+    ~DxfLineEntity() { delete data; }
+
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
-    void print() const override;
-    DxfLineData* getData() override { return data; };
-private:
+    void print() override;
+
     DxfLineData *data;
 };
 
 // LWPOLYLINE Entity
 class DxfLwPolylineEntity : public DxfEntity {
 public:
-    explicit DxfLwPolylineEntity(DxfLwPolylineData *data) : DxfEntity(data), data(data) {}
+    explicit DxfLwPolylineEntity(DxfLwPolylineData *data)
+    : DxfEntity(data), data(data) {}
+
+    ~DxfLwPolylineEntity() { delete data; }
+
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
-    void print() const override;
-    DxfLwPolylineData* getData() override { return data; };
-private:
+    void print() override;
+
     DxfLwPolylineData *data;
 };
 
 // POLYLINE Entity
 class DxfPolylineEntity : public DxfEntity {
 public:
-    explicit DxfPolylineEntity(DxfPolylineData *data) : DxfEntity(data), data(data) {}
+    explicit DxfPolylineEntity(DxfPolylineData *data)
+    : DxfEntity(data), data(data) {}
+
+    ~DxfPolylineEntity() { delete data; }
+
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
-    void print() const override;
-    DxfPolylineData* getData() override { return data; };
-private:
+    void print() override;
+
     DxfPolylineData *data;
 };
 
 // CIRCLE Entity
 class DxfCircleEntity : public DxfEntity {
 public:
-    explicit DxfCircleEntity(DxfCircleData *data) : DxfEntity(data), data(data) {}
+    explicit DxfCircleEntity(DxfCircleData *data)
+    : DxfEntity(data), data(data) {}
+
+    ~DxfCircleEntity() { delete data; }
+
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
-    void print() const override;
-    DxfCircleData* getData() override { return data; };
-private:
+    void print() override;
+
     DxfCircleData *data;
 };
 
 // ARC Entity
 class DxfCircularArcEntity : public DxfEntity {
 public:
-    explicit DxfCircularArcEntity(DxfCircularArcData *data) : DxfEntity(data), data(data) {}
+    explicit DxfCircularArcEntity(DxfCircularArcData *data)
+    : DxfEntity(data), data(data) {}
+
+    ~DxfCircularArcEntity() { delete data; }
+
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
-    void print() const override;
-    DxfCircularArcData* getData() override { return data; };
-private:
+    void print() override;
+
     DxfCircularArcData *data;
 };
 
 // ELLIPSE Entity
 class DxfEllipticalArcEntity : public DxfEntity {
 public:
-    explicit DxfEllipticalArcEntity(DxfEllipticalArcData *data) : DxfEntity(data), data(data) {}
+    explicit DxfEllipticalArcEntity(DxfEllipticalArcData *data)
+    : DxfEntity(data), data(data) {}
+
+    ~DxfEllipticalArcEntity() { delete data; }
+
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
-    void print() const override;
-    DxfEllipticalArcData* getData() override { return data; };
-private:
+    void print() override;
+
     DxfEllipticalArcData *data;
 };
 

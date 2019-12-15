@@ -7,13 +7,13 @@
 
 namespace corecvs {
 
-void DxfObject::print() const {
+void DxfObject::print() {
     std::cout << "Handle: " << data->handle << std::endl;
     std::cout << "Flags: " << data->flags << std::endl;
     std::cout << "Name: " << data->name << std::endl;
 }
 
-void DxfLayerObject::print() const {
+void DxfLayerObject::print() {
     std::cout << "* * * Layer Object * * *" << std::endl;
     DxfObject::print();
     std::cout << "Color number: " << data->colorNumber << std::endl;
@@ -22,7 +22,7 @@ void DxfLayerObject::print() const {
     std::cout << std::endl;
 }
 
-void DxfLineTypeObject::print() const {
+void DxfLineTypeObject::print() {
     std::cout << "* * * Line Type Object * * *" << std::endl;
     DxfObject::print();
     std::cout << "Element amount: " << data->elementAmount << std::endl;

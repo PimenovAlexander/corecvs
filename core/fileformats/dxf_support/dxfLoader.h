@@ -31,6 +31,7 @@ private:
     std::map<int, std::string> rawValues;
     std::vector<Vector2d<double>> current2dVertices = {};     // vertices of LwPolylineEntity
     std::vector<Vector3d<double>> current3dVertices = {};     // vertices of PolylineEntity
+    DxfPolylineData *polylineData = nullptr;
 
     int processDxfPair(int code, std::string const &value);
     void addVariable();
@@ -46,8 +47,8 @@ private:
     void handlePolyline();
     void handleVertex();
     void handleVertexSequence();
-    DxfEntityData* getEntityData();
-    DxfObjectData* getObjectData();
+    DxfEntityData getEntityData();
+    DxfObjectData getObjectData();
     static bool getTruncatedLine(std::string &s, std::istream &stream);
 
     bool hasRawValue(int code) {

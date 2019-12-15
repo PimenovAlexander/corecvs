@@ -16,10 +16,8 @@ public:
     explicit DxfObject(DxfObjectData *data)
     : data(data) {}
 
-    virtual void print() const;
-    virtual DxfObjectData* getData() { return data; };
+    virtual void print();
 
-private:
     DxfObjectData *data;
 };
 
@@ -27,13 +25,12 @@ private:
 class DxfLayerObject : public DxfObject {
 public:
     explicit DxfLayerObject(DxfLayerData *data)
-    : DxfObject(data),
-    data(data) {}
+    : DxfObject(data), data(data) {}
 
-    void print() const override;
-    DxfLayerData* getData() override { return data; };
+    ~DxfLayerObject() { delete data; }
 
-private:
+    void print() override;
+
     DxfLayerData *data;
 };
 
@@ -41,13 +38,12 @@ private:
 class DxfLineTypeObject : public DxfObject {
 public:
     explicit DxfLineTypeObject(DxfLineTypeData *data)
-    : DxfObject(data),
-    data(data) {}
+    : DxfObject(data), data(data) {}
 
-    void print() const override;
-    DxfLineTypeData* getData() override { return data; };
+    ~DxfLineTypeObject() { delete data; }
 
-private:
+    void print() override;
+
     DxfLineTypeData *data;
 };
 

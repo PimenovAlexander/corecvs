@@ -45,7 +45,7 @@ int DxfLoader::load(const std::string &fileName) {
 int DxfLoader::processDxfPair(int code, const std::string &value) {
     switch (code) {
         case DxfCodes::DXF_ENTITY_SEPARATOR_CODE:
-            std::cout << "Separator code : " << value << std::endl;
+//            std::cout << "Separator code : " << value << std::endl;
             if (currentElementType != DxfElementType::DXF_UNKNOWN_TYPE) {
                 switch (currentElementType) {
                     case DxfElementType::DXF_LAYER:
@@ -133,22 +133,22 @@ bool DxfLoader::getTruncatedLine(std::string &s, std::istream &stream) {
     }
 }
 
-DxfEntityData* DxfLoader::getEntityData() {
-    auto data = new DxfEntityData();
-    data->handle = getIntValue(DxfCodes::DXF_HANDLE_CODE, 0);
-    data->flags = getIntValue(DxfCodes::DXF_FLAGS_CODE, 0);
-    data->layerName = getStringValue(DxfCodes::DXF_LAYER_NAME_CODE, "");
-    data->lineTypeName = getStringValue(DxfCodes::DXF_LINE_TYPE_NAME_CODE, DxfCodes::DXF_LINE_TYPE_NAME_DEFAULT);
-    data->colorNumber = getIntValue(DxfCodes::DXF_COLOR_NUMBER_CODE, DxfCodes::DXF_COLOR_NUMBER_DEFAULT);
-    return data;
+DxfEntityData DxfLoader::getEntityData() {
+    return DxfEntityData(
+            getIntValue(DxfCodes::DXF_HANDLE_CODE, 0),
+            getIntValue(DxfCodes::DXF_FLAGS_CODE, 0),
+            getStringValue(DxfCodes::DXF_LAYER_NAME_CODE, ""),
+            getStringValue(DxfCodes::DXF_LINE_TYPE_NAME_CODE, DxfCodes::DXF_LINE_TYPE_NAME_DEFAULT),
+            getIntValue(DxfCodes::DXF_COLOR_NUMBER_CODE, DxfCodes::DXF_COLOR_NUMBER_DEFAULT)
+            );
 }
 
-DxfObjectData* DxfLoader::getObjectData() {
-    auto handle = getIntValue(DxfCodes::DXF_HANDLE_CODE, 0);
-    auto flags = getIntValue(DxfCodes::DXF_FLAGS_CODE, 0);
-    auto name = getStringValue(DxfCodes::DXF_ELEMENT_NAME_CODE, "");
-    auto data = new DxfObjectData(handle, flags, name);
-    return data;
+DxfObjectData DxfLoader::getObjectData() {
+    return DxfObjectData(
+            getIntValue(DxfCodes::DXF_HANDLE_CODE, 0),
+            getIntValue(DxfCodes::DXF_FLAGS_CODE, 0),
+            getStringValue(DxfCodes::DXF_ELEMENT_NAME_CODE, "")
+            );
 }
 
 void DxfLoader::addVariable() {
@@ -192,81 +192,96 @@ void DxfLoader::addVariable() {
 }
 
 void DxfLoader::addLayer() {
-    auto baseData = getObjectData();
-    auto allData = new DxfLayerData(baseData, getIntValue(DxfCodes::DXF_COLOR_NUMBER_CODE, 0), (bool) getIntValue(290, 0), getStringValue(DxfCodes::DXF_LINE_TYPE_NAME_CODE, ""));
-    dxfBuilder->addLayer(new DxfLayerObject(allData));
-    delete baseData;
+    auto data = new DxfLayerData(
+            getObjectData(),
+            getIntValue(DxfCodes::DXF_COLOR_NUMBER_CODE, 0),
+            (bool) getIntValue(290, 0),
+            getStringValue(DxfCodes::DXF_LINE_TYPE_NAME_CODE, "")
+            );
+    dxfBuilder->addLayer(new DxfLayerObject(data));
 }
 
 void DxfLoader::addLineType() {
-    auto baseData = getObjectData();
-    auto allData = new DxfLineTypeData(baseData, getIntValue(73, 0), getDoubleValue(40, 0));
-    dxfBuilder->addLineType(new DxfLineTypeObject(allData));
-    delete baseData;
+    auto data = new DxfLineTypeData(
+            getObjectData(),
+            getIntValue(73, 0),
+            getDoubleValue(40, 0)
+            );
+    dxfBuilder->addLineType(new DxfLineTypeObject(data));
 }
 
 void DxfLoader::addLine() {
-    auto baseData = getEntityData();
-    auto allData = new DxfLineData(baseData, Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
-            Vector3dd(getDoubleValue(11, 0), getDoubleValue(21, 0),getDoubleValue (31, 0)));
-    dxfBuilder->addEntity(new DxfLineEntity(allData));
-    delete baseData;
+    auto data = new DxfLineData(
+            getEntityData(),
+            Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
+            Vector3dd(getDoubleValue(11, 0), getDoubleValue(21, 0),getDoubleValue (31, 0))
+            );
+    dxfBuilder->addEntity(new DxfLineEntity(data));
 }
 
 void DxfLoader::addLwPolyline() {
-    auto baseData = getEntityData();
-    auto allData = new DxfLwPolylineData(baseData, getIntValue(DxfCodes::DXF_VERTEX_AMOUNT_CODE, 0), current2dVertices);
-    dxfBuilder->addEntity(new DxfLwPolylineEntity(allData));
+    auto data = new DxfLwPolylineData(
+            getEntityData(),
+            getIntValue(DxfCodes::DXF_VERTEX_AMOUNT_CODE, 0),
+            current2dVertices
+            );
+    dxfBuilder->addEntity(new DxfLwPolylineEntity(data));
     current2dVertices.clear();
-    delete baseData;
 }
 
 void DxfLoader::addPolyline() {
-    auto baseData = getEntityData();
-    auto allData = new DxfPolylineData(baseData, current3dVertices);
-    dxfBuilder->addEntity(new DxfPolylineEntity(allData));
-    delete baseData;
+    polylineData->vertices = current3dVertices;
+    dxfBuilder->addEntity(new DxfPolylineEntity(polylineData));
+    current3dVertices.clear();
 }
 
 void DxfLoader::addCircle() {
-    auto baseData = getEntityData();
-    auto allData = new DxfCircleData(baseData, Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
-            getDoubleValue(DxfCodes::DXF_RADIUS_CODE, 0), getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0));
-    dxfBuilder->addEntity(new DxfCircleEntity(allData));
-    delete baseData;
+    auto data = new DxfCircleData(
+            getEntityData(),
+            Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
+            getDoubleValue(DxfCodes::DXF_RADIUS_CODE, 0),
+            getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0)
+            );
+    dxfBuilder->addEntity(new DxfCircleEntity(data));
 }
 
 void DxfLoader::addCircularArc() {
-    auto baseData = getEntityData();
-    auto allData = new DxfCircularArcData(baseData, Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
-            getDoubleValue(DxfCodes::DXF_RADIUS_CODE, 0), getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0),
-            getDoubleValue(DxfCodes::DXF_START_ANGLE_CODE, 0), getDoubleValue(DxfCodes::DXF_END_ANGLE_CODE, 0));
-    dxfBuilder->addEntity(new DxfCircularArcEntity(allData));
-    delete baseData;
+    auto data = new DxfCircularArcData(
+            getEntityData(),
+            Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
+            getDoubleValue(DxfCodes::DXF_RADIUS_CODE, 0),
+            getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0),
+            getDoubleValue(DxfCodes::DXF_START_ANGLE_CODE, 0),
+            getDoubleValue(DxfCodes::DXF_END_ANGLE_CODE, 0)
+            );
+    dxfBuilder->addEntity(new DxfCircularArcEntity(data));
 }
 
 void DxfLoader::addEllipticalArc() {
-    auto baseData = getEntityData();
-    auto allData = new DxfEllipticalArcData(baseData, Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
+    auto data = new DxfEllipticalArcData(
+            getEntityData(),
+            Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
             Vector3dd(getDoubleValue(11, 0), getDoubleValue(21, 0), getDoubleValue(31, 0)),
-            getDoubleValue(40, 0), getDoubleValue(41, 0), getDoubleValue(42, 0));
-    dxfBuilder->addEntity(new DxfEllipticalArcEntity(allData));
-    delete baseData;
+            getDoubleValue(40, 0),
+            getDoubleValue(41, 0),
+            getDoubleValue(42, 0)
+            );
+    dxfBuilder->addEntity(new DxfEllipticalArcEntity(data));
 }
 
 void DxfLoader::handleLwPolyline(int groupCode) {
     if (groupCode == 20 && current2dVertices.size() < getIntValue(DxfCodes::DXF_VERTEX_AMOUNT_CODE, 0)) {
-        current2dVertices.emplace_back(Vector2d<double>(getDoubleValue(10, 0), getDoubleValue(20, 0)));
+        current2dVertices.emplace_back(Vector2dd(getDoubleValue(10, 0), getDoubleValue(20, 0)));
     }
 }
 
 void DxfLoader::handlePolyline() {
     currentEntityType = DxfElementType::DXF_POLYLINE;
-    //TODO: save polyline data
+    polylineData = new DxfPolylineData(getEntityData());
 }
 
 void DxfLoader::handleVertex() {
-    current3dVertices.emplace_back(Vector3d<double>(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)));
+    current3dVertices.emplace_back(Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)));
 }
 
 void DxfLoader::handleVertexSequence() {

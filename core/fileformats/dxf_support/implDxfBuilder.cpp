@@ -35,11 +35,11 @@ void ImplDxfBuilder::set3DVectorVariable(int code, std::string const &name, doub
 
 // Objects
 void ImplDxfBuilder::addLayer(DxfLayerObject *object) {
-    layers.insert(std::make_pair(object->getData()->name, object));
+    layers.insert(std::make_pair(object->data->name, object));
     objects.push_back(object);
 }
 
-void ImplDxfBuilder::addLineType(corecvs::DxfLineTypeObject *object) {
+void ImplDxfBuilder::addLineType(DxfLineTypeObject *object) {
     objects.push_back(object);
 }
 
@@ -54,15 +54,15 @@ void ImplDxfBuilder::prepareToDraw() {
     attrs.setMargins(100, 100, 100, 100);
 
     for (DxfEntity* entity : entities) {
-        auto data = entity->getData();
-        if (data->colorNumber == 256) data->colorNumber = layers[data->layerName]->getData()->colorNumber;
+        auto data = entity->data;
+        if (data->colorNumber == 256) data->colorNumber = layers[data->layerName]->data->colorNumber;
         auto rgb = DxfCodes::getRGB(data->colorNumber);
         if (!rgb.empty()) data->rgbColor = RGBColor(rgb[0], rgb[1], rgb[2]);
     }
 
 /* Uncomment for additional info printing */
 //    for (DxfObject* object : objects) object->print();
-//    for (DxfEntity* entity : entities) entity->print();
+    for (DxfEntity* entity : entities) entity->print();
     std::cout << "Left-top corner: " << leftTopCorner << std::endl;
     std::cout << "Right-bottom corner: " << rightBottomCorner << std::endl;
 }

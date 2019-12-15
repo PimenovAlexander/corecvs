@@ -15,9 +15,10 @@ namespace corecvs {
 // Abstract Entity Data
 class DxfEntityData {
 public:
-    DxfEntityData() = default;
-    explicit DxfEntityData(DxfEntityData *data)
-    : handle(data->handle), flags(data->flags), layerName(data->layerName), lineTypeName(data->lineTypeName), rgbColor(data->rgbColor), colorNumber(data->colorNumber) {}
+    DxfEntityData(int handle, int flags, std::string layerName, std::string lineTypeName, int colorNumber)
+    : handle(handle), flags(flags), layerName(std::move(layerName)), lineTypeName(std::move(lineTypeName)), colorNumber(colorNumber) {}
+    DxfEntityData(const DxfEntityData &data) = default;
+
     int handle;
     int flags;
     std::string layerName;
@@ -29,8 +30,9 @@ public:
 // LINE Data
 class DxfLineData : public DxfEntityData {
 public:
-    DxfLineData(DxfEntityData *data, Vector3dd startPoint, Vector3dd endPoint)
+    DxfLineData(const DxfEntityData &data, Vector3dd startPoint, Vector3dd endPoint)
     : DxfEntityData(data), startPoint(startPoint), endPoint(endPoint) {}
+
     Vector3dd startPoint;
     Vector3dd endPoint;
 };
@@ -38,8 +40,9 @@ public:
 // LWPOLYLINE Data
 class DxfLwPolylineData : public DxfEntityData {
 public:
-    DxfLwPolylineData(DxfEntityData *data, int vertexNumber, std::vector<Vector2dd> &vertices)
+    DxfLwPolylineData(const DxfEntityData &data, int vertexNumber, std::vector<Vector2dd> &vertices)
     : DxfEntityData(data), vertexNumber(vertexNumber), vertices(vertices) {}
+
     int vertexNumber;
     std::vector<Vector2dd> vertices;
 };
@@ -47,16 +50,18 @@ public:
 // POLYLINE Data
 class DxfPolylineData : public DxfEntityData {
 public:
-    DxfPolylineData(DxfEntityData *data, std::vector<Vector3dd> &vertices)
-    : DxfEntityData(data), vertices(vertices) {}
+    DxfPolylineData(const DxfEntityData &data)
+    : DxfEntityData(data) {}
+
     std::vector<Vector3dd> vertices;
 };
 
 // CIRCLE Data
 class DxfCircleData : public DxfEntityData {
 public:
-    DxfCircleData(DxfEntityData *data, Vector3dd center, double radius, double thickness)
+    DxfCircleData(const DxfEntityData &data, Vector3dd center, double radius, double thickness)
     : DxfEntityData(data), center(center), radius(radius), thickness(thickness) {}
+
     Vector3dd center;
     double radius;
     double thickness;
@@ -65,8 +70,9 @@ public:
 // ARC Data
 class DxfCircularArcData : public DxfEntityData {
 public:
-    DxfCircularArcData(DxfEntityData *data, Vector3dd center, double radius, double thickness, double startAngle, double endAngle)
+    DxfCircularArcData(const DxfEntityData &data, Vector3dd center, double radius, double thickness, double startAngle, double endAngle)
     : DxfEntityData(data), center(center), radius(radius), thickness(thickness), startAngle(startAngle), endAngle(endAngle) {}
+
     Vector3dd center;
     double radius;
     double thickness;
@@ -77,8 +83,9 @@ public:
 // ELLIPSE Data
 class DxfEllipticalArcData : public DxfEntityData {
 public:
-    DxfEllipticalArcData(DxfEntityData *data, Vector3dd center, Vector3dd majorAxisEndPoint, double ratio, double startAngle, double endAngle)
+    DxfEllipticalArcData(const DxfEntityData &data, Vector3dd center, Vector3dd majorAxisEndPoint, double ratio, double startAngle, double endAngle)
     : DxfEntityData(data), center(center), majorAxisEndPoint(majorAxisEndPoint), ratio(ratio), startAngle(startAngle), endAngle(endAngle) {}
+
     Vector3dd center;
     Vector3dd majorAxisEndPoint;
     double ratio;

@@ -36,7 +36,7 @@ public:
     }
 
     Vector2dd getDrawingValues(double x, double y) {
-        Vector2d<double> result;
+        Vector2dd result;
         result.x() = getDrawingValue(x - leftTopCorner.x()) + marginLeft;
         result.y() = (double) height - getDrawingValue(y - leftTopCorner.y()) + marginTop;
         return result;
@@ -73,7 +73,7 @@ public:
     }
 
 private:
-    DxfDrawingUnits units = DxfDrawingUnits::UNITLESS;
+    DxfDrawingUnits units = DxfDrawingUnits::CENTIMETERS;
     // in pixels:
     int width = 0;
     int height = 0;
