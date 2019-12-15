@@ -43,6 +43,7 @@ private:
     void addCircle();
     void addCircularArc();
     void addEllipticalArc();
+    void addPoint();
     void handleLwPolyline(int groupCode);
     void handlePolyline();
     void handleVertex();

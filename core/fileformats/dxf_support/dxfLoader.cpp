@@ -69,6 +69,9 @@ int DxfLoader::processDxfPair(int code, const std::string &value) {
                     case DxfElementType::DXF_ELLIPSE:
                         addEllipticalArc();
                         break;
+                    case DxfElementType::DXF_POINT:
+                        addPoint();
+                        break;
                     case DxfElementType::DXF_POLYLINE:
                         handlePolyline();
                         break;
@@ -267,6 +270,15 @@ void DxfLoader::addEllipticalArc() {
             getDoubleValue(42, 0)
             );
     dxfBuilder->addEntity(new DxfEllipticalArcEntity(data));
+}
+
+void DxfLoader::addPoint() {
+    auto data = new DxfPointData(
+            getEntityData(),
+            Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
+            getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0)
+    );
+    dxfBuilder->addEntity(new DxfPointEntity(data));
 }
 
 void DxfLoader::handleLwPolyline(int groupCode) {

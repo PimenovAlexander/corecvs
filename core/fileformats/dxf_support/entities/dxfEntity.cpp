@@ -8,6 +8,7 @@
 #include "core/utils/utils.h"
 #include <iostream>
 #include <core/buffers/rgb24/wuRasterizer.h>
+#include <core/buffers/rgb24/abstractPainter.h>
 
 namespace corecvs {
 
@@ -77,6 +78,14 @@ void DxfEllipticalArcEntity::print() {
     std::cout << "End point of major axis: " << data->majorAxisEndPoint << std::endl;
     std::cout << "Ratio: " << data->ratio << std::endl;
     std::cout << "Angle range: " << data->startAngle << ".." << data->endAngle << std::endl;
+    std::cout << std::endl;
+}
+
+void DxfPointEntity::print() {
+    std::cout << "* * * Point Entity * * *" << std::endl;
+    DxfEntity::print();
+    std::cout << "Location: " << data->location << std::endl;
+    std::cout << "Thickness: " << data->thickness << std::endl;
     std::cout << std::endl;
 }
 
@@ -236,5 +245,17 @@ void DxfEllipticalArcEntity::draw(class corecvs::RGB24Buffer *buffer, class core
         bezier.cubicBezierCasteljauApproximationByFlatness(curve);
     }
 }
+
+void DxfPointEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::DxfDrawingAttrs *attrs) {
+    auto center = attrs->getDrawingValues(data->location.x(), data->location.y());
+    auto thickness = attrs->getDrawingValue(data->thickness);
+    if (thickness == 0) {
+        buffer->drawPixel(center.x(), center.y(), data->rgbColor);
+    } else {
+        AbstractPainter<RGB24Buffer> painter(buffer);
+        painter.drawCircle(center, thickness / 2, data->rgbColor);
+    }
+}
+
 
 } // namespace corecvs

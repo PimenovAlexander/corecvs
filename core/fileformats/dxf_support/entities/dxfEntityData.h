@@ -93,6 +93,16 @@ public:
     double endAngle;
 };
 
+// POINT Data
+class DxfPointData : public DxfEntityData {
+public:
+    DxfPointData(const DxfEntityData &data, Vector3dd location, double thickness)
+    : DxfEntityData(data), location(location), thickness(thickness) {}
+
+    Vector3dd location;
+    double thickness;
+};
+
 } // namespace corecvs
 
 #endif //DXF_SUPPORT_DXFENTITYDATA_H

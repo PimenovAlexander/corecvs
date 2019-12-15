@@ -109,6 +109,20 @@ public:
     DxfEllipticalArcData *data;
 };
 
+// POINT Entity
+class DxfPointEntity : public DxfEntity {
+public:
+    explicit DxfPointEntity(DxfPointData *data)
+    : DxfEntity(data), data(data) {}
+
+    ~DxfPointEntity() { delete data; }
+
+    void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
+    void print() override;
+
+    DxfPointData *data;
+};
+
 } // namespace corecvs
 
 #endif //DXF_SUPPORT_DXFENTITY_H
