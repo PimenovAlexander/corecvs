@@ -17,6 +17,9 @@ using corecvs::DoubleVectorField;
 class SettingsSetter
 {
 public:
+    bool isSaver () { return true ;}
+    bool isLoader() { return false;}
+public:
     SettingsSetter(QString const & fileName, QString _root = QString());
     SettingsSetter(QSettings *settings, QString _root = QString());
 

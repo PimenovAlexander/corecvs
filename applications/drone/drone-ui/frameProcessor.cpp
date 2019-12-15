@@ -126,7 +126,8 @@ void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata frameData
            PinholeCameraIntrinsics *pinhole = mCameraModel.getPinhole();
            Matrix33 K = pinhole->getKMatrix33();
            Affine3DQ affine = HomographyReconstructor::getAffineFromHomography(K, homography);
-           // cout << affine << endl;
+           cout << "K:" << K << endl;
+           cout << affine << endl;
 
            path.push_front(affine);
 
@@ -138,7 +139,7 @@ void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata frameData
                renderer.modelviewMatrix = simulated.getCameraMatrix();
                Mesh3D mesh;
                mesh.switchColor();
-               mesh.addAOB(Vector3dd(0,0,0), Vector3dd(1,1,1));
+               mesh.addAOB(Vector3dd(0,0,0), Vector3dd(scale,scale,scale));
                for (size_t i = 0; i < mesh.facesColor.size(); i++) {
                    mesh.facesColor[i] = RGBColor::rainbow((double)i/ mesh.facesColor.size());
                }

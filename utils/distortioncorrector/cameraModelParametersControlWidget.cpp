@@ -105,15 +105,17 @@ void CameraModelParametersControlWidget::setLensDistortionParameters(const LensD
 
 void CameraModelParametersControlWidget::loadParamWidget(WidgetLoader &loader)
 {
-    ui->lensDistortionWidget->loadParamWidget(loader);
-   /**/
+    CameraModel mCameraModel;
+    loader.loadParameters<CameraModel>(mCameraModel, "camera");
+    setParameters(mCameraModel);
 }
 
 
 void CameraModelParametersControlWidget::saveParamWidget(WidgetSaver &saver)
 {
-    ui->lensDistortionWidget->saveParamWidget(saver);
-    /**/
+    CameraModel mCameraModel;
+    getParameters(mCameraModel);
+    saver.saveParameters<CameraModel>(mCameraModel, "camera");
 }
 
 void CameraModelParametersControlWidget::loadPressed()
