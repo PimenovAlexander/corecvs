@@ -43,6 +43,13 @@ public:
         DEBUG_ID,
         HEIGHT_ID,
         WIDTH_ID,
+        ADAPTIVE_THRESOLD_ID,
+        NORMALIZE_IMAGE_ID,
+        FILTER_QUADS_ID,
+        FAST_CHECK_ID,
+        SUBPIXEL_ID,
+        SUBPIXEL_AREA_H_ID,
+        SUBPIXEL_AREA_W_ID,
         OPENCV_CHECKER_BOARD_DETECTOR_PARAMETERS_FIELD_ID_NUM
     };
 
@@ -65,6 +72,48 @@ public:
      * width 
      */
     int mWidth;
+
+    /** 
+     * \brief Adaptive Thresold 
+     * Adaptive Thresold 
+     */
+    bool mAdaptiveThresold;
+
+    /** 
+     * \brief Normalize Image 
+     * Normalize Image 
+     */
+    bool mNormalizeImage;
+
+    /** 
+     * \brief Filter Quads 
+     * Filter Quads 
+     */
+    bool mFilterQuads;
+
+    /** 
+     * \brief Fast Check 
+     * Fast Check 
+     */
+    bool mFastCheck;
+
+    /** 
+     * \brief subpixel 
+     * subpixel 
+     */
+    bool mSubpixel;
+
+    /** 
+     * \brief Subpixel Area H 
+     * Subpixel Area H 
+     */
+    int mSubpixelAreaH;
+
+    /** 
+     * \brief Subpixel Area W 
+     * Subpixel Area W 
+     */
+    int mSubpixelAreaW;
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit(corecvs::Reflection *toFill);
@@ -91,6 +140,41 @@ public:
         return mWidth;
     }
 
+    bool adaptiveThresold() const
+    {
+        return mAdaptiveThresold;
+    }
+
+    bool normalizeImage() const
+    {
+        return mNormalizeImage;
+    }
+
+    bool filterQuads() const
+    {
+        return mFilterQuads;
+    }
+
+    bool fastCheck() const
+    {
+        return mFastCheck;
+    }
+
+    bool subpixel() const
+    {
+        return mSubpixel;
+    }
+
+    int subpixelAreaH() const
+    {
+        return mSubpixelAreaH;
+    }
+
+    int subpixelAreaW() const
+    {
+        return mSubpixelAreaW;
+    }
+
     /** Section with setters */
     void setDebug(bool debug)
     {
@@ -107,6 +191,41 @@ public:
         mWidth = width;
     }
 
+    void setAdaptiveThresold(bool adaptiveThresold)
+    {
+        mAdaptiveThresold = adaptiveThresold;
+    }
+
+    void setNormalizeImage(bool normalizeImage)
+    {
+        mNormalizeImage = normalizeImage;
+    }
+
+    void setFilterQuads(bool filterQuads)
+    {
+        mFilterQuads = filterQuads;
+    }
+
+    void setFastCheck(bool fastCheck)
+    {
+        mFastCheck = fastCheck;
+    }
+
+    void setSubpixel(bool subpixel)
+    {
+        mSubpixel = subpixel;
+    }
+
+    void setSubpixelAreaH(int subpixelAreaH)
+    {
+        mSubpixelAreaH = subpixelAreaH;
+    }
+
+    void setSubpixelAreaW(int subpixelAreaW)
+    {
+        mSubpixelAreaW = subpixelAreaW;
+    }
+
     /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
@@ -115,6 +234,13 @@ template<class VisitorType>
         visitor.visit(mDebug,                     static_cast<const corecvs::BoolField *>(fields()[DEBUG_ID]));
         visitor.visit(mHeight,                    static_cast<const corecvs::IntField *>(fields()[HEIGHT_ID]));
         visitor.visit(mWidth,                     static_cast<const corecvs::IntField *>(fields()[WIDTH_ID]));
+        visitor.visit(mAdaptiveThresold,          static_cast<const corecvs::BoolField *>(fields()[ADAPTIVE_THRESOLD_ID]));
+        visitor.visit(mNormalizeImage,            static_cast<const corecvs::BoolField *>(fields()[NORMALIZE_IMAGE_ID]));
+        visitor.visit(mFilterQuads,               static_cast<const corecvs::BoolField *>(fields()[FILTER_QUADS_ID]));
+        visitor.visit(mFastCheck,                 static_cast<const corecvs::BoolField *>(fields()[FAST_CHECK_ID]));
+        visitor.visit(mSubpixel,                  static_cast<const corecvs::BoolField *>(fields()[SUBPIXEL_ID]));
+        visitor.visit(mSubpixelAreaH,             static_cast<const corecvs::IntField *>(fields()[SUBPIXEL_AREA_H_ID]));
+        visitor.visit(mSubpixelAreaW,             static_cast<const corecvs::IntField *>(fields()[SUBPIXEL_AREA_W_ID]));
     }
 
     OpenCVCheckerBoardDetectorParameters()
@@ -127,11 +253,25 @@ template<class VisitorType>
           bool debug
         , int height
         , int width
+        , bool adaptiveThresold
+        , bool normalizeImage
+        , bool filterQuads
+        , bool fastCheck
+        , bool subpixel
+        , int subpixelAreaH
+        , int subpixelAreaW
     )
     {
         mDebug = debug;
         mHeight = height;
         mWidth = width;
+        mAdaptiveThresold = adaptiveThresold;
+        mNormalizeImage = normalizeImage;
+        mFilterQuads = filterQuads;
+        mFastCheck = fastCheck;
+        mSubpixel = subpixel;
+        mSubpixelAreaH = subpixelAreaH;
+        mSubpixelAreaW = subpixelAreaW;
     }
 
     /** Exact match comparator **/ 
@@ -140,6 +280,13 @@ template<class VisitorType>
         if ( !(this->mDebug == other.mDebug)) return false;
         if ( !(this->mHeight == other.mHeight)) return false;
         if ( !(this->mWidth == other.mWidth)) return false;
+        if ( !(this->mAdaptiveThresold == other.mAdaptiveThresold)) return false;
+        if ( !(this->mNormalizeImage == other.mNormalizeImage)) return false;
+        if ( !(this->mFilterQuads == other.mFilterQuads)) return false;
+        if ( !(this->mFastCheck == other.mFastCheck)) return false;
+        if ( !(this->mSubpixel == other.mSubpixel)) return false;
+        if ( !(this->mSubpixelAreaH == other.mSubpixelAreaH)) return false;
+        if ( !(this->mSubpixelAreaW == other.mSubpixelAreaW)) return false;
         return true;
     }
     friend std::ostream& operator << (std::ostream &out, OpenCVCheckerBoardDetectorParameters &toSave)

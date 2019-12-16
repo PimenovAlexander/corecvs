@@ -33,7 +33,17 @@
   <class name="OpenCV Checker Board Detector Parameters">
     <field type="bool"        name="debug"     defaultValue="false"/>
     <field type="int"         name="height"    defaultValue="4"  />
-    <field type="int"         name="width"    defaultValue="5"  />
+    <field type="int"         name="width"     defaultValue="5"  />
+
+    <field type="bool"        name="Adaptive Thresold"  defaultValue="true"/>
+    <field type="bool"        name="Normalize Image"    defaultValue="false"/>
+    <field type="bool"        name="Filter Quads"       defaultValue="true"/>
+    <field type="bool"        name="Fast Check"         defaultValue="false"/>
+
+    <field type="bool"        name="subpixel"     defaultValue="true"/>
+    <field type="int"         name="Subpixel Area H"     defaultValue="11"/>
+    <field type="int"         name="Subpixel Area W"     defaultValue="11"/>
+
   </class>
 
   <class name="Mesh Flow Draw Parameters">

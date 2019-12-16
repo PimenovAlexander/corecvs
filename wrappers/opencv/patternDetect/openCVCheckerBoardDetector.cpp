@@ -28,22 +28,28 @@ int OpenCVCheckerBoardDetector::operator ()(){
     cv::Size board_sz = cv::Size(params.width(), params.height());
     Statistics::resetInterval(stats, "Conversion");
 
-    bool found = findChessboardCorners(input, board_sz, corners, CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS);
+    int flags = 0;
+    if (params.adaptiveThresold()) flags |= CV_CALIB_CB_ADAPTIVE_THRESH;
+    if (params.filterQuads())      flags |= CV_CALIB_CB_FILTER_QUADS;
+    if (params.fastCheck())        flags |= CV_CALIB_CB_FAST_CHECK;
+    if (params.normalizeImage())   flags |= CV_CALIB_CB_NORMALIZE_IMAGE;
+
+    bool found = findChessboardCorners(input, board_sz, corners, flags);
     Statistics::resetInterval(stats, "Corner Search");
 
-    if(found)
+    if(found && params.subpixel())
     {
         SYNC_PRINT(("Found a board\n"));
         cv::Mat gray_image;
         cvtColor(input, gray_image, CV_RGB2GRAY);
-        cornerSubPix( gray_image, corners, cv::Size(11,11),
+        cornerSubPix( gray_image, corners, cv::Size(params.subpixelAreaW(), params.subpixelAreaH()),
                                     cv::Size(-1,-1), cv::TermCriteria( cv::TermCriteria::EPS+cv::TermCriteria::COUNT, 30, 0.1 ));
-        cv::drawChessboardCorners(gray_image, board_sz, corners, found);
+        //cv::drawChessboardCorners(gray_image, board_sz, corners, found);
     } else {
         SYNC_PRINT(("Board not found\n"));
     }
 
-    Statistics::endInterval(stats, "Detection");
+    Statistics::endInterval(stats, "Corner refinement");
     return result;
 }
 

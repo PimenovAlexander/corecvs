@@ -82,6 +82,88 @@ int OpenCVCheckerBoardDetectorParameters::staticInit(corecvs::Reflection *toFill
         );
     toFill->fields.push_back(field2);
     /*  */ 
+    BoolField* field3 = new BoolField
+        (
+          OpenCVCheckerBoardDetectorParameters::ADAPTIVE_THRESOLD_ID,
+          offsetof(OpenCVCheckerBoardDetectorParameters, mAdaptiveThresold),
+          true,
+          "Adaptive Thresold",
+          "Adaptive Thresold",
+          "Adaptive Thresold"
+        );
+    field3->widgetHint=BaseField::CHECK_BOX;
+    toFill->fields.push_back(field3);
+    /*  */ 
+    BoolField* field4 = new BoolField
+        (
+          OpenCVCheckerBoardDetectorParameters::NORMALIZE_IMAGE_ID,
+          offsetof(OpenCVCheckerBoardDetectorParameters, mNormalizeImage),
+          false,
+          "Normalize Image",
+          "Normalize Image",
+          "Normalize Image"
+        );
+    field4->widgetHint=BaseField::CHECK_BOX;
+    toFill->fields.push_back(field4);
+    /*  */ 
+    BoolField* field5 = new BoolField
+        (
+          OpenCVCheckerBoardDetectorParameters::FILTER_QUADS_ID,
+          offsetof(OpenCVCheckerBoardDetectorParameters, mFilterQuads),
+          true,
+          "Filter Quads",
+          "Filter Quads",
+          "Filter Quads"
+        );
+    field5->widgetHint=BaseField::CHECK_BOX;
+    toFill->fields.push_back(field5);
+    /*  */ 
+    BoolField* field6 = new BoolField
+        (
+          OpenCVCheckerBoardDetectorParameters::FAST_CHECK_ID,
+          offsetof(OpenCVCheckerBoardDetectorParameters, mFastCheck),
+          false,
+          "Fast Check",
+          "Fast Check",
+          "Fast Check"
+        );
+    field6->widgetHint=BaseField::CHECK_BOX;
+    toFill->fields.push_back(field6);
+    /*  */ 
+    BoolField* field7 = new BoolField
+        (
+          OpenCVCheckerBoardDetectorParameters::SUBPIXEL_ID,
+          offsetof(OpenCVCheckerBoardDetectorParameters, mSubpixel),
+          true,
+          "subpixel",
+          "subpixel",
+          "subpixel"
+        );
+    field7->widgetHint=BaseField::CHECK_BOX;
+    toFill->fields.push_back(field7);
+    /*  */ 
+    IntField* field8 = new IntField
+        (
+          OpenCVCheckerBoardDetectorParameters::SUBPIXEL_AREA_H_ID,
+          offsetof(OpenCVCheckerBoardDetectorParameters, mSubpixelAreaH),
+          11,
+          "Subpixel Area H",
+          "Subpixel Area H",
+          "Subpixel Area H"
+        );
+    toFill->fields.push_back(field8);
+    /*  */ 
+    IntField* field9 = new IntField
+        (
+          OpenCVCheckerBoardDetectorParameters::SUBPIXEL_AREA_W_ID,
+          offsetof(OpenCVCheckerBoardDetectorParameters, mSubpixelAreaW),
+          11,
+          "Subpixel Area W",
+          "Subpixel Area W",
+          "Subpixel Area W"
+        );
+    toFill->fields.push_back(field9);
+    /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
     directory[std::string("OpenCV Checker Board Detector Parameters")]= toFill;
    return 0;
