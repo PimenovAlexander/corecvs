@@ -15,7 +15,6 @@ namespace corecvs {
 // Data printing
 void DxfEntity::print() {
     std::cout << "Handle: " << data->handle << std::endl;
-    std::cout << "Flags: " << data->flags << std::endl;
     std::cout << "Layer name: " << data->layerName << std::endl;
     std::cout << "Line type name: " << data->lineTypeName << std::endl;
     std::cout << "RGB color: " << (int) data->rgbColor.r() << " " << (int) data->rgbColor.g() << " " << (int) data->rgbColor.b() << " " << std::endl;
@@ -34,22 +33,20 @@ void DxfLineEntity::print() {
 void DxfLwPolylineEntity::print() {
     std::cout << "* * * LwPolyline Entity * * *" << std::endl;
     DxfEntity::print();
-    std::cout << "Vertex amount: " << data->vertexNumber << std::endl;
+    std::cout << "Thickness: " << data->thickness << std::endl;
+    std::cout << "Vertex amount: " << data->vertices.size() << std::endl;
     int i = 1;
-    for (Vector2d vertex : data->vertices) {
-        std::cout << "Vertex " << i++ << ": " << vertex.x() << " " << vertex.y() << std::endl;
-    }
+    for (Vector2d vertex : data->vertices) std::cout << "Vertex " << i++ << ": " << vertex.x() << " " << vertex.y() << std::endl;
     std::cout << std::endl;
 }
 
 void DxfPolylineEntity::print() {
     std::cout << "* * * Polyline Entity * * *" << std::endl;
     DxfEntity::print();
+    std::cout << "Thickness: " << data->thickness << std::endl;
     std::cout << "Vertex amount: " << data->vertices.size() << std::endl;
     int i = 1;
-    for (Vector3d vertex : data->vertices) {
-        std::cout << "Vertex " << i++ << ": " << vertex.x() << " " << vertex.y() << " " << vertex.z() << std::endl;
-    }
+    for (Vector3d vertex : data->vertices) std::cout << "Vertex " << i++ << ": " << vertex.x() << " " << vertex.y() << " " << vertex.z() << std::endl;
     std::cout << std::endl;
 }
 
@@ -98,19 +95,19 @@ void DxfLineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
 }
 
 void DxfLwPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
-    if (data->vertexNumber > 1) {
+    int vertexNumber = data->vertices.size();
+    if (vertexNumber > 1) {
         for (unsigned long i = 0; i < data->vertices.size() - 1; i++) {
             auto startVertex = attrs->getDrawingValues(data->vertices[i].x(), data->vertices[i].y());
             auto endVertex = attrs->getDrawingValues(data->vertices[i+1].x(), data->vertices[i+1].y());
             buffer->drawLine(startVertex.x(), startVertex.y(), endVertex.x(), endVertex.y(), data->rgbColor);
         }
-        // closed polyline
-        if (data->flags == 1) {
+        if (data->isClosed) {
             auto startVertex = attrs->getDrawingValues(data->vertices[0].x(), data->vertices[0].y());
-            auto endVertex = attrs->getDrawingValues(data->vertices[data->vertexNumber-1].x(), data->vertices[data->vertexNumber-1].y());
+            auto endVertex = attrs->getDrawingValues(data->vertices[vertexNumber-1].x(), data->vertices[vertexNumber-1].y());
             buffer->drawLine(startVertex.x(), startVertex.y(), endVertex.x(), endVertex.y(), data->rgbColor);
         }
-    } else if (data->vertexNumber == 1) {
+    } else if (vertexNumber == 1) {
         auto point = attrs->getDrawingValues(data->vertices[0].x(), data->vertices[0].y());
         buffer->drawPixel(point, data->rgbColor);
     }
@@ -124,8 +121,7 @@ void DxfPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
             auto endVertex = attrs->getDrawingValues(data->vertices[i+1].x(), data->vertices[i+1].y());
             buffer->drawLine(startVertex.x(), startVertex.y(), endVertex.x(), endVertex.y(), data->rgbColor);
         }
-        // closed polyline
-        if (data->flags == 1) {
+        if (data->isClosed) {
             auto startVertex = attrs->getDrawingValues(data->vertices[0].x(), data->vertices[0].y());
             auto endVertex = attrs->getDrawingValues(data->vertices[vertexNumber-1].x(), data->vertices[vertexNumber-1].y());
             buffer->drawLine(startVertex.x(), startVertex.y(), endVertex.x(), endVertex.y(), data->rgbColor);

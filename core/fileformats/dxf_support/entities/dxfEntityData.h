@@ -15,12 +15,11 @@ namespace corecvs {
 // Abstract Entity Data
 class DxfEntityData {
 public:
-    DxfEntityData(int handle, int flags, std::string layerName, std::string lineTypeName, int colorNumber, bool isVisible)
-    : handle(handle), flags(flags), layerName(std::move(layerName)), lineTypeName(std::move(lineTypeName)), colorNumber(colorNumber), isVisible(isVisible) {}
+    DxfEntityData(int handle, std::string layerName, std::string lineTypeName, int colorNumber, bool isVisible)
+    : handle(handle), layerName(std::move(layerName)), lineTypeName(std::move(lineTypeName)), colorNumber(colorNumber), isVisible(isVisible) {}
     DxfEntityData(const DxfEntityData &data) = default;
 
     int handle;
-    int flags;
     std::string layerName;
     std::string lineTypeName;
     RGBColor rgbColor;
@@ -41,20 +40,23 @@ public:
 // LWPOLYLINE Data
 class DxfLwPolylineData : public DxfEntityData {
 public:
-    DxfLwPolylineData(const DxfEntityData &data, int vertexNumber, std::vector<Vector2dd> &vertices)
-    : DxfEntityData(data), vertexNumber(vertexNumber), vertices(vertices) {}
+    DxfLwPolylineData(const DxfEntityData &data, std::vector<Vector2dd> &vertices, double thickness, bool isClosed)
+    : DxfEntityData(data), vertices(vertices), thickness(thickness), isClosed(isClosed) {}
 
-    int vertexNumber;
     std::vector<Vector2dd> vertices;
+    double thickness;
+    bool isClosed;
 };
 
 // POLYLINE Data
 class DxfPolylineData : public DxfEntityData {
 public:
-    DxfPolylineData(const DxfEntityData &data)
-    : DxfEntityData(data) {}
+    DxfPolylineData(const DxfEntityData &data, double thickness, bool isClosed)
+    : DxfEntityData(data), thickness(thickness), isClosed(isClosed) {}
 
     std::vector<Vector3dd> vertices;
+    double thickness;
+    bool isClosed;
 };
 
 // CIRCLE Data

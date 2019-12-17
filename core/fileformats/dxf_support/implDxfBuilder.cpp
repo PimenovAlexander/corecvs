@@ -50,32 +50,41 @@ void ImplDxfBuilder::addEntity(DxfEntity *entity) {
 }
 
 // Drawing
-void ImplDxfBuilder::prepareToDraw() {
-    bool isFirstEntity = true;
-    for (DxfEntity* entity : entities) {
-        auto data = entity->data;
-        if (data->colorNumber == 256) data->colorNumber = layers[data->layerName]->data->colorNumber;
-        auto rgb = DxfCodes::getRGB(data->colorNumber);
-        if (!rgb.empty()) data->rgbColor = RGBColor(rgb[0], rgb[1], rgb[2]);
+std::list<DxfEntity*> ImplDxfBuilder::prepareToDraw() {
+    std::list<DxfEntity*> result = {};
 
-        auto box = entity->getBoundingBox();
-        if (isFirstEntity) {
-            lowerLeftCorner = box.first;
-            upperRightCorner = box.second;
-            isFirstEntity = false;
-        } else {
-            if (box.first.x() < lowerLeftCorner.x()) lowerLeftCorner.x() = box.first.x();
-            else if (box.second.x() > upperRightCorner.x()) upperRightCorner.x() = box.second.x();
-            if (box.first.y() < lowerLeftCorner.y()) lowerLeftCorner.y() = box.first.y();
-            else if (box.second.y() > upperRightCorner.y()) upperRightCorner.y() = box.second.y();
+    bool isFirstVisibleEntity = true;
+    for (DxfEntity* entity : entities) {
+        auto layer = layers[entity->data->layerName];
+
+        if (entity->data->colorNumber == 256) entity->data->colorNumber = layer->data->colorNumber;
+        auto rgb = DxfCodes::getRGB(entity->data->colorNumber);
+        if (!rgb.empty()) entity->data->rgbColor = RGBColor(rgb[0], rgb[1], rgb[2]);
+
+        if (layer->data->isPlotted && entity->data->isVisible && entity->data->colorNumber >= 0) {
+            result.emplace_back(entity);
+            auto box = entity->getBoundingBox();
+            if (isFirstVisibleEntity) {
+                lowerLeftCorner = box.first;
+                upperRightCorner = box.second;
+                isFirstVisibleEntity = false;
+            } else {
+                if (box.first.x() < lowerLeftCorner.x()) lowerLeftCorner.x() = box.first.x();
+                else if (box.second.x() > upperRightCorner.x()) upperRightCorner.x() = box.second.x();
+                if (box.first.y() < lowerLeftCorner.y()) lowerLeftCorner.y() = box.first.y();
+                else if (box.second.y() > upperRightCorner.y()) upperRightCorner.y() = box.second.y();
+            }
         }
     }
 
     attrs.setCorners(lowerLeftCorner, upperRightCorner);
     attrs.setPaddings(80, 80, 80, 80);
-    attrs.setScalingFactor(5.0);
+    attrs.setScalingFactor(10.0);
 
-/* Uncomment for additional info printing */
+    return result;
+}
+
+void ImplDxfBuilder::print() {
     for (DxfObject* object : objects) object->print();
 //    for (DxfEntity* entity : entities) entity->print();
     std::cout << "Lower-left corner: " << lowerLeftCorner << std::endl;
@@ -83,13 +92,11 @@ void ImplDxfBuilder::prepareToDraw() {
 }
 
 RGB24Buffer* ImplDxfBuilder::draw() {
-    prepareToDraw();
+    auto visibleEntities = prepareToDraw();
     auto dimensions = attrs.getPaperSpaceDimensions();
     auto buffer = new RGB24Buffer(dimensions.y(), dimensions.x(), RGBColor::White());
-    for (DxfEntity* entity : entities) {
-        auto layer = layers[entity->data->layerName];
-        if (layer->data->isPlotted && entity->data->isVisible && entity->data->colorNumber >= 0) entity->draw(buffer, &attrs);
-    }
+    for (DxfEntity* entity : visibleEntities) entity->draw(buffer, &attrs);
+//    print();
     return buffer;
 }
 

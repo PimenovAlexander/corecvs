@@ -12,12 +12,11 @@ namespace corecvs {
 // Abstract Object Data
 class DxfObjectData {
 public:
-    DxfObjectData(int handle, int flags, std::string name)
-    : handle(handle), flags(flags), name(std::move(name)) {}
+    DxfObjectData(int handle, std::string name)
+    : handle(handle), name(std::move(name)) {}
     DxfObjectData(const DxfObjectData &data) = default;
 
     int handle;
-    int flags;
     std::string name;
 };
 

@@ -42,7 +42,8 @@ private:
     std::list<DxfObject*> objects = {};
     std::map<std::string,DxfLayerObject*> layers = {};
 
-    void prepareToDraw();
+    std::list<DxfEntity*> prepareToDraw();
+    void print();
 };
 
 } // namespace corecvs

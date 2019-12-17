@@ -139,7 +139,6 @@ bool DxfLoader::getTruncatedLine(std::string &s, std::istream &stream) {
 DxfEntityData DxfLoader::getEntityData() {
     return DxfEntityData(
             getIntValue(DxfCodes::DXF_HANDLE_CODE, 0),
-            getIntValue(DxfCodes::DXF_FLAGS_CODE, 0),
             getStringValue(DxfCodes::DXF_LAYER_NAME_CODE, ""),
             getStringValue(DxfCodes::DXF_LINE_TYPE_NAME_CODE, DxfCodes::DXF_LINE_TYPE_NAME_DEFAULT),
             getIntValue(DxfCodes::DXF_COLOR_NUMBER_CODE, DxfCodes::DXF_COLOR_NUMBER_DEFAULT),
@@ -150,7 +149,6 @@ DxfEntityData DxfLoader::getEntityData() {
 DxfObjectData DxfLoader::getObjectData() {
     return DxfObjectData(
             getIntValue(DxfCodes::DXF_HANDLE_CODE, 0),
-            getIntValue(DxfCodes::DXF_FLAGS_CODE, 0),
             getStringValue(DxfCodes::DXF_ELEMENT_NAME_CODE, "")
             );
 }
@@ -226,8 +224,9 @@ void DxfLoader::addLine() {
 void DxfLoader::addLwPolyline() {
     auto data = new DxfLwPolylineData(
             getEntityData(),
-            getIntValue(DxfCodes::DXF_VERTEX_AMOUNT_CODE, 0),
-            current2dVertices
+            current2dVertices,
+            getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0),
+            ((uint8_t) getIntValue(DxfCodes::DXF_FLAGS_CODE, 0) & 0b00000001u) == 1
             );
     dxfBuilder->addEntity(new DxfLwPolylineEntity(data));
     current2dVertices.clear();
@@ -283,14 +282,18 @@ void DxfLoader::addPoint() {
 }
 
 void DxfLoader::handleLwPolyline(int groupCode) {
-    if (groupCode == 20 && current2dVertices.size() < getIntValue(DxfCodes::DXF_VERTEX_AMOUNT_CODE, 0)) {
+    if (groupCode == 20) {
         current2dVertices.emplace_back(Vector2dd(getDoubleValue(10, 0), getDoubleValue(20, 0)));
     }
 }
 
 void DxfLoader::handlePolyline() {
     currentEntityType = DxfElementType::DXF_POLYLINE;
-    polylineData = new DxfPolylineData(getEntityData());
+    polylineData = new DxfPolylineData(
+            getEntityData(),
+            getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0),
+            ((uint8_t) getIntValue(DxfCodes::DXF_FLAGS_CODE, 0) & 0b00000001u) == 1
+            );
 }
 
 void DxfLoader::handleVertex() {

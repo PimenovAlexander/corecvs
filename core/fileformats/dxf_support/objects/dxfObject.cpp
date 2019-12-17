@@ -9,7 +9,6 @@ namespace corecvs {
 
 void DxfObject::print() {
     std::cout << "Handle: " << data->handle << std::endl;
-    std::cout << "Flags: " << data->flags << std::endl;
     std::cout << "Name: " << data->name << std::endl;
 }
 

@@ -45,7 +45,6 @@ public:
     static const int DXF_OBJECT_VISIBILITY_CODE = 60;
     static const int DXF_COLOR_NUMBER_CODE = 62;
     static const int DXF_FLAGS_CODE = 70;
-    static const int DXF_VERTEX_AMOUNT_CODE = 90;
 
     static const std::string DXF_LINE_TYPE_NAME_DEFAULT;
     static const int DXF_COLOR_NUMBER_DEFAULT = 256;
