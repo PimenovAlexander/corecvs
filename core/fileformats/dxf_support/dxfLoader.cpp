@@ -30,9 +30,9 @@ int DxfLoader::load(const std::string &fileName) {
             ss >> currentCode;
 
             if (ss.fail()) {
-                std::cout << "Error. Group code must be integer!" << std::endl;
+//                std::cout << "Error. Group code must be integer!" << std::endl;
             } else if (!ss.eof()) {
-                std::cout << "Error. Group code must be alone at the line!" << std::endl;
+//                std::cout << "Error. Group code must be alone at the line!" << std::endl;
             }
 
             linePosition += 2;
@@ -142,7 +142,8 @@ DxfEntityData DxfLoader::getEntityData() {
             getIntValue(DxfCodes::DXF_FLAGS_CODE, 0),
             getStringValue(DxfCodes::DXF_LAYER_NAME_CODE, ""),
             getStringValue(DxfCodes::DXF_LINE_TYPE_NAME_CODE, DxfCodes::DXF_LINE_TYPE_NAME_DEFAULT),
-            getIntValue(DxfCodes::DXF_COLOR_NUMBER_CODE, DxfCodes::DXF_COLOR_NUMBER_DEFAULT)
+            getIntValue(DxfCodes::DXF_COLOR_NUMBER_CODE, DxfCodes::DXF_COLOR_NUMBER_DEFAULT),
+            getIntValue(DxfCodes::DXF_OBJECT_VISIBILITY_CODE, 0) == 0
             );
 }
 
@@ -157,14 +158,14 @@ DxfObjectData DxfLoader::getObjectData() {
 void DxfLoader::addVariable() {
     auto codes = DxfCodes::getVariableCodes(variableName);
     if (codes.empty()) {
-        std::cout << "Error. Unknown variable: " << variableName << std::endl;
+//        std::cout << "Error. Unknown variable: " << variableName << std::endl;
         return;
     }
     std::vector<int> types;
     std::vector<std::string> values;
     for (int code : codes) {
         if (!hasRawValue(code)) {
-            std::cout << "Error. No value for code: " << code << " for variable: " << variableName << std::endl;
+//            std::cout << "Error. No value for code: " << code << " for variable: " << variableName << std::endl;
             return;
         } else {
             types.emplace_back(DxfCodes::getCodeType(code));
@@ -198,7 +199,7 @@ void DxfLoader::addLayer() {
     auto data = new DxfLayerData(
             getObjectData(),
             getIntValue(DxfCodes::DXF_COLOR_NUMBER_CODE, 0),
-            (bool) getIntValue(290, 0),
+            getIntValue(290, 1) != 0,
             getStringValue(DxfCodes::DXF_LINE_TYPE_NAME_CODE, "")
             );
     dxfBuilder->addLayer(new DxfLayerObject(data));

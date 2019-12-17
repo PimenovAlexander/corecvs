@@ -17,7 +17,7 @@ void DxfLayerObject::print() {
     std::cout << "* * * Layer Object * * *" << std::endl;
     DxfObject::print();
     std::cout << "Color number: " << data->colorNumber << std::endl;
-    std::cout << "Plotting flag: " << data->plottingFlag << std::endl;
+    std::cout << "Plotting: " << (data->isPlotted ? "on" : "off") << std::endl;
     std::cout << "Line type name: " << data->lineTypeName << std::endl;
     std::cout << std::endl;
 }

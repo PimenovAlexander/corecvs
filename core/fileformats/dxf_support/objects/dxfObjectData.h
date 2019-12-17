@@ -24,11 +24,11 @@ public:
 // LAYER Data
 class DxfLayerData : public DxfObjectData {
 public:
-    DxfLayerData(const DxfObjectData &data, int colorNumber, bool plottingFlag, std::string lineTypeName)
-    : DxfObjectData(data), colorNumber(colorNumber), plottingFlag(plottingFlag), lineTypeName(std::move(lineTypeName)) {}
+    DxfLayerData(const DxfObjectData &data, int colorNumber, bool isPlotted, std::string lineTypeName)
+    : DxfObjectData(data), colorNumber(colorNumber), isPlotted(isPlotted), lineTypeName(std::move(lineTypeName)) {}
 
     int colorNumber;
-    bool plottingFlag;
+    bool isPlotted;
     std::string lineTypeName;
 };
 

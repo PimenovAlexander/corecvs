@@ -20,6 +20,7 @@ void DxfEntity::print() {
     std::cout << "Line type name: " << data->lineTypeName << std::endl;
     std::cout << "RGB color: " << (int) data->rgbColor.r() << " " << (int) data->rgbColor.g() << " " << (int) data->rgbColor.b() << " " << std::endl;
     std::cout << "Color number: " << data->colorNumber << std::endl;
+    std::cout << "Visibility: " << (data->isVisible ? "on" : "off") << std::endl;
 }
 
 void DxfLineEntity::print() {
@@ -109,6 +110,9 @@ void DxfLwPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
             auto endVertex = attrs->getDrawingValues(data->vertices[data->vertexNumber-1].x(), data->vertices[data->vertexNumber-1].y());
             buffer->drawLine(startVertex.x(), startVertex.y(), endVertex.x(), endVertex.y(), data->rgbColor);
         }
+    } else if (data->vertexNumber == 1) {
+        auto point = attrs->getDrawingValues(data->vertices[0].x(), data->vertices[0].y());
+        buffer->drawPixel(point, data->rgbColor);
     }
 }
 
@@ -126,6 +130,9 @@ void DxfPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
             auto endVertex = attrs->getDrawingValues(data->vertices[vertexNumber-1].x(), data->vertices[vertexNumber-1].y());
             buffer->drawLine(startVertex.x(), startVertex.y(), endVertex.x(), endVertex.y(), data->rgbColor);
         }
+    } else if (vertexNumber == 1) {
+        auto point = attrs->getDrawingValues(data->vertices[0].x(), data->vertices[0].y());
+        buffer->drawPixel(point, data->rgbColor);
     }
 }
 
@@ -257,5 +264,68 @@ void DxfPointEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::Dxf
     }
 }
 
+// Bounding box getting
+std::pair<Vector2dd,Vector2dd> DxfLineEntity::getBoundingBox() {
+    auto lowerLeftCorner = Vector2dd(std::min(data->startPoint.x(), data->endPoint.x()), std::min(data->startPoint.y(), data->endPoint.y()));
+    auto upperRightCorner = Vector2dd(std::max(data->startPoint.x(), data->endPoint.x()), std::max(data->startPoint.y(), data->endPoint.y()));
+    return std::make_pair(lowerLeftCorner, upperRightCorner);
+}
+
+std::pair<Vector2dd,Vector2dd> DxfLwPolylineEntity::getBoundingBox() {
+    if (!data->vertices.empty()) {
+        auto lowerLeftCorner = Vector2dd(data->vertices[0].x(), data->vertices[0].y());
+        auto upperRightCorner = lowerLeftCorner;
+        for (int i = 1; i < data->vertices.size(); i++) {
+            auto x = data->vertices[i].x();
+            auto y = data->vertices[i].y();
+            if (x < lowerLeftCorner.x()) lowerLeftCorner.x() = x;
+            else if (x > upperRightCorner.x()) upperRightCorner.x() = x;
+            if (y < lowerLeftCorner.y()) lowerLeftCorner.y() = y;
+            else if (y > upperRightCorner.y()) upperRightCorner.y() = y;
+        }
+        return std::make_pair(lowerLeftCorner, upperRightCorner);
+    }
+}
+
+std::pair<Vector2dd,Vector2dd> DxfPolylineEntity::getBoundingBox() {
+    if (!data->vertices.empty()) {
+        auto lowerLeftCorner = Vector2dd(data->vertices[0].x(), data->vertices[0].y());
+        auto upperRightCorner = lowerLeftCorner;
+        for (int i = 1; i < data->vertices.size(); i++) {
+            auto x = data->vertices[i].x();
+            auto y = data->vertices[i].y();
+            if (x < lowerLeftCorner.x()) lowerLeftCorner.x() = x;
+            else if (x > upperRightCorner.x()) upperRightCorner.x() = x;
+            if (y < lowerLeftCorner.y()) lowerLeftCorner.y() = y;
+            else if (y > upperRightCorner.y()) upperRightCorner.y() = y;
+        }
+        return std::make_pair(lowerLeftCorner, upperRightCorner);
+    }
+}
+
+std::pair<Vector2dd,Vector2dd> DxfCircleEntity::getBoundingBox() {
+    auto lowerLeftCorner = Vector2dd(data->center.x() - data->radius, data->center.y() - data->radius);
+    auto upperRightCorner = Vector2dd(data->center.x() + data->radius, data->center.y() + data->radius);
+    return std::make_pair(lowerLeftCorner, upperRightCorner);
+}
+
+std::pair<Vector2dd,Vector2dd> DxfCircularArcEntity::getBoundingBox() {
+    auto lowerLeftCorner = Vector2dd(data->center.x() - data->radius, data->center.y() - data->radius);
+    auto upperRightCorner = Vector2dd(data->center.x() + data->radius, data->center.y() + data->radius);
+    return std::make_pair(lowerLeftCorner, upperRightCorner);
+}
+
+std::pair<Vector2dd,Vector2dd> DxfEllipticalArcEntity::getBoundingBox() {
+    auto majorRadius = std::sqrt(data->majorAxisEndPoint.x() * data->majorAxisEndPoint.x() + data->majorAxisEndPoint.y() * data->majorAxisEndPoint.y());
+    auto lowerLeftCorner = Vector2dd(data->center.x() - majorRadius, data->center.y() - majorRadius);
+    auto upperRightCorner = Vector2dd(data->center.x() + majorRadius, data->center.y() + majorRadius);
+    return std::make_pair(lowerLeftCorner, upperRightCorner);
+}
+
+std::pair<Vector2dd,Vector2dd> DxfPointEntity::getBoundingBox() {
+    auto lowerLeftCorner = Vector2dd(data->location.x(), data->location.y());
+    auto upperRightCorner = lowerLeftCorner;
+    return std::make_pair(lowerLeftCorner, upperRightCorner);
+}
 
 } // namespace corecvs

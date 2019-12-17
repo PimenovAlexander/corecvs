@@ -21,6 +21,7 @@ public:
 
     virtual void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {}
     virtual void print();
+    virtual std::pair<Vector2dd,Vector2dd> getBoundingBox() {}
 
     DxfEntityData *data;
 };
@@ -35,6 +36,7 @@ public:
 
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() override;
+    std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
 
     DxfLineData *data;
 };
@@ -49,6 +51,7 @@ public:
 
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() override;
+    std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
 
     DxfLwPolylineData *data;
 };
@@ -63,6 +66,7 @@ public:
 
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() override;
+    std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
 
     DxfPolylineData *data;
 };
@@ -77,6 +81,7 @@ public:
 
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() override;
+    std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
 
     DxfCircleData *data;
 };
@@ -91,6 +96,7 @@ public:
 
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() override;
+    std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
 
     DxfCircularArcData *data;
 };
@@ -105,6 +111,7 @@ public:
 
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() override;
+    std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
 
     DxfEllipticalArcData *data;
 };
@@ -119,6 +126,7 @@ public:
 
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() override;
+    std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
 
     DxfPointData *data;
 };

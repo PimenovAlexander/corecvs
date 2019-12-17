@@ -15,8 +15,8 @@ namespace corecvs {
 // Abstract Entity Data
 class DxfEntityData {
 public:
-    DxfEntityData(int handle, int flags, std::string layerName, std::string lineTypeName, int colorNumber)
-    : handle(handle), flags(flags), layerName(std::move(layerName)), lineTypeName(std::move(lineTypeName)), colorNumber(colorNumber) {}
+    DxfEntityData(int handle, int flags, std::string layerName, std::string lineTypeName, int colorNumber, bool isVisible)
+    : handle(handle), flags(flags), layerName(std::move(layerName)), lineTypeName(std::move(lineTypeName)), colorNumber(colorNumber), isVisible(isVisible) {}
     DxfEntityData(const DxfEntityData &data) = default;
 
     int handle;
@@ -25,6 +25,7 @@ public:
     std::string lineTypeName;
     RGBColor rgbColor;
     int colorNumber;
+    bool isVisible;
 };
 
 // LINE Data

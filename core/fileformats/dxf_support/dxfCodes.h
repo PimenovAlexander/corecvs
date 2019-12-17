@@ -42,6 +42,7 @@ public:
     static const int DXF_RADIUS_CODE = 40;
     static const int DXF_START_ANGLE_CODE = 50;
     static const int DXF_END_ANGLE_CODE = 51;
+    static const int DXF_OBJECT_VISIBILITY_CODE = 60;
     static const int DXF_COLOR_NUMBER_CODE = 62;
     static const int DXF_FLAGS_CODE = 70;
     static const int DXF_VERTEX_AMOUNT_CODE = 90;

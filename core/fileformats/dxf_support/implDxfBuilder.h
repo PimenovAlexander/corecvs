@@ -36,8 +36,8 @@ public:
 
 private:
     DxfDrawingAttrs attrs;
-    Vector3dd leftTopCorner;
-    Vector3dd rightBottomCorner;
+    Vector2dd lowerLeftCorner;
+    Vector2dd upperRightCorner;
     std::list<DxfEntity*> entities = {};
     std::list<DxfObject*> objects = {};
     std::map<std::string,DxfLayerObject*> layers = {};

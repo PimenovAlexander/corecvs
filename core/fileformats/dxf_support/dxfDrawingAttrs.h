@@ -17,28 +17,33 @@ public:
         units = _units;
     }
 
-    void setCorners(Vector3dd leftTop, Vector3dd rightBottom) {
-        leftTopCorner = leftTop;
-        rightBottomCorner = rightBottom;
-        width = (int) getDrawingValue(rightBottomCorner.x() - leftTopCorner.x());
-        height = (int) getDrawingValue(rightBottomCorner.y() - leftTopCorner.y());
+    void setScalingFactor(double value) {
+        scalingFactor = value;
+        recalculatePaperSpaceDimensions();
     }
 
-    void setMargins(int left, int right, int top, int bottom) {
-        marginLeft = left;
-        marginRight = right;
-        marginTop = top;
-        marginBottom = bottom;
+    void setCorners(Vector2dd lowerLeft, Vector2dd upperRight) {
+        lowerLeftCorner = lowerLeft;
+        upperRightCorner = upperRight;
+        recalculatePaperSpaceDimensions();
     }
 
-    Vector2d<int> getFullDimensions() {
-        return Vector2d(width + marginLeft + marginRight, height + marginTop + marginBottom);
+    void setPaddings(int left, int right, int top, int bottom) {
+        paddingLeft = left;
+        paddingRight = right;
+        paddingTop = top;
+        paddingBottom = bottom;
+        recalculatePaperSpaceDimensions();
+    }
+
+    Vector2d<int> getPaperSpaceDimensions() {
+        return Vector2d(width, height);
     }
 
     Vector2dd getDrawingValues(double x, double y) {
         Vector2dd result;
-        result.x() = getDrawingValue(x - leftTopCorner.x()) + marginLeft;
-        result.y() = (double) height - getDrawingValue(y - leftTopCorner.y()) + marginTop;
+        result.x() = getDrawingValue(x - lowerLeftCorner.x() + paddingLeft);
+        result.y() = (double) height - getDrawingValue(y - lowerLeftCorner.y() + paddingBottom);
         return result;
     }
 
@@ -47,6 +52,10 @@ public:
     }
 
     double getDrawingValue(double value) {
+        return value * scalingFactor;
+    }
+
+    double getRealValue(double value) {
         switch(units) {
             case DxfDrawingUnits::UNITLESS:     return(value * 1.0);
             case DxfDrawingUnits::INCHES:       return(value * 25.4);
@@ -73,17 +82,21 @@ public:
     }
 
 private:
-    DxfDrawingUnits units = DxfDrawingUnits::CENTIMETERS;
-    // in pixels:
+    DxfDrawingUnits units = DxfDrawingUnits::UNITLESS;
+    double scalingFactor = 1.0;
     int width = 0;
     int height = 0;
-    int marginLeft = 0;
-    int marginRight = 0;
-    int marginTop = 0;
-    int marginBottom = 0;
-    // in drawing coordinates:
-    Vector3dd leftTopCorner;
-    Vector3dd rightBottomCorner;
+    int paddingLeft = 0;
+    int paddingRight = 0;
+    int paddingTop = 0;
+    int paddingBottom = 0;
+    Vector2dd lowerLeftCorner;
+    Vector2dd upperRightCorner;
+
+    void recalculatePaperSpaceDimensions() {
+        width = (int) getDrawingValue(upperRightCorner.x() - lowerLeftCorner.x() + paddingLeft + paddingRight);
+        height = (int) getDrawingValue(upperRightCorner.y() - lowerLeftCorner.y() + paddingTop + paddingBottom);
+    }
 };
 
 } // namespace corecvs
