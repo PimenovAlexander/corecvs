@@ -450,24 +450,37 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh, PlyFormat format)
     out << "property uchar red" << std::endl;
     out << "property uchar green" << std::endl;
     out << "property uchar blue" << std::endl;
+    if (format != PlyFormat::ASCII) {
+        out << "property uchar alpha" << std::endl;
+    }
 
     if (mesh.hasAttributes) {
         out << "property int cluster" << std::endl;
     }
     out << "element face " << faces.size() << std::endl;
-    out << "property list uint8 int32 vertex_index" << std::endl;
+    out << "property list uchar int vertex_indices" << std::endl;
     if (mesh.hasColor) {
         out << "property uchar red" << std::endl;
         out << "property uchar green" << std::endl;
         out << "property uchar blue" << std::endl;
+        if (format != PlyFormat::ASCII) {
+            out << "property uchar alpha" << std::endl;
+        }
     }
-    out << "element edge " << edges.size() << std::endl;
-    out << "property int vertex1" << std::endl;
-    out << "property int vertex2" << std::endl;
-    if (mesh.hasColor) {
-        out << "property uchar red" << std::endl;
-        out << "property uchar green" << std::endl;
-        out << "property uchar blue" << std::endl;
+
+    if (!edges.empty())
+    {
+        out << "element edge " << edges.size() << std::endl;
+        out << "property int vertex1" << std::endl;
+        out << "property int vertex2" << std::endl;
+        if (mesh.hasColor) {
+            out << "property uchar red" << std::endl;
+            out << "property uchar green" << std::endl;
+            out << "property uchar blue" << std::endl;
+            if (format != PlyFormat::ASCII) {
+                out << "property uchar alpha" << std::endl;
+            }
+        }
     }
     out << "end_header" << std::endl;
 
@@ -531,6 +544,8 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh, PlyFormat format)
             unsigned char r = 128;
             unsigned char g = 128;
             unsigned char b = 128;
+            unsigned char a = 255;
+
             if (mesh.hasColor) {
                r = vertexesColor[i].r();
                g = vertexesColor[i].g();
@@ -539,6 +554,8 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh, PlyFormat format)
             out.write((char *)&r, sizeof(unsigned char)) ;
             out.write((char *)&g, sizeof(unsigned char)) ;
             out.write((char *)&b, sizeof(unsigned char)) ;
+            out.write((char *)&a, sizeof(unsigned char)) ;
+
         }
 
         for (unsigned i = 0; i < faces.size(); i++)
@@ -553,13 +570,15 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh, PlyFormat format)
              out.write((char *)&i2, sizeof(int32_t)) ;
 
              if (mesh.hasColor) {
-                 unsigned char r = facesColor[i].r();;
-                 unsigned char g = facesColor[i].g();;
-                 unsigned char b = facesColor[i].b();;
+                 unsigned char r = facesColor[i].r();
+                 unsigned char g = facesColor[i].g();
+                 unsigned char b = facesColor[i].b();
+                 unsigned char a = 255;
 
-                 out.write((char *)&r, sizeof(unsigned char)) ;
-                 out.write((char *)&g, sizeof(unsigned char)) ;
-                 out.write((char *)&b, sizeof(unsigned char)) ;
+                 out.write((char *)&r, sizeof(unsigned char));
+                 out.write((char *)&g, sizeof(unsigned char));
+                 out.write((char *)&b, sizeof(unsigned char));
+                 out.write((char *)&a, sizeof(unsigned char));
             }
         }
         for (unsigned i = 0; i < edges.size(); i++)
@@ -567,22 +586,22 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh, PlyFormat format)
             int32_t i0 = edges[i].x();
             int32_t i1 = edges[i].y();
 
-            out.write((char *)&i0, sizeof(int32_t)) ;
-            out.write((char *)&i1, sizeof(int32_t)) ;
+            out.write((char *)&i0, sizeof(int32_t));
+            out.write((char *)&i1, sizeof(int32_t));
 
             if (mesh.hasColor) {
-                unsigned char r = edgesColor[i].r();;
-                unsigned char g = edgesColor[i].g();;
-                unsigned char b = edgesColor[i].b();;
+                unsigned char r = edgesColor[i].r();
+                unsigned char g = edgesColor[i].g();
+                unsigned char b = edgesColor[i].b();
+                unsigned char a = 255;
 
-                out.write((char *)&r, sizeof(unsigned char)) ;
-                out.write((char *)&g, sizeof(unsigned char)) ;
-                out.write((char *)&b, sizeof(unsigned char)) ;
+                out.write((char *)&r, sizeof(unsigned char));
+                out.write((char *)&g, sizeof(unsigned char));
+                out.write((char *)&b, sizeof(unsigned char));
+                out.write((char *)&a, sizeof(unsigned char));
             }
         }
     }
-
-//    SYNC_PRINT(("This 0x%X. Edges %d", this, edges.size()));
     return 0;
 }
 
