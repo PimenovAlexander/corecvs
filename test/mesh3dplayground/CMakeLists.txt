@@ -1,4 +1,11 @@
-project (Gcodeplayground)
+project (mesh3dplayground)
+
+set (SRC_FILES
+    main_mesh3dplayground.cpp
+)
+
+set (HDR_FILES
+)
 
 if (PNG_LIB)
     include(../../wrappers/libpng/sourcelist.cmake)
@@ -8,19 +15,8 @@ if (JPEG_LIB)
     include(../../wrappers/libjpeg/sourcelist.cmake)
 endif()
 
+set (NAME mesh3dplayground )
 
-set (NAME gcodeplayground )
-
-set (SRC_FILES ${SRC_FILES}
-    labelGcodeInterpreter.cpp  
-    main_gcodeplayground.cpp  
-    vinylCutterInterpreter.cpp  
-)
-
-set (HDR_FILES ${HDR_FILES}
-    labelGcodeInterpreter.h  
-    vinylCutterInterpreter.h
-)
 
 add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
 include_directories(${INC_PATHS})

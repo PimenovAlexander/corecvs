@@ -10,6 +10,7 @@ set(TEST_SUBDIRECTORIES
     flowtest
     focus_stack
     gcodeplayground
+    mesh3dplayground
     grab24
     grab24_qt
     # jitplayground

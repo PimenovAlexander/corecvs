@@ -425,7 +425,7 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
 
 #undef LOCAL_PRINT
 
-int PLYLoader::savePLY(ostream &out, Mesh3D &mesh)
+int PLYLoader::savePLY(ostream &out, Mesh3D &mesh, PlyFormat format)
 {
     vector<Vector3dd>  &vertexes = mesh.vertexes;
     vector<Vector3d32> &faces    = mesh.faces;
@@ -436,7 +436,12 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh)
     vector<RGBColor> &edgesColor    = mesh.edgesColor;;
 
     out << "ply" << std::endl;
-    out << "format ascii 1.0" << std::endl;
+    if (format == PlyFormat::ASCII) {
+        out << "format ascii 1.0" << std::endl;
+    } else {
+        out << "format binary_little_endian 1.0" << std::endl;
+    }
+
     out << "comment made by CVS software" << std::endl;
     out << "element vertex " << vertexes.size() << std::endl;
     out << "property float x" << std::endl;
@@ -450,7 +455,7 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh)
         out << "property int cluster" << std::endl;
     }
     out << "element face " << faces.size() << std::endl;
-    out << "property list uchar int vertex_index" << std::endl;
+    out << "property list uint8 int32 vertex_index" << std::endl;
     if (mesh.hasColor) {
         out << "property uchar red" << std::endl;
         out << "property uchar green" << std::endl;
@@ -466,51 +471,115 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh)
     }
     out << "end_header" << std::endl;
 
-    for (unsigned i = 0; i < vertexes.size(); i++)
-    {
-        out << vertexes[i].x() << " "
-            << vertexes[i].y() << " "
-            << vertexes[i].z() << " ";
-        if (mesh.hasColor) {
-            out << (unsigned)(vertexesColor[i].r()) << " "
-                << (unsigned)(vertexesColor[i].g()) << " "
-                << (unsigned)(vertexesColor[i].b()) << " ";
-        } else {
-            out << (unsigned)(128) << " "
-                << (unsigned)(128) << " "
-                << (unsigned)(128) << " ";
+    if (format == PlyFormat::ASCII) {
+        for (unsigned i = 0; i < vertexes.size(); i++)
+        {
+            out << vertexes[i].x() << " "
+                << vertexes[i].y() << " "
+                << vertexes[i].z() << " ";
+            if (mesh.hasColor) {
+                out << (unsigned)(vertexesColor[i].r()) << " "
+                    << (unsigned)(vertexesColor[i].g()) << " "
+                    << (unsigned)(vertexesColor[i].b()) << " ";
+            } else {
+                out << (unsigned)(128) << " "
+                    << (unsigned)(128) << " "
+                    << (unsigned)(128) << " ";
+            }
+
+            if (mesh.hasAttributes) {
+                out << mesh.attributes[i] << " ";
+            }
+            out << std::endl;
         }
 
-        if (mesh.hasAttributes) {
-            out << mesh.attributes[i] << " ";
+        for (unsigned i = 0; i < faces.size(); i++)
+        {
+            out << "3 "
+                << faces[i].x() << " "
+                << faces[i].y() << " "
+                << faces[i].z() << " ";
+            if (mesh.hasColor) {
+                out << (unsigned)(facesColor[i].r()) << " "
+                    << (unsigned)(facesColor[i].g()) << " "
+                    << (unsigned)(facesColor[i].b());
+            }
+            out << std::endl;
         }
-        out << std::endl;
-    }
 
-    for (unsigned i = 0; i < faces.size(); i++)
-    {
-        out << "3 "
-            << faces[i].x() << " "
-            << faces[i].y() << " "
-            << faces[i].z() << " ";
-        if (mesh.hasColor) {
-            out << (unsigned)(facesColor[i].r()) << " "
-                << (unsigned)(facesColor[i].g()) << " "
-                << (unsigned)(facesColor[i].b());
+        for (unsigned i = 0; i < edges.size(); i++)
+        {
+            out << edges[i].x() << " "
+                << edges[i].y() << " ";
+            if (mesh.hasColor) {
+                out << (unsigned)(edgesColor[i].r()) << " "
+                    << (unsigned)(edgesColor[i].g()) << " "
+                    << (unsigned)(edgesColor[i].b());
+            }
+            out << std::endl;
         }
-        out << std::endl;
-    }
+    } else {
+        for (unsigned i = 0; i < vertexes.size(); i++)
+        {
+            float x = vertexes[i].x();
+            float y = vertexes[i].y();
+            float z = vertexes[i].z();
+            out.write((char *)&x, sizeof(float)) ;
+            out.write((char *)&y, sizeof(float)) ;
+            out.write((char *)&z, sizeof(float)) ;
 
-    for (unsigned i = 0; i < edges.size(); i++)
-    {
-        out << edges[i].x() << " "
-            << edges[i].y() << " ";
-        if (mesh.hasColor) {
-            out << (unsigned)(edgesColor[i].r()) << " "
-                << (unsigned)(edgesColor[i].g()) << " "
-                << (unsigned)(edgesColor[i].b());
+            unsigned char r = 128;
+            unsigned char g = 128;
+            unsigned char b = 128;
+            if (mesh.hasColor) {
+               r = vertexesColor[i].r();
+               g = vertexesColor[i].g();
+               b = vertexesColor[i].b();
+            }
+            out.write((char *)&r, sizeof(unsigned char)) ;
+            out.write((char *)&g, sizeof(unsigned char)) ;
+            out.write((char *)&b, sizeof(unsigned char)) ;
         }
-        out << std::endl;
+
+        for (unsigned i = 0; i < faces.size(); i++)
+        {
+             unsigned char n = 3;
+             int32_t i0 = faces[i].x();
+             int32_t i1 = faces[i].y();
+             int32_t i2 = faces[i].z();
+             out.write((char *)&n, sizeof(unsigned char)) ;
+             out.write((char *)&i0, sizeof(int32_t)) ;
+             out.write((char *)&i1, sizeof(int32_t)) ;
+             out.write((char *)&i2, sizeof(int32_t)) ;
+
+             if (mesh.hasColor) {
+                 unsigned char r = facesColor[i].r();;
+                 unsigned char g = facesColor[i].g();;
+                 unsigned char b = facesColor[i].b();;
+
+                 out.write((char *)&r, sizeof(unsigned char)) ;
+                 out.write((char *)&g, sizeof(unsigned char)) ;
+                 out.write((char *)&b, sizeof(unsigned char)) ;
+            }
+        }
+        for (unsigned i = 0; i < edges.size(); i++)
+        {
+            int32_t i0 = edges[i].x();
+            int32_t i1 = edges[i].y();
+
+            out.write((char *)&i0, sizeof(int32_t)) ;
+            out.write((char *)&i1, sizeof(int32_t)) ;
+
+            if (mesh.hasColor) {
+                unsigned char r = edgesColor[i].r();;
+                unsigned char g = edgesColor[i].g();;
+                unsigned char b = edgesColor[i].b();;
+
+                out.write((char *)&r, sizeof(unsigned char)) ;
+                out.write((char *)&g, sizeof(unsigned char)) ;
+                out.write((char *)&b, sizeof(unsigned char)) ;
+            }
+        }
     }
 
 //    SYNC_PRINT(("This 0x%X. Edges %d", this, edges.size()));

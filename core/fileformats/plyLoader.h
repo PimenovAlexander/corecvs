@@ -81,7 +81,7 @@ public:
     {}
 
     int loadPLY(std::istream &input, Mesh3D &mesh);
-    int savePLY(std::ostream &out, Mesh3D &mesh);
+    int savePLY(std::ostream &out, Mesh3D &mesh, PlyFormat format = PlyFormat::ASCII);
 
     virtual ~PLYLoader();
 };
