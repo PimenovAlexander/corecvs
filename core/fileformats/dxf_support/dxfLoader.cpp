@@ -177,19 +177,19 @@ void DxfLoader::addVariable() {
             case DxfCodes::DXF_INT16:
             case DxfCodes::DXF_INT32:
             case DxfCodes::DXF_INT64:
-                dxfBuilder->setIntVariable(code, variableName, getIntValue(code, 0));
+                dxfBuilder.setIntVariable(code, variableName, getIntValue(code, 0));
                 break;
             case DxfCodes::DXF_DOUBLE:
-                dxfBuilder->setDoubleVariable(code, variableName, getDoubleValue(code, 0));
+                dxfBuilder.setDoubleVariable(code, variableName, getDoubleValue(code, 0));
                 break;
             case DxfCodes::DXF_STRING:
-                dxfBuilder->setStringVariable(code, variableName, getStringValue(code, ""));
+                dxfBuilder.setStringVariable(code, variableName, getStringValue(code, ""));
                 break;
         }
     } else if (codes.size() == 2) {
-        dxfBuilder->set2DVectorVariable(codes[0], variableName, getDoubleValue(codes[0], 0), getDoubleValue(codes[1], 0));
+        dxfBuilder.set2DVectorVariable(codes[0], variableName, getDoubleValue(codes[0], 0), getDoubleValue(codes[1], 0));
     } else if (codes.size() == 3) {
-        dxfBuilder->set3DVectorVariable(codes[0], variableName, getDoubleValue(codes[0], 0), getDoubleValue(codes[1], 0), getDoubleValue(codes[2], 0));
+        dxfBuilder.set3DVectorVariable(codes[0], variableName, getDoubleValue(codes[0], 0), getDoubleValue(codes[1], 0), getDoubleValue(codes[2], 0));
     }
 }
 
@@ -200,7 +200,7 @@ void DxfLoader::addLayer() {
             getIntValue(290, 1) != 0,
             getStringValue(DxfCodes::DXF_LINE_TYPE_NAME_CODE, "")
             );
-    dxfBuilder->addLayer(new DxfLayerObject(data));
+    dxfBuilder.addLayer(new DxfLayerObject(*data));
 }
 
 void DxfLoader::addLineType() {
@@ -209,7 +209,7 @@ void DxfLoader::addLineType() {
             getIntValue(73, 0),
             getDoubleValue(40, 0)
             );
-    dxfBuilder->addLineType(new DxfLineTypeObject(data));
+    dxfBuilder.addLineType(new DxfLineTypeObject(*data));
 }
 
 void DxfLoader::addLine() {
@@ -218,7 +218,7 @@ void DxfLoader::addLine() {
             Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
             Vector3dd(getDoubleValue(11, 0), getDoubleValue(21, 0),getDoubleValue (31, 0))
             );
-    dxfBuilder->addEntity(new DxfLineEntity(data));
+    dxfBuilder.addEntity(new DxfLineEntity(*data));
 }
 
 void DxfLoader::addLwPolyline() {
@@ -228,13 +228,13 @@ void DxfLoader::addLwPolyline() {
             getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0),
             ((uint8_t) getIntValue(DxfCodes::DXF_FLAGS_CODE, 0) & 0b00000001u) == 1
             );
-    dxfBuilder->addEntity(new DxfLwPolylineEntity(data));
+    dxfBuilder.addEntity(new DxfLwPolylineEntity(*data));
     current2dVertices.clear();
 }
 
 void DxfLoader::addPolyline() {
     polylineData->vertices = current3dVertices;
-    dxfBuilder->addEntity(new DxfPolylineEntity(polylineData));
+    dxfBuilder.addEntity(new DxfPolylineEntity(*polylineData));
     current3dVertices.clear();
 }
 
@@ -245,7 +245,7 @@ void DxfLoader::addCircle() {
             getDoubleValue(DxfCodes::DXF_RADIUS_CODE, 0),
             getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0)
             );
-    dxfBuilder->addEntity(new DxfCircleEntity(data));
+    dxfBuilder.addEntity(new DxfCircleEntity(*data));
 }
 
 void DxfLoader::addCircularArc() {
@@ -257,7 +257,7 @@ void DxfLoader::addCircularArc() {
             getDoubleValue(DxfCodes::DXF_START_ANGLE_CODE, 0),
             getDoubleValue(DxfCodes::DXF_END_ANGLE_CODE, 0)
             );
-    dxfBuilder->addEntity(new DxfCircularArcEntity(data));
+    dxfBuilder.addEntity(new DxfCircularArcEntity(*data));
 }
 
 void DxfLoader::addEllipticalArc() {
@@ -269,7 +269,7 @@ void DxfLoader::addEllipticalArc() {
             getDoubleValue(41, 0),
             getDoubleValue(42, 0)
             );
-    dxfBuilder->addEntity(new DxfEllipticalArcEntity(data));
+    dxfBuilder.addEntity(new DxfEllipticalArcEntity(*data));
 }
 
 void DxfLoader::addPoint() {
@@ -278,7 +278,7 @@ void DxfLoader::addPoint() {
             Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
             getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0)
     );
-    dxfBuilder->addEntity(new DxfPointEntity(data));
+    dxfBuilder.addEntity(new DxfPointEntity(*data));
 }
 
 void DxfLoader::handleLwPolyline(int groupCode) {
@@ -323,7 +323,7 @@ bool DXFToRGB24BufferLoader::acceptsFile(std::string const &name) {
 
 RGB24Buffer* DXFToRGB24BufferLoader::load(const string &name) {
     ImplDxfBuilder builder;
-    DxfLoader loader(&builder);
+    DxfLoader loader(builder);
     int resultCode = loader.load(name);
     if (resultCode == -1) {
         std::cout << "Error. Can't open file: " << name << std::endl;

@@ -36,7 +36,7 @@ void ImplDxfBuilder::set3DVectorVariable(int code, std::string const &name, doub
 
 // Objects
 void ImplDxfBuilder::addLayer(DxfLayerObject *object) {
-    layers.insert(std::make_pair(object->data->name, object));
+    layers.insert(std::make_pair(object->data.name, object));
     objects.push_back(object);
 }
 
@@ -55,13 +55,13 @@ std::list<DxfEntity*> ImplDxfBuilder::prepareToDraw() {
 
     bool isFirstVisibleEntity = true;
     for (DxfEntity* entity : entities) {
-        auto layer = layers[entity->data->layerName];
+        auto layer = layers[entity->data.layerName];
 
-        if (entity->data->colorNumber == 256) entity->data->colorNumber = layer->data->colorNumber;
-        auto rgb = DxfCodes::getRGB(entity->data->colorNumber);
-        if (!rgb.empty()) entity->data->rgbColor = RGBColor(rgb[0], rgb[1], rgb[2]);
+        if (entity->data.colorNumber == 256) entity->data.colorNumber = layer->data.colorNumber;
+        auto rgb = DxfCodes::getRGB(entity->data.colorNumber);
+        if (!rgb.empty()) entity->data.rgbColor = RGBColor(rgb[0], rgb[1], rgb[2]);
 
-        if (layer->data->isPlotted && entity->data->isVisible && entity->data->colorNumber >= 0) {
+        if (layer->data.isPlotted && entity->data.isVisible && entity->data.colorNumber >= 0) {
             result.emplace_back(entity);
             auto box = entity->getBoundingBox();
             if (isFirstVisibleEntity) {

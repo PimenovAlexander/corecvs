@@ -13,38 +13,40 @@ namespace corecvs {
 // Abstract Object
 class DxfObject {
 public:
-    explicit DxfObject(DxfObjectData *data)
+    explicit DxfObject(DxfObjectData &data)
     : data(data) {}
+
+    virtual ~DxfObject() { delete &data; }
 
     virtual void print();
 
-    DxfObjectData *data;
+    DxfObjectData &data;
 };
 
 // LAYER Object
 class DxfLayerObject : public DxfObject {
 public:
-    explicit DxfLayerObject(DxfLayerData *data)
+    explicit DxfLayerObject(DxfLayerData &data)
     : DxfObject(data), data(data) {}
 
-    ~DxfLayerObject() { delete data; }
+    ~DxfLayerObject() override { delete &data; }
 
     void print() override;
 
-    DxfLayerData *data;
+    DxfLayerData &data;
 };
 
 // LINETYPE Object
 class DxfLineTypeObject : public DxfObject {
 public:
-    explicit DxfLineTypeObject(DxfLineTypeData *data)
+    explicit DxfLineTypeObject(DxfLineTypeData &data)
     : DxfObject(data), data(data) {}
 
-    ~DxfLineTypeObject() { delete data; }
+    ~DxfLineTypeObject() override { delete &data; }
 
     void print() override;
 
-    DxfLineTypeData *data;
+    DxfLineTypeData &data;
 };
 
 } // namespace corecvs

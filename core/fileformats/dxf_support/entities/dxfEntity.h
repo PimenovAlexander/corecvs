@@ -16,119 +16,121 @@ namespace corecvs {
 // Abstract Entity
 class DxfEntity {
 public:
-    explicit DxfEntity(DxfEntityData *data)
+    explicit DxfEntity(DxfEntityData &data)
     : data(data) {}
+
+    virtual ~DxfEntity() { delete &data; }
 
     virtual void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {}
     virtual void print();
     virtual std::pair<Vector2dd,Vector2dd> getBoundingBox() {}
 
-    DxfEntityData *data;
+    DxfEntityData &data;
 };
 
 // LINE Entity
 class DxfLineEntity : public DxfEntity {
 public:
-    explicit DxfLineEntity(DxfLineData *data)
+    explicit DxfLineEntity(DxfLineData &data)
     : DxfEntity(data), data(data) {}
 
-    ~DxfLineEntity() { delete data; }
+    ~DxfLineEntity() override { delete &data; }
 
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() override;
     std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
 
-    DxfLineData *data;
+    DxfLineData &data;
 };
 
 // LWPOLYLINE Entity
 class DxfLwPolylineEntity : public DxfEntity {
 public:
-    explicit DxfLwPolylineEntity(DxfLwPolylineData *data)
+    explicit DxfLwPolylineEntity(DxfLwPolylineData &data)
     : DxfEntity(data), data(data) {}
 
-    ~DxfLwPolylineEntity() { delete data; }
+    ~DxfLwPolylineEntity() override { delete &data; }
 
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() override;
     std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
 
-    DxfLwPolylineData *data;
+    DxfLwPolylineData &data;
 };
 
 // POLYLINE Entity
 class DxfPolylineEntity : public DxfEntity {
 public:
-    explicit DxfPolylineEntity(DxfPolylineData *data)
+    explicit DxfPolylineEntity(DxfPolylineData &data)
     : DxfEntity(data), data(data) {}
 
-    ~DxfPolylineEntity() { delete data; }
+    ~DxfPolylineEntity() override { delete &data; }
 
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() override;
     std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
 
-    DxfPolylineData *data;
+    DxfPolylineData &data;
 };
 
 // CIRCLE Entity
 class DxfCircleEntity : public DxfEntity {
 public:
-    explicit DxfCircleEntity(DxfCircleData *data)
+    explicit DxfCircleEntity(DxfCircleData &data)
     : DxfEntity(data), data(data) {}
 
-    ~DxfCircleEntity() { delete data; }
+    ~DxfCircleEntity() override { delete &data; }
 
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() override;
     std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
 
-    DxfCircleData *data;
+    DxfCircleData &data;
 };
 
 // ARC Entity
 class DxfCircularArcEntity : public DxfEntity {
 public:
-    explicit DxfCircularArcEntity(DxfCircularArcData *data)
+    explicit DxfCircularArcEntity(DxfCircularArcData &data)
     : DxfEntity(data), data(data) {}
 
-    ~DxfCircularArcEntity() { delete data; }
+    ~DxfCircularArcEntity() override { delete &data; }
 
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() override;
     std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
 
-    DxfCircularArcData *data;
+    DxfCircularArcData &data;
 };
 
 // ELLIPSE Entity
 class DxfEllipticalArcEntity : public DxfEntity {
 public:
-    explicit DxfEllipticalArcEntity(DxfEllipticalArcData *data)
+    explicit DxfEllipticalArcEntity(DxfEllipticalArcData &data)
     : DxfEntity(data), data(data) {}
 
-    ~DxfEllipticalArcEntity() { delete data; }
+    ~DxfEllipticalArcEntity() override { delete &data; }
 
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() override;
     std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
 
-    DxfEllipticalArcData *data;
+    DxfEllipticalArcData &data;
 };
 
 // POINT Entity
 class DxfPointEntity : public DxfEntity {
 public:
-    explicit DxfPointEntity(DxfPointData *data)
+    explicit DxfPointEntity(DxfPointData &data)
     : DxfEntity(data), data(data) {}
 
-    ~DxfPointEntity() { delete data; }
+    ~DxfPointEntity() override { delete &data; }
 
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() override;
     std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
 
-    DxfPointData *data;
+    DxfPointData &data;
 };
 
 } // namespace corecvs

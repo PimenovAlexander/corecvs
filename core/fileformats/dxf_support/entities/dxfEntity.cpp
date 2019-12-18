@@ -14,134 +14,134 @@ namespace corecvs {
 
 // Data printing
 void DxfEntity::print() {
-    std::cout << "Handle: " << data->handle << std::endl;
-    std::cout << "Layer name: " << data->layerName << std::endl;
-    std::cout << "Line type name: " << data->lineTypeName << std::endl;
-    std::cout << "RGB color: " << (int) data->rgbColor.r() << " " << (int) data->rgbColor.g() << " " << (int) data->rgbColor.b() << " " << std::endl;
-    std::cout << "Color number: " << data->colorNumber << std::endl;
-    std::cout << "Visibility: " << (data->isVisible ? "on" : "off") << std::endl;
+    std::cout << "Handle: " << data.handle << std::endl;
+    std::cout << "Layer name: " << data.layerName << std::endl;
+    std::cout << "Line type name: " << data.lineTypeName << std::endl;
+    std::cout << "RGB color: " << (int) data.rgbColor.r() << " " << (int) data.rgbColor.g() << " " << (int) data.rgbColor.b() << " " << std::endl;
+    std::cout << "Color number: " << data.colorNumber << std::endl;
+    std::cout << "Visibility: " << (data.isVisible ? "on" : "off") << std::endl;
 }
 
 void DxfLineEntity::print() {
     std::cout << "* * * Line Entity * * *" << std::endl;
     DxfEntity::print();
-    std::cout << "Start point: " << data->startPoint << std::endl;
-    std::cout << "End point: " << data->endPoint << std::endl;
+    std::cout << "Start point: " << data.startPoint << std::endl;
+    std::cout << "End point: " << data.endPoint << std::endl;
     std::cout << std::endl;
 }
 
 void DxfLwPolylineEntity::print() {
     std::cout << "* * * LwPolyline Entity * * *" << std::endl;
     DxfEntity::print();
-    std::cout << "Thickness: " << data->thickness << std::endl;
-    std::cout << "Vertex amount: " << data->vertices.size() << std::endl;
+    std::cout << "Thickness: " << data.thickness << std::endl;
+    std::cout << "Vertex amount: " << data.vertices.size() << std::endl;
     int i = 1;
-    for (Vector2d vertex : data->vertices) std::cout << "Vertex " << i++ << ": " << vertex.x() << " " << vertex.y() << std::endl;
+    for (Vector2d vertex : data.vertices) std::cout << "Vertex " << i++ << ": " << vertex.x() << " " << vertex.y() << std::endl;
     std::cout << std::endl;
 }
 
 void DxfPolylineEntity::print() {
     std::cout << "* * * Polyline Entity * * *" << std::endl;
     DxfEntity::print();
-    std::cout << "Thickness: " << data->thickness << std::endl;
-    std::cout << "Vertex amount: " << data->vertices.size() << std::endl;
+    std::cout << "Thickness: " << data.thickness << std::endl;
+    std::cout << "Vertex amount: " << data.vertices.size() << std::endl;
     int i = 1;
-    for (Vector3d vertex : data->vertices) std::cout << "Vertex " << i++ << ": " << vertex.x() << " " << vertex.y() << " " << vertex.z() << std::endl;
+    for (Vector3d vertex : data.vertices) std::cout << "Vertex " << i++ << ": " << vertex.x() << " " << vertex.y() << " " << vertex.z() << std::endl;
     std::cout << std::endl;
 }
 
 void DxfCircleEntity::print() {
     std::cout << "* * * Circle Entity * * *" << std::endl;
     DxfEntity::print();
-    std::cout << "Center point: " << data->center << std::endl;
-    std::cout << "Radius: " << data->radius << std::endl;
-    std::cout << "Thickness: " << data->thickness << std::endl;
+    std::cout << "Center point: " << data.center << std::endl;
+    std::cout << "Radius: " << data.radius << std::endl;
+    std::cout << "Thickness: " << data.thickness << std::endl;
     std::cout << std::endl;
 }
 
 void DxfCircularArcEntity::print() {
     std::cout << "* * * Circular Arc Entity * * *" << std::endl;
     DxfEntity::print();
-    std::cout << "Center point: " << data->center << std::endl;
-    std::cout << "Radius: " << data->radius << std::endl;
-    std::cout << "Thickness: " << data->thickness << std::endl;
-    std::cout << "Angle range: " << data->startAngle << ".." << data->endAngle << std::endl;
+    std::cout << "Center point: " << data.center << std::endl;
+    std::cout << "Radius: " << data.radius << std::endl;
+    std::cout << "Thickness: " << data.thickness << std::endl;
+    std::cout << "Angle range: " << data.startAngle << ".." << data.endAngle << std::endl;
     std::cout << std::endl;
 }
 
 void DxfEllipticalArcEntity::print() {
     std::cout << "* * * Elliptical Arc Entity * * *" << std::endl;
     DxfEntity::print();
-    std::cout << "Center point: " << data->center << std::endl;
-    std::cout << "End point of major axis: " << data->majorAxisEndPoint << std::endl;
-    std::cout << "Ratio: " << data->ratio << std::endl;
-    std::cout << "Angle range: " << data->startAngle << ".." << data->endAngle << std::endl;
+    std::cout << "Center point: " << data.center << std::endl;
+    std::cout << "End point of major axis: " << data.majorAxisEndPoint << std::endl;
+    std::cout << "Ratio: " << data.ratio << std::endl;
+    std::cout << "Angle range: " << data.startAngle << ".." << data.endAngle << std::endl;
     std::cout << std::endl;
 }
 
 void DxfPointEntity::print() {
     std::cout << "* * * Point Entity * * *" << std::endl;
     DxfEntity::print();
-    std::cout << "Location: " << data->location << std::endl;
-    std::cout << "Thickness: " << data->thickness << std::endl;
+    std::cout << "Location: " << data.location << std::endl;
+    std::cout << "Thickness: " << data.thickness << std::endl;
     std::cout << std::endl;
 }
 
 // Drawing
 void DxfLineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
-    auto startPoint = attrs->getDrawingValues(data->startPoint.x(), data->startPoint.y());
-    auto endPoint = attrs->getDrawingValues(data->endPoint.x(), data->endPoint.y());
-    buffer->drawLine(startPoint.x(), startPoint.y(), endPoint.x(), endPoint.y(), data->rgbColor);
+    auto startPoint = attrs->getDrawingValues(data.startPoint.x(), data.startPoint.y());
+    auto endPoint = attrs->getDrawingValues(data.endPoint.x(), data.endPoint.y());
+    buffer->drawLine(startPoint.x(), startPoint.y(), endPoint.x(), endPoint.y(), data.rgbColor);
 }
 
 void DxfLwPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
-    int vertexNumber = data->vertices.size();
+    int vertexNumber = data.vertices.size();
     if (vertexNumber > 1) {
-        for (unsigned long i = 0; i < data->vertices.size() - 1; i++) {
-            auto startVertex = attrs->getDrawingValues(data->vertices[i].x(), data->vertices[i].y());
-            auto endVertex = attrs->getDrawingValues(data->vertices[i+1].x(), data->vertices[i+1].y());
-            buffer->drawLine(startVertex.x(), startVertex.y(), endVertex.x(), endVertex.y(), data->rgbColor);
+        for (unsigned long i = 0; i < data.vertices.size() - 1; i++) {
+            auto startVertex = attrs->getDrawingValues(data.vertices[i].x(), data.vertices[i].y());
+            auto endVertex = attrs->getDrawingValues(data.vertices[i+1].x(), data.vertices[i+1].y());
+            buffer->drawLine(startVertex.x(), startVertex.y(), endVertex.x(), endVertex.y(), data.rgbColor);
         }
-        if (data->isClosed) {
-            auto startVertex = attrs->getDrawingValues(data->vertices[0].x(), data->vertices[0].y());
-            auto endVertex = attrs->getDrawingValues(data->vertices[vertexNumber-1].x(), data->vertices[vertexNumber-1].y());
-            buffer->drawLine(startVertex.x(), startVertex.y(), endVertex.x(), endVertex.y(), data->rgbColor);
+        if (data.isClosed) {
+            auto startVertex = attrs->getDrawingValues(data.vertices[0].x(), data.vertices[0].y());
+            auto endVertex = attrs->getDrawingValues(data.vertices[vertexNumber-1].x(), data.vertices[vertexNumber-1].y());
+            buffer->drawLine(startVertex.x(), startVertex.y(), endVertex.x(), endVertex.y(), data.rgbColor);
         }
     } else if (vertexNumber == 1) {
-        auto point = attrs->getDrawingValues(data->vertices[0].x(), data->vertices[0].y());
-        buffer->drawPixel(point, data->rgbColor);
+        auto point = attrs->getDrawingValues(data.vertices[0].x(), data.vertices[0].y());
+        buffer->drawPixel(point, data.rgbColor);
     }
 }
 
 void DxfPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
-    int vertexNumber = data->vertices.size();
+    int vertexNumber = data.vertices.size();
     if (vertexNumber > 1) {
         for (unsigned long i = 0; i < vertexNumber - 1; i++) {
-            auto startVertex = attrs->getDrawingValues(data->vertices[i].x(), data->vertices[i].y());
-            auto endVertex = attrs->getDrawingValues(data->vertices[i+1].x(), data->vertices[i+1].y());
-            buffer->drawLine(startVertex.x(), startVertex.y(), endVertex.x(), endVertex.y(), data->rgbColor);
+            auto startVertex = attrs->getDrawingValues(data.vertices[i].x(), data.vertices[i].y());
+            auto endVertex = attrs->getDrawingValues(data.vertices[i+1].x(), data.vertices[i+1].y());
+            buffer->drawLine(startVertex.x(), startVertex.y(), endVertex.x(), endVertex.y(), data.rgbColor);
         }
-        if (data->isClosed) {
-            auto startVertex = attrs->getDrawingValues(data->vertices[0].x(), data->vertices[0].y());
-            auto endVertex = attrs->getDrawingValues(data->vertices[vertexNumber-1].x(), data->vertices[vertexNumber-1].y());
-            buffer->drawLine(startVertex.x(), startVertex.y(), endVertex.x(), endVertex.y(), data->rgbColor);
+        if (data.isClosed) {
+            auto startVertex = attrs->getDrawingValues(data.vertices[0].x(), data.vertices[0].y());
+            auto endVertex = attrs->getDrawingValues(data.vertices[vertexNumber-1].x(), data.vertices[vertexNumber-1].y());
+            buffer->drawLine(startVertex.x(), startVertex.y(), endVertex.x(), endVertex.y(), data.rgbColor);
         }
     } else if (vertexNumber == 1) {
-        auto point = attrs->getDrawingValues(data->vertices[0].x(), data->vertices[0].y());
-        buffer->drawPixel(point, data->rgbColor);
+        auto point = attrs->getDrawingValues(data.vertices[0].x(), data.vertices[0].y());
+        buffer->drawPixel(point, data.rgbColor);
     }
 }
 
 void DxfCircleEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::DxfDrawingAttrs *attrs) {
-    auto vertex = attrs->getDrawingValues(data->center.x(), data->center.y());
-    Circle2d circle(vertex, attrs->getDrawingValue(data->radius));
-    buffer->drawArc(circle, data->rgbColor);
+    auto vertex = attrs->getDrawingValues(data.center.x(), data.center.y());
+    Circle2d circle(vertex, attrs->getDrawingValue(data.radius));
+    buffer->drawArc(circle, data.rgbColor);
 }
 
 void DxfCircularArcEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::DxfDrawingAttrs *attrs) {
-    auto center = Vector2dd(data->center.x(), data->center.y());
-    auto startAngle = degToRad(data->startAngle);
-    auto endAngle = degToRad(data->endAngle);
+    auto center = Vector2dd(data.center.x(), data.center.y());
+    auto startAngle = degToRad(data.startAngle);
+    auto endAngle = degToRad(data.endAngle);
     while (endAngle < startAngle) endAngle += 2 * M_PI;
 
     // divide arc into 1 or 2 segments
@@ -153,10 +153,10 @@ void DxfCircularArcEntity::draw(class corecvs::RGB24Buffer *buffer, class corecv
         auto eta1 = eta.x();
         auto eta2 = eta.y();
 
-        auto ax = data->radius * std::cos(eta1);
-        auto ay = data->radius * std::sin(eta1);
-        auto bx = data->radius * std::cos(eta2);
-        auto by = data->radius * std::sin(eta2);
+        auto ax = data.radius * std::cos(eta1);
+        auto ay = data.radius * std::sin(eta1);
+        auto bx = data.radius * std::cos(eta2);
+        auto by = data.radius * std::sin(eta2);
 
         // start point
         auto point1 = Vector2dd(center.x() + ax, center.y() + ay);
@@ -181,17 +181,17 @@ void DxfCircularArcEntity::draw(class corecvs::RGB24Buffer *buffer, class corecv
 
         auto curve = Curve({point1, point2, point3, point4});
         WuRasterizer rast = WuRasterizer();
-        BezierRasterizer<RGB24Buffer, WuRasterizer> bezier(*buffer, rast, data->rgbColor);
+        BezierRasterizer<RGB24Buffer, WuRasterizer> bezier(*buffer, rast, data.rgbColor);
         bezier.cubicBezierCasteljauApproximationByFlatness(curve);
     }
 }
 
 void DxfEllipticalArcEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::DxfDrawingAttrs *attrs) {
-    auto center = Vector2dd(data->center.x(), data->center.y());
-    auto deltaX = data->majorAxisEndPoint.x();
-    auto deltaY = data->majorAxisEndPoint.y();
+    auto center = Vector2dd(data.center.x(), data.center.y());
+    auto deltaX = data.majorAxisEndPoint.x();
+    auto deltaY = data.majorAxisEndPoint.y();
     auto a = std::sqrt(deltaX * deltaX + deltaY * deltaY);
-    auto b = a * data->ratio;
+    auto b = a * data.ratio;
 
     double rotationAngle = 0;
     if (deltaX == 0) rotationAngle = M_PI / 2;
@@ -201,8 +201,8 @@ void DxfEllipticalArcEntity::draw(class corecvs::RGB24Buffer *buffer, class core
     }
     double cosAngle = std::cos(rotationAngle);
     double sinAngle = std::sin(rotationAngle);
-    auto startAngle = data->startAngle;
-    auto endAngle = data->endAngle;
+    auto startAngle = data.startAngle;
+    auto endAngle = data.endAngle;
     while (endAngle < startAngle) endAngle += 2 * M_PI;
 
     // divide arc into 1 or 2 segments
@@ -244,36 +244,36 @@ void DxfEllipticalArcEntity::draw(class corecvs::RGB24Buffer *buffer, class core
 
         auto curve = Curve({point1, point2, point3, point4});
         WuRasterizer rast = WuRasterizer();
-        BezierRasterizer<RGB24Buffer, WuRasterizer> bezier(*buffer, rast, data->rgbColor);
+        BezierRasterizer<RGB24Buffer, WuRasterizer> bezier(*buffer, rast, data.rgbColor);
         bezier.cubicBezierCasteljauApproximationByFlatness(curve);
     }
 }
 
 void DxfPointEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::DxfDrawingAttrs *attrs) {
-    auto center = attrs->getDrawingValues(data->location.x(), data->location.y());
-    auto thickness = attrs->getDrawingValue(data->thickness);
+    auto center = attrs->getDrawingValues(data.location.x(), data.location.y());
+    auto thickness = attrs->getDrawingValue(data.thickness);
     if (thickness == 0) {
-        buffer->drawPixel(center.x(), center.y(), data->rgbColor);
+        buffer->drawPixel(center.x(), center.y(), data.rgbColor);
     } else {
         AbstractPainter<RGB24Buffer> painter(buffer);
-        painter.drawCircle(center, thickness / 2, data->rgbColor);
+        painter.drawCircle(center, thickness / 2, data.rgbColor);
     }
 }
 
 // Bounding box getting
 std::pair<Vector2dd,Vector2dd> DxfLineEntity::getBoundingBox() {
-    auto lowerLeftCorner = Vector2dd(std::min(data->startPoint.x(), data->endPoint.x()), std::min(data->startPoint.y(), data->endPoint.y()));
-    auto upperRightCorner = Vector2dd(std::max(data->startPoint.x(), data->endPoint.x()), std::max(data->startPoint.y(), data->endPoint.y()));
+    auto lowerLeftCorner = Vector2dd(std::min(data.startPoint.x(), data.endPoint.x()), std::min(data.startPoint.y(), data.endPoint.y()));
+    auto upperRightCorner = Vector2dd(std::max(data.startPoint.x(), data.endPoint.x()), std::max(data.startPoint.y(), data.endPoint.y()));
     return std::make_pair(lowerLeftCorner, upperRightCorner);
 }
 
 std::pair<Vector2dd,Vector2dd> DxfLwPolylineEntity::getBoundingBox() {
-    if (!data->vertices.empty()) {
-        auto lowerLeftCorner = Vector2dd(data->vertices[0].x(), data->vertices[0].y());
+    if (!data.vertices.empty()) {
+        auto lowerLeftCorner = Vector2dd(data.vertices[0].x(), data.vertices[0].y());
         auto upperRightCorner = lowerLeftCorner;
-        for (int i = 1; i < data->vertices.size(); i++) {
-            auto x = data->vertices[i].x();
-            auto y = data->vertices[i].y();
+        for (int i = 1; i < data.vertices.size(); i++) {
+            auto x = data.vertices[i].x();
+            auto y = data.vertices[i].y();
             if (x < lowerLeftCorner.x()) lowerLeftCorner.x() = x;
             else if (x > upperRightCorner.x()) upperRightCorner.x() = x;
             if (y < lowerLeftCorner.y()) lowerLeftCorner.y() = y;
@@ -284,12 +284,12 @@ std::pair<Vector2dd,Vector2dd> DxfLwPolylineEntity::getBoundingBox() {
 }
 
 std::pair<Vector2dd,Vector2dd> DxfPolylineEntity::getBoundingBox() {
-    if (!data->vertices.empty()) {
-        auto lowerLeftCorner = Vector2dd(data->vertices[0].x(), data->vertices[0].y());
+    if (!data.vertices.empty()) {
+        auto lowerLeftCorner = Vector2dd(data.vertices[0].x(), data.vertices[0].y());
         auto upperRightCorner = lowerLeftCorner;
-        for (int i = 1; i < data->vertices.size(); i++) {
-            auto x = data->vertices[i].x();
-            auto y = data->vertices[i].y();
+        for (int i = 1; i < data.vertices.size(); i++) {
+            auto x = data.vertices[i].x();
+            auto y = data.vertices[i].y();
             if (x < lowerLeftCorner.x()) lowerLeftCorner.x() = x;
             else if (x > upperRightCorner.x()) upperRightCorner.x() = x;
             if (y < lowerLeftCorner.y()) lowerLeftCorner.y() = y;
@@ -300,26 +300,26 @@ std::pair<Vector2dd,Vector2dd> DxfPolylineEntity::getBoundingBox() {
 }
 
 std::pair<Vector2dd,Vector2dd> DxfCircleEntity::getBoundingBox() {
-    auto lowerLeftCorner = Vector2dd(data->center.x() - data->radius, data->center.y() - data->radius);
-    auto upperRightCorner = Vector2dd(data->center.x() + data->radius, data->center.y() + data->radius);
+    auto lowerLeftCorner = Vector2dd(data.center.x() - data.radius, data.center.y() - data.radius);
+    auto upperRightCorner = Vector2dd(data.center.x() + data.radius, data.center.y() + data.radius);
     return std::make_pair(lowerLeftCorner, upperRightCorner);
 }
 
 std::pair<Vector2dd,Vector2dd> DxfCircularArcEntity::getBoundingBox() {
-    auto lowerLeftCorner = Vector2dd(data->center.x() - data->radius, data->center.y() - data->radius);
-    auto upperRightCorner = Vector2dd(data->center.x() + data->radius, data->center.y() + data->radius);
+    auto lowerLeftCorner = Vector2dd(data.center.x() - data.radius, data.center.y() - data.radius);
+    auto upperRightCorner = Vector2dd(data.center.x() + data.radius, data.center.y() + data.radius);
     return std::make_pair(lowerLeftCorner, upperRightCorner);
 }
 
 std::pair<Vector2dd,Vector2dd> DxfEllipticalArcEntity::getBoundingBox() {
-    auto majorRadius = std::sqrt(data->majorAxisEndPoint.x() * data->majorAxisEndPoint.x() + data->majorAxisEndPoint.y() * data->majorAxisEndPoint.y());
-    auto lowerLeftCorner = Vector2dd(data->center.x() - majorRadius, data->center.y() - majorRadius);
-    auto upperRightCorner = Vector2dd(data->center.x() + majorRadius, data->center.y() + majorRadius);
+    auto majorRadius = std::sqrt(data.majorAxisEndPoint.x() * data.majorAxisEndPoint.x() + data.majorAxisEndPoint.y() * data.majorAxisEndPoint.y());
+    auto lowerLeftCorner = Vector2dd(data.center.x() - majorRadius, data.center.y() - majorRadius);
+    auto upperRightCorner = Vector2dd(data.center.x() + majorRadius, data.center.y() + majorRadius);
     return std::make_pair(lowerLeftCorner, upperRightCorner);
 }
 
 std::pair<Vector2dd,Vector2dd> DxfPointEntity::getBoundingBox() {
-    auto lowerLeftCorner = Vector2dd(data->location.x(), data->location.y());
+    auto lowerLeftCorner = Vector2dd(data.location.x(), data.location.y());
     auto upperRightCorner = lowerLeftCorner;
     return std::make_pair(lowerLeftCorner, upperRightCorner);
 }

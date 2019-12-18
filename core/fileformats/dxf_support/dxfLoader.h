@@ -19,19 +19,19 @@ namespace corecvs {
 
 class DxfLoader {
 public:
-    explicit DxfLoader(IDxfBuilder *dxfBuilder) : dxfBuilder(dxfBuilder) {}
-    ~DxfLoader() = default;
+    explicit DxfLoader(IDxfBuilder &dxfBuilder) : dxfBuilder(dxfBuilder) {}
+
     int load(std::string const &fileName);
 
 private:
-    IDxfBuilder *dxfBuilder;
-    DxfElementType currentEntityType;
+    IDxfBuilder &dxfBuilder;
+    DxfElementType currentEntityType = DxfElementType::DXF_UNKNOWN_TYPE;
     DxfElementType currentElementType = DxfElementType::DXF_UNKNOWN_TYPE;
     std::string variableName;
     std::map<int, std::string> rawValues;
     std::vector<Vector2d<double>> current2dVertices = {};     // vertices of LwPolylineEntity
     std::vector<Vector3d<double>> current3dVertices = {};     // vertices of PolylineEntity
-    DxfPolylineData *polylineData = nullptr;
+    DxfPolylineData *polylineData = nullptr;                  // no need to delete in destructor!!!
 
     int processDxfPair(int code, std::string const &value);
     void addVariable();
