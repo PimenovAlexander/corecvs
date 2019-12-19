@@ -769,7 +769,6 @@
   <slot>showRadioControlWidget()</slot>
   <slot>showFlightControllerParameters()</slot>
   <slot>calibrateCamera()</slot>
-  <slot>loadCalibrationSettings()</slot>
   <slot>showPatternDetectionParameters()</slot>
   <slot>showProcessingParametersWidget()</slot>
   <slot>showStatistics()</slot>

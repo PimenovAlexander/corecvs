@@ -223,11 +223,9 @@ private slots:
     void on_toolButton_2_released();
     void on_pushButton_released();
     void on_connetToVirtualButton_pressed();
-    void on_iiOutputSlider_valueChanged(int value);
+//    void on_iiOutputSlider_valueChanged(int value);
 
     void calibrateCamera();
-    void loadCalibrationSettings();
-
 
 
 private:
@@ -282,6 +280,14 @@ private:
     stack<Message> autopilotStack;
 
     bool setOutputType(int i);
+
+
+    void drawDrone();
+
+    /** To be deleted ASAP **/
+    void drawDzhanibekov();
+    void drawTestObject();
+
 };
 
 #endif // PHYSICSMAINWINDOW_H

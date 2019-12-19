@@ -35,6 +35,7 @@ target_sources(drone-core
         ${CMAKE_CURRENT_LIST_DIR}/simulation/mainObject.h
         ${CMAKE_CURRENT_LIST_DIR}/simulation/physObject.h
         ${CMAKE_CURRENT_LIST_DIR}/simulation/physSphere.h
+        ${CMAKE_CURRENT_LIST_DIR}/simulation/testPhysicsObject.h
 
         ${CMAKE_CURRENT_LIST_DIR}/mixer/controlsMixer.h
 
@@ -72,6 +73,7 @@ target_sources(drone-core
         ${CMAKE_CURRENT_LIST_DIR}/simulation/physObject.cpp
         ${CMAKE_CURRENT_LIST_DIR}/simulation/physSphere.cpp
         ${CMAKE_CURRENT_LIST_DIR}/simulation/dzhanibekovBolt.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/simulation/testPhysicsObject.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/mixer/controlsMixer.cpp
 

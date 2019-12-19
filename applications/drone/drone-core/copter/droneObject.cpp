@@ -248,8 +248,8 @@ void DroneObject::flightControllerTick(const CopterInputs &input)
     double wantedRoll     = (input.axis[CopterInputs::CHANNEL_ROLL]     - 1500) / 12;
 
     /** Get current Pitch, Roll, Yaw of drone at this moment **/
-    Quaternion q = angularVelocity;
-    Vector3dd currentPRY = fromQuaternion(angularVelocity);
+    Vector3dd q = angularVelocity;
+    Vector3dd currentPRY = angularVelocity;
 
     for (int i = 0; i < 3; i++)
     {
@@ -389,7 +389,8 @@ void DroneObject::tick(double deltaT)
     Quaternion q = orientation;
     //Probably bug here
     //angularVelocity = Quaternion(0.621634, 0, 0, -0.783308);
-    orientation = Quaternion::pow(angularVelocity, deltaT * 1000) ^ orientation;
+    // TODO: Fix this
+    //orientation = Quaternion::pow(angularVelocity, deltaT * 1000) ^ orientation;
 
     //Just async output
     using namespace std::chrono;
@@ -414,7 +415,8 @@ void DroneObject::tick(double deltaT)
     }
 
     //Probably bug here
-    angularVelocity = Quaternion::pow(angularAcceleration, deltaT * 1000) ^ angularVelocity;
+    // TODO: Fix this
+    //angularVelocity = Quaternion::pow(angularAcceleration, deltaT * 1000) ^ angularVelocity;
 
     //L_INFO<<"Delta orient: "<<abs(orientation.getAngle()-q.getAngle());
 

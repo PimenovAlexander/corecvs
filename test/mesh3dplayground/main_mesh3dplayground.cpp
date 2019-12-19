@@ -54,13 +54,14 @@ int main (int argc, char **argv)
         RGBColor color = mesh.vertexesColor[i];
 
 
-        Vector3dd center = Vector3dd(1,1,1) / 3.0;
+        //Vector3dd center = Vector3dd(1,1,1) / 3.0;
         meshExtended.setColor(color);
-        meshExtended.addTriangle(
+        /*meshExtended.addTriangle(
             v + (Vector3dd(1,0,0) - center)* tsize,
             v + (Vector3dd(0,1,0) - center)* tsize,
             v + (Vector3dd(0,0,1) - center)* tsize
-        );
+        );*/
+        meshExtended.addAOB(v - Vector3dd(1,1,1) * tsize,  v + Vector3dd(1,1,1) * tsize);
     }
 
     MeshLoader saver;

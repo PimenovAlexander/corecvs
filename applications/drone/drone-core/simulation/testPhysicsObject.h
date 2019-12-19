@@ -1,5 +1,5 @@
-#ifndef JANIBEKOVSBOLT_H
-#define JANIBEKOVSBOLT_H
+#ifndef TESTPHYSICSOBJECT_H
+#define TESTPHYSICSOBJECT_H
 #include <physMainObject.h>
 #include "core/geometry/mesh3d.h"
 #include <copterInputs.h>
@@ -12,17 +12,13 @@
 
 #include "physSphere.h"
 
-class DzhanibekovBolt : public PhysMainObject
+class TestPhysicsObject : public PhysMainObject
 {
 
 public:
-    DzhanibekovBolt(double arm = 0.01, double mass = 13);
-
-    /* Not owned */
-    PhysSphere *centralSphere;
-    /* Not owned */
-    std::vector<PhysSphere *> partsOfSystem;
-
+    TestPhysicsObject(double arm = 0.1, double mass = 4);
+    PhysSphere centralSphere;
+    std::vector<PhysSphere> partsOfSystem;
     void drawMyself(Mesh3D &mesh);
     Affine3DQ getTransform();
     void physicsTick(double deltaT);
@@ -33,7 +29,7 @@ public:
     void drawForces(Mesh3D &mesh);
     double mw;
 
-    virtual ~DzhanibekovBolt() override {}
+
 };
 
-#endif // JANIBEKOVSBOLT_H
+#endif // TESTPHYSICSOBJECT_H

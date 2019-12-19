@@ -77,6 +77,18 @@ HEADERS += \
     \
     physicsMainWindow.h \
     physicsAboutWidget.h \
+<<<<<<< HEAD:applications/drone/drone-core/physics.pro.orig
+=======
+    autopilot/protoautopilot.h \
+    comcontroller.h \
+    autopilot/vertexsquare.h\
+    simulation/physObject.h \
+    simulation/physSphere.h \
+    copter/droneObject.h \
+    copter/motor.h \
+    opencvUtils/opencvTransformations.h \
+    simulation/testPhysicsObject.h
+>>>>>>> Gvalhca/TestBranch:applications/physics/physics.pro
 
 
 SOURCES += \
@@ -123,14 +135,37 @@ SOURCES += \
     clientSender.cpp \
     mainPhysics.cpp \
     controlRecord.cpp \
+<<<<<<< HEAD:applications/drone/drone-core/physics.pro.orig
     copterInputsWidget.cpp \   
     copterInputs.cpp \   
     frameProcessor.cpp \   
+=======
+    simulation/testPhysicsObject.cpp \
+    joystick/joystickInterface.cpp \
+    joystick/JoystickOptionsWidget.cpp \
+    radio/frSkyMultimodule.cpp \
+    simulation/mainObject.cpp \
+    copterInputsWidget.cpp \
+    mixer/controlsMixer.cpp \
+    copterInputs.cpp \
+    joystick/mixerChannelOperationWidget.cpp \
+    frameProcessor.cpp \
+    copter/quad.cpp \
+>>>>>>> Gvalhca/TestBranch:applications/physics/physics.pro
     physicsMainWindow.cpp \
     physicsAboutWidget.cpp \   
     comcontroller.cpp \
+<<<<<<< HEAD:applications/drone/drone-core/physics.pro.orig
 
 
+=======
+    autopilot/vertexsquare.cpp \
+    simulation/physObject.cpp \
+    simulation/physSphere.cpp \
+    copter/droneObject.cpp \
+    copter/motor.cpp \
+    opencvUtils/opencvTransformations.cpp
+>>>>>>> Gvalhca/TestBranch:applications/physics/physics.pro
 
 
 FORMS += \

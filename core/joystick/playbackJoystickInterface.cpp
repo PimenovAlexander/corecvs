@@ -17,7 +17,7 @@ PlaybackJoystickInterface::PlaybackJoystickInterface(const string &deviceName):
     corecvs::JoystickInterface(deviceName)
 {
     data.load(deviceName);
-    SYNC_PRINT(("PlaybackJoystickInterface::PlaybackJoystickInterface(): Loaded %d joystick moves\n", data.states.size()));
+    SYNC_PRINT(("PlaybackJoystickInterface::PlaybackJoystickInterface(): Loaded %d joystick moves\n", (int)data.states.size()));
 }
 
 std::vector<string> PlaybackJoystickInterface::getDevices(const string &prefix)
