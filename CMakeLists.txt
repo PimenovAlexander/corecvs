@@ -118,6 +118,8 @@ fetch_googletest(
     ${PROJECT_BINARY_DIR}/googletest
     )
 
+file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+
 add_subdirectory(core)
 add_subdirectory(utils)
 

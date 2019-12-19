@@ -4,6 +4,12 @@ project(egomotion)
 
 add_executable(egomotion main_egomotion.cpp)
 
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND cp ${PROJECT_BINARY_DIR}/${PROJECT_NAME}  ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Copying ${PROJECT_NAME} to binary directory"
+        )
+
 find_package(Qt5 COMPONENTS REQUIRED Core Gui Widgets Script)
 
 target_sources(egomotion

@@ -21,6 +21,8 @@ struct  apriltag_family;
 typedef apriltag_family apriltag_family_t;
 struct zarray;
 typedef zarray zarray_t;
+struct apriltag_quad_thresh_params;
+typedef apriltag_quad_thresh_params apriltag_quad_thresh_params_t;
 
 }
 
@@ -29,6 +31,8 @@ class ApriltagDetector : public corecvs::PatternDetector
 public:
 
     ApriltagParameters params;
+
+//    April
 
     corecvs::Statistics *stats = nullptr;
 
@@ -70,6 +74,7 @@ private:
     apriltag_family_t *tf   = nullptr;
     apriltag_detector_t *td = nullptr;
     zarray_t *at_detections = nullptr;
+    apriltag_quad_thresh_params *qtp = nullptr;
 };
 
 #endif //CORECVS_APRILTAGDETECTOR_H

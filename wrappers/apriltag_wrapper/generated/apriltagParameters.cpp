@@ -143,7 +143,20 @@ int ApriltagParameters::staticInit(corecvs::Reflection *toFill)
     field6->precision=2;
     toFill->fields.push_back(field6);
     /*  */ 
-    BoolField* field7 = new BoolField
+    DoubleField* field7 = new DoubleField
+        (
+          ApriltagParameters::DECODE_SHARPENING_ID,
+          offsetof(ApriltagParameters, mDecode_sharpening),
+          0,
+          "decode_sharpening",
+          "decode_sharpening",
+          "decode_sharpening"
+        );
+    field7->widgetHint=BaseField::SPIN_BOX;
+    field7->precision=2;
+    toFill->fields.push_back(field7);
+    /*  */ 
+    BoolField* field8 = new BoolField
         (
           ApriltagParameters::TRACE_ID,
           offsetof(ApriltagParameters, mTrace),
@@ -152,8 +165,65 @@ int ApriltagParameters::staticInit(corecvs::Reflection *toFill)
           "trace",
           "trace"
         );
-    field7->widgetHint=BaseField::CHECK_BOX;
-    toFill->fields.push_back(field7);
+    field8->widgetHint=BaseField::CHECK_BOX;
+    toFill->fields.push_back(field8);
+    /*  */ 
+    IntField* field9 = new IntField
+        (
+          ApriltagParameters::MIN_CLUSTER_PIXELS_ID,
+          offsetof(ApriltagParameters, mMin_cluster_pixels),
+          5,
+          "min_cluster_pixels",
+          "min_cluster_pixels",
+          "min_cluster_pixels"
+        );
+    toFill->fields.push_back(field9);
+    /*  */ 
+    IntField* field10 = new IntField
+        (
+          ApriltagParameters::MAX_NMAXIMA_ID,
+          offsetof(ApriltagParameters, mMax_nmaxima),
+          10,
+          "max_nmaxima",
+          "max_nmaxima",
+          "max_nmaxima"
+        );
+    toFill->fields.push_back(field10);
+    /*  */ 
+    DoubleField* field11 = new DoubleField
+        (
+          ApriltagParameters::MAX_LINE_FIT_MSE_ID,
+          offsetof(ApriltagParameters, mMax_line_fit_mse),
+          10,
+          "max_line_fit_mse",
+          "max_line_fit_mse",
+          "max_line_fit_mse"
+        );
+    field11->widgetHint=BaseField::SPIN_BOX;
+    field11->precision=2;
+    toFill->fields.push_back(field11);
+    /*  */ 
+    IntField* field12 = new IntField
+        (
+          ApriltagParameters::MIN_WHITE_BLACK_DIFF_ID,
+          offsetof(ApriltagParameters, mMin_white_black_diff),
+          5,
+          "min_white_black_diff",
+          "min_white_black_diff",
+          "min_white_black_diff"
+        );
+    toFill->fields.push_back(field12);
+    /*  */ 
+    IntField* field13 = new IntField
+        (
+          ApriltagParameters::DEGLITCH_ID,
+          offsetof(ApriltagParameters, mDeglitch),
+          0,
+          "deglitch",
+          "deglitch",
+          "deglitch"
+        );
+    toFill->fields.push_back(field13);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
     directory[std::string("Apriltag Parameters")]= toFill;

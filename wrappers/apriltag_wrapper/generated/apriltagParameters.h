@@ -48,7 +48,13 @@ public:
         AT_REFINE_EDGES_ID,
         AT_DECIMATE_ID,
         BLUR_ID,
+        DECODE_SHARPENING_ID,
         TRACE_ID,
+        MIN_CLUSTER_PIXELS_ID,
+        MAX_NMAXIMA_ID,
+        MAX_LINE_FIT_MSE_ID,
+        MIN_WHITE_BLACK_DIFF_ID,
+        DEGLITCH_ID,
         APRILTAG_PARAMETERS_FIELD_ID_NUM
     };
 
@@ -97,10 +103,46 @@ public:
     double mBlur;
 
     /** 
+     * \brief decode_sharpening 
+     * decode_sharpening 
+     */
+    double mDecode_sharpening;
+
+    /** 
      * \brief trace 
      * trace 
      */
     bool mTrace;
+
+    /** 
+     * \brief min_cluster_pixels 
+     * min_cluster_pixels 
+     */
+    int mMin_cluster_pixels;
+
+    /** 
+     * \brief max_nmaxima 
+     * max_nmaxima 
+     */
+    int mMax_nmaxima;
+
+    /** 
+     * \brief max_line_fit_mse 
+     * max_line_fit_mse 
+     */
+    double mMax_line_fit_mse;
+
+    /** 
+     * \brief min_white_black_diff 
+     * min_white_black_diff 
+     */
+    int mMin_white_black_diff;
+
+    /** 
+     * \brief deglitch 
+     * deglitch 
+     */
+    int mDeglitch;
 
     /** Static fields init function, this is used for "dynamic" field initialization */ 
     static int staticInit(corecvs::Reflection *toFill);
@@ -147,9 +189,39 @@ public:
         return mBlur;
     }
 
+    double decode_sharpening() const
+    {
+        return mDecode_sharpening;
+    }
+
     bool trace() const
     {
         return mTrace;
+    }
+
+    int min_cluster_pixels() const
+    {
+        return mMin_cluster_pixels;
+    }
+
+    int max_nmaxima() const
+    {
+        return mMax_nmaxima;
+    }
+
+    double max_line_fit_mse() const
+    {
+        return mMax_line_fit_mse;
+    }
+
+    int min_white_black_diff() const
+    {
+        return mMin_white_black_diff;
+    }
+
+    int deglitch() const
+    {
+        return mDeglitch;
     }
 
     /** Section with setters */
@@ -188,9 +260,39 @@ public:
         mBlur = blur;
     }
 
+    void setDecode_sharpening(double decode_sharpening)
+    {
+        mDecode_sharpening = decode_sharpening;
+    }
+
     void setTrace(bool trace)
     {
         mTrace = trace;
+    }
+
+    void setMin_cluster_pixels(int min_cluster_pixels)
+    {
+        mMin_cluster_pixels = min_cluster_pixels;
+    }
+
+    void setMax_nmaxima(int max_nmaxima)
+    {
+        mMax_nmaxima = max_nmaxima;
+    }
+
+    void setMax_line_fit_mse(double max_line_fit_mse)
+    {
+        mMax_line_fit_mse = max_line_fit_mse;
+    }
+
+    void setMin_white_black_diff(int min_white_black_diff)
+    {
+        mMin_white_black_diff = min_white_black_diff;
+    }
+
+    void setDeglitch(int deglitch)
+    {
+        mDeglitch = deglitch;
     }
 
     /** Section with embedded classes */
@@ -205,7 +307,13 @@ template<class VisitorType>
         visitor.visit(mAt_refine_edges,           static_cast<const corecvs::BoolField *>(fields()[AT_REFINE_EDGES_ID]));
         visitor.visit(mAt_decimate,               static_cast<const corecvs::DoubleField *>(fields()[AT_DECIMATE_ID]));
         visitor.visit(mBlur,                      static_cast<const corecvs::DoubleField *>(fields()[BLUR_ID]));
+        visitor.visit(mDecode_sharpening,         static_cast<const corecvs::DoubleField *>(fields()[DECODE_SHARPENING_ID]));
         visitor.visit(mTrace,                     static_cast<const corecvs::BoolField *>(fields()[TRACE_ID]));
+        visitor.visit(mMin_cluster_pixels,        static_cast<const corecvs::IntField *>(fields()[MIN_CLUSTER_PIXELS_ID]));
+        visitor.visit(mMax_nmaxima,               static_cast<const corecvs::IntField *>(fields()[MAX_NMAXIMA_ID]));
+        visitor.visit(mMax_line_fit_mse,          static_cast<const corecvs::DoubleField *>(fields()[MAX_LINE_FIT_MSE_ID]));
+        visitor.visit(mMin_white_black_diff,      static_cast<const corecvs::IntField *>(fields()[MIN_WHITE_BLACK_DIFF_ID]));
+        visitor.visit(mDeglitch,                  static_cast<const corecvs::IntField *>(fields()[DEGLITCH_ID]));
     }
 
     ApriltagParameters()
@@ -222,7 +330,13 @@ template<class VisitorType>
         , bool at_refine_edges
         , double at_decimate
         , double blur
+        , double decode_sharpening
         , bool trace
+        , int min_cluster_pixels
+        , int max_nmaxima
+        , double max_line_fit_mse
+        , int min_white_black_diff
+        , int deglitch
     )
     {
         mTag_family = tag_family;
@@ -232,7 +346,13 @@ template<class VisitorType>
         mAt_refine_edges = at_refine_edges;
         mAt_decimate = at_decimate;
         mBlur = blur;
+        mDecode_sharpening = decode_sharpening;
         mTrace = trace;
+        mMin_cluster_pixels = min_cluster_pixels;
+        mMax_nmaxima = max_nmaxima;
+        mMax_line_fit_mse = max_line_fit_mse;
+        mMin_white_black_diff = min_white_black_diff;
+        mDeglitch = deglitch;
     }
 
     /** Exact match comparator **/ 
@@ -245,7 +365,13 @@ template<class VisitorType>
         if ( !(this->mAt_refine_edges == other.mAt_refine_edges)) return false;
         if ( !(this->mAt_decimate == other.mAt_decimate)) return false;
         if ( !(this->mBlur == other.mBlur)) return false;
+        if ( !(this->mDecode_sharpening == other.mDecode_sharpening)) return false;
         if ( !(this->mTrace == other.mTrace)) return false;
+        if ( !(this->mMin_cluster_pixels == other.mMin_cluster_pixels)) return false;
+        if ( !(this->mMax_nmaxima == other.mMax_nmaxima)) return false;
+        if ( !(this->mMax_line_fit_mse == other.mMax_line_fit_mse)) return false;
+        if ( !(this->mMin_white_black_diff == other.mMin_white_black_diff)) return false;
+        if ( !(this->mDeglitch == other.mDeglitch)) return false;
         return true;
     }
     friend std::ostream& operator << (std::ostream &out, ApriltagParameters &toSave)

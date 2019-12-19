@@ -12,6 +12,12 @@ find_package(Qt5 COMPONENTS REQUIRED Core Gui Widgets Script)
 
 add_executable(testbed main_testbed.cpp)
 
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND cp ${PROJECT_BINARY_DIR}/${PROJECT_NAME}  ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Copying ${PROJECT_NAME} to binary directory"
+        )
+
 target_sources(testbed
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/testbedMainWindow.h
