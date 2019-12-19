@@ -20,8 +20,8 @@ using namespace corecvs;
 
 //https://people.csail.mit.edu/yichangshih/wide_angle_portrait/webpage/additional-results/97_TPE_2018_0322_IMG_20180322_120256_P000.jpg
 
-static const int GRID_STEP = 25;
-static const double f = 500;
+static const int GRID_STEP = 30;
+static const double f = 750;
 
 class Grid : public AbstractBuffer<Vector2dd>
 {
@@ -98,14 +98,84 @@ public:
                 dir *= 2 * f * tan(theta/2);
                 dir += Vector2dd(w*step/2.0, h*step/2.0);
 
-
-
                 toReturn.element(i,j) =  Vector2dd(dir.x(), dir.y());
             }
         }
         return toReturn;
     }
 
+    void SlowGridWarp(RGB24Buffer* in, RGB24Buffer* out)
+    {
+        int count = 0;
+        SYNC_PRINT(("Running:\n"));
+        parallelable_for( 0, out->h, [&](const BlockedRange<int> &r) {
+            for (int i = r.begin(); i < r.end(); i++)
+            {
+                for (int j = 0; j < out->w; j++)
+                {
+                    Vector2dd point(j,i);
+
+                    for (int k = 0; k < h - 1; k++)
+                    {
+                        for (int l = 0; l < w - 1; l++)
+                        {
+                            Polygon p = getPolygon(k,l);
+                            if (!p.isInside(point))
+                            {
+                                //grid1Debug->element(i,j) = RGBColor::getParulaColor(13*k + 1235*l);
+                                continue;
+                            }
+
+                            Vector2dd a =  element(k    , l    );
+                            Vector2dd e2 = element(k + 1, l    ) - a;
+                            Vector2dd e1 = element(k     , l + 1) - a;
+
+                            Matrix22 m(e1.x(), e2.x(),
+                                       e1.y(), e2.y());
+
+                             Vector2dd inv = m.inverted() * (point - a);
+
+                             inv *= GRID_STEP;
+                             inv += Vector2dd(l * GRID_STEP , k * GRID_STEP );
+
+                            // consider the sign of |e3 x A| to understand where is the point
+                            Vector2dd e3 = element(k+1, l) - element(k, l+1);
+                            Vector2dd A = point - element(k, l+1);
+
+                            // if point lies in lower triangle
+                            if (e3.x()*A.y() - e3.y()*A.x() < 0)
+                            {
+                                // rearrange our basis to match this triangle
+                                a  = element(k+1, l+1);
+                                e2 = element(k, l+1) - a;
+                                e1 = element(k+1, l) - a;
+
+                                m = Matrix22(e1.x(), e2.x(),
+                                             e1.y(), e2.y());
+
+                                inv = m.inverted() * (point - a);
+                                // we actually have to reverse the picture
+                                inv *= -GRID_STEP;
+                                inv += Vector2dd((l+1) * GRID_STEP , (k+1) * GRID_STEP );
+
+
+                            }
+                            if (in->isValidCoordBl(inv))
+                            {
+                                out->element(i, j) = in->elementBl(inv);
+                            }
+                        }
+                    }
+
+                }
+                count++;
+                SYNC_PRINT(("\r%d", count));
+
+        }});
+        SYNC_PRINT(("\n"));
+    }
+
+    void FasterGridWarp();
 };
 
 
@@ -139,7 +209,7 @@ int main(int argc, char *argv[])
     SYNC_PRINT(("Grid size %d x %d\n", gridH, gridW));
 
     Grid startGrid = Grid::TrivialGrid(gridH , gridW);
-    startGrid.drawGrid(in);
+    //startGrid.drawGrid(in);
 
     RGB24Buffer *gridDebug = new RGB24Buffer(in->getSize());
     Grid grid = Grid::TestGrid(gridH , gridW);
@@ -148,81 +218,18 @@ int main(int argc, char *argv[])
     RGB24Buffer *out = new RGB24Buffer(in->getSize());
     RGB24Buffer *grid1Debug = new RGB24Buffer(in->getSize());
 
-    int count = 0;
-    SYNC_PRINT(("Running:\n"));
-    parallelable_for( 0, out->h, [&](const BlockedRange<int> &r) {
-        for (int i = r.begin(); i < r.end(); i++)
-        {
-            for (int j = 0; j < out->w; j++)
-            {
-                Vector2dd point(j,i);
+    grid.SlowGridWarp(in, out);
 
-                for (int k = 0; k < grid.h - 1; k++)
-                {
-                    for (int l = 0; l < grid.w - 1; l++)
-                    {
-                        Polygon p = grid.getPolygon(k,l);
-                        if (!p.isInside(point))
-                        {
-                            grid1Debug->element(i,j) = RGBColor::getParulaColor(13*k + 1235*l);
-                            continue;
-                        }
-
-                        Vector2dd a =  grid.element(k    , l    );
-                        Vector2dd e2 = grid.element(k + 1, l    ) - a;
-                        Vector2dd e1 = grid.element(k     , l + 1) - a;
-
-                        Matrix22 m(e1.x(), e2.x(),
-                                   e1.y(), e2.y());
-
-                         Vector2dd inv = m.inverted() * (point - a);
-
-                         inv *= GRID_STEP;
-                         inv += Vector2dd(l * GRID_STEP , k * GRID_STEP );
-
-                        // consider the sign of |e3 x A| to understand where is the point
-                        Vector2dd e3 = grid.element(k+1, l) - grid.element(k, l+1);
-                        Vector2dd A = point - grid.element(k, l+1);
-
-                        // if point lies in lower triangle
-                        if (e3.x()*A.y() - e3.y()*A.x() < 0)
-                        {
-                            // rearrange our basis to match this triangle
-                            a  = grid.element(k+1, l+1);
-                            e2 = grid.element(k, l+1) - a;
-                            e1 = grid.element(k+1, l) - a;
-
-                            m = Matrix22(e1.x(), e2.x(),
-                                         e1.y(), e2.y());
-
-                            inv = m.inverted() * (point - a);
-                            // we actually have to reverse the picture
-                            inv *= -GRID_STEP;
-                            inv += Vector2dd((l+1) * GRID_STEP , (k+1) * GRID_STEP );
-
-
-                        }
-                        if (in->isValidCoordBl(inv))
-                        {
-                            out->element(i, j) = in->elementBl(inv);
-                        }
-
-
-                    }
-                }
-
-            }
-            count++;
-            SYNC_PRINT(("\r%d", count));
-
-    }});
-    SYNC_PRINT(("\n"));
+    // Пройти по всей сетке и пометить один раз все пиксели
+    // на принадлежность той или иной ячейке (в худшем случае
+    // видимо каждый пиксель может принадлежать нескольким ячейкам если он на границе).
+    // И потом тогда финишный проход вообще не потребует поиска.
 
 
 
     BufferFactory::getInstance()->saveRGB24Bitmap(in         , "input.png");
     BufferFactory::getInstance()->saveRGB24Bitmap(gridDebug  , "grid.png");
-    BufferFactory::getInstance()->saveRGB24Bitmap(grid1Debug , "grid1.png");
+    //BufferFactory::getInstance()->saveRGB24Bitmap(grid1Debug , "grid1.png");
     BufferFactory::getInstance()->saveRGB24Bitmap(out        , "out.png");
 
 
