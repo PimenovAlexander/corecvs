@@ -14,6 +14,12 @@ endif()
 
 add_executable(${NAME} ${SRC_FILES})
 
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND cp ${PROJECT_BINARY_DIR}/${PROJECT_NAME}  ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Copying ${PROJECT_NAME} to binary directory"
+        )
+
 if(AVCODEC_LIBS) 
     target_link_libraries(${NAME} ${AVCODEC_LIBS})
 endif()

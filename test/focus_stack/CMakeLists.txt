@@ -1,6 +1,6 @@
 project (FocusStack)
 
-set (FOCUS_STACK_NAME focus_stack )
+set (NAME focus_stack )
 
 set (SRC_FILES
     imageStack.cpp 
@@ -23,7 +23,14 @@ if (JPEG_LIB)
 endif()
 
 
-add_executable(${FOCUS_STACK_NAME} ${SRC_FILES} ${HDR_FILES})
+add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
+
+add_custom_command(TARGET ${NAME} POST_BUILD
+        COMMAND cp ${PROJECT_BINARY_DIR}/${NAME}  ${CMAKE_BINARY_DIR}/bin/${NAME}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Copying ${NAME} to binary directory"
+        )
+
 include_directories(${INC_PATHS})
 
-target_link_libraries(${FOCUS_STACK_NAME} ${LIBS} stdc++fs corecvs)
+target_link_libraries(${NAME} ${LIBS} stdc++fs corecvs)

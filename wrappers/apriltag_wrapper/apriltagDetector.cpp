@@ -123,6 +123,7 @@ void ApriltagDetector::getOutput(vector<corecvs::PatternDetectorResult> &pattern
 
     }
 
+    delete_safe(at_detections);
     Statistics::endInterval(stats, "Getting output");
 }
 
@@ -171,6 +172,7 @@ bool ApriltagDetector::apriltag_destroy() {
 
     delete_safe(debugBuffer);
     delete_safe(gray);
+    delete_safe(at_detections);
     return true;
 }
 
@@ -206,6 +208,15 @@ bool ApriltagDetector::apriltag_create() {
     td->quad_sigma    = params.blur();
     td->refine_edges  = params.at_refine_edges();
     td->nthreads      = params.at_threads();
+    td->decode_sharpening = params.decode_sharpening();
+
+//    td->qtp.cos_critical_rad      = params.cos_critical_rad();
+//    td->qtp.critical_rad          = params.critical_rad();
+    td->qtp.deglitch              = params.deglitch();
+    td->qtp.max_line_fit_mse      = params.max_line_fit_mse();
+    td->qtp.max_nmaxima           = params.max_nmaxima();
+    td->qtp.min_cluster_pixels    = params.min_cluster_pixels();
+    td->qtp.min_white_black_diff  = params.min_white_black_diff();
 
     return true;
 }

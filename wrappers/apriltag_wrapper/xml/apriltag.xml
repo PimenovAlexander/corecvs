@@ -8,18 +8,31 @@
       <item name="tagCustom48h12"   id="5" comment=""/>
       <item name="tagStandard41h12" id="6" comment=""/>
       <item name="tagStandard52h13" id="7" comment=""/>
-  <enum >
+  </enum >
+<!--  <class name="ApriltagQtp">-->
+
+<!--  </class>-->
 
   <class name="Apriltag Parameters">
     <!-- <field type="string" name="tag_family"      defaultValue="tag36h11"> -->
-    <field type="AprilTagType" name="tag_family"      defaultValue="2">
-    <field type="int"          name="at_threads"      defaultValue="1">
-    <field type="bool"         name="at_debug"        defaultValue="true">    
-    <field type="bool"         name="at_quiet"        defaultValue="false">
-    <field type="bool"         name="at_refine_edges" defaultValue="true">
-    <field type="double"       name="at_decimate"     defaultValue="2.0">
-    <field type="double"       name="blur"            defaultValue="0.0">
-    <field type="bool"         name="trace"           defaultValue="false">
+    <field type="AprilTagType" name="tag_family"        defaultValue="2"/>
+    <field type="int"          name="at_threads"        defaultValue="1"/>
+    <field type="bool"         name="at_debug"          defaultValue="true"/>
+    <field type="bool"         name="at_quiet"          defaultValue="false"/>
+    <field type="bool"         name="at_refine_edges"   defaultValue="true"/>
+    <field type="double"       name="at_decimate"       defaultValue="2.0"/>
+    <field type="double"       name="blur"              defaultValue="0.0"/>
+    <field type="double"       name="decode_sharpening" default_name="0.25"/>
+    <field type="bool"         name="trace"             defaultValue="false"/>
+<!--    QTP Parameters-->
+    <field type="int"        name="min_cluster_pixels"    defaultValue="5"/>
+    <field type="int"        name="max_nmaxima"           defaultValue="10"/>
+<!--    <field type="double"     name="critical_rad"          defaultValue=""/>-->
+<!--    <field type="double"     name="cos_critical_rad"      defaultValue="cos(10 * M_PI / 180)"/>-->
+    <field type="double"     name="max_line_fit_mse"      defaultValue="10.0"/>
+    <field type="int"        name="min_white_black_diff"  defaultValue="5"/>
+    <field type="int"        name="deglitch"              defaultValue="0"/>
 
   </class>
+
 </poco>

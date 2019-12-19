@@ -18,6 +18,13 @@ if (JPEG_LIB)
 endif()
 
 add_executable(${FILELOADER_NAME} ${SRC_FILES} ${HDR_FILES})
+
+add_custom_command(TARGET ${FILELOADER_NAME} POST_BUILD
+        COMMAND cp ${PROJECT_BINARY_DIR}/${FILELOADER_NAME}  ${CMAKE_BINARY_DIR}/bin/${FILELOADER_NAME}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Copying ${FILELOADER_NAME} to binary directory"
+        )
+
 include_directories(${INC_PATHS})
 
 
