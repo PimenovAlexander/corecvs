@@ -25,13 +25,28 @@ public:
             : coeff(coeff)
             , powers(powers) {};
 
+    explicit Monom(const C& coeff)
+            : Monom(coeff, std::vector<P>{}) {}
+
     Monom(const C& coeff, const std::initializer_list<P>& powers)
             : coeff(coeff)
             , powers(powers) {};
 
     bool isZero() const { return abs(coeff) < PRECISION; };
 
-    bool isSimilarTo(const Monom& that) const { return powers == that.powers; };
+    bool isSimilarTo(const Monom& that) const {
+        if (std::abs(coeff) < Monom<C, P>::PRECISION && std::abs(that.coeff) < Monom<C, P>::PRECISION)
+            return true;
+        // drop following nulls
+        auto lhs_end_ind = std::distance(
+                std::find_if(powers.rbegin(), powers.rend(), [](const P& it) { return it != 0; }), powers.rend());
+        auto rhs_end_ind = std::distance(
+                std::find_if(that.powers.rbegin(), that.powers.rend(), [](const P& it) { return it != 0; }),
+                that.powers.rend());
+
+        return lhs_end_ind == rhs_end_ind &&
+               std::equal(powers.begin(), powers.begin() + lhs_end_ind, that.powers.begin());
+    };
 
     // adds similar monoms only!
     Monom& operator+=(const Monom& that) {
@@ -85,6 +100,8 @@ public:
     /* format example: '3x1^2*x3' for coeff = 3, powers == [2,0,1] */
     template<typename C1, typename P1>
     friend std::ostream& operator<<(std::ostream& os, const Monom<C1, P1>& monom);
+    template<typename T>
+    friend struct std::hash;
 
 private:
     C coeff;
@@ -115,22 +132,9 @@ Monom<C, P> operator/(Monom<C, P> lhs, const Monom<C, P>& rhs) { return lhs /= r
 
 template<typename C, typename P>
 bool operator==(const Monom<C, P>& lhs, const Monom<C, P>& rhs) {
-    // unequal coefficients
     if (std::abs(lhs.getCoeff() - rhs.getCoeff()) >= Monom<C, P>::PRECISION)
         return false;
-    // both are zero
-    if (std::abs(lhs.getCoeff()) < Monom<C, P>::PRECISION)
-        return true;
-    // drop trailing nulls
-    auto lhs_end_ind = std::distance(
-            std::find_if(lhs.getPowers().rbegin(), lhs.getPowers().rend(), [](const P& it) { return it != 0; }),
-            lhs.getPowers().rend());
-    auto rhs_end_ind = std::distance(
-            std::find_if(rhs.getPowers().rbegin(), rhs.getPowers().rend(), [](const P& it) { return it != 0; }),
-            rhs.getPowers().rend());
-
-    return lhs_end_ind == rhs_end_ind &&
-           std::equal(lhs.getPowers().begin(), lhs.getPowers().begin() + lhs_end_ind, rhs.getPowers().begin());
+    return lhs.isSimilarTo(rhs);
 }
 
 template<typename C, typename P>
@@ -174,7 +178,7 @@ Monom<C, P> lcm(const Monom<C, P>& lhs, const Monom<C, P>& rhs) {
 }
 
 template<typename C, typename P>
-Monom<C, P> areRelativePrimes(const Monom<C, P>& lhs, const Monom<C, P>& rhs) {
+bool areRelativePrimes(const Monom<C, P>& lhs, const Monom<C, P>& rhs) {
     return lcm(lhs, rhs) == lhs * rhs;
 }
 
@@ -186,11 +190,18 @@ namespace std
 template<typename C, typename P>
 struct hash<corecvs::Monom<C, P>>
 {
-    std::size_t operator()(const corecvs::Monom<C, P>& m) const noexcept {
-        size_t res = 17;
-        res = res * 31 + hash<C>()(m.getCoeff());
-        res = res * 31 + hash<vector<P>>()(m.getPowers());
-        return res;
+    size_t operator()(const corecvs::Monom<C, P>& m) const noexcept {
+        size_t h = 17;
+        const hash<P> pHash;
+        h = (h + hash<long long int>()(static_cast<long long int>(m.getCoeff()))) * 31 % 10000019;
+        if (m.isZero())
+            return h;
+        // drop following nulls
+        auto end_ind = std::distance(
+                std::find_if(m.powers.rbegin(), m.powers.rend(), [](const P& it) { return it != 0; }), m.powers.rend());
+        for (auto i = m.powers.begin(), lst = i + end_ind; i < lst; ++i)
+            h = (h + pHash(*i)) * 31 % 10000019;
+        return h;
     };
 };
 

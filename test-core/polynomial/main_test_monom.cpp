@@ -49,8 +49,9 @@ TEST(MonomTests, testAddition) {
         ASSERT_TRUE(arg1.isSimilarTo(arg2) && arg2.isSimilarTo(arg1));
         ASSERT_EQ(arg1 + arg2, res);
         ASSERT_EQ(arg2 + arg1, res);
+        Monom_ tmp{arg1};
         ASSERT_EQ(arg1 += arg2, res);
-        ASSERT_EQ(arg2 += arg1, res);
+        ASSERT_EQ(arg2 += tmp, res);
     };
 
     test(zero, zero, zero);
@@ -66,9 +67,10 @@ TEST(MonomTests, testSubtraction) {
     const auto test = [](Monom_ arg1, Monom_ arg2, const Monom_& res) {
         ASSERT_TRUE(arg1.isSimilarTo(arg2) && arg2.isSimilarTo(arg1));
         ASSERT_EQ(arg1 - arg2, res);
-        ASSERT_EQ(arg2 - arg1, res);
+        ASSERT_EQ(arg2 - arg1, (-1) * res);
+        Monom_ tmp{arg1};
         ASSERT_EQ(arg1 -= arg2, res);
-        ASSERT_EQ(arg2 -= arg1, res);
+        ASSERT_EQ(arg2 -= tmp, (-1) * res);
     };
 
     test(zero, zero, zero);
@@ -85,8 +87,9 @@ TEST(MonomTests, testMultiplication) {
     const auto test = [](Monom_ arg1, Monom_ arg2, const Monom_& res) {
         ASSERT_EQ(arg1 * arg2, res);
         ASSERT_EQ(arg2 * arg1, res);
+        Monom_ tmp{arg1};
         ASSERT_EQ(arg1 *= arg2, res);
-        ASSERT_EQ(arg2 *= arg1, res);
+        ASSERT_EQ(arg2 *= tmp, res);
     };
 
     test(zero, zero, zero);

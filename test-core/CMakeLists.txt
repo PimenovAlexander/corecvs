@@ -77,6 +77,7 @@ set (CORE_TEST_SOURCES
     conic/main_test_conic.cpp
 #    calstructs/main_test_calstructs.cpp
     polynomial/main_test_polynomial.cpp
+    polynomial/main_test_basis.cpp
     polynomial/main_test_monom.cpp
     polynomial/main_test_polynom.cpp
     meshdraw/main_test_meshdraw.cpp
