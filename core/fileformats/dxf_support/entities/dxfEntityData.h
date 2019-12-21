@@ -53,7 +53,7 @@ public:
 class DxfVertexData : public DxfEntityData {
 public:
     DxfVertexData(const DxfEntityData &data, Vector3dd location, double bulge)
-            : DxfEntityData(data), location(location), bulge(bulge) {}
+    : DxfEntityData(data), location(location), bulge(bulge) {}
 
     Vector3dd location;
     double bulge;
