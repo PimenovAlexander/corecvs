@@ -14,8 +14,6 @@ namespace corecvs {
 
 class IDxfBuilder {
 public:
-    virtual ~IDxfBuilder() = default;
-
     // Variables
     virtual void setIntVariable(int code, std::string const &name, int value) {}
     virtual void setDoubleVariable(int code, std::string const &name, double value) {}

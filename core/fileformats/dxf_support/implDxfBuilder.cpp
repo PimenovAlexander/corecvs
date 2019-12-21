@@ -12,13 +12,10 @@ namespace corecvs {
 // Variables
 void ImplDxfBuilder::setIntVariable(int code, std::string const &name, int value) {
 //    std::cout << "Int Variable: " << name << " (code: " << code << ", value: " << value << ") is set" << std::endl;
-    if (name == "$LUNITS") attrs.setUnits(DxfCodes::getDrawingUnits(value));
-    if (name == "$PSLTSCALE") std::cout << name << ": " << value << std::endl;
 }
 
 void ImplDxfBuilder::setDoubleVariable(int code, std::string const &name, double value) {
 //    std::cout << "Double Variable: " << name << " (code: " << code << ", value: " << value << ") is set" << std::endl;
-    if (name == "$LTSCALE" || name == "$CELTSCALE" || name == "$DIMALTF" || name == "$DIMSCALE" || name == "$DIMLFAC") std::cout << name << ": " << value << std::endl;
 }
 
 void ImplDxfBuilder::setStringVariable(int code, std::string const &name, std::string const &value) {
@@ -27,7 +24,6 @@ void ImplDxfBuilder::setStringVariable(int code, std::string const &name, std::s
 
 void ImplDxfBuilder::set2DVectorVariable(int code, std::string const &name, double x, double y) {
 //    std::cout << "2D Vector Variable: " << name << " (code: " << code << ", value: " << x << "," << y << ") is set" << std::endl;
-    if (name == "$LIMMAX" || name == "$LIMMIN" || name == "$PLIMMAX" || name == "$PLIMMIN") std::cout << name << ": " << x << " " << y << std::endl;
 }
 
 void ImplDxfBuilder::set3DVectorVariable(int code, std::string const &name, double x, double y, double z) {
@@ -78,7 +74,7 @@ std::list<DxfEntity*> ImplDxfBuilder::prepareToDraw() {
     }
 
     attrs.setCorners(lowerLeftCorner, upperRightCorner);
-    attrs.setPaddings(80, 80, 80, 80);
+    attrs.setPaddings(110, 110, 110, 110);
     attrs.setScalingFactor(10.0);
 
     return result;
@@ -86,7 +82,7 @@ std::list<DxfEntity*> ImplDxfBuilder::prepareToDraw() {
 
 void ImplDxfBuilder::print() {
     for (DxfObject* object : objects) object->print();
-//    for (DxfEntity* entity : entities) entity->print();
+    for (DxfEntity* entity : entities) entity->print();
     std::cout << "Lower-left corner: " << lowerLeftCorner << std::endl;
     std::cout << "Upper-right corner: " << upperRightCorner << std::endl;
 }

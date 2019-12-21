@@ -36,6 +36,14 @@ public:
         recalculatePaperSpaceDimensions();
     }
 
+    void setClockwiseDirection(bool value) {
+        isClockwiseDirectionSet = value;
+    }
+
+    bool isClockwiseDirection() {
+        return isClockwiseDirectionSet;
+    }
+
     Vector2d<int> getPaperSpaceDimensions() {
         return Vector2d(width, height);
     }
@@ -84,6 +92,7 @@ public:
 private:
     DxfDrawingUnits units = DxfDrawingUnits::UNITLESS;
     double scalingFactor = 1.0;
+    bool isClockwiseDirectionSet = false;
     int width = 0;
     int height = 0;
     int paddingLeft = 0;

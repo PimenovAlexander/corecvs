@@ -235,7 +235,6 @@ void DxfLoader::addLwPolyline() {
 void DxfLoader::addPolyline() {
     polylineData->vertices = current3dVertices;
     dxfBuilder.addEntity(new DxfPolylineEntity(*polylineData));
-    current3dVertices.clear();
 }
 
 void DxfLoader::addCircle() {
@@ -297,7 +296,12 @@ void DxfLoader::handlePolyline() {
 }
 
 void DxfLoader::handleVertex() {
-    current3dVertices.emplace_back(Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)));
+    auto data = new DxfVertexData(
+            getEntityData(),
+            Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
+            getDoubleValue(DxfCodes::DXF_BULGE_CODE, 0)
+            );
+    current3dVertices.emplace_back(data);
 }
 
 void DxfLoader::handleVertexSequence() {

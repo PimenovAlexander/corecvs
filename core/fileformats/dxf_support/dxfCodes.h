@@ -40,6 +40,7 @@ public:
     static const int DXF_VARIABLE_CODE = 9;
     static const int DXF_THICKNESS_CODE = 39;
     static const int DXF_RADIUS_CODE = 40;
+    static const int DXF_BULGE_CODE = 42;
     static const int DXF_START_ANGLE_CODE = 50;
     static const int DXF_END_ANGLE_CODE = 51;
     static const int DXF_OBJECT_VISIBILITY_CODE = 60;
