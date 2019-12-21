@@ -12,7 +12,6 @@
 #include "physSphere.h"
 #include "physMainObject.h"
 #include "sceneShaded.h"
-#include "joystickInput.h"
 #include "dzhanibekovBolt.h"
 #include <testPhysicsObject.h>
 

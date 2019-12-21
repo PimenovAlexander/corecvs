@@ -48,7 +48,6 @@ target_sources(drone-core
         ${CMAKE_CURRENT_LIST_DIR}/opencvUtils/opencvTransformations.h
 
         ${CMAKE_CURRENT_LIST_DIR}/clientSender.h
-        ${CMAKE_CURRENT_LIST_DIR}/joystickInput.h
         ${CMAKE_CURRENT_LIST_DIR}/controlRecord.h
         ${CMAKE_CURRENT_LIST_DIR}/comcontroller.h
         ${CMAKE_CURRENT_LIST_DIR}/copterInputs.h
@@ -85,7 +84,6 @@ target_sources(drone-core
         ${CMAKE_CURRENT_LIST_DIR}/autopilot/vertexsquare.cpp
         ${CMAKE_CURRENT_LIST_DIR}/opencvUtils/opencvTransformations.cpp
 
-        ${CMAKE_CURRENT_LIST_DIR}/joystickInput.cpp
         ${CMAKE_CURRENT_LIST_DIR}/clientSender.cpp
         ${CMAKE_CURRENT_LIST_DIR}/controlRecord.cpp
         ${CMAKE_CURRENT_LIST_DIR}/copterInputs.cpp
@@ -93,7 +91,10 @@ target_sources(drone-core
         ${CMAKE_CURRENT_LIST_DIR}/joystick/joystickReader.cpp
 )
 
-
+set(ADD_SRC_FILES ${ADD_SRC_FILES}
+    ${CMAKE_CURRENT_LIST_DIR}/legacy/joystickInput.h
+    ${CMAKE_CURRENT_LIST_DIR}/legacy/joystickInput.cpp
+    )
 
 
 target_include_directories(drone-core PUBLIC

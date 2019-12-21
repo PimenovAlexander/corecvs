@@ -30,10 +30,6 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
     ui->comboBox->addItem("RT/LT Full mode");
     ui->comboBox->addItem("RT/LT Extream mode");
 
-
-    on_updateCameraButton_clicked();
-    //frameValuesUpdate();
-
     /*Camera*/
     mInputSelector.setInputString("v4l2:/dev/video0:1/30:mjpeg:800x600");
 
@@ -576,12 +572,6 @@ void PhysicsMainWindow::showStatistics()
 
 void PhysicsMainWindow::startSimuation()
 {
-    //mJoystickSettings.openJoystick();    //counterrevolution (when i will understand how it works, i will swich joystickInput to it
-    //joystick1.start();
-    if (joystick1.active)
-    {
-        currentSendMode=0;
-    }
 }
 
 void PhysicsMainWindow::frameValuesUpdate()
@@ -672,7 +662,6 @@ void PhysicsMainWindow::sendOurValues(std::vector<uint8_t> OurValues)
 
 void PhysicsMainWindow::startJoyStickMode()
 {
-    joystick1.start();
     currentSendMode=0;
     QTimer::singleShot(8, this, SLOT(keepAliveJoyStick()));
 
@@ -869,34 +858,6 @@ int PhysicsMainWindow::sign(int val)
     return result;
 }
 
-void PhysicsMainWindow::on_comboBox_currentTextChanged(const QString &arg1)                 //DO NOT TOUCH IT PLEASE
-{
-     if(arg1=="Usual mode")    //why qstring can not be in case?!
-    {
-        joystick1.setUsualCurrentMode();   //I dont want errors between qstring and string
-    }
-    if(arg1=="Inertia mode")
-    {
-        joystick1.setInertiaCurrentMode();
-    }
-    if(arg1=="Casual mode")
-    {
-        joystick1.setCasualCurrentMode();
-    }
-    if(arg1=="RT/LT Usual mode")
-    {
-        joystick1.setRTLTUsialMode();
-    }
-    if(arg1=="RT/LT Full mode")
-    {
-        joystick1.setRTLTFullMode();
-    }
-    if(arg1=="RT/LT Extream mode")
-    {
-        joystick1.setRTLTExtreamMode();
-    }
- }
-
 void PhysicsMainWindow::updateUi()
 {
     uiMutex.lock();
@@ -946,15 +907,6 @@ void PhysicsMainWindow::updateUi()
 }
 
 
-void PhysicsMainWindow::on_updateCameraButton_clicked()
-{
-
-    QDir DevDir("/dev","video*",QDir::Name,QDir::System);
-    ui->comboBox_2->clear();
-    ui->comboBox_2->addItems(DevDir.entryList());
-
-}
-
 void PhysicsMainWindow::on_comboBox_2_currentTextChanged(const QString &arg1)
 {
     inputCameraPath="v4l2:/dev/"+arg1.toStdString()+":mjpeg";
@@ -982,10 +934,6 @@ void PhysicsMainWindow::on_connetToVirtualButton_released()
     }
 }
 
-void PhysicsMainWindow::on_JoyButton_released()
-{
-    startJoyStickMode();
-}
 
 void PhysicsMainWindow::on_toolButton_3_released()
 {

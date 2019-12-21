@@ -36,7 +36,6 @@
 
 
 #include "controlRecord.h"
-#include "joystickInput.h"
 #include "simulation.h"
 #include "core/geometry/mesh3DDecorated.h"
 #include "mesh3DScene.h"
@@ -214,11 +213,8 @@ private slots:
 
 
     /* This is just terrible */
-    void on_comboBox_currentTextChanged(const QString &arg1);
-    void on_updateCameraButton_clicked();
     void on_comboBox_2_currentTextChanged(const QString &arg1);
     void on_connetToVirtualButton_released();
-    void on_JoyButton_released();
     void on_toolButton_3_released();
     void on_toolButton_2_released();
     void on_pushButton_released();
@@ -242,8 +238,6 @@ private:
     CopterInputs copterInputs;
     int currentSendMode=-1;                                                //tumbler beetwen joystick and autopilot (0- js, 1-autoP)
     int frameCounter=0;                                                    //we need it in the timer
-    /** Replace this with mixer **/
-    JoyStickInput joystick1 ;
 
     MultimoduleController multimoduleController;
     CopterInputs joyStickOutput;                                  //for joystickValues
