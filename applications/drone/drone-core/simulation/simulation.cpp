@@ -142,7 +142,7 @@ void Simulation::execTestPhysObject()
 {
     std::thread thr([this]()
     {
-        srand(NULL);
+        srand(NULL); /*< What is this??? */
         //noiseTime = startTime;
         //noiseReverseTime = startTime;
 

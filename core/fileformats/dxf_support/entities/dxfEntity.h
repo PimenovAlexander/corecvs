@@ -21,9 +21,12 @@ public:
 
     virtual ~DxfEntity() { delete &data; }
 
-    virtual void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {}
+    virtual void draw(RGB24Buffer * /*buffer*/, DxfDrawingAttrs */*attrs*/) {}
     virtual void print();
-    virtual std::pair<Vector2dd,Vector2dd> getBoundingBox() {}
+    virtual std::pair<Vector2dd,Vector2dd> getBoundingBox()
+    {
+        return std::pair<Vector2dd, Vector2dd>();
+    }
 
     DxfEntityData &data;
 };

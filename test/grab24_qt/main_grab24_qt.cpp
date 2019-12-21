@@ -119,7 +119,9 @@ void FrameProcessor::processFrame(ImageCaptureInterface::FrameMetadata /*frameDa
     pair.freeBuffers();
 
 //    BMPLoader().save("cap.bmp", result);
-    widget->setImage(QSharedPointer<QImage>(new RGB24Image(result)));
+    if (result != NULL) {
+        widget->setImage(QSharedPointer<QImage>(new RGB24Image(result)));
+    }
     delete_safe(result);
 }
 
