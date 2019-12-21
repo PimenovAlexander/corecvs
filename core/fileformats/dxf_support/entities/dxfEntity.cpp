@@ -46,7 +46,10 @@ void DxfPolylineEntity::print() {
     std::cout << "Thickness: " << data.thickness << std::endl;
     std::cout << "Vertex amount: " << data.vertices.size() << std::endl;
     int i = 1;
-    for (Vector3d vertex : data.vertices) std::cout << "Vertex " << i++ << ": " << vertex.x() << " " << vertex.y() << " " << vertex.z() << std::endl;
+    for (DxfVertexData* vertex : data.vertices) {
+        std::cout << "Vertex " << i++ << ": " << vertex->location.x() << " " << vertex->location.y() << " " << vertex->location.z() << std::endl;
+        std::cout << "+-->Bulge: " << vertex->bulge << std::endl;
+    }
     std::cout << std::endl;
 }
 
@@ -87,6 +90,14 @@ void DxfPointEntity::print() {
     std::cout << std::endl;
 }
 
+//void DxfVertexEntity::print() {
+//    std::cout << "* * * Vertex Entity * * *" << std::endl;
+//    DxfEntity::print();
+//    std::cout << "Location: " << data.location << std::endl;
+//    std::cout << "Bulge: " << data.bulge << std::endl;
+//    std::cout << std::endl;
+//}
+
 // Drawing
 void DxfLineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
     auto startPoint = attrs->getDrawingValues(data.startPoint.x(), data.startPoint.y());
@@ -116,18 +127,45 @@ void DxfLwPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
 void DxfPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
     int vertexNumber = data.vertices.size();
     if (vertexNumber > 1) {
-        for (unsigned long i = 0; i < vertexNumber - 1; i++) {
-            auto startVertex = attrs->getDrawingValues(data.vertices[i].x(), data.vertices[i].y());
-            auto endVertex = attrs->getDrawingValues(data.vertices[i+1].x(), data.vertices[i+1].y());
-            buffer->drawLine(startVertex.x(), startVertex.y(), endVertex.x(), endVertex.y(), data.rgbColor);
-        }
-        if (data.isClosed) {
-            auto startVertex = attrs->getDrawingValues(data.vertices[0].x(), data.vertices[0].y());
-            auto endVertex = attrs->getDrawingValues(data.vertices[vertexNumber-1].x(), data.vertices[vertexNumber-1].y());
-            buffer->drawLine(startVertex.x(), startVertex.y(), endVertex.x(), endVertex.y(), data.rgbColor);
+        for (unsigned long i = 0; i < vertexNumber - !data.isClosed; i++) {
+            auto startPoint = Vector2dd(data.vertices[i % vertexNumber]->location.x(), data.vertices[i % vertexNumber]->location.y());
+            auto endPoint = Vector2dd(data.vertices[(i+1) % vertexNumber]->location.x(), data.vertices[(i+1) % vertexNumber]->location.y());
+            auto bulge = data.vertices[i % vertexNumber]->bulge;
+
+            if (bulge == 0) {
+                startPoint = attrs->getDrawingValues(startPoint);
+                endPoint = attrs->getDrawingValues(endPoint);
+                buffer->drawLine(startPoint, endPoint, data.rgbColor);
+            } else {
+                auto delta = startPoint - endPoint;
+                auto chordLength = std::sqrt(delta.x() * delta.x() + delta.y() * delta.y());
+                auto radius = chordLength / 4 * (1 / std::abs(bulge) + std::abs(bulge));
+                auto mediumPoint = (startPoint + endPoint) / 2;
+                auto apothemLength = std::sqrt(radius * radius - (chordLength / 2) * (chordLength / 2));
+                auto startEndPointAngle = std::atan(delta.y() / delta.x());
+                if (delta.x() < 0) startEndPointAngle += M_PI;
+                auto centerPoint = mediumPoint + apothemLength * (
+                        bulge < 0
+                        ? Vector2dd(std::cos(startEndPointAngle + M_PI / 2), std::sin(startEndPointAngle + M_PI / 2))
+                        : Vector2dd(std::cos(startEndPointAngle - M_PI / 2), std::sin(startEndPointAngle - M_PI / 2))
+                        );
+
+                auto startAngle = std::atan((startPoint.y() - centerPoint.y()) / (startPoint.x() - centerPoint.x()));
+                if (startPoint.x() - centerPoint.x() < 0) startAngle += M_PI;
+                auto endAngle = std::atan((endPoint.y() - centerPoint.y()) / (endPoint.x() - centerPoint.x()));
+                if (endPoint.x() - centerPoint.x() < 0) endAngle += M_PI;
+
+                auto circularArcData = new DxfCircularArcData(data, Vector3dd(centerPoint.x(), centerPoint.y(), 0), radius, data.thickness, radToDeg(startAngle), radToDeg(endAngle));
+                auto circularArc = new DxfCircularArcEntity(*circularArcData);
+
+                auto wasClockwiseDirection = attrs->isClockwiseDirection();
+                attrs->setClockwiseDirection(bulge < 0);
+                circularArc->draw(buffer, attrs);
+                attrs->setClockwiseDirection(wasClockwiseDirection);
+            }
         }
     } else if (vertexNumber == 1) {
-        auto point = attrs->getDrawingValues(data.vertices[0].x(), data.vertices[0].y());
+        auto point = attrs->getDrawingValues(data.vertices[0]->location.x(), data.vertices[0]->location.y());
         buffer->drawPixel(point, data.rgbColor);
     }
 }
@@ -139,50 +177,46 @@ void DxfCircleEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::Dx
 }
 
 void DxfCircularArcEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::DxfDrawingAttrs *attrs) {
-    auto center = Vector2dd(data.center.x(), data.center.y());
+    auto centerPoint = Vector2dd(data.center.x(), data.center.y());
     auto startAngle = degToRad(data.startAngle);
     auto endAngle = degToRad(data.endAngle);
-    while (endAngle < startAngle) endAngle += 2 * M_PI;
 
     // divide arc into 1 or 2 segments
-    std::vector<Vector2dd> controlAngles = {Vector2dd(startAngle, std::min(endAngle, startAngle + M_PI - 0.00001))};
-    if (endAngle - startAngle > M_PI) controlAngles.emplace_back(Vector2dd(startAngle + M_PI, endAngle));
+    std::vector<Vector2dd> controlAngles;
+    if (attrs->isClockwiseDirection()) {
+        while (endAngle > startAngle) endAngle -= 2 * M_PI;
+        controlAngles.emplace_back(Vector2dd(startAngle, std::max(endAngle, startAngle - M_PI + 0.00001)));
+        if (startAngle - endAngle > M_PI) controlAngles.emplace_back(Vector2dd(startAngle - M_PI, endAngle));
+    } else {
+        while (endAngle < startAngle) endAngle += 2 * M_PI;
+        controlAngles.emplace_back(Vector2dd(startAngle, std::min(endAngle, startAngle + M_PI - 0.00001)));
+        if (endAngle - startAngle > M_PI) controlAngles.emplace_back(Vector2dd(startAngle + M_PI, endAngle));
+    }
 
     // draw 1 or 2 segments
-    for (Vector2dd eta : controlAngles) {
-        auto eta1 = eta.x();
-        auto eta2 = eta.y();
+    for (Vector2dd alpha : controlAngles) {
+        auto a = Vector2dd(std::cos(alpha.x()), std::sin(alpha.x())) * data.radius;
+        auto b = Vector2dd(std::cos(alpha.y()), std::sin(alpha.y())) * data.radius;
+        auto r = std::sqrt(a.x() * a.x() + a.y() * a.y());
+        auto d = std::sqrt((a.x() + b.x()) * (a.x() + b.x()) + (a.y() + b.y()) * (a.y() + b.y()));
+        double k = std::abs(b.y() - a.y()) > M_E
+                ? (a.x() + b.x()) * (r / d - 0.5) * 8.0 / 3.0 / (b.y() - a.y())
+                : (a.y() + b.y()) * (r / d - 0.5) * 8.0 / 3.0 / (a.x() - b.x());
 
-        auto ax = data.radius * std::cos(eta1);
-        auto ay = data.radius * std::sin(eta1);
-        auto bx = data.radius * std::cos(eta2);
-        auto by = data.radius * std::sin(eta2);
+        auto startPoint = centerPoint + a;
+        auto endPoint = centerPoint + b;
 
-        // start point
-        auto point1 = Vector2dd(center.x() + ax, center.y() + ay);
+        auto secondPoint = startPoint + Vector2dd(-a.y(), a.x()) * k;
+        auto thirdPoint = endPoint + Vector2dd(b.y(), -b.x()) * k;
 
-        // end point
-        auto point4 = Vector2dd(center.x() + bx, center.y() + by);
+        startPoint = attrs->getDrawingValues(startPoint);
+        secondPoint = attrs->getDrawingValues(secondPoint);
+        thirdPoint = attrs->getDrawingValues(thirdPoint);
+        endPoint = attrs->getDrawingValues(endPoint);
 
-        auto r = std::sqrt(ax * ax + ay * ay);
-        auto d = std::sqrt((ax + bx) * (ax + bx) + (ay + by) * (ay + by));
-        double k = std::abs(by - ay) > M_E
-                ? (ax + bx) * (r / d - 0.5) * 8.0 / 3.0 / (by - ay)
-                : (ay + by) * (r / d - 0.5) * 8.0 / 3.0 / (ax - bx);
-
-        // intermediate points
-        auto point2 = Vector2dd(point1.x() - k * ay, point1.y() + k * ax);
-        auto point3 = Vector2dd(point4.x() + k * by, point4.y() - k * bx);
-
-        point1 = attrs->getDrawingValues(point1);
-        point2 = attrs->getDrawingValues(point2);
-        point3 = attrs->getDrawingValues(point3);
-        point4 = attrs->getDrawingValues(point4);
-
-        auto curve = Curve({point1, point2, point3, point4});
         WuRasterizer rast = WuRasterizer();
         BezierRasterizer<RGB24Buffer, WuRasterizer> bezier(*buffer, rast, data.rgbColor);
-        bezier.cubicBezierCasteljauApproximationByFlatness(curve);
+        bezier.cubicBezierCasteljauApproximationByFlatness(Curve({startPoint, secondPoint, thirdPoint, endPoint}));
     }
 }
 
@@ -260,6 +294,11 @@ void DxfPointEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::Dxf
     }
 }
 
+//void DxfVertexEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::DxfDrawingAttrs *attrs) {
+//    auto center = attrs->getDrawingValues(data.location.x(), data.location.y());
+//    // TODO: add drawing
+//}
+
 // Bounding box getting
 std::pair<Vector2dd,Vector2dd> DxfLineEntity::getBoundingBox() {
     auto lowerLeftCorner = Vector2dd(std::min(data.startPoint.x(), data.endPoint.x()), std::min(data.startPoint.y(), data.endPoint.y()));
@@ -285,11 +324,11 @@ std::pair<Vector2dd,Vector2dd> DxfLwPolylineEntity::getBoundingBox() {
 
 std::pair<Vector2dd,Vector2dd> DxfPolylineEntity::getBoundingBox() {
     if (!data.vertices.empty()) {
-        auto lowerLeftCorner = Vector2dd(data.vertices[0].x(), data.vertices[0].y());
+        auto lowerLeftCorner = Vector2dd(data.vertices[0]->location.x(), data.vertices[0]->location.y());
         auto upperRightCorner = lowerLeftCorner;
         for (int i = 1; i < data.vertices.size(); i++) {
-            auto x = data.vertices[i].x();
-            auto y = data.vertices[i].y();
+            auto x = data.vertices[i]->location.x();
+            auto y = data.vertices[i]->location.y();
             if (x < lowerLeftCorner.x()) lowerLeftCorner.x() = x;
             else if (x > upperRightCorner.x()) upperRightCorner.x() = x;
             if (y < lowerLeftCorner.y()) lowerLeftCorner.y() = y;
@@ -323,5 +362,11 @@ std::pair<Vector2dd,Vector2dd> DxfPointEntity::getBoundingBox() {
     auto upperRightCorner = lowerLeftCorner;
     return std::make_pair(lowerLeftCorner, upperRightCorner);
 }
+
+//std::pair<Vector2dd,Vector2dd> DxfVertexEntity::getBoundingBox() {
+//    auto lowerLeftCorner = Vector2dd(data.location.x(), data.location.y());
+//    auto upperRightCorner = lowerLeftCorner;
+//    return std::make_pair(lowerLeftCorner, upperRightCorner);
+//}
 
 } // namespace corecvs

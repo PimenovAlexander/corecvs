@@ -133,6 +133,21 @@ public:
     DxfPointData &data;
 };
 
+//// VERTEX Entity
+//class DxfVertexEntity : public DxfEntity {
+//public:
+//    explicit DxfVertexEntity(DxfVertexData &data)
+//    : DxfEntity(data), data(data) {}
+//
+//    ~DxfVertexEntity() override { delete &data; }
+//
+//    void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
+//    void print() override;
+//    std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
+//
+//    DxfVertexData &data;
+//};
+
 } // namespace corecvs
 
 #endif //DXF_SUPPORT_DXFENTITY_H

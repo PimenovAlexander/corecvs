@@ -78,7 +78,7 @@ std::list<DxfEntity*> ImplDxfBuilder::prepareToDraw() {
     }
 
     attrs.setCorners(lowerLeftCorner, upperRightCorner);
-    attrs.setPaddings(80, 80, 80, 80);
+    attrs.setPaddings(110, 110, 110, 110);
     attrs.setScalingFactor(10.0);
 
     return result;

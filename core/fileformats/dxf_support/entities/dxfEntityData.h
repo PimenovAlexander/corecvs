@@ -9,6 +9,7 @@
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/math/vector/vector2d.h"
 #include "core/math/vector/vector3d.h"
+#include "core/fileformats/dxf_support/entities/dxfEntity.h"
 
 namespace corecvs {
 
@@ -48,13 +49,23 @@ public:
     bool isClosed;
 };
 
+// VERTEX Data
+class DxfVertexData : public DxfEntityData {
+public:
+    DxfVertexData(const DxfEntityData &data, Vector3dd location, double bulge)
+            : DxfEntityData(data), location(location), bulge(bulge) {}
+
+    Vector3dd location;
+    double bulge;
+};
+
 // POLYLINE Data
 class DxfPolylineData : public DxfEntityData {
 public:
     DxfPolylineData(const DxfEntityData &data, double thickness, bool isClosed)
     : DxfEntityData(data), thickness(thickness), isClosed(isClosed) {}
 
-    std::vector<Vector3dd> vertices;
+    std::vector<DxfVertexData*> vertices;
     double thickness;
     bool isClosed;
 };
