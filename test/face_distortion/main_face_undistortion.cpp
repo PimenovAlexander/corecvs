@@ -21,7 +21,7 @@ using namespace corecvs;
 //https://people.csail.mit.edu/yichangshih/wide_angle_portrait/webpage/additional-results/97_TPE_2018_0322_IMG_20180322_120256_P000.jpg
 
 static const int GRID_STEP = 30;
-static const double f = 750;
+static const double f = 1200;
 
 class Grid : public AbstractBuffer<Vector2dd>
 {
@@ -175,7 +175,72 @@ public:
         SYNC_PRINT(("\n"));
     }
 
-    void FasterGridWarp();
+    // it's not great because pixels on the borderline are not handled properly
+    void FasterGridWarp(RGB24Buffer* in, RGB24Buffer* out)
+    {
+        int count = 0;
+        SYNC_PRINT(("Running:\n"));
+        parallelable_for( 1, h-1, [&](const BlockedRange<int> &r) {
+            for (int k = r.begin(); k < r.end(); k++)
+            {
+                for (int l = 1; l < w - 1; l++)
+                {
+                    for (int i = (k-1)*GRID_STEP; i <= k*GRID_STEP; i++)
+                    {
+                        for (int j = (l-1)*GRID_STEP; j <= l*GRID_STEP; j++)
+                        {
+                            Vector2dd point(j, i);
+
+                            Vector2dd a =  element(k    , l    );
+                            Vector2dd e2 = element(k + 1, l    ) - a;
+                            Vector2dd e1 = element(k     , l + 1) - a;
+
+                            Matrix22 m(e1.x(), e2.x(),
+                                       e1.y(), e2.y());
+
+                             Vector2dd inv = m.inverted() * (point - a);
+
+                             inv *= GRID_STEP;
+                             inv += Vector2dd(l * GRID_STEP , k * GRID_STEP );
+
+                            // consider the sign of |e3 x A| to understand where is the point
+                            Vector2dd e3 = element(k+1, l) - element(k, l+1);
+                            Vector2dd A = point - element(k, l+1);
+
+                            // if point lies in lower triangle
+                            if (e3.x()*A.y() - e3.y()*A.x() < 0)
+                            {
+                                // rearrange our basis to match this triangle
+                                a  = element(k+1, l+1);
+                                e2 = element(k, l+1) - a;
+                                e1 = element(k+1, l) - a;
+
+                                m = Matrix22(e1.x(), e2.x(),
+                                             e1.y(), e2.y());
+
+                                inv = m.inverted() * (point - a);
+                                // we actually have to reverse the picture
+                                inv *= -GRID_STEP;
+                                inv += Vector2dd((l+1) * GRID_STEP , (k+1) * GRID_STEP );
+
+
+                            }
+                            if (in->isValidCoordBl(inv))
+                            {
+                                out->element(i, j) = in->elementBl(inv);
+                            }
+                        }
+                    }
+                   \
+                }
+
+        }
+        count++;
+        SYNC_PRINT(("\r%d", count));
+    });
+
+    SYNC_PRINT(("\n"));
+    }
 };
 
 
@@ -209,16 +274,20 @@ int main(int argc, char *argv[])
     SYNC_PRINT(("Grid size %d x %d\n", gridH, gridW));
 
     Grid startGrid = Grid::TrivialGrid(gridH , gridW);
+    // UNCOMMENT to get grid on input/output image
     //startGrid.drawGrid(in);
 
     RGB24Buffer *gridDebug = new RGB24Buffer(in->getSize());
     Grid grid = Grid::TestGrid(gridH , gridW);
     grid.drawGrid(gridDebug);
 
-    RGB24Buffer *out = new RGB24Buffer(in->getSize());
+    RGB24Buffer *outSlow = new RGB24Buffer(in->getSize());
+    RGB24Buffer *outFast = new RGB24Buffer(in->getSize());
     RGB24Buffer *grid1Debug = new RGB24Buffer(in->getSize());
 
-    grid.SlowGridWarp(in, out);
+    grid.SlowGridWarp(in, outSlow);
+    grid.FasterGridWarp(in, outFast);
+
 
     // Пройти по всей сетке и пометить один раз все пиксели
     // на принадлежность той или иной ячейке (в худшем случае
@@ -230,7 +299,9 @@ int main(int argc, char *argv[])
     BufferFactory::getInstance()->saveRGB24Bitmap(in         , "input.png");
     BufferFactory::getInstance()->saveRGB24Bitmap(gridDebug  , "grid.png");
     //BufferFactory::getInstance()->saveRGB24Bitmap(grid1Debug , "grid1.png");
-    BufferFactory::getInstance()->saveRGB24Bitmap(out        , "out.png");
+    BufferFactory::getInstance()->saveRGB24Bitmap(outSlow        , "outSlow.png");
+    BufferFactory::getInstance()->saveRGB24Bitmap(outFast        , "outFast.png");
+
 
 
  return 0;
