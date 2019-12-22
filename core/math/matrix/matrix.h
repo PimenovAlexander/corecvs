@@ -330,7 +330,7 @@ public:
 #ifdef WITH_BLAS
     static Matrix multiplyBlas(const Matrix &A, const Matrix &B);
 #endif
-
+    static Matrix multiplyMine(const Matrix &A, const Matrix &B);
 };
 
 } //namespace corecvs

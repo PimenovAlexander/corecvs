@@ -135,54 +135,54 @@ TEST(MatrixProfile, testMulSize3)
             input2[i]->touchOperationElementwize(touch2);
         }
 
-        if (runsimple[testnum])
-        {
-            printName("Simple", TEST_H_SIZE, mem, LIMIT);
-            start = PreciseTimer::currentTime();
-            for (unsigned i = 0; i < LIMIT; i++) {
-                Matrix &A = *input1[i % POLUTING_INPUTS];
-                Matrix &B = *input2[i % POLUTING_INPUTS];
-                AB = Matrix::multiplyHomebrew(A, B, false, false);
-            }
-            uint64_t delaySimple = start.usecsToNow();
-            printResult(gflop, delaySimple, LIMIT);
-        }
-
-        /*if (!AB.isFinite()) {
-            SYNC_PRINT(("Matrix is not finite\n"));
-        } else {
-            SYNC_PRINT(("Matrix is finite - ok\n"));
-        }*/
-
-
-        if (runslow[testnum])
-        {
-            printName("TBB", TEST_H_SIZE, mem, LIMIT);
-            start = PreciseTimer::currentTime();
-            for (unsigned i = 0; i < LIMIT; i++) {
-                Matrix &A = *input1[i % POLUTING_INPUTS];
-                Matrix &B = *input2[i % POLUTING_INPUTS];
-                AB = Matrix::multiplyHomebrew(A, B, true, false);
-            }
-            uint64_t delayTBB = start.usecsToNow();
-            printResult(gflop, delayTBB, LIMIT);
-
-#ifdef WITH_SSE
-#ifdef WITH_AVX
-            printName("AVX/SSE", TEST_H_SIZE, mem, LIMIT);
-#else
-            printName("---/SSE", TEST_H_SIZE, mem, LIMIT);
-#endif
-            start = PreciseTimer::currentTime();
-            for (unsigned i = 0; i < LIMIT; i++) {
-                Matrix &A = *input1[i % POLUTING_INPUTS];
-                Matrix &B = *input2[i % POLUTING_INPUTS];
-                AB = Matrix::multiplyHomebrew(A, B, false, true);
-            }
-            uint64_t delayVector = start.usecsToNow();
-            printResult(gflop, delayVector, LIMIT);
-#endif
-        }
+//        if (runsimple[testnum])
+//        {
+//            printName("Simple", TEST_H_SIZE, mem, LIMIT);
+//            start = PreciseTimer::currentTime();
+//            for (unsigned i = 0; i < LIMIT; i++) {
+//                Matrix &A = *input1[i % POLUTING_INPUTS];
+//                Matrix &B = *input2[i % POLUTING_INPUTS];
+//                AB = Matrix::multiplyHomebrew(A, B, false, false);
+//            }
+//            uint64_t delaySimple = start.usecsToNow();
+//            printResult(gflop, delaySimple, LIMIT);
+//        }
+//
+//        /*if (!AB.isFinite()) {
+//            SYNC_PRINT(("Matrix is not finite\n"));
+//        } else {
+//            SYNC_PRINT(("Matrix is finite - ok\n"));
+//        }*/
+//
+//
+//        if (runslow[testnum])
+//        {
+//            printName("TBB", TEST_H_SIZE, mem, LIMIT);
+//            start = PreciseTimer::currentTime();
+//            for (unsigned i = 0; i < LIMIT; i++) {
+//                Matrix &A = *input1[i % POLUTING_INPUTS];
+//                Matrix &B = *input2[i % POLUTING_INPUTS];
+//                AB = Matrix::multiplyHomebrew(A, B, true, false);
+//            }
+//            uint64_t delayTBB = start.usecsToNow();
+//            printResult(gflop, delayTBB, LIMIT);
+//
+//#ifdef WITH_SSE
+//#ifdef WITH_AVX
+//            printName("AVX/SSE", TEST_H_SIZE, mem, LIMIT);
+//#else
+//            printName("---/SSE", TEST_H_SIZE, mem, LIMIT);
+//#endif
+//            start = PreciseTimer::currentTime();
+//            for (unsigned i = 0; i < LIMIT; i++) {
+//                Matrix &A = *input1[i % POLUTING_INPUTS];
+//                Matrix &B = *input2[i % POLUTING_INPUTS];
+//                AB = Matrix::multiplyHomebrew(A, B, false, true);
+//            }
+//            uint64_t delayVector = start.usecsToNow();
+//            printResult(gflop, delayVector, LIMIT);
+//#endif
+//        }
 
         if (runour[testnum])
         {
@@ -196,6 +196,19 @@ TEST(MatrixProfile, testMulSize3)
             uint64_t delayHome = start.usecsToNow();
             printResult(gflop, delayHome, LIMIT);
 
+        }
+
+        if (runour[testnum])
+        {
+            printName("MyRepl", TEST_H_SIZE, mem, LIMIT);
+            start = PreciseTimer::currentTime();
+            for (unsigned i = 0; i < LIMIT; i++) {
+                Matrix &A = *input1[i % POLUTING_INPUTS];
+                Matrix &B = *input2[i % POLUTING_INPUTS];
+                AB = Matrix::multiplyMine(A, B);
+            }
+            uint64_t delayRepl = start.usecsToNow();
+            printResult(gflop, delayRepl, LIMIT);
         }
 
         if (runfast[testnum])

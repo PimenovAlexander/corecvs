@@ -13,6 +13,7 @@
 #include "core/math/matrix/blasReplacement.h"
 #include "core/math/sse/sseWrapper.h"
 #include "core/tbbwrapper/tbbWrapper.h"
+#include "core/math/matrix/myBlasReplacement.h"
 
 #include "wrappers/cblasLapack/cblasLapackeWrapper.h"
 
@@ -253,6 +254,12 @@ Matrix Matrix::multiplyBlas(const Matrix &A, const Matrix &B)
     return result;
 }
 #endif
+Matrix Matrix::multiplyMine(const Matrix &A, const Matrix &B)
+{
+    Matrix result(A.h, B.w, false);
+    mydgemm_nn(A.h, A.w, B.w, A.data, 1, A.stride, B.data, 1, B.stride, result.data, 1,  result.stride);
+    return result;
+}
 
 
 Matrix operator *(const Matrix &A, const Matrix &B)
