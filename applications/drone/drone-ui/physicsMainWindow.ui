@@ -108,7 +108,7 @@
      <x>0</x>
      <y>0</y>
      <width>1198</width>
-     <height>34</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu12">
@@ -140,8 +140,9 @@
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionAbout"/>
+    <addaction name="actionDownloadModels"/>
     <addaction name="separator"/>
+    <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuProcessing">
     <property name="title">
@@ -482,6 +483,15 @@
    </property>
    <property name="text">
     <string>F&amp;low Parameters</string>
+   </property>
+  </action>
+  <action name="actionDownloadModels">
+   <property name="icon">
+    <iconset resource="../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/down_alt.png</normaloff>:/new/prefix1/down_alt.png</iconset>
+   </property>
+   <property name="text">
+    <string>Download Models</string>
    </property>
   </action>
  </widget>

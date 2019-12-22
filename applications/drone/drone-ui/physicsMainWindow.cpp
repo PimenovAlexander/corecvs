@@ -91,8 +91,7 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
     mModelParametersWidget.loadFromQSettings("drone.ini", "");
 
 
-    /* Moving the camera closer */
-    //ui->cloud->setCamera();
+    connect(ui->actionDownloadModels, SIGNAL(triggered()), this , SLOT(downloadModels()));
 }
 
 PhysicsMainWindow::~PhysicsMainWindow()
@@ -720,6 +719,12 @@ void PhysicsMainWindow::keepAliveJoyStick()
 
     }
 #endif
+}
+
+void PhysicsMainWindow::downloadModels()
+{
+    system("wget http://calvrack.ru:3080/exposed-drone/data.tar.gz");
+    system("tar -zxvf data.tar.gz");
 }
 
 void PhysicsMainWindow::joystickUpdated(JoystickState state)

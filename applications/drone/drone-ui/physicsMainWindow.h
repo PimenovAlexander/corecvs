@@ -183,6 +183,10 @@ public slots:
     void updateUi();
     void keepAliveJoyStick();
 
+/** Model download **/
+public slots:
+    void downloadModels();
+
 
 /** Save/load block */
 public:

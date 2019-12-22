@@ -270,25 +270,23 @@ void AVEncoder::printCaps()
     av_register_all();
     avcodec_register_all();
 
-    SYNC_PRINT(("AVEncoder::printCaps():format list\n"));
-    void **opaque = NULL;
 
-    const AVOutputFormat * oformat = av_muxer_iterate(opaque);
+    SYNC_PRINT(("AVEncoder::printCaps():format list\n"));
+    AVOutputFormat * oformat = av_oformat_next(NULL);
     while(oformat != NULL)
     {
         SYNC_PRINT(("%s %s\n", oformat->name, oformat->long_name));
-        oformat = av_muxer_iterate(opaque);
+        oformat = av_oformat_next(oformat);
     }
 
     SYNC_PRINT(("=============\n"));
 
     SYNC_PRINT(("AVEncoder::printCaps():codec list\n"));
 
-    opaque = NULL;
-    const AVCodec *codec = NULL;
+    AVCodec *codec = NULL;
     while (true)
     {
-        codec = av_codec_iterate(opaque);
+        codec = av_codec_next(codec);
         if (codec == NULL)
         {
             break;
