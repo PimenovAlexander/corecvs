@@ -56,6 +56,7 @@ TEST(MonomTests, testAddition) {
 
     test(zero, zero, zero);
     test(Monom_{1, {1}}, Monom_{-1, {1}}, zero);
+    test(Monom_{2, {}}, Monom_{3, {}}, Monom_{5, {}});
     test(Monom_{1, {1}}, Monom_{1, {1}}, Monom_{2, {1}});
     test(Monom_{1, {1, 2}}, Monom_{1, {1, 2}}, Monom_{2, {1, 2}});
     test(Monom_{1, {0, 0, 2}}, Monom_{2, {0, 0, 2}}, Monom_{3, {0, 0, 2}});
@@ -76,6 +77,7 @@ TEST(MonomTests, testSubtraction) {
     test(zero, zero, zero);
     test(Monom_{1, {1}}, Monom_{1, {1}}, zero);
     test(Monom_{1, {1, 2}}, Monom_{1, {1, 2}}, zero);
+    test(Monom_{2, {}}, Monom_{3, {}}, Monom_{-1, {}});
     test(Monom_{2, {1}}, Monom_{1, {1}}, Monom_{1, {1}});
     test(Monom_{2, {1, 2}}, Monom_{1, {1, 2}}, Monom_{1, {1, 2}});
     test(Monom_{4, {0, 0, 2}}, Monom_{2, {0, 0, 2}}, Monom_{2, {0, 0, 2}});
@@ -95,6 +97,8 @@ TEST(MonomTests, testMultiplication) {
     test(zero, zero, zero);
     test(Monom_{1, {1}}, zero, zero);
     test(zero, Monom_{1, {1}}, zero);
+    test(Monom_{2, {}}, Monom_{3, {}}, Monom_{6, {}});
+    test(Monom_{2, {}}, Monom_{3, {1, 2}}, Monom_{6, {1, 2}});
     test(Monom_{1, {1}}, Monom_{1, {1}}, Monom_{1, {2}});
     test(Monom_{2, {1}}, Monom_{3, {1}}, Monom_{6, {2}});
     test(zero, Monom_{2, {1, 2}}, zero);
@@ -110,12 +114,16 @@ TEST(MonomTests, testDivision) {
     Monom_ zero{};
 
     const auto test = [](Monom_ arg1, const Monom_& arg2, const Monom_& res) {
+        if (!arg1.isDividableBy(arg2)) {
+            std::cout << arg1 << " " << arg2;
+        }
         ASSERT_TRUE(arg1.isDividableBy(arg2));
         ASSERT_EQ(arg1 / arg2, res);
         ASSERT_EQ(arg1 /= arg2, res);
     };
 
     test(zero, Monom_{1, {1}}, zero);
+    test(Monom_{3, {}}, Monom_{2, {}}, Monom_{1.5, {}});
     test(Monom_{1, {1}}, Monom_{1, {1}}, Monom_{1, {}});
     test(Monom_{3, {1}}, Monom_{2, {1}}, Monom_{1.5, {}});
     test(zero, Monom_{2, {1, 2}}, zero);
