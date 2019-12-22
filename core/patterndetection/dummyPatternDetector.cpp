@@ -4,6 +4,7 @@ namespace corecvs {
 
 DummyPatternDetector::DummyPatternDetector()
 {
+    //dummyResult.push_back(PointObservation(Vector3dd::Zero(), Vector2dd(-1, -1)));
     dummyResult.setPosition(Vector2dParameters(-1, -1));
 }
 
@@ -61,12 +62,17 @@ void DummyPatternDetector::getOutput(vector<PatternDetectorResult> &patterns)
     if (input != NULL) {
         if (input->isValidCoordBl(Vector2dd(dummyResult.position())))
         {
-            patterns.push_back(dummyResult);
+            PatternDetectorResult result;
+            result.push_back(PointObservation(Vector3dd(0,0,0), Vector2dd(dummyResult.position())  ));
+            result.push_back(PointObservation(Vector3dd(1,0,0), Vector2dd(dummyResult.ortX())      ));
+            result.push_back(PointObservation(Vector3dd(0,1,0), Vector2dd(dummyResult.ortY())      ));
+            result.push_back(PointObservation(Vector3dd(1,1,0), Vector2dd(dummyResult.unityPoint())));
             return;
         }
 
         PatternDetectorResult result;
-        result.setPosition(Vector2dParameters(0, 0));
+        result.resize(1);
+        result[0] = PointObservation(Vector3dd::Zero(), Vector2dd(0, 0));
 
         double minDist = numeric_limits<int>::max();
         for (int i = 0; i < input->h; i++)
@@ -77,7 +83,7 @@ void DummyPatternDetector::getOutput(vector<PatternDetectorResult> &patterns)
                 if (dist < minDist)
                 {
                     minDist = dist;
-                    result.setPosition(Vector2dParameters(j, i));
+                    result[0] = PointObservation(Vector3dd::Zero(), Vector2dd(j, i));
                 }
             }
         }
@@ -87,7 +93,8 @@ void DummyPatternDetector::getOutput(vector<PatternDetectorResult> &patterns)
         debug = new RGB24Buffer(input);
         for (size_t i = 0; i < patterns.size(); i++)
         {
-            debug->drawCrosshare3(Vector2dd(patterns[i].position()), RGBColor::Red());
+            if (!patterns[i].empty())
+                debug->drawCrosshare3(patterns[i][0].projection, RGBColor::Red());
         }
     }    
 

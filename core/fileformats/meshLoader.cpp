@@ -119,8 +119,18 @@ bool MeshLoader::save(Mesh3D *mesh, const string &fileName)
     if (HelperUtils::endsWith(fileName, PLY_EXT))
     {
         SYNC_PRINT(("MeshLoader::save(): Saving PLY <%s>\n", fileName.c_str()));
+        if (binary)
+        {
+            file.close();
+            file.open(fileName, ios::out | ios::binary);
+            if (file.fail())
+            {
+                SYNC_PRINT(("MeshLoader::save(): Can't open mesh file <%s> for binary writing\n", fileName.c_str()));
+                return false;
+            }
+        }
         PLYLoader loader;
-        int res = loader.savePLY(file, *mesh);
+        int res = loader.savePLY(file, *mesh, binary ? PLYLoader::BINARY_LITTLE_ENDIAN : PLYLoader::ASCII);
         if (res != 0)
         {
            SYNC_PRINT(("MeshLoader::save(): Unable to save mesh code=%d\n", res ));

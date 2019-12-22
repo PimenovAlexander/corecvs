@@ -4,6 +4,7 @@
 #include "opencvTransformations.h"
 #include <opencv2/opencv.hpp>
 #include <QGraphicsScene>
+#include <g12Image.h>
 
 
 ImageForCalibrationWidget::ImageForCalibrationWidget(QWidget *parent) :
@@ -11,66 +12,40 @@ ImageForCalibrationWidget::ImageForCalibrationWidget(QWidget *parent) :
     ui(new Ui::ImageForCalibrationWidget)
 {
     ui->setupUi(this);
-    setDefaultImage();
 }
 
 ImageForCalibrationWidget::~ImageForCalibrationWidget()
 {
+    delete_safe(rgb24Image);
     delete ui;
 }
 
-void ImageForCalibrationWidget::setImage(cv::Mat *inputMat)
+void ImageForCalibrationWidget::setImage(corecvs::RGB24Buffer *input)
 {
-    inputMat->copyTo(image);
-    qimage = opencvTransformations::mat2RealQImage(image).copy();
-    imageSet = true;
-    //sc = new QGraphicsScene(this);
-    //sc->addPixmap(QPixmap::fromImage(qimage));
-    //ui->graphicsView->setScene(sc);
-    //ui->graphicsView->fitInView( QRect(11,11,431,221),Qt::KeepAspectRatio);
-    //updateMicroImage();
+    delete_safe(rgb24Image);
+    rgb24Image = input;
+    qImage = new RGB24Image(input);
+    updateThumbnail();
     unlockButtons();
 }
 
-cv::Mat ImageForCalibrationWidget::getImage()
+corecvs::RGB24Buffer *ImageForCalibrationWidget::getImage()
 {
-    return image;
+    return rgb24Image;
 }
 
-void ImageForCalibrationWidget::updateMicroImage()
+void ImageForCalibrationWidget::updateThumbnail()
 {
-    sc = new QGraphicsScene(this);
-    sc->addPixmap(QPixmap::fromImage(qimage));
-    ui->graphicsView->setScene(sc);
-    ui->graphicsView->fitInView( QRect(0,0,640,480),Qt::KeepAspectRatio);
+    QImage scaled = qImage->scaled(qImage->width(), 200, Qt::KeepAspectRatio);
+    SYNC_PRINT(("Target widget size : %d x %d\n", ui->widget->width(), ui->widget->height()));
+    ui->widget->setImage(new QImage(scaled));
 }
 
 void ImageForCalibrationWidget::setDefaultImage()
-{
-    cv::Mat inputMat = cv::imread("test1.jpg");
-    inputMat.copyTo(image);
-    qimage = opencvTransformations::mat2RealQImage(image).copy();
-    //sc = new QGraphicsScene(this);
-    //sc->addPixmap(QPixmap::fromImage(qimage));
-    //ui->graphicsView->setScene(sc);
-    //ui->graphicsView->fitInView( QRect(11,11,211,111),Qt::KeepAspectRatio);
-    updateMicroImage();
+{   
+    updateThumbnail();
 }
 
-void ImageForCalibrationWidget::showImage()
-{
-    if (imageSet)
-    {
-        cv::imshow("image",image);
-    }
-}
-
-void ImageForCalibrationWidget::approve()
-{
-    imageApproved = true;
-    ui->addButon->setText("remove");
-    emit (approved());
-}
 
 void ImageForCalibrationWidget::lockButtons()
 {
@@ -84,27 +59,4 @@ void ImageForCalibrationWidget::unlockButtons()
     ui->showButon->setEnabled(true);
 }
 
-void ImageForCalibrationWidget::closeWid()
-{
-    if (!imageApproved)
-    {
-        approve();
-    }
-    else {
-        emit (closed(id));
-        this->~ImageForCalibrationWidget();
-    }
-}
 
-void ImageForCalibrationWidget::setId(int i)
-{
-    if (id == -1)
-    {
-        id = i;
-    }
-}
-
-int ImageForCalibrationWidget::getId()
-{
-    return id;
-}

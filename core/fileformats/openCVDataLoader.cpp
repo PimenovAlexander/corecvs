@@ -138,7 +138,9 @@ OpenCVDataLoader::OpenCVCAL OpenCVDataLoader::parseOpenCVOutput(const char *file
 
         toReturn.camera.distortion.setTangentialX(distMatrix.element(2,0));
         toReturn.camera.distortion.setTangentialY(distMatrix.element(3,0));
-        toReturn.camera.distortion.setNormalizingFocal(intr->size().y() / 2);
+        toReturn.camera.distortion.setNormalizingFocal(
+                    0.5 * cameraMatrix.element(0,0) +
+                    0.5 * cameraMatrix.element(1,1));
 
         {
             XMLElement *extrMat = node->FirstChildElement("Extrinsic_Parameters");

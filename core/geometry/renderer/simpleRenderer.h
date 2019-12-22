@@ -33,6 +33,7 @@ public:
     bool drawFaces;
     bool drawEdges;
     bool drawVertexes;
+    bool trace = false;
 
 
     AbstractBuffer<double> *zBuffer;

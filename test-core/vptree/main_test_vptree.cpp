@@ -41,7 +41,7 @@ TEST(VPTreeTest, BuildingLight) {
 		tree.search(searchPoint, 1, &results, &distances);
 
 		ASSERT_EQ(results.size(), 1);
-		ASSERT_LE(abs(distances[0]), 1e-9);
+        ASSERT_LE(fabs(distances[0]), 1e-9);
 	}
 }
 
@@ -64,7 +64,7 @@ TEST(VPTreeTest, InsertingLight) {
 		tree.search(searchPoint, 1, &results, &distances);
 
 		ASSERT_EQ(results.size(), 1);
-		ASSERT_LE(abs(distances[0]), 1e-9);
+        ASSERT_LE(fabs(distances[0]), 1e-9);
 	}
 }
 
@@ -88,7 +88,7 @@ TEST(VPTreeTest, BuildingHard) {
 		GeoCor cur = { i, i };
 		bool check = false;
         for (size_t j = 0; j < results.size(); j++) {
-			if (abs(results[j].latitude - cur.latitude) + abs(results[j].longitude - cur.longitude) < 1e9) {
+            if (fabs(results[j].latitude - cur.latitude) + fabs(results[j].longitude - cur.longitude) < 1e9) {
 				check = true;
 			}
 		}

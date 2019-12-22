@@ -52,6 +52,13 @@ void SettingsSetter::visit<int>(int &intField, int /*defaultValue*/, const char 
     mSettings->setValue(fieldName, intField);
 }
 
+template <>
+void SettingsSetter::visit<std::string>(std::string &stringField, std::string defaultValue, const char *fieldName)
+{
+    mSettings->setValue(fieldName, QString::fromStdString(stringField));
+}
+
+
 /* And new style visitor method */
 
 template <>

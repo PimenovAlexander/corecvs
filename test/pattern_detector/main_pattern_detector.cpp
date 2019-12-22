@@ -23,6 +23,11 @@
 #endif
 #ifdef WITH_OPENCV
 #include "patternDetect/openCVSquareDetector.h"
+#include "patternDetect/openCVCheckerBoardDetector.h"
+#endif
+
+#ifdef WITH_APRILTAG
+#include "wrappers/apriltag_wrapper/apriltagDetector.h"
 #endif
 
 using namespace std;
@@ -130,7 +135,7 @@ int detect(CommandLineSetter &s)
     producer->getOutput(result);
     Statistics::leaveContext(&stats);
 
-    for(int i = 0; i < result.size(); i++) {
+    for(size_t i = 0; i < result.size(); i++) {
         cout << result[i] << endl;
     }
 
@@ -173,7 +178,16 @@ void usage()
   SYNC_PRINT(("Opencv Square pattern provider:\n"));
   SYNC_PRINT(("./bin/pattern_detector --detect --producer=OpenCVSquare --params.debug=on --input=photo_2019-09-29_23-11-36.jpg\n"));
   SYNC_PRINT(("          - example that returns detected squares\n"));
-
+  SYNC_PRINT(("          \n"));
+  SYNC_PRINT(("Opencv CheckerBoard pattern provider (only one checkerboard in frame):\n"));
+  SYNC_PRINT(("wget https://rdmilligan.files.wordpress.com/2015/06/cameracalibrationandposeestimation_sample.jpg -o in.jpg"));
+  SYNC_PRINT(("./bin/pattern_detector --detect --producer=OpenCVCheckerBoard  --input=in.jpg\n"));
+  SYNC_PRINT(("          - example that returns detected squares\n"));
+  SYNC_PRINT(("          \n"));
+  SYNC_PRINT(("          \n"));  
+  SYNC_PRINT(("Apriltag pattern provider:\n"));
+  SYNC_PRINT(("./bin/pattern_detector --detect --producer=Apriltag --params.debug=on --input="".jpg\n")); //TODO add more params
+  SYNC_PRINT(("          - example that returns detected squares\n"));
 }
 
 int main(int argc, char *argv[])
@@ -193,6 +207,12 @@ int main(int argc, char *argv[])
 
 #ifdef WITH_OPENCV
     PatternDetectorFabric::getInstance()->add(new PatternDetectorProducer<OpenCVSquareDetector>("OpenCVSquare"));
+    PatternDetectorFabric::getInstance()->add(new PatternDetectorProducer<OpenCVCheckerBoardDetector>("OpenCVCheckerBoard"));
+
+#endif
+
+#ifdef WITH_APRILTAG
+    PatternDetectorFabric::getInstance()->add(new PatternDetectorProducer<ApriltagDetector>("Apriltag"));
 #endif
 
     CommandLineSetter s(argc, argv);

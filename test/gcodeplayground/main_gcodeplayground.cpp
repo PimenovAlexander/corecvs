@@ -4,6 +4,7 @@
 
 #include "core/fileformats/gcodeLoader.h"
 #include "core/fileformats/pltLoader.h"
+#include "core/filesystem/folderScanner.h"
 
 #include "labelGcodeInterpreter.h"
 
@@ -253,7 +254,7 @@ int main (int argc, char **argv)
 
     loader.loadGcode(file, program);
 
-    std::string basename = HelperUtils::getFileName(input);
+    std::string basename = FolderScanner::getBaseName(input);
     double scale= 0.25;
     int header = 40;
     RGB24Buffer *canvas = new RGB24Buffer(1500 * scale + header, 6000 * scale, RGBColor::White());

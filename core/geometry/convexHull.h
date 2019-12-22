@@ -58,7 +58,7 @@ template<typename PointType>
         LAST
     };
 
-    static Polygon ConvexHullCompute(std::vector<Vector2dd> points, ConvexHullMethod &method);
+    static Polygon ConvexHullCompute(std::vector<Vector2dd> points, const ConvexHullMethod &method = ConvexHullMethod::GRAHAM_SCAN);
 };
 
 } // namespace

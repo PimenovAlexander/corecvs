@@ -37,9 +37,10 @@ public:
 
 
     std::string mName;
-    AVFormatContext* mFormatContext;
-    AVCodecContext* mCodecContext;
-    AVCodec* mCodec;
+    AVFormatContext* mFormatContext = NULL;
+    AVCodecParameters *mCodecParameters = NULL;
+    AVCodecContext* mCodecContext = NULL;
+    AVCodec* mCodec = NULL;
 
     bool mIsPaused;
 

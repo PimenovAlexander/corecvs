@@ -15,7 +15,7 @@ RTSPCapture::RTSPCapture(const std::string &params):
     SYNC_PRINT(("RTSPCapture::RTSPCapture(%s): called\n", params.c_str()));
     SYNC_PRINT(("Registering the codecs...\n"));
 
-    av_register_all();
+    // av_register_all(); Depricated and considered unnessesary
     avformat_network_init();
 
     SYNC_PRINT(("RTSPCapture::RTSPCapture(): exited\n"));
@@ -56,7 +56,7 @@ ImageCaptureInterface::CapErrorCode RTSPCapture::initCapture()
 
     // Find the first video stream
     for (mVideoStream = 0; mVideoStream < mFormatContext->nb_streams; mVideoStream++) {
-        if (mFormatContext->streams[mVideoStream]->codec->codec_type == AVMEDIA_TYPE_VIDEO) {
+        if (mFormatContext->streams[mVideoStream]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
             break;
         }
     }
@@ -67,8 +67,10 @@ ImageCaptureInterface::CapErrorCode RTSPCapture::initCapture()
     }
 
     SYNC_PRINT(("RTSPCapture::initCapture(): Video Stream found\n"));
-    mCodecContext = mFormatContext->streams[mVideoStream]->codec;
-    mCodec = avcodec_find_decoder(mCodecContext->codec_id);
+
+    mCodecParameters = mFormatContext->streams[mVideoStream]->codecpar;
+    mCodec = avcodec_find_decoder(mCodecParameters->codec_id);
+    mCodecContext = avcodec_alloc_context3(mCodec);
     res = avcodec_open2(mCodecContext, mCodec, NULL);
     if (res < 0) {
         SYNC_PRINT(("RTSPCapture::initCapture(): Unable to open codec\n"));
@@ -96,16 +98,31 @@ ImageCaptureInterface::FramePair RTSPCapture::getFrame()
         {
             if (mPacket.stream_index == mVideoStream)
             {
-                int frame_finished;
-                avcodec_decode_video2(mCodecContext, mFrame, &frame_finished, &mPacket);
+                int frame_finished = false;
+                int used = 0;
 
+                //avcodec_decode_video2(mCodecContext, mFrame, &frame_finished, &mPacket);
+                if (mCodecContext->codec_type == AVMEDIA_TYPE_VIDEO ||
+                    mCodecContext->codec_type == AVMEDIA_TYPE_AUDIO)
+                {
+                    used = avcodec_send_packet(mCodecContext, &mPacket);
+                    if (used < 0 && used != AVERROR(EAGAIN) && used != AVERROR_EOF) {
+                    } else {
+                         if (used >= 0) {
+                            mPacket.size = 0;
+                         }
+                         used = avcodec_receive_frame(mCodecContext, mFrame);
+                         if (used >= 0)
+                             frame_finished = true;
+                    }
+                }
                 if (frame_finished) {
 //                    SYNC_PRINT(("AviCapture::getFrame(): Frame ready\n"));
                     break;
                 }
             }
             // Free the packet that was allocated by av_read_frame
-            av_free_packet(&mPacket);
+            av_packet_unref(&mPacket);
         }
 
         if (res >= 0)

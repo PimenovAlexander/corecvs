@@ -44,14 +44,14 @@ set ( ADDITIONAL_MODULES
 
 message(STATUS "Core will use ${CORE_SUBMODULES} and ${ADDITIONAL_MODULES}")
 
-add_library(corecvs STATIC )
+add_library(corecvs STATIC)
 
 set_property(TARGET corecvs PROPERTY CXX_STANDARD 17)
 set_property(TARGET corecvs PROPERTY CXX_STANDARD_REQUIRED ON)
 
 target_include_directories(corecvs PUBLIC ..)
 
-target_link_libraries(corecvs stdc++fs)
+target_link_libraries(corecvs pthread)
 
 if (OpenBLAS_LIB)
     message("Core: Would use OpenBLAS adding <${OpenBLAS_LIB}> to dependancies")
@@ -66,7 +66,6 @@ if (TBB_LIBRARY)
     target_link_libraries(corecvs ${TBB_LIBRARY})
 endif()
 
-
 foreach(core_module ${CORE_SUBMODULES})
     message(STATUS "including ${core_module}")
     add_subdirectory(${core_module})
@@ -76,3 +75,15 @@ foreach(add_core_module ${ADDITIONAL_MODULES})
     message(STATUS "including ${add_core_module}")
     add_subdirectory(${add_core_module})
 endforeach(add_core_module)
+
+
+# Additional stuff mostly for IDE only
+
+file(GLOB CUR_ADD_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/xml/*.xml)
+set(ADD_SRC_FILES ${ADD_SRC_FILES} ${CUR_ADD_SRC_FILES})
+
+file(GLOB ADD_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/../.github/workflows/*.*)
+set(ADD_SRC_FILES ${ADD_SRC_FILES} ${CUR_ADD_SRC_FILES})
+
+target_sources(corecvs PRIVATE ${ADD_SRC_FILES})
+set_source_files_properties(${ADD_SRC_FILES} PROPERTIES EXTERNAL_OBJECT true HEADER_FILE_ONLY TRUE)

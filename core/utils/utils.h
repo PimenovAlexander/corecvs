@@ -114,19 +114,6 @@ namespace HelperUtils
         return filePath.substr(0, pos) + suffix + (pos == string::npos ? "" : filePath.substr(pos));
     }
 
-    /* these wrappers are not essential, but it removes the clutter of handling fs:: namespace */
-    string concatPath  (const string &path1, const string &path2);
-    bool isAbsolutePath(const string &path);
-    bool pathExists    (const string &path);
-    bool pathRemove    (const string &path);
-    bool isDirectory   (const string &path);
-
-    /* Qt rewritten to std */
-    string addFileExtIfNotExist(const string& fileName, const string& ext);
-    string getDirectory(const string& absoluteFilePath);
-    string getFileName(const string& fileName);
-    string getFileNameIfExist(const string& fileName, const string& relativePath);
-
     /**
      *  Many data interchange formats need to load double or float values in С locale,
      *  not in the local locale.

@@ -2,7 +2,7 @@ project (RaytraceRenderer)
 
 set (NAME raytrace_renderer )
 
-set (SOURCES
+set (SRC_FILES
     main_raytracerender.cpp  
     scene_large.cpp  
     scene_pole.cpp  
@@ -11,21 +11,27 @@ set (SOURCES
     scene_test1.cpp
 )
 
-
-
-#set (SOURCES ${SOURCES} ${JSON_MODERN_HEADERS} ${JSON_MODERN_SOURCES})
-
-#add_definitions( -DWITH_JSONMODERN )
-#include_directories(${JSON_MODERN_INCLUDES})
-#message(STATUS FlowDetector:${JSON_MODERN_INCLUDES} )
-
 include(../../wrappers/jsonmodern/sourcelist.cmake)
-include(../../wrappers/libpng/sourcelist.cmake)
-include(../../wrappers/libjpeg/sourcelist.cmake)
 
-message(STATUS RaytraceRenderer:${INCLUDEPATHS} )
+if (PNG_LIB)
+    include(../../wrappers/libpng/sourcelist.cmake)
+endif()
 
-add_executable(${NAME} ${SOURCES} ${HEADERS})
+if (JPEG_LIB)
+    include(../../wrappers/libjpeg/sourcelist.cmake)
+endif()
+
+#message(RaytraceRenderer:${INCLUDEPATHS} )
+
+add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
+
+add_custom_command(TARGET ${NAME} POST_BUILD
+        COMMAND cp ${PROJECT_BINARY_DIR}/${NAME}  ${CMAKE_BINARY_DIR}/bin/${NAME}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Copying ${NAME} to binary directory"
+        )
+
+include_directories(${INC_PATHS})
 
 target_link_libraries(${NAME} corecvs pthread ${LIBS})
 

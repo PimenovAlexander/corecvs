@@ -24,6 +24,10 @@
 #include <KLTFlow.h>
 #endif
 
+#ifdef WITH_DISFLOW
+#include <wrappers/opencv/DISFlow/DISFlow.h>
+#endif
+
 using namespace std;
 using namespace corecvs;
 
@@ -130,7 +134,19 @@ int flow(CommandLineSetter &s)
         return 1;
     }
 
-    SYNC_PRINT(("Images : 1 [%d x %d]  2 [%d x %d]\n", input1->w, input1->h, input2->w, input2->h));
+    std::string input3Name = s.getString("input3");
+    RGB24Buffer *input3 = BufferFactory::getInstance()->loadRGB24Bitmap(input3Name);
+    if (input3 == NULL)
+    {
+        SYNC_PRINT(("Unable to load image2 <%s>. Add --input3=<filename> parameter.\n", input3Name.c_str()));
+    }
+
+    SYNC_PRINT(("Images : 1 [%d x %d]  2 [%d x %d]  ", input1->w, input1->h, input2->w, input2->h));
+    if (input3) {
+        SYNC_PRINT(("3 [%d x %d]", input3->w, input3->h));
+    }
+    SYNC_PRINT(("\n"));
+
     Statistics::endInterval(&stats, "Loading input data");
 
     Statistics::enterContext(&stats, "Processing ->");
@@ -144,11 +160,22 @@ int flow(CommandLineSetter &s)
     producer->setFrameRGB24(input2);
     producer->endFrame();
 
-    //producer->operator ()();
     FlowBuffer *flow = producer->getFlow();
-    Statistics::leaveContext(&stats);
     cout << "Density:" << flow->density() << endl;
+    FloatFlowBuffer *fflow = new FloatFlowBuffer(flow);
+    BufferFactory::getInstance()->saveFloatFlow(*fflow, "flow1.flo");
+    delete_safe(fflow);
 
+    if (input3) {
+        producer->beginFrame();
+        producer->setFrameRGB24(input2);
+        producer->endFrame();
+
+        FlowBuffer *flow2 = producer->getFlow();
+        cout << "Density2:" << flow2->density() << endl;
+    }
+
+    Statistics::leaveContext(&stats);
     Statistics::startInterval(&stats);
    // producer->dumpAllDebugs("detector-", ".png");
 
@@ -207,6 +234,9 @@ int main(int argc, char *argv[])
     ProcessorFlowFactoryHolder::getInstance()->registerProcessor(new AlgoFactory<DummyFlowProcessor, ProcessorFlow>("Dummy"));
 #ifdef WITH_OPENCV
     ProcessorFlowFactoryHolder::getInstance()->registerProcessor(new AlgoFactory<OpenCVFlowProcessor, ProcessorFlow>("OpenCVProcessor"));
+#ifdef WITH_DISFLOW
+    ProcessorFlowFactoryHolder::getInstance()->registerProcessor(new AlgoFactory<DISFlow, ProcessorFlow>("DISFlow"));
+#endif
 #endif
 
     CommandLineSetter s(argc, argv);

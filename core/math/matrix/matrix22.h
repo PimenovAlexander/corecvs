@@ -288,6 +288,14 @@ template<typename ElementType>
 inline ElementType GenericMatrix22<ElementType>::det() const {
     return a00() * a11() - a01() * a10();
 }
+template<typename ElementType>
+inline GenericMatrix22<ElementType> GenericMatrix22<ElementType>::inverted() const {
+    ElementType d = this->det();
+    return GenericMatrix22<ElementType>(
+       a11() / d, -a01() / d,
+      -a10() / d,  a00() / d
+    );
+}
 
 template<typename ElementType>
 inline Vector2d<ElementType> GenericMatrix22<ElementType>::solve(const GenericMatrix22 &A, const Vector2d<ElementType> &b)

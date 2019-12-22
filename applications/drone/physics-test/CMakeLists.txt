@@ -1,23 +1,29 @@
 project (drone-physics-test)
 
 
-set (MODULE_NAME drone-physics-test )
+set (NAME drone-physics-test )
 
 set (SRC_FILES
     main_physics_test.cpp
 )
 
 if(AVCODEC_LIBS) 
-    message("Switching on avcodec support <${AVCODEC_LIBS}>")    
+    message("Switching on avcodec support.")
     include(../../../wrappers/avcodec/sourcelist.cmake)
 endif()
 
-add_executable(${MODULE_NAME} ${SRC_FILES})
+add_executable(${NAME} ${SRC_FILES})
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND cp ${PROJECT_BINARY_DIR}/${PROJECT_NAME}  ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Copying ${PROJECT_NAME} to binary directory"
+        )
 
 if(AVCODEC_LIBS) 
-    target_link_libraries(${MODULE_NAME} ${AVCODEC_LIBS})
+    target_link_libraries(${NAME} ${AVCODEC_LIBS})
 endif()
 
-target_link_libraries(${MODULE_NAME} gtest gtest_main drone-core cvs_utils corecvs pthread ${LIBS})
-target_include_directories(${MODULE_NAME} PUBLIC ${drone-core_SOURCE_DIR} ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} .)
+target_link_libraries(${NAME} gtest gtest_main drone-core cvs_utils corecvs pthread ${LIBS})
+target_include_directories(${NAME} PUBLIC ${drone-core_SOURCE_DIR} ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} .)
 

@@ -59,13 +59,13 @@ string TempFolder::TempFolderPath(const string &projectEnviromentVariable, bool 
     }
 
     bool createFolder = false;
-    if (FolderScanner::isDir(res))                  // dir exists: clear it if others have created it
+    if (FolderScanner::isDirectory(res))                  // dir exists: clear it if others have created it
     {
         if (clear)                                  // clear it only if others have created it, we're not
         {
             if (!contains(clearedFolders, projectEnviromentVariable))
             {                                       // delete folder to create it later
-                FolderScanner::emptyDir(res);
+                FolderScanner::pathRemove(res);
                 createFolder = true;
             }
         }

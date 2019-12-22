@@ -67,6 +67,7 @@ int V4L2CameraDescriptor::initCamera(
     format.fmt.pix.pixelformat = compressed ? V4L2_PIX_FMT_MJPEG: V4L2_PIX_FMT_YUYV;
     format.fmt.pix.field = V4L2_FIELD_ANY;
 
+    SYNC_PRINT(("FORMAT:[%d %dx%d %d %d]\n", format.type, format.fmt.pix.width, format.fmt.pix.height, format.fmt.pix.pixelformat, format.fmt.pix.field));
     if (ioctl (deviceHandle, VIDIOC_S_FMT, &format) == -1) {
         SYNC_PRINT(("Unable to set %d format for camera %s. Error: %s\n", V4L2_BUF_TYPE_VIDEO_CAPTURE, deviceName.c_str(), strerror(errno)));
         return 2;

@@ -42,5 +42,14 @@ copy_if_different Generated/openCVSGMParametersControlWidget.ui     $opencv/gene
 copy_if_different Generated/openCVSquareDetectorParameters.h        $opencv/generated
 copy_if_different Generated/openCVSquareDetectorParameters.cpp      $opencv/generated
 
+copy_if_different Generated/openCVCheckerBoardDetectorParameters.h        $opencv/generated
+copy_if_different Generated/openCVCheckerBoardDetectorParameters.cpp      $opencv/generated
+
+# DISFlow
+
+copy_if_different Generated/disFlowParameters.h        $opencv/generated
+copy_if_different Generated/disFlowParameters.cpp      $opencv/generated
+
+
 
 echo "copied"

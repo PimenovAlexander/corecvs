@@ -46,17 +46,17 @@ AbstractFileCapture::AbstractFileCapture(const std::string &params)
     // store the given path format for further usage
     mPathFmt = matches[filenamePatternGroup];
 
-    bool err = false;
-    int fpsnum = HelperUtils::parseInt(matches[fpsNumGroup].str(), &err);
-    if (!err || fpsnum < 0)
+    bool isOk = false;
+    int fpsnum = HelperUtils::parseInt(matches[fpsNumGroup].str(), &isOk);
+    if (!isOk || fpsnum < 0)
         fpsnum = -1;
 
-    int fpsdenum = HelperUtils::parseInt(matches[fpsDenumGroup].str(), &err);
-    if (!err || fpsdenum <= 0)
+    int fpsdenum = HelperUtils::parseInt(matches[fpsDenumGroup].str(), &isOk);
+    if (!isOk || fpsdenum <= 0)
         fpsdenum = -1;
 
-    mDelay = HelperUtils::parseInt(matches[delayGroup].str(), &err);
-    if (!err /*|| mDelay < 0*/)
+    mDelay = HelperUtils::parseInt(matches[delayGroup].str(), &isOk);
+    if (!isOk /*|| mDelay < 0*/)
         mDelay = capDefaultDelay;
 
     if (fpsnum != -1 && fpsdenum != -1 && fpsdenum != 0)

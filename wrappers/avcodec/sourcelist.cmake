@@ -20,4 +20,4 @@ set (SRC_FILES
 add_definitions(-DWITH_AVCODEC -DWITH_SWSCALE)
 include_directories(${CMAKE_CURRENT_LIST_DIR})
 
-#link_libraries(${AVCODEC_LIBS})
+set(LIBS ${LIBS} ${AVCODEC_LIBS})

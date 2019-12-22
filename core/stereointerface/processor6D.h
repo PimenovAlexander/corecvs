@@ -203,7 +203,14 @@ private:
 public:
     typedef typename FactoryBaseType::ProductType ProductType;
 
-    virtual ~AlgoFactoryHolder() {}
+    ~AlgoFactoryHolder()
+    {
+        for (FactoryBaseType *provider : mProviders)
+        {
+           delete_safe(provider);
+        }
+        mProviders.clear();
+    }
 
 
     static AlgoFactoryHolder* getInstance()

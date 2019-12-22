@@ -5,7 +5,7 @@ set(MODULE_NAME_TEST corecvs_core_tests)
 
 
 MESSAGE( STATUS "Including GTest on Tests build" )
-include_directories (${GTest_INCLUDE_DIR}/..)
+#include_directories (${GTest_INCLUDE_DIR}/..)
 
 set (CORE_TEST_SOURCES
     eigen/main_test_eigen_integration.cpp
@@ -50,6 +50,7 @@ set (CORE_TEST_SOURCES
     histogram/main_test_histogram.cpp
     homography/main_test_homography.cpp
     integral/main_test_integral.cpp
+    inset_outset/main_test_inset_outset.cpp
     kalman/main_test_kalman.cpp
     klt_cycle/main_test_klt_cycle.cpp
     levenberg/main_test_levenberg.cpp
@@ -125,12 +126,18 @@ message(STATUS "TEST_SOURCE_DIR " ${PROJECT_SOURCE_DIR})
 
 add_executable(${MODULE_NAME_TEST} ${CORE_TEST_SOURCES})
 
+add_custom_command(TARGET ${MODULE_NAME_TEST} POST_BUILD
+        COMMAND cp ${PROJECT_BINARY_DIR}/${MODULE_NAME_TEST}  ${CMAKE_BINARY_DIR}/bin/${MODULE_NAME_TEST}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Copying ${MODULE_NAME_TEST} to binary directory"
+        )
+
 set_property(TARGET ${MODULE_NAME_TEST} PROPERTY CXX_STANDARD 17)
 set_property(TARGET ${MODULE_NAME_TEST} PROPERTY CXX_STANDARD_REQUIRED ON)
 
 
 target_link_libraries(${MODULE_NAME_TEST} gtest gtest_main stdc++fs corecvs)
-target_include_directories(${MODULE_NAME_TEST} PUBLIC ${corecvs_SOURCE_DIR} .)
+target_include_directories(${MODULE_NAME_TEST} PUBLIC ${corecvs_SOURCE_DIR})
 
 # For ctest support. Not necessary to use but nice move for automated testing.
 add_test(

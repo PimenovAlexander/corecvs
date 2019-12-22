@@ -88,7 +88,10 @@ void SimpleRenderer::render(Mesh3D *mesh, RGB24Buffer *buffer)
         for(size_t p = 0; p < mesh->vertexes.size(); p++)
         {
             Vector2dd position = (modelviewMatrix * mesh->vertexes[p]).project();
-            cout << "SimpleRenderer::render(): " << mesh->vertexes[p] << " => " << position  << endl;
+
+            if (trace) {
+                cout << "SimpleRenderer::render(): " << mesh->vertexes[p] << " => " << position  << endl;
+            }
 
             RGBColor color = RGBColor::Red();
             if (mesh->hasColor) {

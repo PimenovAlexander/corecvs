@@ -1,28 +1,33 @@
-#include "janibekovsBolt.h"
+#include <chrono>
+
+#include "dzhanibekovBolt.h"
 #include <core/fileformats/meshLoader.h>
+
+using namespace std::chrono;
+
 DzhanibekovBolt::DzhanibekovBolt(double arm, double mass)
 {
     setSystemMass(mass);
-    double massOfRotatingObjects = 1;
-    double massOfTestingObject = 4;
+    double massOfRotatingObjects = 6;
+    double massOfTestingObject = 1;
     double massOfZeroObject = 0.0;
-    double partsRadius = 0.001;
+    double partsRadius = 0.01;
     Affine3DQ defaultPos = Affine3DQ(Vector3dd::Zero());
 
-    partsOfSystem.push_back(PhysSphere(&defaultPos, &partsRadius, &massOfRotatingObjects));
-    partsOfSystem.push_back(PhysSphere(&defaultPos, &partsRadius, &massOfRotatingObjects));
-    partsOfSystem.push_back(PhysSphere(&defaultPos, &partsRadius, &massOfTestingObject));
-    partsOfSystem.push_back(PhysSphere(&defaultPos, &partsRadius, &massOfZeroObject));
+    partsOfSystem.push_back(new PhysSphere(&defaultPos, &partsRadius, &massOfRotatingObjects));
+    partsOfSystem.push_back(new PhysSphere(&defaultPos, &partsRadius, &massOfRotatingObjects));
+    partsOfSystem.push_back(new PhysSphere(&defaultPos, &partsRadius, &massOfTestingObject));
+    partsOfSystem.push_back(new PhysSphere(&defaultPos, &partsRadius, &massOfZeroObject));
 
-    partsOfSystem[0].color = RGBColor::Red();    /*Front right*/
-    partsOfSystem[1].color = RGBColor::Red();  /*Back  left*/
-    partsOfSystem[2].color = RGBColor::Green();    /*Front left*/
-    partsOfSystem[3].color = RGBColor::Yellow();  /*Back  right*/
+    partsOfSystem[0]->color = RGBColor::Red();    /*Front right*/
+    partsOfSystem[1]->color = RGBColor::Red();  /*Back  left*/
+    partsOfSystem[2]->color = RGBColor::Green();    /*Front left*/
+    partsOfSystem[3]->color = RGBColor::Yellow();  /*Back  right*/
 
-    partsOfSystem[0].setPos(Vector3dd( 0,  1, 0).normalised() * 3 * arm);
-    partsOfSystem[1].setPos(Vector3dd( 0, -1, 0).normalised() * 3 * arm);
-    partsOfSystem[2].setPos(Vector3dd( 1,  0, 0).normalised() * arm);
-    partsOfSystem[3].setPos(Vector3dd(-1,  0, 0).normalised() * arm);
+    partsOfSystem[0]->setPos(Vector3dd( 0,  1, 0).normalised() * 3 * arm);
+    partsOfSystem[1]->setPos(Vector3dd( 0, -1, 0).normalised() * 3 * arm);
+    partsOfSystem[2]->setPos(Vector3dd( 1,  0, 0).normalised() * arm);
+    partsOfSystem[3]->setPos(Vector3dd(-1,  0, 0).normalised() * arm);
 
     MeshLoader loader;
     Mesh3DDecorated mesh;
@@ -45,12 +50,13 @@ DzhanibekovBolt::DzhanibekovBolt(double arm, double mass)
     double massOfCentralSphere = mass - 2 * massOfRotatingObjects - massOfTestingObject;
     Affine3DQ posOfCentralSphere = Affine3DQ(Vector3dd(0,0,0).normalised());
     double radiusOfCentralSphere = arm / 100;
-    centralSphere = PhysSphere(&posOfCentralSphere, &radiusOfCentralSphere, &massOfCentralSphere);
+    PhysSphere *centralSphere = new PhysSphere(&posOfCentralSphere, &radiusOfCentralSphere, &massOfCentralSphere);
 
-    objects.push_back(&centralSphere);
+    objects.push_back(centralSphere);
     for (size_t i = 0; i < partsOfSystem.size(); ++i)
     {
-        objects.push_back(&partsOfSystem[i]);
+        /* Transfer ownership */
+        objects.push_back(partsOfSystem[i]);
     }
 }
 
@@ -68,12 +74,17 @@ void DzhanibekovBolt::drawMyself(Mesh3D &mesh)
         for (size_t i = 0; i < objects.size(); i++) {
             objects[i]->drawMesh(mesh);
         }
+
         Circle3d circle;
         circle.c = Vector3dd(0,0,0);
-        circle.r = 0.03;
+        circle.r = 0.3;
         circle.normal = Vector3dd(1,0,0);
         mesh.addCircle(circle);
+        mesh.currentColor = RGBColor::Violet();
+        mesh.addLine(objects[3]->getPosVector(), objects[4]->getPosVector());
+        mesh.addLine(objects[1]->getPosVector(), objects[2]->getPosVector());
         mesh.popTransform();
+        mesh.currentColor = RGBColor::Cyan();
         drawForces(mesh);
 }
 
@@ -81,11 +92,11 @@ void DzhanibekovBolt::drawForces(Mesh3D &mesh)
 {
     for (size_t i = 0; i < partsOfSystem.size(); i++)
     {
-        Affine3DQ motorToWorld = getTransform() * partsOfSystem[i].getPosAffine();
-        Vector3dd force = motorToWorld.rotor * partsOfSystem[i].getForce();
+        Affine3DQ motorToWorld = getTransform() * partsOfSystem[i]->getPosAffine();
+        Vector3dd force = motorToWorld.rotor * partsOfSystem[i]->getForce();
         Vector3dd motorPosition = motorToWorld.shift;
         Vector3dd startDot = motorPosition;
-        Vector3dd endDot = motorPosition + force.normalised() * 1.0;
+        Vector3dd endDot = motorPosition - force * 20.0;
         mesh.addLine(startDot, endDot);
 
         //L_INFO << "force: " << force << ", position " << motorPosition;
@@ -122,15 +133,6 @@ void DzhanibekovBolt::drawMyself(Mesh3DDecorated &mesh)
 
 void DzhanibekovBolt::physicsTick(double deltaT)
 {
-    /*
-    if(!testMode)
-    {
-        startTick();
-        for (size_t i = 0; i < motors.size(); ++i) {
-            motors[i].calcForce();
-        }
-    }
-    */
     calcForce();
     calcMoment();
 
@@ -148,48 +150,64 @@ void DzhanibekovBolt::physicsTick(double deltaT)
 
 void DzhanibekovBolt::tick(double deltaT)
 {
-    double radius = centralSphere.radius;
-    double centerMass = centralSphere.mass;
+    /** Sources:
+     * https://habr.com/ru/post/264381/
+     * https://www.euclideanspace.com/physics/kinematics/angularvelocity/
+     * https://fgiesen.wordpress.com/2012/08/24/quaternion-differentiation/
+     * Physically Based Modeling Rigid Body Simulation. David Baraff
+     * https://ocw.mit.edu/courses/aeronautics-and-astronautics/16-07-dynamics-fall-2009/lecture-notes/MIT16_07F09_Lec26.pdf
+    **/
 
-    double massOfRotatingObjects = partsOfSystem[0].mass;
-    double massOfTestingObject = partsOfSystem[2].mass;
+    double radius = centralSphere->radius;
+    double centerMass = centralSphere->mass;
 
-    double armOfRotatingObjects = partsOfSystem[0].getPosVector().l2Metric();
-    double armOfTestingObject = partsOfSystem[2].getPosVector().l2Metric();
+    double massOfRotatingObjects = partsOfSystem[0]->mass;
+    double massOfTestingObject   = partsOfSystem[2]->mass;
 
-    double inertialMomentX = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * massOfRotatingObjects * pow(armOfRotatingObjects, 2);
-    double inertialMomentY = 2.0 / 5.0 * centerMass * pow(radius, 2) + massOfTestingObject * pow(armOfTestingObject, 2);
-    double inertialMomentZ = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * massOfRotatingObjects * pow(armOfRotatingObjects, 2)
+    double armOfRotatingObjects = partsOfSystem[0]->getPosVector().l2Metric();
+    double armOfTestingObject = partsOfSystem[2]->getPosVector().l2Metric();
+
+    double inertiaMomentX = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * massOfRotatingObjects * pow(armOfRotatingObjects, 2);
+    double inertiaMomentY = 2.0 / 5.0 * centerMass * pow(radius, 2) + massOfTestingObject * pow(armOfTestingObject, 2);
+    double inertiaMomentZ = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * massOfRotatingObjects * pow(armOfRotatingObjects, 2)
                                                                      + massOfTestingObject * pow(armOfTestingObject, 2);
 
-/*
-    inertialMomentX = 1;
-    inertialMomentY = 0.20;
-    inertialMomentZ = 5;
-*/
-    Matrix33 diagonalizedInertiaTensor = Matrix33(inertialMomentX, 0, 0,
-                                                  0, inertialMomentY, 0,
-                                                  0, 0, inertialMomentZ);
+    //Matrix33 diagonalizedInertiaTensor = Matrix33::FromDiagonal(1.0, 1.5, 0.75);
+    //Matrix33 diagonalizedInertiaTensor = Matrix33::FromDiagonal(0.001, 0.002, 0.0001);
+    Matrix33 diagonalizedInertiaTensor = Matrix33::FromDiagonal(inertiaMomentX, inertiaMomentY, inertiaMomentZ);
 
+    Matrix33 transposedOrient = orientation.toMatrix().transposed();
+    //inertiaTensor = orientation.toMatrix() * diagonalizedInertiaTensor * transposedOrient;
+    inertiaTensor = diagonalizedInertiaTensor;
 
-    Matrix33 transposedOrient = orientation.toMatrix();
-    transposedOrient.transpose();
-    inertiaTensor = orientation.toMatrix() * diagonalizedInertiaTensor * transposedOrient;// orientation.toMatrix().transpose();
+    /*
+    if(testMode)
+    {
+        inertiaTensor = orientation.toMatrix() * diagonalizedInertiaTensor * transposedOrient;// orientation.toMatrix().transpose();
+    }
+    else
+    {
+        inertiaTensor = diagonalizedInertiaTensor;
+    }
+    */
 
-
-    using namespace std::chrono;
     time_t ms0 = duration_cast< milliseconds >(
     system_clock::now().time_since_epoch()
     ).count();
     if(ms0 % 200 == 0)
     {
+        //Matrix33 invAngVel = angularVelocity.toMatrix();
+        //L_INFO << invAngVel;
+        //L_INFO << orientation;
         //L_INFO<< "Diagonalized Tensor: " << diagonalizedInertiaTensor / inertialMomentX;
-        L_INFO << "Inertia tensor: " << inertiaTensor/inertialMomentX;
+        //L_INFO << "Inertia tensor: " << inertiaTensor/inertialMomentX;
     }
 
+    /** Kinematics **/
     velocity = Vector3dd(0.0, 0.0, 0.0);
 
     Vector3dd newPos = getPosCenter() + velocity * deltaT;
+    /** Floor simulation **/
     if (newPos.z() < -0.1)
     {
         velocity = Vector3dd::Zero();
@@ -201,41 +219,35 @@ void DzhanibekovBolt::tick(double deltaT)
     velocity += (getForce() / getSystemMass()) * deltaT;
 
     /* We should carefully use inertiaTensor here. It seems like it changes with the frame of reference */
-    //L_INFO << "Momentum: " << getMomentum();
-    /**This works as wanted**/
-    Vector3dd W = inertiaTensor.inv() * getMomentum();
-    Quaternion angularAcceleration = Quaternion::pow(Quaternion::Rotation(W, W.l2Metric()), 0.000001);
+    /** Dynamics **/
+    Vector3dd w_modified = angularVelocity * deltaT;
+    Quaternion dq = Quaternion::Rotation(w_modified, w_modified.l2Metric());
+    orientation = orientation ^ dq;
 
-    Quaternion q = orientation;
-    //Probably bug here
-    //angularVelocity = Quaternion(0.621634, 0, 0, -0.783308);
-    orientation = Quaternion::pow(angularVelocity, deltaT * 1000) ^ orientation;
+    Matrix33 omega = Matrix33::CrossProductLeft(angularVelocity);
+    //Vector3dd dw = -inertiaTensor.inv() * (getMomentum() - (omega * inertiaTensor * angularVelocity));
+    Vector3dd dw = inertiaTensor.inv() * (getMomentum() - (omega * inertiaTensor * w_modified));
+    angularVelocity += dw;// * deltaT;
 
-    //Just async output
-    using namespace std::chrono;
-    time_t ms = duration_cast< milliseconds >(
-    system_clock::now().time_since_epoch()
-    ).count();
-    if(ms % 200 == 0)
+    /** Need more info about why this is needed **/
+    orientation.normalise();
+
+    /** Understood what this should do, but have no clue how to apply this to object
+     * without initial angular veclocity (like DzhanibekovVideo test) **/
+    //double mw = w.l2Metric();
+    //angularVelocity *= mw / angularVelocity.l2Metric();
+
+    /** Old physics equations, could be useful **/
+    //Vector3dd W = inertiaTensor.inv() * getMomentum();
+    //angularAcceleration = Quaternion::pow(Quaternion::Rotation(W, W.l2Metric()), 0.000001);
+    //orientation = Quaternion::pow(angularVelocity, deltaT * 1000) ^ orientation;
+    //angularVelocity = Quaternion::pow(angularAcceleration, deltaT * 1000) ^ angularVelocity;
+
+    /** Just output **/
+    if(ms0 % 200 == 0)
     {
         //L_INFO<<"Delta orient: "<<orientation.getAngle()-q.getAngle();
+        //L_INFO << angularAcceleration;
+        //L_INFO << orientation;
     }
-
-    //orientation.printAxisAndAngle();
-    Quaternion temp = Quaternion::pow(angularAcceleration,deltaT);
-
-    using namespace std::chrono;
-    time_t ms1 = duration_cast< milliseconds >(
-    system_clock::now().time_since_epoch()
-    ).count();
-    if(ms % 200 == 0)
-    {
-        //L_INFO << angularVelocity;
-    }
-
-    //Probably bug here
-    angularVelocity = Quaternion::pow(angularAcceleration, deltaT * 1000) ^ angularVelocity;
-
-    //L_INFO<<"Delta orient: "<<abs(orientation.getAngle()-q.getAngle());
-
 }
