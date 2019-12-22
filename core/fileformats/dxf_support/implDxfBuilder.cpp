@@ -61,14 +61,14 @@ std::list<DxfEntity*> ImplDxfBuilder::prepareToDraw() {
             result.emplace_back(entity);
             auto box = entity->getBoundingBox();
             if (isFirstVisibleEntity) {
-                lowerLeftCorner = box.first;
-                upperRightCorner = box.second;
+                lowerLeftCorner = box.ulCorner();
+                upperRightCorner = box.lrCorner();
                 isFirstVisibleEntity = false;
             } else {
-                if (box.first.x() < lowerLeftCorner.x()) lowerLeftCorner.x() = box.first.x();
-                else if (box.second.x() > upperRightCorner.x()) upperRightCorner.x() = box.second.x();
-                if (box.first.y() < lowerLeftCorner.y()) lowerLeftCorner.y() = box.first.y();
-                else if (box.second.y() > upperRightCorner.y()) upperRightCorner.y() = box.second.y();
+                if (box.ulCorner().x() < lowerLeftCorner.x()) lowerLeftCorner.x() = box.ulCorner().x();
+                if (box.lrCorner().x() > upperRightCorner.x()) upperRightCorner.x() = box.lrCorner().x();
+                if (box.ulCorner().y() < lowerLeftCorner.y()) lowerLeftCorner.y() = box.ulCorner().y();
+                if (box.lrCorner().y() > upperRightCorner.y()) upperRightCorner.y() = box.lrCorner().y();
             }
         }
     }

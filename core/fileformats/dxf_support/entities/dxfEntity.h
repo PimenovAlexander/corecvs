@@ -23,9 +23,9 @@ public:
 
     virtual void draw(RGB24Buffer * /*buffer*/, DxfDrawingAttrs */*attrs*/) {}
     virtual void print();
-    virtual std::pair<Vector2dd,Vector2dd> getBoundingBox()
+    virtual Rectangled getBoundingBox()
     {
-        return std::pair<Vector2dd, Vector2dd>();
+        return Rectangled();
     }
 
     DxfEntityData &data;
@@ -41,7 +41,7 @@ public:
 
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() override;
-    std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
+    Rectangled getBoundingBox() override;
 
     DxfLineData &data;
 };
@@ -56,7 +56,7 @@ public:
 
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() override;
-    std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
+    Rectangled getBoundingBox() override;
 
     DxfLwPolylineData &data;
 };
@@ -71,7 +71,7 @@ public:
 
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() override;
-    std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
+    Rectangled getBoundingBox() override;
 
     DxfPolylineData &data;
 };
@@ -86,7 +86,7 @@ public:
 
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() override;
-    std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
+    Rectangled getBoundingBox() override;
 
     DxfCircleData &data;
 };
@@ -101,7 +101,7 @@ public:
 
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() override;
-    std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
+    Rectangled getBoundingBox() override;
 
     DxfCircularArcData &data;
 };
@@ -116,7 +116,7 @@ public:
 
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() override;
-    std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
+    Rectangled getBoundingBox() override;
 
     DxfEllipticalArcData &data;
 };
@@ -131,7 +131,7 @@ public:
 
     void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
     void print() override;
-    std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
+    Rectangled getBoundingBox() override;
 
     DxfPointData &data;
 };
