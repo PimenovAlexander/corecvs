@@ -87,7 +87,7 @@ if (DISFLOW_FOUND)
     )
 
     include_directories(PUBLIC ${EIGEN_INCLUDE_DIR})
-    set_source_files_properties(${DISFLOW_SRC_FILES} PROPERTIES COMPILE_DEFINITIONS "SELECTCHANNEL=3")
+    set_source_files_properties(${DISFLOW_SRC_FILES} PROPERTIES COMPILE_DEFINITIONS "SELECTMODE=1; SELECTCHANNEL=3")
 
     set (SRC_FILES
         ${SRC_FILES}

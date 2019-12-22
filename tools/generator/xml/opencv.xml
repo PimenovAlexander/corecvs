@@ -65,24 +65,24 @@
 
   
   <class name="dis Flow Parameters">
-    <field type="int"       name="sc_f"         defaultValue="100" min="2"    max="10000" step="1" comment="first (coarsest) scale" />
-    <field type="int"       name="sc_l"         defaultValue="100" min="2"    max="10000" step="1" comment="last (finest) scale" />
-    <field type="int"       name="maxiter"      defaultValue="100" min="2"    max="10000" step="1" comment="max. iterations on one scale" />
-    <field type="int"       name="miniter"      defaultValue="100" min="2"    max="10000" step="1" comment="min. iterations on one scale" />
+    <field type="int"       name="sc_f"         defaultValue="5" min="2"    max="10000" step="1" comment="first (coarsest) scale" />
+    <field type="int"       name="sc_l"         defaultValue="3" min="2"    max="10000" step="1" comment="last (finest) scale" />
+    <field type="int"       name="maxiter"      defaultValue="12" min="2"    max="10000" step="1" comment="max. iterations on one scale" />
+    <field type="int"       name="miniter"      defaultValue="12" min="2"    max="10000" step="1" comment="min. iterations on one scale" />
 
     <field type="double"    name="mindprate"    defaultValue="0.05" min="0"    max="1" step="0.01" comment="minimum rate of change of delta_p before descending one level, e.g. .1 :  change scales when norm(delta_p_last)/norm(delta_p_init) &lt; .1" />
     <field type="double"    name="mindrrate"    defaultValue="0.95" min="0"    max="1" step="0.01" comment="minimum rate of change of residual within 3-iterations-window before descending one level, e.g. .8 :  res_new/res_old >  * .8, SET HIGH (1e10) TO DISABLE"/>
     <field type="double"    name="minimgerr"    defaultValue="0.00" min="0"    max="1" step="0.01" comment="if (mean absolute) residual falls below this threshold, terminate iterations on current scale, IGNORES MIN_ITER , SET TO LOW (1e-10) TO DISABLE"/>
 
-    <field type="int"       name="patchsz"      defaultValue="100" min="2"    max="10000" step="1" comment="patch size (edge length in pixels)"/>
-    <field type="double"    name="poverl"       defaultValue="100" min="2"    max="10000" step="1" comment="Patch overlap"/>
+    <field type="int"       name="patchsz"      defaultValue="8" min="2"    max="10000" step="1" comment="patch size (edge length in pixels)"/>
+    <field type="double"    name="poverl"       defaultValue="0.4" min="2"    max="10000" step="1" comment="Patch overlap"/>
 
     <field type="int"       name="usefbcon"     defaultValue="0" min="0"    max="10" step="1"      comment="use forward-backward flow merging"/>
     <field type="int"       name="patnorm"      defaultValue="1" min="0"    max="10" step="1"      comment="Use patch mean-normalization"/>
     
     <field type="int"       name="costfct"      defaultValue="0" min="0"    max="2" step="1"       comment="Cost function: 0: L2-Norm, 1: L1-Norm, 2: PseudoHuber-Norm"/>
 
-    <field type="int"       name="usetvref"     defaultValue="100" min="2"    max="10000" step="1" comment="TV parameters"/>
+    <field type="int"       name="usetvref"     defaultValue="1" min="2"    max="10000" step="1" comment="TV parameters"/>
 
     <field type="double"    name="tv_alpha"     defaultValue="10.0" min="0"    max="1000" step="0.5"/>
     <field type="double"    name="tv_gamma"     defaultValue="10.0" min="0"    max="1000" step="0.5"/>
