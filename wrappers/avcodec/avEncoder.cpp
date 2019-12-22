@@ -230,11 +230,11 @@ void AVEncoder::endEncoding()
     open = false;
 }
 
+#if 0
 void AVEncoder::printCaps()
 {
     //av_register_all();
     //avcodec_register_all();
-
 
     SYNC_PRINT(("AVEncoder::printCaps():format list\n"));
     void **opaque = NULL;
@@ -264,3 +264,38 @@ void AVEncoder::printCaps()
     SYNC_PRINT(("=============\n"));
 
 }
+#else
+void AVEncoder::printCaps()
+{
+    av_register_all();
+    avcodec_register_all();
+
+    SYNC_PRINT(("AVEncoder::printCaps():format list\n"));
+    void **opaque = NULL;
+
+    const AVOutputFormat * oformat = av_muxer_iterate(opaque);
+    while(oformat != NULL)
+    {
+        SYNC_PRINT(("%s %s\n", oformat->name, oformat->long_name));
+        oformat = av_muxer_iterate(opaque);
+    }
+
+    SYNC_PRINT(("=============\n"));
+
+    SYNC_PRINT(("AVEncoder::printCaps():codec list\n"));
+
+    opaque = NULL;
+    const AVCodec *codec = NULL;
+    while (true)
+    {
+        codec = av_codec_iterate(opaque);
+        if (codec == NULL)
+        {
+            break;
+        }
+        SYNC_PRINT(("0x%04.4X %s %s\n", codec->id, codec->name, codec->long_name));
+    }
+    SYNC_PRINT(("=============\n"));
+
+}
+#endif
