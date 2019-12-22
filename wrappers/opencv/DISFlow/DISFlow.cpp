@@ -48,21 +48,18 @@ std::map<std::string, corecvs::DynamicObject> DISFlow::getParameters() {
 
 cv::Mat DISFlow::convertToCVMat(corecvs::RGB24Buffer *buffer) {
     cv::Mat cv_rgb_image (buffer->h,buffer->w,CV_8UC3);
-    int step = sizeof(uint8_t) * buffer->w;
+    int step = 3*buffer->w;
 
-    for(int i = 0,k=0;i < cv_rgb_image.rows;i++)
+    for(int i = 0;i < cv_rgb_image.rows;i++)
     {
-        for(int j = 0;j < cv_rgb_image.step; j+=3,k++)
+        int k = 0;
+        for(int j = 0;j < cv_rgb_image.cols; k+=3,j++)
         {
-            cv_rgb_image.data[step * i + j] = buffer->data[k].b();
-            cv_rgb_image.data[step * i + j + 1] = buffer->data[k].g();
-            cv_rgb_image.data[step * i + j + 2] = buffer->data[k].r();
+            cv_rgb_image.data[step * i + k] = buffer->element(i, j).b();
+            cv_rgb_image.data[step * i + k + 1] = buffer->element(i, j).g();
+            cv_rgb_image.data[step * i + k + 2] = buffer->element(i, j).r();
         }
     }
-    //cv::Mat newImg;
-    //newImg.Mat::convertTo(cv_rgb_image, CV_32FC3, 1/255.0);
-
-    /*return someting?*/
     return  cv_rgb_image;
 }
 
@@ -86,7 +83,8 @@ void DISFlow::saveFlowBuffer(cv::Mat &img) {
             {
                 tmp[0] = img.at<cv::Vec2f>(y,x)[0];
                 tmp[1] = img.at<cv::Vec2f>(y,x)[1];
-                opticalFlow->element(tmp[0], tmp[1]);
+                corecvs::FlowElement elem(tmp[0], tmp[1]);
+                opticalFlow->setElement(y, x, elem);
             }
             else if (nc==4) // Scene Flow
             {
@@ -167,6 +165,10 @@ cv::Mat DISFlow::execute(cv::Mat img_ao_mat, cv::Mat img_bo_mat) {
         rpyrtype = CV_32FC3;
         nochannels = 3;
     }
+
+    //cv::Mat img_ao_mat = cv::imread("/home/vladimir/Рабочий стол/clear/1.png", incoltype);   // Read the file
+    //cv::Mat img_bo_mat = cv::imread("/home/vladimir/Рабочий стол/clear/2.png", incoltype);   // Read the file
+
     cv::Mat img_ao_fmat, img_bo_fmat;
     cv::Size sz = img_ao_mat.size();
     int width_org = sz.width;   // unpadded original image size
