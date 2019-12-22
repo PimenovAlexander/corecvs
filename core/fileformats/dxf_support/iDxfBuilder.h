@@ -28,7 +28,9 @@ public:
     // Entities
     virtual void addEntity(DxfEntity *entity) {}
 
-    virtual RGB24Buffer* draw() {}
+    virtual RGB24Buffer* draw() {
+        return  NULL;
+    }
 };
 
 } // namespace corecvs

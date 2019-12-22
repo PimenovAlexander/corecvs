@@ -30,7 +30,8 @@ public:
 
     Quaternion orientation = Quaternion::Identity();
 
-    Quaternion angularVelocity  = Quaternion::Identity();
+    Vector3dd angularVelocity  = Vector3dd::Zero();
+    Vector3dd angularAcceleration = Vector3dd::Zero();
 
     /** Mass in kilograms **/
     bool countPhysics = false;

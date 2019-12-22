@@ -24,6 +24,10 @@
 #include <KLTFlow.h>
 #endif
 
+#ifdef WITH_DISFLOW
+#include <wrappers/opencv/DISFlow/DISFlow.h>
+#endif
+
 using namespace std;
 using namespace corecvs;
 
@@ -230,6 +234,9 @@ int main(int argc, char *argv[])
     ProcessorFlowFactoryHolder::getInstance()->registerProcessor(new AlgoFactory<DummyFlowProcessor, ProcessorFlow>("Dummy"));
 #ifdef WITH_OPENCV
     ProcessorFlowFactoryHolder::getInstance()->registerProcessor(new AlgoFactory<OpenCVFlowProcessor, ProcessorFlow>("OpenCVProcessor"));
+#ifdef WITH_DISFLOW
+    ProcessorFlowFactoryHolder::getInstance()->registerProcessor(new AlgoFactory<DISFlow, ProcessorFlow>("DISFlow"));
+#endif
 #endif
 
     CommandLineSetter s(argc, argv);

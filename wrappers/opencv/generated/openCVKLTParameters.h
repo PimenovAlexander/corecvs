@@ -127,7 +127,7 @@ public:
         return mKltSize;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setSelectorQuality(double selectorQuality)
     {
         mSelectorQuality = selectorQuality;
@@ -158,7 +158,7 @@ public:
         mKltSize = kltSize;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -194,6 +194,7 @@ template<class VisitorType>
         mKltSize = kltSize;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const OpenCVKLTParameters &other) const 
     {
         if ( !(this->mSelectorQuality == other.mSelectorQuality)) return false;

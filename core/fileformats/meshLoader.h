@@ -38,6 +38,7 @@ public:
     }
 
     bool trace;
+    bool binary = false;
 
     MeshLoader();
 

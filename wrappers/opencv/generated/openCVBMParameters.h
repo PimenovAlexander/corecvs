@@ -163,7 +163,7 @@ public:
         return mDisp12MaxDiff;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setBlockSize(int blockSize)
     {
         mBlockSize = blockSize;
@@ -209,7 +209,7 @@ public:
         mDisp12MaxDiff = disp12MaxDiff;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -254,6 +254,7 @@ template<class VisitorType>
         mDisp12MaxDiff = disp12MaxDiff;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const OpenCVBMParameters &other) const 
     {
         if ( !(this->mBlockSize == other.mBlockSize)) return false;

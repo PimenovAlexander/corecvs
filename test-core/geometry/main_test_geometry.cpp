@@ -104,6 +104,34 @@ TEST(Geometry, KDTreePredicate)
     }
 }
 
+
+TEST(Geometry, testTexProg)
+{
+    Vector2dd v1(100, 0  );
+    Vector2dd v2(100, 100);
+
+    Matrix22 m(
+        v1.x(), v2.x(),
+        v1.y(), v2.y());
+
+    /* ==== */
+    cout << m * Vector2dd(1, 0) << endl;
+    cout << m * Vector2dd(0, 1) << endl;
+    cout << "Ok:" << endl;
+    cout << m.inverted() * m * Vector2dd(1, 0) << endl;
+    cout << m.inverted() * m * Vector2dd(0, 1) << endl;
+
+    /* ==== */
+    cout << "Ok:" << endl;
+
+    Vector2dd p1(100, 0);
+    Vector2dd p2(100, 100);
+
+    cout << m.inverted() * p1 << endl;
+    cout << m.inverted() * p2 << endl;
+
+}
+
 TEST(Geometry, testPolygonInside)
 {
     corecvs::Polygon p;

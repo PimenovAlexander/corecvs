@@ -35,7 +35,7 @@
          <string>Load</string>
         </property>
         <property name="icon">
-         <iconset resource="../../../restricted/cvs/resources/resresource.qrc">
+         <iconset>
           <normaloff>:/new/prefix1/remove.png</normaloff>:/new/prefix1/remove.png</iconset>
         </property>
         <property name="iconSize">
@@ -88,7 +88,7 @@
   <customwidget>
    <class>AdvancedImageWidget</class>
    <extends>QWidget</extends>
-   <header>advancedImageWidget.h</header>
+   <header location="global">advancedImageWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -104,8 +104,6 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../../../restricted/cvs/resources/resresource.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

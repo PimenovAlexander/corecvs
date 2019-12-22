@@ -15,6 +15,7 @@
 #include <QApplication>
 #include <core/fileformats/xyzListLoader.h>
 
+#include "core/filesystem/folderScanner.h"
 #include "core/fileformats/objLoader.h"
 #include "core/utils/global.h"
 #include "core/utils/utils.h"
@@ -89,7 +90,7 @@ int main(int argc, char *argv[])
                 materialFile.open(mtlFile, std::ios::in);
                 if (materialFile.good())
                 {
-                    objLoader.loadMaterials(materialFile, mesh->materials, corecvs::HelperUtils::getDirectory(mtlFile));
+                    objLoader.loadMaterials(materialFile, mesh->materials, corecvs::FolderScanner::getDirectory(mtlFile));
 
                     cout << "Loaded materials: " << mesh->materials.size() << std::endl;
                 } else {

@@ -27,8 +27,12 @@ class DroneObject : public PhysMainObject
 public:
     std::vector<CameraModel> cameras;
     std::vector<Sensor> sensors;
-    std::vector<Motor> motors;
-    PhysSphere centralSphere;
+
+    /* Not owned */
+    std::vector<Motor *> motors;
+
+    /* Not owned */
+    PhysSphere *centralSphere;
     bool testMode = false;
 
     PID pitchPID{0.7, 0.35, 0.35};

@@ -1,14 +1,14 @@
 //
 // Created by Myasnikov Vladislav on 10/27/19.
 //
+#include <iostream>
 
 #include "core/fileformats/dxf_support/entities/dxfEntity.h"
 #include "core/geometry/conic.h"
-#include "core/buffers/rgb24/bezierRasterizer.h"
 #include "core/utils/utils.h"
-#include <iostream>
-#include <core/buffers/rgb24/wuRasterizer.h>
-#include <core/buffers/rgb24/abstractPainter.h>
+#include "core/buffers/rgb24/bezierRasterizer.h"
+#include "core/buffers/rgb24/wuRasterizer.h"
+#include "core/buffers/rgb24/abstractPainter.h"
 
 namespace corecvs {
 
@@ -115,8 +115,8 @@ void DxfPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
     int vertexNumber = data.vertices.size();
     if (vertexNumber > 1) {
         for (unsigned long i = 0; i < vertexNumber - !data.isClosed; i++) {
-            auto startPoint = Vector2dd(data.vertices[i % vertexNumber]->location.x(), data.vertices[i % vertexNumber]->location.y());
-            auto endPoint = Vector2dd(data.vertices[(i+1) % vertexNumber]->location.x(), data.vertices[(i+1) % vertexNumber]->location.y());
+            Vector2dd startPoint = data.vertices[i     % vertexNumber]->location.xy();
+            Vector2dd endPoint   = data.vertices[(i+1) % vertexNumber]->location.xy();
             auto bulge = data.vertices[i % vertexNumber]->bulge;
 
             if (bulge == 0) {
@@ -125,7 +125,7 @@ void DxfPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
                 buffer->drawLine(startPoint, endPoint, data.rgbColor);
             } else {
                 auto delta = startPoint - endPoint;
-                auto chordLength = std::sqrt(delta.x() * delta.x() + delta.y() * delta.y());
+                auto chordLength = delta.l2Metric();
                 auto radius = chordLength / 4 * (1 / std::abs(bulge) + std::abs(bulge));
                 auto mediumPoint = (startPoint + endPoint) / 2;
                 auto apothemLength = std::sqrt(radius * radius - (chordLength / 2) * (chordLength / 2));
@@ -208,9 +208,9 @@ void DxfCircularArcEntity::draw(class corecvs::RGB24Buffer *buffer, class corecv
 }
 
 void DxfEllipticalArcEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::DxfDrawingAttrs *attrs) {
-    auto centerPoint = Vector2dd(data.center.x(), data.center.y());
-    auto delta = Vector2dd(data.majorAxisEndPoint.x(), data.majorAxisEndPoint.y());
-    auto a = std::sqrt(delta.x() * delta.x() + delta.y() * delta.y());
+    auto centerPoint = data.center.xy();
+    auto delta = data.majorAxisEndPoint.xy();
+    auto a = delta.l2Metric();
     auto b = a * data.ratio;
 
     double rotationAngle = 0;
@@ -246,10 +246,10 @@ void DxfEllipticalArcEntity::draw(class corecvs::RGB24Buffer *buffer, class core
         auto secondPoint = startPoint + theta * Vector2dd(-a * cosRotationAngle * sinStartAlpha - b * sinRotationAngle * cosStartAlpha, -a * sinRotationAngle * sinStartAlpha + b * cosRotationAngle * cosStartAlpha);
         auto thirdPoint = endPoint - theta * Vector2dd(-a * cosRotationAngle * sinEndAlpha - b * sinRotationAngle * cosEndAlpha, -a * sinRotationAngle * sinEndAlpha + b * cosRotationAngle * cosEndAlpha);
 
-        startPoint = attrs->getDrawingValues(startPoint);
+        startPoint  = attrs->getDrawingValues(startPoint);
         secondPoint = attrs->getDrawingValues(secondPoint);
-        thirdPoint = attrs->getDrawingValues(thirdPoint);
-        endPoint = attrs->getDrawingValues(endPoint);
+        thirdPoint  = attrs->getDrawingValues(thirdPoint);
+        endPoint    = attrs->getDrawingValues(endPoint);
 
         WuRasterizer rast = WuRasterizer();
         BezierRasterizer<RGB24Buffer, WuRasterizer> bezier(*buffer, rast, data.rgbColor);
@@ -270,7 +270,7 @@ void DxfPointEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::Dxf
 
 // Bounding box getting
 std::pair<Vector2dd,Vector2dd> DxfLineEntity::getBoundingBox() {
-    auto lowerLeftCorner = Vector2dd(std::min(data.startPoint.x(), data.endPoint.x()), std::min(data.startPoint.y(), data.endPoint.y()));
+    auto lowerLeftCorner  = Vector2dd(std::min(data.startPoint.x(), data.endPoint.x()), std::min(data.startPoint.y(), data.endPoint.y()));
     auto upperRightCorner = Vector2dd(std::max(data.startPoint.x(), data.endPoint.x()), std::max(data.startPoint.y(), data.endPoint.y()));
     return std::make_pair(lowerLeftCorner, upperRightCorner);
 }
@@ -279,7 +279,7 @@ std::pair<Vector2dd,Vector2dd> DxfLwPolylineEntity::getBoundingBox() {
     if (!data.vertices.empty()) {
         auto lowerLeftCorner = Vector2dd(data.vertices[0].x(), data.vertices[0].y());
         auto upperRightCorner = lowerLeftCorner;
-        for (int i = 1; i < data.vertices.size(); i++) {
+        for (size_t i = 1; i < data.vertices.size(); i++) {
             auto x = data.vertices[i].x();
             auto y = data.vertices[i].y();
             if (x < lowerLeftCorner.x()) lowerLeftCorner.x() = x;
@@ -289,13 +289,15 @@ std::pair<Vector2dd,Vector2dd> DxfLwPolylineEntity::getBoundingBox() {
         }
         return std::make_pair(lowerLeftCorner, upperRightCorner);
     }
+    /* We should return something empty, like Rectangled::Empty()*/
+    return std::make_pair(Vector2dd::Zero(), Vector2dd::Zero());
 }
 
 std::pair<Vector2dd,Vector2dd> DxfPolylineEntity::getBoundingBox() {
     if (!data.vertices.empty()) {
         auto lowerLeftCorner = Vector2dd(data.vertices[0]->location.x(), data.vertices[0]->location.y());
         auto upperRightCorner = lowerLeftCorner;
-        for (int i = 1; i < data.vertices.size(); i++) {
+        for (size_t i = 1; i < data.vertices.size(); i++) {
             auto x = data.vertices[i]->location.x();
             auto y = data.vertices[i]->location.y();
             if (x < lowerLeftCorner.x()) lowerLeftCorner.x() = x;
@@ -305,6 +307,7 @@ std::pair<Vector2dd,Vector2dd> DxfPolylineEntity::getBoundingBox() {
         }
         return std::make_pair(lowerLeftCorner, upperRightCorner);
     }
+    return std::make_pair(Vector2dd::Zero(), Vector2dd::Zero());
 }
 
 std::pair<Vector2dd,Vector2dd> DxfCircleEntity::getBoundingBox() {

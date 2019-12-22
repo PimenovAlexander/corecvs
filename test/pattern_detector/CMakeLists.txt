@@ -6,7 +6,6 @@ set (SRC_FILES
     main_pattern_detector.cpp      
 )
 
-
 if (PNG_LIB)
     include(../../wrappers/libpng/sourcelist.cmake)    
 endif()
@@ -21,10 +20,24 @@ if (OpenCV_LIBS)
 include(../../wrappers/opencv/sourcelist.cmake)
 endif()
 
-#message(STATUS PatternDetector:${INCLUDEPATHS} )
-
 add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
 
-target_link_libraries(${NAME} corecvs pthread ${LIBS})
+add_custom_command(TARGET ${NAME} POST_BUILD
+        COMMAND cp ${PROJECT_BINARY_DIR}/${NAME}  ${CMAKE_BINARY_DIR}/bin/${NAME}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Copying ${NAME} to binary directory"
+        )
+
+include_directories(${INC_PATHS})
+
+
+if (APRILTAG_FOUND)
+    target_link_libraries(${NAME} ${APRILTAG_LIB} Threads::Threads)
+endif()
+
+#message(STATUS PatternDetector:${INCLUDEPATHS} )
+
+
+target_link_libraries(${NAME} corecvs pthread cvs_utils ${LIBS})
 
  

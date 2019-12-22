@@ -44,7 +44,10 @@ class ImageWidget : public ViAreaWidget {
 public:
     QImage *image;
 
-    ImageWidget() : image(NULL) {}
+    ImageWidget(QWidget *parent = 0) :
+        ViAreaWidget(parent),
+        image(NULL)
+    {}
 
     void setImage(QImage *_image);
     void setSizeToImage();

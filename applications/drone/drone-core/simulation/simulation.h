@@ -1,17 +1,20 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
-#include "bits/stdc++.h"
-#include "list"
-#include "iostream"
+
+#include <bits/stdc++.h>
+#include <bits/stl_list.h>
+#include <list>
+#include <iostream>
+#include <time.h>
+
+#include "copter/droneObject.h"
 #include "physObject.h"
 #include "physSphere.h"
 #include "physMainObject.h"
-#include <bits/stl_list.h>
-#include "copter/droneObject.h"
 #include "sceneShaded.h"
-#include "joystickInput.h"
-#include <time.h>
-#include <janibekovsBolt.h>
+#include "dzhanibekovBolt.h"
+#include <testPhysicsObject.h>
+
 class Simulation
 {
 public:
@@ -20,6 +23,7 @@ public:
 
     DroneObject drone;
     DzhanibekovBolt testBolt;
+    TestPhysicsObject testObject;
 
     std::chrono::high_resolution_clock::time_point oldTime;
     std::chrono::high_resolution_clock::time_point newTime;
@@ -29,6 +33,7 @@ public:
 
     std::chrono::high_resolution_clock::time_point endTime;
     std::chrono::duration<double> time_span;
+    std::chrono::duration<double> time_since_start;
     SceneShaded *mShadedScene = NULL;
     int frameCounter=0;
     void start();
@@ -48,11 +53,14 @@ public:
     std::vector<size_t> time_between_forces;
 
     void execJanibekovTest();
+    void startDroneSimulation();
+    void execTestPhysObject();
 private:
     void defaultStart();
     void droneStart();
     std::mutex simMutex;
     bool isAlive = false;
     bool noiseFlag = true;
+    bool outputFlag = true;
 };
 #endif // SIMULATION_H

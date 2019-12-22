@@ -172,6 +172,7 @@ bool FolderScanner::createDir(const string &path, bool allowRecursive)
 
     std::system(("mkdir " + path).c_str());
 
+
     if (!isDirectory(path))
     {
         if (!allowRecursive) {

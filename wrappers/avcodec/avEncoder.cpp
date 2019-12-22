@@ -17,8 +17,8 @@ int AVEncoder::startEncoding(const std::string &name, int h, int w, int codec_id
     printf("AVEncoder::startEncoding(%s):called\n", name.c_str());
 
     int ret;
-    av_register_all();
-    avcodec_register_all();
+    //av_register_all();
+    //avcodec_register_all();
 
     if (codec_id == -1) {
         codec_id = AV_CODEC_ID_MPEG4;
@@ -181,7 +181,7 @@ void AVEncoder::addFrame(corecvs::RGB24Buffer *input)
      if (got_output) {
          printf("Write frame %3d (size=%5d)\n", frame_number, pkt.size);
          fwrite(pkt.data, 1, pkt.size, outFile);
-         av_free_packet(&pkt);
+         av_packet_unref(&pkt);
      }
 
      /* get the delayed frames */
@@ -202,7 +202,7 @@ void AVEncoder::addFrame(corecvs::RGB24Buffer *input)
                  return;
              }
          }
-         av_free_packet(&pkt);
+         av_packet_unref(&pkt);
 
      }
 
@@ -230,6 +230,41 @@ void AVEncoder::endEncoding()
     open = false;
 }
 
+#if 0
+void AVEncoder::printCaps()
+{
+    //av_register_all();
+    //avcodec_register_all();
+
+    SYNC_PRINT(("AVEncoder::printCaps():format list\n"));
+    void **opaque = NULL;
+
+    const AVOutputFormat * oformat = av_muxer_iterate(opaque);
+    while(oformat != NULL)
+    {
+        SYNC_PRINT(("%s %s\n", oformat->name, oformat->long_name));
+        oformat = av_muxer_iterate(opaque);
+    }
+
+    SYNC_PRINT(("=============\n"));
+
+    SYNC_PRINT(("AVEncoder::printCaps():codec list\n"));
+
+    opaque = NULL;
+    const AVCodec *codec = NULL;
+    while (true)
+    {
+        codec = av_codec_iterate(opaque);
+        if (codec == NULL)
+        {
+            break;
+        }
+        SYNC_PRINT(("0x%04.4X %s %s\n", codec->id, codec->name, codec->long_name));
+    }
+    SYNC_PRINT(("=============\n"));
+
+}
+#else
 void AVEncoder::printCaps()
 {
     av_register_all();
@@ -261,3 +296,4 @@ void AVEncoder::printCaps()
     SYNC_PRINT(("=============\n"));
 
 }
+#endif

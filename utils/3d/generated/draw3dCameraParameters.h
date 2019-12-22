@@ -359,7 +359,7 @@ public:
         return mDecalRightAlpha;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setFovH(double fovH)
     {
         mFovH = fovH;
@@ -485,7 +485,7 @@ public:
         mDecalRightAlpha = decalRightAlpha;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /** 
      * \brief Base Parameters 
      * Base Parameters 
@@ -634,6 +634,7 @@ template<class VisitorType>
         mDecalRightAlpha = decalRightAlpha;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const Draw3dCameraParameters &other) const 
     {
         if ( !(this->mFovH == other.mFovH)) return false;

@@ -1,6 +1,6 @@
 SET(JPEG_INCLUDE_SEARCH_PATHS
     /usr/include
-    /usr/include/png
+    /usr/include/jpeg
     /usr/local/include
     /usr/local/include/png-base
     /opt/libjpeg/include

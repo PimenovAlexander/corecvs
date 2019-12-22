@@ -127,7 +127,7 @@ public:
         return mMaxCosineThreshold;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setDebug(bool debug)
     {
         mDebug = debug;
@@ -158,7 +158,7 @@ public:
         mMaxCosineThreshold = maxCosineThreshold;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -194,6 +194,7 @@ template<class VisitorType>
         mMaxCosineThreshold = maxCosineThreshold;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const OpenCVSquareDetectorParameters &other) const 
     {
         if ( !(this->mDebug == other.mDebug)) return false;

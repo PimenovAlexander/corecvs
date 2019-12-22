@@ -246,6 +246,129 @@ TEST(Physics, testMultimodule)
     controller.disconnect();
 }
 
+TEST(Physics, dzhanibekovVideo)
+{
+    /** Following this guide                        **/
+    /** 	            **/
+
+    /* Let's begin */
+    Vector3dd pos;  /**< Position */
+    Vector3dd v;    /**< Speed */
+
+    /* Rotation */
+    Quaternion q;    /**< Rodrigues-Hamilton parameters aka Quaternion */
+    Vector3dd  w;    /**< Angular velocity. For presentation look into the paper */
+
+    Matrix33 I;      /**< Inertial tensor */
+
+    int videoLen = 10000;
+    int ticks = 10;
+
+    pos = Vector3dd(-100, 0, 100 );
+    v   = Vector3dd( 200.0 / (videoLen * ticks), 0, 0 );
+
+    q = Quaternion::Identity();
+    w = Vector3dd(0.99,0.01,0) * 0.0008;
+    double mw = w.l2Metric();
+
+    I = Matrix33::FromDiagonal(1.0, 1.5, 0.75);
+
+    Mesh3D obj;
+    obj.addAOB(AxisAlignedBox3d::ByCenter(Vector3dd::Zero(), Vector3dd(5, 20,10) * 2.0));
+    obj.addAOB(AxisAlignedBox3d::ByCenter(Vector3dd(7.0,0,0) , Vector3dd(15, 4, 4) * 2.0));
+
+    obj.switchColor(true);
+    for (size_t c = 0; c < obj.faces.size(); c++) {
+        obj.facesColor[c] = RGBColor::rainbow(lerpLimit(0.0, 1.0, c, 0, obj.faces.size()));
+    }
+
+    /** AVI Preparation **/
+#ifdef WITH_AVCODEC
+    AVEncoder encoder;
+    RGB24Buffer buffer(500, 500);
+    AVEncoder::printCaps();
+    PinholeCameraIntrinsics cam(Vector2dd(buffer.w, buffer.h), degToRad(50));
+    Affine3DQ camPosition = Affine3DQ::Shift(0, 0, -100);
+    ClassicRenderer renderer;
+    renderer.modelviewMatrix = cam.getKMatrix() * Matrix44(camPosition.inverted());
+    renderer.drawFaces = true;
+    encoder.startEncoding("out-dzh.avi", buffer.h, buffer.w * 2);
+
+    RGB24Buffer graph(500, 500, RGBColor::White());
+#endif
+
+    for (int i = 0; i < videoLen; i++)
+    {
+        buffer.checkerBoard(10, RGBColor::Gray(70));
+        /* Create 3d scene */
+        Mesh3DDecorated mesh;
+        mesh.switchColor(true);
+        mesh.currentTransform = Matrix44(q.toMatrix(), pos);
+        mesh.add(obj, true);
+
+        /** Physics **/
+        for (int j = 0; j < ticks; j++ )
+        {
+            pos += v;
+            Quaternion dq = Quaternion::Rotation(w, w.l2Metric());
+            q = q ^ dq;
+            if (q.hasNans()) {
+                cout << w << endl;
+                return;
+            }
+
+#if 1
+            Matrix33 omega = Matrix33::CrossProductLeft(w);
+            Vector3dd dw = -I.inv() * ( omega * I * w );
+            w += dw;
+            w *= mw / w.l2Metric();
+#else
+            double iy = I.a(1,1) / I.a(0,0);
+            double iz = I.a(2,2) / I.a(0,0);
+
+            Vector3dd dw = Vector3dd(
+              (iy - iz)      * w.y() * w.z(),
+              (iz -  1) / iy * w.x() * w.z(),
+              (1  - iy) / iz * w.x() * w.y()
+            );
+            w += dw;
+#endif
+            q.normalise();
+        }
+
+#ifdef WITH_AVCODEC
+        renderer.render(&mesh, &buffer);
+        RGB24Buffer output(buffer.h, buffer.w * 2);
+        output.fillWith(buffer, 0, 0);
+
+        Vector3dd ort = q * Vector3dd::OrtX() * 100;
+
+        //cout << "Res" << (ort.x() + 750) << " " << (i/2) << endl;
+        double x = (double) i / videoLen * graph.w;
+
+        graph.setElement(ort.x() + graph.h / 2, x, RGBColor::Red());
+        graph.setElement(ort.y() + graph.h / 2, x, RGBColor::Green());
+        graph.setElement(ort.z() + graph.h / 2, x, RGBColor::Blue());
+        output.fillWith(graph, 0, 500);
+        cout << "Q:\n";
+        q.printAxisAndAngle();
+        cout << " x: " << pos << endl;
+
+        cout << "Kinetic Energy:" << ((I * w) & w) << endl;
+
+        encoder.addFrame(&output);
+#endif
+
+
+    }
+
+#ifdef WITH_AVCODEC
+    encoder.endEncoding();
+#endif
+
+}
+
+
 
 TEST(Physics, dummyVideo)
 {
@@ -308,7 +431,7 @@ TEST(Physics, dummyVideo)
     SYNC_PRINT(("Done."));
 }
 
-TEST(Physics, dzhanibekovVideo)
+TEST(Physics, dzhanibekovVideo1)
 {
     /** Following this guide                        **/
     /** https://habr.com/ru/post/264381/            **/

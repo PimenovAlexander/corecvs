@@ -1,3 +1,5 @@
+#include "wrappers/jsonmodern/jsonModernReader.h"
+
 #include "calibrationWidget.h"
 #include "physicsMainWindow.h"
 #include "ui_physicsMainWindow.h"
@@ -5,6 +7,8 @@
 #include <g12Image.h>
 #include <imageCaptureInterfaceQt.h>
 #include <sceneShaded.h>
+
+#include <reflection/jsonPrinter.h>
 
 
 PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
@@ -26,14 +30,18 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
     ui->comboBox->addItem("RT/LT Full mode");
     ui->comboBox->addItem("RT/LT Extream mode");
 
+    /*Camera*/
+    mInputSelector.setInputString("v4l2:/dev/video0:1/30:mjpeg:800x600");
 
-    on_updateCameraButton_clicked();
-    //frameValuesUpdate();
-
-    PinholeCameraIntrinsics *intr = new PinholeCameraIntrinsics(640, 480, degToRad(60));
+    PinholeCameraIntrinsics *intr = new PinholeCameraIntrinsics(Vector2dd(800, 600), degToRad(70.42));
     mCameraModel.intrinsics.reset(intr);
     mCameraModel.nameId = "Copter Main Camera";
+    mCameraModel.setLocation(Affine3DQ::Identity());
+    /* Connect parameters and send first version */
+    connect(&mModelParametersWidget, SIGNAL(loadRequest(QString)), this, SLOT(loadCameraModel(QString)));
+    connect(&mModelParametersWidget, SIGNAL(paramsChanged()), this, SLOT(cameraModelWidgetChanged()));
     mModelParametersWidget.setParameters(mCameraModel);
+
 
     for (int i=0;i<8;i++)
     {
@@ -52,17 +60,47 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
 
     ui->actionShowLog->toggled(false);
 
+    /* Creating main processing chain */
+    mProcessor = new FrameProcessor();
+    mProcessor->target = this;
+
+    SYNC_PRINT(("PhysicsMainWindow::startCamera(): connecting parameters\n"));
+    qRegisterMetaType<GeneralPatternDetectorParameters>("GeneralPatternDetectorParameters");
+    connect(this      , SIGNAL(newPatternDetectionParameters(GeneralPatternDetectorParameters)),
+            mProcessor, SLOT  (setPatternDetectorParameters(GeneralPatternDetectorParameters)));
+
+    SYNC_PRINT(("PhysicsMainWindow::startCamera(): connecting camera model\n"));
+    qRegisterMetaType<CameraModel>("CameraModel");
+    connect(this      , SIGNAL(newCameraModel(CameraModel)),
+            mProcessor, SLOT  (setCameraModel(CameraModel)));
+
     /* Setting put paramteres */
 
     flightControllerParametersWidget = new ReflectionWidget(FlightControllerParameters::getReflection());
     connect(flightControllerParametersWidget, SIGNAL(paramsChanged()), this, SLOT(flightControllerParametersChanged()));
 
-    /* Moving the camera closer */
-    //ui->cloud->setCamera();
+    connect(&patternDetectorParametersWidget, SIGNAL(paramsChanged()), this, SLOT(patternDetectionParametersChanged()));
+
+    toSave.push_back(flightControllerParametersWidget);
+    toSave.push_back(&patternDetectorParametersWidget);
+    toSave.push_back(&mInputSelector);
+    toSave.push_back(&mModelParametersWidget);
+
+    mInputSelector.loadFromQSettings("drone.ini", "");
+    patternDetectorParametersWidget.loadFromQSettings("drone.ini", "");
+    mModelParametersWidget.loadFromQSettings("drone.ini", "");
+
+
+    connect(ui->actionDownloadModels, SIGNAL(triggered()), this , SLOT(downloadModels()));
 }
 
 PhysicsMainWindow::~PhysicsMainWindow()
 {
+    SYNC_PRINT(("PhysicsMainWindow::~PhysicsMainWindow(): called\n"));
+    for (SaveableWidget *ts: toSave) {
+        ts->saveToQSettings("drone.ini", "");
+    }
+
     Log::mLogDrains.detach(ui->logWidget);
     delete ui;
 }
@@ -95,6 +133,23 @@ void PhysicsMainWindow::flightControllerParametersChanged()
     flightControllerParametersWidget->getParameters(&currentFlightControllerParameters);
     *static_cast<FlightControllerParameters *>(&copter) = currentFlightControllerParameters;
 
+}
+
+void PhysicsMainWindow::showPatternDetectionParameters()
+{
+    SYNC_PRINT(("PhysicsMainWindow::showPatternDetectionParameters():called\n"));   
+    patternDetectorParametersWidget.show();
+    patternDetectorParametersWidget.raise();
+}
+
+void PhysicsMainWindow::patternDetectionParametersChanged()
+{
+    SYNC_PRINT(("PhysicsMainWindow::patternDetectionParametersChanged():called\n"));
+
+    GeneralPatternDetectorParameters params = patternDetectorParametersWidget.getParameters();
+    SYNC_PRINT(("PhysicsMainWindow::patternDetectionParametersChanged():\n"));
+    cout << params << endl;
+    emit newPatternDetectionParameters(params);
 }
 
 void PhysicsMainWindow::showRadioControlWidget()
@@ -175,81 +230,6 @@ void PhysicsMainWindow::showValues()                                   //shows a
     }
 }
 
-#if 0
-void PhysicsMainWindow::yawChange(int i)                                //i - current yaw value
-{
-    yawValue=i;
-    if (virtualModeActive)
-    {
-        sendJoyValues();
-    }
-}
-
-
-void PhysicsMainWindow::rollChange(int i)                                //i - current roll value
-{
-    rollValue=i;
-    if (virtualModeActive)
-    {
-        sendJoyValues();
-    }
-}
-
-void PhysicsMainWindow::pitchChange(int i)                                //i - current pitch value
-{
-    pitchValue=i;
-    if (virtualModeActive)
-    {
-        sendJoyValues();
-    }
-}
-
-void PhysicsMainWindow::throttleChange(int i)                              //i - current throttle value
-{
-    throttleValue=i;
-    if (virtualModeActive)
-    {
-        sendJoyValues();
-    }
-
-}
-
-void PhysicsMainWindow::CH5Change(int i)                              //i - current throttle value
-{
-    CH5Value=i;
-    if (virtualModeActive)
-    {
-        sendJoyValues();
-    }
-}
-
-void PhysicsMainWindow::CH6Change(int i)                              //i - current throttle value
-{
-    CH6Value=i;
-    if (virtualModeActive)
-    {
-        sendJoyValues();
-    }
-}
-
-void PhysicsMainWindow::CH7Change(int i)                              //i - current throttle value
-{
-    CH7Value=i;
-    if (virtualModeActive)
-    {
-        sendJoyValues();
-    }
-}
-
-void PhysicsMainWindow::CH8Change(int i)                              //i - current throttle value
-{
-    CH8Value=i;
-    if (virtualModeActive)
-    {
-        sendJoyValues();
-    }
-}
-#endif
 
 void PhysicsMainWindow::startVirtualMode()
 {
@@ -272,19 +252,7 @@ void PhysicsMainWindow::startVirtualMode()
                 mainObj.objects[j]->addToMesh(*mesh);
             }
         }
-        */
-        /*
-        mesh->setColor(RGBColor::Yellow());
-        mesh->addIcoSphere(Vector3dd( 5, 5, -3), 2, 2);
-        mesh->addIcoSphere(Vector3dd(-5, 5, -3), 2, 2);
 
-        mesh->setColor(RGBColor::Blue());
-        mesh->addIcoSphere(Vector3dd( 5, -5, -3), 2, 2);
-        mesh->addIcoSphere(Vector3dd(-5, -5, -3), 2, 2);
-        mesh->popTransform();
-        */
-        /*
-        //mesh->dumpPLY("out2.ply");
         Mesh3DScene *scene = new Mesh3DScene;
         scene->setMesh(mesh);
 
@@ -294,9 +262,10 @@ void PhysicsMainWindow::startVirtualMode()
         simSim.start();
         */
 
-    //simSim.startRealTimeSimulation();
-    //simSim.execTestSimulation();
-    simSim.execJanibekovTest();
+//    simSim.startRealTimeSimulation();
+//    simSim.execTestSimulation();
+    //simSim.execJanibekovTest();
+    simSim.execTestPhysObject();
     QTimer::singleShot(8, this, SLOT(keepAlive()));
 }
 
@@ -325,48 +294,151 @@ void PhysicsMainWindow::keepAlive()
 {
     if (virtualModeActive)
     {
-        bool oldbackend = !(ui->actionNewBackend->isChecked());
-
-        Mesh3DScene *scene  = NULL;
-
-        if (oldbackend)
-        {
-            scene = new Mesh3DScene;
-            Mesh3D *mesh = new Mesh3D();
-            mesh->switchColor();
-            scene->setMesh(mesh);
-        } else {
-            if (mShadedScene == NULL) {
-                mShadedScene = new SceneShaded;
-                ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mShadedScene), CloudViewDialog::DISP_CONTROL_ZONE);
-            }
-
-        }
-
-        if (oldbackend) {
-            simSim.drone.drawMyself(*scene->owned);
-        } else {
-            Mesh3DDecorated *mesh = new Mesh3DDecorated();
-            mesh->switchNormals();
-            simSim.drone.drawMyself(*mesh);
-            //mesh->dumpInfo();
-            mShadedScene->setMesh(mesh);
-        }
-
-        mGraphDialog.addGraphPoint("X", simSim.drone.getPosCenter().x());
-        mGraphDialog.addGraphPoint("Y", simSim.drone.getPosCenter().y());
-        mGraphDialog.addGraphPoint("Z", simSim.drone.getPosCenter().z());
-
-        mGraphDialog.update();
-
-        if (oldbackend) {
-            ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene), CloudViewDialog::CONTROL_ZONE);
-        }
-        ui->cloud->update();
-
+//        drawDrone();
+        drawTestObject();
+//        drawDzhanibekov();
         QTimer::singleShot(8, this, SLOT(keepAlive()));
     }
 }
+
+void PhysicsMainWindow::drawDzhanibekov()
+{
+    bool oldbackend = !(ui->actionNewBackend->isChecked());
+    Mesh3DScene *scene  = NULL;
+
+    if (oldbackend)
+    {
+        scene = new Mesh3DScene;
+        Mesh3D *mesh = new Mesh3D();
+        mesh->switchColor();
+        scene->setMesh(mesh);
+    }
+    else
+    {
+        if (mShadedScene == NULL)
+        {
+            mShadedScene = new SceneShaded;
+            ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mShadedScene), CloudViewDialog::DISP_CONTROL_ZONE);
+        }
+    }
+
+    if (oldbackend)
+    {
+        simSim.testBolt.drawMyself(*scene->owned);
+    }
+    else
+    {
+        Mesh3DDecorated *mesh = new Mesh3DDecorated();
+        mesh->switchNormals();
+        simSim.testBolt.drawMyself(*mesh);
+        //mesh->dumpInfo();
+        mShadedScene->setMesh(mesh);
+    }
+
+    mGraphDialog.addGraphPoint("X", simSim.testBolt.getPosCenter().x());
+    mGraphDialog.addGraphPoint("Y", simSim.testBolt.getPosCenter().y());
+    mGraphDialog.addGraphPoint("Z", simSim.testBolt.getPosCenter().z());
+
+    mGraphDialog.update();
+
+    if (oldbackend) {
+        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene), CloudViewDialog::CONTROL_ZONE);
+    }
+    ui->cloud->update();
+}
+
+void PhysicsMainWindow::drawDrone()
+{
+    bool oldbackend = !(ui->actionNewBackend->isChecked());
+    Mesh3DScene *scene  = NULL;
+
+    if (oldbackend)
+    {
+        scene = new Mesh3DScene;
+        Mesh3D *mesh = new Mesh3D();
+        mesh->switchColor();
+        scene->setMesh(mesh);
+    }
+    else
+    {
+        if (mShadedScene == NULL)
+        {
+            mShadedScene = new SceneShaded;
+            ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mShadedScene), CloudViewDialog::DISP_CONTROL_ZONE);
+        }
+    }
+
+    if (oldbackend)
+    {
+        simSim.drone.drawMyself(*scene->owned);
+    }
+    else
+    {
+        Mesh3DDecorated *mesh = new Mesh3DDecorated();
+        mesh->switchNormals();
+        simSim.drone.drawMyself(*mesh);
+        //mesh->dumpInfo();
+        mShadedScene->setMesh(mesh);
+    }
+
+    mGraphDialog.addGraphPoint("X", simSim.drone.getPosCenter().x());
+    mGraphDialog.addGraphPoint("Y", simSim.drone.getPosCenter().y());
+    mGraphDialog.addGraphPoint("Z", simSim.drone.getPosCenter().z());
+
+    mGraphDialog.update();
+
+    if (oldbackend) {
+        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene), CloudViewDialog::CONTROL_ZONE);
+    }
+    ui->cloud->update();
+}
+
+void PhysicsMainWindow::drawTestObject()
+{
+    bool oldbackend = !(ui->actionNewBackend->isChecked());
+    Mesh3DScene *scene  = NULL;
+
+    if (oldbackend)
+    {
+        scene = new Mesh3DScene;
+        Mesh3D *mesh = new Mesh3D();
+        mesh->switchColor();
+        scene->setMesh(mesh);
+    }
+    else
+    {
+        if (mShadedScene == NULL)
+        {
+            mShadedScene = new SceneShaded;
+            ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mShadedScene), CloudViewDialog::DISP_CONTROL_ZONE);
+        }
+    }
+
+    if (oldbackend)
+    {
+        simSim.testObject.drawMyself(*scene->owned);
+    }
+    else
+    {
+        Mesh3DDecorated *mesh = new Mesh3DDecorated();
+        mesh->switchNormals();
+        simSim.testObject.drawMyself(*mesh);
+        //mesh->dumpInfo();
+        mShadedScene->setMesh(mesh);
+    }
+
+    mGraphDialog.addGraphPoint("X", simSim.testObject.getPosCenter().x());
+    mGraphDialog.addGraphPoint("Y", simSim.testObject.getPosCenter().y());
+    mGraphDialog.addGraphPoint("Z", simSim.testObject.getPosCenter().z());
+
+    mGraphDialog.update();
+
+    if (oldbackend) {
+        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene), CloudViewDialog::CONTROL_ZONE);
+    }
+    ui->cloud->update();
+}
+
 
 void PhysicsMainWindow::showCameraInput()
 {
@@ -383,10 +455,10 @@ void PhysicsMainWindow::startCamera()                                           
     }
     cameraActive = true;
     /* We should prepare calculator in some other place */
-    mProcessor = new FrameProcessor();
-    mProcessor->target = this;
 
-    std::string inputString = inputCameraPath;
+    //std::string inputString = inputCameraPath;
+    std::string inputString = mInputSelector.getInputString().toStdString();
+
 
     ImageCaptureInterfaceQt *rawInput = ImageCaptureInterfaceQtFactory::fabric(inputString, true);
     if (rawInput == NULL)
@@ -408,9 +480,14 @@ void PhysicsMainWindow::startCamera()                                           
     mCameraParametersWidget.setCaptureInterface(rawInput);
 
     mProcessor->input = rawInput;
+    qRegisterMetaType<CaptureStatistics>("CaptureStatistics");
+    QObject::connect(
+        rawInput    , SIGNAL(newStatisticsReady(CaptureStatistics)),
+       &mStatsDialog,   SLOT(addCaptureStats(CaptureStatistics)), Qt::QueuedConnection);
+
     QObject::connect(
         rawInput  , SIGNAL(newFrameReady(ImageCaptureInterface::FrameMetadata)),
-        mProcessor,   SLOT(processFrame (ImageCaptureInterface::FrameMetadata)), Qt::QueuedConnection);
+        mProcessor,   SLOT(processFrame(ImageCaptureInterface::FrameMetadata)), Qt::QueuedConnection);
 
     /* All ready. Let's rock */
     mProcessor->start();
@@ -440,6 +517,40 @@ void PhysicsMainWindow::showCameraModelWidget()
     mModelParametersWidget.raise();
 }
 
+void PhysicsMainWindow::loadCameraModel(QString filename)
+{
+    const char *name = filename.toLatin1().constData();
+    SYNC_PRINT(("PhysicsMainWindow::loadCameraModel(<%s>):called\n", name));
+    JSONModernReader reader(name);
+    if (!reader.hasError())
+    {
+        CameraModel model;
+        reader.visit(model, "camera");
+        mModelParametersWidget.setParameters(model);
+        cout << "Model:" << model << endl;
+    } else {
+        SYNC_PRINT(("Can't load <%s>\n", name));
+    }
+}
+
+void PhysicsMainWindow::saveCameraModel(QString filename)
+{
+    const char *name = filename.toLatin1().constData();
+    SYNC_PRINT(("PhysicsMainWindow::saveCameraModel(<%s>):called\n", name));
+    JSONPrinter reader(name);
+    CameraModel model;
+    mModelParametersWidget.getParameters(model);
+    reader.visit(model, "camera");
+}
+
+void PhysicsMainWindow::cameraModelWidgetChanged()
+{
+    SYNC_PRINT(("PhysicsMainWindow::cameraModelWidgetChanged()\n"));
+    mModelParametersWidget.getParameters(mCameraModel);
+    emit newCameraModel(mCameraModel);
+}
+
+
 void PhysicsMainWindow::showProcessingParametersWidget()
 {
     mFlowFabricControlWidget.show();
@@ -452,14 +563,14 @@ void PhysicsMainWindow::showGraphDialog()
     mGraphDialog.raise();
 }
 
+void PhysicsMainWindow::showStatistics()
+{
+    mStatsDialog.show();
+    mStatsDialog.raise();
+}
+
 void PhysicsMainWindow::startSimuation()
 {
-    //mJoystickSettings.openJoystick();    //counterrevolution (when i will understand how it works, i will swich joystickInput to it
-    //joystick1.start();
-    if (joystick1.active)
-    {
-        currentSendMode=0;
-    }
 }
 
 void PhysicsMainWindow::frameValuesUpdate()
@@ -550,7 +661,6 @@ void PhysicsMainWindow::sendOurValues(std::vector<uint8_t> OurValues)
 
 void PhysicsMainWindow::startJoyStickMode()
 {
-    joystick1.start();
     currentSendMode=0;
     QTimer::singleShot(8, this, SLOT(keepAliveJoyStick()));
 
@@ -609,6 +719,12 @@ void PhysicsMainWindow::keepAliveJoyStick()
 
     }
 #endif
+}
+
+void PhysicsMainWindow::downloadModels()
+{
+    system("wget http://calvrack.ru:3080/exposed-drone/data.tar.gz");
+    system("tar -zxvf data.tar.gz");
 }
 
 void PhysicsMainWindow::joystickUpdated(JoystickState state)
@@ -747,38 +863,15 @@ int PhysicsMainWindow::sign(int val)
     return result;
 }
 
-void PhysicsMainWindow::on_comboBox_currentTextChanged(const QString &arg1)                 //DO NOT TOUCH IT PLEASE
-{
-     if(arg1=="Usual mode")    //why qstring can not be in case?!
-    {
-        joystick1.setUsualCurrentMode();   //I dont want errors between qstring and string
-    }
-    if(arg1=="Inertia mode")
-    {
-        joystick1.setInertiaCurrentMode();
-    }
-    if(arg1=="Casual mode")
-    {
-        joystick1.setCasualCurrentMode();
-    }
-    if(arg1=="RT/LT Usual mode")
-    {
-        joystick1.setRTLTUsialMode();
-    }
-    if(arg1=="RT/LT Full mode")
-    {
-        joystick1.setRTLTFullMode();
-    }
-    if(arg1=="RT/LT Extream mode")
-    {
-        joystick1.setRTLTExtreamMode();
-    }
- }
-
 void PhysicsMainWindow::updateUi()
 {
     uiMutex.lock();
     /* We now could quickly scan for data and stats*/
+    for (DrawRequestData *data : uiQueue)
+    {
+        mStatsDialog.addStats(data->stats);
+    }
+
     /* But we would only draw last data */
     DrawRequestData *work = uiQueue.back();
     uiQueue.pop_back();
@@ -819,15 +912,6 @@ void PhysicsMainWindow::updateUi()
 }
 
 
-void PhysicsMainWindow::on_updateCameraButton_clicked()
-{
-
-    QDir DevDir=*new QDir("/dev","video*",QDir::Name,QDir::System);
-    ui->comboBox_2->clear();
-    ui->comboBox_2->addItems(DevDir.entryList());
-
-}
-
 void PhysicsMainWindow::on_comboBox_2_currentTextChanged(const QString &arg1)
 {
     inputCameraPath="v4l2:/dev/"+arg1.toStdString()+":mjpeg";
@@ -855,10 +939,6 @@ void PhysicsMainWindow::on_connetToVirtualButton_released()
     }
 }
 
-void PhysicsMainWindow::on_JoyButton_released()
-{
-    startJoyStickMode();
-}
 
 void PhysicsMainWindow::on_toolButton_3_released()
 {
@@ -876,13 +956,6 @@ void PhysicsMainWindow::on_toolButton_2_released()
     }
 }
 
-void PhysicsMainWindow::on_iiOutputSlider_valueChanged(int value)
-{
-
-}
-
-
-
 void PhysicsMainWindow::on_pushButton_released()
 {
     iiAutoPilot.testImageVoid();
@@ -892,7 +965,7 @@ void PhysicsMainWindow::on_connetToVirtualButton_pressed()
 
 }
 
-void PhysicsMainWindow::CalibrateCamera()
+void PhysicsMainWindow::calibrateCamera()
 {
     calibrationWidget.show();
     calibrationWidget.raise();
@@ -903,17 +976,3 @@ void PhysicsMainWindow::checkForJoystick()               //auto connect
 //   jReader->start();
 }
 
-void PhysicsMainWindow::LoadCalibrationSettings()
-{
-    QString dir = QFileDialog::getOpenFileName(this, tr("Open Calibration File"),"",tr("Calibration Parametrs (*.yml);; All Files (*)"));
-    if (dir!=NULL)
-    {
-        std::cout<<dir.toStdString()<<std::endl;
-        cv::FileStorage fs(dir.toStdString(),cv::FileStorage::READ);
-        cv::Mat intrinsic, distCoeffs;
-        fs["intrinsic"]>>intrinsic;
-        fs["distCoeffs"]>>distCoeffs;
-        calib.setIntrinsicMat(intrinsic);
-        calib.setDistCoeffsMat(distCoeffs);
-    }
-}

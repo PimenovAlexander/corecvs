@@ -12,3 +12,5 @@ set (SRC_FILES
     ${CMAKE_CURRENT_LIST_DIR}/V4L2Capture.cpp
     ${CMAKE_CURRENT_LIST_DIR}/V4L2.cpp
 )
+
+add_definitions(-DWITH_V4L2)

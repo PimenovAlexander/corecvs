@@ -31,6 +31,10 @@ public:
             }
             visitor.visit(patternIdentity, -1, "patternIdentity");
         }
+
+        void add(const Vector3dd &point3d, const Vector2dd &imagePoint) {
+            push_back(PointObservation(point3d, imagePoint));
+        }
 };
 
 struct NamePointObservation : public PointObservation

@@ -76,7 +76,6 @@ private:
         if (!hasRawValue(code)) {
             return defValue;
         }
-        char* p;
         return rawValues[code];
     }
 };

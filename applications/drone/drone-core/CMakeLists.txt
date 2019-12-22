@@ -14,6 +14,7 @@ set(HDR_FILES ${HDR_FILES} ${CURR_HDR_FILES})
 set (INC_PATHS ${CMAKE_CURRENT_LIST_DIR}/xml/generated)
 
 include(../../../wrappers/joystick/sourcelist.cmake)
+include(../../../wrappers/jsonmodern/sourcelist.cmake)
 
 target_sources(drone-core
     PUBLIC
@@ -26,7 +27,7 @@ target_sources(drone-core
         ${CMAKE_CURRENT_LIST_DIR}/copter/motor.h
         ${CMAKE_CURRENT_LIST_DIR}/copter/quad.h
 
-        ${CMAKE_CURRENT_LIST_DIR}/simulation/janibekovsBolt.h
+        ${CMAKE_CURRENT_LIST_DIR}/simulation/dzhanibekovBolt.h
         ${CMAKE_CURRENT_LIST_DIR}/simulation/physMainObject.h
         ${CMAKE_CURRENT_LIST_DIR}/simulation/simulation.h
         ${CMAKE_CURRENT_LIST_DIR}/simulation/simSphere.h
@@ -34,6 +35,7 @@ target_sources(drone-core
         ${CMAKE_CURRENT_LIST_DIR}/simulation/mainObject.h
         ${CMAKE_CURRENT_LIST_DIR}/simulation/physObject.h
         ${CMAKE_CURRENT_LIST_DIR}/simulation/physSphere.h
+        ${CMAKE_CURRENT_LIST_DIR}/simulation/testPhysicsObject.h
 
         ${CMAKE_CURRENT_LIST_DIR}/mixer/controlsMixer.h
 
@@ -46,7 +48,6 @@ target_sources(drone-core
         ${CMAKE_CURRENT_LIST_DIR}/opencvUtils/opencvTransformations.h
 
         ${CMAKE_CURRENT_LIST_DIR}/clientSender.h
-        ${CMAKE_CURRENT_LIST_DIR}/joystickInput.h
         ${CMAKE_CURRENT_LIST_DIR}/controlRecord.h
         ${CMAKE_CURRENT_LIST_DIR}/comcontroller.h
         ${CMAKE_CURRENT_LIST_DIR}/copterInputs.h
@@ -71,6 +72,7 @@ target_sources(drone-core
         ${CMAKE_CURRENT_LIST_DIR}/simulation/physObject.cpp
         ${CMAKE_CURRENT_LIST_DIR}/simulation/physSphere.cpp
         ${CMAKE_CURRENT_LIST_DIR}/simulation/dzhanibekovBolt.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/simulation/testPhysicsObject.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/mixer/controlsMixer.cpp
 
@@ -82,7 +84,6 @@ target_sources(drone-core
         ${CMAKE_CURRENT_LIST_DIR}/autopilot/vertexsquare.cpp
         ${CMAKE_CURRENT_LIST_DIR}/opencvUtils/opencvTransformations.cpp
 
-        ${CMAKE_CURRENT_LIST_DIR}/joystickInput.cpp
         ${CMAKE_CURRENT_LIST_DIR}/clientSender.cpp
         ${CMAKE_CURRENT_LIST_DIR}/controlRecord.cpp
         ${CMAKE_CURRENT_LIST_DIR}/copterInputs.cpp
@@ -90,7 +91,10 @@ target_sources(drone-core
         ${CMAKE_CURRENT_LIST_DIR}/joystick/joystickReader.cpp
 )
 
-
+set(ADD_SRC_FILES ${ADD_SRC_FILES}
+    ${CMAKE_CURRENT_LIST_DIR}/legacy/joystickInput.h
+    ${CMAKE_CURRENT_LIST_DIR}/legacy/joystickInput.cpp
+    )
 
 
 target_include_directories(drone-core PUBLIC
@@ -114,7 +118,6 @@ target_link_libraries(drone-core corecvs Qt5::SerialPort)
 
 
 target_include_directories(drone-core PUBLIC ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} .)
-
 
 
 target_link_libraries(drone-core cvs_utils corecvs)

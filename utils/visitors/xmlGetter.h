@@ -22,6 +22,10 @@ using namespace corecvs;
 class XmlGetter : public BaseXMLVisitor
 {
 public:
+    bool isSaver () { return false;}
+    bool isLoader() { return true ;}
+
+public:
     /**
      *  Create a getter object that will use data from a file with a specified name.
      *

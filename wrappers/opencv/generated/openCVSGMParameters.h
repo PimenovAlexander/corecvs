@@ -175,7 +175,7 @@ public:
         return mFullDP;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setPreFilterCap(int preFilterCap)
     {
         mPreFilterCap = preFilterCap;
@@ -226,7 +226,7 @@ public:
         mFullDP = fullDP;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -274,6 +274,7 @@ template<class VisitorType>
         mFullDP = fullDP;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const OpenCVSGMParameters &other) const 
     {
         if ( !(this->mPreFilterCap == other.mPreFilterCap)) return false;
