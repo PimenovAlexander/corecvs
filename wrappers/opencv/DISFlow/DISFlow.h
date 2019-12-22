@@ -44,10 +44,6 @@ public:
 
     virtual ~DISFlow() {
         delete opticalFlow;
-        delete stats;
-        delete previousFlow;
-        delete inCurr;
-        delete inPrev;
     }
 
     virtual int beginFrame() {return 0;}

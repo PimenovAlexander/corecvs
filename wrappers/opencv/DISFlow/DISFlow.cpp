@@ -71,6 +71,7 @@ void DISFlow::saveFlowBuffer(cv::Mat &img) {
     int nc = img.channels();
     float tmp[nc];
 
+    delete opticalFlow;
     opticalFlow = new corecvs::FlowBuffer(inCurr->h, inCurr->w);
 
     for (int y = 0; y < height; y++)
