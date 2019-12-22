@@ -52,7 +52,7 @@ int DisFlowParameters::staticInit(corecvs::Reflection *toFill)
         (
           DisFlowParameters::SC_F_ID,
           offsetof(DisFlowParameters, mSc_f),
-          100,
+          5,
           "sc_f",
           "sc_f",
           "first (coarsest) scale",
@@ -67,7 +67,7 @@ int DisFlowParameters::staticInit(corecvs::Reflection *toFill)
         (
           DisFlowParameters::SC_L_ID,
           offsetof(DisFlowParameters, mSc_l),
-          100,
+          3,
           "sc_l",
           "sc_l",
           "last (finest) scale",
@@ -82,7 +82,7 @@ int DisFlowParameters::staticInit(corecvs::Reflection *toFill)
         (
           DisFlowParameters::MAXITER_ID,
           offsetof(DisFlowParameters, mMaxiter),
-          100,
+          12,
           "maxiter",
           "maxiter",
           "max. iterations on one scale",
@@ -97,7 +97,7 @@ int DisFlowParameters::staticInit(corecvs::Reflection *toFill)
         (
           DisFlowParameters::MINITER_ID,
           offsetof(DisFlowParameters, mMiniter),
-          100,
+          12,
           "miniter",
           "miniter",
           "min. iterations on one scale",
@@ -163,7 +163,7 @@ int DisFlowParameters::staticInit(corecvs::Reflection *toFill)
         (
           DisFlowParameters::PATCHSZ_ID,
           offsetof(DisFlowParameters, mPatchsz),
-          100,
+          8,
           "patchsz",
           "patchsz",
           "patch size (edge length in pixels)",
@@ -178,7 +178,7 @@ int DisFlowParameters::staticInit(corecvs::Reflection *toFill)
         (
           DisFlowParameters::POVERL_ID,
           offsetof(DisFlowParameters, mPoverl),
-          100,
+          0.4,
           "poverl",
           "poverl",
           "Patch overlap",
@@ -240,7 +240,7 @@ int DisFlowParameters::staticInit(corecvs::Reflection *toFill)
         (
           DisFlowParameters::USETVREF_ID,
           offsetof(DisFlowParameters, mUsetvref),
-          100,
+          1,
           "usetvref",
           "usetvref",
           "TV parameters",

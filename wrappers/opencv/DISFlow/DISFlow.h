@@ -38,8 +38,8 @@ public:
     DISFlow() {
         SELECTMODE = 1;
         SELECTCHANNEL = 3;
+        previousFlow = NULL;
         isSelectedParams = false;
-        defaultParams(true);
     }
 
     virtual ~DISFlow() {

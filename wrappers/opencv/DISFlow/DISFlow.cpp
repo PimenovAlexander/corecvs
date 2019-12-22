@@ -19,10 +19,10 @@ int DISFlow::endFrame() {
 
 bool DISFlow::setParameters(std::string name, const corecvs::DynamicObject &newParams)
 {
-    if (name == "params")
+    if (name == "params" && inPrev)
     {
         newParams.copyTo(&params);
-        if (params.sc_f() != 0) {
+        if (params.sc_f() != 0 && params.sc_l() == 0) {
             defaultParams(false);
         }
         isSelectedParams = true;
@@ -59,16 +59,15 @@ cv::Mat DISFlow::convertToCVMat(corecvs::RGB24Buffer *buffer) {
             cv_rgb_image.data[step * i + j + 2] = buffer->data[k].r();
         }
     }
-    cv::Mat newImg;
-    newImg.Mat::convertTo(cv_rgb_image, CV_32FC3, 1/255.0);
+    //cv::Mat newImg;
+    //newImg.Mat::convertTo(cv_rgb_image, CV_32FC3, 1/255.0);
 
     /*return someting?*/
     return  cv_rgb_image;
 }
 
 void DISFlow::saveFlowBuffer(cv::Mat &img) {
-    // FIXME:
-    //previousFlow = opticalFlow;
+    previousFlow = &img;
 
     cv::Size szt = img.size();
     int width = szt.width, height = szt.height;
@@ -107,18 +106,18 @@ void DISFlow::ConstructImgPyramide(const cv::Mat & img_ao_fmat, cv::Mat * img_ao
     {
         if (i==0) // At finest scale: copy directly, for all other: downscale previous scale by .5
         {
-if (SELECTCHANNEL == 1 | SELECTCHANNEL == 3)  // use RGB or intensity image directly
-            img_ao_fmat_pyr[i] = img_ao_fmat.clone();
-else if (SELECTCHANNEL == 2) { // use gradient magnitude image as input
-    cv::Mat dx, dy, dx2, dy2, dmag;
-    cv::Sobel(img_ao_fmat, dx, CV_32F, 1, 0, 3, 1 / 8.0, 0, cv::BORDER_DEFAULT);
-    cv::Sobel(img_ao_fmat, dy, CV_32F, 0, 1, 3, 1 / 8.0, 0, cv::BORDER_DEFAULT);
-    dx2 = dx.mul(dx);
-    dy2 = dy.mul(dy);
-    dmag = dx2 + dy2;
-    cv::sqrt(dmag, dmag);
-    img_ao_fmat_pyr[i] = dmag.clone();
-}
+            if (SELECTCHANNEL == 1 || SELECTCHANNEL == 3)  // use RGB or intensity image directly
+                img_ao_fmat_pyr[i] = img_ao_fmat.clone();
+            else if (SELECTCHANNEL == 2) { // use gradient magnitude image as input
+                cv::Mat dx, dy, dx2, dy2, dmag;
+                cv::Sobel(img_ao_fmat, dx, CV_32F, 1, 0, 3, 1 / 8.0, 0, cv::BORDER_DEFAULT);
+                cv::Sobel(img_ao_fmat, dy, CV_32F, 0, 1, 3, 1 / 8.0, 0, cv::BORDER_DEFAULT);
+                dx2 = dx.mul(dx);
+                dy2 = dy.mul(dy);
+                dmag = dx2 + dy2;
+                cv::sqrt(dmag, dmag);
+                img_ao_fmat_pyr[i] = dmag.clone();
+            }
         }
         else
             cv::resize(img_ao_fmat_pyr[i-1], img_ao_fmat_pyr[i], cv::Size(), .5, .5, cv::INTER_LINEAR);
@@ -157,7 +156,7 @@ cv::Mat DISFlow::execute(cv::Mat img_ao_mat, cv::Mat img_bo_mat) {
     gettimeofday(&tv_start_all, NULL);
 
     int rpyrtype, nochannels, incoltype;
-    if (SELECTCHANNEL==1 | SELECTCHANNEL==2) // use Intensity or Gradient image
+    if (SELECTCHANNEL==1 || SELECTCHANNEL==2) // use Intensity or Gradient image
     {
         incoltype = CV_LOAD_IMAGE_GRAYSCALE;
         rpyrtype = CV_32FC1;
@@ -233,7 +232,16 @@ cv::Mat DISFlow::execute(cv::Mat img_ao_mat, cv::Mat img_bo_mat) {
      cv::Mat flowinit;
      if (previousFlow)
      {
-//         flowinit = *previousFlow;
+         flowinit = *previousFlow;
+
+         if (padh>0 || padw>0)
+            copyMakeBorder(flowinit,flowinit,floor((float)padh/2.0f),ceil((float)padh/2.0f),floor((float)padw/2.0f),ceil((float)padw/2.0f),cv::BORDER_REPLICATE);
+
+         // resizing to coarsest scale - 1, since the array is upsampled at .5 in the code
+         float sc_fct = pow(2,-params.sc_f()-1);
+         flowinit *= sc_fct;
+         cv::resize(flowinit, flowinit, cv::Size(), sc_fct, sc_fct , cv::INTER_AREA);
+
          initptr = (float*)flowinit.data;
      }
 
