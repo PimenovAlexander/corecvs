@@ -325,15 +325,15 @@ namespace corecvs {
         static const int KC = 384;
         static const int NC = 4096;
 
-//  Local buffers for storing panels from A, B and local result
+        //  Local buffers for storing panels from A, B and local result
         static double _A[MC * KC] __attribute__ ((aligned (16)));
         static double _B[KC * NC] __attribute__ ((aligned (16)));
         static double _result[BLOCK * BLOCK] __attribute__ ((aligned (16)));
 
-//  Packing complete panels from A (i.e. without padding)
+        //  Packing complete panels from A (i.e. without padding)
         static void
         pack_BLOCKxk(int k, const double *A, int incRowA, int incColA,
-                  double *buffer){
+                     double *buffer) {
 
             for (int j = 0; j < k; ++j) {
                 for (int i = 0; i < BLOCK; ++i) {
@@ -373,7 +373,7 @@ namespace corecvs {
 //  Packing complete panels from B (i.e. without padding)
         static void
         pack_kxBLOCK(int k, const double *B, int incRowB, int incColB,
-                  double *buffer) {
+                     double *buffer) {
             for (int i = 0; i < k; ++i) {
                 for (int j = 0; j < BLOCK; ++j) {
                     buffer[j] = B[j * incColB];
@@ -552,24 +552,24 @@ namespace corecvs {
             const Matrix &B = *pB;
             Matrix &result = *pResult;
 
-            int m = A.h;
-            int k = A.w;
-            int n = B.w;
+            const int m = A.h;
+            const int k = A.w;
+            const int n = B.w;
 
-            int incRowA = 1;
-            int incColA = A.stride;
-            int incRowB = 1;
-            int incColB = B.stride;
-            int incRowC = 1;
-            int incColC = result.stride;
+            const int incRowA = A.stride;
+            const int incColA = 1;
+            const int incRowB = B.stride;
+            const int incColB = 1;
+            const int incRowC = result.stride;
+            const int incColC = 1;
 
-            int mb = (m + MC - 1) / MC;
-            int nb = (n + NC - 1) / NC;
-            int kb = (k + KC - 1) / KC;
+            const long mb = (m + MC - 1) / MC;
+            const long nb = (n + NC - 1) / NC;
+            const long kb = (k + KC - 1) / KC;
 
-            int _mc = m % MC;
-            int _nc = n % NC;
-            int _kc = k % KC;
+            const int _mc = m % MC;
+            const int _nc = n % NC;
+            const int _kc = k % KC;
 
             int mc, nc, kc;
 
@@ -578,30 +578,32 @@ namespace corecvs {
 
                 for (int l = 0; l < kb; ++l) {
                     kc = (l != kb - 1 || _kc == 0) ? KC : _kc;
-
-                    pack_B(kc, nc,
-                           &B.a(l * KC, j * NC), incRowB, incColB, _B);
+                    // &B[l*KC*incRowB+j*NC*incColB]
+                    pack_B(kc, nc,&B.a(l * KC, j * NC), incRowB, incColB, _B);
 
                     for (int i = 0; i < mb; ++i) {
                         mc = (i != mb - 1 || _mc == 0) ? MC : _mc;
-
-                        pack_A(mc, kc,
-                               &A.a(i * MC, l * KC), incRowA, incColA, _A);
-
-                        dgemm_macro_kernel(mc, nc, kc,
-                                           &result.a(i * MC, j * NC), incRowC, incColC);
+                        // &A[i*MC*incRowA+l*KC*incColA]
+                        pack_A(mc, kc,&A.a(i * MC, l * KC), incRowA, incColA, _A);
+                        //&C[i*MC*incRowC+j*NC*incColC]
+                        dgemm_macro_kernel(mc, nc, kc,&result.a(i * MC, j * NC), incRowC, incColC);
                     }
                 }
             }
         }
 
-
-        MicroKernelMM(const Matrix *pA, const Matrix *pB, Matrix *pResult) : pA(pA), pB(pB), pResult(pResult) {
+        MicroKernelMM(const Matrix *pA, const Matrix *pB, Matrix *pResult)
+                : pA(pA), pB(pB), pResult(pResult) {
         }
+
         const Matrix *pA;
         const Matrix *pB;
         Matrix *pResult;
     };
+
+    double MicroKernelMM::_A[] = {};
+    double MicroKernelMM::_B[] = {};
+    double MicroKernelMM::_result[] = {};
 
 #if 0 // unfinished stuff
     template<int vectorize = true>
