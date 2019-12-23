@@ -45,10 +45,10 @@ int main (int argc, char **argv)
 
     Mesh3D meshExtended;
     meshExtended.switchColor();
-    double tsize = 0.01;
+    double tsize = s.getDouble("size", 0.01 * 2/3);
 
     SYNC_PRINT(("Adding triangle for each of the %d vertexes\n", (int)mesh.vertexes.size()));
-    for (int i = 0; i < mesh.vertexes.size(); i++)
+    for (size_t i = 0; i < mesh.vertexes.size(); i++)
     {
         Vector3dd v = mesh.vertexes[i];
         RGBColor color = mesh.vertexesColor[i];
