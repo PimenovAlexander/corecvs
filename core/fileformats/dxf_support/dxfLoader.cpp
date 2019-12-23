@@ -4,7 +4,7 @@
 
 #include "core/fileformats/dxf_support/dxfLoader.h"
 #include "core/fileformats/dxf_support/dxfCodes.h"
-#include "core/fileformats/dxf_support/implDxfBuilder.h"
+#include "core/fileformats/dxf_support/dxfBuilder.h"
 #include "core/utils/utils.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/buffers/rgb24/rgbColor.h"
@@ -56,6 +56,15 @@ int DxfLoader::processDxfPair(int code, const std::string &value) {
                         break;
                     case DxfElementType::DXF_LINE:
                         addLine();
+                        break;
+                    case DxfElementType::DXF_BLOCK_RECORD:
+                        addBlockRecord();
+                        break;
+                    case DxfElementType::DXF_BLOCK:
+                        handleBlock();
+                        break;
+                    case DxfElementType::DXF_END_BLOCK:
+                        addBlock();
                         break;
                     case DxfElementType::DXF_LW_POLYLINE:
                         addLwPolyline();
@@ -138,18 +147,21 @@ bool DxfLoader::getTruncatedLine(std::string &s, std::istream &stream) {
 
 DxfEntityData DxfLoader::getEntityData() {
     return DxfEntityData(
-            getIntValue(DxfCodes::DXF_HANDLE_CODE, 0),
+            getStringValue(DxfCodes::DXF_HANDLE_CODE, ""),
             getStringValue(DxfCodes::DXF_LAYER_NAME_CODE, ""),
             getStringValue(DxfCodes::DXF_LINE_TYPE_NAME_CODE, DxfCodes::DXF_LINE_TYPE_NAME_DEFAULT),
             getIntValue(DxfCodes::DXF_COLOR_NUMBER_CODE, DxfCodes::DXF_COLOR_NUMBER_DEFAULT),
-            getIntValue(DxfCodes::DXF_OBJECT_VISIBILITY_CODE, 0) == 0
+            getIntValue(DxfCodes::DXF_OBJECT_VISIBILITY_CODE, 0) == 0,
+            getStringValue(DxfCodes::DXF_BLOCK_RECORD_HANDLE_CODE, ""),
+            currentBlock
             );
 }
 
 DxfObjectData DxfLoader::getObjectData() {
     return DxfObjectData(
-            getIntValue(DxfCodes::DXF_HANDLE_CODE, 0),
-            getStringValue(DxfCodes::DXF_ELEMENT_NAME_CODE, "")
+            getStringValue(DxfCodes::DXF_HANDLE_CODE, ""),
+            getStringValue(DxfCodes::DXF_ELEMENT_NAME_CODE, ""),
+            getStringValue(DxfCodes::DXF_OWNER_DICTIONARY_HANDLE_CODE, "")
             );
 }
 
@@ -212,13 +224,28 @@ void DxfLoader::addLineType() {
     dxfBuilder.addLineType(new DxfLineTypeObject(*data));
 }
 
+void DxfLoader::addBlockRecord() {
+    auto data = new DxfBlockRecordData(
+            getObjectData(),
+            getIntValue(DxfCodes::DXF_BLOCK_SCALABILITY_CODE, 0)
+            );
+    dxfBuilder.addBlockRecord(new DxfBlockRecordObject(*data));
+}
+
+void DxfLoader::addBlock() {
+    dxfBuilder.addBlock(currentBlock);
+    currentBlock = nullptr;
+}
+
 void DxfLoader::addLine() {
     auto data = new DxfLineData(
             getEntityData(),
             Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
             Vector3dd(getDoubleValue(11, 0), getDoubleValue(21, 0),getDoubleValue (31, 0))
             );
-    dxfBuilder.addEntity(new DxfLineEntity(*data));
+    auto entity = new DxfLineEntity(*data);
+    if (currentBlock != nullptr) currentBlock->entities.push_back(entity);
+    dxfBuilder.addEntity(entity);
 }
 
 void DxfLoader::addLwPolyline() {
@@ -228,13 +255,17 @@ void DxfLoader::addLwPolyline() {
             getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0),
             ((uint8_t) getIntValue(DxfCodes::DXF_FLAGS_CODE, 0) & 0b00000001u) == 1
             );
-    dxfBuilder.addEntity(new DxfLwPolylineEntity(*data));
+    auto entity = new DxfLwPolylineEntity(*data);
+    if (currentBlock != nullptr) currentBlock->entities.push_back(entity);
+    dxfBuilder.addEntity(entity);
     current2dVertices.clear();
 }
 
 void DxfLoader::addPolyline() {
     polylineData->vertices = current3dVertices;
-    dxfBuilder.addEntity(new DxfPolylineEntity(*polylineData));
+    auto entity = new DxfPolylineEntity(*polylineData);
+    if (currentBlock != nullptr) currentBlock->entities.push_back(entity);
+    dxfBuilder.addEntity(entity);
 }
 
 void DxfLoader::addCircle() {
@@ -244,7 +275,9 @@ void DxfLoader::addCircle() {
             getDoubleValue(DxfCodes::DXF_RADIUS_CODE, 0),
             getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0)
             );
-    dxfBuilder.addEntity(new DxfCircleEntity(*data));
+    auto entity = new DxfCircleEntity(*data);
+    if (currentBlock != nullptr) currentBlock->entities.push_back(entity);
+    dxfBuilder.addEntity(entity);
 }
 
 void DxfLoader::addCircularArc() {
@@ -256,7 +289,9 @@ void DxfLoader::addCircularArc() {
             getDoubleValue(DxfCodes::DXF_START_ANGLE_CODE, 0),
             getDoubleValue(DxfCodes::DXF_END_ANGLE_CODE, 0)
             );
-    dxfBuilder.addEntity(new DxfCircularArcEntity(*data));
+    auto entity = new DxfCircularArcEntity(*data);
+    if (currentBlock != nullptr) currentBlock->entities.push_back(entity);
+    dxfBuilder.addEntity(entity);
 }
 
 void DxfLoader::addEllipticalArc() {
@@ -268,7 +303,9 @@ void DxfLoader::addEllipticalArc() {
             getDoubleValue(41, 0),
             getDoubleValue(42, 0)
             );
-    dxfBuilder.addEntity(new DxfEllipticalArcEntity(*data));
+    auto entity = new DxfEllipticalArcEntity(*data);
+    if (currentBlock != nullptr) currentBlock->entities.push_back(entity);
+    dxfBuilder.addEntity(entity);
 }
 
 void DxfLoader::addPoint() {
@@ -277,7 +314,20 @@ void DxfLoader::addPoint() {
             Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
             getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0)
     );
-    dxfBuilder.addEntity(new DxfPointEntity(*data));
+    auto entity = new DxfPointEntity(*data);
+    if (currentBlock != nullptr) currentBlock->entities.push_back(entity);
+    dxfBuilder.addEntity(entity);
+}
+
+void DxfLoader::handleBlock() {
+    currentBlock = new DxfBlock(
+            getStringValue(DxfCodes::DXF_HANDLE_CODE, ""),
+            getStringValue(DxfCodes::DXF_ELEMENT_NAME_CODE, ""),
+            getStringValue(DxfCodes::DXF_LAYER_NAME_CODE, ""),
+            Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
+            getStringValue(DxfCodes::DXF_BLOCK_RECORD_HANDLE_CODE, ""),
+            getIntValue(67, 0) == 0
+    );
 }
 
 void DxfLoader::handleLwPolyline(int groupCode) {
@@ -326,7 +376,7 @@ bool DXFToRGB24BufferLoader::acceptsFile(std::string const &name) {
 }
 
 RGB24Buffer* DXFToRGB24BufferLoader::load(const string &name) {
-    ImplDxfBuilder builder;
+    DxfBuilder builder;
     DxfLoader loader(builder);
     int resultCode = loader.load(name);
     if (resultCode == -1) {
@@ -334,7 +384,10 @@ RGB24Buffer* DXFToRGB24BufferLoader::load(const string &name) {
         return nullptr;
     } else {
         std::cout << "DXF file is loaded: " << name << " result code: " << resultCode << std::endl;
-        return builder.draw();
+        auto drawing = builder.getDrawing();
+        drawing.setScalingFactor(10.0);
+        drawing.setPaddings(110, 110, 110, 110);
+        return drawing.draw();
     }
 }
 

@@ -9,6 +9,7 @@
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/math/vector/vector2d.h"
 #include "core/math/vector/vector3d.h"
+#include "core/fileformats/dxf_support/blocks/dxfBlock.h"
 #include "core/fileformats/dxf_support/entities/dxfEntity.h"
 
 namespace corecvs {
@@ -16,16 +17,18 @@ namespace corecvs {
 // Abstract Entity Data
 class DxfEntityData {
 public:
-    DxfEntityData(int handle, std::string layerName, std::string lineTypeName, int colorNumber, bool isVisible)
-    : handle(handle), layerName(std::move(layerName)), lineTypeName(std::move(lineTypeName)), colorNumber(colorNumber), isVisible(isVisible) {}
+    DxfEntityData(std::string handle, std::string layerName, std::string lineTypeName, int colorNumber, bool isVisible, std::string blockRecordID, DxfBlock *block)
+    : handle(std::move(handle)), layerName(std::move(layerName)), lineTypeName(std::move(lineTypeName)), colorNumber(colorNumber), isVisible(isVisible), blockRecordID(std::move(blockRecordID)), block(block) {}
     DxfEntityData(const DxfEntityData &data) = default;
 
-    int handle;
+    std::string handle;
     std::string layerName;
     std::string lineTypeName;
     RGBColor rgbColor;
     int colorNumber;
     bool isVisible;
+    std::string blockRecordID;
+    DxfBlock *block;
 };
 
 // LINE Data

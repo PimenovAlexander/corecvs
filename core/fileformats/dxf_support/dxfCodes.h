@@ -14,8 +14,8 @@
 namespace corecvs {
 
 enum class DxfElementType {
-    DXF_LAYER, DXF_LINE_TYPE, DXF_LINE, DXF_LW_POLYLINE, DXF_POLYLINE, DXF_VERTEX, DXF_UNKNOWN_TYPE, DXF_SEQ_END, DXF_CIRCLE,
-    DXF_ARC, DXF_ELLIPSE, DXF_POINT
+    DXF_LAYER, DXF_LINE_TYPE, DXF_BLOCK_RECORD, DXF_LINE, DXF_LW_POLYLINE, DXF_POLYLINE, DXF_VERTEX, DXF_UNKNOWN_TYPE, DXF_SEQ_END, DXF_CIRCLE,
+    DXF_ARC, DXF_ELLIPSE, DXF_POINT, DXF_BLOCK, DXF_END_BLOCK
 };
 
 enum class DxfDrawingUnits {
@@ -46,6 +46,9 @@ public:
     static const int DXF_OBJECT_VISIBILITY_CODE = 60;
     static const int DXF_COLOR_NUMBER_CODE = 62;
     static const int DXF_FLAGS_CODE = 70;
+    static const int DXF_BLOCK_SCALABILITY_CODE = 281;
+    static const int DXF_OWNER_DICTIONARY_HANDLE_CODE = 330;
+    static const int DXF_BLOCK_RECORD_HANDLE_CODE = 330;
 
     static const std::string DXF_LINE_TYPE_NAME_DEFAULT;
     static const int DXF_COLOR_NUMBER_DEFAULT = 256;

@@ -15,6 +15,7 @@ namespace corecvs {
 // Data printing
 void DxfEntity::print() {
     std::cout << "Handle: " << data.handle << std::endl;
+    std::cout << "Block record ID: " << (data.blockRecordID.empty() ? "none" : data.blockRecordID) << std::endl;
     std::cout << "Layer name: " << data.layerName << std::endl;
     std::cout << "Line type name: " << data.lineTypeName << std::endl;
     std::cout << "RGB color: " << (int) data.rgbColor.r() << " " << (int) data.rgbColor.g() << " " << (int) data.rgbColor.b() << " " << std::endl;
@@ -91,27 +92,27 @@ void DxfPointEntity::print() {
 }
 
 // Drawing
-void DxfLineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
+void DxfLineEntity::draw(RGB24Buffer *buffer, DxfDrawing *attrs) {
     auto startPoint = attrs->getDrawingValues(data.startPoint.xy());
     auto endPoint   = attrs->getDrawingValues(data.endPoint.xy());
     buffer->drawLine(startPoint, endPoint, data.rgbColor);
 }
 
-void DxfLwPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
+void DxfLwPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawing *drawing) {
     int vertexNumber = data.vertices.size();
     if (vertexNumber > 1) {
         for (unsigned long i = 0; i < vertexNumber - !data.isClosed; i++) {
-            auto startPoint = attrs->getDrawingValues(data.vertices[i     % vertexNumber]);
-            auto endPoint   = attrs->getDrawingValues(data.vertices[(i+1) % vertexNumber]);
+            auto startPoint = drawing->getDrawingValues(data.vertices[i % vertexNumber]);
+            auto endPoint   = drawing->getDrawingValues(data.vertices[(i + 1) % vertexNumber]);
             buffer->drawLine(startPoint, endPoint, data.rgbColor);
         }
     } else if (vertexNumber == 1) {
-        auto point = attrs->getDrawingValues(data.vertices[0]);
+        auto point = drawing->getDrawingValues(data.vertices[0]);
         buffer->drawPixel(point, data.rgbColor);
     }
 }
 
-void DxfPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
+void DxfPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawing *drawing) {
     int vertexNumber = data.vertices.size();
     if (vertexNumber > 1) {
         for (unsigned long i = 0; i < vertexNumber - !data.isClosed; i++) {
@@ -120,8 +121,8 @@ void DxfPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
             auto bulge = data.vertices[i % vertexNumber]->bulge;
 
             if (bulge == 0) {
-                startPoint = attrs->getDrawingValues(startPoint);
-                endPoint   = attrs->getDrawingValues(endPoint);
+                startPoint = drawing->getDrawingValues(startPoint);
+                endPoint   = drawing->getDrawingValues(endPoint);
                 buffer->drawLine(startPoint, endPoint, data.rgbColor);
             } else {
                 auto delta = startPoint - endPoint;
@@ -142,32 +143,32 @@ void DxfPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) {
                 auto circularArcData = new DxfCircularArcData(data, Vector3dd(centerPoint.x(), centerPoint.y(), 0), radius, data.thickness, radToDeg(startAngle), radToDeg(endAngle));
                 auto circularArc     = new DxfCircularArcEntity(*circularArcData);
 
-                auto wasClockwiseDirection = attrs->isClockwiseDirection();
-                attrs->setClockwiseDirection(bulge < 0);
-                circularArc->draw(buffer, attrs);
-                attrs->setClockwiseDirection(wasClockwiseDirection);
+                auto wasClockwiseDirection = drawing->isClockwiseDirection();
+                drawing->setClockwiseDirection(bulge < 0);
+                circularArc->draw(buffer, drawing);
+                drawing->setClockwiseDirection(wasClockwiseDirection);
             }
         }
     } else if (vertexNumber == 1) {
-        auto point = attrs->getDrawingValues(data.vertices[0]->location.xy());
+        auto point = drawing->getDrawingValues(data.vertices[0]->location.xy());
         buffer->drawPixel(point, data.rgbColor);
     }
 }
 
-void DxfCircleEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::DxfDrawingAttrs *attrs) {
-    auto centerPoint = attrs->getDrawingValues(data.center.xy());
-    Circle2d circle(centerPoint, attrs->getDrawingValue(data.radius));
+void DxfCircleEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::DxfDrawing *drawing) {
+    auto centerPoint = drawing->getDrawingValues(data.center.xy());
+    Circle2d circle(centerPoint, drawing->getDrawingValue(data.radius));
     buffer->drawArc(circle, data.rgbColor);
 }
 
-void DxfCircularArcEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::DxfDrawingAttrs *attrs) {
+void DxfCircularArcEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::DxfDrawing *drawing) {
     auto centerPoint = Vector2dd(data.center.xy());
     auto startAngle = degToRad(data.startAngle);
     auto endAngle   = degToRad(data.endAngle);
 
     // divide arc into 1 or 2 segments
     std::vector<Vector2dd> controlAngles;
-    if (attrs->isClockwiseDirection()) {
+    if (drawing->isClockwiseDirection()) {
         while (endAngle > startAngle) endAngle -= 2 * M_PI;
         controlAngles.emplace_back(Vector2dd(startAngle, std::max(endAngle, startAngle - M_PI + 0.00001)));
         if (startAngle - endAngle > M_PI) controlAngles.emplace_back(Vector2dd(startAngle - M_PI, endAngle));
@@ -192,10 +193,10 @@ void DxfCircularArcEntity::draw(class corecvs::RGB24Buffer *buffer, class corecv
         auto secondPoint = startPoint  + Vector2dd(-a.y(), a.x()) * k;
         auto thirdPoint  = endPoint    + Vector2dd(b.y(), -b.x()) * k;
 
-        startPoint  = attrs->getDrawingValues(startPoint);
-        secondPoint = attrs->getDrawingValues(secondPoint);
-        thirdPoint  = attrs->getDrawingValues(thirdPoint);
-        endPoint    = attrs->getDrawingValues(endPoint);
+        startPoint  = drawing->getDrawingValues(startPoint);
+        secondPoint = drawing->getDrawingValues(secondPoint);
+        thirdPoint  = drawing->getDrawingValues(thirdPoint);
+        endPoint    = drawing->getDrawingValues(endPoint);
 
         WuRasterizer rast = WuRasterizer();
         BezierRasterizer<RGB24Buffer, WuRasterizer> bezier(*buffer, rast, data.rgbColor);
@@ -203,7 +204,7 @@ void DxfCircularArcEntity::draw(class corecvs::RGB24Buffer *buffer, class corecv
     }
 }
 
-void DxfEllipticalArcEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::DxfDrawingAttrs *attrs) {
+void DxfEllipticalArcEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::DxfDrawing *drawing) {
     auto centerPoint = data.center.xy();
     auto delta = data.majorAxisEndPoint.xy();
     auto a = delta.l2Metric();
@@ -242,10 +243,10 @@ void DxfEllipticalArcEntity::draw(class corecvs::RGB24Buffer *buffer, class core
         auto secondPoint = startPoint + theta * Vector2dd(-a * cosRotationAngle * sinStartAlpha - b * sinRotationAngle * cosStartAlpha, -a * sinRotationAngle * sinStartAlpha + b * cosRotationAngle * cosStartAlpha);
         auto thirdPoint  = endPoint - theta * Vector2dd(-a * cosRotationAngle * sinEndAlpha - b * sinRotationAngle * cosEndAlpha, -a * sinRotationAngle * sinEndAlpha + b * cosRotationAngle * cosEndAlpha);
 
-        startPoint  = attrs->getDrawingValues(startPoint);
-        secondPoint = attrs->getDrawingValues(secondPoint);
-        thirdPoint  = attrs->getDrawingValues(thirdPoint);
-        endPoint    = attrs->getDrawingValues(endPoint);
+        startPoint  = drawing->getDrawingValues(startPoint);
+        secondPoint = drawing->getDrawingValues(secondPoint);
+        thirdPoint  = drawing->getDrawingValues(thirdPoint);
+        endPoint    = drawing->getDrawingValues(endPoint);
 
         WuRasterizer rast = WuRasterizer();
         BezierRasterizer<RGB24Buffer, WuRasterizer> bezier(*buffer, rast, data.rgbColor);
@@ -253,9 +254,9 @@ void DxfEllipticalArcEntity::draw(class corecvs::RGB24Buffer *buffer, class core
     }
 }
 
-void DxfPointEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::DxfDrawingAttrs *attrs) {
-    auto centerPoint = attrs->getDrawingValues(data.location.xy());
-    auto thickness = attrs->getDrawingValue(data.thickness);
+void DxfPointEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::DxfDrawing *drawing) {
+    auto centerPoint = drawing->getDrawingValues(data.location.xy());
+    auto thickness = drawing->getDrawingValue(data.thickness);
     if (thickness == 0) {
         buffer->drawPixel(centerPoint, data.rgbColor);
     } else {

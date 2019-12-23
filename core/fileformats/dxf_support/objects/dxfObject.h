@@ -49,6 +49,19 @@ public:
     DxfLineTypeData &data;
 };
 
+// BLOCK_RECORD Object
+class DxfBlockRecordObject : public DxfObject {
+public:
+    explicit DxfBlockRecordObject(DxfBlockRecordData &data)
+    : DxfObject(data), data(data) {}
+
+    ~DxfBlockRecordObject() override { delete &data; }
+
+    void print() override;
+
+    DxfBlockRecordData &data;
+};
+
 } // namespace corecvs
 
 #endif //DXF_SUPPORT_DXFOBJECT_H

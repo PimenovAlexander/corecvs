@@ -6,12 +6,14 @@
 #define DXF_SUPPORT_DXFENTITY_H
 
 #include <string>
-#include <core/fileformats/dxf_support/dxfDrawingAttrs.h>
+#include "core/fileformats/dxf_support/dxfDrawing.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/fileformats/dxf_support/dxfCodes.h"
 #include "core/fileformats/dxf_support/entities/dxfEntityData.h"
 
 namespace corecvs {
+
+class DxfDrawing;
 
 // Abstract Entity
 class DxfEntity {
@@ -21,10 +23,9 @@ public:
 
     virtual ~DxfEntity() { delete &data; }
 
-    virtual void draw(RGB24Buffer * /*buffer*/, DxfDrawingAttrs */*attrs*/) {}
+    virtual void draw(RGB24Buffer */*buffer*/, DxfDrawing */*drawing*/) {}
     virtual void print();
-    virtual Rectangled getBoundingBox()
-    {
+    virtual Rectangled getBoundingBox() {
         return Rectangled();
     }
 
@@ -39,7 +40,7 @@ public:
 
     ~DxfLineEntity() override { delete &data; }
 
-    void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
+    void draw(RGB24Buffer */*buffer*/, DxfDrawing */*drawing*/) override;
     void print() override;
     Rectangled getBoundingBox() override;
 
@@ -54,7 +55,7 @@ public:
 
     ~DxfLwPolylineEntity() override { delete &data; }
 
-    void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
+    void draw(RGB24Buffer */*buffer*/, DxfDrawing */*drawing*/) override;
     void print() override;
     Rectangled getBoundingBox() override;
 
@@ -69,7 +70,7 @@ public:
 
     ~DxfPolylineEntity() override { delete &data; }
 
-    void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
+    void draw(RGB24Buffer */*buffer*/, DxfDrawing */*drawing*/) override;
     void print() override;
     Rectangled getBoundingBox() override;
 
@@ -84,7 +85,7 @@ public:
 
     ~DxfCircleEntity() override { delete &data; }
 
-    void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
+    void draw(RGB24Buffer */*buffer*/, DxfDrawing */*drawing*/) override;
     void print() override;
     Rectangled getBoundingBox() override;
 
@@ -99,7 +100,7 @@ public:
 
     ~DxfCircularArcEntity() override { delete &data; }
 
-    void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
+    void draw(RGB24Buffer */*buffer*/, DxfDrawing */*drawing*/) override;
     void print() override;
     Rectangled getBoundingBox() override;
 
@@ -114,7 +115,7 @@ public:
 
     ~DxfEllipticalArcEntity() override { delete &data; }
 
-    void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
+    void draw(RGB24Buffer */*buffer*/, DxfDrawing */*drawing*/) override;
     void print() override;
     Rectangled getBoundingBox() override;
 
@@ -129,7 +130,7 @@ public:
 
     ~DxfPointEntity() override { delete &data; }
 
-    void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
+    void draw(RGB24Buffer */*buffer*/, DxfDrawing */*drawing*/) override;
     void print() override;
     Rectangled getBoundingBox() override;
 
