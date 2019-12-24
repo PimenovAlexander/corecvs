@@ -79,6 +79,43 @@ void printResult(double gflops, uint64_t delay, int runs)
                ));
 }
 
+void compareResults(Matrix &A, Matrix &B)
+{
+    if (A.getSize() != B.getSize()) {
+        //SYNC_PRINT(("Sizes differ"));
+        B = A;
+        return;
+    }
+
+    double maxdiff = std::numeric_limits<double>::lowest();
+    int bi = 0;
+    int bj = 0;
+
+    double sum = 0.0;
+
+    for (int i = 0; i < A.h; i++)
+    {
+        for (int j = 0; j < B.w; j++)
+        {
+            double va = A.a(i,j);
+            double vb = B.a(i,j);
+            double diff = fabs(va - vb);
+            if ( diff > maxdiff ) {
+                bj = j;
+                bi = i;
+                maxdiff = diff;
+            }
+            sum += diff;
+        }
+    }
+
+    if (maxdiff > 1e-7)
+    {
+        SYNC_PRINT(("Buffers diff: %d %d diff %lf all %lf\n", bi, bj, maxdiff, sum));
+    }
+
+}
+
 TEST(MatrixProfile, testMulSize3)
 {
 //    int  sizes    [] = { 1024, 2048, 4096, 16384 };
@@ -112,7 +149,8 @@ TEST(MatrixProfile, testMulSize3)
         Matrix ** input1 = new Matrix*[POLUTING_INPUTS]; // Unfortunately VS2013 does not support C99
         Matrix ** input2 = new Matrix*[POLUTING_INPUTS];
 
-        Matrix AB(1,1);
+        Matrix ABorig(1,1);
+        Matrix AB    (1,1);
 
         for (unsigned i = 0; i < POLUTING_INPUTS; i++)
         {
@@ -147,14 +185,16 @@ TEST(MatrixProfile, testMulSize3)
             }
             uint64_t delaySimple = start.usecsToNow();
             printResult(gflop, delaySimple, LIMIT);
+            compareResults(AB, ABorig);
         }
 
-        /*if (!AB.isFinite()) {
+#if 0
+        if (!AB.isFinite()) {
             SYNC_PRINT(("Matrix is not finite\n"));
         } else {
             SYNC_PRINT(("Matrix is finite - ok\n"));
-        }*/
-
+        }
+#endif
 
         if (runslow[testnum])
         {
@@ -167,6 +207,7 @@ TEST(MatrixProfile, testMulSize3)
             }
             uint64_t delayTBB = start.usecsToNow();
             printResult(gflop, delayTBB, LIMIT);
+            compareResults(AB, ABorig);
 
 #ifdef WITH_SSE
 #ifdef WITH_AVX
@@ -182,6 +223,7 @@ TEST(MatrixProfile, testMulSize3)
             }
             uint64_t delayVector = start.usecsToNow();
             printResult(gflop, delayVector, LIMIT);
+            compareResults(AB, ABorig);
 #endif
         }
 
@@ -196,7 +238,7 @@ TEST(MatrixProfile, testMulSize3)
             }
             uint64_t delayHome = start.usecsToNow();
             printResult(gflop, delayHome, LIMIT);
-
+            compareResults(AB, ABorig);
         }
 
 #ifdef WITH_AVX
@@ -211,6 +253,7 @@ TEST(MatrixProfile, testMulSize3)
             }
             uint64_t delayRepl = start.usecsToNow();
             printResult(gflop, delayRepl, LIMIT);
+            compareResults(AB, ABorig);
         }
 #endif
 
@@ -225,6 +268,7 @@ TEST(MatrixProfile, testMulSize3)
             }
             uint64_t delayBlas = start.usecsToNow();
             printResult(gflop, delayBlas, LIMIT);
+            compareResults(AB, ABorig);
 #endif // WITH_BLAS
         }
 
