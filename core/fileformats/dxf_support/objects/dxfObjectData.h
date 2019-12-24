@@ -1,5 +1,5 @@
 //
-// Created by Myasnikov Vladislav on 10/29/19.
+// Created by Myasnikov Vladislav on 29.10.2019.
 //
 
 #ifndef DXF_SUPPORT_DXFOBJECTDATA_H

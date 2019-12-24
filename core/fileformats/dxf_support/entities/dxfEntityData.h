@@ -1,5 +1,5 @@
 //
-// Created by Myasnikov Vladislav on 10/29/19.
+// Created by Myasnikov Vladislav on 29.10.2019.
 //
 
 #ifndef DXF_SUPPORT_DXFENTITYDATA_H
@@ -34,11 +34,12 @@ public:
 // LINE Data
 class DxfLineData : public DxfEntityData {
 public:
-    DxfLineData(const DxfEntityData &data, Vector3dd startPoint, Vector3dd endPoint)
-    : DxfEntityData(data), startPoint(startPoint), endPoint(endPoint) {}
+    DxfLineData(const DxfEntityData &data, Vector3dd startPoint, Vector3dd endPoint, double thickness)
+    : DxfEntityData(data), startPoint(startPoint), endPoint(endPoint), thickness(thickness) {}
 
     Vector3dd startPoint;
     Vector3dd endPoint;
+    double thickness;
 };
 
 // LWPOLYLINE Data

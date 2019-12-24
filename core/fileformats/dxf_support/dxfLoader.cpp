@@ -1,5 +1,5 @@
 //
-// Created by Myasnikov Vladislav on 10/17/19.
+// Created by Myasnikov Vladislav on 17.10.2019.
 //
 
 #include "core/fileformats/dxf_support/dxfLoader.h"
@@ -244,8 +244,9 @@ void DxfLoader::addLine() {
     auto data = new DxfLineData(
             getEntityData(),
             Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
-            Vector3dd(getDoubleValue(11, 0), getDoubleValue(21, 0),getDoubleValue (31, 0))
-            );
+            Vector3dd(getDoubleValue(11, 0), getDoubleValue(21, 0),getDoubleValue (31, 0)),
+            getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 1)
+    );
     auto entity = new DxfLineEntity(*data);
     if (currentBlock != nullptr) currentBlock->entities.push_back(entity);
     dxfBuilder.addEntity(entity);
@@ -255,7 +256,7 @@ void DxfLoader::addLwPolyline() {
     auto data = new DxfLwPolylineData(
             getEntityData(),
             current2dVertices,
-            getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0),
+            getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 1),
             ((uint8_t) getIntValue(DxfCodes::DXF_FLAGS_CODE, 0) & 0b00000001u) == 1
             );
     auto entity = new DxfLwPolylineEntity(*data);
@@ -276,7 +277,7 @@ void DxfLoader::addCircle() {
             getEntityData(),
             Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
             getDoubleValue(DxfCodes::DXF_RADIUS_CODE, 0),
-            getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0)
+            getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 1)
             );
     auto entity = new DxfCircleEntity(*data);
     if (currentBlock != nullptr) currentBlock->entities.push_back(entity);
@@ -288,7 +289,7 @@ void DxfLoader::addCircularArc() {
             getEntityData(),
             Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
             getDoubleValue(DxfCodes::DXF_RADIUS_CODE, 0),
-            getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0),
+            getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 1),
             getDoubleValue(DxfCodes::DXF_START_ANGLE_CODE, 0),
             getDoubleValue(DxfCodes::DXF_END_ANGLE_CODE, 0)
             );
@@ -315,7 +316,7 @@ void DxfLoader::addPoint() {
     auto data = new DxfPointData(
             getEntityData(),
             Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
-            getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0)
+            getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 1)
     );
     auto entity = new DxfPointEntity(*data);
     if (currentBlock != nullptr) currentBlock->entities.push_back(entity);
@@ -356,7 +357,7 @@ void DxfLoader::handlePolyline() {
     currentEntityType = DxfElementType::DXF_POLYLINE;
     polylineData = new DxfPolylineData(
             getEntityData(),
-            getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0),
+            getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 1),
             ((uint8_t) getIntValue(DxfCodes::DXF_FLAGS_CODE, 0) & 0b00000001u) == 1
             );
 }

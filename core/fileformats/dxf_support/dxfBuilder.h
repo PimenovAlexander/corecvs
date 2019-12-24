@@ -1,5 +1,5 @@
 //
-// Created by Myasnikov Vladislav on 10/21/19.
+// Created by Myasnikov Vladislav on 21.10.2019.
 //
 
 #ifndef DXF_SUPPORT_DXFBUILDER_H
@@ -19,8 +19,6 @@ namespace corecvs {
 
 class DxfBuilder {
 public:
-    DxfBuilder() = default;
-
     // Variables
     void setIntVariable(int code, std::string const &name, int value);
     void setDoubleVariable(int code, std::string const &name, double value);

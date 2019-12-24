@@ -1,5 +1,5 @@
 //
-// Created by Myasnikov Vladislav on 10/27/19.
+// Created by Myasnikov Vladislav on 27.10.2019.
 //
 #include <iostream>
 
@@ -28,6 +28,7 @@ void DxfLineEntity::print() {
     DxfEntity::print();
     std::cout << "Start point: " << data.startPoint << std::endl;
     std::cout << "End point: " << data.endPoint << std::endl;
+    std::cout << "Thickness: " << data.thickness << std::endl;
     std::cout << std::endl;
 }
 
@@ -102,23 +103,38 @@ void DxfBlockReferenceEntity::print() {
 }
 
 // Drawing
-void DxfLineEntity::draw(RGB24Buffer *buffer, DxfDrawing *attrs) {
-    auto startPoint = attrs->getDrawingValues(data.startPoint.xy());
-    auto endPoint   = attrs->getDrawingValues(data.endPoint.xy());
-    buffer->drawLine(startPoint, endPoint, data.rgbColor);
+void DxfLineEntity::draw(RGB24Buffer *buffer, DxfDrawing *drawing) {
+    auto startPoint = drawing->getDrawingValues(data.startPoint.xy());
+    auto endPoint   = drawing->getDrawingValues(data.endPoint.xy());
+    auto thickness  = data.thickness;
+    if (thickness > 1) {
+        auto alpha = (endPoint - startPoint).argument();
+        auto stepDelta    = Vector2dd(std::sin(alpha), std::cos(alpha));
+        auto maxDelta     = stepDelta * thickness / 2;
+        auto currentDelta = Vector2dd(0, 0);
+        stepDelta *= 0.5;
+        while (currentDelta.l2Metric() < maxDelta.l2Metric()) {
+            buffer->drawLine(startPoint + currentDelta, endPoint + currentDelta, data.rgbColor);
+            buffer->drawLine(startPoint - currentDelta, endPoint - currentDelta, data.rgbColor);
+            currentDelta += stepDelta;
+        }
+    } else buffer->drawLine(startPoint, endPoint, data.rgbColor);
 }
 
 void DxfLwPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawing *drawing) {
     int vertexNumber = data.vertices.size();
     if (vertexNumber > 1) {
         for (unsigned long i = 0; i < vertexNumber - !data.isClosed; i++) {
-            auto startPoint = drawing->getDrawingValues(data.vertices[i % vertexNumber]);
-            auto endPoint   = drawing->getDrawingValues(data.vertices[(i + 1) % vertexNumber]);
-            buffer->drawLine(startPoint, endPoint, data.rgbColor);
+            auto startPoint = data.vertices[i       % vertexNumber];
+            auto endPoint   = data.vertices[(i + 1) % vertexNumber];
+            auto lineData   = DxfLineData(data, Vector3dd(startPoint, 0), Vector3dd(endPoint, 0), data.thickness);
+            auto lineEntity = DxfLineEntity(lineData);
+            lineEntity.draw(buffer, drawing);
         }
     } else if (vertexNumber == 1) {
-        auto point = drawing->getDrawingValues(data.vertices[0]);
-        buffer->drawPixel(point, data.rgbColor);
+        auto pointData   = DxfPointData(data, Vector3dd(data.vertices[0], 0), data.thickness);
+        auto pointEntity = DxfPointEntity(pointData);
+        pointEntity.draw(buffer, drawing);
     }
 }
 
@@ -131,9 +147,9 @@ void DxfPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawing *drawing) {
             auto bulge = data.vertices[i % vertexNumber]->bulge;
 
             if (bulge == 0) {
-                startPoint = drawing->getDrawingValues(startPoint);
-                endPoint   = drawing->getDrawingValues(endPoint);
-                buffer->drawLine(startPoint, endPoint, data.rgbColor);
+                auto lineData   = DxfLineData(data, Vector3dd(startPoint, 0), Vector3dd(endPoint, 0), data.thickness);
+                auto lineEntity = DxfLineEntity(lineData);
+                lineEntity.draw(buffer, drawing);
             } else {
                 auto delta = startPoint - endPoint;
                 auto chordLength = delta.l2Metric();
@@ -150,18 +166,19 @@ void DxfPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawing *drawing) {
                 auto startAngle = (startPoint - centerPoint).argument();
                 auto endAngle   = (endPoint   - centerPoint).argument();
 
-                auto circularArcData = new DxfCircularArcData(data, Vector3dd(centerPoint.x(), centerPoint.y(), 0), radius, data.thickness, radToDeg(startAngle), radToDeg(endAngle));
-                auto circularArc     = new DxfCircularArcEntity(*circularArcData);
+                auto circularArcData = DxfCircularArcData(data, Vector3dd(centerPoint.x(), centerPoint.y(), 0), radius, data.thickness, radToDeg(startAngle), radToDeg(endAngle));
+                auto circularArc     = DxfCircularArcEntity(circularArcData);
 
                 auto wasClockwiseDirection = drawing->isClockwiseDirection();
                 drawing->setClockwiseDirection(bulge < 0);
-                circularArc->draw(buffer, drawing);
+                circularArc.draw(buffer, drawing);
                 drawing->setClockwiseDirection(wasClockwiseDirection);
             }
         }
     } else if (vertexNumber == 1) {
-        auto point = drawing->getDrawingValues(data.vertices[0]->location.xy());
-        buffer->drawPixel(point, data.rgbColor);
+        auto pointData   = DxfPointData(data, data.vertices[0]->location, data.thickness);
+        auto pointEntity = DxfPointEntity(pointData);
+        pointEntity.draw(buffer, drawing);
     }
 }
 
@@ -266,13 +283,11 @@ void DxfEllipticalArcEntity::draw(RGB24Buffer *buffer, DxfDrawing *drawing) {
 
 void DxfPointEntity::draw(RGB24Buffer *buffer, DxfDrawing *drawing) {
     auto centerPoint = drawing->getDrawingValues(data.location.xy());
-    auto thickness = drawing->getDrawingValue(data.thickness);
-    if (thickness == 0) {
-        buffer->drawPixel(centerPoint, data.rgbColor);
-    } else {
+    auto thickness   = data.thickness;
+    if (thickness > 1) {
         AbstractPainter<RGB24Buffer> painter(buffer);
         painter.drawCircle(centerPoint, thickness / 2, data.rgbColor);
-    }
+    } else buffer->drawPixel(centerPoint, data.rgbColor);
 }
 
 void DxfBlockReferenceEntity::draw(RGB24Buffer *buffer , DxfDrawing *drawing) {}
@@ -350,6 +365,8 @@ Rectangled DxfPointEntity::getBoundingBox() {
     return Rectangled(lowerLeftCorner, dimensions);
 }
 
-Rectangled DxfBlockReferenceEntity::getBoundingBox() {}
+Rectangled DxfBlockReferenceEntity::getBoundingBox() {
+    return Rectangled::Empty();
+}
 
 } // namespace corecvs

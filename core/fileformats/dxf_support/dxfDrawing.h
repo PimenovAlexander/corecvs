@@ -1,5 +1,5 @@
 //
-// Created by Myasnikov Vladislav on 12/5/19.
+// Created by Myasnikov Vladislav on 5.12.2019.
 //
 
 #ifndef DXF_SUPPORT_DXFDRAWING_H
@@ -23,6 +23,16 @@ public:
     DxfDrawing(std::map<std::string, DxfLayerObject*> layers, std::map<std::string, DxfBlock*> blocks, std::map<std::string, DxfObject*> otherObjects,
                std::map<std::string, std::list<DxfEntity*>> layerEntities, std::map<std::string, DxfBlockRecordObject*> blockRecords, std::map<std::string, std::list<DxfEntity*>> blockEntities)
                : layers(layers), blocks(blocks), otherObjects(otherObjects), layerEntities(layerEntities), blockRecords(blockRecords), blockEntities(blockEntities) {}
+
+    ~DxfDrawing() {
+        for (auto& kv : layerEntities)
+            for (DxfEntity* entity : kv.second) delete entity;
+
+        for (auto& kv : layers) delete kv.second;
+        for (auto& kv : blocks) delete kv.second;
+        for (auto& kv : blockRecords) delete kv.second;
+        for (auto& kv : otherObjects) delete kv.second;
+    }
 
     void setScalingFactor(double factor) {
         scalingFactor = factor;
@@ -66,14 +76,12 @@ private:
     int paddingTop = 0;
     int paddingBottom = 0;
 
-    std::map<std::string, DxfLayerObject *> layers;
-    std::map<std::string, DxfBlockRecordObject *> blockRecords;
-    std::map<std::string, DxfObject *> otherObjects;
-    std::map<std::string, DxfBlock *> blocks;
-    std::map<std::string, std::list<DxfEntity *>> layerEntities;
-    std::map<std::string, std::list<DxfEntity *>> blockEntities;
-
-    double getRealValue(double value);
+    std::map<std::string, DxfLayerObject*> layers;
+    std::map<std::string, DxfBlockRecordObject*> blockRecords;
+    std::map<std::string, DxfObject*> otherObjects;
+    std::map<std::string, DxfBlock*> blocks;
+    std::map<std::string, std::list<DxfEntity*>> layerEntities;
+    std::map<std::string, std::list<DxfEntity*>> blockEntities;
 
     Rectangled translate2WCS(Rectangled box) {
         return Rectangled(box.ulCorner() + basePoint.xy(), box.size);
@@ -85,7 +93,7 @@ private:
     }
 
     void prepareToDraw();
-    void calculateVisibleSpace(DxfLayerObject *layer, std::list<DxfEntity *> entities);
+    void calculateVisibleSpace(DxfLayerObject *layer, std::list<DxfEntity*> &entities);
     void drawLayer(RGB24Buffer *buffer, DxfLayerObject *layer, std::list<DxfEntity*> &entities);
 };
 
