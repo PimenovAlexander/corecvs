@@ -5,13 +5,8 @@
 #include "core/math/matrix/matrix.h"
 #include "core/math/matrix/matrix33.h"
 
-#include "core/math/matrix/matrix44.h"
-
 #include "core/tbbwrapper/tbbWrapper.h"
 #include "core/math/sse/sseWrapper.h"
-
-#include <emmintrin.h>
-#include <immintrin.h>
 
 namespace corecvs {
 
@@ -319,16 +314,17 @@ namespace corecvs {
         Matrix *pResult;
     };
 
-    struct MicroKernelMM {
-        static const int BLOCK = 4;
+    // This is made with help of tutorial: http://apfel.mathematik.uni-ulm.de/~lehn/sghpc/gemm/index.html
+    struct BlockMM8 {
+        static const int BLOCK = 8;
         static const int MC = 384;
         static const int KC = 384;
         static const int NC = 4096;
 
         //  Local buffers for storing panels from A, B and local result
-        static double _A[MC * KC] __attribute__ ((aligned (16)));
-        static double _B[KC * NC] __attribute__ ((aligned (16)));
-        static double _result[BLOCK * BLOCK] __attribute__ ((aligned (16)));
+        static double _A[MC * KC] __attribute__ ((aligned (32)));
+        static double _B[KC * NC] __attribute__ ((aligned (32)));
+        static double _result[BLOCK * BLOCK] __attribute__ ((aligned (32)));
 
         //  Packing complete panels from A (i.e. without padding)
         static void
@@ -344,7 +340,7 @@ namespace corecvs {
             }
         }
 
-//  Packing panels from A with padding if required
+        //  Packing panels from A with padding if required
         static void
         pack_A(int mc, int kc, const double *A, int incRowA, int incColA,
                double *buffer) {
@@ -370,7 +366,7 @@ namespace corecvs {
             }
         }
 
-//  Packing complete panels from B (i.e. without padding)
+        //  Packing complete panels from B (i.e. without padding)
         static void
         pack_kxBLOCK(int k, const double *B, int incRowB, int incColB,
                      double *buffer) {
@@ -383,7 +379,7 @@ namespace corecvs {
             }
         }
 
-//  Packing panels from B with padding if required
+        //  Packing panels from B with padding if required
         static void
         pack_B(int kc, int nc, const double *B, int incRowB, int incColB,
                double *buffer) {
@@ -410,102 +406,76 @@ namespace corecvs {
             }
         }
 
-//  Micro kernel for multiplying panels from A and B.
+        //  Micro kernel for multiplying panels from A and B
         static void
         dgemm_micro_kernel(long kc, const double *A, const double *B,
                            double *C, long incRowC, long incColC) {
-            double AB[BLOCK * BLOCK] __attribute__ ((aligned (16)));
+            double AB[BLOCK * BLOCK] __attribute__ ((aligned (32)));
 
-//  Compute AB = A*B
-            register __m128d ab_00_11, ab_20_31;
-            register __m128d ab_01_10, ab_21_30;
-            register __m128d ab_02_13, ab_22_33;
-            register __m128d ab_03_12, ab_23_32;
+            Doublex4 s00 = Doublex4::Zero(); Doublex4 s10 = Doublex4::Zero();
+            Doublex4 s01 = Doublex4::Zero(); Doublex4 s11 = Doublex4::Zero();
+            Doublex4 s02 = Doublex4::Zero(); Doublex4 s12 = Doublex4::Zero();
+            Doublex4 s03 = Doublex4::Zero(); Doublex4 s13 = Doublex4::Zero();
+            Doublex4 s04 = Doublex4::Zero(); Doublex4 s14 = Doublex4::Zero();
+            Doublex4 s05 = Doublex4::Zero(); Doublex4 s15 = Doublex4::Zero();
+            Doublex4 s06 = Doublex4::Zero(); Doublex4 s16 = Doublex4::Zero();
+            Doublex4 s07 = Doublex4::Zero(); Doublex4 s17 = Doublex4::Zero();
 
-            register __m128d tmp0, tmp1, tmp2, tmp3;
-            register __m128d tmp4, tmp5, tmp6, tmp7;
+            Doublex4 a0123, a4567;
 
-            tmp0 = _mm_load_pd(A);                                      // (1)
-            tmp1 = _mm_load_pd(A + 2);                                    // (2)
-            tmp2 = _mm_load_pd(B);                                      // (3)
-
-            ab_00_11 = _mm_setzero_pd();
-            ab_20_31 = _mm_setzero_pd();
-            ab_01_10 = _mm_setzero_pd();
-            ab_21_30 = _mm_setzero_pd();
-            ab_02_13 = _mm_setzero_pd();
-            ab_22_33 = _mm_setzero_pd();
-            ab_03_12 = _mm_setzero_pd();
-            ab_23_32 = _mm_setzero_pd();
-
-            tmp3 = _mm_setzero_pd();
-            tmp4 = _mm_setzero_pd();
-            tmp5 = _mm_setzero_pd();
-            tmp6 = _mm_setzero_pd();
-            tmp7 = _mm_setzero_pd();
+            Doublex4 b;
 
             for (int l = 0; l < kc; ++l) {
-                ab_02_13 = _mm_add_pd(ab_02_13, tmp3);                      // (9)
-                tmp3 = _mm_load_pd(B + 2);
-                ab_22_33 = _mm_add_pd(ab_22_33, tmp6);                      // (10)
-                tmp6 = tmp2;
-                tmp4 = _mm_shuffle_pd(tmp2, tmp2, _MM_SHUFFLE2(0, 1));  // (8)
-                tmp2 = _mm_mul_pd(tmp2, tmp0);
-                tmp6 = _mm_mul_pd(tmp6, tmp1);
+                a0123 = Doublex4(A);
+                a4567 = Doublex4(A + 4);
 
-                ab_03_12 = _mm_add_pd(ab_03_12, tmp5);                      // (15)
-                ab_23_32 = _mm_add_pd(ab_23_32, tmp7);                      // (16)
-                tmp7 = tmp4;
-                tmp4 = _mm_mul_pd(tmp4, tmp0);
-                tmp7 = _mm_mul_pd(tmp7, tmp1);
+                b = Doublex4(B[0]);
+                s00 = multiplyAdd(a0123, b, s00);
+                s10 = multiplyAdd(a4567, b, s10);
 
-                ab_00_11 = _mm_add_pd(ab_00_11, tmp2);                      // (11)
-                tmp2 = _mm_load_pd(B + 4);                                // (6)
-                ab_20_31 = _mm_add_pd(ab_20_31, tmp6);                      // (12)
-                tmp6 = tmp3;
-                tmp5 = _mm_shuffle_pd(tmp3, tmp3, _MM_SHUFFLE2(0, 1));  // (7)
-                tmp3 = _mm_mul_pd(tmp3, tmp0);
-                tmp6 = _mm_mul_pd(tmp6, tmp1);
+                b = Doublex4(B[1]);
+                s01 = multiplyAdd(a0123, b, s01);
+                s11 = multiplyAdd(a4567, b, s11);
 
-                ab_01_10 = _mm_add_pd(ab_01_10, tmp4);                      // (13)
-                ab_21_30 = _mm_add_pd(ab_21_30, tmp7);                      // (14)
-                tmp7 = tmp5;
-                tmp5 = _mm_mul_pd(tmp5, tmp0);
-                tmp0 = _mm_load_pd(A + 4);                                // (4)
-                tmp7 = _mm_mul_pd(tmp7, tmp1);
-                tmp1 = _mm_load_pd(A + 6);                                // (5)
+                b = Doublex4(B[2]);
+                s02 = multiplyAdd(a0123, b, s02);
+                s12 = multiplyAdd(a4567, b, s12);
 
-                A += 4;
-                B += 4;
+                b = Doublex4(B[3]);
+                s03 = multiplyAdd(a0123, b, s03);
+                s13 = multiplyAdd(a4567, b, s13);
+
+                b = Doublex4(B[4]);
+                s04 = multiplyAdd(a0123, b, s04);
+                s14 = multiplyAdd(a4567, b, s14);
+
+                b = Doublex4(B[5]);
+                s05 = multiplyAdd(a0123, b, s05);
+                s15 = multiplyAdd(a4567, b, s15);
+
+                b = Doublex4(B[6]);
+                s06 = multiplyAdd(a0123, b, s06);
+                s16 = multiplyAdd(a4567, b, s16);
+
+                b = Doublex4(B[7]);
+                s07 = multiplyAdd(a0123, b, s07);
+                s17 = multiplyAdd(a4567, b, s17);
+
+                A += 8;
+                B += 8;
             }
-            ab_02_13 = _mm_add_pd(ab_02_13, tmp3);                          // (9)
-            ab_22_33 = _mm_add_pd(ab_22_33, tmp6);                          // (10)
 
-            ab_03_12 = _mm_add_pd(ab_03_12, tmp5);                          // (15)
-            ab_23_32 = _mm_add_pd(ab_23_32, tmp7);                          // (16)
+            s00.save(&AB[0 + 0 * 8]); s10.save(&AB[4 + 0 * 8]);
+            s01.save(&AB[0 + 1 * 8]); s11.save(&AB[4 + 1 * 8]);
+            s02.save(&AB[0 + 2 * 8]); s12.save(&AB[4 + 2 * 8]);
+            s03.save(&AB[0 + 3 * 8]); s13.save(&AB[4 + 3 * 8]);
 
-            _mm_storel_pd(&AB[0 + 0 * 4], ab_00_11);
-            _mm_storeh_pd(&AB[1 + 0 * 4], ab_01_10);
-            _mm_storel_pd(&AB[2 + 0 * 4], ab_20_31);
-            _mm_storeh_pd(&AB[3 + 0 * 4], ab_21_30);
+            s04.save(&AB[0 + 4 * 8]); s14.save(&AB[4 + 4 * 8]);
+            s05.save(&AB[0 + 5 * 8]); s15.save(&AB[4 + 5 * 8]);
+            s06.save(&AB[0 + 6 * 8]); s16.save(&AB[4 + 6 * 8]);
+            s07.save(&AB[0 + 7 * 8]); s17.save(&AB[4 + 7 * 8]);
 
-            _mm_storel_pd(&AB[0 + 1 * 4], ab_01_10);
-            _mm_storeh_pd(&AB[1 + 1 * 4], ab_00_11);
-            _mm_storel_pd(&AB[2 + 1 * 4], ab_21_30);
-            _mm_storeh_pd(&AB[3 + 1 * 4], ab_20_31);
-
-            _mm_storel_pd(&AB[0 + 2 * 4], ab_02_13);
-            _mm_storeh_pd(&AB[1 + 2 * 4], ab_03_12);
-            _mm_storel_pd(&AB[2 + 2 * 4], ab_22_33);
-            _mm_storeh_pd(&AB[3 + 2 * 4], ab_23_32);
-
-            _mm_storel_pd(&AB[0 + 3 * 4], ab_03_12);
-            _mm_storeh_pd(&AB[1 + 3 * 4], ab_02_13);
-            _mm_storel_pd(&AB[2 + 3 * 4], ab_23_32);
-            _mm_storeh_pd(&AB[3 + 3 * 4], ab_22_33);
-
-
-//  Update C <- C + AB
+            //  Update C <- C + AB
             for (int j = 0; j < BLOCK; ++j) {
                 for (int i = 0; i < BLOCK; ++i) {
                     C[i * incRowC + j * incColC] += AB[i + j * BLOCK];
@@ -513,8 +483,8 @@ namespace corecvs {
             }
         }
 
-//  Macro Kernel for the multiplication of blocks of A and B.  We assume that
-//  these blocks were previously packed to buffers _A and _B.
+        //  Macro Kernel for the multiplication of blocks of A and B.  We assume that
+        //  these blocks were previously packed to buffers _A and _B.
         static void
         dgemm_macro_kernel(int mc,
                            int nc,
@@ -578,21 +548,18 @@ namespace corecvs {
 
                 for (int l = 0; l < kb; ++l) {
                     kc = (l != kb - 1 || _kc == 0) ? KC : _kc;
-                    // &B[l*KC*incRowB+j*NC*incColB]
                     pack_B(kc, nc,&B.a(l * KC, j * NC), incRowB, incColB, _B);
 
                     for (int i = 0; i < mb; ++i) {
                         mc = (i != mb - 1 || _mc == 0) ? MC : _mc;
-                        // &A[i*MC*incRowA+l*KC*incColA]
                         pack_A(mc, kc,&A.a(i * MC, l * KC), incRowA, incColA, _A);
-                        //&C[i*MC*incRowC+j*NC*incColC]
                         dgemm_macro_kernel(mc, nc, kc,&result.a(i * MC, j * NC), incRowC, incColC);
                     }
                 }
             }
         }
 
-        MicroKernelMM(const Matrix *pA, const Matrix *pB, Matrix *pResult)
+        BlockMM8(const Matrix *pA, const Matrix *pB, Matrix *pResult)
                 : pA(pA), pB(pB), pResult(pResult) {
         }
 
@@ -601,9 +568,9 @@ namespace corecvs {
         Matrix *pResult;
     };
 
-    double MicroKernelMM::_A[] = {};
-    double MicroKernelMM::_B[] = {};
-    double MicroKernelMM::_result[] = {};
+    double BlockMM8::_A[] = {};
+    double BlockMM8::_B[] = {};
+    double BlockMM8::_result[] = {};
 
 #if 0 // unfinished stuff
     template<int vectorize = true>

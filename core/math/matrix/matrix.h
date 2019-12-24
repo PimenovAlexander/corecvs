@@ -330,7 +330,12 @@ public:
 #ifdef WITH_BLAS
     static Matrix multiplyBlas(const Matrix &A, const Matrix &B);
 #endif
-    static Matrix multiplyBlasRepl(const Matrix &A, const Matrix &B);
+    /**
+     * AVX powered block matrix multiplication
+     * @note Size of matrices A and B must be multiple of 8
+     * @return A * B
+     */
+    static Matrix multiplyBlasReplacement(const Matrix &A, const Matrix &B);
 };
 
 } //namespace corecvs

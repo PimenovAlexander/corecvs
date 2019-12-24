@@ -253,11 +253,10 @@ Matrix Matrix::multiplyBlas(const Matrix &A, const Matrix &B)
     return result;
 }
 #endif
-Matrix Matrix::multiplyBlasRepl(const Matrix &A, const Matrix &B)
+Matrix Matrix::multiplyBlasReplacement(const Matrix &A, const Matrix &B)
 {
     Matrix result(A.h, B.w, false);
-    MicroKernelMM kernel(&A, &B, &result);
-    kernel();
+    BlockMM8(&A, &B, &result)();
     return result;
 }
 
