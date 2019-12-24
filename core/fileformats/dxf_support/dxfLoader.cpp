@@ -66,6 +66,9 @@ int DxfLoader::processDxfPair(int code, const std::string &value) {
                     case DxfElementType::DXF_END_BLOCK:
                         addBlock();
                         break;
+                    case DxfElementType::DXF_INSERT:
+                        addBlockReference();
+                        break;
                     case DxfElementType::DXF_LW_POLYLINE:
                         addLwPolyline();
                         break;
@@ -315,6 +318,19 @@ void DxfLoader::addPoint() {
             getDoubleValue(DxfCodes::DXF_THICKNESS_CODE, 0)
     );
     auto entity = new DxfPointEntity(*data);
+    if (currentBlock != nullptr) currentBlock->entities.push_back(entity);
+    dxfBuilder.addEntity(entity);
+}
+
+void DxfLoader::addBlockReference() {
+    auto data = new DxfBlockReferenceData(
+            getEntityData(),
+            getStringValue(DxfCodes::DXF_ELEMENT_NAME_CODE, ""),
+            Vector3dd(getDoubleValue(10, 0), getDoubleValue(20, 0), getDoubleValue(30, 0)),
+            Vector3dd(getDoubleValue(41, 1), getDoubleValue(42, 1), getDoubleValue(43, 1)),
+            getDoubleValue(DxfCodes::DXF_START_ANGLE_CODE, 0)
+    );
+    auto entity = new DxfBlockReferenceEntity(*data);
     if (currentBlock != nullptr) currentBlock->entities.push_back(entity);
     dxfBuilder.addEntity(entity);
 }

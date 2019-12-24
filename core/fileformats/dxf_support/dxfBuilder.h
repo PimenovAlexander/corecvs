@@ -43,10 +43,11 @@ public:
 
 private:
     std::map<std::string,DxfLayerObject*> layers;
-    std::map<std::string,DxfBlock*> blocks;
+    std::map<std::string,DxfBlockRecordObject*> blockRecords;
     std::map<std::string,DxfObject*> otherObjects;
+    std::map<std::string,DxfBlock*> blocks;
     std::map<std::string,std::list<DxfEntity*>> layerEntities;
-    std::map<std::string,DxfBlockRecordObject*> blockRecords = {};
+    std::map<std::string,std::list<DxfEntity*>> blockEntities;
 };
 
 } // namespace corecvs

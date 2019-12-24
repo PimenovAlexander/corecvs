@@ -91,6 +91,16 @@ void DxfPointEntity::print() {
     std::cout << std::endl;
 }
 
+void DxfBlockReferenceEntity::print() {
+    std::cout << "* * * Block Reference Entity * * *" << std::endl;
+    DxfEntity::print();
+    std::cout << "Block name: " << data.blockName << std::endl;
+    std::cout << "Insertion point: " << data.insertionPoint << std::endl;
+    std::cout << "Scale factor: " << data.scaleFactor << std::endl;
+    std::cout << "Rotation angle: " << data.rotationAngle << std::endl;
+    std::cout << std::endl;
+}
+
 // Drawing
 void DxfLineEntity::draw(RGB24Buffer *buffer, DxfDrawing *attrs) {
     auto startPoint = attrs->getDrawingValues(data.startPoint.xy());
@@ -155,13 +165,13 @@ void DxfPolylineEntity::draw(RGB24Buffer *buffer, DxfDrawing *drawing) {
     }
 }
 
-void DxfCircleEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::DxfDrawing *drawing) {
+void DxfCircleEntity::draw(RGB24Buffer *buffer, DxfDrawing *drawing) {
     auto centerPoint = drawing->getDrawingValues(data.center.xy());
     Circle2d circle(centerPoint, drawing->getDrawingValue(data.radius));
     buffer->drawArc(circle, data.rgbColor);
 }
 
-void DxfCircularArcEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::DxfDrawing *drawing) {
+void DxfCircularArcEntity::draw(RGB24Buffer *buffer, DxfDrawing *drawing) {
     auto centerPoint = Vector2dd(data.center.xy());
     auto startAngle = degToRad(data.startAngle);
     auto endAngle   = degToRad(data.endAngle);
@@ -204,7 +214,7 @@ void DxfCircularArcEntity::draw(class corecvs::RGB24Buffer *buffer, class corecv
     }
 }
 
-void DxfEllipticalArcEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::DxfDrawing *drawing) {
+void DxfEllipticalArcEntity::draw(RGB24Buffer *buffer, DxfDrawing *drawing) {
     auto centerPoint = data.center.xy();
     auto delta = data.majorAxisEndPoint.xy();
     auto a = delta.l2Metric();
@@ -254,7 +264,7 @@ void DxfEllipticalArcEntity::draw(class corecvs::RGB24Buffer *buffer, class core
     }
 }
 
-void DxfPointEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::DxfDrawing *drawing) {
+void DxfPointEntity::draw(RGB24Buffer *buffer, DxfDrawing *drawing) {
     auto centerPoint = drawing->getDrawingValues(data.location.xy());
     auto thickness = drawing->getDrawingValue(data.thickness);
     if (thickness == 0) {
@@ -264,6 +274,8 @@ void DxfPointEntity::draw(class corecvs::RGB24Buffer *buffer, class corecvs::Dxf
         painter.drawCircle(centerPoint, thickness / 2, data.rgbColor);
     }
 }
+
+void DxfBlockReferenceEntity::draw(RGB24Buffer *buffer , DxfDrawing *drawing) {}
 
 // Bounding box getting
 Rectangled DxfLineEntity::getBoundingBox() {
@@ -337,5 +349,7 @@ Rectangled DxfPointEntity::getBoundingBox() {
     auto dimensions = upperRightCorner - lowerLeftCorner;
     return Rectangled(lowerLeftCorner, dimensions);
 }
+
+Rectangled DxfBlockReferenceEntity::getBoundingBox() {}
 
 } // namespace corecvs

@@ -50,10 +50,13 @@ void DxfBuilder::addEntity(DxfEntity *entity) {
 // Blocks
 void DxfBuilder::addBlock(DxfBlock *block) {
     blocks[block->name] = block;
+
+    if (blockEntities[block->name].empty()) blockEntities[block->name] = {};
+    for (DxfEntity* entity : block->entities) blockEntities[block->name].push_back(entity);
 }
 
 DxfDrawing DxfBuilder::getDrawing() {
-    return DxfDrawing(layers, blocks, otherObjects, layerEntities, blockRecords);
+    return DxfDrawing(layers, blocks, otherObjects, layerEntities, blockRecords, blockEntities);
 }
 
 } // namespace corecvs

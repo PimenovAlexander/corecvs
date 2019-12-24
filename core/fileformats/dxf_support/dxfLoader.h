@@ -48,6 +48,7 @@ private:
     void addEllipticalArc();
     void addPoint();
     void addBlock();
+    void addBlockReference();
     void handleLwPolyline(int groupCode);
     void handlePolyline();
     void handleVertex();

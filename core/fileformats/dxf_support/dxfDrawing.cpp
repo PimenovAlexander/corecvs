@@ -34,8 +34,8 @@ double DxfDrawing::getRealValue(double value) {
 
 Vector2dd DxfDrawing::getDrawingValues(double x, double y) {
     Vector2dd result;
-    result.x() = getDrawingValue(x - basePoint.x() - lowerLeftCorner.x() + paddingLeft);
-    result.y() = (double) height - getDrawingValue(y - basePoint.y() - lowerLeftCorner.y() + paddingBottom);
+    result.x() = getDrawingValue(x +/*-*/ basePoint.x() - lowerLeftCorner.x() + paddingLeft);
+    result.y() = (double) paperSpaceDimension.y() - getDrawingValue(y +/*-*/ basePoint.y() - lowerLeftCorner.y() + paddingBottom);
     return result;
 }
 
@@ -50,21 +50,22 @@ void DxfDrawing::prepareToDraw() {
     }
 }
 
-RGB24Buffer* DxfDrawing::draw() {
-    prepareToDraw();
+void DxfDrawing::calculateVisibleSpace(DxfLayerObject *layer, std::list<DxfEntity*> entities) {
+    if (layer->data.isPlotted) {
+        for (DxfEntity *entity : entities) {
+            if (entity->data.isVisible && entity->data.colorNumber >= 0) {
+                auto blockReference = dynamic_cast<DxfBlockReferenceEntity*> (entity);
+                if (blockReference != nullptr) {
+                    auto oldBasePoint = basePoint;
+                    auto oldEntityScalingFactor = entityScalingFactor;
+                    basePoint = blockReference->data.insertionPoint;
+                    entityScalingFactor = blockReference->data.scaleFactor;
 
-    std::map<std::string,std::list<DxfEntity*>> visibleEntities = {};
-    bool isFirstVisibleEntity = true;
-    for (auto& kv : layerEntities) {
-        auto layer = layers[kv.first];
-        if (layer->data.isPlotted) {
-            visibleEntities[kv.first] = {};
-            for (DxfEntity *entity : kv.second) {
-                if (entity->data.isVisible && entity->data.colorNumber >= 0) {
-                    if (entity->data.block != nullptr) {
-                        if (entity->data.block->isModelSpace) continue;
-                        basePoint = entity->data.block->basePoint;
-                    } else basePoint = Vector3dd(0, 0, 0);
+                    calculateVisibleSpace(layer, blocks[blockReference->data.blockName]->entities);
+
+                    basePoint = oldBasePoint;
+                    entityScalingFactor = oldEntityScalingFactor;
+                } else {
                     auto box = translate2WCS(entity->getBoundingBox());
                     if (isFirstVisibleEntity) {
                         lowerLeftCorner = box.ulCorner();
@@ -76,24 +77,53 @@ RGB24Buffer* DxfDrawing::draw() {
                         if (box.ulCorner().y() < lowerLeftCorner.y()) lowerLeftCorner.y() = box.ulCorner().y();
                         if (box.lrCorner().y() > upperRightCorner.y()) upperRightCorner.y() = box.lrCorner().y();
                     }
-                    visibleEntities[kv.first].push_back(entity);
                 }
             }
         }
     }
+}
 
-    recalculatePaperSpaceDimensions();
+void DxfDrawing::drawLayer(RGB24Buffer *buffer, DxfLayerObject *layer, std::list<DxfEntity*> &entities) {
+    if (layer->data.isPlotted) {
+        for (DxfEntity *entity : entities) {
+            if (entity->data.isVisible && entity->data.colorNumber >= 0) {
+                auto blockReference = dynamic_cast<DxfBlockReferenceEntity*> (entity);
+                if (blockReference != nullptr) {
+                    auto oldBasePoint = basePoint;
+                    auto oldEntityScalingFactor = entityScalingFactor;
+                    basePoint = blockReference->data.insertionPoint;
+                    entityScalingFactor = blockReference->data.scaleFactor;
 
-    auto dimensions = getPaperSpaceDimensions();
-    auto buffer = new RGB24Buffer(dimensions.y(), dimensions.x(), RGBColor::White());
-    for (auto& kv : visibleEntities) {
-        for (DxfEntity* entity : kv.second) {
-            if (entity->data.block != nullptr) {
-                basePoint = entity->data.block->basePoint;
-            } else basePoint = Vector3dd(0, 0, 0);
-            entity->draw(buffer, this);
+                    drawLayer(buffer, layer, blocks[blockReference->data.blockName]->entities);
+
+                    basePoint = oldBasePoint;
+                    entityScalingFactor = oldEntityScalingFactor;
+                } else {
+                    entity->draw(buffer, this);
+                }
+            }
         }
     }
+}
+
+RGB24Buffer* DxfDrawing::draw() {
+    prepareToDraw();
+
+    isFirstVisibleEntity = true;
+    std::map<std::string,std::list<DxfEntity*>> nonBlockLayerEntities;
+    for (auto& kv : layers) {
+        nonBlockLayerEntities[kv.first] = {};
+        for (DxfEntity* entity : layerEntities[kv.first]) {
+            if (entity->data.block == nullptr) nonBlockLayerEntities[kv.first].push_back(entity);
+        }
+        calculateVisibleSpace(kv.second, nonBlockLayerEntities[kv.first]);
+    }
+
+    recalculatePaperSpaceDimension();
+
+    auto buffer = new RGB24Buffer(paperSpaceDimension.y(), paperSpaceDimension.x(), RGBColor::White());
+    for (auto& kv : layers) drawLayer(buffer, kv.second, nonBlockLayerEntities[kv.first]);
+
     print();
     return buffer;
 }

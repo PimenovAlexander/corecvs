@@ -120,6 +120,18 @@ public:
     double thickness;
 };
 
+// INSERT Data
+class DxfBlockReferenceData : public DxfEntityData {
+public:
+    DxfBlockReferenceData(const DxfEntityData &data, std::string blockName, Vector3dd insertionPoint, Vector3dd scaleFactor, double rotationAngle)
+    : DxfEntityData(data), blockName(std::move(blockName)), insertionPoint(insertionPoint), scaleFactor(scaleFactor), rotationAngle(rotationAngle) {}
+
+    std::string blockName;
+    Vector3dd insertionPoint;
+    Vector3dd scaleFactor;
+    double rotationAngle;
+};
+
 } // namespace corecvs
 
 #endif //DXF_SUPPORT_DXFENTITYDATA_H

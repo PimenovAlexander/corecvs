@@ -137,6 +137,21 @@ public:
     DxfPointData &data;
 };
 
+// INSERT Entity
+class DxfBlockReferenceEntity : public DxfEntity {
+public:
+    explicit DxfBlockReferenceEntity(DxfBlockReferenceData &data)
+    : DxfEntity(data), data(data) {}
+
+    ~DxfBlockReferenceEntity() override { delete &data; }
+
+    void draw(RGB24Buffer */*buffer*/, DxfDrawing */*drawing*/) override;
+    void print() override;
+    Rectangled getBoundingBox() override;
+
+    DxfBlockReferenceData &data;
+};
+
 } // namespace corecvs
 
 #endif //DXF_SUPPORT_DXFENTITY_H
