@@ -17,7 +17,6 @@
 
 #include "core/math/mathUtils.h"
 #include "core/math/matrix/matrix33.h"
-
 #include "core/math/matrix/matrix.h"
 #include "core/utils/preciseTimer.h"
 
@@ -26,16 +25,19 @@ using namespace corecvs;
 const static unsigned POLUTING_INPUTS = 20;
 const static unsigned LIMIT = 5;
 
-TEST(MatrixProfile, testMul1000) {
+
+TEST(MatrixProfile, testMul1000)
+{
     PreciseTimer start;
-    Matrix *input[POLUTING_INPUTS];
+    Matrix * input[POLUTING_INPUTS];
 
-    const static int TEST_H_SIZE = 1000;
-    const static int TEST_W_SIZE = TEST_H_SIZE;
+    const static int  TEST_H_SIZE = 1000;
+    const static int  TEST_W_SIZE = TEST_H_SIZE;
 
-    for (unsigned i = 0; i < POLUTING_INPUTS; i++) {
-        input[i] = new Matrix(TEST_H_SIZE, TEST_W_SIZE);
-        auto touch = [](int i, int j, double &el) -> void { el = ((i + 1) * (j + 1)) + ((j + 1) / 5.0); };
+    for (unsigned i = 0; i < POLUTING_INPUTS; i++)
+    {
+        input[i] = new Matrix(TEST_H_SIZE ,TEST_W_SIZE);
+        auto touch = [](int i, int j, double &el) -> void { el = ((i+1) * (j + 1)) + ((j + 1) / 5.0); };
         input[i]->touchOperationElementwize(touch);
     }
 
@@ -46,93 +48,90 @@ TEST(MatrixProfile, testMul1000) {
         Matrix B = A * A;
     }
     uint64_t delaySimple = start.usecsToNow();
-    SYNC_PRINT(("%8"
-                       PRIu64
-                       "us %8"
-                       PRIu64
-                       "ms SP: %8"
-                       PRIu64
-                       "us\n", delaySimple, delaySimple / 1000, delaySimple / LIMIT));
+    SYNC_PRINT(("%8" PRIu64 "us %8" PRIu64 "ms SP: %8" PRIu64 "us\n", delaySimple, delaySimple / 1000, delaySimple / LIMIT));
 
     for (unsigned i = 0; i < POLUTING_INPUTS; i++) {
         delete_safe(input[i]);
     }
 }
 
-void printHeader() {
+void printHeader()
+{
     SYNC_PRINT(("|           |      Test size, mem and algo       | Runs|"));
     SYNC_PRINT(("   Time us   |   Time ms  |    One run us  |    Throughput    | \n"));
 }
 
-void printName(const char *name, int testsize, double mem, int runs) {
+void printName(const char *name, int testsize, double mem, int runs)
+{
     SYNC_PRINT(("| Profiling | [%5dx%-5d] (%6.1lf Mb) %8s | %3d |", testsize, testsize, mem / 1000000.0, name, runs));
 }
 
-void printResult(double gflops, uint64_t delay, int runs) {
-    double runss = 1000000.0 / ((double) delay / runs);
+void printResult(double gflops, uint64_t delay, int runs)
+{
+    double runss = 1000000.0 / ((double)delay / runs);
     double gflopss = runss * gflops;
 
-    SYNC_PRINT(("%10"
-                       PRIu64
-                       "us | %8"
-                       PRIu64
-                       "ms | SP: %8"
-                       PRIu64
-                       "us | % 7.3lf Gflops/s |\n",
-                               delay,
-                               delay / 1000,
-                               delay / runs,
-                               gflopss
+    SYNC_PRINT(("%10" PRIu64 "us | %8" PRIu64 "ms | SP: %8" PRIu64 "us | % 7.3lf Gflops/s |\n",
+            delay,
+            delay / 1000,
+            delay / runs,
+            gflopss
                ));
 }
 
-TEST(MatrixProfile, testMulSize3) {
+TEST(MatrixProfile, testMulSize3)
+{
 //    int  sizes    [] = { 1024, 2048, 4096, 16384 };
 
-    int sizes[] = {1000, 2000, 4000, 16000};
+    int  sizes    [] = { 1000, 2000, 4000 };
 
-    int polca[] = {10, 20, 5, 1};
-    int runs[] = {10, 5, 2, 2};
+    int  polca    [] = {   10,   20,    5,     1 };
+    int  runs     [] = {   10,    5,    2,     2 };
 
-    bool runsimple[] = {true, false, false, false};
-    bool runslow[] = {true, true, false, false};
-    bool runour[] = {true, true, true, false};
-    bool runfast[] = {true, true, true, false};   // 16K * 16K - skip at all
+    bool runsimple[] = { true, false, false, false };
+    bool runslow  [] = { true, true , false, false };
+    bool runour   [] = { true, true ,  true, false };
+    bool runfast  [] = { true, true ,  true, false };   // 16K * 16K - skip at all
 
 
     printHeader();
 
-    for (size_t testnum = 0; testnum < CORE_COUNT_OF(sizes); testnum++) {
-        int TEST_H_SIZE = sizes[testnum] /* /128*/;
-        int TEST_W_SIZE = TEST_H_SIZE;
-        unsigned POLUTING_INPUTS = polca[testnum];
-        unsigned LIMIT = runs[testnum];
+    for (size_t testnum = 0; testnum < CORE_COUNT_OF(sizes); testnum++)
+    {
+        int       TEST_H_SIZE     = sizes[testnum] /* /128*/;
+        int       TEST_W_SIZE     = TEST_H_SIZE;
+        unsigned  POLUTING_INPUTS = polca[testnum];
+        unsigned  LIMIT           = runs[testnum];
 
-        double mem = 2.0 * sizeof(double) * (double) TEST_H_SIZE * TEST_H_SIZE;
-        double flop = 2.0 * (double) TEST_H_SIZE * TEST_H_SIZE * TEST_H_SIZE;
-        double gflop = flop / 1000000.0 / 1000.0;
+        double mem    = 2.0 * sizeof(double) * (double)TEST_H_SIZE * TEST_H_SIZE;
+        double flop   = 2.0 * (double)TEST_H_SIZE * TEST_H_SIZE * TEST_H_SIZE;
+        double gflop  = flop / 1000000.0 / 1000.0;
 
 
         PreciseTimer start;
-        Matrix **input1 = new Matrix *[POLUTING_INPUTS]; // Unfortunately VS2013 does not support C99
-        Matrix **input2 = new Matrix *[POLUTING_INPUTS];
-        Matrix AB(1, 1);
+        Matrix ** input1 = new Matrix*[POLUTING_INPUTS]; // Unfortunately VS2013 does not support C99
+        Matrix ** input2 = new Matrix*[POLUTING_INPUTS];
 
-        for (unsigned i = 0; i < POLUTING_INPUTS; i++) {
-            input1[i] = new Matrix(TEST_H_SIZE, TEST_W_SIZE);
-            input2[i] = new Matrix(TEST_H_SIZE, TEST_W_SIZE);
+        Matrix AB(1,1);
+
+        for (unsigned i = 0; i < POLUTING_INPUTS; i++)
+        {
+            input1[i] = new Matrix(TEST_H_SIZE ,TEST_W_SIZE);
+            input2[i] = new Matrix(TEST_H_SIZE ,TEST_W_SIZE);
 
             // auto touch1 = [](int i, int j, double &el) -> void { el = ((i+1) * (j + 1)) + ((j + 1) / 5.0); };
-            auto touch1 = [](int i, int j, double &el) -> void {
-                uint16_t semirand = (uint16_t) (i * 1237657 + j * 235453);
-                el = ((double) semirand - 32768) / 65536.0;
+            auto touch1 = [](int i, int j, double &el) -> void
+            {
+                uint16_t semirand = (uint16_t )(i * 1237657 + j * 235453);
+                el = ((double)semirand - 32768) / 65536.0;
             };
             input1[i]->touchOperationElementwize(touch1);
 
             // auto touch2 = [](int i, int j, double &el) -> void { el = ((i+4) * (j + 1)) + ((i + 1) / 5.0); };
-            auto touch2 = [](int i, int j, double &el) -> void {
-                uint16_t semirand = (uint16_t) (i * 54657 + j * 2517);
-                el = ((double) semirand - 32768) / 65536.0;
+            auto touch2 = [](int i, int j, double &el) -> void
+            {
+                uint16_t semirand = (uint16_t )(i * 54657 + j * 2517);
+                el = ((double)semirand - 32768) / 65536.0;
             };
             input2[i]->touchOperationElementwize(touch2);
         }
@@ -186,7 +185,8 @@ TEST(MatrixProfile, testMulSize3) {
 #endif
         }
 
-        if (runour[testnum]) {
+        if (runour[testnum])
+        {
             printName("All On", TEST_H_SIZE, mem, LIMIT);
             start = PreciseTimer::currentTime();
             for (unsigned i = 0; i < LIMIT; i++) {
@@ -196,6 +196,7 @@ TEST(MatrixProfile, testMulSize3) {
             }
             uint64_t delayHome = start.usecsToNow();
             printResult(gflop, delayHome, LIMIT);
+
         }
 
 #ifdef WITH_AVX
