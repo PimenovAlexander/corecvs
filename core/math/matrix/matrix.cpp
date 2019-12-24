@@ -253,6 +253,12 @@ Matrix Matrix::multiplyBlas(const Matrix &A, const Matrix &B)
     return result;
 }
 #endif
+Matrix Matrix::multiplyBlasReplacement(const Matrix &A, const Matrix &B)
+{
+    Matrix result(A.h, B.w, false);
+    BlockMM8(&A, &B, &result)();
+    return result;
+}
 
 
 Matrix operator *(const Matrix &A, const Matrix &B)

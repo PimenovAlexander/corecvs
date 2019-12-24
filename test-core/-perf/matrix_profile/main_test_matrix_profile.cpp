@@ -68,22 +68,22 @@ void printName(const char *name, int testsize, double mem, int runs)
 
 void printResult(double gflops, uint64_t delay, int runs)
 {
-     double runss = 1000000.0 / ((double)delay / runs);
-     double gflopss = runss * gflops;
+    double runss = 1000000.0 / ((double)delay / runs);
+    double gflopss = runss * gflops;
 
-     SYNC_PRINT(("%10" PRIu64 "us | %8" PRIu64 "ms | SP: %8" PRIu64 "us | % 7.3lf Gflops/s |\n",
-         delay,
-         delay / 1000,
-         delay / runs,
-         gflopss
-     ));
+    SYNC_PRINT(("%10" PRIu64 "us | %8" PRIu64 "ms | SP: %8" PRIu64 "us | % 7.3lf Gflops/s |\n",
+            delay,
+            delay / 1000,
+            delay / runs,
+            gflopss
+               ));
 }
 
 TEST(MatrixProfile, testMulSize3)
 {
 //    int  sizes    [] = { 1024, 2048, 4096, 16384 };
 
-    int  sizes    [] = { 1000, 2000, 4000, 16000 };
+    int  sizes    [] = { 1000, 2000, 4000 };
 
     int  polca    [] = {   10,   20,    5,     1 };
     int  runs     [] = {   10,    5,    2,     2 };
@@ -111,6 +111,7 @@ TEST(MatrixProfile, testMulSize3)
         PreciseTimer start;
         Matrix ** input1 = new Matrix*[POLUTING_INPUTS]; // Unfortunately VS2013 does not support C99
         Matrix ** input2 = new Matrix*[POLUTING_INPUTS];
+
         Matrix AB(1,1);
 
         for (unsigned i = 0; i < POLUTING_INPUTS; i++)
@@ -118,7 +119,7 @@ TEST(MatrixProfile, testMulSize3)
             input1[i] = new Matrix(TEST_H_SIZE ,TEST_W_SIZE);
             input2[i] = new Matrix(TEST_H_SIZE ,TEST_W_SIZE);
 
-           // auto touch1 = [](int i, int j, double &el) -> void { el = ((i+1) * (j + 1)) + ((j + 1) / 5.0); };
+            // auto touch1 = [](int i, int j, double &el) -> void { el = ((i+1) * (j + 1)) + ((j + 1) / 5.0); };
             auto touch1 = [](int i, int j, double &el) -> void
             {
                 uint16_t semirand = (uint16_t )(i * 1237657 + j * 235453);
@@ -126,7 +127,7 @@ TEST(MatrixProfile, testMulSize3)
             };
             input1[i]->touchOperationElementwize(touch1);
 
-           // auto touch2 = [](int i, int j, double &el) -> void { el = ((i+4) * (j + 1)) + ((i + 1) / 5.0); };
+            // auto touch2 = [](int i, int j, double &el) -> void { el = ((i+4) * (j + 1)) + ((i + 1) / 5.0); };
             auto touch2 = [](int i, int j, double &el) -> void
             {
                 uint16_t semirand = (uint16_t )(i * 54657 + j * 2517);
@@ -198,8 +199,22 @@ TEST(MatrixProfile, testMulSize3)
 
         }
 
-        if (runfast[testnum])
+#ifdef WITH_AVX
+        if (runour[testnum])
         {
+            printName("BlockMM8", TEST_H_SIZE, mem, LIMIT);
+            start = PreciseTimer::currentTime();
+            for (unsigned i = 0; i < LIMIT; i++) {
+                Matrix &A = *input1[i % POLUTING_INPUTS];
+                Matrix &B = *input2[i % POLUTING_INPUTS];
+                AB = Matrix::multiplyBlasReplacement(A, B);
+            }
+            uint64_t delayRepl = start.usecsToNow();
+            printResult(gflop, delayRepl, LIMIT);
+        }
+#endif
+
+        if (runfast[testnum]) {
 #ifdef WITH_BLAS
             printName("OpenBLAS", TEST_H_SIZE, mem, LIMIT);
             start = PreciseTimer::currentTime();
