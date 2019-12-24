@@ -128,7 +128,7 @@ Basis<C, P> makeGroebner(const Basis<C, P>& basis) {
         }
         checked.push_back(curr);
     }
-    return Basis{res};
+    return Basis<C, P>{res};
 }
 
 /**
@@ -156,7 +156,7 @@ Basis<C, P> minimizeGroebner(const Basis<C, P>& groebnerBasis) {
             minimized.insert(p);
         }
     }
-    return Basis{minimized};
+    return Basis<C, P>{minimized};
 }
 
 /**
@@ -185,7 +185,7 @@ Basis<C, P> reduceGroebner(const Basis<C, P>& groebnerBasis) {
         }
         reduced.insert(p);
     }
-    return Basis{reduced};
+    return Basis<C, P>{reduced};
 }
 
 /**
@@ -200,7 +200,7 @@ Basis<C, P> normalize(const Basis<C, P>& basis) {
             result.insert(p / p.head().getCoeff());
         }
     }
-    return Basis{result};
+    return Basis<C, P>{result};
 }
 
 /**
