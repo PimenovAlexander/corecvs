@@ -11,24 +11,30 @@
 namespace corecvs {
 
 template<int vectorize = true>
-struct ParallelMM {
-    void operator()(const corecvs::BlockedRange<int> &r) const {
-        const Matrix &A = *pA;
-        const Matrix &B = *pB;
-        Matrix &result = *pResult;
+struct ParallelMM
+{
+    void operator() (const corecvs::BlockedRange<int> &r) const
+    {
+        const Matrix& A = *pA;
+        const Matrix& B = *pB;
+        Matrix& result = *pResult;
 
-        for (int row = r.begin(); row < r.end(); row++) {
+        for (int row = r.begin(); row < r.end(); row++)
+        {
             int column = 0;
 #if WITH_SSE
-            if (vectorize) {
+            if (vectorize)
+            {
                 const int STEP = DoublexN::SIZE;
 
-                for (; column + STEP - 1 < result.w; column += STEP) {
+                for (; column + STEP - 1 < result.w; column += STEP)
+                {
                     const double *ALine = &A.a(row, 0);
-                    const double *BCol = &B.a(0, column);
+                    const double *BCol  = &B.a(0, column);
 
                     DoublexN sum = DoublexN::Zero();
-                    for (int runner = 0; runner < A.w; runner++) {
+                    for (int runner = 0; runner < A.w; runner++)
+                    {
                         DoublexN bc = DoublexN::Broadcast(ALine);
                         DoublexN rw(BCol);
                         sum = multiplyAdd(bc, rw, sum);
@@ -42,61 +48,66 @@ struct ParallelMM {
                 }
             }
 #endif
-            for (; column < result.w; ++column) {
+            for (; column < result.w; ++column)
+            {
                 double sum = 0;
-                for (int runner = 0; runner < A.w; runner++) {
+                for (int runner = 0; runner < A.w; runner++)
+                {
                     sum += A.a(row, runner) * B.a(runner, column);
                 }
                 result.a(row, column) = sum;
             }
         }
     }
-
-    ParallelMM(const Matrix *pA, const Matrix *pB, Matrix *pResult) : pA(pA), pB(pB), pResult(pResult) {
+    ParallelMM(const Matrix *pA, const Matrix *pB, Matrix *pResult) : pA(pA), pB(pB), pResult(pResult)
+    {
     }
-
     const Matrix *pA;
     const Matrix *pB;
     Matrix *pResult;
 };
 
 template<int vectorize = true>
-struct ParallelMM4 {
+struct ParallelMM4
+{
     static const int BLOCK = 4;
 
-    void operator()(const corecvs::BlockedRange<int> &r) const {
-        const Matrix &A = *pA;
-        const Matrix &B = *pB;
-        Matrix &result = *pResult;
+    void operator() (const corecvs::BlockedRange<int> &r) const
+    {
+        const Matrix& A = *pA;
+        const Matrix& B = *pB;
+        Matrix& result = *pResult;
 
         size_t Ad = A.stride;
         size_t Bd = B.stride;
 
         int row = r.begin();
 
-        for (; (row + BLOCK <= r.end()) && vectorize; row += BLOCK) {
+        for (; (row + BLOCK <= r.end()) && vectorize; row += BLOCK)
+        {
             int column = 0;
-            for (; column + BLOCK <= result.w; column += BLOCK) {
+            for (; column + BLOCK <= result.w; column += BLOCK)
+            {
                 /*Ok. Here we have a 4x4 block to update*/
 #ifndef WITH_AVX
+                for (int dr = 0; dr < BLOCK; dr++)
+            {
+                for (int dc = 0; dc < BLOCK; dc++)
+                {
+                    result.a(row + dr, column + dc) = 0;
+                }
+            }
+
+            for (int runner = 0; runner < A.w; runner++)
+            {
                 for (int dr = 0; dr < BLOCK; dr++)
                 {
                     for (int dc = 0; dc < BLOCK; dc++)
                     {
-                        result.a(row + dr, column + dc) = 0;
+                        result.a(row + dr, column + dc) += A.a(row + dr, runner) * B.a(runner, column + dc);
                     }
                 }
-
-                for (int runner = 0; runner < A.w; runner++)
-                {
-                    for (int dr = 0; dr < BLOCK; dr++)
-                    {
-                        for (int dc = 0; dc < BLOCK; dc++)
-                        {
-                            result.a(row + dr, column + dc) += A.a(row + dr, runner) * B.a(runner, column + dc);
-                        }
-                    }
-                }
+            }
 #else
                 Doublex4 s0 = Doublex4::Zero();
                 Doublex4 s1 = Doublex4::Zero();
@@ -108,9 +119,10 @@ struct ParallelMM4 {
                 const double *As = &A.a(row, 0);
                 const double *Bs = &B.a(0, column);
 
-                for (int runner = 0; runner < A.w; runner++) {
+                for (int runner = 0; runner < A.w; runner++)
+                {
 
-                    b = Doublex4(Bs);
+                    b  = Doublex4(Bs);
                     a0 = Doublex4::Broadcast(As);
                     a1 = Doublex4::Broadcast(As + Ad);
 
@@ -124,7 +136,7 @@ struct ParallelMM4 {
                     s3 = multiplyAdd(a3, b, s3);
 
                     As++;
-                    Bs += Bd;
+                    Bs+=Bd;
                 }
 
                 s0.save(&result.a(row + 0, column));
@@ -134,10 +146,13 @@ struct ParallelMM4 {
 #endif
             }
 
-            for (; column < result.w; column++) {
-                for (int dr = 0; dr < BLOCK; dr++) {
+            for (; column < result.w; column++)
+            {
+                for (int dr = 0; dr < BLOCK; dr++)
+                {
                     double sum = 0;
-                    for (int runner = 0; runner < A.w; runner++) {
+                    for (int runner = 0; runner < A.w; runner++)
+                    {
                         sum += A.a(row + dr, runner) * B.a(runner, column);
                     }
                     result.a(row + dr, column) = sum;
@@ -145,21 +160,23 @@ struct ParallelMM4 {
             }
         }
 
-        for (; row < r.end(); row++) {
+        for (; row < r.end(); row++)
+        {
             int column = 0;
-            for (; column < result.w; column++) {
+            for (; column < result.w; column++)
+            {
                 double sum = 0;
-                for (int runner = 0; runner < A.w; runner++) {
+                for (int runner = 0; runner < A.w; runner++)
+                {
                     sum += A.a(row, runner) * B.a(runner, column);
                 }
                 result.a(row, column) = sum;
             }
         }
     }
-
-    ParallelMM4(const Matrix *pA, const Matrix *pB, Matrix *pResult) : pA(pA), pB(pB), pResult(pResult) {
+    ParallelMM4(const Matrix *pA, const Matrix *pB, Matrix *pResult) : pA(pA), pB(pB), pResult(pResult)
+    {
     }
-
     const Matrix *pA;
     const Matrix *pB;
     Matrix *pResult;
@@ -167,13 +184,15 @@ struct ParallelMM4 {
 
 
 template<int vectorize = true>
-struct ParallelMM8 {
+struct ParallelMM8
+{
     static const int BLOCK = 8;
 
-    void operator()(const corecvs::BlockedRange<int> &r) const {
-        const Matrix &A = *pA;
-        const Matrix &B = *pB;
-        Matrix &result = *pResult;
+    void operator() (const corecvs::BlockedRange<int> &r) const
+    {
+        const Matrix& A = *pA;
+        const Matrix& B = *pB;
+        Matrix& result = *pResult;
 
         size_t Ad = A.stride;
         size_t Bd = B.stride;
@@ -181,111 +200,85 @@ struct ParallelMM8 {
         int row = r.begin();
 
 #ifdef WITH_AVX
-        for (; (row + BLOCK <= r.end()) && vectorize; row += BLOCK) {
+        for (; (row + BLOCK <= r.end()) && vectorize; row += BLOCK)
+        {
             int column = 0;
-            for (; column + BLOCK <= result.w; column += BLOCK) {
+            for (; column + BLOCK <= result.w; column += BLOCK)
+            {
                 /*Ok. Here we have a 8x8 block to update*/
-                Doublex4 s00 = Doublex4::Zero();
-                Doublex4 s01 = Doublex4::Zero();
-                Doublex4 s10 = Doublex4::Zero();
-                Doublex4 s11 = Doublex4::Zero();
-                Doublex4 s20 = Doublex4::Zero();
-                Doublex4 s21 = Doublex4::Zero();
-                Doublex4 s30 = Doublex4::Zero();
-                Doublex4 s31 = Doublex4::Zero();
+                Doublex4 s00 = Doublex4::Zero(); Doublex4 s01 = Doublex4::Zero();
+                Doublex4 s10 = Doublex4::Zero(); Doublex4 s11 = Doublex4::Zero();
+                Doublex4 s20 = Doublex4::Zero(); Doublex4 s21 = Doublex4::Zero();
+                Doublex4 s30 = Doublex4::Zero(); Doublex4 s31 = Doublex4::Zero();
 
-                Doublex4 s40 = Doublex4::Zero();
-                Doublex4 s41 = Doublex4::Zero();
-                Doublex4 s50 = Doublex4::Zero();
-                Doublex4 s51 = Doublex4::Zero();
-                Doublex4 s60 = Doublex4::Zero();
-                Doublex4 s61 = Doublex4::Zero();
-                Doublex4 s70 = Doublex4::Zero();
-                Doublex4 s71 = Doublex4::Zero();
+                Doublex4 s40 = Doublex4::Zero(); Doublex4 s41 = Doublex4::Zero();
+                Doublex4 s50 = Doublex4::Zero(); Doublex4 s51 = Doublex4::Zero();
+                Doublex4 s60 = Doublex4::Zero(); Doublex4 s61 = Doublex4::Zero();
+                Doublex4 s70 = Doublex4::Zero(); Doublex4 s71 = Doublex4::Zero();
 
                 Doublex4 a0, a1, a2, a3, b0, b1;
 
                 const double *As = &A.a(row, 0);
                 const double *Bs = &B.a(0, column);
 
-                for (int runner = 0; runner < A.w; runner++) {
+                for (int runner = 0; runner < A.w; runner++)
+                {
 
                     b0 = Doublex4(Bs);
                     b1 = Doublex4(Bs + 4);
 
-                    Bs += Bd;
+                    Bs+=Bd;
 
                     const double *Of = As;
 
-                    a0 = Doublex4::Broadcast(Of);
-                    Of += Ad;
-                    a1 = Doublex4::Broadcast(Of);
-                    Of += Ad;
+                    a0 = Doublex4::Broadcast(Of);  Of += Ad;
+                    a1 = Doublex4::Broadcast(Of);  Of += Ad;
 
-                    s00 = multiplyAdd(a0, b0, s00);
-                    s01 = multiplyAdd(a0, b1, s01);
-                    s10 = multiplyAdd(a1, b0, s10);
-                    s11 = multiplyAdd(a1, b1, s11);
+                    s00 = multiplyAdd(a0, b0, s00); s01 = multiplyAdd(a0, b1, s01);
+                    s10 = multiplyAdd(a1, b0, s10); s11 = multiplyAdd(a1, b1, s11);
 
-                    a2 = Doublex4::Broadcast(Of);
-                    Of += Ad;
-                    a3 = Doublex4::Broadcast(Of);
-                    Of += Ad;
+                    a2 = Doublex4::Broadcast(Of); Of += Ad;
+                    a3 = Doublex4::Broadcast(Of); Of += Ad;
 
-                    s20 = multiplyAdd(a2, b0, s20);
-                    s21 = multiplyAdd(a2, b1, s21);
-                    s30 = multiplyAdd(a3, b0, s30);
-                    s31 = multiplyAdd(a3, b1, s31);
+                    s20 = multiplyAdd(a2, b0, s20); s21 = multiplyAdd(a2, b1, s21);
+                    s30 = multiplyAdd(a3, b0, s30); s31 = multiplyAdd(a3, b1, s31);
 
-                    a0 = Doublex4::Broadcast(Of);
-                    Of += Ad;
-                    a1 = Doublex4::Broadcast(Of);
-                    Of += Ad;
+                    a0 = Doublex4::Broadcast(Of); Of += Ad;
+                    a1 = Doublex4::Broadcast(Of); Of += Ad;
 
-                    s40 = multiplyAdd(a0, b0, s40);
-                    s41 = multiplyAdd(a0, b1, s41);
-                    s50 = multiplyAdd(a1, b0, s50);
-                    s51 = multiplyAdd(a1, b1, s51);
+                    s40 = multiplyAdd(a0, b0, s40); s41 = multiplyAdd(a0, b1, s41);
+                    s50 = multiplyAdd(a1, b0, s50); s51 = multiplyAdd(a1, b1, s51);
 
-                    a2 = Doublex4::Broadcast(Of);
-                    Of += Ad;
-                    a3 = Doublex4::Broadcast(Of);
-                    Of += Ad;
+                    a2 = Doublex4::Broadcast(Of); Of += Ad;
+                    a3 = Doublex4::Broadcast(Of); Of += Ad;
 
-                    s60 = multiplyAdd(a2, b0, s60);
-                    s61 = multiplyAdd(a2, b1, s61);
-                    s70 = multiplyAdd(a3, b0, s70);
-                    s71 = multiplyAdd(a3, b1, s71);
+                    s60 = multiplyAdd(a2, b0, s60); s61 = multiplyAdd(a2, b1, s61);
+                    s70 = multiplyAdd(a3, b0, s70); s71 = multiplyAdd(a3, b1, s71);
 
                     As++;
 
                 }
 
-                s00.save(&result.a(row + 0, column));
-                s01.save(&result.a(row + 0, column + 4));
-                s10.save(&result.a(row + 1, column));
-                s11.save(&result.a(row + 1, column + 4));
-                s20.save(&result.a(row + 2, column));
-                s21.save(&result.a(row + 2, column + 4));
-                s30.save(&result.a(row + 3, column));
-                s31.save(&result.a(row + 3, column + 4));
+                s00.save(&result.a(row + 0, column)); s01.save(&result.a(row + 0, column + 4));
+                s10.save(&result.a(row + 1, column)); s11.save(&result.a(row + 1, column + 4));
+                s20.save(&result.a(row + 2, column)); s21.save(&result.a(row + 2, column + 4));
+                s30.save(&result.a(row + 3, column)); s31.save(&result.a(row + 3, column + 4));
 
-                s40.save(&result.a(row + 4, column));
-                s41.save(&result.a(row + 4, column + 4));
-                s50.save(&result.a(row + 5, column));
-                s51.save(&result.a(row + 5, column + 4));
-                s60.save(&result.a(row + 6, column));
-                s61.save(&result.a(row + 6, column + 4));
-                s70.save(&result.a(row + 7, column));
-                s71.save(&result.a(row + 7, column + 4));
+                s40.save(&result.a(row + 4, column)); s41.save(&result.a(row + 4, column + 4));
+                s50.save(&result.a(row + 5, column)); s51.save(&result.a(row + 5, column + 4));
+                s60.save(&result.a(row + 6, column)); s61.save(&result.a(row + 6, column + 4));
+                s70.save(&result.a(row + 7, column)); s71.save(&result.a(row + 7, column + 4));
 
 
             }
 
-            for (; column < result.w; column++) {
-                for (int dr = 0; dr < BLOCK; dr++) {
+            for (; column < result.w; column++)
+            {
+                for (int dr = 0; dr < BLOCK; dr++)
+                {
                     double sum = 0;
-                    for (int runner = 0; runner < A.w; runner++) {
+                    for (int runner = 0; runner < A.w; runner++)
+                    {
                         sum += A.a(row + dr, runner) * B.a(runner, column);
                     }
                     result.a(row + dr, column) = sum;
@@ -294,28 +287,31 @@ struct ParallelMM8 {
         }
 #endif
 
-        for (; row < r.end(); row++) {
+        for (; row < r.end(); row++)
+        {
             int column = 0;
-            for (; column < result.w; column++) {
+            for (; column < result.w; column++)
+            {
                 double sum = 0;
-                for (int runner = 0; runner < A.w; runner++) {
+                for (int runner = 0; runner < A.w; runner++)
+                {
                     sum += A.a(row, runner) * B.a(runner, column);
                 }
                 result.a(row, column) = sum;
             }
         }
     }
-
-    ParallelMM8(const Matrix *pA, const Matrix *pB, Matrix *pResult) : pA(pA), pB(pB), pResult(pResult) {
+    ParallelMM8(const Matrix *pA, const Matrix *pB, Matrix *pResult) : pA(pA), pB(pB), pResult(pResult)
+    {
     }
-
     const Matrix *pA;
     const Matrix *pB;
     Matrix *pResult;
 };
 
 // This is made with help of tutorial: http://apfel.mathematik.uni-ulm.de/~lehn/sghpc/gemm/index.html
-struct BlockMM8 {
+struct BlockMM8
+        {
     static const int BLOCK = 8;
     static const int MC = 384;
     static const int KC = 384;
@@ -329,10 +325,13 @@ struct BlockMM8 {
     //  Packing complete panels from A (i.e. without padding)
     static void
     pack_BLOCKxk(int k, const double *A, int incRowA, int incColA,
-                 double *buffer) {
+                 double *buffer)
+                 {
 
-        for (int j = 0; j < k; ++j) {
-            for (int i = 0; i < BLOCK; ++i) {
+        for (int j = 0; j < k; j++)
+        {
+            for (int i = 0; i < BLOCK; i++)
+            {
                 buffer[i] = A[i * incRowA];
             }
             buffer += BLOCK;
@@ -343,7 +342,8 @@ struct BlockMM8 {
     //  Packing panels from A with padding if required
     static void
     pack_A(int mc, int kc, const double *A, int incRowA, int incColA,
-           double *buffer) {
+           double *buffer)
+           {
         int mp = mc / BLOCK;
         int _BLOCK = mc % BLOCK;
 
@@ -353,11 +353,14 @@ struct BlockMM8 {
             A += BLOCK * incRowA;
         }
         if (_BLOCK > 0) {
-            for (int j = 0; j < kc; ++j) {
-                for (int i = 0; i < _BLOCK; ++i) {
+            for (int j = 0; j < kc; j++)
+            {
+                for (int i = 0; i < _BLOCK; i++)
+                {
                     buffer[i] = A[i * incRowA];
                 }
-                for (int i = _BLOCK; i < BLOCK; ++i) {
+                for (int i = _BLOCK; i < BLOCK; i++)
+                {
                     buffer[i] = 0.0;
                 }
                 buffer += BLOCK;
@@ -369,9 +372,12 @@ struct BlockMM8 {
     //  Packing complete panels from B (i.e. without padding)
     static void
     pack_kxBLOCK(int k, const double *B, int incRowB, int incColB,
-                 double *buffer) {
-        for (int i = 0; i < k; ++i) {
-            for (int j = 0; j < BLOCK; ++j) {
+                 double *buffer)
+                 {
+        for (int i = 0; i < k; i++)
+        {
+            for (int j = 0; j < BLOCK; j++)
+            {
                 buffer[j] = B[j * incColB];
             }
             buffer += BLOCK;
@@ -386,18 +392,22 @@ struct BlockMM8 {
         int np = nc / BLOCK;
         int _BLOCK = nc % BLOCK;
 
-        for (int j = 0; j < np; ++j) {
+        for (int j = 0; j < np; j++)
+        {
             pack_kxBLOCK(kc, B, incRowB, incColB, buffer);
             buffer += kc * BLOCK;
             B += BLOCK * incColB;
         }
 
         if (_BLOCK > 0) {
-            for (int i = 0; i < kc; ++i) {
-                for (int j = 0; j < _BLOCK; ++j) {
+            for (int i = 0; i < kc; ++i)
+            {
+                for (int j = 0; j < _BLOCK; j++)
+                {
                     buffer[j] = B[j * incColB];
                 }
-                for (int j = _BLOCK; j < BLOCK; ++j) {
+                for (int j = _BLOCK; j < BLOCK; j++)
+                {
                     buffer[j] = 0.0;
                 }
                 buffer += BLOCK;
@@ -409,7 +419,8 @@ struct BlockMM8 {
     //  Micro kernel for multiplying panels from A and B
     static void
     dgemm_micro_kernel(long kc, const double *A, const double *B,
-                       double *C, long incRowC, long incColC) {
+                       double *C, long incRowC, long incColC)
+                       {
         double AB[BLOCK * BLOCK] __attribute__ ((aligned (32)));
 
         Doublex4 s00 = Doublex4::Zero(); Doublex4 s10 = Doublex4::Zero();
@@ -425,7 +436,8 @@ struct BlockMM8 {
 
         Doublex4 b;
 
-        for (int l = 0; l < kc; ++l) {
+        for (int l = 0; l < kc; l++)
+        {
             a0123 = Doublex4(A);
             a4567 = Doublex4(A + 4);
 
@@ -476,8 +488,10 @@ struct BlockMM8 {
         s07.save(&AB[0 + 7 * 8]); s17.save(&AB[4 + 7 * 8]);
 
         //  Update C <- C + AB
-        for (int j = 0; j < BLOCK; ++j) {
-            for (int i = 0; i < BLOCK; ++i) {
+        for (int j = 0; j < BLOCK; j++)
+        {
+            for (int i = 0; i < BLOCK; i++)
+            {
                 C[i * incRowC + j * incColC] += AB[i + j * BLOCK];
             }
         }
@@ -486,12 +500,9 @@ struct BlockMM8 {
     //  Macro Kernel for the multiplication of blocks of A and B.  We assume that
     //  these blocks were previously packed to buffers _A and _B.
     static void
-    dgemm_macro_kernel(int mc,
-                       int nc,
-                       int kc,
-                       double *C,
-                       int incRowC,
-                       int incColC) {
+    dgemm_macro_kernel(int mc, int nc, int kc,
+                       double *C, int incRowC, int incColC)
+                       {
         int mp = (mc + BLOCK - 1) / BLOCK;
         int np = (nc + BLOCK - 1) / BLOCK;
 
@@ -500,13 +511,16 @@ struct BlockMM8 {
 
         int mr, nr;
 
-        for (int j = 0; j < np; ++j) {
+        for (int j = 0; j < np; j++)
+        {
             nr = (j != np - 1 || _nr == 0) ? BLOCK : _nr;
 
-            for (int i = 0; i < mp; ++i) {
+            for (int i = 0; i < mp; i++)
+            {
                 mr = (i != mp - 1 || _mr == 0) ? BLOCK : _mr;
 
-                if (mr == BLOCK && nr == BLOCK) {
+                if (mr == BLOCK && nr == BLOCK)
+                {
                     dgemm_micro_kernel(kc, &_A[i * kc * BLOCK], &_B[j * kc * BLOCK],
                                        &C[i * BLOCK * incRowC + j * BLOCK * incColC], incRowC, incColC);
                 } else {
@@ -517,7 +531,8 @@ struct BlockMM8 {
         }
     }
 
-    void operator()() const {
+    void operator()() const
+    {
         const Matrix &A = *pA;
         const Matrix &B = *pB;
         Matrix &result = *pResult;
@@ -543,14 +558,17 @@ struct BlockMM8 {
 
         int mc, nc, kc;
 
-        for (int j = 0; j < nb; ++j) {
+        for (int j = 0; j < nb; j++)
+        {
             nc = (j != nb - 1 || _nc == 0) ? NC : _nc;
 
-            for (int l = 0; l < kb; ++l) {
+            for (int l = 0; l < kb; l++)
+            {
                 kc = (l != kb - 1 || _kc == 0) ? KC : _kc;
                 pack_B(kc, nc,&B.a(l * KC, j * NC), incRowB, incColB, _B);
 
-                for (int i = 0; i < mb; ++i) {
+                for (int i = 0; i < mb; i++)
+                {
                     mc = (i != mb - 1 || _mc == 0) ? MC : _mc;
                     pack_A(mc, kc,&A.a(i * MC, l * KC), incRowA, incColA, _A);
                     dgemm_macro_kernel(mc, nc, kc,&result.a(i * MC, j * NC), incRowC, incColC);
@@ -576,73 +594,76 @@ double BlockMM8::_result[] = {};
 template<int vectorize = true>
 struct ParallelMMT
 {
-    void operator() (const corecvs::BlockedRange<int> &r) const
+void operator() (const corecvs::BlockedRange<int> &r) const
+{
+    const Matrix& A = *pA;
+    const Matrix& B = *pB;
+    Matrix& result = *pResult;
+
+    for (int row = r.begin(); row < r.end(); row++)
     {
-        const Matrix& A = *pA;
-        const Matrix& B = *pB;
-        Matrix& result = *pResult;
-
-        for (int row = r.begin(); row < r.end(); row++)
-        {
-            int column = 0;
+        int column = 0;
 #if WITH_SSE
-            if (vectorize)
+        if (vectorize)
+        {
+            const int STEP = DoublexN::SIZE;
+            ALIGN_DATA(16) double scratch[STEP];
+
+            for (; column + STEP - 1 < result.w; column += STEP)
             {
-                const int STEP = DoublexN::SIZE;
-                ALIGN_DATA(16) double scratch[STEP];
+                const double *ALine = &A.a(row, 0);
+                const double *BCol  = &B.a(0, column);
 
-                for (; column + STEP - 1 < result.w; column += STEP)
-                {
-                    const double *ALine = &A.a(row, 0);
-                    const double *BCol  = &B.a(0, column);
-
-                    DoublexN sum = DoublexN::Zero();
-                    for (int runner = 0; runner < A.w; runner++)
-                    {
-                        DoublexN bc = DoublexN::Broadcast(ALine);
-                        DoublexN rw(BCol);
-                        sum = multiplyAdd(bc, rw, sum);
-
-                        ALine++;
-                        BCol += B.stride;
-                    }
-
-                    sum.saveAligned(scratch);
-
-                    for (int jj = 0; jj < STEP; ++jj)
-                    {
-                       result.a(row, column + jj) = scratch[jj];
-                    }
-                }
-            }
-#endif
-            for (; column < result.w; column++)
-            {
-                double sum = 0;
+                DoublexN sum = DoublexN::Zero();
                 for (int runner = 0; runner < A.w; runner++)
                 {
-                    sum += A.a(row, runner) * B.a(column, runner);
+                    DoublexN bc = DoublexN::Broadcast(ALine);
+                    DoublexN rw(BCol);
+                    sum = multiplyAdd(bc, rw, sum);
+
+                    ALine++;
+                    BCol += B.stride;
                 }
-                result.a(row, column) = sum;
+
+                sum.saveAligned(scratch);
+
+                for (int jj = 0; jj < STEP; ++jj)
+                {
+                   result.a(row, column + jj) = scratch[jj];
+                }
             }
         }
+#endif
+        for (; column < result.w; column++)
+        {
+            double sum = 0;
+            for (int runner = 0; runner < A.w; runner++)
+            {
+                sum += A.a(row, runner) * B.a(column, runner);
+            }
+            result.a(row, column) = sum;
+        }
     }
-    ParallelMMT(const Matrix *pA, const Matrix *pB, Matrix *pResult) : pA(pA), pB(pB), pResult(pResult)
-    {
-    }
-    const Matrix *pA;
-    const Matrix *pB;
-    Matrix *pResult;
+}
+ParallelMMT(const Matrix *pA, const Matrix *pB, Matrix *pResult) : pA(pA), pB(pB), pResult(pResult)
+{
+}
+const Matrix *pA;
+const Matrix *pB;
+Matrix *pResult;
 };
 #endif
 
-struct ParallelMV {
-    void operator()(const corecvs::BlockedRange<int> &r) const {
-        auto &A = *pA;
-        auto &B = *pB;
-        auto &result = *pResult;
+struct ParallelMV
+{
+    void operator() (const corecvs::BlockedRange<int> &r) const
+    {
+        auto& A = *pA;
+        auto& B = *pB;
+        auto& result = *pResult;
         int row;
-        for (row = r.begin(); row < r.end(); ++row) {
+        for (row = r.begin(); row < r.end(); ++row)
+        {
             int column = 0;
             double sum = 0;
 #ifdef WITH_SSE
@@ -651,7 +672,8 @@ struct ParallelMV {
 
             DoublexN sumV = DoublexN::Zero();
 
-            for (column = 0; column + STEP - 1 < A.w; column += STEP) {
+            for (column = 0; column + STEP - 1 < A.w; column += STEP)
+            {
                 DoublexN bc = DoublexN(&A.a(row, column));
                 DoublexN rw = DoublexN(&B.at(column));
                 sumV = multiplyAdd(bc, rw, sumV);
@@ -663,47 +685,52 @@ struct ParallelMV {
             }
 #endif
 
-            for (; column < A.w; column++) {
+            for (; column < A.w; column++)
+            {
                 sum += B.at(column) * A.a(row, column);
             }
             result.at(row) = sum;
         }
     }
-
-    ParallelMV(const Matrix *pA, const Vector *pB, Vector *pResult) : pA(pA), pB(pB), pResult(pResult) {
+    ParallelMV(const Matrix *pA, const Vector *pB, Vector *pResult) : pA(pA), pB(pB), pResult(pResult)
+    {
     }
-
     const Matrix *pA;
     const Vector *pB;
     Vector *pResult;
 };
 
-struct ParallelMD {
-    void operator()(const corecvs::BlockedRange<int> &r) const {
-        const Matrix &A = *pA;
-        const DiagonalMatrix &B = *pB;
-        Matrix &result = *pResult;
+struct ParallelMD
+{
+    void operator() (const corecvs::BlockedRange<int> &r) const
+    {
+        const Matrix& A = *pA;
+        const DiagonalMatrix& B = *pB;
+        Matrix& result = *pResult;
         int row;
-        for (row = r.begin(); row < r.end(); ++row) {
+        for (row = r.begin(); row < r.end(); ++row)
+        {
             int column = 0;
 
 #ifdef WITH_AVX
-            for (column = 0; column + 3 < result.w; column += 4) {
+            for (column = 0; column + 3 < result.w; column += 4)
+            {
                 __m256d diag = _mm256_loadu_pd(&B.at(column));
-                __m256d mat = _mm256_loadu_pd(&A.a(row, column));
-                __m256d res = _mm256_mul_pd(diag, mat);
+                __m256d mat  = _mm256_loadu_pd(&A.a(row, column));
+                __m256d res  = _mm256_mul_pd(diag, mat);
                 _mm256_storeu_pd(&result.a(row, column), res);
             }
 #endif
-            for (; column < result.w; column++) {
+            for (; column < result.w; column++)
+            {
                 result.a(row, column) = A.a(row, column) * B.at(column);
             }
         }
     }
 
-    ParallelMD(const Matrix *pA, const DiagonalMatrix *pB, Matrix *pResult) : pA(pA), pB(pB), pResult(pResult) {
+    ParallelMD(const Matrix *pA, const DiagonalMatrix *pB, Matrix *pResult) : pA(pA), pB(pB), pResult(pResult)
+    {
     }
-
     const Matrix *pA;
     const DiagonalMatrix *pB;
     Matrix *pResult;
@@ -711,30 +738,33 @@ struct ParallelMD {
 
 
 // TODO: it has a bug, see testMatrixOperations result when change the operator *(Matrix&, Matrix&) to use this!!!
-Matrix Matrix::multiplyHomebrew(const Matrix &A, const Matrix &B, bool parallel, bool vectorize) {
+Matrix Matrix::multiplyHomebrew(const Matrix &A, const Matrix &B, bool parallel, bool vectorize)
+{
     CORE_ASSERT_TRUE(A.w == B.h, "Matrices have wrong sizes");
     Matrix result(A.h, B.w, false);
     if (vectorize) {
-        parallelable_for(0, result.h, 8, ParallelMM8<true>(&A, &B, &result), parallel);
+        parallelable_for (0, result.h, 8, ParallelMM8<true> (&A, &B, &result), parallel);
     } else {
-        parallelable_for(0, result.h, 8, ParallelMM8<false>(&A, &B, &result), parallel);
+        parallelable_for (0, result.h, 8, ParallelMM8<false>(&A, &B, &result), parallel);
     }
     return result;
 }
 
-Matrix Matrix::multiplyHomebrewMD(const Matrix &M, const DiagonalMatrix &D) {
+Matrix Matrix::multiplyHomebrewMD(const Matrix &M, const DiagonalMatrix &D)
+{
     CORE_ASSERT_TRUE(M.w == D.size(), "Matrix and DiagonalMatrix have wrong sizes");
     Matrix result(M.h, M.w);
 
-    parallelable_for(0, result.h, 8, ParallelMD(&M, &D, &result), true);
+    parallelable_for (0, result.h, 8, ParallelMD(&M, &D, &result), true);
     return result;
 }
 
 
-Vector Matrix::multiplyHomebrewMV(const Matrix &M, const Vector &V) {
+Vector Matrix::multiplyHomebrewMV(const Matrix &M, const Vector &V)
+{
     CORE_ASSERT_TRUE(M.w == V.size(), "Matrix and Vector have wrong sizes");
     Vector result(M.h);
-    parallelable_for(0, M.h, 8, ParallelMV(&M, &V, &result));
+    parallelable_for (0, M.h, 8, ParallelMV(&M, &V, &result));
     return result;
 }
 
