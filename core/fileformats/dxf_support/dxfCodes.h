@@ -77,10 +77,9 @@ public:
     }
 
     static std::vector<uint8_t> getRGB(int number) {
-        if (AUTOCAD_COLORS.count(number) == 1) {
-            return AUTOCAD_COLORS[number];
-        }
-        return {0,0,0};
+        if (number >= 0 && number <= 255) {
+            return DXF_COLORS[number];
+        } else return DXF_COLORS[0];
     }
 
     static DxfDrawingUnits getDrawingUnits(int value) {
@@ -93,7 +92,7 @@ public:
 private:
     static std::map<std::string, std::vector<int>> VARIABLE_CODES;
     static std::map<std::string, DxfElementType> ELEMENT_TYPES;
-    static std::map<int, std::vector<uint8_t>> AUTOCAD_COLORS;
+    static std::vector<std::vector<uint8_t>> DXF_COLORS;
     static std::map<int, DxfDrawingUnits> DRAWING_UNITS;
     static int CODE_RANGES[27][3];
 };
