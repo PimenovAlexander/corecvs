@@ -332,10 +332,12 @@ public:
 #endif
     /**
      * AVX powered block matrix multiplication
+     * @warning This method uses static context and must be called only from single thread
      * @note Size of matrices A and B must be multiple of 8
      * @return A * B
      */
     static Matrix multiplyBlasReplacement(const Matrix &A, const Matrix &B);
+    // static Matrix multiplyBlasReplacement(const Matrix &A, const Matrix &B, BlockMM8Context &context);
 };
 
 } //namespace corecvs

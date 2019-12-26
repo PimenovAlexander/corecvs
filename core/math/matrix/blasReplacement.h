@@ -309,25 +309,37 @@ struct ParallelMM8
     Matrix *pResult;
 };
 
-// This is made with help of tutorial: http://apfel.mathematik.uni-ulm.de/~lehn/sghpc/gemm/index.html
-struct BlockMM8
-        {
-    static const int BLOCK = 8;
+/**
+ * BlockMM8 memory buffers to pack matrices A and B for better cache performance.
+ * @warning This context must be thread-local (each separate thread must have its own context)
+ */
+struct BlockMM8Context
+{
     static const int MC = 384;
     static const int KC = 384;
     static const int NC = 4096;
 
     //  Local buffers for storing panels from A, B and local result
-    static double _A[MC * KC] __attribute__ ((aligned (32)));
-    static double _B[KC * NC] __attribute__ ((aligned (32)));
-    static double _result[BLOCK * BLOCK] __attribute__ ((aligned (32)));
+    double _A[MC * KC] __attribute__ ((aligned (32)));
+    double _B[KC * NC] __attribute__ ((aligned (32)));
+};
+
+// This is made with help of tutorial: http://apfel.mathematik.uni-ulm.de/~lehn/sghpc/gemm/index.html
+struct BlockMM8
+{
+    static const int BLOCK = 8;
+    static const int MC = BlockMM8Context::MC;
+    static const int KC = BlockMM8Context::KC;
+    static const int NC = BlockMM8Context::NC;
+
+    //  Local buffers for storing panels from A, B and local result
+    double* _A;
+    double* _B;
+    double _result[BLOCK * BLOCK] __attribute__ ((aligned (32))) = { };
 
     //  Packing complete panels from A (i.e. without padding)
-    static void
-    pack_BLOCKxk(int k, const double *A, int incRowA, int incColA,
-                 double *buffer)
-                 {
-
+    static void pack_BLOCKxk(int k, const double *A, int incRowA, int incColA, double *buffer)
+    {
         for (int j = 0; j < k; j++)
         {
             for (int i = 0; i < BLOCK; i++)
@@ -340,10 +352,8 @@ struct BlockMM8
     }
 
     //  Packing panels from A with padding if required
-    static void
-    pack_A(int mc, int kc, const double *A, int incRowA, int incColA,
-           double *buffer)
-           {
+    static void pack_A(int mc, int kc, const double *A, int incRowA, int incColA, double *buffer)
+    {
         int mp = mc / BLOCK;
         int _BLOCK = mc % BLOCK;
 
@@ -370,10 +380,8 @@ struct BlockMM8
     }
 
     //  Packing complete panels from B (i.e. without padding)
-    static void
-    pack_kxBLOCK(int k, const double *B, int incRowB, int incColB,
-                 double *buffer)
-                 {
+    static void pack_kxBLOCK(int k, const double *B, int incRowB, int incColB, double *buffer)
+    {
         for (int i = 0; i < k; i++)
         {
             for (int j = 0; j < BLOCK; j++)
@@ -386,9 +394,8 @@ struct BlockMM8
     }
 
     //  Packing panels from B with padding if required
-    static void
-    pack_B(int kc, int nc, const double *B, int incRowB, int incColB,
-           double *buffer) {
+    static void pack_B(int kc, int nc, const double *B, int incRowB, int incColB, double *buffer)
+    {
         int np = nc / BLOCK;
         int _BLOCK = nc % BLOCK;
 
@@ -417,10 +424,8 @@ struct BlockMM8
     }
 
     //  Micro kernel for multiplying panels from A and B
-    static void
-    dgemm_micro_kernel(long kc, const double *A, const double *B,
-                       double *C, long incRowC, long incColC)
-                       {
+    static void dgemm_micro_kernel(long kc, const double *A, const double *B, double *C, long incRowC, long incColC)
+    {
         double AB[BLOCK * BLOCK] __attribute__ ((aligned (32)));
 
         Doublex4 s00 = Doublex4::Zero(); Doublex4 s10 = Doublex4::Zero();
@@ -499,9 +504,7 @@ struct BlockMM8
 
     //  Macro Kernel for the multiplication of blocks of A and B.  We assume that
     //  these blocks were previously packed to buffers _A and _B.
-    static void
-    dgemm_macro_kernel(int mc, int nc, int kc,
-                       double *C, int incRowC, int incColC)
+    void dgemm_macro_kernel(int mc, int nc, int kc, double *C, int incRowC, int incColC)
                        {
         int mp = (mc + BLOCK - 1) / BLOCK;
         int np = (nc + BLOCK - 1) / BLOCK;
@@ -525,22 +528,24 @@ struct BlockMM8
                                        &C[i * BLOCK * incRowC + j * BLOCK * incColC], incRowC, incColC);
                 } else {
                     dgemm_micro_kernel(kc, &_A[i * kc * BLOCK], &_B[j * kc * BLOCK],
-                                       _result, 1, BLOCK);
+                                       _result, BLOCK, 1);
                 }
             }
         }
     }
 
-    void operator()() const
+    void operator()()
     {
         const Matrix &A = *pA;
         const Matrix &B = *pB;
         Matrix &result = *pResult;
 
+        // mxk * kxn = mxn
         const int m = A.h;
         const int k = A.w;
         const int n = B.w;
 
+        // How to access next value in the row / column
         const int incRowA = A.stride;
         const int incColA = 1;
         const int incRowB = B.stride;
@@ -565,7 +570,7 @@ struct BlockMM8
             for (int l = 0; l < kb; l++)
             {
                 kc = (l != kb - 1 || _kc == 0) ? KC : _kc;
-                pack_B(kc, nc,&B.a(l * KC, j * NC), incRowB, incColB, _B);
+                pack_B(kc, nc, &B.a(l * KC, j * NC), incRowB, incColB, _B);
 
                 for (int i = 0; i < mb; i++)
                 {
@@ -577,18 +582,15 @@ struct BlockMM8
         }
     }
 
-    BlockMM8(const Matrix *pA, const Matrix *pB, Matrix *pResult)
-            : pA(pA), pB(pB), pResult(pResult) {
+    BlockMM8(const Matrix *pA, const Matrix *pB, Matrix *pResult, BlockMM8Context& context)
+            : pA(pA), pB(pB), pResult(pResult), _A(context._A), _B(context._B)
+    {
     }
 
     const Matrix *pA;
     const Matrix *pB;
     Matrix *pResult;
 };
-
-double BlockMM8::_A[] = {};
-double BlockMM8::_B[] = {};
-double BlockMM8::_result[] = {};
 
 #if 0 // unfinished stuff
 template<int vectorize = true>
