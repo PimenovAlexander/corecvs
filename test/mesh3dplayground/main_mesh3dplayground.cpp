@@ -45,7 +45,7 @@ int main (int argc, char **argv)
 
     Mesh3D meshExtended;
     meshExtended.switchColor();
-    double tsize = s.getDouble("size", 0.01 * 2/3);
+    double tsize = s.getDouble("size", 0.01 * 2/3 * 0.5);
 
     SYNC_PRINT(("Adding triangle for each of the %d vertexes\n", (int)mesh.vertexes.size()));
     for (size_t i = 0; i < mesh.vertexes.size(); i++)

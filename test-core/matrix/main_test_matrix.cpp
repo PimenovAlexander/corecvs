@@ -1138,9 +1138,33 @@ TEST(MatrixTest, test10MatrixMultiply)
 
      Matrix AATH  = Matrix::multiplyHomebrew(A, AT, false, false);
      ASSERT_TRUE(AATH. notTooFar(&result, 1e-8, true));
-
 }
 
+
+TEST(MatrixTest, testMatrixBlasReplacement)
+{
+    auto touch = [](int i, int j, double &el) -> void { el = ((i+1) * (j + 1)) + ((j + 1) / 5.0); };
+
+    {
+        Matrix A(8,8);
+        A.touchOperationElementwize(touch);
+        Matrix AT = A.t();
+        Matrix AAT = A * AT;
+
+        Matrix AATB = Matrix::multiplyBlasReplacement(A, AT);
+        ASSERT_TRUE(AAT. notTooFar(&AATB, 1e-5, true));
+    }
+    {
+        Matrix A(12,12);
+        A.touchOperationElementwize(touch);
+        Matrix AT = A.t();
+        Matrix AAT = A * AT;
+
+        Matrix AATB = Matrix::multiplyBlasReplacement(A, AT);
+        ASSERT_TRUE(AAT. notTooFar(&AATB, 1e-5, true));
+    }
+
+}
 
 TEST(SparseMatrix, FromDense)
 {

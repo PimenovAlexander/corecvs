@@ -340,8 +340,8 @@ struct BlockMM8
     static const int NC = BlockMM8Context::NC;
 
     //  Local buffers for storing panels from A, B and local result
-    double* _A;
-    double* _B;
+    double* _A = NULL;
+    double* _B = NULL;
     double _result[BLOCK * BLOCK] __attribute__ ((aligned (32))) = { };
 
     //  Packing complete panels from A (i.e. without padding)
@@ -513,7 +513,7 @@ struct BlockMM8
     //  Macro Kernel for the multiplication of blocks of A and B.  We assume that
     //  these blocks were previously packed to buffers _A and _B.
     void dgemm_macro_kernel(int mc, int nc, int kc, double *C, int incRowC, int incColC)
-                       {
+    {
         int mp = (mc + BLOCK - 1) / BLOCK;
         int np = (nc + BLOCK - 1) / BLOCK;
 
@@ -592,13 +592,14 @@ struct BlockMM8
     }
 
     BlockMM8(const Matrix *pA, const Matrix *pB, Matrix *pResult, BlockMM8Context& context)
-            : pA(pA), pB(pB), pResult(pResult), _A(context._A), _B(context._B)
+            : _A(context._A), _B(context._B), pA(pA), pB(pB), pResult(pResult)
     {
     }
 
-    const Matrix *pA;
-    const Matrix *pB;
-    Matrix *pResult;
+    const Matrix *pA = NULL;
+    const Matrix *pB = NULL;
+    Matrix *pResult  = NULL;
+
 };
 
 #if 0 // unfinished stuff
