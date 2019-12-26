@@ -256,6 +256,7 @@ Matrix Matrix::multiplyBlas(const Matrix &A, const Matrix &B)
 
 Matrix Matrix::multiplyBlasReplacement(const Matrix &A, const Matrix &B)
 {
+    CORE_ASSERT_TRUE(A.w == B.h, "Matrices have wrong sizes");
     static BlockMM8Context context;
     Matrix result(A.h, B.w, true);
     BlockMM8 block(&A, &B, &result, context);

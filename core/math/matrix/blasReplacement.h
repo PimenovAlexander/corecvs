@@ -324,14 +324,16 @@ struct BlockMM8Context
     double _B[KC * NC] __attribute__ ((aligned (32)));
 };
 
-// This is made with help of tutorial: http://apfel.mathematik.uni-ulm.de/~lehn/sghpc/gemm/index.html
-//
-// The implementation of the matrix-matrix product is cache optimized.
-// MC and KC serve as cache block sizes used by the higher-level blocked algorithms
-// to partition the matrix down to cache optimized matrix macro-blocks, implemented as a macro-kernel.
-// They, in order to accelerate product, should be packed (copied into local buffers _A, _B, and in _B blocks are transposed).
-// Macro-blocks consist of panels -- micro-blocks: the size of panel for A is BlOCKxKC, for B panel size is BlOCKxMC,
-// BlOCK serves as register block size for the micro-kernel, where we multiply panels and compute the product with AVX.
+/**
+ * This is made with help of tutorial: http://apfel.mathematik.uni-ulm.de/~lehn/sghpc/gemm/index.html
+ *
+ * The implementation of the matrix-matrix product is cache optimized.
+ * MC and KC serve as cache block sizes used by the higher-level blocked algorithms
+ * to partition the matrix down to cache optimized matrix macro-blocks, implemented as a macro-kernel.
+ * They, in order to accelerate product, should be packed (copied into local buffers _A, _B, and in _B blocks are transposed).
+ * Macro-blocks consist of panels -- micro-blocks: the size of panel for A is BlOCKxKC, for B panel size is BlOCKxMC,
+ * BlOCK serves as register block size for the micro-kernel, where we multiply panels and compute the product with AVX.
+ */
 struct BlockMM8
 {
     static const int BLOCK = 8;
@@ -431,7 +433,7 @@ struct BlockMM8
     }
 
     //  Micro kernel for multiplying panels from A and B
-    static void dgemm_micro_kernel(long kc, const double *A, const double *B, double *C, long incRowC, long incColC)
+    static void dgemm_micro_kernel_avx(long kc, const double *A, const double *B, double *C, long incRowC, long incColC)
     {
         double AB[BLOCK * BLOCK] __attribute__ ((aligned (32)));
 
@@ -486,8 +488,8 @@ struct BlockMM8
             s07 = multiplyAdd(a0123, b, s07);
             s17 = multiplyAdd(a4567, b, s17);
 
-            A += 8;
-            B += 8;
+            A += BLOCK;
+            B += BLOCK;
         }
 
         s00.save(&AB[0 + 0 * 8]); s10.save(&AB[4 + 0 * 8]);
@@ -510,10 +512,24 @@ struct BlockMM8
         }
     }
 
+    static void dgemm_micro_kernel(int mc, int nc, long kc, const double *A, const double *B, double *C, long incRowC, long incColC)
+    {
+        for (int l = 0; l < kc; l++) {
+            for (int i = 0; i < mc; i++) {
+                for (int j = 0; j < nc; j++) {
+                    C[i * incRowC + j * incColC] += A[i] * B[j];
+                }
+            }
+
+            A += BLOCK;
+            B += BLOCK;
+        }
+    }
+
     //  Macro Kernel for the multiplication of blocks of A and B.  We assume that
     //  these blocks were previously packed to buffers _A and _B.
     void dgemm_macro_kernel(int mc, int nc, int kc, double *C, int incRowC, int incColC)
-                       {
+    {
         int mp = (mc + BLOCK - 1) / BLOCK;
         int np = (nc + BLOCK - 1) / BLOCK;
 
@@ -532,11 +548,13 @@ struct BlockMM8
 
                 if (mr == BLOCK && nr == BLOCK)
                 {
-                    dgemm_micro_kernel(kc, &_A[i * kc * BLOCK], &_B[j * kc * BLOCK],
+                    dgemm_micro_kernel_avx(kc, &_A[i * kc * BLOCK], &_B[j * kc * BLOCK],
+                                           &C[i * BLOCK * incRowC + j * BLOCK * incColC], incRowC, incColC);
+                }
+                else
+                {
+                    dgemm_micro_kernel(mr, nr, kc, &_A[i * kc * BLOCK], &_B[j * kc * BLOCK],
                                        &C[i * BLOCK * incRowC + j * BLOCK * incColC], incRowC, incColC);
-                } else {
-                    dgemm_micro_kernel(kc, &_A[i * kc * BLOCK], &_B[j * kc * BLOCK],
-                                       _result, BLOCK, 1);
                 }
             }
         }
