@@ -325,6 +325,13 @@ struct BlockMM8Context
 };
 
 // This is made with help of tutorial: http://apfel.mathematik.uni-ulm.de/~lehn/sghpc/gemm/index.html
+//
+// The implementation of the matrix-matrix product is cache optimized.
+// MC and KC serve as cache block sizes used by the higher-level blocked algorithms
+// to partition the matrix down to cache optimized matrix macro-blocks, implemented as a macro-kernel.
+// They, in order to accelerate product, should be packed (copied into local buffers _A, _B, and in _B blocks are transposed).
+// Macro-blocks consist of panels -- micro-blocks: the size of panel for A is BlOCKxKC, for B panel size is BlOCKxMC,
+// BlOCK serves as register block size for the micro-kernel, where we multiply panels and compute the product with AVX.
 struct BlockMM8
 {
     static const int BLOCK = 8;
@@ -428,6 +435,7 @@ struct BlockMM8
     {
         double AB[BLOCK * BLOCK] __attribute__ ((aligned (32)));
 
+        // Compute AB = A*B
         Doublex4 s00 = Doublex4::Zero(); Doublex4 s10 = Doublex4::Zero();
         Doublex4 s01 = Doublex4::Zero(); Doublex4 s11 = Doublex4::Zero();
         Doublex4 s02 = Doublex4::Zero(); Doublex4 s12 = Doublex4::Zero();
@@ -541,6 +549,7 @@ struct BlockMM8
         Matrix &result = *pResult;
 
         // mxk * kxn = mxn
+
         const int m = A.h;
         const int k = A.w;
         const int n = B.w;
