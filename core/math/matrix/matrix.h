@@ -331,10 +331,11 @@ public:
     static Matrix multiplyBlas(const Matrix &A, const Matrix &B);
 #endif
     /**
-     * AVX powered block matrix multiplication
+     * @brief AVX powered block matrix multiplication
+     * @param[in] A matrix m x k size
+     * @param[in] B matrix k x n size
      * @warning This method uses static context and must be called only from single thread
-     * @note Size of matrices A and B must be multiple of 8
-     * @return A * B
+     * @return A * B = C matrix m x n size
      */
     static Matrix multiplyBlasReplacement(const Matrix &A, const Matrix &B);
     // static Matrix multiplyBlasReplacement(const Matrix &A, const Matrix &B, BlockMM8Context &context);

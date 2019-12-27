@@ -320,18 +320,20 @@ struct BlockMM8Context
     static const int NC = 4096;
 
     //  Local buffers for storing panels from A, B and local result
-    double _A[MC * KC] __attribute__ ((aligned (32)));
-    double _B[KC * NC] __attribute__ ((aligned (32)));
+    double ALIGN_DATA(32) _A[MC * KC];
+    double ALIGN_DATA(32) _B[KC * NC];
 };
 
-// This is made with help of tutorial: http://apfel.mathematik.uni-ulm.de/~lehn/sghpc/gemm/index.html
-//
-// The implementation of the matrix-matrix product is cache optimized.
-// MC and KC serve as cache block sizes used by the higher-level blocked algorithms
-// to partition the matrix down to cache optimized matrix macro-blocks, implemented as a macro-kernel.
-// They, in order to accelerate product, should be packed (copied into local buffers _A, _B, and in _B blocks are transposed).
-// Macro-blocks consist of panels -- micro-blocks: the size of panel for A is BlOCKxKC, for B panel size is BlOCKxMC,
-// BlOCK serves as register block size for the micro-kernel, where we multiply panels and compute the product with AVX.
+/**
+ * This is made with help of tutorial: http://apfel.mathematik.uni-ulm.de/~lehn/sghpc/gemm/index.html
+ *
+ * The implementation of the matrix-matrix product is cache optimized.
+ * MC and KC serve as cache block sizes used by the higher-level blocked algorithms
+ * to partition the matrix down to cache optimized matrix macro-blocks, implemented as a macro-kernel.
+ * They, in order to accelerate product, should be packed (copied into local buffers _A, _B, and in _B blocks are transposed).
+ * Macro-blocks consist of panels -- micro-blocks: the size of panel for A is BlOCKxKC, for B panel size is BlOCKxMC,
+ * BlOCK serves as register block size for the micro-kernel, where we multiply panels and compute the product with AVX.
+ */
 struct BlockMM8
 {
     static const int BLOCK = 8;
@@ -342,7 +344,7 @@ struct BlockMM8
     //  Local buffers for storing panels from A, B and local result
     double* _A = NULL;
     double* _B = NULL;
-    double _result[BLOCK * BLOCK] __attribute__ ((aligned (32))) = { };
+    double ALIGN_DATA(32) _result[BLOCK * BLOCK] = { };
 
     //  Packing complete panels from A (i.e. without padding)
     static void pack_BLOCKxk(int k, const double *A, int incRowA, int incColA, double *buffer)
@@ -430,10 +432,33 @@ struct BlockMM8
         }
     }
 
-    //  Micro kernel for multiplying panels from A and B
-    static void dgemm_micro_kernel(long kc, const double *A, const double *B, double *C, long incRowC, long incColC)
+    /**
+     *  Micro kernel for multiplying panels from A and B
+     *
+     *  A stores a number of the line spans of BLOCK (so far 8) elements
+     *
+     *    \f[ \pmatrix{ A_{10} & A_{11} & A_{12} & A_{13} & A_{14} & A_{15} & A_{16} & A_{17} & | & A_{21} & \ldots & A_{n5} & A_{n6} & A_{n7} } \f]
+     *
+     *  B stores a number of the line spans of BLOCK (so far 8) elements
+     *
+     *    \f[ \pmatrix{ B_{10} & B_{11} & B_{12} & B_{13} & B_{14} & B_{15} & B_{16} & B_{17} & | & B_{21} & \ldots & B_{n5} & B_{n6} & B_{n7} } \f]
+     *
+     *  This function computes vector A * vector B product
+     *
+     * \f[
+     *  \pmatrix{
+     *    \sum^{kc} A_0  B_0 & \sum^{kc}  A_1 B_0 & \ldots & \sum^{kc} A_6 B_0 & \sum^{kc} A_7 B_0 \cr
+     *          \vdots                    & & \ldots &                & \vdots \cr
+     *          \vdots                    & & \ldots &                & \vdots \cr
+     *    \sum^{kc} A_0  B_7 & \sum^{kc}  A_1 B_7 & \ldots & \sum^{kc} A_6 B_7 & \sum^{kc} A_7 B_7
+     *  }
+     * \f]
+     *
+     *
+     **/
+    static void dgemm_micro_kernel_avx(long kc, const double *A, const double *B, double *C, long incRowC, long incColC)
     {
-        double AB[BLOCK * BLOCK] __attribute__ ((aligned (32)));
+        double ALIGN_DATA(32) AB[BLOCK * BLOCK];
 
         // Compute AB = A*B
         Doublex4 s00 = Doublex4::Zero(); Doublex4 s10 = Doublex4::Zero();
@@ -486,8 +511,8 @@ struct BlockMM8
             s07 = multiplyAdd(a0123, b, s07);
             s17 = multiplyAdd(a4567, b, s17);
 
-            A += 8;
-            B += 8;
+            A += BLOCK;
+            B += BLOCK;
         }
 
         s00.save(&AB[0 + 0 * 8]); s10.save(&AB[4 + 0 * 8]);
@@ -507,6 +532,20 @@ struct BlockMM8
             {
                 C[i * incRowC + j * incColC] += AB[i + j * BLOCK];
             }
+        }
+    }
+
+    static void dgemm_micro_kernel(int mc, int nc, long kc, const double *A, const double *B, double *C, long incRowC, long incColC)
+    {
+        for (int l = 0; l < kc; l++) {
+            for (int i = 0; i < mc; i++) {
+                for (int j = 0; j < nc; j++) {
+                    C[i * incRowC + j * incColC] += A[i] * B[j];
+                }
+            }
+
+            A += BLOCK;
+            B += BLOCK;
         }
     }
 
@@ -532,11 +571,13 @@ struct BlockMM8
 
                 if (mr == BLOCK && nr == BLOCK)
                 {
-                    dgemm_micro_kernel(kc, &_A[i * kc * BLOCK], &_B[j * kc * BLOCK],
+                    dgemm_micro_kernel_avx(kc, &_A[i * kc * BLOCK], &_B[j * kc * BLOCK],
+                                           &C[i * BLOCK * incRowC + j * BLOCK * incColC], incRowC, incColC);
+                }
+                else
+                {
+                    dgemm_micro_kernel(mr, nr, kc, &_A[i * kc * BLOCK], &_B[j * kc * BLOCK],
                                        &C[i * BLOCK * incRowC + j * BLOCK * incColC], incRowC, incColC);
-                } else {
-                    dgemm_micro_kernel(kc, &_A[i * kc * BLOCK], &_B[j * kc * BLOCK],
-                                       _result, BLOCK, 1);
                 }
             }
         }
@@ -601,70 +642,6 @@ struct BlockMM8
     Matrix *pResult  = NULL;
 
 };
-
-#if 0 // unfinished stuff
-template<int vectorize = true>
-struct ParallelMMT
-{
-void operator() (const corecvs::BlockedRange<int> &r) const
-{
-    const Matrix& A = *pA;
-    const Matrix& B = *pB;
-    Matrix& result = *pResult;
-
-    for (int row = r.begin(); row < r.end(); row++)
-    {
-        int column = 0;
-#if WITH_SSE
-        if (vectorize)
-        {
-            const int STEP = DoublexN::SIZE;
-            ALIGN_DATA(16) double scratch[STEP];
-
-            for (; column + STEP - 1 < result.w; column += STEP)
-            {
-                const double *ALine = &A.a(row, 0);
-                const double *BCol  = &B.a(0, column);
-
-                DoublexN sum = DoublexN::Zero();
-                for (int runner = 0; runner < A.w; runner++)
-                {
-                    DoublexN bc = DoublexN::Broadcast(ALine);
-                    DoublexN rw(BCol);
-                    sum = multiplyAdd(bc, rw, sum);
-
-                    ALine++;
-                    BCol += B.stride;
-                }
-
-                sum.saveAligned(scratch);
-
-                for (int jj = 0; jj < STEP; ++jj)
-                {
-                   result.a(row, column + jj) = scratch[jj];
-                }
-            }
-        }
-#endif
-        for (; column < result.w; column++)
-        {
-            double sum = 0;
-            for (int runner = 0; runner < A.w; runner++)
-            {
-                sum += A.a(row, runner) * B.a(column, runner);
-            }
-            result.a(row, column) = sum;
-        }
-    }
-}
-ParallelMMT(const Matrix *pA, const Matrix *pB, Matrix *pResult) : pA(pA), pB(pB), pResult(pResult)
-{
-}
-const Matrix *pA;
-const Matrix *pB;
-Matrix *pResult;
-};
-#endif
 
 struct ParallelMV
 {
