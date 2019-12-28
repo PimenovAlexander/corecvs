@@ -14,12 +14,10 @@ set (NAME gcodeplayground )
 set (SRC_FILES ${SRC_FILES}
     labelGcodeInterpreter.cpp  
     main_gcodeplayground.cpp  
-    vinylCutterInterpreter.cpp  
 )
 
 set (HDR_FILES ${HDR_FILES}
     labelGcodeInterpreter.h  
-    vinylCutterInterpreter.h
 )
 
 add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
