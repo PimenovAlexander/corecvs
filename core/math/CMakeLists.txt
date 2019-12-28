@@ -69,6 +69,7 @@ target_sources(corecvs
         ${CMAKE_CURRENT_LIST_DIR}/matrix/matrix33.cpp
         ${CMAKE_CURRENT_LIST_DIR}/matrix/matrix44.cpp
         ${CMAKE_CURRENT_LIST_DIR}/matrix/diagonalMatrix.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/matrix/blasReplacement.cpp
         ${CMAKE_CURRENT_LIST_DIR}/sparseMatrix.cpp
         ${CMAKE_CURRENT_LIST_DIR}/matrix/homographyReconstructor.cpp
         ${CMAKE_CURRENT_LIST_DIR}/vector/vector2d.cpp

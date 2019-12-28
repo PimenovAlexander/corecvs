@@ -120,15 +120,16 @@ TEST(MatrixProfile, testMulSize3)
 {
 //    int  sizes    [] = { 1024, 2048, 4096, 16384 };
 
-    int  sizes    [] = { 1000, 2000, 4000 };
+    int  sizes    [] = { 100, 500, 700, 1000, 4000, 16384};
 
-    int  polca    [] = {   10,   20,    5,     1 };
-    int  runs     [] = {   10,    5,    2,     2 };
+    int  polca    [] = { 100,  20,  20,  20,    5,     1 };
+    int  runs     [] = { 100,  20,  20,   5,    5,     2 };
 
-    bool runsimple[] = { true, false, false, false };
-    bool runslow  [] = { true, true , false, false };
-    bool runour   [] = { true, true ,  true, false };
-    bool runfast  [] = { true, true ,  true, false };   // 16K * 16K - skip at all
+    bool runsimple[] = { true, true, true, false, false, false };
+    bool runslow  [] = { true, true, true, true , false, false };
+    bool runour   [] = { true, true, true, true , false, false };
+    bool runb88   [] = { true, true, true, true ,  true, true  };
+    bool runfast  [] = { true, true, true, true ,  true, true  };   // 16K * 16K - skip at all
 
 
     printHeader();
@@ -242,7 +243,7 @@ TEST(MatrixProfile, testMulSize3)
         }
 
 #ifdef WITH_AVX
-        if (runour[testnum])
+        if (runb88[testnum])
         {
             printName("BlockMM8", TEST_H_SIZE, mem, LIMIT);
             start = PreciseTimer::currentTime();

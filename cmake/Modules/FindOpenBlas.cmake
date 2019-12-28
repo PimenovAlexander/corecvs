@@ -1,23 +1,27 @@
 
 
 SET(Open_BLAS_INCLUDE_SEARCH_PATHS
-/usr/include
-/usr/include/openblas
-/usr/include/openblas-base
-/usr/local/include
-/usr/local/include/openblas
-/usr/local/include/openblas-base
-/opt/OpenBLAS/include
-$ENV{OpenBLAS_HOME}
-$ENV{OpenBLAS_HOME}/include
+      ${CMAKE_CURRENT_LIST_DIR}/../../siblings/OpenBLAS
+      /usr/include
+      /usr/include/openblas
+      /usr/include/openblas-base
+      /usr/local/include
+      /usr/local/include/openblas
+      /usr/local/include/openblas-base
+      /opt/OpenBLAS/include
+      $ENV{OpenBLAS_HOME}
+      $ENV{OpenBLAS_HOME}/include
+      /usr/include/x86_64-linux-gnu/
 )
 
 SET(Open_BLAS_LIB_SEARCH_PATHS
+      ${CMAKE_CURRENT_LIST_DIR}/../../siblings/OpenBLAS
       /lib/
       /lib/openblas-base
       /lib64/
       /usr/lib
       /usr/lib/openblas-base
+      /usr/lib/x86_64-linux-gnu/
       /usr/lib64
       /usr/local/lib
       /usr/local/lib64
@@ -26,10 +30,11 @@ SET(Open_BLAS_LIB_SEARCH_PATHS
       $ENV{OpenBLAS}/lib
       $ENV{OpenBLAS_HOME}
       $ENV{OpenBLAS_HOME}/lib
+
 )
 
-FIND_PATH(OpenBLAS_INCLUDE_DIR NAMES cblas.h PATHS ${Open_BLAS_INCLUDE_SEARCH_PATHS})
-FIND_LIBRARY(OpenBLAS_LIB NAMES openblas PATHS ${Open_BLAS_LIB_SEARCH_PATHS})
+FIND_PATH(OpenBLAS_INCLUDE_DIR NAMES cblas.h PATHS ${Open_BLAS_INCLUDE_SEARCH_PATHS} NO_DEFAULT_PATH)
+FIND_LIBRARY(OpenBLAS_LIB NAMES openblas PATHS ${Open_BLAS_LIB_SEARCH_PATHS} NO_DEFAULT_PATH)
 
 SET(OpenBLAS_FOUND ON)
 

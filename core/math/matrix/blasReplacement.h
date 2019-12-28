@@ -1,5 +1,5 @@
-#ifndef BLASREPLACEMENT_H
-#define BLASREPLACEMENT_H
+#ifndef BLAS_REPLACEMENT_H
+#define BLAS_REPLACEMENT_H
 
 #include "core/utils/global.h"
 #include "core/math/matrix/matrix.h"
@@ -319,6 +319,10 @@ struct BlockMM8Context
     static const int KC = 384;
     static const int NC = 4096;
 
+    //static const int MC = 384;
+    //static const int KC = 384;
+    //static const int NC = 8192;
+
     //  Local buffers for storing panels from A, B and local result
     double ALIGN_DATA(32) _A[MC * KC];
     double ALIGN_DATA(32) _B[KC * NC];
@@ -347,7 +351,7 @@ struct BlockMM8
     double ALIGN_DATA(32) _result[BLOCK * BLOCK] = { };
 
     //  Packing complete panels from A (i.e. without padding)
-    static void pack_BLOCKxk(int k, const double *A, int incRowA, int incColA, double *buffer)
+    static void pack_BLOCKxk(int k, const double *A, int incRowA, double *buffer)
     {
         for (int j = 0; j < k; j++)
         {
@@ -356,18 +360,18 @@ struct BlockMM8
                 buffer[i] = A[i * incRowA];
             }
             buffer += BLOCK;
-            A += incColA;
+	    A += 1;           
         }
     }
 
     //  Packing panels from A with padding if required
-    static void pack_A(int mc, int kc, const double *A, int incRowA, int incColA, double *buffer)
+    static void pack_A(int mc, int kc, const double *A, int incRowA, double *buffer)
     {
         int mp = mc / BLOCK;
         int _BLOCK = mc % BLOCK;
 
         for (int i = 0; i < mp; ++i) {
-            pack_BLOCKxk(kc, A, incRowA, incColA, buffer);
+            pack_BLOCKxk(kc, A, incRowA, buffer);
             buffer += kc * BLOCK;
             A += BLOCK * incRowA;
         }
@@ -382,20 +386,20 @@ struct BlockMM8
                 {
                     buffer[i] = 0.0;
                 }
-                buffer += BLOCK;
-                A += incColA;
+                buffer += BLOCK;             
+                A += 1;
             }
         }
     }
 
     //  Packing complete panels from B (i.e. without padding)
-    static void pack_kxBLOCK(int k, const double *B, int incRowB, int incColB, double *buffer)
+    static void pack_kxBLOCK(int k, const double *B, int incRowB, double *buffer)
     {
         for (int i = 0; i < k; i++)
         {
             for (int j = 0; j < BLOCK; j++)
             {
-                buffer[j] = B[j * incColB];
+                buffer[j] = B[j];
             }
             buffer += BLOCK;
             B += incRowB;
@@ -403,16 +407,16 @@ struct BlockMM8
     }
 
     //  Packing panels from B with padding if required
-    static void pack_B(int kc, int nc, const double *B, int incRowB, int incColB, double *buffer)
+    static void pack_B(int kc, int nc, const double *B, int incRowB, double *buffer)
     {
         int np = nc / BLOCK;
         int _BLOCK = nc % BLOCK;
 
         for (int j = 0; j < np; j++)
         {
-            pack_kxBLOCK(kc, B, incRowB, incColB, buffer);
+            pack_kxBLOCK(kc, B, incRowB, buffer);
             buffer += kc * BLOCK;
-            B += BLOCK * incColB;
+            B += BLOCK;
         }
 
         if (_BLOCK > 0) {
@@ -420,7 +424,7 @@ struct BlockMM8
             {
                 for (int j = 0; j < _BLOCK; j++)
                 {
-                    buffer[j] = B[j * incColB];
+                    buffer[j] = B[j];
                 }
                 for (int j = _BLOCK; j < BLOCK; j++)
                 {
@@ -456,9 +460,8 @@ struct BlockMM8
      *
      *
      **/
-    static void dgemm_micro_kernel_avx(long kc, const double *A, const double *B, double *C, long incRowC, long incColC)
-    {
-        double ALIGN_DATA(32) AB[BLOCK * BLOCK];
+    static void dgemm_micro_kernel_avx(long kc, const double *A, const double *B, double *C, long incRowC)
+    {       
 
         // Compute AB = A*B
         Doublex4 s00 = Doublex4::Zero(); Doublex4 s10 = Doublex4::Zero();
@@ -470,77 +473,84 @@ struct BlockMM8
         Doublex4 s06 = Doublex4::Zero(); Doublex4 s16 = Doublex4::Zero();
         Doublex4 s07 = Doublex4::Zero(); Doublex4 s17 = Doublex4::Zero();
 
-        Doublex4 a0123, a4567;
+        Doublex4 b0123, b4567;
 
-        Doublex4 b;
+        Doublex4 a;
 
         for (int l = 0; l < kc; l++)
         {
-            a0123 = Doublex4(A);
-            a4567 = Doublex4(A + 4);
+            b0123 = Doublex4(B);
+            b4567 = Doublex4(B + 4);
 
-            b = Doublex4(B[0]);
-            s00 = multiplyAdd(a0123, b, s00);
-            s10 = multiplyAdd(a4567, b, s10);
+            a = Doublex4(A[0]);
+            s00 = multiplyAdd(b0123, a, s00);
+            s10 = multiplyAdd(b4567, a, s10);
 
-            b = Doublex4(B[1]);
-            s01 = multiplyAdd(a0123, b, s01);
-            s11 = multiplyAdd(a4567, b, s11);
+            a = Doublex4(A[1]);
+            s01 = multiplyAdd(b0123, a, s01);
+            s11 = multiplyAdd(b4567, a, s11);
 
-            b = Doublex4(B[2]);
-            s02 = multiplyAdd(a0123, b, s02);
-            s12 = multiplyAdd(a4567, b, s12);
+            a = Doublex4(A[2]);
+            s02 = multiplyAdd(b0123, a, s02);
+            s12 = multiplyAdd(b4567, a, s12);
 
-            b = Doublex4(B[3]);
-            s03 = multiplyAdd(a0123, b, s03);
-            s13 = multiplyAdd(a4567, b, s13);
+            a = Doublex4(A[3]);
+            s03 = multiplyAdd(b0123, a, s03);
+            s13 = multiplyAdd(b4567, a, s13);
 
-            b = Doublex4(B[4]);
-            s04 = multiplyAdd(a0123, b, s04);
-            s14 = multiplyAdd(a4567, b, s14);
+            a = Doublex4(A[4]);
+            s04 = multiplyAdd(b0123, a, s04);
+            s14 = multiplyAdd(b4567, a, s14);
 
-            b = Doublex4(B[5]);
-            s05 = multiplyAdd(a0123, b, s05);
-            s15 = multiplyAdd(a4567, b, s15);
+            a = Doublex4(A[5]);
+            s05 = multiplyAdd(b0123, a, s05);
+            s15 = multiplyAdd(b4567, a, s15);
 
-            b = Doublex4(B[6]);
-            s06 = multiplyAdd(a0123, b, s06);
-            s16 = multiplyAdd(a4567, b, s16);
+            a = Doublex4(A[6]);
+            s06 = multiplyAdd(b0123, a, s06);
+            s16 = multiplyAdd(b4567, a, s16);
 
-            b = Doublex4(B[7]);
-            s07 = multiplyAdd(a0123, b, s07);
-            s17 = multiplyAdd(a4567, b, s17);
+            a = Doublex4(A[7]);
+            s07 = multiplyAdd(b0123, a, s07);
+            s17 = multiplyAdd(b4567, a, s17);
 
             A += BLOCK;
             B += BLOCK;
         }
 
-        s00.save(&AB[0 + 0 * 8]); s10.save(&AB[4 + 0 * 8]);
-        s01.save(&AB[0 + 1 * 8]); s11.save(&AB[4 + 1 * 8]);
-        s02.save(&AB[0 + 2 * 8]); s12.save(&AB[4 + 2 * 8]);
-        s03.save(&AB[0 + 3 * 8]); s13.save(&AB[4 + 3 * 8]);
+        Doublex4 c00; c00.load(C                  ); c00 += s00; c00.save(C                  );
+        Doublex4 c10; c10.load(C +               4); c10 += s10; c10.save(C +               4);
 
-        s04.save(&AB[0 + 4 * 8]); s14.save(&AB[4 + 4 * 8]);
-        s05.save(&AB[0 + 5 * 8]); s15.save(&AB[4 + 5 * 8]);
-        s06.save(&AB[0 + 6 * 8]); s16.save(&AB[4 + 6 * 8]);
-        s07.save(&AB[0 + 7 * 8]); s17.save(&AB[4 + 7 * 8]);
+        Doublex4 c01; c01.load(C + incRowC        ); c01 += s01; c01.save(C + incRowC        );
+        Doublex4 c11; c11.load(C + incRowC     + 4); c11 += s11; c11.save(C + incRowC     + 4);
 
-        //  Update C <- C + AB
-        for (int j = 0; j < BLOCK; j++)
-        {
-            for (int i = 0; i < BLOCK; i++)
-            {
-                C[i * incRowC + j * incColC] += AB[i + j * BLOCK];
-            }
-        }
+        Doublex4 c02; c02.load(C + incRowC * 2    ); c02 += s02; c02.save(C + incRowC * 2    );
+        Doublex4 c12; c12.load(C + incRowC * 2 + 4); c12 += s12; c12.save(C + incRowC * 2 + 4);
+
+        Doublex4 c03; c03.load(C + incRowC * 3    ); c03 += s03; c03.save(C + incRowC * 3    );
+        Doublex4 c13; c13.load(C + incRowC * 3 + 4); c13 += s13; c13.save(C + incRowC * 3 + 4);
+
+        // -----------
+
+        Doublex4 c04; c04.load(C + incRowC * 4    ); c04 += s04; c04.save(C + incRowC * 4    );
+        Doublex4 c14; c14.load(C + incRowC * 4 + 4); c14 += s14; c14.save(C + incRowC * 4 + 4);
+
+        Doublex4 c05; c05.load(C + incRowC * 5    ); c05 += s05; c05.save(C + incRowC * 5    );
+        Doublex4 c15; c15.load(C + incRowC * 5 + 4); c15 += s15; c15.save(C + incRowC * 5 + 4);
+
+        Doublex4 c06; c06.load(C + incRowC * 6    ); c06 += s06; c06.save(C + incRowC * 6    );
+        Doublex4 c16; c16.load(C + incRowC * 6 + 4); c16 += s16; c16.save(C + incRowC * 6 + 4);
+
+        Doublex4 c07; c07.load(C + incRowC * 7    ); c07 += s07; c07.save(C + incRowC * 7    );
+        Doublex4 c17; c17.load(C + incRowC * 7 + 4); c17 += s17; c17.save(C + incRowC * 7 + 4);
     }
 
-    static void dgemm_micro_kernel(int mc, int nc, long kc, const double *A, const double *B, double *C, long incRowC, long incColC)
+    static void dgemm_micro_kernel(int mc, int nc, long kc, const double *A, const double *B, double *C, long incRowC)
     {
         for (int l = 0; l < kc; l++) {
             for (int i = 0; i < mc; i++) {
                 for (int j = 0; j < nc; j++) {
-                    C[i * incRowC + j * incColC] += A[i] * B[j];
+                    C[i * incRowC + j] += A[i] * B[j];
                 }
             }
 
@@ -549,38 +559,87 @@ struct BlockMM8
         }
     }
 
-    //  Macro Kernel for the multiplication of blocks of A and B.  We assume that
-    //  these blocks were previously packed to buffers _A and _B.
-    void dgemm_macro_kernel(int mc, int nc, int kc, double *C, int incRowC, int incColC)
+    /**
+     *   Macro Kernel for the multiplication of blocks of A and B.  We assume that
+     *   these blocks were previously packed to buffers _A and _B.
+     **/
+    void dgemm_macro_kernel(int mc, int nc, int kc, double *C, int incRowC)
     {
-        int mp = (mc + BLOCK - 1) / BLOCK;
-        int np = (nc + BLOCK - 1) / BLOCK;
+        int mp = mc / BLOCK;
+        int np = nc / BLOCK;
 
-        int _mr = mc % BLOCK;
-        int _nr = nc % BLOCK;
+        int mr = mc % BLOCK;
+        int nr = nc % BLOCK;
 
-        int mr, nr;
-
-        for (int j = 0; j < np; j++)
+#if 0
+        parallelable_for(0, np, [&](const BlockedRange<int> &r){
+        for (int j = r.begin(); j < r.end(); j++)
         {
-            nr = (j != np - 1 || _nr == 0) ? BLOCK : _nr;
-
             for (int i = 0; i < mp; i++)
             {
-                mr = (i != mp - 1 || _mr == 0) ? BLOCK : _mr;
+                    dgemm_micro_kernel_avx(
+                            kc,
+                            &_A[i * kc * BLOCK],
+                            &_B[j * kc * BLOCK],
+                            & C[i * BLOCK * incRowC + j * BLOCK], incRowC);
+            }
+        }}, true);
+#endif
+        parallelable_for2d(0, np, 0, mp,
+                           [&](const BlockedRange2d<int, int> &r){
+        for (int j = r.getRows().begin(); j < r.getRows().end(); j++)
+        {
+            for (int i = r.getCols().begin(); i < r.getCols().end(); i++)
+            {
+                    dgemm_micro_kernel_avx(
+                            kc,
+                            &_A[i * kc * BLOCK],
+                            &_B[j * kc * BLOCK],
+                            & C[i * BLOCK * incRowC + j * BLOCK], incRowC);
+            }
+        }}, true);
 
-                if (mr == BLOCK && nr == BLOCK)
-                {
-                    dgemm_micro_kernel_avx(kc, &_A[i * kc * BLOCK], &_B[j * kc * BLOCK],
-                                           &C[i * BLOCK * incRowC + j * BLOCK * incColC], incRowC, incColC);
-                }
-                else
-                {
-                    dgemm_micro_kernel(mr, nr, kc, &_A[i * kc * BLOCK], &_B[j * kc * BLOCK],
-                                       &C[i * BLOCK * incRowC + j * BLOCK * incColC], incRowC, incColC);
-                }
+        /* Work with the boundary */
+#if 0
+        cout << "mc:" << mc << endl;
+        cout << "nc:" << nc << endl;
+        cout << "kc:" << kc << endl;
+
+        cout << "mp:" << mp << endl;
+        cout << "np:" << np << endl;
+
+        cout << "mr:" << mr << endl;
+        cout << "nr:" << nr << endl;
+#endif
+        if (nr != 0) {
+            int j = np;
+            for (int i = 0; i < mp; i++)
+            {
+                dgemm_micro_kernel(BLOCK, nr, kc,
+                        &_A[i * kc * BLOCK],
+                        &_B[j * kc * BLOCK],
+                        & C[i * BLOCK * incRowC + j * BLOCK], incRowC);
             }
         }
+
+        if (mr != 0) {
+            int i = mp;
+            for (int j = 0; j < np; j++)
+            {
+                dgemm_micro_kernel(mr, BLOCK, kc,
+                        &_A[i * kc * BLOCK],
+                        &_B[j * kc * BLOCK],
+                        & C[i * BLOCK * incRowC + j * BLOCK], incRowC);
+            }
+        }
+
+        if (mr != 0 && nr != 0) {
+            dgemm_micro_kernel(mr, nr, kc,
+                    &_A[mp * kc * BLOCK],
+                    &_B[np * kc * BLOCK],
+                    & C[mp * BLOCK * incRowC + np * BLOCK], incRowC);
+        }
+
     }
 
     void operator()()
@@ -597,11 +656,8 @@ struct BlockMM8
 
         // How to access next value in the row / column
         const int incRowA = A.stride;
-        const int incColA = 1;
         const int incRowB = B.stride;
-        const int incColB = 1;
         const int incRowC = result.stride;
-        const int incColC = 1;
 
         const long mb = (m + MC - 1) / MC;
         const long nb = (n + NC - 1) / NC;
@@ -620,13 +676,13 @@ struct BlockMM8
             for (int l = 0; l < kb; l++)
             {
                 kc = (l != kb - 1 || _kc == 0) ? KC : _kc;
-                pack_B(kc, nc, &B.a(l * KC, j * NC), incRowB, incColB, _B);
+                pack_B(kc, nc, &B.a(l * KC, j * NC), incRowB, _B);
 
                 for (int i = 0; i < mb; i++)
                 {
                     mc = (i != mb - 1 || _mc == 0) ? MC : _mc;
-                    pack_A(mc, kc,&A.a(i * MC, l * KC), incRowA, incColA, _A);
-                    dgemm_macro_kernel(mc, nc, kc,&result.a(i * MC, j * NC), incRowC, incColC);
+                    pack_A(mc, kc,&A.a(i * MC, l * KC), incRowA, _A);
+                    dgemm_macro_kernel(mc, nc, kc,&result.a(i * MC, j * NC), incRowC);
                 }
             }
         }
@@ -725,39 +781,6 @@ struct ParallelMD
     Matrix *pResult;
 };
 
-
-// TODO: it has a bug, see testMatrixOperations result when change the operator *(Matrix&, Matrix&) to use this!!!
-Matrix Matrix::multiplyHomebrew(const Matrix &A, const Matrix &B, bool parallel, bool vectorize)
-{
-    CORE_ASSERT_TRUE(A.w == B.h, "Matrices have wrong sizes");
-    Matrix result(A.h, B.w, false);
-    if (vectorize) {
-        parallelable_for (0, result.h, 8, ParallelMM8<true> (&A, &B, &result), parallel);
-    } else {
-        parallelable_for (0, result.h, 8, ParallelMM8<false>(&A, &B, &result), parallel);
-    }
-    return result;
-}
-
-Matrix Matrix::multiplyHomebrewMD(const Matrix &M, const DiagonalMatrix &D)
-{
-    CORE_ASSERT_TRUE(M.w == D.size(), "Matrix and DiagonalMatrix have wrong sizes");
-    Matrix result(M.h, M.w);
-
-    parallelable_for (0, result.h, 8, ParallelMD(&M, &D, &result), true);
-    return result;
-}
-
-
-Vector Matrix::multiplyHomebrewMV(const Matrix &M, const Vector &V)
-{
-    CORE_ASSERT_TRUE(M.w == V.size(), "Matrix and Vector have wrong sizes");
-    Vector result(M.h);
-    parallelable_for (0, M.h, 8, ParallelMV(&M, &V, &result));
-    return result;
-}
-
-
 } //namespace corecvs
 
-#endif  //BLASREPLACEMENT_H
+#endif  // BLAS_REPLACEMENT_H
