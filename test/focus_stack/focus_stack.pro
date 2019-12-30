@@ -48,11 +48,13 @@ with_libpng {
 SOURCES += \
         imageStack.cpp \
         laplacianStacking.cpp \
+        complexWavelet.cpp \
         main.cpp
 
 HEADERS += \
     FSAlgorithm.h \
     imageStack.h \
-    laplacianStacking.h
+    laplacianStacking.h \
+    complexWavelet.h
 
 OTHER_FILES += CMakeLists.txt

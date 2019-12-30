@@ -2,6 +2,7 @@
 #include "core/fileformats/bmpLoader.h"
 #include "imageStack.h"
 #include "laplacianStacking.h"
+#include "complexWavelet.h"
 #ifdef WITH_LIBJPEG
 #include "libjpegFileReader.h"
 #endif
@@ -43,8 +44,8 @@ int main(int argc, char *argv[])
         SYNC_PRINT(("Can't load images!\n"));
         return 0;
     }
-    LaplacianStacking lapl;
-    imageStack->focus_stack(lapl);
+    ComplexWavelet complexWavelet;
+    imageStack->focus_stack(complexWavelet);
     imageStack->saveMergedImage(argv[2]);
 
     delete_safe(imageStack);

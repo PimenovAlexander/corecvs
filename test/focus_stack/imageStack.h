@@ -2,7 +2,7 @@
 #define IMAGESTACK_H
 
 #include "core/buffers/rgb24/rgb24Buffer.h"
-#include "FSAlgorithm.h"
+#include "fsAlgorithm.h"
 
 using namespace corecvs;
 using namespace std;
