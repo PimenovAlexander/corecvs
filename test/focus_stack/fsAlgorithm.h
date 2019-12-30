@@ -3,8 +3,6 @@
 
 #include "core/buffers/rgb24/rgb24Buffer.h"
 
-using namespace corecvs;
-
 /**
 *    This class is a base for Focus Stacking algorithms.
 **/
@@ -16,7 +14,7 @@ public:
      *   @param imageStack Stack with input images.
      *   @param result Pointer to image where the result of stacking should be saved.
      **/
-    virtual void doStacking(std::vector<RGB24Buffer*> & imageStack, RGB24Buffer * result) = 0;
+    virtual void doStacking(std::vector<corecvs::RGB24Buffer*> & imageStack, corecvs::RGB24Buffer * result) = 0;
     virtual ~FSAlgorithm(){}
 };
 
