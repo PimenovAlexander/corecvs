@@ -52,7 +52,7 @@ SOURCES += \
         main.cpp
 
 HEADERS += \
-    FSAlgorithm.h \
+    fsAlgorithm.h \
     imageStack.h \
     laplacianStacking.h \
     complexWavelet.h
