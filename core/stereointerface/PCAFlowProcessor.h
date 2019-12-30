@@ -15,14 +15,13 @@ using namespace cv;
 class PCAFlowProcessor{
     G8Buffer *prev  = NULL;
     G8Buffer *curr  = NULL;
-    FlowBuffer *opticalFlow = NULL;
 
 public:
+    FlowBuffer *opticalFlow = NULL;
     PCAFlowProcessor();
-
     int beginFrame();
     int endFrame();
     FlowBuffer *getFlow();
     int setFrameRGB24(RGB24Buffer *frame, int /*frameType*/);
-
+    int setFrameG12(G12Buffer *frame, int frameType);
 };

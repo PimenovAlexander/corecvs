@@ -31,7 +31,18 @@ FlowBuffer *PCAFlowProcessor::getFlow() {
       inBuffer_prev,
       inBuffer_curr,
       outBuffer);
-  return new FlowBuffer(prev->h, prev->w, outBuffer.data); // Conversion back to corecvs buffer type
+
+// Conversion Back to corecvs type
+  auto f = FlowBuffer(prev->h, prev->w);
+
+  for (int i = 0; i < outBuffer.size[0]; i++){
+      for (int j = 0; j < outBuffer.size[1]; j++){
+          short y = outBuffer.at<Vec2f>(i, j)[0];
+          short x = outBuffer.at<Vec2f>(i, j)[1];
+          f.setElement(i, j, Vector2d(y, x));
+      }
+  }
+  return new FlowBuffer(prev->h, prev->w, f.data);
 }
 
 int PCAFlowProcessor::setFrameRGB24(RGB24Buffer *frame, int /*frameType*/) {
@@ -41,3 +52,9 @@ int PCAFlowProcessor::setFrameRGB24(RGB24Buffer *frame, int /*frameType*/) {
 }
 
 PCAFlowProcessor::PCAFlowProcessor(){}
+
+int PCAFlowProcessor::setFrameG12(G12Buffer *frame, int frameType) {
+    prev = curr;
+    curr = G8Buffer::FromG12Buffer(frame);
+    return 0;
+}
