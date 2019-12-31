@@ -26,6 +26,7 @@ class MainWindow : public QMainWindow {
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void setImage(QString filePath);
 private slots:
 
 private:
@@ -35,6 +36,7 @@ private:
 //    void gCodeExportHandler(QString filePath);
     QGraphicsScene *scene;
     Ui::MainWindow *ui;
+    QGraphicsScene *background;
 };
 
 

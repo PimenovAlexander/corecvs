@@ -61,20 +61,9 @@ void MyGraphicsView::dropEvent(QDropEvent *event) {
 
         gcodeHandler->loadGcode(filePath.toStdString());
         gcodeHandler->drawMesh(scene);
-//        this->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
+        this->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
     } else qDebug() << "ERROR: Null file url";
 }
-
-//void MyGraphicsView::setImage(QImage *image) {
-//    xImageSize = image->height();
-//    yImageSize = image->width();
-//
-//    scene->removeItem(pixmap);
-//    QImage scaledImage = image->scaled(600, 400, Qt::KeepAspectRatio);
-//    pixmap = scene->addPixmap(scaledImage);
-//
-//    pixmap->setPos(0, 0);
-//}
 
 void MyGraphicsView::setXShift(int shift) {
     xImageShift = shift;

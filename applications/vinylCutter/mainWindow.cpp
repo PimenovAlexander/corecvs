@@ -1,5 +1,6 @@
 #include "mainWindow.h"
 #include "./ui_mainWindow.h"
+#include <QDir>
 
 
 using namespace corecvs;
@@ -8,6 +9,11 @@ using namespace std;
 MainWindow::MainWindow(QWidget *parent)
         : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
+
+    QGraphicsView *view = ui->graphicsView;
+    background = new QGraphicsScene(ui->graphicsView);
+    ui->graphicsView->setScene(background);
+
     gcodeHandler = GcodeHandler::getInstance();
 }
 
@@ -19,9 +25,9 @@ void MainWindow::openGcodeTriggered() {
     QString filePath = QFileDialog::getOpenFileName(this, tr("Load Gcode File"), "/home/vinylCutter.gcode",
                                                     tr("*.gcode"));
 
-//    if (!filePath.isEmpty()) {
-//        ui->graphicsView->setImage(filePath);
-//    }
+    if (!filePath.isEmpty()) {
+        return;
+    }
 }
 
 void MainWindow::gcodeExportTriggered() {
@@ -29,6 +35,20 @@ void MainWindow::gcodeExportTriggered() {
                                                     tr("*.gcode"));
 
 //    gCodeExportHandler(filePath);
+}
+
+void MainWindow::setImage(QString filePath) {
+    filePath = QDir::currentPath() + "/applications/vinylCutter/resources/background.png";
+
+    qDebug() << filePath;
+
+    QImage image;
+    image.load(filePath);
+
+    QPixmap pixmap = QPixmap::fromImage(image);
+    auto *item = background->addPixmap(pixmap);
+    qDebug() << item->offset();
+    item->setOffset(-95, -80);
 }
 
 //void MainWindow::gCodeExportHandler(QString filePath) {
