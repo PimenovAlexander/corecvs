@@ -22,6 +22,7 @@
 #endif
 #ifdef WITH_OPENCV
 #include <KLTFlow.h>
+#include <PCAFlowProcessor.h>
 #endif
 
 #ifdef WITH_DISFLOW
@@ -164,6 +165,13 @@ int flow(CommandLineSetter &s)
     cout << "Density:" << flow->density() << endl;
     FloatFlowBuffer *fflow = new FloatFlowBuffer(flow);
     BufferFactory::getInstance()->saveFloatFlow(*fflow, "flow1.flo");
+
+    {
+        RGB24Buffer flowDraw(fflow->getSize());
+        flowDraw.drawFlowBuffer(fflow, -1, 0, 0);
+        BufferFactory::getInstance()->saveRGB24Bitmap(flowDraw, "flow.bmp");
+    }
+
     delete_safe(fflow);
 
     if (input3) {
@@ -234,6 +242,7 @@ int main(int argc, char *argv[])
     ProcessorFlowFactoryHolder::getInstance()->registerProcessor(new AlgoFactory<DummyFlowProcessor, ProcessorFlow>("Dummy"));
 #ifdef WITH_OPENCV
     ProcessorFlowFactoryHolder::getInstance()->registerProcessor(new AlgoFactory<OpenCVFlowProcessor, ProcessorFlow>("OpenCVProcessor"));
+    ProcessorFlowFactoryHolder::getInstance()->registerProcessor(new AlgoFactory<PCAFlowProcessor, ProcessorFlow>("OpenCVPCAFlow"));
 #ifdef WITH_DISFLOW
     ProcessorFlowFactoryHolder::getInstance()->registerProcessor(new AlgoFactory<DISFlow, ProcessorFlow>("DISFlow"));
 #endif
