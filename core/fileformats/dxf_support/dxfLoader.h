@@ -1,12 +1,12 @@
 //
-// Created by Myasnikov Vladislav on 10/17/19.
+// Created by Myasnikov Vladislav on 17.10.2019.
 //
 
 #ifndef DXF_SUPPORT_DXFLOADER_H
 #define DXF_SUPPORT_DXFLOADER_H
 
 #include "core/fileformats/dxf_support/dxfCodes.h"
-#include "core/fileformats/dxf_support/iDxfBuilder.h"
+#include "core/fileformats/dxf_support/dxfBuilder.h"
 #include "core/buffers/rgb24/wuRasterizer.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/buffers/rgb24/abstractPainter.h"
@@ -17,26 +17,63 @@
 
 namespace corecvs {
 
+/**
+ * DxfLoader is intended to load and represent DXF file into special structure for further drawing.
+ *
+ * Brief description of DxfLoader's work:
+ * 1. File is loaded by sent string name.
+ * 2. In a loop, all pairs (group code, value) are extracted.
+ * 3. For each pair, depending on the group code, one of the following actions is performed:
+ *    3.1. if it's a separation code, a new entity is created and transferred to the DxfBuilder or a sub-entity is created (e.g. a vertex in a polyline)
+ *    3.2. a new system variable is set to the DxfBuilder
+ *    3.3. the pair is stored in a 'values' map
+ * 4. In the end, when all pairs were processed, DxfDrawing is created by DxfBuilder.
+ *
+ * DxfBuilder is helper-class for creating DxfDrawing.
+ *
+ * DxfDrawing is part representation of DXF file content.
+ * It contains graphic entities that are associated with a certain layer and, optionally, are tied to a certain block.
+ * Also this class contains some non-graphic objects (e.g. line types).
+ * Several parameters can be set for the DxfDrawing for further display (e.g. paddings and scaling factor).
+ * The class can return RGB24Buffer with visible entities.
+ *
+ * DxfEntity is abstract graphic DXF-entity.
+ * To add a new entity, you need to inherit from DxfEntity and implement three methods:
+ * 1. print          --- to print main information about the entity
+ * 2. draw           --- to draw the entity
+ * 3. getBoundingBox --- to calculate the bounding box
+ * Also you need to inherit from DxfEntityData in order to add entity-specific properties.
+ *
+ * DxfObject is abstract non-graphic DXF-object.
+ * To add a new object, you need to inherit from DxfObject and implement one method:
+ * 1. print          --- to print main information about the object
+ * Also you need to inherit from DxfObjectData in order to add object-specific properties.
+ * 
+ * DxfCodes contains DXF-specific codes and some helpful functions.
+ */
 class DxfLoader {
 public:
-    explicit DxfLoader(IDxfBuilder &dxfBuilder) : dxfBuilder(dxfBuilder) {}
+    explicit DxfLoader(DxfBuilder &dxfBuilder)
+    : dxfBuilder(dxfBuilder) {}
 
     int load(std::string const &fileName);
 
 private:
-    IDxfBuilder &dxfBuilder;
+    DxfBuilder &dxfBuilder;
     DxfElementType currentEntityType = DxfElementType::DXF_UNKNOWN_TYPE;
     DxfElementType currentElementType = DxfElementType::DXF_UNKNOWN_TYPE;
     std::string variableName;
     std::map<int, std::string> rawValues;
     std::vector<Vector2d<double>> current2dVertices = {};     // vertices of LwPolylineEntity
     std::vector<DxfVertexData*> current3dVertices = {};       // vertices of PolylineEntity
-    DxfPolylineData *polylineData = nullptr;                  // no need to delete in destructor!!!
+    DxfPolylineData *polylineData = nullptr;
+    DxfBlock *currentBlock = nullptr;
 
     int processDxfPair(int code, std::string const &value);
     void addVariable();
     void addLayer();
     void addLineType();
+    void addBlockRecord();
     void addLine();
     void addLwPolyline();
     void addPolyline();
@@ -44,10 +81,13 @@ private:
     void addCircularArc();
     void addEllipticalArc();
     void addPoint();
+    void addBlock();
+    void addBlockReference();
     void handleLwPolyline(int groupCode);
     void handlePolyline();
     void handleVertex();
     void handleVertexSequence();
+    void handleBlock();
     DxfEntityData getEntityData();
     DxfObjectData getObjectData();
     static bool getTruncatedLine(std::string &s, std::istream &stream);

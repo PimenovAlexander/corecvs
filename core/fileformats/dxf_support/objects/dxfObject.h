@@ -1,5 +1,5 @@
 //
-// Created by Myasnikov Vladislav on 10/29/19.
+// Created by Myasnikov Vladislav on 29.10.2019.
 //
 
 #ifndef DXF_SUPPORT_DXFOBJECT_H
@@ -16,8 +16,6 @@ public:
     explicit DxfObject(DxfObjectData &data)
     : data(data) {}
 
-    virtual ~DxfObject() { delete &data; }
-
     virtual void print();
 
     DxfObjectData &data;
@@ -28,8 +26,6 @@ class DxfLayerObject : public DxfObject {
 public:
     explicit DxfLayerObject(DxfLayerData &data)
     : DxfObject(data), data(data) {}
-
-    ~DxfLayerObject() override { delete &data; }
 
     void print() override;
 
@@ -42,11 +38,20 @@ public:
     explicit DxfLineTypeObject(DxfLineTypeData &data)
     : DxfObject(data), data(data) {}
 
-    ~DxfLineTypeObject() override { delete &data; }
-
     void print() override;
 
     DxfLineTypeData &data;
+};
+
+// BLOCK_RECORD Object
+class DxfBlockRecordObject : public DxfObject {
+public:
+    explicit DxfBlockRecordObject(DxfBlockRecordData &data)
+    : DxfObject(data), data(data) {}
+
+    void print() override;
+
+    DxfBlockRecordData &data;
 };
 
 } // namespace corecvs

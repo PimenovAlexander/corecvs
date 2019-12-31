@@ -14,11 +14,11 @@ target_sources(corecvs
         ${CMAKE_CURRENT_LIST_DIR}/dxf_support/entities/dxfEntityData.h
         ${CMAKE_CURRENT_LIST_DIR}/dxf_support/objects/dxfObject.h
         ${CMAKE_CURRENT_LIST_DIR}/dxf_support/objects/dxfObjectData.h
-        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfDrawingAttrs.h
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/blocks/dxfBlock.h
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfDrawing.h
         ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfCodes.h
         ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfLoader.h
-        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/iDxfBuilder.h
-        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/implDxfBuilder.h
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfBuilder.h
 
      PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/bufferLoader.cpp
@@ -32,9 +32,11 @@ target_sources(corecvs
         ${CMAKE_CURRENT_LIST_DIR}/tgaLoader.cpp
         ${CMAKE_CURRENT_LIST_DIR}/dxf_support/entities/dxfEntity.cpp
         ${CMAKE_CURRENT_LIST_DIR}/dxf_support/objects/dxfObject.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/blocks/dxfBlock.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfDrawing.cpp
         ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfCodes.cpp
         ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfLoader.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/implDxfBuilder.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfBuilder.cpp
 )
 
 if (1)

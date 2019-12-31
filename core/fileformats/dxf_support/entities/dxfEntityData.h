@@ -1,5 +1,5 @@
 //
-// Created by Myasnikov Vladislav on 10/29/19.
+// Created by Myasnikov Vladislav on 29.10.2019.
 //
 
 #ifndef DXF_SUPPORT_DXFENTITYDATA_H
@@ -9,6 +9,7 @@
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/math/vector/vector2d.h"
 #include "core/math/vector/vector3d.h"
+#include "core/fileformats/dxf_support/blocks/dxfBlock.h"
 #include "core/fileformats/dxf_support/entities/dxfEntity.h"
 
 namespace corecvs {
@@ -16,26 +17,29 @@ namespace corecvs {
 // Abstract Entity Data
 class DxfEntityData {
 public:
-    DxfEntityData(int handle, std::string layerName, std::string lineTypeName, int colorNumber, bool isVisible)
-    : handle(handle), layerName(std::move(layerName)), lineTypeName(std::move(lineTypeName)), colorNumber(colorNumber), isVisible(isVisible) {}
+    DxfEntityData(std::string handle, std::string layerName, std::string lineTypeName, int colorNumber, bool isVisible, std::string blockRecordID, DxfBlock *block)
+    : handle(std::move(handle)), layerName(std::move(layerName)), lineTypeName(std::move(lineTypeName)), colorNumber(colorNumber), isVisible(isVisible), blockRecordID(std::move(blockRecordID)), block(block) {}
     DxfEntityData(const DxfEntityData &data) = default;
 
-    int handle;
+    std::string handle;
     std::string layerName;
     std::string lineTypeName;
     RGBColor rgbColor;
     int colorNumber;
     bool isVisible;
+    std::string blockRecordID;
+    DxfBlock *block;
 };
 
 // LINE Data
 class DxfLineData : public DxfEntityData {
 public:
-    DxfLineData(const DxfEntityData &data, Vector3dd startPoint, Vector3dd endPoint)
-    : DxfEntityData(data), startPoint(startPoint), endPoint(endPoint) {}
+    DxfLineData(const DxfEntityData &data, Vector3dd startPoint, Vector3dd endPoint, double thickness)
+    : DxfEntityData(data), startPoint(startPoint), endPoint(endPoint), thickness(thickness) {}
 
     Vector3dd startPoint;
     Vector3dd endPoint;
+    double thickness;
 };
 
 // LWPOLYLINE Data
@@ -115,6 +119,18 @@ public:
 
     Vector3dd location;
     double thickness;
+};
+
+// INSERT Data
+class DxfBlockReferenceData : public DxfEntityData {
+public:
+    DxfBlockReferenceData(const DxfEntityData &data, std::string blockName, Vector3dd insertionPoint, Vector3dd scaleFactor, double rotationAngle)
+    : DxfEntityData(data), blockName(std::move(blockName)), insertionPoint(insertionPoint), scaleFactor(scaleFactor), rotationAngle(rotationAngle) {}
+
+    std::string blockName;
+    Vector3dd insertionPoint;
+    Vector3dd scaleFactor;
+    double rotationAngle;
 };
 
 } // namespace corecvs
