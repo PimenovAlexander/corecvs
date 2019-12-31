@@ -1,17 +1,19 @@
 //
-// Created by Myasnikov Vladislav on 10/27/19.
+// Created by Myasnikov Vladislav on 27.10.2019.
 //
 
 #ifndef DXF_SUPPORT_DXFENTITY_H
 #define DXF_SUPPORT_DXFENTITY_H
 
 #include <string>
-#include <core/fileformats/dxf_support/dxfDrawingAttrs.h>
+#include "core/fileformats/dxf_support/dxfDrawing.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/fileformats/dxf_support/dxfCodes.h"
 #include "core/fileformats/dxf_support/entities/dxfEntityData.h"
 
 namespace corecvs {
+
+class DxfDrawing;
 
 // Abstract Entity
 class DxfEntity {
@@ -19,13 +21,10 @@ public:
     explicit DxfEntity(DxfEntityData &data)
     : data(data) {}
 
-    virtual ~DxfEntity() { delete &data; }
-
-    virtual void draw(RGB24Buffer * /*buffer*/, DxfDrawingAttrs */*attrs*/) {}
+    virtual void draw(RGB24Buffer */*buffer*/, DxfDrawing */*drawing*/) {}
     virtual void print();
-    virtual std::pair<Vector2dd,Vector2dd> getBoundingBox()
-    {
-        return std::pair<Vector2dd, Vector2dd>();
+    virtual Rectangled getBoundingBox() {
+        return Rectangled();
     }
 
     DxfEntityData &data;
@@ -37,11 +36,9 @@ public:
     explicit DxfLineEntity(DxfLineData &data)
     : DxfEntity(data), data(data) {}
 
-    ~DxfLineEntity() override { delete &data; }
-
-    void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
+    void draw(RGB24Buffer */*buffer*/, DxfDrawing */*drawing*/) override;
     void print() override;
-    std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
+    Rectangled getBoundingBox() override;
 
     DxfLineData &data;
 };
@@ -52,11 +49,9 @@ public:
     explicit DxfLwPolylineEntity(DxfLwPolylineData &data)
     : DxfEntity(data), data(data) {}
 
-    ~DxfLwPolylineEntity() override { delete &data; }
-
-    void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
+    void draw(RGB24Buffer */*buffer*/, DxfDrawing */*drawing*/) override;
     void print() override;
-    std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
+    Rectangled getBoundingBox() override;
 
     DxfLwPolylineData &data;
 };
@@ -67,11 +62,9 @@ public:
     explicit DxfPolylineEntity(DxfPolylineData &data)
     : DxfEntity(data), data(data) {}
 
-    ~DxfPolylineEntity() override { delete &data; }
-
-    void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
+    void draw(RGB24Buffer */*buffer*/, DxfDrawing */*drawing*/) override;
     void print() override;
-    std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
+    Rectangled getBoundingBox() override;
 
     DxfPolylineData &data;
 };
@@ -82,11 +75,9 @@ public:
     explicit DxfCircleEntity(DxfCircleData &data)
     : DxfEntity(data), data(data) {}
 
-    ~DxfCircleEntity() override { delete &data; }
-
-    void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
+    void draw(RGB24Buffer */*buffer*/, DxfDrawing */*drawing*/) override;
     void print() override;
-    std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
+    Rectangled getBoundingBox() override;
 
     DxfCircleData &data;
 };
@@ -97,11 +88,9 @@ public:
     explicit DxfCircularArcEntity(DxfCircularArcData &data)
     : DxfEntity(data), data(data) {}
 
-    ~DxfCircularArcEntity() override { delete &data; }
-
-    void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
+    void draw(RGB24Buffer */*buffer*/, DxfDrawing */*drawing*/) override;
     void print() override;
-    std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
+    Rectangled getBoundingBox() override;
 
     DxfCircularArcData &data;
 };
@@ -112,11 +101,9 @@ public:
     explicit DxfEllipticalArcEntity(DxfEllipticalArcData &data)
     : DxfEntity(data), data(data) {}
 
-    ~DxfEllipticalArcEntity() override { delete &data; }
-
-    void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
+    void draw(RGB24Buffer */*buffer*/, DxfDrawing */*drawing*/) override;
     void print() override;
-    std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
+    Rectangled getBoundingBox() override;
 
     DxfEllipticalArcData &data;
 };
@@ -127,13 +114,24 @@ public:
     explicit DxfPointEntity(DxfPointData &data)
     : DxfEntity(data), data(data) {}
 
-    ~DxfPointEntity() override { delete &data; }
-
-    void draw(RGB24Buffer *buffer, DxfDrawingAttrs *attrs) override;
+    void draw(RGB24Buffer */*buffer*/, DxfDrawing */*drawing*/) override;
     void print() override;
-    std::pair<Vector2dd,Vector2dd> getBoundingBox() override;
+    Rectangled getBoundingBox() override;
 
     DxfPointData &data;
+};
+
+// INSERT Entity
+class DxfBlockReferenceEntity : public DxfEntity {
+public:
+    explicit DxfBlockReferenceEntity(DxfBlockReferenceData &data)
+    : DxfEntity(data), data(data) {}
+
+    void draw(RGB24Buffer */*buffer*/, DxfDrawing */*drawing*/) override;
+    void print() override;
+    Rectangled getBoundingBox() override;
+
+    DxfBlockReferenceData &data;
 };
 
 } // namespace corecvs

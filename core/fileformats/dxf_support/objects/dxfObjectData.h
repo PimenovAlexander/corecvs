@@ -1,5 +1,5 @@
 //
-// Created by Myasnikov Vladislav on 10/29/19.
+// Created by Myasnikov Vladislav on 29.10.2019.
 //
 
 #ifndef DXF_SUPPORT_DXFOBJECTDATA_H
@@ -12,12 +12,13 @@ namespace corecvs {
 // Abstract Object Data
 class DxfObjectData {
 public:
-    DxfObjectData(int handle, std::string name)
-    : handle(handle), name(std::move(name)) {}
+    DxfObjectData(std::string handle, std::string name, std::string ownerDictionaryID)
+    : handle(std::move(handle)), name(std::move(name)), ownerDictionaryID(std::move(ownerDictionaryID)) {}
     DxfObjectData(const DxfObjectData &data) = default;
 
-    int handle;
+    std::string handle;
     std::string name;
+    std::string ownerDictionaryID;
 };
 
 // LAYER Data
@@ -39,6 +40,15 @@ public:
 
     int elementAmount;
     double patternLength;
+};
+
+// BLOCK_RECORD Data
+class DxfBlockRecordData : public DxfObjectData {
+public:
+    DxfBlockRecordData(const DxfObjectData &data, int scalability)
+    : DxfObjectData(data), scalability(scalability) {}
+
+    int scalability;
 };
 
 }

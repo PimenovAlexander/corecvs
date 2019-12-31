@@ -1,5 +1,5 @@
 //
-// Created by Myasnikov Vladislav on 10/17/19.
+// Created by Myasnikov Vladislav on 17.10.2019.
 //
 
 #ifndef DXF_SUPPORT_DXFCODES_H
@@ -14,8 +14,8 @@
 namespace corecvs {
 
 enum class DxfElementType {
-    DXF_LAYER, DXF_LINE_TYPE, DXF_LINE, DXF_LW_POLYLINE, DXF_POLYLINE, DXF_VERTEX, DXF_UNKNOWN_TYPE, DXF_SEQ_END, DXF_CIRCLE,
-    DXF_ARC, DXF_ELLIPSE, DXF_POINT
+    DXF_LAYER, DXF_LINE_TYPE, DXF_BLOCK_RECORD, DXF_LINE, DXF_LW_POLYLINE, DXF_POLYLINE, DXF_VERTEX, DXF_UNKNOWN_TYPE, DXF_SEQ_END, DXF_CIRCLE,
+    DXF_ARC, DXF_ELLIPSE, DXF_POINT, DXF_BLOCK, DXF_END_BLOCK, DXF_INSERT
 };
 
 enum class DxfDrawingUnits {
@@ -46,6 +46,9 @@ public:
     static const int DXF_OBJECT_VISIBILITY_CODE = 60;
     static const int DXF_COLOR_NUMBER_CODE = 62;
     static const int DXF_FLAGS_CODE = 70;
+    static const int DXF_BLOCK_SCALABILITY_CODE = 281;
+    static const int DXF_OWNER_DICTIONARY_HANDLE_CODE = 330;
+    static const int DXF_BLOCK_RECORD_HANDLE_CODE = 330;
 
     static const std::string DXF_LINE_TYPE_NAME_DEFAULT;
     static const int DXF_COLOR_NUMBER_DEFAULT = 256;
@@ -74,10 +77,9 @@ public:
     }
 
     static std::vector<uint8_t> getRGB(int number) {
-        if (AUTOCAD_COLORS.count(number) == 1) {
-            return AUTOCAD_COLORS[number];
-        }
-        return {0,0,0};
+        if (number >= 0 && number <= 255) {
+            return DXF_COLORS[number];
+        } else return DXF_COLORS[0];
     }
 
     static DxfDrawingUnits getDrawingUnits(int value) {
@@ -90,7 +92,7 @@ public:
 private:
     static std::map<std::string, std::vector<int>> VARIABLE_CODES;
     static std::map<std::string, DxfElementType> ELEMENT_TYPES;
-    static std::map<int, std::vector<uint8_t>> AUTOCAD_COLORS;
+    static std::vector<std::vector<uint8_t>> DXF_COLORS;
     static std::map<int, DxfDrawingUnits> DRAWING_UNITS;
     static int CODE_RANGES[27][3];
 };
