@@ -27,11 +27,12 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void setBackground();
+
+private slots:
+    void openGcodeTriggered();
+
 private:
     GcodeHandler *gcodeHandler;
-    void openGcodeTriggered();
-    void gcodeExportTriggered();
-//    void gCodeExportHandler(QString filePath);
     QGraphicsScene *scene;
     Ui::MainWindow *ui;
     QGraphicsScene *background;

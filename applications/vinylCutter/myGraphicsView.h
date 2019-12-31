@@ -35,6 +35,7 @@ public:
     double getBladeOffset();
     double getTouchZ();
     void setUI(Ui::MainWindow *main_ui);
+    void importGcode(QString filePath);
 
 public slots:
     void setXShift(double shift);

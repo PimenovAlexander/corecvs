@@ -20,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     gcodeHandler = GcodeHandler::getInstance();
 
+    connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(openGcodeTriggered()));
+
     this->setBackground();
 }
 
@@ -32,15 +34,8 @@ void MainWindow::openGcodeTriggered() {
                                                     tr("*.gcode"));
 
     if (!filePath.isEmpty()) {
-        return;
+        ui->graphicsView_2->importGcode(filePath);
     }
-}
-
-void MainWindow::gcodeExportTriggered() {
-    QString filePath = QFileDialog::getSaveFileName(this, tr("Save File"), "/home/vinylCutter.gcode",
-                                                    tr("*.gcode"));
-
-//    gCodeExportHandler(filePath);
 }
 
 void MainWindow::setBackground() {
@@ -56,19 +51,3 @@ void MainWindow::setBackground() {
     qDebug() << item->offset();
     item->setOffset(-95, -80);
 }
-
-//void MainWindow::gCodeExportHandler(QString filePath) {
-//    compensator.compensateDragKnife(program, offset, touchZ);
-//
-//    ofstream ofile;
-//    ofile.open(outfile, ios::out);
-//    if (ofile.fail())
-//    {
-//        SYNC_PRINT(("Can't open output gcode file <%s>\n", outfile.c_str()));
-//        return 1;
-//    }
-//
-//    loader.saveGcode(ofile, compensator.result);
-//
-//    ofile.close();
-//}

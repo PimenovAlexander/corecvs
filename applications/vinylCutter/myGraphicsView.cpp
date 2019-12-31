@@ -38,7 +38,6 @@ void MyGraphicsView::dragEnterEvent(QDragEnterEvent *event) {
         QString ext = f.suffix();
 
         if (ext == "gcode") event->acceptProposedAction();
-
     }
 }
 
@@ -57,22 +56,26 @@ void MyGraphicsView::dropEvent(QDropEvent *event) {
             qDebug() << "Too many files. Only the first file will be handled";
         }
         QString filePath = mimeData->urls().at(0).path();
+        importGcode(filePath);
 
-        gcodeHandler->loadGcode(filePath.toStdString());
-        Vector2dd shift = gcodeHandler->applyShift(0.0, 0.0);
-        ui->xShift->setValue(shift.x());
-        ui->yShift->setValue(shift.y());
-        initXShift = shift.x();
-        initYShift = shift.y();
-        gcodeHandler->drawMesh(scene);
-        this->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
-
-        connect(ui->xShift, SIGNAL(valueChanged(double)), this, SLOT(setXShift(double)));
-        connect(ui->yShift, SIGNAL(valueChanged(double)), this, SLOT(setYShift(double)));
-        connect(ui->offset, SIGNAL(valueChanged(double)), this, SLOT(setBladeOffset(double)));
-        connect(ui->touchZ, SIGNAL(valueChanged(double)), this, SLOT(setTouchZ(double)));
-        connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(gcodeExportTriggered()));
     } else qDebug() << "ERROR: Null file url";
+}
+
+void MyGraphicsView::importGcode(QString filePath) {
+    gcodeHandler->loadGcode(filePath.toStdString());
+    Vector2dd shift = gcodeHandler->applyShift(0.0, 0.0);
+    ui->xShift->setValue(shift.x());
+    ui->yShift->setValue(shift.y());
+    initXShift = shift.x();
+    initYShift = shift.y();
+    gcodeHandler->drawMesh(scene);
+    this->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
+
+    connect(ui->xShift, SIGNAL(valueChanged(double)), this, SLOT(setXShift(double)));
+    connect(ui->yShift, SIGNAL(valueChanged(double)), this, SLOT(setYShift(double)));
+    connect(ui->offset, SIGNAL(valueChanged(double)), this, SLOT(setBladeOffset(double)));
+    connect(ui->touchZ, SIGNAL(valueChanged(double)), this, SLOT(setTouchZ(double)));
+    connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(gcodeExportTriggered()));
 }
 
 void MyGraphicsView::setUI(Ui::MainWindow *main_ui) {
