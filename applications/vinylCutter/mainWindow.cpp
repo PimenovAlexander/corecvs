@@ -1,4 +1,5 @@
 #include "mainWindow.h"
+#include <myGraphicsView.h>
 #include "./ui_mainWindow.h"
 #include <QDir>
 
@@ -14,7 +15,12 @@ MainWindow::MainWindow(QWidget *parent)
     background = new QGraphicsScene(ui->graphicsView);
     ui->graphicsView->setScene(background);
 
+    MyGraphicsView *myView = ui->graphicsView_2;
+    myView->setUI(ui);
+
     gcodeHandler = GcodeHandler::getInstance();
+
+    this->setBackground();
 }
 
 MainWindow::~MainWindow() {
@@ -37,8 +43,8 @@ void MainWindow::gcodeExportTriggered() {
 //    gCodeExportHandler(filePath);
 }
 
-void MainWindow::setImage(QString filePath) {
-    filePath = QDir::currentPath() + "/applications/vinylCutter/resources/background.png";
+void MainWindow::setBackground() {
+    QString filePath = QDir::currentPath() + "/applications/vinylCutter/resources/background.png";
 
     qDebug() << filePath;
 

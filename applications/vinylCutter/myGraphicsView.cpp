@@ -7,7 +7,6 @@ using namespace corecvs;
 MyGraphicsView::MyGraphicsView(QWidget *parent)
         : QGraphicsView(parent) {
     scene = new QGraphicsScene(this);
-//    scene->setItemIndexMethod(QGraphicsScene::NoIndex);
     this->setScene(scene);
 
     setCacheMode(CacheBackground);
@@ -23,14 +22,12 @@ MyGraphicsView::MyGraphicsView(QWidget *parent)
     int yImageSize = 0;
     int xImageShift = 0;
     int yImageShift = 0;
-//    setDragMode(QGraphicsView::ScrollHandDrag);
 
     gcodeHandler = GcodeHandler::getInstance();
 }
 
 MyGraphicsView::~MyGraphicsView() {
 }
-
 
 void MyGraphicsView::dragEnterEvent(QDragEnterEvent *event) {
     const QMimeData *mimeData = event->mimeData();
@@ -53,6 +50,8 @@ void MyGraphicsView::dragMoveEvent(QDragMoveEvent *event) {
 void MyGraphicsView::dropEvent(QDropEvent *event) {
     const QMimeData *mimeData = event->mimeData();
     if (mimeData->hasUrls()) {
+        scene->clear();
+
         QList <QUrl> urlList = mimeData->urls();
         if (urlList.size() > 1) {
             qDebug() << "Too many files. Only the first file will be handled";
@@ -60,31 +59,63 @@ void MyGraphicsView::dropEvent(QDropEvent *event) {
         QString filePath = mimeData->urls().at(0).path();
 
         gcodeHandler->loadGcode(filePath.toStdString());
+        Vector2dd shift = gcodeHandler->applyShift(0.0, 0.0);
+        ui->xShift->setValue(shift.x());
+        ui->yShift->setValue(shift.y());
+        initXShift = shift.x();
+        initYShift = shift.y();
         gcodeHandler->drawMesh(scene);
         this->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
+
+        connect(ui->xShift, SIGNAL(valueChanged(double)), this, SLOT(setXShift(double)));
+        connect(ui->yShift, SIGNAL(valueChanged(double)), this, SLOT(setYShift(double)));
+        connect(ui->offset, SIGNAL(valueChanged(double)), this, SLOT(setBladeOffset(double)));
+        connect(ui->touchZ, SIGNAL(valueChanged(double)), this, SLOT(setTouchZ(double)));
+        connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(gcodeExportTriggered()));
     } else qDebug() << "ERROR: Null file url";
 }
 
-void MyGraphicsView::setXShift(int shift) {
+void MyGraphicsView::setUI(Ui::MainWindow *main_ui) {
+    ui = main_ui;
+}
+
+void MyGraphicsView::setXShift(double shift) {
     xImageShift = shift;
 }
 
-void MyGraphicsView::setYShift(int shift) {
+void MyGraphicsView::setYShift(double shift) {
     yImageShift = shift;
 }
 
-int MyGraphicsView::getXShift() {
+double MyGraphicsView::getXShift() {
     return xImageShift;
 }
 
-int MyGraphicsView::getYShift() {
+double MyGraphicsView::getYShift() {
     return yImageShift;
 }
 
-int MyGraphicsView::getXSize() {
-    return xImageSize;
+void MyGraphicsView::setBladeOffset(double val) {
+    bladeOffset = val;
 }
 
-int MyGraphicsView::getYSize() {
-    return yImageSize;
+void MyGraphicsView::setTouchZ(double val) {
+    touchZ = val;
+}
+
+double MyGraphicsView::getBladeOffset() {
+    return bladeOffset;
+}
+
+double MyGraphicsView::getTouchZ() {
+    return touchZ;
+}
+
+void MyGraphicsView::gcodeExportTriggered() {
+    gcodeHandler->applyShift(xImageShift - initXShift, yImageShift - initYShift);
+    gcodeHandler->compensateDragKnife(bladeOffset, touchZ);
+
+    QString filePath = QFileDialog::getSaveFileName(this, tr("Save File"), "/home/vinylCutter.gcode",
+                                                    tr("*.gcode"));
+    gcodeHandler->saveGcode(filePath.toStdString());
 }

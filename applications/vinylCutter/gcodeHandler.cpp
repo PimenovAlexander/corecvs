@@ -1,5 +1,6 @@
 #include <gcodeHandler.h>
 #include <gcodeToSceneInterpreter.h>
+#include <QDebug>
 
 
 GcodeHandler::GcodeHandler() {}
@@ -37,10 +38,15 @@ void GcodeHandler::loadGcode(std::string filePath) {
     loader.loadGcode(file, program);
 }
 
-void GcodeHandler::applyShift(double xShift, double yShift) {
+Vector2dd GcodeHandler::applyShift(double xShift, double yShift) {
     GcodeTransformer transformer(xShift, yShift);
     transformer.executeProgram(program);
     program = transformer.result;
+
+    Vector2dd shift;
+    shift.x() = transformer.initXShift;
+    shift.y() = transformer.initYShift;
+    return shift;
 }
 
 void GcodeHandler::compensateDragKnife(double offset, double touchZ) {
@@ -62,12 +68,22 @@ void GcodeHandler::saveGcode(std::string filePath) {
 bool GcodeHandler::GcodeTransformer::gcodeHook(const corecvs::GCodeProgram::Code &c) {
     corecvs::GCodeProgram::Code code = c;
 
-    if (code.hasParameter('x') && code.hasParameter('y')) {
-        double xVal = code.getParameter('x');
-        double yVal = code.getParameter('y');
+    if ((code.area == 'm') && (code.number == 5)) gcodeEndFlag = true;
 
-        code.setParameter('x', xVal + xShift);
-        code.setParameter('y', yVal + yShift);
+    if (not gcodeEndFlag) {
+        if (code.hasParameter('x')) {
+            double xVal = code.getParameter('x');
+            code.setParameter('x', xVal + xShift);
+            xVal = code.getParameter('x');
+            if (initXShift > xVal) initXShift = xVal;
+        }
+
+        if (code.hasParameter('y')) {
+            double yVal = code.getParameter('y');
+            code.setParameter('y', yVal + yShift);
+            yVal = code.getParameter('y');
+            if (yVal < initYShift) initYShift = yVal;
+        }
     }
 
     result.program.push_back(code);
@@ -75,4 +91,5 @@ bool GcodeHandler::GcodeTransformer::gcodeHook(const corecvs::GCodeProgram::Code
 }
 
 GcodeHandler::GcodeTransformer::GcodeTransformer(double xShift, double yShift) : xShift(xShift),
-                                                                                 yShift(yShift) {};
+                                                                                 yShift(yShift),
+                                                                                 gcodeEndFlag(false) {};

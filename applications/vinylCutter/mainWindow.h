@@ -26,9 +26,7 @@ class MainWindow : public QMainWindow {
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    void setImage(QString filePath);
-private slots:
-
+    void setBackground();
 private:
     GcodeHandler *gcodeHandler;
     void openGcodeTriggered();
@@ -37,6 +35,7 @@ private:
     QGraphicsScene *scene;
     Ui::MainWindow *ui;
     QGraphicsScene *background;
+
 };
 
 

@@ -89,6 +89,9 @@
     <property name="horizontalScrollBarPolicy">
      <enum>Qt::ScrollBarAlwaysOff</enum>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+    </property>
    </widget>
    <widget class="QDoubleSpinBox" name="xShift">
     <property name="geometry">

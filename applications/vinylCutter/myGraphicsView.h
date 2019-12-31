@@ -4,6 +4,7 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
+#include <QMainWindow>
 #include <QDebug>
 #include <QDragEnterEvent>
 #include <QDropEvent>
@@ -18,6 +19,9 @@
 #include <core/fileformats/gcodeLoader.h>
 
 
+
+namespace Ui { class MyGraphicsView; class MainWindow; }
+
 class MyGraphicsView : public QGraphicsView
 {
 	Q_OBJECT
@@ -26,14 +30,21 @@ public:
 	MyGraphicsView(QWidget *parent = nullptr);
 	~MyGraphicsView();
     void setImage(QImage image);
-    int getXSize();
-    int getYSize();
-    int getXShift();
-    int getYShift();
-    void setXShift(int shift);
-    void setYShift(int shift);
+    double getXShift();
+    double getYShift();
+    double getBladeOffset();
+    double getTouchZ();
+    void setUI(Ui::MainWindow *main_ui);
+
+public slots:
+    void setXShift(double shift);
+    void setYShift(double shift);;
+    void setBladeOffset(double val);;
+    void setTouchZ(double val);
+    void gcodeExportTriggered();
 
 private:
+    Ui::MainWindow *ui;
     GcodeHandler *gcodeHandler;
     QWidget *parent = nullptr;
     bool isResized;
@@ -44,8 +55,10 @@ private:
     void dragMoveEvent(QDragMoveEvent *event);
     QPixmap image;
     QGraphicsPixmapItem *pixmap;
-    int xImageSize;
-    int yImageSize;
-    int xImageShift;
-    int yImageShift;
+    double xImageShift;
+    double yImageShift;
+    double bladeOffset;
+    double touchZ;
+    double initXShift = 0;
+    double initYShift = 0;
 };

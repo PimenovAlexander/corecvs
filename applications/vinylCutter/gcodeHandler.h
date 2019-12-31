@@ -2,10 +2,11 @@
 #define CORECVS_GCODEHANDLER_H
 
 #include <fstream>
+#include <cfloat>
+#include <vector>
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
-#include <QDebug>
 
 #include "core/geometry/mesh3d.h"
 #include "core/fileformats/gcodeLoader.h"
@@ -17,12 +18,15 @@ class GcodeHandler {
     class GcodeTransformer : public GCodeInterpreter {
     public:
         bool gcodeHook(const GCodeProgram::Code &c);
+        double initXShift = DBL_MAX;
+        double initYShift = DBL_MAX;
         GCodeProgram result;
 
         GcodeTransformer(double xShift, double yShift);
     private:
         double xShift = 0;
         double yShift = 0;
+        bool gcodeEndFlag = false;
     };
 
 public:
@@ -30,7 +34,7 @@ public:
     static GcodeHandler *getInstance();
     void loadGcode(std::string filePath);
     void saveGcode(std::string filePath);
-    void applyShift(double xShift, double yShift);
+    Vector2dd applyShift(double xShift, double yShift);
     void compensateDragKnife(double offset, double touchZ);
 
 private:
