@@ -95,6 +95,27 @@ if (DISFLOW_FOUND)
     )
 endif()
 
+
+set (USE_PCAFLOW ON)
+if (USE_PCAFLOW)
+
+    set (HDR_FILES
+        ${HDR_FILES}
+        ${CMAKE_CURRENT_LIST_DIR}/PCAFlow/PCAFlowProcessor.h
+    )
+
+    set (SRC_FILES
+        ${SRC_FILES}
+        ${CMAKE_CURRENT_LIST_DIR}/PCAFlow/PCAFlowProcessor.cpp
+    )
+
+    include_directories(PUBLIC ${CMAKE_CURRENT_LIST_DIR}/PCAFlow)
+
+endif()
+
+
+
+
 include_directories(${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_LIST_DIR}/patternDetect)
 include_directories(PUBLIC ${OpenCV_INCLUDE_DIRS})
 link_libraries(${MODULE_NAME} ${OpenCV_LIBS})

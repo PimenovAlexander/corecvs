@@ -3,44 +3,45 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
 project (corecvs)
 
 set (CORE_SUBMODULES
-    alignment
-    assignment
-    automotive
-    boosting
-    buffers
-    cammodel
-    fileformats
-    filesystem
-    framesources
-    filters
-    function
-    geometry
-    kalman
-    kltflow
-    math
-    meta
-    meanshift
-    rectification
-    reflection
-    segmentation
-    stats
-    tbbwrapper
-    utils
-    clustering3d
-    patterndetection
-    cameracalibration
-    polynomial
-    camerafixture
-    iterative
-    stereointerface
-    tinyxml2
-    xml/generated 
-)
+        alignment
+        assignment
+        automotive
+        boosting
+        buffers
+        cammodel
+        fileformats
+        filesystem
+        framesources
+        filters
+        function
+        geometry
+        kalman
+        kltflow
+        math
+        meta
+        meanshift
+        rectification
+        reflection
+        segmentation
+        stats
+        tbbwrapper
+        utils
+        clustering3d
+        patterndetection
+        cameracalibration
+        polynomial
+        camerafixture
+        iterative
+        stereointerface
+        tinyxml2
+        xml/generated
+    )
 
 set ( ADDITIONAL_MODULES
-#    placer
-    delaunay
-    joystick)
+        #    placer
+        delaunay
+        joystick
+    )
 
 message(STATUS "Core will use ${CORE_SUBMODULES} and ${ADDITIONAL_MODULES}")
 
@@ -57,7 +58,7 @@ if (OpenBLAS_LIB)
     message("Core: Would use OpenBLAS adding <${OpenBLAS_LIB}> to dependancies")
     message("Core: Would use Lapacke  adding <${Lapacke_LIB}> to dependancies")
     include_directories (${OpenBLAS_INCLUDE_DIR} ${Lapacke_INCLUDE_DIR})
-    target_link_libraries(corecvs ${OpenBLAS_LIB} ${Lapacke_LIB})    
+    target_link_libraries(corecvs ${OpenBLAS_LIB} ${Lapacke_LIB})
 endif()
 
 if (TBB_LIBRARY)
@@ -87,3 +88,4 @@ set(ADD_SRC_FILES ${ADD_SRC_FILES} ${CUR_ADD_SRC_FILES})
 
 target_sources(corecvs PRIVATE ${ADD_SRC_FILES})
 set_source_files_properties(${ADD_SRC_FILES} PROPERTIES EXTERNAL_OBJECT true HEADER_FILE_ONLY TRUE)
+
