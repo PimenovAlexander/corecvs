@@ -702,7 +702,7 @@
   <customwidget>
    <class>RgbColorParametersControlWidget</class>
    <extends>QWidget</extends>
-   <header location="global">rgbColorParametersControlWidget.h</header>
+   <header location="global">corestructs/coreWidgets/rgbColorParametersControlWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -12,7 +12,7 @@
 
 #include "core/math/matrix/matrix44.h"
 #include "generated/draw3dParameters.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 class CloudViewDialog;
 

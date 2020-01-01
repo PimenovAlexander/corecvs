@@ -3,13 +3,13 @@
 
 #include <QWidget>
 
-#include "core/math/vector/vector2d.h"
-#include "core/math/vector/vector3d.h"
-#include "calibrationFeaturesWidget.h"
-#include "core/alignment/selectableGeometryFeatures.h"
+#include "math/vector/vector2d.h"
+#include "math/vector/vector3d.h"
+#include "calibrationFeaturesWidget.h" //???
+#include "alignment/selectableGeometryFeatures.h"
 
-#include "advancedImageWidget.h"
-#include "observationListModel.h"
+#include "uis/advancedImageWidget.h"
+#include "widgets/observationListModel.h"
 
 using corecvs::Vector2dd;
 using corecvs::Vector3dd;

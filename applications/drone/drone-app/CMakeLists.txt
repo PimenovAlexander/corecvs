@@ -1,12 +1,31 @@
-project (drone-app)
+cmake_minimum_required(VERSION 3.11)
+init_project(PROJECT_NAME drone-app)
 
+find_package(Qt5 COMPONENTS REQUIRED Gui)
 
-set (SRC_FILES
+set(SOURCES_FILE
     mainDrone.cpp
-)
+    )
 
-add_executable(drone-app  mainDrone.cpp)
+set(SOURCES
+    ${SOURCES_FILE}
+    )
 
-target_link_libraries(drone-app  drone-ui drone-core cvs_utils corecvs pthread)
-target_include_directories(drone-app PUBLIC ${drone-ui_SOURCE_DIR} ${drone-core_SOURCE_DIR} ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} .)
+add_executable(${PROJECT_NAME}
+    ${SOURCES}
+    )
 
+target_link_libraries(${PROJECT_NAME}
+    drone-ui
+    drone-core
+    corecvs_utils
+    corecvs
+    pthread
+    Qt5::Gui
+    OPENCVwrapper
+    )
+
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+    FOLDER "${MODULE_NAME}/drone"
+    )

@@ -1,5 +1,4 @@
-
-set(TEST_SUBDIRECTORIES
+set(SUBDIRECTORIES
    #base
    #cloudview
    drone
@@ -13,9 +12,9 @@ set(TEST_SUBDIRECTORIES
    #robodetect
    #scanner
    #testbed
-)
+    )
 
-foreach(test_subdirectory ${TEST_SUBDIRECTORIES})
-    message(STATUS "adding subdirectory test/${test_subdirectory}")
-    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/${test_subdirectory})
-endforeach(test_subdirectory)
+foreach(subdirectory ${SUBDIRECTORIES})
+    message(STATUS "adding subdirectory/${subdirectory}")
+    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/${subdirectory})
+endforeach(subdirectory)

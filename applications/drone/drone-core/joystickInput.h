@@ -2,7 +2,7 @@
 #define JOYSTICKINPUT_H
 //#include "controllrecord.h"
 
-#include <linux/joystick.h>
+//#include <linux/joystick.h>
 #include <fcntl.h>
 #include "copterInputs.h"
 #include <mutex>

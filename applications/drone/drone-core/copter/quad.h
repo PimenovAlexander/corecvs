@@ -3,13 +3,13 @@
 
 #include <vector>
 
-#include <core/cameracalibration/cameraModel.h>
-#include "core/cameracalibration/calibrationDrawHelpers.h"
-#include "core/geometry/mesh3d.h"
-#include "core/math/affine.h"
-#include "core/math/vector/vector3d.h"
+#include <cameracalibration/cameraModel.h>
+#include "cameracalibration/calibrationDrawHelpers.h"
+#include "geometry/mesh3d.h"
+#include "math/affine.h"
+#include "math/vector/vector3d.h"
 
-#include "simObject.h"
+#include "simulation/simObject.h"
 #include "copterInputs.h"
 #include "xml/generated/flightControllerParameters.h"
 

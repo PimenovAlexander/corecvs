@@ -1,25 +1,44 @@
-project (Adoptcolor)
+cmake_minimum_required(VERSION 3.11)
+set(MODULE_NAME test)
+init_project(PROJECT_NAME Adoptcolor)
 
-
-set (FILELOADER_NAME adoptcolor )
-
-set (SRC_FILES
+set(SOURCE_FILE
     main_adoptcolor.cpp
-)
+    )
+
+set(SOURCES
+    ${SOURCE_FILE}
+    )
+
+assign_source_group(${SOURCES})
+
+add_executable(${PROJECT_NAME}
+    ${SOURCES}
+    )
+
+set(ADDITIONAL_LIBS)
 
 if (PNG_LIB)
-    message ("Adoptcolor would use LibPng")
-    include(../../wrappers/libpng/sourcelist.cmake)    
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        PNGwrapper
+        )
 endif()
-    
+
 if (JPEG_LIB)
-    message ("Adoptcolor would use LibJpeg")
-    include(../../wrappers/libjpeg/sourcelist.cmake)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        LIBJPEGwrapper
+        )
 endif()
 
-add_executable(${FILELOADER_NAME} ${SRC_FILES} ${HDR_FILES})
+target_link_libraries(${PROJECT_NAME}
+    stdc++fs 
+    corecvs
+    ${ADDITIONAL_LIBS}
+    )
 
-
-target_link_libraries(${FILELOADER_NAME} ${LIBS} stdc++fs corecvs)
-
-
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+    FOLDER "${MODULE_NAME}"
+    )

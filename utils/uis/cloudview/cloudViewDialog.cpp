@@ -1,20 +1,20 @@
 #include <fstream>
-#include <gCodeScene.h>
-#include <helper3DScenes.h>
+#include <3d/gCodeScene.h>
+#include <3d/helper3DScenes.h>
 #include <sstream>
 #include <QtCore/QDebug>
 
 #include "cloudViewDialog.h"
 #include "opengl/openGLTools.h"
 #include "3d/mesh3DScene.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "qSettingsSetter.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "visitors/qSettingsSetter.h"
 
-#include "core/fileformats/meshLoader.h"
-#include "core/fileformats/objLoader.h"
+#include "fileformats/meshLoader.h"
+#include "fileformats/objLoader.h"
 
 
-#include "sceneShaded.h"
+#include "3d/sceneShaded.h"
 
 // FIXIT: GOOPEN
 //#include "../../../restricted/applications/vimouse/faceDetection/faceMesh.h"

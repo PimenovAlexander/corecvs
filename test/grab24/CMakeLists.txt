@@ -1,14 +1,28 @@
-project (Grab24)
+cmake_minimum_required(VERSION 3.11)
+set(MODULE_NAME test)
+init_project(PROJECT_NAME grab24)
 
-
-set (NAME grab24 )
-
-set (SRC_FILES
+set(SOURCE_FILE
     main_grab24.cpp
-)
+    )
 
-add_executable(${NAME} ${SRC_FILES})
+set(SOURCES
+    ${SOURCE_FILE}
+    )
 
-target_link_libraries(${NAME} cvs_utils corecvs pthread ${LIBS})
-target_include_directories(${NAME} PUBLIC ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} .)
+assign_source_group(${SOURCES})
 
+add_executable(${PROJECT_NAME}
+    ${SOURCES}
+    )
+
+target_link_libraries(${PROJECT_NAME}
+    corecvs
+    cvs_utils
+    pthread
+    )
+
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+    FOLDER "${MODULE_NAME}"
+    )

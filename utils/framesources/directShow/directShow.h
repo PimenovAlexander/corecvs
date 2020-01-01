@@ -4,10 +4,10 @@
 
 #include "core/utils/global.h"
 
-#include "core/framesources/imageCaptureInterface.h"
-#include "core/framesources/cameraControlParameters.h" // CameraParameters
+#include "framesources/imageCaptureInterface.h"
+#include "framesources/cameraControlParameters.h" // CameraParameters
 
-#include "capdll.h" // DSCapDeviceId, CAPTURE_FORMAT_TYPE
+#include "../../../wrappers/directShow/lib64/capdll.h" // DSCapDeviceId, CAPTURE_FORMAT_TYPE
 
 class DirectShowCameraDescriptor
 {

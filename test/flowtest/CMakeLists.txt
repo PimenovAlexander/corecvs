@@ -1,20 +1,37 @@
-project (Flowtest)
+cmake_minimum_required(VERSION 3.11)
+set(MODULE_NAME test)
+init_project(PROJECT_NAME Flowtest)
 
-
-set (FLOWTEST_NAME flowtest )
-
-set (SRC_FILES
+set(SOURCE_FILE
     main_flowtest.cpp
-)
+    )
+
+set(SOURCES
+    ${SOURCE_FILE}
+    )
+
+assign_source_group(${SOURCES})
+
+add_executable(${PROJECT_NAME}
+    ${SOURCES}
+    )
+
+set(ADDITIONAL_LIBS)
 
 if (OpenCV_LIBS)
-include(../../wrappers/opencv/sourcelist.cmake)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        OPENCVwrapper
+        )
 endif()
 
-add_executable(${FLOWTEST_NAME} ${SRC_FILES} ${HDR_FILES})
+target_link_libraries(${PROJECT_NAME}
+    stdc++fs
+    corecvs
+    ${ADDITIONAL_LIBS}
+    )
 
-target_link_libraries(${FLOWTEST_NAME} stdc++fs corecvs)
-
-
-
-
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+    FOLDER "${MODULE_NAME}"
+    )

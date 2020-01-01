@@ -1,16 +1,16 @@
 #ifndef JANIBEKOVSBOLT_H
 #define JANIBEKOVSBOLT_H
-#include <physMainObject.h>
-#include "core/geometry/mesh3d.h"
+#include <simulation/physMainObject.h>
+#include "geometry/mesh3d.h"
 #include <copterInputs.h>
 #include <vector>
 
-#include <core/cameracalibration/cameraModel.h>
-#include "core/cameracalibration/calibrationDrawHelpers.h"
-#include "core/math/affine.h"
-#include "core/math/vector/vector3d.h"
+#include <cameracalibration/cameraModel.h>
+#include "cameracalibration/calibrationDrawHelpers.h"
+#include "math/affine.h"
+#include "math/vector/vector3d.h"
 
-#include "physSphere.h"
+#include "simulation/physSphere.h"
 
 class DzhanibekovBolt : public PhysMainObject
 {

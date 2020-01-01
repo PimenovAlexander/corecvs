@@ -4,7 +4,7 @@
  * \date Mar 1, 2013
  **/
 
-#include "core/reflection/reflection.h"
+#include "reflection/reflection.h"
 
 #include "treeSceneController.h"
 

@@ -1,5 +1,5 @@
 #include "observationListModel.h"
-#include "pointListEditImageWidget.h" /* We can circunavigate this dependacy*/
+#include "distortioncorrector/pointListEditImageWidget.h" /* We can circunavigate this dependacy*/
 
 /* Model */
 

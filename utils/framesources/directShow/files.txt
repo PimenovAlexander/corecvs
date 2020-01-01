@@ -1,0 +1,7 @@
+framesources/directShow/directShow.cpp
+framesources/directShow/directShowCapture.cpp
+framesources/directShow/directShowCaptureDecouple.cpp
+framesources/directShow/directShow.h
+framesources/directShow/directShowCapture.h
+framesources/directShow/directShowCaptureDecouple.h
+files.txt

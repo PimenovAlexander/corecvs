@@ -10,8 +10,8 @@
 #include "core/utils/global.h"
 
 #include "scene3D.h"
-#include "cloudViewDialog.h"
-#include "core/fileformats/plyLoader.h"
+#include "uis/cloudview/cloudViewDialog.h"
+#include "fileformats/plyLoader.h"
 #include "generated/draw3dParameters.h"
 #include "draw3dParametersControlWidget.h"
 #include "draw3dCameraParametersControlWidget.h"

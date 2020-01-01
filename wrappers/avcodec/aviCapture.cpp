@@ -1,7 +1,7 @@
 /**
  * \brief Capture video stream from avi file using avcodec library
  */
-#include "core/utils/preciseTimer.h"
+#include "../../core/utils/preciseTimer.h" //from core/utils
 
 #include "aviCapture.h"
 

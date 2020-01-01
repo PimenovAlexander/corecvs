@@ -3,8 +3,8 @@
 
 #include <QObject>
 
-#include "advancedImageWidget.h"
-#include "observationListModel.h"
+#include "uis/advancedImageWidget.h"
+#include "widgets/observationListModel.h"
 
 
 /**

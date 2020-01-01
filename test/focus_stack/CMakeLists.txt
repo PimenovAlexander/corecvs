@@ -1,19 +1,40 @@
-project (FocusStack)
+cmake_minimum_required(VERSION 3.11)
+set(MODULE_NAME test)
+init_project(PROJECT_NAME FocusStack)
 
-set (FOCUS_STACK_NAME focus_stack )
-
-set (SRC_FILES
-    imageStack.cpp 
-    laplacianStacking.cpp 
-    main.cpp
-)
-
-set (HDR_FILES
-    FSAlgorithm.h 
-    imageStack.h 
+set(PRIVATE_HEADER_FILES
+    FSAlgorithm.h
+    imageStack.h
     laplacianStacking.h
-)
+    )
 
-add_executable(${FOCUS_STACK_NAME} ${SRC_FILES} ${HDR_FILES})
+set(HEADERS
+    ${PRIVATE_HEADER_FILES}
+    )
 
-target_link_libraries(${FOCUS_STACK_NAME} stdc++fs corecvs)
+set(SOURCE_FILES
+    imageStack.cpp
+    laplacianStacking.cpp
+    main.cpp
+    )
+
+set(SOURCES
+    ${SOURCE_FILES}
+    )
+
+assign_source_group(${HEADERS} ${SOURCES})
+
+add_executable(${PROJECT_NAME}
+    ${HEADERS}
+    ${SOURCES}
+    )
+
+target_link_libraries(${PROJECT_NAME}
+    stdc++fs 
+    corecvs
+    )
+
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+    FOLDER "${MODULE_NAME}"
+    )

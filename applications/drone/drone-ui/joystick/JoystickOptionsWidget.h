@@ -6,7 +6,7 @@
 
 #include <QWidget>
 
-#include <core/joystick/playbackJoystickInterface.h>
+#include <joystick/playbackJoystickInterface.h>
 
 namespace Ui {
 class JoystickOptionsWidget;

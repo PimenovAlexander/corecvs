@@ -9,13 +9,13 @@
 #include "draw3dCameraParametersControlWidget.h"
 #include "ui_draw3dCameraParametersControlWidget.h"
 #include <memory>
-#include "qSettingsGetter.h"
-#include "qSettingsSetter.h"
+#include "visitors/qSettingsGetter.h"
+#include "visitors/qSettingsSetter.h"
 
-#include "rgbColorParametersControlWidget.h"
-#include "rgbColorParametersControlWidget.h"
-#include "rgbColorParametersControlWidget.h"
-#include "rgbColorParametersControlWidget.h"
+#include "corestructs/coreWidgets/rgbColorParametersControlWidget.h"
+#include "corestructs/coreWidgets/rgbColorParametersControlWidget.h"
+#include "corestructs/coreWidgets/rgbColorParametersControlWidget.h"
+#include "corestructs/coreWidgets/rgbColorParametersControlWidget.h"
 
 Draw3dCameraParametersControlWidget::Draw3dCameraParametersControlWidget(QWidget *parent, bool _autoInit, QString _rootPath)
     : ParametersControlWidgetBase(parent)

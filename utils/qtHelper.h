@@ -17,12 +17,12 @@
 #include <QFileInfo>
 #include <QDir>
 
-#include "core/math/vector/vector2d.h"
-#include "core/math/vector/vector3d.h"
-#include "core/geometry/rectangle.h"
-#include "core/math/matrix/matrix33.h"
+#include "math/vector/vector2d.h"
+#include "math/vector/vector3d.h"
+#include "geometry/rectangle.h"
+#include "math/matrix/matrix33.h"
 
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 using corecvs::Vector2d;
 using corecvs::Vector2d32;

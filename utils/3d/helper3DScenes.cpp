@@ -1,6 +1,6 @@
 #include "helper3DScenes.h"
 
-#include <openGLTools.h>
+#include <opengl/openGLTools.h>
 
 const int Grid3DScene::GRID_SIZE = 5;
 const int Grid3DScene::GRID_STEP = 250;

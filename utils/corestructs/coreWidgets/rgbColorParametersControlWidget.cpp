@@ -13,7 +13,7 @@
 #include "qSettingsSetter.h"
 
 
-RgbColorParametersControlWidget::RgbColorParametersControlWidget(QWidget *parent, bool _autoInit, QString _rootPath)
+corestructs/coreWidgets/RgbColorParametersControlWidget::corestructs/coreWidgets/RgbColorParametersControlWidget(QWidget *parent, bool _autoInit, QString _rootPath)
     : ParametersControlWidgetBase(parent)
     , mUi(new Ui::RgbColorParametersControlWidget)
     , autoInit(_autoInit)

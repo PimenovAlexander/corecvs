@@ -1,10 +1,20 @@
-cmake_minimum_required (VERSION 3.10)
+cmake_minimum_required (VERSION 3.11)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 project (CoreCVS)
 
 set (CoreCVS_VERSION_MAJOR 1)
 set (CoreCVS_VERSION_MINOR 0)
 
+
+set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/Modules/")
+
+include(cmake/functions.cmake)
+include(cmake/utility.cmake)
+
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Overall dependances
 option(USE_TBB "Should compile with TBB" YES)
@@ -15,7 +25,6 @@ IF ( USE_TBB )
         add_definitions(-DWITH_TBB)
     endif()
 ENDIF ()
-
 
 #option(USE_TBB "Should compile with FILESYSTEM" YES)
 #IF ( USE_TBB )
@@ -59,15 +68,13 @@ IF ( USE_LIBJPEG )
     find_package( Jpeg )
 ENDIF ()
 
-
 option(USE_AVCODEC "Should compile with AVCODEC" YES)
 IF ( USE_AVCODEC )
     MESSAGE( STATUS "Including AVCODEC wherever possible" )
-    find_package( AVCodec )    
+    find_package( AVCodec )
 ELSE()
     MESSAGE( STATUS "Including AVCODEC requested, but libaray not found" )
 ENDIF ()
-
 
 ###
 #
@@ -75,9 +82,7 @@ ENDIF ()
 
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -g")
 
-
 include(cmake/CMakeCpuOptions.cmake)
-
 
 ###
 #
@@ -96,9 +101,8 @@ add_subdirectory(utils)
 add_subdirectory(test)
 add_subdirectory(applications)
 add_subdirectory(tools)
-
+add_subdirectory(wrappers)
 
 enable_testing()
 add_subdirectory(test-core)
 add_subdirectory(test-core/-perf)
-

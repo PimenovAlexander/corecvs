@@ -11,12 +11,12 @@
 #include <QtCore/QMutex>
 #include <string>
 
-#include "core/utils/global.h"
+#include "../../core/utils/global.h"
 
-#include "core/utils/preciseTimer.h"
-#include "core/framesources/imageCaptureInterface.h"
-#include "core/framesources/cameraControlParameters.h"
-#include "core/framesources/decoders/decoupleYUYV.h"
+#include "../../core/utils/preciseTimer.h"
+#include "framesources/imageCaptureInterface.h"
+#include "framesources/cameraControlParameters.h"
+#include "framesources/decoders/decoupleYUYV.h"
 #include "V4L2Capture.h"
 #include "V4L2.h"
 

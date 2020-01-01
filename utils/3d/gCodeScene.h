@@ -12,14 +12,14 @@
 
 #include "scene3D.h"
 #include "sceneShaded.h"
-#include "cloudViewDialog.h"
-#include "core/fileformats/gcodeLoader.h"
+#include "uis/cloudview/cloudViewDialog.h"
+#include "fileformats/gcodeLoader.h"
 #include "generated/draw3dParameters.h"
 #include "draw3dParametersControlWidget.h"
 #include "draw3dCameraParametersControlWidget.h"
 #include "core/xml/generated/drawGCodeParameters.h"
 
-#include "reflectionWidget.h"
+#include "corestructs/reflectionWidget.h"
 
 class GCodeScene : public SceneShaded {
 

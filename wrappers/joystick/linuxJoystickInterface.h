@@ -5,7 +5,7 @@
 #include <string>
 #include <mutex>
 
-#include <core/joystick/joystickInterface.h>
+#include <joystick/joystickInterface.h>
 
 namespace std {
     class thread;

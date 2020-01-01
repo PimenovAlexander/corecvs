@@ -2,7 +2,7 @@
 #include <QWidget>
 #include "generated/graphPlotParameters.h"
 #include "ui_graphPlotParametersControlWidget.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 namespace Ui {
     class GraphPlotParametersControlWidget;

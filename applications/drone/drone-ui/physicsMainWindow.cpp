@@ -1,4 +1,4 @@
-#include "calibrationWidget.h"
+#include "calibration/calibrationWidget.h"
 #include "physicsMainWindow.h"
 #include "ui_physicsMainWindow.h"
 

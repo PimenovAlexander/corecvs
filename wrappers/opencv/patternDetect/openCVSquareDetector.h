@@ -3,12 +3,12 @@
 
 #include <vector>
 
-#include <core/patterndetection/patternDetector.h>
+#include <patterndetection/patternDetector.h>
 
-#include <core/stats/calculationStats.h>
-#include <core/buffers/rgb24/rgb24Buffer.h>
+#include <stats/calculationStats.h>
+#include <buffers/rgb24/rgb24Buffer.h>
 #include <opencv2/core/mat.hpp>
-#include "../generated/openCVSquareDetectorParameters.h"
+#include "generated/openCVSquareDetectorParameters.h"
 
 
 class OpenCVSquareDetector : public corecvs::PatternDetector

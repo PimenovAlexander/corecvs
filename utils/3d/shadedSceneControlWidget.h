@@ -1,7 +1,7 @@
 #ifndef SHADEDSCENECONTROLWIDGET_H
 #define SHADEDSCENECONTROLWIDGET_H
 
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 #include "draw3dParametersControlWidget.h"
 
 #include <QWidget>

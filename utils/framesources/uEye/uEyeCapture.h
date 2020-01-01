@@ -17,8 +17,8 @@
 #include "core/utils/global.h"
 
 #include "uEyeCameraDescriptor.h"
-#include "core/framesources/cameraControlParameters.h"
-#include "core/framesources/imageCaptureInterface.h"
+#include "framesources/cameraControlParameters.h"
+#include "framesources/imageCaptureInterface.h"
 #include "core/utils/preciseTimer.h"
 
 

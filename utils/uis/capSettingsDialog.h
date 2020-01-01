@@ -5,11 +5,11 @@
 #include <QtCore/QMap>
 #include <QWidget>
 
-#include "core/framesources/cameraControlParameters.h"
-#include "core/framesources/imageCaptureInterface.h"
+#include "framesources/cameraControlParameters.h"
+#include "framesources/imageCaptureInterface.h"
 #include "ui_capSettingsDialog.h"
-#include "parameterSlider.h"
-#include "parametersControlWidgetBase.h"
+#include "widgets/parameterSlider.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 
 namespace Ui {

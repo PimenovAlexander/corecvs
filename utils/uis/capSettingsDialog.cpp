@@ -1,6 +1,6 @@
 #include "capSettingsDialog.h"
-#include "parameterSelector.h"
-#include "core/utils/log.h"
+#include "widgets/parameterSelector.h"
+#include "utils/log.h"
 
 #include <QMessageBox>
 #include <QtCore/QSettings>

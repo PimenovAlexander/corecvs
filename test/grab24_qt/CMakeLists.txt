@@ -1,24 +1,40 @@
-project (Grab24_qt)
+cmake_minimum_required(VERSION 3.11)
+set(MODULE_NAME test)
+init_project(PROJECT_NAME Grab24_qt)
 
-
-set (NAME grab24_qt )
-
-set (SRC_FILES
-    main_grab24_qt.cpp    
-)
-
-set (HDR_FILES
+set(PRIVATE_HEADER_FILE
     main_grab24_qt.h
-)
+    )
 
+set(HEADERS
+    ${PRIVATE_HEADER_FILE}
+    )
 
-add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
+set(SOURCE_FILE
+    main_grab24_qt.cpp
+    )
 
-set(CMAKE_INCLUDE_CURRENT_DIR "YES")
-set(CMAKE_AUTOMOC "YES")
-set(CMAKE_AUTOUIC "YES")
-set(CMAKE_AUTORCC "YES")
+set(SOURCES
+    ${SOURCE_FILE}
+    )
 
-target_link_libraries(${NAME} cvs_utils corecvs pthread ${LIBS})
-target_include_directories(${NAME} PUBLIC ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} .)
+assign_source_group(${HEADERS} ${SOURCES})
 
+add_executable(${PROJECT_NAME}
+    ${HEADERS}
+    ${SOURCES}
+    )
+
+target_link_libraries(${PROJECT_NAME}
+    cvs_utils
+    pthread
+    corecvs
+    )
+
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+    AUTOMOC "TRUE"
+    AUTOUIC "TRUE"
+    AUTORCC "TRUE"
+    FOLDER "${MODULE_NAME}"
+    )

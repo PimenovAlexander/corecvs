@@ -1,7 +1,7 @@
 #include "imageForCalibrationWidget.h"
 #include "ui_imageForCalibrationWidget.h"
 #include "opencv2/core.hpp"
-#include "opencvTransformations.h"
+#include "opencvUtils/opencvTransformations.h"
 #include <opencv2/opencv.hpp>
 #include <QGraphicsScene>
 

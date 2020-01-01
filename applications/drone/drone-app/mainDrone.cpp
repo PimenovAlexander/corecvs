@@ -1,12 +1,12 @@
 #include <QApplication>
-#include "qtFileLoader.h"
+#include <fileformats/qtFileLoader.h>
 
-#include "core/utils/utils.h"
-#include "core/geometry/mesh3d.h"
-#include "core/geometry/mesh3DDecorated.h"
-#include "core/reflection/commandLineSetter.h"
-#include "core/buffers/bufferFactory.h"
-#include "core/stereointerface/dummyFlowProcessor.h"
+#include "utils/utils.h"
+#include "geometry/mesh3d.h"
+#include "geometry/mesh3DDecorated.h"
+#include "reflection/commandLineSetter.h"
+#include "buffers/bufferFactory.h"
+#include "stereointerface/dummyFlowProcessor.h"
 
 #ifdef WITH_LIBJPEG
 #include "libjpegFileReader.h"

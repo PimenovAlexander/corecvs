@@ -3,8 +3,8 @@
 
 
 
-#include "core/math/matrix/matrix44.h"
-#include "ui_transform3DSelector.h"
+#include "math/matrix/matrix44.h"
+#include "ui_transform3DSelector.h" 
 #include <QWidget>
 
 using corecvs::Matrix44;

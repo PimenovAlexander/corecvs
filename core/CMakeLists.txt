@@ -1,6 +1,6 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
-
-project (corecvs)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.11)
+set(MODULE_NAME corecvs)
+init_project(PROJECT_NAME ${MODULE_NAME})
 
 set (CORE_SUBMODULES
     alignment
@@ -44,27 +44,39 @@ set ( ADDITIONAL_MODULES
 
 message(STATUS "Core will use ${CORE_SUBMODULES} and ${ADDITIONAL_MODULES}")
 
-add_library(corecvs STATIC )
+add_library(${PROJECT_NAME} SHARED)
 
-set_property(TARGET corecvs PROPERTY CXX_STANDARD 17)
-set_property(TARGET corecvs PROPERTY CXX_STANDARD_REQUIRED ON)
+target_include_directories(${PROJECT_NAME} 
+    PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/
+    ..
+    )
 
-target_include_directories(corecvs PUBLIC ..)
-
-target_link_libraries(corecvs pthread)
+set(ADDITIONAL_LIBS)
 
 if (OpenBLAS_LIB)
     message("Core: Would use OpenBLAS adding <${OpenBLAS_LIB}> to dependancies")
     message("Core: Would use Lapacke  adding <${Lapacke_LIB}> to dependancies")
-    include_directories (${OpenBLAS_INCLUDE_DIR} ${Lapacke_INCLUDE_DIR})
-    target_link_libraries(corecvs ${OpenBLAS_LIB} ${Lapacke_LIB})    
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        OPENBLAS::OPENBLAS
+        LAPACKE::LAPACKE
+        )   
 endif()
 
 if (TBB_LIBRARY)
-    message("Core: Would use TBB")
-    include_directories (${TBB_INCLUDE_DIR})
-    target_link_libraries(corecvs ${TBB_LIBRARY})
+    message("Core: Would use OpenBLAS adding <${OpenBLAS_LIB}> to dependancies")
+    message("Core: Would use Lapacke  adding <${Lapacke_LIB}> to dependancies")
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        TBB::TBB
+        )   
 endif()
+
+target_link_libraries(${PROJECT_NAME}
+    pthread
+    ${ADDITIONAL_LIBS}
+    )
 
 foreach(core_module ${CORE_SUBMODULES})
     message(STATUS "including ${core_module}")

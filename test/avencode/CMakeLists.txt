@@ -1,18 +1,38 @@
-project (avencode)
+cmake_minimum_required(VERSION 3.11)
+set(MODULE_NAME test)
+init_project(PROJECT_NAME avencode)
 
-set (MODULE_NAME avencode)
-
-set (SRC_FILES
+set(SOURCE_FILE
     main_avencode.cpp
-)
+    )
 
+set(SOURCES
+    ${SOURCE_FILE}
+    )
 
-if(AVCODEC_LIBS) 
-    message("Switching on avcodec support <${AVCODEC_LIBS}>")    
-    include(../../wrappers/avcodec/sourcelist.cmake)
+assign_source_group(${SOURCES})
+
+add_executable(${PROJECT_NAME}
+    ${SOURCE_FILE}
+    )
+
+set(ADDITIONAL_LIBS)
+
+if (AVCODEC_LIBS)
+    message("Switching on avcodec support <${AVCODEC_LIBS}>")
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        AVCODECwrapper
+        )
 endif()
 
-add_executable(${MODULE_NAME} ${SRC_FILES} ${HDR_FILES})
+target_link_libraries(${PROJECT_NAME}
+    stdc++fs
+    corecvs
+    ${ADDITIONAL_LIBS}
+    )
 
-target_link_libraries(${MODULE_NAME} ${LIBS} stdc++fs corecvs  )
-
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+    FOLDER "${MODULE_NAME}"
+    )

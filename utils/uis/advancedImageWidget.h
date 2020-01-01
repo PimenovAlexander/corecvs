@@ -12,11 +12,11 @@
 #include <QWidget>
 #include <QtGui>
 
-#include "core/math/vector/vector2d.h"
-#include "core/math/matrix/matrix33.h"
+#include "math/vector/vector2d.h"
+#include "math/matrix/matrix33.h"
 #include "viAreaWidget.h"
-#include "saveFlowSettings.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/saveFlowSettings.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 #include "ui_advancedImageWidget.h"
 

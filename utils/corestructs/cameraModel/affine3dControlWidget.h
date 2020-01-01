@@ -4,7 +4,7 @@
 #include <QDialog>
 
 #include "core/cameracalibration/calibrationLocation.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 namespace Ui {
 class Affine3dControlWidget;

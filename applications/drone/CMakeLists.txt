@@ -1,4 +1,3 @@
-
 set(DRONE_SUBDIRECTORIES   
     drone-core
     drone-ui    
