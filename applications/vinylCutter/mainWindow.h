@@ -1,20 +1,14 @@
 #ifndef VINYLCUTTER_H
 #define VINYLCUTTER_H
 
-#include <string>
-#include <vector>
-#include <fstream>
 #include <QMainWindow>
 #include <QPixmap>
-#include <QGraphicsView>
 #include <QGraphicsPixmapItem>
 #include <QFileDialog>
 #include <QDir>
-
-#include <gcodeHandler.h>
-#include "core/fileformats/svgLoader.h"
-#include "core/geometry/polygons.h"
 #include <core/fileformats/gcodeLoader.h>
+#include "gcodeHandler.h"
+
 
 namespace Ui { class MainWindow; }
 
@@ -24,21 +18,17 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    MainWindow(QWidget *parent = nullptr);
     void setBackground();
 
 private slots:
     void openGcodeTriggered();
 
 private:
-    GcodeHandler *gcodeHandler;
-    QGraphicsScene *scene;
     Ui::MainWindow *ui;
+    GcodeHandler *gcodeHandler;
     QGraphicsScene *background;
-
 };
-
-
 
 #endif // VINYLCUTTER_H

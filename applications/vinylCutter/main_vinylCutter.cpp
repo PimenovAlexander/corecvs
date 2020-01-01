@@ -1,6 +1,6 @@
 #include <QApplication>
-
 #include "mainWindow.h"
+
 
 using namespace corecvs;
 using namespace std;

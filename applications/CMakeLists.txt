@@ -13,6 +13,7 @@ set(TEST_SUBDIRECTORIES
    #robodetect
    #scanner
    #testbed
+   vinylCutter
 )
 
 foreach(test_subdirectory ${TEST_SUBDIRECTORIES})

@@ -1,7 +1,5 @@
 #include "mainWindow.h"
-#include <myGraphicsView.h>
 #include "./ui_mainWindow.h"
-#include <QDir>
 
 
 using namespace corecvs;
@@ -40,14 +38,10 @@ void MainWindow::openGcodeTriggered() {
 
 void MainWindow::setBackground() {
     QString filePath = QDir::currentPath() + "/applications/vinylCutter/resources/background.png";
-
-    qDebug() << filePath;
-
     QImage image;
     image.load(filePath);
 
     QPixmap pixmap = QPixmap::fromImage(image);
     auto *item = background->addPixmap(pixmap);
-    qDebug() << item->offset();
     item->setOffset(-95, -80);
 }

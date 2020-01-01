@@ -1,12 +1,9 @@
 #ifndef CORECVS_GCODETOSVGINTERPRETER_H
 #define CORECVS_GCODETOSVGINTERPRETER_H
 
-
-#include "core/fileformats/gcodeLoader.h"
-#include <core/buffers/rgb24/rgb24Buffer.h>
-#include <core/fileformats/svgLoader.h>
-#include <core/geometry/rectangle.h>
 #include <QGraphicsScene>
+#include <core/fileformats/gcodeLoader.h>
+
 
 using namespace corecvs;
 

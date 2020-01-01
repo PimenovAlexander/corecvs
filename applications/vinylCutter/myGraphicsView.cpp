@@ -1,5 +1,10 @@
-﻿#include "myGraphicsView.h"
+﻿#include <QDebug>
+#include <QMimeData>
+#include <QFileDialog>
+#include <core/fileformats/gcodeLoader.h>
+#include "myGraphicsView.h"
 #include "./ui_mainWindow.h"
+
 
 using namespace std;
 using namespace corecvs;
@@ -14,8 +19,6 @@ MyGraphicsView::MyGraphicsView(QWidget *parent)
     setRenderHint(QPainter::HighQualityAntialiasing);
     setTransformationAnchor(AnchorUnderMouse);
 
-    isResized = false;
-    isLandscape = false;
     setAcceptDrops(true);
 
     int xImageSize = 0;
@@ -26,8 +29,7 @@ MyGraphicsView::MyGraphicsView(QWidget *parent)
     gcodeHandler = GcodeHandler::getInstance();
 }
 
-MyGraphicsView::~MyGraphicsView() {
-}
+MyGraphicsView::~MyGraphicsView() {}
 
 void MyGraphicsView::dragEnterEvent(QDragEnterEvent *event) {
     const QMimeData *mimeData = event->mimeData();
@@ -42,7 +44,6 @@ void MyGraphicsView::dragEnterEvent(QDragEnterEvent *event) {
 }
 
 void MyGraphicsView::dragMoveEvent(QDragMoveEvent *event) {
-//    qDebug() << "drag move";
     event->acceptProposedAction();
 }
 
@@ -90,28 +91,12 @@ void MyGraphicsView::setYShift(double shift) {
     yImageShift = shift;
 }
 
-double MyGraphicsView::getXShift() {
-    return xImageShift;
-}
-
-double MyGraphicsView::getYShift() {
-    return yImageShift;
-}
-
 void MyGraphicsView::setBladeOffset(double val) {
     bladeOffset = val;
 }
 
 void MyGraphicsView::setTouchZ(double val) {
     touchZ = val;
-}
-
-double MyGraphicsView::getBladeOffset() {
-    return bladeOffset;
-}
-
-double MyGraphicsView::getTouchZ() {
-    return touchZ;
 }
 
 void MyGraphicsView::gcodeExportTriggered() {
