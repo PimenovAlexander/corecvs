@@ -12,6 +12,7 @@ set(TEST_SUBDIRECTORIES
    #robodetect    # Cannot be included because it depends on deprecated filters
    #scanner       # Cannot be included because it depends on base application
    #testbed       # Cannot be included becuase it depends on deprecated filters
+   vinylCutter
 )
 
 if (apriltag_LIBS)

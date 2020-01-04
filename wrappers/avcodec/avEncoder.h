@@ -32,6 +32,7 @@ protected:
 
     AVCodec *codec = NULL;
     AVCodecContext    *codecContext = NULL;
+    AVCodecParameters *codecParameters = NULL;
 
     AVStream *outStream = NULL;
 

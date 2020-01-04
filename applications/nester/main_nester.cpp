@@ -86,7 +86,7 @@ int main(int argc, char **argv)
         addSubPolygons(s, inputPolygons);
     }
 
-    SYNC_PRINT(("Loaded %d polygons\n", inputPolygons.size()));
+    SYNC_PRINT(("Loaded %d polygons\n", (int)inputPolygons.size()));
 
 
     // BLPlacement(Bin, inputPolygons);

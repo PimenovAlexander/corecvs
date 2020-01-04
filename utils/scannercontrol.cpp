@@ -69,7 +69,7 @@ bool ScannerControl::step(qint64 dist)
 {
     lock = true;
     QString command;
-    command.sprintf("MOVE %i\n",quint64(abs(dist)));
+    command.sprintf("MOVE %i\n",int(quint64(abs(dist))) );
     qDebug()<<command;
     if(!sendCommand(dist < 0 ? "BACK\n" : "FORWARD\n"))
         return false;

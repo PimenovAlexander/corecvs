@@ -19,6 +19,8 @@ public:
     virtual void print();
 
     DxfObjectData &data;
+
+    ~DxfObject() {}
 };
 
 // LAYER Object
@@ -30,6 +32,8 @@ public:
     void print() override;
 
     DxfLayerData &data;
+
+    ~DxfLayerObject() {}
 };
 
 // LINETYPE Object
@@ -41,6 +45,8 @@ public:
     void print() override;
 
     DxfLineTypeData &data;
+
+    ~DxfLineTypeObject() {}
 };
 
 // BLOCK_RECORD Object
@@ -52,6 +58,8 @@ public:
     void print() override;
 
     DxfBlockRecordData &data;
+
+    ~DxfBlockRecordObject() {}
 };
 
 } // namespace corecvs
