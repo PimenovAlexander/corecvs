@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
     SYNC_PRINT(("Libpng support on\n"));
 #endif
 
+
     ImageStack * imageStack = ImageStack::loadStack(argv[1]);
     if (imageStack == nullptr)
     {
@@ -48,8 +49,7 @@ int main(int argc, char *argv[])
     imageStack->focus_stack(complexWavelet);
     imageStack->saveMergedImage(argv[2]);
 
-    delete_safe(imageStack);
+    delete(imageStack);
 
     return 0;
 }
-
