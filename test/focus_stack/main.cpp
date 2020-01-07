@@ -19,14 +19,16 @@ using namespace corecvs;
 
 void printUsage()
 {
-    SYNC_PRINT(("./bin/focus_stack <path to stack> <path to output dir>\n"));
+    SYNC_PRINT(("./bin/focus_stack <path to stack> <path to output dir>\n or ./bin/focus_stack test for testing"));
 }
 
 int main(int argc, char *argv[])
 {
     if (argc != 3) {
-        printUsage();
-        return 1;
+        if  (argc != 2) {
+            printUsage();
+            return 1;
+        }
     }
 
 #ifdef WITH_LIBJPEG
@@ -38,6 +40,12 @@ int main(int argc, char *argv[])
     SYNC_PRINT(("Libpng support on\n"));
 #endif
 
+    //tested with image stack "128" located in focus_stack folder
+    if (argc == 2) {
+        ComplexWavelet::test();
+        return 0;
+    }
+
     ImageStack * imageStack = ImageStack::loadStack(argv[1]);
     if (imageStack == nullptr)
     {
@@ -48,8 +56,7 @@ int main(int argc, char *argv[])
     imageStack->focus_stack(complexWavelet);
     imageStack->saveMergedImage(argv[2]);
 
-    delete_safe(imageStack);
+    delete(imageStack);
 
     return 0;
 }
-
