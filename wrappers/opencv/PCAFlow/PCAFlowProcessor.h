@@ -46,6 +46,9 @@ public:
     virtual int getError(std::string *errorString) override {return  0;}
 
 
+    void calculateFlow();
+
+    virtual ~PCAFlowProcessor();
 };
 
 #endif //CORECVS_PCAFLOWPROCESSOR_H
