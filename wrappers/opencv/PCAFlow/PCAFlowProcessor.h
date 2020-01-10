@@ -8,12 +8,14 @@
 
 #include <opencv2/optflow/pcaflow.hpp>
 #include "core/stereointerface/processor6D.h"
+#include "generated/openCVPCAFlowParameters.h"
 using namespace corecvs;
 using namespace cv;
 
 class PCAFlowProcessor : public ProcessorFlow {
     G8Buffer *prev  = NULL;
     G8Buffer *curr  = NULL;
+    OpenCVPCAFlowParameters params = OpenCVPCAFlowParameters();
 
 public:
     FlowBuffer *opticalFlow = NULL;
@@ -34,8 +36,8 @@ public:
     /** sets statistics data. Implementation should support stats == NULL **/
     virtual int setStats(Statistics *stats) override {return 1;}
 
-    virtual std::map<std::string, DynamicObject> getParameters() override { return std::map<std::string, DynamicObject>(); }
-    virtual bool setParameters(std::string name, const DynamicObject &param) {return false; }
+    virtual std::map<std::string, DynamicObject> getParameters() override;
+    virtual bool setParameters(std::string name, const DynamicObject &param);
 
 
     virtual CorrespondenceList *getFlowList() override {return  NULL;}
@@ -46,7 +48,7 @@ public:
     virtual int getError(std::string *errorString) override {return  0;}
 
 
-    void calculateFlow();
+    int calculateFlow();
 
     virtual ~PCAFlowProcessor();
 };
