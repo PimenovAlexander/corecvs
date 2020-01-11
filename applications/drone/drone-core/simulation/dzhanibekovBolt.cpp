@@ -14,20 +14,20 @@ DzhanibekovBolt::DzhanibekovBolt(double arm, double mass)
     double partsRadius = 0.01;
     Affine3DQ defaultPos = Affine3DQ(Vector3dd::Zero());
 
-    partsOfSystem.push_back(new PhysSphere(&defaultPos, &partsRadius, &massOfRotatingObjects));
-    partsOfSystem.push_back(new PhysSphere(&defaultPos, &partsRadius, &massOfRotatingObjects));
-    partsOfSystem.push_back(new PhysSphere(&defaultPos, &partsRadius, &massOfTestingObject));
-    partsOfSystem.push_back(new PhysSphere(&defaultPos, &partsRadius, &massOfZeroObject));
+    systemElements.push_back(new PhysicsSphere(defaultPos, partsRadius, massOfRotatingObjects));
+    systemElements.push_back(new PhysicsSphere(defaultPos, partsRadius, massOfRotatingObjects));
+    systemElements.push_back(new PhysicsSphere(defaultPos, partsRadius, massOfTestingObject));
+    systemElements.push_back(new PhysicsSphere(defaultPos, partsRadius, massOfZeroObject));
 
-    partsOfSystem[0]->color = RGBColor::Red();    /*Front right*/
-    partsOfSystem[1]->color = RGBColor::Red();  /*Back  left*/
-    partsOfSystem[2]->color = RGBColor::Green();    /*Front left*/
-    partsOfSystem[3]->color = RGBColor::Yellow();  /*Back  right*/
+    systemElements[0]->color = RGBColor::Red();    /*Front right*/
+    systemElements[1]->color = RGBColor::Red();    /*Back  left*/
+    systemElements[2]->color = RGBColor::Green();  /*Front left*/
+    systemElements[3]->color = RGBColor::Yellow(); /*Back  right*/
 
-    partsOfSystem[0]->setPos(Vector3dd( 0,  1, 0).normalised() * 3 * arm);
-    partsOfSystem[1]->setPos(Vector3dd( 0, -1, 0).normalised() * 3 * arm);
-    partsOfSystem[2]->setPos(Vector3dd( 1,  0, 0).normalised() * arm);
-    partsOfSystem[3]->setPos(Vector3dd(-1,  0, 0).normalised() * arm);
+    systemElements[0]->setPos(Vector3dd( 0,  1, 0).normalised() * 3 * arm);
+    systemElements[1]->setPos(Vector3dd( 0, -1, 0).normalised() * 3 * arm);
+    systemElements[2]->setPos(Vector3dd( 1,  0, 0).normalised() * arm);
+    systemElements[3]->setPos(Vector3dd(-1,  0, 0).normalised() * arm);
 
     MeshLoader loader;
     Mesh3DDecorated mesh;
@@ -50,13 +50,12 @@ DzhanibekovBolt::DzhanibekovBolt(double arm, double mass)
     double massOfCentralSphere = mass - 2 * massOfRotatingObjects - massOfTestingObject;
     Affine3DQ posOfCentralSphere = Affine3DQ(Vector3dd(0,0,0).normalised());
     double radiusOfCentralSphere = arm / 100;
-    PhysSphere *centralSphere = new PhysSphere(&posOfCentralSphere, &radiusOfCentralSphere, &massOfCentralSphere);
+    PhysicsSphere *centralSphere = new PhysicsSphere(posOfCentralSphere, radiusOfCentralSphere, massOfCentralSphere);
 
     objects.push_back(centralSphere);
-    for (size_t i = 0; i < partsOfSystem.size(); ++i)
-    {
-        /* Transfer ownership */
-        objects.push_back(partsOfSystem[i]);
+    for (size_t i = 0; i < systemElements.size(); ++i)
+    {       
+        objects.push_back(systemElements[i]);
     }
 }
 
@@ -65,14 +64,10 @@ void DzhanibekovBolt::drawMyself(Mesh3D &mesh)
 {
         mesh.mulTransform(getTransform());
         mesh.switchColor();
-/*
-        centralSphere.drawMesh(mesh);
-        for (int i = 0; i < partsOfSystem.size(); i++) {
-            partsOfSystem[i].drawMesh(mesh);
-        }
-*/
-        for (size_t i = 0; i < objects.size(); i++) {
-            objects[i]->drawMesh(mesh);
+
+        centralSphere->drawMesh(mesh);
+        for (int i = 0; i < systemElements.size(); i++) {
+            systemElements[i]->drawMesh(mesh);
         }
 
         Circle3d circle;
@@ -81,8 +76,8 @@ void DzhanibekovBolt::drawMyself(Mesh3D &mesh)
         circle.normal = Vector3dd(1,0,0);
         mesh.addCircle(circle);
         mesh.currentColor = RGBColor::Violet();
-        mesh.addLine(objects[3]->getPosVector(), objects[4]->getPosVector());
-        mesh.addLine(objects[1]->getPosVector(), objects[2]->getPosVector());
+        mesh.addLine(objects[3]->position(), objects[4]->position());
+        mesh.addLine(objects[1]->position(), objects[2]->position());
         mesh.popTransform();
         mesh.currentColor = RGBColor::Cyan();
         drawForces(mesh);
@@ -90,10 +85,10 @@ void DzhanibekovBolt::drawMyself(Mesh3D &mesh)
 
 void DzhanibekovBolt::drawForces(Mesh3D &mesh)
 {
-    for (size_t i = 0; i < partsOfSystem.size(); i++)
+    for (size_t i = 0; i < systemElements.size(); i++)
     {
-        Affine3DQ motorToWorld = getTransform() * partsOfSystem[i]->getPosAffine();
-        Vector3dd force = motorToWorld.rotor * partsOfSystem[i]->getForce();
+        Affine3DQ motorToWorld = getTransform() * systemElements[i]->affine();
+        Vector3dd force = motorToWorld.rotor * systemElements[i]->force();
         Vector3dd motorPosition = motorToWorld.shift;
         Vector3dd startDot = motorPosition;
         Vector3dd endDot = motorPosition - force * 20.0;
@@ -106,7 +101,7 @@ void DzhanibekovBolt::drawForces(Mesh3D &mesh)
 
 Affine3DQ DzhanibekovBolt::getTransform()
 {
-    return Affine3DQ(this->orientation, this->getPosCenter());
+    return this->x;
 }
 
 void DzhanibekovBolt::drawMyself(Mesh3DDecorated &mesh)
@@ -161,11 +156,11 @@ void DzhanibekovBolt::tick(double deltaT)
     double radius = centralSphere->radius;
     double centerMass = centralSphere->mass;
 
-    double massOfRotatingObjects = partsOfSystem[0]->mass;
-    double massOfTestingObject   = partsOfSystem[2]->mass;
+    double massOfRotatingObjects = systemElements[0]->mass;
+    double massOfTestingObject   = systemElements[2]->mass;
 
-    double armOfRotatingObjects = partsOfSystem[0]->getPosVector().l2Metric();
-    double armOfTestingObject = partsOfSystem[2]->getPosVector().l2Metric();
+    double armOfRotatingObjects = systemElements[0]->position().l2Metric();
+    double armOfTestingObject   = systemElements[2]->position().l2Metric();
 
     double inertiaMomentX = 2.0 / 5.0 * centerMass * pow(radius, 2) + 2 * massOfRotatingObjects * pow(armOfRotatingObjects, 2);
     double inertiaMomentY = 2.0 / 5.0 * centerMass * pow(radius, 2) + massOfTestingObject * pow(armOfTestingObject, 2);
@@ -176,8 +171,7 @@ void DzhanibekovBolt::tick(double deltaT)
     //Matrix33 diagonalizedInertiaTensor = Matrix33::FromDiagonal(0.001, 0.002, 0.0001);
     Matrix33 diagonalizedInertiaTensor = Matrix33::FromDiagonal(inertiaMomentX, inertiaMomentY, inertiaMomentZ);
 
-    Matrix33 transposedOrient = orientation.toMatrix().transposed();
-    //inertiaTensor = orientation.toMatrix() * diagonalizedInertiaTensor * transposedOrient;
+    Matrix33 transposedOrient = x.rotor.toMatrix().transposed();
     inertiaTensor = diagonalizedInertiaTensor;
 
     /*
@@ -204,33 +198,32 @@ void DzhanibekovBolt::tick(double deltaT)
     }
 
     /** Kinematics **/
-    velocity = Vector3dd(0.0, 0.0, 0.0);
+    v = Vector3dd(0.0, 0.0, 0.0);
 
-    Vector3dd newPos = getPosCenter() + velocity * deltaT;
+    Vector3dd newPos = getPosCenter() + v * deltaT;
     /** Floor simulation **/
     if (newPos.z() < -0.1)
     {
-        velocity = Vector3dd::Zero();
+        v = Vector3dd::Zero();
         setPosCenter(Vector3dd(newPos.x(), newPos.y(), -0.1));
     }
     else {
         setPosCenter(newPos);
     }
-    velocity += (getForce() / getSystemMass()) * deltaT;
+    v += (force() / getSystemMass()) * deltaT;
 
     /* We should carefully use inertiaTensor here. It seems like it changes with the frame of reference */
     /** Dynamics **/
-    Vector3dd w_modified = angularVelocity * deltaT;
+    Vector3dd w_modified = w * deltaT;
     Quaternion dq = Quaternion::Rotation(w_modified, w_modified.l2Metric());
-    orientation = orientation ^ dq;
+    x.rotor = x.rotor ^ dq;
 
-    Matrix33 omega = Matrix33::CrossProductLeft(angularVelocity);
-    //Vector3dd dw = -inertiaTensor.inv() * (getMomentum() - (omega * inertiaTensor * angularVelocity));
-    Vector3dd dw = inertiaTensor.inv() * (getMomentum() - (omega * inertiaTensor * w_modified));
-    angularVelocity += dw;// * deltaT;
+    Matrix33 omega = Matrix33::CrossProductLeft(w);
+    Vector3dd dw = inertiaTensor.inv() * (momentum() - (omega * inertiaTensor * w_modified));
+    w += dw;// * deltaT;
 
     /** Need more info about why this is needed **/
-    orientation.normalise();
+    x.rotor.normalise();
 
     /** Understood what this should do, but have no clue how to apply this to object
      * without initial angular veclocity (like DzhanibekovVideo test) **/

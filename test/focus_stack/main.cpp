@@ -2,7 +2,7 @@
 #include "core/fileformats/bmpLoader.h"
 #include "imageStack.h"
 #include "laplacianStacking.h"
-#include "complexWavelet.h"
+
 #ifdef WITH_LIBJPEG
 #include "libjpegFileReader.h"
 #endif
@@ -40,20 +40,15 @@ int main(int argc, char *argv[])
     SYNC_PRINT(("Libpng support on\n"));
 #endif
 
-    //tested with image stack "128" located in focus_stack folder
-    if (argc == 2) {
-        ComplexWavelet::test();
-        return 0;
-    }
-
     ImageStack * imageStack = ImageStack::loadStack(argv[1]);
     if (imageStack == nullptr)
     {
         SYNC_PRINT(("Can't load images!\n"));
         return 0;
     }
-    ComplexWavelet complexWavelet;
-    imageStack->focus_stack(complexWavelet);
+    LaplacianStacking stacking;
+
+    imageStack->focus_stack(stacking);
     imageStack->saveMergedImage(argv[2]);
 
     delete(imageStack);

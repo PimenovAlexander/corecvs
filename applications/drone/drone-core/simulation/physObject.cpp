@@ -10,58 +10,58 @@ using namespace std;
 using namespace corecvs;
 
 
-void PhysObject::startTick()
+void PhysicsObject::startTick()
 {
     F = Vector3dd::Zero();
     M = Vector3dd::Zero();
 }
 
-void PhysObject::addForce(const Vector3dd &force)
+void PhysicsObject::addForce(const Vector3dd &force)
 {
     F += force;
     //M += force.getM();
 }
 
-void PhysObject::addMoment(const Vector3dd &moment)
+void PhysicsObject::addMoment(const Vector3dd &moment)
 {
     M += moment;
 }
 
-const corecvs::Affine3DQ PhysObject::getPosAffine() const
+Affine3DQ PhysicsObject::affine() const
 {
-    return position;
+    return x;
 }
 
-const Vector3dd PhysObject::getPosVector() const
+Vector3dd PhysicsObject::position() const
 {
-    return position.shift;
+    return x.shift;
 }
 
-Vector3dd PhysObject::getForce() const
+Vector3dd PhysicsObject::force() const
 {
     return F;
 }
 
-Vector3dd PhysObject::getMoment() const
+Vector3dd PhysicsObject::moment() const
 {
     return M;
 }
 
 
-void PhysObject::setPosition(const Affine3DQ &pos)
+void PhysicsObject::setPosition(const Affine3DQ &pos)
 {
-    this->position = pos;
+    this->x = pos;
 }
 
-void PhysObject::setPosition(const Vector3dd &pos)
+void PhysicsObject::setPosition(const Vector3dd &pos)
 {
-    this->position = Affine3DQ(pos);
+    this->x = Affine3DQ(pos);
 }
 
-PhysObject::PhysObject()
+PhysicsObject::PhysicsObject()
 {
-    position = Affine3DQ(Vector3dd(1,1,1));
-    mass = 1;
+    x = Affine3DQ(Vector3dd(1.0, 1.0, 1.0));
+    mass = 1.0;
 
     F = Vector3dd::Zero();
     M = Vector3dd::Zero();
@@ -69,9 +69,9 @@ PhysObject::PhysObject()
     //L_INFO << "default PhysObject():created";
 }
 
-PhysObject::PhysObject(const Affine3DQ &coords, const double &m)
+PhysicsObject::PhysicsObject(const Affine3DQ &coords, const double &m)
 {
-    position = Affine3DQ(coords);
+    x = Affine3DQ(coords);
     mass = m;
 
     F = Vector3dd::Zero();

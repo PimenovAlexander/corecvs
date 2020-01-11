@@ -12,7 +12,7 @@
 
 #include "physSphere.h"
 
-class Motor : public PhysSphere
+class Motor : public PhysicsSphere
 {
 public:
     /**
@@ -44,7 +44,7 @@ public:
     Mesh3D *propMesh  = NULL;
 
 
-    Motor(Affine3DQ *pos, double *propellerRadius, double *mass);
+    Motor(const Affine3DQ &pos, double propellerRadius, double mass);
 };
 
 #endif // MOTOR_H

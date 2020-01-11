@@ -2,24 +2,25 @@
 
 #include <mesh3DScene.h>
 
-PhysSphere::PhysSphere():PhysObject ()
+PhysicsSphere::PhysicsSphere(): MaterialObject ()
 {
     radius = 1.0;
     ////L_INFO << "Created default PhysSphere";
 }
 
-void PhysSphere::setPos(const Vector3dd &pos)
+void PhysicsSphere::setPos(const Vector3dd &pos)
 {
     this->setPosition(Affine3DQ(pos));
 }
 
-PhysSphere::PhysSphere(Affine3DQ *pos, double *r, double *m) : PhysObject(*pos, *m)
+PhysicsSphere::PhysicsSphere(const Affine3DQ &pos, double r, double m) :
+    MaterialObject(pos, m)
 {
-    radius = *r;
+    radius = r;
     ////L_INFO << "Created PhysSphere with pos: " << *pos << " , radius: " << *r << " , mass: " << *m;
 }
 
-void PhysSphere::saveMesh(const std::string &name)
+void PhysicsSphere::saveMesh(const std::string &name)
 {
     cout<<"here"<<endl;
     Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
@@ -32,20 +33,20 @@ void PhysSphere::saveMesh(const std::string &name)
     mesh->switchColor();
     mesh->mulTransform(copterPos);
     mesh->setColor(RGBColor::Red());
-    mesh->addIcoSphere(getPosVector(), 2, 2);
+    mesh->addIcoSphere(position(), 2, 2);
     mesh->popTransform();
 
     //mesh->dumpPLY(name+".ply");
     delete_safe(mesh);
 }
 
-void PhysSphere::drawMesh(corecvs::Mesh3D &mesh)
+void PhysicsSphere::drawMesh(corecvs::Mesh3D &mesh)
 {
     if(mesh.hasColor) {
         mesh.setColor(color);
     }
 
-    mesh.addIcoSphere(getPosVector(), radius, 1);
+    mesh.addIcoSphere(position(), radius, 1);
 
 
     /*
@@ -67,19 +68,19 @@ void PhysSphere::drawMesh(corecvs::Mesh3D &mesh)
     */
 }
 
-void PhysSphere::calcMoment()
+void PhysicsSphere::calcMoment()
 {
-    Vector3dd m = getForce() ^ getPosVector();
+    Vector3dd m = force() ^ position();
     addMoment(m);
     ////L_INFO << "Sphere has no calcMoment implementation";
 }
 
-void PhysSphere::calcForce()
+void PhysicsSphere::calcForce()
 {
     ////L_INFO << "Sphere has no calcForce() implementation";
 }
 
-void PhysSphere::addToMesh(Mesh3D &mesh)
+void PhysicsSphere::addToMesh(Mesh3D &mesh)
 {
-    mesh.addIcoSphere(getPosVector(), radius, 3);
+    mesh.addIcoSphere(position(), radius, 3);
 }

@@ -1,39 +1,41 @@
-#ifndef JANIBEKOVSBOLT_H
-#define JANIBEKOVSBOLT_H
-#include <physMainObject.h>
-#include "core/geometry/mesh3d.h"
-#include <copterInputs.h>
+#ifndef DZANIBEKOVS_BOLT_H
+#define DZANIBEKOVS_BOLT_H
+
 #include <vector>
 
+#include <core/geometry/mesh3d.h>
 #include <core/cameracalibration/cameraModel.h>
 #include "core/cameracalibration/calibrationDrawHelpers.h"
 #include "core/math/affine.h"
 #include "core/math/vector/vector3d.h"
 
-#include "physSphere.h"
+#include <physSphere.h>
+#include <physMainObject.h>
+#include <copterInputs.h>
 
-class DzhanibekovBolt : public PhysMainObject
+class DzhanibekovBolt : public PhysicsMainObject
 {
 
 public:
     DzhanibekovBolt(double arm = 0.01, double mass = 13);
 
-    /* Not owned */
-    PhysSphere *centralSphere;
-    /* Not owned */
-    std::vector<PhysSphere *> partsOfSystem;
+    /* Owned */
+    PhysicsSphere *centralSphere;
+    std::vector<PhysicsSphere *> systemElements;
+
+    Affine3DQ getTransform();
+    void physicsTick (double deltaT);
+    virtual void tick(double deltaT) override;
 
     void drawMyself(Mesh3D &mesh);
-    Affine3DQ getTransform();
-    void physicsTick(double deltaT);
-    virtual void tick(double deltaT) override;
     void drawMyself(Mesh3DDecorated &mesh);
+    void drawForces(Mesh3D &mesh);
+
     bool testMode = false;
     Mesh3DDecorated *worldMesh = NULL;
-    void drawForces(Mesh3D &mesh);
     double mw;
 
-    virtual ~DzhanibekovBolt() override {}
+    virtual ~DzhanibekovBolt() override;
 };
 
-#endif // JANIBEKOVSBOLT_H
+#endif // DZANIBEKOVS_BOLT_H

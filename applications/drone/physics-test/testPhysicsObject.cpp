@@ -1,6 +1,8 @@
 #include "testPhysicsObject.h"
 #include <core/fileformats/meshLoader.h>
+
 using namespace std::chrono;
+
 TestPhysicsObject::TestPhysicsObject(double arm, double mass)
 {
     setSystemMass(mass);
@@ -10,20 +12,20 @@ TestPhysicsObject::TestPhysicsObject(double arm, double mass)
     double partsRadius = 0.015;
     Affine3DQ defaultPos = Affine3DQ(Vector3dd::Zero());
 
-    partsOfSystem.push_back(PhysSphere(&defaultPos, &partsRadius, &massOfRotatingObject));
-    partsOfSystem.push_back(PhysSphere(&defaultPos, &partsRadius, &massOfRotatingObject));
-    partsOfSystem.push_back(PhysSphere(&defaultPos, &partsRadius, &massOfTestingObject));
-    partsOfSystem.push_back(PhysSphere(&defaultPos, &partsRadius, &massOfZeroObject));
+    systemElements.push_back(new PhysicsSphere(defaultPos, partsRadius, massOfRotatingObject));
+    systemElements.push_back(new PhysicsSphere(defaultPos, partsRadius, massOfRotatingObject));
+    systemElements.push_back(new PhysicsSphere(defaultPos, partsRadius, massOfTestingObject));
+    systemElements.push_back(new PhysicsSphere(defaultPos, partsRadius, massOfZeroObject));
 
-    partsOfSystem[0].color = RGBColor::Red();    /*Rotating Sphere*/
-    partsOfSystem[1].color = RGBColor::Red();  /*Rotating Sphere*/
-    partsOfSystem[2].color = RGBColor::Green();    /*Sphere with mass*/
-    partsOfSystem[3].color = RGBColor::Yellow();  /*Sphere without mass*/
+    systemElements[0]->color = RGBColor::Red();    /*Rotating Sphere*/
+    systemElements[1]->color = RGBColor::Red();    /*Rotating Sphere*/
+    systemElements[2]->color = RGBColor::Green();  /*Sphere with mass*/
+    systemElements[3]->color = RGBColor::Yellow(); /*Sphere without mass*/
 
-    partsOfSystem[0].setPos(Vector3dd( 0,  1, 0).normalised() * 1 * arm);
-    partsOfSystem[1].setPos(Vector3dd( 0, -1, 0).normalised() * 1 * arm);
-    partsOfSystem[2].setPos(Vector3dd( 1,  0, 0).normalised() * arm);
-    partsOfSystem[3].setPos(Vector3dd(-1,  0, 0).normalised() * arm);
+    systemElements[0]->setPos(Vector3dd( 0,  1, 0).normalised() * 1 * arm);
+    systemElements[1]->setPos(Vector3dd( 0, -1, 0).normalised() * 1 * arm);
+    systemElements[2]->setPos(Vector3dd( 1,  0, 0).normalised() * arm);
+    systemElements[3]->setPos(Vector3dd(-1,  0, 0).normalised() * arm);
 
     MeshLoader loader;
     Mesh3DDecorated mesh;
@@ -45,12 +47,12 @@ TestPhysicsObject::TestPhysicsObject(double arm, double mass)
     double massOfCentralSphere = mass - 2 * massOfRotatingObject - massOfTestingObject;
     Affine3DQ posOfCentralSphere = Affine3DQ(Vector3dd(0,0,0).normalised());
     double radiusOfCentralSphere = arm / 100;
-    centralSphere = PhysSphere(&posOfCentralSphere, &radiusOfCentralSphere, &massOfCentralSphere);
+    centralSphere = new PhysicsSphere(posOfCentralSphere, radiusOfCentralSphere, massOfCentralSphere);
 
-    objects.push_back(&centralSphere);
-    for (size_t i = 0; i < partsOfSystem.size(); ++i)
+    objects.push_back(centralSphere);
+    for (size_t i = 0; i < systemElements.size(); i++)
     {
-        objects.push_back(&partsOfSystem[i]);
+        objects.push_back(systemElements[i]);
     }
 }
 
@@ -59,14 +61,10 @@ void TestPhysicsObject::drawMyself(Mesh3D &mesh)
 {
         mesh.mulTransform(getTransform());
         mesh.switchColor();
-/*
-        centralSphere.drawMesh(mesh);
-        for (int i = 0; i < partsOfSystem.size(); i++) {
-            partsOfSystem[i].drawMesh(mesh);
-        }
-*/
-        for (size_t i = 0; i < objects.size(); i++) {
-            objects[i]->drawMesh(mesh);
+
+        centralSphere->drawMesh(mesh);
+        for (int i = 0; i < systemElements.size(); i++) {
+            systemElements[i]->drawMesh(mesh);
         }
 
         Circle3d circle;
@@ -75,8 +73,8 @@ void TestPhysicsObject::drawMyself(Mesh3D &mesh)
         circle.normal = Vector3dd(1,0,0);
         mesh.addCircle(circle);
         mesh.currentColor = RGBColor::Violet();
-        mesh.addLine(objects[3]->getPosVector(), objects[4]->getPosVector());
-        mesh.addLine(objects[1]->getPosVector(), objects[2]->getPosVector());
+        mesh.addLine(objects[3]->position(), objects[4]->position());
+        mesh.addLine(objects[1]->position(), objects[2]->position());
         mesh.popTransform();
         mesh.currentColor = RGBColor::Cyan();
         drawForces(mesh);
@@ -84,10 +82,10 @@ void TestPhysicsObject::drawMyself(Mesh3D &mesh)
 
 void TestPhysicsObject::drawForces(Mesh3D &mesh)
 {
-    for (size_t i = 0; i < partsOfSystem.size(); i++)
+    for (size_t i = 0; i < systemElements.size(); i++)
     {
-        Affine3DQ motorToWorld = getTransform() * partsOfSystem[i].getPosAffine();
-        Vector3dd force = motorToWorld.rotor * partsOfSystem[i].getForce();
+        Affine3DQ motorToWorld = getTransform() * systemElements[i]->affine();
+        Vector3dd force = motorToWorld.rotor * systemElements[i]->force();
         Vector3dd motorPosition = motorToWorld.shift;
         Vector3dd startDot = motorPosition;
         Vector3dd endDot = motorPosition - force * 20.0;
@@ -100,7 +98,7 @@ void TestPhysicsObject::drawForces(Mesh3D &mesh)
 
 Affine3DQ TestPhysicsObject::getTransform()
 {
-    return Affine3DQ(this->orientation, this->getPosCenter());
+    return Affine3DQ(this->orientation(), this->getPosCenter());
 }
 
 void TestPhysicsObject::drawMyself(Mesh3DDecorated &mesh)
@@ -162,16 +160,16 @@ void TestPhysicsObject::tick(double deltaT)
      * http://engsi.ru/file/out/723336 //Best to begin with
     **/
 
-    double radius = centralSphere.radius;
-    double centerMass = centralSphere.mass;
+    double radius     = centralSphere->radius;
+    double centerMass = centralSphere->mass;
 
-    double massOfRotatingObject = partsOfSystem[0].mass;
-    double massOfTestingObject  = partsOfSystem[2].mass;
-    double massOfZeroObject     = partsOfSystem[3].mass;
+    double massOfRotatingObject = systemElements[0]->mass;
+    double massOfTestingObject  = systemElements[2]->mass;
+    double massOfZeroObject     = systemElements[3]->mass;
 
-    double armOfRotatingObjects = partsOfSystem[0].getPosVector().l2Metric();
-    double armOfTestingObject   = partsOfSystem[2].getPosVector().l2Metric();
-    double armOfZeroObject      = partsOfSystem[3].getPosVector().l2Metric();
+    double armOfRotatingObjects = systemElements[0]->position().l2Metric();
+    double armOfTestingObject   = systemElements[2]->position().l2Metric();
+    double armOfZeroObject      = systemElements[3]->position().l2Metric();
 
     double inertiaOfCentralSphere  = 2.0 / 5.0 * centerMass * pow(radius, 2);
     double inertiaOfRotatingObject = massOfRotatingObject   * pow(armOfRotatingObjects, 2);
@@ -191,29 +189,29 @@ void TestPhysicsObject::tick(double deltaT)
     inertiaTensor = diagonalizedInertiaTensor;
 
     /** Kinematics **/
-    velocity = Vector3dd(0.0, 0.0, 0.0);
-    Vector3dd newPos = getPosCenter() + velocity * deltaT;
+    v = Vector3dd(0.0, 0.0, 0.0);
+    Vector3dd newPos = getPosCenter() + v * deltaT;
 
     // Floor simulation
     if (newPos.z() < -0.1)
     {
-        velocity = Vector3dd::Zero();
+        v = Vector3dd::Zero();
         setPosCenter(Vector3dd(newPos.x(), newPos.y(), -0.1));
     }
     else {
         setPosCenter(newPos);
     }
-    velocity += (getForce() / getSystemMass()) * deltaT;
+    v += (force() / getSystemMass()) * deltaT;
 
     /* We should carefully use inertiaTensor here. It seems like it changes with the frame of reference */
     /** Dynamics **/
-    Vector3dd w_modified = angularVelocity * deltaT;
+    Vector3dd w_modified = w * deltaT;
     Quaternion dq = Quaternion::Rotation(w_modified, w_modified.l2Metric());
-    orientation = orientation ^ dq;
+    x.rotor = orientation() ^ dq;
 
-    Matrix33 omega = Matrix33::CrossProductLeft(angularVelocity);
+    Matrix33 omega = Matrix33::CrossProductLeft(w);
     //Vector3dd dw = -inertiaTensor.inv() * (getMomentum() - (omega * inertiaTensor * angularVelocity));
-    Vector3dd dw = inertiaTensor.inv() * (getMomentum() - (omega * inertiaTensor * w_modified));
+    Vector3dd dw = inertiaTensor.inv() * (momentum() - (omega * inertiaTensor * w_modified));
 
     /** Just output to console **/
     time_t ms0 = duration_cast< milliseconds >(
@@ -223,7 +221,7 @@ void TestPhysicsObject::tick(double deltaT)
     {
         //Matrix33 invAngVel = angularVelocity.toMatrix();
 
-        L_INFO << "Angular Velocity: " << angularVelocity << "\n"
+        L_INFO << "Angular Velocity: " << w << "\n"
                << "Angular Velocity derivative: " << dw << "\n"
                << "Angular Velocity derivative * deltaT :" << dw * deltaT;
 
@@ -238,10 +236,10 @@ void TestPhysicsObject::tick(double deltaT)
         //L_INFO << orientation;
     }
 
-    angularVelocity += dw;// * deltaT;
+    w += dw;// * deltaT;
 
     /** Need more info about why this is needed **/
-    orientation.normalise();
+    x.rotor.normalise();
 
     /** Understood what this should do, but have no clue how to apply this to object
      * without initial angular veclocity (like DzhanibekovVideo test) **/

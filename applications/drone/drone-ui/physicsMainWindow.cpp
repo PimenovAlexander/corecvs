@@ -265,7 +265,7 @@ void PhysicsMainWindow::startVirtualMode()
 //    simSim.startRealTimeSimulation();
 //    simSim.execTestSimulation();
     //simSim.execJanibekovTest();
-    simSim.execTestPhysObject();
+    //simSim.execTestPhysObject();
     QTimer::singleShot(8, this, SLOT(keepAlive()));
 }
 
@@ -324,20 +324,15 @@ void PhysicsMainWindow::drawDzhanibekov()
 
     if (oldbackend)
     {
-        simSim.testBolt.drawMyself(*scene->owned);
+
     }
     else
     {
         Mesh3DDecorated *mesh = new Mesh3DDecorated();
         mesh->switchNormals();
-        simSim.testBolt.drawMyself(*mesh);
         //mesh->dumpInfo();
         mShadedScene->setMesh(mesh);
     }
-
-    mGraphDialog.addGraphPoint("X", simSim.testBolt.getPosCenter().x());
-    mGraphDialog.addGraphPoint("Y", simSim.testBolt.getPosCenter().y());
-    mGraphDialog.addGraphPoint("Z", simSim.testBolt.getPosCenter().z());
 
     mGraphDialog.update();
 
@@ -416,20 +411,14 @@ void PhysicsMainWindow::drawTestObject()
 
     if (oldbackend)
     {
-        simSim.testObject.drawMyself(*scene->owned);
     }
     else
     {
         Mesh3DDecorated *mesh = new Mesh3DDecorated();
         mesh->switchNormals();
-        simSim.testObject.drawMyself(*mesh);
         //mesh->dumpInfo();
         mShadedScene->setMesh(mesh);
     }
-
-    mGraphDialog.addGraphPoint("X", simSim.testObject.getPosCenter().x());
-    mGraphDialog.addGraphPoint("Y", simSim.testObject.getPosCenter().y());
-    mGraphDialog.addGraphPoint("Z", simSim.testObject.getPosCenter().z());
 
     mGraphDialog.update();
 

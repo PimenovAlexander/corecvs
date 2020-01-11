@@ -4,8 +4,15 @@ project (drone-physics-test)
 set (NAME drone-physics-test )
 
 set (SRC_FILES
+    testPhysicsObject.cpp
     main_physics_test.cpp
 )
+
+
+set (HDR_FILES
+    testPhysicsObject.h
+)
+
 
 if(AVCODEC_LIBS) 
     message("Switching on avcodec support.")

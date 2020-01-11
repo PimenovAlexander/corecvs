@@ -5,7 +5,6 @@ set (NAME focus_stack )
 set (SRC_FILES
     imageStack.cpp 
     laplacianStacking.cpp 
-    complexWavelet.cpp
     main.cpp
 )
 
@@ -13,8 +12,6 @@ set (HDR_FILES
     fsAlgorithm.h
     imageStack.h 
     laplacianStacking.h
-    complexWaveFilter.h
-    complexWavelet.h
 )
 
 if (PNG_LIB)

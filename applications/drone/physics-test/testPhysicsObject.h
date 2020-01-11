@@ -12,13 +12,14 @@
 
 #include "physSphere.h"
 
-class TestPhysicsObject : public PhysMainObject
+class TestPhysicsObject : public PhysicsMainObject
 {
 
 public:
     TestPhysicsObject(double arm = 0.1, double mass = 4);
-    PhysSphere centralSphere;
-    std::vector<PhysSphere> partsOfSystem;
+    PhysicsSphere *centralSphere;
+    std::vector<PhysicsSphere*> systemElements;
+
     void drawMyself(Mesh3D &mesh);
     Affine3DQ getTransform();
     void physicsTick(double deltaT);

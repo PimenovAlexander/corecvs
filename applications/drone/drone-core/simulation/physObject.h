@@ -1,33 +1,42 @@
 #ifndef PHYSOBJECT_H
 #define PHYSOBJECT_H
 
+#include <cmath>
 #include <vector>
 #include <bits/stdc++.h>
+
 #include "core/utils/log.h"
-#include <core/geometry/mesh3d.h>
-#include <cmath>
+#include "core/geometry/mesh3d.h"
+
 #include "core/utils/utils.h"
 #include "core/geometry/mesh3d.h"
 #include "core/math/matrix/matrix33.h"
 #include "core/geometry/mesh3DDecorated.h"
 #include "core/math/affine.h"
 
-/** Temporary usages while we are preparing to move this to the proper place **/
-using corecvs::Vector3dd;
-using corecvs::Quaternion;
-
-class PhysObject
+class PhysicsObject
 {
 public:
-    PhysObject();
-    PhysObject(const corecvs::Affine3DQ &coords, const double &m);
+    PhysicsObject();
+    PhysicsObject(const corecvs::Affine3DQ &coords, const double &m);
 
-    Vector3dd velocity = Vector3dd::Zero();
+    /**
+     *   Current object position and orientation
+     **/
+    corecvs::Affine3DQ x = corecvs::Affine3DQ::Identity();
 
-    int frameCounter = 0;
-    Quaternion orientation = Quaternion::Identity();
-    Quaternion angularVelocity  = Quaternion::Identity();
-    Quaternion angularAcc = Quaternion::Identity();
+    /**
+     *   Current object speed
+     **/
+    corecvs::Vector3dd v = corecvs::Vector3dd::Zero();
+
+    /*Do we need this*/
+    corecvs::Quaternion r   = corecvs::Quaternion::Identity();
+    corecvs::Quaternion w   = corecvs::Quaternion::Identity();
+    corecvs::Quaternion tau = corecvs::Quaternion::Identity();
+
+    corecvs::Vector3dd F;
+    corecvs::Vector3dd M;
 
     /** Main body properties **/
     /** Mass in kilograms **/
@@ -38,33 +47,38 @@ public:
 
     /** Main magick **/
     void startTick();
-    void addForce   (const Vector3dd &force);
-    void addMoment  (const Vector3dd &moment);
-
-    //void tick(double deltaT);
+    void addForce   (const corecvs::Vector3dd &force);
+    void addMoment  (const corecvs::Vector3dd &moment);
 
     /** state inside tick **/
-    Vector3dd getForce() const;
-    Vector3dd getMoment() const;
+
+    virtual void calcMoment() = 0;
+    virtual void calcForce() = 0;
+
+    /** Get & Set **/
+    corecvs::Vector3dd force() const;
+    corecvs::Vector3dd moment() const;
+    void setPosition(const corecvs::Affine3DQ &pos);
+    void setPosition(const corecvs::Vector3dd &pos);
+    corecvs::Affine3DQ affine() const;
+    corecvs::Vector3dd position() const;
+
+    virtual ~PhysicsObject() {}
+};
+
+class MaterialObject : public PhysicsObject
+{
+public:
+    MaterialObject() {}
+    MaterialObject(const corecvs::Affine3DQ &coords, const double &m):
+        PhysicsObject(coords, m)
+    {}
+
+
     /* You may want to bring this to separate interface. */
     virtual void addToMesh (corecvs::Mesh3D &mesh) = 0;
     virtual void saveMesh  (const std::string &name) = 0;
     virtual void drawMesh (corecvs::Mesh3D &mesh) = 0;
-    virtual void calcMoment() = 0;
-    virtual void calcForce() = 0;
-    /* Get & Set */
-    void setPosition(const corecvs::Affine3DQ &pos);
-    void setPosition(const corecvs::Vector3dd &pos);
-    const corecvs::Affine3DQ getPosAffine() const;
-    const corecvs::Vector3dd getPosVector() const;
-
-private:
-    corecvs::Affine3DQ position;
-    Vector3dd F;
-    Vector3dd M;
-    //void addImpulse(const Vector3dd &force);
-    //void setForce(double x, double y, double z);
-    //void setForce(const Vector3dd &force);
 
 };
 

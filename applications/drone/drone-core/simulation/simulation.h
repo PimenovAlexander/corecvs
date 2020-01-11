@@ -13,18 +13,19 @@
 #include "physMainObject.h"
 #include "sceneShaded.h"
 #include "dzhanibekovBolt.h"
-#include <testPhysicsObject.h>
 
 class Simulation
 {
 public:
     Simulation();
-    vector<PhysMainObject> mainObjects;
+    vector<PhysicsMainObject> mainObjects;
 
     DroneObject drone;
-    DzhanibekovBolt testBolt;
-    TestPhysicsObject testObject;
 
+    /*Remove this */
+    //DzhanibekovBolt testBolt;
+
+    /* remove this ASAP */
     std::chrono::high_resolution_clock::time_point oldTime;
     std::chrono::high_resolution_clock::time_point newTime;
     std::chrono::high_resolution_clock::time_point startTime;
@@ -52,9 +53,10 @@ public:
     std::vector<size_t> time_of_forces;
     std::vector<size_t> time_between_forces;
 
-    void execJanibekovTest();
     void startDroneSimulation();
-    void execTestPhysObject();
+    //void execTestPhysObject();
+    //void execJanibekovTest();
+
 private:
     void defaultStart();
     void droneStart();

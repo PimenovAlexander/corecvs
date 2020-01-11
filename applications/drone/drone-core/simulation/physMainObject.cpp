@@ -1,17 +1,15 @@
 #include "physMainObject.h"
 
 
-PhysMainObject::PhysMainObject()
+PhysicsMainObject::PhysicsMainObject()
 {
-    posCenter = Vector3dd(0.0, 0.0, 0.0);
     systemMass = 0;
-    force = Vector3dd::Zero();
-    //moment = Vector3dd::Zero();
+    F = Vector3dd::Zero();
 
     L_INFO << "default PhysMainObject():created";
 }
 
-void PhysMainObject::addForce(const corecvs::Vector3dd &_force)
+void PhysicsMainObject::addForce(const corecvs::Vector3dd &_force)
 {
     /* objects dont need to know about whole system forces
     for (size_t i = 0; i < objects.size(); ++i)
@@ -19,75 +17,75 @@ void PhysMainObject::addForce(const corecvs::Vector3dd &_force)
         objects[i]->addForce(_force);
     }
     */
-    force += _force;
+    F += _force;
 }
 
-void PhysMainObject::tick(double deltaT)
+void PhysicsMainObject::tick(double deltaT)
 {
     //L_INFO <<"PhysMainObject::tick should not be called";
 }
 
 
 
-void PhysMainObject::calcCenterOfMass()
+void PhysicsMainObject::updateCenterOfMass()
 {
     for (size_t i = 0; i < objects.size(); ++i)
     {
-        massCenter += objects[i]->mass * objects[i]->getPosVector();
+        massCenter += objects[i]->mass * objects[i]->position();
         systemMass += objects[i]->mass;
     }
     massCenter = massCenter / systemMass;
 }
 
-const Vector3dd PhysMainObject::getCenterOfMass()
+const Vector3dd PhysicsMainObject::getCenterOfMass()
 {
-    calcCenterOfMass();
+    updateCenterOfMass();
     return massCenter;
 }
 
-void PhysMainObject::setForce(const Vector3dd &_force)
+void PhysicsMainObject::setForce(const Vector3dd &_force)
 {
-    force = _force;
+    F = _force;
 }
 
-const corecvs::Vector3dd PhysMainObject::getForce()
+const Vector3dd PhysicsMainObject::force()
 {
-    return force;
+    return F;
 }
 
-void PhysMainObject::setMomentum(const Vector3dd &_m)
+void PhysicsMainObject::setMomentum(const Vector3dd &_m)
 {
-    momentum = _m;
+    M = _m;
 }
 
-const Vector3dd PhysMainObject::getMomentum()
+const Vector3dd PhysicsMainObject::momentum()
 {
-    return momentum;
+    return M;
 }
 
-void PhysMainObject::setSystemMass(const double m)
+void PhysicsMainObject::setSystemMass(const double m)
 {
     systemMass = m;
 }
 
-double PhysMainObject::getSystemMass() const
+double PhysicsMainObject::getSystemMass() const
 {
     return systemMass;
 }
 
 
-void PhysMainObject::calcForce()
+void PhysicsMainObject::calcForce()
 {
     Vector3dd f = Vector3dd::Zero();
-    Affine3DQ transform;
     //L_INFO << "transform: " << transform;
     Vector3dd forceToTransform;
     Vector3dd forceAfterTransform;
+
     for(size_t i = 0; i < objects.size(); ++i)
-    {
+    {        
         objects[i]->calcForce();
-        transform = Affine3DQ(orientation, getPosCenter());// * objects[i]->getPosAffine();
-        forceToTransform = objects[i]->getForce();
+        Affine3DQ transform = x;
+        forceToTransform = objects[i]->force();
         forceAfterTransform = transform.rotor * forceToTransform;
         f += forceAfterTransform;
         //L_INFO << "added force: " << forceAfterTransform << "; forceToTransform: " << forceToTransform;
@@ -96,73 +94,58 @@ void PhysMainObject::calcForce()
     addForce(f);
 }
 
-void PhysMainObject::calcMoment()
+void PhysicsMainObject::calcMoment()
 {
-    Affine3DQ transform;
     Vector3dd m = Vector3dd::Zero();
-    transform = Affine3DQ(orientation, getPosCenter());
+    Affine3DQ transform = x;
     for(size_t i = 0; i < objects.size(); ++i)
     {
         objects[i]->calcMoment();
 
-        m += transform.rotor * objects[i]->getMoment();
+        m += transform.rotor * objects[i]->moment();
     }
 
-    //Matrix33 angAccMatrix = angularAcceleration.toMatrix();
-    //Matrix33 angVelMatrix = angularVelocity.toMatrix();
-
-    //Vector3dd angAccVector = Vector3dd(angAccMatrix.a(0,2), -angAccMatrix.a(1,2), -angAccMatrix.a(0,1));
-    //Vector3dd angVelVector = Vector3dd(angVelMatrix.a(0,2), -angVelMatrix.a(1,2), -angVelMatrix.a(0,1));
-
-    //m += inertiaTensor * angAccVector + angVelVector ^ (inertiaTensor * angVelVector);
     setMomentum(m);
 }
 
-void PhysMainObject::setPosCenter(const Vector3dd &_pos)
+void PhysicsMainObject::setPosCenter(const Vector3dd &_pos)
 {
-    posCenter = _pos;
+    x.shift = _pos;
 }
 
-const Vector3dd PhysMainObject::getPosCenter()
+Vector3dd PhysicsMainObject::getPosCenter() const
 {
-    return posCenter;
+    return x.shift;
 }
 
-void PhysMainObject::startTick()
+Quaternion PhysicsMainObject::orientation() const
 {
-    force = Vector3dd::Zero();
-    momentum = Vector3dd::Zero();
+    return x.rotor;
+}
+
+void PhysicsMainObject::setOrientation(const Quaternion &orientation)
+{
+    x.rotor = orientation;
+}
+
+
+void PhysicsMainObject::startTick()
+{
+    F = Vector3dd::Zero();
+    M = Vector3dd::Zero();
     for (size_t i = 0; i < objects.size(); i++)
     {
-        objects[i]->startTick();
-        //objects[i]->calcForce();
+        objects[i]->startTick();       
     }
 }
 
-void PhysMainObject::addObject(PhysObject *object)
+void PhysicsMainObject::addObject(PhysicsObject *object)
 {
     objects.push_back(object);
-    calcCenterOfMass();
+    updateCenterOfMass();
 }
 
-/*
-void PhysMainObject::addSphere(Vector3dd coords, double radius)
+PhysicsMainObject::~PhysicsMainObject()
 {
-    objects.push_back(new PhysSphere(coords,radius));
-    setCenterOfMass();
-}
-
-void PhysMainObject::addSphere(Vector3dd coords, double radius,corecvs::RGBColor color)
-{
-    objects.push_back(new SimSphere(coords,radius,color));
-    setCenterOfMass();
-}
-*/
-PhysMainObject::~PhysMainObject()
-{
-    for (PhysObject *obj : objects)
-    {
-        delete_safe(obj);
-    }
     objects.clear();
 }
