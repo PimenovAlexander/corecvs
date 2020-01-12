@@ -99,6 +99,17 @@ void DzhanibekovBolt::drawForces(Mesh3D &mesh)
     }
 }
 
+DzhanibekovBolt::~DzhanibekovBolt()
+{
+    delete_safe(centralSphere);
+    for (PhysicsSphere *element : systemElements)
+    {
+        delete_safe(element);
+    }
+    systemElements.clear();
+
+}
+
 Affine3DQ DzhanibekovBolt::getTransform()
 {
     return this->x;

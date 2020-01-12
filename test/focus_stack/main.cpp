@@ -25,10 +25,8 @@ void printUsage()
 int main(int argc, char *argv[])
 {
     if (argc != 3) {
-        if  (argc != 2) {
-            printUsage();
-            return 1;
-        }
+        printUsage();
+        return 1;
     }
 
 #ifdef WITH_LIBJPEG
@@ -55,3 +53,4 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+

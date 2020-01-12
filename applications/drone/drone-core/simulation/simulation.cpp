@@ -1,12 +1,12 @@
+#include <list>
+
+#include "core/utils/log.h"
+
 #include "simulation.h"
-#include "list"
 #include "simObject.h"
 #include "simSphere.h"
-#include <ctime>
-#include "core/utils/log.h"
-#include <chrono>
 #include "mesh3DScene.h"
-//#include "physicsMainWindow.h"
+
 using namespace std;
 using namespace corecvs;
 
@@ -27,27 +27,10 @@ Simulation::Simulation(string arg)
     }
 }
 
-double fRand(double fMin, double fMax)
-{
-    double f = (double)rand() / RAND_MAX;
-    return fMin + f * (fMax - fMin);
-}
-
 void Simulation::startRealTimeSimulation()
 {
-    std::thread thr([this]()
-    {
-        oldTime = std::chrono::high_resolution_clock::now();
-        while (isAlive)
-        {
-           drone.flightControllerTick(droneJoystick);
-           newTime = std::chrono::high_resolution_clock::now();
-           time_span = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-oldTime);
-           drone.physicsTick(time_span.count());
-           oldTime=newTime;
-        }
-    });
-    thr.detach();
+    drone.flightControllerTick(droneJoystick);
+    drone.physicsTick(1.0);
 }
 
 #if 0
@@ -146,6 +129,7 @@ void Simulation::startDroneSimulation()
 
 void Simulation::execTestSimulation()
 {
+#if 0
     srand(time(NULL));
     for (int i = 0; i < 4; i++)
     {
@@ -170,18 +154,12 @@ void Simulation::execTestSimulation()
 
     std::thread thr([this]()
     {
-        startTime = std::chrono::high_resolution_clock::now();
         drone.testMode = true;
-        oldTime = std::chrono::high_resolution_clock::now();
         while (isAlive)
         {
            drone.motors[1]->addForce(Vector3dd(0, 0, 1) * 0.1);
            drone.motors[0]->addForce(Vector3dd(0, 0, 1) * 0.1);
-           //drone.flightControllerTick(droneJoystick);
-           newTime = std::chrono::high_resolution_clock::now();
-           time_span = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-oldTime);
            drone.physicsTick(time_span.count());
-           oldTime=newTime;
            drone.startTick();
         }
     });
@@ -192,6 +170,7 @@ void Simulation::execTestSimulation()
     //deltaT here is wrong
     drone.physicsTick(0.1);
 */
+#endif
 }
 
 bool Simulation::getIsAlive()
@@ -257,27 +236,17 @@ void Simulation::defaultStart()
 void Simulation::start()
 {
     /* Use PreciseTime instead of chrono, it could make code a bit more compact */
-    startTime = std::chrono::high_resolution_clock::now();
-    oldTime = std::chrono::high_resolution_clock::now();
 
     std::thread thr([this]()
     {
         cout<<mainObjects.size()<<" after thread"<<endl;
-        cout<<"kek"<<endl;
         while (isAlive)
         {
-            newTime = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-oldTime);
-            std::chrono::duration<double> currentTime = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-startTime);
-
-            // cout<<time_span.count()<<endl;
             for (int i = 0; i < mainObjects.size(); i++)
             {
-                mainObjects[i].tick(time_span.count());
+                mainObjects[i].tick(0.1);
              }
             frameCounter++;
-            oldTime=newTime;
-            usleep(3000);
         }
     });
     thr.detach();

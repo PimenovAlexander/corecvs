@@ -12,7 +12,6 @@
 #include "physSphere.h"
 #include "physMainObject.h"
 #include "sceneShaded.h"
-#include "dzhanibekovBolt.h"
 
 class Simulation
 {
@@ -22,10 +21,8 @@ public:
 
     DroneObject drone;
 
-    /*Remove this */
-    //DzhanibekovBolt testBolt;
-
     /* remove this ASAP */
+#if 0
     std::chrono::high_resolution_clock::time_point oldTime;
     std::chrono::high_resolution_clock::time_point newTime;
     std::chrono::high_resolution_clock::time_point startTime;
@@ -35,6 +32,8 @@ public:
     std::chrono::high_resolution_clock::time_point endTime;
     std::chrono::duration<double> time_span;
     std::chrono::duration<double> time_since_start;
+#endif
+
     SceneShaded *mShadedScene = NULL;
     int frameCounter=0;
     void start();
