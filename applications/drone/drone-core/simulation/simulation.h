@@ -8,9 +8,9 @@
 #include <time.h>
 
 #include "copter/droneObject.h"
-#include "physObject.h"
-#include "physSphere.h"
-#include "physMainObject.h"
+#include "physicsObject.h"
+#include "physicsSphere.h"
+#include "physicsCompoundObject.h"
 #include "sceneShaded.h"
 
 class Simulation

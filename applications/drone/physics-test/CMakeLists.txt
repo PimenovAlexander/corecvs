@@ -7,6 +7,7 @@ set (SRC_FILES
     testPhysicsObject.cpp
     dzhanibekovBolt.cpp
     main_physics_test.cpp
+    sim_physics_test.cpp
 )
 
 

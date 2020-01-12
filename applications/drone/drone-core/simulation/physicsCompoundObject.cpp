@@ -1,5 +1,6 @@
-#include "physMainObject.h"
+#include "physicsCompoundObject.h"
 
+using namespace corecvs;
 
 PhysicsMainObject::PhysicsMainObject()
 {

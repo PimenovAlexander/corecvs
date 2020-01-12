@@ -27,13 +27,13 @@ target_sources(drone-core
         ${CMAKE_CURRENT_LIST_DIR}/copter/motor.h
         ${CMAKE_CURRENT_LIST_DIR}/copter/quad.h
 
-        ${CMAKE_CURRENT_LIST_DIR}/simulation/physMainObject.h
         ${CMAKE_CURRENT_LIST_DIR}/simulation/simulation.h
         ${CMAKE_CURRENT_LIST_DIR}/simulation/simSphere.h
         ${CMAKE_CURRENT_LIST_DIR}/simulation/simObject.h
         ${CMAKE_CURRENT_LIST_DIR}/simulation/mainObject.h
-        ${CMAKE_CURRENT_LIST_DIR}/simulation/physObject.h
-        ${CMAKE_CURRENT_LIST_DIR}/simulation/physSphere.h
+        ${CMAKE_CURRENT_LIST_DIR}/simulation/physicsCompoundObject.h
+        ${CMAKE_CURRENT_LIST_DIR}/simulation/physicsObject.h
+        ${CMAKE_CURRENT_LIST_DIR}/simulation/physicsSphere.h
 
         ${CMAKE_CURRENT_LIST_DIR}/mixer/controlsMixer.h
 
@@ -62,13 +62,13 @@ target_sources(drone-core
         ${CMAKE_CURRENT_LIST_DIR}/copter/motor.cpp
 
 
-        ${CMAKE_CURRENT_LIST_DIR}/simulation/physMainObject.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/simulation/mainObject.cpp
         ${CMAKE_CURRENT_LIST_DIR}/simulation/simulation.cpp
         ${CMAKE_CURRENT_LIST_DIR}/simulation/simSphere.cpp
         ${CMAKE_CURRENT_LIST_DIR}/simulation/simObject.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/simulation/mainObject.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/simulation/physObject.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/simulation/physSphere.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/simulation/physicsCompoundObject.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/simulation/physicsObject.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/simulation/physicsSphere.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/mixer/controlsMixer.cpp
 

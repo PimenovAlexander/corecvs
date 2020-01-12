@@ -51,13 +51,13 @@ public:
     void addMoment  (const corecvs::Vector3dd &moment);
 
     /** state inside tick **/
-
     virtual void calcMoment() = 0;
     virtual void calcForce() = 0;
 
     /** Get & Set **/
     corecvs::Vector3dd force() const;
     corecvs::Vector3dd moment() const;
+
     void setPosition(const corecvs::Affine3DQ &pos);
     void setPosition(const corecvs::Vector3dd &pos);
     corecvs::Affine3DQ affine() const;

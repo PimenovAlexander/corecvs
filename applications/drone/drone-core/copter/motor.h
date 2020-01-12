@@ -10,7 +10,7 @@
 #include "core/math/affine.h"
 #include "core/math/vector/vector3d.h"
 
-#include "physSphere.h"
+#include "physicsSphere.h"
 
 class Motor : public PhysicsSphere
 {

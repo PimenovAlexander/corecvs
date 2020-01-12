@@ -1,6 +1,6 @@
 #ifndef TESTPHYSICSOBJECT_H
 #define TESTPHYSICSOBJECT_H
-#include <physMainObject.h>
+
 #include "core/geometry/mesh3d.h"
 #include <copterInputs.h>
 #include <vector>
@@ -10,7 +10,8 @@
 #include "core/math/affine.h"
 #include "core/math/vector/vector3d.h"
 
-#include "physSphere.h"
+#include "physicsSphere.h"
+#include "physicsCompoundObject.h"
 
 class TestPhysicsObject : public PhysicsMainObject
 {

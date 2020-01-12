@@ -1,4 +1,4 @@
-#include "physObject.h"
+#include "physicsObject.h"
 
 #include <bits/stdc++.h>
 

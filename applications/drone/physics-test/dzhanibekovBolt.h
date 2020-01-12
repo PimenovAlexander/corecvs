@@ -9,9 +9,9 @@
 #include "core/math/affine.h"
 #include "core/math/vector/vector3d.h"
 
-#include <physSphere.h>
-#include <physMainObject.h>
-#include <copterInputs.h>
+#include "physicsSphere.h"
+#include "physicsCompoundObject.h"
+#include "copterInputs.h"
 
 class DzhanibekovBolt : public PhysicsMainObject
 {
