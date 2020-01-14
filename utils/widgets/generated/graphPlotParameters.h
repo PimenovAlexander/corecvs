@@ -188,7 +188,7 @@ public:
         return mFixGridValue;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setGraphStyle(GraphStyle::GraphStyle graphStyle)
     {
         mGraphStyle = graphStyle;
@@ -244,7 +244,7 @@ public:
         mFixGridValue = fixGridValue;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -295,6 +295,7 @@ template<class VisitorType>
         mFixGridValue = fixGridValue;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const GraphPlotParameters &other) const 
     {
         if ( !(this->mGraphStyle == other.mGraphStyle)) return false;

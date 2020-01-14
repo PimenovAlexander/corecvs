@@ -107,6 +107,11 @@ void XmlSetter::visit<float>(float &floatField, float /*defaultValue*/, const ch
     saveValue(fieldName, QString::number(floatField));
 }
 
+template <>
+void XmlSetter::visit<std::string>(std::string &stringField, std::string /*defaultValue*/, const char *fieldName)
+{
+    saveValue(fieldName, QString::fromStdString(stringField));
+}
 
 /* And new style visitor method */
 

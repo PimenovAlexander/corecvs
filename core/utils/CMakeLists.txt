@@ -1,32 +1,32 @@
 target_sources(corecvs
      PUBLIC
-        utils/global.h
-        utils/stdint_win.h
-        utils/preciseTimer.h
-        utils/propertyList.h
-        utils/visitors/propertyListVisitor.h
-        utils/utils.h
-        utils/visitors/basePathVisitor.h
-        utils/log.h
-        utils/countedPtr.h
-        utils/atomicOps.h
-        utils/typesafeBitmaskEnums.h
-        utils/statusTracker.h
-    #    utils/abstractImageNamer.h
-    #    utils/statusTrackerCatcher.h
-        utils/debuggableBlock.h
+        ${CMAKE_CURRENT_LIST_DIR}/global.h
+        ${CMAKE_CURRENT_LIST_DIR}/stdint_win.h
+        ${CMAKE_CURRENT_LIST_DIR}/preciseTimer.h
+        ${CMAKE_CURRENT_LIST_DIR}/propertyList.h
+        ${CMAKE_CURRENT_LIST_DIR}/visitors/propertyListVisitor.h
+        ${CMAKE_CURRENT_LIST_DIR}/utils.h
+        ${CMAKE_CURRENT_LIST_DIR}/visitors/basePathVisitor.h
+        ${CMAKE_CURRENT_LIST_DIR}/log.h
+        ${CMAKE_CURRENT_LIST_DIR}/countedPtr.h
+        ${CMAKE_CURRENT_LIST_DIR}/atomicOps.h
+        ${CMAKE_CURRENT_LIST_DIR}/typesafeBitmaskEnums.h
+        ${CMAKE_CURRENT_LIST_DIR}/statusTracker.h
+    #    ${CMAKE_CURRENT_LIST_DIR}/abstractImageNamer.h
+    #    ${CMAKE_CURRENT_LIST_DIR}/statusTrackerCatcher.h
+        ${CMAKE_CURRENT_LIST_DIR}/debuggableBlock.h
 
  
     PRIVATE
-        utils/memhooks.c
-        utils/util.c
-        utils/preciseTimer.cpp
-        utils/propertyList.cpp
-        utils/visitors/propertyListVisitor.cpp
-        utils/visitors/basePathVisitor.cpp
-        utils/utils.cpp
-        utils/log.cpp
-        utils/statusTracker.cpp
-    #    utils/abstractImageNamer.cpp
-        utils/debuggableBlock.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/memhooks.c
+        ${CMAKE_CURRENT_LIST_DIR}/util.c
+        ${CMAKE_CURRENT_LIST_DIR}/preciseTimer.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/propertyList.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/visitors/propertyListVisitor.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/visitors/basePathVisitor.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/utils.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/log.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/statusTracker.cpp
+    #    ${CMAKE_CURRENT_LIST_DIR}/abstractImageNamer.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/debuggableBlock.cpp
 )

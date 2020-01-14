@@ -255,6 +255,8 @@ classes+=" calibrationDrawHelpersParameters"
 classes+=" focusEstimationParameters"
 classes+=" focusEstimationResult"
 classes+=" drawGCodeParameters"
+classes+=" patternDetectorResultBase"
+classes+=" harrisDetectionParameters"
 classes+=" stereoAlignParameters"
 
 classes+=" extrinsicsPlacerParameters"
@@ -266,8 +268,8 @@ full_ui_classes+=" chessBoardCornerDetectorParamsBase"
 full_ui_classes+=" chessBoardAssemblerParamsBase"
 full_ui_classes+=" bitcodeBoardParamsBase"
 
-full_ui_classes+=" openCVBMParameters"
-full_ui_classes+=" openCVSGMParameters"
+#full_ui_classes+=" openCVBMParameters"
+#full_ui_classes+=" openCVSGMParameters"
 
 
 

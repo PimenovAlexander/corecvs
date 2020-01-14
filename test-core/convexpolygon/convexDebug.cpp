@@ -94,7 +94,7 @@ int ConvexDebug::InitailPoint1(ProjectivePolygon &planes, Mesh3D *debug)
         if (line.y() < 0) lower.push_back(line.toDual());
     }
 
-
+    return 0;
 }
 
 

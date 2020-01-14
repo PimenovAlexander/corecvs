@@ -1,28 +1,28 @@
 target_sources(corecvs
     PUBLIC
-        rectification/essentialMatrix.h
-        rectification/essentialEstimator.h
-        rectification/iterativeEstimator.h
-        rectification/ransacEstimator.h
-        rectification/stereoAligner.h
-        rectification/triangulator.h
-        rectification/ransac.h
-    #    rectification/multicameraEstimator.h
-        rectification/multicameraTriangulator.h
-        rectification/sceneStereoAlignerBlock.h
+        ${CMAKE_CURRENT_LIST_DIR}/essentialMatrix.h
+        ${CMAKE_CURRENT_LIST_DIR}/essentialEstimator.h
+        ${CMAKE_CURRENT_LIST_DIR}/iterativeEstimator.h
+        ${CMAKE_CURRENT_LIST_DIR}/ransacEstimator.h
+        ${CMAKE_CURRENT_LIST_DIR}/stereoAligner.h
+        ${CMAKE_CURRENT_LIST_DIR}/triangulator.h
+        ${CMAKE_CURRENT_LIST_DIR}/ransac.h
+    #    ${CMAKE_CURRENT_LIST_DIR}/multicameraEstimator.h
+        ${CMAKE_CURRENT_LIST_DIR}/multicameraTriangulator.h
+        ${CMAKE_CURRENT_LIST_DIR}/sceneStereoAlignerBlock.h
      PRIVATE
-        rectification/essentialMatrix.cpp
-        rectification/essentialEstimator.cpp
-        rectification/iterativeEstimator.cpp
-        rectification/ransacEstimator.cpp
-        rectification/stereoAligner.cpp
-        rectification/triangulator.cpp
-    #    rectification/multicameraEstimator.cpp
-        rectification/multicameraTriangulator.cpp
-        rectification/sceneStereoAlignerBlock.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/essentialMatrix.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/essentialEstimator.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/iterativeEstimator.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ransacEstimator.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/stereoAligner.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/triangulator.cpp
+    #    ${CMAKE_CURRENT_LIST_DIR}/multicameraEstimator.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/multicameraTriangulator.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/sceneStereoAlignerBlock.cpp
 
-        xml/generated/essentialDerivative1.cpp
-        xml/generated/essentialDerivative2.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/../xml/generated/essentialDerivative1.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/../xml/generated/essentialDerivative2.cpp
  )
 
 

@@ -116,7 +116,7 @@ public:
         return mNewW;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setForceScale(bool forceScale)
     {
         mForceScale = forceScale;
@@ -142,7 +142,7 @@ public:
         mNewW = newW;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -175,6 +175,7 @@ template<class VisitorType>
         mNewW = newW;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const DistortionApplicationParameters &other) const 
     {
         if ( !(this->mForceScale == other.mForceScale)) return false;

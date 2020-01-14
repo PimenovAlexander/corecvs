@@ -1,16 +1,18 @@
 #include <stdio.h>
-#include <QtCore/QCoreApplication>
-//#include <unistd.h>
 
-#include <QImage>
+#include "core/buffers/bufferFactory.h"
 
-#include "qtFileLoader.h"
-
-//#include "imageCaptureInterface.h"
-//#include "V4L2Capture.h"
 #include "core/fileformats/bmpLoader.h"
 #include "core/geometry/ellipticalApproximation.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
+
+#ifdef WITH_LIBJPEG
+#include "libjpegFileReader.h"
+#endif
+
+#ifdef WITH_LIBPNG
+#include "libpngFileReader.h"
+#endif
 
 using namespace corecvs;
 
@@ -75,21 +77,26 @@ RGB24Buffer * alphaBlend(RGB24Buffer *in1, RGB24Buffer *in2, G8Buffer *alpha)
 
 int main (int argc, char **argv)
 {
-	QCoreApplication app(argc, argv);
 	printf("Loading mask...\n");
-    QTRGB24Loader  ::registerMyself();
-    QTG12Loader    ::registerMyself();
-    QTRuntimeLoader::registerMyself();
+#ifdef WITH_LIBJPEG
+    LibjpegFileReader::registerMyself();
+    SYNC_PRINT(("Libjpeg support on\n"));
+#endif
+#ifdef WITH_LIBPNG
+    LibpngFileReader::registerMyself();
+    SYNC_PRINT(("Libpng support on\n"));
+#endif
 
-	QImage imageMask    ("data/adopt/orig.png");
-	QImage imageAlpha   ("data/adopt/alpha.bmp");
-    QImage imageFace    ("data/adopt/face.png");
 
-    RGB24Buffer *alpha24 = QTFileLoader::RGB24BufferFromQImage(&imageAlpha);
-    RGB24Buffer *mask    = QTFileLoader::RGB24BufferFromQImage(&imageMask);
-    RGB24Buffer *face    = QTFileLoader::RGB24BufferFromQImage(&imageFace);
+    std::string imageMask  = "data/adopt/orig.png";
+    std::string imageAlpha = "data/adopt/alpha.bmp";
+    std::string imageFace  = "data/adopt/face.png";
 
-    G8Buffer *alpha = alpha24->getChannel(ImageChannel::GRAY);
+    RGB24Buffer *alpha24 = BufferFactory::getInstance()->loadRGB24Bitmap(imageAlpha);
+    RGB24Buffer *mask    = BufferFactory::getInstance()->loadRGB24Bitmap(imageMask);
+    RGB24Buffer *face    = BufferFactory::getInstance()->loadRGB24Bitmap(imageFace);
+
+    G8Buffer *alpha = alpha24->getChannelG8(ImageChannel::GRAY);
 
     Vector3dd meanMask(0.0);
     Vector3dd meanFace(0.0);

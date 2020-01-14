@@ -4,6 +4,7 @@
 
 #include "core/fileformats/gcodeLoader.h"
 #include "core/fileformats/pltLoader.h"
+#include "core/filesystem/folderScanner.h"
 
 #include "labelGcodeInterpreter.h"
 
@@ -215,7 +216,7 @@ int main2 (int argc, char **argv)
     return 0;
 }
 
-int main (int argc, char **argv)
+int main_old (int argc, char **argv)
 {
 #ifdef WITH_LIBPNG
     LibpngFileReader::registerMyself();
@@ -253,7 +254,7 @@ int main (int argc, char **argv)
 
     loader.loadGcode(file, program);
 
-    std::string basename = HelperUtils::getFileName(input);
+    std::string basename = FolderScanner::getBaseName(input);
     double scale= 0.25;
     int header = 40;
     RGB24Buffer *canvas = new RGB24Buffer(1500 * scale + header, 6000 * scale, RGBColor::White());
@@ -283,3 +284,137 @@ int main (int argc, char **argv)
     return 0;
 }
 
+void usage(void) {
+      cout << "Usage:\n"
+           << "\thelp\n"
+           << "\tcompensate [-i|--input filename] [-o|--output filename] [-f|--offset offset] [-t|--touchZ touchZ]\n"
+           << "\trender [-i|--input filename] [-o|--output filename] [-v|--vinyl]\n";
+}
+
+int main(int argc, char **argv) {
+  if (argc < 2 || std::string(argv[1]) == "help") {
+    usage();
+    return 0;
+  }
+
+  bool vinyl = false;
+  double offset = 0.5;
+  double touchZ = -0.1;
+  std::string infile = "in.gcode";
+  std::string outfile;
+
+  std::string mode = argv[1];
+
+  if (mode == "compensate") {
+    outfile = "out.gcode";
+  } else if (mode == "render") {
+    outfile = "out.ply";
+  } else {
+    usage();
+    return -1;
+  }
+
+  for (int i = 1; i < argc; i++) {
+    std::string arg = argv[i];
+
+    if (arg == "-i" || arg == "--input") {
+
+      // You will see this piece of code a couple more times.
+      // I hate macros with a burning passion and this test util doesn't deserve
+      // it's own parser class
+      if (i++ == argc) {
+        usage();
+        return -1;
+      }
+      infile = argv[i];
+
+    } else if (arg == "-o" || arg == "--output") {
+
+      if (i++ == argc) {
+        usage();
+        return -1;
+      }
+      outfile = argv[i];
+
+    } else if (arg == "-t" || arg == "--touchZ") {
+      
+      if (i++ == argc) {
+        usage();
+        return -1;
+      }
+      touchZ = stod(argv[i]);
+
+    } else if (arg == "-f" || arg == "--offset") {
+
+      if (i++ == argc) {
+        usage();
+        return -1;
+      }
+      offset = stod(argv[i]);
+
+    } else if (arg == "-v" || arg == "--vinyl") {
+
+      vinyl = true;
+
+    }
+  }
+
+  if (mode == "compensate") {
+    GCodeCompensator compensator;
+    GCodeProgram program;
+    GcodeLoader loader;
+    ifstream ifile;
+    ofstream ofile;
+
+    ifile.open(infile, ios::in);
+    if (ifile.fail())
+    {
+      SYNC_PRINT(("Can't open input gcode file <%s>\n", infile.c_str()));
+        return 1;
+    }
+
+    ofile.open(outfile, ios::out);
+    if (ofile.fail())
+    {
+      SYNC_PRINT(("Can't open output gcode file <%s>\n", outfile.c_str()));
+        return 1;
+    }
+
+    loader.loadGcode(ifile, program);
+    compensator.compensateDragKnife(program, offset, touchZ);
+    loader.saveGcode(ofile, compensator.result);
+
+    ofile.close();
+
+  }
+
+  if (mode == "render") {
+    GCodeProgram program;
+    GcodeLoader loader;
+    GCodeToMesh renderer;
+    Mesh3D mesh;
+    ifstream file;
+
+    file.open(infile, ios::in);
+    if (file.fail())
+    {
+      SYNC_PRINT(("Can't open input gcode file <%s>\n", infile.c_str()));
+        return 1;
+    }
+
+    loader.loadGcode(file, program);
+
+    if (vinyl) {
+      renderer.renderToMesh(program, mesh, offset);
+    } else {
+      renderer.renderToMesh(program, mesh);
+    }
+
+    if (mesh.dumpPLY(outfile)) {
+        SYNC_PRINT(("Can't open output mesh file <%s>\n", outfile.c_str()));
+        return 1;
+    }
+  }
+
+  return 0;
+}

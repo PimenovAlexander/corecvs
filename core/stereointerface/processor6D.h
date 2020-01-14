@@ -20,15 +20,24 @@
 #include "core/buffers/flow/sixDBuffer.h"
 #include "core/stats/calculationStats.h"
 
+#include "core/patterndetection/patternDetector.h"
+
 namespace corecvs {
 
+/**
+ *  Type to store point tracks:
+ *  vector - is per-point
+ *     map - maps frame number to PatternDetectorResult
+ **/
+typedef std::vector<std::map<int, PatternDetectorResult> > FlowTracks;
 
 class ProcessorFlow {
 public:
     enum ResultNames {
        RESULT_FLOW = 0x01,
        RESULT_FLOAT_FLOW   = 0x08,
-       RESULT_FLOAT_FLOW_LIST = 0x20
+       RESULT_FLOAT_FLOW_LIST = 0x20,
+       RESULT_FLOW_TRACKS = 0x100,
     };
 
     enum FrameNames {
@@ -51,14 +60,27 @@ public:
     virtual int setStats(Statistics *stats) = 0;
 
     /**
+     * Setting this value to the combination of ResultNames flags requests output buffers.
+     * This is a request only, if other combination parameters doesn't allow to produce particular outputs,
+     * they may be returned as NULL
+     **/
+    virtual int requestResultsi(int /*parameterName*/)                         { return 0; }
+
+
+    virtual int getResultCaps  () {return 0;}
+
+    /**
      * Methods below return the pointers to the internal data structures that are only valid
      * untill next beginFrame() is called. If you want them to persist - make a copy
      **/
 
     /** This method computes flow form current frame to previous **/
-    virtual FlowBuffer *getFlow() = 0;
+    virtual FlowBuffer         *getFlow() = 0;
     virtual CorrespondenceList *getFlowList() = 0;
-    virtual FloatFlowBuffer *getFloatFlow() = 0;
+    virtual FloatFlowBuffer    *getFloatFlow() = 0;
+    virtual FlowTracks         *getFlowTracks() = 0;
+
+
 
     virtual int getError(std::string *errorString) = 0;
 
@@ -122,8 +144,6 @@ public:
      * \attention Depricated
      **/
     virtual int setParameteri  (int /*parameterName*/, int /*parameterValue*/) { return 0; }
-    virtual int requestResultsi(int /*parameterName*/)                         { return 0; }
-
     /**
      * Methods below return the pointers to the internal data structures that are only valid
      * untill next beginFrame() is called. If you want them to persist - make a copy
@@ -183,7 +203,14 @@ private:
 public:
     typedef typename FactoryBaseType::ProductType ProductType;
 
-    virtual ~AlgoFactoryHolder() {}
+    ~AlgoFactoryHolder()
+    {
+        for (FactoryBaseType *provider : mProviders)
+        {
+           delete_safe(provider);
+        }
+        mProviders.clear();
+    }
 
 
     static AlgoFactoryHolder* getInstance()

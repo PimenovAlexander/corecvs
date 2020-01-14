@@ -139,7 +139,7 @@ public:
         return mSharpness;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setScore(int score)
     {
         mScore = score;
@@ -175,7 +175,7 @@ public:
         mSharpness = sharpness;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -214,6 +214,7 @@ template<class VisitorType>
         mSharpness = sharpness;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const FocusEstimationResult &other) const 
     {
         if ( !(this->mScore == other.mScore)) return false;

@@ -310,7 +310,7 @@ public:
         return mDecalRightAlpha;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setStyle(Draw3dStyle::Draw3dStyle style)
     {
         mStyle = style;
@@ -416,7 +416,7 @@ public:
         mDecalRightAlpha = decalRightAlpha;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -497,6 +497,7 @@ template<class VisitorType>
         mDecalRightAlpha = decalRightAlpha;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const Draw3dParameters &other) const 
     {
         if ( !(this->mStyle == other.mStyle)) return false;

@@ -67,13 +67,13 @@ public:
         return mPower;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setPower(int power)
     {
         mPower = power;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -94,6 +94,7 @@ template<class VisitorType>
         mPower = power;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const ThickeningParameters &other) const 
     {
         if ( !(this->mPower == other.mPower)) return false;

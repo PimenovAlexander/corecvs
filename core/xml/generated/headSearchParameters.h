@@ -115,7 +115,7 @@ public:
         return mHeadNumber;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setThresholdDistance(double thresholdDistance)
     {
         mThresholdDistance = thresholdDistance;
@@ -141,7 +141,7 @@ public:
         mHeadNumber = headNumber;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -174,6 +174,7 @@ template<class VisitorType>
         mHeadNumber = headNumber;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const HeadSearchParameters &other) const 
     {
         if ( !(this->mThresholdDistance == other.mThresholdDistance)) return false;

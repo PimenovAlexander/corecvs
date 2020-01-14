@@ -161,6 +161,7 @@ public:
     bool autoInit = false;
     PropertyList *input;
     bool ignoreUnknown;
+    bool mHasError;
 
     PropertyListReaderVisitor(PropertyList *_input, bool _ignoreUnknown = false) :
         input(_input),
@@ -172,7 +173,12 @@ public:
         input(new PropertyList()),
         ignoreUnknown(false)
     {
-        input->load(filename);
+        mHasError = !input->load(filename);
+    }
+
+    bool hasError()
+    {
+        return mHasError;
     }
 
     ~PropertyListReaderVisitor()

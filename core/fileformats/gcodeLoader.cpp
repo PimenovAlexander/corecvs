@@ -375,7 +375,7 @@ void GCodeInterpreter::executeProgram(const GCodeProgram &program)
                 straightHook(1, *state, newState);
             }
             else if (c.number == 2 || c.number == 3) {
-                Vector3dd center = newState.position;
+                Vector3dd center = state->position;
                 //mesh.setColor(RGBColor::Yellow());
 
                 for (int i = 0; i < (int)c.parameters.size(); i++)
@@ -533,5 +533,281 @@ int GCodeToMesh::renderToMesh(const GCodeProgram &in, Mesh3D &mesh)
     return 0;
 }
 
+int GCodeToMesh::renderToMesh(const GCodeProgram &in, Mesh3D &mesh,
+                                         double offset) {
+    SYNC_PRINT(("GCodeToMesh::renderToMesh(): called\n"));
+    SYNC_PRINT(
+        ("GCodeToMesh::renderToMesh(): style %d\n", mParameters.scheme()));
+
+    mesh.switchColor(true);
+    VinylCutterMeshInterpreter interpreter(this, &mesh, offset);
+    interpreter.executeProgram(in);
+
+    return 0;
+}
+
+
+bool GCodeToMesh::VinylCutterMeshInterpreter::straightHook(
+    int type, const GCodeInterpreter::MachineState &before,
+    const GCodeInterpreter::MachineState &after) {
+
+    double len = (after.position - before.position).l2Metric();
+    double erate = 0;
+    if (len != 0) {
+        erate = (after.extruderPos - before.extruderPos) / len;
+    }
+
+    DrawGCodeParameters &p = parent->mParameters;
+
+    if (type == 0) {
+        mesh->setColor(RGBColor::Gray());
+        mesh->addLine(before.position, after.position);
+        return true;
+    }
+
+    switch (p.scheme()) {
+        default:
+        case GCodeColoringSheme::COLOR_FROM_GCODE:
+            mesh->setColor(type ? RGBColor::Green() : RGBColor::Blue());
+            break;
+        case GCodeColoringSheme::COLOR_FROM_EXTRUSION_RATE:
+            mesh->setColor(RGBColor::rainbow(
+                lerp(0.0, 1.0, erate, p.minExtrude(), p.maxExtrude())));
+            break;
+        case GCodeColoringSheme::COLOR_FROM_TEMPERATURE:
+            mesh->setColor(
+                RGBColor::rainbow(lerp(0.0, 1.0, after.extruderTemperature,
+                                       p.minTemp(), p.maxTemp())));
+            break;
+        case GCodeColoringSheme::COLOR_FROM_SPEED:
+            mesh->setColor(RGBColor::rainbow(
+                lerp(0.0, 1.0, after.feedRate, p.minSpeed(), p.maxSpeed())));
+            break;
+    }
+
+    // Initial knife position
+    knifePos = before.position - tangent * offset;
+    Vector3dd direction = (after.position - before.position).normalised();
+
+    if (direction.angleTo(tangent) < 90) {
+        SYNC_PRINT((
+            "VinylCutterInterpreter: sharp angle detected! Not handled "
+            "correctly, as it leads to unpredictable behavior of the blade\n"));
+    }
+
+    Vector3dd currentPosition = before.position;
+    double step = len / parent->arcSteps;
+
+    for (int i = 0; i <= parent->arcSteps; i++) {
+        Vector3dd subTarget = knifePos + tangent * step;
+        mesh->addLine(knifePos, subTarget);
+        knifePos = subTarget;
+        currentPosition += direction * step;
+        tangent = (currentPosition - knifePos).normalised();
+    }
+
+    return true;
+}
+
+bool GCodeToMesh::VinylCutterMeshInterpreter::arkHook(
+    const GCodeInterpreter::MachineState &before,
+    const GCodeInterpreter::MachineState &after, const PlaneFrame &frame,
+    double maxArg) {
+
+    MachineState currentState = before;
+    MachineState subTarget = before;
+
+    DrawGCodeParameters &p = parent->mParameters;
+    switch (p.scheme()) {
+        default:
+        case GCodeColoringSheme::COLOR_FROM_GCODE:
+            mesh->setColor(RGBColor::Yellow());
+            break;
+        case GCodeColoringSheme::COLOR_FROM_EXTRUSION_RATE:
+            mesh->setColor(RGBColor::rainbow(0.5));
+            break;
+        case GCodeColoringSheme::COLOR_FROM_TEMPERATURE:
+            mesh->setColor(
+                RGBColor::rainbow(lerp(0.0, 1.0, after.extruderTemperature,
+                                       p.minTemp(), p.maxTemp())));
+            break;
+        case GCodeColoringSheme::COLOR_FROM_SPEED:
+            mesh->setColor(RGBColor::rainbow(
+                lerp(0.0, 1.0, after.feedRate, p.minSpeed(), p.maxSpeed())));
+            break;
+    }
+
+    double arg = 0;
+
+    // Approximates arc with line segments
+    for (int i = 0; i <= parent->arcSteps; i++) {
+        arg += maxArg / parent->arcSteps;
+        subTarget.position =
+            frame.p1 + frame.e1 * cos(arg) + frame.e2 * sin(arg);
+        GCodeInterpreter::MachineState subState;
+        straightHook(1, currentState, subTarget);
+        currentState = subTarget;
+    }
+
+    // Final line segment
+    mesh->setColor(RGBColor::Red());
+    straightHook(1, currentState, after);
+
+    return true;
+}
+
+
+bool GCodeCompensator::VinylCutterCodeInterpreter::gcodeHook(
+    const corecvs::GCodeProgram::Code &c) {
+
+  corecvs::GCodeProgram::Code copy = c;
+
+  result->program.push_back(copy);
+
+  step++;
+
+  return false;
+}
+
+bool GCodeCompensator::VinylCutterCodeInterpreter::straightHook(
+    int type, const GCodeInterpreter::MachineState &before,
+    const GCodeInterpreter::MachineState &after) {
+
+  if (((before.position.z() > touchZ && after.position.z() < touchZ) ||
+       (before.position.z() < touchZ && after.position.z() > touchZ)) &&
+      (before.position.x() != after.position.x() ||
+       before.position.y() != after.position.y())) {
+    SYNC_PRINT(("VinylCutterInterpreter: Warning! The knife touches/loses "
+                "touch with non-zero horizontal or vertical movement.\n"));
+  }
+
+  if (type == 0) {
+    if (before.position.z() < touchZ && after.position.z() < touchZ) {
+      SYNC_PRINT(("VinylCutterInterpreter: Warning! Rapid positioning below "
+                  "cutting position! Not calculating offset for that.\n"));
+    }
+    return true;
+  }
+
+  if (before.position.z() < touchZ && after.position.z() < touchZ) {
+
+    if (reboundStep == step) {
+      Vector2dd tangentVec =
+          (after.position - before.position).normalised().xy() * bladeOffset;
+
+      corecvs::GCodeProgram::Record rebound_x, rebound_y, rebound_z, rebound_i, rebound_j, rebound_k;
+
+      rebound_x.address = 'x';
+      rebound_x.value = before.position.x() + tangentVec.x();
+      rebound_y.address = 'y';
+      rebound_y.value = before.position.y() + tangentVec.y();
+      rebound_z.address = 'z';
+      rebound_z.value = after.position.z();
+      rebound_i.address = 'i';
+      rebound_i.value = reboundCenter.x();
+      rebound_j.address = 'j';
+      rebound_j.value = reboundCenter.y();
+      rebound_k.address = 'k';
+      rebound_k.value = reboundCenter.z();
+
+      corecvs::GCodeProgram::Code rebound;
+      rebound.area = 'g';
+      rebound.number = tangentVec.azimuthTo(tangent) > 0 ? 2 : 3;
+      rebound.parameters = {rebound_x, rebound_y, rebound_z, rebound_i, rebound_j, rebound_k};
+
+      result->program.insert(result->program.end() - 1, rebound);
+    }
+
+    Vector2dd overcutVec =
+        (after.position - before.position).normalised().xy() * bladeOffset;
+
+    corecvs::GCodeProgram::Record overcut_x, overcut_y, overcut_z;
+
+    overcut_x.address = 'x';
+    overcut_x.value = after.position.x() + overcutVec.x();
+    overcut_y.address = 'y';
+    overcut_y.value = after.position.y() + overcutVec.y();
+    overcut_z.address = 'z';
+    overcut_z.value = after.position.z();
+
+    corecvs::GCodeProgram::Code overcut;
+    overcut.area = 'g';
+    overcut.number = 1;
+    overcut.parameters = {overcut_x, overcut_y, overcut_z };
+
+    reboundCenter = - Vector3dd(overcutVec.x(), overcutVec.y(), 0);
+    reboundStep = step + 1;
+    tangent = overcutVec;
+
+    result->program.push_back(overcut);
+  }
+
+  return true;
+}
+
+bool GCodeCompensator::VinylCutterCodeInterpreter::arkHook(
+    const GCodeInterpreter::MachineState &before,
+    const GCodeInterpreter::MachineState &after, const PlaneFrame &frame,
+    double maxArg) {
+  CORE_UNUSED(before);
+  CORE_UNUSED(after);
+  CORE_UNUSED(frame);
+  CORE_UNUSED(maxArg);
+
+  if (((before.position.z() > touchZ && after.position.z() < touchZ) ||
+       (before.position.z() < touchZ && after.position.z() > touchZ)) &&
+      (before.position.x() != after.position.x() ||
+       before.position.y() != after.position.y())) {
+    SYNC_PRINT(("VinylCutterInterpreter: Warning! The kinfe touches/loses "
+                "touch with non-zero horizontal or vertical movement.\n"));
+  }
+
+  if (before.position.z() < touchZ && after.position.z() < touchZ) {
+    if (reboundStep == step) {
+      SYNC_PRINT(("Corners\n"));
+      Vector2dd tangentVec =
+          (after.position - before.position).normalised().xy() * bladeOffset;
+
+      corecvs::GCodeProgram::Record rebound_x, rebound_y, rebound_z, rebound_i, rebound_j, rebound_k;
+
+      rebound_x.address = 'x';
+      rebound_x.value = before.position.x() + tangentVec.x();
+      rebound_y.address = 'y';
+      rebound_y.value = before.position.y() + tangentVec.y();
+      rebound_z.address = 'z';
+      rebound_z.value = after.position.z();
+      rebound_i.address = 'i';
+      rebound_i.value = reboundCenter.x();
+      rebound_j.address = 'j';
+      rebound_j.value = reboundCenter.y();
+      rebound_k.address = 'k';
+      rebound_k.value = reboundCenter.z();
+
+      corecvs::GCodeProgram::Code rebound;
+      rebound.area = 'g';
+      rebound.number = tangentVec.azimuthTo(tangent) > 0 ? 2 : 3; // TODO:
+      rebound.parameters = {rebound_x, rebound_y, rebound_z, rebound_i, rebound_j, rebound_k};
+
+      result->program.insert(result->program.end() - 1, rebound);
+    }
+  }
+
+  return true;
+}
+
+void GCodeCompensator::compensateDragKnife(const GCodeProgram &in,
+                                           double offset, double touchZ) {
+    SYNC_PRINT(("GCodeCompensator::compensateDragKnife(): called\n"));
+    VinylCutterCodeInterpreter interpreter =
+        VinylCutterCodeInterpreter(&result, offset, touchZ);
+    interpreter.executeProgram(in);
+};
+
+
+GCodeCompensator::GCodeCompensator()
+{}
+
+GCodeCompensator::~GCodeCompensator()
+{}
 
 } // namespace corecvs

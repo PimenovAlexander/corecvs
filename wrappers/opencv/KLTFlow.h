@@ -101,7 +101,7 @@ class OpenCVFlowProcessor : public corecvs::Processor6D
     }
 
     /** sets statistics data. Implementation should support stats == NULL **/
-    virtual int setStats(corecvs::Statistics *stats)
+    virtual int setStats(corecvs::Statistics *stats) override
     {
         this->stats = stats;
         return 0;
@@ -112,13 +112,20 @@ class OpenCVFlowProcessor : public corecvs::Processor6D
     virtual int endFrame();
 
 
-    virtual std::map<std::string, corecvs::DynamicObject> getParameters();
-    virtual bool setParameters(std::string /*name*/, const corecvs::DynamicObject & /*param*/) {return true;}
+    virtual std::map<std::string, corecvs::DynamicObject> getParameters() override;
+    virtual bool setParameters(std::string /*name*/, const corecvs::DynamicObject & /*param*/)  override {return true;}
 
 
     /** Oldstyle calls **/
-    virtual int setParameteri  (int /*parameterName*/, int /*parameterValue*/) {return 0;}
-    virtual int requestResultsi(int /*parameterName*/) {return 0;}
+    virtual int setParameteri  (int /*parameterName*/, int /*parameterValue*/) override {return 0;}
+
+    /**
+     * Setting this value to the combination of ResultNames flags requests output buffers.
+     * This is a request only, if other combination parameters doesn't allow to produce particular outputs,
+     * they may be returned as NULL
+     **/
+    virtual int requestResultsi(int /*parameterName*/) override {return 0;}
+    virtual int getResultCaps() override  {return RESULT_FLOW | RESULT_FLOAT_FLOW;}
 
     /**
      * Methods below return the pointers to the internal data structures that are only valid
@@ -126,29 +133,34 @@ class OpenCVFlowProcessor : public corecvs::Processor6D
      **/
 
     /* This method computes flow form current frame to previous */
-    virtual corecvs::FlowBuffer *getFlow(){
+    virtual corecvs::FlowBuffer *getFlow() override
+    {
        return opticalFlow;
     }
 
 
-    virtual corecvs::FlowBuffer *getStereo()
+    virtual corecvs::FlowBuffer *getStereo() override
     {
         return NULL;
     }
 
-    virtual corecvs::CorrespondenceList *getFlowList()
+    virtual corecvs::CorrespondenceList *getFlowList() override
     {
         return NULL;
     }
 
-    virtual corecvs::FloatFlowBuffer *getFloatFlow()
+    virtual corecvs::FloatFlowBuffer *getFloatFlow() override
+    {
+        return NULL;
+    }
+
+    virtual corecvs::FlowTracks *getFlowTracks()
     {
         return NULL;
     }
 
 
-
-    virtual int getError(std::string *errorString) {return 0;}
+    virtual int getError(std::string * /*errorString*/) override {return 0;}
 };
 
 

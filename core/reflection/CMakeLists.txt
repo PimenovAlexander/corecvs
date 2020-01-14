@@ -1,38 +1,38 @@
 target_sources(corecvs
     PUBLIC
-        reflection/stringPrinterVisitor.h
-        reflection/reflection.h
-        reflection/defaultSetter.h
-        reflection/printerVisitor.h
-        reflection/usageVisitor.h
-        reflection/serializerVisitor.h
-        reflection/deserializerVisitor.h
-        reflection/commandLineSetter.h
-        reflection/extendedVisitor.h
-        reflection/commandLineGetter.h
-        reflection/jsonPrinter.h
-        reflection/binaryReader.h
-        reflection/binaryWriter.h
-        reflection/dynamicObject.h
-        reflection/advanced/advancedBinaryReader.h
-        reflection/advanced/advancedBinaryWriter.h
+        ${CMAKE_CURRENT_LIST_DIR}/stringPrinterVisitor.h
+        ${CMAKE_CURRENT_LIST_DIR}/reflection.h
+        ${CMAKE_CURRENT_LIST_DIR}/defaultSetter.h
+        ${CMAKE_CURRENT_LIST_DIR}/printerVisitor.h
+        ${CMAKE_CURRENT_LIST_DIR}/usageVisitor.h
+        ${CMAKE_CURRENT_LIST_DIR}/serializerVisitor.h
+        ${CMAKE_CURRENT_LIST_DIR}/deserializerVisitor.h
+        ${CMAKE_CURRENT_LIST_DIR}/commandLineSetter.h
+        ${CMAKE_CURRENT_LIST_DIR}/extendedVisitor.h
+        ${CMAKE_CURRENT_LIST_DIR}/commandLineGetter.h
+        ${CMAKE_CURRENT_LIST_DIR}/jsonPrinter.h
+        ${CMAKE_CURRENT_LIST_DIR}/binaryReader.h
+        ${CMAKE_CURRENT_LIST_DIR}/binaryWriter.h
+        ${CMAKE_CURRENT_LIST_DIR}/dynamicObject.h
+        ${CMAKE_CURRENT_LIST_DIR}/advanced/advancedBinaryReader.h
+        ${CMAKE_CURRENT_LIST_DIR}/advanced/advancedBinaryWriter.h
 
    PRIVATE
-        reflection/stringPrinterVisitor.cpp
-        reflection/defaultSetter.cpp
-        reflection/printerVisitor.cpp
-        reflection/usageVisitor.cpp
-        reflection/serializerVisitor.cpp
-        reflection/deserializerVisitor.cpp
-        reflection/commandLineSetter.cpp
-        reflection/reflection.cpp
-        reflection/extendedVisitor.cpp
-        reflection/commandLineGetter.cpp
-        reflection/jsonPrinter.cpp
-        reflection/binaryReader.cpp
-        reflection/binaryWriter.cpp
-        reflection/dynamicObject.cpp
-        reflection/advanced/advancedBinaryReader.cpp
-        reflection/advanced/advancedBinaryWriter.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/stringPrinterVisitor.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/defaultSetter.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/printerVisitor.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/usageVisitor.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/serializerVisitor.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/deserializerVisitor.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/commandLineSetter.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/reflection.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/extendedVisitor.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/commandLineGetter.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/jsonPrinter.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/binaryReader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/binaryWriter.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/dynamicObject.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/advanced/advancedBinaryReader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/advanced/advancedBinaryWriter.cpp
 
 )

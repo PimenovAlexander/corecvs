@@ -214,7 +214,7 @@ TEST(MidmapPyramid, testTexureDY)
     mesh.switchNormals(true);
 
     /*mesh.addTriangleT(Vector3dd(-1, -1, 3), Vector2dd(0, 0),
-                      Vector3dd( 1,  0, 3), Vector2dd(1, 0.5),`
+                      Vector3dd( 1,  0, 3), Vector2dd(1, 0.5),
                       Vector3dd(-1,  1, 3), Vector2dd(0, 1));*/
 
     if (!mesh.verify()) {

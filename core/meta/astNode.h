@@ -368,6 +368,11 @@ public:
     {
     }
 
+    ASTNode(ASTNodeInt::Operator _op, const ASTNode &_left) :
+        p(new ASTNodeInt(_op, _left.p))
+    {
+    }
+
     ASTNode(const char *name, ASTNodeFunctionPayload *payload) :
         p(new ASTNodeInt(name, payload))
     {
@@ -376,6 +381,16 @@ public:
     inline friend ASTNode sqrt(const ASTNode &left)
     {
         return ASTNode(ASTNodeInt::OPERATOR_POW, left, ASTNode(0.5));
+    }
+
+    inline friend ASTNode cos(const ASTNode &left)
+    {
+        return ASTNode(ASTNodeInt::OPERATOR_COS, left);
+    }
+
+    inline friend ASTNode sin(const ASTNode &left)
+    {
+        return ASTNode(ASTNodeInt::OPERATOR_SIN, left);
     }
 
 };

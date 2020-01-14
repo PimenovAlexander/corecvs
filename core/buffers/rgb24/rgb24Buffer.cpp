@@ -50,6 +50,20 @@ void RGB24Buffer::drawG8Buffer(const G8Buffer *src, int32_t y, int32_t x)
     }
 }
 
+void RGB24Buffer::drawG16Buffer(const G16Buffer *src, int32_t y, int32_t x)
+{
+    CORE_ASSERT_TRUE((this->h == src->h && this->w == src->w), "Wrong sizes");
+    int i,j;
+    for (i = 0; i < src->h; i++)
+    {
+        for (j = 0; j < src->w; j++)
+        {
+            uint32_t grey = src->element(i,j);
+            this->element(i + y, j + x) = RGBColor(grey, grey, grey);
+        }
+    }
+}
+
 void RGB24Buffer::drawPixel(int x, int y, const RGBColor &color)
 {
     if (this->isValidCoord(y, x))
@@ -284,10 +298,9 @@ void RGB24Buffer::drawFlowBuffer2(FlowBuffer *src, double colorShift, double col
 
 void RGB24Buffer::drawFlowBuffer3(FlowBuffer *src, double colorScaler, int32_t y, int32_t x)
 {
-    int i,j;
-    for (i = 0; i < src->h; i++)
+    for (int i = 0; i < src->h; i++)
     {
-        for (j = 0; j < src->w; j++)
+        for (int j = 0; j < src->w; j++)
         {
             if (!src->isElementKnown(i,j))
             {
@@ -300,6 +313,124 @@ void RGB24Buffer::drawFlowBuffer3(FlowBuffer *src, double colorScaler, int32_t y
             drawLineSimple(j + x, i + y, j + vec.x() + x, i + vec.y() + y, color);
             this->drawCrosshare3(j + vec.x() + x, i+ vec.y() + y, color);
         }
+    }
+}
+
+void RGB24Buffer::drawFlowBuffer(FloatFlowBuffer *src, double scaler, int32_t y, int32_t x)
+{
+    if (scaler < 0)
+    {
+        scaler = 0;
+        for (int i = 0; i < src->h; i++)
+        {
+            for (int j = 0; j < src->w; j++)
+            {
+                if (!src->isElementKnown(i,j))
+                {
+                    continue;
+                }
+                scaler = std::max(std::abs(src->element(i,j).vector.x()), scaler);
+                scaler = std::max(std::abs(src->element(i,j).vector.y()), scaler);
+            }
+        }
+    }
+
+    for (int i = 0; i < src->h; i++)
+    {
+        for (int j = 0; j < src->w; j++)
+        {
+            if (!src->isElementKnown(i,j))
+            {
+                continue;
+            }
+
+            Vector2dd vec = src->element(i,j).vector;
+
+            Vector3dd colord(Vector2dd(128.0) +  (vec / scaler) * Vector2dd(128.0), 0.0);
+            this->element(i + y, j + x) = RGBColor::FromDouble(colord);
+        }
+    }
+
+}
+
+void RGB24Buffer::drawFlowBufferHue(FloatFlowBuffer *src, double scaler, double magLimit, int32_t y, int32_t x, bool unknownBlack, int step, bool kitti)
+{
+    CORE_ASSERT_FALSE_S(step == 0);
+     SYNC_PRINT(("RGB24Buffer::drawFlowBufferHue(%s, %lf, %d, %d, %s, %d, %d): called\n",
+                 src == NULL ? "null" : "",
+                 scaler,
+                 y, x,
+                 unknownBlack ? "fill black" : "don't change",
+                 step, kitti));
+
+    if (scaler < 0) {
+        scaler = src->getMaximumMagnitude();
+    }
+    // SYNC_PRINT(("RGB24Buffer::drawFlowBufferHue(): scaler is %lf\n", scaler));
+
+    int skip = 0;
+    if (step < 0) {
+        skip = std::abs(step);
+        step = 1;
+    }
+
+    double n = 8.0; // multiplier
+    for (int32_t i = 0; i < src->h; i += step)
+    {
+        for (int32_t j = 0; j < src->w; j += step)
+        {
+            if (skip != 0 && (i % skip == 0) && (j % skip == 0))
+                continue;
+
+            if (!src->isElementKnown(i,j))
+            {
+                if (unknownBlack) {
+                    this->element(i + y, j + x) = RGBColor::Black();
+                }
+                continue;
+            }
+
+            this->element(i + y, j + x) = src->element(i,j).getColor(magLimit, scaler, n, kitti);
+       }
+    }
+}
+
+void RGB24Buffer::drawFlowBufferSparseHue(FloatFlowBuffer *src, double scaler, double magLimit, int32_t y, int32_t x, bool unknownBlack, int pointSize, bool kitti)
+{
+     SYNC_PRINT(("RGB24Buffer::drawFlowBufferSparseHue(%s, %lf, %lf, %d, %d, %s, %d): called\n",
+                 src == NULL ? "null" : "",
+                 scaler,
+                 magLimit,
+                 y, x,
+                 unknownBlack ? "fill black" : "don't change",
+                 pointSize));
+
+    if (scaler < 0) {
+        scaler = src->getMaximumMagnitude();
+    }
+    // SYNC_PRINT(("RGB24Buffer::drawFlowBufferSparseHue(): scaler is %lf\n", scaler));
+    for (int32_t i = 0; i < src->h; i += 1)
+    {
+        for (int32_t j = 0; j < src->w; j += 1)
+        {
+            if (!src->isElementKnown(i,j))
+            {
+                if (unknownBlack) {
+                    this->element(i + y, j + x) = RGBColor::Black();
+                }
+                continue;
+            }
+            RGBColor color = src->element(i,j).getColor(magLimit, scaler, 8, kitti);
+            for (int dy = -pointSize; dy <= pointSize; dy++)
+            {
+                for (int dx = -pointSize; dx <= pointSize; dx++)
+                {
+                    int nx = j + x + dx;
+                    int ny = i + y + dy;
+                    this->setElement(ny, nx, color);
+                }
+            }
+         }
     }
 }
 
@@ -793,6 +924,39 @@ void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<ContinuousType> &in,
         }
     }
 
+    if (style == STYLE_GRAY1)
+    {
+        for (int i = 0; i < mh; i++)
+        {
+            for (int j = 0; j < mw; j++)
+            {
+                ContinuousType v = in.element(i,j);
+                if (std::isnan(v)) {
+                    continue;
+                }
+                v = clamp<ContinuousType>(v, 0, 1) * 255;
+                element(i, j) = RGBColor(v,v,v);
+            }
+        }
+    }
+
+    if (style == STYLE_GRAY255)
+    {
+        for (int i = 0; i < mh; i++)
+        {
+            for (int j = 0; j < mw; j++)
+            {
+                ContinuousType v = in.element(i,j);
+                if (std::isnan(v)) {
+                    continue;
+                }
+                v = clamp<ContinuousType>(v, 0, 255);
+                element(i, j) = RGBColor(v,v,v);
+            }
+        }
+    }
+
+
     if (legend) {
         AbstractPainter<RGB24Buffer> painter(this);
         painter.drawFormat(10,10, RGBColor::Black(), 1, "Min:%lf", (double)min);
@@ -1043,9 +1207,10 @@ G12Buffer *RGB24Buffer::toG12Buffer()
 
 
 /* We need to optimize this */
-G8Buffer* RGB24Buffer::getChannel(ImageChannel::ImageChannel channel)
+template<class ReturnType>
+ReturnType* RGB24Buffer::getChannel(ImageChannel::ImageChannel channel)
 {
-    G8Buffer *result = new G8Buffer(getSize(), false);
+    ReturnType *result = new ReturnType(getSize(), false);
 
     for (int i = 0; i < result->h; i++)
     {
@@ -1102,6 +1267,46 @@ G8Buffer* RGB24Buffer::getChannel(ImageChannel::ImageChannel channel)
     }
 
     return result;
+}
+
+G8Buffer * RGB24Buffer::getChannelG8 (ImageChannel::ImageChannel channel) {
+    return getChannel<G8Buffer>(channel);
+}
+
+G12Buffer* RGB24Buffer::getChannelG12(ImageChannel::ImageChannel channel) {
+    G12Buffer* toReturn = getChannel<G12Buffer>(channel);
+    toReturn->touchOperationElementwize([](int, int, uint16_t &a){ a = a << 4;});
+    return toReturn;
+}
+
+G16Buffer* RGB24Buffer::getChannelG16(ImageChannel::ImageChannel channel){
+    return getChannel<G16Buffer>(channel);
+}
+
+DpImage  * RGB24Buffer::getChannelDp(ImageChannel::ImageChannel channel){
+    return getChannel<DpImage>(channel);
+}
+
+FpImage  * RGB24Buffer::getChannelFp(ImageChannel::ImageChannel channel){
+    return getChannel<FpImage>(channel);
+}
+
+
+
+
+
+bool RGB24Buffer::isGrayscale() const
+{
+    for (int i = 0; i < h; i++)
+    {
+        for (int j = 0; j < w; j++)
+        {
+            RGBColor color = element(i,j);
+            if (color.r() != color.g() || color.g() != color.b())
+                return false;
+        }
+    }
+    return true;
 }
 
 double RGB24Buffer::diffL2(RGB24Buffer *buffer1, RGB24Buffer *buffer2)

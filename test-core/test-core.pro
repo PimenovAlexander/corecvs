@@ -98,6 +98,7 @@ SOURCES += \
    #fastkernel_profile/main_test_fastkernel_profile.cpp \ # moved to perf-tests   
     fileformats/main_test_fileformats.cpp \
     filesystem/main_test_filesystem.cpp \
+    joystick/main_test_joystick.cpp \
    #filter_blocks/main_test_filter_blocks.cpp \           # TODO: can't build
 #    gaussianSolution/main_test_gaussianSolution.cpp \     # TODO: check it...
     geometry/main_test_geometry.cpp \
@@ -141,7 +142,6 @@ SOURCES += \
     deform/test_deform.cpp \
     camerafixture/main_test_camerafixture.cpp \
     renderer/main_test_renderer.cpp \
-    meshdraw/test_polymeshdraw.cpp \
     raytrace/main_test_raytrace.cpp \
     json/main_test_json.cpp \
     utils/main_test_utils.cpp \
@@ -165,3 +165,4 @@ SOURCES += \
     mesh/main_test_mesh.cpp \
     convexpolygon/main_test_convexpolygon.cpp \
     convexduality/main_test_convexduality.cpp \
+    inset_outset/main_test_inset_outset.cpp \

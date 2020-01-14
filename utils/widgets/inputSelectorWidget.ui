@@ -160,50 +160,31 @@
        <string>V4L2</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="6" column="0">
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item row="2" column="0">
         <widget class="QCheckBox" name="v4l2StereoCheckBox">
          <property name="text">
           <string>Stereo</string>
          </property>
          <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="2">
-        <widget class="QComboBox" name="v4l2WidthComboBox">
-         <property name="editable">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
        <item row="3" column="0">
         <widget class="QCheckBox" name="v4l2hwCheckBox">
          <property name="text">
-          <string>HxW</string>
+          <string>WxH</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="3">
-        <widget class="QComboBox" name="v4l2Device1ComboBox"/>
+       <item row="5" column="0">
+        <widget class="QCheckBox" name="v4l2FpsCheckBox">
+         <property name="text">
+          <string>FPS</string>
+         </property>
+        </widget>
        </item>
-       <item row="0" column="1" colspan="2">
-        <widget class="QLineEdit" name="v4l2Device1LineEdit"/>
-       </item>
-       <item row="4" column="1">
+       <item row="4" column="2">
         <widget class="QComboBox" name="v4l2CodecComboBox">
          <item>
           <property name="text">
@@ -227,20 +208,10 @@
          </item>
         </widget>
        </item>
-       <item row="2" column="3">
-        <widget class="QComboBox" name="v4l2Device2ComboBox"/>
-       </item>
-       <item row="3" column="1">
-        <widget class="QComboBox" name="v4l2HightComboBox">
-         <property name="editable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1" colspan="2">
+       <item row="2" column="2" colspan="2">
         <widget class="QLineEdit" name="v4l2Device2LineEdit"/>
        </item>
-       <item row="0" column="4">
+       <item row="0" column="5">
         <widget class="QPushButton" name="v4l2RefreshPushButton">
          <property name="toolTip">
           <string>Refresh</string>
@@ -260,69 +231,95 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
-        <widget class="QCheckBox" name="v4l2FpsCheckBox">
-         <property name="text">
-          <string>FPS</string>
-         </property>
-        </widget>
+       <item row="0" column="2" colspan="2">
+        <widget class="QLineEdit" name="v4l2Device1LineEdit"/>
        </item>
-       <item row="5" column="1">
-        <widget class="QComboBox" name="v4l2NumComboBox">
+       <item row="6" column="0">
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="2" column="4">
+        <widget class="QComboBox" name="v4l2Device2ComboBox"/>
+       </item>
+       <item row="0" column="4">
+        <widget class="QComboBox" name="v4l2Device1ComboBox"/>
+       </item>
+       <item row="3" column="4">
+        <widget class="QComboBox" name="v4l2SizeComboBox">
+         <property name="editable">
+          <bool>true</bool>
+         </property>
          <item>
           <property name="text">
-           <string>1</string>
+           <string>640x480</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>2</string>
+           <string>800x600</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="3" column="2">
+        <widget class="QSpinBox" name="v4l2WidthSpinBox">
+         <property name="maximum">
+          <number>99999</number>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="3">
+        <widget class="QSpinBox" name="v4l2HeightSpinBox">
+         <property name="maximum">
+          <number>99999</number>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="4">
+        <widget class="QComboBox" name="v4l2FpsComboBox">
+         <item>
+          <property name="text">
+           <string>1/5</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1/10</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1/25</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1/30</string>
           </property>
          </item>
         </widget>
        </item>
        <item row="5" column="2">
-        <widget class="QComboBox" name="v4l2DenumComboBox">
-         <item>
-          <property name="text">
-           <string>5</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>10</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>15</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>20</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>25</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>30</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>60</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>50</string>
-          </property>
-         </item>
+        <widget class="QSpinBox" name="v4l2FpsNumSpinBox">
+         <property name="maximum">
+          <number>9999</number>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="3">
+        <widget class="QSpinBox" name="v4l2FpsDenumSpinBox">
+         <property name="maximum">
+          <number>9999</number>
+         </property>
         </widget>
        </item>
       </layout>

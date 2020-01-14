@@ -259,7 +259,7 @@ public:
         return mBit15;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setShift(int shift)
     {
         mShift = shift;
@@ -345,7 +345,7 @@ public:
         mBit15 = bit15;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -414,6 +414,7 @@ template<class VisitorType>
         mBit15 = bit15;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const BitSelectorParameters &other) const 
     {
         if ( !(this->mShift == other.mShift)) return false;

@@ -98,7 +98,7 @@ public:
         return static_cast<HomographyAlgorithm::HomographyAlgorithm>(mAlgorithm);
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setIn0(corecvs::CorrespondenceList * in0)
     {
         mIn0 = in0;
@@ -114,7 +114,7 @@ public:
         mAlgorithm = algorithm;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -141,6 +141,7 @@ template<class VisitorType>
         mAlgorithm = algorithm;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const HomorgaphyReconstructorBlockBase &other) const 
     {
         if ( !(this->mAlgorithm == other.mAlgorithm)) return false;

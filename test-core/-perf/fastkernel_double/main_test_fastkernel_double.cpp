@@ -27,7 +27,7 @@ using corecvs::ScalarAlgebraDouble;
 
 using namespace corecvs;
 
-const static unsigned POLUTING_INPUTS = 10;
+const static unsigned POLLUTING_INPUTS = 10;
 const static unsigned LIMIT = 50;
 
 const static int  TEST_H_SIZE = 3000;
@@ -96,21 +96,21 @@ public:
 
 TEST(FastKernelDouble, testDoubleConvolve)  // TODO: it fails on the line 244!
 {
-    DpImage* input[POLUTING_INPUTS];
+    DpImage* input[POLLUTING_INPUTS];
 
     VisiterSemiRandom<DpImage::InternalElementType> vis;
-    for (unsigned i = 0; i < POLUTING_INPUTS; i++)
+    for (unsigned i = 0; i < POLLUTING_INPUTS; i++)
     {
         input[i] = new DpImage(TEST_H_SIZE, TEST_W_SIZE);
         input[i]->touchOperationElementwize(vis);
     }
 
-    DpImage *outputScalar[POLUTING_INPUTS];
-    DpImage *outputSimple[POLUTING_INPUTS];
-    DpImage *outputVector[POLUTING_INPUTS];
-    DpImage *outputKernalized[POLUTING_INPUTS];
+    DpImage *outputScalar    [POLLUTING_INPUTS];
+    DpImage *outputSimple    [POLLUTING_INPUTS];
+    DpImage *outputVector    [POLLUTING_INPUTS];
+    DpImage *outputKernalized[POLLUTING_INPUTS];
 
-    for (unsigned i = 0; i < POLUTING_INPUTS; i++)
+    for (unsigned i = 0; i < POLLUTING_INPUTS; i++)
     {
         outputSimple    [i] = new DpImage(TEST_H_SIZE, TEST_W_SIZE);
         outputScalar    [i] = new DpImage(TEST_H_SIZE, TEST_W_SIZE);
@@ -128,7 +128,9 @@ TEST(FastKernelDouble, testDoubleConvolve)  // TODO: it fails on the line 244!
     PreciseTimer start;
     /* Run Simple */
     /* Preparation */
-    double duk[] = { -1.0, 0.0, 1.0, -1.0, 0.0, 1.0, -1.0, 0.0, 1.0 };
+    double duk[] = { -1.0, 0.0, 1.0,
+                     -1.0, 0.0, 1.0,
+                     -1.0, 0.0, 1.0 };
     DpKernel K(3, 3, duk);
 
     SYNC_PRINT(("Profiling     Simple Approach:"));
@@ -138,7 +140,7 @@ TEST(FastKernelDouble, testDoubleConvolve)  // TODO: it fails on the line 244!
         /*delete_safe(outputSimple[i % POLUTING_INPUTS]);
         outputSimple[i % POLUTING_INPUTS] = input[i % POLUTING_INPUTS]->doConvolve<DpImage>(&K);*/
 
-        input[i % POLUTING_INPUTS]->doConvolve<DpImage>(outputSimple[i % POLUTING_INPUTS], &K);
+        input[i % POLLUTING_INPUTS]->doConvolve<DpImage>(outputSimple[i % POLLUTING_INPUTS], &K);
     }
     uint64_t delaySimple = start.usecsToNow();
     SYNC_PRINT(("%8" PRIu64 "us %8" PRIu64 "ms SP: %8" PRIu64 "us\n", delaySimple, delaySimple / 1000, delaySimple / LIMIT));
@@ -153,7 +155,7 @@ TEST(FastKernelDouble, testDoubleConvolve)  // TODO: it fails on the line 244!
     BufferProcessor<DpImage, DpImage, ConvolveKernel, VectorAlgebraDouble> procScalar;
     for (unsigned i = 0; i < LIMIT; i++)
     {
-        procScalar.process(&input[i % POLUTING_INPUTS], &outputKernalized[i % POLUTING_INPUTS], convolver);
+        procScalar.process(&input[i % POLLUTING_INPUTS], &outputKernalized[i % POLLUTING_INPUTS], convolver);
     }
     uint64_t delayKernalized = start.usecsToNow();
     SYNC_PRINT(("%8" PRIu64 "us %8" PRIu64 "ms SP: %8" PRIu64 "us\n", delayKernalized, delayKernalized / 1000, delayKernalized / LIMIT));
@@ -167,8 +169,8 @@ TEST(FastKernelDouble, testDoubleConvolve)  // TODO: it fails on the line 244!
     BufferProcessor<DpImage, DpImage, VerticalEdgeKernel, ScalarAlgebraDouble> procKernalized;
     for (unsigned i = 0; i < LIMIT; i++)
     {
-        DpImage *cinput [1] = { input       [i % POLUTING_INPUTS] };
-        DpImage *coutput[1] = { outputScalar[i % POLUTING_INPUTS] };
+        DpImage *cinput [1] = { input       [i % POLLUTING_INPUTS] };
+        DpImage *coutput[1] = { outputScalar[i % POLLUTING_INPUTS] };
 
         procKernalized.process(cinput, coutput, kernel);
     }
@@ -183,8 +185,8 @@ TEST(FastKernelDouble, testDoubleConvolve)  // TODO: it fails on the line 244!
     start = PreciseTimer::currentTime();
     BufferProcessor<DpImage, DpImage, CopyKernel, VectorAlgebraDouble> procVector;
     for (unsigned i = 0; i < LIMIT; i++) {
-        DpImage *cinput [1] = { input       [i % POLUTING_INPUTS] };
-        DpImage *coutput[1] = { outputVector[i % POLUTING_INPUTS] };
+        DpImage *cinput [1] = { input       [i % POLLUTING_INPUTS] };
+        DpImage *coutput[1] = { outputVector[i % POLLUTING_INPUTS] };
 
         procVector.process(cinput, coutput, kernel1);
     }
@@ -266,10 +268,10 @@ TEST(FastKernelDouble, testDoubleConvolve)  // TODO: it fails on the line 244!
 
 
     /* Cleanup */
-    for (unsigned i = 0; i < POLUTING_INPUTS; i++)
+    for (unsigned i = 0; i < POLLUTING_INPUTS; i++)
         delete_safe(input[i]);
 
-    for (unsigned i = 0; i < POLUTING_INPUTS; i++)
+    for (unsigned i = 0; i < POLLUTING_INPUTS; i++)
     {
         delete_safe(outputScalar[i]);
         delete_safe(outputVector[i]);
@@ -281,19 +283,19 @@ TEST(FastKernelDouble, testDoubleConvolve)  // TODO: it fails on the line 244!
 
 TEST(FastKernelDouble, testLargeKernel)
 {
-    DpImage * input[POLUTING_INPUTS];
+    DpImage * input[POLLUTING_INPUTS];
     PreciseTimer start;
 
     VisiterSemiRandom<DpImage::InternalElementType> vis;
-    for (unsigned i = 0; i < POLUTING_INPUTS; i++)
+    for (unsigned i = 0; i < POLLUTING_INPUTS; i++)
     {
         input[i] = new DpImage(TEST_H_SIZE, TEST_W_SIZE);
         input[i]->touchOperationElementwize(vis);
     }
 
-    DpImage *outputKernalized[POLUTING_INPUTS];
+    DpImage *outputKernalized[POLLUTING_INPUTS];
 
-    for (unsigned i = 0; i < POLUTING_INPUTS; i++)
+    for (unsigned i = 0; i < POLLUTING_INPUTS; i++)
     {
         outputKernalized[i] = new DpImage(TEST_H_SIZE, TEST_W_SIZE);
     }
@@ -310,7 +312,7 @@ TEST(FastKernelDouble, testLargeKernel)
         ConvolveKernel<DummyAlgebra> convolver(kernel, kernel->h / 2, kernel->w / 2);
         BufferProcessor<DpImage, DpImage, ConvolveKernel, VectorAlgebraDouble> procScalar;
         for (unsigned i = 0; i < LIMIT; i++) {
-            procScalar.process(&input[i % POLUTING_INPUTS], &outputKernalized[i % POLUTING_INPUTS], convolver);
+            procScalar.process(&input[i % POLLUTING_INPUTS], &outputKernalized[i % POLLUTING_INPUTS], convolver);
         }
         uint64_t delayKernalized = start.usecsToNow();
         SYNC_PRINT(("%8" PRIu64 "us %8" PRIu64 "ms SP: %8" PRIu64 "us\n", delayKernalized, delayKernalized / 1000, delayKernalized / LIMIT));
@@ -319,12 +321,12 @@ TEST(FastKernelDouble, testLargeKernel)
         delete_safe(kernel);
     }
 
-    for (unsigned i = 0; i < POLUTING_INPUTS; i++)
+    for (unsigned i = 0; i < POLLUTING_INPUTS; i++)
     {
         delete_safe(input[i]);
     }
 
-    for (unsigned i = 0; i < POLUTING_INPUTS; i++)
+    for (unsigned i = 0; i < POLLUTING_INPUTS; i++)
     {
         delete_safe(outputKernalized[i]);
     }
@@ -357,19 +359,19 @@ public:
 
 TEST(FastKernelDouble, testConvolver)
 {
-    DpImage * input[POLUTING_INPUTS];
+    DpImage * input[POLLUTING_INPUTS];
     PreciseTimer start;
 
-    SYNC_PRINT(("We will profile buffers [%dx%d]. We will have %d polluting inputs\n\n", TEST_H_SIZE, TEST_W_SIZE, POLUTING_INPUTS));
+    SYNC_PRINT(("We will profile buffers [%dx%d]. We will have %d polluting inputs\n\n", TEST_H_SIZE, TEST_W_SIZE, POLLUTING_INPUTS));
 
     VisiterSemiRandom1<DpImage::InternalElementType> vis;
-    for (unsigned i = 0; i < POLUTING_INPUTS; i++)
+    for (unsigned i = 0; i < POLLUTING_INPUTS; i++)
     {
         input[i] = new DpImage(TEST_H_SIZE, TEST_W_SIZE);
         input[i]->touchOperationElementwize(vis);
     }
 
-    DpImage *output[POLUTING_INPUTS];
+    DpImage *output[POLLUTING_INPUTS];
 
     /*ok algos to test*/
 
@@ -399,7 +401,7 @@ TEST(FastKernelDouble, testConvolver)
 
         , { Convolver::ALGORITHM_SSE_FASTKERNEL             ,  60, 5, "Fastkernel",     true,  NULL, NULL, 0 }
         , { Convolver::ALGORITHM_SSE_FASTKERNEL_EXP         ,  60, 5, "FastkernelE",    true,  NULL, NULL, 0 }
-        , { Convolver::ALGORITHM_SSE_FASTKERNEL_EXP5        ,  60, 5, "FastkernelE5",   true,  NULL, NULL, 0 }
+        , { Convolver::ALGORITHM_SSE_FASTKERNEL_EXP3        ,  60, 5, "FastkernelE3",   true,  NULL, NULL, 0 }
 
         , { Convolver::ALGORITHM_SSE_WRAPPERS               ,  60, 5, "Wrappers",       true,  NULL, NULL, 0 }
 
@@ -418,7 +420,7 @@ TEST(FastKernelDouble, testConvolver)
     }
 
     /* Cache polluting outputs */
-    for (unsigned i = 0; i < POLUTING_INPUTS; i++)
+    for (unsigned i = 0; i < POLLUTING_INPUTS; i++)
     {
         output[i] = new DpImage(TEST_H_SIZE, TEST_W_SIZE);
     }
@@ -434,7 +436,7 @@ TEST(FastKernelDouble, testConvolver)
         double gflops = flop / 1000000.0 / 1000.0;
 
         kernel->touchOperationElementwize(vis);
-        for (unsigned i = 0; i < POLUTING_INPUTS; i++)
+        for (unsigned i = 0; i < POLLUTING_INPUTS; i++)
         {
             output[i]->fillWith(0.0);
         }
@@ -443,7 +445,7 @@ TEST(FastKernelDouble, testConvolver)
         start = PreciseTimer::currentTime();
 
         for (int j = 0; j < test.runs; j++) {
-            Convolver::convolve(*input[j % POLUTING_INPUTS], *kernel, *output[j % POLUTING_INPUTS], test.imp);
+            Convolver().convolve(*input[j % POLLUTING_INPUTS], *kernel, *output[j % POLLUTING_INPUTS], test.imp);
         }
 
         uint64_t delay = start.usecsToNow();
@@ -498,12 +500,12 @@ TEST(FastKernelDouble, testConvolver)
         delete_safe(tests[i].result);
     }
 
-    for (unsigned i = 0; i < POLUTING_INPUTS; i++)
+    for (unsigned i = 0; i < POLLUTING_INPUTS; i++)
     {
         delete_safe(input[i]);
     }
 
-    for (unsigned i = 0; i < POLUTING_INPUTS; i++)
+    for (unsigned i = 0; i < POLLUTING_INPUTS; i++)
     {
         delete_safe(output[i]);
     }
@@ -513,26 +515,26 @@ TEST(FastKernelDouble, testConvolver)
 
 TEST(FastKernelFloat, testConvolver)
 {
-    FpImage * input[POLUTING_INPUTS];
+    FpImage * input[POLLUTING_INPUTS] = { NULL };
     PreciseTimer start;
 
-    SYNC_PRINT(("We will profile buffers [%dx%d]. We will have %d polluting inputs\n\n", TEST_H_SIZE, TEST_W_SIZE, POLUTING_INPUTS));
+    SYNC_PRINT(("We will profile buffers [%dx%d]. We will have %d polluting inputs\n\n", TEST_H_SIZE, TEST_W_SIZE, POLLUTING_INPUTS));
 
     VisiterSemiRandom1<FpImage::InternalElementType> vis;
-    for (unsigned i = 0; i < POLUTING_INPUTS; i++)
+    for (unsigned i = 0; i < POLLUTING_INPUTS; i++)
     {
         input[i] = new FpImage(TEST_H_SIZE, TEST_W_SIZE);
         input[i]->touchOperationElementwize(vis);
     }
 
-    FpImage *output[POLUTING_INPUTS];
+    FpImage *output[POLLUTING_INPUTS];
 
     /*ok algos to test*/
 
     const int kernelSize = 11;
 
     TestDescr tests[] = {
- //       {Convolver::ALGORITHM_SSE_DMITRY     , 150, 5, "Dmitry"  , true, NULL, 0},
+        {Convolver::ALGORITHM_SSE_DMITRY     , 150, 5, "Dmitry"  , true, NULL, 0},
 
         {Convolver::ALGORITHM_NAIVE          ,  20, 5, "Naive"   , true, NULL, NULL, 0},
 
@@ -571,16 +573,13 @@ TEST(FastKernelFloat, testConvolver)
 
     };
 
-
-
     /* Results are stored to compare */
     for (size_t i = 0; i < CORE_COUNT_OF(tests); i++) {
-     //   tests[i].result = new DpImage(TEST_H_SIZE, TEST_W_SIZE);
-        tests[i].runs *= 2;
+       // tests[i].runs = 1;
     }
 
     /* Cache polluting outputs */
-    for (unsigned i = 0; i < POLUTING_INPUTS; i++)
+    for (unsigned i = 0; i < POLLUTING_INPUTS; i++)
     {
         output[i] = new FpImage(TEST_H_SIZE, TEST_W_SIZE);
     }
@@ -596,16 +595,16 @@ TEST(FastKernelFloat, testConvolver)
         double gflops = flop / 1000000.0 / 1000.0;
 
         kernel->touchOperationElementwize(vis);
-        for (unsigned i = 0; i < POLUTING_INPUTS; i++)
+        for (unsigned i = 0; i < POLLUTING_INPUTS; i++)
         {
-            output[i]->fillWith(0.0);
+            output[i]->fillWith(0.0f);
         }
 
         SYNC_PRINT(("Profiling %15s Approach [%dx%d] (%3d runs)", test.name, kernel->w, kernel->h, test.runs));
         start = PreciseTimer::currentTime();
 
         for (int j = 0; j < test.runs; j++) {
-            Convolver::convolve(*input[j % POLUTING_INPUTS], *kernel, *output[j % POLUTING_INPUTS], test.imp);
+            Convolver().convolve(*input[j % POLLUTING_INPUTS], *kernel, *output[j % POLLUTING_INPUTS], test.imp);
         }
 
         uint64_t delay = start.usecsToNow();
@@ -627,8 +626,15 @@ TEST(FastKernelFloat, testConvolver)
 
     /*Check the results */
     SYNC_PRINT(("Checking equality... \n"));
+    if (TEST_H_SIZE < 60 && TEST_W_SIZE < 60)
+    {
+        for (size_t i = 0; i < CORE_COUNT_OF(tests); i++)
+        {
+            cout << *tests[i].result1 << endl;
+        }
+    }
 
-    int stepoff = 40;
+    int stepoff = 5;
     for (size_t t = 1; t < CORE_COUNT_OF(tests); t++)
     {
         FpImage *b1 = tests[0].result1;
@@ -656,16 +662,16 @@ TEST(FastKernelFloat, testConvolver)
 
 
     /*Cleanup*/
-    for (size_t i = 0; i < CORE_COUNT_OF(tests); i++) {
-        delete_safe(tests[i].result);
+    for (size_t i = 0; i < CORE_COUNT_OF(tests); i++) {       
+        delete_safe(tests[i].result1);
     }
 
-    for (unsigned i = 0; i < POLUTING_INPUTS; i++)
+    for (unsigned i = 0; i < POLLUTING_INPUTS; i++)
     {
         delete_safe(input[i]);
     }
 
-    for (unsigned i = 0; i < POLUTING_INPUTS; i++)
+    for (unsigned i = 0; i < POLLUTING_INPUTS; i++)
     {
         delete_safe(output[i]);
     }

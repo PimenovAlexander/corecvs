@@ -68,13 +68,13 @@ public:
         return static_cast<InputType::InputType>(mInputType);
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setInputType(InputType::InputType inputType)
     {
         mInputType = inputType;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -95,6 +95,7 @@ template<class VisitorType>
         mInputType = inputType;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const InputFilterParameters &other) const 
     {
         if ( !(this->mInputType == other.mInputType)) return false;

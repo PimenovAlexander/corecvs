@@ -11,14 +11,12 @@
 
 #include <opencv2/core/core_c.h>        // cvCreateImage
 #include <opencv2/imgproc/imgproc_c.h>  // cvGoodFeaturesToTrack
-
 #include <opencv2/video/tracking_c.h>   // cvCalcOpticalFlowPyrLK
 
-
-
 #include "core/math/vector/vector2d.h"
-#include "KLTFlow.h"
 #include "core/math/mathUtils.h"
+
+#include "KLTFlow.h"
 #include "openCVTools.h"
 
 using namespace corecvs;
@@ -167,9 +165,14 @@ std::vector<FloatFlowVector> *KLTFlow::getOpenCVKLT(
 int OpenCVFlowProcessor::endFrame()
 {
 
+    SYNC_PRINT(("OpenCVFlowProcessor::endFrame(): called with curr:%s and prev:%s\n",
+            inCurr ? "non NULL" : "NULL",
+            inPrev ? "non NULL" : "NULL"));
     if (inCurr != NULL && inPrev != NULL)
     {
         delete_safe(opticalFlow);
+        SYNC_PRINT(("Creating output of size: [%d x %d]\n", inCurr->w, inCurr->h));
+
 
         /*
         double mSelectorQuality = 0.01;
@@ -182,9 +185,12 @@ int OpenCVFlowProcessor::endFrame()
         G12Buffer *first  = inPrev->toG12Buffer();
         G12Buffer *second = inCurr->toG12Buffer();
 
-
+        Statistics::startInterval(stats);
         std::vector<FloatFlowVector> *opencvCall = KLTFlow::getOpenCVKLT(
                 first, second, params);
+        Statistics::endInterval(stats, "OpenCV call");
+
+        SYNC_PRINT(("Creating output of size: [%d x %d]\n", inCurr->w, inCurr->h));
 
         opticalFlow = new FlowBuffer(inCurr->h, inCurr->w);
 
@@ -200,6 +206,7 @@ int OpenCVFlowProcessor::endFrame()
     }
     delete_safe (inPrev);
     inPrev = inCurr;
+    return 0;
 }
 
 std::map<std::string, DynamicObject> OpenCVFlowProcessor::getParameters() {

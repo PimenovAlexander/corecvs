@@ -1,6 +1,6 @@
 target_sources(corecvs
     PUBLIC
-        delaunay/delaunay.h
+        ${CMAKE_CURRENT_LIST_DIR}/delaunay.h
     PRIVATE
-        delaunay/delaunay.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/delaunay.cpp
 )

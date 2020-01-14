@@ -15,9 +15,11 @@ public:
     AdvancedImageWidget *widget = NULL;
 
     FrameProcessor(QObject *parent = 0);
+    ~FrameProcessor() {}
 
 public slots:
     void processFrame(ImageCaptureInterface::FrameMetadata frameData);
+
 
 };
 

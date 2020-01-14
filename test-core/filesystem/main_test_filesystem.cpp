@@ -44,6 +44,6 @@ TEST(Filesystem, scanDirCheckKnownFiles)
 
 TEST(Filesystem, isDir)
 {
-    bool res = FolderScanner::isDir(".");
+    bool res = FolderScanner::isDirectory(".");
     CORE_ASSERT_TRUE(res, "current folder must be a dir");
 }

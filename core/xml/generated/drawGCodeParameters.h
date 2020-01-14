@@ -140,7 +140,7 @@ public:
         return mMaxSpeed;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setScheme(GCodeColoringSheme::GCodeColoringSheme scheme)
     {
         mScheme = scheme;
@@ -176,7 +176,7 @@ public:
         mMaxSpeed = maxSpeed;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -215,6 +215,7 @@ template<class VisitorType>
         mMaxSpeed = maxSpeed;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const DrawGCodeParameters &other) const 
     {
         if ( !(this->mScheme == other.mScheme)) return false;

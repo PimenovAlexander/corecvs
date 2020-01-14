@@ -68,3 +68,6 @@ OTHER_FILES +=            \
     ../cvs-mainpage.h \
     ./CMakeLists.txt
 
+SUBDIRS += \
+    joystick/joystick.pro
+

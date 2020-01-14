@@ -13,11 +13,14 @@
 #include <limits>
 #include <random>
 #include <chrono>
+#include <math/matrix/blasReplacement.h>
 #include "gtest/gtest.h"
 
 #include "core/utils/global.h"
 
 #include "core/math/mathUtils.h"
+#include "core/math/matrix/matrix22.h"
+
 #include "core/math/matrix/matrix33.h"
 #include "core/math/matrix/matrix.h"
 #include "core/math/sparseMatrix.h"
@@ -499,6 +502,22 @@ TEST(VectorTest, testVector)
 
     Vector dc(10);
     std::cout << dc << std::endl;
+}
+
+TEST(MatrixTest, testMatrix22)
+{
+    Matrix22 a(
+            1.0, 2.0,
+            4.0, 5.0);
+
+    cout << a << endl;
+    cout << a.inverted();
+
+    Matrix22 E = a * a.inverted();
+    cout << E << endl;
+
+    CORE_ASSERT_TRUE(E.notTooFar(Matrix22::Identity(), 1e-7), "Wrong matrix inversion");
+
 }
 
 TEST(MatrixTest, testMatrix33)
@@ -1120,9 +1139,107 @@ TEST(MatrixTest, test10MatrixMultiply)
 
      Matrix AATH  = Matrix::multiplyHomebrew(A, AT, false, false);
      ASSERT_TRUE(AATH. notTooFar(&result, 1e-8, true));
-
 }
 
+
+TEST(MatrixTest, testMatrixBlasReplacement)
+{
+    auto touch = [](int i, int j, double &el) -> void { el = ((i+1) * (j + 1)) + ((j + 1) / 5.0); };
+
+    {        
+        Matrix A(8,8);
+        cout << "Size:" << A.getSize() << endl;
+        A.touchOperationElementwize(touch);
+        Matrix AT = A.t();
+        Matrix AAT = A * AT;
+
+        Matrix AATB = Matrix::multiplyBlasReplacement(A, AT);
+        ASSERT_TRUE(AAT. notTooFar(&AATB, 1e-5, true));
+    }
+    {
+        Matrix A(12,8);
+        cout << "Size:" << A.getSize() << endl;
+        A.touchOperationElementwize(touch);
+        Matrix AT = A.t();
+        Matrix AAT = A * AT;
+
+        Matrix AATB = Matrix::multiplyBlasReplacement(A, AT);
+        for (int i = 0; i < AATB.h; i++)
+        {
+            for (int j = 0; j < AATB.w; j++)
+            {
+               printf("% 4.1lf ", AATB.element(i, j));
+            }
+            printf("\n");
+        }
+
+        ASSERT_TRUE(AAT. notTooFar(&AATB, 1e-5, true));
+    }
+    {
+        Matrix A(12,12);
+        cout << "Size:" << A.getSize() << endl;
+        A.touchOperationElementwize(touch);
+        Matrix AT = A.t();
+        Matrix AAT = A * AT;
+
+        Matrix AATB = Matrix::multiplyBlasReplacement(A, AT);
+        ASSERT_TRUE(AAT. notTooFar(&AATB, 1e-5, true));
+    }
+}
+
+#ifdef WITH_AVX
+TEST(MatrixTest, testDgemmMicroKernelAVX)
+{
+    SYNC_PRINT(("MatrixTest, testDgemmMicroKernelAVX: called\n"));
+    Matrix A(1, 16);
+    Matrix B(1, 16);
+
+    for (int i = 0; i < 16; i++)
+    {
+        A.element(0, i) = i + 1;
+        B.element(0, i) = i + 2;
+    }
+
+    Matrix C(8, 8);
+    C.fillWith(1.0);
+    BlockMM8::dgemm_micro_kernel_avx(2, A.data, B.data, C.data, C.stride);
+
+    for (int i = 0; i < C.h; i++)
+    {
+        for (int j = 0; j < C.w; j++)
+        {
+           printf("% 4.1lf ", C.element(i, j));
+        }
+        printf("\n");
+    }
+
+
+    double exp0 = A.a(0,0) * B.a(0,0) + A.a(0,8) * B.a(0,8) + 1.0;
+    double exp1 = A.a(0,1) * B.a(0,0) + A.a(0,9) * B.a(0,8) + 1.0;
+    ASSERT_TRUE(exp0 == C.a(0, 0));
+    ASSERT_TRUE(exp1 == C.a(1, 0));
+
+    Matrix C1(8, 8);
+    C1.fillWith(1.0);
+    BlockMM8::dgemm_micro_kernel(8, 8, 2, A.data, B.data, C1.data, C1.stride);
+
+    printf("\n");
+
+    for (int i = 0; i < C1.h; i++)
+    {
+        for (int j = 0; j < C1.w; j++)
+        {
+           printf("% 4.1lf ", C1.element(i, j));
+        }
+        printf("\n");
+    }
+
+    ASSERT_TRUE(exp0 == C1.a(0, 0));
+    ASSERT_TRUE(exp1 == C1.a(1, 0));
+
+    ASSERT_TRUE(C.notTooFar(&C1, 1e-7));
+}
+#endif
 
 TEST(SparseMatrix, FromDense)
 {

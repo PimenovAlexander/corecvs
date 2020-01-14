@@ -342,7 +342,7 @@ HEADERS += \
     uis/pointsRectificationWidget.h \
 
 SOURCES += \
-    widgets/generated/graphPlotParametersControlWidget.cpp \
+    widgets/graphPlotParametersControlWidget.cpp \
     camcalc/cameraCalculatorWidget.cpp \
     \
     corestructs/histogramwidget.cpp \
@@ -483,16 +483,16 @@ with_opengl {
          \
 
 
-    SOURCES     += \
+    SOURCES += \
         3d/scene3D.cpp \
         \
         uis/cloudview/cloudViewDialog.cpp \
         uis/cloudview/treeSceneController.cpp \
         3d/generated/draw3dParameters.cpp \
-        3d/generated/draw3dParametersControlWidget.cpp \
-        3d/generated/draw3dCameraParametersControlWidget.cpp \
+        3d/draw3dParametersControlWidget.cpp \
+        3d/draw3dCameraParametersControlWidget.cpp \
         3d/generated/draw3dCameraParameters.cpp \
-        3d/generated/draw3dViMouseParametersControlWidget.cpp \
+        3d/draw3dViMouseParametersControlWidget.cpp \
         3d/generated/draw3dViMouseParameters.cpp \
         \
         3d/mesh3DScene.cpp \
@@ -503,9 +503,9 @@ with_opengl {
         uis/cloudview/cloudViewDialog.ui \
         #   Generated    \
         \
-        3d/generated/draw3dParametersControlWidget.ui \
-        3d/generated/draw3dCameraParametersControlWidget.ui \
-        3d/generated/draw3dViMouseParametersControlWidget.ui \
+        3d/draw3dParametersControlWidget.ui \
+        3d/draw3dCameraParametersControlWidget.ui \
+        3d/draw3dViMouseParametersControlWidget.ui \
 
 #some dependancies
 
@@ -584,23 +584,11 @@ with_opencv {
 with_rapidjson {
     RAPIDJSON_WRAPPER_DIR = $$UTILSDIR/../wrappers/rapidjson
     include($$RAPIDJSON_WRAPPER_DIR/rapidjson.pri)
-
-    contains(DEFINES, WITH_RAPIDJSON) {
-        HEADERS +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONReader.h
-        SOURCES +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONReader.cpp
-       #HEADERS +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONWriter.h
-       #SOURCES +=  $$RAPIDJSON_WRAPPER_DIR/rapidJSONWriter.cpp
-    }
 }
 
 with_jsonmodern {
     JSONMODERN_WRAPPER_DIR = $$UTILSDIR/../wrappers/jsonmodern
     include($$JSONMODERN_WRAPPER_DIR/jsonmodern.pri)
-
-    contains(DEFINES, WITH_JSONMODERN) {
-         HEADERS += $$JSONMODERN_WRAPPER_DIR/jsonModernReader.h
-         SOURCES += $$JSONMODERN_WRAPPER_DIR/jsonModernReader.cpp
-    }
 }
 
 with_siftgpu {
@@ -608,7 +596,6 @@ with_siftgpu {
         SIFTGPU_WRAPPER_DIR = $$UTILSDIR/../wrappers/siftgpu
         include($$SIFTGPU_WRAPPER_DIR/siftgpu.pri)
 }
-
 
 with_directshow {
     HEADERS += \
@@ -645,5 +632,6 @@ with_qscript {
 }
 
 OTHER_FILES += ../tools/generator/xml/draw3d.xml
+OTHER_FILES += CMakeLists.txt
 
 #message($$CONFIG)

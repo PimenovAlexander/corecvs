@@ -15,6 +15,7 @@ contains(DEFINES, WITH_OPENCV) {                    # if it's installed properly
                 $$OPENCV_WRAPPER_DIR/openCVTools.h \
 		$$OPENCV_WRAPPER_DIR/semiGlobalBlockMatching.h \
 		$$OPENCV_WRAPPER_DIR/openCvCheckerboardDetector.h \
+                $$OPENCV_WRAPPER_DIR/patternDetect/openCVSquareDetector.h \
 
 
     SOURCES += \
@@ -24,6 +25,7 @@ contains(DEFINES, WITH_OPENCV) {                    # if it's installed properly
 		$$OPENCV_WRAPPER_DIR/semiGlobalBlockMatching.cpp \
 		$$OPENCV_WRAPPER_DIR/openCvCheckerboardDetector.cpp \
                 $$OPENCV_WRAPPER_DIR/openCvImageRemapper.cpp \
+                $$OPENCV_WRAPPER_DIR/patternDetect/openCVSquareDetector.cpp
 
     #
     # Features
@@ -71,6 +73,8 @@ contains(DEFINES, WITH_OPENCV) {                    # if it's installed properly
     # Face Detection
     #
     INCLUDEPATH += $$OPENCV_WRAPPER_DIR/faceDetect
+    INCLUDEPATH += $$OPENCV_WRAPPER_DIR/patternDetect
+
 
     HEADERS     += $$OPENCV_WRAPPER_DIR/faceDetect/faceDetect.h
     SOURCES     += $$OPENCV_WRAPPER_DIR/faceDetect/faceDetect.cpp
@@ -80,9 +84,23 @@ contains(DEFINES, WITH_OPENCV) {                    # if it's installed properly
 
     OTHER_FILES +=  $$OPENCV_WRAPPER_DIR/../../tools/generator/regen-opencv.sh
 
-    HEADERS   += $$OPENCV_WRAPPER_DIR/generated/*.h
-    SOURCES   += $$OPENCV_WRAPPER_DIR/generated/*.cpp
-    FORMS     += $$OPENCV_WRAPPER_DIR/generated/*.ui
+#    HEADERS   += $$OPENCV_WRAPPER_DIR/generated/*.h
+#    SOURCES   += $$OPENCV_WRAPPER_DIR/generated/*.cpp
+#    FORMS     += $$OPENCV_WRAPPER_DIR/generated/*.ui
 
+    HEADERS   += $$OPENCV_WRAPPER_DIR/generated/openCVKLTParameters.h
+    SOURCES   += $$OPENCV_WRAPPER_DIR/generated/openCVKLTParameters.cpp
+
+    HEADERS   += $$OPENCV_WRAPPER_DIR/generated/openCVBMParameters.h
+    SOURCES   += $$OPENCV_WRAPPER_DIR/generated/openCVBMParameters.cpp
+
+    HEADERS   += $$OPENCV_WRAPPER_DIR/generated/openCVSGMParameters.h
+    SOURCES   += $$OPENCV_WRAPPER_DIR/generated/openCVSGMParameters.cpp
+
+    HEADERS   += $$OPENCV_WRAPPER_DIR/generated/openCVSquareDetectorParameters.h
+    SOURCES   += $$OPENCV_WRAPPER_DIR/generated/openCVSquareDetectorParameters.cpp
 
 }
+
+OTHER_FILES += $$OPENCV_WRAPPER_DIR/sourcelist.cmake
+

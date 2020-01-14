@@ -16,9 +16,6 @@ class DummyFlowProcessor : public Processor6D
     RGB24Buffer *inPrev  = NULL;
     RGB24Buffer *inCurr  = NULL;
 
-
-
-
     virtual int beginFrame() {return 0;}
 
     /** Completly reset internal data structures. parameters are left intact **/
@@ -68,8 +65,6 @@ class DummyFlowProcessor : public Processor6D
         return 0;
     }
 
-
-
     virtual int endFrame()
     {
 
@@ -89,7 +84,13 @@ class DummyFlowProcessor : public Processor6D
 
     /** Oldstyle calls **/
     virtual int setParameteri(int /*parameterName*/, int /*parameterValue*/) {return 0;}
+
+    /**
+     * Setting this value to the combination of ResultNames flags
+     **/
     virtual int requestResultsi(int /*parameterName*/) {return 0;}
+
+    virtual int getResultCaps() {return RESULT_FLOW | RESULT_FLOAT_FLOW;}
 
     /**
      * Methods below return the pointers to the internal data structures that are only valid
@@ -113,6 +114,11 @@ class DummyFlowProcessor : public Processor6D
     }
 
     virtual CorrespondenceList *getFlowList() override
+    {
+        return NULL;
+    }
+
+    virtual FlowTracks *getFlowTracks() override
     {
         return NULL;
     }

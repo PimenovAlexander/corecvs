@@ -212,6 +212,7 @@ Matrix33 RansacEstimator::getEssentialRansac(vector<Correspondence *> *data)
         return getEssentialRansacS<Model7Point>(data);
     }
     CORE_ASSERT_FAIL("unknown algorithm");
+    return Matrix33::Identity();
 }
 
 EssentialDecomposition RansacEstimatorScene::getEssentialRansac(FixtureScene *scene, FixtureCamera *camera1, FixtureCamera *camera2)

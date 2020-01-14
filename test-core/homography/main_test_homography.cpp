@@ -9,6 +9,8 @@
  */
 
 #include <iostream>
+#include <cameracalibration/projection/pinholeCameraIntrinsics.h>
+#include <cameracalibration/cameraModel.h>
 #include "gtest/gtest.h"
 
 #include "core/utils/global.h"
@@ -22,6 +24,9 @@
 
 using namespace corecvs;
 
+/**
+ * Trival homography test
+ **/
 TEST(Homography, testProjectiveFromPoints)
 {
     cout << "Test 4 point to point reconstruction" << endl;
@@ -94,52 +99,52 @@ TEST(Homography, testProjectiveInverse)
 
 TEST(Homography, testProjectiveFromPoints2)
 {
- static unsigned const NUM = 5;
- cout << "Test " << NUM << " point to point reconstruction" << endl;
+    static unsigned const NUM = 5;
+    cout << "Test " << NUM << " point to point reconstruction" << endl;
 
- Vector2dd points[5] = {
-    Vector2dd ( 32.4,  88.9),
-    Vector2dd (177.8,  88.9),
-    Vector2dd (281.9,  59.7),
-    Vector2dd (281.9,  88.9),
-    Vector2dd (281.9, 118.1)
- };
+    Vector2dd points[5] = {
+        Vector2dd ( 32.4,  88.9),
+        Vector2dd (177.8,  88.9),
+        Vector2dd (281.9,  59.7),
+        Vector2dd (281.9,  88.9),
+        Vector2dd (281.9, 118.1)
+    };
 
- Vector2dd images[5] = {
-     Vector2dd ( 536.0, 372.0),
-     Vector2dd ( 903.0, 463.0),
-     Vector2dd (1324.0, 514.0),
-     Vector2dd (1277.0, 551.0),
-     Vector2dd (1219.0, 597.0)
- };
+    Vector2dd images[5] = {
+         Vector2dd ( 536.0, 372.0),
+         Vector2dd ( 903.0, 463.0),
+         Vector2dd (1324.0, 514.0),
+         Vector2dd (1277.0, 551.0),
+         Vector2dd (1219.0, 597.0)
+    };
 
- Line2d  cushionsLine[11] = {
-     Line2d (-0, 355.6, -933.45),
-     Line2d (-0, 355.6, -933.45),
-     Line2d (-0, 355.6, -933.45),
-     Line2d (-177.8, 0, 62759),
-     Line2d (-177.8, 0, 62759),
-     Line2d (-0, -355.6, 62292.2),
-     Line2d (-0, -355.6, 62292.2),
-     Line2d (-0, -355.6, 62292.2),
-     Line2d (-0, -355.6, 62292.2),
-     Line2d (177.8, 0, -466.725),
-     Line2d (177.8, 0, -466.725)
- };
+    Line2d  cushionsLine[11] = {
+        Line2d (-0, 355.6, -933.45),
+        Line2d (-0, 355.6, -933.45),
+        Line2d (-0, 355.6, -933.45),
+        Line2d (-177.8, 0, 62759),
+        Line2d (-177.8, 0, 62759),
+        Line2d (-0, -355.6, 62292.2),
+        Line2d (-0, -355.6, 62292.2),
+        Line2d (-0, -355.6, 62292.2),
+        Line2d (-0, -355.6, 62292.2),
+        Line2d (177.8, 0, -466.725),
+        Line2d (177.8, 0, -466.725)
+    };
 
- Vector2dd cushionImage[11] = {
-     Vector2dd (731.0, 323.0),
-     Vector2dd (1168.0, 406.0),
-     Vector2dd (1534.0, 476.0),
-     Vector2dd (1674.0, 536.0),
-     Vector2dd (1540.0, 756.0),
-     Vector2dd (275.0, 443.0),
-     Vector2dd (542.0, 532.0),
-     Vector2dd (783.0, 611.0),
-     Vector2dd (1320.0, 788.0),
-     Vector2dd (614.0, 324.0),
-     Vector2dd (338.0, 398.0),
- };
+    Vector2dd cushionImage[11] = {
+        Vector2dd (731.0, 323.0),
+        Vector2dd (1168.0, 406.0),
+        Vector2dd (1534.0, 476.0),
+        Vector2dd (1674.0, 536.0),
+        Vector2dd (1540.0, 756.0),
+        Vector2dd (275.0, 443.0),
+        Vector2dd (542.0, 532.0),
+        Vector2dd (783.0, 611.0),
+        Vector2dd (1320.0, 788.0),
+        Vector2dd (614.0, 324.0),
+        Vector2dd (338.0, 398.0),
+    };
 
  /*Vector2dd points[5 * 2] = {
          Vector2dd(0,0)    , Vector2dd(0,1),
@@ -149,41 +154,41 @@ TEST(Homography, testProjectiveFromPoints2)
          Vector2dd(0.5,1.5), Vector2dd(1.5,5.5)
  };*/
 
- Vector2dd corners[4] = {
+    Vector2dd corners[4] = {
          Vector2dd(  0.0,   0.0),
          Vector2dd(355.6,   0.0),
          Vector2dd(355.6, 178.8),
          Vector2dd(  0.0, 178.8)
- };
+    };
 
- Vector2dd cornersImage[4] = {
+    Vector2dd cornersImage[4] = {
          Vector2dd( 669.0, 298.0),
          Vector2dd(1714.0, 496.0),
          Vector2dd(1506.0, 861.0),
          Vector2dd( 203.0, 424.0)
- };
+    };
 
 
- HomographyReconstructor reconstructor;
- HomographyReconstructor reconstructorN;
- HomographyReconstructor reconstructorI;
+    HomographyReconstructor reconstructor;
+    HomographyReconstructor reconstructorN;
+    HomographyReconstructor reconstructorI;
 
- for (unsigned i = 0; i < NUM; i++)
- {
-     reconstructor .addPoint2PointConstraint(points[i], images[i]);
-     reconstructorI.addPoint2PointConstraint(images[i], points[i]);
-     reconstructorN.addPoint2PointConstraint(points[i], images[i]);
- }
+    for (unsigned i = 0; i < NUM; i++)
+    {
+        reconstructor .addPoint2PointConstraint(points[i], images[i]);
+        reconstructorI.addPoint2PointConstraint(images[i], points[i]);
+        reconstructorN.addPoint2PointConstraint(points[i], images[i]);
+    }
 
- for (unsigned i = 0; i < 11; i++)
- {
-     reconstructorI.addPoint2LineConstraint(cushionImage[i], cushionsLine[i]);
- }
+    for (unsigned i = 0; i < 11; i++)
+    {
+        reconstructorI.addPoint2LineConstraint(cushionImage[i], cushionsLine[i]);
+    }
 
 
- Matrix33 resultLSE = reconstructor.getBestHomographyLSE();
- Matrix33 resultLSE1 = reconstructor.getBestHomographyLSE1();
- Matrix33 resultLSE2 = reconstructor.getBestHomographyLSE2();
+    Matrix33 resultLSE = reconstructor.getBestHomographyLSE();
+    Matrix33 resultLSE1 = reconstructor.getBestHomographyLSE1();
+    Matrix33 resultLSE2 = reconstructor.getBestHomographyLSE2();
 
  //resultLSE2 /= resultLSE2.a(2,2);
 
@@ -468,4 +473,72 @@ TEST(Homography, testStability)
     cout << "outsize:" << reconstructor.getCostFunction(expected) << endl;
 
     BMPLoaderBase().save("homograpy-draw.bmp", image);
+}
+
+
+/**
+ *  This method attempts to restore camera position from the homography.
+ **/
+TEST(Homography, testPoseReconstrution)
+{
+    CameraModel model(
+        new PinholeCameraIntrinsics(
+               Vector2dd(500,500),
+               Vector2dd(250,250),
+               250.0
+        )
+    );
+
+
+    Affine3DQ inputPoses[] =
+        {
+           Affine3DQ::Shift(0, 0, -10) * Affine3DQ::RotationX(degToRad(1)),
+           Affine3DQ::Shift(1, 0, -10) * Affine3DQ::RotationX(degToRad(2)) * Affine3DQ::RotationY(degToRad(22)),
+           Affine3DQ::Shift(0, 2, -10) * Affine3DQ::RotationX(degToRad(1)) * Affine3DQ::RotationZ(degToRad(-5)),
+           Affine3DQ::Shift(1, 1, -10) * Affine3DQ::RotationY(degToRad(1)) * Affine3DQ::RotationZ(degToRad(-5))
+        };
+
+    for (int i = 0; i < CORE_COUNT_OF(inputPoses); i++)
+    {
+        Affine3DQ cameraPose = inputPoses[i];
+
+        cout << "Pose Matrix\n" << endl;
+        cout << (Matrix44)cameraPose << endl;
+        model.setLocation(cameraPose);
+        //cout << model.extrinsics
+
+        /*Plane points*/
+        Vector3dd p[4] = {
+            Vector3dd(0,0,0),
+            Vector3dd(1,0,0),
+            Vector3dd(1,1,0),
+            Vector3dd(0,1,0)
+        };
+
+        Vector2dd q[4];
+
+        HomographyReconstructor reconstrutuctor;
+
+        for (int i = 0; i < CORE_COUNT_OF(p); i++)
+        {
+            q[i] = model.project(p[i]);
+            cout << "P " << p[i] << "  -  " << q[i] << endl;
+
+            reconstrutuctor.addPoint2PointConstraint(p[i].xy(), q[i]);
+        }
+
+        Matrix33 H = reconstrutuctor.getBestHomography();
+        cout << "Homography\n" << H << endl;
+
+        PinholeCameraIntrinsics *pinhole = model.getPinhole();
+        Matrix33 K = pinhole->getKMatrix33();
+
+        /** Try to reconstruct **/
+        Affine3DQ pose = HomographyReconstructor::getAffineFromHomography(K, H);
+        cout << "Pose:" << endl;
+        cout << (Matrix44)pose << endl;
+        cout << pose << endl;
+
+        CORE_ASSERT_TRUE(cameraPose.notToFar(pose, 1e-7), "Failed pose reconstruction");
+    }
 }

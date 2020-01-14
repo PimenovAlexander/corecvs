@@ -3,10 +3,6 @@
 
 #include <core/reflection/commandLineSetter.h>
 
-#include <QApplication>
-#include <QtCore>
-#include "qtFileLoader.h"
-
 #ifdef WITH_LIBJPEG
 #include "libjpegFileReader.h"
 #endif
@@ -22,6 +18,7 @@
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/fileformats/bmpLoader.h"
 #include "core/utils/utils.h"
+#include "core/filesystem/folderScanner.h"
 
 #if 0
 int main(int argc, const char **argv)
@@ -106,8 +103,6 @@ void prepareMesh(Mesh3DDecorated &mesh, RGB24Buffer * /*texture*/)
 
 int main(int argc, char **argv)
 {
-    QApplication a(argc, argv);
-
 #ifdef WITH_LIBJPEG
     LibjpegFileReader::registerMyself();
     SYNC_PRINT(("Libjpeg support on\n"));
@@ -116,8 +111,6 @@ int main(int argc, char **argv)
     LibpngFileReader::registerMyself();
     SYNC_PRINT(("Libpng support on\n"));
 #endif
-    QTRGB24Loader::registerMyself();
-
     BufferFactory::getInstance()->printCaps();
 
 
@@ -188,6 +181,7 @@ int main(int argc, char **argv)
 
     if (line.hasOption("preset")) {
         int preset = line.getInt("preset", 0);
+        cout << "Would use preset position" << preset << endl;
 
         switch (preset) {
         case 0: {
@@ -217,7 +211,7 @@ int main(int argc, char **argv)
         materialFile.open(mtlFile, std::ios::in);
         if (materialFile.good())
         {
-            objLoader.loadMaterials(materialFile, mesh->materials, corecvs::HelperUtils::getDirectory(mtlFile));
+            objLoader.loadMaterials(materialFile, mesh->materials, FolderScanner::getDirectory(mtlFile));
             cout << "Loaded materials: " << mesh->materials.size() << std::endl;
         } else {
             cout << "Unable to load material from <" << mtlFile << ">" << std::endl;

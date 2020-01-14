@@ -13,3 +13,6 @@ SOURCES += \
     \
     ../deform/test_deform.cpp \
     deform_profile/main_test_deform_profile.cpp \
+
+
+OTHER_FILES += CMakeLists.txt

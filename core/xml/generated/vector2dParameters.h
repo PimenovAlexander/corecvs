@@ -79,7 +79,7 @@ public:
         return mY;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setX(double x)
     {
         mX = x;
@@ -90,7 +90,7 @@ public:
         mY = y;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -114,6 +114,7 @@ template<class VisitorType>
         mY = y;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const Vector2dParameters &other) const 
     {
         if ( !(this->mX == other.mX)) return false;

@@ -4,7 +4,15 @@
 
 #include <iostream>
 
+#if !defined(WITH_STD_FILESYSTEM)
+#include <sys/types.h>
+#include <dirent.h>
+#include <sys/stat.h>
+#endif
+
 namespace corecvs {
+
+#if defined(WITH_STD_FILESYSTEM)
 
 bool FolderScanner::isDir(const string &path)
 {
@@ -64,9 +72,88 @@ bool FolderScanner::scan(const string &path, vector<string> &children, bool find
     return true;
 }
 
-#if defined(FILESYSTEM_WORKAROUND)
+std::string FolderScanner::getDirectory(const std::string &absoluteFilePath)
+{
+    CORE_ASSERT_TRUE_S(!absoluteFilePath.empty());
 
-bool FolderScanner::isDir(const string &path)
+    fs::path filePath(absoluteFilePath);
+    return fs::absolute(filePath.parent_path()).string();
+}
+
+std::string corecvs::FolderScanner::getFileName(const std::string &fileName)
+{
+    fs::path filePath(fileName);
+    return filePath.filename().string();
+}
+
+std::string FolderScanner::concatPath(const std::string &path1, const std::string &path2)
+{
+    return (fs::path(path1) / fs::path(path2)).string();
+}
+
+bool FolderScanner::isAbsolutePath(const std::string &path)
+{
+    return fs::path(path).is_absolute();
+}
+
+bool FolderScanner::pathExists(const std::string &path)
+{
+    return fs::exists(path);
+}
+
+bool FolderScanner::pathRemove(const std::string &path)
+{
+    fs::path p(path);
+    if (fs::exists(p))
+        return fs::remove(p);
+    return false;
+}
+
+std::string FolderScanner::getFileNameIfExist(const std::string &fileName, const std::string &relativePath)
+{
+    fs::path filePath(fileName);
+    if (fs::exists(filePath))
+        return fileName;
+
+    fs::path infoNew = fs::path(relativePath) / fs::path(fileName); /* this is concatenation */
+    if (fs::exists(infoNew))
+        return fs::absolute(infoNew).string();
+
+    std::cout << "couldn't locate <" << fileName << "> with relativePath:" << relativePath << std::endl;
+    return "";
+}
+
+bool isDirectory(const std::string &path)
+{
+    fs::path filePath(path);
+    return fs::is_directory(filePath);
+}
+
+#else /* WITH_STD_FILESYSTEM */
+
+std::string FolderScanner::concatPath(const std::string &path1, const std::string &path2)
+{
+    return path1 + PATH_SEPARATOR + path2;
+}
+
+bool FolderScanner::isAbsolutePath(const std::string &path)
+{
+    return HelperUtils::startsWith(path, PATH_SEPARATOR);
+}
+
+std::string FolderScanner::getDirectory(const std::string &absoluteFilePath)
+{
+    size_t found = absoluteFilePath.find_last_of(PATH_SEPARATOR);
+    return absoluteFilePath.substr(0,found);
+}
+
+std::string corecvs::FolderScanner::getBaseName(const std::string &fileName)
+{
+    size_t found = fileName.find_last_of(PATH_SEPARATOR);
+    return fileName.substr(found+1);
+}
+
+bool FolderScanner::isDirectory(const string &path)
 {
     DIR *dp = opendir(path.c_str());
     if (dp == NULL)
@@ -78,14 +165,15 @@ bool FolderScanner::isDir(const string &path)
 
 bool FolderScanner::createDir(const string &path, bool allowRecursive)
 {
-    if (isDir(path))
+    if (isDirectory(path))
         return true;
 
     std::cout << "creating dir <" << path << ">" << std::endl;
 
     std::system(("mkdir " + path).c_str());
 
-    if (!isDir(path))
+
+    if (!isDirectory(path))
     {
         if (!allowRecursive) {
             L_ERROR_P("couldn't create dir <%s>", path.c_str());
@@ -109,7 +197,7 @@ bool FolderScanner::createDir(const string &path, bool allowRecursive)
 
 bool FolderScanner::scan(const string &path, vector<string> &childs, bool findFiles)
 {
-    if (!isDir(path))
+    if (!isDirectory(path))
     {
         L_ERROR_P("<%s> does not exist or not a directory", path.c_str());
         return false;
@@ -127,7 +215,7 @@ bool FolderScanner::scan(const string &path, vector<string> &childs, bool findFi
         bool dir = (ep->d_type != DT_REG) && (ep->d_type != DT_LNK);
         if (ep->d_type == DT_UNKNOWN)
         {
-            dir = isDir(childPath);
+            dir = isDirectory(childPath);
         }
 
         //L_DDEBUG_P("%s contains\t%s\tas a %s (d_type:0x%x)", path.c_str(), ep->d_name, (dir ? "dir" : "file"), ep->d_type);
@@ -144,7 +232,10 @@ bool FolderScanner::scan(const string &path, vector<string> &childs, bool findFi
 
 #endif
 
-void FolderScanner::emptyDir(const string &path)
+/**
+ * This is a temporary lazy implementation used untill stupid C++ would have std::filesystem de facto integrated
+ **/
+bool FolderScanner::pathRemove(const string &path)
 {
 #ifdef WIN32
     std::system(("rd /s /q " + path).c_str());
@@ -152,7 +243,8 @@ void FolderScanner::emptyDir(const string &path)
     int result = std::system(("rm -rf " + path).c_str());
     CORE_UNUSED(result);
 #endif
-    L_INFO_P("The <%s> folder is deleted.", path.c_str());
+    L_INFO_P("The <%s> path is deleted.", path.c_str());
+    return true;
 }
 
 bool FolderScanner::isAccessible(const string &path)
@@ -166,41 +258,26 @@ bool FolderScanner::isAccessible(const string &path)
     if (f.is_open())
     {
         f.close();
-        HelperUtils::pathRemove(p);
+        pathRemove(p);
         return true;
     }
     return false;
 }
 
+std::string FolderScanner::addFileExtIfNotExist(const std::string &fileName, const std::string &ext)
+{
+    return HelperUtils::endsWith(fileName, ext) ? fileName : fileName + ext;
+}
+
+bool FolderScanner::pathExists(const std::string &path)
+{
+    struct stat info;
+    if( stat( path.c_str(), &info ) != 0 ) {
+        return false;
+    }
+
+    return true;
+}
+
 } // namespace corecvs
 
-
-/*
-int main(int argc, char** argv)
-{
-    if (argc != 2)
-    {
-        std::cout << "Second arg is path" << std::endl;
-        exit(-1);
-    }
-    fs::path p(argv[1]);
-    if (!fs::exists(p))
-    {
-        std::cout << p << " does not exist" << std::endl;
-        exit(-2);
-    }
-    if (!fs::is_directory(p))
-    {
-        std::cout << p << " is not a directory" << std::endl;
-        exit(-3);
-    }
-    fs::directory_iterator d(p);
-
-    for (fs::directory_iterator d = fs::directory_iterator(p); d != fs::directory_iterator(); ++d)
-    {
-        fs::path p_child(*d);
-        std::cout << p << " contains " << p_child << " as a " << (fs::is_directory(p_child) ? "dir" : "file") << std::endl;
-    }
-    return 0;
-}
-*/

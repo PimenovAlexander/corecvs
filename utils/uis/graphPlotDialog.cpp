@@ -443,6 +443,19 @@ void GraphPlotDialog::update(void)
     mUi.widget->update();
 }
 
+GraphPlotParameters GraphPlotDialog::getParameters() const
+{
+    GraphPlotParameters result;
+    mUi.parametersWidget->getParameters(result);
+    return result;
+}
+
+void GraphPlotDialog::setParameters(const GraphPlotParameters &params)
+{
+    mUi.parametersWidget->setParameters(params);
+    graphPlotParametersChanged();
+}
+
 void GraphPlotDialog::loadFromQSettings(const QString &fileName, const QString &_root)
 {
     mUi.parametersWidget->loadFromQSettings(fileName, _root + mRootPath);
@@ -452,7 +465,6 @@ void GraphPlotDialog::saveToQSettings  (const QString &fileName, const QString &
 {
     mUi.parametersWidget->saveToQSettings(fileName, _root + mRootPath);
 }
-
 
 void GraphPlotDialog::loadSettingsFromFile()
 {

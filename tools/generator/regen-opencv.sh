@@ -1,5 +1,7 @@
 #!/bin/bash
 
+mkdir -p Generated
+
 source ./helper-regen.sh
 
 opencv="../../wrappers/opencv/"
@@ -36,5 +38,18 @@ copy_if_different Generated/openCVSGMParameters.cpp                 $opencv/gene
 #copy_if_different Generated/openCVSGMParametersControlWidget.h      $opencv/generated
 copy_if_different Generated/openCVSGMParametersControlWidget.cpp    $opencv/generated
 copy_if_different Generated/openCVSGMParametersControlWidget.ui     $opencv/generated
+
+copy_if_different Generated/openCVSquareDetectorParameters.h        $opencv/generated
+copy_if_different Generated/openCVSquareDetectorParameters.cpp      $opencv/generated
+
+copy_if_different Generated/openCVCheckerBoardDetectorParameters.h        $opencv/generated
+copy_if_different Generated/openCVCheckerBoardDetectorParameters.cpp      $opencv/generated
+
+# DISFlow
+
+copy_if_different Generated/disFlowParameters.h        $opencv/generated
+copy_if_different Generated/disFlowParameters.cpp      $opencv/generated
+
+
 
 echo "copied"

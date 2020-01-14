@@ -10,7 +10,7 @@
 #include <opencv2/core/core.hpp>        // Point2f
 
 
-class OpenCvCheckerboardDetector : public PatternDetector
+class OpenCvCheckerboardDetector : public corecvs::PatternGeometryDetector
                                  , protected CheckerboardDetectionParameters
                                  , protected BoardAligner
 {
@@ -20,7 +20,7 @@ public:
 
     virtual bool detectPattern(corecvs::G8Buffer &buffer);
 
-    using PatternDetector::getPointData;
+    using corecvs::PatternGeometryDetector::getPointData;
 
     virtual void getPointData(corecvs::ObservationList &observations);
 

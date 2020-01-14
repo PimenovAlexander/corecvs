@@ -8,8 +8,6 @@
 #include "core/patterndetection/circlePatternGenerator.h"
 #include "core/alignment/selectableGeometryFeatures.h"
 #include "core/utils/typesafeBitmaskEnums.h"
-#include "core/buffers/convolver/convolver.h"    // corecvs::DpImage
-
 
 using std::vector;
 using corecvs::Vector2dd;

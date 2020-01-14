@@ -1,11 +1,11 @@
-project (CoreCVSTests)
+project (CoreCVSCoreTests)
 
 set(MODULE_NAME corecvs)
+set(MODULE_NAME_TEST corecvs_core_tests)
 
 
 MESSAGE( STATUS "Including GTest on Tests build" )
-find_package( GTest REQUIRED)
-include_directories (${GTest_INCLUDE_DIR}/..)
+#include_directories (${GTest_INCLUDE_DIR}/..)
 
 set (CORE_TEST_SOURCES
     eigen/main_test_eigen_integration.cpp
@@ -38,8 +38,6 @@ set (CORE_TEST_SOURCES
     color/main_test_color.cpp
     commandline/main_test_commandline.cpp
     convolve/main_test_convolve.cpp
-#    cornerdetector/main_test_cornerdetector.cpp
-#    debayer/main_test_debayer.cpp
     deform/main_test_deform.cpp
     derivative/main_test_derivative.cpp
     draw/main_test_draw.cpp
@@ -52,10 +50,10 @@ set (CORE_TEST_SOURCES
     histogram/main_test_histogram.cpp
     homography/main_test_homography.cpp
     integral/main_test_integral.cpp
+    inset_outset/main_test_inset_outset.cpp
     kalman/main_test_kalman.cpp
     klt_cycle/main_test_klt_cycle.cpp
     levenberg/main_test_levenberg.cpp
-    logger/main_test_logger.cpp
     linear/main_test_linear.cpp
     matrix/main_test_matrix.cpp                        # TODO: Windows: assert at matrix\main_test_matrix.cpp:385 - Internal problem with double and stdout
     midmap_pyramid/main_test_midmap_pyramid.cpp
@@ -80,6 +78,9 @@ set (CORE_TEST_SOURCES
     conic/main_test_conic.cpp
 #    calstructs/main_test_calstructs.cpp
     polynomial/main_test_polynomial.cpp
+    polynomial/main_test_basis.cpp
+    polynomial/main_test_monom.cpp
+    polynomial/main_test_polynom.cpp
     meshdraw/main_test_meshdraw.cpp
 #    reconstruction/main_test_reconstruction.cpp
     meta/main_test_meta.cpp
@@ -87,7 +88,6 @@ set (CORE_TEST_SOURCES
     deform/test_deform.cpp
     camerafixture/main_test_camerafixture.cpp
     renderer/main_test_renderer.cpp
-    meshdraw/test_polymeshdraw.cpp
     raytrace/main_test_raytrace.cpp
     json/main_test_json.cpp
     utils/main_test_utils.cpp
@@ -97,15 +97,19 @@ set (CORE_TEST_SOURCES
     projection/main_test_projection.cpp
     vptree/main_test_vptree.cpp
     meshfilter/main_test_meshfilter.cpp
+
+    convexpolygon/convexDebug.cpp
+    convexpolygon/main_test_convexpolygon.cpp
     convexhull/main_test_convexhull.cpp
+    convexHull2d/main_test_convexHull2d.cpp
+
     wuRasterizer/main_test_wu_rasterizer.cpp
     bsptree/main_test_bsptree.cpp
     halfspace/main_test_halfspace.cpp
-    orientedbox/main_test_orientedbox.cpp
-    convexHull2d/main_test_convexHull2d.cpp
+    orientedbox/main_test_orientedbox.cpp   
     processor6d/main_test_processor6d.cpp
     bezierRasterizer/main_test_bezier_rasterizer.cpp
-    delaunay/main_test_delaunay.cpp
+#     delaunay/main_test_delaunay.cpp
     bspRenderer/bspRenderTest.cpp
     bspRenderer/bspRenderer.cpp
 
@@ -114,16 +118,35 @@ set (CORE_TEST_SOURCES
     snooker/errors.h
     snooker/reflectionSegmentator.h
     snooker/snookerSegmentator.h
+    convexpolygon/convexDebug.h
     stateMachineTest/test.h
-    cppunit_test/MatcherTest.h
-    snooker/commonTypes.h
-    snooker/errors.h
-    snooker/reflectionSegmentator.h
-    snooker/snookerSegmentator.h
     stateMachineTest/test.h
-    bspRenderer/bspRenderTest.h
-    bspRenderer/bspRenderer.h
 )
 
-add_executable(${MODULE_NAME}_tests ${CORE_TEST_SOURCES})
-target_link_libraries(${MODULE_NAME}_tests gtest_main ${MODULE_NAME})
+message(STATUS "SOURCE_DIR " ${corecvs_SOURCE_DIR})
+message(STATUS "TEST_SOURCE_DIR " ${PROJECT_SOURCE_DIR})
+
+
+add_executable(${MODULE_NAME_TEST} ${CORE_TEST_SOURCES})
+
+add_custom_command(TARGET ${MODULE_NAME_TEST} POST_BUILD
+        COMMAND cp ${PROJECT_BINARY_DIR}/${MODULE_NAME_TEST}  ${CMAKE_BINARY_DIR}/bin/${MODULE_NAME_TEST}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Copying ${MODULE_NAME_TEST} to binary directory"
+        )
+
+set_property(TARGET ${MODULE_NAME_TEST} PROPERTY CXX_STANDARD 17)
+set_property(TARGET ${MODULE_NAME_TEST} PROPERTY CXX_STANDARD_REQUIRED ON)
+
+
+target_link_libraries(${MODULE_NAME_TEST} gtest gtest_main stdc++fs corecvs)
+target_include_directories(${MODULE_NAME_TEST} PUBLIC ${corecvs_SOURCE_DIR})
+
+# For ctest support. Not necessary to use but nice move for automated testing.
+add_test(
+        NAME
+            core-test
+        COMMAND
+            ./${MODULE_NAME_TEST}
+)
+

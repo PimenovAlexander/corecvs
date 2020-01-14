@@ -35,7 +35,7 @@ TEST(processor6d, testprocessor6d)
     proc->setFrameRGB24(Processor6D::FRAME_LEFT_ID, &in2);
     proc->endFrame();
     FlowBuffer *flow = proc->getFlow();
-
+    CORE_ASSERT_TRUE(flow != NULL, "Flow is null");
     delete_safe(proc);
 
 

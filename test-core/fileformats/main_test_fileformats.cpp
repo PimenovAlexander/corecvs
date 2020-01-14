@@ -17,6 +17,7 @@
 #include "gtest/gtest.h"
 
 #include "core/utils/global.h"
+#include "core/filesystem/folderScanner.h"
 
 #include "core/fileformats/rawLoader.h"
 #include "core/buffers/g12Buffer.h"
@@ -75,6 +76,127 @@ TEST(FileFormats, testFileFormats)
     CORE_ASSERT_TRUE(bmp1 != NULL, "BMP Image load failed");
     CORE_ASSERT_TRUE(bmp1->verify(), "BMP Image verification failed");
     delete_safe(bmp1);
+}
+
+TEST(FileFormats, testPPMLoader)
+{
+    PPMLoader loader;
+    PPMLoader::PPMHeader header;
+
+    SYNC_PRINT(("Testing HEADER1\n"));
+    {
+        const char *header1 =
+                "P6 1024 788 255";
+        std::istringstream ss(header1);
+        CORE_ASSERT_TRUE(loader.readHeader(ss, header), "Fail with trivial header");
+        CORE_ASSERT_TRUE_S(header.w      == 1024);
+        CORE_ASSERT_TRUE_S(header.h      == 788);
+        CORE_ASSERT_TRUE_S(header.maxval == 255);
+
+    }
+
+    SYNC_PRINT(("Testing HEADER2\n"));
+    {
+        const char *header2 =
+            "P6\n"
+            "1024 788\n"
+            "# A comment\n"
+            "255\n";
+        std::istringstream ss(header2);
+        CORE_ASSERT_TRUE(loader.readHeader(ss, header), "Fail with header with comments");
+        CORE_ASSERT_TRUE_S(header.w      == 1024);
+        CORE_ASSERT_TRUE_S(header.h      == 788);
+        CORE_ASSERT_TRUE_S(header.maxval == 255);
+    }
+
+    SYNC_PRINT(("Testing HEADER3\n"));
+    {
+        const char *header3 =
+            "P3\n"
+            "1024 # the image width\n"
+            "788 # the image height\n"
+            "# A comment\n"
+            "1023\n";
+        std::istringstream ss(header3);
+        CORE_ASSERT_TRUE(loader.readHeader(ss, header), "Fail with header with extended comments");
+        CORE_ASSERT_TRUE_S(header.w      == 1024);
+        CORE_ASSERT_TRUE_S(header.h      == 788);
+        CORE_ASSERT_TRUE_S(header.maxval == 1023);
+    }
+
+    SYNC_PRINT(("Testing HEADER4\n"));
+    {
+        const char *header3 =
+            "P5\n"
+            "# bigEndian\n"
+            "#[Units are rads, metres and seconds]\n"
+            "#[Inertial Sensor]\n"
+            "640 481\n"
+            "3630\n";
+        std::istringstream ss(header3);
+        CORE_ASSERT_TRUE(loader.readHeader(ss, header), "Fail with header with extended comments");
+        CORE_ASSERT_TRUE_S(header.w      == 640);
+        CORE_ASSERT_TRUE_S(header.h      == 481);
+        CORE_ASSERT_TRUE_S(header.maxval == 3630);
+    }
+
+    /** Test case 5 */
+    {
+        SYNC_PRINT(("Testing set file\n"));
+        std::string name = "data/pair/image0001_c0.pgm";
+        if (FolderScanner::pathExists(name))
+        {
+            G12Buffer *ppm = PPMLoader().loadG12(name);
+            CORE_ASSERT_TRUE(ppm != NULL, "test PPM with type:6 image has been loaded but shouldn't!");
+            CORE_ASSERT_TRUE_S(header.w      == 640);
+            CORE_ASSERT_TRUE_S(header.h      == 481);
+            CORE_ASSERT_TRUE_S(header.maxval == 3630);
+            CORE_ASSERT_TRUE(ppm->verify(), "PPM Image verification failed");
+            delete_safe(ppm);
+        } else {
+            SYNC_PRINT(("This test is skipped in opensource version\n"));
+        }
+    }
+
+
+    /** Test case 3 */
+    {
+        SYNC_PRINT(("Testing test file\n"));
+        std::string name = "data/testdata/test_ppm.ppm";
+        if (FolderScanner::pathExists(name))
+        {
+            G12Buffer *ppm = PPMLoader().loadG12(name);
+            CORE_ASSERT_TRUE(ppm == NULL, "test PPM with type:6 image has been loaded but shouldn't!");            
+            delete_safe(ppm);
+        } else {
+            SYNC_PRINT(("This test is skipped in opensource version\n"));
+        }
+    }
+
+    /** Test case 4 */
+    {
+        SYNC_PRINT(("Testing test file 2\n"));
+        std::string name = "data/testdata/test_pgm_metadata.pgm";
+        if (FolderScanner::pathExists(name))
+        {
+            PPMLoader loader;
+            loader.trace = true;
+            MetaData *metadata = new MetaData;
+            G12Buffer *metappm = loader.loadG12(name, metadata);
+
+            CORE_ASSERT_TRUE(metappm != NULL, "PGM with Metadata Image load failed");
+            CORE_ASSERT_TRUE(metappm->h == metappm->w, "PGM with Metadata Image sizes corrupted");
+            CORE_ASSERT_TRUE(metappm->verify(), "PGM with Metadata Image verification failed");
+
+            // I switched metadata support off. No use for it so far.
+            /*CORE_ASSERT_TRUE(metadata->at("hello_world")[0] == 42, "PGM Metadata read failed");*/
+            delete_safe(metappm);
+            delete_safe(metadata);
+        } else {
+            SYNC_PRINT(("This test is skipped in opensource version\n"));
+        }
+    }
+
 }
 
 TEST(FileFormats, DISABLED_testBMP24)

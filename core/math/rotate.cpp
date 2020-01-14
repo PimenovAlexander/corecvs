@@ -115,9 +115,11 @@ RGB24Buffer* RotateHelper::rotateWithLancozVF(double angle, const RGB24Buffer *r
     float a11 = operation.a(1,1);
     float a12 = operation.a(1,2);
 
+    /*
     float a20 = operation.a(2,0);
     float a21 = operation.a(2,1);
     float a22 = operation.a(2,2);
+    */
 
     float lanczos_size_f = lanczos_size;
 
@@ -190,9 +192,11 @@ RGB24Buffer* RotateHelper::rotateWithLancozVFP(double angle, const RGB24Buffer *
     float a11 = operation.a(1,1);
     float a12 = operation.a(1,2);
 
+    /*
     float a20 = operation.a(2,0);
     float a21 = operation.a(2,1);
     float a22 = operation.a(2,2);
+    */
 
     float lanczos_size_f = lanczos_size;
 

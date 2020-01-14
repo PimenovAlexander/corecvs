@@ -1,43 +1,63 @@
 target_sources(corecvs
     PUBLIC
-        fileformats/bufferLoader.h
-        fileformats/bmpLoader.h
-        fileformats/ppmLoader.h
-        fileformats/rawLoader.h
-        fileformats/plyLoader.h
-        fileformats/stlLoader.h
-        fileformats/metamap.h
-        fileformats/floLoader.h
-        fileformats/openCVDataLoader.h
-        fileformats/tgaLoader.h
+        ${CMAKE_CURRENT_LIST_DIR}/bufferLoader.h
+        ${CMAKE_CURRENT_LIST_DIR}/bmpLoader.h
+        ${CMAKE_CURRENT_LIST_DIR}/ppmLoader.h
+        ${CMAKE_CURRENT_LIST_DIR}/rawLoader.h
+        ${CMAKE_CURRENT_LIST_DIR}/plyLoader.h
+        ${CMAKE_CURRENT_LIST_DIR}/stlLoader.h
+        ${CMAKE_CURRENT_LIST_DIR}/metamap.h
+        ${CMAKE_CURRENT_LIST_DIR}/floLoader.h
+        ${CMAKE_CURRENT_LIST_DIR}/openCVDataLoader.h
+        ${CMAKE_CURRENT_LIST_DIR}/tgaLoader.h
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/entities/dxfEntity.h
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/entities/dxfEntityData.h
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/objects/dxfObject.h
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/objects/dxfObjectData.h
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/blocks/dxfBlock.h
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfDrawing.h
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfCodes.h
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfLoader.h
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfBuilder.h
 
      PRIVATE
-        fileformats/bufferLoader.cpp
-        fileformats/bmpLoader.cpp
-        fileformats/ppmLoader.cpp
-        fileformats/rawLoader.cpp
-        fileformats/plyLoader.cpp
-        fileformats/stlLoader.cpp
-        fileformats/floLoader.cpp
-        fileformats/openCVDataLoader.cpp
-        fileformats/tgaLoader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/bufferLoader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/bmpLoader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ppmLoader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/rawLoader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/plyLoader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/stlLoader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/floLoader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/openCVDataLoader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/tgaLoader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/entities/dxfEntity.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/objects/dxfObject.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/blocks/dxfBlock.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfDrawing.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfCodes.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfLoader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfBuilder.cpp
 )
 
-if (YES)
+if (1)
  
     target_sources(corecvs
       PUBLIC
-        fileformats/meshLoader.h
-        fileformats/objLoader.h
-        fileformats/gcodeLoader.h
-        fileformats/pltLoader.h
-        fileformats/xyzListLoader.h
-        fileformats/meshLoader.cpp
-        fileformats/objLoader.cpp
-        fileformats/gcodeLoader.cpp
-        fileformats/pltLoader.cpp
-        fileformats/xyzListLoader.cpp
-        fileformats/svgLoader.h
-        fileformats/svgLoader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/meshLoader.h
+        ${CMAKE_CURRENT_LIST_DIR}/objLoader.h
+        ${CMAKE_CURRENT_LIST_DIR}/gcodeLoader.h
+        ${CMAKE_CURRENT_LIST_DIR}/pltLoader.h
+        ${CMAKE_CURRENT_LIST_DIR}/xyzListLoader.h
+        ${CMAKE_CURRENT_LIST_DIR}/svgLoader.h
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfLoader.h
+        
+      PRIVATE  
+        ${CMAKE_CURRENT_LIST_DIR}/meshLoader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/objLoader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/gcodeLoader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/pltLoader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/xyzListLoader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/svgLoader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/dxf_support/dxfLoader.cpp
     )
 endif()

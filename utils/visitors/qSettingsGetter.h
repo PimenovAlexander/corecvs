@@ -18,6 +18,9 @@ using corecvs::DoubleVectorField;
 class SettingsGetter
 {
 public:
+    bool isSaver () { return false;}
+    bool isLoader() { return true; }
+public:    
     SettingsGetter(QString const & fileName, QString _root = QString());
     SettingsGetter(QSettings *settings, QString _root = QString());
 
@@ -99,6 +102,10 @@ void SettingsGetter::visit<float>(float &floatField, float defaultValue, const c
 
 template <>
 void SettingsGetter::visit<bool>(bool &boolField, bool defaultValue, const char *fieldName);
+
+template <>
+void SettingsGetter::visit<std::string>(std::string &stringField, std::string defaultValue, const char *fieldName);
+
 
 /* New style visitor */
 

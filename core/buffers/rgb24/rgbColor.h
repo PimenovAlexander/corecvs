@@ -750,7 +750,9 @@ template<class VisitorType>
 
     static RGBColor FromHSVKitti(uint16_t h, uint8_t s, uint8_t v)
     {
-        uint8_t r,g,b;
+        uint8_t r = 0;
+        uint8_t g = 0;
+        uint8_t b = 0;
 
         int c = ((int)s * v) / 255;
         int h2 = h / 60.0;

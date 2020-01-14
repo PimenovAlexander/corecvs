@@ -21,6 +21,9 @@ using namespace corecvs;
 class XmlSetter : public BaseXMLVisitor
 {
 public:
+    bool isSaver () { return true ;}
+    bool isLoader() { return false;}
+public:
     /**
      *  Create a setter object that will store data to a file with a specified name.
      *
@@ -105,6 +108,9 @@ void XmlSetter::visit<float>(float &floatField, float defaultValue, const char *
 
 template <>
 void XmlSetter::visit<bool>(bool &boolField, bool defaultValue, const char *fieldName);
+
+template <>
+void XmlSetter::visit<std::string>(std::string &stringField, std::string defaultValue, const char *fieldName);
 
 /* New style visitor */
 

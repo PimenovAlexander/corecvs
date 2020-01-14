@@ -54,9 +54,11 @@ public:
     virtual FramePair getFrame() override;
 
     std::string mName;
-    AVFormatContext* mFormatContext;
-    AVCodecContext* mCodecContext;
-    AVCodec* mCodec;
+
+    AVFormatContext* mFormatContext = NULL;
+    AVCodecParameters* mCodecParameters = NULL;
+    AVCodecContext *mCodecContext = NULL;
+    AVCodec* mCodec = NULL;
 
     bool mIsPaused;
 
@@ -64,7 +66,7 @@ public:
     AVFrame* mFrame;
     AVPacket mPacket;
 
-    unsigned mVideoStream;
+    int mVideoStream;
 
     int count;
 

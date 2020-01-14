@@ -115,7 +115,7 @@ public:
         return mSigmaFactor;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setLimitSamples(int limitSamples)
     {
         mLimitSamples = limitSamples;
@@ -141,7 +141,7 @@ public:
         mSigmaFactor = sigmaFactor;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -174,6 +174,7 @@ template<class VisitorType>
         mSigmaFactor = sigmaFactor;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const IterativeEstimateParameters &other) const 
     {
         if ( !(this->mLimitSamples == other.mLimitSamples)) return false;

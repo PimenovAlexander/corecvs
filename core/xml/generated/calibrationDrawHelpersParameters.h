@@ -248,7 +248,7 @@ public:
         return mDrawRays;
     }
 
-    /* Section with setters */
+    /** Section with setters */
     void setBackend(SceneDrawBackendType::SceneDrawBackendType backend)
     {
         mBackend = backend;
@@ -329,7 +329,7 @@ public:
         mDrawRays = drawRays;
     }
 
-    /* Section with embedded classes */
+    /** Section with embedded classes */
     /* visitor pattern - http://en.wikipedia.org/wiki/Visitor_pattern */
 template<class VisitorType>
     void accept(VisitorType &visitor)
@@ -395,6 +395,7 @@ template<class VisitorType>
         mDrawRays = drawRays;
     }
 
+    /** Exact match comparator **/ 
     bool operator ==(const CalibrationDrawHelpersParameters &other) const 
     {
         if ( !(this->mBackend == other.mBackend)) return false;

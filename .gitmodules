@@ -1,0 +1,3 @@
+[submodule "siblings/OF_DIS"]
+	path = siblings/OF_DIS
+	url = https://github.com/tikroeger/OF_DIS.git
