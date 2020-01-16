@@ -42,7 +42,7 @@ jobs:
            cd opencv-3.4.6/
            mkdir build
            cd build
-           cmake -DWITH_PNG=false -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/opt/opencv-3.4.6   -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib-3.4.6/modules ..
+           cmake -DWITH_PNG=false -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/opt/opencv-3.4.6   -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-3.4.6/modules ..
     - name: Make OpenCV and contrib
       run: |
            cd ~/3rd_party/opencv/build
