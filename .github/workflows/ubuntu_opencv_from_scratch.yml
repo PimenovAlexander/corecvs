@@ -30,7 +30,7 @@ jobs:
            cd ~/3rd_party/opencv
            wget https://codeload.github.com/opencv/opencv/zip/3.4.6 -O opencv-3.4.6.zip
            unzip opencv-3.4.6.zip 
-    - name: Prepare OpenCV source
+    - name: Prepare OpenCV contrib source
       run: |
            echo "We try to download OpenCV Contrib source"
            cd ~/3rd_party/opencv
@@ -38,7 +38,8 @@ jobs:
            unzip opencv_contrib-3.4.6.zip  
     - name: cmake OpenCV source
       run: |
-           cd ~/3rd_party/opencv
+           cd ~/3rd_party/opencv/
+           cd opencv-3.4.6/
            mkdir build
            cd build
            cmake -DWITH_PNG=false -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/opt/opencv-3.4.6   -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib-3.4.6/modules ..
