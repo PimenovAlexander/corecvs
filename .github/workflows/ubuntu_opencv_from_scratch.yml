@@ -1,0 +1,70 @@
+name: CMake_Ubuntu_No_OpenCV
+
+on:
+  push:
+    branches:
+      - opencv_build_instructions
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Print Machine Status
+      run: |
+            cat /proc/cpuinfo
+    - name: Install generic prerequisites
+      run: |
+           sudo apt-get update
+           sudo apt install -y libtbb-dev libavcodec-dev libavutil-dev libavformat-dev libswscale-dev libjpeg-dev libpng-dev libopenblas-dev liblapacke-dev
+    - name: Install Qt
+      run: |
+           sudo apt install -y qt5-default qtscript-tools qtscript5-dev libqt5serialport5-dev
+
+    - name: Prepare OpenCV source
+      run: |
+           echo "We try to download OpenCV source"
+           mkdir -p ~/3rd_party/opencv
+           cd ~/3rd_party/opencv
+           wget https://codeload.github.com/opencv/opencv/zip/3.4.6 -O opencv-3.4.6.zip
+           unzip opencv-3.4.6.zip 
+    - name: Prepare OpenCV source
+      run: |
+           echo "We try to download OpenCV Contrib source"
+           cd ~/3rd_party/opencv
+           wget https://github.com/opencv/opencv_contrib/archive/3.4.6.zip -O opencv_contrib-3.4.6.zip
+           unzip opencv_contrib-3.4.6.zip  
+    - name: cmake OpenCV source
+      run: |
+           cd ~/3rd_party/opencv
+           mkdir build
+           cd build
+           cmake -DWITH_PNG=false -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/opt/opencv-3.4.6   -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib-3.4.6/modules ..
+    - name: Make OpenCV and contrib
+      run: |
+           cd ~/3rd_party/opencv/build
+           make -j 2                       
+    - name: Install AprilTag
+      run: |
+           git clone https://github.com/AprilRobotics/apriltag.git siblings/apriltag
+           mkdir siblings/apriltag/build
+           cd siblings/apriltag/build
+           cmake ..
+           make -j 2
+    - name: Prepare build folder
+      run: |
+           ls
+           pwd
+           mkdir build
+           cd build
+    - name: Cmake
+      run: |
+           cd build
+           cmake ..
+    - name: Make
+      run: |
+           cd build
+           make -j 2 VERBOSE=1
+
