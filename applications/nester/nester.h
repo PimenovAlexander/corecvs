@@ -1,48 +1,50 @@
 #ifndef NESTER_H
 #define NESTER_H
-
 #include <string>
 #include <vector>
 #include <list>
 #include "core/fileformats/svgLoader.h"
 #include "core/geometry/polygons.h"
-
-
 /* Helpers  */
+void drawPolygons                  (std::vector<corecvs::Polygon> inputPolygons,
+                                    int h, int w, std::string bmpname);
 
-void drawPolygons   (std::vector<corecvs::Polygon> inputPolygons, int h, int w, std::string bmpname);
-void drawSvgPolygons(std::vector<corecvs::Polygon> inputPolygons, int h, int w, std::string svgName);
+void drawSvgPolygons               (std::vector<corecvs::Polygon> inputPolygons,
+                                    int h, int w, std::string svgName);
 
-void drawPolygons(std :: list <corecvs :: Polygon> inputPolygons, int h, int w, std :: string bmpname);
-void drawSvgPolygons(std :: list <corecvs :: Polygon> inputPolygons, int h, int w, std :: string svgName);
+void drawPolygons                  (std :: list <corecvs :: Polygon> inputPolygons,
+                                    int h, int w, std :: string bmpname);
 
-void addSubPolygons (corecvs::SvgShape *shape, std::vector<corecvs::Polygon> &inputPolygons);
+void drawSvgPolygons               (std :: list <corecvs :: Polygon> inputPolygons,
+                                    int h, int w, std :: string svgName);
 
+void addSubPolygons                (corecvs::SvgShape *shape,
+                                    std::vector<corecvs::Polygon> &inputPolygons);
 /* new era*/
-bool isInteriorROConvexPolBinSearch(const corecvs ::Vector2dd &Point, const corecvs :: Polygon &A);
+bool isInteriorROConvexPolBinSearch(const corecvs ::Vector2dd &Point,
+                                    const corecvs :: Polygon &A);
 
-bool isInteriorConvexPol(const corecvs ::Vector2dd &point, const corecvs :: Polygon &A);
+bool isInteriorConvexPol           (const corecvs ::Vector2dd &point,
+                                    const corecvs :: Polygon &A);
 
-bool hasBiggerLOArg(const corecvs ::Vector2dd &v1, const corecvs :: Vector2dd &v2);
+bool hasBiggerLOArg                (const corecvs ::Vector2dd &v1,
+                                    const corecvs :: Vector2dd &v2);
 
-corecvs::Polygon convexNFP(const corecvs::Polygon &A, const corecvs::Polygon &B);
+corecvs::Polygon convexNFP         (const corecvs::Polygon &A,
+                                    const corecvs::Polygon &B);
 
-corecvs::Rectangled innerFitPolygon(const corecvs::Polygon &A, const corecvs::Rectangled &R);
+corecvs::Rectangled innerFitPolygon(const corecvs::Polygon &A,
+                                    const corecvs::Rectangled &R);
 
-void bottomLeftPlacement(std :: list <corecvs :: Polygon> &inp, corecvs :: Rectangled &Bin);
+void bottomLeftPlacement           (std :: list <corecvs :: Polygon> &inp,
+                                    corecvs :: Rectangled &bin);
 
-void bottomLeftPlacementProtected(std :: list <corecvs :: Polygon> &inp, corecvs :: Rectangled &Bin, int i = 1);
+void bottomLeftPlacementProtected  (std :: list <corecvs :: Polygon> &inp,
+                                    corecvs :: Rectangled &bin, int i);
 
-int getTopRightIndex(const corecvs :: Polygon &A);
-
-//same about bottomLeftPlacement, using list
+int getTopRightIndex               (const corecvs :: Polygon &A);
 /* helpful methods */
+void doClockOrP                    (corecvs :: Polygon &A);
 
-
-void doClockOrP(corecvs :: Polygon &A);
-
-void showPolygon(const corecvs :: Polygon &A);
-
-
-
+void showPolygon                   (const corecvs :: Polygon &A);
 #endif // NESTER_H

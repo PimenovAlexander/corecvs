@@ -86,9 +86,7 @@ int main(int argc, char **argv)
     cout << endl << "Interior" << endl;
     cout << isInteriorROConvexPolBinSearch(B15, IfLongNamedFunctionWorthIt) << " " << isInteriorROConvexPolBinSearch(B16, IfLongNamedFunctionWorthIt) << " ";
     cout << isInteriorROConvexPolBinSearch(B17, IfLongNamedFunctionWorthIt) << " " << isInteriorROConvexPolBinSearch(B18, IfLongNamedFunctionWorthIt) << " ";
-
     cout << endl << endl << endl << endl;
-
     cout << "are some points in vertex-rich polygon" <<endl;
     cout << "outside ones:" << endl;
     cout << isInteriorConvexPol(B1, IfLongNamedFunctionWorthIt) << " " << isInteriorConvexPol(B2, IfLongNamedFunctionWorthIt) << " ";
@@ -142,10 +140,7 @@ int main(int argc, char **argv)
     cout << endl << sum1 << " " <<sum2 << endl;
     sum1 = 0;
     sum2 = 0;
-
-
     cout << endl << "VERTEXES" << endl;
-
     t1 = clock();
     for(int l = 0; l < 100000; ++l)
         for (size_t i = 0; i < 8; ++i)
@@ -168,13 +163,7 @@ int main(int argc, char **argv)
     cout << endl << sum1 << " " <<sum2 << endl;
     sum1 = 0;
     sum2 = 0;
-
-
-
-
     cout << endl << "EDGES" << endl;
-
-
     t1 = clock();
     for(int l = 0; l < 100000; ++l)
         for (size_t i = 0; i < 8; ++i)
@@ -196,16 +185,10 @@ int main(int argc, char **argv)
     cout << endl << sum1 << " " <<sum2 << endl;
     sum1 = 0;
     sum2 = 0;
-
-
-
     cout << endl << "OUTSIDE" << endl;
-
     Vector2dd outsideArray1[99][99];
     Vector2dd outsideArray2[99][99];
     Vector2dd outsideArray3[99][99];
-
-
     Vector2dd shift1 = {1, 1};
     Vector2dd shift2 = {1, 0};
     Vector2dd shift3 = {0, 1};
@@ -244,8 +227,6 @@ int main(int argc, char **argv)
     cout << endl << sum1 << " " <<sum2 << endl;
     sum1 = 0;
     sum2 = 0;
-
-
 }
 
 
