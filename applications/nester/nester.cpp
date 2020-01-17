@@ -12,7 +12,8 @@
 using namespace corecvs;
 using namespace std;
 /** =========================================== **/
-void drawPolygons(vector<Polygon> inputPolygons, int h, int w, string bmpname)
+void drawPolygons(vector<Polygon> inputPolygons,
+                  int h, int w, string bmpname)
 {
     Rectangled area = Rectangled::Empty();
     for (Polygon& p: inputPolygons )
@@ -47,7 +48,8 @@ void drawPolygons(vector<Polygon> inputPolygons, int h, int w, string bmpname)
     BufferFactory::getInstance()->saveRGB24Bitmap(buffer, bmpname);
 }
 
-void drawPolygons(list <Polygon> inputPolygons, int h, int w, string bmpname)
+void drawPolygons(list <Polygon> inputPolygons,
+                  int h, int w, string bmpname)
 {
     Rectangled area = Rectangled::Empty();
     for (Polygon& p: inputPolygons )
@@ -186,8 +188,8 @@ double distL1(const Vector2dd &v1, const Vector2dd &v2)
     return (abs (v1.x() - v2.x()) + abs(v1.y() - v2.y()));
 }
 
-bool isInteriorROConvexPolBinSearch(const corecvs ::Vector2dd &point,
-                                    const corecvs :: Polygon &A) //RO means right-oriented, bs used cause no-fit-polygons have quite a few vertexes
+bool isInteriorROConvexPolBinSearch(const Vector2dd &point,
+                                    const Polygon &A) //RO means right-oriented, bs used cause no-fit-polygons have quite a few vertexes
 {
     size_t len = A.size();
     Vector2dd O = A.getPoint(0);
@@ -221,7 +223,8 @@ bool isInteriorROConvexPolBinSearch(const corecvs ::Vector2dd &point,
            ((A.getPoint(len - 1) - O).leftNormal() & diff) > EPSIL);
 }
 
-bool isInteriorConvexPol(const corecvs ::Vector2dd &point, const corecvs :: Polygon &A) //if discarding an idea of bs
+bool isInteriorConvexPol(const Vector2dd &point,
+                         const Polygon &A) //if discarding an idea of bs
 {
     double oldsign = (A.getPoint(1) - A.getPoint(0)).rightNormal() & (point - A.getPoint(0)); //need to initialized
     int len = A.size();
@@ -241,7 +244,8 @@ bool isInteriorConvexPol(const corecvs ::Vector2dd &point, const corecvs :: Poly
     return true;
 }
 
-bool hasBiggerLOArg(const Vector2dd &v1, const Vector2dd &v2) // antiClockwise to vector -(OX)
+bool hasBiggerLOArg(const Vector2dd &v1,
+                    const Vector2dd &v2) // antiClockwise to vector -(OX)
 {
     double minusRadian1 = v1.x()/ v1.l2Metric();
     double minusRadian2 = v2.x()/ v2.l2Metric();
@@ -350,7 +354,8 @@ Polygon convexNFP(const Polygon &A, const Polygon &B)
     return conNFP;
 }
 
-Rectangled innerFitPolygon(const Polygon &A, const Rectangled &R) // all RO
+Rectangled innerFitPolygon(const Polygon &A,
+                           const Rectangled &R) // all RO
 {
     double leftOfA = A.getPoint(0).x();
     double rightOfA = A.getPoint(0).x();
@@ -387,7 +392,8 @@ Rectangled innerFitPolygon(const Polygon &A, const Rectangled &R) // all RO
     return Rectangled(cornerOfIFP.x(), cornerOfIFP.y(), widthHeightOfIFP.x(), widthHeightOfIFP.y()); //x,y,w,h
 }
 
-bool pointDoRefRec(Vector2dd const &point, Rectangled const &R) //RO Rect
+bool pointDoRefRec(Vector2dd const &point,
+                   Rectangled const &R) //RO Rect
 {
     double up = R.corner.y() + R.height();
     double low = R.corner.y();
@@ -401,7 +407,8 @@ Polygon polFromRec(const Rectangled &R) //rectangled is RO and corner is ll one
     return {R.ulCorner(), R.llCorner(), R.lrCorner(), R.urCorner()};
 }
 
-void bottomLeftPlacement(list <corecvs :: Polygon> &inp, corecvs :: Rectangled &bin)
+void bottomLeftPlacement(list <corecvs :: Polygon> &inp,
+                         corecvs :: Rectangled &bin)
 {
     size_t inpNumber = 0;
     //suppose initialisation is ok
@@ -482,7 +489,9 @@ void bottomLeftPlacement(list <corecvs :: Polygon> &inp, corecvs :: Rectangled &
     }
 }
 
-double OrientAreaTwice (const Vector2dd &a, const Vector2dd &b, const Vector2dd &c)
+double OrientAreaTwice (const Vector2dd &a,
+                        const Vector2dd &b,
+                        const Vector2dd &c)
 {
     return (a.x() - b.x()) * (c.y() - a.y()) - (a.x() - c.x()) * (b.y() - a.y());
 }
@@ -549,7 +558,8 @@ void lowerMassCenter(Polygon& A)
         rotatePolAngle(A, best * phi);
 }
 
-void bottomLeftPlacementProtected(list <corecvs :: Polygon> &inp, corecvs :: Rectangled &bin, int i = 1)
+void bottomLeftPlacementProtected(list <Polygon> &inp,
+                                  Rectangled &bin, int i)
 {
     bool seemsOK = 1;
     if(i >= 1)
