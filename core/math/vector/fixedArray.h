@@ -154,12 +154,14 @@ public:
     }
 private:
     explicit inline FixedArrayBase(int length, int) : length(length),
+
 #ifndef WIN32
         data((ElementType*)aligned_alloc(32, sizeof(ElementType) * length), free)
 #else // VS2013 does not support c++11 aligned_alloc
         data((ElementType*)aligned_alloc(32, sizeof(ElementType) * length), _aligned_free)
 #endif
     {
+
     }
     void copyInit(const ElementType *from)
     {

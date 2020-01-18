@@ -8,60 +8,60 @@ namespace corecvs {
 
 bool FolderScanner::isDir(const string &path)
 {
-    fs::path p(path);
-    return fs::exists(p) && fs::is_directory(p);
+    // fs::path p(path);
+    // return fs::exists(p) && fs::is_directory(p);
 }
 
 bool FolderScanner::createDir(const string &path, bool allowRecursive)
 {
-    if (isDir(path))
-        return true;
+    // if (isDir(path))
+    //     return true;
 
-    std::cout << "creating dir <" << path << ">" << std::endl;
+    // std::cout << "creating dir <" << path << ">" << std::endl;
 
-    bool res;
-    try {
-        fs::path p(path);
-        res = allowRecursive ? fs::create_directories(p) : fs::create_directory(p);
-    }
-    catch (...) {
-        L_ERROR_P("couldn't create dir <%s>", path.c_str());
-        res = false;
-    }
-    return res;
+    // bool res;
+    // try {
+    //     fs::path p(path);
+    //     res = allowRecursive ? fs::create_directories(p) : fs::create_directory(p);
+    // }
+    // catch (...) {
+    //     L_ERROR_P("couldn't create dir <%s>", path.c_str());
+    //     res = false;
+    // }
+    // return res;
 }
 
 bool FolderScanner::scan(const string &path, vector<string> &children, bool findFiles)
 {
-    if (!isDir(path))
-    {
-        L_ERROR_P("<%s> does not exist or not a directory", path.c_str());
-        return false;
-    }
+//     if (!isDir(path))
+//     {
+//         L_ERROR_P("<%s> does not exist or not a directory", path.c_str());
+//         return false;
+//     }
 
-    fs::path p(path);
-    for (fs::directory_iterator it = fs::directory_iterator(p); it != fs::directory_iterator(); ++it)
-    {
-        fs::path pathChild(*it);            // pathChild has linux style slashes inside
+//     fs::path p(path);
+//     for (fs::directory_iterator it = fs::directory_iterator(p); it != fs::directory_iterator(); ++it)
+//     {
+//         fs::path pathChild(*it);            // pathChild has linux style slashes inside
 
-        bool isDir = fs::is_directory(pathChild);
+//         bool isDir = fs::is_directory(pathChild);
 
-        //L_DDEBUG_P("%s contains\t%s\tas a %s", p.string().c_str(), pathChild.string().c_str(), (isDir ? "dir" : "file"));
+//         //L_DDEBUG_P("%s contains\t%s\tas a %s", p.string().c_str(), pathChild.string().c_str(), (isDir ? "dir" : "file"));
 
-        if (!(findFiles ^ isDir))
-            continue;
+//         if (!(findFiles ^ isDir))
+//             continue;
 
-        // win32: bugfix state:
-        //  pathChild.string() - has linux   style slashes everywhere
-        //  (string)pathChild  - has windows style slashes on vc12, but it's obsolete in vc14
-#ifdef _MSC_VER
-        childs.push_back(corecvs::HelperUtils::toNativeSlashes(pathChild.string()));
-#else
-        children.push_back(pathChild);
-#endif
-    }
+//         // win32: bugfix state:
+//         //  pathChild.string() - has linux   style slashes everywhere
+//         //  (string)pathChild  - has windows style slashes on vc12, but it's obsolete in vc14
+// #ifdef _MSC_VER
+//         childs.push_back(corecvs::HelperUtils::toNativeSlashes(pathChild.string()));
+// #else
+//         children.push_back(pathChild);
+// #endif
+//     }
 
-    return true;
+//     return true;
 }
 
 #if defined(FILESYSTEM_WORKAROUND)
@@ -78,33 +78,33 @@ bool FolderScanner::isDir(const string &path)
 
 bool FolderScanner::createDir(const string &path, bool allowRecursive)
 {
-    if (isDir(path))
-        return true;
+    // if (isDir(path))
+    //     return true;
 
-    std::cout << "creating dir <" << path << ">" << std::endl;
+    // std::cout << "creating dir <" << path << ">" << std::endl;
 
-    std::system(("mkdir " + path).c_str());
+    // std::system(("mkdir " + path).c_str());
 
-    if (!isDir(path))
-    {
-        if (!allowRecursive) {
-            L_ERROR_P("couldn't create dir <%s>", path.c_str());
-            return false;
-        }
-        L_INFO_P("creating subfolders of <%s>", path.c_str());
+    // if (!isDir(path))
+    // {
+    //     if (!allowRecursive) {
+    //         L_ERROR_P("couldn't create dir <%s>", path.c_str());
+    //         return false;
+    //     }
+    //     L_INFO_P("creating subfolders of <%s>", path.c_str());
 
-        auto subfolders = HelperUtils::stringSplit(path, PATH_SEPARATOR[0]);
-        string p;
-        for (auto& subfolder : subfolders)
-        {
-            if (!p.empty()) p += PATH_SEPARATOR;
-            p += subfolder;
+    //     auto subfolders = HelperUtils::stringSplit(path, PATH_SEPARATOR[0]);
+    //     string p;
+    //     for (auto& subfolder : subfolders)
+    //     {
+    //         if (!p.empty()) p += PATH_SEPARATOR;
+    //         p += subfolder;
 
-            if (!createDir(p, false))
-                return false;
-        }
-    }
-    return true;
+    //         if (!createDir(p, false))
+    //             return false;
+    //     }
+    // }
+    // return true;
 }
 
 bool FolderScanner::scan(const string &path, vector<string> &childs, bool findFiles)
@@ -146,30 +146,30 @@ bool FolderScanner::scan(const string &path, vector<string> &childs, bool findFi
 
 void FolderScanner::emptyDir(const string &path)
 {
-#ifdef WIN32
-    std::system(("rd /s /q " + path).c_str());
-#else
-    int result = std::system(("rm -rf " + path).c_str());
-    CORE_UNUSED(result);
-#endif
-    L_INFO_P("The <%s> folder is deleted.", path.c_str());
-}
+// #ifdef WIN32
+//     std::system(("rd /s /q " + path).c_str());
+// #else
+//     int result = std::system(("rm -rf " + path).c_str());
+//     CORE_UNUSED(result);
+// #endif
+//     L_INFO_P("The <%s> folder is deleted.", path.c_str());
+// }
 
-bool FolderScanner::isAccessible(const string &path)
-{
-    auto p = path;
-    if (!STR_HAS_SLASH_AT_END(p))
-        p += PATH_SEPARATOR;
-    p += "checkFolderScanner.tmp";
+// bool FolderScanner::isAccessible(const string &path)
+// {
+//     auto p = path;
+//     if (!STR_HAS_SLASH_AT_END(p))
+//         p += PATH_SEPARATOR;
+//     p += "checkFolderScanner.tmp";
 
-    std::ofstream f(p, std::ios::app);
-    if (f.is_open())
-    {
-        f.close();
-        HelperUtils::pathRemove(p);
-        return true;
-    }
-    return false;
+//     std::ofstream f(p, std::ios::app);
+//     if (f.is_open())
+//     {
+//         f.close();
+//         HelperUtils::pathRemove(p);
+//         return true;
+//     }
+//     return false;
 }
 
 } // namespace corecvs
