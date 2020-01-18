@@ -22,7 +22,6 @@
 namespace corecvs {
 
 using std::vector;
-using std::bind2nd;
 using std::equal_to;
 
 /**
@@ -247,7 +246,7 @@ public:
                 remove_if(
                         segments->begin(),
                         segments->end(),
-                        bind2nd(equal_to<void *>(), (void *)NULL)
+                        [](SegmentType *segment){ return segment == NULL; }
                 ),
                 segments->end());
         return new SegmentationResult(segments, markup);
