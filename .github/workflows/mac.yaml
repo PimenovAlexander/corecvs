@@ -28,6 +28,8 @@ jobs:
            #brew install liblapacke
            brew install qt
            brew install cmake
+           brew install opencv3
+           
     - name: Prepare build folder
       run: |
            ls
