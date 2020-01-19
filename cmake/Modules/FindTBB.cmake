@@ -184,7 +184,8 @@ set (TBB_INC_SEARCH_DIR ${_TBB_INSTALL_DIR}/include)
 # Jiri: tbbvars now sets the CPATH environment variable to the directory
 # containing the headers.
 find_path(TBB_INCLUDE_DIR
-tbb/task_scheduler_init.h
+    tbb/task_scheduler_init.h
+    tbb/parallel_for.h
 PATHS ${TBB_INC_SEARCH_DIR} ENV CPATH
 )
 mark_as_advanced(TBB_INCLUDE_DIR)
@@ -261,6 +262,11 @@ set (TBB_LIBRARY_DIRS ${TBB_LIBRARY_DIR} CACHE PATH "TBB library directory" FORC
 set (TBB_DEBUG_LIBRARY_DIRS ${TBB_LIBRARY_DEBUG_DIR} CACHE PATH "TBB debug library directory" FORCE)
 mark_as_advanced(TBB_INCLUDE_DIRS TBB_LIBRARY_DIRS TBB_DEBUG_LIBRARY_DIRS TBB_LIBRARIES TBB_DEBUG_LIBRARIES)
 message(STATUS "Found Intel TBB")
+message(STATUS "Intel TBB include dir: " "${TBB_INCLUDE_DIR}")
+message(STATUS "Intel TBB library dir: " "${TBB_LIBRARY_DIR}")
+message(STATUS "Intel TBB libraries  : " "${TBB_LIBRARIES}"  )
+
+
 endif (TBB_LIBRARY)
 endif (TBB_INCLUDE_DIR)
 

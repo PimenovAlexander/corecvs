@@ -57,7 +57,7 @@ target_link_libraries(corecvs pthread)
 if (OpenBLAS_LIB)
     message("Core: Would use OpenBLAS adding <${OpenBLAS_LIB}> to dependancies")
     message("Core: Would use Lapacke  adding <${Lapacke_LIB}> to dependancies")
-    include_directories (${OpenBLAS_INCLUDE_DIR} ${Lapacke_INCLUDE_DIR})
+    target_include_directories(corecvs PUBLIC ${OpenBLAS_INCLUDE_DIR} ${Lapacke_INCLUDE_DIR})
     target_link_libraries(corecvs ${OpenBLAS_LIB} ${Lapacke_LIB})
 endif()
 
