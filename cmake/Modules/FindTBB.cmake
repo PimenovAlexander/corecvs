@@ -262,9 +262,9 @@ set (TBB_LIBRARY_DIRS ${TBB_LIBRARY_DIR} CACHE PATH "TBB library directory" FORC
 set (TBB_DEBUG_LIBRARY_DIRS ${TBB_LIBRARY_DEBUG_DIR} CACHE PATH "TBB debug library directory" FORCE)
 mark_as_advanced(TBB_INCLUDE_DIRS TBB_LIBRARY_DIRS TBB_DEBUG_LIBRARY_DIRS TBB_LIBRARIES TBB_DEBUG_LIBRARIES)
 message(STATUS "Found Intel TBB")
-message(STATUS "Intel TBB include dir: " ${TBB_INCLUDE_DIR})
-message(STATUS "Intel TBB library dir: " ${TBB_LIBRARY_DIR})
-message(STATUS "Intel TBB libraries  : " ${TBB_LIBRARIES})
+message(STATUS "Intel TBB include dir: " "${TBB_INCLUDE_DIR}")
+message(STATUS "Intel TBB library dir: " "${TBB_LIBRARY_DIR}")
+message(STATUS "Intel TBB libraries  : " "${TBB_LIBRARIES}"  )
 
 
 endif (TBB_LIBRARY)
