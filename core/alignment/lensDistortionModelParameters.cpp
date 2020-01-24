@@ -18,17 +18,19 @@
  *  Also it's not clear why removing "= Reflection()" breaks the code;
  **/
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<LensDistortionModelParameters>::reflection = Reflection();
 template<>
 int BaseReflection<LensDistortionModelParameters>::dummy = LensDistortionModelParameters::staticInit();
+#endif
 } // namespace corecvs
 
 SUPPRESS_OFFSET_WARNING_BEGIN
 
-int LensDistortionModelParameters::staticInit()
+int LensDistortionModelParameters::staticInit(corecvs::Reflection *toFill)
 {
-    return LensDistortionModelParametersBase::staticInit();
+    return LensDistortionModelParametersBase::staticInit(toFill);
 }
 
 SUPPRESS_OFFSET_WARNING_END

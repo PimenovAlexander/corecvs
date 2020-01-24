@@ -15,7 +15,7 @@
 #include "imageCaptureInterface.h"
 #include "cameraControlParameters.h"
 
-#ifdef WITH_FRAMESOURCE_V4L2
+#ifdef WITH_V4L2
 # include "V4L2Capture.h"
 # include "V4L2CaptureDecouple.h"
 #endif
@@ -34,7 +34,7 @@ STATIC_ASSERT(CORE_COUNT_OF(CaptureStatistics::names) == CaptureStatistics::MAX_
 
 
 
-void ImageCaptureInterface::notifyAboutNewFrame(frame_data_t frameData)
+void ImageCaptureInterface::notifyAboutNewFrame(ImageCaptureInterface::FrameMetadata frameData)
 {
     // SYNC_PRINT(("ImageCaptureInterface::notifyAboutNewFrame()\n"));
     if (imageInterfaceReceiver != NULL)
@@ -81,7 +81,7 @@ void ImageCaptureInterface::getAllCameras(vector<string> &cameras)
     }
 #endif
 
-#ifdef WITH_FRAMESOURCE_V4L2
+#ifdef WITH_V4L2
     vector<string> v4lcams;
     V4L2CaptureInterface::getAllCameras(v4lcams);
     for (string cam: v4lcams) {
@@ -173,7 +173,7 @@ bool ImageCaptureInterface::supportPause()
     return false;
 }
 
-ImageCaptureInterface *ImageCaptureInterfaceFabric::fabricate(std::string &name, bool isRGB)
+ImageCaptureInterface *ImageCaptureInterfaceFabric::fabricate(const std::string &name, bool isRGB)
 {
     SYNC_PRINT(("ImageCaptureInterfaceFabric::fabricate(%s, rgb=%s):called\n", name.c_str(), isRGB ? "true" : "false"));
 

@@ -127,7 +127,7 @@ void CopterDialog::processResult()
             Affine3DQ copterPos;
             copterPos = fod->position;//Affine3DQ::Identity();
 
-            Mesh3DDecorated *mesh = new Mesh3DDecorated;
+            Mesh3DDecorated *mesh = new Mesh3DDecorated();
             mesh->switchColor();
             mesh->mulTransform(copterPos);
 
@@ -141,16 +141,8 @@ void CopterDialog::processResult()
             mesh->popTransform();
 
             Mesh3DScene *scene = new Mesh3DScene;
-            scene->switchColor(true);
-            scene->add(*mesh, true);
-
-            delete mesh;
-
-            //scene->prepareMesh(cloud);
-            //cloud->addSubObject(, QSharedPointer<Scene3D>(shaded));
-
+            scene->setMesh(mesh);
             cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene));
-
         }
 
         delete fod;

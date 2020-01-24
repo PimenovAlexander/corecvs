@@ -3,26 +3,16 @@
 #include "core/features2d/descriptorExtractorProvider.h"
 
 namespace cv {
-#ifdef WITH_OPENCV_3x
 	class Feature2D;
 	typedef Feature2D DescriptorExtractor;
-#else
-	class DescriptorExtractor;
-#endif  
 }
 
-#ifdef WITH_OPENCV_3x
 struct SmartPtrExtractorHolder;
-#endif
 
 class OpenCvDescriptorExtractorWrapper : public DescriptorExtractor
 {
 public:
-#ifdef WITH_OPENCV_3x
     OpenCvDescriptorExtractorWrapper(SmartPtrExtractorHolder *holder);
-#else
-    OpenCvDescriptorExtractorWrapper(cv::DescriptorExtractor *detector);
-#endif
    ~OpenCvDescriptorExtractorWrapper();
 
     void   setProperty(const std::string &name, const double &value);
@@ -36,9 +26,7 @@ private:
 
     cv::DescriptorExtractor *extractor;
 
-#ifdef WITH_OPENCV_3x
     SmartPtrExtractorHolder /*SmartPtrHolder*/ * holder;   // EM/SF: opencv3.2 requires it?
-#endif
 };
 
 extern "C"

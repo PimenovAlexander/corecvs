@@ -146,10 +146,10 @@ public:
     bool trace = false;
 
 
-    int loadGcode(istream &input, Mesh3D &mesh);
+    int loadGcode(std::istream &input, Mesh3D &mesh);
 
-    int loadGcode(istream &input, GCodeProgram &program);
-    int saveGcode(ostream &out, const GCodeProgram &program);
+    int loadGcode(std::istream &input, GCodeProgram &program);
+    int saveGcode(std::ostream &out, const GCodeProgram &program);
 
     virtual ~GcodeLoader();
 

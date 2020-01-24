@@ -115,8 +115,6 @@ int AVEncoder::startEncoding(const std::string &name, int h, int w, int codec_id
 
 
      SYNC_PRINT(("Writing header\n"));
-     AVDictionary *options = NULL;
-
      ret = avformat_write_header(formatContext, NULL);
      if (ret < 0) {
          SYNC_PRINT(("Writing format problem"));

@@ -14,7 +14,7 @@ class QOpenGLShaderProgram;
 
 
 
-class SceneShaded : public Scene3D, public /*QOpenGLFunctions*/ QOpenGLFunctions_4_4_Core
+class SceneShaded : public Scene3D/*, public QOpenGLFunctions QOpenGLFunctions_4_4_Core*/
 {
 public:
     ShadedSceneControlParameters mParameters;
@@ -62,10 +62,12 @@ public:
     GLuint mBumpmap = -1;
 
 
-
-    /* Some test data */
+protected:
+    /* Main mesh data */
+    bool mMeshPrepared = false;
     Mesh3DDecorated *mMesh = NULL;
 
+public:
     /* Caches in OpenGL format*/
     /* For vertex draw */
     vector<Vector3df> positions;
@@ -100,6 +102,14 @@ public:
         ShadedSceneControlWidget *result = new ShadedSceneControlWidget();
         result->setParameters(mParameters);
         return result;
+    }
+
+    /** Takes ownership **/
+    void setMesh(Mesh3DDecorated *newMesh = NULL)
+    {
+        delete_safe(mMesh);
+        mMesh = newMesh;
+        mMeshPrepared = false;
     }
 
     virtual void setParameters(void * params)  override;

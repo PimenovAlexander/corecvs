@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from graphPlot.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<GraphPlotParameters>::reflection = Reflection();
 template<>
 int BaseReflection<GraphPlotParameters>::dummy = GraphPlotParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int GraphPlotParameters::staticInit()
+int GraphPlotParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <GraphPlotParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Graph Plot Parameters",
         "Graph Plot Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(GraphPlotParameters);
+     toFill->objectSize = sizeof(GraphPlotParameters);
      
 
     EnumField* field0 = new EnumField
@@ -56,7 +62,7 @@ int GraphPlotParameters::staticInit()
           )
         );
     field0->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     IntField* field1 = new IntField
         (
@@ -71,7 +77,7 @@ int GraphPlotParameters::staticInit()
          99,
          1
         );
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     DoubleField* field2 = new DoubleField
         (
@@ -88,7 +94,7 @@ int GraphPlotParameters::staticInit()
         );
     field2->widgetHint=BaseField::SPIN_BOX;
     field2->precision=2;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     BoolField* field3 = new BoolField
         (
@@ -100,7 +106,7 @@ int GraphPlotParameters::staticInit()
           "xGrid"
         );
     field3->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     BoolField* field4 = new BoolField
         (
@@ -112,7 +118,7 @@ int GraphPlotParameters::staticInit()
           "yGrid"
         );
     field4->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     DoubleField* field5 = new DoubleField
         (
@@ -125,7 +131,7 @@ int GraphPlotParameters::staticInit()
         );
     field5->widgetHint=BaseField::SLIDER;
     field5->precision=2;
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     DoubleField* field6 = new DoubleField
         (
@@ -142,7 +148,7 @@ int GraphPlotParameters::staticInit()
         );
     field6->widgetHint=BaseField::SLIDER;
     field6->precision=2;
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     DoubleField* field7 = new DoubleField
         (
@@ -159,7 +165,7 @@ int GraphPlotParameters::staticInit()
         );
     field7->widgetHint=BaseField::SPIN_BOX;
     field7->precision=2;
-    fields().push_back(field7);
+    toFill->fields.push_back(field7);
     /*  */ 
     BoolField* field8 = new BoolField
         (
@@ -171,7 +177,7 @@ int GraphPlotParameters::staticInit()
           "selectGraph"
         );
     field8->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field8);
+    toFill->fields.push_back(field8);
     /*  */ 
     BoolField* field9 = new BoolField
         (
@@ -183,7 +189,7 @@ int GraphPlotParameters::staticInit()
           "Fix Time value"
         );
     field9->widgetHint=BaseField::RADIO_BUTTON;
-    fields().push_back(field9);
+    toFill->fields.push_back(field9);
     /*  */ 
     BoolField* field10 = new BoolField
         (
@@ -195,10 +201,10 @@ int GraphPlotParameters::staticInit()
           "Fix Grid value"
         );
     field10->widgetHint=BaseField::RADIO_BUTTON;
-    fields().push_back(field10);
+    toFill->fields.push_back(field10);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Graph Plot Parameters")]= &reflection;
+    directory[std::string("Graph Plot Parameters")]= toFill;
    return 0;
 }
 int GraphPlotParameters::relinkCompositeFields()

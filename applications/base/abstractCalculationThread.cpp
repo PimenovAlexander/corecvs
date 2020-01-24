@@ -63,7 +63,7 @@ void AbstractCalculationThread::run()
 //    stateLock.unlock();
 }
 
-void AbstractCalculationThread::newFrameReady(frame_data_t frameData)
+void AbstractCalculationThread::newFrameReady(ImageCaptureInterface::FrameMetadata frameData)
 {
 //    qDebug("AbstractCalculationThread::newFrameReady(): called");
 

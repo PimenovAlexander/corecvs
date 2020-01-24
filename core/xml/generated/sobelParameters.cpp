@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from bufferFilters.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<SobelParameters>::reflection = Reflection();
 template<>
 int BaseReflection<SobelParameters>::dummy = SobelParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int SobelParameters::staticInit()
+int SobelParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <SobelParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Sobel Parameters",
         "Sobel Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(SobelParameters);
+     toFill->objectSize = sizeof(SobelParameters);
      
 
     EnumField* field0 = new EnumField
@@ -56,7 +62,7 @@ int SobelParameters::staticInit()
           )
         );
     field0->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     BoolField* field1 = new BoolField
         (
@@ -68,7 +74,7 @@ int SobelParameters::staticInit()
           "Horizontal"
         );
     field1->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     BoolField* field2 = new BoolField
         (
@@ -80,10 +86,10 @@ int SobelParameters::staticInit()
           "Vertical"
         );
     field2->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Sobel Parameters")]= &reflection;
+    directory[std::string("Sobel Parameters")]= toFill;
    return 0;
 }
 int SobelParameters::relinkCompositeFields()

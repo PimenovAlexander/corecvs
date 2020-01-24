@@ -38,6 +38,7 @@ class RGB24Image : public QImage
 {
 public:
     RGB24Image(RGB24Buffer *buffer, bool mirror = false);
+    RGB24Image(corecvs::AbstractBuffer<float> *fpImage);
     virtual ~RGB24Image();
 };
 

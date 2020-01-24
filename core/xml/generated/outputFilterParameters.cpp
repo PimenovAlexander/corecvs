@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from bufferFilters.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<OutputFilterParameters>::reflection = Reflection();
 template<>
 int BaseReflection<OutputFilterParameters>::dummy = OutputFilterParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int OutputFilterParameters::staticInit()
+int OutputFilterParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <OutputFilterParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Output Filter Parameters",
         "Output Filter Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(OutputFilterParameters);
+     toFill->objectSize = sizeof(OutputFilterParameters);
      
 
     EnumField* field0 = new EnumField
@@ -56,10 +62,10 @@ int OutputFilterParameters::staticInit()
           )
         );
     field0->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Output Filter Parameters")]= &reflection;
+    directory[std::string("Output Filter Parameters")]= toFill;
    return 0;
 }
 int OutputFilterParameters::relinkCompositeFields()

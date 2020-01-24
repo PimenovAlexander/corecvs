@@ -19,7 +19,7 @@
 #include "core/math/matrix/matrix33.h"
 #include "core/math/matrix/matrix44.h"
 #include "core/math/vector/vector3d.h"
-#include "core/rectification/correspondenceList.h"
+#include "core/buffers/correspondenceList.h"
 #include "core/fileformats/bmpLoader.h"
 #include "core/rectification/essentialMatrix.h"
 #include "core/cammodel/cameraParameters.h"

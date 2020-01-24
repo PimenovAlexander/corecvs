@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from patternDetector.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<ChessBoardCornerDetectorParamsBase>::reflection = Reflection();
 template<>
 int BaseReflection<ChessBoardCornerDetectorParamsBase>::dummy = ChessBoardCornerDetectorParamsBase::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int ChessBoardCornerDetectorParamsBase::staticInit()
+int ChessBoardCornerDetectorParamsBase::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <ChessBoardCornerDetectorParamsBase>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Chess Board Corner Detector Params Base",
         "Chess Board Corner Detector Params Base",
         ""
     );
 
-     getReflection()->objectSize = sizeof(ChessBoardCornerDetectorParamsBase);
+     toFill->objectSize = sizeof(ChessBoardCornerDetectorParamsBase);
      
 
     BoolField* field0 = new BoolField
@@ -52,7 +58,7 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
           "produceDebug"
         );
     field0->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     BoolField* field1 = new BoolField
         (
@@ -64,7 +70,7 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
           "floatSpeedup"
         );
     field1->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     DoubleField* field2 = new DoubleField
         (
@@ -82,7 +88,7 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
     field2->widgetHint=BaseField::SPIN_BOX;
     field2->suffixHint="%";
     field2->precision=2;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     DoubleField* field3 = new DoubleField
         (
@@ -96,7 +102,7 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
     field3->widgetHint=BaseField::SPIN_BOX;
     field3->suffixHint="deg";
     field3->precision=2;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     IntField* field4 = new IntField
         (
@@ -111,7 +117,7 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
          999999,
          1
         );
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     DoubleField* field5 = new DoubleField
         (
@@ -125,7 +131,7 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
     field5->widgetHint=BaseField::SPIN_BOX;
     field5->suffixHint="deg";
     field5->precision=2;
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     IntField* field6 = new IntField
         (
@@ -140,7 +146,7 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
          999999,
          1
         );
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     DoubleField* field7 = new DoubleField
         (
@@ -153,7 +159,7 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
         );
     field7->widgetHint=BaseField::SPIN_BOX;
     field7->precision=2;
-    fields().push_back(field7);
+    toFill->fields.push_back(field7);
     /*  */ 
     DoubleField* field8 = new DoubleField
         (
@@ -166,7 +172,7 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
         );
     field8->widgetHint=BaseField::SPIN_BOX;
     field8->precision=2;
-    fields().push_back(field8);
+    toFill->fields.push_back(field8);
     /*  */ 
     DoubleField* field9 = new DoubleField
         (
@@ -179,7 +185,7 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
         );
     field9->widgetHint=BaseField::SPIN_BOX;
     field9->precision=2;
-    fields().push_back(field9);
+    toFill->fields.push_back(field9);
     /*  */ 
     DoubleField* field10 = new DoubleField
         (
@@ -192,7 +198,7 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
         );
     field10->widgetHint=BaseField::SPIN_BOX;
     field10->precision=2;
-    fields().push_back(field10);
+    toFill->fields.push_back(field10);
     /*  */ 
     DoubleField* field11 = new DoubleField
         (
@@ -205,7 +211,7 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
         );
     field11->widgetHint=BaseField::SPIN_BOX;
     field11->precision=2;
-    fields().push_back(field11);
+    toFill->fields.push_back(field11);
     /*  */ 
     IntField* field12 = new IntField
         (
@@ -220,7 +226,7 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
          999999,
          1
         );
-    fields().push_back(field12);
+    toFill->fields.push_back(field12);
     /*  */ 
     DoubleField* field13 = new DoubleField
         (
@@ -233,7 +239,7 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
         );
     field13->widgetHint=BaseField::SPIN_BOX;
     field13->precision=2;
-    fields().push_back(field13);
+    toFill->fields.push_back(field13);
     /*  */ 
     IntField* field14 = new IntField
         (
@@ -248,7 +254,7 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
          999999,
          1
         );
-    fields().push_back(field14);
+    toFill->fields.push_back(field14);
     /*  */ 
     DoubleField* field15 = new DoubleField
         (
@@ -265,7 +271,7 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
         );
     field15->widgetHint=BaseField::SPIN_BOX;
     field15->precision=3;
-    fields().push_back(field15);
+    toFill->fields.push_back(field15);
     /*  */ 
     double mPatternRadius_dv[] = {4,8,12};
     DoubleVectorField* field16 = new DoubleVectorField
@@ -283,7 +289,7 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
          1
         );
     field16->precision=2;
-    fields().push_back(field16);
+    toFill->fields.push_back(field16);
     /*  */ 
     double mPatternStartAngleDeg_dv[] = {0,45};
     DoubleVectorField* field17 = new DoubleVectorField
@@ -301,7 +307,7 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
          1
         );
     field17->precision=2;
-    fields().push_back(field17);
+    toFill->fields.push_back(field17);
     /*  */ 
     double mCornerScores_dv[] = {4,8,12};
     DoubleVectorField* field18 = new DoubleVectorField
@@ -319,10 +325,10 @@ int ChessBoardCornerDetectorParamsBase::staticInit()
          1
         );
     field18->precision=2;
-    fields().push_back(field18);
+    toFill->fields.push_back(field18);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Chess Board Corner Detector Params Base")]= &reflection;
+    directory[std::string("Chess Board Corner Detector Params Base")]= toFill;
    return 0;
 }
 int ChessBoardCornerDetectorParamsBase::relinkCompositeFields()

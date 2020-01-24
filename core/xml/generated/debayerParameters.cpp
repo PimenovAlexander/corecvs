@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from parameters.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<DebayerParameters>::reflection = Reflection();
 template<>
 int BaseReflection<DebayerParameters>::dummy = DebayerParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int DebayerParameters::staticInit()
+int DebayerParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <DebayerParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Debayer Parameters",
         "Debayer Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(DebayerParameters);
+     toFill->objectSize = sizeof(DebayerParameters);
      
 
     EnumField* field0 = new EnumField
@@ -58,7 +64,7 @@ int DebayerParameters::staticInit()
           )
         );
     field0->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     IntField* field1 = new IntField
         (
@@ -73,7 +79,7 @@ int DebayerParameters::staticInit()
          3,
          1
         );
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     IntField* field2 = new IntField
         (
@@ -88,7 +94,7 @@ int DebayerParameters::staticInit()
          15,
          1
         );
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     double mGains_dv[] = {1,1,1};
     DoubleVectorField* field3 = new DoubleVectorField
@@ -106,7 +112,7 @@ int DebayerParameters::staticInit()
          1
         );
     field3->precision=2;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     double mGamma_dv[] = {1,1};
     DoubleVectorField* field4 = new DoubleVectorField
@@ -124,10 +130,10 @@ int DebayerParameters::staticInit()
          1
         );
     field4->precision=2;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Debayer Parameters")]= &reflection;
+    directory[std::string("Debayer Parameters")]= toFill;
    return 0;
 }
 int DebayerParameters::relinkCompositeFields()

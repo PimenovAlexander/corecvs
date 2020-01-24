@@ -120,39 +120,51 @@ GenericMatrix22<ElementType> GenericMatrix22<ElementType>::VectorByVector(const 
 }
 
 template GenericMatrix22<double> GenericMatrix22<double>::VectorByVector(const Vector2d<double> &a, const Vector2d<double> &b);
-template GenericMatrix22<float> GenericMatrix22<float>::VectorByVector(const Vector2d<float> &a, const Vector2d<float> &b);
+template GenericMatrix22<float>  GenericMatrix22<float> ::VectorByVector(const Vector2d<float>  &a, const Vector2d<float>  &b);
 
 template<typename ElementType>
-void GenericMatrix22<ElementType>::eigen(const GenericMatrix22<ElementType> &A, ElementType &lambda1, Vector2d<ElementType> &e1, ElementType &lambda2, Vector2d<ElementType> &e2, ElementType EIGTOLERANCE)
+void GenericMatrix22<ElementType>::eigen(const GenericMatrix22<ElementType> &A, ElementType &lambda_max, Vector2d<ElementType> &e1, ElementType &lambda_min, Vector2d<ElementType> &e2, ElementType EIGTOLERANCE)
 {
+    typedef Vector2d<ElementType> VType;
+
     ElementType T = A.trace();
     ElementType D = A.det();
 
     ElementType T2 = T / 2.0;
 
-    lambda2 = T2 + std::sqrt(T2 * T2 - D);
-    lambda1 = T2 - std::sqrt(T2 * T2 - D);
+    lambda_min = T2 - std::sqrt(T2 * T2 - D);
+    lambda_max = T2 + std::sqrt(T2 * T2 - D);
 
-    ElementType c = std::abs(A.a(1, 0));
-    ElementType b = std::abs(A.a(0, 1));
+    ElementType c = std::abs(A.a10());
+    ElementType b = std::abs(A.a01());
 
     if (std::max(b, c) > EIGTOLERANCE)
     {
         if (b > c)
         {
-            e1 = Vector2d<ElementType>(A.a(0, 1), lambda1 - A.a(0, 0)).normalised();
-            e2 = Vector2d<ElementType>(A.a(0, 1), lambda2 - A.a(0, 0)).normalised();
+            e1 = VType(A.a(0, 1), lambda_max - A.a(0, 0)).normalised();
+            e2 = VType(A.a(0, 1), lambda_min - A.a(0, 0)).normalised();
         }
         else
         {
-            e1 = Vector2d<ElementType>(lambda1 - A.a(1, 1), A.a(1, 0)).normalised();
-            e2 = Vector2d<ElementType>(lambda2 - A.a(1, 1), A.a(1, 0)).normalised();
+            e1 = VType(lambda_max - A.a(1, 1), A.a(1, 0)).normalised();
+            e2 = VType(lambda_min - A.a(1, 1), A.a(1, 0)).normalised();
         }
     }
     else
     {
-        e1 = Vector2d<ElementType>(1.0, 0.0);
-        e2 = Vector2d<ElementType>(0.0, 1.0);
+        if (A.a00() > A.a11())
+        {
+            e1 = VType(1.0, 0.0);
+            lambda_max = A.a00();
+            e2 = VType(0.0, 1.0);
+            lambda_min = A.a11();
+        } else {
+            e1 = VType(0.0, 1.0);
+            lambda_max = A.a11();
+            e2 = VType(1.0, 0.0);
+            lambda_min = A.a00();
+        }
     }
 }
 

@@ -9,7 +9,7 @@
  */
 
 #include <vector>
-#include "core/rectification/correspondenceList.h"
+#include "core/buffers/correspondenceList.h"
 #include "core/rectification/essentialMatrix.h"
 #include "core/function/function.h"
 #include "core/math/quaternion.h"

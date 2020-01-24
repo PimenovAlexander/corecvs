@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from projections.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<OmnidirectionalBaseParameters>::reflection = Reflection();
 template<>
 int BaseReflection<OmnidirectionalBaseParameters>::dummy = OmnidirectionalBaseParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int OmnidirectionalBaseParameters::staticInit()
+int OmnidirectionalBaseParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <OmnidirectionalBaseParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Omnidirectional Base Parameters",
         "Omnidirectional Base Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(OmnidirectionalBaseParameters);
+     toFill->objectSize = sizeof(OmnidirectionalBaseParameters);
      
 
     DoubleField* field0 = new DoubleField
@@ -58,7 +64,7 @@ int OmnidirectionalBaseParameters::staticInit()
     field0->widgetHint=BaseField::SPIN_BOX;
     field0->suffixHint="px";
     field0->precision=2;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     DoubleField* field1 = new DoubleField
         (
@@ -76,7 +82,7 @@ int OmnidirectionalBaseParameters::staticInit()
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->suffixHint="px";
     field1->precision=2;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     DoubleField* field2 = new DoubleField
         (
@@ -93,7 +99,7 @@ int OmnidirectionalBaseParameters::staticInit()
         );
     field2->widgetHint=BaseField::SPIN_BOX;
     field2->precision=6;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     double mN_dv[] = {0,0,0,0,0,0};
     DoubleVectorField* field3 = new DoubleVectorField
@@ -111,7 +117,7 @@ int OmnidirectionalBaseParameters::staticInit()
          0.01
         );
     field3->precision=6;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     DoubleField* field4 = new DoubleField
         (
@@ -129,7 +135,7 @@ int OmnidirectionalBaseParameters::staticInit()
     field4->widgetHint=BaseField::SPIN_BOX;
     field4->suffixHint="px";
     field4->precision=2;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     DoubleField* field5 = new DoubleField
         (
@@ -147,7 +153,7 @@ int OmnidirectionalBaseParameters::staticInit()
     field5->widgetHint=BaseField::SPIN_BOX;
     field5->suffixHint="px";
     field5->precision=2;
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     DoubleField* field6 = new DoubleField
         (
@@ -165,7 +171,7 @@ int OmnidirectionalBaseParameters::staticInit()
     field6->widgetHint=BaseField::SPIN_BOX;
     field6->suffixHint="px";
     field6->precision=2;
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     DoubleField* field7 = new DoubleField
         (
@@ -183,10 +189,10 @@ int OmnidirectionalBaseParameters::staticInit()
     field7->widgetHint=BaseField::SPIN_BOX;
     field7->suffixHint="px";
     field7->precision=2;
-    fields().push_back(field7);
+    toFill->fields.push_back(field7);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Omnidirectional Base Parameters")]= &reflection;
+    directory[std::string("Omnidirectional Base Parameters")]= toFill;
    return 0;
 }
 int OmnidirectionalBaseParameters::relinkCompositeFields()

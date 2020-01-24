@@ -16,10 +16,10 @@
 
 #include <iostream>
 
-#include "frames.h"
+#include "core/framesources/frames.h"
 #include "imageCaptureInterfaceQt.h"
 
-#include "core/filters/blocks/filterGraph.h"
+#include "core/filters/legacy/filterGraph.h"
 
 /**
  * An empty stub for the output data obtained as the result of the calculation.
@@ -72,7 +72,7 @@ class AbstractCalculationThread : public QThread
          *
          */
 
-        virtual void newFrameReady(frame_data_t frameData);
+        virtual void newFrameReady(ImageCaptureInterface::FrameMetadata frameData);
 
         /** Pauses calculation. Should only be called as a asynchronous slot function */
         virtual void pauseCalculation();

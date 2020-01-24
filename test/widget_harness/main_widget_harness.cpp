@@ -13,7 +13,7 @@
 #include "libpngFileReader.h"
 #endif
 
-#include "core/filters/blocks/newStyleBlock.h"
+#include "core/filters/newstyle/newStyleBlock.h"
 #include "widgetBlockHarness.h"
 
 #include "qtFileLoader.h"
@@ -45,9 +45,9 @@ int main(int argc, char **argv)
     initLoaders();
 
     /* Assert modules are linked */
-    cout << "Fields:" << HomorgaphyReconstructorBlockBase::reflection.fields.size() << std::endl;
-    cout << "Fields:" << SceneStereoAlignerBlockBase     ::reflection.fields.size() << std::endl;
-    cout << "Fields:" << AdderSubstractor                ::reflection.fields.size() << std::endl;
+    cout << "Fields:" << HomorgaphyReconstructorBlockBase::fields().size() << std::endl;
+    cout << "Fields:" << SceneStereoAlignerBlockBase     ::fields().size() << std::endl;
+    cout << "Fields:" << AdderSubstractor                ::fields().size() << std::endl;
 
     SceneStereoAlignerBlock::relinkCompositeFields();
 

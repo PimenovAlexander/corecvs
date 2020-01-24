@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from bufferFilters.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<HomorgaphyReconstructorBlockBase>::reflection = Reflection();
 template<>
 int BaseReflection<HomorgaphyReconstructorBlockBase>::dummy = HomorgaphyReconstructorBlockBase::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int HomorgaphyReconstructorBlockBase::staticInit()
+int HomorgaphyReconstructorBlockBase::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <HomorgaphyReconstructorBlockBase>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "HomorgaphyReconstructorBlockBase",
         "HomorgaphyReconstructorBlockBase",
         ""
     );
 
-     getReflection()->objectSize = sizeof(HomorgaphyReconstructorBlockBase);
+     toFill->objectSize = sizeof(HomorgaphyReconstructorBlockBase);
      
 
     PointerField* field0 = new PointerField
@@ -52,7 +58,7 @@ int HomorgaphyReconstructorBlockBase::staticInit()
           "in0",
           "corecvs::CorrespondenceList"
         );
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     PointerField* field1 = new PointerField
         (
@@ -64,7 +70,7 @@ int HomorgaphyReconstructorBlockBase::staticInit()
           "out0",
           "corecvs::Matrix33"
         );
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     EnumField* field2 = new EnumField
         (
@@ -83,10 +89,10 @@ int HomorgaphyReconstructorBlockBase::staticInit()
           )
         );
     field2->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("HomorgaphyReconstructorBlockBase")]= &reflection;
+    directory[std::string("HomorgaphyReconstructorBlockBase")]= toFill;
    return 0;
 }
 int HomorgaphyReconstructorBlockBase::relinkCompositeFields()

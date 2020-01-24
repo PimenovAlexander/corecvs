@@ -9,7 +9,7 @@
 #include <math.h>
 #include <vector>
 
-#include <utils/statistics/graphData.h>
+#include "core/stats/graphData.h"
 
 #include "core/utils/global.h"
 #include "core/buffers/rgb24/hardcodeFont.h"
@@ -17,6 +17,7 @@
 #include "core/buffers/rgb24/rgbColor.h"
 #include "core/geometry/polygons.h"
 #include "core/geometry/conic.h"
+#include "core/geometry/ellipse.h"
 
 namespace corecvs {
 
@@ -198,6 +199,34 @@ public:
         drawCircle(center.x(), center.y(), radius, color);
     }
 
+    void drawEllipse(double x, double y, double rx, double ry, double ang, RGBColor color)
+    {
+        Ellipse ellipse;
+
+        ellipse.center = Vector2dd(x, y);
+        ellipse.axis   = Vector2dd(rx, ry);
+        ellipse.angle  = degToRad(ang);
+
+        drawEllipse(ellipse, color);
+    }
+
+    void drawEllipse(const Ellipse &ellipse, RGBColor color)
+    {
+        EllipseSpanIterator outer(ellipse);
+        while (outer.hasValue())
+        {
+            HLineSpanInt span = outer.getSpan();
+            for (int s1 = span.x1; s1 < span.x2; s1++ )
+            {
+                if (mTarget->isValidCoord(span.y(), s1))
+                {
+                    mTarget->element(span.y(), s1) = color;
+                }
+            }
+            outer.step();
+        }
+    }
+
     class EqualPredicate
     {
     private:
@@ -330,6 +359,25 @@ public:
 
     }
 
+    void drawLineD(double x1, double y1, double x2, double y2, ElementType color)
+    {
+        mTarget->drawLine(fround(x1), fround(y1), fround(x2), fround(y2), color);
+    }
+
+    void drawPath(const PointPath &pp, ElementType color)
+    {
+        if (pp.empty())
+            return;
+
+        if (pp.size() == 1)
+        {
+            drawLineD(pp[0].x(), pp[0].y(), pp[0].x(), pp[0].y(), color);
+        }
+        for (unsigned i = 0; i < pp.size() - 1; i++)
+        {
+            drawLineD(pp[i].x(), pp[i].y(), pp[i + 1].x(), pp[i + 1].y(), color);
+        }
+    }
 
     void drawPolygon(const Polygon &p, ElementType color)
     {
@@ -338,13 +386,13 @@ public:
 
         if (p.size() == 1)
         {
-            mTarget->drawLine(p[0].x(), p[0].y(), p[0].x(), p[0].y(), color);
+            drawLineD(p[0].x(), p[0].y(), p[0].x(), p[0].y(), color);
         }
         for (unsigned i = 0; i < p.size() - 1; i++)
         {
-            mTarget->drawLine(p[i].x(), p[i].y(), p[i + 1].x(), p[i + 1].y(), color);
+            drawLineD(p[i].x(), p[i].y(), p[i + 1].x(), p[i + 1].y(), color);
         }
-        mTarget->drawLine(p[p.size() - 1].x(), p[p.size() - 1].y(), p[0].x(), p[0].y(), color);
+        drawLineD(p[p.size() - 1].x(), p[p.size() - 1].y(), p[0].x(), p[0].y(), color);
     }
 
     void drawHLine(int x1, int y1, int x2, const ElementType &color)

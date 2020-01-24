@@ -49,12 +49,21 @@ bool MeshLoader::load(Mesh3D *mesh, const string &fileName)
     {
         if (trace) SYNC_PRINT(("MeshLoader::load(): Loading STL <%s>\n", fileName.c_str()));
         STLLoader loader;
+#if 0
         if (loader.loadBinarySTL(file, *mesh) != 0)
         {
            SYNC_PRINT(("MeshLoader::load(): Unable to load mesh"));
            file.close();
            return false;
         }
+#else
+        if (loader.loadAsciiSTL(file, *mesh) != 0)
+        {
+           SYNC_PRINT(("MeshLoader::load(): Unable to load mesh\n"));
+           file.close();
+           return false;
+        }
+#endif
     }
 
     if (HelperUtils::endsWith(fileName, OBJ_EXT))
@@ -63,7 +72,7 @@ bool MeshLoader::load(Mesh3D *mesh, const string &fileName)
         OBJLoader loader;
         if (loader.loadOBJSimple(file, *mesh) != 0)
         {
-           SYNC_PRINT(("MeshLoader::load(): Unable to load mesh"));
+           SYNC_PRINT(("MeshLoader::load(): Unable to load mesh\n"));
            file.close();
            return false;
         }
@@ -75,7 +84,7 @@ bool MeshLoader::load(Mesh3D *mesh, const string &fileName)
         XYZListLoader loader;
         if (loader.loadXYZ(file, *mesh) != 0)
         {
-           SYNC_PRINT(("MeshLoader::load(): Unable to load mesh"));
+           SYNC_PRINT(("MeshLoader::load(): Unable to load mesh\n"));
            file.close();
            return false;
         }
@@ -87,7 +96,7 @@ bool MeshLoader::load(Mesh3D *mesh, const string &fileName)
         GcodeLoader loader;
         if (loader.loadGcode(file, *mesh) != 0)
         {
-           SYNC_PRINT(("MeshLoader::load(): Unable to load mesh"));
+           SYNC_PRINT(("MeshLoader::load(): Unable to load mesh\n"));
            file.close();
            return false;
         }
@@ -139,7 +148,7 @@ bool MeshLoader::save(Mesh3D *mesh, const string &fileName)
         STLLoader loader;
         if (loader.saveBinarySTL(file, *mesh) != 0)
         {
-           SYNC_PRINT(("MeshLoader::save(): Unable to load mesh"));
+           SYNC_PRINT(("MeshLoader::save(): Unable to load mesh\n"));
            file.close();
            return false;
         }

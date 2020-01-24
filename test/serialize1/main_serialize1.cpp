@@ -128,7 +128,7 @@ class TestComplexStructure : public BaseReflection<TestComplexStructure>{
 public:
     std::vector<double> testField;
 
-    static int staticInit();
+    static int staticInit(Reflection *toFill);
 
     template<class VisitorType>
         void accept(VisitorType &visitor)
@@ -138,18 +138,19 @@ public:
 
 };
 
+#if 0
 template<>
 Reflection BaseReflection<TestComplexStructure>::reflection = Reflection();
 template<>
 int BaseReflection<TestComplexStructure>::dummy = TestComplexStructure::staticInit();
+#endif
 
-int TestComplexStructure::staticInit()
+int TestComplexStructure::staticInit(Reflection *toFill)
 {
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming("TestComplexStructure");
+    toFill->name = ReflectionNaming("TestComplexStructure");
 
-    fields().push_back(
+    toFill->fields.push_back(
         new DoubleVectorField
         (
           0,
@@ -201,7 +202,7 @@ public:
     uint64_t testField1;
     uint64_t testField2;
 
-    static int staticInit();
+    static int staticInit(Reflection *toFill);
 
     template<class VisitorType>
         void accept(VisitorType &visitor)
@@ -212,18 +213,19 @@ public:
 
 };
 
+#if 0
 template<>
 Reflection BaseReflection<Uint64Structure>::reflection = Reflection();
 template<>
 int BaseReflection<Uint64Structure>::dummy = TestComplexStructure::staticInit();
+#endif
 
-int Uint64Structure::staticInit()
+int Uint64Structure::staticInit(Reflection *toFill)
 {
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming("TestComplexStructure");
+    toFill->name = ReflectionNaming("TestComplexStructure");
 
-    fields().push_back(
+    toFill->fields.push_back(
         new Int64Field
         (
           0,

@@ -42,7 +42,7 @@
 #define DIAGRAMITEM_H
 
 #include <QGraphicsPixmapItem>
-#include "core/filters/blocks/filterBlock.h"
+#include "core/filters/legacy/blocks/filterBlock.h"
 
 class Arrow;
 

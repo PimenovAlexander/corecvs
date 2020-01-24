@@ -1,7 +1,7 @@
 with_jsonmodern {
 
-    !c++11 {
-        !build_pass: message(Json for Modern C++ is switched off! Requires c++11 standard)
+    !c++11:!c++14 {
+        !build_pass: message(Json for Modern C++ is switched off! Requires c++11/c++14 standard)
     } else : win32-msvc2010 {
         !build_pass: message(Json for Modern C++ is switched off! Not supported MSVC<2015)
     } else : win32-msvc2013 {

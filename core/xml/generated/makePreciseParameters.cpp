@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from precise.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<MakePreciseParameters>::reflection = Reflection();
 template<>
 int BaseReflection<MakePreciseParameters>::dummy = MakePreciseParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int MakePreciseParameters::staticInit()
+int MakePreciseParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <MakePreciseParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Make Precise Parameters",
         "Make Precise Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(MakePreciseParameters);
+     toFill->objectSize = sizeof(MakePreciseParameters);
      
 
     BoolField* field0 = new BoolField
@@ -52,7 +58,7 @@ int MakePreciseParameters::staticInit()
           "Should Make Precise"
         );
     field0->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     EnumField* field1 = new EnumField
         (
@@ -69,7 +75,7 @@ int MakePreciseParameters::staticInit()
           )
         );
     field1->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     EnumField* field2 = new EnumField
         (
@@ -86,7 +92,7 @@ int MakePreciseParameters::staticInit()
           )
         );
     field2->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     IntField* field3 = new IntField
         (
@@ -101,7 +107,7 @@ int MakePreciseParameters::staticInit()
          100,
          1
         );
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     IntField* field4 = new IntField
         (
@@ -116,7 +122,7 @@ int MakePreciseParameters::staticInit()
          100,
          1
         );
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     IntField* field5 = new IntField
         (
@@ -131,7 +137,7 @@ int MakePreciseParameters::staticInit()
          100,
          1
         );
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     DoubleField* field6 = new DoubleField
         (
@@ -148,10 +154,10 @@ int MakePreciseParameters::staticInit()
         );
     field6->widgetHint=BaseField::SPIN_BOX;
     field6->precision=2;
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Make Precise Parameters")]= &reflection;
+    directory[std::string("Make Precise Parameters")]= toFill;
    return 0;
 }
 int MakePreciseParameters::relinkCompositeFields()

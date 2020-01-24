@@ -7,8 +7,8 @@
 #include "core/buffers/flow/flowBuffer.h"
 #include "core/math/vector/vector2d.h"
 
-#include "openCVSGMParameters.h"
-#include "openCVBMParameters.h"
+#include "generated/openCVSGMParameters.h"
+#include "generated/openCVBMParameters.h"
 
 using namespace cv;
 
@@ -18,12 +18,7 @@ using namespace corecvs;
 class BMOpenCV
 {
 public:
-
-#ifdef WITH_OPENCV_3x
     cv::Ptr< StereoBM > bm;
-#else
-    StereoBM bm;
-#endif
 
     FlowBuffer* getStereoBM(
             G12Buffer *InputBufferLeft,
@@ -35,12 +30,7 @@ public:
 class SGBMOpenCV
 {
 public:
-
-#ifdef WITH_OPENCV_3x
     cv::Ptr< StereoSGBM > sgbm;
-#else
-    StereoSGBM sgbm;
-#endif
 
     FlowBuffer* getStereoSGBM(
             G12Buffer *InputBufferLeft,

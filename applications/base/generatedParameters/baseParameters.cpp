@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from base.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<BaseParameters>::reflection = Reflection();
 template<>
 int BaseReflection<BaseParameters>::dummy = BaseParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int BaseParameters::staticInit()
+int BaseParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <BaseParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Base Parameters",
         "Base parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(BaseParameters);
+     toFill->objectSize = sizeof(BaseParameters);
      
 
     EnumField* field0 = new EnumField
@@ -58,7 +64,7 @@ int BaseParameters::staticInit()
           )
         );
     field0->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     BoolField* field1 = new BoolField
         (
@@ -70,7 +76,7 @@ int BaseParameters::staticInit()
           "mirror"
         );
     field1->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     BoolField* field2 = new BoolField
         (
@@ -82,7 +88,7 @@ int BaseParameters::staticInit()
           "swapCameras"
         );
     field2->widgetHint=BaseField::RADIO_BUTTON;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     BoolField* field3 = new BoolField
         (
@@ -94,7 +100,7 @@ int BaseParameters::staticInit()
           "filterLock"
         );
     field3->widgetHint=BaseField::RADIO_BUTTON;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     BoolField* field4 = new BoolField
         (
@@ -106,7 +112,7 @@ int BaseParameters::staticInit()
           "enableFilterGraph"
         );
     field4->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     DoubleField* field5 = new DoubleField
         (
@@ -123,7 +129,7 @@ int BaseParameters::staticInit()
         );
     field5->widgetHint=BaseField::SPIN_BOX;
     field5->precision=2;
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     IntField* field6 = new IntField
         (
@@ -138,7 +144,7 @@ int BaseParameters::staticInit()
          2024,
          1
         );
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     IntField* field7 = new IntField
         (
@@ -153,7 +159,7 @@ int BaseParameters::staticInit()
          4096,
          1
         );
-    fields().push_back(field7);
+    toFill->fields.push_back(field7);
     /*  */ 
     BoolField* field8 = new BoolField
         (
@@ -165,7 +171,7 @@ int BaseParameters::staticInit()
           "Select crop height so that full image will fit"
         );
     field8->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field8);
+    toFill->fields.push_back(field8);
     /*  */ 
     BoolField* field9 = new BoolField
         (
@@ -177,7 +183,7 @@ int BaseParameters::staticInit()
           "Select crop width so that full image will fit"
         );
     field9->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field9);
+    toFill->fields.push_back(field9);
     /*  */ 
     IntField* field10 = new IntField
         (
@@ -192,7 +198,7 @@ int BaseParameters::staticInit()
          1024,
          1
         );
-    fields().push_back(field10);
+    toFill->fields.push_back(field10);
     /*  */ 
     IntField* field11 = new IntField
         (
@@ -207,7 +213,7 @@ int BaseParameters::staticInit()
          2048,
          1
         );
-    fields().push_back(field11);
+    toFill->fields.push_back(field11);
     /*  */ 
     EnumField* field12 = new EnumField
         (
@@ -225,10 +231,10 @@ int BaseParameters::staticInit()
           )
         );
     field12->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field12);
+    toFill->fields.push_back(field12);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Base Parameters")]= &reflection;
+    directory[std::string("Base Parameters")]= toFill;
    return 0;
 }
 int BaseParameters::relinkCompositeFields()

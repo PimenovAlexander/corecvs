@@ -81,7 +81,7 @@ void PolylineMesh::addPolyline(PolyLine p_line)
 
             for (int t = 0; t < num2; t++)
             {
-                if (p_line.colors.size() >= b2 + t)
+                if (p_line.colors.size() > b2 + t)
                 {
                     mesh.setColor(p_line.colors[b2 + t]);
                 }

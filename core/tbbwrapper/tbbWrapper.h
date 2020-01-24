@@ -212,45 +212,50 @@ void parallelable_for(IndexType begin, IndexType end, std::size_t /*grainsize*/,
 /**@}*/
 
 template <typename RR, typename V, typename F, typename R>
-V parallelable_reduce(const RR& range, const V& id, const F &f, const R &r)
+V parallelable_reduce(const RR& range, const V& id, const F &f, const R &r, bool shouldParallel = true)
 {
 #ifndef WITH_TBB
     return f(range, id);
 #else
-    return tbb::parallel_reduce(range, id, f, r);
+    if (shouldParallel) {
+        return tbb::parallel_reduce(range, id, f, r);
+    } else {
+        return f(range, id);
+    }
 #endif
 }
 
-template <typename I, typename V, typename F, typename R>
-V parallelable_reduce(const I& from, const I& to, const V& id, const F &f, const R &r)
+template <typename Index, typename Value, typename MapFunction, typename ReductionFunction>
+Value parallelable_reduce(const Index& from, const Index& to, const Value& identity, const MapFunction &f, const ReductionFunction &r, bool shouldParallel = true)
 {
-    return parallel_reduce(corecvs::BlockedRange<I>(from, to), id, f, r);
+    return parallelable_reduce(corecvs::BlockedRange<Index>(from, to), identity, f, r, shouldParallel);
 }
 
-template <typename I, typename V, typename F, typename R>
-V parallelable_reduce(const I& from, const I& to, const typename BlockedRange<I>::size_type &grainsize, const V& id, const F &f, const R &r)
+template <typename Index, typename Value, typename MapFunction, typename ReductionFunction>
+Value parallelable_reduce(const Index& from, const Index& to,
+                          const typename BlockedRange<Index>::size_type &grainsize,
+                          const Value& id,
+                          const MapFunction &f, const ReductionFunction &r,
+                          bool shoudParallel = true)
 {
-    return parallelable_reduce(corecvs::BlockedRange<I>(from, to, grainsize), id, f, r);
-}
-
-
-template <typename IndexType, class Function>
-void parallelable_reduce_notbb(IndexType begin, IndexType end, Function &f)
-{
-    f(BlockedRange<IndexType>(begin, end));
+    return parallelable_reduce(corecvs::BlockedRange<Index>(from, to, grainsize), id, f, r, shoudParallel);
 }
 
 #ifdef WITH_TBB
 template <typename IndexType, class Function>
-void parallelable_reduce(IndexType begin, IndexType end, Function &f)
+void parallelable_reduce(IndexType begin, IndexType end, Function &f, bool shouldParallel = true)
 {
-    parallel_reduce(BlockedRange<IndexType>(begin,end), f);
+    if (shouldParallel) {
+        parallel_reduce(BlockedRange<IndexType>(begin,end), f);
+    } else {
+        f(BlockedRange<IndexType>(begin, end));
+    }
 }
 #else
 template <typename IndexType, class Function>
 void parallelable_reduce(IndexType begin, IndexType end, Function &f)
 {
-    parallelable_reduce_notbb(begin, end, f);
+    f(BlockedRange<IndexType>(begin, end));
 }
 #endif
 

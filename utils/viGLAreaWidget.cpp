@@ -11,6 +11,7 @@ ViGLAreaWidget::ViGLAreaWidget(QWidget *parent) :
 
 void ViGLAreaWidget::initializeGL()
 {
+    // SYNC_PRINT(("ViGLAreaWidget::initializeGL(): called\n"));
     emit askParentInitialize();
 }
 

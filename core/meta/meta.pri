@@ -10,3 +10,4 @@ SOURCES += \
     meta/floatJIT.cpp \
     meta/astOptimize.cpp
 
+OTHER_FILES +=$$PWD/CMakeLists.txt

@@ -15,6 +15,7 @@
 
 namespace corecvs {
 
+/* This should be unifed with AxisAlignedBounding box*/
 template<typename ElementType>
 class Rectangle
 {
@@ -45,7 +46,7 @@ public:
         size.y() = height;
     }
 
-    void extendToFit(Vector2d<ElementType> &point)
+    void extendToFit(const Vector2d<ElementType> &point)
     {
         if (isEmpty()) {
             size.x() = 0;
@@ -213,6 +214,17 @@ public:
 
         return FromCorners(newLeft, newTop, newRight, newBottom);
     }
+
+    vector<Vector2dd> getPoints() const {
+        vector<Vector2dd> result;
+        result.reserve(4);
+        result.push_back(ulCorner());
+        result.push_back(urCorner());
+        result.push_back(lrCorner());
+        result.push_back(llCorner());
+        return result;
+    }
+
 
 
     friend std::ostream & operator <<(std::ostream &out, const Rectangle &rect)

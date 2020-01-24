@@ -40,22 +40,14 @@ void OpenCvDescriptorMatcherWrapper::knnMatchImpl(RuntimeTypeBuffer &query
 
 void OpenCvDescriptorMatcherWrapper::setProperty(const std::string &name, const double &value)
 {
-#ifdef WITH_OPENCV_3x
     CORE_UNUSED(name);
     CORE_UNUSED(value);
-#else
-    matcher->set(name, value);
-#endif
 }
 
 double OpenCvDescriptorMatcherWrapper::getProperty(const std::string &name) const
 {
-#ifdef WITH_OPENCV_3x
     CORE_UNUSED(name);
     return 0.0;
-#else
-    return matcher->get<double>(name);
-#endif
 }
 
 void init_opencv_matchers_provider()

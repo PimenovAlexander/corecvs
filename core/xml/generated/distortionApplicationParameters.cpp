@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from distortion.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<DistortionApplicationParameters>::reflection = Reflection();
 template<>
 int BaseReflection<DistortionApplicationParameters>::dummy = DistortionApplicationParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int DistortionApplicationParameters::staticInit()
+int DistortionApplicationParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <DistortionApplicationParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Distortion Application Parameters",
         "Distortion Application Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(DistortionApplicationParameters);
+     toFill->objectSize = sizeof(DistortionApplicationParameters);
      
 
     BoolField* field0 = new BoolField
@@ -52,7 +58,7 @@ int DistortionApplicationParameters::staticInit()
           "Force Scale"
         );
     field0->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     BoolField* field1 = new BoolField
         (
@@ -64,7 +70,7 @@ int DistortionApplicationParameters::staticInit()
           "Adopt Scale"
         );
     field1->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     EnumField* field2 = new EnumField
         (
@@ -82,7 +88,7 @@ int DistortionApplicationParameters::staticInit()
           )
         );
     field2->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     IntField* field3 = new IntField
         (
@@ -93,7 +99,7 @@ int DistortionApplicationParameters::staticInit()
           "New H",
           "New H"
         );
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     IntField* field4 = new IntField
         (
@@ -104,10 +110,10 @@ int DistortionApplicationParameters::staticInit()
           "New W",
           "New W"
         );
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Distortion Application Parameters")]= &reflection;
+    directory[std::string("Distortion Application Parameters")]= toFill;
    return 0;
 }
 int DistortionApplicationParameters::relinkCompositeFields()

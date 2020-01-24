@@ -1,5 +1,5 @@
 #include "filterPresentationsCollection.h"
-#include "core/filters/filtersCollection.h"
+#include "core/filters/legacy/filtersCollection.h"
 
 #include "inputBlockPresentation.h"
 #include "outputBlockPresentation.h"

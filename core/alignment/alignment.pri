@@ -26,4 +26,4 @@ SOURCES += \
     alignment/lensDistortionModelParameters.cpp \
     alignment/pointObservation.cpp \
 
-
+OTHER_FILES += $$PWD/CMakeLists.txt

@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from projections.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<ProjectionBaseParameters>::reflection = Reflection();
 template<>
 int BaseReflection<ProjectionBaseParameters>::dummy = ProjectionBaseParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int ProjectionBaseParameters::staticInit()
+int ProjectionBaseParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <ProjectionBaseParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Projection Base Parameters",
         "Projection Base Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(ProjectionBaseParameters);
+     toFill->objectSize = sizeof(ProjectionBaseParameters);
      
 
     DoubleField* field0 = new DoubleField
@@ -58,7 +64,7 @@ int ProjectionBaseParameters::staticInit()
     field0->widgetHint=BaseField::SPIN_BOX;
     field0->suffixHint="px";
     field0->precision=2;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     DoubleField* field1 = new DoubleField
         (
@@ -76,7 +82,7 @@ int ProjectionBaseParameters::staticInit()
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->suffixHint="px";
     field1->precision=2;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     DoubleField* field2 = new DoubleField
         (
@@ -93,7 +99,7 @@ int ProjectionBaseParameters::staticInit()
         );
     field2->widgetHint=BaseField::SPIN_BOX;
     field2->precision=2;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     DoubleField* field3 = new DoubleField
         (
@@ -111,7 +117,7 @@ int ProjectionBaseParameters::staticInit()
     field3->widgetHint=BaseField::SPIN_BOX;
     field3->suffixHint="px";
     field3->precision=2;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     DoubleField* field4 = new DoubleField
         (
@@ -129,7 +135,7 @@ int ProjectionBaseParameters::staticInit()
     field4->widgetHint=BaseField::SPIN_BOX;
     field4->suffixHint="px";
     field4->precision=2;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     DoubleField* field5 = new DoubleField
         (
@@ -147,7 +153,7 @@ int ProjectionBaseParameters::staticInit()
     field5->widgetHint=BaseField::SPIN_BOX;
     field5->suffixHint="px";
     field5->precision=2;
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     DoubleField* field6 = new DoubleField
         (
@@ -165,10 +171,10 @@ int ProjectionBaseParameters::staticInit()
     field6->widgetHint=BaseField::SPIN_BOX;
     field6->suffixHint="px";
     field6->precision=2;
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Projection Base Parameters")]= &reflection;
+    directory[std::string("Projection Base Parameters")]= toFill;
    return 0;
 }
 int ProjectionBaseParameters::relinkCompositeFields()

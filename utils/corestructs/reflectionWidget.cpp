@@ -6,6 +6,7 @@
 #include <QDoubleSpinBox>
 #include <QTextEdit>
 #include <QPushButton>
+#include <QFileDialog>
 
 #include "core/reflection/jsonPrinter.h"
 

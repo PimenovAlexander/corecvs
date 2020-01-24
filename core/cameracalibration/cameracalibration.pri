@@ -29,3 +29,4 @@ SOURCES += \
     $$PWD/ilFormat.cpp \
     $$PWD/projection/omnidirectionalProjection.cpp
 
+OTHER_FILES +=$$PWD/CMakeLists.txt

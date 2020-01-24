@@ -13,6 +13,8 @@ namespace corecvs {
 
 
 using std::istringstream;
+using std::istream;
+using std::ostream;
 
 
 /**

@@ -64,9 +64,9 @@ HEADERS += \
     buffers/abstractBufferParams.h \
 #    buffers/focusEstimator1.h \
     buffers/rgb24/bresenhamRasterizer.h \
-    $$PWD/fixeddisp/fixedPointRemapper.h \
-    $$PWD/remapBuffer.h \
-    $$PWD/rgb24/bezierRasterizer.h
+    buffers/fixeddisp/fixedPointRemapper.h \
+    buffers/remapBuffer.h \
+    buffers/rgb24/bezierRasterizer.h
 
 
 SOURCES += \
@@ -112,9 +112,12 @@ SOURCES += \
     buffers/nonMaximalSuperssor.cpp \
 #    buffers/focusEstimator1.cpp \
     buffers/rgb24/wuRasterizer.cpp \
-    $$PWD/rgb24/bresenhamRasterizer.cpp \
-    $$PWD/remapBuffer.cpp \
-    $$PWD/rgb24/bezierRasterizer.cpp
+    buffers/rgb24/bresenhamRasterizer.cpp \
+    buffers/remapBuffer.cpp \
+    buffers/rgb24/bezierRasterizer.cpp
 
 
+HEADERS += $$PWD/correspondenceList.h
+SOURCES += $$PWD/correspondenceList.cpp
 
+OTHER_FILES +=$$PWD/CMakeLists.txt

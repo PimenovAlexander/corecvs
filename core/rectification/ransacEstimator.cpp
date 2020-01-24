@@ -14,7 +14,7 @@
 #include "core/rectification/essentialMatrix.h"
 #include "core/rectification/essentialEstimator.h"
 #include "core/rectification/ransac.h"
-#include "core/rectification/correspondenceList.h"
+#include "core/buffers/correspondenceList.h"
 namespace corecvs {
 
 

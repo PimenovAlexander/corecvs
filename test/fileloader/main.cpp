@@ -29,8 +29,23 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    std::string inputName = argv[1];
+
+#if WITH_LIBPNG
     {
-        RGB24Buffer *out = BufferFactory::getInstance()->loadRGB24Bitmap(argv[1]);
+        RGB48Buffer *out = LibpngFileReader().loadRGB48(inputName);
+        if (out != NULL)
+        {
+            SYNC_PRINT(("Loaded 16bit png\n"));
+            return 0;
+        } else {
+            SYNC_PRINT(("Failed to load 16bit png\n"));
+        }
+    }
+#endif
+
+    {
+        RGB24Buffer *out = BufferFactory::getInstance()->loadRGB24Bitmap(inputName);
         if (out != NULL)
         {
             SYNC_PRINT(("Image loaded [%d x %d]\n", out->w, out->h));
@@ -41,7 +56,7 @@ int main(int argc, char *argv[])
     }
     SYNC_PRINT(("Unable to load RGB image. Loading Grayscale\n"));
     {
-        G12Buffer *out = BufferFactory::getInstance()->loadG12Bitmap(argv[1]);
+        G12Buffer *out = BufferFactory::getInstance()->loadG12Bitmap(inputName);
         if (out != NULL)
         {
             SYNC_PRINT(("Image loaded [%d x %d]\n", out->w, out->h));

@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from patternDetector.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<BitcodeBoardParamsBase>::reflection = Reflection();
 template<>
 int BaseReflection<BitcodeBoardParamsBase>::dummy = BitcodeBoardParamsBase::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int BitcodeBoardParamsBase::staticInit()
+int BitcodeBoardParamsBase::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <BitcodeBoardParamsBase>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Bitcode Board Params Base",
         "Bitcode Board Params Base",
         ""
     );
 
-     getReflection()->objectSize = sizeof(BitcodeBoardParamsBase);
+     toFill->objectSize = sizeof(BitcodeBoardParamsBase);
      
 
     BoolField* field0 = new BoolField
@@ -52,7 +58,7 @@ int BitcodeBoardParamsBase::staticInit()
           "Orientation"
         );
     field0->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     IntField* field1 = new IntField
         (
@@ -68,7 +74,7 @@ int BitcodeBoardParamsBase::staticInit()
          1
         );
     field1->suffixHint="px";
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     IntField* field2 = new IntField
         (
@@ -83,7 +89,7 @@ int BitcodeBoardParamsBase::staticInit()
          255,
          1
         );
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     IntField* field3 = new IntField
         (
@@ -98,7 +104,7 @@ int BitcodeBoardParamsBase::staticInit()
          255,
          1
         );
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     DoubleField* field4 = new DoubleField
         (
@@ -112,7 +118,7 @@ int BitcodeBoardParamsBase::staticInit()
     field4->widgetHint=BaseField::SPIN_BOX;
     field4->suffixHint="cells";
     field4->precision=2;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     IntField* field5 = new IntField
         (
@@ -124,7 +130,7 @@ int BitcodeBoardParamsBase::staticInit()
           "size of the chessboard in chesses"
         );
     field5->suffixHint="cells";
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     IntField* field6 = new IntField
         (
@@ -136,7 +142,7 @@ int BitcodeBoardParamsBase::staticInit()
           "size of the chessboard in chesses"
         );
     field6->suffixHint="cells";
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     IntField* field7 = new IntField
         (
@@ -148,7 +154,7 @@ int BitcodeBoardParamsBase::staticInit()
           "width and height of the bitcode in chesses"
         );
     field7->suffixHint="cells";
-    fields().push_back(field7);
+    toFill->fields.push_back(field7);
     /*  */ 
     IntField* field8 = new IntField
         (
@@ -160,7 +166,7 @@ int BitcodeBoardParamsBase::staticInit()
           "width and height of the bitcode in chesses"
         );
     field8->suffixHint="cells";
-    fields().push_back(field8);
+    toFill->fields.push_back(field8);
     /*  */ 
     DoubleField* field9 = new DoubleField
         (
@@ -174,7 +180,7 @@ int BitcodeBoardParamsBase::staticInit()
     field9->widgetHint=BaseField::SPIN_BOX;
     field9->suffixHint="cells";
     field9->precision=2;
-    fields().push_back(field9);
+    toFill->fields.push_back(field9);
     /*  */ 
     DoubleField* field10 = new DoubleField
         (
@@ -188,7 +194,7 @@ int BitcodeBoardParamsBase::staticInit()
     field10->widgetHint=BaseField::SPIN_BOX;
     field10->suffixHint="cells";
     field10->precision=2;
-    fields().push_back(field10);
+    toFill->fields.push_back(field10);
     /*  */ 
     EnumField* field11 = new EnumField
         (
@@ -207,7 +213,7 @@ int BitcodeBoardParamsBase::staticInit()
           )
         );
     field11->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field11);
+    toFill->fields.push_back(field11);
     /*  */ 
     DoubleField* field12 = new DoubleField
         (
@@ -225,7 +231,7 @@ int BitcodeBoardParamsBase::staticInit()
     field12->widgetHint=BaseField::SPIN_BOX;
     field12->suffixHint="cells";
     field12->precision=2;
-    fields().push_back(field12);
+    toFill->fields.push_back(field12);
     /*  */ 
     DoubleField* field13 = new DoubleField
         (
@@ -243,10 +249,10 @@ int BitcodeBoardParamsBase::staticInit()
     field13->widgetHint=BaseField::SPIN_BOX;
     field13->suffixHint="cells";
     field13->precision=2;
-    fields().push_back(field13);
+    toFill->fields.push_back(field13);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Bitcode Board Params Base")]= &reflection;
+    directory[std::string("Bitcode Board Params Base")]= toFill;
    return 0;
 }
 int BitcodeBoardParamsBase::relinkCompositeFields()

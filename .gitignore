@@ -1,0 +1,13 @@
+.obj
+bin
+siblings/gtest
+.vscode
+
+*Makefile*
+*.bmp
+*.ply
+*.log
+
+.qmake.stash
+cvs-open.pro.user
+tools/generator/generator

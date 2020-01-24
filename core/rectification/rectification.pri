@@ -1,5 +1,4 @@
 HEADERS += \
-    rectification/correspondenceList.h \
     rectification/essentialMatrix.h \
     rectification/essentialEstimator.h \
     rectification/iterativeEstimator.h \
@@ -17,7 +16,6 @@ SOURCES += \
     rectification/essentialEstimator.cpp \
     rectification/iterativeEstimator.cpp \
     rectification/ransacEstimator.cpp \
-    rectification/correspondenceList.cpp \
     rectification/stereoAligner.cpp \
     rectification/triangulator.cpp \
 #    rectification/multicameraEstimator.cpp \
@@ -48,3 +46,4 @@ with_fastbuild:!win32 {
 }
 
 
+OTHER_FILES +=$$PWD/CMakeLists.txt

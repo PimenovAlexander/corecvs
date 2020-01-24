@@ -120,6 +120,7 @@ public:
     /* These could be done by explicit constructors also. But what for? */
 
     static Matrix33 Identity();
+    static Matrix33 FlipXY();
     static Matrix33 RotationX(double angle);
     static Matrix33 RotationY(double angle);
     static Matrix33 RotationZ(double angle);

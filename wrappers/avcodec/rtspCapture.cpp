@@ -159,7 +159,7 @@ ImageCaptureInterface::FramePair RTSPCapture::getFrame()
     {
         //SYNC_PRINT(("AviCapture::getFrame(): New notification sending\n"));
         count++;
-        frame_data_t frameData;
+        ImageCaptureInterface::FrameMetadata frameData;
         frameData.timestamp = (count * 10);
         notifyAboutNewFrame(frameData);
     } else {
@@ -173,7 +173,7 @@ ImageCaptureInterface::FramePair RTSPCapture::getFrame()
 ImageCaptureInterface::CapErrorCode RTSPCapture::startCapture()
 {
     SYNC_PRINT(("RTSPCapture::startCapture(): called\n"));
-    frame_data_t frameData;
+    ImageCaptureInterface::FrameMetadata frameData;
 
     //mIsPaused = false;
 
@@ -195,7 +195,7 @@ ImageCaptureInterface::CapErrorCode RTSPCapture::pauseCapture()
 ImageCaptureInterface::CapErrorCode RTSPCapture::nextFrame()
 {
     count++;
-    frame_data_t frameData;
+    ImageCaptureInterface::FrameMetadata frameData;
     frameData.timestamp = (count * 10);
     SYNC_PRINT(("RTSPCapture::nextFrame(): sending notification\n"));
     notifyAboutNewFrame(frameData);

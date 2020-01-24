@@ -36,7 +36,7 @@ TEST(Affine, profileHamilton)
                 (rand() % 4000) - 2000);
         if (!x == 0 ) x = Vector3dd(1.0);
         x = x / !x;
-        muls[i] = Quaternion(x, ((rand() % 4000) / 2000.0 * M_PI));
+        muls[i] = Quaternion::Rotation(x, ((rand() % 4000) / 2000.0 * M_PI));
     }
 
     PreciseTimer timer;

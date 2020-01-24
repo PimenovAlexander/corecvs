@@ -1,7 +1,7 @@
 #include "core/buffers/converters/debayer.h"
 #include "core/buffers/converters/labConverter.h"
 #include "core/utils/log.h"
-#include "math/fftw/fftwWrapper.h"
+#include "core/math/fftw/fftwWrapper.h"
 
 namespace corecvs {
 

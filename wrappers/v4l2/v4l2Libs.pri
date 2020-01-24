@@ -1,21 +1,7 @@
-with_avcodec {
+with_v4l2 {
 
-    !build_pass: message(Switching on AVCodec support)
+    !build_pass: message(Switching on V4L2 support library)
 
-    win32 {
-        isEmpty(AVCODEC_PATH): AVCODEC_PATH = "c:/ffmpeg"
-        !build_pass: message(AvCodec $$AVCODEC_PATH)
-
-        DEFINES     += WITH_AVCODEC
-        INCLUDEPATH += $$AVCODEC_PATH/include
-        LIBS        += -L$$AVCODEC_PATH/lib -lavutil -lavformat -lavcodec -lavutil -lm
-    } else {
-        DEFINES += WITH_AVCODEC
-        LIBS    += -lavutil -lavformat -lavcodec -lz -lavutil -lm
-
-        !build_pass: message(Switching on swscale support)
-
-        DEFINES += WITH_SWSCALE
-        LIBS    += -lswscale
-    }
+    DEFINES += WITH_V4L2
+    #LIBS    += -lv4l2
 }

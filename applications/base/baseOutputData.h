@@ -6,7 +6,7 @@
  */
 #include <QtGui/QImage>
 
-#include "frames.h"
+#include "core/framesources/frames.h"
 #include "abstractCalculationThread.h"
 #include "layers/resultImage.h"
 

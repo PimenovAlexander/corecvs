@@ -40,7 +40,7 @@ int main(int argc, char **argv)
 
     Vector2dd dummy(0.0);
     cout << "Main out test:" <<  dummy.reflection.fields.size() << std::endl;
-    cout << "Main out test:" << HomorgaphyReconstructorBlockBase::reflection.fields.size() << std::endl;
+    cout << "Main out test:" << HomorgaphyReconstructorBlockBase::fields().size() << std::endl;
 
 
 #ifdef INCLUDE_EXAMPLE
@@ -131,7 +131,7 @@ int main(int argc, char **argv)
                 aabWidget->show();
             }*/
             {
-                Reflection *widget_ref = &RgbColorParameters::reflection;
+                const Reflection *widget_ref = RgbColorParameters::getReflection();
                 ReflectionWidget *aabWidget = new ReflectionWidget(widget_ref);
                 aabWidget->show();
             }
@@ -151,7 +151,7 @@ int main(int argc, char **argv)
                 aabWidget->show();
             }*/
             {
-                Reflection *widget_ref = &SceneStereoAlignerBlockBase::reflection;
+                const Reflection *widget_ref = SceneStereoAlignerBlockBase::getReflection();
                 ReflectionWidget *aabWidget = new ReflectionWidget(widget_ref);
                 aabWidget->show();
             }
@@ -191,7 +191,7 @@ int main(int argc, char **argv)
         if (blockName == "homography") {
             HomographyReconstructorBlock block;
 
-            Reflection *widget_ref = &HomographyReconstructorBlock::reflection;
+            const Reflection *widget_ref = HomographyReconstructorBlock::getReflection();
             aabWidget = new ReflectionWidget(widget_ref);
             aabWidget->show();
         }
@@ -199,7 +199,7 @@ int main(int argc, char **argv)
         if (blockName == "stereo_aligner") {
             SceneStereoAlignerBlock block;
 
-            Reflection *widget_ref = &SceneStereoAlignerBlock::reflection;
+            const Reflection *widget_ref = SceneStereoAlignerBlock::getReflection();
             aabWidget = new ReflectionWidget(widget_ref);
             aabWidget->show();
         }

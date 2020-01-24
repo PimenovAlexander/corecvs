@@ -74,6 +74,8 @@ int RAWLoaderBase::typeToBytesNum(RAWLoaderBase::RawFileType type) {
         case RAWLoaderBase::TYPE_24_BIT_RGB:
         case RAWLoaderBase::TYPE_12_BIT_SBS:
             return 3;
+        default:
+            return 0;
 
     }
     return 0;
@@ -82,6 +84,7 @@ int RAWLoaderBase::typeToBytesNum(RAWLoaderBase::RawFileType type) {
 int RAWLoaderBase::typeToBytesDen(RAWLoaderBase::RawFileType type) {
     switch (type)
     {
+        case RAWLoaderBase::TYPE_8_BIT:
         case RAWLoaderBase::TYPE_12_BIT_HIGH :
         case RAWLoaderBase::TYPE_12_BIT_LOW :
         case RAWLoaderBase::TYPE_16_BIT_HIGH :
@@ -92,7 +95,8 @@ int RAWLoaderBase::typeToBytesDen(RAWLoaderBase::RawFileType type) {
             return 1;
         case RAWLoaderBase::TYPE_12_BIT_SBS:
             return 2;
-
+        default:
+            return 0;
     }
     return 0;
 }
@@ -188,7 +192,7 @@ G12Buffer* RAWLoaderBase::loadG12(string name)
     if (counter * bytesden != h * w * bytesnum)
     {
         SYNC_PRINT(("RAWLoaderBase::loadG12(): Image file %s does not contain a valid ST image realsize=%d expected=%d\n",
-                    name.c_str(), h * w * bytesnum, counter * bytesden));
+                    name.c_str(), h * w * bytesnum, (int)(counter * bytesden)));
         goto cleanup;
     }
 
@@ -322,7 +326,7 @@ RGB24Buffer *RAWLoaderBase::loadRGB24(std::string name)
     if (counter * bytesden != h * w * bytesnum)
     {
         SYNC_PRINT(("RAWLoaderBase::loadRGB24(): Image file %s does not contain a valid ST image realsize=%d expected=%d\n",
-                    name.c_str(), h * w * bytesnum, counter * bytesden));
+                    name.c_str(), h * w * bytesnum, (int)(counter * bytesden)));
         goto cleanup;
     }
 

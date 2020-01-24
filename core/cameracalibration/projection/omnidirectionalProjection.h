@@ -194,7 +194,7 @@ public:
 
     virtual DynamicObjectWrapper getDynamicWrapper() override
     {
-        return DynamicObjectWrapper(&reflection, static_cast<OmnidirectionalBaseParameters *>(this));
+        return DynamicObjectWrapper(getReflection(), static_cast<OmnidirectionalBaseParameters *>(this));
     }
 
 

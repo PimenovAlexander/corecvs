@@ -3,7 +3,7 @@
 
 #include "core/buffers/g12Buffer.h"
 #include "core/xml/generated/openCVFilterParameters.h"
-#include "core/filters/blocks/filterBlock.h"
+#include "core/filters/legacy/blocks/filterBlock.h"
 
 class OpenCVFilter: public corecvs::FilterBlock
 {

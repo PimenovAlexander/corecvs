@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from stereoAlign.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<IterativeEstimateParameters>::reflection = Reflection();
 template<>
 int BaseReflection<IterativeEstimateParameters>::dummy = IterativeEstimateParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int IterativeEstimateParameters::staticInit()
+int IterativeEstimateParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <IterativeEstimateParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Iterative Estimate Parameters",
         "Iterative Estimate Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(IterativeEstimateParameters);
+     toFill->objectSize = sizeof(IterativeEstimateParameters);
      
 
     IntField* field0 = new IntField
@@ -55,7 +61,7 @@ int IterativeEstimateParameters::staticInit()
          99999999,
          1
         );
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     IntField* field1 = new IntField
         (
@@ -70,7 +76,7 @@ int IterativeEstimateParameters::staticInit()
          9999999,
          1
         );
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     BoolField* field2 = new BoolField
         (
@@ -82,7 +88,7 @@ int IterativeEstimateParameters::staticInit()
           "Use initial"
         );
     field2->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     DoubleField* field3 = new DoubleField
         (
@@ -99,7 +105,7 @@ int IterativeEstimateParameters::staticInit()
         );
     field3->widgetHint=BaseField::SPIN_BOX;
     field3->precision=2;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     DoubleField* field4 = new DoubleField
         (
@@ -116,10 +122,10 @@ int IterativeEstimateParameters::staticInit()
         );
     field4->widgetHint=BaseField::SPIN_BOX;
     field4->precision=5;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Iterative Estimate Parameters")]= &reflection;
+    directory[std::string("Iterative Estimate Parameters")]= toFill;
    return 0;
 }
 int IterativeEstimateParameters::relinkCompositeFields()

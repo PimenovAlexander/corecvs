@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <core/reflection/commandLineSetter.h>
+
 #include <QApplication>
 #include <QtCore>
 #include "qtFileLoader.h"
@@ -123,96 +125,136 @@ int main(int argc, char **argv)
     {
         printf("Usage: \n"
                "  softrender <obj basename> \n"
-               "  softrender <obj basename> <camera.json | camera.txt> \n");
+               "  softrender <obj basename> <camera.json | camera.txt> \n"
+               "  Parameters --fov=50 --w=1000 --h=1000\n"
+               "  --lookFrom.x=30 --lookFrom.y=30 --lookFrom.z=30\n"
+               "  --lookAt.x=0  --lookAt.y=0  --lookAt.z=0 \n"
+
+               );
 
         exit(1);
     }
 
     std::string objName;
 
-	double fx, fy, cx, cy, w = 4000, h = 4000;
     if (argc >= 2) {
         objName     = std::string(argv[1]);
     }
 
-    PinholeCameraIntrinsics cam(Vector2dd(w,h), 50);
-    Affine3DQ pose;
-    if (argc >= 3) {
-		std::cout << "loading cam" << std::endl;
-		std::ifstream cams;
-		cams.open(argv[2]);
-		std::string tag;
-		cams >> tag >> fx >> fy >> cx >> cy >> w >> h;
-		cam.setSize(Vector2dd(w, h));
-		cam.setPrincipal(Vector2dd(cx, cy));
-		cam.setFocal(Vector2dd(fx, fy));
-	}
+    CommandLineSetter line(argc, argv);
+
+    double fov = degToRad(50);
+    double w = 1000;
+    double h = 1000;
+
+    fov = degToRad(line.getDouble("fov", radToDeg(fov)));
+    w   = line.getDouble("w", 1000);
+    h   = line.getDouble("h", 1000);
+
+    PinholeCameraIntrinsics cam(Vector2dd(w,h), degToRad(50));
+
+    Affine3DQ pose = Affine3DQ::Identity();
+
+    if (line.hasOption("lookFrom"))
+    {
+        Vector3dd lookFrom = Vector3dd::Zero();
+        Vector3dd lookAt   = Vector3dd::Zero();
+        line.visit(lookFrom, "lookFrom");
+        line.visit(lookAt  , "lookAt");
+
+        pose.shift = lookFrom;
+
+        Vector3dd zDir = lookAt - lookFrom;
+        zDir.normalise();
+        Vector3dd xDir = Vector3dd(-zDir.y(), zDir.x(), 0.0);
+        xDir.normalise();
+        Vector3dd yDir = xDir ^ zDir;
+        yDir.normalise();
+
+        pose.rotor = Quaternion::FromMatrix(Matrix33::FromRows(xDir, yDir, zDir));
+
+    }
+
+    if (line.hasOption("posefile")) {
+        std::string posefile = line.getString("posefile", "in.txt");
+        std::cout << "loading pose from <" << posefile << ">"<< std::endl;
+        std::ifstream poses;
+        poses.open(posefile);
+        int n;
+        std::string tag;
+        poses >> n >> tag;
+        poses >> pose.shift.x() >> pose.shift.y() >> pose.shift.z() >> pose.rotor.x() >> pose.rotor.y() >> pose.rotor.z() >> pose.rotor.t();
+    }
+
+    if (line.hasOption("preset")) {
+        int preset = line.getInt("preset", 0);
+
+        switch (preset) {
+        case 0: {
+            pose = Affine3DQ::RotationX(degToRad(-25))
+                 * Affine3DQ::RotationY(degToRad(150))
+                 * Affine3DQ::RotationZ(degToRad(180))
+                 * Affine3DQ::Shift(0, 0, -2000);
+            }
+            break;
+        default:
+            break;
+        }
+    }
 
     ClassicRenderer renderer;
 
     Mesh3DDecorated *mesh = new Mesh3DDecorated();
-    OBJLoader objLoader;
-
-    /** Load Materials **/
-    std::string mtlFile = objName.substr(0, objName.length() - 4) + ".mtl";
-    std::ifstream materialFile;
-    materialFile.open(mtlFile, std::ios::in);
-    if (materialFile.good())
-    {
-        objLoader.loadMaterials(materialFile, mesh->materials, corecvs::HelperUtils::getDirectory(mtlFile));
-
-        cout << "Loaded materials: " << mesh->materials.size() << std::endl;
-    } else {
-        cout << "Unable to load material from <" << mtlFile << ">" << std::endl;
-    }
-    materialFile.close();
-
-
 
     /** Load actual data **/
-    std::ifstream file;
-    file.open(objName, std::ios::in);
-    objLoader.loadOBJ(file, *mesh);
-    file.close();
-
-    //mesh->transform(Matrix44::Shift(0, 0, 100) /** Matrix44::Scale(100)*/);
-
-   // RGB24Buffer *texture; //= BufferFactory::getInstance()->loadRGB24Bitmap(textureName);
-
-/*
-    int square = 64;
-    RGB24Buffer *texture = new RGB24Buffer(512, 1024);
-    for (int i = 0; i < texture->h; i++)
+    if (corecvs::HelperUtils::endsWith(objName, ".obj"))
     {
-        for (int j = 0; j < texture->w; j++)
+        OBJLoader objLoader;
+
+        /** Load Materials **/
+        std::string mtlFile = objName.substr(0, objName.length() - 4) + ".mtl";
+        std::ifstream materialFile;
+        materialFile.open(mtlFile, std::ios::in);
+        if (materialFile.good())
         {
-            bool color = ((i / square) % 2) ^ ((j / square) % 2);
-            texture->element(i, j)  = (color ?  RGBColor::White() : RGBColor::Black());
+            objLoader.loadMaterials(materialFile, mesh->materials, corecvs::HelperUtils::getDirectory(mtlFile));
+            cout << "Loaded materials: " << mesh->materials.size() << std::endl;
+        } else {
+            cout << "Unable to load material from <" << mtlFile << ">" << std::endl;
         }
-    }*/
-    /*if (!texture) {
-        SYNC_PRINT(("Could not load texture"));
-    } else {
-        SYNC_PRINT(("Texture: [%d x %d]\n", texture->w, texture->h));
-    }*/
+        materialFile.close();
 
-    for(size_t t = 0; t < mesh->materials.size(); t++)
-    {
-        renderer.textures.push_back(mesh->materials[t].tex[OBJMaterial::TEX_DIFFUSE]);
+        SYNC_PRINT(("Starting actual data loading\n"));
+        std::ifstream file;
+        file.open(objName, std::ios::in);
+        objLoader.loadOBJ(file, *mesh);
+        file.close();
+
+        for(size_t t = 0; t < mesh->materials.size(); t++)
+        {
+            renderer.addTexture(mesh->materials[t].tex[OBJMaterial::TEX_DIFFUSE], false);
+        }
+
+        SYNC_PRINT(("Loaded and added textures\n"));
+    } else {
+
+        MeshLoader loader;
+        if (!loader.load(mesh, objName)) {
+            SYNC_PRINT(("Unable to load raw data <%s>\n", objName.c_str()));
+        } else {
+            SYNC_PRINT(("Loaded raw data\n"));
+        }
     }
 
 
-	if (argc >= 4) {
-		std::cout << "loading pose" << std::endl;
-		std::ifstream poses;
-		poses.open(argv[3]);
-		int n;
-		std::string tag;
-		poses >> n >> tag;
-
-		poses >> pose.shift.x() >> pose.shift.y() >> pose.shift.z() >> pose.rotor.x() >> pose.rotor.y() >> pose.rotor.z() >> pose.rotor.t();
-    
     printf("Will render <%s>\n", objName.c_str());
+
+
+
+    SYNC_PRINT(("Starting render...\n"));
+    cout << "Camera:" << cam << endl;
+    cout << "Position:" << pose << endl;
+
 
     renderer.modelviewMatrix = cam.getKMatrix() * Matrix44(pose.inverted());
     RGB24Buffer *buffer = new RGB24Buffer(h, w, RGBColor::Black());
@@ -222,15 +264,14 @@ int main(int argc, char **argv)
 
     renderer.render(mesh, buffer);
 
+
     BMPLoader().save("meshdraw.bmp", buffer);
     buffer->drawDoubleBuffer(renderer.zBuffer, RGB24Buffer::STYLE_ZBUFFER);
     BMPLoader().save("meshdraw-z.bmp", buffer);
+    renderer.dumpAllDebugs("meshdraw-");
+
+
     delete_safe(buffer);
-	}
-
-
-
-
 
     return 0;
 }

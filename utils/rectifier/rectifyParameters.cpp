@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from rectify.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<RectifyParameters>::reflection = Reflection();
 template<>
 int BaseReflection<RectifyParameters>::dummy = RectifyParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int RectifyParameters::staticInit()
+int RectifyParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <RectifyParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Rectify Parameters",
         "Rectify Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(RectifyParameters);
+     toFill->objectSize = sizeof(RectifyParameters);
      
 
     EnumField* field0 = new EnumField
@@ -56,7 +62,7 @@ int RectifyParameters::staticInit()
           )
         );
     field0->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     DoubleField* field1 = new DoubleField
         (
@@ -69,7 +75,7 @@ int RectifyParameters::staticInit()
         );
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->precision=2;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     IntField* field2 = new IntField
         (
@@ -80,7 +86,7 @@ int RectifyParameters::staticInit()
           "octaves",
           "octaves"
         );
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     IntField* field3 = new IntField
         (
@@ -91,7 +97,7 @@ int RectifyParameters::staticInit()
           "octaveLayers",
           "octaveLayers"
         );
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     BoolField* field4 = new BoolField
         (
@@ -103,7 +109,7 @@ int RectifyParameters::staticInit()
           "extended"
         );
     field4->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     DoubleField* field5 = new DoubleField
         (
@@ -120,7 +126,7 @@ int RectifyParameters::staticInit()
         );
     field5->widgetHint=BaseField::SPIN_BOX;
     field5->precision=2;
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     BoolField* field6 = new BoolField
         (
@@ -132,7 +138,7 @@ int RectifyParameters::staticInit()
           "useKLT"
         );
     field6->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     BoolField* field7 = new BoolField
         (
@@ -144,7 +150,7 @@ int RectifyParameters::staticInit()
           "computeEssential"
         );
     field7->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field7);
+    toFill->fields.push_back(field7);
     /*  */ 
     DoubleField* field8 = new DoubleField
         (
@@ -161,7 +167,7 @@ int RectifyParameters::staticInit()
         );
     field8->widgetHint=BaseField::SPIN_BOX;
     field8->precision=2;
-    fields().push_back(field8);
+    toFill->fields.push_back(field8);
     /*  */ 
     DoubleField* field9 = new DoubleField
         (
@@ -178,7 +184,7 @@ int RectifyParameters::staticInit()
         );
     field9->widgetHint=BaseField::SPIN_BOX;
     field9->precision=2;
-    fields().push_back(field9);
+    toFill->fields.push_back(field9);
     /*  */ 
     DoubleField* field10 = new DoubleField
         (
@@ -195,7 +201,7 @@ int RectifyParameters::staticInit()
         );
     field10->widgetHint=BaseField::SPIN_BOX;
     field10->precision=2;
-    fields().push_back(field10);
+    toFill->fields.push_back(field10);
     /*  */ 
     DoubleField* field11 = new DoubleField
         (
@@ -212,7 +218,7 @@ int RectifyParameters::staticInit()
         );
     field11->widgetHint=BaseField::SPIN_BOX;
     field11->precision=2;
-    fields().push_back(field11);
+    toFill->fields.push_back(field11);
     /*  */ 
     EnumField* field12 = new EnumField
         (
@@ -229,7 +235,7 @@ int RectifyParameters::staticInit()
           )
         );
     field12->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field12);
+    toFill->fields.push_back(field12);
     /*  */ 
     BoolField* field13 = new BoolField
         (
@@ -241,7 +247,7 @@ int RectifyParameters::staticInit()
           "normalise"
         );
     field13->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field13);
+    toFill->fields.push_back(field13);
     /*  */ 
     IntField* field14 = new IntField
         (
@@ -256,7 +262,7 @@ int RectifyParameters::staticInit()
          9999,
          1
         );
-    fields().push_back(field14);
+    toFill->fields.push_back(field14);
     /*  */ 
     IntField* field15 = new IntField
         (
@@ -271,7 +277,7 @@ int RectifyParameters::staticInit()
          9999,
          1
         );
-    fields().push_back(field15);
+    toFill->fields.push_back(field15);
     /*  */ 
     DoubleField* field16 = new DoubleField
         (
@@ -288,7 +294,7 @@ int RectifyParameters::staticInit()
         );
     field16->widgetHint=BaseField::SPIN_BOX;
     field16->precision=2;
-    fields().push_back(field16);
+    toFill->fields.push_back(field16);
     /*  */ 
     DoubleField* field17 = new DoubleField
         (
@@ -305,7 +311,7 @@ int RectifyParameters::staticInit()
         );
     field17->widgetHint=BaseField::SPIN_BOX;
     field17->precision=2;
-    fields().push_back(field17);
+    toFill->fields.push_back(field17);
     /*  */ 
     DoubleField* field18 = new DoubleField
         (
@@ -322,7 +328,7 @@ int RectifyParameters::staticInit()
         );
     field18->widgetHint=BaseField::SPIN_BOX;
     field18->precision=2;
-    fields().push_back(field18);
+    toFill->fields.push_back(field18);
     /*  */ 
     DoubleField* field19 = new DoubleField
         (
@@ -339,7 +345,7 @@ int RectifyParameters::staticInit()
         );
     field19->widgetHint=BaseField::SPIN_BOX;
     field19->precision=2;
-    fields().push_back(field19);
+    toFill->fields.push_back(field19);
     /*  */ 
     EnumField* field20 = new EnumField
         (
@@ -358,7 +364,7 @@ int RectifyParameters::staticInit()
           )
         );
     field20->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field20);
+    toFill->fields.push_back(field20);
     /*  */ 
     IntField* field21 = new IntField
         (
@@ -373,7 +379,7 @@ int RectifyParameters::staticInit()
          9999,
          1
         );
-    fields().push_back(field21);
+    toFill->fields.push_back(field21);
     /*  */ 
     DoubleField* field22 = new DoubleField
         (
@@ -390,7 +396,7 @@ int RectifyParameters::staticInit()
         );
     field22->widgetHint=BaseField::SPIN_BOX;
     field22->precision=2;
-    fields().push_back(field22);
+    toFill->fields.push_back(field22);
     /*  */ 
     DoubleField* field23 = new DoubleField
         (
@@ -407,7 +413,7 @@ int RectifyParameters::staticInit()
         );
     field23->widgetHint=BaseField::SPIN_BOX;
     field23->precision=2;
-    fields().push_back(field23);
+    toFill->fields.push_back(field23);
     /*  */ 
     DoubleField* field24 = new DoubleField
         (
@@ -424,7 +430,7 @@ int RectifyParameters::staticInit()
         );
     field24->widgetHint=BaseField::SPIN_BOX;
     field24->precision=2;
-    fields().push_back(field24);
+    toFill->fields.push_back(field24);
     /*  */ 
     DoubleField* field25 = new DoubleField
         (
@@ -441,7 +447,7 @@ int RectifyParameters::staticInit()
         );
     field25->widgetHint=BaseField::SPIN_BOX;
     field25->precision=2;
-    fields().push_back(field25);
+    toFill->fields.push_back(field25);
     /*  */ 
     DoubleField* field26 = new DoubleField
         (
@@ -458,7 +464,7 @@ int RectifyParameters::staticInit()
         );
     field26->widgetHint=BaseField::SPIN_BOX;
     field26->precision=2;
-    fields().push_back(field26);
+    toFill->fields.push_back(field26);
     /*  */ 
     DoubleField* field27 = new DoubleField
         (
@@ -475,7 +481,7 @@ int RectifyParameters::staticInit()
         );
     field27->widgetHint=BaseField::SPIN_BOX;
     field27->precision=2;
-    fields().push_back(field27);
+    toFill->fields.push_back(field27);
     /*  */ 
     DoubleField* field28 = new DoubleField
         (
@@ -492,7 +498,7 @@ int RectifyParameters::staticInit()
         );
     field28->widgetHint=BaseField::SPIN_BOX;
     field28->precision=2;
-    fields().push_back(field28);
+    toFill->fields.push_back(field28);
     /*  */ 
     DoubleField* field29 = new DoubleField
         (
@@ -509,7 +515,7 @@ int RectifyParameters::staticInit()
         );
     field29->widgetHint=BaseField::SPIN_BOX;
     field29->precision=2;
-    fields().push_back(field29);
+    toFill->fields.push_back(field29);
     /*  */ 
     DoubleField* field30 = new DoubleField
         (
@@ -526,7 +532,7 @@ int RectifyParameters::staticInit()
         );
     field30->widgetHint=BaseField::SPIN_BOX;
     field30->precision=2;
-    fields().push_back(field30);
+    toFill->fields.push_back(field30);
     /*  */ 
     DoubleField* field31 = new DoubleField
         (
@@ -543,7 +549,7 @@ int RectifyParameters::staticInit()
         );
     field31->widgetHint=BaseField::SPIN_BOX;
     field31->precision=2;
-    fields().push_back(field31);
+    toFill->fields.push_back(field31);
     /*  */ 
     DoubleField* field32 = new DoubleField
         (
@@ -560,7 +566,7 @@ int RectifyParameters::staticInit()
         );
     field32->widgetHint=BaseField::SPIN_BOX;
     field32->precision=2;
-    fields().push_back(field32);
+    toFill->fields.push_back(field32);
     /*  */ 
     BoolField* field33 = new BoolField
         (
@@ -572,7 +578,7 @@ int RectifyParameters::staticInit()
           "autoZ"
         );
     field33->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field33);
+    toFill->fields.push_back(field33);
     /*  */ 
     BoolField* field34 = new BoolField
         (
@@ -584,7 +590,7 @@ int RectifyParameters::staticInit()
           "autoShift"
         );
     field34->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field34);
+    toFill->fields.push_back(field34);
     /*  */ 
     IntField* field35 = new IntField
         (
@@ -599,7 +605,7 @@ int RectifyParameters::staticInit()
          9999,
          1
         );
-    fields().push_back(field35);
+    toFill->fields.push_back(field35);
     /*  */ 
     IntField* field36 = new IntField
         (
@@ -614,10 +620,10 @@ int RectifyParameters::staticInit()
          99999,
          1
         );
-    fields().push_back(field36);
+    toFill->fields.push_back(field36);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Rectify Parameters")]= &reflection;
+    directory[std::string("Rectify Parameters")]= toFill;
    return 0;
 }
 int RectifyParameters::relinkCompositeFields()

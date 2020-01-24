@@ -68,7 +68,7 @@ ImageCaptureInterface::FramePair OpenCvFileCapture::getFrame()
 
 
     count++;
-    frame_data_t frameData;
+    ImageCaptureInterface::FrameMetadata frameData;
     frameData.timestamp = (count * 10);
     notifyAboutNewFrame(frameData);
     //count++;
@@ -80,7 +80,7 @@ ImageCaptureInterface::CapErrorCode OpenCvFileCapture::startCapture()
 {
 //  return ImageCaptureInterface::CapSuccess1Cam;
     SYNC_PRINT(("OpenCvFileCapture::startCapture(): called\n"));
-    frame_data_t frameData;
+    ImageCaptureInterface::FrameMetadata frameData;
     frameData.timestamp = (count * 10);
 
     SYNC_PRINT(("OpenCvFileCapture::startCapture(): sending notification\n"));

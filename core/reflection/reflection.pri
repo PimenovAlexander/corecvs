@@ -33,3 +33,5 @@ HEADERS += \
     reflection/dynamicObject.h \
     reflection/advanced/advancedBinaryReader.h \
     reflection/advanced/advancedBinaryWriter.h \
+
+OTHER_FILES +=$$PWD/CMakeLists.txt

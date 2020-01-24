@@ -9,9 +9,11 @@ class OpenCvBufferReader : public BufferReader
 {
 public:
     corecvs::RuntimeTypeBuffer read(const std::string &s);
-    corecvs::RGB24Buffer readRgb(const std::string &s);
-    bool write(const corecvs::RuntimeTypeBuffer& buffer, const std::string &s);
-    bool writeRgb(const corecvs::RGB24Buffer& buffer, const std::string &s);
+    corecvs::RGB24Buffer    readRgb(const std::string &s);
+
+    bool write   (const corecvs::RuntimeTypeBuffer& buffer, const std::string &s);
+    bool writeRgb(const corecvs::RGB24Buffer& buffer, const std::string &s, int quality = 100);
+
     ~OpenCvBufferReader() {}
 };
 
@@ -60,21 +62,18 @@ public:
 class OpenCVRGB24Saver : public corecvs::BufferSaver<corecvs::RGB24Buffer>
 {
 public:
-
     static int registerMyself()
     {
         corecvs::BufferFactory::getInstance()->registerSaver(new OpenCVRGB24Saver());
         return 0;
     }
 
-    virtual bool acceptsFile(const std::string &name) override;
-    virtual bool save(const corecvs::RGB24Buffer &buffer, const std::string &name, int quality) override;
-    virtual std::string              name()        override { return "OpenCVRGB24Saver"; }
-    virtual std::vector<std::string> extentions() override {
-        return std::vector<std::string>({".bmp", ".BMP", ".jpg", ".JPG", ".png", ".PNG"});
-    }
-    virtual ~OpenCVRGB24Saver() {}
+    virtual bool acceptsFile(const std::string & name) override;
+    virtual bool save(const corecvs::RGB24Buffer &buffer, const std::string& name, int quality = 100) override;
 
+    virtual std::string              name()       override { return "OpenCVRGB24Saver"; }
+    virtual std::vector<std::string> extentions() override { return {".bmp", ".jpg", ".png"}; }
+    virtual ~OpenCVRGB24Saver() {}
 };
 
 

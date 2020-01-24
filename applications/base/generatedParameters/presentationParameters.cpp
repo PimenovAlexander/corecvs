@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from presentation.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<PresentationParameters>::reflection = Reflection();
 template<>
 int BaseReflection<PresentationParameters>::dummy = PresentationParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int PresentationParameters::staticInit()
+int PresentationParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <PresentationParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Presentation Parameters",
         "Presentation parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(PresentationParameters);
+     toFill->objectSize = sizeof(PresentationParameters);
      
 
     EnumField* field0 = new EnumField
@@ -62,7 +68,7 @@ int PresentationParameters::staticInit()
           )
         );
     field0->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     EnumField* field1 = new EnumField
         (
@@ -82,7 +88,7 @@ int PresentationParameters::staticInit()
           )
         );
     field1->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     EnumField* field2 = new EnumField
         (
@@ -102,7 +108,7 @@ int PresentationParameters::staticInit()
           )
         );
     field2->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     BoolField* field3 = new BoolField
         (
@@ -114,7 +120,7 @@ int PresentationParameters::staticInit()
           "showClusters"
         );
     field3->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     BoolField* field4 = new BoolField
         (
@@ -126,7 +132,7 @@ int PresentationParameters::staticInit()
           "showHistogram"
         );
     field4->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     BoolField* field5 = new BoolField
         (
@@ -138,7 +144,7 @@ int PresentationParameters::staticInit()
           "Auto Update Histogram"
         );
     field5->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     BoolField* field6 = new BoolField
         (
@@ -150,7 +156,7 @@ int PresentationParameters::staticInit()
           "showAreaOfInterest"
         );
     field6->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     BoolField* field7 = new BoolField
         (
@@ -162,7 +168,7 @@ int PresentationParameters::staticInit()
           "produce3D"
         );
     field7->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field7);
+    toFill->fields.push_back(field7);
     /*  */ 
     BoolField* field8 = new BoolField
         (
@@ -174,7 +180,7 @@ int PresentationParameters::staticInit()
           "produce6D"
         );
     field8->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field8);
+    toFill->fields.push_back(field8);
     /*  */ 
     BoolField* field9 = new BoolField
         (
@@ -186,7 +192,7 @@ int PresentationParameters::staticInit()
           "dump3D"
         );
     field9->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field9);
+    toFill->fields.push_back(field9);
     /*  */ 
     BoolField* field10 = new BoolField
         (
@@ -198,10 +204,10 @@ int PresentationParameters::staticInit()
           "dumpSceneJSON"
         );
     field10->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field10);
+    toFill->fields.push_back(field10);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Presentation Parameters")]= &reflection;
+    directory[std::string("Presentation Parameters")]= toFill;
    return 0;
 }
 int PresentationParameters::relinkCompositeFields()

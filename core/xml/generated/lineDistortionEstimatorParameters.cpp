@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from distortion.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<LineDistortionEstimatorParameters>::reflection = Reflection();
 template<>
 int BaseReflection<LineDistortionEstimatorParameters>::dummy = LineDistortionEstimatorParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int LineDistortionEstimatorParameters::staticInit()
+int LineDistortionEstimatorParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <LineDistortionEstimatorParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Line Distortion Estimator Parameters",
         "Line Distortion Estimator Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(LineDistortionEstimatorParameters);
+     toFill->objectSize = sizeof(LineDistortionEstimatorParameters);
      
 
     EnumField* field0 = new EnumField
@@ -56,7 +62,7 @@ int LineDistortionEstimatorParameters::staticInit()
           )
         );
     field0->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     IntField* field1 = new IntField
         (
@@ -71,7 +77,7 @@ int LineDistortionEstimatorParameters::staticInit()
          99999,
          1
         );
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     IntField* field2 = new IntField
         (
@@ -87,7 +93,7 @@ int LineDistortionEstimatorParameters::staticInit()
          1
         );
     field2->prefixHint="x^";
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     BoolField* field3 = new BoolField
         (
@@ -99,7 +105,7 @@ int LineDistortionEstimatorParameters::staticInit()
           "Simple Jacobian"
         );
     field3->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     BoolField* field4 = new BoolField
         (
@@ -111,7 +117,7 @@ int LineDistortionEstimatorParameters::staticInit()
           "Even powers only"
         );
     field4->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     BoolField* field5 = new BoolField
         (
@@ -123,7 +129,7 @@ int LineDistortionEstimatorParameters::staticInit()
           "Estimate Tangent"
         );
     field5->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     BoolField* field6 = new BoolField
         (
@@ -135,10 +141,10 @@ int LineDistortionEstimatorParameters::staticInit()
           "Estimate Center"
         );
     field6->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Line Distortion Estimator Parameters")]= &reflection;
+    directory[std::string("Line Distortion Estimator Parameters")]= toFill;
    return 0;
 }
 int LineDistortionEstimatorParameters::relinkCompositeFields()

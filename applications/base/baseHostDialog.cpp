@@ -380,8 +380,8 @@ void BaseHostDialog::initCapture(QString const &init/*, bool isRgb*/)
 
     /*  Now connect mCamera to mCalculator */
     mCalculator->setImageCaptureInterface(mCamera);
-    connect(mCamera,     SIGNAL(newFrameReady(frame_data_t)),
-            mCalculator, SLOT  (newFrameReady(frame_data_t)), Qt::QueuedConnection);
+    connect(mCamera,     SIGNAL(newFrameReady(ImageCaptureInterface::FrameMetadata)),
+            mCalculator, SLOT  (newFrameReady(ImageCaptureInterface::FrameMetadata)), Qt::QueuedConnection);
 
     camerasParamsChanged();
 
@@ -683,6 +683,8 @@ void BaseHostDialog::swapCameras(bool shouldSwap)
         return;
     }
     mFrames->swapFrameSources(shouldSwap);
+    QSettings settings("cvs-camera.conf", QSettings::IniFormat);
+    settings.setValue("swapCameras", shouldSwap);
 }
 
 void BaseHostDialog::setCaptureStats(CaptureStatistics stats)

@@ -87,7 +87,7 @@ public slots:
         }
         PreciseTimer currentTimer = PreciseTimer::currentTime();
         //long timestamp = currentTimer.usecs(); //timer.usecsTo();
-        addSingleStat(name.toStdString(), SingleStat(timer.isCorrect() ? timer.usecsTo(currentTimer) : 0));
+        addSingleStat(name.toStdString(), SingleStat(timer.isCorrect() ? timer.usecsTo(currentTimer) : (uint64_t)0));
         emit contentTransitionRegistered(currentTimer.usec(), newId, name);
 
         currentId = newId;

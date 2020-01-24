@@ -4,11 +4,12 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include "core/utils/visitors/basePathVisitor.h"
 #include "core/reflection/reflection.h"
 
 namespace corecvs {
 
-class CommandLineGetter
+class CommandLineGetter : public BasePathVisitor
 {
 public:
 
@@ -26,15 +27,25 @@ public:
     template <class Type>
         void visit(Type &field, Type defaultValue, const char *fieldName);
 
+    template <class Type>
+        void visit(Type &field, const char *fieldName)
+    {
+        pushChild(fieldName);
+        field.accept(*this);
+        popChild();
+    }
+
     template <typename inputType, typename reflectionType>
         void visit(std::vector<inputType> &/*field*/, const reflectionType * /*fieldDescriptor*/)
     {
     }
 
     template <typename inputType, typename reflectionType>
-        void visit(inputType &field, const reflectionType * /*fieldDescriptor*/)
-    {
+        void visit(inputType &field, const reflectionType * fieldDescriptor)
+    {        
+        pushChild(fieldDescriptor->name.name);
         field.accept(*this);
+        popChild();
     }
 
     std::string str()
@@ -70,12 +81,10 @@ void CommandLineGetter::visit<bool, BoolField>(
         bool &field,
         const BoolField *fieldDescriptor);
 
-/*
 template <>
 void CommandLineGetter::visit<void *, PointerField>(
         void * &field,
         const PointerField *fieldDescriptor);
-*/
 
 template <>
 void CommandLineGetter::visit<int, EnumField>(
@@ -86,6 +95,11 @@ template <>
 void CommandLineGetter::visit<std::string, StringField>(
         std::string &field,
         const StringField *fieldDescriptor);
+
+template <>
+void CommandLineGetter::visit<std::wstring, WStringField>(
+        std::wstring &field,
+        const WStringField *fieldDescriptor);
 
 /* Oldstyle setter */
 template <>

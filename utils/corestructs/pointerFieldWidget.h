@@ -3,13 +3,15 @@
 
 #include "core/reflection/reflection.h"
 #include <QWidget>
-#include "cloudViewDialog.h"
+//#include "cloudViewDialog.h"
 #include "advancedImageWidget.h"
 #include "cameraModelParametersControlWidget.h"
 
 namespace Ui {
 class PointerFieldWidget;
 }
+
+class CloudViewDialog;
 
 class PointerFieldWidget : public QWidget
 {

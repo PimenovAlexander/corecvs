@@ -41,6 +41,10 @@ public:
 
         std::sort(sortedIndex.begin(), sortedIndex.end(), [=](int a, int b) { return polygon[a].y() < polygon[b].y(); });
 
+        if (polygon.empty()){
+            return;
+        }
+
         /*There could be a one point polygon */
         int idx = (sortedIndex.front() + 1) % polygon.size();
         while (idx != sortedIndex.back()) {
@@ -177,7 +181,7 @@ public:
     }
 
     bool hasValue() {
-        return (part.currentY <= polygon.y(sortedIndex.back()));
+        return !polygon.empty() && (part.currentY <= polygon.y(sortedIndex.back()));
     }
 
     /**

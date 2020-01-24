@@ -114,6 +114,11 @@ int main (int argc, char **argv)
     HPGLLoader loader;
     HPGLProgram program;
 
+    if (argc != 2) {
+        return 0;
+    }
+
+
     ifstream file;
     std::string input = argv[1];
 

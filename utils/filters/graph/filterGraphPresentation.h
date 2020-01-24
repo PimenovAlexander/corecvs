@@ -2,6 +2,7 @@
 #define FILTERGRAPHPRESENTATION_H
 
 #include <QListWidgetItem>
+#include <QAction>
 
 #include "ui_filterGraphPresentation.h"
 

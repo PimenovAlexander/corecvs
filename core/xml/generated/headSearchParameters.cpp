@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from clustering1.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<HeadSearchParameters>::reflection = Reflection();
 template<>
 int BaseReflection<HeadSearchParameters>::dummy = HeadSearchParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int HeadSearchParameters::staticInit()
+int HeadSearchParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <HeadSearchParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Head Search Parameters",
         "Head Search Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(HeadSearchParameters);
+     toFill->objectSize = sizeof(HeadSearchParameters);
      
 
     DoubleField* field0 = new DoubleField
@@ -57,7 +63,7 @@ int HeadSearchParameters::staticInit()
         );
     field0->widgetHint=BaseField::SPIN_BOX;
     field0->precision=2;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     DoubleField* field1 = new DoubleField
         (
@@ -74,7 +80,7 @@ int HeadSearchParameters::staticInit()
         );
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->precision=2;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     IntField* field2 = new IntField
         (
@@ -89,7 +95,7 @@ int HeadSearchParameters::staticInit()
          99999,
          1
         );
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     DoubleField* field3 = new DoubleField
         (
@@ -106,7 +112,7 @@ int HeadSearchParameters::staticInit()
         );
     field3->widgetHint=BaseField::SPIN_BOX;
     field3->precision=2;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     IntField* field4 = new IntField
         (
@@ -121,10 +127,10 @@ int HeadSearchParameters::staticInit()
          100,
          1
         );
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Head Search Parameters")]= &reflection;
+    directory[std::string("Head Search Parameters")]= toFill;
    return 0;
 }
 int HeadSearchParameters::relinkCompositeFields()

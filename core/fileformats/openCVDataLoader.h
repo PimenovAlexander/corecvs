@@ -1,7 +1,7 @@
 #ifndef OPENCVDATALOADER_H
 #define OPENCVDATALOADER_H
 
-#include "core/tinyxml/tinyxml2.h"
+#include "core/tinyxml2/tinyxml2.h"
 #include "core/math/matrix/matrix.h"
 
 #include "core/cameracalibration/cameraModel.h"

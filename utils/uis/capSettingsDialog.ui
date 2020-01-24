@@ -20,11 +20,20 @@
    <string>Capture Settings</string>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="../../resources/main.qrc">
     <normaloff>:/new/prefix1/cctv_camera.png</normaloff>:/new/prefix1/cctv_camera.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
     <number>3</number>
    </property>
    <item row="0" column="0" colspan="4">
@@ -76,8 +85,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>732</width>
-           <height>350</height>
+           <width>730</width>
+           <height>340</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2"/>
@@ -117,13 +126,13 @@
        <normaloff>:/new/prefix1/exchange.png</normaloff>:/new/prefix1/exchange.png</iconset>
      </property>
      <property name="iconSize">
-       <size>
-         <width>24</width>
-         <height>24</height>
-       </size>
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
      </property>
      <property name="checked">
-     <bool>true</bool>
+      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -136,12 +145,12 @@
       <iconset resource="../../resources/main.qrc">
        <normaloff>:/new/prefix1/arrow_rotate_clockwise.png</normaloff>:/new/prefix1/arrow_rotate_clockwise.png</iconset>
      </property>
-      <property name="iconSize">
-        <size>
-          <width>24</width>
-          <height>24</height>
-        </size>
-      </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
     </widget>
    </item>
    <item row="6" column="2">

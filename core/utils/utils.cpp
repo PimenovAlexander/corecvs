@@ -260,6 +260,43 @@ bool isDirectory(const std::string &path)
     return fs::is_directory(filePath);
 }
 
+int parseInt (const std::string &c, bool *ok, size_t *endPos)
+{
+    if (c.empty())
+    {
+        if (ok != NULL) {
+            *ok = false;
+        }
+        return 0;
+    }
+
+    try {
+        int i = std::stoi(c, endPos);
+        if (ok != NULL) {
+            *ok = true;
+        }
+        return i;
+    } catch (...)
+    {
+        if (ok != NULL) {
+            *ok = false;
+        }
+        return 0;
+    }
+    return 0;
+}
+
+double parseDouble(const string &s)
+{
+    std::locale myLocale("C");
+    std::istringstream ss(s);
+    ss.imbue(myLocale);
+    double x;
+    ss >> x;
+    return x;
+}
+
+
 } // namespace HelperUtils
 
 } //namespace corecvs

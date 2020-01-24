@@ -13,3 +13,4 @@ SOURCES += \
     cammodel/sphericalCorrectionLUT.cpp \
 #    cammodel/cameraModel.cpp \
 
+OTHER_FILES +=$$PWD/CMakeLists.txt

@@ -3,6 +3,10 @@
 
 namespace corecvs {
 
+using std::istream;
+using std::ostream;
+
+
 static const int STL_BINARY_HEADER_SIZE = 80;
 
 STLLoader::STLLoader()
@@ -19,20 +23,53 @@ int STLLoader::loadAsciiSTL(istream &input, Mesh3D &mesh)
     string line;
     HelperUtils::getlineSafe(input, line);
 
-    SYNC_PRINT(("Magic String is %s", line.c_str()));
+    // SYNC_PRINT(("Magic String is <%s>\n", line.c_str()));
     if (!HelperUtils::startsWith(line, "solid"))
     {
         input.seekg (0, input.beg);
-        loadBinarySTL(input, mesh);
-        return 1;
+        return loadBinarySTL(input, mesh);
     }
 
-    HelperUtils::getlineSafe(input, line);
-    while (!HelperUtils::startsWith(line, "endsolid"))
+    vector<Vector3dd> points;
+
+    while (true)
     {
+        if (!input) {
+            break;
+        }
 
+        HelperUtils::getlineSafe(input, line);
+        line = HelperUtils::removeLeading(line, " ");
 
+        if (HelperUtils::startsWith(line, "facet"))
+        {
+            points.clear();
+        }
 
+        if (HelperUtils::startsWith(line, "outer"))
+        {
+            points.clear();
+        }
+
+        if (HelperUtils::startsWith(line, "vertex"))
+        {
+            std::istringstream work(line.substr(strlen("vertex")));
+            Vector3dd vertex;
+            work >> vertex.x() >> vertex.y() >> vertex.z();
+            points.push_back(vertex);
+        }
+
+        if (HelperUtils::startsWith(line, "endfacet"))
+        {
+            if (points.size() == 3) {
+                mesh.addTriangle(points[0], points[1], points[2]);
+            }
+        }
+
+        if (HelperUtils::startsWith(line, "endsolid"))
+        {
+            break;
+        }
     }
     return 0;
 }

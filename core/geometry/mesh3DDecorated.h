@@ -72,13 +72,23 @@ public:
     bool hasTexCoords;
     bool hasNormals;
 
-    /* Texture Coords Channel */
+    /**
+     * Texture coordinates array. Texture coordinates are referenced by number in this array.
+     * This is done to reuse repeating coordinates
+     **/
     vector<Vector2dd>   textureCoords;
 
+
+    /** NormalCoords stores normals directions. They referenced by number in this array */
     vector<Vector3dd>   normalCoords;
 
     /* Per face ids*/
-    vector<Vector4d32>  texId;
+    /**
+     * texId is an array of <Vector4d32>, the size of this array is equal to the size of the array of fases,
+     * first three numbers are indexes in textureCoords array, and the fourth number is usually used as texture nunber
+     **/
+    vector<Vector4d32>  texId;  
+
     vector<Vector3d32>  normalId;
 
     /* We are not sure what we expect from material.
@@ -93,11 +103,16 @@ public:
     void switchTextures(bool on = true);
     void switchNormals(bool on = true);
 
+    virtual void addAOB(const AxisAlignedBoxParameters &box, bool addFaces = true) override;
+    virtual void addAOB(const AxisAlignedBox3d &box, bool addFaces = true) override;
     virtual void addAOB(const Vector3dd &corner1, const Vector3dd &corner2, bool addFaces = true) override;
 
     void addTriangleT(const Vector3dd &p1, const Vector2dd &t1,
                       const Vector3dd &p2, const Vector2dd &t2,
                       const Vector3dd &p3, const Vector2dd &t3);
+
+    using Mesh3D::add;
+    virtual void add(const Mesh3DDecorated &other, bool preserveColor = false);
 
     virtual void transform(const Matrix44 &matrix) override;
 

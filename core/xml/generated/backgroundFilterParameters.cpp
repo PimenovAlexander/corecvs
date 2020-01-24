@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from bufferFilters.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<BackgroundFilterParameters>::reflection = Reflection();
 template<>
 int BaseReflection<BackgroundFilterParameters>::dummy = BackgroundFilterParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int BackgroundFilterParameters::staticInit()
+int BackgroundFilterParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <BackgroundFilterParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Background Filter Parameters",
         "Background Filter Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(BackgroundFilterParameters);
+     toFill->objectSize = sizeof(BackgroundFilterParameters);
      
 
     IntField* field0 = new IntField
@@ -55,10 +61,10 @@ int BackgroundFilterParameters::staticInit()
          10000,
          1
         );
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Background Filter Parameters")]= &reflection;
+    directory[std::string("Background Filter Parameters")]= toFill;
    return 0;
 }
 int BackgroundFilterParameters::relinkCompositeFields()

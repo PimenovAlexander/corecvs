@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from scanner.xml
  */
 
 #include <vector>
@@ -18,27 +19,36 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<ScannerParameters>::reflection = Reflection();
 template<>
 int BaseReflection<ScannerParameters>::dummy = ScannerParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
 
-int ScannerParameters::staticInit()
-{
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+using namespace corecvs;
+
+int ScannerParameters::staticInit(corecvs::Reflection *toFill)
+{
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <ScannerParameters>\n"));
+         return -1;
+    }
+
+    toFill->name = ReflectionNaming(
         "Scanner Parameters",
         "Scanner parameters",
         ""
     );
+
+     toFill->objectSize = sizeof(ScannerParameters);
      
 
-    fields().push_back(
-        new EnumField
+    EnumField* field0 = new EnumField
         (
           ScannerParameters::CHANNEL_ID,
           offsetof(ScannerParameters, mChannel),
@@ -47,9 +57,9 @@ int ScannerParameters::staticInit()
           "channel",
           "channel",
           new EnumReflection(15
-          , new EnumOption(0,"R")
-          , new EnumOption(1,"G")
-          , new EnumOption(2,"B")
+          , new EnumOption(0,"R",":/new/colors/colors/color_red.png@main.qrc")
+          , new EnumOption(1,"G",":/new/colors/colors/color_green.png@main.qrc")
+          , new EnumOption(2,"B",":/new/colors/colors/color_blue.png@main.qrc")
           , new EnumOption(3,"Alpha")
           , new EnumOption(4,"Y")
           , new EnumOption(5,"Cr")
@@ -57,16 +67,17 @@ int ScannerParameters::staticInit()
           , new EnumOption(7,"U")
           , new EnumOption(8,"V")
           , new EnumOption(9,"Chroma")
-          , new EnumOption(10,"Gray")
-          , new EnumOption(11,"Luma")
-          , new EnumOption(12,"Hue")
+          , new EnumOption(10,"Gray",":/new/colors/colors/color_gray.png@main.qrc")
+          , new EnumOption(11,"Luma",":/new/colors/colors/color_gray.png@main.qrc")
+          , new EnumOption(12,"Hue",":/new/colors/colors/color_wheel.png@main.qrc")
           , new EnumOption(13,"Saturation")
           , new EnumOption(14,"Value")
           )
-        )
-    );
-    fields().push_back(
-        new EnumField
+        );
+    field0->widgetHint=BaseField::COMBO_BOX;
+    toFill->fields.push_back(field0);
+    /*  */ 
+    EnumField* field1 = new EnumField
         (
           ScannerParameters::ALGO_ID,
           offsetof(ScannerParameters, mAlgo),
@@ -79,10 +90,11 @@ int ScannerParameters::staticInit()
           , new EnumOption(1,"Hue")
           , new EnumOption(2,"Dummy")
           )
-        )
-    );
-    fields().push_back(
-        new IntField
+        );
+    field1->widgetHint=BaseField::COMBO_BOX;
+    toFill->fields.push_back(field1);
+    /*  */ 
+    IntField* field2 = new IntField
         (
           ScannerParameters::RED_THRESHOLD_ID,
           offsetof(ScannerParameters, mRedThreshold),
@@ -92,11 +104,12 @@ int ScannerParameters::staticInit()
           "red threshold",
           true,
          0,
-         255
-        )
-    );
-    fields().push_back(
-        new DoubleField
+         255,
+         1
+        );
+    toFill->fields.push_back(field2);
+    /*  */ 
+    DoubleField* field3 = new DoubleField
         (
           ScannerParameters::HEIGHT_ID,
           offsetof(ScannerParameters, mHeight),
@@ -104,10 +117,12 @@ int ScannerParameters::staticInit()
           "height",
           "height",
           "height"
-        )
-    );
-    fields().push_back(
-        new IntField
+        );
+    field3->widgetHint=BaseField::SPIN_BOX;
+    field3->precision=2;
+    toFill->fields.push_back(field3);
+    /*  */ 
+    IntField* field4 = new IntField
         (
           ScannerParameters::GRAPH_LINE_ID,
           offsetof(ScannerParameters, mGraphLine),
@@ -117,11 +132,12 @@ int ScannerParameters::staticInit()
           "Graph line",
           true,
          0,
-         1920
-        )
-    );
-    fields().push_back(
-        new BoolField
+         1920,
+         1
+        );
+    toFill->fields.push_back(field4);
+    /*  */ 
+    BoolField* field5 = new BoolField
         (
           ScannerParameters::USE_SSE_ID,
           offsetof(ScannerParameters, mUseSSE),
@@ -129,10 +145,11 @@ int ScannerParameters::staticInit()
           "Use SSE",
           "Use SSE",
           "Use SSE"
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field5->widgetHint=BaseField::CHECK_BOX;
+    toFill->fields.push_back(field5);
+    /*  */ 
+    BoolField* field6 = new BoolField
         (
           ScannerParameters::CALCULATE_CONVOLUTION_ID,
           offsetof(ScannerParameters, mCalculateConvolution),
@@ -140,10 +157,11 @@ int ScannerParameters::staticInit()
           "Calculate convolution",
           "Calculate convolution",
           "Calculate convolution"
-        )
-    );
-    fields().push_back(
-        new BoolField
+        );
+    field6->widgetHint=BaseField::CHECK_BOX;
+    toFill->fields.push_back(field6);
+    /*  */ 
+    BoolField* field7 = new BoolField
         (
           ScannerParameters::CALIBRATIONMODE_ID,
           offsetof(ScannerParameters, mCalibrationMode),
@@ -151,10 +169,11 @@ int ScannerParameters::staticInit()
           "CalibrationMode",
           "CalibrationMode",
           "CalibrationMode"
-        )
-    );
-    fields().push_back(
-        new DoubleField
+        );
+    field7->widgetHint=BaseField::CHECK_BOX;
+    toFill->fields.push_back(field7);
+    /*  */ 
+    DoubleField* field8 = new DoubleField
         (
           ScannerParameters::CORNER_SCORE_ID,
           offsetof(ScannerParameters, mCornerScore),
@@ -164,11 +183,14 @@ int ScannerParameters::staticInit()
           "Corner Score",
           true,
          0,
-         255
-        )
-    );
-    fields().push_back(
-        new IntField
+         255,
+         1
+        );
+    field8->widgetHint=BaseField::SPIN_BOX;
+    field8->precision=3;
+    toFill->fields.push_back(field8);
+    /*  */ 
+    IntField* field9 = new IntField
         (
           ScannerParameters::HARRIS_APPERTURE_ID,
           offsetof(ScannerParameters, mHarrisApperture),
@@ -178,9 +200,17 @@ int ScannerParameters::staticInit()
           "Harris Apperture",
           true,
          0,
-         255
-        )
-    );
+         255,
+         1
+        );
+    toFill->fields.push_back(field9);
+    /*  */ 
+    ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
+    directory[std::string("Scanner Parameters")]= toFill;
+   return 0;
+}
+int ScannerParameters::relinkCompositeFields()
+{
    return 0;
 }
 

@@ -16,13 +16,15 @@
 #include "draw3dParametersControlWidget.h"
 #include "draw3dCameraParametersControlWidget.h"
 
-class Mesh3DScene : public Mesh3D, public Scene3D {
+
+
+class Mesh3DScene : /*public Mesh3D,*/ public Scene3D {
 
 public:
     Draw3dParameters mParameters;
 
     /* This mesh is not used so far.*/
-    Mesh3D *owned;
+    Mesh3D *owned = NULL;
 
     Mesh3DScene() :
         owned(NULL)
@@ -54,7 +56,10 @@ public:
         owned = newMesh;
     }
 
-    virtual ~Mesh3DScene();
+    virtual ~Mesh3DScene() {
+        delete_safe(owned);
+    }
+
 };
 
 

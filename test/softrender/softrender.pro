@@ -40,3 +40,5 @@ with_libpng {
     }
 
 }
+
+OTHER_FILES += render.sh

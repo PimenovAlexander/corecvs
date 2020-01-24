@@ -12,7 +12,7 @@
 
 
 #include "core/math/projectiveTransform.h"
-#include "core/rectification/correspondenceList.h"
+#include "core/buffers/correspondenceList.h"
 #include "core/math/matrix/matrix33.h"
 namespace corecvs {
 

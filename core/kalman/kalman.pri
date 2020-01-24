@@ -15,3 +15,4 @@ SOURCES += \
 #    kalman/kalman.cpp \
     kalman/classicKalman.cpp \ 
 
+OTHER_FILES +=$$PWD/CMakeLists.txt

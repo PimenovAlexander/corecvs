@@ -2,6 +2,8 @@
 
 /* This in heavily unfinished */
 
+using namespace corecvs;
+
 bool VinylCutterInterpreter::straightHook(int type, const GCodeInterpreter::MachineState &before, const GCodeInterpreter::MachineState &after)
 {
     CORE_UNUSED(type);

@@ -16,6 +16,9 @@ namespace corecvs {
 template<> Reflection Vector2d<double>::reflection = Reflection();
 template<> int        Vector2d<double>::dummy = Vector2d<double>::staticInit("Vector2d<double>");
 
+template<> Reflection Vector2d<float>::reflection = Reflection();
+template<> int        Vector2d<float>::dummy = Vector2d<float>::staticInit("Vector2d<float>");
+
 template<> Reflection Vector2d<uint32_t>::reflection = Reflection();
 template<> int        Vector2d<uint32_t>::dummy = Vector2d<uint32_t>::staticInit("Vector2d<uint32_t>");
 

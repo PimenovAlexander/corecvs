@@ -6,18 +6,18 @@
         This is an example class that tries to test generator
   -->
 
-  <enum name="Test Enum">
+  <enum name="Test Enum" incpath="">
       <item name="item1" id="0" />
       <item name="item2" id="1" />
       <item name="itemWithIcon" id="2" icon=":/new/colors/colors/color_red.png@main.qrc" />
   </enum>
 
-  <class name="Test SubClass" description="Test SubClass">
+  <class name="Test SubClass" description="Test SubClass" incpath="">
       <field type="int"    name="Int Field0"    defaultValue="0"/>
       <field type="double" name="Double field0" defaultValue="2.0"/>
   </class>
 
-  <class name="Test Class" description="Test Class with no practical use">
+  <class name="Test Class" description="Test Class with no practical use" incpath="">
      <field type="bool"   name="Bool Field"    defaultValue="0"/>
      <field type="int"    name="Int Field0"    defaultValue="0"/>
      <field type="int"    name="Int Field1"    defaultValue="0" min="-5" max="5"/>
@@ -43,7 +43,7 @@
   </class>
 
 
-  <class name="Test Block" description="Test Block">
+  <class name="Test Block" description="Test Block" incpath="">
     <field type="pointer"  target="G12Buffer"   name="in0" />
     <field type="pointer"  target="RGB24Buffer" name="in1" />
 

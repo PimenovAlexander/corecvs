@@ -58,7 +58,7 @@ TEST(${testName}, test${testName})
 }
 END_TEXT
 
-echo >>test-core.pro -e "\t${testName}/main_test_${testName}.cpp \\"
+echo >>test-core.pro -e "    ${testName}/main_test_${testName}.cpp \\"
 
 echo -e "${redText}done${normalText}"
  

@@ -15,7 +15,7 @@
 #include "core/utils/global.h"
 
 #include "core/math/mathUtils.h"
-#include "core/rectification/correspondenceList.h"
+#include "core/buffers/correspondenceList.h"
 #include "core/math/matrix/matrix.h"
 #include "core/rectification/essentialMatrix.h"
 #include "core/rectification/ransacEstimator.h"
@@ -554,11 +554,6 @@ TEST(Rectification, testRectifiedModel)
 
 
     model1.setLocation(location);
-
-
-
-
-
 
 
     /* Mesh3d */

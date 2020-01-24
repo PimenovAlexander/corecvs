@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from bufferFilters.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<BinarizeParameters>::reflection = Reflection();
 template<>
 int BaseReflection<BinarizeParameters>::dummy = BinarizeParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int BinarizeParameters::staticInit()
+int BinarizeParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <BinarizeParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Binarize Parameters",
         "Binarize Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(BinarizeParameters);
+     toFill->objectSize = sizeof(BinarizeParameters);
      
 
     IntField* field0 = new IntField
@@ -55,10 +61,10 @@ int BinarizeParameters::staticInit()
          4096,
          1
         );
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Binarize Parameters")]= &reflection;
+    directory[std::string("Binarize Parameters")]= toFill;
    return 0;
 }
 int BinarizeParameters::relinkCompositeFields()

@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from copter.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<Copter>::reflection = Reflection();
 template<>
 int BaseReflection<Copter>::dummy = Copter::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int Copter::staticInit()
+int Copter::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <Copter>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Copter",
         "Copter Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(Copter);
+     toFill->objectSize = sizeof(Copter);
      
 
     BoolField* field0 = new BoolField
@@ -52,7 +58,7 @@ int Copter::staticInit()
           "processing"
         );
     field0->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     DoubleField* field1 = new DoubleField
         (
@@ -65,7 +71,7 @@ int Copter::staticInit()
         );
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->precision=2;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     BoolField* field2 = new BoolField
         (
@@ -77,7 +83,7 @@ int Copter::staticInit()
           "inverted"
         );
     field2->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     DoubleField* field3 = new DoubleField
         (
@@ -90,7 +96,7 @@ int Copter::staticInit()
         );
     field3->widgetHint=BaseField::SPIN_BOX;
     field3->precision=2;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     DoubleField* field4 = new DoubleField
         (
@@ -103,7 +109,7 @@ int Copter::staticInit()
         );
     field4->widgetHint=BaseField::SPIN_BOX;
     field4->precision=2;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     DoubleField* field5 = new DoubleField
         (
@@ -116,7 +122,7 @@ int Copter::staticInit()
         );
     field5->widgetHint=BaseField::SPIN_BOX;
     field5->precision=2;
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     DoubleField* field6 = new DoubleField
         (
@@ -129,7 +135,7 @@ int Copter::staticInit()
         );
     field6->widgetHint=BaseField::SPIN_BOX;
     field6->precision=2;
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     DoubleField* field7 = new DoubleField
         (
@@ -142,7 +148,7 @@ int Copter::staticInit()
         );
     field7->widgetHint=BaseField::SPIN_BOX;
     field7->precision=2;
-    fields().push_back(field7);
+    toFill->fields.push_back(field7);
     /*  */ 
     DoubleField* field8 = new DoubleField
         (
@@ -155,7 +161,7 @@ int Copter::staticInit()
         );
     field8->widgetHint=BaseField::SPIN_BOX;
     field8->precision=2;
-    fields().push_back(field8);
+    toFill->fields.push_back(field8);
     /*  */ 
     DoubleField* field9 = new DoubleField
         (
@@ -168,7 +174,7 @@ int Copter::staticInit()
         );
     field9->widgetHint=BaseField::SPIN_BOX;
     field9->precision=2;
-    fields().push_back(field9);
+    toFill->fields.push_back(field9);
     /*  */ 
     DoubleField* field10 = new DoubleField
         (
@@ -181,7 +187,7 @@ int Copter::staticInit()
         );
     field10->widgetHint=BaseField::SPIN_BOX;
     field10->precision=2;
-    fields().push_back(field10);
+    toFill->fields.push_back(field10);
     /*  */ 
     DoubleField* field11 = new DoubleField
         (
@@ -194,10 +200,10 @@ int Copter::staticInit()
         );
     field11->widgetHint=BaseField::SPIN_BOX;
     field11->precision=2;
-    fields().push_back(field11);
+    toFill->fields.push_back(field11);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Copter")]= &reflection;
+    directory[std::string("Copter")]= toFill;
    return 0;
 }
 int Copter::relinkCompositeFields()

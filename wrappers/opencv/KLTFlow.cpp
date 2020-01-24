@@ -11,11 +11,9 @@
 
 #include <opencv2/core/core_c.h>        // cvCreateImage
 #include <opencv2/imgproc/imgproc_c.h>  // cvGoodFeaturesToTrack
-#ifdef WITH_OPENCV_3x
-    #include <opencv2/video/tracking_c.h>   // cvCalcOpticalFlowPyrLK
-#else
-    #include <opencv2/video/tracking.hpp>   // cvCalcOpticalFlowPyrLK
-#endif
+
+#include <opencv2/video/tracking_c.h>   // cvCalcOpticalFlowPyrLK
+
 
 
 #include "core/math/vector/vector2d.h"

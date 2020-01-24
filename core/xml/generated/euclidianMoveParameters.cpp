@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from parameters.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<EuclidianMoveParameters>::reflection = Reflection();
 template<>
 int BaseReflection<EuclidianMoveParameters>::dummy = EuclidianMoveParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int EuclidianMoveParameters::staticInit()
+int EuclidianMoveParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <EuclidianMoveParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Euclidian Move Parameters",
         "Euclidian Move Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(EuclidianMoveParameters);
+     toFill->objectSize = sizeof(EuclidianMoveParameters);
      
 
     DoubleField* field0 = new DoubleField
@@ -57,7 +63,7 @@ int EuclidianMoveParameters::staticInit()
         );
     field0->widgetHint=BaseField::SPIN_BOX;
     field0->precision=2;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     DoubleField* field1 = new DoubleField
         (
@@ -74,7 +80,7 @@ int EuclidianMoveParameters::staticInit()
         );
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->precision=2;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     DoubleField* field2 = new DoubleField
         (
@@ -91,7 +97,7 @@ int EuclidianMoveParameters::staticInit()
         );
     field2->widgetHint=BaseField::SPIN_BOX;
     field2->precision=2;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     DoubleField* field3 = new DoubleField
         (
@@ -109,7 +115,7 @@ int EuclidianMoveParameters::staticInit()
     field3->widgetHint=BaseField::SPIN_BOX;
     field3->suffixHint="deg";
     field3->precision=2;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     DoubleField* field4 = new DoubleField
         (
@@ -127,7 +133,7 @@ int EuclidianMoveParameters::staticInit()
     field4->widgetHint=BaseField::SPIN_BOX;
     field4->suffixHint="deg";
     field4->precision=2;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     DoubleField* field5 = new DoubleField
         (
@@ -145,10 +151,10 @@ int EuclidianMoveParameters::staticInit()
     field5->widgetHint=BaseField::SPIN_BOX;
     field5->suffixHint="deg";
     field5->precision=2;
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Euclidian Move Parameters")]= &reflection;
+    directory[std::string("Euclidian Move Parameters")]= toFill;
    return 0;
 }
 int EuclidianMoveParameters::relinkCompositeFields()

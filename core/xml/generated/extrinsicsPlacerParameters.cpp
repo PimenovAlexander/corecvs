@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from calibration.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<ExtrinsicsPlacerParameters>::reflection = Reflection();
 template<>
 int BaseReflection<ExtrinsicsPlacerParameters>::dummy = ExtrinsicsPlacerParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int ExtrinsicsPlacerParameters::staticInit()
+int ExtrinsicsPlacerParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <ExtrinsicsPlacerParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Extrinsics Placer Parameters",
         "Extrinsics Placer Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(ExtrinsicsPlacerParameters);
+     toFill->objectSize = sizeof(ExtrinsicsPlacerParameters);
      
 
     BoolField* field0 = new BoolField
@@ -52,7 +58,7 @@ int ExtrinsicsPlacerParameters::staticInit()
           "triangulate on sphere"
         );
     field0->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     DoubleField* field1 = new DoubleField
         (
@@ -69,7 +75,7 @@ int ExtrinsicsPlacerParameters::staticInit()
         );
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->precision=2;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     IntField* field2 = new IntField
         (
@@ -84,7 +90,7 @@ int ExtrinsicsPlacerParameters::staticInit()
          10000,
          1
         );
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     BoolField* field3 = new BoolField
         (
@@ -96,7 +102,7 @@ int ExtrinsicsPlacerParameters::staticInit()
           "use simple cost"
         );
     field3->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     BoolField* field4 = new BoolField
         (
@@ -108,7 +114,7 @@ int ExtrinsicsPlacerParameters::staticInit()
           "lock 1 cam"
         );
     field4->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     BoolField* field5 = new BoolField
         (
@@ -120,7 +126,7 @@ int ExtrinsicsPlacerParameters::staticInit()
           "lock orientations"
         );
     field5->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     BoolField* field6 = new BoolField
         (
@@ -132,10 +138,10 @@ int ExtrinsicsPlacerParameters::staticInit()
           "lock positions"
         );
     field6->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Extrinsics Placer Parameters")]= &reflection;
+    directory[std::string("Extrinsics Placer Parameters")]= toFill;
    return 0;
 }
 int ExtrinsicsPlacerParameters::relinkCompositeFields()

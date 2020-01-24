@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from draw3d.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<Draw3dCameraParameters>::reflection = Reflection();
 template<>
 int BaseReflection<Draw3dCameraParameters>::dummy = Draw3dCameraParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int Draw3dCameraParameters::staticInit()
+int Draw3dCameraParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <Draw3dCameraParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "draw 3d Camera Parameters",
         "draw 3d Camera Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(Draw3dCameraParameters);
+     toFill->objectSize = sizeof(Draw3dCameraParameters);
      
 
     DoubleField* field0 = new DoubleField
@@ -57,7 +63,7 @@ int Draw3dCameraParameters::staticInit()
         );
     field0->widgetHint=BaseField::SPIN_BOX;
     field0->precision=2;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     DoubleField* field1 = new DoubleField
         (
@@ -74,7 +80,7 @@ int Draw3dCameraParameters::staticInit()
         );
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->precision=2;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     DoubleField* field2 = new DoubleField
         (
@@ -91,7 +97,7 @@ int Draw3dCameraParameters::staticInit()
         );
     field2->widgetHint=BaseField::SPIN_BOX;
     field2->precision=2;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     DoubleField* field3 = new DoubleField
         (
@@ -108,7 +114,7 @@ int Draw3dCameraParameters::staticInit()
         );
     field3->widgetHint=BaseField::SPIN_BOX;
     field3->precision=2;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     EnumField* field4 = new EnumField
         (
@@ -127,7 +133,7 @@ int Draw3dCameraParameters::staticInit()
           )
         );
     field4->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     CompositeField* field5 = new CompositeField
         (
@@ -149,7 +155,7 @@ int Draw3dCameraParameters::staticInit()
              printf("Reflection Draw3dCameraParameters to the subclass rgb Color Parameters can't be linked\n");
         }
     }
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     BoolField* field6 = new BoolField
         (
@@ -161,7 +167,7 @@ int Draw3dCameraParameters::staticInit()
           "Point Color Override"
         );
     field6->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     IntField* field7 = new IntField
         (
@@ -176,7 +182,7 @@ int Draw3dCameraParameters::staticInit()
          255,
          1
         );
-    fields().push_back(field7);
+    toFill->fields.push_back(field7);
     /*  */ 
     CompositeField* field8 = new CompositeField
         (
@@ -198,7 +204,7 @@ int Draw3dCameraParameters::staticInit()
              printf("Reflection Draw3dCameraParameters to the subclass rgb Color Parameters can't be linked\n");
         }
     }
-    fields().push_back(field8);
+    toFill->fields.push_back(field8);
     /*  */ 
     BoolField* field9 = new BoolField
         (
@@ -210,7 +216,7 @@ int Draw3dCameraParameters::staticInit()
           "Edge Color Override"
         );
     field9->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field9);
+    toFill->fields.push_back(field9);
     /*  */ 
     IntField* field10 = new IntField
         (
@@ -225,7 +231,7 @@ int Draw3dCameraParameters::staticInit()
          255,
          1
         );
-    fields().push_back(field10);
+    toFill->fields.push_back(field10);
     /*  */ 
     CompositeField* field11 = new CompositeField
         (
@@ -247,7 +253,7 @@ int Draw3dCameraParameters::staticInit()
              printf("Reflection Draw3dCameraParameters to the subclass rgb Color Parameters can't be linked\n");
         }
     }
-    fields().push_back(field11);
+    toFill->fields.push_back(field11);
     /*  */ 
     BoolField* field12 = new BoolField
         (
@@ -259,7 +265,7 @@ int Draw3dCameraParameters::staticInit()
           "Face Color Override"
         );
     field12->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field12);
+    toFill->fields.push_back(field12);
     /*  */ 
     BoolField* field13 = new BoolField
         (
@@ -271,7 +277,7 @@ int Draw3dCameraParameters::staticInit()
           "Show caption"
         );
     field13->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field13);
+    toFill->fields.push_back(field13);
     /*  */ 
     IntField* field14 = new IntField
         (
@@ -286,7 +292,7 @@ int Draw3dCameraParameters::staticInit()
          255,
          1
         );
-    fields().push_back(field14);
+    toFill->fields.push_back(field14);
     /*  */ 
     IntField* field15 = new IntField
         (
@@ -301,7 +307,7 @@ int Draw3dCameraParameters::staticInit()
          255,
          1
         );
-    fields().push_back(field15);
+    toFill->fields.push_back(field15);
     /*  */ 
     CompositeField* field16 = new CompositeField
         (
@@ -323,7 +329,7 @@ int Draw3dCameraParameters::staticInit()
              printf("Reflection Draw3dCameraParameters to the subclass rgb Color Parameters can't be linked\n");
         }
     }
-    fields().push_back(field16);
+    toFill->fields.push_back(field16);
     /*  */ 
     EnumField* field17 = new EnumField
         (
@@ -340,7 +346,7 @@ int Draw3dCameraParameters::staticInit()
           )
         );
     field17->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field17);
+    toFill->fields.push_back(field17);
     /*  */ 
     IntField* field18 = new IntField
         (
@@ -355,7 +361,7 @@ int Draw3dCameraParameters::staticInit()
          255,
          1
         );
-    fields().push_back(field18);
+    toFill->fields.push_back(field18);
     /*  */ 
     DoubleField* field19 = new DoubleField
         (
@@ -372,7 +378,7 @@ int Draw3dCameraParameters::staticInit()
         );
     field19->widgetHint=BaseField::SPIN_BOX;
     field19->precision=2;
-    fields().push_back(field19);
+    toFill->fields.push_back(field19);
     /*  */ 
     IntField* field20 = new IntField
         (
@@ -387,7 +393,7 @@ int Draw3dCameraParameters::staticInit()
          19,
          1
         );
-    fields().push_back(field20);
+    toFill->fields.push_back(field20);
     /*  */ 
     BoolField* field21 = new BoolField
         (
@@ -399,7 +405,7 @@ int Draw3dCameraParameters::staticInit()
           "Decal Left Cam"
         );
     field21->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field21);
+    toFill->fields.push_back(field21);
     /*  */ 
     IntField* field22 = new IntField
         (
@@ -414,7 +420,7 @@ int Draw3dCameraParameters::staticInit()
          255,
          1
         );
-    fields().push_back(field22);
+    toFill->fields.push_back(field22);
     /*  */ 
     BoolField* field23 = new BoolField
         (
@@ -426,7 +432,7 @@ int Draw3dCameraParameters::staticInit()
           "Decal Right Cam"
         );
     field23->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field23);
+    toFill->fields.push_back(field23);
     /*  */ 
     IntField* field24 = new IntField
         (
@@ -441,10 +447,10 @@ int Draw3dCameraParameters::staticInit()
          255,
          1
         );
-    fields().push_back(field24);
+    toFill->fields.push_back(field24);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("draw 3d Camera Parameters")]= &reflection;
+    directory[std::string("draw 3d Camera Parameters")]= toFill;
    return 0;
 }
 int Draw3dCameraParameters::relinkCompositeFields()

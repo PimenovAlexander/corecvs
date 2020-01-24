@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from bufferFilters.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<GainOffsetParameters>::reflection = Reflection();
 template<>
 int BaseReflection<GainOffsetParameters>::dummy = GainOffsetParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int GainOffsetParameters::staticInit()
+int GainOffsetParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <GainOffsetParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Gain Offset Parameters",
         "Gain Offset Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(GainOffsetParameters);
+     toFill->objectSize = sizeof(GainOffsetParameters);
      
 
     DoubleField* field0 = new DoubleField
@@ -57,7 +63,7 @@ int GainOffsetParameters::staticInit()
         );
     field0->widgetHint=BaseField::SPIN_BOX;
     field0->precision=2;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     DoubleField* field1 = new DoubleField
         (
@@ -74,10 +80,10 @@ int GainOffsetParameters::staticInit()
         );
     field1->widgetHint=BaseField::SPIN_BOX;
     field1->precision=2;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Gain Offset Parameters")]= &reflection;
+    directory[std::string("Gain Offset Parameters")]= toFill;
    return 0;
 }
 int GainOffsetParameters::relinkCompositeFields()

@@ -10,6 +10,7 @@ using std::istringstream;
 using std::string;
 using std::vector;
 using std::pair;
+using std::istream;
 
 GcodeLoader::GcodeLoader()
 {}

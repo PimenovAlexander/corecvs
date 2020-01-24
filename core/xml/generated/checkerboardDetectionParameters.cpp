@@ -4,6 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
+ * Generated from patternDetector.xml
  */
 
 #include <vector>
@@ -18,10 +19,12 @@
  **/
 
 namespace corecvs {
+#if 0
 template<>
 Reflection BaseReflection<CheckerboardDetectionParameters>::reflection = Reflection();
 template<>
 int BaseReflection<CheckerboardDetectionParameters>::dummy = CheckerboardDetectionParameters::staticInit();
+#endif
 } // namespace corecvs 
 
 SUPPRESS_OFFSET_WARNING_BEGIN
@@ -29,17 +32,20 @@ SUPPRESS_OFFSET_WARNING_BEGIN
 
 using namespace corecvs;
 
-int CheckerboardDetectionParameters::staticInit()
+int CheckerboardDetectionParameters::staticInit(corecvs::Reflection *toFill)
 {
+    if (toFill == NULL || toFill->objectSize != 0) {
+        SYNC_PRINT(("staticInit(): Contract Violation in <CheckerboardDetectionParameters>\n"));
+         return -1;
+    }
 
-    ReflectionNaming &nameing = naming();
-    nameing = ReflectionNaming(
+    toFill->name = ReflectionNaming(
         "Checkerboard Detection Parameters",
         "Checkerboard Detection Parameters",
         ""
     );
 
-     getReflection()->objectSize = sizeof(CheckerboardDetectionParameters);
+     toFill->objectSize = sizeof(CheckerboardDetectionParameters);
      
 
     BoolField* field0 = new BoolField
@@ -52,7 +58,7 @@ int CheckerboardDetectionParameters::staticInit()
           "Estimate undistorted from distorted"
         );
     field0->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field0);
+    toFill->fields.push_back(field0);
     /*  */ 
     BoolField* field1 = new BoolField
         (
@@ -64,7 +70,7 @@ int CheckerboardDetectionParameters::staticInit()
           "Use Undistortion"
         );
     field1->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field1);
+    toFill->fields.push_back(field1);
     /*  */ 
     EnumField* field2 = new EnumField
         (
@@ -80,7 +86,7 @@ int CheckerboardDetectionParameters::staticInit()
           )
         );
     field2->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field2);
+    toFill->fields.push_back(field2);
     /*  */ 
     EnumField* field3 = new EnumField
         (
@@ -109,7 +115,7 @@ int CheckerboardDetectionParameters::staticInit()
           )
         );
     field3->widgetHint=BaseField::COMBO_BOX;
-    fields().push_back(field3);
+    toFill->fields.push_back(field3);
     /*  */ 
     DoubleField* field4 = new DoubleField
         (
@@ -127,7 +133,7 @@ int CheckerboardDetectionParameters::staticInit()
     field4->widgetHint=BaseField::SPIN_BOX;
     field4->suffixHint="m";
     field4->precision=3;
-    fields().push_back(field4);
+    toFill->fields.push_back(field4);
     /*  */ 
     DoubleField* field5 = new DoubleField
         (
@@ -145,7 +151,7 @@ int CheckerboardDetectionParameters::staticInit()
     field5->widgetHint=BaseField::SPIN_BOX;
     field5->suffixHint="m";
     field5->precision=3;
-    fields().push_back(field5);
+    toFill->fields.push_back(field5);
     /*  */ 
     BoolField* field6 = new BoolField
         (
@@ -157,7 +163,7 @@ int CheckerboardDetectionParameters::staticInit()
           "cleanExisting"
         );
     field6->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field6);
+    toFill->fields.push_back(field6);
     /*  */ 
     IntField* field7 = new IntField
         (
@@ -172,7 +178,7 @@ int CheckerboardDetectionParameters::staticInit()
          999999,
          1
         );
-    fields().push_back(field7);
+    toFill->fields.push_back(field7);
     /*  */ 
     IntField* field8 = new IntField
         (
@@ -187,7 +193,7 @@ int CheckerboardDetectionParameters::staticInit()
          999999,
          1
         );
-    fields().push_back(field8);
+    toFill->fields.push_back(field8);
     /*  */ 
     DoubleField* field9 = new DoubleField
         (
@@ -205,7 +211,7 @@ int CheckerboardDetectionParameters::staticInit()
     field9->widgetHint=BaseField::SPIN_BOX;
     field9->suffixHint="px";
     field9->precision=4;
-    fields().push_back(field9);
+    toFill->fields.push_back(field9);
     /*  */ 
     BoolField* field10 = new BoolField
         (
@@ -217,7 +223,7 @@ int CheckerboardDetectionParameters::staticInit()
           "partialBoard"
         );
     field10->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field10);
+    toFill->fields.push_back(field10);
     /*  */ 
     BoolField* field11 = new BoolField
         (
@@ -229,7 +235,7 @@ int CheckerboardDetectionParameters::staticInit()
           "fastBoardSpeedup"
         );
     field11->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field11);
+    toFill->fields.push_back(field11);
     /*  */ 
     BoolField* field12 = new BoolField
         (
@@ -241,7 +247,7 @@ int CheckerboardDetectionParameters::staticInit()
           "Draw SGFs on boards"
         );
     field12->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field12);
+    toFill->fields.push_back(field12);
     /*  */ 
     BoolField* field13 = new BoolField
         (
@@ -253,10 +259,10 @@ int CheckerboardDetectionParameters::staticInit()
           "Skip undistorted with no distorted board"
         );
     field13->widgetHint=BaseField::CHECK_BOX;
-    fields().push_back(field13);
+    toFill->fields.push_back(field13);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
-    directory[std::string("Checkerboard Detection Parameters")]= &reflection;
+    directory[std::string("Checkerboard Detection Parameters")]= toFill;
    return 0;
 }
 int CheckerboardDetectionParameters::relinkCompositeFields()

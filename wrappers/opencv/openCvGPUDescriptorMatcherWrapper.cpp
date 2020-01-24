@@ -3,7 +3,7 @@
 
 #include "core/utils/global.h"
 
-#ifndef WITH_OPENCV_3x
+#ifndef WITH_OPENCV_3
 
 #include <opencv2/features2d/features2d.hpp>    // cv::DescriptorMatcher
 #include <opencv2/gpu/gpu.hpp>           // cv::gpu::BruteForceMatcher_GPU_base

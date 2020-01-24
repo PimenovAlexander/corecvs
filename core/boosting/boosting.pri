@@ -11,3 +11,4 @@ SOURCES += \
     boosting/vjPattern.cpp \
     boosting/detectedObject.cpp \
 
+OTHER_FILES +=$$PWD/CMakeLists.txt

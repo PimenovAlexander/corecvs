@@ -21,6 +21,7 @@
 #include <tbb/task.h>
 #endif
 
+using namespace std;
 using namespace corecvs;
 
 class ParallelTestTBBWrapper
@@ -28,7 +29,7 @@ class ParallelTestTBBWrapper
 public:
     uint8_t *data;
 
-    ParallelTestTBBWrapper(uint8_t *_data) : data(_data) {};
+    ParallelTestTBBWrapper(uint8_t *_data) : data(_data) {}
 
     void operator()( const BlockedRange<int>& r ) const
     {
@@ -72,6 +73,71 @@ TEST(TBBWrapperTest, testWrapper)
         CORE_ASSERT_TRUE_P(data[i] == 0xFF, ("TBB Wrapper has problems at pos %d found %d", i, data[i]));
     }
     delete[] data;
+}
+
+TEST(TBBWrapperTest, testReduce)
+{
+    const size_t LIMIT = 10;
+
+    std::vector<uint64_t> in(LIMIT);
+    parallelable_for((size_t)0, in.size(), [&](const BlockedRange<size_t>& r)
+    {
+        for (size_t id = r.begin(); id < r.end(); id++ ) {
+            in[id] = id;
+        }
+    });
+
+    uint64_t sum = 0;
+    for (size_t i = 0; i < in.size(); i++)
+    {
+        sum += in[i];
+    }
+
+    double expected1 = LIMIT * (LIMIT - 1) / 2;
+    cout << "sum  :" << sum << endl;
+    cout << "exp:"   << expected1 << endl;
+
+    CORE_ASSERT_TRUE(sum == expected1, "Wrong fill function");
+
+    /*=================================*/
+
+    uint64_t value1 =
+    parallelable_reduce((size_t)0, in.size(), (uint64_t)0,
+        [&]( const corecvs::BlockedRange<size_t> &r, const uint64_t init) {
+            uint64_t result = init;
+            for (size_t id = r.begin(); id < r.end(); id++ ) {
+                result += in[id] * in[id];
+            }
+            return result;
+        },
+        [&](const uint64_t collected, const uint64_t add)
+        {
+            return collected + add;
+        }, true);
+
+    uint64_t value2 =
+    parallelable_reduce((size_t)0, in.size(), (uint64_t)0,
+        [&]( const corecvs::BlockedRange<size_t> &r, const uint64_t init) {
+            uint64_t result = init;
+            for (size_t id = r.begin(); id < r.end(); id++ ) {
+                result += in[id] * in[id];
+            }
+            return result;
+        },
+        [&](const uint64_t collected, const uint64_t add)
+        {
+            return collected + add;
+        }, false);
+
+    uint64_t expected2 = LIMIT * (LIMIT - 1) * (2 * LIMIT - 1) / 6;
+    cout << "sumsq1  :" << value1 << endl;
+    cout << "sumsq2  :" << value2 << endl;
+    cout << "expected:" << expected2 << endl;
+
+    CORE_ASSERT_TRUE(value1 == expected2, "Wrong reduce");
+    CORE_ASSERT_TRUE(value2 == expected2, "Wrong reduce when no parallel");
+
+
 }
 
 /*================= Task Tester ====================*/

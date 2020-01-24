@@ -13,7 +13,8 @@
 
 #include "core/utils/global.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
-#include "../../core/fileformats/bmpLoader.h"
+#include "core/fileformats/bmpLoader.h"
+#include "core/buffers/bufferFactory.h"
 
 using namespace corecvs;
 
@@ -37,4 +38,26 @@ TEST(RGB24BufferTest, testConversionToG12)
 
     delete_safe(result);
     delete_safe(buffer);
+}
+
+TEST(RGBColorTest, testPallete)
+{
+    RGB24Buffer parula(100, 50 + ColorPallete::COLORPALLETE_LAST * 10);
+    for (int i = 0; i < 9; i++)
+    {
+        parula.drawRectangle(i * 10, 0, 9, 50, RGBColor::getParulaColor(i), 2);
+    }
+
+    for (int r = 0; r < ColorPallete::COLORPALLETE_LAST; r++)
+    {
+        for (int i = 0; i < 90; i++)
+        {
+            parula.drawVLine(i,
+                50 + r * 10,
+                50 + r * 10 + 9,
+                RGBColor::colorCode(i / 90.0, (ColorPallete::ColorPallete)r));
+        }
+    }
+
+    BufferFactory::getInstance()->saveRGB24Bitmap(&parula, "parula.bmp");
 }

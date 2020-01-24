@@ -234,7 +234,7 @@ void Scene3D::commonTierdown(CloudViewDialog * /*dialog*/, const Draw3dParameter
 
 void Scene3D::prepareMesh(CloudViewDialog * /*dialog*/)
 {
-
+    SYNC_PRINT(("Scene3D::prepareMesh(): called"));
 }
 
 

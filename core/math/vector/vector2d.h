@@ -130,6 +130,13 @@ public:
         return Vector2d<OtherType>((OtherType)((*this)[0]),(OtherType)((*this)[1]));
     }
 
+    inline Vector2d<float> toFloat() const {
+        return this->cast<float>();
+    }
+
+    inline Vector2d<double> toDouble() const {
+        return this->cast<double>();
+    }
 
     inline Vector2d<ElementType> leftNormal() const
     {

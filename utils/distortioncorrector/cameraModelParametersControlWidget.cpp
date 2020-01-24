@@ -164,7 +164,7 @@ void CameraModelParametersControlWidget::resetPressed()
 
 void CameraModelParametersControlWidget::assertProjectionMatch()
 {
-    Reflection *ref = ProjectionFactory::reflectionById((ProjectionType::ProjectionType)ui->projectionTypeComboBox->currentIndex());
+    const Reflection *ref = ProjectionFactory::reflectionById((ProjectionType::ProjectionType)ui->projectionTypeComboBox->currentIndex());
     if (intrinsicsWidget == NULL || ref != intrinsicsWidget->reflection)
     {
         delete_safe(intrinsicsWidget);
@@ -201,7 +201,7 @@ void CameraModelParametersControlWidget::getParameters(CameraModel& params) cons
         params.intrinsics.reset(ProjectionFactory::projectionById(curId));
     }
 
-    Reflection *ref = ProjectionFactory::reflectionById(params.intrinsics->projection);
+    const Reflection *ref = ProjectionFactory::reflectionById(params.intrinsics->projection);
     if (intrinsicsWidget != NULL && intrinsicsWidget->reflection == ref)
     {
         DynamicObjectWrapper wrapper = params.intrinsics->getDynamicWrapper();

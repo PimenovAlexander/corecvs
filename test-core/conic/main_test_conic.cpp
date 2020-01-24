@@ -188,3 +188,16 @@ TEST(conic, testRayIntersection1)
 
     }
 }
+
+TEST(conic, testCircumscribe)
+{
+    Triangle2dd t(
+        Vector2dd(0,0),
+        Vector2dd(3,0),
+        Vector2dd(0,4));
+
+    Circle2d circle = Circle2d::Circumcircle(t);
+    cout << circle << endl;
+    CORE_ASSERT_TRUE(circle.c.notTooFar(Vector2dd(1.5, 2)), "Position is wrong");
+    CORE_ASSERT_DOUBLE_EQUAL(circle.r, 2.5, "Radius Length is wrong");
+}

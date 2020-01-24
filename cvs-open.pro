@@ -15,7 +15,8 @@ SUBDIRS +=                   \
 #    scanner                  \
 #    testbed                  \
     cloudview                \
-#    physics                  \
+    physics                  \
+    physics-test             \
     imageview                \
 #    \
      generator                \
@@ -67,10 +68,11 @@ directshow.file               = wrappers/directShow/directShow.pro
 base_application.file         = applications/base/baseApplication.pro
 base_application_example.file = applications/base/baseApplicationExample.pro
 recorder.file                 = applications/recorder/recorder.pro
-scanner.file                 = applications/scanner/scanner.pro
+scanner.file                  = applications/scanner/scanner.pro
 egomotion.file                = applications/egomotion/egomotion.pro
 cloudview.file                = applications/cloudview/cloudview.pro
 physics.file                  = applications/physics/physics.pro
+physics-test.file             = applications/physics-test/physics-test.pro
 imageview.file                = applications/imageview/imageview.pro
 testbed.file                  = applications/testbed/testbed.pro
 generator.file                = tools/generator/generator.pro
@@ -78,3 +80,5 @@ generator.file                = tools/generator/generator.pro
 coptercontrol.file            = applications/coptercontrol/coptercontrol.pro
 
 OTHER_FILES += cvs-config.pri
+OTHER_FILES += CMakeLists.txt
+OTHER_FILES += cmake/Modules/*.cmake

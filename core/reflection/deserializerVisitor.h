@@ -2,7 +2,7 @@
 #define DESERIALIZERVISITOR_H
 
 #include "core/reflection/reflection.h"
-#include "core/tinyxml/tinyxml2.h"
+#include "core/tinyxml2/tinyxml2.h"
 
 namespace corecvs {
 

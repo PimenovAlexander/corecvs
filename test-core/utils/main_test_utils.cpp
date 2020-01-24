@@ -56,3 +56,12 @@ TEST(utils, testEscape)
 
     CORE_ASSERT_TRUE(s == back, "Escape failed");
 }
+
+
+TEST(utils, splitString)
+{
+    std::string name = "/media/workarea/work/flow/data/kitti_scene//training/image_2/000002_10.png";
+    std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+    std::vector<string> metaVector = HelperUtils::stringSplit(name, ',');
+    cout << metaVector.size() << std::endl;
+}

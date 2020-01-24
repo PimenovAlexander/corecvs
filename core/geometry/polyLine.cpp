@@ -34,7 +34,8 @@ Vector2d32 PolyLine::closestPointsGenerate(PolyLine p_line, int n1, int n2)
     Vector3dd v1 = points[begins[n1]];
     Vector3dd v2 = points[breaks[n1]];
 
-    int closeset1, closeset2;
+    int closeset1 = 0;
+    int closeset2 = 0;
     double best_diff1, best_diff2;
     bool v1_f, v2_f;
     v1_f = v2_f = true;

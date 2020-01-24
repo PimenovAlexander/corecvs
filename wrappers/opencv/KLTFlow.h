@@ -70,7 +70,7 @@ class OpenCVFlowProcessor : public corecvs::Processor6D
 
 
     /** Implemetation may allow you to reset some internal structures at will **/
-    virtual int clean(int mask) {
+    virtual int clean(int /*mask*/) {
         return 0;
     }
 
@@ -83,17 +83,18 @@ class OpenCVFlowProcessor : public corecvs::Processor6D
      *
      * To get consistent result don't modify frame data after the call to setFrame*
      **/
-    virtual int setFrameG12  (FrameNames frameType, corecvs::G12Buffer   *frame)
+    virtual int setFrameG12  (corecvs::G12Buffer   */*frame*/, int /*frameType*/) override
     {
         return 1;
     }
 
-    virtual int setFrameRGB24(FrameNames frameType, corecvs::RGB24Buffer *frame)
+    virtual int setFrameRGB24(corecvs::RGB24Buffer   *frame, int /*frameType*/) override
     {
         inCurr = new corecvs::RGB24Buffer(frame);
+        return 0;
     }
 
-    virtual int setDisparityBufferS16(FrameNames frameType, corecvs::FlowBuffer *frame)
+    virtual int setDisparityBufferS16(corecvs::FlowBuffer   */*frame*/, int /*frameType*/) override
     {
         return 1;
 
@@ -103,6 +104,7 @@ class OpenCVFlowProcessor : public corecvs::Processor6D
     virtual int setStats(corecvs::Statistics *stats)
     {
         this->stats = stats;
+        return 0;
     }
 
 
@@ -111,12 +113,12 @@ class OpenCVFlowProcessor : public corecvs::Processor6D
 
 
     virtual std::map<std::string, corecvs::DynamicObject> getParameters();
-    virtual bool setParameters(std::string name, const corecvs::DynamicObject &param) {return true;}
+    virtual bool setParameters(std::string /*name*/, const corecvs::DynamicObject & /*param*/) {return true;}
 
 
     /** Oldstyle calls **/
-    virtual int setParameteri(int parameterName, int parameterValue) {return 0;}
-    virtual int requestResultsi(int parameterName) {return 0;}
+    virtual int setParameteri  (int /*parameterName*/, int /*parameterValue*/) {return 0;}
+    virtual int requestResultsi(int /*parameterName*/) {return 0;}
 
     /**
      * Methods below return the pointers to the internal data structures that are only valid
@@ -139,11 +141,18 @@ class OpenCVFlowProcessor : public corecvs::Processor6D
         return NULL;
     }
 
+    virtual corecvs::FloatFlowBuffer *getFloatFlow()
+    {
+        return NULL;
+    }
+
+
 
     virtual int getError(std::string *errorString) {return 0;}
 };
 
 
+#if 0
 class OpenCVProcessor6DFactory : public corecvs::Processor6DFactory
 {
 public:
@@ -151,5 +160,6 @@ public:
    virtual std::string getName() {return "OpenCVFlowProcessor"; }
    virtual ~OpenCVProcessor6DFactory() {}
 };
+#endif
 
 #endif /* KLTFLOW_H_ */

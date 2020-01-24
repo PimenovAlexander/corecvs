@@ -8,3 +8,4 @@ SOURCES += \
     automotive/flowVectorInformation.cpp \
     $$PWD/simulation/testSceneSimulator.cpp
 
+OTHER_FILES +=$$PWD/CMakeLists.txt

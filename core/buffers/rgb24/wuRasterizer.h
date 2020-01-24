@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cfloat>
 #include <iostream>
+#include <cmath>
 
 #include "core/math/mathUtils.h"
 
