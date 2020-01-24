@@ -49,13 +49,6 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
     }
     failSafeOutput.axis[failSafeOutput.CHANNEL_THROTTLE] = 1300;
 
-    /* Move this to other thread completly */
-    /**
-    copterTimer.setInterval(30);
-    copterTimer.setSingleShot(false);
-    connect(&copterTimer, SIGNAL(timeout()), this, SLOT(mainAction()));
-    copterTimer.start();
-    **/
     connect(&mJoystickSettings, SIGNAL(joystickUpdated(JoystickState)), this, SLOT(joystickUpdated(JoystickState)));
 
     ui->actionShowLog->toggled(false);
@@ -92,6 +85,11 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
 
 
     connect(ui->actionDownloadModels, SIGNAL(triggered()), this , SLOT(downloadModels()));
+
+    /* Load world */
+    world.load("models/world.json");
+    connect(ui->actionWorldRedraw, SIGNAL(triggered()), this , SLOT(worldRedraw()));
+
 }
 
 PhysicsMainWindow::~PhysicsMainWindow()
@@ -233,39 +231,6 @@ void PhysicsMainWindow::showValues()                                   //shows a
 
 void PhysicsMainWindow::startVirtualMode()
 {
-    /*
-        SYNC_PRINT(("PhysicsMainWindow::startVirtualMode(): Adding new object to scene\n"));
-        Affine3DQ copterPos = Affine3DQ::Shift(10,10,10);
-
-        Mesh3DDecorated *mesh = new Mesh3DDecorated;
-
-        mesh->switchColor();
-
-        mesh->mulTransform(copterPos);
-
-        mesh->setColor(RGBColor::Red());
-        for (size_t i = 0; i < simSim.mainObjects.size(); ++i)
-        {
-            PhysMainObject &mainObj = simSim.mainObjects[i];
-            for (size_t j = 0; j < mainObj.objects.size(); ++j)
-            {
-                mainObj.objects[j]->addToMesh(*mesh);
-            }
-        }
-
-        Mesh3DScene *scene = new Mesh3DScene;
-        scene->setMesh(mesh);
-
-        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene));
-        ui->cloud->update();
-
-        simSim.start();
-        */
-
-//    simSim.startRealTimeSimulation();
-//    simSim.execTestSimulation();
-    //simSim.execJanibekovTest();
-    //simSim.execTestPhysObject();
     QTimer::singleShot(8, this, SLOT(keepAlive()));
 }
 
@@ -290,57 +255,42 @@ void PhysicsMainWindow::stopVirtualMode()
     ui->cloud->update();
 }
 
+void PhysicsMainWindow::worldRedraw()
+{
+    SYNC_PRINT(("PhysicsMainWindow::worldRedraw(): called\n"));
+
+    /* Temporary world draw */
+    if (mShadedScene == NULL)
+    {
+        mShadedScene = new SceneShaded;
+        Mesh3DDecorated *mesh = new Mesh3DDecorated;
+        mesh->switchColor();
+        for (size_t i = 0; i < world.meshes.size(); i++)
+        {
+            if (!world.meshes[i].show) {
+                continue;
+            }
+            mesh->mulTransform(world.meshes[i].transform);
+            mesh->add(world.meshes[i].mesh);
+            mesh->popTransform();
+        }
+
+        mShadedScene->setMesh(mesh);
+        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mShadedScene), CloudViewDialog::CLUSTER_SWARM);
+    }
+}
+
 void PhysicsMainWindow::keepAlive()
 {
     if (virtualModeActive)
     {
-//        drawDrone();
-        drawTestObject();
-//        drawDzhanibekov();
         QTimer::singleShot(8, this, SLOT(keepAlive()));
     }
+
 }
 
-void PhysicsMainWindow::drawDzhanibekov()
-{
-    bool oldbackend = !(ui->actionNewBackend->isChecked());
-    Mesh3DScene *scene  = NULL;
 
-    if (oldbackend)
-    {
-        scene = new Mesh3DScene;
-        Mesh3D *mesh = new Mesh3D();
-        mesh->switchColor();
-        scene->setMesh(mesh);
-    }
-    else
-    {
-        if (mShadedScene == NULL)
-        {
-            mShadedScene = new SceneShaded;
-            ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mShadedScene), CloudViewDialog::DISP_CONTROL_ZONE);
-        }
-    }
 
-    if (oldbackend)
-    {
-
-    }
-    else
-    {
-        Mesh3DDecorated *mesh = new Mesh3DDecorated();
-        mesh->switchNormals();
-        //mesh->dumpInfo();
-        mShadedScene->setMesh(mesh);
-    }
-
-    mGraphDialog.update();
-
-    if (oldbackend) {
-        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene), CloudViewDialog::CONTROL_ZONE);
-    }
-    ui->cloud->update();
-}
 
 void PhysicsMainWindow::drawDrone()
 {
@@ -387,47 +337,6 @@ void PhysicsMainWindow::drawDrone()
     }
     ui->cloud->update();
 }
-
-void PhysicsMainWindow::drawTestObject()
-{
-    bool oldbackend = !(ui->actionNewBackend->isChecked());
-    Mesh3DScene *scene  = NULL;
-
-    if (oldbackend)
-    {
-        scene = new Mesh3DScene;
-        Mesh3D *mesh = new Mesh3D();
-        mesh->switchColor();
-        scene->setMesh(mesh);
-    }
-    else
-    {
-        if (mShadedScene == NULL)
-        {
-            mShadedScene = new SceneShaded;
-            ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mShadedScene), CloudViewDialog::DISP_CONTROL_ZONE);
-        }
-    }
-
-    if (oldbackend)
-    {
-    }
-    else
-    {
-        Mesh3DDecorated *mesh = new Mesh3DDecorated();
-        mesh->switchNormals();
-        //mesh->dumpInfo();
-        mShadedScene->setMesh(mesh);
-    }
-
-    mGraphDialog.update();
-
-    if (oldbackend) {
-        ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(scene), CloudViewDialog::CONTROL_ZONE);
-    }
-    ui->cloud->update();
-}
-
 
 void PhysicsMainWindow::showCameraInput()
 {
@@ -632,21 +541,6 @@ void PhysicsMainWindow::stop()
 
 
 
-
-///
-/// \brief PhysicsMainWindow::SendOurValues
-/// \param OurValues
-/// Sends our values to module (yes, it wants its own package for every byte)
-void PhysicsMainWindow::sendOurValues(std::vector<uint8_t> OurValues)
-{
-    std::vector<uint8_t>  flyCommandOutput = OurValues;
-    for (size_t i = 0; i < flyCommandOutput.size(); i++)
-    {
-        std::vector<uint8_t>  flyCom = { flyCommandOutput[i] };
-        serialPort.write((const char *)flyCom.data(), flyCom.size());
-        serialPort.flush();
-    }
-}
 
 void PhysicsMainWindow::startJoyStickMode()
 {
@@ -948,10 +842,6 @@ void PhysicsMainWindow::on_toolButton_2_released()
 void PhysicsMainWindow::on_pushButton_released()
 {
     iiAutoPilot.testImageVoid();
-}
-void PhysicsMainWindow::on_connetToVirtualButton_pressed()
-{
-
 }
 
 void PhysicsMainWindow::calibrateCamera()

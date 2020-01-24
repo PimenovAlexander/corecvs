@@ -137,7 +137,7 @@ RGB24Buffer *TGALoaderBase::loadRGB(std::string name)
 {
     uint8_t *data = NULL;
     TGAHeader header;
-    header.trace = true;
+    header.trace = false;
 
     RGB24Buffer *toReturn = NULL;
 

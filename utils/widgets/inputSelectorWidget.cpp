@@ -48,8 +48,8 @@ InputSelectorWidget::InputSelectorWidget(QWidget *parent, bool autoInit, QString
     connect(ui.v4l2hwCheckBox, SIGNAL(toggled(bool)), this, SLOT(updateInputString()));
 
     connect(ui.v4l2SizeComboBox , SIGNAL(currentIndexChanged(int)), this, SLOT(sizeIndexChanged(int)));
-    connect(ui.v4l2HeightSpinBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateInputString()));
-    connect(ui.v4l2WidthSpinBox , SIGNAL(currentIndexChanged(int)), this, SLOT(updateInputString()));
+    connect(ui.v4l2HeightSpinBox, SIGNAL(valueChanged(int)), this, SLOT(updateInputString()));
+    connect(ui.v4l2WidthSpinBox , SIGNAL(valueChanged(int)), this, SLOT(updateInputString()));
 
 
 }

@@ -31,8 +31,6 @@ target_sources(drone-ui
     
     ${CMAKE_CURRENT_LIST_DIR}/frameProcessor.h
 
-    ${CMAKE_CURRENT_LIST_DIR}/world/simulationWorld.h
-
 )
 
 target_sources(drone-ui
@@ -52,7 +50,6 @@ target_sources(drone-ui
 
     ${CMAKE_CURRENT_LIST_DIR}/frameProcessor.cpp
 
-    ${CMAKE_CURRENT_LIST_DIR}/world/simulationWorld.cpp
 )
 
 set (UI_FILES

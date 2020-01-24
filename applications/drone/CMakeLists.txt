@@ -3,8 +3,10 @@ if (OpenCV_LIBS)
         drone-core
         drone-ui
         physics-test
+        drone-utils
         drone-app
         calibrator
+
     )
 
     foreach(test_subdirectory ${DRONE_SUBDIRECTORIES})

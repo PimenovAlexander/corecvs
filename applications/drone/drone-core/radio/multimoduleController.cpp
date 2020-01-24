@@ -1,10 +1,5 @@
 #include "multimoduleController.h"
 
-#if USE_QT
-#include <QtSerialPort/QSerialPort>
-#include <QtSerialPort/QSerialPortInfo>
-#endif
-
 #include <bitset>
 #include <iostream>
 #include <sstream>
@@ -183,20 +178,6 @@ bool MultimoduleController::connectToModule(const std::string &device)
 
     timeToStop = false;
     mSpinThread = new std::thread(&MultimoduleController::run, this);
-
-#if 0
-    QString serialPortName = QString::fromStdString(device);
-    serialPort.setPortName(serialPortName);
-    serialPort.setParity(QSerialPort::EvenParity);
-    const int serialPortBaudRate = QSerialPort::BaudRate(100000);
-    serialPort.setBaudRate(serialPortBaudRate);
-    serialPort.setStopBits(QSerialPort::StopBits(2));
-    if (!serialPort.open(QIODevice::ReadWrite)) {
-        cout <<"Failed to open port, please check that /dev/ttyUSB0 exists" << endl;
-    } else {
-        mSpinThread = new std::thread(&MultimoduleController::run, this);
-    }
-#endif
     return true;
 }
 

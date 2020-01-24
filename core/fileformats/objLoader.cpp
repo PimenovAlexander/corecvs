@@ -102,23 +102,27 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
 
             for (size_t i = 0; i < strs.size(); i++)
             {
+
                 //LOCAL_PRINT(("Attribute: %s\n", strs[i].c_str()));
                 std::stringstream splitter(strs[i]);
                 std::string part;
 
+                /* We now parse group i.e */
+                /* 2684//856              */
+
                 for (int j = 0; j < 3 && std::getline(splitter, part, '/'); j++)
                 {
-                    if (j == 0) {
+                    if (j == 0 && !part.empty()) {
                         int id = std::stoi(part);
                         face[i] = (id - 1);
                     }
 
-                    if (j == 1) {
+                    if (j == 1 && !part.empty()) {
                         int id = std::stoi(part);
                         texId[i] = (id - 1);
                     }
 
-                    if (j == 2) {
+                    if (j == 2 && !part.empty()) {
                         int id = std::stoi(part);
                         normId[i] = (id - 1);
                     }
@@ -156,7 +160,14 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
         }
         if (command == com_smoothing)
         {
-            cout << "smoothing command: This is not fully supported" << endl;
+            static int smoothing_count = 0;
+            smoothing_count++;
+            if (smoothing_count < 10) {
+                cout << "smoothing command: This is not fully supported" << endl;
+            }
+            if (smoothing_count == 10) {
+                cout << "smoothing command: This is not fully supported - futher would be suppressed" << endl;
+            }
         }
         if (command == com_grouping)
         {
@@ -190,7 +201,7 @@ int OBJLoader::loadMaterials(istream &input, vector<OBJMaterial> &materials, con
         count++;
         HelperUtils::getlineSafe (input, line);
 
-        cout << "Line " << count << " <" <<  line << ">" << endl;
+        if (trace) cout << "Line " << count << " <" <<  line << ">" << endl;
 
         if (HelperUtils::startsWith(line, "#")) {
             cout << "OBJLoader::loadMaterial: Skipping comment " << line << endl;
@@ -201,7 +212,7 @@ int OBJLoader::loadMaterials(istream &input, vector<OBJMaterial> &materials, con
         string command;
         work >> command;
 
-        cout << "OBJLoader::loadMaterial: command: " << command << endl;
+        if (trace) cout << "OBJLoader::loadMaterial: command: " << command << endl;
 
         if (command == "newmtl") {
             if (!material.name.empty())
@@ -225,7 +236,7 @@ int OBJLoader::loadMaterials(istream &input, vector<OBJMaterial> &materials, con
 
         if (koef_id != OBJMaterial::KOEF_LAST)
         {
-            cout << "Will load koef" << endl;
+            if (trace) cout << "Will load koef" << endl;
             work >> material.koefs[koef_id].x();
             work >> material.koefs[koef_id].y();
             work >> material.koefs[koef_id].z();
@@ -247,12 +258,12 @@ int OBJLoader::loadMaterials(istream &input, vector<OBJMaterial> &materials, con
         {
             work >> tex_name;
             std::string fullpath = path + PATH_SEPARATOR + tex_name;
-            cout << "Will load texture <" << tex_name << "> ";
-            cout << "full path <" << fullpath << ">" << endl;
+            if (trace) cout << "Will load texture <" << tex_name << "> ";
+            if (trace) cout << "full path <" << fullpath << ">" << endl;
 
             RGB24Buffer *texture = BufferFactory::getInstance()->loadRGB24Bitmap(fullpath);
             if (texture != NULL) {
-                cout << "Texture <" << texture->getSize() << ">" << endl;
+                if (trace) cout << "Texture <" << texture->getSize() << ">" << endl;
             } else {
                 cout << "Failed to load texture" << endl;
             }
