@@ -70,7 +70,6 @@ file(GLOB SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
 file(GLOB HDR_FILES ${CMAKE_CURRENT_LIST_DIR}/*.h)
 file(GLOB UI_FILES ${CMAKE_CURRENT_LIST_DIR}/*.ui)
 
-
 list(REMOVE_ITEM SRC_FILES "${CMAKE_CURRENT_LIST_DIR}/trackPainter.cpp")
 
 foreach(utils_subdirectory ${UTILS_SUBDIRECTORIES})
@@ -79,6 +78,7 @@ foreach(utils_subdirectory ${UTILS_SUBDIRECTORIES})
     include(${utils_subdirectory}/sourcelist.cmake)
 endforeach(utils_subdirectory)
 
+message(STATUS "Found ui files:" "${UI_FILES}")
 
 
 message("Additional include path <${INC_PATHS}>")

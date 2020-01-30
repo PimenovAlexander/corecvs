@@ -2,7 +2,7 @@
   
   <include name="../../core/xml/parameters.xml"/>
 
-  <enum name="draw 3d Style" incpath="">
+  <enum name="draw 3d Style" incpath="core/xml/generated/">
     <item name="Points"       id="0"  comment=""/>
     <item name="Wireframe"    id="1"  comment=""/>
     <item name="Color"        id="2"  comment=""/>
@@ -10,14 +10,14 @@
     <item name="Textured"     id="4"  comment=""/>  
   </enum>
   
-  <enum name="draw 3d Texture Gen" incpath="">
+  <enum name="draw 3d Texture Gen" incpath="core/xml/generated/">
     <item name="No Texture"     id="0"  comment=""/>
     <item name="Auto Decide"    id="1"  comment=""/>
     <item name="Force Texture"  id="2"  comment=""/>
   </enum>
   
   
-  <class name="draw 3d Parameters" incpath="">
+  <class name="draw 3d Parameters" incpath="core/xml/generated/">
     <!-- Geometry  draw style -->
     <field type="draw 3d Style" name="style" defaultValue="3"/>
     

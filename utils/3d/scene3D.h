@@ -11,7 +11,7 @@
 #include "core/utils/global.h"
 
 #include "core/math/matrix/matrix44.h"
-#include "generated/draw3dParameters.h"
+#include "core/xml/generated/draw3dParameters.h"
 #include "parametersControlWidgetBase.h"
 
 class CloudViewDialog;

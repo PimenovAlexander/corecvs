@@ -436,32 +436,34 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
 
             mProgram[FACE]->bind();
 
-            glFuncs.glVertexAttribPointer(mPosAttr, 3, GL_FLOAT, GL_FALSE, 0, facePositions.data());
+            SceneShadedFaceCache &faces = faceCache.back();
+
+            glFuncs.glVertexAttribPointer(mPosAttr, 3, GL_FLOAT, GL_FALSE, 0, faces.facePositions.data());
             glFuncs.glEnableVertexAttribArray(mPosAttr);
 
-            if (!faceColors.empty() && !faceVertexColors.empty())
+            if (!faces.faceColors.empty() && !faces.faceVertexColors.empty())
             {
-                glFuncs.glVertexAttribPointer(mColAttr, GL_BGRA, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(RGBColor), faceColors.data());
+                glFuncs.glVertexAttribPointer(mColAttr, GL_BGRA, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(RGBColor), faces.faceColors.data());
                 glFuncs.glEnableVertexAttribArray(mColAttr);
 
-                glFuncs.glVertexAttribPointer(mFaceColAttr, GL_BGRA, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(RGBColor), faceVertexColors.data());
+                glFuncs.glVertexAttribPointer(mFaceColAttr, GL_BGRA, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(RGBColor), faces.faceVertexColors.data());
                 glFuncs.glEnableVertexAttribArray(mFaceColAttr);
 
             }
-            if (mMesh->hasTexCoords && !faceTexCoords.empty())
+            if (mMesh->hasTexCoords && !faces.faceTexCoords.empty())
             {
-                glFuncs.glVertexAttribPointer(mTexAttr, 2, GL_FLOAT, GL_FALSE, 0, faceTexCoords.data());
+                glFuncs.glVertexAttribPointer(mTexAttr, 2, GL_FLOAT, GL_FALSE, 0, faces.faceTexCoords.data());
                 glFuncs.glEnableVertexAttribArray(mTexAttr);
 
-                glFuncs.glVertexAttribIPointer(mTexIdAttr, 1, GL_UNSIGNED_INT, 0, faceTexNums.data());
+                glFuncs.glVertexAttribIPointer(mTexIdAttr, 1, GL_UNSIGNED_INT, 0, faces.faceTexNums.data());
 
                 glFuncs.glEnableVertexAttribArray(mTexIdAttr);
 
             }
 
-            if (mMesh->hasNormals && !faceNormals.empty())
+            if (mMesh->hasNormals && !faces.faceNormals.empty())
             {
-                glFuncs.glVertexAttribPointer(mNormalAttr, 3, GL_FLOAT, GL_FALSE, 0, faceNormals.data());
+                glFuncs.glVertexAttribPointer(mNormalAttr, 3, GL_FLOAT, GL_FALSE, 0, faces.faceNormals.data());
                 glFuncs.glEnableVertexAttribArray(mNormalAttr);
             }
 
@@ -493,7 +495,7 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
                 mProgram[FACE]->setUniformValue(mTextureSampler, 1);
             }
 
-            glDrawElements(GL_TRIANGLES, GLsizei(mMesh->faces.size() * 3), GL_UNSIGNED_INT, faceIds.data());
+            glDrawElements(GL_TRIANGLES, GLsizei(mMesh->faces.size() * 3), GL_UNSIGNED_INT, faces.faceIds.data());
 #endif
 
             glBindTexture(GL_TEXTURE_2D, 0);

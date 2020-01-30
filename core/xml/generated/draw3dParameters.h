@@ -32,8 +32,8 @@
 /*
  *  Additional includes for enum section.
  */
-#include "draw3dStyle.h"
-#include "draw3dTextureGen.h"
+#include "core/xml/generated/draw3dStyle.h"
+#include "core/xml/generated/draw3dTextureGen.h"
 
 /**
  * \brief draw 3d Parameters 
