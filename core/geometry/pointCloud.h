@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include "core/math/vector/vector3d.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 
 #include "core/geometry/kdtree.h"
 #include "core/geometry/raytrace/bspTree.h"

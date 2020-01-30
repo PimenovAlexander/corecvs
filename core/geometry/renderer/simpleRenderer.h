@@ -11,7 +11,7 @@
 #include "core/geometry/renderer/geometryIterator.h"
 #include "core/buffers/abstractBuffer.h"
 #include "core/buffers/rgb24/abstractPainter.h"
-#include "core/geometry/mesh3DDecorated.h"
+#include "core/geometry/mesh/mesh3DDecorated.h"
 #include "core/buffers/mipmapPyramid.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/geometry/renderer/attributedTriangleSpanIterator.h"

@@ -1,7 +1,7 @@
 #ifndef MESH3DDECORATED_H
 #define MESH3DDECORATED_H
 
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
 
 namespace corecvs
@@ -103,7 +103,7 @@ public:
     void switchTextures(bool on = true);
     void switchNormals(bool on = true);
 
-    void addFace(const Vector3d32 &faceId);
+    virtual void addFace(const Vector3d32 &faceId) override;
 
     virtual void addAOB(const AxisAlignedBoxParameters &box, bool addFaces = true) override;
     virtual void addAOB(const AxisAlignedBox3d &box, bool addFaces = true) override;
@@ -119,35 +119,18 @@ public:
 
     virtual void transform(const Matrix44 &matrix) override;
 
-    virtual void clear();
+    virtual void clear() override;
 
     virtual void dumpInfo(ostream &out = std::cout) override;
 
-    virtual void fillTestScene();
+    virtual void fillTestScene() override;
 
     void recomputeMeanNormals();
 
     bool verify( void );
 };
 
-class MeshFilter
-{
-public:
-    static
-    void removeDuplicatedFaces(Mesh3DDecorated &mesh);
 
-    static
-    void removeUnreferencedVertices(Mesh3DDecorated &mesh);
-
-    static
-    void removeIsolatedPieces(Mesh3DDecorated &mesh,  unsigned minCountOfFaces);
-
-    static
-    void removeZeroAreaFaces(Mesh3DDecorated &mesh);
-
-   static
-    void removeDuplicatedVertices(Mesh3DDecorated &mesh);
-};
 
 } // namespace corecvs
 

@@ -61,7 +61,7 @@ END_TEXT
         echo copying ${class}
         copy_if_different ${GEN_DIR}/${class}.h   ${DST_DIR}
         copy_if_different ${GEN_DIR}/${class}.cpp ${DST_DIR}
-        copy_if_different ${GEN_DIR}/${class}ControlWidget.cpp ${WIDGETS_DIR}
+        #copy_if_different ${GEN_DIR}/${class}ControlWidget.cpp ${WIDGETS_DIR}
 
         echo  >>${PRIFILE} SOURCES+= ${DST_REL_DIR}/${class}.cpp
         echo  >>${PRIFILE} HEADERS+= ${DST_REL_DIR}/${class}.h
@@ -267,6 +267,10 @@ full_ui_classes+=" distortionApplicationParameters"
 full_ui_classes+=" chessBoardCornerDetectorParamsBase"
 full_ui_classes+=" chessBoardAssemblerParamsBase"
 full_ui_classes+=" bitcodeBoardParamsBase"
+
+enums+=" draw3dStyle"
+enums+=" draw3dTextureGen"
+full_ui_classes+=" draw3dParameters"
 
 #full_ui_classes+=" openCVBMParameters"
 #full_ui_classes+=" openCVSGMParameters"

@@ -36,7 +36,7 @@
 
 #include "controlRecord.h"
 #include "simulation.h"
-#include "core/geometry/mesh3DDecorated.h"
+#include "core/geometry/mesh/mesh3DDecorated.h"
 #include "mesh3DScene.h"
 #include "patternDetectorParametersWidget.h"
 

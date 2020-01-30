@@ -1,0 +1,50 @@
+<poco version="5.0">
+  
+  <include name="../../../core/xml/parameters.xml"/>
+  <include name="../../../core/xml/draw3d.xml"/>
+
+  <class name="draw 3d Camera Parameters">
+    <embed type="draw 3d Parameters" name="Base Parameters" />
+    <field type="double"  name="fovH"      min = "0" max="180"   defaultValue="90" />
+    <field type="double"  name="fovV"      min = "0" max="180"   defaultValue="60" />
+    <field type="double"  name="nearPlane" min = "0" max="20000" defaultValue="10" />
+    <field type="double"  name="farPlane"  min = "0" max="20000" defaultValue="100"/>
+  </class>
+  
+  <enum name="ViMouse 3d Stereo Style" incpath="">
+    <item name="Grey value"   id="0"/>
+    <item name="Z Coordinate" id="1"/>
+    <item name="Y Coordinate" id="2"/>
+    <item name="Distance"     id="3"/>
+    <item name="None"         id="4"/>
+    <item name="By Flag"      id="5"/>
+    <item name="By Cluster"   id="6"/>    
+  </enum>
+  
+  <enum name="ViMouse 3d Flow Style" incpath="">
+    <item name="None"    id="0"/>
+    <item name="White"   id="1"/>
+    <item name="Heat"    id="2"/>
+    <item name="By Flag" id="3"/>    
+  </enum>
+
+  <class name="draw 3d ViMouse Parameters">
+    <!--  
+    double redDist  = dialog->mUi.redZBox ->value();
+    double blueDist = dialog->mUi.blueZBox->value();
+    double flowZoom = dialog->mUi.flowZoomSpinBox->value();
+    int pointColorType = dialog->mUi.colorTypeBox    ->currentIndex();
+    int flowColorType  = dialog->mUi.flowColorTypeBox->currentIndex();
+    -->
+
+    <field type="double"  name="redDist"   min = "-50000" max="50000"   defaultValue="0" />
+    <field type="double"  name="blueDist"  min = "-50000" max="50000"   defaultValue="1000" />
+    <field type="double"  name="flowZoom"  min = "0" max="50"   defaultValue="1" />
+ 
+    <field type="ViMouse 3d Stereo Style" name="Point Color Type"  defaultValue="0" />
+    <field type="ViMouse 3d Flow Style"   name="Flow Color Type"   defaultValue="0" />
+  </class>
+
+
+  
+</poco>

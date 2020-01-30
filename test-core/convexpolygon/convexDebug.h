@@ -1,7 +1,7 @@
 #ifndef CONVEXDEBUG_H
 #define CONVEXDEBUG_H
 
-#include <core/geometry/mesh3d.h>
+#include <core/geometry/mesh/mesh3d.h>
 #include <core/geometry/polygons.h>
 
 using namespace corecvs;

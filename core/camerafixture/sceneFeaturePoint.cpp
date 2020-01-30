@@ -3,7 +3,7 @@
 #include "core/camerafixture/cameraFixture.h"
 #include "core/rectification/multicameraTriangulator.h"
 #include "core/utils/visitors/propertyListVisitor.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 
 #ifdef WITH_BOOST
 #include <boost/math/special_functions/gamma.hpp>

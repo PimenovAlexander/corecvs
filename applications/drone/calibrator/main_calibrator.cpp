@@ -2,8 +2,8 @@
 #include "qtFileLoader.h"
 
 #include "core/utils/utils.h"
-#include "core/geometry/mesh3d.h"
-#include "core/geometry/mesh3DDecorated.h"
+#include "core/geometry/mesh/mesh3d.h"
+#include "core/geometry/mesh/mesh3DDecorated.h"
 #include "core/reflection/commandLineSetter.h"
 #include "core/buffers/bufferFactory.h"
 #include "core/stereointerface/dummyFlowProcessor.h"

@@ -126,7 +126,7 @@ set_source_files_properties(${ADD_SRC_FILES} PROPERTIES EXTERNAL_OBJECT true)
 
 set(ADD_SRC_FILES ${ADD_SRC_FILES}
     ${CMAKE_CURRENT_LIST_DIR}/../tools/generator/xml/utils.xml
-    ${CMAKE_CURRENT_LIST_DIR}/../tools/generator/xml/draw3d.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../tools/generator/xml/draw3dutils.xml
     ${CMAKE_CURRENT_LIST_DIR}/../tools/generator/xml/graphPlot.xml
     )
 

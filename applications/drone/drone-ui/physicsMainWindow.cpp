@@ -273,6 +273,8 @@ void PhysicsMainWindow::worldRedraw()
             mesh->mulTransform(world.meshes[i].transform);
             mesh->add(world.meshes[i].mesh);
             mesh->popTransform();
+
+            mesh->materials = world.meshes[i].mesh.materials;
         }
 
         mShadedScene->setMesh(mesh);

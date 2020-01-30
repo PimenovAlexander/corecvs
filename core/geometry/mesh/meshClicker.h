@@ -1,7 +1,7 @@
 #ifndef MESHCLICKER_H
 #define MESHCLICKER_H
 
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 
 namespace corecvs {
 

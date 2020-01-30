@@ -17,7 +17,7 @@
 
 #include "core/math/vector/vector3d.h"
 #include "core/math/matrix/similarityReconstructor.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/utils/propertyList.h"
 #include "core/utils/visitors/propertyListVisitor.h"
 

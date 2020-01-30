@@ -2,7 +2,7 @@
 #define SIMULATIONWORLD_H
 
 #include <string>
-#include <core/geometry/mesh3DDecorated.h>
+#include <core/geometry/mesh/mesh3DDecorated.h>
 #include <core/math/mathUtils.h>
 
 

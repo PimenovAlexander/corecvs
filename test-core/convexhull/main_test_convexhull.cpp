@@ -17,7 +17,7 @@
 #include "core/geometry/convexQuickHull.h"
 #include "core/geometry/projectiveConvexQuickHull.h"
 
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/utils/preciseTimer.h"
 
 

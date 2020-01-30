@@ -45,7 +45,7 @@ set ( ADDITIONAL_MODULES
 
 message(STATUS "Core will use ${CORE_SUBMODULES} and ${ADDITIONAL_MODULES}")
 
-add_library(corecvs STATIC fileformats/dxf_support/blocks/dxfBlock.h fileformats/dxf_support/blocks/dxfBlock.cpp fileformats/dxf_support/dxfDrawing.cpp)
+add_library(corecvs STATIC)
 
 set_property(TARGET corecvs PROPERTY CXX_STANDARD 17)
 set_property(TARGET corecvs PROPERTY CXX_STANDARD_REQUIRED ON)

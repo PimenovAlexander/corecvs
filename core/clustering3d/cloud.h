@@ -7,7 +7,7 @@
 
 #include "core/utils/global.h"
 #include "core/clustering3d/swarmPoint.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 
 namespace corecvs {
 

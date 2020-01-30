@@ -1,5 +1,5 @@
 #include "core/geometry/halfspaceIntersector.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/geometry/polygons.h"
 #include "core/geometry/convexHull.h"
 

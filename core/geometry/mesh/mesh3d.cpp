@@ -7,7 +7,7 @@
 
 #include "core/math/mathUtils.h"      // M_PI
 #include "core/buffers/rgb24/abstractPainter.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/fileformats/plyLoader.h"
 #include "core/cammodel/cameraParameters.h"
 

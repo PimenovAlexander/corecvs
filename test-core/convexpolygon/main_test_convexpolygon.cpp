@@ -11,7 +11,7 @@
 #include <iostream>
 #include <core/buffers/bufferFactory.h>
 #include <core/buffers/rgb24/abstractPainter.h>
-#include <core/geometry/mesh3d.h>
+#include <core/geometry/mesh/mesh3d.h>
 #include "gtest/gtest.h"
 
 #include "core/utils/global.h"

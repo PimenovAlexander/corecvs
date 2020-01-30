@@ -6,12 +6,12 @@
 #include <bits/stdc++.h>
 
 #include "core/utils/log.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 
 #include "core/utils/utils.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/math/matrix/matrix33.h"
-#include "core/geometry/mesh3DDecorated.h"
+#include "core/geometry/mesh/mesh3DDecorated.h"
 #include "core/math/affine.h"
 
 class PhysicsObject

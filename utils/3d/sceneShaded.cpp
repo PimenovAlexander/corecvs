@@ -37,16 +37,6 @@ void dumpGLErrors()
     }
 }
 
-Vector3df toFloat(const Vector3dd &v)
-{
-    return Vector3df(v.x(), v.y(), v.z());
-}
-
-Vector2df toFloat(const Vector2dd &v)
-{
-    return Vector2df(v.x(), v.y());
-}
-
 
 static const char *vertexShaderSource =
     "attribute highp vec4 posAttr;\n"
@@ -225,11 +215,23 @@ void SceneShaded::applyParameters()
 
 void SceneShaded::prepareTextures(CloudViewDialog * dialog)
 {   
+
     if (mTexturesUpdated) {
         return;
     }
-
     SYNC_PRINT(("void SceneShaded::prepareTextures():called\n"));
+
+    if (dialog == NULL) {
+        SYNC_PRINT(("void SceneShaded::prepareTextures(): Error: dialog is NULL\n"));
+        return;
+    }
+
+    if (mMesh == NULL) {
+        SYNC_PRINT(("void SceneShaded::prepareTextures(): Error: mesh is NULL\n"));
+        return;
+    }
+
+    SYNC_PRINT(("void SceneShaded::prepareTextures(): Mesh has %d matrials\n", (int)mMesh->materials.size()));
 
     dialog->mUi.widget->makeCurrent();
     QOpenGLFunctions_4_5_Core &glFuncs = *(dialog->mUi.widget->context()->versionFunctions<QOpenGLFunctions_4_5_Core>());
@@ -245,6 +247,8 @@ void SceneShaded::prepareTextures(CloudViewDialog * dialog)
         dumpGLErrors();
         addTexture(mTexture, texBuf);
         glFuncs.glDisable(GL_TEXTURE_2D);
+    } else {
+        SYNC_PRINT(("void SceneShaded::prepareTextures(): Message: texBuf is NULL\n"));
     }
 
     /*Prepare Bumpmap*/
@@ -258,6 +262,8 @@ void SceneShaded::prepareTextures(CloudViewDialog * dialog)
         dumpGLErrors();
         addTexture(mBumpmap, bumpBuf);
         glFuncs.glDisable(GL_TEXTURE_2D);
+    } else {
+        SYNC_PRINT(("void SceneShaded::prepareTextures(): Message: bumpBuf is NULL\n"));
     }
 
     if (!mMesh->materials.empty())
@@ -303,154 +309,7 @@ void SceneShaded::prepareMesh(CloudViewDialog * dialog)
 
     /* Prepare caches in OpenGL formats */
 
-    /* Vertexes */
-    {
-        positions.resize(mMesh->vertexes.size());
-        for (size_t i = 0; i < mMesh->vertexes.size(); i++)
-        {
-            positions[i] = toFloat(mMesh->vertexes[i]);
-        }
-    }
 
-    /* Edges */
-    {
-        RGBColor edgeColor = RGBColor(mParameters.edgeColor());
-
-        size_t glEdgesNum = mMesh->edges.size();
-        size_t glFacesNum = mMesh->faces.size();
-
-        edgePositions   .resize(glEdgesNum * 2 + glFacesNum * 3);
-        edgeVertexColors.resize(glEdgesNum * 2 + glFacesNum * 3);
-        edgeColors      .resize(glEdgesNum * 2 + glFacesNum * 3);
-        edgeIds         .resize((glEdgesNum + glFacesNum * 3) * 2);
-
-
-        size_t edgeCount = 0;
-        size_t outCount = 0;
-
-        for (size_t edgeNum = 0; edgeNum < mMesh->edges.size(); edgeNum++, outCount += 2, edgeCount += 2)
-        {
-            Vector2d32 pointId = mMesh->edges[edgeNum];
-            edgePositions[outCount    ] = positions[pointId.x()];
-            edgePositions[outCount + 1] = positions[pointId.y()];
-
-            if (mMesh->hasColor && !mParameters.edgeColorOverride()) {
-                edgeVertexColors[outCount    ] = mMesh->vertexesColor[pointId.x()];
-                edgeVertexColors[outCount + 1] = mMesh->vertexesColor[pointId.y()];
-
-                edgeColors[outCount    ] = mMesh->edgesColor[edgeNum];
-                edgeColors[outCount + 1] = mMesh->edgesColor[edgeNum];
-            } else {
-                edgeVertexColors[outCount    ] = edgeColor;
-                edgeVertexColors[outCount + 1] = edgeColor;
-
-                edgeColors[outCount    ] = edgeColor;
-                edgeColors[outCount + 1] = edgeColor;
-            }
-
-            edgeIds[edgeCount    ] = outCount;
-            edgeIds[edgeCount + 1] = outCount + 1;
-        }
-
-        for (size_t faceNum = 0; faceNum < mMesh->faces.size(); faceNum++, outCount += 3, edgeCount += 6)
-        {
-            Vector3d32 pointId = mMesh->faces[faceNum];
-
-            edgePositions[outCount    ] = positions[pointId.x()];
-            edgePositions[outCount + 1] = positions[pointId.y()];
-            edgePositions[outCount + 2] = positions[pointId.z()];
-
-
-            if (mMesh->hasColor && !mParameters.edgeColorOverride()) {
-                edgeColors.push_back(mMesh->facesColor[faceNum]);
-                edgeColors.push_back(mMesh->facesColor[faceNum]);
-                edgeColors.push_back(mMesh->facesColor[faceNum]);
-            } else {
-                edgeColors.push_back(edgeColor);
-                edgeColors.push_back(edgeColor);
-                edgeColors.push_back(edgeColor);
-            }
-
-            edgeIds[edgeCount    ] = outCount;
-            edgeIds[edgeCount + 1] = outCount + 1;
-            edgeIds[edgeCount + 2] = outCount + 1;
-            edgeIds[edgeCount + 3] = outCount + 2;
-            edgeIds[edgeCount + 4] = outCount + 2;
-            edgeIds[edgeCount + 5] = outCount;
-        }
-
-    }
-    /* Faces */
-    {
-
-        RGBColor faceColor = RGBColor(mParameters.faceColor());
-        size_t glFaceNum = mMesh->faces.size();
-        facePositions   .resize(glFaceNum * 3);
-        faceVertexColors.resize(glFaceNum * 3);
-        faceColors      .resize(glFaceNum * 3);
-        faceTexCoords   .resize(glFaceNum * 3);
-
-        faceTexNums     .resize(glFaceNum * 3);
-
-        faceNormals     .resize(glFaceNum * 3);
-        faceIds         .resize(glFaceNum * 3);
-
-
-        for (size_t faceNum = 0, outCount = 0; faceNum < mMesh->faces.size(); faceNum++, outCount += 3)
-        {
-            Vector3d32 pointId = mMesh->faces[faceNum];
-
-            facePositions[outCount    ] = positions[pointId.x()];
-            facePositions[outCount + 1] = positions[pointId.y()];
-            facePositions[outCount + 2] = positions[pointId.z()];
-
-            if (mMesh->hasColor && !mParameters.faceColorOverride()) {
-                faceVertexColors[outCount    ] = mMesh->vertexesColor[pointId.x()];
-                faceVertexColors[outCount + 1] = mMesh->vertexesColor[pointId.y()];
-                faceVertexColors[outCount + 2] = mMesh->vertexesColor[pointId.z()];
-
-                faceColors[outCount    ] = mMesh->facesColor[faceNum];
-                faceColors[outCount + 1] = mMesh->facesColor[faceNum];
-                faceColors[outCount + 2] = mMesh->facesColor[faceNum];
-            } else {
-                faceVertexColors[outCount    ] = faceColor;
-                faceVertexColors[outCount + 1] = faceColor;
-                faceVertexColors[outCount + 2] = faceColor;
-
-                faceColors[outCount    ] = faceColor;
-                faceColors[outCount + 1] = faceColor;
-                faceColors[outCount + 2] = faceColor;
-            }
-
-            if (mMesh->hasTexCoords)
-            {
-                Vector4d32 texId = mMesh->texId[faceNum];
-                faceTexCoords[outCount    ] = toFloat(mMesh->textureCoords[texId.x()]);
-                faceTexCoords[outCount + 1] = toFloat(mMesh->textureCoords[texId.y()]);
-                faceTexCoords[outCount + 2] = toFloat(mMesh->textureCoords[texId.z()]);
-
-                faceTexNums[outCount    ] = texId[3];
-                faceTexNums[outCount + 1] = texId[3];
-                faceTexNums[outCount + 2] = texId[3];
-            } else {
-                faceTexCoords[outCount    ] = Vector2df::Zero();
-                faceTexCoords[outCount + 1] = Vector2df::Zero();
-                faceTexCoords[outCount + 2] = Vector2df::Zero();
-            }
-
-            if (mMesh->hasNormals)
-            {
-                Vector3d32 normalId = mMesh->normalId[faceNum];
-                faceNormals[outCount    ] = toFloat(mMesh->normalCoords[normalId.x()]);
-                faceNormals[outCount + 1] = toFloat(mMesh->normalCoords[normalId.y()]);
-                faceNormals[outCount + 2] = toFloat(mMesh->normalCoords[normalId.z()]);
-            }
-
-            faceIds[outCount    ] = (uint32_t)(outCount);
-            faceIds[outCount + 1] = (uint32_t)(outCount + 1);
-            faceIds[outCount + 2] = (uint32_t)(outCount + 2);
-        }
-    }
     mMeshPrepared = true;
 }
 
@@ -507,32 +366,6 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
 
     bool depthTest =  glFuncs.glIsEnabled(GL_DEPTH_TEST);
     glFuncs.glEnable(GL_DEPTH_TEST);
-
-#if 0
-
-    GLfloat vertices[] = {
-       0.0f, 0.707f,
-       -0.5f, -0.5f,
-       0.5f, -0.5f
-    };
-
-    GLfloat colors[] = {
-       1.0f, 0.0f, 0.0f,
-       0.0f, 1.0f, 0.0f,
-       0.0f, 0.0f, 1.0f
-    };
-
-    glVertexAttribPointer(mPosAttr, 2, GL_FLOAT, GL_FALSE, 0, vertices);
-    glVertexAttribPointer(mColAttr, 3, GL_FLOAT, GL_FALSE, 0, colors);
-
-    glEnableVertexAttribArray(mPosAttr);
-    glEnableVertexAttribArray(mColAttr);
-
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-
-    glDisableVertexAttribArray(mPosAttr);
-    glDisableVertexAttribArray(mColAttr);
-#endif
 
     // qDebug() << "Before Mesh Draw";   dumpGLErrors();
 
