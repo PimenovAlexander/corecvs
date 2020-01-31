@@ -40,14 +40,16 @@ void SimulationWorld::load(const std::string &filename)
         cout << "Loading mesh material name:" << mtlFile << endl;
         cout << "Loading mesh path:" << path << endl;
 
-        file.open(meshes[i].meshName, std::ios::in);
-        loader.loadOBJ(file, meshes[i].mesh);
-        file.close();
-
         std::ifstream materialFile;
         materialFile.open(mtlFile, std::ios::in);
         loader.loadMaterials(materialFile, meshes[i].mesh.materials, path);
         materialFile.close();
+
+        file.open(meshes[i].meshName, std::ios::in);
+        loader.loadOBJ(file, meshes[i].mesh);
+        file.close();
+
+
 
 
     }

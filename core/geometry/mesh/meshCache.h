@@ -19,6 +19,23 @@ public:
     std::vector<uint32_t>  faceIds;
 
 
+
+    friend std::ostream& operator << (std::ostream &out, SceneShadedFaceCache &toPrint)
+    {
+        out << "  Sizes:" << endl;
+
+        out << "    facePositions   :" << toPrint.facePositions.size()    << endl;
+        out << "    faceVertexColors:" << toPrint.faceVertexColors.size() << endl;
+        out << "    faceColors      :" << toPrint.faceColors.size()       << endl;
+        out << "    faceNormals     :" << toPrint.faceNormals.size()      << endl;
+        out << "    faceTexCoords   :" << toPrint.faceTexCoords.size()    << endl;
+        out << "    faceTexNums     :" << toPrint.faceTexNums.size()      << endl;
+        out << "    faceIds         :" << toPrint.faceIds.size()          << endl;
+
+        return out;
+    }
+
+
 };
 
 class SceneShadedOpenGLCache {
@@ -37,11 +54,32 @@ public:
     vector<SceneShadedFaceCache> faceCache;
 
     /**/
-    void cache(Mesh3DDecorated *mesh, const Draw3dParameters &mParameters);
-    void clear(void);
+    void cache     (Mesh3DDecorated *mesh, const Draw3dParameters &mParameters);
+    void clearCache(void);
 
-    /*Parameters. Rework this*/
+    friend std::ostream& operator << (std::ostream &out, SceneShadedOpenGLCache &toPrint)
+    {
+        out << "Scene cache:" << endl;
 
+        out << "  positions       :" << toPrint.positions.size()        << endl;
+        out << "  edgePositions   :" << toPrint.edgePositions.size()    << endl;
+        out << "  edgeVertexColors:" << toPrint.edgeVertexColors.size() << endl;
+        out << "  edgeColors      :" << toPrint.edgeColors.size()       << endl;
+        out << "  edgeIds         :" << toPrint.edgeIds.size()          << endl;
+
+        out << "  faces by Material:" << endl;
+
+        for (size_t id = 0; id < toPrint.faceCache.size(); id++)
+        {
+            out << "    ID:" << id << endl;
+            out << toPrint.faceCache[id] << endl;
+        }
+
+        return out;
+
+    }
+
+    static size_t getMaterialID(Mesh3DDecorated *mesh, size_t &mFace);
 };
 
 } // namespace corecvs;

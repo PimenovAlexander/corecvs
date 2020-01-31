@@ -195,6 +195,13 @@ void SceneShaded::applyParameters()
             qDebug() << mProgram[target]->log();
         }
 
+        SYNC_PRINT(("SceneShaded::applyParameters(): Creating uniform value handles \n"));
+        mAmbientUnif  = mProgram[target]->uniformLocation("ambientUnif");
+        mDiffuseUnif  = mProgram[target]->uniformLocation("mDiffuseUnif");
+        mSpecularUnif = mProgram[target]->uniformLocation("mSpecularUnif");
+
+
+        SYNC_PRINT(("SceneShaded::applyParameters(): Creating attribute value handles \n"));
         mPosAttr     = mProgram[target]->attributeLocation("posAttr");
         mColAttr     = mProgram[target]->attributeLocation("colAttr");
         mFaceColAttr = mProgram[target]->attributeLocation("faceColAttr");
@@ -205,6 +212,7 @@ void SceneShaded::applyParameters()
         mModelViewMatrix  = mProgram[target]->uniformLocation("modelview");
         mProjectionMatrix = mProgram[target]->uniformLocation("projection");
 
+        SYNC_PRINT(("SceneShaded::applyParameters(): Creating samplers value handles \n"));
         mTextureSampler      = mProgram[target]->uniformLocation("textureSampler");
         mMultiTextureSampler = mProgram[target]->uniformLocation("multiTextureSampler");
         mBumpSampler    = mProgram[target]->uniformLocation("bumpSampler");
@@ -236,42 +244,54 @@ void SceneShaded::prepareTextures(CloudViewDialog * dialog)
     dialog->mUi.widget->makeCurrent();
     QOpenGLFunctions_4_5_Core &glFuncs = *(dialog->mUi.widget->context()->versionFunctions<QOpenGLFunctions_4_5_Core>());
 
-    /*Prepare Texture*/
-    RGB24Buffer *texBuf = mMesh->materials.size() > 0 ? mMesh->materials.front().tex[OBJMaterial::TEX_DIFFUSE] : NULL;
-    if (texBuf != NULL) {
-        glFuncs.glEnable(GL_TEXTURE_2D);
-        qDebug() << "Dumping prior error";
-        dumpGLErrors();
-        glFuncs.glGenTextures(1, &mTexture);
-        qDebug() << "Created a handle for the texture:" << mTexture;
-        dumpGLErrors();
-        addTexture(mTexture, texBuf);
-        glFuncs.glDisable(GL_TEXTURE_2D);
-    } else {
-        SYNC_PRINT(("void SceneShaded::prepareTextures(): Message: texBuf is NULL\n"));
+
+    mTextures.resize(mMesh->materials.size(), -1);
+    mBumpmaps.resize(mMesh->materials.size(), -1);
+
+    for (size_t materialId = 0; materialId < mMesh->materials.size(); materialId++)
+    {
+        SYNC_PRINT(("void SceneShaded::prepareTextures(): Processing material %d (%d)\n", (int)materialId, (int)mMesh->materials.size()));
+
+
+        /*Prepare Texture*/
+        RGB24Buffer *texBuf = mMesh->materials.size() > 0 ? mMesh->materials.front().tex[OBJMaterial::TEX_DIFFUSE] : NULL;
+        if (texBuf != NULL) {
+            glFuncs.glEnable(GL_TEXTURE_2D);
+            qDebug() << "Dumping prior error";
+            dumpGLErrors();
+            glFuncs.glGenTextures(1, &mTextures[materialId]);
+            qDebug() << "Created a handle for the texture:" << mTextures[materialId];
+            dumpGLErrors();
+            addTexture(mTextures[materialId], texBuf);
+            glFuncs.glDisable(GL_TEXTURE_2D);
+        } else {
+            SYNC_PRINT(("void SceneShaded::prepareTextures(): Message: texBuf for material %d is NULL\n", (int)materialId));
+        }
+
+        /*Prepare Bumpmap*/
+        RGB24Buffer *bumpBuf = mMesh->materials.size() > 0 ? mMesh->materials.front().tex[OBJMaterial::TEX_BUMP] : NULL;
+        if (bumpBuf != NULL) {
+            glFuncs.glEnable(GL_TEXTURE_2D);
+            qDebug() << "Dumping prior error";
+            dumpGLErrors();
+            glFuncs.glGenTextures(1, &mBumpmaps[materialId]);
+            qDebug() << "Created a handle for the bumpmap:" << mBumpmaps[materialId];
+            dumpGLErrors();
+            addTexture(mBumpmaps[materialId], bumpBuf);
+            glFuncs.glDisable(GL_TEXTURE_2D);
+        } else {
+            SYNC_PRINT(("void SceneShaded::prepareTextures(): Message: bumpBuf for material %d is NULL\n", (int)materialId));
+        }
     }
 
-    /*Prepare Bumpmap*/
-    RGB24Buffer *bumpBuf = mMesh->materials.size() > 0 ? mMesh->materials.front().tex[OBJMaterial::TEX_BUMP] : NULL;
-    if (bumpBuf != NULL) {
-        glFuncs.glEnable(GL_TEXTURE_2D);
-        qDebug() << "Dumping prior error";
-        dumpGLErrors();
-        glFuncs.glGenTextures(1, &mBumpmap);
-        qDebug() << "Created a handle for the bumpmap:" << mBumpmap;
-        dumpGLErrors();
-        addTexture(mBumpmap, bumpBuf);
-        glFuncs.glDisable(GL_TEXTURE_2D);
-    } else {
-        SYNC_PRINT(("void SceneShaded::prepareTextures(): Message: bumpBuf is NULL\n"));
-    }
 
+#if 0
     if (!mMesh->materials.empty())
     {
         RGB24Buffer *texBuf = mMesh->materials.front().tex[OBJMaterial::TEX_DIFFUSE];
         if (texBuf != NULL)
         {
-            glFuncs.glGenTextures(1,&mTexArray);
+            glFuncs.glGenTextures(1, &mTexArray);
             glFuncs.glBindTexture(GL_TEXTURE_2D_ARRAY,mTexArray);
 
             GLint oldStride;
@@ -294,6 +314,7 @@ void SceneShaded::prepareTextures(CloudViewDialog * dialog)
         }
 
     }
+#endif
 
     mTexturesUpdated = true;
 }
@@ -308,7 +329,8 @@ void SceneShaded::prepareMesh(CloudViewDialog * dialog)
     //SYNC_PRINT(("void SceneShaded::prepareMesh():called\n"));
 
     /* Prepare caches in OpenGL formats */
-
+    clearCache();
+    cache(mMesh, mParameters);
 
     mMeshPrepared = true;
 }
@@ -332,6 +354,12 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
     }
     mProgram->bind();*/
 
+
+    SYNC_PRINT(("SceneShaded::drawMyself(): cache state\n"));
+    cout << *static_cast<SceneShadedOpenGLCache *>(this) << endl;
+
+
+    SYNC_PRINT(("SceneShaded::drawMyself(): Preparing matrices\n"));
     float arr[16];
     glFuncs.glGetFloatv(GL_MODELVIEW_MATRIX, arr);
     QMatrix4x4 modelview(
@@ -373,6 +401,8 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
     if (mMesh != NULL)
     {
         /* Draw points */
+        SYNC_PRINT(("SceneShaded::drawMyself(): Draw points\n"));
+
         if (mParameters.point.type != ShaderPreset::NONE && mProgram[POINT] != NULL)
         {
             mProgram[POINT]->bind();
@@ -404,6 +434,8 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
             mProgram[POINT]->release();
         }
 
+        SYNC_PRINT(("SceneShaded::drawMyself(): Draw edges\n"));
+
         if (mParameters.edge.type != ShaderPreset::NONE && mProgram[EDGE] != NULL)
         {
             mProgram[EDGE]->bind();
@@ -429,90 +461,130 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
             mProgram[EDGE]->release();
         }
 
-        /* Draw faces */
+        /* Draw faces */        
+        SYNC_PRINT(("SceneShaded::drawMyself(): Draw faces\n"));
+
         if (mParameters.face.type != ShaderPreset::NONE && mProgram[FACE] != NULL)
         {
-            // cout << "Executing face draw" << endl;
-
             mProgram[FACE]->bind();
 
-            SceneShadedFaceCache &faces = faceCache.back();
-
-            glFuncs.glVertexAttribPointer(mPosAttr, 3, GL_FLOAT, GL_FALSE, 0, faces.facePositions.data());
-            glFuncs.glEnableVertexAttribArray(mPosAttr);
-
-            if (!faces.faceColors.empty() && !faces.faceVertexColors.empty())
+            for (size_t materialId = 0; materialId < mMesh->materials.size(); materialId++)
             {
-                glFuncs.glVertexAttribPointer(mColAttr, GL_BGRA, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(RGBColor), faces.faceColors.data());
-                glFuncs.glEnableVertexAttribArray(mColAttr);
+                SYNC_PRINT(("SceneShaded::drawMyself(): Draw faces for material %d\n", materialId));
 
-                glFuncs.glVertexAttribPointer(mFaceColAttr, GL_BGRA, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(RGBColor), faces.faceVertexColors.data());
-                glFuncs.glEnableVertexAttribArray(mFaceColAttr);
+                {
+                    Vector3dd color = mMesh->materials[materialId].koefs[OBJMaterial::KOEF_AMBIENT];
+                    QVector3D colorAmb(color.x(), color.y(), color.z());
+                    mProgram[FACE]->setUniformValue(mAmbientUnif , colorAmb);
+                }
+                {
+                    Vector3dd color = mMesh->materials[materialId].koefs[OBJMaterial::KOEF_DIFFUSE];
+                    QVector3D colorDiff(color.x(), color.y(), color.z());
+                    mProgram[FACE]->setUniformValue(mDiffuseUnif , colorDiff);
+                }
+                {
+                    Vector3dd color = mMesh->materials[materialId].koefs[OBJMaterial::KOEF_SPECULAR];
+                    QVector3D colorSpec(color.x(), color.y(), color.z());
+                    mProgram[FACE]->setUniformValue(mSpecularUnif , colorSpec);
+                }
 
-            }
-            if (mMesh->hasTexCoords && !faces.faceTexCoords.empty())
-            {
-                glFuncs.glVertexAttribPointer(mTexAttr, 2, GL_FLOAT, GL_FALSE, 0, faces.faceTexCoords.data());
-                glFuncs.glEnableVertexAttribArray(mTexAttr);
+                SYNC_PRINT(("SceneShaded::drawMyself(): Uniform variables set\n"));
 
-                glFuncs.glVertexAttribIPointer(mTexIdAttr, 1, GL_UNSIGNED_INT, 0, faces.faceTexNums.data());
+                SceneShadedFaceCache &faces = faceCache[materialId];
 
-                glFuncs.glEnableVertexAttribArray(mTexIdAttr);
+                glFuncs.glVertexAttribPointer(mPosAttr, 3, GL_FLOAT, GL_FALSE, 0, faces.facePositions.data());
+                glFuncs.glEnableVertexAttribArray(mPosAttr);
 
-            }
+                SYNC_PRINT(("SceneShaded::drawMyself(): Face position set\n"));
 
-            if (mMesh->hasNormals && !faces.faceNormals.empty())
-            {
-                glFuncs.glVertexAttribPointer(mNormalAttr, 3, GL_FLOAT, GL_FALSE, 0, faces.faceNormals.data());
-                glFuncs.glEnableVertexAttribArray(mNormalAttr);
-            }
+                if (!faces.faceColors.empty() && !faces.faceVertexColors.empty())
+                {
+                    glFuncs.glVertexAttribPointer(mColAttr, GL_BGRA, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(RGBColor), faces.faceColors.data());
+                    glFuncs.glEnableVertexAttribArray(mColAttr);
 
-            GLboolean oldTexEnable = glIsEnabled(GL_TEXTURE_2D);
+                    glFuncs.glVertexAttribPointer(mFaceColAttr, GL_BGRA, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(RGBColor), faces.faceVertexColors.data());
+                    glFuncs.glEnableVertexAttribArray(mFaceColAttr);
 
-#if 1
-            if (!mMesh->materials.empty() && mMesh->materials.front().tex[OBJMaterial::TEX_DIFFUSE])
-            {
-                //qDebug() << "Before Texture";   dumpGLErrors();
-                glEnable(GL_TEXTURE_2D);
-                glActiveTexture(GL_TEXTURE0);
-                //qDebug() << "Before Bind";   dumpGLErrors();
-                glBindTexture(GL_TEXTURE_2D, mTexture);
-                //qDebug() << "Before Sampler";   dumpGLErrors();
-                mProgram[FACE]->setUniformValue(mTextureSampler, 0);
-                //qDebug() << "Before Call"; dumpGLErrors();
+                }
+                SYNC_PRINT(("SceneShaded::drawMyself(): Face color set\n"));
 
+                if (mMesh->hasTexCoords && !faces.faceTexCoords.empty())
+                {
+                    glFuncs.glVertexAttribPointer(mTexAttr, 2, GL_FLOAT, GL_FALSE, 0, faces.faceTexCoords.data());
+                    glFuncs.glEnableVertexAttribArray(mTexAttr);
+
+                    glFuncs.glVertexAttribIPointer(mTexIdAttr, 1, GL_UNSIGNED_INT, 0, faces.faceTexNums.data());
+
+                    glFuncs.glEnableVertexAttribArray(mTexIdAttr);
+                }
+                SYNC_PRINT(("SceneShaded::drawMyself(): Face tex coords set\n"));
+
+                if (mMesh->hasNormals && !faces.faceNormals.empty())
+                {
+                    glFuncs.glVertexAttribPointer(mNormalAttr, 3, GL_FLOAT, GL_FALSE, 0, faces.faceNormals.data());
+                    glFuncs.glEnableVertexAttribArray(mNormalAttr);
+                }
+                SYNC_PRINT(("SceneShaded::drawMyself(): Face normals set\n"));
+
+                GLboolean oldTexEnable = glIsEnabled(GL_TEXTURE_2D);
+
+
+                SYNC_PRINT(("SceneShaded::drawMyself(): Binding textures\n"));
+
+                if (mTextures[materialId] != (GLuint)(-1))
+                {
+                    //qDebug() << "Before Texture";   dumpGLErrors();
+                    glEnable(GL_TEXTURE_2D);
+                    glActiveTexture(GL_TEXTURE0);
+                    //qDebug() << "Before Bind";   dumpGLErrors();
+                    glBindTexture(GL_TEXTURE_2D, mTextures[materialId]);
+                    //qDebug() << "Before Sampler";   dumpGLErrors();
+                    mProgram[FACE]->setUniformValue(mTextureSampler, 0);
+                    //qDebug() << "Before Call"; dumpGLErrors();
+                } else {
+                    SYNC_PRINT(("SceneShaded::drawMyself(): no texture for material\n"));
+                }
+
+#if 0
                 /* Multitexture */
                 glEnable(GL_TEXTURE_2D_ARRAY);
                 mProgram[FACE]->setUniformValue(mMultiTextureSampler, 0);
-
-            }
-
-            if (!mMesh->materials.empty() && mMesh->materials.front().tex[OBJMaterial::TEX_BUMP])
-            {
-                glEnable(GL_TEXTURE_2D);
-                glActiveTexture(GL_TEXTURE1);
-                glBindTexture(GL_TEXTURE_2D, mBumpmap);
-                mProgram[FACE]->setUniformValue(mTextureSampler, 1);
-            }
-
-            glDrawElements(GL_TRIANGLES, GLsizei(mMesh->faces.size() * 3), GL_UNSIGNED_INT, faces.faceIds.data());
 #endif
 
-            glBindTexture(GL_TEXTURE_2D, 0);
-            if (!oldTexEnable) {
-                glActiveTexture(GL_TEXTURE0);
-                glDisable(GL_TEXTURE_2D);
+                SYNC_PRINT(("SceneShaded::drawMyself(): Binding bumpmaps \n"));
 
-                glActiveTexture(GL_TEXTURE1);
-                glDisable(GL_TEXTURE_2D);
-            }
+                if (mBumpmaps[materialId] != (GLuint)(-1))
+                {
+                    glEnable(GL_TEXTURE_2D);
+                    glActiveTexture(GL_TEXTURE1);
+                    glBindTexture(GL_TEXTURE_2D, mBumpmaps[materialId]);
+                    mProgram[FACE]->setUniformValue(mBumpSampler, 1);
+                } else {
+                    SYNC_PRINT(("SceneShaded::drawMyself(): no bumpmap material\n"));
+                }
 
-            glFuncs.glDisableVertexAttribArray(mPosAttr);
-            glFuncs.glDisableVertexAttribArray(mColAttr);
-            glFuncs.glDisableVertexAttribArray(mFaceColAttr);
-            glFuncs.glDisableVertexAttribArray(mTexAttr);
-            glFuncs.glDisableVertexAttribArray(mTexIdAttr);
-            glFuncs.glDisableVertexAttribArray(mNormalAttr);
+                SYNC_PRINT(("SceneShaded::drawMyself(): Requesting draw\n"));
+                glDrawElements(GL_TRIANGLES, GLsizei(faces.faceIds.size()), GL_UNSIGNED_INT, faces.faceIds.data());
+
+                SYNC_PRINT(("SceneShaded::drawMyself(): Unbinding\n"));
+                glBindTexture(GL_TEXTURE_2D, 0);
+                if (!oldTexEnable) {
+                    glActiveTexture(GL_TEXTURE0);
+                    glDisable(GL_TEXTURE_2D);
+
+                    glActiveTexture(GL_TEXTURE1);
+                    glDisable(GL_TEXTURE_2D);
+                }
+
+                SYNC_PRINT(("SceneShaded::drawMyself(): cleanup \n"));
+                glFuncs.glDisableVertexAttribArray(mPosAttr);
+                glFuncs.glDisableVertexAttribArray(mColAttr);
+                glFuncs.glDisableVertexAttribArray(mFaceColAttr);
+                glFuncs.glDisableVertexAttribArray(mTexAttr);
+                glFuncs.glDisableVertexAttribArray(mTexIdAttr);
+                glFuncs.glDisableVertexAttribArray(mNormalAttr);
+
+            } // for over materials
 
             mProgram[FACE]->release();
         }

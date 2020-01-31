@@ -181,6 +181,18 @@ void Mesh3DDecorated::dumpInfo(ostream &out)
     out << " - Textures  :" << textureCoords.size() << endl;
     out << " - Norm Idxes:" << normalId.size() << endl;
     out << " - Tex  Idxes:" << texId.size() << endl;
+
+    out << " Materials      :" << materials.size() << endl;
+
+    /* */
+    std::set<int> usedMaterials;
+    for (size_t faceNum = 0; faceNum < faces.size(); faceNum++)
+    {
+        int material = texId[faceNum][Mesh3DDecorated::MATERIAL_NUM];
+        usedMaterials.insert(material);
+    }
+    out << " Materials Used :" << usedMaterials.size() << endl;
+
 }
 
 void Mesh3DDecorated::fillTestScene()

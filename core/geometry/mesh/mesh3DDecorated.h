@@ -15,6 +15,7 @@ public:
         KOEF_AMBIENT,
         KOEF_DIFFUSE,
         KOEF_SPECULAR,
+        KOEF_TRANSMISSION_FILTER,
         KOEF_LAST
     };
 
@@ -87,6 +88,9 @@ public:
      * texId is an array of <Vector4d32>, the size of this array is equal to the size of the array of fases,
      * first three numbers are indexes in textureCoords array, and the fourth number is usually used as texture nunber
      **/
+    static const int TEXTURE_NUM = 3;
+    static const int MATERIAL_NUM = 3;
+
     vector<Vector4d32>  texId;  
 
     vector<Vector3d32>  normalId;

@@ -265,11 +265,14 @@ void PhysicsMainWindow::worldRedraw()
         mShadedScene = new SceneShaded;
         Mesh3DDecorated *mesh = new Mesh3DDecorated;
         mesh->switchColor();
+        mesh->switchTextures();
         for (size_t i = 0; i < world.meshes.size(); i++)
         {
             if (!world.meshes[i].show) {
                 continue;
             }
+            SYNC_PRINT(("Adding mesh %d\n", (int)i));
+            world.meshes[i].mesh.dumpInfo();
             mesh->mulTransform(world.meshes[i].transform);
             mesh->add(world.meshes[i].mesh);
             mesh->popTransform();

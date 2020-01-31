@@ -233,6 +233,9 @@ int OBJLoader::loadMaterials(istream &input, vector<OBJMaterial> &materials, con
             koef_id = OBJMaterial::KOEF_DIFFUSE;
         if (command == "Ks")
             koef_id = OBJMaterial::KOEF_SPECULAR;
+        if (command == "Tf")
+            koef_id = OBJMaterial::KOEF_TRANSMISSION_FILTER;
+
 
         if (koef_id != OBJMaterial::KOEF_LAST)
         {

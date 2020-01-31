@@ -80,8 +80,7 @@ set (CORE_TEST_SOURCES
     polynomial/main_test_polynomial.cpp
     polynomial/main_test_basis.cpp
     polynomial/main_test_monom.cpp
-    polynomial/main_test_polynom.cpp
-    meshdraw/main_test_meshdraw.cpp
+    polynomial/main_test_polynom.cpp   
 #    reconstruction/main_test_reconstruction.cpp
     meta/main_test_meta.cpp
     function/main_test_function.cpp
@@ -97,6 +96,8 @@ set (CORE_TEST_SOURCES
     projection/main_test_projection.cpp
     vptree/main_test_vptree.cpp
     meshfilter/main_test_meshfilter.cpp
+    meshdraw/main_test_meshdraw.cpp
+    meshcache/main_test_meshcache.cpp
 
     convexpolygon/convexDebug.cpp
     convexpolygon/main_test_convexpolygon.cpp

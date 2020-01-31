@@ -43,15 +43,19 @@ public:
     GLuint mMultiTextureSampler;
     GLuint mBumpSampler;
 
+    GLuint mAmbientUnif;
+    GLuint mDiffuseUnif;
+    GLuint mSpecularUnif;
 
     GLuint mModelViewMatrix;
     GLuint mProjectionMatrix;
 
     /*Textures*/
-    GLuint mTexture  = -1;
+    vector<GLuint> mTextures;
+#if 0
     GLuint mTexArray = -1;
-
-    GLuint mBumpmap = -1;
+#endif
+    vector<GLuint> mBumpmaps;
 
 
 protected:
