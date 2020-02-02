@@ -52,7 +52,7 @@ public:
     /* Returns first parameter */
     std::string getNonPrefixParam(int id = 1) const;
 
-    int          getInt    (const std::string & option, int defaultInf = 0) const;
+    int          getInt    (const std::string & option, int defaultInt = 0) const;
     bool         getBool   (const std::string & option, bool defaultBool = false) const;
     double       getDouble (const std::string & option, double defaultDouble = 0.0) const;
     std::string  getString (const std::string & option, const std::string & defaultString = "") const;

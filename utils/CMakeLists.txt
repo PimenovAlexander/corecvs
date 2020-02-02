@@ -78,8 +78,7 @@ foreach(utils_subdirectory ${UTILS_SUBDIRECTORIES})
     include(${utils_subdirectory}/sourcelist.cmake)
 endforeach(utils_subdirectory)
 
-message(STATUS "Found ui files:" "${UI_FILES}")
-
+#message(STATUS "Found ui files:" "${UI_FILES}")
 
 message("Additional include path <${INC_PATHS}>")
 target_include_directories(${MODULE_NAME} PUBLIC ${INC_PATHS})

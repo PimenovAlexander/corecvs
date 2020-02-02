@@ -17,6 +17,9 @@ class QOpenGLShaderProgram;
 class SceneShaded : public Scene3D, public SceneShadedOpenGLCache
 {
 public:
+
+    bool trace = false;
+
     ShadedSceneControlParameters mParameters;
 
     QString pointShaderCache;

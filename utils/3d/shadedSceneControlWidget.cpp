@@ -23,7 +23,7 @@ ShadedSceneControlWidget::ShadedSceneControlWidget(QWidget *parent) :
 
 ShadedSceneControlWidget::~ShadedSceneControlWidget()
 {
-    delete ui;
+    delete_safe(ui);
 }
 
 ShadedSceneControlParameters *ShadedSceneControlWidget::createParameters() const

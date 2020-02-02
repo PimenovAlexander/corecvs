@@ -28,15 +28,15 @@ public:
     KLTFlow();
     virtual ~KLTFlow();
 
-    static vector<FloatFlowVector> *getOpenCVKLT(
-            G12Buffer *first,
+    static vector<FloatFlowVector> *getOpenCVKLT(G12Buffer *first,
             G12Buffer *second,
             double selectorQuality,
             double selectorDistance,
             int selectorSize,
             int useHarris,
             double harrisK,
-            int kltSize);
+            int kltSize,
+            int mMaxCorners);
 
     static vector<FloatFlowVector> *getOpenCVKLT(
             G12Buffer *first,
@@ -57,22 +57,14 @@ class OpenCVFlowProcessor : public corecvs::Processor6D
 
     OpenCVKLTParameters params;
 
-    virtual int beginFrame() {return 0;}
+    virtual int beginFrame() override;
 
     /** Completly reset internal data structures. parameters are left intact **/
-    virtual int reset()
-    {
-        inPrev = NULL;
-        inCurr = NULL;
-        delete_safe(opticalFlow);
-        return 0;
-    }
+    virtual int reset() override;
 
 
     /** Implemetation may allow you to reset some internal structures at will **/
-    virtual int clean(int /*mask*/) {
-        return 0;
-    }
+    virtual int clean(int /*mask*/) override;
 
     /**
      * You are responisble to delete the frame sometime after endFrame() is called
@@ -83,12 +75,12 @@ class OpenCVFlowProcessor : public corecvs::Processor6D
      *
      * To get consistent result don't modify frame data after the call to setFrame*
      **/
-    virtual int setFrameG12  (corecvs::G12Buffer   */*frame*/, int /*frameType*/) override
+    virtual int setFrameG12  (corecvs::G12Buffer */*frame*/, int /*frameType*/) override
     {
         return 1;
     }
 
-    virtual int setFrameRGB24(corecvs::RGB24Buffer   *frame, int /*frameType*/) override
+    virtual int setFrameRGB24(corecvs::RGB24Buffer *frame, int /*frameType*/) override
     {
         inCurr = new corecvs::RGB24Buffer(frame);
         return 0;
@@ -109,7 +101,7 @@ class OpenCVFlowProcessor : public corecvs::Processor6D
 
 
 
-    virtual int endFrame();
+    virtual int endFrame() override;
 
 
     virtual std::map<std::string, corecvs::DynamicObject> getParameters() override;

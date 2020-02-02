@@ -109,6 +109,9 @@ static const char *fragmentShaderSource1 =
     "}\n";
 
 
+#define LOCAL_PRINT(X) if (trace) { SYNC_PRINT(X); }
+
+
 void SceneShaded::addTexture(GLuint texId, RGB24Buffer *input)
 {
     //glActiveTexture(0);
@@ -155,8 +158,12 @@ void SceneShaded::setParameters(void *params)
 
 void SceneShaded::applyParameters()
 {
-    if (mParamsApplied)
+    if (mParamsApplied) {
+        SYNC_PRINT(("SceneShaded::applyParameters(): already applied\n"));
         return;
+    }
+
+    SYNC_PRINT(("SceneShaded::applyParameters(): called\n"));
 
     ShaderPreset *sources[ShaderTarget::LAST] = {
         &mParameters.face,
@@ -184,7 +191,7 @@ void SceneShaded::applyParameters()
             fShader = fragmentShaderSource1;
         }
 
-        SYNC_PRINT(("SceneShaded::applyParameters(): Creating %d program\n", target));
+        LOCAL_PRINT(("SceneShaded::applyParameters(): Creating %d program\n", target));
         mProgram[target] = new QOpenGLShaderProgram();
         mProgram[target]->addShaderFromSourceCode(QOpenGLShader::Vertex,   vShader);
         mProgram[target]->addShaderFromSourceCode(QOpenGLShader::Fragment, fShader);
@@ -195,13 +202,13 @@ void SceneShaded::applyParameters()
             qDebug() << mProgram[target]->log();
         }
 
-        SYNC_PRINT(("SceneShaded::applyParameters(): Creating uniform value handles \n"));
+        LOCAL_PRINT(("SceneShaded::applyParameters(): Creating uniform value handles \n"));
         mAmbientUnif  = mProgram[target]->uniformLocation("ambientUnif");
         mDiffuseUnif  = mProgram[target]->uniformLocation("mDiffuseUnif");
         mSpecularUnif = mProgram[target]->uniformLocation("mSpecularUnif");
 
 
-        SYNC_PRINT(("SceneShaded::applyParameters(): Creating attribute value handles \n"));
+        LOCAL_PRINT(("SceneShaded::applyParameters(): Creating attribute value handles \n"));
         mPosAttr     = mProgram[target]->attributeLocation("posAttr");
         mColAttr     = mProgram[target]->attributeLocation("colAttr");
         mFaceColAttr = mProgram[target]->attributeLocation("faceColAttr");
@@ -212,7 +219,7 @@ void SceneShaded::applyParameters()
         mModelViewMatrix  = mProgram[target]->uniformLocation("modelview");
         mProjectionMatrix = mProgram[target]->uniformLocation("projection");
 
-        SYNC_PRINT(("SceneShaded::applyParameters(): Creating samplers value handles \n"));
+        LOCAL_PRINT(("SceneShaded::applyParameters(): Creating samplers value handles \n"));
         mTextureSampler      = mProgram[target]->uniformLocation("textureSampler");
         mMultiTextureSampler = mProgram[target]->uniformLocation("multiTextureSampler");
         mBumpSampler    = mProgram[target]->uniformLocation("bumpSampler");
@@ -339,7 +346,7 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
 {
     prepareMesh(dialog);
     prepareTextures(dialog);
-    applyParameters();
+    //applyParameters();
 
     dialog->mUi.widget->makeCurrent();
 
@@ -347,19 +354,12 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
     QOpenGLFunctions_4_5_Core &glFuncs = *(dialog->mUi.widget->context()->versionFunctions<QOpenGLFunctions_4_5_Core>());
 
     applyParameters();
-/*    if (mProgram[] == NULL)
-    {
-        qDebug("SceneShaded::drawMyself(): mProgram is NULL");
-        return;
-    }
-    mProgram->bind();*/
+
+    LOCAL_PRINT(("SceneShaded::drawMyself(): cache state\n"));
+    if (trace) { cout << *static_cast<SceneShadedOpenGLCache *>(this) << endl; }
 
 
-    SYNC_PRINT(("SceneShaded::drawMyself(): cache state\n"));
-    cout << *static_cast<SceneShadedOpenGLCache *>(this) << endl;
-
-
-    SYNC_PRINT(("SceneShaded::drawMyself(): Preparing matrices\n"));
+    LOCAL_PRINT(("SceneShaded::drawMyself(): Preparing matrices\n"));
     float arr[16];
     glFuncs.glGetFloatv(GL_MODELVIEW_MATRIX, arr);
     QMatrix4x4 modelview(
@@ -401,7 +401,7 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
     if (mMesh != NULL)
     {
         /* Draw points */
-        SYNC_PRINT(("SceneShaded::drawMyself(): Draw points\n"));
+        LOCAL_PRINT(("SceneShaded::drawMyself(): Draw points\n"));
 
         if (mParameters.point.type != ShaderPreset::NONE && mProgram[POINT] != NULL)
         {
@@ -434,10 +434,10 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
             mProgram[POINT]->release();
         }
 
-        SYNC_PRINT(("SceneShaded::drawMyself(): Draw edges\n"));
-
         if (mParameters.edge.type != ShaderPreset::NONE && mProgram[EDGE] != NULL)
         {
+            LOCAL_PRINT(("SceneShaded::drawMyself(): Draw edges\n"));
+
             mProgram[EDGE]->bind();
             int oldLineWidth = 1;
             glFuncs.glGetIntegerv(GL_LINE_WIDTH, &oldLineWidth);
@@ -462,15 +462,15 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
         }
 
         /* Draw faces */        
-        SYNC_PRINT(("SceneShaded::drawMyself(): Draw faces\n"));
-
         if (mParameters.face.type != ShaderPreset::NONE && mProgram[FACE] != NULL)
         {
-            mProgram[FACE]->bind();
+            LOCAL_PRINT(("SceneShaded::drawMyself(): Draw faces\n"));
+
+            mProgram[FACE]->bind();            
 
             for (size_t materialId = 0; materialId < mMesh->materials.size(); materialId++)
             {
-                SYNC_PRINT(("SceneShaded::drawMyself(): Draw faces for material %d\n", materialId));
+                LOCAL_PRINT(("SceneShaded::drawMyself(): Draw faces for material %d\n", (int)materialId));
 
                 {
                     Vector3dd color = mMesh->materials[materialId].koefs[OBJMaterial::KOEF_AMBIENT];
@@ -488,14 +488,14 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
                     mProgram[FACE]->setUniformValue(mSpecularUnif , colorSpec);
                 }
 
-                SYNC_PRINT(("SceneShaded::drawMyself(): Uniform variables set\n"));
+                LOCAL_PRINT(("SceneShaded::drawMyself(): Uniform variables set\n"));
 
                 SceneShadedFaceCache &faces = faceCache[materialId];
 
                 glFuncs.glVertexAttribPointer(mPosAttr, 3, GL_FLOAT, GL_FALSE, 0, faces.facePositions.data());
                 glFuncs.glEnableVertexAttribArray(mPosAttr);
 
-                SYNC_PRINT(("SceneShaded::drawMyself(): Face position set\n"));
+                LOCAL_PRINT(("SceneShaded::drawMyself(): Face position set\n"));
 
                 if (!faces.faceColors.empty() && !faces.faceVertexColors.empty())
                 {
@@ -506,7 +506,7 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
                     glFuncs.glEnableVertexAttribArray(mFaceColAttr);
 
                 }
-                SYNC_PRINT(("SceneShaded::drawMyself(): Face color set\n"));
+                LOCAL_PRINT(("SceneShaded::drawMyself(): Face color set\n"));
 
                 if (mMesh->hasTexCoords && !faces.faceTexCoords.empty())
                 {
@@ -517,32 +517,28 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
 
                     glFuncs.glEnableVertexAttribArray(mTexIdAttr);
                 }
-                SYNC_PRINT(("SceneShaded::drawMyself(): Face tex coords set\n"));
+                LOCAL_PRINT(("SceneShaded::drawMyself(): Face tex coords set\n"));
 
                 if (mMesh->hasNormals && !faces.faceNormals.empty())
                 {
                     glFuncs.glVertexAttribPointer(mNormalAttr, 3, GL_FLOAT, GL_FALSE, 0, faces.faceNormals.data());
                     glFuncs.glEnableVertexAttribArray(mNormalAttr);
                 }
-                SYNC_PRINT(("SceneShaded::drawMyself(): Face normals set\n"));
+                LOCAL_PRINT(("SceneShaded::drawMyself(): Face normals set\n"));
 
                 GLboolean oldTexEnable = glIsEnabled(GL_TEXTURE_2D);
 
 
-                SYNC_PRINT(("SceneShaded::drawMyself(): Binding textures\n"));
+                LOCAL_PRINT(("SceneShaded::drawMyself(): Binding textures\n"));
 
                 if (mTextures[materialId] != (GLuint)(-1))
                 {
-                    //qDebug() << "Before Texture";   dumpGLErrors();
                     glEnable(GL_TEXTURE_2D);
                     glActiveTexture(GL_TEXTURE0);
-                    //qDebug() << "Before Bind";   dumpGLErrors();
                     glBindTexture(GL_TEXTURE_2D, mTextures[materialId]);
-                    //qDebug() << "Before Sampler";   dumpGLErrors();
                     mProgram[FACE]->setUniformValue(mTextureSampler, 0);
-                    //qDebug() << "Before Call"; dumpGLErrors();
                 } else {
-                    SYNC_PRINT(("SceneShaded::drawMyself(): no texture for material\n"));
+                    LOCAL_PRINT(("SceneShaded::drawMyself(): no texture for material\n"));
                 }
 
 #if 0
@@ -551,7 +547,7 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
                 mProgram[FACE]->setUniformValue(mMultiTextureSampler, 0);
 #endif
 
-                SYNC_PRINT(("SceneShaded::drawMyself(): Binding bumpmaps \n"));
+                LOCAL_PRINT(("SceneShaded::drawMyself(): Binding bumpmaps \n"));
 
                 if (mBumpmaps[materialId] != (GLuint)(-1))
                 {
@@ -560,13 +556,13 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
                     glBindTexture(GL_TEXTURE_2D, mBumpmaps[materialId]);
                     mProgram[FACE]->setUniformValue(mBumpSampler, 1);
                 } else {
-                    SYNC_PRINT(("SceneShaded::drawMyself(): no bumpmap material\n"));
+                    LOCAL_PRINT(("SceneShaded::drawMyself(): no bumpmap material\n"));
                 }
 
-                SYNC_PRINT(("SceneShaded::drawMyself(): Requesting draw\n"));
+                LOCAL_PRINT(("SceneShaded::drawMyself(): Requesting draw\n"));
                 glDrawElements(GL_TRIANGLES, GLsizei(faces.faceIds.size()), GL_UNSIGNED_INT, faces.faceIds.data());
 
-                SYNC_PRINT(("SceneShaded::drawMyself(): Unbinding\n"));
+                LOCAL_PRINT(("SceneShaded::drawMyself(): Unbinding\n"));
                 glBindTexture(GL_TEXTURE_2D, 0);
                 if (!oldTexEnable) {
                     glActiveTexture(GL_TEXTURE0);
@@ -576,7 +572,7 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
                     glDisable(GL_TEXTURE_2D);
                 }
 
-                SYNC_PRINT(("SceneShaded::drawMyself(): cleanup \n"));
+                LOCAL_PRINT(("SceneShaded::drawMyself(): cleanup \n"));
                 glFuncs.glDisableVertexAttribArray(mPosAttr);
                 glFuncs.glDisableVertexAttribArray(mColAttr);
                 glFuncs.glDisableVertexAttribArray(mFaceColAttr);
