@@ -50,7 +50,7 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
         }
 
         if (HelperUtils::startsWith(line, "#")) {
-            cout << "Skipping comment " << line << endl;
+            if (trace) cout << "Skipping comment " << line << endl;
             continue;
         }
 
@@ -152,26 +152,26 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
                 }
             }
 
-             cout << "Use material command: <" << name << "> id " << texName << " (" << mesh.materials.size() << ")" << endl;
+             if(trace) cout << "Use material command: <" << name << "> id " << texName << " (" << mesh.materials.size() << ")" << endl;
         }
         if (command == com_material_lib)
         {
-            cout << "Material library command: This is not fully supported" << endl;
+            if(trace) cout << "Material library command: This is not fully supported" << endl;
         }
         if (command == com_smoothing)
         {
             static int smoothing_count = 0;
             smoothing_count++;
             if (smoothing_count < 10) {
-                cout << "smoothing command: This is not fully supported" << endl;
+                if(trace) cout << "smoothing command: This is not fully supported" << endl;
             }
             if (smoothing_count == 10) {
-                cout << "smoothing command: This is not fully supported - futher would be suppressed" << endl;
+                if(trace) cout << "smoothing command: This is not fully supported - futher would be suppressed" << endl;
             }
         }
         if (command == com_grouping)
         {
-            cout << "grouping command: This is not fully supported" << endl;
+            if(trace) cout << "grouping command: This is not fully supported" << endl;
         }
     }
 
@@ -204,7 +204,7 @@ int OBJLoader::loadMaterials(istream &input, vector<OBJMaterial> &materials, con
         if (trace) cout << "Line " << count << " <" <<  line << ">" << endl;
 
         if (HelperUtils::startsWith(line, "#")) {
-            cout << "OBJLoader::loadMaterial: Skipping comment " << line << endl;
+            if (trace) cout << "OBJLoader::loadMaterial: Skipping comment " << line << endl;
             continue;
         }
 
@@ -295,7 +295,7 @@ int OBJLoader::loadOBJSimple(istream &input, Mesh3D &mesh)
         HelperUtils::getlineSafe (input, line);
 
         if (HelperUtils::startsWith(line, "#")) {
-            cout << "Skipping comment " << line << endl;
+            if (trace) cout << "Skipping comment " << line << endl;
             continue;
         }
 

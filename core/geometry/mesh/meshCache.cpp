@@ -187,9 +187,16 @@ void SceneShadedOpenGLCache::cache(Mesh3DDecorated *mesh, const Draw3dParameters
             if (mesh->hasTexCoords)
             {
                 Vector4d32 texId = mesh->texId[faceNum];
-                curFaceCache.faceTexCoords.push_back(toFloat(mesh->textureCoords[texId.x()]));
-                curFaceCache.faceTexCoords.push_back(toFloat(mesh->textureCoords[texId.y()]));
-                curFaceCache.faceTexCoords.push_back(toFloat(mesh->textureCoords[texId.z()]));
+                if (texId.x() < 0 || texId.y() < 0 || texId.z() < 0)
+                {
+                    curFaceCache.faceTexCoords.push_back(Vector2df::Zero());
+                    curFaceCache.faceTexCoords.push_back(Vector2df::Zero());
+                    curFaceCache.faceTexCoords.push_back(Vector2df::Zero());
+                } else {
+                    curFaceCache.faceTexCoords.push_back(toFloat(mesh->textureCoords[texId.x()]));
+                    curFaceCache.faceTexCoords.push_back(toFloat(mesh->textureCoords[texId.y()]));
+                    curFaceCache.faceTexCoords.push_back(toFloat(mesh->textureCoords[texId.z()]));
+                }
 
                 curFaceCache.faceTexNums.push_back(texId[3]);
                 curFaceCache.faceTexNums.push_back(texId[3]);

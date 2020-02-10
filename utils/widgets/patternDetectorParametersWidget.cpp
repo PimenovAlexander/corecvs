@@ -148,8 +148,10 @@ void PatternDetectorParametersWidget::loadFromQSettings(const QString &fileName,
 
             DynamicObject block(widget->reflection);
             visitor.visit(block, (provider + "." + name).c_str());
-            cout << (provider + "." + name) << endl;
-            cout << block << endl;
+
+            // cout << (provider + "." + name) << endl;
+            // cout << block << endl;
+
             widget->setParameters(block.rawObject);
         }
     }

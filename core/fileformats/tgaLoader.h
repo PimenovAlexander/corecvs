@@ -38,7 +38,7 @@ public:
 
 class TGAHeader : public TGAHeaderData {
 public:
-    bool trace = false;
+    bool trace = true;
 
 public:
 
@@ -85,7 +85,7 @@ protected:
     static string prefix1;
 
 public:
-    bool trace = false;
+    bool trace = true;
 
     TGALoaderBase();
     virtual ~TGALoaderBase();

@@ -171,6 +171,7 @@ void SceneShaded::applyParameters()
         &mParameters.edge
     };
 
+    trace = true;
     for (int target = 0; target < ShaderTarget::LAST; target++)
     {
         QString vShader = vertexShaderSource;
@@ -187,11 +188,19 @@ void SceneShaded::applyParameters()
         }
 
         if(sources[target]->type == ShaderPreset::PRESET1) {
+            LOCAL_PRINT(("SceneShaded::applyParameters(): type is preset, overriding input\n"));
             vShader = vertexShaderSource1;
             fShader = fragmentShaderSource1;
         }
 
         LOCAL_PRINT(("SceneShaded::applyParameters(): Creating %d program\n", target));
+        if (trace) {
+            std::cout << "Vertex:" << std::endl;
+            std::cout << vShader.toStdString() << std::endl;
+            std::cout << "Fragment:" << std::endl;
+            std::cout << fShader.toStdString() << std::endl;
+        }
+
         mProgram[target] = new QOpenGLShaderProgram();
         mProgram[target]->addShaderFromSourceCode(QOpenGLShader::Vertex,   vShader);
         mProgram[target]->addShaderFromSourceCode(QOpenGLShader::Fragment, fShader);
@@ -225,6 +234,9 @@ void SceneShaded::applyParameters()
         mBumpSampler    = mProgram[target]->uniformLocation("bumpSampler");
 
     }
+    trace = false;
+
+
     mParamsApplied = true;
 }
 
@@ -261,7 +273,7 @@ void SceneShaded::prepareTextures(CloudViewDialog * dialog)
 
 
         /*Prepare Texture*/
-        RGB24Buffer *texBuf = mMesh->materials.size() > 0 ? mMesh->materials.front().tex[OBJMaterial::TEX_DIFFUSE] : NULL;
+        RGB24Buffer *texBuf = mMesh->materials[materialId].tex[OBJMaterial::TEX_DIFFUSE];
         if (texBuf != NULL) {
             glFuncs.glEnable(GL_TEXTURE_2D);
             qDebug() << "Dumping prior error";
@@ -276,7 +288,7 @@ void SceneShaded::prepareTextures(CloudViewDialog * dialog)
         }
 
         /*Prepare Bumpmap*/
-        RGB24Buffer *bumpBuf = mMesh->materials.size() > 0 ? mMesh->materials.front().tex[OBJMaterial::TEX_BUMP] : NULL;
+        RGB24Buffer *bumpBuf =  mMesh->materials[materialId].tex[OBJMaterial::TEX_BUMP];
         if (bumpBuf != NULL) {
             glFuncs.glEnable(GL_TEXTURE_2D);
             qDebug() << "Dumping prior error";
@@ -287,7 +299,7 @@ void SceneShaded::prepareTextures(CloudViewDialog * dialog)
             addTexture(mBumpmaps[materialId], bumpBuf);
             glFuncs.glDisable(GL_TEXTURE_2D);
         } else {
-            SYNC_PRINT(("void SceneShaded::prepareTextures(): Message: bumpBuf for material %d is NULL\n", (int)materialId));
+            SYNC_PRINT(("SceneShaded::prepareTextures(): Message: bumpBuf for material %d is NULL\n", (int)materialId));
         }
     }
 

@@ -280,16 +280,19 @@ bool Mesh3DDecorated::verify( void )
 
     for (size_t i = 0; i < texId.size(); i++) {
         for (int j = 0; j < 3; j++) {
-            if (texId[i][j] > (int)textureCoords.size() ) {
-                SYNC_PRINT(("Wrong texture index\n"));
-                return false;
-            }
-            if (texId[i][3] < 0 || texId[i][3] >= (int)materials.size())
-            {
-                SYNC_PRINT(("Mesh3DDecorated::verify(): Wrong texture name (%d of %d)\n", texId[i][3], (int)materials.size()));
+            if (texId[i][j] >= (int)textureCoords.size() ) {
+                SYNC_PRINT(("Wrong texture index for face %d (%d %d %d) with texCoords size of %d\n",
+                            i, texId[i][0], texId[i][1], texId[i][2], (int)textureCoords.size()));
                 return false;
             }
         }
+
+        if (texId[i][MATERIAL_NUM] < 0 || texId[i][MATERIAL_NUM] >= (int)materials.size())
+        {
+            SYNC_PRINT(("Mesh3DDecorated::verify(): Wrong texture name (%d of %d)\n", texId[i][3], (int)materials.size()));
+            return false;
+        }
+
     }
 
     for (size_t i = 0; i < normalId.size(); i++) {

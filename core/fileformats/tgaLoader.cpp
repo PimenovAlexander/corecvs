@@ -137,7 +137,7 @@ RGB24Buffer *TGALoaderBase::loadRGB(std::string name)
 {
     uint8_t *data = NULL;
     TGAHeader header;
-    header.trace = false;
+    header.trace = true;
 
     RGB24Buffer *toReturn = NULL;
 
@@ -160,10 +160,10 @@ RGB24Buffer *TGALoaderBase::loadRGB(std::string name)
                 uint32_t r = src[2];
                 color = RGBColor(r,g,b);
             } else {
-                uint32_t a = src[0];
-                uint32_t b = src[1];
-                uint32_t g = src[2];
-                uint32_t r = src[3];
+                uint32_t b = src[0];
+                uint32_t g = src[1];
+                uint32_t r = src[2];
+                uint32_t a = src[3];
                 color = RGBColor(r,g,b,a);
             }
             *dest = color;
@@ -178,18 +178,18 @@ fail:
 }
 
 void TGAHeader::print() {
-    cout << "idLength "        << (int)idLength << endl;
-    cout << "colourMapType "   << (int)colourMapType << endl;
-    cout << "dataTypeCode "    << getName((DataType)dataTypeCode) << endl;
-    cout << "colourMapOrigin " << (int)colourMapOrigin << endl;
-    cout << "colourMapLength " << (int)colourMapLength << endl;
-    cout << "colourMapDepth "  << (int)colourMapDepth << endl;
-    cout << "xOrigin "         << (int)xOrigin << endl;
-    cout << "yOrigin "         << (int)yOrigin << endl;
-    cout << "width "           << (int)width << endl;
-    cout << "height "          << (int)height << endl;
-    cout << "bitsPerPixel "    << (int)bitsPerPixel << endl;
-    cout << "imageDescriptor " << (int)imageDescriptor << endl;
+    cout << "idLength        :" << (int)idLength << endl;
+    cout << "colourMapType   :" << (int)colourMapType << endl;
+    cout << "dataTypeCode    :" << getName((DataType)dataTypeCode) << endl;
+    cout << "colourMapOrigin :" << (int)colourMapOrigin << endl;
+    cout << "colourMapLength :" << (int)colourMapLength << endl;
+    cout << "colourMapDepth  :" << (int)colourMapDepth << endl;
+    cout << "xOrigin         :" << (int)xOrigin << endl;
+    cout << "yOrigin         :" << (int)yOrigin << endl;
+    cout << "width           :" << (int)width << endl;
+    cout << "height          :" << (int)height << endl;
+    cout << "bitsPerPixel    :" << (int)bitsPerPixel << endl;
+    cout << "imageDescriptor :" << (int)imageDescriptor << endl;
 }
 
 } // namespace corecvs
