@@ -7,16 +7,19 @@
 
 #include "draw3dCameraParametersControlWidget.h"
 #include "scene3D.h"
-#include "core/geometry/mesh3DDecorated.h"
+#include "core/geometry/mesh/mesh3DDecorated.h"
+#include "core/geometry/mesh/meshCache.h"
 #include "shadedSceneControlWidget.h"
 
 class QOpenGLShaderProgram;
 
 
-
-class SceneShaded : public Scene3D/*, public QOpenGLFunctions QOpenGLFunctions_4_4_Core*/
+class SceneShaded : public Scene3D, public SceneShadedOpenGLCache
 {
 public:
+
+    bool trace = false;
+
     ShadedSceneControlParameters mParameters;
 
     QString pointShaderCache;
@@ -43,15 +46,19 @@ public:
     GLuint mMultiTextureSampler;
     GLuint mBumpSampler;
 
+    GLuint mAmbientUnif;
+    GLuint mDiffuseUnif;
+    GLuint mSpecularUnif;
 
     GLuint mModelViewMatrix;
     GLuint mProjectionMatrix;
 
     /*Textures*/
-    GLuint mTexture  = -1;
+    vector<GLuint> mTextures;
+#if 0
     GLuint mTexArray = -1;
-
-    GLuint mBumpmap = -1;
+#endif
+    vector<GLuint> mBumpmaps;
 
 
 protected:
@@ -72,24 +79,7 @@ protected:
     Mesh3DDecorated *mMesh = NULL;
 
 public:
-    /* Caches in OpenGL format*/
-    /* For vertex draw */
-    vector<Vector3df> positions;
 
-    /* For edges draw */
-    vector<Vector3df> edgePositions;
-    vector<RGBColor>  edgeVertexColors;
-    vector<RGBColor>  edgeColors;
-    vector<uint32_t>  edgeIds;
-
-    /* For face draw */
-    vector<Vector3df> facePositions;
-    vector<RGBColor>  faceVertexColors;
-    vector<RGBColor>  faceColors;
-    vector<Vector3df> faceNormals;
-    vector<Vector2df> faceTexCoords;
-    vector<uint32_t>  faceTexNums;
-    vector<uint32_t>  faceIds;
 
 
 

@@ -11,8 +11,8 @@
 
 #include "core/utils/global.h"
 
-#include "core/geometry/mesh3d.h"
-#include "core/geometry/mesh3DDecorated.h"
+#include "core/geometry/mesh/mesh3d.h"
+#include "core/geometry/mesh/mesh3DDecorated.h"
 
 
 #include "core/buffers/rgb24/rgb24Buffer.h"

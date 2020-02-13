@@ -30,6 +30,7 @@ target_sources(drone-ui
     ${CMAKE_CURRENT_LIST_DIR}/physicsAboutWidget.h 
     
     ${CMAKE_CURRENT_LIST_DIR}/frameProcessor.h
+
 )
 
 target_sources(drone-ui
@@ -48,6 +49,7 @@ target_sources(drone-ui
     ${CMAKE_CURRENT_LIST_DIR}/physicsAboutWidget.cpp 
 
     ${CMAKE_CURRENT_LIST_DIR}/frameProcessor.cpp
+
 )
 
 set (UI_FILES
@@ -84,6 +86,8 @@ target_include_directories(drone-ui PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/calibration
     ${CMAKE_CURRENT_LIST_DIR}/opencvUtils
     ${CMAKE_CURRENT_LIST_DIR}/simulation
+
+    ${CMAKE_CURRENT_LIST_DIR}/world
 )
 
 

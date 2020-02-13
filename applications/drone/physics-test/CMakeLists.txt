@@ -4,15 +4,25 @@ project (drone-physics-test)
 set (NAME drone-physics-test )
 
 set (SRC_FILES
+    testPhysicsObject.cpp
+    dzhanibekovBolt.cpp
     main_physics_test.cpp
+    sim_physics_test.cpp
 )
+
+
+set (HDR_FILES
+    testPhysicsObject.h
+    dzhanibekovBolt.h
+)
+
 
 if(AVCODEC_LIBS) 
     message("Switching on avcodec support.")
     include(../../../wrappers/avcodec/sourcelist.cmake)
 endif()
 
-add_executable(${NAME} ${SRC_FILES})
+add_executable(${NAME} ${SRC_FILES} ${HDR_FILES} )
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND cp ${PROJECT_BINARY_DIR}/${PROJECT_NAME}  ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}

@@ -1,6 +1,6 @@
 #pragma once
 #include <QWidget>
-#include "generated/draw3dParameters.h"
+#include "core/xml/generated/draw3dParameters.h"
 #include "ui_draw3dParametersControlWidget.h"
 #include "parametersControlWidgetBase.h"
 

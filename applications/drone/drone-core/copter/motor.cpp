@@ -1,14 +1,14 @@
 #include "motor.h"
 
-Motor::Motor() : PhysSphere()
+Motor::Motor() : PhysicsSphere()
 {
     cw = false;
     //L_INFO << "Created default Motor";
 }
 
 
-Motor::Motor(Affine3DQ *pos, double *propellerRadius, double *mass)
-    : PhysSphere (pos, propellerRadius, mass)
+Motor::Motor(const Affine3DQ &pos, double propellerRadius, double mass)
+    : PhysicsSphere (pos, propellerRadius, mass)
 {
     cw = false;
     //L_INFO << "Created Motor with pos: " << pos << " , propeller radius: "
@@ -18,7 +18,7 @@ Motor::Motor(Affine3DQ *pos, double *propellerRadius, double *mass)
 
 void Motor::calcMoment()
 {
-    Vector3dd m = getForce() ^ getPosVector();
+    Vector3dd m = force() ^ position();
     addMoment(m);
     //L_INFO << "Added moment: " << m << "; force : " << getForce() << "; pos: " << getPosVector();
 
@@ -60,7 +60,7 @@ void Motor::calcForce()
 
 Vector3dd Motor::getForceTransformed(const Affine3DQ &T)
 {
-    return T.rotor * getForce();
+    return T.rotor * force();
 }
 
 Vector3dd Motor::calcMotorMoment()

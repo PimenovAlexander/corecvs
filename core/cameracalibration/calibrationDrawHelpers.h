@@ -3,8 +3,8 @@
 #include "core/buffers/rgb24/rgbColor.h"
 #include "core/xml/generated/calibrationDrawHelpersParameters.h"
 
-#include "core/geometry/mesh3d.h"
-#include "core/geometry/mesh3DDecorated.h"
+#include "core/geometry/mesh/mesh3d.h"
+#include "core/geometry/mesh/mesh3DDecorated.h"
 
 namespace corecvs {
 

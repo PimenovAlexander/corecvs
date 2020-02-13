@@ -28,6 +28,8 @@ public:
     }
 
     DxfEntityData &data;
+
+    virtual ~DxfEntity() {};
 };
 
 // LINE Entity

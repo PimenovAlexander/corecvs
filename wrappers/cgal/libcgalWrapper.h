@@ -8,7 +8,7 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <core/geometry/convexQuickHull.h>
-#include <core/geometry/mesh3d.h>
+#include <core/geometry/mesh/mesh3d.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
 typedef CGAL::Polyhedron_3<K>                     Polyhedron_3;

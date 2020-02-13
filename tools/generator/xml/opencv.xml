@@ -11,12 +11,15 @@
 
   <class name="OpenCV KLT Parameters">
 
-    <field type="double"      name="SelectorQuality"    defaultValue="0.01" />
-    <field type="double"      name="SelectorDistance"   defaultValue="10" />
-    <field type="int"         name="SelectorSize"       defaultValue="7" />
-    <field type="int"         name="UseHarris"          defaultValue="1" />
-    <field type="double"      name="HarrisK"            defaultValue="0.05" />
-    <field type="int"         name="kltSize"            defaultValue="4"  />
+    <field type="int"         name="MaxCorners"         defaultValue="4000"   min="0" max="1000000" />
+    <field type="double"      name="SelectorQuality"    defaultValue="0.01"  />
+    <field type="double"      name="SelectorDistance"   defaultValue="10"    />
+    <field type="int"         name="SelectorSize"       defaultValue="7"     />
+    <field type="int"         name="UseHarris"          defaultValue="1"     />
+    <field type="double"      name="HarrisK"            defaultValue="0.05"  />
+    <field type="int"         name="kltSize"            defaultValue="4"     />
+    <field type="bool"        name="trace"              defaultValue="false" />
+
 
   </class>
 
@@ -93,6 +96,16 @@
     <field type="double"    name="tv_sor"       defaultValue="1.6" min="0"    max="100" step="0.1" comment="Successive-over-relaxation weight"/>
 
     <field type="int"       name="verbosity"    defaultValue="2" min="0"    max="4" step="1"       comment="Verbosity, 0: plot nothing, 1: final internal timing 2: complete iteration timing, (UNCOMMENTED -> 3: Display flow scales, 4: Display flow scale iterations)"/>
+  </class>
+
+  <class name="OpenCV PCA Flow Parameters">
+    <field type="double" name="Sparse Rate"               defaultValue="0.024"   min="0"    max="0.1" step="0.001"   comment="Controls density of sparse matches. "/>
+    <field type="double" name="Retained corners fraction" defaultValue="0.2"     min="0"    max="1.0" step="0.001"   comment="Retained corners fraction. "/>
+    <field type="double" name="Occlusions threshold"      defaultValue="0.0003"  min="0"    max="100" step="0.0001"  comment="Occlusion threshold. "/>
+    <field type="double" name="Damping factor"            defaultValue="0.00002" min="0"    max="100" step="0.00001" comment="Regularization term for solving least-squares. It is not related to the prior regularization."/>
+    <field type="int"    name="Clahe clip"                defaultValue="14"      min="-100" max="100" step="0.5"     comment="Clip parameter for CLAHE. "/>
+    <field type="int"    name="Basis height"              defaultValue="18"      min="0"    max="1000" step="1"      comment="Number of basis vectors."/>
+    <field type="int"    name="Basis width"               defaultValue="14"      min="0"    max="1000" step="1"      comment="Number of basis vectors."/>
   </class>
 
 

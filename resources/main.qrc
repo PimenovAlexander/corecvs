@@ -182,5 +182,7 @@
         <file>shaders/default_fast.vsh</file>
         <file>shaders/green.fsh</file>
         <file>shaders/green.vsh</file>
+        <file>shaders/obj_textured.fsh</file>
+        <file>shaders/obj_textured.vsh</file>
     </qresource>
 </RCC>

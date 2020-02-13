@@ -28,6 +28,12 @@ if (OpenCV_LIBS)
 include(../../wrappers/opencv/sourcelist.cmake)
 endif()
 
+if(AVCODEC_LIBS)
+    message("Switching on avcodec support <${AVCODEC_LIBS}>")
+    include(../../wrappers/avcodec/sourcelist.cmake)
+endif()
+
+
 #message(STATUS FlowDetector:${INCLUDEPATHS} )
 
 add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})

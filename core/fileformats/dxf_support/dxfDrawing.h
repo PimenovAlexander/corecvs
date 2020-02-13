@@ -1,9 +1,8 @@
+#ifndef DXF_SUPPORT_DXFDRAWING_H
+#define DXF_SUPPORT_DXFDRAWING_H
 //
 // Created by Myasnikov Vladislav on 5.12.2019.
 //
-
-#ifndef DXF_SUPPORT_DXFDRAWING_H
-#define DXF_SUPPORT_DXFDRAWING_H
 
 #include "core/fileformats/dxf_support/dxfCodes.h"
 #include "core/fileformats/dxf_support/objects/dxfObject.h"
@@ -24,15 +23,7 @@ public:
                std::map<std::string, std::list<DxfEntity*>> layerEntities, std::map<std::string, DxfBlockRecordObject*> blockRecords, std::map<std::string, std::list<DxfEntity*>> blockEntities)
                : layers(layers), blocks(blocks), otherObjects(otherObjects), layerEntities(layerEntities), blockRecords(blockRecords), blockEntities(blockEntities) {}
 
-    ~DxfDrawing() {
-        for (auto& kv : layerEntities)
-            for (DxfEntity* entity : kv.second) delete entity;
-
-        for (auto& kv : layers) delete kv.second;
-        for (auto& kv : blocks) delete kv.second;
-        for (auto& kv : blockRecords) delete kv.second;
-        for (auto& kv : otherObjects) delete kv.second;
-    }
+    ~DxfDrawing();
 
     void setScalingFactor(double factor) {
         scalingFactor = factor;

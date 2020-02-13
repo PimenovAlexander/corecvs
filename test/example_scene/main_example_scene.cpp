@@ -26,7 +26,7 @@
 #include "jsonSetter.h"
 
 #include "core/reflection/jsonPrinter.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 
 using namespace std;
 

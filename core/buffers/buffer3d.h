@@ -4,7 +4,7 @@
 #include "core/utils/global.h"
 
 #include "core/math/vector/vector3d.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/rectification/triangulator.h"
 #include "core/buffers/abstractContiniousBuffer.h"
 #include "flow/punchedBufferOperations.h"

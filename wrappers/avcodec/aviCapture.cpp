@@ -1,9 +1,13 @@
 /**
  * \brief Capture video stream from avi file using avcodec library
  */
-#include "core/utils/preciseTimer.h"
 
 #include "aviCapture.h"
+#include "core/utils/preciseTimer.h"
+
+extern "C" {
+    #include <libavutil/pixdesc.h>
+}
 
 
 bool AviCapture::avCodecInited = false;
@@ -65,8 +69,20 @@ ImageCaptureInterface::CapErrorCode AviCapture::initCapture()
 
     SYNC_PRINT(("AviCapture::initCapture(): Video Stream found\n"));
     mCodecParameters = mFormatContext->streams[mVideoStream]->codecpar;
-    mCodec = avcodec_find_decoder(mCodecParameters->codec_id);
+    mCodec = avcodec_find_decoder(mCodecParameters->codec_id);    
     mCodecContext = avcodec_alloc_context3(mCodec);
+    if (mCodecContext == NULL)
+    {
+        SYNC_PRINT(("AviCapture::initCapture(): Unable to allocate context\n"));
+        return ImageCaptureInterface::FAILURE;
+    }
+
+    res = avcodec_parameters_to_context(mCodecContext, mCodecParameters);
+    if (res < 0) {
+        SYNC_PRINT(("AviCapture::initCapture(): Unable to set context parameters\n"));
+        return ImageCaptureInterface::FAILURE;
+    }
+
     res = avcodec_open2(mCodecContext, mCodec, NULL);
     if (res < 0) {
         SYNC_PRINT(("AviCapture::initCapture(): Unable to open codec\n"));
@@ -125,7 +141,7 @@ ImageCaptureInterface::FramePair AviCapture::getFrame()
         if (res >= 0)
         {            
             if (mFrame->format == AV_PIX_FMT_YUV420P ||
-                mFrame->format != AV_PIX_FMT_YUVJ420P)
+                mFrame->format == AV_PIX_FMT_YUVJ420P)
             {
                 result.setRgbBufferLeft(new RGB24Buffer(mFrame->height, mFrame->width));
                 result.setBufferLeft   (new G12Buffer  (mFrame->height, mFrame->width));
@@ -150,11 +166,28 @@ ImageCaptureInterface::FramePair AviCapture::getFrame()
 
                 return result;
              } else {
-                SYNC_PRINT(("AviCapture::getFrame(): Not supported format %d\n", mFrame->format));
+                SYNC_PRINT(("AviCapture::getFrame(): Not supported format %d <%s>\n"
+                            , mFrame->format, av_get_pix_fmt_name((AVPixelFormat)mFrame->format)
+                            ));
+#if 0
+                SYNC_PRINT(("We support so far:\n"));
+                SYNC_PRINT((" - %d %s\n", ));
+#endif
+
                 return result;
              }
         } else {
-            SYNC_PRINT(("AviCapture::getFrame(): av_read_frame failed with %d", res));
+            SYNC_PRINT(("AviCapture::getFrame(): av_read_frame failed with %d [0x%x %c %c %c]\n", res,
+                        (uint8_t)(((uint32_t)res & 0xFF000000) >> 24),
+                        (uint8_t)(((uint32_t)res & 0x00FF0000) >> 16),
+                        (uint8_t)(((uint32_t)res & 0x0000FF00) >> 8 ),
+                        (uint8_t)(((uint32_t)res & 0x000000FF)      )));
+
+
+            char errorText[100];
+            av_make_error_string (errorText, CORE_COUNT_OF(errorText), res);
+            SYNC_PRINT(("Error string: <%s>\n", errorText));
+
             return result;
         }
 

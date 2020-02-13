@@ -54,8 +54,8 @@ int AVEncoder::startEncoding(const std::string &name, int h, int w, int codec_id
      outStream->id = formatContext->nb_streams - 1;
      SYNC_PRINT(("Stream id %d\n", outStream->id));
 
-     codecContext = outStream->codec;
-     codecContext->codec_id = codec->id;
+     codecParameters = outStream->codecpar;
+     codecContext = avcodec_alloc_context3(codec);
 
      if (codecContext == NULL) {
          fprintf(stderr, "Could not allocate video codec context\n");
@@ -230,7 +230,7 @@ void AVEncoder::endEncoding()
     open = false;
 }
 
-#if 0
+#if FF_API_NEXT
 void AVEncoder::printCaps()
 {
     //av_register_all();
@@ -259,7 +259,7 @@ void AVEncoder::printCaps()
         {
             break;
         }
-        SYNC_PRINT(("0x%04.4X %s %s\n", codec->id, codec->name, codec->long_name));
+        SYNC_PRINT(("0x%4.4X %s %s\n", codec->id, codec->name, codec->long_name));
     }
     SYNC_PRINT(("=============\n"));
 

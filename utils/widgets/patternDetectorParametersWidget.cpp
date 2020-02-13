@@ -10,6 +10,7 @@ PatternDetectorParametersWidget::PatternDetectorParametersWidget(QWidget *parent
     QWidget(parent),
     ui(new Ui::PatternDetectorParametersWidget)
 {
+    SYNC_PRINT(("PatternDetectorParametersWidget:PatternDetectorParametersWidget(): called\n"));
     ui->setupUi(this);
 
     std::vector<std::string> hints;
@@ -85,6 +86,8 @@ PatternDetectorParametersWidget::~PatternDetectorParametersWidget()
 
 GeneralPatternDetectorParameters PatternDetectorParametersWidget::getParameters()
 {
+    SYNC_PRINT(("PatternDetectorParametersWidget:getParameters(): called\n"));
+
     GeneralPatternDetectorParameters toReturn;
     size_t id = (size_t)ui->providerComboBox->currentIndex();
     toReturn.provider       = providerMetadata[id]->providerName;
@@ -115,6 +118,8 @@ void PatternDetectorParametersWidget::saveParamWidget(WidgetSaver &saver)
 
 void PatternDetectorParametersWidget::loadFromQSettings(const QString &fileName, const QString &_root)
 {
+    SYNC_PRINT(("PatternDetectorParametersWidget:loadFromQSettings(): called\n"));
+
     SettingsGetter visitor(fileName, _root);
 
     PatternFromPoseParameters pose;
@@ -143,7 +148,10 @@ void PatternDetectorParametersWidget::loadFromQSettings(const QString &fileName,
 
             DynamicObject block(widget->reflection);
             visitor.visit(block, (provider + "." + name).c_str());
-            cout << block << endl;
+
+            // cout << (provider + "." + name) << endl;
+            // cout << block << endl;
+
             widget->setParameters(block.rawObject);
         }
     }
@@ -154,6 +162,8 @@ void PatternDetectorParametersWidget::loadFromQSettings(const QString &fileName,
 
 void PatternDetectorParametersWidget::saveToQSettings (const QString &fileName, const QString &_root)
 {
+    SYNC_PRINT(("PatternDetectorParametersWidget:saveToQSettings(): called\n"));
+
     SettingsSetter visitor(fileName, _root);
 
     PatternFromPoseParameters pose;

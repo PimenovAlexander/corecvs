@@ -81,6 +81,7 @@ int main(int argc, char *argv[])
             if (corecvs::HelperUtils::endsWith(path, ".obj"))
             {
                 OBJLoader objLoader;
+                objLoader.trace = false;
 
                 /** Load Materials **/
                 std::string mtlFile = path.substr(0, path.length() - 4) + ".mtl";
@@ -122,9 +123,21 @@ int main(int argc, char *argv[])
 
             if (!mesh->verify())
             {
-                SYNC_PRINT(("Internal error loading mesh"));
+                SYNC_PRINT(("Verification: Internal error loading mesh"));
                 return 1;
+            } else {
+                SYNC_PRINT(("Verification: Mesh Verfication passed\n"));
             }
+
+            for (int m = 0; m < mesh->materials.size(); m++)
+            {
+                if (mesh->materials[m].tex[OBJMaterial::TEX_AMBIENT] == NULL)
+                    continue;
+                std::ostringstream ss;
+                ss << "tex" << m << ".bmp";
+                BufferFactory::getInstance()->saveRGB24Bitmap(mesh->materials[m].tex[OBJMaterial::TEX_AMBIENT], ss.str() );
+            }
+
             mesh->recomputeMeanNormals();
             shaded->setMesh(mesh);
             //shaded->prepareMesh(&mainWindow);

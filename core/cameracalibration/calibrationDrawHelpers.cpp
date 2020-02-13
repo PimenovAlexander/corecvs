@@ -1,5 +1,5 @@
 #include "core/cameracalibration/calibrationDrawHelpers.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/cameracalibration/cameraModel.h"
 #include "core/camerafixture/fixtureScene.h"
 #include "core/alignment/selectableGeometryFeatures.h"

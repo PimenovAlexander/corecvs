@@ -9,7 +9,7 @@
  */
 
 #include <iostream>
-#include <core/geometry/mesh3d.h>
+#include <core/geometry/mesh/mesh3d.h>
 #include <core/geometry/raytrace/bspTree.h>
 #include "gtest/gtest.h"
 

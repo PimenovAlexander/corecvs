@@ -636,7 +636,6 @@
       <property name="mouseTracking">
        <bool>false</bool>
       </property>
-      <zorder>widget_3</zorder>
      </widget>
     </widget>
    </item>

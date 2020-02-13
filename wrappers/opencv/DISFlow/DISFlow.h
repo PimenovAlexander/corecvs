@@ -22,9 +22,9 @@ public:
 
     corecvs::FlowBuffer *opticalFlow = NULL;
 
-    corecvs::FlowTracks *tracks;
+    corecvs::FlowTracks *tracks = NULL;
 
-    cv::Mat *previousFlow;
+    cv::Mat previousFlow;
 
     corecvs::RGB24Buffer *inPrev  = NULL;
     corecvs::RGB24Buffer *inCurr  = NULL;
@@ -32,21 +32,20 @@ public:
     DisFlowParameters params;
     bool isSelectedParams;
 
-    int SELECTCHANNEL;
-    int SELECTMODE;
+    int selectChannel;
+    int selectMode;
 
-    DISFlow() {
-        SELECTMODE = 1;
-        SELECTCHANNEL = 3;
-        previousFlow = NULL;
-        isSelectedParams = false;
-    }
+    DISFlow() :
+        isSelectedParams(false),
+        selectChannel(3),
+        selectMode(1)
+    {}
 
     virtual ~DISFlow() {
         delete opticalFlow;
     }
 
-    virtual int beginFrame() {return 0;}
+    virtual int beginFrame() override;
 
     virtual int setFrameRGB24(corecvs::RGB24Buffer *frame, int frameType = FRAME_DEFAULT) override
     {

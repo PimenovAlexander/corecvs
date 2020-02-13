@@ -25,7 +25,7 @@
 #include "core/fileformats/bmpLoader.h"
 #include "core/buffers/rgb24/abstractPainter.h"
 #include "core/geometry/renderer/simpleRenderer.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/cameracalibration/cameraModel.h"
 
 #include "core/geometry/polygonPointIterator.h"

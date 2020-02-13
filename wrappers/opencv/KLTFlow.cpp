@@ -33,9 +33,6 @@ KLTFlow::~KLTFlow()
     // TODO Auto-generated destructor stub
 }
 
-
-#define MAX_CORNERS 4000
-
 /**
  *   This function wraps  OpenCV call
  *
@@ -48,7 +45,8 @@ std::vector<FloatFlowVector> *KLTFlow::getOpenCVKLT(
       , int    mSelectorSize
       , int    mUseHarris
       , double mHarrisK
-      , int    mKLTSize)
+      , int    mKLTSize
+      , int    mMaxCorners)
 {
     std::vector<FloatFlowVector> *result = new std::vector<FloatFlowVector>();
 
@@ -74,12 +72,12 @@ std::vector<FloatFlowVector> *KLTFlow::getOpenCVKLT(
 
     /* Arrays that will hold features */
     /* Make C++ style*/
-    CvPoint2D32f* featuresA = new CvPoint2D32f[MAX_CORNERS];
-    CvPoint2D32f* featuresB = new CvPoint2D32f[MAX_CORNERS];
-    float *feature_errors = new float[MAX_CORNERS];
-    char  *features_found = new char[MAX_CORNERS];
+    CvPoint2D32f* featuresA = new CvPoint2D32f[mMaxCorners];
+    CvPoint2D32f* featuresB = new CvPoint2D32f[mMaxCorners];
+    float *feature_errors = new float[mMaxCorners];
+    char  *features_found = new char[mMaxCorners];
 
-    int corner_count = MAX_CORNERS;
+    int corner_count = mMaxCorners;
 
     cvGoodFeaturesToTrack(
                 algo_image_A_p, /**< */
@@ -158,20 +156,38 @@ std::vector<FloatFlowVector> *KLTFlow::getOpenCVKLT(
         , params.selectorSize()
         , params.useHarris()
         , params.harrisK()
-        , params.kltSize());
+        , params.kltSize()
+        , params.maxCorners());
 }
 
+
+int OpenCVFlowProcessor::beginFrame()
+{
+    return 0;
+}
+
+int OpenCVFlowProcessor::reset()
+{
+    inPrev = NULL;
+    inCurr = NULL;
+    delete_safe(opticalFlow);
+    return 0;
+}
+
+int OpenCVFlowProcessor::clean(int) {
+    return 0;
+}
 
 int OpenCVFlowProcessor::endFrame()
 {
 
-    SYNC_PRINT(("OpenCVFlowProcessor::endFrame(): called with curr:%s and prev:%s\n",
+    if (params.trace()) SYNC_PRINT(("OpenCVFlowProcessor::endFrame(): called with curr:%s and prev:%s\n",
             inCurr ? "non NULL" : "NULL",
             inPrev ? "non NULL" : "NULL"));
     if (inCurr != NULL && inPrev != NULL)
     {
         delete_safe(opticalFlow);
-        SYNC_PRINT(("Creating output of size: [%d x %d]\n", inCurr->w, inCurr->h));
+        if (params.trace()) SYNC_PRINT(("Creating output of size: [%d x %d]\n", inCurr->w, inCurr->h));
 
 
         /*
@@ -190,7 +206,7 @@ int OpenCVFlowProcessor::endFrame()
                 first, second, params);
         Statistics::endInterval(stats, "OpenCV call");
 
-        SYNC_PRINT(("Creating output of size: [%d x %d]\n", inCurr->w, inCurr->h));
+        if (params.trace()) SYNC_PRINT(("Creating output of size: [%d x %d]\n", inCurr->w, inCurr->h));
 
         opticalFlow = new FlowBuffer(inCurr->h, inCurr->w);
 

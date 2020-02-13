@@ -655,8 +655,8 @@ int PPMLoader::save(const string& name, RGB48Buffer *buffer, MetaData* metadata,
     header.w = buffer->w;
 
     int maxval = 0;
-    for (ulong i = 0; i < header.h; i++)
-        for (ulong j = 0; j < header.w; j++)
+    for (unsigned long i = 0; i < header.h; i++)
+        for (unsigned long j = 0; j < header.w; j++)
         {
             auto &pixel = buffer->element(i, j);
             if (pixel.r() > maxval) maxval = pixel.r();

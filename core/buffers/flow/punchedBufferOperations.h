@@ -93,6 +93,21 @@ public:
         return sc.count;
     }
 
+    template <class B>
+    B *knownConvert(typename B::InternalElementType known = 1, typename B::InternalElementType unknown = 0)
+    {
+        B *toReturn = new B(realThis()->getSize(), false);
+        for (int i = 0; i < toReturn->h; i++)
+        {
+            for (int j = 0; j < toReturn->w; j++)
+            {
+                toReturn->element(i,j) = realThis()->isElementKnown(i,j) ? known : unknown;
+            }
+        }
+
+        return toReturn;
+    }
+
     FpImage *knownAsFloat(float known = 1.0, float unknown = 0.0)
     {        
         FpImage *toReturn = new FpImage(realThis()->getSize(), false);      
@@ -104,7 +119,7 @@ public:
             }
         }
 
-        SYNC_PRINT(("Created buffer %x of size [%d %d]\n", toReturn, toReturn->h, toReturn->w));
+//        SYNC_PRINT(("Created buffer %x of size [%d %d]\n", toReturn, toReturn->h, toReturn->w));
         return toReturn;
     }
 
@@ -129,6 +144,39 @@ public:
         if (sumOut != NULL) *sumOut = sum;
         if (numOut != NULL) *numOut = num;
     }
+
+    bool isSubsetOf(const ThisTypeName &that)
+    {
+        if (that.h != realThis()->h || that.w != realThis()->w)
+        {
+            std::cout << "f1\n";
+            return false;
+        }
+        int diff = 0, eq = 0, rev = 0;
+        for (int i = 0; i < realThis()->h; i++)
+        {
+            const ElementType *thisElemRunner = &(realThis()->element(i, 0));
+            const ElementType *thatElemRunner = &(that.element(i, 0));
+            for (int j = 0; j < realThis()->w; j++)
+            {
+                if (realThis()->isElementKnown(i, j)) {
+                if (*thatElemRunner != *thisElemRunner)
+                {
+//                    std::cout << "f2 " << i << ' ' << j << ' ' << *thisElemRunner << *thatElemRunner << '\n';
+                    diff++;
+                } else
+                    eq++;
+                if (!that.isElementKnown(i, j))
+                    rev++;
+                }
+                thatElemRunner++;
+                thisElemRunner++;
+            }
+        }
+        std::cout << eq << ' ' << diff << " " << rev << " t1\n";
+        return diff = 0;
+    }
+
 
 };
 

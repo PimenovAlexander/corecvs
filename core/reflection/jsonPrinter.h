@@ -224,13 +224,13 @@ template <class Type>
      **/
     template <typename Type,
               typename std::enable_if<!(std::is_enum<Type>::value || (std::is_arithmetic<Type>::value && !std::is_same<bool, Type>::value)), int>::type foo = 0>
-    void visit(Type &field, Type /*defaultValue*/, const char * fieldName)
+    void visit(Type &field, const Type &/*defaultValue*/, const char * fieldName)
     {
         visit<Type>(field, fieldName);
     }
 
     template <typename type, typename std::enable_if<std::is_arithmetic<type>::value && !std::is_same<bool, type>::value, int>::type foo = 0>
-    void visit(type &field, type, const char *fieldName)
+    void visit(type &field, const type&, const char *fieldName)
     {
         if (!stream) return;
         *stream << separate() << indent() << decorateName(fieldName) << FIELD_VALUE_SEPARATOR << field;
@@ -240,7 +240,7 @@ template <class Type>
      * Enums
      **/
     template <typename type, typename std::enable_if<std::is_enum<type>::value, int>::type foo = 0>
-    void visit(type &field, type defaultValue, const char *fieldName)
+    void visit(type &field, const type &defaultValue, const char *fieldName)
     {
         using U = typename std::underlying_type<type>::type;
         U u = static_cast<U>(field);
@@ -295,16 +295,16 @@ void JSONPrinter::visit<double, DoubleVectorField>(std::vector<double> &field, c
  * this methods can be made universal, but are separated to make it a bit more controllable
  **/
 template <>
-void JSONPrinter::visit<uint64_t>(uint64_t &intField, uint64_t defaultValue, const char *fieldName);
+void JSONPrinter::visit<uint64_t>(uint64_t &intField, const uint64_t &defaultValue, const char *fieldName);
 
 template <>
-void JSONPrinter::visit<bool>(bool &boolField, bool defaultValue, const char *fieldName);
+void JSONPrinter::visit<bool>(bool &boolField, const bool &defaultValue, const char *fieldName);
 
 template <>
-void JSONPrinter::visit<std::string>(std::string &stringField, std::string defaultValue, const char *fieldName);
+void JSONPrinter::visit<std::string>(std::string &stringField, const std::string &defaultValue, const char *fieldName);
 
 template <>
-void JSONPrinter::visit<std::wstring>(std::wstring &stringField, std::wstring defaultValue, const char *fieldName);
+void JSONPrinter::visit<std::wstring>(std::wstring &stringField, const std::wstring &defaultValue, const char *fieldName);
 
 
 } //namespace corecvs

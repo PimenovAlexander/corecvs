@@ -23,7 +23,7 @@
 #include "core/buffers/rgb24/abstractPainter.h"
 #include "core/fileformats/bmpLoader.h"
 #include "core/geometry/convexPolyhedron.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 
 #include "core/geometry/kdtree.h"
 

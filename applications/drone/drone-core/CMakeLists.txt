@@ -27,15 +27,13 @@ target_sources(drone-core
         ${CMAKE_CURRENT_LIST_DIR}/copter/motor.h
         ${CMAKE_CURRENT_LIST_DIR}/copter/quad.h
 
-        ${CMAKE_CURRENT_LIST_DIR}/simulation/dzhanibekovBolt.h
-        ${CMAKE_CURRENT_LIST_DIR}/simulation/physMainObject.h
         ${CMAKE_CURRENT_LIST_DIR}/simulation/simulation.h
         ${CMAKE_CURRENT_LIST_DIR}/simulation/simSphere.h
         ${CMAKE_CURRENT_LIST_DIR}/simulation/simObject.h
         ${CMAKE_CURRENT_LIST_DIR}/simulation/mainObject.h
-        ${CMAKE_CURRENT_LIST_DIR}/simulation/physObject.h
-        ${CMAKE_CURRENT_LIST_DIR}/simulation/physSphere.h
-        ${CMAKE_CURRENT_LIST_DIR}/simulation/testPhysicsObject.h
+        ${CMAKE_CURRENT_LIST_DIR}/simulation/physicsCompoundObject.h
+        ${CMAKE_CURRENT_LIST_DIR}/simulation/physicsObject.h
+        ${CMAKE_CURRENT_LIST_DIR}/simulation/physicsSphere.h
 
         ${CMAKE_CURRENT_LIST_DIR}/mixer/controlsMixer.h
 
@@ -53,6 +51,9 @@ target_sources(drone-core
         ${CMAKE_CURRENT_LIST_DIR}/copterInputs.h
         ${CMAKE_CURRENT_LIST_DIR}/joystick/joystickReader.h
 
+        ${CMAKE_CURRENT_LIST_DIR}/world/simulationWorld.h
+
+
     PRIVATE
         ${SRC_FILES}
 
@@ -64,15 +65,13 @@ target_sources(drone-core
         ${CMAKE_CURRENT_LIST_DIR}/copter/motor.cpp
 
 
-        ${CMAKE_CURRENT_LIST_DIR}/simulation/physMainObject.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/simulation/mainObject.cpp
         ${CMAKE_CURRENT_LIST_DIR}/simulation/simulation.cpp
         ${CMAKE_CURRENT_LIST_DIR}/simulation/simSphere.cpp
         ${CMAKE_CURRENT_LIST_DIR}/simulation/simObject.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/simulation/mainObject.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/simulation/physObject.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/simulation/physSphere.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/simulation/dzhanibekovBolt.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/simulation/testPhysicsObject.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/simulation/physicsCompoundObject.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/simulation/physicsObject.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/simulation/physicsSphere.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/mixer/controlsMixer.cpp
 
@@ -89,6 +88,9 @@ target_sources(drone-core
         ${CMAKE_CURRENT_LIST_DIR}/copterInputs.cpp
         ${CMAKE_CURRENT_LIST_DIR}/comcontroller.cpp
         ${CMAKE_CURRENT_LIST_DIR}/joystick/joystickReader.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/world/simulationWorld.cpp
+
 )
 
 set(ADD_SRC_FILES ${ADD_SRC_FILES}
@@ -113,8 +115,7 @@ target_include_directories(drone-core PUBLIC
 
 target_include_directories(drone-core PUBLIC ../../../wrappers/joystick)
 
-find_package(Qt5 COMPONENTS REQUIRED SerialPort)
-target_link_libraries(drone-core corecvs Qt5::SerialPort)
+target_link_libraries(drone-core corecvs)
 
 
 target_include_directories(drone-core PUBLIC ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} .)
@@ -125,4 +126,13 @@ target_link_libraries(drone-core cvs_utils corecvs)
 if (OpenCV_LIBS)
     target_link_libraries(drone-core ${OpenCV_LIBS})
 endif()
+
+
+# Additional stuff mostly for IDE only
+
+file(GLOB CUR_ADD_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/xml/*.xml)
+set(ADD_SRC_FILES ${ADD_SRC_FILES} ${CUR_ADD_SRC_FILES})
+
+target_sources(drone-core PRIVATE ${ADD_SRC_FILES})
+set_source_files_properties(${ADD_SRC_FILES} PROPERTIES EXTERNAL_OBJECT true HEADER_FILE_ONLY TRUE)
 

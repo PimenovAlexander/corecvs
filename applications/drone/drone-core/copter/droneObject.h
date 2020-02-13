@@ -7,11 +7,11 @@
 
 #include <core/cameracalibration/cameraModel.h>
 #include "core/cameracalibration/calibrationDrawHelpers.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/math/affine.h"
 #include "core/math/vector/vector3d.h"
 
-#include "physMainObject.h"
+#include "physicsCompoundObject.h"
 #include "pid.h"
 
 class Sensor
@@ -22,7 +22,7 @@ public:
      std::string name;
 };
 
-class DroneObject : public PhysMainObject
+class DroneObject : public PhysicsMainObject
 {
 public:
     std::vector<CameraModel> cameras;
@@ -32,7 +32,7 @@ public:
     std::vector<Motor *> motors;
 
     /* Not owned */
-    PhysSphere *centralSphere;
+    PhysicsSphere *centralSphere;
     bool testMode = false;
 
     PID pitchPID{0.7, 0.35, 0.35};

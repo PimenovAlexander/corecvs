@@ -6,7 +6,6 @@ target_sources(corecvs
         ${CMAKE_CURRENT_LIST_DIR}/line.h
         ${CMAKE_CURRENT_LIST_DIR}/triangulation.h
         ${CMAKE_CURRENT_LIST_DIR}/polygons.h
-        ${CMAKE_CURRENT_LIST_DIR}/mesh3d.h
         ${CMAKE_CURRENT_LIST_DIR}/vptree.h
         ${CMAKE_CURRENT_LIST_DIR}/convexPolyhedron.h
         ${CMAKE_CURRENT_LIST_DIR}/conic.h
@@ -14,11 +13,9 @@ target_sources(corecvs
     #    ${CMAKE_CURRENT_LIST_DIR}/projection.h
         ${CMAKE_CURRENT_LIST_DIR}/gentryState.h
         ${CMAKE_CURRENT_LIST_DIR}/twoViewOptimalTriangulation.h
-        ${CMAKE_CURRENT_LIST_DIR}/mesh3DDecorated.h
         ${CMAKE_CURRENT_LIST_DIR}/ellipse.h
         ${CMAKE_CURRENT_LIST_DIR}/ellipseFit.h
         ${CMAKE_CURRENT_LIST_DIR}/plane3dFit.h
-        ${CMAKE_CURRENT_LIST_DIR}/meshClicker.h
         ${CMAKE_CURRENT_LIST_DIR}/convexHull.h
         ${CMAKE_CURRENT_LIST_DIR}/convexHull3d.h
         ${CMAKE_CURRENT_LIST_DIR}/convexQuickHull.h
@@ -29,7 +26,15 @@ target_sources(corecvs
         ${CMAKE_CURRENT_LIST_DIR}/plane.h
         ${CMAKE_CURRENT_LIST_DIR}/kdtree.h
         ${CMAKE_CURRENT_LIST_DIR}/beziercurve.h
-        ${CMAKE_CURRENT_LIST_DIR}/raytrace/bspTree.h
+        ${CMAKE_CURRENT_LIST_DIR}/raytrace/bspTree.h        
+
+        ${CMAKE_CURRENT_LIST_DIR}/mesh/mesh3d.h
+        ${CMAKE_CURRENT_LIST_DIR}/mesh/mesh3DDecorated.h
+        ${CMAKE_CURRENT_LIST_DIR}/mesh/meshClicker.h
+        ${CMAKE_CURRENT_LIST_DIR}/mesh/meshFilter.h
+        ${CMAKE_CURRENT_LIST_DIR}/mesh/meshCache.h
+
+
 
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/ellipticalApproximation.cpp
@@ -37,18 +42,15 @@ target_sources(corecvs
         ${CMAKE_CURRENT_LIST_DIR}/rectangle.cpp
         ${CMAKE_CURRENT_LIST_DIR}/triangulation.cpp
         ${CMAKE_CURRENT_LIST_DIR}/polygons.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/mesh3d.cpp
         ${CMAKE_CURRENT_LIST_DIR}/convexPolyhedron.cpp
         ${CMAKE_CURRENT_LIST_DIR}/conic.cpp
         ${CMAKE_CURRENT_LIST_DIR}/polygonPointIterator.cpp
         # ${CMAKE_CURRENT_LIST_DIR}/projection.cpp
         ${CMAKE_CURRENT_LIST_DIR}/gentryState.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/mesh3DDecorated.cpp
         ${CMAKE_CURRENT_LIST_DIR}/twoViewOptimalTriangulation.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ellipse.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ellipseFit.cpp
         ${CMAKE_CURRENT_LIST_DIR}/plane3dFit.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/meshClicker.cpp
         ${CMAKE_CURRENT_LIST_DIR}/convexHull.cpp
         ${CMAKE_CURRENT_LIST_DIR}/convexHull3d.cpp
         ${CMAKE_CURRENT_LIST_DIR}/convexQuickHull.cpp
@@ -58,6 +60,12 @@ target_sources(corecvs
         ${CMAKE_CURRENT_LIST_DIR}/halfspaceIntersector.cpp
         ${CMAKE_CURRENT_LIST_DIR}/orientedBox.cpp
         ${CMAKE_CURRENT_LIST_DIR}/plane.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/mesh/mesh3d.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/mesh/mesh3DDecorated.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/mesh/meshClicker.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/mesh/meshFilter.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/mesh/meshCache.cpp
 
 )
 

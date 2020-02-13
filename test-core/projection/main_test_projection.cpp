@@ -23,7 +23,7 @@
 
 
 #include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/cameracalibration/calibrationDrawHelpers.h"
 #include "core/fileformats/bmpLoader.h"
 #include "core/fileformats/objLoader.h"

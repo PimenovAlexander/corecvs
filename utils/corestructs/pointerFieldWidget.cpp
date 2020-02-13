@@ -25,7 +25,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
-#include "core/geometry/mesh3DDecorated.h"
+#include "core/geometry/mesh/mesh3DDecorated.h"
 
 #ifdef WITH_OPENGL
 #include <sceneShaded.h>

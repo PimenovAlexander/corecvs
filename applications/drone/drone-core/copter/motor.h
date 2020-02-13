@@ -6,13 +6,13 @@
 
 #include <core/cameracalibration/cameraModel.h>
 #include "core/cameracalibration/calibrationDrawHelpers.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/math/affine.h"
 #include "core/math/vector/vector3d.h"
 
-#include "physSphere.h"
+#include "physicsSphere.h"
 
-class Motor : public PhysSphere
+class Motor : public PhysicsSphere
 {
 public:
     /**
@@ -44,7 +44,7 @@ public:
     Mesh3D *propMesh  = NULL;
 
 
-    Motor(Affine3DQ *pos, double *propellerRadius, double *mass);
+    Motor(const Affine3DQ &pos, double propellerRadius, double mass);
 };
 
 #endif // MOTOR_H

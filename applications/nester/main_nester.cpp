@@ -23,8 +23,67 @@ void lowerMassCenter(Polygon& A);
 
 Vector2dd massCenter(const Polygon &A);
 
+
 int main(int argc, char **argv)
 {
+
+    for (auto s: svg.shapes )
+    {
+        addSubPolygons(s, inputPolygons);
+    }
+
+    SYNC_PRINT(("Loaded %d polygons\n", (int)inputPolygons.size()));
+
+
+    // BLPlacement(Bin, inputPolygons);
+
+    /****
+     *  Put your code here
+     ****/
+
+    inputPolygons.push_back(B);
+    inputPolygons.push_back(B);
+    inputPolygons.push_back(B);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+    inputPolygons.push_back(A);
+
+
+
+
+    LazySort(inputPolygons);
+
+    for(auto &p : inputPolygons)
+    {
+        DoClockOrP(p);
+        LowerMassCenter(p);
+
+    }
+
+    BLPlacement(Bin, inputPolygons); //всякие защиты от пустых множеств отсутствуют
+
+
+    for (Polygon& p: inputPolygons )
+    {
+        showP(p);
+    }
+
+    int h = s.getInt("h", 1000);
+    int w = s.getInt("w", 1000);
+
 
 
     //Vector2dd B = {4, 12};

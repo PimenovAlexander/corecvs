@@ -6,12 +6,11 @@
 #include <stack>
 #include <linux/joystick.h>
 #include <fcntl.h>
+#include <world/simulationWorld.h>
 
 #include <JoystickOptionsWidget.h>
 #include <QWidget>
 #include <statisticsDialog.h>
-#include <QtSerialPort/QSerialPort>
-#include <QtSerialPort/QSerialPortInfo>
 
 #include "calibration.h"
 #include "cameraModelParametersControlWidget.h"
@@ -37,7 +36,7 @@
 
 #include "controlRecord.h"
 #include "simulation.h"
-#include "core/geometry/mesh3DDecorated.h"
+#include "core/geometry/mesh/mesh3DDecorated.h"
 #include "mesh3DScene.h"
 #include "patternDetectorParametersWidget.h"
 
@@ -77,7 +76,6 @@ public:
 private:
     Ui::PhysicsMainWindow *ui;
 
-    QSerialPort serialPort;
     ProtoAutoPilot iiAutoPilot;
     QByteArray *flyCommandWriteData = NULL;
     QByteArray getDataFromSticks();
@@ -140,6 +138,13 @@ public slots:
 
 signals:
     void newPatternDetectionParameters(GeneralPatternDetectorParameters params);
+
+/** World **/
+public:
+    SimulationWorld world;
+
+public slots:
+    void worldRedraw();
 
 /** Quad **/
 public:
@@ -222,8 +227,6 @@ private slots:
     void on_toolButton_3_released();
     void on_toolButton_2_released();
     void on_pushButton_released();
-    void on_connetToVirtualButton_pressed();
-//    void on_iiOutputSlider_valueChanged(int value);
 
     void calibrateCamera();
 

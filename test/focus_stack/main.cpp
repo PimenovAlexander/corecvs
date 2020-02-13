@@ -2,7 +2,7 @@
 #include "core/fileformats/bmpLoader.h"
 #include "imageStack.h"
 #include "laplacianStacking.h"
-#include "complexWavelet.h"
+
 #ifdef WITH_LIBJPEG
 #include "libjpegFileReader.h"
 #endif
@@ -19,7 +19,7 @@ using namespace corecvs;
 
 void printUsage()
 {
-    SYNC_PRINT(("./bin/focus_stack <path to stack> <path to output dir>\n"));
+    SYNC_PRINT(("./bin/focus_stack <path to stack> <path to output dir>\n or ./bin/focus_stack test for testing"));
 }
 
 int main(int argc, char *argv[])
@@ -44,11 +44,12 @@ int main(int argc, char *argv[])
         SYNC_PRINT(("Can't load images!\n"));
         return 0;
     }
-    ComplexWavelet complexWavelet;
-    imageStack->focus_stack(complexWavelet);
+    LaplacianStacking stacking;
+
+    imageStack->focus_stack(stacking);
     imageStack->saveMergedImage(argv[2]);
 
-    delete_safe(imageStack);
+    delete(imageStack);
 
     return 0;
 }

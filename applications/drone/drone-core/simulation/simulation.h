@@ -8,23 +8,21 @@
 #include <time.h>
 
 #include "copter/droneObject.h"
-#include "physObject.h"
-#include "physSphere.h"
-#include "physMainObject.h"
+#include "physicsObject.h"
+#include "physicsSphere.h"
+#include "physicsCompoundObject.h"
 #include "sceneShaded.h"
-#include "dzhanibekovBolt.h"
-#include <testPhysicsObject.h>
 
 class Simulation
 {
 public:
     Simulation();
-    vector<PhysMainObject> mainObjects;
+    vector<PhysicsMainObject> mainObjects;
 
     DroneObject drone;
-    DzhanibekovBolt testBolt;
-    TestPhysicsObject testObject;
 
+    /* remove this ASAP */
+#if 0
     std::chrono::high_resolution_clock::time_point oldTime;
     std::chrono::high_resolution_clock::time_point newTime;
     std::chrono::high_resolution_clock::time_point startTime;
@@ -34,6 +32,8 @@ public:
     std::chrono::high_resolution_clock::time_point endTime;
     std::chrono::duration<double> time_span;
     std::chrono::duration<double> time_since_start;
+#endif
+
     SceneShaded *mShadedScene = NULL;
     int frameCounter=0;
     void start();
@@ -52,9 +52,10 @@ public:
     std::vector<size_t> time_of_forces;
     std::vector<size_t> time_between_forces;
 
-    void execJanibekovTest();
     void startDroneSimulation();
-    void execTestPhysObject();
+    //void execTestPhysObject();
+    //void execJanibekovTest();
+
 private:
     void defaultStart();
     void droneStart();

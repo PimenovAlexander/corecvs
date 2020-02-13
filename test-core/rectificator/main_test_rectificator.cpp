@@ -22,7 +22,7 @@
 #include "core/rectification/essentialEstimator.h"
 #include "core/cameracalibration/cameraModel.h"
 #include "core/geometry/polygons.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/cameracalibration/calibrationDrawHelpers.h"
 
 #include "core/rectification/iterativeEstimator.h"

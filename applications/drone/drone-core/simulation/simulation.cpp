@@ -1,12 +1,12 @@
+#include <list>
+
+#include "core/utils/log.h"
+
 #include "simulation.h"
-#include "list"
 #include "simObject.h"
 #include "simSphere.h"
-#include <ctime>
-#include "core/utils/log.h"
-#include <chrono>
 #include "mesh3DScene.h"
-//#include "physicsMainWindow.h"
+
 using namespace std;
 using namespace corecvs;
 
@@ -27,29 +27,13 @@ Simulation::Simulation(string arg)
     }
 }
 
-double fRand(double fMin, double fMax)
-{
-    double f = (double)rand() / RAND_MAX;
-    return fMin + f * (fMax - fMin);
-}
-
 void Simulation::startRealTimeSimulation()
 {
-    std::thread thr([this]()
-    {
-        oldTime = std::chrono::high_resolution_clock::now();
-        while (isAlive)
-        {
-           drone.flightControllerTick(droneJoystick);
-           newTime = std::chrono::high_resolution_clock::now();
-           time_span = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-oldTime);
-           drone.physicsTick(time_span.count());
-           oldTime=newTime;
-        }
-    });
-    thr.detach();
+    drone.flightControllerTick(droneJoystick);
+    drone.physicsTick(1.0);
 }
 
+#if 0
 void Simulation::execJanibekovTest()
 {
     std::thread thr([this]()
@@ -63,8 +47,8 @@ void Simulation::execJanibekovTest()
         //Quaternion testOrientation = Quaternion(0, 0.012489, 0, 0.999922);
         Quaternion testOrientation = Quaternion::Identity();
         L_INFO << "INTIAL ORIENTATION: " << testOrientation;
-        testBolt.orientation = testOrientation;
-        testBolt.angularVelocity = testAngVel;
+        testBolt. = testOrientation;
+        testBolt.w = testAngVel;
 
         testBolt.mw = testAngVel.l2Metric();
 
@@ -108,12 +92,15 @@ void Simulation::execJanibekovTest()
     });
     thr.detach();
 }
+#endif
 
 void Simulation::startDroneSimulation()
 {
+#if 0
     std::thread thr([this]()
     {
-        srand(NULL); /*< Was ist das? */
+        //srand(NULL); /*< Was ist das? */
+
         startTime = std::chrono::high_resolution_clock::now();
         oldTime = startTime;
         noiseTime = startTime;
@@ -124,7 +111,7 @@ void Simulation::startDroneSimulation()
             newTime = std::chrono::high_resolution_clock::now();
             double timePassed = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-startTime).count();
 
-            Affine3DQ motorToWorld = testBolt.getTransform() * testBolt.partsOfSystem[1]->getPosAffine();
+            Affine3DQ motorToWorld = testBolt.getTransform() * testBolt.partsOfSystem[1]->affine();
             Matrix33 transposedOrient = motorToWorld.rotor.toMatrix();
             transposedOrient.transpose();
 
@@ -136,81 +123,13 @@ void Simulation::startDroneSimulation()
         }
     });
     thr.detach();
+#endif
 }
-
-void Simulation::execTestPhysObject()
-{
-    std::thread thr([this]()
-    {
-        srand(NULL); /*< What is this??? */
-        //noiseTime = startTime;
-        //noiseReverseTime = startTime;
-
-        //Quaternion testAngVel = Quaternion(-0.00144962, -2.8152e-11, 9.80112e-15, 0.999999);
-        Vector3dd testAngVel = Vector3dd(1.0, 1.0, 0.0); //* 0.000001;
-        //Quaternion testOrientation = Quaternion(0, 0.012489, 0, 0.999922);
-        Quaternion testOrientation = Quaternion::Identity();
-
-        L_INFO << "Starting rigid body simulation of 4 objects...\n"
-               << "----------------------------------------------\n";
-
-        usleep(3000000);
-        L_INFO << "INITIAL Angular Velocity W = " << testAngVel << "\n"
-               << "INTIAL ORIENTATION: " << testOrientation << "\n"
-               << "----------------------------------------------\n"
-               << "ACTION: STOP AFTER 2Pi SECONDS\n"
-               << "TARGET: AFTER STOP ORIENTATION SHOULD BE SAME AS INITIAL\n"
-               << "Running test...";
-        testObject.orientation = testOrientation;
-        testObject.angularVelocity = testAngVel;
-
-        testObject.mw = testAngVel.l2Metric();
-
-        startTime = std::chrono::high_resolution_clock::now();
-        oldTime = startTime;
-
-        while (isAlive)
-        {
-            //double timePassed = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-startTime).count();
-
-            Affine3DQ motorToWorld = testObject.getTransform() * testObject.partsOfSystem[1].getPosAffine();
-            Matrix33 transposedOrient = motorToWorld.rotor.toMatrix();
-            transposedOrient.transpose();
-
-            //Vector3dd force = transposedOrient * Vector3dd(0.0, 0.0, 0.05);
-            //Vector3dd force2 = Vector3dd(0.0, 0.0, 0.03);
-            //Quaternion q = Quaternion(-0.00744148, -8.46662e-11, 0.000934261, 0.999972);
-
-            newTime = std::chrono::high_resolution_clock::now();
-            time_span = std::chrono::duration_cast<std::chrono::duration<double>>(newTime - oldTime);
-            time_since_start = std::chrono::duration_cast<std::chrono::duration<double>>(newTime - startTime);
-
-            if(time_since_start.count() <= 2 * M_PI)
-            {
-                testObject.physicsTick(time_span.count());
-                oldTime=newTime;
-                testObject.startTick();
-            }
-            else
-            {
-                if(outputFlag)
-                {
-                    L_INFO << "TEST COMPLETED\n"
-                           << "----------------------------------------------\n"
-                           << "FINAL ORIENTATION: " << testObject.orientation << "\n"
-                           << "==============================================";
-                    outputFlag = false;
-                }
-            }
-        }
-    });
-    thr.detach();
-}
-
 
 
 void Simulation::execTestSimulation()
 {
+#if 0
     srand(time(NULL));
     for (int i = 0; i < 4; i++)
     {
@@ -235,18 +154,12 @@ void Simulation::execTestSimulation()
 
     std::thread thr([this]()
     {
-        startTime = std::chrono::high_resolution_clock::now();
         drone.testMode = true;
-        oldTime = std::chrono::high_resolution_clock::now();
         while (isAlive)
         {
            drone.motors[1]->addForce(Vector3dd(0, 0, 1) * 0.1);
            drone.motors[0]->addForce(Vector3dd(0, 0, 1) * 0.1);
-           //drone.flightControllerTick(droneJoystick);
-           newTime = std::chrono::high_resolution_clock::now();
-           time_span = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-oldTime);
            drone.physicsTick(time_span.count());
-           oldTime=newTime;
            drone.startTick();
         }
     });
@@ -257,6 +170,7 @@ void Simulation::execTestSimulation()
     //deltaT here is wrong
     drone.physicsTick(0.1);
 */
+#endif
 }
 
 bool Simulation::getIsAlive()
@@ -277,7 +191,7 @@ void Simulation::setIsAlive(const bool flag)
 void Simulation::droneStart()
 {
     mainObjects.emplace_back();
-    PhysMainObject *mainObject = &mainObjects.back();
+    PhysicsMainObject *mainObject = &mainObjects.back();
     mainObject->countPhysics = true;
     double radius = 2.0;
     double mass = 1.0;
@@ -285,10 +199,10 @@ void Simulation::droneStart()
     Affine3DQ pos2 = Affine3DQ(Vector3dd(1, -1, -1));
     Affine3DQ pos3 = Affine3DQ(Vector3dd(-1, 1, -1));
     Affine3DQ pos4 = Affine3DQ(Vector3dd(1, 1, -1));
-    PhysSphere *sphere1 = new PhysSphere(&pos1, &radius, &mass);
-    PhysSphere *sphere2 = new PhysSphere(&pos2, &radius, &mass);
-    PhysSphere *sphere3 = new PhysSphere(&pos3, &radius, &mass);
-    PhysSphere *sphere4 = new PhysSphere(&pos4, &radius, &mass);
+    PhysicsSphere *sphere1 = new PhysicsSphere(pos1, radius, mass);
+    PhysicsSphere *sphere2 = new PhysicsSphere(pos2, radius, mass);
+    PhysicsSphere *sphere3 = new PhysicsSphere(pos3, radius, mass);
+    PhysicsSphere *sphere4 = new PhysicsSphere(pos4, radius, mass);
     mainObject->addObject(sphere1);
     mainObject->addObject(sphere2);
     mainObject->addObject(sphere3);
@@ -322,27 +236,17 @@ void Simulation::defaultStart()
 void Simulation::start()
 {
     /* Use PreciseTime instead of chrono, it could make code a bit more compact */
-    startTime = std::chrono::high_resolution_clock::now();
-    oldTime = std::chrono::high_resolution_clock::now();
 
     std::thread thr([this]()
     {
         cout<<mainObjects.size()<<" after thread"<<endl;
-        cout<<"kek"<<endl;
         while (isAlive)
         {
-            newTime = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-oldTime);
-            std::chrono::duration<double> currentTime = std::chrono::duration_cast<std::chrono::duration<double>>(newTime-startTime);
-
-            // cout<<time_span.count()<<endl;
             for (int i = 0; i < mainObjects.size(); i++)
             {
-                mainObjects[i].tick(time_span.count());
+                mainObjects[i].tick(0.1);
              }
             frameCounter++;
-            oldTime=newTime;
-            usleep(3000);
         }
     });
     thr.detach();

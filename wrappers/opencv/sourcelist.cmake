@@ -102,11 +102,13 @@ if (USE_PCAFLOW)
     set (HDR_FILES
         ${HDR_FILES}
         ${CMAKE_CURRENT_LIST_DIR}/PCAFlow/PCAFlowProcessor.h
+        ${CMAKE_CURRENT_LIST_DIR}/generated/openCVPCAFlowParameters.h
     )
 
     set (SRC_FILES
         ${SRC_FILES}
         ${CMAKE_CURRENT_LIST_DIR}/PCAFlow/PCAFlowProcessor.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/generated/openCVPCAFlowParameters.cpp
     )
 
     include_directories(PUBLIC ${CMAKE_CURRENT_LIST_DIR}/PCAFlow)

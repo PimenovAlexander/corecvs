@@ -77,7 +77,7 @@ int PatternDetectorResultBase::staticInit(corecvs::Reflection *toFill)
           "ortX",
           "Vector2dParameters",
           "ortX",
-          "One of resulting pattern directions in image corrdinate",
+          "One of resulting pattern directions in image coordinate",
            NULL
         );
     {
@@ -99,7 +99,7 @@ int PatternDetectorResultBase::staticInit(corecvs::Reflection *toFill)
           "ortY",
           "Vector2dParameters",
           "ortY",
-          "Second resulting pattern direction in image corrdinate ",
+          "Second resulting pattern direction in image coordinate ",
            NULL
         );
     {

@@ -2,7 +2,7 @@
 #define RAYTRACEOBJECTS_H
 
 #include "core/geometry/raytrace/bspTree.h"
-#include "core/geometry/mesh3DDecorated.h"
+#include "core/geometry/mesh/mesh3DDecorated.h"
 #include "core/geometry/raytrace/raytraceRenderer.h"
 #include "core/geometry/raytrace/raytraceableNodeWrapper.h"
 

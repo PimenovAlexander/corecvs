@@ -6,6 +6,16 @@
 
 namespace corecvs {
 
+DxfDrawing::~DxfDrawing() {
+    for (auto& kv : layerEntities)
+        for (DxfEntity* entity : kv.second) delete entity;
+
+    for (auto& kv : layers) delete kv.second;
+    for (auto& kv : blocks) delete kv.second;
+    for (auto& kv : blockRecords) delete kv.second;
+    for (auto& kv : otherObjects) delete kv.second;
+}
+
 Vector2dd DxfDrawing::getDrawingValues(double x, double y) {
     Vector2dd result;
     result.x() = getDrawingValue(x + basePoint.x() - lowerLeftCorner.x() + paddingLeft);

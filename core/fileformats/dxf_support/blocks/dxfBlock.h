@@ -17,7 +17,13 @@ class DxfEntity;
 class DxfBlock {
 public:
     DxfBlock(std::string id, std::string name, std::string layerName, Vector3dd basePoint, std::string blockRecordID, bool isModelSpace)
-    : id(std::move(id)), name(std::move(name)), layerName(std::move(layerName)), basePoint(basePoint), blockRecordID(std::move(blockRecordID)), isModelSpace(isModelSpace) {}
+    : id(std::move(id)),
+      name(std::move(name)),
+      layerName(std::move(layerName)),
+      basePoint(basePoint),
+      blockRecordID(std::move(blockRecordID)),
+      isModelSpace(isModelSpace)
+    {}
 
     void print();
 

@@ -3,7 +3,7 @@
 
 #include "core/geometry/polygons.h"
 #include "core/cameracalibration/cameraModel.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/geometry/line.h"
 #include "core/cameracalibration/projection/projectionModels.h"
 
