@@ -3,22 +3,17 @@
 #include "core/utils/utils.h"
 #include "core/buffers/rgb24/abstractPainter.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
-
 #include "core/fileformats/svgLoader.h"
 #include <core/reflection/commandLineSetter.h>
-
 #include <algorithm>
 #include <core/buffers/bufferFactory.h>
 #define EPSIL 0.00001
 
 using namespace corecvs;
 using namespace std;
-
-
-
-
 /** =========================================== **/
-void drawPolygons(vector<Polygon> inputPolygons, int h, int w, string bmpname)
+void drawPolygons(vector<Polygon> inputPolygons,
+                  int h, int w, string bmpname)
 {
     Rectangled area = Rectangled::Empty();
     for (Polygon& p: inputPolygons )
@@ -53,7 +48,8 @@ void drawPolygons(vector<Polygon> inputPolygons, int h, int w, string bmpname)
     BufferFactory::getInstance()->saveRGB24Bitmap(buffer, bmpname);
 }
 
-void drawPolygons(list <Polygon> inputPolygons, int h, int w, string bmpname)
+void drawPolygons(list <Polygon> inputPolygons,
+                  int h, int w, string bmpname)
 {
     Rectangled area = Rectangled::Empty();
     for (Polygon& p: inputPolygons )
@@ -140,8 +136,6 @@ void drawSvgPolygons(list <Polygon> inputPolygons, int h, int w, string svgName)
         std::string style="style=\"stroke:#";
         style += colorStr;
         style += ";fill:none;stroke-width:1\"";
-
-
         file << "<polygon points=\"";
         for (Vector2dd &point : p)
         {
@@ -154,12 +148,9 @@ void drawSvgPolygons(list <Polygon> inputPolygons, int h, int w, string svgName)
     file.close();
 }
 
-
-
 void addSubPolygons (SvgShape *shape, vector<Polygon> &inputPolygons)
 {
     cout << shape->type;
-
     SYNC_PRINT(("addSubPolygons(%s):called\n", SvgShape::getName(shape->type)));
     if (shape->type == SvgShape::POLYGON_SHAPE)
     {
@@ -192,27 +183,23 @@ void addSubPolygons (SvgShape *shape, vector<Polygon> &inputPolygons)
     }
 }
 
-
 double distL1(const Vector2dd &v1, const Vector2dd &v2)
 {
     return (abs (v1.x() - v2.x()) + abs(v1.y() - v2.y()));
 }
 
-
-bool isInteriorROConvexPolBinSearch(const corecvs ::Vector2dd &point, const corecvs :: Polygon &A) //RO means right-oriented, bs used cause no-fit-polygons have quite a few vertexes
+bool isInteriorROConvexPolBinSearch(const Vector2dd &point,
+                                    const Polygon &A) //RO means right-oriented, bs used cause no-fit-polygons have quite a few vertexes
 {
-    int len = A.size();
+    size_t len = A.size();
     Vector2dd O = A.getPoint(0);
     if (distL1(point, O) < EPSIL)
         return false;
-
-    int left = 1;
-    int mid = A.size() / 2;
-    int right = A.size() - 1;
-
+    size_t left = 1;
+    size_t mid = A.size() / 2;
+    size_t right = A.size() - 1;
     Vector2dd diff = point - O;
     Vector2dd normal;
-
     while(right - left > 1)
     {
         normal = (A.getPoint(mid) - O).rightNormal();
@@ -231,32 +218,17 @@ bool isInteriorROConvexPolBinSearch(const corecvs ::Vector2dd &point, const core
     Vector2dd leftP = A.getPoint(left);
     Vector2dd rightP = A.getPoint(right);
     normal = ( rightP - leftP).rightNormal();
-    if((normal & (point - leftP)) <= 0) {
-        return false;
-    }
-    else {
-        if(((A.getPoint(1) - O).rightNormal() & diff) > EPSIL)
-        {
-            if(((A.getPoint(len-1) - O).leftNormal() & diff) > EPSIL){
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-        else {
-            return false;
-        }
-    }
-
+    return ((normal & (point - leftP)) > 0 &&
+           ((A.getPoint(1) - O).rightNormal() & diff) > EPSIL &&
+           ((A.getPoint(len - 1) - O).leftNormal() & diff) > EPSIL);
 }
 
-
-bool isInteriorConvexPol(const corecvs ::Vector2dd &point, const corecvs :: Polygon &A) //discarding an idea of bs
+bool isInteriorConvexPol(const Vector2dd &point,
+                         const Polygon &A) //if discarding an idea of bs
 {
     double oldsign = (A.getPoint(1) - A.getPoint(0)).rightNormal() & (point - A.getPoint(0)); //need to initialized
     int len = A.size();
-    for (int i = 1; i < len; i++)
+    for (size_t i = 1; i < len; i++)
     {
         const Vector2dd &curr = A.getPoint(i);
         const Vector2dd &next = A.getNextPoint(i);
@@ -272,7 +244,8 @@ bool isInteriorConvexPol(const corecvs ::Vector2dd &point, const corecvs :: Poly
     return true;
 }
 
-bool hasBiggerLOArg(const Vector2dd &v1, const Vector2dd &v2) // antiClockwise to vector -(OX)
+bool hasBiggerLOArg(const Vector2dd &v1,
+                    const Vector2dd &v2) // antiClockwise to vector -(OX)
 {
     double minusRadian1 = v1.x()/ v1.l2Metric();
     double minusRadian2 = v2.x()/ v2.l2Metric();
@@ -281,11 +254,8 @@ bool hasBiggerLOArg(const Vector2dd &v1, const Vector2dd &v2) // antiClockwise t
         minusRadian1 = 2 - minusRadian1;
     if(v2.y() <= 0)
         minusRadian2 = 2 - minusRadian2;
-
-    return (minusRadian1 > minusRadian2);
-
+    return (minusRadian1 < minusRadian2);
 }
-
 
 int pythonDir(int m, int n)
 {
@@ -302,65 +272,55 @@ int pythonDir(int m, int n)
 
 Vector2dd getPointByGenInd(const Polygon &A, int i)
 {
-    int r = pythonDir(i, (int)A.size());
-    return A[r];
+    return A[pythonDir(i, (int)A.size())];
 }
 
-int getTopRightIndex(const Polygon &A)
+size_t getTopRightIndex(const Polygon &A)
 {
-    int result = 0;
+    size_t result = 0;
     for (size_t i = 0; i < A.size(); ++i)
     {
         if(A.getPoint(i).y() > A.getPoint(result).y())
         {
             result = i;
-        }
-        else if (A.getPoint(i).y() == A.getPoint(result).y())
+        } else if (A.getPoint(i).y() == A.getPoint(result).y())
         {
             if (A.getPoint(i).x() > A.getPoint(result).x())
                 result = i;
-
         }
     }
     return result;
-
 }
 
 int getBotLeftIndex(const Polygon &A)
 {
-    int result = 0;
+    size_t result = 0;
     for (size_t i = 0; i < A.size(); ++i)
     {
-        if(A.getPoint(i).y() < A.getPoint(result).y())
+        if (A.getPoint(i).y() < A.getPoint(result).y())
         {
             result = i;
         }
-        else if (A.getPoint(i).y() == A.getPoint(result).y())
+        else if (A.getPoint(i).y() == A.getPoint(result).y() &&
+                 A.getPoint(i).x() < A.getPoint(result).x())
         {
-            if (A.getPoint(i).x() < A.getPoint(result).x())
-                result = i;
-
+            result = i;
         }
     }
     return result;
-
 }
-
 
 Polygon convexNFP(const Polygon &A, const Polygon &B)
 //A walks around B, begining in his bottom-left point going counterclockwise, top-right point of A leaves the trace
 //assuming both Polygons are RO
 {
-
     Polygon conNFP;
-    int i = getTopRightIndex(A);
-    int j = getBotLeftIndex(B);
+    size_t i = getTopRightIndex(A);
+    size_t j = getBotLeftIndex(B);
     conNFP.push_back(getPointByGenInd(B, j));
-
-    int length1 = (int)A.size() + i;
-    int length2 = (int)B.size() + j;
-    int place = 0;
-
+    size_t length1 = A.size() + i;
+    size_t length2 = B.size() + j;
+    size_t place = 0;
     while(i < length1 && j < length2 )
     {
         Vector2dd candidateFromA = -getPointByGenInd(A, i + 1) + getPointByGenInd(A, i);
@@ -368,44 +328,41 @@ Polygon convexNFP(const Polygon &A, const Polygon &B)
 
         if (hasBiggerLOArg(candidateFromA, candidateFromB))
         {
-            conNFP.push_back(conNFP[place] + candidateFromB);
-            ++place;
-            ++j;
-        }
-        else
-        {
             conNFP.push_back(conNFP[place] + candidateFromA);
             ++place;
             ++i;
         }
-
+        else
+        {
+            conNFP.push_back(conNFP[place] + candidateFromB);
+            ++place;
+            ++j;
+        }
     }
 
-    for(; i < length1; ++i, ++place)
+    for (; i < length1; ++i, ++place)
     {
         Vector2dd candidateFromA = -getPointByGenInd(A, i + 1) + getPointByGenInd(A,i);
         conNFP.push_back(conNFP[place] + candidateFromA);        
     }
-
-    for(; j < length2; ++j, ++place)
+    for (; j < length2; ++j, ++place)
     {
         Vector2dd candidateFromB = getPointByGenInd(B, j + 1) - getPointByGenInd(B, j);
         conNFP.push_back(conNFP[place] + candidateFromB);
     }
     conNFP.pop_back(); // not to dublicate first vertex
     return conNFP;
-
 }
 
-
-Rectangled innerFitPolygon(const Polygon &A, const Rectangled &R) // all RO
+Rectangled innerFitPolygon(const Polygon &A,
+                           const Rectangled &R) // all RO
 {
     double leftOfA = A.getPoint(0).x();
     double rightOfA = A.getPoint(0).x();
     double topOfA = A.getPoint(0).y();
     double botOfA = A.getPoint(0).y();
-    double markedPointAbciss = A.getPoint(0).x(); //marked is top-right of A
-    for(size_t i = 1; i < A.size(); ++i)
+    double markedPointAbciss = A.getPoint(0).x(); //marked vertex is top-right of A
+    for (size_t i = 1; i < A.size(); ++i)
     {
         double xCandidate = A.getPoint(i).x();
         double yCandidate = A.getPoint(i).y();
@@ -421,8 +378,6 @@ Rectangled innerFitPolygon(const Polygon &A, const Rectangled &R) // all RO
         else if (yCandidate < botOfA) {
             botOfA = yCandidate;
         }
-
-
         if(xCandidate > rightOfA) {
             rightOfA = xCandidate;
         }
@@ -433,35 +388,33 @@ Rectangled innerFitPolygon(const Polygon &A, const Rectangled &R) // all RO
     Vector2dd cornerOfIFP = {markedPointAbciss - leftOfA, topOfA - botOfA};
     cornerOfIFP += R.corner;
 
-
     Vector2dd widthHeightOfIFP = {R.width()- rightOfA + leftOfA, R.height() - topOfA + botOfA};
     return Rectangled(cornerOfIFP.x(), cornerOfIFP.y(), widthHeightOfIFP.x(), widthHeightOfIFP.y()); //x,y,w,h
 }
 
-bool pointDoRefRec(Vector2dd const &point, Rectangled const &R) //RO Rect
+bool pointDoRefRec(Vector2dd const &point,
+                   Rectangled const &R) //RO Rect
 {
     double up = R.corner.y() + R.height();
     double low = R.corner.y();
     double left = R.corner.x();
     double right = R.corner.x() + R.width();
     return (point.x() >= left && point.x() <= right && point.y() >= low && point.y() <= up);
-
 }
 
-
-Polygon polFromRect(Rectangled &R) //rectangled is RO and corner is ll one
+Polygon polFromRec(const Rectangled &R) //rectangled is RO and corner is ll one
 {
     return {R.ulCorner(), R.llCorner(), R.lrCorner(), R.urCorner()};
 }
 
-
-void bottomLeftPlacement(list <corecvs :: Polygon> &inp, corecvs :: Rectangled &Bin)
+void bottomLeftPlacement(list <corecvs :: Polygon> &inp,
+                         corecvs :: Rectangled &bin)
 {
-    int inpNumber = 0;
+    size_t inpNumber = 0;
     //suppose initialisation is ok
     auto it = inp.begin();
     list <Polygon> placedPolygons;
-    Rectangled innerFP = innerFitPolygon(*it, Bin);
+    Rectangled innerFP = innerFitPolygon(*it, bin);
 
     if (innerFP.height() >= 0 && innerFP.width() >= 0) {
         Vector2dd topRightInitiate = it->getPoint(getTopRightIndex(*it));
@@ -471,14 +424,12 @@ void bottomLeftPlacement(list <corecvs :: Polygon> &inp, corecvs :: Rectangled &
     else {
         cout << endl << "0 polygon can't be placed" << endl;
     }
-
     ++it;
     ++inpNumber;
 
-
-    for(;it != inp.end();++it, ++inpNumber)
+    for (;it != inp.end();++it, ++inpNumber)
     {
-        innerFP = innerFitPolygon(*it, Bin);
+        innerFP = innerFitPolygon(*it, bin);
         list <Polygon> currNFPs;
         for (Polygon c : placedPolygons){
             currNFPs.push_back(convexNFP(*it, c));
@@ -501,13 +452,14 @@ void bottomLeftPlacement(list <corecvs :: Polygon> &inp, corecvs :: Rectangled &
                         }
                         ++it3;
                     }
-                    if (b == 0){
+                    if (b == 0)
+                    {
                         Candidates.push_back(Candidate);
                     }
                 }
             }
         }
-        Polygon ifpClone = polFromRect(innerFP);
+        Polygon ifpClone = polFromRec(innerFP);
 
         for (Vector2dd &p : ifpClone)
         {
@@ -524,7 +476,6 @@ void bottomLeftPlacement(list <corecvs :: Polygon> &inp, corecvs :: Rectangled &
             }
         }
 
-
         if (Candidates.size() > 0)
         {
             auto where = Candidates.getPoint(getBotLeftIndex(Candidates));
@@ -536,22 +487,18 @@ void bottomLeftPlacement(list <corecvs :: Polygon> &inp, corecvs :: Rectangled &
 
         }
     }
-
 }
 
-double OrientAreaTwice (const Vector2dd &a, const Vector2dd &b, const Vector2dd &c)
+double OrientAreaTwice (const Vector2dd &a,
+                        const Vector2dd &b,
+                        const Vector2dd &c)
 {
-
     return (a.x() - b.x()) * (c.y() - a.y()) - (a.x() - c.x()) * (b.y() - a.y());
-
 }
 
 bool isClockOrP(const Polygon &A)
 {
-    if(OrientAreaTwice(A.getPoint(0), A.getPoint(1), A.getPoint(2)) >= 0)
-        return true;
-    else return false;
-
+    return (OrientAreaTwice(A.getPoint(0), A.getPoint(1), A.getPoint(2)) >= 0);
 }
 
 void doClockOrP(Polygon &A)
@@ -564,7 +511,6 @@ void doClockOrP(Polygon &A)
         }
         A = B;
     }
-
 }
 
 void rotatePolAngle(Polygon &A, double Phi)
@@ -577,7 +523,6 @@ void rotatePolAngle(Polygon &A, double Phi)
     }
 }
 
-
 Vector2dd massCenter(const Polygon &A)
 {
     Vector2dd Result (0,0);
@@ -587,20 +532,16 @@ Vector2dd massCenter(const Polygon &A)
     return Result/A.size();
 }
 
-
 void lowerMassCenter(Polygon& A)
 {
     A.translate(-A.getPoint(getBotLeftIndex(A)));
     double phi = 3.14 / 320.0;
     double best = 0;
     double bestMassCenter = massCenter(A).y();
-
-
     A.translate(-massCenter(A));
     Polygon B = A;
 
-
-    for( double i = 1; i < 320 ;++i)
+    for (double i = 1; i < 320 ;++i)
     {
         rotatePolAngle(B, phi);
         B.translate(-massCenter(B));
@@ -611,19 +552,14 @@ void lowerMassCenter(Polygon& A)
             best = i;
             bestMassCenter = massCenter(C).y();
         }
-
     }
 
     if (best != 0)
         rotatePolAngle(A, best * phi);
 }
 
-
-
-
-
-
-void bottomLeftPlacementProtected(list <corecvs :: Polygon> &inp, corecvs :: Rectangled &Bin, int i = 1)
+void bottomLeftPlacementProtected(list <Polygon> &inp,
+                                  Rectangled &bin, int i)
 {
     bool seemsOK = 1;
     if(i >= 1)
@@ -633,35 +569,29 @@ void bottomLeftPlacementProtected(list <corecvs :: Polygon> &inp, corecvs :: Rec
             if(!isClockOrP(p))
                 doClockOrP(p);
         }
-        if (Bin.height() < 0 || Bin.width() < 0)
+        if (bin.height() < 0 || bin.width() < 0)
         {
             cout << "Bin is wrong oriented";
             seemsOK = 0;
         }
-
     }
-    if(i > 1)
+
+    if (i > 1)
     {
         inp.sort([](Polygon &A, Polygon &B) -> bool
-        {
-        return (A.area()) > (B.area());
-        });
-
+        { return (A.area()) > (B.area()); } );
     }
-
-    if(i > 2)
+    if (i > 2)
     {
         for (Polygon &p : inp){
             lowerMassCenter(p);
         }
 
     }
-
     if (seemsOK){
-        bottomLeftPlacement(inp, Bin);
+        bottomLeftPlacement(inp, bin);
     }
 }
-
 
 void showPolygon(const Polygon &A)
 {
