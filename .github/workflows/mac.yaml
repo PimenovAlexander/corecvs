@@ -1,0 +1,46 @@
+name: CMake_MAC
+
+on: 
+  push:
+    branches: 
+      - apimenov_mac_action
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+    
+    steps:      
+    - uses: actions/checkout@v1
+    - name: Print Machine Status
+      run: |
+           sysctl -a | grep machdep.cpu
+    - name: Install generic prerequisites
+      run: |
+           brew install libjpeg libpng 
+           brew install tbb
+           # brew install libavcodec
+           # brew install libavutil
+           # brew install libavformat
+           # brew install libswscale
+           brew install ffmpeg
+           #brew install libopenblas
+           #brew install liblapacke
+           brew install qt
+           brew install cmake
+           brew install opencv3
+           
+    - name: Prepare build folder
+      run: |
+           ls
+           pwd
+           mkdir build
+           cd build              
+    - name: Cmake    
+      run: |
+           cd build
+           cmake ..
+    - name: Make 
+      run: |
+           cd build
+           make -j 2 VERBOSE=1           

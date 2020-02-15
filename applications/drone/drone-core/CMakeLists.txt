@@ -51,6 +51,9 @@ target_sources(drone-core
         ${CMAKE_CURRENT_LIST_DIR}/copterInputs.h
         ${CMAKE_CURRENT_LIST_DIR}/joystick/joystickReader.h
 
+        ${CMAKE_CURRENT_LIST_DIR}/world/simulationWorld.h
+
+
     PRIVATE
         ${SRC_FILES}
 
@@ -85,6 +88,9 @@ target_sources(drone-core
         ${CMAKE_CURRENT_LIST_DIR}/copterInputs.cpp
         ${CMAKE_CURRENT_LIST_DIR}/comcontroller.cpp
         ${CMAKE_CURRENT_LIST_DIR}/joystick/joystickReader.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/world/simulationWorld.cpp
+
 )
 
 set(ADD_SRC_FILES ${ADD_SRC_FILES}
@@ -109,8 +115,7 @@ target_include_directories(drone-core PUBLIC
 
 target_include_directories(drone-core PUBLIC ../../../wrappers/joystick)
 
-find_package(Qt5 COMPONENTS REQUIRED SerialPort)
-target_link_libraries(drone-core corecvs Qt5::SerialPort)
+target_link_libraries(drone-core corecvs)
 
 
 target_include_directories(drone-core PUBLIC ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} .)
@@ -121,4 +126,13 @@ target_link_libraries(drone-core cvs_utils corecvs)
 if (OpenCV_LIBS)
     target_link_libraries(drone-core ${OpenCV_LIBS})
 endif()
+
+
+# Additional stuff mostly for IDE only
+
+file(GLOB CUR_ADD_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/xml/*.xml)
+set(ADD_SRC_FILES ${ADD_SRC_FILES} ${CUR_ADD_SRC_FILES})
+
+target_sources(drone-core PRIVATE ${ADD_SRC_FILES})
+set_source_files_properties(${ADD_SRC_FILES} PROPERTIES EXTERNAL_OBJECT true HEADER_FILE_ONLY TRUE)
 

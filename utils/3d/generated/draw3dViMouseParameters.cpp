@@ -4,7 +4,7 @@
  *
  * \date MMM DD, 20YY
  * \author autoGenerator
- * Generated from draw3d.xml
+ * Generated from draw3dutils.xml
  */
 
 #include <vector>

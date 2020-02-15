@@ -48,7 +48,22 @@ int OpenCVKLTParameters::staticInit(corecvs::Reflection *toFill)
      toFill->objectSize = sizeof(OpenCVKLTParameters);
      
 
-    DoubleField* field0 = new DoubleField
+    IntField* field0 = new IntField
+        (
+          OpenCVKLTParameters::MAXCORNERS_ID,
+          offsetof(OpenCVKLTParameters, mMaxCorners),
+          4000,
+          "MaxCorners",
+          "MaxCorners",
+          "MaxCorners",
+          true,
+         0,
+         1000000,
+         1
+        );
+    toFill->fields.push_back(field0);
+    /*  */ 
+    DoubleField* field1 = new DoubleField
         (
           OpenCVKLTParameters::SELECTORQUALITY_ID,
           offsetof(OpenCVKLTParameters, mSelectorQuality),
@@ -57,11 +72,11 @@ int OpenCVKLTParameters::staticInit(corecvs::Reflection *toFill)
           "SelectorQuality",
           "SelectorQuality"
         );
-    field0->widgetHint=BaseField::SPIN_BOX;
-    field0->precision=2;
-    toFill->fields.push_back(field0);
+    field1->widgetHint=BaseField::SPIN_BOX;
+    field1->precision=2;
+    toFill->fields.push_back(field1);
     /*  */ 
-    DoubleField* field1 = new DoubleField
+    DoubleField* field2 = new DoubleField
         (
           OpenCVKLTParameters::SELECTORDISTANCE_ID,
           offsetof(OpenCVKLTParameters, mSelectorDistance),
@@ -70,11 +85,11 @@ int OpenCVKLTParameters::staticInit(corecvs::Reflection *toFill)
           "SelectorDistance",
           "SelectorDistance"
         );
-    field1->widgetHint=BaseField::SPIN_BOX;
-    field1->precision=2;
-    toFill->fields.push_back(field1);
+    field2->widgetHint=BaseField::SPIN_BOX;
+    field2->precision=2;
+    toFill->fields.push_back(field2);
     /*  */ 
-    IntField* field2 = new IntField
+    IntField* field3 = new IntField
         (
           OpenCVKLTParameters::SELECTORSIZE_ID,
           offsetof(OpenCVKLTParameters, mSelectorSize),
@@ -83,9 +98,9 @@ int OpenCVKLTParameters::staticInit(corecvs::Reflection *toFill)
           "SelectorSize",
           "SelectorSize"
         );
-    toFill->fields.push_back(field2);
+    toFill->fields.push_back(field3);
     /*  */ 
-    IntField* field3 = new IntField
+    IntField* field4 = new IntField
         (
           OpenCVKLTParameters::USEHARRIS_ID,
           offsetof(OpenCVKLTParameters, mUseHarris),
@@ -94,9 +109,9 @@ int OpenCVKLTParameters::staticInit(corecvs::Reflection *toFill)
           "UseHarris",
           "UseHarris"
         );
-    toFill->fields.push_back(field3);
+    toFill->fields.push_back(field4);
     /*  */ 
-    DoubleField* field4 = new DoubleField
+    DoubleField* field5 = new DoubleField
         (
           OpenCVKLTParameters::HARRISK_ID,
           offsetof(OpenCVKLTParameters, mHarrisK),
@@ -105,11 +120,11 @@ int OpenCVKLTParameters::staticInit(corecvs::Reflection *toFill)
           "HarrisK",
           "HarrisK"
         );
-    field4->widgetHint=BaseField::SPIN_BOX;
-    field4->precision=2;
-    toFill->fields.push_back(field4);
+    field5->widgetHint=BaseField::SPIN_BOX;
+    field5->precision=2;
+    toFill->fields.push_back(field5);
     /*  */ 
-    IntField* field5 = new IntField
+    IntField* field6 = new IntField
         (
           OpenCVKLTParameters::KLTSIZE_ID,
           offsetof(OpenCVKLTParameters, mKltSize),
@@ -118,7 +133,19 @@ int OpenCVKLTParameters::staticInit(corecvs::Reflection *toFill)
           "kltSize",
           "kltSize"
         );
-    toFill->fields.push_back(field5);
+    toFill->fields.push_back(field6);
+    /*  */ 
+    BoolField* field7 = new BoolField
+        (
+          OpenCVKLTParameters::TRACE_ID,
+          offsetof(OpenCVKLTParameters, mTrace),
+          false,
+          "trace",
+          "trace",
+          "trace"
+        );
+    field7->widgetHint=BaseField::CHECK_BOX;
+    toFill->fields.push_back(field7);
     /*  */ 
     ReflectionDirectory &directory = *ReflectionDirectoryHolder::getReflectionDirectory();
     directory[std::string("OpenCV KLT Parameters")]= toFill;

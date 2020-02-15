@@ -24,10 +24,13 @@
 #include <KLTFlow.h>
 #include <PCAFlowProcessor.h>
 #endif
-
 #ifdef WITH_DISFLOW
 #include <wrappers/opencv/DISFlow/DISFlow.h>
 #endif
+#ifdef WITH_AVCODEC
+#include "aviCapture.h"
+#endif
+
 
 using namespace std;
 using namespace corecvs;
@@ -60,16 +63,13 @@ int producerCaps(CommandLineSetter &s)
 }
 
 
-int flow(CommandLineSetter &s)
+ProcessorFlow * getFlowProcessor(CommandLineSetter &s)
 {
-    Statistics stats;
-    Statistics::startInterval(&stats);
-
     std::string producerName = s.getString("producer");
     ProcessorFlow *producer = ProcessorFlowFactoryHolder::getInstance()->getProcessor(producerName);
     if (producer == NULL) {
         SYNC_PRINT(("Producer not found. Check --caps\n"));
-        return 2;
+        return NULL;
     }
     std::map<std::string, DynamicObject> paramsMap = producer->getParameters();
     std::string configFile = s.getString("config", "");
@@ -116,7 +116,19 @@ int flow(CommandLineSetter &s)
     for(auto &it : paramsMap)
         producer->setParameters(it.first, it.second);
 
+    return producer;
+}
+
+int flow(CommandLineSetter &s)
+{
+    Statistics stats;
+
+    Statistics::startInterval(&stats);
+    ProcessorFlow *producer = getFlowProcessor(s);
     Statistics::endInterval(&stats, "Creating producer");
+    if (producer == NULL) {
+        return 2;
+    }
 
     Statistics::startInterval(&stats);
     std::string input1Name = s.getString("input1");
@@ -200,6 +212,98 @@ int flow(CommandLineSetter &s)
     return 0;
 }
 
+#ifdef WITH_AVCODEC
+int flowVideo(CommandLineSetter &s)
+{
+    Statistics stats;
+
+    Statistics::startInterval(&stats);
+    ProcessorFlow *producer = getFlowProcessor(s);
+    Statistics::endInterval(&stats, "Creating producer");
+    if (producer == NULL) {
+        return 2;
+    }
+    std::string input = s.getString("input");
+    AviCapture *capture = new AviCapture(input);
+
+    ImageCaptureInterface::CapErrorCode res = capture->initCapture();
+    cout << res << endl;
+    if (res == ImageCaptureInterface::FAILURE) {
+        return 3;
+    }
+
+    capture->startCapture();
+
+    producer->requestResultsi(ProcessorFlow::RESULT_FLOW | ProcessorFlow::RESULT_FLOAT_FLOW);
+    producer->setStats(&stats);
+
+    int firstframe = s.getInt("start", 0);
+    int lastframe = s.getInt("frames", numeric_limits<int>::max());
+
+    SYNC_PRINT(("Skipping %d frames:\n", firstframe));
+    for (int i = 0; i < firstframe; i++)
+    {
+        ImageCaptureInterface::FramePair pair = capture->getFrameRGB24();
+        pair.freeBuffers();
+    }
+
+    SYNC_PRINT(("Would process %d frames:\n", lastframe));
+    for (int i = 0; i < lastframe; i++)
+    {
+        ImageCaptureInterface::FramePair pair = capture->getFrameRGB24();
+        RGB24Buffer * frame = pair.rgbBufferLeft();
+        pair.setRgbBufferLeft(NULL);
+        pair.freeBuffers();
+        SYNC_PRINT(("New frame...\n"));
+
+        if (frame == NULL)
+            return 5;
+
+        producer->beginFrame();
+        producer->setFrameRGB24(frame);
+        producer->endFrame();
+
+#if 0
+        FloatFlowBuffer *flow = producer->getFloatFlow();
+
+        if (flow != NULL)
+        {
+            std::ostringstream oss;
+            oss << "flow" << (i + firstframe) << ".png";
+
+            RGB24Buffer flowDraw(frame);
+            flowDraw.drawFlowBuffer(flow);
+            BufferFactory::getInstance()->saveRGB24Bitmap(flowDraw, oss.str());
+        } else {
+            SYNC_PRINT(("Flow is NULL\n"));
+        }
+#else
+        FlowBuffer *flow = producer->getFlow();
+
+        if (flow != NULL)
+        {
+            std::ostringstream oss;
+            oss << "flow" << (i + firstframe) << ".png";
+
+            RGB24Buffer flowDraw(frame);
+            flowDraw.drawFlowBuffer1(flow);
+            BufferFactory::getInstance()->saveRGB24Bitmap(flowDraw, oss.str());
+        } else {
+            SYNC_PRINT(("Flow is NULL\n"));
+        }
+#endif
+
+        delete_safe(frame);
+    }
+
+    BaseTimeStatisticsCollector collector;
+    collector.addStatistics(stats);
+    collector.printAdvanced();
+
+    return 0;
+}
+#endif
+
 
 void usage()
 {
@@ -220,10 +324,20 @@ void usage()
   SYNC_PRINT(("./bin/flow_detector --flow --producer=Dummy --input1=000_001800.png --input2=000_001801.png\n"));
   SYNC_PRINT(("          - example that returns dummy data\n"));
   SYNC_PRINT(("          \n"));
-  SYNC_PRINT(("          \n"));
   SYNC_PRINT(("KLT flow provider:\n"));
-  SYNC_PRINT(("./bin/flow_detector --detect --producer=OpenCVProcessor --params.debug=on --input=photo_2019-09-29_23-11-36.jpg\n"));
-  SYNC_PRINT(("          - example that returns detected squares\n"));
+  SYNC_PRINT(("./bin/flow_detector --flow --producer=OpenCVProcessor --params.debug=on --input=photo_2019-09-29_23-11-36.jpg\n"));
+  SYNC_PRINT(("          \n"));
+  SYNC_PRINT(("PCA flow provider:\n"));
+  SYNC_PRINT(("./bin/flow_detector --flow --producer=OpenCVPCAFlow --params.debug=on --input=photo_2019-09-29_23-11-36.jpg\n"));
+  SYNC_PRINT(("          \n"));
+  SYNC_PRINT(("DIS flow provider:\n"));
+  SYNC_PRINT(("./bin/flow_detector --flow --producer=DISFlow --params.debug=on --input=photo_2019-09-29_23-11-36.jpg\n"));
+  SYNC_PRINT(("          \n"));
+
+#ifdef WITH_AVCODEC
+  SYNC_PRINT(("./bin/flow_detector --video --producer=Dummy --input=../05032102_0005-5-of-11.MP4 --frames=20\n"));
+#endif
+
 
 }
 
@@ -265,6 +379,14 @@ int main(int argc, char *argv[])
         flow(s);
         return 0;
     }
+
+#if WITH_AVCODEC
+    if (s.hasOption("video"))
+    {
+        flowVideo(s);
+        return 0;
+    }
+#endif
 
     usage();
     return 0;

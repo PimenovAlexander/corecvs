@@ -1,5 +1,5 @@
 #include "projectiveConvexQuickHull.h"
-#include "mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 
 using namespace std;
 

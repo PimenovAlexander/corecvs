@@ -118,14 +118,14 @@ void JSONPrinter::visit<double, DoubleVectorField>(std::vector<double> &field, c
 /* Old style visitor */
 
 template <>
-void JSONPrinter::visit<uint64_t>(uint64_t &intField, uint64_t /*defaultValue*/, const char *fieldName)
+void JSONPrinter::visit<uint64_t>(uint64_t &intField, const uint64_t &/*defaultValue*/, const char *fieldName)
 {
     if (!stream) return;
     *stream << separate() << indent() << decorateName(fieldName) << FIELD_VALUE_SEPARATOR <<  NAME_DECORATOR << intField << "u64" << NAME_DECORATOR;
 }
 
 template <>
-void JSONPrinter::visit<bool>(bool &boolField, bool /*defaultValue*/, const char *fieldName)
+void JSONPrinter::visit<bool>(bool &boolField, const bool &/*defaultValue*/, const char *fieldName)
 {
     if (!stream) return;
  // *stream << separate() << indent() << decorateName(fieldName) << FIELD_VALUE_SEPARATOR << NAME_DECORATOR << (boolField ? "true" : "false") << NAME_DECORATOR;
@@ -133,14 +133,14 @@ void JSONPrinter::visit<bool>(bool &boolField, bool /*defaultValue*/, const char
 }
 
 template <>
-void JSONPrinter::visit<std::string>(std::string &stringField, std::string /*defaultValue*/, const char *fieldName)
+void JSONPrinter::visit<std::string>(std::string &stringField, const std::string & /*defaultValue*/, const char *fieldName)
 {
     if (!stream) return;
     *stream << separate() << indent() << decorateName(fieldName) << FIELD_VALUE_SEPARATOR << NAME_DECORATOR << escapeString(stringField) << NAME_DECORATOR;
 }
 
 template <>
-void JSONPrinter::visit<std::wstring>(std::wstring &stringField, std::wstring /*defaultValue*/, const char *fieldName)
+void JSONPrinter::visit<std::wstring>(std::wstring &stringField, const std::wstring & /*defaultValue*/, const char *fieldName)
 {
     if (!stream) return;
     *stream << separate() << indent() << decorateName(fieldName) << FIELD_VALUE_SEPARATOR << NAME_DECORATOR << /*escapeString(stringField)*/ "Unsupported" << NAME_DECORATOR;

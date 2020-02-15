@@ -12,9 +12,9 @@
 #include "gtest/gtest.h"
 
 #include "core/utils/global.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/fileformats/meshLoader.h"
-#include "core/geometry/mesh3DDecorated.h"
+#include "core/geometry/mesh/mesh3DDecorated.h"
 
 using namespace corecvs;
 

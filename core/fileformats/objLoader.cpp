@@ -50,7 +50,7 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
         }
 
         if (HelperUtils::startsWith(line, "#")) {
-            cout << "Skipping comment " << line << endl;
+            if (trace) cout << "Skipping comment " << line << endl;
             continue;
         }
 
@@ -102,23 +102,27 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
 
             for (size_t i = 0; i < strs.size(); i++)
             {
+
                 //LOCAL_PRINT(("Attribute: %s\n", strs[i].c_str()));
                 std::stringstream splitter(strs[i]);
                 std::string part;
 
+                /* We now parse group i.e */
+                /* 2684//856              */
+
                 for (int j = 0; j < 3 && std::getline(splitter, part, '/'); j++)
                 {
-                    if (j == 0) {
+                    if (j == 0 && !part.empty()) {
                         int id = std::stoi(part);
                         face[i] = (id - 1);
                     }
 
-                    if (j == 1) {
+                    if (j == 1 && !part.empty()) {
                         int id = std::stoi(part);
                         texId[i] = (id - 1);
                     }
 
-                    if (j == 2) {
+                    if (j == 2 && !part.empty()) {
                         int id = std::stoi(part);
                         normId[i] = (id - 1);
                     }
@@ -148,19 +152,26 @@ int OBJLoader::loadOBJ(istream &input, Mesh3DDecorated &mesh)
                 }
             }
 
-             cout << "Use material command: <" << name << "> id " << texName << " (" << mesh.materials.size() << ")" << endl;
+             if(trace) cout << "Use material command: <" << name << "> id " << texName << " (" << mesh.materials.size() << ")" << endl;
         }
         if (command == com_material_lib)
         {
-            cout << "Material library command: This is not fully supported" << endl;
+            if(trace) cout << "Material library command: This is not fully supported" << endl;
         }
         if (command == com_smoothing)
         {
-            cout << "smoothing command: This is not fully supported" << endl;
+            static int smoothing_count = 0;
+            smoothing_count++;
+            if (smoothing_count < 10) {
+                if(trace) cout << "smoothing command: This is not fully supported" << endl;
+            }
+            if (smoothing_count == 10) {
+                if(trace) cout << "smoothing command: This is not fully supported - futher would be suppressed" << endl;
+            }
         }
         if (command == com_grouping)
         {
-            cout << "grouping command: This is not fully supported" << endl;
+            if(trace) cout << "grouping command: This is not fully supported" << endl;
         }
     }
 
@@ -190,10 +201,10 @@ int OBJLoader::loadMaterials(istream &input, vector<OBJMaterial> &materials, con
         count++;
         HelperUtils::getlineSafe (input, line);
 
-        cout << "Line " << count << " <" <<  line << ">" << endl;
+        if (trace) cout << "Line " << count << " <" <<  line << ">" << endl;
 
         if (HelperUtils::startsWith(line, "#")) {
-            cout << "OBJLoader::loadMaterial: Skipping comment " << line << endl;
+            if (trace) cout << "OBJLoader::loadMaterial: Skipping comment " << line << endl;
             continue;
         }
 
@@ -201,7 +212,7 @@ int OBJLoader::loadMaterials(istream &input, vector<OBJMaterial> &materials, con
         string command;
         work >> command;
 
-        cout << "OBJLoader::loadMaterial: command: " << command << endl;
+        if (trace) cout << "OBJLoader::loadMaterial: command: " << command << endl;
 
         if (command == "newmtl") {
             if (!material.name.empty())
@@ -222,10 +233,13 @@ int OBJLoader::loadMaterials(istream &input, vector<OBJMaterial> &materials, con
             koef_id = OBJMaterial::KOEF_DIFFUSE;
         if (command == "Ks")
             koef_id = OBJMaterial::KOEF_SPECULAR;
+        if (command == "Tf")
+            koef_id = OBJMaterial::KOEF_TRANSMISSION_FILTER;
+
 
         if (koef_id != OBJMaterial::KOEF_LAST)
         {
-            cout << "Will load koef" << endl;
+            if (trace) cout << "Will load koef" << endl;
             work >> material.koefs[koef_id].x();
             work >> material.koefs[koef_id].y();
             work >> material.koefs[koef_id].z();
@@ -247,12 +261,12 @@ int OBJLoader::loadMaterials(istream &input, vector<OBJMaterial> &materials, con
         {
             work >> tex_name;
             std::string fullpath = path + PATH_SEPARATOR + tex_name;
-            cout << "Will load texture <" << tex_name << "> ";
-            cout << "full path <" << fullpath << ">" << endl;
+            if (trace) cout << "Will load texture <" << tex_name << "> ";
+            if (trace) cout << "full path <" << fullpath << ">" << endl;
 
             RGB24Buffer *texture = BufferFactory::getInstance()->loadRGB24Bitmap(fullpath);
             if (texture != NULL) {
-                cout << "Texture <" << texture->getSize() << ">" << endl;
+                if (trace) cout << "Texture <" << texture->getSize() << ">" << endl;
             } else {
                 cout << "Failed to load texture" << endl;
             }
@@ -281,7 +295,7 @@ int OBJLoader::loadOBJSimple(istream &input, Mesh3D &mesh)
         HelperUtils::getlineSafe (input, line);
 
         if (HelperUtils::startsWith(line, "#")) {
-            cout << "Skipping comment " << line << endl;
+            if (trace) cout << "Skipping comment " << line << endl;
             continue;
         }
 

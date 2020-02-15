@@ -10,7 +10,7 @@
 
 #include <iostream>
 #include <core/geometry/halfspaceIntersector.h>
-#include <core/geometry/mesh3d.h>
+#include <core/geometry/mesh/mesh3d.h>
 #include <core/geometry/polygonPointIterator.h>
 #include <core/buffers/rgb24/abstractPainter.h>
 #include <core/buffers/rgb24/rgb24Buffer.h>

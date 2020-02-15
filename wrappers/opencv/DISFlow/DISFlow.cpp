@@ -2,14 +2,25 @@
 // Created by vladimir on 21.11.2019.
 //
 
+#include <core/utils/preciseTimer.h>
 #include "DISFlow.h"
+
+using namespace corecvs;
+
+int DISFlow::beginFrame() {return 0;}
 
 int DISFlow::endFrame() {
 
     if (inCurr != NULL && inPrev != NULL)
     {
         delete_safe(opticalFlow);
-        cv::Mat img = execute(convertToCVMat(inPrev), convertToCVMat(inCurr));
+
+        cv::Mat prev = convertToCVMat(inPrev);
+        cv::Mat curr = convertToCVMat(inCurr);
+
+        cv::Mat img = execute(prev, curr);
+
+        previousFlow = img;
         saveFlowBuffer(img);
     }
     delete_safe (inPrev);
@@ -55,7 +66,7 @@ cv::Mat DISFlow::convertToCVMat(corecvs::RGB24Buffer *buffer) {
         int k = 0;
         for(int j = 0;j < cv_rgb_image.cols; k+=3,j++)
         {
-            cv_rgb_image.data[step * i + k] = buffer->element(i, j).b();
+            cv_rgb_image.data[step * i + k]     = buffer->element(i, j).b();
             cv_rgb_image.data[step * i + k + 1] = buffer->element(i, j).g();
             cv_rgb_image.data[step * i + k + 2] = buffer->element(i, j).r();
         }
@@ -64,30 +75,28 @@ cv::Mat DISFlow::convertToCVMat(corecvs::RGB24Buffer *buffer) {
 }
 
 void DISFlow::saveFlowBuffer(cv::Mat &img) {
-    previousFlow = &img;
-
     cv::Size szt = img.size();
     int width = szt.width, height = szt.height;
     int nc = img.channels();
     float tmp[nc];
 
     delete opticalFlow;
-    opticalFlow = new corecvs::FlowBuffer(inCurr->h, inCurr->w);
+    opticalFlow = new FlowBuffer(inCurr->h, inCurr->w);
 
     for (int y = 0; y < height; y++)
     {
         for (int x = 0; x < width; x++)
         {
-            if (nc==1) // depth
+            if (nc == 1) // depth
                 tmp[0] = img.at<float>(y,x);
-            else if (nc==2) // Optical Flow
+            else if (nc == 2) // Optical Flow
             {
                 tmp[0] = img.at<cv::Vec2f>(y,x)[0];
                 tmp[1] = img.at<cv::Vec2f>(y,x)[1];
-                corecvs::FlowElement elem(tmp[0], tmp[1]);
+                FlowElement elem(tmp[0], tmp[1]);
                 opticalFlow->setElement(y, x, elem);
             }
-            else if (nc==4) // Scene Flow
+            else if (nc == 4) // Scene Flow
             {
                 tmp[0] = img.at<cv::Vec4f>(y,x)[0];
                 tmp[1] = img.at<cv::Vec4f>(y,x)[1];
@@ -101,25 +110,27 @@ void DISFlow::saveFlowBuffer(cv::Mat &img) {
 
 void DISFlow::ConstructImgPyramide(const cv::Mat & img_ao_fmat, cv::Mat * img_ao_fmat_pyr, cv::Mat * img_ao_dx_fmat_pyr, cv::Mat * img_ao_dy_fmat_pyr, const float ** img_ao_pyr, const float ** img_ao_dx_pyr, const float ** img_ao_dy_pyr, const int lv_f, const int lv_l, const int rpyrtype, const bool getgrad, const int imgpadding, const int padw, const int padh)
 {
-    for (int i=0; i<=lv_f; ++i)  // Construct image and gradient pyramides
+    for (int i = 0; i <= lv_f; i++)  // Construct image and gradient pyramides
     {
-        if (i==0) // At finest scale: copy directly, for all other: downscale previous scale by .5
+        if (i == 0) // At finest scale: copy directly, for all other: downscale previous scale by .5
         {
-            if (SELECTCHANNEL == 1 || SELECTCHANNEL == 3)  // use RGB or intensity image directly
+            if (selectChannel == 1 || selectChannel == 3) { // use RGB or intensity image directly
                 img_ao_fmat_pyr[i] = img_ao_fmat.clone();
-            else if (SELECTCHANNEL == 2) { // use gradient magnitude image as input
-                cv::Mat dx, dy, dx2, dy2, dmag;
-                cv::Sobel(img_ao_fmat, dx, CV_32F, 1, 0, 3, 1 / 8.0, 0, cv::BORDER_DEFAULT);
-                cv::Sobel(img_ao_fmat, dy, CV_32F, 0, 1, 3, 1 / 8.0, 0, cv::BORDER_DEFAULT);
-                dx2 = dx.mul(dx);
-                dy2 = dy.mul(dy);
-                dmag = dx2 + dy2;
-                cv::sqrt(dmag, dmag);
-                img_ao_fmat_pyr[i] = dmag.clone();
+            } else {
+                if (selectChannel == 2) { // use gradient magnitude image as input
+                    cv::Mat dx, dy, dx2, dy2, dmag;
+                    cv::Sobel(img_ao_fmat, dx, CV_32F, 1, 0, 3, 1 / 8.0, 0, cv::BORDER_DEFAULT);
+                    cv::Sobel(img_ao_fmat, dy, CV_32F, 0, 1, 3, 1 / 8.0, 0, cv::BORDER_DEFAULT);
+                    dx2 = dx.mul(dx);
+                    dy2 = dy.mul(dy);
+                    dmag = dx2 + dy2;
+                    cv::sqrt(dmag, dmag);
+                    img_ao_fmat_pyr[i] = dmag.clone();
+                }
             }
-        }
-        else
+        } else {
             cv::resize(img_ao_fmat_pyr[i-1], img_ao_fmat_pyr[i], cv::Size(), .5, .5, cv::INTER_LINEAR);
+        }
 
         img_ao_fmat_pyr[i].convertTo(img_ao_fmat_pyr[i], rpyrtype);
 
@@ -133,7 +144,7 @@ void DISFlow::ConstructImgPyramide(const cv::Mat & img_ao_fmat, cv::Mat * img_ao
     }
 
     // pad images
-    for (int i=0; i<=lv_f; ++i)  // Construct image and gradient pyramides
+    for (int i = 0; i <= lv_f; i++)  // Construct image and gradient pyramides
     {
         copyMakeBorder(img_ao_fmat_pyr[i],img_ao_fmat_pyr[i],imgpadding,imgpadding,imgpadding,imgpadding,cv::BORDER_REPLICATE);  // Replicate border for image padding
         img_ao_pyr[i] = (float*)img_ao_fmat_pyr[i].data;
@@ -149,13 +160,12 @@ void DISFlow::ConstructImgPyramide(const cv::Mat & img_ao_fmat, cv::Mat * img_ao
     }
 }
 
-cv::Mat DISFlow::execute(cv::Mat img_ao_mat, cv::Mat img_bo_mat) {
-
-    struct timeval tv_start_all, tv_end_all;
-    gettimeofday(&tv_start_all, NULL);
+cv::Mat DISFlow::execute(cv::Mat img_ao_mat, cv::Mat img_bo_mat)
+{
+    Statistics::startInterval(stats);
 
     int rpyrtype, nochannels, incoltype;
-    if (SELECTCHANNEL==1 || SELECTCHANNEL==2) // use Intensity or Gradient image
+    if (selectChannel==1 || selectChannel==2) // use Intensity or Gradient image
     {
         incoltype = CV_LOAD_IMAGE_GRAYSCALE;
         rpyrtype = CV_32FC1;
@@ -167,38 +177,30 @@ cv::Mat DISFlow::execute(cv::Mat img_ao_mat, cv::Mat img_bo_mat) {
         nochannels = 3;
     }
 
-    //cv::Mat img_ao_mat = cv::imread("/home/vladimir/Рабочий стол/clear/1.png", incoltype);   // Read the file
-    //cv::Mat img_bo_mat = cv::imread("/home/vladimir/Рабочий стол/clear/2.png", incoltype);   // Read the file
-
     cv::Mat img_ao_fmat, img_bo_fmat;
     cv::Size sz = img_ao_mat.size();
-    int width_org = sz.width;   // unpadded original image size
+    int width_org  = sz.width;   // unpadded original image size
     int height_org = sz.height;  // unpadded original image size
 
     // *** Pad image such that width and height are restless divisible on all scales (except last)
-    int padw=0, padh=0;
+    int padw = 0, padh = 0;
     int scfct = pow(2,params.sc_f()); // enforce restless division by this number on coarsest scale
     //if (hasinfile) scfct = pow(2,lv_f+1); // if initialization file is given, make sure that size is restless divisible by 2^(lv_f+1) !
+
     int div = sz.width % scfct;
-    if (div>0) padw = scfct - div;
+    if (div > 0) padw = scfct - div;
+
     div = sz.height % scfct;
-    if (div>0) padh = scfct - div;
-    if (padh>0 || padw>0)
+    if (div > 0) padh = scfct - div;
+
+    if (padh > 0 || padw > 0)
     {
-        copyMakeBorder(img_ao_mat,img_ao_mat,floor((float)padh/2.0f),ceil((float)padh/2.0f),floor((float)padw/2.0f),ceil((float)padw/2.0f),cv::BORDER_REPLICATE);
-        copyMakeBorder(img_bo_mat,img_bo_mat,floor((float)padh/2.0f),ceil((float)padh/2.0f),floor((float)padw/2.0f),ceil((float)padw/2.0f),cv::BORDER_REPLICATE);
+        copyMakeBorder(img_ao_mat, img_ao_mat, floor((float)padh / 2.0f), ceil((float)padh / 2.0f), floor((float)padw / 2.0f), ceil((float)padw / 2.0f), cv::BORDER_REPLICATE);
+        copyMakeBorder(img_bo_mat, img_bo_mat, floor((float)padh / 2.0f), ceil((float)padh / 2.0f), floor((float)padw / 2.0f), ceil((float)padw / 2.0f), cv::BORDER_REPLICATE);
     }
     sz = img_ao_mat.size();  // padded image size, ensures divisibility by 2 on all scales (except last)
 
-    // Timing, image loading
-    if (params.verbosity() > 1)
-    {
-        gettimeofday(&tv_end_all, NULL);
-        double tt = (tv_end_all.tv_sec-tv_start_all.tv_sec)*1000.0f + (tv_end_all.tv_usec-tv_start_all.tv_usec)/1000.0f;
-        printf("TIME (Image loading     ) (ms): %3g\n", tt);
-        gettimeofday(&tv_start_all, NULL);
-    }
-
+    Statistics::resetInterval(stats, "Preparing input images");
 
     //  *** Generate scale pyramides
     img_ao_mat.convertTo(img_ao_fmat, CV_32F); // convert to float
@@ -222,37 +224,35 @@ cv::Mat DISFlow::execute(cv::Mat img_ao_mat, cv::Mat img_bo_mat) {
     ConstructImgPyramide(img_bo_fmat, img_bo_fmat_pyr, img_bo_dx_fmat_pyr, img_bo_dy_fmat_pyr, img_bo_pyr, img_bo_dx_pyr, img_bo_dy_pyr, params.sc_f(), params.sc_l(), rpyrtype, 1, params.patchsz(), padw, padh);
 
     // Timing, image gradients and pyramid
-    if (params.verbosity() > 1)
-    {
-        gettimeofday(&tv_end_all, NULL);
-        double tt = (tv_end_all.tv_sec-tv_start_all.tv_sec)*1000.0f + (tv_end_all.tv_usec-tv_start_all.tv_usec)/1000.0f;
-        printf("TIME (Pyramide+Gradients) (ms): %3g\n", tt);
-    }
-
+    Statistics::resetInterval(stats, "Preparing pyramids and gradients images");
 
     // Read Initial Truth flow (if available)
-     float * initptr = nullptr;
-     cv::Mat flowinit;
-     if (previousFlow)
-     {
-         flowinit = *previousFlow;
+    float * initptr = NULL;
+    cv::Mat flowinit;
+    if (!previousFlow.empty())
+    {
+        flowinit = previousFlow;
 
-         if (padh>0 || padw>0)
-            copyMakeBorder(flowinit,flowinit,floor((float)padh/2.0f),ceil((float)padh/2.0f),floor((float)padw/2.0f),ceil((float)padw/2.0f),cv::BORDER_REPLICATE);
+        if (padh > 0 || padw > 0) {
+            copyMakeBorder(flowinit, flowinit,
+                           floor((float)padh/2.0f), ceil((float)padh/2.0f),
+                           floor((float)padw/2.0f), ceil((float)padw/2.0f),
+                           cv::BORDER_REPLICATE);
+        }
 
-         // resizing to coarsest scale - 1, since the array is upsampled at .5 in the code
-         float sc_fct = pow(2,-params.sc_f()-1);
-         flowinit *= sc_fct;
-         cv::resize(flowinit, flowinit, cv::Size(), sc_fct, sc_fct , cv::INTER_AREA);
+        // resizing to coarsest scale - 1, since the array is upsampled at .5 in the code
+        float sc_fct = pow(2,-params.sc_f()-1);
+        flowinit *= sc_fct;
+        cv::resize(flowinit, flowinit, cv::Size(), sc_fct, sc_fct , cv::INTER_AREA);
 
-         initptr = (float*)flowinit.data;
-     }
+        initptr = (float*)flowinit.data;
+    }
 
     //  *** Run main optical flow / depth algorithm
     float sc_fct = pow(2,params.sc_l());
     cv::Mat flowout;
 
-    if (SELECTMODE==1)
+    if (selectMode==1)
         flowout = cv::Mat(sz.height / sc_fct , sz.width / sc_fct, CV_32FC2); // Optical Flow
     else
         flowout = cv::Mat(sz.height / sc_fct , sz.width / sc_fct, CV_32FC1); // Depth
@@ -273,10 +273,7 @@ cv::Mat DISFlow::execute(cv::Mat img_ao_mat, cv::Mat img_bo_mat) {
                      params.tv_innerit(), params.tv_solverit(), params.tv_sor(),
                      params.verbosity());
 
-    if (params.verbosity() > 1)
-        gettimeofday(&tv_start_all, NULL);
-
-
+    Statistics::endInterval(stats, "Actual computation");
 
     // *** Resize to original scale, if not run to finest level
     if (params.sc_l() != 0)
@@ -294,10 +291,12 @@ cv::Mat DISFlow::execute(cv::Mat img_ao_mat, cv::Mat img_bo_mat) {
 
 int AutoFirstScaleSelect(int imgwidth, int fratio, int patchsize)
 {
-    return std::max(0,(int)std::floor(log2((2.0f*(float)imgwidth) / ((float)fratio * (float)patchsize))));
+    float width = (float)imgwidth;
+    return std::max(0, (int)std::floor(log2((2.0f * width) / ((float)fratio * (float)patchsize))));
 }
 
-void DISFlow::defaultParams(bool isNeedDefineAll) {
+void DISFlow::defaultParams(bool isNeedDefineAll)
+{
     int lv_f, lv_l, maxiter, miniter, patchsz, patnorm, costfct, tv_innerit, tv_solverit, verbosity;
     float mindprate, mindrrate, minimgerr, poverl, tv_alpha, tv_gamma, tv_delta, tv_sor;
     bool usefbcon, usetvref;

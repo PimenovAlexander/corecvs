@@ -44,9 +44,8 @@ ImageCaptureInterface::FramePair OpenCvFileCapture::getFrame()
         mCapture.grab();
         cv::Mat image;
         mCapture.retrieve(image);
-        IplImage *header = new IplImage(image);
 
-        result.setRgbBufferLeft  (OpenCVTools::getRGB24BufferFromCVImage(header));
+        result.setRgbBufferLeft  (OpenCVTools::getRGB24BufferFromCVMat(image));
         result.setRgbBufferRight (new RGB24Buffer(result.rgbBufferLeft()));
 
         result.setBufferLeft     (result.rgbBufferLeft()->toG12Buffer());
@@ -63,9 +62,7 @@ ImageCaptureInterface::FramePair OpenCvFileCapture::getFrame()
         result.setTimeStampLeft (count * 10);
         result.setTimeStampRight(count * 10);
 
-        delete_safe(header);
     //mProtectFrame.unlock();
-
 
     count++;
     ImageCaptureInterface::FrameMetadata frameData;

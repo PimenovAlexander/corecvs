@@ -1,7 +1,7 @@
 #ifndef TESTPHYSICSOBJECT_H
 #define TESTPHYSICSOBJECT_H
 
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include <copterInputs.h>
 #include <vector>
 

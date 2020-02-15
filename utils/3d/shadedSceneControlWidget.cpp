@@ -23,7 +23,7 @@ ShadedSceneControlWidget::ShadedSceneControlWidget(QWidget *parent) :
 
 ShadedSceneControlWidget::~ShadedSceneControlWidget()
 {
-    delete ui;
+    delete_safe(ui);
 }
 
 ShadedSceneControlParameters *ShadedSceneControlWidget::createParameters() const
@@ -104,6 +104,14 @@ void ShadedSceneControlWidget::applyPressed()
 
     shaderCache[name].fragment = ui->fragmentShaderTextEdit->toPlainText();
     shaderCache[name].vertex   = ui->vetrexShaderTextEdit->toPlainText();
+
+#if 0
+    std::cout << "We would apply new shader code for <" << name.toStdString() << ">" << std::endl;
+    std::cout << "Vertex:" << std::endl;
+    std::cout << shaderCache[name].vertex.toStdString() << std::endl;
+    std::cout << "Fragment:" << std::endl;
+    std::cout << shaderCache[name].fragment.toStdString() << std::endl;
+#endif
 
     emit paramsChanged();
 }

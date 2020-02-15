@@ -3,8 +3,8 @@
 #include <bits/stdc++.h>
 
 #include "core/utils/utils.h"
-#include "core/geometry/mesh3d.h"
-#include "core/geometry/mesh3DDecorated.h"
+#include "core/geometry/mesh/mesh3d.h"
+#include "core/geometry/mesh/mesh3DDecorated.h"
 
 using namespace std;
 using namespace corecvs;

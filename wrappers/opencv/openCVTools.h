@@ -43,6 +43,7 @@ public:
     static G8Buffer    *getG8BufferFromCVImage   (IplImage *input);
 
     static RGB24Buffer *getRGB24BufferFromCVMat(const cv::Mat &input);
+    static G12Buffer   *getG12BufferFromCVMat  (const cv::Mat &input);
     static G8Buffer    *getG8BufferFromCVMat   (const cv::Mat &input);
 
     static cv::Mat convert(const corecvs::RuntimeTypeBuffer &buffer);

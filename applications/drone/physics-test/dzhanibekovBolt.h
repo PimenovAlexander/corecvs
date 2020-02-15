@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include <core/geometry/mesh3d.h>
+#include <core/geometry/mesh/mesh3d.h>
 #include <core/cameracalibration/cameraModel.h>
 #include "core/cameracalibration/calibrationDrawHelpers.h"
 #include "core/math/affine.h"

@@ -7,7 +7,7 @@
 
 #include <core/cameracalibration/cameraModel.h>
 #include "core/cameracalibration/calibrationDrawHelpers.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/math/affine.h"
 #include "core/math/vector/vector3d.h"
 

@@ -1,7 +1,7 @@
 #ifndef MESH3DDECORATED_H
 #define MESH3DDECORATED_H
 
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
 
 namespace corecvs
@@ -15,6 +15,7 @@ public:
         KOEF_AMBIENT,
         KOEF_DIFFUSE,
         KOEF_SPECULAR,
+        KOEF_TRANSMISSION_FILTER,
         KOEF_LAST
     };
 
@@ -87,6 +88,9 @@ public:
      * texId is an array of <Vector4d32>, the size of this array is equal to the size of the array of fases,
      * first three numbers are indexes in textureCoords array, and the fourth number is usually used as texture nunber
      **/
+    static const int TEXTURE_NUM = 3;
+    static const int MATERIAL_NUM = 3;
+
     vector<Vector4d32>  texId;  
 
     vector<Vector3d32>  normalId;
@@ -103,7 +107,7 @@ public:
     void switchTextures(bool on = true);
     void switchNormals(bool on = true);
 
-    void addFace(const Vector3d32 &faceId);
+    virtual void addFace(const Vector3d32 &faceId) override;
 
     virtual void addAOB(const AxisAlignedBoxParameters &box, bool addFaces = true) override;
     virtual void addAOB(const AxisAlignedBox3d &box, bool addFaces = true) override;
@@ -119,35 +123,18 @@ public:
 
     virtual void transform(const Matrix44 &matrix) override;
 
-    virtual void clear();
+    virtual void clear() override;
 
     virtual void dumpInfo(ostream &out = std::cout) override;
 
-    virtual void fillTestScene();
+    virtual void fillTestScene() override;
 
     void recomputeMeanNormals();
 
     bool verify( void );
 };
 
-class MeshFilter
-{
-public:
-    static
-    void removeDuplicatedFaces(Mesh3DDecorated &mesh);
 
-    static
-    void removeUnreferencedVertices(Mesh3DDecorated &mesh);
-
-    static
-    void removeIsolatedPieces(Mesh3DDecorated &mesh,  unsigned minCountOfFaces);
-
-    static
-    void removeZeroAreaFaces(Mesh3DDecorated &mesh);
-
-   static
-    void removeDuplicatedVertices(Mesh3DDecorated &mesh);
-};
 
 } // namespace corecvs
 

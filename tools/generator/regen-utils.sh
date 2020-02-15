@@ -15,8 +15,8 @@ echo -n "Running generator on xml/graphPlot.xml..."
 ${GENERATOR_BIN} xml/graphPlot.xml
 echo "done"
 
-echo -n "Running generator on xml/draw3d.xml..."
-${GENERATOR_BIN} xml/draw3d.xml
+echo -n "Running generator on xml/draw3dutils.xml..."
+${GENERATOR_BIN} xml/draw3dutils.xml
 echo "done"
 
 echo -n "Running generator on xml/utils.xml..."
@@ -38,12 +38,12 @@ copy_if_different Generated/patternFromPoseParameters.cpp       $dest/
 echo "Generic utils copied"
 
 dest="../../utils/3d/generated"
-copy_if_different Generated/draw3dParametersControlWidget.ui   $dest/
-copy_if_different Generated/draw3dParametersControlWidget.cpp  $dest/
-copy_if_different Generated/draw3dParameters.cpp               $dest/
-copy_if_different Generated/draw3dParameters.h                 $dest/
-copy_if_different Generated/draw3dStyle.h                      $dest/
-copy_if_different Generated/draw3dTextureGen.h                 $dest/
+#copy_if_different Generated/draw3dParametersControlWidget.ui   $dest/
+#copy_if_different Generated/draw3dParametersControlWidget.cpp  $dest/
+#copy_if_different Generated/draw3dParameters.cpp               $dest/
+#copy_if_different Generated/draw3dParameters.h                 $dest/
+#copy_if_different Generated/draw3dStyle.h                      $dest/
+#copy_if_different Generated/draw3dTextureGen.h                 $dest/
 
 copy_if_different Generated/draw3dCameraParametersControlWidget.ui   $dest/
 copy_if_different Generated/draw3dCameraParametersControlWidget.cpp  $dest/

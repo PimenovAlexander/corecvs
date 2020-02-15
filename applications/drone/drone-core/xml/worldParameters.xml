@@ -1,0 +1,8 @@
+<poco version="5.0">
+
+<class name="World Parameters"  incpath="">
+   <field type="string" name="name"/>
+
+</class>
+
+</poco>

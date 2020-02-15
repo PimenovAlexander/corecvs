@@ -23,7 +23,6 @@
 namespace corecvs {
 
 using std::vector;
-using std::binder2nd;
 using std::plus;
 using std::minus;
 

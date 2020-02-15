@@ -70,7 +70,6 @@ file(GLOB SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
 file(GLOB HDR_FILES ${CMAKE_CURRENT_LIST_DIR}/*.h)
 file(GLOB UI_FILES ${CMAKE_CURRENT_LIST_DIR}/*.ui)
 
-
 list(REMOVE_ITEM SRC_FILES "${CMAKE_CURRENT_LIST_DIR}/trackPainter.cpp")
 
 foreach(utils_subdirectory ${UTILS_SUBDIRECTORIES})
@@ -79,7 +78,7 @@ foreach(utils_subdirectory ${UTILS_SUBDIRECTORIES})
     include(${utils_subdirectory}/sourcelist.cmake)
 endforeach(utils_subdirectory)
 
-
+#message(STATUS "Found ui files:" "${UI_FILES}")
 
 message("Additional include path <${INC_PATHS}>")
 target_include_directories(${MODULE_NAME} PUBLIC ${INC_PATHS})
@@ -126,7 +125,7 @@ set_source_files_properties(${ADD_SRC_FILES} PROPERTIES EXTERNAL_OBJECT true)
 
 set(ADD_SRC_FILES ${ADD_SRC_FILES}
     ${CMAKE_CURRENT_LIST_DIR}/../tools/generator/xml/utils.xml
-    ${CMAKE_CURRENT_LIST_DIR}/../tools/generator/xml/draw3d.xml
+    ${CMAKE_CURRENT_LIST_DIR}/../tools/generator/xml/draw3dutils.xml
     ${CMAKE_CURRENT_LIST_DIR}/../tools/generator/xml/graphPlot.xml
     )
 

@@ -27,7 +27,7 @@
 #include "core/fileformats/bmpLoader.h"
 #include "core/math/mathUtils.h"
 #include "core/buffers/rgb24/abstractPainter.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/cameracalibration/calibrationDrawHelpers.h"
 
 using corecvs::G12Buffer;

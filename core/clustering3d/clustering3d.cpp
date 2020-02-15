@@ -404,7 +404,7 @@ void Clustering3D::clustering(int sizeW, int sizeH, int zoneW, int zoneH, int zo
             remove_if(
                     mpClusters.begin(),
                     mpClusters.end(),
-                    bind2nd(equal_to<void *>(), (void *)NULL)
+                    [](CloudCluster *segment){ return segment == NULL; }
             ),
             mpClusters.end());
 }
@@ -492,7 +492,7 @@ void Clustering3D::_clustering(int sizeW, int sizeH)
             remove_if(
                     mpClusters.begin(),
                     mpClusters.end(),
-                    bind2nd(equal_to<void *>(), (void *)NULL)
+                    [](CloudCluster *segment){ return segment == NULL; }
             ),
             mpClusters.end());
     return;

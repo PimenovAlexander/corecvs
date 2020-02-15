@@ -14,7 +14,7 @@
 #include "sceneShaded.h"
 #include "cloudViewDialog.h"
 #include "core/fileformats/gcodeLoader.h"
-#include "generated/draw3dParameters.h"
+#include "core/xml/generated/draw3dParameters.h"
 #include "draw3dParametersControlWidget.h"
 #include "draw3dCameraParametersControlWidget.h"
 #include "core/xml/generated/drawGCodeParameters.h"

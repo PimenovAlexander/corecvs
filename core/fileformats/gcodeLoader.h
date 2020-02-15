@@ -8,7 +8,7 @@
 
 #include "core/utils/global.h"
 
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "core/geometry/polygons.h"
 
 #include "core/xml/generated/gCodeColoringSheme.h"

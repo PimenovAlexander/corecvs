@@ -11,12 +11,15 @@
 
   <class name="OpenCV KLT Parameters">
 
-    <field type="double"      name="SelectorQuality"    defaultValue="0.01" />
-    <field type="double"      name="SelectorDistance"   defaultValue="10" />
-    <field type="int"         name="SelectorSize"       defaultValue="7" />
-    <field type="int"         name="UseHarris"          defaultValue="1" />
-    <field type="double"      name="HarrisK"            defaultValue="0.05" />
-    <field type="int"         name="kltSize"            defaultValue="4"  />
+    <field type="int"         name="MaxCorners"         defaultValue="4000"   min="0" max="1000000" />
+    <field type="double"      name="SelectorQuality"    defaultValue="0.01"  />
+    <field type="double"      name="SelectorDistance"   defaultValue="10"    />
+    <field type="int"         name="SelectorSize"       defaultValue="7"     />
+    <field type="int"         name="UseHarris"          defaultValue="1"     />
+    <field type="double"      name="HarrisK"            defaultValue="0.05"  />
+    <field type="int"         name="kltSize"            defaultValue="4"     />
+    <field type="bool"        name="trace"              defaultValue="false" />
+
 
   </class>
 

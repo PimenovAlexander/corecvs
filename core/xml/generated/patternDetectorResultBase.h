@@ -59,13 +59,13 @@ public:
 
     /** 
      * \brief ortX 
-     * One of resulting pattern directions in image corrdinate 
+     * One of resulting pattern directions in image coordinate 
      */
     Vector2dParameters mOrtX;
 
     /** 
      * \brief ortY 
-     * Second resulting pattern direction in image corrdinate  
+     * Second resulting pattern direction in image coordinate  
      */
     Vector2dParameters mOrtY;
 
