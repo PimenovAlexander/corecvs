@@ -1,4 +1,4 @@
-name: Ubuntu_Build_OpenCV_FromScratch
+name: Ubuntu_Build_OpenCV3.4.6_FromScratch
 
 on:
   push:
