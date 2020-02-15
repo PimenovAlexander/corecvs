@@ -1,4 +1,5 @@
 #include "openCVHelper.h"
+#include "wrappers/opencv/openCVTools.h"
 
 bool OpenCvHelper::captureImageCopyToBuffer(cv::VideoCapture &capture, G12Buffer* buf)
 {
@@ -7,9 +8,7 @@ bool OpenCvHelper::captureImageCopyToBuffer(cv::VideoCapture &capture, G12Buffer
         return false;
 
     capture.retrieve(image);
-
-    IplImage frame = image;
-    return captureImageCopyToBuffer(&frame, buf);
+    return OpenCVTools::getG12BufferFromCVMat(image);
 }
 
 bool OpenCvHelper::captureImageCopyToBuffer(CvCapture* capHandle, G12Buffer* buf)

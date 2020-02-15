@@ -44,8 +44,7 @@ corecvs::RGB24Buffer OpenCvBufferReader::readRgb(const std::string &s)
     if (!(img.rows && img.cols && img.data)) {
         throwInvalidArg(s);
     }
-    IplImage ip(img);
-    auto* b = OpenCVTools::getRGB24BufferFromCVImage(&ip);
+    auto* b = OpenCVTools::getRGB24BufferFromCVMat(img);
     corecvs::RGB24Buffer buffer = *b;
     delete b;
     return buffer;
@@ -104,8 +103,7 @@ RGB24Buffer *OpenCVRGB24Loader::load(const std::string & name)
     if (!(img.rows && img.cols && img.data)) {
         throwInvalidArg(name);
     }
-    IplImage ip(img);
-    return OpenCVTools::getRGB24BufferFromCVImage(&ip);
+    return OpenCVTools::getRGB24BufferFromCVMat(img);
 }
 
 OpenCVRuntimeTypeBufferLoader::OpenCVRuntimeTypeBufferLoader()

@@ -145,6 +145,52 @@ G12Buffer *OpenCVTools::getG12BufferFromCVImage(IplImage *input)
     return toReturn;
 }
 
+/*TODO: Support other depth and channel numbers*/
+G12Buffer *OpenCVTools::getG12BufferFromCVMat(const cv::Mat &input)
+{
+    G12Buffer *toReturn = new G12Buffer(input.rows, input.cols);
+
+
+    CORE_ASSERT_TRUE_P((input.type() == CV_8UC1) || (input.type() == CV_8UC3),
+        ("getG12BufferFromCVMat(): Unsupported cv::Mat format: depth=%d, type = %d\n", input.depth(), input.type()));
+
+    if (input.type() == CV_8UC3)
+    {
+        for (int i = 0; i < input.rows; i++)
+        {
+            uint8_t *srcData = (uint8_t *)&input.at<cv::Vec3b>(i, 0);
+            G12Buffer::InternalElementType *dstData =  &(toReturn->element(i,0));
+
+            /*TODO: Add SSE implementation*/
+            for (int j = 0; j < input.cols; j++)
+            {
+                *dstData = (11 * srcData[0] + 16 * srcData[1] + 5 * srcData[2]) >> 1;
+                dstData++;
+                srcData += 3;
+            }
+        }
+    }
+
+    if (input.type() == CV_8UC1)
+    {
+        for (int i = 0; i < input.rows; i++)
+        {
+            uint8_t *srcData = (uint8_t *)&input.at<uint8_t>(i, 0);
+            G12Buffer::InternalElementType *dstData =  &(toReturn->element(i,0));
+
+            /*TODO: Add SSE implementation*/
+            for (int j = 0; j < input.cols; j++)
+            {
+                *dstData = *srcData * 16;
+                dstData++;
+                srcData++;
+            }
+        }
+    }
+
+    return toReturn;
+}
+
 G8Buffer *OpenCVTools::getG8BufferFromCVImage(IplImage *input)
 {
     G8Buffer *toReturn = new G8Buffer(input->height, input->width);
