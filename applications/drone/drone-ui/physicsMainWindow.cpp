@@ -281,6 +281,12 @@ void PhysicsMainWindow::worldRedraw()
         }
 
         mShadedScene->setMesh(mesh);
+        mShadedScene->mParameters.point.type = ShaderPreset::NONE;
+        mShadedScene->mParameters.edge.type  = ShaderPreset::NONE;
+
+        mShadedScene->mParameters.face.load("obj_textured.vsh", QDir(":/new/shaders/shaders"));
+        mShadedScene->mParameters.face.name = "obj_textured_custom";
+
         ui->cloud->setNewScenePointer(QSharedPointer<Scene3D>(mShadedScene), CloudViewDialog::CLUSTER_SWARM);
     }
 }
