@@ -1,5 +1,5 @@
 #include "tgaLoader.h"
-#include "core/utils/utils.h"
+#include "utils/utils.h"
 
 namespace corecvs {
 

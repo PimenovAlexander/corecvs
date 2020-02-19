@@ -3,9 +3,9 @@
 
 #include <iostream>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/reflection/reflection.h"
+#include "reflection/reflection.h"
 
 namespace corecvs {
 

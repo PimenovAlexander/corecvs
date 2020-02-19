@@ -9,10 +9,10 @@
 #ifndef BLURPROCESSOR_H_
 #define BLURPROCESSOR_H_
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/buffers/integralBuffer.h"
-#include "core/buffers/g12Buffer.h"
+#include "buffers/integralBuffer.h"
+#include "buffers/g12Buffer.h"
 
 namespace corecvs {
 

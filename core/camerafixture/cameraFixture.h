@@ -7,10 +7,10 @@
 #include <type_traits>
 #include <cstring>
 
-#include "core/alignment/pointObservation.h"
+#include "alignment/pointObservation.h"
 
-#include "core/utils/typesafeBitmaskEnums.h"
-#include "core/cameracalibration/calibrationLocation.h"  // LocationData
+#include "utils/typesafeBitmaskEnums.h"
+#include "cameracalibration/calibrationLocation.h"  // LocationData
 #include "fixtureCamera.h"
 #include "fixtureScenePart.h"
 

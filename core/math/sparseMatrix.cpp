@@ -1,4 +1,4 @@
-#include "core/math/sparseMatrix.h"
+#include "math/sparseMatrix.h"
 #include "wrappers/cblasLapack/cblasLapackeWrapper.h"
 
 #include <chrono>

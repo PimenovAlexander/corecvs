@@ -13,8 +13,8 @@
 #include <immintrin.h>
 #include <stdint.h>
 
-#include "core/utils/global.h"
-#include "core/math/vector/fixedVector.h"
+#include "utils/global.h"
+#include "math/vector/fixedVector.h"
 
 namespace corecvs {
 

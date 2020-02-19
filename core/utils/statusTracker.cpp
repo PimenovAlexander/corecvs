@@ -1,5 +1,5 @@
-#include "core/utils/statusTracker.h"
-#include "core/tbbwrapper/tbbWrapper.h"
+#include "utils/statusTracker.h"
+#include "tbbwrapper/tbbWrapper.h"
 
 #include <iostream>
 

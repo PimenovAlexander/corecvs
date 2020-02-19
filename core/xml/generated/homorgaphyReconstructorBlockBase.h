@@ -9,9 +9,9 @@
  * Generated from bufferFilters.xml
  */
 
-#include "core/reflection/reflection.h"
-#include "core/reflection/defaultSetter.h"
-#include "core/reflection/printerVisitor.h"
+#include "reflection/reflection.h"
+#include "reflection/defaultSetter.h"
+#include "reflection/printerVisitor.h"
 
 /*
  *  Embed includes.
@@ -37,7 +37,7 @@ class Matrix33;
 /*
  *  Additional includes for enum section.
  */
-#include "core/xml/generated/homographyAlgorithm.h"
+#include "xml/generated/homographyAlgorithm.h"
 
 /**
  * \brief HomorgaphyReconstructorBlockBase 

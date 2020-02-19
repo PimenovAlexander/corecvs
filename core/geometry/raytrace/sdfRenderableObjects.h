@@ -1,10 +1,10 @@
 #ifndef SDFRENDERABLEOBJECTS_H
 #define SDFRENDERABLEOBJECTS_H
 
-#include "core/function/function.h"
+#include "function/function.h"
 
-#include "core/math/vector/vector3d.h"
-#include "core/geometry/raytrace/sdfRenderable.h"
+#include "math/vector/vector3d.h"
+#include "geometry/raytrace/sdfRenderable.h"
 
 class SDFRenderableSphere : public SDFRenderable{
     Vector3dd sphere;

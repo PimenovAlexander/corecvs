@@ -3,7 +3,7 @@
 
 #include <type_traits>
 
-#include "core/utils/typesafeBitmaskEnums.h"
+#include "utils/typesafeBitmaskEnums.h"
 
 namespace corecvs {
 enum class CameraConstraints

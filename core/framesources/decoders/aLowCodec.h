@@ -9,8 +9,8 @@
 
 #include <stdint.h>
 
-#include "core/utils/global.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "utils/global.h"
+#include "buffers/rgb24/rgb24Buffer.h"
 
 namespace corecvs
 {

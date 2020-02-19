@@ -7,7 +7,11 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-#include <sys/time.h>
+#   if defined (_MSC_VER)
+#      include <time.h>
+#   else
+#      include <sys/time.h>
+#   endif
 
 #include <string>
 #include <core/buffers/rgb24/rgb24Buffer.h>

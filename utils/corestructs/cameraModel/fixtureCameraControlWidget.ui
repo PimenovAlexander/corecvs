@@ -33,7 +33,7 @@
   <customwidget>
    <class>CameraModelParametersControlWidget</class>
    <extends>QWidget</extends>
-   <header>cameraModelParametersControlWidget.h</header>
+   <header>distortioncorrector/cameraModelParametersControlWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

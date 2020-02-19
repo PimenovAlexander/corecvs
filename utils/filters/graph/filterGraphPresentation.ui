@@ -192,7 +192,7 @@
   <customwidget>
    <class>ExponentialSlider</class>
    <extends>QWidget</extends>
-   <header>exponentialSlider.h</header>
+   <header>widgets/exponentialSlider.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

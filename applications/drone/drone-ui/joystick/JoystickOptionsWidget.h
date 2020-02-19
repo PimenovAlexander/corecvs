@@ -6,7 +6,9 @@
 
 #include <QWidget>
 
+#include <core/utils/global.h>
 #include <core/joystick/playbackJoystickInterface.h>
+
 
 namespace Ui {
 class JoystickOptionsWidget;
@@ -20,13 +22,16 @@ class JoystickInterfaceQt : public QObject, public virtual corecvs::JoystickInte
 {
     Q_OBJECT
 
-
-
-
 signals:
     void joystickUpdated(corecvs::JoystickState state);
 
 public:
+    JoystickInterfaceQt(const std::string &deviceName) :
+        corecvs::JoystickInterface(deviceName)
+    {
+        SYNC_PRINT(("JoystickInterfaceQt::JoystickInterfaceQt(%s): called\n", deviceName.c_str()));
+    }
+
     virtual ~JoystickInterfaceQt(){}
 };
 
@@ -37,9 +42,11 @@ public:
     JoystickOptionsWidget *mTarget = NULL;
 
     JoystickListener(const std::string &deviceName, JoystickOptionsWidget *target) :
+        JoystickInterfaceQt(deviceName),
         BaseObject(deviceName),
         mTarget(target)
     {
+        SYNC_PRINT(("JoystickListener::JoystickListener(%s, _): created\n", deviceName.c_str()));
         qRegisterMetaType<corecvs::JoystickState>("JoystickState");
     }
 

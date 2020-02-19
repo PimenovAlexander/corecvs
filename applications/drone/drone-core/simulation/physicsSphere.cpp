@@ -1,6 +1,6 @@
 #include "physicsSphere.h"
 
-#include <mesh3DScene.h>
+#include <3d/mesh3DScene.h>
 
 PhysicsSphere::PhysicsSphere(): MaterialObject ()
 {

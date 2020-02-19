@@ -7,8 +7,8 @@
  * \author alexander
  */
 
-#include "core/math/lutAlgebra.h"
-#include "core/math/vector/vector3d.h"
+#include "math/lutAlgebra.h"
+#include "math/vector/vector3d.h"
 #include <iostream>
 #include <stdlib.h>
 namespace corecvs {

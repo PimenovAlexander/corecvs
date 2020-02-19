@@ -6,11 +6,11 @@
 #include <string>
 
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/utils/visitors/basePathVisitor.h"
-#include "core/reflection/reflection.h"
-#include "core/reflection/dynamicObject.h"
+#include "utils/visitors/basePathVisitor.h"
+#include "reflection/reflection.h"
+#include "reflection/dynamicObject.h"
 
 namespace corecvs {
 

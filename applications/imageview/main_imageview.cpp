@@ -9,13 +9,13 @@
 #include <string>
 #include <iostream>
 
-#include <QtGui/QtGui>
+#include <QtGui>
 #include <QApplication>
 
 #include "core/utils/global.h"
 
 #include "core/utils/utils.h"
-#include "qtFileLoader.h"
+#include "fileformats/qtFileLoader.h"
 #include "imageViewMainWindow.h"
 
 int main(int argc, char *argv[])

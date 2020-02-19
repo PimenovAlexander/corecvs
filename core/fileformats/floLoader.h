@@ -1,8 +1,8 @@
 #ifndef FLOLOADER_H
 #define FLOLOADER_H
 
-#include "core/buffers/flow/flowBuffer.h"
-#include "core/buffers/flow/floatFlowBuffer.h"
+#include "buffers/flow/flowBuffer.h"
+#include "buffers/flow/floatFlowBuffer.h"
 
 #include "bufferLoader.h"
 

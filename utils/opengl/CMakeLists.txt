@@ -1,0 +1,9 @@
+set(OPENGL_HEADER_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/openGLTools.h
+    PARENT_SCOPE
+    )
+
+set(OPENGL_SOURCE_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/openGLTools.cpp
+    PARENT_SCOPE
+    )

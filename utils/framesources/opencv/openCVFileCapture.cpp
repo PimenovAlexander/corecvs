@@ -4,7 +4,7 @@
 
 #include "openCVFileCapture.h"
 //#include "openCVHelper.h"
-#include "openCVTools.h"
+#include "../../../wrappers/opencv/openCVTools.h"
 
 OpenCvFileCapture::OpenCvFileCapture(const  std::string &params)
     : /*AbstractFileCapture(params),*/

@@ -1,10 +1,10 @@
 #ifndef RAYTRACEOBJECTS_H
 #define RAYTRACEOBJECTS_H
 
-#include "core/geometry/raytrace/bspTree.h"
-#include "core/geometry/mesh/mesh3DDecorated.h"
-#include "core/geometry/raytrace/raytraceRenderer.h"
-#include "core/geometry/raytrace/raytraceableNodeWrapper.h"
+#include "geometry/raytrace/bspTree.h"
+#include "geometry/mesh/mesh3DDecorated.h"
+#include "geometry/raytrace/raytraceRenderer.h"
+#include "geometry/raytrace/raytraceableNodeWrapper.h"
 
 class RaytraceableTransform : public Raytraceable
 {

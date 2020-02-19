@@ -5,11 +5,11 @@
 #include <map>
 #include <functional>
 
-#include "core/camerafixture/fixtureScenePart.h"
-#include "core/camerafixture/fixtureCamera.h"
-#include "core/camerafixture/sceneFeaturePoint.h"
-#include "core/camerafixture/cameraPrototype.h"
-#include "core/utils/typesafeBitmaskEnums.h"
+#include "camerafixture/fixtureScenePart.h"
+#include "camerafixture/fixtureCamera.h"
+#include "camerafixture/sceneFeaturePoint.h"
+#include "camerafixture/cameraPrototype.h"
+#include "utils/typesafeBitmaskEnums.h"
 
 /* In future Scene would like to control memory management for child objects */
 //#define SCENE_OWN_ALLOCATOR_DRAFT

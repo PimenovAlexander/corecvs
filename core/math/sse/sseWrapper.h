@@ -11,38 +11,38 @@
 #define SEEWRAPPER_H_
 
 #ifdef WITH_SSE
-#include "core/math/sse/sseInteger.h"
-#include "core/math/sse/int64x2.h"
-#include "core/math/sse/int32x4.h"
-#include "core/math/sse/int32x8v.h"
-#include "core/math/sse/int16x8.h"
-#include "core/math/sse/uInt16x8.h"
+#include "math/sse/sseInteger.h"
+#include "math/sse/int64x2.h"
+#include "math/sse/int32x4.h"
+#include "math/sse/int32x8v.h"
+#include "math/sse/int16x8.h"
+#include "math/sse/uInt16x8.h"
 
-#include "core/math/sse/int8x16.h"
-#include "core/math/sse/uInt8x16.h"
+#include "math/sse/int8x16.h"
+#include "math/sse/uInt8x16.h"
 
-#include "core/math/sse/float32x4.h"
-#include "core/math/sse/doublex2.h"
+#include "math/sse/float32x4.h"
+#include "math/sse/doublex2.h"
 #endif // WITH_SSE
 
 #ifdef WITH_AVX
-#include "core/math/sse/float32x8.h"
-#include "core/math/sse/doublex4.h"
-#include "core/math/sse/doublex8.h"
-#include "core/math/sse/doublexT4.h"
-#include "core/math/sse/floatT8.h"
+#include "math/sse/float32x8.h"
+#include "math/sse/doublex4.h"
+#include "math/sse/doublex8.h"
+#include "math/sse/doublexT4.h"
+#include "math/sse/floatT8.h"
 #endif // WITH_AVX
 
 #ifdef WITH_AVX2
-#include "core/math/avx/avxInteger.h"
-#include "core/math/avx/int64x4.h"
-#include "core/math/avx/int32x8.h"
-#include "core/math/avx/int32x16v.h"
-#include "core/math/avx/int16x16.h"
+#include "math/avx/avxInteger.h"
+#include "math/avx/int64x4.h"
+#include "math/avx/int32x8.h"
+#include "math/avx/int32x16v.h"
+#include "math/avx/int16x16.h"
 #endif // WITH_AVX2
 
 #ifdef WITH_SSE
-#include "core/math/sse/sseMath.h"
+#include "math/sse/sseMath.h"
 #endif
 
 #ifdef _MSC_VER

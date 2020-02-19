@@ -8,12 +8,12 @@
 #ifndef FFTWWRAPPER_H_
 #define FFTWWRAPPER_H_
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
 #include <vector>
 #include <cstdint>
 
-#include "core/buffers/abstractBuffer.h"
+#include "buffers/abstractBuffer.h"
 
 struct fftw_plan_s;
 typedef double fftw_complex[2];

@@ -1,7 +1,7 @@
 #include <QMenu>
 
 #include "pointListEditImageWidget.h"
-#include "painterHelpers.h"
+#include "corestructs/painterHelpers.h"
 #include "qtHelper.h"
 
 

@@ -1,9 +1,9 @@
 #ifndef GENTRYSTATE_H
 #define GENTRYSTATE_H
 
-#include "core/math/vector/vector3d.h"
-#include "core/geometry/line.h"
-#include "core/cameracalibration/cameraModel.h"
+#include "math/vector/vector3d.h"
+#include "geometry/line.h"
+#include "cameracalibration/cameraModel.h"
 
 using namespace corecvs;
 

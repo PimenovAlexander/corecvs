@@ -1,7 +1,7 @@
 #include <fstream>
 
-#include "core/cameracalibration/cameraModel.h"
-#include "core/geometry/convexHull.h"
+#include "cameracalibration/cameraModel.h"
+#include "geometry/convexHull.h"
 
 namespace corecvs {
 

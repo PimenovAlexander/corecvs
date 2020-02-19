@@ -2,7 +2,7 @@
 #include <QWidget>
 #include "core/xml/generated/lineDistortionEstimatorParameters.h"
 #include "ui_lineDistortionEstimatorParametersControlWidget.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 
 namespace Ui {

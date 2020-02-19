@@ -8,37 +8,36 @@
 #include <fcntl.h>
 #include <world/simulationWorld.h>
 
-#include <JoystickOptionsWidget.h>
+#include <joystick/JoystickOptionsWidget.h>
 #include <QWidget>
-#include <statisticsDialog.h>
-
-#include "calibration.h"
-#include "cameraModelParametersControlWidget.h"
-#include "capSettingsDialog.h"
-#include "controlsMixer.h"
-#include "flowFabricControlWidget.h"
-#include "graphPlotDialog.h"
-#include "inputSelectorWidget.h"
-#include "radioControlWidget.h"
-#include "joystickReader.h"
+#include <statistics/statisticsDialog.h>
+#include "calibration/calibration.h"
+#include "distortioncorrector/cameraModelParametersControlWidget.h"
+#include "uis/capSettingsDialog.h"
+#include "mixer/controlsMixer.h"
+#include "corestructs/flowFabricControlWidget.h"
+#include "uis/graphPlotDialog.h"
+#include "widgets/inputSelectorWidget.h"
+#include "radio/radioControlWidget.h"
+#include "joystick/joystickReader.h"
 
 #include "copter/quad.h"
 #include "copter/droneObject.h"
 
-#include "calibrationWidget.h"
+#include "calibration/calibrationWidget.h"
 #include "clientSender.h"
 #include "copterInputsWidget.h"
 #include "frameProcessor.h"
 #include "physicsAboutWidget.h"
-#include "protoautopilot.h"
-#include "multimoduleController.h"
+#include "autopilot/protoautopilot.h"
+#include "radio/multimoduleController.h"
 
 
 #include "controlRecord.h"
-#include "simulation.h"
-#include "core/geometry/mesh/mesh3DDecorated.h"
-#include "mesh3DScene.h"
-#include "patternDetectorParametersWidget.h"
+#include "simulation/simulation.h"
+#include "geometry/mesh/mesh3DDecorated.h"
+#include "3d/mesh3DScene.h"
+#include "widgets/patternDetectorParametersWidget.h"
 
 
 namespace Ui {
@@ -187,6 +186,7 @@ public:
 public slots:
     void updateUi();
     void keepAliveJoyStick();
+    void repositionCloudCamera();
 
 /** Model download **/
 public slots:
@@ -199,10 +199,6 @@ public:
 
 
 private slots:
-
-
-
-    void checkForJoystick();
 
     void stopVirtualMode();
     void startVirtualMode();

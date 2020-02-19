@@ -9,8 +9,8 @@
 #include "draw3dViMouseParametersControlWidget.h"
 #include "ui_draw3dViMouseParametersControlWidget.h"
 #include <memory>
-#include "qSettingsGetter.h"
-#include "qSettingsSetter.h"
+#include "visitors/qSettingsGetter.h"
+#include "visitors/qSettingsSetter.h"
 
 
 Draw3dViMouseParametersControlWidget::Draw3dViMouseParametersControlWidget(QWidget *parent, bool _autoInit, QString _rootPath)

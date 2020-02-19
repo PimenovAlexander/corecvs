@@ -6,12 +6,12 @@
  *
  * \date Feb 10, 2011
  */
-#include "core/utils/global.h"
-#include "core/math/vector/vector2d.h"
-#include "core/math/matrix/matrix44.h"
+#include "utils/global.h"
+#include "math/vector/vector2d.h"
+#include "math/matrix/matrix44.h"
 
-#include "core/cameracalibration/cameraModel.h"
-#include "core/cameracalibration/projection/pinholeCameraIntrinsics.h"
+#include "cameracalibration/cameraModel.h"
+#include "cameracalibration/projection/pinholeCameraIntrinsics.h"
 
 
 

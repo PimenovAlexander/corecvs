@@ -1,8 +1,8 @@
 #ifndef PLANE_H
 #define PLANE_H
 
-#include "core/geometry/line.h"
-#include "core/math/vector/vector4d.h"
+#include "geometry/line.h"
+#include "math/vector/vector4d.h"
 
 namespace corecvs {
 

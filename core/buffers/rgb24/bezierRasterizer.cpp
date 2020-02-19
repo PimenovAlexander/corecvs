@@ -1,3 +1,3 @@
-#include "core/buffers/rgb24/bezierRasterizer.h"
+#include "buffers/rgb24/bezierRasterizer.h"
 
 

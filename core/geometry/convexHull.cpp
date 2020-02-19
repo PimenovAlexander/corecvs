@@ -1,6 +1,6 @@
-#include "core/geometry/convexHull.h"
+#include "geometry/convexHull.h"
 
-#include "core/geometry/mesh/mesh3d.h"
+#include "geometry/mesh/mesh3d.h"
 
 using namespace corecvs;
 using namespace std;

@@ -2,7 +2,7 @@
 #define GENERICMATH_H_
 
 #include <stdint.h>
-#include "core/utils/global.h"
+#include "utils/global.h"
 
 /*
  * genericMath.h

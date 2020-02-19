@@ -1,5 +1,6 @@
 #include "opencv2/imgproc/imgproc.hpp"
-#include "openCvImageRemapper.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "buffers/displacementBuffer.h"
 
 #ifdef WITH_OPENCV_GPU
 #include <opencv2/core/cuda.hpp>

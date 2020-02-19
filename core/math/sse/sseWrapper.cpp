@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 #include <iomanip>
-#include "core/math/sse/sseWrapper.h"
+#include "math/sse/sseWrapper.h"
 
 namespace corecvs {
 

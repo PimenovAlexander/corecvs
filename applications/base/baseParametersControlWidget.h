@@ -4,7 +4,7 @@
 
 #include "generatedParameters/baseParameters.h"
 #include "ui_baseParametersControlWidget.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 namespace Ui {
     class BaseParametersControlWidget;

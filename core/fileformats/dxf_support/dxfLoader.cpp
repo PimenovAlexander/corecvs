@@ -2,12 +2,12 @@
 // Created by Myasnikov Vladislav on 17.10.2019.
 //
 
-#include "core/fileformats/dxf_support/dxfLoader.h"
-#include "core/fileformats/dxf_support/dxfCodes.h"
-#include "core/fileformats/dxf_support/dxfBuilder.h"
-#include "core/utils/utils.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/buffers/rgb24/rgbColor.h"
+#include "fileformats/dxf_support/dxfLoader.h"
+#include "fileformats/dxf_support/dxfCodes.h"
+#include "fileformats/dxf_support/dxfBuilder.h"
+#include "utils/utils.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "buffers/rgb24/rgbColor.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>

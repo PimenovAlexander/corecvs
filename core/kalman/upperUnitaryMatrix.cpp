@@ -6,7 +6,7 @@
  * \author alexander
  */
 
-#include "core/kalman/upperUnitaryMatrix.h"
+#include "kalman/upperUnitaryMatrix.h"
 namespace corecvs {
 
 

@@ -1,27 +1,25 @@
 #include "gtest/gtest.h"
 
 #include "core/utils/utils.h"
-#include "core/buffers/rgb24/abstractPainter.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/geometry/renderer/simpleRenderer.h"
-#include "core/buffers/bufferFactory.h"
-#include "core/filesystem/folderScanner.h"
+#include "buffers/rgb24/abstractPainter.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "geometry/renderer/simpleRenderer.h"
+#include "filesystem/folderScanner.h"
 
 
 #ifdef WITH_AVCODEC
+
 #include "avEncoder.h"
-
-#include <core/cameracalibration/projection/pinholeCameraIntrinsics.h>
-
-#include <core/buffers/bufferFactory.h>
+#include <cameracalibration/projection/pinholeCameraIntrinsics.h>
+#include <buffers/bufferFactory.h>
 #endif
 
-#include "frSkyMultimodule.h"
+#include "radio/frSkyMultimodule.h"
 
 #include <bitset>
-#include <multimoduleController.h>
+#include <radio/multimoduleController.h>
 
-#include "core/fileformats/meshLoader.h"
+#include "fileformats/meshLoader.h"
 #include "copter/quad.h"
 
 

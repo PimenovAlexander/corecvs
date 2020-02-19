@@ -108,7 +108,7 @@
      <x>0</x>
      <y>0</y>
      <width>1198</width>
-     <height>22</height>
+     <height>34</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu12">
@@ -163,6 +163,7 @@
     <addaction name="actionStatistics"/>
     <addaction name="separator"/>
     <addaction name="actionWorldRedraw"/>
+    <addaction name="actionRepositionCamera"/>
    </widget>
    <widget class="QMenu" name="menuRadio">
     <property name="title">
@@ -170,10 +171,17 @@
     </property>
     <addaction name="actionRadioParameters"/>
    </widget>
+   <widget class="QMenu" name="menuSimulation">
+    <property name="title">
+     <string>Simulation</string>
+    </property>
+    <addaction name="actionStartSimulation"/>
+   </widget>
    <addaction name="menu12"/>
    <addaction name="menuView"/>
    <addaction name="menuCamera"/>
    <addaction name="menuJoystick"/>
+   <addaction name="menuSimulation"/>
    <addaction name="menuProcessing"/>
    <addaction name="menuRadio"/>
    <addaction name="menuAbout"/>
@@ -505,18 +513,36 @@
     <string>World Redraw</string>
    </property>
   </action>
+  <action name="actionStartSimulation">
+   <property name="icon">
+    <iconset resource="../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/theater.png</normaloff>:/new/prefix1/theater.png</iconset>
+   </property>
+   <property name="text">
+    <string>Start Simulation</string>
+   </property>
+  </action>
+  <action name="actionRepositionCamera">
+   <property name="icon">
+    <iconset resource="../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/zoom_layer.png</normaloff>:/new/prefix1/zoom_layer.png</iconset>
+   </property>
+   <property name="text">
+    <string>Reposition Camera</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
    <class>CloudViewDialog</class>
    <extends>QWidget</extends>
-   <header location="global">cloudViewDialog.h</header>
+   <header location="global">uis/cloudview/cloudViewDialog.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>AdvancedImageWidget</class>
    <extends>QWidget</extends>
-   <header location="global">advancedImageWidget.h</header>
+   <header location="global">uis/advancedImageWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -528,7 +554,7 @@
   <customwidget>
    <class>LoggerWidget</class>
    <extends>QWidget</extends>
-   <header>loggerWidget.h</header>
+   <header>widgets/loggerWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
@@ -776,6 +802,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionRepositionCamera</sender>
+   <signal>triggered()</signal>
+   <receiver>PhysicsMainWindow</receiver>
+   <slot>repositionCloudCamera()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>598</x>
+     <y>394</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showCameraInput()</slot>
@@ -793,5 +835,6 @@
   <slot>showPatternDetectionParameters()</slot>
   <slot>showProcessingParametersWidget()</slot>
   <slot>showStatistics()</slot>
+  <slot>repositionCloudCamera()</slot>
  </slots>
 </ui>

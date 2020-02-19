@@ -2,7 +2,7 @@
 #define HELPER_3D_SCENES_H
 
 #include "scene3D.h"
-#include "cloudViewDialog.h"
+#include "uis/cloudview/cloudViewDialog.h"
 
 class Grid3DScene : public Scene3D {
 private:

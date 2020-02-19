@@ -12,9 +12,9 @@
 #include <arm_neon.h>
 #include <stdint.h>
 
-#include "core/utils/global.h"
-#include "core/math/vector/fixedVector.h"
-#include "core/math/sse/int64x2.h"
+#include "utils/global.h"
+#include "math/vector/fixedVector.h"
+#include "math/sse/int64x2.h"
 namespace corecvs {
 
 class ALIGN_DATA(16) UInt32x4

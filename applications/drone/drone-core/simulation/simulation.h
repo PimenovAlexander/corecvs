@@ -11,7 +11,7 @@
 #include "physicsObject.h"
 #include "physicsSphere.h"
 #include "physicsCompoundObject.h"
-#include "sceneShaded.h"
+#include "3d/sceneShaded.h"
 
 class Simulation
 {

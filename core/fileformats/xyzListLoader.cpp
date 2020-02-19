@@ -1,8 +1,8 @@
 #include <sstream>
 #include <iomanip>
 
-#include "core/fileformats/xyzListLoader.h"
-#include "core/utils/utils.h"
+#include "fileformats/xyzListLoader.h"
+#include "utils/utils.h"
 
 namespace corecvs {
 

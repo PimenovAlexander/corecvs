@@ -9,9 +9,9 @@
  * Generated from precise.xml
  */
 
-#include "core/reflection/reflection.h"
-#include "core/reflection/defaultSetter.h"
-#include "core/reflection/printerVisitor.h"
+#include "reflection/reflection.h"
+#include "reflection/defaultSetter.h"
+#include "reflection/printerVisitor.h"
 
 /*
  *  Embed includes.
@@ -31,8 +31,8 @@
 /*
  *  Additional includes for enum section.
  */
-#include "core/xml/generated/makePreciseAlgorithm.h"
-#include "core/xml/generated/preciseInterpolationType.h"
+#include "xml/generated/makePreciseAlgorithm.h"
+#include "xml/generated/preciseInterpolationType.h"
 
 /**
  * \brief Make Precise Parameters 

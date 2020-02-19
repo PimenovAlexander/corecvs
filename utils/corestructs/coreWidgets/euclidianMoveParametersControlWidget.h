@@ -2,7 +2,7 @@
 #include <QWidget>
 #include "core/xml/generated/euclidianMoveParameters.h"
 #include "ui_euclidianMoveParametersControlWidget.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 
 namespace Ui {

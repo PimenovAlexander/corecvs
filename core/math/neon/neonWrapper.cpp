@@ -6,7 +6,7 @@
  * \date Oct 7, 2010
  */
 
-#include "core/math/neon/neonWrapper.h"
+#include "math/neon/neonWrapper.h"
 namespace corecvs {
 
 #ifdef PROFILE_ACCESS_ALIGNMENT

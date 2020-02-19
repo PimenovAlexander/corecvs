@@ -6,8 +6,8 @@
  * \date Sep 28, 2013
  **/
 
-#include "core/buffers/abstractContiniousBuffer.h"
-#include "core/buffers/g8Buffer.h"
+#include "buffers/abstractContiniousBuffer.h"
+#include "buffers/g8Buffer.h"
 
 namespace corecvs
 {

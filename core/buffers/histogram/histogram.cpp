@@ -7,9 +7,9 @@
  * \author alexander
  */
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/buffers/histogram/histogram.h"
+#include "buffers/histogram/histogram.h"
 namespace corecvs {
 
 Histogram::~Histogram()

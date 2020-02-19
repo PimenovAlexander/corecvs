@@ -1,16 +1,16 @@
 #ifndef OMNIDIRECTIONALPROJECTION_H
 #define OMNIDIRECTIONALPROJECTION_H
 
-#include "core/polynomial/polynomial.h"
-#include "core/polynomial/polynomialSolver.h"
+#include "polynomial/polynomial.h"
+#include "polynomial/polynomialSolver.h"
 
-#include "core/math/vector/vector2d.h"
-#include "core/math/vector/vector3d.h"
-#include "core/function/function.h"
+#include "math/vector/vector2d.h"
+#include "math/vector/vector3d.h"
+#include "function/function.h"
 
-#include "core/cameracalibration/projection/projectionModels.h"
-#include "core/xml/generated/projectionBaseParameters.h"
-#include "core/xml/generated/omnidirectionalBaseParameters.h"
+#include "cameracalibration/projection/projectionModels.h"
+#include "xml/generated/projectionBaseParameters.h"
+#include "xml/generated/omnidirectionalBaseParameters.h"
 
 
 namespace corecvs{

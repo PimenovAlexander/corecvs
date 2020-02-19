@@ -4,13 +4,13 @@
 // Created by Myasnikov Vladislav on 5.12.2019.
 //
 
-#include "core/fileformats/dxf_support/dxfCodes.h"
-#include "core/fileformats/dxf_support/objects/dxfObject.h"
-#include "core/fileformats/dxf_support/entities/dxfEntity.h"
-#include "core/fileformats/dxf_support/blocks/dxfBlock.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/math/vector/vector2d.h"
-#include "core/math/vector/vector3d.h"
+#include "fileformats/dxf_support/dxfCodes.h"
+#include "fileformats/dxf_support/objects/dxfObject.h"
+#include "fileformats/dxf_support/entities/dxfEntity.h"
+#include "fileformats/dxf_support/blocks/dxfBlock.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "math/vector/vector2d.h"
+#include "math/vector/vector3d.h"
 
 namespace corecvs {
 

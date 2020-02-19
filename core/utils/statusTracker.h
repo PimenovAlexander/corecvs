@@ -5,9 +5,9 @@
 #include <ostream>
 #include <functional>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/tbbwrapper/tbbWrapper.h"
+#include "tbbwrapper/tbbWrapper.h"
 
 struct CancelExecutionException : public AssertException
 {

@@ -1,5 +1,4 @@
-
-set(TEST_SUBDIRECTORIES
+set(SUBDIRECTORIES
    #base
    cloudview
    drone
@@ -7,6 +6,7 @@ set(TEST_SUBDIRECTORIES
    imageview     
    #laserscan     # Cannot be included because it uses some deprecated/unknown API: calibrationHelpers.h
    nester
+   qtnester
    #nester-test   # TODO: include this
    #recorder      # Cannot be added because it depends on base application
    #robodetect    # Cannot be included because it depends on deprecated filters
@@ -15,15 +15,15 @@ set(TEST_SUBDIRECTORIES
    vinylCutter
 )
 
-if (apriltag_LIBS)
-    set(TEST_SUBDIRECTORIES
-        ${TEST_SUBDIRECTORIES}
+if(APRILTAG_LIBS)
+    set(SUBDIRECTORIES
+        ${SUBDIRECTORIES}
         apriltag_test
-    )
+    	)
 endif()
 
+foreach(subdirectory ${SUBDIRECTORIES})
+    message(STATUS "adding subdirectory/${subdirectory}")
+    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/${subdirectory})
+endforeach(subdirectory)
 
-foreach(test_subdirectory ${TEST_SUBDIRECTORIES})
-    message(STATUS "adding subdirectory applications/${test_subdirectory}")
-    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/${test_subdirectory})
-endforeach(test_subdirectory)

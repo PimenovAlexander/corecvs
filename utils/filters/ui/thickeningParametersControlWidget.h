@@ -2,7 +2,7 @@
 #include <QWidget>
 #include "core/xml/generated/thickeningParameters.h"
 #include "ui_thickeningParametersControlWidget.h"
-#include "filterParametersControlWidgetBase.h"
+#include "filters/filterParametersControlWidgetBase.h"
 
 namespace Ui {
     class ThickeningParametersControlWidget;

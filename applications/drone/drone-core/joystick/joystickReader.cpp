@@ -1,10 +1,12 @@
+#include "core/utils/global.h"
+
 #include "joystickReader.h"
 #include "iostream"
 
 JoystickReader::JoystickReader(const std::string &deviceName) :
     LinuxJoystickInterface (deviceName)
 {
-    std::cout<<"JS Reader created"<<std::endl;
+    SYNC_PRINT(("JoystickReader::JoystickReader(%s): called\n", deviceName.c_str()));
 }
 
 

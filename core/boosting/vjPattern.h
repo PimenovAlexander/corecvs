@@ -17,16 +17,16 @@
 #include <stdlib.h>
 #include <limits>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/tbbwrapper/tbbWrapper.h"
-#include "core/math/mathUtils.h"
-#include "core/buffers/integralBuffer.h"
-#include "core/math/vector/vector3d.h"
-#include "core/math/vector/vector2d.h"
-#include "core/buffers/mipmapPyramid.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/boosting/adaBoost.h"
+#include "tbbwrapper/tbbWrapper.h"
+#include "math/mathUtils.h"
+#include "buffers/integralBuffer.h"
+#include "math/vector/vector3d.h"
+#include "math/vector/vector2d.h"
+#include "buffers/mipmapPyramid.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "boosting/adaBoost.h"
 
 using std::vector;
 

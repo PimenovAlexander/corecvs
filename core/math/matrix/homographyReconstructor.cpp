@@ -8,12 +8,12 @@
 
 #include <limits>
 
-#include "core/math/matrix/homographyReconstructor.h"
-#include "core/math/matrix/matrix.h"
-#include "core/geometry/line.h"
-#include "../vector/vector.h"
-#include "../../kalman/classicKalman.h"
-#include "../levenmarq.h"
+#include "math/matrix/homographyReconstructor.h"
+#include "math/matrix/matrix.h"
+#include "geometry/line.h"
+#include "math/vector/vector.h"
+#include "kalman/classicKalman.h"
+#include "math/levenmarq.h"
 
 namespace corecvs {
 

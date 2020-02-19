@@ -3,7 +3,7 @@
 //
 
 #include <iostream>
-#include "core/fileformats/dxf_support/objects/dxfObject.h"
+#include "fileformats/dxf_support/objects/dxfObject.h"
 
 namespace corecvs {
 

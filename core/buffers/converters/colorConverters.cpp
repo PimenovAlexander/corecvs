@@ -5,7 +5,7 @@
  *      Author: alexander
  */
 
-#include "core/buffers/converters/colorConverters.h"
+#include "buffers/converters/colorConverters.h"
 
 namespace corecvs
 {

@@ -6,7 +6,7 @@
 #include <string>
 #include <type_traits>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
 // This interface is necessary to make possible class implementing both FeatureDetector/DescriptorExtractor interfaces
 class AlgoBase

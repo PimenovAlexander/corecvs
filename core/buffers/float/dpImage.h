@@ -1,7 +1,7 @@
 #ifndef DP_IMAGE_H
 #define DP_IMAGE_H
 
-#include "core/buffers/abstractContiniousBuffer.h"
+#include "buffers/abstractContiniousBuffer.h"
 
 namespace corecvs {
 

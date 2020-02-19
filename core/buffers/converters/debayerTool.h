@@ -9,10 +9,10 @@
 
 #include <string>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/reflection/commandLineSetter.h"
-#include "core/buffers/converters/debayer.h"
+#include "reflection/commandLineSetter.h"
+#include "buffers/converters/debayer.h"
 
 namespace corecvs {
 

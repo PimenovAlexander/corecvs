@@ -8,8 +8,8 @@
  * \author alexander
  */
 
-#include "core/utils/global.h"
-#include "core/buffers/mipmapPyramid.h"
+#include "utils/global.h"
+#include "buffers/mipmapPyramid.h"
 namespace corecvs {
 
 

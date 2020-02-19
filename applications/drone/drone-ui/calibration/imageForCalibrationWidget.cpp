@@ -1,10 +1,10 @@
 #include "imageForCalibrationWidget.h"
 #include "ui_imageForCalibrationWidget.h"
 #include "opencv2/core.hpp"
-#include "opencvTransformations.h"
+#include "opencvUtils/opencvTransformations.h"
 #include <opencv2/opencv.hpp>
 #include <QGraphicsScene>
-#include <g12Image.h>
+#include <corestructs/g12Image.h>
 
 
 ImageForCalibrationWidget::ImageForCalibrationWidget(QWidget *parent) :

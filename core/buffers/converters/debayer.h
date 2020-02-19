@@ -12,16 +12,16 @@
 #include <string>
 #include <map>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/math/vector/vector2d.h"
-#include "core/math/vector/vector3d.h"
-#include "core/buffers/g12Buffer.h"
-#include "core/buffers/rgb24/rgbTBuffer.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/fileformats/metamap.h"
+#include "math/vector/vector2d.h"
+#include "math/vector/vector3d.h"
+#include "buffers/g12Buffer.h"
+#include "buffers/rgb24/rgbTBuffer.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "fileformats/metamap.h"
 
-#include "core/xml/generated/debayerParameters.h"
+#include "xml/generated/debayerParameters.h"
 
 namespace corecvs {
 

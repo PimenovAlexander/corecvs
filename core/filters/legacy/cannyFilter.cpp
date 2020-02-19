@@ -6,14 +6,14 @@
  * \author a.melnikov
  */
 
-#include "core/filters/legacy/cannyFilter.h"
-#include "core/buffers/kernels/fastkernel/fastKernel.h"
-#include "core/buffers/kernels/fastkernel/scalarAlgebra.h"
-#include "core/buffers/kernels/fastkernel/vectorAlgebra.h"
-#include "core/buffers/kernels/fastkernel/vectorTraits.h"
-#include "core/buffers/derivativeBuffer.h"
-#include "core/reflection/serializerVisitor.h"
-#include "core/reflection/deserializerVisitor.h"
+#include "filters/legacy/cannyFilter.h"
+#include "buffers/kernels/fastkernel/fastKernel.h"
+#include "buffers/kernels/fastkernel/scalarAlgebra.h"
+#include "buffers/kernels/fastkernel/vectorAlgebra.h"
+#include "buffers/kernels/fastkernel/vectorTraits.h"
+#include "buffers/derivativeBuffer.h"
+#include "reflection/serializerVisitor.h"
+#include "reflection/deserializerVisitor.h"
 
 namespace corecvs
 {

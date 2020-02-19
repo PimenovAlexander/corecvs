@@ -9,12 +9,12 @@
 #include <stdio.h>
 #include <cstdio>
 
-#include "core/utils/global.h"
-#include "core/utils/utils.h"
-#include "core/filesystem/folderScanner.h"
+#include "utils/global.h"
+#include "utils/utils.h"
+#include "filesystem/folderScanner.h"
 
 #include "precCapture.h"
-#include "core/buffers/bufferFactory.h"
+#include "buffers/bufferFactory.h"
 
 /** Capture interface with precise simulation from the value "fps" view point
  */

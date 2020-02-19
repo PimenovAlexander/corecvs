@@ -1,15 +1,14 @@
 #include "wrappers/jsonmodern/jsonModernReader.h"
 
-#include "calibrationWidget.h"
+#include "calibration/calibrationWidget.h"
 #include "physicsMainWindow.h"
 #include "ui_physicsMainWindow.h"
 
-#include <g12Image.h>
-#include <imageCaptureInterfaceQt.h>
-#include <sceneShaded.h>
+#include <corestructs/g12Image.h>
+#include <framesources/imageCaptureInterfaceQt.h>
+#include <3d/sceneShaded.h>
 
 #include <reflection/jsonPrinter.h>
-
 
 PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -482,55 +481,6 @@ void PhysicsMainWindow::startSimuation()
 {
 }
 
-void PhysicsMainWindow::frameValuesUpdate()
-{
-  /*  std::thread thr([this]()
-    {
-        while(true)
-        {
-            if (currentMode==1)
-            {
-#if 0
-                throttleValue+=sign(throttleValueFromJS-1500);
-                if (throttleValue>1800){throttleValue=1799;}
-                if (throttleValue<900){throttleValue=901;}
-#endif
-            }
-
-#if 0
-            ui->Yaw->setValue(yawValue);
-            ui->Throttle->setValue(throttleValue);
-
-            ui->label->setText("Yaw-"+QString::number(yawValue));
-            ui->label_4->setText("throttle-"+QString::number(throttleValue));
-
-            ui->Pitch->setValue(pitchValue);
-            ui->Roll->setValue(rollValue);
-
-            ui->label_2->setText("Roll-"+QString::number(rollValue));
-            ui->label_3->setText("pitch-"+QString::number(pitchValue));
-
-            ui->CH5->setValue(CH5Value);
-            ui->CH6->setValue(CH6Value);
-            ui->CH7->setValue(CH7Value);
-            ui->CH8->setValue(CH8Value);
-
-            ui->CH5_label->setText("CH5-"+QString::number(CH5Value));
-            ui->CH6_label->setText("CH6-"+QString::number(CH6Value));
-            ui->CH7_label->setText("CH7-"+QString::number(CH7Value));
-            ui->CH8_label->setText("CH8-"+QString::number(CH8Value));
-#endif
-
-
-            usleep(30000);
-
-        }
-
-    });
-    thr.detach();
-*/
-}
-
 void PhysicsMainWindow::startRealMode()                                    //starts controlling the copter
 {
     if (!virtualModeActive & !realModeActive)
@@ -660,8 +610,8 @@ void PhysicsMainWindow::mainAction()
         copter.physicsTick();
     }
     */
-/**
-    copter.flightControllerTick(joystick1.output);
+
+//    copter.flightControllerTick(joystick.output);
     copter.physicsTick();
 
     copter.visualTick();
@@ -681,7 +631,7 @@ void PhysicsMainWindow::mainAction()
     mGraphDialog.addGraphPoint("Z", copter.position.z());
 
     mGraphDialog.update();
-**/
+
 
     //drone.flightControllerTick(joystick1.output);
 
@@ -861,8 +811,14 @@ void PhysicsMainWindow::calibrateCamera()
     calibrationWidget.raise();
 }
 
-void PhysicsMainWindow::checkForJoystick()               //auto connect
+
+void PhysicsMainWindow::repositionCloudCamera()
 {
-//   jReader->start();
+    SYNC_PRINT(("PhysicsMainWindow::repositionCloudCamera(): called\n"));
+    CameraModel model;
+    mModelParametersWidget.getParameters(model); /* We get it from the UI just to be able to edit it. */
+    cout << "Model to be set:" << endl;
+    cout << model << endl;
+    ui->cloud->setCamera(model);
 }
 

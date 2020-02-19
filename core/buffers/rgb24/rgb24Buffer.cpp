@@ -6,15 +6,15 @@
  * \date Mar 1, 2010
  * \author alexander
  */
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/geometry/rectangle.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/buffers/rgb24/hardcodeFont.h"
-#include "core/buffers/kernels/fastkernel/readers.h"
-#include "core/math/vector/fixedVector.h"
-#include "core/buffers/rgb24/bresenhamRasterizer.h"
-#include "core/buffers/rgb24/wuRasterizer.h"
+#include "geometry/rectangle.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "buffers/rgb24/hardcodeFont.h"
+#include "buffers/kernels/fastkernel/readers.h"
+#include "math/vector/fixedVector.h"
+#include "buffers/rgb24/bresenhamRasterizer.h"
+#include "buffers/rgb24/wuRasterizer.h"
 #include "abstractPainter.h"
 
 
@@ -898,7 +898,7 @@ void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<ContinuousType> &in,
         {
             for (int j = 0; j < mw; j++)
             {
-                if (std::isnan(in.element(i,j))) {
+                if (std::isnan(float(in.element(i,j)))) {
                     continue;
                 }
                 element(i, j) = RGBColor::colorCode(lerp(0.0, 1.0, in.element(i,j), min, max), pallete);
@@ -912,7 +912,7 @@ void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<ContinuousType> &in,
         {
             for (int j = 0; j < mw; j++)
             {
-                if (std::isnan(in.element(i,j))) {
+                if (std::isnan(float(in.element(i,j)))) {
                     continue;
                 }
                 if (in.element(i,j) != std::numeric_limits<ContinuousType>::max()) {
@@ -931,7 +931,7 @@ void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<ContinuousType> &in,
             for (int j = 0; j < mw; j++)
             {
                 ContinuousType v = in.element(i,j);
-                if (std::isnan(v)) {
+                if (std::isnan(float(v))) {
                     continue;
                 }
                 v = clamp<ContinuousType>(v, 0, 1) * 255;
@@ -947,7 +947,7 @@ void RGB24Buffer::drawContinuousBuffer(const AbstractBuffer<ContinuousType> &in,
             for (int j = 0; j < mw; j++)
             {
                 ContinuousType v = in.element(i,j);
-                if (std::isnan(v)) {
+                if (std::isnan(float(v))) {
                     continue;
                 }
                 v = clamp<ContinuousType>(v, 0, 255);

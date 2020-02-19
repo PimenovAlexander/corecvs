@@ -1,8 +1,8 @@
 #ifndef MATERIALEXAMPLES_H
 #define MATERIALEXAMPLES_H
 
-#include "core/geometry/raytrace/perlinNoise.h"
-#include "core/geometry/raytrace/raytraceRenderer.h"
+#include "geometry/raytrace/perlinNoise.h"
+#include "geometry/raytrace/raytraceRenderer.h"
 
 namespace corecvs {
 

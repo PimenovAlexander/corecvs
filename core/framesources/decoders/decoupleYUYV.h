@@ -9,10 +9,10 @@
  */
 
 
-#include "core/framesources/imageCaptureInterface.h"
-#include "core/buffers/kernels/fastkernel/readers.h"
-#include "core/math/vector/fixedVector.h"
-#include "core/math/sse/sseWrapper.h"
+#include "framesources/imageCaptureInterface.h"
+#include "buffers/kernels/fastkernel/readers.h"
+#include "math/vector/fixedVector.h"
+#include "math/sse/sseWrapper.h"
 
 namespace corecvs
 {

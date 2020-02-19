@@ -9,8 +9,8 @@
  * \author alexander
  */
 
-#include "core/buffers/abstractBuffer.h"
-#include "core/utils/global.h"
+#include "buffers/abstractBuffer.h"
+#include "utils/global.h"
 
 namespace corecvs {
 

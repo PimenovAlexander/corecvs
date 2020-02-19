@@ -16,16 +16,16 @@
 #ifdef WITH_SSE
 #include <emmintrin.h>
 #endif
-#include "core/math/sse/sseWrapper.h"
-#include "core/math/neon/neonWrapper.h"
+#include "math/sse/sseWrapper.h"
+#include "math/neon/neonWrapper.h"
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/buffers/flow/punchedBufferOperations.h"
-#include "core/buffers/abstractContiniousBuffer.h"
-#include "core/math/vector/vector2d.h"
-#include "core/buffers/flow/flowVector.h"
-#include "core/math/matrix/matrix33.h"
+#include "buffers/flow/punchedBufferOperations.h"
+#include "buffers/abstractContiniousBuffer.h"
+#include "math/vector/vector2d.h"
+#include "buffers/flow/flowVector.h"
+#include "math/matrix/matrix33.h"
 
 namespace corecvs {
 

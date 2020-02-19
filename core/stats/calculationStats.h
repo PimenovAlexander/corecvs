@@ -15,15 +15,15 @@
 #include <string>
 #include <deque>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/math/vector/fixedVector.h"
-#include "core/utils/preciseTimer.h"
-#include "core/math/mathUtils.h"
+#include "math/vector/fixedVector.h"
+#include "utils/preciseTimer.h"
+#include "math/mathUtils.h"
 
 /* This is for osd */
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/buffers/rgb24/abstractPainter.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "buffers/rgb24/abstractPainter.h"
 
 namespace corecvs {
 

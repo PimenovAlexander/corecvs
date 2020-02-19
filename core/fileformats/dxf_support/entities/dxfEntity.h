@@ -6,10 +6,10 @@
 #define DXF_SUPPORT_DXFENTITY_H
 
 #include <string>
-#include "core/fileformats/dxf_support/dxfDrawing.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/fileformats/dxf_support/dxfCodes.h"
-#include "core/fileformats/dxf_support/entities/dxfEntityData.h"
+#include "fileformats/dxf_support/dxfDrawing.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "fileformats/dxf_support/dxfCodes.h"
+#include "fileformats/dxf_support/entities/dxfEntityData.h"
 
 namespace corecvs {
 

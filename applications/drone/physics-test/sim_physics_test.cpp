@@ -16,10 +16,10 @@
 #include <core/buffers/bufferFactory.h>
 #endif
 
-#include "frSkyMultimodule.h"
+#include "radio/frSkyMultimodule.h"
 
 #include <bitset>
-#include <multimoduleController.h>
+#include "radio/multimoduleController.h"
 
 #include "core/fileformats/meshLoader.h"
 #include "copter/quad.h"

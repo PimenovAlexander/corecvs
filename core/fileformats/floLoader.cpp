@@ -1,5 +1,5 @@
-#include "core/fileformats/floLoader.h"
-#include "core/utils/utils.h"
+#include "fileformats/floLoader.h"
+#include "utils/utils.h"
 #include "stdint.h"
 #include <fstream>
 

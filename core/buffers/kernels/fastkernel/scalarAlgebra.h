@@ -9,10 +9,10 @@
  * \author alexander
  */
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/buffers/kernels/fastkernel/baseAlgebra.h"
-#include "core/math/generic/genericMath.h"
+#include "buffers/kernels/fastkernel/baseAlgebra.h"
+#include "math/generic/genericMath.h"
 
 #ifdef TRACE_SCALAR_ALGEBRA
 #define DOTRACE_ALG(X) SYNC_PRINT(X)

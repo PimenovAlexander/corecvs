@@ -11,8 +11,8 @@
 
 #include <iostream>
 
-#include "core/math/vector/vector2d.h"
-#include "core/geometry/convexPolyhedron.h"
+#include "math/vector/vector2d.h"
+#include "geometry/convexPolyhedron.h"
 
 namespace corecvs {
 

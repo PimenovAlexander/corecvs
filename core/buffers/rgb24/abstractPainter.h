@@ -9,16 +9,16 @@
 #include <math.h>
 #include <vector>
 
-#include "core/stats/graphData.h"
+#include "stats/graphData.h"
 
-#include "core/utils/global.h"
-#include "core/buffers/rgb24/hardcodeFont.h"
-#include "core/buffers/rgb24/hersheyVectorFont.h"
-#include "core/buffers/rgb24/rgbColor.h"
-#include "core/geometry/polygons.h"
-#include "core/geometry/conic.h"
-#include "core/geometry/line.h"
-#include "core/geometry/ellipse.h"
+#include "utils/global.h"
+#include "buffers/rgb24/hardcodeFont.h"
+#include "buffers/rgb24/hersheyVectorFont.h"
+#include "buffers/rgb24/rgbColor.h"
+#include "geometry/polygons.h"
+#include "geometry/conic.h"
+#include "geometry/line.h"
+#include "geometry/ellipse.h"
 
 namespace corecvs {
 
@@ -124,16 +124,27 @@ public:
 
         uint16_t codepoint = ((theChar & 0x1F00) >> 2) | (theChar & 0x003F);
 
-        if (codepoint >=u'а' && codepoint <= u'я')
+#ifdef WIN32
+        if (codepoint >=u"а" && codepoint <= u"я")
+            char_ptr = HardcodeFont::cyrilic_glyphs + HardcodeFont::GLYPH_HEIGHT * (codepoint - u"а");
+        if (codepoint >=u"А" && codepoint <= u"Я")
+            char_ptr = HardcodeFont::cyrilic_glyphs + HardcodeFont::GLYPH_HEIGHT * (codepoint - u"а");
+#else
+        if (codepoint >= u'а' && codepoint <= u'я')
             char_ptr = HardcodeFont::cyrilic_glyphs + HardcodeFont::GLYPH_HEIGHT * (codepoint - u'а');
-        if (codepoint >=u'А' && codepoint <= u'Я')
+        if (codepoint >= u'А' && codepoint <= u'Я')
             char_ptr = HardcodeFont::cyrilic_glyphs + HardcodeFont::GLYPH_HEIGHT * (codepoint - u'а');
+#endif
 
         if (char_ptr == NULL) {
             printf("No symbol for %04X %04X %04X | %04X %04X\n",
                    theChar,
                    (theChar & 0x1F3F),
-                  ((theChar & 0x1F00) >> 2) | (theChar & 0x003F), u'а', u'я');
+#ifdef WIN32
+        ((theChar & 0x1F00) >> 2) | (theChar & 0x003F), u"а", u"я");
+#else
+        ((theChar & 0x1F00) >> 2) | (theChar & 0x003F), u'а', u'я');
+#endif
             return;
         }
 
@@ -497,10 +508,67 @@ public:
             Vector2dd middle = ray.getPoint((t1+t2) / 2.0);
             mTarget->drawLine(middle, middle + line.normal().normalised() * drawNormal, color);
         }
+    }
 
+    /**
+     * Off screen canvas graph draw
+     * This could be merged with GraphPlot dialog.
+     *
+     * If you want some fancy draw use 3rd party libraries. This is for a most basic drawing
+     *
+     **/
+    void drawGraphGrid(const GraphData &data, bool gridX, double gainX, bool gridY, double gainY)
+    {
+        unsigned i;
+        unsigned lineNumber;
+        unsigned w = mTarget->getW();
+        unsigned h = mTarget->getH();
+
+        if (gridX) {
+            while (gainX > 100) {
+                gainX /= 10;
+            }
+
+            while (gainX < 10) {
+                gainX *= 10;
+            }
+            unsigned stepX = gainX * 2;
+
+            lineNumber = w / stepX;
+
+            for (i = 0; i < lineNumber; i++) {
+                if (stepX > 50) {
+                    mTarget->drawLine(i * stepX  + stepX / 2, 0, i * stepX + stepX / 2, h - 1, RGBColor::Green());
+                }
+                mTarget->drawLine((i + 1) * stepX, 0, (i + 1) * stepX, h - 1, RGBColor::Green() / 2);
+            }
+        }
+        if (gridY && gainY > 0.005) {
+
+            while (gainY > 100) {
+                gainY /= 10;
+            }
+
+            while (gainY < 10) {
+                gainY *= 10;
+            }
+            unsigned stepY = gainY * 2;
+
+            lineNumber = w / stepY;
+            for (i = 0; i < h / 2; i += stepY) {
+                if (stepY > 50) {
+                    mTarget->drawLine(0, h / 2 + i + stepY / 2, w - 1, h / 2 + i + stepY / 2, RGBColor::Yellow());
+                    mTarget->drawLine(0, h / 2 - i - stepY / 2, w - 1, h / 2 - i - stepY / 2, RGBColor::Yellow());
+                }
+
+                mTarget->drawLine(0, h / 2 + i + stepY, w - 1, h / 2 + i + stepY, RGBColor::Yellow() / 2);
+                mTarget->drawLine(0, h / 2 - i - stepY, w - 1, h / 2 - i - stepY, RGBColor::Yellow() / 2);
+            }
+        }
     }
 
     void drawGraph(const GraphData &data) {
+
     }
 
     virtual ~AbstractPainter() {}

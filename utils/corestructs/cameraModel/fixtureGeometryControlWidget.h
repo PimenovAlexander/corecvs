@@ -3,11 +3,11 @@
 
 #include <QWidget>
 
-#include "core/camerafixture/sceneFeaturePoint.h"
-#include "core/camerafixture/fixtureScenePart.h"
-#include "parametersControlWidgetBase.h"
+#include "camerafixture/sceneFeaturePoint.h"
+#include "camerafixture/fixtureScenePart.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
-#include "graphPlotDialog.h"
+#include "uis/graphPlotDialog.h"
 
 namespace Ui {
 class FixtureGeometryControlWidget;

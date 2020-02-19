@@ -8,7 +8,7 @@
 #ifndef EULERANGLES_H_
 #define EULERANGLES_H_
 
-#include "core/math/quaternion.h"
+#include "math/quaternion.h"
 
 namespace corecvs {
 

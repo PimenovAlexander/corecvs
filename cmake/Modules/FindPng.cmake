@@ -1,14 +1,60 @@
-SET(PNG_INCLUDE_SEARCH_PATHS
+# Distributed under the OSI-approved BSD 3-Clause License.  See accompanying
+# file Copyright.txt or https://cmake.org/licensing for details.
+
+#[=======================================================================[.rst:
+FindPNG
+-------
+
+Find libpng, the official reference library for the PNG image format.
+
+Imported targets
+^^^^^^^^^^^^^^^^
+
+This module defines the following :prop_tgt:`IMPORTED` target:
+
+``PNG::PNG``
+  The libpng library, if found.
+
+Result variables
+^^^^^^^^^^^^^^^^
+
+This module will set the following variables in your project:
+
+``PNG_INCLUDE_DIRS``
+  where to find png.h, etc.
+``PNG_LIBRARIES``
+  the libraries to link against to use PNG.
+``PNG_DEFINITIONS``
+  You should add_definitions(${PNG_DEFINITIONS}) before compiling code
+  that includes png library files.
+``PNG_FOUND``
+  If false, do not try to use PNG.
+``PNG_VERSION_STRING``
+  the version of the PNG library found (since CMake 2.8.8)
+
+Obsolete variables
+^^^^^^^^^^^^^^^^^^
+
+The following variables may also be set, for backwards compatibility:
+
+``PNG_LIBRARY``
+  where to find the PNG library.
+``PNG_INCLUDE_DIR``
+  where to find the PNG headers (same as PNG_INCLUDE_DIRS)
+
+#]=======================================================================]
+
+set(PNG_INCLUDE_SEARCH_PATHS
     /usr/include
     /usr/include/png
     /usr/local/include
     /usr/local/include/png-base
     /opt/libpng/include
-    $ENV{PNG_HOME}
-    $ENV{PNG_HOME}/include
-)
+    $ENV{PNG_ROOT_DIR}
+    $ENV{PNG_ROOT_DIR}/include
+    )
 
-SET(PNG_LIB_SEARCH_PATHS
+set(PNG_LIB_SEARCH_PATHS
     /lib/
     /lib64/
     /usr/lib
@@ -16,40 +62,96 @@ SET(PNG_LIB_SEARCH_PATHS
     /usr/local/lib
     /usr/local/lib64
     /opt/png/lib
-    $ENV{PNG_HOME}
-    $ENV{PNG_HOME}/lib
-)
+    $ENV{PNG_ROOT_DIR}
+    $ENV{PNG_ROOT_DIR}/lib
+    )
 
-FIND_PATH(PNG_INCLUDE_DIR NAMES png.h PATHS ${PNG_INCLUDE_SEARCH_PATHS})
-FIND_LIBRARY(PNG_LIB NAMES png PATHS ${PNG_LIB_SEARCH_PATHS})
+find_path(PNG_PNG_INCLUDE_DIR png.h PATHS ${PNG_INCLUDE_SEARCH_PATHS})
 
-SET(PNG_FOUND ON)
+list(APPEND PNG_NAMES png libpng)
+    unset(PNG_NAMES_DEBUG)
+    
+set(_PNG_VERSION_SUFFIXES 17 16 15 14 12)
+if (PNG_FIND_VERSION MATCHES "^([0-9]+)\\.([0-9]+)(\\..*)?$")
+    set(_PNG_VERSION_SUFFIX_MIN "${CMAKE_MATCH_1}${CMAKE_MATCH_2}")
+    if (PNG_FIND_VERSION_EXACT)
+      set(_PNG_VERSION_SUFFIXES ${_PNG_VERSION_SUFFIX_MIN})
+    else ()
+      string(REGEX REPLACE
+          "${_PNG_VERSION_SUFFIX_MIN}.*" "${_PNG_VERSION_SUFFIX_MIN}"
+          _PNG_VERSION_SUFFIXES "${_PNG_VERSION_SUFFIXES}")
+    endif ()
+    unset(_PNG_VERSION_SUFFIX_MIN)
+  endif ()
+  foreach(v IN LISTS _PNG_VERSION_SUFFIXES)
+    list(APPEND PNG_NAMES png${v} libpng${v})
+    list(APPEND PNG_NAMES_DEBUG png${v}d libpng${v}d)
+  endforeach()
+  unset(_PNG_VERSION_SUFFIXES)
+  # For compatibility with versions prior to this multi-config search, honor
+  # any PNG_LIBRARY that is already specified and skip the search.
+  if(NOT PNG_LIBRARY)
+    find_library(PNG_LIBRARY_RELEASE NAMES ${PNG_NAMES} PATHS ${PNG_LIB_SEARCH_PATHS})
+    find_library(PNG_LIBRARY_DEBUG NAMES ${PNG_NAMES_DEBUG} PATHS ${PNG_LIB_SEARCH_PATHS})
+    include(SelectLibraryConfigurations)
+    select_library_configurations(PNG)
+    mark_as_advanced(PNG_LIBRARY_RELEASE PNG_LIBRARY_DEBUG)
+  endif()
+  unset(PNG_NAMES)
+  unset(PNG_NAMES_DEBUG)
 
-#    Check include files
-IF(NOT PNG_INCLUDE_DIR)
-  SET(PNG_FOUND OFF)
-  MESSAGE(STATUS "Could not find PNG include. Turning PNG_FOUND off")
-ENDIF()
+  # Set by select_library_configurations(), but we want the one from
+  # find_package_handle_standard_args() below.
+  unset(PNG_FOUND)
 
-#    Check libraries
-IF(NOT PNG_LIB)
-  SET(PNG_FOUND OFF)
-  MESSAGE(STATUS "Could not find PNG lib. Turning PNG_FOUND off")
-ENDIF()
+  if (PNG_LIBRARY AND PNG_PNG_INCLUDE_DIR)
+      # png.h includes zlib.h. Sigh.
+      set(PNG_INCLUDE_DIRS ${PNG_PNG_INCLUDE_DIR} ${ZLIB_INCLUDE_DIR} )
+      set(PNG_INCLUDE_DIR ${PNG_INCLUDE_DIRS} ) # for backward compatibility
+      set(PNG_LIBRARIES ${PNG_LIBRARY} ${ZLIB_LIBRARY})
 
-IF (PNG_FOUND)
-IF (NOT PNG_FIND_QUIETLY)
-  MESSAGE(STATUS "Found PNG libraries: ${PNG_LIB}")
-  MESSAGE(STATUS "Found PNG include: ${PNG_INCLUDE_DIR}")
-ENDIF (NOT PNG_FIND_QUIETLY)
-ELSE (PNG_FOUND)
-IF (PNG_FIND_REQUIRED)
-  MESSAGE(FATAL_ERROR "Could not find PNG")
-ENDIF (PNG_FIND_REQUIRED)
-ENDIF (PNG_FOUND)
+      if (CYGWIN)
+        if(BUILD_SHARED_LIBS)
+           # No need to define PNG_USE_DLL here, because it's default for Cygwin.
+        else()
+          set (PNG_DEFINITIONS -DPNG_STATIC)
+          set(_PNG_COMPILE_DEFINITIONS PNG_STATIC)
+        endif()
+      endif ()
 
-MARK_AS_ADVANCED(
-  PNG_INCLUDE_DIR
-  PNG_LIB
-  PNG
-)
+      if(NOT TARGET PNG::PNG)
+        add_library(PNG::PNG UNKNOWN IMPORTED)
+        set_target_properties(PNG::PNG PROPERTIES
+          INTERFACE_COMPILE_DEFINITIONS "${_PNG_COMPILE_DEFINITIONS}"
+          INTERFACE_INCLUDE_DIRECTORIES "${PNG_INCLUDE_DIRS}"
+          INTERFACE_LINK_LIBRARIES PNG::PNG)
+        if(EXISTS "${PNG_LIBRARY}")
+          set_target_properties(PNG::PNG PROPERTIES
+            IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+            IMPORTED_LOCATION "${PNG_LIBRARY}")
+        endif()
+        if(EXISTS "${PNG_LIBRARY_RELEASE}")
+          set_property(TARGET PNG::PNG APPEND PROPERTY
+            IMPORTED_CONFIGURATIONS RELEASE)
+          set_target_properties(PNG::PNG PROPERTIES
+            IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "C"
+            IMPORTED_LOCATION_RELEASE "${PNG_LIBRARY_RELEASE}")
+        endif()
+        if(EXISTS "${PNG_LIBRARY_DEBUG}")
+          set_property(TARGET PNG::PNG APPEND PROPERTY
+            IMPORTED_CONFIGURATIONS DEBUG)
+          set_target_properties(PNG::PNG PROPERTIES
+            IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "C"
+            IMPORTED_LOCATION_DEBUG "${PNG_LIBRARY_DEBUG}")
+        endif()
+      endif()
+
+      unset(_PNG_COMPILE_DEFINITIONS)
+  endif ()
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(PNG
+                                  REQUIRED_VARS PNG_LIBRARY PNG_PNG_INCLUDE_DIR
+                                  VERSION_VAR PNG_VERSION_STRING)
+
+mark_as_advanced(PNG_PNG_INCLUDE_DIR PNG_LIBRARY PNG_LIB LIBPNG)

@@ -1,91 +1,143 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
-
-project (corecvs)
-
-set (CORE_SUBMODULES
-        alignment
-        assignment
-        automotive
-        boosting
-        buffers
-        cammodel
-        fileformats
-        filesystem
-        framesources
-        filters
-        function
-        geometry
-        kalman
-        kltflow
-        math
-        meta
-        meanshift
-        rectification
-        reflection
-        segmentation
-        stats
-        tbbwrapper
-        utils
-        clustering3d
-        patterndetection
-        cameracalibration
-        polynomial
-        camerafixture
-        iterative
-        stereointerface
-        tinyxml2
-        xml/generated
-    )
-
-set ( ADDITIONAL_MODULES
-        #    placer
-        delaunay
-        joystick
-    )
+cmake_minimum_required(VERSION 3.11)
+set(MODULE_NAME corecvs)
+init_project(PROJECT_NAME ${MODULE_NAME})
 
 message(STATUS "Core will use ${CORE_SUBMODULES} and ${ADDITIONAL_MODULES}")
 
-add_library(corecvs STATIC)
+set(CORE_SUBMODULES
+    alignment
+    assignment
+    automotive
+    boosting
+    buffers
+    cameracalibration
+    camerafixture
+    cammodel
+    clustering3d
+    fileformats
+    filesystem
+    filters
+    framesources
+    function
+    geometry
+    iterative
+    kalman
+    kltflow
+    math
+    meanshift
+    meta
+    patterndetection
+    polynomial
+    rectification
+    reflection
+    segmentation
+    stats
+    stereointerface
+    tbbwrapper
+    tinyxml2
+    utils
+    xml/generated
+    )
 
-set_property(TARGET corecvs PROPERTY CXX_STANDARD 17)
-set_property(TARGET corecvs PROPERTY CXX_STANDARD_REQUIRED ON)
-
-target_include_directories(corecvs PUBLIC ..)
-
-target_link_libraries(corecvs pthread)
-
-if (OpenBLAS_LIB)
-    message("Core: Would use OpenBLAS adding <${OpenBLAS_LIB}> to dependancies")
-    message("Core: Would use Lapacke  adding <${Lapacke_LIB}> to dependancies")
-    target_include_directories(corecvs PUBLIC ${OpenBLAS_INCLUDE_DIR} ${Lapacke_INCLUDE_DIR})
-    target_link_libraries(corecvs ${OpenBLAS_LIB} ${Lapacke_LIB})
-endif()
-
-if (TBB_LIBRARY)
-    message("Core: Would use TBB")
-    include_directories (${TBB_INCLUDE_DIR})
-    target_link_libraries(corecvs ${TBB_LIBRARY})
-endif()
+set(ADDITIONAL_MODULES
+    #placer
+    delaunay
+    joystick
+    )
 
 foreach(core_module ${CORE_SUBMODULES})
     message(STATUS "including ${core_module}")
     add_subdirectory(${core_module})
+    string(TOUPPER ${core_module} core_module)
+    set(HEADERS
+        ${HEADERS}
+        ${${core_module}_HEADER_FILES}
+        )
+    set(SOURCES
+        ${SOURCES}
+        ${${core_module}_SOURCE_FILES}
+        )
 endforeach(core_module)
 
 foreach(add_core_module ${ADDITIONAL_MODULES})
     message(STATUS "including ${add_core_module}")
     add_subdirectory(${add_core_module})
+    string(TOUPPER ${add_core_module} add_core_module)
+    set(HEADERS
+        ${HEADERS}
+        ${${add_core_module}_HEADER_FILES}
+        )
+    set(SOURCES
+        ${SOURCES}
+        ${${add_core_module}_SOURCE_FILES}
+        )
 endforeach(add_core_module)
 
+set(XML_RESOURCE_FILES
+    xml/basemock.xml
+    xml/clustering1.xml
+    xml/precise.xml
+    xml/bufferFilters.xml
+    xml/distortion.xml
+    xml/parameters.xml
+    xml/projections.xml
+    xml/calibration.xml
+    xml/filterBlock.xml
+    xml/patternDetector.xml
+    xml/stereoAlign.xml
+    )
 
-# Additional stuff mostly for IDE only
+set(RESOURCES
+    ${XML_RESOURCE_FILES}
+    ${CMAKE_CURRENT_LIST_DIR}/../.github/workflows/ccpp.yaml
+    ${CMAKE_CURRENT_LIST_DIR}/../.github/workflows/ubuntu_no_opencv.yml
+    )
 
-file(GLOB CUR_ADD_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/xml/*.xml)
-set(ADD_SRC_FILES ${ADD_SRC_FILES} ${CUR_ADD_SRC_FILES})
+set_source_files_properties(${RESOURCES} 
+    PROPERTIES 
+    EXTERNAL_OBJECT TRUE 
+    HEADER_FILE_ONLY TRUE
+    )
 
-file(GLOB ADD_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/../.github/workflows/*.*)
-set(ADD_SRC_FILES ${ADD_SRC_FILES} ${CUR_ADD_SRC_FILES})
+assign_source_group(${HEADERS} ${SOURCES} ${RESOURCES})
 
-target_sources(corecvs PRIVATE ${ADD_SRC_FILES})
-set_source_files_properties(${ADD_SRC_FILES} PROPERTIES EXTERNAL_OBJECT true HEADER_FILE_ONLY TRUE)
+add_library(${PROJECT_NAME} STATIC
+    ${HEADERS}
+    ${SOURCES}
+    ${RESOURCES}
+    )
 
+target_include_directories(${PROJECT_NAME} 
+    PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ..
+    )
+
+set(ADDITIONAL_LIBS)
+
+if(OpenBLAS_LIB)
+    message("Core: Would use OpenBLAS adding <${OpenBLAS_LIB}> to dependancies")
+    message("Core: Would use Lapacke  adding <${Lapacke_LIB}> to dependancies")
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        OPENBLAS::OPENBLAS
+        LAPACKE::LAPACKE
+        )   
+endif()
+
+if(TBB_LIBRARY)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        TBB::TBB
+        )   
+endif()
+
+target_link_libraries(${PROJECT_NAME}
+    pthread
+    ${ADDITIONAL_LIBS}
+    )
+
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+    FOLDER "${MODULE_NAME}"
+    )

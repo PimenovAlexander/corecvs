@@ -8,9 +8,9 @@
 #include <iostream>
 #include <vector>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/geometry/mesh/mesh3d.h"
+#include "geometry/mesh/mesh3d.h"
 
 namespace corecvs {
 
@@ -26,6 +26,7 @@ public:
 
     enum PropType  {
         PROP_TYPE_FLOAT,
+        PROP_TYPE_DOUBLE,
         PROP_TYPE_UCHAR,
         PROP_TYPE_INT,
         PROP_TYPE_LIST,
@@ -40,6 +41,7 @@ public:
         PROP_NAME_RED,
         PROP_NAME_GREEN,
         PROP_NAME_BLUE,
+        PROP_NAME_ALPHA,
 
         PROP_NAME_CLUSTER,
 
@@ -63,6 +65,35 @@ public:
         static const char *typeToStr(PropType type);
         static const char *nameToStr(PropName name);
 
+
+        double getDouble(std::istream &input) {
+            double toReturn = 0;
+            switch (type) {
+                case PROP_TYPE_FLOAT: {
+                    float f = 0.0f;
+                    input.read((char *)&f, sizeof(f)); toReturn = f;
+                    break;
+                };
+                case PROP_TYPE_DOUBLE: {
+                    double d = 0.0;
+                    input.read((char *)&d, sizeof(d)); toReturn = d;
+                    break;
+                }
+                case PROP_TYPE_UCHAR: {
+                    unsigned char c = 0;
+                    input.read((char *)&c, sizeof(c)); toReturn = c;
+                    break;
+                }
+                case PROP_TYPE_INT: {
+                    int32_t i = 0;
+                    input.read((char *)&i, sizeof(i)); toReturn = i;
+                    break;
+                }
+                default:
+                    break;
+            }
+            return toReturn;
+        }
     };
 
     enum ObjType {
@@ -81,7 +112,7 @@ public:
     {}
 
     int loadPLY(std::istream &input, Mesh3D &mesh);
-    int savePLY(std::ostream &out, Mesh3D &mesh, PlyFormat format = PlyFormat::ASCII);
+    int savePLY(std::ostream &out, Mesh3D &mesh, PlyFormat format = PlyFormat::ASCII, bool useDouble = false, bool forceNoAlpha = false);
 
     virtual ~PLYLoader();
 };

@@ -3,12 +3,12 @@
 //
 #include <iostream>
 
-#include "core/fileformats/dxf_support/entities/dxfEntity.h"
-#include "core/geometry/conic.h"
-#include "core/utils/utils.h"
-#include "core/buffers/rgb24/bezierRasterizer.h"
-#include "core/buffers/rgb24/wuRasterizer.h"
-#include "core/buffers/rgb24/abstractPainter.h"
+#include "fileformats/dxf_support/entities/dxfEntity.h"
+#include "geometry/conic.h"
+#include "utils/utils.h"
+#include "buffers/rgb24/bezierRasterizer.h"
+#include "buffers/rgb24/wuRasterizer.h"
+#include "buffers/rgb24/abstractPainter.h"
 
 namespace corecvs {
 

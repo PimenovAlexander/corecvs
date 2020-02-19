@@ -1,5 +1,5 @@
-#include "core/alignment/angleFunction.h"
-#include "core/alignment/radialFunc.h"
+#include "alignment/angleFunction.h"
+#include "alignment/radialFunc.h"
 
 namespace corecvs
 {

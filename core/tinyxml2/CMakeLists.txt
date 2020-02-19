@@ -1,7 +1,9 @@
-target_sources(corecvs
-    PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}/tinyxml2.h
+set(TINYXML2_HEADER_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/tinyxml2.h
+    PARENT_SCOPE
+    )
 
-    PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/tinyxml2.cpp
-)
+set(TINYXML2_SOURCE_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/tinyxml2.cpp
+    PARENT_SCOPE
+    )

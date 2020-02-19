@@ -14,7 +14,7 @@
 #include <vector>
 #include <stdint.h>
 
-#include "core/math/vector/vector3d.h"
+#include "math/vector/vector3d.h"
 #include "stdio.h"
 #include "math.h"
 

@@ -1,7 +1,7 @@
-#include "core/filesystem/tempFolder.h"
-#include "core/utils/log.h"
-#include "core/utils/utils.h"
-#include "core/filesystem/folderScanner.h"
+#include "filesystem/tempFolder.h"
+#include "utils/log.h"
+#include "utils/utils.h"
+#include "filesystem/folderScanner.h"
 
 //#include <mutex>
 

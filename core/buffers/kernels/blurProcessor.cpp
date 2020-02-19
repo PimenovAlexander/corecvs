@@ -6,11 +6,11 @@
  * \date Sep 19, 2010
  * \author alexander
  */
-#include "core/buffers/kernels/blurProcessor.h"
-#include "core/tbbwrapper/tbbWrapper.h"
+#include "buffers/kernels/blurProcessor.h"
+#include "tbbwrapper/tbbWrapper.h"
 
-#include "core/math/sse/sseWrapper.h"
-#include "core/math/neon/neonWrapper.h"
+#include "math/sse/sseWrapper.h"
+#include "math/neon/neonWrapper.h"
 
 namespace corecvs {
 

@@ -5,7 +5,7 @@
  **/
 
 #include "coordinateFrame.h"
-#include "openGLTools.h"
+#include "opengl/openGLTools.h"
 
 CoordinateFrame::CoordinateFrame()
 {

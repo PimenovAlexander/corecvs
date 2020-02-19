@@ -4,13 +4,13 @@
 #include <stack>
 #include <map>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/features2d/imageKeyPoints.h"
-#include "core/features2d/imageMatches.h"   // RawMatches
-#include "core/features2d/matchingPlan.h"   // MatchPlan
-#include "core/utils/statusTracker.h"
-#include "core/tbbwrapper/tbbWrapper.h"     // tbb::spin_mutex
+#include "features2d/imageKeyPoints.h"
+#include "features2d/imageMatches.h"   // RawMatches
+#include "features2d/matchingPlan.h"   // MatchPlan
+#include "utils/statusTracker.h"
+#include "tbbwrapper/tbbWrapper.h"     // tbb::spin_mutex
 
 class FeatureMatchingPipeline;
 

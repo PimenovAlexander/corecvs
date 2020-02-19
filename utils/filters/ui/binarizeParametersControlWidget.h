@@ -2,7 +2,7 @@
 #include <QWidget>
 #include "core/xml/generated/binarizeParameters.h"
 #include "ui_binarizeParametersControlWidget.h"
-#include "filterParametersControlWidgetBase.h"
+#include "filters/filterParametersControlWidgetBase.h"
 
 namespace Ui {
     class BinarizeParametersControlWidget;

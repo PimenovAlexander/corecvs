@@ -15,17 +15,17 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
 //#ifdef REFLECTION_IN_CORE
-#include "core/reflection/reflection.h"
+#include "reflection/reflection.h"
 //#endif // REFLECTION_IN_CORE
 
-#include "core/math/vector/fixedVector.h"
-#include "core/math/vector/vector.h"
+#include "math/vector/fixedVector.h"
+#include "math/vector/vector.h"
 
 // This is discussable if there should be such a dependancy
-#include "core/xml/generated/vector2dParameters.h"
+#include "xml/generated/vector2dParameters.h"
 
 namespace corecvs {
 

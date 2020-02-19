@@ -9,8 +9,8 @@
 #include "distortionApplicationParametersControlWidget.h"
 #include "ui_distortionApplicationParametersControlWidget.h"
 #include <memory>
-#include "qSettingsGetter.h"
-#include "qSettingsSetter.h"
+#include "visitors/qSettingsGetter.h"
+#include "visitors/qSettingsSetter.h"
 
 
 DistortionApplicationParametersControlWidget::DistortionApplicationParametersControlWidget(QWidget *parent, bool _autoInit, QString _rootPath)

@@ -4,7 +4,7 @@
 #include <QGridLayout>
 #include <vector>
 
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 class ReflectionWidget : public ParametersControlWidgetBase
 {

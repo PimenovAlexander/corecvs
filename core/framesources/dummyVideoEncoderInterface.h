@@ -1,7 +1,7 @@
 #ifndef DUMMY_VIDEO_ENCODER_INTERFACE_H
 #define DUMMY_VIDEO_ENCODER_INTERFACE_H
 
-#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "buffers/rgb24/rgb24Buffer.h"
 #include <string>
 
 namespace corecvs {

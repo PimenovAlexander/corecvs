@@ -1,7 +1,7 @@
 #ifndef LAPLACE_H
 #define LAPLACE_H
 
-#include "core/buffers/abstractKernel.h"
+#include "buffers/abstractKernel.h"
 
 namespace corecvs {
 

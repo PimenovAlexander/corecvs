@@ -10,13 +10,13 @@
 #include <stdint.h>
 #include <cmath>
 
-#include "core/math/vector/fixedVector.h"
-#include "core/math/vector/vector3d.h"
-#include "core/math/mathUtils.h"
-#include "core/reflection/reflection.h"
+#include "math/vector/fixedVector.h"
+#include "math/vector/vector3d.h"
+#include "math/mathUtils.h"
+#include "reflection/reflection.h"
 
-#include "core/xml/generated/rgbColorParameters.h"
-#include "core/xml/generated/colorPallete.h"
+#include "xml/generated/rgbColorParameters.h"
+#include "xml/generated/colorPallete.h"
 
 namespace corecvs {
 

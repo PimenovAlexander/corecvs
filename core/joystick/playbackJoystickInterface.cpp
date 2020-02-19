@@ -1,22 +1,22 @@
 #include <fstream>
-#include <unistd.h>
+//#include <unistd.h>
 #include <sstream>
 
-#include "core/utils/global.h"
-#include "core/utils/utils.h"
+#include "utils/global.h"
+#include "utils/utils.h"
 
-#include "core/joystick/playbackJoystickInterface.h"
+#include "joystick/playbackJoystickInterface.h"
 
-#include "core/utils/preciseTimer.h"
-#include "core/filesystem/folderScanner.h"
+#include "utils/preciseTimer.h"
+#include "filesystem/folderScanner.h"
 
 using namespace corecvs;
 using namespace std;
 
-PlaybackJoystickInterface::PlaybackJoystickInterface(const string &deviceName):
-    corecvs::JoystickInterface(deviceName)
+PlaybackJoystickInterface::PlaybackJoystickInterface(const string &deviceName)
 {
-    data.load(deviceName);
+    mDeviceName = deviceName;
+    data.load(mDeviceName);
     SYNC_PRINT(("PlaybackJoystickInterface::PlaybackJoystickInterface(): Loaded %d joystick moves\n", (int)data.states.size()));
 }
 
@@ -90,7 +90,9 @@ void PlaybackJoystickInterface::run()
             delay = std::min(delay, data.states[count].timestamp - initialTimestamp);
         }
 
-        usleep(delay);
+        //usleep(delay);
+        bool QueryPerformanceCounter(delay);
+
 
         uint64_t time = PreciseTimer::currentTime().usec() - initialTimestamp;
 

@@ -1,7 +1,7 @@
 #include <set>
 
-#include "core/math/vector/vector3d.h"
-#include "core/geometry/polygons.h"
+#include "math/vector/vector3d.h"
+#include "geometry/polygons.h"
 
 
 namespace corecvs {

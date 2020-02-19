@@ -15,8 +15,8 @@
 #include "testClass.h"
 #endif
 
-#include "qtFileLoader.h"
-#include "reflectionWidget.h"
+#include "fileformats/qtFileLoader.h"
+#include "corestructs/reflectionWidget.h"
 #include "core/xml/generated/axisAlignedBoxParameters.h"
 #include "core/xml/generated/chessBoardAssemblerParamsBase.h"
 #include "core/xml/generated/checkerboardDetectionParameters.h"
@@ -26,7 +26,7 @@
 //#include "iterativeReconstructionNonlinearOptimizationParamsWrapper.h"
 
 #include "core/math/vector/vector2d.h"
-#include "changeReceiver.h"
+#include "../widget_harness/changeReceiver.h"
 #include "testNativeWidget.h"
 
 #include "core/math/matrix/homographyReconstructor.h"

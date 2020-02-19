@@ -5,11 +5,11 @@
  **/
 #include <fstream>
 
-#include "core/math/mathUtils.h"      // M_PI
-#include "core/buffers/rgb24/abstractPainter.h"
-#include "core/geometry/mesh/mesh3d.h"
-#include "core/fileformats/plyLoader.h"
-#include "core/cammodel/cameraParameters.h"
+#include "math/mathUtils.h"      // M_PI
+#include "buffers/rgb24/abstractPainter.h"
+#include "geometry/mesh/mesh3d.h"
+#include "fileformats/plyLoader.h"
+#include "cammodel/cameraParameters.h"
 
 namespace corecvs {
 
@@ -185,7 +185,6 @@ void Mesh3D::addAOB(const Vector3dd &c1, const Vector3dd &c2, bool addFaces)
     if (addFaces)
     {
         Vector3d32 startId(vectorIndex, vectorIndex, vectorIndex);
-        addFace(startId + Vector3d32(0, 1, 2));
         addFace(startId + Vector3d32(0, 1, 2));
         addFace(startId + Vector3d32(2, 3, 0));
         addFace(startId + Vector3d32(7, 6, 5));

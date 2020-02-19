@@ -9,10 +9,10 @@
 #include <stdio.h>
 #include <cstdio>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
 #include "fileCapture.h"
-#include "core/buffers/bufferFactory.h"
+#include "buffers/bufferFactory.h"
 
 /* File capture interface */
 FileCaptureInterface::FileCaptureInterface(string pathFmt, bool isVerbose, bool isRGB)

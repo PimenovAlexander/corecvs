@@ -18,7 +18,7 @@
 #include <vector>
 #include <unordered_map>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
 
 namespace corecvs {

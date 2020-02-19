@@ -10,7 +10,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
 //#define _TRACE
 #ifdef _TRACE

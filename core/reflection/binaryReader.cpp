@@ -1,5 +1,5 @@
-#include "core/reflection/binaryReader.h"
-#include "core/utils/utils.h"
+#include "reflection/binaryReader.h"
+#include "utils/utils.h"
 
 namespace corecvs {
 

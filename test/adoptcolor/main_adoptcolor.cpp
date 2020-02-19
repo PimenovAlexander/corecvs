@@ -1,10 +1,10 @@
 #include <stdio.h>
 
-#include "core/buffers/bufferFactory.h"
+#include "buffers/bufferFactory.h"
 
-#include "core/fileformats/bmpLoader.h"
-#include "core/geometry/ellipticalApproximation.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "fileformats/bmpLoader.h"
+#include "geometry/ellipticalApproximation.h"
+#include "buffers/rgb24/rgb24Buffer.h"
 
 #ifdef WITH_LIBJPEG
 #include "libjpegFileReader.h"

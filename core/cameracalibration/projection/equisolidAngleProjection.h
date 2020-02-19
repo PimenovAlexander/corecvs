@@ -1,12 +1,12 @@
 #ifndef EQUISOLIDANGLEPROJECTION_H
 #define EQUISOLIDANGLEPROJECTION_H
 
-#include "core/math/vector/vector2d.h"
-#include "core/math/vector/vector3d.h"
-#include "core/function/function.h"
+#include "math/vector/vector2d.h"
+#include "math/vector/vector3d.h"
+#include "function/function.h"
 
-#include "core/cameracalibration/projection/projectionModels.h"
-#include "core/xml/generated/projectionBaseParameters.h"
+#include "cameracalibration/projection/projectionModels.h"
+#include "xml/generated/projectionBaseParameters.h"
 
 namespace corecvs {
 /**
@@ -37,7 +37,7 @@ public:
     {
         double theta = rayToAngle(p);
         Vector2dd dir = p.xy().normalised();
-        return dir * 2 * focal() * sin(theta / 2) + principal();
+        return dir * 2 * focal() *std::sin(theta / 2) + principal();
     }
 
     virtual Vector3dd reverse(const Vector2dd &p) const override
@@ -46,7 +46,7 @@ public:
         double r = shift.l2Metric();
         shift /= r;
         double theta = 2 * asin(r / 2.0 / focal());
-        return Vector3dd(shift.normalised() * sin(theta), cos(theta));
+        return Vector3dd(shift.normalised() * std::sin(theta), std::cos(theta));
     }
 
     /* TODO: Function not actually implemented */

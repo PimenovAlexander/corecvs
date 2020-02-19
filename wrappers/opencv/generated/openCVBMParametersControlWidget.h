@@ -2,7 +2,7 @@
 #include <QWidget>
 #include "openCVBMParameters.h"
 #include "ui_openCVBMParametersControlWidget.h"
-#include "parametersControlWidgetBase.h"
+#include "utils/corestructs/parametersControlWidgetBase.h"
 
 
 namespace Ui {

@@ -9,9 +9,9 @@
  * Generated from patternDetector.xml
  */
 
-#include "core/reflection/reflection.h"
-#include "core/reflection/defaultSetter.h"
-#include "core/reflection/printerVisitor.h"
+#include "reflection/reflection.h"
+#include "reflection/defaultSetter.h"
+#include "reflection/printerVisitor.h"
 
 /*
  *  Embed includes.
@@ -31,8 +31,8 @@
 /*
  *  Additional includes for enum section.
  */
-#include "core/xml/generated/checkerboardDetectionAlgorithm.h"
-#include "core/xml/generated/imageChannel.h"
+#include "xml/generated/checkerboardDetectionAlgorithm.h"
+#include "xml/generated/imageChannel.h"
 
 /**
  * \brief Checkerboard Detection Parameters 

@@ -11,10 +11,10 @@
 
 #include <vector>
 
-#include "core/utils/global.h"
-#include "core/buffers/memory/memoryBlock.h"
-#include "core/math/vector/vector2d.h"
-#include "core/math/vector/vector3d.h"
+#include "utils/global.h"
+#include "buffers/memory/memoryBlock.h"
+#include "math/vector/vector2d.h"
+#include "math/vector/vector3d.h"
 
 namespace corecvs {
 

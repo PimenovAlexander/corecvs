@@ -1,7 +1,7 @@
 #include <sstream>
 #include <fstream>
 
-#include "core/utils/utils.h"
+#include "utils/utils.h"
 #include "jsonModernReader.h"
 
 using namespace corecvs;

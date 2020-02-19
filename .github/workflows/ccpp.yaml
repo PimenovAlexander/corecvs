@@ -19,7 +19,7 @@ jobs:
     - name: Install generic prerequisites
       run: |
            sudo apt-get update 
-           sudo apt install -y libtbb-dev libavcodec-dev libavutil-dev libavformat-dev libswscale-dev libjpeg-dev libpng-dev libopenblas-dev liblapacke-dev
+           sudo apt install -y libtbb-dev libavcodec-dev libavutil-dev libavformat-dev libswscale-dev libjpeg-dev libpng-dev libopenblas-dev liblapacke-dev libfftw3-dev libsoapysdr-dev
     - name: Install OpenCV prerequisites
       run: |
            sudo apt-get update 

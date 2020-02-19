@@ -1,7 +1,7 @@
 #ifndef PARAMETERS_CONTROL_WIDGET_BASE_H_
 #define PARAMETERS_CONTROL_WIDGET_BASE_H_
 /**
- * \file parametersControlWidgetBase.h
+ * \file corestructs/parametersControlWidgetBase.h
  *
  *
  *

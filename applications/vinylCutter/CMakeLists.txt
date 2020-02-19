@@ -1,45 +1,68 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
+cmake_minimum_required(VERSION 3.11)
+set(MODULE_NAME applications)
+init_project(PROJECT_NAME vinylCutter)
 
-project(vinylCutter)
+find_package(Qt5 COMPONENTS REQUIRED Core Gui Widgets)
 
-set(CMAKE_INCLUDE_CURRENT_DIR "YES")
-set(CMAKE_AUTOMOC "YES")
-set(CMAKE_AUTOUIC "YES")
+set(PRIVATE_HEADER_FILES
+    gcodeHandler.h
+    mainWindow.h
+    myGraphicsView.h
+    gcodeToSceneInterpreter.h
+    )
 
-find_package(Qt5 COMPONENTS REQUIRED Core Gui Widgets Script)
+set(HEADERS
+    ${PRIVATE_HEADER_FILES}
+    )
 
-add_executable(vinylCutter main_vinylCutter.cpp)
+set(SOURCE_FILES
+    main_vinylCutter.cpp
+    mainWindow.cpp
+    myGraphicsView.cpp
+    gcodeHandler.cpp
+    gcodeToSceneInterpreter.cpp
+    )
 
-target_sources(vinylCutter
-    PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}/mainWindow.h
+set(SOURCES
+    ${SOURCE_FILES}
+    )
+
+assign_source_group(${HEADERS} ${SOURCES})
+
+add_executable(${PROJECT_NAME}
+    ${HEADERS}
+    ${SOURCES}
+    )
+
+target_include_directories(${PROJECT_NAME} 
     PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/main_vinylCutter.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/mainWindow.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/myGraphicsView.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/gcodeHandler.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/gcodeToSceneInterpreter.cpp
-)
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+
+file(GLOB RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/*.*)
 
 # Resource files copying:
 # we don't want to copy if we're building in the source dir
-if (NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
-
-    # list of files for which we add a copy rule
-    set(data_SHADOW resources/background.png)
-
-    foreach(item IN LISTS data_SHADOW)
-        message(STATUS ${item})
-        add_custom_command(
-                OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${item}"
-                COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/${item}" "${CMAKE_CURRENT_BINARY_DIR}/${item}"
-                DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/${item}"
+if(NOT ${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_BINARY_DIR})
+    copy_files(${PROJECT_NAME}
+        RESOURCE_FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/resources/
         )
-    endforeach()
 endif()
 
-# files are only copied if a target depends on them
-add_custom_target(data-target ALL DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/resources/background.png")
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+    corecvs_utils
+    corecvs
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Widgets
+    )
 
-target_link_libraries(vinylCutter cvs_utils corecvs)
-target_include_directories(vinylCutter PUBLIC ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} .)
+set_target_properties(${PROJECT_NAME}     
+    PROPERTIES                             
+    AUTOMOC TRUE
+    AUTOUIC TRUE
+    AUTORCC TRUE
+    FOLDER "${MODULE_NAME}"
+    )

@@ -8,11 +8,11 @@
 #include <ostream>
 #include <QtCore/QString>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/math/matrix/matrix44.h"
-#include "core/xml/generated/draw3dParameters.h"
-#include "parametersControlWidgetBase.h"
+#include "math/matrix/matrix44.h"
+#include "xml/generated/draw3dParameters.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 class CloudViewDialog;
 

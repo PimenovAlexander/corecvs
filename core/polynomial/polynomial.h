@@ -3,11 +3,11 @@
 
 #include <vector>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/math/vector/vector.h"
-#include "core/buffers/abstractBuffer.h"
-#include "core/math/matrix/matrix.h"
+#include "math/vector/vector.h"
+#include "buffers/abstractBuffer.h"
+#include "math/matrix/matrix.h"
 
 /* Including this header to source files together with opencv dues to a compilation error like this:
     ...\opencv\2411\sources\modules\core\include\opencv2/core/core.hpp(3211): error C2891: fixed_size: cannot take the address of a template parameter

@@ -8,7 +8,7 @@
 #include <iostream>
 #include <cmath>
 
-#include "core/math/mathUtils.h"
+#include "math/mathUtils.h"
 
 class WuRasterizer {
     // integer part of x

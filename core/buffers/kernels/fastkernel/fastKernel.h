@@ -7,11 +7,11 @@
  * \date Sep 26, 2010
  * \author alexander
  */
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/buffers/kernels/fastkernel/baseKernel.h"
-#include "core/buffers/kernels/fastkernel/scalarAlgebra.h"
-#include "core/tbbwrapper/tbbWrapper.h"
+#include "buffers/kernels/fastkernel/baseKernel.h"
+#include "buffers/kernels/fastkernel/scalarAlgebra.h"
+#include "tbbwrapper/tbbWrapper.h"
 
 namespace corecvs {
 

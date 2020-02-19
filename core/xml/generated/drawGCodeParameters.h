@@ -9,9 +9,9 @@
  * Generated from parameters.xml
  */
 
-#include "core/reflection/reflection.h"
-#include "core/reflection/defaultSetter.h"
-#include "core/reflection/printerVisitor.h"
+#include "reflection/reflection.h"
+#include "reflection/defaultSetter.h"
+#include "reflection/printerVisitor.h"
 
 /*
  *  Embed includes.
@@ -31,7 +31,7 @@
 /*
  *  Additional includes for enum section.
  */
-#include "core/xml/generated/gCodeColoringSheme.h"
+#include "xml/generated/gCodeColoringSheme.h"
 
 /**
  * \brief draw GCode Parameters 

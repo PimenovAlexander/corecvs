@@ -34,11 +34,9 @@ class JoystickInterface
 public:
     std::string mDeviceName;
 
-    JoystickInterface() {}
+    JoystickInterface();
 
-    JoystickInterface(const std::string &deviceName):
-        mDeviceName(deviceName)
-    {}
+    //JoystickInterface(const std::string &deviceName);
 
     //static std::vector<std::string> getDevices      (const std::string &prefix = "/dev/input/js");
     //static JoystickConfiguration    getConfiguration(const std::string &deviceName);

@@ -5,14 +5,14 @@
 #ifndef DXF_SUPPORT_DXFLOADER_H
 #define DXF_SUPPORT_DXFLOADER_H
 
-#include "core/fileformats/dxf_support/dxfCodes.h"
-#include "core/fileformats/dxf_support/dxfBuilder.h"
-#include "core/buffers/rgb24/wuRasterizer.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/buffers/rgb24/abstractPainter.h"
-#include "core/fileformats/bufferLoader.h"
-#include "core/math/vector/vector2d.h"
-#include "core/math/vector/vector3d.h"
+#include "fileformats/dxf_support/dxfCodes.h"
+#include "fileformats/dxf_support/dxfBuilder.h"
+#include "buffers/rgb24/wuRasterizer.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "buffers/rgb24/abstractPainter.h"
+#include "fileformats/bufferLoader.h"
+#include "math/vector/vector2d.h"
+#include "math/vector/vector3d.h"
 #include <map>
 
 namespace corecvs {

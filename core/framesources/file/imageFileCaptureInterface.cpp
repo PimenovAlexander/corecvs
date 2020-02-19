@@ -5,9 +5,9 @@
  * \date Nov 20, 2012
  * \author s.fedorenko
  */
-#include "core/utils/global.h"
-#include "core/utils/utils.h"
-#include "core/filesystem/folderScanner.h"
+#include "utils/global.h"
+#include "utils/utils.h"
+#include "filesystem/folderScanner.h"
 
 #include "imageFileCaptureInterface.h"
 
@@ -73,7 +73,7 @@ string ImageFileCaptureInterface::getImageFileName(uint imageNumber, uint channe
             mPathPrefix = "../";
         }
 #ifdef WIN32
-        else if (HelperUtils::pathExists((string("../../../../") + pathName).c_str()))
+        else if (FolderScanner::pathExists((string("../../../../") + pathName).c_str()))
         {
             mPathPrefix = "../../../../";
         }

@@ -1,0 +1,19 @@
+set(DISTORTIONCORRECTOR_HEADER_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/calibrationFeaturesWidget.h
+    ${CMAKE_CURRENT_LIST_DIR}/cameraModelParametersControlWidget.h
+    ${CMAKE_CURRENT_LIST_DIR}/distortionCorrectionDoc.h
+    ${CMAKE_CURRENT_LIST_DIR}/distortionParameters.h
+    ${CMAKE_CURRENT_LIST_DIR}/distortionWidget.h
+    ${CMAKE_CURRENT_LIST_DIR}/lensDistortionModelParametersControlWidget.h
+    ${CMAKE_CURRENT_LIST_DIR}/pointListEditImageWidget.h
+    PARENT_SCOPE
+    )
+
+set(DISTORTIONCORRECTOR_SOURCE_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/calibrationFeaturesWidget.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/cameraModelParametersControlWidget.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/distortionWidget.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/lensDistortionModelParametersControlWidget.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/pointListEditImageWidget.cpp
+    PARENT_SCOPE
+    )

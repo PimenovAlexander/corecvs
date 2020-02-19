@@ -8,7 +8,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
-#include "core/geometry/polygons.h"
+#include "geometry/polygons.h"
 
 using namespace corecvs;
 

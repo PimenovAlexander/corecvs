@@ -4,7 +4,7 @@
  * \date Oct 19, 2013
  **/
 
-#include "core/edgedetector/cannyDetector.h"
+#include "edgedetector/cannyDetector.h"
 #if 0
 void CannyDetector::recursiveEdgeProver(G12Buffer *buffer, int h, int w)
 {

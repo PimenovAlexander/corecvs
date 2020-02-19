@@ -6,17 +6,16 @@
  **/
 #include <vector>
 
-
-#include "core/utils/global.h"
-#include "core/geometry/renderer/geometryIterator.h"
-#include "core/buffers/abstractBuffer.h"
-#include "core/buffers/rgb24/abstractPainter.h"
-#include "core/geometry/mesh/mesh3DDecorated.h"
-#include "core/buffers/mipmapPyramid.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/geometry/renderer/attributedTriangleSpanIterator.h"
-#include "core/fileformats/bmpLoader.h"
-#include "core/utils/debuggableBlock.h"
+#include "utils/global.h"
+#include "geometry/renderer/geometryIterator.h"
+#include "buffers/abstractBuffer.h"
+#include "buffers/rgb24/abstractPainter.h"
+#include "geometry/mesh/mesh3DDecorated.h"
+#include "buffers/mipmapPyramid.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "geometry/renderer/attributedTriangleSpanIterator.h"
+#include "fileformats/bmpLoader.h"
+#include "utils/debuggableBlock.h"
 
 
 namespace corecvs {

@@ -9,8 +9,8 @@
 #include "gainOffsetParametersControlWidget.h"
 #include "ui_gainOffsetParametersControlWidget.h"
 #include <memory>
-#include "qSettingsGetter.h"
-#include "qSettingsSetter.h"
+#include "visitors/qSettingsGetter.h"
+#include "visitors/qSettingsSetter.h"
 
 
 GainOffsetParametersControlWidget::GainOffsetParametersControlWidget(QWidget *parent, bool _autoInit, QString _rootPath)

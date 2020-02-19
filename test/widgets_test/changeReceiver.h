@@ -2,7 +2,7 @@
 #define CHANGERECIEVER_H
 
 #include <QObject>
-#include "reflectionWidget.h"
+#include "corestructs/reflectionWidget.h"
 
 #ifdef INCLUDE_EXAMPLE
 #include "testClass.h"

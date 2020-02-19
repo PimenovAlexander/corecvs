@@ -5,8 +5,8 @@
 #include <vector>
 #include <ostream>
 
-#include "core/math/vector/vector2d.h"
-#include "core/geometry/line.h"
+#include "math/vector/vector2d.h"
+#include "geometry/line.h"
 
 
 namespace corecvs {

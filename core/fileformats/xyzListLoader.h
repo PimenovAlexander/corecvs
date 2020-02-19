@@ -2,7 +2,7 @@
 #define XYZLISTLOADER_H
 
 #include <iostream>
-#include "core/geometry/mesh/mesh3d.h"
+#include "geometry/mesh/mesh3d.h"
 
 namespace corecvs {
 

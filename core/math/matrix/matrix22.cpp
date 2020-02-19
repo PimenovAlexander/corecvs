@@ -1,6 +1,6 @@
 #include <cmath>
 
-#include "core/math/matrix/matrix22.h"
+#include "math/matrix/matrix22.h"
 
 namespace corecvs {
 

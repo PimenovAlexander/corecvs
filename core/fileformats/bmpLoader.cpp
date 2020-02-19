@@ -7,8 +7,8 @@
  * \author alexander
  */
 
-#include "core/fileformats/bmpLoader.h"
-#include "core/utils/utils.h"
+#include "fileformats/bmpLoader.h"
+#include "utils/utils.h"
 
 #include <string>
 #include <stdio.h>

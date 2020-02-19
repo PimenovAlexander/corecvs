@@ -11,14 +11,14 @@
 #include <iostream>
 #include <vector>
 
-#include "core/math/affine.h"
-#include "core/math/vector/vector2d.h"
-#include "core/math/matrix/matrix33.h"
-#include "core/buffers/correspondenceList.h"
-#include "core/math/matrix/matrix.h"
-#include "core/math/quaternion.h"
-#include "core/function/function.h"
-#include "core/math/affine.h"
+#include "math/affine.h"
+#include "math/vector/vector2d.h"
+#include "math/matrix/matrix33.h"
+#include "buffers/correspondenceList.h"
+#include "math/matrix/matrix.h"
+#include "math/quaternion.h"
+#include "function/function.h"
+#include "math/affine.h"
 
 namespace corecvs {
 

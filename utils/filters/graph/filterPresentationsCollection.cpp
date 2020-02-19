@@ -4,17 +4,17 @@
 #include "inputBlockPresentation.h"
 #include "outputBlockPresentation.h"
 
-#include "sobelParametersControlWidget.h"
-#include "gainOffsetParametersControlWidget.h"
-#include "bitSelectorParametersControlWidget.h"
-#include "cannyParametersControlWidget.h"
-#include "backgroundFilterParametersControlWidget.h"
-#include "inputFilterParametersControlWidget.h"
-#include "outputFilterParametersControlWidget.h"
-#include "operationParametersControlWidget.h"
-#include "binarizeParametersControlWidget.h"
-#include "thickeningParametersControlWidget.h"
-#include "maskingParametersControlWidget.h"
+#include "filters/ui/sobelParametersControlWidget.h"
+#include "filters/ui/gainOffsetParametersControlWidget.h"
+#include "filters/ui/bitSelectorParametersControlWidget.h"
+#include "filters/ui/cannyParametersControlWidget.h"
+#include "filters/ui/backgroundFilterParametersControlWidget.h"
+#include "filters/ui/inputFilterParametersControlWidget.h"
+#include "filters/ui/outputFilterParametersControlWidget.h"
+#include "filters/ui/operationParametersControlWidget.h"
+#include "filters/ui/binarizeParametersControlWidget.h"
+#include "filters/ui/thickeningParametersControlWidget.h"
+#include "filters/ui/maskingParametersControlWidget.h"
 
 FilterBlockPresentation *FilterPresentationsCollection::presentationByName(const int row,
                                                                            FilterBlock* filter,

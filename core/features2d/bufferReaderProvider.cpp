@@ -1,4 +1,4 @@
-#include "core/features2d/bufferReaderProvider.h"
+#include "features2d/bufferReaderProvider.h"
 
 using corecvs::RuntimeTypeBuffer;
 

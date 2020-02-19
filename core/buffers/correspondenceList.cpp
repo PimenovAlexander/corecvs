@@ -7,9 +7,9 @@
  * \author alexander
  */
 
-#include "core/math/mathUtils.h"
-#include "core/buffers/correspondenceList.h"
-#include "core/kltflow/kltGenerator.h"
+#include "math/mathUtils.h"
+#include "buffers/correspondenceList.h"
+#include "kltflow/kltGenerator.h"
 namespace corecvs {
 
 CorrespondenceList::CorrespondenceList()

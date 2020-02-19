@@ -12,8 +12,8 @@
 
 #include <vector>
 
-#include "core/math/vector/vector2d.h"
-#include "core/geometry/triangle.h"
+#include "math/vector/vector2d.h"
+#include "geometry/triangle.h"
 
 namespace corecvs {
 

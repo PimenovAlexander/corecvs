@@ -1,9 +1,9 @@
 #ifndef HALFSPACEINTERSECTOR_H
 #define HALFSPACEINTERSECTOR_H
 
-#include "core/geometry/polygons.h"
-#include "core/geometry/convexQuickHull.h"
-#include "core/geometry/projectiveConvexQuickHull.h"
+#include "geometry/polygons.h"
+#include "geometry/convexQuickHull.h"
+#include "geometry/projectiveConvexQuickHull.h"
 
 namespace corecvs {
 

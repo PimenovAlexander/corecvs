@@ -9,8 +9,8 @@
 #include "headSearchParametersControlWidget.h"
 #include "ui_headSearchParametersControlWidget.h"
 #include <memory>
-#include "qSettingsGetter.h"
-#include "qSettingsSetter.h"
+#include "visitors/qSettingsGetter.h"
+#include "visitors/qSettingsSetter.h"
 
 
 HeadSearchParametersControlWidget::HeadSearchParametersControlWidget(QWidget *parent, bool _autoInit, QString _rootPath)

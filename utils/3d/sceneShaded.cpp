@@ -8,8 +8,8 @@
 
 #include <qopengl.h>
 #include "sceneShaded.h"
-#include "cloudViewDialog.h"
-#include "core/fileformats/bmpLoader.h"
+#include "uis/cloudview/cloudViewDialog.h"
+#include "fileformats/bmpLoader.h"
 
 QString textGlError(GLenum err)
 {
@@ -565,9 +565,11 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
                 LOCAL_PRINT(("SceneShaded::drawMyself(): Binding textures\n"));
 
                 if (mTextures[materialId] != (GLuint)(-1))
+                    
                 {
                     glEnable(GL_TEXTURE_2D);
-                    glActiveTexture(GL_TEXTURE0);
+                    QOpenGLFunctions glAT;
+                    glAT.glActiveTexture(GL_TEXTURE0);
                     glBindTexture(GL_TEXTURE_2D, mTextures[materialId]);
                     mProgram[FACE]->setUniformValue(mTextureSampler, 0);
                     mProgram[FACE]->setUniformValue(mHasTexture, (GLint)1);
@@ -589,7 +591,8 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
                 if (mBumpmaps[materialId] != (GLuint)(-1))
                 {
                     glEnable(GL_TEXTURE_2D);
-                    glActiveTexture(GL_TEXTURE1);
+                    QOpenGLFunctions glAT;
+                    glAT.glActiveTexture(GL_TEXTURE1);
                     glBindTexture(GL_TEXTURE_2D, mBumpmaps[materialId]);
                     mProgram[FACE]->setUniformValue(mBumpSampler, 1);
                 } else {
@@ -602,10 +605,12 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
                 LOCAL_PRINT(("SceneShaded::drawMyself(): Unbinding\n"));
                 glBindTexture(GL_TEXTURE_2D, 0);
                 if (!oldTexEnable) {
-                    glActiveTexture(GL_TEXTURE0);
+                    QOpenGLFunctions glAT;
+                    glAT.glActiveTexture(GL_TEXTURE0);
                     glDisable(GL_TEXTURE_2D);
 
-                    glActiveTexture(GL_TEXTURE1);
+
+                    glAT.glActiveTexture(GL_TEXTURE0); (GL_TEXTURE1);
                     glDisable(GL_TEXTURE_2D);
                 }
 

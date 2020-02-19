@@ -2,11 +2,11 @@
 #include <regex>
 #include <fstream>
 
-#include "core/fileformats/objLoader.h"
-#include "core/utils/utils.h"
-#include "core/buffers/bufferFactory.h"
+#include "fileformats/objLoader.h"
+#include "utils/utils.h"
+#include "buffers/bufferFactory.h"
 
-#include "core/fileformats/bmpLoader.h"
+#include "fileformats/bmpLoader.h"
 
 using namespace std;
 

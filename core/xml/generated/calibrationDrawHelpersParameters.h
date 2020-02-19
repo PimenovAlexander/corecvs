@@ -9,9 +9,9 @@
  * Generated from calibration.xml
  */
 
-#include "core/reflection/reflection.h"
-#include "core/reflection/defaultSetter.h"
-#include "core/reflection/printerVisitor.h"
+#include "reflection/reflection.h"
+#include "reflection/defaultSetter.h"
+#include "reflection/printerVisitor.h"
 
 /*
  *  Embed includes.
@@ -31,7 +31,7 @@
 /*
  *  Additional includes for enum section.
  */
-#include "core/xml/generated/sceneDrawBackendType.h"
+#include "xml/generated/sceneDrawBackendType.h"
 
 /**
  * \brief EXPERIMENTAL 

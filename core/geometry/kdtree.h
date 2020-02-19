@@ -7,7 +7,7 @@
 #include <iostream>
 #include <thread>
 #include <atomic>
-#include "core/tbbwrapper/tbbWrapper.h"
+#include "tbbwrapper/tbbWrapper.h"
 
 namespace corecvs
 {

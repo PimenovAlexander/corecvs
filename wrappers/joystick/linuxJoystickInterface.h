@@ -5,7 +5,7 @@
 #include <string>
 #include <mutex>
 
-#include <core/joystick/joystickInterface.h>
+#include <joystick/joystickInterface.h>
 
 namespace std {
     class thread;
@@ -14,15 +14,13 @@ namespace std {
 class LinuxJoystickInterface : public virtual corecvs::JoystickInterface
 {
 public:
-    LinuxJoystickInterface(const std::string &deviceName):
-        corecvs::JoystickInterface(deviceName)
-    {}
+    LinuxJoystickInterface(const std::string &deviceName);
 
     static std::vector<std::string>         getDevices      (const std::string &prefix = "/dev/input/js");
     static corecvs::JoystickConfiguration   getConfiguration(const std::string &deviceName);
 
 
-    corecvs::JoystickConfiguration getConfiguration();
+    corecvs::JoystickConfiguration getConfiguration() override;
     virtual bool start() override;
     virtual void stop()  override;
 

@@ -53,7 +53,7 @@ typedef int                bool_t;                          // fast Boolean type
 #ifdef WIN32
 #   define strdup       _strdup
 #   define strcasecmp   _stricmp
-#   ifdef _MSC_VER
+#   if _MSC_VER < 1900
 #    define snprintf    sprintf_s
 #    define putenv      _putenv
 #   endif

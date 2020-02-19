@@ -15,18 +15,18 @@
 #include <thread>
 #include <cmath>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/math/vector/vector2d.h"
-#include "core/math/matrix/matrix.h"
-#include "core/function/function.h"
-#include "core/math/sparseMatrix.h"
-#include "core/math/vector/vector.h"
-#include "core/iterative/minresQLP.h"
-#include "core/iterative/pcg.h"
-#include "core/utils/statusTracker.h"
-#include "core/utils/preciseTimer.h"
-#include "core/stats/calculationStats.h"
+#include "math/vector/vector2d.h"
+#include "math/matrix/matrix.h"
+#include "function/function.h"
+#include "math/sparseMatrix.h"
+#include "math/vector/vector.h"
+#include "iterative/minresQLP.h"
+#include "iterative/pcg.h"
+#include "utils/statusTracker.h"
+#include "utils/preciseTimer.h"
+#include "stats/calculationStats.h"
 
 namespace corecvs {
 

@@ -1,4 +1,4 @@
-#include "core/reflection/deserializerVisitor.h"
+#include "reflection/deserializerVisitor.h"
 #include <algorithm>
 
 namespace corecvs {

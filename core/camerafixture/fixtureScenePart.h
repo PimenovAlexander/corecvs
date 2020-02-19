@@ -1,9 +1,9 @@
 #ifndef FIXTURE_SCENE_PART_H
 #define FIXTURE_SCENE_PART_H
 
-#include "core/utils/global.h"
-#include "core/utils/atomicOps.h"
-#include "core/geometry/polygons.h"
+#include "utils/global.h"
+#include "utils/atomicOps.h"
+#include "geometry/polygons.h"
 
 namespace corecvs {
 

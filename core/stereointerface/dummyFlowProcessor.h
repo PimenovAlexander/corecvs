@@ -1,9 +1,9 @@
 #ifndef DUMMY_FLOW_PROCESSOR_H
 #define DUMMY_FLOW_PROCESSOR_H
 
-#include "core/stats/calculationStats.h"
-#include "core/reflection/dynamicObject.h"
-#include "core/stereointerface/processor6D.h"
+#include "stats/calculationStats.h"
+#include "reflection/dynamicObject.h"
+#include "stereointerface/processor6D.h"
 
 namespace corecvs {
 

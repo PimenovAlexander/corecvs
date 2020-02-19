@@ -1,50 +1,70 @@
-project (FlowDetector)
+cmake_minimum_required(VERSION 3.11)
+set(MODULE_NAME test)
+init_project(PROJECT_NAME flow_detector)
 
-
-set (NAME flow_detector )
-
-set (SRC_FILES
+set(SOURCE_FILE
     main_flow_detector.cpp
-)
+    )
 
-#set (SOURCES ${SOURCES} ${JSON_MODERN_HEADERS} ${JSON_MODERN_SOURCES})
+set(SOURCES
+    ${SOURCE_FILE}
+    )
 
-#add_definitions( -DWITH_JSONMODERN )
-#include_directories(${JSON_MODERN_INCLUDES})
-#message(STATUS FlowDetector:${JSON_MODERN_INCLUDES} )
+assign_source_group(${SOURCES})
 
+add_executable(${PROJECT_NAME}
+    ${SOURCES}
+    )
 
-if (PNG_LIB)
-    include(../../wrappers/libpng/sourcelist.cmake)    
-endif()
-    
-if (JPEG_LIB)
-    include(../../wrappers/libjpeg/sourcelist.cmake)
-endif()
-
-include(../../wrappers/jsonmodern/sourcelist.cmake)
-
-if (OpenCV_LIBS)
-include(../../wrappers/opencv/sourcelist.cmake)
-endif()
+set(ADDITIONAL_LIBS)
 
 if(AVCODEC_LIBS)
     message("Switching on avcodec support <${AVCODEC_LIBS}>")
-    include(../../wrappers/avcodec/sourcelist.cmake)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        AVCODECwrapper
+        )
+     add_definitions(-DWITH_AVCODEC -DWITH_SWSCALE)
 endif()
 
-
-#message(STATUS FlowDetector:${INCLUDEPATHS} )
-
-add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
-
-add_custom_command(TARGET ${NAME} POST_BUILD
-        COMMAND cp ${PROJECT_BINARY_DIR}/${NAME}  ${CMAKE_BINARY_DIR}/bin/${NAME}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Copying ${NAME} to binary directory"
+if(PNG_LIB)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        LIBPNGwrapper
         )
+    add_definitions(-DWITH_LIBPNG)
+endif()
 
-include_directories(${INC_PATHS})
+if(JPEG_LIB)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        LIBJPEGwrapper
+        )
+    add_definitions(-DWITH_LIBJPEG)
+endif()
 
-target_link_libraries(${NAME} corecvs pthread ${LIBS})
+if (OpenCV_LIBS)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        OPENCVwrapper
+        )
+endif()
 
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+    stdc++fs 
+    corecvs
+    pthread
+    JSONMODERNwrapper
+    ${ADDITIONAL_LIBS}
+    )
+
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+    FOLDER "${MODULE_NAME}"
+    )
+
+copy_directory(${PROJECT_NAME} 
+    ${PROJECT_BINARY_DIR}/${MODULE_NAME}/${PROJECT_NAME}
+    ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}
+    )

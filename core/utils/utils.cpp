@@ -18,7 +18,7 @@
 #endif
 #include <sstream>
 
-#include "core/utils/utils.h"
+#include "utils/utils.h"
 
 namespace corecvs {
 

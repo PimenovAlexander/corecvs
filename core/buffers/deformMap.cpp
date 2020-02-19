@@ -1,4 +1,4 @@
-#include "core/buffers/deformMap.h"
+#include "buffers/deformMap.h"
 
 namespace corecvs {
 

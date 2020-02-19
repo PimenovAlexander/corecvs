@@ -68,5 +68,5 @@ typedef struct OpenCLRemapCache
 #endif
 
     void remap( corecvs::RGB24Buffer &src, corecvs::RGB24Buffer &dst, const corecvs::DisplacementBuffer &transform );
-};
+
 

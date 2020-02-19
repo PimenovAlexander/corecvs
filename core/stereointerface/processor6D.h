@@ -10,17 +10,17 @@
  */
 
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/reflection/dynamicObject.h"
+#include "reflection/dynamicObject.h"
 
-#include "core/buffers/g12Buffer.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/buffers/flow/flowBuffer.h"
-#include "core/buffers/flow/sixDBuffer.h"
-#include "core/stats/calculationStats.h"
+#include "buffers/g12Buffer.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "buffers/flow/flowBuffer.h"
+#include "buffers/flow/sixDBuffer.h"
+#include "stats/calculationStats.h"
 
-#include "core/patterndetection/patternDetector.h"
+#include "patterndetection/patternDetector.h"
 
 namespace corecvs {
 

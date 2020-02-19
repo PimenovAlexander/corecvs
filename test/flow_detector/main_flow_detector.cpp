@@ -1,18 +1,18 @@
 #include <iostream>
 
-#include <core/reflection/commandLineSetter.h>
-#include <core/reflection/jsonPrinter.h>
-#include <core/reflection/usageVisitor.h>
+#include <reflection/commandLineSetter.h>
+#include <reflection/jsonPrinter.h>
+#include <reflection/usageVisitor.h>
 
-#include <wrappers/jsonmodern/jsonModernReader.h>
+#include <jsonModernReader.h>
 
-#include <core/stereointerface/dummyFlowProcessor.h>
+#include <stereointerface/dummyFlowProcessor.h>
 
-#include "core/stereointerface/processor6D.h"
+#include "stereointerface/processor6D.h"
 
-#include "core/buffers/bufferFactory.h"
-#include "core/fileformats/bmpLoader.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "buffers/bufferFactory.h"
+#include "fileformats/bmpLoader.h"
+#include "buffers/rgb24/rgb24Buffer.h"
 
 #ifdef WITH_LIBJPEG
 #include "libjpegFileReader.h"
@@ -22,10 +22,10 @@
 #endif
 #ifdef WITH_OPENCV
 #include <KLTFlow.h>
-#include <PCAFlowProcessor.h>
+#include <PCAFlow/PCAFlowProcessor.h>
 #endif
 #ifdef WITH_DISFLOW
-#include <wrappers/opencv/DISFlow/DISFlow.h>
+#include <DISFlow/DISFlow.h>
 #endif
 #ifdef WITH_AVCODEC
 #include "aviCapture.h"

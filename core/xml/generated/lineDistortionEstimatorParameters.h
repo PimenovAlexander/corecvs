@@ -9,9 +9,9 @@
  * Generated from distortion.xml
  */
 
-#include "core/reflection/reflection.h"
-#include "core/reflection/defaultSetter.h"
-#include "core/reflection/printerVisitor.h"
+#include "reflection/reflection.h"
+#include "reflection/defaultSetter.h"
+#include "reflection/printerVisitor.h"
 
 /*
  *  Embed includes.
@@ -31,7 +31,7 @@
 /*
  *  Additional includes for enum section.
  */
-#include "core/xml/generated/lineDistortionEstimatorCost.h"
+#include "xml/generated/lineDistortionEstimatorCost.h"
 
 /**
  * \brief Line Distortion Estimator Parameters 

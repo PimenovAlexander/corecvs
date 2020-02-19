@@ -10,8 +10,8 @@
  * \author ylitvinov
  */
 
-#include "core/meanshift/meanShiftWindow.h"
-#include "core/meanshift/abstractMeanShiftKernel.h"
+#include "meanshift/meanShiftWindow.h"
+#include "meanshift/abstractMeanShiftKernel.h"
 
 #include <map>
 namespace corecvs {

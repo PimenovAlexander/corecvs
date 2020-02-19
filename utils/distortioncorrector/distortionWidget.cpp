@@ -1,16 +1,16 @@
 #include "distortionWidget.h"
-#include "core/utils/log.h"
+#include "utils/log.h"
 #include "qtHelper.h"
-#include "core/alignment/camerasCalibration/camerasCalibrationFunc.h"
-#include "core/alignment/lmDistortionSolver.h"
-#include "g12Image.h"
-#include "core/buffers/displacementBuffer.h"
+#include "alignment/camerasCalibration/camerasCalibrationFunc.h"
+#include "alignment/lmDistortionSolver.h"
+#include "corestructs/g12Image.h"
+#include "buffers/displacementBuffer.h"
 #include "ui_distortionWidget.h"
-#include "core/alignment/distPointsFunction.h"
+#include "alignment/distPointsFunction.h"
 //#include "core/patterndetection/chessBoardDetector.h"
 
 #ifdef WITH_OPENCV
-# include "openCvCheckerboardDetector.h"
+# include "../../wrappers/opencv/openCvCheckerboardDetector.h"
 #endif
 
 using corecvs::DistPointsFunction;

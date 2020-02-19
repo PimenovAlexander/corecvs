@@ -1,9 +1,9 @@
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/camerafixture/fixtureScene.h"
-#include "core/camerafixture/cameraFixture.h"
-#include "core/math/affine.h"
-#include "core/rectification/sceneStereoAlignerBlock.h"
-#include "core/rectification/stereoAligner.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "camerafixture/fixtureScene.h"
+#include "camerafixture/cameraFixture.h"
+#include "math/affine.h"
+#include "rectification/sceneStereoAlignerBlock.h"
+#include "rectification/stereoAligner.h"
 
 namespace corecvs {
 

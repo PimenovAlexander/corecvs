@@ -6,10 +6,10 @@
  * \author alexander
  */
 
-#include "core/buffers/morphological/morphological.h"
-#include "core/buffers/kernels/fastkernel/fastKernel.h"
-#include "core/buffers/kernels/fastkernel/vectorAlgebra.h"
-#include "core/buffers/kernels/fastkernel/vectorTraits.h"
+#include "buffers/morphological/morphological.h"
+#include "buffers/kernels/fastkernel/fastKernel.h"
+#include "buffers/kernels/fastkernel/vectorAlgebra.h"
+#include "buffers/kernels/fastkernel/vectorTraits.h"
 namespace corecvs {
 
 /**

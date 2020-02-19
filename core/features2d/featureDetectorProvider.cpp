@@ -1,6 +1,6 @@
-#include "core/features2d/featureDetectorProvider.h"
+#include "features2d/featureDetectorProvider.h"
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
 using namespace corecvs;
 using namespace std;

@@ -19,6 +19,7 @@
 #include "core/fileformats/bmpLoader.h"
 #include "core/utils/utils.h"
 #include "core/filesystem/folderScanner.h"
+#include "buffers/bufferFactory.h"
 
 #if 0
 int main(int argc, const char **argv)

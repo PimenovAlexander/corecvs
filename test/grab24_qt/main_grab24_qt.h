@@ -2,7 +2,7 @@
 #define MAIN_GRAB24_H_
 
 #include <QObject>
-#include <imageCaptureInterfaceQt.h>
+#include <framesources/imageCaptureInterfaceQt.h>
 
 class AdvancedImageWidget;
 

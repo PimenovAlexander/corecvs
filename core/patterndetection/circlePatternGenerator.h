@@ -6,10 +6,10 @@
 #include <algorithm>
 #include <unordered_map>
 
-#include "core/buffers/abstractBuffer.h"
-#include "core/math/vector/vector2d.h"
-#include "core/math/matrix/matrix33.h"
-#include "core/buffers/float/dpImage.h"
+#include "buffers/abstractBuffer.h"
+#include "math/vector/vector2d.h"
+#include "math/matrix/matrix33.h"
+#include "buffers/float/dpImage.h"
 
 #ifdef WITH_TBB
 #include <tbb/reader_writer_lock.h>

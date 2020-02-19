@@ -5,7 +5,7 @@
  *      Author: apimenov
  */
 
-#include "core/cammodel/imagerProperties.h"
+#include "cammodel/imagerProperties.h"
 
 namespace corecvs {
 

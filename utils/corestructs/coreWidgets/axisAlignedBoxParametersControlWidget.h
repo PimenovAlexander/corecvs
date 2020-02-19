@@ -2,7 +2,7 @@
 #include <QWidget>
 #include "core/xml/generated/axisAlignedBoxParameters.h"
 #include "ui_axisAlignedBoxParametersControlWidget.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 
 namespace Ui {

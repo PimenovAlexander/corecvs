@@ -8,6 +8,7 @@
 // CAPDLL_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
 
+#ifdef WIN32
 #ifdef CAPDLL_EXPORTS
 #  define CAPDLL_API  __declspec(dllexport)
 #  ifdef _MSC_VER
@@ -18,6 +19,10 @@
 #  ifdef _MSC_VER
 #    pragma message ( "Importing capdll funcs" )
 #  endif
+#endif
+#else
+// Linux
+#	define CAPDLL_API
 #endif
 
 extern "C" {

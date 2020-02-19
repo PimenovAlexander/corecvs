@@ -9,8 +9,8 @@
 #include "debayerParametersControlWidget.h"
 #include "ui_debayerParametersControlWidget.h"
 #include <memory>
-#include "qSettingsGetter.h"
-#include "qSettingsSetter.h"
+#include "visitors/qSettingsGetter.h"
+#include "visitors/qSettingsSetter.h"
 
 
 DebayerParametersControlWidget::DebayerParametersControlWidget(QWidget *parent, bool _autoInit, QString _rootPath)

@@ -1,4 +1,4 @@
-#include "core/math/fftw/fftwWrapper.h"
+#include "math/fftw/fftwWrapper.h"
 
 //#ifdef WITH_MKL
 

@@ -1,12 +1,13 @@
 #ifndef BLAS_REPLACEMENT_H
 #define BLAS_REPLACEMENT_H
 
-#include "core/utils/global.h"
-#include "core/math/matrix/matrix.h"
-#include "core/math/matrix/matrix33.h"
+#include "utils/global.h"
+#include "math/matrix/matrix.h"
+#include "math/matrix/matrix33.h"
 
-#include "core/tbbwrapper/tbbWrapper.h"
-#include "core/math/sse/sseWrapper.h"
+#include "tbbwrapper/tbbWrapper.h"
+#include "math/sse/sseWrapper.h"
+#include "math/sse/doublex4.h"
 
 namespace corecvs {
 
@@ -199,7 +200,7 @@ struct ParallelMM8
 
         int row = r.begin();
 
-#ifdef WITH_AVX
+//#ifdef WITH_AVX
         for (; (row + BLOCK <= r.end()) && vectorize; row += BLOCK)
         {
             int column = 0;
@@ -285,7 +286,7 @@ struct ParallelMM8
                 }
             }
         }
-#endif
+//#endif
 
         for (; row < r.end(); row++)
         {

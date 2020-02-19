@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core/features2d/descriptorExtractorProvider.h"
-#include "core/features2d/imageMatches.h"
+#include "features2d/descriptorExtractorProvider.h"
+#include "features2d/imageMatches.h"
 
 class DescriptorMatcher : public virtual AlgoBase
 {

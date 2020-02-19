@@ -11,8 +11,8 @@
 #include "core/math/affine.h"
 #include "core/math/vector/vector3d.h"
 
-#include "physicsCompoundObject.h"
-#include "pid.h"
+#include "simulation/physicsCompoundObject.h"
+#include "copter/pid.h"
 
 class Sensor
 {

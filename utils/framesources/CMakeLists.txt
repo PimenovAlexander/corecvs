@@ -1,0 +1,25 @@
+set(FRAMESOURCES_HEADER_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/imageCaptureInterfaceQt.h
+    ${CMAKE_CURRENT_LIST_DIR}/directShow/directShow.h
+    ${CMAKE_CURRENT_LIST_DIR}/directShow/directShowCapture.h
+    ${CMAKE_CURRENT_LIST_DIR}/directShow/directShowCaptureDecouple.h
+    ${CMAKE_CURRENT_LIST_DIR}/opencv/openCVCapture.h
+    ${CMAKE_CURRENT_LIST_DIR}/opencv/openCVFileCapture.h
+    ${CMAKE_CURRENT_LIST_DIR}/opencv/openCVHelper.h
+    #${CMAKE_CURRENT_LIST_DIR}/uEye/uEyeCameraDescriptor.h
+    #${CMAKE_CURRENT_LIST_DIR}/uEye/uEyeCapture.h
+    PARENT_SCOPE
+    )
+
+set(FRAMESOURCES_SOURCE_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/imageCaptureInterfaceQt.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/directShow/directShow.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/directShow/directShowCapture.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/directShow/directShowCaptureDecouple.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/opencv/openCVCapture.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/opencv/openCVFileCapture.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/opencv/openCVHelper.cpp
+    #${CMAKE_CURRENT_LIST_DIR}/uEye/uEyeCameraDescriptor.cpp
+    #${CMAKE_CURRENT_LIST_DIR}/uEye/uEyeCapture.cpp
+    PARENT_SCOPE
+    )
