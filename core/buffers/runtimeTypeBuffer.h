@@ -1,7 +1,7 @@
 #ifndef RUNTIMETYPEBUFFER_H
 #define RUNTIMETYPEBUFFER_H
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
 #include <cstring>
 #include <string>

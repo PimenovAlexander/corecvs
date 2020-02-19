@@ -1,0 +1,41 @@
+set(UIS_HEADER_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/aboutDialog.h
+    ${CMAKE_CURRENT_LIST_DIR}/aboutPropsTableWidget.h
+    ${CMAKE_CURRENT_LIST_DIR}/advancedImageWidget.h
+    ${CMAKE_CURRENT_LIST_DIR}/capSettingsDialog.h
+    ${CMAKE_CURRENT_LIST_DIR}/graphPlotDialog.h
+    ${CMAKE_CURRENT_LIST_DIR}/histogramDepthDialog.h
+    ${CMAKE_CURRENT_LIST_DIR}/osdBaseWidget.h
+    ${CMAKE_CURRENT_LIST_DIR}/paintImageWidget.h
+    ${CMAKE_CURRENT_LIST_DIR}/pointsRectificationWidget.h
+    ${CMAKE_CURRENT_LIST_DIR}/textLabelWidget.h
+    PARENT_SCOPE
+    )
+
+set(UIS_SOURCE_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/aboutDialog.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/aboutPropsTableWidget.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/advancedImageWidget.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/capSettingsDialog.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/graphPlotDialog.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/histogramDepthDialog.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/osdBaseWidget.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/paintImageWidget.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/pointsRectificationWidget.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/textLabelWidget.cpp
+    PARENT_SCOPE
+    )
+
+set(UIS_CLOUDVIEW_HEADER_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/cloudview/cloudViewDialog.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/cloudview/scene3dTreeView.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/cloudview/treeSceneController.cpp
+    PARENT_SCOPE
+    )
+
+set(UIS_CLOUDVIEW_SOURCE_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/cloudview/cloudViewDialog.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/cloudview/scene3dTreeView.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/cloudview/treeSceneController.cpp
+    PARENT_SCOPE
+    )

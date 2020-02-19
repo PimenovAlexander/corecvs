@@ -1,11 +1,11 @@
 #ifndef RAYTRACERENDERER_H
 #define RAYTRACERENDERER_H
 
-#include "core/geometry/polygons.h"
-#include "core/cameracalibration/cameraModel.h"
-#include "core/geometry/mesh/mesh3d.h"
-#include "core/geometry/line.h"
-#include "core/cameracalibration/projection/projectionModels.h"
+#include "geometry/polygons.h"
+#include "cameracalibration/cameraModel.h"
+#include "geometry/mesh/mesh3d.h"
+#include "geometry/line.h"
+#include "cameracalibration/projection/projectionModels.h"
 
 namespace corecvs {
 

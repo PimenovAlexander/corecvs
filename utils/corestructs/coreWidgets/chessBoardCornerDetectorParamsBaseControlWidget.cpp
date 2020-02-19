@@ -9,8 +9,8 @@
 #include "chessBoardCornerDetectorParamsBaseControlWidget.h"
 #include "ui_chessBoardCornerDetectorParamsBaseControlWidget.h"
 #include <memory>
-#include "qSettingsGetter.h"
-#include "qSettingsSetter.h"
+#include "visitors/qSettingsGetter.h"
+#include "visitors/qSettingsSetter.h"
 
 
 ChessBoardCornerDetectorParamsBaseControlWidget::ChessBoardCornerDetectorParamsBaseControlWidget(QWidget *parent, bool _autoInit, QString _rootPath)

@@ -1,6 +1,6 @@
 #ifndef ROTATE_H
 #define ROTATE_H
-#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "buffers/rgb24/rgb24Buffer.h"
 
 namespace corecvs {
 

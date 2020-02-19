@@ -1,9 +1,9 @@
 #ifndef ORIENTEDBOX_H
 #define ORIENTEDBOX_H
 
-#include <core/geometry/ellipticalApproximation.h>
-#include <core/geometry/axisAlignedBox.h>
-#include <core/math/matrix/matrix33.h>
+#include <geometry/ellipticalApproximation.h>
+#include <geometry/axisAlignedBox.h>
+#include <math/matrix/matrix33.h>
 
 namespace corecvs {
 

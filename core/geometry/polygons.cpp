@@ -8,12 +8,12 @@
  */
 
 #include "convexHull.h"
-#include "core/geometry/polygons.h"
-#include "core/math/mathUtils.h"
-#include "core/utils/global.h"
+#include "geometry/polygons.h"
+#include "math/mathUtils.h"
+#include "utils/global.h"
 
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/buffers/rgb24/abstractPainter.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "buffers/rgb24/abstractPainter.h"
 
 namespace corecvs {
 

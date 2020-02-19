@@ -7,8 +7,8 @@
  **/
 
 #if 0
-#include "core/buffers/g12Buffer.h"
-#include "core/xml/generated/cannyParameters.h"
+#include "buffers/g12Buffer.h"
+#include "xml/generated/cannyParameters.h"
 
 using corecvs::G12Buffer;
 

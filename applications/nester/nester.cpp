@@ -1,14 +1,14 @@
 #include <fstream>
 #include <list>
-#include "core/utils/utils.h"
-#include "core/buffers/rgb24/abstractPainter.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "utils/utils.h"
+#include "buffers/rgb24/abstractPainter.h"
+#include "buffers/rgb24/rgb24Buffer.h"
 
-#include "core/fileformats/svgLoader.h"
-#include <core/reflection/commandLineSetter.h>
+#include "fileformats/svgLoader.h"
+#include <reflection/commandLineSetter.h>
 
 #include <algorithm>
-#include <core/buffers/bufferFactory.h>
+#include <buffers/bufferFactory.h>
 #define EPSIL 0.00001
 
 using namespace corecvs;

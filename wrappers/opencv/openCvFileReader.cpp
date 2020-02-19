@@ -1,4 +1,4 @@
-#include "core/utils/utils.h"
+#include "utils/utils.h"
 #include "openCvFileReader.h"
 #include "openCVTools.h"
 
@@ -105,7 +105,6 @@ RGB24Buffer *OpenCVRGB24Loader::load(const std::string & name)
     }
     return OpenCVTools::getRGB24BufferFromCVMat(img);
 }
-
 OpenCVRuntimeTypeBufferLoader::OpenCVRuntimeTypeBufferLoader()
 {}
 

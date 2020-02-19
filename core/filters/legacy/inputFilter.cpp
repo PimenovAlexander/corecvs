@@ -1,6 +1,6 @@
-#include "core/filters/legacy/inputFilter.h"
-#include "core/reflection/serializerVisitor.h"
-#include "core/reflection/deserializerVisitor.h"
+#include "filters/legacy/inputFilter.h"
+#include "reflection/serializerVisitor.h"
+#include "reflection/deserializerVisitor.h"
 
 namespace corecvs
 {

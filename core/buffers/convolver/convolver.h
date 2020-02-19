@@ -9,14 +9,14 @@
  * \date Mar 24, 2010
  * \author alexander
  */
-#include "core/utils/global.h"
-#include "core/math/matrix/matrix.h"
+#include "utils/global.h"
+#include "math/matrix/matrix.h"
 
-#include "core/buffers/abstractBuffer.h"
-#include "core/buffers/abstractKernel.h"
+#include "buffers/abstractBuffer.h"
+#include "buffers/abstractKernel.h"
 
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/buffers/float/dpImage.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "buffers/float/dpImage.h"
 
 namespace corecvs {
 

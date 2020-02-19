@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
-#include "core/buffers/runtimeTypeBuffer.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "buffers/runtimeTypeBuffer.h"
+#include "buffers/rgb24/rgb24Buffer.h"
 
 /**
  * This class is depricated. Use BufferFactory instead

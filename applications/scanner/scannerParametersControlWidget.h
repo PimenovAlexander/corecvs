@@ -5,7 +5,7 @@
 #include <QPushButton>
 #include "generatedParameters/scannerParameters.h"
 #include "ui_scannerParametersControlWidget.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 #include "scannerThread.h"
 
 namespace Ui {

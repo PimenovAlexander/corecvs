@@ -3,7 +3,7 @@
 #include <QWidget>
 
 #include "core/alignment/selectableGeometryFeatures.h"
-#include "advancedImageWidget.h"
+#include "uis/advancedImageWidget.h"
 #include "core/geometry/polygons.h"
 
 namespace Ui {

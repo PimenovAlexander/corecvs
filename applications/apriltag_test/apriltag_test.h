@@ -6,6 +6,6 @@
 #define CORECVS_APRILTAG_TEST_H
 
 #include "opencv2/opencv.hpp"
-#include "wrappers/apriltag_wrapper/apriltagDetector.h"
+#include "apriltagDetector.h"
 
 #endif //CORECVS_APRILTAG_TEST_H

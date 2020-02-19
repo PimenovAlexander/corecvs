@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "buffers/rgb24/rgb24Buffer.h"
 
 namespace corecvs {
 

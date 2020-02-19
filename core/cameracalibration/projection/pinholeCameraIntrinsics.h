@@ -1,10 +1,10 @@
 #ifndef PINHOLECAMERAINTRINSICS_H
 #define PINHOLECAMERAINTRINSICS_H
 
-#include "core/math/matrix/matrix44.h"
-#include "core/cameracalibration/projection/projectionModels.h"
-#include "core/xml/generated/pinholeCameraIntrinsicsBaseParameters.h"
-#include "core/math/mathUtils.h"
+#include "math/matrix/matrix44.h"
+#include "cameracalibration/projection/projectionModels.h"
+#include "xml/generated/pinholeCameraIntrinsicsBaseParameters.h"
+#include "math/mathUtils.h"
 
 namespace corecvs {
 

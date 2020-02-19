@@ -1,4 +1,4 @@
-SET(APRILTAG_INCLUDE_SEARCH_PATHS
+set(APRILTAG_INCLUDE_SEARCH_PATHS
         ${CMAKE_CURRENT_LIST_DIR}/../../siblings/apriltag
 #        /usr/include/
 #        /usr/local/include/
@@ -6,7 +6,7 @@ SET(APRILTAG_INCLUDE_SEARCH_PATHS
         /usr/local/include/apriltag/common/
        )
 
-SET(APRILTAG_LIB_SEARCH_PATHS
+set(APRILTAG_LIB_SEARCH_PATHS
        ${CMAKE_CURRENT_LIST_DIR}/../../siblings/apriltag
        ${CMAKE_CURRENT_LIST_DIR}/../../siblings/apriltag/build
        ${CMAKE_CURRENT_LIST_DIR}/../../siblings/apriltag/build/lib
@@ -20,7 +20,7 @@ SET(APRILTAG_LIB_SEARCH_PATHS
 
 #message(APRILTAG_LIB_SEARCH_PATHS: ${APRILTAG_LIB_SEARCH_PATHS})
 
-FIND_PATH(APRILTAG_INCLUDE_DIR NAMES
+find_path(APRILTAG_INCLUDE_DIR NAMES
         apriltag.h
         apriltag_math.h
         apriltag_pose.h
@@ -63,14 +63,25 @@ FIND_PATH(APRILTAG_INCLUDE_DIR NAMES
         PATHS ${APRILTAG_INCLUDE_SEARCH_PATHS} NO_DEFAULT_PATH
         )
 
-FIND_LIBRARY(APRILTAG_LIB NAMES apriltag PATHS ${APRILTAG_LIB_SEARCH_PATHS} NO_DEFAULT_PATH)
+find_library(APRILTAG_LIB NAMES apriltag PATHS ${APRILTAG_LIB_SEARCH_PATHS} NO_DEFAULT_PATH)
 
-if (APRILTAG_LIB)
+if(APRILTAG_LIB)
   message("Apriltag has been found.")
   MESSAGE(STATUS "Found Apriltag libraries: ${APRILTAG_LIB}")
   MESSAGE(STATUS "Found Apriltag include: ${APRILTAG_INCLUDE_DIR}")
 
-  SET(APRILTAG_FOUND ON)
+  set(APRILTAG_FOUND ON)
 else()
-  SET(APRILTAG_FOUND OFF)
+  set(APRILTAG_FOUND OFF)
 endif()
+
+      if(NOT TARGET APRILTAG::APRILTAG)
+        add_library(APRILTAG::APRILTAG SHARED IMPORTED)
+        set_target_properties(APRILTAG::APRILTAG PROPERTIES
+          INTERFACE_INCLUDE_DIRECTORIES "${APRILTAG_INCLUDE_DIR}")
+        if(EXISTS "${APRILTAG_LIB}")
+          set_target_properties(APRILTAG::APRILTAG PROPERTIES
+            IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+            IMPORTED_LOCATION "${APRILTAG_LIB}")
+        endif()
+      endif()

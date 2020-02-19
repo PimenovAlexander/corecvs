@@ -9,8 +9,8 @@
 #include "cannyParametersControlWidget.h"
 #include "ui_cannyParametersControlWidget.h"
 #include <memory>
-#include "qSettingsGetter.h"
-#include "qSettingsSetter.h"
+#include "visitors/qSettingsGetter.h"
+#include "visitors/qSettingsSetter.h"
 
 
 CannyParametersControlWidget::CannyParametersControlWidget(QWidget *parent, bool _autoInit, QString _rootPath)

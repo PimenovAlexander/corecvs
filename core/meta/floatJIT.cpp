@@ -1,4 +1,4 @@
-#include "core/meta/floatJIT.h"
+#include "meta/floatJIT.h"
 
 namespace corecvs {
 

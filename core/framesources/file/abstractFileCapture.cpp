@@ -2,7 +2,7 @@
 #include <regex>
 
 #include "abstractFileCapture.h"
-#include "core/utils/utils.h"
+#include "utils/utils.h"
 
 AbstractFileCapture::AbstractFileCapture(const std::string &params)
     : mDelay(0)

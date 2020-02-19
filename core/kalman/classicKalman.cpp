@@ -6,7 +6,7 @@
  * \author alexander
  */
 
-#include "core/kalman/classicKalman.h"
+#include "kalman/classicKalman.h"
 namespace corecvs {
 
 ClassicKalman::~ClassicKalman()

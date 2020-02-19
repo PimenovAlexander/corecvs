@@ -11,14 +11,14 @@
  * \author alexander
  */
 
-#include "core/geometry/ellipticalApproximation.h"
-#include "core/alignment/lensDistortionModelParameters.h"
-#include "core/utils/global.h"
-#include "core/math/vector/vector2d.h"
-#include "core/buffers/g12Buffer.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/function/function.h"
-#include "core/math/levenmarq.h"
+#include "geometry/ellipticalApproximation.h"
+#include "alignment/lensDistortionModelParameters.h"
+#include "utils/global.h"
+#include "math/vector/vector2d.h"
+#include "buffers/g12Buffer.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "function/function.h"
+#include "math/levenmarq.h"
 
 namespace corecvs {
 

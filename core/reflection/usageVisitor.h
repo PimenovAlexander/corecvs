@@ -5,8 +5,8 @@
 #include <iostream>
 #include <sstream>
 
-#include "core/reflection/reflection.h"
-#include "core/reflection/dynamicObject.h"
+#include "reflection/reflection.h"
+#include "reflection/dynamicObject.h"
 
 namespace corecvs {
 

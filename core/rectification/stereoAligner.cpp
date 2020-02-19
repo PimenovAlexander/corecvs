@@ -12,15 +12,15 @@
 
 #include <limits>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/math/mathUtils.h"
-#include "core/math/vector/vector2d.h"
-#include "core/math/matrix/matrix.h"
-#include "core/rectification/stereoAligner.h"
-#include "core/rectification/ransac.h"
-#include "core/geometry/line.h"
-#include "core/rectification/essentialMatrix.h"
+#include "math/mathUtils.h"
+#include "math/vector/vector2d.h"
+#include "math/matrix/matrix.h"
+#include "rectification/stereoAligner.h"
+#include "rectification/ransac.h"
+#include "geometry/line.h"
+#include "rectification/essentialMatrix.h"
 namespace corecvs {
 
 #if 0

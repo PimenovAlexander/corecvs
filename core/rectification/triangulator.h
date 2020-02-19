@@ -11,15 +11,15 @@
 
 #include <vector>
 
-#include "core/cammodel/cameraParameters.h"
-#include "core/math/matrix/matrix33.h"
-#include "core/rectification/essentialMatrix.h"
-#include "core/buffers/flow/sixDBuffer.h"
-#include "core/math/vector/vector3d.h"
-#include "core/buffers/rgb24/rgbColor.h"
-#include "core/buffers/flow/depthBuffer.h"
-#include "core/clustering3d/cloud.h"
-#include "core/tbbwrapper/tbbWrapper.h"
+#include "cammodel/cameraParameters.h"
+#include "math/matrix/matrix33.h"
+#include "rectification/essentialMatrix.h"
+#include "buffers/flow/sixDBuffer.h"
+#include "math/vector/vector3d.h"
+#include "buffers/rgb24/rgbColor.h"
+#include "buffers/flow/depthBuffer.h"
+#include "clustering3d/cloud.h"
+#include "tbbwrapper/tbbWrapper.h"
 
 namespace corecvs {
 using std::vector;

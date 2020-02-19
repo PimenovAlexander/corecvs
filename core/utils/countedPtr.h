@@ -1,6 +1,6 @@
 #pragma once
 
-//#include "core/utils/global.h"
+//#include "utils/global.h"
 
 template<typename T>
 class CountedPtr

@@ -6,7 +6,7 @@
  * \author alexander
  */
 
-#include "core/buffers/flow/element6D.h"
+#include "buffers/flow/element6D.h"
 namespace corecvs {
 
 

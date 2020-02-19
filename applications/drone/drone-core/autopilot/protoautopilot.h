@@ -13,8 +13,8 @@
 
 #include "vertexsquare.h"
 #include "copterInputs.h"
-#include "mainObject.h"                               //Vector3dd here, and i dont understand where exactly
-#include "droneObject.h"
+#include "simulation/mainObject.h"                               //Vector3dd here, and i dont understand where exactly
+#include "copter/droneObject.h"
 
 class ProtoAutoPilot
 {

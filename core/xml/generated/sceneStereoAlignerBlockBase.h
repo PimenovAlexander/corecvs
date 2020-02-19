@@ -9,9 +9,9 @@
  * Generated from bufferFilters.xml
  */
 
-#include "core/reflection/reflection.h"
-#include "core/reflection/defaultSetter.h"
-#include "core/reflection/printerVisitor.h"
+#include "reflection/reflection.h"
+#include "reflection/defaultSetter.h"
+#include "reflection/printerVisitor.h"
 
 /*
  *  Embed includes.
@@ -19,7 +19,7 @@
 /*
  *  Additional includes for Composite Types.
  */
-#include "core/xml/generated/stereoAlignParameters.h"
+#include "xml/generated/stereoAlignParameters.h"
 
 // using namespace corecvs;
 

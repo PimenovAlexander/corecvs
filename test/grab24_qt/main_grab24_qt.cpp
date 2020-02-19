@@ -11,9 +11,9 @@
 #include "core/utils/global.h"
 #include "core/fileformats/bmpLoader.h"
 #include "V4L2Capture.h"
-#include "g12Image.h"
-#include "imageCaptureInterfaceQt.h"
-#include "advancedImageWidget.h"
+#include "corestructs/g12Image.h"
+#include "framesources/imageCaptureInterfaceQt.h"
+#include "uis/advancedImageWidget.h"
 
 
 int main (int argc, char **argv)

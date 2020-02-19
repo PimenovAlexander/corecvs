@@ -1,4 +1,4 @@
-#include "core/geometry/raytrace/perlinNoise.h"
+#include "geometry/raytrace/perlinNoise.h"
 
 namespace corecvs {
 

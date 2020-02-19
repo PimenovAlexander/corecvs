@@ -2,7 +2,7 @@
 #define INPUTSELECTORWIDGET_H
 
 #include <QWidget>
-#include <parametersControlWidgetBase.h>
+#include <corestructs/parametersControlWidgetBase.h>
 #include "ui_inputSelectorWidget.h"
 
 class InputSelectorWidget : public QWidget, public SaveableWidget

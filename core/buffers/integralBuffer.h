@@ -17,18 +17,18 @@
 #ifdef WITH_SSE
 #include <emmintrin.h>
 #endif
-#include "core/math/sse/sseWrapper.h"
-#include "core/math/neon/neonWrapper.h"
+#include "math/sse/sseWrapper.h"
+#include "math/neon/neonWrapper.h"
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/buffers/abstractBuffer.h"
-#include "core/buffers/g12Buffer.h"
-#include "core/buffers/g8Buffer.h"
+#include "buffers/abstractBuffer.h"
+#include "buffers/g12Buffer.h"
+#include "buffers/g8Buffer.h"
 
-#include "core/tbbwrapper/tbbWrapper.h"
+#include "tbbwrapper/tbbWrapper.h"
 
-#include "core/geometry/rectangle.h"
+#include "geometry/rectangle.h"
 
 namespace corecvs {
 

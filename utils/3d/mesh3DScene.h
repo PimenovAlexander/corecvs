@@ -1,6 +1,6 @@
 #pragma once
 /**
- * \file mesh3D.h
+ * \file mesh/mesh3d.h
  *
  * \date Nov 13, 2012
  **/
@@ -10,9 +10,9 @@
 #include "core/utils/global.h"
 
 #include "scene3D.h"
-#include "cloudViewDialog.h"
-#include "core/fileformats/plyLoader.h"
-#include "core/xml/generated/draw3dParameters.h"
+#include "uis/cloudview/cloudViewDialog.h"
+#include "fileformats/plyLoader.h"
+#include "xml/generated/draw3dParameters.h"
 #include "draw3dParametersControlWidget.h"
 #include "draw3dCameraParametersControlWidget.h"
 

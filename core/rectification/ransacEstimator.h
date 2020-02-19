@@ -10,10 +10,10 @@
 
 #include <vector>
 
-#include "core/math/matrix/matrix33.h"
-#include "core/buffers/correspondenceList.h"
-#include "core/rectification/ransac.h"
-#include "core/camerafixture/fixtureScene.h"
+#include "math/matrix/matrix33.h"
+#include "buffers/correspondenceList.h"
+#include "rectification/ransac.h"
+#include "camerafixture/fixtureScene.h"
 
 namespace corecvs {
 

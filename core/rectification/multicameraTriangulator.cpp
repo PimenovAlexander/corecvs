@@ -1,7 +1,7 @@
-#include "core/rectification/multicameraTriangulator.h"
-#include "core/geometry/twoViewOptimalTriangulation.h"
-#include "core/math/levenmarq.h"
-#include "core/geometry/ellipticalApproximation.h"
+#include "rectification/multicameraTriangulator.h"
+#include "geometry/twoViewOptimalTriangulation.h"
+#include "math/levenmarq.h"
+#include "geometry/ellipticalApproximation.h"
 
 #include <iostream>
 

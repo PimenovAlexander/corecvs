@@ -6,8 +6,8 @@
  * \date Jan 17, 2013
  */
 
-#include "core/filters/legacy/blocks/filterBlock.h"
-#include "core/xml/generated/binarizeParameters.h"
+#include "filters/legacy/blocks/filterBlock.h"
+#include "xml/generated/binarizeParameters.h"
 
 namespace corecvs
 {

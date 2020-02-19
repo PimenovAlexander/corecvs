@@ -1235,7 +1235,7 @@
   <customwidget>
    <class>AngleEditBox</class>
    <extends>QWidget</extends>
-   <header>angleEditBox.h</header>
+   <header>widgets/angleEditBox.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

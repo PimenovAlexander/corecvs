@@ -1,12 +1,12 @@
 #include <QFileDialog>
-#include "pointListEditImageWidget.h"
+#include "distortioncorrector/pointListEditImageWidget.h"
 #include "imageViewMainWindow.h"
 #include "ui_imageViewMainWindow.h"
-#include "core/buffers/bufferFactory.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/buffers/converters/debayer.h"
-#include "core/fileformats/ppmLoader.h"
-#include "utils/corestructs/g12Image.h"
+#include "buffers/bufferFactory.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "buffers/converters/debayer.h"
+#include "fileformats/ppmLoader.h"
+#include "corestructs/g12Image.h"
 
 ImageViewMainWindow::ImageViewMainWindow(QWidget *parent) :
     QWidget(parent),

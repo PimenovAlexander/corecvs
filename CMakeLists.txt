@@ -1,88 +1,111 @@
-cmake_minimum_required (VERSION 3.10)
-project (CoreCVS)
+cmake_minimum_required (VERSION 3.11)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set (CoreCVS_VERSION_MAJOR 1)
-set (CoreCVS_VERSION_MINOR 0)
+project(CoreCVS)
 
-set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/Modules/")
+set(CoreCVS_VERSION_MAJOR 1)
+set(CoreCVS_VERSION_MINOR 0)
+
+# Debug/Release switch 
+
+#set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -g")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -g")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -fPIC")
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/Modules/")
+
+include(cmake/CMakeCpuOptions.cmake)
+include(cmake/functions.cmake)
+include(cmake/utility.cmake)
+
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
 # Overall dependances
 option(USE_TBB "Should compile with TBB" YES)
-IF ( USE_TBB )
-    MESSAGE( STATUS "Including TBB on CORECVS build" )
+if(USE_TBB)
+    message(STATUS "Including TBB on CORECVS build")
     find_package(TBB REQUIRED)
     if (TBB_LIBRARY)
         add_definitions(-DWITH_TBB)
     endif()
-ENDIF ()
-
+endif()
 
 #option(USE_TBB "Should compile with FILESYSTEM" YES)
-#IF ( USE_TBB )
-#    MESSAGE( STATUS "Including FILESYSTEM on CORECVS build" )
+#if (USE_TBB)
+#    message(STATUS "Including FILESYSTEM on CORECVS build")
 #    find_package(Filesystem)
 #    if (FILESYSTEM_LIBRARY)
 #        add_definitions(-DWITH_FILESYSTEM)
 #    endif()
-#ENDIF ()
+#endif()
 
 option(USE_OPENBLAS "Should compile with OpenBlas" YES)
-IF ( USE_OPENBLAS )
-    MESSAGE( STATUS "Including OpenBlas and Lapacke on CORECVS build" )
-    find_package( OpenBlas )
-    find_package( Lapacke )
+if(USE_OPENBLAS)
+    message(STATUS "Including OpenBlas and Lapacke on CORECVS build")
+    find_package(OpenBlas)
+    find_package(Lapacke)
     if (OpenBLAS_LIB AND Lapacke_LIB)
         add_definitions(-DWITH_BLAS)
     endif()
-ENDIF ()
+endif()
 
 option(USE_OPENCV "Should compile with OpenCV" YES)
-IF ( USE_OPENCV )
-    MESSAGE( STATUS "Including OpenCV on CORECVS build" )
-    find_package( OpenCV )
-    if (OpenCV_LIBS)
+if(USE_OPENCV)
+    message(STATUS "Including OpenCV on CORECVS build")
+    find_package(OpenCV)
+    if(OpenCV_LIBS)
         add_definitions(-DWITH_OPENCV)
     else()
         message("You requested OPENCV in the build, but none was found.")
     endif()
-ENDIF ()
+endif()
 
 option(USE_LIBPNG "Should compile with LibPNG" YES)
-IF ( USE_LIBPNG )
-    MESSAGE( STATUS "Including LibPNG wherever possible" )
-    find_package( Png )
-ENDIF ()
+if(USE_LIBPNG)
+    message(STATUS "Including LibPNG wherever possible")
+    find_package(Png)
+endif()
 
 option(USE_LIBJPEG "Should compile with LibJPEG" YES)
-IF ( USE_LIBJPEG )
-    MESSAGE( STATUS "Including LibJpeg wherever possible" )
-    find_package( Jpeg )
-ENDIF ()
+if(USE_LIBJPEG)
+    message(STATUS "Including LibJpeg wherever possible")
+    find_package(Jpeg)
+endif()
 
 option(USE_EIGEN "Should compile with Eigen solver" YES)
-IF ( USE_EIGEN )
-    MESSAGE( STATUS "Including Eigen solver wherever possible" )
-    find_package( Eigen )
-ENDIF ()
+if(USE_EIGEN)
+    message(STATUS "Including Eigen solver wherever possible")
+    find_package(Eigen)
+endif()
 
 option(USE_CERES "Should compile with Ceres solver" YES)
-IF ( USE_CERES )
-    MESSAGE( STATUS "Including Ceres solver wherever possible" )
-    find_package( Ceres )
+if(USE_CERES)
+    message(STATUS "Including Ceres solver wherever possible")
+    find_package(Ceres)
+endif()
+
+option(USE_LIBFFT "Should compile with libfftw" YES)
+IF ( USE_LIBFFT )
+    MESSAGE( STATUS "Including libfftw wherever possible" )
+    find_package( FFTW )
 ENDIF ()
 
 option(USE_AVCODEC "Should compile with AVCODEC" YES)
-IF ( USE_AVCODEC )
-    MESSAGE( STATUS "Including AVCODEC wherever possible" )
-    find_package( AVCodec )    
-ELSE()
-    MESSAGE( STATUS "Including AVCODEC requested, but libaray not found" )
-ENDIF ()
-
+if(USE_AVCODEC)
+    message(STATUS "Including AVCODEC wherever possible")
+    find_package(AVCodec)
+else()
+    message(STATUS "Including AVCODEC requested, but libaray not found")
+endif()
 
 option(USE_APRILTAG "Should compile with APRILTAG" YES)
-IF ( USE_APRILTAG )
-    MESSAGE(STATUS "Including Apriltag wherever possible")
+if(USE_APRILTAG)
+    message(STATUS "Including Apriltag wherever possible")
     find_package(Apriltag)
     find_package(Threads)
     if (APRILTAG_FOUND)
@@ -91,26 +114,10 @@ IF ( USE_APRILTAG )
         message("You requested USE_APRILTAG in the build, but none was found.")
     endif()
 else()
-    MESSAGE(STATUS "Apriltag switched off")
+    message(STATUS "Apriltag switched off")
 endif()
 
-###
-#
-# Debug/Release switch 
-
-#set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -g")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -g")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -fPIC")
-
-
-include(cmake/CMakeCpuOptions.cmake)
-
-
-###
-#
 # Actual subprojects
-#
 
 include(cmake/googletest.cmake)
 fetch_googletest(
@@ -118,20 +125,14 @@ fetch_googletest(
     ${PROJECT_BINARY_DIR}/googletest
     )
 
-file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
-
 add_subdirectory(core)
 add_subdirectory(utils)
 
 add_subdirectory(test)
 add_subdirectory(applications)
 add_subdirectory(tools)
-
+add_subdirectory(wrappers)
 
 enable_testing()
 add_subdirectory(test-core)
 add_subdirectory(test-core/-perf)
-
-
-
-

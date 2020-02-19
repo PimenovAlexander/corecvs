@@ -6,9 +6,9 @@
  * \author alexander
  */
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/stats/calculationStats.h"
+#include "stats/calculationStats.h"
 
 namespace corecvs {
 

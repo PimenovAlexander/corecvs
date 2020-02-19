@@ -6,7 +6,7 @@
  * \author alexander
  */
 
-#include "core/framesources/frames.h"
+#include "framesources/frames.h"
 
 Frames::Frames()
 {

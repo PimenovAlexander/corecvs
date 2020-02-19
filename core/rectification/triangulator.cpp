@@ -6,7 +6,7 @@
  * \author alexander
  */
 
-#include "core/rectification/triangulator.h"
+#include "rectification/triangulator.h"
 
 namespace corecvs {
 

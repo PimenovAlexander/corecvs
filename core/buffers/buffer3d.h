@@ -1,14 +1,14 @@
 #ifndef BUFFER3D_H
 #define BUFFER3D_H
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/math/vector/vector3d.h"
-#include "core/geometry/mesh/mesh3d.h"
-#include "core/rectification/triangulator.h"
-#include "core/buffers/abstractContiniousBuffer.h"
+#include "math/vector/vector3d.h"
+#include "geometry/mesh/mesh3d.h"
+#include "rectification/triangulator.h"
+#include "buffers/abstractContiniousBuffer.h"
 #include "flow/punchedBufferOperations.h"
-#include "core/clustering3d/cloud.h"
+#include "clustering3d/cloud.h"
 
 namespace corecvs {
 

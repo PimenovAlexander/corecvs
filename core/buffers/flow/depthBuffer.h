@@ -6,10 +6,10 @@
  **/
 #include <limits>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/buffers/abstractContiniousBuffer.h"
-#include "core/buffers/flow/punchedBufferOperations.h"
+#include "buffers/abstractContiniousBuffer.h"
+#include "buffers/flow/punchedBufferOperations.h"
 
 namespace corecvs
 {

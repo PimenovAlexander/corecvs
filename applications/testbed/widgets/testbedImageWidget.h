@@ -6,7 +6,7 @@
  * \date Dec 2, 2013
  **/
 
-#include "advancedImageWidget.h"
+#include "uis/advancedImageWidget.h"
 
 class TestbedImageWidget: public AdvancedImageWidget
 {

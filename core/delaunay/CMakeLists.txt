@@ -1,6 +1,9 @@
-target_sources(corecvs
-    PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}/delaunay.h
-    PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/delaunay.cpp
-)
+set(DELAUNAY_HEADER_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/delaunay.h
+	PARENT_SCOPE
+    )
+
+set(DELAUNAY_SOURCE_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/delaunay.cpp
+	PARENT_SCOPE
+    )

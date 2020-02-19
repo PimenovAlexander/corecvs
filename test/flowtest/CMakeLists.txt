@@ -1,25 +1,43 @@
-project (Flowtest)
+cmake_minimum_required(VERSION 3.11)
+set(MODULE_NAME test)
+init_project(PROJECT_NAME flowtest)
 
-set (NAME flowtest )
-
-set (SRC_FILES
+set(SOURCE_FILE
     main_flowtest.cpp
-)
+    )
+
+set(SOURCES
+    ${SOURCE_FILE}
+    )
+
+assign_source_group(${SOURCES})
+
+add_executable(${PROJECT_NAME}
+    ${SOURCES}
+    )
+
+set(ADDITIONAL_LIBS)
 
 if (OpenCV_LIBS)
-include(../../wrappers/opencv/sourcelist.cmake)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        OPENCVwrapper
+        )
 endif()
 
-add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+    stdc++fs
+    corecvs
+    ${ADDITIONAL_LIBS}
+    )
 
-add_custom_command(TARGET ${NAME} POST_BUILD
-        COMMAND cp ${PROJECT_BINARY_DIR}/${NAME}  ${CMAKE_BINARY_DIR}/bin/${NAME}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Copying ${NAME} to binary directory"
-        )
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+    FOLDER "${MODULE_NAME}"
+    )
 
-target_link_libraries(${NAME} stdc++fs -pthread corecvs ${LIBS})
-
-
-
-
+copy_directory(${PROJECT_NAME} 
+    ${PROJECT_BINARY_DIR}/${MODULE_NAME}/${PROJECT_NAME}
+    ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}
+    )

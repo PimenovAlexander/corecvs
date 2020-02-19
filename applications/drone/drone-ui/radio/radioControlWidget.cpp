@@ -1,4 +1,4 @@
-#include "multimoduleController.h"
+#include "radio/multimoduleController.h"
 #include "radioControlWidget.h"
 #include "ui_radioControlWidget.h"
 

@@ -432,7 +432,7 @@
   <customwidget>
    <class>AdvancedImageWidget</class>
    <extends>QWidget</extends>
-   <header location="global">advancedImageWidget.h</header>
+   <header location="global">uis/advancedImageWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

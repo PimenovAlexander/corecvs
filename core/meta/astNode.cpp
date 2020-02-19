@@ -3,7 +3,7 @@
 
 #include <sstream>
 
-#include "core/meta/astNode.h"
+#include "meta/astNode.h"
 
 namespace corecvs {
 

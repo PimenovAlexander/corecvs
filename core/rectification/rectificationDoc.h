@@ -1,4 +1,4 @@
-#include "core/rectification/stereoAligner.h"
+#include "rectification/stereoAligner.h"
 /** \page pRectification Rectification documentation page
 
   \section Introduction

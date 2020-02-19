@@ -10,11 +10,11 @@
  */
 #include <iostream>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/buffers/abstractBuffer.h"
-#include "core/buffers/abstractContiniousBuffer.h"
-#include "core/buffers/fixeddisp/fixedPointBlMapper.h"
+#include "buffers/abstractBuffer.h"
+#include "buffers/abstractContiniousBuffer.h"
+#include "buffers/fixeddisp/fixedPointBlMapper.h"
 
 namespace corecvs {
 

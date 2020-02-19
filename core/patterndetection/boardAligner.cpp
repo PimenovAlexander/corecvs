@@ -1,8 +1,8 @@
-#include "core/patterndetection/boardAligner.h"
+#include "patterndetection/boardAligner.h"
 
-#include "core/buffers/rgb24/abstractPainter.h"
-#include "core/math/matrix/homographyReconstructor.h"
-#include "core/geometry/renderer/simpleRenderer.h"
+#include "buffers/rgb24/abstractPainter.h"
+#include "math/matrix/homographyReconstructor.h"
+#include "geometry/renderer/simpleRenderer.h"
 
 using corecvs::RGBColor;
 using corecvs::Matrix33;

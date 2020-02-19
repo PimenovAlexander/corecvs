@@ -7,8 +7,8 @@
  * \author alexander
  */
 
-#include "core/automotive/simulation/testSceneSimulator.h"
-#include "core/automotive/FCostFunction.h"
+#include "automotive/simulation/testSceneSimulator.h"
+#include "automotive/FCostFunction.h"
 namespace corecvs {
 
 TestSceneSimulator::TestSceneSimulator()

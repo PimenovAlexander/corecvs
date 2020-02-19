@@ -417,13 +417,13 @@
   <customwidget>
    <class>LensDistortionModelParametersControlWidget</class>
    <extends>QWidget</extends>
-   <header>lensDistortionModelParametersControlWidget.h</header>
+   <header>distortioncorrector/lensDistortionModelParametersControlWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>Affine3dControlWidget</class>
    <extends>QWidget</extends>
-   <header location="global">affine3dControlWidget.h</header>
+   <header location="global">corestructs/cameraModel/affine3dControlWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

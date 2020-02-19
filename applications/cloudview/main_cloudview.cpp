@@ -8,21 +8,21 @@
 
 #include <string>
 #include <iostream>
-#include <sceneShaded.h>
-#include <billboardCaption3DScene.h>
+#include <3d/sceneShaded.h>
+#include <3d/billboardCaption3DScene.h>
 
 #include <QtGui/QtGui>
 #include <QApplication>
-#include <core/fileformats/xyzListLoader.h>
+#include <fileformats/xyzListLoader.h>
 
-#include "core/filesystem/folderScanner.h"
-#include "core/fileformats/objLoader.h"
-#include "core/utils/global.h"
-#include "core/utils/utils.h"
-#include "cloudViewDialog.h"
-#include "mesh3DScene.h"
-#include "core/fileformats/meshLoader.h"
-#include "qtFileLoader.h"
+#include "filesystem/folderScanner.h"
+#include "fileformats/objLoader.h"
+#include "utils/global.h"
+#include "utils/utils.h"
+#include "uis/cloudview/cloudViewDialog.h"
+#include "3d/mesh3DScene.h"
+#include "fileformats/meshLoader.h"
+#include "fileformats/qtFileLoader.h"
 
 
 int main(int argc, char *argv[])

@@ -9,8 +9,8 @@
 #include "thickeningParametersControlWidget.h"
 #include "ui_thickeningParametersControlWidget.h"
 #include <memory>
-#include "qSettingsGetter.h"
-#include "qSettingsSetter.h"
+#include "visitors/qSettingsGetter.h"
+#include "visitors/qSettingsSetter.h"
 
 
 ThickeningParametersControlWidget::ThickeningParametersControlWidget(QWidget *parent, bool _autoInit, QString _rootPath)

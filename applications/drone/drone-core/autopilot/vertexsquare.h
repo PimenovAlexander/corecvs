@@ -1,7 +1,7 @@
 #include "core/utils/global.h"
 #include "iostream"
 
-#include "mainObject.h"
+#include "simulation/mainObject.h"
 
 #ifndef VERTEXSQUARE_H
 #define VERTEXSQUARE_H

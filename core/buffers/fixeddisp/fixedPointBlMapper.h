@@ -11,7 +11,7 @@
  * \ingroup cppcorefiles
  */
 
-#include "core/buffers/fixeddisp/fixedPointRemapper.h"
+#include "buffers/fixeddisp/fixedPointRemapper.h"
 
 namespace corecvs {
 

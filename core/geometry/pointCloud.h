@@ -3,11 +3,10 @@
 
 #include <string>
 #include <vector>
-#include "core/math/vector/vector3d.h"
-#include "core/geometry/mesh/mesh3d.h"
-
-#include "core/geometry/kdtree.h"
-#include "core/geometry/raytrace/bspTree.h"
+#include "math/vector/vector3d.h"
+#include "geometry/mesh/mesh3d.h"
+#include "geometry/kdtree.h"
+#include "geometry/raytrace/bspTree.h"
 
 namespace corecvs {
 

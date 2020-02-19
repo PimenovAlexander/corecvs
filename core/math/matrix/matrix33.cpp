@@ -7,8 +7,8 @@
  * \date Jan 27, 2007
  * \author Alexander Pimenov
  **/
-#include "core/math/matrix/matrix33.h"
-#include "core/math/matrix/matrix.h"
+#include "math/matrix/matrix33.h"
+#include "math/matrix/matrix.h"
 
 namespace corecvs {
 

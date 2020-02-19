@@ -2,12 +2,12 @@
 
 #include <QWidget>
 
-#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "buffers/rgb24/rgb24Buffer.h"
 #include "distortionParameters.h"
-#include "core/math/vector/vector3d.h"
-#include "core/buffers/displacementBuffer.h"
-#include "core/segmentation/segmentator.h"
-#include "observationListModel.h"
+#include "math/vector/vector3d.h"
+#include "buffers/displacementBuffer.h"
+#include "segmentation/segmentator.h"
+#include "widgets/observationListModel.h"
 
 namespace Ui {
 class DistortionWidget;

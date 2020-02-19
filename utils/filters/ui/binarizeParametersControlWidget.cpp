@@ -9,8 +9,8 @@
 #include "binarizeParametersControlWidget.h"
 #include "ui_binarizeParametersControlWidget.h"
 #include <memory>
-#include "qSettingsGetter.h"
-#include "qSettingsSetter.h"
+#include "visitors/qSettingsGetter.h"
+#include "visitors/qSettingsSetter.h"
 
 
 BinarizeParametersControlWidget::BinarizeParametersControlWidget(QWidget *parent, bool _autoInit, QString _rootPath)

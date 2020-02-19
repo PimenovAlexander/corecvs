@@ -6,7 +6,7 @@
  * \author alexander
  */
 
-#include "core/math/gradientDescent.h"
+#include "math/gradientDescent.h"
 namespace corecvs {
 
 using std::endl;

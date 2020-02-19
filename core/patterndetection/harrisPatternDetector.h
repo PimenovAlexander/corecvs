@@ -1,9 +1,9 @@
 #ifndef HARRISPATTERNDETECTOR_H
 #define HARRISPATTERNDETECTOR_H
 
-#include "core/patterndetection/patternDetector.h"
+#include "patterndetection/patternDetector.h"
 
-#include "core/xml/generated/harrisDetectionParameters.h"
+#include "xml/generated/harrisDetectionParameters.h"
 
 namespace corecvs {
 

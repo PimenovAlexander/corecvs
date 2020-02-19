@@ -1,6 +1,6 @@
 #pragma once
-#include "core/math/vector/vector2d.h"
-#include "core/math/matrix/matrix.h"
+#include "math/vector/vector2d.h"
+#include "math/matrix/matrix.h"
 #include <vector>
 namespace corecvs {
 

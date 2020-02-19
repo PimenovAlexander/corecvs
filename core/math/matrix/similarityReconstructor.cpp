@@ -1,6 +1,6 @@
-#include "core/math/matrix/similarityReconstructor.h"
-#include "core/math/levenmarq.h"
-#include "core/cameracalibration/calibrationLocation.h"
+#include "math/matrix/similarityReconstructor.h"
+#include "math/levenmarq.h"
+#include "cameracalibration/calibrationLocation.h"
 
 namespace corecvs {
 

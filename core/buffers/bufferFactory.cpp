@@ -6,14 +6,14 @@
  * \date Jun 22, 2010
  * \author alexander
  */
-#include "core/buffers/bufferFactory.h"
-#include "core/fileformats/ppmLoader.h"
-#include "core/fileformats/rawLoader.h"
-#include "core/fileformats/bmpLoader.h"
-#include "core/fileformats/tgaLoader.h"
-#include "core/fileformats/floLoader.h"
-#include "core/fileformats/svgLoader.h"
-#include "core/fileformats/dxf_support/dxfLoader.h"
+#include "buffers/bufferFactory.h"
+#include "fileformats/ppmLoader.h"
+#include "fileformats/rawLoader.h"
+#include "fileformats/bmpLoader.h"
+#include "fileformats/tgaLoader.h"
+#include "fileformats/floLoader.h"
+#include "fileformats/svgLoader.h"
+#include "fileformats/dxf_support/dxfLoader.h"
 
 //#if __cplusplus > 199711L
 #if defined(WIN32) && (_MSC_VER < 1900) // we need a threadsafety singleton initialization described in paragraph 6.7.4 of the C++11 standard, msvc2013 doesn't support it fully... Don't care about gcc-versions

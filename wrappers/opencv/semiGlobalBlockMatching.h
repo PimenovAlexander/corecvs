@@ -3,9 +3,9 @@
 
 #include "opencv2/calib3d/calib3d.hpp"
 
-#include "core/buffers/g12Buffer.h"
-#include "core/buffers/flow/flowBuffer.h"
-#include "core/math/vector/vector2d.h"
+#include "buffers/g12Buffer.h"
+#include "buffers/flow/flowBuffer.h"
+#include "math/vector/vector2d.h"
 
 #include "generated/openCVSGMParameters.h"
 #include "generated/openCVBMParameters.h"

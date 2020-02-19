@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "core/framesources/imageCaptureInterface.h"
+#include "framesources/imageCaptureInterface.h"
 
 class ImageFileCaptureInterface : public virtual ImageCaptureInterface
 {

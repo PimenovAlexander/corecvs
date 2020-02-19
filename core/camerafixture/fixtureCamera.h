@@ -4,16 +4,16 @@
 #include <stdint.h>
 #include <unordered_map>
 
-#include "core/utils/atomicOps.h"
-#include "core/cameracalibration/calibrationLocation.h"  // LocationData
-#include "core/alignment/lensDistortionModelParameters.h"
-#include "core/geometry/line.h"
-#include "core/geometry/convexPolyhedron.h"
-#include "core/alignment/pointObservation.h"
-#include "core/cameracalibration/cameraModel.h"
-#include "core/camerafixture/fixtureScenePart.h"
+#include "utils/atomicOps.h"
+#include "cameracalibration/calibrationLocation.h"  // LocationData
+#include "alignment/lensDistortionModelParameters.h"
+#include "geometry/line.h"
+#include "geometry/convexPolyhedron.h"
+#include "alignment/pointObservation.h"
+#include "cameracalibration/cameraModel.h"
+#include "camerafixture/fixtureScenePart.h"
 
-#include "core/camerafixture/cameraPrototype.h"  // pls see comment below
+#include "camerafixture/cameraPrototype.h"  // pls see comment below
 
 namespace corecvs {
 

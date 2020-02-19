@@ -1,4 +1,4 @@
-#include "core/iterative/pcg.h"
+#include "iterative/pcg.h"
 
 namespace corecvs
 {

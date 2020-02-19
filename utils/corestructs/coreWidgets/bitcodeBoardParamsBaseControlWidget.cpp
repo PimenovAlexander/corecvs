@@ -9,8 +9,8 @@
 #include "bitcodeBoardParamsBaseControlWidget.h"
 #include "ui_bitcodeBoardParamsBaseControlWidget.h"
 #include <memory>
-#include "qSettingsGetter.h"
-#include "qSettingsSetter.h"
+#include "visitors/qSettingsGetter.h"
+#include "visitors/qSettingsSetter.h"
 
 
 BitcodeBoardParamsBaseControlWidget::BitcodeBoardParamsBaseControlWidget(QWidget *parent, bool _autoInit, QString _rootPath)

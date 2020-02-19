@@ -14,7 +14,7 @@
 #include "core/utils/global.h"
 
 #include "core/reflection/reflection.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 class FilterParametersControlWidgetBase : public QWidget
 {

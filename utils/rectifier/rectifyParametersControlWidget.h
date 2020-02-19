@@ -8,7 +8,7 @@
 #include "core/math/vector/vector3d.h"
 #include "core/math/mathUtils.h"
 #include "rectifyParameters.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 #include "qtHelper.h"
 
 using namespace corecvs;

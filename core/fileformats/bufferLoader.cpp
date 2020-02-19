@@ -7,7 +7,7 @@
  * \author alexander
  */
 
-#include "core/fileformats/bufferLoader.h"
+#include "fileformats/bufferLoader.h"
 namespace corecvs {
 
 

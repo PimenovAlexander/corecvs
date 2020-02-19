@@ -1,44 +1,52 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
+cmake_minimum_required(VERSION 3.11)
+set(MODULE_NAME applications/drone)
+init_project(PROJECT_NAME drone-utils)
 
-set (NAME drone-utils)
+set(SOURCE_FILE
+    main_drone_utils.cpp
+    )
 
-project (${NAME})
+set(SOURCES
+    ${SOURCE_FILE}
+    )
 
-add_executable(${NAME}  main_drone_utils.cpp)
+set(JSON_FILE
+    test_world.json
+    )
 
+set(RESOURCES
+    ${JSON_FILE}
+    )
 
-# Temporary fixes 
-SET(AUTOGEN_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/${NAME}_autogen/include")
-target_include_directories(${NAME} PUBLIC ${AUTOGEN_BUILD_DIR} )
-target_include_directories(${NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR} )
+set_source_files_properties(${RESOURCES} 
+    PROPERTIES
+    EXTERNAL_OBJECT TRUE 
+    HEADER_FILE_ONLY TRUE
+    )
 
-message("AUTOGEN_BUILD_DIR bin directory <${AUTOGEN_BUILD_DIR}>")
+assign_source_group(${SOURCES} ${RESOURCES})
 
-target_include_directories(${NAME} PUBLIC ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} ${drone-core_SOURCE_DIR} .)
+add_executable(${PROJECT_NAME}
+    ${SOURCES}
+    ${RESOURCES}
+    )
 
-target_link_libraries(${NAME} drone-core cvs_utils corecvs)
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+    corecvs
+    corecvs_utils
+    drone-core
+    ${OpenCV_LIBS}
+    )
 
-if (OpenCV_LIBS)
-    target_link_libraries(${NAME} ${OpenCV_LIBS})
-endif()
-
-
-# Additional stuff mostly for IDE only
-
-file(GLOB CUR_ADD_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/*.json)
-set(ADD_SRC_FILES ${ADD_SRC_FILES} ${CUR_ADD_SRC_FILES})
-
-target_sources(${NAME} PRIVATE ${ADD_SRC_FILES})
 set_source_files_properties(${ADD_SRC_FILES} PROPERTIES EXTERNAL_OBJECT true HEADER_FILE_ONLY TRUE)
+
+copy_directory(${PROJECT_NAME} 
+    ${PROJECT_BINARY_DIR}/${MODULE_NAME}/${PROJECT_NAME}
+    ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}
+    )
 
 # Adding raw resoures
 #add_custom_command(OUTPUT resource.o
 #      COMMAND cd ${CMAKE_CURRENT_SOURCE_DIR}/files && ld -r -b binary -o ${CMAKE_CURRENT_BINARY_DIR}/resource.o test_world.json
 #      COMMAND objcopy --rename-section .data=.rodata,alloc,load,readonly,data,contents ${CMAKE_CURRENT_BINARY_DIR}/resource.o ${CMAKE_CURRENT_BINARY_DIR}/resource.o)
-
-# Copy result
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND cp ${PROJECT_BINARY_DIR}/${PROJECT_NAME}  ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Copying ${PROJECT_NAME} to binary directory"
-        )

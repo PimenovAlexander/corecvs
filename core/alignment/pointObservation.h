@@ -1,8 +1,8 @@
 #ifndef POINTOBSERVATION_H
 #define POINTOBSERVATION_H
 
-#include "core/math/vector/vector2d.h"
-#include "core/math/vector/vector3d.h"
+#include "math/vector/vector2d.h"
+#include "math/vector/vector3d.h"
 
 namespace corecvs {
 

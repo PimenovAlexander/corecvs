@@ -2,7 +2,7 @@
 #include <QWidget>
 #include "generated/egomotionParameters.h"
 #include "ui_egomotionParametersControlWidget.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 
 namespace Ui {

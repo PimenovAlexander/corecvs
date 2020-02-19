@@ -6,7 +6,7 @@
  * \author alexander
  */
 
-#include "core/serializer/serializable.h"
+#include "serializer/serializable.h"
 namespace corecvs {
 
 template<>

@@ -2,7 +2,7 @@
 #include <QWidget>
 #include "core/xml/generated/checkerboardDetectionParameters.h"
 #include "ui_checkerboardDetectionParametersControlWidget.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 
 namespace Ui {

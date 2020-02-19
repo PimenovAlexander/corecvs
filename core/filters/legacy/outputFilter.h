@@ -1,9 +1,9 @@
 #ifndef OUTPUTFILTERBLOCK_H
 #define OUTPUTFILTERBLOCK_H
-#include "core/filters/legacy/blocks/filterBlock.h"
-#include "core/buffers/g12Buffer.h"
-#include "core/xml/generated/outputFilterParameters.h"
-#include "core/filters/legacy/filtersCollection.h"
+#include "filters/legacy/blocks/filterBlock.h"
+#include "buffers/g12Buffer.h"
+#include "xml/generated/outputFilterParameters.h"
+#include "filters/legacy/filtersCollection.h"
 
 namespace corecvs
 {

@@ -1,8 +1,8 @@
 #pragma once
 #include <QWidget>
-#include "core/xml/generated/draw3dParameters.h"
+#include "generated/draw3dCameraParameters.h"
 #include "ui_draw3dParametersControlWidget.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 
 namespace Ui {

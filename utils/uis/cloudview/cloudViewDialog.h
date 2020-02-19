@@ -9,21 +9,21 @@
 #include "core/utils/global.h"
 
 #include "ui_cloudViewDialog.h"
-#include "core/buffers/g12Buffer.h"
-#include "core/buffers/bufferFactory.h"
+#include "buffers/g12Buffer.h"
+#include "buffers/bufferFactory.h"
 #include "viAreaWidget.h"
-#include "core/rectification/triangulator.h"
-#include "transform3DSelector.h"
+#include "rectification/triangulator.h"
+#include "widgets/transform3DSelector.h"
 #include "3d/scene3D.h"
 #include "3d/draw3dParametersControlWidget.h"
 #include "3d/coordinateFrame.h"
-#include "core/framesources/frames.h"
-#include "coordinateFrame.h"
+#include "framesources/frames.h"
+#include "3d/coordinateFrame.h"
 #include "treeSceneController.h"
-#include "core/cameracalibration/cameraModel.h"
+#include "cameracalibration/cameraModel.h"
 
-#include "textLabelWidget.h"
-#include "core/stats/calculationStats.h"
+#include "uis/textLabelWidget.h"
+#include "stats/calculationStats.h"
 
 
 using namespace corecvs;

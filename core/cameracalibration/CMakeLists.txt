@@ -1,5 +1,4 @@
-target_sources(corecvs
-    PUBLIC
+set(CAMERACALIBRATION_HEADER_FILES
         ${CMAKE_CURRENT_LIST_DIR}/flatPatternCalibrator.h    
         ${CMAKE_CURRENT_LIST_DIR}/calibrationLocation.h             
         ${CMAKE_CURRENT_LIST_DIR}/cameraConstraints.h        
@@ -13,9 +12,10 @@ target_sources(corecvs
         ${CMAKE_CURRENT_LIST_DIR}/projection/projectionFactory.h
         ${CMAKE_CURRENT_LIST_DIR}/ilFormat.h
         ${CMAKE_CURRENT_LIST_DIR}/projection/omnidirectionalProjection.h
+		PARENT_SCOPE
+        )
 
-
-    PRIVATE
+set(CAMERACALIBRATION_SOURCE_FILES
         ${CMAKE_CURRENT_LIST_DIR}/calibrationLocation.cpp      
         ${CMAKE_CURRENT_LIST_DIR}/flatPatternCalibrator.cpp    
         ${CMAKE_CURRENT_LIST_DIR}/cameraConstraints.cpp        
@@ -29,5 +29,5 @@ target_sources(corecvs
         ${CMAKE_CURRENT_LIST_DIR}/projection/projectionFactory.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ilFormat.cpp
         ${CMAKE_CURRENT_LIST_DIR}/projection/omnidirectionalProjection.cpp
-
-    )
+		PARENT_SCOPE
+        )

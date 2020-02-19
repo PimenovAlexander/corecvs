@@ -1,4 +1,4 @@
-#include "core/reflection/reflection.h"
+#include "reflection/reflection.h"
 
 namespace corecvs {
 

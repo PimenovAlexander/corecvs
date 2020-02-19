@@ -3,7 +3,7 @@
  */
 
 #include "aviCapture.h"
-#include "core/utils/preciseTimer.h"
+#include "utils/preciseTimer.h"
 
 extern "C" {
     #include <libavutil/pixdesc.h>

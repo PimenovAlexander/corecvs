@@ -6,7 +6,7 @@
 #include <time.h>
 #include <ostream>
 
-#include <uEye.h>
+#include <ueye.h>
 
 #include <QImage>
 

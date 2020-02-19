@@ -12,10 +12,10 @@
 #include <vector>
 #include <algorithm>
 
-#include "core/tbbwrapper/tbbWrapper.h"
+#include "tbbwrapper/tbbWrapper.h"
 
-#include "core/utils/global.h"
-#include "core/xml/generated/ransacParameters.h"
+#include "utils/global.h"
+#include "xml/generated/ransacParameters.h"
 
 #ifdef WITH_TBB
 #include <tbb/mutex.h>

@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 #include <QWidget>
-#include <reflectionWidget.h>
+#include <corestructs/reflectionWidget.h>
 
 #include "core/reflection/dynamicObject.h"
 #include "generated/patternFromPoseParameters.h"

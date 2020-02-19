@@ -13,11 +13,11 @@
 #include <string>
 #include <vector>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/utils/propertyList.h"
-#include "core/utils/visitors/basePathVisitor.h"
-#include "core/reflection/reflection.h"
+#include "utils/propertyList.h"
+#include "utils/visitors/basePathVisitor.h"
+#include "reflection/reflection.h"
 
 namespace corecvs {
 

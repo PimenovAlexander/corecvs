@@ -8,7 +8,7 @@
  * \author alexander
  */
 
-#include "core/math/projectiveTransform.h"
+#include "math/projectiveTransform.h"
 namespace corecvs {
 
 } //namespace corecvs

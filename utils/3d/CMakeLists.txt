@@ -1,0 +1,35 @@
+set(3D_HEADER_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/billboardCaption3DScene.h
+    ${CMAKE_CURRENT_LIST_DIR}/coordinateFrame.h
+    ${CMAKE_CURRENT_LIST_DIR}/draw3dCameraParametersControlWidget.h
+    ${CMAKE_CURRENT_LIST_DIR}/draw3dParametersControlWidget.h
+    ${CMAKE_CURRENT_LIST_DIR}/draw3dViMouseParametersControlWidget.h
+    ${CMAKE_CURRENT_LIST_DIR}/gCodeScene.h
+    ${CMAKE_CURRENT_LIST_DIR}/helper3DScenes.h
+    ${CMAKE_CURRENT_LIST_DIR}/mesh3DScene.h
+    ${CMAKE_CURRENT_LIST_DIR}/scene3D.h
+    ${CMAKE_CURRENT_LIST_DIR}/sceneShaded.h
+    ${CMAKE_CURRENT_LIST_DIR}/shadedSceneControlWidget.h
+    ${CMAKE_CURRENT_LIST_DIR}/generated/draw3dCameraParameters.h
+    ${CMAKE_CURRENT_LIST_DIR}/generated/draw3dViMouseParameters.h
+    ${CMAKE_CURRENT_LIST_DIR}/generated/viMouse3dFlowStyle.h
+    ${CMAKE_CURRENT_LIST_DIR}/generated/viMouse3dStereoStyle.h
+    PARENT_SCOPE
+    )
+
+set(3D_SOURCE_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/billboardCaption3DScene.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/coordinateFrame.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/draw3dCameraParametersControlWidget.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/draw3dParametersControlWidget.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/draw3dViMouseParametersControlWidget.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gCodeScene.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/helper3DScenes.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/mesh3DScene.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/scene3D.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/sceneShaded.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/shadedSceneControlWidget.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/generated/draw3dCameraParameters.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/generated/draw3dViMouseParameters.cpp
+    PARENT_SCOPE
+    )

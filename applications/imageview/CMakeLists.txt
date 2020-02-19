@@ -1,40 +1,50 @@
-project (imageview)
-
-set(NAME imageview)
-
-set(CMAKE_INCLUDE_CURRENT_DIR "YES")
-set(CMAKE_AUTOMOC "YES")
-set(CMAKE_AUTORCC "YES")
+cmake_minimum_required(VERSION 3.11)
+set(MODULE_NAME applications)
+init_project(PROJECT_NAME imageview)
 
 find_package(Qt5 COMPONENTS REQUIRED Core Gui Widgets)
 
-set (UI_FILES
-    ${CMAKE_CURRENT_LIST_DIR}/imageViewMainWindow.ui
+set(PRIVATE_HEADER_FILE
+    imageViewMainWindow.h
     )
 
-QT5_WRAP_UI( UI_HEADERS ${UI_FILES} )
+set(HEADERS
+    ${PRIVATE_HEADER_FILE}
+    )
 
+set(SOURCE_FILES
+    imageViewMainWindow.cpp
+    main_imageview.cpp
+    )
 
-add_executable(${NAME}
-    ${CMAKE_CURRENT_LIST_DIR}/imageViewMainWindow.h
+set(SOURCES
+    ${SOURCE_FILES}
+    )
 
-    ${CMAKE_CURRENT_LIST_DIR}/imageViewMainWindow.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/main_imageview.cpp
-    ${UI_HEADERS}
-)
+assign_source_group(${HEADERS} ${SOURCES})
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND cp ${PROJECT_BINARY_DIR}/${PROJECT_NAME}  ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Copying ${PROJECT_NAME} to binary directory"
-        )
+add_executable(${PROJECT_NAME}
+    ${HEADERS}
+    ${SOURCES}
+    )
 
-SET(AUTOGEN_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/${NAME}_autogen/include")
-target_include_directories(${NAME} PUBLIC ${AUTOGEN_BUILD_DIR} )
-target_include_directories(${NAME} PUBLIC ${AUTOGEN_BUILD_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-message("AUTOGEN_BUILD_DIR bin directory <${AUTOGEN_BUILD_DIR}>")
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+    corecvs_utils
+    corecvs
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Widgets
+    )
 
+set_target_properties(${PROJECT_NAME}     
+    PROPERTIES                             
+    AUTOMOC TRUE
+    AUTOUIC TRUE
+    FOLDER "${MODULE_NAME}"
+    )
 
-target_include_directories(${NAME} PUBLIC ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} .)
-target_link_libraries(${NAME} cvs_utils corecvs)
-
+copy_directory(${PROJECT_NAME} 
+    ${PROJECT_BINARY_DIR}/${MODULE_NAME}/${PROJECT_NAME}
+    ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}
+    )

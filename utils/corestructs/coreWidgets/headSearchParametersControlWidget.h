@@ -2,7 +2,7 @@
 #include <QWidget>
 #include "core/xml/generated/headSearchParameters.h"
 #include "ui_headSearchParametersControlWidget.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 
 namespace Ui {

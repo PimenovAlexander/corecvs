@@ -5,10 +5,10 @@
 #include "calibrationFeaturesWidget.h"
 #include "ui_calibrationFeaturesWidget.h"
 
-#include "qSettingsSetter.h"
-#include "qSettingsGetter.h"
+#include "visitors/qSettingsSetter.h"
+#include "visitors/qSettingsGetter.h"
 
-#include "painterHelpers.h"
+#include "corestructs/painterHelpers.h"
 #include "qtHelper.h"
 
 using namespace corecvs;

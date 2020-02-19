@@ -13,9 +13,9 @@
 
 #include "core/utils/global.h"
 
-#include "core/buffers/rgb24/rgbColor.h"
+#include "buffers/rgb24/rgbColor.h"
 #include "advancedImageWidget.h"
-#include "saveFlowSettings.h"
+#include "corestructs/saveFlowSettings.h"
 #include "core/math/mathUtils.h"
 #include "qtHelper.h"
 

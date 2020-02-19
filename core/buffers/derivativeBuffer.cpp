@@ -7,7 +7,7 @@
  * \author alexander
  */
 
-#include "core/buffers/derivativeBuffer.h"
+#include "buffers/derivativeBuffer.h"
 namespace corecvs {
 
 DerivativeBuffer::DerivativeBuffer(G12Buffer *input) : DerivativeBufferBase(input->h, input->w)

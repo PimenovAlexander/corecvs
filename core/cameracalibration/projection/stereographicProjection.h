@@ -1,12 +1,12 @@
 #ifndef STEREOGRAPHICPROJECTION_H
 #define STEREOGRAPHICPROJECTION_H
 
-#include "core/math/vector/vector2d.h"
-#include "core/math/vector/vector3d.h"
-#include "core/function/function.h"
+#include "math/vector/vector2d.h"
+#include "math/vector/vector3d.h"
+#include "function/function.h"
 
-#include "core/cameracalibration/projection/projectionModels.h"
-#include "core/xml/generated/projectionBaseParameters.h"
+#include "cameracalibration/projection/projectionModels.h"
+#include "xml/generated/projectionBaseParameters.h"
 
 namespace corecvs {
 

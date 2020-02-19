@@ -11,11 +11,11 @@
 #include <string>
 #include <stdint.h>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/fileformats/bufferLoader.h"
-#include "core/buffers/g12Buffer.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "fileformats/bufferLoader.h"
+#include "buffers/g12Buffer.h"
+#include "buffers/rgb24/rgb24Buffer.h"
 
 namespace corecvs {
 

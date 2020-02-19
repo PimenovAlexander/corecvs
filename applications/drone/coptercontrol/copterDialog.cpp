@@ -16,7 +16,7 @@
 #include <QMessageBox>
 #include <mesh3DScene.h>
 #include "parametersMapper/parametersMapperCopter.h"
-#include <core/geometry/mesh3DDecorated.h>
+#include <geometry/mesh/mesh3DDecorated.h>
 
 CopterDialog::CopterDialog()
     : BaseHostDialog(),

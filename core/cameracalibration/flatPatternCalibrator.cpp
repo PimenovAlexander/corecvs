@@ -1,4 +1,4 @@
-#include "core/cameracalibration/flatPatternCalibrator.h"
+#include "cameracalibration/flatPatternCalibrator.h"
 
 corecvs::FlatPatternCalibrator::FlatPatternCalibrator(const CameraConstraints constraints, const PinholeCameraIntrinsics lockParams, const LineDistortionEstimatorParameters distortionEstimatorParams, const double lockFactor) : factor(lockFactor), K(0), N(0), absoluteConic(6), intrinsics(lockParams), lockParams(lockParams), distortionEstimationParams(distortionEstimatorParams), constraints(constraints), forceZeroSkew(!!(constraints & CameraConstraints::ZERO_SKEW))
 {

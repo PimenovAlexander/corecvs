@@ -9,7 +9,7 @@
  * \author: alexander
  */
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 namespace corecvs {
 
 class ALIGN_DATA(16) Float32x4

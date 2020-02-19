@@ -1,9 +1,9 @@
 #ifndef PLANEFRAME_H
 #define PLANEFRAME_H
 
-#include "core/math/vector/vector3d.h"
-#include "core/geometry/plane.h"
-#include "core/math/affine.h"
+#include "math/vector/vector3d.h"
+#include "geometry/plane.h"
+#include "math/affine.h"
 
 namespace corecvs {
 

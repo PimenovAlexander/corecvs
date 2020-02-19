@@ -1,32 +1,65 @@
-project (ExampleScene)
+cmake_minimum_required(VERSION 3.11)
+set(MODULE_NAME test)
+init_project(PROJECT_NAME example_scene)
 
+find_package(Qt5 REQUIRED COMPONENTS Xml)
 
-set (NAME example_scene )
-
-set (SRC_FILES
-    main_example_scene.cpp
-)
-
-if (PNG_LIB)
-    include(../../wrappers/libpng/sourcelist.cmake)
-endif()
+set(PRIVATE_HEADER_FILE
+    main_example_scene.h
+    )
     
-if (JPEG_LIB)
-    include(../../wrappers/libjpeg/sourcelist.cmake)
+set(HEADERS
+    ${PRIVATE_HEADER_FILE}
+    )
+
+set(SOURCE_FILE
+    main_example_scene.cpp
+    )
+
+set(SOURCES
+    ${SOURCE_FILE}
+    )
+
+assign_source_group(${HEADERS} ${SOURCES})
+
+add_executable(${PROJECT_NAME}
+    ${HEADERS}
+    ${SOURCES}
+    )
+
+set(ADDITIONAL_LIBS)
+
+if(PNG_LIB)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        LIBPNGwrapper
+        )
+    add_definitions(-DWITH_LIBPNG)
 endif()
 
-include(../../wrappers/jsonmodern/sourcelist.cmake)
-
-
-add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
-
-add_custom_command(TARGET ${NAME} POST_BUILD
-        COMMAND cp ${PROJECT_BINARY_DIR}/${NAME}  ${CMAKE_BINARY_DIR}/bin/${NAME}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Copying ${NAME} to binary directory"
+if(JPEG_LIB)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        LIBJPEGwrapper
         )
+    add_definitions(-DWITH_LIBJPEG)
+endif()
 
-include_directories(${INC_PATHS})
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+    stdc++fs 
+    corecvs
+    corecvs_utils
+    Qt5::Xml
+    ${ADDITIONAL_LIBS}
+    )
 
-target_link_libraries(${NAME} ${LIBS} cvs_utils stdc++fs corecvs)
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+    FOLDER "${MODULE_NAME}"
+    )
 
+copy_directory(${PROJECT_NAME} 
+    ${PROJECT_BINARY_DIR}/${MODULE_NAME}/${PROJECT_NAME}
+    ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}
+    )

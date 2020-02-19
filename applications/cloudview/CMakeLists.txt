@@ -1,19 +1,33 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
+cmake_minimum_required(VERSION 3.11)
+set(MODULE_NAME applications)
+init_project(PROJECT_NAME cloudview)
 
-project(cloudview)
+set(SOURCE_FILE
+    main_cloudview.cpp
+    )
 
-add_executable(cloudview main_cloudview.cpp)
+set(SOURCES
+    ${SOURCE_FILE}
+    )
 
-target_sources(cloudview
+assign_source_group(${SOURCES})
+
+add_executable(${PROJECT_NAME}
+    ${SOURCES}
+    )
+
+target_link_libraries(${PROJECT_NAME}
     PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/main_cloudview.cpp
-)
+    corecvs
+    corecvs_utils
+    )
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND cp ${PROJECT_BINARY_DIR}/${PROJECT_NAME}  ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    COMMENT "Copying ${PROJECT_NAME} to binary directory"
-)
+set_target_properties(${PROJECT_NAME}     
+    PROPERTIES
+    FOLDER "${MODULE_NAME}"
+    )
 
-target_link_libraries(cloudview cvs_utils corecvs)
-target_include_directories(cloudview PUBLIC ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} .)
+copy_directory(${PROJECT_NAME} 
+    ${PROJECT_BINARY_DIR}/${MODULE_NAME}/${PROJECT_NAME}
+    ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}
+    )

@@ -8,12 +8,12 @@
 #ifndef AFFINE_H_
 #define AFFINE_H_
 
-#include "core/math/vector/vector3d.h"
-#include "core/math/quaternion.h"
-#include "core/math/eulerAngles.h"
-#include "core/math/matrix/matrix33.h"
-#include "core/math/matrix/matrix22.h"
-#include "core/geometry/line.h"
+#include "math/vector/vector3d.h"
+#include "math/quaternion.h"
+#include "math/eulerAngles.h"
+#include "math/matrix/matrix33.h"
+#include "math/matrix/matrix22.h"
+#include "geometry/line.h"
 
 namespace corecvs {
 

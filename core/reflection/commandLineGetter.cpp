@@ -1,4 +1,4 @@
-#include "core/reflection/commandLineGetter.h"
+#include "reflection/commandLineGetter.h"
 
 namespace corecvs {
 

@@ -9,13 +9,13 @@
  * \author alexander
  */
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/buffers/kernels/fastkernel/baseAlgebra.h"
-#include "core/buffers/kernels/fastkernel/scalarAlgebra.h"
+#include "buffers/kernels/fastkernel/baseAlgebra.h"
+#include "buffers/kernels/fastkernel/scalarAlgebra.h"
 
 #ifdef WITH_SSE
-#include "core/math/sse/sseWrapper.h"
+#include "math/sse/sseWrapper.h"
 #endif
 
 namespace corecvs {

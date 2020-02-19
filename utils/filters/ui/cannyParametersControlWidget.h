@@ -2,7 +2,7 @@
 #include <QWidget>
 #include "core/xml/generated/cannyParameters.h"
 #include "ui_cannyParametersControlWidget.h"
-#include "filterParametersControlWidgetBase.h"
+#include "filters/filterParametersControlWidgetBase.h"
 
 
 namespace Ui {

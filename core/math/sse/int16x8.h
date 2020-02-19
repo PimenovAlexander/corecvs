@@ -12,9 +12,9 @@
 #include <emmintrin.h>
 #include <stdint.h>
 
-#include "core/utils/global.h"
-#include "core/math/vector/fixedVector.h"
-#include "core/math/sse/intBase16x8.h"
+#include "utils/global.h"
+#include "math/vector/fixedVector.h"
+#include "math/sse/intBase16x8.h"
 
 namespace corecvs {
 

@@ -6,7 +6,7 @@
 #define DXF_SUPPORT_DXFOBJECT_H
 
 #include <string>
-#include "core/fileformats/dxf_support/objects/dxfObjectData.h"
+#include "fileformats/dxf_support/objects/dxfObjectData.h"
 
 namespace corecvs {
 

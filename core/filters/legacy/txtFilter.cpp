@@ -1,4 +1,4 @@
-#include "core/filters/legacy/txtFilter.h"
+#include "filters/legacy/txtFilter.h"
 
 namespace corecvs
 {

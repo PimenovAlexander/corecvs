@@ -5,15 +5,15 @@
  *
  * \date Nov 11, 2012
  **/
-#include "core/buffers/g12Buffer.h"
+#include "buffers/g12Buffer.h"
 
-#include "core/filters/legacy/blocks/filterBlock.h"
-#include "core/buffers/kernels/fastkernel/baseAlgebra.h"
-#include "core/buffers/kernels/fastkernel/fastKernel.h"
-#include "core/buffers/kernels/fastkernel/vectorTraits.h"
-#include "core/buffers/kernels/arithmetic.h"
-#include "core/filters/legacy/filtersCollection.h"
-#include "core/xml/generated/operationParameters.h"
+#include "filters/legacy/blocks/filterBlock.h"
+#include "buffers/kernels/fastkernel/baseAlgebra.h"
+#include "buffers/kernels/fastkernel/fastKernel.h"
+#include "buffers/kernels/fastkernel/vectorTraits.h"
+#include "buffers/kernels/arithmetic.h"
+#include "filters/legacy/filtersCollection.h"
+#include "xml/generated/operationParameters.h"
 
 namespace corecvs
 {

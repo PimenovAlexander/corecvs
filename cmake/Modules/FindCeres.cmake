@@ -1,14 +1,15 @@
-SET(CERES_INCLUDE_SEARCH_PATHS
+set(CERES_INCLUDE_SEARCH_PATHS
     /usr/include
     /usr/include/ceres
     /usr/local/include
+    /usr/local/include/ceres
     /usr/local/include/png-base
     /opt/libjpeg/include
     $ENV{CERES_HOME}
     $ENV{CERES_HOME}/include
 )
 
-SET(CERES_LIB_SEARCH_PATHS
+set(CERES_LIB_SEARCH_PATHS
     /lib/
     /lib64/
     /usr/lib
@@ -20,36 +21,36 @@ SET(CERES_LIB_SEARCH_PATHS
     $ENV{CERES_HOME}/lib
 )
 
-FIND_PATH(CERES_INCLUDE_DIR NAMES ceres.h PATHS ${CERES_INCLUDE_SEARCH_PATHS})
-FIND_LIBRARY(CERES_LIB NAMES ceres PATHS ${CERES_LIB_SEARCH_PATHS})
+find_path(CERES_INCLUDE_DIR NAMES ceres.h PATHS ${CERES_INCLUDE_SEARCH_PATHS})
+find_library(CERES_LIB NAMES ceres PATHS ${CERES_LIB_SEARCH_PATHS})
 
-SET(CERES_FOUND ON)
+set(CERES_FOUND ON)
 
 #    Check include files
-IF(NOT CERES_INCLUDE_DIR)
-  SET(CERES_FOUND OFF)
-  MESSAGE(STATUS "Could not find CERES include. Turning CERES_FOUND off")
-ENDIF()
+if(NOT CERES_INCLUDE_DIR)
+  set(CERES_FOUND OFF)
+  message(STATUS "Could not find CERES include. Turning CERES_FOUND off")
+endif()
 
 #    Check libraries
-IF(NOT CERES_LIB)
-  SET(CERES_FOUND OFF)
-  MESSAGE(STATUS "Could not find CERES lib. Turning CERES_FOUND off")
-ENDIF()
+if(NOT CERES_LIB)
+  set(CERES_FOUND OFF)
+  message(STATUS "Could not find CERES lib. Turning CERES_FOUND off")
+endif()
 
-IF (CERES_FOUND)
-IF (NOT CERES_FIND_QUIETLY)
-  MESSAGE(STATUS "Found CERES libraries: ${CERES_LIB}")
-  MESSAGE(STATUS "Found CERES include: ${CERES_INCLUDE_DIR}")
-ENDIF (NOT CERES_FIND_QUIETLY)
-ELSE (CERES_FOUND)
-IF (CERES_FIND_REQUIRED)
-  MESSAGE(FATAL_ERROR "Could not find CERES")
-ENDIF (CERES_FIND_REQUIRED)
-ENDIF (CERES_FOUND)
+if(CERES_FOUND)
+if(NOT CERES_FIND_QUIETLY)
+  message(STATUS "Found CERES libraries: ${CERES_LIB}")
+  message(STATUS "Found CERES include: ${CERES_INCLUDE_DIR}")
+endif(NOT CERES_FIND_QUIETLY)
+else(CERES_FOUND)
+if(CERES_FIND_REQUIRED)
+  message(FATAL_ERROR "Could not find CERES")
+endif(CERES_FIND_REQUIRED)
+endif(CERES_FOUND)
 
-MARK_AS_ADVANCED(
-  CERES_INCLUDE_DIR
-  CERES_LIB
-  CERES
-)
+mark_as_advanced(
+    CERES_INCLUDE_DIR
+    CERES_LIB
+    CERES
+    )

@@ -2,7 +2,7 @@
 #include <QWidget>
 #include "core/xml/generated/sobelParameters.h"
 #include "ui_sobelParametersControlWidget.h"
-#include "filterParametersControlWidgetBase.h"
+#include "filters/filterParametersControlWidgetBase.h"
 
 
 namespace Ui {

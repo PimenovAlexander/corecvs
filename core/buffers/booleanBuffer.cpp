@@ -4,7 +4,7 @@
  * \date Sep 28, 2013
  **/
 
-#include "core/buffers/booleanBuffer.h"
+#include "buffers/booleanBuffer.h"
 
 namespace corecvs
 {

@@ -1,5 +1,5 @@
-#include "core/fileformats/stlLoader.h"
-#include "core/utils/utils.h"
+#include "fileformats/stlLoader.h"
+#include "utils/utils.h"
 
 namespace corecvs {
 

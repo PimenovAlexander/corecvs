@@ -10,11 +10,11 @@
  */
 #include <string>
 
-#include "core/utils/global.h"
-#include "core/utils/utils.h"
-#include "core/fileformats/ppmLoader.h"
-#include "core/buffers/converters/debayer.h"
-#include "core/utils/log.h"
+#include "utils/global.h"
+#include "utils/utils.h"
+#include "fileformats/ppmLoader.h"
+#include "buffers/converters/debayer.h"
+#include "utils/log.h"
 
 namespace corecvs {
 

@@ -9,12 +9,12 @@
 
 #include <fstream>
 
-#include "core/buffers/rgb24/bresenhamRasterizer.h"
-#include "core/buffers/rgb24/bezierRasterizer.h"
+#include "buffers/rgb24/bresenhamRasterizer.h"
+#include "buffers/rgb24/bezierRasterizer.h"
 
-#include "core/utils/utils.h"
-#include "core/tinyxml2/tinyxml2.h"
-#include "core/fileformats/svgLoader.h"
+#include "utils/utils.h"
+#include "tinyxml2/tinyxml2.h"
+#include "fileformats/svgLoader.h"
 
 namespace corecvs {
 
@@ -70,7 +70,7 @@ int SvgLoader::loadSvg(istream &input, SvgFile &svg)
     int len = input.tellg();
     input.seekg(0, input.beg);
 
-    char data[len];
+    char* data = new char[len];
     input.read(data, len);
 
     XMLDocument xml;

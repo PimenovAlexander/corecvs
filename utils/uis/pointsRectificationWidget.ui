@@ -203,7 +203,7 @@
   <customwidget>
    <class>PaintImageWidget</class>
    <extends>QWidget</extends>
-   <header>paintImageWidget.h</header>
+   <header>uis/paintImageWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

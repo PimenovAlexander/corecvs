@@ -1,31 +1,53 @@
-project (ceres_playground)
+cmake_minimum_required(VERSION 3.11)
+set(MODULE_NAME test)
+init_project(PROJECT_NAME ceres_playground)
 
-
-set (NAME ceres_playground)
-
-set (SRC_FILES
+set(SOURCE_FILE
     main_ceres_playground.cpp
-)
+    )
 
-if (PNG_LIB)
-    include(../../wrappers/libpng/sourcelist.cmake)
-endif()
-    
-if (JPEG_LIB)
-    include(../../wrappers/libjpeg/sourcelist.cmake)
-endif()
+set(SOURCES
+    ${SOURCE_FILE}
+    )
 
+assign_source_group(${SOURCES})
 
+add_executable(${PROJECT_NAME}
+    ${SOURCES}
+    )
 
-add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
+set(ADDITIONAL_LIBS)
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND cp ${PROJECT_BINARY_DIR}/${PROJECT_NAME}  ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Copying ${PROJECT_NAME} to binary directory"
+if(PNG_LIB)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        LIBPNGwrapper
         )
+    add_definitions(-DWITH_LIBPNG)
+endif()
 
-include_directories(${INC_PATHS} ${EIGEN_INCLUDE_DIR} ${CERES_INCLUDE_DIR})
+if(JPEG_LIB)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        LIBJPEGwrapper
+        )
+    add_definitions(-DWITH_LIBJPEG)
+endif()
 
-target_link_libraries(${NAME} ${LIBS} ceres stdc++fs corecvs)
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+    stdc++fs
+    ceres
+    corecvs
+    ${ADDITIONAL_LIBS}
+    )
 
+copy_directory(${PROJECT_NAME} 
+    ${PROJECT_BINARY_DIR}/${MODULE_NAME}/${PROJECT_NAME}
+    ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}
+    )
+
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+    FOLDER "${MODULE_NAME}"
+    )

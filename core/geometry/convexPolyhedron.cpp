@@ -1,6 +1,6 @@
-#include "core/geometry/convexPolyhedron.h"
-#include "core/geometry/halfspaceIntersector.h"
-#include "core/geometry/mesh/mesh3d.h"
+#include "convexPolyhedron.h"
+#include "halfspaceIntersector.h"
+#include "mesh/mesh3d.h"
 
 #include <random>
 

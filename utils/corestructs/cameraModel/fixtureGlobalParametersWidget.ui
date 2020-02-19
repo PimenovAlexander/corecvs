@@ -100,7 +100,7 @@
   <customwidget>
    <class>Affine3dControlWidget</class>
    <extends>QWidget</extends>
-   <header location="global">affine3dControlWidget.h</header>
+   <header>corestructs/cameraModel/affine3dControlWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

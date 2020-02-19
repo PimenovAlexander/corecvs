@@ -2,7 +2,7 @@
 #include <QWidget>
 #include "core/xml/generated/backgroundFilterParameters.h"
 #include "ui_backgroundFilterParametersControlWidget.h"
-#include "filterParametersControlWidgetBase.h"
+#include "filters/filterParametersControlWidgetBase.h"
 
 namespace Ui {
     class BackgroundFilterParametersControlWidget;

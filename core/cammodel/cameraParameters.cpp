@@ -6,7 +6,7 @@
  * \author alexander
  */
 
-#include "core/cammodel/cameraParameters.h"
+#include "cammodel/cameraParameters.h"
 
 namespace corecvs {
 

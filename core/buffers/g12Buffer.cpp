@@ -8,14 +8,14 @@
  * \author alexander
  */
 
-#include "core/buffers/g12Buffer.h"
-#include "core/buffers/commonMappers.h"
-#include "core/buffers/kernels/fastkernel/fastKernel.h"
-#include "core/buffers/kernels/fastkernel/scalarAlgebra.h"
-#include "core/buffers/kernels/fastkernel/vectorAlgebra.h"
-#include "core/buffers/kernels/arithmetic.h"
-#include "core/buffers/kernels/threshold.h"
-#include "core/buffers/kernels/fastkernel/vectorTraits.h"
+#include "buffers/g12Buffer.h"
+#include "buffers/commonMappers.h"
+#include "buffers/kernels/fastkernel/fastKernel.h"
+#include "buffers/kernels/fastkernel/scalarAlgebra.h"
+#include "buffers/kernels/fastkernel/vectorAlgebra.h"
+#include "buffers/kernels/arithmetic.h"
+#include "buffers/kernels/threshold.h"
+#include "buffers/kernels/fastkernel/vectorTraits.h"
 //#include "rgb24/hardcodeFont.h"
 
 namespace corecvs {

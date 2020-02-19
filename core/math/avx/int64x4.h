@@ -14,10 +14,10 @@
 #include <smmintrin.h>
 #include <stdint.h>
 
-#include "core/math/avx/avxInteger.h"
-#include "core/utils/global.h"
-#include "core/math/vector/fixedVector.h"
-#include "core/math/sse/int64x2.h"
+#include "math/avx/avxInteger.h"
+#include "utils/global.h"
+#include "math/vector/fixedVector.h"
+#include "math/sse/int64x2.h"
 
 namespace corecvs {
 

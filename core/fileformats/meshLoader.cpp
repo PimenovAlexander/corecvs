@@ -1,10 +1,10 @@
-#include "core/fileformats/meshLoader.h"
-#include "core/fileformats/plyLoader.h"
-#include "core/fileformats/stlLoader.h"
-#include "core/fileformats/objLoader.h"
-#include "core/fileformats/gcodeLoader.h"
-#include "core/fileformats/xyzListLoader.h"
-#include "core/utils/utils.h"
+#include "fileformats/meshLoader.h"
+#include "fileformats/plyLoader.h"
+#include "fileformats/stlLoader.h"
+#include "fileformats/objLoader.h"
+#include "fileformats/gcodeLoader.h"
+#include "fileformats/xyzListLoader.h"
+#include "utils/utils.h"
 #include <fstream>
 
 using namespace std;

@@ -12,8 +12,8 @@
 
 #include <math.h>
 
-#include "core/math/vector/vector2d.h"
-#include "core/math/vector/vector.h"
+#include "math/vector/vector2d.h"
+#include "math/vector/vector.h"
 
 namespace corecvs {
 

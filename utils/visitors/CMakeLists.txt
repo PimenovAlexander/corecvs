@@ -1,0 +1,21 @@
+set(VISITORS_HEADER_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/baseXMLVisitor.h
+    ${CMAKE_CURRENT_LIST_DIR}/jsonGetter.h
+    ${CMAKE_CURRENT_LIST_DIR}/jsonSetter.h
+    ${CMAKE_CURRENT_LIST_DIR}/qSettingsGetter.h
+    ${CMAKE_CURRENT_LIST_DIR}/qSettingsSetter.h
+    ${CMAKE_CURRENT_LIST_DIR}/xmlGetter.h
+    ${CMAKE_CURRENT_LIST_DIR}/xmlSetter.h
+    PARENT_SCOPE
+    )
+
+set(VISITORS_SOURCE_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/baseXMLVisitor.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/jsonGetter.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/jsonSetter.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/qSettingsGetter.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/qSettingsSetter.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/xmlGetter.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/xmlSetter.cpp
+    PARENT_SCOPE
+    )

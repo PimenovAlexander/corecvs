@@ -1,4 +1,4 @@
-#include "core/math/matrix/blasReplacement.h"
+#include "math/matrix/blasReplacement.h"
 
 namespace corecvs {
 

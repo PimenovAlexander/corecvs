@@ -6,7 +6,7 @@
  * \author alexander
  */
 
-#include "core/kalman/cholesky.h"
+#include "kalman/cholesky.h"
 namespace corecvs {
 
 Cholesky::Cholesky()

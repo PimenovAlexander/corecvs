@@ -1,5 +1,5 @@
-#include "core/reflection/advanced/advancedBinaryReader.h"
-#include "core/utils/utils.h"
+#include "reflection/advanced/advancedBinaryReader.h"
+#include "utils/utils.h"
 
 namespace corecvs {
 

@@ -1,4 +1,4 @@
-#include "core/clustering3d/swarmPoint.h"
+#include "clustering3d/swarmPoint.h"
 
 namespace corecvs {
 

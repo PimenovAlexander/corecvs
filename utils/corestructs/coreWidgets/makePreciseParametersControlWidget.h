@@ -2,7 +2,7 @@
 #include <QWidget>
 #include "core/xml/generated/makePreciseParameters.h"
 #include "ui_makePreciseParametersControlWidget.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 
 namespace Ui {

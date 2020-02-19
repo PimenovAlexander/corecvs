@@ -4,7 +4,7 @@
  * \date Nov 22, 2012
  **/
 
-#include "core/buffers/rgb24/abstractPainter.h"
+#include "buffers/rgb24/abstractPainter.h"
 
 namespace corecvs {
 

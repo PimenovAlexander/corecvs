@@ -10,10 +10,10 @@
 #include <string>
 
 
-#include "core/utils/global.h"
-#include "core/fileformats/bufferLoader.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/buffers/g12Buffer.h"
+#include "utils/global.h"
+#include "fileformats/bufferLoader.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "buffers/g12Buffer.h"
 
 namespace corecvs {
 

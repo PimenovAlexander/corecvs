@@ -8,7 +8,7 @@
 
 
 #include "arrow.h"
-#include "exponentialSlider.h"
+#include "widgets/exponentialSlider.h"
 #include "filterPresentationsCollection.h"
 
 class FilterGraphPresentation : public QWidget

@@ -1,9 +1,9 @@
 #ifndef FRAMEPROCESSOR_H
 #define FRAMEPROCESSOR_H
 #include <QThread>
-#include <patternDetectorParametersWidget.h>
-#include <core/framesources/imageCaptureInterface.h>
-#include <core/cameracalibration/cameraModel.h>
+#include <widgets/patternDetectorParametersWidget.h>
+#include <framesources/imageCaptureInterface.h>
+#include <cameracalibration/cameraModel.h>
 #include <patterndetection/patternDetector.h>
 
 

@@ -1,4 +1,4 @@
-#include "core/buffers/g12Buffer3d.h"
+#include "buffers/g12Buffer3d.h"
 namespace corecvs {
 
 SwarmPoint* G12Buffer3d::p0 = NULL;

@@ -622,7 +622,7 @@
   <customwidget>
    <class>DoubleVectorWidget</class>
    <extends>QWidget</extends>
-   <header>vectorWidget.h</header>
+   <header>widgets/vectorWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

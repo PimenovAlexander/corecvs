@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core/features2d/imageKeyPoints.h"
-#include "core/features2d/algoBase.h"
+#include "features2d/imageKeyPoints.h"
+#include "features2d/algoBase.h"
 
 class FeatureDetector : public virtual AlgoBase
 {

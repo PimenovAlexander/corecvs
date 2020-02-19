@@ -5,10 +5,10 @@
  * \date Mar 15, 2013
  */
 
-#include "core/utils/global.h"
-#include "core/clustering3d/cloud.h"
-#include "core/segmentation/segmentator.h"
-#include "core/geometry/ellipticalApproximation.h"
+#include "utils/global.h"
+#include "clustering3d/cloud.h"
+#include "segmentation/segmentator.h"
+#include "geometry/ellipticalApproximation.h"
 
 namespace corecvs {
 

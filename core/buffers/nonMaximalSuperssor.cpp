@@ -1,5 +1,5 @@
-#include "core/buffers/nonMaximalSuperssor.h"
-#include "core/buffers/convolver/convolver.h"
+#include "buffers/nonMaximalSuperssor.h"
+#include "buffers/convolver/convolver.h"
 
 namespace corecvs {
 

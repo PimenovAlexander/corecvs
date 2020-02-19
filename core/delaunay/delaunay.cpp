@@ -7,12 +7,12 @@
  * \author Spirin Egor
  */
 
-#include "core/delaunay/delaunay.h"
+#include "delaunay/delaunay.h"
 
-#include "core/math/mathUtils.h"
-#include "core/delaunay/delaunay.h"
+#include "math/mathUtils.h"
+#include "delaunay/delaunay.h"
 
-#include "core/geometry/conic.h"
+#include "geometry/conic.h"
 
 namespace corecvs {
 

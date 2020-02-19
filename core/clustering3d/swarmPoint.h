@@ -5,9 +5,9 @@
  * \date Mar 15, 2013
  */
 
-#include "core/math/vector/vector2d.h"
-#include "core/math/vector/vector3d.h"
-#include "core/buffers/rgb24/rgbColor.h"
+#include "math/vector/vector2d.h"
+#include "math/vector/vector3d.h"
+#include "buffers/rgb24/rgbColor.h"
 
 namespace corecvs {
 

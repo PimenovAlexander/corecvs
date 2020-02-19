@@ -5,9 +5,9 @@
  * \date Jan 17, 2013
  */
 
-#include "core/filters/legacy/maskFilterBlock.h"
-#include "core/reflection/serializerVisitor.h"
-#include "core/reflection/deserializerVisitor.h"
+#include "filters/legacy/maskFilterBlock.h"
+#include "reflection/serializerVisitor.h"
+#include "reflection/deserializerVisitor.h"
 
 namespace corecvs
 {

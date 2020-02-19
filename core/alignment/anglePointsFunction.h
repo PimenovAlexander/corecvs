@@ -1,5 +1,5 @@
 #pragma once
-#include "core/alignment/radialFunc.h"
+#include "alignment/radialFunc.h"
 
 namespace corecvs
 {

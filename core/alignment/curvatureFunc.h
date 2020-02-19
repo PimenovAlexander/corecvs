@@ -1,5 +1,5 @@
 #pragma once
-#include "core/function/function.h"
+#include "function/function.h"
 
 namespace corecvs {
 

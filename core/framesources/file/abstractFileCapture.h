@@ -2,7 +2,7 @@
 
 #include <mutex>
 
-#include "core/framesources/file/imageFileCaptureInterface.h"
+#include "framesources/file/imageFileCaptureInterface.h"
 #include "abstractFileCaptureSpinThread.h"
 
 /**

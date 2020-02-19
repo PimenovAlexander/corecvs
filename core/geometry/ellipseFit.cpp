@@ -1,5 +1,5 @@
-#include "core/geometry/ellipseFit.h"
-#include "core/kalman/cholesky.h"
+#include "geometry/ellipseFit.h"
+#include "kalman/cholesky.h"
 
 #include "wrappers/cblasLapack/cblasLapackeWrapper.h"
 

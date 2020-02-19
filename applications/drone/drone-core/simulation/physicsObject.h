@@ -6,7 +6,6 @@
 #include <bits/stdc++.h>
 
 #include "core/utils/log.h"
-#include "core/geometry/mesh/mesh3d.h"
 
 #include "core/utils/utils.h"
 #include "core/geometry/mesh/mesh3d.h"

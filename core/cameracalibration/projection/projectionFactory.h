@@ -1,11 +1,11 @@
 #ifndef PROJECTIONFACTORY_H
 #define PROJECTIONFACTORY_H
 
-#include "core/cameracalibration/projection/pinholeCameraIntrinsics.h"
-#include "core/cameracalibration/projection/equidistantProjection.h"
-#include "core/cameracalibration/projection/equisolidAngleProjection.h"
-#include "core/cameracalibration/projection/omnidirectionalProjection.h"
-#include "core/cameracalibration/projection/stereographicProjection.h"
+#include "cameracalibration/projection/pinholeCameraIntrinsics.h"
+#include "cameracalibration/projection/equidistantProjection.h"
+#include "cameracalibration/projection/equisolidAngleProjection.h"
+#include "cameracalibration/projection/omnidirectionalProjection.h"
+#include "cameracalibration/projection/stereographicProjection.h"
 
 
 namespace corecvs {

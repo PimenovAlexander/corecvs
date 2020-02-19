@@ -1,7 +1,9 @@
-target_sources(corecvs
-    PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}/function.h
-    PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/function.cpp
+set(FUNCTION_HEADER_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/function.h
+    PARENT_SCOPE
+    )
 
-)
+set(FUNCTION_SOURCE_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/function.cpp
+    PARENT_SCOPE
+    )

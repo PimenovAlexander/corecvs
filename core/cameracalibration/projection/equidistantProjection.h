@@ -1,12 +1,12 @@
 #ifndef EQUIDISTANTPROJECTION_H
 #define EQUIDISTANTPROJECTION_H
 
-#include "core/math/vector/vector2d.h"
-#include "core/math/vector/vector3d.h"
-#include "core/function/function.h"
+#include "math/vector/vector2d.h"
+#include "math/vector/vector3d.h"
+#include "function/function.h"
 
-#include "core/cameracalibration/projection/projectionModels.h"
-#include "core/xml/generated/projectionBaseParameters.h"
+#include "cameracalibration/projection/projectionModels.h"
+#include "xml/generated/projectionBaseParameters.h"
 
 namespace corecvs{
 /**
@@ -59,7 +59,7 @@ public:
         ElementType r = shift.l2Metric();
         shift /= r;
         ElementType tau = r / focal();
-        out = Vector3d<ElementType>(shift.normalised() * sin(tau), cos(tau));
+        out = Vector3d<ElementType>(shift.normalised() * std::sin(tau), std::cos(tau));
     }
 };
 

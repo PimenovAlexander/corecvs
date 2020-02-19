@@ -4,7 +4,7 @@
 #include <QLineEdit>
 #include "generatedParameters/copter.h"
 #include "ui_copterControlWidget.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 namespace Ui {
     class CopterControlWidget;

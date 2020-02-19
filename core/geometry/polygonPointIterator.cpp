@@ -1,4 +1,4 @@
-#include "core/geometry/polygonPointIterator.h"
+#include "geometry/polygonPointIterator.h"
 
 
 namespace corecvs {

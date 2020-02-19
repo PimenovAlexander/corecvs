@@ -6,13 +6,13 @@
  * \date Oct 1, 2011
  * \author alexander
  */
-#include "core/math/matrix/matrix33.h"
-#include "core/math/vector/vector3d.h"
-#include "core/math/matrix/matrix.h"
-#include "core/math/quaternion.h"
-#include "core/geometry/line.h"
-#include "core/buffers/correspondenceList.h"
-#include "core/math/affine.h"
+#include "math/matrix/matrix33.h"
+#include "math/vector/vector3d.h"
+#include "math/matrix/matrix.h"
+#include "math/quaternion.h"
+#include "geometry/line.h"
+#include "buffers/correspondenceList.h"
+#include "math/affine.h"
 
 namespace corecvs {
 

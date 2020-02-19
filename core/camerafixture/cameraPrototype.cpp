@@ -1,4 +1,4 @@
-#include "core/camerafixture/cameraPrototype.h"
+#include "camerafixture/cameraPrototype.h"
 
 namespace corecvs {
 

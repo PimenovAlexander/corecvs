@@ -11,9 +11,9 @@
 #ifndef COPYKERNEL_H_
 #define COPYKERNEL_H_
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/buffers/abstractKernel.h"
+#include "buffers/abstractKernel.h"
 namespace corecvs {
 
 

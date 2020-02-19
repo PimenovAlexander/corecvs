@@ -7,9 +7,9 @@
 #include <map>
 #include <functional>
 
-#include "core/math/vector/vector.h"
+#include "math/vector/vector.h"
 #include "wrappers/cblasLapack/cblasLapackeWrapper.h"
-#include "core/tbbwrapper/tbbWrapper.h"
+#include "tbbwrapper/tbbWrapper.h"
 
 #ifdef WITH_FMA
 #include "immintrin.h"

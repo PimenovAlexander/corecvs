@@ -19,11 +19,11 @@
 #include "core/cameracalibration/ilFormat.h"
 
 #include "core/math/vector/vector3d.h"
-#include "xmlSetter.h"
-#include "xmlGetter.h"
+#include "visitors/xmlSetter.h"
+#include "visitors/xmlGetter.h"
 
-#include "jsonGetter.h"
-#include "jsonSetter.h"
+#include "visitors/jsonGetter.h"
+#include "visitors/jsonSetter.h"
 
 #include "core/reflection/jsonPrinter.h"
 #include "core/geometry/mesh/mesh3d.h"

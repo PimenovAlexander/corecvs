@@ -10,18 +10,18 @@
 #include <iostream>
 #include <vector>
 
-#include "core/math/vector/vector2d.h"
-#include "core/math/matrix/matrix33.h"
-#include "core/math/matrix/matrix.h"
-#include "core/math/matrix/matrixOperations.h"
-#include "core/function/function.h"
-#include "core/geometry/line.h"
-#include "core/geometry/polygons.h"
-#include "core/buffers/correspondenceList.h"
-#include "core/filters/newstyle/newStyleBlock.h"
-#include "core/cameracalibration/calibrationLocation.h"
-#include "core/xml/generated/homographyAlgorithm.h"
-#include "core/xml/generated/homorgaphyReconstructorBlockBase.h"
+#include "math/vector/vector2d.h"
+#include "math/matrix/matrix33.h"
+#include "math/matrix/matrix.h"
+#include "math/matrix/matrixOperations.h"
+#include "function/function.h"
+#include "geometry/line.h"
+#include "geometry/polygons.h"
+#include "buffers/correspondenceList.h"
+#include "filters/newstyle/newStyleBlock.h"
+#include "cameracalibration/calibrationLocation.h"
+#include "xml/generated/homographyAlgorithm.h"
+#include "xml/generated/homorgaphyReconstructorBlockBase.h"
 
 namespace corecvs {
 

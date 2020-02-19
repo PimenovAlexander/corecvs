@@ -1,29 +1,64 @@
-project (widget_harness)
+cmake_minimum_required(VERSION 3.11)
+set(MODULE_NAME test)
+init_project(PROJECT_NAME widget_harness)
 
-set (NAME widget_harness)
+find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
-set (SRC_FILES
+set(PRIVATE_HEADER_FILE
     changeReceiver.h
-    main_widget_harness.cpp
-)
-
-if (PNG_LIB)
-    include(../../wrappers/libpng/sourcelist.cmake)
-endif()
+    )
     
-if (JPEG_LIB)
-    include(../../wrappers/libjpeg/sourcelist.cmake)
+set(HEADERS
+    ${PRIVATE_HEADER_FILE}
+    )
+
+set(SOURCE_FILE
+    main_widget_harness.cpp
+    )
+
+set(SOURCES
+    ${SOURCE_FILE}
+    )
+
+assign_source_group(${HEADERS} ${SOURCES})
+
+add_executable(${PROJECT_NAME}
+    ${HEADERS}
+    ${SOURCES}
+    )
+
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+    ${CURRENT_SOURCE_DIR}
+    )
+
+set(ADDITIONAL_LIBS)
+
+if(PNG_LIB)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        LIBPNGwrapper
+        )
+    add_definitions(-DWITH_LIBPNG)
 endif()
 
-add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
-
-add_custom_command(TARGET ${NAME} POST_BUILD
-        COMMAND cp ${PROJECT_BINARY_DIR}/${NAME}  ${CMAKE_BINARY_DIR}/bin/${NAME}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Copying ${NAME} to binary directory"
+if(JPEG_LIB)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        LIBJPEGwrapper
         )
+    add_definitions(-DWITH_LIBJPEG)
+endif()
 
-include_directories(${INC_PATHS})
+target_link_libraries(${PROJECT_NAME}
+    corecvs
+    corecvs_utils
+    Qt5::Widgets
+    stdc++fs 
+    ${ADDITIONAL_LIBS}
+    )
 
-target_link_libraries(${NAME} ${LIBS} cvs_utils stdc++fs corecvs)
-
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+    FOLDER "${MODULE_NAME}"
+    )

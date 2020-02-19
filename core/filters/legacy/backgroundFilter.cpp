@@ -5,9 +5,9 @@
  * \date Oct 11, 2012
  */
 
-#include "core/filters/legacy/backgroundFilter.h"
-#include "core/reflection/serializerVisitor.h"
-#include "core/reflection/deserializerVisitor.h"
+#include "filters/legacy/backgroundFilter.h"
+#include "reflection/serializerVisitor.h"
+#include "reflection/deserializerVisitor.h"
 
 namespace corecvs
 {

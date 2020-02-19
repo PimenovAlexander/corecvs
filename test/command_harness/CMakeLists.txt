@@ -1,29 +1,51 @@
-project (command_harness)
+cmake_minimum_required(VERSION 3.11)
+set(MODULE_NAME test)
+init_project(PROJECT_NAME command_harness)
 
-
-set (NAME command_harness)
-
-set (SRC_FILES
+set(SOURCE_FILE
     main_command_harness.cpp
-)
+    )
+
+#set(EXTERNAL_SOURCE_FILES
+#    ../widgets_test/main_widgets_test.cpp
+#    ../widgets_test/testNativeWidget.cpp
+#    )
+
+set(SOURCES
+    ${SOURCE_FILE}
+#    ${EXTERNAL_SOURCE_FILES}
+    )
+
+add_executable(${PROJECT_NAME}
+    ${SOURCES}
+    )
+
+set(ADDITIONAL_LIBS)
 
 if (PNG_LIB)
-    include(../../wrappers/libpng/sourcelist.cmake)
-endif()
-    
-if (JPEG_LIB)
-    include(../../wrappers/libjpeg/sourcelist.cmake)
-endif()
-
-add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
-
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND cp ${PROJECT_BINARY_DIR}/${PROJECT_NAME}  ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Copying ${PROJECT_NAME} to binary directory"
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        LIBPNGwrapper
         )
+endif()
 
-include_directories(${INC_PATHS})
+if (JPEG_LIB)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        LIBJPEGwrapper
+        )
+endif()
 
-target_link_libraries(${NAME} ${LIBS} cvs_utils stdc++fs corecvs)
+target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+    corecvs
+    corecvs_utils
+    pthread
+    stdc++fs
+    ${ADDITIONAL_LIBS}
+    )
 
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+    FOLDER "${MODULE_NAME}"
+    )

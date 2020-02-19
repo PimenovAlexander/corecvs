@@ -5,14 +5,14 @@
  * \date Mar 15, 2013
  */
 
-#include "core/utils/global.h"
-#include "core/clustering3d/cloud.h"
-#include "core/clustering3d/cloudCluster.h"
-#include "core/utils/preciseTimer.h"
-#include "core/buffers/buffer3d.h"
+#include "utils/global.h"
+#include "clustering3d/cloud.h"
+#include "clustering3d/cloudCluster.h"
+#include "utils/preciseTimer.h"
+#include "buffers/buffer3d.h"
 
-#include "core/stats/calculationStats.h"
-#include "core/xml/generated/headSearchParameters.h"
+#include "stats/calculationStats.h"
+#include "xml/generated/headSearchParameters.h"
 
 namespace corecvs {
 using std::vector;

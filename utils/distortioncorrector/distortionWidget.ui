@@ -642,31 +642,31 @@
   <customwidget>
    <class>LensDistortionModelParametersControlWidget</class>
    <extends>QWidget</extends>
-   <header>lensDistortionModelParametersControlWidget.h</header>
+   <header>distortioncorrector/lensDistortionModelParametersControlWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>PaintImageWidget</class>
    <extends>QWidget</extends>
-   <header>paintImageWidget.h</header>
+   <header>uis/paintImageWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>CheckerboardDetectionParametersControlWidget</class>
    <extends>QWidget</extends>
-   <header>checkerboardDetectionParametersControlWidget.h</header>
+   <header>corestructs/coreWidgets/checkerboardDetectionParametersControlWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>LineDistortionEstimatorParametersControlWidget</class>
    <extends>QWidget</extends>
-   <header>lineDistortionEstimatorParametersControlWidget.h</header>
+   <header>corestructs/coreWidgets/lineDistortionEstimatorParametersControlWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>CalibrationFeaturesWidget</class>
    <extends>QWidget</extends>
-   <header>calibrationFeaturesWidget.h</header>
+   <header>distortioncorrector/calibrationFeaturesWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

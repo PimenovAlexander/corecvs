@@ -2,7 +2,7 @@
 
 #include "ui_bitSelectorParametersControlWidget.h"
 #include "core/xml/generated/bitSelectorParameters.h"
-#include "filterParametersControlWidgetBase.h"
+#include "filters/filterParametersControlWidgetBase.h"
 
 namespace Ui {
     class BitSelectorParametersControlWidget;

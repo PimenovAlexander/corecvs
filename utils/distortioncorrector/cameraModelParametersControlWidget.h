@@ -4,15 +4,15 @@
 #include <QWidget>
 #include <QComboBox>
 
-#include "parametersControlWidgetBase.h"
-#include "core/alignment/lensDistortionModelParameters.h"
+#include "corestructs/parametersControlWidgetBase.h"
+#include "alignment/lensDistortionModelParameters.h"
 
-#include "core/cameracalibration/cameraModel.h"
+#include "cameracalibration/cameraModel.h"
 
-#include "core/math/quaternion.h"
-#include "core/math/vector/vector3d.h"
+#include "math/quaternion.h"
+#include "math/vector/vector3d.h"
 
-#include "reflectionWidget.h"
+#include "corestructs/reflectionWidget.h"
 
 namespace Ui {
 class CameraModelParametersControlWidget;

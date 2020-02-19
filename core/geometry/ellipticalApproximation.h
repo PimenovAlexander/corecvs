@@ -9,12 +9,12 @@
 #include <math.h>
 #include <set>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/math/vector/vector2d.h"
-#include "core/math/matrix/matrix.h"
+#include "math/vector/vector2d.h"
+#include "math/matrix/matrix.h"
 
-#include "core/math/affine.h"
+#include "math/affine.h"
 
 namespace corecvs {
 

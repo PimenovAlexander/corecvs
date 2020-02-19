@@ -1,11 +1,11 @@
 #include <iostream>
 
 
-#include "core/reflection/commandLineSetter.h"
-#include "core/buffers/bufferFactory.h"
-#include "core/fileformats/bmpLoader.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/buffers/rgb24/abstractPainter.h"
+#include "reflection/commandLineSetter.h"
+#include "buffers/bufferFactory.h"
+#include "fileformats/bmpLoader.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "buffers/rgb24/abstractPainter.h"
 
 #ifdef WITH_LIBJPEG
 #include "libjpegFileReader.h"

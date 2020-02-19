@@ -9,9 +9,9 @@
  * \author alexander
  */
 
-#include "core/math/vector/fixedVector.h"
-#include "core/math/matrix/matrix33.h"
-#include "core/math/vector/vector4d.h"
+#include "math/vector/fixedVector.h"
+#include "math/matrix/matrix33.h"
+#include "math/vector/vector4d.h"
 
 namespace corecvs {
 

@@ -1,15 +1,15 @@
 #ifndef CALIBRATION_LOCATION_H
 #define CALIBRATION_LOCATION_H
 
-#include "core/math/vector/vector2d.h"
-#include "core/math/vector/vector3d.h"
-#include "core/math/affine.h"
-#include "core/math/eulerAngles.h"
-#include "core/math/quaternion.h"
-#include "core/math/mathUtils.h"
-#include "core/math/matrix/matrix44.h"
-#include "core/geometry/line.h"
-#include "core/reflection/printerVisitor.h"
+#include "math/vector/vector2d.h"
+#include "math/vector/vector3d.h"
+#include "math/affine.h"
+#include "math/eulerAngles.h"
+#include "math/quaternion.h"
+#include "math/mathUtils.h"
+#include "math/matrix/matrix44.h"
+#include "geometry/line.h"
+#include "reflection/printerVisitor.h"
 
 namespace corecvs {
 

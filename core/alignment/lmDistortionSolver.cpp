@@ -1,9 +1,9 @@
-#include "core/alignment/lmDistortionSolver.h"
+#include "alignment/lmDistortionSolver.h"
 #include "camerasCalibration/camerasCalibrationFunc.h"
-#include "core/math/levenmarq.h"
-#include "core/utils/log.h"
-#include "core/alignment/anglePointsFunction.h"
-#include "core/alignment/distPointsFunction.h"
+#include "math/levenmarq.h"
+#include "utils/log.h"
+#include "alignment/anglePointsFunction.h"
+#include "alignment/distPointsFunction.h"
 
 namespace corecvs {
 

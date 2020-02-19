@@ -1,7 +1,7 @@
 #ifndef RADIOCONTROLWIDGET_H
 #define RADIOCONTROLWIDGET_H
 
-#include "multimoduleController.h"
+#include "radio/multimoduleController.h"
 
 #include <QWidget>
 

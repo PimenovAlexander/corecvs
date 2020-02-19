@@ -2,9 +2,9 @@
 #include <string.h>
 #include <math.h>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/math/levenmarq.h"
+#include "math/levenmarq.h"
 #include "stdlib.h"
 namespace corecvs {
 

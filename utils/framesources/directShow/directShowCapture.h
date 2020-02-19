@@ -13,10 +13,10 @@
 #include <mutex>
 
 #include "directShow.h"
-#include "core/framesources/imageCaptureInterface.h"
-#include "core/framesources/cameraControlParameters.h"    // CameraParameters
+#include "framesources/imageCaptureInterface.h"
+#include "framesources/cameraControlParameters.h"    // CameraParameters
 #include "core/utils/preciseTimer.h"
-#include "../../frames.h"     // Frames::
+#include "framesources/frames.h"     // Frames::
 
 #define PREFFERED_RGB_BPP 24
 #define AUTOSELECT_FORMAT_FEATURE -255

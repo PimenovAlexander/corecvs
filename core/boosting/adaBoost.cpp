@@ -7,9 +7,9 @@
  * \author alexander
  */
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/boosting/adaBoost.h"
+#include "boosting/adaBoost.h"
 namespace corecvs {
 
 

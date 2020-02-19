@@ -9,8 +9,8 @@
 #include "inputFilterParametersControlWidget.h"
 #include "ui_inputFilterParametersControlWidget.h"
 #include <memory>
-#include "qSettingsGetter.h"
-#include "qSettingsSetter.h"
+#include "visitors/qSettingsGetter.h"
+#include "visitors/qSettingsSetter.h"
 
 
 InputFilterParametersControlWidget::InputFilterParametersControlWidget(QWidget *parent, bool _autoInit, QString _rootPath)

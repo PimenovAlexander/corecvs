@@ -2,12 +2,12 @@
 #include <list>
 #include <algorithm>
 
-#include "core/utils/utils.h"
-#include "core/buffers/rgb24/abstractPainter.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/buffers/bufferFactory.h"
-#include "core/fileformats/svgLoader.h"
-#include "core/reflection/commandLineSetter.h"
+#include "utils/utils.h"
+#include "buffers/rgb24/abstractPainter.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "buffers/bufferFactory.h"
+#include "fileformats/svgLoader.h"
+#include "reflection/commandLineSetter.h"
 
 #define EPSIL 0.00001
 

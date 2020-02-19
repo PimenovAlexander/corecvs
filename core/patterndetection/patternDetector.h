@@ -1,19 +1,19 @@
 #ifndef PATTERNDETECTOR
 #define PATTERNDETECTOR
 
-#include "core/stats/calculationStats.h"
-#include "core/utils/global.h"
+#include "stats/calculationStats.h"
+#include "utils/global.h"
 
-#include "core/alignment/selectableGeometryFeatures.h"
-#include "core/buffers/g8Buffer.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "alignment/selectableGeometryFeatures.h"
+#include "buffers/g8Buffer.h"
+#include "buffers/rgb24/rgb24Buffer.h"
 
 
-#include "core/filters/newstyle/newStyleBlock.h"
-#include "core/utils/debuggableBlock.h"
-#include "core/reflection/dynamicObject.h"
+#include "filters/newstyle/newStyleBlock.h"
+#include "utils/debuggableBlock.h"
+#include "reflection/dynamicObject.h"
 
-#include "core/xml/generated/patternDetectorResultBase.h"
+#include "xml/generated/patternDetectorResultBase.h"
 
 
 namespace corecvs {

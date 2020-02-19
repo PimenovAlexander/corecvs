@@ -1,39 +1,65 @@
-project (drone-physics-test)
+cmake_minimum_required(VERSION 3.11)
+set(MODULE_NAME applications/drone)
+init_project(PROJECT_NAME physics-test)
 
+find_package(Qt5 COMPONENTS REQUIRED Gui)
 
-set (NAME drone-physics-test )
+set(PRIVATE_HEADER_FILES
+    dzhanibekovBolt.h
+    testPhysicsObject.h
+    )
 
-set (SRC_FILES
-    testPhysicsObject.cpp
+set(HEADERS
+    ${PRIVATE_HEADER_FILES}
+    )
+
+set(SOURCE_FILES
     dzhanibekovBolt.cpp
     main_physics_test.cpp
     sim_physics_test.cpp
-)
+    testPhysicsObject.cpp
+    )
 
+set(SOURCES
+    ${SOURCE_FILES}
+    )
 
-set (HDR_FILES
-    testPhysicsObject.h
-    dzhanibekovBolt.h
-)
+assign_source_group(${HEADERS} ${SOURCES})
 
+add_executable(${PROJECT_NAME}
+    ${HEADERS}
+    ${SOURCES}
+    )
 
-if(AVCODEC_LIBS) 
-    message("Switching on avcodec support.")
-    include(../../../wrappers/avcodec/sourcelist.cmake)
+set(ADDITIONAL_LIBS)
+
+if(AVCODEC_LIBS)
+    set(ADDITIONAL_LIBS
+            ${ADDITIONAL_LIBS}
+            AVCODECwrapper
+            )
+    add_definitions(-DWITH_AVCODEC -DWITH_SWSCALE)
 endif()
 
-add_executable(${NAME} ${SRC_FILES} ${HDR_FILES} )
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+    corecvs
+    corecvs_utils
+    drone-core
+    gtest
+    gtest_main
+    JSONMODERNwrapper
+    Qt5::Gui
+    pthread
+    ${ADDITIONAL_LIBS}
+    )
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND cp ${PROJECT_BINARY_DIR}/${PROJECT_NAME}  ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Copying ${PROJECT_NAME} to binary directory"
-        )
+set_target_properties(${PROJECT_NAME} 
+    PROPERTIES
+    FOLDER "${MODULE_NAME}"
+    )
 
-if(AVCODEC_LIBS) 
-    target_link_libraries(${NAME} ${AVCODEC_LIBS})
-endif()
-
-target_link_libraries(${NAME} gtest gtest_main drone-core cvs_utils corecvs pthread ${LIBS})
-target_include_directories(${NAME} PUBLIC ${drone-core_SOURCE_DIR} ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} .)
-
+copy_directory(${PROJECT_NAME} 
+    ${PROJECT_BINARY_DIR}/${MODULE_NAME}/${PROJECT_NAME}
+    ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}
+    )

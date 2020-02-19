@@ -1,22 +1,43 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
+cmake_minimum_required(VERSION 3.11)
+set(MODULE_NAME applications)
+init_project(PROJECT_NAME nester)
 
-project(nester)
+set(PRIVATE_HEADER_FILE
+    nester.h
+    )
 
-add_executable(nester main_nester.cpp)
+set(HEADERS
+    ${PRIVATE_HEADER_FILE}
+    )
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND cp ${PROJECT_BINARY_DIR}/${PROJECT_NAME}  ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Copying ${PROJECT_NAME} to binary directory"
-        )
+set(SOURCE_FILES
+    main_nester.cpp
+    nester.cpp
+    )
 
-target_sources(nester
-    PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}/nester.h
+set(SOURCES
+    ${SOURCE_FILES}
+    )
+
+assign_source_group(${HEADERS} ${SOURCES})
+
+add_executable(${PROJECT_NAME}
+    ${HEADERS}
+    ${SOURCES}
+    )
+
+target_link_libraries(${PROJECT_NAME}
     PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/main_nester.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/nester.cpp
-)
+    corecvs_utils
+    corecvs
+    )
 
-target_link_libraries(nester cvs_utils corecvs)
-target_include_directories(nester PUBLIC ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} .)
+set_target_properties(${PROJECT_NAME}     
+    PROPERTIES
+    FOLDER "${MODULE_NAME}"
+    )
+
+copy_directory(${PROJECT_NAME} 
+    ${PROJECT_BINARY_DIR}/${MODULE_NAME}/${PROJECT_NAME}
+    ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}
+    )
