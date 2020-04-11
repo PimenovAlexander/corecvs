@@ -13,6 +13,60 @@
 using namespace std;
 using namespace corecvs;
 
+void drawFFT(int window_size, vector<complex<float>> &data, char *name)
+{
+    float *avg = new float[window_size];
+    for(int j = 0; j < window_size; j++)
+    {
+        avg[j] = 0;
+    }
+
+    fftw_complex *in       = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * window_size);
+    fftw_complex *out      = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * window_size);
+
+    for (size_t i = 0; i + window_size < data.size(); i += window_size)
+    {
+        /* Don't want to use memcpy here so far, for more control*/
+        for(int j = 0; j < window_size; j++)
+        {
+            in[j][0] = data[i+j].real();
+            in[j][1] = data[i+j].imag();
+        }
+
+        fftw_plan pf;
+        pf = fftw_plan_dft_1d(window_size, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
+        fftw_execute(pf);
+        fftw_destroy_plan(pf);
+
+        for(int j = 0; j < window_size; j++)
+        {
+            avg[j] += out[j][0] * out[j][0] + out[j][1] * out[j][1];
+        }
+    }
+
+    int dscale = 6 * 1024;
+    RGB24Buffer *fftShow = new RGB24Buffer(1000, 1024);
+
+    for(int j = 0; j < fftShow->w; j ++)
+    {
+        double value = 0;
+        for (int k = 0; k < dscale; k++)
+        {
+            value += avg[j * dscale + k];
+        }
+        value /= dscale;
+
+        //cout << j << " " << avg[j] << endl ;
+        int y0 = fftShow->h - 1 - (value / 500.0);
+
+        fftShow->drawVLine(j, fftShow->h - 1, y0, RGBColor::Red());
+    }
+    BufferFactory::getInstance()->saveRGB24Bitmap(fftShow, name);
+
+
+}
+
+
 int main (int argc, char **argv)
 {
 #ifdef WITH_LIBPNG
@@ -75,17 +129,15 @@ int main (int argc, char **argv)
 
 
 
-    int window_size = 512*4;
-    float *avg = new float[window_size];
-    for(int j = 0; j < window_size; j++)
-    {
-        avg[j] = 0;
-    }
+    int window_size = 6 * 1024 * 1024;
 
 #ifdef WITH_FFTW
 
-    fftw_complex *in  = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * window_size);
-    fftw_complex *out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * window_size);
+    fftw_complex *in       = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * window_size);
+    fftw_complex *out      = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * window_size);
+    fftw_complex *filtered = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * window_size);
+
+    drawFFT(window_size, data, "prefilter.png");
 
 
     for (int i = 0; i + window_size < data.size(); i += window_size)
@@ -97,45 +149,50 @@ int main (int argc, char **argv)
             in[j][1] = data[i+j].imag();
         }
 
-        fftw_plan p;
-        p = fftw_plan_dft_1d(window_size, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
-        fftw_execute(p);
-        fftw_destroy_plan(p);
+        fftw_plan pf;
+        pf = fftw_plan_dft_1d(window_size, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
+        fftw_execute(pf);
+        fftw_destroy_plan(pf);
+
+        /* Filter. Don't want to think of anything more complicated */
+        for(int j = window_size / 2; j < window_size; j++)
+        {
+            out[j][0] = 0;
+            out[j][1] = 0;
+        }
+
+        fftw_plan pb;
+        pb = fftw_plan_dft_1d(window_size, out, filtered, FFTW_BACKWARD, FFTW_ESTIMATE);
+        fftw_execute(pb);
+        fftw_destroy_plan(pb);
 
         for(int j = 0; j < window_size; j++)
         {
-            avg[j] += out[j][0] * out[j][0] + out[j][1] * out[j][1];
+            data[i+j].real(filtered[j][0] / window_size);
+            data[i+j].imag(filtered[j][1] / window_size);
         }
     }
     fftw_free(in);
     fftw_free(out);
+    fftw_free(filtered);
+
+    drawFFT(window_size, data, "postfilter.png");
+
 #endif
-
-    double min = 0;
-    double max = 0;
-    RGB24Buffer *fftShow = new RGB24Buffer(1000, window_size);
-
-    for(int j = 0; j < window_size; j++)
-    {
-        //cout << j << " " << avg[j] << endl ;
-        int y0 = fftShow->h - 1 - (avg[j] / 500.0);
-
-        fftShow->drawVLine(j, fftShow->h - 1, y0, RGBColor::Red());
-    }
-    BufferFactory::getInstance()->saveRGB24Bitmap(fftShow, "fftw.png");
 
 
     int perframe = 333666;
-    RGB24Buffer *syncShow = new RGB24Buffer(525, perframe / 525, RGBColor::White());
+    int width = perframe / scanLines;
+    RGB24Buffer *syncShow = new RGB24Buffer(scanLines, width, RGBColor::White());
     float scale = 1.00088;
-
+    int startOffset = width * 201.15;
 
 
     for(int i = 0; i < syncShow->h; i++)
     {
         for(int j = 0; j < syncShow->w; j++)
         {
-            int offset = (i * syncShow->w + j) * scale;
+            int offset = (i * syncShow->w + j) * scale + startOffset;
             if (offset >= data.size())
             {
                 syncShow->element(i,j) = RGBColor::Green();
@@ -156,6 +213,21 @@ int main (int argc, char **argv)
     }
     BufferFactory::getInstance()->saveRGB24Bitmap(syncShow, "sync.png");
 
+    RGB24Buffer *deinterlace = new RGB24Buffer(scanLines, width, RGBColor::White());
+    for(int i = 0; i < deinterlace->h; i++)
+    {
+        for(int j = 0; j < deinterlace->w; j++)
+        {
+            int h = i / 2;
+            if (i % 2) {
+                h += scanLines / 2;
+            }
+            deinterlace->element(i,j) = syncShow->element(h, j);
+
+        }
+    }
+
+    BufferFactory::getInstance()->saveRGB24Bitmap(deinterlace, "deint.png");
 
 
     return 0;
