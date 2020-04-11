@@ -482,55 +482,6 @@ void PhysicsMainWindow::startSimuation()
 {
 }
 
-void PhysicsMainWindow::frameValuesUpdate()
-{
-  /*  std::thread thr([this]()
-    {
-        while(true)
-        {
-            if (currentMode==1)
-            {
-#if 0
-                throttleValue+=sign(throttleValueFromJS-1500);
-                if (throttleValue>1800){throttleValue=1799;}
-                if (throttleValue<900){throttleValue=901;}
-#endif
-            }
-
-#if 0
-            ui->Yaw->setValue(yawValue);
-            ui->Throttle->setValue(throttleValue);
-
-            ui->label->setText("Yaw-"+QString::number(yawValue));
-            ui->label_4->setText("throttle-"+QString::number(throttleValue));
-
-            ui->Pitch->setValue(pitchValue);
-            ui->Roll->setValue(rollValue);
-
-            ui->label_2->setText("Roll-"+QString::number(rollValue));
-            ui->label_3->setText("pitch-"+QString::number(pitchValue));
-
-            ui->CH5->setValue(CH5Value);
-            ui->CH6->setValue(CH6Value);
-            ui->CH7->setValue(CH7Value);
-            ui->CH8->setValue(CH8Value);
-
-            ui->CH5_label->setText("CH5-"+QString::number(CH5Value));
-            ui->CH6_label->setText("CH6-"+QString::number(CH6Value));
-            ui->CH7_label->setText("CH7-"+QString::number(CH7Value));
-            ui->CH8_label->setText("CH8-"+QString::number(CH8Value));
-#endif
-
-
-            usleep(30000);
-
-        }
-
-    });
-    thr.detach();
-*/
-}
-
 void PhysicsMainWindow::startRealMode()                                    //starts controlling the copter
 {
     if (!virtualModeActive & !realModeActive)
@@ -660,8 +611,8 @@ void PhysicsMainWindow::mainAction()
         copter.physicsTick();
     }
     */
-/**
-    copter.flightControllerTick(joystick1.output);
+
+//    copter.flightControllerTick(joystick.output);
     copter.physicsTick();
 
     copter.visualTick();
@@ -681,7 +632,7 @@ void PhysicsMainWindow::mainAction()
     mGraphDialog.addGraphPoint("Z", copter.position.z());
 
     mGraphDialog.update();
-**/
+
 
     //drone.flightControllerTick(joystick1.output);
 
@@ -860,9 +811,3 @@ void PhysicsMainWindow::calibrateCamera()
     calibrationWidget.show();
     calibrationWidget.raise();
 }
-
-void PhysicsMainWindow::checkForJoystick()               //auto connect
-{
-//   jReader->start();
-}
-

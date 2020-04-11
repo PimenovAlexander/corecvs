@@ -56,16 +56,23 @@ void JoystickOptionsWidget::getProps()
 
 void JoystickOptionsWidget::openJoystick()
 {
+    SYNC_PRINT(("JoystickOptionsWidget::openJoystick() : called\n"));
     if (mInterface != NULL) {
         return;
     }
 
     std::string name  = ui->deviceLineEdit->text().toStdString();
+    SYNC_PRINT(("JoystickOptionsWidget::openJoystick() : creating joystick for <%s>\n", name.c_str()));
+
     if (HelperUtils::endsWith(name, ".dump")) {
+        SYNC_PRINT(("Created PlaybackJoystickInterface\n"));
         mInterface = new JoystickListener<PlaybackJoystickInterface>(name, this);
     } else {
+        SYNC_PRINT(("Created LinuxJoystickInterface\n"));
         mInterface = new JoystickListener<LinuxJoystickInterface>(name, this);
     }
+
+    mInterface->start();
 
     JoystickConfiguration conf = mInterface->getConfiguration();
     conf.print();
@@ -73,7 +80,6 @@ void JoystickOptionsWidget::openJoystick()
     QObject::connect(mInterface, SIGNAL(joystickUpdated(JoystickState)), this, SLOT(newData(JoystickState)), Qt::QueuedConnection);
     QObject::connect(mInterface, SIGNAL(joystickUpdated(JoystickState)), this, SIGNAL(joystickUpdated(JoystickState)), Qt::QueuedConnection);
 
-    mInterface->start();
     ui-> openPushButton->setEnabled(false);
     ui->closePushButton->setEnabled(true);
 }

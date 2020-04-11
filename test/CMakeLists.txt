@@ -6,6 +6,7 @@ set(TEST_SUBDIRECTORIES
     widget_harness
     example_scene
     fileloader
+    fftplayground
     flow_detector
     flowtest
     focus_stack

@@ -13,6 +13,12 @@
 using namespace std;
 using namespace corecvs;
 
+LinuxJoystickInterface::LinuxJoystickInterface(const string &deviceName)
+{
+    mDeviceName = deviceName;
+    SYNC_PRINT(("LinuxJoystickInterface::LinuxJoystickInterface(%s):called\n", deviceName.c_str()));
+}
+
 vector<string> LinuxJoystickInterface::getDevices(const string &prefix)
 {
     vector<string> toReturn;
@@ -86,7 +92,7 @@ JoystickConfiguration LinuxJoystickInterface::getConfiguration(const std::string
 JoystickConfiguration LinuxJoystickInterface::getConfiguration()
 {
     if (mJoystickDevice == -1) {
-        SYNC_PRINT(("Device not open\n"));
+        SYNC_PRINT(("LinuxJoystickInterface::getConfiguration(): Device not open\n"));
         return JoystickConfiguration();
     }
 

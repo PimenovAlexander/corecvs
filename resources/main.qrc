@@ -128,6 +128,7 @@
         <file>radio_modern.png</file>
         <file>transmit_blue.png</file>
         <file>transmit.png</file>
+        <file>theater.png</file>
     </qresource>
     <qresource prefix="/new/colors">
         <file>colors/color_blue.png</file>

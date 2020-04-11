@@ -200,10 +200,6 @@ public:
 
 private slots:
 
-
-
-    void checkForJoystick();
-
     void stopVirtualMode();
     void startVirtualMode();
 
