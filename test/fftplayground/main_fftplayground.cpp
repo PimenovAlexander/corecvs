@@ -21,6 +21,7 @@ void drawFFT(int window_size, vector<complex<float>> &data, char *name)
         avg[j] = 0;
     }
 
+#ifdef WITH_FFTW
     fftw_complex *in       = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * window_size);
     fftw_complex *out      = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * window_size);
 
@@ -43,6 +44,7 @@ void drawFFT(int window_size, vector<complex<float>> &data, char *name)
             avg[j] += out[j][0] * out[j][0] + out[j][1] * out[j][1];
         }
     }
+#endif
 
     int dscale = 6 * 1024;
     RGB24Buffer *fftShow = new RGB24Buffer(1000, 1024);
