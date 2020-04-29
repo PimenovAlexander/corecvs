@@ -9,6 +9,7 @@
  * \author alexander
  */
 #include <string>
+#include <cctype>
 
 #include "utils/global.h"
 #include "utils/utils.h"

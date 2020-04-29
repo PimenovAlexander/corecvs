@@ -6,7 +6,11 @@
 
 #if !defined(WITH_STD_FILESYSTEM)
 #include <sys/types.h>
-#include <dirent.h>
+#   if !defined(MSVC)
+#      include <../dirent.h>
+#   else
+#      include <dirent.h>
+#   endif
 #include <sys/stat.h>
 #endif
 
