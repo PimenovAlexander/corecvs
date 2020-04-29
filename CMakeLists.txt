@@ -26,7 +26,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
 # Overall dependances
-option(USE_TBB "Should compile with TBB" YES)
+option(USE_TBB "Should compile with TBB" NO)
 if(USE_TBB)
     message(STATUS "Including TBB on CORECVS build")
     find_package(TBB REQUIRED)
@@ -44,7 +44,7 @@ endif()
 #    endif()
 #endif()
 
-option(USE_OPENBLAS "Should compile with OpenBlas" YES)
+option(USE_OPENBLAS "Should compile with OpenBlas" NO)
 if(USE_OPENBLAS)
     message(STATUS "Including OpenBlas and Lapacke on CORECVS build")
     find_package(OpenBlas)
@@ -54,7 +54,7 @@ if(USE_OPENBLAS)
     endif()
 endif()
 
-option(USE_OPENCV "Should compile with OpenCV" YES)
+option(USE_OPENCV "Should compile with OpenCV" NO)
 if(USE_OPENCV)
     message(STATUS "Including OpenCV on CORECVS build")
     find_package(OpenCV)
@@ -65,37 +65,37 @@ if(USE_OPENCV)
     endif()
 endif()
 
-option(USE_LIBPNG "Should compile with LibPNG" YES)
+option(USE_LIBPNG "Should compile with LibPNG" NO)
 if(USE_LIBPNG)
     message(STATUS "Including LibPNG wherever possible")
     find_package(Png)
 endif()
 
-option(USE_LIBJPEG "Should compile with LibJPEG" YES)
+option(USE_LIBJPEG "Should compile with LibJPEG" NO)
 if(USE_LIBJPEG)
     message(STATUS "Including LibJpeg wherever possible")
     find_package(Jpeg)
 endif()
 
-option(USE_EIGEN "Should compile with Eigen solver" YES)
+option(USE_EIGEN "Should compile with Eigen solver" NO)
 if(USE_EIGEN)
     message(STATUS "Including Eigen solver wherever possible")
     find_package(Eigen)
 endif()
 
-option(USE_CERES "Should compile with Ceres solver" YES)
+option(USE_CERES "Should compile with Ceres solver" NO)
 if(USE_CERES)
     message(STATUS "Including Ceres solver wherever possible")
     find_package(Ceres)
 endif()
 
-option(USE_LIBFFT "Should compile with libfftw" YES)
+option(USE_LIBFFT "Should compile with libfftw" NO)
 IF ( USE_LIBFFT )
     MESSAGE( STATUS "Including libfftw wherever possible" )
     find_package( FFTW )
 ENDIF ()
 
-option(USE_AVCODEC "Should compile with AVCODEC" YES)
+option(USE_AVCODEC "Should compile with AVCODEC" NO)
 if(USE_AVCODEC)
     message(STATUS "Including AVCODEC wherever possible")
     find_package(AVCodec)
@@ -103,7 +103,7 @@ else()
     message(STATUS "Including AVCODEC requested, but libaray not found")
 endif()
 
-option(USE_APRILTAG "Should compile with APRILTAG" YES)
+option(USE_APRILTAG "Should compile with APRILTAG" NO)
 if(USE_APRILTAG)
     message(STATUS "Including Apriltag wherever possible")
     find_package(Apriltag)
@@ -119,20 +119,20 @@ endif()
 
 # Actual subprojects
 
-include(cmake/googletest.cmake)
-fetch_googletest(
-    ${PROJECT_SOURCE_DIR}/cmake
-    ${PROJECT_BINARY_DIR}/googletest
-    )
+#include(cmake/googletest.cmake)
+#fetch_googletest(
+#    ${PROJECT_SOURCE_DIR}/cmake
+#    ${PROJECT_BINARY_DIR}/googletest
+#    )
 
-add_subdirectory(core)
-add_subdirectory(utils)
+#add_subdirectory(core)
+#add_subdirectory(utils)
 
-add_subdirectory(test)
-add_subdirectory(applications)
-add_subdirectory(tools)
-add_subdirectory(wrappers)
+#add_subdirectory(test)
+#add_subdirectory(applications)
+#add_subdirectory(tools)
+#add_subdirectory(wrappers)
 
-enable_testing()
-add_subdirectory(test-core)
-add_subdirectory(test-core/-perf)
+#enable_testing()
+#add_subdirectory(test-core)
+#add_subdirectory(test-core/-perf)
