@@ -35,6 +35,10 @@
  #include "opencv/openCVFileCapture.h"
 #endif
 
+#ifdef WITH_ATVCAMERA
+ #include "wrappers/atv/atvCapture.h"
+#endif
+
 ImageCaptureInterfaceQt* ImageCaptureInterfaceQtFactory::fabric(string input, bool isRGB)
 {
     SYNC_PRINT(("ImageCaptureInterfaceQtFactory::fabric(%s, rgb=%s):called\n", input.c_str(), isRGB ? "true" : "false"));
@@ -158,6 +162,16 @@ ImageCaptureInterfaceQt* ImageCaptureInterfaceQtFactory::fabric(string input, bo
     {
         string tmp = input.substr(opencv_file.size());
         return new ImageCaptureInterfaceWrapper<OpenCvFileCapture>(tmp);
+    }
+#endif
+
+#ifdef WITH_ATVCAMERA
+    string atv("atv:");
+    if (input.substr(0, atv.size()) == atv)
+    {
+        SYNC_PRINT(("ImageCaptureInterface::fablic(): Creating ATVCamera input\n"));
+        string tmp = input.substr(atv.size());
+        return new ImageCaptureInterfaceWrapper<ATVCapture>(tmp, isRGB);
     }
 #endif
 
