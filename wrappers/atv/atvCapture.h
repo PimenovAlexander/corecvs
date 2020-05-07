@@ -6,8 +6,8 @@
  * \author Ilya
  */
 
-#ifndef ATV_H_
-#define ATV_H_
+#ifndef CORECVS_ATV_H_
+#define CORECVS_ATV_H_
 
 #include <cstdlib>
 #include <complex>
@@ -120,4 +120,4 @@ public:
 #define EQUALISING_LEVEL 0
 #define VERTICAL_SYNC_LEVEL 0
 
-#endif /* ATV_H_ */
+#endif /* CORECVS_ATV_H_ */
