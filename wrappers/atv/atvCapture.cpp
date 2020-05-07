@@ -8,7 +8,6 @@
 
 #include "atvCapture.h"
 
-#include <fstream>
 
 u_short next_4(u_short i)
 {
