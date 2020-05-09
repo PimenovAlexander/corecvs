@@ -22,6 +22,13 @@ if (apriltag_LIBS)
     )
 endif()
 
+if (WITH_VULKAN_QT_IB)
+set(TEST_SUBDIRECTORIES
+        ${TEST_SUBDIRECTORIES}
+        vkwidgettest
+    )
+endif()
+
 
 foreach(test_subdirectory ${TEST_SUBDIRECTORIES})
     message(STATUS "adding subdirectory applications/${test_subdirectory}")

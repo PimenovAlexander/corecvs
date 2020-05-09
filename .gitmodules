@@ -1,3 +1,6 @@
 [submodule "siblings/OF_DIS"]
 	path = siblings/OF_DIS
 	url = https://github.com/tikroeger/OF_DIS.git
+[submodule "utils/vkrenderer/ignimbrite"]
+	path = utils/vkrenderer/ignimbrite
+	url = https://github.com/EgorOrachyov/Ignimbrite.git

@@ -66,6 +66,13 @@ if(WITH_OPENGL)
     target_link_libraries(${MODULE_NAME} Qt5::OpenGL GLU GL)
 endif()
 
+option(WITH_VULKAN_QT_IB "Should use Ignimbrite for Vulkan API" NO)
+if (WITH_VULKAN_QT_IB)
+    message(STATUS "including utils/vkrenderer")
+    add_subdirectory(vkrenderer)
+    target_link_libraries(${MODULE_NAME} vkrenderer)
+endif()
+
 file(GLOB SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
 file(GLOB HDR_FILES ${CMAKE_CURRENT_LIST_DIR}/*.h)
 file(GLOB UI_FILES ${CMAKE_CURRENT_LIST_DIR}/*.ui)
