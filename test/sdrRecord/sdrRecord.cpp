@@ -8,39 +8,75 @@
 
 #include "sdrRecord.h"
 
-sdrRecord::sdrRecord(double centerFreq) : centerFreq(centerFreq), mIsPaused(true) {}
+SDRRecord::SDRRecord(double centerFreq) : centerFreq(centerFreq), mIsPaused(true) {}
 
 
-sdrRecord::CapErrorCode sdrRecord::initCapture()
+SDRRecord::CapErrorCode SDRRecord::initCapture()
 {
     SYNC_PRINT(("sdrRecord::initCapture(): called\n"));
 
-    // TODO: automatic chose of device
+    // TODO: automatic choice of device
     SoapySDR::Kwargs args = SoapySDR::KwargsFromString("driver=hackrf");
     SDR = SoapySDR::Device::make(args);
     if (SDR == nullptr)
     {
         SYNC_PRINT(("sdrRecord::initCapture(): Unable to make a device\n"));
-        return sdrRecord::FAILURE;
+        return SDRRecord::FAILURE;
     }
 
+    /* Output some information */
+    std::string driverKey   = SDR->getDriverKey();
+    std::string hardwareKey = SDR->getHardwareKey();
+
+    SYNC_PRINT(("Driver   Key: %s\n", driverKey.c_str()));
+    SYNC_PRINT(("Hardware Key: %s\n", hardwareKey.c_str()));
+
+    SYNC_PRINT(("Hardware Info:\n"));
+    SoapySDR::Kwargs list = SDR->getHardwareInfo();
+    for (auto &key : list)
+    {
+        SYNC_PRINT(("    %s - %s:\n", key.first.c_str(), key.second.c_str()));
+    }
+
+    SYNC_PRINT(("Stream formats:\n"));
+    std::vector<std::string> streamFormats = SDR->getStreamFormats(SOAPY_SDR_RX, 0);
+    for (auto &format : streamFormats)
+    {
+        SYNC_PRINT((" - %s:\n", format.c_str()));
+    }
+
+    SYNC_PRINT(("Native formats:\n"));
+    double fullScale = 0.0;
+    std::string nativeStreamFormat = SDR->getNativeStreamFormat(SOAPY_SDR_RX, 0, fullScale);
+    SYNC_PRINT((" - %s:\n", nativeStreamFormat.c_str()));
+
+
+    /* Creating and opening stream */
     SDR->setSampleRate(SOAPY_SDR_RX, 0, sampleRate);
     SDR->setFrequency (SOAPY_SDR_RX, 0, centerFreq);
     rxStream = SDR->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CF32);
+
+    /* Output stream info */
+    size_t mtu = SDR->getStreamMTU(rxStream);
+    SYNC_PRINT(("Created stream MTU is %d elements\n", (int)mtu));
+
+    size_t dmaBuffs = SDR->getNumDirectAccessBuffers(rxStream);
+    SYNC_PRINT(("Created stream has %d DMA buffers\n", (int)dmaBuffs));
+
 
     std::string output = "samples.bin";
     file.open(output, std::ios::out | std::ios::binary);
     if (file.fail())
     {
         SYNC_PRINT(("Can't open output file <%s>\n", output.c_str()));
-        return sdrRecord::FAILURE;
+        return SDRRecord::FAILURE;
     }
 
     SYNC_PRINT(("sdrRecord::initCapture(): exited\n"));
-    return sdrRecord::SUCCESS;
+    return SDRRecord::SUCCESS;
 }
 
-sdrRecord::CapErrorCode sdrRecord::startCapture()
+SDRRecord::CapErrorCode SDRRecord::startCapture()
 {
     SYNC_PRINT(("sdrRecord::startCapture(): called\n"));
 
@@ -48,14 +84,14 @@ sdrRecord::CapErrorCode sdrRecord::startCapture()
     mIsPaused = false;
     firstIteration = true;
 
-    writer = std::thread(&sdrRecord::writing, this);
+    writer = std::thread(&SDRRecord::writing, this);
 
     SYNC_PRINT(("sdrRecord::startCapture(): exited\n"));
-    return sdrRecord::SUCCESS;
+    return SDRRecord::SUCCESS;
 }
 
 
-void sdrRecord::receiving(std::complex<float> buffer[])
+void SDRRecord::receiving(std::complex<float> buffer[])
 {
     void *buffs[] = {buffer};
     int flags;
@@ -64,12 +100,12 @@ void sdrRecord::receiving(std::complex<float> buffer[])
 }
 
 
-void sdrRecord::writing()
+void SDRRecord::writing()
 {
     float re, im;
     for (u_char i = 0; !mIsPaused; i = 1 - i)
     {
-        receiver = std::thread(&sdrRecord::receiving, this, buff[i]);
+        receiver = std::thread(&SDRRecord::receiving, this, buff[i]);
         if (firstIteration)
         {   firstIteration = false; receiver.join(); continue;   }
         for (u_short sampleNumber = 0; sampleNumber < buffSize; sampleNumber++)
@@ -84,18 +120,18 @@ void sdrRecord::writing()
 }
 
 
-sdrRecord::CapErrorCode sdrRecord::stopCapture()
+SDRRecord::CapErrorCode SDRRecord::stopCapture()
 {
     SYNC_PRINT(("sdrRecord::stopCapture(): called.\n"));
 
     mIsPaused = true;
     writer.join();
     SDR->deactivateStream(rxStream, 0, 0);
-    return sdrRecord::SUCCESS;
+    return SDRRecord::SUCCESS;
 }
 
 
-sdrRecord::~sdrRecord()
+SDRRecord::~SDRRecord()
 {
     SYNC_PRINT(("sdrRecord::sdrRecord(): called\n"));
 
@@ -106,4 +142,21 @@ sdrRecord::~sdrRecord()
     SoapySDR::Device::unmake(SDR);
 
     SYNC_PRINT(("sdrRecord::sdrRecord(): exited\n"));
+}
+
+void SDRRecord::printDevices()
+{
+    SoapySDR::KwargsList list = SoapySDR::Device::enumerate();
+    SYNC_PRINT(("SoapySDR returns following devices:\n"));
+    int count = 1;
+    for (auto &dev : list)
+    {
+        SYNC_PRINT(("  Device %d:\n", count));
+
+        for (auto &key : dev)
+        {
+            SYNC_PRINT(("    %s - %s:\n", key.first.c_str(), key.second.c_str()));
+        }
+        count++;
+    }
 }

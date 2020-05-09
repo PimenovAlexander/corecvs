@@ -1,5 +1,6 @@
 #include <fstream>
 
+#include "core/reflection/commandLineSetter.h"
 #include <core/utils/preciseTimer.h>
 #include <core/buffers/bufferFactory.h>
 
@@ -13,7 +14,7 @@
 using namespace std;
 using namespace corecvs;
 
-void drawFFT(int window_size, vector<complex<float>> &data, char *name)
+void drawFFT(int window_size, vector<complex<float>> &data, std::string name)
 {
     float *avg = new float[window_size];
     for(int j = 0; j < window_size; j++)
@@ -46,7 +47,17 @@ void drawFFT(int window_size, vector<complex<float>> &data, char *name)
     }
 #endif
 
-    int dscale = 6 * 1024;
+    int dscale = window_size / 1024;
+    float vscale = 0;
+
+    for(int j = 0; j < window_size; j++)
+    {
+        if (avg[j] > vscale) vscale = avg[j];
+    }
+    if (vscale == 0) vscale = 1;
+    vscale = 3000.0;
+    cout << "vscale :" << vscale << endl;
+
     RGB24Buffer *fftShow = new RGB24Buffer(1000, 1024);
 
     for(int j = 0; j < fftShow->w; j ++)
@@ -59,18 +70,20 @@ void drawFFT(int window_size, vector<complex<float>> &data, char *name)
         value /= dscale;
 
         //cout << j << " " << avg[j] << endl ;
-        int y0 = fftShow->h - 1 - (value / 500.0);
+        int y0 = fftShow->h - 1 - (value / vscale);
 
         fftShow->drawVLine(j, fftShow->h - 1, y0, RGBColor::Red());
     }
     BufferFactory::getInstance()->saveRGB24Bitmap(fftShow, name);
 
-
+    deletearr_safe(avg);
 }
 
 
-int main (int argc, char **argv)
+int main (int argC, char **argV)
 {
+    CommandLineSetter s(argC, argV);
+
 #ifdef WITH_LIBPNG
     LibpngFileReader::registerMyself();
     LibpngRuntimeTypeBufferLoader::registerMyself();
@@ -81,7 +94,13 @@ int main (int argc, char **argv)
     PreciseTimer timer;
 
     std::string input = "samples.bin";
-    SYNC_PRINT(("Starting fftplayground\n"));
+
+    if (s.nonPrefix().size() > 1)
+    {
+        input = s.nonPrefix()[1];
+    }
+
+    SYNC_PRINT(("Starting fftplayground for %s\n", input.c_str()));
 
     ifstream file;
     file.open(input, ios::in | ios::binary);
@@ -131,12 +150,29 @@ int main (int argc, char **argv)
 
 
 
-    int window_size = 6 * 1024 * 1024;
+    int window_size = 4 * 1024 * 1024;
+
+    /**
+     * Shift data to center.
+     *
+     * For more information see http://www.fftw.org/faq/section3.html#centerorigin
+     **/
+    for(size_t i = 0; i < data.size(); i++)
+    {
+        if (i % 2) {
+            data[i].real(-data[i].real());
+            data[i].imag(-data[i].imag());
+        }
+    }
 
 #ifdef WITH_FFTW
 
     fftw_complex *in       = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * window_size);
     fftw_complex *out      = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * window_size);
+
+    fftw_complex *freq     = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * window_size);
+
+    fftw_complex *sync     = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * window_size);
     fftw_complex *filtered = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * window_size);
 
     drawFFT(window_size, data, "prefilter.png");
@@ -157,14 +193,33 @@ int main (int argc, char **argv)
         fftw_destroy_plan(pf);
 
         /* Filter. Don't want to think of anything more complicated */
-        for(int j = window_size / 2; j < window_size; j++)
+        /* First delete the aliasing artifact from capute*/
+        out[window_size / 2][0] = 0;
+        out[window_size / 2][1] = 0;
+
+
+        /* Seems like leftmost peak is a nice feature to get h-sync*/
+
+        /* Prepare data */
+
+        int shift = 2 * 1024 * 700;
+        int swindow = 2 * 1024 * 122;
+
+        for(int j = 0; j < swindow; j++)
         {
-            out[j][0] = 0;
-            out[j][1] = 0;
+            freq[j][0] = out[j + shift][0];
+            freq[j][1] = out[j + shift][1];
         }
 
+        for(int j = swindow; j < window_size; j++)
+        {
+            freq[j][0] = 0;
+            freq[j][1] = 0;
+        }
+
+
         fftw_plan pb;
-        pb = fftw_plan_dft_1d(window_size, out, filtered, FFTW_BACKWARD, FFTW_ESTIMATE);
+        pb = fftw_plan_dft_1d(window_size, freq, filtered, FFTW_BACKWARD, FFTW_ESTIMATE);
         fftw_execute(pb);
         fftw_destroy_plan(pb);
 
@@ -176,11 +231,31 @@ int main (int argc, char **argv)
     }
     fftw_free(in);
     fftw_free(out);
+    fftw_free(sync);
     fftw_free(filtered);
 
     drawFFT(window_size, data, "postfilter.png");
 
 #endif
+
+    RGB24Buffer *sliceGraph = new RGB24Buffer(500, 4000, RGBColor::White());
+    for (int i = 1; i < sliceGraph->w && i < data.size(); i++)
+    {
+        double value0 = data[i - 1].imag() * data[i - 1].imag() + data[i - 1].real() * data[i - 1].real();
+        double value1 = data[i    ].imag() * data[i    ].imag() + data[i    ].real() * data[i    ].real();
+
+        value0 = sqrt(value0);
+        value1 = sqrt(value1);
+
+        value0 *= 4000;
+        value1 *= 4000;
+
+        sliceGraph->drawLine( i - 1, sliceGraph->h - 1 - (int)value0,
+                              i    , sliceGraph->h - 1 - (int)value1,
+                             RGBColor::Blue());
+    }
+    BufferFactory::getInstance()->saveRGB24Bitmap(sliceGraph, "osciloscope.png");
+
 
 
     int perframe = 333666;
@@ -205,9 +280,9 @@ int main (int argc, char **argv)
             float im = data[offset].imag() * 4000.0;
 
             Vector3df color;
-            color[0] = sqrt((re * re) + (im * im));
-            color[1] = 0;
-            color[2] = 0;
+            color[0] = 255.0 - sqrt((re * re) + (im * im));
+            color[1] = color[0];
+            color[2] = color[0];
 
             syncShow->element(i,j) = RGBColor::FromFloat(color);
 

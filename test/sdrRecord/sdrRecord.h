@@ -25,10 +25,10 @@
 #include <core/utils/global.h>
 
 
-class sdrRecord
+class SDRRecord
 {
 public:
-    explicit sdrRecord(double centerFreq);
+    explicit SDRRecord(double centerFreq);
 
     enum CapErrorCode
     {
@@ -36,13 +36,15 @@ public:
         FAILURE = 2
     };
 
-    sdrRecord::CapErrorCode initCapture();
-    sdrRecord::CapErrorCode startCapture();
-    sdrRecord::CapErrorCode stopCapture();
+    SDRRecord::CapErrorCode initCapture();
+    SDRRecord::CapErrorCode startCapture();
+    SDRRecord::CapErrorCode stopCapture();
 
-    ~sdrRecord();
+    ~SDRRecord();
     bool mIsPaused;
     bool firstIteration;
+
+    static void printDevices();
 
 private:
     constexpr static const double sampleRate = 10e6;

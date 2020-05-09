@@ -1,28 +1,51 @@
+#include "core/reflection/commandLineSetter.h"
+#include "core/utils/utils.h"
+
 #include <fstream>
 
 #include "sdrRecord.h"
 
-int main (int argc, char **argv)
+using namespace corecvs;
+
+int main (int argC, char **argV)
 {
-    if (argc == 0)
+    CommandLineSetter s(argC, argV);
+
+    if (s.hasOption("list"))
     {
-        SYNC_PRINT(("enter centerFreq\n"));
+        SDRRecord::printDevices();
         return 0;
     }
-    double centerFreq = strtod(argv[1], nullptr);
-    SYNC_PRINT(("Initializing capture on frequency %f\n", centerFreq));
-    auto sdrCapture = new sdrRecord(centerFreq);
-    sdrRecord::CapErrorCode errorCode;
+
+    vector<string> input = s.nonPrefix();
+
+    if (input.size() != 2)
+    {
+        SYNC_PRINT(("Usage:\n"));
+        SYNC_PRINT(("  sdrRecord <centerFreq>\n"));
+        SYNC_PRINT(("    - Will capture quadratures from <centerFreq>\n"));
+
+        SYNC_PRINT(("You have provided %d argumants\n", argC));
+
+        return 0;
+    }
+
+    double centerFreq = HelperUtils::parseDouble(input[1]);
+
+    SYNC_PRINT(("Initializing capture on frequency %f Hz (%f MHz)\n", centerFreq, centerFreq / 1000000.0));
+
+    SDRRecord* sdrCapture = new SDRRecord(centerFreq);
+    SDRRecord::CapErrorCode errorCode;
 
     errorCode = sdrCapture->initCapture();
-    if (errorCode == sdrRecord::CapErrorCode::FAILURE)
+    if (errorCode == SDRRecord::CapErrorCode::FAILURE)
     {
         SYNC_PRINT(("Cannot init capture\n"));
         return 1;
     }
 
     errorCode = sdrCapture->startCapture();
-    if (errorCode == sdrRecord::CapErrorCode::FAILURE)
+    if (errorCode == SDRRecord::CapErrorCode::FAILURE)
     {
         SYNC_PRINT(("Cannot start capture\n"));
         return 1;
@@ -32,7 +55,7 @@ int main (int argc, char **argv)
     std::string userInput;
     if (std::getline(std::cin, userInput))
         errorCode = sdrCapture->stopCapture();
-    if (errorCode == sdrRecord::CapErrorCode::FAILURE)
+    if (errorCode == SDRRecord::CapErrorCode::FAILURE)
     {
         SYNC_PRINT(("Error stopping capture\n"));
         return 1;
