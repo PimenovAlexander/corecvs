@@ -25,7 +25,7 @@ class VkIbWindow : public QWindow {
 public:
     // Create render device
     VkIbWindow();
-    // Destroy device, surface and release app's resources (if exists)
+    // Destroy device, surface and release app's resources (if exist)
     ~VkIbWindow();
 
     // Init surface for rendering using Vulkan.
@@ -39,7 +39,7 @@ public:
     void setVkIbApp(IVkIbApp *app);
 
     ignimbrite::ID<ignimbrite::IRenderDevice::Surface> getSurfaceId();
-    ignimbrite::IRenderDevice *getRenderDevice();
+    std::shared_ptr<ignimbrite::IRenderDevice> getRenderDevice();
 
 private:
     // Create render device
@@ -60,7 +60,7 @@ private:
 
 private:
     bool isSurfaceExist;
-    ignimbrite::IRenderDevice *device;
+    std::shared_ptr<ignimbrite::IRenderDevice> device;
     ignimbrite::ID<ignimbrite::IRenderDevice::Surface> surfaceId;
 
     QVulkanInstance *qvkInstance;

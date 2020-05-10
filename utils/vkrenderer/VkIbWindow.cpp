@@ -18,8 +18,8 @@ ID<IRenderDevice::Surface> VkIbWindow::getSurfaceId() {
     return surfaceId;
 }
 
-IRenderDevice *VkIbWindow::getRenderDevice() {
-    return (ignimbrite::IRenderDevice*)device;
+std::shared_ptr<ignimbrite::IRenderDevice> VkIbWindow::getRenderDevice() {
+    return device;
 }
 
 void VkIbWindow::initDevice() {
@@ -57,7 +57,7 @@ void VkIbWindow::initDevice() {
     #endif
 #endif
 
-    device = new VulkanRenderDevice(2, ext);
+    device = std::make_shared<VulkanRenderDevice>(2, ext);
 
     // allocate as QWindow stores only a pointer
     qvkInstance = new QVulkanInstance();
@@ -71,7 +71,7 @@ void VkIbWindow::initDevice() {
                    << "VK_LAYER_GOOGLE_unique_objects");
 
     // set to QVulkanInstance VkInstance from created render device
-    VulkanExtensions::setVulkanInstance(*((VulkanRenderDevice*)device), qvkInstance);
+    VulkanExtensions::setVulkanInstance(*((VulkanRenderDevice*)device.get()), qvkInstance);
 
     if (!qvkInstance->create()) {
         qFatal("Failed to create Vulkan instance: %d", qvkInstance->errorCode());
@@ -102,7 +102,7 @@ void VkIbWindow::initSurface() {
 
     if (device) {
         // to get surface window must be shown
-        surfaceId = VulkanExtensions::createSurfaceQtWidget(*((VulkanRenderDevice*)device), this);
+        surfaceId = VulkanExtensions::createSurfaceQtWidget(*((VulkanRenderDevice*)device.get()), this);
         isSurfaceExist = true;
 
     } else {
@@ -115,12 +115,11 @@ void VkIbWindow::setVkIbApp(IVkIbApp *app) {
 }
 
 void VkIbWindow::destroyDevice() {
-    delete device;
+    device.reset();
 
     // QVulkanInstance doesn't own VkInstance
     delete qvkInstance;
 
-    device = nullptr;
     qvkInstance = nullptr;
 }
 
@@ -130,7 +129,7 @@ void VkIbWindow::destroySurfaceResources() {
     }
 
     // destroy ignimbrite surface, but not VkSurfaceKHR
-    ignimbrite::VulkanExtensions::destroySurface(*((VulkanRenderDevice*)device), surfaceId, false);
+    ignimbrite::VulkanExtensions::destroySurface(*((VulkanRenderDevice*)device.get()), surfaceId, false);
 
     isSurfaceExist = false;
 }
@@ -144,7 +143,7 @@ void VkIbWindow::updateApp() {
 void VkIbWindow::exposeEvent(QExposeEvent *) {
     // ensure that window is initilized
     if (isExposed()) {
-        if (device == nullptr) {
+        if (!device) {
             initDevice();
         }
 

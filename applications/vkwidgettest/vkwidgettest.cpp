@@ -17,6 +17,7 @@
 #include <functional>
 
 #include "utils/vkrenderer/VkIbWindow.h"
+#include "utils/vkrenderer/IbEngine.h"
 
 // This is an example for a window that contains
 // widget that is used for rendering in using Vulkan.
@@ -34,30 +35,6 @@ public:
         widget->setLayout(layout);
         setCentralWidget(widget);
     }
-};
-
-// This class implements
-class RenderingApp : public vulkanwindow::IVkIbApp
-{
-public:
-    RenderingApp(ignimbrite::IRenderDevice *device, ignimbrite::ID<ignimbrite::IRenderDevice::Surface> surfaceId,
-                 int width, int height)
-    {
-
-    }
-
-    void onUpdate() override
-    {
-
-    }
-
-    void onDestroy() override
-    {
-
-    }
-
-private:
-
 };
 
 int main(int argc, char *argv[])
@@ -87,9 +64,9 @@ int main(int argc, char *argv[])
     // create application that manages meshes, textures, shaders, ..;
     // it also implements IVkIbApp interface which is used
     // for frame drawing and releasing resources associated with render device
-    RenderingApp app(
-                vulkanWindow.getRenderDevice(), vulkanWindow.getSurfaceId(),
-                vulkanWindow.width(), vulkanWindow.height());
+    vulkanwindow::IbEngine app(&vulkanWindow);
+
+    app.setPerspectiveCamera(3.0f, 0, 0, 0, 0, 1, 0, 0);
 
     // set this application to window
     vulkanWindow.setVkIbApp(&app);
