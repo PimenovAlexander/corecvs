@@ -85,11 +85,15 @@ void MeshDecoratedRenderable::createBuffers(int vertCount, int indexCount)
     vertData.resize(vertCount);
     indexData.resize(indexCount);
 
+    // release previous
+    releaseBuffers();
+
+    // allocate new
     uint32 vbSize = vertexStride * vertCount;
-    vertexBuffer = device->createVertexBuffer(BufferUsage::Static, vbSize, nullptr);
+    vertexBuffer = device->createVertexBuffer(BufferUsage::Dynamic, vbSize, nullptr);
 
     uint32 ibSize = sizeof(uint32) * indexCount;
-    indexBuffer = device->createIndexBuffer(BufferUsage::Static, ibSize, nullptr);
+    indexBuffer = device->createIndexBuffer(BufferUsage::Dynamic, ibSize, nullptr);
 }
 
 void MeshDecoratedRenderable::updateBuffers()
@@ -113,8 +117,8 @@ void MeshDecoratedRenderable::updateBuffers()
         }
     }
 
-    // if buffers weren't created or their size is too small
-    if ((vertexBuffer.isNull() && indexBuffer.isNull()) || faceCount * 3 > indexData.size() || faceCount * 3 > vertData.size())
+    // if buffers' sizes are too small
+    if (faceCount * 3 > indexData.size() || faceCount * 3 > vertData.size())
     {
         createBuffers(faceCount * 3, faceCount * 3);
     }
@@ -171,9 +175,13 @@ void MeshDecoratedRenderable::updateBuffers()
         }
         else
         {
-            vertData[i * 3 + 0].Normal = {0,1,0};
-            vertData[i * 3 + 1].Normal = {0,1,0};
-            vertData[i * 3 + 2].Normal = {0,1,0};
+            const auto n = glm::cross(
+                    vertData[i * 3 + 1].Position - vertData[i * 3 + 0].Position,
+                    vertData[i * 3 + 2].Position - vertData[i * 3 + 0].Position);
+
+            vertData[i * 3 + 0].Normal = n;
+            vertData[i * 3 + 1].Normal = n;
+            vertData[i * 3 + 2].Normal = n;
         }
 
         if (meshDecorated->hasTexCoords)
@@ -209,6 +217,10 @@ void MeshDecoratedRenderable::updateBuffers()
 
         i++;
     }
+
+    // update buffers
+    device->updateIndexBuffer(indexBuffer, sizeof(uint32) * indexData.size(), 0, indexData.data());
+    device->updateVertexBuffer(vertexBuffer, vertexStride * vertData.size(), 0, vertData.data());
 
     currentIndexCount = indexData.size();
 }

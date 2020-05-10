@@ -32,7 +32,7 @@ vulkanwindow::IbEngine::IbEngine(vulkanwindow::VkIbWindow *vkIbWindow) {
     mainLight = std::make_shared<Light>();
     mainLight->setType(Light::Type::Directional);
     mainLight->setCastShadow(true);
-    mainLight->rotate(mainLight->getRight(), -M_PI / 3.0f);
+    mainLight->rotate({1,0,0}, M_PI / 4.0f);
     mainLight->setClipMatrix(vkClipMatrix);
 
     engine->addLightSource(mainLight);
@@ -92,13 +92,13 @@ void vulkanwindow::IbEngine::loadShaders() {
     vertexBufferLayoutDesc.attributes.resize(3);
     auto& attr = vertexBufferLayoutDesc.attributes;
     attr[0].format = DataFormat::R32G32B32_SFLOAT;
-    attr[0].offset = sizeof(float) * 3;
+    attr[0].offset = 0;
     attr[0].location = 0;
     attr[1].format = DataFormat::R32G32B32_SFLOAT;
     attr[1].offset = sizeof(float) * 3;
     attr[1].location = 1;
     attr[2].format = DataFormat::R32G32_SFLOAT;
-    attr[2].offset = sizeof(float) * 2;
+    attr[2].offset = sizeof(float) * 3 + sizeof(float) * 3;
     attr[2].location = 2;
 
     RefCounted<GraphicsPipeline> pipeline = std::make_shared<GraphicsPipeline>(device);
@@ -215,49 +215,56 @@ void vulkanwindow::IbEngine::setMesh3dDecorated(
     points.clear();
     lines.clear();
 
+    bool renderPoints = false;
+    bool renderEdges = false;
+
     // TODO: cache, params
 
     // extract points lines to render them separately
 
-    for (int i = 0; i < meshDecorated->vertexes.size(); i++) {
-        const auto &p = meshDecorated->vertexes[i];
+    if (renderPoints) {
+        for (int i = 0; i < meshDecorated->vertexes.size(); i++) {
+            const auto &p = meshDecorated->vertexes[i];
 
-        Vec4f color = { 1.0f, 1.0f, 1.0f, 1.0f };
+            Vec4f color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-        if (meshDecorated->hasColor && meshDecorated->vertexesColor.size() > i)  {
-            const auto &c = meshDecorated->vertexesColor[i];
-            color = { c.r(), c.g(), c.b(), c.a() };
+            if (meshDecorated->hasColor && meshDecorated->vertexesColor.size() > i)  {
+                const auto &c = meshDecorated->vertexesColor[i];
+                color = { c.r(), c.g(), c.b(), c.a() };
+            }
+
+            points.push_back({
+                                 { p.x(),p.y(),p.z() },
+                                 color,
+                                 1.0f
+                             });
         }
-
-        points.push_back({
-                             { p.x(),p.y(),p.z() },
-                             color,
-                             1.0f
-                         });
     }
 
-    for (int i = 0; i < meshDecorated->edges.size(); i++) {
-        const auto &edge = meshDecorated->edges[i];
+    if (renderEdges) {
+        for (int i = 0; i < meshDecorated->edges.size(); i++) {
+            const auto &edge = meshDecorated->edges[i];
 
-        const auto &a = meshDecorated->vertexes[edge.x()];
-        const auto &b = meshDecorated->vertexes[edge.y()];
+            const auto &a = meshDecorated->vertexes[edge.x()];
+            const auto &b = meshDecorated->vertexes[edge.y()];
 
-        Vec4f color = { 1.0f, 1.0f, 1.0f, 1.0f };
+            Vec4f color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-        if (meshDecorated->hasColor && meshDecorated->edgesColor.size() > i) {
-            const auto &c = meshDecorated->edgesColor[i];
-            color = { c.r(), c.g(), c.b(), c.a() };
+            if (meshDecorated->hasColor && meshDecorated->edgesColor.size() > i) {
+                const auto &c = meshDecorated->edgesColor[i];
+                color = { c.r(), c.g(), c.b(), c.a() };
+            }
+
+            lines.push_back({
+                                { a.x(), a.y(), a.z() },
+                                { b.x(), b.y(), b.z() },
+                                color,
+                                1.0f
+                            });
         }
 
-        lines.push_back({
-                            { a.x(), a.y(), a.z() },
-                            { b.x(), b.y(), b.z() },
-                            color,
-                            1.0f
-                        });
+        // TODO: face edges
     }
-
-    // TODO: face edges
 
     // TODO: multiple meshes
     renderables.clear();
@@ -268,7 +275,6 @@ void vulkanwindow::IbEngine::setMesh3dDecorated(
     newMesh->setShadowRenderMaterial(shadowMaterial);
     newMesh->setCanApplyCulling(false);
     newMesh->setMaxViewDistance(1000.0f);
-    newMesh->setPosition({0, 0, -17});
     newMesh->setMesh(meshDecorated, 0);
 
     renderables.push_back(newMesh);
@@ -318,6 +324,12 @@ void vulkanwindow::IbEngine::onUpdate() {
         for (const auto &e : lines) {
             engine->addLine3d(e.start, e.end, e.color, e.width);
         }
+
+        engine->addLine3d({0,0,0}, mainLight->getDirection(), {1,1,0,1}, 1);
+        engine->addLine3d({0,0,0}, mainLight->getRight(), {0,1,0,1}, 1);
+        engine->addLine3d({0,0,0}, mainLight->getUp(), {1,0,0,1}, 1);
+
+        mainLight->rotate({0,1,0}, 1.0f/120.0f);
 
         engine->draw();
     }

@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
     // for frame drawing and releasing resources associated with render device
     vulkanwindow::IbEngine app(&vulkanWindow);
 
-    app.setPerspectiveCamera(3.0f, 0, 0, 0, 0, 1, 0, 0);
+    app.setPerspectiveCamera(3.14f / 2, -12, 3, 12, 0, 1, 0, -3.14f / 6);
 
     // load models from .json; assets can be downloaded through:
     //   "wget http://calvrack.ru:3080/exposed-drone/data.tar.gz"
