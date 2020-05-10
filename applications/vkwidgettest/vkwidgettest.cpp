@@ -16,6 +16,9 @@
 #include <ios>
 #include <functional>
 
+// for .obj models loading
+#include <world/simulationWorld.h>
+
 #include "utils/vkrenderer/VkIbWindow.h"
 #include "utils/vkrenderer/IbEngine.h"
 
@@ -68,22 +71,34 @@ int main(int argc, char *argv[])
 
     app.setPerspectiveCamera(3.0f, 0, 0, 0, 0, 1, 0, 0);
 
+    // load models from .json; assets can be downloaded through:
+    //   "wget http://calvrack.ru:3080/exposed-drone/data.tar.gz"
+    //   "tar -zxvf data.tar.gz"
+    SimulationWorld world;
+    world.load("models/world.json");
+
+    // init corecvs' mesh class
+    Mesh3DDecorated *mesh = new Mesh3DDecorated;
+    mesh->switchColor();
+    mesh->switchTextures();
+    for (size_t i = 0; i < world.meshes.size(); i++)
+    {
+        if (!world.meshes[i].show) {
+            continue;
+        }
+        SYNC_PRINT(("Adding mesh %d\n", (int)i));
+        world.meshes[i].mesh.dumpInfo();
+        mesh->mulTransform(world.meshes[i].transform);
+        mesh->add(world.meshes[i].mesh);
+        mesh->popTransform();
+
+        mesh->materials = world.meshes[i].mesh.materials;
+    }
+
+    app.setMesh3dDecorated(mesh);
+
     // set this application to window
     vulkanWindow.setVkIbApp(&app);
 
     return qtApp.exec();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

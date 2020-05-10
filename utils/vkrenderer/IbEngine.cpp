@@ -59,6 +59,8 @@ vulkanwindow::IbEngine::IbEngine(vulkanwindow::VkIbWindow *vkIbWindow) {
 
     shadowTarget->getDepthStencilAttachment()->setSampler(sampler);
     engine->setShadowTarget(mainLight, shadowTarget);
+
+    loadShaders();
 }
 
 void vulkanwindow::IbEngine::loadShaders() {
@@ -264,14 +266,14 @@ void vulkanwindow::IbEngine::setMesh3dDecorated(
     std::shared_ptr<MeshDecoratedRenderable> newMesh = std::make_shared<MeshDecoratedRenderable>(device, VERTEX_STRIDE_SIZE);
     newMesh->setRenderMaterial(whiteMaterial);
     newMesh->setShadowRenderMaterial(shadowMaterial);
-    newMesh->setCastShadows();
     newMesh->setCanApplyCulling(false);
     newMesh->setMaxViewDistance(1000.0f);
-    newMesh->setVisible(true);
-
-    newMesh->setMesh(meshDecorated);
+    newMesh->setPosition({0, 0, -17});
+    newMesh->setMesh(meshDecorated, 0);
 
     renderables.push_back(newMesh);
+
+    engine->addRenderable(newMesh);
 }
 
 void vulkanwindow::IbEngine::drawScreenPoint2d(float x0, float y0, float colorR, float colorG, float colorB, float size) {
@@ -284,7 +286,7 @@ void vulkanwindow::IbEngine::drawScreenPoint2d(float x0, float y0, float colorR,
 
 void vulkanwindow::IbEngine::drawScreenPoint3d(float x0, float y0, float z0, float colorR, float colorG, float colorB, float size) {
     if (mainCamera && cameraIsActive) {
-        engine->addPoint3d({x0,y0,z1},{colorR,colorG,colorB,1.0f},size);
+        engine->addPoint3d({x0,y0,z0},{colorR,colorG,colorB,1.0f},size);
     } else {
         qDebug("Point3d will not be drawn as no camera is set.\n");
     }

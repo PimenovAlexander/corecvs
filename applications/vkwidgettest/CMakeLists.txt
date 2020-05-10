@@ -17,5 +17,5 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 
 set(WITH_VULKAN_QT_IB ON CACHE BOOL "" FORCE)
 
-target_link_libraries(vkwidgettest PRIVATE cvs_utils corecvs)
+target_link_libraries(vkwidgettest PRIVATE drone-core cvs_utils corecvs)
 

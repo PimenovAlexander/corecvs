@@ -8,6 +8,10 @@ MeshDecoratedRenderable::MeshDecoratedRenderable(std::shared_ptr<IRenderDevice> 
 {
     this->device = device;
     this->vertexStride = vertexStride;
+
+    setCastShadows(true);
+    setVisible(true);
+    setLayerID((uint32)IRenderable::DefaultLayers::Solid);
 }
 
 MeshDecoratedRenderable::~MeshDecoratedRenderable()
@@ -205,6 +209,8 @@ void MeshDecoratedRenderable::updateBuffers()
 
         i++;
     }
+
+    currentIndexCount = indexData.size();
 }
 
 void MeshDecoratedRenderable::onAddToScene(const IRenderContext &context)
@@ -220,7 +226,11 @@ void MeshDecoratedRenderable::onRenderQueueEntered(float32 distFromViewPoint)
 
 void MeshDecoratedRenderable::onRender(const IRenderContext &context)
 {
-    updateBuffers();
+    // if doesn't cast shadows, then it wasn't updated in onShadowRender function
+    if (!castShadows())
+    {
+        updateBuffers();
+    }
 
     if (currentIndexCount == 0)
     {
@@ -264,7 +274,7 @@ void MeshDecoratedRenderable::onShadowRenderQueueEntered(float32 distFromViewPoi
 
 void MeshDecoratedRenderable::onShadowRender(const IRenderContext &context)
 {
-    // no need to update buffers, as it was done in "onRender"
+    updateBuffers();
 
     if (currentIndexCount == 0)
     {
