@@ -163,6 +163,7 @@
     <addaction name="actionStatistics"/>
     <addaction name="separator"/>
     <addaction name="actionWorldRedraw"/>
+    <addaction name="actionRepositionCamera"/>
    </widget>
    <widget class="QMenu" name="menuRadio">
     <property name="title">
@@ -521,6 +522,15 @@
     <string>Start Simulation</string>
    </property>
   </action>
+  <action name="actionRepositionCamera">
+   <property name="icon">
+    <iconset resource="../../../resources/main.qrc">
+     <normaloff>:/new/prefix1/zoom_layer.png</normaloff>:/new/prefix1/zoom_layer.png</iconset>
+   </property>
+   <property name="text">
+    <string>Reposition Camera</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -792,6 +802,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionRepositionCamera</sender>
+   <signal>triggered()</signal>
+   <receiver>PhysicsMainWindow</receiver>
+   <slot>repositionCloudCamera()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>598</x>
+     <y>394</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showCameraInput()</slot>
@@ -809,5 +835,6 @@
   <slot>showPatternDetectionParameters()</slot>
   <slot>showProcessingParametersWidget()</slot>
   <slot>showStatistics()</slot>
+  <slot>repositionCloudCamera()</slot>
  </slots>
 </ui>

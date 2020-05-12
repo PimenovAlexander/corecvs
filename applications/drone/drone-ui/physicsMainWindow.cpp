@@ -811,3 +811,15 @@ void PhysicsMainWindow::calibrateCamera()
     calibrationWidget.show();
     calibrationWidget.raise();
 }
+
+
+void PhysicsMainWindow::repositionCloudCamera()
+{
+    SYNC_PRINT(("PhysicsMainWindow::repositionCloudCamera(): called\n"));
+    CameraModel model;
+    mModelParametersWidget.getParameters(model); /* We get it from the UI just to be able to edit it. */
+    cout << "Model to be set:" << endl;
+    cout << model << endl;
+    ui->cloud->setCamera(model);
+}
+

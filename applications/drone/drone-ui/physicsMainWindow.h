@@ -187,6 +187,7 @@ public:
 public slots:
     void updateUi();
     void keepAliveJoyStick();
+    void repositionCloudCamera();
 
 /** Model download **/
 public slots:
