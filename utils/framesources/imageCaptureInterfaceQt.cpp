@@ -209,3 +209,43 @@ ImageCaptureInterfaceQt *ImageCaptureInterfaceQtFactory::fabric(string input, in
 
     return NULL;
 }
+
+void ImageCaptureInterfaceQtFactory::printCaps()
+{
+    SYNC_PRINT(("Caps for ImageCaptureInterfaceQtFactory::fabric(string input, bool isRGB):\n"));
+
+    SYNC_PRINT(("  file:\n"));
+    SYNC_PRINT(("  prec:\n"));
+
+#ifdef WITH_SYNCCAM
+    SYNC_PRINT(("  sync:\n"));
+#endif
+#ifdef WITH_V4L2
+    SYNC_PRINT(("  v4l2:\n"));
+    SYNC_PRINT(("  v4l2d:\n"));
+#endif
+#ifdef WITH_UEYE
+    SYNC_PRINT(("  ueye:\n"));
+#endif
+#ifdef WITH_FLYCAP
+    SYNC_PRINT(("  flycap:\n"));
+#endif
+#ifdef WITH_DIRECTSHOW
+    SYNC_PRINT(("  dshow:\n"));
+    SYNC_PRINT(("  dshowd:\n"));
+#endif
+#ifdef WITH_AVCODEC
+    SYNC_PRINT(("  avcodec:\n"));
+    SYNC_PRINT(("  rtsp:\n"));
+#endif
+#ifdef WITH_OPENCV
+    SYNC_PRINT(("  any:\n"));
+    SYNC_PRINT(("  vfw:\n"));
+    SYNC_PRINT(("  ds:\n"));
+    SYNC_PRINT(("  opencv_file:\n"));
+#endif
+
+#ifdef WITH_ATVCAMERA
+    SYNC_PRINT(("  atv:\n"));
+#endif
+}

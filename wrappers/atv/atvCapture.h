@@ -22,6 +22,7 @@
 #include <SoapySDR/Types.hpp>
 #include <SoapySDR/Formats.hpp>
 
+#include "core/framesources/cameraControlParameters.h"
 #include "core/framesources/imageCaptureInterface.h"
 #include "filter.h"
 
@@ -50,8 +51,8 @@ private:
     const double centerFreq;
     static const short buffSize = 1024;
 
-    SoapySDR::Device* SDR;
-    SoapySDR::Stream* rxStream;
+    SoapySDR::Device* SDR = NULL;
+    SoapySDR::Stream* rxStream = NULL;
 
     void receiving();
     void filtering();
@@ -73,6 +74,16 @@ private:
     static double getChannelFreq(std::string channel);
 
     std::vector<float> debug = {0};
+
+    // ImageCaptureInterface interface
+public:
+    int gain = 0;
+    int brightness = 0;
+    int contrast = 0;
+
+    virtual CapErrorCode queryCameraParameters(CameraParameters &parameter) override;
+    virtual CapErrorCode setCaptureProperty(int id, int value) override;
+    virtual CapErrorCode getCaptureProperty(int id, int *value) override;
 };
 
 

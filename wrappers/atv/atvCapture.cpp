@@ -33,8 +33,15 @@ ImageCaptureInterface::CapErrorCode ATVCapture::initCapture()
         return ImageCaptureInterface::FAILURE;
     }
     // TODO: automatic chose of device
-    SoapySDR::Kwargs args = SoapySDR::KwargsFromString("driver=hackrf");
-    SDR = SoapySDR::Device::make(args);
+
+    try {
+        SoapySDR::Kwargs args = SoapySDR::KwargsFromString("driver=hackrf");
+        SDR = SoapySDR::Device::make(args);
+    } catch (...) {
+        SYNC_PRINT(("ATVCapture::initCapture(): Got an exeption from device creation\n"));
+    }
+
+
     if (SDR == nullptr)
     {
         SYNC_PRINT(("ATVCapture::initCapture(): Unable to make a device\n"));
@@ -324,4 +331,63 @@ double ATVCapture::getChannelFreq(std::string channel)
         default: SYNC_PRINT (("ATVCapture: Channel name is wrong\n")); return -1;
     }
     return 1e6 * frequency;
+}
+
+ImageCaptureInterface::CapErrorCode ATVCapture::queryCameraParameters(CameraParameters &parameter)
+{
+    parameter.mCameraControls[CameraParameters::GAIN].setActive      (true);
+    parameter.mCameraControls[CameraParameters::GAIN].setMinimum     (0);
+    parameter.mCameraControls[CameraParameters::GAIN].setMaximum     (100000);
+    parameter.mCameraControls[CameraParameters::GAIN].setDefaultValue(50000);
+
+    parameter.mCameraControls[CameraParameters::BRIGHTNESS].setActive      (true);
+    parameter.mCameraControls[CameraParameters::BRIGHTNESS].setMinimum     (0);
+    parameter.mCameraControls[CameraParameters::BRIGHTNESS].setMaximum     (100000);
+    parameter.mCameraControls[CameraParameters::BRIGHTNESS].setDefaultValue(50000);
+
+    parameter.mCameraControls[CameraParameters::CONTRAST].setActive      (true);
+    parameter.mCameraControls[CameraParameters::CONTRAST].setMinimum     (0);
+    parameter.mCameraControls[CameraParameters::CONTRAST].setMaximum     (100000);
+    parameter.mCameraControls[CameraParameters::CONTRAST].setDefaultValue(50000);
+
+    return ImageCaptureInterface::SUCCESS;
+}
+
+ImageCaptureInterface::CapErrorCode ATVCapture::setCaptureProperty(int id, int value)
+{
+    switch (id) {
+        case CameraParameters::GAIN:
+            gain = value;
+            return  ImageCaptureInterface::SUCCESS;
+        case CameraParameters::BRIGHTNESS:
+            brightness = value;
+            return  ImageCaptureInterface::SUCCESS;
+        case CameraParameters::CONTRAST:
+            contrast = value;
+            return  ImageCaptureInterface::SUCCESS;
+    default:
+            break;
+
+    }
+    return  ImageCaptureInterface::FAILURE;
+}
+
+ImageCaptureInterface::CapErrorCode ATVCapture::getCaptureProperty(int id, int *value)
+{
+    switch (id) {
+        case CameraParameters::GAIN:
+            *value = gain;
+            return  ImageCaptureInterface::SUCCESS;
+        case CameraParameters::BRIGHTNESS:
+            *value = brightness;
+            return  ImageCaptureInterface::SUCCESS;
+        case CameraParameters::CONTRAST:
+            *value = contrast;
+            return  ImageCaptureInterface::SUCCESS;
+    default:
+            break;
+
+    }
+    return  ImageCaptureInterface::FAILURE;
+
 }
