@@ -262,7 +262,7 @@ void MeshDecoratedRenderable::onRender(const IRenderContext &context)
 
         renderMaterial->setMat4("CommonParams.lightSpace", lightViewProj);
         renderMaterial->setVec3("CommonParams.lightDir", light->getDirection());
-        renderMaterial->setTexture2D("texShadowMap", context.getShadowMap());
+        renderMaterial->setTexture("texShadowMap", context.getShadowMap());
     }
 
     renderMaterial->setMat4("CommonParams.viewProj", camViewProj);

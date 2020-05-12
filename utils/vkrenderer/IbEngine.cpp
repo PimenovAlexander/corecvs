@@ -1,9 +1,10 @@
 #include "IbEngine.h"
 
 #include <RenderEngine.h>
+#include <FileUtils.h>
 #include <Shader.h>
 #include <MaterialFullscreen.h>
-#include <FileUtils.h>
+#include <PresentationPass.h>
 
 #include "MeshDecoratedRenderable.h"
 
@@ -47,8 +48,12 @@ vulkanwindow::IbEngine::IbEngine(vulkanwindow::VkIbWindow *vkIbWindow) {
     engine->setCamera(mainCamera);
     cameraIsActive = false;
 
-    auto presentationPass = MaterialFullscreen::fullscreenQuad("shaders/", surfaceId, device);
-    engine->setPresentationPass(presentationPass);
+    auto presentMaterial = MaterialFullscreen::fullscreenQuad("shaders/spirv/", surfaceId, device);
+    auto depthPresentMaterial = MaterialFullscreen::fullscreenQuadLinearDepth("shaders/spirv/", surfaceId, device);
+    auto presentPass = std::make_shared<PresentationPass>(device, presentMaterial);
+    presentPass->setDepthPresentationMaterial(depthPresentMaterial);
+    presentPass->enableDepthShow();
+    engine->setPresentationPass(presentPass);
 
     // init shadows
     auto shadowTarget = std::make_shared<RenderTarget>(device);
@@ -130,8 +135,8 @@ void vulkanwindow::IbEngine::loadShaders() {
     whiteMaterial = std::make_shared<Material>(device);
     whiteMaterial->setGraphicsPipeline(pipeline);
     whiteMaterial->createMaterial();
-    whiteMaterial->setTexture2D("texShadowMap", defaultShadowTexture);
-    whiteMaterial->setTexture2D("texAlbedo", defaultAlbedoTexture);
+    whiteMaterial->setTexture("texShadowMap", defaultShadowTexture);
+    whiteMaterial->setTexture("texAlbedo", defaultAlbedoTexture);
     whiteMaterial->updateUniformData();
 
     IRenderDevice::VertexBufferLayoutDesc vertShadowLayoutDesc = {};
