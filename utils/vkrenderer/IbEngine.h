@@ -14,10 +14,18 @@ namespace vulkanwindow {
 
 class IbEngine : public IVkIbApp {
 public:
+    // Special interface for per-frame updates.
+    // It can be used for implementation of per-frame logic.
+    class IUpdateable {
+    public:
+        // This function will be called in each frame
+        virtual void onUpdate() = 0;
+    };
+
+public:
     explicit IbEngine(VkIbWindow *vkIbWindow);
 
-    // Set main camera
-    void setCamera(const CameraModel *cameraModel = nullptr);
+    // Set main camera's properties
     void setOrthoCamera(
             float orthoWidth,
             float posx, float posy, float posz,
@@ -27,10 +35,17 @@ public:
             float posx, float posy, float posz,
             float axisx, float axisy, float axisz, float angleRad);
 
+    void setLightRotation(
+            float axisx, float axisy, float axisz, float angleRad);
+
+    // Set Mesh3DDecorated for rendering
     void setMesh3dDecorated(
             const Mesh3DDecorated *meshDecorated,
             const SceneShadedOpenGLCache *cache = nullptr);
             //const ShadedSceneControlParameters *params = nullptr);
+
+    // Set IUpdateable
+    void setUpdateable(IUpdateable *updateable);
 
     void drawScreenPoint2d(
             float x0, float y0,
@@ -45,6 +60,45 @@ public:
             float x0, float y0, float z0,
             float x1, float y1, float z1,
             float colorR, float colorG, float colorB);
+
+public:
+    // the next functions uses corecvs' classes
+
+    void setCamera(const CameraModel *cameraModel = nullptr);
+
+    void setOrthoCamera(
+            float orthoWidth,
+            const corecvs::Vector3df &position,
+            const corecvs::Vector3df &axis, float angleRad);
+    void setOrthoCamera(
+            float orthoWidth,
+            const corecvs::Vector3df &position,
+            const corecvs::Quaternion &rotation);
+    void setPerspectiveCamera(
+            float fovYRad,
+            const corecvs::Vector3df &position,
+            const corecvs::Vector3df &axis, float angleRad);
+    void setPerspectiveCamera(
+            float fovYRad,
+            const corecvs::Vector3df &position,
+            const corecvs::Quaternion &rotation);
+    void setLightRotation(
+            const corecvs::Vector3df &axis, float angleRad);
+    void setLightRotation(
+            const corecvs::Quaternion &rotation);
+
+    void drawScreenPoint2d(
+            const corecvs::Vector2df &p,
+            const corecvs::RGBColor &rgb8, float size = 1);
+    void drawScreenPoint3d(
+            const corecvs::Vector3df &p,
+            const corecvs::RGBColor &rgb8, float size = 1);
+    void drawScreenLine2d(
+            const corecvs::Vector2df &a, const corecvs::Vector2df &b,
+            const corecvs::RGBColor &rgb8);
+    void drawLine3d(
+            const corecvs::Vector3df &a, const corecvs::Vector3df &b,
+            const corecvs::RGBColor &rgb8);
 
 public:
     void onUpdate() override;
@@ -79,6 +133,8 @@ private:
     const int ShadowMapSize = 2048;
     std::shared_ptr<ignimbrite::Light> mainLight;
 
+    IUpdateable *updateable = nullptr;
+
     // meshes
     // NOTE: only one mesh currently available
     std::vector<std::shared_ptr<ignimbrite::IRenderable>> renderables;
@@ -90,6 +146,8 @@ private:
     // default materials
     std::shared_ptr<ignimbrite::Material> whiteMaterial;
     std::shared_ptr<ignimbrite::Material> shadowMaterial;
+    // default sampler for textures
+    std::shared_ptr<ignimbrite::Sampler> defaultSampler;
 
     // shader paths
     const char *ShaderPath_MeshTextured_Vert = "shaders/spirv/shadowmapping/MeshTexturedShadowed.vert.spv";

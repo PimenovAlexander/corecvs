@@ -14,58 +14,70 @@
 using namespace ignimbrite;
 
 vulkanwindow::IbEngine::IbEngine(vulkanwindow::VkIbWindow *vkIbWindow) {
-    engine = std::make_shared<RenderEngine>();
+    try {
+        engine = std::make_shared<RenderEngine>();
 
-    device = std::shared_ptr<IRenderDevice>(vkIbWindow->getRenderDevice());
-    auto surfaceId = vkIbWindow->getSurfaceId();
+        device = std::shared_ptr<IRenderDevice>(vkIbWindow->getRenderDevice());
+        auto surfaceId = vkIbWindow->getSurfaceId();
 
-    engine->setRenderDevice(device);
-    engine->setTargetSurface(surfaceId);
-    engine->setRenderArea(0, 0, vkIbWindow->width(), vkIbWindow->height());
+        engine->setRenderDevice(device);
+        engine->setTargetSurface(surfaceId);
+        engine->setRenderArea(0, 0, vkIbWindow->width(), vkIbWindow->height());
 
-    // Vulkan has inverted y axis and half of z axis
-    glm::mat4x4 vkClipMatrix = {1.0f, 0.0f, 0.0f, 0.0f,
-                        0.0f, -1.0f, 0.0f, 0.0f,
-                        0.0f, 0.0f, 0.5f, 0.0f,
-                        0.0f, 0.0f, 0.5f, 1.0f};
+        // Vulkan has inverted y axis and half of z axis
+        glm::mat4x4 vkClipMatrix = {1.0f, 0.0f, 0.0f, 0.0f,
+                            0.0f, -1.0f, 0.0f, 0.0f,
+                            0.0f, 0.0f, 0.5f, 0.0f,
+                            0.0f, 0.0f, 0.5f, 1.0f};
 
-    // init light
-    mainLight = std::make_shared<Light>();
-    mainLight->setType(Light::Type::Directional);
-    mainLight->setCastShadow(true);
-    mainLight->rotate({1,0,0}, M_PI / 4.0f);
-    mainLight->setClipMatrix(vkClipMatrix);
+        // init light
+        mainLight = std::make_shared<Light>();
+        mainLight->setType(Light::Type::Directional);
+        mainLight->setCastShadow(true);
+        mainLight->rotate({1,0,0}, M_PI / 4.0f);
+        mainLight->setClipMatrix(vkClipMatrix);
 
-    engine->addLightSource(mainLight);
+        engine->addLightSource(mainLight);
 
-    // init camera
-    mainCamera = std::make_shared<Camera>();
-    // set aspect of the window
-    mainCamera->setAspect((float)vkIbWindow->width() / vkIbWindow->height());
-    mainCamera->setClipMatrix(vkClipMatrix);
-    mainCamera->setNearView(0.1f);
-    mainCamera->setFarView(400.0f);
-    engine->setCamera(mainCamera);
-    cameraIsActive = false;
+        // init camera
+        mainCamera = std::make_shared<Camera>();
+        // set aspect of the window
+        mainCamera->setAspect((float)vkIbWindow->width() / vkIbWindow->height());
+        mainCamera->setClipMatrix(vkClipMatrix);
+        mainCamera->setNearView(0.1f);
+        mainCamera->setFarView(400.0f);
+        engine->setCamera(mainCamera);
+        cameraIsActive = false;
 
-    auto presentMaterial = MaterialFullscreen::fullscreenQuad("shaders/spirv/", surfaceId, device);
-    auto depthPresentMaterial = MaterialFullscreen::fullscreenQuadLinearDepth("shaders/spirv/", surfaceId, device);
-    auto presentPass = std::make_shared<PresentationPass>(device, presentMaterial);
-    presentPass->setDepthPresentationMaterial(depthPresentMaterial);
-    presentPass->enableDepthShow();
-    engine->setPresentationPass(presentPass);
+        auto presentMaterial = MaterialFullscreen::fullscreenQuad("shaders/spirv/", surfaceId, device);
+        auto depthPresentMaterial = MaterialFullscreen::fullscreenQuadLinearDepth("shaders/spirv/", surfaceId, device);
+        auto presentPass = std::make_shared<PresentationPass>(device, presentMaterial);
+        presentPass->setDepthPresentationMaterial(depthPresentMaterial);
+        presentPass->enableDepthShow();
+        engine->setPresentationPass(presentPass);
 
-    // init shadows
-    auto shadowTarget = std::make_shared<RenderTarget>(device);
-    shadowTarget->createTargetFromFormat(ShadowMapSize, ShadowMapSize, RenderTarget::DefaultFormat::DepthStencil);
+        // init shadowmap
+        auto shadowTarget = std::make_shared<RenderTarget>(device);
+        shadowTarget->createTargetFromFormat(ShadowMapSize, ShadowMapSize, RenderTarget::DefaultFormat::DepthStencil);
 
-    auto sampler = std::make_shared<Sampler>(device);
-    sampler->setHighQualityFiltering(SamplerRepeatMode::ClampToBorder);
+        auto sampler = std::make_shared<Sampler>(device);
+        sampler->setHighQualityFiltering(SamplerRepeatMode::ClampToEdge);
 
-    shadowTarget->getDepthStencilAttachment()->setSampler(sampler);
-    engine->setShadowTarget(mainLight, shadowTarget);
+        // set special sampler to depth attachment for shadowmapping
+        shadowTarget->getDepthStencilAttachment()->setSampler(sampler);
+        engine->setShadowTarget(mainLight, shadowTarget);
 
-    loadShaders();
+        try {
+            loadShaders();
+        } catch (const std::exception &e) {
+            const char *emsg = (std::string("IbEngine::Can't init materials: ") + e.what()).c_str();
+             printf(emsg);
+        }
+
+    } catch (const std::exception &e) {
+        const char *emsg = (std::string("IbEngine::Exception: ") + e.what()).c_str();
+         printf(emsg);
+    }
 }
 
 void vulkanwindow::IbEngine::loadShaders() {
@@ -117,8 +129,8 @@ void vulkanwindow::IbEngine::loadShaders() {
     pipeline->createPipeline();
 
     // Sampler
-    auto sampler = std::make_shared<Sampler>(device);
-    sampler->setHighQualityFiltering();
+    defaultSampler = std::make_shared<Sampler>(device);
+    defaultSampler->setHighQualityFiltering();
 
     const uint8 blackPixel[] = { 0, 0, 0, 0 };
     const uint8 whitePixel[] = { 255, 255, 255, 255 };
@@ -126,11 +138,11 @@ void vulkanwindow::IbEngine::loadShaders() {
     // Texture to use if there is no shadow map
     auto defaultShadowTexture = std::make_shared<Texture>(device);
     defaultShadowTexture->setDataAsRGBA8(1, 1, blackPixel, true);
-    defaultShadowTexture->setSampler(sampler);
+    defaultShadowTexture->setSampler(defaultSampler);
 
     auto defaultAlbedoTexture = std::make_shared<Texture>(device);
     defaultAlbedoTexture->setDataAsRGBA8(1, 1, whitePixel, true);
-    defaultAlbedoTexture->setSampler(sampler);
+    defaultAlbedoTexture->setSampler(defaultSampler);
 
     whiteMaterial = std::make_shared<Material>(device);
     whiteMaterial->setGraphicsPipeline(pipeline);
@@ -161,37 +173,6 @@ void vulkanwindow::IbEngine::loadShaders() {
     shadowMaterial->createMaterial();
 }
 
-void vulkanwindow::IbEngine::setCamera(const CameraModel *cameraModel) {
-    if (cameraModel == nullptr)
-    {
-        cameraIsActive = false;
-        return;
-    }
-
-    auto pos = cameraModel->extrinsics.position;
-    auto axis = cameraModel->extrinsics.orientation.getAxis();
-    float32 angle = cameraModel->extrinsics.orientation.getAngle();
-
-    switch (cameraModel->intrinsics->projection) {
-    case ProjectionType::PINHOLE: {
-        float fov = static_cast<PinholeCameraIntrinsics*>(cameraModel->intrinsics.get())->getVFov();
-        setPerspectiveCamera(fov, pos.x(), pos.y(), pos.z(), axis.x(), axis.y(), axis.z(), angle);
-        break;
-    }
-    case ProjectionType::ORTHOGRAPHIC: {
-        float orthoWidth = cameraModel->intrinsics->w();
-        setOrthoCamera(orthoWidth, pos.x(), pos.y(), pos.z(), axis.x(), axis.y(), axis.z(), angle);
-        break;
-    }
-    default: {
-        cameraIsActive = false;
-        qDebug("Can't set camera to render engine as CameraModel's projection "
-               "is not perspective nor orthographic.\n");
-        return;
-    }
-    }
-}
-
 void vulkanwindow::IbEngine::setOrthoCamera(float orthoWidth, float posx, float posy, float posz, float axisx, float axisy, float axisz, float angleRad)
 {
     mainCamera->setType(Camera::Type::Orthographic);
@@ -210,6 +191,11 @@ void vulkanwindow::IbEngine::setPerspectiveCamera(float fovYRad, float posx, flo
     mainCamera->setRotation({axisx,axisy,axisz}, angleRad);
     mainCamera->recalculate();
     cameraIsActive = true;
+}
+
+void vulkanwindow::IbEngine::setLightRotation(
+        float axisx, float axisy, float axisz, float angleRad) {
+    mainLight->setRotation({axisx,axisy,axisz}, angleRad);
 }
 
 void vulkanwindow::IbEngine::setMesh3dDecorated(
@@ -271,20 +257,35 @@ void vulkanwindow::IbEngine::setMesh3dDecorated(
         // TODO: face edges
     }
 
-    // TODO: multiple meshes
+    // remove previous mesh
+    for (const auto &r : renderables) {
+        engine->removeRenderable(r);
+    }
     renderables.clear();
 
     // create new renderable to draw faces of the mesh
-    std::shared_ptr<MeshDecoratedRenderable> newMesh = std::make_shared<MeshDecoratedRenderable>(device, VERTEX_STRIDE_SIZE);
-    newMesh->setRenderMaterial(whiteMaterial);
-    newMesh->setShadowRenderMaterial(shadowMaterial);
-    newMesh->setCanApplyCulling(false);
-    newMesh->setMaxViewDistance(1000.0f);
-    newMesh->setMesh(meshDecorated, 0);
+    for (int i = 0;  i < meshDecorated->materials.size(); i++) {
+        std::shared_ptr<MeshDecoratedRenderable> newMesh = std::make_shared<MeshDecoratedRenderable>(device, VERTEX_STRIDE_SIZE);
+        newMesh->setCanApplyCulling(false);
+        newMesh->setMaxViewDistance(1000.0f);
+        newMesh->setDefaultSampler(defaultSampler);
 
-    renderables.push_back(newMesh);
+        // each renderable has its own material for its own params
+        newMesh->setRenderMaterial(whiteMaterial->clone());
+        newMesh->setShadowRenderMaterial(shadowMaterial->clone());
 
-    engine->addRenderable(newMesh);
+        // each material has its own MeshDecoratedRenderable,
+        // as each of them contains different material params.
+        // (however, different OBJ materials can be hid in MeshDecoratedRenderable)
+        newMesh->setMesh(meshDecorated, i);
+
+        renderables.push_back(newMesh);
+        engine->addRenderable(newMesh);
+    }
+}
+
+void vulkanwindow::IbEngine::setUpdateable(vulkanwindow::IbEngine::IUpdateable *updateable){
+    this->updateable = updateable;
 }
 
 void vulkanwindow::IbEngine::drawScreenPoint2d(float x0, float y0, float colorR, float colorG, float colorB, float size) {
@@ -320,26 +321,130 @@ void vulkanwindow::IbEngine::drawLine3d(float x0, float y0, float z0, float x1, 
 }
 
 void vulkanwindow::IbEngine::onUpdate() {
-    if (mainCamera && cameraIsActive) {
-
-        for (const auto &p : points) {
-            engine->addPoint3d(p.position, p.color, p.size);
+    try {
+        if (updateable != nullptr) {
+            updateable->onUpdate();
         }
 
-        for (const auto &e : lines) {
-            engine->addLine3d(e.start, e.end, e.color, e.width);
+        if (mainCamera && cameraIsActive) {
+
+            for (const auto &p : points) {
+                engine->addPoint3d(p.position, p.color, p.size);
+            }
+
+            for (const auto &e : lines) {
+                engine->addLine3d(e.start, e.end, e.color, e.width);
+            }
+
+            engine->draw();
         }
-
-        engine->addLine3d({0,0,0}, mainLight->getDirection(), {1,1,0,1}, 1);
-        engine->addLine3d({0,0,0}, mainLight->getRight(), {0,1,0,1}, 1);
-        engine->addLine3d({0,0,0}, mainLight->getUp(), {1,0,0,1}, 1);
-
-        mainLight->rotate({0,1,0}, 1.0f/120.0f);
-
-        engine->draw();
+    } catch (const std::exception &e) {
+        const char *emsg = (std::string("IbEngine::Update exception: ") + e.what()).c_str();
+        printf(emsg);
     }
 }
 
 void vulkanwindow::IbEngine::onDestroy() {
 
+}
+
+void vulkanwindow::IbEngine::setOrthoCamera(
+        float orthoWidth,
+        const corecvs::Vector3df &position,
+        const corecvs::Vector3df &axis, float angleRad) {
+    setOrthoCamera(orthoWidth, position.x(), position.y(), position.z(),
+                   axis.x(), axis.y(), axis.z(), angleRad);
+}
+
+void vulkanwindow::IbEngine::setOrthoCamera(
+        float orthoWidth,
+        const corecvs::Vector3df &position,
+        const corecvs::Quaternion &rotation) {
+    const auto &axis = rotation.getAxis();
+    setOrthoCamera(orthoWidth, position.x(), position.y(), position.z(),
+                   axis.x(), axis.y(), axis.z(), rotation.getAngle());
+}
+
+void vulkanwindow::IbEngine::setPerspectiveCamera(
+        float fovYRad,
+        const corecvs::Vector3df &position,
+        const corecvs::Vector3df &axis, float angleRad) {
+    setPerspectiveCamera(fovYRad, position.x(), position.y(), position.z(),
+                   axis.x(), axis.y(), axis.z(), angleRad);
+}
+
+void vulkanwindow::IbEngine::setPerspectiveCamera(
+        float fovYRad,
+        const corecvs::Vector3df &position,
+        const corecvs::Quaternion &rotation) {
+    const auto &axis = rotation.getAxis();
+    setPerspectiveCamera(fovYRad, position.x(), position.y(), position.z(),
+                         axis.x(), axis.y(), axis.z(), rotation.getAngle());
+}
+
+void vulkanwindow::IbEngine::setLightRotation(
+        const corecvs::Quaternion &rotation) {
+    const auto &axis = rotation.getAxis();
+    setLightRotation(axis.x(), axis.y(), axis.z(), rotation.getAngle());
+}
+
+
+void vulkanwindow::IbEngine::setLightRotation(
+        const corecvs::Vector3df &axis, float angleRad) {
+    setLightRotation(axis.x(), axis.y(), axis.z(), angleRad);
+}
+
+void vulkanwindow::IbEngine::drawScreenPoint2d(
+        const corecvs::Vector2df &p,
+        const corecvs::RGBColor &rgb8, float size) {
+    drawScreenPoint2d(p.x(), p.y(), rgb8.r() / 255.0f, rgb8.g() / 255.0f, rgb8.b() / 255.0f, size);
+}
+
+void vulkanwindow::IbEngine::drawScreenPoint3d(
+        const corecvs::Vector3df &p,
+        const corecvs::RGBColor &rgb8, float size) {
+    drawScreenPoint3d(p.x(), p.y(), p.z(), rgb8.r() / 255.0f, rgb8.g() / 255.0f, rgb8.b() / 255.0f, size);
+}
+
+void vulkanwindow::IbEngine::drawScreenLine2d(
+        const corecvs::Vector2df &a, const corecvs::Vector2df &b,
+        const corecvs::RGBColor &rgb8){
+    drawScreenLine2d(a.x(), a.y(), b.x(), b.y(),rgb8.r() / 255.0f, rgb8.g() / 255.0f, rgb8.b() / 255.0f);
+}
+
+void vulkanwindow::IbEngine::drawLine3d(
+        const corecvs::Vector3df &a, const corecvs::Vector3df &b,
+        const corecvs::RGBColor &rgb8) {
+    drawLine3d(a.x(),a.y(),a.z(),b.x(),b.y(),b.z(), rgb8.r() / 255.0f, rgb8.g() / 255.0f, rgb8.b() / 255.0f);
+}
+
+void vulkanwindow::IbEngine::setCamera(const CameraModel *cameraModel) {
+    if (cameraModel == nullptr)
+    {
+        cameraIsActive = false;
+        return;
+    }
+
+    auto pos = cameraModel->extrinsics.position;
+    auto axis = cameraModel->extrinsics.orientation.getAxis();
+    float32 angle = cameraModel->extrinsics.orientation.getAngle();
+
+    switch (cameraModel->intrinsics->projection) {
+    case ProjectionType::PINHOLE: {
+        float fov = static_cast<PinholeCameraIntrinsics*>(cameraModel->intrinsics.get())->getVFov();
+        setPerspectiveCamera(fov, pos.x(), pos.y(), pos.z(), axis.x(), axis.y(), axis.z(), angle);
+        break;
+    }
+    case ProjectionType::ORTHOGRAPHIC: {
+        float orthoWidth = cameraModel->intrinsics->w();
+        setOrthoCamera(orthoWidth, pos.x(), pos.y(), pos.z(), axis.x(), axis.y(), axis.z(), angle);
+        break;
+    }
+    default: {
+        cameraIsActive = false;
+        qDebug("Can't set camera to render engine as CameraModel's projection "
+               "is not perspective nor orthographic.\n");
+        return;
+    }
+    }
 }

@@ -4,8 +4,7 @@ namespace vulkanwindow {
 
 using namespace ignimbrite;
 
-MeshDecoratedRenderable::MeshDecoratedRenderable(std::shared_ptr<IRenderDevice> device, uint32_t vertexStride)
-{
+MeshDecoratedRenderable::MeshDecoratedRenderable(std::shared_ptr<IRenderDevice> device, uint32_t vertexStride) {
     this->device = device;
     this->vertexStride = vertexStride;
 
@@ -14,23 +13,23 @@ MeshDecoratedRenderable::MeshDecoratedRenderable(std::shared_ptr<IRenderDevice> 
     setLayerID((uint32)IRenderable::DefaultLayers::Solid);
 }
 
-MeshDecoratedRenderable::~MeshDecoratedRenderable()
-{
+MeshDecoratedRenderable::~MeshDecoratedRenderable() {
     releaseBuffers();
 }
 
-void MeshDecoratedRenderable::setRenderMaterial(std::shared_ptr<Material> material)
-{
+void MeshDecoratedRenderable::setDefaultSampler(std::shared_ptr<Sampler> sampler){
+    this->defaultSampler = sampler;
+}
+
+void MeshDecoratedRenderable::setRenderMaterial(std::shared_ptr<Material> material) {
     this->renderMaterial = material;
 }
 
-void MeshDecoratedRenderable::setShadowRenderMaterial(std::shared_ptr<Material> material)
-{
+void MeshDecoratedRenderable::setShadowRenderMaterial(std::shared_ptr<Material> material) {
     this->shadowMaterial = material;
 }
 
-void MeshDecoratedRenderable::setRotation(const Vec3f &axis, float angle)
-{
+void MeshDecoratedRenderable::setRotation(const Vec3f &axis, float angle) {
     this->rotation = glm::rotate(angle, axis);
 }
 
@@ -39,42 +38,37 @@ void MeshDecoratedRenderable::rotate(const Vec3f &axis, float angle)
     this->rotation = glm::rotate(angle, axis) * this->rotation;
 }
 
-void MeshDecoratedRenderable::setPosition(const Vec3f &position)
-{
+void MeshDecoratedRenderable::setPosition(const Vec3f &position) {
     this->position = position;
 }
 
-void MeshDecoratedRenderable::translate(const Vec3f &offset)
-{
+void MeshDecoratedRenderable::translate(const Vec3f &offset) {
     this->position += offset;
 }
 
-void MeshDecoratedRenderable::setScale(const Vec3f &scale)
-{
+void MeshDecoratedRenderable::setScale(const Vec3f &scale) {
     this->scale = scale;
 }
 
-void MeshDecoratedRenderable::setMesh(const corecvs::Mesh3DDecorated *meshDecorated, uint32_t materialId)
-{
-    if (!device)
-    {
+void MeshDecoratedRenderable::setMesh(const corecvs::Mesh3DDecorated *meshDecorated, uint32_t materialId) {
+    if (!device) {
         throw std::runtime_error("No device was set in MeshDecoratedRenderable");
     }
 
     this->meshDecorated = meshDecorated;
     this->meshMaterialId = materialId;
+
+    // textures will not change, upload them once
+    uploadTextures();
 }
 
 
-void MeshDecoratedRenderable::releaseBuffers()
-{
-    if (vertexBuffer.isNotNull())
-    {
+void MeshDecoratedRenderable::releaseBuffers() {
+    if (vertexBuffer.isNotNull()) {
         device->destroyVertexBuffer(vertexBuffer);
         vertexBuffer = ID<IRenderDevice::VertexBuffer>();
     }
-    if (indexBuffer.isNotNull())
-    {
+    if (indexBuffer.isNotNull()) {
         device->destroyIndexBuffer(indexBuffer);
         indexBuffer = ID<IRenderDevice::IndexBuffer>();
     }
@@ -96,10 +90,41 @@ void MeshDecoratedRenderable::createBuffers(int vertCount, int indexCount)
     indexBuffer = device->createIndexBuffer(BufferUsage::Dynamic, ibSize, nullptr);
 }
 
+void MeshDecoratedRenderable::uploadTextures() {
+    if (meshMaterialId < 0 || meshMaterialId >= meshDecorated->materials.size()) {
+        return;
+    }
+
+    corecvs::RGB24Buffer *diffuseSource = meshDecorated->materials[meshMaterialId].tex[corecvs::OBJMaterial::TEX_AMBIENT];
+
+    if (diffuseSource == nullptr) {
+        return;
+    }
+
+    if (!defaultSampler) {
+        throw std::runtime_error("Default texture sampler wasn't set to MeshDecoratedRenderable");
+    }
+
+    if (!renderMaterial) {
+        throw std::runtime_error("MeshDecoratedRenderable's render material must be set before setting Mesh3dDecorated");
+    }
+
+    int h = diffuseSource->getH();
+    int w = diffuseSource->getW();
+
+    diffuseTexture = std::make_shared<Texture>(device);
+    diffuseTexture->setSampler(defaultSampler);
+
+    // RGB24Buffer contatains 4-byte array and 4th component is ignored,
+    // i.e. pixels are represented as RGBA8, so we can upload that buffer directly without conversion to RGBA8 array
+    diffuseTexture->setDataAsRGBA8(diffuseSource->getW(), diffuseSource->getH(), (const uint8*)diffuseSource->data, true);
+
+    renderMaterial->setTexture("texAlbedo", diffuseTexture);
+}
+
 void MeshDecoratedRenderable::updateBuffers()
 {
-    if (meshDecorated == nullptr)
-    {
+    if (meshDecorated == nullptr) {
         currentIndexCount = 0;
         return;
     }
@@ -118,8 +143,7 @@ void MeshDecoratedRenderable::updateBuffers()
     }
 
     // if buffers' sizes are too small
-    if (faceCount * 3 > indexData.size() || faceCount * 3 > vertData.size())
-    {
+    if (faceCount * 3 > indexData.size() || faceCount * 3 > vertData.size()) {
         createBuffers(faceCount * 3, faceCount * 3);
     }
 
@@ -128,8 +152,7 @@ void MeshDecoratedRenderable::updateBuffers()
     for (size_t faceId = 0; faceId < meshDecorated->faces.size(); faceId++)
     {
         int matId = meshDecorated->texId[faceId][corecvs::Mesh3DDecorated::MATERIAL_NUM];
-        if (matId != meshMaterialId)
-        {
+        if (matId != meshMaterialId) {
             continue;
         }
 
@@ -152,8 +175,7 @@ void MeshDecoratedRenderable::updateBuffers()
             vs[face.z()].z(),
         };
 
-        if (meshDecorated->hasNormals)
-        {
+        if (meshDecorated->hasNormals) {
             const auto &normalId = meshDecorated->normalId[faceId];
             const auto &ns = meshDecorated->normalCoords;
 
@@ -173,37 +195,41 @@ void MeshDecoratedRenderable::updateBuffers()
                 ns[normalId.z()].z(),
             };
         }
-        else
-        {
-            const auto n = glm::cross(
-                    vertData[i * 3 + 1].Position - vertData[i * 3 + 0].Position,
-                    vertData[i * 3 + 2].Position - vertData[i * 3 + 0].Position);
+        else {
+            const bool forceCalculateNormals = false;
 
-            vertData[i * 3 + 0].Normal = n;
-            vertData[i * 3 + 1].Normal = n;
-            vertData[i * 3 + 2].Normal = n;
+            if (forceCalculateNormals) {
+                const auto n = glm::cross(
+                        vertData[i * 3 + 1].Position - vertData[i * 3 + 0].Position,
+                        vertData[i * 3 + 2].Position - vertData[i * 3 + 0].Position);
+
+                vertData[i * 3 + 0].Normal = n;
+                vertData[i * 3 + 1].Normal = n;
+                vertData[i * 3 + 2].Normal = n;
+            } else {
+                vertData[i * 3 + 0].Normal = {0,1,0};
+                vertData[i * 3 + 1].Normal = {0,1,0};
+                vertData[i * 3 + 2].Normal = {0,1,0};
+            }
         }
 
-        if (meshDecorated->hasTexCoords)
-        {
+        if (meshDecorated->hasTexCoords) {
             const auto &texId = meshDecorated->texId[faceId];
             const auto &ts = meshDecorated->textureCoords;
 
             vertData[i * 3 + 0].TexCoords = {
                 ts[texId.x()].x(),
-                ts[texId.x()].y(),
+                1 - ts[texId.x()].y(),
             };
             vertData[i * 3 + 1].TexCoords = {
                 ts[texId.y()].x(),
-                ts[texId.y()].y(),
+                1 - ts[texId.y()].y(),
             };
             vertData[i * 3 + 2].TexCoords = {
                 ts[texId.z()].x(),
-                ts[texId.z()].y(),
+                1 - ts[texId.z()].y(),
             };
-        }
-        else
-        {
+        } else {
             vertData[i * 3 + 0].TexCoords = {0,0};
             vertData[i * 3 + 1].TexCoords = {0,0};
             vertData[i * 3 + 2].TexCoords = {0,0};
@@ -225,27 +251,22 @@ void MeshDecoratedRenderable::updateBuffers()
     currentIndexCount = indexData.size();
 }
 
-void MeshDecoratedRenderable::onAddToScene(const IRenderContext &context)
-{
+void MeshDecoratedRenderable::onAddToScene(const IRenderContext &context) {
     // Do nothing
 }
 
-void MeshDecoratedRenderable::onRenderQueueEntered(float32 distFromViewPoint)
-{
+void MeshDecoratedRenderable::onRenderQueueEntered(float32 distFromViewPoint) {
     // Possibly select LOD, but this mesh has only LOD 0
     // Do nothing
 }
 
-void MeshDecoratedRenderable::onRender(const IRenderContext &context)
-{
+void MeshDecoratedRenderable::onRender(const IRenderContext &context) {
     // if doesn't cast shadows, then it wasn't updated in onShadowRender function
-    if (!castShadows())
-    {
+    if (!castShadows()) {
         updateBuffers();
     }
 
-    if (currentIndexCount == 0)
-    {
+    if (currentIndexCount == 0) {
         return;
     }
 
@@ -278,8 +299,7 @@ void MeshDecoratedRenderable::onRender(const IRenderContext &context)
     device->drawListDrawIndexed(currentIndexCount, 1);
 }
 
-void MeshDecoratedRenderable::onShadowRenderQueueEntered(float32 distFromViewPoint)
-{
+void MeshDecoratedRenderable::onShadowRenderQueueEntered(float32 distFromViewPoint) {
     // Possibly select LOD, but this mesh has only LOD 0
     // Do nothing
 }
@@ -288,8 +308,7 @@ void MeshDecoratedRenderable::onShadowRender(const IRenderContext &context)
 {
     updateBuffers();
 
-    if (currentIndexCount == 0)
-    {
+    if (currentIndexCount == 0) {
         return;
     }
 
@@ -299,7 +318,6 @@ void MeshDecoratedRenderable::onShadowRender(const IRenderContext &context)
     auto model = glm::translate(position) * rotation * glm::scale(scale);
     auto lightMVP = light->getViewProjClipMatrix() * model;
 
-    // todo: another bindings
     shadowMaterial->setMat4("ShadowParams.depthMVP", lightMVP);
 
     shadowMaterial->updateUniformData();
@@ -311,28 +329,23 @@ void MeshDecoratedRenderable::onShadowRender(const IRenderContext &context)
     device->drawListDrawIndexed(currentIndexCount, 1);
 }
 
-Vec3f MeshDecoratedRenderable::getWorldPosition() const
-{
+Vec3f MeshDecoratedRenderable::getWorldPosition() const {
     return position;
 }
 
-AABB MeshDecoratedRenderable::getWorldBoundingBox() const
-{
+AABB MeshDecoratedRenderable::getWorldBoundingBox() const {
     return AABB({0,0,0}, 1000000.0f);
 }
 
-void MeshDecoratedRenderable::updateAABB()
-{
+void MeshDecoratedRenderable::updateAABB() {
     // TODO
 }
 
-Material *MeshDecoratedRenderable::getRenderMaterial()
-{
+Material *MeshDecoratedRenderable::getRenderMaterial() {
     return renderMaterial.get();
 }
 
-Material *MeshDecoratedRenderable::getShadowRenderMaterial()
-{
+Material *MeshDecoratedRenderable::getShadowRenderMaterial() {
     return shadowMaterial.get();
 }
 

@@ -12,6 +12,7 @@ class MeshDecoratedRenderable : public ignimbrite::IRenderable
         MeshDecoratedRenderable(std::shared_ptr<ignimbrite::IRenderDevice> device, uint32_t vertexStride);
         ~MeshDecoratedRenderable() override;
 
+        void setDefaultSampler(std::shared_ptr<ignimbrite::Sampler> sampler);
         void setRenderMaterial(std::shared_ptr<ignimbrite::Material> material);
         void setShadowRenderMaterial(std::shared_ptr<ignimbrite::Material> material);
 
@@ -44,6 +45,9 @@ private:
         void releaseBuffers();
         void createBuffers(int vertCount, int indexCount);
 
+        // Load textures from OBJ material from Mesh3dDecorated
+        void uploadTextures();
+
 private:
         struct M3DDVertex
         {
@@ -55,8 +59,11 @@ private:
 private:
         std::shared_ptr<ignimbrite::IRenderDevice> device;
 
+        std::shared_ptr<ignimbrite::Sampler> defaultSampler;
         std::shared_ptr<ignimbrite::Material> renderMaterial;
         std::shared_ptr<ignimbrite::Material> shadowMaterial;
+
+        std::shared_ptr<ignimbrite::Texture> diffuseTexture;
 
         ignimbrite::AABB  aabb;
         ignimbrite::Mat4f rotation  = ignimbrite::Mat4f(1.0f);
