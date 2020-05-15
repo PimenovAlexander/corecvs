@@ -6,7 +6,6 @@
 
 #include <QWidget>
 
-#include <joystick/playbackJoystickInterface.h>
 #include <core/utils/global.h>
 #include <joystick/playbackJoystickInterface.h>
 

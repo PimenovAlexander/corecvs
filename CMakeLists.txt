@@ -95,6 +95,12 @@ IF ( USE_LIBFFT )
     find_package( FFTW )
 ENDIF ()
 
+option(USE_SOAPYSDR "Should compile with SoapySDR" YES)
+IF ( USE_SOAPYSDR )
+    MESSAGE( STATUS "Including SoapySDR wherever possible" )
+    find_package( SoapySDR )
+ENDIF ()
+
 option(USE_AVCODEC "Should compile with AVCODEC" NO)
 if(USE_AVCODEC)
     message(STATUS "Including AVCODEC wherever possible")

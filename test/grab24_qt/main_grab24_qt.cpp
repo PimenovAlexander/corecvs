@@ -1,3 +1,4 @@
+#include <capSettingsDialog.h>
 #include <stdio.h>
 #include <unistd.h>
 
@@ -23,11 +24,11 @@ int main (int argc, char **argv)
     Q_INIT_RESOURCE(main);
     CommandLineSetter s(argc, argv);
 
-    /*if (s.hasOption("caps"))
+    if (s.hasOption("caps"))
     {
-        ImageCaptureInterfaceQtFactory::
+        ImageCaptureInterfaceQtFactory::printCaps();
         return 0;
-    }*/
+    }
 
     std::string inputString = s.getString("input", "v4l2:/dev/video0:1/10");
 
@@ -52,7 +53,7 @@ int main (int argc, char **argv)
 
     if (returnCode == ImageCaptureInterface::FAILURE)
     {
-        SYNC_PRINT(("Can't open\n"));
+        SYNC_PRINT(("Can't open capture device <%s>\n", inputString.c_str()));
         return 1;
     }
 
@@ -79,6 +80,11 @@ int main (int argc, char **argv)
 
     AdvancedImageWidget widget;
     widget.show();
+
+    CapSettingsDialog capSettings;
+    capSettings.show();
+    capSettings.setCaptureInterface(rawInput);
+
     processor.widget = &widget;
 
 

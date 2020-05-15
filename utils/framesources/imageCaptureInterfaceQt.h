@@ -12,6 +12,8 @@ class ImageCaptureInterfaceQtFactory {
 public:
     static ImageCaptureInterfaceQt *fabric(string input, bool isRgb = false);
     static ImageCaptureInterfaceQt *fabric(string input, int h, int w, int fps, bool isRgb = false);
+
+    static void printCaps();
 };
 
 class ImageCaptureQtNotifier : public QObject

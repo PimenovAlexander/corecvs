@@ -10,7 +10,7 @@ set (SRC_FILES
 add_definitions(-DWITH_FFTW)
 set (INC_PATHS
     ${INC_PATHS}
-    ${FFTW_INCLUDE_DIRS}
+    ${FFTW_INCLUDE_DIR}
     )
 
-set(LIBS ${LIBS} ${FFTW_LIBRARIES})
+set(LIBS ${LIBS} ${FFTW_LIB})

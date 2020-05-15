@@ -1,80 +1,53 @@
-cmake_minimum_required(VERSION 3.11)
-
-set(FFTW_FOUND FALSE)
-
-set(FFTW_INCLUDE_SEARCH_PATHS
+SET(FFTW_INCLUDE_SEARCH_PATHS
     /usr/include
-    /usr/include/FFTW
     /usr/local/include
-    /opt/libFFTW/include
-    $ENV{FFTW_ROOT_DIR}
-    $ENV{FFTW_ROOT_DIR}/include
-    )
+    $ENV{FFTW_HOME}
+    $ENV{FFTW_HOME}/include
+)
 
-set(FFTW_LIB_SEARCH_PATHS
+SET(FFTW_LIB_SEARCH_PATHS
     /lib/
     /lib64/
     /usr/lib
     /usr/lib64
     /usr/local/lib
     /usr/local/lib64
-    /usr/lib/x86_64-linux-gnu
-    /opt/libFFTW/lib
-    $ENV{FFTW_ROOT_DIR}
-    $ENV{FFTW_ROOT_DIR}/lib
-    )
+    $ENV{FFTW_HOME}
+    $ENV{FFTW_HOME}/lib
+)
 
-set(FFTW_INCLUDE_DIR NOTFOUND)
-find_path(FFTW_INCLUDE_DIR
-	fftw3.h
-	PATHS 	${FFTW_INCLUDE_SEARCH_PATHS}
-	NO_DEFAULT_PATH
-	)
+FIND_PATH(FFTW_INCLUDE_DIR NAMES fftw3.h PATHS ${FFTW_INCLUDE_SEARCH_PATHS})
+FIND_LIBRARY(FFTW_LIB_SEARCH NAMES fftw3 fftw3f PATHS ${FFTW_LIB_SEARCH_PATHS})
 
-set(FFTW_ERROR_REASON)
-if(NOT FFTW_INCLUDE_DIR)	
-	string(APPEND 	
-		FFTW_ERROR_REASON
-		"INCLUDE_DIRS for FFTW module not found. Set FFTW_ROOT to the location of FFTW."
-		)
-endif()
+SET(FFTW_FOUND ON)
 
-#Check if we can use PkgConfig
-find_package(PkgConfig)
+#    Check include files
+IF(NOT FFTW_INCLUDE_DIR)
+  SET(FFTW_FOUND OFF)
+  MESSAGE(STATUS "Could not find FFTW include. Turning FFTW_FOUND off")
+ENDIF()
 
-#Determine from PKG
-if( PKG_CONFIG_FOUND AND NOT FFTW_ROOT )
-  pkg_check_modules( PKG_FFTW QUIET "libfftw3" )
-endif()
+#    Check libraries
+IF(NOT FFTW_LIB_SEARCH)
+  SET(FFTW_FOUND OFF)
+  MESSAGE(STATUS "Could not find FFTW lib. Turning FFTW_FOUND off")
+ELSE()
+  SET(FFTW_LIB fftw3 fftw3f)
+ENDIF()
 
-if(NOT FFTW_LIBRARY)
+IF (FFTW_FOUND)
+IF (NOT FFTW_FIND_QUIETLY)
+  MESSAGE(STATUS "Found FFTW libraries: ${FFTW_LIB}")
+  MESSAGE(STATUS "Found FFTW include: ${FFTW_INCLUDE_DIR}")
+ENDIF (NOT FFTW_FIND_QUIETLY)
+ELSE (FFTW_FOUND)
+IF (FFTW_FIND_REQUIRED)
+  MESSAGE(FATAL_ERROR "Could not find FFTW")
+ENDIF (FFTW_FIND_REQUIRED)
+ENDIF (FFTW_FOUND)
 
-find_library(FFTW_LIBRARY
-    NAMES libfftw3.so.3 libfftw3 libfftw
-    PATHS ${FFTW_LIB_SEARCH_PATHS}
-    )
-
-endif()
-
-if(FFTW_INCLUDE_DIR)	
-	set(FFTW_FOUND TRUE)
-endif()
-
-if(FFTW_FOUND)
-  set(FFTW_LIBRARIES ${FFTW_LIBRARY})
-  set(FFTW_INCLUDE_DIRS ${FFTW_INCLUDE_DIR})
-
-  if(NOT TARGET FFTW::FFTW)
-    add_library(FFTW::FFTW INTERFACE IMPORTED)
-    if(FFTW_INCLUDE_DIRS)
-      set_target_properties(FFTW::FFTW PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES ${FFTW_INCLUDE_DIRS})
-    endif()
-    if(EXISTS ${FFTW_LIBRARIES})
-      set_target_properties(FFTW::FFTW PROPERTIES
-        INTERFACE_LINK_LIBRARIES ${FFTW_LIBRARIES})
-    endif()
- endif()
-endif()
-
-mark_as_advanced( FFTW_INCLUDE_DIRS FFTW_LIBRARIES)
+MARK_AS_ADVANCED(
+  FFTW_INCLUDE_DIR
+  FFTW_LIB
+  FFTW
+)

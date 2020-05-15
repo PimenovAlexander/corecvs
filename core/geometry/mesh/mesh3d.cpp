@@ -186,7 +186,6 @@ void Mesh3D::addAOB(const Vector3dd &c1, const Vector3dd &c2, bool addFaces)
     {
         Vector3d32 startId(vectorIndex, vectorIndex, vectorIndex);
         addFace(startId + Vector3d32(0, 1, 2));
-        addFace(startId + Vector3d32(0, 1, 2));
         addFace(startId + Vector3d32(2, 3, 0));
         addFace(startId + Vector3d32(7, 6, 5));
         addFace(startId + Vector3d32(5, 4, 7));

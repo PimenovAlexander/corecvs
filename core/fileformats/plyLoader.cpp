@@ -167,9 +167,9 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
 
     for (int k = 0; k < OBJ_LAST; k++)
     {
-        for (unsigned i = 0; i < objProps[k].size(); i++)
+        for (size_t i = 0; i < objProps[k].size(); i++)
         {
-            LOCAL_PRINT(("%d %s %s \n",i , Prop::typeToStr(objProps[k][i].type), Prop::nameToStr(objProps[k][i].name)));
+            LOCAL_PRINT(("%d %s %s \n", (int)i , Prop::typeToStr(objProps[k][i].type), Prop::nameToStr(objProps[k][i].name)));
         }
         LOCAL_PRINT(("\n"));
     }
@@ -312,7 +312,7 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
 
             if (edgeColor) {
                 work >> mesh.currentColor;
-                LOCAL_PRINT(("Color %d %d %d\n", mesh.currentColor.r(), mesh.currentColor.g(), mesh.currentColor.b()));
+                // LOCAL_PRINT(("Edge Color %d %d %d\n", mesh.currentColor.r(), mesh.currentColor.g(), mesh.currentColor.b()));
             }
 
             if (!edge.isInHypercube(
@@ -338,11 +338,14 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
                     SYNC_PRINT(("Unexpected EOF on vertex number %d\n", i));
                     return 1;
                 }
-                float f;
+                //float f;
                 Vector3dd vertex;
-                input.read((char *)&f, sizeof(f)); vertex.x() = f;
-                input.read((char *)&f, sizeof(f)); vertex.y() = f;
-                input.read((char *)&f, sizeof(f)); vertex.z() = f;
+                //input.read((char *)&f, sizeof(f)); vertex.x() = f;
+                //input.read((char *)&f, sizeof(f)); vertex.y() = f;
+                //input.read((char *)&f, sizeof(f)); vertex.z() = f;
+                vertex.x() = objProps[OBJ_VERTEX][0].getDouble(input);
+                vertex.y() = objProps[OBJ_VERTEX][1].getDouble(input);
+                vertex.z() = objProps[OBJ_VERTEX][2].getDouble(input);
 
                 if (input.bad()) {
                     SYNC_PRINT(("Corrupted vertex number %d\n", i));
@@ -399,17 +402,21 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
                     SYNC_PRINT(("Unexpected EOF on vertex number %d\n", i));
                     return 1;
                 }
-                float f;
-                Vector3dd vertex;
-                input.read((char *)&f, sizeof(f)); vertex.x() = f;
-                input.read((char *)&f, sizeof(f)); vertex.y() = f;
-                input.read((char *)&f, sizeof(f)); vertex.z() = f;
+                //float f;
+                Vector3dd vertex;               
+                //input.read((char *)&f, sizeof(f)); vertex.x() = f;
+                //input.read((char *)&f, sizeof(f)); vertex.y() = f;
+                //input.read((char *)&f, sizeof(f)); vertex.z() = f;
+                vertex.x() = objProps[OBJ_VERTEX][0].getDouble(input);
+                vertex.y() = objProps[OBJ_VERTEX][1].getDouble(input);
+                vertex.z() = objProps[OBJ_VERTEX][2].getDouble(input);
+                // LOCAL_PRINT(("Position [%lf %lf %lf]\n", vertex.x(), vertex.y(), vertex.z()));
 
                 if (vertexColor) {
                     input.read((char *)&mesh.currentColor.r(), sizeof(uint8_t));
                     input.read((char *)&mesh.currentColor.g(), sizeof(uint8_t));
                     input.read((char *)&mesh.currentColor.b(), sizeof(uint8_t));
-                    LOCAL_PRINT(("Color %d %d %d\n", mesh.currentColor.r(), mesh.currentColor.g(), mesh.currentColor.b()));
+                    // LOCAL_PRINT(("Color %d %d %d\n", mesh.currentColor.r(), mesh.currentColor.g(), mesh.currentColor.b()));
                 }
                 if (input.bad()) {
                     SYNC_PRINT(("Corrupted vertex number %d\n", i));
@@ -425,7 +432,7 @@ int PLYLoader::loadPLY(istream &input, Mesh3D &mesh)
 
 #undef LOCAL_PRINT
 
-int PLYLoader::savePLY(ostream &out, Mesh3D &mesh, PlyFormat format)
+int PLYLoader::savePLY(ostream &out, Mesh3D &mesh, PlyFormat format, bool useDouble, bool forceNoAlpha)
 {
     vector<Vector3dd>  &vertexes = mesh.vertexes;
     vector<Vector3d32> &faces    = mesh.faces;
@@ -435,6 +442,9 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh, PlyFormat format)
     vector<RGBColor> &facesColor    = mesh.facesColor;;
     vector<RGBColor> &edgesColor    = mesh.edgesColor;;
 
+    bool alpha = (format != PlyFormat::ASCII);
+    if (forceNoAlpha) alpha = false;
+
     out << "ply" << std::endl;
     if (format == PlyFormat::ASCII) {
         out << "format ascii 1.0" << std::endl;
@@ -442,15 +452,18 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh, PlyFormat format)
         out << "format binary_little_endian 1.0" << std::endl;
     }
 
+    string coordType = useDouble ? "double" : "float";
+
+
     out << "comment made by CVS software" << std::endl;
     out << "element vertex " << vertexes.size() << std::endl;
-    out << "property float x" << std::endl;
-    out << "property float y" << std::endl;
-    out << "property float z" << std::endl;
+    out << "property " << coordType << " x" << std::endl;
+    out << "property " << coordType << " y" << std::endl;
+    out << "property " << coordType << " z" << std::endl;
     out << "property uchar red" << std::endl;
     out << "property uchar green" << std::endl;
     out << "property uchar blue" << std::endl;
-    if (format != PlyFormat::ASCII) {
+    if (alpha) {
         out << "property uchar alpha" << std::endl;
     }
 
@@ -463,7 +476,7 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh, PlyFormat format)
         out << "property uchar red" << std::endl;
         out << "property uchar green" << std::endl;
         out << "property uchar blue" << std::endl;
-        if (format != PlyFormat::ASCII) {
+        if (alpha) {
             out << "property uchar alpha" << std::endl;
         }
     }
@@ -477,7 +490,7 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh, PlyFormat format)
             out << "property uchar red" << std::endl;
             out << "property uchar green" << std::endl;
             out << "property uchar blue" << std::endl;
-            if (format != PlyFormat::ASCII) {
+            if (alpha) {
                 out << "property uchar alpha" << std::endl;
             }
         }
@@ -485,7 +498,7 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh, PlyFormat format)
     out << "end_header" << std::endl;
 
     if (format == PlyFormat::ASCII) {
-        for (unsigned i = 0; i < vertexes.size(); i++)
+        for (size_t i = 0; i < vertexes.size(); i++)
         {
             out << vertexes[i].x() << " "
                 << vertexes[i].y() << " "
@@ -506,7 +519,7 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh, PlyFormat format)
             out << std::endl;
         }
 
-        for (unsigned i = 0; i < faces.size(); i++)
+        for (size_t i = 0; i < faces.size(); i++)
         {
             out << "3 "
                 << faces[i].x() << " "
@@ -520,7 +533,7 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh, PlyFormat format)
             out << std::endl;
         }
 
-        for (unsigned i = 0; i < edges.size(); i++)
+        for (size_t i = 0; i < edges.size(); i++)
         {
             out << edges[i].x() << " "
                 << edges[i].y() << " ";
@@ -532,14 +545,20 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh, PlyFormat format)
             out << std::endl;
         }
     } else {
-        for (unsigned i = 0; i < vertexes.size(); i++)
+        for (size_t i = 0; i < vertexes.size(); i++)
         {
-            float x = vertexes[i].x();
-            float y = vertexes[i].y();
-            float z = vertexes[i].z();
-            out.write((char *)&x, sizeof(float)) ;
-            out.write((char *)&y, sizeof(float)) ;
-            out.write((char *)&z, sizeof(float)) ;
+            if (useDouble) {
+                out.write((char *)&vertexes[i].x(), sizeof(double));
+                out.write((char *)&vertexes[i].y(), sizeof(double));
+                out.write((char *)&vertexes[i].z(), sizeof(double));
+            } else {
+                float x = vertexes[i].x();
+                float y = vertexes[i].y();
+                float z = vertexes[i].z();
+                out.write((char *)&x, sizeof(float));
+                out.write((char *)&y, sizeof(float));
+                out.write((char *)&z, sizeof(float));
+            }
 
             unsigned char r = 128;
             unsigned char g = 128;
@@ -554,11 +573,13 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh, PlyFormat format)
             out.write((char *)&r, sizeof(unsigned char)) ;
             out.write((char *)&g, sizeof(unsigned char)) ;
             out.write((char *)&b, sizeof(unsigned char)) ;
-            out.write((char *)&a, sizeof(unsigned char)) ;
+            if (alpha) {
+                out.write((char *)&a, sizeof(unsigned char)) ;
+            }
 
         }
 
-        for (unsigned i = 0; i < faces.size(); i++)
+        for (size_t i = 0; i < faces.size(); i++)
         {
              unsigned char n = 3;
              int32_t i0 = faces[i].x();
@@ -578,10 +599,12 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh, PlyFormat format)
                  out.write((char *)&r, sizeof(unsigned char));
                  out.write((char *)&g, sizeof(unsigned char));
                  out.write((char *)&b, sizeof(unsigned char));
-                 out.write((char *)&a, sizeof(unsigned char));
+                 if (alpha) {
+                    out.write((char *)&a, sizeof(unsigned char));
+                 }
             }
         }
-        for (unsigned i = 0; i < edges.size(); i++)
+        for (size_t i = 0; i < edges.size(); i++)
         {
             int32_t i0 = edges[i].x();
             int32_t i1 = edges[i].y();
@@ -598,7 +621,9 @@ int PLYLoader::savePLY(ostream &out, Mesh3D &mesh, PlyFormat format)
                 out.write((char *)&r, sizeof(unsigned char));
                 out.write((char *)&g, sizeof(unsigned char));
                 out.write((char *)&b, sizeof(unsigned char));
-                out.write((char *)&a, sizeof(unsigned char));
+                if (alpha) {
+                    out.write((char *)&a, sizeof(unsigned char));
+                }
             }
         }
     }
@@ -623,6 +648,8 @@ istream &operator >>(istream &in, PLYLoader::Prop &toLoad)
     }
     if (type == "float"  ) toLoad.type = PLYLoader::PROP_TYPE_FLOAT;
     if (type == "float32") toLoad.type = PLYLoader::PROP_TYPE_FLOAT;
+
+    if (type == "double" ) toLoad.type = PLYLoader::PROP_TYPE_DOUBLE;
 
     if (type == "uchar")   toLoad.type = PLYLoader::PROP_TYPE_UCHAR;
     if (type == "uint8")   toLoad.type = PLYLoader::PROP_TYPE_UCHAR;
@@ -666,6 +693,7 @@ istream &operator >>(istream &in, PLYLoader::Prop &toLoad)
     if (name == "red")   toLoad.name = PLYLoader::PROP_NAME_RED;
     if (name == "green") toLoad.name = PLYLoader::PROP_NAME_GREEN;
     if (name == "blue")  toLoad.name = PLYLoader::PROP_NAME_BLUE;
+    if (name == "alpha") toLoad.name = PLYLoader::PROP_NAME_ALPHA;
 
     if (name == "cluster") toLoad.name = PLYLoader::PROP_NAME_CLUSTER;
 
@@ -682,10 +710,11 @@ istream &operator >>(istream &in, PLYLoader::Prop &toLoad)
 const char *PLYLoader::Prop::typeToStr(PLYLoader::PropType type)
 {
     switch (type) {
-        case PROP_TYPE_FLOAT: return "float";
-        case PROP_TYPE_UCHAR: return "uchar";
-        case PROP_TYPE_INT  : return "int";
-        case PROP_TYPE_LIST : return "list";
+        case PROP_TYPE_FLOAT : return "float";
+        case PROP_TYPE_DOUBLE: return "double";
+        case PROP_TYPE_UCHAR : return "uchar";
+        case PROP_TYPE_INT   : return "int";
+        case PROP_TYPE_LIST  : return "list";
     default:
         return "unknown";
     }
@@ -697,11 +726,12 @@ const char *PLYLoader::Prop::nameToStr(PLYLoader::PropName name)
 
         case PROP_NAME_X: return "x";
         case PROP_NAME_Y: return "y";
-        case PROP_NAME_Z: return  "z";
+        case PROP_NAME_Z: return "z";
 
-        case PROP_NAME_RED: return  "red";
+        case PROP_NAME_RED  : return "red";
         case PROP_NAME_GREEN: return "green";
         case PROP_NAME_BLUE : return "blue";
+        case PROP_NAME_ALPHA: return "alpha";
 
         case PROP_NAME_VERTEX1: return  "vertex1";
         case PROP_NAME_VERTEX2: return  "vertex2";
