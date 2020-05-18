@@ -187,6 +187,7 @@ public:
 public slots:
     void updateUi();
     void keepAliveJoyStick();
+    void repositionCloudCamera();
 
 /** Model download **/
 public slots:
@@ -199,10 +200,6 @@ public:
 
 
 private slots:
-
-
-
-    void checkForJoystick();
 
     void stopVirtualMode();
     void startVirtualMode();

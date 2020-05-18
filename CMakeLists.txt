@@ -71,6 +71,19 @@ IF ( USE_CERES )
     find_package( Ceres )
 ENDIF ()
 
+option(USE_LIBFFT "Should compile with libfftw" YES)
+IF ( USE_LIBFFT )
+    MESSAGE( STATUS "Including libfftw wherever possible" )
+    find_package( FFTW )
+ENDIF ()
+
+option(USE_SOAPYSDR "Should compile with SoapySDR" YES)
+IF ( USE_SOAPYSDR )
+    MESSAGE( STATUS "Including SoapySDR wherever possible" )
+    find_package( SoapySDR )
+ENDIF ()
+
+
 option(USE_AVCODEC "Should compile with AVCODEC" YES)
 IF ( USE_AVCODEC )
     MESSAGE( STATUS "Including AVCODEC wherever possible" )

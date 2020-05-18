@@ -19,11 +19,30 @@ set (UTILS_SUBDIRECTORIES
     visitors
     widgets   
     ../wrappers/jsonmodern
-    ../wrappers/libpng
-    ../wrappers/libjpeg
     ../wrappers/v4l2
     ../wrappers/avcodec   
         )
+
+if (FFTW_FOUND AND SOAPYSDR_FOUND)
+    set(UTILS_SUBDIRECTORIES
+        ${UTILS_SUBDIRECTORIES}
+        ../wrappers/atv
+    )
+endif()
+
+if (JPEG_FOUND)
+    set(UTILS_SUBDIRECTORIES
+        ${UTILS_SUBDIRECTORIES}
+        ../wrappers/libjpeg
+    )
+endif()
+
+if (PNG_FOUND)
+    set(UTILS_SUBDIRECTORIES
+        ${UTILS_SUBDIRECTORIES}
+        ../wrappers/libpng
+    )
+endif()
 
 if (OpenCV_LIBS)
     set(UTILS_SUBDIRECTORIES

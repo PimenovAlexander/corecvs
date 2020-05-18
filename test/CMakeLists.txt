@@ -6,6 +6,7 @@ set(TEST_SUBDIRECTORIES
     widget_harness
     example_scene
     fileloader
+    fftplayground
     flow_detector
     flowtest
     focus_stack
@@ -25,6 +26,10 @@ set(TEST_SUBDIRECTORIES
 
 if (EIGEN_FOUND AND CERES_FOUND)
     set(TEST_SUBDIRECTORIES ${TEST_SUBDIRECTORIES} ceres_playground)
+endif()
+
+if (SOAPYSDR_FOUND)
+    set(TEST_SUBDIRECTORIES ${TEST_SUBDIRECTORIES} sdrRecord)
 endif()
 
 foreach(test_subdirectory ${TEST_SUBDIRECTORIES})

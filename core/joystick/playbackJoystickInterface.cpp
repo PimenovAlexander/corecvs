@@ -13,10 +13,10 @@
 using namespace corecvs;
 using namespace std;
 
-PlaybackJoystickInterface::PlaybackJoystickInterface(const string &deviceName):
-    corecvs::JoystickInterface(deviceName)
+PlaybackJoystickInterface::PlaybackJoystickInterface(const string &deviceName)
 {
-    data.load(deviceName);
+    mDeviceName = deviceName;
+    data.load(mDeviceName);
     SYNC_PRINT(("PlaybackJoystickInterface::PlaybackJoystickInterface(): Loaded %d joystick moves\n", (int)data.states.size()));
 }
 

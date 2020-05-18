@@ -42,6 +42,8 @@ public:
     GLuint mTexIdAttr;
     GLuint mNormalAttr;
 
+    GLuint mHasTexture;
+
     GLuint mTextureSampler;
     GLuint mMultiTextureSampler;
     GLuint mBumpSampler;
@@ -119,7 +121,9 @@ public:
     virtual void drawMyself (CloudViewDialog *dialog)  override;
 
     virtual ~SceneShaded();
-    void addTexture(GLuint texId, RGB24Buffer *input);
+
+    void addTexture   (GLuint texId, RGB24Buffer *input);
+    void deleteTexture(GLuint &texId);
 };
 
 

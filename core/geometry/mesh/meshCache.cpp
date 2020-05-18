@@ -136,7 +136,7 @@ void SceneShadedOpenGLCache::cache(Mesh3DDecorated *mesh, const Draw3dParameters
             size_t glFaceNum = matrialSizes[mCount];
             SceneShadedFaceCache &curFaceCache = faceCache[mCount];
 
-            cout << "Material:" << mCount << " - size - " << glFaceNum << endl;
+            SYNC_PRINT(( "Material: %d - size - %d <%s>\n", (int)mCount, (int)glFaceNum, (mCount < mesh->materials.size()) ? mesh->materials[mCount].name.c_str() : "Additional" ));
 
             curFaceCache.facePositions   .reserve(glFaceNum * 3);
             curFaceCache.faceVertexColors.reserve(glFaceNum * 3);

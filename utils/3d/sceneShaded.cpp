@@ -111,6 +111,14 @@ static const char *fragmentShaderSource1 =
 
 #define LOCAL_PRINT(X) if (trace) { SYNC_PRINT(X); }
 
+void SceneShaded::deleteTexture(GLuint &texId)
+{
+    if (texId != -1) {
+        glDeleteTextures(1, &texId);
+    }
+    texId = -1;
+}
+
 
 void SceneShaded::addTexture(GLuint texId, RGB24Buffer *input)
 {
@@ -159,11 +167,11 @@ void SceneShaded::setParameters(void *params)
 void SceneShaded::applyParameters()
 {
     if (mParamsApplied) {
-        SYNC_PRINT(("SceneShaded::applyParameters(): already applied\n"));
+        if (trace) SYNC_PRINT(("SceneShaded::applyParameters(): already applied\n"));
         return;
     }
 
-    SYNC_PRINT(("SceneShaded::applyParameters(): called\n"));
+    if (trace) SYNC_PRINT(("SceneShaded::applyParameters(): called\n"));
 
     ShaderPreset *sources[ShaderTarget::LAST] = {
         &mParameters.face,
@@ -213,8 +221,8 @@ void SceneShaded::applyParameters()
 
         LOCAL_PRINT(("SceneShaded::applyParameters(): Creating uniform value handles \n"));
         mAmbientUnif  = mProgram[target]->uniformLocation("ambientUnif");
-        mDiffuseUnif  = mProgram[target]->uniformLocation("mDiffuseUnif");
-        mSpecularUnif = mProgram[target]->uniformLocation("mSpecularUnif");
+        mDiffuseUnif  = mProgram[target]->uniformLocation("diffuseUnif");
+        mSpecularUnif = mProgram[target]->uniformLocation("specularUnif");
 
 
         LOCAL_PRINT(("SceneShaded::applyParameters(): Creating attribute value handles \n"));
@@ -228,7 +236,9 @@ void SceneShaded::applyParameters()
         mModelViewMatrix  = mProgram[target]->uniformLocation("modelview");
         mProjectionMatrix = mProgram[target]->uniformLocation("projection");
 
-        LOCAL_PRINT(("SceneShaded::applyParameters(): Creating samplers value handles \n"));
+        mHasTexture = mProgram[target]->uniformLocation("hasTexture");
+
+        LOCAL_PRINT(("SceneShaded::applyParameters(): Creating samplers value handles \n"));        
         mTextureSampler      = mProgram[target]->uniformLocation("textureSampler");
         mMultiTextureSampler = mProgram[target]->uniformLocation("multiTextureSampler");
         mBumpSampler    = mProgram[target]->uniformLocation("bumpSampler");
@@ -273,21 +283,29 @@ void SceneShaded::prepareTextures(CloudViewDialog * dialog)
 
 
         /*Prepare Texture*/
+        deleteTexture(mTextures[materialId]);
+
         RGB24Buffer *texBuf = mMesh->materials[materialId].tex[OBJMaterial::TEX_DIFFUSE];
         if (texBuf != NULL) {
             glFuncs.glEnable(GL_TEXTURE_2D);
             qDebug() << "Dumping prior error";
             dumpGLErrors();
+
             glFuncs.glGenTextures(1, &mTextures[materialId]);
             qDebug() << "Created a handle for the texture:" << mTextures[materialId];
             dumpGLErrors();
             addTexture(mTextures[materialId], texBuf);
             glFuncs.glDisable(GL_TEXTURE_2D);
         } else {
-            SYNC_PRINT(("void SceneShaded::prepareTextures(): Message: texBuf for material %d is NULL\n", (int)materialId));
+            SYNC_PRINT(("void SceneShaded::prepareTextures(): Message: texBuf for material %d <%s> is NULL\n",
+                        (int)materialId,
+                        mMesh->materials[materialId].name.c_str()
+                        ));
         }
 
         /*Prepare Bumpmap*/
+
+        deleteTexture(mBumpmaps[materialId]);
         RGB24Buffer *bumpBuf =  mMesh->materials[materialId].tex[OBJMaterial::TEX_BUMP];
         if (bumpBuf != NULL) {
             glFuncs.glEnable(GL_TEXTURE_2D);
@@ -299,7 +317,10 @@ void SceneShaded::prepareTextures(CloudViewDialog * dialog)
             addTexture(mBumpmaps[materialId], bumpBuf);
             glFuncs.glDisable(GL_TEXTURE_2D);
         } else {
-            SYNC_PRINT(("SceneShaded::prepareTextures(): Message: bumpBuf for material %d is NULL\n", (int)materialId));
+            SYNC_PRINT(("SceneShaded::prepareTextures(): Message: bumpBuf for material %d <%s> is NULL\n",
+                        (int)materialId,
+                        mMesh->materials[materialId].name.c_str()
+                        ));
         }
     }
 
@@ -486,17 +507,17 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
 
                 {
                     Vector3dd color = mMesh->materials[materialId].koefs[OBJMaterial::KOEF_AMBIENT];
-                    QVector3D colorAmb(color.x(), color.y(), color.z());
+                    QVector4D colorAmb (color.x(), color.y(), color.z(), 1.0);
                     mProgram[FACE]->setUniformValue(mAmbientUnif , colorAmb);
                 }
                 {
                     Vector3dd color = mMesh->materials[materialId].koefs[OBJMaterial::KOEF_DIFFUSE];
-                    QVector3D colorDiff(color.x(), color.y(), color.z());
+                    QVector4D colorDiff(color.x(), color.y(), color.z(), 1.0);
                     mProgram[FACE]->setUniformValue(mDiffuseUnif , colorDiff);
                 }
                 {
                     Vector3dd color = mMesh->materials[materialId].koefs[OBJMaterial::KOEF_SPECULAR];
-                    QVector3D colorSpec(color.x(), color.y(), color.z());
+                    QVector4D colorSpec(color.x(), color.y(), color.z(), 1.0);
                     mProgram[FACE]->setUniformValue(mSpecularUnif , colorSpec);
                 }
 
@@ -549,8 +570,12 @@ void SceneShaded::drawMyself(CloudViewDialog * dialog)
                     glActiveTexture(GL_TEXTURE0);
                     glBindTexture(GL_TEXTURE_2D, mTextures[materialId]);
                     mProgram[FACE]->setUniformValue(mTextureSampler, 0);
+                    mProgram[FACE]->setUniformValue(mHasTexture, (GLint)1);
+
                 } else {
-                    LOCAL_PRINT(("SceneShaded::drawMyself(): no texture for material\n"));
+                    // SYNC_PRINT(("SceneShaded::drawMyself(): no texture for material %d <%s> \n", materialId, mMesh->materials[materialId].name.c_str()));
+                    mProgram[FACE]->setUniformValue(mHasTexture, (GLint)0);
+
                 }
 
 #if 0

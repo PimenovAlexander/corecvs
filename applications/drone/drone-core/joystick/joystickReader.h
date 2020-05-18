@@ -14,7 +14,7 @@ private:
     QString deviceName = "/dev/input/js0";
 
 public:
-    JoystickReader(const std::string &deviceName)  ;
+    JoystickReader(const std::string &deviceName);
     ~JoystickReader();
 signals:
 

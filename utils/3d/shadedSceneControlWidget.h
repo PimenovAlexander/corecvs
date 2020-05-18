@@ -35,6 +35,8 @@ public:
         fragment(fragment)
     {}
 
+    void load(const QString &shaderFile, const QDir &shaderPath);
+
 };
 
 class ShadedSceneControlParameters : public Draw3dParameters

@@ -82,6 +82,23 @@ void ShadedSceneControlWidget::setParameters(const ShadedSceneControlParameters 
     } else {
         ui->pointComboBox->setCurrentIndex(1);
     }
+
+    int i = 0;
+    for (; i < ui->faceComboBox->count(); i++)
+    {
+        if (ui->faceComboBox->itemText(i) == input.face.name)
+        {
+            break;
+        }
+    }
+    if (i == ui->faceComboBox->count()) {
+        shaderCache[input.face.name] = input.face;
+        ui->faceComboBox->addItem(input.face.name);
+
+        ui->presetComboBox->insertItem(ui->presetComboBox->count(), input.face.name);
+    }
+    ui->faceComboBox->setCurrentIndex(i);
+
 }
 
 void ShadedSceneControlWidget::setParametersVirtual(void *input)
@@ -118,47 +135,23 @@ void ShadedSceneControlWidget::applyPressed()
 
 void ShadedSceneControlWidget::reloadShaders(QString path)
 {
-    QDir shaders(path);
-    if (shaders.exists()) {
+    QDir shaderPath(path);
+    if (shaderPath.exists()) {
         qDebug() << "Enumerating shaders at <" << path << ">";
-        QStringList shadersFiles = shaders.entryList(QStringList("*.vsh"));
+        QStringList shadersFiles = shaderPath.entryList(QStringList("*.vsh"));
         for (QString shaderFile : shadersFiles)
         {
-            QString shaderName = shaderFile.left(shaderFile.length() - 4);
-            QString shaderFileF = shaderName + ".fsh";
+            ShaderPreset shaderPreset;
+            shaderPreset.load(shaderFile, shaderPath);
+            shaderCache.insert(shaderPreset.name, shaderPreset);
 
-            qDebug() << "Checking shader <" << shaderName << ">"
-                     << " <" << shaderFile  << "> "
-                     << " <" << shaderFileF << "> ";
+            ui->presetComboBox->insertItem(ui->presetComboBox->count(), shaderPreset.name);
 
-            QFile vsh(shaders.filePath(shaderFile ));
-            QFile fsh(shaders.filePath(shaderFileF));
-            if (!vsh.exists() || !fsh.exists())
-            {
-                continue;
-            }
+            ui->pointComboBox->insertItem(ui->presetComboBox->count(), shaderPreset.name);
+            ui->edgeComboBox ->insertItem(ui->presetComboBox->count(), shaderPreset.name);
+            ui->faceComboBox ->insertItem(ui->presetComboBox->count(), shaderPreset.name);
 
-            vsh.open(QIODevice::ReadOnly);
-            QString shaderText;
-            QTextStream shaderStream(&vsh);
-            shaderText.append(shaderStream.readAll());
-            vsh.close();
-
-            fsh.open(QIODevice::ReadOnly);
-            QString shaderTextF;
-            QTextStream shaderStreamF(&fsh);
-            shaderTextF.append(shaderStreamF.readAll());
-            fsh.close();
-
-            shaderCache.insert(shaderName, ShaderPreset(shaderName, shaderText, shaderTextF));
-
-            ui->presetComboBox->insertItem(ui->presetComboBox->count(), shaderName);
-
-            ui->pointComboBox->insertItem(ui->presetComboBox->count(), shaderName);
-            ui->edgeComboBox ->insertItem(ui->presetComboBox->count(), shaderName);
-            ui->faceComboBox ->insertItem(ui->presetComboBox->count(), shaderName);
-
-            qDebug() << "Loaded shader <"  << shaderName << ">" << endl;
+            qDebug() << "Loaded shader <"  << shaderPreset.name << ">" << endl;
         }
     }
 }
@@ -180,5 +173,40 @@ void ShadedSceneControlWidget::presetChanged()
     QString name = ui->presetComboBox->currentText();
     ui->fragmentShaderTextEdit->setText(shaderCache[name].fragment);
     ui->vetrexShaderTextEdit->setText(shaderCache[name].vertex);
+
+}
+
+void ShaderPreset::load(const QString &shaderFile, const QDir &shaderPath)
+{
+    QString shaderName = shaderFile.left(shaderFile.length() - 4);
+    QString shaderFileF = shaderName + ".fsh";
+
+    qDebug() << "Checking shader <" << shaderName << ">"
+             << " <" << shaderFile  << "> "
+             << " <" << shaderFileF << "> ";
+
+    QFile vsh(shaderPath.filePath(shaderFile ));
+    QFile fsh(shaderPath.filePath(shaderFileF));
+    if (!vsh.exists() || !fsh.exists())
+    {
+        return;
+    }
+
+    vsh.open(QIODevice::ReadOnly);
+    QString shaderText;
+    QTextStream shaderStream(&vsh);
+    shaderText.append(shaderStream.readAll());
+    vsh.close();
+
+    fsh.open(QIODevice::ReadOnly);
+    QString shaderTextF;
+    QTextStream shaderStreamF(&fsh);
+    shaderTextF.append(shaderStreamF.readAll());
+    fsh.close();
+
+    this->fragment = shaderTextF;
+    this->name     = shaderName;
+    this->vertex   = shaderText;
+    this->type     = ShaderType::SAVEABLE;
 
 }
