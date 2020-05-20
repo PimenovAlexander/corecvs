@@ -7,6 +7,7 @@ set(TEST_SUBDIRECTORIES
    imageview     
    #laserscan     # Cannot be included because it uses some deprecated/unknown API: calibrationHelpers.h
    nester
+   qtnester
    #nester-test   # TODO: include this
    #recorder      # Cannot be added because it depends on base application
    #robodetect    # Cannot be included because it depends on deprecated filters
