@@ -1,4 +1,4 @@
-#include <capSettingsDialog.h>
+#include <uis/capSettingsDialog.h>
 #include <stdio.h>
 #include <unistd.h>
 
