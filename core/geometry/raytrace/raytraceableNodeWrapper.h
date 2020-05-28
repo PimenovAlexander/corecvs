@@ -1,7 +1,7 @@
 #ifndef RAYTRACEABLENODEWRAPPER_H
 #define RAYTRACEABLENODEWRAPPER_H
 
-#include "core/geometry/raytrace/raytraceRenderer.h"
+#include "geometry/raytrace/raytraceRenderer.h"
 #include "bspTree.h"
 
 namespace corecvs {

@@ -9,8 +9,8 @@
 #include "backgroundFilterParametersControlWidget.h"
 #include "ui_backgroundFilterParametersControlWidget.h"
 #include <memory>
-#include "qSettingsGetter.h"
-#include "qSettingsSetter.h"
+#include "visitors/qSettingsGetter.h"
+#include "visitors/qSettingsSetter.h"
 
 
 BackgroundFilterParametersControlWidget::BackgroundFilterParametersControlWidget(QWidget *parent, bool _autoInit, QString _rootPath)

@@ -4,8 +4,8 @@
 #include "core/reflection/reflection.h"
 #include <QWidget>
 //#include "cloudViewDialog.h"
-#include "advancedImageWidget.h"
-#include "cameraModelParametersControlWidget.h"
+#include "uis/advancedImageWidget.h"
+#include "distortioncorrector/cameraModelParametersControlWidget.h"
 
 namespace Ui {
 class PointerFieldWidget;

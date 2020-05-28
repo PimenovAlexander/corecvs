@@ -2,17 +2,17 @@
 #define CAMERAMODEL_H
 
 #include "calibrationLocation.h"
-#include "core/buffers/displacementBuffer.h"
-#include "core/xml/generated/distortionApplicationParameters.h"
-#include "core/rectification/essentialMatrix.h"
-#include "core/alignment/lensDistortionModelParameters.h"
-#include "core/alignment/pointObservation.h"
-#include "core/geometry/polygons.h"
-#include "core/reflection/dynamicObject.h"
+#include "buffers/displacementBuffer.h"
+#include "xml/generated/distortionApplicationParameters.h"
+#include "rectification/essentialMatrix.h"
+#include "alignment/lensDistortionModelParameters.h"
+#include "alignment/pointObservation.h"
+#include "geometry/polygons.h"
+#include "reflection/dynamicObject.h"
 
-#include "core/alignment/selectableGeometryFeatures.h"
+#include "alignment/selectableGeometryFeatures.h"
 
-#include "core/cameracalibration/projection/projectionFactory.h"
+#include "cameracalibration/projection/projectionFactory.h"
 
 
 namespace corecvs {

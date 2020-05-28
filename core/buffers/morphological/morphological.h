@@ -11,8 +11,8 @@
  */
 
 
-#include "core/buffers/g12Buffer.h"
-#include "core/buffers/g8Buffer.h"
+#include "buffers/g12Buffer.h"
+#include "buffers/g8Buffer.h"
 
 namespace corecvs {
 

@@ -1,13 +1,11 @@
 #ifndef PROJECTIONMODELS_H
 #define PROJECTIONMODELS_H
 
-#include "core/xml/generated/projectionType.h"
-#include "core/reflection/dynamicObject.h"
+#include "xml/generated/projectionType.h"
+#include "reflection/dynamicObject.h"
 
-#include "core/math/vector/vector2d.h"
-#include "core/math/vector/vector3d.h"
-
-#include "core/cameracalibration/projection/projectionModels.h"
+#include "math/vector/vector2d.h"
+#include "math/vector/vector3d.h"
 
 namespace corecvs {
 
@@ -120,7 +118,7 @@ public:
     {
         double tau = rayToAngle(p);
         Vector2dd dir = p.xy().normalised();
-        return dir * focal * sin(tau);
+        return dir * focal * std::sin(tau);
     }
 
     virtual Vector3dd reverse(const Vector2dd &p) const override

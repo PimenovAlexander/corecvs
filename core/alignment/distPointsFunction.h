@@ -6,8 +6,8 @@
  * \date Jun 11, 2013
  **/
 
-#include "core/alignment/radialFunc.h"
-#include "core/math/vector/vector2d.h"
+#include "alignment/radialFunc.h"
+#include "math/vector/vector2d.h"
 
 namespace corecvs
 {

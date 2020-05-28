@@ -4,10 +4,10 @@
 #include <vector>
 #include <iostream>
 
-#include "core/buffers/runtimeTypeBuffer.h"
-#include "core/buffers/rgb24/rgbColor.h"
+#include "buffers/runtimeTypeBuffer.h"
+#include "buffers/rgb24/rgbColor.h"
 
-#include "core/features2d/algoBase.h"
+#include "features2d/algoBase.h"
 
 struct KeyPointArea
 {

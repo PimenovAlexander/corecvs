@@ -1,4 +1,4 @@
-#include "core/stereointerface/processor6D.h"
+#include "stereointerface/processor6D.h"
 
 namespace corecvs {
 

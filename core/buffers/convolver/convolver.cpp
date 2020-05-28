@@ -1,11 +1,11 @@
-#include "core/buffers/convolver/convolver.h"
+#include "buffers/convolver/convolver.h"
 
-#include "core/utils/global.h"
-#include "core/buffers/kernels/fastkernel/fastKernel.h"
-#include "core/buffers/kernels/arithmetic.h"
+#include "utils/global.h"
+#include "buffers/kernels/fastkernel/fastKernel.h"
+#include "buffers/kernels/arithmetic.h"
 
-#include "core/math/sse/sseWrapper.h"
-#include "core/buffers/kernels/fastkernel/vectorTraits.h"
+#include "math/sse/sseWrapper.h"
+#include "buffers/kernels/fastkernel/vectorTraits.h"
 
 namespace corecvs {
 

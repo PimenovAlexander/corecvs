@@ -1,7 +1,7 @@
 #include "frameProcessor.h"
 
 #include <QApplication>
-#include <imageCaptureInterfaceQt.h>
+#include <framesources/imageCaptureInterfaceQt.h>
 
 #include "physicsMainWindow.h"
 

@@ -7,7 +7,7 @@
 #include <QMessageBox>
 #include <QDebug>
 
-#include "loggerWidget.h"
+#include "widgets/loggerWidget.h"
 
 namespace Ui {
 class ScriptWindow;

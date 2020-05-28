@@ -7,7 +7,7 @@
 
 
 #include <opencv2/optflow/pcaflow.hpp>
-#include "core/stereointerface/processor6D.h"
+#include "stereointerface/processor6D.h"
 #include "generated/openCVPCAFlowParameters.h"
 using namespace corecvs;
 using namespace cv;

@@ -6,13 +6,13 @@
  * \date Mar 24, 2010
  * \author alexander
  */
-#include "core/utils/global.h"
-#include "core/math/sparseMatrix.h"
-#include "core/math/matrix/matrix.h"
-#include "core/math/matrix/matrix33.h"
-#include "core/math/matrix/blasReplacement.h"
-#include "core/math/sse/sseWrapper.h"
-#include "core/tbbwrapper/tbbWrapper.h"
+#include "utils/global.h"
+#include "math/sparseMatrix.h"
+#include "math/matrix/matrix.h"
+#include "math/matrix/matrix33.h"
+#include "math/matrix/blasReplacement.h"
+#include "math/sse/sseWrapper.h"
+#include "tbbwrapper/tbbWrapper.h"
 
 #include "wrappers/cblasLapack/cblasLapackeWrapper.h"
 

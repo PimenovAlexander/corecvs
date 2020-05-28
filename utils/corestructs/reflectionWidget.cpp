@@ -13,8 +13,8 @@
 #include "pointerFieldWidget.h"
 #include "core/reflection/reflection.h"
 #include "reflectionWidget.h"
-#include "vectorWidget.h"
-#include "exponentialSlider.h"
+#include "widgets/vectorWidget.h"
+#include "widgets/exponentialSlider.h"
 #include "core/reflection/dynamicObject.h"
 
 using namespace corecvs;

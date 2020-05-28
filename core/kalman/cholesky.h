@@ -8,9 +8,9 @@
 
 #ifndef CHOLESKY_H_
 #define CHOLESKY_H_
-#include "core/math/matrix/matrix.h"
-#include "core/math/matrix/diagonalMatrix.h"
-#include "core/kalman/upperUnitaryMatrix.h"
+#include "math/matrix/matrix.h"
+#include "math/matrix/diagonalMatrix.h"
+#include "kalman/upperUnitaryMatrix.h"
 namespace corecvs {
 
 /**

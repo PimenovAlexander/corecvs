@@ -10,7 +10,7 @@
 
 #include <iostream>
 #include <core/geometry/convexHull.h>
-#include <core/geometry/mesh3d.h>
+#include <core/geometry/mesh/mesh3d.h>
 #include "gtest/gtest.h"
 
 #include "core/utils/global.h"

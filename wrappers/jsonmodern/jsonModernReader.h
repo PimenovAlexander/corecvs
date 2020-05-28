@@ -9,9 +9,9 @@
 # define noexcept_if(pred)   noexcept((pred))
 #endif
 
-#include "json.hpp"
+#include "sources/src/json.hpp"
 
-#include "core/reflection/reflection.h"
+#include "reflection/reflection.h"
 
 using corecvs::IntField;
 using corecvs::Int64Field;

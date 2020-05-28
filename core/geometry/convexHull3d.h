@@ -4,8 +4,8 @@
 #include <set>
 #include <iostream>
 
-#include "core/math/vector/vector3d.h"
-#include "core/geometry/triangle.h"
+#include "math/vector/vector3d.h"
+#include "geometry/triangle.h"
 
 namespace corecvs {
 

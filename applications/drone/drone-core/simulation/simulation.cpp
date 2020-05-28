@@ -5,7 +5,7 @@
 #include "simulation.h"
 #include "simObject.h"
 #include "simSphere.h"
-#include "mesh3DScene.h"
+#include "3d/mesh3DScene.h"
 
 using namespace std;
 using namespace corecvs;

@@ -11,11 +11,11 @@
 #define NEON_WRAPPER_H_
 
 #ifdef WITH_NEON
-#include "core/math/neon/int64x2.h"
-#include "core/math/neon/int32x4.h"
-#include "core/math/neon/uInt32x4.h"
-//#include "core/math/neon/int32x8.h"
-#include "core/math/neon/int32x8v.h"
+#include "math/neon/int64x2.h"
+#include "math/neon/int32x4.h"
+#include "math/neon/uInt32x4.h"
+//#include "math/neon/int32x8.h"
+#include "math/neon/int32x8v.h"
 
 // Int32x8 is a vector of two Int32x4
 
@@ -23,11 +23,11 @@ namespace corecvs {
 typedef Int32x8v Int32x8;
 }
 
-#include "core/math/neon/int16x8.h"
-#include "core/math/neon/uInt16x8.h"
+#include "math/neon/int16x8.h"
+#include "math/neon/uInt16x8.h"
 
 
-#include "core/math/neon/float32x4.h"
+#include "math/neon/float32x4.h"
 
 namespace corecvs {
 typedef Float32x4  FloatxN;

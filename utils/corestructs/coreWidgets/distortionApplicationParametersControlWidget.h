@@ -2,7 +2,7 @@
 #include <QWidget>
 #include "core/xml/generated/distortionApplicationParameters.h"
 #include "ui_distortionApplicationParametersControlWidget.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 
 namespace Ui {

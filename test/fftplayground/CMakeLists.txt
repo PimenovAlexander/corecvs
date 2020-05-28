@@ -1,33 +1,62 @@
-project (fftplayground)
+cmake_minimum_required(VERSION 3.11)
+set(MODULE_NAME test)
+init_project(PROJECT_NAME fftplayground)
 
-if (PNG_LIB)
-    include(../../wrappers/libpng/sourcelist.cmake)
-endif()
+set(SOURCE_FILE
+    main_fftplayground.cpp
+    )
 
-if (JPEG_LIB)
-    include(../../wrappers/libjpeg/sourcelist.cmake)
-endif()
+set(SOURCES
+    ${SOURCE_FILE}
+    )
 
-if (FFTW_LIB)
-    message ("fftplayground  would use FFTW")
-    include(../../wrappers/libfftw/sourcelist.cmake)
-endif()
+assign_source_group(${SOURCES})
 
-set (NAME fftplayground )
+add_executable(${PROJECT_NAME}
+    ${SOURCES}
+    )
 
-set (SRC_FILES ${SRC_FILES}
-    main_fftplayground.cpp  
-)
+set(ADDITIONAL_LIBS)
 
-add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
-
-add_custom_command(TARGET ${NAME} POST_BUILD
-        COMMAND cp ${PROJECT_BINARY_DIR}/${NAME}  ${CMAKE_BINARY_DIR}/bin/${NAME}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Copying ${NAME} to binary directory"
+if(PNG_LIB)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        LIBPNGwrapper
         )
+    add_definitions(-DWITH_LIBPNG)
+endif()
 
-include_directories(${INC_PATHS})
+if(JPEG_LIB)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        LIBJPEGwrapper
+        )
+    add_definitions(-DWITH_LIBJPEG)
+endif()
 
-target_link_libraries(${NAME} ${LIBS} corecvs pthread)
+if (FFTW_LIBRARIES)
+    message ("fftplayground  would use FFTW")
+    set(ADDITIONAL_LIBS
+            ${ADDITIONAL_LIBS}
+            FFTW::FFTW
+            )
+    add_definitions(-DWITH_FFTW)
+#    include(../../wrappers/libfftw/sourcelist.cmake)
+endif()
 
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+    corecvs
+	pthread
+    ${ADDITIONAL_LIBS}
+    )
+
+copy_directory(${PROJECT_NAME} 
+    ${PROJECT_BINARY_DIR}/${MODULE_NAME}/${PROJECT_NAME}
+    ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}
+    )
+
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+    FOLDER "${MODULE_NAME}"
+	)

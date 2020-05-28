@@ -12,9 +12,9 @@
  */
 
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/buffers/abstractKernel.h"
+#include "buffers/abstractKernel.h"
 
 namespace corecvs {
 

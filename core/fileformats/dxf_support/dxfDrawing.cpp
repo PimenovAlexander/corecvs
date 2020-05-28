@@ -2,7 +2,7 @@
 // Created by Myasnikov Vladislav on 23.12.2019.
 //
 
-#include "core/fileformats/dxf_support/dxfDrawing.h"
+#include "fileformats/dxf_support/dxfDrawing.h"
 
 namespace corecvs {
 

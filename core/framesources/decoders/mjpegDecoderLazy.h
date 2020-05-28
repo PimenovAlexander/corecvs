@@ -12,8 +12,8 @@
 #define MJPEGDECODERLAZY_H_
 
 #include <stdint.h>
-#include "core/buffers/g12Buffer.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "buffers/g12Buffer.h"
+#include "buffers/rgb24/rgb24Buffer.h"
 
 using namespace corecvs;
 

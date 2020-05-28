@@ -9,7 +9,7 @@
 #include <vector>
 #include <string>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
 using std::vector;
 using std::string;

@@ -11,24 +11,24 @@
 
 #include <stdint.h>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/buffers/fixeddisp/fixedPointBlMapper.h"
-#include "core/buffers/abstractContiniousBuffer.h"
-#include "core/buffers/g12Buffer.h"
-#include "core/buffers/g8Buffer.h"
-#include "core/buffers/flow/flowBuffer.h"
-#include "core/buffers/histogram/histogram.h"
-#include "core/geometry/rectangle.h"
-#include "core/geometry/polygons.h"
-#include "core/buffers/rgb24/rgbColor.h"
-#include "core/function/function.h"
-#include "core/buffers/correspondenceList.h"
-#include "core/xml/generated/imageChannel.h"
+#include "buffers/fixeddisp/fixedPointBlMapper.h"
+#include "buffers/abstractContiniousBuffer.h"
+#include "buffers/g12Buffer.h"
+#include "buffers/g8Buffer.h"
+#include "buffers/flow/flowBuffer.h"
+#include "buffers/histogram/histogram.h"
+#include "geometry/rectangle.h"
+#include "geometry/polygons.h"
+#include "buffers/rgb24/rgbColor.h"
+#include "function/function.h"
+#include "buffers/correspondenceList.h"
+#include "xml/generated/imageChannel.h"
 
-#include "core/geometry/conic.h"
+#include "geometry/conic.h"
 
-#include "core/buffers/kernels/fastkernel/readers.h"
+#include "buffers/kernels/fastkernel/readers.h"
 
 namespace corecvs {
 

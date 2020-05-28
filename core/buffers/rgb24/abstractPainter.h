@@ -9,16 +9,16 @@
 #include <math.h>
 #include <vector>
 
-#include "core/stats/graphData.h"
+#include "stats/graphData.h"
 
-#include "core/utils/global.h"
-#include "core/buffers/rgb24/hardcodeFont.h"
-#include "core/buffers/rgb24/hersheyVectorFont.h"
-#include "core/buffers/rgb24/rgbColor.h"
-#include "core/geometry/polygons.h"
-#include "core/geometry/conic.h"
-#include "core/geometry/line.h"
-#include "core/geometry/ellipse.h"
+#include "utils/global.h"
+#include "buffers/rgb24/hardcodeFont.h"
+#include "buffers/rgb24/hersheyVectorFont.h"
+#include "buffers/rgb24/rgbColor.h"
+#include "geometry/polygons.h"
+#include "geometry/conic.h"
+#include "geometry/line.h"
+#include "geometry/ellipse.h"
 
 namespace corecvs {
 
@@ -124,16 +124,27 @@ public:
 
         uint16_t codepoint = ((theChar & 0x1F00) >> 2) | (theChar & 0x003F);
 
-        if (codepoint >=u'а' && codepoint <= u'я')
+#ifdef WIN32
+        if (codepoint >=u"а" && codepoint <= u"я")
+            char_ptr = HardcodeFont::cyrilic_glyphs + HardcodeFont::GLYPH_HEIGHT * (codepoint - u"а");
+        if (codepoint >=u"А" && codepoint <= u"Я")
+            char_ptr = HardcodeFont::cyrilic_glyphs + HardcodeFont::GLYPH_HEIGHT * (codepoint - u"а");
+#else
+        if (codepoint >= u'а' && codepoint <= u'я')
             char_ptr = HardcodeFont::cyrilic_glyphs + HardcodeFont::GLYPH_HEIGHT * (codepoint - u'а');
-        if (codepoint >=u'А' && codepoint <= u'Я')
+        if (codepoint >= u'А' && codepoint <= u'Я')
             char_ptr = HardcodeFont::cyrilic_glyphs + HardcodeFont::GLYPH_HEIGHT * (codepoint - u'а');
+#endif
 
         if (char_ptr == NULL) {
             printf("No symbol for %04X %04X %04X | %04X %04X\n",
                    theChar,
                    (theChar & 0x1F3F),
-                  ((theChar & 0x1F00) >> 2) | (theChar & 0x003F), u'а', u'я');
+#ifdef WIN32
+        ((theChar & 0x1F00) >> 2) | (theChar & 0x003F), u"а", u"я");
+#else
+        ((theChar & 0x1F00) >> 2) | (theChar & 0x003F), u'а', u'я');
+#endif
             return;
         }
 

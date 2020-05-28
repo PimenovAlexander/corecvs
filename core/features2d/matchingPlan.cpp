@@ -1,6 +1,6 @@
-#include "core/features2d/matchingPlan.h"
+#include "features2d/matchingPlan.h"
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
 #include <fstream>
 

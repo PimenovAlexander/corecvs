@@ -6,8 +6,8 @@
 
 #include <sstream>
 
-#include "core/fileformats/plyLoader.h"
-#include "core/utils/utils.h"
+#include "fileformats/plyLoader.h"
+#include "utils/utils.h"
 
 namespace corecvs {
 

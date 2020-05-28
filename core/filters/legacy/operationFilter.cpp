@@ -4,9 +4,9 @@
  * \date Nov 11, 2012
  **/
 
-#include "core/filters/legacy/operationFilter.h"
-#include "core/reflection/serializerVisitor.h"
-#include "core/reflection/deserializerVisitor.h"
+#include "filters/legacy/operationFilter.h"
+#include "reflection/serializerVisitor.h"
+#include "reflection/deserializerVisitor.h"
 
 namespace corecvs
 {

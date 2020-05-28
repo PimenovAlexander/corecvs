@@ -1,29 +1,38 @@
-
-set(TEST_SUBDIRECTORIES
+set(SUBDIRECTORIES
     adoptcolor    # depends on utils
-    avencode      
+    autonavRW
+    avencode
     #command_harness
-    widget_harness
     example_scene
+    face_distortion
     fileloader
     fftplayground
     flow_detector
     flowtest
     focus_stack
     gcodeplayground
-    mesh3dplayground
     grab24
     grab24_qt
-    # jitplayground
+    #jitplayground
+    mesh3dplayground
+    #opencvpostcalib
+    #opencv_profile
     pattern_detector
+    #qtScriptConsole
     raytracerender
     reprojector
     #serialize1
     softrender
-    face_distortion
-    autonavRW
-)
+    #stereointerface
+    #vodometry
+    widget_harness
+    widgets_test
+    )
 
+foreach(subdirectory ${SUBDIRECTORIES})
+    message(STATUS "adding subdirectory/${subdirectory}")
+    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/${subdirectory})
+endforeach(subdirectory)
 if (EIGEN_FOUND AND CERES_FOUND)
     set(TEST_SUBDIRECTORIES ${TEST_SUBDIRECTORIES} ceres_playground)
 endif()

@@ -1,0 +1,10 @@
+set(SCRIPTING_HEADER_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/coreToScript.h
+    ${CMAKE_CURRENT_LIST_DIR}/scriptWindow.h
+    PARENT_SCOPE
+    )
+
+set(SCRIPTING_SOURCE_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/scriptWindow.cpp
+    PARENT_SCOPE
+    )

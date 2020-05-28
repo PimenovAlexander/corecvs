@@ -5,8 +5,8 @@
  * \date Nov 27, 2011
  * \author alexander
  */
-#include "core/utils/global.h"
-#include "core/utils/visitors/propertyListVisitor.h"
+#include "utils/global.h"
+#include "utils/visitors/propertyListVisitor.h"
 
 namespace corecvs {
 

@@ -1,28 +1,52 @@
-project (Autonav_RW)
+cmake_minimum_required(VERSION 3.11)
+set(MODULE_NAME test)
+init_project(PROJECT_NAME autonavRW)
 
-set (NAME autonav_RW)
-
-set (SRC_FILES
+set(SOURCE_FILE
     main_autonavRW.cpp
-)
+    )
 
-if (PNG_LIB)
-    include(../../wrappers/libpng/sourcelist.cmake)
-endif()
-    
-if (JPEG_LIB)
-    include(../../wrappers/libjpeg/sourcelist.cmake)
-endif()
+set(SOURCES
+    ${SOURCE_FILE}
+    )
 
-add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
+assign_source_group(${SOURCES})
 
-add_custom_command(TARGET ${NAME} POST_BUILD
-        COMMAND cp ${PROJECT_BINARY_DIR}/${NAME}  ${CMAKE_BINARY_DIR}/bin/${NAME}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Copying ${NAME} to binary directory"
+add_executable(${PROJECT_NAME}
+    ${SOURCES}
+    )
+
+set(ADDITIONAL_LIBS)
+
+if(PNG_LIB)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        LIBPNGwrapper
         )
+    add_definitions(-DWITH_LIBPNG)
+endif()
 
-include_directories(${INC_PATHS})
+if(JPEG_LIB)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        LIBJPEGwrapper
+        )
+    add_definitions(-DWITH_LIBJPEG)
+endif()
 
-target_link_libraries(${NAME} ${LIBS} stdc++fs corecvs)
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+    stdc++fs 
+    corecvs
+    ${ADDITIONAL_LIBS}
+    )
 
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+    FOLDER "${MODULE_NAME}"
+    )
+
+copy_directory(${PROJECT_NAME} 
+    ${PROJECT_BINARY_DIR}/${MODULE_NAME}/${PROJECT_NAME}
+    ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}
+    )

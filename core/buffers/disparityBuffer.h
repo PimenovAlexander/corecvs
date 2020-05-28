@@ -8,7 +8,7 @@
  * \author alexander
  */
 #include <stdint.h>
-#include "core/buffers/abstractContiniousBuffer.h"
+#include "buffers/abstractContiniousBuffer.h"
 
 namespace corecvs {
 

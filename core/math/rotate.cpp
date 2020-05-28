@@ -1,10 +1,10 @@
 #include <cstdio>
 #include <iostream>
 #include <string>
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/utils/global.h"
-#include "core/math/rotate.h"
-#include "core/math/matrix/matrixOperations.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "utils/global.h"
+#include "math/rotate.h"
+#include "math/matrix/matrixOperations.h"
 
 namespace corecvs {
 
@@ -164,18 +164,21 @@ RGB24Buffer* RotateHelper::rotateWithLancozVF(double angle, const RGB24Buffer *r
 }
 
 
-RGB24Buffer* RotateHelper::rotateWithLancozVFP(double angle, const RGB24Buffer *rgb24buffer, int newH, int newW, double lanczos_size) {
+RGB24Buffer* RotateHelper::rotateWithLancozVFP(double angle, const RGB24Buffer* rgb24buffer, int newH, int newW, double lanczos_size) {
 
     Matrix33 operation = // Matrix33::ShiftProj(rgb24buffer->w / 2, rgb24buffer->h / 2)
-                         Matrix33::ShiftProj(newW / 2, newH / 2)
-                       * Matrix33::RotationZ(angle)
-                       * Matrix33::ShiftProj(-rgb24buffer->w / 2, -rgb24buffer->h / 2);
+        Matrix33::ShiftProj(newW / 2, newH / 2)
+        * Matrix33::RotationZ(angle)
+        * Matrix33::ShiftProj(-rgb24buffer->w / 2, -rgb24buffer->h / 2);
     operation.invert();
-    RGB24Buffer *rotated = new RGB24Buffer(newH, newW);
+    RGB24Buffer* rotated = new RGB24Buffer(newH, newW);
 
     const int scale = 1024;
+    //float    lut[(int)(lanczos_size + 1) * scale];
+    //float* lut = new float[(int)(lanczos_size + 1) * scale];
+    std::vector<float> lut;
+    lut.resize((int)(lanczos_size + 1) * scale);
 
-    float lut[(int)(lanczos_size + 1) * scale];
     for (size_t i = 0; i < CORE_COUNT_OF(lut); i++) {
         lut[i] = LanczosFilter((float) i / scale, (float)lanczos_size);
 //        cout << lut[i] << ", ";
@@ -253,13 +256,18 @@ RGB24Buffer* RotateHelper::rotateWithLancozVFPI(double angle, const RGB24Buffer 
     operation.invert();
     RGB24Buffer *rotated = new RGB24Buffer(newH, newW);
 
-    const int scale = 1024;
+    int scale = 1024;
 
     //const int pfpos   = 1024;
     const int pfpos   = 1048;
 
-    float    lut [(int)(lanczos_size + 1) * scale];
-    int32_t  luti[(int)(lanczos_size + 1) * scale];
+    //float    lut [(int)(lanczos_size + 1) * scale];
+    //int32_t  luti[(int)(lanczos_size + 1) * scale];
+
+    std::vector<float> lut;
+    lut.resize((int)(lanczos_size + 1) * scale);
+    std::vector<int32_t> luti;
+    lut.resize((int)(lanczos_size + 1) * scale);
 
     for (size_t i = 0; i < CORE_COUNT_OF(lut); i++) {
         lut [i] = LanczosFilter((double)i / scale, lanczos_size);

@@ -2,7 +2,7 @@
 // Created by Myasnikov Vladislav on 21.10.2019.
 //
 
-#include "core/fileformats/dxf_support/dxfCodes.h"
+#include "fileformats/dxf_support/dxfCodes.h"
 
 namespace corecvs {
 

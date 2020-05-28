@@ -9,8 +9,8 @@
 #include "sobelParametersControlWidget.h"
 #include "ui_sobelParametersControlWidget.h"
 #include <memory>
-#include "qSettingsGetter.h"
-#include "qSettingsSetter.h"
+#include "visitors/qSettingsGetter.h"
+#include "visitors/qSettingsSetter.h"
 
 
 SobelParametersControlWidget::SobelParametersControlWidget(QWidget *parent, bool _autoInit, QString _rootPath)

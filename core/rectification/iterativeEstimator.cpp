@@ -6,10 +6,10 @@
  * \author alexander
  */
 
-#include "core/utils/global.h"
-#include "core/utils/log.h"
+#include "utils/global.h"
+#include "utils/log.h"
 
-#include "core/rectification/iterativeEstimator.h"
+#include "rectification/iterativeEstimator.h"
 
 namespace corecvs {
 

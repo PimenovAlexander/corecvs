@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QDoubleSpinBox>
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 
 namespace Ui {

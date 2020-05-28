@@ -8,7 +8,7 @@
 #include "core/camerafixture/fixtureScene.h"
 #include "core/camerafixture/cameraFixture.h"
 #include "core/cameracalibration/calibrationDrawHelpers.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 
 #include "reprojectionCostFunction.h"
 #include "core/meta/astNode.h"

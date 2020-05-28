@@ -2,8 +2,8 @@
 #include <QWidget>
 #include "core/xml/generated/operationParameters.h"
 #include "ui_operationParametersControlWidget.h"
-#include "parametersControlWidgetBase.h"
-#include "filterParametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
+#include "filters/filterParametersControlWidgetBase.h"
 
 
 namespace Ui {

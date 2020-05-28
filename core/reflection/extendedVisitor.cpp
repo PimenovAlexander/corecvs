@@ -1,7 +1,7 @@
-#include "core/reflection/extendedVisitor.h"
-#include "core/reflection/reflection.h"
-#include "core/reflection/dynamicObject.h"
-#include "core/reflection/defaultSetter.h"
+#include "reflection/extendedVisitor.h"
+#include "reflection/reflection.h"
+#include "reflection/dynamicObject.h"
+#include "reflection/defaultSetter.h"
 
 namespace corecvs {
 

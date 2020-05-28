@@ -7,7 +7,7 @@
  * \author alexander
  */
 
-#include "core/cammodel/energyBuffer.h"
+#include "cammodel/energyBuffer.h"
 namespace corecvs {
 
 

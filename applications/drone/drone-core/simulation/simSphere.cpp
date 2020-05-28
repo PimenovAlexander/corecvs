@@ -1,6 +1,6 @@
 #include "simSphere.h"
 
-#include <mesh3DScene.h>
+#include <3d/mesh3DScene.h>
 
 SimSphere::SimSphere()
 {

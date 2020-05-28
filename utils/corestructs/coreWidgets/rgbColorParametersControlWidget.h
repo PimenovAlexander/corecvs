@@ -10,7 +10,7 @@
 #include "core/xml/generated/rgbColorParameters.h"
 
 #include "ui_rgbColorParametersControlWidget.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 //#ifndef WIN32
 //EM: said that it crashes on her Linux

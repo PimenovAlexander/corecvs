@@ -1,12 +1,16 @@
-#include "core/filesystem/folderScanner.h"
-#include "core/utils/log.h"
-#include "core/utils/utils.h"
+#include "filesystem/folderScanner.h"
+#include "utils/log.h"
+#include "utils/utils.h"
 
 #include <iostream>
 
 #if !defined(WITH_STD_FILESYSTEM)
 #include <sys/types.h>
-#include <dirent.h>
+#   if defined (_MSC_VER)
+#      include <../dirent_msvc.h>
+#   else
+#      include <dirent.h>
+#   endif
 #include <sys/stat.h>
 #endif
 

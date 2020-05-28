@@ -9,8 +9,8 @@
 #include "operationParametersControlWidget.h"
 #include "ui_operationParametersControlWidget.h"
 #include <memory>
-#include "qSettingsGetter.h"
-#include "qSettingsSetter.h"
+#include "visitors/qSettingsGetter.h"
+#include "visitors/qSettingsSetter.h"
 
 
 OperationParametersControlWidget::OperationParametersControlWidget(QWidget *parent, bool _autoInit, QString _rootPath)

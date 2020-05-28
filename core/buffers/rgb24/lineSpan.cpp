@@ -1,2 +1,2 @@
-#include "core/buffers/rgb24/lineSpan.h"
+#include "buffers/rgb24/lineSpan.h"
 

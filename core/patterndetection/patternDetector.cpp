@@ -1,4 +1,4 @@
-#include "core/patterndetection/patternDetector.h"
+#include "patterndetection/patternDetector.h"
 
 namespace corecvs {
 

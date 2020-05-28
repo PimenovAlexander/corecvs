@@ -1,10 +1,10 @@
-#include "core/cameracalibration/calibrationDrawHelpers.h"
-#include "core/geometry/mesh/mesh3d.h"
-#include "core/cameracalibration/cameraModel.h"
-#include "core/camerafixture/fixtureScene.h"
-#include "core/alignment/selectableGeometryFeatures.h"
-#include "core/buffers/rgb24/abstractPainter.h"
-#include "core/camerafixture/cameraFixture.h"
+#include "cameracalibration/calibrationDrawHelpers.h"
+#include "geometry/mesh/mesh3d.h"
+#include "cameracalibration/cameraModel.h"
+#include "camerafixture/fixtureScene.h"
+#include "alignment/selectableGeometryFeatures.h"
+#include "buffers/rgb24/abstractPainter.h"
+#include "camerafixture/cameraFixture.h"
 
 using namespace corecvs;
 

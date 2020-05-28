@@ -1,10 +1,10 @@
 #ifndef CONIC_H
 #define CONIC_H
 
-#include "core/geometry/line.h"
-#include "core/geometry/plane.h"
-#include "core/geometry/triangle.h"
-#include "core/buffers/rgb24/lineSpan.h"
+#include "geometry/line.h"
+#include "geometry/plane.h"
+#include "geometry/triangle.h"
+#include "buffers/rgb24/lineSpan.h"
 
 namespace corecvs {
 

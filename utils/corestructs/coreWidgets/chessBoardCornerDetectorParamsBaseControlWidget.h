@@ -2,7 +2,7 @@
 #include <QWidget>
 #include "core/xml/generated/chessBoardCornerDetectorParamsBase.h"
 #include "ui_chessBoardCornerDetectorParamsBaseControlWidget.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 
 namespace Ui {

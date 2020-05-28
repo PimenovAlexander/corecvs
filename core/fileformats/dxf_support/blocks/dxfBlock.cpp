@@ -2,8 +2,8 @@
 // Created by Myasnikov Vladislav on 23.12.2019.
 //
 
-#include "core/fileformats/dxf_support/blocks/dxfBlock.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "fileformats/dxf_support/blocks/dxfBlock.h"
+#include "buffers/rgb24/rgb24Buffer.h"
 
 namespace corecvs {
 

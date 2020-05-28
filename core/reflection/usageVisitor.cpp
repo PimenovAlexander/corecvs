@@ -1,4 +1,4 @@
-#include "core/reflection/usageVisitor.h"
+#include "reflection/usageVisitor.h"
 
 namespace corecvs {
 

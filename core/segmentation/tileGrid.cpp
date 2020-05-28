@@ -7,7 +7,7 @@
  * \author alexander
  */
 
-#include "core/segmentation/tileGrid.h"
+#include "segmentation/tileGrid.h"
 namespace corecvs {
 
 

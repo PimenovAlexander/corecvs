@@ -15,7 +15,7 @@ int main () {
 
     vector<corecvs::PatternDetectorResult> patts;
 
-    auto *a_detector = new apriltagDetector();
+    auto *a_detector = new ApriltagDetector();
 
     if(!cap.isOpened()){
         cout << "Error opening video stream or file" << endl;

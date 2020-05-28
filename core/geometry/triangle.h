@@ -1,8 +1,8 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 
-#include "core/geometry/line.h"
-#include "core/geometry/planeFrame.h"
+#include "geometry/line.h"
+#include "geometry/planeFrame.h"
 
 namespace corecvs {
 

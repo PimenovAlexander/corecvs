@@ -9,8 +9,8 @@
 #include "rgbColorParametersControlWidget.h"
 #include "ui_rgbColorParametersControlWidget.h"
 #include <memory>
-#include "qSettingsGetter.h"
-#include "qSettingsSetter.h"
+#include "visitors/qSettingsGetter.h"
+#include "visitors/qSettingsSetter.h"
 
 
 RgbColorParametersControlWidget::RgbColorParametersControlWidget(QWidget *parent, bool _autoInit, QString _rootPath)

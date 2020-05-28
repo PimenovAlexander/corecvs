@@ -11,9 +11,9 @@
  */
 
 
-#include "core/math/projectiveTransform.h"
-#include "core/buffers/correspondenceList.h"
-#include "core/math/matrix/matrix33.h"
+#include "math/projectiveTransform.h"
+#include "buffers/correspondenceList.h"
+#include "math/matrix/matrix33.h"
 namespace corecvs {
 
 class StereoTransformation

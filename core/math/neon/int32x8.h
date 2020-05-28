@@ -8,8 +8,8 @@
  * \date Sep 25, 2010
  * \author: alexander
  */
-#include "core/utils/global.h"
-#include "core/math/vector/vector2d.h"
+#include "utils/global.h"
+#include "math/vector/vector2d.h"
 namespace corecvs {
 
 class Int32x8 : public Vector2d<Int32x4>

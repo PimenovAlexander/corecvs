@@ -11,17 +11,17 @@
 
 
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/math/vector/vector2d.h"
-#include "core/buffers/flow/flowBuffer.h"
-#include "core/buffers/g12Buffer.h"
-#include "core/buffers/abstractContiniousBuffer.h"
-#include "core/kltflow/kltGenerator.h"
-#include "core/buffers/rgb24/rgbColor.h"
+#include "math/vector/vector2d.h"
+#include "buffers/flow/flowBuffer.h"
+#include "buffers/g12Buffer.h"
+#include "buffers/abstractContiniousBuffer.h"
+#include "kltflow/kltGenerator.h"
+#include "buffers/rgb24/rgbColor.h"
 
-#include "core/xml/generated/preciseInterpolationType.h"
-#include "core/xml/generated/makePreciseParameters.h"
+#include "xml/generated/preciseInterpolationType.h"
+#include "xml/generated/makePreciseParameters.h"
 
 namespace corecvs {
 

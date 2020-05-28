@@ -1,9 +1,8 @@
-#include "core/geometry/renderer/simpleRenderer.h"
-#include "core/geometry/mesh/mesh3d.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/fileformats/bmpLoader.h"
-#include "core/geometry/renderer/attributedTriangleSpanIterator.h"
-#include <math.h>
+#include "geometry/renderer/simpleRenderer.h"
+#include "geometry/mesh/mesh3d.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "fileformats/bmpLoader.h"
+#include "geometry/renderer/attributedTriangleSpanIterator.h"
 
 namespace corecvs {
 

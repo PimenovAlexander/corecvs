@@ -11,14 +11,14 @@
 
 #undef TRACE
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/math/mathUtils.h"
-#include "core/buffers/mipmapPyramid.h"
-#include "core/kltflow/kltGenerator.h"
-#include "core/math/vector/vector2d.h"
+#include "math/mathUtils.h"
+#include "buffers/mipmapPyramid.h"
+#include "kltflow/kltGenerator.h"
+#include "math/vector/vector2d.h"
 
-#include "core/geometry/rectangle.h"
+#include "geometry/rectangle.h"
 
 namespace corecvs {
 

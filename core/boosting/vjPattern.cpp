@@ -6,7 +6,7 @@
  * \date Jun 22, 2010
  * \author alexander
  */
-#include "core/boosting/vjPattern.h"
+#include "boosting/vjPattern.h"
 
 namespace corecvs {
 

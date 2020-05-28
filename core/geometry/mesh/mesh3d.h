@@ -6,16 +6,16 @@
  * \date Dec 13, 2012
  **/
 
-#include "core/math/vector/vector3d.h"
-#include "core/math/matrix/matrix33.h"
-#include "core/math/matrix/matrix44.h"
-#include "core/geometry/axisAlignedBox.h"
-#include "core/geometry/ellipticalApproximation.h"
-#include "core/geometry/polygons.h"
-#include "core/geometry/conic.h"
-#include "core/geometry/orientedBox.h"
-#include "core/buffers/rgb24/rgbColor.h"
-#include "core/xml/generated/axisAlignedBoxParameters.h"
+#include "math/vector/vector3d.h"
+#include "math/matrix/matrix33.h"
+#include "math/matrix/matrix44.h"
+#include "geometry/axisAlignedBox.h"
+#include "geometry/ellipticalApproximation.h"
+#include "geometry/polygons.h"
+#include "geometry/conic.h"
+#include "geometry/orientedBox.h"
+#include "buffers/rgb24/rgbColor.h"
+#include "xml/generated/axisAlignedBoxParameters.h"
 
 namespace corecvs {
 

@@ -2,7 +2,7 @@
 #include <QWidget>
 #include "core/xml/generated/debayerParameters.h"
 #include "ui_debayerParametersControlWidget.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 
 namespace Ui {

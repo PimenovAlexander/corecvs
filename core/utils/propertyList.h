@@ -19,8 +19,8 @@
 #include <string.h>
 #include <limits>
 
-#include "core/utils/global.h"
-#include "core/utils/utils.h"
+#include "utils/global.h"
+#include "utils/utils.h"
 
 namespace corecvs {
 

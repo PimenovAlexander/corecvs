@@ -43,7 +43,7 @@
 #include "generatedParameters/baseParameters.h"
 #include "camerasConfigParameters.h"
 #include "g12Image.h"
-#include "advancedImageWidget.h"
+#include "uis/advancedImageWidget.h"
 #include "histogramdialog.h"
 
 #include "memoryUsageCalculator.h"

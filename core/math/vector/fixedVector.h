@@ -12,7 +12,7 @@
  */
 
 #include <stdio.h>
-#include "core/math/vector/vectorOperations.h"
+#include "math/vector/vectorOperations.h"
 
 
 namespace corecvs {

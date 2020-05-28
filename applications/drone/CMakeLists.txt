@@ -1,16 +1,16 @@
+set(DRONE_SUBDIRECTORIES
+   calibrator
+   #coptercontrol
+   drone-app
+   drone-core
+   drone-ui
+   drone-utils
+   physics-test
+   )
+
 if (OpenCV_LIBS)
-    set(DRONE_SUBDIRECTORIES
-        drone-core
-        drone-ui
-        physics-test
-        drone-utils
-        drone-app
-        calibrator
-
-    )
-
-    foreach(test_subdirectory ${DRONE_SUBDIRECTORIES})
-      message(STATUS "adding subdirectory test/${test_subdirectory}")
-      add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/${test_subdirectory})
-    endforeach(test_subdirectory)
+    foreach(subdirectory ${DRONE_SUBDIRECTORIES})
+      message(STATUS "adding subdirectory/${subdirectory}")
+      add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/${subdirectory})
+    endforeach(subdirectory)
 endif()

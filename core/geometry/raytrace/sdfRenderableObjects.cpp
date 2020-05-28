@@ -1,4 +1,4 @@
-#include "core/geometry/raytrace/sdfRenderableObjects.h"
+#include "geometry/raytrace/sdfRenderableObjects.h"
 
 SDFRenderableSphere::SDFRenderableSphere(const Vector3dd &sphere, double r) :
     sphere(sphere),

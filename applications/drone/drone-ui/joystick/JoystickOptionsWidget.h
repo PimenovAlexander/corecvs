@@ -7,7 +7,7 @@
 #include <QWidget>
 
 #include <core/utils/global.h>
-#include <core/joystick/playbackJoystickInterface.h>
+#include <joystick/playbackJoystickInterface.h>
 
 
 namespace Ui {

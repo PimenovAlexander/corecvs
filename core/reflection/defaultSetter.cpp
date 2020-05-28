@@ -1,4 +1,4 @@
-#include "core/reflection/defaultSetter.h"
+#include "reflection/defaultSetter.h"
 
 namespace corecvs {
 

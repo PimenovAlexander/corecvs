@@ -8,12 +8,12 @@
 #include <string>
 #include <list>
 #include <map>
-#include "core/fileformats/dxf_support/dxfCodes.h"
-#include "core/fileformats/dxf_support/dxfDrawing.h"
-#include "core/fileformats/dxf_support/objects/dxfObject.h"
-#include "core/fileformats/dxf_support/entities/dxfEntity.h"
-#include "core/fileformats/dxf_support/blocks/dxfBlock.h"
-#include "core/math/vector/vector3d.h"
+#include "fileformats/dxf_support/dxfCodes.h"
+#include "fileformats/dxf_support/dxfDrawing.h"
+#include "fileformats/dxf_support/objects/dxfObject.h"
+#include "fileformats/dxf_support/entities/dxfEntity.h"
+#include "fileformats/dxf_support/blocks/dxfBlock.h"
+#include "math/vector/vector3d.h"
 
 namespace corecvs {
 

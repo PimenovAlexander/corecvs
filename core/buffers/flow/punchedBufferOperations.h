@@ -12,11 +12,11 @@
 
 
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/math/vector/vector2d.h"
-#include "core/tbbwrapper/tbbWrapper.h"
-#include "core/buffers/float/dpImage.h"
+#include "math/vector/vector2d.h"
+#include "tbbwrapper/tbbWrapper.h"
+#include "buffers/float/dpImage.h"
 
 namespace corecvs {
 

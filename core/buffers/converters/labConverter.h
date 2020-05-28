@@ -10,9 +10,9 @@
 #ifndef LABCONVERTER_H_
 #define LABCONVERTER_H_
 
-#include "core/utils/global.h"
-#include "core/buffers/rgb24/rgbTColor.h"
-#include "core/buffers/rgb24/rgbColor.h"
+#include "utils/global.h"
+#include "buffers/rgb24/rgbTColor.h"
+#include "buffers/rgb24/rgbColor.h"
 
 namespace corecvs {
 

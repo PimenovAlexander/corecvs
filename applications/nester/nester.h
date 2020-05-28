@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
-#include "core/fileformats/svgLoader.h"
-#include "core/geometry/polygons.h"
+#include "fileformats/svgLoader.h"
+#include "geometry/polygons.h"
 
 
 /* Helpers */

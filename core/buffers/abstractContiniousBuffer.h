@@ -12,12 +12,12 @@
  * TODO: Add nearest neighbor      GEDB
  * TODO: Add colorspace converters GEDB
  */
-#include "core/utils/global.h"
-#include "core/buffers/abstractBuffer.h"
-#include "core/math/matrix/matrix.h"
+#include "utils/global.h"
+#include "buffers/abstractBuffer.h"
+#include "math/matrix/matrix.h"
 
-//#include "core/buffers/fixeddisp/fixedPointBlMapper.h"
-//#include "core/buffers/fixeddisp/bilinearMapPoint.h"
+//#include "buffers/fixeddisp/fixedPointBlMapper.h"
+//#include "buffers/fixeddisp/bilinearMapPoint.h"
 
 namespace corecvs {
 

@@ -88,19 +88,19 @@
   <customwidget>
    <class>AdvancedImageWidget</class>
    <extends>QWidget</extends>
-   <header location="global">advancedImageWidget.h</header>
+   <header>uis/advancedImageWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>BitSelectorParametersControlWidget</class>
    <extends>QFrame</extends>
-   <header>bitSelectorParametersControlWidget.h</header>
+   <header>filters/ui/bitSelectorParametersControlWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>DebayerParametersControlWidget</class>
    <extends>QWidget</extends>
-   <header>debayerParametersControlWidget.h</header>
+   <header>corestructs/coreWidgets/debayerParametersControlWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

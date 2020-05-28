@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "filterParametersControlWidgetBase.h"
+#include "filters/filterParametersControlWidgetBase.h"
 #include "core/xml/generated/gainOffsetParameters.h"
 #include "ui_gainOffsetParametersControlWidget.h"
 

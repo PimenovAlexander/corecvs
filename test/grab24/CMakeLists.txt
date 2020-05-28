@@ -1,20 +1,34 @@
-project (Grab24)
+cmake_minimum_required(VERSION 3.11)
+set(MODULE_NAME test)
+init_project(PROJECT_NAME grab24)
 
-
-set (NAME grab24 )
-
-set (SRC_FILES
+set(SOURCE_FILE
     main_grab24.cpp
-)
+    )
 
-add_executable(${NAME} ${SRC_FILES})
+set(SOURCES
+    ${SOURCE_FILE}
+    )
 
-add_custom_command(TARGET ${NAME} POST_BUILD
-        COMMAND cp ${PROJECT_BINARY_DIR}/${NAME}  ${CMAKE_BINARY_DIR}/bin/${NAME}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Copying ${NAME} to binary directory"
-        )
+assign_source_group(${SOURCES})
 
-target_link_libraries(${NAME} cvs_utils corecvs pthread ${LIBS})
-target_include_directories(${NAME} PUBLIC ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} .)
+add_executable(${PROJECT_NAME}
+    ${SOURCES}
+    )
 
+target_link_libraries(${PROJECT_NAME}
+    corecvs
+    corecvs_utils
+    pthread
+	V4L2wrapper
+    )
+
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+    FOLDER "${MODULE_NAME}"
+    )
+
+copy_directory(${PROJECT_NAME} 
+    ${PROJECT_BINARY_DIR}/${MODULE_NAME}/${PROJECT_NAME}
+    ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}
+    )

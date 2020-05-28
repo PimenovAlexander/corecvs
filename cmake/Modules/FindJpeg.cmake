@@ -1,14 +1,18 @@
-SET(JPEG_INCLUDE_SEARCH_PATHS
+cmake_minimum_required(VERSION 3.11)
+
+set(JPEG_FOUND FALSE)
+
+set(JPEG_INCLUDE_SEARCH_PATHS
     /usr/include
     /usr/include/jpeg
     /usr/local/include
     /usr/local/include/png-base
     /opt/libjpeg/include
-    $ENV{JPEG_HOME}
-    $ENV{JPEG_HOME}/include
-)
+    $ENV{JPEG_ROOT_DIR}
+    $ENV{JPEG_ROOT_DIR}/include
+    )
 
-SET(JPEG_LIB_SEARCH_PATHS
+set(JPEG_LIB_SEARCH_PATHS
     /lib/
     /lib64/
     /usr/lib
@@ -16,40 +20,52 @@ SET(JPEG_LIB_SEARCH_PATHS
     /usr/local/lib
     /usr/local/lib64
     /opt/libjpeg/lib
-    $ENV{JPEG_HOME}
-    $ENV{JPEG_HOME}/lib
-)
+    $ENV{JPEG_ROOT_DIR}
+    $ENV{JPEG_ROOT_DIR}/lib
+    )
 
-FIND_PATH(JPEG_INCLUDE_DIR NAMES jpeglib.h PATHS ${JPEG_INCLUDE_SEARCH_PATHS})
-FIND_LIBRARY(JPEG_LIB NAMES jpeg PATHS ${JPEG_LIB_SEARCH_PATHS})
+set(jpeg_headers ${jpeg_headers} jpeg.h libjpeg.h jpeglib.h)
 
-SET(JPEG_FOUND ON)
+set(JPEG_INCLUDE_DIR NOTFOUND)
+find_path(JPEG_INCLUDE_DIR
+	${jpeg_headers}
+	PATHS 	${JPEG_INCLUDE_SEARCH_PATHS}
+	NO_DEFAULT_PATH
+	)
 
-#    Check include files
-IF(NOT JPEG_INCLUDE_DIR)
-  SET(JPEG_FOUND OFF)
-  MESSAGE(STATUS "Could not find JPEG include. Turning JPEG_FOUND off")
-ENDIF()
+set(JPEG_ERROR_REASON)
+if(NOT JPEG_INCLUDE_DIR)	
+	string(APPEND 	
+		JPEG_ERROR_REASON
+		"INCLUDE_DIRS for JPEG module not found. Set JPEG_ROOT to the location of JPEG."
+		)
+endif()
 
-#    Check libraries
-IF(NOT JPEG_LIB)
-  SET(JPEG_FOUND OFF)
-  MESSAGE(STATUS "Could not find JPEG lib. Turning JPEG_FOUND off")
-ENDIF()
+set(jpeg_names ${JPEG_NAMES} jpeg jpeg-static libjpeg libjpeg.dll libjpeg-static)
 
-IF (JPEG_FOUND)
-IF (NOT JPEG_FIND_QUIETLY)
-  MESSAGE(STATUS "Found JPEG libraries: ${JPEG_LIB}")
-  MESSAGE(STATUS "Found JPEG include: ${JPEG_INCLUDE_DIR}")
-ENDIF (NOT JPEG_FIND_QUIETLY)
-ELSE (JPEG_FOUND)
-IF (JPEG_FIND_REQUIRED)
-  MESSAGE(FATAL_ERROR "Could not find JPEG")
-ENDIF (JPEG_FIND_REQUIRED)
-ENDIF (JPEG_FOUND)
+if(NOT JPEG_LIBRARY)
+  find_library(JPEG_LIBRARY NAMES ${jpeg_names} PATHS ${JPEG_LIB_SEARCH_PATHS})
+endif()
 
-MARK_AS_ADVANCED(
-  JPEG_INCLUDE_DIR
-  JPEG_LIB
-  JPEG
-)
+if(JPEG_INCLUDE_DIR)	
+	set(JPEG_FOUND TRUE)
+endif()
+
+if(JPEG_FOUND)
+  set(JPEG_LIBRARIES ${JPEG_LIBRARY})
+  set(JPEG_INCLUDE_DIRS ${JPEG_INCLUDE_DIR})
+
+  if(NOT TARGET JPEG::JPEG)
+    add_library(JPEG::JPEG INTERFACE IMPORTED)
+    if(JPEG_INCLUDE_DIRS)
+      set_target_properties(JPEG::JPEG PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES ${JPEG_INCLUDE_DIRS})
+    endif()
+    if(EXISTS ${JPEG_LIBRARIES})
+      set_target_properties(JPEG::JPEG PROPERTIES
+        INTERFACE_LINK_LIBRARIES ${JPEG_LIBRARIES})
+    endif()
+  endif()
+endif()
+
+mark_as_advanced(JPEG_LIBRARIES JPEG_INCLUDE_DIRS)

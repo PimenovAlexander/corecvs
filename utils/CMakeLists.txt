@@ -1,154 +1,180 @@
-project(corecvs_utils)
+cmake_minimum_required(VERSION 3.11)
 set(MODULE_NAME cvs_utils)
+init_project(PROJECT_NAME corecvs_utils)
 
-set (UTILS_SUBDIRECTORIES
+find_package(Qt5 COMPONENTS REQUIRED Core Gui Widgets Script Xml SerialPort)
+
+set(UTILS_MODULES
     camcalc
-    corestructs
+    corestructs          
     distortioncorrector
     fileformats
-    filters
-    flowcolorers
+    filters              
+    flowcolorers         
     framesources
-    # memoryuse
-    # opengl
+    #memoryuse     
     rectifier
     scripting
     serializer
     statistics
     uis
     visitors
-    widgets   
-    ../wrappers/jsonmodern
-    ../wrappers/v4l2
-    ../wrappers/avcodec   
+    widgets
+    )
+    
+set(UTILS_OPENGL_MODULES
+    3d
+    opengl
+    )
+
+set(PUBLIC_HEADER_FILES
+    configManager.h
+    flowDrawer.h
+    matrixwidget.h
+    qtHelper.h
+    scannercontrol.h
+    timeliner.h
+    trackPainter.h
+    viAreaWidget.h
+    viGLAreaWidget.h
+    )
+
+foreach(utils_module ${UTILS_MODULES})
+    message(STATUS "including ${utils_module}")
+    add_subdirectory(${utils_module})
+    string(TOUPPER ${utils_module} utils_module)
+    set(HEADERS
+        ${HEADERS}
+        ${${utils_module}_HEADER_FILES}
         )
-
-if (FFTW_FOUND AND SOAPYSDR_FOUND)
-    set(UTILS_SUBDIRECTORIES
-        ${UTILS_SUBDIRECTORIES}
-        ../wrappers/atv
-    )
-endif()
-
-if (JPEG_FOUND)
-    set(UTILS_SUBDIRECTORIES
-        ${UTILS_SUBDIRECTORIES}
-        ../wrappers/libjpeg
-    )
-endif()
-
-if (PNG_FOUND)
-    set(UTILS_SUBDIRECTORIES
-        ${UTILS_SUBDIRECTORIES}
-        ../wrappers/libpng
-    )
-endif()
-
-if (OpenCV_LIBS)
-    set(UTILS_SUBDIRECTORIES
-        ${UTILS_SUBDIRECTORIES}
-        ../wrappers/opencv
-    )
-endif()
-
-if (APRILTAG_FOUND)
-    set(UTILS_SUBDIRECTORIES
-        ${UTILS_SUBDIRECTORIES}
-        ../wrappers/apriltag_wrapper
-    )
-endif()
+    set(SOURCES
+        ${SOURCES}
+        ${${utils_module}_SOURCE_FILES}
+        )
+endforeach(utils_module)
 
 option(WITH_OPENGL "Should use OpenGL from Qt" YES)
+
 if(WITH_OPENGL)
-    set(UTILS_SUBDIRECTORIES
-        ${UTILS_SUBDIRECTORIES}
-        3d
-        opengl
-        uis/cloudview
+    foreach(utils_opengl_module ${UTILS_OPENGL_MODULES})
+        message(STATUS "including ${utils_opengl_module}")
+        add_subdirectory(${utils_opengl_module})
+        string(TOUPPER ${utils_opengl_module} utils_opengl_module)
+        set(HEADERS
+            ${HEADERS}
+            ${${utils_opengl_module}_HEADER_FILES}
+            )
+        set(SOURCES
+            ${SOURCES}
+            ${${utils_opengl_module}_SOURCE_FILES}
+            )
+    endforeach(utils_opengl_module)
+endif()
+
+set(HEADERS
+    ${HEADERS}
+    ${PUBLIC_HEADER_FILES}
+    ${UIS_CLOUDVIEW_HEADER_FILES}
     )
-endif()
 
+set(SOURCE_FILES
+    configManager.cpp
+    flowDrawer.cpp
+    matrixwidget.cpp
+    qtHelper.cpp
+    scannercontrol.cpp
+    timeliner.cpp
+    viAreaWidget.cpp
+    viGLAreaWidget.cpp
+    )
 
-set(CMAKE_INCLUDE_CURRENT_DIR "YES")
-set(CMAKE_AUTOMOC "YES")
-set(CMAKE_AUTORCC "YES")
+set(SOURCES
+    ${SOURCES}
+    ${SOURCE_FILES}
+    ${UIS_CLOUDVIEW_SOURCE_FILES}
+    )
 
-
-find_package(Qt5 COMPONENTS REQUIRED Core Gui Widgets Script Xml SerialPort)
-
-add_library(${MODULE_NAME} STATIC)
-
-target_link_libraries(${MODULE_NAME} corecvs Qt5::Widgets Qt5::Core Qt5::Gui Qt5::Script Qt5::Xml Qt5::SerialPort)
-
-if(WITH_OPENGL)
-    find_package(Qt5 COMPONENTS REQUIRED OpenGL)
-    target_link_libraries(${MODULE_NAME} Qt5::OpenGL GLU GL)
-endif()
-
-file(GLOB SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
-file(GLOB HDR_FILES ${CMAKE_CURRENT_LIST_DIR}/*.h)
-file(GLOB UI_FILES ${CMAKE_CURRENT_LIST_DIR}/*.ui)
-
-list(REMOVE_ITEM SRC_FILES "${CMAKE_CURRENT_LIST_DIR}/trackPainter.cpp")
-
-foreach(utils_subdirectory ${UTILS_SUBDIRECTORIES})
-    message(STATUS "including utils/${utils_subdirectory}")
-    target_include_directories(${MODULE_NAME} PUBLIC ${utils_subdirectory})
-    include(${utils_subdirectory}/sourcelist.cmake)
-endforeach(utils_subdirectory)
-
-#message(STATUS "Found ui files:" "${UI_FILES}")
-
-message("Additional include path <${INC_PATHS}>")
-target_include_directories(${MODULE_NAME} PUBLIC ${INC_PATHS})
-target_include_directories(${MODULE_NAME} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
-
-# UI processing with QT
-QT5_WRAP_UI( UI_HEADERS ${UI_FILES} )
-
-#message("Ui processor returned <${UI_HEADERS}>")
-
-# Temporary fixes 
-SET(AUTOGEN_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/${MODULE_NAME}_autogen/include")
-target_include_directories(${MODULE_NAME} PUBLIC ${AUTOGEN_BUILD_DIR} )
-target_include_directories(${MODULE_NAME} PUBLIC ${AUTOGEN_BUILD_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-message("AUTOGEN_BUILD_DIR bin directory <${AUTOGEN_BUILD_DIR}>")
-
-target_link_libraries(${MODULE_NAME} ${LIBS})
-
-if (OpenCV_LIBS)
-    target_link_libraries(${MODULE_NAME} ${OpenCV_LIBS})
-endif()
-
-if (APRILTAG_FOUND)
-    target_link_libraries(${MODULE_NAME} ${APRILTAG_LIB} Threads::Threads)
-endif()
-
-
-
-
-target_sources(${MODULE_NAME}
-    PUBLIC
-        ${HDR_FILES}        
-    PRIVATE
-        ${UI_HEADERS}
-        ${SRC_FILES}
-        ../resources/main.qrc
-)
-
-target_sources(${MODULE_NAME} PRIVATE ${ADD_SRC_FILES})
-set_source_files_properties(${ADD_SRC_FILES} PROPERTIES EXTERNAL_OBJECT true)
-
-
-# Additional stuff mostly for IDE only
-
-set(ADD_SRC_FILES ${ADD_SRC_FILES}
+set(XML_RESOURCE_FILES
     ${CMAKE_CURRENT_LIST_DIR}/../tools/generator/xml/utils.xml
     ${CMAKE_CURRENT_LIST_DIR}/../tools/generator/xml/draw3dutils.xml
     ${CMAKE_CURRENT_LIST_DIR}/../tools/generator/xml/graphPlot.xml
     )
 
-target_sources(corecvs PRIVATE ${ADD_SRC_FILES})
-set_source_files_properties(${ADD_SRC_FILES} PROPERTIES EXTERNAL_OBJECT true HEADER_FILE_ONLY TRUE)
+set_source_files_properties(${XML_RESOURCE_FILES} 
+    PROPERTIES 
+    EXTERNAL_OBJECT TRUE 
+    HEADER_FILE_ONLY TRUE
+    )
 
+set(RESOURCES
+    ${XML_RESOURCE_FILES}
+    ../resources/main.qrc
+    )
 
+assign_source_group(${HEADERS} ${SOURCES} ${RESOURCES})
+
+add_library(${PROJECT_NAME} STATIC
+    ${HEADERS}
+    ${SOURCES}
+    ${RESOURCES}
+    )
+
+set(AUTOGEN_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_autogen/include")
+
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+    ${AUTOGEN_BUILD_DIR} 
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+
+set(ADDITIONAL_LIBS)
+
+if (OpenCV_LIBS)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        OPENCVwrapper
+    )
+endif()
+
+if (APRILTAG_FOUND)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        Threads::Threads
+        APRILTAGwrapper
+        )
+endif()
+
+if(WITH_OPENGL)
+    find_package(Qt5 COMPONENTS REQUIRED OpenGL)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        Qt5::OpenGL
+        GLU
+        GL
+        )
+endif()
+
+target_link_libraries(${PROJECT_NAME}
+    PUBLIC
+    corecvs 
+    Qt5::Widgets
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Script
+    Qt5::Xml
+    Qt5::SerialPort
+    JSONMODERNwrapper
+    LIBPNGwrapper
+    LIBJPEGwrapper
+    V4L2wrapper
+    AVCODECwrapper
+    ${ADDITIONAL_LIBS}
+    )
+
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+    AUTOMOC "TRUE"
+    AUTOUIC "TRUE"
+    AUTORCC "TRUE"
+    FOLDER "${MODULE_NAME}"
+    )

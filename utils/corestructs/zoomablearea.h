@@ -1,7 +1,7 @@
 #ifndef ZOOMABLEAREA_H
 #define ZOOMABLEAREA_H
 
-#include <QtGui/QWidget>
+#include <QWidget>
 #include "ui_zoomablearea.h"
 
 class ZoomableArea : public QWidget

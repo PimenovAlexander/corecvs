@@ -12,9 +12,9 @@
 #include <memory>
 #include <initializer_list>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/math/vector/vectorOperations.h"
+#include "math/vector/vectorOperations.h"
 
 namespace corecvs {
 

@@ -40,9 +40,9 @@
 #include <stdio.h>
 #include <cmath>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/reflection/reflection.h"
+#include "reflection/reflection.h"
 
 using std::numeric_limits;
 //using std::istream;

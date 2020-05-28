@@ -536,13 +536,13 @@
   <customwidget>
    <class>CloudViewDialog</class>
    <extends>QWidget</extends>
-   <header location="global">cloudViewDialog.h</header>
+   <header location="global">uis/cloudview/cloudViewDialog.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>AdvancedImageWidget</class>
    <extends>QWidget</extends>
-   <header location="global">advancedImageWidget.h</header>
+   <header location="global">uis/advancedImageWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -554,7 +554,7 @@
   <customwidget>
    <class>LoggerWidget</class>
    <extends>QWidget</extends>
-   <header>loggerWidget.h</header>
+   <header>widgets/loggerWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

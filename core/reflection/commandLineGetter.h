@@ -4,8 +4,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include "core/utils/visitors/basePathVisitor.h"
-#include "core/reflection/reflection.h"
+#include "utils/visitors/basePathVisitor.h"
+#include "reflection/reflection.h"
 
 namespace corecvs {
 

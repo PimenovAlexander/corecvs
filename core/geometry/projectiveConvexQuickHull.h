@@ -7,9 +7,9 @@
 #include <vector>
 #include <numeric>
 
-#include "core/math/vector/vector3d.h"
-#include "core/math/vector/vector4d.h"
-#include "core/geometry/triangle.h"
+#include "math/vector/vector3d.h"
+#include "math/vector/vector4d.h"
+#include "geometry/triangle.h"
 
 namespace corecvs {
 

@@ -7,7 +7,7 @@
  * \author alexander
  */
 
-#include "core/math/vector/fixedArray.h"
+#include "math/vector/fixedArray.h"
 
 namespace corecvs {
 

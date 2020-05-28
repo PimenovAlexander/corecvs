@@ -11,8 +11,8 @@
 #include <QStandardPaths>
 #include <QDebug>
 
-#include "qtFileLoader.h"
-#include "g12Image.h"
+#include "fileformats/qtFileLoader.h"
+#include "corestructs/g12Image.h"
 #include "qtHelper.h"
 
 using std::string;

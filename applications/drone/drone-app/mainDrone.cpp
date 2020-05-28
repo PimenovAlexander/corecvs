@@ -1,14 +1,14 @@
 #include <QApplication>
 #include <patterndetection/dummyPatternDetector.h>
 #include <patterndetection/harrisPatternDetector.h>
-#include "qtFileLoader.h"
+#include "fileformats/qtFileLoader.h"
 
-#include "core/utils/utils.h"
-#include "core/geometry/mesh/mesh3d.h"
-#include "core/geometry/mesh/mesh3DDecorated.h"
-#include "core/reflection/commandLineSetter.h"
-#include "core/buffers/bufferFactory.h"
-#include "core/stereointerface/dummyFlowProcessor.h"
+#include "utils/utils.h"
+#include "reflection/commandLineSetter.h"
+#include "buffers/bufferFactory.h"
+#include "stereointerface/dummyFlowProcessor.h"
+#include "geometry/mesh/mesh3d.h"
+#include "geometry/mesh/mesh3DDecorated.h"
 
 #ifdef WITH_LIBJPEG
 #include "libjpegFileReader.h"
@@ -22,7 +22,7 @@
 #include "patternDetect/openCVCheckerBoardDetector.h"
 #endif
 #ifdef WITH_APRILTAG
-#include "wrappers/apriltag_wrapper/apriltagDetector.h"
+#include "apriltagDetector.h"
 #endif
 
 

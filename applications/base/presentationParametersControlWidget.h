@@ -4,7 +4,7 @@
 
 #include "generatedParameters/presentationParameters.h"
 #include "ui_presentationParametersControlWidget.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 namespace Ui {
     class PresentationParametersControlWidget;

@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <imageCaptureInterfaceQt.h>
-#include "advancedImageWidget.h"
+#include "uis/advancedImageWidget.h"
 #include "KLTFlow.h"
 
 class FrameProcessor : public QObject

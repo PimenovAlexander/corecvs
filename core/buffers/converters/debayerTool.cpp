@@ -1,12 +1,12 @@
-#include "core/buffers/converters/debayerTool.h"
-#include "core/buffers/converters/debayer.h"
-#include "core/buffers/converters/errorMetrics.h"
-#include "core/reflection/commandLineSetter.h"
-#include "core/fileformats/ppmLoader.h"
-#include "core/fileformats/bmpLoader.h"
-#include "core/filesystem/folderScanner.h"
-#include "core/utils/utils.h"
-#include "core/utils/log.h"
+#include "buffers/converters/debayerTool.h"
+#include "buffers/converters/debayer.h"
+#include "buffers/converters/errorMetrics.h"
+#include "reflection/commandLineSetter.h"
+#include "fileformats/ppmLoader.h"
+#include "fileformats/bmpLoader.h"
+#include "filesystem/folderScanner.h"
+#include "utils/utils.h"
+#include "utils/log.h"
 
 namespace corecvs {
 

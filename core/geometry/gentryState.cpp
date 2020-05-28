@@ -1,4 +1,4 @@
-#include "core/geometry/gentryState.h"
+#include "geometry/gentryState.h"
 
 GentryState::GentryState()
 {

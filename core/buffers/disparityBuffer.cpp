@@ -7,7 +7,7 @@
  * \author alexander
  */
 
-#include "core/buffers/disparityBuffer.h"
+#include "buffers/disparityBuffer.h"
 namespace corecvs {
 
 } //namespace corecvs

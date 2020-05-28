@@ -1,6 +1,6 @@
 #include <set>
 
-#include "core/alignment/selectableGeometryFeatures.h"
+#include "alignment/selectableGeometryFeatures.h"
 
 namespace corecvs {
 

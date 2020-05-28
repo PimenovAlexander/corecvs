@@ -3,11 +3,11 @@
 
 #include <QWidget>
 
-#include "parametersControlWidgetBase.h"
-#include "core/alignment/radialCorrection.h"
-#include "advancedImageWidget.h"
-#include "graphPlotDialog.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "corestructs/parametersControlWidgetBase.h"
+#include "alignment/radialCorrection.h"
+#include "uis/advancedImageWidget.h"
+#include "uis/graphPlotDialog.h"
+#include "buffers/rgb24/rgb24Buffer.h"
 
 namespace Ui {
 class LensDistortionModelParametersContolWidget;

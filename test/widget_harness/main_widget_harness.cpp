@@ -14,10 +14,10 @@
 #endif
 
 #include "core/filters/newstyle/newStyleBlock.h"
-#include "widgetBlockHarness.h"
+#include "corestructs/widgetBlockHarness.h"
 
-#include "qtFileLoader.h"
-#include "reflectionWidget.h"
+#include "fileformats/qtFileLoader.h"
+#include "corestructs/reflectionWidget.h"
 
 #include "core/math/vector/vector2d.h"
 #include "core/math/matrix/homographyReconstructor.h"

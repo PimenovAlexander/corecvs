@@ -4,14 +4,14 @@
 #include <string>
 #include <stdint.h>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/fileformats/bufferLoader.h"
-#include "core/buffers/bufferFactory.h"
-#include "core/buffers/g12Buffer.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/buffers/rgb24/rgbTBuffer.h"
-#include "core/buffers/runtimeTypeBuffer.h"
+#include "fileformats/bufferLoader.h"
+#include "buffers/bufferFactory.h"
+#include "buffers/g12Buffer.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "buffers/rgb24/rgbTBuffer.h"
+#include "buffers/runtimeTypeBuffer.h"
 
 using std::string;
 

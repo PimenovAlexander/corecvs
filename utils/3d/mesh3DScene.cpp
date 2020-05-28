@@ -14,8 +14,8 @@
 #include "core/fileformats/meshLoader.h"
 #include "mesh3DScene.h"
 #include "opengl/openGLTools.h"
-#include "core/xml/generated/draw3dParameters.h"
-#include "painterHelpers.h"
+#include "xml/generated/draw3dParameters.h"
+#include "corestructs/painterHelpers.h"
 #include "core/math/mathUtils.h"
 #include "qtHelper.h"
 

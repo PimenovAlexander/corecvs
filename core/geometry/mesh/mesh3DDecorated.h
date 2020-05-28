@@ -1,8 +1,8 @@
 #ifndef MESH3DDECORATED_H
 #define MESH3DDECORATED_H
 
-#include "core/geometry/mesh/mesh3d.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
+#include "geometry/mesh/mesh3d.h"
+#include "buffers/rgb24/rgb24Buffer.h"
 
 namespace corecvs
 {

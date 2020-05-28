@@ -6,10 +6,10 @@
  * \date Jul 20, 2010
  * \author alexander
  */
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/buffers/flow/floatFlowBuffer.h"
-#include "core/stats/calculationStats.h"
+#include "buffers/flow/floatFlowBuffer.h"
+#include "stats/calculationStats.h"
 
 namespace corecvs {
 

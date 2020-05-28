@@ -21,10 +21,10 @@
 #include <array>
 #include <string.h>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/math/vector/vector3d.h"
-#include "core/math/vector/fixedVector.h"
+#include "math/vector/vector3d.h"
+#include "math/vector/fixedVector.h"
 
 namespace corecvs {
 

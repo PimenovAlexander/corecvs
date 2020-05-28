@@ -2,7 +2,7 @@
 #include <QWidget>
 #include "generated/openCVSGMParameters.h"
 #include "ui_openCVSGMParametersControlWidget.h"
-#include "parametersControlWidgetBase.h"
+#include "utils/corestructs/parametersControlWidgetBase.h"
 
 
 namespace Ui {

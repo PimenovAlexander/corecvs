@@ -15,7 +15,7 @@
 #   include "rapidJSONReader.h"
     typedef RapidJSONReader  JSONReader;
 #else
-#   include "jsonGetter.h"   // it depends on Qt!
+#   include "visitors/jsonGetter.h"   // it depends on Qt!
     typedef JSONGetter       JSONReader;
 #endif
 

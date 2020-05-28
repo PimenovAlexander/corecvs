@@ -1,6 +1,6 @@
-#include "core/utils/utils.h"
+#include "utils/utils.h"
 #include "pointCloud.h"
-#include "core/filesystem/folderScanner.h"
+#include "filesystem/folderScanner.h"
 
 namespace corecvs {
 

@@ -1,5 +1,5 @@
-#include "core/reflection/jsonPrinter.h"
-#include "core/utils/utils.h"
+#include "reflection/jsonPrinter.h"
+#include "utils/utils.h"
 
 namespace corecvs {
 

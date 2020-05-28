@@ -1,4 +1,4 @@
-#include "openGLTools.h"
+#include "opengl/openGLTools.h"
 #include "billboardCaption3DScene.h"
 
 BillboardCaption3DScene::BillboardCaption3DScene()

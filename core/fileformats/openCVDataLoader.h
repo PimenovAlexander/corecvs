@@ -1,10 +1,10 @@
 #ifndef OPENCVDATALOADER_H
 #define OPENCVDATALOADER_H
 
-#include "core/tinyxml2/tinyxml2.h"
-#include "core/math/matrix/matrix.h"
+#include "tinyxml2/tinyxml2.h"
+#include "math/matrix/matrix.h"
 
-#include "core/cameracalibration/cameraModel.h"
+#include "cameracalibration/cameraModel.h"
 
 namespace corecvs {
 

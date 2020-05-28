@@ -1,6 +1,4 @@
-target_sources(corecvs
-    PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}/tbbWrapper.h
-)
-
- 
+set(TBBWRAPPER_HEADER_FILE
+    ${CMAKE_CURRENT_LIST_DIR}/tbbWrapper.h
+    PARENT_SCOPE
+    )

@@ -7,7 +7,7 @@
  * \date Oct 21, 2011
  * \author alexander
  */
-#include "core/function/function.h"
+#include "function/function.h"
 namespace corecvs {
 
 /**

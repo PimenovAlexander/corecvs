@@ -10,8 +10,8 @@
  */
 #include <string>
 
-#include "core/utils/global.h"
-#include "core/geometry/mesh/mesh3d.h"
+#include "utils/global.h"
+#include "geometry/mesh/mesh3d.h"
 
 namespace corecvs {
 

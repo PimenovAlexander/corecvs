@@ -8,7 +8,7 @@
 #include <functional>
 
 #include "wrappers/cblasLapack/cblasLapackeWrapper.h"
-#include "core/math/vector/vector.h"
+#include "math/vector/vector.h"
 
 namespace corecvs
 {

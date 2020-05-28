@@ -9,11 +9,11 @@
  * \author: alexander
  */
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/kalman/upperUnitaryMatrix.h"
-#include "core/math/matrix/diagonalMatrix.h"
-#include "core/kalman/cholesky.h"
+#include "kalman/upperUnitaryMatrix.h"
+#include "math/matrix/diagonalMatrix.h"
+#include "kalman/cholesky.h"
 
 namespace corecvs {
 

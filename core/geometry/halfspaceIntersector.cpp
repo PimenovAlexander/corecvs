@@ -1,7 +1,7 @@
-#include "core/geometry/halfspaceIntersector.h"
-#include "core/geometry/mesh/mesh3d.h"
-#include "core/geometry/polygons.h"
-#include "core/geometry/convexHull.h"
+#include "geometry/halfspaceIntersector.h"
+#include "geometry/mesh/mesh3d.h"
+#include "geometry/polygons.h"
+#include "geometry/convexHull.h"
 
 namespace corecvs {
 

@@ -8,17 +8,17 @@
  * \date Feb 23, 2010
  * \author alexander
  */
-#include "core/buffers/mipmapPyramid.h"
-#include "core/buffers/integralBuffer.h"
-#include "core/buffers/g12Buffer.h"
-#include "core/buffers/flow/flowBuffer.h"
-#include "core/math/vector/vector3d.h"
-#include "core/math/vector/vector2d.h"
-#include "core/buffers/interpolator.h"
-#include "core/buffers/kernels/spatialGradient.h"
-#include "core/utils/global.h"
-#include "core/math/mathUtils.h"
-#include "core/buffers/mipmapPyramid.h"
+#include "buffers/mipmapPyramid.h"
+#include "buffers/integralBuffer.h"
+#include "buffers/g12Buffer.h"
+#include "buffers/flow/flowBuffer.h"
+#include "math/vector/vector3d.h"
+#include "math/vector/vector2d.h"
+#include "buffers/interpolator.h"
+#include "buffers/kernels/spatialGradient.h"
+#include "utils/global.h"
+#include "math/mathUtils.h"
+#include "buffers/mipmapPyramid.h"
 
 namespace corecvs {
 

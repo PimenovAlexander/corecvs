@@ -2,7 +2,7 @@
 #include <QWidget>
 #include "core/xml/generated/inputFilterParameters.h"
 #include "ui_inputFilterParametersControlWidget.h"
-#include "filterParametersControlWidgetBase.h"
+#include "filters/filterParametersControlWidgetBase.h"
 
 
 namespace Ui {

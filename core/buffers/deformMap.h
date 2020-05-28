@@ -1,7 +1,7 @@
 #ifndef DEFORMMAP_H
 #define DEFORMMAP_H
 
-#include "core/math/vector/vector2d.h"
+#include "math/vector/vector2d.h"
 
 namespace corecvs {
 

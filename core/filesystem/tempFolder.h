@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
 namespace corecvs {
 

@@ -4,7 +4,7 @@
 #include <QLineEdit>
 #include "generatedParameters/recorder.h"
 #include "ui_recorderControlWidget.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 namespace Ui {
     class RecorderControlWidget;

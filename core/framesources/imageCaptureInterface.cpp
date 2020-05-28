@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
 #include "imageCaptureInterface.h"
 #include "cameraControlParameters.h"

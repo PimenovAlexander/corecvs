@@ -8,10 +8,10 @@
  * \author alexander
  */
 
-#include "core/rectification/essentialEstimator.h"
-#include "core/xml/generated/iterativeEstimateParameters.h"
+#include "rectification/essentialEstimator.h"
+#include "xml/generated/iterativeEstimateParameters.h"
 
-#include "core/camerafixture/fixtureScene.h"
+#include "camerafixture/fixtureScene.h"
 
 namespace corecvs {
 

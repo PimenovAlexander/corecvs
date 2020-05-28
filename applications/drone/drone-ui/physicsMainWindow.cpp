@@ -1,15 +1,14 @@
 #include "wrappers/jsonmodern/jsonModernReader.h"
 
-#include "calibrationWidget.h"
+#include "calibration/calibrationWidget.h"
 #include "physicsMainWindow.h"
 #include "ui_physicsMainWindow.h"
 
-#include <g12Image.h>
-#include <imageCaptureInterfaceQt.h>
-#include <sceneShaded.h>
+#include <corestructs/g12Image.h>
+#include <framesources/imageCaptureInterfaceQt.h>
+#include <3d/sceneShaded.h>
 
 #include <reflection/jsonPrinter.h>
-
 
 PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
     QMainWindow(parent),

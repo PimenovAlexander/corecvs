@@ -1,8 +1,8 @@
 #ifndef COVMATRIX22_H
 #define COVMATRIX22_H
 
-#include "core/math/vector/vector3d.h"
-#include "core/math/matrix/matrix22.h"
+#include "math/vector/vector3d.h"
+#include "math/matrix/matrix22.h"
 
 namespace corecvs {
 

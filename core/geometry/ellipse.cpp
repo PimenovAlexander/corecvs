@@ -1,6 +1,6 @@
-#include "core/math/matrix/matrix22.h"
-#include "core/geometry/ellipse.h"
-#include "core/polynomial/polynomialSolver.h"
+#include "math/matrix/matrix22.h"
+#include "geometry/ellipse.h"
+#include "polynomial/polynomialSolver.h"
 
 namespace corecvs {
 

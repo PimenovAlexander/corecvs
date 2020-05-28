@@ -1,7 +1,7 @@
 #pragma once
 
 #include <thread>
-#include "core/framesources/imageCaptureInterface.h"
+#include "framesources/imageCaptureInterface.h"
 
 class AbstractFileCapture;
 

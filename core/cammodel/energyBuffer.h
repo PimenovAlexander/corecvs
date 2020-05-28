@@ -10,7 +10,7 @@
 #ifndef CENERGYBUFFER_H_
 #define CENERGYBUFFER_H_
 
-#include "core/buffers/abstractContiniousBuffer.h"
+#include "buffers/abstractContiniousBuffer.h"
 namespace corecvs {
 
 class EnergyBuffer : public AbstractContiniousBuffer<double, int>

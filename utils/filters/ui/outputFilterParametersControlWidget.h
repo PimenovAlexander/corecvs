@@ -2,7 +2,7 @@
 
 #include "core/xml/generated/outputFilterParameters.h"
 #include "ui_outputFilterParametersControlWidget.h"
-#include "filterParametersControlWidgetBase.h"
+#include "filters/filterParametersControlWidgetBase.h"
 
 
 namespace Ui {

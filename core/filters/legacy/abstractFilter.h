@@ -9,7 +9,7 @@
  */
 
 
-#include "core/buffers/g12Buffer.h"
+#include "buffers/g12Buffer.h"
 
 namespace corecvs
 {

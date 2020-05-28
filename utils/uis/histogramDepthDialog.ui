@@ -268,7 +268,7 @@
   <customwidget>
    <class>HistogramWidget</class>
    <extends>QWidget</extends>
-   <header>histogramwidget.h</header>
+   <header>corestructs/histogramwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

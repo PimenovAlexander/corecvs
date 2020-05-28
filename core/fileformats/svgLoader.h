@@ -10,14 +10,14 @@
 
 #include <vector>
 #include <unordered_map>
-#include "core/utils/utils.h"
-#include "core/tinyxml2/tinyxml2.h"
-#include "core/geometry/polygons.h"
-#include "core/geometry/ellipse.h"
-#include "core/buffers/rgb24/rgb24Buffer.h"
-#include "core/buffers/rgb24/wuRasterizer.h"
-#include "core/buffers/rgb24/abstractPainter.h"
-#include "core/fileformats/bufferLoader.h"
+#include "utils/utils.h"
+#include "tinyxml2/tinyxml2.h"
+#include "geometry/polygons.h"
+#include "geometry/ellipse.h"
+#include "buffers/rgb24/rgb24Buffer.h"
+#include "buffers/rgb24/wuRasterizer.h"
+#include "buffers/rgb24/abstractPainter.h"
+#include "fileformats/bufferLoader.h"
 
 namespace corecvs {
 

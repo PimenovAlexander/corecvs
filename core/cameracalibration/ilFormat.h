@@ -1,7 +1,7 @@
 #ifndef ILFORMAT_H
 #define ILFORMAT_H
 
-#include "core/camerafixture/fixtureScene.h"
+#include "camerafixture/fixtureScene.h"
 
 namespace corecvs {
 

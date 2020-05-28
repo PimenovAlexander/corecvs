@@ -4,10 +4,10 @@
 #include <QWidget>
 #include "opencv2/core.hpp"
 #include "imageForCalibrationWidget.h"
-#include <capSettingsDialog.h>
-#include <g12Image.h>
-#include <imageCaptureInterfaceQt.h>
-#include <inputSelectorWidget.h>
+#include <uis/capSettingsDialog.h>
+#include <corestructs/g12Image.h>
+#include <framesources/imageCaptureInterfaceQt.h>
+#include <widgets/inputSelectorWidget.h>
 #include <mutex>
 #include <cameracalibration/cameraModel.h>
 

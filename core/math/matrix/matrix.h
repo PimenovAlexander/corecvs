@@ -12,13 +12,13 @@
 #include <cmath>
 #include <functional>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/buffers/abstractBuffer.h"
-#include "core/math/matrix/matrix33.h"
-#include "core/math/matrix/matrix44.h"
-#include "core/math/matrix/diagonalMatrix.h"
-#include "core/math/vector/vector.h"
+#include "buffers/abstractBuffer.h"
+#include "math/matrix/matrix33.h"
+#include "math/matrix/matrix44.h"
+#include "math/matrix/diagonalMatrix.h"
+#include "math/vector/vector.h"
 
 namespace corecvs {
 

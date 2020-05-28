@@ -9,8 +9,8 @@
 #include "openCVFilterParametersControlWidget.h"
 #include "ui_openCVFilterParametersControlWidget.h"
 #include <memory>
-#include "qSettingsGetter.h"
-#include "qSettingsSetter.h"
+#include "visitors/qSettingsGetter.h"
+#include "visitors/qSettingsSetter.h"
 
 
 OpenCVFilterParametersControlWidget::OpenCVFilterParametersControlWidget(QWidget *parent, bool _autoInit, QString _rootPath)

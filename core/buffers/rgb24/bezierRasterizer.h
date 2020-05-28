@@ -1,7 +1,7 @@
 #ifndef BEZIERRASTERIZER_H
 #define BEZIERRASTERIZER_H
 
-#include "core/math/vector/vector2d.h"
+#include "math/vector/vector2d.h"
 
 #include <utility>
 #include <iostream>

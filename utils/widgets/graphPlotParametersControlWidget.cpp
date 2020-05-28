@@ -9,8 +9,8 @@
 #include "graphPlotParametersControlWidget.h"
 #include "ui_graphPlotParametersControlWidget.h"
 #include <memory>
-#include "qSettingsGetter.h"
-#include "qSettingsSetter.h"
+#include "visitors/qSettingsGetter.h"
+#include "visitors/qSettingsSetter.h"
 
 
 GraphPlotParametersControlWidget::GraphPlotParametersControlWidget(QWidget *parent, bool _autoInit, QString _rootPath)

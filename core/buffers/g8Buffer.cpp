@@ -7,13 +7,13 @@
  * \author alexander
  */
 
-#include "core/buffers/g8Buffer.h"
-#include "core/buffers/g12Buffer.h"
-#include "core/math/sse/sseWrapper.h"
+#include "buffers/g8Buffer.h"
+#include "buffers/g12Buffer.h"
+#include "math/sse/sseWrapper.h"
 
-#include "core/buffers/kernels/fastkernel/vectorTraits.h"
-#include "core/buffers/kernels/fastkernel/fastKernel.h"
-#include "core/buffers/kernels/arithmetic.h"
+#include "buffers/kernels/fastkernel/vectorTraits.h"
+#include "buffers/kernels/fastkernel/fastKernel.h"
+#include "buffers/kernels/arithmetic.h"
 
 namespace corecvs {
 

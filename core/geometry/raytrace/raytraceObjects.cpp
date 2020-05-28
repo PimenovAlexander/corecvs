@@ -1,4 +1,4 @@
-#include "core/geometry/raytrace/raytraceObjects.h"
+#include "geometry/raytrace/raytraceObjects.h"
 
 const double RaytraceableSphere::EPSILON = 0.000001;
 

@@ -1,4 +1,4 @@
-#include "core/math/wisdom.h"
+#include "math/wisdom.h"
 
 #include <iostream>
 

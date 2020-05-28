@@ -5,7 +5,7 @@
 #include <QMainWindow>
 
 #include "ui_testbedMainWindow.h"
-#include "advancedImageWidget.h"
+#include "uis/advancedImageWidget.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "cloudViewDialog.h"
 #include "localHistogram.h"

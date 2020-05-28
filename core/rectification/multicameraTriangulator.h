@@ -3,12 +3,12 @@
 
 #include <vector>
 
-#include "core/math/vector/vector2d.h"
-#include "core/math/vector/vector3d.h"
-#include "core/math/matrix/matrix.h"
-#include "core/math/matrix/matrix33.h"
-#include "core/math/matrix/matrix44.h"
-#include "core/function/function.h"
+#include "math/vector/vector2d.h"
+#include "math/vector/vector3d.h"
+#include "math/matrix/matrix.h"
+#include "math/matrix/matrix33.h"
+#include "math/matrix/matrix44.h"
+#include "function/function.h"
 
 namespace corecvs {
 

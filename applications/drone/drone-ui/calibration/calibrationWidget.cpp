@@ -9,8 +9,8 @@
 #include <QDir>
 #include <QTimer>
 #include <QFileDialog>
-#include <imageCaptureInterfaceQt.h>
-#include <g12Image.h>
+#include <framesources/imageCaptureInterfaceQt.h>
+#include <corestructs/g12Image.h>
 
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/calib3d/calib3d.hpp>

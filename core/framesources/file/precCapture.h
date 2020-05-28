@@ -6,7 +6,7 @@
  * \date Jan 9, 2015
  * \author alexander
  */
-#include "core/framesources/file/imageFileCaptureInterface.h"
+#include "framesources/file/imageFileCaptureInterface.h"
 #include "abstractFileCaptureSpinThread.h"
 #include "abstractFileCapture.h"
 

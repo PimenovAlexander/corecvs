@@ -1,7 +1,7 @@
 #ifndef DUMMYPATTERNDETECTOR_H
 #define DUMMYPATTERNDETECTOR_H
 
-#include "core/patterndetection/patternDetector.h"
+#include "patterndetection/patternDetector.h"
 
 namespace corecvs {
 

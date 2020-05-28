@@ -1,5 +1,5 @@
 #include "core/geometry/gentryState.h"
-#include "core/geometry/mesh3d.h"
+#include "core/geometry/mesh/mesh3d.h"
 #include "calibrationHelpers.h"
 
 

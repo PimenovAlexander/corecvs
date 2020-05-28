@@ -9,8 +9,8 @@
 #include <QtCore/QSharedPointer>
 
 #include "3d/scene3D.h"
-#include "transform3DSelector.h"
-#include "coordinateFrame.h"
+#include "widgets/transform3DSelector.h"
+#include "3d/coordinateFrame.h"
 
 
 class TreeSceneModel;

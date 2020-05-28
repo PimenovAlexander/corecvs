@@ -1,7 +1,7 @@
 #ifndef NONMAXIMALSUPERSSOR_H
 #define NONMAXIMALSUPERSSOR_H
 
-#include "core/math/vector/vector2d.h"
+#include "math/vector/vector2d.h"
 
 namespace corecvs {
 

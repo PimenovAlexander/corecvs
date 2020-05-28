@@ -15,7 +15,7 @@
 #endif
 
 #include "g12buffer.h"
-#include "core/clegacy/math/geometry.h"
+#include "clegacy/math/geometry.h"
 
 #ifdef DEPRICATED
 #include "displacement.h"

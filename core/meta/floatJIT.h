@@ -1,7 +1,7 @@
 #ifndef FLOATJIT_H
 #define FLOATJIT_H
 
-#include "core/meta/astNode.h"
+#include "meta/astNode.h"
 
 namespace corecvs {
 

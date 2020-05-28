@@ -32,7 +32,7 @@
 using namespace tbb;
 #endif
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
 namespace corecvs {
 

@@ -4,10 +4,10 @@
 #include <memory>
 #include <vector>
 
-#include "core/math/vector/vector2d.h"
-#include "core/patterndetection/circlePatternGenerator.h"
-#include "core/alignment/selectableGeometryFeatures.h"
-#include "core/utils/typesafeBitmaskEnums.h"
+#include "math/vector/vector2d.h"
+#include "patterndetection/circlePatternGenerator.h"
+#include "alignment/selectableGeometryFeatures.h"
+#include "utils/typesafeBitmaskEnums.h"
 
 using std::vector;
 using corecvs::Vector2dd;

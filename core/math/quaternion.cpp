@@ -7,7 +7,7 @@
  * \author alexander
  */
 
-#include "core/math/quaternion.h"
+#include "math/quaternion.h"
 namespace corecvs {
 
 

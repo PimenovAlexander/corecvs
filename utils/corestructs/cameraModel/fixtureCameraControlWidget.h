@@ -1,10 +1,10 @@
 #ifndef FIXTURECAMERACONTROLWIDGET_H
 #define FIXTURECAMERACONTROLWIDGET_H
 
-#include "core/camerafixture/fixtureCamera.h"
+#include "camerafixture/fixtureCamera.h"
 
 #include <QWidget>
-#include <parametersControlWidgetBase.h>
+#include <corestructs/parametersControlWidgetBase.h>
 
 namespace Ui {
 class FixtureCameraControlWidget;

@@ -2,7 +2,7 @@
 #include "ui_patternDetectorParametersWidget.h"
 #include "core/patterndetection/patternDetector.h"
 
-#include <reflectionWidget.h>
+#include <corestructs/reflectionWidget.h>
 
 using namespace corecvs;
 

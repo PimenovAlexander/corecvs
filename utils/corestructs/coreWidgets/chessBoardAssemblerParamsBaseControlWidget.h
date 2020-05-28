@@ -2,7 +2,7 @@
 #include <QWidget>
 #include "core/xml/generated/chessBoardAssemblerParamsBase.h"
 #include "ui_chessBoardAssemblerParamsBaseControlWidget.h"
-#include "parametersControlWidgetBase.h"
+#include "corestructs/parametersControlWidgetBase.h"
 
 
 namespace Ui {

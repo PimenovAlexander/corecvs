@@ -19,7 +19,7 @@
 #include <string>
 #include <vector>
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
 #include "math.h"
 

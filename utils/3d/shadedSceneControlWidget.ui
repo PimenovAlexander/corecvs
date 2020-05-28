@@ -186,7 +186,7 @@
   <customwidget>
    <class>Draw3dParametersControlWidget</class>
    <extends>QWidget</extends>
-   <header>draw3dParametersControlWidget.h</header>
+   <header>3d/draw3dParametersControlWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

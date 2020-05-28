@@ -9,10 +9,10 @@
 #ifndef QUATERNION_H_
 #define QUATERNION_H_
 
-#include "core/math/matrix/matrix33.h"
-#include "core/math/matrix/matrix44.h"
-#include "core/math/vector/fixedVector.h"
-#include "core/math/mathUtils.h"
+#include "math/matrix/matrix33.h"
+#include "math/matrix/matrix44.h"
+#include "math/vector/fixedVector.h"
+#include "math/mathUtils.h"
 
 namespace corecvs {
 
@@ -425,22 +425,23 @@ public:
 
     static GenericQuaternion RotationX(ElementType alpha)
     {
-        ElementType sina2 = sin(alpha * 0.5);
-        ElementType cosa2 = cos(alpha * 0.5);
+        ElementType sina2 = std::sin(alpha * 0.5);
+        ElementType cosa2 = std::cos(alpha * 0.5);
         return GenericQuaternion(sina2, 0.0, 0.0, cosa2);
+
     }
 
     static GenericQuaternion RotationY(ElementType alpha)
     {
-        ElementType sina2 = sin(alpha * 0.5);
-        ElementType cosa2 = cos(alpha * 0.5);
+        ElementType sina2 = std::sin(alpha * 0.5);
+        ElementType cosa2 = std::cos(alpha * 0.5);
         return GenericQuaternion(0.0, sina2, 0.0, cosa2);
     }
 
     static GenericQuaternion RotationZ(ElementType alpha)
     {
-        ElementType sina2 = sin(alpha * 0.5);
-        ElementType cosa2 = cos(alpha * 0.5);
+        ElementType sina2 = std::sin(alpha * 0.5);
+        ElementType cosa2 = std::cos(alpha * 0.5);
         return GenericQuaternion(0.0, 0.0, sina2, cosa2);
     }
 

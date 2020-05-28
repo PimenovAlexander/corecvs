@@ -1,5 +1,5 @@
-#include "core/geometry/plane3dFit.h"
-#include "core/rectification/ransac.h"
+#include "geometry/plane3dFit.h"
+#include "rectification/ransac.h"
 
 namespace corecvs {
 

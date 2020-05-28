@@ -7,10 +7,10 @@
  * \date Oct 24, 2010
  */
 
-#include "core/utils/global.h"
+#include "utils/global.h"
 
-#include "core/math/sse/sseWrapper.h"
-#include "core/math/puzzleBlock.h"
+#include "math/sse/sseWrapper.h"
+#include "math/puzzleBlock.h"
 #ifdef WITH_SSE4
 #include <smmintrin.h>
 #endif

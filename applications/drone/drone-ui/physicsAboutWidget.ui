@@ -33,7 +33,7 @@
   <customwidget>
    <class>AboutPropsTableWidget</class>
    <extends>QTableWidget</extends>
-   <header location="global">aboutPropsTableWidget.h</header>
+   <header location="global">uis/aboutPropsTableWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

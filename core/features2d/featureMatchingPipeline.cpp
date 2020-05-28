@@ -1,13 +1,13 @@
-#include "core/features2d/featureMatchingPipeline.h"
-#include "core/features2d/featureDetectorProvider.h"
-#include "core/features2d/descriptorExtractorProvider.h"
-#include "core/features2d/descriptorMatcherProvider.h"
-#include "core/features2d/detectExtractAndMatchProvider.h"
-#include "core/features2d/detectAndExtractProvider.h"
-#include "core/features2d/bufferReaderProvider.h"
-#include "core/features2d/vsfmIo.h"
-#include "core/buffers/bufferFactory.h"
-#include "core/utils/utils.h"
+#include "features2d/featureMatchingPipeline.h"
+#include "features2d/featureDetectorProvider.h"
+#include "features2d/descriptorExtractorProvider.h"
+#include "features2d/descriptorMatcherProvider.h"
+#include "features2d/detectExtractAndMatchProvider.h"
+#include "features2d/detectAndExtractProvider.h"
+#include "features2d/bufferReaderProvider.h"
+#include "features2d/vsfmIo.h"
+#include "buffers/bufferFactory.h"
+#include "utils/utils.h"
 
 #include <fstream>
 #include <iomanip>

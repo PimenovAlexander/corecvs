@@ -1,4 +1,4 @@
-#include "core/stereointerface/dummyFlowProcessor.h"
+#include "stereointerface/dummyFlowProcessor.h"
 
 /**
  *   Factory

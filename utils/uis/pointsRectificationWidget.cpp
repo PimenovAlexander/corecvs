@@ -1,6 +1,6 @@
 #include "pointsRectificationWidget.h"
 #include "ui_pointsRectificationWidget.h"
-#include "g12Image.h"
+#include "corestructs/g12Image.h"
 #include "qtHelper.h"
 
 

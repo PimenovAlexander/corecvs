@@ -1,10 +1,10 @@
 #pragma once
 
-#include "core/buffers/rgb24/rgbColor.h"
-#include "core/xml/generated/calibrationDrawHelpersParameters.h"
+#include "buffers/rgb24/rgbColor.h"
+#include "xml/generated/calibrationDrawHelpersParameters.h"
 
-#include "core/geometry/mesh/mesh3d.h"
-#include "core/geometry/mesh/mesh3DDecorated.h"
+#include "geometry/mesh/mesh3d.h"
+#include "geometry/mesh/mesh3DDecorated.h"
 
 namespace corecvs {
 

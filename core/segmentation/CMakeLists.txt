@@ -1,10 +1,11 @@
-target_sources(corecvs
-    PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}/segmentator.h
-        ${CMAKE_CURRENT_LIST_DIR}/tileGrid.h
+set(SEGMENTATION_HEADER_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/segmentator.h
+    ${CMAKE_CURRENT_LIST_DIR}/tileGrid.h
+    PARENT_SCOPE
+    )
 
-    PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/segmentator.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/tileGrid.cpp
-)
-
+set(SEGMENTATION_SOURCE_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/segmentator.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/tileGrid.cpp
+    PARENT_SCOPE
+    )

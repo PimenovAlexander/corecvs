@@ -7,15 +7,15 @@
  */
 
 
-#include "core/rectification/essentialEstimator.h"
-#include "core/math/quaternion.h"
-#include "core/math/levenmarq.h"
-#include "core/math/gradientDescent.h"
-#include "core/kalman/classicKalman.h"
-#include "core/polynomial/polynomialSolver.h"
-#include "core/math/matrix/matrixOperations.h"
-#include "core/meta/packedDerivative.h"
-#include "core/meta/astNode.h"
+#include "rectification/essentialEstimator.h"
+#include "math/quaternion.h"
+#include "math/levenmarq.h"
+#include "math/gradientDescent.h"
+#include "kalman/classicKalman.h"
+#include "polynomial/polynomialSolver.h"
+#include "math/matrix/matrixOperations.h"
+#include "meta/packedDerivative.h"
+#include "meta/astNode.h"
 
 //#include "kalman.h"
 
@@ -378,10 +378,10 @@ std::vector<EssentialMatrix> EssentialEstimator::getEssential5point(const vector
     const double w12 = w1 * w1, w22 = w2 * w2, w32 = w3 * w3, w42 = w4 * w4, w52 = w5 * w5, w62 = w6 * w6, w72 = w7 * w7, w82 = w8 * w8, w92 = w9 * w9;
 
     corecvs::Matrix A(10, 10);
-#include "core/rectification/p5pNumericPart.h"
+#include "rectification/p5pNumericPart.h"
 // Now we fill polynomial part of matrix
     corecvs::PolynomialMatrix B(10, 3);
-#include "core/rectification/p5pPolynomialPart.h"
+#include "rectification/p5pPolynomialPart.h"
 
     A = A.inv();
 

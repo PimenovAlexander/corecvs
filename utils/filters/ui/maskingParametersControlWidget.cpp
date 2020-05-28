@@ -9,8 +9,8 @@
 #include "maskingParametersControlWidget.h"
 #include "ui_maskingParametersControlWidget.h"
 #include <memory>
-#include "qSettingsGetter.h"
-#include "qSettingsSetter.h"
+#include "visitors/qSettingsGetter.h"
+#include "visitors/qSettingsSetter.h"
 
 
 MaskingParametersControlWidget::MaskingParametersControlWidget(QWidget *parent, bool _autoInit, QString _rootPath)

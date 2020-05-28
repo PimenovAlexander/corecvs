@@ -1,8 +1,8 @@
 #ifndef DYNAMICOBJECT_H
 #define DYNAMICOBJECT_H
 
-#include "core/reflection/reflection.h"
-#include "core/reflection/printerVisitor.h"
+#include "reflection/reflection.h"
+#include "reflection/printerVisitor.h"
 
 namespace corecvs {
 

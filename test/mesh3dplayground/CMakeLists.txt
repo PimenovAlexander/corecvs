@@ -1,25 +1,46 @@
-project (mesh3dplayground)
+cmake_minimum_required(VERSION 3.11)
+set(MODULE_NAME test)
+init_project(PROJECT_NAME mesh3dplayground)
 
-set (SRC_FILES
+set(SOURCE_FILE
     main_mesh3dplayground.cpp
-)
+    )
 
-set (HDR_FILES
-)
+set(SOURCES
+    ${SOURCE_FILE}
+    )
 
-if (PNG_LIB)
-    include(../../wrappers/libpng/sourcelist.cmake)
+assign_source_group(${SOURCES})
+
+add_executable(${PROJECT_NAME}
+    ${SOURCES}
+    )
+
+set(ADDITIONAL_LIBS)
+
+if(PNG_LIB)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        LIBPNGwrapper
+        )
+    add_definitions(-DWITH_LIBPNG)
 endif()
 
-if (JPEG_LIB)
-    include(../../wrappers/libjpeg/sourcelist.cmake)
+if(JPEG_LIB)
+    set(ADDITIONAL_LIBS
+        ${ADDITIONAL_LIBS}
+        LIBJPEGwrapper
+        )
+    add_definitions(-DWITH_LIBJPEG)
 endif()
 
-set (NAME mesh3dplayground )
+target_link_libraries(${PROJECT_NAME}
+    pthread
+    corecvs
+    ${ADDITIONAL_LIBS}
+    )
 
-
-add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
-include_directories(${INC_PATHS})
-
-target_link_libraries(${NAME} ${LIBS} corecvs pthread)
-
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+    FOLDER "${MODULE_NAME}"
+    )

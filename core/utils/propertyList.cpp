@@ -7,7 +7,7 @@
  * \author alexander
  */
 
-#include "core/utils/propertyList.h"
+#include "utils/propertyList.h"
 namespace corecvs {
 
 

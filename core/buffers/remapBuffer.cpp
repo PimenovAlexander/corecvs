@@ -7,7 +7,7 @@
  * \ingroup cppcorefiles
  * \date Mar 18, 2018
  */
-#include "core/buffers/remapBuffer.h"
+#include "buffers/remapBuffer.h"
 
 namespace corecvs {
 
