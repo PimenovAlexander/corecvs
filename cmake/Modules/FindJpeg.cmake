@@ -24,9 +24,11 @@ set(JPEG_LIB_SEARCH_PATHS
     $ENV{JPEG_ROOT_DIR}/lib
     )
 
+set(jpeg_headers ${jpeg_headers} jpeg.h libjpeg.h jpeglib.h)
+
 set(JPEG_INCLUDE_DIR NOTFOUND)
 find_path(JPEG_INCLUDE_DIR
-	jpeglib.h
+	${jpeg_headers}
 	PATHS 	${JPEG_INCLUDE_SEARCH_PATHS}
 	NO_DEFAULT_PATH
 	)
@@ -39,7 +41,7 @@ if(NOT JPEG_INCLUDE_DIR)
 		)
 endif()
 
-set(jpeg_names ${JPEG_NAMES} jpeg jpeg-static libjpeg libjpeg-static)
+set(jpeg_names ${JPEG_NAMES} jpeg jpeg-static libjpeg libjpeg.dll libjpeg-static)
 
 if(NOT JPEG_LIBRARY)
   find_library(JPEG_LIBRARY NAMES ${jpeg_names} PATHS ${JPEG_LIB_SEARCH_PATHS})

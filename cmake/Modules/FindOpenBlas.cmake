@@ -25,7 +25,7 @@
     )
 
 find_path(OpenBLAS_INCLUDE_DIR NAMES cblas.h PATHS ${Open_BLAS_INCLUDE_SEARCH_PATHS})
-find_library(OpenBLAS_LIB NAMES libopenblas libopenblas.so PATHS ${Open_BLAS_LIB_SEARCH_PATHS})
+find_library(OpenBLAS_LIB NAMES openblas libopenblas libopenblas.so PATHS ${Open_BLAS_LIB_SEARCH_PATHS})
 
 set(OpenBLAS_FOUND ON)
 

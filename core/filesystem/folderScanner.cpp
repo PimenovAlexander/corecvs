@@ -6,8 +6,8 @@
 
 #if !defined(WITH_STD_FILESYSTEM)
 #include <sys/types.h>
-#   if !defined(MSVC)
-#      include <../dirent.h>
+#   if defined (_MSC_VER)
+#      include <../dirent_msvc.h>
 #   else
 #      include <dirent.h>
 #   endif

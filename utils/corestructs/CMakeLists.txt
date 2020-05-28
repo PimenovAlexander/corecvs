@@ -11,7 +11,7 @@ set(CORESTRUCTS_HEADER_FILES
     ${CMAKE_CURRENT_LIST_DIR}/saveFlowSettings.h
     ${CMAKE_CURRENT_LIST_DIR}/universalVisitor.h
     ${CMAKE_CURRENT_LIST_DIR}/widgetBlockHarness.h
-    ${CMAKE_CURRENT_LIST_DIR}/zoomablearea.h
+#    ${CMAKE_CURRENT_LIST_DIR}/zoomablearea.h
     ${CMAKE_CURRENT_LIST_DIR}/cameraModel/affine3dControlWidget.h
     ${CMAKE_CURRENT_LIST_DIR}/cameraModel/featurePointControlWidget.h
     ${CMAKE_CURRENT_LIST_DIR}/cameraModel/fixtureCameraControlWidget.h
@@ -46,7 +46,7 @@ set(CORESTRUCTS_SOURCE_FILES
     ${CMAKE_CURRENT_LIST_DIR}/saveFlowSettings.cpp
     ${CMAKE_CURRENT_LIST_DIR}/universalVisitor.cpp
     ${CMAKE_CURRENT_LIST_DIR}/widgetBlockHarness.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/zoomablearea.cpp
+#    ${CMAKE_CURRENT_LIST_DIR}/zoomablearea.cpp
     ${CMAKE_CURRENT_LIST_DIR}/cameraModel/affine3dControlWidget.cpp
     ${CMAKE_CURRENT_LIST_DIR}/cameraModel/featurePointControlWidget.cpp
     ${CMAKE_CURRENT_LIST_DIR}/cameraModel/fixtureCameraControlWidget.cpp

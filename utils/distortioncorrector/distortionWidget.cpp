@@ -10,7 +10,7 @@
 //#include "core/patterndetection/chessBoardDetector.h"
 
 #ifdef WITH_OPENCV
-# include "openCvCheckerboardDetector.h"
+# include "../../wrappers/opencv/openCvCheckerboardDetector.h"
 #endif
 
 using corecvs::DistPointsFunction;
