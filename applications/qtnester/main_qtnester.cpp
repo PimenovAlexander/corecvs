@@ -8,7 +8,7 @@
 
 #include <string>
 #include <iostream>
-
+#include "nester.h"
 #include <QtGui/QtGui>
 #include <QApplication>
 
@@ -16,8 +16,8 @@
 
 #include "core/utils/utils.h"
 #include "qtFileLoader.h"
-#include "imageViewMainWindow.h"
-
+//#include "imageViewMainWindow.h"
+#include "gui_nester.h"
 int main(int argc, char *argv[])
 {
     SET_HANDLERS();
@@ -25,20 +25,20 @@ int main(int argc, char *argv[])
     Q_INIT_RESOURCE(main);
 
     SYNC_PRINT(("Starting ImageView...\n"));
-    BufferFactory::printCaps();
+    //BufferFactory::printCaps();
+
 
     QApplication app(argc, argv);
-    ImageViewMainWindow mainWindow;
-
+   // ImageViewMainWindow mainWindow;
+    GUI_nester mainWindow;
     QTG12Loader::registerMyself();
     QTRGB24Loader::registerMyself();
 
-    if (argc > 1)
-    {
-        qDebug("Main: %s", argv[1]);
-        mainWindow.loadImage(QString(argv[1]));
-    }
-
+//    if (argc > 1)
+//    {
+//        qDebug("Main: %s", argv[1]);
+//        mainWindow.loadImage(QString(argv[1]));
+//    }
     mainWindow.show();
     app.exec();
     SYNC_PRINT(("Exiting ImageView application...\n"));

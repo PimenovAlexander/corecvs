@@ -1009,3 +1009,17 @@ void vinilPlacementNester (list<Polygon> &inputList, Rectangled &bin,
     }
     inputList = inputListTransofrmed;
 }
+
+double getTopY(const Polygon &p) {
+    return getPointByGenInd(p, getTopRightIndex(p)).y();
+}
+
+double getMaxValueY(const std::list<corecvs::Polygon> &inputList) {
+    double max = 0;
+    for (auto &p : inputList) {
+        if (max < getTopY(p)) {
+            max = getTopY(p);
+        }
+    }
+    return max;
+}

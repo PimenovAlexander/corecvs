@@ -64,4 +64,6 @@ corecvs::Polygon polFromRec        (const corecvs::Rectangled &R);
 void bruteHeightBL                 (std::list <corecvs :: Polygon> &inp,
                                     corecvs :: Rectangled &bin, size_t rotatesAmount,
                                     double heightCost);
+
+double getMaxValueY                (const std::list<corecvs::Polygon> &inputList);
 #endif // NESTER_H

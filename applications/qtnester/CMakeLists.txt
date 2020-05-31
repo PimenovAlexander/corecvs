@@ -9,17 +9,21 @@ set(CMAKE_AUTORCC "YES")
 find_package(Qt5 COMPONENTS REQUIRED Core Gui Widgets)
 
 set (UI_FILES
-    ${CMAKE_CURRENT_LIST_DIR}/imageViewMainWindow.ui
+    #${CMAKE_CURRENT_LIST_DIR}/imageViewMainWindow.ui
+    ${CMAKE_CURRENT_LIST_DIR}/gui_nester.ui
     )
 
 QT5_WRAP_UI( UI_HEADERS ${UI_FILES} )
 
 
 add_executable(${NAME}
-    ${CMAKE_CURRENT_LIST_DIR}/imageViewMainWindow.h
-
-    ${CMAKE_CURRENT_LIST_DIR}/imageViewMainWindow.cpp
+    #${CMAKE_CURRENT_LIST_DIR}/imageViewMainWindow.h
+    ${CMAKE_CURRENT_LIST_DIR}/nester.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui_nester.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui_nester.cpp
+    #${CMAKE_CURRENT_LIST_DIR}/imageViewMainWindow.cpp
     ${CMAKE_CURRENT_LIST_DIR}/main_qtnester.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/nester.cpp
     ${UI_HEADERS}
 )
 
@@ -37,4 +41,3 @@ message("AUTOGEN_BUILD_DIR bin directory <${AUTOGEN_BUILD_DIR}>")
 
 target_include_directories(${NAME} PUBLIC ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} .)
 target_link_libraries(${NAME} cvs_utils corecvs)
-
