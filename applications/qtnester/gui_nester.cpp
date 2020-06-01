@@ -42,16 +42,18 @@ void GUI_nester::on_Load_clicked() {
     if (name.isEmpty())
         return;
     if (name.endsWith(".svg")) {
-        inputPolygons = {};
-        std::ifstream proxi(name.toStdString(), std::ifstream::binary);
-        svgFileP = new SvgFile;
-        svgLoader.loadSvg(proxi, *svgFileP);
-        for (auto sh : (*svgFileP).shapes) {
-            if (sh->type == 2) {
-                inputPolygons.push_back(((SvgPolygon*)sh)->polygon);
-            }
-        }
-        delete svgFileP;
+        inputPolygons = loadPolygonListSVG(name.toStdString());
+//        std::ifstream proxi(name.toStdString(), std::ifstream::binary);
+//        svgFileP = new SvgFile;
+//        svgLoader.loadSvg(proxi, *svgFileP);
+//        for (auto sh : (*svgFileP).shapes) {
+//            if (sh->type == 2) {
+//                inputPolygons.push_back(((SvgPolygon*)sh)->polygon);
+//            }
+//        }
+//        delete svgFileP;
+    } else if (name.endsWith("dxf")) {
+        inputPolygons = loadPolygonListDXF(name.toStdString());
     }
     QPixmap picture1(name);
     ui->pic1->setPixmap(picture1.scaled(ui->pic1->height(), ui->pic1->width(), Qt::KeepAspectRatio));

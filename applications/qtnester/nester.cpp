@@ -13,7 +13,9 @@
 #include <core/reflection/commandLineSetter.h>
 #include <algorithm>
 #include <core/buffers/bufferFactory.h>
-#define EPSIL 0.00001
+#include "core/fileformats/dxf_support/dxfLoader.h"
+
+#define EPSIL 0.0001
 
 using namespace corecvs;
 using namespace std;
@@ -316,14 +318,64 @@ int getBotLeftIndex(const Polygon &A)
     return result;
 }
 
+Polygon convexNFPSaturated(const Polygon &A, const Polygon &B, size_t steps = 4)
+//A walks around B, begining in his bottom-left point going counterclockwise, top-right point of A leaves the trace
+//assuming both Polygons are RO
+{
+    Polygon convexNFPSaturated;
+    size_t i = getTopRightIndex(A);
+    size_t j = getBotLeftIndex(B);
+    convexNFPSaturated.push_back(getPointByGenInd(B, j));
+    size_t length1 = A.size() + i;
+    size_t length2 = B.size() + j;
+    size_t place = 0;
+    while(i < length1 && j < length2 )
+    {
+        Vector2dd candidateFromA = -getPointByGenInd(A, i + 1) + getPointByGenInd(A, i);
+        Vector2dd candidateFromB = getPointByGenInd(B, j + 1) - getPointByGenInd(B, j);
+
+        if (hasBiggerLOArg(candidateFromA, candidateFromB))
+        {
+            for (int k = 1; k <= steps; ++k)
+            convexNFPSaturated.push_back(convexNFPSaturated[place] + (double)k * 0.2 * candidateFromA);
+            convexNFPSaturated.push_back(convexNFPSaturated[place] + candidateFromA);
+
+            place += 5;
+            ++i;
+        }
+        else
+        {
+            for (int k = 1; k <= steps; ++k)
+            convexNFPSaturated.push_back(convexNFPSaturated[place] + (double)k * 0.2 * candidateFromB);
+            convexNFPSaturated.push_back(convexNFPSaturated[place] + candidateFromB);
+
+            place += 5;
+            ++j;
+        }
+    }
+
+    for (; i < length1; ++i, ++place)
+    {
+        Vector2dd candidateFromA = -getPointByGenInd(A, i + 1) + getPointByGenInd(A,i);
+        convexNFPSaturated.push_back(convexNFPSaturated[place] + candidateFromA);
+    }
+    for (; j < length2; ++j, ++place)
+    {
+        Vector2dd candidateFromB = getPointByGenInd(B, j + 1) - getPointByGenInd(B, j);
+        convexNFPSaturated.push_back(convexNFPSaturated[place] + candidateFromB);
+    }
+    convexNFPSaturated.pop_back(); // not to dublicate first vertex
+    return convexNFPSaturated;
+}
+
 Polygon convexNFP(const Polygon &A, const Polygon &B)
 //A walks around B, begining in his bottom-left point going counterclockwise, top-right point of A leaves the trace
 //assuming both Polygons are RO
 {
-    Polygon conNFP;
+    Polygon convexNFP;
     size_t i = getTopRightIndex(A);
     size_t j = getBotLeftIndex(B);
-    conNFP.push_back(getPointByGenInd(B, j));
+    convexNFP.push_back(getPointByGenInd(B, j));
     size_t length1 = A.size() + i;
     size_t length2 = B.size() + j;
     size_t place = 0;
@@ -334,63 +386,13 @@ Polygon convexNFP(const Polygon &A, const Polygon &B)
 
         if (hasBiggerLOArg(candidateFromA, candidateFromB))
         {
-            for (int k = 1; k <= 4; ++k)
-            conNFP.push_back(conNFP[place] + (double)k * 0.2 * candidateFromA);
-            conNFP.push_back(conNFP[place] + candidateFromA);
-
-            place += 5;
-            ++i;
-        }
-        else
-        {
-            for (int k = 1; k <= 4; ++k)
-            conNFP.push_back(conNFP[place] + (double)k * 0.2 * candidateFromB);
-            conNFP.push_back(conNFP[place] + candidateFromB);
-
-            place += 5;
-            ++j;
-        }
-    }
-
-    for (; i < length1; ++i, ++place)
-    {
-        Vector2dd candidateFromA = -getPointByGenInd(A, i + 1) + getPointByGenInd(A,i);
-        conNFP.push_back(conNFP[place] + candidateFromA);
-    }
-    for (; j < length2; ++j, ++place)
-    {
-        Vector2dd candidateFromB = getPointByGenInd(B, j + 1) - getPointByGenInd(B, j);
-        conNFP.push_back(conNFP[place] + candidateFromB);
-    }
-    conNFP.pop_back(); // not to dublicate first vertex
-    return conNFP;
-}
-
-Polygon convexNFPUsable(const Polygon &A, const Polygon &B)
-//A walks around B, begining in his bottom-left point going counterclockwise, top-right point of A leaves the trace
-//assuming both Polygons are RO
-{
-    Polygon conNFP;
-    size_t i = getTopRightIndex(A);
-    size_t j = getBotLeftIndex(B);
-    conNFP.push_back(getPointByGenInd(B, j));
-    size_t length1 = A.size() + i;
-    size_t length2 = B.size() + j;
-    size_t place = 0;
-    while(i < length1 && j < length2 )
-    {
-        Vector2dd candidateFromA = -getPointByGenInd(A, i + 1) + getPointByGenInd(A, i);
-        Vector2dd candidateFromB = getPointByGenInd(B, j + 1) - getPointByGenInd(B, j);
-
-        if (hasBiggerLOArg(candidateFromA, candidateFromB))
-        {
-            conNFP.push_back(conNFP[place] + candidateFromA);
+            convexNFP.push_back(convexNFP[place] + candidateFromA);
             ++place;
             ++i;
         }
         else
         {
-            conNFP.push_back(conNFP[place] + candidateFromB);
+            convexNFP.push_back(convexNFP[place] + candidateFromB);
             ++place;
             ++j;
         }
@@ -399,15 +401,15 @@ Polygon convexNFPUsable(const Polygon &A, const Polygon &B)
     for (; i < length1; ++i, ++place)
     {
         Vector2dd candidateFromA = -getPointByGenInd(A, i + 1) + getPointByGenInd(A,i);
-        conNFP.push_back(conNFP[place] + candidateFromA);
+        convexNFP.push_back(convexNFP[place] + candidateFromA);
     }
     for (; j < length2; ++j, ++place)
     {
         Vector2dd candidateFromB = getPointByGenInd(B, j + 1) - getPointByGenInd(B, j);
-        conNFP.push_back(conNFP[place] + candidateFromB);
+        convexNFP.push_back(convexNFP[place] + candidateFromB);
     }
-    conNFP.pop_back(); // not to dublicate first vertex
-    return conNFP;
+    convexNFP.pop_back(); // not to dublicate first vertex
+    return convexNFP;
 }
 
 Rectangled innerFitPolygon(const Polygon &A,
@@ -558,13 +560,13 @@ void bottomLeftPlacement(list <corecvs :: Polygon> &inp,
     for (;it != inp.end();++it, ++prevIt, ++inpNumber)
     {
         innerFP = innerFitPolygon(*it, bin);
-        list <Polygon> currNFPs;
+        list <Polygon> nfpList;
         for (Polygon c : placedPolygons){
-            currNFPs.push_back(convexNFP(*it, c));
+            nfpList.push_back(convexNFPSaturated(*it, c));
         }
         Polygon Candidates; //cause there is getBotLeft function
 
-        for (auto it2 = currNFPs.begin(); it2 != currNFPs.end(); ++it2)
+        for (auto it2 = nfpList.begin(); it2 != nfpList.end(); ++it2)
         {
             for (size_t i = 0; i < it2->size(); ++i)
             {
@@ -572,8 +574,8 @@ void bottomLeftPlacement(list <corecvs :: Polygon> &inp,
                 bool b = 0;
                 if (pointDoRefRec(Candidate, innerFP))
                 {
-                    auto it3 = currNFPs.begin();
-                    while(it3 != currNFPs.end() && b == 0)
+                    auto it3 = nfpList.begin();
+                    while(it3 != nfpList.end() && b == 0)
                     {
                         if(isInteriorConvexPol(Candidate, *it3)){
                             b = 1;
@@ -593,7 +595,7 @@ void bottomLeftPlacement(list <corecvs :: Polygon> &inp,
         {
             bool b = 0;
 
-            for (auto it3 = currNFPs.begin(); it3 != currNFPs.end() && b == 0; ++it3)
+            for (auto it3 = nfpList.begin(); it3 != nfpList.end() && b == 0; ++it3)
             {
                 if(isInteriorConvexPol(p, *it3)){
                     b = 1;
@@ -620,7 +622,7 @@ void bottomLeftPlacement(list <corecvs :: Polygon> &inp,
 
 
 void bruteBL(list <corecvs :: Polygon> &inp,
-                         corecvs :: Rectangled &bin, size_t rotatesAmount)
+             corecvs :: Rectangled &bin, size_t rotatesAmount)
 {
     size_t inpNumber = 0;
     //suppose initialisation is ok
@@ -649,18 +651,18 @@ void bruteBL(list <corecvs :: Polygon> &inp,
             double angle = ((double)c) * 6.29 / ((double)rotatesAmount);
             rotatePolAngle(curPolygon, angle);
             innerFP = innerFitPolygon(curPolygon, bin);
-            list <Polygon> currNFPs;
+            list <Polygon> nfpList;
             for (Polygon c : placedPolygons){
-                currNFPs.push_back(convexNFP(curPolygon, c));
+                nfpList.push_back(convexNFPSaturated(curPolygon, c));
             }
 
-            for (auto it2 = currNFPs.begin(); it2 != currNFPs.end(); ++it2) {
+            for (auto it2 = nfpList.begin(); it2 != nfpList.end(); ++it2) {
                 for (size_t i = 0; i < it2->size(); ++i) {
                     auto Candidate = it2->getPoint(i);
                     bool b = 0;
                     if (pointDoRefRec(Candidate, innerFP)) {
-                        auto it3 = currNFPs.begin();
-                        while(it3 != currNFPs.end() && b == 0) {
+                        auto it3 = nfpList.begin();
+                        while(it3 != nfpList.end() && b == 0) {
                             if(isInteriorConvexPol(Candidate, *it3)) {
                                 b = 1;
                             }
@@ -678,7 +680,7 @@ void bruteBL(list <corecvs :: Polygon> &inp,
             {
                 bool b = 0;
 
-                for (auto it3 = currNFPs.begin(); it3 != currNFPs.end() && b == 0; ++it3)
+                for (auto it3 = nfpList.begin(); it3 != nfpList.end() && b == 0; ++it3)
                 {
                     if(isInteriorConvexPol(p, *it3)){
                         b = 1;
@@ -713,7 +715,7 @@ void bruteBL(list <corecvs :: Polygon> &inp,
     }
 }
 
-double heightOfPolygon(corecvs::Polygon& pol) {
+double heightOfPolygon(const corecvs::Polygon& pol) {
     return abs(getPointByGenInd(pol, getTopRightIndex(pol)).y() - getPointByGenInd(pol, getBotLeftIndex(pol)).y());
 }
 
@@ -749,18 +751,18 @@ void bruteHeightBL(list <corecvs :: Polygon> &inp,
             double angle = ((double)c) * 6.29 / ((double)rotatesAmount);
             rotatePolAngle(curPolygon, angle);
             innerFP = innerFitPolygon(curPolygon, bin);
-            list <Polygon> currNFPs;
+            list <Polygon> nfpList;
             for (Polygon c : placedPolygons){
-                currNFPs.push_back(convexNFP(curPolygon, c));
+                nfpList.push_back(convexNFPSaturated(curPolygon, c));
             }
 
-            for (auto it2 = currNFPs.begin(); it2 != currNFPs.end(); ++it2) {
+            for (auto it2 = nfpList.begin(); it2 != nfpList.end(); ++it2) {
                 for (size_t i = 0; i < it2->size(); ++i) {
                     auto Candidate = it2->getPoint(i);
                     bool b = 0;
                     if (pointDoRefRec(Candidate, innerFP)) {
-                        auto it3 = currNFPs.begin();
-                        while(it3 != currNFPs.end() && b == 0) {
+                        auto it3 = nfpList.begin();
+                        while(it3 != nfpList.end() && b == 0) {
                             if(isInteriorConvexPol(Candidate, *it3)) {
                                 b = 1;
                             }
@@ -780,7 +782,7 @@ void bruteHeightBL(list <corecvs :: Polygon> &inp,
             {
                 bool b = 0;
 
-                for (auto it3 = currNFPs.begin(); it3 != currNFPs.end() && b == 0; ++it3)
+                for (auto it3 = nfpList.begin(); it3 != nfpList.end() && b == 0; ++it3)
                 {
                     if(isInteriorConvexPol(p, *it3)){
                         b = 1;
@@ -855,18 +857,18 @@ void bruteMassBL (list <corecvs :: Polygon> &inp,
             double angle = ((double)c) * 6.29 / ((double)rotatesAmount);
             rotatePolAngle(curPolygon, angle);
             innerFP = innerFitPolygon(curPolygon, bin);
-            list <Polygon> currNFPs;
+            list <Polygon> nfpList;
             for (Polygon c : placedPolygons){
-                currNFPs.push_back(convexNFP(curPolygon, c));
+                nfpList.push_back(convexNFPSaturated(curPolygon, c));
             }
 
-            for (auto it2 = currNFPs.begin(); it2 != currNFPs.end(); ++it2) {
+            for (auto it2 = nfpList.begin(); it2 != nfpList.end(); ++it2) {
                 for (size_t i = 0; i < it2->size(); ++i) {
                     auto Candidate = it2->getPoint(i);
                     bool b = 0;
                     if (pointDoRefRec(Candidate, innerFP)) {
-                        auto it3 = currNFPs.begin();
-                        while(it3 != currNFPs.end() && b == 0) {
+                        auto it3 = nfpList.begin();
+                        while(it3 != nfpList.end() && b == 0) {
                             if(isInteriorConvexPol(Candidate, *it3)) {
                                 b = 1;
                             }
@@ -886,7 +888,7 @@ void bruteMassBL (list <corecvs :: Polygon> &inp,
             {
                 bool b = 0;
 
-                for (auto it3 = currNFPs.begin(); it3 != currNFPs.end() && b == 0; ++it3)
+                for (auto it3 = nfpList.begin(); it3 != nfpList.end() && b == 0; ++it3)
                 {
                     if(isInteriorConvexPol(p, *it3)){
                         b = 1;
@@ -1023,3 +1025,81 @@ double getMaxValueY(const std::list<corecvs::Polygon> &inputList) {
     }
     return max;
 }
+
+Vector2dd getNextPoint(const list<DxfEntity*> &listOfPoints, const Vector2dd &curPoint) {
+    using namespace corecvs;
+    using namespace std;
+    for (auto &point : listOfPoints) {
+        auto entData = (DxfLineData)(dynamic_cast<DxfLineEntity*>(point)->data);
+        double curX = entData.startPoint.x();
+        double curY = entData.startPoint.y();
+        Vector2dd candP = {curX, curY};
+        if ((curPoint - candP).getLengthStable() < EPSIL) {
+            return {entData.endPoint.x(), entData.endPoint.y()};
+        }
+    }
+}
+
+
+std::list<corecvs::Polygon> loadPolygonListDXF(const std::string &name) {
+    using namespace corecvs;
+    using namespace std;
+    list<Polygon> polygonList {};
+    DxfBuilder builder;
+    DxfLoader loader(builder);
+    loader.load(name);
+    auto layerEntitties = builder.layerEntities;
+    for (auto &layer : layerEntitties) {
+        auto listOfEntitites = layer.second;
+        auto first = listOfEntitites.begin();
+        if (auto firstPtr = dynamic_cast<DxfLineEntity*>(*first)) {
+            Polygon p;
+            auto entData = ((DxfLineData)(firstPtr->data));
+            double curX = entData.startPoint.x();
+            double curY = entData.startPoint.y();
+            p.push_back({curX, curY});
+
+            curX = entData.endPoint.x();
+            curY = entData.endPoint.y();
+            Vector2dd curPoint = {curX, curY};
+            p.push_back(curPoint);
+            int restPoints = (int)listOfEntitites.size() - 2;
+            for (int i = 0; i < restPoints; ++i) {
+                curPoint = getNextPoint(listOfEntitites, curPoint);
+                p.push_back(curPoint);
+            }
+            polygonList.push_back(p);
+        }
+    }
+    return polygonList;
+}
+
+void addPolygonsFromSVGShape(SvgShape* sh, std::list<corecvs::Polygon>& polygonList) {
+    using namespace corecvs;
+    using namespace std;
+    if (sh->type == 2) {
+        polygonList.push_back(((SvgPolygon*)sh)->polygon);
+    } else if (sh->type == 7) {
+        for (auto s : ((SvgGroup*)sh)->shapes) {
+            addPolygonsFromSVGShape(s, polygonList);
+        }
+    }
+}
+
+std::list<corecvs::Polygon> loadPolygonListSVG(const std::string &name) {
+    using namespace corecvs;
+    using namespace std;
+
+    list<Polygon> polygonList {};
+    std::ifstream proxi(name, std::ifstream::binary);
+    SvgFile svgFile;
+    SvgLoader loader;
+    loader.loadSvg(proxi, svgFile);
+    for (auto sh : svgFile.shapes) {
+        addPolygonsFromSVGShape(sh, polygonList);
+    }
+    return polygonList;
+}
+
+
+
