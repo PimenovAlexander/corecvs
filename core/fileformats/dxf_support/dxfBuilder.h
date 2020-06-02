@@ -39,7 +39,6 @@ public:
 
     DxfDrawing getDrawing();
 
-private:
     std::map<std::string,DxfLayerObject*> layers;
     std::map<std::string,DxfBlockRecordObject*> blockRecords;
     std::map<std::string,DxfObject*> otherObjects;

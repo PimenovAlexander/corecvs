@@ -1077,7 +1077,6 @@ std::list<corecvs::Polygon> loadPolygonListDXF(const std::string &name) {
 void addPolygonsFromSVGShape(SvgShape* sh, std::list<corecvs::Polygon>& polygonList) {
     using namespace corecvs;
     using namespace std;
-
     if (sh->type == 2) {
         polygonList.push_back(((SvgPolygon*)sh)->polygon);
     } else if (sh->type == 7) {
@@ -1101,7 +1100,6 @@ std::list<corecvs::Polygon> loadPolygonListSVG(const std::string &name) {
     }
     return polygonList;
 }
-
 
 
 
