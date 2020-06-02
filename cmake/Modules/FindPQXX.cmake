@@ -1,0 +1,50 @@
+SET(PQXX_INCLUDE_SEARCH_PATHS
+    /usr/include
+    /usr/local/include
+    $ENV{PQXX_HOME}
+    $ENV{PQXX_HOME}/include
+)
+
+SET(PQXX_LIB_SEARCH_PATHS
+    /lib/
+    /lib64/
+    /usr/lib
+    /usr/lib64
+    /usr/local/lib
+    /usr/local/lib64
+    $ENV{PQXX_HOME}
+    $ENV{PQXX_HOME}/lib
+)
+
+FIND_PATH(PQXX_INCLUDE_DIR NAMES pqxx PATHS ${PQXX_INCLUDE_SEARCH_PATHS})
+FIND_LIBRARY(PQXX_LIB NAMES pqxx PATHS ${PQXX_LIB_SEARCH_PATHS})
+
+SET(PQXX_FOUND ON)
+
+#    Check include files
+IF(NOT PQXX_INCLUDE_DIR)
+  SET(PQXX_FOUND OFF)
+  MESSAGE(STATUS "Could not find PQXX include. Turning PQXX_FOUND off")
+ENDIF()
+
+#    Check libraries
+IF(NOT PQXX_LIB)
+  SET(PQXX_FOUND OFF)
+  MESSAGE(STATUS "Could not find PQXX lib. Turning PQXX_FOUND off")
+ENDIF()
+
+IF (PQXX_FOUND)
+IF (NOT PQXX_FIND_QUIETLY)
+  MESSAGE(STATUS "Found PQXX libraries: ${PQXX_LIB}")
+  MESSAGE(STATUS "Found PQXX include: ${PQXX_INCLUDE_DIR}")
+ENDIF (NOT PQXX_FIND_QUIETLY)
+ELSE (PQXX_FOUND)
+IF (PQXX_FIND_REQUIRED)
+  MESSAGE(FATAL_ERROR "Could not find PQXX")
+ENDIF (PQXX_FIND_REQUIRED)
+ENDIF (PQXX_FOUND)
+
+MARK_AS_ADVANCED(
+  PQXX_INCLUDE_DIR
+  PQXX_LIB
+)

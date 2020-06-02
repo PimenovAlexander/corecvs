@@ -88,8 +88,11 @@ option(USE_AVCODEC "Should compile with AVCODEC" YES)
 IF ( USE_AVCODEC )
     MESSAGE( STATUS "Including AVCODEC wherever possible" )
     find_package( AVCodec )    
-ELSE()
-    MESSAGE( STATUS "Including AVCODEC requested, but libaray not found" )
+    IF ( AVCODEC_FOUND )
+        MESSAGE( STATUS "Including AVCODEC found" )
+    ELSE()
+        MESSAGE( STATUS "Including AVCODEC requested, but libaray not found" )
+    ENDIF()
 ENDIF ()
 
 
@@ -106,6 +109,22 @@ IF ( USE_APRILTAG )
 else()
     MESSAGE(STATUS "Apriltag switched off")
 endif()
+
+##
+#   Additional dependances for web related applications
+##
+
+option(USE_AWSSDK "Should compile with AWS SDK" YES)
+IF ( USE_AWSSDK )
+    option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+    find_package(AWSSDK REQUIRED COMPONENTS s3 cloudtrail)
+ENDIF ()
+
+option(USE_POSTGRES "Should compile with POSTGRES" YES)
+IF ( USE_POSTGRES )
+    find_package(PQXX REQUIRED)
+ENDIF ()
+
 
 ###
 #

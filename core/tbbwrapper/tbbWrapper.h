@@ -22,7 +22,13 @@
 #include <tbb/blocked_range.h>
 #include <tbb/reader_writer_lock.h>
 #include <tbb/spin_mutex.h>
+
+#define OLD_TBB 1
+
+#if OLD_TBB
 #include <tbb/task_scheduler_init.h>
+#endif
+
 #include <tbb/parallel_sort.h>
 #include <tbb/tbb_stddef.h>
 
@@ -350,11 +356,16 @@ inline std::string tbbInfo()
 /** Useful class to setmaximum number of working threads for the whole TBB environment for any application on startup
  */
 #ifdef WITH_TBB
-    class TbbSchedulerInitializer : public tbb::task_scheduler_init
+    class TbbSchedulerInitializer
+#if OLD_TBB
+            : public tbb::task_scheduler_init
+#endif
     {
     public:
         TbbSchedulerInitializer(const char* varName = "CALIBRATION_TEST_THREAD_LIMIT")
+#if OLD_TBB
             : tbb::task_scheduler_init(std::getenv(varName) ? std::stoi(std::getenv(varName)) : automatic)
+#endif
         {
             char* var = std::getenv(varName);
             if (var) {

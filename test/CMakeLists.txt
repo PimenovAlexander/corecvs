@@ -32,6 +32,11 @@ if (SOAPYSDR_FOUND)
     set(TEST_SUBDIRECTORIES ${TEST_SUBDIRECTORIES} sdrRecord)
 endif()
 
+if (AWSSDK_FOUND AND PQXX_FOUND)
+    set(TEST_SUBDIRECTORIES ${TEST_SUBDIRECTORIES} cloudplayground)
+endif()
+
+
 foreach(test_subdirectory ${TEST_SUBDIRECTORIES})
     message(STATUS "adding subdirectory test/${test_subdirectory}")
     add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/${test_subdirectory})
