@@ -5,7 +5,7 @@
 #include "core/buffers/bufferFactory.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
 #include "core/buffers/rgb24/abstractPainter.h"
-
+#include "core/geometry/renderer/attributedTriangleSpanIterator.h"
 
 #ifdef WITH_LIBJPEG
 #include "libjpegFileReader.h"
@@ -20,8 +20,8 @@ using namespace corecvs;
 
 //https://people.csail.mit.edu/yichangshih/wide_angle_portrait/webpage/additional-results/97_TPE_2018_0322_IMG_20180322_120256_P000.jpg
 
-static const int GRID_STEP = 30;
-static const double f = 1200;
+static const int GRID_STEP = 300;
+static const double f = 2500;
 
 class Grid : public AbstractBuffer<Vector2dd>
 {
@@ -175,74 +175,101 @@ public:
         SYNC_PRINT(("\n"));
     }
 
-    // it's not great because pixels on the borderline are not handled properly
+    // still not working
     void FasterGridWarp(RGB24Buffer* in, RGB24Buffer* out)
-    {
-        int count = 0;
-        SYNC_PRINT(("Running:\n"));
-        parallelable_for( 1, h-1, [&](const BlockedRange<int> &r) {
-            for (int k = r.begin(); k < r.end(); k++)
-            {
-                for (int l = 1; l < w - 1; l++)
-                {
-                    for (int i = (k-1)*GRID_STEP; i <= k*GRID_STEP; i++)
-                    {
-                        for (int j = (l-1)*GRID_STEP; j <= l*GRID_STEP; j++)
+       {
+           SYNC_PRINT(("Running:\n"));
+           parallelable_for( 0, h-1, [&](const BlockedRange<int> &r) {
+               for (int k = r.begin(); k < r.end(); k++)
+               {
+                   for (int l = 0; l < w - 1; l++)
+                   {
+                       // leftmost x coordinate between (k,l), (k,l+1), (k+1,l), (k+1,l+1)
+                        double xLeft = element(k,l).x();
+                        if (element(k+1,l).x() < xLeft) xLeft = element(k+1,l).x();
+
+                       // rightmost x coordinate between (k,l), (k,l+1), (k+1,l), (k+1,l+1)
+                        double xRight = element(k+1,l+1).x();
+                        if (element(k,l+1).x() > xRight) xRight = element(k,l+1).x();
+
+                        // upper y coordinate between (k,l), (k,l+1), (k+1,l), (k+1,l+1)
+                        double yUp = element(k,l).y();
+                        if (element(k,l+1).y() < yUp) yUp = element(k,l+1).y();
+
+                        // lower y coordinate between (k,l), (k,l+1), (k+1,l), (k+1,l+1)
+                        double yLow = element(k+1,l+1).y();
+                        if (element(k+1,l).y() > yLow) yLow = element(k+1,l).y();
+
+                        cout << "xLeft: " << xLeft << ", xRight: " << xRight << endl;
+                        cout << "yUp: " << yUp << " , yLow: " << yLow << endl;
+
+                        Polygon poly = getPolygon(k,l);
+
+                        Vector2dd a =  element(k    , l    );
+                        Vector2dd e2 = element(k + 1, l    ) - a;
+                        Vector2dd e1 = element(k     , l + 1) - a;
+                        Vector2dd e3 = element(k+1, l) - element(k, l+1);
+
+                        Matrix22 m(e1.x(), e2.x(),
+                                   e1.y(), e2.y());
+
+                        for (int j = int(xLeft); j <= ceil(xRight)+1; j++)
                         {
-                            Vector2dd point(j, i);
-
-                            Vector2dd a =  element(k    , l    );
-                            Vector2dd e2 = element(k + 1, l    ) - a;
-                            Vector2dd e1 = element(k     , l + 1) - a;
-
-                            Matrix22 m(e1.x(), e2.x(),
-                                       e1.y(), e2.y());
-
-                             Vector2dd inv = m.inverted() * (point - a);
-
-                             inv *= GRID_STEP;
-                             inv += Vector2dd(l * GRID_STEP , k * GRID_STEP );
-
-                            // consider the sign of |e3 x A| to understand where is the point
-                            Vector2dd e3 = element(k+1, l) - element(k, l+1);
-                            Vector2dd A = point - element(k, l+1);
-
-                            // if point lies in lower triangle
-                            if (e3.x()*A.y() - e3.y()*A.x() < 0)
+                            for (int i = int(yUp); i <= ceil(yLow)+1; i++)
                             {
-                                // rearrange our basis to match this triangle
-                                a  = element(k+1, l+1);
-                                e2 = element(k, l+1) - a;
-                                e1 = element(k+1, l) - a;
+                                Vector2dd point(j,i);
 
-                                m = Matrix22(e1.x(), e2.x(),
-                                             e1.y(), e2.y());
+                                if (!poly.isInside(point))
+                                {
+                                    continue;
+                                }
 
-                                inv = m.inverted() * (point - a);
-                                // we actually have to reverse the picture
-                                inv *= -GRID_STEP;
-                                inv += Vector2dd((l+1) * GRID_STEP , (k+1) * GRID_STEP );
+                                 Vector2dd inv = m.inverted() * (point - a);
+
+                                 inv *= -GRID_STEP;
+                                 inv += Vector2dd((l+1) * GRID_STEP , (k+1) * GRID_STEP );
 
 
-                            }
-                            if (in->isValidCoordBl(inv))
-                            {
-                                out->element(i, j) = in->elementBl(inv);
+                                // consider the sign of |e3 x A| to understand where is the point
+
+                                Vector2dd A = point - element(k, l+1);
+
+                                // if point lies in lower triangle
+                                if (e3.x()*A.y() - e3.y()*A.x() < 0)
+                                {
+                                    // rearrange our basis to match this triangle
+                                    a  = element(k+1, l+1);
+                                    e2 = element(k, l+1) - a;
+                                    e1 = element(k+1, l) - a;
+
+                                    m = Matrix22(e1.x(), e2.x(),
+                                                 e1.y(), e2.y());
+
+                                    inv = m.inverted() * (point - a);
+                                    // we actually have to reverse the picture
+                                    inv *= -GRID_STEP;
+                                    inv += Vector2dd((l+1) * GRID_STEP , (k+1) * GRID_STEP );
+
+
+                                }
+
+                                if (in->isValidCoordBl(inv))
+                                {
+                                    out->element(i, j) = in->elementBl(inv);
+                                }
                             }
                         }
-                    }
-                   \
-                }
 
-        }
-        count++;
-        SYNC_PRINT(("\r%d", count));
-    });
 
-    SYNC_PRINT(("\n"));
+                   }
+
+               }
+           });
+
+        SYNC_PRINT(("\n"));
     }
-};
 
+};
 
 int main(int argc, char *argv[])
 {
@@ -279,22 +306,14 @@ int main(int argc, char *argv[])
 
     RGB24Buffer *gridDebug = new RGB24Buffer(in->getSize());
     Grid grid = Grid::TestGrid(gridH , gridW);
-    grid.drawGrid(gridDebug);
+    //grid.drawGrid(gridDebug);
 
     RGB24Buffer *outSlow = new RGB24Buffer(in->getSize());
     RGB24Buffer *outFast = new RGB24Buffer(in->getSize());
     RGB24Buffer *grid1Debug = new RGB24Buffer(in->getSize());
 
-    grid.SlowGridWarp(in, outSlow);
+    //grid.SlowGridWarp(in, outSlow);
     grid.FasterGridWarp(in, outFast);
-
-
-    // Пройти по всей сетке и пометить один раз все пиксели
-    // на принадлежность той или иной ячейке (в худшем случае
-    // видимо каждый пиксель может принадлежать нескольким ячейкам если он на границе).
-    // И потом тогда финишный проход вообще не потребует поиска.
-
-
 
     BufferFactory::getInstance()->saveRGB24Bitmap(in         , "input.png");
     BufferFactory::getInstance()->saveRGB24Bitmap(gridDebug  , "grid.png");
@@ -302,7 +321,5 @@ int main(int argc, char *argv[])
     BufferFactory::getInstance()->saveRGB24Bitmap(outSlow        , "outSlow.png");
     BufferFactory::getInstance()->saveRGB24Bitmap(outFast        , "outFast.png");
 
-
-
- return 0;
+    return 0;
 }
