@@ -122,7 +122,7 @@ ENDIF ()
 
 option(USE_POSTGRES "Should compile with POSTGRES" YES)
 IF ( USE_POSTGRES )
-    find_package(PQXX REQUIRED)
+    find_package(PQXX)
 ENDIF ()
 
 
