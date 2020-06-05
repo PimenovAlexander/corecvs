@@ -7,8 +7,8 @@
 #include "patterndetection/boardAligner.h"
 #include "xml/generated/checkerboardDetectionParameters.h"
 
-#include <opencv2/core/core.hpp>        // Point2f
 
+#include <opencv2/core/core.hpp>        // Point2f
 
 class OpenCvCheckerboardDetector : public corecvs::PatternGeometryDetector
                                  , protected CheckerboardDetectionParameters

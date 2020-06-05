@@ -4,7 +4,11 @@
 
 #include "openCVFileCapture.h"
 //#include "openCVHelper.h"
-#include "../../../wrappers/opencv/openCVTools.h"
+#   if defined (_MSC_VER)
+#      include "../../../wrappers/opencv/openCVTools.h"
+#   else
+#      include <openCVTools.h>
+#   endif
 
 OpenCvFileCapture::OpenCvFileCapture(const  std::string &params)
     : /*AbstractFileCapture(params),*/

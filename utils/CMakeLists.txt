@@ -121,10 +121,28 @@ add_library(${PROJECT_NAME} STATIC
 
 set(AUTOGEN_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_autogen/include")
 
+if(WIN32)
+    if(USE_OPENCV)
+        set(OPENCV_MODULES
+            $ENV{OPENCV_DIR}/
+            $ENV{OPENCV_DIR}/../modules/core/include
+            $ENV{OPENCV_DIR}/../modules/highgui/include
+            $ENV{OPENCV_DIR}/../modules/imgcodecs/include
+            $ENV{OPENCV_DIR}/../modules/imgproc/include
+            $ENV{OPENCV_DIR}/../modules/objdetect/include
+            $ENV{OPENCV_DIR}/../modules/videoio/include
+            $ENV{OPENCV_DIR}/../modules/videostab/include
+            $ENV{OPENCV_DIR}/../modules/videostab/include
+            $ENV{OPENCV_CONTRIB_DIR}/../modules/optflow/include
+            )
+    endif()
+endif(WIN32)
+
 target_include_directories(${PROJECT_NAME}
     PUBLIC
     ${AUTOGEN_BUILD_DIR} 
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${OPENCV_MODULES}
     )
 
 set(ADDITIONAL_LIBS)

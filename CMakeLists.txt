@@ -125,20 +125,24 @@ endif()
 
 # Actual subprojects
 
-#include(cmake/googletest.cmake)
-#fetch_googletest(
-#    ${PROJECT_SOURCE_DIR}/cmake
-#    ${PROJECT_BINARY_DIR}/googletest
-#    )
+if(UNIX)
+    include(cmake/googletest.cmake)
+    fetch_googletest(
+        ${PROJECT_SOURCE_DIR}/cmake
+        ${PROJECT_BINARY_DIR}/googletest
+        )
+endif(UNIX)
 
 add_subdirectory(core)
 add_subdirectory(utils)
 
-add_subdirectory(test)
-add_subdirectory(applications)
-add_subdirectory(tools)
-add_subdirectory(wrappers)
+if(UNIX)
+    add_subdirectory(test)
+    add_subdirectory(applications)
+    add_subdirectory(tools)
+    add_subdirectory(wrappers)
 
-enable_testing()
-add_subdirectory(test-core)
-add_subdirectory(test-core/-perf)
+    enable_testing()
+    add_subdirectory(test-core)
+    add_subdirectory(test-core/-perf)
+endif(UNIX)
