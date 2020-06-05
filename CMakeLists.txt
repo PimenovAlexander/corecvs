@@ -117,7 +117,7 @@ endif()
 option(USE_AWSSDK "Should compile with AWS SDK" YES)
 IF ( USE_AWSSDK )
     option(BUILD_SHARED_LIBS "Build shared libraries" ON)
-    find_package(AWSSDK COMPONENTS s3 cloudtrail)
+    find_package(AWSSDK QUIET COMPONENTS s3 cloudtrail)
 ENDIF ()
 
 option(USE_POSTGRES "Should compile with POSTGRES" YES)
