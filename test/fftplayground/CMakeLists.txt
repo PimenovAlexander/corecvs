@@ -41,7 +41,6 @@ if (FFTW_LIBRARIES)
             FFTW::FFTW
             )
     add_definitions(-DWITH_FFTW)
-#    include(../../wrappers/libfftw/sourcelist.cmake)
 endif()
 
 target_link_libraries(${PROJECT_NAME}

@@ -29,10 +29,6 @@ set(SUBDIRECTORIES
     widgets_test
     )
 
-foreach(subdirectory ${SUBDIRECTORIES})
-    message(STATUS "adding subdirectory/${subdirectory}")
-    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/${subdirectory})
-endforeach(subdirectory)
 if (EIGEN_FOUND AND CERES_FOUND)
     set(SUBDIRECTORIES ${SUBDIRECTORIES} ceres_playground)
 endif()

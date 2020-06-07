@@ -34,7 +34,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lfftw3f")
 target_include_directories(${PROJECT_NAME} 
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${FFTW_INCLUDE_DIR}
+#    ${FFTW_INCLUDE_DIR}
     )
 
 target_link_libraries(${PROJECT_NAME}

@@ -38,6 +38,7 @@ if(NOT CERES_LIB)
   message(STATUS "Could not find CERES lib. Turning CERES_FOUND off")
 endif()
 
+
 if(CERES_FOUND)
 if(NOT CERES_FIND_QUIETLY)
   message(STATUS "Found CERES libraries: ${CERES_LIB}")
@@ -54,9 +55,3 @@ mark_as_advanced(
     CERES_LIB
     CERES
     )
-
-message(STATUS "Found CERES libraries: ${CERES_LIBRARY}")
-message(STATUS "Found CERES include: ${CERES_INCLUDE_DIRS}")
-
-mark_as_advanced(CERES_LIBRARIES CERES_INCLUDE_DIRS)
-
