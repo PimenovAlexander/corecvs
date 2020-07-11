@@ -59,6 +59,12 @@ IF ( USE_LIBJPEG )
     find_package( Jpeg )
 ENDIF ()
 
+option(USE_LIBGIF "Should compile with LibGIF" YES)
+IF ( USE_LIBGIF )
+    MESSAGE( STATUS "Including LibGif wherever possible" )
+    find_package( Gif )
+ENDIF ()
+
 option(USE_EIGEN "Should compile with Eigen solver" YES)
 IF ( USE_EIGEN )
     MESSAGE( STATUS "Including Eigen solver wherever possible" )

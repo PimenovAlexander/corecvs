@@ -13,6 +13,9 @@ class AVEncoder : public corecvs::DummyVideoEncoderInterface
 {
 public:
     AVEncoder();
+    bool trace = false;
+
+
     bool open = false;
 
     virtual int startEncoding(const std::string &name, int h, int w, int codec_id = -1) override;
@@ -20,6 +23,10 @@ public:
     virtual void endEncoding() override;
 
     static void printCaps();
+
+
+    static void rgb24BufferToAVFrameYUV420P(corecvs::RGB24Buffer *input, AVFrame *frame);
+    static void rgb24BufferToAVFrameBGR8   (corecvs::RGB24Buffer *input, AVFrame *frame);
 
 protected:
     int got_output = 0;
@@ -32,7 +39,7 @@ protected:
 
     AVCodec *codec = NULL;
     AVCodecContext    *codecContext = NULL;
-    AVCodecParameters *codecParameters = NULL;
+    //AVCodecParameters *codecParameters = NULL;
 
     AVStream *outStream = NULL;
 

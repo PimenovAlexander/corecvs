@@ -15,6 +15,10 @@ if (JPEG_LIB)
     include(../../wrappers/libjpeg/sourcelist.cmake)
 endif()
 
+if (GIF_LIB)
+    include(../../wrappers/libgif/sourcelist.cmake)
+endif()
+
 add_executable(${NAME} ${SRC_FILES} ${HDR_FILES})
 
 add_custom_command(TARGET ${NAME} POST_BUILD

@@ -12,6 +12,11 @@ if(AVCODEC_LIBS)
     include(../../wrappers/avcodec/sourcelist.cmake)
 endif()
 
+if(GIF_FOUND)
+    message("Switching on gif support <${GIF_LIB}>")
+    include(../../wrappers/libgif/sourcelist.cmake)
+endif()
+
 add_executable(${MODULE_NAME} ${SRC_FILES} ${HDR_FILES})
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD

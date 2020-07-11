@@ -1,6 +1,5 @@
 #include <iostream>
 
-
 #include "core/reflection/commandLineSetter.h"
 #include "core/buffers/bufferFactory.h"
 #include "core/fileformats/bmpLoader.h"
@@ -13,6 +12,10 @@
 
 #ifdef WITH_LIBPNG
 #include "libpngFileReader.h"
+#endif
+
+#ifdef WITH_LIBGIF
+#include "libgifFileReader.h"
 #endif
 
 using namespace std;
@@ -85,6 +88,11 @@ int main(int argc, char *argv[])
     LibpngFileReader::registerMyself();
     SYNC_PRINT(("Libpng support on\n"));
 #endif
+#ifdef WITH_LIBGIF
+    LibgifFileReader::registerMyself();
+    SYNC_PRINT(("Libgif support on\n"));
+#endif
+
 
     CommandLineSetter s(argc, argv);
     cout << "FileLoader launched" << endl;

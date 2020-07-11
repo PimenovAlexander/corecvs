@@ -15,28 +15,62 @@ using namespace corecvs;
 
 int main(int argc, char **argv)
 {
-#ifdef WITH_AVCODEC
-    AVEncoder encoder;
-    RGB24Buffer buffer(100,100);
-
+#ifdef WITH_AVCODEC    
     AVEncoder::printCaps();
 
-    encoder.startEncoding("out.avi", buffer.h, buffer.w);
-    for (int i = 0; i < 250; i++)
     {
-        buffer.checkerBoard(i % 99, RGBColor::Yellow(), RGBColor::Brown());
-        AbstractPainter<RGB24Buffer> p(&buffer);
-        p.drawFormat(0,0, RGBColor::Navy(), 2, "%d", i);
-        encoder.addFrame(&buffer);
+        AVEncoder encoder;
+        encoder.trace = true;
+        RGB24Buffer buffer(100,100);
+
+
+        int res = encoder.startEncoding("out.avi", buffer.h, buffer.w);
+        if (res != 0) {
+            SYNC_PRINT(("Error: Encoder.startEncoding() :failed\n"));
+            return 1;
+        }
+
+        for (int i = 0; i < 250; i++)
+        {
+            buffer.checkerBoard(i % 99, RGBColor::Yellow(), RGBColor::Brown());
+            AbstractPainter<RGB24Buffer> p(&buffer);
+            p.drawFormat(0,0, RGBColor::Navy(), 2, "%d", i);
+            encoder.addFrame(&buffer);
+        }
+        encoder.endEncoding();
     }
-    encoder.endEncoding();
+
+    /**
+     *   GIF
+     **/
+    {
+        AVEncoder encoder;
+        encoder.trace = true;
+        RGB24Buffer buffer(100,100);
+
+        int res = encoder.startEncoding("out.gif", buffer.h, buffer.w);
+        if (res != 0) {
+            SYNC_PRINT(("Error: Encoder.startEncoding() :failed\n"));
+            return 1;
+        }
+
+        for (int i = 0; i < 250; i++)
+        {
+            buffer.checkerBoard(i % 99, RGBColor::Yellow(), RGBColor::Brown());
+            AbstractPainter<RGB24Buffer> p(&buffer);
+            p.drawFormat(0,0, RGBColor::Navy(), 2, "%d", i);
+            encoder.addFrame(&buffer);
+        }
+        encoder.endEncoding();
+    }
+
 #endif
 
 
 #ifdef WITH_SWSCALE
     RGB24Buffer *in = new RGB24Buffer(100,100);
-    in = BufferFactory::getInstance()->loadRGB24Bitmap("data/scene1.row3.col2.BMP");
-    //in->checkerBoard(10, RGBColor::Green(), RGBColor::Red());
+    //in = BufferFactory::getInstance()->loadRGB24Bitmap("data/scene1.row3.col2.BMP");
+    in->checkerBoard(10, RGBColor::Green(), RGBColor::Red());
     G8Buffer *inG = in->getChannelG8(ImageChannel::GRAY);
 
     SWScaler scaler;
