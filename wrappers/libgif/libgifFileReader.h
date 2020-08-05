@@ -29,7 +29,8 @@ public:
         return 0;
     }
 
-    static const char *getErrorName(int value);
+    static const char *getErrorName    (int value);
+    static const char *getExtentionName(int value);
 
     virtual bool acceptsFile(const string &name) override;
     virtual corecvs::RGB24Buffer * load     (const string & name) override;
@@ -76,10 +77,14 @@ public:
     virtual ~LibpgifRuntimeTypeBufferLoader() {}
 };
 
+class GifFileType;
+
 class GifEncoder : corecvs::DummyVideoEncoderInterface {
+
+    GifFileType *gif = NULL;
     // DummyVideoEncoderInterface interface
 public:
-    virtual int startEncoding(const std::string &name, int h, int w, int codec_id) override;
+    virtual int startEncoding(const std::string &name, int h, int w, int codec_id = -1) override;
     virtual void addFrame(corecvs::RGB24Buffer *) override;
     virtual void endEncoding() override;
 };

@@ -132,6 +132,15 @@ int main(int argc, char *argv[])
         {
             SYNC_PRINT(("Image loaded [%d x %d]\n", out->w, out->h));
             BMPLoader().save("out.bmp", out);
+
+#if WITH_LIBJPEG
+            vector<unsigned char> data;
+            LibjpegFileReader().saveJPEG(data, out);
+#endif
+#if WITH_LIBGIF
+            LibgifFileSaver().save(out, "gif.gif");
+#endif
+
             delete_safe(out);
             return 0;
         }

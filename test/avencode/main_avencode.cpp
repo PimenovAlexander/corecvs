@@ -9,6 +9,8 @@
 #include "swScaler.h"
 
 #include <core/buffers/bufferFactory.h>
+
+#include <libgifFileReader.h>
 #endif
 
 using namespace corecvs;
@@ -25,6 +27,31 @@ int main(int argc, char **argv)
 
 
         int res = encoder.startEncoding("out.avi", buffer.h, buffer.w);
+        if (res != 0) {
+            SYNC_PRINT(("Error: Encoder.startEncoding() :failed\n"));
+            return 1;
+        }
+
+        for (int i = 0; i < 250; i++)
+        {
+            buffer.checkerBoard(i % 99, RGBColor::Yellow(), RGBColor::Brown());
+            AbstractPainter<RGB24Buffer> p(&buffer);
+            p.drawFormat(0,0, RGBColor::Navy(), 2, "%d", i);
+            encoder.addFrame(&buffer);
+        }
+        encoder.endEncoding();
+    }
+
+    /**
+     *    WEBM
+     **/
+    {
+        AVEncoder encoder;
+        encoder.trace = true;
+        RGB24Buffer buffer(100,100);
+
+
+        int res = encoder.startEncoding("out.webm", buffer.h, buffer.w);
         if (res != 0) {
             SYNC_PRINT(("Error: Encoder.startEncoding() :failed\n"));
             return 1;
@@ -63,6 +90,31 @@ int main(int argc, char **argv)
         }
         encoder.endEncoding();
     }
+    /**
+     *    Native GIF
+     **/
+    {
+        GifEncoder encoder;
+        //encoder.trace = true;
+        RGB24Buffer buffer(100,100);
+
+        int res = encoder.startEncoding("out-native.gif", buffer.h, buffer.w);
+        if (res != 0) {
+            SYNC_PRINT(("Error: Encoder.startEncoding() :failed\n"));
+            return 1;
+        }
+
+        for (int i = 0; i < 250; i++)
+        {
+            buffer.checkerBoard(i % 99, RGBColor::Yellow(), RGBColor::Brown());
+            AbstractPainter<RGB24Buffer> p(&buffer);
+            p.drawFormat(0,0, RGBColor::Navy(), 2, "%d", i);
+            encoder.addFrame(&buffer);
+        }
+        encoder.endEncoding();
+
+
+    }
 
 #endif
 
@@ -87,6 +139,12 @@ int main(int argc, char **argv)
     BufferFactory::getInstance()->saveRGB24Bitmap(inGRGB , "scaled-g-before.bmp");
     BufferFactory::getInstance()->saveRGB24Bitmap(outGRGB, "scaled-g-after.bmp");
 
+    delete_safe(outGRGB);
+    delete_safe(inGRGB);
+    delete_safe(outG);
+    delete_safe(out);
+    delete_safe(inG);
+    delete_safe(in);
 #endif
 
     SYNC_PRINT(("Done."));

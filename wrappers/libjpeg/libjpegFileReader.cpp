@@ -151,6 +151,68 @@ bool LibjpegFileReader::saveJPEG(const std::string &name, const RGB24Buffer *buf
     return true;
 }
 
+
+bool LibjpegFileReader::saveJPEG(std::vector<unsigned char> &mem_vector, const RGB24Buffer *buffer, int quality, bool alpha)
+{
+    CORE_UNUSED(alpha);
+    struct jpeg_compress_struct cinfo;
+    struct jpeg_error_mgr jerr;
+
+    if (buffer == NULL) {
+        return false;
+    }
+
+    JSAMPROW row_pointer[1];	/* pointer to JSAMPLE row[s] */
+    int row_stride;		        /* physical row width in image buffer */
+
+    cinfo.err = jpeg_std_error(&jerr);
+
+    jpeg_create_compress(&cinfo);
+
+    unsigned char *mem = NULL;
+    unsigned long mem_size = 0;
+    jpeg_mem_dest(&cinfo, &mem, &mem_size);
+
+    cinfo.image_width  = buffer->w; 	/* image width and height, in pixels */
+    cinfo.image_height = buffer->h;
+    cinfo.input_components = 3;		    /* # of color components per pixel */
+    cinfo.in_color_space = JCS_RGB; 	/* colorspace of input image */
+
+    jpeg_set_defaults(&cinfo);
+    jpeg_set_quality(&cinfo, quality, TRUE /* limit to baseline-JPEG values */);
+
+    jpeg_start_compress(&cinfo, TRUE);
+
+    row_stride = buffer->w * 3;	/* JSAMPLEs per row in image_buffer */
+
+    uint8_t *scratch = new uint8_t[row_stride];
+    row_pointer[0] = scratch;
+
+    while (cinfo.next_scanline < (JDIMENSION)buffer->h) {
+        const RGBColor *c = &buffer->element(cinfo.next_scanline, 0);
+        for (int j = 0; j < buffer->w; j++)
+        {
+            scratch[3 * j + 0] = c->r();
+            scratch[3 * j + 1] = c->g();
+            scratch[3 * j + 2] = c->b();
+            c++;
+        }
+       (void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
+    }
+
+    deletearr_safe(scratch);
+
+    jpeg_finish_compress(&cinfo);
+    jpeg_destroy_compress(&cinfo);
+
+    SYNC_PRINT(("LibjpegFileReader::saveJPEG(): in memory size %d\n", (int)mem_size));
+
+    mem_vector.resize(mem_size);
+    memcpy(mem_vector.data(), mem, mem_size);
+    free(mem);
+    return true;
+}
+
 LibjpegFileReader::LibjpegFileReader()
 {}
 

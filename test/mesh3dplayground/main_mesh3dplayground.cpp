@@ -13,6 +13,7 @@
 using namespace corecvs;
 using namespace std;
 
+static const double DEFAULT_SIZE = 0.01 * 2/3 * 1.5;
 
 int main (int argc, char **argv)
 {
@@ -21,6 +22,7 @@ int main (int argc, char **argv)
     LibpngFileSaver::registerMyself();
     SYNC_PRINT(("Libpng support on\n"));
 #endif
+
 
     CommandLineSetter s(argc, argv);
 
@@ -55,10 +57,12 @@ int main (int argc, char **argv)
     vector<string> nonPrefix = s.nonPrefix();
     if (nonPrefix.size() <= 1) {
         SYNC_PRINT(("Usage: \n"));
-        SYNC_PRINT(("mesh3dplayground <in.ply> [--trace] [--decoration=<id>] [--dump] [--nocenter] [--double]\n"));
+        SYNC_PRINT(("mesh3dplayground <in.ply> [--trace] [--decoration=<id>] [--dump] [--nocenter] [--double] [--limit=<d>]\n"));
+        SYNC_PRINT(("\n"));
+        SYNC_PRINT(("\t   --limit=<d> - only process d points\n"));
         SYNC_PRINT(("\n"));
         SYNC_PRINT(("\tDecoration:\n"));
-        SYNC_PRINT(("\t 0 - cubes of [--size=<size>]\n"));
+        SYNC_PRINT(("\t 0 - cubes of [--size=<size>] %lf default\n", DEFAULT_SIZE));
         SYNC_PRINT(("\t 1 - do nothing just dry run \n"));
         SYNC_PRINT(("\n"));
         SYNC_PRINT(("Unsigned size: %d\n", (int)sizeof(unsigned int)));
@@ -129,7 +133,7 @@ int main (int argc, char **argv)
 
     Mesh3D meshExtended;
     meshExtended.switchColor();
-    double tsize = s.getDouble("size", 0.01 * 2/3 * 0.5);
+    double tsize = s.getDouble("size", DEFAULT_SIZE);
 
 
     int decoration  = s.getInt("decoration", 0);

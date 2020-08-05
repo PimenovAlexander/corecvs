@@ -54,6 +54,19 @@ const char *LibgifFileReader::getErrorName(int value)
     return "Not in range";
 }
 
+const char *LibgifFileReader::getExtentionName(int value)
+{
+    switch (value) {
+        case CONTINUE_EXT_FUNC_CODE   : return "CONTINUE_EXT_FUNC_CODE";
+        case COMMENT_EXT_FUNC_CODE    : return "COMMENT_EXT_FUNC_CODE";
+        case GRAPHICS_EXT_FUNC_CODE   : return "GRAPHICS_EXT_FUNC_CODE";
+        case PLAINTEXT_EXT_FUNC_CODE  : return "PLAINTEXT_EXT_FUNC_CODE";
+        case APPLICATION_EXT_FUNC_CODE: return "APPLICATION_EXT_FUNC_CODE";
+        default: return "Not in range";
+    }
+    return "Not in range";
+}
+
 bool LibgifFileReader::acceptsFile(const string & name)
 {
     SYNC_PRINT(("LibgifFileReader::acceptsFile(%s): called\n", name.c_str()));
@@ -100,13 +113,68 @@ RGB24Buffer *LibgifFileReader::load(const string & name)
             int b = gif->SColorMap->Colors[i].Blue;
 
             palette[i] = RGBColor(r,g,b);
-            cout << i << ":" << r << " " << g << " " << b << " " << endl;
+            //cout << i << ":" << r << " " << g << " " << b << " " << endl;
         }
     }
 
     SavedImage* gifFrame = gif->SavedImages + 0;
 
     toReturn = new RGB24Buffer(gif->SHeight, gif->SWidth);
+
+    for(int fr = 0; fr < gif->ImageCount; fr ++)
+    {
+        SavedImage* gifFrame = gif->SavedImages + fr;
+        SYNC_PRINT(("Info frame: %d\n", fr));
+        SYNC_PRINT(("  Frame Size      : %d x %d [+%d +%d]\n",
+                    gifFrame->ImageDesc.Width,
+                    gifFrame->ImageDesc.Height,
+                    gifFrame->ImageDesc.Left,
+                    gifFrame->ImageDesc.Top
+                    ));
+        SYNC_PRINT(("  Frame Extentions : %d\n", gifFrame->ExtensionBlockCount));
+
+        for (int ex = 0; ex < gifFrame->ExtensionBlockCount; ex++)
+        {
+            SYNC_PRINT(("    Extentions : %d\n", ex));
+            ExtensionBlock *block = &gifFrame->ExtensionBlocks[ex];
+            SYNC_PRINT(("    Type: %s\n",  getExtentionName(block->Function)));
+            SYNC_PRINT(("    Size: %d\n", (int)block->ByteCount));
+            if (block->Function == GRAPHICS_EXT_FUNC_CODE)
+            {
+                GraphicsControlBlock graphicsControlBlock;
+
+                DGifExtensionToGCB(block->ByteCount, block->Bytes, &graphicsControlBlock);
+                SYNC_PRINT(("     Delay            :%d\n", graphicsControlBlock.DelayTime));
+                SYNC_PRINT(("     Disposal Mode    :%d\n", graphicsControlBlock.DisposalMode));
+                SYNC_PRINT(("     User Input Flag  :%d\n", graphicsControlBlock.UserInputFlag));
+                SYNC_PRINT(("     Transparent Color:%d\n", graphicsControlBlock.TransparentColor));
+            }
+
+            if (block->Function == APPLICATION_EXT_FUNC_CODE)
+            {
+                if (block->ByteCount == 11)
+                {
+                    SYNC_PRINT(("    Seem to be netscape 2.0 block.\n"));
+                    if (!memcmp(block->Bytes, "NETSCAPE2.0", 11))
+                    {
+                        SYNC_PRINT(("    NETSCAPE2.0 signature found\n"));
+                        if (ex < gifFrame->ExtensionBlockCount - 1)
+                        {
+                            ExtensionBlock *blockData = &gifFrame->ExtensionBlocks[ex + 1];
+                            if (blockData->ByteCount == 3 && blockData->Bytes[0] == 0x1)
+                            {
+                                uint16_t loopCount = blockData->Bytes[1] | (blockData->Bytes[2] << 8);
+                                SYNC_PRINT(("Loop Count: %d\n", loopCount));
+                            } else {
+                                SYNC_PRINT(("    Unknown data block %d\n", blockData->Bytes[0]));
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+    }
 
     for (int y = 0; y < toReturn->h; y++)
     {
@@ -137,27 +205,96 @@ bool LibgifFileReader::save(const string &name, const RGB24Buffer *buffer, int q
 
 bool LibgifFileReader::saveGIF(const string &name, const RGB24Buffer *buffer, int quality, bool alpha)
 {
+    SYNC_PRINT(("LibgifFileReader::saveGIF(%s, [%d x %d]):called\n", name.c_str(), buffer->w, buffer->h));
+    int paletteSize = 256;
+    ColorMapObject *cmap = GifMakeMapObject(paletteSize, NULL);
+    cmap->BitsPerPixel = 8;
 
-    ColorMapObject *cmap = GifMakeMapObject(256, NULL);
-
-    if (NULL == cmap){
+    if (cmap == NULL){
         SYNC_PRINT(("cmap is NULL"));
         return false;
     }
-/*
-    int res = GifQuantizeBuffer(
-            buffer->w, buffer->h, &_colors,
-           redBuff, greenBuff, blueBuff,
-           gifimgbuf, cmap->Colors);
-*/
 
+    uint8_t *rB = new uint8_t[buffer->h * buffer->w];
+    uint8_t *gB = new uint8_t[buffer->h * buffer->w];
+    uint8_t *bB = new uint8_t[buffer->h * buffer->w];
 
-    /*if (res == GIF_ERROR)
+    for (int i = 0; i < buffer->h; i++)
     {
-        GifFreeMapObject(cmap);
-        SYNC_PRINT(("Error quantising\n"));
+        for (int j = 0; j < buffer->w; j++)
+        {
+            rB[i * buffer->w + j] = buffer->element(i,j).r();
+            gB[i * buffer->w + j] = buffer->element(i,j).g();
+            bB[i * buffer->w + j] = buffer->element(i,j).b();
+        }
+    }
+
+    uint8_t *oB = new uint8_t[buffer->h * buffer->w];
+
+    int res = GifQuantizeBuffer(
+            buffer->w, buffer->h, &paletteSize,
+            rB, gB, bB,
+            oB, cmap->Colors);
+
+#if 0
+    for (int i = 0; i < cmap->ColorCount; i++) {
+        int r = cmap->Colors[i].Red;
+        int g = cmap->Colors[i].Green;
+        int b = cmap->Colors[i].Blue;
+
+        cout << i << ":" << r << " " << g << " " << b << " " << endl;
+    }
+#endif
+
+    int error = 0;
+    GifFileType *gif = EGifOpenFileName(name.c_str(), false, &error);
+    if (gif == NULL) {
+        SYNC_PRINT(("Unable to open file <%s>\n", name.c_str()));
         return false;
-    }*/
+    }
+
+    gif->SWidth  = buffer->w;
+    gif->SHeight = buffer->h;
+    gif->Image.ColorMap = NULL;
+    gif->Image.Height   = buffer->h;
+    gif->Image.Width    = buffer->w;
+    gif->Image.Left    = 0;
+    gif->Image.Top     = 0;
+    gif->Image.Interlace = false;
+    gif->Image.ColorMap = NULL;
+
+    gif->SColorResolution = 8;
+    gif->SBackGroundColor = 0;
+    gif->SColorMap = cmap;
+
+    SavedImage *image = GifMakeSavedImage(gif, NULL);
+    if (image == NULL) {
+        SYNC_PRINT(("Unable to create image in gif... \n"));
+        return false;
+    }
+    image->RasterBits = oB;
+    image->ExtensionBlockCount = 0;
+    image->ImageDesc = gif->Image;
+
+    SYNC_PRINT(("images %d\n", gif->ImageCount ));
+    SYNC_PRINT(("colors %d\n", gif->SColorMap->ColorCount ));
+    SYNC_PRINT(("image  %p %p\n", image, gif->SavedImages));
+
+
+    EGifSetGifVersion(gif, true);
+
+    if (EGifSpew(gif) == GIF_ERROR)
+    {
+        SYNC_PRINT(("Unable to write file <%s>\n", name.c_str()));
+        return false;
+    }
+
+    //cout << gif->SavedImages[0].RasterBits << endl;
+
+    deletearr_safe(rB);
+    deletearr_safe(gB);
+    deletearr_safe(bB);
+    deletearr_safe(oB);
 
     return false;
 }
@@ -186,15 +323,123 @@ RuntimeTypeBuffer *LibpgifRuntimeTypeBufferLoader::load(const string &name)
 
 int GifEncoder::startEncoding(const std::string &name, int h, int w, int codec_id)
 {
+    int error = 0;
+    gif = EGifOpenFileName(name.c_str(), false, &error);
+    if (gif == NULL) {
+        SYNC_PRINT(("Unable to open file <%s>\n", name.c_str()));
+        return false;
+    }
 
+    gif->SWidth  = w;
+    gif->SHeight = h;
+    gif->Image.ColorMap = NULL;
+    gif->Image.Height   = h;
+    gif->Image.Width    = w;
+    gif->Image.Left    = 0;
+    gif->Image.Top     = 0;
+    gif->Image.Interlace = false;
+    gif->Image.ColorMap = NULL;
+
+    gif->SColorResolution = 8;
+    gif->SBackGroundColor = 0;
+
+    gif->SColorMap = NULL;
+
+    return 0;
 }
 
-void GifEncoder::addFrame(RGB24Buffer *)
+void GifEncoder::addFrame(RGB24Buffer *frame)
 {
+    int paletteSize = 256;
+    ColorMapObject *cmap = GifMakeMapObject(paletteSize, NULL);
+    cmap->BitsPerPixel = 8;
 
+    if (cmap == NULL){
+        SYNC_PRINT(("cmap is NULL"));
+        return;
+    }
+
+    uint8_t *rB = new uint8_t[frame->h * frame->w];
+    uint8_t *gB = new uint8_t[frame->h * frame->w];
+    uint8_t *bB = new uint8_t[frame->h * frame->w];
+
+    for (int i = 0; i < frame->h; i++)
+    {
+        for (int j = 0; j < frame->w; j++)
+        {
+            rB[i * frame->w + j] = frame->element(i,j).r();
+            gB[i * frame->w + j] = frame->element(i,j).g();
+            bB[i * frame->w + j] = frame->element(i,j).b();
+        }
+    }
+
+    uint8_t *oB = new uint8_t[frame->h * frame->w];
+
+    int res = GifQuantizeBuffer(
+            frame->w, frame->h, &paletteSize,
+            rB, gB, bB,
+            oB, cmap->Colors);
+
+    SavedImage *image = GifMakeSavedImage(gif, NULL);
+    if (image == NULL) {
+        SYNC_PRINT(("Unable to create image in gif... \n"));
+        return;
+    }
+    image->RasterBits = oB;
+    image->ExtensionBlockCount = 0;
+    image->ImageDesc = gif->Image;
+    image->ImageDesc.ColorMap = cmap;
+
+    GraphicsControlBlock graphicsControlBlock;
+    graphicsControlBlock.DelayTime        = 20;
+    graphicsControlBlock.DisposalMode     = 0;
+    graphicsControlBlock.UserInputFlag    = 0;
+    graphicsControlBlock.TransparentColor = -1;
+
+    EGifGCBToSavedExtension(&graphicsControlBlock, gif, gif->ImageCount - 1);
+
+    if (gif->ImageCount == 1) {
+        gif->SColorMap = cmap;
+
+        GifAddExtensionBlock(
+            &image->ExtensionBlockCount,
+            &image->ExtensionBlocks,
+            APPLICATION_EXT_FUNC_CODE,
+            11,
+            (unsigned char *)"NETSCAPE2.0"
+        );
+        const unsigned char data[] = {0x1, 0x0, 0x0};
+        GifAddExtensionBlock(
+            &image->ExtensionBlockCount,
+            &image->ExtensionBlocks,
+            CONTINUE_EXT_FUNC_CODE,
+            3,
+            (unsigned char *)data
+        );
+
+    }
+
+    deletearr_safe(rB);
+    deletearr_safe(gB);
+    deletearr_safe(bB);
 }
 
 void GifEncoder::endEncoding()
 {
+    SYNC_PRINT(("images %d\n", gif->ImageCount ));
+    SYNC_PRINT(("colors %d\n", gif->SColorMap->ColorCount ));
+    //SYNC_PRINT(("image  %p\n", gif->SavedImages));
 
+
+    EGifSetGifVersion(gif, true);
+
+    if (EGifSpew(gif) == GIF_ERROR)
+    {
+        SYNC_PRINT(("Unable to write file\n"));
+        return;
+    }
+
+    int error = 0;
+    /*GifFreeSavedImages(gif);
+    EGifCloseFile(gif, &error);*/
 }

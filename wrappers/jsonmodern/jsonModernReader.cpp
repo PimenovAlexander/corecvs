@@ -14,8 +14,14 @@ using namespace corecvs;
 
 JSONModernReader::JSONModernReader(std::istream &is)
 {
-    is >> mDocument;
-    mNodePath.push_back(&mDocument);
+    try {
+        is >> mDocument;
+        mNodePath.push_back(&mDocument);
+    } catch (nlohmann::detail::exception &e)
+    {
+        SYNC_PRINT(("JSONModernReader::init(stream): json parsing had an exception <%s>\n", e.what()));
+        mHasError = true;
+    }
 }
 
 void JSONModernReader::init(const char *fileName)

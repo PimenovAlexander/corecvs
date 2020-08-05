@@ -18,6 +18,12 @@ set (SRC_FILES
 )
 
 add_definitions(-DWITH_AVCODEC -DWITH_SWSCALE)
-include_directories(${CMAKE_CURRENT_LIST_DIR})
+
+set (INC_PATHS
+    ${INC_PATHS}
+    ${CMAKE_CURRENT_LIST_DIR}
+    ${AVCODEC_INCLUDE_DIR}
+    )
+
 
 set(LIBS ${LIBS} ${AVCODEC_LIBS})

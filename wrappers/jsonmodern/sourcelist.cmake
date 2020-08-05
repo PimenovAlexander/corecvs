@@ -6,6 +6,7 @@ set (HDR_FILES
 
 set (INC_PATHS
     ${INC_PATHS}
+    ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_CURRENT_LIST_DIR}/sources/src/
 )
 

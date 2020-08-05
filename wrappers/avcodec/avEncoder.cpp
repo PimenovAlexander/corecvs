@@ -33,9 +33,10 @@ int AVEncoder::startEncoding(const std::string &name, int h, int w, int codec_id
 
 
     if (codec_id == -1) {
-        if (std::string(outputFormat->name) == "gif")
-        {
+        if        (std::string(outputFormat->name) == "gif" ) {
             codec_id = AV_CODEC_ID_GIF;
+        } else if (std::string(outputFormat->name) == "webm") {
+            codec_id = AV_CODEC_ID_VP8;
         } else {
             codec_id = AV_CODEC_ID_MPEG4;
         }
@@ -81,7 +82,11 @@ int AVEncoder::startEncoding(const std::string &name, int h, int w, int codec_id
      outStream->codecpar->height = h;
 
      /* frames per second */
-     outStream->time_base = AVRational({1,25});
+     if (codec->id == AV_CODEC_ID_GIF) {
+        outStream->time_base = AVRational({1,2});
+     } else {
+        outStream->time_base = AVRational({1,25});
+     }
 
      avcodec_parameters_to_context(codecContext, outStream->codecpar);
 
@@ -243,6 +248,8 @@ void AVEncoder::endEncoding()
     av_free(codecContext);
     av_freep(&frame->data[0]);
     av_frame_free(&frame);
+    avio_close(formatContext->pb);
+    avformat_free_context(formatContext);
     printf("\n");
     open = false;
 }
@@ -319,16 +326,19 @@ void AVEncoder::printCaps()
 
 void AVEncoder::rgb24BufferToAVFrameYUV420P(corecvs::RGB24Buffer *input, AVFrame *frame)
 {
+    int h = std::min(frame->height, input->h);
+    int w = std::min(frame->width , input->w);
+
     /* Y */
-    for(int  y = 0; y < frame->height; y++) {
-        for(int x = 0; x < frame->width; x++) {
+    for(int  y = 0; y < h; y++) {
+        for(int x = 0; x < w; x++) {
             frame->data[0][y * frame->linesize[0] + x] = input->element(y,x).y();
         }
     }
 
     /* Cb and Cr */
-    for(int y = 0; y < frame->height / 2; y++) {
-         for(int x = 0; x < frame->width / 2; x++) {
+    for(int y = 0; y < h / 2; y++) {
+         for(int x = 0; x < w / 2; x++) {
              int x2 = x * 2;
              int y2 = y * 2;
 
@@ -344,17 +354,19 @@ void AVEncoder::rgb24BufferToAVFrameYUV420P(corecvs::RGB24Buffer *input, AVFrame
                       input->element(y2 + 1, x2 + 1).v();
              cr = cr / 4;
 
-             frame->data[1][y * frame->linesize[1] + x] = cr;
-             frame->data[2][y * frame->linesize[2] + x] = cb;
+             frame->data[1][y * frame->linesize[1] + x] = cb;
+             frame->data[2][y * frame->linesize[2] + x] = cr;
          }
      }
 }
 
 void AVEncoder::rgb24BufferToAVFrameBGR8(corecvs::RGB24Buffer *input, AVFrame *frame)
 {
+    int h = std::min(frame->height, input->h);
+    int w = std::min(frame->width , input->w);
     /* BGR8 */
-    for(int  y = 0; y < frame->height; y++) {
-        for(int x = 0; x < frame->width; x++) {
+    for(int  y = 0; y < h; y++) {
+        for(int x = 0; x < w; x++) {
             corecvs::RGBColor c = input->element(y,x);
             uint8_t v =
                 ((c.r() & 0xE0)     ) |

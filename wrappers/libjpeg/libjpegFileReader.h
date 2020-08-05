@@ -25,7 +25,8 @@ public:
     virtual std::string name() override { return "LibJpeg"; }
     virtual std::vector<std::string> extentions() { return {".jpg", ".jpeg"}; }
 
-    bool saveJPEG(const std::string& name, const corecvs::RGB24Buffer *buffer, int quality = 95, bool alpha=false);
+    bool saveJPEG(const std::string& name, const corecvs::RGB24Buffer *buffer, int quality = 95, bool alpha = false);
+    bool saveJPEG(std::vector<unsigned char> &mem_vector, const corecvs::RGB24Buffer *buffer, int quality = 95, bool alpha = false);
 
     LibjpegFileReader();
     virtual ~LibjpegFileReader();
