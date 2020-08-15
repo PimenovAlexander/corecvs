@@ -10,6 +10,10 @@
 
 #include <reflection/jsonPrinter.h>
 
+#define LIBEVENT_WSERVER
+#ifdef LIBEVENT_WSERVER
+#include "applications/drone/drone-app/server/server.h"
+#endif
 
 PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -86,9 +90,13 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
 
     connect(ui->actionDownloadModels, SIGNAL(triggered()), this , SLOT(downloadModels()));
 
+#ifdef LIBEVENT_WSERVER
+    SYNC_PRINT(("Starting web server...\n"));
+    startWServer();
     web_server_timer = new QTimer();
-    QObject::connect(web_server_timer, SIGNAL(timeout()), this, SLOT(callWServer()));
+    QObject::connect(web_server_timer, SIGNAL(timeout()), this, SLOT(callingWServer()));
     web_server_timer->start(100);
+#endif
 
     /* Load world */
     world.load("models/world.json");
@@ -829,6 +837,10 @@ void PhysicsMainWindow::repositionCloudCamera()
 
 void PhysicsMainWindow::callingWServer()
 {
+#ifdef LIBEVENT_WSERVER
+    server->process_requests();
+#else
     emit web_server_tick();
+#endif
 }
 

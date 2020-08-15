@@ -10,7 +10,7 @@
 
 #include <core/buffers/bufferFactory.h>
 
-#include <libgifFileReader.h>
+#include <wrappers/libgif/libgifFileReader.h>
 #endif
 
 using namespace corecvs;

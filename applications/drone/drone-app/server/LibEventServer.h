@@ -18,14 +18,10 @@
 #include <string.h>
 #include <cstring>
 
-#include <QApplication>
-#include <QObject>
-
 const int DEFAULT_PORT = 8040;
 const char *DEFAULT_IP_ADDRESS = "0.0.0.0";
 
-class LibEventServer: public QObject {
-    Q_OBJECT
+class LibEventServer {
 private:
     evhttp *server;
     event_base *base;
@@ -81,7 +77,6 @@ public:
         evhttp_set_gencb(server, callback, nullptr);
     }
 
-public slots:
     /**
      * Process all pending requests
      */

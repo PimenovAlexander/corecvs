@@ -5,8 +5,8 @@
 #ifndef LIBEVENTAPP_SERVER_H
 #define LIBEVENTAPP_SERVER_H
 
-#include "Libs/ImageGenerator.h"
-#include "Libs/StatsGenerator.h"
+#include "applications/drone/drone-app/server/Libs/ImageGenerator.h"
+#include "applications/drone/drone-app/server/Libs/StatsGenerator.h"
 #include "LibEventServer.h"
 
 #include <iostream>
@@ -23,7 +23,7 @@
 #include <vector>
 #include <sstream>
 
-#include "Libs/base64.cpp"
+#include "applications/drone/drone-app/server/Libs/base64.cpp"
 #include "LibEventServer.h"
 
 LibEventServer *server = new LibEventServer();

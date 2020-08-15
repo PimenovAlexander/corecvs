@@ -10,8 +10,6 @@
 #include "core/buffers/bufferFactory.h"
 #include "core/stereointerface/dummyFlowProcessor.h"
 
-#include "server/server.h"
-
 #ifdef WITH_LIBJPEG
 #include "libjpegFileReader.h"
 #endif
@@ -27,14 +25,7 @@
 #include "wrappers/apriltag_wrapper/apriltagDetector.h"
 #endif
 
-
 #include "physicsMainWindow.h"
-
-#define LIBEVENT_WSERVER
-
-#ifdef LIBEVENT_WSERVER
-#include "server/server.h"
-#endif
 
 using namespace corecvs;
 using namespace std;
@@ -120,12 +111,6 @@ int main(int argc, char *argv[])
     mainWindow->show();
     mainWindow->setAttribute(Qt::WA_QuitOnClose, true);
     mainWindow->setAttribute(Qt::WA_DeleteOnClose, true);
-
-#ifdef LIBEVENT_WSERVER
-    SYNC_PRINT(("Starting web server...\n"));
-    startWServer();
-    QObject::connect(mainWindow, SIGNAL(callingWServer()), server, SLOT(process_requests()));
-#endif
 
     app.setQuitOnLastWindowClosed(true);
     QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
