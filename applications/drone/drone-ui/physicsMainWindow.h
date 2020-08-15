@@ -97,6 +97,8 @@ public slots:
     void showAboutWidget();
     void keepAlive();
 
+    void callingWServer();
+
 /** Camera **/
 public:
     FrameProcessor *mProcessor = NULL;
@@ -123,6 +125,7 @@ public slots:
 
 signals:
     void newCameraModel(CameraModel model);
+    void web_server_tick();
 
 /** Processing **/
 public:
@@ -281,6 +284,8 @@ private:
 
 
     void drawDrone();
+
+    QTimer *web_server_timer;
 
     /** To be deleted ASAP **/
     void drawDzhanibekov();

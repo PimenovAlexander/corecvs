@@ -86,6 +86,10 @@ PhysicsMainWindow::PhysicsMainWindow(QWidget *parent) :
 
     connect(ui->actionDownloadModels, SIGNAL(triggered()), this , SLOT(downloadModels()));
 
+    web_server_timer = new QTimer();
+    QObject::connect(web_server_timer, SIGNAL(timeout()), this, SLOT(callWServer()));
+    web_server_timer->start(100);
+
     /* Load world */
     world.load("models/world.json");
     connect(ui->actionWorldRedraw, SIGNAL(triggered()), this , SLOT(worldRedraw()));
@@ -821,5 +825,10 @@ void PhysicsMainWindow::repositionCloudCamera()
     cout << "Model to be set:" << endl;
     cout << model << endl;
     ui->cloud->setCamera(model);
+}
+
+void PhysicsMainWindow::callingWServer()
+{
+    emit web_server_tick();
 }
 
