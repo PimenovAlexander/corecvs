@@ -1,9 +1,8 @@
+#ifndef LIBEVENTAPP_LIBEVENTSERVER_H
+#define LIBEVENTAPP_LIBEVENTSERVER_H
 //
 // Created by dio on 06.12.2019.
 //
-
-#ifndef LIBEVENTAPP_LIBEVENTSERVER_H
-#define LIBEVENTAPP_LIBEVENTSERVER_H
 
 #include <iostream>
 #include <getopt.h>
@@ -18,15 +17,15 @@
 #include <string.h>
 #include <cstring>
 
-const int DEFAULT_PORT = 8040;
-const char *DEFAULT_IP_ADDRESS = "0.0.0.0";
-
 class LibEventServer {
 private:
     evhttp *server;
     event_base *base;
 
 public:
+    const int DEFAULT_PORT = 8040;
+    const char *DEFAULT_IP_ADDRESS = "0.0.0.0";
+
     struct _options {
         int port;
         char *addr;
@@ -45,6 +44,8 @@ public:
      */
     int setup() {
         // Creating EVENT_BASE object, which is required for almost all of LibEvent's functionality
+
+
         if (!(base = event_base_new())) {
             std::cerr << "Event_base_new failed" << std::endl;
             return -1;
@@ -56,6 +57,7 @@ public:
             std::cerr << "Binding failed" << std::endl;
             return -2;
         }
+        return 0;
     }
 
     /**

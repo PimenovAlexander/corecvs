@@ -266,7 +266,6 @@ bool BMPLoaderBase::save(const string& name, const G8Buffer *buffer)
     return result;
 }
 
-
 /**
  * TODO: Add error handling
  *
@@ -337,5 +336,61 @@ bool BMPLoaderBase::save(const string& name, const RGB24Buffer *buffer)
     deletearr_safe(data);
     return true;
 }
+
+/* Merge with pervious function */
+bool BMPLoaderBase::save(std::vector<unsigned char> &mem_vector, const RGB24Buffer *buffer)
+{
+    CORE_ASSERT_TRUE(buffer != NULL, "Null buffer could not be saved");
+
+    int w = buffer->w;
+    int h = buffer->h;
+
+    /*Line length in BMP is always 32bit aligned*/
+    int lineLength = w * 3;
+    lineLength = (lineLength % 4) ? (lineLength | 0x3) + 1 : lineLength;
+    int fileSize = BMPHeader::HEADER_SIZE + h * lineLength;
+
+    mem_vector.resize(fileSize);
+    uint8_t *data = mem_vector.data();
+    memset(data, 0, BMPHeader::HEADER_SIZE /*fileSize*/);
+
+    data[0x0] = BMPHeader::HEADER_SIGNATURE[0];
+    data[0x1] = BMPHeader::HEADER_SIGNATURE[1];
+    *((uint32_t *)(data + 0x2)) =  h * lineLength + BMPHeader::HEADER_SIZE;
+    data[0x6] = 0;
+    data[0x7] = 0;
+    *((uint32_t *)(data + 0xA))  = BMPHeader::HEADER_SIZE;
+    *((uint32_t *)(data + 0xE))  = 0x28;
+    *((uint32_t *)(data + 0x12)) = w;
+    *((uint32_t *)(data + 0x16)) = h;
+    *((uint16_t *)(data + 0x1A)) = 1;
+    *((uint16_t *)(data + 0x1C)) = 24;
+    *((uint32_t *)(data + 0x1E)) = 0;
+    *((uint32_t *)(data + 0x22)) = lineLength * h;
+    *((uint32_t *)(data + 0x26)) = 0x0000B013;
+    *((uint32_t *)(data + 0x2A)) = 0x0000B013;
+    *((uint32_t *)(data + 0x2E)) = 0x0;
+    *((uint32_t *)(data + 0x32)) = 0x0;
+
+    for (int i = 0; i < h; i++)
+    {
+        uint8_t *offset = data + BMPHeader::HEADER_SIZE + (lineLength * (h - 1 - i));   // lines are flipped vertically there
+        int j;
+        for (j = 0; j < w; j++)
+        {
+            RGBColor pixel = buffer->element(i, j);
+            *offset++ = pixel.b();
+            *offset++ = pixel.g();
+            *offset++ = pixel.r();
+        }
+        // Put in predictable padding values
+        for (int k = j * 3; k < lineLength; k++)
+        {
+            *offset++ = 0;
+        }
+    }
+    return true;
+}
+
 
 } //namespace corecvs

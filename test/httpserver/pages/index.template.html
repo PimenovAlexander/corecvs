@@ -1,0 +1,420 @@
+
+html {
+    overflow-y: scroll;
+}
+
+#img {
+    object-fit: cover;
+    width: 400px;
+    height: 100%;
+}
+#imgDiv {
+    /* other styles */
+    -webkit-transition: all 1s ease-in-out;
+    transition: all 1s ease-in-out;
+    text-align: center;
+}
+#properties input {
+    border: 2px solid #008000;
+    width: 230px;
+    /* border: 2px solid #456879; */
+    border-radius:10px;
+}
+#properties input:focus {
+    outline: none;
+}
+.property_confirmed {
+    background-color : #99FFCC;
+}
+.property_loading {
+    background-color : #FFFF50;
+}
+.property_failed {
+    background-color : red;
+}
+
+/* Table */
+.table-fill {
+    background: white;
+    border-radius:3px;
+    border-collapse: collapse;
+    width: 100%;
+    padding:5px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    animation: float 5s infinite;
+}
+th {
+    color:#D5DDE5;;
+    background:#1b1e24;
+    border-bottom:4px solid #9ea7af;
+    border-right: 1px solid #343a45;
+    font-size:23px;
+    font-weight: 100;
+    padding:24px;
+    text-align:left;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    vertical-align:middle;
+}
+tr {
+    border-top: 1px solid #C1C3D1;
+    border-bottom: 1px solid #C1C3D1;
+    color:#666B85;
+    font-size:16px;
+    font-weight:normal;
+    text-shadow: 0 1px 1px rgba(256, 256, 256, 0.1);
+}
+tr:hover td {
+    background:#4E5066;
+    color:#FFFFFF;
+    border-top: 1px solid #22262e;
+}
+tr:nth-child(odd) td {
+    background:#EBEBEB;
+}
+tr:nth-child(odd):hover td {
+    background:#4E5066;
+}
+td {
+    background:#FFFFFF;
+    padding:20px;
+    text-align:left;
+    vertical-align:middle;
+    font-weight:300;
+    font-size:18px;
+    text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+    border-right: 1px solid #C1C3D1;
+    height: 32px;
+}
+td input {
+    font-size: 18px;
+}
+
+/* Menu */
+#menu {
+    display: grid;
+    color: red;
+    width: 100%;
+    height: 100px;
+    background-color: #abcdef;
+    grid-template-columns: auto repeat(3, 80px) 40px;
+    font-family: 'Montserrat', Helvetica, sans-serif;
+}
+#menuOptionCamera { grid-column: 2; }
+#menuOption2 {      grid-column: 3; }
+#menuOption3 {      grid-column: 4; }
+#menu button:active {
+    -webkit-animation: active 1200ms ease 1 alternate;
+    animation: active 1200ms ease 1 alternate;
+    background: #5F9BE0;
+}
+#menu button {
+    background: #76B3FA;
+    border-radius: 50px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 1em;
+    margin: 5%;
+}
+#menu button:focus {
+    outline: none;
+}
+#menu .gray { background: #D2D2D2; }
+#menu .gray:active { background: #b9b9b9; }
+
+#content {
+    margin: 0 2%;
+}
+
+@media(min-width: 550px) {
+    #img {
+        width: 500px;
+    }
+}
+
+/* DESKTOP VERSION */
+@media(min-width: 768px) {
+    #tables {
+        display: grid;
+        grid-template-columns: 50% 50%;
+    }
+
+    .table-fill {
+        grid-column: 1;
+    }
+
+    #properties {
+        grid-column: 2;
+    }
+
+    #menu button {
+        border-radius: 100px;
+        font-size: 1.45em;
+    }
+
+    #menu {
+        display: grid;
+        color: red;
+        width: 100%;
+        height: 100px;
+        background-color: #abcdef;
+        grid-template-columns: auto repeat(3, 200px) 100px;
+        font-family: 'Montserrat', Helvetica, sans-serif;
+    }
+
+    #img {
+        width: 700px;
+    }
+}
+
+@media(min-width: 850px) {
+    #img {
+        width: 800px;
+    }
+}
+
+/* Background */
+body {
+    background-color: #7373D3;
+    background-image: linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, .05) 25%, rgba(255, 255, 255, .05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .05) 75%, rgba(255, 255, 255, .05) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, .05) 25%, rgba(255, 255, 255, .05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .05) 75%, rgba(255, 255, 255, .05) 76%, transparent 77%, transparent);
+    background-size:50px 50px;
+}
+
+</style>
+</head>
+<body>
+
+<div id='menu'>
+    <button id='menuOptionCamera' onclick="cameraImage.slideToggle()">Hide camera</button>
+    <button id='menuOption2' class="gray">Some button</button>
+    <button id='menuOption3' class="gray">Another button</button>
+</div>
+
+<div id="content">
+    <!--CONTENT-->
+    <div id="imgDiv">
+        <img id='img' src="" alt="Camera Image">
+    </div>
+
+    <div id="tables">
+    <table class="table-fill">
+        <thead>
+        <tr>
+            <th>Property</th>
+            <th>Value</th>
+        </tr>
+        </thead>
+        <tbody class="table-hover">
+        <tr>
+            <td>Roll</td>
+            <td id = "RollDiv"></td>
+        </tr>
+        <tr>
+            <td>Pitch</td>
+            <td id = "PitchDiv"></td>
+        </tr>
+        <tr>
+            <td>Yaw</td>
+            <td id = "YawDiv"></td>
+        </tr>
+        </tbody>
+    </table>
+    <table class="table-fill" id="properties">
+        <thead>
+        <tr>
+            <th>Property</th>
+            <th>Value</th>
+        </tr>
+        </thead>
+        <tbody class="table-hover">
+        <tr>
+            <td>Property 1</td>
+            <td>
+                <input id="property1" class="property_confirmed" type="number">
+            </td>
+        </tr>
+        <tr>
+            <td>Property 1</td>
+            <td>
+                <input id="property2" class="property_confirmed" type="number">
+            </td>
+        </tr>
+        <tr>
+            <td>Property 1</td>
+            <td>
+                <input id="property3" class="property_confirmed" type="number">
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+    <!--/CONTENT-->
+    <div id="FPS_Div"></div>
+</div>
+
+<script>
+
+<!--INDEX.TEMPLATE.HTML is generated automatically, change files in HTML, CSS and JS folders instead-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <title>%s title</title>
+    <!--CSS-->
+    <style>
+
+</script>
+</body>
+</html>
+
+let statsLoaded = true;
+let fps = 0;
+const properties = {
+    values : [],
+    types : [
+        'property_confirmed',
+        'property_loading',
+        'property_failed'
+    ],
+    PROPERTY_CONFIRMED: 0,
+    PROPERTY_LOADING: 1,
+    PROPERTY_FAILED: 2,
+
+    URL_CHANGE_PARAM: 'change_stat_request',
+
+    setPropertyClass : function (prop, prop_class) {
+        if (Number.isInteger(prop)) {
+            // prop is an index starting from 1
+            prop = document.getElementById(`property${prop}`);
+        }
+        if (Number.isInteger(prop_class)) {
+            // prop_class is an index starting from 0
+            prop_class = this.types[prop_class];
+        }
+        this.types.forEach(type => prop.classList.remove(type));
+        prop.classList.add(prop_class);
+    },
+    maxIndex : 0, // This property is equal to (values.size + 1)
+    set(index, value) {
+        this.values[index] = value;
+        let param = document.getElementById(`property${index+1}`);
+        param.value = value;
+        this.setPropertyClass(param, this.PROPERTY_CONFIRMED);
+    },
+    initialize() {
+        let param;
+        while(param = document.getElementById(`property${++this.maxIndex}`)) {
+            param.oninput = function() {
+                properties.setPropertyClass(this, properties.PROPERTY_LOADING);
+                // match(/\d+/) returns the first number from a string
+                send_Ajax(`${properties.URL_CHANGE_PARAM}?${this.id.match(/\d+/)[0]}?${this.value}`,
+                    _ => {
+                        properties.setPropertyClass(this, properties.PROPERTY_CONFIRMED);
+                    }, {
+                        error: _ => {
+                            properties.setPropertyClass(this, properties.PROPERTY_FAILED);
+                        }
+                    });
+            };
+        }
+    }
+}
+
+function recursive_Ajax(url, func, options = {}) {
+    options.recursive = true;
+    return send_Ajax(url, func, options);
+}
+function send_Ajax(url, func, options = {}) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.onload = function() {
+        if (this.status === 200) {
+            func(this.responseText);
+        } else {
+            if (options.error) {
+                options.error(this.responseText);
+            }
+        }
+        if (options.recursive) send_Ajax(url, func, options);
+    };
+    xhr.send();
+}
+
+let cameraImage = {
+    displaying: true,
+    heightChecked: false,
+    initHeight : 0,
+    slideToggle: function () {
+        // This method does not work after a window has been resized
+        if (!this.div) {
+            this.div = document.getElementById('imgDiv');
+            this.div.style.height = `${this.div.offsetHeight}px`;
+        }
+        if (!this.button) {
+            this.button = document.getElementById('menuOptionCamera');
+        }
+        if (!this.heightChecked) {
+            this.initHeight = this.div.offsetHeight;
+            this.heightChecked = true;
+        }
+        if (this.displaying) {
+            this.button.innerHTML = 'Show camera';
+            this.button.classList.add('gray');
+            this.displaying = false;
+            this.div.style.height = '0px';
+        } else {
+            this.button.innerHTML = 'Hide camera';
+            this.button.classList.remove('gray');
+            this.displaying = true;
+            this.div.style.height = `${this.initHeight}px`;
+        }
+    }
+}
+
+function onLoad() {
+    properties.initialize();
+    setInterval(_ => {
+        if (statsLoaded) {
+            statsLoaded = false;
+            send_Ajax('stats_request', data => {
+                const arr = data.split('@');
+
+                const modes = arr[0].split('$');
+
+                const parameters_changed = modes.includes('Parameters_Changed');
+
+                const arr_stats = arr[1].split('$');
+                document.getElementById('RollDiv').innerHTML = arr_stats[0];
+                document.getElementById('PitchDiv').innerHTML = arr_stats[1];
+                document.getElementById('YawDiv').innerHTML = arr_stats[2];
+
+                const arr_params = arr[2].split('$');
+                arr_params.forEach((el, ind) => {
+                    if (// Initialize a value
+                        !properties.values[ind] ||
+                        // Either update a value or discard any changes made to it if parameters have been changed on a server
+                        (properties.values[ind] !== el && parameters_changed)) {
+                        properties.set(ind, el);
+                    }
+                })
+                statsLoaded = true;
+            })
+        }
+    }, 250);
+
+    recursive_Ajax('image_request', data => {
+        document.getElementById('img').setAttribute('src', `data:image/png;base64,${data}`);
+        fps++;
+    });
+
+    setInterval(_ => { console.log(`FPS: ${fps}`); document.getElementById('FPS_Div').innerHTML = `FPS:${fps}`; fps = 0; }, 1000);
+}
+
+(function(fn){
+    if (document.readyState !== 'loading') {
+        fn();
+    } else {
+        document.addEventListener('DOMContentLoaded', fn);
+    }
+})(onLoad)

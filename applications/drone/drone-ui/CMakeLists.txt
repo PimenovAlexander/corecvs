@@ -100,7 +100,7 @@ message("AUTOGEN_BUILD_DIR bin directory <${AUTOGEN_BUILD_DIR}>")
 
 target_include_directories(drone-ui PUBLIC ${corecvs_SOURCE_DIR} ${cvs_utils_SOURCE_DIR} ${drone-core_SOURCE_DIR} .)
 
-target_link_libraries(drone-ui drone-core cvs_utils corecvs -levent)
+target_link_libraries(drone-ui drone-core cvs_utils corecvs)
 
 if (OpenCV_LIBS)
     target_link_libraries(drone-ui ${OpenCV_LIBS})

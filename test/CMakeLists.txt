@@ -24,6 +24,11 @@ set(TEST_SUBDIRECTORIES
     autonavRW
 )
 
+
+#if (LIBEVENT_FOUND)
+    set(TEST_SUBDIRECTORIES ${TEST_SUBDIRECTORIES} httpserver)
+#endif()
+
 if (EIGEN_FOUND AND CERES_FOUND)
     set(TEST_SUBDIRECTORIES ${TEST_SUBDIRECTORIES} ceres_playground)
 endif()

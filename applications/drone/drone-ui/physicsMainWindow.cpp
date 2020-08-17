@@ -10,7 +10,7 @@
 
 #include <reflection/jsonPrinter.h>
 
-#define LIBEVENT_WSERVER
+//#define LIBEVENT_WSERVER
 #ifdef LIBEVENT_WSERVER
 #include "applications/drone/drone-app/server/server.h"
 #endif

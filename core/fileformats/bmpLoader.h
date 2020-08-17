@@ -65,6 +65,9 @@ public:
     virtual bool save(const string& name, const G12Buffer   *buffer);
     virtual bool save(const string& name, const G8Buffer    *buffer);
 
+    bool save(std::vector<unsigned char> &mem_vector, const corecvs::RGB24Buffer *buffer);
+
+
 private:
     int parseBMP (string& name, BMPHeader *header, uint8_t **dataPtr);
 };

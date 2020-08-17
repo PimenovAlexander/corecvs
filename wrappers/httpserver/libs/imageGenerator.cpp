@@ -1,20 +1,14 @@
-//
-// Created by dio on 7/26/20.
-//
-
-#ifndef LIBEVENTAPP_IMAGEGENERATOR_H
-#define LIBEVENTAPP_IMAGEGENERATOR_H
-
 #include <iostream>
 #include <fstream>
+
+#include "imageGenerator.h"
 
 int width = 255;
 int height = 255;
 int max_colour = 255;
-
 int curImg = 0;
 
-const char *generateImage(int id = 0)
+const char *generateImage(int id)
 {
     curImg = (curImg + 1) % 4;
 #ifdef generate_ppm
@@ -38,4 +32,3 @@ const char *generateImage(int id = 0)
     }
 }
 
-#endif //LIBEVENTAPP_IMAGEGENERATOR_H

@@ -117,6 +117,23 @@ else()
 endif()
 
 ##
+#  Internal http server based on libevent
+##
+option(USE_LIBEVENT "Should compile with LIBEVENT" YES)
+IF ( USE_LIBEVENT )
+    MESSAGE(STATUS "Including libevent wherever possible")
+    find_package(Event)
+    if (LIBEVENT_FOUND)
+        add_definitions(-DWITH_LIBEVENT)
+    else()
+        message("You requested USE_LIBEVENT in the build, but none was found.")
+    endif()
+else()
+    MESSAGE(STATUS "Libevent switched off")
+endif()
+
+
+##
 #   Additional dependances for web related applications
 ##
 
@@ -161,15 +178,14 @@ file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 add_subdirectory(core)
 add_subdirectory(utils)
 
-# Getting : undefined reference to `vtable for GifEncoder'
-# add_subdirectory(test)
-add_subdirectory(applications)
-add_subdirectory(tools)
+add_subdirectory(test)
+#add_subdirectory(applications)
+#add_subdirectory(tools)
 
 
 enable_testing()
-add_subdirectory(test-core)
-add_subdirectory(test-core/-perf)
+#add_subdirectory(test-core)
+#add_subdirectory(test-core/-perf)
 
 
 
