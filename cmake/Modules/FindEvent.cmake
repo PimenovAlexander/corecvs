@@ -1,0 +1,53 @@
+SET(EVENT_INCLUDE_SEARCH_PATHS
+    /usr/include
+    /usr/local/include
+    /usr/local/include/png-base
+    /opt/libgif/include
+    $ENV{LIBEVENT_HOME}
+    $ENV{LIBEVENT_HOME}/include
+)
+
+SET(EVENT_LIB_SEARCH_PATHS
+    /lib/
+    /lib64/
+    /usr/lib
+    /usr/lib64
+    /usr/local/lib
+    /usr/local/lib64
+    $ENV{LIBEVENT_HOME}
+    $ENV{LIBEVENT_HOME}/lib
+)
+
+FIND_PATH(EVENT_INCLUDE_DIR NAMES event2/event.h PATHS ${EVENT_INCLUDE_SEARCH_PATHS})
+FIND_LIBRARY(EVENT_LIB NAMES event PATHS ${EVENT_LIB_SEARCH_PATHS})
+
+SET(LIBEVENT_FOUND ON)
+
+#    Check include files
+IF(NOT EVENT_INCLUDE_DIR)
+  SET(LIBEVENT_FOUND OFF)
+  MESSAGE(STATUS "Could not find EVENT include. Turning LIBEVENT_FOUND off")
+ENDIF()
+
+#    Check libraries
+IF(NOT EVENT_LIB)
+  SET(LIBEVENT_FOUND OFF)
+  MESSAGE(STATUS "Could not find EVENT lib. Turning LIBEVENT_FOUND off")
+ENDIF()
+
+IF (LIBEVENT_FOUND)
+IF (NOT EVENT_FIND_QUIETLY)
+  MESSAGE(STATUS "Found EVENT libraries: ${EVENT_LIB}")
+  MESSAGE(STATUS "Found EVENT include: ${EVENT_INCLUDE_DIR}")
+ENDIF (NOT EVENT_FIND_QUIETLY)
+ELSE (LIBEVENT_FOUND)
+IF (EVENT_FIND_REQUIRED)
+  MESSAGE(FATAL_ERROR "Could not find GIF")
+ENDIF (EVENT_FIND_REQUIRED)
+ENDIF (LIBEVENT_FOUND)
+
+MARK_AS_ADVANCED(
+  EVENT_INCLUDE_DIR
+  EVENT_LIB
+  EVENT
+)
