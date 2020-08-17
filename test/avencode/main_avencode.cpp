@@ -90,6 +90,8 @@ int main(int argc, char **argv)
         }
         encoder.endEncoding();
     }
+
+#ifdef WITH_LIBGIF
     /**
      *    Native GIF
      **/
@@ -112,9 +114,8 @@ int main(int argc, char **argv)
             encoder.addFrame(&buffer);
         }
         encoder.endEncoding();
-
-
     }
+#endif
 
 #endif
 
