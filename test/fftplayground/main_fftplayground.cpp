@@ -11,6 +11,8 @@
 #include "libpngFileReader.h"
 #endif
 
+#include <complex>
+
 using namespace std;
 using namespace corecvs;
 

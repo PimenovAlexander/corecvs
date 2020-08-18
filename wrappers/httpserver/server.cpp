@@ -19,7 +19,7 @@ void on_get_index(struct evhttp_request *req, void *arg)
     if (!evb) return;               // No pointer returned
 
     // Access html using file stream
-    std::ifstream fin("Pages/index.html", std::ios::in | std::ios::binary);
+    std::ifstream fin("pages/index.html", std::ios::in | std::ios::binary);
     if (!fin) {
         evhttp_send_reply(req, HTTP_NOTFOUND, "404 Error", evb);
         evbuffer_free(evb);
@@ -54,7 +54,7 @@ void on_get_test_data(struct evhttp_request *req, void *arg)
     evbuffer *evb = evbuffer_new(); // Creating a response buffer
     if (!evb) return;               // No pointer returned
 
-    // Add image to buffer as base64 string
+    // Add content to buffer
     evbuffer_add_printf(evb, "%s", response);
     evhttp_send_reply(req, HTTP_OK, "OK", evb);
     evbuffer_free(evb);
@@ -62,7 +62,7 @@ void on_get_test_data(struct evhttp_request *req, void *arg)
 
 void on_get_test_image(struct evhttp_request *req, void *arg)
 {
-    SYNC_PRINT(("on_image_request(struct evhttp_request *req, void *arg):called\n"));
+    SYNC_PRINT(("on_get_test_image(struct evhttp_request *req, void *arg):called\n"));
     std::unique_ptr<RGB24Buffer> buffer(new RGB24Buffer(100, 100));
     buffer->checkerBoard(10, RGBColor::Cyan(), RGBColor::Yellow());
 
@@ -74,7 +74,7 @@ void on_get_test_image(struct evhttp_request *req, void *arg)
     if (!evb) return;               // No pointer returned
 
 
-    // Add image to buffer as base64 string
+    // Add image to buffer
     evbuffer_add(evb, mem_buffer.data(), mem_buffer.size());
     evhttp_add_header(req->output_headers, "Content-Type", "image/bmp");
 
@@ -117,7 +117,7 @@ void on_image_request(struct evhttp_request *req, void *arg)
 
 void on_get_stats_request(struct evhttp_request *req, void *arg)
 {
-    SYNC_PRINT(("on_image_request(struct evhttp_request *req, void *arg):called\n"));
+    SYNC_PRINT(("on_get_stats_request(struct evhttp_request *req, void *arg):called\n"));
 
 
     evbuffer *evb = evbuffer_new(); // Creating a response buffer
@@ -178,17 +178,17 @@ void on_other_requests(struct evhttp_request * req, void *arg)
 }
 
 int startWServer() {
-    server->options.verbose = 0;   // Configuring port, IP and other available options
+    server->options.verbose = 0;    // Configuring port, IP and other available options
     server->options.port = 8040;
+    server->setup();                // Starting server with current configuration
 
-    server->setup();                                         // Starting server with current configuration
-    server->set_callback("/", on_get_index);                  // Adding handlers
+    server->set_callback("/", on_get_index);
 
-    server->set_callback("/test", on_get_test_data);                  // Adding handlers
-    server->set_callback("/test_img.bmp", on_get_test_image);                  // Adding handlers
+    server->set_callback("/test", on_get_test_data);
+    server->set_callback("/test_img.bmp", on_get_test_image);
 
-    server->set_callback("/image_request", on_image_request);// for different routes
-    server->set_callback("/stats_request", on_get_stats_request);// for different routes
+    server->set_callback("/image_request", on_image_request);
+    server->set_callback("/stats_request", on_get_stats_request);
     server->set_callback("/change_stat_request", on_change_stats_request);
     server->set_default_callback(on_other_requests);
     return 0;

@@ -25,10 +25,10 @@ const char *generateImage(int id)
     file.close();
 #endif
     switch (curImg) {
-        case 0: return "Pages/img/jojo0.jpg";
-        case 1: return "Pages/img/jojo1.jpg";
-        case 2: return "Pages/img/jojo2.jpg";
-        default: return "Pages/img/jojo3.jpg";
+        case 0: return "pages/img/jojo0.jpg";
+        case 1: return "pages/img/jojo1.jpg";
+        case 2: return "pages/img/jojo2.jpg";
+        default: return "pages/img/jojo3.jpg";
     }
 }
 
