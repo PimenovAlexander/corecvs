@@ -46,7 +46,7 @@ void on_get_test_data(struct evhttp_request *req, void *arg)
     "<h1>This is an internal test page</h1>\n"
     "This is an internal test page content\n"
     "<h2>Here is an example image</h2>\n"
-    "<img src=\"test_img.bmp\" >\n"
+    "<img src=\"test_img.jpg\" >\n"
     "</body>"
     "</html>\n";
 

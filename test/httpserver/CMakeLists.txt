@@ -2,6 +2,7 @@ project (httpserver)
 
 set (SRC_FILES
     main_httpserver.cpp
+        resources.c
 )
 
 set (HDR_FILES
@@ -60,4 +61,30 @@ add_custom_command(TARGET ${NAME} POST_BUILD
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         COMMENT "Copying ${NAME} to binary directory"
         )
+
+function(create_resources dir output)
+    function(create_resources_recursively dir output)
+        message("create_resources_recursively(${dir}, ${output})")
+        file(GLOB bins ${dir}/*)
+        foreach(bin ${bins})
+            message("Packaging resource file: ${bin}")
+            if(IS_DIRECTORY ${bin})
+                create_resources_recursively(${bin} ${output})
+            endif()
+            # Get short filename
+            string(REGEX MATCH "([^/]+)$" filename ${bin})
+            # Replace filename spaces & extension separator for C compatibility
+            string(REGEX REPLACE "\\.| |-" "_" filename "${filename}")
+            file(READ ${bin} filedata HEX)
+            # Convert hex data for C compatibility
+            string(REGEX REPLACE "([0-9a-f][0-9a-f])" "0x\\1," filedata "${filedata}")
+            file(APPEND ${output} "const unsigned char ${filename}[] = {${filedata}};\nconst unsigned ${filename}_size = sizeof(${filename});\n")
+        endforeach()
+    endfunction()
+    # Create empty output file
+    file(WRITE ${output} "")
+    create_resources_recursively(${dir} ${output})
+endfunction()
+
+create_resources(pages/img resources.c)
 
