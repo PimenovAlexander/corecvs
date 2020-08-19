@@ -40,6 +40,8 @@ public:
 
     int setup();
     int set_callback(const char *path, void (*callback)(evhttp_request *, void *));
+    void remove_callback(const char *path);
+    void override_callback(const char *path, void (*callback)(evhttp_request *, void *));
     void set_default_callback(void (*callback)(evhttp_request *, void *));
     void process_requests();
 };

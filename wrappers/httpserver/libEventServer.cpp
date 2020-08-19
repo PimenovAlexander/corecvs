@@ -48,3 +48,25 @@ void LibEventServer::set_default_callback(void (*callback)(evhttp_request *, voi
 void LibEventServer::process_requests() {
     event_base_loop(base, EVLOOP_NONBLOCK);
 }
+
+/**
+ * Remove a callback for a specified URI
+ * @param path the path for which to remove the callback
+ */
+void LibEventServer::remove_callback(const char *path) {
+    evhttp_del_cb(server, path);
+}
+
+/**
+ * Set a callback for a specified URI (Overrides a callback for specified URI if it already exists)
+ * @param path the path for which to invoke the callback
+ * @param callback the callback function that gets invoked on specified URI
+ */
+void LibEventServer::override_callback(const char *path, void (*callback)(evhttp_request *, void *))
+{
+    if (set_callback(path, callback) == -1)
+    {
+        remove_callback(path);
+        set_callback(path, callback);
+    }
+}
