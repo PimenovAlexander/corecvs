@@ -12,6 +12,8 @@
 #include <event2/http.h>
 #include <event2/buffer.h>
 
+#include <longPoll.h>
+
 #include <evhttp.h>
 #include <string>
 #include <string.h>
@@ -26,6 +28,8 @@ public:
     const int DEFAULT_PORT = 8040;
     const char *DEFAULT_IP_ADDRESS = "0.0.0.0";
 
+    LongPoll *poll;
+
     struct _options {
         int port;
         char *addr;
@@ -36,6 +40,7 @@ public:
         options.port = DEFAULT_PORT;
         options.addr = (char *) DEFAULT_IP_ADDRESS;
         options.verbose = 0;
+        poll = new LongPoll();
     }
 
     int setup();
