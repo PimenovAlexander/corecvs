@@ -61,8 +61,7 @@ int main (int argc, char **argv)
     startWServer();
 
 #ifdef resource_file_enabled
-    std::cout << "Size of an image : " << jojo0_jpg_size << std::endl;
-    server->set_callback("/test_img.jpg", on_resource_image_request);
+    server->override_callback("/test_img.bmp", on_resource_image_request);
 #endif
 
     while (true) {

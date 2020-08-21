@@ -46,7 +46,7 @@ void on_get_test_data(struct evhttp_request *req, void *arg)
     "<h1>This is an internal test page</h1>\n"
     "This is an internal test page content\n"
     "<h2>Here is an example image</h2>\n"
-    "<img src=\"test_img.jpg\" >\n"
+    "<img src=\"test_img.bmp\" >\n"
     "</body>"
     "</html>\n";
 
@@ -131,6 +131,13 @@ void on_get_stats_request(struct evhttp_request *req, void *arg)
     evbuffer_free(evb);
 }
 
+void on_long_poll_request_announce(struct evhttp_request *req, void *arg)
+{
+    server->poll->announce("CLIENT_REQUEST");
+
+    evhttp_send_reply(req, HTTP_OK, "OK", nullptr);
+}
+
 void on_change_stats_request(struct evhttp_request *req, void *arg)
 {
     SYNC_PRINT(("on_change_stats_request(struct evhttp_request *req, void *arg):called\n"));
@@ -165,6 +172,26 @@ void on_change_stats_request(struct evhttp_request *req, void *arg)
     evbuffer_free(evb);
 }
 
+void on_long_pull_request_subscribe(struct evhttp_request *req, void *arg)
+{
+    server->poll->subscribe("CLIENT_REQUEST", req);
+}
+
+void on_long_poll(struct evhttp_request * req, void *arg)
+{
+    evbuffer *evb = evbuffer_new(); // Creating a response buffer
+    if (!evb) return;               // No pointer returned
+
+    evhttp_send_reply_start(req, HTTP_OK, "P1");
+    evbuffer_add_printf(evb, "1");
+    evhttp_send_reply_chunk(req, evb);
+    evbuffer_add_printf(evb, "2");
+    evhttp_send_reply_chunk(req, evb);
+    evhttp_send_reply_end(req);
+
+    evbuffer_free(evb);
+}
+
 void on_other_requests(struct evhttp_request * req, void *arg)
 {
     SYNC_PRINT(("on_other_requests(struct evhttp_request *req, void *arg):called\n"));
@@ -189,8 +216,14 @@ int startWServer() {
 
     server->set_callback("/image_request", on_image_request);
     server->set_callback("/stats_request", on_get_stats_request);
+
+    server->set_callback("/long_poll", on_long_pull_request_subscribe);
+    server->set_callback("/long_poll_announce", on_long_poll_request_announce);
+
     server->set_callback("/change_stat_request", on_change_stats_request);
     server->set_default_callback(on_other_requests);
+
+    server->poll->addEvent("CLIENT_REQUEST", on_get_test_image);
     return 0;
 }
 
