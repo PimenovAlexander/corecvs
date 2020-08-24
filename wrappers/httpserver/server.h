@@ -1,41 +1,30 @@
+#ifndef LIBEVENTAPP_SERVER_H
+#define LIBEVENTAPP_SERVER_H
+
 //
 // Created by dio on 7/26/20.
 //
 
-#ifndef LIBEVENTAPP_SERVER_H
-#define LIBEVENTAPP_SERVER_H
 
-#include "libs/imageGenerator.h"
-#include "libs/statsGenerator.h"
 #include "libEventServer.h"
 
-#include <iostream>
-#include <fstream>
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
+/**
+ * This is an extended server version that is oriented on modules and contents
+ **/
+class HttpServer : public LibEventServer {
+public:
+    HttpServer(int port = DEFAULT_PORT, const char *addr = (const char *) DEFAULT_IP_ADDRESS, int verbose = 0) :
+        LibEventServer(port, addr, verbose)
+    {}
 
-#include <chrono>
+    virtual int setup() override;
 
-#include <iterator>
-#include <vector>
-#include <sstream>
+    /* This method starts the server in a separate thread */
+    /* You may want to start it synchroniously, then call LibEventServer methods directly */
+    void start();
 
-#include "libs/base64.h"
-#include "libEventServer.h"
+};
 
-extern LibEventServer *server;
-
-void on_get_index(struct evhttp_request *req, void *arg);
-void on_get_test_data(struct evhttp_request *req, void *arg);
-void on_image_request(struct evhttp_request *req, void *arg);
-void on_get_stats_request(struct evhttp_request *req, void *arg);
-void on_change_stats_request(struct evhttp_request *req, void *arg);
-void on_long_poll(struct evhttp_request *req, void *arg);
-void on_other_requests(struct evhttp_request * req, void *arg);
-
-int startWServer();
 
 #endif //LIBEVENTAPP_SERVER_H

@@ -72,6 +72,7 @@ namespace HelperUtils
     string          escapeString  (const string &s, const std::unordered_map<char, char> &symbols, const std::string &escape);
     string          unescapeString(const string &s, const std::unordered_map<char, char> &symbols, char guard);
 
+    string          toLower(const string &s);
 
     string          stringCombine(vector<string> parts, char delim);
 

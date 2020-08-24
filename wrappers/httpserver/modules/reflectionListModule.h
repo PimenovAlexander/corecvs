@@ -7,21 +7,27 @@
 
 class ReflectionModuleDAO {
 public:
-    virtual QList<QString>  getReflectionNames() = 0;
-    virtual LockableObject *getReflectionObject(QString name) = 0;
+    virtual std::vector<std::string>  getReflectionNames() = 0;
+    virtual corecvs::LockableObject *getReflectionObject(std::string name) = 0;
 };
 
 class ReflectionModuleHashDAO : public ReflectionModuleDAO {
 public:
-    QHash<QString, LockableObject *> mReflectionsList;
+    std::map<std::string, corecvs::LockableObject *> mReflectionsList;
 
-    virtual QList<QString> getReflectionNames() {
-        return mReflectionsList.keys();
+    virtual vector<std::string> getReflectionNames() {
+
+        vector<std::string> names;
+        names.reserve(mReflectionsList.size());
+        for (auto it : mReflectionsList) {
+            names.push_back(it.first);
+        }
+        return names;
     }
 
-    virtual LockableObject *getReflectionObject(QString name)
+    virtual corecvs::LockableObject *getReflectionObject(std::string name)
     {
-        if (!mReflectionsList.contains(name))
+        if (mReflectionsList.count(name) == 0)
             return NULL;
         return mReflectionsList[name];
     }
@@ -34,9 +40,9 @@ public:
 
     ReflectionModuleDAO* mReflectionsDAO;
 
-    virtual bool shouldProcessURL(QUrl url);
+    virtual bool shouldProcessURL(std::string url);
     virtual bool shouldWrapURL(std::string url);
-    virtual QSharedPointer<HttpContent> getContentByUrl(QUrl url);
+    virtual std::shared_ptr<HttpContent> getContentByUrl(std::string url);
 
 
     ReflectionListModule();

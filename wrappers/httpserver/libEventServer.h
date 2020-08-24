@@ -19,36 +19,48 @@
 #include <string.h>
 #include <cstring>
 
+/**
+ * Base class for callback driven interface for HTTP server
+ **/
 class LibEventServer {
 private:
-    evhttp *server;
-    event_base *base;
+    evhttp     *server = NULL;
+    event_base *base   = NULL;
 
 public:
-    const int DEFAULT_PORT = 8040;
-    const char *DEFAULT_IP_ADDRESS = "0.0.0.0";
+    static const int   DEFAULT_PORT;
+    static const char *DEFAULT_IP_ADDRESS;
 
-    LongPoll *poll;
+    LongPoll *poll = NULL;
 
-    struct _options {
+    struct Options {
+        Options(int port, const char *addr, int verbose) :
+            port(port),
+            addr(addr),
+            verbose(verbose)
+        {}
+
         int port;
-        char *addr;
+        std::string addr;
         int verbose;
-    } options;
+    };
 
-    LibEventServer() {
-        options.port = DEFAULT_PORT;
-        options.addr = (char *) DEFAULT_IP_ADDRESS;
-        options.verbose = 0;
-        poll = new LongPoll();
+    Options options;
+
+    LibEventServer( int port = DEFAULT_PORT, const char *addr = (const char *) DEFAULT_IP_ADDRESS, int verbose = 0) :
+        options(port, addr, verbose),
+        poll(new LongPoll())
+    {
     }
 
-    int setup();
-    int set_callback(const char *path, void (*callback)(evhttp_request *, void *));
+    virtual int setup();
+
+    int set_callback(const char *path, void (*callback)(evhttp_request *, void *), void *arg = NULL);
     void remove_callback(const char *path);
-    void override_callback(const char *path, void (*callback)(evhttp_request *, void *));
-    void set_default_callback(void (*callback)(evhttp_request *, void *));
-    void process_requests();
+    void override_callback(const char *path, void (*callback)(evhttp_request *, void *), void *arg = NULL);
+
+    void set_default_callback(void (*callback)(evhttp_request *, void *), void *arg = NULL);
+    void process_requests(bool nonBlock = true);
 };
 
 #endif //LIBEVENTAPP_LIBEVENTSERVER_H

@@ -25,7 +25,7 @@ public:
     virtual std::vector<uint8_t> getContent();
     virtual std::string getContentType();
 
-    bool changeValue(const QUrl &url, QVariant &realValue);
+    bool changeValue(const std::string &url, std::string &realValue);
 
     corecvs::LockableObject *mReflection;
 };

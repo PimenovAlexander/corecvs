@@ -1,35 +1,42 @@
+#include "core/utils/utils.h"
+
 #include "contents/jsonContent.h"
 #include "contents/imageContent.h"
 #include "imageListModule.h"
 
+#include <httpUtils.h>
 
+using namespace corecvs;
 
 ImageListModule::ImageListModule()
 {
 }
 
 
-bool ImageListModule::shouldProcessURL(QUrl url)
+bool ImageListModule::shouldProcessURL(std::string url)
 {
-    QString path = url.path();
-    if (path.startsWith("/framelist")) {
+    std::string path = url;
+    if (HelperUtils::startsWith(path, "/framelist")) {
         return true;
     }
 
-    if (path.startsWith("/imagelist.json")) {
+    if (HelperUtils::startsWith(path, "/imagelist.json")) {
         return true;
     }
 
-    if (path.startsWith("/frame.jpg") || path.startsWith("/frame.bmp") || path.startsWith("/frame.png")) {
+    if (HelperUtils::startsWith(path, "/frame.jpg") ||
+        HelperUtils::startsWith(path, "/frame.bmp") ||
+        HelperUtils::startsWith(path, "/frame.png"))
+    {
         return true;
     }
     return false;
 }
 
-bool ImageListModule::shouldWrapURL(QUrl url)
+bool ImageListModule::shouldWrapURL(std::string url)
 {
-    QString path = url.path();
-    if (path.startsWith("/framelist")) {
+    std::string path = url;
+    if (HelperUtils::startsWith(path, "/framelist")) {
         return true;
     }
 
@@ -37,20 +44,20 @@ bool ImageListModule::shouldWrapURL(QUrl url)
 }
 
 
-QSharedPointer<HttpContent> ImageListModule::getContentByUrl(QUrl url)
+std::shared_ptr<HttpContent> ImageListModule::getContentByUrl(std::string url)
 {
-    QString urlPath = url.path();
-    QList<QPair<QString, QString> > query = QUrlQuery(url).queryItems();
+    std::string urlPath = url;
+    std::vector<std::pair<std::string, std::string> > query = HttpUtils::parseParameters(urlPath);
 
-    if (urlPath.startsWith("/framelist"))
+    if (HelperUtils::startsWith(urlPath, "/framelist"))
     {
-        return QSharedPointer<HttpContent>(new ImageListContent(mImages->getImageNames()));
+        return std::shared_ptr<HttpContent>(new ImageListContent(mImages->getImageNames()));
     }
-    if (urlPath.startsWith("/frame.jpg") ||
-        urlPath.startsWith("/frame.bmp") ||
-        urlPath.startsWith("/frame.png"))
+    if (HelperUtils::startsWith(urlPath, "/frame.jpg") ||
+        HelperUtils::startsWith(urlPath, "/frame.bmp") ||
+        HelperUtils::startsWith(urlPath, "/frame.png"))
     {
-        QString imageName = "Main";
+        std::string imageName = "Main";
         if (query.size() > 0 && query.at(0).first == "name")
         {
             imageName = query.at(0).second;
@@ -60,31 +67,32 @@ QSharedPointer<HttpContent> ImageListModule::getContentByUrl(QUrl url)
         if (query.size() > 1 && query.at(1).first == "scale")
         {
             bool ok = true;
-            scale = query.at(1).second.toDouble(&ok) / 100.0;
+            std::string strScale = query.at(1).second;
+            scale = HelperUtils::parseDouble(strScale) / 100.0;
             if (!ok || scale <= 0.0 || scale >= 3.0)
                 scale = 1.0;
         }
 
-        QString format = "JPG";
-        if(urlPath.startsWith("/frame.bmp")) {
+        std::string format = "JPG";
+        if(HelperUtils::startsWith(urlPath, "/frame.bmp")) {
             format = "BMP";
         }
-        if(urlPath.startsWith("/frame.png")) {
+        if(HelperUtils::startsWith(urlPath, "/frame.png")) {
             format = "PNG";
         }
 
         MetaImage image = mImages->getImage(imageName);
-        if (image.mImage.isNull())
+        if (image.mImage)
         {
-            return QSharedPointer<HttpContent>(new ImageContent(QSharedPointer<QImage>(NULL)));
+            return std::shared_ptr<HttpContent>(new ImageContent(std::shared_ptr<corecvs::RGB24Buffer>(NULL)));
         }
 
-        return QSharedPointer<HttpContent>(new ImageContent(image.mImage, scale, format));
+        return std::shared_ptr<HttpContent>(new ImageContent(image.mImage, scale, format));
     }
 
-    if (urlPath.startsWith("/imagelist.json"))
+    if (HelperUtils::startsWith(urlPath,"/imagelist.json"))
     {
-        QString prefix = "";
+        std::string prefix = "";
         if (query.size() > 0 && query.at(0).first == "name")
         {
             prefix = query.at(0).second;
@@ -93,26 +101,25 @@ QSharedPointer<HttpContent> ImageListModule::getContentByUrl(QUrl url)
         uint64_t since = 0;
         if (query.size() > 1 && query.at(1).first == "since")
         {
-            since = query.at(1).second.toULongLong();
+            std::string strStamp = query.at(1).second;
+            since = stol(strStamp);
         }
 
-        QVariantMap vars;
-
-        QList<QString> names = mImages->getImageNames();
+        std::vector<std::string> names = mImages->getImageNames();
         for (int i = 0; i < names.size(); i++)
         {
-            if (!names[i].startsWith(prefix))
+            if (!HelperUtils::startsWith(names[i], prefix))
                 continue;
             MetaImage image = mImages->getImage(names[i]);
             if (image.mTimestamp <= since)
                 continue;
-            vars[names[i]] = QVariant((qlonglong)image.mTimestamp);
+            //vars[names[i]] = QVariant((qlonglong)image.mTimestamp);
         }
 
-        return QSharedPointer<HttpContent>(new JSONContent(vars));
+        return std::shared_ptr<HttpContent>();
     }
 
-    return QSharedPointer<HttpContent>();
+    return std::shared_ptr<HttpContent>();
 }
 
 

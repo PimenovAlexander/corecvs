@@ -6,6 +6,11 @@ set (HDR_FILES
     ${CMAKE_CURRENT_LIST_DIR}/libs/imageGenerator.h
     ${CMAKE_CURRENT_LIST_DIR}/libs/statsGenerator.h
     ${CMAKE_CURRENT_LIST_DIR}/libs/longPoll.h
+    ${CMAKE_CURRENT_LIST_DIR}/libs/httpUtils.h
+
+
+    ${CMAKE_CURRENT_LIST_DIR}/libs/cStyleExample.h
+
 )
 
 set (SRC_FILES
@@ -16,6 +21,10 @@ set (SRC_FILES
     ${CMAKE_CURRENT_LIST_DIR}/libs/imageGenerator.cpp
     ${CMAKE_CURRENT_LIST_DIR}/libs/statsGenerator.cpp
     ${CMAKE_CURRENT_LIST_DIR}/libs/longPoll.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/libs/httpUtils.cpp
+
+    ${CMAKE_CURRENT_LIST_DIR}/libs/cStyleExample.cpp
+
 )
 
 # Modules and contents

@@ -2,6 +2,7 @@
 #define IMAGELISTMODULE_H
 
 #include <memory>
+#include <vector>
 
 #include "core/utils/global.h"
 #include "core/buffers/rgb24/rgb24Buffer.h"
@@ -9,10 +10,10 @@
 #include "httpServerModule.h"
 
 struct MetaImage {
-    std::shared_ptr<RGB24Buffer> mImage;
+    std::shared_ptr<corecvs::RGB24Buffer> mImage;
     uint64_t mTimestamp;
 
-    MetaImage(std::shared_ptr<RGB24Buffer> image = QSharedPointer<QImage>(), uint64_t timestamp = 0) :
+    MetaImage(std::shared_ptr<corecvs::RGB24Buffer> image = std::shared_ptr<corecvs::RGB24Buffer>(), uint64_t timestamp = 0) :
         mImage(image),
         mTimestamp(timestamp)
     {}
@@ -20,21 +21,26 @@ struct MetaImage {
 
 class ImageListModuleDAO {
 public:
-    virtual QList<QString> getImageNames() = 0;
-    virtual MetaImage      getImage(QString name) = 0;
+    virtual std::vector<std::string> getImageNames() = 0;
+    virtual MetaImage                getImage(std::string name) = 0;
 };
 
 class ImageListModuleHashDAO : public ImageListModuleDAO {
 public:
-    QHash<QString, QSharedPointer<QImage> > mImages;
+    std::map<std::string, MetaImage> mImages;
 
-    virtual QList<QString> getImageNames() {
-        return mImages.keys();
+    virtual std::vector<std::string> getImageNames() {
+        vector<std::string> names;
+        names.reserve(mImages.size());
+        for (auto it : mImages) {
+            names.push_back(it.first);
+        }
+        return names;
     }
 
-    virtual MetaImage getImage(QString name)
+    virtual MetaImage getImage(std::string name)
     {
-        if (!mImages.contains(name)) {
+        if (mImages.count(name) == 0) {
             return MetaImage();
         }
         return MetaImage(mImages[name]);
@@ -47,9 +53,9 @@ class ImageListModule : public HttpServerModule
 public:
     ImageListModuleDAO *mImages;
 
-    virtual bool shouldProcessURL(QUrl url);
-    virtual bool shouldWrapURL(QUrl url);
-    virtual QSharedPointer<HttpContent> getContentByUrl(QUrl url);
+    virtual bool shouldProcessURL(std::string url);
+    virtual bool shouldWrapURL   (std::string url);
+    virtual std::shared_ptr<HttpContent> getContentByUrl(std::string url);
 
     ImageListModule();
 };

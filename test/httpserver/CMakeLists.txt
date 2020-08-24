@@ -2,7 +2,8 @@ project (httpserver)
 
 set (SRC_FILES
     main_httpserver.cpp
-        resources.c
+    resources.c
+    resources_test.c
 )
 
 set (HDR_FILES
@@ -62,14 +63,17 @@ add_custom_command(TARGET ${NAME} POST_BUILD
         COMMENT "Copying ${NAME} to binary directory"
         )
 
-function(create_resources dir output)
-    function(create_resources_recursively dir output)
-        message("create_resources_recursively(${dir}, ${output})")
+function(create_resources dir output prefix)
+
+    set(INDEX_LIST "")
+
+    function(create_resources_recursively dir output prefix)
+        message("create_resources_recursively(${dir}, ${output}, ${prefix})")
         file(GLOB bins ${dir}/*)
         foreach(bin ${bins})
             message("Packaging resource file: ${bin}")
             if(IS_DIRECTORY ${bin})
-                create_resources_recursively(${bin} ${output})
+                create_resources_recursively(${bin} ${output} ${prefix})
             endif()
             # Get short filename
             string(REGEX MATCH "([^/]+)$" filename ${bin})
@@ -78,13 +82,31 @@ function(create_resources dir output)
             file(READ ${bin} filedata HEX)
             # Convert hex data for C compatibility
             string(REGEX REPLACE "([0-9a-f][0-9a-f])" "0x\\1," filedata "${filedata}")
-            file(APPEND ${output} "const unsigned char ${filename}[] = {${filedata}};\nconst unsigned ${filename}_size = sizeof(${filename});\n")
+
+            # beautify it a bit
+            string(REGEX REPLACE "([^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,)" "\\1\n     " filedata "${filedata}")
+            file(APPEND ${output} "const unsigned char ${prefix}${filename}[] = {\n     ${filedata}\n};\nconst unsigned ${prefix}${filename}_size = sizeof(${prefix}${filename});\n")
+
+
+            set(INDEX_LIST ${INDEX_LIST} "    {\"${prefix}${filename}\", ${prefix}${filename}, sizeof(${prefix}${filename}) },\n" PARENT_SCOPE)
         endforeach()
     endfunction()
-    # Create empty output file
+    # Create empty output files
     file(WRITE ${output} "")
-    create_resources_recursively(${dir} ${output})
+
+    create_resources_recursively(${dir} ${output} ${prefix})
+
+    file(APPEND ${output} "\n")
+    file(APPEND ${output} "typedef struct {\n    char *name;\n    const unsigned char *data;\n    int length;\n} ${prefix}resource_index_type;\n")
+    file(APPEND ${output} "\n")
+    file(APPEND ${output} "${prefix}resource_index_type ${prefix}resource_index[] = {\n")
+    file(APPEND ${output} ${INDEX_LIST} )
+    file(APPEND ${output} "};\n")
+
 endfunction()
 
-create_resources(pages/img resources.c)
+#file(WRITE ${index} "struct {char *name; const  unsigned char *}")
+
+create_resources(pages/img   resources.c      res_)
+create_resources(test_pages  resources_test.c test_)
 

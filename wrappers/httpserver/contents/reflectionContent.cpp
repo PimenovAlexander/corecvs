@@ -1,5 +1,3 @@
-//#include <QtCore/QBuffer>
-
 #include "reflectionContent.h"
 
 
@@ -13,60 +11,64 @@ ReflectionContent::ReflectionContent(LockableObject *reflection) :
 
 std::vector<uint8_t> ReflectionContent::getContent()
 {
-    QByteArray data;
+    std::ostringstream data;
     if (mReflection == NULL) {
-        data.append("Oops");
+        data << "Oops";
     } else {
         mReflection->lock();
 
-        QString prefix = "";
-        QString result;
+        std::string prefix = "";
+        std::ostringstream result;
 
         if (!mSimple) {
-            result += "Object: " + QString("0x%1").arg((quintptr)mReflection->rawObject, QT_POINTER_SIZE * 2, 16, QChar('0'));
+            result << "Object: ";
+            char buffer[100];
+            snprintf2buf(buffer, "0x%08X", mReflection->rawObject);
+            result << buffer;
         }
 
-        result += "<form class=\"QtStyle\" name=\"form1\" method=\"get\">\n";
-        result += "<table border=\"1\">\n";
+        result << "<form class=\"QtStyle\" name=\"form1\" method=\"get\">\n";
+        result << "<table border=\"1\">\n";
 
 
         for (int i = 0; i < mReflection->reflection->fieldNumber(); i++)
         {
-            result += "<tr>\n";
+            result << "<tr>\n";
             const BaseField *field = mReflection->reflection->fields[i];
 
             if (!mSimple) {
-                result += QString("<td>") + QString::number(field->id) + "</td>";
+                result << "<td>" << field->id << "</td>";
             }
-            result += QString("<td>") + field->name.name + "</td>";
+            result << "<td>" << field->name.name << "</td>";
 
             if (!mSimple) {
-                result += QString("<td>") + QString::number(field->type) + "</td>";
-                result += QString("<td>") + QString::number(field->offset) + "</td>";
+                result << "<td>" << field->type   << "</td>";
+                result << "<td>" << field->offset << "</td>";
             }
-            result += QString("<td>");
+            result << "<td>";
 
             switch (field->type) {
                 case BaseField::TYPE_BOOL:
                 {
                     bool *value = mReflection->getField<bool>(i);
-                    result  = result + "<input type=\"checkbox\" " + (*value ? "checked=\"checked\"" : "")
-                            + " onchange=\"postEdit(this)\" "
-                            + "name=\"" + prefix + field->name.name + "\" >";
-                    result  = result + field->name.name;
-                    result  = result + "</input>";
+
+                    result  << "<input type=\"checkbox\" " << (*value ? "checked=\"checked\"" : "");
+                    result  << " onchange=\"postEdit(this)\" ";
+                    result  << "name=\"" << prefix << field->name.name << "\" >";
+                    result  << field->name.name;
+                    result  << "</input>";
                     break;
                 }
                 case BaseField::TYPE_INT:
                 {
                     int *value = mReflection->getField<int>(i);
-                    result += "<input "
+                    result << "<input "
                                  //"id=\"" + QString::number(mId++) + "\"" //for what id?
                                  "onchange=\"postEdit(this)\" "
                                  "type=\"text\" "
                                  "size=\"5\" "
-                                 "value=\"" + QString::number(*value) + "\" "
-                                 "name=\"" + prefix + field->name.name + "\" "
+                                 "value=\"" << *value << "\" "
+                                 "name=\"" << prefix << field->name.name << "\" "
                                  ">"
                               "</input>\n";
                     break;
@@ -74,17 +76,17 @@ std::vector<uint8_t> ReflectionContent::getContent()
                 case BaseField::TYPE_DOUBLE:
                 {
                     double *value = mReflection->getField<double>(i);
-                    result += "<input type=\"text\"  size=\"5\" value=\"" + QString::number(*value)
-                           + "\" onchange=\"postEdit(this)\" "
-                           + " name=\"" + prefix + field->name.name + "\" >"  "</input>\n";
+                    result << "<input type=\"text\"  size=\"5\" value=\"" << *value
+                           << "\" onchange=\"postEdit(this)\" "
+                           << " name=\"" << prefix << field->name.name << "\" >"  "</input>\n";
                     break;
                 }
                 case BaseField::TYPE_STRING:
                 {
                     std::string *value = mReflection->getField<std::string>(i);
-                    result += "<input type=\"text\"  size=\"5\" name=\"" + prefix + field->name.name +
-                            + "\" onchange=\"postEdit(this)\" value=\""
-                            + QString::fromStdString(*value).toHtmlEscaped()  + "\" >"  "</input>\n";
+                    result << "<input type=\"text\"  size=\"5\" name=\"" << prefix << field->name.name
+                           << "\" onchange=\"postEdit(this)\" value=\""
+                           << *value << "\" >"  "</input>\n";
                     break;
                 }
 
@@ -94,16 +96,16 @@ std::vector<uint8_t> ReflectionContent::getContent()
                 const EnumField *enumField = static_cast<const EnumField *>(field);
                 const EnumReflection *enumReflection = enumField->enumReflection;
 
-                result  = result + "<select name=\""
-                        + prefix + field->name.name + "\" "
-                        + "onchange=\"postEdit(this)\" "
-                        + "autocomplete=\"off\">\n";
+                result  << "<select name=\""
+                        << prefix << field->name.name << "\" "
+                        << "onchange=\"postEdit(this)\" "
+                        << "autocomplete=\"off\">\n";
                 for (unsigned option = 0; option < enumReflection->options.size(); option++)
                 {
-                    result += "    <option value=\"" + QString::number(option) + "\" " +
-                             + (*value == option ? "selected" : "") + ">" + enumReflection->options[option]->name.name + "</option>\n";
+                    result << "    <option value=\"" << option << "\" "
+                           << (*value == option ? "selected" : "") << ">" << enumReflection->options[option]->name.name << "</option>\n";
                 }
-                result  = result + "</select>\n";
+                result  << "</select>\n";
                 break;
             }
 
@@ -112,17 +114,20 @@ std::vector<uint8_t> ReflectionContent::getContent()
             }
 
             //result += QString::number(field->id) + " " + field->name.name + " " + field->type + "<br/>\n";
-            result += "</td></tr>\n";
+            result << "</td></tr>\n";
         }
 
-        result += "</table>\n";
-        result += "</form>\n";
-        data.append(result);
+        result << "</table>\n";
+        result << "</form>\n";
+        data << result.str();
         mReflection->unlock();
     }
-    return data;
+    std::string str = data.str();
+    return std::vector<uint8_t>(str.begin(), str.end());
 }
 
+
+#if 0
 bool ReflectionContent::changeValue(const QUrl &url, QVariant &realValue)
 {
     typedef QPair<QString, QString> Items;
@@ -224,38 +229,40 @@ bool ReflectionContent::changeValue(const QUrl &url, QVariant &realValue)
 
     return ok;
 }
+#endif
 
-
-QString ReflectionContent::getContentType()
+std::string ReflectionContent::getContentType()
 {
     return "text/html";
 }
 
-ReflectionListContent::ReflectionListContent(QList<QString> names) :
+ReflectionListContent::ReflectionListContent(std::vector<std::string> names) :
     mNames(names)
 {
 
 }
 
-QByteArray ReflectionListContent::getContent()
+std::vector<uint8_t> ReflectionListContent::getContent()
 {
-    QByteArray data;
-    data.append("<h1>Control Structures</h1>\n");
-    data.append("<ol>\n");
-    foreach (QString name , mNames)
+    std::ostringstream data;
+    data << "<h1>Control Structures</h1>\n";
+    data << "<ol>\n";
+    for (auto name : mNames)
     {
-        data.append("  <li><a href=\"reflection?name=");
-        data.append( name );
-        data.append("\">");
-        data.append( name );
-        data.append("</a></li>\n");
+        data << "  <li><a href=\"reflection?name=";
+        data <<  name;
+        data << "\">";
+        data <<  name;
+        data << "</a></li>\n";
     }
 
-    data.append("</ol>\n");
-    return data;
+    data << "</ol>\n";
+
+    std::string str = data.str();
+    return std::vector<uint8_t>(str.begin(), str.end());
 }
 
-QString ReflectionListContent::getContentType()
+std::string ReflectionListContent::getContentType()
 {
     return "text/html";
 }

@@ -1,6 +1,8 @@
 #ifndef HTTPSERVERMODULE_H
 #define HTTPSERVERMODULE_H
 
+#include <memory>
+
 #include "httpContent.h"
 
 class HttpServerModule
@@ -60,21 +62,21 @@ public:
         return getContentByUrl(url);
     }
 
+#endif
 protected:
     /* Functions to be overloaded */
-    virtual bool shouldProcessURL(QUrl /*url*/)
+    virtual bool shouldProcessURL(std::string /*url*/)
     {
         return false;
     }
 
-    virtual bool shouldWrapURL(QUrl /*url*/)
+    virtual bool shouldWrapURL(std::string /*url*/)
     {
         return mShouldWrap;
     }
 
-    virtual QSharedPointer<HttpContent> getContentByUrl(QUrl url) = 0;
+    virtual std::shared_ptr<HttpContent> getContentByUrl(std::string url) = 0;
 
-#endif
 
 };
 

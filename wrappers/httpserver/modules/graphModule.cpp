@@ -1,23 +1,23 @@
 #include "core/stats/graphData.h"
 #include "graphModule.h"
 
-bool GraphModule::shouldProcessURL(QUrl url)
+bool GraphModule::shouldProcessURL(std::string url)
 {
-    QString path = url.path();
+    std::string path = url;
     if (path.startsWith("/graph.json")) {
         return true;
     }
     return false;
 }
 
-bool GraphModule::shouldWrapURL(QUrl url)
+bool GraphModule::shouldWrapURL(std::string url)
 {
     return false;
 }
 
-QSharedPointer<HttpContent> GraphModule::getContentByUrl(QUrl url)
+std::shared_ptr<HttpContent> GraphModule::getContentByUrl(std::string url)
 {
-    QString urlPath = url.path();
+    std::string urlPath = url;
 
     if (urlPath.startsWith("/graph.json"))
     {

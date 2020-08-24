@@ -255,6 +255,14 @@ double parseDouble(const string &s)
     return x;
 }
 
+std::string toLower(const std::string &s)
+{
+    std::string toReturn = s;
+    std::transform(toReturn.begin(), toReturn.end(), toReturn.begin(),
+        [](unsigned char c){ return std::tolower(c); });
+    return toReturn;
+}
+
 
 } // namespace HelperUtils
 

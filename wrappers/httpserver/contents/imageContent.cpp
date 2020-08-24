@@ -1,9 +1,9 @@
-//#include <QtCore/QBuffer>
-
 #include "imageContent.h"
+#include "core/utils/utils.h"
 
+using namespace corecvs;
 
-ImageContent::ImageContent(std::shared_ptr<corecvs::RGB24Buffer>, double scale, std::string format) :
+ImageContent::ImageContent(std::shared_ptr<corecvs::RGB24Buffer> image, double scale, std::string format) :
     mScale(scale),
     mFormat(format),
     mImage(image)
@@ -13,59 +13,48 @@ ImageContent::ImageContent(std::shared_ptr<corecvs::RGB24Buffer>, double scale, 
 std::vector<uint8_t> ImageContent::getContent()
 {
     std::vector<uint8_t> data;
-    QBuffer buffer(&data);
     if (mImage != NULL)
     {
-        buffer.open(QIODevice::WriteOnly);
-        if (mScale == 1.0) {
-            mImage->save(&buffer, mFormat.toLatin1());
-        } else {
-            mImage->scaled(mImage->size() * mScale).save(&buffer, mFormat.toLatin1());
-        }
 
     } else {
-        QImage image(100,100, QImage::Format_RGB32);
-        image.fill(Qt::cyan);
-        /*QPainter p(&image);
-        p.setPen(Qt::black);
-        p.drawText(5, 30, "No image");
-        p.end();*/
-        image.save(&buffer, mFormat.toLatin1());
+
     }
     return data;
 }
 
-QString ImageContent::getContentType()
-{
-    return QString("image/%1").arg(mFormat.toLower());
+std::string ImageContent::getContentType()
+{    
+    return std::string("image/") + HelperUtils::toLower(mFormat);
 }
 
-ImageListContent::ImageListContent(QList<QString> names) :
+ImageListContent::ImageListContent(std::vector<std::string> names) :
     mNames(names)
 {
 
 }
 
-QByteArray ImageListContent::getContent()
+ std::vector<uint8_t> ImageListContent::getContent()
 {
-    QByteArray data;
-    data.append("<h1>Frames</h1>\n");
-    data.append("<ol>\n");
-    foreach (QString name , mNames)
+    std::ostringstream data;
+    data << "<h1>Frames</h1>\n";
+    data << "<ol>\n";
+    for(std::string name : mNames)
     {
-        data.append(QString("  <li><a href=\"frame.jpg?name=%1\">").arg(name));
-        data.append( name );
-        data.append("</a>&nbsp");
-        data.append(QString("<a href=\"frame.bmp?name=%1\">bmp</a>&nbsp").arg(name));
-        data.append(QString("<a href=\"frame.png?name=%1\">png</a>").arg(name));
-        data.append("</li>\n");
+        data << "  <li><a href=\"frame.jpg?name=" << name << "\">";
+        data << name;
+        data << "</a>&nbsp";
+        data << "<a href=\"frame.bmp?name=" << name << "\">bmp</a>&nbsp";
+        data << "<a href=\"frame.png?name=" << name << "\">png</a>";
+        data << "</li>\n";
     }
 
-    data.append("</ol>\n");
-    return data;
+    data << "</ol>\n";
+
+    std::string str = data.str();
+    return std::vector<uint8_t>(str.begin(), str.end());
 }
 
-QString ImageListContent::getContentType()
+std::string ImageListContent::getContentType()
 {
     return "text/html";
 }

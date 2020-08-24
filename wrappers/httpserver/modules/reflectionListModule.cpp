@@ -1,3 +1,5 @@
+#include "core/utils/utils.h"
+
 #include "reflectionListModule.h"
 #include "contents/reflectionContent.h"
 #include "contents/jsonContent.h"
@@ -5,12 +7,12 @@
 
 using namespace corecvs;
 
-bool ReflectionListModule::shouldProcessURL(QUrl url)
+bool ReflectionListModule::shouldProcessURL(std::string url)
 {
-    QString urlPath = url.path();
+    std::string urlPath = url;
     if (urlPath == "/reflections" ||
-        urlPath.startsWith("/reflection") ||
-        urlPath.startsWith("/ureflection"))
+        HelperUtils::startsWith(urlPath, "/reflection") ||
+        HelperUtils::startsWith(urlPath, "/ureflection"))
     {
         return true;
     }
@@ -19,7 +21,7 @@ bool ReflectionListModule::shouldProcessURL(QUrl url)
 
 bool ReflectionListModule::shouldWrapURL(std::string url)
 {
-    QString urlPath = url.path();
+    std::string urlPath = url;
     if (urlPath == "/reflections")
     {
         return true;
@@ -28,9 +30,11 @@ bool ReflectionListModule::shouldWrapURL(std::string url)
 
 }
 
-QSharedPointer<HttpContent> ReflectionListModule::getContentByUrl(QUrl url)
+std::shared_ptr<HttpContent> ReflectionListModule::getContentByUrl(std::string url)
 {
-    QString urlPath = url.path();
+    std::string urlPath = url;
+
+#if 0
     QList<QPair<QString, QString> > query = QUrlQuery(url).queryItems();
 
     if (urlPath == "/reflections")
@@ -62,13 +66,14 @@ QSharedPointer<HttpContent> ReflectionListModule::getContentByUrl(QUrl url)
             return QSharedPointer<HttpContent>(content);
         }
 
-        if (urlPath.startsWith("/reflection")) {
-            return WrapperContent::Wrap (QSharedPointer<HttpContent>(new ReflectionContent(object)));
+        if (HelperUtils::startsWith(urlPath, "/reflection")) {
+            return WrapperContent::Wrap (std::shared_ptr<HttpContent>(new ReflectionContent(object)));
         } else {
-            return WrapperContent::WrapS(QSharedPointer<HttpContent>(new ReflectionContent(object)));
+            return WrapperContent::WrapS(std::shared_ptr<HttpContent>(new ReflectionContent(object)));
         }
     }
-    return QSharedPointer<HttpContent>(NULL);
+#endif
+    return std::shared_ptr<HttpContent>(NULL);
 }
 
 ReflectionListModule::ReflectionListModule()
