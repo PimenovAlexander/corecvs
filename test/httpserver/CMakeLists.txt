@@ -17,6 +17,15 @@ if (JPEG_LIB)
     include(../../wrappers/libjpeg/sourcelist.cmake)
 endif()
 
+if (GIF_LIB)
+    include(../../wrappers/libgif/sourcelist.cmake)
+endif()
+
+if(AVCODEC_LIBS)
+    message("Switching on avcodec support <${AVCODEC_LIBS}>")
+    include(../../wrappers/avcodec/sourcelist.cmake)
+endif()
+
 include(../../wrappers/httpserver/sourcelist.cmake)
 
 set (NAME httpserver)

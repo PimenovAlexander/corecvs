@@ -1,4 +1,6 @@
 #include <fstream>
+#include <imageListModule.h>
+#include <reflectionListModule.h>
 #include <thread>
 
 
@@ -48,6 +50,58 @@ void server_loop(LibEventServer * server) {
     }
 }
 
+class RefDAO : public ReflectionModuleDAO {
+public:
+    RgbColorParameters params;
+    LockableObject *lockable;
+
+    RefDAO() {
+        lockable = new LockableObject(&params);
+    }
+
+    virtual std::vector<std::string>  getReflectionNames() override
+    {
+        return std::vector<std::string>({"example1", "example2"});
+    };
+
+    virtual corecvs::LockableObject *getReflectionObject(std::string name) override
+    {
+        if ( name == "example1" )
+        {
+            return lockable;
+        }
+        return  NULL;
+    }
+};
+
+
+class ImageDAO : public ImageListModuleDAO {
+public:
+    RGB24Buffer *buffer = NULL;
+
+    ImageDAO()
+    {
+        buffer = new RGB24Buffer(100, 100);
+        buffer->checkerBoard(10, RGBColor::Cyan(), RGBColor::Yellow());
+    }
+
+    virtual std::vector<std::string> getImageNames() override
+    {
+        return std::vector<std::string>({"example1"});
+    }
+
+    virtual MetaImage   getImage(std::string name) override
+    {
+        if ( name == "example1" )
+        {
+            SYNC_PRINT(("ImageDAO::getImage(): will return [%d x %d]\n", buffer->w, buffer->h));
+            return MetaImage(shared_ptr<RGB24Buffer>(new RGB24Buffer(buffer)));
+        }
+        return  MetaImage();
+    }
+
+
+};
 
 int main (int argc, char **argv)
 {
@@ -65,13 +119,15 @@ int main (int argc, char **argv)
 
     CommandLineSetter s(argc, argv);
 
-#define BASIC
+//#define BASIC
 #ifdef BASIC
     std::thread *mThread = NULL;
+    SYNC_PRINT(("Starting web server 1...\n"));
+    LibEventServer *server = new LibEventServer(8040, "0.0.0.0", 1);
+
     /* Start first basic webserver */
     {
-        SYNC_PRINT(("Starting web server 1...\n"));
-        LibEventServer *server = new LibEventServer(8040, "0.0.0.0", 1);
+
 
         server->setup();
 
@@ -97,12 +153,23 @@ int main (int argc, char **argv)
     }
 #endif
 
+#define MODULAR
 #ifdef MODULAR
     /* Start modular webserver */
+    HttpServer* server = new HttpServer(8041, "0.0.0.0", 1);
     {
-        HttpServer server;
-        server.init();
-        server.start();
+        ReflectionListModule *reflectionModule = new ReflectionListModule;
+        reflectionModule->mReflectionsDAO = new RefDAO;
+        reflectionModule->setPrefix("/R/");
+        server->addModule(reflectionModule);
+
+        ImageListModule *imageModule = new ImageListModule;
+        imageModule->mImages = new ImageDAO;
+        imageModule->setPrefix("/I/");
+        server->addModule(imageModule);
+
+        server->setup();
+        server->start();
 
     }
 
@@ -113,7 +180,7 @@ int main (int argc, char **argv)
     while (true) {
         char animation[4] = {'|', '/', '-', '\\' };
         SYNC_PRINT(("\r%c", animation[count % 4]));
-        usleep(10000);
+        usleep(1000000);
         count++;
     }
 

@@ -9,14 +9,107 @@ using namespace corecvs;
 int HttpServer::setup()
 {
     LibEventServer::setup();
-
+    set_default_callback(HttpServer::httpCallbackStatic, this);
 
     return 0;
 
 
 }
 
-void HttpServer::start()
+void HttpServer::httpCallback(evhttp_request *request)
+{
+    if (options.verbose > 0) {
+        SYNC_PRINT(("HttpServer::httpCallback(): called\n"));
+    }
+
+    evbuffer *evb = evbuffer_new(); // Creating a response buffer
+    if (!evb) return;               // No pointer returned
+
+    SYNC_PRINT(("URL: <%s>\n", request->uri ));
+
+    std::string url(request->uri);
+
+    /* Modules */
+    std::shared_ptr<HttpContent> contentPointer;
+
+    for (unsigned i = 0; i < mModuleList.size(); i++)
+    {
+        SYNC_PRINT((" - Checking module with prefix <%s>\n", mModuleList[i]->mPrefix.c_str()));
+        if (mModuleList[i]->shouldProcess(url)) {
+            contentPointer = mModuleList[i]->getContent(url);
+            if (!contentPointer) {
+                continue;
+            } else {
+                SYNC_PRINT((" - We have a match\n" ));
+            }
+
+#if 0
+            if (mModuleList[i]->shouldWrap(url))
+            {
+                pointer = QSharedPointer<HttpContent>(new WrapperContent(pointer));
+            }
+#endif
+        }
+    }
+
+    if (!contentPointer) {
+        evhttp_send_reply(request, HTTP_BADREQUEST, "FAIL", evb);
+    } else {
+
+        evhttp_add_header(request->output_headers, "Content-Type", contentPointer->getContentType().c_str());
+
+
+        vector<uint8_t> mem_buffer = contentPointer->getContent();
+        SYNC_PRINT((" - Outputing %d bytes of reply\n", (int)mem_buffer.size() ));
+        evbuffer_add(evb, mem_buffer.data(), mem_buffer.size());
+
+
+
+        evhttp_send_reply(request, HTTP_OK, "OK", evb);
+    }
+    evbuffer_free(evb);
+
+}
+
+void HttpServer::httpCallbackStatic(evhttp_request *request, void *server)
 {
 
+    HttpServer * httpServer = static_cast<HttpServer *>( server );
+    httpServer->httpCallback(request);
+}
+
+void HttpServer::start()
+{
+    if (options.verbose > 0) {
+        SYNC_PRINT(("HttpServer::start(): called\n"));
+    }
+    serverThread = new std::thread(HttpServer::runStatic, this);
+}
+
+void HttpServer::runStatic(HttpServer *server)
+{
+    server->run();
+}
+
+void HttpServer::run()
+{
+    int count = 0;
+    while (true) {
+        usleep(10);
+        process_requests(false);
+        count++;
+    }
+}
+
+
+void HttpServer::addModule(HttpServerModule *module)
+{
+    mModuleList.push_back(module);
+}
+
+HttpServer::~HttpServer()
+{
+    if (options.verbose > 0) {
+        SYNC_PRINT(("HttpServer::~HttpServer(): called. Starting shutdown\n"));
+    }
 }

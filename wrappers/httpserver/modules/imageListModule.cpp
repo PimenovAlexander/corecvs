@@ -82,7 +82,7 @@ std::shared_ptr<HttpContent> ImageListModule::getContentByUrl(std::string url)
         }
 
         MetaImage image = mImages->getImage(imageName);
-        if (image.mImage)
+        if (!image.mImage)
         {
             return std::shared_ptr<HttpContent>(new ImageContent(std::shared_ptr<corecvs::RGB24Buffer>(NULL)));
         }
@@ -106,7 +106,7 @@ std::shared_ptr<HttpContent> ImageListModule::getContentByUrl(std::string url)
         }
 
         std::vector<std::string> names = mImages->getImageNames();
-        for (int i = 0; i < names.size(); i++)
+        for (size_t i = 0; i < names.size(); i++)
         {
             if (!HelperUtils::startsWith(names[i], prefix))
                 continue;

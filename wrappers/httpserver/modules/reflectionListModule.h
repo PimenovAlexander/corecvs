@@ -38,7 +38,7 @@ class ReflectionListModule : public HttpServerModule
 {
 public:
 
-    ReflectionModuleDAO* mReflectionsDAO;
+    ReflectionModuleDAO* mReflectionsDAO = NULL;
 
     virtual bool shouldProcessURL(std::string url);
     virtual bool shouldWrapURL(std::string url);

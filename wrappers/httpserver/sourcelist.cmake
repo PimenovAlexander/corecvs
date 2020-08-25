@@ -1,3 +1,5 @@
+#optional depe
+
 set (HDR_FILES
     ${HDR_FILES}
     ${CMAKE_CURRENT_LIST_DIR}/libEventServer.h
@@ -34,6 +36,8 @@ set (HDR_FILES
     # ${CMAKE_CURRENT_LIST_DIR}/modules/graphModule.h
     ${CMAKE_CURRENT_LIST_DIR}/modules/imageListModule.h
     ${CMAKE_CURRENT_LIST_DIR}/modules/reflectionListModule.h
+    ${CMAKE_CURRENT_LIST_DIR}/modules/httpServerModule.h
+
     #${CMAKE_CURRENT_LIST_DIR}/modules/statisticsListModule.h
 
     ${CMAKE_CURRENT_LIST_DIR}/contents/httpContent.h

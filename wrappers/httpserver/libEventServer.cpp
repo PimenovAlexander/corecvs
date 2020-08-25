@@ -28,6 +28,10 @@ int LibEventServer::setup() {
         std::cerr << "Binding failed" << std::endl;
         return -2;
     }
+
+    if (options.verbose > 0) {
+        SYNC_PRINT(("LibEventServer::setup(): setup finished\n"));
+    }
     return 0;
 }
 
@@ -73,6 +77,14 @@ void LibEventServer::set_default_callback(void (*callback)(evhttp_request *, voi
  * Process all pending requests
  */
 void LibEventServer::process_requests(bool nonBlock) {
+    if (options.verbose > 0) {
+        SYNC_PRINT(("LibEventServer::process_requests(nonblock=%s): called\n", nonBlock ? "yes" : "no" ));
+    }
+
+    if (base == NULL) {
+        SYNC_PRINT(("LibEventServer::process_requests(): called before setup()\n"));
+        return;
+    }
     event_base_loop(base, nonBlock ? EVLOOP_NONBLOCK : EVLOOP_ONCE);
 }
 

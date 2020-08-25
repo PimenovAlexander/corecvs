@@ -1,5 +1,25 @@
 #include "imageContent.h"
 #include "core/utils/utils.h"
+#include "core/fileformats/bmpLoader.h"
+
+using namespace corecvs;
+
+
+#ifdef WITH_SWSCALE
+#include "swScaler.h"
+#endif
+
+#ifdef WITH_LIBJPEG
+#include "libjpegFileReader.h"
+#endif
+
+#ifdef WITH_LIBPNG
+#include "libpngFileReader.h"
+#endif
+
+#ifdef WITH_LIBGIF
+#include "libgifFileReader.h"
+#endif
 
 using namespace corecvs;
 
@@ -12,19 +32,63 @@ ImageContent::ImageContent(std::shared_ptr<corecvs::RGB24Buffer> image, double s
 
 std::vector<uint8_t> ImageContent::getContent()
 {
+    SYNC_PRINT(("ImageContent::getContent(): called\n"));
+    if (!mImage) {
+        SYNC_PRINT((" Image :is null\n"));
+    } else {
+        SYNC_PRINT((" Image :[%d x %d]\n", mImage->w, mImage->h));
+    }
+    SYNC_PRINT((" Format :%s\n", mFormat.c_str()));
+    SYNC_PRINT((" Scale  :%lf\n", mScale));
+
+
     std::vector<uint8_t> data;
     if (mImage != NULL)
     {
+        RGB24Buffer *toSend = mImage.get();
+#ifdef WITH_SWSCALE
+        if (mScale != 1.0) {
+            toSend = SWScaler::scale(toSend, mScale);
+        }
+#else
+        if (mScale == 0.5) {
+            toSend = AbstractMipmapPyramid<RGB24Buffer>::downsample2(toSend);
+        }
+#endif
 
+        do {
+#if WITH_LIBJPEG
+            if (mFormat == "JPG") {
+                SYNC_PRINT(("Storing jpeg\n"));
+                LibjpegFileReader().saveJPEG(data, toSend);
+            }
+#endif
+            if (mFormat == "PNG") {
+                SYNC_PRINT(("So far PNG unsupported\n"));
+            }
+
+            if (mFormat == "BMP") {
+                SYNC_PRINT(("Storing bmp\n"));
+                BMPLoader().save(data, toSend);
+            }
+        } while (false);
+
+
+        if (toSend != mImage.get()) {
+            delete_safe(toSend);
+        }
     } else {
-
+        return std::vector<uint8_t>();
     }
     return data;
 }
 
 std::string ImageContent::getContentType()
-{    
-    return std::string("image/") + HelperUtils::toLower(mFormat);
+{
+    std::string mimeType = std::string("image/") + HelperUtils::toLower(mFormat);
+    SYNC_PRINT(("ImageContent::getContentType(): %s\n", mimeType.c_str()));
+
+    return mimeType;
 }
 
 ImageListContent::ImageListContent(std::vector<std::string> names) :
@@ -44,7 +108,10 @@ ImageListContent::ImageListContent(std::vector<std::string> names) :
         data << name;
         data << "</a>&nbsp";
         data << "<a href=\"frame.bmp?name=" << name << "\">bmp</a>&nbsp";
-        data << "<a href=\"frame.png?name=" << name << "\">png</a>";
+        data << "<a href=\"frame.png?name=" << name << "\">png</a>&nbsp";
+        data << "<a href=\"frame.jpg?name=" << name << "&scale=30\">jpg 30%</a>&nbsp";
+        data << "<a href=\"frame.bmp?name=" << name << "&scale=30\">bmp 30%</a>&nbsp";
+        data << "<a href=\"frame.png?name=" << name << "&scale=30\">png 30%</a>&nbsp";
         data << "</li>\n";
     }
 
