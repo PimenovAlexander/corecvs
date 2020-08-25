@@ -24,8 +24,8 @@ class StatisticsContent : public HttpContent
 public:
 
 
-    StatisticsContent(Statistics const &stat);
-    virtual QByteArray getContent();
+    StatisticsContent(corecvs::Statistics const &stat);
+    virtual std::vector<uint8_t> getContent() override;
 
 private:
     corecvs::Statistics mStat;

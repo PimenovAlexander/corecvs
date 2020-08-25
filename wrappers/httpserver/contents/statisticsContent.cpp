@@ -18,7 +18,7 @@ class HTMLPrinter {
 public:
     std::ostringstream &mData;
 
-    HTMLPrinter(QByteArray &data) : mData(data) {}
+    HTMLPrinter(std::ostringstream &data) : mData(data) {}
 
     void printUnitedStat(const string &name, int /*length*/, const UnitedStat &stat, int /*lineNum*/)
     {
@@ -30,36 +30,39 @@ public:
 
         mData << "<tr>\n";
         if (stat.type == SingleStat::TIME)
-        {
-            QString stringTime;
-            //uint64_t time = (stat.sum / stat.number + 500) / 1000;
+        {           
+            char buffer[400];
+            snprintf2buf(buffer, "<td>%s</td><td>%7d us</td><td>%7d ms</td><td>%7d us</td>\n",
+                            name.c_str(),
+                            stat.last,
+                            (stat.last + 500) / 1000,
+                            mean
+                         );
+            mData << buffer;
 
-            mData.append(
-                        QString("<td>%1</td><td>%2 us</td><td>%3 ms</td><td>%4 us</td>\n")
-                        .arg(name.c_str())
-                        .arg(stat.last, 7)
-                        .arg((stat.last + 500) / 1000, 7)
-                        .arg(mean, 7));
         }
         else
         {
-            mData.append(
-                        QString("<td>%1</td><td></td><td>%2</td><td>%3</td>\n")
-                        .arg(name.c_str())
-                        .arg(stat.last, 10)
-                        .arg(mean, 10));
+            char buffer[400];
+            snprintf2buf(buffer,"<td>%s</td><td></td><td>%10d</td><td>%10d</td>\n",
+                            name.c_str(),
+                            stat.last,
+                            mean
+                         );
+             mData << buffer;
+
         }
 
-        mData.append("</tr>\n");
+        mData << "</tr>\n";
     }
 };
 
 class JSONPrinter {
 
 public:
-    QByteArray &mData;
+    std::ostringstream &mData;
 
-    JSONPrinter(QByteArray &data) : mData(data) {}
+    JSONPrinter(std::ostringstream &data) : mData(data) {}
 
     void printUnitedStat(const string &name, int /*length*/, const UnitedStat &stat, int lineNum)
     {
@@ -69,24 +72,23 @@ public:
             mean = stat.sum / stat.number;
         }
 
-        mData.append(lineNum == 0 ? "  " : " ,");
-        mData.append("{\n");
-        mData.append(
-                    QString("    \"name\":\"%1\",\n"
-                            "    \"value\":\"%2\",\n"
-                            "    \"mean\":\"%3\"\n")
-                    .arg(name.c_str())
-                    .arg(stat.last, 7)
-                    .arg(mean, 7));
-        mData.append("  }\n");
+        mData << (lineNum == 0 ? "  " : " ,");
+        mData << "{\n";
+        char buffer[400];
+        snprintf2buf(buffer,
+           "    \"name\":\"%s\",\n"
+           "    \"value\":\"%7d\",\n"
+           "    \"mean\":\"%7d\"\n",
+           name.c_str(), stat.last, mean);
+        mData << "  }\n";
     }
 };
 
 class HTMLPrinterEx {
 public:
-    QByteArray &mData;
+    std::ostringstream &mData;
 
-    HTMLPrinterEx(QByteArray &data) : mData(data) {}
+    HTMLPrinterEx(std::ostringstream &data) : mData(data) {}
 
     void printUnitedStat(const string &name, int /*length*/, const UnitedStat &stat, int /*lineNum*/)
     {
@@ -97,63 +99,68 @@ public:
         }
 
 
-        mData.append("<tr>\n");
+        mData << "<tr>\n";
         if (stat.type == SingleStat::TIME)
         {
-            QString stringTime;
-            //uint64_t time = (stat.sum / stat.number + 500) / 1000;
+            char buffer[400];
 
-            mData.append(
-                        QString("<td>%1</td><td>%2</td><td>%3 us</td><td>%4 ms</td><td>%5 us</td>\n")
-                        .arg(name.c_str())
-                        .arg(stat.number)
-                        .arg(stat.last, 7)
-                        .arg((stat.last + 500) / 1000, 7)
-                        .arg(mean, 7));
+            snprintf2buf(buffer, "<td>%s</td><td>%d</td><td>%7d us</td><td>%7d ms</td><td>%7d us</td>\n",
+                        name.c_str(),
+                        stat.number,
+                        stat.last,
+                        (stat.last + 500) / 1000,
+                        mean);
+            mData << buffer;
         }
         else
         {
-            mData.append(
-                        QString("<td>%1</td><td>%2</td><td></td><td>%3</td><td>%4</td>\n")
-                        .arg(name.c_str())
-                        .arg(stat.number)
-                        .arg(stat.last, 10)
-                        .arg(mean, 10));
+            char buffer[400];
+             snprintf2buf(buffer, "<td>%s</td><td>%d</td><td></td><td>%10d</td><td>%10d</td>\n",
+                        name.c_str(),
+                        stat.number,
+                        stat.last,
+                        mean);
+            mData << buffer;
         }
 
-        mData.append("</tr>\n");
+        mData << "</tr>\n";
     }
 };
 
-QByteArray StatisticsContent::getContent()
+std::vector<uint8_t> StatisticsContent::getContent()
 {
-    QByteArray data;
+    std::ostringstream data;
+
     //QtStatisticsCollector
     BaseTimeStatisticsCollector statCollector;
     statCollector.addStatistics(mStat);
-    data.append("<div class=\"StatisticsTable\">\n");
-    data.append("<table>\n");
-    data.append("<tr><th>Value Name</th><th colspan=\"2\">Current Value</th><th>Mean Value</th></tr>\n");
+    data << "<div class=\"StatisticsTable\">\n";
+    data << "<table>\n";
+    data << "<tr><th>Value Name</th><th colspan=\"2\">Current Value</th><th>Mean Value</th></tr>\n";
     HTMLPrinter printer(data);
     statCollector.printStats(printer);
-    data.append("</table>\n");
-    data.append("</div>\n");
-    return data;
+    data << "</table>\n";
+    data << "</div>\n";
+
+    std::string str = data.str();
+    return std::vector<uint8_t>(str.begin(), str.end());
 }
 
 std::vector<uint8_t> StatisticsJSONContent::getContent()
 {
-    QByteArray data;
-    // QtStatisticsCollector
+    std::ostringstream data;
+
     BaseTimeStatisticsCollector statCollector;
     statCollector.addStatistics(mStat);
-    data.append("{\n");
-    data.append("\"data\" : [\n");
+    data << "{\n";
+    data << "\"data\" : [\n";
     JSONPrinter printer(data);
     statCollector.printStats(printer);
-    data.append("     ]\n");
-    data.append("}\n");
-    return data;
+    data << "     ]\n";
+    data << "}\n";
+
+    std::string str = data.str();
+    return std::vector<uint8_t>(str.begin(), str.end());
 }
 
 
@@ -163,15 +170,18 @@ UnitedStatisticsContent::UnitedStatisticsContent(const BaseTimeStatisticsCollect
 
 std::vector<uint8_t> UnitedStatisticsContent::getContent()
 {
-    QByteArray data;
-    data.append("<div class=\"StatisticsTable\">\n");
-    data.append("<table>\n");
-    data.append("<tr><th>Value Name</th><th>Samples</th><th colspan=\"2\">Current Value</th><th>Mean Value</th></tr>\n");
+    std::ostringstream data;
+
+    data << "<div class=\"StatisticsTable\">\n";
+    data << "<table>\n";
+    data << "<tr><th>Value Name</th><th>Samples</th><th colspan=\"2\">Current Value</th><th>Mean Value</th></tr>\n";
     HTMLPrinterEx printer(data);
     mStat.printStats(printer);
-    data.append("</table>\n");
-    data.append("</div>\n");
-    return data;
+    data << "</table>\n";
+    data << "</div>\n";
+
+    std::string str = data.str();
+    return std::vector<uint8_t>(str.begin(), str.end());
 }
 
 

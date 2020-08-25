@@ -37,14 +37,13 @@ set (HDR_FILES
     ${CMAKE_CURRENT_LIST_DIR}/modules/imageListModule.h
     ${CMAKE_CURRENT_LIST_DIR}/modules/reflectionListModule.h
     ${CMAKE_CURRENT_LIST_DIR}/modules/httpServerModule.h
-
-    #${CMAKE_CURRENT_LIST_DIR}/modules/statisticsListModule.h
+    ${CMAKE_CURRENT_LIST_DIR}/modules/statisticsListModule.h
 
     ${CMAKE_CURRENT_LIST_DIR}/contents/httpContent.h
     ${CMAKE_CURRENT_LIST_DIR}/contents/imageContent.h
     # ${CMAKE_CURRENT_LIST_DIR}/contents/jsonContent.h
     ${CMAKE_CURRENT_LIST_DIR}/contents/reflectionContent.h
-    #${CMAKE_CURRENT_LIST_DIR}/contents/statisticsContent.h
+    ${CMAKE_CURRENT_LIST_DIR}/contents/statisticsContent.h
 
 )
 
@@ -53,12 +52,12 @@ set (SRC_FILES
     # ${CMAKE_CURRENT_LIST_DIR}/modules/graphModule.cpp
     ${CMAKE_CURRENT_LIST_DIR}/modules/imageListModule.cpp
     ${CMAKE_CURRENT_LIST_DIR}/modules/reflectionListModule.cpp
-    #${CMAKE_CURRENT_LIST_DIR}/modules/statisticsListModule.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/modules/statisticsListModule.cpp
 
     ${CMAKE_CURRENT_LIST_DIR}/contents/imageContent.cpp
     # ${CMAKE_CURRENT_LIST_DIR}/contents/jsonContent.cpp
     ${CMAKE_CURRENT_LIST_DIR}/contents/reflectionContent.cpp
-    # ${CMAKE_CURRENT_LIST_DIR}/contents/statisticsContent.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/contents/statisticsContent.cpp
 )
 
 

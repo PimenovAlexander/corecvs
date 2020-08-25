@@ -1,33 +1,36 @@
-#include <QUrlQuery>
-
 #include "statisticsListModule.h"
 #include "statisticsContent.h"
 
-bool StatisticsListModule::shouldProcessURL(QUrl url)
+#include "core/utils/utils.h"
+#include <httpUtils.h>
+
+using namespace corecvs;
+
+bool StatisticsListModule::shouldProcessURL(std::string url)
 {
-    QString path = url.path();
-    if (path.startsWith("/stat")) {
+    std::string path = url;
+    if (HelperUtils::startsWith(path, "/stat")) {
         return true;
     }
     return false;
 }
 
-bool StatisticsListModule::shouldWrapURL(QUrl /*url*/)
+bool StatisticsListModule::shouldWrapURL(std::string /*url*/)
 {
     return true;
 }
 
-QSharedPointer<HttpContent> StatisticsListModule::getContentByUrl(QUrl url)
+std::shared_ptr<HttpContent> StatisticsListModule::getContentByUrl(std::string url)
 {
-    QString urlPath = url.path();
-    QList<QPair<QString, QString> > query = QUrlQuery(url).queryItems();
+    std::string urlPath = url;
+    std::vector<std::pair<std::string, std::string> > query = HttpUtils::parseParameters(urlPath);
 
-    if (urlPath.startsWith("/stat"))
+    if (HelperUtils::startsWith(urlPath, "/stat"))
     {
-        return QSharedPointer<HttpContent>(new UnitedStatisticsContent(mStatisticsDAO->getCollector()));
+        return std::shared_ptr<HttpContent>(new UnitedStatisticsContent(mStatisticsDAO->getCollector()));
     }
 
-    return QSharedPointer<HttpContent>();
+    return std::shared_ptr<HttpContent>();
 
 }
 
