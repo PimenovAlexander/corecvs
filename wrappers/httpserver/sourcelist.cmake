@@ -4,6 +4,7 @@ set (HDR_FILES
     ${HDR_FILES}
     ${CMAKE_CURRENT_LIST_DIR}/libEventServer.h
     ${CMAKE_CURRENT_LIST_DIR}/server.h
+    ${CMAKE_CURRENT_LIST_DIR}/libs/compiledResourceDirectory.h
     ${CMAKE_CURRENT_LIST_DIR}/libs/base64.h
     ${CMAKE_CURRENT_LIST_DIR}/libs/imageGenerator.h
     ${CMAKE_CURRENT_LIST_DIR}/libs/statsGenerator.h
@@ -33,7 +34,8 @@ set (SRC_FILES
 
 set (HDR_FILES
     ${HDR_FILES}
-    # ${CMAKE_CURRENT_LIST_DIR}/modules/graphModule.h
+    ${CMAKE_CURRENT_LIST_DIR}/modules/resourcePackModule.h
+    ${CMAKE_CURRENT_LIST_DIR}/modules/graphModule.h
     ${CMAKE_CURRENT_LIST_DIR}/modules/imageListModule.h
     ${CMAKE_CURRENT_LIST_DIR}/modules/reflectionListModule.h
     ${CMAKE_CURRENT_LIST_DIR}/modules/httpServerModule.h
@@ -49,7 +51,8 @@ set (HDR_FILES
 
 set (SRC_FILES
     ${SRC_FILES}
-    # ${CMAKE_CURRENT_LIST_DIR}/modules/graphModule.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/modules/resourcePackModule.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/modules/graphModule.cpp
     ${CMAKE_CURRENT_LIST_DIR}/modules/imageListModule.cpp
     ${CMAKE_CURRENT_LIST_DIR}/modules/reflectionListModule.cpp
     ${CMAKE_CURRENT_LIST_DIR}/modules/statisticsListModule.cpp
@@ -75,8 +78,4 @@ set (INC_PATHS
 set (LIBS  ${LIBS}  ${EVENT_LIB} )
 
 
-# Additional stuff mostly for IDE only
-file(GLOB CURR_ADD_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/xml/*.xml)
-set(ADD_SRC_FILES ${ADD_SRC_FILES} ${CURR_ADD_SRC_FILES}  )
-file(GLOB CURR_ADD_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/../../tools/generator/regen-apriltag.sh)
-set(ADD_SRC_FILES ${ADD_SRC_FILES} ${CURR_ADD_SRC_FILES}  )
+

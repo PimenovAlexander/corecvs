@@ -39,9 +39,9 @@ class GraphModule : public HttpServerModule
 public:
     GraphModuleDAO *mGraphData;
 
-    virtual bool shouldProcessURL(QUrl url);
-    virtual bool shouldWrapURL(QUrl url);
-    virtual QSharedPointer<HttpContent> getContentByUrl(QUrl url);
+    virtual bool shouldProcessURL(std::string url);
+    virtual bool shouldWrapURL(std::string url);
+    virtual std::shared_ptr<HttpContent> getContentByUrl(std::string url);
 
     GraphModule();
 };

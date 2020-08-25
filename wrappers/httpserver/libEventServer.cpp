@@ -77,7 +77,7 @@ void LibEventServer::set_default_callback(void (*callback)(evhttp_request *, voi
  * Process all pending requests
  */
 void LibEventServer::process_requests(bool nonBlock) {
-    if (options.verbose > 0) {
+    if (options.verbose > 1) {
         SYNC_PRINT(("LibEventServer::process_requests(nonblock=%s): called\n", nonBlock ? "yes" : "no" ));
     }
 

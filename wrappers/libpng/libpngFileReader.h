@@ -37,7 +37,8 @@ public:
     virtual string name() override                      { return "LibPNG"; }
     virtual bool save(const string& name, const corecvs::RGB24Buffer *buffer, int quality = 95, bool alpha=false);
 
-    bool savePNG(const string& name, const corecvs::RGB24Buffer *buffer, int quality = 95, bool alpha=false);
+    bool savePNG(const string& name                    , const corecvs::RGB24Buffer *buffer, int quality = 95, bool alpha=false);
+    bool savePNG(std::vector<unsigned char> &mem_vector, const corecvs::RGB24Buffer *buffer, int quality = 95, bool alpha=false);
     bool savePNG(const string& name, const corecvs::RGB48Buffer *buffer, int quality = 95, bool alpha=false);
 
     virtual ~LibpngFileReader() {}

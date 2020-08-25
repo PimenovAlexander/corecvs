@@ -1,6 +1,9 @@
 #include <fstream>
+#include <graphModule.h>
 #include <imageListModule.h>
 #include <reflectionListModule.h>
+#include <resourcePackModule.h>
+#include <statisticsListModule.h>
 #include <thread>
 
 
@@ -20,8 +23,11 @@
 #include "libjpegFileReader.h"
 #endif
 
-extern "C" const char res_jojo0_jpg[];
-extern "C" const size_t res_jojo0_jpg_size;
+extern "C" const char res__someOtherImages_jojo0_jpg[];
+extern "C" const size_t res__someOtherImages_jojo0_jpg_size;
+
+extern "C" struct CompiledResourceDirectoryEntry test_resource_index[];
+extern "C" int test_resource_index_size;
 
 #include "server.h"
 
@@ -34,7 +40,7 @@ void on_resource_image_request(struct evhttp_request *req, void *arg)
     if (!evb) return;               // No pointer returned
 
     // Add image to buffer
-    evbuffer_add(evb, res_jojo0_jpg, res_jojo0_jpg_size);
+    evbuffer_add(evb, res__someOtherImages_jojo0_jpg, res__someOtherImages_jojo0_jpg_size);
     evhttp_add_header(req->output_headers, "Content-Type", "image/jpg");
 
     evhttp_send_reply(req, HTTP_OK, "OK", evb);
@@ -99,7 +105,45 @@ public:
         }
         return  MetaImage();
     }
+};
 
+class StatisticsDAO : public StatisticsModuleDAO
+{
+    corecvs::BaseTimeStatisticsCollector collector;
+
+public:
+    StatisticsDAO()
+    {
+        Statistics stats;
+        stats.setValue("value1", 100  );
+        stats.setTime ("value2", 10000);
+        collector.addStatistics(stats);
+    }
+
+    virtual corecvs::BaseTimeStatisticsCollector getCollector() override
+    {
+        return  collector;
+    }
+};
+
+class GraphDAO : public GraphModuleDAO
+{
+    GraphData data;
+
+public:
+    GraphDAO() {
+        for (int i = 0; i < 100; i++) {
+            data.addGraphPoint("test", 10 * sin(i / 10.0), true);
+        }
+    }
+
+    virtual void lockGraphData() { };
+    virtual void unlockGraphData() { };
+
+    virtual GraphData *getGraphData()
+    {
+        return &data;
+    }
 
 };
 
@@ -119,7 +163,7 @@ int main (int argc, char **argv)
 
     CommandLineSetter s(argc, argv);
 
-//#define BASIC
+#define BASIC
 #ifdef BASIC
     std::thread *mThread = NULL;
     SYNC_PRINT(("Starting web server 1...\n"));
@@ -156,22 +200,38 @@ int main (int argc, char **argv)
 #define MODULAR
 #ifdef MODULAR
     /* Start modular webserver */
-    HttpServer* server = new HttpServer(8041, "0.0.0.0", 1);
-    {
-        ReflectionListModule *reflectionModule = new ReflectionListModule;
-        reflectionModule->mReflectionsDAO = new RefDAO;
-        reflectionModule->setPrefix("/R/");
-        server->addModule(reflectionModule);
+    HttpServer* modularServer = new HttpServer(8041, "0.0.0.0", 2);
 
-        ImageListModule *imageModule = new ImageListModule;
-        imageModule->mImages = new ImageDAO;
-        imageModule->setPrefix("/I/");
-        server->addModule(imageModule);
+    ReflectionListModule *reflectionModule = new ReflectionListModule;
+    reflectionModule->mReflectionsDAO = new RefDAO;
+    reflectionModule->setPrefix("/R/");
+    modularServer->addModule(reflectionModule);
 
-        server->setup();
-        server->start();
+    ImageListModule *imageModule = new ImageListModule;
+    imageModule->mImages = new ImageDAO;
+    imageModule->setPrefix("/I/");
+    modularServer->addModule(imageModule);
 
-    }
+    StatisticsListModule *statsModule = new StatisticsListModule;
+    statsModule->mStatisticsDAO = new StatisticsDAO;
+    statsModule->setPrefix("/S/");
+    modularServer->addModule(statsModule);
+
+    GraphModule *graphModule = new GraphModule;
+    graphModule->mGraphData = new GraphDAO;
+    graphModule->setPrefix("/G/");
+    modularServer->addModule(graphModule);
+
+    ResourcePackModule *packModule = new ResourcePackModule(test_resource_index, test_resource_index_size);
+    packModule->setPrefix("/");
+    modularServer->addModule(packModule);
+
+
+
+    modularServer->setup();
+    modularServer->start();
+
+
 
 #endif
 

@@ -63,9 +63,12 @@ std::vector<uint8_t> ImageContent::getContent()
                 LibjpegFileReader().saveJPEG(data, toSend);
             }
 #endif
+
+#if WITH_LIBPNG
             if (mFormat == "PNG") {
-                SYNC_PRINT(("So far PNG unsupported\n"));
+                LibpngFileReader().savePNG(data, toSend);
             }
+#endif
 
             if (mFormat == "BMP") {
                 SYNC_PRINT(("Storing bmp\n"));

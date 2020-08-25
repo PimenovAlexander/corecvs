@@ -1,10 +1,16 @@
+#include <iostream>
+#include <sstream>
+
+#include "core/utils/utils.h"
 #include "core/stats/graphData.h"
 #include "graphModule.h"
+
+using namespace corecvs;
 
 bool GraphModule::shouldProcessURL(std::string url)
 {
     std::string path = url;
-    if (path.startsWith("/graph.json")) {
+    if (HelperUtils::startsWith(path, "/graph.json")) {
         return true;
     }
     return false;
@@ -19,11 +25,11 @@ std::shared_ptr<HttpContent> GraphModule::getContentByUrl(std::string url)
 {
     std::string urlPath = url;
 
-    if (urlPath.startsWith("/graph.json"))
+    if (HelperUtils::startsWith(urlPath, "/graph.json"))
     {
-        return QSharedPointer<HttpContent>(new GraphContent(mGraphData));
+        return std::shared_ptr<HttpContent>(new GraphContent(mGraphData));
     }
-    return QSharedPointer<HttpContent>(NULL);
+    return std::shared_ptr<HttpContent>(NULL);
 }
 
 GraphModule::GraphModule()
@@ -31,46 +37,48 @@ GraphModule::GraphModule()
 }
 
 
-QByteArray GraphContent::getContent()
+std::vector<uint8_t> GraphContent::getContent()
 {
-    QByteArray result;
+    std::ostringstream result;
     if (mDao == NULL) {
-        return result;
+        std::string str = result.str();
+        return std::vector<uint8_t>(str.begin(), str.end());
     }
 
     mDao->lockGraphData();
     GraphData *graph = mDao->getGraphData();
 
-    result.append("[\n");
+    result << "[\n";
 
     for (unsigned i = 0; i < graph->mData.size(); i++ )
     {
         GraphHistory *hist = &graph->mData[i];
-        result.append("{\n");
-        result.append(QString("\"label\":\"") + QString::fromStdString(hist->name) + "\",\n");
-        result.append(QString("\"data\": ["));
+        result << "{\n";
+        result << "\"label\":\"" << hist->name << "\",\n";
+        result << "\"data\": [";
         for (unsigned j = 0; j < hist->size(); j++)
         {
             GraphValue &value = hist->operator [](j);
-            QString record = "null";
             if (value.isValid) {
-                record = QString::number(value.value);
+                result << value.value;
+            } else {
+                result << "null";
             }
-            result.append(record);
             if (j != (hist->size() - 1)) {
-                result.append(",");
+                result << ",";
             }
         }
-        result.append("]\n");
-        result.append("}");
+        result << "]\n";
+        result << "}";
         if (i != graph->mData.size() - 1)
         {
-            result.append(",");
+            result << ",";
         }
-        result.append("\n");
+        result << "\n";
     }
-    result.append("]");
+    result << "]";
 
     mDao->unlockGraphData();
-    return result;
+    std::string str = result.str();
+    return std::vector<uint8_t>(str.begin(), str.end());
 }
