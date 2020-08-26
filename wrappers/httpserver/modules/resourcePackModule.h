@@ -34,7 +34,7 @@ class ResourcePackModule : public HttpServerModule
 {
 public:
     /* Build a set here for fast search. I'm too lazy for this */
-    CompiledResourceDirectoryEntry *data;
+    CompiledResourceDirectoryEntry *data = NULL;
     int size;
 
     virtual bool shouldProcessURL(std::string url);

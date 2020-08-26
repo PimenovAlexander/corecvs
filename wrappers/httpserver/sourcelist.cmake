@@ -1,4 +1,3 @@
-#optional depe
 
 set (HDR_FILES
     ${HDR_FILES}
@@ -10,7 +9,6 @@ set (HDR_FILES
     ${CMAKE_CURRENT_LIST_DIR}/libs/statsGenerator.h
     ${CMAKE_CURRENT_LIST_DIR}/libs/longPoll.h
     ${CMAKE_CURRENT_LIST_DIR}/libs/httpUtils.h
-
 
     ${CMAKE_CURRENT_LIST_DIR}/libs/cStyleExample.h
 
@@ -43,7 +41,7 @@ set (HDR_FILES
 
     ${CMAKE_CURRENT_LIST_DIR}/contents/httpContent.h
     ${CMAKE_CURRENT_LIST_DIR}/contents/imageContent.h
-    # ${CMAKE_CURRENT_LIST_DIR}/contents/jsonContent.h
+    ${CMAKE_CURRENT_LIST_DIR}/contents/jsonContent.h
     ${CMAKE_CURRENT_LIST_DIR}/contents/reflectionContent.h
     ${CMAKE_CURRENT_LIST_DIR}/contents/statisticsContent.h
 
@@ -58,7 +56,7 @@ set (SRC_FILES
     ${CMAKE_CURRENT_LIST_DIR}/modules/statisticsListModule.cpp
 
     ${CMAKE_CURRENT_LIST_DIR}/contents/imageContent.cpp
-    # ${CMAKE_CURRENT_LIST_DIR}/contents/jsonContent.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/contents/jsonContent.cpp
     ${CMAKE_CURRENT_LIST_DIR}/contents/reflectionContent.cpp
     ${CMAKE_CURRENT_LIST_DIR}/contents/statisticsContent.cpp
 )

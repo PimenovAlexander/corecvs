@@ -5,11 +5,15 @@
 
 class JSONContent : public HttpContent {
 public:
-    JSONContent();
+    /* So far only boolean */
+    bool result;
+    std::string value;
 
+    JSONContent();
     virtual ~JSONContent();
 
     void setResult(bool res);
+    void setValue(std::string val);
 
 
     virtual std::vector<uint8_t> getContent();

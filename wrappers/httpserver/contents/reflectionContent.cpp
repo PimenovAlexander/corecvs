@@ -29,7 +29,18 @@ std::vector<uint8_t> ReflectionContent::getContent()
             result << buffer;
         }
 
-        result << "<script src=\"/js/forms.js&id=$timestamp$\" type=\"text/javascript\"></script>";
+        /* This need to be moved somewhere */
+        result << "<html>\n"
+                  "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n"
+                  "\n"
+                  "<link rel=\"stylesheet\" type=\"text/css\"  href=\"/css/main.css\" />\n"
+                  "<link rel=\"icon\"       type=\"image/x-icon\" href=\"/favico.ico\">\n"
+                  "<head>\n"
+                  "<title>$name$</title>\n"
+                  "</head>\n"
+                  "<body>\n";
+
+        result << "<script src=\"/js/forms.js?id=$timestamp$\" type=\"text/javascript\"></script>";
 
         result << "<form class=\"QtStyle\" name=\"form1\" method=\"get\">\n";
         result << "<table border=\"1\">\n";
@@ -123,6 +134,11 @@ std::vector<uint8_t> ReflectionContent::getContent()
 
         result << "</table>\n";
         result << "</form>\n";
+
+        /* Move it somewhere */
+        result << "</body>\n"
+                  "</html>\n";
+
         data << result.str();
         mReflection->unlock();
     }
@@ -173,8 +189,9 @@ bool ReflectionContent::changeValue(const std::string &url, std::string &realVal
             }
             *value = remoteValue;
 
-            realValue = *value;
+            realValue = std::to_string(*value);
             mReflection->unlock();
+            ok = true;
             break;
         }
         if (field->type == BaseField::TYPE_ENUM)
@@ -188,8 +205,9 @@ bool ReflectionContent::changeValue(const std::string &url, std::string &realVal
             if (remoteValue >= ref->enumReflection->optionsNumber()) remoteValue = ref->enumReflection->optionsNumber() - 1;
             *value = remoteValue;
 
-            realValue = *value;
+            realValue = std::to_string(*value);
             mReflection->unlock();
+            ok = true;
             break;
         }
         if (field->type == BaseField::TYPE_DOUBLE)
@@ -205,8 +223,9 @@ bool ReflectionContent::changeValue(const std::string &url, std::string &realVal
             }
             *value = remoteValue;
 
-            realValue = *value;
+            realValue = std::to_string(*value);
             mReflection->unlock();
+            ok = true;
             break;
         }
         if (field->type == BaseField::TYPE_BOOL)
@@ -214,8 +233,9 @@ bool ReflectionContent::changeValue(const std::string &url, std::string &realVal
             mReflection->lock();
             bool *value = mReflection->getField<bool>(id);
             *value = (newValue == "on");
-            realValue = *value;
+            realValue = (*value) ? "true" : "false";
             mReflection->unlock();
+            ok = true;
             break;
         }
         if (field->type == BaseField::TYPE_STRING)

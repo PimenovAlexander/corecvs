@@ -61,12 +61,12 @@ std::shared_ptr<HttpContent> ReflectionListModule::getContentByUrl(std::string u
 
         if (query.size() > 1)
         {
-            /*JSONContent *content = new JSONContent();
-            QVariant newValue;
+            JSONContent *content = new JSONContent();
+            std::string newValue;
             bool result = ReflectionContent(object).changeValue(url, newValue);
             content->setResult(result);
             content->setValue(newValue);
-            return QSharedPointer<HttpContent>(content);*/
+            return std::shared_ptr<HttpContent>(content);
         }
 
         if (HelperUtils::startsWith(urlPath, "/reflection")) {

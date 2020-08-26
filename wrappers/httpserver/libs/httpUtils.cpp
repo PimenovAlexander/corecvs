@@ -32,7 +32,7 @@ vector<pair<string, string> > HttpUtils::parseParameters(std::string &url)
     std::cout << "Parsed input:" << std::endl;
     for (size_t i = 0; i < toReturn.size(); i++)
     {
-        std::cout << toReturn[i].first << " - " << toReturn[i].second << std::endl;
+        std::cout << "   " << toReturn[i].first << " - " << toReturn[i].second << std::endl;
     }
 
 

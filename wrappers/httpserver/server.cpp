@@ -40,7 +40,8 @@ void HttpServer::httpCallback(evhttp_request *request)
             if (!contentPointer) {
                 continue;
             } else {
-                SYNC_PRINT((" - We have a match\n" ));
+                SYNC_PRINT((" - We have a match!\n" ));
+                break;
             }
 
 #if 0
