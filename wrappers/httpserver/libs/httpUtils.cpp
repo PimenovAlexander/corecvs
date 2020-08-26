@@ -6,29 +6,26 @@
 using namespace corecvs;
 using std::string;
 using std::vector;
+using std::pair;
 
 
-std::vector<std::pair<std::string, std::string> > HttpUtils::parseParameters(std::string &url)
+
+vector<pair<string, string> > HttpUtils::parseParameters(std::string &url)
 {
     SYNC_PRINT(("HttpUtils::parseParameters(%s): called\n", url.c_str()));
-    std::vector<std::pair<std::string, std::string> > toReturn;
+    vector<pair<string, string> > toReturn;
 
-    vector<string> split1 = HelperUtils::stringSplit(url, '?');
+    string paramString = getParameters(url);
 
-    if (split1.size() != 2)
-    {
-        return toReturn;
-    }
-
-    vector<string> split2 = HelperUtils::stringSplit(split1[1], '&');
+    vector<string> split2 = HelperUtils::stringSplit(paramString, '&');
     for (size_t i = 0; i < split2.size(); i++)
     {
         vector<string> split3 = HelperUtils::stringSplit(split2[i], '=');
 
         if (split3.size() == 1) {
-            toReturn.push_back(std::pair<std::string, std::string>(split3[0], ""));
+            toReturn.push_back(pair<string, string>(split3[0], ""));
         } else if (split3.size() == 2) {
-            toReturn.push_back(std::pair<std::string, std::string>(split3[0], split3[1]));
+            toReturn.push_back(pair<string, string>(split3[0], split3[1]));
         }
     }
 
@@ -40,4 +37,30 @@ std::vector<std::pair<std::string, std::string> > HttpUtils::parseParameters(std
 
 
     return toReturn;
+}
+
+std::string HttpUtils::getPath(const std::string &url)
+{
+    std::size_t found = url.find_last_of("?");
+    return url.substr(0, found);
+}
+
+std::string HttpUtils::getParameters(const std::string &url)
+{
+    std::size_t found = url.find_last_of("?");
+    return url.substr(found + 1);
+}
+
+std::string HttpUtils::extentionToMIME(const std::string &path)
+{
+    std::string name(path);
+    if (corecvs::HelperUtils::endsWith(name, ".js")) {
+        return "text/javascript";
+    }
+
+    if (corecvs::HelperUtils::endsWith(name, ".bmp")) {
+        return "image/bmp";
+    }
+
+    return "text/html";
 }

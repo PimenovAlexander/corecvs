@@ -9,10 +9,11 @@ ResourcePackModule::ResourcePackModule(CompiledResourceDirectoryEntry *data, int
 
 bool ResourcePackModule::shouldProcessURL(std::string url)
 {
+    std::string path = HttpUtils::getPath(url);
     for (int i = 0; i < size; i++)
     {
         SYNC_PRINT(("-- Checking %s against %s\n", url.c_str(), data[i].name));
-        if (url == data[i].name) {
+        if (path == data[i].name) {
             return true;
             SYNC_PRINT(("--- Match"));
         }
@@ -27,10 +28,11 @@ bool ResourcePackModule::shouldWrapURL(std::string url)
 
 std::shared_ptr<HttpContent> ResourcePackModule::getContentByUrl(std::string url)
 {
+    std::string path = HttpUtils::getPath(url);
     for (int i = 0; i < size; i++)
     {
-        if (url == data[i].name) {
-            return std::shared_ptr<HttpContent>(new ResourcePackContent(data));
+        if (path == data[i].name) {
+            return std::shared_ptr<HttpContent>(new ResourcePackContent(&data[i]));
         }
     }
     return std::shared_ptr<HttpContent>();

@@ -1,6 +1,7 @@
 #ifndef RESOURCEPACKMODULE_H
 #define RESOURCEPACKMODULE_H
 
+#include <httpUtils.h>
 #include <memory.h>
 
 #include "httpServerModule.h"
@@ -25,14 +26,14 @@ public:
 
     virtual std::string getContentType() override
     {
-        return "text/html";
+        return HttpUtils::extentionToMIME(data->name);
     }
 };
 
 class ResourcePackModule : public HttpServerModule
 {
 public:
-    /* Build a set here. I'm too lazy for this */
+    /* Build a set here for fast search. I'm too lazy for this */
     CompiledResourceDirectoryEntry *data;
     int size;
 

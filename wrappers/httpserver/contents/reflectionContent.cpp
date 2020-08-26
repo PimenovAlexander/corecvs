@@ -1,5 +1,7 @@
 #include "reflectionContent.h"
 
+#include <httpUtils.h>
+
 
 using namespace corecvs;
 
@@ -26,6 +28,8 @@ std::vector<uint8_t> ReflectionContent::getContent()
             snprintf2buf(buffer, "0x%08X", mReflection->rawObject);
             result << buffer;
         }
+
+        result << "<script src=\"/js/forms.js&id=$timestamp$\" type=\"text/javascript\"></script>";
 
         result << "<form class=\"QtStyle\" name=\"form1\" method=\"get\">\n";
         result << "<table border=\"1\">\n";
@@ -127,23 +131,25 @@ std::vector<uint8_t> ReflectionContent::getContent()
 }
 
 
-#if 0
-bool ReflectionContent::changeValue(const QUrl &url, QVariant &realValue)
+
+bool ReflectionContent::changeValue(const std::string &url, std::string &realValue)
 {
-    typedef QPair<QString, QString> Items;
 
     bool ok = false;
 
-    for(int count = 1; count < QUrlQuery(url).queryItems().size(); count++)
+    std::string urlPath = url;
+    std::vector<std::pair<std::string, std::string> > query = HttpUtils::parseParameters(urlPath);
+
+
+    for(size_t count = 1; count < query.size(); count++)
     {
-        qDebug() << "Count: " << count;
-        Items item = QUrlQuery(url).queryItems()[count];
-        QString name  = item.first;
-        QString newValue = item.second;
+        std::cout << "Count: " << count << std::endl;
+        std::string name     = query[count].first;
+        std::string newValue = query[count].second;
 
-        qDebug() << "Setting value :" << name << " to " << newValue;
+        std::cout << "Setting value :" << name << " to " << newValue;
 
-        int id = mReflection->reflection->idByName(name.toLatin1().constData());
+        int id = mReflection->reflection->idByName(name.c_str());
         if (id == -1) {
             continue;
         }
@@ -159,7 +165,7 @@ bool ReflectionContent::changeValue(const QUrl &url, QVariant &realValue)
             mReflection->lock();
             int *value = mReflection->getField<int>(id);
 
-            int remoteValue = newValue.toInt(&ok);
+            int remoteValue = HelperUtils::parseInt(newValue);
             const IntField* ref = static_cast<const IntField*>(mReflection->getFieldReflection(id));
             if (ref->hasAdditionalValues) {
                 if (remoteValue < ref->min) remoteValue = ref->min;
@@ -176,7 +182,7 @@ bool ReflectionContent::changeValue(const QUrl &url, QVariant &realValue)
             mReflection->lock();
             int *value = mReflection->getField<int>(id);
 
-            int remoteValue = newValue.toInt(&ok);
+            int remoteValue = HelperUtils::parseInt(newValue);
             const EnumField* ref = static_cast<const EnumField*>(mReflection->getFieldReflection(id));
             if (remoteValue < 0) remoteValue = 0;
             if (remoteValue >= ref->enumReflection->optionsNumber()) remoteValue = ref->enumReflection->optionsNumber() - 1;
@@ -191,7 +197,7 @@ bool ReflectionContent::changeValue(const QUrl &url, QVariant &realValue)
             mReflection->lock();
             double *value = mReflection->getField<double>(id);
 
-            double remoteValue = newValue.toDouble(&ok);
+            double remoteValue = HelperUtils::parseDouble(newValue);
             const DoubleField* ref = static_cast<const DoubleField*>(mReflection->getFieldReflection(id));
             if (ref->hasAdditionalValues) {
                 if (remoteValue < ref->min) remoteValue = ref->min;
@@ -216,11 +222,11 @@ bool ReflectionContent::changeValue(const QUrl &url, QVariant &realValue)
         {
             mReflection->lock();
             std::string *value = mReflection->getField<std::string>(id);
-            qDebug() << "Input string arrived <" << newValue << ">";
+            std::cout << "Input string arrived <" << newValue << ">";
 
-            QString text = QUrl::fromPercentEncoding(newValue.toLatin1());
-            *value = text.toStdString();
-            realValue = QString::fromStdString(*value).toHtmlEscaped();
+            //QString text = QUrl::fromPercentEncoding(newValue.toLatin1());
+            *value = newValue;
+            //realValue = QString::fromStdString(*value).toHtmlEscaped();
             ok = true;
             mReflection->unlock();
             break;
@@ -229,7 +235,6 @@ bool ReflectionContent::changeValue(const QUrl &url, QVariant &realValue)
 
     return ok;
 }
-#endif
 
 std::string ReflectionContent::getContentType()
 {
