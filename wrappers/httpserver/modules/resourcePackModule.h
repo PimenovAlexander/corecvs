@@ -6,13 +6,18 @@
 
 #include "httpServerModule.h"
 #include "compiledResourceDirectory.h"
+#include "compiledResource.h"
+
+#include <map>
 
 class ResourcePackContent : public HttpContent
 {
 public:
-    CompiledResourceDirectoryEntry *data;
+    std::string name;
+    CompiledResource *data;
 
-    ResourcePackContent(CompiledResourceDirectoryEntry *data) :
+    ResourcePackContent(std::string name, CompiledResource *data) :
+        name(name),
         data(data)
     {}
 
@@ -26,15 +31,14 @@ public:
 
     virtual std::string getContentType() override
     {
-        return HttpUtils::extentionToMIME(data->name);
+        return HttpUtils::extentionToMIME(name);
     }
 };
 
 class ResourcePackModule : public HttpServerModule
 {
 public:
-    /* Build a set here for fast search. I'm too lazy for this */
-    CompiledResourceDirectoryEntry *data = NULL;
+    std::map<std::string, CompiledResource> data;
     int size;
 
     virtual bool shouldProcessURL(std::string url);
@@ -42,7 +46,7 @@ public:
     virtual std::shared_ptr<HttpContent> getContentByUrl(std::string url);
 
 
-    ResourcePackModule(CompiledResourceDirectoryEntry *data, int size);
+    ResourcePackModule(CompiledResourceDirectoryEntry *Data, int size);
 };
 
 #endif // RESOURCEPACKMODULE_H
