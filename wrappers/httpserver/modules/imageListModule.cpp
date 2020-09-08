@@ -57,6 +57,8 @@ std::shared_ptr<HttpContent> ImageListModule::getContentByUrl(std::string url)
         HelperUtils::startsWith(urlPath, "/frame.bmp") ||
         HelperUtils::startsWith(urlPath, "/frame.png"))
     {
+        std::cout << "Called with frame.jpg" << std::endl;
+
         std::string imageName = "Main";
         if (query.size() > 0 && query.at(0).first == "name")
         {
