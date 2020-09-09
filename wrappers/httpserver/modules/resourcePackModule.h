@@ -9,6 +9,7 @@
 #include "compiledResource.h"
 
 #include <map>
+#include <utility>
 
 class ResourcePackContent : public HttpContent
 {
@@ -17,11 +18,11 @@ public:
     CompiledResource *data;
 
     ResourcePackContent(std::string name, CompiledResource *data) :
-        name(name),
+        name(std::move(name)),
         data(data)
     {}
 
-    virtual std::vector<uint8_t> getContent() override
+    std::vector<uint8_t> getContent() override
     {
         std::vector<uint8_t> result;
         result.resize(data->length);
@@ -29,7 +30,7 @@ public:
         return result;
     }
 
-    virtual std::string getContentType() override
+    std::string getContentType() override
     {
         return HttpUtils::extentionToMIME(name);
     }
@@ -41,9 +42,9 @@ public:
     std::map<std::string, CompiledResource> data;
     int size;
 
-    bool shouldProcessURL(std::string url) override;
-    bool shouldWrapURL(std::string url) override;
-    std::shared_ptr<HttpContent> getContentByUrl(std::string url) override;
+    bool shouldProcessURL(const std::string& url) override;
+    bool shouldWrapURL(const std::string& url) override;
+    std::shared_ptr<HttpContent> getContentByUrl(const std::string& url) override;
 
 
     ResourcePackModule(CompiledResourceDirectoryEntry *Data, int size);

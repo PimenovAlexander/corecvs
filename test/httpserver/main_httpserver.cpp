@@ -4,6 +4,7 @@
 #include <reflectionListModule.h>
 #include <resourcePackModule.h>
 #include <statisticsListModule.h>
+#include <memory>
 #include <thread>
 
 
@@ -47,7 +48,7 @@ void on_resource_image_request(struct evhttp_request *req, void *arg)
     evbuffer_free(evb);
 }
 
-void server_loop(LibEventServer * server) {
+[[noreturn]] void server_loop(LibEventServer * server) {
     int count = 0;
     while (true) {
         usleep(10);
@@ -65,12 +66,12 @@ public:
         lockable = new LockableObject(&params);
     }
 
-    virtual std::vector<std::string>  getReflectionNames() override
+    std::vector<std::string>  getReflectionNames() override
     {
         return std::vector<std::string>({"example1", "example2"});
     };
 
-    virtual corecvs::LockableObject *getReflectionObject(std::string name) override
+    corecvs::LockableObject *getReflectionObject(std::string name) override
     {
         if ( name == "example1" )
         {
@@ -91,17 +92,17 @@ public:
         buffer->checkerBoard(10, RGBColor::Cyan(), RGBColor::Yellow());
     }
 
-    virtual std::vector<std::string> getImageNames() override
+    std::vector<std::string> getImageNames() override
     {
         return std::vector<std::string>({"example1"});
     }
 
-    virtual MetaImage   getImage(std::string name) override
+    MetaImage getImage(std::string name) override
     {
         if ( name == "example1" )
         {
             SYNC_PRINT(("ImageDAO::getImage(): will return [%d x %d]\n", buffer->w, buffer->h));
-            return MetaImage(shared_ptr<RGB24Buffer>(new RGB24Buffer(buffer)));
+            return MetaImage(std::make_shared<RGB24Buffer>(buffer));
         }
         return  MetaImage();
     }
@@ -137,10 +138,10 @@ public:
         }
     }
 
-    virtual void lockGraphData() { };
-    virtual void unlockGraphData() { };
+    void lockGraphData() override { };
+    void unlockGraphData() override { };
 
-    virtual GraphData *getGraphData()
+    GraphData *getGraphData() override
     {
         return &data;
     }

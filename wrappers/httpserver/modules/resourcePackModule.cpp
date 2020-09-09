@@ -12,7 +12,7 @@ ResourcePackModule::ResourcePackModule(CompiledResourceDirectoryEntry *Data, int
     }
 }
 
-bool ResourcePackModule::shouldProcessURL(std::string url)
+bool ResourcePackModule::shouldProcessURL(const std::string& url)
 {
     std::string path = HttpUtils::getPath(url);
     SYNC_PRINT(("--- For URL <%s> Would search resource <%s>\n", url.c_str(), path.c_str()));
@@ -20,12 +20,12 @@ bool ResourcePackModule::shouldProcessURL(std::string url)
     return (data.find(path) != data.end());
 }
 
-bool ResourcePackModule::shouldWrapURL(std::string url)
+bool ResourcePackModule::shouldWrapURL(const std::string& url)
 {
     return false;
 }
 
-std::shared_ptr<HttpContent> ResourcePackModule::getContentByUrl(std::string url)
+std::shared_ptr<HttpContent> ResourcePackModule::getContentByUrl(const std::string& url)
 {
     std::string path = HttpUtils::getPath(url);
     return std::shared_ptr<HttpContent>(new ResourcePackContent(path, &data[path]));

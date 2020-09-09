@@ -9,7 +9,7 @@
 
 class HttpUtils {
 public:
-    static std::vector<std::pair<std::string, std::string>> parseParameters(std::string &url);
+    static std::vector<std::pair<std::string, std::string>> parseParameters(const std::string &url);
 
     /* Throw away parameters*/
     static std::string getPath(const std::string &url);

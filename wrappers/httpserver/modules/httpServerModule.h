@@ -2,6 +2,7 @@
 #define HTTPSERVERMODULE_H
 
 #include <memory>
+#include <utility>
 
 #include "httpContent.h"
 #include "core/utils/utils.h"
@@ -17,12 +18,12 @@ public:
         mShouldWrap(shouldWrap)
     {}
 
-    void setPrefix(std::string string) {
-        mPrefix = string;
+    void setPrefix(std::string prefix) {
+        mPrefix = std::move(prefix);
     }
 
     /* Rewrite input */
-    virtual bool checkAndRewrite(std::string &url)
+    virtual bool checkAndRewrite(std::string url)
     {
         if (!mPrefix.empty())
         {
@@ -35,13 +36,13 @@ public:
         return true;
     }
 
-    virtual bool shouldProcess(std::string url)
+    virtual bool shouldProcess(const std::string& url)
     {
         if (!checkAndRewrite(url))
         {
-                return false;
+            return false;
         }
-        SYNC_PRINT(("Prefix is ok. Checking rest url\n"));
+        SYNC_PRINT(("Prefix is ok. Checking the rest of the url\n"));
         return shouldProcessURL(url);
     }
 
@@ -56,28 +57,28 @@ public:
     }
 #endif
 
-    virtual std::shared_ptr<HttpContent> getContent(std::string url)
+    virtual std::shared_ptr<HttpContent> getContent(const std::string& url)
     {
         if (!checkAndRewrite(url))
         {
-                return std::shared_ptr<HttpContent>();
+            return std::shared_ptr<HttpContent>();
         }
         return getContentByUrl(url);
     }
 
 protected:
     /* Functions to be overloaded */
-    virtual bool shouldProcessURL(std::string /*url*/)
+    virtual bool shouldProcessURL(const std::string& /*url*/)
     {
         return false;
     }
 
-    virtual bool shouldWrapURL(std::string /*url*/)
+    virtual bool shouldWrapURL(const std::string& /*url*/)
     {
         return mShouldWrap;
     }
 
-    virtual std::shared_ptr<HttpContent> getContentByUrl(std::string url) = 0;
+    virtual std::shared_ptr<HttpContent> getContentByUrl(const std::string& url) = 0;
 
 
 };

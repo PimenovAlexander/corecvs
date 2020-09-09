@@ -6,26 +6,24 @@
 
 using namespace corecvs;
 
-bool StatisticsListModule::shouldProcessURL(std::string url)
+bool StatisticsListModule::shouldProcessURL(const std::string& url)
 {
-    std::string path = url;
-    if (HelperUtils::startsWith(path, "/stat")) {
+    if (HelperUtils::startsWith(url, "/stat")) {
         return true;
     }
     return false;
 }
 
-bool StatisticsListModule::shouldWrapURL(std::string /*url*/)
+bool StatisticsListModule::shouldWrapURL(const std::string& /*url*/)
 {
     return true;
 }
 
-std::shared_ptr<HttpContent> StatisticsListModule::getContentByUrl(std::string url)
+std::shared_ptr<HttpContent> StatisticsListModule::getContentByUrl(const std::string& url)
 {
-    std::string urlPath = url;
-    std::vector<std::pair<std::string, std::string> > query = HttpUtils::parseParameters(urlPath);
+    std::vector<std::pair<std::string, std::string> > query = HttpUtils::parseParameters(url);
 
-    if (HelperUtils::startsWith(urlPath, "/stat"))
+    if (HelperUtils::startsWith(url, "/stat"))
     {
         return std::shared_ptr<HttpContent>(new UnitedStatisticsContent(mStatisticsDAO->getCollector()));
     }

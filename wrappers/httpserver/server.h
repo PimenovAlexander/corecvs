@@ -35,7 +35,7 @@ public:
     void start();
 
     static void runStatic(HttpServer *server);
-    void run();
+    [[noreturn]] void run();
 
 
     void addModule(HttpServerModule *module);

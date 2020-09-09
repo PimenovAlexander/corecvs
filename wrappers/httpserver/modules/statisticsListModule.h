@@ -17,9 +17,9 @@ class StatisticsListModule : public HttpServerModule
 public:
     StatisticsModuleDAO *mStatisticsDAO;
 
-    bool shouldProcessURL(std::string url) override;
-    bool shouldWrapURL(std::string url) override;
-    std::shared_ptr<HttpContent> getContentByUrl(std::string url) override;
+    bool shouldProcessURL(const std::string& url) override;
+    bool shouldWrapURL(const std::string& url) override;
+    std::shared_ptr<HttpContent> getContentByUrl(const std::string& url) override;
 
     StatisticsListModule();
 };

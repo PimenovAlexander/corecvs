@@ -7,29 +7,23 @@
 
 using namespace corecvs;
 
-bool GraphModule::shouldProcessURL(std::string url)
+bool GraphModule::shouldProcessURL(const std::string& url)
 {
-    std::string path = url;
-    if (HelperUtils::startsWith(path, "/graph.json")) {
-        return true;
-    }
-    return false;
+    return HelperUtils::startsWith(url, "/graph.json");
 }
 
-bool GraphModule::shouldWrapURL(std::string url)
+bool GraphModule::shouldWrapURL(const std::string& url)
 {
     return false;
 }
 
-std::shared_ptr<HttpContent> GraphModule::getContentByUrl(std::string url)
+std::shared_ptr<HttpContent> GraphModule::getContentByUrl(const std::string& url)
 {
-    std::string urlPath = url;
-
-    if (HelperUtils::startsWith(urlPath, "/graph.json"))
+    if (HelperUtils::startsWith(url, "/graph.json"))
     {
         return std::shared_ptr<HttpContent>(new GraphContent(mGraphData));
     }
-    return std::shared_ptr<HttpContent>(NULL);
+    return std::shared_ptr<HttpContent>(nullptr);
 }
 
 GraphModule::GraphModule()
@@ -40,12 +34,13 @@ GraphModule::GraphModule()
 std::vector<uint8_t> GraphContent::getContent()
 {
     std::ostringstream result;
-    if (mDao == NULL) {
+    if (mDao == nullptr) {
         std::string str = result.str();
         return std::vector<uint8_t>(str.begin(), str.end());
     }
 
     mDao->lockGraphData();
+
     GraphData *graph = mDao->getGraphData();
 
     result << "[\n";
@@ -79,6 +74,7 @@ std::vector<uint8_t> GraphContent::getContent()
     result << "]";
 
     mDao->unlockGraphData();
+
     std::string str = result.str();
     return std::vector<uint8_t>(str.begin(), str.end());
 }

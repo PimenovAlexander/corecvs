@@ -24,6 +24,7 @@ void LongPoll::subscribe(const std::string& event, subscriber client)
 int LongPoll::addEvent(const std::string& event, callback_fn callback)
 {
     SYNC_PRINT(("LongPoll::addEvent(const std::string& event, callback_fn callback) : called\n"));
+
     if (events.find(event) != events.end())
         return -1; // List of events already contains an event with the same title
 

@@ -27,7 +27,7 @@ public:
     corecvs::LockableObject *getReflectionObject(std::string name) override
     {
         if (mReflectionsList.count(name) == 0)
-            return NULL;
+            return nullptr;
         return mReflectionsList[name];
     }
 };
@@ -37,11 +37,11 @@ class ReflectionListModule : public HttpServerModule
 {
 public:
 
-    ReflectionModuleDAO* mReflectionsDAO = NULL;
+    ReflectionModuleDAO* mReflectionsDAO = nullptr;
 
-    bool shouldProcessURL(std::string url) override;
-    bool shouldWrapURL(std::string url) override;
-    std::shared_ptr<HttpContent> getContentByUrl(std::string url) override;
+    bool shouldProcessURL(const std::string& url) override;
+    bool shouldWrapURL(const std::string& url) override;
+    std::shared_ptr<HttpContent> getContentByUrl(const std::string& url) override;
 
 
     ReflectionListModule();
