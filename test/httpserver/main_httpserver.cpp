@@ -120,7 +120,7 @@ public:
         collector.addStatistics(stats);
     }
 
-    virtual corecvs::BaseTimeStatisticsCollector getCollector() override
+    corecvs::BaseTimeStatisticsCollector getCollector() override
     {
         return  collector;
     }

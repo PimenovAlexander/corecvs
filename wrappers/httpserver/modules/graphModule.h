@@ -22,8 +22,8 @@ public:
         mDao(dao)
     {}
 
-    virtual std::vector<uint8_t> getContent();
-    virtual std::string getContentType()
+    std::vector<uint8_t> getContent() override;
+    std::string getContentType() override
     {
         return "application/json";
     }
@@ -39,9 +39,9 @@ class GraphModule : public HttpServerModule
 public:
     GraphModuleDAO *mGraphData;
 
-    virtual bool shouldProcessURL(std::string url);
-    virtual bool shouldWrapURL(std::string url);
-    virtual std::shared_ptr<HttpContent> getContentByUrl(std::string url);
+    bool shouldProcessURL(std::string url) override;
+    bool shouldWrapURL(std::string url) override;
+    std::shared_ptr<HttpContent> getContentByUrl(std::string url) override;
 
     GraphModule();
 };

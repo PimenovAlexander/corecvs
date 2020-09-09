@@ -41,9 +41,9 @@ public:
     std::map<std::string, CompiledResource> data;
     int size;
 
-    virtual bool shouldProcessURL(std::string url);
-    virtual bool shouldWrapURL(std::string url);
-    virtual std::shared_ptr<HttpContent> getContentByUrl(std::string url);
+    bool shouldProcessURL(std::string url) override;
+    bool shouldWrapURL(std::string url) override;
+    std::shared_ptr<HttpContent> getContentByUrl(std::string url) override;
 
 
     ResourcePackModule(CompiledResourceDirectoryEntry *Data, int size);

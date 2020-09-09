@@ -15,17 +15,16 @@ class ReflectionModuleHashDAO : public ReflectionModuleDAO {
 public:
     std::map<std::string, corecvs::LockableObject *> mReflectionsList;
 
-    virtual vector<std::string> getReflectionNames() {
-
+    vector<std::string> getReflectionNames() override {
         vector<std::string> names;
         names.reserve(mReflectionsList.size());
-        for (auto it : mReflectionsList) {
+        for (const auto& it : mReflectionsList) {
             names.push_back(it.first);
         }
         return names;
     }
 
-    virtual corecvs::LockableObject *getReflectionObject(std::string name)
+    corecvs::LockableObject *getReflectionObject(std::string name) override
     {
         if (mReflectionsList.count(name) == 0)
             return NULL;
@@ -40,9 +39,9 @@ public:
 
     ReflectionModuleDAO* mReflectionsDAO = NULL;
 
-    virtual bool shouldProcessURL(std::string url);
-    virtual bool shouldWrapURL(std::string url);
-    virtual std::shared_ptr<HttpContent> getContentByUrl(std::string url);
+    bool shouldProcessURL(std::string url) override;
+    bool shouldWrapURL(std::string url) override;
+    std::shared_ptr<HttpContent> getContentByUrl(std::string url) override;
 
 
     ReflectionListModule();
