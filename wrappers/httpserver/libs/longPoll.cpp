@@ -4,6 +4,8 @@
 
 #include "longPoll.h"
 
+using namespace corecvs;
+
 /**
  * Add a subscriber that should receive a reply at the next instance of certain event happening
  * @param event name of the event

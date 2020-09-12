@@ -8,10 +8,7 @@ using namespace corecvs;
 
 bool StatisticsListModule::shouldProcessURL(const std::string& url)
 {
-    if (HelperUtils::startsWith(url, "/stat")) {
-        return true;
-    }
-    return false;
+    return (HelperUtils::startsWith(url, "/stat"));
 }
 
 bool StatisticsListModule::shouldWrapURL(const std::string& /*url*/)

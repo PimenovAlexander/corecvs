@@ -19,19 +19,21 @@
 #include <string.h>
 #include <cstring>
 
+#include <memory>
+
 /**
  * Base class for callback driven interface for HTTP server
  **/
 class LibEventServer {
 private:
-    evhttp     *server = NULL;
-    event_base *base   = NULL;
+    evhttp     *server = nullptr;
+    event_base *base   = nullptr;
 
 public:
     static const int   DEFAULT_PORT;
     static const char *DEFAULT_IP_ADDRESS;
 
-    LongPoll *poll = NULL;
+    //std::shared_ptr<LongPoll> poll = NULL;
 
     struct Options {
         Options(int port, const char *addr, int verbose) :
@@ -48,8 +50,8 @@ public:
     Options options;
 
     LibEventServer( int port = DEFAULT_PORT, const char *addr = (const char *) DEFAULT_IP_ADDRESS, int verbose = 0) :
-        options(port, addr, verbose),
-        poll(new LongPoll())
+        options(port, addr, verbose) //,
+        //poll(new LongPoll)
     {
     }
 

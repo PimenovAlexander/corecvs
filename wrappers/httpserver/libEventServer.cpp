@@ -66,7 +66,7 @@ void LibEventServer::set_default_callback(void (*callback)(evhttp_request *, voi
         SYNC_PRINT(("LibEventServer::set_default_callback( _, %s): called\n", arg == NULL ? "null" : "non null" ));
     }
 
-    if (server == NULL) {
+    if (server == nullptr) {
         SYNC_PRINT(("LibEventServer::set_default_callback(): called before setup()\n"));
         return;
     }

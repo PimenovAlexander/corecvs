@@ -13,18 +13,21 @@
 #include <queue>
 #include <map>
 
-using callback_fn = void (*)(evhttp_request *, void *);
+#include "core/utils/utils.h"
+#include "httpUtils.h"
+
+using callback_fn = void (*)(evhttp_request *, const std::string& /* url */);
 typedef evhttp_request* subscriber;
 
 struct long_poll_event {
     std::queue<subscriber> subscribers;
-    callback_fn callback;
-    bool ready;
+    callback_fn callback = nullptr;
+    bool ready = false;
 };
 
 class LongPoll {
 public:
-    LongPoll() {}
+    LongPoll() = default;
     void subscribe(const std::string& event, subscriber client);
     int addEvent(const std::string& event, callback_fn callback);
     void announce(const std::string& event);

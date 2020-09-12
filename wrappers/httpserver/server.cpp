@@ -12,7 +12,7 @@ using namespace corecvs;
 int HttpServer::setup()
 {
     int setupCode = LibEventServer::setup();
-    if (!setupCode)
+    if (setupCode)
         return setupCode;
 
     set_default_callback(HttpServer::httpCallbackStatic, this);
@@ -41,7 +41,7 @@ void HttpServer::httpCallback(evhttp_request *request)
 
     for (const auto& module : mModuleList)
     {
-        SYNC_PRINT((" - Checking module with prefix <%s>\n", module->mPrefix.c_str()));
+        SYNC_PRINT((" - Checking module with prefix <%s>\n", module->getPrefix().c_str()));
         if (module->shouldProcess(url)) {
             contentPointer = module->getContent(url);
             if (!contentPointer) {

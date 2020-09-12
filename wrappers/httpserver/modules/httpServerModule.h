@@ -9,21 +9,25 @@
 
 class HttpServerModule
 {
-public:
-    bool mShouldWrap;
+private:
     std::string mPrefix;
+    bool mShouldWrap;
 
 public:
     HttpServerModule(bool shouldWrap = true) :
         mShouldWrap(shouldWrap)
     {}
 
+    std::string getPrefix() {
+        return mPrefix;
+    }
+
     void setPrefix(std::string prefix) {
         mPrefix = std::move(prefix);
     }
 
     /* Rewrite input */
-    virtual bool checkAndRewrite(std::string url)
+    bool checkAndRewrite(std::string& url)
     {
         if (!mPrefix.empty())
         {
@@ -36,14 +40,15 @@ public:
         return true;
     }
 
-    virtual bool shouldProcess(const std::string& url)
+    bool shouldProcess(const std::string& url)
     {
-        if (!checkAndRewrite(url))
+        std::string urlPath(url);
+        if (!checkAndRewrite(urlPath))
         {
             return false;
         }
         SYNC_PRINT(("Prefix is ok. Checking the rest of the url\n"));
-        return shouldProcessURL(url);
+        return shouldProcessURL(urlPath);
     }
 
 #if 0
@@ -57,13 +62,14 @@ public:
     }
 #endif
 
-    virtual std::shared_ptr<HttpContent> getContent(const std::string& url)
+    std::shared_ptr<HttpContent> getContent(const std::string& url)
     {
-        if (!checkAndRewrite(url))
+        std::string urlPath(url);
+        if (!checkAndRewrite(urlPath))
         {
             return std::shared_ptr<HttpContent>();
         }
-        return getContentByUrl(url);
+        return getContentByUrl(urlPath);
     }
 
 protected:
