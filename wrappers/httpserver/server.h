@@ -23,7 +23,7 @@ public:
         LibEventServer(port, addr, verbose)
     {}
 
-    virtual int setup() override;
+    int setup() override;
     virtual void httpCallback(evhttp_request *request);
 
     static  void httpCallbackStatic(evhttp_request *request, void *server);
@@ -31,8 +31,11 @@ public:
 
     /* This method starts the server in a separate thread */
     /* You may want to start it synchroniously, then call LibEventServer methods directly */
-    std::thread *serverThread = NULL;
+    std::thread *serverThread = nullptr;
     void start();
+
+    int addEvent(const std::string& name, ContentProvider *provider);
+    int addEvent(const std::string& name, const std::string& url, ContentProvider *provider);
 
     static void runStatic(HttpServer *server);
     [[noreturn]] void run();

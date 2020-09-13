@@ -33,7 +33,7 @@ public:
     static const int   DEFAULT_PORT;
     static const char *DEFAULT_IP_ADDRESS;
 
-    //std::shared_ptr<LongPoll> poll = NULL;
+    LongPoll *poll = nullptr;
 
     struct Options {
         Options(int port, const char *addr, int verbose) :
@@ -50,8 +50,8 @@ public:
     Options options;
 
     LibEventServer( int port = DEFAULT_PORT, const char *addr = (const char *) DEFAULT_IP_ADDRESS, int verbose = 0) :
-        options(port, addr, verbose) //,
-        //poll(new LongPoll)
+        options(port, addr, verbose),
+        poll(new LongPoll)
     {
     }
 

@@ -6,8 +6,9 @@
 
 #include "httpContent.h"
 #include "core/utils/utils.h"
+#include "contentProvider.h"
 
-class HttpServerModule
+class HttpServerModule : ContentProvider
 {
 private:
     std::string mPrefix;
@@ -62,7 +63,7 @@ public:
     }
 #endif
 
-    std::shared_ptr<HttpContent> getContent(const std::string& url)
+    std::shared_ptr<HttpContent> getContent(const std::string& url) override
     {
         std::string urlPath(url);
         if (!checkAndRewrite(urlPath))
@@ -72,9 +73,22 @@ public:
         return getContentByUrl(urlPath);
     }
 
+    bool shouldPoll(const std::string& url)
+    {
+        std::string urlPath(url);
+        if (checkAndRewrite(urlPath))
+            return shouldPollURL(urlPath);
+        return false;
+    }
+
 protected:
     /* Functions to be overloaded */
     virtual bool shouldProcessURL(const std::string& /*url*/)
+    {
+        return false;
+    }
+
+    virtual bool shouldPollURL(const std::string& /*url*/)
     {
         return false;
     }
@@ -85,7 +99,6 @@ protected:
     }
 
     virtual std::shared_ptr<HttpContent> getContentByUrl(const std::string& url) = 0;
-
 
 };
 

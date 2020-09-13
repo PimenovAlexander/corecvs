@@ -29,9 +29,6 @@ void HttpServer::httpCallback(evhttp_request *request)
         SYNC_PRINT(("HttpServer::httpCallback(): called\n"));
     }
 
-    evbuffer *evb = evbuffer_new(); // Creating a response buffer
-    if (!evb) return;               // No pointer returned
-
     SYNC_PRINT(("URL: <%s>\n", request->uri ));
 
     std::string url(request->uri);
@@ -43,22 +40,23 @@ void HttpServer::httpCallback(evhttp_request *request)
     {
         SYNC_PRINT((" - Checking module with prefix <%s>\n", module->getPrefix().c_str()));
         if (module->shouldProcess(url)) {
-            contentPointer = module->getContent(url);
-            if (!contentPointer) {
-                continue;
+            if (!module->shouldPoll(url)) {
+                contentPointer = module->getContent(url);
+                if (!contentPointer) {
+                    continue;
+                } else {
+                    SYNC_PRINT((" - We have a match!\n"));
+                    break;
+                }
             } else {
-                SYNC_PRINT((" - We have a match!\n" ));
-                break;
+                poll->subscribe(url, request);
+                return;
             }
-
-#if 0
-            if (mModuleList[i]->shouldWrap(url))
-            {
-                pointer = QSharedPointer<HttpContent>(new WrapperContent(pointer));
-            }
-#endif
         }
     }
+
+    evbuffer *evb = evbuffer_new(); // Creating a response buffer
+    if (!evb) return;               // No pointer returned
 
     if (!contentPointer) {
         evhttp_send_reply(request, HTTP_BADREQUEST, "FAIL", evb);
@@ -79,8 +77,37 @@ void HttpServer::httpCallback(evhttp_request *request)
  */
 void HttpServer::httpCallbackStatic(evhttp_request *request, void *server)
 {
-    HttpServer * httpServer = static_cast<HttpServer *>( server );
+    auto httpServer = static_cast<HttpServer *>( server );
     httpServer->httpCallback(request);
+}
+
+int HttpServer::addEvent(const std::string& name, ContentProvider *provider)
+{
+    return HttpServer::addEvent(name, name, provider);
+}
+
+int HttpServer::addEvent(const std::string& name, const std::string& url, ContentProvider *provider)
+{
+    return poll->addEvent(name,
+                          [](evhttp_request * request, std::shared_ptr<HttpContent> contentPointer) {
+        evbuffer *evb = evbuffer_new(); // Creating a response buffer
+        if (!evb) return;               // No pointer returned
+
+        if (!contentPointer) {
+            evhttp_send_reply(request, HTTP_BADREQUEST, "FAIL", evb);
+        } else {
+            evhttp_add_header(request->output_headers, "Content-Type", contentPointer->getContentType().c_str());
+
+            vector<uint8_t> mem_buffer = contentPointer->getContent();
+            SYNC_PRINT((" - Outputing %d bytes of reply\n", (int)mem_buffer.size() ));
+            evbuffer_add(evb, mem_buffer.data(), mem_buffer.size());
+
+            evhttp_send_reply(request, HTTP_OK, "OK", evb);
+        }
+        evbuffer_free(evb);
+        },
+        provider,
+        url);
 }
 
 /**
