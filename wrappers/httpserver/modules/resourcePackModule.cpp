@@ -15,6 +15,8 @@ ResourcePackModule::ResourcePackModule(CompiledResourceDirectoryEntry *Data, int
 bool ResourcePackModule::shouldProcessURL(const std::string& url)
 {
     std::string path = HttpUtils::getPath(url);
+    if (corecvs::HelperUtils::endsWith(path, "/"))
+        path = path + "index.html";
     SYNC_PRINT(("--- For URL <%s> Would search resource <%s>\n", url.c_str(), path.c_str()));
 
     return (data.find(path) != data.end());
@@ -28,5 +30,7 @@ bool ResourcePackModule::shouldWrapURL(const std::string& url)
 std::shared_ptr<HttpContent> ResourcePackModule::getContentByUrl(const std::string& url)
 {
     std::string path = HttpUtils::getPath(url);
+    if (corecvs::HelperUtils::endsWith(path, "/"))
+        path = path + "index.html";
     return std::shared_ptr<HttpContent>(new ResourcePackContent(path, &data[path]));
 }

@@ -19,8 +19,11 @@ class HttpServer : public LibEventServer {
 public:
     std::vector<HttpServerModule *> mModuleList;
 
+    LongPoll *poll = nullptr;
+
     HttpServer(int port = DEFAULT_PORT, const char *addr = (const char *) DEFAULT_IP_ADDRESS, int verbose = 0) :
-        LibEventServer(port, addr, verbose)
+        LibEventServer(port, addr, verbose),
+        poll(new LongPoll)
     {}
 
     int setup() override;

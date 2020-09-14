@@ -7,6 +7,7 @@ html {
     object-fit: cover;
     width: 400px;
     height: 100%;
+    border: solid 4px #789ABC;
 }
 #imgDiv {
     /* other styles */
@@ -123,6 +124,12 @@ td input {
 
 #content {
     margin: 0 2%;
+}
+
+#aboutSection {
+    width: 50%;
+    font-size: 28px;
+    margin: 5% auto 0 auto;
 }
 
 @media(min-width: 550px) {

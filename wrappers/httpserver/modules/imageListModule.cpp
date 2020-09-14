@@ -33,6 +33,8 @@ std::shared_ptr<HttpContent> ImageListModule::getContentByUrl(const std::string&
 {
     std::vector<std::pair<std::string, std::string> > query = HttpUtils::parseParameters(url);
 
+    std::cout << "Image List Module : " << url << std::endl;
+
     if (HelperUtils::startsWith(url, "/framelist"))
     {
         return std::shared_ptr<HttpContent>(new ImageListContent(mImages->getImageNames()));
@@ -41,8 +43,6 @@ std::shared_ptr<HttpContent> ImageListModule::getContentByUrl(const std::string&
         HelperUtils::startsWith(url, "/frame.bmp") ||
         HelperUtils::startsWith(url, "/frame.png"))
     {
-        std::cout << "Called with frame.jpg" << std::endl;
-
         std::string imageName = "Main";
         if (!query.empty() && query.at(0).first == "name")
         {

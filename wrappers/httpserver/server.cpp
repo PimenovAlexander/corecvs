@@ -81,11 +81,24 @@ void HttpServer::httpCallbackStatic(evhttp_request *request, void *server)
     httpServer->httpCallback(request);
 }
 
+/**
+ * Adds an event so that users can subscribe to it
+ * @param name name of the event
+ * @param provider object that has to supply content
+ * @return 0 on success, -1 if event's name matches an existing event
+ */
 int HttpServer::addEvent(const std::string& name, ContentProvider *provider)
 {
     return HttpServer::addEvent(name, name, provider);
 }
 
+/**
+ * Adds an event so that users can subscribe to it
+ * @param name name of the event
+ * @param provider object that has to supply content
+ * @param url url for which to construct content
+ * @return 0 on success, -1 if event's name matches an existing event
+ */
 int HttpServer::addEvent(const std::string& name, const std::string& url, ContentProvider *provider)
 {
     return poll->addEvent(name,

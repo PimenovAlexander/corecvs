@@ -62,5 +62,9 @@ std::string HttpUtils::extentionToMIME(const std::string &path)
         return "image/bmp";
     }
 
+    if (corecvs::HelperUtils::endsWith(path, ".css")) {
+        return "text/css";
+    }
+
     return "text/html";
 }

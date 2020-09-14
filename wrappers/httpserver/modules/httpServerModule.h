@@ -73,7 +73,7 @@ public:
         return getContentByUrl(urlPath);
     }
 
-    bool shouldPoll(const std::string& url)
+    bool shouldPoll(const std::string& url) override
     {
         std::string urlPath(url);
         if (checkAndRewrite(urlPath))

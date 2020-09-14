@@ -72,39 +72,9 @@ function send_Ajax(url, func, options = {}) {
     xhr.send();
 }
 
-let cameraImage = {
-    displaying: true,
-    heightChecked: false,
-    initHeight : 0,
-    slideToggle: function () {
-        // This method does not work after a window has been resized
-        if (!this.div) {
-            this.div = document.getElementById('imgDiv');
-            this.div.style.height = `${this.div.offsetHeight}px`;
-        }
-        if (!this.button) {
-            this.button = document.getElementById('menuOptionCamera');
-        }
-        if (!this.heightChecked) {
-            this.initHeight = this.div.offsetHeight;
-            this.heightChecked = true;
-        }
-        if (this.displaying) {
-            this.button.innerHTML = 'Show camera';
-            this.button.classList.add('gray');
-            this.displaying = false;
-            this.div.style.height = '0px';
-        } else {
-            this.button.innerHTML = 'Hide camera';
-            this.button.classList.remove('gray');
-            this.displaying = true;
-            this.div.style.height = `${this.initHeight}px`;
-        }
-    }
-}
-
 function onLoad() {
     properties.initialize();
+
     setInterval(_ => {
         if (statsLoaded) {
             statsLoaded = false;
@@ -134,10 +104,12 @@ function onLoad() {
         }
     }, 250);
 
+    /*
     recursive_Ajax('image_request', data => {
         document.getElementById('img').setAttribute('src', `data:image/png;base64,${data}`);
         fps++;
     });
+     */
 
     setInterval(_ => { console.log(`FPS: ${fps}`); document.getElementById('FPS_Div').innerHTML = `FPS:${fps}`; fps = 0; }, 1000);
 }
