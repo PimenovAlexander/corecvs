@@ -8,7 +8,7 @@
 #include "core/utils/utils.h"
 #include "contentProvider.h"
 
-class HttpServerModule : ContentProvider
+class HttpServerModule : public ContentProvider
 {
 private:
     std::string mPrefix;
@@ -39,6 +39,16 @@ public:
             url = std::string("/") + url.substr(mPrefix.length());
         }
         return true;
+    }
+
+    static bool checkAndRewritePollPrefix(std::string &url)
+    {
+        if (corecvs::HelperUtils::startsWith(url, "/poll"))
+        {
+            url = url.substr(5);
+            return true;
+        }
+        return false;
     }
 
     bool shouldProcess(const std::string& url)
@@ -76,8 +86,13 @@ public:
     bool shouldPoll(const std::string& url) override
     {
         std::string urlPath(url);
-        if (checkAndRewrite(urlPath))
-            return shouldPollURL(urlPath);
+        if (checkAndRewrite(urlPath)) {
+            if (checkAndRewritePollPrefix(urlPath)) {
+                if (shouldPollURL(urlPath)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -87,9 +102,9 @@ protected:
     {
         return false;
     }
-
     virtual bool shouldPollURL(const std::string& /*url*/)
     {
+        // Assumes that URL has neither module's nor poll's prefix
         return false;
     }
 

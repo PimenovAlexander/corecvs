@@ -40,6 +40,7 @@ void HttpServer::httpCallback(evhttp_request *request)
     {
         SYNC_PRINT((" - Checking module with prefix <%s>\n", module->getPrefix().c_str()));
         if (module->shouldProcess(url)) {
+            std::cout << url << " matches URL for module" << std::endl;
             if (!module->shouldPoll(url)) {
                 contentPointer = module->getContent(url);
                 if (!contentPointer) {

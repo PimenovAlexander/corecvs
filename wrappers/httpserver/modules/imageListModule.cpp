@@ -15,12 +15,23 @@ ImageListModule::ImageListModule()
 
 bool ImageListModule::shouldProcessURL(const std::string& url)
 {
+    string urlPath(url);
+    if (checkAndRewritePollPrefix(urlPath)) {
+        return shouldPollURL(urlPath);
+    }
     return (
             HelperUtils::startsWith(url, "/framelist") ||
             HelperUtils::startsWith(url, "/imagelist.json") ||
             HelperUtils::startsWith(url, "/frame.jpg") ||
             HelperUtils::startsWith(url, "/frame.bmp") ||
             HelperUtils::startsWith(url, "/frame.png"));
+}
+
+bool ImageListModule::shouldPollURL(const std::string& url)
+{
+    if (HelperUtils::startsWith(url, "/cameraImage"))
+        return true;
+    return false;
 }
 
 bool ImageListModule::shouldWrapURL(const std::string& url)
@@ -31,17 +42,22 @@ bool ImageListModule::shouldWrapURL(const std::string& url)
 
 std::shared_ptr<HttpContent> ImageListModule::getContentByUrl(const std::string& url)
 {
-    std::vector<std::pair<std::string, std::string> > query = HttpUtils::parseParameters(url);
+    string urlPath(url);
 
-    std::cout << "Image List Module : " << url << std::endl;
+    // Removes poll prefix
+    checkAndRewritePollPrefix(urlPath);
 
-    if (HelperUtils::startsWith(url, "/framelist"))
+    std::vector<std::pair<std::string, std::string> > query = HttpUtils::parseParameters(urlPath);
+
+    std::cout << "Image List Module : " << urlPath << std::endl;
+
+    if (HelperUtils::startsWith(urlPath, "/framelist"))
     {
         return std::shared_ptr<HttpContent>(new ImageListContent(mImages->getImageNames()));
     }
-    if (HelperUtils::startsWith(url, "/frame.jpg") ||
-        HelperUtils::startsWith(url, "/frame.bmp") ||
-        HelperUtils::startsWith(url, "/frame.png"))
+    if (HelperUtils::startsWith(urlPath, "/frame.jpg") ||
+        HelperUtils::startsWith(urlPath, "/frame.bmp") ||
+        HelperUtils::startsWith(urlPath, "/frame.png"))
     {
         std::string imageName = "Main";
         if (!query.empty() && query.at(0).first == "name")
@@ -59,10 +75,10 @@ std::shared_ptr<HttpContent> ImageListModule::getContentByUrl(const std::string&
         }
 
         std::string format = "JPG";
-        if(HelperUtils::startsWith(url, "/frame.bmp")) {
+        if(HelperUtils::startsWith(urlPath, "/frame.bmp")) {
             format = "BMP";
         }
-        if(HelperUtils::startsWith(url, "/frame.png")) {
+        if(HelperUtils::startsWith(urlPath, "/frame.png")) {
             format = "PNG";
         }
 
@@ -75,7 +91,7 @@ std::shared_ptr<HttpContent> ImageListModule::getContentByUrl(const std::string&
         return std::shared_ptr<HttpContent>(new ImageContent(image.mImage, scale, format));
     }
 
-    if (HelperUtils::startsWith(url,"/imagelist.json"))
+    if (HelperUtils::startsWith(urlPath,"/imagelist.json"))
     {
         std::string prefix;
         if (!query.empty() && query.at(0).first == "name")

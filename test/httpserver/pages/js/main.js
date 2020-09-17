@@ -1,6 +1,6 @@
 
-let statsLoaded = true;
 let fps = 0;
+
 const properties = {
     values : [],
     types : [

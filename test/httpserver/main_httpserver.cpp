@@ -226,7 +226,7 @@ int main (int argc, char **argv)
     packModule->setPrefix("/");
     modularServer->addModule(packModule);
 
-
+    modularServer->addEvent("cameraImage", imageModule);
 
     modularServer->setup();
     modularServer->start();
@@ -242,6 +242,10 @@ int main (int argc, char **argv)
         SYNC_PRINT(("\r%c", animation[count % 4]));
         usleep(1000000);
         count++;
+
+        if (count % 100) {
+            // modularServer->poll->announce("cameraImage");
+        }
     }
 
     SYNC_PRINT(("Exiting web server...\n"));
