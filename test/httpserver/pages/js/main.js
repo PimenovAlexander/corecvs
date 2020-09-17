@@ -56,53 +56,69 @@ function recursive_Ajax(url, func, options = {}) {
     options.recursive = true;
     return send_Ajax(url, func, options);
 }
+
 function send_Ajax(url, func, options = {}) {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
-    xhr.onload = function() {
+
+    let delay = (options.failureDelay) ? options.failureDelay : 1000;
+
+    // Closure variables
+
+    let received = false;
+
+    xhr.onload = _ => {
+        if (received) return; // Request has already been sent again because of connection problems
+
         if (this.status === 200) {
+            received = true;
             func(this.responseText);
+
+            if (options.recursive) {
+                send_Ajax(url, func, options);
+            }
         } else {
             if (options.error) {
                 options.error(this.responseText);
             }
         }
-        if (options.recursive) send_Ajax(url, func, options);
     };
+
+    setInterval(_ => {
+        if (!received) {
+            received = true;
+            send_Ajax(url, func, options);
+        }
+    }, delay);
+
     xhr.send();
 }
 
 function onLoad() {
     properties.initialize();
 
-    setInterval(_ => {
-        if (statsLoaded) {
-            statsLoaded = false;
-            send_Ajax('stats_request', data => {
-                const arr = data.split('@');
+    recursive_Ajax('stats_request', data => {
+        const arr = data.split('@');
 
-                const modes = arr[0].split('$');
+        const modes = arr[0].split('$');
 
-                const parameters_changed = modes.includes('Parameters_Changed');
+        const parameters_changed = modes.includes('Parameters_Changed');
 
-                const arr_stats = arr[1].split('$');
-                document.getElementById('RollDiv').innerHTML = arr_stats[0];
-                document.getElementById('PitchDiv').innerHTML = arr_stats[1];
-                document.getElementById('YawDiv').innerHTML = arr_stats[2];
+        const arr_stats = arr[1].split('$');
+        document.getElementById('RollDiv').innerHTML = arr_stats[0];
+        document.getElementById('PitchDiv').innerHTML = arr_stats[1];
+        document.getElementById('YawDiv').innerHTML = arr_stats[2];
 
-                const arr_params = arr[2].split('$');
-                arr_params.forEach((el, ind) => {
-                    if (// Initialize a value
-                        !properties.values[ind] ||
-                        // Either update a value or discard any changes made to it if parameters have been changed on a server
-                        (properties.values[ind] !== el && parameters_changed)) {
-                        properties.set(ind, el);
-                    }
-                })
-                statsLoaded = true;
-            })
-        }
-    }, 250);
+        const arr_params = arr[2].split('$');
+        arr_params.forEach((el, ind) => {
+            if (// Initialize a value
+                !properties.values[ind] ||
+                // Either update a value or discard any changes made to it if parameters have been changed on a server
+                (properties.values[ind] !== el && parameters_changed)) {
+                properties.set(ind, el);
+            }
+        })
+    })
 
     /*
     recursive_Ajax('image_request', data => {
