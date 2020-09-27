@@ -1,24 +1,14 @@
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Title</title>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-</head>
-<body>
-
 <div id='menu'>
-    <button id='menuOptionCamera'>Main</button>
-    <button id='menuOption2' class="gray"
-            onclick="window.location.href='/graph.html';">Graph</button>
-    <button id='menuOption3' class="gray"
-            onclick="window.location.href='/about.html';">About</button>
+    <button id='menuOptionCamera' onclick="cameraImage.slideToggle()">Hide camera</button>
+    <button id='menuOption2' class="gray">Some button</button>
+    <button id='menuOption3' class="gray">Another button</button>
 </div>
 
 <div id="content">
+    <!--CONTENT-->
     <div id="imgDiv">
-        <img id='img' src="img/loading_gif.gif" alt="Camera Image">
+        <img id='img' src="" alt="Camera Image">
     </div>
 
     <div id="tables">
@@ -51,8 +41,7 @@
             <th>Value</th>
         </tr>
         </thead>
-
-        <tbody class="table-hover" id="tableProperties">
+        <tbody class="table-hover">
         <tr>
             <td>Property 1</td>
             <td>
@@ -74,10 +63,8 @@
         </tbody>
     </table>
     </div>
+    <!--/CONTENT-->
     <div id="FPS_Div"></div>
 </div>
 
-<script src="js/ajax.js"></script>
-<script src="js/main.js"></script>
-</body>
-</html>
+<script>

@@ -132,8 +132,10 @@ class GraphDAO : public GraphModuleDAO
 
 public:
     GraphDAO() {
-        for (int i = 0; i < 100; i++) {
-            data.addGraphPoint("test", 10 * sin(i / 10.0), true);
+        for (int i = 0; i < 10; i++) {
+            data.addGraphPoint("yaw", 10 * sin(i / 10.0), true);
+            data.addGraphPoint("pitch", 10 * cos(i / 10.0), true);
+            data.addGraphPoint("roll", 10 * tan(i / 10.0), true);
         }
     }
 
@@ -240,12 +242,16 @@ int main (int argc, char **argv)
     while (true) {
         char animation[4] = {'|', '/', '-', '\\' };
         SYNC_PRINT(("\r%c", animation[count % 4]));
-        usleep(1000000);
+        usleep(100000);
         count++;
 
-        if (count % 100) {
-            // modularServer->poll->announce("cameraImage");
-        }
+        // graphModule->mGraphData->getGraphData()->addGraphPoint("test", 10 * sin((count+99) / 10.0), true);
+
+        graphModule->mGraphData->getGraphData()->addGraphPoint("yaw", 10 * sin((count+99) / 10.0), true);
+        graphModule->mGraphData->getGraphData()->addGraphPoint("pitch", 10 * cos((count+99) / 10.0), true);
+        graphModule->mGraphData->getGraphData()->addGraphPoint("roll", 10 * cos((count+249) / 5.0), true);
+
+        // modularServer->poll->announce("cameraImage");
     }
 
     SYNC_PRINT(("Exiting web server...\n"));

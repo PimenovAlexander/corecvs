@@ -40,6 +40,25 @@ function(cat IN_FILE OUT_FILE)
     file(APPEND ${OUT_FILE} "${CONTENTS}")
 endfunction()
 
+file(GLOB HTML
+        pages/html/Header.html
+        pages/css/style.css
+        pages/html/Body.html
+        pages/html/Content.html
+        pages/js/cstylemain.js
+        pages/html/Script.html)
+
+# Prepare a temporary file to "cat" to:
+file(WRITE pages/index.template.html "")
+
+# Call the "cat" function for each input file
+foreach(html_template_file ${HTML})
+    cat(${html_template_file} pages/index.template.html)
+endforeach()
+
+# Copy the temporary file to the final location
+configure_file(pages/index.template.html pages/index.html COPYONLY)
+
 file(COPY
         pages/img
         DESTINATION pages/)
