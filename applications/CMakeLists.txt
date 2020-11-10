@@ -2,18 +2,18 @@
 set(TEST_SUBDIRECTORIES
    #base
    cloudview
-   drone
+   #drone
    #egomotion     # Cannot be included because it depends on base application
-   imageview     
+   #imageview     
    #laserscan     # Cannot be included because it uses some deprecated/unknown API: calibrationHelpers.h
-   nester
-   qtnester
+   #nester
+   #qtnester
    #nester-test   # TODO: include this
    #recorder      # Cannot be added because it depends on base application
    #robodetect    # Cannot be included because it depends on deprecated filters
    #scanner       # Cannot be included because it depends on base application
    #testbed       # Cannot be included becuase it depends on deprecated filters
-   vinylCutter
+   #vinylCutter
 )
 
 if (apriltag_LIBS)
