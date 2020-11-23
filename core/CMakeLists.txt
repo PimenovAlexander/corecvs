@@ -19,6 +19,7 @@ set (CORE_SUBMODULES
         kltflow
         math
         meta
+        multifractalSpectrum
         meanshift
         rectification
         reflection

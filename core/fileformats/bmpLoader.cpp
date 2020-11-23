@@ -226,10 +226,14 @@ RGB24Buffer * BMPLoaderBase::loadRGB(string name)
                 uint32_t r = src[2];
                 color = RGBColor(r,g,b);
             } else {
-                uint32_t a = src[0];
-                uint32_t b = src[1];
-                uint32_t g = src[2];
-                uint32_t r = src[3];
+                uint32_t b = src[0];
+                uint32_t g = src[1];
+                uint32_t r = src[2];
+                uint32_t a = src[3];
+//                uint32_t a = src[0];
+//                uint32_t b = src[1];
+//                uint32_t g = src[2];
+//                uint32_t r = src[3];
                 color = RGBColor(r,g,b,a);
             }
             *dest = color;
