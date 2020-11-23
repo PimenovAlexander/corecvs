@@ -6,7 +6,8 @@ set(MODULE_NAME_TEST corecvs_core_tests)
 
 MESSAGE( STATUS "Including GTest on Tests build" )
 #include_directories (${GTest_INCLUDE_DIR}/..)
-
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/multifractalSpectrum/2.bmp
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 set (CORE_TEST_SOURCES
     eigen/main_test_eigen_integration.cpp
 
@@ -80,7 +81,7 @@ set (CORE_TEST_SOURCES
     polynomial/main_test_polynomial.cpp
     polynomial/main_test_basis.cpp
     polynomial/main_test_monom.cpp
-    polynomial/main_test_polynom.cpp   
+    polynomial/main_test_polynom.cpp
 #    reconstruction/main_test_reconstruction.cpp
     meta/main_test_meta.cpp
     function/main_test_function.cpp
@@ -107,7 +108,7 @@ set (CORE_TEST_SOURCES
     wuRasterizer/main_test_wu_rasterizer.cpp
     bsptree/main_test_bsptree.cpp
     halfspace/main_test_halfspace.cpp
-    orientedbox/main_test_orientedbox.cpp   
+    orientedbox/main_test_orientedbox.cpp
     processor6d/main_test_processor6d.cpp
     bezierRasterizer/main_test_bezier_rasterizer.cpp
 #     delaunay/main_test_delaunay.cpp
@@ -122,7 +123,7 @@ set (CORE_TEST_SOURCES
     convexpolygon/convexDebug.h
     stateMachineTest/test.h
     stateMachineTest/test.h
-)
+        multifractalSpectrum/main_test_multifractalSpectrum.cpp)
 
 message(STATUS "SOURCE_DIR " ${corecvs_SOURCE_DIR})
 message(STATUS "TEST_SOURCE_DIR " ${PROJECT_SOURCE_DIR})

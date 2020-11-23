@@ -1,0 +1,11 @@
+target_sources(corecvs
+        PUBLIC
+            ${CMAKE_CURRENT_LIST_DIR}/leastSquares.h
+            ${CMAKE_CURRENT_LIST_DIR}/structures.h
+            ${CMAKE_CURRENT_LIST_DIR}/layerBuilder.h
+        ${CMAKE_CURRENT_LIST_DIR}/spectrumBuilder.h
+        PRIVATE
+            ${CMAKE_CURRENT_LIST_DIR}/leastSquares.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/structures.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/layerBuilder.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/spectrumBuilder.cpp)
