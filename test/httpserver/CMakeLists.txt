@@ -82,7 +82,7 @@ function(create_resources dir output prefix)
         file(GLOB bins RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/${dir}/${wpath} ${CMAKE_CURRENT_SOURCE_DIR}/${dir}/${wpath}*)
         foreach(rel_bin ${bins})
 
-            set(bin ${CMAKE_CURRENT_SOURCE_DIR}/${dir}/${wpath}${rel_bin})
+            set(bin ${CMAKE_CURRENT_SOURCE_DIR}/${dir}${wpath}${rel_bin})
             message("Packaging resource file: ${bin}")
             if(IS_DIRECTORY ${bin})
                 message("Packaging directory: ${bin}")
