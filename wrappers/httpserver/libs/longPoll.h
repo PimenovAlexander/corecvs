@@ -18,7 +18,7 @@
 #include "modules/contentProvider.h"
 #include "memory"
 
-using callback_fn = void (*)(evhttp_request *, std::shared_ptr<HttpContent>);
+using callback_fn = void (*)(evhttp_request *, const std::shared_ptr<HttpContent>&);
 typedef evhttp_request* subscriber;
 
 struct long_poll_event {

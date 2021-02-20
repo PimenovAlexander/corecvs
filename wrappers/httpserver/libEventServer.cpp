@@ -41,18 +41,18 @@ int LibEventServer::setup() {
  * @param callback the callback function that gets invoked on specified URI
  * @return 0 on success, -1 if the callback existed already, -2 on failure
  */
-int LibEventServer::set_callback(const char *path, void (*callback)(evhttp_request *, void *), void *arg)
+int LibEventServer::set_callback(const std::string& path, void (*callback)(evhttp_request *, void *), void *arg)
 {
     if (options.verbose > 0) {
-        SYNC_PRINT(("LibEventServer::set_callback(<%s>, _, %s): called\n", path, arg == NULL ? "null" : "non null" ));
+        SYNC_PRINT(("LibEventServer::set_callback(<%s>, _, %s): called\n", path.c_str(), arg == nullptr ? "null" : "non null" ));
     }
 
-    if (server == NULL) {
+    if (server == nullptr) {
         SYNC_PRINT(("LibEventServer::set_callback(): called before setup()\n"));
         return -2;
     }
 
-    return evhttp_set_cb(server, path, callback, arg);
+    return evhttp_set_cb(server, path.c_str(), callback, arg);
 }
 
 /**
@@ -63,7 +63,7 @@ int LibEventServer::set_callback(const char *path, void (*callback)(evhttp_reque
 void LibEventServer::set_default_callback(void (*callback)(evhttp_request *, void *), void *arg) {
 
     if (options.verbose > 0) {
-        SYNC_PRINT(("LibEventServer::set_default_callback( _, %s): called\n", arg == NULL ? "null" : "non null" ));
+        SYNC_PRINT(("LibEventServer::set_default_callback( _, %s): called\n", arg == nullptr ? "null" : "non null" ));
     }
 
     if (server == nullptr) {
@@ -81,7 +81,7 @@ void LibEventServer::process_requests(bool nonBlock) {
         SYNC_PRINT(("LibEventServer::process_requests(nonblock=%s): called\n", nonBlock ? "yes" : "no" ));
     }
 
-    if (base == NULL) {
+    if (base == nullptr) {
         SYNC_PRINT(("LibEventServer::process_requests(): called before setup()\n"));
         return;
     }
@@ -92,12 +92,11 @@ void LibEventServer::process_requests(bool nonBlock) {
  * Remove a callback for a specified URI
  * @param path the path for which to remove the callback
  */
-void LibEventServer::remove_callback(const char *path) {
-
-    if (server == NULL) {
+void LibEventServer::remove_callback(const std::string& path) {
+    if (server == nullptr) {
         SYNC_PRINT(("LibEventServer::remove_callback(): called before setup()"));
     }
-    evhttp_del_cb(server, path);
+    evhttp_del_cb(server, path.c_str());
 }
 
 /**
@@ -105,10 +104,10 @@ void LibEventServer::remove_callback(const char *path) {
  * @param path the path for which to invoke the callback
  * @param callback the callback function that gets invoked on specified URI
  */
-void LibEventServer::override_callback(const char *path, void (*callback)(evhttp_request *, void *), void *arg)
+void LibEventServer::override_callback(const std::string& path, void (*callback)(evhttp_request *, void *), void *arg)
 {
     if (options.verbose > 0) {
-        SYNC_PRINT(("LibEventServer::override_callback(<%s>, _, %s): called\n", path, arg == NULL ? "null" : "non null" ));
+        SYNC_PRINT(("LibEventServer::override_callback(<%s>, _, %s): called\n", path.c_str(), arg == nullptr ? "null" : "non null" ));
     }
 
     if (set_callback(path, callback, arg) == -1)

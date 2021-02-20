@@ -30,11 +30,11 @@ private:
     event_base *base   = nullptr;
 
 public:
-    static const int   DEFAULT_PORT;
-    static const char *DEFAULT_IP_ADDRESS;
+    static const int    DEFAULT_PORT;
+    static const char*  DEFAULT_IP_ADDRESS;
 
     struct Options {
-        Options(int port, const char *addr, int verbose) :
+        Options(int port, const std::string addr, int verbose) :
             port(port),
             addr(addr),
             verbose(verbose)
@@ -47,18 +47,18 @@ public:
 
     Options options;
 
-    LibEventServer( int port = DEFAULT_PORT, const char *addr = (const char *) DEFAULT_IP_ADDRESS, int verbose = 0) :
+    explicit LibEventServer( int port = DEFAULT_PORT, const std::string addr = DEFAULT_IP_ADDRESS, int verbose = 0) :
         options(port, addr, verbose)
     {
     }
 
     virtual int setup();
 
-    int set_callback(const char *path, void (*callback)(evhttp_request *, void *), void *arg = NULL);
-    void remove_callback(const char *path);
-    void override_callback(const char *path, void (*callback)(evhttp_request *, void *), void *arg = NULL);
+    int set_callback(const std::string& path, void (*callback)(evhttp_request *, void *), void *arg = nullptr);
+    void remove_callback(const std::string& path);
+    void override_callback(const std::string& path, void (*callback)(evhttp_request *, void *), void *arg = nullptr);
 
-    void set_default_callback(void (*callback)(evhttp_request *, void *), void *arg = NULL);
+    void set_default_callback(void (*callback)(evhttp_request *, void *), void *arg = nullptr);
     void process_requests(bool nonBlock = true);
 };
 

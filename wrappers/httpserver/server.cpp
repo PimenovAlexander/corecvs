@@ -88,7 +88,7 @@ void HttpServer::httpCallbackStatic(evhttp_request *request, void *server)
  * @param provider object that has to supply content
  * @return 0 on success, -1 if event's name matches an existing event
  */
-int HttpServer::addEvent(const std::string& name, ContentProvider *provider)
+int HttpServer::addEvent(const std::string& name, ContentProvider *provider) const
 {
     return HttpServer::addEvent(name, name, provider);
 }
@@ -100,10 +100,10 @@ int HttpServer::addEvent(const std::string& name, ContentProvider *provider)
  * @param url url for which to construct content
  * @return 0 on success, -1 if event's name matches an existing event
  */
-int HttpServer::addEvent(const std::string& name, const std::string& url, ContentProvider *provider)
+int HttpServer::addEvent(const std::string& name, const std::string& url, ContentProvider *provider) const
 {
     return poll->addEvent(name,
-                          [](evhttp_request * request, std::shared_ptr<HttpContent> contentPointer) {
+                          [](evhttp_request * request, const std::shared_ptr<HttpContent>& contentPointer) {
         evbuffer *evb = evbuffer_new(); // Creating a response buffer
         if (!evb) return;               // No pointer returned
 
