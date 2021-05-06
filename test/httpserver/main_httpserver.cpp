@@ -232,9 +232,6 @@ int main (int argc, char **argv)
 
     modularServer->setup();
     modularServer->start();
-
-
-
 #endif
 
     /* Run some background task */

@@ -1,9 +1,9 @@
 project (httpserver)
 
 set (SRC_FILES
-    main_httpserver.cpp
-    resources.c
-    resources_test.c
+        main_httpserver.cpp
+        resources.c
+        resources_test.c
 )
 
 set (HDR_FILES
