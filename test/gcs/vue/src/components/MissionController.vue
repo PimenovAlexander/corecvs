@@ -90,6 +90,7 @@ export default class MissionController extends Vue {
 	margin-top: 0.2%;
 	border: solid 4px black;
 	background-color: #ABC;
+	border-radius: 40px;
 
 	display: grid;
 	grid-template-columns: repeat(2, 20%) 30%;

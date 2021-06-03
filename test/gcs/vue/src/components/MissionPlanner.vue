@@ -72,7 +72,7 @@ export default class MissionPlanner extends Vue {
 
 	// Test function that returns a position which is close to starting position
 	// Used to assign position to added waypoints before user enters exact coordinates needed for added mission item
-	getWaypointLocation(): Position {
+	private getWaypointLocation(): Position {
 		return new Position(
 			this.position.latitude + (Math.random() % 100 * 0.001),
 			this.position.longitude + (Math.random() % 100 * 0.001),
@@ -80,7 +80,7 @@ export default class MissionPlanner extends Vue {
 		)
 	}
 
-	addWaypoint(): void {
+	private addWaypoint(): void {
 		const waypoint = new Waypoint(this.getWaypointLocation())
 
 		const marker = new L.Marker(L.latLng(
@@ -108,11 +108,11 @@ export default class MissionPlanner extends Vue {
 		send('mavlink/missionItem', missionItem)
 	}
 
-	getMarker(id: number) {
+	private getMarker(id: number) {
 		return get(id, this.markers)
 	}
 
-	removeWaypoint(id: number): void {
+	private removeWaypoint(id: number): void {
 		this.waypoints = this.waypoints.filter(waypoint => {
 			return waypoint.id != id
 		})
@@ -129,7 +129,7 @@ export default class MissionPlanner extends Vue {
 		return waypoints[0].ind
 	}
 
-	moveWaypointUp(id: number): void {
+	private moveWaypointUp(id: number): void {
 		if (this.waypoints.length < 2) return;
 
 		const ind = this.getWaypointIndex(id)
@@ -149,7 +149,7 @@ export default class MissionPlanner extends Vue {
 		this.updateWaypoints()
 	}
 
-	moveWaypointDown(id: number): void {
+	private moveWaypointDown(id: number): void {
 		if (this.waypoints.length < 2) return;
 
 		const ind = this.getWaypointIndex(id)
@@ -163,7 +163,7 @@ export default class MissionPlanner extends Vue {
 		this.updateWaypoints()
 	}
 
-	updateWaypoints(): void {
+	private updateWaypoints(): void {
 		const missionClearAll = new MissionClearAll(this.SYSTEM_ID(), this.COMPONENT_ID())
 		missionClearAll.mission_type = MavMissionType.MAV_MISSION_TYPE_MISSION
 
@@ -190,6 +190,7 @@ export default class MissionPlanner extends Vue {
 		})
 	}
 }
+
 </script>
 
 <style>

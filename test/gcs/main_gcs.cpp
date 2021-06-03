@@ -60,7 +60,7 @@ public:
 
     ImageDAO()
     {
-        buffer = new RGB24Buffer(100, 100);
+        buffer = new RGB24Buffer(1280, 720);
         buffer->checkerBoard(10, RGBColor::Cyan(), RGBColor::Yellow());
     }
 
@@ -175,6 +175,7 @@ int main (int argc, char **argv)
         image->buffer->checkerBoard(10,
                                     *colourBoard1,
                                     *colourBoard2);
+
         images->mImages = image;
 
         graphs->mGraphData->getGraphData()->addGraphPoint("yaw", 10 * sin((count+99) / 10.0), true);

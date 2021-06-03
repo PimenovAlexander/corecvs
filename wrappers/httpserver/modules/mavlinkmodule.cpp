@@ -13,7 +13,7 @@ bool MavLinkModule::shouldProcessURL(const std::string& url) {
 
 bool MavLinkModule::shouldPollURL(const std::string& url)
 {
-    return false;
+    return !HelperUtils::startsWith(url, "/heartbeatMessage");
 }
 
 bool MavLinkModule::shouldWrapURL(const std::string& url)
@@ -90,7 +90,7 @@ std::vector<uint8_t> MavLinkContent::getContent()
     if (containsResponse) {
         result << missionItem;
     } else {
-        // Those variables are mocks that have to be replaced with UAV's logic
+        // These variables are mocks that have to be replaced with UAV's logic
         int system_id = 1;
         int component_id = 2;
         int target_system = 1;
@@ -131,7 +131,8 @@ std::shared_ptr<HttpContent> MavLinkModule::getContentByUrl(const std::string& u
             HelperUtils::startsWith(urlPath, "/clearAll") ||
             HelperUtils::startsWith(urlPath, "/pauseMission") ||
             HelperUtils::startsWith(urlPath, "/heartbeatMessage") ||
-            HelperUtils::startsWith(urlPath, "/missionSetCurrent"))
+            HelperUtils::startsWith(urlPath, "/missionSetCurrent") ||
+            HelperUtils::startsWith(urlPath, "/setParam"))
     {
         return std::shared_ptr<HttpContent>(new MavLinkContent());
     }

@@ -9,7 +9,7 @@
 		</tr>
 		</thead>
 		<tbody class="table-hover">
-			<tr v-for="property in this.properties.filter(item => !item.userControlled)" :key="`property${property.toString()}`">
+			<tr v-for="property in this.properties.filter(item => !item.userControlled)" :key="`property${property.name}`">
 				<td>{{property.name}}</td>
 				<td>{{property.value}}</td>
 			</tr>
@@ -24,10 +24,10 @@
 		</thead>
 
 		<tbody class="table-hover" id="tableProperties">
-		<tr v-for="property in this.properties.filter(item => item.userControlled)" :key="`property${property.toString()}`">
+		<tr v-for="property in this.properties.filter(item => item.userControlled)" :key="`property${property.name}`">
 			<td>{{property.name}}</td>
 			<td>
-				<input class="property_confirmed" type="number" :value="property.value">
+				<input class="property_confirmed" type="number" :value="property.value" @keyup="setParam(property.name, property.value)">
 			</td>
 		</tr>
 		</tbody>
@@ -37,7 +37,12 @@
 
 <script lang="ts">
 
+import { ParamSet } from '../classes/mavlink/messages/param-set';
+
 import { Component, Vue, Prop } from 'vue-property-decorator';
+import { MavParamType } from '@/classes/mavlink/enums/mav-param-type';
+
+import { send } from '../classes/AjaxRequest';
 
 // A component that displays text data coming from UAV and allows changing manually controlled fields
 
@@ -55,6 +60,8 @@ class Property {
 
 @Component
 export default class Properties extends Vue {
+	@Prop() private SYSTEM_ID!: () => number;
+	@Prop() private COMPONENT_ID!: () => number;
 
 	properties: Property[] = []
 
@@ -80,6 +87,17 @@ export default class Properties extends Vue {
 				value: 0
 			})
 		})
+	}
+
+	private setParam(): void {
+		const setParamMessage = new ParamSet(this.SYSTEM_ID(), this.COMPONENT_ID())
+		setParamMessage.param_id = "1";
+		setParamMessage.param_value = 2;
+		setParamMessage.param_type = MavParamType.MAV_PARAM_TYPE_INT32;
+
+		console.log('Sending param')
+
+		send('mavlink/setParam', setParamMessage)
 	}
 }
 

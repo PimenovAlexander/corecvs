@@ -1,7 +1,23 @@
 
 <template>
-	<div class="map" id="map">
+	<div id="mapComponent">
+		<div class="map" id="map">
 
+		</div>
+		<div class="gps">
+			<div class="property">
+				<input id="latitude" type="text" class="green" @keyup="updatePosition()"/>
+				<label>Latitude</label>
+			</div>
+			<div class="property">
+				<input id="longitude" type="text" class="green" @keyup="updatePosition()"/>
+				<label>Longitude</label>
+			</div>
+			<div class="property">
+				<input id="viewSize" type="text" class="green" @keyup="updatePosition()"/>
+				<label>Zoom</label>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -21,10 +37,60 @@ export default class Map extends Vue {
 	@Prop() private addMap!: (map: L.Map) => void;
 
 	map: L.Map|undefined;
+	x = 0
+	y = 0
+	z = 0
+
+	copterMarker: L.Marker|undefined
+
+	updatePosition(coordinates: number[] = []) {
+		const latitude = document.getElementById('latitude') as HTMLInputElement
+		const longitude = document.getElementById('longitude') as HTMLInputElement
+		const viewSize = document.getElementById('viewSize') as HTMLInputElement
+
+		if (coordinates.length == 0) {
+			this.x = Number(latitude.value)
+			this.y = Number(longitude.value)
+			this.z = Number(viewSize.value)
+		}
+		if (coordinates.length == 3) {
+			[ this.x, this.y, this.z ] = coordinates
+			latitude.value = coordinates[0].toString()
+			longitude.value = coordinates[1].toString()
+			viewSize.value = coordinates[2].toString()
+		}
+
+		latitude.classList.replace(latitude.classList[0], isNaN(this.x) || latitude.value.trim() == '' ? 'red': 'green')
+		longitude.classList.replace(longitude.classList[0], isNaN(this.y) || longitude.value.trim() == '' ? 'red': 'green')
+		viewSize.classList.replace(viewSize.classList[0], isNaN(this.z) || viewSize.value.trim() == '' ? 'red': 'green')
+
+		this.map!.flyTo([this.x, this.y], this.z);
+	}
 
 	mounted() {
 		// Initializing a map that displays area around starting coordinates
 		this.map = L.map('map').setView([this.position.latitude, this.position.longitude], 18);
+
+		this.map.on('moveend', event => {
+			const map = this.map!
+			const pos = map.getCenter();
+			if (this.x != pos.lat || this.y != pos.lng || this.z != map.getZoom()) {
+				this.x = pos.lat
+				this.y = pos.lng
+				this.z = map.getZoom()
+				this.updatePosition([this.x, this.y, this.z])
+			}
+		});
+
+		const copterIcon = L.icon({
+			iconUrl: 'https://www.freeiconspng.com/uploads/helicopter-icon-11.png',
+
+			iconSize:     [50, 40], // size of the icon
+			iconAnchor:   [25, 20], // point of the icon which will correspond to marker's location
+		});
+		
+		this.copterMarker = L.marker([this.position.latitude, this.position.longitude], {icon: copterIcon});
+		this.copterMarker!.addTo(this.map)
 
 		this.addMap(this.map)
 
@@ -49,14 +115,144 @@ export default class Map extends Vue {
 			el.src = src;
 			return el;
 		};
+
+		this.x = this.position.latitude
+		this.y = this.position.longitude
+		this.z = 18
+
+		const latitude = document.getElementById('latitude') as HTMLInputElement
+		const longitude = document.getElementById('longitude') as HTMLInputElement
+		const viewSize = document.getElementById('viewSize') as HTMLInputElement
+
+		latitude.setAttribute('value', this.x.toString())
+		longitude.setAttribute('value', this.y.toString())
+		viewSize.setAttribute('value', this.z.toString())
 	}
 }
 </script>
 
 <style scoped>
 #map {
-	width: 90%;
+	width: 100%;
 	height: 400px;
+}
+#mapComponent {
+	width: 90%;
+	display: grid;
+	grid-template-columns: 80% 20%;
+}
+
+.transition, .gps button, .gps .property label, .gps .property input[type="text"] {
+	-moz-transition: all 0.25s cubic-bezier(0.53, 0.01, 0.35, 1.5);
+	-o-transition: all 0.25s cubic-bezier(0.53, 0.01, 0.35, 1.5);
+	-webkit-transition: all 0.25s cubic-bezier(0.53, 0.01, 0.35, 1.5);
+	transition: all 0.25s cubic-bezier(0.53, 0.01, 0.35, 1.5);
+}
+
+* {
+	font-family: Helvetica, sans-serif;
+	font-weight: light;
+	-webkit-font-smoothing: antialiased;
+}
+
+.gps {
+	position: relative;
+	display: inline-block;
+	width: 90%;
+	box-sizing: border-box;
+	padding: 30px 25px;
+	background-color: white;
+	border-radius: 40px;
+	margin: 40px 0;
+	left: 50%;
+	-moz-transform: translate(-50%, 0);
+	-ms-transform: translate(-50%, 0);
+	-webkit-transform: translate(-50%, 0);
+	transform: translate(-50%, 0);
+	border: solid 4px black;
+	background-color: #ABC;
+}
+h1 {
+	color: #ff4a56;
+	font-weight: 100;
+	letter-spacing: 0.01em;
+	margin-left: 15px;
+	margin-bottom: 35px;
+	text-transform: uppercase;
+}
+.property {
+	position: relative;
+	padding: 10px 0;
+}
+.property:first-of-type {
+	padding-top: 0;
+}
+.property:last-of-type {
+	padding-bottom: 0;
+}
+.property label {
+	transform-origin: left center;
+	font-weight: 100;
+	letter-spacing: 0.01em;
+	font-size: 22px;
+	box-sizing: border-box;
+	padding: 10px 15px;
+	display: block;
+	position: absolute;
+	margin-top: -40px;
+	z-index: 2;
+	pointer-events: none;
+}
+.property input[type="text"] {
+	appearance: none;
+	background-color: none;
+	line-height: 0;
+	font-size: 17px;
+	width: 100%;
+	display: block;
+	box-sizing: border-box;
+	padding: 10px 15px;
+	border-radius: 60px;
+	font-weight: 100;
+	letter-spacing: 0.01em;
+	position: relative;
+	z-index: 1;
+}
+.green {
+	border: 1px solid green;
+	color: green;
+}
+.red {
+	border: 1px solid red;
+	color: red;
+}
+.green:focus {
+	background: green;
+}
+.red:focus {
+	background: red;
+}
+.property input[type="text"]:focus {
+	outline: none;
+	color: white;
+	margin-top: 30px;
+}
+.property input[type="text"]:valid {
+	margin-top: 30px;
+}
+.property input[type="text"]:focus ~ label {
+	-moz-transform: translate(0, -35px);
+	-ms-transform: translate(0, -35px);
+	-webkit-transform: translate(0, -35px);
+	transform: translate(0, -35px);
+}
+.property input[type="text"]:valid ~ label {
+	text-transform: uppercase;
+	font-style: italic;
+	-moz-transform: translate(5px, -35px) scale(0.6);
+	-ms-transform: translate(5px, -35px) scale(0.6);
+	-webkit-transform: translate(5px, -35px) scale(0.6);
+	transform: translate(5px, -35px) scale(0.6);
 }
 </style>
 

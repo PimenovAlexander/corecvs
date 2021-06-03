@@ -14,6 +14,7 @@
 			:SYSTEM_ID='this.SYSTEM_ID' :COMPONENT_ID='this.COMPONENT_ID'
 			:startingWaypoints="waypoints" :position="position" :addMarker="addMarker" :removeMarker="removeMarker"/>
 		<Properties
+			:SYSTEM_ID='this.SYSTEM_ID' :COMPONENT_ID='this.COMPONENT_ID'
 			v-show="this.getManualMode()"/>
 	</div>
 </template>

@@ -20,7 +20,7 @@ export default class Camera extends Vue {
 			document.getElementById('cameraImage')?.setAttribute(
 				'src', `${window.location.href}I/frame.jpg?name=example1&date=${new Date().getTime()}`
 			)
-		}, 50);
+		}, 200);
 	}
 }
 </script>
@@ -28,7 +28,7 @@ export default class Camera extends Vue {
 <style scoped>
 #camera {
 	background-color: green;
-	width: 90%;
+	width: 80%;
 	height: 400px;
 }
 

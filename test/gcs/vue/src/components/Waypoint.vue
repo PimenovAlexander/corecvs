@@ -43,21 +43,21 @@ export default class WaypointComponent extends Vue {
 
 	missionPlanner = this.$parent as MissionPlanner
 
-	removeComponent() {
+	private removeComponent() {
 		this.removeWaypoint()
 		this.removeMarker(this.marker)
 	}
 
-	hasUpperNeighbor() {
+	private hasUpperNeighbor() {
 		return this.missionPlanner.getWaypointIndex(this.waypoint.id) != 0;
 	}
 
-	hasLowerNeighbor() {
+	private hasLowerNeighbor() {
 		return this.missionPlanner.getWaypointIndex(this.waypoint.id) != this.missionPlanner.size - 1;
 	}
 
 	// This function highlights fields that have either type or constraint errors in them
-	checkWaypoint() {
+	private checkWaypoint() {
 		const fields = this.waypoint.errorValues()
 
 		if (fields.length == 0) {
@@ -99,7 +99,7 @@ export default class WaypointComponent extends Vue {
 	}
 
 	// This function prevents any inputs other than [ '0', '1', ... , '9', '.', '-' ]
-    checkCharacter(event: Event | undefined) {
+    private checkCharacter(event: Event | undefined) {
 		// Modified code from:
 		//	https://stackoverflow.com/questions/39782176/filter-input-text-only-accept-number-and-dot-vue-js
 
@@ -113,7 +113,7 @@ export default class WaypointComponent extends Vue {
 		}
     }
 
-	updateMarker() {
+	private updateMarker() {
 		this.marker.setLatLng(
 			new L.LatLng(this.waypoint.position.latitude, this.waypoint.position.longitude, this.waypoint.position.altitude)
 		)
