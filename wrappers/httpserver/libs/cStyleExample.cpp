@@ -15,8 +15,6 @@
 
 using namespace corecvs;
 
-
-
 void on_get_index(struct evhttp_request *req, void *arg)
 {
     SYNC_PRINT(("on_get_index(struct evhttp_request *req, void *arg) : called\n"));
@@ -137,19 +135,33 @@ void on_get_stats_request(struct evhttp_request *req, void *arg)
     evbuffer_free(evb);
 }
 
+#ifdef poll_in_C_style
 void on_long_poll_request_announce(struct evhttp_request *req, void *arg)
 {
-    if (arg == NULL) {
+    if (arg == nullptr) {
         SYNC_PRINT(("on_long_poll_request_announce(struct evhttp_request *req, void *arg):called with NULL arg\n"));
         return;
     }
-    /* Shoot yourself in the leg */
-    LibEventServer *server = static_cast<LibEventServer *>(arg);
 
-    server->poll->announce("CLIENT_REQUEST");
+    auto poll = (LongPoll *)(arg);
+
+    poll->announce("CLIENT_REQUEST");
 
     evhttp_send_reply(req, HTTP_OK, "OK", nullptr);
 }
+
+void on_long_pull_request_subscribe(struct evhttp_request *req, void *arg)
+{
+    if (arg == nullptr) {
+        SYNC_PRINT(("on_long_pull_request_subscribe(struct evhttp_request *req, void *arg):called with NULL arg\n"));
+        return;
+    }
+
+    auto poll = (LongPoll *)(arg);
+
+    poll->subscribe("CLIENT_REQUEST", req);
+}
+#endif
 
 void on_change_stats_request(struct evhttp_request *req, void *arg)
 {
@@ -182,33 +194,6 @@ void on_change_stats_request(struct evhttp_request *req, void *arg)
     }
 
     evhttp_send_reply(req, HTTP_BADREQUEST, "No parameters", evb);
-    evbuffer_free(evb);
-}
-
-void on_long_pull_request_subscribe(struct evhttp_request *req, void *arg)
-{
-    if (arg == NULL) {
-        SYNC_PRINT(("on_long_pull_request_subscribe(struct evhttp_request *req, void *arg):called with NULL arg\n"));
-        return;
-    }
-    /* Shoot yourself in the leg */
-    LibEventServer *server = static_cast<LibEventServer *>(arg);
-
-    server->poll->subscribe("CLIENT_REQUEST", req);
-}
-
-void on_long_poll(struct evhttp_request * req, void *arg)
-{
-    evbuffer *evb = evbuffer_new(); // Creating a response buffer
-    if (!evb) return;               // No pointer returned
-
-    evhttp_send_reply_start(req, HTTP_OK, "P1");
-    evbuffer_add_printf(evb, "1");
-    evhttp_send_reply_chunk(req, evb);
-    evbuffer_add_printf(evb, "2");
-    evhttp_send_reply_chunk(req, evb);
-    evhttp_send_reply_end(req);
-
     evbuffer_free(evb);
 }
 

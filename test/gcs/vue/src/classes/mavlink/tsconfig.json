@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./",
+    "strict": true,
+    "esModuleInterop": true
+  },
+  "include": [
+    "./"
+  ],
+  "exclude": [
+    "**/*.d.ts",
+    "**/*.d.ts.map",
+    "**/*.js",
+    "**/*.js.map"
+  ]
+}

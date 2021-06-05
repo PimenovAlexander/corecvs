@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Title</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+
+<div id='menu'>
+    <button id='menuOptionCamera'>Main</button>
+    <button id='menuOption2' class="gray"
+            onclick="window.location.href='/graph.html';">Graph</button>
+    <button id='menuOption3' class="gray"
+            onclick="window.location.href='/about.html';">About</button>
+</div>
+
+<div id="content">
+    <div id="imgDiv">
+        <img id='img' src="img/loading_gif.gif" alt="Camera Image">
+    </div>
+
+    <div id="tables">
+    <table class="table-fill">
+        <thead>
+        <tr>
+            <th>Property</th>
+            <th>Value</th>
+        </tr>
+        </thead>
+        <tbody class="table-hover">
+        <tr>
+            <td>Roll</td>
+            <td id = "RollDiv"></td>
+        </tr>
+        <tr>
+            <td>Pitch</td>
+            <td id = "PitchDiv"></td>
+        </tr>
+        <tr>
+            <td>Yaw</td>
+            <td id = "YawDiv"></td>
+        </tr>
+        </tbody>
+    </table>
+    <table class="table-fill" id="properties">
+        <thead>
+        <tr>
+            <th>Property</th>
+            <th>Value</th>
+        </tr>
+        </thead>
+
+        <tbody class="table-hover" id="tableProperties">
+        <tr>
+            <td>Property 1</td>
+            <td>
+                <input id="property1" class="property_confirmed" type="number">
+            </td>
+        </tr>
+        <tr>
+            <td>Property 1</td>
+            <td>
+                <input id="property2" class="property_confirmed" type="number">
+            </td>
+        </tr>
+        <tr>
+            <td>Property 1</td>
+            <td>
+                <input id="property3" class="property_confirmed" type="number">
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+    <div id="FPS_Div"></div>
+</div>
+
+<script src="js/ajax.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

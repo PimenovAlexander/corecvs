@@ -38,6 +38,7 @@ set (HDR_FILES
     ${CMAKE_CURRENT_LIST_DIR}/modules/reflectionListModule.h
     ${CMAKE_CURRENT_LIST_DIR}/modules/httpServerModule.h
     ${CMAKE_CURRENT_LIST_DIR}/modules/statisticsListModule.h
+    ${CMAKE_CURRENT_LIST_DIR}/modules/mavlinkmodule.h
 
     ${CMAKE_CURRENT_LIST_DIR}/contents/httpContent.h
     ${CMAKE_CURRENT_LIST_DIR}/contents/imageContent.h
@@ -54,6 +55,7 @@ set (SRC_FILES
     ${CMAKE_CURRENT_LIST_DIR}/modules/imageListModule.cpp
     ${CMAKE_CURRENT_LIST_DIR}/modules/reflectionListModule.cpp
     ${CMAKE_CURRENT_LIST_DIR}/modules/statisticsListModule.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/modules/mavlinkmodule.cpp
 
     ${CMAKE_CURRENT_LIST_DIR}/contents/imageContent.cpp
     ${CMAKE_CURRENT_LIST_DIR}/contents/jsonContent.cpp

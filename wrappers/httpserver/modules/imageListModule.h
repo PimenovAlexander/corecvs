@@ -29,16 +29,16 @@ class ImageListModuleHashDAO : public ImageListModuleDAO {
 public:
     std::map<std::string, MetaImage> mImages;
 
-    virtual std::vector<std::string> getImageNames() {
+    std::vector<std::string> getImageNames() override {
         vector<std::string> names;
         names.reserve(mImages.size());
-        for (auto it : mImages) {
+        for (const auto& it : mImages) {
             names.push_back(it.first);
         }
         return names;
     }
 
-    virtual MetaImage getImage(std::string name)
+    MetaImage getImage(std::string name) override
     {
         if (mImages.count(name) == 0) {
             return MetaImage();
@@ -53,9 +53,10 @@ class ImageListModule : public HttpServerModule
 public:
     ImageListModuleDAO *mImages;
 
-    virtual bool shouldProcessURL(std::string url);
-    virtual bool shouldWrapURL   (std::string url);
-    virtual std::shared_ptr<HttpContent> getContentByUrl(std::string url);
+    bool shouldProcessURL(const std::string& url) override;
+    bool shouldWrapURL   (const std::string& url) override;
+    std::shared_ptr<HttpContent> getContentByUrl(const std::string& url) override;
+    bool shouldPollURL(const std::string& url) override;
 
     ImageListModule();
 };

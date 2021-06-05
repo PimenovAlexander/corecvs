@@ -9,43 +9,31 @@
 
 using namespace corecvs;
 
-bool ReflectionListModule::shouldProcessURL(std::string url)
+bool ReflectionListModule::shouldProcessURL(const std::string& url)
 {
     SYNC_PRINT(("ReflectionListModule::shouldProcessURL(%s): called\n", url.c_str()));
-    std::string urlPath = url;
-    if (urlPath == "/reflections" ||
-        HelperUtils::startsWith(urlPath, "/reflection") ||
-        HelperUtils::startsWith(urlPath, "/ureflection"))
-    {
-        return true;
-    }
-    return false;
+    return (url == "/reflections" ||
+        HelperUtils::startsWith(url, "/reflection") ||
+        HelperUtils::startsWith(url, "/ureflection"));
 }
 
-bool ReflectionListModule::shouldWrapURL(std::string url)
+bool ReflectionListModule::shouldWrapURL(const std::string& url)
 {
-    std::string urlPath = url;
-    if (urlPath == "/reflections")
-    {
-        return true;
-    }
-    return false;
-
+    return (url == "/reflections");
 }
 
-std::shared_ptr<HttpContent> ReflectionListModule::getContentByUrl(std::string url)
+std::shared_ptr<HttpContent> ReflectionListModule::getContentByUrl(const std::string& url)
 {
-    std::string urlPath = url;
-    SYNC_PRINT(("ReflectionListModule::getContentByUrl(%s): called\n", urlPath.c_str()));
+    SYNC_PRINT(("ReflectionListModule::getContentByUrl(%s): called\n", url.c_str()));
 
-    std::vector<std::pair<std::string, std::string> > query = HttpUtils::parseParameters(urlPath);
+    std::vector<std::pair<std::string, std::string> > query = HttpUtils::parseParameters(url);
 
-    if (urlPath == "/reflections")
+    if (url == "/reflections")
     {
         return std::shared_ptr<HttpContent>(new ReflectionListContent(mReflectionsDAO->getReflectionNames()));
     }
 
-    if (HelperUtils::startsWith(urlPath, "/reflection") || HelperUtils::startsWith(urlPath, "/ureflection"))
+    if (HelperUtils::startsWith(url, "/reflection") || HelperUtils::startsWith(url, "/ureflection"))
     {
         std::string reflectionName = "Main";
         if (!query.empty() && query.at(0).first == "name")
@@ -55,13 +43,13 @@ std::shared_ptr<HttpContent> ReflectionListModule::getContentByUrl(std::string u
 
         LockableObject *object = mReflectionsDAO->getReflectionObject(reflectionName);
 
-        if (object == NULL) {
-            return std::shared_ptr<HttpContent>(new ReflectionContent(NULL));
+        if (object == nullptr) {
+            return std::shared_ptr<HttpContent>(new ReflectionContent(nullptr));
         }
 
         if (query.size() > 1)
         {
-            JSONContent *content = new JSONContent();
+            auto *content = new JSONContent();
             std::string newValue;
             bool result = ReflectionContent(object).changeValue(url, newValue);
             content->setResult(result);
@@ -69,13 +57,13 @@ std::shared_ptr<HttpContent> ReflectionListModule::getContentByUrl(std::string u
             return std::shared_ptr<HttpContent>(content);
         }
 
-        if (HelperUtils::startsWith(urlPath, "/reflection")) {
+        if (HelperUtils::startsWith(url, "/reflection")) {
             return std::shared_ptr<HttpContent>(new ReflectionContent(object));
         } else {
             return std::shared_ptr<HttpContent>(new ReflectionContent(object));
         }
     }
-    return std::shared_ptr<HttpContent>(NULL);
+    return std::shared_ptr<HttpContent>(nullptr);
 }
 
 ReflectionListModule::ReflectionListModule()

@@ -6,17 +6,23 @@
 
 #include "httpServerModule.h"
 #include "compiledResourceDirectory.h"
+#include "compiledResource.h"
+
+#include <map>
+#include <utility>
 
 class ResourcePackContent : public HttpContent
 {
 public:
-    CompiledResourceDirectoryEntry *data;
+    std::string name;
+    CompiledResource *data;
 
-    ResourcePackContent(CompiledResourceDirectoryEntry *data) :
+    ResourcePackContent(std::string name, CompiledResource *data) :
+        name(std::move(name)),
         data(data)
     {}
 
-    virtual std::vector<uint8_t> getContent() override
+    std::vector<uint8_t> getContent() override
     {
         std::vector<uint8_t> result;
         result.resize(data->length);
@@ -24,25 +30,24 @@ public:
         return result;
     }
 
-    virtual std::string getContentType() override
+    std::string getContentType() override
     {
-        return HttpUtils::extentionToMIME(data->name);
+        return HttpUtils::extentionToMIME(name);
     }
 };
 
 class ResourcePackModule : public HttpServerModule
 {
 public:
-    /* Build a set here for fast search. I'm too lazy for this */
-    CompiledResourceDirectoryEntry *data = NULL;
+    std::map<std::string, CompiledResource> data;
     int size;
 
-    virtual bool shouldProcessURL(std::string url);
-    virtual bool shouldWrapURL(std::string url);
-    virtual std::shared_ptr<HttpContent> getContentByUrl(std::string url);
+    bool shouldProcessURL(const std::string& url) override;
+    bool shouldWrapURL(const std::string& url) override;
+    std::shared_ptr<HttpContent> getContentByUrl(const std::string& url) override;
 
 
-    ResourcePackModule(CompiledResourceDirectoryEntry *data, int size);
+    ResourcePackModule(CompiledResourceDirectoryEntry *Data, int size);
 };
 
 #endif // RESOURCEPACKMODULE_H

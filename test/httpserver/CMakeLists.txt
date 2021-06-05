@@ -1,9 +1,9 @@
 project (httpserver)
 
 set (SRC_FILES
-    main_httpserver.cpp
-    resources.c
-    resources_test.c
+        main_httpserver.cpp
+        resources.c
+        resources_test.c
 )
 
 set (HDR_FILES
@@ -45,7 +45,7 @@ file(GLOB HTML
         pages/css/style.css
         pages/html/Body.html
         pages/html/Content.html
-        pages/js/main.js
+        pages/js/cstylemain.js
         pages/html/Script.html)
 
 # Prepare a temporary file to "cat" to:
@@ -82,7 +82,7 @@ function(create_resources dir output prefix)
         file(GLOB bins RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/${dir}/${wpath} ${CMAKE_CURRENT_SOURCE_DIR}/${dir}/${wpath}*)
         foreach(rel_bin ${bins})
 
-            set(bin ${CMAKE_CURRENT_SOURCE_DIR}/${dir}/${wpath}${rel_bin})
+            set(bin ${CMAKE_CURRENT_SOURCE_DIR}/${dir}${wpath}${rel_bin})
             message("Packaging resource file: ${bin}")
             if(IS_DIRECTORY ${bin})
                 message("Packaging directory: ${bin}")
@@ -95,6 +95,7 @@ function(create_resources dir output prefix)
 
                 # Replace filename spaces & extension separator for C compatibility
                 string(REGEX REPLACE "[\\.-/]" "_" filename "${filename}")
+                string(REGEX REPLACE "-|@" "_" filename "${filename}")
                 file(READ ${bin} filedata HEX)
                 # Convert hex data for C compatibility
                 string(REGEX REPLACE "([0-9a-f][0-9a-f])" "0x\\1," filedata "${filedata}")
@@ -130,7 +131,9 @@ endfunction()
 #file(WRITE ${index} "struct {char *name; const  unsigned char *}")
 
 create_resources(pages/img   resources.c      res_)
-create_resources(test_pages  resources_test.c test_)
+
+create_resources(pages  resources_test.c test_)
+# create_resources(test_pages/pages  resources_test.c test_)
 
 # Additional stuff mostly for IDE only
 file(GLOB CURR_ADD_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/pages/img/*)

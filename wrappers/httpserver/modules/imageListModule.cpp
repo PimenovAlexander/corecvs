@@ -13,41 +13,43 @@ ImageListModule::ImageListModule()
 }
 
 
-bool ImageListModule::shouldProcessURL(std::string url)
+bool ImageListModule::shouldProcessURL(const std::string& url)
 {
-    std::string path = url;
-    if (HelperUtils::startsWith(path, "/framelist")) {
-        return true;
+    string urlPath(url);
+    if (checkAndRewritePollPrefix(urlPath)) {
+        return shouldPollURL(urlPath);
     }
+    return (
+            HelperUtils::startsWith(url, "/framelist") ||
+            HelperUtils::startsWith(url, "/imagelist.json") ||
+            HelperUtils::startsWith(url, "/frame.jpg") ||
+            HelperUtils::startsWith(url, "/frame.bmp") ||
+            HelperUtils::startsWith(url, "/frame.png"));
+}
 
-    if (HelperUtils::startsWith(path, "/imagelist.json")) {
+bool ImageListModule::shouldPollURL(const std::string& url)
+{
+    if (HelperUtils::startsWith(url, "/cameraImage"))
         return true;
-    }
-
-    if (HelperUtils::startsWith(path, "/frame.jpg") ||
-        HelperUtils::startsWith(path, "/frame.bmp") ||
-        HelperUtils::startsWith(path, "/frame.png"))
-    {
-        return true;
-    }
     return false;
 }
 
-bool ImageListModule::shouldWrapURL(std::string url)
+bool ImageListModule::shouldWrapURL(const std::string& url)
 {
-    std::string path = url;
-    if (HelperUtils::startsWith(path, "/framelist")) {
-        return true;
-    }
-
-    return false;
+    return HelperUtils::startsWith(url, "/framelist");
 }
 
 
-std::shared_ptr<HttpContent> ImageListModule::getContentByUrl(std::string url)
+std::shared_ptr<HttpContent> ImageListModule::getContentByUrl(const std::string& url)
 {
-    std::string urlPath = url;
+    string urlPath(url);
+
+    // Removes poll prefix
+    checkAndRewritePollPrefix(urlPath);
+
     std::vector<std::pair<std::string, std::string> > query = HttpUtils::parseParameters(urlPath);
+
+    std::cout << "Image List Module : " << urlPath << std::endl;
 
     if (HelperUtils::startsWith(urlPath, "/framelist"))
     {
@@ -58,7 +60,7 @@ std::shared_ptr<HttpContent> ImageListModule::getContentByUrl(std::string url)
         HelperUtils::startsWith(urlPath, "/frame.png"))
     {
         std::string imageName = "Main";
-        if (query.size() > 0 && query.at(0).first == "name")
+        if (!query.empty() && query.at(0).first == "name")
         {
             imageName = query.at(0).second;
         }
@@ -66,10 +68,9 @@ std::shared_ptr<HttpContent> ImageListModule::getContentByUrl(std::string url)
         double scale = 1.0;
         if (query.size() > 1 && query.at(1).first == "scale")
         {
-            bool ok = true;
             std::string strScale = query.at(1).second;
             scale = HelperUtils::parseDouble(strScale) / 100.0;
-            if (!ok || scale <= 0.0 || scale >= 3.0)
+            if (scale <= 0.0 || scale >= 3.0)
                 scale = 1.0;
         }
 
@@ -84,7 +85,7 @@ std::shared_ptr<HttpContent> ImageListModule::getContentByUrl(std::string url)
         MetaImage image = mImages->getImage(imageName);
         if (!image.mImage)
         {
-            return std::shared_ptr<HttpContent>(new ImageContent(std::shared_ptr<corecvs::RGB24Buffer>(NULL)));
+            return std::shared_ptr<HttpContent>(new ImageContent(std::shared_ptr<corecvs::RGB24Buffer>(nullptr)));
         }
 
         return std::shared_ptr<HttpContent>(new ImageContent(image.mImage, scale, format));
@@ -92,8 +93,8 @@ std::shared_ptr<HttpContent> ImageListModule::getContentByUrl(std::string url)
 
     if (HelperUtils::startsWith(urlPath,"/imagelist.json"))
     {
-        std::string prefix = "";
-        if (query.size() > 0 && query.at(0).first == "name")
+        std::string prefix;
+        if (!query.empty() && query.at(0).first == "name")
         {
             prefix = query.at(0).second;
         }
@@ -106,16 +107,17 @@ std::shared_ptr<HttpContent> ImageListModule::getContentByUrl(std::string url)
         }
 
         std::vector<std::string> names = mImages->getImageNames();
-        for (size_t i = 0; i < names.size(); i++)
+
+        for(const std::string& imageName: names)
         {
-            if (!HelperUtils::startsWith(names[i], prefix))
+            if (!HelperUtils::startsWith(imageName, prefix))
                 continue;
-            MetaImage image = mImages->getImage(names[i]);
+            MetaImage image = mImages->getImage(imageName);
             if (image.mTimestamp <= since)
                 continue;
-            //vars[names[i]] = QVariant((qlonglong)image.mTimestamp);
         }
 
+        // Empty pointer (TBD)
         return std::shared_ptr<HttpContent>();
     }
 

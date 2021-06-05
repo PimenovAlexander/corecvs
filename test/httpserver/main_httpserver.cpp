@@ -4,6 +4,7 @@
 #include <reflectionListModule.h>
 #include <resourcePackModule.h>
 #include <statisticsListModule.h>
+#include <memory>
 #include <thread>
 
 
@@ -11,9 +12,6 @@
 #include "core/fileformats/meshLoader.h"
 #include "core/fileformats/plyLoader.h"
 #include "core/utils/utils.h"
-
-#include "cStyleExample.h"
-
 
 #ifdef WITH_LIBPNG
 #include "libpngFileReader.h"
@@ -31,6 +29,8 @@ extern "C" int test_resource_index_size;
 
 #include "server.h"
 
+#include "cStyleExample.h"
+
 using namespace corecvs;
 using namespace std;
 
@@ -47,7 +47,7 @@ void on_resource_image_request(struct evhttp_request *req, void *arg)
     evbuffer_free(evb);
 }
 
-void server_loop(LibEventServer * server) {
+[[noreturn]] void server_loop(LibEventServer * server) {
     int count = 0;
     while (true) {
         usleep(10);
@@ -65,25 +65,25 @@ public:
         lockable = new LockableObject(&params);
     }
 
-    virtual std::vector<std::string>  getReflectionNames() override
+    std::vector<std::string>  getReflectionNames() override
     {
         return std::vector<std::string>({"example1", "example2"});
     };
 
-    virtual corecvs::LockableObject *getReflectionObject(std::string name) override
+    corecvs::LockableObject *getReflectionObject(std::string name) override
     {
         if ( name == "example1" )
         {
             return lockable;
         }
-        return  NULL;
+        return nullptr;
     }
 };
 
 
 class ImageDAO : public ImageListModuleDAO {
 public:
-    RGB24Buffer *buffer = NULL;
+    RGB24Buffer *buffer = nullptr;
 
     ImageDAO()
     {
@@ -91,17 +91,17 @@ public:
         buffer->checkerBoard(10, RGBColor::Cyan(), RGBColor::Yellow());
     }
 
-    virtual std::vector<std::string> getImageNames() override
+    std::vector<std::string> getImageNames() override
     {
         return std::vector<std::string>({"example1"});
     }
 
-    virtual MetaImage   getImage(std::string name) override
+    MetaImage getImage(std::string name) override
     {
         if ( name == "example1" )
         {
             SYNC_PRINT(("ImageDAO::getImage(): will return [%d x %d]\n", buffer->w, buffer->h));
-            return MetaImage(shared_ptr<RGB24Buffer>(new RGB24Buffer(buffer)));
+            return MetaImage(std::make_shared<RGB24Buffer>(buffer));
         }
         return  MetaImage();
     }
@@ -120,7 +120,7 @@ public:
         collector.addStatistics(stats);
     }
 
-    virtual corecvs::BaseTimeStatisticsCollector getCollector() override
+    corecvs::BaseTimeStatisticsCollector getCollector() override
     {
         return  collector;
     }
@@ -132,15 +132,17 @@ class GraphDAO : public GraphModuleDAO
 
 public:
     GraphDAO() {
-        for (int i = 0; i < 100; i++) {
-            data.addGraphPoint("test", 10 * sin(i / 10.0), true);
+        for (int i = 0; i < 10; i++) {
+            data.addGraphPoint("yaw", 10 * sin(i / 10.0), true);
+            data.addGraphPoint("pitch", 10 * cos(i / 10.0), true);
+            data.addGraphPoint("roll", 10 * tan(i / 10.0), true);
         }
     }
 
-    virtual void lockGraphData() { };
-    virtual void unlockGraphData() { };
+    void lockGraphData() override { };
+    void unlockGraphData() override { };
 
-    virtual GraphData *getGraphData()
+    GraphData *getGraphData() override
     {
         return &data;
     }
@@ -165,14 +167,12 @@ int main (int argc, char **argv)
 
 #define BASIC
 #ifdef BASIC
-    std::thread *mThread = NULL;
+    std::thread *mThread = nullptr;
     SYNC_PRINT(("Starting web server 1...\n"));
-    LibEventServer *server = new LibEventServer(8040, "0.0.0.0", 1);
+    auto *server = new LibEventServer(8040, "0.0.0.0", 1);
 
     /* Start first basic webserver */
     {
-
-
         server->setup();
 
         server->override_callback("/test_img.bmp"  , on_resource_image_request);
@@ -184,13 +184,15 @@ int main (int argc, char **argv)
         server->set_callback("/image_request"      , on_image_request, server);
         server->set_callback("/stats_request"      , on_get_stats_request, server);
 
-        server->set_callback("/long_poll"          , on_long_pull_request_subscribe, server);
-        server->set_callback("/long_poll_announce" , on_long_poll_request_announce, server);
+#ifdef poll_in_C_style
+        server->set_callback("/long_poll"          , on_long_pull_request_subscribe, server->poll.get());
+        server->set_callback("/long_poll_announce" , on_long_poll_request_announce, server->poll.get());
+
+        server->poll->addEvent("CLIENT_REQUEST", on_get_test_image);
+#endif
 
         server->set_callback("/change_stat_request", on_change_stats_request, server);
         server->set_default_callback(on_other_requests);
-
-        server->poll->addEvent("CLIENT_REQUEST", on_get_test_image);
 
         /* Start server thread */
         mThread = new std::thread(server_loop, server);
@@ -200,39 +202,36 @@ int main (int argc, char **argv)
 #define MODULAR
 #ifdef MODULAR
     /* Start modular webserver */
-    HttpServer* modularServer = new HttpServer(8041, "0.0.0.0", 2);
+    auto modularServer = new HttpServer(8041, "0.0.0.0", 2);
 
-    ReflectionListModule *reflectionModule = new ReflectionListModule;
+    auto reflectionModule = new ReflectionListModule;
     reflectionModule->mReflectionsDAO = new RefDAO;
     reflectionModule->setPrefix("/R/");
     modularServer->addModule(reflectionModule);
 
-    ImageListModule *imageModule = new ImageListModule;
+    auto imageModule = new ImageListModule;
     imageModule->mImages = new ImageDAO;
     imageModule->setPrefix("/I/");
     modularServer->addModule(imageModule);
 
-    StatisticsListModule *statsModule = new StatisticsListModule;
+    auto statsModule = new StatisticsListModule;
     statsModule->mStatisticsDAO = new StatisticsDAO;
     statsModule->setPrefix("/S/");
     modularServer->addModule(statsModule);
 
-    GraphModule *graphModule = new GraphModule;
+    auto graphModule = new GraphModule;
     graphModule->mGraphData = new GraphDAO;
     graphModule->setPrefix("/G/");
     modularServer->addModule(graphModule);
 
-    ResourcePackModule *packModule = new ResourcePackModule(test_resource_index, test_resource_index_size);
+    auto packModule = new ResourcePackModule(test_resource_index, test_resource_index_size);
     packModule->setPrefix("/");
     modularServer->addModule(packModule);
 
-
+    modularServer->addEvent("cameraImage", imageModule);
 
     modularServer->setup();
     modularServer->start();
-
-
-
 #endif
 
     /* Run some background task */
@@ -240,8 +239,16 @@ int main (int argc, char **argv)
     while (true) {
         char animation[4] = {'|', '/', '-', '\\' };
         SYNC_PRINT(("\r%c", animation[count % 4]));
-        usleep(1000000);
+        usleep(100000);
         count++;
+
+        // graphModule->mGraphData->getGraphData()->addGraphPoint("test", 10 * sin((count+99) / 10.0), true);
+
+        graphModule->mGraphData->getGraphData()->addGraphPoint("yaw", 10 * sin((count+99) / 10.0), true);
+        graphModule->mGraphData->getGraphData()->addGraphPoint("pitch", 10 * cos((count+99) / 10.0), true);
+        graphModule->mGraphData->getGraphData()->addGraphPoint("roll", 10 * cos((count+249) / 5.0), true);
+
+        // modularServer->poll->announce("cameraImage");
     }
 
     SYNC_PRINT(("Exiting web server...\n"));

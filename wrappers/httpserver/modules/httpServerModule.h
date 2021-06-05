@@ -2,27 +2,33 @@
 #define HTTPSERVERMODULE_H
 
 #include <memory>
+#include <utility>
 
 #include "httpContent.h"
 #include "core/utils/utils.h"
+#include "contentProvider.h"
 
-class HttpServerModule
+class HttpServerModule : public ContentProvider
 {
-public:
-    bool mShouldWrap;
+private:
     std::string mPrefix;
+    bool mShouldWrap;
 
 public:
     HttpServerModule(bool shouldWrap = true) :
         mShouldWrap(shouldWrap)
     {}
 
-    void setPrefix(std::string string) {
-        mPrefix = string;
+    std::string getPrefix() {
+        return mPrefix;
+    }
+
+    void setPrefix(std::string prefix) {
+        mPrefix = std::move(prefix);
     }
 
     /* Rewrite input */
-    virtual bool checkAndRewrite(std::string &url)
+    bool checkAndRewrite(std::string& url)
     {
         if (!mPrefix.empty())
         {
@@ -35,14 +41,25 @@ public:
         return true;
     }
 
-    virtual bool shouldProcess(std::string url)
+    static bool checkAndRewritePollPrefix(std::string &url)
     {
-        if (!checkAndRewrite(url))
+        if (corecvs::HelperUtils::startsWith(url, "/poll"))
         {
-                return false;
+            url = url.substr(5);
+            return true;
         }
-        SYNC_PRINT(("Prefix is ok. Checking rest url\n"));
-        return shouldProcessURL(url);
+        return false;
+    }
+
+    bool shouldProcess(const std::string& url)
+    {
+        std::string urlPath(url);
+        if (!checkAndRewrite(urlPath))
+        {
+            return false;
+        }
+        SYNC_PRINT(("Prefix is ok. Checking the rest of the url\n"));
+        return shouldProcessURL(urlPath);
     }
 
 #if 0
@@ -56,29 +73,47 @@ public:
     }
 #endif
 
-    virtual std::shared_ptr<HttpContent> getContent(std::string url)
+    std::shared_ptr<HttpContent> getContent(const std::string& url) override
     {
-        if (!checkAndRewrite(url))
+        std::string urlPath(url);
+        if (!checkAndRewrite(urlPath))
         {
-                return std::shared_ptr<HttpContent>();
+            return std::shared_ptr<HttpContent>();
         }
-        return getContentByUrl(url);
+        return getContentByUrl(urlPath);
+    }
+
+    bool shouldPoll(const std::string& url) override
+    {
+        std::string urlPath(url);
+        if (checkAndRewrite(urlPath)) {
+            if (checkAndRewritePollPrefix(urlPath)) {
+                if (shouldPollURL(urlPath)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 protected:
     /* Functions to be overloaded */
-    virtual bool shouldProcessURL(std::string /*url*/)
+    virtual bool shouldProcessURL(const std::string& /*url*/)
     {
         return false;
     }
+    virtual bool shouldPollURL(const std::string& /*url*/)
+    {
+        // Assumes that URL has neither module's nor poll's prefix
+        return false;
+    }
 
-    virtual bool shouldWrapURL(std::string /*url*/)
+    virtual bool shouldWrapURL(const std::string& /*url*/)
     {
         return mShouldWrap;
     }
 
-    virtual std::shared_ptr<HttpContent> getContentByUrl(std::string url) = 0;
-
+    virtual std::shared_ptr<HttpContent> getContentByUrl(const std::string& url) = 0;
 
 };
 
