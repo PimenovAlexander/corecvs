@@ -14,9 +14,13 @@ import Position from '../classes/Position';
 
 @Component
 export default class Camera extends Vue {
+	@Prop() private receivedMessagesRecently!: () => boolean;
+
 	mounted() {
 		// Update image src to get new image
 		setInterval(_ => {
+			if (!this.receivedMessagesRecently()) return;
+			
 			document.getElementById('cameraImage')?.setAttribute(
 				'src', `${window.location.href}I/frame.jpg?name=example1&date=${new Date().getTime()}`
 			)

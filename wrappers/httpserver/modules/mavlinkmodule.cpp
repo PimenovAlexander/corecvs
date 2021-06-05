@@ -13,7 +13,8 @@ bool MavLinkModule::shouldProcessURL(const std::string& url) {
 
 bool MavLinkModule::shouldPollURL(const std::string& url)
 {
-    return !HelperUtils::startsWith(url, "/heartbeatMessage");
+    // return !HelperUtils::startsWith(url, "/heartbeatMessage");
+    return false;
 }
 
 bool MavLinkModule::shouldWrapURL(const std::string& url)
@@ -87,8 +88,15 @@ std::vector<uint8_t> MavLinkContent::getContent()
 {
     std::ostringstream result;
 
-    if (containsResponse) {
-        result << missionItem;
+    if (containsValue || containsValues) {
+        if (containsValue) {
+            result << value;
+        }
+        if (containsValues) {
+            for (auto value : values) {
+                result << "&" << value;
+            }
+        }
     } else {
         // These variables are mocks that have to be replaced with UAV's logic
         int system_id = 1;
@@ -131,8 +139,7 @@ std::shared_ptr<HttpContent> MavLinkModule::getContentByUrl(const std::string& u
             HelperUtils::startsWith(urlPath, "/clearAll") ||
             HelperUtils::startsWith(urlPath, "/pauseMission") ||
             HelperUtils::startsWith(urlPath, "/heartbeatMessage") ||
-            HelperUtils::startsWith(urlPath, "/missionSetCurrent") ||
-            HelperUtils::startsWith(urlPath, "/setParam"))
+            HelperUtils::startsWith(urlPath, "/missionSetCurrent"))
     {
         return std::shared_ptr<HttpContent>(new MavLinkContent());
     }
@@ -141,6 +148,15 @@ std::shared_ptr<HttpContent> MavLinkModule::getContentByUrl(const std::string& u
         // Current mission item should be acquired from UAV's data
         int currentMissionItem = 0;
         return std::shared_ptr<HttpContent>(new MavLinkContent(currentMissionItem));
+    }
+    if (HelperUtils::startsWith(urlPath, "/setParam"))
+    {
+        std::cout << std::endl << "SET PARAM " << std::endl << query[0].first << std::endl;
+    }
+    if (HelperUtils::startsWith(urlPath, "/getProperties"))
+    {
+        int properties[] = { rand() % 100, rand() % 100, rand() % 100 };
+        return std::shared_ptr<HttpContent>(new MavLinkContent(properties));
     }
 
     return std::shared_ptr<HttpContent>();

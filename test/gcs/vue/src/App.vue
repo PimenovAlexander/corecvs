@@ -1,9 +1,10 @@
 <template>
 	<div id="app">
 		<div id="main">
-			<Menu :windows="this.windows" :changeActiveWindow="this.changeActiveWindow"/>
-			<Map v-show="this.currentWindow('map')" v-bind:position="position" :addMap="addMap"/>
-			<Camera v-show="this.currentWindow('camera')"/>
+			<ChartComponent v-show="this.showingChart"/>
+			<Menu v-show="!this.showingChart" :windows="this.windows" :changeActiveWindow="this.changeActiveWindow"/>
+			<Map v-show="this.currentWindow('map') && !this.showingChart" v-bind:position="position" :addMap="addMap"/>
+			<Camera :receivedMessagesRecently="this.receivedMessagesRecently" v-show="this.currentWindow('camera') && !this.showingChart"/>
 		</div>
 
 		<MissionController
@@ -15,6 +16,8 @@
 			:startingWaypoints="waypoints" :position="position" :addMarker="addMarker" :removeMarker="removeMarker"/>
 		<Properties
 			:SYSTEM_ID='this.SYSTEM_ID' :COMPONENT_ID='this.COMPONENT_ID'
+			:showChart='this.showChart' :hideChart='this.hideChart'
+			:receivedMessagesRecently="this.receivedMessagesRecently"
 			v-show="this.getManualMode()"/>
 	</div>
 </template>
@@ -30,6 +33,7 @@ import MissionPlanner from './components/MissionPlanner.vue';
 import Camera from './components/Camera.vue';
 import MissionController from './components/MissionController.vue';
 import Properties from './components/Properties.vue';
+import ChartComponent from './components/Chart.vue';
 
 import { Heartbeat } from './classes/mavlink/messages/heartbeat';
 
@@ -48,25 +52,34 @@ import { send } from './classes/AjaxRequest';
 		MissionPlanner,
 		Camera,
 		MissionController,
-		Properties
+		Properties,
+		ChartComponent
 	},
 })
 
 export default class App extends Vue {
+	// Placeholder for starting position
 	static position = new Position(59.87994329833602, 29.82886671034883, 100)
+
+	// Number of messages sent after previous UAV's response
+	unansweredMessages = 0;
 
 	get position() {
 		return App.position
 	}
 
+	/*
+		"The sender always fills in the System ID and Component ID fields so that the receiver knows where the packet came from. The System ID is a unique ID for each vehicle or ground station. Ground stations normally use a high system id like “255” and vehicles default to use “1” (this can be changed by setting the SYSID_THISMAV parameter). The Component ID for the ground station or flight controller is normally “1”." - Ardupilot Documentation
+	*/
+
 	// Placeholder for GCS's system id
-	SYSTEM_ID(): number {
-		return 1;
+	private SYSTEM_ID(): number {
+		return 255;
 	}
 
 	// Placeholder for component id
-	COMPONENT_ID(): number {
-		return 2;
+	private COMPONENT_ID(): number {
+		return 1;
 	}
 
 	// List of menu items available for displaying
@@ -75,17 +88,19 @@ export default class App extends Vue {
 		"camera"
 	]
 
+	showingChart = false;
+
 	manualControlMode = false;
 
-	getManualMode() {
+	private getManualMode() {
 		return this.manualControlMode;
 	}
 
-	setManualMode(value: boolean) {
+	private setManualMode(value: boolean) {
 		this.manualControlMode = value;
 	}
 
-	currentWindow(window: string): boolean {
+	private currentWindow(window: string): boolean {
 		return this.activeWindow == this.windows.indexOf(window)
 	}
 
@@ -95,23 +110,38 @@ export default class App extends Vue {
 	maps: L.Map[] = [
 	]
 
-	addMap(map: L.Map) {
+	private addMap(map: L.Map) {
 		this.maps.push(map)
 	}
 
-	addMarker(marker: L.Marker) {
+	private addMarker(marker: L.Marker) {
 		marker.addTo(this.maps[0])
 	}
 
-	removeMarker(marker: L.Marker) {
+	private removeMarker(marker: L.Marker) {
 		marker.removeFrom(this.maps[0])
+	}
+
+	private resetMessagesCounter() {
+		this.unansweredMessages = 0;
+	}
+
+	private increaseMessagesCounter() {
+		this.unansweredMessages++;
+	}
+
+	private receivedMessagesRecently() {
+		return this.unansweredMessages < 10;
 	}
 
 	activeWindow = 0;
 
-	changeActiveWindow(windowIndex: number) {
+	private changeActiveWindow(windowIndex: number) {
 		this.activeWindow = windowIndex;
 	}
+
+	private showChart() { this.showingChart = true; }
+	private hideChart() { this.showingChart = false; }
 
 	mounted() {
 		// Sending messages to notify UAV of GCS's state
@@ -120,8 +150,10 @@ export default class App extends Vue {
 			heartbeatMessage.type = MavType.MAV_TYPE_GCS;
 			heartbeatMessage.autopilot = MavAutopilot.MAV_AUTOPILOT_INVALID;
 			heartbeatMessage.system_status = MavState.MAV_STATE_ACTIVE;
-			
-			send('mavlink/heartbeatMessage', heartbeatMessage);
+
+			this.increaseMessagesCounter();
+
+			send('mavlink/heartbeatMessage', heartbeatMessage, this.resetMessagesCounter);
 		}, 1000);
 	}
 }

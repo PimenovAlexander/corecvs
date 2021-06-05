@@ -59,21 +59,21 @@ export default class MissionController extends Vue {
 		const missionSetCurrent = new MissionSetCurrent(this.SYSTEM_ID(), this.COMPONENT_ID());
 		missionSetCurrent.seq = 0;
 
-		send('mavlink/missionSetCurrent', missionSetCurrent, true);
+		send('mavlink/missionSetCurrent', missionSetCurrent);
 	}
 
 	pauseMission() {
 		const missionSetCurrent = new MissionSetCurrent(this.SYSTEM_ID(), this.COMPONENT_ID());
 		missionSetCurrent.seq = 65535;
 
-		send('mavlink/pauseMission', missionSetCurrent, true);
+		send('mavlink/pauseMission', missionSetCurrent);
 	}
 
 	setActiveMissionItem(missionItemIndex: number) {
 		const missionSetCurrent = new MissionSetCurrent(this.SYSTEM_ID(), this.COMPONENT_ID());
 		missionSetCurrent.seq = missionItemIndex;
 
-		send('mavlink/missionSetCurrent', missionSetCurrent, true);
+		send('mavlink/missionSetCurrent', missionSetCurrent);
 	}
 
 	switchManualMode() {

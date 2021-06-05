@@ -9,9 +9,15 @@ class MavLinkContent : public HttpContent
 {
 public:
     MavLinkContent() {}
-    MavLinkContent(int currentMissionItem) {
-        missionItem = currentMissionItem;
-        containsResponse = true;
+    MavLinkContent(int item) {
+        value = item;
+        containsValue = true;
+    }
+    MavLinkContent(const int items[]) {
+        for(int i = 0; i < 3; i++) {
+            values[i] = items[i];
+        }
+        containsValues = true;
     }
 
     std::vector<uint8_t> getContent() override;
@@ -20,9 +26,11 @@ public:
         return "text/html";
     }
 private:
-    // Required as a mock if no droneApp is present to acquire current mission item's index
-    int missionItem = 0;
-    bool containsResponse = false;
+    // Required as a mock if no droneApp is present to acquire current mission item's index and properties
+    int value = 0;
+    int values[3] = { 0, 0, 0 };
+    bool containsValue = false;
+    bool containsValues = false;
 };
 
 class MavLinkModule: public HttpServerModule {
