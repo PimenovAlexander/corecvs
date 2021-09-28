@@ -10,7 +10,7 @@ set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/Modules
 option(USE_TBB "Should compile with TBB" YES)
 IF ( USE_TBB )
     MESSAGE( STATUS "Including TBB on CORECVS build" )
-    find_package(TBB REQUIRED)
+    find_package(TBB)
     if (TBB_LIBRARY)
         add_definitions(-DWITH_TBB)
     endif()
@@ -179,8 +179,8 @@ add_subdirectory(core)
 add_subdirectory(utils)
 
 add_subdirectory(test)
-add_subdirectory(applications)
-add_subdirectory(tools)
+#add_subdirectory(applications)
+#add_subdirectory(tools)
 
 
 enable_testing()

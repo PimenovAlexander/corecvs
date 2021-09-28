@@ -1353,4 +1353,21 @@ RGB24Buffer *RGB24Buffer::diff(RGB24Buffer *buffer1, RGB24Buffer *buffer2, int *
     return toReturn;
 }
 
+RGB24Buffer *RGB24Buffer::blend(RGB24Buffer *buffer1, RGB24Buffer *buffer2, double alpha)
+{
+    RGB24Buffer *toReturn = new RGB24Buffer(buffer1);
+    int h = CORE_MIN(buffer1->h, buffer2->w);
+    int w = CORE_MIN(buffer1->w, buffer2->w);
+
+    for (int i = 0; i < h; i++)
+    {
+        for (int j = 0; j < w; j++)
+        {
+            RGBColor blended = RGBColor::lerpColor(buffer1->element(i,j), buffer2->element(i,j), alpha);
+            toReturn->element(i,j) = blended;
+        }
+    }
+    return toReturn;
+}
+
 } //namespace corecvs

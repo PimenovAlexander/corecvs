@@ -4,6 +4,11 @@ set (NAME softrender )
 
 set (SRC_FILES
     main_softrender.cpp      
+    floatHorizon.cpp
+)
+
+set (HDR_FILES
+    floatHorizon.h
 )
 
 

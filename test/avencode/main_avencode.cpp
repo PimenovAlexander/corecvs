@@ -13,10 +13,72 @@
 #include <wrappers/libgif/libgifFileReader.h>
 #endif
 
+extern "C" {
+#include <libavcodec/avcodec.h>
+#include <libavutil/opt.h>
+#include <libavutil/mem.h>
+#include <libavcodec/avcodec.h>
+#include <libavutil/imgutils.h>
+#include <libavformat/avio.h>
+#include <libavformat/avformat.h>
+
+#include <libavutil/avutil.h>
+#include <libswscale/swscale.h>
+}
+
+
+
 using namespace corecvs;
+
+
+void testConvert()
+{
+#ifdef WITH_SWSCALE
+    SYNC_PRINT(("testConvert():called\n"));
+    AVFrame *frame = new AVFrame;
+    frame->height = 100;
+    frame->width  = 100;
+    frame->format = AV_PIX_FMT_YUVJ444P;
+//    frame->data =
+
+
+    RGB24Buffer *image = new RGB24Buffer(100, 100);
+
+    uint8_t *inData[1]  = { (uint8_t *)frame->data };
+    uint8_t *outData[1] = { (uint8_t *)image->data };
+
+
+    int inStride [1] = { (int)(frame->linesize[0]) };
+    int outStride[1] = { (int)(image->stride * sizeof(typename RGB24Buffer::InternalElementType)) };
+
+    SwsContext *scaleContext = sws_getContext(
+                frame->width,
+                frame->height,
+                (AVPixelFormat)frame->format,
+                image->w,
+                image->h,
+                (AVPixelFormat)AV_PIX_FMT_RGB32,
+                SWS_BILINEAR , NULL, NULL, NULL);
+
+
+    sws_scale(scaleContext,
+        inData,
+        inStride,
+        0,
+        frame->height,
+        outData,
+        outStride);
+
+    sws_freeContext(scaleContext);
+
+#endif //WITH_SWSCALE
+}
 
 int main(int argc, char **argv)
 {
+
+    testConvert();
+
 #ifdef WITH_AVCODEC    
     AVEncoder::printCaps();
 

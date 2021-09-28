@@ -46,7 +46,7 @@ set (CORE_TEST_SOURCES
     filesystem/main_test_filesystem.cpp
 #    gaussianSolution/main_test_gaussianSolution.cpp      # TODO: check it...
     geometry/main_test_geometry.cpp
-    gradient/main_test_gradient.cpp
+    gradient/main_test_gradient.cpp    
     histogram/main_test_histogram.cpp
     homography/main_test_homography.cpp
     integral/main_test_integral.cpp
@@ -103,6 +103,8 @@ set (CORE_TEST_SOURCES
     convexpolygon/main_test_convexpolygon.cpp
     convexhull/main_test_convexhull.cpp
     convexHull2d/main_test_convexHull2d.cpp
+
+    polygon/main_test_polygon.cpp
 
     wuRasterizer/main_test_wu_rasterizer.cpp
     bsptree/main_test_bsptree.cpp

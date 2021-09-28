@@ -14,6 +14,7 @@ target_sources(corecvs
         ${CMAKE_CURRENT_LIST_DIR}/binaryReader.h
         ${CMAKE_CURRENT_LIST_DIR}/binaryWriter.h
         ${CMAKE_CURRENT_LIST_DIR}/dynamicObject.h
+        ${CMAKE_CURRENT_LIST_DIR}/lockableObject.h
         ${CMAKE_CURRENT_LIST_DIR}/advanced/advancedBinaryReader.h
         ${CMAKE_CURRENT_LIST_DIR}/advanced/advancedBinaryWriter.h
 
@@ -32,6 +33,7 @@ target_sources(corecvs
         ${CMAKE_CURRENT_LIST_DIR}/binaryReader.cpp
         ${CMAKE_CURRENT_LIST_DIR}/binaryWriter.cpp
         ${CMAKE_CURRENT_LIST_DIR}/dynamicObject.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/lockableObject.cpp        
         ${CMAKE_CURRENT_LIST_DIR}/advanced/advancedBinaryReader.cpp
         ${CMAKE_CURRENT_LIST_DIR}/advanced/advancedBinaryWriter.cpp
 

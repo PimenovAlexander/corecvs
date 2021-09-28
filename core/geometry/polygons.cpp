@@ -468,12 +468,12 @@ bool PolygonCombiner::validateState() const
     return ok;
 }
 
-void PolygonCombiner::drawDebug(RGB24Buffer *buffer) const
+void PolygonCombiner::drawDebug(RGB24Buffer *buffer, const RGBColor &firstColor, const RGBColor &secondColor, const RGBColor &textColor ) const
 {
     AbstractPainter<RGB24Buffer> painter(buffer);
 
-    painter.drawPolygon(pol[0], RGBColor::Yellow());
-    painter.drawPolygon(pol[1], RGBColor::Cyan  ());
+    painter.drawPolygon(pol[0], firstColor);
+    painter.drawPolygon(pol[1], secondColor);
 
     for (int p = 0; p < 2; p++)
     {
@@ -489,7 +489,7 @@ void PolygonCombiner::drawDebug(RGB24Buffer *buffer) const
             if (v.flag == COMMON)
                 buffer->drawCrosshare3(pos.x(), pos.y(), RGBColor::Blue());
 
-            painter.drawFormat(pos.x(), pos.y() + p * 10, RGBColor::White(), 1, "%c%d (%0.2lf) [%d]", p == 0 ? 'A' : 'B', i, v.t, v.other);
+            painter.drawFormat(pos.x() + 2, pos.y() + p * 10 + 2, textColor, 1, "%c%d (%0.2lf) [%d]", p == 0 ? 'A' : 'B', i, v.t, v.other);
             printf("(%lf %lf) %c%d (%0.2lf) [%" PRISIZE_T "]\n", pos.x(), pos.y() , p == 0 ? 'A' : 'B', i, v.t, v.other);
         }
     }

@@ -255,6 +255,34 @@ double parseDouble(const string &s)
     return x;
 }
 
+std::string toLower(const std::string &s)
+{
+    std::string toReturn = s;
+    std::transform(toReturn.begin(), toReturn.end(), toReturn.begin(),
+        [](unsigned char c){ return std::tolower(c); });
+    return toReturn;
+}
+
+std::string format(const char *fmt, ...)
+{
+    va_list  varList;
+
+    va_start(varList, fmt);
+    int iLen = vsnprintf(NULL, 0, fmt, varList);
+    va_end(varList);
+
+    vector<uint8_t> buffer(iLen + 1);
+
+    //std::cout << "Created buffer of length" << iLen << std::endl;
+    va_start(varList, fmt);
+    int rLen = vsnprintf((char *)buffer.data(), (size_t)iLen + 1, fmt, varList);
+    va_end(varList);
+
+    CORE_UNUSED(rLen);
+    std::string result(buffer.begin(), buffer.begin() + iLen);
+    return result;
+}
+
 
 } // namespace HelperUtils
 

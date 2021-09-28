@@ -194,7 +194,7 @@ public:
                 i++; pos++;
             } else {
                 uint16_t v = ((uint8_t)str[i] << 8) | (uint8_t)(str[i + 1]);
-                drawChar16(5 + pos * 6 * scale, y, v, color, scale);
+                drawChar16(x + pos * 6 * scale, y, v, color, scale);
                 i+=2; pos++;
             }
         }

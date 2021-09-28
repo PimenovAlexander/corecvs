@@ -989,3 +989,21 @@ TEST(Draw, DISABLED_testPack)
     delete_safe(block);
 
 }
+
+
+
+TEST(Draw, drawDiagonal)
+{
+    DiagonalIterator d(100);
+    RGB24Buffer buffer(200,200);
+
+    int count = 11000;
+    for(auto a : d)
+    {
+        buffer.element(a.y() + 50, a.x() + 50) = RGBColor::Red();
+        count--;
+        if (count == 0) break;
+    }
+
+    BMPLoader().save("diagonal.bmp", &buffer);
+}

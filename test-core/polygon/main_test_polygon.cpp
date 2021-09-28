@@ -1,3 +1,5 @@
+
+#include <geometry/convexHull.h>
 /**
  * \file main_test_polygon.cpp
  * \brief This is the main file for the test polygon
@@ -57,7 +59,7 @@ TEST(polygon, testArea1)
     cout << "Starting test <polygon>" << endl;
 
     Polygon  pentakle = Polygon::RegularPolygon(5, Vector2dd::Zero(), 10);
-    Polygon rpentakle = Polygon::Reverse(pentakle);
+    Polygon rpentakle = Polygon::Reversed(pentakle);
 
     cout << "Center :" <<  pentakle.center() << endl;
     cout << "RCenter:" << rpentakle.center() << endl;
@@ -106,7 +108,7 @@ TEST(polygon, testArea2)
     p.push_back(Vector2dd(6.0, 6.0));
     p.push_back(Vector2dd(0.0, 6.0));
 
-    Polygon rp = Polygon::Reverse(p);
+    Polygon rp = Polygon::Reversed(p);
 
     cout << "Center :" <<  p.center() << endl;
     cout << "RCenter:" << rp.center() << endl;
@@ -379,11 +381,11 @@ TEST(polygon, testIntersection)
     int w = 400;
 
     Polygon  p1 = Polygon::RegularPolygon(5, Vector2dd(w / 2 , h / 2), 180);
-    Polygon  p2 = Polygon::Reverse(Polygon::RegularPolygon(5, Vector2dd(w / 2 , h / 2), 180, degToRad(36)));
+    Polygon  p2 = Polygon::Reversed(Polygon::RegularPolygon(5, Vector2dd(w / 2 , h / 2), 180, degToRad(36)));
 
     p1[0] = Vector2dd(w / 2, h / 2);
 
-    RGB24Buffer *buffer  = new RGB24Buffer(h, w, RGBColor::Black());
+    RGB24Buffer *buffer  = new RGB24Buffer(h, w, RGBColor::White());
     AbstractPainter<RGB24Buffer> painter(buffer);
 
     PolygonCombiner combiner;
@@ -393,11 +395,13 @@ TEST(polygon, testIntersection)
     combiner.prepare();
     Polygon p3 = combiner.intersection();
 
-    combiner.drawDebug(buffer);
-    painter.drawPolygon(p3, RGBColor::Magenta());
-
+    combiner.drawDebug(buffer, RGBColor::Navy(), RGBColor::Brown(), RGBColor::Black());
+    //painter.drawPolygon(p3, RGBColor::Magenta());
 
     BMPLoader().save("intersect.bmp", buffer);
+
+    painter.drawPolygon(p3, RGBColor::Magenta());
+    BMPLoader().save("intersect1.bmp", buffer);
     delete_safe(buffer);
 }
 
@@ -599,7 +603,7 @@ TEST(polygon, simpleNonConvex)
 
 TEST(polygon, twoSeparateIntersections)
 {
-    Polygon  p2 = Polygon::Reverse(Polygon::RegularPolygon(5, Vector2dd(TEST_FILED_W / 2 , TEST_FILED_H / 2), 180, degToRad(72)));
+    Polygon  p2 = Polygon::Reversed(Polygon::RegularPolygon(5, Vector2dd(TEST_FILED_W / 2 , TEST_FILED_H / 2), 180, degToRad(72)));
     p2[0] = Vector2dd(TEST_FILED_W / 2, TEST_FILED_H / 2);
     Polygon  p1 = p2;
     p2.transform(Matrix33::ShiftProj(TEST_FILED_W, 10) * Matrix33::MirrorYZ());
@@ -609,7 +613,7 @@ TEST(polygon, twoSeparateIntersections)
 
 TEST(polygon, twoSeparateIntersections1)
 {
-    Polygon  p2 = Polygon::Reverse(Polygon::RegularPolygon(5, Vector2dd(TEST_FILED_W / 2 , TEST_FILED_H / 2), 180, degToRad(72)));
+    Polygon  p2 = Polygon::Reversed(Polygon::RegularPolygon(5, Vector2dd(TEST_FILED_W / 2 , TEST_FILED_H / 2), 180, degToRad(72)));
     p2[0] = Vector2dd(TEST_FILED_W / 2, TEST_FILED_H / 2);
     Polygon  p1 = p2;
     p2.transform(Matrix33::ShiftProj(TEST_FILED_W + 15, 10) * Matrix33::MirrorYZ());
@@ -618,7 +622,7 @@ TEST(polygon, twoSeparateIntersections1)
 
 TEST(polygon, trivialIntersection)
 {
-    Polygon  p2 = Polygon::Reverse(Polygon::RegularPolygon(5, Vector2dd(TEST_FILED_W / 2 , TEST_FILED_H / 2), 180, degToRad(72)));
+    Polygon  p2 = Polygon::Reversed(Polygon::RegularPolygon(5, Vector2dd(TEST_FILED_W / 2 , TEST_FILED_H / 2), 180, degToRad(72)));
     Polygon  p1 = p2.transformed(Matrix33::RotationZ(degToRad(36)));
     p2.transform(Matrix33::ShiftProj(TEST_FILED_W, 10) * Matrix33::MirrorYZ());
     testTwoPolygons(p1, p2, "poly-trivial.bmp");

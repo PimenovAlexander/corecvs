@@ -10,13 +10,30 @@
 class LabelGcodeInterpreter : public corecvs::GCodeInterpreter
 {
 public:
-    double scale = 0.25;
+    struct Label {
+        std::string l1;
+        std::string l2;
+        corecvs::Vector2dd pos;
+
+        Label(std::string l1, std::string l2, corecvs::Vector2dd pos) :
+            l1(l1), l2(l2), pos(pos)
+        {}
+    };
+
+    double scale = 0.5;
+    //double scale = 0.05;
 
     std::string part_label;
     std::string label;
     corecvs::RGB24Buffer * canvas = NULL;
     corecvs::SvgGroup *svg = NULL;
     corecvs::Rectangled rectangle;
+    corecvs::Vector2dd mean;
+    double count;
+
+    //corecvs::RGBColor color =
+
+    std::vector<Label> labelList;
 
     virtual void executeProgram(const corecvs::GCodeProgram &program)  override;
 
@@ -30,6 +47,8 @@ public:
     LabelGcodeInterpreter();
 
     void labelObject();
+    void drawLabels();
+
 };
 
 #endif // LABELGCODEINTERPRETER_H

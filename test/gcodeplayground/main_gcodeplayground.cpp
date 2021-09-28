@@ -1,6 +1,9 @@
 #include <fstream>
 
-#include <core/buffers/bufferFactory.h>
+
+#include "core/reflection/commandLineSetter.h"
+
+#include "core/buffers/bufferFactory.h"
 
 #include "core/fileformats/gcodeLoader.h"
 #include "core/fileformats/pltLoader.h"
@@ -216,30 +219,17 @@ int main2 (int argc, char **argv)
     return 0;
 }
 
-int main_old (int argc, char **argv)
+int annotate (CommandLineSetter &s)
 {
+    SYNC_PRINT(("GCode annotate called\n"));
 #ifdef WITH_LIBPNG
     LibpngFileReader::registerMyself();
     LibpngFileSaver::registerMyself();
     SYNC_PRINT(("Libpng support on\n"));
 #endif
 
-    std::string input = "";
-    std::string output = "out.png";
-
-
-    if (argc == 2)
-    {
-        input = argv[1];
-    } else if (argc == 3)
-    {
-        input  = argv[1];
-        output = argv[2];
-    } else {
-        SYNC_PRINT(("Usage labeler <input.gcode> [<output.png>]\n"));
-        SYNC_PRINT((" default output is a.gcode \n"));
-        return 1;
-    }
+    std::string input  = s.getString("input" , "input.gcode");
+    std::string output = s.getString("output", "out.png");
 
     GCodeProgram program;
     GcodeLoader loader;
@@ -248,7 +238,7 @@ int main_old (int argc, char **argv)
     file.open(input, ios::in);
     if (file.fail())
     {
-        SYNC_PRINT(("g code playground::load(): Can't open mesh file <%s>\n", input.c_str()));
+        SYNC_PRINT(("g code playground::load(): Can't open gcode file <%s>\n", input.c_str()));
         return false;
     }
 
@@ -260,12 +250,13 @@ int main_old (int argc, char **argv)
     RGB24Buffer *canvas = new RGB24Buffer(1500 * scale + header, 6000 * scale, RGBColor::White());
     canvas->drawRectangle(0, header, canvas->w - 1, canvas->w - 1 - header, RGBColor::Gray());
     AbstractPainter<RGB24Buffer> p(canvas);
-    p.drawFormatU8(4, 4, RGBColor::Black(), 4, "Layout: %s", basename.c_str());
+    p.drawFormatU8(4, 4, RGBColor::Black(), 4, "Left: %s", basename.c_str());
+    p.drawFormatU8(4 + canvas->w/2, 4, RGBColor::Black(), 4, "Right: %s", basename.c_str());
 
-    for (int c = 0; c < basename.length(); c++)
+/*    for (int c = 0; c < basename.length(); c++)
     {
         printf("%02X\n",(int)basename[c]);
-    }
+    }*/
 
     SvgFile svgFile;
 
@@ -276,6 +267,12 @@ int main_old (int argc, char **argv)
     interperter.executeProgram(program);
 
     BufferFactory::getInstance()->saveRGB24Bitmap(canvas, output);
+
+    RGB24Buffer *canvas1 = canvas->createViewPtr<RGB24Buffer>(0,           0, canvas->h, canvas->w/2);
+    RGB24Buffer *canvas2 = canvas->createViewPtr<RGB24Buffer>(0, canvas->w/2, canvas->h, canvas->w/2);
+
+    BufferFactory::getInstance()->saveRGB24Bitmap(canvas1, std::string("1_") + output);
+    BufferFactory::getInstance()->saveRGB24Bitmap(canvas2, std::string("2_") + output);
 
     ofstream outfile;
     outfile.open("02.re.gcode", std::ostream::out);
@@ -288,13 +285,21 @@ void usage(void) {
       cout << "Usage:\n"
            << "\thelp\n"
            << "\tcompensate [-i|--input filename] [-o|--output filename] [-f|--offset offset] [-t|--touchZ touchZ]\n"
-           << "\trender [-i|--input filename] [-o|--output filename] [-v|--vinyl]\n";
+           << "\trender [-i|--input filename] [-o|--output filename] [-v|--vinyl]\n"
+           << "\tannotate [-i|--input filename] [-o|--output filename]\n";
+
 }
 
-int main(int argc, char **argv) {
-  if (argc < 2 || std::string(argv[1]) == "help") {
-    usage();
-    return 0;
+int main(int argc, char **argv)
+{
+  CommandLineSetter s(argc, argv);
+
+  vector<string> nonPrefix = s.nonPrefix();
+
+  if (nonPrefix.size() <= 1) {
+     SYNC_PRINT(("Provided %d argumets\n", nonPrefix.size()));
+     usage();
+     return 0;
   }
 
   bool vinyl = false;
@@ -303,7 +308,20 @@ int main(int argc, char **argv) {
   std::string infile = "in.gcode";
   std::string outfile;
 
-  std::string mode = argv[1];
+  std::string mode = nonPrefix[1];
+  SYNC_PRINT(("Mode :%s\n", mode.c_str()));
+
+  if (mode == "help" || s.hasOption("help"))
+  {
+      usage();
+      return  0;
+  }
+
+  if (mode == "annotate") {
+    annotate(s);
+
+    return  0;
+  }
 
   if (mode == "compensate") {
     outfile = "out.gcode";

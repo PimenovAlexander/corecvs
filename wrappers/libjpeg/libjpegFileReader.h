@@ -22,8 +22,10 @@ public:
 
     virtual bool acceptsFile(const std::string & name) override;
     virtual corecvs::RGB24Buffer *load(const std::string &name) override;
+    virtual corecvs::RGB24Buffer *load(std::vector<unsigned char> &mem_vector);
+
     virtual std::string name() override { return "LibJpeg"; }
-    virtual std::vector<std::string> extentions() { return {".jpg", ".jpeg"}; }
+    virtual std::vector<std::string> extentions() override { return {".jpg", ".jpeg"}; }
 
     bool saveJPEG(const std::string& name, const corecvs::RGB24Buffer *buffer, int quality = 95, bool alpha = false);
     bool saveJPEG(std::vector<unsigned char> &mem_vector, const corecvs::RGB24Buffer *buffer, int quality = 95, bool alpha = false);

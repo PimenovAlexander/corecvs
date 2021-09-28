@@ -83,10 +83,14 @@ int AVEncoder::startEncoding(const std::string &name, int h, int w, int codec_id
 
      /* frames per second */
      if (codec->id == AV_CODEC_ID_GIF) {
-        outStream->time_base = AVRational({1,2});
+         outStream->time_base = AVRational({1,2});
+     } else if (codec->id == AV_CODEC_ID_VP8) {
+         outStream->time_base = AVRational({1,2});
      } else {
-        outStream->time_base = AVRational({1,25});
+         outStream->time_base = AVRational({1,25});
      }
+
+     //outStream->codec->time_base = outStream->time_base;
 
      avcodec_parameters_to_context(codecContext, outStream->codecpar);
 
@@ -94,7 +98,10 @@ int AVEncoder::startEncoding(const std::string &name, int h, int w, int codec_id
      codecContext->codec_id = codec->id;
      codecContext->height = outStream->codecpar->height;
      codecContext->width  = outStream->codecpar->width;
-     codecContext->time_base = AVRational({1,25});
+
+     codecContext->time_base = AVRational({1,2});
+     codecContext->framerate = AVRational({2,1});
+
      codecContext->gop_size = 10; /* emit one intra frame every ten frames */
      codecContext->max_b_frames=1;
      if (codec->id == AV_CODEC_ID_GIF) {
@@ -164,14 +171,20 @@ int AVEncoder::startEncoding(const std::string &name, int h, int w, int codec_id
 
          if (trace) SYNC_PRINT(("Writing header...\n"));
          if (trace) SYNC_PRINT(("Format dimentions:\n"));
+         if (trace) SYNC_PRINT(("    stream [%d / %d]\n",
+                stream->time_base.num,
+                stream->time_base.den ));
+
          if (trace) SYNC_PRINT(("    codecpar [%d %d] <%s>\n",
                 stream->codecpar->width,
                 stream->codecpar->height,
                 av_get_media_type_string(stream->codecpar->codec_type) ));
 
-         if (trace) SYNC_PRINT(("    codec    [%d %d]\n",
+         if (trace) SYNC_PRINT(("    codec    [%d %d] [%d / %d]\n",
                 stream->codec->width,
-                stream->codec->height));
+                stream->codec->height,
+                stream->codec->time_base.num,
+                stream->codec->time_base.den));
      }
      ret = avformat_write_header(formatContext, NULL);
      if (ret < 0) {
@@ -208,29 +221,30 @@ void AVEncoder::addFrame(corecvs::RGB24Buffer *input)
         rgb24BufferToAVFrameYUV420P(input, frame);
     }
 
-     frame_number++;
+    frame->pts = frame_number * 50 * 10;
 
-     frame->pts = frame_number;
-
-     /* encode the image */
-     if (trace) SYNC_PRINT(("Sending frame to codec\n"));
-     ret = avcodec_send_frame(codecContext, frame);
-     if (ret < 0) {
-         fprintf(stderr, "Error encoding frame\n");
-         exit(1);
-     }
+    frame_number++;
 
 
-     printf("Write frame %3d (size=%5d)\n", frame_number, packet.size);
-     if (trace) SYNC_PRINT(("Reciveing packet from codec\n"));
-     ret = avcodec_receive_packet(codecContext, &packet);
-     if (ret == 0) {
-         fprintf(stderr, "Got packet from codec\n");
-         if ((ret = av_interleaved_write_frame(formatContext, &packet)) < 0) {
-             fprintf(stderr, "Failed to write packet\n");
-             return;
-         }
-     }
+    /* encode the image */
+    if (trace) SYNC_PRINT(("Sending frame to codec\n"));
+    ret = avcodec_send_frame(codecContext, frame);
+    if (ret < 0) {
+        fprintf(stderr, "Error encoding frame\n");
+        exit(1);
+    }
+
+
+    printf("Write frame %3d (size=%5d)\n", frame_number, packet.size);
+    if (trace) SYNC_PRINT(("Reciveing packet from codec\n"));
+    ret = avcodec_receive_packet(codecContext, &packet);
+    if (ret == 0) {
+        fprintf(stderr, "Got packet from codec\n");
+        if ((ret = av_interleaved_write_frame(formatContext, &packet)) < 0) {
+            fprintf(stderr, "Failed to write packet\n");
+            return;
+        }
+    }
 
 
 }

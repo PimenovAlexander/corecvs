@@ -20,6 +20,104 @@
 #include "core/utils/utils.h"
 #include "core/filesystem/folderScanner.h"
 
+#include "floatHorizon.h"
+
+void test_horizon(CommandLineSetter &line)
+{
+    SYNC_PRINT(("test_horizon called...\n"));
+
+    if (line.hasOption("points"))
+    {
+        SYNC_PRINT(("points...\n"));
+        for (int k = 0; k < 100; k++)
+        {
+            SYNC_PRINT(("processing frame %d...\n", k ));
+            RGB24Buffer out(600, 800);
+
+            FloatHorizon renderer;
+            renderer.output = &out;
+            renderer.phi = degToRad(20);
+            renderer.psi = degToRad(k);
+            renderer.render1();
+
+            string name = HelperUtils::format("horizon0-%03d.bmp", k);
+
+            BufferFactory::getInstance()->saveRGB24Bitmap(&out, name);
+        }
+    }
+
+    if (line.hasOption("lines"))
+    {
+        SYNC_PRINT(("lines...\n"));
+        for (int k = 0; k < 100; k++)
+        {
+            SYNC_PRINT(("processing frame %d...\n", k ));
+            RGB24Buffer out(600, 800);
+
+            FloatHorizon renderer;
+            renderer.output = &out;
+            renderer.phi = degToRad(20);
+            renderer.psi = degToRad(k);
+            renderer.render2();
+
+            string name = HelperUtils::format("horizon2-%03d.bmp", k);
+
+            BufferFactory::getInstance()->saveRGB24Bitmap(&out, name);
+        }
+    }
+
+    if (line.hasOption("hor"))
+    {
+        for (int k = 0; k < 350; k++)
+        {
+            SYNC_PRINT(("processing frame %d...\n", k ));
+            RGB24Buffer out(600, 800);
+
+            FloatHorizon renderer;
+            renderer.output = &out;
+            renderer.phi = degToRad(-45);
+            renderer.psi = degToRad(k);
+            renderer.init();
+            renderer.render3();
+
+            string name = HelperUtils::format("horizon3-%03d.bmp", k);
+
+            BufferFactory::getInstance()->saveRGB24Bitmap(&out, name);
+        }
+    }
+
+    if (line.hasOption("anim"))
+    {
+        for (int k = 0; k < 350; k++)
+        {
+            SYNC_PRINT(("processing frame %d...\n", k ));
+            RGB24Buffer out(600, 800);
+
+            FloatHorizon renderer;
+            renderer.output = &out;
+            renderer.phi = degToRad(-45);
+            renderer.psi = degToRad(200);
+            renderer.stopAt = k*8;
+            if (line.hasOption("draw")) {
+                renderer.shouldHorison = true;
+            }
+            renderer.init();
+            renderer.render3();
+
+            string name = HelperUtils::format("horizon4-%03d.bmp", k);
+
+            BufferFactory::getInstance()->saveRGB24Bitmap(&out, name);
+        }
+    }
+
+    SYNC_PRINT(("use ffmpeg to make video from frames:\n"));
+    SYNC_PRINT(("ffmpeg -y -framerate 25 -f image2 -pattern_type glob -i \"horizon0-*.bmp\" -c:v libx264 -r 30 -pix_fmt yuv420p encoded0.mp4\n"));
+    SYNC_PRINT(("ffmpeg -y -framerate 25 -f image2 -pattern_type glob -i \"horizon2-*.bmp\" -c:v libx264 -r 30 -pix_fmt yuv420p encoded2.mp4\n"));
+    SYNC_PRINT(("ffmpeg -y -framerate 25 -f image2 -pattern_type glob -i \"horizon3-*.bmp\" -c:v libx264 -r 30 -pix_fmt yuv420p encoded3.mp4\n"));
+    SYNC_PRINT(("ffmpeg -y -framerate 25 -f image2 -pattern_type glob -i \"horizon4-*.bmp\" -c:v libx264 -r 30 -pix_fmt yuv420p encoded4.mp4\n"));
+}
+
+
 #if 0
 int main(int argc, const char **argv)
 {
@@ -135,6 +233,12 @@ int main(int argc, char **argv)
     }
 
     CommandLineSetter line(argc, argv);
+
+    if (line.hasOption("horizon"))
+    {
+        test_horizon(line);
+        return 0;
+    }
 
     double fov = degToRad(50);
     double w = 1000;

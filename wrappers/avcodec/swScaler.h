@@ -15,11 +15,15 @@ public:
     static corecvs::G12Buffer   *scale (corecvs::G12Buffer   *input, double scaler);
 
 
+
+
 private:
 
 template<typename BufferType, int swScaleFormatId>
     static BufferType *scale(BufferType *input, double scale);
 
 };
+
+
 
 #endif // SWSCALER_H

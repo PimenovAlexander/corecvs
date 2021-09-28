@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <ostream>
 
+
 #include "core/math/vector/vector3d.h"
 #include "core/xml/generated/axisAlignedBoxParameters.h"
 #include "core/geometry/line.h"
@@ -22,6 +23,7 @@
 #include "core/geometry/rectangle.h"
 #include "core/geometry/convexPolyhedron.h"
 #include "core/geometry/planeFrame.h"
+#include "core/buffers/rgb24/rgbColor.h"
 
 namespace corecvs {
 
@@ -456,7 +458,10 @@ public:
     bool validateState(void) const;
 
     Rectangled getDebugRectangle() const;
-    void drawDebug(RGB24Buffer *buffer) const;
+    void drawDebug(RGB24Buffer *buffer,
+                const RGBColor &first  = RGBColor::Yellow(),
+                const RGBColor &second = RGBColor::Cyan  (),
+                const RGBColor &text   = RGBColor::White () )const;
     void drawDebugAutoscale(RGB24Buffer *buffer, int margin = 100) const;
 
     Polygon followContour(int startIntersection, bool inner, vector<bool> *visited = NULL) const;

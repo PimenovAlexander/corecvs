@@ -540,22 +540,22 @@ public:
 
 
 
-    static RGBColor lerpColor(const RGBColor &first, const RGBColor &second, double alpha)
+    static RGBColor lerpColor(const RGBColor &first, const RGBColor &second, float alpha)
     {
-        uint8_t r = (uint8_t)lerp<double>(first.r(), second.r(), alpha);
-        uint8_t g = (uint8_t)lerp<double>(first.g(), second.g(), alpha);
-        uint8_t b = (uint8_t)lerp<double>(first.b(), second.b(), alpha);
+        uint8_t r = (uint8_t)lerp<float>(first.r(), second.r(), alpha);
+        uint8_t g = (uint8_t)lerp<float>(first.g(), second.g(), alpha);
+        uint8_t b = (uint8_t)lerp<float>(first.b(), second.b(), alpha);
         return RGBColor(r, g, b);
     }
 
     /**
      *    This function is slow. Use for debugging and fancy effects only.
      **/
-    void blendWith(const RGBColor &second, double alpha = 0.5)
+    void blendWith(const RGBColor &second, float alpha = 0.5)
     {
-        r() = (uint8_t)lerp<double>(r(), second.r(), alpha);
-        g() = (uint8_t)lerp<double>(g(), second.g(), alpha);
-        b() = (uint8_t)lerp<double>(b(), second.b(), alpha);
+        r() = (uint8_t)lerp<float>(r(), second.r(), alpha);
+        g() = (uint8_t)lerp<float>(g(), second.g(), alpha);
+        b() = (uint8_t)lerp<float>(b(), second.b(), alpha);
     }
 
     static RGBColor diff(const RGBColor &first, const RGBColor &second)

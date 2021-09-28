@@ -340,6 +340,108 @@ bool LibpngFileReader::savePNG(const string &name, const RGB24Buffer *buffer, in
     png_create_write_struct_failed:
         fclose (fp);
 
+        return toReturn;
+}
+
+typedef struct
+{
+    //png_bytep data;
+    //int size;
+
+    std::vector<unsigned char> *vdata;
+} ImageTarget;
+
+void pngWriteCallback(png_structp png_ptr, png_bytep data, png_size_t length)
+{
+    //cout << "- length ----------- " << length << endl;
+    ImageTarget * itarget = (ImageTarget*)png_get_io_ptr(png_ptr);
+    size_t nsize = itarget->vdata->size() + length;
+    //cout << "- nsize ----------- " << nsize << endl;
+    //cout << "- data ------ " << (size_t) itarget->data << endl;
+
+    size_t old_size = itarget->vdata->size();
+    itarget->vdata->resize(nsize);
+    memcpy(itarget->vdata->data() + old_size, data, length);
+}
+
+bool LibpngFileReader::savePNG(std::vector<unsigned char> &mem_vector, const RGB24Buffer *buffer, int quality, bool alpha)
+{
+    //CORE_UNUSED(quality); /*TODO: connect with PNG_COMPRESSION_TYPE_DEFAULT below*/
+    bool toReturn = false;
+    int pixel_size = alpha ? 4 : 3;
+    int depth = 8;
+    png_uint_32 width = buffer->w, height = buffer->h;
+    png_structp png_ptr;
+    png_infop info_ptr;
+    png_byte **row_pointers;
+
+    png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+    if (png_ptr == nullptr) {
+        goto png_create_write_struct_failed;
+    }
+
+    info_ptr = png_create_info_struct(png_ptr);
+    if (info_ptr == nullptr) {
+        goto png_create_info_struct_failed;
+    }
+
+    /* Set up error handling. */
+    if (setjmp (png_jmpbuf(png_ptr))) {
+        goto png_failure;
+    }
+
+    /* Set image attributes. */
+    png_set_IHDR(png_ptr,
+                 info_ptr,
+                 width,
+                 height,
+                 depth,
+                 alpha ? PNG_COLOR_TYPE_RGBA : PNG_COLOR_TYPE_RGB,
+                 PNG_INTERLACE_NONE,
+                 PNG_COMPRESSION_TYPE_DEFAULT,
+                 PNG_FILTER_TYPE_DEFAULT);
+
+    /* Initialize rows of PNG. */
+    row_pointers = (png_byte **)png_malloc(png_ptr, height * sizeof(png_byte *));
+    for (uint32_t y = 0; y < height; ++y)
+    {
+        auto row = (png_byte *)png_malloc(png_ptr, sizeof(uint8_t) * width * pixel_size);
+        row_pointers[y] = row;
+        for (uint32_t x = 0; x < width; ++x)
+        {
+            RGBColor pixel = buffer->element(y, x);
+            *row++ = pixel.r();
+            *row++ = pixel.g();
+            *row++ = pixel.b();
+            if (alpha) {
+                *row++ = pixel.a();
+            }
+        }
+    }
+
+    /* Write the image data to "fp". */
+    //png_init_io  (png_ptr, fp);
+    ImageTarget itarget;
+    mem_vector.clear();
+    itarget.vdata = &mem_vector;
+    png_set_write_fn(png_ptr, &itarget, pngWriteCallback, NULL);
+
+
+    png_set_rows (png_ptr, info_ptr, row_pointers);
+    png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
+
+    toReturn = true;
+
+    for (uint32_t y = 0; y < height; ++y) {
+        png_free(png_ptr, row_pointers[y]);
+    }
+    png_free(png_ptr, row_pointers);
+
+    png_failure:
+    png_create_info_struct_failed:
+        png_destroy_write_struct(&png_ptr, &info_ptr);
+    png_create_write_struct_failed:
+
     return toReturn;
 }
 

@@ -22,6 +22,8 @@ set(TEST_SUBDIRECTORIES
     softrender
     face_distortion
     autonavRW
+    rectify_aligner
+    test_3points
 )
 
 

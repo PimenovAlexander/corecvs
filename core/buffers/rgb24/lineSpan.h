@@ -7,6 +7,7 @@
 
 #include "core/math/vector/vector2d.h"
 #include "core/geometry/line.h"
+#include "core/math/mathUtils.h"
 
 
 namespace corecvs {
@@ -199,7 +200,7 @@ public:
 
     int count = 0;
 
-    LineSpanIterator(int x1, int y1, int x2, int y2) :
+    LineSpanIterator(double x1, double y1, double x2, double y2) :
         x1(x1), y1(y1), x2(x2), y2(y2)
     {
         cx = x1;
@@ -228,12 +229,19 @@ public:
     {
     }
 
+    LineSpanIterator(const Vector2dd &begin, const Vector2dd &end) :
+        LineSpanIterator(
+            begin.x(), begin.y(),
+            end  .x(), end  .y())
+    {
+    }
+
     int x() {
-        return cx;
+        return fround(cx);
     }
 
     int y() {
-        return cy;
+        return fround(cy);
     }
 
     Vector2d<int> pos() {
@@ -247,7 +255,7 @@ public:
     }
 
     bool hasValue() {
-        return (count > 0);
+        return (count >= 0);
     }
 
     /**
@@ -335,6 +343,62 @@ public:
 
 
 
+};
+
+
+class DiagonalIterator {
+public:
+    int t;
+    int x;
+    int y;
+
+    DiagonalIterator(int t) :
+       t(t), x(0), y(0)
+    {}
+
+    bool operator !=(const DiagonalIterator & /*other*/) {
+        if ((x >= t) || (y >= t))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    void operator ++() {
+       y++;
+       x--;
+
+       /* First half */
+       if (x < 0) {
+           x = y;
+           y = 0;
+       }
+
+       /* Transition */
+       if (x > t - 1) {
+           y = x - (t - 1);
+           x = t - 1;
+       }
+
+       /* Second half */
+       if (y > t - 1) {
+           y = x + 2;
+           x = t - 1;
+       }
+
+    }
+
+    DiagonalIterator &begin() {
+        return *this;
+    }
+
+    DiagonalIterator & end() {
+        return *this;
+    }
+
+    Vector2d<int> operator *() {
+        return Vector2d<int>(x, y);
+    }
 };
 
 

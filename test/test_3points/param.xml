@@ -1,0 +1,72 @@
+<poco version="5.0">
+
+
+  <class name="Vector 3d Parameters">
+    <field type="double" name="X"  defaultValue="0" decimals="6" min="-50000" max="50000"/>
+    <field type="double" name="Y"  defaultValue="0" decimals="6" min="-50000" max="50000"/>
+    <field type="double" name="Z"  defaultValue="0" decimals="6" min="-50000" max="50000"/>
+  </class>
+
+
+  <class name="Vector 2d Parameters">
+    <field type="double" name="X"  defaultValue="0" decimals="6" min="-50000" max="50000"/>
+    <field type="double" name="Y"  defaultValue="0" decimals="6" min="-50000" max="50000"/>
+  </class>
+
+  <enum name="Target Type 3 Point">
+    <item name="Single Point" id="0" />
+    <item name="Wall"         id="1" />
+    <item name="POIS Files"   id="2" />
+  </enum>
+
+  <class name="Error 3 Point Parameters">
+    <field type="string" name="scene file name"            defaultValue="test.data.json"/>
+
+    <field type="Vector 3d Parameters"  name="Station Error Sigma" />
+    <field type="bool"    name="use 3rd point" />
+    <field type="Vector 3d Parameters"  name="Point 3 Error Sigma" />
+    <field type="double"  name="tiltError deg" suffix="deg" min = "0" max="20000" defaultValue="0.05"/>
+
+
+    <field type="Vector 2d Parameters"  name="Observation Error" comment="Observation Error (px)"/>
+
+    <field type="double"  name="baseline"          min = "0" max="20000" defaultValue="1.5"/>
+    <field type="double"  name="point 3 distance"  min = "0" max="20000" defaultValue="10"/>
+
+
+    <!-- Target Types -->
+    <field type="Target Type 3 Point"  name="target type" defaultValue="0"/>
+    <field type="int"  name="sampling iterations"         defaultValue="1000" min="0" max="50000" />
+    <field type="string" name="pois file name"            defaultValue="pois.txt"/>
+    <field type="double" name="distance"                  defaultValue="30" decimals="6" min="-50000" max="50000"/>
+
+
+    <field type="double" name="wall angle deg"            defaultValue="0" decimals="6" min="-50000" max="50000" suffix="deg"/>
+    <field type="double" name="wall brick step"           defaultValue="5" decimals="6" min="-50000" max="50000"/>
+    <field type="int"    name="wall bricks"               defaultValue="6" min="0" max="50000" />
+
+    <!-- Image params -->
+    <field type="int"    name="image size"            defaultValue="2000" min="0" max="50000" />
+    <field type="double" name="image scale"           defaultValue="100" decimals="6" min="-50000" max="50000"/>
+    <field type="Vector 3d Parameters" name="image shift" />
+
+    <!-- Image params -->
+    <field type="int"    name="random seed"            defaultValue="0" min="0" max="999999" />
+
+  </class>
+
+
+  <class name="ErrorEstimatorBlockBase">
+    <field type="pointer"  target="corecvs::FixtureScene" name="inScene" />
+
+    <field type="Error 3 Point Parameters" name="parameters"   />
+
+    <field type="pointer"  target="corecvs::Mesh3D" name="outMesh" />
+    <field type="pointer"  target="corecvs::RGB24Buffer" name="outImage" />
+    <!--
+    <field type="pointer"  target="corecvs::FixtureCamera" name="outCamera1" />
+    <field type="pointer"  target="corecvs::FixtureCamera" name="outCamera2"  />
+    -->
+  </class>
+
+</poco>
